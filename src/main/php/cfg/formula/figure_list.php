@@ -36,6 +36,8 @@ include_once API_FORMULA_PATH . 'figure_list.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
 
 use api\figure_list_api;
+use cfg\db\sql_creator;
+use cfg\db\sql_par_type;
 use html\figure\figure as figure_dsp;
 use html\value\value as value_dsp;
 use test\test_api;
@@ -102,19 +104,19 @@ class figure_list extends sandbox_list
 
     /**
      * set the SQL query parameters to load a list of figure objects
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con, string $query_name): sql_par
+    function load_sql(sql_creator $sc, string $query_name): sql_par
     {
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
 
-        $db_con->set_type(sql_db::VT_FIGURE);
-        $db_con->set_name($qp->name);
+        $sc->set_type(sql_db::VT_FIGURE);
+        $sc->set_name($qp->name);
 
-        $db_con->set_usr($this->user()->id());
-        $db_con->set_fields(figure::FLD_NAMES);
+        $sc->set_usr($this->user()->id());
+        $sc->set_fields(figure::FLD_NAMES);
         //$db_con->set_usr_fields(figure::FLD_NAMES_USR_NO_NAME);
         //$db_con->set_usr_num_fields(figure::FLD_NAMES_NUM_USR);
         //$db_con->set_order_text(sql_db::STD_TBL . '.' . $db_con->name_sql_esc(figure::FLD_VALUES) . ' DESC, ' . figure::FLD_NAME);
@@ -124,16 +126,16 @@ class figure_list extends sandbox_list
     /**
      * create an SQL statement to retrieve a list of phrase objects by the id from the database
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param fig_ids $ids figure ids that should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_ids(sql_db $db_con, fig_ids $ids): sql_par
+    function load_sql_by_ids(sql_creator $sc, fig_ids $ids): sql_par
     {
-        $qp = $this->load_sql($db_con, $ids->count() . 'ids');
-        $db_con->set_where_id_in(figure::FLD_ID, $ids->lst);
-        $qp->sql = $db_con->select_by_set_id();
-        $qp->par = $db_con->get_par();
+        $qp = $this->load_sql($sc, 'ids');
+        $sc->add_where(figure::FLD_ID, $ids->lst);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
 
         return $qp;
     }
@@ -179,7 +181,7 @@ class figure_list extends sandbox_list
     function load_by_ids(fig_ids $ids): bool
     {
         global $db_con;
-        $qp = $this->load_sql_by_ids($db_con, $ids);
+        $qp = $this->load_sql_by_ids($db_con->sql_creator(), $ids);
         return $this->load($qp);
     }
 

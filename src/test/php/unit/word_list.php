@@ -307,13 +307,13 @@ class word_list_unit_tests
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $lst->load_sql_by_ids($db_con, $ids);
+        $qp = $lst->load_sql_by_ids($db_con->sql_creator(), $ids);
         $result = $t->assert_qp($qp, $db_con->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
-            $qp = $lst->load_sql_by_ids($db_con, $ids);
+            $qp = $lst->load_sql_by_ids($db_con->sql_creator(), $ids);
             $t->assert_qp($qp, $db_con->db_type);
         }
     }
@@ -331,12 +331,12 @@ class word_list_unit_tests
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $lst->load_sql_by_names($db_con, $words);
+        $qp = $lst->load_sql_by_names($db_con->sql_creator(), $words);
         $t->assert_qp($qp, $db_con->db_type);
 
         // check the MySQL query syntax
         $db_con->db_type = sql_db::MYSQL;
-        $qp = $lst->load_sql_by_names($db_con, $words);
+        $qp = $lst->load_sql_by_names($db_con->sql_creator(), $words);
         $t->assert_qp($qp, $db_con->db_type);
     }
 
@@ -353,12 +353,12 @@ class word_list_unit_tests
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $lst->load_sql_by_grp_id($db_con, $grp_id);
+        $qp = $lst->load_sql_by_grp_id($db_con->sql_creator(), $grp_id);
         $t->assert_qp($qp, $db_con->db_type);
 
         // check the MySQL query syntax
         $db_con->db_type = sql_db::MYSQL;
-        $qp = $lst->load_sql_by_grp_id($db_con, $grp_id);
+        $qp = $lst->load_sql_by_grp_id($db_con->sql_creator(), $grp_id);
         $t->assert_qp($qp, $db_con->db_type);
     }
 
@@ -375,12 +375,12 @@ class word_list_unit_tests
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $lst->load_sql_by_type($db_con, $type_id);
+        $qp = $lst->load_sql_by_type($db_con->sql_creator(), $type_id);
         $t->assert_qp($qp, $db_con->db_type);
 
         // check the MySQL query syntax
         $db_con->db_type = sql_db::MYSQL;
-        $qp = $lst->load_sql_by_type($db_con, $type_id);
+        $qp = $lst->load_sql_by_type($db_con->sql_creator(), $type_id);
         $t->assert_qp($qp, $db_con->db_type);
     }
 
@@ -397,12 +397,12 @@ class word_list_unit_tests
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $lst->load_sql_pattern($db_con, $pattern);
+        $qp = $lst->load_sql_pattern($db_con->sql_creator(), $pattern);
         $t->assert_qp($qp, $db_con->db_type);
 
         // check the MySQL query syntax
         $db_con->db_type = sql_db::MYSQL;
-        $qp = $lst->load_sql_pattern($db_con, $pattern);
+        $qp = $lst->load_sql_pattern($db_con->sql_creator(), $pattern);
         $t->assert_qp($qp, $db_con->db_type);
     }
 
@@ -421,12 +421,12 @@ class word_list_unit_tests
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $lst->load_sql_linked_words($db_con, $vrb, $direction);
+        $qp = $lst->load_sql_linked_words($db_con->sql_creator(), $vrb, $direction);
         $t->assert_qp($qp, $db_con->db_type);
 
         // check the MySQL query syntax
         $db_con->db_type = sql_db::MYSQL;
-        $qp = $lst->load_sql_linked_words($db_con, $vrb, $direction);
+        $qp = $lst->load_sql_linked_words($db_con->sql_creator(), $vrb, $direction);
         $t->assert_qp($qp, $db_con->db_type);
     }
 

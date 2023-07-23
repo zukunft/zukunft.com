@@ -136,7 +136,8 @@ class word_unit_db_tests
         // load a word list by name pattern
         $wrd_lst = new word_list ($t->usr1);
         $wrd_lst->load_by_pattern('S');
-        $t->assert_contains('load_by_pattern', $wrd_lst->names(), array("S", "September", "Share", "Share Price", "SI base unit", "Sv"));
+        $t->assert_contains('load_by_pattern', $wrd_lst->names(),
+            array("S", "September", "Share", "Share Price", "SI base unit", "Sv"));
 
         // add a word to a list by the word id
         $wrd_lst = new word_list ($t->usr1);

@@ -627,14 +627,6 @@ class sql_db
     }
 
     /**
-     * to change the user view independent of the session user (can only be called by admin users)
-     */
-    function set_view_usr($usr_id): void
-    {
-        $this->usr_view_id = $usr_id;
-    }
-
-    /**
      * add a parameter for a prepared query
      * @param sql_par_type $par_type the SQL parameter type used e.g. for Postgres as int or text
      * @param string $value the int, float value or text value that is used for the concrete execution of the query
@@ -1491,11 +1483,6 @@ class sql_db
         }
     }
 
-    function get_id_field(): string
-    {
-        return $this->id_field;
-    }
-
     function get_name_field(string $type): string
     {
         global $debug;
@@ -2321,12 +2308,6 @@ class sql_db
             }
         }
         return $result;
-    }
-
-    function set_where_id_in(string $id_field_name, array $ids): string
-    {
-        $this->where = ' WHERE ' . $this->where_in_par($id_field_name, $ids);
-        return $this->where;
     }
 
     /**

@@ -552,7 +552,10 @@ class sql_creator
      * @param sql_par_type|null $spt to force using a non-standard parameter type e.g. OR instead of AND
      * @return void
      */
-    function add_where(string $fld, int|string|array $fld_val, sql_par_type|null $spt = null): void
+    function add_where(
+        string $fld,
+        int|string|array $fld_val,
+        sql_par_type|null $spt = null): void
     {
         $this->add_field($fld);
 
@@ -578,8 +581,10 @@ class sql_creator
         } elseif ($spt == sql_par_type::TEXT
             or $spt == sql_par_type::TEXT_USR
             or $spt == sql_par_type::TEXT_OR
-            or $spt == sql_par_type::LIKE) {
+            or $spt == sql_par_type::INT_SUB) {
             $this->add_par($spt, $fld_val);
+        } elseif ($spt == sql_par_type::LIKE) {
+            $this->add_par($spt, $fld_val . '%');
         } else {
             log_err('SQL parameter type ' . $spt->value . ' not expected');
         }
@@ -594,24 +599,20 @@ class sql_creator
      * create a SQL select statement for the select database
      * base on the previous set parameters
      *
-     * @param array|null $id_fields the name of the primary id field that should be used or the list of link fields
+     * @param int $par_offset in case of a sub query the number of parameter set until here of the main query
      * @param bool $has_id to be able to create also SQL statements for tables that does not have a single unique key
      * @return string the created SQL statement in the previous set dialect
      */
-    function sql(array|null $id_fields = null, bool $has_id = true): string
+    function sql(int $par_offset = 0, bool $has_id = true): string
     {
         // check if the minimum parameters are set
         if ($this->query_name == '') {
             log_err('SQL statement is not yet named');
         }
-        if ($id_fields == null) {
-            $id_fields = array($this->id_field);
-        }
-
         // prepare the SQL statement parts that have dependencies to each other
         $fields = $this->fields($has_id);
         $from = $this->from($fields);
-        $where = $this->where($id_fields);
+        $where = $this->where($par_offset);
 
         // create a prepare SQL statement if possible
         $sql = $this->prepare_sql();
@@ -1153,10 +1154,10 @@ class sql_creator
 
     /**
      * set the where statement based on the parameter set until now
-     * @param array $id_fields the name of the primary id field that should be used or the list of link fields
+     * @param int $par_offset in case of a sub query the number of parameter set until here of the main query
      * @return string the sql where statement
      */
-    private function where(array $id_fields): string
+    private function where(int $par_offset = 0): string
     {
 
         $result = '';
@@ -1236,25 +1237,28 @@ class sql_creator
                             }
 
                             // add the other fields
+                            $par_pos = $i + 1 + $par_offset;
                             if ($par_type == sql_par_type::INT_LIST
                                 or $par_type == sql_par_type::INT_LIST_OR
                                 or $par_type == sql_par_type::TEXT_LIST) {
                                 if ($this->db_type == sql_db::POSTGRES) {
-                                    $result .= $this->par_fields[$i] . ' = ANY (' . $this->par_name($i + 1) . ')';
+                                    $result .= $this->par_fields[$i] . ' = ANY (' . $this->par_name($par_pos) . ')';
                                 } else {
-                                    $result .= $this->par_fields[$i] . ' IN (' . $this->par_name($i + 1) . ')';
+                                    $result .= $this->par_fields[$i] . ' IN (' . $this->par_name($par_pos) . ')';
                                 }
+                            } elseif ($par_type == sql_par_type::INT_SUB) {
+                                $result .= $this->par_fields[$i] . ' IN (' . $this->par_value($i + 1) . ')';
                             } else {
                                 if ($par_type == sql_par_type::LIKE) {
-                                    $result .= $this->par_fields[$i] . ' like ' . $this->par_name($i + 1);
+                                    $result .= $this->par_fields[$i] . ' like ' . $this->par_name($par_pos);
                                 } else {
                                     if ($par_type == sql_par_type::CONST) {
                                         $result .= $this->par_value($i + 1);
                                     } else {
                                         if ($par_type == sql_par_type::INT_NOT) {
-                                            $result .= $this->par_fields[$i] . ' <> ' . $this->par_name($i + 1);
+                                            $result .= $this->par_fields[$i] . ' <> ' . $this->par_name($par_pos);
                                         } else {
-                                            $result .= $this->par_fields[$i] . ' = ' . $this->par_name($i + 1);
+                                            $result .= $this->par_fields[$i] . ' = ' . $this->par_name($par_pos);
                                         }
                                     }
                                 }
@@ -1356,14 +1360,19 @@ class sql_creator
     {
         $sql = '';
         if (count($this->par_types) > 0) {
-            if ($this->db_type == sql_db::POSTGRES) {
-                $par_types = $this->par_types_to_postgres();
-                $sql = 'PREPARE ' . $this->query_name . ' (' . implode(', ', $par_types) . ') AS SELECT';
-            } elseif ($this->db_type == sql_db::MYSQL) {
-                $sql = "PREPARE " . $this->query_name . " FROM 'SELECT";
-                $this->end = "';";
+            // used for sub queries
+            if ($this->query_name == '') {
+                $sql = "SELECT";
             } else {
-                log_err('Prepare SQL not yet defined for SQL dialect ' . $this->db_type);
+                if ($this->db_type == sql_db::POSTGRES) {
+                    $par_types = $this->par_types_to_postgres();
+                    $sql = 'PREPARE ' . $this->query_name . ' (' . implode(', ', $par_types) . ') AS SELECT';
+                } elseif ($this->db_type == sql_db::MYSQL) {
+                    $sql = "PREPARE " . $this->query_name . " FROM 'SELECT";
+                    $this->end = "';";
+                } else {
+                    log_err('Prepare SQL not yet defined for SQL dialect ' . $this->db_type);
+                }
             }
         } else {
             log_err('Query name is given, but parameters types are missing for ' . $this->query_name);
@@ -1379,7 +1388,7 @@ class sql_creator
         if ($this->end == '') {
             $this->end = ';';
         }
-        if (!str_ends_with($sql, ";")) {
+        if (!str_ends_with($sql, ";") and $this->query_name != '') {
             $sql .= $this->end;
         }
         return $sql;
@@ -1393,7 +1402,8 @@ class sql_creator
         $used_par_values = [];
         $i = 0; // the position in the SQL parameter array
         foreach ($this->par_types as $par_type) {
-            if ($par_type != sql_par_type::CONST) {
+            if ($par_type != sql_par_type::CONST
+                and $par_type != sql_par_type::INT_SUB) {
                 $used_par_values[] = $this->par_value($i + 1);;
             }
             $i++;
@@ -1929,6 +1939,7 @@ class sql_creator
                     break;
                 case sql_par_type::INT_OR:
                 case sql_par_type::INT_NOT:
+                case sql_par_type::INT_SUB:
                     $result[] = 'int';
                     break;
                 case sql_par_type::TEXT_LIST:

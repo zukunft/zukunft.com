@@ -45,6 +45,7 @@ include_once MODEL_HELPER_PATH . 'foaf_direction.php';
 include_once API_WORD_PATH . 'word_list.php';
 
 use api\word_list_api;
+use cfg\db\sql_creator;
 use cfg\db\sql_par_type;
 use html\word\word as word_dsp;
 use html\word\word_list as word_list_dsp;
@@ -102,129 +103,133 @@ class word_list extends sandbox_list
 
     /**
      * set the SQL query parameters to load a list of words
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con): sql_par
+    function load_sql(sql_creator $sc): sql_par
     {
-        $db_con->set_type(sql_db::TBL_WORD);
+        $sc->set_type(sql_db::TBL_WORD);
         $qp = new sql_par(self::class);
-        $db_con->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
-        $db_con->set_usr($this->user()->id());
-        $db_con->set_fields(word::FLD_NAMES);
-        $db_con->set_usr_fields(word::FLD_NAMES_USR);
-        $db_con->set_usr_num_fields(word::FLD_NAMES_NUM_USR);
-        $db_con->set_order_text(sql_db::STD_TBL . '.' . $db_con->name_sql_esc(word::FLD_VALUES) . ' DESC, ' . word::FLD_NAME);
+        $sc->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
+        $sc->set_usr($this->user()->id());
+        $sc->set_fields(word::FLD_NAMES);
+        $sc->set_usr_fields(word::FLD_NAMES_USR);
+        $sc->set_usr_num_fields(word::FLD_NAMES_NUM_USR);
+        $sc->set_order_text(sql_db::STD_TBL . '.' . $sc->name_sql_esc(word::FLD_VALUES) . ' DESC, '
+            . word::FLD_NAME);
         return $qp;
     }
 
     /**
      * set the SQL query parameters to load a list of words by the ids
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param array $wrd_ids a list of int values with the word ids
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_ids(sql_db $db_con, array $wrd_ids): sql_par
+    function load_sql_by_ids(sql_creator $sc, array $wrd_ids): sql_par
     {
-        $qp = $this->load_sql($db_con);
+        $qp = $this->load_sql($sc);
         if (count($wrd_ids) > 0) {
             $qp->name .= 'ids';
-            $db_con->set_name($qp->name);
-            $db_con->add_par_in_int($wrd_ids);
-            $qp->sql = $db_con->select_by_field(word::FLD_ID);
+            $sc->set_name($qp->name);
+            $sc->add_where(word::FLD_ID, $wrd_ids);
+            $qp->sql = $sc->sql();
         } else {
             $qp->name = '';
         }
-        $qp->par = $db_con->get_par();
+        $qp->par = $sc->get_par();
         return $qp;
     }
 
     /**
      * set the SQL query parameters to load a list of words by the names
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param array $wrd_names a list of strings with the word names
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_names(sql_db $db_con, array $wrd_names): sql_par
+    function load_sql_by_names(sql_creator $sc, array $wrd_names): sql_par
     {
-        $qp = $this->load_sql($db_con);
+        $qp = $this->load_sql($sc);
         if (count($wrd_names) > 0) {
             $qp->name .= 'names';
-            $db_con->set_name($qp->name);
-            $db_con->add_par_in_txt($wrd_names);
-            $qp->sql = $db_con->select_by_field(word::FLD_NAME);
+            $sc->set_name($qp->name);
+            $sc->add_where(word::FLD_NAME, $wrd_names, sql_par_type::TEXT_LIST);
+            $qp->sql = $sc->sql();
         } else {
             $qp->name = '';
         }
-        $qp->par = $db_con->get_par();
+        $qp->par = $sc->get_par();
         return $qp;
     }
 
     /**
      * set the SQL query parameters to load a list of words by the phrase group id
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param int $grp_id the id of the phrase group
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_grp_id(sql_db $db_con, int $grp_id): sql_par
+    function load_sql_by_grp_id(sql_creator $sc, int $grp_id): sql_par
     {
-        $qp = $this->load_sql($db_con);
+        $qp = $this->load_sql($sc);
         if ($grp_id > 0) {
             $qp->name .= 'group';
-            $db_con->set_name($qp->name);
-            $db_con->add_par(sql_par_type::INT, $grp_id);
-            $table_name = $db_con->get_table_name(sql_db::TBL_PHRASE_GROUP_WORD_LINK);
-            $sql_where = sql_db::STD_TBL . '.' . word::FLD_ID . ' IN ( SELECT ' . word::FLD_ID . ' 
-                                    FROM ' . $table_name . '
-                                    WHERE ' . phrase_group::FLD_ID . ' = ' . $db_con->par_name() . ')';
-            $db_con->set_where_text($sql_where);
-            $qp->sql = $db_con->select_by_set_id();
+            $sc->set_name($qp->name);
+
+            // create the sub query
+            $sub_sc = clone $sc;
+            $sub_sc->set_type(sql_db::TBL_PHRASE_GROUP_WORD_LINK);
+            $sub_sc->set_fields(array(word::FLD_ID));
+            $sub_sc->add_where(phrase_group::FLD_ID, $grp_id);
+
+            // use the sub query
+            $sc->add_where(word::FLD_ID, $sub_sc->sql(1, false), sql_par_type::INT_SUB);
+            $qp->sql = $sc->sql();
+            $qp->par = array_merge($sc->get_par(), $sub_sc->get_par());
         } else {
             $qp->name = '';
         }
-        $qp->par = $db_con->get_par();
         return $qp;
     }
 
     /**
      * set the SQL query parameters to load a list of words by the type
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param int $type_id the id of the word type
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_type(sql_db $db_con, int $type_id): sql_par
+    function load_sql_by_type(sql_creator $sc, int $type_id): sql_par
     {
-        $qp = $this->load_sql($db_con);
+        $qp = $this->load_sql($sc);
         if ($type_id > 0) {
             $qp->name .= 'type';
-            $db_con->set_name($qp->name);
-            $db_con->add_par(sql_par_type::INT, $type_id);
-            $qp->sql = $db_con->select_by_field(phrase::FLD_TYPE);
+            $sc->set_name($qp->name);
+            $sc->add_where(phrase::FLD_TYPE, $type_id);
+            $qp->sql = $sc->sql();
         } else {
             $qp->name = '';
         }
-        $qp->par = $db_con->get_par();
+        $qp->par = $sc->get_par();
         return $qp;
     }
 
     /**
      * set the SQL query parameters to load a list of words by a word pattern
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param string $word_pattern the id of the word type
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_pattern(sql_db $db_con, string $word_pattern = ''): sql_par
+    function load_sql_pattern(sql_creator $sc, string $word_pattern = ''): sql_par
     {
-        $qp = $this->load_sql($db_con);
+        $qp = $this->load_sql($sc);
         if ($word_pattern !=  '') {
             $qp->name .= 'pattern';
-            $db_con->set_name($qp->name);
-            $db_con->add_name_pattern($word_pattern);
-            $qp->sql = $db_con->select_by_field(word::FLD_NAME);
+            $sc->set_name($qp->name);
+            $sc->add_where(word::FLD_NAME, $word_pattern, sql_par_type::LIKE);
+            $qp->sql = $sc->sql();
         } else {
             $qp->name = '';
         }
-        $qp->par = $db_con->get_par();
+        $qp->par = $sc->get_par();
         return $qp;
     }
 
@@ -232,59 +237,44 @@ class word_list extends sandbox_list
      * create the sql statement to select the related words
      * the relation can be narrowed with a verb id
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param verb|null $vrb if set to select only words linked with this verb
      * @param foaf_direction $direction to define the link direction
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_linked_words(sql_db $db_con, ?verb $vrb, foaf_direction $direction): sql_par
+    function load_sql_linked_words(sql_creator $sc, ?verb $vrb, foaf_direction $direction): sql_par
     {
-        $qp = $this->load_sql($db_con);
+        $qp = $this->load_sql($sc);
         $sql_where = '';
         $join_field = '';
         if (count($this->lst) <= 0) {
             log_warning('The word list is empty, so nothing could be found', self::class . "->load_sql_by_linked_type");
             $qp->name = '';
         } else {
-            if ($db_con->db_type == sql_db::POSTGRES) {
-                $sql_in = ' = ANY (';
-            } else {
-                $sql_in = ' IN (';
-            }
             if ($direction == foaf_direction::UP) {
                 $qp->name .= 'parents';
-                $db_con->add_par_in_int($this->ids());
-                $sql_where = sql_db::LNK_TBL . '.' . triple::FLD_FROM . $sql_in . $db_con->par_name() . ')';
+                $sc->add_where(sql_db::LNK_TBL . '.' . triple::FLD_FROM, $this->ids(), sql_par_type::INT_LIST);
                 $join_field = triple::FLD_TO;
             } elseif ($direction == foaf_direction::DOWN) {
                 $qp->name .= 'children';
-                $db_con->add_par_in_int($this->ids());
-                $sql_where = sql_db::LNK_TBL . '.' . triple::FLD_TO . $sql_in . $db_con->par_name() . ')';
+                $sc->add_where(sql_db::LNK_TBL . '.' . triple::FLD_TO, $this->ids(), sql_par_type::INT_LIST);
                 $join_field = triple::FLD_FROM;
             } else {
                 log_err('Unknown direction ' . $direction->value);
             }
+            $sc->set_join_fields(
+                array(verb::FLD_ID),
+                sql_db::TBL_TRIPLE,
+                word::FLD_ID,
+                $join_field);
             // verbs can have a negative id for the reverse selection
             if ($vrb != null) {
-                $db_con->set_join_fields(
-                    array(verb::FLD_ID),
-                    sql_db::TBL_TRIPLE,
-                    word::FLD_ID,
-                    $join_field,
-                    verb::FLD_ID,
-                    $vrb->id());
                 $qp->name .= '_verb_select';
-            } else {
-                $db_con->set_join_fields(
-                    array(verb::FLD_ID),
-                    sql_db::TBL_TRIPLE,
-                    word::FLD_ID,
-                    $join_field);
+                $sc->add_where(sql_db::LNK_TBL . '.' . verb::FLD_ID, $vrb->id());
             }
-            $db_con->set_name($qp->name);
-            $db_con->set_where_text($sql_where);
-            $qp->sql = $db_con->select_by_set_id();
-            $qp->par = $db_con->get_par();
+            $sc->set_name($qp->name);
+            $qp->sql = $sc->sql();
+            $qp->par = $sc->get_par();
         }
 
         return $qp;
@@ -300,7 +290,7 @@ class word_list extends sandbox_list
      */
     function load_user_changes_sql(sql_db $db_con, user $usr): sql_par
     {
-        $qp = $this->load_sql($db_con);
+        $qp = $this->load_sql($db_con->sql_creator());
         if ($usr->id() > 0) {
             $qp->name .= 'user_changes';
             $db_con->set_name($qp->name);
@@ -348,7 +338,7 @@ class word_list extends sandbox_list
     function load_by_ids(array $wrd_ids): bool
     {
         global $db_con;
-        $qp = $this->load_sql_by_ids($db_con, $wrd_ids);
+        $qp = $this->load_sql_by_ids($db_con->sql_creator(), $wrd_ids);
         return $this->load($qp);
     }
 
@@ -360,7 +350,7 @@ class word_list extends sandbox_list
     function load_by_names(array $wrd_names): bool
     {
         global $db_con;
-        $qp = $this->load_sql_by_names($db_con, $wrd_names);
+        $qp = $this->load_sql_by_names($db_con->sql_creator(), $wrd_names);
         return $this->load($qp);
     }
 
@@ -374,7 +364,7 @@ class word_list extends sandbox_list
     function load_by_grp_id(int $grp_id): bool
     {
         global $db_con;
-        $qp = $this->load_sql_by_grp_id($db_con, $grp_id);
+        $qp = $this->load_sql_by_grp_id($db_con->sql_creator(), $grp_id);
         return $this->load($qp);
     }
 
@@ -387,7 +377,7 @@ class word_list extends sandbox_list
     function load_by_type(int $type_id): bool
     {
         global $db_con;
-        $qp = $this->load_sql_by_type($db_con, $type_id);
+        $qp = $this->load_sql_by_type($db_con->sql_creator(), $type_id);
         return $this->load($qp);
     }
 
@@ -401,7 +391,7 @@ class word_list extends sandbox_list
     function load_by_pattern(string $pattern): bool
     {
         global $db_con;
-        $qp = $this->load_sql_pattern($db_con, $pattern);
+        $qp = $this->load_sql_pattern($db_con->sql_creator(), $pattern);
         return $this->load($qp);
     }
 
@@ -420,7 +410,7 @@ class word_list extends sandbox_list
         $lib = new library();
         $additional_added = new word_list($this->user()); // list of the added words with this call
 
-        $qp = $this->load_sql_linked_words($db_con, $vrb, $direction);
+        $qp = $this->load_sql_linked_words($db_con->sql_creator(), $vrb, $direction);
         if ($qp->name == '') {
             log_warning('The word list is empty, so nothing could be found', self::class . '->load_linked_words');
         } else {

@@ -40,6 +40,8 @@ include_once WEB_PHRASE_PATH . 'term_list.php';
 include_once API_PHRASE_PATH . 'term_list.php';
 
 use api\term_list_api;
+use cfg\db\sql_creator;
+use cfg\db\sql_par_type;
 use html\phrase\term_list as term_list_dsp;
 
 ;
@@ -111,20 +113,21 @@ class term_list extends sandbox_list_named
      * create the common part of an SQL statement to retrieve a list of terms from the database
      * uses the term view which includes only the main fields
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name of the query use to prepare and call the query
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    private function load_sql(sql_db $db_con, string $query_name): sql_par
+    private function load_sql(sql_creator $sc, string $query_name): sql_par
     {
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
 
-        $db_con->set_type(sql_db::VT_TERM);
-        $db_con->set_name($qp->name);
+        $sc->set_type(sql_db::VT_TERM);
+        $sc->set_name($qp->name);
 
-        $db_con->set_fields(term::FLD_NAMES);
-        $db_con->set_usr_fields(term::FLD_NAMES_USR);
-        $db_con->set_usr_num_fields(term::FLD_NAMES_NUM_USR);
+        $sc->set_fields(term::FLD_NAMES);
+        $sc->set_usr_fields(term::FLD_NAMES_USR);
+        $sc->set_usr_num_fields(term::FLD_NAMES_NUM_USR);
 
         return $qp;
     }
@@ -132,16 +135,16 @@ class term_list extends sandbox_list_named
     /**
      * create an SQL statement to retrieve a list of terms from the database
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_ids(sql_db $db_con, trm_ids $ids): sql_par
+    function load_sql_by_ids(sql_creator $sc, trm_ids $ids): sql_par
     {
-        $qp = $this->load_sql($db_con, 'ids');
-        $db_con->add_par_in_int($ids->lst);
-        $db_con->set_order(term::FLD_ID, sql_db::ORDER_ASC);
-        $qp->sql = $db_con->select_by_field(term::FLD_ID);
-        $qp->par = $db_con->get_par();
+        $qp = $this->load_sql($sc, 'ids');
+        $sc->add_where(term::FLD_ID, $ids->lst);
+        $sc->set_order(term::FLD_ID, sql_db::ORDER_ASC);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
 
         return $qp;
     }
@@ -150,15 +153,15 @@ class term_list extends sandbox_list_named
      * create an SQL statement to retrieve a list of terms from the database
      * uses the erm view which includes only the main fields
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_like(sql_db $db_con, string $pattern = ''): sql_par
+    function load_sql_like(sql_creator $sc, string $pattern = ''): sql_par
     {
-        $qp = $this->load_sql($db_con, 'name_like');
-        $db_con->add_name_pattern($pattern);
-        $qp->sql = $db_con->select_by_field(term::FLD_NAME);
-        $qp->par = $db_con->get_par();
+        $qp = $this->load_sql($sc, 'name_like');
+        $sc->add_where(term::FLD_NAME, $pattern, sql_par_type::LIKE);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
 
         return $qp;
     }
@@ -198,7 +201,7 @@ class term_list extends sandbox_list_named
     {
         global $db_con;
 
-        $qp = $this->load_sql_by_ids($db_con, $ids);
+        $qp = $this->load_sql_by_ids($db_con->sql_creator(), $ids);
         return $this->load($qp);
     }
 
@@ -210,7 +213,7 @@ class term_list extends sandbox_list_named
     {
         global $db_con;
 
-        $qp = $this->load_sql_like($db_con, $pattern);
+        $qp = $this->load_sql_like($db_con->sql_creator(), $pattern);
         return $this->load($qp);
     }
 

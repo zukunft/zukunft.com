@@ -40,6 +40,7 @@ enum sql_par_type: string
     case INT_NOT = 'int_not';
     case INT_LIST = 'int_list';
     case INT_LIST_OR = 'int_list_or';
+    case INT_SUB = 'int_sub'; // a sub query is using an int parameter
     case TEXT = 'text';
     case TEXT_LIST = 'text_list';
     case TEXT_OR = 'text_or';
