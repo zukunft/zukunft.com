@@ -31,6 +31,8 @@
 
 namespace cfg;
 
+use cfg\db\sql_creator;
+
 include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';
 include_once MODEL_REF_PATH . 'ref_type.php';
@@ -51,28 +53,28 @@ class ref_type_list extends type_list
     /**
      * overwrite the user_type_list function to create the SQL to load the ref types
      *
-     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
+     * @param sql_creator $sc with the target db_type set
      * @param string $db_type the database name e.g. the table name without s
      * @param string $query_name the name extension to make the query name unique
      * @param string $order_field set if the type list should e.g. be sorted by the name instead of the id
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql(
-        sql_db $db_con,
+        sql_creator $sc,
         string $db_type,
         string $query_name = 'all',
         string $order_field = ''): sql_par
     {
-        $db_con->set_type($db_type);
+        $sc->set_type($db_type);
         $qp = new sql_par($db_type);
         $qp->name = $db_type;
-        $db_con->set_name($qp->name);
+        $sc->set_name($qp->name);
         //TODO check if $db_con->set_usr($this->user()->id()); is needed
-        $db_con->set_fields(array(sandbox_named::FLD_DESCRIPTION, sql_db::FLD_CODE_ID, self::FLD_URL));
+        $sc->set_fields(array(sandbox_named::FLD_DESCRIPTION, sql_db::FLD_CODE_ID, self::FLD_URL));
         if ($order_field == '') {
-            $order_field = $db_con->get_id_field_name($db_type);
+            $order_field = $sc->get_id_field_name($db_type);
         }
-        $db_con->set_order($order_field);
+        $sc->set_order($order_field);
 
         return $qp;
     }
@@ -80,16 +82,16 @@ class ref_type_list extends type_list
     /**
      * create an SQL statement to load all refs types from the database
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param string $db_type the class name to be compatible with the user sandbox load_sql functions
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_all(sql_db $db_con, string $db_type): sql_par
+    function load_sql_all(sql_creator $sc, string $db_type): sql_par
     {
-        $qp = $this->load_sql($db_con, $db_type);
-        $db_con->set_page_par(SQL_ROW_MAX, 0);
-        $qp->sql = $db_con->select_all();
-        $qp->par = $db_con->get_par();
+        $qp = $this->load_sql($sc, $db_type);
+        $sc->set_page_par(SQL_ROW_MAX, 0);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
 
         return $qp;
     }
@@ -103,7 +105,7 @@ class ref_type_list extends type_list
     private function load_list(sql_db $db_con, string $db_type): void
     {
         $this->lst = array();
-        $qp = $this->load_sql_all($db_con, $db_type);
+        $qp = $this->load_sql_all($db_con->sql_creator(), $db_type);
         $db_lst = $db_con->get($qp);
         if ($db_lst != null) {
             foreach ($db_lst as $db_entry) {

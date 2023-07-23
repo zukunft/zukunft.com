@@ -42,6 +42,7 @@ include_once MODEL_WORD_PATH . 'word.php';
 include_once MODEL_WORD_PATH . 'triple.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 
+use cfg\db\sql_creator;
 use cfg\db\sql_par_type;
 use html\html_base;
 
@@ -193,26 +194,26 @@ class verb_list extends type_list
     /**
      * common part to create an SQL statement to load all verbs from the database
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param string $db_type the class name to be compatible with the user sandbox load_sql functions
      * @param string $query_name the name extension to make the query name unique
      * @param string $order_field set if the type list should e.g. be sorted by the name instead of the id
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql(
-        sql_db $db_con,
+        sql_creator $sc,
         string $db_type = self::class,
         string $query_name = 'all',
         string $order_field = verb::FLD_ID): sql_par
     {
-        $db_con->set_type(sql_db::TBL_VERB);
+        $sc->set_type(sql_db::TBL_VERB);
         $qp = new sql_par($db_type);
         $qp->name = $db_type . '_' . $query_name;
 
-        $db_con->set_name($qp->name);
+        $sc->set_name($qp->name);
         //TODO check if $db_con->set_usr($this->user()->id()); is needed
-        $db_con->set_fields(verb::FLD_NAMES);
-        $db_con->set_order($order_field);
+        $sc->set_fields(verb::FLD_NAMES);
+        $sc->set_order($order_field);
 
         return $qp;
     }
@@ -221,16 +222,16 @@ class verb_list extends type_list
     /**
      * create an SQL statement to load all verbs from the database
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param string $db_type the class name to be compatible with the user sandbox load_sql functions
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_all(sql_db $db_con, string $db_type): sql_par
+    function load_sql_all(sql_creator $sc, string $db_type): sql_par
     {
-        $qp = $this->load_sql($db_con, $db_type);
-        $db_con->set_page_par(SQL_ROW_MAX, 0);
-        $qp->sql = $db_con->select_all();
-        $qp->par = $db_con->get_par();
+        $qp = $this->load_sql($sc, $db_type);
+        $sc->set_page_par(SQL_ROW_MAX, 0);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
 
         return $qp;
     }
@@ -245,7 +246,7 @@ class verb_list extends type_list
     private function load_list(sql_db $db_con, string $db_type): array
     {
         $this->lst = [];
-        $qp = $this->load_sql_all($db_con, $db_type);
+        $qp = $this->load_sql_all($db_con->sql_creator(), $db_type);
         $db_lst = $db_con->get($qp);
         if ($db_lst != null) {
             foreach ($db_lst as $db_row) {

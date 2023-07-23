@@ -1381,6 +1381,34 @@ class sql_creator
     }
 
     /**
+     * set the parameter for paged results
+     * @param int $limit the number of records requested with one request
+     * @param int $page the offset
+     * @return void
+     */
+    function set_page_par(int $limit = 0, int $page = 0): void
+    {
+        // set default values
+        if ($page < 0) {
+            $page = 0;
+        }
+        if ($limit == 0) {
+            $limit = SQL_ROW_LIMIT;
+        } else {
+            if ($limit <= 0) {
+                $limit = SQL_ROW_LIMIT;
+            }
+        }
+
+        $this->add_par(sql_par_type::INT, $limit);
+        $this->page = ' LIMIT ' . $this->par_name();
+        if ($page > 0) {
+            $this->add_par(sql_par_type::INT, $page * $limit);
+            $this->page .= ' OFFSET ' . $this->par_name();
+        }
+    }
+
+    /**
      * @return string with the SQL closing statement for the current query
      */
     private function end_sql(string $sql): string
@@ -1596,6 +1624,32 @@ class sql_creator
         return $fld;
     }
 
+    /**
+     * get the database field name of the primary index of a database table
+     * @param string $type the database object name
+     * @return string the database primary index field name base of the object name set before
+     */
+    function get_id_field_name(string $type): string
+    {
+        $lib = new library();
+
+        // exceptions for user overwrite tables
+        // but not for the user type table, because this is not part of the sandbox tables
+        if (str_starts_with($type, sql_db::TBL_USER_PREFIX)
+            and $type != sql_db::TBL_USER_TYPE) {
+            $type = $lib->str_right_of($type, sql_db::TBL_USER_PREFIX);
+        }
+        $result = $type . sql_db::FLD_EXT_ID;
+        // standard exceptions for nice english
+        if ($result == 'sys_log_statuss_id') {
+            $result = 'sys_log_status_id';
+        }
+        if ($result == 'blocked_ip_id') {
+            $result = 'user_blocked_id';
+        }
+        return $result;
+    }
+
 
     /*
      * private sql helpers
@@ -1716,31 +1770,6 @@ class sql_creator
         log_debug('to "' . $this->table . '"', $debug - 20);
     }
 
-    /**
-     * get the database field name of the primary index of a database table
-     * @param string $type the database object name
-     * @return string the database primary index field name base of the object name set before
-     */
-    private function get_id_field_name(string $type): string
-    {
-        $lib = new library();
-
-        // exceptions for user overwrite tables
-        // but not for the user type table, because this is not part of the sandbox tables
-        if (str_starts_with($type, sql_db::TBL_USER_PREFIX)
-            and $type != sql_db::TBL_USER_TYPE) {
-            $type = $lib->str_right_of($type, sql_db::TBL_USER_PREFIX);
-        }
-        $result = $type . sql_db::FLD_EXT_ID;
-        // standard exceptions for nice english
-        if ($result == 'sys_log_statuss_id') {
-            $result = 'sys_log_status_id';
-        }
-        if ($result == 'blocked_ip_id') {
-            $result = 'user_blocked_id';
-        }
-        return $result;
-    }
 
     /*
      * for all tables some standard fields such as "word_name" are used

@@ -106,7 +106,7 @@ class phrase_type extends type_object
         if ($dp_type == 'phrase_type') {
             $dp_type = 'phrase_type';
         }
-        $qp = $this->load_sql_by_id($db_con, $id, $dp_type);
+        $qp = $this->load_sql_by_id($db_con->sql_creator(), $id, $dp_type);
         return $this->load($qp, $dp_type);
     }
 

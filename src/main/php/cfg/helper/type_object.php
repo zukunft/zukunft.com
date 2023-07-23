@@ -45,6 +45,7 @@ include_once DB_PATH . 'sql_par_type.php';
 include_once API_SANDBOX_PATH . 'type_object.php';
 
 use api\type_object_api;
+use cfg\db\sql_creator;
 use cfg\db\sql_par_type;
 use model\db_cl;
 
@@ -200,18 +201,18 @@ class type_object
     /**
      * create an SQL statement to retrieve a type object by id from the database
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param int $id the id of the type object
      * @param string $db_type the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql_db $db_con, int $id, string $db_type = ''): sql_par
+    function load_sql_by_id(sql_creator $sc, int $id, string $db_type = ''): sql_par
     {
         $typ_lst = new type_list();
-        $qp = $typ_lst->load_sql($db_con, $db_type, sql_db::FLD_ID);
-        $db_con->add_par_int($id);
-        $qp->sql = $db_con->select_by_field($this->id_field($db_type));
-        $qp->par = $db_con->get_par();
+        $qp = $typ_lst->load_sql($sc, $db_type, sql_db::FLD_ID);
+        $sc->add_where($this->id_field($db_type), $id);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
 
         return $qp;
     }
@@ -219,18 +220,18 @@ class type_object
     /**
      * create an SQL statement to retrieve a type object by name from the database
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param string $name the name of the source
      * @param string $db_type the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_name(sql_db $db_con, string $name, string $db_type = ''): sql_par
+    function load_sql_by_name(sql_creator $sc, string $name, string $db_type = ''): sql_par
     {
         $typ_lst = new type_list();
-        $qp = $typ_lst->load_sql($db_con, $db_type, sql_db::FLD_NAME);
-        $db_con->add_par(sql_par_type::TEXT, $name);
-        $qp->sql = $db_con->select_by_field($this->name_field($db_type));
-        $qp->par = $db_con->get_par();
+        $qp = $typ_lst->load_sql($sc, $db_type, sql_db::FLD_NAME);
+        $sc->add_where($this->name_field($db_type), $name);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
 
         return $qp;
     }
@@ -246,7 +247,7 @@ class type_object
     function load_sql_by_code_id(sql_db $db_con, string $code_id, string $db_type = ''): sql_par
     {
         $typ_lst = new type_list();
-        $qp = $typ_lst->load_sql($db_con, $db_type, 'code_id');
+        $qp = $typ_lst->load_sql($db_con->sql_creator(), $db_type, 'code_id');
         $db_con->add_par(sql_par_type::TEXT, $code_id);
         $qp->sql = $db_con->select_by_code_id();
         $qp->par = $db_con->get_par();

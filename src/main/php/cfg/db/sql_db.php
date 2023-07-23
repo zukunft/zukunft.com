@@ -646,64 +646,12 @@ class sql_db
     }
 
     /**
-     * convert an array of int values to a sql string that can be used for an IN condition
-     * @param array $int_array
-     * @return string
-     */
-    private function int_array_to_sql_string(array $int_array): string
-    {
-        return "{" . implode(",", $int_array) . "}";
-    }
-
-    /**
-     * convert an array of string values to an sql string that can be used for an IN condition
-     * @param array $str_array
-     * @return string
-     */
-    private function str_array_to_sql_string(array $str_array): string
-    {
-        // TODO check how to escape ","
-        return "{" . implode(",", $str_array) . "}";
-    }
-
-    /**
      * interface function to add a integer parameter for a prepared query
      * @param int $id the integer value for the WHERE IN SQL statement part
      */
     function add_par_int(int $id): void
     {
         $this->add_par(sql_par_type::INT, $id);
-    }
-
-    /**
-     * interface function to add a "IN" parameter for a prepared query
-     * @param array $ids with the int id values for the WHERE IN SQL statement part
-     * @param bool $named true if the parameter name is already used
-     * @param bool $use_link true if the parameter should be applied on the linked table
-     */
-    function add_par_in_int(array $ids, bool $named = false, bool $use_link = false): void
-    {
-        $this->add_par(sql_par_type::INT_LIST, $this->int_array_to_sql_string($ids), $named, $use_link);
-    }
-
-    /**
-     * interface function to add a "IN" parameter for a prepared query
-     * @param array $names with the strings for the WHERE IN SQL statement part
-     */
-    function add_par_in_txt(array $names): void
-    {
-        // TODO check how to escape ","
-        //$this->add_par(sql_par_type::TEXT_LIST, "{'" . implode("','", $names) . "'}");
-        $this->add_par(sql_par_type::TEXT_LIST, $this->str_array_to_sql_string($names));
-    }
-
-    /**
-     * select
-     * @param string $name_pattern the pattern that should be used to search for names
-     */
-    function add_name_pattern(string $name_pattern): void
-    {
-        $this->add_par(sql_par_type::LIKE, $name_pattern . '%');
     }
 
     /**
@@ -2692,6 +2640,8 @@ class sql_db
 
     /**
      * set the parameter for paged results
+     * @param int $limit
+     * @param int $page
      * @return void
      */
     function set_page_par(int $limit = 0, int $page = 0): void
