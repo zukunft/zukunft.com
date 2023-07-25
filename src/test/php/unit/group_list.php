@@ -2,8 +2,8 @@
 
 /*
 
-    test/unit/result_list.php - unit testing of the FORMULA VALUE functions
-    --------------------------------
+    test/unit/group_list.php - testing of the phrase group list functions
+    ------------------------
   
 
     This file is part of zukunft.com - calc with words
@@ -32,17 +32,14 @@
 
 namespace test;
 
-include_once WEB_FIGURE_PATH . 'figure_list.php';
+include_once MODEL_PHRASE_PATH . 'phrase_group_list.php';
 
-use cfg\fig_ids;
-use cfg\figure;
-use cfg\figure_list;
+use cfg\phrase_group_list;
+use cfg\library;
 use cfg\sql_db;
-use html\figure\figure_list as figure_list_dsp;
 
-class figure_list_unit_tests
+class group_list_unit_tests
 {
-
     function run(test_cleanup $t): void
     {
 
@@ -50,31 +47,18 @@ class figure_list_unit_tests
 
         // init
         $db_con = new sql_db();
-        $t->name = 'figure->';
-        $t->resource_path = 'db/figure/';
-        $json_file = 'unit/figure/figure_list_import.json';
+        $t->name = 'group_list->';
+        $t->resource_path = 'db/group/';
         $usr->set_id(1);
 
+        $t->header('Unit tests of the phrase group list class (src/main/php/model/group/group_list.php)');
 
-        $t->header('Unit tests of the figure list class (src/main/php/model/figure/figure_list.php)');
+        $t->subheader('Database query creation tests');
 
-        $t->subheader('SQL statement creation tests');
-
-        // load by figure ids
-        $fig_lst = new figure_list($usr);
-        $t->assert_sql_by_ids($db_con, $fig_lst, new fig_ids([1, -1]));
-
-
-        $t->subheader('API unit tests');
-
-        $fig_lst = $t->dummy_figure_list();
-        $t->assert_api($fig_lst);
-
-
-        $t->subheader('HTML frontend unit tests');
-
-        $fig_lst = $t->dummy_figure_list();
-        $t->assert_api_to_dsp($fig_lst, new figure_list_dsp());
+        // load by triple ids
+        $grp_lst = new phrase_group_list($usr);
+        $t->assert_sql_by_ids($db_con, $grp_lst, array(3,2,4));
+        $t->assert_sql_names_by_ids($db_con, $grp_lst, array(3,2,4));
 
     }
 

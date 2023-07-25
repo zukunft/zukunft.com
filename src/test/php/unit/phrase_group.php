@@ -127,7 +127,7 @@ class phrase_group_unit_tests
         $wrd->set_id(1); // dummy number just to test the SQL creation
         $phr_grp_lst = new phrase_group_list($usr);
         $phr_grp_lst->phr = $wrd->phrase();
-        $created_sql = $phr_grp_lst->load_sql($db_con)->sql;
+        $created_sql = $phr_grp_lst->load_sql_by_vars($db_con)->sql;
         $expected_sql = $t->file('db/phrase/phrase_group_list_by_word.sql');
         $t->assert('phrase_group_list->load_all_triples', $lib->trim($created_sql), $lib->trim($expected_sql));
 
@@ -136,7 +136,7 @@ class phrase_group_unit_tests
         $lnk->set_id(2); // dummy number just to test the SQL creation
         $phr_grp_lst = new phrase_group_list($usr);
         $phr_grp_lst->phr = $lnk->phrase();
-        $created_sql = $phr_grp_lst->load_sql($db_con)->sql;
+        $created_sql = $phr_grp_lst->load_sql_by_vars($db_con)->sql;
         $expected_sql = $t->file('db/phrase/phrase_group_list_by_triple.sql');
         $t->assert('phrase_group_list->load_all_triple_linked', $lib->trim($created_sql), $lib->trim($expected_sql));
 

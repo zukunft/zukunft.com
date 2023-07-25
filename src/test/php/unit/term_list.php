@@ -31,6 +31,8 @@ namespace test;
 use api\formula_api;
 use api\triple_api;
 use api\word_api;
+use cfg\phrase_list;
+use cfg\trm_ids;
 use html\html_base;
 use html\phrase\term_list as term_list_dsp;
 use cfg\formula;
@@ -53,6 +55,8 @@ class term_list_unit_tests
      */
     function run(test_cleanup $t): void
     {
+        global $usr;
+
         // init
         $db_con = new sql_db();
         $t->name = 'term_list->';
@@ -69,8 +73,10 @@ class term_list_unit_tests
 
         $t->subheader('term list sql tests');
 
+        $trm_lst = new term_list($usr);
+        $trm_ids = new trm_ids(array(3, -2, 4, -7));
+        $t->assert_sql_by_ids($db_con, $trm_lst, $trm_ids);
         $lst = $this->new_list();
-        $t->assert_sql_trm_ids($db_con, $lst);
         $t->assert_sql_like($db_con, $lst);
 
 

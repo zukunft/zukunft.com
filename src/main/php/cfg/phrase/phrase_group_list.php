@@ -33,6 +33,7 @@ namespace cfg;
 
 include_once DB_PATH . 'sql_par_type.php';
 
+use cfg\db\sql_creator;
 use cfg\db\sql_par_type;
 
 class phrase_group_list
@@ -87,9 +88,97 @@ class phrase_group_list
         return $this->usr;
     }
 
+
     /*
-     * load functions
+     * load
      */
+
+    /**
+     * create the common part of an SQL statement to get a list of phrase groups names from the database
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    protected function load_names_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
+    {
+        $grp = new phrase_group($this->user());
+        return $grp->load_sql($sc, $query_name, $class);
+    }
+
+    /**
+     * set the SQL query parameters to load a list of phrase groups names by the ids
+     * @param sql_creator $sc with the target db_type set
+     * @param array $grp_ids a list of int values with the group ids
+     * @param int $limit the number of rows to return
+     * @param int $offset jump over these number of pages
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_names_sql_by_ids(sql_creator $sc, array $grp_ids, int $limit = 0, int $offset = 0): sql_par
+    {
+        $qp = $this->load_names_sql($sc, 'ids_fast');
+        $sc->add_where(phrase_group::FLD_ID, $grp_ids);
+        $sc->set_order(phrase_group::FLD_ID);
+        $sc->set_page($limit, $offset);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+        return $qp;
+    }
+
+    /**
+     * create the common part of an SQL statement to get a list of phrase groups from the database
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    protected function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
+    {
+        $grp = new phrase_group($this->user());
+        return $grp->load_sql($sc, $query_name, $class);
+    }
+
+    /**
+     * set the SQL query parameters to load a list of phrase groups by the ids
+     * @param sql_creator $sc with the target db_type set
+     * @param array $grp_ids a list of int values with the group ids
+     * @param int $limit the number of rows to return
+     * @param int $offset jump over these number of pages
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_ids(sql_creator $sc, array $grp_ids, int $limit = 0, int $offset = 0): sql_par
+    {
+        $qp = $this->load_sql($sc, 'ids');
+        $sc->add_where(phrase_group::FLD_ID, $grp_ids);
+        $sc->set_order(phrase_group::FLD_ID);
+        $sc->set_page($limit, $offset);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+        return $qp;
+    }
+
+    /**
+     * set the SQL query parameters to load a list of phrase groups by the ids
+     * @param sql_creator $sc with the target db_type set
+     * @param phrase $phr the phrase to which all linked groups should be returned
+     * @param int $limit the number of rows to return
+     * @param int $offset jump over these number of pages
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_phr(sql_creator $sc, phrase $phr, int $limit = 0, int $offset = 0): sql_par
+    {
+        $qp = $this->load_sql($sc, 'phr');
+        if ($phr->is_word()) {
+            $sc->add_where(word::FLD_ID, $phr->obj_id());
+        } else {
+            $sc->add_where(phrase::FLD_ID, $phr->obj_id());
+        }
+        $sc->set_order(phrase_group::FLD_ID);
+        $sc->set_page($limit, $offset);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+        return $qp;
+    }
 
     /**
      * create an SQL statement to retrieve a list of phrase groups from the database
@@ -98,7 +187,7 @@ class phrase_group_list
      * @param bool $get_name to create the SQL statement name for the predefined SQL within the same function to avoid duplicating if in case of more than on where type
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con, bool $get_name = false): sql_par
+    function load_sql_by_vars(sql_db $db_con, bool $get_name = false): sql_par
     {
         $lib = new library();
         $db_con->set_type(sql_db::TBL_PHRASE_GROUP);
@@ -142,7 +231,7 @@ class phrase_group_list
         return $qp;
     }
 
-    function load(): bool
+    function load_by_vars(): bool
     {
         global $db_con;
         $result = false;
@@ -151,7 +240,7 @@ class phrase_group_list
         if ($this->user() == null) {
             log_err('The user must be set to load ' . self::class, self::class . '->load');
         } else {
-            $qp = $this->load_sql($db_con);
+            $qp = $this->load_sql_by_vars($db_con);
 
             if ($db_con->get_where() == '') {
                 log_err('The phrase must be set to load ' . self::class, self::class . '->load');

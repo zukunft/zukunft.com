@@ -55,6 +55,8 @@ namespace test;
 include_once MODEL_USER_PATH . 'user.php';
 
 use cfg\config;
+use cfg\fig_ids;
+use cfg\phr_ids;
 use controller\controller;
 use html\html_base;
 use html\word\word as word_dsp;
@@ -137,6 +139,7 @@ include_once $path_unit . 'triple_list.php';
 include_once $path_unit . 'phrase.php';
 include_once $path_unit . 'phrase_list.php';
 include_once $path_unit . 'phrase_group.php';
+include_once $path_unit . 'group_list.php';
 include_once $path_unit . 'term.php';
 include_once $path_unit . 'term_list.php';
 include_once $path_unit . 'value.php';
@@ -1085,19 +1088,47 @@ class test_base
      *
      * @param sql_db $db_con does not need to be connected to a real database
      * @param object $usr_obj the user sandbox object e.g. a word
+     * @param array|phr_ids|trm_ids|fig_ids|null $ids the ids that should be loaded
      * @return bool true if all tests are fine
      */
-    function assert_sql_by_ids(sql_db $db_con, object $usr_obj): bool
+    function assert_sql_by_ids(
+        sql_db $db_con,
+        object $usr_obj,
+        array|phr_ids|trm_ids|fig_ids|null $ids = array(1, 2)): bool
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $usr_obj->load_sql_by_ids($db_con->sql_creator(), array(1, 2));
+        $qp = $usr_obj->load_sql_by_ids($db_con->sql_creator(), $ids);
         $result = $this->assert_qp($qp, $db_con->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
-            $qp = $usr_obj->load_sql_by_ids($db_con->sql_creator(), array(1, 2));
+            $qp = $usr_obj->load_sql_by_ids($db_con->sql_creator(), $ids);
+            $result = $this->assert_qp($qp, $db_con->db_type);
+        }
+        return $result;
+    }
+
+    /**
+     * check the object load by id list SQL statements for all allowed SQL database dialects
+     * similar to assert_sql_by_id but for an id list
+     *
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param object $usr_obj the user sandbox object e.g. a word
+     * @return bool true if all tests are fine
+     */
+    function assert_sql_names_by_ids(sql_db $db_con, object $usr_obj, ?array $ids = array(1, 2)): bool
+    {
+        // check the Postgres query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $usr_obj->load_names_sql_by_ids($db_con->sql_creator(), $ids);
+        $result = $this->assert_qp($qp, $db_con->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $usr_obj->load_names_sql_by_ids($db_con->sql_creator(), $ids);
             $result = $this->assert_qp($qp, $db_con->db_type);
         }
         return $result;
@@ -1148,30 +1179,6 @@ class test_base
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
             $qp = $usr_obj->load_sql_by_names($db_con->sql_creator(), $names);
-            $result = $this->assert_qp($qp, $db_con->db_type);
-        }
-        return $result;
-    }
-
-    /**
-     * check the object load by id list SQL statements for all allowed SQL database dialects
-     * similar to assert_sql_by_ids but for a term id list
-     *
-     * @param sql_db $db_con does not need to be connected to a real database
-     * @param object $usr_obj the user sandbox object e.g. a word
-     * @return bool true if all tests are fine
-     */
-    function assert_sql_trm_ids(sql_db $db_con, object $usr_obj): bool
-    {
-        // check the Postgres query syntax
-        $db_con->db_type = sql_db::POSTGRES;
-        $qp = $usr_obj->load_sql_by_ids($db_con->sql_creator(), new trm_ids(array()));
-        $result = $this->assert_qp($qp, $db_con->db_type);
-
-        // ... and check the MySQL query syntax
-        if ($result) {
-            $db_con->db_type = sql_db::MYSQL;
-            $qp = $usr_obj->load_sql_by_ids($db_con->sql_creator(), new trm_ids(array()));
             $result = $this->assert_qp($qp, $db_con->db_type);
         }
         return $result;

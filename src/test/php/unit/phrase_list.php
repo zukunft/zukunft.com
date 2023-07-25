@@ -90,7 +90,7 @@ class phrase_list_unit_tests
         // load by phrase ids
         $phr_lst = new phrase_list($usr);
         $phr_ids = new phr_ids(array(3, -2, 4, -7));
-        $this->assert_sql_by_ids($t, $db_con, $phr_lst, $phr_ids);
+        $t->assert_sql_by_ids($db_con, $phr_lst, $phr_ids);
         $this->assert_sql_names_by_ids($t, $db_con, $phr_lst, $phr_ids);
         $phr_names = array(word_api::TN_READ, triple_api::TN_READ);
         $t->assert_sql_by_names($db_con, $phr_lst, $phr_names);
@@ -201,34 +201,6 @@ class phrase_list_unit_tests
         $wrd = new word($usr);
         $wrd->set($id, $name);
         return $wrd->phrase();
-    }
-
-    /**
-     * test the SQL statement creation for a phrase list
-     *
-     * @param test_cleanup $t the test environment
-     * @param sql_db $db_con the test database connection
-     * @param phrase_list $lst the empty phrase list object
-     * @param phr_ids $ids filled with a list of word ids to be used for the query creation
-     * @return void
-     */
-    private function assert_sql_by_ids(
-        test_cleanup $t,
-        sql_db $db_con,
-        phrase_list $lst,
-        phr_ids $ids): void
-    {
-        // check the Postgres query syntax
-        $db_con->db_type = sql_db::POSTGRES;
-        $qp = $lst->load_sql_by_ids($db_con->sql_creator(), $ids);
-        $result = $t->assert_qp($qp, $db_con->db_type);
-
-        // ... and check the MySQL query syntax
-        if ($result) {
-            $db_con->db_type = sql_db::MYSQL;
-            $qp = $lst->load_sql_by_ids($db_con->sql_creator(), $ids);
-            $t->assert_qp($qp, $db_con->db_type);
-        }
     }
 
     /**

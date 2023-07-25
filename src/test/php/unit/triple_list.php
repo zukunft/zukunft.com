@@ -68,8 +68,7 @@ class triple_list_unit_tests
 
         // load by triple ids
         $trp_lst = new triple_list($usr);
-        $trp_ids = array(3,2,4);
-        $this->assert_sql_by_ids($t, $db_con, $trp_lst, $trp_ids);
+        $t->assert_sql_by_ids($db_con, $trp_lst, array(3,2,4));
 
         // load by phr
         $trp_lst = new triple_list($usr);
@@ -230,29 +229,6 @@ class triple_list_unit_tests
         $trp_lst = $t->dummy_triple_list();
         $t->assert_api_to_dsp($trp_lst, new triple_list_dsp());
 
-    }
-
-    /**
-     * test the SQL statement creation for a triple list in all SQL dialect
-     * and check if the statement name is unique
-     *
-     * @param test_cleanup $t the test environment
-     * @param sql_db $db_con the test database connection
-     * @param triple_list $lst the empty triple list object
-     * @param array $ids filled with a list of word ids to be used for the query creation
-     * @return void
-     */
-    private function assert_sql_by_ids(test_cleanup $t, sql_db $db_con, triple_list $lst, array $ids): void
-    {
-        // check the Postgres query syntax
-        $db_con->db_type = sql_db::POSTGRES;
-        $qp = $lst->load_sql_by_ids($db_con->sql_creator(), $ids);
-        $t->assert_qp($qp, $db_con->db_type);
-
-        // check the MySQL query syntax
-        $db_con->db_type = sql_db::MYSQL;
-        $qp = $lst->load_sql_by_ids($db_con->sql_creator(), $ids);
-        $t->assert_qp($qp, $db_con->db_type);
     }
 
     /**

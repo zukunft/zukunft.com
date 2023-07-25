@@ -15,6 +15,8 @@ use html\phrase\phrase_group as phrase_group_dsp;
 
     but first this needs to be fixed:
     TODO clean up the phrase_list (and triple_list and word_list) cfg/class and add unit and db read tests for all
+    TODO use $t->assert_sql_by_ids for all lists
+    TODO use the load_sql object function for all list load sql functions like in group_list
     TODO add a useful and self speaking verb unit test for all verbs
     TODO for some verbs such as "is part of" the triple itself should by de fault not be included in the foaf list
     TODO use phrase get_or_add in test
@@ -22,6 +24,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO add properties to verbs so that the same behavior con be used for several verbs
     TODO use the $load_all parameter for all load functions to include excluded rows for admins
     TODO add a unit and db test
+    TODO combine phrase_group_word_links and phrase_group_triple_links to group_phrase_links
     TODO add a simple value format where the json key is used as the phrase name e.g "system config target number of selection entries": 7
     TODO add system and user config parameter that are e.g. 100 views a view is automatically frozen for the user
     TODO add a trigger to the message header to force the frontend update of types, verbs und user configuration if needed
@@ -49,6 +52,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO define all database field names as const
     TODO for reference field names use the destination object
             e.g. for the field name phrase_group_id use phrase_group::FLD_ID
+    TODO rename phrase_group to group
     TODO move the time field of phrase groups to the group
     TODO check that all times include the time zone
     TODO load_obj_vars: replace the load_obj_vars with more specific load_by_ functions

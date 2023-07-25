@@ -1920,7 +1920,7 @@ class word extends sandbox_typed
         // collect all phrase groups where this word is used
         $grp_lst = new phrase_group_list($this->user());
         $grp_lst->phr = $this->phrase();
-        $grp_lst->load();
+        $grp_lst->load_by_vars();
 
         // collect all triples where this word is used
         $trp_lst = new triple_list($this->user());

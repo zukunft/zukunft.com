@@ -69,8 +69,7 @@ class word_list_unit_tests
 
         // load by word ids
         $wrd_lst = new word_list($usr);
-        $wrd_ids = array(3, 2, 4);
-        $this->assert_sql_by_ids($t, $db_con, $wrd_lst, $wrd_ids);
+        $t->assert_sql_by_ids($db_con, $wrd_lst, array(3, 2, 4));
 
         // load by word names
         $wrd_lst = new word_list($usr);
@@ -291,31 +290,6 @@ class word_list_unit_tests
         $wrd_lst = $t->dummy_word_list();
         $t->assert_api_to_dsp($wrd_lst, new word_list_dsp());
 
-    }
-
-    /**
-     * test the SQL statement creation for a word list in all SQL dialect
-     * and check if the statement name is unique
-     *
-     * @param test_cleanup $t the test environment
-     * @param sql_db $db_con the test database connection
-     * @param word_list $lst the empty word list object
-     * @param array $ids filled with a list of word ids to be used for the query creation
-     * @return void
-     */
-    private function assert_sql_by_ids(test_cleanup $t, sql_db $db_con, word_list $lst, array $ids): void
-    {
-        // check the Postgres query syntax
-        $db_con->db_type = sql_db::POSTGRES;
-        $qp = $lst->load_sql_by_ids($db_con->sql_creator(), $ids);
-        $result = $t->assert_qp($qp, $db_con->db_type);
-
-        // ... and check the MySQL query syntax
-        if ($result) {
-            $db_con->db_type = sql_db::MYSQL;
-            $qp = $lst->load_sql_by_ids($db_con->sql_creator(), $ids);
-            $t->assert_qp($qp, $db_con->db_type);
-        }
     }
 
     /**
