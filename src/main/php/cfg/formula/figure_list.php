@@ -105,6 +105,7 @@ class figure_list extends sandbox_list
     /**
      * set the SQL query parameters to load a list of figure objects
      * @param sql_creator $sc with the target db_type set
+     * @param string $query_name the name extension to make the query name unique
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql(sql_creator $sc, string $query_name): sql_par

@@ -310,7 +310,7 @@ class formula_link extends sandbox_link_with_type
         if ($this->is_unique()) {
             $qp = $this->load_standard_sql($db_con->sql_creator());
 
-            if ($db_con->get_where() <> '') {
+            if ($qp->name <> '') {
                 $db_frm = $db_con->get1($qp);
                 $this->row_mapper_sandbox($db_frm, true, false);
                 $result = $this->load_owner();
@@ -358,7 +358,7 @@ class formula_link extends sandbox_link_with_type
             if ($this->phrase_id() <> 0) {
                 $phr = new phrase($this->user());
                 $phr->load_by_id($this->phrase_id());
-                if ($phr->id() > 0) {
+                if ($phr->id() != 0) {
                     $this->tob = $phr;
                 } else {
                     $result = false;

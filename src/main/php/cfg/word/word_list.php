@@ -104,12 +104,14 @@ class word_list extends sandbox_list
     /**
      * set the SQL query parameters to load a list of words
      * @param sql_creator $sc with the target db_type set
+     * @param string $query_name the name extension to make the query name unique
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_creator $sc): sql_par
+    function load_sql(sql_creator $sc, string $query_name = ''): sql_par
     {
         $sc->set_type(sql_db::TBL_WORD);
         $qp = new sql_par(self::class);
+        $qp->name .= $query_name;
         $sc->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
         $sc->set_usr($this->user()->id());
         $sc->set_fields(word::FLD_NAMES);
@@ -128,10 +130,8 @@ class word_list extends sandbox_list
      */
     function load_sql_by_ids(sql_creator $sc, array $wrd_ids): sql_par
     {
-        $qp = $this->load_sql($sc);
+        $qp = $this->load_sql($sc, 'ids');
         if (count($wrd_ids) > 0) {
-            $qp->name .= 'ids';
-            $sc->set_name($qp->name);
             $sc->add_where(word::FLD_ID, $wrd_ids);
             $qp->sql = $sc->sql();
         } else {
@@ -149,10 +149,8 @@ class word_list extends sandbox_list
      */
     function load_sql_by_names(sql_creator $sc, array $wrd_names): sql_par
     {
-        $qp = $this->load_sql($sc);
+        $qp = $this->load_sql($sc, 'names');
         if (count($wrd_names) > 0) {
-            $qp->name .= 'names';
-            $sc->set_name($qp->name);
             $sc->add_where(word::FLD_NAME, $wrd_names, sql_par_type::TEXT_LIST);
             $qp->sql = $sc->sql();
         } else {
@@ -170,10 +168,8 @@ class word_list extends sandbox_list
      */
     function load_sql_by_grp_id(sql_creator $sc, int $grp_id): sql_par
     {
-        $qp = $this->load_sql($sc);
+        $qp = $this->load_sql($sc, 'group');
         if ($grp_id > 0) {
-            $qp->name .= 'group';
-            $sc->set_name($qp->name);
 
             // create the sub query
             $sub_sc = clone $sc;
@@ -199,10 +195,8 @@ class word_list extends sandbox_list
      */
     function load_sql_by_type(sql_creator $sc, int $type_id): sql_par
     {
-        $qp = $this->load_sql($sc);
+        $qp = $this->load_sql($sc, 'type');
         if ($type_id > 0) {
-            $qp->name .= 'type';
-            $sc->set_name($qp->name);
             $sc->add_where(phrase::FLD_TYPE, $type_id);
             $qp->sql = $sc->sql();
         } else {
@@ -220,10 +214,8 @@ class word_list extends sandbox_list
      */
     function load_sql_pattern(sql_creator $sc, string $word_pattern = ''): sql_par
     {
-        $qp = $this->load_sql($sc);
+        $qp = $this->load_sql($sc, 'pattern');
         if ($word_pattern !=  '') {
-            $qp->name .= 'pattern';
-            $sc->set_name($qp->name);
             $sc->add_where(word::FLD_NAME, $word_pattern, sql_par_type::LIKE);
             $qp->sql = $sc->sql();
         } else {
@@ -245,7 +237,6 @@ class word_list extends sandbox_list
     function load_sql_linked_words(sql_creator $sc, ?verb $vrb, foaf_direction $direction): sql_par
     {
         $qp = $this->load_sql($sc);
-        $sql_where = '';
         $join_field = '';
         if (count($this->lst) <= 0) {
             log_warning('The word list is empty, so nothing could be found', self::class . "->load_sql_by_linked_type");
@@ -290,10 +281,8 @@ class word_list extends sandbox_list
      */
     function load_user_changes_sql(sql_db $db_con, user $usr): sql_par
     {
-        $qp = $this->load_sql($db_con->sql_creator());
+        $qp = $this->load_sql($db_con->sql_creator(), 'user_changes');
         if ($usr->id() > 0) {
-            $qp->name .= 'user_changes';
-            $db_con->set_name($qp->name);
             $qp->sql = $db_con->select_by_field(word::FLD_ID);
         } else {
             $qp->name = '';

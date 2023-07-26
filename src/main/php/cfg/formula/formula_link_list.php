@@ -33,6 +33,7 @@ namespace cfg;
 
 include_once DB_PATH . 'sql_par_type.php';
 
+use cfg\db\sql_creator;
 use cfg\db\sql_par_type;
 
 class formula_link_list extends sandbox_list
@@ -63,31 +64,35 @@ class formula_link_list extends sandbox_list
 
     /**
      * set the SQL query parameters to load a list of formula links
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param string $query_name the name of the selection fields to make the query name unique
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con): sql_par
+    function load_sql(sql_creator $sc, string $query_name): sql_par
     {
-        $db_con->set_type(sql_db::TBL_FORMULA_LINK);
         $qp = new sql_par(self::class);
-        $db_con->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
-        $db_con->set_usr($this->user()->id());
-        $db_con->set_link_fields(formula::FLD_ID, phrase::FLD_ID);
-        $db_con->set_usr_num_fields(formula_link::FLD_NAMES_NUM_USR);
+        $qp->name .= $query_name;
+
+        $sc->set_type(sql_db::TBL_FORMULA_LINK);
+        $sc->set_name($qp->name);
+        $sc->set_usr($this->user()->id());
+        $sc->set_fields(array(formula::FLD_ID, phrase::FLD_ID));
+        $sc->set_usr_num_fields(formula_link::FLD_NAMES_NUM_USR);
         // also load the linked user specific phrase with the same SQL statement
-        $db_con->set_join_fields(
+        $sc->set_join_fields(
             phrase::FLD_NAMES,
             sql_db::TBL_PHRASE,
             phrase::FLD_ID,
             phrase::FLD_ID
         );
-        $db_con->set_join_usr_fields(
+        $sc->set_join_usr_fields(
             phrase::FLD_NAMES_USR,
             sql_db::TBL_PHRASE,
             phrase::FLD_ID,
             phrase::FLD_ID
         );
-        $db_con->set_join_usr_num_fields(
+        $sc->set_join_usr_num_fields(
             phrase::FLD_NAMES_NUM_USR,
             sql_db::TBL_PHRASE,
             phrase::FLD_ID,
@@ -99,22 +104,20 @@ class formula_link_list extends sandbox_list
 
     /**
      * set the SQL query parameters to load a list of formula links by the formula id
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param int $frm_id the id of the formula which links should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_frm_id(sql_db $db_con, int $frm_id): sql_par
+    function load_sql_by_frm_id(sql_creator $sc, int $frm_id): sql_par
     {
-        $qp = $this->load_sql($db_con);
+        $qp = $this->load_sql($sc, 'frm_id');
         if ($frm_id > 0) {
-            $qp->name .= 'frm_id';
-            $db_con->set_name($qp->name);
-            $db_con->add_par(sql_par_type::INT, $frm_id);
-            $qp->sql = $db_con->select_by_field(formula::FLD_ID);
+            $sc->add_where(formula::FLD_ID, $frm_id);
+            $qp->sql = $sc->sql();
         } else {
             $qp->name = '';
         }
-        $qp->par = $db_con->get_par();
+        $qp->par = $sc->get_par();
         return $qp;
     }
 
@@ -126,7 +129,7 @@ class formula_link_list extends sandbox_list
     function load_by_frm_id(int $frm_id): bool
     {
         global $db_con;
-        $qp = $this->load_sql_by_frm_id($db_con, $frm_id);
+        $qp = $this->load_sql_by_frm_id($db_con->sql_creator(), $frm_id);
         return $this->load($qp);
     }
 

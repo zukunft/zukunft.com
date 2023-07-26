@@ -31,6 +31,8 @@
 
 namespace cfg;
 
+use cfg\db\sql_creator;
+
 include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';
 
@@ -41,10 +43,125 @@ class user_list
 
     public ?array $lst = null;  // the list of users
     public array $code_id_hash = [];
+    private user $usr;          // the person who wants to see the user list e.g. an admin user
+
+
+    /*
+     * construct and map
+     */
+
+    /**
+     * always set the user because a link list is always user specific
+     * @param user $usr the user who requested to see e.g. the formula links
+     */
+    function __construct(user $usr)
+    {
+        $this->set_user($usr);
+    }
+
+
+    /*
+     * load
+     */
+
+    /**
+     * set the SQL query parameters to load a list of figure objects
+     * @param sql_creator $sc with the target db_type set
+     * @param string $query_name the name extension to make the query name unique
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    private function load_sql(sql_creator $sc, string $query_name): sql_par
+    {
+        $qp = new sql_par(self::class);
+        $qp->name .= $query_name;
+
+        $sc->set_type(sql_db::TBL_USER);
+        $sc->set_name($qp->name);
+
+        $sc->set_usr($this->user()->id());
+        $sc->set_fields(user::FLD_NAMES);
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve a user list by the id from the database
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param array $ids list of user ids that should be loaded
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_ids(sql_creator $sc, array $ids): sql_par
+    {
+        $qp = $this->load_sql($sc, 'ids');
+        $sc->add_where(user::FLD_ID, $ids);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve a user the code id from the database
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param string $code_id all users with this code id should be loaded
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_code_id(sql_creator $sc, string $code_id): sql_par
+    {
+        $qp = $this->load_sql($sc, 'code_id');
+        $sc->add_where(sql_db::FLD_CODE_ID, $code_id);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve a user the code id from the database
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param int $profile_id list of user id that should be loaded
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_profile_and_higher(sql_creator $sc, int $profile_id): sql_par
+    {
+        $qp = $this->load_sql($sc, 'profiles');
+        $sc->add_where(user::FLD_USER_PROFILE, $profile_id);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
+
+
+    /*
+     * set and get
+     */
+
+    /**
+     * set the user of the user sandbox object
+     *
+     * @param user $usr the person who wants to access the user list
+     * @return void
+     */
+    function set_user(user $usr): void
+    {
+        $this->usr = $usr;
+    }
+
+    /**
+     * @return user the person who wants to see the user list
+     */
+    function user(): user
+    {
+        return $this->usr;
+    }
+
 
     // fill the user objects of the list based on a sql
     // TODO review
-    private function load_sql($sql, sql_db $db_con): void
+    private function load_sql_old($sql, sql_db $db_con): void
     {
 
         $db_usr_lst = $db_con->get_old($sql);
@@ -90,7 +207,7 @@ class user_list
          ORDER BY u.user_id;";
         // TODO check if the user needs to be set to the original value again
         $db_con->usr_id = $usr->id();
-        $this->load_sql($sql, $db_con);
+        $this->load_sql_old($sql, $db_con);
 
         log_debug($lib->dsp_count($this->lst));
         return $this->lst;
@@ -107,7 +224,7 @@ class user_list
               FROM users u
             WHERE u.code_id IS NOT NULL
          ORDER BY u.user_id;";
-        $this->load_sql($sql, $db_con);
+        $this->load_sql_old($sql, $db_con);
         $this->set_hash();
         $system_users = clone $this;
     }
@@ -134,7 +251,7 @@ class user_list
               FROM users
             WHERE " . $sql_in . "
          ORDER BY user_id;";
-        $this->load_sql($sql, $db_con);
+        $this->load_sql_old($sql, $db_con);
     }
 
     function name_lst(): string

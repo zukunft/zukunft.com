@@ -607,7 +607,11 @@ class sql_creator
     {
         // check if the minimum parameters are set
         if ($this->query_name == '') {
-            log_err('SQL statement is not yet named');
+            if ($par_offset > 0) {
+                log_info('SQL statement is not yet named, which is not required for a sub query');
+            } else {
+                log_err('SQL statement is not yet named');
+            }
         }
         // prepare the SQL statement parts that have dependencies to each other
         $fields = $this->fields($has_id);

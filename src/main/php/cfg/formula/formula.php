@@ -1534,7 +1534,7 @@ class formula extends sandbox_typed
 
         // read the existing elements from the database
         $frm_elm_lst = new formula_element_list($this->user());
-        $qp = $frm_elm_lst->load_sql_by_frm_and_type_id($db_con, $this->id(), $elm_type_id);
+        $qp = $frm_elm_lst->load_sql_by_frm_and_type_id($db_con->sql_creator(), $this->id(), $elm_type_id);
         $db_lst = $db_con->get($qp);
 
         $elm_db_ids = array();
@@ -1706,7 +1706,7 @@ class formula extends sandbox_typed
     {
         $result = '';
         if (isset($phr) and $this->user() != null) {
-            log_debug($this->dsp_id() . ' from "' . $phr->name() . '" for user "' . $this->user()->name . '"');
+            log_debug($this->dsp_id() . ' from ' . $phr->dsp_id() . ' for user ' . $this->user()->dsp_id());
             $frm_lnk = new formula_link($this->user());
             $frm_lnk->load_by_link($this, $phr);
             $msg = $frm_lnk->del();

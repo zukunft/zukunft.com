@@ -116,13 +116,13 @@ class formula_link_unit_tests
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $frm_lnk->load_sql_by_frm_id($db_con, 7);
+        $qp = $frm_lnk->load_sql_by_frm_id($db_con->sql_creator(), 7);
         $result = $t->assert_qp($qp, $db_con->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
-            $qp = $frm_lnk->load_sql_by_frm_id($db_con, 7);
+            $qp = $frm_lnk->load_sql_by_frm_id($db_con->sql_creator(), 7);
             $t->assert_qp($qp, $db_con->db_type);
         }
     }

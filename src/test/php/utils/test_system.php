@@ -92,7 +92,7 @@ function run_system_test(test_cleanup $t): void
 
     $t->header('Test the user list class (classes/user_list.php)');
 
-    $usr_lst = new user_list;
+    $usr_lst = new user_list($usr);
     $usr_lst->load_active();
     $result = $usr_lst->name_lst();
     $target = TEST_USER_DESCRIPTION;

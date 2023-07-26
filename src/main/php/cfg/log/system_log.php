@@ -188,6 +188,7 @@ class system_log extends db_object
      * create the SQL statement to load one system log entry
      *
      * @param sql_creator $sc with the target db_type set
+     * @param string $query_name the name extension to make the query name unique
      * @param string $class the name of this class from where the call has been triggered
      * @return sql_par the database depending on sql statement to load a system error from the log table
      *                 and the unique name for the query

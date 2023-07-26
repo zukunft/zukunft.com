@@ -343,6 +343,7 @@ class ref extends sandbox_link_with_type
      * create the common part of an SQL statement to retrieve the parameters of a ref from the database
      *
      * @param sql_creator $sc with the target db_type set
+     * @param string $query_name the name extension to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */

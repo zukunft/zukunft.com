@@ -211,6 +211,9 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO create a user view for contradicting behaviour e.g. if time should be shown in column, but days in rows
     TODO add a text table for string and prosa that never should be used for selection
     TODO add a date table to save dates in an efficient way
+    TODO create a alternative backend based on Rust for better speed
+    TODO use zeroMQ or Kafka to sync the insert and update statements between the pod
+    TODO use separate kafka topics for values and results of each pod e.g. switzerland_values for all updates related to Switzerland
     TODO allow to assign users to an admin and offer each admin to use different settings for "his" users so that different behavior due to setting changes can be tested to the same pod
 
 

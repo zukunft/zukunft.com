@@ -131,6 +131,7 @@ include_once $path_unit . 'test_lib.php';
 include_once $path_unit . 'math.php';
 include_once $path_unit . 'system.php';
 include_once $path_unit . 'user.php';
+include_once $path_unit . 'user_list.php';
 include_once $path_unit . 'sandbox.php';
 include_once $path_unit . 'word.php';
 include_once $path_unit . 'word_list.php';

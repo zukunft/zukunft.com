@@ -200,6 +200,7 @@ class test_unit extends test_cleanup
         (new system_unit_tests)->run($this);
         (new test_api)->run_openapi_test($this);
         (new user_unit_tests)->run($this);
+        (new user_list_unit_tests)->run($this);
         (new sandbox_unit_tests)->run($this);
 
         // do the user object unit tests
@@ -293,9 +294,10 @@ class test_unit extends test_cleanup
      */
     function init_sys_users(): void
     {
+        global $usr_sys;
         global $system_users;
 
-        $system_users = new user_list();
+        $system_users = new user_list($usr_sys);
         $system_users->load_dummy();
 
     }
