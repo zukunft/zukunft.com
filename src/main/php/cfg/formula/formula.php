@@ -1852,19 +1852,7 @@ class formula extends sandbox_typed
             log_debug('->add_usr_cfg for "' . $this->dsp_id() . ' und user ' . $this->user()->name);
 
             // check again if there ist not yet a record
-            $db_con->set_type(sql_db::TBL_FORMULA, true);
-            $qp = new sql_par(self::class);
-            $qp->name = 'formula_add_usr_cfg';
-            $db_con->set_name($qp->name);
-            $db_con->set_usr($this->user()->id);
-            $db_con->set_where_std($this->id);
-            $qp->sql = $db_con->select_by_set_id();
-            $qp->par = $db_con->get_par();
-            $db_row = $db_con->get1($qp);
-            if ($db_row != null) {
-                $this->usr_cfg_id = $db_row[self::FLD_ID];
-            }
-            if (!$this->has_usr_cfg()) {
+            if (!$this->check_usr_cfg()) {
                 // create an entry in the user sandbox
                 $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_FORMULA);
                 $log_id = $db_con->insert(array(self::FLD_ID, user::FLD_ID), array($this->id(), $this->user()->id));

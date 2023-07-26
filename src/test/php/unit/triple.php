@@ -44,6 +44,7 @@ class triple_unit_tests
         $trp = new triple($usr);
         $trp->set_id(2);
         $t->assert_sql_standard($db_con, $trp);
+        $t->assert_sql_user_changes($db_con, $trp);
 
         // sql to load the triple by name
         $trp = new triple($usr);

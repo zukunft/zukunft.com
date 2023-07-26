@@ -281,6 +281,20 @@ class result extends sandbox_value
      */
 
     /**
+     * create the SQL to load the single default result always by the id
+     * @param sql_creator $sc with the target db_type set
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_standard_sql(sql_creator $sc, string $class = self::class): sql_par
+    {
+        $sc->set_type(sql_db::TBL_RESULT);
+        $sc->set_fields(array_merge(self::FLD_NAMES, array(user::FLD_ID)));
+
+        return parent::load_standard_sql($sc, $class);
+    }
+
+    /**
      * create the SQL to load a results
      *
      * @param sql_creator $sc with the target db_type set
@@ -360,6 +374,19 @@ class result extends sandbox_value
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
         return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve the user changes of the current result
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_user_changes(sql_creator $sc, string $class = self::class): sql_par
+    {
+        $sc->set_type(sql_db::TBL_RESULT, true);
+        return parent::load_sql_user_changes($sc, $class);
     }
 
     /**

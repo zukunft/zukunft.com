@@ -646,15 +646,6 @@ class sql_db
     }
 
     /**
-     * interface function to add a integer parameter for a prepared query
-     * @param int $id the integer value for the WHERE IN SQL statement part
-     */
-    function add_par_int(int $id): void
-    {
-        $this->add_par(sql_par_type::INT, $id);
-    }
-
-    /**
      * get the SQL parameter placeholder in the used SQL dialect
      *
      * @param int $pos to get the placeholder of another position than the last

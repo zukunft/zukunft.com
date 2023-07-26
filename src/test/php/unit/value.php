@@ -69,19 +69,17 @@ class value_unit_tests
         // ... and the related default value
         $t->assert_sql_standard($db_con, $val);
 
+        // ... and to check if any user has uses another than the default value
+        $val->set_id(1);
+        $t->assert_sql_not_changed($db_con, $val);
+        $t->assert_sql_user_changes($db_con, $val);
+
         $t->subheader('Database query creation tests');
 
         // sql to load a user specific value by phrase group id
         $val->reset($usr);
         $val->grp->set_id(2);
         //$t->assert_load_sql_obj_vars($db_con, $val);
-
-
-        // ... and to check if any user has uses another than the default value
-        $val->set_id(1);
-        $t->assert_sql_not_changed($db_con, $val);
-        $t->assert_sql_user_changes($db_con, $val);
-
 
         $t->subheader('Im- and Export tests');
 

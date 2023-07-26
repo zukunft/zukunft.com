@@ -436,11 +436,11 @@ class sandbox extends db_object
      */
     function load_sql_fields(
         sql_creator $sc,
-        string $query_name,
-        string $class,
-        array  $fields,
-        array  $usr_fields,
-        array  $usr_num_fields,
+        string      $query_name,
+        string      $class,
+        array       $fields,
+        array       $usr_fields,
+        array       $usr_num_fields,
     ): sql_par
     {
         $qp = new sql_par($class);
@@ -1112,6 +1112,30 @@ class sandbox extends db_object
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
         return $qp;
+    }
+
+    /**
+     * check again if there ist not yet a record
+     * @return bool true if the user has done some personal changes on this object
+     */
+    protected function check_usr_cfg(): bool
+    {
+        global $db_con;
+        $result = false;
+
+        log_debug('for "' . $this->dsp_id() . ' und user ' . $this->user()->dsp_id());
+
+        // check again if there ist not yet a record
+        $qp = $this->load_sql_user_changes($db_con->sql_creator());
+        $db_con->usr_id = $this->user()->id();
+        $db_row = $db_con->get1($qp);
+        if ($db_row != null) {
+            $this->usr_cfg_id = $db_row[$this->id_field()];
+            if ($this->has_usr_cfg()) {
+                $result = true;
+            }
+        }
+        return $result;
     }
 
     /**

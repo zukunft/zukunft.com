@@ -68,6 +68,14 @@ class result_unit_tests
         $this->assert_sql_by_group($t, $db_con, $res);
         $this->assert_sql_by_group_time($t, $db_con, $res);
 
+        $t->subheader('SQL load default statement tests');
+
+        // sql to load the word by id
+        $res = new result($usr);
+        $res->set_id(2);
+        $t->assert_sql_standard($db_con, $res);
+        $t->assert_sql_user_changes($db_con, $res);
+
         $t->subheader('Display tests');
 
         // test phrase based default formatter
