@@ -63,6 +63,7 @@ class user_list_unit_tests
         $usr_lst = new user_list($usr);
         $t->assert_sql_by_ids($db_con, $usr_lst);
         $t->assert_sql_by_code_id($db_con, $usr_lst);
+        $this->assert_sql_by_profile_and_higher($t, $db_con, $usr_lst);
 
 
         $t->subheader('Im- and Export tests');
@@ -75,6 +76,29 @@ class user_list_unit_tests
         //$trp_lst = $t->dummy_value_list();
         //$t->assert_api_to_dsp($trp_lst, new value_list_dsp());
 
+    }
+
+    /**
+     * check the SQL statements creation to get user by profile level
+     *
+     * @param test_cleanup $t the testing object with the error counter
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param user_list $usr_lst the user sandbox object e.g. a result
+     * @return void true if all tests are fine
+     */
+    private function assert_sql_by_profile_and_higher(test_cleanup $t, sql_db $db_con, user_list $usr_lst): void
+    {
+        // check the Postgres query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $usr_lst->load_sql_by_profile_and_higher($db_con->sql_creator(), user::RIGHT_LEVEL_SYSTEM_TEST);
+        $result = $t->assert_qp($qp, $db_con->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $usr_lst->load_sql_by_profile_and_higher($db_con->sql_creator(), user::RIGHT_LEVEL_SYSTEM_TEST);
+            $t->assert_qp($qp, $db_con->db_type);
+        }
     }
 
 }

@@ -36,6 +36,8 @@ enum sql_par_type: string
 
     // the parameter types for prepared queries independent of the SQL dialect
     case INT = 'int'; // a normal integer e.g. the unique database row id / prime index
+    case INT_HIGHER = 'int_higher'; // the result includes the given int value an all rows with a higher value
+    case INT_LOWER = 'int_lower'; //
     case INT_OR = 'int_or'; //
     case INT_NOT = 'int_not';
     case INT_LIST = 'int_list';

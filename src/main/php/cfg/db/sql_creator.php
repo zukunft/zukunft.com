@@ -575,6 +575,8 @@ class sql_creator
         } elseif ($spt == sql_par_type::TEXT_LIST) {
             $this->add_par($spt, $this->str_array_to_sql_string($fld_val));
         } elseif ($spt == sql_par_type::INT
+            or $spt == sql_par_type::INT_HIGHER
+            or $spt == sql_par_type::INT_LOWER
             or $spt == sql_par_type::INT_OR
             or $spt == sql_par_type::INT_NOT) {
             $this->add_par($spt, $fld_val);
@@ -1262,7 +1264,15 @@ class sql_creator
                                         if ($par_type == sql_par_type::INT_NOT) {
                                             $result .= $this->par_fields[$i] . ' <> ' . $this->par_name($par_pos);
                                         } else {
-                                            $result .= $this->par_fields[$i] . ' = ' . $this->par_name($par_pos);
+                                            if ($par_type == sql_par_type::INT_HIGHER) {
+                                                $result .= $this->par_fields[$i] . ' >= ' . $this->par_name($par_pos);
+                                            } else {
+                                                if ($par_type == sql_par_type::INT_LOWER) {
+                                                    $result .= $this->par_fields[$i] . ' =< ' . $this->par_name($par_pos);
+                                                } else {
+                                                    $result .= $this->par_fields[$i] . ' = ' . $this->par_name($par_pos);
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -1971,6 +1981,8 @@ class sql_creator
                     $result[] = 'int[]';
                     break;
                 case sql_par_type::INT_OR:
+                case sql_par_type::INT_HIGHER:
+                case sql_par_type::INT_LOWER:
                 case sql_par_type::INT_NOT:
                 case sql_par_type::INT_SUB:
                     $result[] = 'int';

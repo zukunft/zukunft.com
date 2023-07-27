@@ -32,6 +32,7 @@
 namespace cfg;
 
 use cfg\db\sql_creator;
+use cfg\db\sql_par_type;
 
 include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';
@@ -118,20 +119,76 @@ class user_list
     }
 
     /**
-     * create an SQL statement to retrieve a user the code id from the database
+     * create an SQL statement to retrieve all users that
+     * have the given profile level or higher
+     * e.g. loading the admin includes the system user
      *
      * @param sql_creator $sc with the target db_type set
-     * @param int $profile_id list of user id that should be loaded
+     * @param int $profile_id list of user that have at least this profile level
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_by_profile_and_higher(sql_creator $sc, int $profile_id): sql_par
     {
         $qp = $this->load_sql($sc, 'profiles');
-        $sc->add_where(user::FLD_USER_PROFILE, $profile_id);
+        $sc->set_join_fields(
+            array(user_profile::FLD_LEVEL),
+            sql_db::TBL_USER_PROFILE,
+            user::FLD_USER_PROFILE,
+            user_profile::FLD_ID);
+        $sc->add_where(sql_db::LNK_TBL . '.' . user_profile::FLD_LEVEL, $profile_id, sql_par_type::INT_HIGHER);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
         return $qp;
+    }
+
+    /**
+     * load this list of user
+     * @param sql_db $db_con the database link as a parameter to load the system users at program start
+     * @param sql_par $qp the SQL statement, the unique name of the SQL statement and the parameter list
+     * @return bool true if at least one user has been loaded
+     */
+    private function load(sql_db $db_con, sql_par $qp): bool
+    {
+        $result = false;
+
+        $db_rows = $db_con->get($qp);
+        if ($db_rows != null) {
+            foreach ($db_rows as $db_row) {
+                $usr = new user();
+                $usr->row_mapper($db_row);
+                $this->lst[] = $usr;
+                $result = true;
+            }
+            $this->set_hash();
+        }
+
+        return $result;
+    }
+
+    /**
+     * load all users that have the given profile level or higher
+     * e.g. loading the admin includes the system user
+     *
+     * @param sql_db $db_con the database link as a parameter to load the system users at program start
+     * @param int $profile_id list of user that have at least this profile level
+     * @return bool true if at least one user found
+     */
+    function load_by_profile_and_higher(sql_db $db_con, int $profile_id): bool
+    {
+        $qp = $this->load_sql_by_profile_and_higher($db_con->sql_creator(), $profile_id);
+        return $this->load($db_con, $qp);
+    }
+
+    /**
+     * load all system users that have a code id
+     */
+    function load_system(sql_db $db_con): void
+    {
+        global $system_users;
+
+        $this->load_by_profile_and_higher($db_con, user::RIGHT_LEVEL_SYSTEM_TEST);
+        $system_users = clone $this;
     }
 
 
@@ -211,22 +268,6 @@ class user_list
 
         log_debug($lib->dsp_count($this->lst));
         return $this->lst;
-    }
-
-    /**
-     * load all system users that have a code id
-     */
-    function load_system(sql_db $db_con): void
-    {
-        global $system_users;
-
-        $sql = "SELECT u.user_id, u.user_name, u.code_id 
-              FROM users u
-            WHERE u.code_id IS NOT NULL
-         ORDER BY u.user_id;";
-        $this->load_sql_old($sql, $db_con);
-        $this->set_hash();
-        $system_users = clone $this;
     }
 
     /**

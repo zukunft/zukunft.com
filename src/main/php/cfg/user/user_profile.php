@@ -41,4 +41,7 @@ class user_profile
     const TEST = "test";     // reserved for the system test user e.g. for internal unit and integration tests
     const SYSTEM = "system"; // reserved for the system user which is executing cleanup tasks
 
+    // database fields additional to the standard field names
+    const FLD_ID = 'profile_id';
+    const FLD_LEVEL = 'right_level';
 }

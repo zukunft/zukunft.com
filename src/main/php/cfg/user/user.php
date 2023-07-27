@@ -127,6 +127,13 @@ class user extends db_object
     const SYSTEM_LOCAL = 'localhost';
     const SYSTEM_TEST_PARTNER_EMAIL = "support.partner@zukunft.com";
 
+    // change right levels to prevent access level gaining
+    const RIGHT_LEVEL_USER = 10;
+    const RIGHT_LEVEL_ADMIN = 60;
+    const RIGHT_LEVEL_DEVELOPER = 80;
+    const RIGHT_LEVEL_SYSTEM_TEST = 90;
+    const RIGHT_LEVEL_SYSTEM = 99;
+
 
     /*
      * object vars
