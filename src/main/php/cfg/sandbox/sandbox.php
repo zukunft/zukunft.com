@@ -895,15 +895,45 @@ class sandbox extends db_object
     }
 
     /**
-     * a list of all user that have ever changed the object
+     * create an SQL statement to get a list of all user that have ever changed the object
+     * @param sql_creator $sc with the target db_type set
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function usr_lst(): user_list
+    function load_sql_of_users_that_changed(sql_creator $sc): sql_par
+    {
+        $lib = new library();
+
+        $qp = new sql_par($this::class);
+        $qp->name .= 'user_list';
+
+        $class = $lib->class_to_name($this::class);
+        $sc->set_type($class, true);
+        $sc->set_name($qp->name);
+        $sc->set_usr($this->user()->id());
+        $sc->set_join_fields(
+            array_merge(array(user::FLD_ID, user::FLD_NAME),user::FLD_NAMES),
+            sql_db::TBL_USER,
+            user::FLD_ID,
+            user::FLD_ID);
+        $sc->add_where($this->id_field(), $this->id());
+        $sc->add_where(sandbox::FLD_EXCLUDED, 1, sql_par_type::INT_NOT_OR_NULL);
+
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * @return user_list a list of all user that have ever changed the object
+     */
+    function changed_by(): user_list
     {
         log_debug($this->dsp_id());
 
         global $db_con;
 
-        $result = new user_list;
+        $result = new user_list($this->user());
 
         // add object owner
         $result->add_by_id($this->owner_id);
@@ -1202,7 +1232,7 @@ class sandbox extends db_object
         log_debug($this->dsp_id());
 
         // get a list of users that have a user cfg of this object
-        $usr_lst = $this->usr_lst();
+        $usr_lst = $this->changed_by();
         foreach ($usr_lst as $usr) {
             // remove the usr cfg if not needed any more
             $this->del_usr_cfg_if_not_needed($this->id_field(), $this->all_sandbox_fields());

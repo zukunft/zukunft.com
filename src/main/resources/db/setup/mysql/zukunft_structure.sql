@@ -1526,7 +1526,7 @@ select (`triples`.`triple_id` * -(1)) AS `phrase_id`,
           if(`triples`.`name_given` is null,
              `triples`.`name_generated`,
              `triples`.`name_given`),
-          `triples`.`triple_name` AS `phrase_name`,
+          `triples`.`triple_name`) AS `phrase_name`,
        `triples`.`description`           AS `description`,
        `triples`.`values`                AS `values`,
        `triples`.`phrase_type_id`        AS `phrase_type_id`,
@@ -1554,11 +1554,11 @@ select `user_words`.`word_id`       AS `phrase_id`,
 union
 select (`user_triples`.`triple_id` * -(1)) AS `phrase_id`,
        `user_triples`.`user_id`               AS `user_id`,
-       if(`triples`.`triple_name` is null,
-          if(`triples`.`name_given` is null,
-             `triples`.`name_generated`,
-             `triples`.`name_given`),
-          `triples`.`triple_name` AS `phrase_name`,
+       if(`user_triples`.`triple_name` is null,
+          if(`user_triples`.`name_given` is null,
+             `user_triples`.`name_generated`,
+             `user_triples`.`name_given`),
+          `user_triples`.`triple_name`) AS `phrase_name`,
        `user_triples`.`description`           AS `description`,
        `user_triples`.`values`                AS `values`,
        `user_triples`.`excluded`              AS `excluded`,
@@ -1593,7 +1593,7 @@ select ((`triples`.`triple_id` * -2) + 1) AS `term_id`,
           if(`triples`.`name_given` is null,
              `triples`.`name_generated`,
              `triples`.`name_given`),
-          `triples`.`triple_name` AS `phrase_name`,
+          `triples`.`triple_name`) AS `phrase_name`,
        `triples`.`description`             AS `description`,
        `triples`.`values`                  AS `usage`,
        `triples`.`phrase_type_id`          AS `term_type_id`,
@@ -1653,11 +1653,11 @@ where `user_words`.`phrase_type_id` <> 10
 union
 select ((`user_triples`.`triple_id` * -2) + 1) AS `term_id`,
        `user_triples`.`user_id`                   AS `user_id`,
-       if(`triples`.`triple_name` is null,
-          if(`triples`.`name_given` is null,
-             `triples`.`name_generated`,
-             `triples`.`name_given`),
-          `triples`.`triple_name` AS `phrase_name`,
+       if(`user_triples`.`triple_name` is null,
+          if(`user_triples`.`name_given` is null,
+             `user_triples`.`name_generated`,
+             `user_triples`.`name_given`),
+          `user_triples`.`triple_name`) AS `phrase_name`,
        `user_triples`.`description`               AS `description`,
        `user_triples`.`values`                    AS `usage`,
        `user_triples`.`excluded`                  AS `excluded`,
@@ -2409,7 +2409,7 @@ ALTER TABLE `languages`
 -- AUTO_INCREMENT for table`language_forms`
 --
 ALTER TABLE `language_forms`
-    MODIFY `languages_form_id` int(11) NOT NULL AUTO_INCREMENT;
+    MODIFY `language_form_id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table`phrase_groups`
 --

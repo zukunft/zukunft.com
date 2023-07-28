@@ -167,6 +167,32 @@ class user_list
     }
 
     /**
+     * load a list of users by the id
+     *
+     * @param sql_db $db_con the database link as a parameter to load the system users at program start
+     * @param array $ids list of user ids that should be loaded
+     * @return bool true if at least one user found
+     */
+    function load_by_ids(sql_db $db_con,  array $ids): bool
+    {
+        $qp = $this->load_sql_by_ids($db_con->sql_creator(), $ids);
+        return $this->load($db_con, $qp);
+    }
+
+    /**
+     * load a list of users by the id
+     *
+     * @param sql_db $db_con the database link as a parameter to load the system users at program start
+     * @param string $code_id list of user ids that should be loaded
+     * @return bool true if at least one user found
+     */
+    function load_by_code_id(sql_db $db_con, string $code_id): bool
+    {
+        $qp = $this->load_sql_by_code_id($db_con->sql_creator(), $code_id);
+        return $this->load($db_con, $qp);
+    }
+
+    /**
      * load all users that have the given profile level or higher
      * e.g. loading the admin includes the system user
      *
@@ -186,7 +212,6 @@ class user_list
     function load_system(sql_db $db_con): void
     {
         global $system_users;
-
         $this->load_by_profile_and_higher($db_con, user::RIGHT_LEVEL_SYSTEM_TEST);
         $system_users = clone $this;
     }

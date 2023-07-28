@@ -1828,6 +1828,11 @@
             "name": "save button",
             "description": "button to save the form field into the database",
             "type_id": 23
+          },
+          {
+            "id": 9,
+            "name": "form end",
+            "type_id": 24
           }
         ]
       },
@@ -1838,7 +1843,7 @@
         "code_id": "word_edit",
         "components": [
           {
-            "id": 9,
+            "id": 10,
             "name": "form title word edit",
             "description": "show the language specific title of a add, change or delete form",
             "type_id": 17
@@ -1878,6 +1883,11 @@
             "name": "save button",
             "description": "button to save the form field into the database",
             "type_id": 23
+          },
+          {
+            "id": 9,
+            "name": "form end",
+            "type_id": 24
           }
         ]
       },
@@ -2073,7 +2083,7 @@
         "code_id": "component_add",
         "components": [
           {
-            "id": 10,
+            "id": 11,
             "name": "form title",
             "description": "show the language specific title of a add, change or delete form",
             "type_id": 17

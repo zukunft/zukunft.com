@@ -553,8 +553,8 @@ class sql_creator
      * @return void
      */
     function add_where(
-        string $fld,
-        int|string|array $fld_val,
+        string            $fld,
+        int|string|array  $fld_val,
         sql_par_type|null $spt = null): void
     {
         $this->add_field($fld);
@@ -578,7 +578,8 @@ class sql_creator
             or $spt == sql_par_type::INT_HIGHER
             or $spt == sql_par_type::INT_LOWER
             or $spt == sql_par_type::INT_OR
-            or $spt == sql_par_type::INT_NOT) {
+            or $spt == sql_par_type::INT_NOT
+            or $spt == sql_par_type::INT_NOT_OR_NULL) {
             $this->add_par($spt, $fld_val);
         } elseif ($spt == sql_par_type::TEXT
             or $spt == sql_par_type::TEXT_USR
@@ -1228,16 +1229,17 @@ class sql_creator
                             $result .= $this->par_fields[$i] . " IS NULL))";
                         } else {
 
-                            // add the table
+                            // set the table prefix
+                            $tbl_id = '';
                             if ($this->usr_query
                                 or $this->join <> ''
                                 or $this->join_type <> ''
                                 or $this->join2_type <> '') {
                                 if (!str_contains($this->par_fields[$i], '.')) {
                                     if ($this->par_use_link[$i]) {
-                                        $result .= sql_db::LNK_TBL . '.';
+                                        $tbl_id = sql_db::LNK_TBL . '.';
                                     } else {
-                                        $result .= sql_db::STD_TBL . '.';
+                                        $tbl_id = sql_db::STD_TBL . '.';
                                     }
                                 }
                             }
@@ -1248,35 +1250,33 @@ class sql_creator
                                 or $par_type == sql_par_type::INT_LIST_OR
                                 or $par_type == sql_par_type::TEXT_LIST) {
                                 if ($this->db_type == sql_db::POSTGRES) {
-                                    $result .= $this->par_fields[$i] . ' = ANY (' . $this->par_name($par_pos) . ')';
+                                    $result .= $tbl_id . $this->par_fields[$i]
+                                        . ' = ANY (' . $this->par_name($par_pos) . ')';
                                 } else {
-                                    $result .= $this->par_fields[$i] . ' IN (' . $this->par_name($par_pos) . ')';
+                                    $result .= $tbl_id . $this->par_fields[$i]
+                                        . ' IN (' . $this->par_name($par_pos) . ')';
                                 }
                             } elseif ($par_type == sql_par_type::INT_SUB) {
-                                $result .= $this->par_fields[$i] . ' IN (' . $this->par_value($i + 1) . ')';
+                                $result .= $tbl_id . $this->par_fields[$i]
+                                    . ' IN (' . $this->par_value($i + 1) . ')';
+                            } elseif ($par_type == sql_par_type::LIKE) {
+                                $result .= $tbl_id . $this->par_fields[$i]
+                                    . ' like ' . $this->par_name($par_pos);
+                            } elseif ($par_type == sql_par_type::CONST) {
+                                $result .= $this->par_value($i + 1);
+                            } elseif ($par_type == sql_par_type::INT_NOT) {
+                                $result .= $tbl_id . $this->par_fields[$i] . ' <> ' . $this->par_name($par_pos);
+                            } elseif ($par_type == sql_par_type::INT_NOT_OR_NULL) {
+                                $result .= '( ' . $tbl_id . $this->par_fields[$i] . ' <> ' . $this->par_name($par_pos)
+                                    . ' OR ' . $tbl_id . $this->par_fields[$i] . ' IS NULL )';
+                            } elseif ($par_type == sql_par_type::INT_HIGHER) {
+                                $result .= $tbl_id . $this->par_fields[$i] . ' >= ' . $this->par_name($par_pos);
+                            } elseif ($par_type == sql_par_type::INT_LOWER) {
+                                $result .= $tbl_id . $this->par_fields[$i] . ' =< ' . $this->par_name($par_pos);
                             } else {
-                                if ($par_type == sql_par_type::LIKE) {
-                                    $result .= $this->par_fields[$i] . ' like ' . $this->par_name($par_pos);
-                                } else {
-                                    if ($par_type == sql_par_type::CONST) {
-                                        $result .= $this->par_value($i + 1);
-                                    } else {
-                                        if ($par_type == sql_par_type::INT_NOT) {
-                                            $result .= $this->par_fields[$i] . ' <> ' . $this->par_name($par_pos);
-                                        } else {
-                                            if ($par_type == sql_par_type::INT_HIGHER) {
-                                                $result .= $this->par_fields[$i] . ' >= ' . $this->par_name($par_pos);
-                                            } else {
-                                                if ($par_type == sql_par_type::INT_LOWER) {
-                                                    $result .= $this->par_fields[$i] . ' =< ' . $this->par_name($par_pos);
-                                                } else {
-                                                    $result .= $this->par_fields[$i] . ' = ' . $this->par_name($par_pos);
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
+                                $result .= $tbl_id . $this->par_fields[$i] . ' = ' . $this->par_name($par_pos);
                             }
+
 
                             // include rows where code_id is null
                             if ($par_type == sql_par_type::TEXT) {
@@ -1984,6 +1984,7 @@ class sql_creator
                 case sql_par_type::INT_HIGHER:
                 case sql_par_type::INT_LOWER:
                 case sql_par_type::INT_NOT:
+                case sql_par_type::INT_NOT_OR_NULL:
                 case sql_par_type::INT_SUB:
                     $result[] = 'int';
                     break;

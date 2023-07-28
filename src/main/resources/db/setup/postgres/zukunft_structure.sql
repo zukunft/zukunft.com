@@ -297,15 +297,15 @@ CREATE TABLE IF NOT EXISTS formula_types
 
 CREATE TABLE IF NOT EXISTS results
 (
-    result_id       BIGSERIAL PRIMARY KEY,
+    result_id              BIGSERIAL PRIMARY KEY,
     formula_id             bigint           NOT NULL,
-    user_id                bigint                DEFAULT NULL,
-    source_phrase_group_id bigint                DEFAULT NULL,
-    source_time_id    bigint                DEFAULT NULL,
-    phrase_group_id        bigint                DEFAULT 0,
-    result          double precision NOT NULL,
-    last_update            timestamp        NULL DEFAULT NULL,
-    dirty                  smallint              DEFAULT NULL
+    user_id                bigint           DEFAULT NULL,
+    source_phrase_group_id bigint           DEFAULT NULL,
+    source_time_id         bigint           DEFAULT NULL,
+    phrase_group_id        bigint           DEFAULT 0,
+    result                 double precision NOT NULL,
+    last_update            timestamp   NULL DEFAULT NULL,
+    dirty                  smallint         DEFAULT NULL
 );
 
 COMMENT ON TABLE results is 'temp table to cache the formula results';

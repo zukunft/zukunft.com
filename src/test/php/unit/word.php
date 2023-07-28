@@ -76,6 +76,7 @@ class word_unit_tests
         $t->assert_sql_standard($db_con, $wrd);
         $t->assert_sql_not_changed($db_con, $wrd);
         $t->assert_sql_user_changes($db_con, $wrd);
+        $t->assert_sql_changing_users($db_con, $wrd);
         $this->assert_sql_view($t, $db_con, $wrd);
 
 

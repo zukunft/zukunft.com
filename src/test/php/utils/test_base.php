@@ -881,6 +881,31 @@ class test_base
         return $result;
     }
 
+    /**
+     * check the SQL statements to get the users that have ever done a change
+     * e.g. to clean up changes not needed any more
+     *
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param sandbox $usr_obj the user sandbox object e.g. a word
+     * @return bool true if all tests are fine
+     */
+    function assert_sql_changing_users(sql_db $db_con, sandbox $usr_obj): bool
+    {
+        // check the Postgres query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $usr_obj->load_sql_of_users_that_changed($db_con->sql_creator());
+        $result = $this->assert_qp($qp, $db_con->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $usr_obj->load_sql_of_users_that_changed($db_con->sql_creator());
+            $result = $this->assert_qp($qp, $db_con->db_type);
+        }
+
+        return $result;
+    }
+
 
     /*
      * SQL for named

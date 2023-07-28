@@ -87,6 +87,12 @@
           "description": "button to save the form field into the database",
           "type": "system_button_save",
           "code_id": "form_button_save"
+        },
+        {
+          "position": "8",
+          "name": "form end",
+          "type": "form_end",
+          "code_id": "form_end"
         }
       ]
     },
@@ -144,6 +150,12 @@
           "description": "button to save the form field into the database",
           "type": "system_button_save",
           "code_id": "form_button_save"
+        },
+        {
+          "position": "8",
+          "name": "form end",
+          "type": "form_end",
+          "code_id": "form_end"
         }
       ]
     },

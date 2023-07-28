@@ -38,6 +38,8 @@ use html\api;
 use html\button;
 use html\html_base;
 use html\html_selector;
+use html\view\component AS component_dsp;
+use cfg\component AS component;
 use html\log\user_log_display;
 use html\msg;
 
