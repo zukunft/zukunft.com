@@ -14,4 +14,5 @@ PREPARE word_by_id FROM
           FROM words s
      LEFT JOIN user_words u ON s.word_id = u.word_id
                            AND u.user_id = ?
-         WHERE s.word_id = ?';
+         WHERE s.phrase_type_id <> 10
+           AND s.word_id = ?';

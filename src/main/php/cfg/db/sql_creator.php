@@ -586,6 +586,10 @@ class sql_creator
             or $spt == sql_par_type::TEXT_OR
             or $spt == sql_par_type::INT_SUB) {
             $this->add_par($spt, $fld_val);
+        } elseif ($spt == sql_par_type::CONST
+            or $spt == sql_par_type::CONST_NOT) {
+            $this->add_par($spt, $fld_val);
+            log_debug('For SQL parameter type const no parameter is needed');
         } elseif ($spt == sql_par_type::LIKE) {
             $this->add_par($spt, $fld_val . '%');
         } else {
@@ -1262,8 +1266,12 @@ class sql_creator
                             } elseif ($par_type == sql_par_type::LIKE) {
                                 $result .= $tbl_id . $this->par_fields[$i]
                                     . ' like ' . $this->par_name($par_pos);
-                            } elseif ($par_type == sql_par_type::CONST) {
+                            } elseif ($par_type == sql_par_type::CONST ) {
+                                $par_offset--;
                                 $result .= $this->par_value($i + 1);
+                            } elseif ($par_type == sql_par_type::CONST_NOT) {
+                                $par_offset--;
+                                $result .= $tbl_id . $this->par_fields[$i] . ' <> ' . $this->par_value($i + 1);
                             } elseif ($par_type == sql_par_type::INT_NOT) {
                                 $result .= $tbl_id . $this->par_fields[$i] . ' <> ' . $this->par_name($par_pos);
                             } elseif ($par_type == sql_par_type::INT_NOT_OR_NULL) {
@@ -1445,6 +1453,7 @@ class sql_creator
         $i = 0; // the position in the SQL parameter array
         foreach ($this->par_types as $par_type) {
             if ($par_type != sql_par_type::CONST
+                and $par_type != sql_par_type::CONST_NOT
                 and $par_type != sql_par_type::INT_SUB) {
                 $used_par_values[] = $this->par_value($i + 1);;
             }
@@ -1997,6 +2006,7 @@ class sql_creator
                     $result[] = 'text';
                     break;
                 case sql_par_type::CONST:
+                case sql_par_type::CONST_NOT:
                     break;
                 default:
                     $result[] = $type->value;

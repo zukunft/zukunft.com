@@ -50,5 +50,6 @@ enum sql_par_type: string
     case TEXT_USR = 'text_usr'; // a name that can be user specific e.g. the word or triple name
     case LIKE = 'like';
     case CONST = 'const';
+    case CONST_NOT = 'const_not';
 
 }

@@ -51,6 +51,7 @@ include_once SERVICE_EXPORT_PATH . 'word_exp.php';
 use api\api;
 use api\word_api;
 use cfg\db\sql_creator;
+use cfg\db\sql_par_type;
 use html\phrase\phrase_list as phrase_list_dsp;
 use model\export\exp_obj;
 use model\export\sandbox_exp_named;
@@ -467,6 +468,8 @@ class word extends sandbox_typed
      */
     protected function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
+        global $phrase_types;
+
         $qp = parent::load_sql_obj_vars($sc, $class);
         $qp->name .= $query_name;
 
@@ -476,6 +479,7 @@ class word extends sandbox_typed
         $sc->set_fields(self::FLD_NAMES);
         $sc->set_usr_fields(self::FLD_NAMES_USR);
         $sc->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
+        $sc->add_where(phrase::FLD_TYPE, $phrase_types->id(phrase_type::FORMULA_LINK), sql_par_type::CONST_NOT);
 
         return $qp;
     }
@@ -492,6 +496,25 @@ class word extends sandbox_typed
     function load_sql_by_id(sql_creator $sc, int $id, string $class = self::class): sql_par
     {
         return parent::load_sql_by_id($sc, $id, $class);
+    }
+
+    /**
+     * create an SQL statement to retrieve a word representing a formula by name
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param string $name the name of the formula
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_formula_name(sql_creator $sc, string $name): sql_par
+    {
+        global $phrase_types;
+        $qp = $this->load_sql($sc, sql_db::FLD_NAME);
+        $sc->add_where($this->name_field(), $name, sql_par_type::TEXT_USR);
+        $sc->add_where(phrase::FLD_TYPE, $phrase_types->id(phrase_type::FORMULA_LINK));
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
+        return $qp;
     }
 
     /**
@@ -516,6 +539,23 @@ class word extends sandbox_typed
     function load_by_name(string $name, string $class = self::class): int
     {
         return parent::load_by_name($name, $class);
+    }
+
+    /**
+     * load a word that represents a formula by the name
+     * TODO exclude the formula words in all other queries
+     *
+     * @param string $name the name word
+     * @return int the id of the object found and zero if nothing is found
+     */
+    function load_by_formula_name(string $name): int
+    {
+        global $db_con;
+
+        $qp = $this->load_sql_by_formula_name($db_con->sql_creator(), $name);
+        $db_row = $db_con->get1($qp);
+        $this->row_mapper_sandbox($db_row);
+        return $this->id();
     }
 
     /**
