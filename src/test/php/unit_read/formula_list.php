@@ -41,6 +41,7 @@ use cfg\formula_list;
 use cfg\triple;
 use cfg\verb;
 use cfg\word;
+use cfg\word_list;
 
 class formula_list_unit_db_tests
 {
@@ -100,6 +101,11 @@ class formula_list_unit_db_tests
         $t->assert_contains(
             'formulas that use the formula "this" are at least "increase"',
             $frm_lst->names(), [formula_api::TN_INCREASE]);
+
+        $test_name = 'load formulas staring with i';
+        $frm_lst = new formula_list($t->usr1);
+        $frm_lst->load_like('i');
+        $t->assert_contains($test_name, $frm_lst->names(), array(formula_api::TN_INCREASE));
     }
 
 }

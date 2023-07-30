@@ -371,12 +371,12 @@ class word_list_unit_tests
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $lst->load_sql_pattern($db_con->sql_creator(), $pattern);
+        $qp = $lst->load_sql_like($db_con->sql_creator(), $pattern);
         $t->assert_qp($qp, $db_con->db_type);
 
         // check the MySQL query syntax
         $db_con->db_type = sql_db::MYSQL;
-        $qp = $lst->load_sql_pattern($db_con->sql_creator(), $pattern);
+        $qp = $lst->load_sql_like($db_con->sql_creator(), $pattern);
         $t->assert_qp($qp, $db_con->db_type);
     }
 

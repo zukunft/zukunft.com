@@ -381,9 +381,8 @@ class phrase_list extends sandbox_list_named
 
     /**
      * load the phrases with the given pattern
-     * by the given name list from the database
      *
-     * @param string $pattern of phrase names that should be loaded
+     * @param string $pattern to select the phrases
      * @return bool true if at least one phrase has been loaded
      */
     function load_like(string $pattern): bool

@@ -1,4 +1,4 @@
-PREPARE word_list_by_pattern FROM
+PREPARE word_list_by_name_like FROM
     'SELECT s.word_id,
             u.word_id AS user_word_id,
             s.user_id,

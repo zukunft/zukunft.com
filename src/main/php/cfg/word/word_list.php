@@ -112,7 +112,7 @@ class word_list extends sandbox_list
         $sc->set_type(sql_db::TBL_WORD);
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
-        $sc->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
+        $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
         $sc->set_fields(word::FLD_NAMES);
         $sc->set_usr_fields(word::FLD_NAMES_USR);
@@ -209,14 +209,14 @@ class word_list extends sandbox_list
     /**
      * set the SQL query parameters to load a list of words by a word pattern
      * @param sql_creator $sc with the target db_type set
-     * @param string $word_pattern the id of the word type
+     * @param string $pattern the text part that should be used to select the words
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_pattern(sql_creator $sc, string $word_pattern = ''): sql_par
+    function load_sql_like(sql_creator $sc, string $pattern = ''): sql_par
     {
-        $qp = $this->load_sql($sc, 'pattern');
-        if ($word_pattern !=  '') {
-            $sc->add_where(word::FLD_NAME, $word_pattern, sql_par_type::LIKE);
+        $qp = $this->load_sql($sc, 'name_like');
+        if ($pattern !=  '') {
+            $sc->add_where(word::FLD_NAME, $pattern, sql_par_type::LIKE);
             $qp->sql = $sc->sql();
         } else {
             $qp->name = '';
@@ -344,6 +344,20 @@ class word_list extends sandbox_list
     }
 
     /**
+     * load words with the given pattern
+     *
+     * @param string $pattern the text part that should be used to select the words
+     * @return bool true if at least one word has been loaded
+     * TODO filter by type while loading e.g. to exclude formula words
+     */
+    function load_like(string $pattern): bool
+    {
+        global $db_con;
+        $qp = $this->load_sql_like($db_con->sql_creator(), $pattern);
+        return $this->load($qp);
+    }
+
+    /**
      * load a list of words by the phrase group id
      * TODO needs to be checked if really needed
      *
@@ -367,20 +381,6 @@ class word_list extends sandbox_list
     {
         global $db_con;
         $qp = $this->load_sql_by_type($db_con->sql_creator(), $type_id);
-        return $this->load($qp);
-    }
-
-    /**
-     * load a list of words by a part of the word name
-     *
-     * @param string $pattern the text part that should be used to select the words
-     * @return bool true if at least one word found
-     * TODO filter by type while loading e.g. to exclude formula words
-     */
-    function load_by_pattern(string $pattern): bool
-    {
-        global $db_con;
-        $qp = $this->load_sql_pattern($db_con->sql_creator(), $pattern);
         return $this->load($qp);
     }
 

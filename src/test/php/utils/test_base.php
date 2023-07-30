@@ -938,7 +938,7 @@ class test_base
     /**
      * check the SQL statements to load named sandbox objects by a pattern for the name
      * for all allowed SQL database dialects
-     * TODO add unit and load test for all word, triple, verb, formula, view and component list
+     * TODO add unit and load test for triple, verb, view and component list
      *
      * @param sql_db $db_con does not need to be connected to a real database
      * @param object $usr_obj the user sandbox object e.g. a word

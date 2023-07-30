@@ -49,11 +49,20 @@ class word_list_unit_db_tests
         $t->header('Test the word list class (classes/word_list.php)');
 
         // test load by word list by ids
+        $test_name = 'load words by ids';
         $wrd_lst = new word_list($t->usr1);
         $wrd_lst->load_by_ids(array(1,3));
-        $result = $wrd_lst->name();
         $target = '"' . word_api::TN_READ . '","' . word_api::TN_PI . '"'; // order adjusted based on the number of usage
-        $t->assert('load by ids for ' . $wrd_lst->dsp_id(), $result, $target);
+        $t->assert($test_name, $wrd_lst->name(), $target);
+        $test_name = 'load words by names';
+        $wrd_lst = new word_list($t->usr1);
+        $wrd_lst->load_by_names(array(word_api::TN_READ,word_api::TN_PI));
+        $t->assert_contains($test_name, $wrd_lst->ids(), array(1,3));
+        $test_name = 'load words staring with P';
+        $wrd_lst = new word_list($t->usr1);
+        $wrd_lst->load_like('P');
+        $t->assert_contains($test_name, $wrd_lst->names(), array(word_api::TN_PI));
+
     }
 
 }

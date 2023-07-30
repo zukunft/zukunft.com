@@ -145,13 +145,15 @@ class formula_list extends sandbox_list
     /**
      * set the SQL query parameters to load a list of formulas
      * @param sql_creator $sc with the target db_type set
+     * @param string $query_name the name extension to make the query name unique
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_creator $sc): sql_par
+    function load_sql(sql_creator $sc, string $query_name = ''): sql_par
     {
         $sc->set_type(sql_db::TBL_FORMULA);
         $qp = new sql_par(self::class);
-        $sc->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
+        $qp->name .= $query_name;
+        $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
         $sc->set_usr_fields(formula::FLD_NAMES_USR);
         $sc->set_usr_num_fields(formula::FLD_NAMES_NUM_USR);
@@ -166,10 +168,8 @@ class formula_list extends sandbox_list
      */
     function load_sql_by_ids(sql_creator $sc, array $frm_ids): sql_par
     {
-        $qp = $this->load_sql($sc);
+        $qp = $this->load_sql($sc, 'frm_ids');
         if (count($frm_ids) > 0) {
-            $qp->name .= 'frm_ids';
-            $sc->set_name($qp->name);
             $sc->add_where(formula::FLD_ID, $frm_ids, sql_par_type::INT_LIST);
             $qp->sql = $sc->sql();
         } else {
@@ -187,15 +187,28 @@ class formula_list extends sandbox_list
      */
     function load_sql_by_names(sql_creator $sc, array $names): sql_par
     {
-        $qp = $this->load_sql($sc);
+        $qp = $this->load_sql($sc, 'names');
         if (count($names) > 0) {
-            $qp->name .= 'names';
-            $sc->set_name($qp->name);
             $sc->add_where(formula::FLD_NAME, $names, sql_par_type::TEXT_LIST);
             $qp->sql = $sc->sql();
         } else {
             $qp->name = '';
         }
+        $qp->par = $sc->get_par();
+        return $qp;
+    }
+
+    /**
+     * set the SQL query parameters to load a list of formulas by a pattern
+     * @param sql_creator $sc with the target db_type set
+     * @param string $pattern the text part that should be used to select the formulas
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_like(sql_creator $sc, string $pattern = ''): sql_par
+    {
+        $qp = $this->load_sql($sc, 'name_like');
+        $sc->add_where(formula::FLD_NAME, $pattern, sql_par_type::LIKE);
+        $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
         return $qp;
     }
@@ -208,10 +221,8 @@ class formula_list extends sandbox_list
      */
     function load_sql_by_phr(sql_creator $sc, phrase $phr): sql_par
     {
-        $qp = $this->load_sql($sc);
+        $qp = $this->load_sql($sc, 'phr');
         if ($phr->id() <> 0) {
-            $qp->name .= 'phr';
-            $sc->set_name($qp->name);
             $sc->set_join_fields(
                 array(phrase::FLD_ID),
                 sql_db::TBL_FORMULA_LINK,
@@ -235,10 +246,8 @@ class formula_list extends sandbox_list
      */
     function load_sql_by_phr_lst(sql_creator $sc, phrase_list $phr_lst): sql_par
     {
-        $qp = $this->load_sql($sc);
+        $qp = $this->load_sql($sc, 'phr_lst');
         if ($phr_lst->count() > 0) {
-            $qp->name .= 'phr_lst';
-            $sc->set_name($qp->name);
             $sc->set_join_fields(
                 array(phrase::FLD_ID),
                 sql_db::TBL_FORMULA_LINK,
@@ -269,10 +278,8 @@ class formula_list extends sandbox_list
         int         $par_type_id,
         string      $type_query_name): sql_par
     {
-        $qp = $this->load_sql($sc);
+        $qp = $this->load_sql($sc, $type_query_name . '_ref');
         if ($ref_id > 0) {
-            $qp->name .= $type_query_name . '_ref';
-            $sc->set_name($qp->name);
             $sc->set_join_fields(
                 array(formula::FLD_ID),
                 sql_db::TBL_FORMULA_ELEMENT,
@@ -398,12 +405,25 @@ class formula_list extends sandbox_list
     /**
      * load a list of formulas by the given formula names
      * @param array $names an array of formula ids which should be loaded
-     * @return bool true if at least one word found
+     * @return bool true if at least one formula found
      */
     function load_by_names(array $names): bool
     {
         global $db_con;
         $qp = $this->load_sql_by_names($db_con->sql_creator(), $names);
+        return $this->load($qp);
+    }
+
+    /**
+     * load formulas with the given pattern
+     *
+     * @param string $pattern the text part that should be used to select the formulas
+     * @return bool true if at least one formula has been loaded
+     */
+    function load_like(string $pattern): bool
+    {
+        global $db_con;
+        $qp = $this->load_sql_like($db_con->sql_creator(), $pattern);
         return $this->load($qp);
     }
 
