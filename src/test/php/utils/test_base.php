@@ -936,24 +936,26 @@ class test_base
     }
 
     /**
-     * check the object load by id list SQL statements for all allowed SQL database dialects
-     * similar to assert_sql_by_name but for a name pattern
+     * check the SQL statements to load named sandbox objects by a pattern for the name
+     * for all allowed SQL database dialects
+     * TODO add unit and load test for all word, triple, verb, formula, view and component list
      *
      * @param sql_db $db_con does not need to be connected to a real database
      * @param object $usr_obj the user sandbox object e.g. a word
+     * @param string $pattern the pattern for the name used for testing
      * @return bool true if all tests are fine
      */
-    function assert_sql_like(sql_db $db_con, object $usr_obj,): bool
+    function assert_sql_like(sql_db $db_con, object $usr_obj, string $pattern = ''): bool
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $usr_obj->load_sql_like($db_con->sql_creator(), '');
+        $qp = $usr_obj->load_sql_like($db_con->sql_creator(), $pattern);
         $result = $this->assert_qp($qp, $db_con->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
-            $qp = $usr_obj->load_sql_like($db_con->sql_creator(), '');
+            $qp = $usr_obj->load_sql_like($db_con->sql_creator(), $pattern);
             $result = $this->assert_qp($qp, $db_con->db_type);
         }
         return $result;
@@ -1155,31 +1157,6 @@ class test_base
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
             $qp = $usr_obj->load_names_sql_by_ids($db_con->sql_creator(), $ids);
-            $result = $this->assert_qp($qp, $db_con->db_type);
-        }
-        return $result;
-    }
-
-    /**
-     * check the SQL statements to load a list by name for all allowed SQL database dialects
-     * similar to assert_sql_by_ids but for a name list
-     *
-     * @param sql_db $db_con does not need to be connected to a real database
-     * @param object $usr_obj the user sandbox object e.g. a word
-     * @param array $names with the names of the objects that should be loaded
-     * @return bool true if all tests are fine
-     */
-    function assert_sql_by_names_non_sc(sql_db $db_con, object $usr_obj, array $names): bool
-    {
-        // check the Postgres query syntax
-        $db_con->db_type = sql_db::POSTGRES;
-        $qp = $usr_obj->load_sql_by_names($db_con->sql_creator(), $names);
-        $result = $this->assert_qp($qp, $db_con->db_type);
-
-        // ... and check the MySQL query syntax
-        if ($result) {
-            $db_con->db_type = sql_db::MYSQL;
-            $qp = $usr_obj->load_sql_by_names($db_con->sql_creator(), $names);
             $result = $this->assert_qp($qp, $db_con->db_type);
         }
         return $result;

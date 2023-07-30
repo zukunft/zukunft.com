@@ -245,8 +245,28 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
+     * create an SQL statement to retrieve a list of phrase objects
+     * by the name pattern from the database
+     * TODO add limit and page
+     * TODO add read test that formula link words are excluded
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param string $pattern phrase names that should be loaded
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_like(sql_creator $sc, string $pattern): sql_par
+    {
+        $qp = $this->load_sql($sc, 'name_like');
+        $sc->add_where(phrase::FLD_NAME, $pattern, sql_par_type::LIKE);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
+
+    /**
      * set the SQL query parameters to load a list of phrase by a phrase list, verb and direction
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param verb|null $vrb if set to filter the selection
      * @param foaf_direction $direction to select either the parents, children or all related words ana triples
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
@@ -356,6 +376,20 @@ class phrase_list extends sandbox_list_named
             $names_to_load = $names;
         }
         $qp = $this->load_sql_by_names($db_con->sql_creator(), $names_to_load);
+        return $this->load($qp);
+    }
+
+    /**
+     * load the phrases with the given pattern
+     * by the given name list from the database
+     *
+     * @param string $pattern of phrase names that should be loaded
+     * @return bool true if at least one phrase has been loaded
+     */
+    function load_like(string $pattern): bool
+    {
+        global $db_con;
+        $qp = $this->load_sql_like($db_con->sql_creator(), $pattern);
         return $this->load($qp);
     }
 
