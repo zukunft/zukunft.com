@@ -1218,17 +1218,19 @@ class sql_creator
                             }
                         }
 
+                        $par_pos = $i + 1 + $par_offset;
+
                         // select by the user specific name
                         if ($par_type == sql_par_type::TEXT_USR) {
                             $result .= '(' . sql_db::USR_TBL . '.';
-                            $result .= $this->par_fields[$i] . " = " . $this->par_name();
+                            $result .= $this->par_fields[$i] . " = " . $this->par_name($par_pos);
                             $result .= ' OR (' . sql_db::STD_TBL . '.';
                             /*
                             if (SQL_DB_TYPE != sql_db::POSTGRES) {
                                 $this->add_par(sql_par_type::TEXT, $name);
                             }
                             */
-                            $result .= $this->par_fields[$i] . " = " . $this->par_name();
+                            $result .= $this->par_fields[$i] . " = " . $this->par_name($par_pos);
                             $result .= ' AND ' . sql_db::USR_TBL . '.';
                             $result .= $this->par_fields[$i] . " IS NULL))";
                         } else {
@@ -1249,7 +1251,6 @@ class sql_creator
                             }
 
                             // add the other fields
-                            $par_pos = $i + 1 + $par_offset;
                             if ($par_type == sql_par_type::INT_LIST
                                 or $par_type == sql_par_type::INT_LIST_OR
                                 or $par_type == sql_par_type::TEXT_LIST) {
@@ -1268,7 +1269,7 @@ class sql_creator
                                     . ' like ' . $this->par_name($par_pos);
                             } elseif ($par_type == sql_par_type::CONST ) {
                                 $par_offset--;
-                                $result .= $this->par_value($i + 1);
+                                $result .= $tbl_id . $this->par_fields[$i] . ' = ' . $this->par_value($i + 1);
                             } elseif ($par_type == sql_par_type::CONST_NOT) {
                                 $par_offset--;
                                 $result .= $tbl_id . $this->par_fields[$i] . ' <> ' . $this->par_value($i + 1);

@@ -86,6 +86,11 @@ class sandbox extends db_object
     const FLD_NAMES_NUM_USR_ONLY_SBX = array(
         self::FLD_SHARE // the standard value is per definition share to public
     );
+    // dummy arrays that should be overwritten by the child object
+    const FLD_NAMES = array(
+    );
+    const FLD_NAMES_USR = array(
+    );
     // combine FLD_NAMES_NUM_USR_SBX and FLD_NAMES_NUM_USR_ONLY_SBX just for shorter code
     const FLD_NAMES_NUM_USR = array(
         self::FLD_EXCLUDED,
@@ -456,8 +461,33 @@ class sandbox extends db_object
     }
 
     /**
+     * create the SQL to load a sandbox object with numeric user specific fields
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param sandbox $sbx the name of the child class from where the call has been triggered
+     * @param string $query_name the name extension to make the query name unique
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_usr_num(sql_creator $sc, sandbox $sbx, string $query_name): sql_par
+    {
+        $lib = new library();
+
+        $qp = new sql_par($sbx::class);
+        $qp->name .= $query_name;
+
+        $sc->set_type($lib->class_to_name($sbx::class));
+        $sc->set_name($qp->name);
+        $sc->set_usr($this->user()->id());
+        $sc->set_fields($sbx::FLD_NAMES);
+        $sc->set_usr_fields($sbx::FLD_NAMES_USR);
+        $sc->set_usr_num_fields($sbx::FLD_NAMES_NUM_USR);
+
+        return $qp;
+    }
+
+    /**
      * create the SQL to load a single user specific value
-     * TODO replace by load_sql or do it in the child objects
+     * TODO replace by load_sql_usr or load_sql_usr_num
      *
      * @param sql_creator $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered

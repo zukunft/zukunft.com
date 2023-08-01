@@ -347,17 +347,7 @@ class component extends sandbox_typed
      */
     protected function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
-        $qp = parent::load_sql_obj_vars($sc, $class);
-        $qp->name .= $query_name;
-
-        $sc->set_type(sql_db::TBL_COMPONENT);
-        $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id());
-        $sc->set_fields(self::FLD_NAMES);
-        $sc->set_usr_fields(self::FLD_NAMES_USR);
-        $sc->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
-
-        return $qp;
+        return parent::load_sql_usr_num($sc, $this, $query_name);
     }
 
     /**

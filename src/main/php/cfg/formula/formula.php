@@ -92,9 +92,9 @@ class formula extends sandbox_typed
     const FLD_ASSIGN = 'assigned_word';
 
     // all database field names excluding the id
+    // actually empty because all formula fields are user specific
     // TODO check if last_update must be user specific
     const FLD_NAMES = array(
-        self::FLD_NAME
     );
     // list of the user specific database field names
     const FLD_NAMES_USR = array(
@@ -445,7 +445,8 @@ class formula extends sandbox_typed
     }
 
     /**
-     * create the common part of an SQL statement to retrieve the parameters of a formula from the database
+     * create the common part of an SQL statement to retrieve
+     * the parameters of a formula from the database
      *
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name of the selection fields to make the query name unique
@@ -454,17 +455,8 @@ class formula extends sandbox_typed
      */
     protected function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
-        $qp = parent::load_sql_obj_vars($sc, $class);
-        $qp->name .= $query_name;
-
         // maybe the formula name should be excluded from the user sandbox to avoid confusion
-        $sc->set_type(sql_db::TBL_FORMULA);
-        $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id);
-        $sc->set_usr_fields(self::FLD_NAMES_USR);
-        $sc->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
-
-        return $qp;
+        return parent::load_sql_usr_num($sc, $this, $query_name);
     }
 
     /**

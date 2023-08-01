@@ -136,51 +136,6 @@ class word_list extends list_dsp
         return $sel->display();
     }
 
-    // display a list of words that match to the given pattern
-    // TODO REVIEW
-    function dsp_like($word_pattern, user $usr): string
-    {
-        log_debug($word_pattern . ',u' . $usr->id());
-
-        global $db_con;
-        global $phrase_types;
-
-        $result = '';
-
-        $back = 1;
-        $trm_lst = new term_list($usr);
-
-        // get the link types related to the word
-        $sql = " ( SELECT t.word_id AS id, t.word_name AS name, 'word' AS type
-                 FROM words t 
-                WHERE t.word_name like '" . $word_pattern . "%' 
-                  AND t.phrase_type_id <> " . $phrase_types->id(phrase_type::FORMULA_LINK) . ")
-       UNION ( SELECT f.formula_id AS id, f.formula_name AS name, 'formula' AS type
-                 FROM formulas f 
-                WHERE f.formula_name like '" . $word_pattern . "%' )
-             ORDER BY name
-                LIMIT 200;";
-        //$db_con->usr_id = $this->usr->id;
-        $db_lst = $db_con->get_old($sql);
-
-        // loop over the words and display it with the link
-        foreach ($db_lst as $db_row) {
-            //while ($entry = mysqli_fetch_array($sql_result, MySQLi_NUM)) {
-            if ($db_row['type'] == "word") {
-                $wrd = new word($db_row['id'], $db_row['name']);
-                $result .= $wrd->tr();
-            }
-            if ($db_row['type'] == "formula") {
-                $frm = new formula_dsp();
-                $frm->id = $db_row['id'];
-                $frm->set_name($db_row['name']);
-                $result .= $frm->edit_link($back);
-            }
-        }
-
-        return $result;
-    }
-
 
     /*
      * select

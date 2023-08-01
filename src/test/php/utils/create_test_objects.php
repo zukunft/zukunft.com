@@ -1310,7 +1310,7 @@ class create_test_objects extends test_base
 
     function load_formula(string $frm_name): formula
     {
-        $frm = new formula_dsp_old($this->usr1);
+        $frm = new formula($this->usr1);
         $frm->load_by_name($frm_name, formula::class);
         return $frm;
     }

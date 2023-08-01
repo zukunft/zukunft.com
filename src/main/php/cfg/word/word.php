@@ -468,20 +468,12 @@ class word extends sandbox_typed
      */
     protected function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
-        global $phrase_types;
-
-        $qp = parent::load_sql_obj_vars($sc, $class);
-        $qp->name .= $query_name;
-
-        $sc->set_type(sql_db::TBL_WORD);
-        $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id());
-        $sc->set_fields(self::FLD_NAMES);
-        $sc->set_usr_fields(self::FLD_NAMES_USR);
-        $sc->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
-        $sc->add_where(phrase::FLD_TYPE, $phrase_types->id(phrase_type::FORMULA_LINK), sql_par_type::CONST_NOT);
-
-        return $qp;
+        // TODO check if and where it is needed to exclude the formula words
+        // global $phrase_types;
+        // $qp = parent::load_sql_usr_num($sc, $this, $query_name);
+        // $sc->add_where(phrase::FLD_TYPE, $phrase_types->id(phrase_type::FORMULA_LINK), sql_par_type::CONST_NOT);
+        // return $qp;
+        return parent::load_sql_usr_num($sc, $this, $query_name);
     }
 
     /**
@@ -508,9 +500,9 @@ class word extends sandbox_typed
     function load_sql_by_formula_name(sql_creator $sc, string $name): sql_par
     {
         global $phrase_types;
-        $qp = $this->load_sql($sc, sql_db::FLD_NAME);
+        $qp = parent::load_sql_usr_num($sc, $this, formula::FLD_NAME);
         $sc->add_where($this->name_field(), $name, sql_par_type::TEXT_USR);
-        $sc->add_where(phrase::FLD_TYPE, $phrase_types->id(phrase_type::FORMULA_LINK));
+        $sc->add_where(phrase::FLD_TYPE, $phrase_types->id(phrase_type::FORMULA_LINK), sql_par_type::CONST);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 

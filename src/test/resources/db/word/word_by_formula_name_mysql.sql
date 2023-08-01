@@ -1,4 +1,4 @@
-PREPARE word_by_id FROM
+PREPARE word_by_formula_name FROM
    'SELECT     s.word_id,
                u.word_id AS user_word_id,
                s.user_id,
@@ -14,4 +14,6 @@ PREPARE word_by_id FROM
           FROM words s
      LEFT JOIN user_words u ON s.word_id = u.word_id
                            AND u.user_id = ?
-         WHERE s.word_id = ?';
+         WHERE (u.word_name = ?
+            OR (s.word_name = ? AND u.word_name IS NULL))
+           AND s.phrase_type_id = 10';

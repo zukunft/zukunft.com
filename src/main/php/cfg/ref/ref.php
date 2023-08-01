@@ -349,17 +349,7 @@ class ref extends sandbox_link_with_type
      */
     protected function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
-        $qp = parent::load_sql($sc, $query_name, $class);
-
-        $sc->set_type(sql_db::TBL_REF);
-        $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id());
-        //$sc->set_link_fields(phrase::FLD_ID, self::FLD_TYPE);
-        $sc->set_fields(self::FLD_NAMES);
-        $sc->set_usr_fields(self::FLD_NAMES_USR);
-        $sc->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
-
-        return $qp;
+        return parent::load_sql_usr_num($sc, $this, $query_name);
     }
 
     /**

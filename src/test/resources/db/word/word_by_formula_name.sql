@@ -1,4 +1,4 @@
-PREPARE word_by_name (int,text) AS
+PREPARE word_by_formula_name (int,text) AS
     SELECT     s.word_id,
                u.word_id AS user_word_id,
                s.user_id,
@@ -15,4 +15,5 @@ PREPARE word_by_name (int,text) AS
      LEFT JOIN user_words u ON s.word_id = u.word_id
                            AND u.user_id = $1
          WHERE (u.word_name = $2
-            OR (s.word_name = $2 AND u.word_name IS NULL));
+            OR (s.word_name = $2 AND u.word_name IS NULL))
+           AND s.phrase_type_id = 10;

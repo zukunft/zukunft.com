@@ -393,7 +393,7 @@ class view extends sandbox_typed
     // TODO review and add a unit test
     function load_by_phrase_sql(sql_db $db_con, phrase $phr): sql_par
     {
-        $qp = parent::load_sql_obj_vars($db_con, self::class);
+        $qp = parent::load_sql_obj_vars($db_con->sql_creator(), self::class);
 
         // sql to get the id of the most often used view
         $db_con_tmp = new sql_db();

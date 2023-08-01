@@ -14,6 +14,5 @@ PREPARE word_by_name FROM
           FROM words s
      LEFT JOIN user_words u ON s.word_id = u.word_id
                            AND u.user_id = ?
-         WHERE s.phrase_type_id <> 10
-           AND (u.word_name = ?
+         WHERE (u.word_name = ?
             OR (s.word_name = ? AND u.word_name IS NULL))';

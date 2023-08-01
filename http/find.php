@@ -33,6 +33,7 @@
 use controller\controller;
 use html\html_base;
 use html\view\view_dsp_old;
+use html\word\word_list as word_list_dsp;
 use cfg\user;
 use cfg\view;
 use cfg\word_list;
@@ -67,7 +68,7 @@ if (!$db_con->connected()) {
         $usr->load_usr_data();
 
         // show view header
-        $dsp = new view_dsp_old($usr);
+        $dsp = new view_dsp_old();
         $dsp->set_id($system_views->id(controller::DSP_WORD_FIND));
         $result .= $dsp->dsp_navbar($back);
 
@@ -83,8 +84,11 @@ if (!$db_con->connected()) {
         */
 
         // show the matching words to select
+        // TODO replace by term or phrase list
         $wrd_lst = new word_list($usr);
-        $result .= $wrd_lst->dsp_obj()->dsp_like($find_str, $usr);
+        $wrd_lst->load_like($find_str);
+        $dsp_lst = new word_list_dsp($wrd_lst->api_json());
+        $result .= $dsp_lst->display();
 
         // show the matching terms to select
         // TODO create a term list object
