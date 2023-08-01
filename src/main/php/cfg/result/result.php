@@ -91,21 +91,19 @@ class result extends sandbox_value
      */
 
     // database fields
+    public ?float $value = null;               // ... and finally the numeric value
     public ?bool $is_std = True;               // true as long as no user specific value, formula or assignment is used for this result
+    // objects directly linked to database fields
+    public formula $frm;                       // the formula object used to calculate this result
     private phrase_group $grp;                 // the phrase group of the result
     public ?phrase_group $src_grp = null;      // the phrase group used for calculating the result
-    public ?float $value = null;               // ... and finally the numeric value
 
     // to deprecate
-    public ?int $owner_id = null;              // the user for whom the result has been calculated; if Null the result is the standard result
-    public ?int $src_phr_grp_id = null;        // the word group used for calculating the result
     public ?int $src_time_id = null;           // the time word id for calculating the result
     public ?int $time_id = null;               // the result time word id as saved in the database, which can differ from the source time
     public ?DateTime $last_update = null;      // ... and the time of the last update; all updates up to this time are included in this result
     public ?bool $dirty = null;                // true as long as an update is pending
 
-    // objects directly linked to database fields
-    public formula $frm;                       // the formula object used to calculate this result
 
     // in memory only fields (all methods except load and save should use the wrd_lst object not the ids and not the group id)
     public ?phrase_list $src_phr_lst = null;   // the source word list obj (not a list of word objects) based on which the result has been calculated
@@ -138,6 +136,7 @@ class result extends sandbox_value
         $this->set_id(0);
         $this->frm = new formula($this->user());
         $this->grp = new phrase_group($this->user());
+        $this->src_grp = new phrase_group($this->user());
     }
 
     /**
@@ -153,14 +152,15 @@ class result extends sandbox_value
         $result = parent::row_mapper($db_row, self::FLD_ID);
         if ($result) {
             $this->frm->set_id($db_row[formula::FLD_ID]);
-            $this->owner_id = $db_row[user::FLD_ID];
-            $this->src_phr_grp_id = $db_row[self::FLD_SOURCE_GRP];
-            $this->src_time_id = $db_row[self::FLD_SOURCE_TIME];
             $this->grp->set_id($db_row[self::FLD_GRP]);
+            $this->src_grp->set_id($db_row[self::FLD_SOURCE_GRP]);
             $this->value = $db_row[self::FLD_VALUE];
+            $this->owner_id = $db_row[user::FLD_ID];
             $this->last_update = $lib->get_datetime($db_row[self::FLD_LAST_UPDATE]);
             $this->last_val_update = $lib->get_datetime($db_row[self::FLD_LAST_UPDATE]);
             $this->dirty = $db_row[self::FLD_DIRTY];
+
+            $this->src_time_id = $db_row[self::FLD_SOURCE_TIME];
             $this->load_phrases(true);
         }
 
@@ -655,24 +655,24 @@ class result extends sandbox_value
             $qp->name = 'res_by_';
 
             // set the source group id if the source list is set, but not the group id
-            if ($this->src_phr_grp_id <= 0 and $this->src_phr_lst != null) {
+            if ($this->src_grp->id() <= 0 and $this->src_phr_lst != null) {
 
                 if (!$this->src_phr_lst->is_empty()) {
                     $phr_grp = $this->src_phr_lst->get_grp();
                     if (isset($phr_grp)) {
                         if ($phr_grp->id() > 0) {
-                            $this->src_phr_grp_id = $phr_grp->id();
+                            $this->src_grp->set_id($phr_grp->id());
                         }
                     }
-                    log_debug('source group ' . $this->src_phr_grp_id . ' found for ' . $this->src_phr_lst->dsp_name());
+                    log_debug('source group ' . $this->src_grp->dsp_id() . ' found for ' . $this->src_phr_lst->dsp_name());
                 }
             }
 
             $sql_order = '';
             // include the source words in the search if requested
-            if ($this->src_phr_grp_id > 0 and $this->user()->id() > 0) {
+            if ($this->src_grp->id() > 0 and $this->user()->id() > 0) {
                 $qp->name .= '_usr_src_phr_grp';
-                $db_con->add_par(sql_par_type::INT, $this->src_phr_grp_id);
+                $db_con->add_par(sql_par_type::INT, $this->src_grp->id());
                 $db_con->add_par(sql_par_type::INT, $this->user()->id);
                 if ($sql_where != '') {
                     $sql_where .= ' AND ';
@@ -682,8 +682,8 @@ class result extends sandbox_value
                 $sql_order = " ORDER BY user_id DESC";
             } else {
                 $qp->name .= '_src_phr_grp';
-                if ($this->src_phr_grp_id > 0) {
-                    $db_con->add_par(sql_par_type::INT, $this->src_phr_grp_id);
+                if ($this->src_grp->id() > 0) {
+                    $db_con->add_par(sql_par_type::INT, $this->src_grp->id());
                     if ($sql_where != '') {
                         $sql_where .= ' AND ';
                     }
@@ -839,11 +839,11 @@ class result extends sandbox_value
      */
     private function load_phr_lst_src(bool $force_reload = false): void
     {
-        if ($this->src_phr_grp_id > 0) {
+        if ($this->src_grp->id() > 0) {
             if ($this->src_phr_lst == null or $force_reload) {
-                log_debug('for source group "' . $this->src_phr_grp_id . '"');
+                log_debug('for source group "' . $this->src_grp->id() . '"');
                 $phr_grp = new phrase_group($this->user());
-                $phr_grp->load_by_id($this->src_phr_grp_id);
+                $phr_grp->load_by_id($this->src_grp->id());
                 if (!$phr_grp->phr_lst->empty()) {
                     $this->src_phr_lst = $phr_grp->phr_lst;
                     log_debug('source phrases ' . $this->src_phr_lst->dsp_name() . ' loaded');
@@ -854,10 +854,10 @@ class result extends sandbox_value
         }
         if ($this->src_phr_lst != null) {
             if ($this->src_phr_lst->empty()) {
-                log_warning("Missing source words for the calculated value " . $this->id() . ' (group id ' . $this->src_phr_grp_id . ').', "result->load_phr_lst_src");
+                log_warning("Missing source words for the calculated value " . $this->id() . ' (group id ' . $this->src_grp->dsp_id() . ').', "result->load_phr_lst_src");
             }
         } else {
-            log_warning("Missing source words for the calculated value " . $this->id() . ' (group id ' . $this->src_phr_grp_id . ').', "result->load_phr_lst_src");
+            log_warning("Missing source words for the calculated value " . $this->id() . ' (group id ' . $this->src_grp->dsp_id() . ').', "result->load_phr_lst_src");
         }
     }
 
@@ -1086,9 +1086,9 @@ class result extends sandbox_value
                 log_debug("source group for " . $this->src_phr_lst->dsp_id() . ".");
                 $grp = new phrase_group($this->user());
                 $grp->load_by_lst($this->src_phr_lst);
-                $this->src_phr_grp_id = $grp->get_id();
+                $this->src_grp->set_id($grp->get_id());
             }
-            log_debug("source group id " . $this->src_phr_grp_id . " for " . $this->src_phr_lst->dsp_name() . ".");
+            log_debug("source group id " . $this->src_grp->dsp_id() . " for " . $this->src_phr_lst->dsp_name() . ".");
         }
     }
 
@@ -1582,7 +1582,7 @@ class result extends sandbox_value
                     if ($debug > 0) {
                         $debug_txt = 'result = ' . $this->value . ' saved for ' . $this->phr_lst->name_linked();
                         if ($debug > 3) {
-                            $debug_txt .= ' (group id "' . $this->grp->id() . '" and the result time is ' . $this->time_phr->name_linked() . ') as id "' . $res_id . '" based on ' . $this->src_phr_lst->name_linked() . ' (group id "' . $this->src_phr_grp_id . '" and the result time is ' . $this->src_time_phr->name_linked() . ')';
+                            $debug_txt .= ' (group id "' . $this->grp->id() . '" and the result time is ' . $this->time_phr->name_linked() . ') as id "' . $res_id . '" based on ' . $this->src_phr_lst->name_linked() . ' (group id "' . $this->src_grp->dsp_id() . '" and the result time is ' . $this->src_time_phr->name_linked() . ')';
                         }
                         if (!$this->is_std) {
                             $debug_txt .= ' for user "' . $this->user()->name . '"';
@@ -1633,7 +1633,7 @@ class result extends sandbox_value
 
             // build the word list if needed to separate the time word from the word list
             $this->save_prepare_wrds();
-            log_debug("group id " . $this->grp->id() . " and source group id " . $this->src_phr_grp_id);
+            log_debug("group id " . $this->grp->id() . " and source group id " . $this->src_grp->dsp_id());
 
             // check if a database update is needed
             // or if a second results object with the database values
@@ -1668,7 +1668,7 @@ class result extends sandbox_value
                 $field_names[] = result::FLD_GRP;
                 $field_values[] = $this->grp->id();
                 $field_names[] = result::FLD_SOURCE_GRP;
-                $field_values[] = $this->src_phr_grp_id;
+                $field_values[] = $this->src_grp->id();
                 $field_names[] = result::FLD_SOURCE_TIME;
                 $field_values[] = $this->src_time_id;
                 if (!$this->is_std) {

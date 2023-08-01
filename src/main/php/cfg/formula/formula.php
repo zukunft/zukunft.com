@@ -831,6 +831,7 @@ class formula extends sandbox_typed
     {
         $rst = new result($this->user());
         $rst->frm = $this;
+        $rst->src_grp = $phr_lst->get_grp();
         $rst->ref_text = $this->ref_text_r;
         $rst->num_text = $this->ref_text_r;
         $rst->src_phr_lst = clone $phr_lst;
