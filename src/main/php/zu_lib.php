@@ -14,6 +14,9 @@ use html\phrase\phrase_group as phrase_group_dsp;
     4. commit
 
     but first this needs to be fixed:
+    TODO remove the time phrase from result
+    TODO create an use the figure database view
+    TODO combine phrase_group_word_links and phrase_group_triple_links to group_links (using phrase)
     TODO clean up the phrase_list (and triple_list and word_list) cfg/class and add unit and db read tests for all
     TODO use $t->assert_sql_by_ids for all lists
     TODO use the load_sql object function for all list load sql functions like in group_list

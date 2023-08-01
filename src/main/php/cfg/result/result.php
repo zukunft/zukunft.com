@@ -91,7 +91,6 @@ class result extends sandbox_value
      */
 
     // database fields
-    public user $usr;                          // the user who wants to see the result because the formula and values can differ for each user; this is
     public ?bool $is_std = True;               // true as long as no user specific value, formula or assignment is used for this result
     private phrase_group $grp;                 // the phrase group of the result
     public ?phrase_group $src_grp = null;      // the phrase group used for calculating the result
@@ -120,9 +119,6 @@ class result extends sandbox_value
     public ?DateTime $last_val_update = null;  // the time of the last update of an underlying value, formula result or formula
     //                                            if this is later than the last update the result needs to be updated
     private string $symbol = '';               // the symbol of the related formula element
-
-    // to be dismissed
-    public ?phrase $phr = null;  // to get the most interesting result for this word
 
 
     /*
@@ -194,25 +190,6 @@ class result extends sandbox_value
     function symbol(): string
     {
         return $this->symbol;
-    }
-
-    /**
-     * set the user of the formula result list
-     *
-     * @param user $usr the person who wants to access the formula result
-     * @return void
-     */
-    function set_user(user $usr): void
-    {
-        $this->usr = $usr;
-    }
-
-    /**
-     * @return user the person who wants to see the formula result
-     */
-    function user(): user
-    {
-        return $this->usr;
     }
 
     function is_std(): bool
@@ -637,7 +614,7 @@ class result extends sandbox_value
     {
         $sql_where = "";
         if ($this->id > 0) {
-            $qp = $this->load_sql_by_id($db_con, $this->id);
+            $qp = $this->load_sql_by_id($db_con->sql_creator(), $this->id);
         } else {
             // prepare the search by getting the word group based on the word list
             log_debug('not by id');
@@ -657,14 +634,6 @@ class result extends sandbox_value
                     $phr_lst = new phrase_list($this->user());
                     $phr_lst->load_names_by_ids(new phr_ids($this->phr_ids()));
                     // ... or to get the most interesting result for this word
-                } elseif ($this->phr != null and isset($this->frm)) {
-                    if ($this->phr->id() > 0 and $this->frm->id() > 0 and isset($this->frm->name_wrd)) {
-                        // get the best matching word group
-                        $phr_lst = new phrase_list($this->user());
-                        $phr_lst->add($this->phr);
-                        $phr_lst->add($this->frm->name_wrd->phrase());
-                        log_debug('get group by words ' . $phr_lst->dsp_name());
-                    }
                 }
                 if (isset($phr_lst)) {
                     $this->phr_lst = $phr_lst;
@@ -684,15 +653,6 @@ class result extends sandbox_value
             $db_con->set_type(sql_db::TBL_RESULT);
             $qp = new sql_par(self::class);
             $qp->name = 'res_by_';
-
-            // create the source phrase list if just the word is given
-            if ($this->phr_lst == null and $this->phr != null) {
-                if ($this->phr->id() > 0 or $this->phr->name() != '') {
-                    $new_phr_lst = new phrase_list($this->user());
-                    $new_phr_lst->add($this->phr);
-                    $this->phr_lst = $new_phr_lst;
-                }
-            }
 
             // set the source group id if the source list is set, but not the group id
             if ($this->src_phr_grp_id <= 0 and $this->src_phr_lst != null) {
@@ -1675,7 +1635,8 @@ class result extends sandbox_value
             $this->save_prepare_wrds();
             log_debug("group id " . $this->grp->id() . " and source group id " . $this->src_phr_grp_id);
 
-            // to check if a database update is needed to create a second res object with the database values
+            // check if a database update is needed
+            // or if a second results object with the database values
             $res_db = clone $this;
             $res_db->load_obj_vars();
             $row_id = $res_db->id;

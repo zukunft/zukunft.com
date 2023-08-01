@@ -230,7 +230,7 @@ class sandbox extends db_object
     }
 
     /**
-     * @return user the person who wants to see a word, verb, triple, formula or view
+     * @return user the person who wants to see a word, verb, triple, formula, view or result
      */
     function user(): user
     {
