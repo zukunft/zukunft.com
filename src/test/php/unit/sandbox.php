@@ -1195,7 +1195,7 @@ class sandbox_unit_tests
         // the formula list load query
         $db_con->db_type = sql_db::POSTGRES;
         $sql_from = 'formula_links l, formulas f';
-        $sql_where = 'l.phrase_id = 1 AND l.formula_id = f.formula_id';
+        $sql_where = sql_db::LNK_TBL . '.phrase_id = 1 AND l.formula_id = f.formula_id';
         $created_sql = "SELECT 
                        f.formula_id,
                        f.formula_name,
@@ -1527,7 +1527,7 @@ class sandbox_unit_tests
 
         // the word link list load query (used in triple_list->load)
         $db_con->db_type = sql_db::POSTGRES;
-        $sql_where = 'l.to_phrase_id   = 3';
+        $sql_where = sql_db::LNK_TBL . '.to_phrase_id   = 3';
         $sql_type = 'AND l.verb_id = 2';
         $sql_wrd1_fields = '';
         $sql_wrd1_from = '';
@@ -1542,7 +1542,7 @@ class sandbox_unit_tests
                   t2.values AS values2";
         $sql_wrd2_from = ' words t2 LEFT JOIN user_words u2 ON u2.word_id = t2.word_id 
                                                        AND u2.user_id = 1 ';
-        $sql_wrd2 = 'l.from_phrase_id = t2.word_id';
+        $sql_wrd2 = sql_db::LNK_TBL . '.from_phrase_id = t2.word_id';
         $created_sql = "SELECT l.triple_id,
                        l.from_phrase_id,
                        l.verb_id,
@@ -1613,7 +1613,7 @@ class sandbox_unit_tests
         // the phrase load word link query by ...
         // TODO check if and how GROUP BY t2.word_id, l.verb_id can / should be added
         $db_con->db_type = sql_db::POSTGRES;
-        $sql_where = 'l.to_phrase_id   = 3';
+        $sql_where = sql_db::LNK_TBL . '.to_phrase_id   = 3';
         $sql_type = 'AND l.verb_id = 2';
         $sql_wrd1_fields = '';
         $sql_wrd1_from = '';
@@ -1628,7 +1628,7 @@ class sandbox_unit_tests
                   t2.values AS values2";
         $sql_wrd2_from = ' words t2 LEFT JOIN user_words u2 ON u2.word_id = t2.word_id 
                                                        AND u2.user_id = 1 ';
-        $sql_wrd2 = 'l.from_phrase_id = t2.word_id';
+        $sql_wrd2 = sql_db::LNK_TBL . '.from_phrase_id = t2.word_id';
         $created_sql = "SELECT l.triple_id,
                        l.from_phrase_id,
                        l.verb_id,

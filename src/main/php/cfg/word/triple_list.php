@@ -458,7 +458,7 @@ class triple_list extends sandbox_list
             if (count($this->ids) > 0) {
                 $id_txt = $lib->sql_array($this->ids);
                 if ($id_txt <> '') {
-                    $sql_where = 'l.triple_id IN (' . $id_txt . ')';
+                    $sql_where = sql_db::LNK_TBL . '.triple_id IN (' . $id_txt . ')';
                     $sql_wrd1_fields = $this->load_wrd_fields($db_con, '1');
                     $sql_wrd1_from = $this->load_wrd_from('1');
                     $sql_wrd1 = 'AND l.from_phrase_id = t1.word_id';
@@ -466,7 +466,7 @@ class triple_list extends sandbox_list
                     $sql_wrd1_from .= ', ';
                     $sql_wrd2_fields = $this->load_wrd_fields($db_con, '2');
                     $sql_wrd2_from = $this->load_wrd_from('2');
-                    $sql_wrd2 = 'l.to_phrase_id = t2.word_id';
+                    $sql_wrd2 = sql_db::LNK_TBL . '.to_phrase_id = t2.word_id';
                     log_debug('triple_list->load where ids ' . $sql_where);
                 }
             }
@@ -478,11 +478,11 @@ class triple_list extends sandbox_list
                 $sql_wrd2_fields = $this->load_wrd_fields($db_con, '2');
                 $sql_wrd2_from = $this->load_wrd_from('2');
                 if ($this->direction == foaf_direction::UP) {
-                    $sql_where = 'l.from_phrase_id = ' . $this->wrd->id();
-                    $sql_wrd2 = 'l.to_phrase_id = t2.word_id';
+                    $sql_where = sql_db::LNK_TBL . '.from_phrase_id = ' . $this->wrd->id();
+                    $sql_wrd2 = sql_db::LNK_TBL . '.to_phrase_id = t2.word_id';
                 } else {
-                    $sql_where = 'l.to_phrase_id   = ' . $this->wrd->id();
-                    $sql_wrd2 = 'l.from_phrase_id = t2.word_id';
+                    $sql_where = sql_db::LNK_TBL . '.to_phrase_id   = ' . $this->wrd->id();
+                    $sql_wrd2 = sql_db::LNK_TBL . '.from_phrase_id = t2.word_id';
                 }
                 log_debug('triple_list->load where wrd ' . $sql_where);
             }
@@ -501,13 +501,13 @@ class triple_list extends sandbox_list
                     $sql_wrd2_from = $this->load_wrd_from('2');
                     log_debug('triple_list->load based on word list loaded');
                     if ($this->direction == foaf_direction::UP) {
-                        $sql_where = 'l.from_phrase_id IN (' . $this->wrd_lst->ids_txt() . ')';
+                        $sql_where = sql_db::LNK_TBL . '.from_phrase_id IN (' . $this->wrd_lst->ids_txt() . ')';
                         $sql_wrd1 = 'AND l.from_phrase_id = t1.word_id';
-                        $sql_wrd2 = 'l.to_phrase_id   = t2.word_id';
+                        $sql_wrd2 = sql_db::LNK_TBL . '.to_phrase_id   = t2.word_id';
                     } else {
-                        $sql_where = 'l.to_phrase_id   IN (' . $this->wrd_lst->ids_txt() . ')';
+                        $sql_where = sql_db::LNK_TBL . '.to_phrase_id   IN (' . $this->wrd_lst->ids_txt() . ')';
                         $sql_wrd1 = 'AND l.to_phrase_id   = t1.word_id';
-                        $sql_wrd2 = 'l.from_phrase_id = t2.word_id';
+                        $sql_wrd2 = sql_db::LNK_TBL . '.from_phrase_id = t2.word_id';
                     }
                     log_debug('triple_list->load where wrd in ' . $sql_where);
                 }

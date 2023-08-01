@@ -40,6 +40,7 @@ use html\api;
 use html\button;
 use html\html_base;
 use html\html_selector;
+use html\result\result as result_dsp;
 use html\log\user_log_display;
 use html\msg;
 use html\word\word as word_dsp;
@@ -72,12 +73,9 @@ class formula_dsp_old extends formula
     {
         log_debug('for "' . $phr->name() . '" and formula ' . $this->dsp_id());
         $res = new result($this->user());
-        $res->frm = $this;
-        $res->phr = $phr;
-        log_debug('load result');
-        $res->load_obj_vars();
-        log_debug('display');
-        return $res->display($back);
+        $res->load_by_formula_and_group_list($this, $phr->groups());
+        $dsp_res = new result_dsp($res->api_json());
+        return $dsp_res->display($back);
     }
 
     /**

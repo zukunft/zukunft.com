@@ -2,31 +2,33 @@
 
 /*
 
-  model/phrase/phrase_group_list.php - a list of word and triple groups
-  ----------------------------------
+    model/phrase/phrase_group_list.php - a list of word and triple groups
+    ----------------------------------
 
-  This file is part of zukunft.com - calc with words
+    TODO base on sandbox_list
 
-  zukunft.com is free software: you can redistribute it and/or modify it
-  under the terms of the GNU General Public License as
-  published by the Free Software Foundation, either version 3 of
-  the License, or (at your option) any later version.
-  zukunft.com is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU General Public License for more details.
-  
-  You should have received a copy of the GNU General Public License
-  along with zukunft.com. If not, see <http://www.gnu.org/licenses/agpl.html>.
-  
-  To contact the authors write to:
-  Timon Zielonka <timon@zukunft.com>
-  
-  Copyright (c) 1995-2022 zukunft.com AG, Zurich
-  Heang Lor <heang@zukunft.com>
-  
-  http://zukunft.com
-  
+    This file is part of zukunft.com - calc with words
+
+    zukunft.com is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as
+    published by the Free Software Foundation, either version 3 of
+    the License, or (at your option) any later version.
+    zukunft.com is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with zukunft.com. If not, see <http://www.gnu.org/licenses/agpl.html>.
+
+    To contact the authors write to:
+    Timon Zielonka <timon@zukunft.com>
+
+    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Heang Lor <heang@zukunft.com>
+
+    http://zukunft.com
+
 */
 
 namespace cfg;
@@ -170,9 +172,19 @@ class phrase_group_list
     {
         $qp = $this->load_sql($sc, 'phr');
         if ($phr->is_word()) {
-            $sc->add_where(word::FLD_ID, $phr->obj_id());
+            $sc->set_join_fields(
+                array(word::FLD_ID),
+                sql_db::TBL_PHRASE_GROUP_WORD_LINK,
+                phrase_group::FLD_ID,
+                phrase_group::FLD_ID);
+            $sc->add_where(sql_db::LNK_TBL . '.' . word::FLD_ID, $phr->obj_id());
         } else {
-            $sc->add_where(phrase::FLD_ID, $phr->obj_id());
+            $sc->set_join_fields(
+                array(triple::FLD_ID),
+                sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK,
+                phrase_group::FLD_ID,
+                phrase_group::FLD_ID);
+            $sc->add_where(sql_db::LNK_TBL . '.' . phrase::FLD_ID, $phr->obj_id());
         }
         $sc->set_order(phrase_group::FLD_ID);
         $sc->set_page($limit, $offset);
@@ -203,11 +215,11 @@ class phrase_group_list
                 if ($this->phr->is_word()) {
                     $qp->name .= word::FLD_ID;
                     $db_con->add_par(sql_par_type::INT, $this->phr->id());
-                    $sql_where = 'l.' . word::FLD_ID . ' = ' . $db_con->par_name();
+                    $sql_where = sql_db::LNK_TBL . '.' . word::FLD_ID . ' = ' . $db_con->par_name();
                 } else {
                     $qp->name .= triple::FLD_ID;
                     $db_con->add_par(sql_par_type::INT, $this->phr->id() * -1);
-                    $sql_where = 'l.' . triple::FLD_ID . ' = ' . $db_con->par_name();
+                    $sql_where = sql_db::LNK_TBL . '.' . triple::FLD_ID . ' = ' . $db_con->par_name();
                 }
             }
         }
@@ -230,6 +242,33 @@ class phrase_group_list
         }
 
         return $qp;
+    }
+
+    /**
+     * load all phrase groups that contain the given phrase
+     * @param phrase $phr
+     * @return bool true if at least one phrase group has been found
+     */
+    function load_by_phr(phrase $phr): bool
+    {
+        global $db_con;
+        $result = false;
+
+        $qp = $this->load_sql_by_phr($db_con->sql_creator(), $phr);
+
+        // similar statement used in triple_list->load, check if changes should be repeated in triple_list.php
+        $db_rows = $db_con->get($qp);
+        if ($db_rows != null) {
+            foreach ($db_rows as $db_row) {
+                $phr_grp = new phrase_group($this->usr);
+                $phr_grp->row_mapper($db_row);
+                $this->lst[] = $phr_grp;
+                $result = true;
+            }
+        }
+
+
+        return $result;
     }
 
     function load_by_vars(): bool
@@ -650,6 +689,26 @@ class phrase_group_list
         log_debug($lib->dsp_count($result->lst()));
         return $result;
     }
+
+    /*
+     * information
+     */
+
+    /**
+     * @return array with the database ids of all objects of this list
+     */
+    function ids(): array
+    {
+        $result = array();
+        foreach ($this->lst as $sbx_obj) {
+            // use only valid ids
+            if ($sbx_obj->id() <> 0) {
+                $result[] = $sbx_obj->id();
+            }
+        }
+        return $result;
+    }
+
 
     /*
       display functions

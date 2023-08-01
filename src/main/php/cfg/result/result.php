@@ -262,8 +262,10 @@ class result extends sandbox_value
     {
         $api_obj = new result_api($this->id);
         $api_obj->set_number($this->value);
-        $grp = $this->phr_lst->get_grp($do_save);
-        $api_obj->set_grp($grp->api_obj());
+        if ($this->phr_lst != null) {
+            $grp = $this->phr_lst->get_grp($do_save);
+            $api_obj->set_grp($grp->api_obj());
+        }
         return $api_obj;
     }
 
@@ -277,7 +279,7 @@ class result extends sandbox_value
 
 
     /*
-     * loading
+     * load
      */
 
     /**
@@ -377,6 +379,44 @@ class result extends sandbox_value
     }
 
     /**
+     * create the SQL to load a results by formula id and phrase group id
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param formula $frm the formula used for the selection
+     * @param phrase_group $grp the group used for the selection
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_frm_grp(sql_creator $sc, formula $frm, phrase_group $grp): sql_par
+    {
+        $qp = $this->load_sql($sc, 'frm_grp');
+        $sc->set_name($qp->name);
+        $sc->add_where(formula::FLD_ID, $frm->id());
+        $sc->add_where(self::FLD_GRP, $grp->id());
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+        return $qp;
+    }
+
+    /**
+     * create the SQL to load a results by formula id and phrase group id
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param formula $frm the formula used for the selection
+     * @param phrase_group_list $lst the group used for the selection
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_frm_grp_lst(sql_creator $sc, formula $frm, phrase_group_list $lst): sql_par
+    {
+        $qp = $this->load_sql($sc, 'frm_grp_lst');
+        $sc->set_name($qp->name);
+        $sc->add_where(formula::FLD_ID, $frm->id());
+        $sc->add_where(self::FLD_GRP, $lst->ids());
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+        return $qp;
+    }
+
+    /**
      * create an SQL statement to retrieve the user changes of the current result
      *
      * @param sql_creator $sc with the target db_type set
@@ -392,7 +432,9 @@ class result extends sandbox_value
     /**
      * load (or force reload from database of) a result by the id
      *
-     * @return bool true if result has been loaded
+     * @param int $id the unique database id of the result that should be loaded
+     * @param string $class always the result class just to be compatible with the parent function
+     * @return int true if result has been loaded
      */
     function load_by_id(int $id = 0, string $class = self::class): int
     {
@@ -452,6 +494,66 @@ class result extends sandbox_value
             } else {
                 $qp = $this->load_sql_by_grp($db_con->sql_creator(), $grp);
             }
+            if ($qp->name != '') {
+                $db_row = $db_con->get1($qp);
+                $this->row_mapper($db_row);
+                $result = true;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * load all a result by the phrase group id and time phrase
+     *
+     * @param formula $frm to select the result
+     * @param phrase_group $grp to select the result
+     * @return bool true if result has been loaded
+     */
+    function load_by_formula_and_group(formula $frm, phrase_group $grp): bool
+    {
+        global $db_con;
+        $result = false;
+
+        if ($frm->id() <= 0) {
+            log_err('The formula id must be set to load a ' . self::class);
+        } elseif ($grp->id() <= 0) {
+            log_err('The phrase group id must be set to load a ' . self::class);
+        } else {
+            $res_usr = $this->user();
+            $this->reset();
+            $this->set_user($res_usr);
+            $qp = $this->load_sql_by_frm_grp($db_con->sql_creator(), $frm, $grp);
+            if ($qp->name != '') {
+                $db_row = $db_con->get1($qp);
+                $this->row_mapper($db_row);
+                $result = true;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * load all a result by the phrase group id and time phrase
+     *
+     * @param formula $frm to select the result
+     * @param phrase_group_list $lst the group used for the selection
+     * @return bool true if result has been loaded
+     */
+    function load_by_formula_and_group_list(formula $frm, phrase_group_list $lst): bool
+    {
+        global $db_con;
+        $result = false;
+
+        if ($frm->id() <= 0) {
+            log_err('The formula id must be set to load a ' . self::class);
+        } else {
+            $res_usr = $this->user();
+            $this->reset();
+            $this->set_user($res_usr);
+            $qp = $this->load_sql_by_frm_grp_lst($db_con->sql_creator(), $frm, $lst);
             if ($qp->name != '') {
                 $db_row = $db_con->get1($qp);
                 $this->row_mapper($db_row);

@@ -513,9 +513,9 @@ class formula_test
         $frm_lst = new formula_list($t->usr1);
         $frm_lst->back = $wrd->id();
         $frm_lst->load_by_phr($wrd->phrase());
-        $result = $frm_lst->display();
-        $target = formula_api::TN_RATIO;
         // TODO fix it
+        //$result = $frm_lst->display();
+        //$target = formula_api::TN_RATIO;
         // $t->dsp_contains(', formula_list->load formula for word "' . $wrd->dsp_id() . '" should contain', $target, $result, TIMEOUT_LIMIT_PAGE);
 
     }

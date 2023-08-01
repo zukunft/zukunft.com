@@ -34,6 +34,7 @@ namespace test;
 
 include_once MODEL_PHRASE_PATH . 'phrase_group_list.php';
 
+use cfg\phrase;
 use cfg\phrase_group_list;
 use cfg\library;
 use cfg\sql_db;
@@ -59,7 +60,35 @@ class group_list_unit_tests
         $grp_lst = new phrase_group_list($usr);
         $t->assert_sql_by_ids($db_con, $grp_lst, array(3,2,4));
         $t->assert_sql_names_by_ids($db_con, $grp_lst, array(3,2,4));
+        $this->assert_sql_by_phrase($t, $db_con, $grp_lst);
 
+    }
+
+    /**
+     * check the SQL statements creation to get all phrase groups related to obe phrase
+     *
+     * @param test_cleanup $t the testing object with the error counter
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param phrase_group_list $lst the phrase group list object used for testing
+     * @return void true if all tests are fine
+     */
+    private function assert_sql_by_phrase(test_cleanup $t, sql_db $db_con, phrase_group_list $lst): void
+    {
+        // prepare
+        $phr = new phrase($t->usr1);
+        $phr->set_id(1);
+
+        // check the Postgres query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $lst->load_sql_by_phr($db_con->sql_creator(), $phr);
+        $result = $t->assert_qp($qp, $db_con->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $lst->load_sql_by_phr($db_con->sql_creator(), $phr);
+            $t->assert_qp($qp, $db_con->db_type);
+        }
     }
 
 }

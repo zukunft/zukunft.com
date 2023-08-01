@@ -36,7 +36,9 @@ include_once API_RESULT_PATH . 'result.php';
 
 use api\result_api;
 use api\word_api;
+use cfg\formula;
 use cfg\phrase_group;
+use cfg\phrase_group_list;
 use html\result\result as result_dsp;
 use cfg\phrase_list;
 use cfg\result;
@@ -66,6 +68,8 @@ class result_unit_tests
         $res = new result($usr);
         $t->assert_sql_by_id($db_con, $res);
         $this->assert_sql_by_group($t, $db_con, $res);
+        $this->assert_sql_by_formula_and_group($t, $db_con, $res);
+        $this->assert_sql_by_formula_and_group_list($t, $db_con, $res);
         $this->assert_sql_by_group_time($t, $db_con, $res);
 
         $t->subheader('SQL load default statement tests');
@@ -131,6 +135,71 @@ class result_unit_tests
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
             $qp = $res->load_sql_by_grp($db_con->sql_creator(), $grp);
+            $t->assert_qp($qp, $db_con->db_type);
+        }
+    }
+
+    /**
+     * check the SQL statements creation to get the results
+     * by the formula and phrase group
+     *
+     * @param test_cleanup $t the testing object with the error counter
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param result $res the user sandbox object e.g. a result
+     * @return void true if all tests are fine
+     */
+    private function assert_sql_by_formula_and_group(test_cleanup $t, sql_db $db_con, result $res): void
+    {
+        // prepare
+        $frm = new formula($t->usr1);
+        $frm->set_id(2);
+        $grp = new phrase_group($t->usr1);
+        $grp->set_id(3);
+
+        // check the Postgres query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $res->load_sql_by_frm_grp($db_con->sql_creator(), $frm, $grp);
+        $result = $t->assert_qp($qp, $db_con->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $res->load_sql_by_frm_grp($db_con->sql_creator(), $frm, $grp);
+            $t->assert_qp($qp, $db_con->db_type);
+        }
+    }
+
+    /**
+     * check the SQL statements creation to get the results
+     * by the formula and phrase group
+     *
+     * @param test_cleanup $t the testing object with the error counter
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param result $res the user sandbox object e.g. a result
+     * @return void true if all tests are fine
+     */
+    private function assert_sql_by_formula_and_group_list(test_cleanup $t, sql_db $db_con, result $res): void
+    {
+        // prepare
+        $frm = new formula($t->usr1);
+        $frm->set_id(2);
+        $grp1 = new phrase_group($t->usr1);
+        $grp1->set_id(3);
+        $grp2 = new phrase_group($t->usr1);
+        $grp2->set_id(4);
+        $lst = new phrase_group_list($t->usr1);
+        $lst->add($grp1);
+        $lst->add($grp2);
+
+        // check the Postgres query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $res->load_sql_by_frm_grp_lst($db_con->sql_creator(), $frm, $lst);
+        $result = $t->assert_qp($qp, $db_con->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $res->load_sql_by_frm_grp_lst($db_con->sql_creator(), $frm, $lst);
             $t->assert_qp($qp, $db_con->db_type);
         }
     }

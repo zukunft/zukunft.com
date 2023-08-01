@@ -830,6 +830,13 @@ class phrase extends combine_named
         return $phr_lst->foaf_related();
     }
 
+    function groups(): phrase_group_list
+    {
+        $lst = new phrase_group_list($this->user());
+        $lst->load_by_phr($this);
+        return $lst;
+    }
+
 
     /*
      * display functions
