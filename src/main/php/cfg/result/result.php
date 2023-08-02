@@ -66,9 +66,7 @@ class result extends sandbox_value
     // database fields only used for results
     const FLD_ID = 'result_id';
     const FLD_SOURCE_GRP = 'source_phrase_group_id';
-    const FLD_SOURCE_TIME = 'source_time_id';
     const FLD_GRP = 'phrase_group_id';
-    const FLD_TIME = 'time_word_id';
     const FLD_VALUE = 'result';
     const FLD_LAST_UPDATE = 'last_update';
     const FLD_DIRTY = 'dirty';
@@ -78,7 +76,6 @@ class result extends sandbox_value
         formula::FLD_ID,
         user::FLD_ID,
         self::FLD_SOURCE_GRP,
-        self::FLD_SOURCE_TIME,
         self::FLD_GRP,
         self::FLD_VALUE,
         self::FLD_LAST_UPDATE,
@@ -99,7 +96,6 @@ class result extends sandbox_value
     public ?phrase_group $src_grp = null;      // the phrase group used for calculating the result
 
     // to deprecate
-    public ?int $src_time_id = null;           // the time word id for calculating the result
     public ?int $time_id = null;               // the result time word id as saved in the database, which can differ from the source time
     public ?DateTime $last_update = null;      // ... and the time of the last update; all updates up to this time are included in this result
     public ?bool $dirty = null;                // true as long as an update is pending
@@ -160,7 +156,6 @@ class result extends sandbox_value
             $this->last_val_update = $lib->get_datetime($db_row[self::FLD_LAST_UPDATE]);
             $this->dirty = $db_row[self::FLD_DIRTY];
 
-            $this->src_time_id = $db_row[self::FLD_SOURCE_TIME];
             $this->load_phrases(true);
         }
 
@@ -890,50 +885,6 @@ class result extends sandbox_value
     }
 
     /**
-     * update the source time word object based on the source time word id
-     * @param bool $force_reload set to true if a loaded source time phrase should be reloaded from database
-     */
-    private function load_time_wrd_src(bool $force_reload = false): void
-    {
-        if ($this->src_time_id <> 0) {
-            if ($this->src_time_phr == null or $force_reload) {
-                log_debug('result->load_time_wrd_src for source time "' . $this->src_time_id . '"');
-                $time_phr = new phrase($this->user());
-                $time_phr->load_by_id($this->src_time_id);
-                if ($time_phr->isset()) {
-                    $this->src_time_phr = $time_phr;
-                    if ($this->src_phr_lst != null) {
-                        $this->src_phr_lst->add($time_phr);
-                        log_debug('result->load_time_wrd_src source time word "' . $time_phr->name() . '" added');
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * update the time word object based on the time word id
-     * @param bool $force_reload set to true if a loaded time phrase should be reloaded from database
-     */
-    private function load_time_wrd(bool $force_reload = false): void
-    {
-        if ($this->time_id <> 0) {
-            if ($this->time_phr == null or $force_reload) {
-                log_debug('result->load_phr_lst for time "' . $this->time_id . '"');
-                $time_phr = new phrase($this->user());
-                $time_phr->load_by_id($this->time_id);
-                if ($time_phr->isset()) {
-                    $this->time_phr = $time_phr;
-                    if ($this->phr_lst != null) {
-                        $this->phr_lst->add($time_phr);
-                        log_debug('result->load_time_wrd time word "' . $time_phr->name() . '" added');
-                    }
-                }
-            }
-        }
-    }
-
-    /**
      * update the phrase objects based on the phrase group ids
      * (usually done after loading the formula result from the database)
      */
@@ -943,8 +894,6 @@ class result extends sandbox_value
             log_debug('for user ' . $this->user()->name);
             $this->load_phr_lst_src($force_reload);
             $this->load_phr_lst($force_reload);
-            $this->load_time_wrd_src($force_reload);
-            $this->load_time_wrd($force_reload);
         }
     }
 
@@ -1362,17 +1311,12 @@ class result extends sandbox_value
 
                 // select or guess the element time word if needed
                 log_debug('guess the time ... ');
-                if ($this->src_time_id <= 0) {
-                    if ($this->time_id > 0) {
-                        $elm_time_phr = $this->time_phr;
-                        log_debug('time ' . $this->time_phr->name() . ' taken from the result');
-                    } else {
-                        $elm_time_phr = $src_phr_lst->assume_time();
-                        log_debug('time ' . $elm_time_phr->name() . ' assumed');
-                    }
+                if ($this->time_id > 0) {
+                    $elm_time_phr = $this->time_phr;
+                    log_debug('time ' . $this->time_phr->name() . ' taken from the result');
                 } else {
-                    $elm_time_phr = $this->src_time_phr;
-                    log_debug('time ' . $elm_time_phr->name() . ' taken from the source');
+                    $elm_time_phr = $src_phr_lst->assume_time();
+                    log_debug('time ' . $elm_time_phr->name() . ' assumed');
                 }
 
                 $elm_grp->phr_lst = $src_phr_lst;
@@ -1669,8 +1613,6 @@ class result extends sandbox_value
                 $field_values[] = $this->grp->id();
                 $field_names[] = result::FLD_SOURCE_GRP;
                 $field_values[] = $this->src_grp->id();
-                $field_names[] = result::FLD_SOURCE_TIME;
-                $field_values[] = $this->src_time_id;
                 if (!$this->is_std) {
                     $field_names[] = user::FLD_ID;
                     $field_values[] = $this->user()->id();

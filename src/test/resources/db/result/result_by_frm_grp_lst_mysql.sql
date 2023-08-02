@@ -3,7 +3,6 @@ PREPARE result_by_frm_grp_lst FROM
            formula_id,
            user_id,
            source_phrase_group_id,
-           source_time_id,
            phrase_group_id,
            result,
            last_update,

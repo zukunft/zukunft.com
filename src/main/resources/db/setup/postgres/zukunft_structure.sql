@@ -301,7 +301,6 @@ CREATE TABLE IF NOT EXISTS results
     formula_id             bigint           NOT NULL,
     user_id                bigint           DEFAULT NULL,
     source_phrase_group_id bigint           DEFAULT NULL,
-    source_time_id         bigint           DEFAULT NULL,
     phrase_group_id        bigint           DEFAULT 0,
     result                 double precision NOT NULL,
     last_update            timestamp   NULL DEFAULT NULL,
@@ -1826,7 +1825,7 @@ CREATE INDEX formula_link_type_idx ON formula_links (link_type_id);
 -- Indexes for table results
 --
 CREATE UNIQUE INDEX result_idx ON results (formula_id, user_id, phrase_group_id,
-                                                         source_phrase_group_id, source_time_id);
+                                                         source_phrase_group_id);
 CREATE INDEX result_user_idx ON results (user_id);
 
 --

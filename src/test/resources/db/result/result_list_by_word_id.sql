@@ -3,7 +3,6 @@ PREPARE result_list_by_word_id (int) AS
            s.formula_id,
            s.user_id,
            s.source_phrase_group_id,
-           s.source_time_id,
            s.phrase_group_id,
            s.result,
            s.last_update,

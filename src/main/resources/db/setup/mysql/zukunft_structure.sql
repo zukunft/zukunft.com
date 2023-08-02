@@ -290,13 +290,12 @@ CREATE TABLE IF NOT EXISTS `formula_types`
 
 CREATE TABLE IF NOT EXISTS `results`
 (
-    `result_id`       int(11)   NOT NULL,
+    `result_id`              int(11)   NOT NULL,
     `formula_id`             int(11)   NOT NULL,
     `user_id`                int(11)        DEFAULT NULL,
     `source_phrase_group_id` int(11)        DEFAULT NULL,
-    `source_time_id`    int(11)        DEFAULT NULL,
     `phrase_group_id`        int(11)        DEFAULT '0' COMMENT 'temp field for fast data collection; no single links to terms because this is just a cache table and can be recreated by the underlying tables',
-    `result`          double    NOT NULL,
+    `result`                 double    NOT NULL,
     `last_update`            timestamp NULL DEFAULT NULL COMMENT 'time of last value update mainly used for recovery in case of inconsistencies, empty in case this value is dirty',
     `dirty`                  tinyint(4)     DEFAULT NULL
 ) ENGINE = InnoDB
@@ -1858,7 +1857,7 @@ ALTER TABLE `formula_types`
 ALTER TABLE `results`
     ADD PRIMARY KEY (`result_id`),
     ADD UNIQUE KEY `formula_id_2` (`formula_id`, `user_id`, `phrase_group_id`,
-                                   `source_phrase_group_id`, `source_time_id`),
+                                   `source_phrase_group_id`),
     ADD KEY `user_id` (`user_id`);
 
 --
