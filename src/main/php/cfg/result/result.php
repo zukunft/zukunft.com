@@ -102,7 +102,6 @@ class result extends sandbox_value
 
 
     // in memory only fields (all methods except load and save should use the wrd_lst object not the ids and not the group id)
-    public ?phrase_list $src_phr_lst = null;   // the source word list obj (not a list of word objects) based on which the result has been calculated
     public ?phrase $src_time_phr = null;       // the time word object created while loading
     public ?phrase_list $phr_lst = null;       // the phrase list obj (not a list of phrase objects) filled while loading
     public ?phrase $time_phr = null;           // the time word object created while loading
@@ -650,16 +649,16 @@ class result extends sandbox_value
             $qp->name = 'res_by_';
 
             // set the source group id if the source list is set, but not the group id
-            if ($this->src_grp->id() <= 0 and $this->src_phr_lst != null) {
+            if ($this->src_grp->id() <= 0 and $this->src_grp->phr_lst != null) {
 
-                if (!$this->src_phr_lst->is_empty()) {
-                    $phr_grp = $this->src_phr_lst->get_grp();
+                if (!$this->src_grp->phr_lst->is_empty()) {
+                    $phr_grp = $this->src_grp->phr_lst->get_grp();
                     if (isset($phr_grp)) {
                         if ($phr_grp->id() > 0) {
                             $this->src_grp->set_id($phr_grp->id());
                         }
                     }
-                    log_debug('source group ' . $this->src_grp->dsp_id() . ' found for ' . $this->src_phr_lst->dsp_name());
+                    log_debug('source group ' . $this->src_grp->dsp_id() . ' found for ' . $this->src_grp->phr_lst->dsp_name());
                 }
             }
 
@@ -835,20 +834,20 @@ class result extends sandbox_value
     private function load_phr_lst_src(bool $force_reload = false): void
     {
         if ($this->src_grp->id() > 0) {
-            if ($this->src_phr_lst == null or $force_reload) {
+            if ($this->src_grp->phr_lst == null or $force_reload) {
                 log_debug('for source group "' . $this->src_grp->id() . '"');
                 $phr_grp = new phrase_group($this->user());
                 $phr_grp->load_by_id($this->src_grp->id());
                 if (!$phr_grp->phr_lst->empty()) {
-                    $this->src_phr_lst = $phr_grp->phr_lst;
-                    log_debug('source phrases ' . $this->src_phr_lst->dsp_name() . ' loaded');
+                    $this->src_grp->phr_lst = $phr_grp->phr_lst;
+                    log_debug('source phrases ' . $this->src_grp->phr_lst->dsp_name() . ' loaded');
                 } else {
                     log_debug('no source words found for ' . $this->dsp_id());
                 }
             }
         }
-        if ($this->src_phr_lst != null) {
-            if ($this->src_phr_lst->empty()) {
+        if ($this->src_grp->phr_lst != null) {
+            if ($this->src_grp->phr_lst->empty()) {
                 log_warning("Missing source words for the calculated value " . $this->id() . ' (group id ' . $this->src_grp->dsp_id() . ').', "result->load_phr_lst_src");
             }
         } else {
@@ -1026,18 +1025,18 @@ class result extends sandbox_value
     // update the source word group id based on the word list ($this->phr_lst)
     private function save_prepare_phr_lst_src(): void
     {
-        if (isset($this->src_phr_lst)) {
+        if (isset($this->src_grp->phr_lst)) {
             // TODO check if the phrases are already loaded
-            // $this->src_phr_lst->load();
+            // $this->src_grp->phr_lst->load();
             // get the word group id (and create the group if needed)
             // TODO include triples
-            if (count($this->src_phr_lst->id_lst()) > 0) {
-                log_debug("source group for " . $this->src_phr_lst->dsp_id() . ".");
+            if (count($this->src_grp->phr_lst->id_lst()) > 0) {
+                log_debug("source group for " . $this->src_grp->phr_lst->dsp_id() . ".");
                 $grp = new phrase_group($this->user());
-                $grp->load_by_lst($this->src_phr_lst);
+                $grp->load_by_lst($this->src_grp->phr_lst);
                 $this->src_grp->set_id($grp->get_id());
             }
-            log_debug("source group id " . $this->src_grp->dsp_id() . " for " . $this->src_phr_lst->dsp_name() . ".");
+            log_debug("source group id " . $this->src_grp->dsp_id() . " for " . $this->src_grp->phr_lst->dsp_name() . ".");
         }
     }
 
@@ -1258,7 +1257,7 @@ class result extends sandbox_value
         // add the value  to the title
         $title .= $this->display($back);
         $result .= $html->dsp_text_h1($title);
-        log_debug('explain the value for ' . $val_phr_lst->dsp_name() . ' based on ' . $this->src_phr_lst->dsp_name());
+        log_debug('explain the value for ' . $val_phr_lst->dsp_name() . ' based on ' . $this->src_grp->phr_lst->dsp_name());
 
         // display the measure and scaling of the value
         if ($val_wrd_lst->has_percent()) {
@@ -1290,7 +1289,7 @@ class result extends sandbox_value
         $result .= ' where</br>';
 
         // check the element consistency and if it fails, create a warning
-        if (!isset($this->src_phr_lst)) {
+        if (!isset($this->src_grp->phr_lst)) {
             log_warning("Missing source words for the calculated value " . $this->dsp_id(), "result->explain");
         } else {
 
@@ -1304,10 +1303,10 @@ class result extends sandbox_value
 
                 // exclude the formula word from the words used to select the formula element values
                 // so reverse what has been done when saving the result
-                $src_phr_lst = clone $this->src_phr_lst;
+                $src_grp->phr_lst = clone $this->src_grp->phr_lst;
                 $frm_wrd_id = $frm->name_wrd->id();
-                $src_phr_lst->diff_by_ids(array($frm_wrd_id));
-                log_debug('formula word "' . $frm->name_wrd->name() . '" excluded from ' . $src_phr_lst->dsp_name());
+                $src_grp->phr_lst->diff_by_ids(array($frm_wrd_id));
+                log_debug('formula word "' . $frm->name_wrd->name() . '" excluded from ' . $src_grp->phr_lst->dsp_name());
 
                 // select or guess the element time word if needed
                 log_debug('guess the time ... ');
@@ -1315,11 +1314,11 @@ class result extends sandbox_value
                     $elm_time_phr = $this->time_phr;
                     log_debug('time ' . $this->time_phr->name() . ' taken from the result');
                 } else {
-                    $elm_time_phr = $src_phr_lst->assume_time();
+                    $elm_time_phr = $src_grp->phr_lst->assume_time();
                     log_debug('time ' . $elm_time_phr->name() . ' assumed');
                 }
 
-                $elm_grp->phr_lst = $src_phr_lst;
+                $elm_grp->phr_lst = $src_grp->phr_lst;
                 $elm_grp->time_phr = $elm_time_phr;
                 $elm_grp->usr = $this->user();
                 log_debug('words set ' . $elm_grp->phr_lst->dsp_name() . ' taken from the source and user "' . $elm_grp->usr->name . '"');
@@ -1396,7 +1395,7 @@ class result extends sandbox_value
             $this->load_formula();
 
             $frm = $this->frm;
-            $phr_lst = $this->src_phr_lst;
+            $phr_lst = $this->src_grp->phr_lst;
             $frm->calc($phr_lst, '');
 
             //$this->save_if_updated ();
@@ -1462,7 +1461,7 @@ class result extends sandbox_value
                 if (!isset($this->phr_lst)) {
                     log_warning('The result phrases for ' . $this->dsp_id() . ' are missing.', 'result->save_if_updated');
                 }
-                if (!isset($this->src_phr_lst)) {
+                if (!isset($this->src_grp->phr_lst)) {
                     log_warning('The source phrases for ' . $this->dsp_id() . ' are missing.', 'result->save_if_updated');
                 }
 
@@ -1503,7 +1502,7 @@ class result extends sandbox_value
                 }
 
                 if (!isset($this->value)) {
-                    log_info('No result calculated for "' . $this->frm->name() . '" based on ' . $this->src_phr_lst->dsp_id() . ' for user ' . $this->user()->id() . '.', "result->save_if_updated");
+                    log_info('No result calculated for "' . $this->frm->name() . '" based on ' . $this->src_grp->phr_lst->dsp_id() . ' for user ' . $this->user()->id() . '.', "result->save_if_updated");
                 } else {
                     // save the default value if the result time is the "newest"
                     if (isset($res_default_time)) {
@@ -1526,7 +1525,7 @@ class result extends sandbox_value
                     if ($debug > 0) {
                         $debug_txt = 'result = ' . $this->value . ' saved for ' . $this->phr_lst->name_linked();
                         if ($debug > 3) {
-                            $debug_txt .= ' (group id "' . $this->grp->id() . '" and the result time is ' . $this->time_phr->name_linked() . ') as id "' . $res_id . '" based on ' . $this->src_phr_lst->name_linked() . ' (group id "' . $this->src_grp->dsp_id() . '" and the result time is ' . $this->src_time_phr->name_linked() . ')';
+                            $debug_txt .= ' (group id "' . $this->grp->id() . '" and the result time is ' . $this->time_phr->name_linked() . ') as id "' . $res_id . '" based on ' . $this->src_grp->phr_lst->name_linked() . ' (group id "' . $this->src_grp->dsp_id() . '" and the result time is ' . $this->src_time_phr->name_linked() . ')';
                         }
                         if (!$this->is_std) {
                             $debug_txt .= ' for user "' . $this->user()->name . '"';
@@ -1556,13 +1555,13 @@ class result extends sandbox_value
             log_err("Formula id missing.", "result->save");
         } elseif (empty($this->phr_lst)) {
             log_err("No words for the result.", "result->save");
-        } elseif (empty($this->src_phr_lst)) {
+        } elseif (empty($this->src_grp->phr_lst)) {
             log_err("No words for the calculation.", "result->save");
         } elseif ($this->user() == null) {
             log_err("User missing.", "result->save");
         } else {
             if ($debug > 0) {
-                $debug_txt = 'result->save (' . $this->value . ' for formula ' . $this->frm->id() . ' with ' . $this->phr_lst->dsp_name() . ' based on ' . $this->src_phr_lst->dsp_name();
+                $debug_txt = 'result->save (' . $this->value . ' for formula ' . $this->frm->id() . ' with ' . $this->phr_lst->dsp_name() . ' based on ' . $this->src_grp->phr_lst->dsp_name();
                 if (!$this->is_std) {
                     $debug_txt .= ' and user ' . $this->user()->id();
                 }
