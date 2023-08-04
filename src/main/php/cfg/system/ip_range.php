@@ -559,7 +559,7 @@ class ip_range extends db_object
      * helper because the db id field differs from the class name
      * @return string the field name of the prime database index of the object
      */
-    protected function id_field(): string
+    public function id_field(): string
     {
         return self::FLD_ID;
     }

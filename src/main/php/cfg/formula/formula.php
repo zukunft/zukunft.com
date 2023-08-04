@@ -525,7 +525,7 @@ class formula extends sandbox_typed
     /**
      * @return string with the id field name of the formula (not the formula word)
      */
-    protected function id_field(): string
+    public function id_field(): string
     {
         return self::FLD_ID;
     }

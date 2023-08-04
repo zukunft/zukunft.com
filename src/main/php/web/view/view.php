@@ -490,4 +490,81 @@ class view extends sandbox_typed_dsp
         return $result;
     }
 
+    /**
+     * create a selection page where the user can select a view that should be used for a word
+     */
+    function selector_page(int $wrd_id, string $back): string
+    {
+        global $db_con;
+        $result = '';
+
+        $lst = new view_list();
+        /*
+        $sql = "SELECT view_id, view_name
+                  FROM views
+                 WHERE code_id IS NULL
+              ORDER BY view_name;";
+              */
+        $sql = sql_lst_usr("view", $this->user());
+        $call = '/http/view.php?words=' . $wrd_id;
+        $field = 'new_id';
+
+        //$db_con = New mysql;
+        $db_con->usr_id = $this->user()->id();
+        $dsp_lst = $db_con->get_old($sql);
+        foreach ($dsp_lst as $dsp) {
+            $view_id = $dsp['id'];
+            $view_name = $dsp['name'];
+            if ($view_id == $this->id) {
+                $result .= '<b><a href="' . $call . '&' . $field . '=' . $view_id . '">' . $view_name . '</a></b> ';
+            } else {
+                $result .= '<a href="' . $call . '&' . $field . '=' . $view_id . '">' . $view_name . '</a> ';
+            }
+            $call_edit = '/http/view_edit.php?id=' . $view_id . '&word=' . $wrd_id . '&back=' . $back;
+            $result .= \html\btn_edit('design the view', $call_edit) . ' ';
+            $call_del = '/http/view_del.php?id=' . $view_id . '&word=' . $wrd_id . '&back=' . $back;
+            $result .= \html\btn_del('delete the view', $call_del) . ' ';
+            $result .= '<br>';
+        }
+
+        log_debug('done');
+        return $result;
+    }
+
+    /**
+     * same as dsp_navbar, but without the view change used for the view editors
+     */
+    function dsp_navbar_no_view(string $back = ''): string
+    {
+        $result = '';
+
+        // check the all minimal input parameters are set
+        if ($this->user() == null) {
+            log_err("The user id must be set to display a view.", "view_dsp->dsp_navbar");
+        } else {
+            if (UI_USE_BOOTSTRAP) {
+                $result .= $this->dsp_navbar_bs(FALSE, $back);
+            } else {
+                $result .= $this->dsp_navbar_html_no_view($back);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * same as dsp_navbar, but without the view change used for the view editors
+     */
+    function dsp_navbar_html_no_view(string $back = ''): string
+    {
+
+        $result = $this->html_navbar_start();
+        $result .= '<td class="right_ref">';
+        $result .= $this->dsp_user($back);
+        $result .= $this->dsp_logout();
+        $result .= '</td>';
+        $result .= $this->html_navbar_end();
+
+        return $result;
+    }
+
 }

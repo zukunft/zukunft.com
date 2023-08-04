@@ -260,7 +260,7 @@ class system_log extends db_object
     /**
      * @return string sys_log_id instead of system_log_id
      */
-    protected function id_field(): string
+    public function id_field(): string
     {
         return self::FLD_ID;
     }

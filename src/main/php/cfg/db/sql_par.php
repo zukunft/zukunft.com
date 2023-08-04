@@ -49,14 +49,17 @@ class sql_par
     /**
      * @param string $class the name of the calling class used for the unique query name
      * @param bool $is_std true if the standard data for all users should be loaded
+     * @param bool $all true if all rows should be loaded
      */
-    function __construct(string $class, bool $is_std = false)
+    function __construct(string $class, bool $is_std = false, bool $all = false)
     {
         $lib = new library();
         $this->sql = '';
         $class = $lib->class_to_name($class);
         if ($is_std) {
             $this->name = $class . '_std_by_';
+        } elseif ($all) {
+            $this->name = $class . '_';
         } else {
             $this->name = $class . '_by_';
         }

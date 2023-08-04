@@ -229,4 +229,31 @@ class list_dsp
         return $result;
     }
 
+
+    /*
+     * html - function that create html code
+     */
+
+    /**
+     * create a selector for this list
+     * used for words, triples, phrases, formulas, terms, view and components
+     * TODO create unit test for triples
+     *
+     * @param string $name the name of this selector which must be unique within the form
+     * @param string $form the html form name which must be unique within the html page
+     * @param string $label the text show to the user
+     * @param int $selected the unique database id of the object that has been selected
+     * @returns string the html code to select a word from this list
+     */
+    function selector(string $name = '', string $form = '', string $label = '', int $selected = 0): string
+    {
+        $sel = new html_selector();
+        $sel->name = $name;
+        $sel->form = $form;
+        $sel->label = $label;
+        $sel->lst = $this->lst_key();
+        $sel->selected = $selected;
+        return $sel->display();
+    }
+
 }

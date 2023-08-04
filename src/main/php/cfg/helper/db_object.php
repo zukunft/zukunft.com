@@ -226,7 +226,7 @@ class db_object
      * e.g. if the object name does not match the generated id field name
      * @return string the field name of the prime database index of the object
      */
-    protected function id_field(): string
+    public function id_field(): string
     {
         $lib = new library();
         return $lib->class_to_name($this::class) . sql_db::FLD_EXT_ID;

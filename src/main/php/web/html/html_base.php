@@ -265,6 +265,21 @@ class html_base
      * text formatting
      */
 
+    function text_h1(string $title, string $style = ''): string
+    {
+        $result = '';
+        if (UI_USE_BOOTSTRAP) {
+            $result .= "<h2>" . $title . "</h2>";
+        } else {
+            if ($style <> "") {
+                $result .= '<h1 class="' . $style . '">' . $title . '</h1>';
+            } else {
+                $result .= "<h1>" . $title . "</h1>";
+            }
+        }
+        return $result;
+    }
+
     function text_h2(string $title, string $style = ''): string
     {
         $result = '';

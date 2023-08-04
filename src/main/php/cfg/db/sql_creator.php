@@ -330,6 +330,16 @@ class sql_creator
     }
 
     /**
+     * activate that in the SQL statement the user sandbox name field should be included
+     */
+    function set_usr_query(): void
+    {
+        $this->usr_query = true;
+        $this->join_usr_query = true;
+        $this->set_user_join();
+    }
+
+    /**
      * set the SQL statement for the user sandbox fields that should be returned in a select query
      * which can be user specific
      *
@@ -337,10 +347,8 @@ class sql_creator
      */
     function set_usr_fields(array $usr_field_lst): void
     {
-        $this->usr_query = true;
-        $this->join_usr_query = true;
         $this->usr_field_lst = $usr_field_lst;
-        $this->set_user_join();
+        $this->set_usr_query();
     }
 
     /**
@@ -351,18 +359,14 @@ class sql_creator
      */
     function set_usr_num_fields(array $usr_field_lst): void
     {
-        $this->usr_query = true;
-        $this->join_usr_query = true;
         $this->usr_num_field_lst = $usr_field_lst;
-        $this->set_user_join();
+        $this->set_usr_query();
     }
 
     function set_usr_only_fields($field_lst): void
     {
-        $this->usr_query = true;
-        $this->join_usr_query = true;
         $this->usr_only_field_lst = $field_lst;
-        $this->set_user_join();
+        $this->set_usr_query();
     }
 
     /**

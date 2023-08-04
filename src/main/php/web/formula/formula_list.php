@@ -130,17 +130,4 @@ class formula_list extends list_dsp
         return $html->tbl($html->tr($cols), html_base::STYLE_BORDERLESS);
     }
 
-    /**
-     * @returns string the html code to select a formula from this list
-     */
-    function selector(string $name = '', string $form = '', int $selected = 0): string
-    {
-        $sel = new html_selector();
-        $sel->name = $name;
-        $sel->form = $form;
-        $sel->lst = $this->lst_key();
-        $sel->selected = $selected;
-        return $sel->display();
-    }
-
 }

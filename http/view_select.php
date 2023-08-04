@@ -30,6 +30,7 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
+use controller\controller;
 use html\view\view_dsp_old;
 use html\word\word as word_dsp;
 use cfg\user;

@@ -50,38 +50,21 @@ class word_list
         $t->subheader('Word list tests');
 
         // create the word list test set
-        $lst = new word_list_dsp();
-        $lst_long = new word_list_dsp();
-        $wrd = new word_dsp('{"id":1,"name":"' . word_api::TN_READ . '"}');
-        $wrd_pi = new word_dsp('{"id":2,"name":"' . word_api::TN_PI . '"}');
-        $wrd_time = new word_dsp('{"id":3,"name":"' . word_api::TN_2019 . '"}');
-        $wrd_one = new word_dsp('{"id":4,"name":"' . word_api::TN_ONE . '"}');
-        $wrd_mio = new word_dsp('{"id":5,"name":"' . word_api::TN_MIO_SHORT . '"}');
-        $wrd_pct = new word_dsp('{"id":6,"name":"' . word_api::TN_PCT . '"}');
-        $wrd_time->set_type(phrase_type::TIME);
-        $wrd_one->set_type(phrase_type::SCALING_HIDDEN);
-        $wrd_mio->set_type(phrase_type::SCALING);
-        $wrd_pct->set_type(phrase_type::PERCENT);
-        $lst->add($wrd);
-        $lst->add($wrd_pi);
-        $lst_long->add($wrd);
-        $lst_long->add($wrd_pi);
-        $lst_long->add($wrd_time);
-        $lst_long->add($wrd_one);
-        $lst_long->add($wrd_mio);
-        $lst_long->add($wrd_pct);
+        $lst = new word_list_dsp($t->dummy_word_list_short()->api_json());
+        $lst_long = new word_list_dsp($t->dummy_word_list_all_types()->api_json());
 
         // test the word list display functions
-        $test_page = $html->text_h2('Word list display test');
-        $test_page .= 'names with links: ' . $lst->display() . '<br>';
+        $test_page = $html->text_h1('Word list display test');
+        $test_page .= 'names with links:<br>' . $lst->display() . '<br><br>';
         $test_page .= 'table cells<br>';
         $test_page .= $lst->tbl();
-        $test_page .= 'all word types: ' . '<br>' . $lst_long->display() . '<br>';
-        $test_page .= 'ex measure and time: ' . '<br>' . $lst_long->ex_measure_and_time_lst()->display() . '<br>';
-        $test_page .= 'measure and scaling: ' . '<br>' . $lst_long->measure_scale_lst()->display() . '<br>';
+        $test_page .= 'all word types: ' . '<br>' . $lst_long->display() . '<br><br>';
+        $test_page .= 'ex measure and time: ' . '<br>' . $lst_long->ex_measure_and_time_lst()->display() . '<br><br>';
+        $test_page .= 'measure and scaling: ' . '<br>' . $lst_long->measure_scale_lst()->display() . '<br><br>';
 
-        $test_page .= 'selector: ' . '<br>';
-        $test_page .= $lst_long->selector() . '<br>';
+        $test_page .= '<br>' . $html->text_h2('Selector tests');
+        $test_page .= $lst_long->selector('test_selector', '', 'No word selected') . '<br>';
+        $test_page .= $lst_long->selector('2_selected', '', 'Pi selected', 3) . '<br>';
 
         $t->html_test($test_page, 'word_list', $t);
     }

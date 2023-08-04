@@ -685,22 +685,15 @@ class view extends sandbox_typed
         global $db_con;
         $result = '';
 
-        /*
-        $sql = "SELECT view_id, view_name
-                  FROM views
-                 WHERE code_id IS NULL
-              ORDER BY view_name;";
-              */
-        $sql = sql_lst_usr("view", $this->user());
+        $dsp_lst = new view_list($this->user());
+        $dsp_lst->load_names($db_con->sql_creator(), $this);
+
         $call = '/http/view.php?words=' . $wrd_id;
         $field = 'new_id';
 
-        //$db_con = New mysql;
-        $db_con->usr_id = $this->user()->id();
-        $dsp_lst = $db_con->get_old($sql);
         foreach ($dsp_lst as $dsp) {
-            $view_id = $dsp['id'];
-            $view_name = $dsp['name'];
+            $view_id = $dsp->id();;
+            $view_name = $dsp->name();
             if ($view_id == $this->id) {
                 $result .= '<b><a href="' . $call . '&' . $field . '=' . $view_id . '">' . $view_name . '</a></b> ';
             } else {

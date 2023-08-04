@@ -34,6 +34,7 @@ namespace test;
 
 use api\word_api;
 use cfg\phrase_type;
+use cfg\view;
 use cfg\view_sys_list;
 use cfg\sql_db;
 use cfg\view_list;
@@ -59,6 +60,10 @@ class view_list_unit_tests
         // load the system views
         $sys_dsp_lst = new view_sys_list($usr);
         $this->assert_sql_sys_views($t, $db_con, $sys_dsp_lst);
+
+        // load of non system view
+        $dsp_lst = new view_list($usr);
+        $t->assert_sql_names($db_con, $dsp_lst, new view($usr));
 
 
         $t->subheader('Im- and Export tests');

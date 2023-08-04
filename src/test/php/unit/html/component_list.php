@@ -52,6 +52,10 @@ class component_list
         $test_page = $html->text_h2('component list display test');
         $test_page .= 'component list with tooltip: ' . $lst->display() . '<br>';
         $test_page .= 'component list with link: ' . $lst->display_linked() . '<br>';
+
+        $test_page .= '<br>' . $html->text_h2('Selector tests');
+        $test_page .= $lst->selector('test_selector', '', 'No component selected') . '<br>';
+
         $t->html_test($test_page, 'component_list', $t);
     }
 

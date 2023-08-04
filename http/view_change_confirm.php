@@ -30,8 +30,9 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
+use controller\controller;
 use html\html_base;
-use html\view\view_dsp_old;
+use html\view\view as view_dsp;
 use cfg\user;
 use cfg\view;
 use cfg\word;
@@ -70,7 +71,7 @@ if ($usr->id() > 0) {
     if ($word_id <= 0) {
         $result .= $html->dsp_err('word not found');
     } else {
-        $dsp = new view_dsp_old($usr);
+        $dsp = new view_dsp();
         //$dsp->set_id(cl(SQL_VIEW_FORMULA_EXPLAIN));
         $back = $word_id;
         $result .= $dsp->dsp_navbar_no_view($back);

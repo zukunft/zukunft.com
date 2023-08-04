@@ -553,7 +553,7 @@ class word extends sandbox_typed
     /**
      * @return string with the id field name of the word (not the related formula)
      */
-    protected function id_field(): string
+    public function id_field(): string
     {
         return self::FLD_ID;
     }

@@ -330,6 +330,14 @@ class sandbox_named extends sandbox
     }
 
     /**
+     * @return array with the id and name field of the child object
+     */
+    function main_fields(): array
+    {
+        return array($this->id_field(), $this->name_field());
+    }
+
+    /**
      * dummy function that should always be overwritten by the child object
      * @return string
      */

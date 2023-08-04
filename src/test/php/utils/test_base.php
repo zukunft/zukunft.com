@@ -57,6 +57,7 @@ include_once MODEL_USER_PATH . 'user.php';
 use cfg\config;
 use cfg\fig_ids;
 use cfg\phr_ids;
+use cfg\sandbox_named;
 use controller\controller;
 use html\html_base;
 use html\word\word as word_dsp;
@@ -1157,6 +1158,30 @@ class test_base
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
             $qp = $usr_obj->load_names_sql_by_ids($db_con->sql_creator(), $ids);
+            $result = $this->assert_qp($qp, $db_con->db_type);
+        }
+        return $result;
+    }
+
+    /**
+     * check the object load by id list SQL statements for all allowed SQL database dialects
+     *
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param object $usr_obj the user sandbox object e.g. a word
+     * @param sandbox_named $sbx the user sandbox object e.g. a word
+     * @return bool true if all tests are fine
+     */
+    function assert_sql_names(sql_db $db_con, object $usr_obj, sandbox_named $sbx): bool
+    {
+        // check the Postgres query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $usr_obj->load_sql_names($db_con->sql_creator(), $sbx);
+        $result = $this->assert_qp($qp, $db_con->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $usr_obj->load_sql_names($db_con->sql_creator(), $sbx);
             $result = $this->assert_qp($qp, $db_con->db_type);
         }
         return $result;

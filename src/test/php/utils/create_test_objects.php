@@ -291,6 +291,7 @@ class create_test_objects extends test_base
     {
         $wrd = new word($this->usr1);
         $wrd->set(16, word_api::TN_2019);
+        $wrd->set_type(phrase_type::TIME);
         return $wrd;
     }
 
@@ -298,6 +299,7 @@ class create_test_objects extends test_base
     {
         $wrd = new word($this->usr1);
         $wrd->set(198, word_api::TN_2020);
+        $wrd->set_type(phrase_type::TIME);
         return $wrd;
     }
 
@@ -305,6 +307,7 @@ class create_test_objects extends test_base
     {
         $wrd = new word($this->usr1);
         $wrd->set(164, word_api::TN_PCT);
+        $wrd->set_type(phrase_type::PERCENT);
         return $wrd;
     }
 
@@ -326,6 +329,7 @@ class create_test_objects extends test_base
     {
         $wrd = new word($this->usr1);
         $wrd->set(160, word_api::TN_ONE);
+        $wrd->set_type(phrase_type::SCALING_HIDDEN);
         return $wrd;
     }
 
@@ -333,6 +337,7 @@ class create_test_objects extends test_base
     {
         $wrd = new word($this->usr1);
         $wrd->set(162, word_api::TN_MIO_SHORT);
+        $wrd->set_type(phrase_type::SCALING);
         return $wrd;
     }
 
@@ -395,6 +400,33 @@ class create_test_objects extends test_base
         $lst->add($this->dummy_word_const());
         $lst->add($this->dummy_word_pi());
         $lst->add($this->dummy_word_e());
+        return $lst;
+    }
+
+    /**
+     * @return word_list with a few words for unit testing
+     */
+    function dummy_word_list_short(): word_list
+    {
+        $lst = new word_list($this->usr1);
+        $lst->add($this->dummy_word());
+        $lst->add($this->dummy_word_pi());
+        return $lst;
+    }
+
+    /**
+     * @return word_list with at least one word of each type for unit testing
+     */
+    function dummy_word_list_all_types(): word_list
+    {
+        $lst = new word_list($this->usr1);
+        $lst->add($this->dummy_word());
+        $lst->add($this->dummy_word_const());
+        $lst->add($this->dummy_word_pi());
+        $lst->add($this->dummy_word_2019());
+        $lst->add($this->dummy_word_one());
+        $lst->add($this->dummy_word_mio());
+        $lst->add($this->dummy_word_pct());
         return $lst;
     }
 

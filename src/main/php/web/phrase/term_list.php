@@ -129,20 +129,6 @@ class term_list extends list_dsp
         return $result;
     }
 
-    /**
-     * @returns string the html code to select a phrase out of this list
-     */
-    function selector(string $name = '', string $form = '', int $selected = 0): string
-    {
-        $sel = new html_selector;
-        $sel->name = $name;
-        $sel->form = $form;
-        $sel->lst = $this->lst_key();
-        $sel->selected = $selected;
-
-        return $sel->display();
-    }
-
     function add(object $obj): bool
     {
         return $this->add_obj($obj);

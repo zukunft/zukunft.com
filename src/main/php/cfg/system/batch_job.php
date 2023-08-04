@@ -319,7 +319,7 @@ class batch_job extends db_object
      * TODO align the field name with the object
      * @return string calc_and_cleanup_task_id instead of batch_job
      */
-    protected function id_field(): string
+    public function id_field(): string
     {
         return self::FLD_ID;
     }

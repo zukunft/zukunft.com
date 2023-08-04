@@ -32,6 +32,8 @@
 
 namespace cfg;
 
+use cfg\db\sql_creator;
+
 include_once MODEL_SYSTEM_PATH . 'base_list.php';
 
 class sandbox_list extends base_list
@@ -122,6 +124,59 @@ class sandbox_list extends base_list
     /*
      * load
      */
+
+    /**
+     * set the SQL query parameters to load only the id and name to save time and memory
+     * TODO add unit test for each named object
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param sandbox_named $sbx the single child object
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_names(sql_creator $sc, sandbox_named $sbx): sql_par
+    {
+        $lib = new library();
+
+        $qp = new sql_par($sbx::class, false, true);
+        $qp->name .= 'names';
+
+        $sc->set_type($lib->class_to_name($sbx::class));
+        $sc->set_name($qp->name);
+        $sc->set_usr($this->user()->id());
+        $sc->set_fields(array($sbx->id_field()));
+        $sc->set_usr_query();
+        $sc->set_order($sbx->name_field());
+
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * load only the id and name of sandbox objects (e.g. phrases or values) based on the given query parameters
+     * TODO add read db tests for all named objects
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param sandbox_named $sbx the single child object
+     * @return bool true if at least one object has been loaded
+     */
+    function load_names(sql_creator $sc, sandbox_named $sbx): bool
+    {
+
+        global $db_con;
+        $result = false;
+
+        // check the all minimal input parameters are set
+        if ($this->user()->id() <= 0) {
+            log_err('The user must be set to load ' . self::class, self::class . '->load');
+        } else {
+            $qp = $this->load_sql_names($sc, $sbx);
+            $db_lst = $db_con->get($qp);
+            $result = $this->rows_mapper($db_lst);
+        }
+        return $result;
+    }
 
     /**
      * load a list of sandbox objects (e.g. phrases or values) based on the given query parameters

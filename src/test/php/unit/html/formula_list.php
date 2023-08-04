@@ -50,6 +50,10 @@ class formula_list
         $test_page = $html->text_h2('formula list display test');
         $test_page .= 'formula list with tooltip: ' . $lst->display() . '<br>';
         $test_page .= 'formula list with link: ' . $lst->display_linked() . '<br>';
+
+        $test_page .= '<br>' . $html->text_h2('Selector tests');
+        $test_page .= $lst->selector('test_selector', '', 'No formula selected') . '<br>';
+
         $t->html_test($test_page, 'formula_list', $t);
     }
 
