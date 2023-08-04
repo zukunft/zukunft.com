@@ -271,7 +271,6 @@ class result_list extends sandbox_list
 
     /**
      * create a list of results for the export
-     * TODO check that all export_obj called from assert_json_file have the $do_load parameter
      * @param bool $do_load true if the result should be validated again before export
      *                      use false for a faster export and unit tests
      * @return array with the reduced results that can be used to create a JSON message
@@ -795,6 +794,7 @@ class result_list extends sandbox_list
 
     /**
      * load all results related to one value
+     * TODO check if this is needed
      * TODO review: the table value_formula_links is not yet filled
      *              split the backend and frontend part
      *              target is: if a value is changed, what needs to be updated?

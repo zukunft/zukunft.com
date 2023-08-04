@@ -70,7 +70,6 @@ class result_unit_tests
         $this->assert_sql_by_group($t, $db_con, $res);
         $this->assert_sql_by_formula_and_group($t, $db_con, $res);
         $this->assert_sql_by_formula_and_group_list($t, $db_con, $res);
-        $this->assert_sql_by_group_time($t, $db_con, $res);
 
         $t->subheader('SQL load default statement tests');
 
@@ -200,34 +199,6 @@ class result_unit_tests
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
             $qp = $res->load_sql_by_frm_grp_lst($db_con->sql_creator(), $frm, $lst);
-            $t->assert_qp($qp, $db_con->db_type);
-        }
-    }
-
-    /**
-     * check the SQL statements creation to get the results by the phrase group
-     *
-     * @param test_cleanup $t the testing object with the error counter
-     * @param sql_db $db_con does not need to be connected to a real database
-     * @param result $res the user sandbox object e.g. a result
-     * @return void true if all tests are fine
-     */
-    private function assert_sql_by_group_time(test_cleanup $t, sql_db $db_con, result $res): void
-    {
-        // prepare
-        $grp = new phrase_group($t->usr1);
-        $grp->set_id(1);
-        $res->time_id = 2;
-
-        // check the Postgres query syntax
-        $db_con->db_type = sql_db::POSTGRES;
-        $qp = $res->load_sql_by_grp_time($db_con->sql_creator(), $grp);
-        $result = $t->assert_qp($qp, $db_con->db_type);
-
-        // ... and check the MySQL query syntax
-        if ($result) {
-            $db_con->db_type = sql_db::MYSQL;
-            $qp = $res->load_sql_by_grp_time($db_con->sql_creator(), $grp);
             $t->assert_qp($qp, $db_con->db_type);
         }
     }

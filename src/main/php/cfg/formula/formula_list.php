@@ -542,14 +542,15 @@ class formula_list extends sandbox_list
 
     /**
      * create a list of formula objects for the export
-     * @return array with the reduced word objects that can be used to create a JSON message
+     * @param bool $do_load to switch off the database load for unit tests
+     * @return array with the reduced formula objects that can be used to create a JSON message
      */
-    function export_obj(): array
+    function export_obj(bool $do_load = true): array
     {
         $exp_formulas = array();
         foreach ($this->lst as $frm) {
             if (get_class($frm) == formula::class) {
-                $exp_formulas[] = $frm->export_obj();
+                $exp_formulas[] = $frm->export_obj($do_load);
             } else {
                 log_err('The function formula_list->export_obj returns ' . $frm->dsp_id() . ', which is ' . get_class($frm) . ', but not a formula.', 'export->get');
             }

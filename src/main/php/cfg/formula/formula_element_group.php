@@ -371,7 +371,7 @@ class formula_element_group
     /**
      * the HTML code to display a figure list
      */
-    function dsp_values($time_default, string $back = ''): string
+    function dsp_values(string $back = ''): string
     {
         log_debug();
 

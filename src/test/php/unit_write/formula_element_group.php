@@ -106,8 +106,7 @@ class formula_element_group_test
             $t->display('formula_element_group->dsp_names', $target, $result);
 
             // test if the values for an element group are displayed correctly
-            $time_phr = $phr_lst->assume_time();
-            $result = $elm_grp->dsp_values($time_phr);
+            $result = $elm_grp->dsp_values();
             $fig_lst = $elm_grp->figures();
             $target = '<a href="/http/result_edit.php?id=' . $fig_lst->get_first_id() . '" title="8.51">8.51</a>';
             $t->display('formula_element_group->dsp_values', $target, $result);

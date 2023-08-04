@@ -682,6 +682,23 @@ class phrase_group extends db_object
     }
 
     /**
+     * TODO add a unit test
+     * @return phrase of the most relevant time
+     */
+    function time(): phrase
+    {
+        $phr = new phrase($this->user());
+        $phr_lst = $this->phr_lst->time_lst();
+        if (!$phr_lst->is_empty()) {
+            // TODO use a new "most relevant" function
+            $phr = $phr_lst->lst()[0];
+        } else {
+            $phr = $phr_lst->assume_time();
+        }
+        return $phr;
+    }
+
+    /**
      * @param $time_wrd_id
      * @return array|null
      */

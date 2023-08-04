@@ -88,22 +88,18 @@ class result extends sandbox_value
      */
 
     // database fields
+    public ?phrase_group $src_grp = null;      // the phrase group used that selected the numbers to calculate this result
+    public formula $frm;                       // the formula object used to calculate this result
+    public phrase_group $grp;                  // the phrase group of the result
     public ?float $value = null;               // ... and finally the numeric value
     public ?bool $is_std = True;               // true as long as no user specific value, formula or assignment is used for this result
-    // objects directly linked to database fields
-    public formula $frm;                       // the formula object used to calculate this result
-    public phrase_group $grp;                 // the phrase group of the result
-    public ?phrase_group $src_grp = null;      // the phrase group used for calculating the result
 
     // to deprecate
-    public ?int $time_id = null;               // the result time word id as saved in the database, which can differ from the source time
     public ?DateTime $last_update = null;      // ... and the time of the last update; all updates up to this time are included in this result
     public ?bool $dirty = null;                // true as long as an update is pending
 
 
     // in memory only fields (all methods except load and save should use the wrd_lst object not the ids and not the group id)
-    public ?phrase_list $phr_lst = null;       // the phrase list obj (not a list of phrase objects) filled while loading
-    public ?phrase $time_phr = null;           // the time word object created while loading
     public ?bool $val_missing = False;         // true if at least one of the results is not set which means is NULL (but zero is a value)
     public ?bool $is_updated = False;          // true if the result has been calculated, but not yet saved
     public ?string $ref_text = null;           // the formula text in the database reference format on which the result is based
@@ -315,23 +311,6 @@ class result extends sandbox_value
     }
 
     /**
-     * create the SQL to load a results by phrase group id and time phrase
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @param phrase_group $grp the group used for the selection
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql_by_grp_time(sql_creator $sc, phrase_group $grp, int $time_phr_id = null): sql_par
-    {
-        $qp = $this->load_sql_by_grp_prepare($sc, $grp);
-        $qp->name .= '_time';
-        $sc->set_name($qp->name);
-        $qp->sql = $sc->sql();
-        $qp->par = $sc->get_par();
-        return $qp;
-    }
-
-    /**
      * create the SQL to load a results by phrase group id
      *
      * @param sql_creator $sc with the target db_type set
@@ -458,12 +437,7 @@ class result extends sandbox_value
             $res_usr = $this->user();
             $this->reset();
             $this->set_user($res_usr);
-            if ($time_phr_id != null) {
-                $this->time_id = $time_phr_id;
-                $qp = $this->load_sql_by_grp_time($db_con->sql_creator(), $grp, $time_phr_id);
-            } else {
-                $qp = $this->load_sql_by_grp($db_con->sql_creator(), $grp);
-            }
+            $qp = $this->load_sql_by_grp($db_con->sql_creator(), $grp);
             if ($qp->name != '') {
                 $db_row = $db_con->get1($qp);
                 $this->row_mapper($db_row);
@@ -1112,11 +1086,6 @@ class result extends sandbox_value
         if ($this->grp->phr_lst != null) {
             $id_lst = $this->grp->phr_lst->id_lst();
         }
-        if ($this->time_phr != null) {
-            if ($this->time_phr->isset()) {
-                $id_lst[] = $this->time_phr->id();
-            }
-        }
         return $id_lst;
     }
 
@@ -1136,9 +1105,6 @@ class result extends sandbox_value
         }
         if (isset($this->grp->phr_lst)) {
             $result .= $this->grp->phr_lst->dsp_id();
-        }
-        if (isset($this->time_phr)) {
-            $result .= '@' . $this->time_phr->dsp_id();
         }
         if ($result <> '') {
             $result .= ' (' . $this->id() . ')';
@@ -1162,9 +1128,6 @@ class result extends sandbox_value
         if (isset($this->grp->phr_lst)) {
             $result .= $this->grp->phr_lst->dsp_name();
         }
-        if (isset($this->time_phr)) {
-            $result .= '@' . $this->time_phr->dsp_name();
-        }
 
         return $result;
     }
@@ -1176,9 +1139,6 @@ class result extends sandbox_value
 
         if (isset($this->grp->phr_lst)) {
             $result .= $this->grp->phr_lst->name_linked();
-        }
-        if (isset($this->time_phr)) {
-            $result .= '@' . $this->time_phr->name_linked();
         }
 
         log_debug('result->name done');
@@ -1244,7 +1204,6 @@ class result extends sandbox_value
         $title = '';
         // add the words that specify the calculated value to the title
         $val_phr_lst = clone $this->grp->phr_lst;
-        $val_phr_lst->add($this->time_phr);
         $val_wrd_lst = $val_phr_lst->wrd_lst_all();
         $title .= $lib->dsp_array($val_wrd_lst->api_obj()->ex_measure_and_time_lst()->dsp_obj()->names_linked());
         $time_phr = $lib->dsp_array($val_wrd_lst->dsp_obj()->time_lst()->dsp_obj()->names_linked());
@@ -1308,13 +1267,7 @@ class result extends sandbox_value
 
                 // select or guess the element time word if needed
                 log_debug('guess the time ... ');
-                if ($this->time_id > 0) {
-                    $elm_time_phr = $this->time_phr;
-                    log_debug('time ' . $this->time_phr->name() . ' taken from the result');
-                } else {
-                    $elm_time_phr = $this->src_grp->phr_lst->assume_time();
-                    log_debug('time ' . $elm_time_phr->name() . ' assumed');
-                }
+                $elm_time_phr = $this->src_grp->phr_lst->assume_time();
 
                 $elm_grp->phr_lst = $this->src_grp->phr_lst;
                 $elm_grp->time_phr = $elm_time_phr;
@@ -1322,7 +1275,7 @@ class result extends sandbox_value
                 log_debug('words set ' . $elm_grp->phr_lst->dsp_name() . ' taken from the source and user "' . $elm_grp->usr->name . '"');
 
                 // finally, display the value used in the formula
-                $result .= ' = ' . $elm_grp->dsp_values($this->time_phr, $back);
+                $result .= ' = ' . $elm_grp->dsp_values($back);
                 $result .= '</br>';
                 log_debug('next element');
                 $elm_nbr++;
@@ -1340,7 +1293,7 @@ class result extends sandbox_value
     function update_depending(): array
     {
         $lib = new library();
-        log_debug("(f" . $this->frm->id() . ",t" . $lib->dsp_array($this->phr_ids()) . ",tt" . $this->time_id . ",v" . $this->value . " and user " . $this->user()->name . ")");
+        log_debug("(f" . $this->frm->id() . ",t" . $lib->dsp_array($this->phr_ids()) . ",v" . $this->value . " and user " . $this->user()->name . ")");
 
         global $db_con;
         $result = array();
@@ -1404,7 +1357,7 @@ class result extends sandbox_value
     private function save_without_time(): string
     {
         $res_no_time = clone $this;
-        $res_no_time->time_phr = null;
+        // $res_no_time->time_phr = null;
         return $res_no_time->save();
     }
 
@@ -1503,8 +1456,8 @@ class result extends sandbox_value
                 } else {
                     // save the default value if the result time is the "newest"
                     if (isset($res_default_time)) {
-                        log_debug('check if result time ' . $this->time_phr->dsp_id() . ' is the default time ' . $res_default_time->dsp_id());
-                        if ($this->time_phr->id() == $res_default_time->id()) {
+                        log_debug('check if result time ' . $this->grp->time()->dsp_id() . ' is the default time ' . $res_default_time->dsp_id());
+                        if ($this->grp->time()->id() == $res_default_time->id()) {
                             // if there is not yet a general value for all user, save it now
                             $result .= $this->save_without_time();
                         }
@@ -1522,7 +1475,7 @@ class result extends sandbox_value
                     if ($debug > 0) {
                         $debug_txt = 'result = ' . $this->value . ' saved for ' . $this->grp->phr_lst->name_linked();
                         if ($debug > 3) {
-                            $debug_txt .= ' (group id "' . $this->grp->id() . '" and the result time is ' . $this->time_phr->name_linked() . ') as id "' . $res_id . '" based on ' . $this->src_grp->phr_lst->name_linked() . ' (group id "' . $this->src_grp->dsp_id() . ')';
+                            $debug_txt .= ' (group id "' . $this->grp->id() . '" as id "' . $res_id . '" based on ' . $this->src_grp->phr_lst->name_linked() . ' (group id "' . $this->src_grp->dsp_id() . ')';
                         }
                         if (!$this->is_std) {
                             $debug_txt .= ' for user "' . $this->user()->name . '"';

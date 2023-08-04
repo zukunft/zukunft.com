@@ -1354,6 +1354,10 @@ class formula extends sandbox_typed
 
     /**
      * create an object for the export
+     * @param bool $do_load true if the result should be validated again before export
+     *                      use false for a faster export and unit tests
+     * TODO check where if the exp_obj can be replaced with a simple array or the other way round
+     * @return exp_obj with the reduced formula object that can be used to create a JSON message
      */
     function export_obj(bool $do_load = true): exp_obj
     {

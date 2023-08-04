@@ -623,14 +623,15 @@ class phrase_list extends sandbox_list_named
     /**
      * create a list of phrase objects for the export
      * TODO check if needed
-     * @return array with the reduced word objects that can be used to create a JSON message
+     * @param bool $do_load to switch off the database load for unit tests
+     * @return array with the reduced phrase objects that can be used to create a JSON message
      */
-    function export_obj(): array
+    function export_obj(bool $do_load = true): array
     {
         $exp_phrases = array();
         foreach ($this->lst as $phr) {
-            if (get_class($phr) == triple::class) {
-                $exp_phrases[] = $phr->export_obj();
+            if (get_class($phr) == word::class or get_class($phr) == triple::class) {
+                $exp_phrases[] = $phr->export_obj($do_load);
             } else {
                 log_err('The function phrase_list->export_obj returns ' . $phr->dsp_id() . ', which is ' . get_class($phr) . ', but not a word.', 'export->get');
             }
