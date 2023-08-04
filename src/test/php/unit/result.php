@@ -87,7 +87,7 @@ class result_unit_tests
         $wrd_const = $t->new_word(word_api::TN_READ);
         $phr_lst = new phrase_list($usr);
         $phr_lst->add($wrd_const->phrase());
-        $res->phr_lst = $phr_lst;
+        $res->grp->phr_lst = $phr_lst;
         $res->value = result_api::TV_INT;
         $t->assert('result->val_formatted test big numbers', $res->val_formatted(), "123'456");
 

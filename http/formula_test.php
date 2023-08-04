@@ -138,10 +138,10 @@ if ($session_usr->id() > 0) {
                 if (!empty($res_lst)) {
                     $res = $res_lst[0];
                     if ($debug > 0) {
-                        if (is_null($res->phr_lst) > 0) {
+                        if (is_null($res->grp->phr_lst) > 0) {
                             $debug_text = '' . $frm->name_linked() . ' for ';
                         } else {
-                            $debug_text = '' . $frm->name_linked() . ' for ' . $res->phr_lst->name_linked();
+                            $debug_text = '' . $frm->name_linked() . ' for ' . $res->grp->phr_lst->name_linked();
                         }
                         $debug_text .= ' = ' . $res->display_linked($back) . ' (<a href="/http/formula_test.php?id=' . $frm_id . '&phrases=' . $phr_ids_txt . '&user=' . $usr->id() . '&back=' . $back . '&debug=' . $debug_next_level . '">more details</a>)';
                         log_debug($debug_text);

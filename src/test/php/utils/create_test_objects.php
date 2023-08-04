@@ -598,7 +598,7 @@ class create_test_objects extends test_base
         $phr_lst = new phrase_list($this->usr1);
         $phr_lst->add($wrd->phrase());
         $res->set_id(1);
-        $res->phr_lst = $phr_lst;
+        $res->grp->phr_lst = $phr_lst;
         $res->value = result_api::TV_INT;
         return $res;
     }
@@ -609,7 +609,7 @@ class create_test_objects extends test_base
         $wrd_pct = $this->new_word(word_api::TN_PCT, 2, phrase_type::PERCENT);
         $phr_lst = new phrase_list($this->usr1);
         $phr_lst->add($wrd_pct->phrase());
-        $res->phr_lst = $phr_lst;
+        $res->grp->phr_lst = $phr_lst;
         $res->value = 0.01234;
         return $res;
     }

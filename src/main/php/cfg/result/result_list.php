@@ -271,13 +271,16 @@ class result_list extends sandbox_list
 
     /**
      * create a list of results for the export
+     * TODO check that all export_obj called from assert_json_file have the $do_load parameter
+     * @param bool $do_load true if the result should be validated again before export
+     *                      use false for a faster export and unit tests
      * @return array with the reduced results that can be used to create a JSON message
      */
-    function export_obj(): array
+    function export_obj(bool $do_load = true): array
     {
         $exp_results = array();
         foreach ($this->lst as $res) {
-            $exp_results[] = $res->export_obj();
+            $exp_results[] = $res->export_obj($do_load);
         }
         return $exp_results;
     }
@@ -415,7 +418,7 @@ class result_list extends sandbox_list
                   $result .= '<th>value</th>';
                 } */
                 $res->load_phrases(); // load any missing objects if needed
-                $phr_lst = clone $res->phr_lst;
+                $phr_lst = clone $res->grp->phr_lst;
                 if (isset($res->time_phr)) {
                     log_debug("add time " . $res->time_phr->name() . ".");
                     $phr_lst->add($res->time_phr);

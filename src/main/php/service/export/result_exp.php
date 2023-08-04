@@ -37,14 +37,12 @@ class result_exp extends exp_obj
     // field names used for JSON creation
     public ?array $words = null;
     public ?array $triples = null;
-    public ?string $time = '';
     public ?string $number = '';
 
     function reset()
     {
         $this->words = [];
         $this->triples = [];
-        $this->time = '';
         $this->number = '';
     }
 
