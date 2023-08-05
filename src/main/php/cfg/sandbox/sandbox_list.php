@@ -133,18 +133,18 @@ class sandbox_list extends base_list
      *   or for view to exclude system views
      *
      * @param sql_creator $sc with the target db_type set
-     * @param sandbox_named $sbx the single child object
+     * @param sandbox_named|combine_named $sbx the single child object
      * @param string $pattern the pattern to filter the words
      * @param int $limit the number of rows to return
      * @param int $offset jump over these number of pages
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     protected function load_sql_names_pre(
-        sql_creator $sc,
-        sandbox_named $sbx,
-        string $pattern = '',
-        int $limit = 0,
-        int $offset = 0
+        sql_creator                 $sc,
+        sandbox_named|combine_named $sbx,
+        string                      $pattern = '',
+        int                         $limit = 0,
+        int                         $offset = 0
     ): sql_par
     {
         $lib = new library();
@@ -174,21 +174,21 @@ class sandbox_list extends base_list
      * TODO add unit test for each named object
      *
      * @param sql_creator $sc with the target db_type set
-     * @param sandbox_named $sbx the single child object
+     * @param sandbox_named|combine_named $sbx the single child object
      * @param string $pattern the pattern to filter the words
      * @param int $limit the number of rows to return
      * @param int $offset jump over these number of pages
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_names(
-        sql_creator $sc,
-        sandbox_named $sbx,
-        string $pattern = '',
-        int $limit = 0,
-        int $offset = 0
+        sql_creator                 $sc,
+        sandbox_named|combine_named $sbx,
+        string                      $pattern = '',
+        int                         $limit = 0,
+        int                         $offset = 0
     ): sql_par
     {
-        $qp = $this->load_sql_names_pre($sc, $sbx);
+        $qp = $this->load_sql_names_pre($sc, $sbx, $pattern, $limit, $offset);
 
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();

@@ -550,6 +550,19 @@ class phrase extends combine_named
     }
 
     /**
+     * @return string with the id field name of the phrase
+     */
+    function id_field(): string
+    {
+        return self::FLD_ID;
+    }
+
+    function name_field(): string
+    {
+        return self::FLD_NAME;
+    }
+
+    /**
      * get the main word object
      * e.g. ???
      * assumes that the phrase has already been loaded
@@ -645,6 +658,7 @@ class phrase extends combine_named
 
         return $frm;
     }
+
 
     /*
      * classification

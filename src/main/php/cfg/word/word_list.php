@@ -125,18 +125,18 @@ class word_list extends sandbox_list
      * the SQL statement to load only the word id and name
      *
      * @param sql_creator $sc with the target db_type set
-     * @param sandbox_named $sbx the single child object
+     * @param sandbox_named|combine_named $sbx the single child object
      * @param string $pattern the pattern to filter the words
      * @param int $limit the number of rows to return
      * @param int $offset jump over these number of pages
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_names(
-        sql_creator $sc,
-        sandbox_named $sbx,
-        string $pattern = '',
-        int $limit = 0,
-        int $offset = 0
+        sql_creator                 $sc,
+        sandbox_named|combine_named $sbx,
+        string                      $pattern = '',
+        int                         $limit = 0,
+        int                         $offset = 0
     ): sql_par
     {
         global $phrase_types;
@@ -265,7 +265,7 @@ class word_list extends sandbox_list
     function load_sql_like(sql_creator $sc, string $pattern = ''): sql_par
     {
         $qp = $this->load_sql($sc, 'name_like');
-        if ($pattern !=  '') {
+        if ($pattern != '') {
             $sc->add_where(word::FLD_NAME, $pattern, sql_par_type::LIKE);
             $qp->sql = $sc->sql();
         } else {
@@ -535,11 +535,11 @@ class word_list extends sandbox_list
      * @return word_list the accumulated list of added words
      */
     private function foaf_level(
-        int $level,
-        word_list $added_wrd_lst,
-        ?verb $vrb,
+        int            $level,
+        word_list      $added_wrd_lst,
+        ?verb          $vrb,
         foaf_direction $direction,
-        int $max_level = 0): word_list
+        int            $max_level = 0): word_list
     {
         $log_msg = 'foaf_level ';
         if ($vrb != null) {
