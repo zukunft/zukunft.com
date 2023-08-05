@@ -60,6 +60,25 @@ class word_list extends sandbox_list
 
 
     /*
+     * construct and map
+     */
+
+    /**
+     * fill the word list based on a database records
+     * actually just add the single word object to the parent function
+     * TODO check that a similar function is used for all lists
+     *
+     * @param array $db_rows is an array of an array with the database values
+     * @param bool $load_all force to include also the excluded phrases e.g. for admins
+     * @return bool true if at least one formula link has been added
+     */
+    protected function rows_mapper(array $db_rows, bool $load_all = false): bool
+    {
+        return parent::rows_mapper_obj(new word($this->user()), $db_rows, $load_all);
+    }
+
+
+    /*
      * cast
      */
 
@@ -100,6 +119,37 @@ class word_list extends sandbox_list
     /*
      * load
      */
+
+    /**
+     * add formula word filter to
+     * the SQL statement to load only the word id and name
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param sandbox_named $sbx the single child object
+     * @param string $pattern the pattern to filter the words
+     * @param int $limit the number of rows to return
+     * @param int $offset jump over these number of pages
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_names(
+        sql_creator $sc,
+        sandbox_named $sbx,
+        string $pattern = '',
+        int $limit = 0,
+        int $offset = 0
+    ): sql_par
+    {
+        global $phrase_types;
+
+        $qp = $this->load_sql_names_pre($sc, $sbx, $pattern, $limit, $offset);
+
+        $sc->add_where(phrase::FLD_TYPE, $phrase_types->id(phrase_type::FORMULA_LINK), sql_par_type::CONST_NOT);
+
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
 
     /**
      * set the SQL query parameters to load a list of words
@@ -317,6 +367,18 @@ class word_list extends sandbox_list
         }
 
         return $result;
+    }
+
+    /**
+     * load a list of word names
+     * @param string $pattern the pattern to filter the words
+     * @param int $limit the number of rows to return
+     * @param int $offset jump over these number of pages
+     * @return bool true if at least one word found
+     */
+    function load_names(string $pattern = '', int $limit = 0, int $offset = 0): bool
+    {
+        return parent::load_sbx_names(new word($this->user()), $pattern, $limit, $offset);
     }
 
     /**

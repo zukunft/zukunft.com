@@ -132,8 +132,8 @@ class batch_job_list extends base_list
         $type_id = $job_types->id($type_code_id);
         $job = new batch_job($this->usr);
         $qp = $job->load_sql($sc, 'job_type', self::class);
-        $sc->set_page($this->limit, $this->offset());
         $sc->add_where(batch_job::FLD_TYPE, $type_id);
+        $sc->set_page($this->limit, $this->offset());
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
         return $qp;

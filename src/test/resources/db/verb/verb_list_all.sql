@@ -1,4 +1,4 @@
-PREPARE verb_list_all (int) AS
+PREPARE verb_list_all (int, int) AS
     SELECT
            verb_id,
            verb_name,
@@ -11,4 +11,5 @@ PREPARE verb_list_all (int) AS
            words
       FROM verbs
   ORDER BY verb_id
-     LIMIT $1;
+     LIMIT $1
+    OFFSET $2;

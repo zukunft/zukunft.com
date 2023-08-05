@@ -1,4 +1,4 @@
-PREPARE change_log_named_by_field_row (int,int) AS
+PREPARE change_log_named_by_field_row (int, int, int, int) AS
     SELECT s.change_id,
            s.user_id,
            s.change_time,
@@ -17,4 +17,5 @@ PREPARE change_log_named_by_field_row (int,int) AS
      WHERE s.change_field_id = $1
        AND s.row_id = $2
   ORDER BY s.change_time DESC
-     LIMIT 20;
+     LIMIT $3
+    OFFSET $4;

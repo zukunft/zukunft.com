@@ -1,4 +1,4 @@
-PREPARE phrase_group_list_by_ids_fast (int[]) AS
+PREPARE phrase_group_list_by_ids_fast (int[], int, int) AS
     SELECT
             phrase_group_id,
             phrase_group_name,
@@ -9,4 +9,5 @@ PREPARE phrase_group_list_by_ids_fast (int[]) AS
        FROM phrase_groups
       WHERE phrase_group_id = ANY ($1)
    ORDER BY phrase_group_id
-      LIMIT 20;
+      LIMIT $2
+     OFFSET $3;

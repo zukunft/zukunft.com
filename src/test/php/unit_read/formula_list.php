@@ -105,7 +105,7 @@ class formula_list_unit_db_tests
         $test_name = 'load formulas staring with i';
         $frm_lst = new formula_list($t->usr1);
         $frm_lst->load_like('i');
-        $t->assert_contains($test_name, $frm_lst->names(), array(formula_api::TN_INCREASE));
+        $t->assert_contains($test_name, $frm_lst->names(), formula_api::TN_INCREASE);
     }
 
 }

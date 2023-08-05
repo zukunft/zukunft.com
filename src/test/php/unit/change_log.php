@@ -94,13 +94,6 @@ class change_log_unit_tests
         $log = new change_log_link($usr);
         $this->assert_sql_link_by_table($t, $db_con, $log);
 
-        // compare the new and the old query creation
-        $log = new change_log_named($usr);
-        $db_con->db_type = sql_db::POSTGRES;
-        $qp = $log->load_sql_by_field_row($db_con->sql_creator(), 1, 2);
-        $sql_expected = 'PREPARE change_log_named_by_field_row (int,int) AS ' . $log->load_sql_old(word::class)->sql;
-        $t->assert_sql('word', $qp->sql, $sql_expected);
-
         $t->subheader('SQL list statement tests');
 
         // prepare the objects for the tests

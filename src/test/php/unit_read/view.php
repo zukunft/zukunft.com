@@ -70,7 +70,7 @@ class view_unit_db_tests
 
         $test_name = 'load the components of view ' . view_api::TN_READ . ' contains ' . component_api::TN_READ;
         $dsp->load_components();
-        $t->assert_contains($test_name, $dsp->cmp_lst()->names(), array(component_api::TN_READ));
+        $t->assert_contains($test_name, $dsp->cmp_lst()->names(), component_api::TN_READ);
 
 
         $t->subheader('View types tests');

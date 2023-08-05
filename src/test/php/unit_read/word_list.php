@@ -32,7 +32,9 @@
 
 namespace test;
 
+use api\formula_api;
 use api\word_api;
+use cfg\formula;
 use cfg\word_list;
 
 class word_list_unit_db_tests
@@ -48,6 +50,30 @@ class word_list_unit_db_tests
 
         $t->header('Test the word list class (classes/word_list.php)');
 
+        // test loading word names
+        $wrd_lst = new word_list($t->usr1);
+        $test_name = 'loading word names without pattern return more than two words';
+        $wrd_lst->load_names();
+        $t->assert_greater($test_name, 2, $wrd_lst->count());
+        $test_name = 'loading word names with pattern return the expected word';
+        $pattern = substr(word_api::TN_READ, 0, -1);
+        $wrd_lst = new word_list($t->usr1);
+        $wrd_lst->load_names($pattern);
+        $t->assert_contains($test_name, $wrd_lst->names(), word_api::TN_READ);
+        $test_name = 'loading word names with page size one return only one word';
+        $wrd_lst = new word_list($t->usr1);
+        $wrd_lst->load_names($pattern, 1, 0);
+        $t->assert($test_name, $wrd_lst->count(), 1);
+        $test_name = 'next page with page size one does not return the pattern word';
+        $wrd_lst = new word_list($t->usr1);
+        $wrd_lst->load_names($pattern, 1, 1);
+        $t->assert_contains_not($test_name, $wrd_lst->names(), word_api::TN_READ);
+        $test_name = 'formula names are not included in the normal word list';
+        $wrd_lst = new word_list($t->usr1);
+        $wrd_lst->load_names(formula_api::TN_READ);
+        $t->assert_contains_not($test_name, $wrd_lst->names(), formula_api::TN_READ);
+
+
         // test load by word list by ids
         $test_name = 'load words by ids';
         $wrd_lst = new word_list($t->usr1);
@@ -61,7 +87,7 @@ class word_list_unit_db_tests
         $test_name = 'load words staring with P';
         $wrd_lst = new word_list($t->usr1);
         $wrd_lst->load_like('P');
-        $t->assert_contains($test_name, $wrd_lst->names(), array(word_api::TN_PI));
+        $t->assert_contains($test_name, $wrd_lst->names(), word_api::TN_PI);
 
     }
 

@@ -73,6 +73,7 @@ class sql_creator
     private ?string $order;    // the ORDER                 SQL statement that is used for the next select query
     private ?string $page;     // the LIMIT and OFFSET      SQL statement that is used for the next select query
     private ?string $end;      // the closing               SQL statement that is used for the next select query
+    private bool $use_page;    // true if the limit and offset statement should be added at the end
 
     // temp for handling the user fields
     private ?array $field_lst;                 // list of fields that should be returned to the next select query
@@ -172,6 +173,7 @@ class sql_creator
         $this->order = '';
         $this->page = '';
         $this->end = '';
+        $this->use_page = false;
 
         $this->field_lst = [];
         $this->usr_field_lst = [];
@@ -583,7 +585,9 @@ class sql_creator
             or $spt == sql_par_type::INT_LOWER
             or $spt == sql_par_type::INT_OR
             or $spt == sql_par_type::INT_NOT
-            or $spt == sql_par_type::INT_NOT_OR_NULL) {
+            or $spt == sql_par_type::INT_NOT_OR_NULL
+            or $spt == sql_par_type::LIMIT
+            or $spt == sql_par_type::OFFSET) {
             $this->add_par($spt, $fld_val);
         } elseif ($spt == sql_par_type::TEXT
             or $spt == sql_par_type::TEXT_USR
@@ -632,7 +636,7 @@ class sql_creator
         // create a prepare SQL statement if possible
         $sql = $this->prepare_sql();
 
-        $sql .= $fields . $from . $this->join . $where . $this->order . $this->page;
+        $sql .= $fields . $from . $this->join . $where . $this->order . $this->get_page();
 
         return $this->end_sql($sql);
     }
@@ -1201,17 +1205,21 @@ class sql_creator
                     }
                     if ($this->par_named[$i] == false) {
                         // start with the where statement
-                        if ($result == '') {
-                            $result = ' WHERE ';
-                        } else {
-                            if ($par_type == sql_par_type::TEXT_OR
-                                or $par_type == sql_par_type::INT_OR
-                                or $par_type == sql_par_type::INT_LIST_OR) {
-                                $result .= ' OR ';
+                        if ($par_type != sql_par_type::LIMIT
+                            and $par_type != sql_par_type::OFFSET) {
+                            if ($result == '') {
+                                $result = ' WHERE ';
                             } else {
-                                $result .= ' AND ';
+                                if ($par_type == sql_par_type::TEXT_OR
+                                    or $par_type == sql_par_type::INT_OR
+                                    or $par_type == sql_par_type::INT_LIST_OR) {
+                                    $result .= ' OR ';
+                                } else {
+                                    $result .= ' AND ';
+                                }
                             }
                         }
+
                         // set the opening bracket around a or field list if needed
                         if ($par_type == sql_par_type::TEXT_OR
                             or $par_type == sql_par_type::INT_OR
@@ -1241,15 +1249,18 @@ class sql_creator
 
                             // set the table prefix
                             $tbl_id = '';
-                            if ($this->usr_query
-                                or $this->join <> ''
-                                or $this->join_type <> ''
-                                or $this->join2_type <> '') {
-                                if (!str_contains($this->par_fields[$i], '.')) {
-                                    if ($this->par_use_link[$i]) {
-                                        $tbl_id = sql_db::LNK_TBL . '.';
-                                    } else {
-                                        $tbl_id = sql_db::STD_TBL . '.';
+                            if ($par_type != sql_par_type::LIMIT
+                                and $par_type != sql_par_type::OFFSET) {
+                                if ($this->usr_query
+                                    or $this->join <> ''
+                                    or $this->join_type <> ''
+                                    or $this->join2_type <> '') {
+                                    if (!str_contains($this->par_fields[$i], '.')) {
+                                        if ($this->par_use_link[$i]) {
+                                            $tbl_id = sql_db::LNK_TBL . '.';
+                                        } else {
+                                            $tbl_id = sql_db::STD_TBL . '.';
+                                        }
                                     }
                                 }
                             }
@@ -1268,10 +1279,14 @@ class sql_creator
                             } elseif ($par_type == sql_par_type::INT_SUB) {
                                 $result .= $tbl_id . $this->par_fields[$i]
                                     . ' IN (' . $this->par_value($i + 1) . ')';
+                            } elseif ($par_type == sql_par_type::LIMIT
+                                or $par_type == sql_par_type::OFFSET) {
+                                $par_offset--;
+                                $result .= ''; // because added with the page statement
                             } elseif ($par_type == sql_par_type::LIKE) {
                                 $result .= $tbl_id . $this->par_fields[$i]
                                     . ' like ' . $this->par_name($par_pos);
-                            } elseif ($par_type == sql_par_type::CONST ) {
+                            } elseif ($par_type == sql_par_type::CONST) {
                                 $par_offset--;
                                 $result .= $tbl_id . $this->par_fields[$i] . ' = ' . $this->par_value($i + 1);
                             } elseif ($par_type == sql_par_type::CONST_NOT) {
@@ -1373,11 +1388,40 @@ class sql_creator
                 $limit = SQL_ROW_LIMIT;
             }
         }
-        $this->page = '';
-        if ($offset > 0) {
-            $this->page .= ' OFFSET ' . $offset;
+        $this->use_page = true;
+        $this->add_field(sql_par_type::LIMIT->value);
+        $this->add_par(sql_par_type::LIMIT, $limit);
+        $this->add_field(sql_par_type::OFFSET->value);
+        $this->add_par(sql_par_type::OFFSET, $offset * $limit);
+    }
+
+    /**
+     * @return string the page statement that needs to be created after all other parameter have been requested
+     */
+    function get_page(): string
+    {
+        $result = '';
+        if ($this->use_page) {
+            // assuming that limit and offset are always the last two parameters
+            $result .= ' LIMIT ' . $this->par_name($this->par_count() - 1);
+            $result .= ' OFFSET ' . $this->par_name($this->par_count());
         }
-        $this->page .= ' LIMIT ' . $limit;
+        return $result;
+    }
+
+    /**
+     * @return int the number of parameters used excluding constants
+     */
+    function par_count(): int
+    {
+        $result = 0;
+        foreach ($this->par_types as $par_type) {
+            if ($par_type != sql_par_type::CONST
+                and $par_type != sql_par_type::CONST_NOT) {
+                $result++;
+            }
+        }
+        return $result;
     }
 
     /**
@@ -1405,34 +1449,6 @@ class sql_creator
             log_err('Query name is given, but parameters types are missing for ' . $this->query_name);
         }
         return $sql;
-    }
-
-    /**
-     * set the parameter for paged results
-     * @param int $limit the number of records requested with one request
-     * @param int $page the offset
-     * @return void
-     */
-    function set_page_par(int $limit = 0, int $page = 0): void
-    {
-        // set default values
-        if ($page < 0) {
-            $page = 0;
-        }
-        if ($limit == 0) {
-            $limit = SQL_ROW_LIMIT;
-        } else {
-            if ($limit <= 0) {
-                $limit = SQL_ROW_LIMIT;
-            }
-        }
-
-        $this->add_par(sql_par_type::INT, $limit);
-        $this->page = ' LIMIT ' . $this->par_name();
-        if ($page > 0) {
-            $this->add_par(sql_par_type::INT, $page * $limit);
-            $this->page .= ' OFFSET ' . $this->par_name();
-        }
     }
 
     /**
@@ -2000,6 +2016,8 @@ class sql_creator
                 case sql_par_type::INT_NOT:
                 case sql_par_type::INT_NOT_OR_NULL:
                 case sql_par_type::INT_SUB:
+                case sql_par_type::LIMIT:
+                case sql_par_type::OFFSET:
                     $result[] = 'int';
                     break;
                 case sql_par_type::TEXT_LIST:

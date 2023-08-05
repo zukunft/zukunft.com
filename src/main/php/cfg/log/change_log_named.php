@@ -220,7 +220,6 @@ class change_log_named extends change_log
     function load_sql_by_field_row(sql_creator $sc, ?int $field_id = null, ?int $row_id = null): sql_par
     {
         $qp = $this->load_sql($sc, 'field_row', self::class);
-        $sc->set_page();
         if ($field_id != null) {
             $sc->add_where(change_log_named::FLD_FIELD_ID, $field_id);
         }
@@ -228,6 +227,7 @@ class change_log_named extends change_log
             $sc->add_where(change_log_named::FLD_ROW_ID, $row_id);
         }
         //$fields[] = user::FLD_ID;
+        $sc->set_page();
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 

@@ -6,4 +6,5 @@ PREPARE ref_type FROM
            base_url
       FROM ref_types
   ORDER BY ref_type_id
-     LIMIT ?';
+     LIMIT ?
+    OFFSET ?';

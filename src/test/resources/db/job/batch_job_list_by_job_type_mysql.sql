@@ -8,4 +8,5 @@ PREPARE batch_job_list_by_job_type FROM
             change_field_id
        FROM calc_and_cleanup_tasks
       WHERE calc_and_cleanup_task_type_id = ?
-      LIMIT 20';
+      LIMIT ?
+     OFFSET ?';

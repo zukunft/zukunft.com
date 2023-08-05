@@ -1,4 +1,4 @@
-PREPARE ref_type (int) AS
+PREPARE ref_type (int, int) AS
     SELECT ref_type_id,
            type_name,
            description,
@@ -6,4 +6,5 @@ PREPARE ref_type (int) AS
            base_url
       FROM ref_types
   ORDER BY ref_type_id
-     LIMIT $1;
+     LIMIT $1
+    OFFSET $2;

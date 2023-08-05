@@ -33,6 +33,7 @@
 namespace cfg;
 
 use cfg\db\sql_creator;
+use cfg\db\sql_par_type;
 
 include_once MODEL_SYSTEM_PATH . 'base_list.php';
 
@@ -127,13 +128,24 @@ class sandbox_list extends base_list
 
     /**
      * set the SQL query parameters to load only the id and name to save time and memory
-     * TODO add unit test for each named object
+     * without the final building of the sql statement to allow adding a filter
+     * e.g. for words to exclude formula words
+     *   or for view to exclude system views
      *
      * @param sql_creator $sc with the target db_type set
      * @param sandbox_named $sbx the single child object
+     * @param string $pattern the pattern to filter the words
+     * @param int $limit the number of rows to return
+     * @param int $offset jump over these number of pages
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_names(sql_creator $sc, sandbox_named $sbx): sql_par
+    protected function load_sql_names_pre(
+        sql_creator $sc,
+        sandbox_named $sbx,
+        string $pattern = '',
+        int $limit = 0,
+        int $offset = 0
+    ): sql_par
     {
         $lib = new library();
 
@@ -141,11 +153,42 @@ class sandbox_list extends base_list
         $qp->name .= 'names';
 
         $sc->set_type($lib->class_to_name($sbx::class));
-        $sc->set_name($qp->name);
+        $sc->set_name($qp->name);  // assign incomplete name to force the usage of the user as a parameter
         $sc->set_usr($this->user()->id());
         $sc->set_fields(array($sbx->id_field()));
         $sc->set_usr_query();
+        if ($pattern != '') {
+            $qp->name .= '_like';
+            $sc->set_name($qp->name);
+            $sc->add_where($sbx->name_field(), $pattern, sql_par_type::LIKE);
+        }
+        $sc->set_page($limit, $offset);
         $sc->set_order($sbx->name_field());
+
+        return $qp;
+    }
+
+    /**
+     * build the SQL statement to load only the id and name to save time and memory
+     * without further filter
+     * TODO add unit test for each named object
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param sandbox_named $sbx the single child object
+     * @param string $pattern the pattern to filter the words
+     * @param int $limit the number of rows to return
+     * @param int $offset jump over these number of pages
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_names(
+        sql_creator $sc,
+        sandbox_named $sbx,
+        string $pattern = '',
+        int $limit = 0,
+        int $offset = 0
+    ): sql_par
+    {
+        $qp = $this->load_sql_names_pre($sc, $sbx);
 
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -157,11 +200,13 @@ class sandbox_list extends base_list
      * load only the id and name of sandbox objects (e.g. phrases or values) based on the given query parameters
      * TODO add read db tests for all named objects
      *
-     * @param sql_creator $sc with the target db_type set
      * @param sandbox_named $sbx the single child object
+     * @param string $pattern the pattern to filter the words
+     * @param int $limit the number of rows to return
+     * @param int $offset jump over these number of pages
      * @return bool true if at least one object has been loaded
      */
-    function load_names(sql_creator $sc, sandbox_named $sbx): bool
+    function load_sbx_names(sandbox_named $sbx, string $pattern = '', int $limit = 0, int $offset = 0): bool
     {
 
         global $db_con;
@@ -171,7 +216,7 @@ class sandbox_list extends base_list
         if ($this->user()->id() <= 0) {
             log_err('The user must be set to load ' . self::class, self::class . '->load');
         } else {
-            $qp = $this->load_sql_names($sc, $sbx);
+            $qp = $this->load_sql_names($db_con->sql_creator(), $sbx, $pattern, $limit, $offset);
             $db_lst = $db_con->get($qp);
             $result = $this->rows_mapper($db_lst);
         }

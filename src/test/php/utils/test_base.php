@@ -558,8 +558,37 @@ class test_base
      * or in other words if all needles can be found in the haystack
      *
      * @param string $msg (unique) description of the test
+     * @param int $min the minimal expected number
+     * @param int $actual the actual number
+     * @param float $exe_max_time the expected max time to create the result
+     * @param string $comment
+     * @param string $test_type
+     * @return bool true is the result is fine
+     */
+    function assert_greater(
+        string $msg,
+        int $min,
+        int $actual,
+        float $exe_max_time = TIMEOUT_LIMIT,
+        string $comment = '',
+        string $test_type = ''): bool
+    {
+        if ($actual > $min) {
+            $actual = $min;
+        } else {
+            $actual = $min - 1;
+        }
+        // the array keys are not relevant if only a few elements should be checked
+        return $this->assert($msg, $actual, $min, $exe_max_time, $comment, $test_type);
+    }
+
+    /**
+     * check if the test results contains at least all expected results
+     * or in other words if all needles can be found in the haystack
+     *
+     * @param string $msg (unique) description of the test
      * @param array $haystack the actual result
-     * @param array $needles the expected minimal result
+     * @param array|string $needle the expected minimal result
      * @param float $exe_max_time the expected max time to create the result
      * @param string $comment
      * @param string $test_type
@@ -568,11 +597,16 @@ class test_base
     function assert_contains(
         string $msg,
         array  $haystack,
-        array  $needles,
+        array|string  $needle,
         float  $exe_max_time = TIMEOUT_LIMIT,
         string $comment = '',
         string $test_type = ''): bool
     {
+        if (is_string($needle)) {
+            $needles = array($needle);
+        } else {
+            $needles = $needle;
+        }
         // the array keys are not relevant if only a few elements should be checked
         $haystack = array_values(array_intersect($haystack, $needles));
         return $this->display(', ' . $msg, $needles, $haystack, $exe_max_time, $comment, $test_type);
@@ -582,23 +616,28 @@ class test_base
      * check if the test results contains at least all expected results
      *
      * @param string $msg (unique) description of the test
-     * @param array $result the actual result
-     * @param array $target the expected result
+     * @param array $haystack the actual result
+     * @param array|string $needle the expected result
      * @param float $exe_max_time the expected max time to create the result
      * @param string $comment
      * @param string $test_type
      * @return bool true is the result is fine
      */
     function assert_contains_not(
-        string $msg,
-        array  $result,
-        array  $target,
-        float  $exe_max_time = TIMEOUT_LIMIT,
-        string $comment = '',
-        string $test_type = ''): bool
+        string       $msg,
+        array        $haystack,
+        array|string $needle,
+        float        $exe_max_time = TIMEOUT_LIMIT,
+        string       $comment = '',
+        string       $test_type = ''): bool
     {
-        $result = array_diff($target, $result);
-        return $this->display(', ' . $msg, $target, $result, $exe_max_time, $comment, $test_type);
+        if (is_string($needle)) {
+            $needles = array($needle);
+        } else {
+            $needles = $needle;
+        }
+        $haystack = array_diff($needles, $haystack);
+        return $this->display(', ' . $msg, $needles, $haystack, $exe_max_time, $comment, $test_type);
     }
 
     /**
@@ -1169,19 +1208,20 @@ class test_base
      * @param sql_db $db_con does not need to be connected to a real database
      * @param object $usr_obj the user sandbox object e.g. a word
      * @param sandbox_named $sbx the user sandbox object e.g. a word
+     * @param string $pattern the pattern to filter
      * @return bool true if all tests are fine
      */
-    function assert_sql_names(sql_db $db_con, object $usr_obj, sandbox_named $sbx): bool
+    function assert_sql_names(sql_db $db_con, object $usr_obj, sandbox_named $sbx, string $pattern = ''): bool
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $usr_obj->load_sql_names($db_con->sql_creator(), $sbx);
+        $qp = $usr_obj->load_sql_names($db_con->sql_creator(), $sbx, $pattern);
         $result = $this->assert_qp($qp, $db_con->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
-            $qp = $usr_obj->load_sql_names($db_con->sql_creator(), $sbx);
+            $qp = $usr_obj->load_sql_names($db_con->sql_creator(), $sbx, $pattern);
             $result = $this->assert_qp($qp, $db_con->db_type);
         }
         return $result;

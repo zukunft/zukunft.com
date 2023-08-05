@@ -11,4 +11,5 @@ PREPARE verb_list_all FROM
          words
     FROM verbs
 ORDER BY verb_id
-   LIMIT ?';
+   LIMIT ?
+  OFFSET ?';

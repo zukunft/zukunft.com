@@ -1,4 +1,4 @@
-PREPARE phrase_group_list_by_phr (int) AS
+PREPARE phrase_group_list_by_phr (int, int, int) AS
     SELECT
             s.phrase_group_id,
             s.phrase_group_name,
@@ -11,4 +11,5 @@ PREPARE phrase_group_list_by_phr (int) AS
   LEFT JOIN phrase_group_word_links l ON s.phrase_group_id = l.phrase_group_id
       WHERE l.word_id = $1
    ORDER BY s.phrase_group_id
-      LIMIT 20;
+      LIMIT $2
+     OFFSET $3;

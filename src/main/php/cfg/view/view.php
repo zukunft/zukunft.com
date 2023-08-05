@@ -686,7 +686,7 @@ class view extends sandbox_typed
         $result = '';
 
         $dsp_lst = new view_list($this->user());
-        $dsp_lst->load_names($db_con->sql_creator(), $this);
+        $dsp_lst->load_sbx_names($this);
 
         $call = '/http/view.php?words=' . $wrd_id;
         $field = 'new_id';

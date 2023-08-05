@@ -17,4 +17,5 @@ PREPARE change_log_named_by_field_row FROM
      WHERE s.change_field_id = ?
        AND s.row_id = ?
   ORDER BY s.change_time DESC
-     LIMIT 20';
+     LIMIT ?
+    OFFSET ?';

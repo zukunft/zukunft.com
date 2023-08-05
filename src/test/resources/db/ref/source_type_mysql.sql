@@ -5,4 +5,5 @@ PREPARE source_type FROM
            code_id
       FROM source_types
   ORDER BY source_type_id
-     LIMIT ?';
+     LIMIT ?
+    OFFSET ?';

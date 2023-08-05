@@ -44,6 +44,8 @@ enum sql_par_type: string
     case INT_LIST = 'int_list';
     case INT_LIST_OR = 'int_list_or';
     case INT_SUB = 'int_sub'; // a sub query is using an int parameter
+    case LIMIT = 'limit'; // the query limit as an integer that is not used in the where statement
+    case OFFSET = 'offset'; // the query offset as an integer that is not used in the where statement
     case TEXT = 'text';
     case TEXT_LIST = 'text_list';
     case TEXT_OR = 'text_or';

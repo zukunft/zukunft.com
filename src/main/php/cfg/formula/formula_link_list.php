@@ -58,8 +58,9 @@ class formula_link_list extends sandbox_list
         return parent::rows_mapper_obj(new formula_link($this->user()), $db_rows, $load_all);
     }
 
+
     /*
-     * load functions
+     * load
      */
 
     /**

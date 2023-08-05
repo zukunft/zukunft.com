@@ -70,6 +70,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO split acronym in 'one to one' and 'one to many'
     TODO replace db field 'triple_name' with a virtual field based on name_generated and name_given
     TODO add api unit test (assert_api_to_dsp) to all objects
+    TODO add limit and offset to all list sql statements
     TODO align the namespace with PSR-0 as much as possible
 
     after that this should be done while keeping step 1. to 4. for each commit:

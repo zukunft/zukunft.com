@@ -325,9 +325,9 @@ class change_log_list extends base_list
         $log_named = new change_log_named($usr);
         $query_ext = $this->table_field_to_query_name($table_name, $field_name);
         $qp = $log_named->load_sql($sc, $query_ext, self::class);
-        $sc->set_page($this->limit, $this->offset());
         $sc->add_where(change_log_named::FLD_FIELD_ID, $field_id);
         $sc->add_where(change_log_named::FLD_ROW_ID, $id);
+        $sc->set_page($this->limit, $this->offset());
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
         return $qp;

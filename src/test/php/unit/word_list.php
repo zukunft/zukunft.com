@@ -67,6 +67,11 @@ class word_list_unit_tests
 
         $t->subheader('Database query creation tests');
 
+        // load only the names
+        $wrd_lst = new word_list($usr);
+        $t->assert_sql_names($db_con, $wrd_lst, new word($usr));
+        $t->assert_sql_names($db_con, $wrd_lst, new word($usr), word_api::TD_READ);
+
         // load by word ids
         $wrd_lst = new word_list($usr);
         $t->assert_sql_by_ids($db_con, $wrd_lst, array(3, 2, 4));
@@ -128,6 +133,7 @@ class word_list_unit_tests
         $t->subheader('Modify and filter word lists');
 
         // create words for unit testing
+        // TODO used create dummy functions
         $wrd1 = new word($usr);
         $wrd1->set_id(1);
         $wrd1->set_name('word1');

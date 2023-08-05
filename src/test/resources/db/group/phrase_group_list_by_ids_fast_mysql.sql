@@ -9,4 +9,5 @@ PREPARE phrase_group_list_by_ids_fast FROM
        FROM phrase_groups
       WHERE phrase_group_id IN (?)
    ORDER BY phrase_group_id
-      LIMIT 20';
+      LIMIT ?
+     OFFSET ?';
