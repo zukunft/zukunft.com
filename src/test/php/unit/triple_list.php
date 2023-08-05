@@ -35,8 +35,10 @@ namespace test;
 include_once MODEL_WORD_PATH . 'triple_list.php';
 include_once WEB_WORD_PATH . 'triple_list.php';
 
+use api\triple_api;
 use cfg\foaf_direction;
 use cfg\phrase_list;
+use cfg\triple;
 use cfg\verb_list;
 use html\word\triple_list as triple_list_dsp;
 use cfg\library;
@@ -65,6 +67,11 @@ class triple_list_unit_tests
         $t->header('Unit tests of the word link list class (src/main/php/model/word/triple_list.php)');
 
         $t->subheader('Database query creation tests');
+
+        // load only the names
+        $trp_lst = new triple_list($usr);
+        //$t->assert_sql_names($db_con, $trp_lst, new triple($usr));
+        //$t->assert_sql_names($db_con, $trp_lst, new triple($usr), triple_api::TD_READ);
 
         // load by triple ids
         $trp_lst = new triple_list($usr);

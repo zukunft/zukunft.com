@@ -35,6 +35,8 @@ include_once API_VIEW_PATH . 'view_list.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
 
 use api\view_list_api;
+use cfg\db\sql_creator;
+use cfg\db\sql_par_type;
 
 global $system_views;
 
@@ -96,6 +98,35 @@ class view_list extends sandbox_list
     /*
      * load
      */
+
+    /**
+     * add system view filter to
+     * the SQL statement to load only the view id and name
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param sandbox_named|combine_named $sbx the single child object
+     * @param string $pattern the pattern to filter the views
+     * @param int $limit the number of rows to return
+     * @param int $offset jump over these number of pages
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_names(
+        sql_creator                 $sc,
+        sandbox_named|combine_named $sbx,
+        string                      $pattern = '',
+        int                         $limit = 0,
+        int                         $offset = 0
+    ): sql_par
+    {
+        $qp = $this->load_sql_names_pre($sc, $sbx, $pattern, $limit, $offset);
+
+        $sc->add_where(sql_db::FLD_CODE_ID, '', sql_par_type::IS_NULL);
+
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
 
     /**
      * set the SQL query parameters to load a list of views

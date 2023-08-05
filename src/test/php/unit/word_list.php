@@ -70,7 +70,7 @@ class word_list_unit_tests
         // load only the names
         $wrd_lst = new word_list($usr);
         $t->assert_sql_names($db_con, $wrd_lst, new word($usr));
-        $t->assert_sql_names($db_con, $wrd_lst, new word($usr), word_api::TD_READ);
+        $t->assert_sql_names($db_con, $wrd_lst, new word($usr), word_api::TN_READ);
 
         // load by word ids
         $wrd_lst = new word_list($usr);

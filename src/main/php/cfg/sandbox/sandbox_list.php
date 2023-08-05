@@ -171,7 +171,7 @@ class sandbox_list extends base_list
     /**
      * build the SQL statement to load only the id and name to save time and memory
      * without further filter
-     * TODO add unit test for each named object
+     * TODO add unit test for each named object (triple, term, view and component still missing)
      *
      * @param sql_creator $sc with the target db_type set
      * @param sandbox_named|combine_named $sbx the single child object
@@ -198,7 +198,7 @@ class sandbox_list extends base_list
 
     /**
      * load only the id and name of sandbox objects (e.g. phrases or values) based on the given query parameters
-     * TODO add read db tests for all named objects
+     * TODO add read db tests for all named objects (triple, phrase, formula, term, view and component still missing)
      *
      * @param sandbox_named $sbx the single child object
      * @param string $pattern the pattern to filter the words

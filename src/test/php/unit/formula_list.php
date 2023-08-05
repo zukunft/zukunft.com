@@ -62,7 +62,12 @@ class formula_list_unit_tests
 
         $t->subheader('SQL statement creation tests');
 
-        // sql to load a list of formulas by the id
+        // load only the names
+        $frm_lst = new formula_list($usr);
+        $t->assert_sql_names($db_con, $frm_lst, new formula($usr));
+        $t->assert_sql_names($db_con, $frm_lst, new formula($usr), formula_api::TN_READ);
+
+        // sql to load a list of formulas by the id, name or ...
         $frm_lst = new formula_list($usr);
         $t->assert_sql_by_ids($db_con, $frm_lst);
         $t->assert_sql_by_names($db_con, $frm_lst, array(formula_api::TN_INCREASE, formula_api::TN_ADD));
