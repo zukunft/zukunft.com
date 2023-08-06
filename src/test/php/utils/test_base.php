@@ -58,6 +58,7 @@ use cfg\combine_named;
 use cfg\config;
 use cfg\fig_ids;
 use cfg\phr_ids;
+use cfg\sandbox_link_named;
 use cfg\sandbox_named;
 use controller\controller;
 use html\html_base;
@@ -1208,15 +1209,15 @@ class test_base
      *
      * @param sql_db $db_con does not need to be connected to a real database
      * @param object $lst_obj the user sandbox object e.g. a word
-     * @param sandbox_named|combine_named $sbx the user sandbox object e.g. a word
+     * @param sandbox_named|sandbox_link_named|combine_named $sbx the user sandbox object e.g. a word
      * @param string $pattern the pattern to filter
      * @return bool true if all tests are fine
      */
     function assert_sql_names(
-        sql_db                      $db_con,
-        object                      $lst_obj,
-        sandbox_named|combine_named $sbx,
-        string                      $pattern = ''
+        sql_db                                         $db_con,
+        object                                         $lst_obj,
+        sandbox_named|sandbox_link_named|combine_named $sbx,
+        string                                         $pattern = ''
     ): bool
     {
         // check the Postgres query syntax

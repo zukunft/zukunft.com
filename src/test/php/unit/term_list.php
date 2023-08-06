@@ -30,6 +30,7 @@ namespace test;
 
 use api\formula_api;
 use api\triple_api;
+use api\verb_api;
 use api\word_api;
 use cfg\phrase_list;
 use cfg\trm_ids;
@@ -60,7 +61,7 @@ class term_list_unit_tests
         // init
         $db_con = new sql_db();
         $t->name = 'term_list->';
-        $t->resource_path = 'db/phrase/';
+        $t->resource_path = 'db/term/';
 
         $t->header('Unit tests of the term list class (src/main/php/model/phrase/term_list.php)');
 
@@ -71,7 +72,12 @@ class term_list_unit_tests
         $this->t = $t;
 
 
-        $t->subheader('term list sql tests');
+        $t->subheader('SQL statement creation tests');
+
+        // load only the names
+        $phr_lst = new term_list($usr);
+        $t->assert_sql_names($db_con, $phr_lst, new term($usr));
+        $t->assert_sql_names($db_con, $phr_lst, new term($usr), verb_api::TN_IS);
 
         $trm_lst = new term_list($usr);
         $trm_ids = new trm_ids(array(3, -2, 4, -7));

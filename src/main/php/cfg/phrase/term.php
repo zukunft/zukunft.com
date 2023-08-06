@@ -656,8 +656,7 @@ class term extends combine_named
      * simply load a formula
      * without fixing any missing related word issues
      */
-    private
-    function load_formula_by_id(int $id): bool
+    private function load_formula_by_id(int $id): bool
     {
         $result = false;
         $frm = new formula($this->user());
@@ -672,8 +671,7 @@ class term extends combine_named
     /**
      * simply load a verb
      */
-    private
-    function load_verb_by_id(int $id): bool
+    private function load_verb_by_id(int $id): bool
     {
         $result = false;
         $vrb = new verb;
@@ -788,6 +786,20 @@ class term extends combine_named
         }
         return $result;
     }
+
+    /**
+     * @return string with the id field name of the term
+     */
+    function id_field(): string
+    {
+        return self::FLD_ID;
+    }
+
+    function name_field(): string
+    {
+        return self::FLD_NAME;
+    }
+
 
     /*
      * classification

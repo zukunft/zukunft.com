@@ -70,8 +70,8 @@ class triple_list_unit_tests
 
         // load only the names
         $trp_lst = new triple_list($usr);
-        //$t->assert_sql_names($db_con, $trp_lst, new triple($usr));
-        //$t->assert_sql_names($db_con, $trp_lst, new triple($usr), triple_api::TD_READ);
+        $t->assert_sql_names($db_con, $trp_lst, new triple($usr));
+        $t->assert_sql_names($db_con, $trp_lst, new triple($usr), triple_api::TD_READ);
 
         // load by triple ids
         $trp_lst = new triple_list($usr);
