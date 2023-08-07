@@ -595,7 +595,8 @@ class sql_creator
             or $spt == sql_par_type::INT_SUB) {
             $this->add_par($spt, $fld_val);
         } elseif ($spt == sql_par_type::CONST
-            or $spt == sql_par_type::CONST_NOT) {
+            or $spt == sql_par_type::CONST_NOT
+            or $spt == sql_par_type::CONST_NOT_IN) {
             $this->add_par($spt, $fld_val);
             log_debug('For SQL parameter type const no parameter is needed');
         } elseif ($spt == sql_par_type::IS_NULL) {
@@ -1294,6 +1295,9 @@ class sql_creator
                             } elseif ($par_type == sql_par_type::CONST_NOT) {
                                 $par_offset--;
                                 $result .= $tbl_id . $this->par_fields[$i] . ' <> ' . $this->par_value($i + 1);
+                            } elseif ($par_type == sql_par_type::CONST_NOT_IN) {
+                                $par_offset--;
+                                $result .= $tbl_id . $this->par_fields[$i] . ' NOT IN (' . $this->par_value($i + 1) . ')';
                             } elseif ($par_type == sql_par_type::IS_NULL) {
                                 $par_offset--;
                                 $result .= $tbl_id . $this->par_fields[$i] . ' IS NULL ';
@@ -1423,6 +1427,7 @@ class sql_creator
         foreach ($this->par_types as $par_type) {
             if ($par_type != sql_par_type::CONST
                 and $par_type != sql_par_type::CONST_NOT
+                and $par_type != sql_par_type::CONST_NOT_IN
                 and $par_type != sql_par_type::IS_NULL) {
                 $result++;
             }
@@ -1481,6 +1486,7 @@ class sql_creator
         foreach ($this->par_types as $par_type) {
             if ($par_type != sql_par_type::CONST
                 and $par_type != sql_par_type::CONST_NOT
+                and $par_type != sql_par_type::CONST_NOT_IN
                 and $par_type != sql_par_type::IS_NULL
                 and $par_type != sql_par_type::INT_SUB) {
                 $used_par_values[] = $this->par_value($i + 1);;
@@ -2037,6 +2043,7 @@ class sql_creator
                     break;
                 case sql_par_type::CONST:
                 case sql_par_type::CONST_NOT:
+                case sql_par_type::CONST_NOT_IN:
                 case sql_par_type::IS_NULL:
                     break;
                 default:

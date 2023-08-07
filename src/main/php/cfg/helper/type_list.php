@@ -395,4 +395,19 @@ class type_list
         $this->add($type);
     }
 
+    /**
+     * @param array $code_id_list with the code ids that should be converted into an id list
+     * @return array
+     */
+    function id_list(array $code_id_list): array
+    {
+        global $component_types;
+
+        $result = [];
+        foreach ($code_id_list as $code_id) {
+            $result[] = $component_types->id($code_id);
+        }
+        return $result;
+    }
+
 }

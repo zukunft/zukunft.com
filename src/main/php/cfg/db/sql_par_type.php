@@ -53,6 +53,7 @@ enum sql_par_type: string
     case LIKE = 'like';
     case CONST = 'const';
     case CONST_NOT = 'const_not';
+    case CONST_NOT_IN = 'const_not_in';
     case IS_NULL = 'is_null';
 
 }

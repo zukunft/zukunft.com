@@ -73,4 +73,16 @@ class view_cmp_type
     // simple close the form section
     const FORM_END = "form_end";
 
+    // list of component types that should not be used for non system views
+    const SYSTEM_TYPES = array(
+        self::FORM_TITLE,
+        self::FORM_BACK,
+        self::FORM_CONFIRM,
+        self::FORM_NAME,
+        self::FORM_DESCRIPTION,
+        self::FORM_CANCEL,
+        self::FORM_SAVE,
+        self::FORM_END
+    );
+
 }
