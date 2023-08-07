@@ -218,7 +218,9 @@ class formula extends sandbox_typed
             if (array_key_exists(self::FLD_FORMULA_USER_TEXT, $db_row)) {
                 $this->usr_text = $db_row[self::FLD_FORMULA_USER_TEXT];
             }
-            $this->type_id = $db_row[$type_fld];
+            if (array_key_exists($type_fld, $db_row)) {
+                $this->type_id = $db_row[$type_fld];
+            }
             if (array_key_exists(self::FLD_LAST_UPDATE, $db_row)) {
                 $this->last_update = $lib->get_datetime($db_row[self::FLD_LAST_UPDATE], $this->dsp_id());
             }

@@ -202,7 +202,9 @@ class word extends sandbox_typed
             if (array_key_exists(self::FLD_PLURAL, $db_row)) {
                 $this->plural = $db_row[self::FLD_PLURAL];
             }
-            $this->type_id = $db_row[$type_fld];
+            if (array_key_exists($type_fld, $db_row)) {
+                $this->type_id = $db_row[$type_fld];
+            }
             if (array_key_exists(self::FLD_PLURAL, $db_row)) {
                 if ($db_row[self::FLD_VIEW] != null) {
                     $this->set_view_id($db_row[self::FLD_VIEW]);

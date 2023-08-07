@@ -54,6 +54,13 @@ class formula_list_unit_db_tests
 
         $t->header('Test the formula list class (classes/formula_list.php)');
 
+        // test loading formula names
+        $test_name = 'loading formula names with pattern return the expected formula';
+        $pattern = substr(formula_api::TN_READ, 0, -1);
+        $frm_lst = new formula_list($t->usr1);
+        $frm_lst->load_names($pattern);
+        $t->assert_contains($test_name, $frm_lst->names(), formula_api::TN_READ);
+
         // test load by formula list by ids
         $frm_lst = new formula_list($t->usr1);
         $frm_lst->load_by_ids([1, 2]);

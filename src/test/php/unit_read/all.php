@@ -41,6 +41,10 @@ use api\word_api;
 use html\word\triple as triple_dsp;
 use cfg\triple;
 use cfg\verb;
+use unit_read\component_list_unit_db_tests;
+use unit_read\triple_list_unit_db_tests;
+use unit_read\triple_unit_db_tests;
+use unit_read\view_list_unit_db_tests;
 
 class test_unit_read_db extends test_unit
 {
@@ -58,6 +62,8 @@ class test_unit_read_db extends test_unit
         (new word_unit_db_tests)->run($this);
         (new word_list_unit_db_tests)->run($this);
         (new verb_unit_db_tests)->run($this);
+        (new triple_unit_db_tests)->run($this);
+        (new triple_list_unit_db_tests)->run($this);
         (new phrase_unit_db_tests)->run($this);
         (new phrase_list_unit_db_tests)->run($this);
         (new phrase_group_unit_db_tests)->run($this);
@@ -69,7 +75,9 @@ class test_unit_read_db extends test_unit
         (new formula_list_unit_db_tests)->run($this);
         (new expression_unit_db_tests)->run($this);
         (new view_unit_db_tests)->run($this);
+        (new view_list_unit_db_tests)->run($this);
         (new component_unit_db_tests)->run($this);
+        (new component_list_unit_db_tests)->run($this);
         (new ref_unit_db_tests)->run($this);
         (new language_unit_db_tests)->run($this);
         (new change_log_unit_db_tests)->run($this);

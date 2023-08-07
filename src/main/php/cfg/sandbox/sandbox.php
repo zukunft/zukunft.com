@@ -340,7 +340,11 @@ class sandbox extends db_object
         $result = parent::row_mapper($db_row, $id_fld);
         if ($result) {
             $this->owner_id = $db_row[user::FLD_ID];
-            $this->set_excluded($db_row[self::FLD_EXCLUDED]);
+            // e.g. the list of names does not include the field excluded
+            // TODO instead the excluded rows are filtered out on SQL level
+            if (array_key_exists(sandbox::FLD_EXCLUDED, $db_row)) {
+                $this->set_excluded($db_row[self::FLD_EXCLUDED]);
+            }
             if (!$load_std) {
                 $this->usr_cfg_id = $db_row[sql_db::TBL_USER_PREFIX . $id_fld];
             }
@@ -361,8 +365,12 @@ class sandbox extends db_object
      */
     function row_mapper_usr(array $db_row): void
     {
-        $this->share_id = $db_row[self::FLD_SHARE];
-        $this->protection_id = $db_row[self::FLD_PROTECT];
+        if (array_key_exists(self::FLD_SHARE, $db_row)) {
+            $this->share_id = $db_row[self::FLD_SHARE];
+        }
+        if (array_key_exists(self::FLD_PROTECT, $db_row)) {
+            $this->protection_id = $db_row[self::FLD_PROTECT];
+        }
     }
 
     /**

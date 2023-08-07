@@ -66,11 +66,30 @@ class triple_list extends sandbox_list
 
 
     /*
+     * construct and map
+     */
+
+    /**
+     * fill the triple list based on a database records
+     * actually just add the single triple object to the parent function
+     * TODO check that a similar function is used for all lists
+     *
+     * @param array $db_rows is an array of an array with the database values
+     * @param bool $load_all force to include also the excluded phrases e.g. for admins
+     * @return bool true if at least one formula link has been added
+     */
+    protected function rows_mapper(array $db_rows, bool $load_all = false): bool
+    {
+        return parent::rows_mapper_obj(new triple($this->user()), $db_rows, $load_all);
+    }
+
+
+    /*
      * cast
      */
 
     /**
-     * @return triple_list_api the word list object with the display interface functions
+     * @return triple_list_api the triple list object with the display interface functions
      */
     function api_obj(): triple_list_api
     {
@@ -90,7 +109,7 @@ class triple_list extends sandbox_list
     }
 
     /**
-     * @return triple_list the word list object with the display interface functions
+     * @return triple_list the triple list object with the display interface functions
      */
     function dsp_obj(): triple_list
     {
@@ -112,7 +131,7 @@ class triple_list extends sandbox_list
      *
      * @param sql_creator $sc with the target db_type set
      * @param sandbox_named|sandbox_link_named|combine_named $sbx the single child object
-     * @param string $pattern the pattern to filter the words
+     * @param string $pattern the pattern to filter the triples
      * @param int $limit the number of rows to return
      * @param int $offset jump over these number of pages
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
@@ -306,7 +325,7 @@ class triple_list extends sandbox_list
      * load this list of triples
      * @param sql_par $qp the SQL statement, the unique name of the SQL statement and the parameter list
      * @param bool $load_all force to include also the excluded triples e.g. for admins
-     * @return bool true if at least one word found
+     * @return bool true if at least one triple found
      */
     protected function load(sql_par $qp, bool $load_all = false): bool
     {
@@ -345,6 +364,18 @@ class triple_list extends sandbox_list
     }
 
     /**
+     * load a list of triple names
+     * @param string $pattern the pattern to filter the triples
+     * @param int $limit the number of rows to return
+     * @param int $offset jump over these number of pages
+     * @return bool true if at least one triple found
+     */
+    function load_names(string $pattern = '', int $limit = 0, int $offset = 0): bool
+    {
+        return parent::load_sbx_names(new triple($this->user()), $pattern, $limit, $offset);
+    }
+
+    /**
      * load a list of triples by the ids
      * @param array $wrd_ids a list of int values with the triple ids
      * @return bool true if at least one triple found
@@ -352,7 +383,7 @@ class triple_list extends sandbox_list
     function load_by_ids(array $wrd_ids): bool
     {
         global $db_con;
-        $qp = $this->load_sql_by_ids($db_con, $wrd_ids);
+        $qp = $this->load_sql_by_ids($db_con->sql_creator(), $wrd_ids);
         return $this->load($qp);
     }
 

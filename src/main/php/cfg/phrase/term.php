@@ -149,26 +149,43 @@ class term extends combine_named
 
     /**
      * map a complete underlying object to a term
+     * @param array|null $db_row with the data directly from the database
      * @return bool true if at least one term has been loaded
      */
-    function row_mapper_obj(array $db_row, string $class, string $id_fld, string $name_fld, string $type_fld = '', bool $load_std = false, bool $allow_usr_protect = true): bool
+    function row_mapper_sandbox(
+        ?array $db_row,
+        string $id_fld = term::FLD_ID,
+        string $name_fld = term::FLD_NAME,
+        string $type_fld = term::FLD_TYPE,
+        bool $load_std = false,
+        bool $allow_usr_protect = true
+    ): bool
     {
         $result = false;
-        if ($class == word::class) {
-            $result = $this->get_word()->row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
-        } elseif ($class == triple::class) {
-            $result = $this->get_triple()->row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
-        } elseif ($class == formula::class) {
-            $result = $this->get_formula()->row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
-        } elseif ($class == verb::class) {
-            $result = $this->get_verb()->row_mapper_verb($db_row, $id_fld, $name_fld);
-        } else {
-            log_warning('Term ' . $this->dsp_id() . ' is of unknown type');
+        $this->set_obj_id(0);
+        if ($db_row != null) {
+            if (array_key_exists(term::FLD_ID, $db_row)) {
+                $this->set_obj_from_id($db_row[term::FLD_ID]);
+                if ($this->type() == word::class) {
+                    $result = $this->get_word()->row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
+                } elseif ($this->type() == triple::class) {
+                    $result = $this->get_triple()->row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
+                } elseif ($this->type() == formula::class) {
+                    $result = $this->get_formula()->row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
+                } elseif ($this->type() == verb::class) {
+                    $result = $this->get_verb()->row_mapper_verb($db_row, $id_fld, $name_fld);
+                } else {
+                    log_warning('Term ' . $this->dsp_id() . ' is of unknown type');
+                }
+                // overwrite the term id in the object with the real object id
+                $this->set_id($db_row[$id_fld]);
+            } else {
+                log_err('id field missing when trying to map term from ' . implode(',', $db_row));
+            }
         }
-        // overwrite the term id in the object with the real object id
-        $this->set_id($db_row[$id_fld]);
         return $result;
     }
+
 
     /*
      * set and get

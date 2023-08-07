@@ -192,7 +192,9 @@ class verb extends db_object
             if (array_key_exists(self::FLD_FORMULA, $db_row)) {
                 $this->frm_name = $db_row[self::FLD_FORMULA];
             }
-            $this->description = $db_row[sandbox_named::FLD_DESCRIPTION];
+            if (array_key_exists(sandbox_named::FLD_DESCRIPTION, $db_row)) {
+                $this->description = $db_row[sandbox_named::FLD_DESCRIPTION];
+            }
             if (array_key_exists(self::FLD_WORDS, $db_row)) {
                 if ($db_row[self::FLD_WORDS] == null) {
                     $this->usage = 0;

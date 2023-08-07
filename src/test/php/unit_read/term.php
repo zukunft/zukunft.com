@@ -56,12 +56,14 @@ class term_unit_db_tests
         $t->header('Test the term class (src/main/php/model/term.php)');
 
         // test load by term by a word db row
-        $wrd = new word($t->usr1);
+        $wrd = new word($t->usr1); // create a word object just to create the query parameters
         $qp = $wrd->load_sql_by_id($db_con->sql_creator(),1, word::class);
         $db_row = $db_con->get1($qp);
-        $trm = new term($t->usr1);
+        $trm = new term($t->usr1); // use the term object to convert the id
         $trm->set_obj_from_class(word::class);
-        $trm->row_mapper_obj($db_row, word::class, word::FLD_ID, word::FLD_NAME, phrase::FLD_TYPE);
+        $trm->set_obj_id(1);
+        $db_row[term::FLD_ID]  = $trm->id(); // simulate the term db row by setting the id
+        $trm->row_mapper_sandbox($db_row, word::FLD_ID, word::FLD_NAME, phrase::FLD_TYPE);
         $t->assert($t->name . ' word row mapper', $trm->name(), word_api::TN_READ);
         $trm_by_obj_id = new term($t->usr1);
         $trm_by_obj_id->load_by_obj_id($trm->id_obj(), word::class);
@@ -73,7 +75,9 @@ class term_unit_db_tests
         $db_row = $db_con->get1($qp);
         $trm = new term($t->usr1);
         $trm->set_obj_from_class(triple::class);
-        $trm->row_mapper_obj($db_row, triple::class, triple::FLD_ID, triple::FLD_NAME, phrase::FLD_TYPE);
+        $trm->set_obj_id(1);
+        $db_row[term::FLD_ID]  = $trm->id(); // simulate the term db row by setting the id
+        $trm->row_mapper_sandbox($db_row, triple::FLD_ID, triple::FLD_NAME, phrase::FLD_TYPE);
         $t->assert($t->name . ' triple row mapper', $trm->name(), triple_api::TN_READ);
         $trm_by_obj_id = new term($t->usr1);
         $trm_by_obj_id->load_by_obj_id($trm->id_obj(), triple::class);
@@ -85,7 +89,9 @@ class term_unit_db_tests
         $db_row = $db_con->get1($qp);
         $trm = new term($t->usr1);
         $trm->set_obj_from_class(formula::class);
-        $trm->row_mapper_obj($db_row, formula::class, formula::FLD_ID, formula::FLD_NAME, formula::FLD_TYPE);
+        $trm->set_obj_id(1);
+        $db_row[term::FLD_ID]  = $trm->id(); // simulate the term db row by setting the id
+        $trm->row_mapper_sandbox($db_row, formula::FLD_ID, formula::FLD_NAME, formula::FLD_TYPE);
         $t->assert($t->name . ' formula row mapper', $trm->name(), formula_api::TN_READ);
         $trm_by_obj_id = new term($t->usr1);
         $trm_by_obj_id->load_by_obj_id($trm->id_obj(), formula::class);
@@ -97,7 +103,9 @@ class term_unit_db_tests
         $db_row = $db_con->get1($qp);
         $trm = new term($t->usr1);
         $trm->set_obj_from_class(verb::class);
-        $trm->row_mapper_obj($db_row, verb::class, verb::FLD_ID, verb::FLD_NAME);
+        $trm->set_obj_id(1);
+        $db_row[term::FLD_ID]  = $trm->id(); // simulate the term db row by setting the id
+        $trm->row_mapper_sandbox($db_row, verb::FLD_ID, verb::FLD_NAME);
         $t->assert($t->name . ' verb row mapper', $trm->name(), verb_api::TN_READ);
         $trm_by_obj_id = new term($t->usr1);
         $trm_by_obj_id->load_by_obj_id($trm->id_obj(), verb::class);

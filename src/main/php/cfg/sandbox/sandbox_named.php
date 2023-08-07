@@ -114,7 +114,9 @@ class sandbox_named extends sandbox
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld);
         if ($result) {
             $this->set_name($db_row[$name_fld]);
-            $this->description = $db_row[self::FLD_DESCRIPTION];
+            if (array_key_exists(self::FLD_DESCRIPTION, $db_row)) {
+                $this->description = $db_row[self::FLD_DESCRIPTION];
+            }
         }
         return $result;
     }

@@ -53,6 +53,7 @@ class view_api extends sandbox_typed_api
     const TN_COMPLETE = 'System Test View Complete';
     const TN_EXCLUDED = 'System Test View Excluded';
     const TN_TABLE = 'System Test View Table';
+    const TN_ALL = 'complete';
 
     // to test a system view (add word) as unit test without database
     const TN_FORM = 'Add word';

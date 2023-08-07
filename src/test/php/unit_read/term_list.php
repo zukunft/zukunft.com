@@ -36,6 +36,7 @@ use api\word_api;
 use api\triple_api;
 use api\formula_api;
 use api\verb_api;
+use cfg\formula;
 use cfg\library;
 use cfg\term_list;
 use cfg\trm_ids;
@@ -52,6 +53,26 @@ class term_list_unit_db_tests
 
         $t->header('Test the term list class (classes/term_list.php)');
 
+        $test_name = 'loading phrase names with pattern return the expected word';
+        $lst = new term_list($t->usr1);
+        $pattern = substr(word_api::TN_READ, 0, -1);
+        $lst->load_names($pattern);
+        $t->assert_contains($test_name, $lst->names(), word_api::TN_READ);
+        $test_name = 'loading phrase names with pattern return the expected verb';
+        $lst = new term_list($t->usr1);
+        $pattern = substr(verb_api::TN_READ, 0, -1);
+        $lst->load_names($pattern);
+        $t->assert_contains($test_name, $lst->names(), verb_api::TN_READ);
+        $test_name = 'loading phrase names with pattern return the expected triple';
+        $lst = new term_list($t->usr1);
+        $pattern = substr(triple_api::TN_READ, 0, -1);
+        $lst->load_names($pattern);
+        $t->assert_contains($test_name, $lst->names(), triple_api::TN_READ);
+        $test_name = 'loading phrase names with pattern return the expected formula';
+        $lst = new term_list($t->usr1);
+        $pattern = substr(formula_api::TN_READ, 0, -1);
+        $lst->load_names($pattern);
+        $t->assert_contains($test_name, $lst->names(), formula_api::TN_READ);
         // test load by term list by ids
         $trm_lst = new term_list($t->usr1);
         $trm_lst->load_by_ids((new trm_ids([1, -1, 2, -2])));

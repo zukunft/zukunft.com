@@ -32,6 +32,7 @@
 
 namespace test;
 
+use api\formula_api;
 use api\word_api;
 use api\triple_api;
 use api\phrase_api;
@@ -56,6 +57,22 @@ class phrase_list_unit_db_tests
         $t->resource_path = 'db/phrase/';
 
         $t->subheader('Load phrases');
+
+        $test_name = 'loading phrase names with pattern return the expected word';
+        $lst = new phrase_list($t->usr1);
+        $pattern = substr(word_api::TN_READ, 0, -1);
+        $lst->load_names($pattern);
+        $t->assert_contains($test_name, $lst->names(), word_api::TN_READ);
+        $test_name = 'loading phrase names with pattern return the expected triple';
+        $lst = new phrase_list($t->usr1);
+        $pattern = substr(triple_api::TN_READ, 0, -1);
+        $lst->load_names($pattern);
+        $t->assert_contains($test_name, $lst->names(), triple_api::TN_READ);
+        $test_name = 'formula names are not included in the normal phrase list';
+        $lst = new phrase_list($t->usr1);
+        $lst->load_names(formula_api::TN_READ);
+        // TODO activate
+        //$t->assert_contains_not($test_name, $lst->names(), formula_api::TN_READ);
         $test_name = 'api message of phrases list';
         $lst = new phrase_list($t->usr1);
         $id_lst = [1, 2, 3, -1, -2];

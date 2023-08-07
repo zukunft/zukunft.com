@@ -233,14 +233,30 @@ class component extends sandbox_typed
     {
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld);
         if ($result) {
-            $this->code_id = $db_row[sql_db::FLD_CODE_ID];
-            $this->ui_msg_code_id = $db_row[self::FLD_UI_MSG_ID];
-            $this->type_id = $db_row[self::FLD_TYPE];
-            $this->word_id_row = $db_row[self::FLD_ROW_PHRASE];
-            $this->link_type_id = $db_row[self::FLD_LINK_TYPE];
-            $this->formula_id = $db_row[formula::FLD_ID];
-            $this->word_id_col = $db_row[self::FLD_COL_PHRASE];
-            $this->word_id_col2 = $db_row[self::FLD_COL2_PHRASE];
+            if (array_key_exists(sql_db::FLD_CODE_ID, $db_row)) {
+                $this->code_id = $db_row[sql_db::FLD_CODE_ID];
+            }
+            if (array_key_exists(self::FLD_UI_MSG_ID, $db_row)) {
+                $this->ui_msg_code_id = $db_row[self::FLD_UI_MSG_ID];
+            }
+            if (array_key_exists(self::FLD_TYPE, $db_row)) {
+                $this->type_id = $db_row[self::FLD_TYPE];
+            }
+            if (array_key_exists(self::FLD_ROW_PHRASE, $db_row)) {
+                $this->word_id_row = $db_row[self::FLD_ROW_PHRASE];
+            }
+            if (array_key_exists(self::FLD_LINK_TYPE, $db_row)) {
+                $this->link_type_id = $db_row[self::FLD_LINK_TYPE];
+            }
+            if (array_key_exists(formula::FLD_ID, $db_row)) {
+                $this->formula_id = $db_row[formula::FLD_ID];
+            }
+            if (array_key_exists(self::FLD_COL_PHRASE, $db_row)) {
+                $this->word_id_col = $db_row[self::FLD_COL_PHRASE];
+            }
+            if (array_key_exists(self::FLD_COL2_PHRASE, $db_row)) {
+                $this->word_id_col2 = $db_row[self::FLD_COL2_PHRASE];
+            }
         }
         return $result;
     }

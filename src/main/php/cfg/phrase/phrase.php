@@ -149,16 +149,42 @@ class phrase extends combine_named
         $result = false;
         $this->set_obj_id(0);
         if ($db_row != null) {
+            /* TODO try to used the object mapper
+            if (array_key_exists(phrase::FLD_ID, $db_row)) {
+                $this->set_obj_from_id($db_row[phrase::FLD_ID]);
+                if ($this->type() == word::class) {
+                    $result = $this->get_word()->row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
+                } elseif ($this->type() == triple::class) {
+                    $result = $this->get_triple()->row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
+                } else {
+                    log_warning('Term ' . $this->dsp_id() . ' is of unknown type');
+                }
+                // overwrite the phrase id in the object with the real object id
+                $this->set_id($db_row[$id_fld]);
+                $this->set_name($db_row[phrase::FLD_NAME . $fld_ext]);
+            }
+            */
+
             if ($db_row[$id_fld] > 0) {
                 // map a word
                 $wrd = new word($this->user());
                 $wrd->set_id($db_row[$id_fld]);
                 $wrd->set_name($db_row[phrase::FLD_NAME . $fld_ext]);
-                $wrd->description = $db_row[sandbox_named::FLD_DESCRIPTION . $fld_ext];
-                $wrd->type_id = $db_row[phrase::FLD_TYPE . $fld_ext];
-                $wrd->set_excluded($db_row[sandbox::FLD_EXCLUDED . $fld_ext]);
-                $wrd->share_id = $db_row[sandbox::FLD_SHARE . $fld_ext];
-                $wrd->protection_id = $db_row[sandbox::FLD_PROTECT . $fld_ext];
+                if (array_key_exists(sandbox_named::FLD_DESCRIPTION . $fld_ext, $db_row)) {
+                    $wrd->description = $db_row[sandbox_named::FLD_DESCRIPTION . $fld_ext];
+                }
+                if (array_key_exists(phrase::FLD_TYPE . $fld_ext, $db_row)) {
+                    $wrd->type_id = $db_row[phrase::FLD_TYPE . $fld_ext];
+                }
+                if (array_key_exists(sandbox::FLD_EXCLUDED . $fld_ext, $db_row)) {
+                    $wrd->set_excluded($db_row[sandbox::FLD_EXCLUDED . $fld_ext]);
+                }
+                if (array_key_exists(sandbox::FLD_SHARE . $fld_ext, $db_row)) {
+                    $wrd->share_id = $db_row[sandbox::FLD_SHARE . $fld_ext];
+                }
+                if (array_key_exists(sandbox::FLD_PROTECT . $fld_ext, $db_row)) {
+                    $wrd->protection_id = $db_row[sandbox::FLD_PROTECT . $fld_ext];
+                }
                 //$wrd->owner_id = $db_row[_user::FLD_ID . $fld_ext];
                 $this->obj = $wrd;
                 $result = true;
@@ -167,11 +193,21 @@ class phrase extends combine_named
                 $trp = new triple($this->user());
                 $trp->set_id($db_row[$id_fld] * -1);
                 $trp->set_name($db_row[phrase::FLD_NAME . $fld_ext]);
-                $trp->description = $db_row[sandbox_named::FLD_DESCRIPTION . $fld_ext];
-                $trp->type_id = $db_row[phrase::FLD_TYPE . $fld_ext];
-                $trp->set_excluded($db_row[sandbox::FLD_EXCLUDED . $fld_ext]);
-                $trp->share_id = $db_row[sandbox::FLD_SHARE . $fld_ext];
-                $trp->protection_id = $db_row[sandbox::FLD_PROTECT . $fld_ext];
+                if (array_key_exists(sandbox_named::FLD_DESCRIPTION . $fld_ext, $db_row)) {
+                    $trp->description = $db_row[sandbox_named::FLD_DESCRIPTION . $fld_ext];
+                }
+                if (array_key_exists(phrase::FLD_TYPE . $fld_ext, $db_row)) {
+                    $trp->type_id = $db_row[phrase::FLD_TYPE . $fld_ext];
+                }
+                if (array_key_exists(sandbox::FLD_EXCLUDED . $fld_ext, $db_row)) {
+                    $trp->set_excluded($db_row[sandbox::FLD_EXCLUDED . $fld_ext]);
+                }
+                if (array_key_exists(sandbox::FLD_SHARE . $fld_ext, $db_row)) {
+                    $trp->share_id = $db_row[sandbox::FLD_SHARE . $fld_ext];
+                }
+                if (array_key_exists(sandbox::FLD_PROTECT . $fld_ext, $db_row)) {
+                    $trp->protection_id = $db_row[sandbox::FLD_PROTECT . $fld_ext];
+                }
                 // not yet loaded with initial load
                 // $trp->name = $db_row[triple::FLD_NAME_GIVEN . $fld_ext];
                 // $trp->owner_id = $db_row[_user::FLD_ID . $fld_ext];
@@ -1297,7 +1333,7 @@ class phrase extends combine_named
         //$db_con = new mysql;
         $db_con->usr_id = $this->user()->id();
         $db_con->set_type(sql_db::TBL_TRIPLE);
-        $key_result = $db_con->get_value_2key('from_phrase_id', 'to_phrase_id', $this->id, verb::FLD_ID, $link_id);
+        $key_result = $db_con->get_value_2key('from_phrase_id', 'to_phrase_id', $this->id(), verb::FLD_ID, $link_id);
         if (is_numeric($key_result)) {
             $id = intval($key_result);
             if ($id > 0) {
@@ -1326,7 +1362,7 @@ class phrase extends combine_named
         //$db_con = new mysql;
         $db_con->usr_id = $this->user()->id();
         $db_con->set_type(sql_db::TBL_TRIPLE);
-        $key_result = $db_con->get_value_2key('to_phrase_id', 'from_phrase_id', $this->id, verb::FLD_ID, $link_id);
+        $key_result = $db_con->get_value_2key('to_phrase_id', 'from_phrase_id', $this->id(), verb::FLD_ID, $link_id);
         if (is_numeric($key_result)) {
             $id = intval($key_result);
             if ($id > 0) {

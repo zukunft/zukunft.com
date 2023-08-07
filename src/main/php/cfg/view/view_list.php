@@ -45,6 +45,24 @@ class view_list extends sandbox_list
 
     public user $usr;   // the user object of the person for whom the verb list is loaded, so to say the viewer
 
+    /*
+     * construct and map
+     */
+
+    /**
+     * fill the view list based on a database records
+     * actually just add the single view object to the parent function
+     * TODO check that a similar function is used for all lists
+     *
+     * @param array $db_rows is an array of an array with the database values
+     * @param bool $load_all force to include also the excluded phrases e.g. for admins
+     * @return bool true if at least one formula link has been added
+     */
+    protected function rows_mapper(array $db_rows, bool $load_all = false): bool
+    {
+        return parent::rows_mapper_obj(new view($this->user()), $db_rows, $load_all);
+    }
+
 
     /*
      * set and get
@@ -144,6 +162,18 @@ class view_list extends sandbox_list
         $db_con->set_usr_fields(view::FLD_NAMES_USR);
         $db_con->set_usr_num_fields(view::FLD_NAMES_NUM_USR);
         return $qp;
+    }
+
+    /**
+     * load a list of view names
+     * @param string $pattern the pattern to filter the views
+     * @param int $limit the number of rows to return
+     * @param int $offset jump over these number of pages
+     * @return bool true if at least one view found
+     */
+    function load_names(string $pattern = '', int $limit = 0, int $offset = 0): bool
+    {
+        return parent::load_sbx_names(new view($this->user()), $pattern, $limit, $offset);
     }
 
     /**

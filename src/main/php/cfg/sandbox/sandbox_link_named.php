@@ -77,7 +77,9 @@ class sandbox_link_named extends sandbox_link
                     $this->set_name($db_row[$name_fld]);
                 }
             }
-            $this->description = $db_row[sandbox_named::FLD_DESCRIPTION];
+            if (array_key_exists(sandbox_named::FLD_DESCRIPTION, $db_row)) {
+                $this->description = $db_row[sandbox_named::FLD_DESCRIPTION];
+            }
         }
         return $result;
     }

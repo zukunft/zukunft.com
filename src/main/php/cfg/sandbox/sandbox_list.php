@@ -86,7 +86,11 @@ class sandbox_list extends base_list
         $result = false;
         if ($db_rows != null) {
             foreach ($db_rows as $db_row) {
-                if (is_null($db_row[sandbox::FLD_EXCLUDED]) or $db_row[sandbox::FLD_EXCLUDED] == 0 or $load_all) {
+                $excluded = null;
+                if (array_key_exists(sandbox::FLD_EXCLUDED, $db_row)) {
+                    $excluded = $db_row[sandbox::FLD_EXCLUDED];
+                }
+                if (is_null($excluded) or $excluded == 0 or $load_all) {
                     $obj_to_add = clone $sdb_obj;
                     $obj_to_add->row_mapper_sandbox($db_row);
                     $this->lst[] = $obj_to_add;
@@ -133,7 +137,7 @@ class sandbox_list extends base_list
      *   or for view to exclude system views
      *
      * @param sql_creator $sc with the target db_type set
-     * @param sandbox_named|combine_named $sbx the single child object
+     * @param sandbox_named|sandbox_link_named|combine_named $sbx the single child object
      * @param string $pattern the pattern to filter the words
      * @param int $limit the number of rows to return
      * @param int $offset jump over these number of pages
@@ -171,7 +175,6 @@ class sandbox_list extends base_list
     /**
      * build the SQL statement to load only the id and name to save time and memory
      * without further filter
-     * TODO add unit test for each named object (component still missing)
      *
      * @param sql_creator $sc with the target db_type set
      * @param sandbox_named|sandbox_link_named|combine_named $sbx the single child object
@@ -198,15 +201,19 @@ class sandbox_list extends base_list
 
     /**
      * load only the id and name of sandbox objects (e.g. phrases or values) based on the given query parameters
-     * TODO add read db tests for all named objects (triple, phrase, formula, term, view and component still missing)
      *
-     * @param sandbox_named $sbx the single child object
+     * @param sandbox_named|sandbox_link_named|combine_named $sbx the single child object
      * @param string $pattern the pattern to filter the words
      * @param int $limit the number of rows to return
      * @param int $offset jump over these number of pages
      * @return bool true if at least one object has been loaded
      */
-    function load_sbx_names(sandbox_named $sbx, string $pattern = '', int $limit = 0, int $offset = 0): bool
+    function load_sbx_names(
+        sandbox_named|sandbox_link_named|combine_named $sbx,
+        string                                         $pattern = '',
+        int                                            $limit = 0,
+        int                                            $offset = 0
+    ): bool
     {
 
         global $db_con;
@@ -276,6 +283,8 @@ class sandbox_list extends base_list
         }
         if ($obj_to_add->id() <> 0 or $obj_to_add->name() != '') {
             if (!$allow_duplicates) {
+                $obj_id = $obj_to_add->id();
+                $ids = $this->ids();
                 if (!in_array($obj_to_add->id(), $this->ids())) {
                     $result = parent::add_obj($obj_to_add);
                 } else {

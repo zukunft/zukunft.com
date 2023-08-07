@@ -53,6 +53,23 @@ class term_list extends sandbox_list_named
     // (key is at the moment the database id, but it looks like this has no advantages,
     // so a normal 0 to n order could have more advantages)
 
+    /*
+     * construct and map
+     */
+
+    /**
+     * fill the term list based on a database records
+     * actually just set the term object for the parent function
+     *
+     * @param array|null $db_rows is an array of an array with the database values
+     * @param bool $load_all force to include also the excluded terms e.g. for admins
+     * @return bool true if at least one term has been added
+     */
+    protected function rows_mapper(?array $db_rows, bool $load_all = false): bool
+    {
+        return parent::rows_mapper_obj(new term($this->user()), $db_rows, $load_all);
+    }
+
 
     /*
      * cast
@@ -180,8 +197,7 @@ class term_list extends sandbox_list_named
         $trm_lst = $db_con->get($qp);
         foreach ($trm_lst as $db_row) {
             $trm = new term($this->user());
-            $trm->set_obj_from_id($db_row[term::FLD_ID]);
-            $trm->row_mapper_obj($db_row, $trm->obj()::class, term::FLD_ID, term::FLD_NAME, term::FLD_TYPE);
+            $trm->row_mapper_sandbox($db_row);
             if ($trm->id() != 0) {
                 $this->add($trm);
                 $result = true;
@@ -189,6 +205,18 @@ class term_list extends sandbox_list_named
         }
 
         return $result;
+    }
+
+    /**
+     * load a list of term names
+     * @param string $pattern the pattern to filter the terms
+     * @param int $limit the number of rows to return
+     * @param int $offset jump over these number of pages
+     * @return bool true if at least one term found
+     */
+    function load_names(string $pattern = '', int $limit = 0, int $offset = 0): bool
+    {
+        return parent::load_sbx_names(new term($this->user()), $pattern, $limit, $offset);
     }
 
     /**

@@ -380,6 +380,18 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
+     * load a list of phrase names
+     * @param string $pattern the pattern to filter the phrases
+     * @param int $limit the number of rows to return
+     * @param int $offset jump over these number of pages
+     * @return bool true if at least one phrase found
+     */
+    function load_names(string $pattern = '', int $limit = 0, int $offset = 0): bool
+    {
+        return parent::load_sbx_names(new phrase($this->user()), $pattern, $limit, $offset);
+    }
+
+    /**
      * load the phrases with the given pattern
      *
      * @param string $pattern to select the phrases

@@ -67,7 +67,11 @@ class formula_list extends sandbox_list
         $result = false;
         if ($db_rows != null) {
             foreach ($db_rows as $db_row) {
-                if (is_null($db_row[sandbox::FLD_EXCLUDED]) or $db_row[sandbox::FLD_EXCLUDED] == 0 or $load_all) {
+                $excluded = null;
+                if (array_key_exists(sandbox::FLD_EXCLUDED, $db_row)) {
+                    $excluded = $db_row[sandbox::FLD_EXCLUDED];
+                }
+                if (is_null($excluded) or $excluded == 0 or $load_all) {
                     $frm_id = $db_row[formula::FLD_ID];
                     if ($frm_id > 0 and !in_array($frm_id, $this->ids())) {
                         $frm = new formula($this->user());
@@ -391,9 +395,21 @@ class formula_list extends sandbox_list
     }
 
     /**
+     * load a list of formula names
+     * @param string $pattern the pattern to filter the formulas
+     * @param int $limit the number of rows to return
+     * @param int $offset jump over these number of pages
+     * @return bool true if at least one formula found
+     */
+    function load_names(string $pattern = '', int $limit = 0, int $offset = 0): bool
+    {
+        return parent::load_sbx_names(new formula($this->user()), $pattern, $limit, $offset);
+    }
+
+    /**
      * load a list of formulas by the given formula id
      * @param array $frm_ids an array of formula ids which should be loaded
-     * @return bool true if at least one word found
+     * @return bool true if at least one formula found
      */
     function load_by_ids(array $frm_ids): bool
     {
@@ -430,7 +446,7 @@ class formula_list extends sandbox_list
     /**
      * load a list of formulas with are linked to one of the gives phrases
      * @param phrase $phr a phrase used to select the formulas
-     * @return bool true if at least one word found
+     * @return bool true if at least one formula found
      */
     function load_by_phr(phrase $phr): bool
     {
@@ -442,7 +458,7 @@ class formula_list extends sandbox_list
     /**
      * load a list of formulas with are linked to one of the gives phrases
      * @param phrase_list $phr_lst a phrase list used to select the formulas
-     * @return bool true if at least one word found
+     * @return bool true if at least one formula found
      */
     function load_by_phr_lst(phrase_list $phr_lst): bool
     {
@@ -454,7 +470,7 @@ class formula_list extends sandbox_list
     /**
      * load all formulas that use the given word
      * @param word $wrd the word that
-     * @return bool true if at least one formula has bee loaded
+     * @return bool true if at least one formula has been loaded
      */
     function load_by_word_ref(word $wrd): bool
     {

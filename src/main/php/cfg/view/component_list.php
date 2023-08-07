@@ -162,6 +162,18 @@ class component_list extends sandbox_list
     }
 
     /**
+     * load a list of component names
+     * @param string $pattern the pattern to filter the components
+     * @param int $limit the number of rows to return
+     * @param int $offset jump over these number of pages
+     * @return bool true if at least one component found
+     */
+    function load_names(string $pattern = '', int $limit = 0, int $offset = 0): bool
+    {
+        return parent::load_sbx_names(new component($this->user()), $pattern, $limit, $offset);
+    }
+
+    /**
      * load the components of a view from the database selected by id
      * @param int $id the id of the word, triple, formula, verb, view or view component
      * @return bool true if at least one component has been loaded

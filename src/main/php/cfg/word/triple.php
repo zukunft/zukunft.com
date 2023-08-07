@@ -235,7 +235,9 @@ class triple extends sandbox_link_typed implements JsonSerializable
             if (array_key_exists(self::FLD_NAME_AUTO, $db_row)) {
                 $this->set_name_generated($db_row[self::FLD_NAME_AUTO]);
             }
-            $this->type_id = $db_row[$type_fld];
+            if (array_key_exists($type_fld, $db_row)) {
+                $this->type_id = $db_row[$type_fld];
+            }
             if (array_key_exists(self::FLD_VALUES, $db_row)) {
                 $this->values = $db_row[self::FLD_VALUES];
             }

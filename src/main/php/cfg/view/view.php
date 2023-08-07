@@ -149,8 +149,12 @@ class view extends sandbox_typed
     {
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld);
         if ($result) {
-            $this->type_id = $db_row[self::FLD_TYPE];
-            $this->code_id = $db_row[sql_db::FLD_CODE_ID];
+            if (array_key_exists(self::FLD_TYPE, $db_row)) {
+                $this->type_id = $db_row[self::FLD_TYPE];
+            }
+            if (array_key_exists(sql_db::FLD_CODE_ID, $db_row)) {
+                $this->code_id = $db_row[sql_db::FLD_CODE_ID];
+            }
         }
         return $result;
     }

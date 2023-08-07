@@ -440,7 +440,7 @@ class component_link extends sandbox_link_with_type
                 log_debug('component_link->move check order numbers for ' . $this->fob->dsp_id());
                 // TODO define the common sorting start number, which is 1 and not 0
                 $order_nbr = 1;
-                if ($this->cmp_lst != null) {
+                if ($this->fob->cmp_lst != null) {
                     foreach ($this->fob->cmp_lst->lst() as $entry) {
                         // get the component link (TODO add the order number to the entry lst, so that this loading is not needed)
                         $cmp_lnk = new component_link($this->user());
@@ -464,7 +464,7 @@ class component_link extends sandbox_link_with_type
                     $this->fob->load_components();
                     // check if correction was successful
                     $order_nbr = 0;
-                    if ($this->cmp_lst != null) {
+                    if ($this->fob->cmp_lst != null) {
                         foreach ($this->fob->cmp_lst->lst() as $entry) {
                             $cmp_lnk = new component_link($this->user());
                             $dsp = new view($this->user());
@@ -483,7 +483,7 @@ class component_link extends sandbox_link_with_type
                 $order_nbr = 1;
                 $prev_entry = null;
                 $prev_entry_down = false;
-                if ($this->cmp_lst != null) {
+                if ($this->fob->cmp_lst != null) {
                     foreach ($this->fob->cmp_lst->lst() as $entry) {
                         // get the component link (TODO add the order number to the entry lst, so that this loading is not needed)
                         $cmp_lnk = new component_link($this->user());
