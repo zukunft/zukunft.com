@@ -30,6 +30,7 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
+use controller\controller;
 use html\html_base;
 use cfg\sql_db;
 use cfg\user;
@@ -58,18 +59,11 @@ if (isset($_POST['submit'])) {
     $db_con->usr_id = $usr_id;
 
     // check key
-    $sql = "SELECT activation_key FROM users  
-            WHERE user_id =" . $usr_id . ";";
-    $db_row = $db_con->get1_old($sql);
-    $db_key = $db_row['activation_key'];
-    $sql = "SELECT activation_key_timeout FROM users  
-            WHERE user_id =" . $usr_id . ";";
-    $db_row = $db_con->get1_old($sql);
-    $db_time_limit = $db_row['activation_key_timeout'];
-    // get the server now
-    $sql = "SELECT NOW() AS db_dow;";
-    $db_row = $db_con->get1_old($sql);
-    $db_now = $db_row['db_dow'];
+    $usr = new user();
+    $usr->load_by_id($usr_id);
+    $db_key = $usr->activation_key;
+    $db_time_limit = $usr->activation_timeout; // TODO check if and when the conversion to time should be done
+    $db_now = $usr->db_now; // get the server now
     log_debug("login_activate (db: " . $db_key . ", post: " . $_POST['key'] . ", limit: " . $db_time_limit . ", db now:" . $db_now . ")");
     if ($db_key == $_POST['key'] and $db_time_limit > $db_now) {
 

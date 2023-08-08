@@ -81,8 +81,27 @@ class user extends db_object
     const FLD_CODE_ID = 'code_id';
     const FLD_USER_PROFILE = 'user_profile_id';
 
+    // database fields used for the user logon process
+    const FLD_ACTIVATION_KEY = 'activation_key';
+    const FLD_ACTIVATION_TIMEOUT = 'activation_key_timeout';
+    const FLD_DB_NOW = 'NOW() AS db_now';
+
     // all database field names excluding the id
     const FLD_NAMES = array(
+        sql_db::FLD_CODE_ID,
+        self::FLD_IP_ADDRESS,
+        self::FLD_EMAIL,
+        self::FLD_FIRST_NAME,
+        self::FLD_LAST_NAME,
+        self::FLD_LAST_WORD,
+        self::FLD_SOURCE,
+        self::FLD_USER_PROFILE,
+        self::FLD_ACTIVATION_KEY,
+        self::FLD_ACTIVATION_TIMEOUT,
+        self::FLD_DB_NOW
+    );
+    // the database field names excluding the id and the fields for logon
+    const FLD_NAMES_LIST = array(
         sql_db::FLD_CODE_ID,
         self::FLD_IP_ADDRESS,
         self::FLD_EMAIL,
@@ -163,6 +182,11 @@ class user extends db_object
     public ?user $viewer = null;          // the user who wants to access this user
     // e.g. only admin are allowed to see other user parameters
 
+    // var used for the registration and logon process
+    public ?string $activation_key = '';
+    public ?string $activation_timeout = '';
+    public ?string $db_now = '';
+
 
     /*
      * construct and map
@@ -202,6 +226,10 @@ class user extends db_object
         $this->profile = null;
         $this->viewer = null;
 
+        $this->activation_key = '';
+        $this->activation_timeout = '';
+        $this->db_now = '';
+
     }
 
     /**
@@ -229,6 +257,15 @@ class user extends db_object
             $this->dec_point = DEFAULT_DEC_POINT;
             $this->thousand_sep = DEFAULT_THOUSAND_SEP;
             $this->percent_decimals = DEFAULT_PERCENT_DECIMALS;
+            if (array_key_exists(self::FLD_ACTIVATION_KEY, $db_row)) {
+                $this->activation_key = $db_row[self::FLD_ACTIVATION_KEY];
+            }
+            if (array_key_exists(self::FLD_ACTIVATION_TIMEOUT, $db_row)) {
+                $this->activation_timeout = $db_row[self::FLD_ACTIVATION_TIMEOUT];
+            }
+            if (array_key_exists(self::FLD_DB_NOW, $db_row)) {
+                $this->db_now = $db_row[self::FLD_DB_NOW];
+            }
             $result = true;
             log_debug($this->name, $debug - 25);
         }

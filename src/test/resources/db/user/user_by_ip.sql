@@ -9,6 +9,9 @@ PREPARE user_by_ip (text) AS
          last_name,
          last_word_id,
          source_id,
-         user_profile_id
+         user_profile_id,
+         activation_key,
+         activation_key_timeout,
+         NOW() AS db_now
     FROM users
    WHERE ip_address = $1;

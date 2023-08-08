@@ -80,7 +80,7 @@ class user_list
         $sc->set_name($qp->name);
 
         $sc->set_usr($this->user()->id());
-        $sc->set_fields(user::FLD_NAMES);
+        $sc->set_fields(user::FLD_NAMES_LIST);
         return $qp;
     }
 

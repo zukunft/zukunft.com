@@ -9,7 +9,10 @@ PREPARE user_by_name_or_email (text, text) AS
          last_name,
          last_word_id,
          source_id,
-         user_profile_id
+         user_profile_id,
+         activation_key,
+         activation_key_timeout,
+         NOW() AS db_now
     FROM users
    WHERE (user_name = $1
       OR email = $2);

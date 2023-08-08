@@ -949,7 +949,7 @@ class sandbox extends db_object
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
         $sc->set_join_fields(
-            array_merge(array(user::FLD_ID, user::FLD_NAME),user::FLD_NAMES),
+            array_merge(array(user::FLD_ID, user::FLD_NAME),user::FLD_NAMES_LIST),
             sql_db::TBL_USER,
             user::FLD_ID,
             user::FLD_ID);
