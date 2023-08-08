@@ -61,6 +61,7 @@ class system_log extends db_object
     const FLD_FUNCTION = 'sys_log_function_id';
     const FLD_FUNCTION_NAME = 'sys_log_function_name';
     const FLD_TEXT = 'sys_log_text';
+    const FLD_DESCRIPTION = 'sys_log_description';
     const FLD_TRACE = 'sys_log_trace';
     const FLD_STATUS = 'sys_log_status_id';
 
@@ -76,6 +77,7 @@ class system_log extends db_object
         self::FLD_TYPE,
         self::FLD_FUNCTION,
         self::FLD_TEXT,
+        self::FLD_DESCRIPTION,
         self::FLD_TRACE,
         self::FLD_STATUS
     );
@@ -95,6 +97,7 @@ class system_log extends db_object
     public ?int $type_id = null;        // type of the error
     public ?int $function_id = null;    // the program function where the issue happened
     public ?string $log_text = null;    // the description of the problem
+    public ?string $log_description = null;    // the long description of the problem
     public string $log_trace = '';      // the system trace
     public ?int $status_id = null;      // the status of the error
 
@@ -127,6 +130,7 @@ class system_log extends db_object
             $this->function_id = $db_row[self::FLD_FUNCTION];
             $this->function_name = $db_row[type_list::FLD_NAME];
             $this->log_text = $db_row[self::FLD_TEXT];
+            $this->log_description = $db_row[self::FLD_DESCRIPTION];
             $this->log_trace = $db_row[self::FLD_TRACE];
             $this->status_id = $db_row[self::FLD_STATUS];
             $this->status_name = $db_row[type_object::FLD_NAME];
@@ -172,6 +176,7 @@ class system_log extends db_object
         $dsp_obj->time = $this->log_time->format('Y-m-d H:i:s');
         $dsp_obj->user = $this->usr_name;
         $dsp_obj->text = $this->log_text;
+        $dsp_obj->description = $this->log_description;
         $dsp_obj->trace = $this->log_trace;
         $dsp_obj->prg_part = $this->function_name;
         //$dsp_obj->owner = $this->solver_name;

@@ -6,6 +6,7 @@ PREPARE system_log_by_id FROM
            s.sys_log_type_id,
            s.sys_log_function_id,
            s.sys_log_text,
+           s.sys_log_description,
            s.sys_log_trace,
            s.sys_log_status_id,
            l.sys_log_function_name,

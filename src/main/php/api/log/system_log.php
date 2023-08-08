@@ -60,6 +60,7 @@ class system_log_api extends db_object
     public string $time;
     public string $user;
     public string $text;
+    public ?string $description;
     public string $trace;
     public ?string $prg_part;
     public string $owner;
@@ -72,6 +73,7 @@ class system_log_api extends db_object
         $this->time = '';
         $this->user = '';
         $this->text = '';
+        $this->description = '';
         $this->trace = '';
         $this->prg_part = '';
         $this->owner = '';
@@ -95,6 +97,7 @@ class system_log_api extends db_object
         $row_text = $html->td($this->time);
         $row_text .= $html->td($this->user);
         $row_text .= $html->td($this->text);
+        $row_text .= $html->td($this->description);
         $row_text .= $html->td($this->trace);
         $row_text .= $html->td($this->prg_part);
         $row_text .= $html->td($this->owner);

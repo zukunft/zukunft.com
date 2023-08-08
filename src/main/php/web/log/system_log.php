@@ -51,6 +51,7 @@ class system_log extends log_dsp
     // the user or user group who is supposed to fix the issue
     // TODO use a simple user object instead of the id
     public string $owner_id;
+    public ?string $description;
 
 
     /*
@@ -69,6 +70,11 @@ class system_log extends log_dsp
             $this->set_trace($json_array[api::FLD_TRACE]);
         } else {
             $this->set_trace('');
+        }
+        if (array_key_exists(api::FLD_DESCRIPTION, $json_array)) {
+            $this->description = $json_array[api::FLD_DESCRIPTION];
+        } else {
+            $this->description = '';
         }
         if (array_key_exists(api::FLD_PRG_PART, $json_array)) {
             $this->set_prg_part($json_array[api::FLD_PRG_PART]);
@@ -123,6 +129,7 @@ class system_log extends log_dsp
      */
 
     /**
+     * one user table entry
      * @returns string the html code to show one system log entry for non admin users
      */
     function display(): string
@@ -138,6 +145,30 @@ class system_log extends log_dsp
         $result .= $html->td($this->text());
         $result .= $html->td($this->owner_id());
         $result .= $html->td($this->status());
+        return $result;
+    }
+
+    /**
+     * one system log error as an overview page
+     * @return string
+     */
+    function page_view(): string
+    {
+        $result = "";
+        $html = new html_base();
+
+        $result .= $html->dsp_text_h2("Status of error #"
+            . $this->id() . ': ' . $this->status_text());
+        $result .= '"' . $this->text() . '" <br>';
+        if ($this->description <> 'NULL') {
+            $result .= '"' . $this->description . '" <br>';
+        }
+        $result .= '<br>';
+        $result .= 'Program trace:<br>';
+        $result .= $this->trace() . ' ';
+        //echo "<style color=green>OK</style>" .$test_text;
+        //echo "<style color=red>Error</style>".$test_text;
+
         return $result;
     }
 
@@ -213,6 +244,17 @@ class system_log extends log_dsp
         $vars[api::FLD_PRG_PART] = $this->prg_part();
         $vars[api::FLD_OWNER] = $this->owner_id();
         return $vars;
+    }
+
+
+    /*
+     * internal helper
+     */
+
+    private function status_text(): string
+    {
+        global $sys_log_stati;
+        return $sys_log_stati->name($this->status());
     }
 
 }

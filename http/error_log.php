@@ -39,6 +39,8 @@
 */
 
 use controller\controller;
+use cfg\system_log;
+use html\log\system_log as system_log_dsp;
 use html\html_base;
 use html\view\view_dsp_old;
 use cfg\user;
@@ -47,31 +49,10 @@ use cfg\word;
 
 function err_dsp($err_id, $user_id): string
 {
-
-    global $db_con;
-    $result = "";
-    $html = new html_base();
-
-    $sql = "SELECT l.sys_log_text, l.sys_log_description, s.type_name AS sys_log_status_name, l.sys_log_trace
-              FROM sys_log l 
-         LEFT JOIN sys_log_status s ON l.sys_log_status_id = s.sys_log_status_id
-             WHERE l.sys_log_id = " . $err_id . ";";
-    //$db_con = New mysql;
-    $db_con->usr_id = $user_id;
-    $db_err = $db_con->get1_old($sql);
-
-    $result .= $html->dsp_text_h2("Status of error #" . $err_id . ': ' . $db_err['sys_log_status_name']);
-    $result .= '"' . $db_err['sys_log_text'] . '" <br>';
-    if ($db_err['sys_log_description'] <> 'NULL') {
-        $result .= '"' . $db_err['sys_log_description'] . '" <br>';
-    }
-    $result .= '<br>';
-    $result .= 'Program trace:<br>';
-    $result .= '' . $db_err['sys_log_trace'] . ' ';
-    //echo "<style color=green>OK</style>" .$test_text;
-    //echo "<style color=red>Error</style>".$test_text;
-
-    return $result;
+    $log = new system_log();
+    $log->load_by_id($err_id);
+    $dsp = new system_log_dsp($log->api_json());
+    return $dsp->page_view();
 }
 
 
