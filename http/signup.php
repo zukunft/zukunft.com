@@ -104,13 +104,10 @@ if (isset($_POST['submit'])) {
           $pw_hash)or die(mysqli_error());
         $sql_result = mysqli_query($sql);
         */
-        // get user id
-        $db_con->set_type(sql_db::TBL_USER);
-        $db_con->set_usr(SYSTEM_USER_ID);
-        $db_con->set_where_std(null,$usr_name);
-        $sql = $db_con->select_by_set_id();
-        $db_row = $db_con->get1_old($sql);
-        $usr_id = $db_row[user::FLD_ID];
+        // get user id from the name
+        $usr_by_name = new user();
+        $usr_by_name->load_by_name($usr_name);
+        $usr_id = $usr_by_name->id();
         if ($usr_id > 0) {
             // auto login
             session_start();

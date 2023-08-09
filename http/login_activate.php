@@ -97,13 +97,10 @@ if (isset($_POST['submit'])) {
             $sql_result = mysql_query($sql);
             */
 
-            $db_con->set_type(sql_db::TBL_USER);
-            $db_con->set_usr(SYSTEM_USER_ID);
-            $db_con->set_where_std($usr_id);
-            $sql = $db_con->select_by_set_id();
-
-            $db_row = $db_con->get1_old($sql);
-            $usr_name = $db_row[user::FLD_NAME];
+            // TODO check if a system or admin user is needed to read any user
+            $usr = new user();
+            $usr->load_by_id($usr_id);
+            $usr_name = $usr->name();
 
             if ($usr_id > 0 and $usr_name <> '') {
                 // auto login
