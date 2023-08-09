@@ -708,29 +708,16 @@ class phrase_group extends db_object
 
         global $db_con;
 
-        //$db_con = new mysql;
-        $db_con->usr_id = $this->user()->id();
-        $sql = "SELECT result_id AS id,
-                   result    AS num,
-                   user_id          AS usr,
-                   last_update      AS upd
-              FROM results 
-             WHERE phrase_group_id = " . $this->id . "
-               AND user_id = " . $this->user()->id() . ";";
-        $result = $db_con->get1_old($sql);
+        $res = new result($this->user());
+        $result = $res->load_by_grp($this);
 
         // if no user specific result is found, get the standard result
+        // TODO use load_std_by_grp
         if ($result === false) {
-            $sql = "SELECT result_id AS id,
-                     result    AS num,
-                     user_id          AS usr,
-                     last_update      AS upd
-                FROM results 
-               WHERE phrase_group_id = " . $this->id . "
-                 AND (user_id = 0 OR user_id IS NULL);";
-            $result = $db_con->get1_old($sql);
+            $result = $res->load_std_by_grp($this);
 
             // get any time value: to be adjusted to: use the latest
+            // TODO use get_grp_ex_time that returns the group without time phrases
             if ($result === false) {
                 $sql = "SELECT result_id AS id,
                        result    AS num,
@@ -739,7 +726,7 @@ class phrase_group extends db_object
                   FROM results 
                  WHERE phrase_group_id = " . $this->id . "
                    AND (user_id = 0 OR user_id IS NULL);";
-                $result = $db_con->get1_old($sql);
+                $result = $db_con->get1_internal($sql);
                 log_debug($result['num']);
             } else {
                 log_debug($result['num']);

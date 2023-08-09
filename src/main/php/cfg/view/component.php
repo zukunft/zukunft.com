@@ -661,7 +661,7 @@ class component extends sandbox_typed
                         WHERE l.view_id = " . $view_id . " ) AS m;";
             //$db_con = new mysql;
             $db_con->usr_id = $this->user()->id();
-            $db_row = $db_con->get1_old($sql);
+            $db_row = $db_con->get1_internal($sql);
             $result = $db_row["max_order_nbr"];
 
             // if nothing is found, assume one as the next free number

@@ -188,6 +188,8 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO move the environment variables to a setting YAML like application.yaml, application-dev.yaml, application-int.yaml or application-prod.yaml in springboot
     TODO create a sanity API for monitor tools like checkMK or platforms like openshift
     TODO create an "always on" thread for the backend
+    TODO add a test with the query "inhabitants of Zurich" which should return the number of inhabitants of the city and the canton of Zurich, but not the employies of zurich insurance
+    TODO add a user parameter "default search levels" - users that use more specific words and a larger short term memory might want to increase this to more than 1
     TODO create a LaTeX extension for charts and values, so that studies can be recreated based on the LaTeX document
     TODO for fail over in the underlying technologies, create a another backend in python and java  and allow the user to select or auto select the backend technology
     TODO for fail over in the underlying database technologies, auto sync the casandra, hadoop, Postgres and mariaDB databases

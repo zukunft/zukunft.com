@@ -70,6 +70,7 @@ class result_unit_tests
         $this->assert_sql_by_group($t, $db_con, $res);
         $this->assert_sql_by_formula_and_group($t, $db_con, $res);
         $this->assert_sql_by_formula_and_group_list($t, $db_con, $res);
+        $this->assert_sql_load_std_by_group_id($t, $db_con, $res);
 
         $t->subheader('SQL load default statement tests');
 
@@ -199,6 +200,34 @@ class result_unit_tests
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
             $qp = $res->load_sql_by_frm_grp_lst($db_con->sql_creator(), $frm, $lst);
+            $t->assert_qp($qp, $db_con->db_type);
+        }
+    }
+
+    /**
+     * similar to $t->assert_sql_all but calling load_by_group_id_sql instead of load_sql
+     *
+     * @param test_cleanup $t the forwarded testing object
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param result $res the user sandbox object e.g. a result
+     */
+    private function assert_sql_load_std_by_group_id(
+        test_cleanup $t,
+        sql_db $db_con,
+        result $res): void
+    {
+        $grp = new phrase_group($t->usr1);
+        $grp->set_id(7);
+
+        // check the Postgres query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $res->load_sql_std_by_grp($db_con->sql_creator(), $grp);
+        $result = $t->assert_qp($qp, $db_con->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $res->load_sql_std_by_grp($db_con->sql_creator(), $grp);
             $t->assert_qp($qp, $db_con->db_type);
         }
     }

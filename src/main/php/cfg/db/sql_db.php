@@ -1868,22 +1868,27 @@ class sql_db
 
     /**
      * get only the first record from the database
+     * based on a not prepared sql query
+     * only for internal use where no parameter can be influenced by an user
+     *
+     * @param string $sql the sql statement to get the db row
+     * @return array|null the database row or null
      */
-    function get1_old(string $sql, string $sql_name = '', array $sql_array = array()): ?array
+    function get1_internal(string $sql): ?array
     {
         $this->debug_msg($sql, 'get1');
 
         // optimise the sql statement
         $sql = trim($sql);
-        if (strpos($sql, "LIMIT") === FALSE) {
-            if (substr($sql, -1) == ";") {
+        if (!str_contains($sql, "LIMIT")) {
+            if (str_ends_with($sql, ";")) {
                 $sql = substr($sql, 0, -1) . " LIMIT 1;";
             } else {
                 $sql = $sql . " LIMIT 1;";
             }
         }
 
-        return $this->fetch_first($sql, $sql_name, $sql_array);
+        return $this->fetch_first($sql, '', array());
     }
 
     /**
@@ -3625,15 +3630,19 @@ class sql_db
         return $param;
     }
 
-// reset the seq number
-    function seq_reset($type): string
+    /**
+     * reset the seq number
+     * @param string $type the class name to which the related table should be resetted
+     * @return string any warning message to be shown to the admin user
+     */
+    function seq_reset(string $type): string
     {
         $msg = '';
         $this->set_type($type);
         $sql_max = 'SELECT MAX(' . $this->name_sql_esc($this->id_field) . ') AS max_id FROM ' . $this->name_sql_esc($this->table) . ';';
         // $db_con->set_fields(array('MAX(value_id) AS max_id'));
         // $sql_max = $db_con->select();
-        $max_row = $this->get1_old($sql_max);
+        $max_row = $this->get1_internal($sql_max);
         if ($max_row == null) {
             log_warning('Cannot get the max of values', 'sql_db->seq_reset');
         } else {
@@ -3675,7 +3684,7 @@ class sql_db
             $result .= $msg;
         }
         if ($sql_check != '') {
-            $sql_result = $this->get1_old($sql_check);
+            $sql_result = $this->get1_internal($sql_check);
             if ($sql_result) {
                 $result = true;
             }
@@ -3703,7 +3712,7 @@ class sql_db
             $result .= $msg;
         }
         if ($sql_check != '') {
-            $sql_result = $this->get1_old($sql_check);
+            $sql_result = $this->get1_internal($sql_check);
             if ($sql_result) {
                 $result = true;
             }
@@ -3738,7 +3747,7 @@ class sql_db
             $result .= $msg;
         }
         if ($sql_check != '') {
-            $sql_result = $this->get1_old($sql_check);
+            $sql_result = $this->get1_internal($sql_check);
             if ($sql_result) {
                 $result = true;
             }
@@ -3871,7 +3880,7 @@ class sql_db
                                FROM INFORMATION_SCHEMA.COLUMNS 
                               WHERE table_name = '" . $table_name . "' 
                                 AND COLUMN_NAME = '" . $from_column_name . "';";
-                $db_row = $this->get1_old($pre_sql);
+                $db_row = $this->get1_internal($pre_sql);
                 $db_format = $db_row['COL_TYPE'];
                 $sql = "ALTER TABLE `" . $table_name . "` CHANGE `" . $from_column_name . "` `" . $to_column_name . "` " . $db_format . ";";
             } else {
@@ -3940,7 +3949,7 @@ class sql_db
                                FROM INFORMATION_SCHEMA.COLUMNS 
                               WHERE table_name = '" . $table_name . "' 
                                 AND COLUMN_NAME = '" . $column_name . "';";
-                $db_row = $this->get1_old($pre_sql);
+                $db_row = $this->get1_internal($pre_sql);
                 $db_format = $db_row['COL_TYPE'];
                 $sql = "ALTER TABLE `" . $table_name . "` CHANGE `" . $column_name . "` `" . $column_name . "` " . $db_format . ";";
                 //$sql_a = 'ALTER TABLE `phrase_types` CHANGE `word_symbol` `word_symbol` VARCHAR(5) CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT 'e.g. for percent the symbol is %'; '
@@ -3978,7 +3987,7 @@ class sql_db
                                FROM INFORMATION_SCHEMA.COLUMNS 
                               WHERE table_name = '" . $table_name . "' 
                                 AND COLUMN_NAME = '" . $column_name . "';";
-                $db_row = $this->get1_old($pre_sql);
+                $db_row = $this->get1_internal($pre_sql);
                 $db_format = $db_row['COL_TYPE'];
                 $sql = "ALTER TABLE `" . $table_name . "` CHANGE `" . $column_name . "` `" . $column_name . "` " . $db_format . ";";
             } else {
