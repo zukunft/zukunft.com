@@ -699,10 +699,11 @@ class phrase_group extends db_object
     }
 
     /**
+     * TODO add a db read test
      * @param $time_wrd_id
-     * @return array|null
+     * @return result the best matching result of the group
      */
-    function result($time_wrd_id): ?array
+    function result($time_wrd_id): result
     {
         log_debug($this->id . ",time" . $time_wrd_id . ",u" . $this->user()->name);
 
@@ -712,30 +713,26 @@ class phrase_group extends db_object
         $result = $res->load_by_grp($this);
 
         // if no user specific result is found, get the standard result
-        // TODO use load_std_by_grp
         if ($result === false) {
             $result = $res->load_std_by_grp($this);
 
             // get any time value: to be adjusted to: use the latest
-            // TODO use get_grp_ex_time that returns the group without time phrases
             if ($result === false) {
-                $sql = "SELECT result_id AS id,
-                       result    AS num,
-                       user_id          AS usr,
-                       last_update      AS upd
-                  FROM results 
-                 WHERE phrase_group_id = " . $this->id . "
-                   AND (user_id = 0 OR user_id IS NULL);";
-                $result = $db_con->get1_internal($sql);
-                log_debug($result['num']);
+                $grp_ex_time = $this->get_ex_time();
+                $result = $res->load_std_by_grp($this);
+                if ($result === false) {
+                    log_info('no result found for ' . $this->dsp_id());
+                } else {
+                    log_debug($res->dsp_id());
+                }
             } else {
-                log_debug($result['num']);
+                log_debug($res->dsp_id());
             }
         } else {
-            log_debug($result['num'] . " for " . $this->user()->id());
+            log_debug($res->dsp_id() . " for " . $this->user()->dsp_id());
         }
 
-        return $result;
+        return $res;
     }
 
     /**
@@ -773,6 +770,14 @@ class phrase_group extends db_object
         log_debug('group name ' . $group_name);
 
         return $result;
+    }
+
+
+    function get_ex_time(): phrase_group
+    {
+        $phr_lst = $this->phr_lst;
+        $phr_lst->ex_time();
+        return $phr_lst->get_grp();
     }
 
     /*
