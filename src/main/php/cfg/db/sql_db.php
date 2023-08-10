@@ -191,6 +191,7 @@ class sql_db
     const ULK2_TBL = 'ul2';                       // prefix used for the second user table which should be joined in the result
     const ULK3_TBL = 'ul3';                       // prefix used for the third user table which should be joined in the result
     const ULK4_TBL = 'ul4';                       // prefix used for the fourth user table which should be joined in the result
+    const GRP_TBL = 'g';                          // prefix used for the standard table where data for all users are stored
 
     const FLD_CODE_ID = 'code_id';                // field name for the code link
     const FLD_VALUE = 'value';                    // field name e.g. for the configuration value

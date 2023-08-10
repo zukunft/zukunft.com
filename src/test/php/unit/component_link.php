@@ -62,6 +62,7 @@ class component_link_unit_tests
         $vcl = new component_link($usr);
         $t->assert_sql_by_id($db_con, $vcl);
         $t->assert_sql_by_link($db_con, $vcl);
+        $this->assert_sql_max_pos($t, $db_con, $vcl);
 
 
         $t->subheader('SQL statement tests');
@@ -115,6 +116,31 @@ class component_link_unit_tests
         // check the MySQL query syntax
         $db_con->db_type = sql_db::MYSQL;
         $qp = $lst->load_sql($db_con, $dsp, $cmp);
+        $t->assert_qp($qp, $db_con->db_type);
+    }
+
+    /**
+     * test the SQL statement creation to retrieve the max order number of one view
+     * and check if the statement name is unique
+     *
+     * @param test_cleanup $t the test environment
+     * @param sql_db $db_con the test database connection
+     * @param component_link $vcl
+     * @return void
+     */
+    private function assert_sql_max_pos(
+        test_cleanup $t,
+        sql_db $db_con,
+        component_link $vcl): void
+    {
+        // check the Postgres query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $vcl->load_sql_max_pos($db_con->sql_creator(), 1);
+        $t->assert_qp($qp, $db_con->db_type);
+
+        // check the MySQL query syntax
+        $db_con->db_type = sql_db::MYSQL;
+        $qp = $vcl->load_sql_max_pos($db_con->sql_creator(), 1);
         $t->assert_qp($qp, $db_con->db_type);
     }
 

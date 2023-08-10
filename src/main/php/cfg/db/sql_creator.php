@@ -38,6 +38,7 @@ use cfg\library;
 use cfg\sql_db;
 use cfg\sys_log_level;
 use cfg\user;
+use cfg\view;
 use Exception;
 
 class sql_creator
@@ -45,6 +46,7 @@ class sql_creator
 
     // sql const used for this sql statement creator
     const NULL_VALUE = 'NULL';
+    const MAX_PREFIX = 'max_';
 
 
     // parameters for the sql creation that are set step by step with the functions of the sql creator
@@ -55,6 +57,8 @@ class sql_creator
     private ?string $table;         // name of the table that is used for the next query
     private ?string $query_name;    // unique name of the query to precompile and use the query
     private bool $usr_query;        // true, if the query is expected to retrieve user specific data
+    private bool $grp_query;        // true, if the query should calculate the value for a group of database rows; cannot be combined with other query types
+    private bool $sub_query;        // true, if the query is a sub query for another query
     private bool $all_query;        // true, if the query is expected to retrieve the standard and the user specific data
     private ?string $id_field;      // primary key field of the table used
     private ?string $id_from_field; // only for link objects the id field of the source object
@@ -81,6 +85,7 @@ class sql_creator
     private ?array $usr_num_field_lst;         // list of user specific numeric fields that should be returned to the next select query
     private ?array $usr_bool_field_lst;        // list of user specific boolean / tinyint fields that should be returned to the next select query
     private ?array $usr_only_field_lst;        // list of fields that are only in the user sandbox
+    private ?array $grp_field_lst;             // list of fields where e.g. the min or max of a group should be calculated
 
     // temp for handling the table joins
     private ?array $join_field_lst;            // list of fields that should be returned to the next select query that are taken from a joined table
@@ -156,6 +161,8 @@ class sql_creator
         $this->table = '';
         $this->query_name = '';
         $this->usr_query = false;
+        $this->grp_query = false;
+        $this->sub_query = false;
         $this->from_user = false;
         $this->all_query = false;
         $this->id_field = '';
@@ -180,6 +187,7 @@ class sql_creator
         $this->usr_num_field_lst = [];
         $this->usr_bool_field_lst = [];
         $this->usr_only_field_lst = [];
+        $this->grp_field_lst = [];
 
         $this->join_field = '';
         $this->join2_field = '';
@@ -336,9 +344,23 @@ class sql_creator
      */
     function set_usr_query(): void
     {
+        if ($this->grp_query) {
+            log_err('Group calculation cannot be combined with a user query');
+        }
         $this->usr_query = true;
         $this->join_usr_query = true;
         $this->set_user_join();
+    }
+
+    /**
+     * activate that in the SQL statement the user sandbox name field should be included
+     */
+    function set_grp_query(): void
+    {
+        if ($this->usr_query) {
+            log_err('Group calculation cannot be combined with other query types');
+        }
+        $this->grp_query = true;
     }
 
     /**
@@ -592,13 +614,18 @@ class sql_creator
         } elseif ($spt == sql_par_type::TEXT
             or $spt == sql_par_type::TEXT_USR
             or $spt == sql_par_type::TEXT_OR
-            or $spt == sql_par_type::INT_SUB) {
+            or $spt == sql_par_type::INT_SUB
+            or $spt == sql_par_type::INT_SUB_IN) {
             $this->add_par($spt, $fld_val);
         } elseif ($spt == sql_par_type::CONST
             or $spt == sql_par_type::CONST_NOT
             or $spt == sql_par_type::CONST_NOT_IN) {
             $this->add_par($spt, $fld_val);
             log_debug('For SQL parameter type const no parameter is needed');
+        } elseif ($spt == sql_par_type::MIN
+            or $spt == sql_par_type::MAX) {
+            $this->add_par($spt, '');
+            log_debug('For group SQL parameter type and no parameter and value is needed');
         } elseif ($spt == sql_par_type::IS_NULL) {
             $this->add_par($spt, '');
         } elseif ($spt == sql_par_type::LIKE) {
@@ -625,7 +652,7 @@ class sql_creator
     {
         // check if the minimum parameters are set
         if ($this->query_name == '') {
-            if ($par_offset > 0) {
+            if ($par_offset > 0 or $this->sub_query) {
                 log_info('SQL statement is not yet named, which is not required for a sub query');
             } else {
                 log_err('SQL statement is not yet named');
@@ -633,7 +660,7 @@ class sql_creator
         }
         // prepare the SQL statement parts that have dependencies to each other
         $fields = $this->fields($has_id);
-        $from = $this->from($fields);
+        $from = $this->from($fields, $par_offset);
         $where = $this->where($par_offset);
 
         // create a prepare SQL statement if possible
@@ -643,6 +670,24 @@ class sql_creator
 
         return $this->end_sql($sql);
     }
+
+    /**
+     * define the fields that should be returned in a select query
+     * @param string $fld_name list of the non-user specific fields that should be loaded from the database
+     * @param sql_par_type $spt the aggregation type for the field
+     */
+    function add_usr_grp_field(string $fld_name, sql_par_type $spt): void
+    {
+        // assuming that the user specific part is selected in the sub query
+        $this->add_field(sql_db::USR_TBL . '.' . user::FLD_ID);
+        $this->add_par(sql_par_type::INT_SUB, $this->usr_id);
+
+        $this->grp_field_lst[] = $fld_name;
+        $this->add_field($fld_name);
+        $this->add_par($spt, '');
+        $this->set_grp_query();
+    }
+
 
     /*
      * internal where
@@ -665,7 +710,7 @@ class sql_creator
                 $this->join .= ' ON ' . sql_db::STD_TBL . '.' . $this->id_field . ' = ' . sql_db::USR_TBL . '.' . $this->id_field;
                 if (!$this->all_query) {
                     $this->join .= ' AND ' . sql_db::USR_TBL . '.' . user::FLD_ID . ' = ';
-                    if ($this->query_name == '') {
+                    if ($this->query_name == '' and !$this->sub_query) {
                         $this->join .= $this->usr_view_id;
                     } else {
                         $this->add_field(sql_db::USR_TBL . '.' . user::FLD_ID);
@@ -803,6 +848,14 @@ class sql_creator
         if ($this->all_query) {
             $result = $this->sep($result);
             $result .= ' ' . sql_db::STD_TBL . '.' . user::FLD_ID . ' AS owner_id';
+        }
+
+        // add group fields
+        foreach ($this->grp_field_lst as $field) {
+            $field = $this->name_sql_esc($field);
+            $result = $this->sep($result);
+            // TODO add min
+            $result .= ' max(' . sql_db::GRP_TBL . '.' . $field . ') AS ' . sql_creator::MAX_PREFIX . $field;
         }
 
         // add join fields
@@ -962,11 +1015,28 @@ class sql_creator
     /**
      * create the "FROM" SQL statement based on the type
      * @param string $fields with a list of the query result field names for the group statement
+     * @param int $par_offset in case of a sub query the number of parameter set until here of the main query
      * @return string the sql statement
      */
-    private function from(string $fields): string
+    private function from(string $fields, int $par_offset = 0): string
     {
         $result = '';
+        if ($this->grp_query) {
+            $sc_sub = clone $this;
+            $sc_sub->set_type(sql_db::TBL_COMPONENT_LINK);
+            $sc_sub->sub_query = true;
+            $sc_sub->set_usr($this->usr_id);
+            $sc_sub->set_usr_num_fields($this->grp_field_lst);
+            // move parameter to the sub query if possible
+            $i = $par_offset;
+            while ($i < count($this->par_fields)) {
+                $sc_sub->add_where($this->par_fields[$i], $this->par_values[$i], $this->par_types[$i]);
+                $this->move_where_to_sub($i);
+                $i++;
+            }
+
+            $result = ' FROM ( ' . $sc_sub->sql(0, false) . ' ) AS ' . sql_db::GRP_TBL;
+        }
         if ($this->join_type <> '') {
             $join_table_name = $this->name_sql_esc($this->get_table_name($this->join_type));
             $join_id_field = $this->name_sql_esc($this->get_id_field_name($this->join_type));
@@ -1208,7 +1278,10 @@ class sql_creator
                     }
                     if ($this->par_named[$i] == false) {
                         // start with the where statement
-                        if ($par_type != sql_par_type::LIMIT
+                        if ($par_type != sql_par_type::MIN
+                            and $par_type != sql_par_type::MAX
+                            and ($par_type != sql_par_type::INT_SUB or $this->sub_query)
+                            and $par_type != sql_par_type::LIMIT
                             and $par_type != sql_par_type::OFFSET) {
                             if ($result == '') {
                                 $result = ' WHERE ';
@@ -1252,7 +1325,10 @@ class sql_creator
 
                             // set the table prefix
                             $tbl_id = '';
-                            if ($par_type != sql_par_type::LIMIT
+                            if ($par_type != sql_par_type::MIN
+                                and $par_type != sql_par_type::MAX
+                                and ($par_type != sql_par_type::INT_SUB or $this->sub_query)
+                                and $par_type != sql_par_type::LIMIT
                                 and $par_type != sql_par_type::OFFSET) {
                                 if ($this->usr_query
                                     or $this->join <> ''
@@ -1279,10 +1355,18 @@ class sql_creator
                                     $result .= $tbl_id . $this->par_fields[$i]
                                         . ' IN (' . $this->par_name($par_pos) . ')';
                                 }
-                            } elseif ($par_type == sql_par_type::INT_SUB) {
+                            } elseif ($par_type == sql_par_type::INT_SUB and $this->sub_query) {
+                                $result .= $tbl_id . $this->par_fields[$i]
+                                    . ' = ' . $this->par_name($par_pos);
+                            } elseif ($par_type == sql_par_type::INT_SUB and !$this->sub_query) {
+                                //$par_offset--;
+                                $result .= ''; // because added with the page statement
+                            } elseif ($par_type == sql_par_type::INT_SUB_IN) {
                                 $result .= $tbl_id . $this->par_fields[$i]
                                     . ' IN (' . $this->par_value($i + 1) . ')';
-                            } elseif ($par_type == sql_par_type::LIMIT
+                            } elseif ($par_type == sql_par_type::MIN
+                                or $par_type == sql_par_type::MAX
+                                or $par_type == sql_par_type::LIMIT
                                 or $par_type == sql_par_type::OFFSET) {
                                 $par_offset--;
                                 $result .= ''; // because added with the page statement
@@ -1428,7 +1512,9 @@ class sql_creator
             if ($par_type != sql_par_type::CONST
                 and $par_type != sql_par_type::CONST_NOT
                 and $par_type != sql_par_type::CONST_NOT_IN
-                and $par_type != sql_par_type::IS_NULL) {
+                and $par_type != sql_par_type::IS_NULL
+                and $par_type != sql_par_type::MIN
+                and $par_type != sql_par_type::MAX) {
                 $result++;
             }
         }
@@ -1457,7 +1543,11 @@ class sql_creator
                 }
             }
         } else {
-            log_err('Query name is given, but parameters types are missing for ' . $this->query_name);
+            if ($this->sub_query) {
+                $sql = "SELECT";
+            } else {
+                log_err('Query name is given, but parameters types are missing for ' . $this->query_name);
+            }
         }
         return $sql;
     }
@@ -1488,7 +1578,8 @@ class sql_creator
                 and $par_type != sql_par_type::CONST_NOT
                 and $par_type != sql_par_type::CONST_NOT_IN
                 and $par_type != sql_par_type::IS_NULL
-                and $par_type != sql_par_type::INT_SUB) {
+                and $par_type != sql_par_type::INT_SUB
+                and $par_type != sql_par_type::INT_SUB_IN) {
                 $used_par_values[] = $this->par_value($i + 1);;
             }
             $i++;
@@ -1496,9 +1587,25 @@ class sql_creator
         return $used_par_values;
     }
 
+    /**
+     * remove the where condition at the given position $pos
+     * used to move where parameters to a sub query
+     * @param int $pos the array position which parameter should be removed
+     * @return void
+     */
+    function move_where_to_sub(int $pos): void
+    {
+        /*
+        unset($this->par_fields[$pos]);
+        unset($this->par_values[$pos]);
+        unset($this->par_types[$pos]);
+        */
+    }
+
     /*
       technical function to finally update data in the MySQL database
     */
+
 
     /**
      * insert a new record in the database
@@ -2029,6 +2136,7 @@ class sql_creator
                 case sql_par_type::INT_NOT:
                 case sql_par_type::INT_NOT_OR_NULL:
                 case sql_par_type::INT_SUB:
+                case sql_par_type::INT_SUB_IN:
                 case sql_par_type::LIMIT:
                 case sql_par_type::OFFSET:
                     $result[] = 'int';
@@ -2045,6 +2153,8 @@ class sql_creator
                 case sql_par_type::CONST_NOT:
                 case sql_par_type::CONST_NOT_IN:
                 case sql_par_type::IS_NULL:
+                case sql_par_type::MIN:
+                case sql_par_type::MAX:
                     break;
                 default:
                     $result[] = $type->value;

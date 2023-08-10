@@ -641,7 +641,7 @@ class component extends sandbox_typed
     /**
      * returns the next free order number for a new view component
      */
-    function next_nbr($view_id)
+    function next_nbr(int $view_id): int
     {
         log_debug('component->next_nbr for view "' . $view_id . '"');
 
@@ -651,18 +651,8 @@ class component extends sandbox_typed
         if ($view_id == '' or $view_id == Null or $view_id == 0) {
             log_err('Cannot get the next position, because the view_id is not set', 'component->next_nbr');
         } else {
-            $sql_avoid_code_check_prefix = "SELECT";
-            $sql = $sql_avoid_code_check_prefix . " max(m.order_nbr) AS max_order_nbr
-                FROM ( SELECT 
-                              " . $db_con->get_usr_field("order_nbr", "l", "u", sql_db::FLD_FORMAT_VAL) . " 
-                          FROM component_links l 
-                    LEFT JOIN user_component_links u ON u.component_link_id = l.component_link_id 
-                                                      AND u.user_id = " . $this->user()->id() . " 
-                        WHERE l.view_id = " . $view_id . " ) AS m;";
-            //$db_con = new mysql;
-            $db_con->usr_id = $this->user()->id();
-            $db_row = $db_con->get1_internal($sql);
-            $result = $db_row["max_order_nbr"];
+            $vcl = new component_link($this->user());
+            $result = $vcl->max_pos_by_view($view_id);
 
             // if nothing is found, assume one as the next free number
             if ($result <= 0) {

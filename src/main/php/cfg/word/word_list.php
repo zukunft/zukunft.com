@@ -228,7 +228,7 @@ class word_list extends sandbox_list
             $sub_sc->add_where(phrase_group::FLD_ID, $grp_id);
 
             // use the sub query
-            $sc->add_where(word::FLD_ID, $sub_sc->sql(1, false), sql_par_type::INT_SUB);
+            $sc->add_where(word::FLD_ID, $sub_sc->sql(1, false), sql_par_type::INT_SUB_IN);
             $qp->sql = $sc->sql();
             $qp->par = array_merge($sc->get_par(), $sub_sc->get_par());
         } else {

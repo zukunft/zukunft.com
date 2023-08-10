@@ -271,6 +271,51 @@ class component_link extends sandbox_link_with_type
     }
 
     /**
+     * create a simple SQL statement to retrieve the max order number of one view
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param int $id the id of the view
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_max_pos(sql_creator $sc, int $id): sql_par
+    {
+        $qp = parent::load_sql_obj_vars($sc, self::class);
+        $qp->name .= 'max_pos';
+
+        $sc->set_type(sql_db::TBL_COMPONENT_LINK);
+        $sc->set_name($qp->name);
+        $sc->set_usr($this->user()->id());
+        $sc->add_usr_grp_field(self::FLD_ORDER_NBR, sql_par_type::MAX);
+        $sc->add_where(view::FLD_ID, $id, sql_par_type::INT_SUB);
+        $qp->sql = $sc->sql(1, false);
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * load the component_link by the link id
+     *
+     * @param int $view_id the id of the view
+     * @return int the max order number of components related to the given view
+     */
+    function max_pos_by_view(int $view_id): int
+    {
+        global $db_con;
+        $qp = $this->load_sql_max_pos($db_con->sql_creator(), $view_id);
+        $db_row = $db_con->get1($qp);
+        if ($db_row != null) {
+            if (array_key_exists(sql_creator::MAX_PREFIX . self::FLD_ORDER_NBR, $db_row)) {
+                return $db_row[sql_creator::MAX_PREFIX . self::FLD_ORDER_NBR];
+            } else {
+                return 0;
+            }
+        } else {
+            return 0;
+        }
+    }
+
+    /**
      * load the component_link by the link id
      *
      * @param int $from_id the subject object id
@@ -417,7 +462,7 @@ class component_link extends sandbox_link_with_type
         if ($this->id > 0) {
             $this->load_by_id($this->id);
         } elseif ($this->fob->id() != 0 and $this->tob->id() != 0) {
-            $this->load_by_link_id($this->fob->id(), 0,  $this->tob->id(), self::class);
+            $this->load_by_link_id($this->fob->id(), 0, $this->tob->id(), self::class);
         }
         $this->load_objects();
 
