@@ -303,7 +303,9 @@ class component_dsp_old extends component
         return $result;
     }
 
-    // lists of all views where a view component is used
+    /**
+     * lists of all views where this component is used
+     */
     private function linked_views($add_link, $wrd, $back): string
     {
         log_debug("id " . $this->id . " and user " . $this->user()->id() . " (word " . $wrd->id . ", add " . $add_link . ").");
@@ -318,22 +320,18 @@ class component_dsp_old extends component
             $result .= $html->dsp_tbl_start_half();
         }
 
-        $sql = "SELECT m.view_id, m.view_name 
-              FROM component_links l, views m 
-             WHERE l.component_id = " . $this->id . " 
-               AND l.view_id = m.view_id;";
-        //$db_con = New mysql;
-        $db_con->usr_id = $this->user()->id();
-        $view_lst = $db_con->get_old($sql);
-        foreach ($view_lst as $view) {
+        $lnk_lst = new component_link_list($this->user());
+        $lnk_lst->load_by_component($this);
+
+        foreach ($lnk_lst as $lnk) {
             $result .= '  <tr>' . "\n";
             $result .= '    <td>' . "\n";
             $dsp = new view_dsp_old($this->user());
-            $dsp->id = $view[view::FLD_ID];
-            $dsp->name = $view[view::FLD_NAME];
-            $result .= '      ' . $dsp->name_linked($wrd, $back) . '' . "\n";
+            $dsp->id = $lnk->fob->id();
+            $dsp->name = $lnk->fob->name();
+            $result .= '      ' . $dsp->name_linked($wrd, $back) . "\n";
             $result .= '    </td>' . "\n";
-            $result .= $this->btn_unlink($view[view::FLD_ID], $wrd, $back);
+            $result .= $this->btn_unlink($lnk->fob->id(), $wrd, $back);
             $result .= '  </tr>' . "\n";
         }
 
@@ -465,8 +463,12 @@ class component_dsp_old extends component
         return $this->dsp_edit($add_link, $wrd, $back);
     }
 
-    // HTML code to edit all word fields
-    function dsp_edit($add_link, $wrd, $back): string
+    /**
+     * HTML code to edit all word fields
+     * @param int $add_link the id of the view that should be linked to the word
+     * @param word $wrd
+     */
+    function dsp_edit(int $add_link, word $wrd, string $back): string
     {
         log_debug($this->dsp_id() . ' for user ' . $this->user()->name . ' (called from ' . $back . ')');
         $result = '';

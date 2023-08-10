@@ -1578,7 +1578,8 @@ class sql_creator
                 and $par_type != sql_par_type::CONST_NOT
                 and $par_type != sql_par_type::CONST_NOT_IN
                 and $par_type != sql_par_type::IS_NULL
-                and $par_type != sql_par_type::INT_SUB
+                and $par_type != sql_par_type::MIN
+                and $par_type != sql_par_type::MAX
                 and $par_type != sql_par_type::INT_SUB_IN) {
                 $used_par_values[] = $this->par_value($i + 1);;
             }

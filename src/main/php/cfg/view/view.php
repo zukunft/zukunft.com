@@ -939,7 +939,7 @@ class view extends sandbox_typed
 
         // collect all component links where this view is used
         $lnk_lst = new component_link_list($this->user());
-        $lnk_lst->load_by_view($this);
+        $lnk_lst->load_by_view_old($this);
 
         // if there are links, delete if not used by anybody else than the user who has requested the deletion
         // or exclude the links for the user if the link is used by someone else

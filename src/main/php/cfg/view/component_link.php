@@ -306,7 +306,11 @@ class component_link extends sandbox_link_with_type
         $db_row = $db_con->get1($qp);
         if ($db_row != null) {
             if (array_key_exists(sql_creator::MAX_PREFIX . self::FLD_ORDER_NBR, $db_row)) {
-                return $db_row[sql_creator::MAX_PREFIX . self::FLD_ORDER_NBR];
+                if ($db_row[sql_creator::MAX_PREFIX . self::FLD_ORDER_NBR] != null) {
+                    return $db_row[sql_creator::MAX_PREFIX . self::FLD_ORDER_NBR];
+                } else {
+                    return 0;
+                }
             } else {
                 return 0;
             }

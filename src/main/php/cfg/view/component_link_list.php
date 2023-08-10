@@ -2,8 +2,8 @@
 
 /*
 
-    model/view/view_cmp_link_list.php - a list of view component links
-    ---------------------------------
+    model/view/component_link_list.php - a list of links between a view and a component
+    ----------------------------------
 
     This links list object is used to update or delete a list of links with one SQL statement
 
@@ -35,6 +35,7 @@ namespace cfg;
 
 include_once DB_PATH . 'sql_par_type.php';
 
+use cfg\db\sql_creator;
 use cfg\db\sql_par_type;
 
 class component_link_list extends sandbox_list
@@ -62,6 +63,93 @@ class component_link_list extends sandbox_list
      */
 
     /**
+     * set the common part of the SQL query component links
+     * @param sql_creator $sc with the target db_type set
+     * @param string $query_name the name of the selection fields to make the query name unique
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql(sql_creator $sc, string $query_name): sql_par
+    {
+        $qp = new sql_par(self::class);
+        $qp->name .= $query_name;
+
+        $sc->set_type(sql_db::TBL_COMPONENT_LINK);
+        $sc->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
+        $sc->set_usr($this->user()->id());
+        $sc->set_fields(component_link::FLD_NAMES);
+        $sc->set_usr_num_fields(component_link::FLD_NAMES_NUM_USR);
+        return $qp;
+    }
+
+    /**
+     * set the SQL query parameters to load all components linked to a view
+     * @param sql_creator $sc with the target db_type set
+     * @param int $msk_id the id of the view to which the components should be loaded
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_view_id(sql_creator $sc, int $msk_id): sql_par
+    {
+        $qp = $this->load_sql($sc, 'msk_id');
+        if ($msk_id > 0) {
+            $sc->add_where(view::FLD_ID, $msk_id);
+            $sc->set_join_fields(component::FLD_NAMES, sql_db::TBL_COMPONENT);
+            // TODO add the user component fields
+            $qp->sql = $sc->sql();
+        } else {
+            $qp->name = '';
+        }
+        $qp->par = $sc->get_par();
+        return $qp;
+    }
+
+    /**
+     * set the SQL query parameters to load all views linked to a component
+     * @param sql_creator $sc with the target db_type set
+     * @param int $cmp_id the id of the component to which the views should be loaded
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_component_id(sql_creator $sc, int $cmp_id): sql_par
+    {
+        $qp = $this->load_sql($sc, 'cmp_id');
+        if ($cmp_id > 0) {
+            $sc->add_where(view::FLD_ID, $cmp_id);
+            $sc->set_join_fields(view::FLD_NAMES, sql_db::TBL_VIEW);
+            // TODO add the user view fields
+            $qp->sql = $sc->sql();
+        } else {
+            $qp->name = '';
+        }
+        $qp->par = $sc->get_par();
+        return $qp;
+    }
+
+    /**
+     * interface function to load all components linked to a given view
+     *
+     * @param view $dsp if set to get all links for this view
+     * @return bool true if phrases are found
+     */
+    function load_by_view(view $dsp): bool
+    {
+        global $db_con;
+        $qp = $this->load_sql_by_view_id($db_con->sql_creator(), $dsp->id());
+        return $this->load($qp);
+    }
+
+    /**
+     * interface function to load all views linked to a given component
+     *
+     * @param component $cmp if set to get all links for this view
+     * @return bool true if phrases are found
+     */
+    function load_by_component(component $cmp): bool
+    {
+        global $db_con;
+        $qp = $this->load_sql_by_component_id($db_con->sql_creator(), $cmp->id());
+        return $this->load($qp);
+    }
+
+    /**
      * create an SQL statement to retrieve a list of view component links from the database
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
@@ -69,7 +157,7 @@ class component_link_list extends sandbox_list
      * @param component|null $cmp if set to get all links for this view component
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con, ?view $dsp = null, ?component $cmp = null): sql_par
+    function load_sql_by(sql_db $db_con, ?view $dsp = null, ?component $cmp = null): sql_par
     {
         $db_con->set_type(sql_db::TBL_COMPONENT_LINK);
         $qp = new sql_par(self::class);
@@ -122,10 +210,10 @@ class component_link_list extends sandbox_list
      * @param view $dsp if set to get all links for this view
      * @return bool true if phrases are found
      */
-    function load_by_view(view $dsp): bool
+    function load_by_view_old(view $dsp): bool
     {
         global $db_con;
-        $qp = $this->load_sql($db_con, $dsp, null);
+        $qp = $this->load_sql_by($db_con, $dsp, null);
         return $this->load($qp);
     }
 
@@ -135,10 +223,10 @@ class component_link_list extends sandbox_list
      * @param component $cmp if set to get all links for this view component
      * @return bool true if phrases are found
      */
-    function load_by_component(component $cmp): bool
+    function load_by_component_old(component $cmp): bool
     {
         global $db_con;
-        $qp = $this->load_sql($db_con, null, $cmp);
+        $qp = $this->load_sql_by($db_con, null, $cmp);
         return $this->load($qp);
     }
 

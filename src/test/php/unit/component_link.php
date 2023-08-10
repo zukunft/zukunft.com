@@ -110,12 +110,12 @@ class component_link_unit_tests
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $lst->load_sql($db_con, $dsp, $cmp);
+        $qp = $lst->load_sql_by($db_con, $dsp, $cmp);
         $t->assert_qp($qp, $db_con->db_type);
 
         // check the MySQL query syntax
         $db_con->db_type = sql_db::MYSQL;
-        $qp = $lst->load_sql($db_con, $dsp, $cmp);
+        $qp = $lst->load_sql_by($db_con, $dsp, $cmp);
         $t->assert_qp($qp, $db_con->db_type);
     }
 

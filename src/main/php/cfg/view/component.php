@@ -500,7 +500,7 @@ class component extends sandbox_typed
 
         if ($this->id > 0 and $this->user() != null) {
             $lst = new component_link_list($this->user());
-            $lst->load_by_component($this);
+            $lst->load_by_component_old($this);
             $result = $lst->view_ids();
         } else {
             log_err("The user id must be set to list the component links.", "component->assign_dsp_ids");
@@ -965,7 +965,7 @@ class component extends sandbox_typed
 
         // collect all component links where this component is used
         $lnk_lst = new component_link_list($this->user());
-        $lnk_lst->load_by_component($this);
+        $lnk_lst->load_by_component_old($this);
 
         // if there are links, delete if not used by anybody else than the user who has requested the deletion
         // or exclude the links for the user if the link is used by someone else
