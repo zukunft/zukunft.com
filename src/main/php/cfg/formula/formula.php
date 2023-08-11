@@ -417,7 +417,7 @@ class formula extends sandbox_typed
      */
     function load_standard_sql(sql_creator $sc, string $class = self::class): sql_par
     {
-        $sc->set_type(sql_db::TBL_FORMULA);
+        $sc->set_type($class);
         $sc->set_fields(array_merge(
             self::FLD_NAMES,
             self::FLD_NAMES_USR,
@@ -1796,7 +1796,8 @@ class formula extends sandbox_typed
      */
     function not_changed_sql(sql_db $db_con): sql_par
     {
-        $db_con->set_type(sql_db::TBL_FORMULA);
+        $lib = new library();
+        $db_con->set_type($lib->class_to_name(self::class));
         return $db_con->load_sql_not_changed($this->id(), $this->owner_id);
     }
 
@@ -1900,7 +1901,7 @@ class formula extends sandbox_typed
      */
     function load_sql_user_changes(sql_creator $sc, string $class = self::class): sql_par
     {
-        $sc->set_type(sql_db::TBL_FORMULA, true);
+        $sc->set_type($class, true);
         $sc->set_fields(array_merge(
             self::FLD_NAMES_USR,
             self::FLD_NAMES_NUM_USR

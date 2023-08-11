@@ -259,17 +259,19 @@ class sandbox extends db_object
     function fld_id(string $class = self::class): string
     {
         $lib = new library();
-        return $this->obj_name . sql_db::FLD_EXT_ID;
+        return $lib->class_to_name($class) . sql_db::FLD_EXT_ID;
     }
 
-    function fld_usr_id(): string
+    function fld_usr_id(string $class = self::class): string
     {
-        return sql_db::USER_PREFIX . $this->obj_name . sql_db::FLD_EXT_ID;
+        $lib = new library();
+        return sql_db::USER_PREFIX . $lib->class_to_name($class) . sql_db::FLD_EXT_ID;
     }
 
-    function fld_name(): string
+    function fld_name(string $class = self::class): string
     {
-        return $this->obj_name . sql_db::FLD_EXT_NAME;
+        $lib = new library();
+        return $lib->class_to_name($class) . sql_db::FLD_EXT_NAME;
     }
 
     /**

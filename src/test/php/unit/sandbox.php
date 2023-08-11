@@ -276,7 +276,7 @@ class sandbox_unit_tests
 
         // test a simple SQL select of the user defined word for Postgres by the id
         $db_con->db_type = sql_db::POSTGRES;
-        $db_con->set_type(sql_db::TBL_WORD, true);
+        $db_con->set_type(word::class, true);
         $db_con->set_usr(1);
         $db_con->set_fields(array(word::FLD_PLURAL, sandbox_named::FLD_DESCRIPTION, phrase::FLD_TYPE, word::FLD_VIEW));
         $db_con->set_where_std(1);
@@ -294,7 +294,7 @@ class sandbox_unit_tests
 
         // ... same for MySQL
         $db_con->db_type = sql_db::MYSQL;
-        $db_con->set_type(sql_db::TBL_WORD, true);
+        $db_con->set_type(word::class, true);
         $db_con->set_usr(1);
         $db_con->set_fields(array('plural', sandbox_named::FLD_DESCRIPTION, 'phrase_type_id', 'view_id'));
         $db_con->set_where_std(1);
@@ -312,7 +312,7 @@ class sandbox_unit_tests
 
         // test a very simple SQL select of the user defined word for Postgres by the id
         $db_con->db_type = sql_db::POSTGRES;
-        $db_con->set_type(sql_db::TBL_WORD, true);
+        $db_con->set_type(word::class, true);
         $db_con->set_usr(1);
         $db_con->set_where_std(1);
         $created_sql = $db_con->select_by_set_id();
@@ -325,7 +325,7 @@ class sandbox_unit_tests
 
         // ... same for MySQL
         $db_con->db_type = sql_db::MYSQL;
-        $db_con->set_type(sql_db::TBL_WORD, true);
+        $db_con->set_type(word::class, true);
         $db_con->set_usr(1);
         $db_con->set_where_std(1);
         $created_sql = $db_con->select_by_set_id();
@@ -393,7 +393,7 @@ class sandbox_unit_tests
 
         // test a SQL select creation of user sandbox data for Postgres
         $db_con->db_type = sql_db::POSTGRES;
-        $db_con->set_type(sql_db::TBL_SOURCE);
+        $db_con->set_type(source::class);
         $db_con->set_fields(array(sql_db::FLD_CODE_ID));
         $db_con->set_usr_fields(array(source::FLD_URL, sandbox_named::FLD_DESCRIPTION));
         $db_con->set_usr_num_fields(array('source_type_id'));
@@ -415,7 +415,7 @@ class sandbox_unit_tests
         $t->display('Postgres user sandbox select', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // ... same for search by name
-        $db_con->set_type(sql_db::TBL_SOURCE);
+        $db_con->set_type(source::class);
         $db_con->set_fields(array(sql_db::FLD_CODE_ID));
         $db_con->set_usr_fields(array(source::FLD_URL, sandbox_named::FLD_DESCRIPTION));
         $db_con->set_usr_num_fields(array('source_type_id'));
@@ -438,7 +438,7 @@ class sandbox_unit_tests
         $t->display('Postgres user sandbox select by name', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // ... same for search by code_id
-        $db_con->set_type(sql_db::TBL_SOURCE);
+        $db_con->set_type(source::class);
         $db_con->set_fields(array(sql_db::FLD_CODE_ID));
         $db_con->set_usr_fields(array(source::FLD_URL, sandbox_named::FLD_DESCRIPTION));
         $db_con->set_usr_num_fields(array('source_type_id'));
@@ -460,7 +460,7 @@ class sandbox_unit_tests
         $t->display('Postgres user sandbox select by code_id', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // ... same for all users by id
-        $db_con->set_type(sql_db::TBL_SOURCE);
+        $db_con->set_type(source::class);
         $db_con->set_fields(array(sql_db::FLD_CODE_ID, 'url', sandbox_named::FLD_DESCRIPTION, 'source_type_id'));
         $db_con->set_where_std(1, '');
         $created_sql = $db_con->select_by_set_id();
@@ -826,7 +826,7 @@ class sandbox_unit_tests
 
         // ... and search by id for MySQL
         $db_con->db_type = sql_db::MYSQL;
-        $db_con->set_type(sql_db::TBL_SOURCE);
+        $db_con->set_type(source::class);
         $db_con->set_fields(array(sql_db::FLD_CODE_ID));
         $db_con->set_usr_fields(array('url', sandbox_named::FLD_DESCRIPTION));
         $db_con->set_usr_num_fields(array('source_type_id'));
@@ -849,7 +849,7 @@ class sandbox_unit_tests
         $t->display('MySQL user sandbox select', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // ... same for search by name
-        $db_con->set_type(sql_db::TBL_SOURCE);
+        $db_con->set_type(source::class);
         $db_con->set_fields(array(sql_db::FLD_CODE_ID));
         $db_con->set_usr_fields(array('url', sandbox_named::FLD_DESCRIPTION));
         $db_con->set_usr_num_fields(array('source_type_id'));
@@ -873,7 +873,7 @@ class sandbox_unit_tests
         $t->display('MySQL user sandbox select by name', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // ... same for search by code_id
-        $db_con->set_type(sql_db::TBL_SOURCE);
+        $db_con->set_type(source::class);
         $db_con->set_fields(array(sql_db::FLD_CODE_ID));
         $db_con->set_usr_fields(array('url', sandbox_named::FLD_DESCRIPTION));
         $db_con->set_usr_num_fields(array('source_type_id'));
@@ -896,7 +896,7 @@ class sandbox_unit_tests
         $t->display('MySQL user sandbox select by code_id', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // ... same for all users by id
-        $db_con->set_type(sql_db::TBL_SOURCE);
+        $db_con->set_type(source::class);
         $db_con->set_fields(array(sql_db::FLD_CODE_ID, 'url', sandbox_named::FLD_DESCRIPTION, 'source_type_id'));
         $db_con->set_where_std(1, '');
         $created_sql = $db_con->select_by_set_id();

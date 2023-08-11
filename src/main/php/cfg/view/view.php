@@ -312,7 +312,7 @@ class view extends sandbox_typed
      */
     function load_standard_sql(sql_creator $sc, string $class = self::class): sql_par
     {
-        $sc->set_type(sql_db::TBL_VIEW);
+        $sc->set_type($class);
         $sc->set_fields(array_merge(
             self::FLD_NAMES,
             self::FLD_NAMES_USR,
@@ -352,7 +352,7 @@ class view extends sandbox_typed
      */
     protected function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
-        $sc->set_type(sql_db::TBL_VIEW);
+        $sc->set_type($class);
         return parent::load_sql_fields(
             $sc, $query_name, $class,
             self::FLD_NAMES,
@@ -559,6 +559,11 @@ class view extends sandbox_typed
         return parent::load_by_name($name, $class);
     }
 
+
+    /*
+     * load helper
+     */
+
     function name_field(): string
     {
         return self::FLD_NAME;
@@ -567,6 +572,18 @@ class view extends sandbox_typed
     function all_sandbox_fields(): array
     {
         return self::ALL_SANDBOX_FLD_NAMES;
+    }
+
+    /**
+     * @param sql_creator $sc the sql creator without view joins
+     * @return sql_creator the sql creator with the view join set
+     */
+    function set_join(sql_creator $sc): sql_creator
+    {
+        $sc->set_join_fields(view::FLD_NAMES, sql_db::TBL_VIEW);
+        $sc->set_join_usr_fields(view::FLD_NAMES_USR, sql_db::TBL_VIEW);
+        $sc->set_join_usr_num_fields(view::FLD_NAMES_NUM_USR, sql_db::TBL_VIEW);
+        return $sc;
     }
 
 

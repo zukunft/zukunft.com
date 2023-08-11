@@ -154,7 +154,7 @@ class formula_element extends db_object
     {
         $qp = parent::load_sql($sc, $query_name, $class);
 
-        $sc->set_type(sql_db::TBL_FORMULA_ELEMENT);
+        $sc->set_type($class);
         $sc->set_name($qp->name);
         $sc->set_fields(self::FLD_NAMES);
 

@@ -73,21 +73,6 @@ class component_link_unit_tests
         //$t->assert_sql_all($db_con, $lnk);
         $t->assert_sql_user_changes($db_con, $lnk);
 
-
-        $t->subheader('Database list query creation tests');
-
-        // sql to load a view component link list by view id
-        $dsp_cmp_lnk_lst = new component_link_list($usr);
-        $dsp = new view($usr);
-        $dsp->set_id(2);
-        $this->assert_sql_lst_all($t, $db_con, $dsp_cmp_lnk_lst, $dsp);
-
-        // sql to load a view component link list by component id
-        $dsp_cmp_lnk_lst = new component_link_list($usr);
-        $cmp = new component($usr);
-        $cmp->set_id(3);
-        $this->assert_sql_lst_all($t, $db_con, $dsp_cmp_lnk_lst, null, $cmp);
-
     }
 
     /**

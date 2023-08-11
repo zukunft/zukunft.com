@@ -587,16 +587,19 @@ class sql_db
      * resets all previous db query settings such as fields, user_fields, so this should be the first statement when defining a database query
      * TODO check that this is always called directly before the query is created, so that
      *
-     * @param string $type is a string that is used to select the table name, the id field and the name field
+     * @param string $class is a string that is used to select the table name, the id field and the name field
      * @param bool $usr_table if it is true the user table instead of the standard table is used
      * @return bool true if setting the type was successful
      */
-    function set_type(string $type, bool $usr_table = false): bool
+    function set_type(string $class, bool $usr_table = false): bool
     {
         global $usr;
 
+        $lib = new library();
+        $class = $lib->class_to_name($class);
+
         $this->reset();
-        $this->type = $type;
+        $this->type = $class;
         if ($usr == null) {
             $this->set_usr(SYSTEM_USER_ID); // if the session user is not yet set, use the system user id to test the database compatibility
         } else {
@@ -728,6 +731,7 @@ class sql_db
                              string $join_select_field = '',
                              int    $join_select_id = 0): void
     {
+        $join_type = $this->class_to_name($join_type);
         // fill up the join field places or add settings to a matching join link
         if ($this->join_type == '' and !$this->join_force_rename
             or (($this->join_field == $join_field and $join_field != '')
@@ -783,6 +787,7 @@ class sql_db
                                  string $join_to_field = '',
                                  bool   $force_rename = false): void
     {
+        $join_type = $this->class_to_name($join_type);
         // fill up the join field places or add settings to a matching join link
         // e.g. add the user fields to an existing not user specific join
         if ($this->join_type == ''
@@ -832,6 +837,7 @@ class sql_db
                                      string $join_to_field = '',
                                      bool   $force_rename = false): void
     {
+        $join_type = $this->class_to_name($join_type);
         // fill up the join field places or add settings to a matching join link
         // e.g. add the user fields to an existing not user specific join
         if ($this->join_type == ''
@@ -878,6 +884,7 @@ class sql_db
     function set_join_usr_count_fields(array  $join_field_lst,
                                        string $join_type): void
     {
+        $join_type = $this->class_to_name($join_type);
         if ($this->join_type == '') {
             $this->join_type = $join_type;
             $this->join_usr_count_field_lst = $join_field_lst;
@@ -897,6 +904,12 @@ class sql_db
         } else {
             log_err('Max four table count joins expected in version ' . PRG_VERSION);
         }
+    }
+
+    function class_to_name(string $class): string
+    {
+        $lib = new library();
+        return $lib->class_to_name($class);
     }
 
     /**

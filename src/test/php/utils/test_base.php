@@ -163,6 +163,7 @@ include_once $path_unit . 'view_list.php';
 include_once $path_unit . 'component.php';
 include_once $path_unit . 'component_link.php';
 include_once $path_unit . 'component_list.php';
+include_once $path_unit . 'component_link_list.php';
 include_once $path_unit . 'verb.php';
 include_once $path_unit . 'ref.php';
 include_once $path_unit . 'language.php';

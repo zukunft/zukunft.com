@@ -59,7 +59,7 @@ class formula_element_list extends sandbox_list
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
 
-        $sc->set_type(sql_db::TBL_FORMULA_ELEMENT);
+        $sc->set_type(formula_element::class);
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
         $sc->set_fields(formula_element::FLD_NAMES);

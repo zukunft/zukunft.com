@@ -73,7 +73,7 @@ class component_link_list extends sandbox_list
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
 
-        $sc->set_type(sql_db::TBL_COMPONENT_LINK);
+        $sc->set_type(component_link::class);
         $sc->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
         $sc->set_usr($this->user()->id());
         $sc->set_fields(component_link::FLD_NAMES);
@@ -84,16 +84,15 @@ class component_link_list extends sandbox_list
     /**
      * set the SQL query parameters to load all components linked to a view
      * @param sql_creator $sc with the target db_type set
-     * @param int $msk_id the id of the view to which the components should be loaded
+     * @param view $msk the id of the view to which the components should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_view_id(sql_creator $sc, int $msk_id): sql_par
+    function load_sql_by_view_id(sql_creator $sc, view $msk): sql_par
     {
-        $qp = $this->load_sql($sc, 'msk_id');
-        if ($msk_id > 0) {
-            $sc->add_where(view::FLD_ID, $msk_id);
-            $sc->set_join_fields(component::FLD_NAMES, sql_db::TBL_COMPONENT);
-            // TODO add the user component fields
+        $qp = $this->load_sql($sc, view::FLD_ID);
+        if ($msk->id() > 0) {
+            $sc->add_where(view::FLD_ID, $msk->id());
+            $sc = (new component($this->user()))->set_join($sc);
             $qp->sql = $sc->sql();
         } else {
             $qp->name = '';
@@ -105,16 +104,15 @@ class component_link_list extends sandbox_list
     /**
      * set the SQL query parameters to load all views linked to a component
      * @param sql_creator $sc with the target db_type set
-     * @param int $cmp_id the id of the component to which the views should be loaded
+     * @param component $cmp the id of the component to which the views should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_component_id(sql_creator $sc, int $cmp_id): sql_par
+    function load_sql_by_component_id(sql_creator $sc, component $cmp): sql_par
     {
-        $qp = $this->load_sql($sc, 'cmp_id');
-        if ($cmp_id > 0) {
-            $sc->add_where(view::FLD_ID, $cmp_id);
-            $sc->set_join_fields(view::FLD_NAMES, sql_db::TBL_VIEW);
-            // TODO add the user view fields
+        $qp = $this->load_sql($sc, component::FLD_ID);
+        if ($cmp->id() > 0) {
+            $sc->add_where(component::FLD_ID, $cmp->id());
+            $sc = (new view($this->user()))->set_join($sc);
             $qp->sql = $sc->sql();
         } else {
             $qp->name = '';
@@ -132,7 +130,7 @@ class component_link_list extends sandbox_list
     function load_by_view(view $dsp): bool
     {
         global $db_con;
-        $qp = $this->load_sql_by_view_id($db_con->sql_creator(), $dsp->id());
+        $qp = $this->load_sql_by_view_id($db_con->sql_creator(), $dsp);
         return $this->load($qp);
     }
 
@@ -145,7 +143,7 @@ class component_link_list extends sandbox_list
     function load_by_component(component $cmp): bool
     {
         global $db_con;
-        $qp = $this->load_sql_by_component_id($db_con->sql_creator(), $cmp->id());
+        $qp = $this->load_sql_by_component_id($db_con->sql_creator(), $cmp);
         return $this->load($qp);
     }
 

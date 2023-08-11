@@ -232,6 +232,7 @@ class test_unit extends test_cleanup
         (new component_unit_tests())->run($this);
         (new component_list_unit_tests)->run($this); // TODO add assert_api_to_dsp
         (new component_link_unit_tests)->run($this); // TODO add assert_api_to_dsp
+        (new component_link_list_unit_tests)->run($this);
         (new ref_unit_tests)->run($this);
         (new language_unit_tests)->run($this); // TODO add assert_api_to_dsp
         (new change_log_unit_tests)->run($this); // TODO add assert_api_to_dsp  // TODO for version 0.0.6 add import test

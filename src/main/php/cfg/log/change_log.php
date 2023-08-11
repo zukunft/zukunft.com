@@ -320,7 +320,7 @@ class change_log extends db_object
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } elseif ($table_name == change_log_table::WORD) {
-                $db_con->set_type(sql_DB::TBL_WORD);
+                $db_con->set_type(word::class);
                 foreach (word::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
@@ -425,7 +425,7 @@ class change_log extends db_object
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } elseif ($table_name == change_log_table::SOURCE) {
-                $db_con->set_type(sql_DB::TBL_SOURCE);
+                $db_con->set_type(source::class);
                 foreach (source::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }

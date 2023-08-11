@@ -470,6 +470,11 @@ class component extends sandbox_typed
         return $id;
     }
 
+
+    /*
+     * load helper
+     */
+
     function name_field(): string
     {
         return self::FLD_NAME;
@@ -478,6 +483,19 @@ class component extends sandbox_typed
     function all_sandbox_fields(): array
     {
         return self::ALL_SANDBOX_FLD_NAMES;
+    }
+
+    /**
+     * TODO use a set_join function for all not simple sql joins
+     * @param sql_creator $sc the sql creator without component joins
+     * @return sql_creator the sql creator with the components join set
+     */
+    function set_join(sql_creator $sc): sql_creator
+    {
+        $sc->set_join_fields(component::FLD_NAMES, sql_db::TBL_COMPONENT);
+        $sc->set_join_usr_fields(component::FLD_NAMES_USR, sql_db::TBL_COMPONENT);
+        $sc->set_join_usr_num_fields(component::FLD_NAMES_NUM_USR, sql_db::TBL_COMPONENT);
+        return $sc;
     }
 
     /**

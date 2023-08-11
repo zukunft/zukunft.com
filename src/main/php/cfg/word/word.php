@@ -152,7 +152,8 @@ class word extends sandbox_typed
         $this->reset();
         parent::__construct($usr);
 
-        $this->obj_name = sql_db::TBL_WORD;
+        $lib = new library();
+        $this->obj_name = $lib->class_to_name(word::class);
         $this->rename_can_switch = UI_CAN_CHANGE_WORD_NAME;
     }
 
@@ -431,7 +432,7 @@ class word extends sandbox_typed
      */
     function load_standard_sql(sql_creator $sc, string $class = self::class): sql_par
     {
-        $sc->set_type(sql_db::TBL_WORD);
+        $sc->set_type(word::class);
         $sc->set_fields(array_merge(
             self::FLD_NAMES,
             self::FLD_NAMES_USR,
@@ -640,10 +641,10 @@ class word extends sandbox_typed
      */
     function view_sql(sql_db $db_con): sql_par
     {
-        $db_con->set_type(sql_db::TBL_WORD);
+        $db_con->set_type(word::class);
         $db_con->set_usr($this->user()->id());
         $db_con->set_fields(array(self::FLD_VIEW));
-        $db_con->set_join_usr_count_fields(array(user::FLD_ID), sql_db::TBL_WORD);
+        $db_con->set_join_usr_count_fields(array(user::FLD_ID), word::class);
         $qp = new sql_par(self::class);
         $qp->name = 'word_view_most_used';
         $db_con->set_name($qp->name);
@@ -1736,7 +1737,7 @@ class word extends sandbox_typed
      */
     function not_changed_sql(sql_db $db_con): sql_par
     {
-        $db_con->set_type(sql_db::TBL_WORD);
+        $db_con->set_type(word::class);
         return $db_con->load_sql_not_changed($this->id, $this->owner_id);
     }
 
@@ -1804,7 +1805,7 @@ class word extends sandbox_typed
      */
     function load_sql_user_changes(sql_creator $sc, string $class = self::class): sql_par
     {
-        $sc->set_type(sql_db::TBL_WORD, true);
+        $sc->set_type(word::class, true);
         return parent::load_sql_user_changes($sc, $class);
     }
 
@@ -1855,7 +1856,7 @@ class word extends sandbox_typed
                 //$db_con = new mysql;
                 $db_con->usr_id = $this->user()->id();
                 if ($this->can_change()) {
-                    $db_con->set_type(sql_db::TBL_WORD);
+                    $db_con->set_type(word::class);
                     if (!$db_con->update($this->id, "view_id", $view_id)) {
                         $result = 'setting of view failed';
                     }

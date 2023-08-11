@@ -235,7 +235,7 @@ class source extends sandbox_typed
      */
     function load_standard_sql(sql_creator $sc, string $class = self::class): sql_par
     {
-        $sc->set_type(sql_db::TBL_SOURCE);
+        $sc->set_type(source::class);
         $sc->set_fields(array_merge(
             self::FLD_NAMES,
             self::FLD_NAMES_USR,
@@ -274,7 +274,7 @@ class source extends sandbox_typed
      */
     protected function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
-        $sc->set_type(sql_db::TBL_SOURCE);
+        $sc->set_type(source::class);
         return parent::load_sql_fields(
             $sc, $query_name, $class,
             self::FLD_NAMES,
@@ -488,7 +488,7 @@ class source extends sandbox_typed
      */
     function not_changed_sql(sql_db $db_con): sql_par
     {
-        $db_con->set_type(sql_db::TBL_SOURCE);
+        $db_con->set_type(source::class);
         return $db_con->load_sql_not_changed($this->id, $this->owner_id);
     }
 
@@ -525,7 +525,7 @@ class source extends sandbox_typed
      */
     function load_sql_user_changes(sql_creator $sc, string $class = self::class): sql_par
     {
-        $sc->set_type(sql_db::TBL_SOURCE, true);
+        $sc->set_type(source::class, true);
         return parent::load_sql_user_changes($sc, $class);
     }
 

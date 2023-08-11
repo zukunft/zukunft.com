@@ -356,7 +356,7 @@ class change_log_link extends change_log
         global $db_con;
         $result = '';
         //$db_con = new mysql;
-        $db_con->set_type(sql_db::TBL_SOURCE);
+        $db_con->set_type(source::class);
         $result .= $db_con->get_name($id);
         return $result;
     }

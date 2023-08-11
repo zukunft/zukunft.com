@@ -602,7 +602,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
      */
     function load_standard_sql(sql_creator $sc, string $class = self::class): sql_par
     {
-        $sc->set_type(sql_db::TBL_TRIPLE);
+        $sc->set_type($class);
         $qp = new sql_par($class, true);
         $qp->name .= $this->load_sql_name_ext();
         $sc->set_name($qp->name);

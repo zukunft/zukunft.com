@@ -48,6 +48,28 @@ class sql_creator
     const NULL_VALUE = 'NULL';
     const MAX_PREFIX = 'max_';
 
+    // classes where the table that do not have a name
+    // e.g. sql_db::TBL_TRIPLE is a link which hase a name, but the generated name can be overwritten, so the standard field naming is not used
+    const DB_TYPES_NOT_NAMED = [
+        sql_db::TBL_TRIPLE,
+        sql_db::TBL_VALUE,
+        sql_db::TBL_VALUE_TIME_SERIES,
+        sql_db::TBL_FORMULA_LINK,
+        sql_db::TBL_RESULT,
+        sql_db::TBL_FORMULA_ELEMENT,
+        sql_db::TBL_COMPONENT_LINK,
+        sql_db::TBL_VALUE_PHRASE_LINK,
+        sql_db::TBL_PHRASE_GROUP_WORD_LINK,
+        sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK,
+        sql_db::TBL_VIEW_TERM_LINK,
+        sql_db::TBL_REF,
+        sql_db::TBL_IP,
+        sql_db::TBL_CHANGE,
+        sql_db::TBL_CHANGE_LINK,
+        sql_db::TBL_SYS_LOG,
+        sql_db::TBL_TASK,
+        sql_db::VT_PHRASE_GROUP_LINK
+    ];
 
     // parameters for the sql creation that are set step by step with the functions of the sql creator
     private ?int $usr_id;           // the user id of the person who request the database changes
@@ -125,7 +147,11 @@ class sql_creator
     //private ?array $join2_usr_count_field_lst; // same as $join_usr_count_field_lst but for the second join
     //private ?array $join3_usr_count_field_lst; // same as $join_usr_count_field_lst but for the third join
     //private ?array $join4_usr_count_field_lst; // same as $join_usr_count_field_lst but for the fourth join
-    private bool $join_usr_query;              // true, if the joined query is also expected to retrieve user specific data
+    private bool $join_usr_fields;             // true, if the joined query is also expected to retrieve user specific data
+    private bool $join2_usr_fields;            // same as $join_usr_fields but for the second join
+    private bool $join3_usr_fields;            // same as $join_usr_fields but for the third join
+    private bool $join4_usr_fields;            // same as $join_usr_fields but for the fourth join
+    private bool $join_usr_query;              // true, if the joined query is also based on a user specific data link
     private bool $join2_usr_query;             // same as $usr_join_query but for the second join
     private bool $join3_usr_query;             // same as $usr_join_query but for the third join
     private bool $join4_usr_query;             // same as $usr_join_query but for the fourth join
@@ -223,6 +249,10 @@ class sql_creator
         $this->join3_usr_num_field_lst = [];
         $this->join4_usr_num_field_lst = [];
         $this->join_usr_count_field_lst = [];
+        $this->join_usr_fields = false;
+        $this->join2_usr_fields = false;
+        $this->join3_usr_fields = false;
+        $this->join4_usr_fields = false;
         $this->join_usr_query = false;
         $this->join2_usr_query = false;
         $this->join3_usr_query = false;
@@ -279,17 +309,18 @@ class sql_creator
      * define the table that should be used for the next select, insert, update or delete statement
      * resets all previous db query settings such as fields, user_fields, so this should be the first statement when defining a database query
      * TODO check that this is always called directly before the query is created, so that
+     * TODO check if this is called with the class name and if there are exceptions
      *
-     * @param string $type is a string that is used to select the table name, the id field and the name field
+     * @param string $class is a string that is used to select the table name, the id field and the name field
      * @param bool $usr_table if it is true the user table instead of the standard table is used
      * @return bool true if setting the type was successful
      */
-    function set_type(string $type, bool $usr_table = false): bool
+    function set_type(string $class, bool $usr_table = false): bool
     {
         global $usr;
 
         $this->reset();
-        $this->type = $type;
+        $this->type = $this->class_to_name($class);
         if ($usr == null) {
             $this->set_usr(SYSTEM_USER_ID); // if the session user is not yet set, use the system user id to test the database compatibility
         } else {
@@ -420,6 +451,7 @@ class sql_creator
                              string $join_select_field = '',
                              int    $join_select_id = 0): void
     {
+        $join_type = $this->class_to_name($join_type);
         // fill up the join field places or add settings to a matching join link
         if ($this->join_type == '' and !$this->join_force_rename
             or (($this->join_field == $join_field and $join_field != '')
@@ -475,6 +507,7 @@ class sql_creator
                                  string $join_to_field = '',
                                  bool   $force_rename = false): void
     {
+        $join_type = $this->class_to_name($join_type);
         // fill up the join field places or add settings to a matching join link
         // e.g. add the user fields to an existing not user specific join
         if ($this->join_type == ''
@@ -485,7 +518,7 @@ class sql_creator
             $this->join_field = $join_field;
             $this->join_to_field = $join_to_field;
             $this->join_force_rename = $force_rename;
-            $this->join_usr_query = true;
+            $this->join_usr_fields = true;
         } elseif ($this->join2_type == ''
             or (($this->join2_field == $join_field or $join_field == '')
                 and ($this->join2_to_field == $join_to_field or $join_to_field == ''))) {
@@ -494,7 +527,7 @@ class sql_creator
             $this->join2_field = $join_field;
             $this->join2_to_field = $join_to_field;
             $this->join2_force_rename = $force_rename;
-            $this->join2_usr_query = true;
+            $this->join2_usr_fields = true;
         } elseif ($this->join3_type == ''
             or (($this->join3_field == $join_field or $join_field == '')
                 and ($this->join3_to_field == $join_to_field or $join_to_field == ''))) {
@@ -503,7 +536,7 @@ class sql_creator
             $this->join3_field = $join_field;
             $this->join3_to_field = $join_to_field;
             $this->join3_force_rename = $force_rename;
-            $this->join3_usr_query = true;
+            $this->join3_usr_fields = true;
         } elseif ($this->join4_type == ''
             or (($this->join4_field == $join_field or $join_field == '')
                 and ($this->join4_to_field == $join_to_field or $join_to_field == ''))) {
@@ -512,7 +545,7 @@ class sql_creator
             $this->join4_field = $join_field;
             $this->join4_to_field = $join_to_field;
             $this->join4_force_rename = $force_rename;
-            $this->join4_usr_query = true;
+            $this->join4_usr_fields = true;
         } else {
             log_err('Max four table joins expected in version ' . PRG_VERSION);
         }
@@ -524,6 +557,7 @@ class sql_creator
                                      string $join_to_field = '',
                                      bool   $force_rename = false): void
     {
+        $join_type = $this->class_to_name($join_type);
         // fill up the join field places or add settings to a matching join link
         // e.g. add the user fields to an existing not user specific join
         if ($this->join_type == ''
@@ -534,7 +568,7 @@ class sql_creator
             $this->join_field = $join_field;
             $this->join_to_field = $join_to_field;
             $this->join_force_rename = $force_rename;
-            $this->join_usr_query = true;
+            $this->join_usr_fields = true;
         } elseif ($this->join2_type == ''
             or (($this->join2_field == $join_field and $join_field != '')
                 and ($this->join2_to_field == $join_to_field and $join_to_field != ''))) {
@@ -543,7 +577,7 @@ class sql_creator
             $this->join2_field = $join_field;
             $this->join2_to_field = $join_to_field;
             $this->join2_force_rename = $force_rename;
-            $this->join2_usr_query = true;
+            $this->join2_usr_fields = true;
         } elseif ($this->join3_type == ''
             or (($this->join3_field == $join_field and $join_field != '')
                 and ($this->join3_to_field == $join_to_field and $join_to_field != ''))) {
@@ -552,7 +586,7 @@ class sql_creator
             $this->join3_field = $join_field;
             $this->join3_to_field = $join_to_field;
             $this->join3_force_rename = $force_rename;
-            $this->join3_usr_query = true;
+            $this->join3_usr_fields = true;
         } elseif ($this->join4_type == ''
             or (($this->join4_field == $join_field and $join_field != '')
                 and ($this->join4_to_field == $join_to_field and $join_to_field != ''))) {
@@ -561,7 +595,7 @@ class sql_creator
             $this->join4_field = $join_field;
             $this->join4_to_field = $join_to_field;
             $this->join4_force_rename = $force_rename;
-            $this->join4_usr_query = true;
+            $this->join4_usr_fields = true;
         } else {
             log_err('Max four table joins expected in version ' . PRG_VERSION);
         }
@@ -781,14 +815,14 @@ class sql_creator
             $field_lst[] = $this->id_field;
             if ($this->usr_query) {
                 // user can change the name of an object, that's why the target field list is either $usr_field_lst or $field_lst
-                if (!in_array($this->type, sql_db::DB_TYPES_NOT_NAMED)) {
+                if (!in_array($this->type, self::DB_TYPES_NOT_NAMED)) {
                     $usr_field_lst[] = $this->name_field();
                 }
                 if (!$this->all_query) {
                     $field_lst[] = user::FLD_ID;
                 }
             } else {
-                if (!in_array($this->type, sql_db::DB_TYPES_NOT_NAMED)) {
+                if (!in_array($this->type, self::DB_TYPES_NOT_NAMED)) {
                     $field_lst[] = $this->name_field();
                 }
             }
@@ -1023,7 +1057,7 @@ class sql_creator
         $result = '';
         if ($this->grp_query) {
             $sc_sub = clone $this;
-            $sc_sub->set_type(sql_db::TBL_COMPONENT_LINK);
+            $sc_sub->set_type($this->type);
             $sc_sub->sub_query = true;
             $sc_sub->set_usr($this->usr_id);
             $sc_sub->set_usr_num_fields($this->grp_field_lst);
@@ -1091,7 +1125,7 @@ class sql_creator
             } else {
                 $this->join .= ' LEFT JOIN ' . $join_table_name . ' ' . sql_db::LNK_TBL;
                 $this->join .= ' ON ' . sql_db::STD_TBL . '.' . $join_from_id_field . ' = ' . sql_db::LNK_TBL . '.' . $join_id_field;
-                if ($this->usr_query and $this->join_usr_query) {
+                if ($this->usr_query and $this->join_usr_fields) {
                     $this->join .= ' LEFT JOIN ' . sql_db::TBL_USER_PREFIX . $join_table_name . ' ' . sql_db::ULK_TBL;
                     $this->join .= ' ON ' . sql_db::LNK_TBL . '.' . $join_id_field . ' = ' . sql_db::ULK_TBL . '.' . $join_id_field;
                     if (!$this->all_query) {
@@ -1131,7 +1165,7 @@ class sql_creator
             }
             $this->join .= ' LEFT JOIN ' . $join2_table_name . ' ' . sql_db::LNK2_TBL;
             $this->join .= ' ON ' . sql_db::STD_TBL . '.' . $join2_from_id_field . ' = ' . sql_db::LNK2_TBL . '.' . $join2_id_field;
-            if ($this->usr_query and $this->join2_usr_query) {
+            if ($this->usr_query and $this->join2_usr_fields) {
                 $this->join .= ' LEFT JOIN ' . sql_db::TBL_USER_PREFIX . $join2_table_name . ' ' . sql_db::ULK2_TBL;
                 $this->join .= ' ON ' . sql_db::LNK2_TBL . '.' . $join2_id_field . ' = ' . sql_db::ULK2_TBL . '.' . $join2_id_field;
                 if (!$this->all_query) {
@@ -1170,7 +1204,7 @@ class sql_creator
             }
             $this->join .= ' LEFT JOIN ' . $join3_table_name . ' ' . sql_db::LNK3_TBL;
             $this->join .= ' ON ' . sql_db::STD_TBL . '.' . $join3_from_id_field . ' = ' . sql_db::LNK3_TBL . '.' . $join3_id_field;
-            if ($this->usr_query and $this->join3_usr_query) {
+            if ($this->usr_query and $this->join3_usr_fields) {
                 $this->join .= ' LEFT JOIN ' . sql_db::TBL_USER_PREFIX . $join3_table_name . ' ' . sql_db::ULK3_TBL;
                 $this->join .= ' ON ' . sql_db::LNK3_TBL . '.' . $join3_id_field . ' = ' . sql_db::ULK3_TBL . '.' . $join3_id_field;
                 if (!$this->all_query) {
@@ -1209,7 +1243,7 @@ class sql_creator
             }
             $this->join .= ' LEFT JOIN ' . $join4_table_name . ' ' . sql_db::LNK4_TBL;
             $this->join .= ' ON ' . sql_db::STD_TBL . '.' . $join4_from_id_field . ' = ' . sql_db::LNK4_TBL . '.' . $join4_id_field;
-            if ($this->usr_query and $this->join4_usr_query) {
+            if ($this->usr_query and $this->join4_usr_fields) {
                 $this->join .= ' LEFT JOIN ' . sql_db::TBL_USER_PREFIX . $join4_table_name . ' ' . sql_db::ULK4_TBL;
                 $this->join .= ' ON ' . sql_db::LNK4_TBL . '.' . $join4_id_field . ' = ' . sql_db::ULK4_TBL . '.' . $join4_id_field;
                 if (!$this->all_query) {
@@ -2285,6 +2319,11 @@ class sql_creator
         return $result;
     }
 
+
+    /*
+     * internal helper
+     */
+
     /**
      * @param string $txt sql fields that should be seperated with a comma
      * @return string the original text with the sql separator if the text is not empty
@@ -2296,6 +2335,16 @@ class sql_creator
         } else {
             return '';
         }
+    }
+
+    /**
+     * @param string $class where the namespace should be removed to get the db type name
+     * @return string the db type name without the class namespace
+     */
+    function class_to_name(string $class): string
+    {
+        $lib = new library();
+        return $lib->class_to_name($class);
     }
 
 }

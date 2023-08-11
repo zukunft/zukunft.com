@@ -154,7 +154,7 @@ class formula_list extends sandbox_list
      */
     function load_sql(sql_creator $sc, string $query_name = ''): sql_par
     {
-        $sc->set_type(sql_db::TBL_FORMULA);
+        $sc->set_type(formula::class);
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
         $sc->set_name($qp->name);

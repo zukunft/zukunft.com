@@ -113,7 +113,7 @@ class figure_list extends sandbox_list
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
 
-        $sc->set_type(sql_db::VT_FIGURE);
+        $sc->set_type(figure::class);
         $sc->set_name($qp->name);
 
         $sc->set_usr($this->user()->id());

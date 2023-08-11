@@ -738,7 +738,7 @@ class verb extends db_object
         $qp = new sql_par(verb::class);
 
         $qp->name .= 'usage';
-        $db_con->set_type(sql_db::TBL_WORD);
+        $db_con->set_type(word::class);
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->user()->id());
         $db_con->set_fields(self::FLD_NAMES);

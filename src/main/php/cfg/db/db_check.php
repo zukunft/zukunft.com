@@ -35,6 +35,9 @@ namespace cfg;
 class db_check
 {
 
+    const TBL_WORD = 'word';
+    const TBL_TRIPLE = 'triple';
+
     /**
      * read the version number from the database and compare it with the backend version
      * if the database has a lower version than the backend program start the upgrade process
@@ -132,12 +135,12 @@ class db_check
         // rename word_link to triple
         $result .= $db_con->change_table_name('phrase_group_word_link', sql_db::TBL_PHRASE_GROUP_WORD_LINK);
         $result .= $db_con->change_table_name(sql_db::TBL_USER_PREFIX . 'phrase_group_word_link', sql_db::TBL_USER_PREFIX . sql_db::TBL_PHRASE_GROUP_WORD_LINK);
-        $result .= $db_con->change_table_name('word_link', sql_db::TBL_TRIPLE);
-        $result .= $db_con->change_column_name(sql_db::TBL_TRIPLE, 'word_link_id', 'triple_id');
-        $result .= $db_con->change_column_name(sql_db::TBL_TRIPLE, 'word_link_condition_id', 'triple_condition_id');
-        $result .= $db_con->change_column_name(sql_db::TBL_TRIPLE, 'word_link_condition_type_id', 'triple_condition_type_id');
-        $result .= $db_con->change_table_name(sql_db::TBL_USER_PREFIX . 'word_link', sql_db::TBL_USER_PREFIX . sql_db::TBL_TRIPLE);
-        $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_TRIPLE, 'word_link_id', sql_db::TBL_USER_PREFIX . 'triple_id');
+        $result .= $db_con->change_table_name('word_link', self::TBL_TRIPLE);
+        $result .= $db_con->change_column_name(self::TBL_TRIPLE, 'word_link_id', 'triple_id');
+        $result .= $db_con->change_column_name(self::TBL_TRIPLE, 'word_link_condition_id', 'triple_condition_id');
+        $result .= $db_con->change_column_name(self::TBL_TRIPLE, 'word_link_condition_type_id', 'triple_condition_type_id');
+        $result .= $db_con->change_table_name(sql_db::TBL_USER_PREFIX . 'word_link', sql_db::TBL_USER_PREFIX . self::TBL_TRIPLE);
+        $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . self::TBL_TRIPLE, 'word_link_id', sql_db::TBL_USER_PREFIX . 'triple_id');
         $result .= $db_con->change_table_name('view_word_link', sql_db::TBL_VIEW_TERM_LINK);
         $result .= $db_con->change_table_name('formula_value', sql_db::TBL_RESULT);
         $result .= $db_con->change_column_name(sql_db::TBL_RESULT, 'formula_value_id', 'result_id');
@@ -162,16 +165,16 @@ class db_check
         //
         $result .= $db_con->change_table_name('languages_form', sql_db::TBL_LANGUAGE_FORM);
         $result .= $db_con->add_column(sql_db::TBL_USER_PROFILE, 'right_level', 'smallint');
-        $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_WORD, 'share_type_id', 'smallint');
-        $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_WORD, 'protect_id', 'smallint');
-        $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_WORD, 'values', 'bigint');
-        $result .= $db_con->add_column(sql_db::TBL_WORD, 'protect_id', 'smallint');
-        $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_TRIPLE, 'values', 'bigint');
-        $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_TRIPLE, 'share_type_id', 'smallint');
-        $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_TRIPLE, 'protect_id', 'smallint');
-        $result .= $db_con->add_column(sql_db::TBL_TRIPLE, 'protect_id', 'smallint');
-        $result .= $db_con->add_column(sql_db::TBL_TRIPLE, 'word_type_id', 'bigint');
-        $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_TRIPLE, 'word_type_id', 'bigint');
+        $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . self::TBL_WORD, 'share_type_id', 'smallint');
+        $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . self::TBL_WORD, 'protect_id', 'smallint');
+        $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . self::TBL_WORD, 'values', 'bigint');
+        $result .= $db_con->add_column(self::TBL_WORD, 'protect_id', 'smallint');
+        $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . self::TBL_TRIPLE, 'values', 'bigint');
+        $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . self::TBL_TRIPLE, 'share_type_id', 'smallint');
+        $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . self::TBL_TRIPLE, 'protect_id', 'smallint');
+        $result .= $db_con->add_column(self::TBL_TRIPLE, 'protect_id', 'smallint');
+        $result .= $db_con->add_column(self::TBL_TRIPLE, 'word_type_id', 'bigint');
+        $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . self::TBL_TRIPLE, 'word_type_id', 'bigint');
         $result .= $db_con->add_column(sql_db::TBL_FORMULA, 'share_type_id', 'smallint');
         $result .= $db_con->add_column(sql_db::TBL_FORMULA, 'protect_id', 'smallint');
         $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_FORMULA, 'protect_id', 'smallint');
@@ -240,21 +243,21 @@ class db_check
         $result .= $db_con->change_column_name(sql_db::TBL_VALUE_TIME_SERIES, 'protection_type_id', 'protect_id');
         $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_VALUE_TIME_SERIES, 'protection_type_id', 'protect_id');
         $result .= $db_con->change_column_name(sql_db::TBL_RESULT, 'source_time_word_id', 'source_time_id');
-        if (!$db_con->has_column($db_con->get_table_name(sql_db::TBL_TRIPLE), 'name_generated')) {
-            $result .= $db_con->change_column_name(sql_db::TBL_TRIPLE, 'name', 'triple_name');
-            $result .= $db_con->change_column_name(sql_db::TBL_TRIPLE, 'description', 'name_given');
-            $result .= $db_con->add_column(sql_db::TBL_TRIPLE, 'name_generated', 'text');
-            $result .= $db_con->add_column(sql_db::TBL_TRIPLE, 'description', 'text');
+        if (!$db_con->has_column($db_con->get_table_name(self::TBL_TRIPLE), 'name_generated')) {
+            $result .= $db_con->change_column_name(self::TBL_TRIPLE, 'name', 'triple_name');
+            $result .= $db_con->change_column_name(self::TBL_TRIPLE, 'description', 'name_given');
+            $result .= $db_con->add_column(self::TBL_TRIPLE, 'name_generated', 'text');
+            $result .= $db_con->add_column(self::TBL_TRIPLE, 'description', 'text');
         }
-        $result .= $db_con->add_column(sql_db::TBL_TRIPLE, 'values', 'bigint');
-        if (!$db_con->has_column($db_con->get_table_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_TRIPLE), 'name_generated')) {
-            $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_TRIPLE, 'name', 'triple_name');
-            $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_TRIPLE, 'description', 'name_given');
-            $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_TRIPLE, 'name_generated', 'text');
-            $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_TRIPLE, 'description', 'text');
+        $result .= $db_con->add_column(self::TBL_TRIPLE, 'values', 'bigint');
+        if (!$db_con->has_column($db_con->get_table_name(sql_db::TBL_USER_PREFIX . self::TBL_TRIPLE), 'name_generated')) {
+            $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . self::TBL_TRIPLE, 'name', 'triple_name');
+            $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . self::TBL_TRIPLE, 'description', 'name_given');
+            $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . self::TBL_TRIPLE, 'name_generated', 'text');
+            $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . self::TBL_TRIPLE, 'description', 'text');
         }
-        $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_TRIPLE, 'values', 'bigint');
-        $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . sql_db::TBL_WORD, 'values', 'bigint');
+        $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . self::TBL_TRIPLE, 'values', 'bigint');
+        $result .= $db_con->add_column(sql_db::TBL_USER_PREFIX . self::TBL_WORD, 'values', 'bigint');
         $result .= $db_con->add_column(sql_db::TBL_VIEW_TERM_LINK, user::FLD_ID, 'bigint');
         $result .= $db_con->add_column(sql_db::TBL_VIEW_TERM_LINK, 'description', 'text');
         $result .= $db_con->add_column(sql_db::TBL_VIEW_TERM_LINK, 'excluded', 'smallint');
@@ -269,7 +272,7 @@ class db_check
         $result .= $db_con->remove_prefix(sql_db::TBL_COMPONENT_TYPE, 'code_id', 'dsp_comp_type_');
         $result .= $db_con->remove_prefix(sql_db::TBL_VERB, 'code_id', 'vrb_');
         $result .= $db_con->change_code_id(sql_db::TBL_VERB, 'vrb_contains', 'is_part_of');
-        $result .= $db_con->column_allow_null(sql_db::TBL_WORD, 'plural');
+        $result .= $db_con->column_allow_null(self::TBL_WORD, 'plural');
         $result .= $db_con->column_allow_null(sql_db::TBL_PHRASE_TYPE, 'word_symbol');
         $result .= $db_con->column_allow_null(sql_db::TBL_CHANGE_TABLE, 'description');
         $result .= $db_con->column_allow_null(sql_db::TBL_CHANGE_FIELD, 'code_id');
@@ -291,10 +294,10 @@ class db_check
         $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_VALUE, 'word_value', value::FLD_VALUE);
         $result .= $db_con->change_table_name('word_types', sql_db::TBL_PHRASE_TYPE);
         $result .= $db_con->change_column_name(sql_db::TBL_PHRASE_TYPE, 'word_type_id', phrase::FLD_TYPE);
-        $result .= $db_con->change_column_name(sql_db::TBL_WORD, 'word_type_id', phrase::FLD_TYPE);
-        $result .= $db_con->change_column_name(sql_db::TBL_TRIPLE, 'word_type_id', phrase::FLD_TYPE);
-        $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_WORD, 'word_type_id', phrase::FLD_TYPE);
-        $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_TRIPLE, 'word_type_id', phrase::FLD_TYPE);
+        $result .= $db_con->change_column_name(self::TBL_WORD, 'word_type_id', phrase::FLD_TYPE);
+        $result .= $db_con->change_column_name(self::TBL_TRIPLE, 'word_type_id', phrase::FLD_TYPE);
+        $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . self::TBL_WORD, 'word_type_id', phrase::FLD_TYPE);
+        $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . self::TBL_TRIPLE, 'word_type_id', phrase::FLD_TYPE);
         $result .= $db_con->change_column_name(sql_db::TBL_FORMULA_LINK_TYPE, 'word_type_id', phrase::FLD_TYPE);
         // TODO set default profile_id in users to 1
         if ($db_con->db_type == sql_db::MYSQL) {
