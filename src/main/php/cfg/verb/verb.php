@@ -359,7 +359,7 @@ class verb extends db_object
     {
         $qp = parent::load_sql($sc, $query_name, $class);
 
-        $sc->set_type(sql_db::TBL_VERB);
+        $sc->set_type(self::class);
         $sc->set_name($qp->name);
         $sc->set_fields(self::FLD_NAMES);
 

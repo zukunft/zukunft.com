@@ -206,7 +206,7 @@ class verb_list extends type_list
         string $query_name = 'all',
         string $order_field = verb::FLD_ID): sql_par
     {
-        $sc->set_type(sql_db::TBL_VERB);
+        $sc->set_type(verb::class);
         $qp = new sql_par($db_type);
         $qp->name = $db_type . '_' . $query_name;
 

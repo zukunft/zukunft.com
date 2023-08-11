@@ -876,7 +876,7 @@ class view extends sandbox_typed
      */
     function load_sql_user_changes(sql_creator $sc, string $class = self::class): sql_par
     {
-        $sc->set_type(sql_db::TBL_VIEW, true);
+        $sc->set_type($class, true);
         $sc->set_fields(array_merge(
             self::FLD_NAMES_USR,
             self::FLD_NAMES_NUM_USR
@@ -956,7 +956,7 @@ class view extends sandbox_typed
 
         // collect all component links where this view is used
         $lnk_lst = new component_link_list($this->user());
-        $lnk_lst->load_by_view_old($this);
+        $lnk_lst->load_by_view($this);
 
         // if there are links, delete if not used by anybody else than the user who has requested the deletion
         // or exclude the links for the user if the link is used by someone else

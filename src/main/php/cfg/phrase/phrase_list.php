@@ -156,7 +156,7 @@ class phrase_list extends sandbox_list_named
      */
     function load_names_sql(sql_creator $sc, string $query_name): sql_par
     {
-        $sc->set_type(sql_db::TBL_PHRASE);
+        $sc->set_type(phrase::class);
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
 
@@ -197,7 +197,7 @@ class phrase_list extends sandbox_list_named
      */
     function load_sql(sql_creator $sc, string $query_name): sql_par
     {
-        $sc->set_type(sql_db::TBL_PHRASE);
+        $sc->set_type(phrase::class);
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
 

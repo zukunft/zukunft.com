@@ -146,7 +146,7 @@ class value_time_series extends sandbox_value
      */
     function load_standard_sql(sql_creator $sc, string $class = self::class): sql_par
     {
-        $sc->set_type(sql_db::TBL_VALUE_TIME_SERIES);
+        $sc->set_type(self::class);
         $sc->set_fields(array_merge(self::FLD_NAMES, self::FLD_NAMES_NUM_USR));
 
         return parent::load_standard_sql($sc, $class);
@@ -165,7 +165,7 @@ class value_time_series extends sandbox_value
         $qp = parent::load_sql_obj_vars($sc, $class);
         $qp->name .= $query_name;
 
-        $sc->set_type(sql_db::TBL_VALUE_TIME_SERIES);
+        $sc->set_type(self::class);
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
         $sc->set_fields(self::FLD_NAMES);

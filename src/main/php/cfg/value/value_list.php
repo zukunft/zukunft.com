@@ -124,7 +124,7 @@ class value_list extends sandbox_list
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
 
-        $sc->set_type(sql_db::TBL_VALUE);
+        $sc->set_type(value::class);
         $sc->set_name($qp->name);
 
         $sc->set_usr($this->user()->id());

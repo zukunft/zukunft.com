@@ -669,7 +669,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
         $qp = parent::load_sql_obj_vars($sc, $class);
         $qp->name .= $query_name;
 
-        $sc->set_type(sql_db::TBL_TRIPLE);
+        $sc->set_type($class);
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
         $sc->set_fields(array_merge(self::FLD_NAMES_LINK, self::FLD_NAMES));
@@ -1656,7 +1656,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
      */
     function load_sql_user_changes(sql_creator $sc, string $class = self::class): sql_par
     {
-        $sc->set_type(sql_db::TBL_TRIPLE, true);
+        $sc->set_type($class, true);
         $sc->set_fields(array_merge(
             self::FLD_NAMES_USR,
             self::FLD_NAMES_NUM_USR

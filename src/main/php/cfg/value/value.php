@@ -369,7 +369,7 @@ class value extends sandbox_value
      */
     function load_standard_sql(sql_creator $sc, string $class = self::class): sql_par
     {
-        $sc->set_type(sql_db::TBL_VALUE);
+        $sc->set_type(self::class);
         $sc->set_fields(array_merge(self::FLD_NAMES, self::FLD_NAMES_NUM_USR, array(user::FLD_ID)));
 
         return parent::load_standard_sql($sc, $class);
@@ -400,7 +400,7 @@ class value extends sandbox_value
     {
         $qp = parent::load_sql($sc, $query_name, $class);
 
-        $sc->set_type(sql_db::TBL_VALUE);
+        $sc->set_type(self::class);
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
         $sc->set_fields(self::FLD_NAMES);
@@ -459,7 +459,7 @@ class value extends sandbox_value
         $sql_where = '';
         $sql_grp = '';
 
-        $sc->set_type(sql_db::TBL_VALUE);
+        $sc->set_type(self::class);
         if ($this->id() > 0) {
             $qp->name .= sql_db::FLD_ID;
         } elseif ($this->grp->id() > 0) {
@@ -1473,7 +1473,7 @@ class value extends sandbox_value
      */
     function load_sql_user_changes(sql_creator $sc, string $class = self::class): sql_par
     {
-        $sc->set_type(sql_db::TBL_VALUE, true);
+        $sc->set_type(self::class, true);
         return parent::load_sql_user_changes($sc, $class);
     }
 

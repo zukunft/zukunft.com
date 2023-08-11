@@ -310,7 +310,7 @@ class ref extends sandbox_link_with_type
      */
     function load_standard_sql(sql_creator $sc, string $class = self::class): sql_par
     {
-        $sc->set_type(sql_db::TBL_REF);
+        $sc->set_type($class);
         $sc->set_fields(array_merge(
             self::FLD_NAMES,
             self::FLD_NAMES_USR,

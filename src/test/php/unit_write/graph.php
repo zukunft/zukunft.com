@@ -76,9 +76,7 @@ class graph_test
         // step 4: get the word links for the used phrases
         //         these are the word links that are needed for a complete export
         $lnk_lst = new triple_list($usr);
-        $lnk_lst->wrd_lst = $phr_lst_used->wrd_lst();
-        $lnk_lst->direction = foaf_direction::UP;
-        $lnk_lst->load_old();
+        $lnk_lst->load_by_phr_lst($phr_lst_used, null, foaf_direction::UP);
         $result = $lnk_lst->name();
         // check if at least the basic relations are in the database
         /*
@@ -94,9 +92,8 @@ class graph_test
         $phr_lst = new phrase_list($usr);
         $phr_lst->load_by_names(array(word_api::TN_ZH, word_api::TN_INHABITANTS, word_api::TN_MIO));
         $lnk_lst = new triple_list($usr);
-        $lnk_lst->wrd_lst = $phr_lst->wrd_lst_all();
-        $lnk_lst->direction = foaf_direction::UP;
-        $lnk_lst->load_old();
+        $lnk_lst->load_by_phr_lst($phr_lst, null, foaf_direction::UP);
+        //$lnk_lst->wrd_lst = $phr_lst->wrd_lst_all();
         $result = $lnk_lst->name();
         // TODO to be reviewed
         $target = word_api::TN_ZH;
@@ -110,10 +107,7 @@ class graph_test
         $is->set_user($usr);
         $is->load_by_code_id(verb::IS);
         $graph = new triple_list($usr);
-        $graph->wrd = $ZH;
-        $graph->vrb = $is;
-        $graph->direction = foaf_direction::UP;
-        $graph->load_old();
+        $graph->load_by_phr($ZH->phrase(), $is, foaf_direction::UP);
         //$target = zut_html_list_related($ZH->id, $graph->direction, $usr->id());
         $result = $graph->display($back);
         /*

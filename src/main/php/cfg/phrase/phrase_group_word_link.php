@@ -88,7 +88,7 @@ class phrase_group_word_link extends phrase_group_link
     {
         $qp = parent::load_sql($sc, $query_name, $class);
 
-        $sc->set_type(sql_db::TBL_PHRASE_GROUP_WORD_LINK);
+        $sc->set_type($class);
         $sc->set_name($qp->name);
         $sc->set_fields(self::FLD_NAMES);
 
@@ -104,7 +104,7 @@ class phrase_group_word_link extends phrase_group_link
      */
     function load_by_group_id_sql(sql_db $db_con, phrase_group $grp): sql_par
     {
-        $db_con->set_type(sql_db::TBL_PHRASE_GROUP_WORD_LINK);
+        $db_con->set_type(self::class);
         $qp = new sql_par(self::class);
 
         if ($grp->id > 0) {

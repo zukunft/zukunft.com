@@ -90,12 +90,12 @@ class component_link_list_unit_tests
 
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $lst->load_sql_by_view_id($db_con->sql_creator(), $msk);
+        $qp = $lst->load_sql_by_view($db_con->sql_creator(), $msk);
         $t->assert_qp($qp, $db_con->db_type);
 
         // check the MySQL query syntax
         $db_con->db_type = sql_db::MYSQL;
-        $qp = $lst->load_sql_by_view_id($db_con->sql_creator(), $msk);
+        $qp = $lst->load_sql_by_view($db_con->sql_creator(), $msk);
         $t->assert_qp($qp, $db_con->db_type);
     }
 
@@ -118,12 +118,12 @@ class component_link_list_unit_tests
 
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $lst->load_sql_by_component_id($db_con->sql_creator(), $cmp);
+        $qp = $lst->load_sql_by_component($db_con->sql_creator(), $cmp);
         $t->assert_qp($qp, $db_con->db_type);
 
         // check the MySQL query syntax
         $db_con->db_type = sql_db::MYSQL;
-        $qp = $lst->load_sql_by_component_id($db_con->sql_creator(), $cmp);
+        $qp = $lst->load_sql_by_component($db_con->sql_creator(), $cmp);
         $t->assert_qp($qp, $db_con->db_type);
     }
 

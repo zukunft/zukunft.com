@@ -237,7 +237,7 @@ class phrase_group extends db_object
     {
         $qp = parent::load_sql($sc, $query_name, $class);
 
-        $sc->set_type(sql_db::TBL_PHRASE_GROUP);
+        $sc->set_type(self::class);
         $sc->set_name($qp->name);
         $sc->set_fields(self::FLD_NAMES);
 
@@ -257,7 +257,7 @@ class phrase_group extends db_object
      */
     function load_sql_obj_vars(sql_db $db_con): sql_par
     {
-        $db_con->set_type(sql_db::TBL_PHRASE_GROUP);
+        $db_con->set_type(self::class);
         $qp = new sql_par(self::class);
         $qp->name .= $this->load_sql_name_ext();
         $db_con->set_name($qp->name);

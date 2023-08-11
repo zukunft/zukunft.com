@@ -70,38 +70,8 @@ class component_link_unit_tests
         // sql to load a view component link by the id
         $lnk = new component_link($usr);
         $lnk->set_id(1);
-        //$t->assert_sql_all($db_con, $lnk);
         $t->assert_sql_user_changes($db_con, $lnk);
 
-    }
-
-    /**
-     * test the SQL statement creation for a value phrase link list in all SQL dialect
-     * and check if the statement name is unique
-     *
-     * @param test_cleanup $t the test environment
-     * @param sql_db $db_con the test database connection
-     * @param component_link_list $lst filled with an id to be able to load
-     * @param view|null $dsp the view used for selection
-     * @param component|null $cmp the component used for selection
-     * @return void
-     */
-    private function assert_sql_lst_all(
-        test_cleanup $t,
-        sql_db $db_con,
-        component_link_list $lst,
-        ?view $dsp = null,
-        ?component $cmp = null): void
-    {
-        // check the Postgres query syntax
-        $db_con->db_type = sql_db::POSTGRES;
-        $qp = $lst->load_sql_by($db_con, $dsp, $cmp);
-        $t->assert_qp($qp, $db_con->db_type);
-
-        // check the MySQL query syntax
-        $db_con->db_type = sql_db::MYSQL;
-        $qp = $lst->load_sql_by($db_con, $dsp, $cmp);
-        $t->assert_qp($qp, $db_con->db_type);
     }
 
     /**

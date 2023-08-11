@@ -87,7 +87,7 @@ class component_link_list extends sandbox_list
      * @param view $msk the id of the view to which the components should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_view_id(sql_creator $sc, view $msk): sql_par
+    function load_sql_by_view(sql_creator $sc, view $msk): sql_par
     {
         $qp = $this->load_sql($sc, view::FLD_ID);
         if ($msk->id() > 0) {
@@ -107,7 +107,7 @@ class component_link_list extends sandbox_list
      * @param component $cmp the id of the component to which the views should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_component_id(sql_creator $sc, component $cmp): sql_par
+    function load_sql_by_component(sql_creator $sc, component $cmp): sql_par
     {
         $qp = $this->load_sql($sc, component::FLD_ID);
         if ($cmp->id() > 0) {
@@ -130,7 +130,7 @@ class component_link_list extends sandbox_list
     function load_by_view(view $dsp): bool
     {
         global $db_con;
-        $qp = $this->load_sql_by_view_id($db_con->sql_creator(), $dsp);
+        $qp = $this->load_sql_by_view($db_con->sql_creator(), $dsp);
         return $this->load($qp);
     }
 
@@ -143,90 +143,14 @@ class component_link_list extends sandbox_list
     function load_by_component(component $cmp): bool
     {
         global $db_con;
-        $qp = $this->load_sql_by_component_id($db_con->sql_creator(), $cmp);
+        $qp = $this->load_sql_by_component($db_con->sql_creator(), $cmp);
         return $this->load($qp);
     }
 
-    /**
-     * create an SQL statement to retrieve a list of view component links from the database
-     *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param view|null $dsp if set to get all links for this view
-     * @param component|null $cmp if set to get all links for this view component
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+
+    /*
+     * del
      */
-    function load_sql_by(sql_db $db_con, ?view $dsp = null, ?component $cmp = null): sql_par
-    {
-        $db_con->set_type(sql_db::TBL_COMPONENT_LINK);
-        $qp = new sql_par(self::class);
-        $sql_by = '';
-
-        if ($dsp != null) {
-            if ($dsp->id() > 0) {
-                $sql_by = view::FLD_ID;
-            }
-        } elseif ($cmp != null) {
-            if ($cmp->id() > 0) {
-                $sql_by = component::FLD_ID;
-            }
-        }
-        if ($sql_by == '') {
-            log_err('Either the view id or the component id and the user (' . $this->user()->id() .
-                ') must be set to load a ' . self::class, self::class . '->load_sql');
-            $qp->name = '';
-        } else {
-            $qp->name .= $sql_by;
-            $db_con->set_name($qp->name);
-            $db_con->set_usr($this->user()->id());
-            $db_con->set_fields(component_link::FLD_NAMES);
-            $db_con->set_usr_num_fields(component_link::FLD_NAMES_NUM_USR);
-            if ($dsp != null) {
-                $db_con->set_join_fields(array(view::FLD_ID), sql_db::TBL_VIEW);
-            } else {
-                $db_con->set_join_fields(array(component::FLD_ID), sql_db::TBL_COMPONENT);
-            }
-            if ($dsp != null) {
-                if ($dsp->id() > 0) {
-                    $db_con->add_par(sql_par_type::INT, $dsp->id());
-                    $qp->sql = $db_con->select_by_field_list(array(view::FLD_ID));
-                }
-            } elseif ($cmp != null) {
-                if ($cmp->id() > 0) {
-                    $db_con->add_par(sql_par_type::INT, $cmp->id());
-                    $qp->sql = $db_con->select_by_field_list(array(component::FLD_ID));
-                }
-            }
-            $qp->par = $db_con->get_par();
-        }
-
-        return $qp;
-    }
-
-    /**
-     * interface function to load all phrases linked to a given value
-     *
-     * @param view $dsp if set to get all links for this view
-     * @return bool true if phrases are found
-     */
-    function load_by_view_old(view $dsp): bool
-    {
-        global $db_con;
-        $qp = $this->load_sql_by($db_con, $dsp, null);
-        return $this->load($qp);
-    }
-
-    /**
-     * interface function to load all values linked to a given phrase
-     *
-     * @param component $cmp if set to get all links for this view component
-     * @return bool true if phrases are found
-     */
-    function load_by_component_old(component $cmp): bool
-    {
-        global $db_con;
-        $qp = $this->load_sql_by($db_con, null, $cmp);
-        return $this->load($qp);
-    }
 
     /**
      * delete all loaded view component links e.g. to delete all the links linked to a view
@@ -244,8 +168,9 @@ class component_link_list extends sandbox_list
         return new user_message();
     }
 
+
     /*
-     * extract function
+     * extract
      */
 
     /**

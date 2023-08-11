@@ -182,7 +182,7 @@ class component_link extends sandbox_link_with_type
             $this->id = 0;
         }
 
-        $sc->set_type(sql_db::TBL_COMPONENT_LINK);
+        $sc->set_type(self::class);
         $qp = new sql_par(self::class);
         if ($this->id != 0) {
             $qp->name .= 'std_id';
@@ -247,7 +247,7 @@ class component_link extends sandbox_link_with_type
         $qp = parent::load_sql_obj_vars($sc, $class);
         $qp->name .= $query_name;
 
-        $sc->set_type(sql_db::TBL_COMPONENT_LINK);
+        $sc->set_type($class);
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
         $sc->set_fields(self::FLD_NAMES_LINK);
@@ -282,7 +282,7 @@ class component_link extends sandbox_link_with_type
         $qp = parent::load_sql_obj_vars($sc, self::class);
         $qp->name .= 'max_pos';
 
-        $sc->set_type(sql_db::TBL_COMPONENT_LINK);
+        $sc->set_type(self::class);
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
         $sc->add_usr_grp_field(self::FLD_ORDER_NBR, sql_par_type::MAX);
@@ -651,7 +651,7 @@ class component_link extends sandbox_link_with_type
      */
     function load_sql_user_changes(sql_creator $sc, string $class = self::class): sql_par
     {
-        $sc->set_type(sql_db::TBL_COMPONENT_LINK, true);
+        $sc->set_type($class, true);
         return parent::load_sql_user_changes($sc, $class);
     }
 

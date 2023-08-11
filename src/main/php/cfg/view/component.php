@@ -321,7 +321,7 @@ class component extends sandbox_typed
      */
     function load_standard_sql(sql_creator $sc, string $class = self::class): sql_par
     {
-        $sc->set_type(sql_db::TBL_COMPONENT);
+        $sc->set_type(self::class);
         $sc->set_fields(array_merge(
             self::FLD_NAMES,
             self::FLD_NAMES_USR,
@@ -518,7 +518,7 @@ class component extends sandbox_typed
 
         if ($this->id > 0 and $this->user() != null) {
             $lst = new component_link_list($this->user());
-            $lst->load_by_component_old($this);
+            $lst->load_by_component($this);
             $result = $lst->view_ids();
         } else {
             log_err("The user id must be set to list the component links.", "component->assign_dsp_ids");
@@ -798,7 +798,7 @@ class component extends sandbox_typed
      */
     function load_sql_user_changes(sql_creator $sc, string $class = self::class): sql_par
     {
-        $sc->set_type(sql_db::TBL_COMPONENT, true);
+        $sc->set_type(self::class, true);
         $sc->set_fields(array_merge(
             self::FLD_NAMES_USR,
             self::FLD_NAMES_NUM_USR
@@ -983,7 +983,7 @@ class component extends sandbox_typed
 
         // collect all component links where this component is used
         $lnk_lst = new component_link_list($this->user());
-        $lnk_lst->load_by_component_old($this);
+        $lnk_lst->load_by_component($this);
 
         // if there are links, delete if not used by anybody else than the user who has requested the deletion
         // or exclude the links for the user if the link is used by someone else

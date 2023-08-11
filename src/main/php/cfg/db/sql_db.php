@@ -120,9 +120,6 @@ class sql_db
     const TBL_USER_PREFIX = 'user_';
 
     // the synthetic view tables (VT) for union query creation
-    const VT_PHRASE = 'phrase';
-    const VT_TERM = 'term';
-    const VT_FIGURE = 'figure';
     const VT_PHRASE_GROUP_LINK = 'phrase_group_phrase_link';
     const VT_TABLE_FIELD = 'change_table_field';
 

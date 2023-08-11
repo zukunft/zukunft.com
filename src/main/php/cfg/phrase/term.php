@@ -503,7 +503,7 @@ class term extends combine_named
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
 
-        $sc->set_type(sql_db::VT_TERM);
+        $sc->set_type(self::class);
         $sc->set_name($qp->name);
 
         $sc->set_usr_fields(self::FLD_NAMES_USR);

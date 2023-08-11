@@ -372,7 +372,7 @@ class user extends db_object
     {
         $qp = parent::load_sql($sc, $query_name, $class);
 
-        $sc->set_type(sql_db::TBL_USER);
+        $sc->set_type(self::class);
         $sc->set_name($qp->name);
 
         if ($this->viewer == null) {

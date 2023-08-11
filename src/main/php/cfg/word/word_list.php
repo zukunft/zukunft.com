@@ -223,7 +223,7 @@ class word_list extends sandbox_list
 
             // create the sub query
             $sub_sc = clone $sc;
-            $sub_sc->set_type(sql_db::TBL_PHRASE_GROUP_WORD_LINK);
+            $sub_sc->set_type(phrase_group_word_link::class);
             $sub_sc->set_fields(array(word::FLD_ID));
             $sub_sc->add_where(phrase_group::FLD_ID, $grp_id);
 
