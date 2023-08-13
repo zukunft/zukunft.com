@@ -2178,8 +2178,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
 
         // collect all phrase groups where this triple is used
         $grp_lst = new phrase_group_list($this->user());
-        $grp_lst->phr = $this->phrase();
-        $grp_lst->load_by_vars();
+        $grp_lst->load_by_phr($this->phrase());
 
         // collect all values related to this triple
         $val_lst = new value_list($this->user());

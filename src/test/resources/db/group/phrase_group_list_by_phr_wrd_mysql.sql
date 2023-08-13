@@ -1,4 +1,4 @@
-PREPARE phrase_group_list_by_phr FROM
+PREPARE phrase_group_list_by_phr_wrd FROM
    'SELECT
             s.phrase_group_id,
             s.phrase_group_name,

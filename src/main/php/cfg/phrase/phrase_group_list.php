@@ -172,6 +172,8 @@ class phrase_group_list
     {
         $qp = $this->load_sql($sc, 'phr');
         if ($phr->is_word()) {
+            $qp->name .= '_wrd';
+            $sc->set_name($qp->name);
             $sc->set_join_fields(
                 array(word::FLD_ID),
                 sql_db::TBL_PHRASE_GROUP_WORD_LINK,
@@ -179,68 +181,19 @@ class phrase_group_list
                 phrase_group::FLD_ID);
             $sc->add_where(sql_db::LNK_TBL . '.' . word::FLD_ID, $phr->obj_id());
         } else {
+            $qp->name .= '_trp';
+            $sc->set_name($qp->name);
             $sc->set_join_fields(
                 array(triple::FLD_ID),
                 sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK,
                 phrase_group::FLD_ID,
                 phrase_group::FLD_ID);
-            $sc->add_where(sql_db::LNK_TBL . '.' . phrase::FLD_ID, $phr->obj_id());
+            $sc->add_where(sql_db::LNK_TBL . '.' . triple::FLD_ID, $phr->obj_id());
         }
         $sc->set_order(phrase_group::FLD_ID);
         $sc->set_page($limit, $offset);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
-        return $qp;
-    }
-
-    /**
-     * create an SQL statement to retrieve a list of phrase groups from the database
-     *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param bool $get_name to create the SQL statement name for the predefined SQL within the same function to avoid duplicating if in case of more than on where type
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql_by_vars(sql_db $db_con, bool $get_name = false): sql_par
-    {
-        $lib = new library();
-        $db_con->set_type(sql_db::TBL_PHRASE_GROUP);
-        $class = $lib->class_to_name(self::class);
-        $qp = new sql_par($class);
-        $qp->name = $class . '_by_';
-        $sql_where = '';
-
-
-        if ($this->phr != null) {
-            if ($this->phr->id() <> 0) {
-                if ($this->phr->is_word()) {
-                    $qp->name .= word::FLD_ID;
-                    $db_con->add_par(sql_par_type::INT, $this->phr->id());
-                    $sql_where = sql_db::LNK_TBL . '.' . word::FLD_ID . ' = ' . $db_con->par_name();
-                } else {
-                    $qp->name .= triple::FLD_ID;
-                    $db_con->add_par(sql_par_type::INT, $this->phr->id() * -1);
-                    $sql_where = sql_db::LNK_TBL . '.' . triple::FLD_ID . ' = ' . $db_con->par_name();
-                }
-            }
-        }
-        if ($sql_where == '') {
-            log_err("The phrase and the user must be set to load a phrase group list.", "phrase_group_list->load");
-        } else {
-
-            $db_con->set_name($qp->name);
-            $db_con->set_usr($this->user()->id());
-            $db_con->set_fields(phrase_group::FLD_NAMES);
-            if ($this->phr->is_word()) {
-                $db_con->set_join_fields(array(word::FLD_ID), sql_db::TBL_PHRASE_GROUP_WORD_LINK, phrase_group::FLD_ID, phrase_group::FLD_ID);
-            } else {
-                $db_con->set_join_fields(array(triple::FLD_ID), sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK, phrase_group::FLD_ID, phrase_group::FLD_ID);
-            }
-            $db_con->set_where_text($sql_where);
-            $qp->sql = $db_con->select_by_set_id();
-            $qp->par = $db_con->get_par();
-
-        }
-
         return $qp;
     }
 
@@ -271,37 +224,6 @@ class phrase_group_list
         return $result;
     }
 
-    function load_by_vars(): bool
-    {
-        global $db_con;
-        $result = false;
-
-        // check the all minimal input parameters
-        if ($this->user() == null) {
-            log_err('The user must be set to load ' . self::class, self::class . '->load');
-        } else {
-            $qp = $this->load_sql_by_vars($db_con);
-
-            if ($db_con->get_where() == '') {
-                log_err('The phrase must be set to load ' . self::class, self::class . '->load');
-            } else {
-                // similar statement used in triple_list->load, check if changes should be repeated in triple_list.php
-                $db_rows = $db_con->get($qp);
-                if ($db_rows != null) {
-                    foreach ($db_rows as $db_row) {
-                        $phr_grp = new phrase_group($this->usr);
-                        $phr_grp->row_mapper($db_row);
-                        $this->lst[] = $phr_grp;
-                        $result = true;
-                    }
-                }
-            }
-
-        }
-
-        return $result;
-    }
-
     /**
      * delete all loaded phrase groups e.g. to delete al the phrase groups linked to a phrase
      * @return user_message
@@ -316,8 +238,9 @@ class phrase_group_list
         return new user_message();
     }
 
+
     /*
-     * add functions
+     * add
      */
 
     /**
@@ -343,62 +266,6 @@ class phrase_group_list
             }
         }
         return $id;
-    }
-
-    // add a phrase group and a time word based on the id
-    private function add_grp_time_id($grp_id, $time_id): bool
-    {
-        log_debug($grp_id . '@' . $time_id);
-
-        $grp = new phrase_group($this->usr);
-        if ($grp_id > 0) {
-            $grp->load_by_id($grp_id);
-            log_debug('found ' . $grp->name());
-        }
-        $time = new word($this->usr);
-        if ($time_id > 0) {
-            $time->load_by_id($time_id);
-            log_debug('found time ' . $time->dsp_id());
-        }
-        return $this->add_with_time($grp, $time);
-    }
-
-    // add a phrase group if the group/time combination is not yet part of the list
-    private function add_with_time($grp, $time): bool
-    {
-        $result = false;
-
-        $id = $this->grp_time_id($grp, $time);
-        log_debug($id);
-        if ($id <> '') {
-            log_debug('is id ' . $id . ' in ' . implode(",", $this->grp_time_ids));
-            if (!in_array($id, $this->grp_time_ids)) {
-                log_debug('id ' . $id . ' add');
-                $this->grp_time_ids[] = $id;
-                if (isset($grp)) {
-                    $this->lst[] = $grp;
-                    $this->grp_ids[] = $grp->id;
-                    $phr_lst = clone $grp->phr_lst;
-                } else {
-                    $phr_lst = new phrase_list($this->usr);
-                    $this->lst[] = null;
-                    $this->grp_ids[] = 0;
-                }
-                if (isset($time)) {
-                    $this->time_lst[] = $time;
-                    $phr_time = $time->phrase();
-                    $phr_lst->add($phr_time);
-                } else {
-                    $this->time_lst[] = null;
-                }
-                $this->phr_lst_lst[] = $phr_lst;
-                $result = true;
-                log_debug($grp->dsp_id() . ' added to list ' . $this->dsp_id());
-            } else {
-                log_debug($grp->dsp_id() . ' skipped, because is already in list ' . $this->dsp_id());
-            }
-        }
-        return $result;
     }
 
     /**

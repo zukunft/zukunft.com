@@ -249,7 +249,7 @@ class word extends sandbox_typed
 
     /**
      * set the value to rank the words by usage
-     *
+     *r
      * @param int|null $usage a higher value moves the word to the top of the selection list
      * @return void
      */
@@ -1955,8 +1955,7 @@ class word extends sandbox_typed
 
         // collect all phrase groups where this word is used
         $grp_lst = new phrase_group_list($this->user());
-        $grp_lst->phr = $this->phrase();
-        $grp_lst->load_by_vars();
+        $grp_lst->load_by_phr($this->phrase());
 
         // collect all triples where this word is used
         $trp_lst = new triple_list($this->user());
