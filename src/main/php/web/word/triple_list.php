@@ -329,4 +329,22 @@ class triple_list extends list_dsp
         return $trp;
     }
 
+    /**
+     * @return array with all triple names in alphabetic order
+     * this function is called from dsp_id, so no call of another function is allowed
+     * TODO move to a parent object for triple list and term list
+     */
+    function names(): array
+    {
+        $name_lst = array();
+        foreach ($this->lst as $phr) {
+            if ($phr != null) {
+                $name_lst[] = $phr->name();
+            }
+        }
+        // TODO allow to fix the order
+        asort($name_lst);
+        return $name_lst;
+    }
+
 }

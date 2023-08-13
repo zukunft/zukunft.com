@@ -30,7 +30,7 @@
 
 */
 
-namespace test\html;
+namespace unit\html;
 
 use api\component_api;
 use html\html_base;

@@ -30,7 +30,7 @@
 
 */
 
-namespace test\html;
+namespace unit\html;
 
 use api\word_api;
 use html\html_base;

@@ -2,7 +2,7 @@
 
 /*
 
-    test/unit/html/phrase_list.php - testing of the html frontend functions for phrase lists
+    test/unit/html/triple_list.php - testing of the html frontend functions for triples
     ------------------------------
   
 
@@ -32,44 +32,40 @@
 
 namespace unit\html;
 
-use api\phrase_api;
 use api\triple_api;
 use api\word_api;
 use html\html_base;
 use html\word\word as word_dsp;
-use \html\word\triple as triple_dsp;
-use html\phrase\phrase as phrase_dsp;
-use html\phrase\phrase_list as phrase_list_dsp;
+use html\word\triple as triple_dsp;
+use html\word\triple_list as triple_list_dsp;
 use cfg\verb;
 use test\test_cleanup;
 
-class phrase_list
+class triple_list
 {
     function run(test_cleanup $t): void
     {
 
         $html = new html_base();
 
-        $t->subheader('HTML phrase list tests');
+        $t->subheader('HTML triple list tests');
 
-        // fill the phrase list based on the api message
-        $db_lst = $t->dummy_phrase_list();
-        $lst = new phrase_list_dsp($db_lst->api_json());
-        $t->assert('HTML phrase list names match backend names', $lst->names(), $db_lst->names());
+        // fill the triple list based on the api message
+        $db_lst = $t->dummy_triple_list();
+        $lst = new triple_list_dsp($db_lst->api_json());
+        $t->assert('HTML triple list names match backend names', $lst->names(), $db_lst->names());
 
-        // create the phrase list test set
-        $lst = new phrase_list_dsp();
-        $phr_city = $this->phrase_api_triple(1,  triple_api::TN_ZH_CITY_NAME,
+        // create the triple list test set
+        $lst = new triple_list_dsp();
+        $phr_city = $this->triple_api_triple(1,  triple_api::TN_ZH_CITY_NAME,
             word_api::TN_ZH, verb::IS, word_api::TN_CITY);
-        $phr_canton = $this->phrase_api_triple(2,  triple_api::TN_ZH_CANTON_NAME,
+        $phr_canton = $this->triple_api_triple(2,  triple_api::TN_ZH_CANTON_NAME,
             word_api::TN_ZH, verb::IS, word_api::TN_CANTON);
-        $phr_ch = $this->phrase_api_word(1, word_api::TN_CH);
-        $lst->add_phrase($phr_city);
-        $lst->add_phrase($phr_canton);
-        $lst->add_phrase($phr_ch);
+        $lst->add($phr_city);
+        $lst->add($phr_canton);
 
-        // test the phrase list display functions
-        $test_page = $html->text_h2('phrase list display test');
+        // test the triple list display functions
+        $test_page = $html->text_h2('triple list display test');
         /*
         $test_page .= 'names with links: ' . $lst->display() . '<br>';
         $test_page .= 'table cells<br>';
@@ -77,30 +73,20 @@ class phrase_list
         */
 
         $test_page .= 'selector: ' . '<br>';
-        $test_page .= $lst->selector('phrase list test selector', '', 'please select') . '<br>';
+        $test_page .= $lst->selector('triple list test selector', '', 'please select') . '<br>';
 
-        $t->html_test($test_page, 'phrase_list', $t);
+        $t->html_test($test_page, 'triple_list', $t);
     }
 
-    function phrase_api_word(
-        int $id,
-        string $name
-    ): phrase_dsp {
-        $wrd = new word_api($id, $name);
-        $wrd_dsp = new word_dsp($wrd->get_json());
-        return $wrd_dsp->phrase();
-    }
-
-    function phrase_api_triple(
+    function triple_api_triple(
         int $id,
         string $name,
         string $from = '',
         string $verb = '',
         string $to = ''
-    ): phrase_dsp {
+    ): triple_dsp {
         $trp = new triple_api($id, $name, $from, $verb, $to);
-        $trp_dsp = new triple_dsp($trp->get_json());
-        return $trp_dsp->phrase();
+        return new triple_dsp($trp->get_json());
     }
 
 }

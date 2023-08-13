@@ -30,7 +30,7 @@
 
 */
 
-namespace test\html;
+namespace unit\html;
 
 include_once WEB_TYPES_PATH . 'type_list.php';
 

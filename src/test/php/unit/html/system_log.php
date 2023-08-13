@@ -30,7 +30,7 @@
 
 */
 
-namespace test\html;
+namespace unit\html;
 
 use html\html_base;
 use html\log\system_log_list as system_log_list_dsp;

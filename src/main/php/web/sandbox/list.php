@@ -237,7 +237,6 @@ class list_dsp
     /**
      * create a selector for this list
      * used for words, triples, phrases, formulas, terms, view and components
-     * TODO create unit test for triples
      *
      * @param string $name the name of this selector which must be unique within the form
      * @param string $form the html form name which must be unique within the html page

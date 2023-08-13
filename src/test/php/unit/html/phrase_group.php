@@ -30,7 +30,7 @@
 
 */
 
-namespace test\html;
+namespace unit\html;
 
 use html\html_base;
 use html\phrase\phrase_group as phrase_group_dsp;

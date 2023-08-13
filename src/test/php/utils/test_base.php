@@ -180,6 +180,7 @@ include_once $path_unit_dsp . 'word.php';
 include_once $path_unit_dsp . 'word_list.php';
 include_once $path_unit_dsp . 'verb.php';
 include_once $path_unit_dsp . 'triple.php';
+include_once $path_unit_dsp . 'triple_list.php';
 include_once $path_unit_dsp . 'phrase.php';
 include_once $path_unit_dsp . 'phrase_list.php';
 include_once $path_unit_dsp . 'phrase_group.php';

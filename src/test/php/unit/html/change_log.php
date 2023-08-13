@@ -30,7 +30,7 @@
 
 */
 
-namespace test\html;
+namespace unit\html;
 
 include_once WEB_SYSTEM_PATH . 'back_trace.php';
 

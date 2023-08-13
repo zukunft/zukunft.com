@@ -30,7 +30,7 @@
 
 */
 
-namespace test\html;
+namespace unit\html;
 
 use html\html_base;
 use html\ref\source as source_dsp;

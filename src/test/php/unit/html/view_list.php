@@ -30,7 +30,7 @@
 
 */
 
-namespace test\html;
+namespace unit\html;
 
 include_once WEB_VIEW_PATH . 'view_list.php';
 

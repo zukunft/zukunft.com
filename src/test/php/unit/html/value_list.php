@@ -30,7 +30,7 @@
 
 */
 
-namespace test\html;
+namespace unit\html;
 
 use api\phrase_group_api;
 use api\phrase_list_api;
