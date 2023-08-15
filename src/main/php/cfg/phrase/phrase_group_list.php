@@ -38,57 +38,14 @@ include_once DB_PATH . 'sql_par_type.php';
 use cfg\db\sql_creator;
 use cfg\db\sql_par_type;
 
-class phrase_group_list
+class phrase_group_list extends sandbox_list
 {
 
-    public array $lst;                  // the list of the phrase group objects
-    public user $usr;                   // the person for whom the word group list has been created
     public ?array $time_lst = null;     // the list of the time phrase (the add function)
     public ?array $grp_ids = null;      // the list of the phrase group ids
-    public ?array $grp_time_ids = null; // the list of the phrase group and time ids
-
-    public ?array $phr_lst_lst = null;  // list of a list of phrases
 
     // search fields
     public ?phrase $phr; //
-
-    /*
-     * construct and map
-     */
-
-    /**
-     * always set the user because a phrase group list is always user specific
-     * @param user $usr the user who requested to see the phrase groups
-     */
-    function __construct(user $usr)
-    {
-        $this->lst = array();
-        $this->set_user($usr);
-    }
-
-
-    /*
-     * set and get
-     */
-
-    /**
-     * set the user of the phrase group list
-     *
-     * @param user $usr the person who wants to access the phrase groups
-     * @return void
-     */
-    function set_user(user $usr): void
-    {
-        $this->usr = $usr;
-    }
-
-    /**
-     * @return user the person who wants to see the phrase groups
-     */
-    function user(): user
-    {
-        return $this->usr;
-    }
 
 
     /*
@@ -213,7 +170,7 @@ class phrase_group_list
         $db_rows = $db_con->get($qp);
         if ($db_rows != null) {
             foreach ($db_rows as $db_row) {
-                $phr_grp = new phrase_group($this->usr);
+                $phr_grp = new phrase_group($this->user());
                 $phr_grp->row_mapper($db_row);
                 $this->lst[] = $phr_grp;
                 $result = true;
@@ -455,7 +412,7 @@ class phrase_group_list
                 log_debug('add id ' . $val_row[phrase_group::FLD_ID]);
                 // log_debug('add time id ' . $val_row[value::FLD_TIME_WORD]);
                 // remove the formula name phrase and the result phrases from the value phrases to avoid potentials loops and
-                $val_grp = new phrase_group($this->usr);
+                $val_grp = new phrase_group($this->user());
                 $val_grp->load_by_id($val_row[phrase_group::FLD_ID]);
                 $used_phr_lst = clone $val_grp->phr_lst;
                 log_debug('used_phr_lst ' . $used_phr_lst->dsp_id());
@@ -527,16 +484,19 @@ class phrase_group_list
     }
     */
 
-    /*
-    get functions
-    */
 
-    // return all phrases that are part of each phrase group of the list
+    /*
+     * information
+     */
+
+    /**
+     * @return phrase_list with all phrases that are part of each phrase group of the list
+     */
     function common_phrases(): ?phrase_list
     {
         log_debug();
         $lib = new library();
-        $result = new phrase_list($this->usr);
+        $result = new phrase_list($this->user());
         $pos = 0;
         foreach ($this->lst as $grp) {
             $grp->load_by_obj_vars();
@@ -556,10 +516,6 @@ class phrase_group_list
         log_debug($lib->dsp_count($result->lst()));
         return $result;
     }
-
-    /*
-     * information
-     */
 
     /**
      * @return array with the database ids of all objects of this list
