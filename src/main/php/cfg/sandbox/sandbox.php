@@ -416,14 +416,12 @@ class sandbox extends db_object
     /**
      * create the SQL to load the single default value always by something else than the main id
      * @param sql_creator $sc with the target db_type set
-     * @param string $class the name of the child class from where the call has been triggered
+     * @param sql_par $qp the query parameters with the class and name already set
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql_by(sql_creator $sc, string $class = self::class): sql_par
+    function load_standard_sql_by(sql_creator $sc, sql_par $qp): sql_par
     {
-        $qp = new sql_par($class, true);
-        $qp->name .= sql_db::FLD_ID;
-
+        $qp->name .= '_std';
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id);
         $qp->sql = $sc->sql();

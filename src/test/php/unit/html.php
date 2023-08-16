@@ -113,6 +113,7 @@ class html_unit_tests
         $lst = new verb_list($usr);
         $lst->add_verb(new verb(1, verb::IS));
         $lst->add_verb(new verb(2, verb::IS_PART_OF));
+        // TODO use set_from_json to set the display object
         $t->html_test($lst->dsp_obj()->list(verb::class, 'Verbs'), 'list_verbs', $t);
 
 

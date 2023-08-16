@@ -1100,46 +1100,65 @@ class library
         $diff_part = array(); // list with the differences
         $diff_type = array(); // list with the difference type: same, add or del
 
+        // get the array keys e.g. if the keys are not a number
+        $from_keys = array_keys($from);
+        $to_keys = array_keys($to);
         $from_pos = 0;
         $to_pos = 0;
 
         // check if the from parts are also part of to
         while ($from_pos < count($from)) {
-            if (!array_key_exists($to_pos, $to)) {
-                log_err('To pos ' . $to_pos . ' not found in ' . implode(",",$to) . ' when comparing to ' . implode(",",$from));
+            if (!array_key_exists($to_pos, $to_keys)) {
+                log_err('To pos ' . $to_pos . ' not found in ' . implode(",", $to) . ' when comparing to ' . implode(",", $from));
             }
-            if ($from[$from_pos] == $to[$to_pos]) {
-                $diff_part[] = $to_sep[$to_pos];
+            if ($from[$from_keys[$from_pos]] == $to[$to_keys[$to_pos]]) {
+                $diff_part[] = $to_sep[$to_keys[$to_pos]];
                 $diff_type[] = self::STR_DIFF_UNCHANGED;
                 if ($to_pos < count($to)) {
                     $to_pos++;
                 }
                 $from_pos++;
             } else {
-                if ($str_type == self::STR_TYPE_CODE) {
-                    $from_len = min(self::STR_DIFF_MATCH_LEN, count($from) - $from_pos);
-                    $search = array_slice($from, $from_pos, $from_len);
-                    $match_pos = $this->str_diff_list_next_array_match($search, $to, $to_pos);
-                } else {
-                    $match_pos = $this->str_diff_list_next_match($from[$from_pos], $to, $to_pos);
-                }
-                if ($match_pos > $to_pos) {
-                    for ($add_pos = $to_pos; $add_pos < $match_pos; $add_pos++) {
-                        $diff_part[] = $to_sep[$add_pos];
-                        $diff_type[] = self::STR_DIFF_ADD;
+                if (is_array($from[$from_keys[$from_pos]])) {
+                    $sub_diff = $this->str_diff_list(
+                        $from[$from_keys[$from_pos]],
+                        $to[$to_keys[$to_pos]],
+                        $from_sep[$from_keys[$from_pos]],
+                        $to_sep[$to_keys[$to_pos]],
+                        $str_type
+                    );
+                    array_walk_recursive($sub_diff[self::STR_DIFF_VAL], function ($diff, $key) use (&$diff_part){$diff_part[$key] = $diff;});
+                    array_walk_recursive($sub_diff[self::STR_DIFF_TYP], function ($type, $key) use (&$diff_type){$diff_type[$key] = $type;});
+                    if ($to_pos < count($to)) {
+                        $to_pos++;
                     }
-                    $to_pos = $add_pos;
-                } elseif ($match_pos == -1) {
-                    $diff_part[] = $from_sep[$from_pos];
-                    $diff_type[] = self::STR_DIFF_DEL;
                     $from_pos++;
+                } else {
+                    if ($str_type == self::STR_TYPE_CODE) {
+                        $from_len = min(self::STR_DIFF_MATCH_LEN, count($from) - $from_pos);
+                        $search = array_slice($from, $from_pos, $from_len);
+                        $match_pos = $this->str_diff_list_next_array_match($search, $to, $to_pos);
+                    } else {
+                        $match_pos = $this->str_diff_list_next_match($from[$from_keys[$from_pos]], $to, $to_keys, $to_pos);
+                    }
+                    if ($match_pos > $to_pos) {
+                        for ($add_pos = $to_pos; $add_pos < $match_pos; $add_pos++) {
+                            $diff_part[] = $to_sep[$to_keys[$add_pos]];
+                            $diff_type[] = self::STR_DIFF_ADD;
+                        }
+                        $to_pos = $add_pos;
+                    } elseif ($match_pos == -1) {
+                        $diff_part[] = $from_sep[$from_keys[$from_pos]];
+                        $diff_type[] = self::STR_DIFF_DEL;
+                        $from_pos++;
+                    }
                 }
             }
         }
 
         // add the parts extra in to at the end
         while ($to_pos < count($to)) {
-            $diff_part[] = $to_sep[$to_pos];
+            $diff_part[] = $to_sep[$to_keys[$to_pos]];
             $diff_type[] = self::STR_DIFF_ADD;
             $to_pos++;
         }
@@ -1187,16 +1206,17 @@ class library
     /**
      * @param string $from the part of the target string that should be found in the $to string array
      * @param array $to the result string converted to an array
+     * @param array $to_keys the array keys to the to array for the case they are not integer
      * @param int $start_pos the staring position in the to string array
      * @return int the position of the next match in the to array or -1 if nothing found
      */
     private
-    function str_diff_list_next_match(string $from, array $to, int $start_pos): int
+    function str_diff_list_next_match(string $from, array $to, array $to_keys, int $start_pos): int
     {
         $check_pos = $start_pos;
         $found_pos = -1;
         while ($check_pos < count($to) and $found_pos == -1) {
-            if ($from == $to[$check_pos]) {
+            if ($from == $to[$to_keys[$check_pos]]) {
                 $found_pos = $check_pos;
             }
             $check_pos++;

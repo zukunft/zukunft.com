@@ -2,8 +2,8 @@
 
 /*
 
-    web/types/protection.php - the preloaded data protection types used for the html frontend
-    ------------------------
+    web/types/source_type_list.php - the preloaded data source types used for the html frontend
+    -------------------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -34,25 +34,16 @@ namespace html\types;
 
 use html\html_selector;
 
-class protection extends type_list
+class source_type_list extends type_list
 {
 
     /**
      * @returns string the html code to select a type from this list
      */
-    function selector(string $name = '', string $form = '', int $selected = 0): string
+    function selector(string $form = '', int $selected = 0, string $name = 'source type'): string
     {
-        global $html_protection_types;
-        return parent::type_selector($html_protection_types->lst_key(), $name, $form, $selected);
+        global $html_source_types;
+        return parent::type_selector($html_source_types->lst_key(), $name, $form, $selected);
     }
-
-    /*
-     * set and get
-
-    function default_id(): int
-    {
-        return parent::id(protection_type::NO_PROTECT);
-    }
-*/
 
 }

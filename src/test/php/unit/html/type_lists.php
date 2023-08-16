@@ -33,36 +33,33 @@
 namespace unit\html;
 
 include_once WEB_TYPES_PATH . 'type_list.php';
+include_once WEB_TYPES_PATH . 'type_lists.php';
+include_once WEB_TYPES_PATH . 'formula_type_list.php';
+include_once WEB_TYPES_PATH . 'phrase_type_list.php';
+include_once WEB_TYPES_PATH . 'pprotection.php';
 
 use api\view_api;
-use cfg\formula_type_list;
 use html\html_base;
-use html\view\view as view_dsp;
-use html\types\protection;
-use html\types\type_list as type_list_dsp;
+use html\types\type_lists as type_list_dsp;
 use test\test_cleanup;
 
-class type_list
+class type_lists
 {
     function run(test_cleanup $t): void
     {
 
         $html = new html_base();
 
-        $t->subheader('Type list tests');
-
-        // create the formula type list test set
-        $frm_lst = new formula_type_list();
-        $frm_lst->load_dummy();
+        $t->Header('Test the HTML functions for the list preloaded in the Frontend');
 
         // load the types from the api message
         $api_msg = $t->dummy_type_lists_api($t->usr1)->get_json();
         new type_list_dsp($api_msg);
 
-        // test the type list display functions
+        // Start the HTML test page
         $test_page = $html->text_h2('type list display test');
 
-        // check if the system views have set
+        // check if the system views have loaded
         global $html_system_views;
         $dsp = $html_system_views->get(view_api::TI_READ);
         $wrd = $t->dummy_word_dsp();
@@ -70,10 +67,23 @@ class type_list
         $test_page .= 'simple mask: ' . '<br>';
         $test_page .= $dsp->show($wrd, $back) . '<br>';
 
-        $test_page .= $html->label('formula type selector from dummy: ', 'formula type');
-        $test_page .= $frm_lst->dsp_obj()->selector('formula type') . '<br>';
+        // test the type list selectors
+        $form_name = 'unit test form';
+        global $html_user_profiles;
+        $test_page .= $html->label('user profile selector from api message: ', 'user profile');
+        $test_page .= $html_user_profiles->selector($form_name) . '<br>';
+
+        global $html_phrase_types;
+        $test_page .= $html->label('phrase type selector from api message: ', 'phrase type');
+        $test_page .= $html_phrase_types->selector($form_name) . '<br>';
+
+        global $html_formula_types;
+        $test_page .= $html->label('phrase type selector from api message: ', 'phrase type');
+        $test_page .= $html_formula_types->selector($form_name) . '<br>';
+
+        global $html_protection_types;
         $test_page .= $html->label('protection selector from api message: ', 'protection');
-        $test_page .= (new protection())->selector('protection') . '<br>';
+        $test_page .= $html_protection_types->selector('protection') . '<br>';
 
         $t->html_test($test_page, 'types', $t);
     }

@@ -32,7 +32,7 @@
 
 namespace test;
 
-include_once MODEL_WORD_PATH . 'component_link_list.php';
+include_once MODEL_VIEW_PATH . 'component_link_list.php';
 
 use cfg\library;
 use cfg\phrase;

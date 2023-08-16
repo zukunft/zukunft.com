@@ -931,99 +931,6 @@ class word extends sandbox_typed
      */
 
     /**
-     * returns the html code to select a word link type
-     * database link must be open
-     * TODO: similar to verb->dsp_selector maybe combine???
-     */
-    function selector_link($id, $form, $back): string
-    {
-        log_debug('verb id ' . $id);
-        global $db_con;
-
-        $result = '';
-
-        $sql_name = "";
-        if ($db_con->get_type() == sql_db::POSTGRES) {
-            $sql_name = "CASE WHEN (name_reverse  <> '' IS NOT TRUE AND name_reverse <> verb_name) THEN CONCAT(verb_name, ' (', name_reverse, ')') ELSE verb_name END AS name";
-        } elseif ($db_con->get_type() == sql_db::MYSQL) {
-            $sql_name = "IF (name_reverse <> '' AND name_reverse <> verb_name, CONCAT(verb_name, ' (', name_reverse, ')'), verb_name) AS name";
-        } else {
-            log_err('Unknown db type ' . $db_con->get_type());
-        }
-        $sql_avoid_code_check_prefix = "SELECT";
-        $sql = $sql_avoid_code_check_prefix . " * FROM (
-            SELECT verb_id AS id, 
-                   " . $sql_name . ",
-                   words
-              FROM verbs 
-      UNION SELECT verb_id * -1 AS id, 
-                   CONCAT(name_reverse, ' (', verb_name, ')') AS name,
-                   words
-              FROM verbs 
-             WHERE name_reverse <> '' 
-               AND name_reverse <> verb_name) AS links
-          ORDER BY words DESC, name;";
-        $sel = new html_selector;
-        $sel->form = $form;
-        $sel->name = 'verb';
-        $sel->sql = $sql;
-        $sel->selected = $id;
-        $sel->dummy_text = '';
-        $result .= $sel->display_old();
-
-        if ($this->user()->is_admin()) {
-            // admin users should always have the possibility to create a new link type
-            $result .= \html\btn_add('add new link type', '/http/verb_add.php?back=' . $back);
-        }
-
-        return $result;
-    }
-
-    // to select an existing word to be added
-    private function selector_add($id, $form, $bs_class): string
-    {
-        log_debug('word_dsp->selector_add ... word id ' . $id);
-        $result = '';
-        $sel = new html_selector;
-        $sel->form = $form;
-        $sel->name = 'add';
-        $sel->label = "Word:";
-        $sel->bs_class = $bs_class;
-        $sel->sql = sql_lst_usr("word", $this->user());
-        $sel->selected = $id;
-        $sel->dummy_text = '... or select an existing word to link it';
-        $result .= $sel->display_old();
-
-        return $result;
-    }
-
-    /**
-     * @returns string the html code to select a word
-     * database link must be open
-     */
-    function selector_word(int $id, int $pos, string $form_name): string
-    {
-        log_debug('word_dsp->selector_word ... word id ' . $id);
-        $result = '';
-
-        if ($pos > 0) {
-            $field_id = "word" . $pos;
-        } else {
-            $field_id = "word";
-        }
-        $sel = new html_selector;
-        $sel->form = $form_name;
-        $sel->name = $field_id;
-        $sel->sql = sql_lst_usr("word", $this->user());
-        $sel->selected = $id;
-        $sel->dummy_text = '';
-        $result .= $sel->display_old();
-
-        log_debug('word_dsp->selector_word ... done ' . $id);
-        return $result;
-    }
-
-    /**
      * @param string $script
      * @param string $bs_class
      * @return string
@@ -1040,36 +947,6 @@ class word extends sandbox_typed
         $sel->selected = $this->type_id;
         $sel->dummy_text = '';
         $result .= $sel->display_old();
-        return $result;
-    }
-
-    /**
-     * @return string HTML code to edit all word fields
-     */
-    function dsp_add(int $wrd_id, int $wrd_to, int $vrb_id, $back): string
-    {
-        log_debug('word_dsp->dsp_add ' . $this->dsp_id() . ' or link the existing word with id ' . $wrd_id . ' to ' . $wrd_to . ' by verb ' . $vrb_id . ' for user ' . $this->user()->name . ' (called by ' . $back . ')');
-        $result = '';
-        $html = new html_base();
-
-        $form = "word_add";
-        $result .= $html->dsp_text_h2('Add a new word');
-        $result .= $html->dsp_form_start($form);
-        $result .= $html->dsp_form_hidden("back", $back);
-        $result .= $html->dsp_form_hidden("confirm", '1');
-        $result .= '<div class="form-row">';
-        $result .= $html->dsp_form_text("word_name", $this->name, "Name:", "col-sm-4");
-        $result .= $this->dsp_type_selector($form, "col-sm-4");
-        $result .= $this->selector_add($wrd_id, $form, "form-row") . ' ';
-        $result .= '</div>';
-        $result .= 'which ';
-        $result .= '<div class="form-row">';
-        $result .= $this->selector_link($vrb_id, $form, $back);
-        $result .= $this->selector_word($wrd_to, 0, $form);
-        $result .= '</div>';
-        $result .= $html->dsp_form_end('', $back);
-
-        log_debug('word_dsp->dsp_add ... done');
         return $result;
     }
 

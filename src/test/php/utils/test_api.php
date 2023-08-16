@@ -742,7 +742,7 @@ class test_api extends create_test_objects
      */
     function assert_api_compare(
         string $class,
-        ?array  $actual,
+        ?array $actual,
         ?array $expected = null,
         string $filename = '',
         bool   $contains = false,

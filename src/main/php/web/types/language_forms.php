@@ -2,7 +2,7 @@
 
 /*
 
-    web/types/protection.php - the preloaded data protection types used for the html frontend
+    web/types/language_form.php - the preloaded data language_forms used for the html frontend
     ------------------------
 
 
@@ -34,7 +34,7 @@ namespace html\types;
 
 use html\html_selector;
 
-class protection extends type_list
+class language_forms extends type_list
 {
 
     /**
@@ -42,17 +42,8 @@ class protection extends type_list
      */
     function selector(string $name = '', string $form = '', int $selected = 0): string
     {
-        global $html_protection_types;
-        return parent::type_selector($html_protection_types->lst_key(), $name, $form, $selected);
+        global $html_language_forms;
+        return parent::type_selector($html_language_forms->lst_key(), $name, $form, $selected);
     }
-
-    /*
-     * set and get
-
-    function default_id(): int
-    {
-        return parent::id(protection_type::NO_PROTECT);
-    }
-*/
 
 }

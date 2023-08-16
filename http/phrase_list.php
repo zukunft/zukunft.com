@@ -35,6 +35,7 @@
 use controller\controller;
 use html\html_base;
 use html\view\view as view_dsp;
+use html\word\word as word_dsp;
 use cfg\term;
 use cfg\triple;
 use cfg\user;
@@ -181,7 +182,8 @@ if ($usr->id() > 0) {
         $result .= $dsp->dsp_navbar($back);
         $result .= $html->dsp_err($msg);
 
-        $result .= $wrd->dsp_add($phr_id, $phr_to, $vrb_id, $back);
+        $wrd_dsp = new word_dsp($wrd->api_json());
+        $result .= $wrd_dsp->dsp_add($phr_id, $phr_to, $vrb_id, $back);
     }
 }
 

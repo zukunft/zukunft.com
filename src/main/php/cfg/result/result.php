@@ -322,13 +322,8 @@ class result extends sandbox_value
         $sc->set_type(self::class);
         $sc->set_fields(array_merge(self::FLD_NAMES, array(user::FLD_ID)));
 
-        $qp = parent::load_standard_sql_by($sc, self::class);
-        $qp->name .= '_grp';
-        $sc->set_name($qp->name);
-        $sc->add_where(self::FLD_GRP, $grp->id());
-        $qp->sql = $sc->sql();
-        $qp->par = $sc->get_par();
-        return $qp;
+        $qp = $this->load_sql_by_grp_prepare($sc, $grp);
+        return parent::load_standard_sql_by($sc, $qp);
     }
 
     /**

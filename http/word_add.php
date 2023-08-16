@@ -51,6 +51,7 @@ Delete a word (check if nothing is depending on the word to delete)
 use controller\controller;
 use html\html_base;
 use html\view\view_dsp_old;
+use html\word\word as word_dsp;
 use cfg\term;
 use cfg\triple;
 use cfg\user;
@@ -195,7 +196,8 @@ if ($usr->id() > 0) {
         $result .= $dsp->dsp_navbar($back);
         $result .= $html->dsp_err($msg);
 
-        $result .= $wrd->dsp_add($wrd_id, $wrd_to, $vrb_id, $back);
+        $wrd_dsp = new word_dsp($wrd->api_json());
+        $result .= $wrd_dsp->dsp_add($wrd_id, $wrd_to, $vrb_id, $back);
     }
 }
 

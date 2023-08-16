@@ -113,7 +113,7 @@ use unit\html\term as term_html_tests;
 use unit\html\term_list as term_list_html_tests;
 use unit\html\triple as triple_html_tests;
 use unit\html\triple_list as triple_list_html_tests;
-use unit\html\type_list as type_list_html_tests;
+use unit\html\type_lists as type_list_html_tests;
 use unit\html\user as user_html_tests;
 use unit\html\value as value_html_tests;
 use unit\html\value_list as value_list_html_tests;

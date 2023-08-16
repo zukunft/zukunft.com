@@ -37,8 +37,9 @@ use api_message;
 use controller\controller;
 use cfg\sql_db;
 use cfg\user;
+use JsonSerializable;
 
-class system_log_list_api extends api_message
+class system_log_list_api extends api_message implements JsonSerializable
 {
 
     // field names used for JSON creation
@@ -60,7 +61,19 @@ class system_log_list_api extends api_message
      */
     function get_json(): string
     {
-        return json_encode($this);
+        return json_encode($this->jsonSerialize());
+    }
+
+    /**
+     * @return array with the sandbox vars without empty values that are not needed
+     * the message from the backend to the frontend does not need to include empty fields
+     * the message from the frontend to the backend on the other side must include empty fields
+     * to be able to unset fields in the backend
+     */
+    function jsonSerialize(): array
+    {
+        $vars = get_object_vars($this);
+        return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
 }
