@@ -2,7 +2,7 @@
 
 /*
 
-    model/word/phrase_type_list.php - to link coded functionality to a word or a triple, which means to every phrase
+    model/word/phrase_types.php - to link coded functionality to a word or a triple, which means to every phrase
     -----------------------------
 
     TODO rename to phrase type
@@ -37,7 +37,7 @@ include_once DB_PATH . 'sql_db.php';
 include_once MODEL_HELPER_PATH . 'type_list.php';
 include_once MODEL_PHRASE_PATH . 'phrase_type.php';
 
-class phrase_type_list extends type_list
+class phrase_types extends type_list
 {
 
     // the phrase types used for unit testing
@@ -64,7 +64,9 @@ class phrase_type_list extends type_list
         phrase_type::LATEST,
         phrase_type::KEY,
         phrase_type::INFO,
-        phrase_type::TRIPLE_HIDDEN
+        phrase_type::TRIPLE_HIDDEN,
+        phrase_type::SYSTEM_HIDDEN,
+        phrase_type::GROUP
     );
 
     /**

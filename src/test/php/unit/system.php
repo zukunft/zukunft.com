@@ -53,6 +53,7 @@ class system_unit_tests
     {
 
         global $usr;
+        global $usr_sys;
         global $sql_names;
         global $sys_log_stati;
 
@@ -139,7 +140,7 @@ class system_unit_tests
         $t->assert_sql_all($db_con, $system_users);
         $user_profiles = new user_profile_list();
         $t->assert_sql_all($db_con, $user_profiles);
-        $phrase_types = new phrase_type_list();
+        $phrase_types = new phrase_types();
         $t->assert_sql_all($db_con, $phrase_types);
         $formula_types = new formula_type_list();
         $t->assert_sql_all($db_con, $formula_types);
@@ -308,8 +309,14 @@ class system_unit_tests
         $expected = file_get_contents(PATH_TEST_FILES . 'api/system/system_log.json');
         $t->assert('system_log_dsp->get_json', $lib->trim_json($created), $lib->trim_json($expected));
 
+        // html code for the system log entry for normal users
         $created = $log_dsp->get_html($usr);
         $expected = file_get_contents(PATH_TEST_FILES . 'web/system/system_log.html');
+        $t->assert('system_log_dsp->get_json', $lib->trim_html($created), $lib->trim_html($expected));
+
+        // ... and the same for admin users
+        $created = $log_dsp->get_html($usr_sys);
+        $expected = file_get_contents(PATH_TEST_FILES . 'web/system/system_log_admin.html');
         $t->assert('system_log_dsp->get_json', $lib->trim_html($created), $lib->trim_html($expected));
 
         // create a second system log entry to create a list

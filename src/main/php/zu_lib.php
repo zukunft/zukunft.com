@@ -346,7 +346,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
         language_form - to differentiate the word and triple name forms e.g. plural
     type_list - list of type_objects that is only load once a startup in the frontend
         view_sys_list - list of all view used by the system itself
-        phrase_type_list - list of all word or triple types
+        phrase_types - list of all word or triple types
         verb_list - list of all verbs
         formula_type_list - a list of all formula types
         formula_element_type_list - list of all formula element types
@@ -543,7 +543,7 @@ include_once MODEL_SYSTEM_PATH . 'sys_log_level.php';
 include_once MODEL_SYSTEM_PATH . 'sys_log_status.php';
 include_once MODEL_USER_PATH . 'user_list.php';
 include_once MODEL_USER_PATH . 'user_profile_list.php';
-include_once MODEL_PHRASE_PATH . 'phrase_type_list.php';
+include_once MODEL_PHRASE_PATH . 'phrase_types.php';
 include_once MODEL_FORMULA_PATH . 'formula_type_list.php';
 include_once MODEL_FORMULA_PATH . 'formula_link_type_list.php';
 include_once MODEL_FORMULA_PATH . 'formula_element_type_list.php';

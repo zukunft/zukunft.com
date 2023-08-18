@@ -49,6 +49,7 @@ include_once MODEL_VIEW_PATH . 'component_list.php';
 include_once WEB_FORMULA_PATH . 'formula_dsp_old.php';
 include_once WEB_VIEW_PATH . 'view_dsp_old.php';
 
+use api\api;
 use api\component_api;
 use api\formula_api;
 use api\phrase_group_api;
@@ -85,11 +86,12 @@ use cfg\formula_type_list;
 use cfg\language;
 use cfg\language_form_list;
 use cfg\language_list;
+use cfg\library;
 use cfg\phrase;
 use cfg\phrase_group;
 use cfg\phrase_list;
 use cfg\phrase_type;
-use cfg\phrase_type_list;
+use cfg\phrase_types;
 use cfg\protection_type_list;
 use cfg\ref;
 use cfg\ref_type_list;
@@ -106,6 +108,8 @@ use cfg\term;
 use cfg\term_list;
 use cfg\triple;
 use cfg\triple_list;
+use cfg\type_list;
+use cfg\type_object;
 use cfg\user;
 use cfg\user_profile_list;
 use cfg\value;
@@ -148,8 +152,9 @@ class create_test_objects extends test_base
     function dummy_type_lists_api(user $usr): type_lists_api
     {
         global $db_con;
+
         $user_profiles = new user_profile_list();
-        $phrase_types = new phrase_type_list();
+        $phrase_types = new phrase_types();
         $formula_types = new formula_type_list();
         $formula_link_types = new formula_link_type_list();
         $formula_element_types = new formula_element_type_list();
@@ -192,6 +197,9 @@ class create_test_objects extends test_base
         $change_log_fields->load_dummy();
         $verbs->load_dummy();
 
+        // read the corresponding names and description from the internal config csv files
+        $this->read_name_from_config_csv($phrase_types);
+
         $lst = new type_lists_api($db_con, $usr);
         $lst->add($user_profiles->api_obj(), controller::API_LIST_USER_PROFILES);
         $lst->add($phrase_types->api_obj(), controller::API_LIST_PHRASE_TYPES);
@@ -219,6 +227,67 @@ class create_test_objects extends test_base
         $lst->add($system_views->api_obj(), controller::API_LIST_SYSTEM_VIEWS);
 
         return $lst;
+    }
+
+    private function read_name_from_config_csv(type_list $list): bool
+    {
+        $result = false;
+
+        $lib = new library();
+        $type = $lib->class_to_name($list::class);
+
+        // get the list of CSV and loop
+        $csv_file_list = unserialize(BASE_CODE_LINK_FILES);
+        foreach ($csv_file_list as $csv_file_name) {
+            if ($csv_file_name == $type) {
+                // load the csv
+                $csv_path = PATH_BASE_CODE_LINK_FILES . $csv_file_name . BASE_CODE_LINK_FILE_TYPE;
+                $row = 1;
+                $code_id_col = 0;
+                $name_col = 0;
+                $desc_col = 0;
+                if (($handle = fopen($csv_path, "r")) !== FALSE) {
+                    while (($data = fgetcsv($handle, 0, ",", "'")) !== FALSE) {
+                        if ($row == 1) {
+                            $col_names = $lib->array_trim($data);
+                            if (in_array(api::FLD_CODE_ID, $col_names)) {
+                                $code_id_col = array_search(api::FLD_CODE_ID, $col_names);
+                            }
+                            if (in_array(type_object::FLD_NAME, $col_names)) {
+                                $name_col = array_search(type_object::FLD_NAME, $col_names);
+                            }
+                            if (in_array(api::FLD_DESCRIPTION, $col_names)) {
+                                $desc_col = array_search(api::FLD_DESCRIPTION, $col_names);
+                            }
+                        } else {
+                            $typ_obj = null;
+                            $code_id = trim($data[$code_id_col]);
+                            if ($code_id == 'NULL') {
+                                $id = $data[0];
+                                $typ_obj = $list->get_by_id($id);
+                            } else {
+                                if ($list->id($code_id) == null) {
+                                    log_warning($type . ' ' . $data[$name_col] . ' not jet included in the unit tests');
+                                } else {
+                                    $typ_obj = $list->get_by_code_id($code_id);
+                                }
+                            }
+                            if ($typ_obj != null) {
+                                $typ_obj->set_name($data[$name_col]);
+                                if ($desc_col > 0) {
+                                    $typ_obj->set_comment($data[$desc_col]);
+                                }
+                            }
+                        }
+                        $row++;
+                    }
+                    fclose($handle);
+                }
+                $result = true;
+            }
+        }
+
+        return $result;
     }
 
     /**

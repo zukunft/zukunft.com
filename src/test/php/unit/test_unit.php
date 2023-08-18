@@ -41,7 +41,7 @@ include_once MODEL_USER_PATH . 'user_list.php';
 include_once MODEL_USER_PATH . 'user_profile.php';
 include_once MODEL_SYSTEM_PATH . 'batch_job_type_list.php';
 include_once MODEL_SYSTEM_PATH . 'sys_log_status.php';
-include_once MODEL_PHRASE_PATH . 'phrase_type_list.php';
+include_once MODEL_PHRASE_PATH . 'phrase_types.php';
 include_once MODEL_VERB_PATH . 'verb_list.php';
 include_once MODEL_FORMULA_PATH . 'formula_type_list.php';
 include_once MODEL_FORMULA_PATH . 'formula_link_type_list.php';
@@ -75,7 +75,7 @@ use cfg\formula_link_type_list;
 use cfg\formula_type_list;
 use cfg\language_form_list;
 use cfg\language_list;
-use cfg\phrase_type_list;
+use cfg\phrase_types;
 use cfg\protection_type_list;
 use cfg\ref_type_list;
 use cfg\share_type_list;
@@ -85,6 +85,7 @@ use cfg\sys_log_status;
 use cfg\user;
 use cfg\user_list;
 use cfg\user_profile;
+use cfg\user_profile_list;
 use cfg\verb_list;
 use cfg\view_cmp_link_type_list;
 use cfg\view_cmp_pos_type_list;
@@ -312,7 +313,7 @@ class test_unit extends test_cleanup
     {
         global $user_profiles;
 
-        $user_profiles = new batch_job_type_list();
+        $user_profiles = new user_profile_list();
         $user_profiles->load_dummy();
 
     }
@@ -324,7 +325,7 @@ class test_unit extends test_cleanup
     {
         global $phrase_types;
 
-        $phrase_types = new phrase_type_list();
+        $phrase_types = new phrase_types();
         $phrase_types->load_dummy();
 
     }

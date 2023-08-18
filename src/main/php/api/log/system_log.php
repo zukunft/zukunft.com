@@ -103,7 +103,7 @@ class system_log_api extends db_object
         $row_text .= $html->td($this->owner);
         $row_text .= $html->td($this->status);
         if ($usr != null) {
-            if ($usr->is_admin()) {
+            if ($usr->is_admin() or $usr->is_system()) {
                 $par_status = api::PAR_LOG_STATUS. '=' . $sys_log_stati->id(sys_log_status::CLOSED);
                 $url = $html->url(api::ERROR_UPDATE, $this->id, $back, '', $par_status);
                 $row_text .= $html->td($html->ref($url, 'close'));

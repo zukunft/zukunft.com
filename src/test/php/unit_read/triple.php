@@ -35,7 +35,7 @@ namespace unit_read;
 use api\triple_api;
 use cfg\phrase;
 use cfg\phrase_type;
-use cfg\phrase_type_list;
+use cfg\phrase_types;
 use cfg\verb;
 use cfg\triple;
 use cfg\triple_list;

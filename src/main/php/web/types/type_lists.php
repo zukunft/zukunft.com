@@ -45,7 +45,7 @@ include_once WEB_TYPES_PATH . 'language_forms.php';
 include_once WEB_TYPES_PATH . 'share.php';
 include_once WEB_TYPES_PATH . 'protection.php';
 include_once WEB_TYPES_PATH . 'verbs.php';
-include_once WEB_TYPES_PATH . 'phrase_type_list.php';
+include_once WEB_TYPES_PATH . 'phrase_types.php';
 include_once WEB_TYPES_PATH . 'formula_type_list.php';
 include_once WEB_TYPES_PATH . 'formula_link_type_list.php';
 include_once WEB_TYPES_PATH . 'source_type_list.php';
@@ -244,7 +244,7 @@ class type_lists
     function set_phrase_types(array $json_array = null): void
     {
         global $html_phrase_types;
-        $html_phrase_types = new phrase_type_list();
+        $html_phrase_types = new phrase_types();
         $html_phrase_types->set_obj_from_json_array($json_array);
     }
 

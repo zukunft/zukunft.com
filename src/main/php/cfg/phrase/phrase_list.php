@@ -449,7 +449,7 @@ class phrase_list extends sandbox_list_named
     function load_by_phr_vrb_and_type(
         phrase         $phr,
         ?verb          $vrb = null,
-        phrase_type_list $wrd_types,
+        phrase_types   $wrd_types,
         foaf_direction $direction = foaf_direction::BOTH): phrase_list
     {
         $result = new phrase_list($this->user());

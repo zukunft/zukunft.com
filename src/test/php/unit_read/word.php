@@ -36,7 +36,7 @@ use api\triple_api;
 use api\word_api;
 use cfg\phrase;
 use cfg\phrase_type;
-use cfg\phrase_type_list;
+use cfg\phrase_types;
 use cfg\verb;
 use cfg\word;
 use cfg\word_list;
@@ -73,7 +73,7 @@ class word_unit_db_tests
         $t->subheader('Word types tests');
 
         // load the word types
-        $lst = new phrase_type_list();
+        $lst = new phrase_types();
         $result = $lst->load($db_con);
         $t->assert('load types', $result, true);
 

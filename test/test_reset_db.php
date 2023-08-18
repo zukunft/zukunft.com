@@ -49,7 +49,7 @@ use cfg\formula_link_type_list;
 use cfg\formula_type_list;
 use cfg\language_form_list;
 use cfg\language_list;
-use cfg\phrase_type_list;
+use cfg\phrase_types;
 use cfg\protection_type_list;
 use cfg\ref_type_list;
 use cfg\share_type_list;
@@ -242,7 +242,7 @@ function run_preloaded_truncate(): void
 
     //$system_users =[];
     //$user_profiles =[];
-    $phrase_types = new phrase_type_list();
+    $phrase_types = new phrase_types();
     $formula_types = new formula_type_list();
     $formula_link_types = new formula_link_type_list();
     $formula_element_types = new formula_element_type_list();

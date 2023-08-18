@@ -2,7 +2,7 @@
 
 /*
 
-    web/types/phrase_type_list.php - the preloaded data phrase types used for the html frontend
+    web/types/phrase_types.php - the preloaded data phrase types used for the html frontend
     ------------------------------
 
 
@@ -34,7 +34,7 @@ namespace html\types;
 
 use html\html_selector;
 
-class phrase_type_list extends type_list
+class phrase_types extends type_list
 {
 
     /**

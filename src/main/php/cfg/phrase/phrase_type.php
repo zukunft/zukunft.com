@@ -58,6 +58,8 @@ class phrase_type extends type_object
     const KEY = "key";
     const INFO = "information";
     const TRIPLE_HIDDEN = "hidden_triple";
+    const SYSTEM_HIDDEN = "hidden_system";
+    const GROUP = "group";
     const THIS = "this";
     const NEXT = "next";
     const PRIOR = "previous";
