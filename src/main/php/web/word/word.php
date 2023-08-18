@@ -40,14 +40,19 @@ use cfg\phrase_type;
 use cfg\sql_db;
 use html\api;
 use html\button;
+use html\formula\formula as formula_dsp;
 use html\log\change_log_named as change_log_named_dsp;
 use html\html_base;
 use html\html_selector;
+use html\log\user_log_display;
 use html\msg;
 use html\phrase\phrase as phrase_dsp;
+use html\phrase\phrase_list;
+use html\phrase\phrase_list as phrase_list_dsp;
 use html\phrase\term as term_dsp;
 use html\sandbox_typed_dsp;
 use html\system\back_trace;
+use html\word\word as word_dsp;
 
 class word extends sandbox_typed_dsp
 {
@@ -482,6 +487,25 @@ class word extends sandbox_typed_dsp
 
 
     /*
+     * load
+     */
+
+    function parents(): phrase_list_dsp
+    {
+        $lst = new phrase_list_dsp();
+        // TODO get the json from the backend
+        return $lst;
+    }
+
+    function children(): phrase_list_dsp
+    {
+        $lst = new phrase_list_dsp();
+        // TODO get the json from the backend
+        return $lst;
+    }
+
+
+    /*
      * type functions
      */
 
@@ -599,6 +623,37 @@ class word extends sandbox_typed_dsp
         return $result;
     }
 
+    /**
+     * HTML code to edit all word fields
+     */
+    function dsp_edit(string $back = ''): string
+    {
+        $html = new html_base();
+        $phr_lst_up = $this->parents();
+        $phr_lst_down = $this->children();
+        $dsp_graph = $phr_lst_up->dsp_graph($this->phrase(), $back);
+        $dsp_graph .= $phr_lst_down->dsp_graph($this->phrase(), $back);
+        $wrd_dsp = $this;
+        // collect the display code for the user changes
+        $dsp_log = '';
+        $changes = $this->dsp_hist(1, SQL_ROW_LIMIT, '', $back);
+        if (trim($changes) <> "") {
+            $dsp_log .= $html->dsp_text_h3("Latest changes related to this word", "change_hist");
+            $dsp_log .= $changes;
+        }
+        $changes = $this->dsp_hist_links(0, SQL_ROW_LIMIT, '', $back);
+        if (trim($changes) <> "") {
+            $dsp_log .= $html->dsp_text_h3("Latest link changes related to this word", "change_hist");
+            $dsp_log .= $changes;
+        }
+        return $wrd_dsp->form_edit(
+            $dsp_graph,
+            $dsp_log,
+            $this->dsp_formula($back),
+            $this->dsp_type_selector(word_dsp::FORM_EDIT, $back),
+            $back);
+    }
+
     /*
      * to review
      */
@@ -692,6 +747,69 @@ class word extends sandbox_typed_dsp
         $result .= $sel->display_old();
 
         log_debug('word_dsp->selector_word ... done ' . $id);
+        return $result;
+    }
+
+    /**
+     * display the history of a word
+     * maybe move this to a new object user_log_display
+     * because this is very similar to a value linked function
+     */
+    function dsp_hist(int $page = 1, int $size = 20, string $call = '', string $back = ''): string
+    {
+        log_debug("word_dsp->dsp_hist for id " . $this->id . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
+        $result = ''; // reset the html code var
+
+        $log_dsp = new user_log_display($this->user());
+        $log_dsp->id = $this->id;
+        $log_dsp->type = \cfg\word::class;
+        $log_dsp->page = $page;
+        $log_dsp->size = $size;
+        $log_dsp->call = $call;
+        $log_dsp->back = $back;
+        $result .= $log_dsp->dsp_hist();
+
+        log_debug('done');
+        return $result;
+    }
+
+    /**
+     * display the history of a word
+     */
+    function dsp_hist_links($page, $size, $call, $back): string
+    {
+        log_debug($this->id . ",size" . $size . ",b" . $size);
+        $result = ''; // reset the html code var
+
+        $log_dsp = new user_log_display($this->user());
+        $log_dsp->id = $this->id;
+        $log_dsp->type = word::class;
+        $log_dsp->page = $page;
+        $log_dsp->size = $size;
+        $log_dsp->call = $call;
+        $log_dsp->back = $back;
+        $result .= $log_dsp->dsp_hist_links();
+
+        log_debug('done');
+        return $result;
+    }
+
+    function dsp_formula(string $back = ''): string
+    {
+        global $phrase_types;
+        $html = new html_base();
+
+        $result = '';
+        if ($this->type_id() == $phrase_types->id(phrase_type::FORMULA_LINK)) {
+            $result .= $html->dsp_form_hidden("name", $this->name);
+            $result .= '  to change the name of "' . $this->name . '" rename the ';
+            $frm = $this->formula();
+            $frm_html = new formula_dsp($frm->api_json());
+            $result .= $frm_html->display_linked($back);
+            $result .= '.<br> ';
+        } else {
+            $result .= $html->dsp_form_text("name", $this->name, "Name:", "col-sm-4");
+        }
         return $result;
     }
 

@@ -77,6 +77,12 @@ class word_list extends list_dsp
 
 
     /*
+     * load
+     */
+
+
+
+    /*
      * display
      */
 

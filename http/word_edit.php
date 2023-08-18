@@ -33,6 +33,7 @@
 use controller\controller;
 use html\html_base;
 use html\view\view_dsp_old;
+use html\word\word as word_dsp;
 use cfg\user;
 use cfg\view;
 use cfg\word;
@@ -113,7 +114,9 @@ if ($usr->id() > 0) {
             $result .= $html->dsp_err($msg);
 
             // show the word and its relations, so that the user can change it
-            $result .= $wrd->dsp_edit($back);
+            $wrd_dsp = new word_dsp();
+            $wrd_dsp->set_from_json($wrd->api_json());
+            $result .= $wrd_dsp->dsp_edit($back);
         }
     }
 }

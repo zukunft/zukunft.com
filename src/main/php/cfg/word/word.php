@@ -61,6 +61,7 @@ use html\button;
 use html\html_base;
 use html\html_selector;
 use html\log\user_log_display;
+use html\phrase\phrase as phrase_dsp;
 use html\view\view_dsp_old;
 use html\word\word as word_dsp;
 use html\formula\formula as formula_dsp;
@@ -930,95 +931,11 @@ class word extends sandbox_typed
      * TODO move to frontend
      */
 
-    /**
-     * @param string $script
-     * @param string $bs_class
-     * @return string
-     */
-    private function type_selector(string $script, string $bs_class): string
-    {
-        $result = '';
-        $sel = new html_selector;
-        $sel->form = $script;
-        $sel->name = 'type';
-        $sel->label = "Word type:";
-        $sel->bs_class = $bs_class;
-        $sel->sql = sql_lst("phrase_type");
-        $sel->selected = $this->type_id;
-        $sel->dummy_text = '';
-        $result .= $sel->display_old();
-        return $result;
-    }
-
-    function dsp_formula(string $back = ''): string
-    {
-        global $phrase_types;
-        $html = new html_base();
-
-        $result = '';
-        if ($this->type_id == $phrase_types->id(phrase_type::FORMULA_LINK)) {
-            $result .= $html->dsp_form_hidden("name", $this->name);
-            $result .= '  to change the name of "' . $this->name . '" rename the ';
-            $frm = $this->formula();
-            $frm_html = new formula_dsp($frm->api_json());
-            $result .= $frm_html->display_linked($back);
-            $result .= '.<br> ';
-        } else {
-            $result .= $html->dsp_form_text("name", $this->name, "Name:", "col-sm-4");
-        }
-        return $result;
-    }
-
-    function dsp_type_selector(string $back = ''): string
-    {
-        global $phrase_types;
-        $result = '';
-        if ($this->type_id == $phrase_types->id(phrase_type::FORMULA_LINK)) {
-            $result .= ' type: ' . $this->type_name();
-        } else {
-            $result .= $this->type_selector('word_edit', "col-sm-4");
-        }
-        return $result;
-    }
-
     function dsp_graph(foaf_direction $direction, verb_list $link_types, string $back = ''): string
     {
         return $this->phrase()->dsp_graph($direction, $link_types, $back);
     }
 
-
-    /**
-     * HTML code to edit all word fields
-     */
-    function dsp_edit(string $back = ''): string
-    {
-        $html = new html_base();
-        $phr_lst_up = $this->parents();
-        $phr_lst_down = $this->children();
-        $phr_lst_up_dsp = new phrase_list_dsp($phr_lst_up->api_json());
-        $phr_lst_down_dsp = new phrase_list_dsp($phr_lst_down->api_json());
-        $dsp_graph = $phr_lst_up_dsp->dsp_graph($this->phrase(), $back);
-        $dsp_graph .= $phr_lst_down_dsp->dsp_graph($this->phrase(), $back);
-        $wrd_dsp = new word_dsp($this->api_json());
-        // collect the display code for the user changes
-        $dsp_log = '';
-        $changes = $this->dsp_hist(1, SQL_ROW_LIMIT, '', $back);
-        if (trim($changes) <> "") {
-            $dsp_log .= $html->dsp_text_h3("Latest changes related to this word", "change_hist");
-            $dsp_log .= $changes;
-        }
-        $changes = $this->dsp_hist_links(0, SQL_ROW_LIMIT, '', $back);
-        if (trim($changes) <> "") {
-            $dsp_log .= $html->dsp_text_h3("Latest link changes related to this word", "change_hist");
-            $dsp_log .= $changes;
-        }
-        return $wrd_dsp->form_edit(
-            $dsp_graph,
-            $dsp_log,
-            $this->dsp_formula($back),
-            $this->dsp_type_selector(word_dsp::FORM_EDIT, $back),
-            $back);
-    }
 
     function view(): ?view
     {
@@ -1047,23 +964,6 @@ class word extends sandbox_typed
         return $result;
     }
     */
-
-    /**
-     * to add a word linked to this word
-     * e.g. if this word is "Company" to add another company
-     */
-    function btn_add(string $back = ''): string
-    {
-        global $verbs;
-        global $phrase_types;
-        $html = new html_base();
-        $vrb_is = $verbs->id(verb::IS);
-        $wrd_type = $phrase_types->default_id(); // maybe base it on the other linked words
-        $wrd_add_title = "add a new " . $this->name();
-        $url = $html->url(controller::DSP_WORD_ADD, 0, $back,
-            "verb=" . $vrb_is . "&word=" . $this->id . "&type=" . $wrd_type);
-        return (new button($url, $back))->add('', $wrd_add_title);
-    }
 
     /**
      * get the database id of the word type
@@ -1470,54 +1370,6 @@ class word extends sandbox_typed
         return $phr_lst->direct_children();
     }
 
-    /*
-     * display functions
-     */
-
-    /**
-     * display the history of a word
-     * maybe move this to a new object user_log_display
-     * because this is very similar to a value linked function
-     */
-    function dsp_hist(int $page = 1, int $size = 20, string $call = '', string $back = ''): string
-    {
-        log_debug("word_dsp->dsp_hist for id " . $this->id . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
-        $result = ''; // reset the html code var
-
-        $log_dsp = new user_log_display($this->user());
-        $log_dsp->id = $this->id;
-        $log_dsp->type = word::class;
-        $log_dsp->page = $page;
-        $log_dsp->size = $size;
-        $log_dsp->call = $call;
-        $log_dsp->back = $back;
-        $result .= $log_dsp->dsp_hist();
-
-        log_debug('done');
-        return $result;
-    }
-
-    /**
-     * display the history of a word
-     */
-    function dsp_hist_links($page, $size, $call, $back): string
-    {
-        log_debug($this->id . ",size" . $size . ",b" . $size);
-        $result = ''; // reset the html code var
-
-        $log_dsp = new user_log_display($this->user());
-        $log_dsp->id = $this->id;
-        $log_dsp->type = word::class;
-        $log_dsp->page = $page;
-        $log_dsp->size = $size;
-        $log_dsp->call = $call;
-        $log_dsp->back = $back;
-        $result .= $log_dsp->dsp_hist_links();
-
-        log_debug('done');
-        return $result;
-    }
-
 
     /*
      * convert
@@ -1638,7 +1490,7 @@ class word extends sandbox_typed
                 $result = false;
             }
         }
-        log_debug('for ' . $this->id . ' is ' . zu_dsp_bool($result));
+        log_debug('for ' . $this->id);
         return $result;
     }
 

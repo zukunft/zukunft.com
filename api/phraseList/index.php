@@ -29,6 +29,7 @@
   
 */
 
+use cfg\phrase;
 use controller\controller;
 use cfg\user;
 use cfg\phr_ids;
@@ -55,6 +56,7 @@ $db_con = prg_start("api/phraseList", "", false);
 
 // get the parameters
 $phr_ids = $_GET[controller::URL_VAR_ID_LST] ?? 0;
+$phr_id = $_GET[controller::URL_VAR_PHRASE] ?? 0;
 
 $msg = '';
 $result = new phrase_list_api(); // reset the html code var
@@ -70,8 +72,14 @@ if ($usr->id() > 0) {
         $lst = new phrase_list($usr);
         $lst->load_names_by_ids((new phr_ids(explode(",", $phr_ids))));
         $result = $lst->api_obj();
+    } elseif ($phr_id != '') {
+        $lst = new phrase_list($usr);
+        $phr = new phrase($usr);
+        $phr->set_id($phr_id);
+        $lst->load_by_phr($phr);
+        $result = $lst->api_obj();
     } else {
-        $msg = 'phrase id is missing';
+        $msg = 'phrase ids is missing';
     }
 }
 

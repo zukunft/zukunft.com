@@ -106,6 +106,19 @@ class phrase_list extends list_dsp
         return $result;
     }
 
+    /*
+     * load
+     */
+
+    /**
+     * add the phrases related to the given phrase to the list
+     * @return bool
+     */
+    function load_by_phrase(phrase_dsp $phr, ): bool
+    {
+        $result = false;
+        return $result;
+    }
 
     /*
      * display
@@ -391,14 +404,14 @@ class phrase_list extends list_dsp
      * e.g. used to display all phrases linked to a word
      * @returns string the html code to edit a linked word
      */
-    function dsp_graph(phrase $root_phr, string $back = ''): string
+    function dsp_graph(phrase_dsp $root_phr, string $back = ''): string
     {
         log_debug();
         $result = '';
 
         // loop over the link types
         if ($this->lst == null) {
-            $result .= 'Nothing linked to ' . $root_phr->dsp_name() . ' until now. Click here to link it.';
+            $result .= 'Nothing linked to ' . $root_phr->name() . ' until now. Click here to link it.';
         } else {
             $phr_lst = new phrase_list_db(new user());
             $phr_lst->set_by_api_json($this->api_array());

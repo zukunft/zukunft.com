@@ -69,6 +69,9 @@ class controller
     const URL_VAR_DEBUG = 'debug'; // to force the output of debug messages
     const URL_VAR_CODE_ID = 'code_id';
     const URL_VAR_WORD = 'words';
+    const URL_VAR_PHRASE = 'phrase'; // the id (or name?) of one phrase
+    const URL_VAR_DIRECTION = 'dir'; // 'up' to get the parents and 'down' for the children'
+    const URL_VAR_LEVELS = 'levels'; // the number of search levels'
     const URL_VAR_MSG = 'message';
     const URL_VAR_RESULT = 'result';
     const URL_VAR_EMAIL = 'email';

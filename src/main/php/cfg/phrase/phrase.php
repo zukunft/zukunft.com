@@ -980,7 +980,8 @@ class phrase extends combine_named
     {
         $phr_lst = $this->phrases($direction, $link_types);
         $phr_lst_dsp = new phrase_list_dsp($phr_lst->api_json());
-        return $phr_lst_dsp->dsp_graph($this, $back);
+        $phr_dsp = new phrase_dsp($this->api_json());
+        return $phr_lst_dsp->dsp_graph($phr_dsp, $back);
     }
 
     /**
