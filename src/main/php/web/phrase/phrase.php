@@ -42,6 +42,8 @@ use api\combine_object_api;
 use api\phrase_api;
 use api\word_api;
 use api\api;
+use cfg\foaf_direction;
+use cfg\verb_list;
 use html\api as api_dsp;
 use html\button;
 use html\combine_named_dsp;
@@ -50,6 +52,7 @@ use html\html_selector;
 use html\msg;
 use html\word\word as word_dsp;
 use html\word\triple as triple_dsp;
+use html\phrase\phrase_list as phrase_list_dsp;
 use controller\controller;
 
 class phrase extends combine_named_dsp
@@ -257,9 +260,10 @@ class phrase extends combine_named_dsp
         return (new button($url))->del($ui_msg_id);
     }
 
-    //
-    //
-    // $type
+    /*
+     * to review
+     */
+
     /**
      * create a selector that contains the words and triples
      * if one form contains more than one selector, $pos is used for identification
@@ -301,6 +305,16 @@ class phrase extends combine_named_dsp
         $result .= $sel->display_old();
 
         return $result;
+    }
+
+    function dsp_graph(foaf_direction $direction, ?verb_list $link_types = null, string $back = ''): string
+    {
+        $phr_lst = new phrase_list_dsp();
+        if ($phr_lst->load_related($this, $direction, $link_types)) {
+            return $phr_lst->dsp_graph($this, $back);
+        } else {
+            return '';
+        }
     }
 
 }

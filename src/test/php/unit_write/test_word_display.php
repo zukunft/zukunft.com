@@ -39,6 +39,7 @@ use api\triple_api;
 use api\word_api;
 use cfg\foaf_direction;
 use html\html_selector;
+use html\word\word as word_dsp;
 use cfg\library;
 use cfg\verb;
 use cfg\word;
@@ -63,7 +64,8 @@ function run_word_display_test(test_cleanup $t): void
     $target = word_api::TN_COMPANY;
     // get the link types related to the word
     $link_types = $wrd_ZH->link_types($direction);
-    $result = $wrd_ZH->dsp_graph($direction, $link_types, 0);
+    $wrd_ZH_dsp = new word_dsp($wrd_ZH->api_json());
+    $result = $wrd_ZH_dsp->dsp_graph($direction, $link_types, 0);
     // TODO activate
     //$t->dsp_contains('word_dsp->dsp_graph ' . $direction->value . ' for ' . $wrd_ZH->name(), $target, $result);
 
@@ -73,7 +75,8 @@ function run_word_display_test(test_cleanup $t): void
     $direction = foaf_direction::DOWN;
     $target = 'ZU';
     $link_types = $wrd_ZH->link_types($direction);
-    $result = $wrd_ZH->dsp_graph($direction, $link_types, 0);
+    $wrd_ZH_dsp = new word_dsp($wrd_ZH->api_json());
+    $result = $wrd_ZH_dsp->dsp_graph($direction, $link_types, 0);
     $t->assert_text_contains('word_dsp->dsp_graph check if acronym ZU is found for Zurich', $target, $result);
 
     // ... and the graph display for 2019
@@ -85,7 +88,8 @@ function run_word_display_test(test_cleanup $t): void
     $lnk_20_to_21 = $t->load_triple(word_api::TN_2021, verb::FOLLOW, word_api::TN_2020);
     $target_part_is_followed = verb::FOLLOWED_BY;
     $link_types = $wrd_2020->link_types($direction);
-    $result = $wrd_2020->dsp_graph($direction, $link_types, 0);
+    $wrd_2020_dsp = new word_dsp($wrd_2020->api_json());
+    $result = $wrd_2020_dsp->dsp_graph($direction, $link_types, 0);
     $result = $lib->trim_html($result);
     $target = $lib->trim_html($target);
     $t->assert_text_contains($t->name . ' has follower', $result, $target_part_is_followed);
@@ -103,7 +107,8 @@ function run_word_display_test(test_cleanup $t): void
     $lnk_20_is_year = $t->load_triple(word_api::TN_2020, verb::IS, word_api::TN_YEAR);
     $lnk_19_to_20 = $t->load_triple(word_api::TN_2020, verb::FOLLOW, word_api::TN_2019);
     $link_types = $wrd_2020->link_types($direction);
-    $result = $wrd_2020->dsp_graph($direction, $link_types, 0);
+    $wrd_2020_dsp = new word_dsp($wrd_2020->api_json());
+    $result = $wrd_2020_dsp->dsp_graph($direction, $link_types, 0);
     $result = $lib->trim_html($result);
     $t->assert_text_contains($t->name . ' has year id', $result, $wrd_year->id());
     $t->assert_text_contains($t->name . ' has year name', $result, word_api::TN_YEAR);

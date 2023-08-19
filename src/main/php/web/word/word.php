@@ -36,8 +36,10 @@ include_once WEB_PHRASE_PATH . 'phrase.php';
 include_once WEB_HTML_PATH . 'html_base.php';
 include_once API_PHRASE_PATH . 'phrase.php';
 
+use cfg\foaf_direction;
 use cfg\phrase_type;
 use cfg\sql_db;
+use cfg\verb_list;
 use html\api;
 use html\button;
 use html\formula\formula as formula_dsp;
@@ -657,6 +659,11 @@ class word extends sandbox_typed_dsp
     /*
      * to review
      */
+
+    function dsp_graph(foaf_direction $direction, verb_list $link_types, string $back = ''): string
+    {
+        return $this->phrase()->dsp_graph($direction, $link_types, $back);
+    }
 
     /**
      * returns the html code to select a word link type

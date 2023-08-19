@@ -38,6 +38,7 @@ include_once API_SANDBOX_PATH . 'sandbox_named.php';
 use api\api;
 use api\sandbox_named_api;
 use controller\controller;
+use html\api as api_dsp;
 use html\sandbox\db_object as db_object_dsp;
 
 class sandbox_named_dsp extends db_object_dsp
@@ -101,6 +102,31 @@ class sandbox_named_dsp extends db_object_dsp
         } else {
             return $this->description;
         }
+    }
+
+
+    /*
+     * load
+     */
+
+    /**
+     * load the named user sandbox object e.g. word by name via api
+     * @param string $name
+     * @return bool
+     */
+    function load_by_name(string $name): bool
+    {
+        $result = false;
+
+        $api = new api_dsp();
+        $json_body = $api->api_call_name($this::class, $name);
+        if ($json_body) {
+            $this->set_from_json_array($json_body);
+            if ($this->id() != 0) {
+                $result = true;
+            }
+        }
+        return $result;
     }
 
 

@@ -34,6 +34,8 @@
 
 namespace html;
 
+use const test\HOST_TESTING;
+
 class html_base
 {
 
@@ -234,20 +236,20 @@ class html_base
      * @param string $obj_name the object that is requested e.g. a view
      * @param int $id the id of the parameter e.g. 1 for math const
      * @param string|null $back the back trace calls to return to the original url and for undo
-     * @param string $par_name the parameter objects e.g. a phrase
+     * @param string|array $par either the array with the parameters or the parameter objects e.g. a phrase
      * @param string $id_ext an additional id parameter e.g. used to link and unlink two objects
      * @return string the created url
      */
-    function url(string $obj_name,
-                 int $id = 0,
-                 ?string $back = '',
-                 string $par_name = '',
-                 string $id_ext = ''): string
+    function url(string       $obj_name,
+                 int          $id = 0,
+                 ?string      $back = '',
+                 string|array $par = '',
+                 string       $id_ext = ''): string
     {
         $result = api::PATH_FIXED . $obj_name . api::EXT;
         if ($id <> 0) {
-            if ($par_name != '') {
-                $result .= '?' . $par_name . '=' . $id;
+            if ($par != '') {
+                $result .= '?' . $par . '=' . $id;
             } else {
                 $result .= '?id=' . $id;
             }
@@ -259,6 +261,25 @@ class html_base
             $result .= '&back=' . $back;
         }
         return $result;
+    }
+
+    /**
+     * build an url for link a zukunft.com element
+     *
+     * @param string $obj_name the object that is requested e.g. a view
+     * @return string the created url
+     */
+    function url_api(string $obj_name): string
+    {
+        return $this->host() . api::PATH . $obj_name . '/';
+    }
+
+    /**
+     * @return string the host name of the api
+     */
+    private function host(): string
+    {
+        return HOST_TESTING;
     }
 
     /*
@@ -481,11 +502,11 @@ class html_base
      * @param string $label the expected value of the form field
      * @return string the html code of the form field
      */
-    function form_text(string $field,
+    function form_text(string  $field,
                        ?string $txt_value = '',
-                       string $label = '',
-                       string $class = api::CLASS_COL_4,
-                       string $attribute = ''): string
+                       string  $label = '',
+                       string  $class = api::CLASS_COL_4,
+                       string  $attribute = ''): string
     {
         $result = '';
         if ($label == '') {
@@ -626,7 +647,7 @@ class html_base
 
         $row_nbr = 0;
         $num_rows = count($item_lst);
-        foreach ($item_lst as $key =>  $item) {
+        foreach ($item_lst as $key => $item) {
             // list of all possible view entries
             $row_nbr = $row_nbr + 1;
             $edit_script = $this->edit_url($class);
@@ -1105,12 +1126,12 @@ class html_base
      * base elements - functions for all html elements used in zukunft.com
      */
 
-    function button(string $text, string $style= '', string $type = ''): string
+    function button(string $text, string $style = '', string $type = ''): string
     {
         if ($style == '') {
             $style = self::BS_BTN_SUCCESS;
         }
-        $class = ' class="'. self::BS_BTN . ' ' . $style . '"';
+        $class = ' class="' . self::BS_BTN . ' ' . $style . '"';
         if ($type == '') {
             $type = self::INPUT_SUBMIT;
         }

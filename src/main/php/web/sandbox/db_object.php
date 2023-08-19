@@ -38,6 +38,7 @@ include_once API_SANDBOX_PATH . 'sandbox.php';
 
 use api\api;
 use controller\controller;
+use html\api as api_dsp;
 use html\html_base;
 use html\phrase\phrase as phrase_dsp;
 use html\phrase\term as term_dsp;
@@ -102,6 +103,31 @@ class db_object
     function id(): int
     {
         return $this->id;
+    }
+
+
+    /*
+     * load
+     */
+
+    /**
+     * load the user sandbox object e.g. word by id via api
+     * @param int $id
+     * @return bool
+     */
+    function load_by_id(int $id): bool
+    {
+        $result = false;
+
+        $api = new api_dsp();
+        $json_body = $api->api_call_id($this::class, $id);
+        if ($json_body) {
+            $this->set_from_json_array($json_body);
+            if ($this->name() != '') {
+                $result = true;
+            }
+        }
+        return $result;
     }
 
 

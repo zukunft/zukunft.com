@@ -48,6 +48,7 @@ use api\combine_object_api;
 use api\list_api;
 use api\type_lists_api;
 use api\sandbox_api;
+use cfg\combine_object;
 use cfg\sandbox;
 use cfg\source;
 use cfg\word;
@@ -227,7 +228,7 @@ class controller
      * @param int $id the id of object that should be deleted
      * @return void
      */
-    private function curl_response(string $api_obj, string $msg, int $id = 0, ?sandbox $obj = null): void
+    private function curl_response(string $api_obj, string $msg, int $id = 0, sandbox|combine_object|null $obj = null): void
     {
         // required headers
         header("Access-Control-Allow-Origin: *");
@@ -423,9 +424,10 @@ class controller
     }
 
     /**
+     * check if an api message is fine
      * @param array $api_msg the complete api message including the header and in some cases several body parts
      * @param string $body_key to select a body part of the api message
-     * @return array
+     * @return array the message body if everything has been fine or an empty array
      */
     public function check_api_msg(array $api_msg, string $body_key = controller::API_BODY): array
     {
@@ -454,9 +456,10 @@ class controller
      * @param api_message $api_msg the object that should be encoded
      * @param string $msg if filled the message that should be shown to the user instead of the object
      * @param int $id
+     * @param sandbox|combine_object $obj
      * @return void
      */
-    function curl(api_message $api_msg, string $msg, int $id, sandbox $obj): void
+    function curl(api_message $api_msg, string $msg, int $id, sandbox|combine_object $obj): void
     {
         // return the api json or the error message
         if ($msg == '') {

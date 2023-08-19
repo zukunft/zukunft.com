@@ -776,7 +776,7 @@ class word_list extends sandbox_list
     }
 
     /*
-     * function that changes the list e.g. adding and filter
+     * modification
      */
 
     /**
@@ -889,7 +889,7 @@ class word_list extends sandbox_list
      *
      * @param array $del_wrd_ids is the list of word ids that should be removed from this list object
      */
-    function diff_by_ids(array $del_wrd_ids)
+    function diff_by_ids(array $del_wrd_ids): void
     {
         $lib = new library();
         foreach ($del_wrd_ids as $del_wrd_id) {
@@ -917,7 +917,7 @@ class word_list extends sandbox_list
     /**
      * Exclude all measure words out of the list of words
      */
-    function ex_measure()
+    function ex_measure(): void
     {
         $del_wrd_lst = $this->measure_lst();
         $this->diff($del_wrd_lst);
@@ -927,7 +927,7 @@ class word_list extends sandbox_list
     /**
      * Exclude all scaling words out of the list of words
      */
-    function ex_scaling()
+    function ex_scaling(): void
     {
         $del_wrd_lst = $this->scaling_lst();
         $this->diff($del_wrd_lst);
@@ -937,7 +937,7 @@ class word_list extends sandbox_list
     /**
      * remove the percent words from this word list
      */
-    function ex_percent()
+    function ex_percent(): void
     {
         $del_wrd_lst = $this->percent_lst();
         $this->diff($del_wrd_lst);
@@ -977,8 +977,9 @@ class word_list extends sandbox_list
         return $result;
     }
 
+
     /*
-     * filter functions
+     * filter
      */
 
     /**
@@ -1204,7 +1205,7 @@ class word_list extends sandbox_list
 
 
     /*
-     * extract functions
+     * extract
      */
 
     /**
@@ -1290,8 +1291,9 @@ class word_list extends sandbox_list
         return $result;
     }
 
+
     /*
-     *  convert functions
+     *  convert
      */
 
     /**
@@ -1330,6 +1332,7 @@ class word_list extends sandbox_list
 
     /**
      * convert the word list object into a phrase list object
+     * @return phrase_list with all words of this list
      */
     function phrase_lst(): phrase_list
     {
@@ -1387,8 +1390,9 @@ class word_list extends sandbox_list
         return $val;
     }
 
+
     /*
-     *  info functions
+     *  info
      */
 
     /**
@@ -1485,8 +1489,9 @@ class word_list extends sandbox_list
         return $result;
     }
 
+
     /*
-     * functions to select linked objects
+     * select linked
      */
 
     /**

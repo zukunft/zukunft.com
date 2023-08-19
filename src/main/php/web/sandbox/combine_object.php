@@ -39,6 +39,8 @@
 
 namespace html;
 
+use html\api as api_dsp;
+
 class combine_object_dsp
 {
 
@@ -98,6 +100,29 @@ class combine_object_dsp
     function obj(): object
     {
         return $this->obj;
+    }
+
+
+    /*
+     * load
+     */
+
+    /**
+     * load the combine object e.g. phrase by id via api
+     * @param int $id
+     * @return bool
+     */
+    function load_by_id(int $id): bool
+    {
+        $result = false;
+
+        $api = new api_dsp();
+        $json_body = $api->api_call_id($this::class, $id);
+        if ($json_body) {
+            $this->set_from_json_array($json_body);
+            $result = true;
+        }
+        return $result;
     }
 
 }

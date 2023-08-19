@@ -31,6 +31,8 @@ tags:
     description: the triple predicates
   - name: triple
     description: RDF triples
+  - name: phrase
+    description: a single word or triple
   - name: phraseList
     description: get a list of words or triples by id or related phrase or phrase list
   - name: termList
@@ -451,6 +453,61 @@ paths:
       responses:
         '204':
           description: triple deleted
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /phrase/{id}:
+    get:
+      tags:
+        - phrase
+      summary: get phrase by id
+      description: Returns a user based on a single ID, if the user does not have access to the phrase
+      operationId: find phrase by id
+      parameters:
+        - name: id
+          in: path
+          description: ID of phrase to fetch
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: phrase response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Phrase'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /phrase/{name}:
+    get:
+      tags:
+        - phrase
+      summary: get phrase by name
+      description: Returns a user based on a single ID, if the user does not have access to the phrase
+      operationId: find phrase by name
+      parameters:
+        - name: name
+          in: path
+          description: name of phrase to fetch
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: phrase response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Phrase'
         default:
           description: unexpected error
           content:

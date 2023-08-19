@@ -41,9 +41,14 @@ include_once WEB_PHRASE_PATH . 'phrase_list.php';
 use api\combine_object_api;
 use api\term_api;
 use cfg\config;
+use cfg\foaf_direction;
 use cfg\phrase;
 use cfg\phrase_list AS phrase_list_db;
 use cfg\user;
+use cfg\verb_list;
+use controller\controller;
+use html\api as api_dsp;
+use html\helper\api;
 use html\html_base;
 use html\html_selector;
 use html\list_dsp;
@@ -112,11 +117,26 @@ class phrase_list extends list_dsp
 
     /**
      * add the phrases related to the given phrase to the list
+     * @param phrase_dsp $phr
+     * @param foaf_direction $direction
+     * @param verb_list|null $link_types
      * @return bool
      */
-    function load_by_phrase(phrase_dsp $phr, ): bool
+    function load_related(phrase_dsp $phr, foaf_direction $direction, ?verb_list $link_types = null): bool
     {
         $result = false;
+
+        // TODO move the
+        $api = new api_dsp();
+        $data = array();
+        $data[controller::URL_VAR_PHRASE] = $phr->id();
+        $data[controller::URL_VAR_DIRECTION] = $direction;
+        $data[controller::URL_VAR_LEVELS] = 1;
+        $json_body = $api->api_get(self::class, $data);
+        $this->set_from_json_array($json_body);
+        if (!$this->is_empty()) {
+            $result = true;
+        }
         return $result;
     }
 

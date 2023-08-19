@@ -97,6 +97,8 @@ use cfg\verb;
 use cfg\view;
 use cfg\word;
 use html\word\word as word_dsp;
+use html\phrase\phrase as phrase_dsp;
+use html\phrase\phrase_list as phrase_list_dsp;
 
 class test_api extends create_test_objects
 {
@@ -130,6 +132,7 @@ class test_api extends create_test_objects
         $this->assert_api_get_by_text(verb::class, verb_api::TN_READ);
         $this->assert_api_get(triple::class);
         //$this->assert_api_get_by_text(triple::class, triple_api::TN_READ);
+        //$this->assert_api_get(phrase::class);
         $this->assert_api_get(value::class);
         $this->assert_api_get(formula::class);
         $this->assert_api_get_by_text(formula::class, formula_api::TN_READ);
@@ -159,6 +162,20 @@ class test_api extends create_test_objects
             'system_log_list_api',
             true);
         // $this->assert_rest(new word($usr, word_api::TN_READ));
+
+
+        // load the frontend objects via api call
+        $test_name = 'api id and name call of a word';
+        $wrd_zh = new word_dsp();
+        $wrd_zh->load_by_name(word_api::TN_ZH);
+        $wrd_zh->load_by_id($wrd_zh->id());
+        $this->assert($test_name, $wrd_zh->name(), word_api::TN_ZH);
+
+        $test_name = 'api id and name call of a phrase';
+        $phr_zh = new phrase_dsp();
+        $phr_zh->load_by_name(word_api::TN_ZH);
+        $phr_zh->load_by_id($phr_zh->id());
+        $this->assert($test_name, $phr_zh->name(), word_api::TN_ZH);
 
     }
 

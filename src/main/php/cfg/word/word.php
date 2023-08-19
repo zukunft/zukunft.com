@@ -927,14 +927,8 @@ class word extends sandbox_typed
     }
 
     /*
-     * display
-     * TODO move to frontend
+     * object load
      */
-
-    function dsp_graph(foaf_direction $direction, verb_list $link_types, string $back = ''): string
-    {
-        return $this->phrase()->dsp_graph($direction, $link_types, $back);
-    }
 
 
     function view(): ?view

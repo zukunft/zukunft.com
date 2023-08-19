@@ -36,6 +36,7 @@ namespace html;
 
 use controller\controller;
 use api\api;
+use html\api as api_dsp;
 use html\word\word;
 
 include_once WEB_SANDBOX_PATH . 'combine_object.php';
@@ -122,6 +123,31 @@ class combine_named_dsp extends combine_object_dsp
     function type_id(): ?int
     {
         return $this->obj()?->type_id();
+    }
+
+
+    /*
+     * load
+     */
+
+    /**
+     * load the phrase by name via api
+     * @param string $name
+     * @return bool
+     */
+    function load_by_name(string $name): bool
+    {
+        $result = false;
+
+        $api = new api_dsp();
+        $json_body = $api->api_call_name($this::class, $name);
+        if ($json_body) {
+            $this->set_from_json_array($json_body);
+            if ($this->obj_id() != 0) {
+                $result = true;
+            }
+        }
+        return $result;
     }
 
 
