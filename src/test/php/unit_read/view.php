@@ -32,16 +32,16 @@
 
 namespace test;
 
+use api\component\component_api;
 use api\view_api;
-use api\component_api;
-use cfg\view_cmp_type_list;
+use cfg\component\component;
+use cfg\component\component_type;
+use cfg\component\component_type_list;
+use cfg\view;
 use cfg\view_sys_list;
 use cfg\view_type;
 use cfg\view_type_list;
 use controller\controller;
-use cfg\view;
-use cfg\component;
-use cfg\view_cmp_type;
 
 class view_unit_db_tests
 {
@@ -131,13 +131,13 @@ class view_unit_db_tests
         $t->name = 'view component read db->';
 
         // load the view component types
-        $cmp_lst = new view_cmp_type_list();
+        $cmp_lst = new component_type_list();
         $result = $cmp_lst->load($db_con);
         $t->assert('load_types', $result, true);
 
         // ... and check if at least the most critical is loaded
-        $result = $component_types->id(view_cmp_type::TEXT);
-        $t->assert('check type' . view_cmp_type::TEXT, $result, 3);
+        $result = $component_types->id(component_type::TEXT);
+        $t->assert('check type' . component_type::TEXT, $result, 3);
     }
 
 }

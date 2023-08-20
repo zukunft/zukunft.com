@@ -49,9 +49,9 @@ include_once MODEL_FORMULA_PATH . 'formula_element_type_list.php';
 include_once MODEL_VIEW_PATH . 'view_sys_list.php';
 include_once MODEL_VIEW_PATH . 'view_sys_list.php';
 include_once MODEL_VIEW_PATH . 'view_type_list.php';
-include_once MODEL_VIEW_PATH . 'view_cmp_type_list.php';
-include_once MODEL_VIEW_PATH . 'view_cmp_link_types.php';
-include_once MODEL_VIEW_PATH . 'view_cmp_pos_type_list.php';
+include_once MODEL_VIEW_PATH . 'component_link_types.php';
+include_once MODEL_COMPONENT_PATH . 'component_type_list.php';
+include_once MODEL_COMPONENT_PATH . 'component_pos_type_list.php';
 include_once MODEL_VIEW_PATH . 'view_term_link.php';
 include_once MODEL_REF_PATH . 'ref_type_list.php';
 include_once MODEL_REF_PATH . 'source_type_list.php';
@@ -70,6 +70,9 @@ use cfg\batch_job_type_list;
 use cfg\change_log_action;
 use cfg\change_log_field;
 use cfg\change_log_table;
+use cfg\component\component_pos_type_list;
+use cfg\component\component_type_list;
+use cfg\component_link_type_list;
 use cfg\formula_element_type_list;
 use cfg\formula_link_type_list;
 use cfg\formula_type_list;
@@ -87,11 +90,9 @@ use cfg\user_list;
 use cfg\user_profile;
 use cfg\user_profile_list;
 use cfg\verb_list;
-use cfg\view_cmp_link_type_list;
-use cfg\view_cmp_pos_type_list;
-use cfg\view_cmp_type_list;
 use cfg\view_sys_list;
 use cfg\view_type_list;
+use unit\component_list_unit_tests;
 use unit\html\batch_job as batch_job_html_tests;
 use unit\html\change_log as change_log_html_tests;
 use unit\html\component as component_html_tests;
@@ -123,7 +124,6 @@ use unit\html\view as view_html_tests;
 use unit\html\view_list as view_list_html_tests;
 use unit\html\word as word_html_tests;
 use unit\html\word_list as word_list_html_tests;
-use unit\component_list_unit_tests;
 
 class test_unit extends test_cleanup
 {
@@ -409,7 +409,7 @@ class test_unit extends test_cleanup
     {
         global $component_types;
 
-        $component_types = new view_cmp_type_list();
+        $component_types = new component_type_list();
         $component_types->load_dummy();
 
     }
@@ -421,7 +421,7 @@ class test_unit extends test_cleanup
     {
         global $component_position_types;
 
-        $component_position_types = new view_cmp_pos_type_list();
+        $component_position_types = new component_pos_type_list();
         $component_position_types->load_dummy();
 
     }
@@ -433,7 +433,7 @@ class test_unit extends test_cleanup
     {
         global $component_link_types;
 
-        $component_link_types = new view_cmp_link_type_list();
+        $component_link_types = new component_link_type_list();
         $component_link_types->load_dummy();
 
     }

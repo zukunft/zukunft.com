@@ -44,13 +44,13 @@ namespace test;
 include_once API_REF_PATH . 'ref.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_PHRASE_PATH . 'term.php';
-include_once MODEL_VIEW_PATH . 'component.php';
-include_once MODEL_VIEW_PATH . 'component_list.php';
+include_once MODEL_COMPONENT_PATH . 'component.php';
+include_once MODEL_COMPONENT_PATH . 'component_list.php';
 include_once WEB_FORMULA_PATH . 'formula_dsp_old.php';
 include_once WEB_VIEW_PATH . 'view_dsp_old.php';
 
 use api\api;
-use api\component_api;
+use api\component\component_api;
 use api\formula_api;
 use api\phrase_group_api;
 use api\ref_api;
@@ -71,9 +71,12 @@ use cfg\change_log_field;
 use cfg\change_log_list;
 use cfg\change_log_named;
 use cfg\change_log_table;
-use cfg\component;
+use cfg\component\component;
+use cfg\component\component_list;
+use cfg\component\component_pos_type_list;
+use cfg\component\component_type;
+use cfg\component\component_type_list;
 use cfg\component_link;
-use cfg\component_list;
 use cfg\figure;
 use cfg\figure_list;
 use cfg\formula;
@@ -117,9 +120,6 @@ use cfg\value_list;
 use cfg\verb;
 use cfg\verb_list;
 use cfg\view;
-use cfg\view_cmp_pos_type_list;
-use cfg\view_cmp_type;
-use cfg\view_cmp_type_list;
 use cfg\view_list;
 use cfg\view_type_list;
 use cfg\word;
@@ -127,7 +127,6 @@ use cfg\word_list;
 use controller\controller;
 use controller\log\system_log_api;
 use DateTime;
-use formula\formula_dsp_old;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\word\word as word_dsp;
 use test\write\component_link_test;
@@ -159,9 +158,9 @@ class create_test_objects extends test_base
         $formula_link_types = new formula_link_type_list();
         $formula_element_types = new formula_element_type_list();
         $view_types = new view_type_list();
-        $component_types = new view_cmp_type_list();
+        $component_types = new component_type_list();
         //$component_link_types = new component_link_type_list();
-        $component_position_types = new view_cmp_pos_type_list();
+        $component_position_types = new component_pos_type_list();
         $ref_types = new ref_type_list();
         $source_types = new source_type_list();
         $share_types = new share_type_list();
@@ -816,7 +815,7 @@ class create_test_objects extends test_base
     function dummy_component(): component
     {
         $cmp = new component($this->usr1);
-        $cmp->set(1, component_api::TN_READ, view_cmp_type::PHRASE_NAME);
+        $cmp->set(1, component_api::TN_READ, component_type::PHRASE_NAME);
         $cmp->description = component_api::TD_READ;
         return $cmp;
     }
@@ -824,7 +823,7 @@ class create_test_objects extends test_base
     function dummy_component_word_add_title(): component
     {
         $cmp = new component($this->usr1);
-        $cmp->set(1, component_api::TN_FORM_TITLE, view_cmp_type::FORM_TITLE);
+        $cmp->set(1, component_api::TN_FORM_TITLE, component_type::FORM_TITLE);
         $cmp->description = component_api::TD_FORM_TITLE;
         $cmp->code_id = component_api::TI_FORM_TITLE;
         return $cmp;
@@ -833,7 +832,7 @@ class create_test_objects extends test_base
     function dummy_component_word_add_back_stack(): component
     {
         $cmp = new component($this->usr1);
-        $cmp->set(2, component_api::TN_FORM_BACK, view_cmp_type::FORM_BACK);
+        $cmp->set(2, component_api::TN_FORM_BACK, component_type::FORM_BACK);
         $cmp->description = component_api::TD_FORM_BACK;
         $cmp->code_id = component_api::TI_FORM_BACK;
         return $cmp;
@@ -842,7 +841,7 @@ class create_test_objects extends test_base
     function dummy_component_word_add_button_confirm(): component
     {
         $cmp = new component($this->usr1);
-        $cmp->set(3, component_api::TN_FORM_CONFIRM, view_cmp_type::FORM_CONFIRM);
+        $cmp->set(3, component_api::TN_FORM_CONFIRM, component_type::FORM_CONFIRM);
         $cmp->description = component_api::TD_FORM_CONFIRM;
         $cmp->code_id = component_api::TI_FORM_CONFIRM;
         return $cmp;
@@ -851,7 +850,7 @@ class create_test_objects extends test_base
     function dummy_component_word_add_name(): component
     {
         $cmp = new component($this->usr1);
-        $cmp->set(4, component_api::TN_FORM_NAME, view_cmp_type::FORM_NAME);
+        $cmp->set(4, component_api::TN_FORM_NAME, component_type::FORM_NAME);
         $cmp->description = component_api::TD_FORM_NAME;
         $cmp->code_id = component_api::TI_FORM_NAME;
         return $cmp;
@@ -860,7 +859,7 @@ class create_test_objects extends test_base
     function dummy_component_word_add_description(): component
     {
         $cmp = new component($this->usr1);
-        $cmp->set(5, component_api::TN_FORM_DESCRIPTION, view_cmp_type::FORM_DESCRIPTION);
+        $cmp->set(5, component_api::TN_FORM_DESCRIPTION, component_type::FORM_DESCRIPTION);
         $cmp->description = component_api::TD_FORM_DESCRIPTION;
         $cmp->code_id = component_api::TI_FORM_DESCRIPTION;
         return $cmp;
@@ -869,7 +868,7 @@ class create_test_objects extends test_base
     function dummy_component_word_add_cancel(): component
     {
         $cmp = new component($this->usr1);
-        $cmp->set(6, component_api::TN_FORM_CANCEL, view_cmp_type::FORM_CANCEL);
+        $cmp->set(6, component_api::TN_FORM_CANCEL, component_type::FORM_CANCEL);
         $cmp->description = component_api::TD_FORM_CANCEL;
         $cmp->code_id = component_api::TI_FORM_CANCEL;
         return $cmp;
@@ -878,7 +877,7 @@ class create_test_objects extends test_base
     function dummy_component_word_add_save(): component
     {
         $cmp = new component($this->usr1);
-        $cmp->set(7, component_api::TN_FORM_SAVE, view_cmp_type::FORM_SAVE);
+        $cmp->set(7, component_api::TN_FORM_SAVE, component_type::FORM_SAVE);
         $cmp->description = component_api::TD_FORM_SAVE;
         $cmp->code_id = component_api::TI_FORM_SAVE;
         return $cmp;
@@ -887,7 +886,7 @@ class create_test_objects extends test_base
     function dummy_component_word_add_form_end(): component
     {
         $cmp = new component($this->usr1);
-        $cmp->set(8, component_api::TN_FORM_END, view_cmp_type::FORM_END);
+        $cmp->set(8, component_api::TN_FORM_END, component_type::FORM_END);
         $cmp->description = component_api::TD_FORM_END;
         $cmp->code_id = component_api::TI_FORM_END;
         return $cmp;
@@ -1891,7 +1890,7 @@ class create_test_objects extends test_base
         return $cmp;
     }
 
-    function test_view_cmp_lnk(string $dsp_name, string $cmp_name, int $pos): component_link
+    function test_component_lnk(string $dsp_name, string $cmp_name, int $pos): component_link
     {
         $dsp = $this->load_view($dsp_name);
         $cmp = $this->load_component($cmp_name);
@@ -1905,7 +1904,7 @@ class create_test_objects extends test_base
         return $lnk;
     }
 
-    function test_view_cmp_unlink(string $dsp_name, string $cmp_name): string
+    function test_component_unlink(string $dsp_name, string $cmp_name): string
     {
         $result = '';
         $dsp = $this->load_view($dsp_name);

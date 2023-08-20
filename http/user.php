@@ -30,9 +30,8 @@
 
 */
 
-use controller\controller;
-use html\html_base;
-use html\view\view_dsp_old;
+use cfg\component\component;
+use cfg\component_link;
 use cfg\formula;
 use cfg\formula_link;
 use cfg\triple;
@@ -40,9 +39,10 @@ use cfg\user;
 use cfg\user_profile;
 use cfg\value;
 use cfg\view;
-use cfg\component;
-use cfg\component_link;
 use cfg\word;
+use controller\controller;
+use html\html_base;
+use html\view\view_dsp_old;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . '/../';

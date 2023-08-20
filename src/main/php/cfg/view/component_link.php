@@ -37,10 +37,9 @@ namespace cfg;
 
 include_once DB_PATH . 'sql_par_type.php';
 
-use api\component_api;
+use cfg\component\component;
 use cfg\db\sql_creator;
 use cfg\db\sql_par_type;
-use html\view\view_dsp_old;
 
 class component_link extends sandbox_link_with_type
 {
@@ -615,7 +614,7 @@ class component_link extends sandbox_link_with_type
             // check again if there is not yet a record
             $db_con->set_type(sql_db::TBL_COMPONENT_LINK, true);
             $qp = new sql_par(self::class);
-            $qp->name = 'view_cmp_link_add_usr_cfg';
+            $qp->name = 'component_link_add_usr_cfg';
             $db_con->set_name($qp->name);
             $db_con->set_usr($this->user()->id());
             $db_con->set_where_std($this->id);

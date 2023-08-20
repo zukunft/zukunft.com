@@ -29,10 +29,10 @@
   
 */
 
-use controller\controller;
+use api\component\component_api;
+use cfg\component\component;
 use cfg\user;
-use cfg\component;
-use api\component_api;
+use controller\controller;
 
 // standard zukunft header for callable php files to allow debugging and lib loading
 global $debug;
@@ -45,7 +45,7 @@ include_once API_PATH . 'api.php';
 include_once API_PATH . 'controller.php';
 include_once API_PATH . 'message_header.php';
 include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_VIEW_PATH . 'view_cmp.php';
+include_once MODEL_COMPONENT_PATH . 'component.php';
 include_once API_VIEW_PATH . 'view_cmp.php';
 
 // open database

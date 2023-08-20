@@ -40,19 +40,19 @@ include_once API_FORMULA_PATH . 'formula.php';
 include_once API_PHRASE_PATH . 'phrase.php';
 include_once API_REF_PATH . 'source.php';
 include_once API_VIEW_PATH . 'view.php';
-include_once API_VIEW_PATH . 'component.php';
+include_once API_COMPONENT_PATH . 'component.php';
 include_once API_WORD_PATH . 'word.php';
 
+use api\component\component_api;
 use api\formula_api;
 use api\phrase_api;
 use api\source_api;
 use api\view_api;
-use api\component_api;
 use api\word_api;
 use cfg\db\sql_creator;
 use cfg\db\sql_par_type;
-use model\export\exp_obj;
 use Exception;
+use model\export\exp_obj;
 
 class sandbox_named extends sandbox
 {

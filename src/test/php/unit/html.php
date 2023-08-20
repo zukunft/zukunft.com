@@ -36,24 +36,22 @@ include_once WEB_HTML_PATH . 'html_selector.php';
 include_once WEB_HTML_PATH . 'button.php';
 include_once WEB_RESULT_PATH . 'result_list.php';
 
+use api\component\component_api;
 use api\phrase_api;
 use api\result_api;
 use api\value_api;
-use api\component_api;
 use api\word_api;
+use cfg\component\component;
+use cfg\component\component_type;
+use cfg\library;
+use cfg\verb;
 use cfg\verb_list;
 use controller\controller;
 use html\button;
 use html\html_base;
 use html\html_selector;
 use html\msg;
-use html\value\value as value_dsp;
 use html\result\result as result_dsp;
-use cfg\library;
-use cfg\verb;
-use cfg\view;
-use cfg\component;
-use cfg\view_cmp_type;
 use html\result\result_list as result_list_dsp;
 
 class html_unit_tests
@@ -204,8 +202,8 @@ class html_unit_tests
         $t->subheader('View component tests');
 
         $cmp = new component($usr);
-        $cmp->set(1, component_api::TN_ADD, view_cmp_type::TEXT);
-        $t->html_test($cmp->dsp_obj()->html(), 'view_cmp_text', $t);
+        $cmp->set(1, component_api::TN_ADD, component_type::TEXT);
+        $t->html_test($cmp->dsp_obj()->html(), 'component_text', $t);
 
         $wrd = new \api\word_api();
         $wrd->set_name(word_api::TN_ADD);

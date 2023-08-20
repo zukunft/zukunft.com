@@ -68,8 +68,8 @@ class change_log_field extends type_list
     const FLD_SOURCE_NAME = 'source_name';
     const FLD_SOURCE_URL = 'url';
     const FLD_VIEW_NAME = 'view_name';
-    const FLD_VIEW_CMP_NAME = 'component_name';
-    const FLD_VIEW_CMP_TYPE = 'component_type_id';
+    const FLD_COMPONENT_NAME = 'component_name';
+    const FLD_COMPONENT_TYPE = 'component_type_id';
     const FLD_TABLE_FIELD = 'table_field_name';
 
 

@@ -32,13 +32,13 @@
 
 namespace test\write;
 
+use api\component\component_api;
 use api\view_api;
-use api\component_api;
 use cfg\change_log_link;
 use cfg\change_log_table;
-use cfg\view;
-use cfg\component;
+use cfg\component\component;
 use cfg\component_link;
+use cfg\view;
 use test\test_cleanup;
 use const test\TIMEOUT_LIMIT_DB_MULTI;
 
@@ -290,14 +290,14 @@ class component_link_test
     {
         $t->header('Check if all base view component links are existing');
 
-        $t->test_view_cmp_lnk(view_api::TN_COMPLETE, component_api::TN_TITLE, 1);
-        $t->test_view_cmp_lnk(view_api::TN_COMPLETE, component_api::TN_VALUES, 2);
-        $t->test_view_cmp_lnk(view_api::TN_COMPLETE, component_api::TN_RESULTS, 3);
+        $t->test_component_lnk(view_api::TN_COMPLETE, component_api::TN_TITLE, 1);
+        $t->test_component_lnk(view_api::TN_COMPLETE, component_api::TN_VALUES, 2);
+        $t->test_component_lnk(view_api::TN_COMPLETE, component_api::TN_RESULTS, 3);
 
-        $t->test_view_cmp_lnk(view_api::TN_EXCLUDED, component_api::TN_EXCLUDED, 1);
+        $t->test_component_lnk(view_api::TN_EXCLUDED, component_api::TN_EXCLUDED, 1);
 
-        $t->test_view_cmp_lnk(view_api::TN_TABLE, component_api::TN_TITLE, 1);
-        $t->test_view_cmp_lnk(view_api::TN_TABLE, component_api::TN_TABLE, 2);
+        $t->test_component_lnk(view_api::TN_TABLE, component_api::TN_TITLE, 1);
+        $t->test_component_lnk(view_api::TN_TABLE, component_api::TN_TABLE, 2);
     }
 
 }

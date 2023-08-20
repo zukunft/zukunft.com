@@ -38,10 +38,10 @@ include_once WEB_LOG_PATH . 'change_log_named.php';
 
 use api\change_log_named_api;
 use api\user_config;
+use cfg\component\component;
 use cfg\db\sql_creator;
-use cfg\db\sql_par_type;
-use html\log\change_log_named as change_log_named_dsp;
 use Exception;
+use html\log\change_log_named as change_log_named_dsp;
 
 class change_log_named extends change_log
 {

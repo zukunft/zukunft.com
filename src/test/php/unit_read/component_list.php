@@ -32,8 +32,8 @@
 
 namespace unit_read;
 
-use api\component_api;
-use cfg\component_list;
+use api\component\component_api;
+use cfg\component\component_list;
 use test\test_cleanup;
 
 class component_list_unit_db_tests

@@ -29,16 +29,16 @@
 
 */
 
-namespace html;
+namespace html\component;
 
-include_once API_VIEW_PATH . 'component.php';
+include_once API_COMPONENT_PATH . 'component.php';
 
-use api\component_api;
-use cfg\view_cmp_type;
-
+use api\component\component_api;
+use cfg\component\component_type;
+use html\html_base;
 use html\phrase\phrase as phrase_dsp;
 
-class component_dsp_old extends component_api
+class component_old extends component_api
 {
 
     const FORM_ADD = 'component_add';
@@ -51,9 +51,9 @@ class component_dsp_old extends component_api
     {
         global $component_types;
         return match ($component_types->code_id($this->type_id)) {
-            view_cmp_type::TEXT => $this->text(),
-            view_cmp_type::PHRASE_NAME => $this->word_name($phr),
-            view_cmp_type::VALUES_RELATED => $this->table(),
+            component_type::TEXT => $this->text(),
+            component_type::PHRASE_NAME => $this->word_name($phr),
+            component_type::VALUES_RELATED => $this->table(),
             default => 'ERROR: unknown type ',
         };
     }
@@ -64,7 +64,7 @@ class component_dsp_old extends component_api
     function text(): string
     {
         global $component_types;
-        if ($component_types->code_id($this->type_id) == view_cmp_type::TEXT) {
+        if ($component_types->code_id($this->type_id) == component_type::TEXT) {
             return $this->name();
         } else {
             return '';
@@ -77,7 +77,7 @@ class component_dsp_old extends component_api
     function word_name(phrase_dsp $phr): string
     {
         global $component_types;
-        if ($component_types->code_id($this->type_id) == view_cmp_type::PHRASE_NAME) {
+        if ($component_types->code_id($this->type_id) == component_type::PHRASE_NAME) {
             return $phr->name();
         } else {
             return '';
@@ -85,13 +85,13 @@ class component_dsp_old extends component_api
     }
 
     /**
-     * TODO move code from view_cmp_dsp_old
+     * TODO move code from component_dsp_old
      * @return string a dummy text
      */
     function table(): string
     {
         global $component_types;
-        if ($component_types->code_id($this->type_id) == view_cmp_type::VALUES_RELATED) {
+        if ($component_types->code_id($this->type_id) == component_type::VALUES_RELATED) {
             return $this->name();
         } else {
             return '';
@@ -99,13 +99,13 @@ class component_dsp_old extends component_api
     }
 
     /**
-     * TODO move code from view_cmp_dsp_old
+     * TODO move code from component_dsp_old
      * @return string a dummy text
      */
     function num_list(): string
     {
         global $component_types;
-        if ($component_types->code_id($this->type_id) == view_cmp_type::NUMERIC_VALUE) {
+        if ($component_types->code_id($this->type_id) == component_type::NUMERIC_VALUE) {
             return $this->name();
         } else {
             return '';
@@ -113,13 +113,13 @@ class component_dsp_old extends component_api
     }
 
     /**
-     * TODO move code from view_cmp_dsp_old
+     * TODO move code from component_dsp_old
      * @return string a dummy text
      */
     function formulas(): string
     {
         global $component_types;
-        if ($component_types->code_id($this->type_id) == view_cmp_type::FORMULAS) {
+        if ($component_types->code_id($this->type_id) == component_type::FORMULAS) {
             return $this->name();
         } else {
             return '';
@@ -127,13 +127,13 @@ class component_dsp_old extends component_api
     }
 
     /**
-     * TODO move code from view_cmp_dsp_old
+     * TODO move code from component_dsp_old
      * @return string a dummy text
      */
     function results(): string
     {
         global $component_types;
-        if ($component_types->code_id($this->type_id) == view_cmp_type::FORMULA_RESULTS) {
+        if ($component_types->code_id($this->type_id) == component_type::FORMULA_RESULTS) {
             return $this->name();
         } else {
             return '';
@@ -141,13 +141,13 @@ class component_dsp_old extends component_api
     }
 
     /**
-     * TODO move code from view_cmp_dsp_old
+     * TODO move code from component_dsp_old
      * @return string a dummy text
      */
     function word_children(): string
     {
         global $component_types;
-        if ($component_types->code_id($this->type_id) == view_cmp_type::WORDS_DOWN) {
+        if ($component_types->code_id($this->type_id) == component_type::WORDS_DOWN) {
             return $this->name();
         } else {
             return '';
@@ -155,13 +155,13 @@ class component_dsp_old extends component_api
     }
 
     /**
-     * TODO move code from view_cmp_dsp_old
+     * TODO move code from component_dsp_old
      * @return string a dummy text
      */
     function word_parents(): string
     {
         global $component_types;
-        if ($component_types->code_id($this->type_id) == view_cmp_type::WORDS_UP) {
+        if ($component_types->code_id($this->type_id) == component_type::WORDS_UP) {
             return $this->name();
         } else {
             return '';
@@ -169,13 +169,13 @@ class component_dsp_old extends component_api
     }
 
     /**
-     * TODO move code from view_cmp_dsp_old
+     * TODO move code from component_dsp_old
      * @return string a dummy text
      */
     function json_export(): string
     {
         global $component_types;
-        if ($component_types->code_id($this->type_id) == view_cmp_type::JSON_EXPORT) {
+        if ($component_types->code_id($this->type_id) == component_type::JSON_EXPORT) {
             return $this->name();
         } else {
             return '';
@@ -183,13 +183,13 @@ class component_dsp_old extends component_api
     }
 
     /**
-     * TODO move code from view_cmp_dsp_old
+     * TODO move code from component_dsp_old
      * @return string a dummy text
      */
     function xml_export(): string
     {
         global $component_types;
-        if ($component_types->code_id($this->type_id) == view_cmp_type::XML_EXPORT) {
+        if ($component_types->code_id($this->type_id) == component_type::XML_EXPORT) {
             return $this->name();
         } else {
             return '';
@@ -197,13 +197,13 @@ class component_dsp_old extends component_api
     }
 
     /**
-     * TODO move code from view_cmp_dsp_old
+     * TODO move code from component_dsp_old
      * @return string a dummy text
      */
     function csv_export(): string
     {
         global $component_types;
-        if ($component_types->code_id($this->type_id) == view_cmp_type::CSV_EXPORT) {
+        if ($component_types->code_id($this->type_id) == component_type::CSV_EXPORT) {
             return $this->name();
         } else {
             return '';
@@ -211,13 +211,13 @@ class component_dsp_old extends component_api
     }
 
     /**
-     * TODO move code from view_cmp_dsp_old
+     * TODO move code from component_dsp_old
      * @return string a dummy text
      */
     function all(): string
     {
         global $component_types;
-        if ($component_types->code_id($this->type_id) == view_cmp_type::VALUES_ALL) {
+        if ($component_types->code_id($this->type_id) == component_type::VALUES_ALL) {
             return $this->name();
         } else {
             return '';

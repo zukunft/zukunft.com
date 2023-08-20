@@ -29,14 +29,18 @@
   
 */
 
-namespace cfg;
+namespace cfg\component;
+
+use cfg\sql_db;
+use cfg\type_list;
+use cfg\type_object;
 
 include_once DB_PATH . 'sql_db.php';
-include_once MODEL_VIEW_PATH . 'view_cmp_pos_type.php';
+include_once MODEL_COMPONENT_PATH . 'component_pos_type.php';
 
 global $component_position_types;
 
-class view_cmp_pos_type_list extends type_list
+class component_pos_type_list extends type_list
 {
 
     /**
@@ -54,7 +58,7 @@ class view_cmp_pos_type_list extends type_list
      */
     function load_dummy(): void {
         parent::load_dummy();
-        $type = new type_object(view_cmp_pos_type::SIDE, view_cmp_pos_type::SIDE, '', 2);
+        $type = new type_object(component_pos_type::SIDE, component_pos_type::SIDE, '', 2);
         $this->add($type);
     }
 
@@ -63,7 +67,7 @@ class view_cmp_pos_type_list extends type_list
      */
     function default_id(): int
     {
-        return parent::id(view_cmp_pos_type::BELOW);
+        return parent::id(component_pos_type::BELOW);
     }
 
 }

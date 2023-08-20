@@ -32,11 +32,11 @@
 
 namespace test;
 
+use api\component\component_api;
 use api\view_api;
-use api\component_api;
+use cfg\component\component;
 use cfg\component_link;
 use cfg\view;
-use cfg\component;
 
 class component_unit_db_tests
 {

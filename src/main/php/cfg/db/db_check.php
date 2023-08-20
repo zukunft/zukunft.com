@@ -32,6 +32,8 @@
 
 namespace cfg;
 
+use cfg\component\component;
+
 class db_check
 {
 

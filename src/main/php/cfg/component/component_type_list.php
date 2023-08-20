@@ -29,16 +29,20 @@
   
 */
 
-namespace cfg;
+namespace cfg\component;
+
+use cfg\sql_db;
+use cfg\type_list;
+use cfg\type_object;
 
 include_once DB_PATH . 'sql_db.php';
-include_once MODEL_VIEW_PATH . 'view_cmp_type.php';
+include_once MODEL_COMPONENT_PATH . 'component_type.php';
 include_once MODEL_HELPER_PATH . 'type_list.php';
 include_once MODEL_HELPER_PATH . 'type_object.php';
 
 global $component_types;
 
-class view_cmp_type_list extends type_list
+class component_type_list extends type_list
 {
 
     /**
@@ -56,25 +60,25 @@ class view_cmp_type_list extends type_list
      */
     function load_dummy(): void {
         parent::load_dummy();
-        $type = new type_object(view_cmp_type::TEXT, view_cmp_type::TEXT, '', 2);
+        $type = new type_object(component_type::TEXT, component_type::TEXT, '', 2);
         $this->add($type);
-        $type = new type_object(view_cmp_type::PHRASE_NAME, view_cmp_type::PHRASE_NAME, '', 8);
+        $type = new type_object(component_type::PHRASE_NAME, component_type::PHRASE_NAME, '', 8);
         $this->add($type);
-        $type = new type_object(view_cmp_type::FORM_TITLE, view_cmp_type::FORM_TITLE, '', 17);
+        $type = new type_object(component_type::FORM_TITLE, component_type::FORM_TITLE, '', 17);
         $this->add($type);
-        $type = new type_object(view_cmp_type::FORM_BACK, view_cmp_type::FORM_BACK, '', 18);
+        $type = new type_object(component_type::FORM_BACK, component_type::FORM_BACK, '', 18);
         $this->add($type);
-        $type = new type_object(view_cmp_type::FORM_CONFIRM, view_cmp_type::FORM_CONFIRM, '', 19);
+        $type = new type_object(component_type::FORM_CONFIRM, component_type::FORM_CONFIRM, '', 19);
         $this->add($type);
-        $type = new type_object(view_cmp_type::FORM_NAME, view_cmp_type::FORM_NAME, '', 20);
+        $type = new type_object(component_type::FORM_NAME, component_type::FORM_NAME, '', 20);
         $this->add($type);
-        $type = new type_object(view_cmp_type::FORM_DESCRIPTION, view_cmp_type::FORM_DESCRIPTION, '', 21);
+        $type = new type_object(component_type::FORM_DESCRIPTION, component_type::FORM_DESCRIPTION, '', 21);
         $this->add($type);
-        $type = new type_object(view_cmp_type::FORM_CANCEL, view_cmp_type::FORM_CANCEL, '', 22);
+        $type = new type_object(component_type::FORM_CANCEL, component_type::FORM_CANCEL, '', 22);
         $this->add($type);
-        $type = new type_object(view_cmp_type::FORM_SAVE, view_cmp_type::FORM_SAVE, '', 23);
+        $type = new type_object(component_type::FORM_SAVE, component_type::FORM_SAVE, '', 23);
         $this->add($type);
-        $type = new type_object(view_cmp_type::FORM_END, view_cmp_type::FORM_END, '', 24);
+        $type = new type_object(component_type::FORM_END, component_type::FORM_END, '', 24);
         $this->add($type);
     }
 
@@ -83,7 +87,7 @@ class view_cmp_type_list extends type_list
      */
     function default_id(): int
     {
-        return parent::id(view_cmp_type::TEXT);
+        return parent::id(component_type::TEXT);
     }
 
 }

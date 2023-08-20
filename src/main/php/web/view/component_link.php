@@ -2,7 +2,7 @@
 
 /*
 
-    view_cmp_link_dsp.php - create HTML code to display a view component links
+    component_link_dsp.php - create HTML code to display a view component links
     ---------------------
 
     This file is part of zukunft.com - calc with words

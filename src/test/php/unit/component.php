@@ -32,14 +32,12 @@
 
 namespace test;
 
-include_once WEB_VIEW_PATH . 'component.php';
+include_once MODEL_COMPONENT_PATH . 'component.php';
 
-use cfg\sql_db;
-use cfg\component;
-use cfg\view_cmp_type;
-use html\view\component as component_dsp;
 use api\view_api;
-use api\component_api;
+use cfg\component\component;
+use cfg\sql_db;
+use html\component\component as component_dsp;
 
 class component_unit_tests
 {

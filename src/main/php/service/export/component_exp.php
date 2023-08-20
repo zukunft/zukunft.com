@@ -31,7 +31,7 @@
 
 namespace model\export;
 
-class view_cmp_exp extends sandbox_exp_named
+class component_exp extends sandbox_exp_named
 {
 
     // field names used for JSON creation

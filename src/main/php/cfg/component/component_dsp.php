@@ -29,19 +29,26 @@
   
 */
 
-namespace cfg;
+namespace cfg\component;
 
-include_once MODEL_VIEW_PATH . 'component.php';
+include_once MODEL_COMPONENT_PATH . 'component.php';
 
+use cfg\component_link_list;
+use cfg\foaf_direction;
+use cfg\formula_list;
+use cfg\phrase;
+use cfg\value_list;
+use cfg\verb;
+use cfg\word;
 use html\html_base;
 use html\html_selector;
 use html\log\user_log_display;
+use html\phrase\phrase as phrase_dsp;
+use html\result\result_list;
 use html\sandbox\db_object as db_object_dsp;
 use html\value\value_list_dsp_old;
 use html\view\view_dsp_old;
 use html\word\word as word_dsp;
-use html\phrase\phrase as phrase_dsp;
-use html\result\result_list;
 
 class component_dsp_old extends component
 {
@@ -54,7 +61,7 @@ class component_dsp_old extends component
         global $component_types;
         $result = '';
         switch ($this->type_id) {
-            case $component_types->id(view_cmp_type::TEXT):
+            case $component_types->id(component_type::TEXT):
                 $result .= $this->text();
                 break;
             default:
@@ -71,7 +78,7 @@ class component_dsp_old extends component
         global $component_types;
 
         $result = '';
-        if ($this->type_id == $component_types->id(view_cmp_type::TEXT)) {
+        if ($this->type_id == $component_types->id(component_type::TEXT)) {
             $result .= " " . $this->name();
         }
         return $result;
@@ -84,7 +91,7 @@ class component_dsp_old extends component
     {
         global $component_types;
         $result = '';
-        if ($this->type_id == $component_types->id(view_cmp_type::PHRASE_NAME)) {
+        if ($this->type_id == $component_types->id(component_type::PHRASE_NAME)) {
             if (!isset($wrd)) {
                 $result .= log_err('No word selected for "' . $this->name . '".', "component_dsp->word_name");
             } else {
@@ -113,7 +120,7 @@ class component_dsp_old extends component
     {
         global $component_types;
         $result = '';
-        if ($this->type_id == $component_types->id(view_cmp_type::VALUES_RELATED)) {
+        if ($this->type_id == $component_types->id(component_type::VALUES_RELATED)) {
             log_debug('of view component ' . $this->dsp_id() . ' for "' . $phr->name() . '" with columns "' . $this->wrd_row->name . '" and user "' . $this->user()->name . '"');
             $val_lst = new value_list_dsp_old($this->user());
             $val_lst->phr = $phr;
@@ -135,7 +142,7 @@ class component_dsp_old extends component
         global $component_types;
         $result = '';
         $html = new html_base();
-        if ($this->type_id == $component_types->id(view_cmp_type::FORMULAS)) {
+        if ($this->type_id == $component_types->id(component_type::FORMULAS)) {
             log_debug('in view ' . $this->dsp_id() . ' for word ' . $wrd->name() . ' and user ' . $this->user()->name);
             $result .= $html->dsp_text_h2('Formulas');
 
@@ -163,7 +170,7 @@ class component_dsp_old extends component
     {
         global $component_types;
         $result = '';
-        if ($this->type_id == $component_types->id(view_cmp_type::FORMULA_RESULTS)) {
+        if ($this->type_id == $component_types->id(component_type::FORMULA_RESULTS)) {
             log_debug('in view ' . $this->dsp_id() . ' for word ' . $wrd->name() . ' and user ' . $this->user()->name);
             $result .= "<br><br>calculated values<br>";
             $frm_val_lst = new result_list($this->user());
@@ -189,7 +196,7 @@ class component_dsp_old extends component
             log_warning($msg);
             $result = $msg;
         } else {
-            if ($this->type_id == $component_types->id(view_cmp_type::WORDS_DOWN)) {
+            if ($this->type_id == $component_types->id(component_type::WORDS_DOWN)) {
                 log_debug('in view ' . $this->dsp_id() . ' for word ' . $dbo->name() . ' and user ' . $this->user()->name);
                 $result .= $dbo->dsp_graph(foaf_direction::DOWN);
             }
@@ -203,7 +210,7 @@ class component_dsp_old extends component
     {
         global $component_types;
         $result = '';
-        if ($this->type_id == $component_types->id(view_cmp_type::WORDS_DOWN)) {
+        if ($this->type_id == $component_types->id(component_type::WORDS_DOWN)) {
             log_debug('in view ' . $this->dsp_id() . ' for word ' . $wrd->name() . ' and user ' . $this->user()->name);
             $result .= $wrd->dsp_graph(foaf_direction::UP);
         }
@@ -215,7 +222,7 @@ class component_dsp_old extends component
     {
         global $component_types;
         $result = '';
-        if ($this->type_id == $component_types->id(view_cmp_type::JSON_EXPORT)) {
+        if ($this->type_id == $component_types->id(component_type::JSON_EXPORT)) {
             log_debug('in view ' . $this->dsp_id() . ' for word ' . $wrd->name() . ' and user ' . $this->user()->name);
             $result .= '<br>';
             $result .= $wrd->config_json_export($back);
@@ -229,7 +236,7 @@ class component_dsp_old extends component
     {
         global $component_types;
         $result = '';
-        if ($this->type_id == $component_types->id(view_cmp_type::XML_EXPORT)) {
+        if ($this->type_id == $component_types->id(component_type::XML_EXPORT)) {
             log_debug('in view ' . $this->dsp_id() . ' for word ' . $wrd->name() . ' and user ' . $this->user()->name);
             $result .= '<br>';
             $result .= $wrd->config_xml_export($back);
@@ -243,7 +250,7 @@ class component_dsp_old extends component
     {
         global $component_types;
         $result = '';
-        if ($this->type_id == $component_types->id(view_cmp_type::CSV_EXPORT)) {
+        if ($this->type_id == $component_types->id(component_type::CSV_EXPORT)) {
             log_debug('in view ' . $this->dsp_id() . ' for word ' . $wrd->name() . ' and user ' . $this->user()->name);
             $result .= '<br>';
             $result .= $wrd->config_csv_export($back);
@@ -265,7 +272,7 @@ class component_dsp_old extends component
         log_debug('for word ' . $phr->name());
 
         $result = '';
-        if ($this->type_id == $component_types->id(view_cmp_type::VALUES_ALL)) {
+        if ($this->type_id == $component_types->id(component_type::VALUES_ALL)) {
             log_debug('in view ' . $this->dsp_id() . ' for word ' . $phr->name() . ' and user ' . $this->user()->name);
             $result .= '<br>';
             $phrases_down = $phr->dsp_graph(foaf_direction::DOWN);

@@ -38,19 +38,18 @@ include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
 include_once WEB_WORD_PATH . 'word.php';
 
 use api\api;
-use api\component_api;
+use api\component\component_api;
+use cfg\library;
+use html\component\component_old;
+use html\component\component_list as component_list_dsp;
 use controller\controller;
 use html\api as api_dsp;
 use html\button;
-use html\component_dsp_old;
 use html\html_base;
 use html\msg;
-use html\system\back_trace;
-use html\view\component_list as component_list_dsp;
+use html\sandbox\db_object as db_object_dsp;
 use html\sandbox_typed_dsp;
 use html\word\word as word_dsp;
-use html\sandbox\db_object as db_object_dsp;
-use cfg\library;
 
 class view extends sandbox_typed_dsp
 {
@@ -475,11 +474,11 @@ class view extends sandbox_typed_dsp
         $result = '';
         switch ($this->code_id) {
             case controller::DSP_COMPONENT_ADD:
-                $cmp = new component_dsp_old(0);
+                $cmp = new component_old(0);
                 $result = $cmp->form_edit('', '', '', '', '');
                 break;
             case controller::DSP_COMPONENT_EDIT:
-                $cmp = new component_dsp_old(1, component_api::TN_READ);
+                $cmp = new component_old(1, component_api::TN_READ);
                 $result = $cmp->form_edit('', '', '', '', '');
                 break;
             case controller::DSP_COMPONENT_DEL:

@@ -352,9 +352,9 @@ use html\phrase\phrase_group as phrase_group_dsp;
         formula_element_type_list - list of all formula element types
         formula_link_type_list - list of all formula link types
         view_type_list - list of all view types
-        view_cmp_type_list - list of all component types
-        view_cmp_link_type_list - list of all link types how to assign a component to a view
-        view_cmp_pos_type_list - list of all view_cmp_pos_type
+        component_type_list - list of all component types
+        component_link_type_list - list of all link types how to assign a component to a view
+        component_pos_type_list - list of all component_pos_type
         ref_list - list of all refs (TODO use a sandbox_link list?)
         ref_type_list - list of all ref types
         source_type_list - list of all source types
@@ -381,8 +381,8 @@ use html\phrase\phrase_group as phrase_group_dsp;
         phrase_group_list - a list of phrase group that is supposed to be a sandbox_list
         value_phrase_link - db index to find a valur by the phrase (not the db normal form to speed up)
         formula_element_group - to combine several formula elements that are depending on each other
-        view_cmp_type - TODO rename to component_type and move to type_object?
-        view_cmp_pos_type - TODO use a simple enum?
+        component_type - TODO rename to component_type and move to type_object?
+        component_pos_type - TODO use a simple enum?
         ref_link_wikidata - the link to wikidata
 
 
@@ -463,6 +463,7 @@ const MODEL_REF_PATH = MODEL_PATH . 'ref' . DIRECTORY_SEPARATOR;
 const MODEL_FORMULA_PATH = MODEL_PATH . 'formula' . DIRECTORY_SEPARATOR;
 const MODEL_RESULT_PATH = MODEL_PATH . 'result' . DIRECTORY_SEPARATOR;
 const MODEL_VIEW_PATH = MODEL_PATH . 'view' . DIRECTORY_SEPARATOR;
+const MODEL_COMPONENT_PATH = MODEL_PATH . 'component' . DIRECTORY_SEPARATOR;
 const API_PATH = PHP_PATH . 'api' . DIRECTORY_SEPARATOR; // path of the api objects for the message creation to the frontend
 const API_SANDBOX_PATH = API_PATH . 'sandbox' . DIRECTORY_SEPARATOR;
 const API_SYSTEM_PATH = API_PATH . 'system' . DIRECTORY_SEPARATOR;
@@ -476,6 +477,7 @@ const API_VALUE_PATH = API_PATH . 'value' . DIRECTORY_SEPARATOR;
 const API_FORMULA_PATH = API_PATH . 'formula' . DIRECTORY_SEPARATOR;
 const API_RESULT_PATH = API_PATH . 'result' . DIRECTORY_SEPARATOR;
 const API_VIEW_PATH = API_PATH . 'view' . DIRECTORY_SEPARATOR;
+const API_COMPONENT_PATH = API_PATH . 'component' . DIRECTORY_SEPARATOR;
 const API_REF_PATH = API_PATH . 'ref' . DIRECTORY_SEPARATOR;
 const WEB_PATH = PHP_PATH . 'web' . DIRECTORY_SEPARATOR; // path of the pure html frontend objects
 const WEB_LOG_PATH = WEB_PATH . 'log' . DIRECTORY_SEPARATOR;
@@ -493,6 +495,7 @@ const WEB_FORMULA_PATH = WEB_PATH . 'formula' . DIRECTORY_SEPARATOR;
 const WEB_RESULT_PATH = WEB_PATH . 'result' . DIRECTORY_SEPARATOR;
 const WEB_FIGURE_PATH = WEB_PATH . 'figure' . DIRECTORY_SEPARATOR;
 const WEB_VIEW_PATH = WEB_PATH . 'view' . DIRECTORY_SEPARATOR;
+const WEB_COMPONENT_PATH = WEB_PATH . 'component' . DIRECTORY_SEPARATOR;
 const WEB_REF_PATH = WEB_PATH . 'ref' . DIRECTORY_SEPARATOR;
 
 // the main global vars to shorten the code by avoiding them in many function calls as parameter
@@ -548,8 +551,8 @@ include_once MODEL_FORMULA_PATH . 'formula_type_list.php';
 include_once MODEL_FORMULA_PATH . 'formula_link_type_list.php';
 include_once MODEL_FORMULA_PATH . 'formula_element_type_list.php';
 include_once MODEL_VIEW_PATH . 'view_type_list.php';
-include_once MODEL_VIEW_PATH . 'view_cmp_type_list.php';
-include_once MODEL_VIEW_PATH . 'view_cmp_pos_type_list.php';
+include_once MODEL_COMPONENT_PATH . 'component_type_list.php';
+include_once MODEL_COMPONENT_PATH . 'component_pos_type_list.php';
 include_once MODEL_REF_PATH . 'ref_type_list.php';
 include_once MODEL_REF_PATH . 'source_type_list.php';
 include_once MODEL_SANDBOX_PATH . 'share_type_list.php';

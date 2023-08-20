@@ -32,14 +32,14 @@
 
 namespace test;
 
-use api\word_api;
-use api\verb_api;
+use api\component\component_api;
+use api\formula_api;
+use api\source_api;
 use api\triple_api;
 use api\value_api;
-use api\source_api;
-use api\formula_api;
+use api\verb_api;
 use api\view_api;
-use api\component_api;
+use api\word_api;
 use cfg\change_log_field;
 use cfg\change_log_list;
 use cfg\word;
@@ -152,7 +152,7 @@ class change_log_unit_db_tests
 
         // check loading of name changes of view component
         $lst = new change_log_list();
-        $result = $lst->load_by_fld_of_cmp($cmp, $t->usr1, change_log_field::FLD_VIEW_CMP_NAME);
+        $result = $lst->load_by_fld_of_cmp($cmp, $t->usr1, change_log_field::FLD_COMPONENT_NAME);
         $t->assert('view component name change', $result, true);
 
         // ... and if the first entry is the setting the view component name

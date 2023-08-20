@@ -33,7 +33,7 @@
 namespace html\log;
 
 use cfg\change_log_table;
-use cfg\component;
+use cfg\component\component;
 use cfg\formula;
 use cfg\library;
 use cfg\sql_db;

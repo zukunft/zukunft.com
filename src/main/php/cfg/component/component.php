@@ -31,17 +31,30 @@
   
 */
 
-namespace cfg;
+namespace cfg\component;
 
 include_once DB_PATH . 'sql_par_type.php';
-include_once WEB_VIEW_PATH . 'view_cmp_old.php';
+include_once WEB_COMPONENT_PATH . 'component_old.php';
 
-use api\component_api;
+use api\component\component_api;
+use cfg\change_log_action;
+use cfg\change_log_link;
+use cfg\change_log_table;
+use cfg\component_link;
+use cfg\component_link_list;
 use cfg\db\sql_creator;
-use cfg\db\sql_par_type;
+use cfg\formula;
+use cfg\sandbox;
+use cfg\sandbox_named;
+use cfg\sandbox_typed;
+use cfg\sql_db;
+use cfg\sql_par;
+use cfg\user;
+use cfg\user_message;
+use cfg\word;
+use html\component\component_old as component_dsp_old;
 use model\export\exp_obj;
-use model\export\view_cmp_exp;
-use html\component_dsp_old;
+use model\export\component_exp;
 
 class component extends sandbox_typed
 {
@@ -599,7 +612,7 @@ class component extends sandbox_typed
     function export_obj(bool $do_load = true): exp_obj
     {
         log_debug('component->export_obj ' . $this->dsp_id());
-        $result = new view_cmp_exp();
+        $result = new component_exp();
 
         // add the component parameters
         $this->load_phrases();
@@ -761,7 +774,7 @@ class component extends sandbox_typed
             // check again if there ist not yet a record
             $db_con->set_type(sql_db::TBL_COMPONENT, true);
             $qp = new sql_par(self::class);
-            $qp->name = 'view_cmp_del_usr_cfg_if';
+            $qp->name = 'component_del_usr_cfg_if';
             $db_con->set_name($qp->name);
             $db_con->set_usr($this->user()->id());
             $db_con->set_fields(array(component::FLD_ID));

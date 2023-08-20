@@ -32,13 +32,14 @@
 
 use api\view_api;
 use api\word_api;
+use cfg\component\component_dsp_old;
+use cfg\component\component_type;
+use cfg\view;
+use html\component\component as component_dsp;
 use controller\controller;
 use html\button;
 use html\html_base;
 use html\msg;
-use cfg\view;
-use cfg\component_dsp_old;
-use cfg\view_cmp_type;
 use test\test_cleanup;
 use const test\TW_ABB;
 
@@ -66,10 +67,11 @@ function run_display_test(test_cleanup $t): void
 
     // test if a simple text component can be created
     $cmp = new component_dsp_old($usr);
-    $cmp->type_id = $component_types->id(view_cmp_type::TEXT);
+    $cmp->type_id = $component_types->id(component_type::TEXT);
     $cmp->set_id(1);
     $cmp->set_name(view_api::TN_READ_NESN_2016);
-    $result = $cmp->dsp_obj()->html();
+    $cmp_dsp = new component_dsp($cmp->api_json());
+    $result = $cmp_dsp->html();
     $target = view_api::TN_READ_NESN_2016;
     $t->display('component_dsp->text', $target, $result);
 

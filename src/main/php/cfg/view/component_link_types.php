@@ -37,7 +37,7 @@ include_once DB_PATH . 'sql_db.php';
 
 global $component_link_types;
 
-class view_cmp_link_type_list extends type_list
+class component_link_type_list extends type_list
 {
     /**
      * overwrite the general user type list load function to keep the link to the table type capsuled

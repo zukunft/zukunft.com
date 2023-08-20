@@ -2,7 +2,7 @@
 
 /*
 
-    view_cmp_list_dsp.php - a list function to create the HTML code to display a view component list
+    component_list_dsp.php - a list function to create the HTML code to display a view component list
     ---------------------
 
     This file is part of zukunft.com - calc with words
@@ -29,13 +29,13 @@
 
 */
 
-namespace html\view;
+namespace html\component;
 
 include_once WEB_SANDBOX_PATH . 'list.php';
-include_once WEB_VIEW_PATH . 'component.php';
+include_once WEB_COMPONENT_PATH . 'component.php';
 
 use html\list_dsp;
-use html\view\component as component_dsp;
+use html\component\component as component_dsp;
 
 class component_list extends list_dsp
 {

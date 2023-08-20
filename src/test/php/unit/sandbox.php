@@ -36,10 +36,9 @@ include_once MODEL_REF_PATH . 'source.php';
 include_once MODEL_PHRASE_PATH . 'phrase_group.php';
 include_once MODEL_VALUE_PATH . 'value.php';
 
-use cfg\component;
+use cfg\component\component;
 use cfg\config;
 use cfg\db\sql_creator;
-use cfg\db\sql_par_type;
 use cfg\formula;
 use cfg\formula_link;
 use cfg\library;

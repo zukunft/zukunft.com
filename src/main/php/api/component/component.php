@@ -30,7 +30,9 @@
 
 */
 
-namespace api;
+namespace api\component;
+
+use api\sandbox_typed_api;
 
 class component_api extends sandbox_typed_api
 {
@@ -116,7 +118,7 @@ class component_api extends sandbox_typed_api
 
 
     // the code id of the view component type because all types should be loaded in the frontend at startup
-    // public int $pos_type_id = view_cmp_pos_type::BELOW;
+    // public int $pos_type_id = component_pos_type::BELOW;
     // TODO use for default position ?
     // public int $pos_type_id = 1;
 }

@@ -32,22 +32,21 @@
 
 namespace test;
 
+use api\component\component_api;
 use api\formula_api;
 use api\phrase_api;
 use api\source_api;
 use api\triple_api;
 use api\verb_api;
 use api\view_api;
-use api\component_api;
 use api\word_api;
-use cfg\formula_type;
-use cfg\phrase_type;
-use cfg\ref_type;
-use html\html_base;
 use cfg\formula;
+use cfg\formula_type;
 use cfg\library;
 use cfg\phrase;
 use cfg\phrase_list;
+use cfg\phrase_type;
+use cfg\ref_type;
 use cfg\sql_db;
 use cfg\sql_par;
 use cfg\term;
@@ -56,6 +55,7 @@ use cfg\triple;
 use cfg\value;
 use cfg\verb;
 use cfg\word;
+use html\html_base;
 
 class test_cleanup extends test_api
 {
@@ -108,12 +108,12 @@ class test_cleanup extends test_api
         // secure cleanup the test views
         // TODO: if a user has changed the view during the test, delete also the user views
 
-        $result .= $this->test_view_cmp_unlink(view_api::TN_COMPLETE, component_api::TN_TITLE);
-        $result .= $this->test_view_cmp_unlink(view_api::TN_COMPLETE, component_api::TN_VALUES);
-        $result .= $this->test_view_cmp_unlink(view_api::TN_COMPLETE, component_api::TN_RESULTS);
-        $result .= $this->test_view_cmp_unlink(view_api::TN_EXCLUDED, component_api::TN_EXCLUDED);
-        $result .= $this->test_view_cmp_unlink(view_api::TN_TABLE, component_api::TN_TITLE);
-        $result .= $this->test_view_cmp_unlink(view_api::TN_TABLE, component_api::TN_TABLE);
+        $result .= $this->test_component_unlink(view_api::TN_COMPLETE, component_api::TN_TITLE);
+        $result .= $this->test_component_unlink(view_api::TN_COMPLETE, component_api::TN_VALUES);
+        $result .= $this->test_component_unlink(view_api::TN_COMPLETE, component_api::TN_RESULTS);
+        $result .= $this->test_component_unlink(view_api::TN_EXCLUDED, component_api::TN_EXCLUDED);
+        $result .= $this->test_component_unlink(view_api::TN_TABLE, component_api::TN_TITLE);
+        $result .= $this->test_component_unlink(view_api::TN_TABLE, component_api::TN_TABLE);
 
         // load the test view
         $dsp = $this->load_view(view_api::TN_ADD);

@@ -29,9 +29,9 @@
   
 */
 
-namespace cfg;
+namespace cfg\component;
 
-class view_cmp_type
+class component_type
 {
     // list of the view component types that have a coded functionality
 

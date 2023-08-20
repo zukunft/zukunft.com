@@ -59,6 +59,7 @@ include_once MODEL_VALUE_PATH . 'value_phrase_link.php';
 include_once API_LOG_PATH . 'change_log.php';
 
 use api\change_log_api;
+use cfg\component\component;
 use DateTime;
 use Exception;
 

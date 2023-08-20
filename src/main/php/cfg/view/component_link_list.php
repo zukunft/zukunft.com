@@ -35,8 +35,8 @@ namespace cfg;
 
 include_once DB_PATH . 'sql_par_type.php';
 
+use cfg\component\component;
 use cfg\db\sql_creator;
-use cfg\db\sql_par_type;
 
 class component_link_list extends sandbox_list
 {

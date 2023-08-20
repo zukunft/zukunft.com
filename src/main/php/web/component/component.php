@@ -32,19 +32,18 @@
 
 */
 
-namespace html\view;
+namespace html\component;
 
 include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
 
-use controller\controller;
 use api\api;
+use cfg\component\component_type;
+use cfg\library;
+use controller\controller;
 use html\html_base;
 use html\phrase\phrase as phrase_dsp;
-use html\phrase\term as term_dsp;
 use html\sandbox\db_object as db_object_dsp;
 use html\sandbox_typed_dsp;
-use cfg\library;
-use cfg\view_cmp_type;
 
 class component extends sandbox_typed_dsp
 {
@@ -77,27 +76,27 @@ class component extends sandbox_typed_dsp
         // list of all possible view components
         $type_code_id = $this->type_code_id();
         $result .= match ($type_code_id) {
-            view_cmp_type::TEXT => $this->text(),
-            view_cmp_type::WORD => $this->display_name(),
-            view_cmp_type::PHRASE_NAME => $this->phrase_name($dbo),
-            view_cmp_type::VALUES_RELATED => $this->table($dbo),
-            view_cmp_type::NUMERIC_VALUE => $this->num_list($dbo, $back),
-            view_cmp_type::FORMULAS => $this->formulas($dbo),
-            view_cmp_type::FORMULA_RESULTS => $this->results($dbo),
-            view_cmp_type::WORDS_DOWN => $this->word_children($dbo),
-            view_cmp_type::WORDS_UP => $this->word_parents($dbo),
-            view_cmp_type::JSON_EXPORT => $this->json_export($dbo, $back),
-            view_cmp_type::XML_EXPORT => $this->xml_export($dbo, $back),
-            view_cmp_type::CSV_EXPORT => $this->csv_export($dbo, $back),
-            view_cmp_type::VALUES_ALL => $this->all($dbo, $back),
-            view_cmp_type::FORM_TITLE => $this->form_tile($dbo, $back),
-            view_cmp_type::FORM_BACK => $this->form_back($dbo, $back),
-            view_cmp_type::FORM_CONFIRM => $this->form_confirm($dbo, $back),
-            view_cmp_type::FORM_NAME => $this->form_name($dbo, $back),
-            view_cmp_type::FORM_DESCRIPTION => $this->form_description($dbo, $back),
-            view_cmp_type::FORM_CANCEL => $this->form_cancel($dbo, $back),
-            view_cmp_type::FORM_SAVE => $this->form_save($dbo, $back),
-            view_cmp_type::FORM_END => $this->form_end(),
+            component_type::TEXT => $this->text(),
+            component_type::WORD => $this->display_name(),
+            component_type::PHRASE_NAME => $this->phrase_name($dbo),
+            component_type::VALUES_RELATED => $this->table($dbo),
+            component_type::NUMERIC_VALUE => $this->num_list($dbo, $back),
+            component_type::FORMULAS => $this->formulas($dbo),
+            component_type::FORMULA_RESULTS => $this->results($dbo),
+            component_type::WORDS_DOWN => $this->word_children($dbo),
+            component_type::WORDS_UP => $this->word_parents($dbo),
+            component_type::JSON_EXPORT => $this->json_export($dbo, $back),
+            component_type::XML_EXPORT => $this->xml_export($dbo, $back),
+            component_type::CSV_EXPORT => $this->csv_export($dbo, $back),
+            component_type::VALUES_ALL => $this->all($dbo, $back),
+            component_type::FORM_TITLE => $this->form_tile($dbo, $back),
+            component_type::FORM_BACK => $this->form_back($dbo, $back),
+            component_type::FORM_CONFIRM => $this->form_confirm($dbo, $back),
+            component_type::FORM_NAME => $this->form_name($dbo, $back),
+            component_type::FORM_DESCRIPTION => $this->form_description($dbo, $back),
+            component_type::FORM_CANCEL => $this->form_cancel($dbo, $back),
+            component_type::FORM_SAVE => $this->form_save($dbo, $back),
+            component_type::FORM_END => $this->form_end(),
             default => 'program code for component type ' . $type_code_id . ' missing<br>'
         };
 
@@ -139,7 +138,7 @@ class component extends sandbox_typed_dsp
     }
 
     /**
-     * TODO move code from view_cmp_dsp_old
+     * TODO move code from component_dsp_old
      * @return string a dummy text
      */
     function table(): string
@@ -148,7 +147,7 @@ class component extends sandbox_typed_dsp
     }
 
     /**
-     * TODO move code from view_cmp_dsp_old
+     * TODO move code from component_dsp_old
      * @return string a dummy text
      */
     function num_list(): string
@@ -157,7 +156,7 @@ class component extends sandbox_typed_dsp
     }
 
     /**
-     * TODO move code from view_cmp_dsp_old
+     * TODO move code from component_dsp_old
      * @return string a dummy text
      */
     function formulas(): string
@@ -166,7 +165,7 @@ class component extends sandbox_typed_dsp
     }
 
     /**
-     * TODO move code from view_cmp_dsp_old
+     * TODO move code from component_dsp_old
      * @return string a dummy text
      */
     function results(): string
@@ -175,7 +174,7 @@ class component extends sandbox_typed_dsp
     }
 
     /**
-     * TODO move code from view_cmp_dsp_old
+     * TODO move code from component_dsp_old
      * @return string a dummy text
      */
     function word_children(): string
@@ -184,7 +183,7 @@ class component extends sandbox_typed_dsp
     }
 
     /**
-     * TODO move code from view_cmp_dsp_old
+     * TODO move code from component_dsp_old
      * @return string a dummy text
      */
     function word_parents(): string
@@ -193,7 +192,7 @@ class component extends sandbox_typed_dsp
     }
 
     /**
-     * TODO move code from view_cmp_dsp_old
+     * TODO move code from component_dsp_old
      * @return string a dummy text
      */
     function json_export(): string
@@ -202,7 +201,7 @@ class component extends sandbox_typed_dsp
     }
 
     /**
-     * TODO move code from view_cmp_dsp_old
+     * TODO move code from component_dsp_old
      * @return string a dummy text
      */
     function xml_export(): string
@@ -211,7 +210,7 @@ class component extends sandbox_typed_dsp
     }
 
     /**
-     * TODO move code from view_cmp_dsp_old
+     * TODO move code from component_dsp_old
      * @return string a dummy text
      */
     function csv_export(): string
@@ -220,7 +219,7 @@ class component extends sandbox_typed_dsp
     }
 
     /**
-     * TODO move code from view_cmp_dsp_old
+     * TODO move code from component_dsp_old
      * @return string a dummy text
      */
     function all(): string
@@ -417,6 +416,38 @@ class component extends sandbox_typed_dsp
         $result .= $dsp_log;
 
         return $result;
+    }
+
+    /*
+     * to review
+     */
+
+
+    /**
+     * @returns string the html code to display this view component
+     */
+    function html(?phrase_dsp $phr = null): string
+    {
+        global $component_types;
+        return match ($component_types->code_id($this->type_id())) {
+            component_type::TEXT => $this->text(),
+            component_type::PHRASE_NAME => $this->word_name($phr),
+            component_type::VALUES_RELATED => $this->table(),
+            default => 'ERROR: unknown type ',
+        };
+    }
+
+    /**
+     * @return string the name of a phrase and give the user the possibility to change the phrase name
+     */
+    function word_name(phrase_dsp $phr): string
+    {
+        global $component_types;
+        if ($component_types->code_id($this->type_id()) == component_type::PHRASE_NAME) {
+            return $phr->name();
+        } else {
+            return '';
+        }
     }
 
 }

@@ -32,13 +32,13 @@
 
 namespace test\write;
 
-use api\component_api;
+use api\component\component_api;
 use cfg\change_log_field;
 use cfg\change_log_named;
 use cfg\change_log_table;
+use cfg\component\component;
+use cfg\component\component_type;
 use cfg\sandbox_named;
-use cfg\component;
-use cfg\view_cmp_type;
 use test\test_cleanup;
 use const test\TIMEOUT_LIMIT_DB_MULTI;
 use const test\TIMEOUT_LIMIT_LONG;
@@ -153,7 +153,7 @@ class component_test
         $cmp_renamed = new component($t->usr1);
         $cmp_renamed->load_by_name(component_api::TN_RENAMED, component::class);
         $cmp_renamed->description = 'Just added for testing the user sandbox';
-        $cmp_renamed->type_id = $component_types->id(view_cmp_type::PHRASE_NAME);
+        $cmp_renamed->type_id = $component_types->id(component_type::PHRASE_NAME);
         $result = $cmp_renamed->save();
         $target = '';
         $t->display('component->save all component fields beside the name for "' . component_api::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_LONG);
@@ -165,7 +165,7 @@ class component_test
         $target = 'Just added for testing the user sandbox';
         $t->display('component->load comment for "' . component_api::TN_RENAMED . '"', $target, $result);
         $result = $cmp_reloaded->type_id;
-        $target = $component_types->id(view_cmp_type::PHRASE_NAME);
+        $target = $component_types->id(component_type::PHRASE_NAME);
         $t->display('component->load type_id for "' . component_api::TN_RENAMED . '"', $target, $result);
 
         // check if the component parameter adding have been logged
@@ -177,7 +177,7 @@ class component_test
         //$target = 'zukunft.com system test added Just added for testing the user sandbox';
         $target = 'zukunft.com system test changed Just added for testing to Just added for testing the user sandbox';
         $t->display('component->load comment for "' . component_api::TN_RENAMED . '" logged', $target, $result);
-        $log->set_field(change_log_field::FLD_VIEW_CMP_TYPE);
+        $log->set_field(change_log_field::FLD_COMPONENT_TYPE);
         $result = $log->dsp_last(true);
         $target = 'zukunft.com system test added word name';
         $t->display('component->load component_type_id for "' . component_api::TN_RENAMED . '" logged', $target, $result);
@@ -186,7 +186,7 @@ class component_test
         $cmp_usr2 = new component($t->usr2);
         $cmp_usr2->load_by_name(component_api::TN_RENAMED, component::class);
         $cmp_usr2->description = 'Just changed for testing the user sandbox';
-        $cmp_usr2->type_id = $component_types->id(view_cmp_type::FORMULAS);
+        $cmp_usr2->type_id = $component_types->id(component_type::FORMULAS);
         $result = $cmp_usr2->save();
         $target = '';
         $t->display('component->save all component fields for user 2 beside the name for "' . component_api::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
@@ -198,7 +198,7 @@ class component_test
         $target = 'Just changed for testing the user sandbox';
         $t->display('component->load comment for "' . component_api::TN_RENAMED . '"', $target, $result);
         $result = $cmp_usr2_reloaded->type_id;
-        $target = $component_types->id(view_cmp_type::FORMULAS);
+        $target = $component_types->id(component_type::FORMULAS);
         $t->display('component->load type_id for "' . component_api::TN_RENAMED . '"', $target, $result);
 
         // check the component for the original user remains unchanged
@@ -208,14 +208,14 @@ class component_test
         $target = 'Just added for testing the user sandbox';
         $t->display('component->load comment for "' . component_api::TN_RENAMED . '"', $target, $result);
         $result = $cmp_reloaded->type_id;
-        $target = $component_types->id(view_cmp_type::PHRASE_NAME);
+        $target = $component_types->id(component_type::PHRASE_NAME);
         $t->display('component->load type_id for "' . component_api::TN_RENAMED . '"', $target, $result);
 
         // check if undo all specific changes removes the user component
         $cmp_usr2 = new component($t->usr2);
         $cmp_usr2->load_by_name(component_api::TN_RENAMED, component::class);
         $cmp_usr2->description = 'Just added for testing the user sandbox';
-        $cmp_usr2->type_id = $component_types->id(view_cmp_type::PHRASE_NAME);
+        $cmp_usr2->type_id = $component_types->id(component_type::PHRASE_NAME);
         $result = $cmp_usr2->save();
         $target = '';
         $t->display('component->save undo the user component fields beside the name for "' . component_api::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
@@ -239,11 +239,11 @@ class component_test
     {
         $t->header('Check if all base view components are existing');
 
-        $t->test_component(component_api::TN_TITLE, view_cmp_type::PHRASE_NAME);
-        $t->test_component(component_api::TN_VALUES, view_cmp_type::VALUES_ALL);
-        $t->test_component(component_api::TN_RESULTS, view_cmp_type::FORMULA_RESULTS);
-        $t->test_component(component_api::TN_EXCLUDED, view_cmp_type::PHRASE_NAME);
-        $t->test_component(component_api::TN_TABLE, view_cmp_type::NUMERIC_VALUE);
+        $t->test_component(component_api::TN_TITLE, component_type::PHRASE_NAME);
+        $t->test_component(component_api::TN_VALUES, component_type::VALUES_ALL);
+        $t->test_component(component_api::TN_RESULTS, component_type::FORMULA_RESULTS);
+        $t->test_component(component_api::TN_EXCLUDED, component_type::PHRASE_NAME);
+        $t->test_component(component_api::TN_TABLE, component_type::NUMERIC_VALUE);
 
         // modify the special test cases
         global $usr;

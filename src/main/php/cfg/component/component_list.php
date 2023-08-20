@@ -29,14 +29,24 @@
 
 */
 
-namespace cfg;
+namespace cfg\component;
 
-include_once API_VIEW_PATH . 'component_list.php';
+include_once API_COMPONENT_PATH . 'component_list.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
 
-use api\component_list_api;
+use api\component\component_list_api;
+use cfg\combine_named;
+use cfg\component_link;
 use cfg\db\sql_creator;
 use cfg\db\sql_par_type;
+use cfg\sandbox_link_named;
+use cfg\sandbox_list;
+use cfg\sandbox_named;
+use cfg\sql_db;
+use cfg\sql_par;
+use cfg\type_list;
+use cfg\user_message;
+use cfg\view;
 
 class component_list extends sandbox_list
 {
@@ -111,7 +121,7 @@ class component_list extends sandbox_list
         $typ_lst = new type_list();
         $sc->add_where(
             component::FLD_TYPE,
-            implode(',', $typ_lst->id_list(view_cmp_type::SYSTEM_TYPES)),
+            implode(',', $typ_lst->id_list(component_type::SYSTEM_TYPES)),
             sql_par_type::CONST_NOT_IN);
 
         $qp->sql = $sc->sql();

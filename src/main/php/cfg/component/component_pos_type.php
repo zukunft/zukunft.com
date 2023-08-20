@@ -29,9 +29,9 @@
   
 */
 
-namespace cfg;
+namespace cfg\component;
 
-class view_cmp_pos_type
+class component_pos_type
 {
     // list of the view component position types that have a coded functionality
     const BELOW = "below";

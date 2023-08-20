@@ -150,7 +150,7 @@ class system_unit_tests
         $t->assert_sql_all($db_con, $formula_element_types);
         $view_types = new view_type_list();
         $t->assert_sql_all($db_con, $view_types);
-        $component_types = new view_cmp_type_list();
+        $component_types = new component_type_list();
         $t->assert_sql_all($db_con, $component_types);
         $ref_types = new ref_type_list();
         $t->assert_sql_all($db_con, $ref_types);
