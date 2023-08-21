@@ -36,13 +36,11 @@ include_once WEB_VIEW_PATH . 'view.php';
 include_once MODEL_VIEW_PATH . 'component_link.php';
 include_once MODEL_COMPONENT_PATH . 'component.php';
 include_once MODEL_COMPONENT_PATH . 'component_list.php';
-include_once MODEL_COMPONENT_PATH . 'component_dsp.php'; // TODO move to web namespace
 include_once SERVICE_EXPORT_PATH . 'view_exp.php';
 include_once SERVICE_EXPORT_PATH . 'component_exp.php';
 
 use api\view_api;
 use cfg\component\component;
-use cfg\component\component_dsp_old;
 use cfg\component\component_list;
 use cfg\db\sql_creator;
 use cfg\db\sql_par_type;
@@ -500,7 +498,7 @@ class view extends sandbox_typed
                 // this is only for the view of the active user, so a direct exclude can be done
                 if ((is_null($db_entry[sandbox::FLD_EXCLUDED]) or $db_entry[sandbox::FLD_EXCLUDED] == 0)
                     and (is_null($db_entry[sandbox::FLD_EXCLUDED . '2']) or $db_entry[sandbox::FLD_EXCLUDED . '2'] == 0)) {
-                    $new_entry = new component_dsp_old($this->user());
+                    $new_entry = new component($this->user());
                     $new_entry->id = $db_entry[component::FLD_ID];
                     $new_entry->owner_id = $db_entry[user::FLD_ID];
                     $new_entry->order_nbr = $db_entry[component_link::FLD_ORDER_NBR];
@@ -671,7 +669,7 @@ class view extends sandbox_typed
         if ($component_id <= 0) {
             log_err("The view component id must be given to move it.", "view->entry_up");
         } else {
-            $cmp = new component_dsp_old($this->user());
+            $cmp = new component($this->user());
             $cmp->load_by_id($component_id);
             $cmp_lnk = new component_link($this->user());
             $cmp_lnk->load_by_link($this, $cmp);

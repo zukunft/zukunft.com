@@ -79,8 +79,7 @@
     batch_job_list.php
     view.php
     view_display.php
-    component.php (ex component)
-    component_dsp.php
+    component.php
     component_link.php
     web/html/button.php
     json.php

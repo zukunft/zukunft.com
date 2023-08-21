@@ -52,7 +52,7 @@ use cfg\sql_par;
 use cfg\user;
 use cfg\user_message;
 use cfg\word;
-use html\component\component_old as component_dsp_old;
+use html\component\component as component_dsp;
 use model\export\exp_obj;
 use model\export\component_exp;
 
@@ -206,13 +206,13 @@ class component extends sandbox_typed
     }
 
     /**
-     * @return component_dsp_old the view component object with the html creation functions
+     * @return component_dsp the view component object with the html creation functions
      */
     function dsp_obj(): object
     {
         global $component_types;
 
-        $dsp_obj = new component_dsp_old();
+        $dsp_obj = new component_dsp();
 
         parent::fill_dsp_obj($dsp_obj);
 

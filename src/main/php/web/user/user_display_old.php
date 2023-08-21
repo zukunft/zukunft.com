@@ -30,7 +30,6 @@
 */
 
 use cfg\component\component;
-use cfg\component\component_dsp_old;
 use cfg\component_link;
 use cfg\formula;
 use cfg\formula_link;
@@ -915,7 +914,7 @@ class user_dsp_old extends user
                 $row_nbr++;
 
                 // create the component object with the minimal parameter needed
-                $dsp_usr = new component_dsp_old($this);
+                $dsp_usr = new component($this);
                 $dsp_usr->set_id($sbx_row['id']);
                 $dsp_usr->set_name($sbx_row['usr_name']);
                 $dsp_usr->description = $sbx_row['usr_comment'];

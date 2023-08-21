@@ -38,12 +38,18 @@ include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
 
 use api\api;
 use cfg\component\component_type;
+use cfg\component_link_list;
 use cfg\library;
+use cfg\word;
 use controller\controller;
 use html\html_base;
+use html\html_selector;
+use html\log\user_log_display;
 use html\phrase\phrase as phrase_dsp;
 use html\sandbox\db_object as db_object_dsp;
 use html\sandbox_typed_dsp;
+use html\view\view_dsp_old;
+use html\word\word as word_dsp;
 
 class component extends sandbox_typed_dsp
 {
@@ -423,6 +429,89 @@ class component extends sandbox_typed_dsp
      */
 
 
+    // TODO HTML code to add a view component
+    function dsp_add($add_link, $wrd, $back): string
+    {
+        return $this->dsp_edit($add_link, $wrd, $back);
+    }
+
+    /**
+     * HTML code to edit all word fields
+     * @param int $add_link the id of the view that should be linked to the word
+     * @param word $wrd
+     */
+    function dsp_edit(int $add_link, word $wrd, string $back): string
+    {
+        log_debug($this->dsp_id() . ' (called from ' . $back . ')');
+        $result = '';
+        $html = new html_base();
+
+        // show the view component name
+        if ($this->id <= 0) {
+            $script = "component_add";
+            $result .= $html->dsp_text_h2('Create a view element for <a href="/http/view.php?words=' . $wrd->id() . '">' . $wrd->name() . '</a>');
+        } else {
+            $script = "component_edit";
+            $result .= $html->dsp_text_h2('Edit the view element "' . $this->name . '" (used for <a href="/http/view.php?words=' . $wrd->id() . '">' . $wrd->name() . '</a>) ');
+        }
+        $result .= '<div class="row">';
+
+        // when changing a view component show the fields only on the left side
+        if ($this->id > 0) {
+            $result .= '<div class="col-sm-7">';
+        }
+
+        $result .= $html->dsp_form_start($script);
+        if ($this->id > 0) {
+            $result .= $html->dsp_form_id($this->id);
+        }
+        $result .= $html->dsp_form_hidden("word", $wrd->id());
+        $result .= $html->dsp_form_hidden("back", $back);
+        $result .= $html->dsp_form_hidden("confirm", 1);
+        $result .= '<div class="form-row">';
+        $result .= $html->dsp_form_fld("name", $this->name, "Component name:", "col-sm-8");
+        $result .= $this->dsp_type_selector($script, "col-sm-4"); // allow to change the type
+        $result .= '</div>';
+        $result .= '<div class="form-row">';
+        $result .= $this->dsp_word_row_selector($script, "col-sm-6"); // allow to change the word_row word
+        $result .= $this->dsp_word_col_selector($script, "col-sm-6"); // allow to change the word col word
+        $result .= '</div>';
+        $result .= $html->dsp_form_fld("comment", $this->description, "Comment:");
+        if ($add_link <= 0) {
+            if ($this->id > 0) {
+                $result .= $html->dsp_form_end('', $back, "/http/component_del.php?id=" . $this->id . "&back=" . $back);
+            } else {
+                $result .= $html->dsp_form_end('', $back, '');
+            }
+        }
+
+        if ($this->id > 0) {
+            $result .= '</div>';
+
+            $view_html = $this->linked_views($add_link, $wrd, $back);
+            $changes = $this->dsp_hist(0, SQL_ROW_LIMIT, '', $back);
+            if (trim($changes) <> "") {
+                $hist_html = $changes;
+            } else {
+                $hist_html = 'Nothing changed yet.';
+            }
+            $changes = $this->dsp_hist_links(0, SQL_ROW_LIMIT, '', $back);
+            if (trim($changes) <> "") {
+                $link_html = $changes;
+            } else {
+                $link_html = 'No component have been added or removed yet.';
+            }
+            $result .= $html->dsp_link_hist_box('Views', $view_html,
+                '', '',
+                'Changes', $hist_html,
+                'Link changes', $link_html);
+        }
+
+        $result .= '</div>';   // of row
+        $result .= '<br><br>'; // this a usually a small for, so the footer can be moved away
+
+        return $result;
+    }
     /**
      * @returns string the html code to display this view component
      */
@@ -449,5 +538,160 @@ class component extends sandbox_typed_dsp
             return '';
         }
     }
+
+    // display the component type selector
+    private function dsp_type_selector($script, $class): string
+    {
+        $result = '';
+        $sel = new html_selector;
+        $sel->form = $script;
+        $sel->dummy_text = 'not set';
+        $sel->name = 'type';
+        $sel->label = "Type:";
+        $sel->bs_class = $class;
+        $sel->sql = sql_lst("component_type");
+        $sel->selected = $this->type_id();
+        $result .= $sel->display_old() . ' ';
+        return $result;
+    }
+
+    // display the component word_row selector
+    private function dsp_word_row_selector($script, $class): string
+    {
+        $result = '';
+        $sel = new html_selector;
+        $sel->form = $script;
+        $sel->dummy_text = 'not set';
+        $sel->name = 'word_row';
+        if ($this->wrd_row != null) {
+            $phr_dsp = new word_dsp($this->wrd_row->api_json());
+            $sel->label = "Rows taken from " . $phr_dsp->display_linked() . ":";
+        } else {
+            $sel->label = "Take rows from:";
+        }
+        $sel->bs_class = $class;
+        $sel->sql = sql_lst_usr("word", $this->user());
+        $sel->selected = $this->word_id_row;
+        $result .= $sel->display_old() . ' ';
+        return $result;
+    }
+
+    // display the component word_col selector
+    private function dsp_word_col_selector($script, $class): string
+    {
+        $result = '';
+        $sel = new html_selector;
+        $sel->form = $script;
+        $sel->dummy_text = 'not set';
+        $sel->name = 'word_col';
+        if (isset($this->wrd_col)) {
+            $phr_dsp = new word_dsp($this->wrd_col->api_json());
+            $sel->label = "Columns taken from " . $phr_dsp->display_linked() . ":";
+        } else {
+            $sel->label = "Take columns from:";
+        }
+        $sel->bs_class = $class;
+        $sel->sql = sql_lst_usr("word", $this->user());
+        $sel->selected = $this->word_id_col;
+        $result .= $sel->display_old() . ' ';
+        return $result;
+    }
+
+    /**
+     * lists of all views where this component is used
+     */
+    private function linked_views($add_link, $wrd, $back): string
+    {
+        log_debug("id " . $this->id . " and user " . $this->user()->id() . " (word " . $wrd->id . ", add " . $add_link . ").");
+
+        global $db_con;
+        $html = new html_base();
+        $result = '';
+
+        if (UI_USE_BOOTSTRAP) {
+            $result .= $html->dsp_tbl_start_hist();
+        } else {
+            $result .= $html->dsp_tbl_start_half();
+        }
+
+        $lnk_lst = new component_link_list($this->user());
+        $lnk_lst->load_by_component($this);
+
+        foreach ($lnk_lst as $lnk) {
+            $result .= '  <tr>' . "\n";
+            $result .= '    <td>' . "\n";
+            $dsp = new view_dsp_old($this->user());
+            $dsp->id = $lnk->fob->id();
+            $dsp->name = $lnk->fob->name();
+            $result .= '      ' . $dsp->name_linked($wrd, $back) . "\n";
+            $result .= '    </td>' . "\n";
+            $result .= $this->btn_unlink($lnk->fob->id(), $wrd, $back);
+            $result .= '  </tr>' . "\n";
+        }
+
+        // give the user the possibility to add a view
+        $result .= '  <tr>';
+        $result .= '    <td>';
+        if ($add_link == 1) {
+            $sel = new html_selector;
+            $sel->form = 'component_edit';
+            $sel->name = 'link_view';
+            $sel->sql = sql_lst_usr("view", $this->user());
+            $sel->selected = 0;
+            $sel->dummy_text = 'select a view where the view component should also be used';
+            $result .= $sel->display_old();
+
+            $result .= $html->dsp_form_end('', $back);
+        } else {
+            $result .= '      ' . \html\btn_add('add new', '/http/component_edit.php?id=' . $this->id . '&add_link=1&word=' . $wrd->id . '&back=' . $back);
+        }
+        $result .= '    </td>';
+        $result .= '  </tr>';
+
+        $result .= $html->dsp_tbl_end();
+        $result .= '  <br>';
+
+        return $result;
+    }
+
+    // display the history of a view component
+    function dsp_hist($page, $size, $call, $back): string
+    {
+        log_debug("for id " . $this->id . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
+        $result = ''; // reset the html code var
+
+        $log_dsp = new user_log_display($this->user());
+        $log_dsp->id = $this->id;
+        $log_dsp->usr = $this->user();
+        $log_dsp->type = \cfg\component\component::class;
+        $log_dsp->page = $page;
+        $log_dsp->size = $size;
+        $log_dsp->call = $call;
+        $log_dsp->back = $back;
+        $result .= $log_dsp->dsp_hist();
+
+        log_debug("done");
+        return $result;
+    }
+
+    // display the link history of a view component
+    function dsp_hist_links($page, $size, $call, $back): string
+    {
+        log_debug("for id " . $this->id . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
+        $result = ''; // reset the html code var
+
+        $log_dsp = new user_log_display($this->user());
+        $log_dsp->id = $this->id;
+        $log_dsp->type = component::class;
+        $log_dsp->page = $page;
+        $log_dsp->size = $size;
+        $log_dsp->call = $call;
+        $log_dsp->back = $back;
+        $result .= $log_dsp->dsp_hist_links();
+
+        log_debug("done");
+        return $result;
+    }
+
 
 }

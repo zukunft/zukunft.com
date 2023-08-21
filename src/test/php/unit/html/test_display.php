@@ -32,7 +32,7 @@
 
 use api\view_api;
 use api\word_api;
-use cfg\component\component_dsp_old;
+use cfg\component\component;
 use cfg\component\component_type;
 use cfg\view;
 use html\component\component as component_dsp;
@@ -63,10 +63,10 @@ function run_display_test(test_cleanup $t): void
     //$t->dsp_contains(', view_dsp->display is "'.$result.'" which should contain '.$wrd_abb->name.'', $target, $result);
 
 
-    $t->header('Test the view component display class (classes/component_dsp.php)');
+    $t->header('Test the view component display class (classes/component.php)');
 
     // test if a simple text component can be created
-    $cmp = new component_dsp_old($usr);
+    $cmp = new component($usr);
     $cmp->type_id = $component_types->id(component_type::TEXT);
     $cmp->set_id(1);
     $cmp->set_name(view_api::TN_READ_NESN_2016);

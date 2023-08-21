@@ -30,12 +30,13 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
-use cfg\component\component_dsp_old;
+use cfg\component\component;
 use cfg\user;
 use cfg\word;
 use controller\controller;
 use html\html_base;
 use html\view\view_dsp_old;
+use html\component\component as component_dsp;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . '/../';
@@ -66,7 +67,7 @@ if ($usr->id() > 0) {
         $dsp = new view_dsp_old($usr);
 
         // create the view component object to apply the user changes to it
-        $cmp = new component_dsp_old($usr);
+        $cmp = new component($usr);
         $result .= $cmp->load_by_id($_GET[controller::URL_VAR_ID]);
 
         // get the word used as a sample to illustrate the changes
@@ -147,7 +148,8 @@ if ($usr->id() > 0) {
             }
 
             // show the word and its relations, so that the user can change it
-            $result .= $cmp->dsp_edit($add_link, $wrd, $back);
+            $cmp_dsp = new component_dsp($cmp->api_json());
+            $result .= $cmp_dsp->dsp_edit($add_link, $wrd, $back);
         }
     }
 }

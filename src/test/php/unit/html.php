@@ -53,6 +53,7 @@ use html\html_selector;
 use html\msg;
 use html\result\result as result_dsp;
 use html\result\result_list as result_list_dsp;
+use html\component\component as component_dsp;
 
 class html_unit_tests
 {
@@ -203,7 +204,8 @@ class html_unit_tests
 
         $cmp = new component($usr);
         $cmp->set(1, component_api::TN_ADD, component_type::TEXT);
-        $t->html_test($cmp->dsp_obj()->html(), 'component_text', $t);
+        $cmp_dsp = new component_dsp($cmp->api_json());
+        $t->html_test($cmp_dsp->html(), 'component_text', $t);
 
         $wrd = new \api\word_api();
         $wrd->set_name(word_api::TN_ADD);
