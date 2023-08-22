@@ -1274,8 +1274,8 @@ class result extends sandbox_value
         $frm->load_by_id($this->frm->id(), formula::class);
         $frm_html = new formula_dsp($frm->api_json());
         $result .= ' based on</br>' . $frm_html->display_linked($back);
-        $result .= ' ' . $frm->dsp_text($back) . "\n";
-        $result .= ' ' . $frm->btn_edit($back) . "\n";
+        $result .= ' ' . $frm_html->dsp_text($back) . "\n";
+        $result .= ' ' . $frm_html->btn_edit($back) . "\n";
         $result .= '</br></br>' . "\n";
 
         // load the formula element groups

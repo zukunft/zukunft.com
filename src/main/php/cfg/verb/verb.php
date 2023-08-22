@@ -332,16 +332,6 @@ class verb extends db_object
         return $this->api_obj()->get_json();
     }
 
-    /**
-     * @return verb_dsp the verb frontend api object
-     */
-    function dsp_obj(): verb_dsp
-    {
-        $dsp_obj = new verb_dsp();
-        $dsp_obj->set_id($this->id());
-        $dsp_obj->set_name($this->name());
-        return $dsp_obj;
-    }
 
     /*
      * load

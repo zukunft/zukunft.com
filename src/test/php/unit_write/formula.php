@@ -225,7 +225,6 @@ class formula_test
 
         // test the formula display functions
         $frm = $t->load_formula(formula_api::TN_ADD);
-        $frm_dsp = $frm->dsp_obj_old();
         $frm_html = new formula_dsp($frm->api_json());
         $exp = $frm->expression();
         $result = $exp->dsp_id();
@@ -238,7 +237,7 @@ class formula_test
         $t->display('formula->name for ' . $frm->dsp_id(), $target, $result);
 
         // ... in HTML format
-        $result = $frm_dsp->dsp_text($back);
+        $result = $frm_html->dsp_text($back);
         $target = '"percent" = ( <a href="/http/formula_edit.php?id=' . $frm_this->id() . '&back=0" title="this">this</a> - <a href="/http/formula_edit.php?id=' . $frm_prior->id() . '&back=0" title=<a href="/http/formula_edit.php?id=20&back=0" title="prior">prior</a>>prior</a> ) / <a href="/http/formula_edit.php?id=20&back=0" title=<a href="/http/formula_edit.php?id=' . $frm_prior->id() . '&back=0" title="prior">prior</a>>prior</a>';
         $t->display('formula->dsp_text for ' . $frm->dsp_id(), $target, $result);
 
@@ -268,11 +267,11 @@ class formula_test
         $page = 1;
         $size = 20;
         $call = '/http/test.php';
-        $result = $frm_dsp->dsp_hist($page, $size, $call, $back);
+        $result = $frm_html->dsp_hist($page, $size, $call, $back);
         $target = 'changed to';
         $t->dsp_contains(', formula->dsp_hist for ' . $frm->dsp_id() . '', $target, $result);
 
-        $result = $frm_dsp->dsp_hist_links($page, $size, $call, $back);
+        $result = $frm_html->dsp_hist_links($page, $size, $call, $back);
         // TODO fix it
         //$target = 'link';
         $target = 'table';
@@ -280,7 +279,7 @@ class formula_test
         $t->dsp_contains(', formula->dsp_hist_links for ' . $frm->dsp_id() . '', $target, $result);
 
         $add = 0;
-        $result = $frm_dsp->dsp_edit($add, $wrd, $back);
+        $result = $frm_html->dsp_edit($add, $wrd, $back);
         $target = 'Formula "System Test Formula"';
         //$result = $edit_page;
         $t->dsp_contains(', formula->dsp_edit for ' . $frm->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
@@ -549,5 +548,6 @@ class formula_test
         $frm->set_excluded(true);
         $frm->save();
     }
+
 
 }

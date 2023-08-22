@@ -90,8 +90,9 @@ class formula_link_test
                 log_err('unexpected class in formula link test');
             }
         }
-        $target = $frm->dsp_obj_old()->name();
-        $t->display('formula_link->load by formula id and link id "' . $frm->dsp_obj_old()->name(), $target, $result);
+        $frm_html = new formula_dsp($frm->api_json());
+        $target = $frm_html->name();
+        $t->display('formula_link->load by formula id and link id "' . $frm_html->name(), $target, $result);
 
         $result = '';
         if ($frm_lnk2->tob != null) {

@@ -48,6 +48,7 @@ use api\triple_list_api;
 use cfg\db\sql_creator;
 use cfg\db\sql_par_type;
 use html\html_base;
+use html\word\triple as triple_dsp;
 use html\word\triple_list as triple_list_dsp;
 
 class triple_list extends sandbox_list
@@ -106,18 +107,6 @@ class triple_list extends sandbox_list
     function api_json(): string
     {
         return $this->api_obj()->get_json();
-    }
-
-    /**
-     * @return triple_list the triple list object with the display interface functions
-     */
-    function dsp_obj(): triple_list
-    {
-        $dsp_obj = new triple_list($this->usr);
-        foreach ($this->lst as $wrd) {
-            $dsp_obj->add($wrd->dsp_obj());
-        }
-        return $dsp_obj;
     }
 
 
@@ -596,7 +585,9 @@ class triple_list extends sandbox_list
 
                         // display the link type
                         if ($lnk->verb->id() == $next_lnk->verb->id()) {
-                            $result .= $this->wrd->plural;
+                            if ($this->wrd != null) {
+                                $result .= $this->wrd->plural;
+                            }
                             if ($this->direction == foaf_direction::DOWN) {
                                 $result .= " " . $lnk->verb->rev_plural;
                             } else {
@@ -624,7 +615,8 @@ class triple_list extends sandbox_list
                             $dsp_obj = $lnk->tob->get_dsp_obj();
                             $result .= $dsp_obj->dsp_tbl_cell(0);
                         }
-                        $result .= $lnk->dsp_obj()->btn_edit($lnk->fob->dsp_obj());
+                        $lnk_dsp = new triple_dsp($lnk->api_json());
+                        $result .= $lnk_dsp->btn_edit($lnk->fob->dsp_obj());
                         if ($lnk->fob != null) {
                             $dsp_obj = $lnk->fob->get_dsp_obj();
                             $result .= $dsp_obj->dsp_unlink($lnk->id());

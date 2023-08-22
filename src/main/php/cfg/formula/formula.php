@@ -377,32 +377,6 @@ class formula extends sandbox_typed
         return $this->api_obj()->get_json();
     }
 
-    /**
-     * @return formula_dsp_old the formula object with the display interface functions
-     */
-    function dsp_obj_old(): object
-    {
-        $dsp_obj = new formula_dsp_old($this->user());
-
-        $dsp_obj->id = $this->id;
-        $dsp_obj->name = $this->name();
-
-        $dsp_obj->ref_text = $this->ref_text;
-        $dsp_obj->usr_text = $this->usr_text;
-        $dsp_obj->description = $this->description;
-        $dsp_obj->type_id = $this->type_id;
-        $dsp_obj->need_all_val = $this->need_all_val;
-        $dsp_obj->last_update = $this->last_update;
-
-        $dsp_obj->type_cl = $this->type_cl;
-        $dsp_obj->name_wrd = $this->name_wrd;
-
-        $dsp_obj->needs_res_upd = $this->needs_res_upd;
-        $dsp_obj->ref_text_r = $this->ref_text_r;
-
-        return $dsp_obj;
-    }
-
 
     /*
      * loading

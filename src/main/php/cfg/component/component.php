@@ -205,22 +205,6 @@ class component extends sandbox_typed
         return $this->api_obj()->get_json();
     }
 
-    /**
-     * @return component_dsp the view component object with the html creation functions
-     */
-    function dsp_obj(): object
-    {
-        global $component_types;
-
-        $dsp_obj = new component_dsp();
-
-        parent::fill_dsp_obj($dsp_obj);
-
-        $dsp_obj->set_type_id($this->type_id);
-        //$dsp_obj->set_type($component_types->get_by_id($this->type_id)->code_id());
-
-        return $dsp_obj;
-    }
 
     /*
      * database mapper
@@ -540,15 +524,6 @@ class component extends sandbox_typed
         return $result;
     }
 
-    /**
-     * return the html code to display a view name with the link
-     */
-    function name_linked(string $back = ''): string
-    {
-
-        return '<a href="/http/component_edit.php?id=' . $this->id . '&back=' . $back . '">' . $this->name . '</a>';
-    }
-
 
     /*
      * im- and export
@@ -651,7 +626,7 @@ class component extends sandbox_typed
         return $this->name;
     }
 
-// not used at the moment
+    // not used at the moment
     /*  private function link_type_name() {
         if ($this->type_id > 0) {
           $sql = "SELECT type_name
@@ -729,7 +704,7 @@ class component extends sandbox_typed
         return $result;
     }
 
-// link a view component to a view
+    // link a view component to a view
     function link($dsp, $order_nbr): string
     {
         log_debug($this->dsp_id() . ' to ' . $dsp->dsp_id() . ' at pos ' . $order_nbr);

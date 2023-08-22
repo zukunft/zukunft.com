@@ -65,5 +65,4 @@ class user extends user_api
         return $result;
     }
 
-
 }

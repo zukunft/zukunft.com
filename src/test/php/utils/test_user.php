@@ -35,6 +35,7 @@
 // -----------------------------------------------
 
 use cfg\user;
+use html\user\user as user_dsp;
 use test\test_cleanup;
 
 function run_user_test(test_cleanup $t): void
@@ -47,7 +48,8 @@ function run_user_test(test_cleanup $t): void
     // test the user display after the word changes to have a sample case
     $t->header('Test the user display class (classes/user_display.php)');
 
-    $result = $usr->dsp_obj()->form_edit($back);
+    $usr_dsp = new user_dsp($usr->api_json());
+    $result = $usr_dsp->form_edit($back);
     $target = user::SYSTEM_TEST_NAME;
     $t->dsp_contains(', user_display->dsp_edit', $target, $result);
 

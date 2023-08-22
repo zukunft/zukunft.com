@@ -745,7 +745,7 @@ class phrase extends combine_named
     {
         $result = false;
         if (isset($this->obj)) {
-            if (get_class($this->obj) == formula::class or get_class($this->obj) == formula_dsp_old::class) {
+            if (get_class($this->obj) == formula::class) {
                 $result = true;
             }
         } else {

@@ -492,23 +492,6 @@ class triple extends sandbox_link_typed implements JsonSerializable
         return $this->api_obj()->get_json();
     }
 
-    /**
-     * @return triple_dsp the triple object with the display interface functions
-     */
-    function dsp_obj(): object
-    {
-        $dsp_obj = new triple_dsp();
-
-        parent::fill_dsp_obj($dsp_obj);
-
-        $dsp_obj->set_name($this->name);
-        $dsp_obj->set_verb($this->verb->dsp_obj());
-
-        $dsp_obj->set_type_id($this->type_id);
-
-        return $dsp_obj;
-    }
-
 
     /*
      * set and get
