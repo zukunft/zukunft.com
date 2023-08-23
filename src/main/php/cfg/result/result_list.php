@@ -38,6 +38,7 @@ include_once API_RESULT_PATH . 'result_list.php';
 use api\result_list_api;
 use cfg\db\sql_par_type;
 use Exception;
+use html\formula\formula as formula_dsp;
 use formula\formula_dsp_old;
 use html\html_base;
 use html\phrase\phrase_list as phrase_list_dsp;
@@ -109,7 +110,9 @@ class result_list extends sandbox_list
         $qp = new sql_par(self::class);
         $sql_by = '';
         if ($obj->id() > 0) {
-            if (get_class($obj) == formula::class or get_class($obj) == formula_dsp_old::class) {
+            if (get_class($obj) == formula::class
+                or get_class($obj) == formula_dsp::class
+                or get_class($obj) == formula_dsp_old::class) {
                 $sql_by .= formula::FLD_ID;
             } elseif (get_class($obj) == phrase_group::class) {
                 if ($by_source) {

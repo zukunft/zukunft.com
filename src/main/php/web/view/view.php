@@ -40,6 +40,7 @@ include_once WEB_WORD_PATH . 'word.php';
 use api\api;
 use api\component\component_api;
 use cfg\library;
+use html\component\component;
 use html\component\component_old;
 use html\component\component_list as component_list_dsp;
 use controller\controller;
@@ -474,12 +475,15 @@ class view extends sandbox_typed_dsp
         $result = '';
         switch ($this->code_id) {
             case controller::DSP_COMPONENT_ADD:
-                $cmp = new component_old(0);
-                $result = $cmp->form_edit('', '', '', '', '');
+                $cmp = new component();
+                $cmp->set_id(0);
+                $result = $cmp->form_edit_new('', '', '', '', '');
                 break;
             case controller::DSP_COMPONENT_EDIT:
-                $cmp = new component_old(1, component_api::TN_READ);
-                $result = $cmp->form_edit('', '', '', '', '');
+                $cmp = new component();
+                $cmp->set_id(1);
+                $cmp->set_name(component_api::TN_READ);
+                $result = $cmp->form_edit_new('', '', '', '', '');
                 break;
             case controller::DSP_COMPONENT_DEL:
                 // TODO fill

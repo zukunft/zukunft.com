@@ -34,7 +34,6 @@
 namespace cfg\component;
 
 include_once DB_PATH . 'sql_par_type.php';
-include_once WEB_COMPONENT_PATH . 'component_old.php';
 
 use api\component\component_api;
 use cfg\change_log_action;

@@ -54,12 +54,19 @@ use html\word\word as word_dsp;
 class component extends sandbox_typed_dsp
 {
 
+    const FORM_ADD = 'component_add';
+    const FORM_EDIT = 'component_edit';
+
     /*
      * object vars
      */
 
     public ?string $code_id = null;         // the entry type code id
 
+    // mainly for table components
+    public ?phrase_dsp $phr_row = null;     // the main phrase to select the table rows
+    public ?phrase_dsp $phr_col = null;     // the phrase to select the main table columns
+    public ?phrase_dsp $wrd_col2 = null;    // the phrase to select the sub table columns
 
     /*
      * display
@@ -512,6 +519,55 @@ class component extends sandbox_typed_dsp
 
         return $result;
     }
+
+    /**
+     * HTML code to edit all component fields
+     * @param string $dsp_type the html code to display the type selector
+     * @param string $phr_row the html code to select the phrase for the row
+     * @param string $phr_col the html code to select the phrase for the column
+     * @param string $phr_cols the html code to select the phrase for the second column
+     * @param string $dsp_log the html code of the change log
+     * @param string $back the html code to be opened in case of a back action
+     * @return string the html code to display the edit page
+     */
+    function form_edit_new(
+        string $dsp_type,
+        string $phr_row,
+        string $phr_col,
+        string $phr_cols,
+        string $dsp_log,
+        string $back = ''): string
+    {
+        $html = new html_base();
+        $result = '';
+
+        $hidden_fields = '';
+        if ($this->id <= 0) {
+            $script = self::FORM_ADD;
+            $fld_ext = '_add';
+            $header = $html->text_h2('Create a view element');
+        } else {
+            $script = self::FORM_EDIT;
+            $fld_ext = '';
+            $header = $html->text_h2('Change "' . $this->name . '"');
+            $hidden_fields .= $html->form_hidden("id", $this->id);
+        }
+        $hidden_fields .= $html->form_hidden("back", $back);
+        $hidden_fields .= $html->form_hidden("confirm", '1');
+        $detail_fields = $html->form_text("name" . $fld_ext, $this->name(), "Name");
+        $detail_fields .= $html->form_text("description" . $fld_ext, $this->description, "Description");
+        $detail_fields .= $dsp_type;
+        $detail_row = $html->fr($detail_fields) . '<br>';
+        $result = $header
+            . $html->form($script, $hidden_fields . $detail_row)
+            . '<br>';
+
+        $result .= $dsp_log;
+
+        return $result;
+    }
+
+
     /**
      * @returns string the html code to display this view component
      */
@@ -558,20 +614,22 @@ class component extends sandbox_typed_dsp
     // display the component word_row selector
     private function dsp_word_row_selector($script, $class): string
     {
+        global $usr;
         $result = '';
         $sel = new html_selector;
         $sel->form = $script;
         $sel->dummy_text = 'not set';
         $sel->name = 'word_row';
-        if ($this->wrd_row != null) {
-            $phr_dsp = new word_dsp($this->wrd_row->api_json());
+        if ($this->phr_row != null) {
+            //$phr_dsp = new word_dsp($this->phr_row->api_json());
+            $phr_dsp = $this->phr_row;
             $sel->label = "Rows taken from " . $phr_dsp->display_linked() . ":";
         } else {
             $sel->label = "Take rows from:";
         }
         $sel->bs_class = $class;
-        $sel->sql = sql_lst_usr("word", $this->user());
-        $sel->selected = $this->word_id_row;
+        $sel->sql = sql_lst_usr("word", $usr);
+        $sel->selected = $this->phr_row->id();
         $result .= $sel->display_old() . ' ';
         return $result;
     }
@@ -579,20 +637,22 @@ class component extends sandbox_typed_dsp
     // display the component word_col selector
     private function dsp_word_col_selector($script, $class): string
     {
+        global $usr;
         $result = '';
         $sel = new html_selector;
         $sel->form = $script;
         $sel->dummy_text = 'not set';
         $sel->name = 'word_col';
-        if (isset($this->wrd_col)) {
-            $phr_dsp = new word_dsp($this->wrd_col->api_json());
+        if (isset($this->phr_col)) {
+            //$phr_dsp = new word_dsp($this->phr_col->api_json());
+            $phr_dsp = $this->phr_col;
             $sel->label = "Columns taken from " . $phr_dsp->display_linked() . ":";
         } else {
             $sel->label = "Take columns from:";
         }
         $sel->bs_class = $class;
-        $sel->sql = sql_lst_usr("word", $this->user());
-        $sel->selected = $this->word_id_col;
+        $sel->sql = sql_lst_usr("word", $usr);
+        $sel->selected = $this->phr_col->id();
         $result .= $sel->display_old() . ' ';
         return $result;
     }
@@ -602,8 +662,9 @@ class component extends sandbox_typed_dsp
      */
     private function linked_views($add_link, $wrd, $back): string
     {
-        log_debug("id " . $this->id . " and user " . $this->user()->id() . " (word " . $wrd->id . ", add " . $add_link . ").");
+        log_debug("id " . $this->id . " (word " . $wrd->id . ", add " . $add_link . ").");
 
+        global $usr;
         global $db_con;
         $html = new html_base();
         $result = '';
