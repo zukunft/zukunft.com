@@ -33,7 +33,6 @@
 namespace api;
 
 use cfg\phrase_type;
-use html\batch_job_list_dsp_old;
 use JsonSerializable;
 
 class batch_job_list_api extends list_api implements JsonSerializable
@@ -55,33 +54,6 @@ class batch_job_list_api extends list_api implements JsonSerializable
     function add(batch_job_api $job): bool
     {
         return parent::add_obj($job);
-    }
-
-
-    /*
-     * cast
-     */
-
-    /**
-     * @returns batch_job_list_dsp_old the cast object with the HTML code generating functions
-     */
-    function dsp_obj(): batch_job_list_dsp_old
-    {
-        $dsp_obj = new batch_job_list_dsp_old();
-
-        // cast the single list objects
-        $lst_dsp = array();
-        foreach ($this->lst as $job) {
-            if ($job != null) {
-                $job_dsp = $job->dsp_obj();
-                $lst_dsp[] = $job_dsp;
-            }
-        }
-
-        $dsp_obj->set_lst($lst_dsp);
-        $dsp_obj->set_lst_dirty();
-
-        return $dsp_obj;
     }
 
 

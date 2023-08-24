@@ -110,4 +110,27 @@ class batch_job_list extends list_dsp
         return $html->tbl($result);
     }
 
+    /*
+     * to review
+     */
+
+    /**
+     * show all batch_jobs of the list as table row (ex display)
+     * @param string $back the back trace url for the undo functionality
+     * @return string the html code with all batch_jobs of the list
+     */
+    function tbl(string $back = ''): string
+    {
+        $html = new html_base();
+        $cols = '';
+        // TODO check if and why the next line makes sense
+        // $cols = $html->td('');
+        foreach ($this->lst as $wrd) {
+            $lnk = $wrd->dsp_obj()->display_linked($back);
+            $cols .= $html->td($lnk);
+        }
+        return $html->tbl($html->tr($cols), html_base::STYLE_BORDERLESS);
+    }
+
+
 }
