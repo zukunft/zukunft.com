@@ -40,6 +40,7 @@ use DateTime;
 use DateTimeInterface;
 use Exception;
 use api\api;
+use html\api as api_dsp;
 use html\sandbox\db_object as db_object_dsp;
 use html\html_base;
 
@@ -271,5 +272,52 @@ class batch_job extends db_object_dsp
         $vars[api::FLD_PRIORITY] = $this->priority();
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
+
+    /*
+     * to review
+     */
+
+    /**
+     * display a batch_job with a link to the main page for the batch_job
+     * @param string|null $back the back trace url for the undo functionality
+     * @param string $style the CSS style that should be used
+     * @returns string the html code
+     */
+    function display_linked(?string $back = '', string $style = ''): string
+    {
+        $html = new html_base();
+        $url = $html->url(\html\api::VIEW, $this->id, $back, api_dsp::PAR_VIEW_WORDS);
+        return $html->ref($url, $this->name(), $this->description(), $style);
+    }
+
+    /**
+     * @param string $back the back trace url for the undo functionality
+     * @param string $style the CSS style that should be used
+     * @returns string the batch_job as a table cell
+     */
+    function td(string $back = '', string $style = '', int $intent = 0): string
+    {
+        $cell_text = $this->display_linked($back, $style);
+        return (new html_base)->td($cell_text, $intent);
+    }
+
+    /**
+     * @param string $back the back trace url for the undo functionality
+     * @param string $style the CSS style that should be used
+     * @returns string the batch_job as a table cell
+     */
+    function th(string $back = '', string $style = ''): string
+    {
+        return (new html_base)->th($this->display_linked($back, $style));
+    }
+
+    /**
+     * @return string the html code for a table row with the batch_job
+     */
+    function tr(): string
+    {
+        return (new html_base())->tr($this->td());
+    }
+
 
 }
