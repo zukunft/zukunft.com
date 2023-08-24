@@ -35,6 +35,7 @@
 use controller\controller;
 use html\html_base;
 use html\view\view_dsp_old;
+use html\ref\source as source_dsp;
 use cfg\source;
 use cfg\user;
 use cfg\view;
@@ -124,7 +125,8 @@ if ($usr->id() > 0) {
         $result .= $html->dsp_err($msg);
 
         // display the add source view
-        $result .= $src->dsp_obj()->dsp_edit($back);
+        $scr_dsp = new source_dsp($src->api_json());
+        $result .= $scr_dsp->dsp_edit($back);
     }
 }
 

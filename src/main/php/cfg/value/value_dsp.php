@@ -35,6 +35,7 @@ namespace cfg;
 use html\api;
 use html\html_base;
 use html\word\word as word_dsp;
+use html\ref\source as source_dsp;
 
 class value_dsp_old extends value
 {
@@ -602,7 +603,8 @@ class value_dsp_old extends value
         log_debug('load source');
         $src = $this->load_source();
         if (isset($src)) {
-            $result .= $src->dsp_obj()->dsp_select($script, $back);
+            $scr_dsp = new source_dsp($src->api_json());
+            $result .= $scr_dsp->dsp_select($script, $back);
             $result .= '<br><br>';
         }
 

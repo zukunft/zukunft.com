@@ -35,6 +35,7 @@ use controller\controller;
 use api\api;
 use html\api as api_dsp;
 use html\html_base;
+use html\html_selector;
 use html\sandbox_typed_dsp;
 
 class source extends sandbox_typed_dsp
@@ -111,6 +112,82 @@ class source extends sandbox_typed_dsp
         $html = new html_base();
         $url = $html->url(api_dsp::SOURCE, $this->id, $back, api_dsp::PAR_VIEW_SOURCES);
         return $html->ref($url, $this->name(), $this->name(), $style);
+    }
+
+    /*
+     * to review
+     */
+
+    // display a html view to change the source name and url
+    function dsp_edit(string $back = ''): string
+    {
+        log_debug($this->dsp_id());
+        $html = new html_base();
+        $result = '';
+
+        if ($this->id <= 0) {
+            $script = "source_add";
+            $result .= $html->dsp_text_h2("Add source");
+        } else {
+            $script = "source_edit";
+            $result .= $html->dsp_text_h2('Edit source "' . $this->name . '"');
+        }
+        $result .= $html->dsp_form_start($script);
+        //$result .= dsp_tbl_start();
+        $result .= $html->dsp_form_hidden("id", $this->id);
+        $result .= $html->dsp_form_hidden("back", $back);
+        $result .= $html->dsp_form_hidden("confirm", 1);
+        $result .= $html->dsp_form_fld("name", $this->name, "Source name:");
+        $result .= '<tr><td>type   </td><td>' . $this->dsp_select_type($script, $back) . '</td></tr>';
+        $result .= $html->dsp_form_fld("url", $this->url, "URL:");
+        $result .= $html->dsp_form_fld("comment", $this->description, "Comment:");
+        //$result .= dsp_tbl_end ();
+        $result .= $html->dsp_form_end('', $back);
+
+        log_debug('done');
+        return $result;
+    }
+
+    // display a selector for the source type
+    private function dsp_select_type($form_name, $back): string
+    {
+        log_debug("source->dsp_select_type (" . $this->id . "," . $form_name . ",b" . $back . ")");
+
+        $result = ''; // reset the html code var
+
+        $sel = new html_selector;
+        $sel->form = $form_name;
+        $sel->name = "source_type";
+        $sel->sql = sql_lst("source_type");
+        $sel->selected = $this->type_id();
+        $sel->dummy_text = 'please select the source type';
+        $result .= $sel->display_old();
+        return $result;
+    }
+
+    // display a selector for the value source
+    function dsp_select($form_name, $back): string
+    {
+        global $usr;
+        log_debug($this->dsp_id());
+        $result = ''; // reset the html code var
+
+        // for new values assume the last source used, but not for existing values to enable only changing the value, but not setting the source
+        if ($this->id <= 0 and $form_name == "value_add") {
+            $this->id = $usr->source_id;
+        }
+
+        log_debug("source id used (" . $this->id . ")");
+        $sel = new html_selector;
+        $sel->form = $form_name;
+        $sel->name = "source";
+        $sel->sql = sql_lst_usr("source", $usr);
+        $sel->selected = $this->id;
+        $sel->dummy_text = 'please define the source';
+        $result .= '      taken from ' . $sel->display_old() . ' ';
+        $result .= '    <td>' . \html\btn_edit("Rename " . $this->name, '/http/source_edit.php?id=' . $this->id . '&back=' . $back) . '</td>';
+        $result .= '    <td>' . \html\btn_add("Add new source", '/http/source_add.php?back=' . $back) . '</td>';
+        return $result;
     }
 
 }
