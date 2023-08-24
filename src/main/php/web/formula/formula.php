@@ -39,7 +39,9 @@ include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
 use cfg\expression;
 use cfg\formula_link_list;
 use cfg\library;
+use cfg\phrase;
 use cfg\phrase_list;
+use cfg\result;
 use cfg\result_list;
 use cfg\term_list;
 use controller\controller;
@@ -51,6 +53,7 @@ use html\html_selector;
 use html\log\user_log_display;
 use html\msg;
 use html\phrase\term as term_dsp;
+use html\result\result as result_dsp;
 use html\sandbox_typed_dsp;
 use html\word\word as word_dsp;
 
@@ -541,6 +544,23 @@ class formula extends sandbox_typed_dsp
         $result .= (new button($url, $back))->del(msg::FORMULA_UNLINK);
         $result .= '    </td>' . "\n";
         return $result;
+    }
+
+    /*
+     * to review
+     */
+
+    /**
+     * display the most interesting formula result for one word
+     * TODO define the criteria and review the result loading
+     */
+    function dsp_result(phrase $phr, $back): string
+    {
+        log_debug('for "' . $phr->name() . '" and formula ' . $this->dsp_id());
+        $res = new result($this->user());
+        $res->load_by_formula_and_group_list($this, $phr->groups());
+        $dsp_res = new result_dsp($res->api_json());
+        return $dsp_res->display($back);
     }
 
 

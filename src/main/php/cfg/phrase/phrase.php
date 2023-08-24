@@ -63,8 +63,6 @@ include_once MODEL_PHRASE_PATH . 'phrase.php';
 use api\api;
 use api\phrase_api;
 use cfg\db\sql_creator;
-use controller\controller;
-use formula\formula_dsp_old;
 use html\html_selector;
 use html\phrase\phrase as phrase_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;

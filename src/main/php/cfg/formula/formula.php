@@ -56,8 +56,6 @@ use model\export\exp_obj;
 use model\export\formula_exp;
 use DateTime;
 use Exception;
-use formula\formula_dsp_old;
-use html\formula\formula as formula_dsp;
 use html\word\word as word_dsp;
 use math;
 

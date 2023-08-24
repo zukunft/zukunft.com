@@ -46,7 +46,7 @@ include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_PHRASE_PATH . 'term.php';
 include_once MODEL_COMPONENT_PATH . 'component.php';
 include_once MODEL_COMPONENT_PATH . 'component_list.php';
-include_once WEB_FORMULA_PATH . 'formula_dsp_old.php';
+include_once WEB_FORMULA_PATH . 'formula_dsp.php';
 include_once WEB_VIEW_PATH . 'view_dsp_old.php';
 
 use api\api;

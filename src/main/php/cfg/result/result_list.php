@@ -39,7 +39,6 @@ use api\result_list_api;
 use cfg\db\sql_par_type;
 use Exception;
 use html\formula\formula as formula_dsp;
-use formula\formula_dsp_old;
 use html\html_base;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\system\back_trace;
@@ -111,8 +110,7 @@ class result_list extends sandbox_list
         $sql_by = '';
         if ($obj->id() > 0) {
             if (get_class($obj) == formula::class
-                or get_class($obj) == formula_dsp::class
-                or get_class($obj) == formula_dsp_old::class) {
+                or get_class($obj) == formula_dsp::class) {
                 $sql_by .= formula::FLD_ID;
             } elseif (get_class($obj) == phrase_group::class) {
                 if ($by_source) {
@@ -137,7 +135,7 @@ class result_list extends sandbox_list
             $db_con->set_fields(result::FLD_NAMES);
             $db_con->set_usr($this->user()->id());
             if ($obj->id() > 0) {
-                if (get_class($obj) == formula::class or get_class($obj) == formula_dsp_old::class) {
+                if (get_class($obj) == formula::class) {
                     $db_con->add_par(sql_par_type::INT, $obj->id());
                     $qp->sql = $db_con->select_by_field_list(array(formula::FLD_ID));
                 } elseif (get_class($obj) == phrase_group::class) {
