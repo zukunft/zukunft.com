@@ -34,7 +34,7 @@
 
 use controller\controller;
 use html\html_base;
-use html\view\view_dsp_old;
+use html\view\view as view_dsp;
 use cfg\term;
 use cfg\user;
 use cfg\verb;
@@ -61,8 +61,8 @@ if ($usr->id() > 0) {
     $usr->load_usr_data();
 
     // prepare the display
-    $dsp = new view_dsp_old($usr);
-    $dsp->load_by_code_id(controller::DSP_VERB_ADD);
+    $msk = new view($usr);
+    $msk->load_by_code_id(controller::DSP_VERB_ADD);
     $back = $_GET[controller::API_BACK]; // the calling word which should be displayed after saving
 
     if (!$usr->is_admin()) {
@@ -121,7 +121,8 @@ if ($usr->id() > 0) {
         // if nothing yet done display the add view (and any message on the top)
         if ($result == '') {
             // show the header
-            $result .= $dsp->dsp_navbar($back);
+            $msk_dsp = new view_dsp($msk->api_json());
+            $result .= $msk_dsp->dsp_navbar($back);
             $result .= $html->dsp_err($msg);
 
             // get the form to add a new verb

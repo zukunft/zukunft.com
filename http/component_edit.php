@@ -32,10 +32,11 @@
 // standard zukunft header for callable php files to allow debugging and lib loading
 use cfg\component\component;
 use cfg\user;
+use cfg\view;
 use cfg\word;
 use controller\controller;
 use html\html_base;
-use html\view\view_dsp_old;
+use html\view\view as view_dsp;
 use html\component\component as component_dsp;
 
 $debug = $_GET['debug'] ?? 0;
@@ -64,7 +65,7 @@ if ($usr->id() > 0) {
         log_info("The view component id must be set to display a view.", "component_edit.php", '', (new Exception)->getTraceAsString(), $usr);
     } else {
         // init the display object to show the standard elements such as the header
-        $dsp = new view_dsp_old($usr);
+        $msk = new view($usr);
 
         // create the view component object to apply the user changes to it
         $cmp = new component($usr);
@@ -85,7 +86,7 @@ if ($usr->id() > 0) {
         // link or unlink a view
         $dsp_link_id = $_GET['link_view'];    // to link the view component to another view
         if ($dsp_link_id > 0) {
-            $dsp_link = new view_dsp_old($usr);
+            $dsp_link = new view($usr);
             $result .= $dsp_link->load_by_id($dsp_link_id);
             $order_nbr = $cmp->next_nbr($dsp_link_id);
             $upd_result = $cmp->link($dsp_link, $order_nbr);
@@ -93,7 +94,7 @@ if ($usr->id() > 0) {
 
         $dsp_unlink_id = $_GET['unlink_view'];  // to unlink a view component from the view
         if ($dsp_unlink_id > 0) {
-            $dsp_unlink = new view_dsp_old($usr);
+            $dsp_unlink = new view($usr);
             $result .= $dsp_unlink->load_by_id($dsp_unlink_id);
             $upd_result .= $cmp->unlink($dsp_unlink);
         }
@@ -138,7 +139,8 @@ if ($usr->id() > 0) {
         // if nothing yet done display the add view (and any message on the top)
         if ($result == '') {
             // in view edit views the view cannot be changed
-            $result .= $dsp->dsp_navbar_no_view($wrd->id());
+            $msk_dsp = new view_dsp($msk->api_json());
+            $result .= $msk_dsp->dsp_navbar_no_view($wrd->id());
             $result .= $html->dsp_err($msg);
 
             // if the user has requested to use this display component also in another view, $add_link is greater than 0

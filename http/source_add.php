@@ -34,7 +34,7 @@
 
 use controller\controller;
 use html\html_base;
-use html\view\view_dsp_old;
+use html\view\view as view_dsp;
 use html\ref\source as source_dsp;
 use cfg\source;
 use cfg\user;
@@ -65,8 +65,8 @@ if ($usr->id() > 0) {
     $usr->load_usr_data();
 
     // prepare the display
-    $dsp = new view_dsp_old($usr);
-    $dsp->load_by_id($system_views->id(controller::DSP_SOURCE_ADD));
+    $msk = new view($usr);
+    $msk->load_by_id($system_views->id(controller::DSP_SOURCE_ADD));
     $back = $_GET[controller::API_BACK];      // the calling word which should be displayed after saving
 
     // create the object to store the parameters so that if the add form is shown again it is already filled
@@ -121,7 +121,8 @@ if ($usr->id() > 0) {
     // if nothing yet done display the add view (and any message on the top)
     if ($result == '') {
         // display the add view again
-        $result .= $dsp->dsp_navbar($back);
+        $msk_dsp = new view_dsp($msk->api_json());
+        $result .= $msk_dsp->dsp_navbar($back);
         $result .= $html->dsp_err($msg);
 
         // display the add source view

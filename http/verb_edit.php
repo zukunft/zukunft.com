@@ -32,7 +32,7 @@
 // standard zukunft header for callable php files to allow debugging and lib loading
 use controller\controller;
 use html\html_base;
-use html\view\view_dsp_old;
+use html\view\view as view_dsp;
 use cfg\user;
 use cfg\verb;
 use cfg\view;
@@ -58,8 +58,8 @@ if ($usr->id() > 0) {
     $usr->load_usr_data();
 
     // prepare the display
-    $dsp = new view_dsp_old($usr);
-    $dsp->load_by_code_id(controller::DSP_VERB_EDIT);
+    $msk = new view($usr);
+    $msk->load_by_code_id(controller::DSP_VERB_EDIT);
     $back = $_GET[controller::API_BACK]; // the original calling page that should be shown after the change is finished
 
     // create the verb object to have an place to update the parameters
@@ -108,7 +108,8 @@ if ($usr->id() > 0) {
         // if nothing yet done display the add view (and any message on the top)
         if ($result == '') {
             // show the header
-            $result .= $dsp->dsp_navbar($back);
+            $msk_dsp = new view_dsp($msk->api_json());
+            $result .= $msk_dsp->dsp_navbar($back);
             $result .= $html->dsp_err($msg);
 
             // show the verb and its relations, so that the user can change it

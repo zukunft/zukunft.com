@@ -33,7 +33,7 @@
 // standard zukunft header for callable php files to allow debugging and lib loading
 use cfg\verb_list;
 use controller\controller;
-use html\view\view_dsp_old;
+use html\view\view as view_dsp;
 use cfg\user;
 use cfg\view;
 
@@ -59,11 +59,12 @@ if ($usr->id() > 0) {
     $usr->load_usr_data();
 
     // prepare the display
-    $dsp = new view_dsp_old($usr);
-    $dsp->load_by_code_id(controller::DSP_VERBS);
+    $msk = new view($usr);
+    $msk->load_by_code_id(controller::DSP_VERBS);
 
     // show the header
-    $result .= $dsp->dsp_navbar($back);
+    $msk_dsp = new view_dsp($msk->api_json());
+    $result .= $msk_dsp->dsp_navbar($back);
 
     // display the verb list
     $result .= $html->dsp_text_h2("Word link types");

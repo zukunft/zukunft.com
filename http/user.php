@@ -42,7 +42,7 @@ use cfg\view;
 use cfg\word;
 use controller\controller;
 use html\html_base;
-use html\view\view_dsp_old;
+use html\view\view as view_dsp;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . '/../';
@@ -81,8 +81,8 @@ if ($usr->id() > 0) {
     $usr->load_usr_data();
 
     // prepare the display
-    $dsp = new view_dsp_old($usr);
-    $dsp->load_by_code_id(controller::DSP_USER);
+    $msk = new view($usr);
+    $msk->load_by_code_id(controller::DSP_USER);
 
     // do user change
     $result .= $usr->upd_pars($_GET);
@@ -124,9 +124,9 @@ if ($usr->id() > 0) {
 
     // undo user changes for formulas
     if ($undo_dsp > 0) {
-        $dsp = new view($usr);
-        $dsp->set_id($undo_dsp);
-        $dsp->del_usr_cfg();
+        $msk = new view($usr);
+        $msk->set_id($undo_dsp);
+        $msk->del_usr_cfg();
     }
 
     // undo user changes for formulas
@@ -143,7 +143,8 @@ if ($usr->id() > 0) {
         $cmp_lnk->del_usr_cfg();
     }
 
-    $result .= $dsp->dsp_navbar($back);
+    $msk_dsp = new view_dsp($msk->api_json());
+    $result .= $msk_dsp->dsp_navbar($back);
     $result .= $dsp_usr->form_edit($back);
 
     // allow to import data

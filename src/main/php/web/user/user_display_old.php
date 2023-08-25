@@ -48,7 +48,7 @@ use cfg\view;
 use html\html_base;
 use html\log\user_log_display;
 use html\phrase\phrase_list as phrase_list_dsp;
-use html\view\view_dsp_old;
+use html\view\view as view_dsp;
 
 class user_dsp_old extends user
 {
@@ -748,11 +748,11 @@ class user_dsp_old extends user
                 $row_nbr++;
 
                 // create the view objects with the minimal parameter needed
-                $dsp_usr = new view_dsp_old($this);
+                $dsp_usr = new view_dsp($this);
                 $dsp_usr->set_id($sbx_row['id']);
                 $dsp_usr->set_name($sbx_row['usr_name']);
                 $dsp_usr->description = $sbx_row['usr_description'];
-                $dsp_usr->type_id = $sbx_row['usr_type'];
+                $dsp_usr->set_type_id($sbx_row['usr_type']);
                 $dsp_usr->set_excluded($sbx_row['usr_excluded']);
                 $dsp_usr->set_user($this);
 
@@ -764,13 +764,13 @@ class user_dsp_old extends user
                 $dsp_std->set_user($usr_std);
                 $dsp_std->set_name($sbx_row['std_name']);
                 $dsp_std->description = $sbx_row['std_description'];
-                $dsp_std->type_id = $sbx_row['std_type'];
+                $dsp_std->set_type_id($sbx_row['std_type']);
                 $dsp_std->set_excluded($sbx_row['std_excluded']);
 
                 // check database consistency and correct it if needed
                 if ($dsp_usr->set_name($dsp_std->name())
                     and $dsp_usr->description == $dsp_std->description
-                    and $dsp_usr->type_id == $dsp_std->type_id
+                    and $dsp_usr->type_id() == $dsp_std->type_id()
                     and $dsp_usr->is_excluded() == $dsp_std->is_excluded()) {
                     $dsp_usr->del_usr_cfg();
                 } else {
@@ -815,7 +815,7 @@ class user_dsp_old extends user
                         $dsp_other->set_user($usr_other);
                         $dsp_other->set_name($dsp_other_row[view::FLD_NAME]);
                         $dsp_other->description = $dsp_other_row[sandbox_named::FLD_DESCRIPTION];
-                        $dsp_other->type_id = $dsp_other_row[view::FLD_TYPE];
+                        $dsp_other->set_type_id($dsp_other_row[view::FLD_TYPE]);
                         $dsp_other->set_excluded($dsp_other_row[sandbox::FLD_EXCLUDED]);
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';

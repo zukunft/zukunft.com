@@ -31,7 +31,7 @@
 
 // for callable php files the standard zukunft.com header to load all classes and allow debugging
 use controller\controller;
-use html\view\view_dsp_old;
+use html\view\view as view_dsp;
 use cfg\result;
 use cfg\user;
 use cfg\view;
@@ -56,10 +56,11 @@ if ($session_usr->id() > 0) {
     $session_usr->load_usr_data();
 
     // show the header
-    $dsp = new view_dsp_old($session_usr);
-    $dsp->set_id($system_views->id(controller::DSP_FORMULA_EXPLAIN));
+    $msk = new view($session_usr);
+    $msk->set_id($system_views->id(controller::DSP_FORMULA_EXPLAIN));
     $back = $_GET[controller::API_BACK]; // the page (or phrase id) from which formula testing has been called
-    $result .= $dsp->dsp_navbar($back);
+    $msk_dsp = new view_dsp($msk->api_json());
+    $result .= $msk_dsp->dsp_navbar($back);
 
     // get the parameters
     $frm_val_id = $_GET[controller::URL_VAR_ID];      // id of the formula result if known already

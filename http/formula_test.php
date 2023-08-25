@@ -40,7 +40,7 @@
 
 use controller\controller;
 use html\html_base;
-use html\view\view_dsp_old;
+use html\view\view as view_dsp;
 use cfg\formula_list;
 use cfg\library;
 use cfg\phr_ids;
@@ -70,10 +70,11 @@ if ($session_usr->id() > 0) {
     $lib = new library();
 
     // show the header even if all parameters are wrong
-    $dsp = new view_dsp_old($session_usr);
-    $dsp->set_id($system_views->id(controller::DSP_FORMULA_TEST));
+    $msk = new view($session_usr);
+    $msk->set_id($system_views->id(controller::DSP_FORMULA_TEST));
     $back = $_GET[controller::API_BACK]; // the page (or phrase id) from which formula testing has been called
-    echo $dsp->dsp_navbar($back);
+    $msk_dsp = new view_dsp($msk->api_json());
+    echo $msk_dsp->dsp_navbar($back);
 
     // get all parameters
     $frm_id = $_GET[controller::URL_VAR_ID];

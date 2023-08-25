@@ -423,9 +423,10 @@ use html\phrase\phrase_group as phrase_group_dsp;
 use cfg\db_check;
 use cfg\type_lists;
 use cfg\verb_list;
+use cfg\view;
 use cfg\view_sys_list;
 use html\html_base;
-use html\view\view_dsp_old;
+use html\view\view as view_dsp;
 use cfg\change_log;
 use cfg\library;
 use cfg\sql_db;
@@ -906,8 +907,9 @@ function log_msg(string $msg_text,
                 if ($msg_log_level >= DSP_LEVEL) {
                     $usr = new user();
                     $usr->load_by_id($user_id);
-                    $dsp = new view_dsp_old($usr);
-                    $result .= $dsp->dsp_navbar_simple();
+                    $msk = new view($usr);
+                    $msk_dsp = new view_dsp($msk->api_json());
+                    $result .= $msk_dsp->dsp_navbar_simple();
                     $result .= $msg_text . " (by " . $function_name . ").<br><br>";
                 }
             }

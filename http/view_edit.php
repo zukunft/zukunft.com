@@ -32,10 +32,11 @@
 // standard zukunft header for callable php files to allow debugging and lib loading
 use cfg\component\component;
 use cfg\user;
+use cfg\view;
 use cfg\word;
 use controller\controller;
 use html\html_base;
-use html\view\view_dsp_old;
+use html\view\view as view_dsp;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . '/../';
@@ -59,16 +60,16 @@ if ($usr->id() > 0) {
     $usr->load_usr_data();
 
     // prepare the display to edit the view
-    $dsp = new view_dsp_old($usr);
-    $dsp->load_by_code_id(controller::DSP_VIEW_ADD);
+    $msk = new view($usr);
+    $msk->load_by_code_id(controller::DSP_VIEW_ADD);
     $back = $_GET[controller::API_BACK];
 
     // create the view object that the user can change
-    $dsp_edit = new view_dsp_old($usr);
-    $result .= $dsp_edit->load_by_id($_GET[controller::URL_VAR_ID]);
+    $msk_edit = new view($usr);
+    $result .= $msk_edit->load_by_id($_GET[controller::URL_VAR_ID]);
 
     // get the view id to adjust
-    if ($dsp_edit->id() <= 0) {
+    if ($msk_edit->id() <= 0) {
         log_info("The view id must be set to display a view.", "view_edit.php", '', (new Exception)->getTraceAsString(), $usr);
     } else {
 
@@ -79,7 +80,7 @@ if ($usr->id() > 0) {
         // save the direct changes
         // ... of the element list
         if (isset($_GET['move_up'])) {
-            $upd_result = $dsp_edit->entry_up($_GET['move_up']);
+            $upd_result = $msk_edit->entry_up($_GET['move_up']);
             if (str_replace('1', '', $upd_result) <> '') {
                 // ... or in case of a problem prepare to show the message
                 $msg .= $upd_result;
@@ -87,7 +88,7 @@ if ($usr->id() > 0) {
         }
 
         if (isset($_GET['move_down'])) {
-            $upd_result .= $dsp_edit->entry_down($_GET['move_down']);
+            $upd_result .= $msk_edit->entry_down($_GET['move_down']);
             if (str_replace('1', '', $upd_result) <> '') {
                 // ... or in case of a problem prepare to show the message
                 $msg .= $upd_result;
@@ -98,7 +99,7 @@ if ($usr->id() > 0) {
         if (isset($_GET['del'])) {
             $cmp = new component($usr);
             $cmp->load_by_id($_GET['del']);
-            $cmp->unlink($dsp_edit);
+            $cmp->unlink($msk_edit);
         }
 
         // check if a existing view element should be added
@@ -106,8 +107,8 @@ if ($usr->id() > 0) {
             if ($_GET['add_component'] > 0) {
                 $cmp = new component($usr);
                 $cmp->load_by_id($_GET['add_component']);
-                $order_nbr = $cmp->next_nbr($dsp_edit->id());
-                $cmp->link($dsp_edit, $order_nbr);
+                $order_nbr = $cmp->next_nbr($msk_edit->id());
+                $cmp->link($msk_edit, $order_nbr);
             }
         }
 
@@ -123,8 +124,8 @@ if ($usr->id() > 0) {
                     if ($cmp->id() > 0) {
                         $cmp->type_id = $_GET['new_entry_type'];
                         $cmp->save();
-                        $order_nbr = $cmp->next_nbr($dsp_edit->id());
-                        $cmp->link($dsp_edit, $order_nbr);
+                        $order_nbr = $cmp->next_nbr($msk_edit->id());
+                        $cmp->link($msk_edit, $order_nbr);
                     }
                 }
             }
@@ -137,17 +138,17 @@ if ($usr->id() > 0) {
 
             // get other field parameters that should be saved
             if (isset($_GET[controller::URL_VAR_NAME])) {
-                $dsp_edit->set_name($_GET[controller::URL_VAR_NAME]);
+                $msk_edit->set_name($_GET[controller::URL_VAR_NAME]);
             }
             if (isset($_GET[controller::URL_VAR_COMMENT])) {
-                $dsp_edit->description = $_GET[controller::URL_VAR_COMMENT];
+                $msk_edit->description = $_GET[controller::URL_VAR_COMMENT];
             }
             if (isset($_GET['type'])) {
-                $dsp_edit->type_id = $_GET['type'];
+                $msk_edit->type_id = $_GET['type'];
             } //
 
             // save the changes
-            $upd_result = $dsp_edit->save();
+            $upd_result = $msk_edit->save();
 
             // if update was fine ...
             if (str_replace('1', '', $upd_result) == '') {
@@ -162,7 +163,8 @@ if ($usr->id() > 0) {
         // if nothing yet done display the add view (and any message on the top)
         if ($result == '') {
             // in view edit views the view cannot be changed
-            $result .= $dsp->dsp_navbar_no_view($back);
+            $msk_dsp = new view_dsp($msk->api_json());
+            $result .= $msk_dsp->dsp_navbar_no_view($back);
             $result .= $html->dsp_err($msg);
 
             // get parameters that change only dsp_edit
@@ -173,7 +175,8 @@ if ($usr->id() > 0) {
             }
 
             // show the word and its relations, so that the user can change it
-            $result .= $dsp_edit->dsp_edit($add_cmp, $wrd, $back);
+            $msk_edit_dsp = new view_dsp($msk_edit->api_json());
+            $result .= $msk_edit_dsp->dsp_edit($add_cmp, $wrd, $back);
         }
     }
 }

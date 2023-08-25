@@ -35,7 +35,7 @@ use html\api;
 use html\button;
 use html\html_base;
 use html\msg;
-use html\view\view_dsp_old;
+use html\view\view as view_dsp;
 use cfg\user;
 use cfg\value;
 use cfg\view;
@@ -62,8 +62,8 @@ if ($usr->id() > 0) {
     $usr->load_usr_data();
 
     // prepare the display
-    $dsp = new view_dsp_old($usr);
-    $dsp->load_by_code_id(controller::DSP_VALUE_DEL);
+    $msk = new view($usr);
+    $msk->load_by_code_id(controller::DSP_VALUE_DEL);
     $back = $_GET[controller::API_BACK];  // the page from which the value deletion has been called
 
     // get the parameters
@@ -83,7 +83,8 @@ if ($usr->id() > 0) {
             $result .= $html->dsp_go_back($back, $usr);
         } else {
             // display the view header
-            $result .= $dsp->dsp_navbar($back);
+            $msk_dsp = new view_dsp($msk->api_json());
+            $result .= $msk_dsp->dsp_navbar($back);
 
             $val->load_phrases();
             $url = $html->url(api::VALUE . api::REMOVE, $val_id, $back);

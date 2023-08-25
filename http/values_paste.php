@@ -30,8 +30,9 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
+use cfg\view;
 use controller\controller;
-use html\view\view_dsp_old;
+use html\view\view as view_dsp;
 use cfg\user;
 
 $debug = $_GET['debug'] ?? 0;
@@ -53,8 +54,8 @@ if ($usr->id() > 0) {
     $usr->load_usr_data();
 
     // prepare the display
-    $dsp = new view_dsp_old($usr);
-    $dsp->load_by_code_id(controller::DSP_VALUE_ADD);
+    $msk = new view($usr);
+    $msk->load_by_code_id(controller::DSP_VALUE_ADD);
     /*
         // get the fixed parameters
         $new_tbl   = $_GET['table'];    // the value table as pasted by the user

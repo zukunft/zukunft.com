@@ -31,7 +31,7 @@
 
 // standard zukunft header for callable php files to allow debugging and lib loading
 use controller\controller;
-use html\view\view_dsp_old;
+use html\view\view as view_dsp;
 use html\word\word as word_dsp;
 use cfg\user;
 use cfg\view;
@@ -59,10 +59,11 @@ if ($usr->id() > 0) {
     $usr->load_usr_data();
 
     // in view edit views the view cannot be changed
-    $dsp = new view_dsp_old($usr);
+    $msk = new view($usr);
     //$dsp->set_id(cl(SQL_VIEW_FORMULA_EXPLAIN));
     $back = $_GET[controller::API_BACK]; // the original calling page that should be shown after the change if finished
-    $result .= $dsp->dsp_navbar_no_view($back);
+    $msk_dsp = new view_dsp($msk->api_json());
+    $result .= $msk_dsp->dsp_navbar_no_view($back);
     $view_id = 0;
     $word_id = $back;
 
@@ -84,9 +85,9 @@ if ($usr->id() > 0) {
     }
 
     // allow to change to type
-    $dsp = new view($usr);
-    $dsp->set_id($view_id);
-    $result .= $dsp->selector_page($word_id, $back);
+    $msk = new view($usr);
+    $msk->set_id($view_id);
+    $result .= $msk->selector_page($word_id, $back);
 
     // show the changes
     $wrd_html = new word_dsp($wrd->api_json());

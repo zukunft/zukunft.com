@@ -50,7 +50,7 @@ Delete a word (check if nothing is depending on the word to delete)
 
 use controller\controller;
 use html\html_base;
-use html\view\view_dsp_old;
+use html\view\view as view_dsp;
 use html\word\word as word_dsp;
 use cfg\term;
 use cfg\triple;
@@ -79,8 +79,8 @@ if ($usr->id() > 0) {
     $usr->load_usr_data();
 
     // prepare the display
-    $dsp = new view_dsp_old($usr);
-    $dsp->load_by_code_id(controller::DSP_WORD_ADD);
+    $msk = new view($usr);
+    $msk->load_by_code_id(controller::DSP_WORD_ADD);
     $back = $_GET[controller::API_BACK]; // the calling page which should be displayed after saving
 
     // create the word object to have a place to update the parameters
@@ -193,7 +193,8 @@ if ($usr->id() > 0) {
     // if nothing yet done display the add view (and any message on the top)
     if ($result == '') {
         // display the add view again
-        $result .= $dsp->dsp_navbar($back);
+        $msk_dsp = new view_dsp($msk->api_json());
+        $result .= $msk_dsp->dsp_navbar($back);
         $result .= $html->dsp_err($msg);
 
         $wrd_dsp = new word_dsp($wrd->api_json());

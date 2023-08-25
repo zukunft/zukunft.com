@@ -30,8 +30,10 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
+use cfg\view;
 use controller\controller;
-use html\view\view_dsp_old;
+use html\view\view as view_dsp;
+use html\value\value as value_dsp;
 use cfg\user;
 use cfg\word_list;
 
@@ -58,11 +60,12 @@ if ($usr->id() > 0) {
     $usr->load_usr_data();
 
     // prepare the display
-    $dsp = new view_dsp_old($usr);
-    $dsp->load_by_code_id(controller::DSP_VALUE_DISPLAY);
+    $msk = new view($usr);
+    $msk->load_by_code_id(controller::DSP_VALUE_DISPLAY);
     $back = $_GET[controller::API_BACK]; // the page (or phrase id) from which formula testing has been called
 
-    $result .= $dsp->dsp_navbar($back);
+    $msk_dsp = new view_dsp($msk->api_json());
+    $result .= $msk_dsp->dsp_navbar($back);
 
     if ($wrd_names <> '') {
 
@@ -73,7 +76,8 @@ if ($usr->id() > 0) {
         $result .= $wrd_lst->dsp_obj()->display();
         $result .= ' = ';
         $val = $wrd_lst->value();
-        $result .= $val->display_linked($back);
+        $val_dsp = new value_dsp($val->api_json());
+        $result .= $val_dsp->display_linked($back);
     }
 }
 

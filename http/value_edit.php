@@ -32,7 +32,7 @@
 // standard zukunft header for callable php files to allow debugging and lib loading
 use controller\controller;
 use html\html_base;
-use html\view\view_dsp_old;
+use html\view\view as view_dsp;
 use cfg\user;
 use cfg\value;
 use cfg\view;
@@ -58,8 +58,8 @@ if ($usr->id() > 0) {
     $usr->load_usr_data();
 
     // prepare the display
-    $dsp = new view_dsp_old($usr);
-    $dsp->load_by_code_id(controller::DSP_VALUE_EDIT);
+    $msk = new view($usr);
+    $msk->load_by_code_id(controller::DSP_VALUE_EDIT);
     $back = $_GET[controller::API_BACK];     // the word id from which this value change has been called (maybe later any page)
 
     // create the value object to store the parameters so that if the edit form is shown again it is already filled
@@ -133,7 +133,8 @@ if ($usr->id() > 0) {
         // if nothing yet done display the edit view (and any message on the top)
         if ($result == '') {
             // show the value and the linked words to edit the value (again after removing or adding a word)
-            $result .= $dsp->dsp_navbar($back);
+            $msk_dsp = new view_dsp($msk->api_json());
+            $result .= $msk_dsp->dsp_navbar($back);
             $result .= $html->dsp_err($msg);
 
             $result .= $val->dsp_edit($type_ids, $back);

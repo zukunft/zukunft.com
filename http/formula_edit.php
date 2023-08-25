@@ -31,7 +31,8 @@
 
 use controller\controller;
 use html\html_base;
-use html\view\view_dsp_old;
+use html\view\view as view_dsp;
+use html\formula\formula as formula_dsp;
 use cfg\formula;
 use cfg\phrase;
 use cfg\user;
@@ -60,8 +61,8 @@ if ($usr->id() > 0) {
     $usr->load_usr_data();
 
     // prepare the display
-    $dsp = new view_dsp_old($usr);
-    $dsp->load_by_code_id(controller::DSP_FORMULA_EDIT);
+    $msk = new view($usr);
+    $msk->load_by_code_id(controller::DSP_FORMULA_EDIT);
     $back = $_GET[controller::API_BACK];
 
     // create the formula object to have a place to update the parameters
@@ -138,17 +139,15 @@ if ($usr->id() > 0) {
         // if nothing yet done display the edit view (and any message on the top)
         if ($result == '') {
             // display the view header
-            $result .= $dsp->dsp_navbar($back);
+            $msk_dsp = new view_dsp($msk->api_json());
+            $result .= $msk_dsp->dsp_navbar($back);
             $result .= $html->dsp_err($msg);
 
             // display the view to change the formula
             $frm->load_by_id($frm_id); // reload to formula object to display the real database values
-            if (isset($_GET['add_link'])) {
-                $add_link = $_GET['add_link'];
-            } else {
-                $add_link = 0;
-            }
-            $result .= $frm->dsp_edit($add_link, 0, $back); // with add_link to add a link and display a word selector
+            $add_link = $_GET['add_link'] ?? 0;
+            $frm_dsp = new formula_dsp($frm->api_json());
+            $result .= $frm_dsp->dsp_edit($add_link, 0, $back); // with add_link to add a link and display a word selector
         }
     }
 }

@@ -32,7 +32,7 @@
 // standard zukunft header for callable php files to allow debugging and lib loading
 use controller\controller;
 use html\html_base;
-use html\view\view_dsp_old;
+use html\view\view as view_dsp;
 use cfg\user;
 use cfg\view;
 use cfg\word;
@@ -58,8 +58,8 @@ if ($usr->id() > 0) {
     $usr->load_usr_data();
 
     // prepare the display
-    $dsp = new view_dsp_old($usr);
-    $dsp->load_by_code_id(controller::DSP_WORD_DEL);
+    $msk = new view($usr);
+    $msk->load_by_code_id(controller::DSP_WORD_DEL);
     $back = $_GET[controller::API_BACK]; // the original calling page that should be shown after the change if finished
 
     // get the parameters
@@ -78,7 +78,8 @@ if ($usr->id() > 0) {
             $result .= $html->dsp_go_back($back, $usr);
         } else {
             // display the view header
-            $result .= $dsp->dsp_navbar($back);
+            $msk_dsp = new view_dsp($msk->api_json());
+            $result .= $msk_dsp->dsp_navbar($back);
 
             $result .= \html\btn_yesno("Delete " . $wrd->name() . "? ", "/http/word_del.php?id=" . $wrd_id . "&back=" . $back);
         }

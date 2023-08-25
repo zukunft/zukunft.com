@@ -52,19 +52,10 @@ use api\api;
 use api\word_api;
 use cfg\db\sql_creator;
 use cfg\db\sql_par_type;
-use html\phrase\phrase_list as phrase_list_dsp;
 use model\export\exp_obj;
 use model\export\sandbox_exp_named;
 use model\export\word_exp;
-use controller\controller;
-use html\button;
-use html\html_base;
-use html\html_selector;
-use html\log\user_log_display;
-use html\phrase\phrase as phrase_dsp;
-use html\view\view_dsp_old;
 use html\word\word as word_dsp;
-use html\formula\formula as formula_dsp;
 
 class word extends sandbox_typed
 {
@@ -1539,24 +1530,24 @@ class word extends sandbox_typed
     function log_upd_view($view_id): change_log_named
     {
         log_debug($this->dsp_id() . ' for user ' . $this->user()->name);
-        $dsp_new = new view_dsp_old($this->user());
-        $dsp_new->load_by_id($view_id);
+        $msk_new = new view($this->user());
+        $msk_new->load_by_id($view_id);
 
         $log = new change_log_named($this->user());
         $log->action = change_log_action::UPDATE;
         $log->set_table(change_log_table::WORD);
         $log->set_field(self::FLD_VIEW);
         if ($this->view_id() > 0) {
-            $dsp_old = new view_dsp_old($this->user());
-            $dsp_old->load_by_id($this->view_id());
-            $log->old_value = $dsp_old->name();
-            $log->old_id = $dsp_old->id;
+            $msk_old = new view($this->user());
+            $msk_old->load_by_id($this->view_id());
+            $log->old_value = $msk_old->name();
+            $log->old_id = $msk_old->id;
         } else {
             $log->old_value = '';
             $log->old_id = 0;
         }
-        $log->new_value = $dsp_new->name();
-        $log->new_id = $dsp_new->id;
+        $log->new_value = $msk_new->name();
+        $log->new_id = $msk_new->id;
         $log->row_id = $this->id;
         $log->add();
 

@@ -32,7 +32,7 @@
 
 use controller\controller;
 use html\html_base;
-use html\view\view_dsp_old;
+use html\view\view as view_dsp;
 use html\word\word_list as word_list_dsp;
 use cfg\user;
 use cfg\view;
@@ -68,9 +68,10 @@ if (!$db_con->connected()) {
         $usr->load_usr_data();
 
         // show view header
-        $dsp = new view_dsp_old();
-        $dsp->set_id($system_views->id(controller::DSP_WORD_FIND));
-        $result .= $dsp->dsp_navbar($back);
+        $msk = new view($usr);
+        $msk->set_id($system_views->id(controller::DSP_WORD_FIND));
+        $msk_dsp = new view_dsp($msk->api_json());
+        $result .= $msk_dsp->dsp_navbar($back);
 
         $find_str = $_GET['pattern'];
 

@@ -48,8 +48,7 @@ use html\log\user_log_display;
 use html\phrase\phrase as phrase_dsp;
 use html\sandbox\db_object as db_object_dsp;
 use html\sandbox_typed_dsp;
-use html\view\view_dsp_old;
-use html\word\word as word_dsp;
+use html\view\view as view_dsp;
 
 class component extends sandbox_typed_dsp
 {
@@ -681,7 +680,7 @@ class component extends sandbox_typed_dsp
         foreach ($lnk_lst as $lnk) {
             $result .= '  <tr>' . "\n";
             $result .= '    <td>' . "\n";
-            $dsp = new view_dsp_old($this->user());
+            $dsp = new view_dsp();
             $dsp->id = $lnk->fob->id();
             $dsp->name = $lnk->fob->name();
             $result .= '      ' . $dsp->name_linked($wrd, $back) . "\n";

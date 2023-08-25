@@ -32,7 +32,7 @@
 
 use controller\controller;
 use html\html_base;
-use html\view\view_dsp_old;
+use html\view\view as view_dsp;
 use cfg\system_log;
 use cfg\system_log_list;
 use cfg\user;
@@ -65,9 +65,10 @@ if ($usr->id() > 0) {
 
     $usr->load_usr_data();
 
-    $dsp = new view_dsp_old($usr);
-    $dsp->set_id($system_views->id(controller::DSP_ERR_UPD));
-    $result .= $dsp->dsp_navbar($back);
+    $msk = new view($usr);
+    $msk->set_id($system_views->id(controller::DSP_ERR_UPD));
+    $msk_dsp = new view_dsp($msk->api_json());
+    $result .= $msk_dsp->dsp_navbar($back);
 
     if ($usr->id() > 0 and $usr->profile_id == $user_profiles->id(user_profile::ADMIN)) {
         // update the error if requested

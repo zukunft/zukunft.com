@@ -36,7 +36,7 @@
 // for callable php files the standard zukunft.com header to load all classes and allow debugging
 use controller\controller;
 use html\api;
-use html\view\view_dsp_old;
+use html\view\view as view_dsp;
 use cfg\user;
 use cfg\view;
 use cfg\word;
@@ -99,15 +99,16 @@ if ($usr->id() > 0) {
 
         // create a display object, select and load the view and display the word according to the view
         if ($view_id > 0) {
-            $dsp = new view_dsp_old($usr);
-            $dsp->load_by_id($view_id, view::class);
-            $dsp_text = $dsp->display($wrd, $back);
+            $msk = new view($usr);
+            $msk->load_by_id($view_id, view::class);
+            $msk_dsp = new view_dsp($msk->api_json());
+            $dsp_text = $msk_dsp->display($wrd, $back);
 
             // use a fallback if the view is empty
-            if ($dsp_text == '' or $dsp->name() == '') {
+            if ($dsp_text == '' or $msk->name() == '') {
                 $view_id = $system_views->id(controller::DSP_START);
-                $dsp->load_by_id($view_id, view::class);
-                $dsp_text = $dsp->display($wrd, $back);
+                $msk->load_by_id($view_id, view::class);
+                $dsp_text = $msk_dsp->display($wrd, $back);
             }
             if ($dsp_text == '') {
                 $result .= 'Please add a component to the view by clicking on Edit on the top right.';

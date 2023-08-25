@@ -42,7 +42,7 @@ use controller\controller;
 use cfg\system_log;
 use html\log\system_log as system_log_dsp;
 use html\html_base;
-use html\view\view_dsp_old;
+use html\view\view as view_dsp;
 use cfg\user;
 use cfg\view;
 use cfg\word;
@@ -87,9 +87,10 @@ if ($usr->id() > 0) {
         $usr->load_usr_data();
 
         // prepare the display to edit the view
-        $dsp = new view_dsp_old($usr);
-        $dsp->set_id($system_views->id(controller::DSP_ERR_LOG));
-        $result .= $dsp->dsp_navbar($back);
+        $msk = new view($usr);
+        $msk->set_id($system_views->id(controller::DSP_ERR_LOG));
+        $msk_dsp = new view_dsp($msk->api_json());
+        $result .= $msk_dsp->dsp_navbar($back);
         //$result .= " in \"zukunft.com\" that has been logged in the system automatically by you.";
         $result .= err_dsp($err_id, $usr->id());
     }

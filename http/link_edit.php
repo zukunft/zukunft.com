@@ -31,7 +31,7 @@
 
 use controller\controller;
 use html\html_base;
-use html\view\view_dsp_old;
+use html\view\view as view_dsp;
 use html\word\triple as triple_dsp;
 use cfg\triple;
 use cfg\user;
@@ -58,8 +58,8 @@ if ($usr->id() > 0) {
     $usr->load_usr_data();
 
     // prepare the display
-    $dsp = new view_dsp_old($usr);
-    $dsp->load_by_code_id(controller::DSP_TRIPLE_EDIT);
+    $msk = new view($usr);
+    $msk->load_by_code_id(controller::DSP_TRIPLE_EDIT);
     $back = $_GET[controller::API_BACK]; // the original calling page that should be shown after the change if finished
 
     // create the link object to have a place to update the parameters
@@ -94,7 +94,8 @@ if ($usr->id() > 0) {
         // if nothing yet done display the add view (and any message on the top)
         if ($result == '') {
             // display the view header
-            $result .= $dsp->dsp_navbar($back);
+            $msk_dsp = new view_dsp($msk->api_json());
+            $result .= $msk_dsp->dsp_navbar($back);
             $result .= $html->dsp_err($msg);
 
             // display the triple to allow the user to change it

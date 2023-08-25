@@ -40,6 +40,9 @@ include_once WEB_WORD_PATH . 'word.php';
 use api\api;
 use api\component\component_api;
 use cfg\library;
+use cfg\view_type;
+use cfg\word;
+use dsp_list;
 use html\component\component;
 use html\component\component_old;
 use html\component\component_list as component_list_dsp;
@@ -47,6 +50,8 @@ use controller\controller;
 use html\api as api_dsp;
 use html\button;
 use html\html_base;
+use html\html_selector;
+use html\log\user_log_display;
 use html\msg;
 use html\sandbox\db_object as db_object_dsp;
 use html\sandbox_typed_dsp;
@@ -527,6 +532,253 @@ class view extends sandbox_typed_dsp
         $result .= $this->html_navbar_end();
 
         return $result;
+    }
+
+    /*
+     * to review
+     */
+
+    /**
+     * the basic zukunft top elements that should be show always
+     */
+    function dsp_navbar_simple(): string
+    {
+        if (UI_USE_BOOTSTRAP) {
+            $result = $this->dsp_navbar_bs(FALSE, 0);
+        } else {
+            $result = $this->html_navbar_start();
+            $result .= $this->html_navbar_end();
+        }
+        return $result;
+    }
+
+    /**
+     * HTML code to edit all word fields
+     */
+    function dsp_edit($add_cmp, $wrd, $back): string
+    {
+        global $view_types;
+
+        $result = '';
+        $html = new html_base();
+
+        // use the default settings if needed
+        if ($this->type_id() <= 0) {
+            $this->set_type_id($view_types->id(view_type::DEFAULT));
+        }
+
+        // the header to add or change a view
+        if ($this->id <= 0) {
+            log_debug('create a view');
+            $script = "view_add";
+            $result .= $html->dsp_text_h2('Create a new view (for <a href="/http/view.php?words=' . $wrd->id() . '">' . $wrd->name() . '</a>)');
+        } else {
+            log_debug($this->dsp_id() . ' for user ' . $this->user()->name . ' (called from ' . $back . ')');
+            $script = "view_edit";
+            $result .= $html->dsp_text_h2('Edit view "' . $this->name . '" (used for <a href="/http/view.php?words=' . $wrd->id() . '">' . $wrd->name() . '</a>)');
+        }
+        $result .= '<div class="row">';
+
+        // when changing a view show the fields only on the left side
+        if ($this->id > 0) {
+            $result .= '<div class="col-sm-7">';
+        }
+
+        // show the edit fields
+        $result .= $html->dsp_form_start($script);
+        $result .= $html->dsp_form_id($this->id);
+        $result .= $html->dsp_form_hidden("word", $wrd->id);
+        $result .= $html->dsp_form_hidden("back", $back);
+        $result .= $html->dsp_form_hidden("confirm", '1');
+        $result .= '<div class="form-row">';
+        if ($add_cmp < 0 or $add_cmp > 0) {
+            // show the fields inactive, because the assign fields are active
+            $result .= $html->dsp_form_text("name", $this->name, "Name:", "col-sm-8", "disabled");
+            $result .= $this->dsp_type_selector($script, "col-sm-4", "disabled");
+            $result .= '</div>';
+            $result .= $html->dsp_form_text_big("description", $this->description, "Comment:", "", "disabled");
+        } else {
+            // show the fields inactive, because the assign fields are active
+            $result .= $html->dsp_form_text("name", $this->name, "Name:", "col-sm-8");
+            $result .= $this->dsp_type_selector($script, "col-sm-4", "");
+            $result .= '</div>';
+            $result .= $html->dsp_form_text_big("description", $this->description, "Comment:");
+            $result .= $html->dsp_form_end('', $back, "/http/view_del.php?id=" . $this->id . "&back=" . $back);
+        }
+
+        // in edit mode show the assigned words and the hist on the right
+        if ($this->id > 0) {
+            $result .= '</div>';
+
+            $comp_html = $this->linked_components($add_cmp, $wrd, $back);
+
+            // collect the history
+            $changes = $this->dsp_hist(0, SQL_ROW_LIMIT, '', $back);
+            if (trim($changes) <> "") {
+                $hist_html = $changes;
+            } else {
+                $hist_html = 'Nothing changed yet.';
+            }
+            $changes = $this->dsp_hist_links(0, SQL_ROW_LIMIT, '', $back);
+            if (trim($changes) <> "") {
+                $link_html = $changes;
+            } else {
+                $link_html = 'No component have been added or removed yet.';
+            }
+
+            // display the tab box with the links and changes
+            $result .= $html->dsp_link_hist_box('Components', $comp_html,
+                '', '',
+                'Changes', $hist_html,
+                'Component changes', $link_html);
+
+            log_debug('done');
+        }
+
+        $result .= '</div>';   // of row
+        $result .= '<br><br>'; // this a usually a small for, so the footer can be moved away
+
+        return $result;
+    }
+
+    /**
+     * display the type selector
+     */
+    private function dsp_type_selector($script, $class, $attribute): string
+    {
+        $result = '';
+        $sel = new html_selector;
+        $sel->form = $script;
+        $sel->name = 'type';
+        $sel->label = "View type:";
+        $sel->bs_class = $class;
+        $sel->attribute = $attribute;
+        $sel->sql = sql_lst("view_type");
+        $sel->selected = $this->type_id();
+        $sel->dummy_text = '';
+        $result .= $sel->display_old();
+        return $result;
+    }
+
+    /**
+     * lists of all view components which are used by this view
+     */
+    private function linked_components($add_cmp, $wrd, $back): string
+    {
+        $html = new html_base();
+
+        $result = '';
+
+        if (UI_USE_BOOTSTRAP) {
+            $result .= $html->dsp_tbl_start_hist();
+        }
+
+        // show the view elements and allow the user to change them
+        log_debug('load');
+        if (!$this->load_components()) {
+            log_err('Loading of view components for ' . $this->dsp_id() . ' failed');
+        } else {
+            log_debug('loaded');
+            $dsp_list = new dsp_list;
+            $dsp_list->lst = $this->cmp_lst;
+            $dsp_list->id_field = \cfg\component\component::FLD_ID;
+            $dsp_list->script_name = "view_edit.php";
+            $dsp_list->class_edit = view::class;
+            $dsp_list->script_parameter = $this->id . "&back=" . $back . "&word=" . $wrd->id;
+            $result .= $dsp_list->display($back);
+            log_debug('displayed');
+            if (UI_USE_BOOTSTRAP) {
+                $result .= '<tr><td>';
+            }
+
+            // check if the add button has been pressed and ask the user what to add
+            if ($add_cmp > 0) {
+                $result .= 'View component to add: ';
+                $url = $html->url(controller::DSP_VIEW_ADD, $this->id, $back, '', word::class . '=' . $wrd->id() . '&add_entry=-1&');
+                $result .= (new button($url, $back))->add(msg::COMPONENT_ADD);
+                $sel = new html_selector;
+                $sel->form = 'view_edit';
+                $sel->dummy_text = 'Select a view component ...';
+                $sel->name = 'add_component';
+                $sel->sql = sql_lst_usr("component", $this->user());
+                $sel->selected = 0; // no default view component to add defined yet, maybe use the last???
+                $result .= $sel->display_old();
+
+                $result .= $html->dsp_form_end('', "/http/view_edit.php?id=" . $this->id . "&word=" . $wrd->id() . "&back=" . $back);
+            } elseif ($add_cmp < 0) {
+                $result .= 'Name of the new display element: ';
+                $result .= $html->input('entry_name', '', html_base::INPUT_TEXT);
+                $sel = new html_selector;
+                $sel->form = 'view_edit';
+                $sel->dummy_text = 'Select a type ...';
+                $sel->name = 'new_entry_type';
+                $sel->sql = sql_lst("component_type");
+                $sel->selected = $this->type_id();  // ??? should this not be the default entry type
+                $result .= $sel->display_old();
+                $result .= $html->dsp_form_end('', "/http/view_edit.php?id=" . $this->id . "&word=" . $wrd->id() . "&back=" . $back);
+            } else {
+                $url = $html->url(controller::DSP_COMPONENT_LINK, $this->id, $back, '', word::class . '=' . $wrd->id() . '&add_entry=1');
+                $result .= (new button($url, $back))->add(msg::COMPONENT_ADD);
+            }
+        }
+        if (UI_USE_BOOTSTRAP) {
+            $result .= '</td></tr>';
+        }
+
+        if (UI_USE_BOOTSTRAP) {
+            $result .= $html->dsp_tbl_end();
+        }
+
+        return $result;
+    }
+
+    /**
+     * display the history of a view
+     */
+    function dsp_hist($page, $size, $call, $back): string
+    {
+        global $usr;
+        log_debug("for id " . $this->id . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
+        $result = ''; // reset the html code var
+
+        $log_dsp = new user_log_display($usr);
+        $log_dsp->id = $this->id;
+        $log_dsp->type = view::class;
+        $log_dsp->page = $page;
+        $log_dsp->size = $size;
+        $log_dsp->call = $call;
+        $log_dsp->back = $back;
+        $result .= $log_dsp->dsp_hist();
+
+        log_debug("done");
+        return $result;
+    }
+
+    /**
+     * display the link history of a view
+     */
+    function dsp_hist_links($page, $size, $call, $back): string
+    {
+        global $usr;
+        log_debug("for id " . $this->id . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
+        $result = ''; // reset the html code var
+
+        $log_dsp = new user_log_display($usr);
+        $log_dsp->id = $this->id;
+        $log_dsp->type = view::class;
+        $log_dsp->page = $page;
+        $log_dsp->size = $size;
+        $log_dsp->call = $call;
+        $log_dsp->back = $back;
+        $result .= $log_dsp->dsp_hist_links();
+
+        log_debug("done");
+        return $result;
+    }
+
+    private function load_components(): bool
+    {
+        return true;
     }
 
 }
