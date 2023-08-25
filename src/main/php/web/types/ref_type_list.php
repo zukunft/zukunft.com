@@ -37,10 +37,12 @@ use html\html_selector;
 class ref_type_list extends type_list
 {
 
+    const NAME = 'ref type';
+
     /**
      * @returns string the html code to select a type from this list
      */
-    function selector(string $form = '', int $selected = 0, string $name = 'ref type'): string
+    function selector(string $form = '', int $selected = 0, string $name = self::NAME): string
     {
         global $html_ref_types;
         return parent::type_selector($html_ref_types->lst_key(), $name, $form, $selected);

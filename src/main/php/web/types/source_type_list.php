@@ -37,10 +37,12 @@ use html\html_selector;
 class source_type_list extends type_list
 {
 
+    const NAME = 'source type';
+
     /**
      * @returns string the html code to select a type from this list
      */
-    function selector(string $form = '', int $selected = 0, string $name = 'source type'): string
+    function selector(string $form = '', int $selected = 0, string $name = self::NAME): string
     {
         global $html_source_types;
         return parent::type_selector($html_source_types->lst_key(), $name, $form, $selected);

@@ -642,22 +642,15 @@ class view extends sandbox_typed_dsp
     }
 
     /**
-     * display the type selector
+     * @param string $script the name of the formula
+     * @return string the html code for the view type selector
      */
-    private function dsp_type_selector($script, $class, $attribute): string
+    private function dsp_type_selector(string $script, string $class, string $attribute): string
     {
-        $result = '';
-        $sel = new html_selector;
-        $sel->form = $script;
-        $sel->name = 'type';
-        $sel->label = "View type:";
-        $sel->bs_class = $class;
-        $sel->attribute = $attribute;
-        $sel->sql = sql_lst("view_type");
-        $sel->selected = $this->type_id();
-        $sel->dummy_text = '';
-        $result .= $sel->display_old();
-        return $result;
+        global $html_view_types;
+        //$sel->bs_class = $class;
+        //$sel->attribute = $attribute;
+        return $html_view_types->selector($script);
     }
 
     /**

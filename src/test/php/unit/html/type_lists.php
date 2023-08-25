@@ -40,7 +40,17 @@ include_once WEB_TYPES_PATH . 'protection.php';
 
 use api\view_api;
 use html\html_base;
+use html\types\component_type_list;
+use html\types\formula_link_type_list;
+use html\types\formula_type_list;
+use html\types\phrase_types;
+use html\types\protection;
+use html\types\ref_type_list;
+use html\types\share;
+use html\types\source_type_list;
 use html\types\type_lists as type_list_dsp;
+use html\types\user_profiles;
+use html\types\view_type_list;
 use test\test_cleanup;
 
 class type_lists
@@ -68,20 +78,44 @@ class type_lists
         $test_page .= $html->form_start($form_name);
 
         global $html_user_profiles;
-        $test_page .= $html->label('user profile', 'user profile');
+        $test_page .= $html->label(user_profiles::NAME, user_profiles::NAME);
         $test_page .= $html_user_profiles->selector($form_name) . '<br>';
 
         global $html_phrase_types;
-        $test_page .= $html->label('phrase type', 'phrase type');
+        $test_page .= $html->label(phrase_types::NAME, phrase_types::NAME);
         $test_page .= $html_phrase_types->selector($form_name) . '<br>';
 
         global $html_formula_types;
-        $test_page .= $html->label('formula type', 'formula type');
+        $test_page .= $html->label(formula_type_list::NAME, formula_type_list::NAME);
         $test_page .= $html_formula_types->selector($form_name) . '<br>';
 
+        global $html_formula_link_types;
+        $test_page .= $html->label(formula_link_type_list::NAME, formula_link_type_list::NAME);
+        $test_page .= $html_formula_link_types->selector($form_name) . '<br>';
+
+        global $html_view_types;
+        $test_page .= $html->label(view_type_list::NAME, view_type_list::NAME);
+        $test_page .= $html_view_types->selector($form_name) . '<br>';
+
+        global $html_component_types;
+        $test_page .= $html->label(component_type_list::NAME, component_type_list::NAME);
+        $test_page .= $html_component_types->selector($form_name) . '<br>';
+
+        global $html_ref_types;
+        $test_page .= $html->label(ref_type_list::NAME, ref_type_list::NAME);
+        $test_page .= $html_ref_types->selector($form_name) . '<br>';
+
+        global $html_source_types;
+        $test_page .= $html->label(source_type_list::NAME, source_type_list::NAME);
+        $test_page .= $html_source_types->selector($form_name) . '<br>';
+
         global $html_protection_types;
-        $test_page .= $html->label('protection', 'protection');
-        $test_page .= $html_protection_types->selector('protection') . '<br>';
+        $test_page .= $html->label(protection::NAME, protection::NAME);
+        $test_page .= $html_protection_types->selector($form_name) . '<br>';
+
+        global $html_share_types;
+        $test_page .= $html->label(share::NAME, share::NAME);
+        $test_page .= $html_share_types->selector($form_name) . '<br>';
 
         $test_page .= $html->form_end_with_submit($form_name, '');
 

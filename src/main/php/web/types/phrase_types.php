@@ -37,10 +37,12 @@ use html\html_selector;
 class phrase_types extends type_list
 {
 
+    const NAME = 'phrase type';
+
     /**
      * @returns string the html code to select a type from this list
      */
-    function selector(string $form = '', int $selected = 0, string $name = 'phrase type'): string
+    function selector(string $form = '', int $selected = 0, string $name = self::NAME): string
     {
         global $html_phrase_types;
         return parent::type_selector($html_phrase_types->lst_key(), $name, $form, $selected);

@@ -37,10 +37,12 @@ use html\html_selector;
 class share extends type_list
 {
 
+    const NAME = 'share';
+
     /**
      * @returns string the html code to select a type from this list
      */
-    function selector(string $name = '', string $form = '', int $selected = 0): string
+    function selector(string $form = '', int $selected = 0, string $name = self::NAME): string
     {
         global $html_share_types;
         return parent::type_selector($html_share_types->lst_key(), $name, $form, $selected);

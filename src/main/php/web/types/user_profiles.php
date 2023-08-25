@@ -37,10 +37,12 @@ use html\html_selector;
 class user_profiles extends type_list
 {
 
+    const NAME = 'user profile';
+
     /**
      * @returns string the html code to select a type from this list
      */
-    function selector(string $form = '', int $selected = 0, string $name = 'user profile'): string
+    function selector(string $form = '', int $selected = 0, string $name = self::NAME): string
     {
         global $html_user_profiles;
         return parent::type_selector($html_user_profiles->lst_key(), $name, $form, $selected);

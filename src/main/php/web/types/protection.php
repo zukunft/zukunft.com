@@ -37,10 +37,12 @@ use html\html_selector;
 class protection extends type_list
 {
 
+    const NAME = 'protection';
+
     /**
      * @returns string the html code to select a type from this list
      */
-    function selector(string $name = '', string $form = '', int $selected = 0): string
+    function selector(string $form = '', int $selected = 0, string $name = self::NAME): string
     {
         global $html_protection_types;
         return parent::type_selector($html_protection_types->lst_key(), $name, $form, $selected);
