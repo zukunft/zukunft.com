@@ -32,7 +32,7 @@
 
 use api\value_api;
 use api\word_api;
-use html\value\value_list_dsp_old;
+use html\value\value_list as value_list_dsp;
 use cfg\phrase_list;
 use cfg\value;
 use cfg\value_list;
@@ -195,7 +195,7 @@ function run_value_ui_test(test_cleanup $t): void
     $wrd->load_by_name('Nestlé');
     $wrd_col = new word($usr);
     $wrd_col->load_by_name(TW_CF);
-    $val_lst = new value_list_dsp_old($usr);
+    $val_lst = new value_list_dsp();
     $val_lst->phr = $wrd->phrase();
     $result = $val_lst->dsp_table($wrd_col, $wrd->id());
     $target = TV_NESN_SALES_2016_FORMATTED;
