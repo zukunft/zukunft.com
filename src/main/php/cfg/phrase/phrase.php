@@ -68,7 +68,6 @@ use html\phrase\phrase as phrase_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\word\triple as triple_dsp;
 use html\word\word as word_dsp;
-use user_dsp_old;
 
 class phrase extends combine_named
 {
@@ -119,7 +118,7 @@ class phrase extends combine_named
      */
     function __construct(user|word|triple|null $obj = null, int|string|null $id_or_name = null)
     {
-        if ($obj::class == user::class or $obj::class == user_dsp_old::class) {
+        if ($obj::class == user::class) {
             // create a dummy word object to remember the user
             parent::__construct(new word($obj));
         } else {

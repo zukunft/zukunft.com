@@ -60,7 +60,6 @@ use model\export\user_exp;
 use model\export\exp_obj;
 use Exception;
 use html\user\user as user_dsp;
-use user_dsp_old;
 
 class user extends db_object
 {
@@ -966,12 +965,12 @@ class user extends db_object
     }
 
     // create the display user object based on the object (not needed any more if always the display user object is used)
-    function dsp_user(): user_dsp_old
+    function dsp_user(): user_dsp
     {
         global $db_con;
-        $dsp_user = new user_dsp_old;
-        $dsp_user->load_by_id($this->id);
-        return $dsp_user;
+        $usr = new user;
+        $usr->load_by_id($this->id);
+        return new user_dsp($usr->api_json());
     }
 
     // create the HTML code to display the username with the HTML link

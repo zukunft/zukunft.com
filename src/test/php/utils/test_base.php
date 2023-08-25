@@ -91,7 +91,6 @@ use cfg\word_list;
 use controller\controller;
 use html\html_base;
 use html\view\view as view_dsp;
-use user_dsp_old;
 
 const HOST_TESTING = 'http://localhost/';
 
@@ -438,10 +437,10 @@ class test_base
         // e.g. a value owned by the first user cannot be adjusted by the second user instead a user specific value is created
         // instead a user specific value is created
         // for testing $usr is the user who has started the test ans $usr1 and $usr2 are the users used for simulation
-        $this->usr1 = new user_dsp_old;
+        $this->usr1 = new user();
         $this->usr1->load_by_name(user::SYSTEM_TEST_NAME);
 
-        $this->usr2 = new user_dsp_old;
+        $this->usr2 = new user();
         $this->usr2->load_by_name(user::SYSTEM_NAME_TEST_PARTNER);
 
     }

@@ -65,7 +65,6 @@ use cfg\db\sql_creator;
 use html\html_base;
 use html\phrase\term as term_dsp;
 use html\word\word as word_dsp;
-use user_dsp_old;
 
 class term extends combine_named
 {
@@ -113,8 +112,7 @@ class term extends combine_named
      */
     function __construct(user|word|triple|formula|verb|null $obj)
     {
-        // TODO remove user_dsp_old
-        if ($obj::class == user::class or $obj::class == user_dsp_old::class) {
+        if ($obj::class == user::class) {
             // create a dummy word object to remember the user
             parent::__construct(new word($obj));
         } else {

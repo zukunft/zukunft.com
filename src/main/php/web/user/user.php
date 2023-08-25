@@ -31,13 +31,97 @@
 
 namespace html\user;
 
+use api\api;
+use api\sandbox_value_api;
 use api\user_api;
 use html\html_base;
+use html\phrase\phrase_group as phrase_group_dsp;
 
 class user extends user_api
 {
 
     const FORM_EDIT = 'user_edit';
+
+
+    /*
+     * set and get
+     */
+
+    /**
+     * set the vars of this object bases on the api json string
+     * @param string $json_api_msg an api json message as a string
+     * @return void
+     */
+    function set_from_json(string $json_api_msg): void
+    {
+        $this->set_from_json_array(json_decode($json_api_msg, true));
+    }
+
+    /**
+     * set the vars of this object bases on the api json array
+     * @param array $json_array an api json message
+     * @return void
+     */
+    function set_from_json_array(array $json_array): void
+    {
+        if (array_key_exists(api::FLD_ID, $json_array)) {
+            $this->set_id($json_array[api::FLD_ID]);
+        } else {
+            $this->set_id(0);
+            log_err('Mandatory field id missing in API JSON ' . json_encode($json_array));
+        }
+        if (array_key_exists(api::FLD_NAME, $json_array)) {
+            $this->name = $json_array[api::FLD_NAME];
+        } else {
+            $this->name = null;
+        }
+        if (array_key_exists(api::FLD_NAME, $json_array)) {
+            $this->description = $json_array[api::FLD_NAME];
+        } else {
+            $this->description = null;
+        }
+        if (array_key_exists(api::FLD_NAME, $json_array)) {
+            $this->profile = $json_array[api::FLD_NAME];
+        } else {
+            $this->profile = null;
+        }
+        if (array_key_exists(api::FLD_NAME, $json_array)) {
+            $this->email = $json_array[api::FLD_NAME];
+        } else {
+            $this->email = null;
+        }
+        if (array_key_exists(api::FLD_NAME, $json_array)) {
+            $this->first_name = $json_array[api::FLD_NAME];
+        } else {
+            $this->first_name = null;
+        }
+        if (array_key_exists(api::FLD_NAME, $json_array)) {
+            $this->last_name = $json_array[api::FLD_NAME];
+        } else {
+            $this->last_name = null;
+        }
+    }
+
+
+    /*
+     * interface
+     */
+
+    /**
+     * @return array the json message array to send the updated data to the backend
+     * an array is used (instead of a string) to enable combinations of api_array() calls
+     */
+    function api_array(): array
+    {
+        $vars[api::FLD_NAME] = $this->name;
+        $vars[api::FLD_DESCRIPTION] = $this->description;
+        return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
+    }
+
+
+    /*
+     * to review
+     */
 
     /**
      * display a form with the user parameters such as name or email
