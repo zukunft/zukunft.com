@@ -35,17 +35,11 @@ include_once WEB_SANDBOX_PATH . 'list.php';
 
 
 use cfg\phrase_type;
-use html\formula\formula as formula_dsp;
 use html\html_base;
-use html\html_selector;
 use html\list_dsp;
 use html\word\triple as triple_dsp;
 use html\word\triple_list as triple_list_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
-use cfg\term_list;
-use cfg\user;
-use cfg\verb;
-use word_select_direction;
 
 class triple_list extends list_dsp
 {

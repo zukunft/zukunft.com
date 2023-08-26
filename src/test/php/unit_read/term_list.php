@@ -73,7 +73,8 @@ class term_list_unit_db_tests
         $pattern = substr(formula_api::TN_READ, 0, -1);
         $lst->load_names($pattern);
         $t->assert_contains($test_name, $lst->names(), formula_api::TN_READ);
-        // test load by term list by ids
+
+        $test_name = 'loading by term list by ids ';
         $trm_lst = new term_list($t->usr1);
         $trm_lst->load_by_ids((new trm_ids([1, -1, 2, -2])));
         $result = $trm_lst->name();
@@ -81,14 +82,20 @@ class term_list_unit_db_tests
             word_api::TN_READ . '","' .
             verb_api::TN_READ . '","' .
             formula_api::TN_READ . '"'; // order adjusted based on the number of usage
-        $t->assert('load by ids for ' . $trm_lst->dsp_id(), $result, $target);
+        $t->assert($test_name . $trm_lst->dsp_id(), $result, $target);
 
-        // test the api message creation of the api index file
+        $test_name = 'loading the api message creation of the api index file for ';
         // TODO add this to all db read tests for all API call functions
         $result = json_decode(json_encode($trm_lst->api_obj()), true);
         $class_for_file = $t->class_without_namespace(term_list::class);
         $target = json_decode($t->api_json_expected($class_for_file), true);
-        $t->assert('api json based on id loading for ' . $trm_lst->dsp_id(), $lib->json_is_similar($target, $result), true);
+        $t->assert($test_name . $trm_lst->dsp_id(), $lib->json_is_similar($target, $result), true);
+
+        $test_name = 'loading by term list by pattern ';
+        $trm_lst = new term_list($t->usr1);
+        $pattern = substr(word_api::TN_READ, 0, -1);
+        $trm_lst->load_like($pattern);
+        $t->assert_contains($test_name, $trm_lst->names(), word_api::TN_READ);
 
     }
 

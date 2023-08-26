@@ -32,8 +32,11 @@
 
 namespace test;
 
+use api\source_api;
+use cfg\library;
 use cfg\phrase_type;
 use cfg\ref_type_list;
+use cfg\source_list;
 use cfg\source_type;
 use cfg\source_type_list;
 use cfg\ref;
@@ -50,6 +53,7 @@ class ref_unit_db_tests
         global $source_types;
 
         // init
+        $lib = new library();
         $t->header('Unit database tests of the ref class (src/main/php/model/ref/ref.php)');
         $t->name = 'ref read db->';
 
@@ -83,6 +87,31 @@ class ref_unit_db_tests
         // ... and check if at least the most critical is loaded
         $result = $source_types->id(source_type::XBRL);
         $t->assert('check ' . source_type::XBRL, $result, 2);
+
+
+        $t->subheader('Source list tests');
+        $t->name = 'source read db->';
+
+        $test_name = 'loading by source list by ids ';
+        $src_lst = new source_list($t->usr1);
+        $src_lst->load_by_ids([1]);
+        $result = $src_lst->name();
+        $target = source_api::TN_READ;
+        $t->assert($test_name . $src_lst->dsp_id(), $result, $target);
+
+        $test_name = 'loading the api message creation of the api index file for ';
+        // TODO add this to all db read tests for all API call functions
+        $result = json_decode(json_encode($src_lst->api_obj()), true);
+        $class_for_file = $t->class_without_namespace(source_list::class);
+        $target = json_decode($t->api_json_expected($class_for_file), true);
+        $t->assert($test_name . $src_lst->dsp_id(), $lib->json_is_similar($target, $result), true);
+
+        $test_name = 'loading by source list by pattern ';
+        $src_lst = new source_list($t->usr1);
+        $pattern = substr(source_api::TN_READ, 0, -1);
+        $src_lst->load_like($pattern);
+        $t->assert_contains($test_name, $src_lst->names(), source_api::TN_READ);
+
     }
 
 }

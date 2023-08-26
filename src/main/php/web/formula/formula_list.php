@@ -31,12 +31,11 @@
 
 namespace html\formula;
 
+include_once WEB_SANDBOX_PATH . 'list.php';
+
 use html\html_base;
-use html\html_selector;
 use html\list_dsp;
 use html\formula\formula as formula_dsp;
-
-include_once WEB_SANDBOX_PATH . 'list.php';
 
 class formula_list extends list_dsp
 {

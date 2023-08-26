@@ -65,6 +65,7 @@ class controller
     const URL_VAR_ID = 'id'; // the internal database id that should never be shown to the user
     const URL_VAR_ID_LST = 'ids'; // a comma seperated list of internal database ids
     const URL_VAR_NAME = 'name'; // the unique name of a term, view, component, user, source, language or type
+    const URL_VAR_PATTERN = 'pattern'; // part of a name to select a named object such as word, triple, ...
     const URL_VAR_COMMENT = 'comment';
     const URL_VAR_DESCRIPTION = 'description';
     const URL_VAR_DEBUG = 'debug'; // to force the output of debug messages

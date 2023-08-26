@@ -124,6 +124,12 @@ class source extends sandbox_typed
         return $html_source_types->selector($form_name);
     }
 
+    private function source_selector(string $form_name): string
+    {
+        $src_lst = new sou;
+        return '';
+    }
+
 
     /*
      * to review
@@ -159,8 +165,10 @@ class source extends sandbox_typed
         return $result;
     }
 
-    // display a selector for the value source
-    function dsp_select($form_name, $back): string
+    /**
+     * display a selector for the value source
+     */
+    function dsp_select(string $form_name, string $back): string
     {
         global $usr;
         log_debug($this->dsp_id());

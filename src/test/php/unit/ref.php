@@ -34,6 +34,7 @@ namespace test;
 
 use api\source_api;
 use cfg\ref_type_list;
+use cfg\source_list;
 use cfg\source_type_list;
 use html\ref\ref as ref_dsp;
 use html\ref\source as source_dsp;
@@ -112,6 +113,16 @@ class ref_unit_tests
         $src = $t->dummy_source();
         $t->assert_api_msg($db_con, $src);
         $t->assert_api_to_dsp($src, new source_dsp());
+
+
+        // init for source list
+        $t->name = 'source_list->';
+
+        $src_lst = new source_list($usr);
+        $trm_ids = array(1, 2, 3);
+        $t->assert_sql_by_ids($db_con, $src_lst, $trm_ids);
+        $src_lst = new source_list($usr);
+        $t->assert_sql_like($db_con, $src_lst);
 
     }
 

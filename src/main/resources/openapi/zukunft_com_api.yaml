@@ -53,6 +53,8 @@ tags:
     description: the single components of a display mask
   - name: source
     description: the original data sources for the values
+  - name: sourceList
+    description: a list of sources for the values that may often change so it is loaded every time for the moment
   - name: reference
     description: a data link with scheduled updates
   - name: import
@@ -1224,6 +1226,32 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Source'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /sourceList:
+    post:
+      tags:
+        - sourceList
+      summary: get a list of sources by the ids
+      description: get a list of sources by the ids
+      requestBody:
+        description: id list of sources to fetch
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IdList'
+      responses:
+        '200':
+          description: sources requested
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SourceList'
         default:
           description: unexpected error
           content:

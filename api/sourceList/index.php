@@ -2,8 +2,8 @@
 
 /*
 
-    api/termList/index.php - the term list API controller: send a list of term to the frontend
-    ----------------------
+    api/sourceList/index.php - the source list API controller: send a list of source to the frontend
+    ------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -26,14 +26,13 @@
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
-  
+
 */
 
 use controller\controller;
 use cfg\user;
-use cfg\trm_ids;
-use cfg\term_list;
-use api\term_list_api;
+use cfg\source_list;
+use api\ref\source_list as source_list_api;
 
 // standard zukunft header for callable php files to allow debugging and lib loading
 global $debug;
@@ -46,19 +45,18 @@ include_once API_PATH . 'api.php';
 include_once API_PATH . 'controller.php';
 include_once API_PATH . 'message_header.php';
 include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_PHRASE_PATH . 'trm_ids.php';
-include_once MODEL_PHRASE_PATH . 'term_list.php';
-include_once API_PHRASE_PATH . 'term_list.php';
+include_once MODEL_REF_PATH . 'source_list.php';
+include_once API_REF_PATH . 'source_list.php';
 
 // open database
-$db_con = prg_start("api/termList", "", false);
+$db_con = prg_start("api/sourceList", "", false);
 
 // get the parameters
-$trm_ids = $_GET[controller::URL_VAR_ID_LST] ?? '';
+$src_ids = $_GET[controller::URL_VAR_ID_LST] ?? '';
 $pattern = $_GET[controller::URL_VAR_PATTERN] ?? '';
 
 $msg = '';
-$result = new term_list_api(); // reset the html code var
+$result = new source_list_api(array());
 
 // load the session user parameters
 $usr = new user;
@@ -67,16 +65,16 @@ $msg .= $usr->get();
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id() > 0) {
 
-    if ($trm_ids != '') {
-        $lst = new term_list($usr);
-        $lst->load_by_ids((new trm_ids(explode(",", $trm_ids))));
+    if ($src_ids != '') {
+        $lst = new source_list($usr);
+        $lst->load_by_ids(explode(",", $src_ids));
         $result = $lst->api_obj();
     } elseif ($pattern != '') {
-        $lst = new term_list($usr);
-        $lst->load_like($pattern);
+        $lst = new source_list($usr);
+        $lst->load_like(($pattern));
         $result = $lst->api_obj();
     } else {
-        $msg = 'term ids and pattern missing';
+        $msg = 'source ids and pattern missing';
     }
 }
 

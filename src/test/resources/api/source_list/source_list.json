@@ -1,0 +1,9 @@
+[
+  {
+    "id": 1,
+    "name": "wikidata",
+    "description": "the base API link to wikidata",
+    "type_id": 5,
+    "url": "https:\/\/www.wikidata.org\/wiki\/"
+  }
+]

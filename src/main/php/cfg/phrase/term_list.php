@@ -122,8 +122,9 @@ class term_list extends sandbox_list_named
         return $phr_lst;
     }
 
+
     /*
-     * load function
+     * load
      */
 
     /**

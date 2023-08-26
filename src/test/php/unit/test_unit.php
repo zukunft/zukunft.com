@@ -54,6 +54,7 @@ include_once MODEL_COMPONENT_PATH . 'component_type_list.php';
 include_once MODEL_COMPONENT_PATH . 'component_pos_type_list.php';
 include_once MODEL_VIEW_PATH . 'view_term_link.php';
 include_once MODEL_REF_PATH . 'ref_type_list.php';
+include_once MODEL_REF_PATH . 'source_list.php';
 include_once MODEL_REF_PATH . 'source_type_list.php';
 include_once MODEL_SANDBOX_PATH . 'share_type_list.php';
 include_once MODEL_SANDBOX_PATH . 'protection_type_list.php';

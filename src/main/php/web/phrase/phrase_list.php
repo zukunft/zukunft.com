@@ -111,6 +111,7 @@ class phrase_list extends list_dsp
         return $result;
     }
 
+
     /*
      * load
      */
@@ -139,6 +140,7 @@ class phrase_list extends list_dsp
         }
         return $result;
     }
+
 
     /*
      * display
