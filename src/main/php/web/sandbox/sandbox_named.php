@@ -30,18 +30,16 @@
 
 */
 
-namespace html;
+namespace html\sandbox;
 
 include_once WEB_SANDBOX_PATH . 'db_object.php';
+include_once WEB_SANDBOX_PATH . 'sandbox.php';
 include_once API_SANDBOX_PATH . 'sandbox_named.php';
 
 use api\api;
-use api\sandbox_named_api;
-use controller\controller;
 use html\api as api_dsp;
-use html\sandbox\db_object as db_object_dsp;
 
-class sandbox_named_dsp extends db_object_dsp
+class sandbox_named extends sandbox
 {
 
     // the unique name of the object that is shown to the user

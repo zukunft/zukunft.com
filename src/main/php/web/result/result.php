@@ -37,12 +37,12 @@ namespace html\result;
 use api\api;
 use controller\controller;
 use html\phrase\phrase_list as phrase_list_dsp;
-use html\sandbox_value_dsp;
+use html\sandbox\sandbox_value;
 use html\figure\figure as figure_dsp;
 
 include_once WEB_SANDBOX_PATH . 'sandbox_value.php';
 
-class result extends sandbox_value_dsp
+class result extends sandbox_value
 {
 
     /*

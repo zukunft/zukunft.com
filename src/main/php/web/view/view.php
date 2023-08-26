@@ -44,7 +44,6 @@ use cfg\view_type;
 use cfg\word;
 use dsp_list;
 use html\component\component;
-use html\component\component_old;
 use html\component\component_list as component_list_dsp;
 use controller\controller;
 use html\api as api_dsp;
@@ -54,10 +53,10 @@ use html\html_selector;
 use html\log\user_log_display;
 use html\msg;
 use html\sandbox\db_object as db_object_dsp;
-use html\sandbox_typed_dsp;
+use html\sandbox\sandbox_typed;
 use html\word\word as word_dsp;
 
-class view extends sandbox_typed_dsp
+class view extends sandbox_typed
 {
 
     /*
@@ -348,11 +347,12 @@ class view extends sandbox_typed_dsp
      */
     private function dsp_navbar_html(string $back = ''): string
     {
+        global $usr;
         $html = new html_base();
 
         $result = $this->html_navbar_start();
         $result .= '<td class="right_ref">';
-        if ($this->is_system() and !$this->user()->is_admin()) {
+        if ($this->is_system() and !$usr->is_admin()) {
             $url = $html->url(api_dsp::SEARCH);
             $result .= (new button($url, $back))->find(msg::SEARCH_MAIN) . ' - ';
             $result .= $this->name . ' ';
@@ -557,6 +557,7 @@ class view extends sandbox_typed_dsp
      */
     function dsp_edit($add_cmp, $wrd, $back): string
     {
+        global $usr;
         global $view_types;
 
         $result = '';
@@ -573,7 +574,7 @@ class view extends sandbox_typed_dsp
             $script = "view_add";
             $result .= $html->dsp_text_h2('Create a new view (for <a href="/http/view.php?words=' . $wrd->id() . '">' . $wrd->name() . '</a>)');
         } else {
-            log_debug($this->dsp_id() . ' for user ' . $this->user()->name . ' (called from ' . $back . ')');
+            log_debug($this->dsp_id() . ' for user ' . $usr->name() . ' (called from ' . $back . ')');
             $script = "view_edit";
             $result .= $html->dsp_text_h2('Edit view "' . $this->name . '" (used for <a href="/http/view.php?words=' . $wrd->id() . '">' . $wrd->name() . '</a>)');
         }
@@ -593,14 +594,14 @@ class view extends sandbox_typed_dsp
         $result .= '<div class="form-row">';
         if ($add_cmp < 0 or $add_cmp > 0) {
             // show the fields inactive, because the assign fields are active
-            $result .= $html->dsp_form_text("name", $this->name, "Name:", "col-sm-8", "disabled");
-            $result .= $this->dsp_type_selector($script, "col-sm-4", "disabled");
+            $result .= $html->dsp_form_text("name", $this->name, "Name:", html_base::COL_SM_8, "disabled");
+            $result .= $this->dsp_type_selector($script, html_base::COL_SM_4, "disabled");
             $result .= '</div>';
             $result .= $html->dsp_form_text_big("description", $this->description, "Comment:", "", "disabled");
         } else {
             // show the fields inactive, because the assign fields are active
-            $result .= $html->dsp_form_text("name", $this->name, "Name:", "col-sm-8");
-            $result .= $this->dsp_type_selector($script, "col-sm-4", "");
+            $result .= $html->dsp_form_text("name", $this->name, "Name:", html_base::COL_SM_8);
+            $result .= $this->dsp_type_selector($script, html_base::COL_SM_4, "");
             $result .= '</div>';
             $result .= $html->dsp_form_text_big("description", $this->description, "Comment:");
             $result .= $html->dsp_form_end('', $back, "/http/view_del.php?id=" . $this->id . "&back=" . $back);
@@ -642,7 +643,7 @@ class view extends sandbox_typed_dsp
     }
 
     /**
-     * @param string $script the name of the formula
+     * @param string $script the name of the html form
      * @return string the html code for the view type selector
      */
     private function dsp_type_selector(string $script, string $class, string $attribute): string

@@ -51,6 +51,9 @@ class html_base
     const BS_BTN_SUCCESS = 'btn-outline-success';
     const BS_BTN_CANCEL = 'btn-outline-secondary';
     const BS_SM_2 = 'mr-sm-2';
+    const COL_SM_4 = 'col-sm-4';
+    const COL_SM_8 = 'col-sm-8';
+    const COL_SM_12 = 'col-sm-12';
 
 
     const IMG_LOGO = "/src/main/resources/images/ZUKUNFT_logo.svg";
@@ -505,7 +508,7 @@ class html_base
     function form_text(string  $field,
                        ?string $txt_value = '',
                        string  $label = '',
-                       string  $class = api::CLASS_COL_4,
+                       string  $class = html_base::COL_SM_4,
                        string  $attribute = ''): string
     {
         $result = '';
@@ -1020,7 +1023,7 @@ class html_base
     }
 
 // add the text field to a form
-    function dsp_form_text($field, $txt_value, $label, $class = "col-sm-4", $attribute = ''): string
+    function dsp_form_text($field, $txt_value, $label, $class = self::COL_SM_4, $attribute = ''): string
     {
         $result = '';
         if (UI_USE_BOOTSTRAP) {
@@ -1032,7 +1035,7 @@ class html_base
     }
 
 // add the text big field to a form
-    function dsp_form_text_big($field, $txt_value, $label, $class = "col-sm-4", $attribute = ''): string
+    function dsp_form_text_big($field, $txt_value, $label, $class = self::COL_SM_4, $attribute = ''): string
     {
         $result = '';
         if (UI_USE_BOOTSTRAP) {
@@ -1044,7 +1047,7 @@ class html_base
     }
 
 // add the field to a form
-    function dsp_form_fld($field, $txt_value, $label, $class = "col-sm-4", $attribute = ''): string
+    function dsp_form_fld($field, $txt_value, $label, $class = self::COL_SM_4, $attribute = ''): string
     {
         $result = '';
         if ($label == '') {
@@ -1147,6 +1150,15 @@ class html_base
         return '<label for="' . $for . '">' . $text . '</label>';
     }
 
+    /**
+     * create the HTML code for an input field
+     * @param string $name the title and id of the input field e.g. Name
+     * @param string $value the suggested value which is in most cases the value already saved in the db
+     * @param string $type the type of the input e.g. a text or if not set a submit field
+     * @param string $class_add the formatting code to adjust the formatting e.g. extend the description to the full screen width
+     * @param string $placeholder
+     * @return string the HTML code for the field
+     */
     function input(
         string $name = '',
         string $value = '',
@@ -1181,7 +1193,9 @@ class html_base
     function div(string $text, string $class = ''): string
     {
         if ($class == '') {
-            $class = 'form-group col-sm-4';
+            $class = 'form-group ' . self::COL_SM_4;
+        } else {
+            $class = 'form-group ' . $class;
         }
         return '<div class="' . $class . '">' . $text . '</div>';
     }
@@ -1206,10 +1220,25 @@ class html_base
         return '<form' . $action . $id . '>';
     }
 
-    function form_field(string $name, string $value, string $id = ''): string
+    /**
+     * create the HTML code for an input field including the label
+     * @param string $name the title and id of the input field e.g. Name
+     * @param string $value the suggested value which is in most cases the value already saved in the db
+     * @param string $type the type of the input e.g. a text or if not set a submit field
+     * @param string $input_class the formatting code to change the input type
+     * @param string $col_class the formatting code to adjust the formatting e.g. extend the description to the full screen width
+     * @return string the HTML code for the field with the label
+     */
+    function form_field(
+        string $name,
+        string $value,
+        string $type = '',
+        string $input_class = '',
+        string $col_class = ''
+    ): string
     {
-        $text = $this->label($name) . $this->input($name, $value);
-        return $this->div($text);
+        $text = $this->label($name) . $this->input($name, $value, $type, $input_class);
+        return $this->div($text, $col_class);
     }
 
     /**

@@ -35,9 +35,9 @@ use controller\controller;
 use api\api;
 use html\api as api_dsp;
 use html\html_base;
-use html\sandbox_typed_dsp;
+use html\sandbox\sandbox_typed;
 
-class language extends sandbox_typed_dsp
+class language extends sandbox_typed
 {
 
     private ?string $url;

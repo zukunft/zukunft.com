@@ -36,9 +36,9 @@ use api\api;
 use html\api as api_dsp;
 use html\html_base;
 use html\html_selector;
-use html\sandbox_typed_dsp;
+use html\sandbox\sandbox_typed;
 
-class source extends sandbox_typed_dsp
+class source extends sandbox_typed
 {
 
     private ?string $url;
@@ -114,6 +114,17 @@ class source extends sandbox_typed_dsp
         return $html->ref($url, $this->name(), $this->name(), $style);
     }
 
+    /**
+     * @param string $form_name the name of the html form
+     * @return string the html code to select the source type
+     */
+    private function dsp_select_type(string $form_name): string
+    {
+        global $html_source_types;
+        return $html_source_types->selector($form_name);
+    }
+
+
     /*
      * to review
      */
@@ -145,23 +156,6 @@ class source extends sandbox_typed_dsp
         $result .= $html->dsp_form_end('', $back);
 
         log_debug('done');
-        return $result;
-    }
-
-    // display a selector for the source type
-    private function dsp_select_type($form_name, $back): string
-    {
-        log_debug("source->dsp_select_type (" . $this->id . "," . $form_name . ",b" . $back . ")");
-
-        $result = ''; // reset the html code var
-
-        $sel = new html_selector;
-        $sel->form = $form_name;
-        $sel->name = "source_type";
-        $sel->sql = sql_lst("source_type");
-        $sel->selected = $this->type_id();
-        $sel->dummy_text = 'please select the source type';
-        $result .= $sel->display_old();
         return $result;
     }
 

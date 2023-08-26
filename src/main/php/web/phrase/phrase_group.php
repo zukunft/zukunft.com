@@ -37,8 +37,7 @@ namespace html\phrase;
 include_once WEB_SANDBOX_PATH . 'sandbox_named.php';
 
 use api\api;
-use controller\controller;
-use html\sandbox_named_dsp;
+use html\sandbox\sandbox_named as sandbox_named_dsp;
 use html\word\word as word_dsp;
 use html\phrase\phrase as phrase_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;

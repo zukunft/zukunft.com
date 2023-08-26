@@ -46,9 +46,9 @@ use html\api as api_dsp;
 use html\html_base;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\figure\figure as figure_dsp;
-use html\sandbox_value_dsp;
+use html\sandbox\sandbox_value;
 
-class value extends sandbox_value_dsp
+class value extends sandbox_value
 {
 
 

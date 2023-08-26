@@ -42,13 +42,13 @@ use html\msg;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\word\word as word_dsp;
 use html\phrase\phrase as phrase_dsp;
-use html\sandbox_typed_dsp;
+use html\sandbox\sandbox_typed;
 use html\phrase\term as term_dsp;
 use html\verb\verb as verb_dsp;
 use cfg\phrase;
 use cfg\phrase_list;
 
-class triple extends sandbox_typed_dsp
+class triple extends sandbox_typed
 {
 
     // the form names to change the word
@@ -238,7 +238,7 @@ class triple extends sandbox_typed_dsp
             $detail_fields .= $this->phrase_selector(self::FORM_EDIT, 'from', $this->from());
             /* TODO
             if (isset($this->verb)) {
-                $result .= $this->verb->dsp_selector('forward', $form_name, "col-sm-4", $back);
+                $result .= $this->verb->dsp_selector('forward', $form_name, html_base::COL_SM_4, $back);
             }
             */
             $detail_fields .= $this->phrase_selector(self::FORM_EDIT, 'to', $this->to());

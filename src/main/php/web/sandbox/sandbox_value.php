@@ -32,19 +32,17 @@
 
 */
 
-namespace html;
+namespace html\sandbox;
 
 include_once WEB_SANDBOX_PATH . 'db_object.php';
+include_once WEB_SANDBOX_PATH . 'sandbox.php';
 
 use api\api;
-use api\sandbox_api;
 use api\sandbox_value_api;
-use controller\controller;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\phrase\phrase_group as phrase_group_dsp;
-use html\sandbox\db_object as db_object_dsp;
 
-class sandbox_value_dsp extends db_object_dsp
+class sandbox_value extends sandbox
 {
 
     private phrase_group_dsp $grp; // the phrase group with the list of words and triples (not the source words and triples)

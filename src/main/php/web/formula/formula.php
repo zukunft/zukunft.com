@@ -54,10 +54,10 @@ use html\log\user_log_display;
 use html\msg;
 use html\phrase\term as term_dsp;
 use html\result\result as result_dsp;
-use html\sandbox_typed_dsp;
+use html\sandbox\sandbox_typed;
 use html\word\word as word_dsp;
 
-class formula extends sandbox_typed_dsp
+class formula extends sandbox_typed
 {
 
     /*
@@ -224,6 +224,22 @@ class formula extends sandbox_typed_dsp
         return (new button($url, $back))->del(msg::FORMULA_DEL, msg::OF . $this->name);
     }
 
+
+    /*
+     * internal
+     */
+
+    /**
+     * @param string $form_name the name of the html form
+     * @return string the html code to select the formula type
+     */
+    function dsp_type_selector(string $form_name): string
+    {
+        global $html_formula_types;
+        return $html_formula_types->selector($form_name);
+    }
+
+
     /*
      * to review
      */
@@ -322,8 +338,8 @@ class formula extends sandbox_typed_dsp
             $result .= $html->dsp_form_hidden("back", $back);
         }
         $result .= '<div class="form-row">';
-        $result .= $html->dsp_form_fld("formula_name", $this->name, "Formula name:", "col-sm-8");
-        $result .= $this->dsp_type_selector($script, "col-sm-4");
+        $result .= $html->dsp_form_fld("formula_name", $this->name, "Formula name:", html_base::COL_SM_8);
+        $result .= $this->dsp_type_selector($script);
         $result .= '</div>';
         $result .= $html->dsp_form_fld("description", $this->description, "Description:", "col-sm-9");
         // predefined formulas like "this" or "next" should only be changed by an admin
@@ -366,22 +382,6 @@ class formula extends sandbox_typed_dsp
         $result .= '<br><br>'; // this a usually a small for, so the footer can be moved away
 
         log_debug("done");
-        return $result;
-    }
-
-    // display the formula type selector
-    function dsp_type_selector($script, $class): string
-    {
-        $result = '';
-        $sel = new html_selector;
-        $sel->form = $script;
-        $sel->name = "type";
-        $sel->label = "Formula type:";
-        $sel->bs_class = $class;
-        $sel->sql = sql_lst("formula_type");
-        $sel->selected = $this->type_id();
-        $sel->dummy_text = 'select a predefined type if needed';
-        $result .= $sel->display_old() . ' ';
         return $result;
     }
 

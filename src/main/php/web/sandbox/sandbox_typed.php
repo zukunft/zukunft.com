@@ -30,14 +30,14 @@
 
 */
 
-namespace html;
+namespace html\sandbox;
 
 use controller\controller;
 use api\api;
 
 include_once WEB_SANDBOX_PATH . 'sandbox_named.php';
 
-class sandbox_typed_dsp extends sandbox_named_dsp
+class sandbox_typed extends sandbox_named
 {
 
     // all named objects can have a type that links predefined functionality to it

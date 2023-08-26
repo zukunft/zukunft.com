@@ -52,11 +52,11 @@ use html\phrase\phrase as phrase_dsp;
 use html\phrase\phrase_list;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\phrase\term as term_dsp;
-use html\sandbox_typed_dsp;
+use html\sandbox\sandbox_typed;
 use html\system\back_trace;
 use html\word\word as word_dsp;
 
-class word extends sandbox_typed_dsp
+class word extends sandbox_typed
 {
 
     // default view settings
@@ -286,23 +286,14 @@ class word extends sandbox_typed_dsp
      */
 
     /**
-     * @param string $script
-     * @param string $bs_class
-     * @return string
+     * @param string $form_name the name of the html form
+     * @param string $bs_class e.g. to define the size of the select field
+     * @return string the html code to select the phrase type
      */
-    private function type_selector(string $script, string $bs_class): string
+    private function type_selector(string $form_name, string $bs_class): string
     {
-        $result = '';
-        $sel = new html_selector;
-        $sel->form = $script;
-        $sel->name = 'type';
-        $sel->label = "Word type:";
-        $sel->bs_class = $bs_class;
-        $sel->sql = sql_lst("phrase_type");
-        $sel->selected = $this->type_id();
-        $sel->dummy_text = '';
-        $result .= $sel->display_old();
-        return $result;
+        global $html_phrase_types;
+        return $html_phrase_types->selector($form_name);
     }
 
     function dsp_type_selector(string $script, string $back = ''): string
@@ -312,7 +303,7 @@ class word extends sandbox_typed_dsp
         if ($phrase_types->code_id($this->type_id()) == phrase_type::FORMULA_LINK) {
             $result .= ' type: ' . $phrase_types->name($this->type_id());
         } else {
-            $result .= $this->type_selector($script, "col-sm-4");
+            $result .= $this->type_selector($script, html_base::COL_SM_4);
         }
         return $result;
     }
@@ -610,8 +601,8 @@ class word extends sandbox_typed_dsp
         $result .= $html->dsp_form_hidden("back", $back);
         $result .= $html->dsp_form_hidden("confirm", '1');
         $result .= '<div class="form-row">';
-        $result .= $html->dsp_form_text("word_name", $this->name, "Name:", "col-sm-4");
-        $result .= $this->dsp_type_selector($form, "col-sm-4");
+        $result .= $html->dsp_form_text("word_name", $this->name, "Name:", html_base::COL_SM_4);
+        $result .= $this->dsp_type_selector($form, html_base::COL_SM_4);
         $result .= $this->selector_add($wrd_id, $form, "form-row") . ' ';
         $result .= '</div>';
         $result .= 'which ';
@@ -815,7 +806,7 @@ class word extends sandbox_typed_dsp
             $result .= $frm_html->display_linked($back);
             $result .= '.<br> ';
         } else {
-            $result .= $html->dsp_form_text("name", $this->name, "Name:", "col-sm-4");
+            $result .= $html->dsp_form_text("name", $this->name, "Name:", html_base::COL_SM_4);
         }
         return $result;
     }

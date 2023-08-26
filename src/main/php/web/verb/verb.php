@@ -37,7 +37,7 @@ use api\verb_api;
 use html\api;
 use html\html_base;
 use html\phrase\term as term_dsp;
-use html\sandbox_named_dsp;
+use html\sandbox\sandbox_named as sandbox_named_dsp;
 
 class verb extends sandbox_named_dsp
 {

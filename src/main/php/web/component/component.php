@@ -47,10 +47,10 @@ use html\html_selector;
 use html\log\user_log_display;
 use html\phrase\phrase as phrase_dsp;
 use html\sandbox\db_object as db_object_dsp;
-use html\sandbox_typed_dsp;
+use html\sandbox\sandbox_typed;
 use html\view\view as view_dsp;
 
-class component extends sandbox_typed_dsp
+class component extends sandbox_typed
 {
 
     const FORM_ADD = 'component_add';
@@ -271,12 +271,13 @@ class component extends sandbox_typed_dsp
     }
 
     /**
+     * @param db_object_dsp $dbo the object
      * @return string the html code to request the object name from the user
      */
     function form_name(db_object_dsp $dbo): string
     {
         $html = new html_base();
-        return $html->form_field('Name', $dbo->name());
+        return $html->form_field('Name', $dbo->name(), html_base::INPUT_TEXT);
     }
 
     /**
@@ -285,7 +286,13 @@ class component extends sandbox_typed_dsp
     function form_description(db_object_dsp $dbo): string
     {
         $html = new html_base();
-        return $html->form_field('Description', $dbo->description());
+        return $html->form_field(
+            'Description',
+            $dbo->description(),
+            html_base::INPUT_TEXT,
+            '',
+            html_base::COL_SM_12
+        );
     }
 
     /**
@@ -376,6 +383,21 @@ class component extends sandbox_typed_dsp
     {
         $vars = parent::api_array();
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
+    }
+
+
+    /*
+     * internal
+     */
+
+    /**
+     * @param string $form_name the name of the html form
+     * @return string the html code to select the component type
+     */
+    private function dsp_type_selector(string $form_name): string
+    {
+        global $html_component_types;
+        return $html_component_types->selector($form_name);
     }
 
 
@@ -475,8 +497,8 @@ class component extends sandbox_typed_dsp
         $result .= $html->dsp_form_hidden("back", $back);
         $result .= $html->dsp_form_hidden("confirm", 1);
         $result .= '<div class="form-row">';
-        $result .= $html->dsp_form_fld("name", $this->name, "Component name:", "col-sm-8");
-        $result .= $this->dsp_type_selector($script, "col-sm-4"); // allow to change the type
+        $result .= $html->dsp_form_fld("name", $this->name, "Component name:", html_base::COL_SM_8);
+        $result .= $this->dsp_type_selector($script); // allow to change the type
         $result .= '</div>';
         $result .= '<div class="form-row">';
         $result .= $this->dsp_word_row_selector($script, "col-sm-6"); // allow to change the word_row word
@@ -592,22 +614,6 @@ class component extends sandbox_typed_dsp
         } else {
             return '';
         }
-    }
-
-    // display the component type selector
-    private function dsp_type_selector($script, $class): string
-    {
-        $result = '';
-        $sel = new html_selector;
-        $sel->form = $script;
-        $sel->dummy_text = 'not set';
-        $sel->name = 'type';
-        $sel->label = "Type:";
-        $sel->bs_class = $class;
-        $sel->sql = sql_lst("component_type");
-        $sel->selected = $this->type_id();
-        $result .= $sel->display_old() . ' ';
-        return $result;
     }
 
     // display the component word_row selector

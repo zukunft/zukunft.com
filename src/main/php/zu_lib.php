@@ -102,6 +102,9 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO add simple value list table with the hashed phrase list as key and the value
     TODO add a calculation validation section to the import
     TODO add a text based view validation section to the import
+    TODO for the frontend use three level of objects: normal, full and small
+         where the full additional contains the share and protection type
+         and the small object contains basically e.g. the id and the name
     TODO add a simple UI API JSON to text frontend for the view validation
     TODO exclude any search objects from list objects e.g. remove the phrase from the value list which implies to split the list loading into single functions such as load_by_phr
     TODO use a key-value table without a phrase group if a value is not user specific and none of the default settings has been changed
