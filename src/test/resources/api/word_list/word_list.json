@@ -1,0 +1,20 @@
+[
+  {
+    "id": 2,
+    "name": "constant",
+    "description": "fixed and well-defined number",
+    "type_id": 17
+  },
+  {
+    "id": 1,
+    "name": "Mathematics",
+    "description": "Mathematics is an area of knowledge that includes the topics of numbers and formulas",
+    "type_id": 1
+  },
+  {
+    "id": 3,
+    "name": "Pi",
+    "description": "ratio of the circumference of a circle to its diameter",
+    "type_id": 17
+  }
+]

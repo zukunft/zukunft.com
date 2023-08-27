@@ -91,6 +91,7 @@ use cfg\value;
 use cfg\verb;
 use cfg\view;
 use cfg\word;
+use cfg\word_list;
 use controller\controller;
 use controller\log\system_log_api;
 use DateTime;
@@ -148,9 +149,10 @@ class test_api extends create_test_objects
         $this->assert_api_get(language_form::class);
 
         $this->assert_api_get_list(type_lists::class);
+        $this->assert_api_get_list(word_list::class, [1, 2, 3]);
+        $this->assert_api_get_list(word_list::class, word_api::TN_READ, controller::URL_VAR_PATTERN);
         $this->assert_api_get_list(phrase_list::class, [1, 2, 3, -1, -2]);
-        // TODO fix contains
-        //$this->assert_api_get_list(phrase_list::class, 'M', controller::URL_VAR_PATTERN, '', true);
+        $this->assert_api_get_list(phrase_list::class, word_api::TN_READ, controller::URL_VAR_PATTERN);
         $this->assert_api_get_list(term_list::class, [1, -1, 2, -2]);
         $this->assert_api_get_list(formula_list::class, [1]);
         $this->assert_api_get_list(component_list::class, 3, 'view_id');

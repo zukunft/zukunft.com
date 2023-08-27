@@ -705,22 +705,19 @@ class word extends sandbox_typed
         return $result;
     }
 
-    // to select an existing word to be added
+    /**
+     * to select an existing word to be added
+     */
     private function selector_add($id, $form, $bs_class): string
     {
-        log_debug('word_dsp->selector_add ... word id ' . $id);
-        $result = '';
-        $sel = new html_selector;
-        $sel->form = $form;
-        $sel->name = 'add';
-        $sel->label = "Word:";
-        $sel->bs_class = $bs_class;
-        $sel->sql = sql_lst_usr("word", $this->user());
-        $sel->selected = $id;
-        $sel->dummy_text = '... or select an existing word to link it';
-        $result .= $sel->display_old();
-
-        return $result;
+        $pattern = '';
+        $phr_lst = new word_list();
+        $phr_lst->load_like($pattern);
+        $field_name = 'add';
+        $label = "Word:";
+        //$sel->bs_class = $bs_class;
+        //$sel->dummy_text = '... or select an existing word to link it';
+        return $phr_lst->selector($field_name, $form, $label, $id);
     }
 
     /**
@@ -728,24 +725,16 @@ class word extends sandbox_typed
      */
     function selector_word(int $id, int $pos, string $form_name): string
     {
-        log_debug('word_dsp->selector_word ... word id ' . $id);
-        $result = '';
+        $pattern = '';
+        $phr_lst = new word_list();
+        $phr_lst->load_like($pattern);
 
         if ($pos > 0) {
-            $field_id = "word" . $pos;
+            $field_name = "word" . $pos;
         } else {
-            $field_id = "word";
+            $field_name = "word";
         }
-        $sel = new html_selector;
-        $sel->form = $form_name;
-        $sel->name = $field_id;
-        $sel->sql = sql_lst_usr("word", $this->user());
-        $sel->selected = $id;
-        $sel->dummy_text = '';
-        $result .= $sel->display_old();
-
-        log_debug('word_dsp->selector_word ... done ' . $id);
-        return $result;
+        return $phr_lst->selector($field_name, $form_name, '', $id);
     }
 
     /**
