@@ -33,11 +33,10 @@ namespace html\ref;
 
 include_once WEB_SANDBOX_PATH . 'list.php';
 
-use cfg\phrase_type;
-use html\word\word as word_dsp;
-use html\html_base;
+use controller\controller;
 use html\list_dsp;
-use html\word\word_list;
+use html\api as api_dsp;
+use html\word\word as word_dsp;
 
 class source_list extends list_dsp
 {
@@ -79,18 +78,16 @@ class source_list extends list_dsp
 
     /**
      * add the sources from the backend
-     * @return bool
+     * @param string $pattern part of the name that should be used to select the sources
+     * @return bool true if at least one source has been found
      */
-    function load_all(): bool
+    function load_like(string $pattern): bool
     {
         $result = false;
 
-        // TODO move the
         $api = new api_dsp();
         $data = array();
-        $data[controller::URL_VAR_PHRASE] = $phr->id();
-        $data[controller::URL_VAR_DIRECTION] = $direction;
-        $data[controller::URL_VAR_LEVELS] = 1;
+        $data[controller::URL_VAR_PATTERN] = $pattern;
         $json_body = $api->api_get(self::class, $data);
         $this->set_from_json_array($json_body);
         if (!$this->is_empty()) {

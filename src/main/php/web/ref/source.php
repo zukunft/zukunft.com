@@ -124,10 +124,16 @@ class source extends sandbox_typed
         return $html_source_types->selector($form_name);
     }
 
-    private function source_selector(string $form_name): string
+    /**
+     * @param string $form_name
+     * @param string $pattern
+     * @return string
+     */
+    private function source_selector(string $form_name, string $pattern): string
     {
-        $src_lst = new sou;
-        return '';
+        $src_lst = new source_list;
+        $src_lst->load_like($pattern);
+        return $src_lst->selector('source', $form_name, 'please define a source', $this->id());
     }
 
 
@@ -180,13 +186,7 @@ class source extends sandbox_typed
         }
 
         log_debug("source id used (" . $this->id . ")");
-        $sel = new html_selector;
-        $sel->form = $form_name;
-        $sel->name = "source";
-        $sel->sql = sql_lst_usr("source", $usr);
-        $sel->selected = $this->id;
-        $sel->dummy_text = 'please define the source';
-        $result .= '      taken from ' . $sel->display_old() . ' ';
+        $result .= '      taken from ' . $this->source_selector($form_name, '') . ' ';
         $result .= '    <td>' . \html\btn_edit("Rename " . $this->name, '/http/source_edit.php?id=' . $this->id . '&back=' . $back) . '</td>';
         $result .= '    <td>' . \html\btn_add("Add new source", '/http/source_add.php?back=' . $back) . '</td>';
         return $result;
