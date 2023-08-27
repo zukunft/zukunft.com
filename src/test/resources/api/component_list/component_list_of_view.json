@@ -1,0 +1,49 @@
+[
+  {
+    "id": 2,
+    "name": "form title word add",
+    "description": "show the language specific title of a add, change or delete form",
+    "type_id": 17
+  },
+  {
+    "id": 3,
+    "name": "hidden back stack",
+    "description": "field that contains the stack for the undo actions",
+    "type_id": 18
+  },
+  {
+    "id": 4,
+    "name": "hidden confirm status",
+    "description": "switch on that the form saving needs an extra confirm by the user",
+    "type_id": 19
+  },
+  {
+    "id": 5,
+    "name": "name form field",
+    "description": "the name field in a form",
+    "type_id": 20
+  },
+  {
+    "id": 6,
+    "name": "description form field",
+    "description": "the description field in a form",
+    "type_id": 21
+  },
+  {
+    "id": 7,
+    "name": "cancel button",
+    "description": "button to cancel the form action and go back to the previous view",
+    "type_id": 22
+  },
+  {
+    "id": 8,
+    "name": "save button",
+    "description": "button to save the form field into the database",
+    "type_id": 23
+  },
+  {
+    "id": 9,
+    "name": "form end",
+    "type_id": 24
+  }
+]

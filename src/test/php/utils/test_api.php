@@ -67,6 +67,7 @@ use cfg\change_log;
 use cfg\change_log_field;
 use cfg\change_log_list;
 use cfg\component\component;
+use cfg\component\component_list;
 use cfg\formula;
 use cfg\formula_list;
 use cfg\language;
@@ -150,13 +151,15 @@ class test_api extends create_test_objects
         $this->assert_api_get_list(phrase_list::class, [1, 2, 3, -1, -2]);
         $this->assert_api_get_list(term_list::class, [1, -1, 2, -2]);
         $this->assert_api_get_list(formula_list::class, [1]);
+        $this->assert_api_get_list(
+            component_list::class, 3, 'view_id', 'component_list_of_view');
         $this->assert_api_chg_list(
             change_log_list::class,
             controller::URL_VAR_WORD_ID, 1,
             controller::URL_VAR_WORD_FLD, change_log_field::FLD_WORD_NAME);
         $this->assert_api_get_list(
             system_log_list::class,
-            [1, 2],
+            [1, 2], 'ids',
             'system_log_list_api',
             true);
         // $this->assert_rest(new word($usr, word_api::TN_READ));
@@ -688,27 +691,35 @@ class test_api extends create_test_objects
      * for testing the local deployments needs to be updated using an external script
      *
      * @param string $class the class name of the object to test
-     * @param array $ids the database ids of the db rows that should be used for testing
+     * @param array|string $ids the database ids of the db rows that should be used for testing
+     * @param string $id_fld the field name for the object id e.g. word_id
      * @param string $filename to overwrite the class based filename to get the standard expected result
      * @param bool $contains set to true if the actual message is expected to contain more than the expected message
      * @return bool true if the json has no relevant differences
      */
     function assert_api_get_list(
-        string $class,
-        array  $ids = [1, 2],
-        string $filename = '',
-        bool   $contains = false): bool
+        string       $class,
+        array|string $ids = [1, 2],
+        string       $id_fld = 'ids',
+        string       $filename = '',
+        bool         $contains = false): bool
     {
         $lib = new library();
         $class = $lib->class_to_name($class);
         $url = HOST_TESTING . controller::URL_API_PATH . $lib->camelize_ex_1($class);
-        $data = array("ids" => implode(",", $ids));
+        if (is_array($ids)) {
+            $data = array($id_fld => implode(",", $ids));
+        } else {
+            $data = array($id_fld => $ids);
+        }
         $actual = json_decode($this->api_call("GET", $url, $data), true);
 
         // TODO remove
-        $lst = new term_list($this->usr1);
-        $lst->load_by_ids((new trm_ids($ids)));
-        $result = $lst->api_obj();
+        if ($class == $lib->class_to_name(term_list::class)) {
+            $lst = new term_list($this->usr1);
+            $lst->load_by_ids((new trm_ids($ids)));
+            $result = $lst->api_obj();
+        }
 
         return $this->assert_api_compare($class, $actual, null, $filename, $contains);
     }
