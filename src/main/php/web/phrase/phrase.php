@@ -277,34 +277,30 @@ class phrase extends combine_named_dsp
      */
     function dsp_selector(phrase_api $type, string $form_name, int $pos, string $class, string $back = ''): string
     {
-        $result = '';
+        // TODO include pattern in the call
+        $pattern = '';
+        $phr_lst = new phrase_list();
+        $phr_lst->load_like($pattern);
 
         if ($pos > 0) {
             $field_name = "phrase" . $pos;
         } else {
             $field_name = "phrase";
         }
-        $sel = new html_selector;
-        $sel->form = $form_name;
-        $sel->name = $field_name;
-        if ($form_name == "value_add" or $form_name == "value_edit") {
-            $sel->label = "";
-        } else {
+        $label = "";
+        if ($form_name != "value_add" and $form_name != "value_edit") {
             if ($pos == 1) {
-                $sel->label = "From:";
+                $label = "From:";
             } elseif ($pos == 2) {
-                $sel->label = "To:";
+                $label = "To:";
             } else {
-                $sel->label = "Word:";
+                $label = "Word:";
             }
         }
-        $sel->bs_class = $class;
-        $sel->sql = $this->sql_list($type);
-        $sel->selected = $this->id();
-        $sel->dummy_text = '... please select';
-        $result .= $sel->display_old();
+        // TODO activate
+        // $sel->bs_class = $class;
 
-        return $result;
+        return $phr_lst->selector($field_name, $form_name, $label, $this->id());
     }
 
     function dsp_graph(foaf_direction $direction, ?verb_list $link_types = null, string $back = ''): string
