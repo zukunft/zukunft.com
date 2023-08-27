@@ -31,7 +31,7 @@
 
 namespace cfg;
 
-use api\view_api;
+use api\view\view as view_api;
 use cfg\db\sql_creator;
 use model\export\exp_obj;
 use model\export\view_exp;

@@ -32,11 +32,10 @@
 namespace html\ref;
 
 include_once WEB_SANDBOX_PATH . 'list.php';
+include_once WEB_REF_PATH . 'source.php';
 
-use controller\controller;
 use html\list_dsp;
-use html\api as api_dsp;
-use html\word\word as word_dsp;
+use html\ref\source as source_dsp;
 
 class source_list extends list_dsp
 {
@@ -46,15 +45,15 @@ class source_list extends list_dsp
      */
 
     /**
-     * set the vars of a word object based on the given json
+     * set the vars of a source object based on the given json
      * @param array $json_array an api single object json message
-     * @return object a word set based on the given json
+     * @return object a source set based on the given json
      */
     function set_obj_from_json_array(array $json_array): object
     {
-        $wrd = new word_dsp();
-        $wrd->set_from_json_array($json_array);
-        return $wrd;
+        $src = new source_dsp();
+        $src->set_from_json_array($json_array);
+        return $src;
     }
 
 
@@ -63,38 +62,12 @@ class source_list extends list_dsp
      */
 
     /**
-     * add a word to the list
-     * @returns bool true if the word has been added
+     * add a source to the list
+     * @returns bool true if the source has been added
      */
-    function add(word_dsp $wrd): bool
+    function add(source_dsp $src): bool
     {
-        return parent::add_obj($wrd);
+        return parent::add_obj($src);
     }
-
-
-    /*
-     * load
-     */
-
-    /**
-     * add the sources from the backend
-     * @param string $pattern part of the name that should be used to select the sources
-     * @return bool true if at least one source has been found
-     */
-    function load_like(string $pattern): bool
-    {
-        $result = false;
-
-        $api = new api_dsp();
-        $data = array();
-        $data[controller::URL_VAR_PATTERN] = $pattern;
-        $json_body = $api->api_get(self::class, $data);
-        $this->set_from_json_array($json_body);
-        if (!$this->is_empty()) {
-            $result = true;
-        }
-        return $result;
-    }
-
 
 }

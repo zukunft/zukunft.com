@@ -534,6 +534,30 @@ class view extends sandbox_typed
         return $result;
     }
 
+    /**
+     * @param string $form_name
+     * @param string $pattern
+     * @return string
+     */
+    private function component_selector(string $form_name, string $pattern, int $id): string
+    {
+        $cmp_lst = new component_list_dsp;
+        $cmp_lst->load_like($pattern);
+        return $cmp_lst->selector('add_component', $form_name, 'please define a component', $id);
+    }
+
+    /**
+     * @param string $form_name
+     * @param int $id the id of the type that should be preselected
+     * @return string
+     */
+    private function component_type_selector(string $form_name, int $id): string
+    {
+        global $html_component_types;
+        return $html_component_types->selector($form_name, $id);
+    }
+
+
     /*
      * to review
      */
@@ -611,7 +635,7 @@ class view extends sandbox_typed
         if ($this->id > 0) {
             $result .= '</div>';
 
-            $comp_html = $this->linked_components($add_cmp, $wrd, $back);
+            $comp_html = $this->linked_components($add_cmp, $wrd, $script, $back);
 
             // collect the history
             $changes = $this->dsp_hist(0, SQL_ROW_LIMIT, '', $back);
@@ -657,7 +681,7 @@ class view extends sandbox_typed
     /**
      * lists of all view components which are used by this view
      */
-    private function linked_components($add_cmp, $wrd, $back): string
+    private function linked_components($add_cmp, $wrd, string $script, $back): string
     {
         $html = new html_base();
 
@@ -674,7 +698,7 @@ class view extends sandbox_typed
         } else {
             log_debug('loaded');
             $dsp_list = new dsp_list;
-            $dsp_list->lst = $this->cmp_lst;
+            $dsp_list->lst = $this->cmp_lst->lst();
             $dsp_list->id_field = \cfg\component\component::FLD_ID;
             $dsp_list->script_name = "view_edit.php";
             $dsp_list->class_edit = view::class;
@@ -690,25 +714,15 @@ class view extends sandbox_typed
                 $result .= 'View component to add: ';
                 $url = $html->url(controller::DSP_VIEW_ADD, $this->id, $back, '', word::class . '=' . $wrd->id() . '&add_entry=-1&');
                 $result .= (new button($url, $back))->add(msg::COMPONENT_ADD);
-                $sel = new html_selector;
-                $sel->form = 'view_edit';
-                $sel->dummy_text = 'Select a view component ...';
-                $sel->name = 'add_component';
-                $sel->sql = sql_lst_usr("component", $this->user());
-                $sel->selected = 0; // no default view component to add defined yet, maybe use the last???
-                $result .= $sel->display_old();
+                $id_selected = 0; // no default view component to add defined yet, maybe use the last???
+                $result .= $this->component_selector($script, '', $id_selected);
 
                 $result .= $html->dsp_form_end('', "/http/view_edit.php?id=" . $this->id . "&word=" . $wrd->id() . "&back=" . $back);
             } elseif ($add_cmp < 0) {
                 $result .= 'Name of the new display element: ';
                 $result .= $html->input('entry_name', '', html_base::INPUT_TEXT);
-                $sel = new html_selector;
-                $sel->form = 'view_edit';
-                $sel->dummy_text = 'Select a type ...';
-                $sel->name = 'new_entry_type';
-                $sel->sql = sql_lst("component_type");
-                $sel->selected = $this->type_id();  // ??? should this not be the default entry type
-                $result .= $sel->display_old();
+                // TODO ??? should this not be the default entry type
+                $result .= $this->component_selector($script, '', $this->type_id());
                 $result .= $html->dsp_form_end('', "/http/view_edit.php?id=" . $this->id . "&word=" . $wrd->id() . "&back=" . $back);
             } else {
                 $url = $html->url(controller::DSP_COMPONENT_LINK, $this->id, $back, '', word::class . '=' . $wrd->id() . '&add_entry=1');

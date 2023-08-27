@@ -30,13 +30,15 @@
 
 */
 
-namespace api;
-
-use api\component\component_list_api;
+namespace api\view;
 
 include_once API_SANDBOX_PATH . 'sandbox_typed.php';
+include_once API_COMPONENT_PATH . 'component_list.php';
 
-class view_api extends sandbox_typed_api
+use api\sandbox_typed_api;
+use api\component\component_list AS component_list_api;
+
+class view extends sandbox_typed_api
 {
 
     /*

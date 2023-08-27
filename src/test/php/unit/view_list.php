@@ -33,7 +33,7 @@
 namespace test;
 
 use api\formula_api;
-use api\view_api;
+use api\view\view as view_api;
 use api\word_api;
 use cfg\formula;
 use cfg\formula_list;

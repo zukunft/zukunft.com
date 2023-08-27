@@ -32,7 +32,7 @@
 use controller\controller;
 use cfg\user;
 use cfg\view;
-use api\view_api;
+use api\view\view as view_api;
 
 // standard zukunft header for callable php files to allow debugging and lib loading
 global $debug;

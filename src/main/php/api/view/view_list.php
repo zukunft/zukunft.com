@@ -32,6 +32,7 @@
 
 namespace api;
 
+use api\view\view as view_api;
 use html\view\view_list as view_list_dsp;
 use JsonSerializable;
 

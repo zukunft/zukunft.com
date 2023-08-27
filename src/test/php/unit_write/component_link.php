@@ -33,7 +33,7 @@
 namespace test\write;
 
 use api\component\component_api;
-use api\view_api;
+use api\view\view as view_api;
 use cfg\change_log_link;
 use cfg\change_log_table;
 use cfg\component\component;

@@ -39,7 +39,7 @@ include_once MODEL_COMPONENT_PATH . 'component_list.php';
 include_once SERVICE_EXPORT_PATH . 'view_exp.php';
 include_once SERVICE_EXPORT_PATH . 'component_exp.php';
 
-use api\view_api;
+use api\view\view as view_api;
 use cfg\component\component;
 use cfg\component\component_list;
 use cfg\db\sql_creator;

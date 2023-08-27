@@ -38,7 +38,7 @@ include_once WEB_TYPES_PATH . 'formula_type_list.php';
 include_once WEB_TYPES_PATH . 'phrase_types.php';
 include_once WEB_TYPES_PATH . 'protection.php';
 
-use api\view_api;
+use api\view\view as view_api;
 use html\html_base;
 use html\types\component_type_list;
 use html\types\formula_link_type_list;

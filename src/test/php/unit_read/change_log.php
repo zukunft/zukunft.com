@@ -38,7 +38,7 @@ use api\source_api;
 use api\triple_api;
 use api\value_api;
 use api\verb_api;
-use api\view_api;
+use api\view\view as view_api;
 use api\word_api;
 use cfg\change_log_field;
 use cfg\change_log_list;

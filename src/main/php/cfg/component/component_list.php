@@ -34,7 +34,7 @@ namespace cfg\component;
 include_once API_COMPONENT_PATH . 'component_list.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
 
-use api\component\component_list_api;
+use api\component\component_list AS component_list_api;
 use cfg\combine_named;
 use cfg\component_link;
 use cfg\db\sql_creator;

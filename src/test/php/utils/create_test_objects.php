@@ -59,7 +59,7 @@ use api\triple_api;
 use api\type_lists_api;
 use api\value_api;
 use api\verb_api;
-use api\view_api;
+use api\view\view as view_api;
 use api\word_api;
 use api_message;
 use cfg\batch_job;

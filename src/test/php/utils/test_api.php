@@ -59,7 +59,7 @@ use api\ref_api;
 use api\source_api;
 use api\type_api;
 use api\verb_api;
-use api\view_api;
+use api\view\view as view_api;
 use api\word_api;
 use api_message;
 use cfg\batch_job;

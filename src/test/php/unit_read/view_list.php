@@ -32,7 +32,7 @@
 
 namespace unit_read;
 
-use api\view_api;
+use api\view\view as view_api;
 use cfg\view_list;
 use test\test_cleanup;
 

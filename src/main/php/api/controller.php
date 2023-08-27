@@ -77,6 +77,7 @@ class controller
     const URL_VAR_MSG = 'message';
     const URL_VAR_RESULT = 'result';
     const URL_VAR_EMAIL = 'email';
+    const URL_VAR_VIEW_ID = 'view_id';
 
     // used for the change log
     const URL_VAR_WORD_ID = 'word_id';

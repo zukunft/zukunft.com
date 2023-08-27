@@ -47,7 +47,7 @@ use api\component\component_api;
 use api\formula_api;
 use api\phrase_api;
 use api\source_api;
-use api\view_api;
+use api\view\view as view_api;
 use api\word_api;
 use cfg\db\sql_creator;
 use cfg\db\sql_par_type;

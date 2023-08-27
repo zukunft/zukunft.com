@@ -38,7 +38,7 @@ use api\phrase_api;
 use api\source_api;
 use api\triple_api;
 use api\verb_api;
-use api\view_api;
+use api\view\view as view_api;
 use api\word_api;
 use cfg\formula;
 use cfg\formula_type;

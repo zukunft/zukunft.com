@@ -34,7 +34,7 @@ namespace test;
 
 include_once MODEL_COMPONENT_PATH . 'component.php';
 
-use api\view_api;
+use api\view\view as view_api;
 use cfg\component\component;
 use cfg\sql_db;
 use html\component\component as component_dsp;

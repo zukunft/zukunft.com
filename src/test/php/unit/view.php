@@ -32,7 +32,7 @@
 
 namespace test;
 
-use api\view_api;
+use api\view\view as view_api;
 use cfg\view_term_link;
 use html\view\view as view_dsp;
 use cfg\library;

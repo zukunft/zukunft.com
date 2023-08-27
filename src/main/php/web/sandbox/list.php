@@ -34,15 +34,19 @@
 namespace html;
 
 use cfg\library;
+use controller\controller;
+use html\api as api_dsp;
 
 class list_dsp
 {
+
     // the protected main var
     protected array $lst;
 
     // memory vs speed optimize vars
     private array $id_lst;
     private bool $lst_dirty;
+
 
     /*
      * construct and map
@@ -152,6 +156,31 @@ class list_dsp
         $result = array();
         foreach ($this->lst as $obj) {
             $result[] = $obj->api_array();
+        }
+        return $result;
+    }
+
+
+    /*
+     * load
+     */
+
+    /**
+     * add the objects from the backend
+     * @param string $pattern part of the name that should be used to select the objects
+     * @return bool true if at least one object has been found
+     */
+    function load_like(string $pattern): bool
+    {
+        $result = false;
+
+        $api = new api_dsp();
+        $data = array();
+        $data[controller::URL_VAR_PATTERN] = $pattern;
+        $json_body = $api->api_get(self::class, $data);
+        $this->set_from_json_array($json_body);
+        if (!$this->is_empty()) {
+            $result = true;
         }
         return $result;
     }

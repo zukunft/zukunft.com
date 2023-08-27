@@ -35,7 +35,7 @@ namespace api\component;
 use api\list_api;
 use html\word\word_list as word_list_dsp;
 
-class component_list_api extends list_api
+class component_list extends list_api
 {
 
     /*
