@@ -46,6 +46,7 @@ use html\html_base;
 use html\html_selector;
 use html\log\user_log_display;
 use html\phrase\phrase as phrase_dsp;
+use html\phrase\phrase_list;
 use html\sandbox\db_object as db_object_dsp;
 use html\sandbox\sandbox_typed;
 use html\view\view as view_dsp;
@@ -106,6 +107,8 @@ class component extends sandbox_typed
             component_type::FORM_CONFIRM => $this->form_confirm($dbo, $back),
             component_type::FORM_NAME => $this->form_name($dbo, $back),
             component_type::FORM_DESCRIPTION => $this->form_description($dbo, $back),
+            component_type::FORM_SHARE_TYPE => $this->form_share_type($dbo),
+            component_type::FORM_PROTECTION_TYPE => $this->form_protection_type($dbo),
             component_type::FORM_CANCEL => $this->form_cancel($dbo, $back),
             component_type::FORM_SAVE => $this->form_save($dbo, $back),
             component_type::FORM_END => $this->form_end(),
@@ -293,6 +296,23 @@ class component extends sandbox_typed
             '',
             html_base::COL_SM_12
         );
+    }
+
+    // TODO probably add the form name
+    /**
+     * @return string the html code to select the share type
+     */
+    function form_share_type(db_object_dsp $dbo): string
+    {
+        return $dbo->share_type_selector('share');
+    }
+
+    /**
+     * @return string the html code to select the protection type
+     */
+    function form_protection_type(db_object_dsp $dbo): string
+    {
+        return $dbo->protection_type_selector('protection');
     }
 
     /**
@@ -486,7 +506,7 @@ class component extends sandbox_typed
 
         // when changing a view component show the fields only on the left side
         if ($this->id > 0) {
-            $result .= '<div class="col-sm-7">';
+            $result .= '<div class="' . html_base::COL_SM_7 . '">';
         }
 
         $result .= $html->dsp_form_start($script);
@@ -501,8 +521,8 @@ class component extends sandbox_typed
         $result .= $this->dsp_type_selector($script); // allow to change the type
         $result .= '</div>';
         $result .= '<div class="form-row">';
-        $result .= $this->dsp_word_row_selector($script, "col-sm-6"); // allow to change the word_row word
-        $result .= $this->dsp_word_col_selector($script, "col-sm-6"); // allow to change the word col word
+        $result .= $this->dsp_word_row_selector($script, html_base::COL_SM_6); // allow to change the word_row word
+        $result .= $this->dsp_word_col_selector($script, html_base::COL_SM_6); // allow to change the word col word
         $result .= '</div>';
         $result .= $html->dsp_form_fld("comment", $this->description, "Comment:");
         if ($add_link <= 0) {
@@ -616,50 +636,44 @@ class component extends sandbox_typed
         }
     }
 
-    // display the component word_row selector
-    private function dsp_word_row_selector($script, $class): string
+    /**
+     * @param string $script the name of the html form
+     * @param string $col_class the formatting code to adjust the formatting
+     * @return string with the HTML code to show the component word_row selector
+     */
+    private function dsp_word_row_selector(string $script, string $col_class): string
     {
-        global $usr;
-        $result = '';
-        $sel = new html_selector;
-        $sel->form = $script;
-        $sel->dummy_text = 'not set';
-        $sel->name = 'word_row';
+        $label = "Take rows from:";
         if ($this->phr_row != null) {
             //$phr_dsp = new word_dsp($this->phr_row->api_json());
             $phr_dsp = $this->phr_row;
-            $sel->label = "Rows taken from " . $phr_dsp->display_linked() . ":";
-        } else {
-            $sel->label = "Take rows from:";
+            $label = "Rows taken from " . $phr_dsp->display_linked() . ":";
         }
-        $sel->bs_class = $class;
-        $sel->sql = sql_lst_usr("word", $usr);
-        $sel->selected = $this->phr_row->id();
-        $result .= $sel->display_old() . ' ';
-        return $result;
+        return $this->phrase_selector('word_row', $script, $label, $col_class, $this->phr_row->id()) . ' ';
     }
 
-    // display the component word_col selector
-    private function dsp_word_col_selector($script, $class): string
+    /**
+     * @param string $script the name of the html form
+     * @param string $col_class the formatting code to adjust the formatting
+     * @return string with the HTML code to show the component word_col selector
+     */
+    private function dsp_word_col_selector(string $script, string $col_class): string
     {
         global $usr;
-        $result = '';
-        $sel = new html_selector;
-        $sel->form = $script;
-        $sel->dummy_text = 'not set';
-        $sel->name = 'word_col';
+        $label = "Take columns from:";
         if (isset($this->phr_col)) {
             //$phr_dsp = new word_dsp($this->phr_col->api_json());
             $phr_dsp = $this->phr_col;
-            $sel->label = "Columns taken from " . $phr_dsp->display_linked() . ":";
-        } else {
-            $sel->label = "Take columns from:";
+            $label = "Columns taken from " . $phr_dsp->display_linked() . ":";
         }
-        $sel->bs_class = $class;
-        $sel->sql = sql_lst_usr("word", $usr);
-        $sel->selected = $this->phr_col->id();
-        $result .= $sel->display_old() . ' ';
-        return $result;
+        return $this->phrase_selector('word_col', $script, $label, $col_class, $this->phr_row->id()) . ' ';
+    }
+
+    private function phrase_selector(string $name, string $form_name, string $label, string $col_class, int $selected, string $pattern = ''): string
+    {
+        $phr_lst = new phrase_list();
+        $phr_lst->load_like($pattern);
+        return $phr_lst->selector($name, $form_name, $label, $selected);
     }
 
     /**

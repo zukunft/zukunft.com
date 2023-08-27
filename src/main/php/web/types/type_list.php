@@ -39,6 +39,7 @@ include_once WEB_TYPES_PATH . 'type_object.php';
 include_once WEB_TYPES_PATH . 'protection.php';
 
 use api\api;
+use cfg\library;
 use controller\controller;
 use html\html_selector;
 use html\types\type_object as type_object_dsp;
@@ -47,8 +48,12 @@ use html\view\view_list as view_list_dsp;
 class type_list
 {
 
+    // error return codes
+    const CODE_ID_NOT_FOUND = -1;
+
     // the protected main var without id list because this is only loaded once
     protected array $lst = array();
+    private array $hash = []; // hash list with the code id for fast selection
 
 
     /**
@@ -89,6 +94,29 @@ class type_list
         return $result;
     }
 
+    /**
+     * return the database row id based on the code_id
+     *
+     * @param string $code_id
+     * @return int the database id for the given code_id
+     */
+    function id(string $code_id): int
+    {
+        $lib = new library();
+        $result = 0;
+        if ($code_id != '' and $code_id != null) {
+            if (array_key_exists($code_id, $this->hash)) {
+                $result = $this->hash[$code_id];
+            } else {
+                $result = self::CODE_ID_NOT_FOUND;
+                log_debug('Type id not found for "' . $code_id . '" in ' . $lib->dsp_array_keys($this->hash));
+            }
+        } else {
+            log_debug('Type code id not not set');
+        }
+        return $result;
+    }
+
 
     /*
      * modify functions
@@ -103,6 +131,7 @@ class type_list
         $result = false;
         if (!in_array($obj->id(), $this->id_lst())) {
             $this->lst[] = $obj;
+            $this->hash[$obj->code_id] = $obj->id();
             $result = true;
         }
         return $result;
@@ -138,6 +167,24 @@ class type_list
         $sel->lst = $key_lst;
         $sel->selected = $selected;
         return $sel->display();
+    }
+
+
+    /*
+     * internal
+     */
+
+    /**
+     * recreate the hash table to get the database id for a code_id
+     */
+    private function set_hash(): void
+    {
+        $this->hash = [];
+        if ($this->lst != null) {
+            foreach ($this->lst as $key => $type) {
+                $this->hash[$type->code_id] = $key;
+            }
+        }
     }
 
 }

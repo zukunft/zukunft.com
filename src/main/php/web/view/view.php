@@ -277,7 +277,7 @@ class view extends sandbox_typed
         $result .= $this->input_search_pattern();
         $result .= '    <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Get numbers</button>';
         $result .= '  </form>';
-        $result .= '  <div class="col-sm-2">';
+        $result .= '  <div class="' . html_base::COL_SM_2 . '">';
         $result .= '    <ul class="nav navbar-nav">';
         $result .= '      <li class="active">';
         $result .= $this->dsp_user($back);
@@ -606,7 +606,7 @@ class view extends sandbox_typed
 
         // when changing a view show the fields only on the left side
         if ($this->id > 0) {
-            $result .= '<div class="col-sm-7">';
+            $result .= '<div class="' . html_base::COL_SM_7 . '">';
         }
 
         // show the edit fields

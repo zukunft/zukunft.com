@@ -32,7 +32,7 @@
 
 namespace html\types;
 
-use html\html_selector;
+use cfg\protection_type;
 
 class protection extends type_list
 {
@@ -50,11 +50,11 @@ class protection extends type_list
 
     /*
      * set and get
+     */
 
     function default_id(): int
     {
         return parent::id(protection_type::NO_PROTECT);
     }
-*/
 
 }

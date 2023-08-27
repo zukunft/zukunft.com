@@ -796,7 +796,7 @@ class create_test_objects extends test_base
     function dummy_view_word_add(): view
     {
         $dsp = new view($this->usr1);
-        $dsp->set(2, view_api::TN_FORM);
+        $dsp->set(3, view_api::TN_FORM);
         $dsp->description = view_api::TD_FORM;
         $dsp->code_id = view_api::TI_FORM;
         $dsp->cmp_lst = $this->dummy_components_word_add();
@@ -864,10 +864,28 @@ class create_test_objects extends test_base
         return $cmp;
     }
 
+    function dummy_component_word_add_share_type(): component
+    {
+        $cmp = new component($this->usr1);
+        $cmp->set(6, component_api::TN_FORM_SHARE_TYPE, component_type::FORM_SHARE_TYPE);
+        $cmp->description = component_api::TD_FORM_SHARE_TYPE;
+        $cmp->code_id = component_api::TI_FORM_SHARE_TYPE;
+        return $cmp;
+    }
+
+    function dummy_component_word_add_protection_type(): component
+    {
+        $cmp = new component($this->usr1);
+        $cmp->set(7, component_api::TN_FORM_PROTECTION_TYPE, component_type::FORM_PROTECTION_TYPE);
+        $cmp->description = component_api::TD_FORM_PROTECTION_TYPE;
+        $cmp->code_id = component_api::TI_FORM_PROTECTION_TYPE;
+        return $cmp;
+    }
+
     function dummy_component_word_add_cancel(): component
     {
         $cmp = new component($this->usr1);
-        $cmp->set(6, component_api::TN_FORM_CANCEL, component_type::FORM_CANCEL);
+        $cmp->set(8, component_api::TN_FORM_CANCEL, component_type::FORM_CANCEL);
         $cmp->description = component_api::TD_FORM_CANCEL;
         $cmp->code_id = component_api::TI_FORM_CANCEL;
         return $cmp;
@@ -876,7 +894,7 @@ class create_test_objects extends test_base
     function dummy_component_word_add_save(): component
     {
         $cmp = new component($this->usr1);
-        $cmp->set(7, component_api::TN_FORM_SAVE, component_type::FORM_SAVE);
+        $cmp->set(9, component_api::TN_FORM_SAVE, component_type::FORM_SAVE);
         $cmp->description = component_api::TD_FORM_SAVE;
         $cmp->code_id = component_api::TI_FORM_SAVE;
         return $cmp;
@@ -885,7 +903,7 @@ class create_test_objects extends test_base
     function dummy_component_word_add_form_end(): component
     {
         $cmp = new component($this->usr1);
-        $cmp->set(8, component_api::TN_FORM_END, component_type::FORM_END);
+        $cmp->set(10, component_api::TN_FORM_END, component_type::FORM_END);
         $cmp->description = component_api::TD_FORM_END;
         $cmp->code_id = component_api::TI_FORM_END;
         return $cmp;
@@ -906,6 +924,8 @@ class create_test_objects extends test_base
         $lst->add($this->dummy_component_word_add_button_confirm());
         $lst->add($this->dummy_component_word_add_name());
         $lst->add($this->dummy_component_word_add_description());
+        $lst->add($this->dummy_component_word_add_share_type());
+        $lst->add($this->dummy_component_word_add_protection_type());
         $lst->add($this->dummy_component_word_add_cancel());
         $lst->add($this->dummy_component_word_add_save());
         $lst->add($this->dummy_component_word_add_form_end());

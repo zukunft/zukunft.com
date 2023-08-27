@@ -81,6 +81,12 @@ class component_api extends sandbox_typed_api
     const TN_FORM_DESCRIPTION = 'description form field';
     const TI_FORM_DESCRIPTION = 'form_field_description';
     const TD_FORM_DESCRIPTION = 'the description field in a form';
+    const TN_FORM_SHARE_TYPE = 'form field share type';
+    const TI_FORM_SHARE_TYPE = 'form_field_share_type';
+    const TD_FORM_SHARE_TYPE = 'the share type field in a form';
+    const TN_FORM_PROTECTION_TYPE = 'form field protection type';
+    const TI_FORM_PROTECTION_TYPE = 'form_field_protection_type';
+    const TD_FORM_PROTECTION_TYPE = 'the protection type field in a form';
     const TN_FORM_CANCEL = 'cancel button';
     const TI_FORM_CANCEL = 'form_cancel_button';
     const TD_FORM_CANCEL = 'button to cancel the form action and go back to the previous view';

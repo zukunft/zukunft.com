@@ -149,10 +149,11 @@ class test_api extends create_test_objects
 
         $this->assert_api_get_list(type_lists::class);
         $this->assert_api_get_list(phrase_list::class, [1, 2, 3, -1, -2]);
+        // TODO fix contains
+        //$this->assert_api_get_list(phrase_list::class, 'M', controller::URL_VAR_PATTERN, '', true);
         $this->assert_api_get_list(term_list::class, [1, -1, 2, -2]);
         $this->assert_api_get_list(formula_list::class, [1]);
-        $this->assert_api_get_list(
-            component_list::class, 3, 'view_id', 'component_list_of_view');
+        $this->assert_api_get_list(component_list::class, 3, 'view_id');
         $this->assert_api_chg_list(
             change_log_list::class,
             controller::URL_VAR_WORD_ID, 1,
@@ -719,6 +720,10 @@ class test_api extends create_test_objects
             $lst = new term_list($this->usr1);
             $lst->load_by_ids((new trm_ids($ids)));
             $result = $lst->api_obj();
+        }
+
+        if ($filename == '' AND $id_fld != 'ids') {
+            $filename = $class . '_by_' . $id_fld;
         }
 
         return $this->assert_api_compare($class, $actual, null, $filename, $contains);

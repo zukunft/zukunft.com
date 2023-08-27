@@ -76,20 +76,34 @@
         },
         {
           "position": "6",
+          "name": "share type",
+          "description": "selector for the share type",
+          "type": "field_share_type",
+          "code_id": "form_field_share_type"
+        },
+        {
+          "position": "7",
+          "name": "protection type",
+          "description": "selector for the protection type",
+          "type": "field_protection_type",
+          "code_id": "form_field_protection_type"
+        },
+        {
+          "position": "8",
           "name": "cancel button",
           "description": "button to cancel the form action and go back to the previous view",
           "type": "system_button_cancel",
           "code_id": "form_cancel_button"
         },
         {
-          "position": "7",
+          "position": "9",
           "name": "save button",
           "description": "button to save the form field into the database",
           "type": "system_button_save",
           "code_id": "form_button_save"
         },
         {
-          "position": "8",
+          "position": "10",
           "name": "form end",
           "type": "form_end",
           "code_id": "form_end"

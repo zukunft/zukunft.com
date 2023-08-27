@@ -1438,10 +1438,10 @@ class triple extends sandbox_link_typed implements JsonSerializable
         $result .= $html->input("from", $this->fob->id());
         $result .= '<div class="form-row">';
         if (isset($this->verb)) {
-            $result .= $this->verb->dsp_selector('both', $form_name, "col-sm-6", $back);
+            $result .= $this->verb->dsp_selector('both', $form_name, html_base::COL_SM_6, $back);
         }
         if (isset($this->tob)) {
-            $result .= $this->tob->dsp_selector(0, $form_name, 0, "col-sm-6", $back);
+            $result .= $this->tob->dsp_selector(0, $form_name, 0, html_base::COL_SM_6, $back);
         }
         $result .= '</div>';
         $result .= '<br>';

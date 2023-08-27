@@ -55,8 +55,9 @@ include_once API_PHRASE_PATH . 'phrase_list.php';
 $db_con = prg_start("api/phraseList", "", false);
 
 // get the parameters
-$phr_ids = $_GET[controller::URL_VAR_ID_LST] ?? 0;
-$phr_id = $_GET[controller::URL_VAR_PHRASE] ?? 0;
+$phr_ids = $_GET[controller::URL_VAR_ID_LST] ?? '';
+$phr_id = $_GET[controller::URL_VAR_PHRASE] ?? '';
+$pattern = $_GET[controller::URL_VAR_PATTERN] ?? '';
 
 $msg = '';
 $result = new phrase_list_api(); // reset the html code var
@@ -72,6 +73,10 @@ if ($usr->id() > 0) {
         $lst = new phrase_list($usr);
         $lst->load_names_by_ids((new phr_ids(explode(",", $phr_ids))));
         $result = $lst->api_obj();
+    } elseif ($pattern != '') {
+        $lst = new phrase_list($usr);
+        $lst->load_like($pattern);
+        $result = $lst->api_obj();
     } elseif ($phr_id != '') {
         $lst = new phrase_list($usr);
         $phr = new phrase($usr);
@@ -79,7 +84,7 @@ if ($usr->id() > 0) {
         $lst->load_by_phr($phr);
         $result = $lst->api_obj();
     } else {
-        $msg = 'phrase ids is missing';
+        $msg = 'phrase ids, pattern and related phrase is missing';
     }
 }
 

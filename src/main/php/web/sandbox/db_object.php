@@ -205,6 +205,33 @@ class db_object
         return new term_dsp();
     }
 
+
+    /*
+     * dummy function to be overwritten by the child objects
+     */
+
+    /**
+     * @param string $form_name the name of the html form
+     * @return string the html code to select the share type
+     */
+    protected function share_type_selector(string $form_name): string
+    {
+        $msg = 'share type selector not defined for ' . $this::class;
+        log_err($msg);
+        return $msg;
+    }
+
+    /**
+     * @param string $form_name the name of the html form
+     * @return string the html code to select the protection type
+     */
+    protected function protection_type_selector(string $form_name): string
+    {
+        $msg = 'protection type selector not defined for ' . $this::class;
+        log_err($msg);
+        return $msg;
+    }
+
 }
 
 

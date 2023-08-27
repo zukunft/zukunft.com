@@ -31,19 +31,31 @@
   },
   {
     "id": 7,
-    "name": "cancel button",
-    "description": "button to cancel the form action and go back to the previous view",
+    "name": "share type",
+    "description": "selector for the share type",
     "type_id": 22
   },
   {
     "id": 8,
-    "name": "save button",
-    "description": "button to save the form field into the database",
+    "name": "protection type",
+    "description": "selector for the protection type",
     "type_id": 23
   },
   {
     "id": 9,
-    "name": "form end",
+    "name": "cancel button",
+    "description": "button to cancel the form action and go back to the previous view",
     "type_id": 24
+  },
+  {
+    "id": 10,
+    "name": "save button",
+    "description": "button to save the form field into the database",
+    "type_id": 25
+  },
+  {
+    "id": 11,
+    "name": "form end",
+    "type_id": 26
   }
 ]

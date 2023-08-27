@@ -38,6 +38,7 @@ use api\phrase_group_api;
 use api\triple_api;
 use api\value_api;
 use api\word_api;
+use html\types\type_lists as type_list_dsp;
 use html\word\triple as triple_dsp;
 use cfg\triple;
 use cfg\verb;
@@ -83,6 +84,10 @@ class test_unit_read_db extends test_unit
         (new change_log_unit_db_tests)->run($this);
         (new system_log_unit_db_tests)->run($this);
         (new batch_job_unit_db_tests)->run($this);
+
+        // load the types from the api message
+        $api_msg = $this->dummy_type_lists_api($this->usr1)->get_json();
+        new type_list_dsp($api_msg);
 
         $this->run_api_test();
         $this->run_ui_test();

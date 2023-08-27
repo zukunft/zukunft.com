@@ -425,18 +425,30 @@
       },
       {
         "id": 22,
+        "code_id": "field_share_type",
+        "name": "form field share type",
+        "comment": "the share type field in a form"
+      },
+      {
+        "id": 23,
+        "code_id": "field_protection_type",
+        "name": "form field protection type",
+        "comment": "the protection type field in a form"
+      },
+      {
+        "id": 24,
         "code_id": "system_button_cancel",
         "name": "button cancel",
         "comment": "a button of a form to cancel the form action"
       },
       {
-        "id": 23,
+        "id": 25,
         "code_id": "system_button_save",
         "name": "button save",
         "comment": "a button of a form to save the changes to the database"
       },
       {
-        "id": 24,
+        "id": 26,
         "code_id": "form_end",
         "name": "form end",
         "comment": "just to indicate that a form ends"
@@ -1834,20 +1846,32 @@
           },
           {
             "id": 7,
-            "name": "cancel button",
-            "description": "button to cancel the form action and go back to the previous view",
+            "name": "share type",
+            "description": "selector for the share type",
             "type_id": 22
           },
           {
             "id": 8,
-            "name": "save button",
-            "description": "button to save the form field into the database",
+            "name": "protection type",
+            "description": "selector for the protection type",
             "type_id": 23
           },
           {
             "id": 9,
-            "name": "form end",
+            "name": "cancel button",
+            "description": "button to cancel the form action and go back to the previous view",
             "type_id": 24
+          },
+          {
+            "id": 10,
+            "name": "save button",
+            "description": "button to save the form field into the database",
+            "type_id": 25
+          },
+          {
+            "id": 11,
+            "name": "form end",
+            "type_id": 26
           }
         ]
       },
@@ -1858,7 +1882,7 @@
         "code_id": "word_edit",
         "components": [
           {
-            "id": 10,
+            "id": 12,
             "name": "form title word edit",
             "description": "show the language specific title of a add, change or delete form",
             "type_id": 17
@@ -1888,21 +1912,21 @@
             "type_id": 21
           },
           {
-            "id": 7,
+            "id": 9,
             "name": "cancel button",
             "description": "button to cancel the form action and go back to the previous view",
-            "type_id": 22
+            "type_id": 24
           },
           {
-            "id": 8,
+            "id": 10,
             "name": "save button",
             "description": "button to save the form field into the database",
-            "type_id": 23
+            "type_id": 25
           },
           {
-            "id": 9,
+            "id": 11,
             "name": "form end",
-            "type_id": 24
+            "type_id": 26
           }
         ]
       },
@@ -2098,7 +2122,7 @@
         "code_id": "component_add",
         "components": [
           {
-            "id": 11,
+            "id": 13,
             "name": "form title",
             "description": "show the language specific title of a add, change or delete form",
             "type_id": 17
@@ -2128,16 +2152,16 @@
             "type_id": 21
           },
           {
-            "id": 7,
+            "id": 9,
             "name": "cancel button",
             "description": "button to cancel the form action and go back to the previous view",
-            "type_id": 22
+            "type_id": 24
           },
           {
-            "id": 8,
+            "id": 10,
             "name": "save button",
             "description": "button to save the form field into the database",
-            "type_id": 23
+            "type_id": 25
           }
         ]
       },

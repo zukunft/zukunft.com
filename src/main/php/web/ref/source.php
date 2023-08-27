@@ -131,7 +131,7 @@ class source extends sandbox_typed
      */
     private function source_selector(string $form_name, string $pattern): string
     {
-        $src_lst = new source_list;
+        $src_lst = new source_list();
         $src_lst->load_like($pattern);
         return $src_lst->selector('source', $form_name, 'please define a source', $this->id());
     }

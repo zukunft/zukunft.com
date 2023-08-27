@@ -68,6 +68,8 @@ class component_type
     const FORM_CONFIRM = "system_form_confirm_status";
     const FORM_NAME = "field_name";
     const FORM_DESCRIPTION = "field_description";
+    const FORM_SHARE_TYPE = "field_share_type";
+    const FORM_PROTECTION_TYPE = "field_protection_type";
     const FORM_CANCEL = "system_button_cancel";
     const FORM_SAVE = "system_button_save";
     // simple close the form section
@@ -80,6 +82,8 @@ class component_type
         self::FORM_CONFIRM,
         self::FORM_NAME,
         self::FORM_DESCRIPTION,
+        self::FORM_SHARE_TYPE,
+        self::FORM_PROTECTION_TYPE,
         self::FORM_CANCEL,
         self::FORM_SAVE,
         self::FORM_END

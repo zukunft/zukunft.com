@@ -56,8 +56,12 @@ class sandbox extends db_object_dsp
     {
         global $usr;
         global $html_share_types;
-        if ($usr == $this->owner) {
-            return $html_share_types->selector($form_name, $this->share_id);
+        $used_share_id = $this->share_id;
+        if ($used_share_id == null) {
+            $used_share_id = $html_share_types->default_id();
+        }
+        if ($usr == $this->owner or $this->owner == null) {
+            return $html_share_types->selector($form_name, $used_share_id);
         } else {
             return '';
         }
@@ -71,8 +75,12 @@ class sandbox extends db_object_dsp
     {
         global $usr;
         global $html_protection_types;
-        if ($usr == $this->owner) {
-            return $html_protection_types->selector($form_name, $this->protection_id);
+        $used_protection_id = $this->protection_id;
+        if ($used_protection_id == null) {
+            $used_protection_id = $html_protection_types->default_id();
+        }
+        if ($usr == $this->owner or $this->owner == null) {
+            return $html_protection_types->selector($form_name, $used_protection_id);
         } else {
             return '';
         }

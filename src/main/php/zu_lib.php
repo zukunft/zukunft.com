@@ -215,6 +215,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO Export of restricted data is always pgp secured and the header includes the access rights,
     TODO rename phrase_group to group
     TODO rename formula_element to element
+    TODO check that all modules used are loaded with include_once before the use statement
     TODO create a undo und redo function for a change_log entry
     TODO for behavior that should apply to several types create a property/behavior table with an n:m reration to phrase types e.g. "show preferred as column" for time phrases
     TODO create a user view for contradicting behaviour e.g. if time should be shown in column, but days in rows

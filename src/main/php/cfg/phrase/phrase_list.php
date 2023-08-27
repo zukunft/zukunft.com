@@ -47,6 +47,8 @@ namespace cfg;
 include_once DB_PATH . 'sql_creator.php';
 include_once MODEL_HELPER_PATH . 'foaf_direction.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_list_named.php';
+include_once MODEL_WORD_PATH . 'word_list.php';
+include_once MODEL_WORD_PATH . 'triple_list.php';
 include_once MODEL_PHRASE_PATH . 'trm_ids.php';
 include_once MODEL_PHRASE_PATH . 'term_list.php';
 

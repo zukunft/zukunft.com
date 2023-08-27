@@ -7,7 +7,7 @@ PREPARE component_names FROM
            FROM components s
       LEFT JOIN user_components u ON s.component_id = u.component_id
             AND u.user_id = ?
-          WHERE s.component_type_id NOT IN (17,18,19,20,21,22,23,24)
+          WHERE s.component_type_id NOT IN (17,18,19,20,21,22,23,24,25,26)
        ORDER BY s.component_name
           LIMIT ?
          OFFSET ?';

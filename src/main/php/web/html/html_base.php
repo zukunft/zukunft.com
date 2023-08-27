@@ -51,8 +51,13 @@ class html_base
     const BS_BTN_SUCCESS = 'btn-outline-success';
     const BS_BTN_CANCEL = 'btn-outline-secondary';
     const BS_SM_2 = 'mr-sm-2';
+    const COL_SM_2 = 'col-sm-2';
     const COL_SM_4 = 'col-sm-4';
+    const COL_SM_5 = 'col-sm-5';
+    const COL_SM_6 = 'col-sm-6';
+    const COL_SM_7 = 'col-sm-7';
     const COL_SM_8 = 'col-sm-8';
+    const COL_SM_10 = 'col-sm-10';
     const COL_SM_12 = 'col-sm-12';
 
 
@@ -435,7 +440,7 @@ class html_base
     function tbl_start_half(): string
     {
         if (UI_USE_BOOTSTRAP) {
-            $result = '<table class="table col-sm-5 table-striped table-bordered">';
+            $result = '<table class="table ' . html_base::COL_SM_5 . ' table-striped table-bordered">';
         } else {
             $result = '<table style="width:' . $this->tbl_width_half() . '">';
         }
@@ -458,7 +463,7 @@ class html_base
     function tbl_start_select(): string
     {
         if (UI_USE_BOOTSTRAP) {
-            $result = '<table class="table col-sm-10 table-borderless">' . "\n";
+            $result = '<table class="table ' . html_base::COL_SM_10 . ' table-borderless">' . "\n";
         } else {
             $result = '<table style="width:' . $this->tbl_width_half() . '">' . "\n";
         }
@@ -856,7 +861,7 @@ class html_base
         $hist_id = str_replace(' ', '_', strtolower($hist_name));
         $link_id = str_replace(' ', '_', strtolower($link_name));
 
-        $result .= '<div class="col-sm-5">';
+        $result .= '<div class="' . html_base::COL_SM_5 . '">';
         $result .= '<ul class="nav nav-tabs">';
         $result .= '  <li class="nav-item">';
         $result .= '    <a class="nav-link active" id="' . $comp_id . '-tab" data-toggle="tab" href="#' . $comp_id . '" role="tab" aria-controls="' . $comp_id . '" aria-selected="true">' . $comp_name . '</a>';
@@ -918,7 +923,7 @@ class html_base
     function dsp_tbl_start_half(): string
     {
         if (UI_USE_BOOTSTRAP) {
-            $result = '<table class="table col-sm-5 table-borderless">' . "\n";
+            $result = '<table class="table ' . html_base::COL_SM_5 . ' table-borderless">' . "\n";
         } else {
             $result = '<table style="width:' . $this->dsp_tbl_width_half() . '">' . "\n";
         }
@@ -939,7 +944,7 @@ class html_base
     function dsp_tbl_start_select(): string
     {
         if (UI_USE_BOOTSTRAP) {
-            $result = '<table class="table col-sm-10 table-borderless">' . "\n";
+            $result = '<table class="table ' . html_base::COL_SM_10 . ' table-borderless">' . "\n";
         } else {
             $result = '<table style="width:' . $this->dsp_tbl_width_half() . '">' . "\n";
         }

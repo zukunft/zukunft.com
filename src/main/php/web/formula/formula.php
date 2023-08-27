@@ -326,7 +326,7 @@ class formula extends sandbox_typed
 
         // when changing a view show the fields only on the left side
         if ($this->id > 0) {
-            $result .= '<div class="col-sm-7">';
+            $result .= '<div class="' . html_base::COL_SM_7 . '">';
         }
 
         // formula fields
@@ -341,11 +341,11 @@ class formula extends sandbox_typed
         $result .= $html->dsp_form_fld("formula_name", $this->name, "Formula name:", html_base::COL_SM_8);
         $result .= $this->dsp_type_selector($script);
         $result .= '</div>';
-        $result .= $html->dsp_form_fld("description", $this->description, "Description:", "col-sm-9");
+        $result .= $html->dsp_form_fld("description", $this->description, "Description:", html_base::COL_SM_8);
         // predefined formulas like "this" or "next" should only be changed by an admin
         // TODO check if formula user or login user should be used
         if (!$this->is_special() or $usr->is_admin()) {
-            $result .= $html->dsp_form_fld("formula_text", $resolved_text, "Expression:", "col-sm-10");
+            $result .= $html->dsp_form_fld("formula_text", $resolved_text, "Expression:", html_base::COL_SM_12);
         }
         $result .= $html->dsp_form_fld_checkbox("need_all_val", $this->need_all_val, "calculate only if all values used in the formula exist");
         $result .= '<br><br>';

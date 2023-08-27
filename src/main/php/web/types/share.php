@@ -32,7 +32,7 @@
 
 namespace html\types;
 
-use html\html_selector;
+use cfg\share_type;
 
 class share extends type_list
 {
@@ -50,11 +50,11 @@ class share extends type_list
 
     /*
      * set and get
+     */
 
     function default_id(): int
     {
-        return parent::id(share_type::NO_PROTECT);
+        return parent::id(share_type::PUBLIC);
     }
-*/
 
 }
