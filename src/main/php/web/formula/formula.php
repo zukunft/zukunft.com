@@ -49,9 +49,10 @@ use api\api;
 use html\api as api_dsp;
 use html\button;
 use html\html_base;
-use html\html_selector;
 use html\log\user_log_display;
 use html\msg;
+use html\phrase\phrase as phrase_dsp;
+use html\phrase\phrase_list as phrase_list_dsp;
 use html\phrase\term as term_dsp;
 use html\result\result as result_dsp;
 use html\sandbox\sandbox_typed;
@@ -67,6 +68,8 @@ class formula extends sandbox_typed
     // the formula expression as shown to the user
     private string $usr_text = '';
     private string $ref_text = '';
+    public ?bool $need_all_val = false;    // calculate and save the result only if all used values are not null
+    public ?phrase_dsp $name_wrd = null;         // the triple object for the formula name:
 
 
     /*
@@ -97,6 +100,21 @@ class formula extends sandbox_typed
             $this->set_usr_text($json_array[api::FLD_USER_TEXT]);
         } else {
             $this->set_usr_text(null);
+        }
+        if (array_key_exists(api::FLD_REF_TEXT, $json_array)) {
+            $this->set_ref_text($json_array[api::FLD_REF_TEXT]);
+        } else {
+            $this->set_ref_text(null);
+        }
+        if (array_key_exists(api::FLD_NEED_ALL_VAL, $json_array)) {
+            $this->need_all_val = $json_array[api::FLD_NEED_ALL_VAL];
+        } else {
+            $this->need_all_val = false;
+        }
+        if (array_key_exists(api::FLD_FORMULA_NAME_PHRASE, $json_array)) {
+            $this->name_wrd = new phrase_dsp($json_array[api::FLD_FORMULA_NAME_PHRASE]);
+        } else {
+            $this->name_wrd = null;
         }
     }
 
@@ -392,7 +410,7 @@ class formula extends sandbox_typed
     function is_special(): bool
     {
         $result = false;
-        if ($this->type_cl <> "") {
+        if ($this->type_id() != null) {
             $result = true;
             log_debug($this->dsp_id());
         }
@@ -427,17 +445,14 @@ class formula extends sandbox_typed
         $result .= '  <tr>';
         $result .= '    <td>';
         if ($add == 1 or $wrd->id() > 0) {
-            $sel = new html_selector;
-            $sel->form = "formula_edit"; // ??? to review
-            $sel->name = 'link_phrase';
-            $sel->dummy_text = 'select a word where the formula should also be used';
-            $sel->sql = sql_lst_usr("word", $usr);
+            //$sel->dummy_text = 'select a word where the formula should also be used';
             if ($wrd->id() > 0) {
-                $sel->selected = $wrd->id();
+                $selected = $wrd->id();
             } else {
-                $sel->selected = 0;
+                $selected = 0;
             }
-            $result .= $sel->display_old();
+            $result .= $this->phrase_selector('link_phrase', "formula_edit", '',
+                    '', $selected) . ' ';
         } else {
             if ($this->id > 0) {
                 $url = $this->obj_url(controller::DSP_FORMULA_ADD);
@@ -452,6 +467,29 @@ class formula extends sandbox_typed
 
         log_debug("done");
         return $result;
+    }
+
+    /**
+     * HTML code of a phrase selector
+     * @param string $name the unique name inside the form for this selector
+     * @param string $form_name the name of the html form
+     * @param string $label the label name (TODO remove from the selector)
+     * @param string $col_class the formatting code to adjust the formatting
+     * @param int $selected the id of the preselected phrase
+     * @param string $pattern the pattern to filter the phrases
+     * @return string with the HTML code to show the phrase selector
+     */
+    private function phrase_selector(
+        string $name,
+        string $form_name,
+        string $label,
+        string $col_class,
+        int $selected,
+        string $pattern = ''): string
+    {
+        $phr_lst = new phrase_list_dsp();
+        $phr_lst->load_like($pattern);
+        return $phr_lst->selector($name, $form_name, $label, $selected);
     }
 
     // test and refresh the formula and show some sample values by returning the HTML code

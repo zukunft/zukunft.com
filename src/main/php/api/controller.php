@@ -78,6 +78,7 @@ class controller
     const URL_VAR_RESULT = 'result';
     const URL_VAR_EMAIL = 'email';
     const URL_VAR_VIEW_ID = 'view_id';
+    const URL_VAR_COMPONENT_ID = 'component_id';
 
     // used for the change log
     const URL_VAR_WORD_ID = 'word_id';
@@ -441,7 +442,10 @@ class controller
             if (array_key_exists($body_key, $api_msg)) {
                 $body = $api_msg[$body_key];
             } else {
-                $msg_ok = false;
+                // TODO activate next line and avoid these cases
+                // $msg_ok = false;
+                $body = $api_msg;
+                log_warning('message header missing in api message');
             }
         }
         if ($msg_ok) {

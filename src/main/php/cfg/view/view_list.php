@@ -34,7 +34,8 @@ namespace cfg;
 include_once API_VIEW_PATH . 'view_list.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
 
-use api\view_list_api;
+use api\view\view_list as view_list_api;
+use cfg\component\component;
 use cfg\db\sql_creator;
 use cfg\db\sql_par_type;
 
@@ -138,7 +139,11 @@ class view_list extends sandbox_list
     {
         $qp = $this->load_sql_names_pre($sc, $sbx, $pattern, $limit, $offset);
 
-        $sc->add_where(sql_db::FLD_CODE_ID, '', sql_par_type::IS_NULL);
+        $typ_lst = new type_list();
+        $sc->add_where(
+            view::FLD_TYPE,
+            implode(',', $typ_lst->view_id_list(view_type::SYSTEM_TYPES)),
+            sql_par_type::CONST_NOT_IN);
 
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -165,6 +170,29 @@ class view_list extends sandbox_list
     }
 
     /**
+     * set the SQL query parameters to load a list of views by the component id
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param int $id the id of the component to which the views should be loaded
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_component_id(sql_db $db_con, int $id): sql_par
+    {
+        $qp = $this->load_sql($db_con);
+        $qp->name .= 'component_id';
+        $db_con->set_name($qp->name);
+        $db_con->set_join_fields(
+            component_link::FLD_NAMES,
+            sql_db::TBL_COMPONENT_LINK,
+            view::FLD_ID,
+            view::FLD_ID);
+        $db_con->set_order(component_link::FLD_ORDER_NBR, '', sql_db::LNK_TBL);
+        $qp->sql = $db_con->select_by_join_field(component::FLD_ID, $id);
+        $qp->par = $db_con->get_par();
+
+        return $qp;
+    }
+
+    /**
      * load a list of view names
      * @param string $pattern the pattern to filter the views
      * @param int $limit the number of rows to return
@@ -174,6 +202,20 @@ class view_list extends sandbox_list
     function load_names(string $pattern = '', int $limit = 0, int $offset = 0): bool
     {
         return parent::load_sbx_names(new view($this->user()), $pattern, $limit, $offset);
+    }
+
+    /**
+     * load the views that have a component linked from the database selected by id
+     * @param int $id the id of the component
+     * @return bool true if at least one component has been loaded
+     */
+    function load_by_component_id(int $id): bool
+    {
+        global $db_con;
+
+        log_debug($id);
+        $qp = $this->load_sql_by_component_id($db_con, $id);
+        return parent::load($qp);
     }
 
     /**

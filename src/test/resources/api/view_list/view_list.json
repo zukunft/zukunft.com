@@ -1,0 +1,33 @@
+[
+  {
+    "id": 1,
+    "name": "Word",
+    "description": "the default view for words",
+    "code_id": "word"
+  },
+  {
+    "id": 2,
+    "name": "Start view",
+    "description": "A dynamic start mask that shows a interesting fact",
+    "type_id": 2,
+    "code_id": "entry_view"
+  },
+  {
+    "id": 36,
+    "name": "complete",
+    "description": "Show a word, all related words to edit the word tree and the linked formulas with some results"
+  },
+  {
+    "id": 37,
+    "name": "base units",
+    "type_id": 6
+  },
+  {
+    "id": 38,
+    "name": "Country ratios"
+  },
+  {
+    "id": 39,
+    "name": "Company sheet"
+  }
+]

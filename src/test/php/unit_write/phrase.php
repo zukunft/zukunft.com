@@ -41,6 +41,7 @@ use cfg\triple;
 use cfg\verb;
 use cfg\word;
 use test\test_cleanup;
+use html\phrase\phrase as phrase_dsp;
 use const test\TIMEOUT_LIMIT_PAGE;
 use const test\TIMEOUT_LIMIT_PAGE_SEMI;
 use const test\TW_VESTAS;
@@ -112,11 +113,12 @@ class phrase_test
         // test the phrase selector for the word company
         $wrd = new word($usr);
         $wrd->load_by_name(word_api::TN_COMPANY, word::class);
-        $wrd_ins = new word($usr);
-        $wrd_ins->load_by_name(triple_api::TN_ZH_COMPANY, word::class);
-        $phr = $wrd_ins->phrase();
-        $result = $phr->dsp_selector($wrd, $form_name, $pos, '', $back);
-        $target = $wrd_ins->name();
+        $trp_ins = new triple($usr);
+        $trp_ins->load_by_name(triple_api::TN_ZH_COMPANY, triple::class);
+        $phr = $wrd->phrase();
+        $phr_dsp = new phrase_dsp($phr->api_json());
+        $result = $phr->dsp_selector($phr_dsp, $form_name, $pos, '', $back);
+        $target = $trp_ins->name();
         $t->dsp_contains(', phrase->dsp_selector of type ' . word_api::TN_COMPANY . ' is : ' .
             $result . ' which contains ' . triple_api::TN_ZH_COMPANY,
             $target, $result, TIMEOUT_LIMIT_PAGE_SEMI);

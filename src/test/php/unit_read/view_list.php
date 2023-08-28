@@ -33,6 +33,7 @@
 namespace unit_read;
 
 use api\view\view as view_api;
+use cfg\library;
 use cfg\view_list;
 use test\test_cleanup;
 
@@ -43,6 +44,7 @@ class view_list_unit_db_tests
     {
 
         global $usr;
+        $lib = new library();
 
         // init
         $t->name = 'view list read db->';
@@ -63,6 +65,27 @@ class view_list_unit_db_tests
         $dsp_lst->load_names(view_api::TN_FORM);
         $t->assert_contains_not($test_name, $dsp_lst->names(), view_api::TN_FORM);
 
+
+        $test_name = 'loading by view list by component id ';
+        $msk_lst = new view_list($t->usr1);
+        $msk_lst->load_by_component_id(1);
+        $result = $msk_lst->names();
+        $target = view_api::TN_READ;
+        $t->assert_contains($test_name . '1', $result, $target);
+
+        $test_name = 'loading the api message creation of the api index file for ';
+        // TODO add this to all db read tests for all API call functions
+        $result = json_decode(json_encode($msk_lst->api_obj()), true);
+        $class_for_file = $t->class_without_namespace(view_list::class);
+        $target = json_decode($t->api_json_expected($class_for_file), true);
+        // TODO use jso_contains and activate
+        //$t->assert($test_name . $msk_lst->dsp_id(), $lib->json_is_similar($target, $result), true);
+
+        $test_name = 'loading by component list by pattern ';
+        $msk_lst = new view_list($t->usr1);
+        $pattern = substr(view_api::TN_READ, 0, -1);
+        $msk_lst->load_names($pattern);
+        $t->assert_contains($test_name, $msk_lst->names(), view_api::TN_READ);
 
         // test load by view list by ids
         /* TODO activate

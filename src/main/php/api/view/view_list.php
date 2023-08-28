@@ -2,7 +2,7 @@
 
 /*
 
-    api/view/view_list_api.php - a list object of minimal/api view list object
+    api/view/view_list.php - a list object of minimal/api view list object
     --------------------------
 
 
@@ -30,13 +30,14 @@
 
 */
 
-namespace api;
+namespace api\view;
 
+use api\list_api;
 use api\view\view as view_api;
 use html\view\view_list as view_list_dsp;
 use JsonSerializable;
 
-class view_list_api extends list_api implements JsonSerializable
+class view_list extends list_api implements JsonSerializable
 {
 
     /*

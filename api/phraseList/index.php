@@ -69,23 +69,17 @@ $msg .= $usr->get();
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id() > 0) {
 
+    $lst = new phrase_list($usr);
     if ($phr_ids != '') {
-        $lst = new phrase_list($usr);
         $lst->load_names_by_ids((new phr_ids(explode(",", $phr_ids))));
-        $result = $lst->api_obj();
-    } elseif ($pattern != '') {
-        $lst = new phrase_list($usr);
-        $lst->load_like($pattern);
-        $result = $lst->api_obj();
     } elseif ($phr_id != '') {
-        $lst = new phrase_list($usr);
         $phr = new phrase($usr);
         $phr->set_id($phr_id);
         $lst->load_by_phr($phr);
-        $result = $lst->api_obj();
     } else {
-        $msg = 'phrase ids, pattern and related phrase is missing';
+        $lst->load_like($pattern);
     }
+    $result = $lst->api_obj();
 }
 
 $ctrl = new controller();

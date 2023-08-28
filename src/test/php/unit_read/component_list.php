@@ -44,9 +44,9 @@ class component_list_unit_db_tests
     {
 
         global $usr;
+        $lib = new library();
 
         // init
-        $lib = new library();
         $t->name = 'component list read db->';
 
         $t->header('Test the component list class (classes/component_list.php)');

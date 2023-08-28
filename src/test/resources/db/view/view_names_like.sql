@@ -7,7 +7,7 @@ PREPARE view_names_like (int, text, int, int) AS
       LEFT JOIN user_views u ON s.view_id = u.view_id
             AND u.user_id = $1
           WHERE s.view_name like $2
-            AND s.code_id IS NULL
+            AND ( s.view_type_id NOT IN (7) OR s.view_type_id IS NULL )
        ORDER BY s.view_name
           LIMIT $3
          OFFSET $4;

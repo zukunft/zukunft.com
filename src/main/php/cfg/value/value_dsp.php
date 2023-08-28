@@ -570,7 +570,7 @@ class value_dsp_old extends value
                     $result .= '    <td colspan="2">';
 
                     $phr_new = new phrase($this->user());
-                    $result .= $phr_new->dsp_selector(0, $script, $url_pos, '', $back);
+                    $result .= $phr_new->dsp_selector(null, $script, $url_pos, '', $back);
                     $url_pos++;
 
                     $result .= '    </td>';

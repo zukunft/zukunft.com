@@ -1415,7 +1415,9 @@ class sql_creator
                                 $result .= $tbl_id . $this->par_fields[$i] . ' <> ' . $this->par_value($i + 1);
                             } elseif ($par_type == sql_par_type::CONST_NOT_IN) {
                                 $par_offset--;
-                                $result .= $tbl_id . $this->par_fields[$i] . ' NOT IN (' . $this->par_value($i + 1) . ')';
+                                $result .= ' ( ' . $tbl_id . $this->par_fields[$i]
+                                    . ' NOT IN (' . $this->par_value($i + 1) . ')'
+                                    . ' OR ' . $tbl_id . $this->par_fields[$i] . ' IS NULL )';
                             } elseif ($par_type == sql_par_type::IS_NULL) {
                                 $par_offset--;
                                 $result .= $tbl_id . $this->par_fields[$i] . ' IS NULL ';

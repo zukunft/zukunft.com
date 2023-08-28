@@ -33,6 +33,7 @@ namespace api;
 
 include_once API_PATH . 'message_header.php';
 
+use api\view\view_list as view_list_api;
 use api_message;
 use controller\controller;
 use cfg\sql_db;

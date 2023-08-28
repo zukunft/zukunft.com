@@ -177,7 +177,7 @@ class list_dsp
         $api = new api_dsp();
         $data = array();
         $data[controller::URL_VAR_PATTERN] = $pattern;
-        $json_body = $api->api_get(self::class, $data);
+        $json_body = $api->api_get($this::class, $data);
         $this->set_from_json_array($json_body);
         if (!$this->is_empty()) {
             $result = true;

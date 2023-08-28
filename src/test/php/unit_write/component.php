@@ -135,8 +135,10 @@ class component_test
         // TODO review
         if ($result == 24) {
             $target = 24;
-        } else {
+        } elseif ($result == 26) {
             $target = 26;
+        } else {
+            $target = 28;
         }
         $t->display('component->load renamed component "' . component_api::TN_RENAMED . '"', $target, $result);
 

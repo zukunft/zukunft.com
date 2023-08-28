@@ -2,9 +2,8 @@
 
 /*
 
-    web/types/view_type_list.php - the preloaded data view types used for the html frontend
-    ----------------------------
-
+    model/view/view_type.php - ENUM of the view types
+    ------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -30,22 +29,24 @@
   
 */
 
-namespace html\types;
+namespace cfg;
 
-use html\html_selector;
-
-class view_type_list extends type_list
+class view_type
 {
 
-    const NAME = 'view type';
+    // list of the view types that have a coded functionality
+    const DEFAULT = "default";
+    const ENTRY = "entry";
+    const MASK_DEFAULT = "mask_default";
+    const PRESENT = "presentation";
+    const WORD_DEFAULT = "word_default";
+    const DETAIL = "detail_view";
+    const SYSTEM = "system";
 
-    /**
-     * @returns string the html code to select a type from this list
-     */
-    function selector(string $form = '', int $selected = 0, string $name = self::NAME): string
-    {
-        global $html_view_types;
-        return parent::type_selector($html_view_types->lst_key(), $name, $form, $selected);
-    }
+    // list of view types that are used by the system
+    // and should not be assignable by users
+    const SYSTEM_TYPES = array(
+        self::SYSTEM
+    );
 
 }

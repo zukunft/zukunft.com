@@ -50,6 +50,7 @@ use html\phrase\phrase_list;
 use html\sandbox\db_object as db_object_dsp;
 use html\sandbox\sandbox_typed;
 use html\view\view as view_dsp;
+use html\view\view_list;
 
 class component extends sandbox_typed
 {
@@ -669,11 +670,51 @@ class component extends sandbox_typed
         return $this->phrase_selector('word_col', $script, $label, $col_class, $this->phr_row->id()) . ' ';
     }
 
-    private function phrase_selector(string $name, string $form_name, string $label, string $col_class, int $selected, string $pattern = ''): string
+    /**
+     * HTML code of a phrase selector
+     * @param string $name the unique name inside the form for this selector
+     * @param string $form_name the name of the html form
+     * @param string $label the label name (TODO remove from the selector)
+     * @param string $col_class the formatting code to adjust the formatting
+     * @param int $selected the id of the preselected phrase
+     * @param string $pattern the pattern to filter the phrases
+     * @return string with the HTML code to show the phrase selector
+     */
+    private function phrase_selector(
+        string $name,
+        string $form_name,
+        string $label,
+        string $col_class,
+        int $selected,
+        string $pattern = ''): string
     {
         $phr_lst = new phrase_list();
         $phr_lst->load_like($pattern);
         return $phr_lst->selector($name, $form_name, $label, $selected);
+    }
+
+    /**
+     * HTML code of a view selector
+     * @param string $name the unique name inside the form for this selector
+     * @param string $form_name the name of the html form
+     * @param string $label the label name (TODO remove from the selector)
+     * @param string $col_class the formatting code to adjust the formatting
+     * @param int $selected the id of the preselected item
+     * @param string $pattern the pattern to filter the views
+     * @return string with the HTML code to show the view selector
+     */
+    private function view_selector(
+        string $name,
+        string $form_name,
+        string $label = '',
+        string $col_class = '',
+        int $selected = 0,
+        string $pattern = ''
+    ): string
+    {
+        $msk_lst = new view_list();
+        $msk_lst->load_like($pattern);
+        return $msk_lst->selector($name, $form_name, $label, $selected);
     }
 
     /**
@@ -713,13 +754,8 @@ class component extends sandbox_typed
         $result .= '  <tr>';
         $result .= '    <td>';
         if ($add_link == 1) {
-            $sel = new html_selector;
-            $sel->form = 'component_edit';
-            $sel->name = 'link_view';
-            $sel->sql = sql_lst_usr("view", $this->user());
-            $sel->selected = 0;
-            $sel->dummy_text = 'select a view where the view component should also be used';
-            $result .= $sel->display_old();
+            // $sel->dummy_text = 'select a view where the view component should also be used';
+            $result .= $this->view_selector('link_view', 'component_edit');
 
             $result .= $html->dsp_form_end('', $back);
         } else {

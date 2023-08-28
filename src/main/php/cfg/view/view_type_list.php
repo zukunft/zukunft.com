@@ -57,6 +57,8 @@ class view_type_list extends type_list
         parent::load_dummy();
         $type = new type_object(view_type::DEFAULT, view_type::DEFAULT, '', 2);
         $this->add($type);
+        $type = new type_object(view_type::SYSTEM, view_type::SYSTEM, '', 7);
+        $this->add($type);
     }
 
     /**
@@ -67,17 +69,4 @@ class view_type_list extends type_list
         return parent::id(view_type::DEFAULT);
     }
 
-}
-
-/**
- * ENUM for the view types
- */
-class view_type
-{
-    // list of the view types that have a coded functionality
-    const DEFAULT = "default";
-    const ENTRY = "entry";
-    const MASK_DEFAULT = "mask_default";
-    const PRESENT = "presentation";
-    const WORD_DEFAULT = "word_default";
 }

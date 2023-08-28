@@ -68,12 +68,12 @@ class component_list_unit_tests
     }
 
     /**
-     * test the SQL statement creation for a view list in all SQL dialect
+     * test the SQL statement creation for a component list in all SQL dialect
      * and check if the statement name is unique
      *
      * @param test_cleanup $t the test environment
      * @param sql_db $db_con the test database connection
-     * @param component_list $lst
+     * @param component_list $lst the component list object for the sql creation
      * @return void
      */
     private function assert_sql_by_view_id(test_cleanup $t, sql_db $db_con, component_list $lst): void

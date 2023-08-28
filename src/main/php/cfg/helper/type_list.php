@@ -396,10 +396,25 @@ class type_list
     }
 
     /**
-     * @param array $code_id_list with the code ids that should be converted into an id list
-     * @return array
+     * @param array $code_id_list with the code ids that should be converted
+     * @return array with the component ids
      */
-    function id_list(array $code_id_list): array
+    function view_id_list(array $code_id_list): array
+    {
+        global $view_types;
+
+        $result = [];
+        foreach ($code_id_list as $code_id) {
+            $result[] = $view_types->id($code_id);
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $code_id_list with the code ids that should be converted
+     * @return array with the component ids
+     */
+    function component_id_list(array $code_id_list): array
     {
         global $component_types;
 

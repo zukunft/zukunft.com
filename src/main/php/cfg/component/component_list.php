@@ -121,7 +121,7 @@ class component_list extends sandbox_list
         $typ_lst = new type_list();
         $sc->add_where(
             component::FLD_TYPE,
-            implode(',', $typ_lst->id_list(component_type::SYSTEM_TYPES)),
+            implode(',', $typ_lst->component_id_list(component_type::SYSTEM_TYPES)),
             sql_par_type::CONST_NOT_IN);
 
         $qp->sql = $sc->sql();
@@ -185,7 +185,7 @@ class component_list extends sandbox_list
 
     /**
      * load the components of a view from the database selected by id
-     * @param int $id the id of the word, triple, formula, verb, view or view component
+     * @param int $id the id of the view
      * @return bool true if at least one component has been loaded
      */
     function load_by_view_id(int $id): bool

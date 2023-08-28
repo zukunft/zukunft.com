@@ -37,7 +37,7 @@ include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_VIEW_PATH . 'view.php';
 include_once MODEL_VIEW_PATH . 'view_list.php';
 
-use api\view_list_api;
+use api\view\view_list as view_list_api;
 use controller\controller;
 
 global $system_views;

@@ -1200,40 +1200,37 @@ class phrase extends combine_named
 // create a selector that contains the words and triples
 // if one form contains more than one selector, $pos is used for identification
 // $type is a word to preselect the list to only those phrases matching this type
-    function dsp_selector($type, $form_name, $pos, string $class, $back): string
+    function dsp_selector(?phrase_dsp $type, $form_name, $pos, string $class, $back): string
     {
+        // TODO include pattern in the call
+        $phr_lst = new phrase_list_dsp();
         if ($type != null) {
-            log_debug('type "' . $type->dsp_id() . ' selected for form ' . $form_name . $pos);
+            $phr_lst->load_related($type, foaf_direction::DOWN);
+        } else {
+            $pattern = '';
+            $phr_lst->load_like($pattern);
         }
-        $result = '';
+
 
         if ($pos > 0) {
             $field_name = "phrase" . $pos;
         } else {
             $field_name = "phrase";
         }
-        $sel = new html_selector;
-        $sel->form = $form_name;
-        $sel->name = $field_name;
-        if ($form_name == "value_add" or $form_name == "value_edit") {
-            $sel->label = "";
-        } else {
+        $label = "";
+        if ($form_name != "value_add" and $form_name != "value_edit") {
             if ($pos == 1) {
-                $sel->label = "From:";
+                $label = "From:";
             } elseif ($pos == 2) {
-                $sel->label = "To:";
+                $label = "To:";
             } else {
-                $sel->label = "Word:";
+                $label = "Word:";
             }
         }
-        $sel->bs_class = $class;
-        $sel->sql = $this->sql_list($type);
-        $sel->selected = $this->id();
-        $sel->dummy_text = '... please select';
-        $result .= $sel->display_old();
-
-        log_debug('done ');
-        return $result;
+        // TODO activate
+        // $sel->bs_class = $class;
+        // $sel->dummy_text = '... please select';
+        return $phr_lst->selector($field_name, $form_name, $label, $this->id());
     }
 
 // button to add a new word similar to this phrase

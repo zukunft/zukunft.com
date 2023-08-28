@@ -67,6 +67,9 @@ class api
     const FLD_NUMBER = 'number'; // a float number used for values and results
     const FLD_IS_STD = 'is_std'; // flag if a value or result is user specific or the default value for all users
     const FLD_USER_TEXT = 'user_text'; // the formula expression in a human-readable format
+    const FLD_REF_TEXT = 'ref_text'; // the formula expression in a database reference format
+    const FLD_NEED_ALL_VAL = 'need_all_val'; // calculate and save the result only if all used values are not null
+    const FLD_FORMULA_NAME_PHRASE = 'name_phrase'; // the phrase object for the formula name
     const FLD_URL = 'url'; // the external link of a source or a reference
     const FLD_EXTERNAL_KEY = 'external_key'; // the unique key of the reference
 
