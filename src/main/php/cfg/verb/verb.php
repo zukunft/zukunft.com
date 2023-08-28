@@ -602,25 +602,10 @@ class verb extends db_object
     // database link must be open
     function dsp_selector($side, $form, $class, $back): string
     {
-        global $verbs;
+        global $html_verbs;
 
-        log_debug('for verb id ' . $this->id);
-        $result = '';
-
-        $sel = new html_selector;
-        $sel->form = $form;
-        $sel->name = 'verb';
-        $sel->label = "Verb:";
-        $sel->bs_class = $class;
-        $db_lst = $verbs->selector_list($side);
-        $sel_lst = array();
-        foreach ($db_lst as $db_entry) {
-            $sel_lst[$db_entry['id']] = $db_entry['name'];
-        }
-        $sel->lst = $sel_lst;
-        $sel->selected = $this->id;
-        $sel->dummy_text = '';
-        $result .= $sel->display_old();
+        $result = "Verb:";
+        $result .= $html_verbs->selector('verb', $form, $this->id(), $class);
 
         log_debug('admin id ' . $this->id);
         if ($this->user() != null) {

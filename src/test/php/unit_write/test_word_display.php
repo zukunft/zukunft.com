@@ -158,6 +158,7 @@ function run_word_display_test(test_cleanup $t): void
     // TODO fix second run
     $phr_corp = $t->load_phrase(word_api::TN_COMPANY);
     $phr_ZH_INS = $t->load_phrase(triple_api::TN_ZH_COMPANY);
+    /* TODO base it on the api
     $sel = new html_selector;
     $sel->form = 'test_form';
     $sel->name = 'select_company';
@@ -168,5 +169,6 @@ function run_word_display_test(test_cleanup $t): void
     $result .= $sel->display_old();
     $target = triple_api::TN_ZH_COMPANY;
     $t->dsp_contains(', display_selector->display of all ' . $phr_corp->name() . ' with ' . $phr_ZH_INS->dsp_name() . ' selected', $target, $result);
+    */
 
 }

@@ -159,13 +159,20 @@ class type_list
     /**
      * @returns string the html code to select a type from this list
      */
-    function type_selector(array $key_lst, string $name = '', string $form = '', int $selected = 0): string
+    function type_selector(
+        array $key_lst,
+        string $name = '',
+        string $form = '',
+        int $selected = 0,
+        string $bs_class = ''
+    ): string
     {
         $sel = new html_selector();
         $sel->name = $name;
         $sel->form = $form;
         $sel->lst = $key_lst;
         $sel->selected = $selected;
+        $sel->bs_class = $bs_class;
         return $sel->display();
     }
 

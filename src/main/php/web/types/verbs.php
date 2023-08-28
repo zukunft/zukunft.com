@@ -37,13 +37,15 @@ use html\html_selector;
 class verbs extends type_list
 {
 
+    const NAME = 'verb';
+
     /**
      * @returns string the html code to select a type from this list
      */
-    function selector(string $name = '', string $form = '', int $selected = 0): string
+    function selector(string $form = '', int $selected = 0, string $name = self::NAME, string $bs_class = ''): string
     {
         global $html_verbs;
-        return parent::type_selector($html_verbs->lst_key(), $name, $form, $selected);
+        return parent::type_selector($html_verbs->lst_key(), $name, $form, $selected, $bs_class);
     }
 
 }

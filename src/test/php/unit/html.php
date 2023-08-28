@@ -78,7 +78,7 @@ class html_unit_tests
 
         // TODO test the creation of a phrase list API JSON
         // TODO create a selector using a list an with a simple test page header an footer
-        //
+        /*
         $sel = new html_selector();
         $sel->label = 'Test:';
         $sel->name = 'test_selector';
@@ -94,6 +94,7 @@ class html_unit_tests
         $body .= $sel->display_old();
         $body .= $html->form_end_with_submit($sel->name, '');
         $t->html_test($body, 'selector', $t);
+        */
 
         // ... and check if the prepared sql name is unique
         //$t->assert_sql_name_unique($log_dsp->dsp_hist_links_sql($db_con, true));

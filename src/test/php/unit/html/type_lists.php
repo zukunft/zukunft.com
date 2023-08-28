@@ -51,6 +51,7 @@ use html\types\source_type_list;
 use html\types\type_lists as type_list_dsp;
 use html\types\user_profiles;
 use html\types\view_type_list;
+use html\types\verbs;
 use test\test_cleanup;
 
 class type_lists
@@ -80,6 +81,10 @@ class type_lists
         global $html_user_profiles;
         $test_page .= $html->label(user_profiles::NAME, user_profiles::NAME);
         $test_page .= $html_user_profiles->selector($form_name) . '<br>';
+
+        global $html_verbs;
+        $test_page .= $html->label(verbs::NAME, verbs::NAME);
+        $test_page .= $html_verbs->selector($form_name) . '<br>';
 
         global $html_phrase_types;
         $test_page .= $html->label(phrase_types::NAME, phrase_types::NAME);

@@ -663,6 +663,7 @@ class word extends sandbox_typed
      */
     function selector_link($id, $form, $back): string
     {
+        /*
         log_debug('verb id ' . $id);
         global $db_con;
 
@@ -695,9 +696,13 @@ class word extends sandbox_typed
         $sel->sql = $sql;
         $sel->selected = $id;
         $sel->dummy_text = '';
-        $result .= $sel->display_old();
+        */
+        global $usr;
+        global $html_verbs;
+        // TODO add $id to the parameters
+        $result = $html_verbs->selector($form);
 
-        if ($this->user()->is_admin()) {
+        if ($usr->is_admin()) {
             // admin users should always have the possibility to create a new link type
             $result .= \html\btn_add('add new link type', '/http/verb_add.php?back=' . $back);
         }

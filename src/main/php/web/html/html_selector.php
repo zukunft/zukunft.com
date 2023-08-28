@@ -77,51 +77,6 @@ class html_selector
     }
 
     /**
-     * TODO deprecate because it is base on an sql query, but should always be based on a list
-     */
-    function display_old(): string
-    {
-        log_debug('selector->display (' . $this->name . ',' . $this->form . ',' . $this->sql . ',s' . $this->selected . ',' . $this->dummy_text . ')');
-
-        global $db_con;
-
-        $result = $this->start_selector();
-
-        /*
-        if ($this->dummy_text == '') {
-            $this->dummy_text == 'please select ...';
-        }
-        */
-
-        if ($this->selected == 0) {
-            $result .= '<option value="0" selected>' . $this->dummy_text . '</option>';
-        }
-
-        // check if list needs to be reloaded
-        if ($this->sql != '') {
-            $db_lst = $db_con->get_old($this->sql);
-            foreach ($db_lst as $db_entry) {
-                $this->lst[$db_entry['id']] = $db_entry['name'];
-            }
-        }
-        if ($this->count() > 0) {
-            foreach ($this->lst as $key => $value) {
-                $row_option = '';
-                if ($key == $this->selected and $this->selected <> 0) {
-                    log_debug('selector->display ... selected ' . $key);
-                    $row_option = ' selected';
-                }
-                $result .= '<option value="' . $key . '" ' . $row_option . ' >' . $value . '</option>';
-            }
-        }
-
-        $result .= $this->end_selector();
-
-        log_debug('selector->display ... done');
-        return $result;
-    }
-
-    /**
      * @returns string the HTML code that starts a selector field
      */
     private function start_selector(): string
