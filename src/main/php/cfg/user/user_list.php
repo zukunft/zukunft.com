@@ -159,6 +159,12 @@ class user_list
     {
         $sql = $this->load_sql_count_changes_dbo(new word($this->user()));
         $sql .= ' UNION ' . $this->load_sql_count_changes_dbo(new triple($this->user()));
+        $sql .= ' UNION ' . $this->load_sql_count_changes_dbo(new value($this->user()));
+        $sql .= ' UNION ' . $this->load_sql_count_changes_dbo(new formula($this->user()));
+        $sql .= ' UNION ' . $this->load_sql_count_changes_dbo(new ref($this->user()));
+        $sql .= ' UNION ' . $this->load_sql_count_changes_dbo(new source($this->user()));
+        $sql .= ' UNION ' . $this->load_sql_count_changes_dbo(new view($this->user()));
+        //$sql .= ' UNION ' . $this->load_sql_count_changes_dbo(new component($this->user()));
         /* TODO activate if a class name can be used to create a class instance
         foreach (sql_db::CLASSES_WITH_USER_CHANGES as $class) {
             $sql_count .= $this->load_sql_count_changes($class);
@@ -324,25 +330,8 @@ class user_list
         $usr->dummy_all();
         $this->lst[] = $usr;
 
-        $sql = "SELECT u.user_id, u.user_name, u.code_id 
-              FROM users u,
-                  ( SELECT user_id 
-                      FROM ( SELECT user_id 
-                               FROM user_formulas
-                           GROUP BY user_id 
-                       UNION SELECT user_id 
-                               FROM user_words
-                           GROUP BY user_id 
-                       UNION SELECT user_id 
-                               FROM user_values
-                           GROUP BY user_id ) AS cp
-                  GROUP BY user_id ) AS c
-            WHERE u.user_id = c.user_id
-         ORDER BY u.user_id;";
-        // TODO check if the user needs to be set to the original value again
-        $db_con->usr_id = $usr->id();
-        $this->load_sql_old($sql, $db_con);
-        $cp = $this->load_sql_count_changes($db_con->sql_creator());
+        $qp = $this->load_sql_count_changes($db_con->sql_creator());
+        $this->load($db_con, $qp);
 
         log_debug($lib->dsp_count($this->lst));
         return $this->lst;

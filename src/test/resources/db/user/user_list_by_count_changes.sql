@@ -23,6 +23,26 @@ PREPARE user_list_by_count_changes AS
 UNION SELECT user_id,
              COUNT (triple_id) AS changes
         FROM user_triples
+    GROUP BY user_id
+UNION SELECT user_id,
+             COUNT (value_id) AS changes
+        FROM user_values
+    GROUP BY user_id
+UNION SELECT user_id,
+             COUNT (formula_id) AS changes
+        FROM user_formulas
+    GROUP BY user_id
+UNION SELECT user_id,
+             COUNT (ref_id) AS changes
+        FROM user_refs
+    GROUP BY user_id
+UNION SELECT user_id,
+             COUNT (source_id) AS changes
+        FROM user_sources
+     GROUP BY user_id
+UNION SELECT user_id,
+             COUNT (view_id) AS changes
+        FROM user_views
     GROUP BY user_id) g
     GROUP BY user_id) l
           ON s.user_id = l.user_id
