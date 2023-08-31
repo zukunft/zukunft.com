@@ -41,6 +41,8 @@ global $system_users;
 
 class user_list
 {
+    // internal db field name to count the changes by on user
+    const FLD_CHANGES = 'changes';
 
     public ?array $lst = null;  // the list of users
     public array $code_id_hash = [];
@@ -142,6 +144,56 @@ class user_list
         return $qp;
     }
 
+    private function load_sql_count_changes_dbo(db_object $dbo): string
+    {
+        $lib = new library();
+        $class = $lib->class_to_name($dbo::class);
+        $sql = 'SELECT ' . user::FLD_ID . ',';
+        $sql .= ' COUNT (' . $dbo->id_field() . ') AS ' . self::FLD_CHANGES;
+        $sql .= ' FROM ' . sql_db::TBL_USER_PREFIX . $class . sql_db::TABLE_EXTENSION;
+        $sql .= ' GROUP BY ' . user::FLD_ID;
+        return $sql;
+    }
+
+    private function load_sql_count_all_changes(): string
+    {
+        $sql = $this->load_sql_count_changes_dbo(new word($this->user()));
+        $sql .= ' UNION ' . $this->load_sql_count_changes_dbo(new triple($this->user()));
+        /* TODO activate if a class name can be used to create a class instance
+        foreach (sql_db::CLASSES_WITH_USER_CHANGES as $class) {
+            $sql_count .= $this->load_sql_count_changes($class);
+        }
+        */
+        return $sql;
+    }
+
+    private function load_sql_count_sum_changes(): string
+    {
+        $sql = 'SELECT ' . sql_db::GRP_TBL . '.' . user::FLD_ID . ',';
+        $sql .= ' SUM (' . sql_db::GRP_TBL . '.' . self::FLD_CHANGES . ') AS ' . self::FLD_CHANGES;
+        $sql .= ' FROM ( ' . $this->load_sql_count_all_changes() .') ' . sql_db::GRP_TBL;
+        $sql .= ' GROUP BY ' . user::FLD_ID;
+        return $sql;
+    }
+
+    /**
+     * create an SQL statement to retrieve users that have changed something
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_count_changes(sql_creator $sc): sql_par
+    {
+        $sub_sql = '(' . $this->load_sql_count_sum_changes() . ')';
+        $qp = $this->load_sql($sc, 'count_changes');
+        $sc->set_join_sql($sub_sql, array(self::FLD_CHANGES), user::FLD_ID);
+        $sc->add_where(self::FLD_CHANGES, '', sql_par_type::NOT_NULL);
+        $sc->set_order( self::FLD_CHANGES, sql_db::ORDER_DESC, sql_db::LNK_TBL);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
     /**
      * load this list of user
      * @param sql_db $db_con the database link as a parameter to load the system users at program start
@@ -290,6 +342,7 @@ class user_list
         // TODO check if the user needs to be set to the original value again
         $db_con->usr_id = $usr->id();
         $this->load_sql_old($sql, $db_con);
+        $cp = $this->load_sql_count_changes($db_con->sql_creator());
 
         log_debug($lib->dsp_count($this->lst));
         return $this->lst;

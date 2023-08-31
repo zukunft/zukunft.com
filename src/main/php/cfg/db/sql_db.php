@@ -160,6 +160,11 @@ class sql_db
         sql_db::TBL_TASK,
         sql_db::VT_PHRASE_GROUP_LINK
     ];
+    const CLASSES_WITH_USER_CHANGES = [
+        word::class,
+        triple::class
+    ];
+
     // tables that link two named tables
     // TODO set automatically by set_link_fields???
     const DB_TYPES_LINK = [sql_db::TBL_TRIPLE, sql_db::TBL_FORMULA_LINK, sql_db::TBL_COMPONENT_LINK, sql_db::TBL_REF];

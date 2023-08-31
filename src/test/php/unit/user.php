@@ -36,6 +36,7 @@ use api\user_api;
 use cfg\phrase_type;
 use cfg\sql_db;
 use cfg\user;
+use cfg\user_list;
 
 class user_unit_tests
 {
@@ -64,6 +65,9 @@ class user_unit_tests
         $this->assert_sql_by_name_or_email($t, $db_con, $test_usr);
         $this->assert_sql_by_ip($t, $db_con, $test_usr);
         $this->assert_sql_by_profile($t, $db_con, $test_usr);
+
+        $test_usr_list = new user_list($test_usr);
+        $this->assert_sql_count_changes($t, $db_con, $test_usr_list);
 
 
         $t->subheader('API unit tests');
@@ -170,6 +174,28 @@ class user_unit_tests
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
             $qp = $usr_obj->load_sql_by_profile($db_con->sql_creator(), 1, $usr_obj::class);
+            $t->assert_qp($qp, $db_con->db_type);
+        }
+    }
+
+    /**
+     * check the SQL statements to count the changes by a user
+     *
+     * @param test_cleanup $t the testing object with the error counter
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param object $usr_obj the user sandbox object e.g. a verb
+     */
+    private function assert_sql_count_changes(test_cleanup $t, sql_db $db_con, object $usr_obj): void
+    {
+        // check the Postgres query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $usr_obj->load_sql_count_changes($db_con->sql_creator());
+        $result = $t->assert_qp($qp, $db_con->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $usr_obj->load_sql_count_changes($db_con->sql_creator());
             $t->assert_qp($qp, $db_con->db_type);
         }
     }

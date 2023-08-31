@@ -56,9 +56,11 @@ enum sql_par_type: string
     case CONST_NOT = 'const_not';
     case CONST_NOT_IN = 'const_not_in';
     case IS_NULL = 'is_null';
+    case NOT_NULL = 'not_null';
 
     // parameter types to calculate the result for a group
     case MIN = 'min';
     case MAX = 'max';
+    case COUNT = 'count';
 
 }

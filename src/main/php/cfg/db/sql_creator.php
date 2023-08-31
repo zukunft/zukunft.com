@@ -99,6 +99,7 @@ class sql_creator
     private ?string $order;    // the ORDER                 SQL statement that is used for the next select query
     private ?string $page;     // the LIMIT and OFFSET      SQL statement that is used for the next select query
     private ?string $end;      // the closing               SQL statement that is used for the next select query
+    private ?string $sub_sql;  // a complex sql statement used for the next select query
     private bool $use_page;    // true if the limit and offset statement should be added at the end
 
     // temp for handling the user fields
@@ -155,6 +156,10 @@ class sql_creator
     private bool $join2_usr_query;             // same as $usr_join_query but for the second join
     private bool $join3_usr_query;             // same as $usr_join_query but for the third join
     private bool $join4_usr_query;             // same as $usr_join_query but for the fourth join
+    private bool $join_sub_query;              // true, if the joined type contains is a sql query statement
+    private bool $join2_sub_query;             // same as $usr_join_query but for the second join
+    private bool $join3_sub_query;             // same as $usr_join_query but for the third join
+    private bool $join4_sub_query;             // same as $usr_join_query but for the fourth join
     private bool $join_usr_added;              // true, if the user join statement has been created
     private ?string $join_type;                // the type name of the table to join
     private ?string $join2_type;               // the type name of the second table to join (maybe later switch to join n tables)
@@ -206,6 +211,7 @@ class sql_creator
         $this->order = '';
         $this->page = '';
         $this->end = '';
+        $this->sub_sql = '';
         $this->use_page = false;
 
         $this->field_lst = [];
@@ -257,6 +263,10 @@ class sql_creator
         $this->join2_usr_query = false;
         $this->join3_usr_query = false;
         $this->join4_usr_query = false;
+        $this->join_sub_query = false;
+        $this->join2_sub_query = false;
+        $this->join3_sub_query = false;
+        $this->join4_sub_query = false;
         $this->join_usr_added = false;
         $this->join_type = '';
         $this->join2_type = '';
@@ -384,6 +394,47 @@ class sql_creator
     }
 
     /**
+     * define a field that is taken from a complex sub query that is not yet created
+     * @param string $fld_name the field names from the sub query that should be included in the main query
+     * @param string $sql the sql of the sub query
+     * @param string $link_field the field that should be used to link the queries
+     * @return void
+     */
+    function set_join_sql(string $sql, array $join_field_lst, string $join_field): void
+    {
+        $this->sub_sql = $sql;
+        if ($this->join_type == '' and !$this->join_force_rename
+            or ($this->join_field == $join_field and $join_field != '')) {
+            $this->join_type = $sql;
+            $this->join_field_lst = $join_field_lst;
+            $this->join_field = $join_field;
+            $this->join_sub_query = true;
+        } elseif ($this->join2_type == '' and !$this->join2_force_rename
+            or ($this->join2_field == $join_field and $join_field != '')) {
+            $this->join2_type = $sql;
+            $this->join2_field_lst = $join_field_lst;
+            $this->join2_field = $join_field;
+            $this->join2_sub_query = true;
+        } elseif ($this->join3_type == '' and !$this->join3_force_rename
+            or ($this->join3_field == $join_field and $join_field != '')) {
+            $this->join3_type = $sql;
+            $this->join3_field_lst = $join_field_lst;
+            $this->join3_field = $join_field;
+            $this->join3_sub_query = true;
+        } elseif ($this->join4_type == '' and !$this->join4_force_rename
+            or ($this->join4_field == $join_field and $join_field != '')) {
+            $this->join4_type = $sql;
+            $this->join4_field_lst = $join_field_lst;
+            $this->join4_field = $join_field;
+            $this->join4_sub_query = true;
+        } else {
+            log_err('Max four table joins expected on version ' . PRG_VERSION);
+        }
+
+
+    }
+
+    /**
      * activate that in the SQL statement the user sandbox name field should be included
      */
     function set_grp_query(): void
@@ -463,6 +514,7 @@ class sql_creator
             $this->join_select_field = $join_select_field;
             $this->join_select_id = $join_select_id;
             $this->join_usr_query = false;
+            $this->join_sub_query = false;
         } elseif ($this->join2_type == '' and !$this->join2_force_rename
             or (($this->join2_field == $join_field and $join_field != '')
                 and ($this->join2_to_field == $join_to_field and $join_to_field != ''))) {
@@ -473,6 +525,7 @@ class sql_creator
             $this->join2_select_field = $join_select_field;
             $this->join2_select_id = $join_select_id;
             $this->join2_usr_query = false;
+            $this->join2_sub_query = false;
         } elseif ($this->join3_type == '' and !$this->join3_force_rename
             or (($this->join3_field == $join_field and $join_field != '')
                 and ($this->join3_to_field == $join_to_field and $join_to_field != ''))) {
@@ -483,6 +536,7 @@ class sql_creator
             $this->join3_select_field = $join_select_field;
             $this->join3_select_id = $join_select_id;
             $this->join3_usr_query = false;
+            $this->join3_sub_query = false;
         } elseif ($this->join4_type == '' and !$this->join4_force_rename
             or (($this->join4_field == $join_field and $join_field != '')
                 and ($this->join4_to_field == $join_to_field and $join_to_field != ''))) {
@@ -493,6 +547,7 @@ class sql_creator
             $this->join4_select_field = $join_select_field;
             $this->join4_select_id = $join_select_id;
             $this->join4_usr_query = false;
+            $this->join4_sub_query = false;
         } else {
             log_err('Max four table joins expected on version ' . PRG_VERSION);
         }
@@ -657,10 +712,13 @@ class sql_creator
             $this->add_par($spt, $fld_val);
             log_debug('For SQL parameter type const no parameter is needed');
         } elseif ($spt == sql_par_type::MIN
-            or $spt == sql_par_type::MAX) {
+            or $spt == sql_par_type::MAX
+            or $spt == sql_par_type::COUNT) {
             $this->add_par($spt, '');
             log_debug('For group SQL parameter type and no parameter and value is needed');
         } elseif ($spt == sql_par_type::IS_NULL) {
+            $this->add_par($spt, '');
+        } elseif ($spt == sql_par_type::NOT_NULL) {
             $this->add_par($spt, '');
         } elseif ($spt == sql_par_type::LIKE) {
             $this->add_par($spt, $fld_val . '%');
@@ -902,6 +960,10 @@ class sql_creator
             } elseif ($this->usr_query and $this->join_usr_query) {
                 $result = $this->sep($result);
                 $result .= ' ' . sql_db::ULK_TBL . '.' . $field_esc;
+            } elseif ($this->join_sub_query) {
+                // switched off because at the moment only the change sum should be calculated
+                //$result = $this->sep($result);
+                //$result .= ' ' . sql_db::GRP_TBL . '.' . $field_esc;
             }
         }
 
@@ -915,6 +977,9 @@ class sql_creator
             } elseif ($this->usr_query and $this->join2_usr_query) {
                 $result = $this->sep($result);
                 $result .= ' ' . sql_db::ULK2_TBL . '.' . $field_esc;
+            } elseif ($this->join2_sub_query) {
+                $result = $this->sep($result);
+                $result .= ' ' . sql_db::GRP_TBL . '.' . $field_esc;
             }
         }
 
@@ -928,6 +993,9 @@ class sql_creator
             } elseif ($this->usr_query and $this->join3_usr_query) {
                 $result = $this->sep($result);
                 $result .= ' ' . sql_db::ULK3_TBL . '.' . $field_esc;
+            } elseif ($this->join3_sub_query) {
+                $result = $this->sep($result);
+                $result .= ' ' . sql_db::GRP_TBL . '.' . $field_esc;
             }
         }
 
@@ -943,6 +1011,9 @@ class sql_creator
                     $result .= ', ';
                 }
                 $result .= ' ' . sql_db::ULK4_TBL . '.' . $field_esc;
+            } elseif ($this->join4_sub_query) {
+                $result = $this->sep($result);
+                $result .= ' ' . sql_db::GRP_TBL . '.' . $field_esc;
             }
         }
 
@@ -1055,6 +1126,7 @@ class sql_creator
     private function from(string $fields, int $par_offset = 0): string
     {
         $result = '';
+        $join_id_field = '';
         if ($this->grp_query) {
             $sc_sub = clone $this;
             $sc_sub->set_type($this->type);
@@ -1072,12 +1144,18 @@ class sql_creator
             $result = ' FROM ( ' . $sc_sub->sql(0, false) . ' ) AS ' . sql_db::GRP_TBL;
         }
         if ($this->join_type <> '') {
-            $join_table_name = $this->name_sql_esc($this->get_table_name($this->join_type));
-            $join_id_field = $this->name_sql_esc($this->get_id_field_name($this->join_type));
-            if ($this->join_field == '') {
-                $join_from_id_field = $join_id_field;
-            } else {
+            if ($this->join_sub_query) {
+                $join_table_name = $this->join_type;
                 $join_from_id_field = $this->join_field;
+                $join_id_field = $this->join_field;
+            } else {
+                $join_table_name = $this->name_sql_esc($this->get_table_name($this->join_type));
+                $join_id_field = $this->name_sql_esc($this->get_id_field_name($this->join_type));
+                if ($this->join_field == '') {
+                    $join_from_id_field = $join_id_field;
+                } else {
+                    $join_from_id_field = $this->join_field;
+                }
             }
             if ($this->join_to_field != '') {
                 $join_id_field = $this->join_to_field;
@@ -1314,6 +1392,7 @@ class sql_creator
                         // start with the where statement
                         if ($par_type != sql_par_type::MIN
                             and $par_type != sql_par_type::MAX
+                            and $par_type != sql_par_type::COUNT
                             and ($par_type != sql_par_type::INT_SUB or $this->sub_query)
                             and $par_type != sql_par_type::LIMIT
                             and $par_type != sql_par_type::OFFSET) {
@@ -1361,6 +1440,7 @@ class sql_creator
                             $tbl_id = '';
                             if ($par_type != sql_par_type::MIN
                                 and $par_type != sql_par_type::MAX
+                                and $par_type != sql_par_type::COUNT
                                 and ($par_type != sql_par_type::INT_SUB or $this->sub_query)
                                 and $par_type != sql_par_type::LIMIT
                                 and $par_type != sql_par_type::OFFSET) {
@@ -1400,6 +1480,7 @@ class sql_creator
                                     . ' IN (' . $this->par_value($i + 1) . ')';
                             } elseif ($par_type == sql_par_type::MIN
                                 or $par_type == sql_par_type::MAX
+                                or $par_type == sql_par_type::COUNT
                                 or $par_type == sql_par_type::LIMIT
                                 or $par_type == sql_par_type::OFFSET) {
                                 $par_offset--;
@@ -1421,6 +1502,10 @@ class sql_creator
                             } elseif ($par_type == sql_par_type::IS_NULL) {
                                 $par_offset--;
                                 $result .= $tbl_id . $this->par_fields[$i] . ' IS NULL ';
+                            } elseif ($par_type == sql_par_type::NOT_NULL) {
+                                $par_offset--;
+                                // TODO review taböe prefix
+                                $result .= sql_db::LNK_TBL . '.' . $this->par_fields[$i] . ' IS NOT NULL ';
                             } elseif ($par_type == sql_par_type::INT_NOT) {
                                 $result .= $tbl_id . $this->par_fields[$i] . ' <> ' . $this->par_name($par_pos);
                             } elseif ($par_type == sql_par_type::INT_NOT_OR_NULL) {
@@ -1549,8 +1634,10 @@ class sql_creator
                 and $par_type != sql_par_type::CONST_NOT
                 and $par_type != sql_par_type::CONST_NOT_IN
                 and $par_type != sql_par_type::IS_NULL
+                and $par_type != sql_par_type::NOT_NULL
                 and $par_type != sql_par_type::MIN
-                and $par_type != sql_par_type::MAX) {
+                and $par_type != sql_par_type::MAX
+                and $par_type != sql_par_type::COUNT) {
                 $result++;
             }
         }
@@ -1563,14 +1650,22 @@ class sql_creator
     private function prepare_sql(): string
     {
         $sql = '';
-        if (count($this->par_types) > 0) {
+        if (count($this->par_types) > 0
+            or $this->join_sub_query
+            or $this->join2_sub_query
+            or $this->join3_sub_query
+            or $this->join4_sub_query) {
             // used for sub queries
             if ($this->query_name == '') {
                 $sql = "SELECT";
             } else {
                 if ($this->db_type == sql_db::POSTGRES) {
                     $par_types = $this->par_types_to_postgres();
-                    $sql = 'PREPARE ' . $this->query_name . ' (' . implode(', ', $par_types) . ') AS SELECT';
+                    if ($this->used_par_types() > 0) {
+                        $sql = 'PREPARE ' . $this->query_name . ' (' . implode(', ', $par_types) . ') AS SELECT';
+                    } else {
+                        $sql = 'PREPARE ' . $this->query_name . ' AS SELECT';
+                    }
                 } elseif ($this->db_type == sql_db::MYSQL) {
                     $sql = "PREPARE " . $this->query_name . " FROM 'SELECT";
                     $this->end = "';";
@@ -1586,6 +1681,20 @@ class sql_creator
             }
         }
         return $sql;
+    }
+
+    /**
+     * @return int the number of parameter types actually used e.g. excluding "is null"
+     */
+    private function used_par_types(): int
+    {
+        $result = 0;
+        foreach ($this->par_types_to_postgres() AS $par_type) {
+            if ($par_type != '') {
+                $result++;
+            }
+        }
+        return $result;
     }
 
     /**
@@ -1614,8 +1723,10 @@ class sql_creator
                 and $par_type != sql_par_type::CONST_NOT
                 and $par_type != sql_par_type::CONST_NOT_IN
                 and $par_type != sql_par_type::IS_NULL
+                and $par_type != sql_par_type::NOT_NULL
                 and $par_type != sql_par_type::MIN
                 and $par_type != sql_par_type::MAX
+                and $par_type != sql_par_type::COUNT
                 and $par_type != sql_par_type::INT_SUB_IN) {
                 $used_par_values[] = $this->par_value($i + 1);;
             }
@@ -2190,8 +2301,10 @@ class sql_creator
                 case sql_par_type::CONST_NOT:
                 case sql_par_type::CONST_NOT_IN:
                 case sql_par_type::IS_NULL:
+                case sql_par_type::NOT_NULL:
                 case sql_par_type::MIN:
                 case sql_par_type::MAX:
+                case sql_par_type::COUNT:
                     break;
                 default:
                     $result[] = $type->value;
