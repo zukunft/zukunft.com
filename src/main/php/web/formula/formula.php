@@ -451,7 +451,7 @@ class formula extends sandbox_typed
             } else {
                 $selected = 0;
             }
-            $result .= $this->phrase_selector('link_phrase', "formula_edit", '',
+            $result .= $this->phrase_selector('link_phrase', "formula_edit",
                     '', $selected) . ' ';
         } else {
             if ($this->id > 0) {
@@ -473,23 +473,24 @@ class formula extends sandbox_typed
      * HTML code of a phrase selector
      * @param string $name the unique name inside the form for this selector
      * @param string $form_name the name of the html form
-     * @param string $label the label name (TODO remove from the selector)
      * @param string $col_class the formatting code to adjust the formatting
      * @param int $selected the id of the preselected phrase
      * @param string $pattern the pattern to filter the phrases
+     * @param phrase_dsp|null $phr phrase to preselect the phrases e.g. use Country to narrow the selection
      * @return string with the HTML code to show the phrase selector
      */
-    private function phrase_selector(
+    protected function phrase_selector(
         string $name,
         string $form_name,
-        string $label,
-        string $col_class,
-        int $selected,
-        string $pattern = ''): string
+        string $col_class = '',
+        int $selected = 0,
+        string $pattern = '',
+        ?phrase_dsp $phr = null
+    ): string
     {
         $phr_lst = new phrase_list_dsp();
         $phr_lst->load_like($pattern);
-        return $phr_lst->selector($name, $form_name, $label, $selected);
+        return $phr_lst->selector($name, $form_name, '', $selected);
     }
 
     // test and refresh the formula and show some sample values by returning the HTML code

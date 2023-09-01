@@ -37,6 +37,7 @@ namespace html\sandbox;
 include_once API_SANDBOX_PATH . 'sandbox.php';
 
 use api\api;
+use cfg\phrase;
 use controller\controller;
 use html\api as api_dsp;
 use html\html_base;
@@ -228,6 +229,40 @@ class db_object
     protected function protection_type_selector(string $form_name): string
     {
         $msg = 'protection type selector not defined for ' . $this::class;
+        log_err($msg);
+        return $msg;
+    }
+
+    /**
+     * @param string $name the unique name inside the form for this selector
+     * @param string $form_name the name of the html form
+     * @param string $col_class the formatting code to adjust the formatting
+     * @param int $selected the id of the preselected phrase
+     * @param string $pattern the pattern to filter the phrases
+     * @param phrase_dsp|null $phr phrase to preselect the phrases e.g. use Country to narrow the selection
+     * @return string with the HTML code to show the phrase selector
+     */
+    protected function phrase_selector(
+        string $name,
+        string $form_name,
+        string $col_class = '',
+        int $selected = 0,
+        string $pattern = '',
+        ?phrase_dsp $phr = null
+    ): string
+    {
+        $msg = 'phrase selector not defined for ' . $this::class;
+        log_err($msg);
+        return $msg;
+    }
+
+    /**
+     * @param string $form_name the name of the html form
+     * @return string the html code to select a phrase
+     */
+    protected function verb_selector(string $form_name): string
+    {
+        $msg = 'verb selector not defined for ' . $this::class;
         log_err($msg);
         return $msg;
     }

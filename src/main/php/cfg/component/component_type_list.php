@@ -74,15 +74,21 @@ class component_type_list extends type_list
         $this->add($type);
         $type = new type_object(component_type::FORM_DESCRIPTION, component_type::FORM_DESCRIPTION, '', 21);
         $this->add($type);
-        $type = new type_object(component_type::FORM_SHARE_TYPE, component_type::FORM_SHARE_TYPE, '', 22);
+        $type = new type_object(component_type::FORM_PHRASE_FROM, component_type::FORM_PHRASE_FROM, '', 22);
         $this->add($type);
-        $type = new type_object(component_type::FORM_PROTECTION_TYPE, component_type::FORM_PROTECTION_TYPE, '', 23);
+        $type = new type_object(component_type::FORM_VERB_SELECTOR, component_type::FORM_VERB_SELECTOR, '', 23);
         $this->add($type);
-        $type = new type_object(component_type::FORM_CANCEL, component_type::FORM_CANCEL, '', 24);
+        $type = new type_object(component_type::FORM_PHRASE_TO, component_type::FORM_PHRASE_TO, '', 24);
         $this->add($type);
-        $type = new type_object(component_type::FORM_SAVE, component_type::FORM_SAVE, '', 25);
+        $type = new type_object(component_type::FORM_SHARE_TYPE, component_type::FORM_SHARE_TYPE, '', 25);
         $this->add($type);
-        $type = new type_object(component_type::FORM_END, component_type::FORM_END, '', 26);
+        $type = new type_object(component_type::FORM_PROTECTION_TYPE, component_type::FORM_PROTECTION_TYPE, '', 26);
+        $this->add($type);
+        $type = new type_object(component_type::FORM_CANCEL, component_type::FORM_CANCEL, '', 27);
+        $this->add($type);
+        $type = new type_object(component_type::FORM_SAVE, component_type::FORM_SAVE, '', 28);
+        $this->add($type);
+        $type = new type_object(component_type::FORM_END, component_type::FORM_END, '', 29);
         $this->add($type);
     }
 

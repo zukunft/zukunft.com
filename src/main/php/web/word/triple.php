@@ -201,17 +201,30 @@ class triple extends sandbox_typed
      *
      * select a phrase based on a given context
      *
-     * @param string $form_name
-     * @param phrase $phr the context to select the phrases, which is until now just the phrase
+     * @param string $name the unique name inside the form for this selector
+     * @param string $form_name the name of the html form
+     * @param string $col_class the formatting code to adjust the formatting
+     * @param int $selected the id of the preselected phrase
+     * @param string $pattern the pattern to filter the phrases
+     * @param phrase_dsp|null $phr the context to select the phrases, which is until now just the phrase
      * @return string the html code to select a phrase
      */
-    private function phrase_selector(string $form_name, string $label, phrase_dsp $phr): string
+    protected function phrase_selector(
+        string $name,
+        string $form_name,
+        string $col_class = '',
+        int $selected = 0,
+        string $pattern = '',
+        ?phrase_dsp $phr = null
+    ): string
     {
         global $usr;
         $phr_lst = new phrase_list($usr);
-        $phr_lst->load_by_phr($phr);
+        $phr_be = new phrase($usr);
+        $phr_be->load_by_id($phr->id());
+        $phr_lst->load_by_phr($phr_be);
         $phr_lst_dsp = new phrase_list_dsp($phr_lst->api_json());
-        return $phr_lst_dsp->selector($label, $form_name, $label);
+        return $phr_lst_dsp->selector($name, $form_name, '');
     }
 
 
@@ -235,13 +248,15 @@ class triple extends sandbox_typed
             $hidden_fields .= $html->form_hidden("confirm", '1');
             $detail_fields = $html->form_text("name", $this->name());
             $detail_fields .= $html->form_text("description", $this->description);
-            $detail_fields .= $this->phrase_selector(self::FORM_EDIT, 'from', $this->from());
+            $detail_fields .= 'from: ' . $this->phrase_selector(
+                'from', self::FORM_EDIT, '', $this->from()->id(), '', $this->from());
             /* TODO
             if (isset($this->verb)) {
                 $result .= $this->verb->dsp_selector('forward', $form_name, html_base::COL_SM_4, $back);
             }
             */
-            $detail_fields .= $this->phrase_selector(self::FORM_EDIT, 'to', $this->to());
+            $detail_fields .= 'to: ' . $this->phrase_selector(
+                'to', self::FORM_EDIT, '', $this->to()->id(), '', $this->to());
             $detail_row = $html->fr($detail_fields) . '<br>';
             $result = $header . $html->form(self::FORM_EDIT, $hidden_fields . $detail_row);
         }

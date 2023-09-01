@@ -108,6 +108,9 @@ class component extends sandbox_typed
             component_type::FORM_CONFIRM => $this->form_confirm($dbo, $back),
             component_type::FORM_NAME => $this->form_name($dbo, $back),
             component_type::FORM_DESCRIPTION => $this->form_description($dbo, $back),
+            component_type::FORM_PHRASE_FROM => $this->form_phrase_from($dbo),
+            component_type::FORM_VERB_SELECTOR => $this->form_verb($dbo),
+            component_type::FORM_PHRASE_TO => $this->form_phrase_to($dbo),
             component_type::FORM_SHARE_TYPE => $this->form_share_type($dbo),
             component_type::FORM_PROTECTION_TYPE => $this->form_protection_type($dbo),
             component_type::FORM_CANCEL => $this->form_cancel($dbo, $back),
@@ -297,6 +300,30 @@ class component extends sandbox_typed
             '',
             html_base::COL_SM_12
         );
+    }
+
+    /**
+     * @return string the html code to request the description from the user
+     */
+    function form_phrase_from(db_object_dsp $dbo): string
+    {
+        return $dbo->phrase_selector('from');
+    }
+
+    /**
+     * @return string the html code to request the description from the user
+     */
+    function form_phrase_to(db_object_dsp $dbo): string
+    {
+        return $dbo->phrase_selector('to');
+    }
+
+    /**
+     * @return string the html code to request the description from the user
+     */
+    function form_verb(db_object_dsp $dbo): string
+    {
+        return $dbo->verb_selector('verb');
     }
 
     // TODO probably add the form name
@@ -674,23 +701,23 @@ class component extends sandbox_typed
      * HTML code of a phrase selector
      * @param string $name the unique name inside the form for this selector
      * @param string $form_name the name of the html form
-     * @param string $label the label name (TODO remove from the selector)
      * @param string $col_class the formatting code to adjust the formatting
      * @param int $selected the id of the preselected phrase
      * @param string $pattern the pattern to filter the phrases
+     * @param phrase_dsp|null $phr phrase to preselect the phrases e.g. use Country to narrow the selection
      * @return string with the HTML code to show the phrase selector
      */
-    private function phrase_selector(
+    protected function phrase_selector(
         string $name,
         string $form_name,
-        string $label,
-        string $col_class,
-        int $selected,
-        string $pattern = ''): string
+        string $col_class = '',
+        int $selected = 0,
+        string $pattern = '',
+        ?phrase_dsp $phr = null): string
     {
         $phr_lst = new phrase_list();
         $phr_lst->load_like($pattern);
-        return $phr_lst->selector($name, $form_name, $label, $selected);
+        return $phr_lst->selector($name, $form_name, '', $selected);
     }
 
     /**

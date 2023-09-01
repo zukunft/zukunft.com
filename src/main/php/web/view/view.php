@@ -55,6 +55,7 @@ use html\msg;
 use html\sandbox\db_object as db_object_dsp;
 use html\sandbox\sandbox_typed;
 use html\word\word as word_dsp;
+use html\word\triple as triple_dsp;
 
 class view extends sandbox_typed
 {
@@ -111,6 +112,17 @@ class view extends sandbox_typed
         if (array_key_exists(controller::API_WORD, $json_array)) {
             $this->dbo = new word_dsp();
             $dbo_json = $json_array[controller::API_WORD];
+            $id = 0;
+            if (array_key_exists(api::FLD_ID, $json_array)) {
+                $id = $dbo_json[api::FLD_ID];
+            }
+            if ($id != 0) {
+                $this->dbo->set_from_json_array($dbo_json);
+            }
+        }
+        if (array_key_exists(controller::API_TRIPLE, $json_array)) {
+            $this->dbo = new triple_dsp();
+            $dbo_json = $json_array[controller::API_TRIPLE];
             $id = 0;
             if (array_key_exists(api::FLD_ID, $json_array)) {
                 $id = $dbo_json[api::FLD_ID];

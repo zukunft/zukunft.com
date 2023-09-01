@@ -180,6 +180,95 @@
       "code_id": "word_del"
     },
     {
+      "name": "System View Add Triple",
+      "code_id": "triple_add",
+      "type": "system",
+      "components": [
+        {
+          "position": "1",
+          "name": "form title triple add",
+          "description": "show the language specific title of a add, change or delete form",
+          "type": "system_form_title",
+          "code_id": "form_title_triple_add",
+          "ui_msg_code_id": "form_title_triple_add"
+        },
+        {
+          "position": "2",
+          "name": "hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "name form field"
+        },
+        {
+          "position": "5",
+          "name": "description form field"
+        },
+        {
+          "position": "6",
+          "name": "system form triple phrase from",
+          "description": "selector for the from phrase of a triple",
+          "type": "field_phrase_from",
+          "code_id": "form_field_triple_phrase_from",
+          "ui_msg_code_id": "form_triple_phrase_from"
+        },
+        {
+          "position": "7",
+          "name": "system form triple verb",
+          "description": "selector for the verb of a triple",
+          "type": "field_verb",
+          "code_id": "form_field_triple_verb",
+          "ui_msg_code_id": "form_triple_verb"
+        },
+        {
+          "position": "8",
+          "name": "system form triple phrase to",
+          "description": "selector for the to phrase of a triple",
+          "type": "field_phrase_to",
+          "code_id": "form_field_triple_phrase_to",
+          "ui_msg_code_id": "form_triple_phrase_to"
+        },
+        {
+          "position": "9",
+          "name": "share type",
+          "description": "selector for the share type",
+          "type": "field_share_type",
+          "code_id": "form_field_share_type"
+        },
+        {
+          "position": "10",
+          "name": "protection type",
+          "description": "selector for the protection type",
+          "type": "field_protection_type",
+          "code_id": "form_field_protection_type"
+        },
+        {
+          "position": "11",
+          "name": "cancel button",
+          "description": "button to cancel the form action and go back to the previous view",
+          "type": "system_button_cancel",
+          "code_id": "form_cancel_button"
+        },
+        {
+          "position": "12",
+          "name": "save button",
+          "description": "button to save the form field into the database",
+          "type": "system_button_save",
+          "code_id": "form_button_save"
+        },
+        {
+          "position": "13",
+          "name": "form end",
+          "type": "form_end",
+          "code_id": "form_end"
+        }
+      ]
+    },
+    {
       "name": "Search",
       "description": "The search page for all words and formulas",
       "code_id": "word_find"

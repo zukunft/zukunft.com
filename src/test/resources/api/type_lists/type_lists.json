@@ -1940,189 +1940,271 @@
       },
       {
         "id": 6,
+        "name": "System View Add Triple",
+        "type_id": 7,
+        "code_id": "triple_add",
+        "components": [
+          {
+            "id": 13,
+            "name": "form title triple add",
+            "description": "show the language specific title of a add, change or delete form",
+            "type_id": 17
+          },
+          {
+            "id": 3,
+            "name": "hidden back stack",
+            "description": "field that contains the stack for the undo actions",
+            "type_id": 18
+          },
+          {
+            "id": 4,
+            "name": "hidden confirm status",
+            "description": "switch on that the form saving needs an extra confirm by the user",
+            "type_id": 19
+          },
+          {
+            "id": 5,
+            "name": "name form field",
+            "description": "the name field in a form",
+            "type_id": 20
+          },
+          {
+            "id": 6,
+            "name": "description form field",
+            "description": "the description field in a form",
+            "type_id": 21
+          },
+          {
+            "id": 14,
+            "name": "system form triple phrase from",
+            "description": "selector for the from phrase of a triple"
+          },
+          {
+            "id": 15,
+            "name": "system form triple verb",
+            "description": "selector for the verb of a triple"
+          },
+          {
+            "id": 16,
+            "name": "system form triple phrase to",
+            "description": "selector for the to phrase of a triple"
+          },
+          {
+            "id": 7,
+            "name": "share type",
+            "description": "selector for the share type",
+            "type_id": 22
+          },
+          {
+            "id": 8,
+            "name": "protection type",
+            "description": "selector for the protection type",
+            "type_id": 23
+          },
+          {
+            "id": 9,
+            "name": "cancel button",
+            "description": "button to cancel the form action and go back to the previous view",
+            "type_id": 24
+          },
+          {
+            "id": 10,
+            "name": "save button",
+            "description": "button to save the form field into the database",
+            "type_id": 25
+          },
+          {
+            "id": 11,
+            "name": "form end",
+            "type_id": 26
+          }
+        ]
+      },
+      {
+        "id": 7,
         "name": "Search",
         "description": "The search page for all words and formulas",
         "code_id": "word_find",
         "components": []
       },
       {
-        "id": 7,
+        "id": 8,
         "name": "Display Number",
         "code_id": "value",
         "components": []
       },
       {
-        "id": 8,
+        "id": 9,
         "name": "Add New Number",
         "code_id": "value_add",
         "components": []
       },
       {
-        "id": 9,
+        "id": 10,
         "name": "Change Number",
         "code_id": "value_edit",
         "components": []
       },
       {
-        "id": 10,
+        "id": 11,
         "name": "Delete Number",
         "code_id": "value_del",
         "components": []
       },
       {
-        "id": 11,
+        "id": 12,
         "name": "Add New Formula",
         "code_id": "formula_add",
         "components": []
       },
       {
-        "id": 12,
+        "id": 13,
         "name": "Change Formula",
         "code_id": "formula_edit",
         "components": []
       },
       {
-        "id": 13,
+        "id": 14,
         "name": "Delete Formula",
         "description": "To confirm the exclusion or deleting of a formula",
         "code_id": "formula_del",
         "components": []
       },
       {
-        "id": 14,
+        "id": 15,
         "name": "Explain Formula Result",
         "description": "Explain the formula result",
         "code_id": "formula_explain",
         "components": []
       },
       {
-        "id": 15,
+        "id": 16,
         "name": "Formula test",
         "description": "To debug the formula",
         "code_id": "formula_test",
         "components": []
       },
       {
-        "id": 16,
+        "id": 17,
         "name": "Add New Source",
         "code_id": "source_add",
         "components": []
       },
       {
-        "id": 17,
+        "id": 18,
         "name": "Change Source",
         "code_id": "source_edit",
         "components": []
       },
       {
-        "id": 18,
+        "id": 19,
         "name": "Delete Source",
         "description": "Delete an external data source",
         "code_id": "source_del",
         "components": []
       },
       {
-        "id": 19,
+        "id": 20,
         "name": "Verb List",
         "description": "List all available ways how to link two words",
         "code_id": "verbs",
         "components": []
       },
       {
-        "id": 20,
+        "id": 21,
         "name": "Add New Verb",
         "code_id": "verb_add",
         "components": []
       },
       {
-        "id": 21,
+        "id": 22,
         "name": "Change Verb",
         "description": "Rename a tern link type",
         "code_id": "verb_edit",
         "components": []
       },
       {
-        "id": 22,
+        "id": 23,
         "name": "Delete verb",
         "description": "Exclude or delete a verb",
         "code_id": "verb_del",
         "components": []
       },
       {
-        "id": 23,
+        "id": 24,
         "name": "Add New Triple",
         "code_id": "triple_add",
         "components": []
       },
       {
-        "id": 24,
+        "id": 25,
         "name": "Change Triple",
         "description": "Rename a triple",
         "code_id": "triple_edit",
         "components": []
       },
       {
-        "id": 25,
+        "id": 26,
         "name": "Delete triple",
         "description": "Exclude or delete a triple",
         "code_id": "triple_del",
         "components": []
       },
       {
-        "id": 26,
+        "id": 27,
         "name": "User Settings",
         "description": "to change the user settings",
         "code_id": "user",
         "components": []
       },
       {
-        "id": 27,
+        "id": 28,
         "name": "Error Log",
         "description": "simple confirm page for a new error that has been logged in the database",
         "code_id": "error_log",
         "components": []
       },
       {
-        "id": 28,
+        "id": 29,
         "name": "System Error List",
         "description": "List the system errors and allow the user to change the status",
         "code_id": "error_update",
         "components": []
       },
       {
-        "id": 29,
+        "id": 30,
         "name": "Import",
         "description": "Select a file to import data",
         "code_id": "import",
         "components": []
       },
       {
-        "id": 30,
+        "id": 31,
         "name": "Add View",
         "code_id": "view_add",
         "components": []
       },
       {
-        "id": 31,
+        "id": 32,
         "name": "Change View",
         "description": "Rename a view",
         "code_id": "view_edit",
         "components": []
       },
       {
-        "id": 32,
+        "id": 33,
         "name": "Delete View",
         "description": "Exclude or delete a view",
         "code_id": "view_del",
         "components": []
       },
       {
-        "id": 33,
+        "id": 34,
         "name": "Add View Component",
         "code_id": "component_add",
         "components": [
           {
-            "id": 13,
+            "id": 17,
             "name": "form title",
             "description": "show the language specific title of a add, change or delete form",
             "type_id": 17
@@ -2166,14 +2248,14 @@
         ]
       },
       {
-        "id": 34,
+        "id": 35,
         "name": "Change View Component",
         "description": "Adjust a view component",
         "code_id": "component_edit",
         "components": []
       },
       {
-        "id": 35,
+        "id": 36,
         "name": "Delete View Component",
         "description": "Exclude or delete a view component",
         "code_id": "component_del",

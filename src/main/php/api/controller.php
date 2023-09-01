@@ -99,6 +99,7 @@ class controller
 
     // to include the objects that should be displayed in one api message
     const API_WORD = 'word';
+    const API_TRIPLE = 'triple';
 
     //
     const API_TYPE_LISTS = 'type_lists';
@@ -143,6 +144,9 @@ class controller
     const DSP_WORD_EDIT = "word_edit";
     const DSP_WORD_DEL = "word_del";
     const DSP_WORD_FIND = "word_find";
+    const DSP_TRIPLE_ADD = "triple_add";
+    const DSP_TRIPLE_EDIT = "triple_edit";
+    const DSP_TRIPLE_DEL = "triple_del";
     const DSP_VALUE_DISPLAY = "value";
     const DSP_VALUE_ADD = "value_add";
     const DSP_VALUE_EDIT = "value_edit";
@@ -159,9 +163,6 @@ class controller
     const DSP_VERB_ADD = "verb_add";
     const DSP_VERB_EDIT = "verb_edit";
     const DSP_VERB_DEL = "verb_del";
-    const DSP_TRIPLE_ADD = "triple_add";
-    const DSP_TRIPLE_EDIT = "triple_edit";
-    const DSP_TRIPLE_DEL = "triple_del";
     const DSP_USER = "user";
     const DSP_ERR_LOG = "error_log";
     const DSP_ERR_UPD = "error_update";
@@ -179,6 +180,7 @@ class controller
     // list of add system views which don't need a object
     const DSP_SYS_ADD = array(
         self::DSP_WORD_ADD,
+        self::DSP_TRIPLE_ADD,
         self::DSP_VALUE_ADD,
         self::DSP_COMPONENT_ADD
     );
