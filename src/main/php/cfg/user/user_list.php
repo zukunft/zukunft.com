@@ -337,31 +337,6 @@ class user_list
         return $this->lst;
     }
 
-    /**
-     * add an usr with just the id for later mass load
-     */
-    function add_by_id($usr_id): void
-    {
-        $usr = new user;
-        $usr->set_id($usr_id);
-        $this->lst[] = $usr;
-    }
-
-    // fill the user objects of the list based on the id
-    function load_by_id(): void
-    {
-
-        global $db_con;
-        $lib = new library();
-
-        $sql_in = $lib->sql_array($this->lst, 'user_id IN(', ')');
-        $sql = "SELECT user_id, user_name, code_id 
-              FROM users
-            WHERE " . $sql_in . "
-         ORDER BY user_id;";
-        $this->load_sql_old($sql, $db_con);
-    }
-
     function name_lst(): string
     {
         $lib = new library();

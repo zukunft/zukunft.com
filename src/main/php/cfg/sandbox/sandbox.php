@@ -990,20 +990,19 @@ class sandbox extends db_object
 
         global $db_con;
 
+        $usr_id_lst = array();
         $result = new user_list($this->user());
 
         // add object owner
-        $result->add_by_id($this->owner_id);
-
-        $sql = 'SELECT user_id 
-              FROM user_' . $this->obj_name . 's 
-              WHERE ' . $this->obj_name . '_id = ' . $this->id . '
-                AND (excluded <> 1 OR excluded is NULL)';
-        $db_usr_lst = $db_con->get_old($sql);
+        $usr_id_lst[] = $this->owner_id;
+        $qp = $this->load_sql_of_users_that_changed($db_con->sql_creator());
+        $db_usr_lst = $db_con->get($qp);
         foreach ($db_usr_lst as $db_usr) {
-            $result->add_by_id($db_usr[user::FLD_ID]);
+            if ($db_usr[user::FLD_ID] > 0) {
+                $usr_id_lst[] = $db_usr[user::FLD_ID];
+            }
         }
-        $result->load_by_id();
+        $result->load_by_ids($db_con, $usr_id_lst);
 
         return $result;
     }
