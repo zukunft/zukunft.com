@@ -50,6 +50,7 @@ class html_base
     const BS_BTN = 'btn btn-space';
     const BS_BTN_SUCCESS = 'btn-outline-success';
     const BS_BTN_CANCEL = 'btn-outline-secondary';
+    const BS_BTN_DEL = 'btn-outline-secondary';
     const BS_SM_2 = 'mr-sm-2';
     const COL_SM_2 = 'col-sm-2';
     const COL_SM_4 = 'col-sm-4';

@@ -798,7 +798,25 @@ class view extends sandbox_typed
                 $cmp_pos = 1;
                 foreach ($json_lst as $json_cmp) {
                     $cmp = new component($usr);
-                    $cmp->import_obj($json_cmp, $test_obj);
+                    // if for the component only the position and name is defined
+                    // do not overwrite an existing component
+                    // instead just add the existing component
+                    if (count($json_cmp) == 2
+                        and array_key_exists(exp_obj::FLD_POSITION, $json_cmp)
+                        and array_key_exists(exp_obj::FLD_NAME, $json_cmp)) {
+                        $cmp->load_by_name($json_cmp[exp_obj::FLD_NAME]);
+                        // if the component does not jet exist
+                        // nevertheless create the component
+                        // but send a warning message
+                        if ($cmp->id() <= 0) {
+                            log_warning('Component ' . $json_cmp[exp_obj::FLD_NAME]
+                                . ' has not yet been created, but is supposed to be at position '
+                                . $json_cmp[exp_obj::FLD_POSITION] . ' of a view ');
+                            $cmp->import_obj($json_cmp, $test_obj);
+                        }
+                    } else {
+                        $cmp->import_obj($json_cmp, $test_obj);
+                    }
                     // on import first add all view components to the view object and save them all at once
                     $result->add_message($this->add_cmp($cmp, $cmp_pos, $test_obj));
                     $cmp_pos++;

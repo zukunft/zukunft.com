@@ -54,27 +54,27 @@ class component_type
     // display all formulas related to the given word
     const FORMULAS = "formula_list";
     // show a list of formula results related to a word
-    const FORMULA_RESULTS = "formula_results";
+    const FORMULA_RESULTS = "formula_results"; // TODO add to csv
     // offer to configure and create an JSON file
     const JSON_EXPORT = "json_export";
     // offer to configure and create an XML file
     const XML_EXPORT = "xml_export";
     // offer to configure and create an CSV file
     const CSV_EXPORT = "csv_export";
-    const VIEW_SELECT = "view_select";
+    const VIEW_SELECT = "view_select"; // TODO add to csv
     const LINK = "link";
     const FORM_TITLE = "system_form_title";
     const FORM_BACK = "system_form_back_stack";
     const FORM_CONFIRM = "system_form_confirm_status";
-    const FORM_NAME = "field_name";
-    const FORM_DESCRIPTION = "field_description";
-    const FORM_PHRASE_FROM = "field_phrase_from";
-    const FORM_VERB_SELECTOR = "field_verb";
-    const FORM_PHRASE_TO = "field_phrase_to";
-    const FORM_SHARE_TYPE = "field_share_type";
-    const FORM_PROTECTION_TYPE = "field_protection_type";
+    const FORM_NAME = "system_form_field_name";
+    const FORM_DESCRIPTION = "system_form_field_description";
+    const FORM_PHRASE = "system_form_select_phrase";
+    const FORM_VERB_SELECTOR = "system_form_select_verb";
+    const FORM_SHARE_TYPE = "system_form_select_share";
+    const FORM_PROTECTION_TYPE = "system_form_select_protection";
     const FORM_CANCEL = "system_button_cancel";
     const FORM_SAVE = "system_button_save";
+    const FORM_DEL = "system_button_del";
     // simple close the form section
     const FORM_END = "form_end";
 
@@ -85,13 +85,13 @@ class component_type
         self::FORM_CONFIRM,
         self::FORM_NAME,
         self::FORM_DESCRIPTION,
-        self::FORM_PHRASE_FROM,
+        self::FORM_PHRASE,
         self::FORM_VERB_SELECTOR,
-        self::FORM_PHRASE_TO,
         self::FORM_SHARE_TYPE,
         self::FORM_PROTECTION_TYPE,
         self::FORM_CANCEL,
         self::FORM_SAVE,
+        self::FORM_DEL,
         self::FORM_END
     );
 

@@ -73,6 +73,7 @@ class export
     const VALUES = 'values';
     const VALUE_LIST = 'value-list';
     const VIEWS = 'views';
+    const COMPONENTS = 'components';
     const CALC_VALIDATION = 'calc-validation';
     const VIEW_VALIDATION = 'view-validation';
     const IP_BLACKLIST = 'ip-blacklist';

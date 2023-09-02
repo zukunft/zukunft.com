@@ -1,4 +1,17 @@
 messages:
+  form_title_word_add:
+    text: "Add word"
+    tooltip: "add a new word, but should not have a verb, triple or formula with the same name"
+  form_title_word_edit: "Change word"
+  form_title_word_del: "Delete word"
+  form_title_triple_add: "Add triple"
+  form_field_name: "Name"
+  form_field_description: "Description"
+  form_select_share: "Share"
+  form_select_protection: "Protection"
+  form_button_cancel: "cancel"
+  form_button_save: "save"
+  form_button_del: "del"
   rename_word:
     text: "Rename"
     tooltip: "change the word name only for as an exception"

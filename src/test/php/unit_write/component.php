@@ -126,20 +126,13 @@ class component_test
 
         // check if the component renaming was successful
         $cmp_renamed = new component($t->usr1);
-        $result = $cmp_renamed->load_by_name(component_api::TN_RENAMED, component::class);
-        if ($result == '') {
-            if ($cmp_renamed->id() > 0) {
-                $result = $cmp_renamed->name();
-            }
+        $cmp_renamed->load_by_name(component_api::TN_RENAMED, component::class);
+        if ($cmp_renamed->id() > 0) {
+            $cmp_renamed_reloaded = new component($t->usr1);
+            $cmp_renamed_reloaded->load_by_id($cmp_renamed->id(), component::class);
+            $result = $cmp_renamed_reloaded->name();
         }
-        // TODO review
-        if ($result == 26) {
-            $target = 26;
-        } elseif ($result == 28) {
-            $target = 28;
-        } else {
-            $target = 30;
-        }
+        $target = component_api::TN_RENAMED;
         $t->display('component->load renamed component "' . component_api::TN_RENAMED . '"', $target, $result);
 
         // check if the component renaming has been logged

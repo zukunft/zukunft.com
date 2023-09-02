@@ -417,7 +417,7 @@
       {
         "id": 24,
         "code_id": "form_end",
-        "name": "form end",
+        "name": "system form end",
         "comment": "just to indicate that a form ends"
       }
     ],
@@ -1356,27 +1356,27 @@
           },
           {
             "id": 3,
-            "name": "hidden back stack"
+            "name": "system form hidden back stack"
           },
           {
             "id": 4,
-            "name": "hidden confirm status"
+            "name": "system form hidden confirm status"
           },
           {
             "id": 5,
-            "name": "name form field"
+            "name": "system form field name"
           },
           {
             "id": 6,
-            "name": "description form field"
+            "name": "system form field description"
           },
           {
             "id": 7,
-            "name": "cancel button"
+            "name": "system form button cancel"
           },
           {
             "id": 8,
-            "name": "save button"
+            "name": "system form button save"
           }
         ]
       },

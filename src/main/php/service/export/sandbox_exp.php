@@ -48,5 +48,6 @@ class exp_obj
     const FLD_TIMESTAMP = 'timestamp';
     const FLD_NUMBER = 'number';
     const FLD_SOURCE = 'source';
+    const FLD_POSITION = 'position';
 
 }

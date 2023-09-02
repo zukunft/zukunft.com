@@ -260,7 +260,7 @@ class db_object
      * @param string $form_name the name of the html form
      * @return string the html code to select a phrase
      */
-    protected function verb_selector(string $form_name): string
+    protected function verb_selector(string $name, string $form_name): string
     {
         $msg = 'verb selector not defined for ' . $this::class;
         log_err($msg);

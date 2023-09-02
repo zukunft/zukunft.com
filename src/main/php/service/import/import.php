@@ -53,6 +53,7 @@ include_once MODEL_VERB_PATH . 'verb.php';
 include_once MODEL_VIEW_PATH . 'view.php';
 include_once MODEL_VIEW_PATH . 'view_list.php';
 
+use cfg\component\component;
 use im_export\export;
 use cfg\formula;
 use cfg\formula_list;
@@ -98,6 +99,8 @@ class file_import
     public ?int $list_values_failed = 0;
     public ?int $views_done = 0;
     public ?int $views_failed = 0;
+    public ?int $components_done = 0;
+    public ?int $components_failed = 0;
     public ?int $calc_validations_done = 0;
     public ?int $calc_validations_failed = 0;
     public ?int $view_validations_done = 0;
@@ -291,6 +294,17 @@ class file_import
                             $this->views_done++;
                         } else {
                             $this->views_failed++;
+                        }
+                        $result->add($import_result);
+                    }
+                } elseif ($key == export::COMPONENTS) {
+                    foreach ($json_obj as $cmp) {
+                        $cmp_obj = new component($this->usr);
+                        $import_result = $cmp_obj->import_obj($cmp);
+                        if ($import_result->is_ok()) {
+                            $this->components_done++;
+                        } else {
+                            $this->components_failed++;
                         }
                         $result->add($import_result);
                     }

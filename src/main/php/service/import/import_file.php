@@ -67,6 +67,7 @@ function import_json_file(string $filename, user $usr): string
                     . $import->sources_done . ' sources, '
                     . $import->refs_done . ' references, '
                     . $import->views_done . ' views loaded, '
+                    . $import->components_done . ' components loaded, '
                     . $import->calc_validations_done . ' results validated, '
                     . $import->view_validations_done . ' views validated)';
                 if ($import->users_done > 0) {

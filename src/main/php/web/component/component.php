@@ -37,6 +37,7 @@ namespace html\component;
 include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
 
 use api\api;
+use api\word_api;
 use cfg\component\component_type;
 use cfg\component_link_list;
 use cfg\library;
@@ -108,13 +109,13 @@ class component extends sandbox_typed
             component_type::FORM_CONFIRM => $this->form_confirm($dbo, $back),
             component_type::FORM_NAME => $this->form_name($dbo, $back),
             component_type::FORM_DESCRIPTION => $this->form_description($dbo, $back),
-            component_type::FORM_PHRASE_FROM => $this->form_phrase_from($dbo),
+            component_type::FORM_PHRASE => $this->form_phrase_from($dbo),
             component_type::FORM_VERB_SELECTOR => $this->form_verb($dbo),
-            component_type::FORM_PHRASE_TO => $this->form_phrase_to($dbo),
             component_type::FORM_SHARE_TYPE => $this->form_share_type($dbo),
             component_type::FORM_PROTECTION_TYPE => $this->form_protection_type($dbo),
             component_type::FORM_CANCEL => $this->form_cancel($dbo, $back),
             component_type::FORM_SAVE => $this->form_save($dbo, $back),
+            component_type::FORM_DEL => $this->form_del($dbo, $back),
             component_type::FORM_END => $this->form_end(),
             default => 'program code for component type ' . $type_code_id . ' missing<br>'
         };
@@ -303,27 +304,38 @@ class component extends sandbox_typed
     }
 
     /**
+     * TODO replace _add with a parameter value
+     * TODO move form_field_triple_phrase_to to a const
+     * TODO remove fixed pattern
      * @return string the html code to request the description from the user
      */
     function form_phrase_from(db_object_dsp $dbo): string
     {
-        return $dbo->phrase_selector('from');
+        $lib = new library();
+        $form_name = $lib->class_to_name($dbo::class) . '_add';
+        // TODO use a pattern base on user entry
+        $pattern = $dbo->name();
+        if ($pattern == '') {
+            $pattern = word_api::TN_READ;
+        }
+        // TODO activate
+        //if ($this->code_id == 'form_field_triple_phrase_from') {
+        if ($this->name == 'system form triple phrase from') {
+            return $dbo->phrase_selector('from', $form_name, '', $dbo->id(), $pattern);
+        } else {
+            return $dbo->phrase_selector('to', $form_name, '', $dbo->id(), $pattern);
+        }
     }
 
     /**
-     * @return string the html code to request the description from the user
-     */
-    function form_phrase_to(db_object_dsp $dbo): string
-    {
-        return $dbo->phrase_selector('to');
-    }
-
-    /**
+     * TODO replace _add with a parameter value
      * @return string the html code to request the description from the user
      */
     function form_verb(db_object_dsp $dbo): string
     {
-        return $dbo->verb_selector('verb');
+        $lib = new library();
+        $form_name = $lib->class_to_name($dbo::class) . '_add';
+        return $dbo->verb_selector('verb', $form_name);
     }
 
     // TODO probably add the form name
@@ -359,6 +371,15 @@ class component extends sandbox_typed
     {
         $html = new html_base();
         return $html->button('Save');
+    }
+
+    /**
+     * @return string the html code for a form save button
+     */
+    function form_del(): string
+    {
+        $html = new html_base();
+        return $html->button('Delete', html_base::BS_BTN_DEL);
     }
 
     /**

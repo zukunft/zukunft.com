@@ -131,6 +131,7 @@ if ($usr->id() > 0) {
                         . $import->values_done . ' values, '
                         . $import->list_values_done . ' simple values, '
                         . $import->views_done . ' views loaded, '
+                        . $import->components_done . ' components loaded, '
                         . $import->calc_validations_done . ' results validated, '
                         . $import->view_validations_done . ' views validated)';
                     if ($import->users_done > 0) {

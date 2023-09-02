@@ -70,6 +70,12 @@ class msg
     const FORM_WORD_ADD_TITLE = 'form_title_word_add';
     const FORM_WORD_EDIT_TITLE = 'form_title_word_edit';
     const FORM_COMPONENT_ADD_TITLE = 'form_component_add_title';
+    const FORM_FIELD_NAME = 'form_field_name';
+    const FORM_FIELD_DESCRIPTION = 'form_field_description';
+    const FORM_SELECT_SHARE = 'form_select_share';
+    const FORM_SELECT_PROTECTION = 'form_select_protection';
+    const FORM_BUTTON_CANCEL = 'form_button_cancel';
+    const FORM_BUTTON_SAVE = 'form_button_save';
     const FORM_WORD_FLD_NAME = 'form_word_fld_name';
     const UNDO = 'undo';
     const UNDO_ADD = 'undo_add';

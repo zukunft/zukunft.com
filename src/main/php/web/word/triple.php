@@ -218,13 +218,19 @@ class triple extends sandbox_typed
         ?phrase_dsp $phr = null
     ): string
     {
-        global $usr;
-        $phr_lst = new phrase_list($usr);
-        $phr_be = new phrase($usr);
-        $phr_be->load_by_id($phr->id());
-        $phr_lst->load_by_phr($phr_be);
-        $phr_lst_dsp = new phrase_list_dsp($phr_lst->api_json());
-        return $phr_lst_dsp->selector($name, $form_name, '');
+        $phr_lst = new phrase_list_dsp();
+        $phr_lst->load_like($pattern);
+        return $phr_lst->selector($name, $form_name, '');
+    }
+
+    /**
+     * @param string $form_name the name of the html form
+     * @return string the html code to select a phrase
+     */
+    protected function verb_selector(string $name, string $form_name): string
+    {
+        global $html_verbs;
+        return $html_verbs->selector($form_name);
     }
 
 

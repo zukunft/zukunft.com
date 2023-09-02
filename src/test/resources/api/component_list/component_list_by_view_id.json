@@ -1,61 +1,61 @@
 [
   {
     "id": 2,
-    "name": "form title word add",
-    "description": "show the language specific title of a add, change or delete form",
+    "name": "system form title word add",
+    "description": "show the language specific title for the system form to add a new word",
     "type_id": 17
   },
   {
-    "id": 3,
-    "name": "hidden back stack",
+    "id": 7,
+    "name": "system form hidden back stack",
     "description": "field that contains the stack for the undo actions",
     "type_id": 18
   },
   {
-    "id": 4,
-    "name": "hidden confirm status",
+    "id": 8,
+    "name": "system form hidden confirm status",
     "description": "switch on that the form saving needs an extra confirm by the user",
     "type_id": 19
   },
   {
-    "id": 5,
-    "name": "name form field",
+    "id": 9,
+    "name": "system form field name",
     "description": "the name field in a form",
     "type_id": 20
   },
   {
-    "id": 6,
-    "name": "description form field",
+    "id": 10,
+    "name": "system form field description",
     "description": "the description field in a form",
     "type_id": 21
   },
   {
-    "id": 7,
-    "name": "share type",
+    "id": 14,
+    "name": "system form select share type",
     "description": "selector for the share type",
-    "type_id": 22
-  },
-  {
-    "id": 8,
-    "name": "protection type",
-    "description": "selector for the protection type",
-    "type_id": 23
-  },
-  {
-    "id": 9,
-    "name": "cancel button",
-    "description": "button to cancel the form action and go back to the previous view",
     "type_id": 24
   },
   {
-    "id": 10,
-    "name": "save button",
-    "description": "button to save the form field into the database",
+    "id": 15,
+    "name": "system form select protection type",
+    "description": "selector for the protection type",
     "type_id": 25
   },
   {
-    "id": 11,
-    "name": "form end",
+    "id": 16,
+    "name": "system form button cancel",
+    "description": "button to cancel the form action and go back to the previous view",
     "type_id": 26
+  },
+  {
+    "id": 17,
+    "name": "system form button save",
+    "description": "button to save the form field into the database",
+    "type_id": 27
+  },
+  {
+    "id": 19,
+    "name": "system form end",
+    "type_id": 29
   }
 ]
