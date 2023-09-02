@@ -49,6 +49,7 @@ use api\api;
 use html\api as api_dsp;
 use html\button;
 use html\html_base;
+use html\html_selector;
 use html\log\user_log_display;
 use html\msg;
 use html\phrase\phrase as phrase_dsp;
@@ -473,6 +474,7 @@ class formula extends sandbox_typed
      * HTML code of a phrase selector
      * @param string $name the unique name inside the form for this selector
      * @param string $form_name the name of the html form
+     * @param string $label the text show to the user
      * @param string $col_class the formatting code to adjust the formatting
      * @param int $selected the id of the preselected phrase
      * @param string $pattern the pattern to filter the phrases
@@ -482,6 +484,7 @@ class formula extends sandbox_typed
     protected function phrase_selector(
         string $name,
         string $form_name,
+        string $label = '',
         string $col_class = '',
         int $selected = 0,
         string $pattern = '',
@@ -490,7 +493,7 @@ class formula extends sandbox_typed
     {
         $phr_lst = new phrase_list_dsp();
         $phr_lst->load_like($pattern);
-        return $phr_lst->selector($name, $form_name, '', $selected);
+        return $phr_lst->selector($name, $form_name, $label, '', $selected, html_selector::TYPE_DATALIST);
     }
 
     // test and refresh the formula and show some sample values by returning the HTML code

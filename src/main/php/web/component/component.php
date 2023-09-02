@@ -109,7 +109,7 @@ class component extends sandbox_typed
             component_type::FORM_CONFIRM => $this->form_confirm($dbo, $back),
             component_type::FORM_NAME => $this->form_name($dbo, $back),
             component_type::FORM_DESCRIPTION => $this->form_description($dbo, $back),
-            component_type::FORM_PHRASE => $this->form_phrase_from($dbo),
+            component_type::FORM_PHRASE => $this->form_phrase($dbo),
             component_type::FORM_VERB_SELECTOR => $this->form_verb($dbo),
             component_type::FORM_SHARE_TYPE => $this->form_share_type($dbo),
             component_type::FORM_PROTECTION_TYPE => $this->form_protection_type($dbo),
@@ -309,21 +309,24 @@ class component extends sandbox_typed
      * TODO remove fixed pattern
      * @return string the html code to request the description from the user
      */
-    function form_phrase_from(db_object_dsp $dbo): string
+    function form_phrase(db_object_dsp $dbo): string
     {
         $lib = new library();
         $form_name = $lib->class_to_name($dbo::class) . '_add';
         // TODO use a pattern base on user entry
+        $pattern = '';
+        /*
         $pattern = $dbo->name();
         if ($pattern == '') {
             $pattern = word_api::TN_READ;
         }
+        */
         // TODO activate
         //if ($this->code_id == 'form_field_triple_phrase_from') {
         if ($this->name == 'system form triple phrase from') {
-            return $dbo->phrase_selector('from', $form_name, '', $dbo->id(), $pattern);
+            return $dbo->phrase_selector('from', $form_name, 'from:', '', $dbo->id(), $pattern);
         } else {
-            return $dbo->phrase_selector('to', $form_name, '', $dbo->id(), $pattern);
+            return $dbo->phrase_selector('to', $form_name, 'to:', '', $dbo->id(), $pattern);
         }
     }
 
@@ -344,7 +347,7 @@ class component extends sandbox_typed
      */
     function form_share_type(db_object_dsp $dbo): string
     {
-        return $dbo->share_type_selector('share');
+        return $dbo->share_type_selector('share', 0, 'share');
     }
 
     /**
@@ -722,6 +725,7 @@ class component extends sandbox_typed
      * HTML code of a phrase selector
      * @param string $name the unique name inside the form for this selector
      * @param string $form_name the name of the html form
+     * @param string $label the text show to the user
      * @param string $col_class the formatting code to adjust the formatting
      * @param int $selected the id of the preselected phrase
      * @param string $pattern the pattern to filter the phrases
@@ -731,6 +735,7 @@ class component extends sandbox_typed
     protected function phrase_selector(
         string $name,
         string $form_name,
+        string $label = '',
         string $col_class = '',
         int $selected = 0,
         string $pattern = '',
@@ -738,14 +743,14 @@ class component extends sandbox_typed
     {
         $phr_lst = new phrase_list();
         $phr_lst->load_like($pattern);
-        return $phr_lst->selector($name, $form_name, '', $selected);
+        return $phr_lst->selector($name, $form_name, $label, $selected, html_base::COL_SM_4, html_selector::TYPE_DATALIST);
     }
 
     /**
      * HTML code of a view selector
      * @param string $name the unique name inside the form for this selector
      * @param string $form_name the name of the html form
-     * @param string $label the label name (TODO remove from the selector)
+     * @param string $label the label name (TODO remove from the selector?
      * @param string $col_class the formatting code to adjust the formatting
      * @param int $selected the id of the preselected item
      * @param string $pattern the pattern to filter the views
@@ -762,7 +767,7 @@ class component extends sandbox_typed
     {
         $msk_lst = new view_list();
         $msk_lst->load_like($pattern);
-        return $msk_lst->selector($name, $form_name, $label, $selected);
+        return $msk_lst->selector($name, $form_name, $label, html_base::COL_SM_4, $selected);
     }
 
     /**

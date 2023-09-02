@@ -236,6 +236,7 @@ class db_object
     /**
      * @param string $name the unique name inside the form for this selector
      * @param string $form_name the name of the html form
+     * @param string $label the text show to the user
      * @param string $col_class the formatting code to adjust the formatting
      * @param int $selected the id of the preselected phrase
      * @param string $pattern the pattern to filter the phrases
@@ -245,6 +246,7 @@ class db_object
     protected function phrase_selector(
         string $name,
         string $form_name,
+        string $label = '',
         string $col_class = '',
         int $selected = 0,
         string $pattern = '',

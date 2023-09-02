@@ -35,6 +35,7 @@ namespace html\sandbox;
 include_once WEB_SANDBOX_PATH . 'db_object.php';
 include_once API_SANDBOX_PATH . 'sandbox_named.php';
 
+use html\html_base;
 use html\sandbox\db_object as db_object_dsp;
 use html\user\user as user_dsp;
 
@@ -61,7 +62,7 @@ class sandbox extends db_object_dsp
             $used_share_id = $html_share_types->default_id();
         }
         if ($usr == $this->owner or $this->owner == null) {
-            return $html_share_types->selector($form_name, $used_share_id);
+            return $html_share_types->selector($form_name, $used_share_id, 'share', html_base::COL_SM_4, 'share:');
         } else {
             return '';
         }
@@ -80,7 +81,7 @@ class sandbox extends db_object_dsp
             $used_protection_id = $html_protection_types->default_id();
         }
         if ($usr == $this->owner or $this->owner == null) {
-            return $html_protection_types->selector($form_name, $used_protection_id);
+            return $html_protection_types->selector($form_name, $used_protection_id, 'protection', html_base::COL_SM_4, 'protection:');
         } else {
             return '';
         }

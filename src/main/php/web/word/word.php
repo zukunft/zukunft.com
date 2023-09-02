@@ -722,7 +722,7 @@ class word extends sandbox_typed
         $label = "Word:";
         //$sel->bs_class = $bs_class;
         //$sel->dummy_text = '... or select an existing word to link it';
-        return $phr_lst->selector($field_name, $form, $label, $id);
+        return $phr_lst->selector($field_name, $form, $label, '', $id);
     }
 
     /**

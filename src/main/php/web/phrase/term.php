@@ -335,7 +335,7 @@ class term extends combine_named_dsp
         // TODO activate
         // $sel->bs_class = $class;
 
-        return $trm_lst->selector($field_name, $form_name, $label, $this->id());
+        return $trm_lst->selector($field_name, $form_name, $label, '', $this->id());
     }
 
 }

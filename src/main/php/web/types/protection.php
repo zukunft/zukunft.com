@@ -42,10 +42,16 @@ class protection extends type_list
     /**
      * @returns string the html code to select a type from this list
      */
-    function selector(string $form = '', int $selected = 0, string $name = self::NAME): string
+    function selector(
+        string $form = '',
+        int $selected = 0, string
+        $name = self::NAME,
+        string $bs_class = '',
+        string $label = ''
+    ): string
     {
         global $html_protection_types;
-        return parent::type_selector($html_protection_types->lst_key(), $name, $form, $selected);
+        return parent::type_selector($html_protection_types->lst_key(), $name, $form, $selected, $bs_class, $label);
     }
 
     /*

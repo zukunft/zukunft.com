@@ -64,7 +64,7 @@ class word_list
 
         $test_page .= '<br>' . $html->text_h2('Selector tests');
         $test_page .= $lst_long->selector('test_selector', '', 'No word selected') . '<br>';
-        $test_page .= $lst_long->selector('2_selected', '', 'Pi selected', 3) . '<br>';
+        $test_page .= $lst_long->selector('2_selected', '', 'Pi selected', '', 3) . '<br>';
 
         $t->html_test($test_page, 'word_list', $t);
     }

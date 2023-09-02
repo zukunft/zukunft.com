@@ -38,6 +38,7 @@ use cfg\phrase_type;
 use html\api;
 use html\button;
 use html\html_base;
+use html\html_selector;
 use html\msg;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\word\word as word_dsp;
@@ -68,7 +69,7 @@ class triple extends sandbox_typed
 
     // the triple components
     private phrase_dsp $from;
-    private verb_dsp $verb;
+    private ?verb_dsp $verb = null;
     private phrase_dsp $to;
 
 
@@ -203,6 +204,7 @@ class triple extends sandbox_typed
      *
      * @param string $name the unique name inside the form for this selector
      * @param string $form_name the name of the html form
+     * @param string $label the text show to the user
      * @param string $col_class the formatting code to adjust the formatting
      * @param int $selected the id of the preselected phrase
      * @param string $pattern the pattern to filter the phrases
@@ -212,6 +214,7 @@ class triple extends sandbox_typed
     protected function phrase_selector(
         string $name,
         string $form_name,
+        string $label = '',
         string $col_class = '',
         int $selected = 0,
         string $pattern = '',
@@ -220,7 +223,7 @@ class triple extends sandbox_typed
     {
         $phr_lst = new phrase_list_dsp();
         $phr_lst->load_like($pattern);
-        return $phr_lst->selector($name, $form_name, '');
+        return $phr_lst->selector($name, $form_name, $label, html_base::COL_SM_4, $selected, html_selector::TYPE_DATALIST);
     }
 
     /**
@@ -230,7 +233,12 @@ class triple extends sandbox_typed
     protected function verb_selector(string $name, string $form_name): string
     {
         global $html_verbs;
-        return $html_verbs->selector($form_name);
+        if ($this->verb != null) {
+            $id = $this->verb()->id();
+        } else {
+            $id = 0;
+        }
+        return $html_verbs->selector($form_name, $id, 'verb', html_base::COL_SM_4, 'verb:');
     }
 
 
@@ -255,14 +263,14 @@ class triple extends sandbox_typed
             $detail_fields = $html->form_text("name", $this->name());
             $detail_fields .= $html->form_text("description", $this->description);
             $detail_fields .= 'from: ' . $this->phrase_selector(
-                'from', self::FORM_EDIT, '', $this->from()->id(), '', $this->from());
+                'from', self::FORM_EDIT, 'from:', '', $this->from()->id(), '', $this->from());
             /* TODO
             if (isset($this->verb)) {
                 $result .= $this->verb->dsp_selector('forward', $form_name, html_base::COL_SM_4, $back);
             }
             */
             $detail_fields .= 'to: ' . $this->phrase_selector(
-                'to', self::FORM_EDIT, '', $this->to()->id(), '', $this->to());
+                'to', self::FORM_EDIT, 'to:', '', $this->to()->id(), '', $this->to());
             $detail_row = $html->fr($detail_fields) . '<br>';
             $result = $header . $html->form(self::FORM_EDIT, $hidden_fields . $detail_row);
         }

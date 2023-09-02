@@ -133,7 +133,7 @@ class source extends sandbox_typed
     {
         $src_lst = new source_list();
         $src_lst->load_like($pattern);
-        return $src_lst->selector('source', $form_name, 'please define a source', $this->id());
+        return $src_lst->selector('source', $form_name, 'please define a source', '', $this->id());
     }
 
 

@@ -40,12 +40,19 @@ class verbs extends type_list
     const NAME = 'verb';
 
     /**
+     * @param string $label the text show to the user
      * @returns string the html code to select a type from this list
      */
-    function selector(string $form = '', int $selected = 0, string $name = self::NAME, string $bs_class = ''): string
+    function selector(
+        string $form = '',
+        int $selected = 0,
+        string $name = self::NAME,
+        string $bs_class = '',
+        string $label = ''
+    ): string
     {
         global $html_verbs;
-        return parent::type_selector($html_verbs->lst_key(), $name, $form, $selected, $bs_class);
+        return parent::type_selector($html_verbs->lst_key(), $name, $form, $selected, $bs_class, $label);
     }
 
 }

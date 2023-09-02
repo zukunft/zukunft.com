@@ -270,15 +270,25 @@ class list_dsp
      * @param string $name the name of this selector which must be unique within the form
      * @param string $form the html form name which must be unique within the html page
      * @param string $label the text show to the user
+     * @param string $col_class the formatting code to adjust the formatting
      * @param int $selected the unique database id of the object that has been selected
      * @returns string the html code to select a word from this list
      */
-    function selector(string $name = '', string $form = '', string $label = '', int $selected = 0): string
+    function selector(
+        string $name = '',
+        string $form = '',
+        string $label = '',
+        string $col_class = '',
+        int $selected = 0,
+        string $type = html_selector::TYPE_SELECT
+    ): string
     {
         $sel = new html_selector();
         $sel->name = $name;
         $sel->form = $form;
         $sel->label = $label;
+        $sel->bs_class = $col_class;
+        $sel->type = $type;
         $sel->lst = $this->lst_key();
         $sel->selected = $selected;
         return $sel->display();

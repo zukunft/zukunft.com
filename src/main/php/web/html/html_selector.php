@@ -37,6 +37,8 @@ include_once WEB_SYSTEM_PATH . 'messages.php';
 
 class html_selector
 {
+    const TYPE_SELECT = "select";
+    const TYPE_DATALIST = "datalist";
 
     // the parameters
     public string $name = '';       // the HTML form field name
@@ -48,6 +50,7 @@ class html_selector
     public ?array $lst = null;      // list of objects from which the user can select
     public ?int $selected = null;   // id of the selected object
     public string $dummy_text = ''; // text for the NULL result if allowed
+    public string $type = self::TYPE_SELECT;  // the selector type
 
     function display(): string
     {
@@ -58,7 +61,11 @@ class html_selector
         }
 
         if ($this->selected == 0) {
-            $result .= '<option value="0" selected>' . $this->dummy_text . '</option>';
+            if ($this->type == self::TYPE_DATALIST) {
+                $result .= '<option data-value="0" selected>' . $this->dummy_text . '</option>';
+            } else {
+                $result .= '<option value="0" selected>' . $this->dummy_text . '</option>';
+            }
         }
 
         if ($this->count() > 0) {
@@ -67,7 +74,11 @@ class html_selector
                 if ($key == $this->selected and $this->selected <> 0) {
                     $row_option = ' selected';
                 }
-                $result .= '<option value="' . $key . '" ' . $row_option . ' >' . $value . '</option>';
+                if ($this->type == self::TYPE_DATALIST) {
+                    $result .= '<option data-value="' . $key . '" ' . $row_option . ' >' . $value . '</option>';
+                } else {
+                    $result .= '<option value="' . $key . '" ' . $row_option . ' >' . $value . '</option>';
+                }
             }
         }
 
@@ -93,10 +104,21 @@ class html_selector
             if ($this->label != "") {
                 $result .= '<label for="' . $this->name . '">' . $this->label . '</label>';
             }
-            if ($this->form != "") {
-                $result .= '<select class="form-control" name="' . $this->name . '" form="' . $this->form . '" id="' . $this->name . '" ' . $this->attribute . '>';
+            $bs_class = 'form-control';
+            /*
+            if ($this->bs_class != '') {
+                $bs_class .= ' ' . $this->bs_class;
+            }
+            */
+            if ($this->type == self::TYPE_DATALIST) {
+                $result .= '<input type="text" list="' . $this->name . '_list" class="' . $bs_class . '" name="' . $this->name . '" form="' . $this->form . '" id="' . $this->name . '" ' . $this->attribute . '>';
+                $result .= '<datalist id="' . $this->name . '_list">';
             } else {
-                $result .= '<select class="form-control" name="' . $this->name . '" id="' . $this->name . '" ' . $this->attribute . '>';
+                if ($this->form != "") {
+                    $result .= '<select class="' . $bs_class . '" name="' . $this->name . '" form="' . $this->form . '" id="' . $this->name . '" ' . $this->attribute . '>';
+                } else {
+                    $result .= '<select class="' . $bs_class . '" name="' . $this->name . '" id="' . $this->name . '" ' . $this->attribute . '>';
+                }
             }
         } else {
             $result .= $this->label . ' <select name="' . $this->name . '" form="' . $this->form . '">';
@@ -117,7 +139,12 @@ class html_selector
      * @returns string the HTML code to end a selector field
      */
     function end_selector(): string {
-        $result = '</select>';
+        if ($this->type == self::TYPE_DATALIST) {
+            $result = '</datalist>';
+            $result .= '</input>';
+        } else {
+            $result = '</select>';
+        }
         if (UI_USE_BOOTSTRAP) {
             $result .= '</div>';
         }

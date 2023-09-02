@@ -1230,7 +1230,7 @@ class phrase extends combine_named
         // TODO activate
         // $sel->bs_class = $class;
         // $sel->dummy_text = '... please select';
-        return $phr_lst->selector($field_name, $form_name, $label, $this->id());
+        return $phr_lst->selector($field_name, $form_name, $label, '', $this->id());
     }
 
 // button to add a new word similar to this phrase

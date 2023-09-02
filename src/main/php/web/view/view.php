@@ -555,7 +555,7 @@ class view extends sandbox_typed
     {
         $cmp_lst = new component_list_dsp;
         $cmp_lst->load_like($pattern);
-        return $cmp_lst->selector('add_component', $form_name, 'please define a component', $id);
+        return $cmp_lst->selector('add_component', $form_name, 'please define a component', '', $id);
     }
 
     /**
