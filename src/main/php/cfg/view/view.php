@@ -36,12 +36,12 @@ include_once WEB_VIEW_PATH . 'view.php';
 include_once MODEL_VIEW_PATH . 'component_link.php';
 include_once MODEL_COMPONENT_PATH . 'component.php';
 include_once MODEL_COMPONENT_PATH . 'component_list.php';
+include_once MODEL_VIEW_PATH . 'component_link_list.php';
 include_once SERVICE_EXPORT_PATH . 'view_exp.php';
 include_once SERVICE_EXPORT_PATH . 'component_exp.php';
 
 use api\view\view as view_api;
 use cfg\component\component;
-use cfg\component\component_list;
 use cfg\db\sql_creator;
 use cfg\db\sql_par_type;
 use model\export\exp_obj;
@@ -95,7 +95,6 @@ class view extends sandbox_typed
     public ?string $code_id = null;   // to select internal predefined views
 
     // in memory only fields
-    public ?component_list $cmp_lst;  // array of the view component objects in correct order
     public ?component_link_list $cmp_lnk_lst;  // all links to the component objects in correct order
 
 
@@ -109,12 +108,11 @@ class view extends sandbox_typed
      */
     function __construct(user $usr)
     {
+        $this->reset();
+
         parent::__construct($usr);
         $this->obj_name = sql_db::TBL_VIEW;
-
         $this->rename_can_switch = UI_CAN_CHANGE_VIEW_NAME;
-        $this->cmp_lst = null;
-        $this->cmp_lnk_lst = null;
     }
 
     function reset(): void
@@ -124,7 +122,6 @@ class view extends sandbox_typed
         $this->type_id = null;
         $this->code_id = '';
 
-        $this->cmp_lst = null;
         $this->cmp_lnk_lst = null;
     }
 
@@ -217,19 +214,19 @@ class view extends sandbox_typed
     }
 
     /**
-     * @return component_list the list of components of this view
+     * @return component_link_list the list of the linked components of this view
      */
-    function cmp_lst(): component_list
+    function component_link_list(): component_link_list
     {
-        return $this->cmp_lst;
+        return $this->cmp_lnk_lst;
     }
 
     /**
-     * @return int the number of components of this view
+     * @return int the number of linked components of this view
      */
-    public function components(): int
+    public function component_links(): int
     {
-        return $this->cmp_lst()->count();
+        return $this->component_link_list()->count();
     }
 
 
@@ -284,8 +281,8 @@ class view extends sandbox_typed
         $api_obj->set_type_id($this->type_id);
         $api_obj->code_id = $this->code_id;
         $api_obj->description = $this->description;
-        if ($this->cmp_lst != null) {
-            $api_obj->components = $this->cmp_lst->api_obj();
+        if ($this->cmp_lnk_lst != null) {
+            $api_obj->components = $this->cmp_lnk_lst->api_obj();
         }
 
         return $api_obj;
@@ -482,56 +479,13 @@ class view extends sandbox_typed
      * load all parts of this view for this user
      * @return bool false if a technical error on loading has occurred; an empty list if fine and returns true
      */
-    function load_components_old(): bool
-    {
-        log_debug($this->dsp_id());
-
-        global $db_con;
-        $result = true;
-
-        $db_con->usr_id = $this->user()->id();
-        $qp = $this->load_components_sql($db_con);
-        $db_lst = $db_con->get($qp);
-        $this->cmp_lst = new component_list($this->user());
-        if ($db_lst != null) {
-            foreach ($db_lst as $db_entry) {
-                // this is only for the view of the active user, so a direct exclude can be done
-                if ((is_null($db_entry[sandbox::FLD_EXCLUDED]) or $db_entry[sandbox::FLD_EXCLUDED] == 0)
-                    and (is_null($db_entry[sandbox::FLD_EXCLUDED . '2']) or $db_entry[sandbox::FLD_EXCLUDED . '2'] == 0)) {
-                    $new_entry = new component($this->user());
-                    $new_entry->id = $db_entry[component::FLD_ID];
-                    $new_entry->owner_id = $db_entry[user::FLD_ID];
-                    $new_entry->order_nbr = $db_entry[component_link::FLD_ORDER_NBR];
-                    $new_entry->name = $db_entry[component::FLD_NAME];
-                    $new_entry->word_id_row = $db_entry[component::FLD_ROW_PHRASE . '2'];
-                    $new_entry->link_type_id = $db_entry[component::FLD_LINK_TYPE . '2'];
-                    $new_entry->type_id = $db_entry[component::FLD_TYPE . '2'];
-                    $new_entry->formula_id = $db_entry[formula::FLD_ID . '2'];
-                    $new_entry->word_id_col = $db_entry[component::FLD_COL_PHRASE . '2'];
-                    $new_entry->word_id_col2 = $db_entry[component::FLD_COL2_PHRASE . '2'];
-                    if (!$new_entry->load_phrases()) {
-                        $result = false;
-                    }
-                    $this->cmp_lst->add($new_entry);
-                }
-            }
-        }
-        log_debug($this->cmp_lst->count() . ' loaded for ' . $this->dsp_id());
-
-        return $result;
-    }
-
-    /**
-     * load all parts of this view for this user
-     * @return bool false if a technical error on loading has occurred; an empty list if fine and returns true
-     */
     function load_components(): bool
     {
         log_debug($this->dsp_id());
 
-        $this->cmp_lst = new component_list($this->user());
-        $result = $this->cmp_lst->load_by_view_id($this->id());
-        log_debug($this->cmp_lst->count() . ' loaded for ' . $this->dsp_id());
+        $this->cmp_lnk_lst = new component_link_list($this->user());
+        $result = $this->cmp_lnk_lst->load_by_view_with_components($this);
+        log_debug($this->cmp_lnk_lst->count() . ' loaded for ' . $this->dsp_id());
 
         return $result;
     }
@@ -634,13 +588,12 @@ class view extends sandbox_typed
 
         // if no position is requested add the component at the end
         if ($pos == null) {
-            $pos = $this->components() + 1;
+            $pos = $this->component_links() + 1;
         }
         if ($pos != null) {
-            if ($this->cmp_lst == null) {
-                $this->cmp_lst = new component_list($this->user());
+            if ($this->cmp_lnk_lst == null) {
+                $this->cmp_lnk_lst = new component_link_list($this->user());
             }
-            $this->cmp_lst->add($cmp);
             if (!$test_obj) {
                 $cmp->save();
                 $cmp_lnk = new component_link($this->user());
@@ -650,6 +603,9 @@ class view extends sandbox_typed
                 $cmp_lnk->pos_type_id = 0;
                 $cmp_lnk->pos_code = '';
                 $cmp_lnk->save();
+                $this->cmp_lnk_lst->add($cmp_lnk->id(), $this, $cmp, $pos);
+            } else {
+                $this->cmp_lnk_lst->add($pos, $this, $cmp, $pos);
             }
         }
         // compare with the database links and save the differences
@@ -849,9 +805,9 @@ class view extends sandbox_typed
         if ($do_load) {
             $this->load_components();
         }
-        if ($this->cmp_lst != null) {
-            foreach ($this->cmp_lst->lst() as $cmp) {
-                $result->components[] = $cmp->export_obj();
+        if ($this->cmp_lnk_lst != null) {
+            foreach ($this->cmp_lnk_lst->lst() as $lnk) {
+                $result->components[] = $lnk->export_obj();
             }
         }
 

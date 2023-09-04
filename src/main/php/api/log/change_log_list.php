@@ -66,7 +66,7 @@ class change_log_list_api extends list_api implements JsonSerializable
     function jsonSerialize(): array
     {
         $vars = [];
-        foreach ($this->lst as $chg) {
+        foreach ($this->lst() as $chg) {
             $vars[] = json_decode(json_encode($chg));
         }
         return $vars;

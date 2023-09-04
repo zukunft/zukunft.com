@@ -70,7 +70,7 @@ class triple_list_api extends list_api
 
         // cast the single list objects
         $lst_dsp = array();
-        foreach ($this->lst as $wrd) {
+        foreach ($this->lst() as $wrd) {
             if ($wrd != null) {
                 $wrd_dsp = $wrd->dsp_obj();
                 $lst_dsp[] = $wrd_dsp;
@@ -102,12 +102,12 @@ class triple_list_api extends list_api
         if (!$this->is_empty()) {
             $result = array();
             $lst_ids = $del_lst->id_lst();
-            foreach ($this->lst as $wrd) {
+            foreach ($this->lst() as $wrd) {
                 if (!in_array($wrd->id(), $lst_ids)) {
                     $result[] = $wrd;
                 }
             }
-            $this->lst = $result;
+            $this->set_lst($result);
         }
     }
 
@@ -117,7 +117,7 @@ class triple_list_api extends list_api
      */
     function merge(triple_list_api $new_wrd_lst)
     {
-        foreach ($new_wrd_lst->lst as $new_wrd) {
+        foreach ($new_wrd_lst->lst() as $new_wrd) {
             $this->add($new_wrd);
         }
     }
@@ -129,7 +129,7 @@ class triple_list_api extends list_api
     private function filter(string $type): triple_list_api
     {
         $result = new triple_list_api();
-        foreach ($this->lst as $wrd) {
+        foreach ($this->lst() as $wrd) {
             if ($wrd->is_type($type)) {
                 $result->add($wrd);
             }
@@ -159,7 +159,7 @@ class triple_list_api extends list_api
     function scaling_lst(): triple_list_api
     {
         $result = new triple_list_api();
-        foreach ($this->lst as $wrd) {
+        foreach ($this->lst() as $wrd) {
             if ($wrd->is_scaling()) {
                 $result->add($wrd);
             }

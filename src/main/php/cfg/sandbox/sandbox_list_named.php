@@ -102,7 +102,7 @@ class sandbox_list_named extends sandbox_list
         $key_lst = $this->name_pos_lst();
         $pos = $key_lst[$name];
         if ($pos !== null) {
-            return $this->lst[$pos];
+            return $this->get($pos);
         } else {
             return null;
         }
@@ -125,7 +125,7 @@ class sandbox_list_named extends sandbox_list
         if (!in_array($obj_to_add->name(), $this->name_pos_lst()) or $allow_duplicates) {
             // if a sandbox object has a name, but not (yet) an id, add it nevertheless to the list
             if ($obj_to_add->id() == null) {
-                $this->lst[] = $obj_to_add;
+                $this->add_obj($obj_to_add);
                 $this->set_lst_dirty();
                 $result = true;
             } else {
@@ -143,7 +143,7 @@ class sandbox_list_named extends sandbox_list
         $pos = 0;
         $result = array();
         if ($this->lst_name_dirty) {
-            foreach ($this->lst as $obj) {
+            foreach ($this->lst() as $obj) {
                 if (!in_array($obj->name(), $result)) {
                     $result[$obj->name()] = $pos;
                     $pos++;

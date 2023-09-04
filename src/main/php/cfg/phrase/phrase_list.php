@@ -94,7 +94,7 @@ class phrase_list extends sandbox_list_named
     function api_obj(): phrase_list_api
     {
         $api_obj = new phrase_list_api();
-        foreach ($this->lst as $phr) {
+        foreach ($this->lst() as $phr) {
             $api_obj->add($phr->api_obj());
         }
         return $api_obj;
@@ -422,7 +422,7 @@ class phrase_list extends sandbox_list_named
      */
     function load_by_phr(phrase $phr, ?verb $vrb = null, foaf_direction $direction = foaf_direction::BOTH): bool
     {
-        $this->lst = array();
+        $this->reset();
 
         $wrd_lst = new word_list($this->user());
         $wrd_lst->load_linked_words($vrb, $direction);
@@ -510,7 +510,7 @@ class phrase_list extends sandbox_list_named
     {
         $qp = $this->load_names_sql($sc, '');
         $join_field = '';
-        if (count($this->lst) <= 0) {
+        if (count($this->lst()) <= 0) {
             log_warning('The phrase list is empty, so nothing could be found', self::class . "->load_sql_by_linked_type");
             $qp->name = '';
         } else {
@@ -560,7 +560,7 @@ class phrase_list extends sandbox_list_named
         }
 
         // fill the word list
-        foreach ($this->lst as $phr) {
+        foreach ($this->lst() as $phr) {
             if ($phr->obj() == null) {
                 log_err('Phrase ' . $phr->dsp_id() . ' could not be loaded', 'phrase_list->wrd_lst_all');
             } else {
@@ -577,7 +577,7 @@ class phrase_list extends sandbox_list_named
                     } elseif (get_class($phr->obj()) == triple::class) {
                         // use the recursive triple function to include the foaf words
                         $sub_wrd_lst = $phr->obj()->wrd_lst();
-                        foreach ($sub_wrd_lst->lst as $wrd) {
+                        foreach ($sub_wrd_lst->lst() as $wrd) {
                             if ($wrd->name() == '') {
                                 $wrd->load();
                                 log_warning('Word ' . $wrd->dsp_id() . ' needs unexpected reload', 'phrase_list->wrd_lst_all');
@@ -602,7 +602,7 @@ class phrase_list extends sandbox_list_named
     function wrd_lst(): word_list
     {
         $wrd_lst = new word_list($this->user());
-        foreach ($this->lst as $phr) {
+        foreach ($this->lst() as $phr) {
             if ($phr->id() > 0 or $phr->name() != '') {
                 if ($phr->obj() !== null and $phr->obj()::class == word::class) {
                     $wrd_lst->add($phr->obj());
@@ -619,7 +619,7 @@ class phrase_list extends sandbox_list_named
     function trp_lst(): triple_list
     {
         $trp_lst = new triple_list($this->user());
-        foreach ($this->lst as $phr) {
+        foreach ($this->lst() as $phr) {
             if ($phr->id() < 0 or $phr->name() != '') {
                 if (isset($phr->obj) and $phr->obj()::class == triple::class) {
                     $trp_lst->add($phr->obj());
@@ -643,7 +643,7 @@ class phrase_list extends sandbox_list_named
     function export_obj(bool $do_load = true): array
     {
         $exp_phrases = array();
-        foreach ($this->lst as $phr) {
+        foreach ($this->lst() as $phr) {
             if (get_class($phr) == word::class or get_class($phr) == triple::class) {
                 $exp_phrases[] = $phr->export_obj($do_load);
             } else {
@@ -733,6 +733,9 @@ class phrase_list extends sandbox_list_named
         // set the list if phrases used to get the related phrases
         $accumulated_list = clone $this;
 
+        $additional_added_triples = new phrase_list($this->user());
+        $additional_added_phrases = new phrase_list($this->user());
+
         do {
             $loops = $loops + 1;
 
@@ -780,8 +783,8 @@ class phrase_list extends sandbox_list_named
                 log_fatal("max number (" . $loops . ") of loops for phrase reached.", "phrase_list->tree_up_level");
             }
         } while ((
-            !empty($additional_added_triples->lst) or
-            !empty($additional_added_phrases->lst)
+            !empty($additional_added_triples->lst()) or
+            !empty($additional_added_phrases->lst())
         ) and $loops < $max_loops);
         log_debug('->foaf_level done');
         return $added_phr_lst;
@@ -1027,7 +1030,7 @@ class phrase_list extends sandbox_list_named
 
             }
         }
-        foreach ($this->lst as $phr) {
+        foreach ($this->lst() as $phr) {
             if ($phr->id() == 0 or $phr->name() == '') {
                 $result = false;
             }
@@ -1227,8 +1230,8 @@ class phrase_list extends sandbox_list_named
     function phrase_ids(): phr_ids
     {
         $lst = array();
-        if (count($this->lst) > 0) {
-            foreach ($this->lst as $phr) {
+        if (count($this->lst()) > 0) {
+            foreach ($this->lst() as $phr) {
                 // use only valid ids
                 if ($phr->id() <> 0) {
                     if (!array_key_exists($phr->id(), $lst)) {
@@ -1247,8 +1250,8 @@ class phrase_list extends sandbox_list_named
     function wrd_ids(): array
     {
         $result = array();
-        if (count($this->lst) > 0) {
-            foreach ($this->lst as $phr) {
+        if (count($this->lst()) > 0) {
+            foreach ($this->lst() as $phr) {
                 // use only valid word ids
                 if ($phr->is_word()) {
                     $result[] = $phr->obj_id();
@@ -1265,8 +1268,8 @@ class phrase_list extends sandbox_list_named
     function trp_ids(): array
     {
         $result = array();
-        if (count($this->lst) > 0) {
-            foreach ($this->lst as $phr) {
+        if (count($this->lst()) > 0) {
+            foreach ($this->lst() as $phr) {
                 // use only valid triple ids
                 if (!$phr->is_word()) {
                     $result[] = $phr->obj_id();
@@ -1282,7 +1285,7 @@ class phrase_list extends sandbox_list_named
     function id_url(): string
     {
         $result = '';
-        if (count($this->lst) > 0) {
+        if (count($this->lst()) > 0) {
             $result = '&phrases=' . implode(",", $this->id_lst());
         }
         return $result;
@@ -1321,7 +1324,7 @@ class phrase_list extends sandbox_list_named
     function name_linked(): string
     {
         $result = '';
-        foreach ($this->lst as $phr) {
+        foreach ($this->lst() as $phr) {
             if ($phr != null) {
                 if ($result != '') {
                     $result .= ', ';
@@ -1347,7 +1350,7 @@ class phrase_list extends sandbox_list_named
         } else {
             $result = '"' . implode('","', array_slice($name_lst, 0, 7));
             if (count($name_lst) > 8) {
-                $result .= ' ... total ' . $lib->dsp_count($this->lst);
+                $result .= ' ... total ' . $lib->dsp_count($this->lst());
             }
             $result .= '"';
         }
@@ -1372,7 +1375,7 @@ class phrase_list extends sandbox_list_named
     function names(): array
     {
         $name_lst = array();
-        foreach ($this->lst as $phr) {
+        foreach ($this->lst() as $phr) {
             if ($phr != null) {
                 $name_lst[] = $phr->name();
             }
@@ -1387,7 +1390,7 @@ class phrase_list extends sandbox_list_named
     {
         $result = false;
 
-        foreach ($this->lst as $phr) {
+        foreach ($this->lst() as $phr) {
             if ($phr->id() == $phr_to_check->id()) {
                 $result = true;
             }
@@ -1407,8 +1410,8 @@ class phrase_list extends sandbox_list_named
     function is_empty(): bool
     {
         $result = true;
-        if ($this->lst != null) {
-            if (count($this->lst) > 0) {
+        if ($this->lst() != null) {
+            if (count($this->lst()) > 0) {
                 $result = false;
             }
         }
@@ -1451,8 +1454,8 @@ class phrase_list extends sandbox_list_named
         $result = false;
         // check parameters
         if ($wrd_lst_to_add != null) {
-            if ($wrd_lst_to_add->lst != null) {
-                foreach ($wrd_lst_to_add->lst as $wrd) {
+            if ($wrd_lst_to_add->lst() != null) {
+                foreach ($wrd_lst_to_add->lst() as $wrd) {
                     if ($this->add($wrd->phrase())) {
                         $result = true;
                     }
@@ -1473,8 +1476,8 @@ class phrase_list extends sandbox_list_named
         $result = false;
         // check parameters
         if ($trp_lst_to_add != null) {
-            if ($trp_lst_to_add->lst != null) {
-                foreach ($trp_lst_to_add->lst as $trp) {
+            if ($trp_lst_to_add->lst() != null) {
+                foreach ($trp_lst_to_add->lst() as $trp) {
                     if ($this->add($trp->phrase())) {
                         $result = true;
                     }
@@ -1534,8 +1537,8 @@ class phrase_list extends sandbox_list_named
         if (count($phr_ids) > 0) {
             if (in_array($phr_to_del->id(), $phr_ids)) {
                 $del_pos = array_search($phr_to_del->id(), $phr_ids);
-                if ($this->lst[$del_pos]->id == $phr_to_del->id()) {
-                    unset ($this->lst[$del_pos]);
+                if ($this->get($del_pos)->id() == $phr_to_del->id()) {
+                    $this->unset($del_pos);
                 } else {
                     log_err('Remove of ' . $phr_to_del->dsp_id() . ' failed');
                 }
@@ -1549,9 +1552,9 @@ class phrase_list extends sandbox_list_named
     function merge($new_phr_lst): phrase_list
     {
         log_debug($new_phr_lst->dsp_id() . ' to ' . $this->dsp_id());
-        if (isset($new_phr_lst->lst)) {
+        if (!$new_phr_lst->is_empty()) {
             log_debug('do');
-            foreach ($new_phr_lst->lst as $new_phr) {
+            foreach ($new_phr_lst->lst() as $new_phr) {
                 log_debug('add');
                 log_debug('add ' . $new_phr->dsp_id());
                 $this->add($new_phr);
@@ -1587,15 +1590,15 @@ class phrase_list extends sandbox_list_named
             log_err(get_class($filter_phr_lst) . ' cannot be used to delete phrases.', 'phrase_list->diff');
         }
 
-        if (!empty($result->lst)) {
+        if (!$result->is_empty()) {
             $phr_lst = array();
             $lst_ids = $filter_phr_lst->id_lst();
-            foreach ($result->lst as $phr) {
+            foreach ($result->lst() as $phr) {
                 if (in_array($phr->id(), $lst_ids)) {
                     $phr_lst[] = $phr;
                 }
             }
-            $result->lst = $phr_lst;
+            $result->set_lst($phr_lst);
             log_debug($result->dsp_id());
         }
         return $result;
@@ -1620,12 +1623,12 @@ class phrase_list extends sandbox_list_named
             $result = clone $this;
             $phr_lst = array();
             $lst_ids = $id_lst->lst;
-            foreach ($result->lst as $phr) {
+            foreach ($result->lst() as $phr) {
                 if (in_array($phr->id(), $lst_ids)) {
                     $phr_lst[] = $phr;
                 }
             }
-            $result->lst = $phr_lst;
+            $result->set_lst($phr_lst);
             log_debug($result->dsp_id());
         }
         return $result;
@@ -1644,15 +1647,15 @@ class phrase_list extends sandbox_list_named
     {
         log_debug('phrase_list->diff of ' . $del_lst->dsp_id() . ' and ' . $this->dsp_id());
 
-        if (!empty($this->lst)) {
+        if (!$this->is_empty()) {
             $result = array();
             $lst_ids = $del_lst->id_lst();
-            foreach ($this->lst as $phr) {
+            foreach ($this->lst() as $phr) {
                 if (!in_array($phr->id(), $lst_ids)) {
                     $result[] = $phr;
                 }
             }
-            $this->lst = $result;
+            $this->set_lst($result);
         }
 
         log_debug($this->dsp_id());
@@ -1671,11 +1674,11 @@ class phrase_list extends sandbox_list_named
     // e.g. for "2014", "2015", "2016", "2017" and the exclude list of "2016", "2017","2018" the result is "2014", "2015"
     function not_in($del_phr_lst) {
       zu_debug('phrase_list->not_in');
-      foreach ($this->lst AS $phr) {
+      foreach ($this->lst() AS $phr) {
         if ($phr->id <> 0) {
           if (in_array($phr->id, $del_phr_lst->ids)) {
             $del_pos = array_search($phr->id, $this->ids);
-            zu_debug('phrase_list->not_in -> to exclude ('.$this->lst[$del_pos]->name.')');
+            zu_debug('phrase_list->not_in -> to exclude ('.$this->get($del_pos(->name.')');
             unset ($this->lst[$del_pos]);
             unset ($this->ids[$del_pos]);
           }
@@ -1696,7 +1699,7 @@ class phrase_list extends sandbox_list_named
                 log_debug('phrase_list->diff_by_ids ' . $del_phr_id);
                 if ($del_phr_id > 0 and in_array($del_phr_id, $this->id_lst())) {
                     $del_pos = array_search($del_phr_id, $this->id_lst());
-                    unset ($this->lst[$del_pos]);
+                    $this->unset($del_pos);
                 }
             }
         }
@@ -1713,7 +1716,7 @@ class phrase_list extends sandbox_list_named
         $lib = new library();
 
         $result = $this->id_lst();
-        foreach ($this->lst as $phr) {
+        foreach ($this->lst() as $phr) {
             // temp workaround utils the reason is found, why the user is sometimes not set
             if (!isset($phr->usr)) {
                 $phr->set_user($this->user());
@@ -1738,7 +1741,7 @@ class phrase_list extends sandbox_list_named
     {
         $result = false;
         // loop over the phrase ids and add only the time ids to the result array
-        foreach ($this->lst as $phr) {
+        foreach ($this->lst() as $phr) {
             log_debug('check (' . $phr->name() . ')');
             if ($result == false) {
                 if ($phr->is_time()) {
@@ -1758,7 +1761,7 @@ class phrase_list extends sandbox_list_named
         log_debug('for ' . $this->dsp_id());
         $result = false;
         // loop over the phrase ids and add only the time ids to the result array
-        foreach ($this->lst as $phr) {
+        foreach ($this->lst() as $phr) {
             log_debug('check ' . $phr->dsp_id());
             if ($result == false) {
                 if ($phr->is_measure()) {
@@ -1777,7 +1780,7 @@ class phrase_list extends sandbox_list_named
     {
         $result = false;
         // loop over the phrase ids and add only the time ids to the result array
-        foreach ($this->lst as $phr) {
+        foreach ($this->lst() as $phr) {
             log_debug('check ' . $phr->dsp_id());
             if ($result == false) {
                 if ($phr->is_scaling()) {
@@ -1796,7 +1799,7 @@ class phrase_list extends sandbox_list_named
     {
         $result = false;
         // loop over the phrase ids and add only the time ids to the result array
-        foreach ($this->lst as $phr) {
+        foreach ($this->lst() as $phr) {
             // temp solution for testing
             $phr->set_user($this->user());
             log_debug('check ' . $phr->dsp_id());
@@ -1824,7 +1827,7 @@ class phrase_list extends sandbox_list_named
         $result = array();
         $time_type = $phrase_types->id(phrase_type::TIME);
         // loop over the phrase ids and add only the time ids to the result array
-        foreach ($this->lst as $phr) {
+        foreach ($this->lst() as $phr) {
             if ($phr->type_id() == $time_type) {
                 $result[] = $phr;
             }
@@ -1921,7 +1924,7 @@ class phrase_list extends sandbox_list_named
         $result = new phrase_list($this->user());
         $measure_type = $phrase_types->id(phrase_type::MEASURE);
         // loop over the phrase ids and add only the time ids to the result array
-        foreach ($this->lst as $phr) {
+        foreach ($this->lst() as $phr) {
             if (get_class($phr) <> phrase::class and get_class($phr) <> word::class and get_class($phr) <> word_dsp::class) {
                 log_warning('The phrase list contains ' . $this->dsp_id() . ' of type ' . get_class($phr) . ', which is not supposed to be in the list.', 'phrase_list->measure_lst');
                 log_debug('phrase_list->measure_lst contains object ' . get_class($phr) . ', which is not a phrase');
@@ -1934,7 +1937,7 @@ class phrase_list extends sandbox_list_named
                 }
             }
         }
-        log_debug($lib->dsp_count($result->lst));
+        log_debug($lib->dsp_count($result->lst()));
         return $result;
     }
 
@@ -1953,7 +1956,7 @@ class phrase_list extends sandbox_list_named
         $scale_type = $phrase_types->id(phrase_type::SCALING);
         $scale_hidden_type = $phrase_types->id(phrase_type::SCALING_HIDDEN);
         // loop over the phrase ids and add only the time ids to the result array
-        foreach ($this->lst as $phr) {
+        foreach ($this->lst() as $phr) {
             if ($phr->type_id() == $scale_type or $phr->type_id() == $scale_hidden_type) {
                 $result->add($phr);
                 log_debug('found (' . $phr->name() . ')');
@@ -1961,7 +1964,7 @@ class phrase_list extends sandbox_list_named
                 log_debug('not found (' . $phr->name() . ')');
             }
         }
-        log_debug($lib->dsp_count($result->lst));
+        log_debug($lib->dsp_count($result->lst()));
         return $result;
     }
 
@@ -2008,7 +2011,7 @@ class phrase_list extends sandbox_list_named
         $name_lst = array();
         $result = array();
         $pos = 0;
-        foreach ($this->lst as $phr) {
+        foreach ($this->lst() as $phr) {
             $name_lst[$pos] = $phr->name();
             $pos++;
         }
@@ -2016,15 +2019,15 @@ class phrase_list extends sandbox_list_named
         log_debug('sorted "' . implode('","', $name_lst) . '" (' . $lib->dsp_array(array_keys($name_lst)) . ')');
         foreach (array_keys($name_lst) as $sorted_id) {
             log_debug('get ' . $sorted_id);
-            $phr_to_add = $this->lst[$sorted_id];
+            $phr_to_add = $this->get($sorted_id);
             log_debug('got ' . $phr_to_add->name());
             $result[] = $phr_to_add;
         }
         // check
-        if (count($this->lst) <> count($result)) {
-            log_err("Sorting changed the number of phrases from " . $lib->dsp_count($this->lst) . " to " . $lib->dsp_count($result) . ".", "phrase_list->wlsort");
+        if ($this->count() <> count($result)) {
+            log_err("Sorting changed the number of phrases from " . $lib->dsp_count($this->lst()) . " to " . $lib->dsp_count($result) . ".", "phrase_list->wlsort");
         } else {
-            $this->lst = $result;
+            $this->set_lst($result);
             $this->id_lst();
         }
         log_debug('sorted ' . $this->dsp_id());
@@ -2039,8 +2042,8 @@ class phrase_list extends sandbox_list_named
     {
         log_debug($this->dsp_id() . ' and user ' . $this->user()->name);
         $max_phr = new phrase($this->user());
-        if (count($this->lst) > 0) {
-            foreach ($this->lst as $phr) {
+        if (!$this->is_empty()) {
+            foreach ($this->lst() as $phr) {
                 // to be replaced by "is following"
                 if ($phr->name() > $max_phr->name()) {
                     log_debug('select (' . $phr->name() . ' instead of ' . $max_phr->name() . ')');
@@ -2082,19 +2085,19 @@ class phrase_list extends sandbox_list_named
         $result = array();
         $lib = new library();
         log_debug('of ' . $this->dsp_name() . ' and ' . $filter_lst->name());
-        if (count($this->lst) > 0) {
-            foreach ($this->lst as $phr) {
+        if (count($this->lst()) > 0) {
+            foreach ($this->lst() as $phr) {
                 if (isset($phr)) {
                     log_debug('check if "' . $phr->name() . '" is in ' . $filter_lst->name());
-                    if (in_array($phr, $filter_lst->lst)) {
+                    if (in_array($phr, $filter_lst->lst())) {
                         $result[] = $phr;
                     }
                 }
             }
-            $this->lst = $result;
+            $this->set_lst($result);
             $this->id_lst();
         }
-        log_debug($lib->dsp_count($this->lst));
+        log_debug($lib->dsp_count($this->lst()));
         return $result;
     }
 
@@ -2107,11 +2110,11 @@ class phrase_list extends sandbox_list_named
         $lib = new library();
         $result = clone $this;
         foreach ($join_phr_lst->lst as $phr) {
-            if (!in_array($phr, $result->lst)) {
-                $result->lst[] = $phr;
+            if (!in_array($phr, $result->lst())) {
+                $result->add_obj($phr);
             }
         }
-        log_debug($lib->dsp_count($result->lst));
+        log_debug($lib->dsp_count($result->lst()));
         return $result;
     }
 
@@ -2190,7 +2193,7 @@ class phrase_list extends sandbox_list_named
     function save(): string
     {
         $result = '';
-        foreach ($this->lst as $phr) {
+        foreach ($this->lst() as $phr) {
             $result .= $phr->save();
         }
         return $result;

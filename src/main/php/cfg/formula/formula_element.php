@@ -137,6 +137,11 @@ class formula_element extends db_object
         return $this->obj?->id;
     }
 
+    function user(): user
+    {
+        return $this->usr;
+    }
+
 
     /*
      * load

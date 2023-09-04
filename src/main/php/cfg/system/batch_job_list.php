@@ -68,7 +68,7 @@ class batch_job_list extends base_list
     function __construct(user $usr)
     {
         parent::__construct();
-        $this->lst = array();
+        $this->reset();
         $this->usr = $usr;
     }
 
@@ -83,7 +83,7 @@ class batch_job_list extends base_list
     function api_obj(): batch_job_list_api
     {
         $api_obj = new batch_job_list_api();
-        foreach ($this->lst as $job) {
+        foreach ($this->lst() as $job) {
             $api_obj->add($job->api_obj());
         }
         return $api_obj;
@@ -157,7 +157,7 @@ class batch_job_list extends base_list
                 foreach ($db_rows as $db_row) {
                     $job = new batch_job($this->usr);
                     $job->row_mapper($db_row);
-                    $this->lst[] = $job;
+                    $this->add_obj($job);
                     $result = true;
                 }
             }
@@ -199,7 +199,7 @@ class batch_job_list extends base_list
 
         // finally add the job to the list if everything has been fine
         if ($result->is_ok()) {
-            $this->lst[] = $job;
+            $this->add_obj($job);
         }
 
         log_debug('done');
@@ -218,11 +218,11 @@ class batch_job_list extends base_list
 
         // build the list of phrase ids
         $chk_phr_lst_ids = array();
-        foreach ($this->lst as $chk_job) {
+        foreach ($this->lst() as $chk_job) {
             $chk_phr_lst_ids = $chk_job->phr_lst->id();
         }
 
-        foreach ($this->lst as $chk_job) {
+        foreach ($this->lst() as $chk_job) {
             if ($chk_job->frm == $job->frm) {
                 if ($chk_job->usr == $job->usr) {
                     if (in_array($chk_job->phr_lst->id(), $chk_phr_lst_ids)) {
@@ -240,7 +240,7 @@ class batch_job_list extends base_list
      */
     function merge(batch_job_list $job_lst): void
     {
-        foreach ($job_lst->lst as $job) {
+        foreach ($job_lst->lst() as $job) {
             $this->add($job);
         }
     }

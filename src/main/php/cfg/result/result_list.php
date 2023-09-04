@@ -204,7 +204,7 @@ class result_list extends sandbox_list
                 foreach ($db_rows as $db_row) {
                     $res = new result($this->user());
                     $res->row_mapper($db_row);
-                    $this->lst[] = $res;
+                    $this->add_obj($res);
                     $result = true;
                 }
             }
@@ -237,7 +237,7 @@ class result_list extends sandbox_list
                 foreach ($db_rows as $db_row) {
                     $res = new result($this->user());
                     $res->row_mapper($db_row);
-                    $this->lst[] = $res;
+                    $this->add_obj($res);
                     $result = true;
                 }
             }
@@ -279,7 +279,7 @@ class result_list extends sandbox_list
     function export_obj(bool $do_load = true): array
     {
         $exp_results = array();
-        foreach ($this->lst as $res) {
+        foreach ($this->lst() as $res) {
             $exp_results[] = $res->export_obj($do_load);
         }
         return $exp_results;
@@ -298,16 +298,16 @@ class result_list extends sandbox_list
         $lib = new library();
 
         if ($debug > 10) {
-            if (isset($this->lst)) {
-                foreach ($this->lst as $res) {
+            if (!$this->is_empty()) {
+                foreach ($this->lst() as $res) {
                     $result .= $res->dsp_id();
                     $result .= ' (' . $res->id() . ') - ';
                 }
             }
         } else {
             $nbr = 1;
-            if (isset($this->lst)) {
-                foreach ($this->lst as $res) {
+            if (!$this->is_empty()) {
+                foreach ($this->lst() as $res) {
                     if ($nbr <= 5) {
                         $result .= $res->dsp_id();
                         $result .= ' (' . $res->id() . ') - ';
@@ -316,7 +316,7 @@ class result_list extends sandbox_list
                 }
             }
             if ($nbr > 5) {
-                $result .= ' ... total ' . $lib->dsp_count($this->lst);
+                $result .= ' ... total ' . $lib->dsp_count($this->lst());
             }
         }
         /*
@@ -336,8 +336,8 @@ class result_list extends sandbox_list
         $lib = new library();
 
         $name_lst = array();
-        if (isset($this->lst)) {
-            foreach ($this->lst as $res) {
+        if (!$this->is_empty()) {
+            foreach ($this->lst() as $res) {
                 $name_lst[] = $res->name();
             }
         }
@@ -347,7 +347,7 @@ class result_list extends sandbox_list
         } else {
             $result = '"' . implode('","', array_slice($name_lst, 0, 7));
             if (count($name_lst) > 8) {
-                $result .= ' ... total ' . $lib->dsp_count($this->lst);
+                $result .= ' ... total ' . $lib->dsp_count($this->lst());
             }
             $result .= '"';
         }
@@ -360,8 +360,8 @@ class result_list extends sandbox_list
     function ids(): array
     {
         $result = array();
-        if (isset($this->lst)) {
-            foreach ($this->lst as $res) {
+        if (!$this->is_empty()) {
+            foreach ($this->lst() as $res) {
                 // use only valid ids
                 if ($res->id() <> 0) {
                     $result[] = $res->id();
@@ -378,8 +378,8 @@ class result_list extends sandbox_list
     {
         $result = array();
         $lib = new library();
-        if (isset($this->lst)) {
-            foreach ($this->lst as $res) {
+        if (!$this->is_empty()) {
+            foreach ($this->lst() as $res) {
                 $result[] = $res->name();
 
                 // check user consistency (can be switched off once the program ist stable)
@@ -403,14 +403,14 @@ class result_list extends sandbox_list
         $lib = new library();
         $html = new html_base();
 
-        log_debug("res_lst->display (" . $lib->dsp_count($this->lst) . ")");
+        log_debug("res_lst->display (" . $lib->dsp_count($this->lst()) . ")");
         $result = ''; // reset the html code var
 
         // prepare to show where the user uses different word than a normal viewer
         //$row_nbr = 0;
         $result .= $html->dsp_tbl_start_half();
-        if ($this->lst != null) {
-            foreach ($this->lst as $res) {
+        if (!$this->is_empty()) {
+            foreach ($this->lst() as $res) {
                 //$row_nbr++;
                 $result .= '<tr>';
                 /*if ($row_nbr == 1) {
@@ -550,7 +550,7 @@ class result_list extends sandbox_list
 
             // remove double requests
 
-            if (!empty($phr_lst->lst)) {
+            if (!$phr_lst->is_empty()) {
                 $calc_request = new batch_job($usr);
                 $calc_request->frm = $frm;
                 $calc_request->phr_lst = $phr_lst;
@@ -757,7 +757,7 @@ class result_list extends sandbox_list
 
         $lib = new library();
         log_debug('active users (' . $lib->dsp_array($usr_lst->names()) . ')');
-        foreach ($usr_lst->lst as $usr) {
+        foreach ($usr_lst->lst() as $usr) {
             // check
             $usr_calc_needed = False;
             if ($usr->id() == $this->user()->id()) {
@@ -778,8 +778,8 @@ class result_list extends sandbox_list
     function get_first(): result
     {
         $result = new result($this->user());
-        if (count($this->lst) > 0) {
-            $result = $this->lst[0];
+        if (!$this->is_empty()) {
+            $result = $this->get(0);
         }
         return $result;
     }
@@ -850,7 +850,7 @@ class result_list extends sandbox_list
     {
         $result = '';
         $formula_links = '';
-        foreach ($this->lst as $res) {
+        foreach ($this->lst() as $res) {
             $formula_links .= ' <a href="/http/formula_edit.php?id=' . $res->frm->id . '&back=' . $back->url_encode() . '">' . $res->number . '</a> ';
         }
         if ($formula_links <> '') {
@@ -868,7 +868,7 @@ class result_list extends sandbox_list
         log_debug($res_to_add->dsp_id());
         if (!in_array($res_to_add->id(), $this->ids())) {
             if ($res_to_add->id() <> 0) {
-                $this->lst[] = $res_to_add;
+                $this->add_obj($res_to_add);
             }
         } else {
             log_debug($res_to_add->dsp_id() . ' not added, because it is already in the list');
@@ -881,26 +881,14 @@ class result_list extends sandbox_list
     function merge(result_list $lst_to_merge): result_list
     {
         log_debug($lst_to_merge->dsp_id() . ' to ' . $this->dsp_id());
-        if (isset($lst_to_merge->lst)) {
-            foreach ($lst_to_merge->lst as $new_res) {
+        if (!$lst_to_merge->is_empty()) {
+            foreach ($lst_to_merge->lst() as $new_res) {
                 log_debug('add ' . $new_res->dsp_id());
                 $this->add($new_res);
             }
         }
         log_debug('to ' . $this->dsp_id());
         return $this;
-    }
-
-    /**
-     * @return bool true if the list is empty
-     */
-    function is_empty(): bool
-    {
-        if (count($this->lst) <= 0) {
-            return true;
-        } else {
-            return false;
-        }
     }
 
 }

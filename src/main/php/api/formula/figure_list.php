@@ -69,7 +69,7 @@ class figure_list_api extends list_api implements JsonSerializable
     function jsonSerialize(): array
     {
         $vars = [];
-        foreach ($this->lst as $fig) {
+        foreach ($this->lst() as $fig) {
             $vars[] = json_decode(json_encode($fig));
         }
         return $vars;

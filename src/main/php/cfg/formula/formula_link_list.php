@@ -143,7 +143,7 @@ class formula_link_list extends sandbox_list
         $result = array();
         $lib = new library();
 
-        foreach ($this->lst as $frm_lnk) {
+        foreach ($this->lst() as $frm_lnk) {
             if ($frm_lnk->phrase_id() <> 0) {
                 if ($sbx) {
                     if ($frm_lnk->excluded <= 0) {
@@ -170,7 +170,7 @@ class formula_link_list extends sandbox_list
         global $db_con;
         $result = '';
 
-        foreach ($this->lst as $frm_lnk) {
+        foreach ($this->lst() as $frm_lnk) {
             if ($result == '') {
                 if ($frm_lnk->can_change() > 0 and $frm_lnk->not_used()) {
                     //$db_con = new mysql;

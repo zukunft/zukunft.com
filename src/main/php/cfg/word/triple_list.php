@@ -95,8 +95,8 @@ class triple_list extends sandbox_list
     function api_obj(): triple_list_api
     {
         $api_obj = new triple_list_api();
-        foreach ($this->lst as $wrd) {
-            $api_obj->add($wrd->api_obj());
+        foreach ($this->lst() as $trp) {
+            $api_obj->add($trp->api_obj());
         }
         return $api_obj;
     }
@@ -325,7 +325,7 @@ class triple_list extends sandbox_list
         if ($qp->name == '') {
             log_err('The query name cannot be created to load a ' . self::class, self::class . '->load');
         } else {
-            $this->lst = array();
+            $this->reset();
             $db_rows = $db_con->get($qp);
             if ($db_rows != null) {
                 foreach ($db_rows as $db_row) {
@@ -334,7 +334,7 @@ class triple_list extends sandbox_list
                     // the simple object row mapper allows mapping excluded objects to remove the exclusion
                     // but an object list should not have excluded objects
                     if (!$trp->is_excluded() or $load_all) {
-                        $this->lst[] = $trp;
+                        $this->add_obj($trp);
                         $result = true;
                         // fill verb
                         $trp->verb = $verbs->get_verb_by_id($db_row[verb::FLD_ID]);
@@ -442,7 +442,7 @@ class triple_list extends sandbox_list
 
         if (!in_array($lnk_to_add->id(), $this->ids)) {
             if ($lnk_to_add->id() > 0) {
-                $this->lst[] = $lnk_to_add;
+                $this->add_obj($lnk_to_add);
                 $this->ids[] = $lnk_to_add->id();
                 $result = true;
             }
@@ -482,7 +482,7 @@ class triple_list extends sandbox_list
     function export_obj(bool $do_load = true): array
     {
         $exp_triples = array();
-        foreach ($this->lst as $trp) {
+        foreach ($this->lst() as $trp) {
             if (get_class($trp) == triple::class) {
                 $exp_triples[] = $trp->export_obj($do_load);
             } else {
@@ -526,7 +526,7 @@ class triple_list extends sandbox_list
     function names(): array
     {
         $result = array();
-        foreach ($this->lst as $lnk) {
+        foreach ($this->lst() as $lnk) {
             if ($lnk->name() <> '') {
                 $result[] = $lnk->name();
             }
@@ -556,15 +556,15 @@ class triple_list extends sandbox_list
             $prev_verb_id = 0;
 
             // loop over the graph elements
-            foreach (array_keys($this->lst) as $lnk_id) {
+            foreach (array_keys($this->lst()) as $lnk_id) {
                 // reset the vars
                 $directional_link_type_id = 0;
 
-                $lnk = $this->lst[$lnk_id];
+                $lnk = $this->get($lnk_id);
                 // get the next link to detect if there is more than one word linked with the same link type
                 // TODO check with a unit test if last element is used
-                if (count($this->lst) - 1 > $lnk_id) {
-                    $next_lnk = $this->lst[$lnk_id + 1];
+                if ($this->count() - 1 > $lnk_id) {
+                    $next_lnk = $this->get[$lnk_id + 1];
                 } else {
                     $next_lnk = $lnk;
                 }
@@ -679,7 +679,7 @@ class triple_list extends sandbox_list
     function is_empty(): bool
     {
         $result = true;
-        if ($this->lst != null) {
+        if ($this->lst() != null) {
             if ($this->count() > 0) {
                 $result = false;
             }
@@ -707,7 +707,7 @@ class triple_list extends sandbox_list
     {
         $result = new user_message();
 
-        foreach ($this->lst as $trp) {
+        foreach ($this->lst() as $trp) {
             $result->add($trp->del());
         }
         return new user_message();
@@ -724,7 +724,7 @@ class triple_list extends sandbox_list
     function phrase_lst(): phrase_list
     {
         $phr_lst = new phrase_list($this->user());
-        foreach ($this->lst as $lnk) {
+        foreach ($this->lst() as $lnk) {
             $phr_lst->add($lnk->phrase());
         }
         return $phr_lst;

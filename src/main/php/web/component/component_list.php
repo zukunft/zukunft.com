@@ -51,9 +51,9 @@ class component_list extends list_dsp
      */
     function set_obj_from_json_array(array $json_array): object
     {
-        $wrd = new component_dsp();
-        $wrd->set_from_json_array($json_array);
-        return $wrd;
+        $cmp = new component_dsp();
+        $cmp->set_from_json_array($json_array);
+        return $cmp;
     }
 
 

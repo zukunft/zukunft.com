@@ -69,7 +69,7 @@ class source_list extends sandbox_list_named
     function api_obj(): source_list_api
     {
         $api_obj = new source_list_api(array());
-        foreach ($this->lst as $src) {
+        foreach ($this->lst() as $src) {
             $api_obj->add($src->api_obj());
         }
         return $api_obj;

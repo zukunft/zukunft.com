@@ -132,6 +132,21 @@
       "name": "system form end",
       "type": "form_end",
       "code_id": "form_end"
+    },
+    {
+      "name": "system formatter row start",
+      "type": "row_start",
+      "code_id": "row_start"
+    },
+    {
+      "name": "system formatter row right",
+      "type": "row_right",
+      "code_id": "row_right"
+    },
+    {
+      "name": "system formatter row end",
+      "type": "row_end",
+      "code_id": "row_end"
     }
   ],
   "views": [
@@ -304,34 +319,58 @@
         },
         {
           "position": "6",
-          "name": "system form triple phrase from"
+          "name": "system formatter row start"
         },
         {
           "position": "7",
-          "name": "system form triple verb"
+          "name": "system form triple phrase from"
         },
         {
           "position": "8",
-          "name": "system form triple phrase to"
+          "name": "system form triple verb"
         },
         {
           "position": "9",
-          "name": "system form select share type"
+          "name": "system form triple phrase to"
         },
         {
           "position": "10",
-          "name": "system form select protection type"
+          "name": "system formatter row end"
         },
         {
           "position": "11",
-          "name": "system form button cancel"
+          "name": "system formatter row start"
         },
         {
           "position": "12",
-          "name": "system form button save"
+          "name": "system form select share type"
         },
         {
           "position": "13",
+          "name": "system form select protection type"
+        },
+        {
+          "position": "14",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "15",
+          "name": "system formatter row right"
+        },
+        {
+          "position": "16",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "17",
+          "name": "system form button save"
+        },
+        {
+          "position": "18",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "19",
           "name": "system form end"
         }
       ]

@@ -172,7 +172,7 @@ class phrase_group_list extends sandbox_list
             foreach ($db_rows as $db_row) {
                 $phr_grp = new phrase_group($this->user());
                 $phr_grp->row_mapper($db_row);
-                $this->lst[] = $phr_grp;
+                $this->add_obj($phr_grp);
                 $result = true;
             }
         }
@@ -189,7 +189,7 @@ class phrase_group_list extends sandbox_list
     {
         $result = new user_message();
 
-        foreach ($this->lst as $phr_grp) {
+        foreach ($this->lst() as $phr_grp) {
             $result->add($phr_grp->del());
         }
         return new user_message();
@@ -243,7 +243,7 @@ class phrase_group_list extends sandbox_list
             }
         }
         if ($do_add) {
-            $this->lst[] = $grp;
+            $this->add_obj($grp);
             $this->grp_ids[] = $grp->id();
             $this->time_lst[] = null;
             log_debug($grp->dsp_id() . ' added to list ' . $this->dsp_id());
@@ -477,7 +477,7 @@ class phrase_group_list extends sandbox_list
     //      the result would be "2016,Nestlé" and "2016,Danone"
     /* to review
     function remove_wrd_lst($del_wrd_lst) {
-      foreach (array_keys($this->lst) AS $pos) {
+      foreach (array_keys($this->lst()) AS $pos) {
         zu_debug('remove "'.implode(",",$del_wrd_lst->names()).'" from ('.implode(",",$this->lst[$pos]->names()).')');
         $this->lst[$pos]->diff_by_ids($del_wrd_lst->ids);
       }
@@ -498,7 +498,7 @@ class phrase_group_list extends sandbox_list
         $lib = new library();
         $result = new phrase_list($this->user());
         $pos = 0;
-        foreach ($this->lst as $grp) {
+        foreach ($this->lst() as $grp) {
             $grp->load_by_obj_vars();
             if ($pos == 0) {
                 if (isset($grp->phr_lst)) {
@@ -523,7 +523,7 @@ class phrase_group_list extends sandbox_list
     function ids(): array
     {
         $result = array();
-        foreach ($this->lst as $sbx_obj) {
+        foreach ($this->lst() as $sbx_obj) {
             // use only valid ids
             if ($sbx_obj->id() <> 0) {
                 $result[] = $sbx_obj->id();
@@ -545,12 +545,12 @@ class phrase_group_list extends sandbox_list
         $lib = new library();
         $result = '';
         // check the object setup
-        if (count($this->lst) <> count($this->time_lst)) {
-            $result .= 'The number of groups (' . $lib->dsp_count($this->lst) . ') are not equal the number of times (' . $lib->dsp_count($this->time_lst) . ') of this phrase group list';
+        if (count($this->lst()) <> count($this->time_lst)) {
+            $result .= 'The number of groups (' . $lib->dsp_count($this->lst()) . ') are not equal the number of times (' . $lib->dsp_count($this->time_lst) . ') of this phrase group list';
         } else {
 
             $pos = 0;
-            foreach ($this->lst as $phr_lst) {
+            foreach ($this->lst() as $phr_lst) {
                 if ($debug > $pos) {
                     if ($result <> '') {
                         $result .= ' / ';
@@ -563,8 +563,8 @@ class phrase_group_list extends sandbox_list
                     $pos++;
                 }
             }
-            if (count($this->lst) > $pos) {
-                $result .= ' ... total ' . $lib->dsp_count($this->lst);
+            if (count($this->lst()) > $pos) {
+                $result .= ' ... total ' . $lib->dsp_count($this->lst());
             }
 
         }
@@ -596,7 +596,7 @@ class phrase_group_list extends sandbox_list
     function names(): array
     {
         $result = array();
-        foreach ($this->lst as $phr_lst) {
+        foreach ($this->lst() as $phr_lst) {
             $result[] = $phr_lst->name();
         }
         log_debug('phrase_group_list->names ' . implode(" / ", $result));

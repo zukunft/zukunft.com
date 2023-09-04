@@ -36,7 +36,7 @@ namespace cfg;
 class base_list
 {
     // the protected main var
-    protected array $lst;
+    private array $lst;
 
     // paging vars
     // display and select fields to increase the response time
@@ -66,10 +66,24 @@ class base_list
         }
     }
 
+    function reset(): void
+    {
+        $this->set_lst(array());
+    }
+
 
     /*
      * set and get
      */
+
+    /**
+     * @param string|int $key the key of the lst array
+     * @return sandbox|null the found user sandbox object or null if no id is found
+     */
+    function get(string|int $key): ?object
+    {
+        return $this->lst[$key];
+    }
 
     /**
      * @return array with the API object of the values
@@ -105,7 +119,8 @@ class base_list
     }
 
     /**
-     * @returns array the protected list of values or formula results
+     * @returns array the list of items
+     * which is private to make sure the dirty handling always works
      */
     function lst(): array
     {
@@ -221,14 +236,33 @@ class base_list
      * add an object to the list
      * @returns bool true if the object has been added
      */
-    protected function add_obj(object $obj_to_add): bool
+    protected function add_obj(object $obj_to_add, bool $allow_duplicates = false): bool
     {
         $result = false;
-        $id_to_add = $obj_to_add->id();
-        $id_lst = $this->id_pos_lst();
-        if (!in_array($obj_to_add->id(), $this->ids())) {
+        if ($allow_duplicates) {
             $this->lst[] = $obj_to_add;
             $this->set_lst_dirty();
+            $result = true;
+        } else {
+            if (!in_array($obj_to_add->id(), $this->ids())) {
+                $this->lst[] = $obj_to_add;
+                $this->set_lst_dirty();
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * unset an object of the list
+     * @returns bool true if the object has been added
+     */
+    protected function unset_by_id(int $id): bool
+    {
+        $result = false;
+        $key_lst = $this->id_pos_lst();
+        if (array_key_exists($id, $key_lst)) {
+            unset ($this->lst[$id]);
             $result = true;
         }
         return $result;

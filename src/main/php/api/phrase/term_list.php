@@ -75,7 +75,7 @@ class term_list_api extends list_api implements JsonSerializable
 
         // cast the single list objects
         $lst_dsp = array();
-        foreach ($this->lst as $trm) {
+        foreach ($this->lst() as $trm) {
             if ($trm != null) {
                 $phr_dsp = $trm->dsp_obj();
                 $lst_dsp[] = $phr_dsp;
@@ -106,7 +106,7 @@ class term_list_api extends list_api implements JsonSerializable
     function jsonSerialize(): array
     {
         $vars = [];
-        foreach ($this->lst as $trm) {
+        foreach ($this->lst() as $trm) {
             $vars[] = $trm->jsonSerialize();
         }
         return $vars;
@@ -126,17 +126,17 @@ class term_list_api extends list_api implements JsonSerializable
     {
         if (!$new_lst->is_empty()) {
             if ($this->is_empty()) {
-                $this->set_lst($new_lst->lst);
+                $this->set_lst($new_lst->lst());
             } else {
                 // next line would work if array_intersect could handle objects
-                // $this->lst = array_intersect($this->lst, $new_lst->lst());
+                // $this->lst() = array_intersect($this->lst(), $new_lst->lst());
                 $found_lst = new term_list_api();
                 foreach ($new_lst->lst() as $trm) {
                     if (in_array($trm->id(), $this->id_lst())) {
                         $found_lst->add($trm);
                     }
                 }
-                $this->set_lst($found_lst->lst);
+                $this->set_lst($found_lst->lst());
             }
         }
         return $this;
@@ -151,14 +151,14 @@ class term_list_api extends list_api implements JsonSerializable
     {
         if (!$del_lst->is_empty()) {
             // next line would work if array_intersect could handle objects
-            // $this->lst = array_intersect($this->lst, $new_lst->lst());
+            // $this->lst() = array_intersect($this->lst(), $new_lst->lst());
             $remain_lst = new term_list_api();
             foreach ($this->lst() as $trm) {
                 if (!in_array($trm->id(), $del_lst->id_lst())) {
                     $remain_lst->add($trm);
                 }
             }
-            $this->set_lst($remain_lst->lst);
+            $this->set_lst($remain_lst->lst());
         }
         return $this;
     }

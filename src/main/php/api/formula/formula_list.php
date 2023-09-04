@@ -32,7 +32,7 @@
 
 namespace api;
 
-use html\formula_list_dsp;
+use html\formula\formula_list as formula_list_dsp;
 use JsonSerializable;
 
 class formula_list_api extends list_api implements JsonSerializable
@@ -70,7 +70,7 @@ class formula_list_api extends list_api implements JsonSerializable
 
         // cast the single list objects
         $lst_dsp = array();
-        foreach ($this->lst as $frm) {
+        foreach ($this->lst() as $frm) {
             if ($frm != null) {
                 $frm_dsp = $frm->dsp_obj();
                 $lst_dsp[] = $frm_dsp;
@@ -94,7 +94,7 @@ class formula_list_api extends list_api implements JsonSerializable
     function jsonSerialize(): array
     {
         $vars = [];
-        foreach ($this->lst as $frm) {
+        foreach ($this->lst() as $frm) {
             $vars[] = json_decode(json_encode($frm));
         }
         return $vars;
@@ -119,12 +119,12 @@ class formula_list_api extends list_api implements JsonSerializable
         if (!$this->is_empty()) {
             $result = array();
             $lst_ids = $del_lst->id_lst();
-            foreach ($this->lst as $frm) {
+            foreach ($this->lst() as $frm) {
                 if (!in_array($frm->id(), $lst_ids)) {
                     $result[] = $frm;
                 }
             }
-            $this->lst = $result;
+            $this->set_lst($result);
         }
     }
 
@@ -134,7 +134,7 @@ class formula_list_api extends list_api implements JsonSerializable
      */
     function merge(formula_list_api $new_wrd_lst): void
     {
-        foreach ($new_wrd_lst->lst as $new_wrd) {
+        foreach ($new_wrd_lst->lst() as $new_wrd) {
             $this->add($new_wrd);
         }
     }
@@ -146,7 +146,7 @@ class formula_list_api extends list_api implements JsonSerializable
     private function filter(string $type): formula_list_api
     {
         $result = new formula_list_api();
-        foreach ($this->lst as $frm) {
+        foreach ($this->lst() as $frm) {
             if ($frm->is_type($type)) {
                 $result->add($frm);
             }

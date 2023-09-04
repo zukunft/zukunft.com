@@ -66,8 +66,18 @@ class type_list
      * object vars
      */
 
-    public array $lst = [];  // a list of type objects
-    public array $hash = []; // hash list with the code id for fast selection
+    private array $lst = [];  // a list of type objects
+    private array $hash = []; // hash list with the code id for fast selection
+
+
+    /*
+     * construct and map
+     */
+
+    function reset(): void
+    {
+        $this->set_lst(array());
+    }
 
 
     /*
@@ -100,10 +110,41 @@ class type_list
 
 
     /*
+     * set and get
+     */
+
+    /**
+     * @returns true if the list has been replaced
+     */
+    function set_lst(array $lst): bool
+    {
+        $this->lst = $lst;
+        $this->get_hash($lst);
+        return true;
+    }
+
+    /**
+     * @returns array the protected list of preloaded types
+     */
+    function lst(): array
+    {
+        return $this->lst;
+    }
+
+    /**
+     * @returns array the hash list of preloaded types
+     */
+    function hash(): array
+    {
+        return $this->hash;
+    }
+
+
+    /*
      * interface set and get
      */
 
-    function add(type_object $item): void
+    function add(type_object|ref $item): void
     {
         $this->lst[$item->id] = $item;
         $this->hash[$item->code_id] = $item->id;

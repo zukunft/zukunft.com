@@ -99,7 +99,7 @@ class system_log_list extends base_list
     {
         global $db_con;
         $api_obj = new system_log_list_api($db_con, $usr);
-        foreach ($this->lst as $log) {
+        foreach ($this->lst() as $log) {
             //$api_obj->add($log->api_obj());
             $api_obj->system_log[] = $log->get_api_obj();
         }
@@ -122,7 +122,7 @@ class system_log_list extends base_list
         global $usr;
         global $db_con;
         $dsp_obj = new system_log_list_dsp_old($db_con, $usr);
-        foreach ($this->lst as $log) {
+        foreach ($this->lst() as $log) {
             //$dsp_obj->add($log->dsp_obj());
             $dsp_obj->system_log[] = $log->get_api_obj();
         }
@@ -206,7 +206,7 @@ class system_log_list extends base_list
             foreach ($db_lst as $db_row) {
                 $log = new system_log();
                 $log->row_mapper($db_row);
-                $this->lst[] = $log;
+                $this->add_obj($log);
             }
             $result = true;
         }
@@ -231,7 +231,7 @@ class system_log_list extends base_list
      */
     function add(system_log $log_to_add): void
     {
-        $this->lst[] = $log_to_add;
+        $this->add_obj($log_to_add);
     }
 
 }

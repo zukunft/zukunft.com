@@ -67,7 +67,7 @@ class batch_job_list_api extends list_api implements JsonSerializable
     function jsonSerialize(): array
     {
         $vars = [];
-        foreach ($this->lst as $job) {
+        foreach ($this->lst() as $job) {
             $vars[] = json_decode(json_encode($job));
         }
         return $vars;
@@ -92,12 +92,12 @@ class batch_job_list_api extends list_api implements JsonSerializable
         if (!$this->is_empty()) {
             $result = array();
             $lst_ids = $del_lst->id_lst();
-            foreach ($this->lst as $job) {
+            foreach ($this->lst() as $job) {
                 if (!in_array($job->id(), $lst_ids)) {
                     $result[] = $job;
                 }
             }
-            $this->lst = $result;
+            $this->set_lst($result);
         }
     }
 
@@ -107,7 +107,7 @@ class batch_job_list_api extends list_api implements JsonSerializable
      */
     function merge(batch_job_list_api $new_wrd_lst)
     {
-        foreach ($new_wrd_lst->lst as $new_wrd) {
+        foreach ($new_wrd_lst->lst() as $new_wrd) {
             $this->add($new_wrd);
         }
     }

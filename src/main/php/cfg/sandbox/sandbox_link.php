@@ -158,10 +158,30 @@ class sandbox_link extends sandbox
         return '';
     }
 
+    /*
+    /**
+     * set the vars of the minimal api object based on this link object
+     * @param object $api_obj frontend API object filled with the database id
+     *
+     * @return void
+    function fill_api_obj(object $api_obj): void
+    {
+        parent::fill_api_obj($api_obj);
+
+        if ($this->fob != null) {
+            $api_obj->fob = $this->fob->api_obj();
+        }
+        if ($this->tob != null) {
+            $api_obj->tob = $this->tob->api_obj();
+        }
+    }
+    */
+
     /**
      * fill a similar object that is extended with display interface functions
+     * @param object $dsp_obj
      *
-     * @return object the object fill with all user sandbox value
+     * @return void
      */
     function fill_dsp_obj(object $dsp_obj): void
     {
@@ -170,7 +190,7 @@ class sandbox_link extends sandbox
         if ($this->fob != null) {
             $dsp_obj->fob = $this->fob->dsp_obj();
         }
-        if ($this->fob != null) {
+        if ($this->tob != null) {
             $dsp_obj->tob = $this->tob->dsp_obj();
         }
     }

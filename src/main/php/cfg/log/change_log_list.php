@@ -67,7 +67,7 @@ class change_log_list extends base_list
     function api_obj(): change_log_list_api
     {
         $api_obj = new change_log_list_api();
-        foreach ($this->lst as $chg) {
+        foreach ($this->lst() as $chg) {
             $api_obj->add($chg->api_obj());
         }
         return $api_obj;
@@ -87,7 +87,7 @@ class change_log_list extends base_list
     function dsp_obj(): change_log_list_dsp
     {
         $dsp_obj = new change_log_list_dsp();
-        foreach ($this->lst as $chg) {
+        foreach ($this->lst() as $chg) {
             $dsp_obj->add($chg->dsp_obj());
         }
         return $dsp_obj;
@@ -352,7 +352,7 @@ class change_log_list extends base_list
                 foreach ($db_rows as $db_row) {
                     $chg = new change_log_named($usr);
                     $chg->row_mapper($db_row);
-                    $this->lst[] = $chg;
+                    $this->add_obj($chg);
                     $result = true;
                 }
             }

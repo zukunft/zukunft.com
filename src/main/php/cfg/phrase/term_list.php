@@ -81,7 +81,7 @@ class term_list extends sandbox_list_named
     function api_obj(): term_list_api
     {
         $api_obj = new term_list_api();
-        foreach ($this->lst as $trm) {
+        foreach ($this->lst() as $trm) {
             $api_obj->add($trm->api_obj());
         }
         return $api_obj;
@@ -101,7 +101,7 @@ class term_list extends sandbox_list_named
     function dsp_obj(): term_list_dsp
     {
         $dsp_obj = new term_list_dsp();
-        foreach ($this->lst as $trm) {
+        foreach ($this->lst() as $trm) {
             $dsp_obj->add($trm->dsp_obj());
         }
         return $dsp_obj;
@@ -305,8 +305,8 @@ class term_list extends sandbox_list_named
     function term_ids(): trm_ids
     {
         $lst = array();
-        if (count($this->lst) > 0) {
-            foreach ($this->lst as $trm) {
+        if (count($this->lst()) > 0) {
+            foreach ($this->lst() as $trm) {
                 // use only valid ids
                 if ($trm->id_obj() <> 0) {
                     $lst[] = $trm->id();
@@ -454,7 +454,7 @@ class term_list extends sandbox_list_named
         } else {
             $result = '"' . implode('","', array_slice($name_lst, 0, 7));
             if (count($name_lst) > 8) {
-                $result .= ' ... total ' . $lib->dsp_count($this->lst);
+                $result .= ' ... total ' . $lib->dsp_count($this->lst());
             }
             $result .= '"';
         }
@@ -478,7 +478,7 @@ class term_list extends sandbox_list_named
     function names(): array
     {
         $name_lst = array();
-        foreach ($this->lst as $trm) {
+        foreach ($this->lst() as $trm) {
             if (isset($trm)) {
                 $name_lst[] = $trm->name();
             }

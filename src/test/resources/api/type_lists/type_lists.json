@@ -470,6 +470,24 @@
         "code_id": "form_end",
         "name": "form end",
         "comment": "just to indicate that a form ends"
+      },
+      {
+        "id": 30,
+        "code_id": "row_start",
+        "name": "row start",
+        "comment": "combine the next elements to one row"
+      },
+      {
+        "id": 31,
+        "code_id": "row_right",
+        "name": "row right",
+        "comment": "combine the next elements to one row and align to the right"
+      },
+      {
+        "id": 32,
+        "code_id": "row_end",
+        "name": "row end",
+        "comment": "just to indicate that a row ends"
       }
     ],
     "component_position_types": [
@@ -1807,7 +1825,9 @@
             "id": 1,
             "name": "Word",
             "description": "simply show the word name",
-            "type_id": 8
+            "type_id": 8,
+            "link_id": 1,
+            "position": 1
           }
         ]
       },
@@ -1822,7 +1842,9 @@
             "id": 1,
             "name": "Word",
             "description": "simply show the word name",
-            "type_id": 8
+            "type_id": 8,
+            "link_id": 2,
+            "position": 1
           }
         ]
       },
@@ -1833,63 +1855,74 @@
         "code_id": "word_add",
         "components": [
           {
-            "id": 2,
-            "name": "system form title word add",
-            "description": "show the language specific title for the system form to add a new word",
-            "type_id": 17
-          },
-          {
-            "id": 7,
-            "name": "system form hidden back stack",
-            "description": "field that contains the stack for the undo actions",
-            "type_id": 18
-          },
-          {
-            "id": 8,
-            "name": "system form hidden confirm status",
-            "description": "switch on that the form saving needs an extra confirm by the user",
-            "type_id": 19
-          },
-          {
-            "id": 9,
-            "name": "system form field name",
-            "description": "the name field in a form",
-            "type_id": 20
-          },
-          {
-            "id": 10,
-            "name": "system form field description",
-            "description": "the description field in a form",
-            "type_id": 21
-          },
-          {
-            "id": 14,
-            "name": "system form select share type",
-            "description": "selector for the share type",
-            "type_id": 24
-          },
-          {
-            "id": 15,
-            "name": "system form select protection type",
-            "description": "selector for the protection type",
-            "type_id": 25
-          },
-          {
-            "id": 16,
-            "name": "system form button cancel",
-            "description": "button to cancel the form action and go back to the previous view",
-            "type_id": 26
-          },
-          {
-            "id": 17,
-            "name": "system form button save",
-            "description": "button to save the form field into the database",
-            "type_id": 27
+            "id": 19,
+            "name": "system form end",
+            "type_id": 29,
+            "link_id": 3,
+            "position": 1
           },
           {
             "id": 19,
             "name": "system form end",
-            "type_id": 29
+            "type_id": 29,
+            "link_id": 8,
+            "position": 6
+          },
+          {
+            "id": 19,
+            "name": "system form end",
+            "type_id": 29,
+            "link_id": 4,
+            "position": 2
+          },
+          {
+            "id": 19,
+            "name": "system form end",
+            "type_id": 29,
+            "link_id": 9,
+            "position": 7
+          },
+          {
+            "id": 19,
+            "name": "system form end",
+            "type_id": 29,
+            "link_id": 5,
+            "position": 3
+          },
+          {
+            "id": 19,
+            "name": "system form end",
+            "type_id": 29,
+            "link_id": 6,
+            "position": 4
+          },
+          {
+            "id": 19,
+            "name": "system form end",
+            "type_id": 29,
+            "link_id": 10,
+            "position": 8
+          },
+          {
+            "id": 19,
+            "name": "system form end",
+            "type_id": 29,
+            "link_id": 7,
+            "position": 5
+          },
+          {
+            "id": 19,
+            "name": "system form end",
+            "type_id": 29,
+            "link_id": 11,
+            "position": 9
+          },
+          {
+            "id": 19,
+            "name": "system form end",
+            "type_id": 29,
+            "link_id": 12,
+            "position": 10
           }
         ]
       },
@@ -1901,51 +1934,60 @@
         "code_id": "word_edit",
         "components": [
           {
-            "id": 3,
-            "name": "system form title word edit",
-            "description": "show the language specific title for the system form to change a word",
-            "type_id": 17
-          },
-          {
-            "id": 7,
-            "name": "system form hidden back stack",
-            "description": "field that contains the stack for the undo actions",
-            "type_id": 18
-          },
-          {
-            "id": 8,
-            "name": "system form hidden confirm status",
-            "description": "switch on that the form saving needs an extra confirm by the user",
-            "type_id": 19
-          },
-          {
-            "id": 9,
-            "name": "system form field name",
-            "description": "the name field in a form",
-            "type_id": 20
-          },
-          {
-            "id": 10,
-            "name": "system form field description",
-            "description": "the description field in a form",
-            "type_id": 21
-          },
-          {
-            "id": 16,
-            "name": "system form button cancel",
-            "description": "button to cancel the form action and go back to the previous view",
-            "type_id": 26
-          },
-          {
-            "id": 17,
-            "name": "system form button save",
-            "description": "button to save the form field into the database",
-            "type_id": 27
+            "id": 19,
+            "name": "system form end",
+            "type_id": 29,
+            "link_id": 13,
+            "position": 1
           },
           {
             "id": 19,
             "name": "system form end",
-            "type_id": 29
+            "type_id": 29,
+            "link_id": 14,
+            "position": 2
+          },
+          {
+            "id": 19,
+            "name": "system form end",
+            "type_id": 29,
+            "link_id": 15,
+            "position": 3
+          },
+          {
+            "id": 19,
+            "name": "system form end",
+            "type_id": 29,
+            "link_id": 16,
+            "position": 4
+          },
+          {
+            "id": 19,
+            "name": "system form end",
+            "type_id": 29,
+            "link_id": 18,
+            "position": 6
+          },
+          {
+            "id": 19,
+            "name": "system form end",
+            "type_id": 29,
+            "link_id": 17,
+            "position": 5
+          },
+          {
+            "id": 19,
+            "name": "system form end",
+            "type_id": 29,
+            "link_id": 19,
+            "position": 7
+          },
+          {
+            "id": 19,
+            "name": "system form end",
+            "type_id": 29,
+            "link_id": 20,
+            "position": 8
           }
         ]
       },
@@ -1957,39 +1999,46 @@
         "code_id": "word_del",
         "components": [
           {
-            "id": 4,
-            "name": "system form title word del",
-            "description": "show the language specific title for the system form to delete or exclude a word",
-            "type_id": 17
-          },
-          {
-            "id": 7,
-            "name": "system form hidden back stack",
-            "description": "field that contains the stack for the undo actions",
-            "type_id": 18
-          },
-          {
-            "id": 8,
-            "name": "system form hidden confirm status",
-            "description": "switch on that the form saving needs an extra confirm by the user",
-            "type_id": 19
-          },
-          {
-            "id": 16,
-            "name": "system form button cancel",
-            "description": "button to cancel the form action and go back to the previous view",
-            "type_id": 26
-          },
-          {
-            "id": 18,
-            "name": "system form button del",
-            "description": "button to delete or exclude a word, triple, verb, value, formula, view or component",
-            "type_id": 28
+            "id": 19,
+            "name": "system form end",
+            "type_id": 29,
+            "link_id": 21,
+            "position": 1
           },
           {
             "id": 19,
             "name": "system form end",
-            "type_id": 29
+            "type_id": 29,
+            "link_id": 22,
+            "position": 2
+          },
+          {
+            "id": 19,
+            "name": "system form end",
+            "type_id": 29,
+            "link_id": 23,
+            "position": 3
+          },
+          {
+            "id": 19,
+            "name": "system form end",
+            "type_id": 29,
+            "link_id": 24,
+            "position": 4
+          },
+          {
+            "id": 19,
+            "name": "system form end",
+            "type_id": 29,
+            "link_id": 25,
+            "position": 5
+          },
+          {
+            "id": 19,
+            "name": "system form end",
+            "type_id": 29,
+            "link_id": 26,
+            "position": 6
           }
         ]
       },
@@ -2000,81 +2049,116 @@
         "code_id": "triple_add",
         "components": [
           {
-            "id": 5,
-            "name": "system form title triple add",
-            "description": "show the language specific title for the system form to add a new triple",
-            "type_id": 17
-          },
-          {
-            "id": 7,
-            "name": "system form hidden back stack",
-            "description": "field that contains the stack for the undo actions",
-            "type_id": 18
-          },
-          {
-            "id": 8,
-            "name": "system form hidden confirm status",
-            "description": "switch on that the form saving needs an extra confirm by the user",
-            "type_id": 19
-          },
-          {
-            "id": 9,
-            "name": "system form field name",
-            "description": "the name field in a form",
-            "type_id": 20
-          },
-          {
-            "id": 10,
-            "name": "system form field description",
-            "description": "the description field in a form",
-            "type_id": 21
-          },
-          {
-            "id": 11,
-            "name": "system form triple phrase from",
-            "description": "selector for the from phrase of a triple",
-            "type_id": 22
-          },
-          {
-            "id": 13,
-            "name": "system form triple verb",
-            "description": "selector for the verb of a triple",
-            "type_id": 23
-          },
-          {
-            "id": 12,
-            "name": "system form triple phrase to",
-            "description": "selector for the to phrase of a triple",
-            "type_id": 22
-          },
-          {
-            "id": 14,
-            "name": "system form select share type",
-            "description": "selector for the share type",
-            "type_id": 24
-          },
-          {
-            "id": 15,
-            "name": "system form select protection type",
-            "description": "selector for the protection type",
-            "type_id": 25
-          },
-          {
-            "id": 16,
-            "name": "system form button cancel",
-            "description": "button to cancel the form action and go back to the previous view",
-            "type_id": 26
-          },
-          {
-            "id": 17,
-            "name": "system form button save",
-            "description": "button to save the form field into the database",
-            "type_id": 27
+            "id": 19,
+            "name": "system form end",
+            "type_id": 29,
+            "link_id": 32,
+            "position": 11
           },
           {
             "id": 19,
             "name": "system form end",
-            "type_id": 29
+            "type_id": 29,
+            "link_id": 35,
+            "position": 9
+          },
+          {
+            "id": 19,
+            "name": "system form end",
+            "type_id": 29,
+            "link_id": 39,
+            "position": 15
+          },
+          {
+            "id": 19,
+            "name": "system form end",
+            "type_id": 29,
+            "link_id": 34,
+            "position": 8
+          },
+          {
+            "id": 19,
+            "name": "system form end",
+            "type_id": 29,
+            "link_id": 27,
+            "position": 1
+          },
+          {
+            "id": 19,
+            "name": "system form end",
+            "type_id": 29,
+            "link_id": 36,
+            "position": 18
+          },
+          {
+            "id": 19,
+            "name": "system form end",
+            "type_id": 29,
+            "link_id": 37,
+            "position": 12
+          },
+          {
+            "id": 19,
+            "name": "system form end",
+            "type_id": 29,
+            "link_id": 28,
+            "position": 2
+          },
+          {
+            "id": 19,
+            "name": "system form end",
+            "type_id": 29,
+            "link_id": 38,
+            "position": 13
+          },
+          {
+            "id": 19,
+            "name": "system form end",
+            "type_id": 29,
+            "link_id": 29,
+            "position": 3
+          },
+          {
+            "id": 19,
+            "name": "system form end",
+            "type_id": 29,
+            "link_id": 30,
+            "position": 4
+          },
+          {
+            "id": 19,
+            "name": "system form end",
+            "type_id": 29,
+            "link_id": 40,
+            "position": 16
+          },
+          {
+            "id": 19,
+            "name": "system form end",
+            "type_id": 29,
+            "link_id": 31,
+            "position": 5
+          },
+          {
+            "id": 19,
+            "name": "system form end",
+            "type_id": 29,
+            "link_id": 33,
+            "position": 7
+          },
+          {
+            "id": 19,
+            "name": "system form end",
+            "type_id": 29,
+            "link_id": 41,
+            "position": 17
+          },
+          {
+            "id": 19,
+            "name": "system form end",
+            "type_id": 29,
+            "link_id": 42,
+            "position": 19
           }
         ]
       },
@@ -2262,46 +2346,60 @@
         "code_id": "component_add",
         "components": [
           {
-            "id": 6,
-            "name": "system form title component add",
-            "description": "show the language specific title for the system form to add a new component",
-            "type_id": 17
-          },
-          {
-            "id": 7,
-            "name": "system form hidden back stack",
-            "description": "field that contains the stack for the undo actions",
-            "type_id": 18
-          },
-          {
-            "id": 8,
-            "name": "system form hidden confirm status",
-            "description": "switch on that the form saving needs an extra confirm by the user",
-            "type_id": 19
-          },
-          {
-            "id": 9,
-            "name": "system form field name",
-            "description": "the name field in a form",
-            "type_id": 20
-          },
-          {
-            "id": 10,
-            "name": "system form field description",
-            "description": "the description field in a form",
-            "type_id": 21
-          },
-          {
-            "id": 16,
-            "name": "system form button cancel",
-            "description": "button to cancel the form action and go back to the previous view",
-            "type_id": 26
+            "id": 17,
+            "name": "system form button save",
+            "description": "button to save the form field into the database",
+            "type_id": 27,
+            "link_id": 43,
+            "position": 1
           },
           {
             "id": 17,
             "name": "system form button save",
             "description": "button to save the form field into the database",
-            "type_id": 27
+            "type_id": 27,
+            "link_id": 44,
+            "position": 2
+          },
+          {
+            "id": 17,
+            "name": "system form button save",
+            "description": "button to save the form field into the database",
+            "type_id": 27,
+            "link_id": 45,
+            "position": 3
+          },
+          {
+            "id": 17,
+            "name": "system form button save",
+            "description": "button to save the form field into the database",
+            "type_id": 27,
+            "link_id": 46,
+            "position": 4
+          },
+          {
+            "id": 17,
+            "name": "system form button save",
+            "description": "button to save the form field into the database",
+            "type_id": 27,
+            "link_id": 48,
+            "position": 6
+          },
+          {
+            "id": 17,
+            "name": "system form button save",
+            "description": "button to save the form field into the database",
+            "type_id": 27,
+            "link_id": 47,
+            "position": 5
+          },
+          {
+            "id": 17,
+            "name": "system form button save",
+            "description": "button to save the form field into the database",
+            "type_id": 27,
+            "link_id": 49,
+            "position": 7
           }
         ]
       },

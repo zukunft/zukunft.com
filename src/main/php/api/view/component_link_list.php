@@ -2,8 +2,8 @@
 
 /*
 
-    api/view/component_list_api.php - a list object of minimal/api view component objects
-    -----------------
+    api/view/component_link_list.php - a list of api component links
+    --------------------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -30,57 +30,42 @@
 
 */
 
-namespace api\component;
+namespace api\view;
 
 use api\list_api;
-use html\word\word_list as word_list_dsp;
 
-class component_list extends list_api
+class component_link_list extends list_api
 {
 
     /*
      * construct and map
      */
 
-    function __construct(array $lst = array())
-    {
-        parent::__construct($lst);
-    }
-
     /**
-     * add a view component to the list
+     * add a link of component to a view to the list
+     * the same component can be linked several times at different positions
+     *
      * @returns bool true if at least one component has been added
      */
-    function add(component_api $phr): bool
+    function add(component_link $lnk): bool
     {
-        return parent::add_obj($phr);
-    }
-
-
-    /*
-     * cast
-     */
-
-    /**
-     * @returns word_list_dsp the cast object with the HTML code generating functions
-     */
-    function dsp_obj(): word_list_dsp
-    {
-        $dsp_obj = new word_list_dsp();
-
-        // cast the single list objects
-        $lst_dsp = array();
-        foreach ($this->lst() as $wrd) {
-            if ($wrd != null) {
-                $wrd_dsp = $wrd->dsp_obj();
-                $lst_dsp[] = $wrd_dsp;
+        $do_add = true;
+        if (in_array($lnk->id(), $this->id_lst())) {
+            $do_add = false;
+        } else {
+            foreach ($this->lst() as $lst_lnk) {
+                if ($lst_lnk->view()->id() == $lnk->view()->id()
+                    and $lst_lnk->component()->id() == $lnk->component()->id()
+                    and $lst_lnk->pos() == $lnk->pos()) {
+                    $do_add = false;
+                }
             }
         }
-
-        $dsp_obj->set_lst($lst_dsp);
-        $dsp_obj->set_lst_dirty();
-
-        return $dsp_obj;
+        if ($do_add) {
+            $this->add_obj($lnk);
+            $this->set_lst_dirty();
+        }
+        return $do_add;
     }
 
 }

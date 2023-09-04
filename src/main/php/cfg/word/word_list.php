@@ -88,7 +88,7 @@ class word_list extends sandbox_list
     function api_obj(): word_list_api
     {
         $api_obj = new word_list_api();
-        foreach ($this->lst as $wrd) {
+        foreach ($this->lst() as $wrd) {
             $api_obj->add($wrd->api_obj());
         }
         return $api_obj;
@@ -108,7 +108,7 @@ class word_list extends sandbox_list
     function dsp_obj(): word_list_dsp
     {
         $dsp_obj = new word_list_dsp();
-        foreach ($this->lst as $wrd) {
+        foreach ($this->lst() as $wrd) {
             $wrd_dsp = new word_dsp($wrd->api_json());
             $dsp_obj->add($wrd_dsp);
         }
@@ -288,7 +288,7 @@ class word_list extends sandbox_list
     {
         $qp = $this->load_sql($sc);
         $join_field = '';
-        if (count($this->lst) <= 0) {
+        if ($this->count() <= 0) {
             log_warning('The word list is empty, so nothing could be found', self::class . "->load_sql_by_linked_type");
             $qp->name = '';
         } else {
@@ -360,7 +360,7 @@ class word_list extends sandbox_list
                 foreach ($db_rows as $db_row) {
                     $wrd = new word($this->user());
                     $wrd->row_mapper_sandbox($db_row);
-                    $this->lst[] = $wrd;
+                    $this->add_obj($wrd);
                     $result = true;
                 }
             }
@@ -566,7 +566,7 @@ class word_list extends sandbox_list
             if ($loops >= MAX_RECURSIVE) {
                 log_fatal("max number (" . $loops . ") of loops reached.", "word_list->foaf_level");
             }
-        } while (!empty($additional_added->lst) and $loops < $max_loops);
+        } while (!empty($additional_added->lst()) and $loops < $max_loops);
         log_debug('->foaf_level done');
         return $added_wrd_lst;
     }
@@ -692,11 +692,11 @@ class word_list extends sandbox_list
         $wrd_lst = $wrd_lst->contains();
         $added_lst = clone $wrd_lst;
         $added_lst->diff($this);
-        if (count($added_lst->lst) > 0) {
+        if (count($added_lst->lst()) > 0) {
             log_debug('add ' . $added_lst->name() . ' to ' . $wrd_lst->name());
         }
         // ... and after that get only for the new
-        if (count($added_lst->lst) > 0) {
+        if (count($added_lst->lst()) > 0) {
             $loops = 0;
             log_debug('added ' . $added_lst->name() . ' to ' . $wrd_lst->name());
             do {
@@ -705,12 +705,12 @@ class word_list extends sandbox_list
                 $next_lst = $next_lst->contains();
                 $next_lst->diff($added_lst);
                 $added_lst->merge($next_lst);
-                if (count($next_lst->lst) > 0) {
+                if (count($next_lst->lst()) > 0) {
                     log_debug('add ' . $next_lst->name() . ' to ' . $wrd_lst->name());
                 }
                 $wrd_lst->merge($added_lst);
                 $loops++;
-            } while (count($next_lst->lst) > 0 and $loops < MAX_LOOP);
+            } while (count($next_lst->lst()) > 0 and $loops < MAX_LOOP);
         }
         log_debug($this->dsp_id() . ' are_and_contains ' . $wrd_lst->name());
         return $wrd_lst;
@@ -765,7 +765,7 @@ class word_list extends sandbox_list
     function keep_only_specific(): word_list
     {
         $parents = new word_list($this->user());
-        foreach ($this->lst as $wrd) {
+        foreach ($this->lst() as $wrd) {
             $phr_lst = $wrd->parents();
             $wrd_lst = $phr_lst->wrd_lst_all();
             $parents->merge($wrd_lst);
@@ -788,7 +788,7 @@ class word_list extends sandbox_list
         log_debug('->add ' . $wrd_to_add->dsp_id());
         if (!in_array($wrd_to_add->id(), $this->ids())) {
             if ($wrd_to_add->id() > 0) {
-                $this->lst[] = $wrd_to_add;
+                $this->add_obj($wrd_to_add);
             }
         }
     }
@@ -844,7 +844,7 @@ class word_list extends sandbox_list
     {
         $result = false;
         log_debug('->merge ' . $new_wrd_lst->name() . ' to ' . $this->dsp_id() . '"');
-        foreach ($new_wrd_lst->lst as $new_wrd) {
+        foreach ($new_wrd_lst->lst() as $new_wrd) {
             log_debug('->merge add ' . $new_wrd->name() . ' (' . $new_wrd->id() . ')');
             $this->add($new_wrd);
             $result = true;
@@ -870,15 +870,15 @@ class word_list extends sandbox_list
             log_err('Phrases to delete are missing.', 'word_list->diff');
         }
 
-        if (count($this->lst) > 0) {
+        if (count($this->lst()) > 0) {
             $result = array();
             $lst_ids = $del_wrd_lst->ids();
-            foreach ($this->lst as $wrd) {
+            foreach ($this->lst() as $wrd) {
                 if (!in_array($wrd->id(), $lst_ids)) {
                     $result[] = $wrd;
                 }
             }
-            $this->lst = $result;
+            $this->set_lst($result);
         }
 
         log_debug($this->dsp_id());
@@ -896,8 +896,8 @@ class word_list extends sandbox_list
             if ($del_wrd_id > 0) {
                 if (in_array($del_wrd_id, $this->ids())) {
                     $del_pos = array_search($del_wrd_id, $this->ids());
-                    log_debug('exclude (' . $this->lst[$del_pos]->name() . ')');
-                    unset ($this->lst[$del_pos]);
+                    log_debug('exclude (' . $this->get_by_id($del_pos)->name() . ')');
+                    $this->unset_by_id($del_pos);
                 }
             }
         }
@@ -955,7 +955,7 @@ class word_list extends sandbox_list
         $name_lst = array();
         $result = array();
         $pos = 0;
-        foreach ($this->lst as $wrd) {
+        foreach ($this->lst() as $wrd) {
             $name_lst[$pos] = $wrd->name();
             $pos++;
         }
@@ -963,15 +963,15 @@ class word_list extends sandbox_list
         log_debug('sorted "' . implode('","', $name_lst) . '" (' . $lib->dsp_array(array_keys($name_lst)) . ')');
         foreach (array_keys($name_lst) as $sorted_id) {
             log_debug('get ' . $sorted_id);
-            $wrd_to_add = $this->lst[$sorted_id];
+            $wrd_to_add = $this->get($sorted_id);
             log_debug('got ' . $wrd_to_add->name());
             $result[] = $wrd_to_add;
         }
         // check
-        if (count($this->lst) <> count($result)) {
-            log_err("Sorting changed the number of words from " . $lib->dsp_count($this->lst) . " to " . $lib->dsp_count($result) . ".", "word_list->wlsort");
+        if (count($this->lst()) <> count($result)) {
+            log_err("Sorting changed the number of words from " . $lib->dsp_count($this->lst()) . " to " . $lib->dsp_count($result) . ".", "word_list->wlsort");
         } else {
-            $this->lst = $result;
+            $this->set_lst($result);
         }
         log_debug('sorted ' . $this->dsp_id());
         return $result;
@@ -1005,15 +1005,15 @@ class word_list extends sandbox_list
             log_err(get_class($filter_lst) . ' cannot be used to delete words.', 'word_list->filter');
         }
 
-        if (count($result->lst) > 0) {
+        if (count($result->lst()) > 0) {
             $wrd_lst = array();
             $lst_ids = $filter_lst->ids();
-            foreach ($result->lst as $wrd) {
+            foreach ($result->lst() as $wrd) {
                 if (in_array($wrd->id(), $lst_ids)) {
                     $wrd_lst[] = $wrd;
                 }
             }
-            $result->lst = $wrd_lst;
+            $result->set_lst($wrd_lst);
             log_debug($result->dsp_id());
         }
 
@@ -1033,7 +1033,7 @@ class word_list extends sandbox_list
         $result = new word_list($this->user());
         $time_type = $phrase_types->id(phrase_type::TIME);
         // loop over the word ids and add only the time ids to the result array
-        foreach ($this->lst as $wrd) {
+        foreach ($this->lst() as $wrd) {
             if ($wrd->type_id() == $time_type) {
                 $result->add($wrd);
                 log_debug('found (' . $wrd->name() . ')');
@@ -1041,10 +1041,10 @@ class word_list extends sandbox_list
                 log_debug('not found (' . $wrd->name() . ')');
             }
         }
-        if (count($result->lst) < 10) {
+        if (count($result->lst()) < 10) {
             log_debug('total found ' . $result->dsp_id());
         } else {
-            log_debug('total found: ' . $lib->dsp_count($result->lst) . ' ');
+            log_debug('total found: ' . $lib->dsp_count($result->lst()) . ' ');
         }
         return $result;
     }
@@ -1093,15 +1093,15 @@ class word_list extends sandbox_list
         $result = new word_list($this->user());
         $measure_type = $phrase_types->id(phrase_type::MEASURE);
         // loop over the word ids and add only the time ids to the result array
-        foreach ($this->lst as $wrd) {
+        foreach ($this->lst() as $wrd) {
             if ($wrd->type_id == $measure_type) {
-                $result->lst[] = $wrd;
+                $result->add_obj($wrd);
                 log_debug('found (' . $wrd->name() . ')');
             } else {
                 log_debug($wrd->name() . ' is not measure');
             }
         }
-        log_debug($lib->dsp_count($result->lst));
+        log_debug($lib->dsp_count($result->lst()));
         return $result;
     }
 
@@ -1120,10 +1120,10 @@ class word_list extends sandbox_list
         $scale_type = $phrase_types->id(phrase_type::SCALING);
         $scale_hidden_type = $phrase_types->id(phrase_type::SCALING_HIDDEN);
         // loop over the word ids and add only the time ids to the result array
-        foreach ($this->lst as $wrd) {
+        foreach ($this->lst() as $wrd) {
             if ($wrd->type_id == $scale_type or $wrd->type_id == $scale_hidden_type) {
                 $wrd->usr = $this->user(); // review: should not be needed
-                $result->lst[] = $wrd;
+                $result->add_obj($wrd);
                 log_debug('found (' . $wrd->name() . ')');
             } else {
                 log_debug('not found (' . $wrd->name() . ')');
@@ -1147,9 +1147,9 @@ class word_list extends sandbox_list
         $result = new word_list($this->user());
         $percent_type = $phrase_types->id(phrase_type::PERCENT);
         // loop over the word ids and add only the time ids to the result array
-        foreach ($this->lst as $wrd) {
+        foreach ($this->lst() as $wrd) {
             if ($wrd->type_id == $percent_type) {
-                $result->lst[] = $wrd;
+                $result->add_obj($wrd);
                 log_debug('found (' . $wrd->name() . ')');
             } else {
                 log_debug($wrd->name() . ' is not percent');
@@ -1191,7 +1191,7 @@ class word_list extends sandbox_list
     function export_obj(bool $do_load = true): array
     {
         $exp_words = array();
-        foreach ($this->lst as $wrd) {
+        foreach ($this->lst() as $wrd) {
             if (get_class($wrd) == word::class or get_class($wrd) == word_dsp::class) {
                 if ($wrd->has_cfg()) {
                     $exp_words[] = $wrd->export_obj($do_load);
@@ -1214,7 +1214,7 @@ class word_list extends sandbox_list
     function ids(): array
     {
         $result = array();
-        foreach ($this->lst as $wrd) {
+        foreach ($this->lst() as $wrd) {
             if ($wrd->id() > 0) {
                 $result[] = $wrd->id();
             }
@@ -1269,7 +1269,7 @@ class word_list extends sandbox_list
         } else {
             $result .= '"' . implode('","', array_slice($this->names(), 0, 7));
             if (count($this->names()) > 8) {
-                $result .= ' ... total ' . $lib->dsp_count($this->lst);
+                $result .= ' ... total ' . $lib->dsp_count($this->lst());
             }
             $result .= '"';
         }
@@ -1283,7 +1283,7 @@ class word_list extends sandbox_list
     function names(): array
     {
         $result = array();
-        foreach ($this->lst as $wrd) {
+        foreach ($this->lst() as $wrd) {
             if (isset($wrd)) {
                 $result[] = $wrd->name();
             }
@@ -1339,7 +1339,7 @@ class word_list extends sandbox_list
         log_debug($this->dsp_id());
         $lib = new library();
         $phr_lst = new phrase_list($this->user());
-        foreach ($this->lst as $phr) {
+        foreach ($this->lst() as $phr) {
             if (get_class($phr) == word::class or get_class($phr) == word_dsp::class) {
                 $phr_lst->add($phr->phrase());
             } elseif (get_class($phr) == phrase::class) {
@@ -1402,7 +1402,7 @@ class word_list extends sandbox_list
     {
         $result = false;
 
-        foreach ($this->lst as $wrd) {
+        foreach ($this->lst() as $wrd) {
             if ($wrd->id() == $wrd_to_check->id()) {
                 $result = true;
             }
@@ -1419,7 +1419,7 @@ class word_list extends sandbox_list
         log_debug('for ' . $this->dsp_id());
         $result = false;
         // loop over the word ids and add only the time ids to the result array
-        foreach ($this->lst as $wrd) {
+        foreach ($this->lst() as $wrd) {
             log_debug('check (' . $wrd->name() . ')');
             if (!$result) {
                 if ($wrd->is_time()) {
@@ -1438,7 +1438,7 @@ class word_list extends sandbox_list
     {
         $result = false;
         // loop over the word ids and add only the time ids to the result array
-        foreach ($this->lst as $wrd) {
+        foreach ($this->lst() as $wrd) {
             log_debug('check (' . $wrd->name() . ')');
             if (!$result) {
                 if ($wrd->is_measure()) {
@@ -1457,7 +1457,7 @@ class word_list extends sandbox_list
     {
         $result = false;
         // loop over the word ids and add only the time ids to the result array
-        foreach ($this->lst as $wrd) {
+        foreach ($this->lst() as $wrd) {
             log_debug('check (' . $wrd->name() . ')');
             if (!$result) {
                 if ($wrd->is_scaling()) {
@@ -1477,7 +1477,7 @@ class word_list extends sandbox_list
     {
         $result = false;
         // loop over the word ids and add only the time ids to the result array
-        foreach ($this->lst as $wrd) {
+        foreach ($this->lst() as $wrd) {
             log_debug('check (' . $wrd->name() . ')');
             if (!$result) {
                 if ($wrd->is_percent()) {
@@ -1504,7 +1504,7 @@ class word_list extends sandbox_list
         $lib = new library();
         log_debug();
 
-        foreach ($this->lst as $wrd) {
+        foreach ($this->lst() as $wrd) {
             // $wrd_dsp = $wrd->dsp_obj();
             // TODO review $view = $wrd_dsp->view();
             $view = $wrd->view();
@@ -1537,8 +1537,8 @@ class word_list extends sandbox_list
     {
         log_debug($this->dsp_id() . ' and user ' . $this->user()->name);
         $max_wrd = new word($this->user());
-        if (count($this->lst) > 0) {
-            foreach ($this->lst as $wrd) {
+        if (count($this->lst()) > 0) {
+            foreach ($this->lst() as $wrd) {
                 // TODO replaced by "is following"
                 if ($wrd->name() > $max_wrd->name()) {
                     log_debug('select (' . $wrd->name() . ' instead of ' . $max_wrd->name() . ')');
@@ -1651,7 +1651,7 @@ class word_list extends sandbox_list
             // get the last time from the word list
             $time_phr_lst = $this->time_lst();
             // shortcut, replace with a most_useful function
-            foreach ($time_phr_lst->lst as $time_wrd) {
+            foreach ($time_phr_lst->lst() as $time_wrd) {
                 if (is_null($phr)) {
                     $phr = $time_wrd;
                     $phr->set_user($this->user());

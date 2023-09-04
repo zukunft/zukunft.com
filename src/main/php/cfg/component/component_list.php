@@ -32,6 +32,7 @@
 namespace cfg\component;
 
 include_once API_COMPONENT_PATH . 'component_list.php';
+include_once API_VIEW_PATH . 'component_link_list.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
 
 use api\component\component_list AS component_list_api;
@@ -77,7 +78,7 @@ class component_list extends sandbox_list
     function api_obj(): component_list_api
     {
         $api_obj = new component_list_api();
-        foreach ($this->lst as $dsp) {
+        foreach ($this->lst() as $dsp) {
             $api_obj->add($dsp->api_obj());
         }
         return $api_obj;
@@ -132,41 +133,59 @@ class component_list extends sandbox_list
 
     /**
      * set the common SQL query parameters to load a list of components
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc the db connection object as a function parameter for unit testing
      * @param string $class the name of this class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con, string $class = self::class): sql_par
+    function load_sql(sql_creator $sc, string $class = self::class): sql_par
     {
         $qp = new sql_par($class);
-        $db_con->set_type(sql_db::TBL_COMPONENT);
-        $db_con->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
-        $db_con->set_usr($this->user()->id());
-        $db_con->set_fields(component::FLD_NAMES);
-        $db_con->set_usr_fields(component::FLD_NAMES_USR);
-        $db_con->set_usr_num_fields(component::FLD_NAMES_NUM_USR);
+        $sc->set_type(sql_db::TBL_COMPONENT);
+        $sc->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
+        $sc->set_usr($this->user()->id());
+        $sc->set_fields(component::FLD_NAMES);
+        $sc->set_usr_fields(component::FLD_NAMES_USR);
+        $sc->set_usr_num_fields(component::FLD_NAMES_NUM_USR);
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve a list of sources from the database
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_ids(sql_creator $sc, array $ids): sql_par
+    {
+        $qp = $this->load_sql($sc, 'ids');
+        $sc->add_where(component::FLD_ID, $ids);
+        $sc->set_order(component::FLD_ID, sql_db::ORDER_ASC);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
         return $qp;
     }
 
     /**
      * set the SQL query parameters to load a list of components by the view id
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc the db connection object as a function parameter for unit testing
      * @param int $id the id of the view to which the components should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_view_id(sql_db $db_con, int $id): sql_par
+    function load_sql_by_view_id(sql_creator $sc, int $id): sql_par
     {
-        $qp = $this->load_sql($db_con);
+        $qp = $this->load_sql($sc);
         $qp->name .= 'view_id';
-        $db_con->set_name($qp->name);
-        $db_con->set_join_fields(
+        $sc->set_name($qp->name);
+        $sc->set_join_fields(
             component_link::FLD_NAMES,
             sql_db::TBL_COMPONENT_LINK,
             component::FLD_ID,
             component::FLD_ID);
-        $db_con->set_order(component_link::FLD_ORDER_NBR, '', sql_db::LNK_TBL);
-        $qp->sql = $db_con->select_by_join_field(view::FLD_ID, $id);
-        $qp->par = $db_con->get_par();
+        $sc->add_where(sql_db::LNK_TBL . '.' . view::FLD_ID, $id);
+        $sc->set_order(component_link::FLD_ORDER_NBR, '', sql_db::LNK_TBL);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
 
         return $qp;
     }
@@ -184,6 +203,20 @@ class component_list extends sandbox_list
     }
 
     /**
+     * load the components selected by the id
+     *
+     * @param array $ids of components ids that should be loaded
+     * @return bool true if at least one component has been loaded
+     */
+    function load_by_ids(array $ids): bool
+    {
+        global $db_con;
+
+        $qp = $this->load_sql_by_ids($db_con->sql_creator(), $ids);
+        return $this->load($qp);
+    }
+
+    /**
      * load the components of a view from the database selected by id
      * @param int $id the id of the view
      * @return bool true if at least one component has been loaded
@@ -193,7 +226,7 @@ class component_list extends sandbox_list
         global $db_con;
 
         log_debug($id);
-        $qp = $this->load_sql_by_view_id($db_con, $id);
+        $qp = $this->load_sql_by_view_id($db_con->sql_creator(), $id);
         return parent::load($qp);
     }
 
@@ -207,7 +240,7 @@ class component_list extends sandbox_list
         log_debug($cmp_to_add->dsp_id());
         if (!in_array($cmp_to_add->id(), $this->ids())) {
             if ($cmp_to_add->id() <> 0) {
-                $this->lst[] = $cmp_to_add;
+                $this->add_obj($cmp_to_add);
             }
         } else {
             log_debug($cmp_to_add->dsp_id() . ' not added, because it is already in the list');
@@ -246,7 +279,7 @@ class component_list extends sandbox_list
     function export_obj(bool $do_load = true): array
     {
         $exp_components = array();
-        foreach ($this->lst as $dsp) {
+        foreach ($this->lst() as $dsp) {
             $exp_components[] = $dsp->export_obj($do_load);
         }
         return $exp_components;

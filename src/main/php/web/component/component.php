@@ -117,6 +117,9 @@ class component extends sandbox_typed
             component_type::FORM_SAVE => $this->form_save($dbo, $back),
             component_type::FORM_DEL => $this->form_del($dbo, $back),
             component_type::FORM_END => $this->form_end(),
+            component_type::ROW_START => $this->row_start(),
+            component_type::ROW_RIGHT => $this->row_right(),
+            component_type::ROW_END => $this->row_end(),
             default => 'program code for component type ' . $type_code_id . ' missing<br>'
         };
 
@@ -392,6 +395,33 @@ class component extends sandbox_typed
     {
         $html = new html_base();
         return $html->form_end();
+    }
+
+    /**
+     * @return string combine the next elements to one row
+     */
+    function row_start(): string
+    {
+        $html = new html_base();
+        return $html->row_start();
+    }
+
+    /**
+     * @return string combine the next elements to one row and align to the right
+     */
+    function row_right(): string
+    {
+        $html = new html_base();
+        return $html->row_right();
+    }
+
+    /**
+     * @return string just to indicate that a row ends
+     */
+    function row_end(): string
+    {
+        $html = new html_base();
+        return $html->row_end();
     }
 
 

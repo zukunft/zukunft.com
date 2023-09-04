@@ -36,10 +36,13 @@
 namespace cfg;
 
 include_once DB_PATH . 'sql_par_type.php';
+include_once API_VIEW_PATH . 'component_link.php';
 
 use cfg\component\component;
+use api\view\component_link as component_link_api;
 use cfg\db\sql_creator;
 use cfg\db\sql_par_type;
+use model\export\exp_obj;
 
 class component_link extends sandbox_link_with_type
 {
@@ -162,6 +165,85 @@ class component_link extends sandbox_link_with_type
         }
         return $result;
     }
+
+
+    /*
+     * set and get
+     */
+
+    /**
+     * rename to standard link to object to component
+     * @param component $cmp
+     */
+    function set_component(component $cmp): void
+    {
+        $this->tob = $cmp;
+    }
+
+    /**
+     * rename to standard link from object to view
+     * @return object
+     */
+    function view(): object
+    {
+        return $this->fob;
+    }
+
+    /**
+     * rename to standard link to object to component
+     * @return object
+     */
+    function component(): object
+    {
+        return $this->tob;
+    }
+
+    /**
+     * expose the order number as pos
+     * @return int
+     */
+    function pos(): int
+    {
+        return $this->order_nbr;
+    }
+
+
+    /*
+     * cast
+     */
+
+    /**
+     * @param object $api_obj minimal component link object that vars should be set based on this object vars
+     */
+    function fill_api_obj(object $api_obj): void
+    {
+        $api_obj->set_id($this->id());
+        if ($this->tob != null) {
+            $api_obj->set_component($this->tob->api_obj());
+        }
+        $api_obj->set_pos($this->order_nbr);
+
+        //$api_obj->set_type_id($this->type_id());
+    }
+
+    /**
+     * @return component_link_api the view component frontend api object
+     */
+    function api_obj(): object
+    {
+        $api_obj = new component_link_api();
+        $this->fill_api_obj($api_obj);
+        return $api_obj;
+    }
+
+    /**
+     * @returns string the api json message for the object as a string
+     */
+    function api_json(): string
+    {
+        return $this->api_obj()->get_json();
+    }
+
 
     /*
      * loading
@@ -638,6 +720,25 @@ class component_link extends sandbox_link_with_type
         }
         return $result;
     }
+
+
+    /*
+     * im- and export
+     */
+
+    /**
+     * fill the component export object to create a json
+     * which does not include the internal database id
+     */
+    function export_obj(bool $do_load = true): exp_obj
+    {
+        $result = $this->tob->export_obj($do_load);
+        if ($this->order_nbr >= 0) {
+            $result->position = $this->order_nbr;
+        }
+        return $result;
+    }
+
 
     // check if the database record for the user specific settings can be removed
 

@@ -38,7 +38,7 @@ use JsonSerializable;
 class list_api implements JsonSerializable
 {
     // the protected main var
-    protected array $lst;
+    private array $lst;
 
     // memory vs speed optimize vars
     private array $id_lst;
@@ -56,7 +56,7 @@ class list_api implements JsonSerializable
         $this->lst_dirty = false;
 
         if (count($lst) > 0) {
-            $this->set_lst($lst);
+            $this->lst = $lst;
         }
     }
 
@@ -135,12 +135,14 @@ class list_api implements JsonSerializable
 
     /**
      * add a phrase or ... to the list
+     * @param object $obj the api object that should be added
+     * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
      * @returns bool true if the object has been added
      */
-    protected function add_obj(object $obj): bool
+    protected function add_obj(object $obj, bool $allow_duplicates = false): bool
     {
         $result = false;
-        if (!in_array($obj->id(), $this->id_lst())) {
+        if (!in_array($obj->id(), $this->id_lst()) or $allow_duplicates) {
             $this->lst[] = $obj;
             $this->lst_dirty = true;
             $result = true;

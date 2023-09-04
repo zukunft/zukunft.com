@@ -616,9 +616,10 @@ class component extends sandbox_typed
         return $result;
     }
 
+
     /*
-    display functions
-    */
+     * display
+     */
 
     function name(): string
     {

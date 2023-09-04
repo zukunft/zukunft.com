@@ -282,35 +282,35 @@ class verb_list extends type_list
      */
     function load_dummy(): void
     {
-        $type = new verb();
-        $type->set_id(1);
-        $type->set_name(verb::NOT_SET);
-        $type->code_id = verb::NOT_SET;
-        $this->lst[1] = $type;
+        $vrb = new verb();
+        $vrb->set_id(1);
+        $vrb->set_name(verb::NOT_SET);
+        $vrb->code_id = verb::NOT_SET;
+        $this->lst[1] = $vrb;
         $this->hash[verb::NOT_SET] = 1;
-        $type = new verb();
-        $type->set_id(2);
-        $type->set_name(verb::IS);
-        $type->code_id = verb::IS;
-        $this->lst[2] = $type;
+        $vrb = new verb();
+        $vrb->set_id(2);
+        $vrb->set_name(verb::IS);
+        $vrb->code_id = verb::IS;
+        $this->lst[2] = $vrb;
         $this->hash[verb::IS] = 2;
-        $type = new verb();
-        $type->set_id(3);
-        $type->set_name(verb::IS_PART_OF);
-        $type->code_id = verb::IS_PART_OF;
-        $this->lst[3] = $type;
+        $vrb = new verb();
+        $vrb->set_id(3);
+        $vrb->set_name(verb::IS_PART_OF);
+        $vrb->code_id = verb::IS_PART_OF;
+        $this->lst[3] = $vrb;
         $this->hash[verb::IS_PART_OF] = 3;
-        $type = new verb();
-        $type->set_id(4);
-        $type->set_name(verb::IS_WITH);
-        $type->code_id = verb::IS_WITH;
-        $this->lst[4] = $type;
+        $vrb = new verb();
+        $vrb->set_id(4);
+        $vrb->set_name(verb::IS_WITH);
+        $vrb->code_id = verb::IS_WITH;
+        $this->lst[4] = $vrb;
         $this->hash[verb::IS_WITH] = 4;
-        $type = new verb();
-        $type->set_id(9);
-        $type->set_name(verb::FOLLOW);
-        $type->code_id = verb::FOLLOW;
-        $this->lst[9] = $type;
+        $vrb = new verb();
+        $vrb->set_id(9);
+        $vrb->set_name(verb::FOLLOW);
+        $vrb->code_id = verb::FOLLOW;
+        $this->lst[9] = $vrb;
         $this->hash[verb::FOLLOW] = 9;
     }
 

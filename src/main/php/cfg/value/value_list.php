@@ -286,11 +286,11 @@ class value_list extends sandbox_list
                     if (is_null($db_val[sandbox::FLD_EXCLUDED]) or $db_val[sandbox::FLD_EXCLUDED] == 0) {
                         $val = new value($this->user());
                         $val->row_mapper_sandbox($db_val);
-                        $this->lst[] = $val;
+                        $this->add_obj($val);
                         $result = true;
                     }
                 }
-                log_debug($lib->dsp_count($this->lst));
+                log_debug($lib->dsp_count($this->lst()));
             }
         }
 
@@ -349,8 +349,8 @@ class value_list extends sandbox_list
             if (is_null($db_val[sandbox::FLD_EXCLUDED]) or $db_val[sandbox::FLD_EXCLUDED] == 0) {
                 $val = new value($this->user());
                 $val->row_mapper_sandbox($db_val);
-                $this->lst[] = $val;
-                log_debug($lib->dsp_count($this->lst));
+                $this->add_obj($val);
+                log_debug($lib->dsp_count($this->lst()));
                 $result = true;
             }
         }
@@ -400,11 +400,11 @@ class value_list extends sandbox_list
                         if (is_null($db_val[sandbox::FLD_EXCLUDED]) or $db_val[sandbox::FLD_EXCLUDED] == 0) {
                             $val = new value($this->user());
                             $val->row_mapper_sandbox($db_val);
-                            $this->lst[] = $val;
+                            $this->add_obj($val);
                         }
                     }
                 }
-                log_debug($lib->dsp_count($this->lst));
+                log_debug($lib->dsp_count($this->lst()));
             }
         }
         log_debug('done');
@@ -498,12 +498,12 @@ class value_list extends sandbox_list
                             $val->set_source_id($db_val[source::FLD_ID]);
                             $val->last_update = $lib->get_datetime($db_val[value::FLD_LAST_UPDATE]);
                             $val->grp->set_id($db_val[phrase_group::FLD_ID]);
-                            $this->lst[] = $val;
+                            $this->add_obj($val);
                         }
                     }
                 }
             }
-            log_debug($lib->dsp_count($this->lst));
+            log_debug($lib->dsp_count($this->lst()));
         }
     }
 
@@ -514,7 +514,7 @@ class value_list extends sandbox_list
     function load_phrases(): void
     {
         // loading via word group is the most used case, because to save database space and reading time the value is saved with the word group id
-        foreach ($this->lst as $val) {
+        foreach ($this->lst() as $val) {
             $val->load_phrases();
         }
     }
@@ -643,7 +643,7 @@ class value_list extends sandbox_list
                         } else {
                             $result->add_message($val_to_add->save());
                         }
-                        $this->lst[] = $val_to_add;
+                        $this->add_obj($val_to_add);
                     }
                 }
             }
@@ -669,12 +669,12 @@ class value_list extends sandbox_list
             $this->load_old();
         }
 
-        if (count($this->lst) > 1) {
+        if ($this->count() > 1) {
 
             // use the first value to get the context parameter
-            $val0 = $this->lst[0];
+            $val0 = $this->get(0);
             // use the second value to detect the context phrases
-            $val1 = $this->lst[1];
+            $val1 = $this->get(1);
 
             // get phrase names of the first value
             $phr_lst1 = $val0->phr_names();
@@ -708,7 +708,7 @@ class value_list extends sandbox_list
                 $result->source = $val0->source->name();
             }
 
-            foreach ($this->lst as $val) {
+            foreach ($this->lst() as $val) {
                 $phr_name = array_diff($val->phr_names(), $phr_lst);
                 if (count($phr_name) > 0) {
                     $val_entry = array();
@@ -735,14 +735,14 @@ class value_list extends sandbox_list
     {
         $lib = new library();
         $all_ids = array();
-        foreach ($this->lst as $val) {
+        foreach ($this->lst() as $val) {
             $all_ids = array_unique(array_merge($all_ids, array($val->time_id)));
         }
         $phr_lst = new phrase_list($this->user());
         if (count($all_ids) > 0) {
             $phr_lst->load_names_by_ids(new phr_ids($all_ids));
         }
-        log_debug($lib->dsp_count($phr_lst->lst));
+        log_debug($lib->dsp_count($phr_lst->lst()));
         return $phr_lst;
     }
 
@@ -755,7 +755,7 @@ class value_list extends sandbox_list
         $phr_lst = new phrase_list($this->user());
         $lib = new library();
 
-        foreach ($this->lst as $val) {
+        foreach ($this->lst() as $val) {
             if (!isset($val->phr_lst)) {
                 $val->load();
                 $val->load_phrases();
@@ -763,7 +763,7 @@ class value_list extends sandbox_list
             $phr_lst->merge($val->phr_lst);
         }
 
-        log_debug($lib->dsp_count($phr_lst->lst));
+        log_debug($lib->dsp_count($phr_lst->lst()));
         return $phr_lst;
     }
 
@@ -804,7 +804,7 @@ class value_list extends sandbox_list
         $result = array();
         $src_ids = array();
 
-        foreach ($this->lst as $val) {
+        foreach ($this->lst() as $val) {
             if ($val->source_id > 0) {
                 log_debug('test id ' . $val->source_id);
                 if (!in_array($val->source_id, $src_ids)) {
@@ -837,7 +837,7 @@ class value_list extends sandbox_list
     function numbers(): array
     {
         $result = array();
-        foreach ($this->lst as $val) {
+        foreach ($this->lst() as $val) {
             $result[] = $val->number();
         }
         return $result;
@@ -849,8 +849,8 @@ class value_list extends sandbox_list
     function id_lst(): array
     {
         $lst = array();
-        if (count($this->lst) > 0) {
-            foreach ($this->lst as $val) {
+        if ($this->count() > 0) {
+            foreach ($this->lst() as $val) {
                 // use only valid ids
                 if ($val->id() <> 0) {
                     $lst[] = $val->id();
@@ -874,7 +874,7 @@ class value_list extends sandbox_list
         log_debug();
         $lib = new library();
         $val_lst = array();
-        foreach ($this->lst as $val) {
+        foreach ($this->lst() as $val) {
             // only include time specific value
             if ($val->time_id > 0) {
                 // only include values within the specific time periods
@@ -889,9 +889,9 @@ class value_list extends sandbox_list
             }
         }
         $result = clone $this;
-        $result->lst = $val_lst;
+        $result->set_lst($val_lst);
 
-        log_debug($lib->dsp_count($result->lst));
+        log_debug($lib->dsp_count($result->lst()));
         return $result;
     }
 
@@ -901,9 +901,9 @@ class value_list extends sandbox_list
     function filter_by_phrase_lst($phr_lst): value_list
     {
         $lib = new library();
-        log_debug($lib->dsp_count($this->lst) . ' values by ' . $phr_lst->name());
+        log_debug($lib->dsp_count($this->lst()) . ' values by ' . $phr_lst->name());
         $result = array();
-        foreach ($this->lst as $val) {
+        foreach ($this->lst() as $val) {
             //$val->load_phrases();
             $val_phr_lst = $val->phr_lst;
             if (isset($val_phr_lst)) {
@@ -912,7 +912,7 @@ class value_list extends sandbox_list
                 log_debug('val no value phrase list');
             }
             $found = false;
-            foreach ($val_phr_lst->lst as $phr) {
+            foreach ($val_phr_lst->lst() as $phr) {
                 //zu_debug('value_list->filter_by_phrase_lst val is '.$phr->name().' in '.$phr_lst->name());
                 if (in_array($phr->name(), $phr_lst->names())) {
                     if (isset($val_phr_lst)) {
@@ -927,9 +927,9 @@ class value_list extends sandbox_list
                 $result[] = $val;
             }
         }
-        $this->lst = $result;
+        $this->set_lst($result);
 
-        log_debug($lib->dsp_count($this->lst));
+        log_debug($lib->dsp_count($this->lst()));
         return $this;
     }
 
@@ -946,7 +946,7 @@ class value_list extends sandbox_list
 
         $found = false;
         $result = null;
-        foreach ($this->lst as $val) {
+        foreach ($this->lst() as $val) {
             if (!$found) {
                 log_debug("check " . implode(",", $word_ids) . " with (" . implode(",", $val->ids) . ")");
                 $wrd_missing = $lib->lst_not_in($word_ids, $val->ids);
@@ -982,7 +982,7 @@ class value_list extends sandbox_list
         $found = false;
         $result = null;
         $row = 0;
-        foreach ($this->lst as $val) {
+        foreach ($this->lst() as $val) {
             if (!$found) {
                 // show only a few debug messages for a useful result
                 if ($row < 6) {
@@ -1023,7 +1023,7 @@ class value_list extends sandbox_list
     function has_values(): bool
     {
         $result = false;
-        if (count($this->lst) > 0) {
+        if ($this->count() > 0) {
             $result = true;
         }
         return $result;
@@ -1042,18 +1042,18 @@ class value_list extends sandbox_list
         log_debug();
         $lib = new library();
         $grp_lst = new phrase_group_list($this->user());
-        foreach ($this->lst as $val) {
+        foreach ($this->lst() as $val) {
             if (!isset($val->grp)) {
                 $val->load_grp_by_id();
             }
             if (isset($val->grp)) {
-                $grp_lst->lst[] = $val->grp;
+                $grp_lst->add_obj($val->grp);
             } else {
                 log_err("The phrase group for value " . $val->id . " cannot be loaded.", "value_list->phrase_groups");
             }
         }
 
-        log_debug($lib->dsp_count($grp_lst->lst));
+        log_debug($lib->dsp_count($grp_lst->lst()));
         return $grp_lst;
     }
 
@@ -1066,7 +1066,7 @@ class value_list extends sandbox_list
         $lib = new library();
         $grp_lst = $this->phrase_groups();
         $phr_lst = $grp_lst->common_phrases();
-        log_debug($lib->dsp_count($phr_lst->lst));
+        log_debug($lib->dsp_count($phr_lst->lst()));
         return $phr_lst;
     }
 
@@ -1098,9 +1098,9 @@ class value_list extends sandbox_list
             if (!$val->check()) {
                 $result = false;
             }
-            log_debug($lib->dsp_count($this->lst));
+            log_debug($lib->dsp_count($this->lst()));
         }
-        log_debug($lib->dsp_count($this->lst));
+        log_debug($lib->dsp_count($this->lst()));
         return $result;
     }
 
@@ -1213,28 +1213,26 @@ class value_list extends sandbox_list
     {
         $lib = new library();
         $html = new html_base();
-        log_debug($lib->dsp_count($this->lst));
+        log_debug($lib->dsp_count($this->lst()));
         $result = '';
 
         $html = new html_base();
 
         // get common words
         $common_phr_ids = array();
-        foreach ($this->lst as $val) {
+        foreach ($this->lst() as $val) {
             if ($val->check() > 0) {
                 log_warning('The group id for value ' . $val->id . ' has not been updated, but should now be correct.', "value_list->html");
             }
             $val->load_phrases();
             log_debug('value_list->html loaded');
             $val_phr_lst = $val->phr_lst;
-            if ($val_phr_lst->lst != null) {
-                if (count($val_phr_lst->lst) > 0) {
-                    log_debug('get words ' . $val->phr_lst->dsp_id() . ' for "' . $val->number() . '" (' . $val->id . ')');
-                    if (empty($common_phr_ids)) {
-                        $common_phr_ids = $val_phr_lst->id_lst();
-                    } else {
-                        $common_phr_ids = array_intersect($common_phr_ids, $val_phr_lst->id_lst());
-                    }
+            if ($val_phr_lst->count() > 0) {
+                log_debug('get words ' . $val->phr_lst->dsp_id() . ' for "' . $val->number() . '" (' . $val->id . ')');
+                if (empty($common_phr_ids)) {
+                    $common_phr_ids = $val_phr_lst->id_lst();
+                } else {
+                    $common_phr_ids = array_intersect($common_phr_ids, $val_phr_lst->id_lst());
                 }
             }
         }
@@ -1260,7 +1258,7 @@ class value_list extends sandbox_list
         $last_phr_lst = array();
 
         log_debug('add new button');
-        foreach ($this->lst as $val) {
+        foreach ($this->lst() as $val) {
             //$this->user()->id()  = $val->user()->id();
 
             // get the words
@@ -1355,7 +1353,7 @@ class value_list extends sandbox_list
         }
         */
         if ($common_phr_lst->is_valid()) {
-            if (!empty($common_phr_lst->lst)) {
+            if (!empty($common_phr_lst->lst())) {
                 $common_phr_lst->add($this->phr);
                 $phr_lst_dsp = new phrase_list_dsp($common_phr_lst->api_json());
                 $result .= $phr_lst_dsp->btn_add_value($back);
@@ -1375,7 +1373,7 @@ class value_list extends sandbox_list
     {
         $result = new user_message();
 
-        foreach ($this->lst as $val) {
+        foreach ($this->lst() as $val) {
             $result->add($val->del());
         }
         return new user_message();

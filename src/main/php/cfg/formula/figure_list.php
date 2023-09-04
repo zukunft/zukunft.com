@@ -59,7 +59,7 @@ class figure_list extends sandbox_list
     function api_obj(bool $do_save = true): figure_list_api
     {
         $api_obj = new figure_list_api();
-        foreach ($this->lst as $phr) {
+        foreach ($this->lst() as $phr) {
             $api_obj->add($phr->api_obj($do_save));
         }
         return $api_obj;
@@ -164,7 +164,7 @@ class figure_list extends sandbox_list
                         $fig = new figure(new value($this->user()));
                     }
                     $fig->row_mapper($db_row);
-                    $this->lst[] = $fig;
+                    $this->add_obj($fig);
                     $result = true;
                 }
             }
@@ -233,7 +233,7 @@ class figure_list extends sandbox_list
     {
         $result = '';
 
-        foreach ($this->lst as $fig) {
+        foreach ($this->lst() as $fig) {
             $result .= $fig->name() . ' ';
         }
 
@@ -255,7 +255,7 @@ class figure_list extends sandbox_list
     function ids(): array
     {
         $result = array();
-        foreach ($this->lst as $fig) {
+        foreach ($this->lst() as $fig) {
             // use only valid ids
             if ($fig->id() <> 0) {
                 $result[] = $fig->id();
@@ -271,8 +271,8 @@ class figure_list extends sandbox_list
     {
         $result = 0;
         if ($this != null) {
-            if (count($this->lst) > 0) {
-                $fig = $this->lst[0];
+            if (count($this->lst()) > 0) {
+                $fig = $this->get(0);
                 if ($fig != null) {
                     $result = $fig->id();
                 }
@@ -291,7 +291,7 @@ class figure_list extends sandbox_list
     {
         $result = '';
 
-        foreach ($this->lst as $fig) {
+        foreach ($this->lst() as $fig) {
             $t = new test_api();
             $fig_dsp = $t->dsp_obj($fig, new figure_dsp());
             $result .= $fig_dsp->display($back) . ' ';

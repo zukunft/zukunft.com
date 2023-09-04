@@ -141,7 +141,6 @@ class html_selector
     function end_selector(): string {
         if ($this->type == self::TYPE_DATALIST) {
             $result = '</datalist>';
-            $result .= '</input>';
         } else {
             $result = '</select>';
         }

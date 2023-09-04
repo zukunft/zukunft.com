@@ -94,17 +94,17 @@ class ref_list extends type_list
     private function load_list(sql_db $db_con, string $db_type): array
     {
         global $usr;
-        $this->lst = [];
-        $qp = $this->load_sql_all($db_con, $db_type);
+        $this->reset();
+        $qp = $this->load_sql_all($db_con->sql_creator(), $db_type);
         $db_lst = $db_con->get($qp);
         if ($db_lst != null) {
             foreach ($db_lst as $db_row) {
-                $vrb = new ref($usr);
-                $vrb->row_mapper_sandbox($db_row);
-                $this->lst[$db_row[$db_con->get_id_field_name($db_type)]] = $vrb;
+                $ref = new ref($usr);
+                $ref->row_mapper_sandbox($db_row);
+                $this->lst()[$db_row[$db_con->get_id_field_name($db_type)]] = $ref;
             }
         }
-        return $this->lst;
+        return $this->lst();
     }
 
     /**
@@ -117,9 +117,8 @@ class ref_list extends type_list
     function load(sql_db $db_con, string $db_type = sql_db::TBL_VERB): bool
     {
         $result = false;
-        $this->lst = $this->load_list($db_con, $db_type);
-        $this->hash = $this->get_hash($this->lst);
-        if (count($this->hash) > 0) {
+        $this->set_lst($this->load_list($db_con, $db_type));
+        if (count($this->hash()) > 0) {
             $result = true;
         }
         return $result;
@@ -136,8 +135,7 @@ class ref_list extends type_list
         $type->set_id(1);
         $type->set_name(ref_api::TN_READ);
         $type->code_id = ref_api::TN_READ;
-        $this->lst[1] = $type;
-        $this->hash[ref_api::TN_READ] = 1;
+        $this->add($type);
     }
 
 
@@ -151,10 +149,10 @@ class ref_list extends type_list
     function ids(): array
     {
         $result = array();
-        if ($this->lst != null) {
-            foreach ($this->lst as $vrb) {
-                if ($vrb->id()  > 0) {
-                    $result[] = $vrb->id() ;
+        if ($this->lst() != null) {
+            foreach ($this->lst() as $ref) {
+                if ($ref->id()  > 0) {
+                    $result[] = $ref->id() ;
                 }
             }
         }

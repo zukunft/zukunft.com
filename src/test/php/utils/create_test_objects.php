@@ -76,6 +76,7 @@ use cfg\component\component_pos_type_list;
 use cfg\component\component_type;
 use cfg\component\component_type_list;
 use cfg\component_link;
+use cfg\component_link_list;
 use cfg\figure;
 use cfg\figure_list;
 use cfg\formula;
@@ -789,7 +790,7 @@ class create_test_objects extends test_base
     function dummy_view_with_components(): view
     {
         $dsp = $this->dummy_view();
-        $dsp->cmp_lst = $this->dummy_component_list();
+        $dsp->cmp_lnk_lst = $this->dummy_component_link_list();
         return $dsp;
     }
 
@@ -799,7 +800,7 @@ class create_test_objects extends test_base
         $dsp->set(3, view_api::TN_FORM);
         $dsp->description = view_api::TD_FORM;
         $dsp->code_id = view_api::TI_FORM;
-        $dsp->cmp_lst = $this->dummy_components_word_add();
+        $dsp->cmp_lnk_lst = $this->dummy_components_word_add($dsp);
         return $dsp;
     }
 
@@ -916,19 +917,36 @@ class create_test_objects extends test_base
         return $lst;
     }
 
-    function dummy_components_word_add(): component_list
+    function dummy_component_link_list(): component_link_list
     {
-        $lst = new component_list($this->usr1);
-        $lst->add($this->dummy_component_word_add_title());
-        $lst->add($this->dummy_component_word_add_back_stack());
-        $lst->add($this->dummy_component_word_add_button_confirm());
-        $lst->add($this->dummy_component_word_add_name());
-        $lst->add($this->dummy_component_word_add_description());
-        $lst->add($this->dummy_component_word_add_share_type());
-        $lst->add($this->dummy_component_word_add_protection_type());
-        $lst->add($this->dummy_component_word_add_cancel());
-        $lst->add($this->dummy_component_word_add_save());
-        $lst->add($this->dummy_component_word_add_form_end());
+        $lst = new component_link_list($this->usr1);
+        $lst->add(1, $this->dummy_view(), $this->dummy_component(), 1);
+        return $lst;
+    }
+
+    function dummy_components_word_add(view $msk): component_link_list
+    {
+        $pos = 1;
+        $lst = new component_link_list($this->usr1);
+        $lst->add($pos, $msk, $this->dummy_component_word_add_title(), $pos);
+        $pos++;
+        $lst->add($pos, $msk, $this->dummy_component_word_add_back_stack(), $pos);
+        $pos++;
+        $lst->add($pos, $msk, $this->dummy_component_word_add_button_confirm(), $pos);
+        $pos++;
+        $lst->add($pos, $msk, $this->dummy_component_word_add_name(), $pos);
+        $pos++;
+        $lst->add($pos, $msk, $this->dummy_component_word_add_description(), $pos);
+        $pos++;
+        $lst->add($pos, $msk, $this->dummy_component_word_add_share_type(), $pos);
+        $pos++;
+        $lst->add($pos, $msk, $this->dummy_component_word_add_protection_type(), $pos);
+        $pos++;
+        $lst->add($pos, $msk, $this->dummy_component_word_add_cancel(), $pos);
+        $pos++;
+        $lst->add($pos, $msk, $this->dummy_component_word_add_save(), $pos);
+        $pos++;
+        $lst->add($pos, $msk, $this->dummy_component_word_add_form_end(), $pos);
         return $lst;
     }
 

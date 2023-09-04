@@ -93,7 +93,7 @@ class sandbox_list extends base_list
                 if (is_null($excluded) or $excluded == 0 or $load_all) {
                     $obj_to_add = clone $sdb_obj;
                     $obj_to_add->row_mapper_sandbox($db_row);
-                    $this->lst[] = $obj_to_add;
+                    $this->add_obj($obj_to_add);
                     $result = true;
                 }
             }
@@ -261,7 +261,7 @@ class sandbox_list extends base_list
 
     /**
      * add one object to the list of user sandbox objects, but only if it is not yet part of the list
-     * @param object $obj_to_add the formula backend object that should be added
+     * @param object $obj_to_add the backend object that should be added
      * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
      * @returns bool true the formula has been added
      */
@@ -282,7 +282,9 @@ class sandbox_list extends base_list
             }
         }
         if ($obj_to_add->id() <> 0 or $obj_to_add->name() != '') {
-            if (!$allow_duplicates) {
+            if ($allow_duplicates) {
+                $result = parent::add_obj($obj_to_add, $allow_duplicates);
+            } else {
                 $obj_id = $obj_to_add->id();
                 $ids = $this->ids();
                 if (!in_array($obj_to_add->id(), $this->ids())) {
@@ -291,12 +293,11 @@ class sandbox_list extends base_list
                     log_warning('Trying to add ' . $obj_to_add->dsp_id()
                         . ' which is already part of the ' . $obj_to_add::class . 'list');
                 }
-            } else {
-                $result = parent::add_obj($obj_to_add);
             }
         }
         return $result;
     }
+
 
 
     /*
@@ -319,9 +320,9 @@ class sandbox_list extends base_list
         }
 
 
-        if ($this->lst != null) {
+        if ($this->lst() != null) {
             $pos = 0;
-            foreach ($this->lst as $sbx_obj) {
+            foreach ($this->lst() as $sbx_obj) {
                 if ($min_names > $pos) {
                     if ($result <> '') $result .= ' / ';
                     $name = $sbx_obj->name();
@@ -337,8 +338,8 @@ class sandbox_list extends base_list
                     $pos++;
                 }
             }
-            if (count($this->lst) > $pos) {
-                $result .= ' ... total ' . $lib->dsp_count($this->lst);
+            if (count($this->lst()) > $pos) {
+                $result .= ' ... total ' . $lib->dsp_count($this->lst());
             }
             if ($debug > DEBUG_SHOW_USER) {
                 if ($this->user() != null) {
@@ -365,7 +366,7 @@ class sandbox_list extends base_list
     function names(): array
     {
         $result = [];
-        foreach ($this->lst as $sbx_obj) {
+        foreach ($this->lst() as $sbx_obj) {
             $result[] = $sbx_obj->name();
         }
         return $result;

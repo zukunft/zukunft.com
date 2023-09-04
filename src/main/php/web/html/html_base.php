@@ -1248,11 +1248,35 @@ class html_base
     }
 
     /**
-     * end a html form
+     * @return string html code to end a form
      */
     function form_end(): string
     {
         return '</form>';
+    }
+
+    /**
+     * @return string html code to combine the next elements to one row
+     */
+    function row_start(): string
+    {
+        return '<div class="row col-sm-12">';
+    }
+
+    /**
+     * @return string html code to combine the next elements to one row and align to the right
+     */
+    function row_right(): string
+    {
+        return '<div class="text-right">';
+    }
+
+    /**
+     * @return string html code to end a form
+     */
+    function row_end(): string
+    {
+        return '</div>';
     }
 
 

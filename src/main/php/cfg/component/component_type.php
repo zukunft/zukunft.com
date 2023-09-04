@@ -77,6 +77,10 @@ class component_type
     const FORM_DEL = "system_button_del";
     // simple close the form section
     const FORM_END = "form_end";
+    // internal components used for formatting
+    const ROW_START = "row_start";
+    const ROW_RIGHT = "row_right";
+    const ROW_END = "row_end";
 
     // list of component types that should not be used for non system views
     const SYSTEM_TYPES = array(
@@ -92,7 +96,10 @@ class component_type
         self::FORM_CANCEL,
         self::FORM_SAVE,
         self::FORM_DEL,
-        self::FORM_END
+        self::FORM_END,
+        self::ROW_START,
+        self::ROW_RIGHT,
+        self::ROW_END
     );
 
 }

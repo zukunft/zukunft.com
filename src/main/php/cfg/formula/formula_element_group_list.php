@@ -55,17 +55,17 @@ class formula_element_group_list extends sandbox_list
             $min_names = LIST_MIN_NAMES;
         }
 
-        if ($this->lst != null) {
+        if ($this->lst() != null) {
             $pos = 0;
-            foreach ($this->lst as $sbx_obj) {
+            foreach ($this->lst() as $sbx_obj) {
                 if ($min_names > $pos) {
                     if ($result <> '') $result .= ' / ';
                     $result .= $sbx_obj->dsp_id();
                     $pos++;
                 }
             }
-            if (count($this->lst) > $pos) {
-                $result .= ' ... total ' . $lib->dsp_count($this->lst);
+            if (count($this->lst()) > $pos) {
+                $result .= ' ... total ' . $lib->dsp_count($this->lst());
             }
             if ($debug > DEBUG_SHOW_USER) {
                 if ($this->user() != null) {

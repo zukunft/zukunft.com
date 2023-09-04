@@ -8,7 +8,9 @@
       "id": 1,
       "name": "Word",
       "description": "simply show the word name",
-      "type_id": 8
+      "type_id": 8,
+      "link_id": 1,
+      "position": 1
     }
   ]
 }

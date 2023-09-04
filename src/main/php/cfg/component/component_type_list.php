@@ -90,6 +90,12 @@ class component_type_list extends type_list
         $this->add($type);
         $type = new type_object(component_type::FORM_END, component_type::FORM_END, '', 29);
         $this->add($type);
+        $type = new type_object(component_type::ROW_START, component_type::ROW_START, '', 30);
+        $this->add($type);
+        $type = new type_object(component_type::ROW_RIGHT, component_type::ROW_RIGHT, '', 31);
+        $this->add($type);
+        $type = new type_object(component_type::ROW_END, component_type::ROW_END, '', 32);
+        $this->add($type);
     }
 
     /**

@@ -72,7 +72,7 @@ class view_list extends list_api implements JsonSerializable
 
         // cast the single list objects
         $lst_dsp = array();
-        foreach ($this->lst as $wrd) {
+        foreach ($this->lst() as $wrd) {
             if ($wrd != null) {
                 $wrd_dsp = $wrd->dsp_obj();
                 $lst_dsp[] = $wrd_dsp;
@@ -95,7 +95,7 @@ class view_list extends list_api implements JsonSerializable
     function jsonSerialize(): array
     {
         $vars = [];
-        foreach ($this->lst as $dsp) {
+        foreach ($this->lst() as $dsp) {
             $vars[] = json_decode(json_encode($dsp));
         }
         return $vars;

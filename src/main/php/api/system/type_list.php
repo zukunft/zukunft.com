@@ -88,7 +88,7 @@ class type_list_api extends list_api implements JsonSerializable
                 );
                 $result[$id] = $api_obj;
             }
-            $this->lst = $result;
+            $this->set_lst($result);
         }
         $this->set_lst_dirty();
         return true;
@@ -116,7 +116,7 @@ class type_list_api extends list_api implements JsonSerializable
     {
         // cast the single list objects
         $lst_dsp = array();
-        foreach ($this->lst as $val) {
+        foreach ($this->lst() as $val) {
             if ($val != null) {
                 $val_dsp = $val->dsp_obj();
                 $lst_dsp[] = $val_dsp;
@@ -137,7 +137,7 @@ class type_list_api extends list_api implements JsonSerializable
     function jsonSerialize(): array
     {
         $vars = [];
-        foreach ($this->lst as $lst) {
+        foreach ($this->lst() as $lst) {
             $vars[] = json_decode(json_encode($lst));
         }
         return $vars;
@@ -150,7 +150,7 @@ class type_list_api extends list_api implements JsonSerializable
     {
         $result = array();
         if ($this->code_lst_dirty) {
-            foreach ($this->lst as $type) {
+            foreach ($this->lst() as $type) {
                 if (!in_array($type->code_id(), $result)) {
                     $result[] = $type->code_id();
                 }
@@ -169,8 +169,9 @@ class type_list_api extends list_api implements JsonSerializable
     private function lst_has_api_items(): bool
     {
         $result = false;
-        if (count($this->lst) > 0) {
-            if ($this->lst[0]::class == type_api::class) {
+        if (count($this->lst()) > 0) {
+            $typ_obj = $this->lst()[0];
+            if ($typ_obj::class == type_api::class) {
                 $result = true;
             }
         }
@@ -191,13 +192,13 @@ class type_list_api extends list_api implements JsonSerializable
         $result = false;
         if ($type->id() == 0) {
             if (!in_array($type->code_id(), $this->code_id_lst())) {
-                $this->lst[] = $type;
+                $this->add_obj($type);
                 $this->set_lst_dirty();
                 $result = true;
             }
         } else {
             if (!in_array($type->id(), $this->id_lst())) {
-                $this->lst[$type->id()] = $type;
+                $this->lst()[$type->id()] = $type;
                 $this->set_lst_dirty();
                 $result = true;
             }

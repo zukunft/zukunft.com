@@ -81,7 +81,7 @@ class source_list extends list_api implements JsonSerializable
     function jsonSerialize(): array
     {
         $vars = [];
-        foreach ($this->lst as $src) {
+        foreach ($this->lst() as $src) {
             $vars[] = $src->jsonSerialize();
         }
         return $vars;

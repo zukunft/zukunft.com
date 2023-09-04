@@ -33,9 +33,14 @@
 
 namespace cfg;
 
+include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
+include_once API_VIEW_PATH . 'component_link_list.php';
+include_once DB_PATH . 'sql_creator.php';
 include_once DB_PATH . 'sql_par_type.php';
 
+use api\view\component_link_list as component_link_list_api;
 use cfg\component\component;
+use cfg\component\component_list;
 use cfg\db\sql_creator;
 
 class component_link_list extends sandbox_list
@@ -55,6 +60,31 @@ class component_link_list extends sandbox_list
     protected function rows_mapper(?array $db_rows, bool $load_all = false): bool
     {
         return parent::rows_mapper_obj(new component_link($this->user()), $db_rows, $load_all);
+    }
+
+
+    /*
+     * cast
+     */
+
+    /**
+     * @return component_link_list_api the component list object with the display interface functions
+     */
+    function api_obj(): component_link_list_api
+    {
+        $api_obj = new component_link_list_api(array());
+        foreach ($this->lst() as $lnk) {
+            $api_obj->add($lnk->api_obj());
+        }
+        return $api_obj;
+    }
+
+    /**
+     * @returns string the api json message for the object as a string
+     */
+    function api_json(): string
+    {
+        return $this->api_obj()->get_json();
     }
 
 
@@ -122,7 +152,7 @@ class component_link_list extends sandbox_list
     }
 
     /**
-     * interface function to load all components linked to a given view
+     * interface function to load all component links of the given view
      *
      * @param view $dsp if set to get all links for this view
      * @return bool true if phrases are found
@@ -132,6 +162,22 @@ class component_link_list extends sandbox_list
         global $db_con;
         $qp = $this->load_sql_by_view($db_con->sql_creator(), $dsp);
         return $this->load($qp);
+    }
+
+    /**
+     * interface function to load all component links and the components of the given view
+     * TODO (speed) combine the sql statements
+     *
+     * @param view $dsp if set to get all links for this view
+     * @return bool true if phrases are found
+     */
+    function load_by_view_with_components(view $dsp): bool
+    {
+        if ($this->load_by_view($dsp)) {
+            return $this->load_components();
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -147,10 +193,57 @@ class component_link_list extends sandbox_list
         return $this->load($qp);
     }
 
+    /**
+     * load the components of this list
+     * @return bool true if the loading of the component has been successful
+     */
+    function load_components(): bool
+    {
+        $ids = $this->cmp_ids();
+        $cmp_lst = new component_list($this->user());
+        $result = $cmp_lst->load_by_ids($ids);
+        if ($result) {
+            foreach ($this->lst() as $lnk) {
+                $cmp = $cmp_lst->get_by_id($lnk->component()->id());
+                if ($cmp != null) {
+                    $lnk->set_component($cmp);
+                }
+            }
+        }
+        return $result;
+    }
+
 
     /*
-     * del
+     * modify
      */
+
+    /**
+     * add a view component link to the list without saving it to the database
+     */
+    function add(int $id, view $msk, component $cmp, int $pos): bool
+    {
+        $do_add = true;
+
+        if (!$this->is_empty()) {
+            foreach ($this->lst() as $lnk) {
+                if ($lnk->view()->id() == $msk->id()
+                    and $lnk->component()->id() == $cmp->id()
+                    and $lnk->pos() == $pos) {
+                    $do_add = false;
+                }
+            }
+        }
+        if ($do_add) {
+            $new_lnk = new component_link($this->user());
+            $new_lnk->set_id($id);
+            $new_lnk->fob = $msk;
+            $new_lnk->tob = $cmp;
+            $new_lnk->order_nbr = $pos;
+            $this->add_obj($new_lnk);
+        }
+        return $do_add;
+    }
 
     /**
      * delete all loaded view component links e.g. to delete all the links linked to a view
@@ -160,8 +253,8 @@ class component_link_list extends sandbox_list
     {
         $result = new user_message();
 
-        if ($this->lst != null) {
-            foreach ($this->lst as $dsp_cmp_lnk) {
+        if (!$this->is_empty()) {
+            foreach ($this->lst() as $dsp_cmp_lnk) {
                 $result->add($dsp_cmp_lnk->del());
             }
         }
@@ -179,7 +272,7 @@ class component_link_list extends sandbox_list
     function view_ids(): array
     {
         $result = array();
-        foreach ($this->lst as $lnk) {
+        foreach ($this->lst() as $lnk) {
             if ($lnk->fob != null) {
                 if ($lnk->fob->id() <> 0) {
                     if (!in_array($lnk->fob->id(), $result)) {
@@ -197,10 +290,28 @@ class component_link_list extends sandbox_list
     function cmp_ids(): array
     {
         $result = array();
-        foreach ($this->lst as $lnk) {
+        foreach ($this->lst() as $lnk) {
             if ($lnk->tob->id() <> 0) {
-                if (in_array($lnk->tob->id(), $result)) {
+                if (!in_array($lnk->tob->id(), $result)) {
                     $result[] = $lnk->tob->id();
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @return array with all component names linked usually to one view
+     */
+    function names(): array
+    {
+        $result = array();
+        foreach ($this->lst() as $lnk) {
+            if ($lnk->tob != null) {
+                if ($lnk->tob->name() <> '') {
+                    if (!in_array($lnk->tob->name(), $result)) {
+                        $result[] = $lnk->tob->name();
+                    }
                 }
             }
         }

@@ -117,7 +117,7 @@ class value_phrase_link_list extends sandbox_list
                 foreach ($db_rows as $db_row) {
                     $val_phr_lnk = new value_phrase_link($this->user());
                     $val_phr_lnk->row_mapper($db_row);
-                    $this->lst[] = $val_phr_lnk;
+                    $this->add_obj($val_phr_lnk);
                     $result = true;
                 }
             }
@@ -164,8 +164,8 @@ class value_phrase_link_list extends sandbox_list
     {
         $result = new user_message();
 
-        if ($this->lst != null) {
-            foreach ($this->lst as $val_phr_lmk) {
+        if (!$this->is_empty()) {
+            foreach ($this->lst() as $val_phr_lmk) {
                 $result->add($val_phr_lmk->del());
             }
         }
@@ -182,7 +182,7 @@ class value_phrase_link_list extends sandbox_list
     function phr_ids(): array
     {
         $result = array();
-        foreach ($this->lst as $lnk) {
+        foreach ($this->lst() as $lnk) {
             if ($lnk->phr->id() <> 0) {
                 if (in_array($lnk->phr->id(), $result)) {
                     $result[] = $lnk->phr->id();
@@ -198,7 +198,7 @@ class value_phrase_link_list extends sandbox_list
     function val_ids(): array
     {
         $result = array();
-        foreach ($this->lst as $lnk) {
+        foreach ($this->lst() as $lnk) {
             if ($lnk->val->id <> 0) {
                 if (in_array($lnk->val->id, $result)) {
                     $result[] = $lnk->val->id;

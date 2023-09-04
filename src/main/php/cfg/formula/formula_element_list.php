@@ -119,7 +119,7 @@ class formula_element_list extends sandbox_list
             foreach ($db_rows as $db_row) {
                 $elm = new formula_element($this->user());
                 $elm->row_mapper($db_row);
-                $this->lst[] = $elm;
+                $this->add_obj($elm);
                 $result = true;
             }
         }
@@ -137,7 +137,7 @@ class formula_element_list extends sandbox_list
      */
     function add(?formula_element $elm_to_add): bool
     {
-        $this->lst[] = $elm_to_add;
+        $this->add_obj($elm_to_add, true);
         $this->set_lst_dirty();
         return true;
     }

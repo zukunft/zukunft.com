@@ -216,12 +216,14 @@ class list_dsp
 
     /**
      * add a phrase or ... to the list but only if it does not exist
+     * @param object $obj the frontend object that should be added
+     * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
      * @returns bool true if the object has been added
      */
-    protected function add_obj(object $obj): bool
+    protected function add_obj(object $obj, bool $allow_duplicates = false): bool
     {
         $result = false;
-        if (!in_array($obj->id(), $this->id_lst())) {
+        if (!in_array($obj->id(), $this->id_lst()) or $allow_duplicates) {
             $this->lst[] = $obj;
             $this->lst_dirty = true;
             $result = true;

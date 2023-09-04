@@ -753,6 +753,7 @@ class sandbox extends db_object
      */
     function export_obj(): exp_obj
     {
+        log_warning($this::class . ' does not have an expected instance of the export_obj function');
         return (new exp_obj());
     }
 

@@ -73,7 +73,7 @@ class phrase_list_api extends list_api implements JsonSerializable
 
         // cast the single list objects
         $lst_dsp = array();
-        foreach ($this->lst as $phr) {
+        foreach ($this->lst() as $phr) {
             if ($phr != null) {
                 $phr_dsp = $phr->dsp_obj();
                 $lst_dsp[] = $phr_dsp;
@@ -105,7 +105,7 @@ class phrase_list_api extends list_api implements JsonSerializable
     function jsonSerialize(): array
     {
         $vars = [];
-        foreach ($this->lst as $phr) {
+        foreach ($this->lst() as $phr) {
             $vars[] = $phr->jsonSerialize();
         }
         return $vars;
@@ -122,7 +122,7 @@ class phrase_list_api extends list_api implements JsonSerializable
     function has_percent(): bool
     {
         $result = false;
-        foreach ($this->lst as $phr) {
+        foreach ($this->lst() as $phr) {
             if ($phr->is_percent()) {
                 $result = true;
             }
@@ -139,14 +139,14 @@ class phrase_list_api extends list_api implements JsonSerializable
     {
         if (!$del_lst->is_empty()) {
             // next line would work if array_intersect could handle objects
-            // $this->lst = array_intersect($this->lst, $new_lst->lst());
+            // $this->lst() = array_intersect($this->lst(), $new_lst->lst());
             $remain_lst = new phrase_list_api();
             foreach ($this->lst() as $phr) {
                 if (!in_array($phr->id(), $del_lst->id_lst())) {
                     $remain_lst->add($phr);
                 }
             }
-            $this->set_lst($remain_lst->lst);
+            $this->set_lst($remain_lst->lst());
         }
         return $this;
     }

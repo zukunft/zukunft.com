@@ -99,7 +99,7 @@ class view_list extends sandbox_list
     function api_obj(): view_list_api
     {
         $api_obj = new view_list_api();
-        foreach ($this->lst as $dsp) {
+        foreach ($this->lst() as $dsp) {
             $api_obj->add($dsp->api_obj());
         }
         return $api_obj;
@@ -227,7 +227,7 @@ class view_list extends sandbox_list
         log_debug($dsp_to_add->dsp_id());
         if (!in_array($dsp_to_add->id(), $this->ids())) {
             if ($dsp_to_add->id() <> 0) {
-                $this->lst[] = $dsp_to_add;
+                $this->add_obj($dsp_to_add);
             }
         } else {
             log_debug($dsp_to_add->dsp_id() . ' not added, because it is already in the list');
@@ -265,7 +265,7 @@ class view_list extends sandbox_list
     function export_obj(bool $do_load = true): array
     {
         $exp_views = array();
-        foreach ($this->lst as $dsp) {
+        foreach ($this->lst() as $dsp) {
             $exp_views[] = $dsp->export_obj($do_load);
         }
         return $exp_views;

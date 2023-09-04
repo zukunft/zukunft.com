@@ -178,7 +178,7 @@ class component_link_test
         if (isset($dsp)) {
             $pos = 1;
             $dsp->load_components();
-            foreach ($dsp->cmp_lst->lst() as $entry) {
+            foreach ($dsp->cmp_lnk_lst->lst() as $entry) {
                 if ($pos == 1) {
                     $target = component_api::TN_ADD;
                 } else {
@@ -194,7 +194,7 @@ class component_link_test
         if (isset($dsp2)) {
             $pos = 1;
             $dsp2->load_components();
-            foreach ($dsp2->cmp_lst->lst() as $entry) {
+            foreach ($dsp2->cmp_lnk_lst->lst() as $entry) {
                 if ($pos == 1) {
                     $target = component_api::TN_ADD;
                 } else {
@@ -221,7 +221,7 @@ class component_link_test
         if (isset($dsp2)) {
             $pos = 1;
             $dsp->load_components();
-            foreach ($dsp2->cmp_lst->lst() as $entry) {
+            foreach ($dsp2->cmp_lnk_lst->lst() as $entry) {
                 if ($pos == 1) {
                     $target = component_api::TN_ADD2;
                 } else {
@@ -243,7 +243,7 @@ class component_link_test
         if (isset($dsp)) {
             $pos = 1;
             $dsp2->load_components();
-            foreach ($dsp->cmp_lst->lst() as $entry) {
+            foreach ($dsp->cmp_lnk_lst->lst() as $entry) {
                 if ($pos == 1) {
                     $target = component_api::TN_ADD;
                 } else {

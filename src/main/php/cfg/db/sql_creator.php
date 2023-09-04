@@ -664,6 +664,8 @@ class sql_creator
     /**
      * add a where condition a list of id are one field or another
      * e.g. used to select both sides of a phrase tree
+     * TODO move the table prefix to a separate parameter
+     *
      * @param string $fld the field name used in the sql where statement
      * @param int|string|array $fld_val with the database id that should be selected
      * @param sql_par_type|null $spt to force using a non-standard parameter type e.g. OR instead of AND

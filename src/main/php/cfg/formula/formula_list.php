@@ -82,7 +82,7 @@ class formula_list extends sandbox_list
                             $name_wrd->load_by_name($frm->name(), word::class);
                             $frm->name_wrd = $name_wrd;
                         }
-                        $this->lst[] = $frm;
+                        $this->add_obj($frm);
                         $result = true;
                     }
                 }
@@ -92,7 +92,7 @@ class formula_list extends sandbox_list
         $result = parent::rows_mapper_obj(new formula_link($this->user()), $db_rows, $load_all);
         // TODO check if this is really needed
         if ($db_rows != null) {
-            foreach ($this->lst as $frm) {
+            foreach ($this->lst() as $frm) {
                 if ($frm->name() <> '') {
                     $name_wrd = new word($this->user());
                     $name_wrd->load_by_name($frm->name(), word::class);
@@ -115,7 +115,7 @@ class formula_list extends sandbox_list
     function api_obj(): formula_list_api
     {
         $api_obj = new formula_list_api();
-        foreach ($this->lst as $frm) {
+        foreach ($this->lst() as $frm) {
             $api_obj->add($frm->api_obj());
         }
         return $api_obj;
@@ -135,7 +135,7 @@ class formula_list extends sandbox_list
     function dsp_obj(): formula_list_dsp
     {
         $dsp_obj = new formula_list_dsp();
-        foreach ($this->lst as $wrd) {
+        foreach ($this->lst() as $wrd) {
             $dsp_obj->add($wrd->dsp_obj());
         }
         return $dsp_obj;
@@ -564,7 +564,7 @@ class formula_list extends sandbox_list
     function export_obj(bool $do_load = true): array
     {
         $exp_formulas = array();
-        foreach ($this->lst as $frm) {
+        foreach ($this->lst() as $frm) {
             if (get_class($frm) == formula::class) {
                 $exp_formulas[] = $frm->export_obj($do_load);
             } else {
@@ -617,7 +617,7 @@ class formula_list extends sandbox_list
         $pages = ceil($total / self::UPDATE_BLOCK_SIZE);
         while ($page <= $pages and $result) {
             $this->load_all(self::UPDATE_BLOCK_SIZE, $page);
-            foreach ($this->lst as $frm) {
+            foreach ($this->lst() as $frm) {
                 $frm->set_ref_text();
             }
             $msg = $this->save();
@@ -658,8 +658,8 @@ class formula_list extends sandbox_list
     function names(): array
     {
         $result = array();
-        if ($this->lst != null) {
-            foreach ($this->lst as $frm) {
+        if ($this->lst() != null) {
+            foreach ($this->lst() as $frm) {
                 $result[] = $frm->name();
             }
         }
@@ -675,10 +675,13 @@ class formula_list extends sandbox_list
         $result = '';
 
         // list all related formula results
-        if ($this->lst != null) {
-            usort($this->lst, array(formula::class, "cmp"));
-            if ($this->lst != null) {
-                foreach ($this->lst as $frm) {
+        if ($this->lst() != null) {
+            // TODO add usort to base_list
+            $lst = $this->lst();
+            usort($lst, array(formula::class, "cmp"));
+            $this->set_lst($lst);
+            if ($this->lst() != null) {
+                foreach ($this->lst() as $frm) {
                     // formatting should be moved
                     //$resolved_text = str_replace('"','&quot;', $frm->usr_text);
                     //$resolved_text = str_replace('"','&quot;', $frm->dsp_text($this->back));
@@ -734,7 +737,7 @@ class formula_list extends sandbox_list
     function save(): string
     {
         $result = '';
-        foreach ($this->lst as $frm) {
+        foreach ($this->lst() as $frm) {
             $result .= $frm->save();
         }
         return $result;
