@@ -171,10 +171,11 @@ class view extends sandbox_typed
      * create the html code to view a sandbox object
      * @param db_object_dsp|null $dbo the word, triple or formula object that should be shown to the user
      * @param string $back the history of the user actions to allow rollbacks
+     * @param bool $test_mode true to create a reproducible result e.g. by using just one phrase
      * @return string the html code for a view: this is the main function of this lib
      * TODO use backtrace or use a global backtrace var
      */
-    function show(db_object_dsp $dbo = null, string $back = ''): string
+    function show(db_object_dsp $dbo = null, string $back = '', bool $test_mode = false): string
     {
         $result = '';
 
@@ -204,7 +205,7 @@ class view extends sandbox_typed
             // display always the view name in the top right corner and allow the user to edit the view
             $result .= $this->dsp_type_open();
             $result .= $this->dsp_navbar($back);
-            $result .= $this->dsp_entries($dbo, $back);
+            $result .= $this->dsp_entries($dbo, $back, $test_mode);
             $result .= $this->dsp_type_close();
         }
         log_debug('done');
@@ -216,15 +217,16 @@ class view extends sandbox_typed
      * create the html code for all components of this view
      *
      * @param db_object_dsp|null $dbo the word, triple or formula object that should be shown to the user
+     * @param bool $test_mode true to create a reproducible result e.g. by using just one phrase
      * @return string the html code of all view components
      */
-    private function dsp_entries(?db_object_dsp $dbo, string $back): string
+    private function dsp_entries(?db_object_dsp $dbo, string $back, bool $test_mode = false): string
     {
         log_debug($this->dsp_id());
         $result = '';
         if (!$this->cmp_lst->is_empty()) {
             foreach ($this->cmp_lst->lst() as $cmp) {
-                $result .= $cmp->dsp_entries($dbo, $back);
+                $result .= $cmp->dsp_entries($dbo, $back, $test_mode);
             }
         }
 

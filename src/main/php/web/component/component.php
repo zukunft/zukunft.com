@@ -77,9 +77,10 @@ class component extends sandbox_typed
 
     /**
      * @param db_object_dsp|null $dbo the word, triple or formula object that should be shown to the user
+     * @param bool $test_mode true to create a reproducible result e.g. by using just one phrase
      * @return string the html code of all view components
      */
-    function dsp_entries(?db_object_dsp $dbo, string $back): string
+    function dsp_entries(?db_object_dsp $dbo, string $back, bool $test_mode = false): string
     {
         if ($dbo == null) {
             log_debug($this->dsp_id());
@@ -110,7 +111,7 @@ class component extends sandbox_typed
             component_type::FORM_CONFIRM => $this->form_confirm($dbo, $back),
             component_type::FORM_NAME => $this->form_name($dbo, $back),
             component_type::FORM_DESCRIPTION => $this->form_description($dbo, $back),
-            component_type::FORM_PHRASE => $this->form_phrase($dbo),
+            component_type::FORM_PHRASE => $this->form_phrase($dbo, $test_mode),
             component_type::FORM_VERB_SELECTOR => $this->form_verb($dbo),
             component_type::FORM_SHARE_TYPE => $this->form_share_type($dbo),
             component_type::FORM_PROTECTION_TYPE => $this->form_protection_type($dbo),
@@ -313,18 +314,15 @@ class component extends sandbox_typed
      * TODO remove fixed pattern
      * @return string the html code to request the description from the user
      */
-    function form_phrase(db_object_dsp $dbo): string
+    function form_phrase(db_object_dsp $dbo, bool $test_mode = false): string
     {
         $lib = new library();
         $form_name = $lib->class_to_name($dbo::class) . '_add';
         // TODO use a pattern base on user entry
         $pattern = '';
-        /*
-        $pattern = $dbo->name();
-        if ($pattern == '') {
+        if ($test_mode) {
             $pattern = word_api::TN_READ;
         }
-        */
         // TODO activate
         //if ($this->code_id == 'form_field_triple_phrase_from') {
         if ($this->name == 'system form triple phrase from') {

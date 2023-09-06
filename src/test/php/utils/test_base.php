@@ -779,7 +779,7 @@ class test_base
         // create the view for the user
         $dsp_html = new view_dsp;
         $dsp_html->set_from_json($api_msg);
-        $actual = $dsp_html->show();
+        $actual = $dsp_html->show(null, '', true);
 
         // check if the created view matches the expected view
         return $this->assert_html(
