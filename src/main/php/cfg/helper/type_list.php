@@ -144,7 +144,7 @@ class type_list
      * interface set and get
      */
 
-    function add(type_object|ref $item): void
+    function add(type_object|ref|view $item): void
     {
         $this->lst[$item->id()] = $item;
         $this->hash[$item->code_id] = $item->id();

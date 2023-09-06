@@ -133,7 +133,7 @@ class export
                 log_debug('export->get triples');
                 $lnk_lst = $phr_lst->trp_lst();
                 $exp_triples = array();
-                foreach ($lnk_lst->lst as $lnk) {
+                foreach ($lnk_lst->lst() as $lnk) {
                     $exp_lnk = $lnk->export_obj();
                     if (isset($exp_lnk)) {
                         $exp_triples[] = $exp_lnk;
@@ -207,8 +207,8 @@ class export
                 if (!$frm_lst->is_empty()) {
                     foreach ($frm_lst->lst() as $frm) {
                         $res_lst = $frm->get_res_lst();
-                        if ($res_lst->lst != null) {
-                            foreach ($res_lst->lst as $res) {
+                        if ($res_lst->lst() != null) {
+                            foreach ($res_lst->lst() as $res) {
                                 $exp_res = $res->export_obj();
                                 if (isset($exp_res)) {
                                     $exp_results[] = $exp_res;

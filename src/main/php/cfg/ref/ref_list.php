@@ -118,7 +118,7 @@ class ref_list extends type_list
     {
         $result = false;
         $this->set_lst($this->load_list($db_con, $db_type));
-        if (count($this->hash()) > 0) {
+        if ($this->count() > 0) {
             $result = true;
         }
         return $result;

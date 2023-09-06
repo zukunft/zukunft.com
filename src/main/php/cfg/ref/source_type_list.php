@@ -126,8 +126,7 @@ class source_type_list extends type_list
     {
         $result = false;
         $this->load_list($db_con, $db_type);
-        $this->hash = parent::get_hash($this->lst());
-        if (count($this->hash) > 0) {
+        if (!$this->is_empty()) {
             $result = true;
         }
         return $result;

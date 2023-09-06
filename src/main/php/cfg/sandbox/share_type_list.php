@@ -55,8 +55,7 @@ class share_type_list extends type_list
      */
     function load_dummy(): void
     {
-        $this->lst = array();
-        $this->hash = array();
+        $this->reset();
         $type = new type_object(share_type::PUBLIC, share_type::PUBLIC, '', 1);
         $this->add($type);
         $type = new type_object(share_type::PERSONAL, share_type::PERSONAL, '', 2);

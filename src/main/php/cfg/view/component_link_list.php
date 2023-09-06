@@ -122,6 +122,7 @@ class component_link_list extends sandbox_list
         $qp = $this->load_sql($sc, view::FLD_ID);
         if ($msk->id() > 0) {
             $sc->add_where(view::FLD_ID, $msk->id());
+            $sc->set_order(component_link::FLD_ORDER_NBR);
             $sc = (new component($this->user()))->set_join($sc);
             $qp->sql = $sc->sql();
         } else {

@@ -47,9 +47,10 @@ include_once API_SANDBOX_PATH . 'type_object.php';
 use api\type_object_api;
 use cfg\db\sql_creator;
 use cfg\db\sql_par_type;
+use JsonSerializable;
 use model\db_cl;
 
-class type_object extends db_object
+class type_object extends db_object implements JsonSerializable
 {
 
     /*
@@ -280,6 +281,31 @@ class type_object extends db_object
     {
         global $db_con;
         return $db_con->get_name_field($db_type);
+    }
+
+
+    /*
+     * interface
+     */
+
+    /**
+     * @return string the json api message as a text string
+     */
+    function get_json(): string
+    {
+        return json_encode($this->jsonSerialize());
+    }
+
+    /**
+     * @return array with the sandbox vars without empty values that are not needed
+     * the message from the backend to the frontend does not need to include empty fields
+     * the message from the frontend to the backend on the other side must include empty fields
+     * to be able to unset fields in the backend
+     */
+    function jsonSerialize(): array
+    {
+        $vars = get_object_vars($this);
+        return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
 }

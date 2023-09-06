@@ -27,4 +27,5 @@ PREPARE component_link_list_by_view_id (int, int) AS
  LEFT JOIN user_components ul     ON  l.component_id      =  ul.component_id      AND  ul.user_id = $1
  LEFT JOIN components l2          ON  s.component_id      =  l2.component_id
  LEFT JOIN user_components ul2    ON l2.component_id      = ul2.component_id      AND ul2.user_id = $1
-     WHERE s.view_id = $2;
+     WHERE s.view_id = $2
+  ORDER BY s.order_nbr;

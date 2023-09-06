@@ -564,7 +564,7 @@ class triple_list extends sandbox_list
                 // get the next link to detect if there is more than one word linked with the same link type
                 // TODO check with a unit test if last element is used
                 if ($this->count() - 1 > $lnk_id) {
-                    $next_lnk = $this->get[$lnk_id + 1];
+                    $next_lnk = $this->get($lnk_id + 1);
                 } else {
                     $next_lnk = $lnk;
                 }
@@ -573,52 +573,52 @@ class triple_list extends sandbox_list
                 if ($lnk->verb == null) {
                     log_warning('graph->display type is missing');
                 } else {
-                    if ($lnk->verb->id() <> $prev_verb_id) {
-                        log_debug('graph->display type "' . $lnk->verb->name() . '"');
+                    if ($lnk->verb()->id() <> $prev_verb_id) {
+                        log_debug('graph->display type "' . $lnk->verb()->name() . '"');
 
                         // select the same side of the verb
                         if ($this->direction == foaf_direction::DOWN) {
-                            $directional_link_type_id = $lnk->verb->id();
+                            $directional_link_type_id = $lnk->verb()->id();
                         } else {
-                            $directional_link_type_id = $lnk->verb->id() * -1;
+                            $directional_link_type_id = $lnk->verb()->id() * -1;
                         }
 
                         // display the link type
-                        if ($lnk->verb->id() == $next_lnk->verb->id()) {
+                        if ($lnk->verb()->id() == $next_lnk->verb()->id()) {
                             if ($this->wrd != null) {
                                 $result .= $this->wrd->plural;
                             }
                             if ($this->direction == foaf_direction::DOWN) {
-                                $result .= " " . $lnk->verb->rev_plural;
+                                $result .= " " . $lnk->verb()->rev_plural;
                             } else {
-                                $result .= " " . $lnk->verb->plural;
+                                $result .= " " . $lnk->verb()->plural;
                             }
                         } else {
                             $result .= $this->wrd->name();
                             if ($this->direction == foaf_direction::DOWN) {
-                                $result .= " " . $lnk->verb->reverse;
+                                $result .= " " . $lnk->verb()->reverse;
                             } else {
-                                $result .= " " . $lnk->verb->name;
+                                $result .= " " . $lnk->verb()->name;
                             }
                         }
                     }
                     $result .= $html->dsp_tbl_start_half();
-                    $prev_verb_id = $lnk->verb->id();
+                    $prev_verb_id = $lnk->verb()->id();
 
                     // display the word
-                    if ($lnk->fob == null) {
+                    if ($lnk->fob() == null) {
                         log_warning('graph->display from is missing');
                     } else {
-                        log_debug('word->dsp_graph display word ' . $lnk->fob->name());
+                        log_debug('word->dsp_graph display word ' . $lnk->fob()->name());
                         $result .= '  <tr>' . "\n";
-                        if ($lnk->tob != null) {
-                            $dsp_obj = $lnk->tob->get_dsp_obj();
+                        if ($lnk->tob() != null) {
+                            $dsp_obj = $lnk->tob()->get_dsp_obj();
                             $result .= $dsp_obj->dsp_tbl_cell(0);
                         }
                         $lnk_dsp = new triple_dsp($lnk->api_json());
-                        $result .= $lnk_dsp->btn_edit($lnk->fob->dsp_obj());
-                        if ($lnk->fob != null) {
-                            $dsp_obj = $lnk->fob->get_dsp_obj();
+                        $result .= $lnk_dsp->btn_edit($lnk->fob()->dsp_obj());
+                        if ($lnk->fob() != null) {
+                            $dsp_obj = $lnk->fob()->get_dsp_obj();
                             $result .= $dsp_obj->dsp_unlink($lnk->id());
                         }
                         $result .= '  </tr>' . "\n";
@@ -626,37 +626,37 @@ class triple_list extends sandbox_list
 
                     // use the last word as a sample for the new word type
                     $last_linked_word_id = 0;
-                    if ($lnk->verb->id() == $verbs->id(verb::FOLLOW)) {
-                        $last_linked_word_id = $lnk->tob->id;
+                    if ($lnk->verb()->id() == $verbs->id(verb::FOLLOW)) {
+                        $last_linked_word_id = $lnk->tob()->id;
                     }
 
                     // in case of the verb "following" continue the series after the last element
                     $start_id = 0;
-                    if ($lnk->verb->id() == $verbs->id(verb::FOLLOW)) {
+                    if ($lnk->verb()->id() == $verbs->id(verb::FOLLOW)) {
                         $start_id = $last_linked_word_id;
                         // and link with the same direction (looks like not needed!)
                         /* if ($directional_link_type_id > 0) {
                           $directional_link_type_id = $directional_link_type_id * -1;
                         } */
                     } else {
-                        if ($lnk->fob == null) {
+                        if ($lnk->fob() == null) {
                             log_warning('graph->display from is missing');
                         } else {
-                            $start_id = $lnk->fob->id(); // to select a similar word for the verb following
+                            $start_id = $lnk->fob()->id(); // to select a similar word for the verb following
                         }
                     }
 
-                    if ($lnk->verb->id() <> $next_lnk->verb->id()) {
-                        if ($lnk->fob == null) {
+                    if ($lnk->verb()->id() <> $next_lnk->verb()->id()) {
+                        if ($lnk->fob() == null) {
                             log_warning('graph->display from is missing');
                         } else {
-                            $start_id = $lnk->fob->id();
+                            $start_id = $lnk->fob()->id();
                         }
                         // give the user the possibility to add a similar word
                         $result .= '  <tr>';
                         $result .= '    <td>';
                         $result .= '      ' . \html\btn_add("Add similar word", '/http/word_add.php?verb=' .
-                                $directional_link_type_id . '&word=' . $start_id . '&type=' . $lnk->tob->type_id . '&back=' . $start_id);
+                                $directional_link_type_id . '&word=' . $start_id . '&type=' . $lnk->tob()->type_id . '&back=' . $start_id);
                         $result .= '    </td>';
                         $result .= '  </tr>';
 

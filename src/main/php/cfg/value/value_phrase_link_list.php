@@ -116,7 +116,7 @@ class value_phrase_link_list extends sandbox_list
             if ($db_rows != null) {
                 foreach ($db_rows as $db_row) {
                     $val_phr_lnk = new value_phrase_link($this->user());
-                    $val_phr_lnk->row_mapper($db_row);
+                    $val_phr_lnk->row_mapper_val_phr_lnk($db_row);
                     $this->add_obj($val_phr_lnk);
                     $result = true;
                 }

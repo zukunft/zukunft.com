@@ -55,8 +55,7 @@ class protection_type_list extends type_list
      */
     function load_dummy(): void
     {
-        $this->lst = array();
-        $this->hash = array();
+        $this->reset();
         $type = new type_object(protection_type::NO_PROTECT, protection_type::NO_PROTECT, '', 1);
         $this->add($type);
         $type = new type_object(protection_type::USER, protection_type::USER, '', 2);

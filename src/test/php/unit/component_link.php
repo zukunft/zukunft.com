@@ -59,6 +59,8 @@ class component_link_unit_tests
         $vcl = new component_link($usr);
         $t->assert_sql_by_id($db_con, $vcl);
         $t->assert_sql_by_link($db_con, $vcl);
+        $this->assert_sql_link_and_type($t, $db_con, $vcl);
+        $this->assert_sql_link_and_pos($t, $db_con, $vcl);
         $this->assert_sql_max_pos($t, $db_con, $vcl);
 
 
@@ -69,6 +71,56 @@ class component_link_unit_tests
         $lnk->set_id(1);
         $t->assert_sql_user_changes($db_con, $lnk);
 
+    }
+
+    /**
+     * test the SQL statement creation to retrieve a component link by view, component and link type
+     * and check if the statement name is unique
+     *
+     * @param test_cleanup $t the test environment
+     * @param sql_db $db_con the test database connection
+     * @param component_link $vcl
+     * @return void
+     */
+    private function assert_sql_link_and_type(
+        test_cleanup $t,
+        sql_db $db_con,
+        component_link $vcl): void
+    {
+        // check the Postgres query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $vcl->load_sql_by_link_and_type($db_con->sql_creator(), 1, 2, 3);
+        $t->assert_qp($qp, $db_con->db_type);
+
+        // check the MySQL query syntax
+        $db_con->db_type = sql_db::MYSQL;
+        $qp = $vcl->load_sql_by_link_and_type($db_con->sql_creator(), 1, 2, 3);
+        $t->assert_qp($qp, $db_con->db_type);
+    }
+
+    /**
+     * test the SQL statement creation to retrieve a component link by view, component and pos
+     * and check if the statement name is unique
+     *
+     * @param test_cleanup $t the test environment
+     * @param sql_db $db_con the test database connection
+     * @param component_link $vcl
+     * @return void
+     */
+    private function assert_sql_link_and_pos(
+        test_cleanup $t,
+        sql_db $db_con,
+        component_link $vcl): void
+    {
+        // check the Postgres query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $vcl->load_sql_by_link_and_pos($db_con->sql_creator(), 1, 2, 3);
+        $t->assert_qp($qp, $db_con->db_type);
+
+        // check the MySQL query syntax
+        $db_con->db_type = sql_db::MYSQL;
+        $qp = $vcl->load_sql_by_link_and_pos($db_con->sql_creator(), 1, 2, 3);
+        $t->assert_qp($qp, $db_con->db_type);
     }
 
     /**

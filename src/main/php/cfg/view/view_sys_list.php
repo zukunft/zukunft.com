@@ -87,7 +87,7 @@ class view_sys_list extends type_list
     function api_obj(): object
     {
         $api_obj = new view_list_api();
-        foreach ($this->lst as $dsp) {
+        foreach ($this->lst() as $dsp) {
             $api_obj->add($dsp->api_obj());
         }
         return $api_obj;
@@ -105,7 +105,7 @@ class view_sys_list extends type_list
      */
     function load_sql_list(sql_db $db_con): sql_par
     {
-        $this->lst = [];
+        $this->reset();
         $dsp_lst = new view_list($this->usr);
         $qp = $dsp_lst->load_sql($db_con, self::class);
         $qp->name .= 'sys_views';
@@ -125,7 +125,7 @@ class view_sys_list extends type_list
      */
     private function load_list(sql_db $db_con, string $db_type): array
     {
-        $this->lst = [];
+        $this->reset();
         $qp = $this->load_sql_list($db_con);
         $db_lst = $db_con->get($qp);
         if ($db_lst != null) {
@@ -133,10 +133,10 @@ class view_sys_list extends type_list
                 $dsp = new view($this->usr);
                 $dsp->row_mapper_sandbox($db_row);
                 $dsp->load_components();
-                $this->lst[$db_row[$db_con->get_id_field_name($db_type)]] = $dsp;
+                $this->add($dsp);
             }
         }
-        return $this->lst;
+        return $this->lst();
     }
 
     /**
@@ -147,9 +147,8 @@ class view_sys_list extends type_list
     function load(sql_db $db_con, string $db_type = sql_db::TBL_VIEW): bool
     {
         $result = false;
-        $this->lst = $this->load_list($db_con, $db_type);
-        $this->hash = $this->get_hash($this->lst);
-        if (count($this->hash) > 0) {
+        $this->set_lst($this->load_list($db_con, $db_type));
+        if ($this->count() > 0) {
             $result = true;
         }
         return $result;
@@ -161,10 +160,10 @@ class view_sys_list extends type_list
     function load_dummy(): void {
         parent::load_dummy();
         $dsp = new view($this->usr);
+        $dsp->set_id(2);
         $dsp->set_name(controller::DSP_WORD);
         $dsp->code_id = controller::DSP_WORD;
-        $this->lst[2] = $dsp;
-        $this->hash[controller::DSP_WORD] = 2;
+        $this->add($dsp);
     }
 
     /**

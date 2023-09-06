@@ -56,6 +56,18 @@ class component_list extends list_dsp
         return $cmp;
     }
 
+    /**
+     * set the vars of these list display objects bases on the api json array
+     * @param array $json_array an api list json message
+     * @return void
+     */
+    function set_from_json_array(array $json_array): void
+    {
+        foreach ($json_array as $value) {
+            $this->add_obj($this->set_obj_from_json_array($value), true);
+        }
+    }
+
 
     /*
      * display

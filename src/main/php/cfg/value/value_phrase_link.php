@@ -39,7 +39,7 @@
 
 namespace cfg;
 
-class value_phrase_link
+class value_phrase_link extends db_object
 {
     // object specific database and JSON object field names
     const FLD_ID = 'value_phrase_link_id';
@@ -58,7 +58,6 @@ class value_phrase_link
     );
 
     // database fields
-    public int $id;        // the primary database id of the numeric value, which is the same for the standard and the user specific value
     private user $usr;     // the person for whom the value word is loaded, so to say the viewer
     public value $val;     // the value object to which the words are linked
     public phrase $phr;    // the word (not the triple) object to be linked to the value
@@ -76,7 +75,7 @@ class value_phrase_link
      */
     function __construct(user $usr)
     {
-        $this->id = 0;
+        parent::__construct();
         $this->set_user($usr);
         $this->val = new value($usr);
         $this->phr = new phrase($usr);
@@ -86,7 +85,7 @@ class value_phrase_link
         $this->frm_id = null;
     }
 
-    function row_mapper(array $db_row): bool
+    function row_mapper_val_phr_lnk(array $db_row): bool
     {
         $result = false;
         if ($db_row != null) {
@@ -180,14 +179,14 @@ class value_phrase_link
     /**
      * load the word to value link from the database
      */
-    function load(): bool
+    function load_lnk(): bool
     {
 
         global $db_con;
 
         $qp = $this->load_sql_obj_vars($db_con);
 
-        return $this->row_mapper($db_con->get1($qp));
+        return $this->row_mapper_val_phr_lnk($db_con->get1($qp));
     }
 
 
@@ -321,7 +320,7 @@ class value_phrase_link
                 $db_chk = new value_phrase_link($this->usr);
                 $db_chk->val = $this->val;
                 $db_chk->phr = $this->phr;
-                $db_chk->load();
+                $db_chk->load_lnk();
                 if ($db_chk->id > 0) {
                     $this->id = $db_chk->id;
                 }
@@ -348,7 +347,7 @@ class value_phrase_link
                 // because it needs to be done for user and general formulas
                 $db_rec = new value_phrase_link($this->usr);
                 $db_rec->id = $this->id;
-                $db_rec->load();
+                $db_rec->load_lnk();
                 log_debug("database value_phrase_link loaded (" . $db_rec->id . ")");
 
                 // update the linked word

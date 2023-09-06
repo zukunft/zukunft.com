@@ -359,6 +359,12 @@ class string_unit_tests
         $result = $lib->diff_msg($test_result, $test_target);
         $target = '//-"System Test Word Share"////+""//';
         $t->assert("diff_msg, replaced part", $result, $target);
+        // ... string that has caused an error in an earlier version
+        $test_result = 'zukunft.com system test partner unlinked System Test View Renamed from System Test View Component';
+        $test_target = 'zukunft.com system test partner ';
+        $result = $lib->diff_msg($test_result, $test_target);
+        $target = 'zukunft.com system test partner//-////+ unlinked System Test View Renamed from System Test View Component//';
+        $t->assert("diff_msg, replaced part", $result, $target);
         // ... identical array
         $test_result = [1, 2, 3];
         $test_target = [1, 2, 3];

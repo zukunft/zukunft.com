@@ -158,7 +158,9 @@ class component_link extends sandbox_link_with_type
     {
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, self::FLD_ID);
         if ($result) {
+            $this->fob = new view($this->user());
             $this->fob->set_id($db_row[view::FLD_ID]);
+            $this->tob = new component($this->user());
             $this->tob->set_id($db_row[component::FLD_ID]);
             $this->order_nbr = $db_row[self::FLD_ORDER_NBR];
             $this->pos_type_id = $db_row[self::FLD_POS_TYPE];
@@ -346,9 +348,30 @@ class component_link extends sandbox_link_with_type
      * @param int $cmp_id the component id
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_link_and_type(sql_creator $sc, int $dsp_id, int $type_id, int $cmp_id, string $class): sql_par
+    function load_sql_by_link_and_type(sql_creator $sc, int $dsp_id, int $type_id, int $cmp_id, string $class = self::class): sql_par
     {
-        return parent::load_sql_by_link($sc, $dsp_id, $type_id, $cmp_id, self::class);
+        return parent::load_sql_by_link($sc, $dsp_id, $type_id, $cmp_id, $class);
+    }
+
+    /**
+     * create an SQL statement to retrieve a user sandbox link by the ids of the linked objects from the database
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param int $msk_id the id of the view
+     * @param int $cmp_id the id of the lin type
+     * @param int $pos the position of the component
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_link_and_pos(sql_creator $sc, int $msk_id, int $cmp_id, int $pos): sql_par
+    {
+        $qp = $this->load_sql($sc, 'link_and_pos');
+        $sc->add_where($this->from_field(), $msk_id);
+        $sc->add_where($this->to_field(), $cmp_id);
+        $sc->add_where(self::FLD_ORDER_NBR, $pos);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
+        return $qp;
     }
 
     /**
@@ -432,6 +455,22 @@ class component_link extends sandbox_link_with_type
             $this->tob = $cmp;
         }
         return $id;
+    }
+
+    /**
+     * load the component link by the unique link ids including the pos
+     * @param int $msk_id the id of the view
+     * @param int $cmp_id the id of the lin type
+     * @param int $pos the position of the component
+     * @return int the id of the component link found and zero if nothing is found
+     */
+    function load_by_link_and_pos(int $msk_id, int $cmp_id, int $pos): int
+    {
+        global $db_con;
+
+        log_debug();
+        $qp = $this->load_sql_by_link_and_pos($db_con->sql_creator(), $msk_id, $cmp_id, $pos);
+        return $this->load($qp);
     }
 
     /**
@@ -753,6 +792,24 @@ class component_link extends sandbox_link_with_type
     {
         $sc->set_type($class, true);
         return parent::load_sql_user_changes($sc, $class);
+    }
+
+    /**
+     * get a similar reference
+     */
+    function get_similar(): component_link
+    {
+        $result = new component_link($this->user());
+
+        $db_chk = clone $this;
+        $db_chk->reset();
+        $db_chk->load_by_link_and_pos($this->fob->id(), $this->tob->id(), $this->order_nbr);
+        if ($db_chk->id > 0) {
+            log_debug('a component link like ' . $this->dsp_id() . ' already exists');
+            $result = $db_chk;
+        }
+
+        return $result;
     }
 
     /**

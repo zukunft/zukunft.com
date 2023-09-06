@@ -64,6 +64,7 @@ class component extends sandbox_typed
      */
 
     public ?string $code_id = null;         // the entry type code id
+    public ?int $position = 0;              // for the frontend the position of the link is included in the component object
 
     // mainly for table components
     public ?phrase_dsp $phr_row = null;     // the main phrase to select the table rows
@@ -458,6 +459,11 @@ class component extends sandbox_typed
             $this->code_id = $json_array[api::FLD_CODE_ID];
         } else {
             $this->code_id = null;
+        }
+        if (array_key_exists(api::FLD_POSITION, $json_array)) {
+            $this->position = $json_array[api::FLD_POSITION];
+        } else {
+            $this->position = 0;
         }
     }
 

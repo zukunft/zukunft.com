@@ -60,7 +60,7 @@ class system_log extends log_dsp
 
     /**
      * set the vars of this system log html object bases on the api json array
-     * @param array $json_msg an api json message including the api message header
+     * @param array $json_array an api json message including the api message header
      * @return void
      */
     function set_from_json_array(array $json_array): void

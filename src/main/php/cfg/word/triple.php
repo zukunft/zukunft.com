@@ -404,6 +404,21 @@ class triple extends sandbox_link_typed implements JsonSerializable
         return $this->values;
     }
 
+    function fob(): object
+    {
+        return $this->fob;
+    }
+
+    function verb(): verb
+    {
+        return $this->verb;
+    }
+
+    function tob(): object
+    {
+        return $this->tob;
+    }
+
     /**
      * @return string|null the name manually set by the user or null if the generated name should be used
      */
