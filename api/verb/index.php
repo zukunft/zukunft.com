@@ -68,10 +68,10 @@ if ($usr->id() > 0) {
     $vrb = new verb();
     if ($vrb_id > 0) {
         $vrb->load_by_id($vrb_id);
-        $result = $vrb->api_obj();
+        $result = $vrb->api_verb_obj();
     } elseif ($vrb_name != '') {
         $vrb->load_by_name($vrb_name);
-        $result = $vrb->api_obj();
+        $result = $vrb->api_verb_obj();
     } else {
         $msg = 'verb id or name is missing';
     }

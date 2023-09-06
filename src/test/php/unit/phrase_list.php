@@ -108,7 +108,7 @@ class phrase_list_unit_tests
         $wrd = new word($usr);
         $wrd->set(1, word_api::TN_CH);
         $phr_lst->add($wrd->phrase());
-        $vrb = $verbs->get(verb::IS_PART_OF);
+        $vrb = $verbs->get_verb(verb::IS_PART_OF);
         $this->assert_sql_linked_phrases($db_con->sql_creator(), $t, $phr_lst, $vrb, foaf_direction::UP);
         // TODO activate
         //$this->assert_sql_by_phr_lst($db_con, $t, $phr_lst, $vrb, foaf_direction::UP);

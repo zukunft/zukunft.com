@@ -968,7 +968,7 @@ class phrase_list extends sandbox_list_named
     function is(): phrase_list
     {
         global $verbs;
-        $phr_lst = $this->foaf_parents($verbs->get(verb::IS));
+        $phr_lst = $this->foaf_parents($verbs->get_verb(verb::IS));
         log_debug($this->dsp_id() . ' is ' . $phr_lst->dsp_name());
         return $phr_lst;
     }
@@ -979,7 +979,7 @@ class phrase_list extends sandbox_list_named
     {
         global $verbs;
         log_debug($this->dsp_id());
-        $phr_lst = $this->all_children($verbs->get(verb::IS));
+        $phr_lst = $this->all_children($verbs->get_verb(verb::IS));
         log_debug($this->dsp_id() . ' are ' . $phr_lst->dsp_id());
         $phr_lst->merge($this);
         log_debug($this->dsp_id() . ' merged into ' . $phr_lst->dsp_id());
@@ -992,7 +992,7 @@ class phrase_list extends sandbox_list_named
     function contains(): phrase_list
     {
         global $verbs;
-        $phr_lst = $this->all_children($verbs->get(verb::IS_PART_OF));
+        $phr_lst = $this->all_children($verbs->get_verb(verb::IS_PART_OF));
         $phr_lst->merge($this);
         log_debug($this->dsp_id() . ' contains ' . $phr_lst->name());
         return $phr_lst;
@@ -1077,7 +1077,7 @@ class phrase_list extends sandbox_list_named
     {
         global $verbs;
         log_debug('for ' . $this->dsp_id());
-        $phr_lst = $this->all_children($verbs->get(verb::CAN_CONTAIN));
+        $phr_lst = $this->all_children($verbs->get_verb(verb::CAN_CONTAIN));
         log_debug('merge ' . $this->dsp_id());
         $this->merge($phr_lst);
         log_debug($phr_lst->dsp_id() . ' for ' . $this->dsp_id());
@@ -1090,7 +1090,7 @@ class phrase_list extends sandbox_list_named
         global $verbs;
         log_debug('for ' . $this->dsp_id());
         // this first time get all related items
-        $phr_lst = $this->all_children($verbs->get(verb::CAN_CONTAIN));
+        $phr_lst = $this->all_children($verbs->get_verb(verb::CAN_CONTAIN));
         $phr_lst = $phr_lst->are();
         $added_lst = $phr_lst->contains();
         $added_lst->diff($this);
@@ -1099,7 +1099,7 @@ class phrase_list extends sandbox_list_named
             $loops = 0;
             log_debug('added ' . $added_lst->dsp_id() . ' to ' . $phr_lst->name());
             do {
-                $next_lst = $added_lst->all_children($verbs->get(verb::CAN_CONTAIN));
+                $next_lst = $added_lst->all_children($verbs->get_verb(verb::CAN_CONTAIN));
                 $next_lst = $next_lst->are();
                 $added_lst = $next_lst->contains();
                 $added_lst->diff($phr_lst);

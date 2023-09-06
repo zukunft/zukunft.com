@@ -1083,7 +1083,7 @@ class word extends sandbox_typed
         global $verbs;
         log_debug('for ' . $this->dsp_id() . ' and user ' . $this->user()->id());
         $phr_lst = $this->lst();
-        $parent_phr_lst = $phr_lst->foaf_parents($verbs->get(verb::IS));
+        $parent_phr_lst = $phr_lst->foaf_parents($verbs->get_verb(verb::IS));
         log_debug('are ' . $parent_phr_lst->dsp_name() . ' for ' . $this->dsp_id());
         return $parent_phr_lst;
     }
@@ -1131,7 +1131,7 @@ class word extends sandbox_typed
         if (!$wrd_lst->does_contain($child)) {
             $wrd_lnk = new triple($this->user());
             $wrd_lnk->fob = $child->phrase();
-            $wrd_lnk->verb = $verbs->get(verb::IS);
+            $wrd_lnk->verb = $verbs->get_verb(verb::IS);
             $wrd_lnk->tob = $this->phrase();
             if ($wrd_lnk->save() == '') {
                 $result = true;
@@ -1149,7 +1149,7 @@ class word extends sandbox_typed
         global $verbs;
         log_debug('for ' . $this->dsp_id() . ' and user ' . $this->user()->id());
         $phr_lst = $this->lst();
-        $child_phr_lst = $phr_lst->all_children($verbs->get(verb::IS));
+        $child_phr_lst = $phr_lst->all_children($verbs->get_verb(verb::IS));
         log_debug('are ' . $child_phr_lst->name() . ' for ' . $this->dsp_id());
         return $child_phr_lst;
     }
@@ -1174,7 +1174,7 @@ class word extends sandbox_typed
     {
         global $verbs;
         $phr_lst = $this->lst();
-        return $phr_lst->foaf_children($verbs->get(verb::IS_PART_OF));
+        return $phr_lst->foaf_children($verbs->get_verb(verb::IS_PART_OF));
     }
 
     /**
@@ -1185,7 +1185,7 @@ class word extends sandbox_typed
     {
         global $verbs;
         $phr_lst = $this->lst();
-        return $phr_lst->foaf_children($verbs->get(verb::IS_PART_OF), 1);
+        return $phr_lst->foaf_children($verbs->get_verb(verb::IS_PART_OF), 1);
     }
 
     /**
@@ -1300,7 +1300,7 @@ class word extends sandbox_typed
         global $verbs;
         log_debug($this->dsp_id() . ', user ' . $this->user()->id());
         $phr_lst = $this->lst();
-        $is_phr_lst = $phr_lst->foaf_parents($verbs->get(verb::IS_PART_OF));
+        $is_phr_lst = $phr_lst->foaf_parents($verbs->get_verb(verb::IS_PART_OF));
 
         log_debug($this->dsp_id() . ' is a ' . $is_phr_lst->dsp_name());
         return $is_phr_lst;

@@ -100,7 +100,7 @@ class source_type_list extends type_list
      */
     private function load_list(sql_db $db_con, string $db_type): void
     {
-        $this->lst = array();
+        $this->reset();
         $qp = $this->load_sql_all($db_con->sql_creator(), $db_type);
         $db_lst = $db_con->get($qp);
         if ($db_lst != null) {
@@ -109,9 +109,9 @@ class source_type_list extends type_list
                 $type_name = strval($db_entry[sql_db::FLD_TYPE_NAME]);
                 $type_comment = strval($db_entry[sandbox_named::FLD_DESCRIPTION]);
                 $type_obj = new source_type($type_code_id, $type_name, $type_comment);
-                $type_obj->id = $db_entry[self::FLD_ID];
+                $type_obj->set_id($db_entry[self::FLD_ID]);
                 //$type_obj->url = $db_entry[self::FLD_URL];
-                $this->lst[$db_entry[$db_con->get_id_field_name($db_type)]] = $type_obj;
+                $this->add($type_obj);
             }
         }
     }
@@ -126,7 +126,7 @@ class source_type_list extends type_list
     {
         $result = false;
         $this->load_list($db_con, $db_type);
-        $this->hash = parent::get_hash($this->lst);
+        $this->hash = parent::get_hash($this->lst());
         if (count($this->hash) > 0) {
             $result = true;
         }
@@ -140,17 +140,14 @@ class source_type_list extends type_list
     {
         parent::load_dummy();
         $type = new source_type(source_type::XBRL, source_type::XBRL);
-        $type->id = 2;
-        $this->lst[2] = $type;
-        $this->hash[source_type::XBRL] = 2;
+        $type->set_id(2);
+        $this->add($type);
         $type = new source_type(source_type::CSV, source_type::CSV);
-        $type->id = 3;
-        $this->lst[3] = $type;
-        $this->hash[source_type::CSV] = 3;
+        $type->set_id(3);
+        $this->add($type);
         $type = new source_type(source_type::PDF, source_type::PDF);
-        $type->id = 4;
-        $this->lst[4] = $type;
-        $this->hash[source_type::PDF] = 4;
+        $type->set_id(4);
+        $this->add($type);
     }
 
     /**
@@ -173,10 +170,10 @@ class source_type_list extends type_list
         $lib = new library();
         $result = null;
         if ($id > 0) {
-            if (array_key_exists($id, $source_types->lst)) {
-                $result = $source_types->lst[$id];
+            if (array_key_exists($id, $source_types->lst())) {
+                $result = $source_types->get($id);
             } else {
-                log_err('Source type with is ' . $id . ' not found in ' . $lib->dsp_array($source_types->lst));
+                log_err('Source type with is ' . $id . ' not found in ' . $lib->dsp_array($source_types->lst()));
             }
         } else {
             log_debug('Source type id not not set');

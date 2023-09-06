@@ -100,7 +100,7 @@ class phrase_list_test
         $wrd_lst = new word_list($usr);
         $wrd_lst->load_by_names(array(TW_ABB));
         $phr_lst = $wrd_lst->phrase_lst();
-        $lst_parents = $phr_lst->foaf_parents($verbs->get(verb::IS));
+        $lst_parents = $phr_lst->foaf_parents($verbs->get_verb(verb::IS));
         $result = $lib->dsp_array($lst_parents->names());
         $target = word_api::TN_COMPANY; // order adjusted based on the number of usage
         $t->display('phrase_list->foaf_parents for ' . $phr_lst->dsp_name() . ' up', $target, $result);

@@ -644,7 +644,7 @@ class word_list extends sandbox_list
     function is(): word_list
     {
         global $verbs;
-        $wrd_lst = $this->foaf_parents($verbs->get(verb::IS));
+        $wrd_lst = $this->foaf_parents($verbs->get_verb(verb::IS));
         log_debug($this->dsp_id() . ' is ' . $wrd_lst->name());
         return $wrd_lst;
     }
@@ -659,7 +659,7 @@ class word_list extends sandbox_list
     {
         global $verbs;
         log_debug('for ' . $this->dsp_id());
-        $wrd_lst = $this->children($verbs->get(verb::IS));
+        $wrd_lst = $this->children($verbs->get_verb(verb::IS));
         $wrd_lst->merge($this);
         log_debug($this->dsp_id() . ' are ' . $wrd_lst->name());
         return $wrd_lst;
@@ -672,7 +672,7 @@ class word_list extends sandbox_list
     function contains(): word_list
     {
         global $verbs;
-        $wrd_lst = $this->children($verbs->get(verb::IS_PART_OF));
+        $wrd_lst = $this->children($verbs->get_verb(verb::IS_PART_OF));
         $wrd_lst->merge($this);
         log_debug($this->dsp_id() . ' contains ' . $wrd_lst->name());
         return $wrd_lst;
@@ -725,7 +725,7 @@ class word_list extends sandbox_list
     function differentiators(): word_list
     {
         global $verbs;
-        $wrd_lst = $this->foaf_parents($verbs->get(verb::CAN_CONTAIN));
+        $wrd_lst = $this->foaf_parents($verbs->get_verb(verb::CAN_CONTAIN));
         $wrd_lst->merge($this);
         return $wrd_lst;
     }
@@ -740,7 +740,7 @@ class word_list extends sandbox_list
         global $verbs;
         // this first time get all related items
         // parents and not children because the verb is "can contain", but here the question is for "can be split by"
-        $wrd_lst = $this->foaf_parents($verbs->get(verb::CAN_CONTAIN));
+        $wrd_lst = $this->foaf_parents($verbs->get_verb(verb::CAN_CONTAIN));
         return $wrd_lst->are_and_contains();
     }
 

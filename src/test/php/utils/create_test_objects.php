@@ -263,7 +263,7 @@ class create_test_objects extends test_base
                             $code_id = trim($data[$code_id_col]);
                             if ($code_id == 'NULL') {
                                 $id = $data[0];
-                                $typ_obj = $list->get_by_id($id);
+                                $typ_obj = $list->get($id);
                             } else {
                                 if ($list->id($code_id) == null) {
                                     log_warning($type . ' ' . $data[$name_col] . ' not jet included in the unit tests');
@@ -1230,7 +1230,7 @@ class create_test_objects extends test_base
         $trp = new triple($test_usr);
         $trp->set_id($id);
         $trp->fob = $this->new_word($from_name)->phrase();
-        $trp->verb = $verbs->get($verb_code_id);
+        $trp->verb = $verbs->get_verb($verb_code_id);
         $trp->tob = $this->new_word($to_name)->phrase();
         $trp->set_name($wrd_name);
 
@@ -1258,7 +1258,7 @@ class create_test_objects extends test_base
         $from = $wrd_from->phrase();
         $to = $wrd_to->phrase();
 
-        $vrb = $verbs->get($verb_code_id);
+        $vrb = $verbs->get_verb($verb_code_id);
 
         $lnk_test = new triple($this->usr1);
         if ($from->id() > 0 and $to->id() > 0) {
@@ -1285,7 +1285,7 @@ class create_test_objects extends test_base
         $from = $wrd_from->phrase();
         $to = $wrd_to->phrase();
 
-        $vrb = $verbs->get($verb_code_id);
+        $vrb = $verbs->get_verb($verb_code_id);
 
         $lnk_test = new triple($test_usr);
         $lnk_test->set_from($from);
@@ -1331,7 +1331,7 @@ class create_test_objects extends test_base
         }
 
         // load the verb
-        $vrb = $verbs->get($verb_code_id);
+        $vrb = $verbs->get_verb($verb_code_id);
 
         // check if the triple exists or create a new if needed
         $trp = new triple($this->usr1);

@@ -33,14 +33,22 @@ namespace html\verb;
 
 include_once WEB_SANDBOX_PATH . 'sandbox_named.php';
 
+use api\api;
 use api\verb_api;
-use html\api;
+use html\api as api_dsp;
 use html\html_base;
 use html\phrase\term as term_dsp;
 use html\sandbox\sandbox_named as sandbox_named_dsp;
 
 class verb extends sandbox_named_dsp
 {
+
+    /*
+     * object vars
+     */
+
+    public string $code_id;        // this id text is unique for all code links and is used for system im- and export
+
 
     /*
      * set and get
@@ -55,6 +63,11 @@ class verb extends sandbox_named_dsp
     function set_from_json_array(array $json_array): void
     {
         parent::set_from_json_array($json_array);
+        if (array_key_exists(api::FLD_CODE_ID, $json_array)) {
+            $this->set_code_id($json_array[api::FLD_CODE_ID]);
+        } else {
+            $this->set_code_id('');
+        }
     }
 
     /**
@@ -67,6 +80,20 @@ class verb extends sandbox_named_dsp
         return $this->id;
     }
 
+
+    /*
+     * set and get
+     */
+
+    function set_code_id(string $code_id): void
+    {
+        $this->code_id = $code_id;
+    }
+
+    function code_id(): string
+    {
+        return $this->code_id;
+    }
 
     /*
      * cast
@@ -102,7 +129,7 @@ class verb extends sandbox_named_dsp
     function display_linked(?string $back = '', string $style = ''): string
     {
         $html = new html_base();
-        $url = $html->url(api::VERB, $this->id, $back, api::PAR_VIEW_VERBS);
+        $url = $html->url(api_dsp::VERB, $this->id, $back, api_dsp::PAR_VIEW_VERBS);
         return $html->ref($url, $this->name(), $this->name(), $style);
     }
 
@@ -117,7 +144,9 @@ class verb extends sandbox_named_dsp
      */
     function api_array(): array
     {
-        return parent::api_array();
+        $vars = parent::api_array();
+        $vars[api::FLD_CODE_ID] = $this->code_id();
+        return $vars;
     }
 
 }

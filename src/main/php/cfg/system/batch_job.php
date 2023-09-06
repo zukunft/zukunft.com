@@ -207,7 +207,7 @@ class batch_job extends db_object
         global $job_types;
         $result = '';
         if ($this->type_id != 0) {
-            $type = $job_types->get_by_id($this->type_id);
+            $type = $job_types->get($this->type_id);
             if ($type != null) {
                 $result = $type->code_id();
             }

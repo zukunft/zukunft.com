@@ -47,7 +47,7 @@ class change_log_list extends change_log_list_api
     {
         $html = new html_base();
         $html_text = $this->th($condensed, $with_users);
-        foreach ($this->lst as $chg) {
+        foreach ($this->lst() as $chg) {
             $html_text .= $html->td($chg->tr($back, $condensed, $with_users));
         }
         return $html->tbl($html->tr($html_text), html_base::STYLE_BORDERLESS);

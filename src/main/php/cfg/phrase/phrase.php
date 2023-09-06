@@ -843,7 +843,7 @@ class phrase extends combine_named
         log_debug('for ' . $this->dsp_id());
         $vrb_lst = new verb_list($this->user());
         $vrb_lst->load_by_linked_phrases($db_con, $this, $direction);
-        log_debug('got ' . $lib->dsp_count($vrb_lst->lst));
+        log_debug('got ' . $lib->dsp_count($vrb_lst->lst()));
         return $vrb_lst;
     }
 
@@ -964,7 +964,7 @@ class phrase extends combine_named
             $link_types = $this->vrb_lst($direction);
         }
         if ($link_types != null) {
-            foreach ($link_types->lst as $vrb) {
+            foreach ($link_types->lst() as $vrb) {
                 $add_lst = new phrase_list($this->user());
                 $add_lst->load_by_phr($this, $vrb, $direction);
                 $phr_lst->merge($add_lst);

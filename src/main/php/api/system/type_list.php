@@ -137,8 +137,10 @@ class type_list_api extends list_api implements JsonSerializable
     function jsonSerialize(): array
     {
         $vars = [];
-        foreach ($this->lst() as $lst) {
-            $vars[] = json_decode(json_encode($lst));
+        foreach ($this->lst() as $typ) {
+            $typ_vars = get_object_vars($typ);
+            $typ_vars[api::FLD_ID] = $typ->id();
+            $vars[] = $typ_vars;
         }
         return $vars;
     }

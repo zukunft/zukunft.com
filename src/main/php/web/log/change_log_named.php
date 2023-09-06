@@ -180,7 +180,7 @@ class change_log_named extends change_log_named_api
     {
         global $change_log_actions;
 
-        $action = $change_log_actions->get_by_id($this->action_id);
+        $action = $change_log_actions->get($this->action_id);
         return $action->code_id;
     }
 
@@ -202,7 +202,7 @@ class change_log_named extends change_log_named_api
     {
         global $change_log_fields;
 
-        $field = $change_log_fields->get_by_id($this->field_id);
+        $field = $change_log_fields->get($this->field_id);
         return $field->code_id;
     }
 
@@ -213,7 +213,7 @@ class change_log_named extends change_log_named_api
     {
         global $change_log_fields;
 
-        $field = $change_log_fields->get_by_id($this->field_id);
+        $field = $change_log_fields->get($this->field_id);
         return $field->comment;
     }
 
@@ -224,7 +224,7 @@ class change_log_named extends change_log_named_api
     {
         global $change_log_tables;
 
-        $table = $change_log_tables->get_by_id($this->table_id);
+        $table = $change_log_tables->get($this->table_id);
         return $table->name;
     }
 

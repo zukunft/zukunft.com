@@ -55,8 +55,7 @@ class language_list extends type_list
      */
     function load_dummy(): void
     {
-        $this->lst = array();
-        $this->hash = array();
+        $this->reset();
         $type = new type_object(language::DEFAULT, language::DEFAULT, '', 2);
         $this->add($type);
 

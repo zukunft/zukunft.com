@@ -71,7 +71,7 @@ class language_form extends type_object
         $lib = new library();
         $dp_type = $lib->class_to_name($class);
         $qp = $this->load_sql_by_id($db_con->sql_creator(), $id, $dp_type);
-        return $this->load($qp, $dp_type);
+        return $this->load_typ_obj($qp, $dp_type);
     }
 
 }

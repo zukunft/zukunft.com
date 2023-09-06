@@ -104,7 +104,7 @@ class ref_type_list extends type_list
      */
     private function load_list(sql_db $db_con, string $db_type): void
     {
-        $this->lst = array();
+        $this->reset();
         $qp = $this->load_sql_all($db_con->sql_creator(), $db_type);
         $db_lst = $db_con->get($qp);
         if ($db_lst != null) {
@@ -113,9 +113,11 @@ class ref_type_list extends type_list
                 $type_name = strval($db_entry[sql_db::FLD_TYPE_NAME]);
                 $type_comment = strval($db_entry[sandbox_named::FLD_DESCRIPTION]);
                 $type_obj = new ref_type($type_code_id, $type_name, $type_comment);
-                $type_obj->id = $db_entry[self::FLD_ID];
+                $type_obj->set_id($db_entry[self::FLD_ID]);
                 $type_obj->url = $db_entry[self::FLD_URL];
-                $this->lst[$db_entry[$db_con->get_id_field_name($db_type)]] = $type_obj;
+                // TODO check if still needed
+                // $id = $db_entry[$db_con->get_id_field_name($db_type)];
+                $this->add($type_obj);
             }
         }
     }
@@ -130,8 +132,7 @@ class ref_type_list extends type_list
     {
         $result = false;
         $this->load_list($db_con, $db_type);
-        $this->hash = parent::get_hash($this->lst);
-        if (count($this->hash) > 0) {
+        if ($this->count() > 0) {
             $result = true;
         }
         return $result;
@@ -144,9 +145,8 @@ class ref_type_list extends type_list
     {
         parent::load_dummy();
         $type = new ref_type(ref_type::WIKIPEDIA, ref_type::WIKIPEDIA);
-        $type->id = 2;
-        $this->lst[2] = $type;
-        $this->hash[ref_type::WIKIPEDIA] = 2;
+        $type->set_id(2);
+        $this->add($type);
     }
 
     /**
@@ -169,10 +169,10 @@ class ref_type_list extends type_list
         $lib = new library();
         $result = null;
         if ($id > 0) {
-            if (array_key_exists($id, $ref_types->lst)) {
-                $result = $ref_types->lst[$id];
+            if (array_key_exists($id, $ref_types->lst())) {
+                $result = $ref_types->get($id);
             } else {
-                log_err('Ref type with is ' . $id . ' not found in ' . $lib->dsp_array($ref_types->lst));
+                log_err('Ref type with is ' . $id . ' not found in ' . $lib->dsp_array($ref_types->lst()));
             }
         } else {
             log_debug('Ref type id not not set');

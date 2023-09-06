@@ -52,8 +52,7 @@ class user_profile_list extends type_list
      */
     function load_dummy(): void
     {
-        $this->lst = array();
-        $this->hash = array();
+        $this->reset();
         $type = new type_object(user_profile::NORMAL, user_profile::NORMAL, '', 2);
         $this->add($type);
         $type = new type_object(user_profile::ADMIN, user_profile::ADMIN, '', 3);

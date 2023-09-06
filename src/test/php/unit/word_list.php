@@ -110,7 +110,7 @@ class word_list_unit_tests
         $wrd = new word($usr);
         $wrd->set_id(7);
         $wrd_lst->add($wrd);
-        $vrb = $verbs->get(verb::IS);
+        $vrb = $verbs->get_verb(verb::IS);
         $this->assert_sql_by_linked_words($t, $db_con, $wrd_lst, $vrb, $direction);
 
         // the child words
@@ -127,7 +127,7 @@ class word_list_unit_tests
         $wrd = new word($usr);
         $wrd->set_id(9);
         $wrd_lst->add($wrd);
-        $vrb = $verbs->get(verb::IS);
+        $vrb = $verbs->get_verb(verb::IS);
         $this->assert_sql_by_linked_words($t, $db_con, $wrd_lst, $vrb, $direction);
 
         $t->subheader('Modify and filter word lists');

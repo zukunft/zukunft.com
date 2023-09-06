@@ -109,7 +109,7 @@ class change_log_named extends change_log
             $this->new_value = $db_row[self::FLD_NEW_VALUE];
             $this->new_id = $db_row[self::FLD_NEW_ID];
 
-            $fld_tbl = $change_log_fields->get_by_id($this->field_id);
+            $fld_tbl = $change_log_fields->get($this->field_id);
             $this->table_id = preg_replace("/[^0-9]/", '', $fld_tbl->name);
             // TODO check if not the complete user should be loaded
             $usr = new user();

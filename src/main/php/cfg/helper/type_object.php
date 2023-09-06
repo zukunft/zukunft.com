@@ -49,7 +49,7 @@ use cfg\db\sql_creator;
 use cfg\db\sql_par_type;
 use model\db_cl;
 
-class type_object
+class type_object extends db_object
 {
 
     /*
@@ -70,9 +70,8 @@ class type_object
      */
 
     // the standard fields of a type
-    public int $id;                // the database id is also used as the array pointer
     public string $name;           // simply the type name as shown to the user
-    public string $code_id;        // this id text is unique for all code links and is used for system im- and export
+    public ?string $code_id;       // this id text is unique for all code links and is used for system im- and export
     public ?string $comment = '';  // to explain the type to the user as a tooltip
 
 
@@ -82,6 +81,7 @@ class type_object
 
     function __construct(?string $code_id, string $name = '', string $comment = '', int $id = 0)
     {
+        parent::__construct();
         $this->set_id($id);
         $this->set_name($name);
         $this->set_code_id($code_id);
@@ -90,10 +90,9 @@ class type_object
         }
     }
 
-    function row_mapper(array $db_row, string $db_type): bool
+    function row_mapper_typ_obj(array $db_row, string $db_type): bool
     {
-        $result = false;
-        $this->id = $db_row[$this->id_field($db_type)];
+        $result = parent::row_mapper($db_row, $this->id_field_typ($db_type));
         if ($this->id > 0) {
             $this->code_id = strval($db_row[sql_db::FLD_CODE_ID]);
             $type_name = '';
@@ -122,11 +121,6 @@ class type_object
      * set and get
      */
 
-    function set_id(int $id): void
-    {
-        $this->id = $id;
-    }
-
     function set_name(string $name): void
     {
         $this->name = $name;
@@ -140,11 +134,6 @@ class type_object
     function set_comment(string $comment): void
     {
         $this->comment = $comment;
-    }
-
-    function id(): int
-    {
-        return $this->id;
     }
 
     function name(): string
@@ -203,14 +192,14 @@ class type_object
      *
      * @param sql_creator $sc with the target db_type set
      * @param int $id the id of the type object
-     * @param string $db_type the name of the child class from where the call has been triggered
+     * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql_creator $sc, int $id, string $db_type = ''): sql_par
+    function load_sql_by_id(sql_creator $sc, int $id, string $class = ''): sql_par
     {
         $typ_lst = new type_list();
-        $qp = $typ_lst->load_sql($sc, $db_type, sql_db::FLD_ID);
-        $sc->add_where($this->id_field($db_type), $id);
+        $qp = $typ_lst->load_sql($sc, $class, sql_db::FLD_ID);
+        $sc->add_where($this->id_field_typ($class), $id);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -218,18 +207,30 @@ class type_object
     }
 
     /**
+     * synthetic creation of grandparent:: for verb
+     * @param sql_creator $sc with the target db_type set
+     * @param int $id the id of the type object
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_id_fwd(sql_creator $sc, int $id, string $class = ''): sql_par
+    {
+        return parent::load_sql_by_id($sc, $id, $class);
+    }
+
+    /**
      * create an SQL statement to retrieve a type object by name from the database
      *
      * @param sql_creator $sc with the target db_type set
      * @param string $name the name of the source
-     * @param string $db_type the name of the child class from where the call has been triggered
+     * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_name(sql_creator $sc, string $name, string $db_type = ''): sql_par
+    function load_sql_by_name(sql_creator $sc, string $name, string $class = ''): sql_par
     {
         $typ_lst = new type_list();
-        $qp = $typ_lst->load_sql($sc, $db_type, sql_db::FLD_NAME);
-        $sc->add_where($this->name_field($db_type), $name);
+        $qp = $typ_lst->load_sql($sc, $class, sql_db::FLD_NAME);
+        $sc->add_where($this->name_field_typ($class), $name);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -239,18 +240,18 @@ class type_object
     /**
      * create an SQL statement to retrieve a type object by code id from the database
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param string $code_id the code id of the source
-     * @param string $db_type the name of the child class from where the call has been triggered
+     * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_code_id(sql_db $db_con, string $code_id, string $db_type = ''): sql_par
+    function load_sql_by_code_id(sql_creator $sc, string $code_id, string $class = ''): sql_par
     {
         $typ_lst = new type_list();
-        $qp = $typ_lst->load_sql($db_con->sql_creator(), $db_type, 'code_id');
-        $db_con->add_par(sql_par_type::TEXT, $code_id);
-        $qp->sql = $db_con->select_by_code_id();
-        $qp->par = $db_con->get_par();
+        $qp = $typ_lst->load_sql($sc, $class, 'code_id');
+        $sc->add_where(sql_db::FLD_CODE_ID, $code_id);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
 
         return $qp;
     }
@@ -260,22 +261,22 @@ class type_object
      * @param sql_par $qp the query parameters created by the calling function
      * @return int the id of the object found and zero if nothing is found
      */
-    protected function load(sql_par $qp, string $db_type): int
+    protected function load_typ_obj(sql_par $qp, string $db_type): int
     {
         global $db_con;
 
         $db_row = $db_con->get1($qp);
-        $this->row_mapper($db_row, $db_type);
+        $this->row_mapper_typ_obj($db_row, $db_type);
         return $this->id();
     }
 
-    private function id_field(string $db_type): string
+    private function id_field_typ(string $db_type): string
     {
         global $db_con;
         return $db_con->get_id_field_name($db_type);
     }
 
-    private function name_field(string $db_type): string
+    private function name_field_typ(string $db_type): string
     {
         global $db_con;
         return $db_con->get_name_field($db_type);

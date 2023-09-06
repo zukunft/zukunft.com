@@ -175,15 +175,13 @@ class verb_list extends type_list
                             $vrb->row_mapper_verb($db_vrb);
                             $vrb->set_user($this->usr);
                             $vrb_lst[] = $vrb;
-                            $vrb_id_lst[] = $vrb->id() ;
+                            $vrb_id_lst[] = $vrb->id();
                             log_debug('verb_list->load added (' . $vrb->name() . ')');
                         }
                     }
                 }
-                $this->lst = $vrb_lst;
-                $this->hash = $this->get_hash($this->lst);
-                if (count($this->hash) > 0) {
-                    $this->lst = $vrb_lst;
+                $this->set_lst($vrb_lst);
+                if ($this->count() > 0) {
                     $result = true;
                 }
             }
@@ -195,20 +193,20 @@ class verb_list extends type_list
      * common part to create an SQL statement to load all verbs from the database
      *
      * @param sql_creator $sc with the target db_type set
-     * @param string $db_type the class name to be compatible with the user sandbox load_sql functions
+     * @param string $class the class name to be compatible with the user sandbox load_sql functions
      * @param string $query_name the name extension to make the query name unique
      * @param string $order_field set if the type list should e.g. be sorted by the name instead of the id
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql(
         sql_creator $sc,
-        string $db_type = self::class,
-        string $query_name = 'all',
-        string $order_field = verb::FLD_ID): sql_par
+        string      $class = self::class,
+        string      $query_name = 'all',
+        string      $order_field = verb::FLD_ID): sql_par
     {
         $sc->set_type(verb::class);
-        $qp = new sql_par($db_type);
-        $qp->name = $db_type . '_' . $query_name;
+        $qp = new sql_par($class);
+        $qp->name = $class . '_' . $query_name;
 
         $sc->set_name($qp->name);
         //TODO check if $db_con->set_usr($this->user()->id()); is needed
@@ -245,17 +243,17 @@ class verb_list extends type_list
      */
     private function load_list(sql_db $db_con, string $db_type): array
     {
-        $this->lst = [];
+        $this->reset();
         $qp = $this->load_sql_all($db_con->sql_creator(), $db_type);
         $db_lst = $db_con->get($qp);
         if ($db_lst != null) {
             foreach ($db_lst as $db_row) {
                 $vrb = new verb();
                 $vrb->row_mapper_verb($db_row);
-                $this->lst[$db_row[$db_con->get_id_field_name($db_type)]] = $vrb;
+                $this->add_verb($vrb);
             }
         }
-        return $this->lst;
+        return $this->lst();
     }
 
     /**
@@ -268,9 +266,8 @@ class verb_list extends type_list
     function load(sql_db $db_con, string $db_type = sql_db::TBL_VERB): bool
     {
         $result = false;
-        $this->lst = $this->load_list($db_con, $db_type);
-        $this->hash = $this->get_hash($this->lst);
-        if (count($this->hash) > 0) {
+        $this->set_lst($this->load_list($db_con, $db_type));
+        if ($this->count() > 0) {
             $result = true;
         }
         return $result;
@@ -286,32 +283,42 @@ class verb_list extends type_list
         $vrb->set_id(1);
         $vrb->set_name(verb::NOT_SET);
         $vrb->code_id = verb::NOT_SET;
-        $this->lst[1] = $vrb;
-        $this->hash[verb::NOT_SET] = 1;
+        $this->add_verb($vrb);
         $vrb = new verb();
         $vrb->set_id(2);
         $vrb->set_name(verb::IS);
         $vrb->code_id = verb::IS;
-        $this->lst[2] = $vrb;
-        $this->hash[verb::IS] = 2;
+        $this->add_verb($vrb);
         $vrb = new verb();
         $vrb->set_id(3);
         $vrb->set_name(verb::IS_PART_OF);
         $vrb->code_id = verb::IS_PART_OF;
-        $this->lst[3] = $vrb;
-        $this->hash[verb::IS_PART_OF] = 3;
+        $this->add_verb($vrb);
         $vrb = new verb();
         $vrb->set_id(4);
         $vrb->set_name(verb::IS_WITH);
         $vrb->code_id = verb::IS_WITH;
-        $this->lst[4] = $vrb;
-        $this->hash[verb::IS_WITH] = 4;
+        $this->add_verb($vrb);
         $vrb = new verb();
         $vrb->set_id(9);
         $vrb->set_name(verb::FOLLOW);
         $vrb->code_id = verb::FOLLOW;
-        $this->lst[9] = $vrb;
-        $this->hash[verb::FOLLOW] = 9;
+        $this->add_verb($vrb);
+    }
+
+
+    /*
+     * modify
+     */
+
+    /**
+     * add a verb to the list
+     * @param verb $vrb
+     */
+    function add_verb(verb $vrb): void
+    {
+        //$type_obj = new type_object($vrb->code_id, $vrb->name(), '', $vrb->id());
+        $this->add($vrb);
     }
 
     /**
@@ -343,7 +350,7 @@ class verb_list extends type_list
     function db_id_list(): array
     {
         $result = array();
-        foreach ($this->lst as $obj) {
+        foreach ($this->lst() as $obj) {
             $result[$obj->id()] = $obj->name();
         }
         return $result;
@@ -355,10 +362,10 @@ class verb_list extends type_list
     function ids(): array
     {
         $result = array();
-        if ($this->lst != null) {
-            foreach ($this->lst as $vrb) {
-                if ($vrb->id()  > 0) {
-                    $result[] = $vrb->id() ;
+        if (!$this->is_empty()) {
+            foreach ($this->lst() as $vrb) {
+                if ($vrb->id() > 0) {
+                    $result[] = $vrb->id();
                 }
             }
         }
@@ -378,26 +385,14 @@ class verb_list extends type_list
      * @param string $code_id
      * @return verb the verb object or null if no match is found
      */
-    function get(string $code_id): verb
+    function get_verb(string $code_id): ?verb
     {
         $result = null;
-        if ($code_id != '' and $code_id != null) {
-            if (array_key_exists($code_id, $this->hash)) {
-                $id = $this->hash[$code_id];
-                if ($id > 0) {
-                    if (array_key_exists($id, $this->lst)) {
-                        $result = $this->lst[$id];
-                    } else {
-                        log_err('Verb "' . $code_id . '" with is ' . $id . ' not found in ' . $this->dsp_id());
-                    }
-                } else {
-                    log_debug('Verb id not set while try to get "' . $code_id . '"');
-                }
-            } else {
-                log_err('Verb "' . $code_id . '" not found in ' . $this->dsp_id());
-            }
+        $id = $this->id($code_id);
+        if ($id > 0) {
+            $result = $this->get_verb_by_id($id);
         } else {
-            log_debug('Type code id not not set');
+            log_debug('Verb id not set while try to get "' . $code_id . '"');
         }
 
         return $result;
@@ -408,27 +403,25 @@ class verb_list extends type_list
      * a kind of replacement for the user_type_list->get_by_id() function but for the verb object
      *
      * @param int $id
-     * @return verb the verb object or null if no match is found
+     * @return verb|null the verb object or null if no match is found
      */
-    function get_verb_by_id(int $id): verb
+    function get_verb_by_id(int $id): ?verb
     {
         $result = null;
         if ($id > 0) {
-            if ($id > 0) {
-                if (array_key_exists($id, $this->lst)) {
-                    $result = $this->lst[$id];
-                } else {
-                    log_err('Verb with id ' . $id . ' not found in ' . $this->dsp_id());
-                }
+            $vrb_lst = $this->lst();
+            if (array_key_exists($id, $vrb_lst)) {
+                $result = $vrb_lst[$id];
             } else {
-                log_debug('Verb id not set while try to get "' . $id . '"');
+                log_err('Verb with id ' . $id . ' not found in ' . $this->dsp_id());
             }
         } else {
-            log_debug('ID not not set for getting a verb');
+            log_debug('Verb id not set while try to get "' . $id . '"');
         }
 
         return $result;
     }
+
 
     /*
       GUI interface
@@ -438,12 +431,12 @@ class verb_list extends type_list
     function selector_list(): array
     {
         $result = array();
-        if ($this->lst != null) {
+        if (!$this->is_empty()) {
 
             // create a list with the forward and backward version of the verb
             $combined_list = array();
-            foreach ($this->lst as $vrb) {
-                if ($vrb->id()  > 0) {
+            foreach ($this->lst() as $vrb) {
+                if ($vrb->id() > 0) {
                     $select_row = array();
                     $select_name = $vrb->name();
                     /* has been an idea, but has actually caused more confusion
@@ -451,7 +444,7 @@ class verb_list extends type_list
                         $select_name .= ' (' . $vrb->reverse . ')';
                     }
                     */
-                    $id = $vrb->id() ;
+                    $id = $vrb->id();
                     $select_row[] = $id;
                     $select_row[] = $select_name;
                     $select_row[] = $vrb->usage;
@@ -465,7 +458,7 @@ class verb_list extends type_list
                     }
                     */
                     if (trim($select_name) != '') {
-                        $id = $vrb->id()  * -1;
+                        $id = $vrb->id() * -1;
                         $select_row[] = $id;
                         $select_row[] = $select_name;
                         $select_row[] = $vrb->usage; // TODO separate the backward usage or separate the reverse form
@@ -532,7 +525,7 @@ class verb_list extends type_list
     function dsp_list(): string
     {
         $html = new html_base();
-        return $html->dsp_list($this->lst, "link_type");
+        return $html->dsp_list($this->lst(), "link_type");
     }
 
 }

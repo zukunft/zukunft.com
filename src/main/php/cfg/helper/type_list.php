@@ -2,8 +2,8 @@
 
 /*
 
-    model/helper/user_type_list.php - the superclass for word, formula and view type lists
-    -------------------------------
+    model/helper/type_list.php - the superclass for word, formula and view type lists
+    --------------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -146,18 +146,8 @@ class type_list
 
     function add(type_object|ref $item): void
     {
-        $this->lst[$item->id] = $item;
-        $this->hash[$item->code_id] = $item->id;
-    }
-
-    /**
-     * like add, but cast a verb
-     * @param verb $vrb
-     */
-    function add_verb(verb $vrb): void
-    {
-        $type_obj = new type_object($vrb->code_id, $vrb->name(), '', $vrb->id());
-        $this->add($type_obj);
+        $this->lst[$item->id()] = $item;
+        $this->hash[$item->code_id] = $item->id();
     }
 
     /*
@@ -175,17 +165,19 @@ class type_list
      * e.g. a db_type is phrase_type or view type
      *
      * @param sql_creator $sc with the target db_type set
-     * @param string $db_type the class of the related object e.g. phrase_type or formula_type
+     * @param string $class the class of the related object e.g. phrase_type or formula_type
      * @param string $query_name the name extension to make the query name unique
      * @param string $order_field set if the type list should e.g. be sorted by the name instead of the id
      * @return sql_par the sql statement with the parameters and the name
      */
     function load_sql(
         sql_creator $sc,
-        string $db_type,
-        string $query_name = 'all',
-        string $order_field = ''): sql_par
+        string      $class,
+        string      $query_name = 'all',
+        string      $order_field = ''): sql_par
     {
+        $lib = new library();
+        $db_type = $lib->class_to_name($class);
         $sc->set_type($db_type);
         $qp = new sql_par($db_type);
         $qp->name = $db_type . '_' . $query_name;
@@ -328,8 +320,7 @@ class type_list
     {
         $result = '';
         if ($id != null) {
-
-            $type = $this->get_by_id($id);
+            $type = $this->get($id);
             if ($type != null) {
                 $result = $type->name;
             } else {
@@ -344,7 +335,7 @@ class type_list
      * @param int $id the database id of the expected type
      * @return type_object|null the type object
      */
-    function get_by_id(int $id): ?type_object
+    function get(int $id): ?type_object
     {
         $result = null;
         if ($id > 0) {
@@ -364,19 +355,24 @@ class type_list
      */
     function get_by_code_id(string $code_id): type_object
     {
-        return $this->get_by_id($this->id($code_id));
+        return $this->get($this->id($code_id));
     }
 
     function code_id(int $id): string
     {
         $result = '';
-        $type = $this->get_by_id($id);
+        $type = $this->get($id);
         if ($type != null) {
             $result = $type->code_id;
         } else {
             log_err('Type code id not found for ' . $id . ' in ' . $this->dsp_id());
         }
         return $result;
+    }
+
+    function count(): int
+    {
+        return count($this->lst());
     }
 
     /**

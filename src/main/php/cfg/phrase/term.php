@@ -451,7 +451,7 @@ class term extends combine_named
         } elseif ($this->is_formula()) {
             return $this->get_formula()->api_obj()->term();
         } elseif ($this->is_verb()) {
-            return $this->get_verb()->api_obj()->term();
+            return $this->get_verb()->api_verb_obj()->term();
         } else {
             log_warning('Term ' . $this->dsp_id() . ' is of unknown type');
             return (new term_api(new word_api()));

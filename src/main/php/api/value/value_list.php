@@ -52,7 +52,7 @@ class value_list_api extends list_value_api
     {
         $result = false;
         if (!in_array($val->id(), $this->id_lst())) {
-            $this->lst[] = $val;
+            $this->add_obj($val);
             $this->set_lst_dirty();
             $result = true;
         }
@@ -66,7 +66,7 @@ class value_list_api extends list_value_api
     {
         // cast the single list objects
         $lst_dsp = array();
-        foreach ($this->lst as $val) {
+        foreach ($this->lst() as $val) {
             if ($val != null) {
                 $val_dsp = $val->dsp_obj();
                 $lst_dsp[] = $val_dsp;

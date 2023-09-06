@@ -50,7 +50,7 @@ use html\html_selector;
 use html\verb\verb as verb_dsp;
 use verb_exp;
 
-class verb extends db_object
+class verb extends type_object
 {
 
     /*
@@ -113,8 +113,8 @@ class verb extends db_object
     //                                    but there should not be any user specific verbs
     //                                    otherwise if id is 0 (not NULL) the standard word link type,
     //                                    otherwise the user specific verb
-    public ?string $code_id = '';      // the main id to detect verbs that have a special behavior
-    private ?string $name = '';        // the verb name to build the "sentence" for the user, which cannot be empty
+    //public ?string $code_id = '';      // the main id to detect verbs that have a special behavior
+    //private ?string $name = '';        // the verb name to build the "sentence" for the user, which cannot be empty
     public ?string $plural = '';       // name used if more than one word is shown
     //                                    e.g. instead of "ABB" "is a" "company"
     //                                         use "ABB", Nestlé" "are" "companies"
@@ -135,7 +135,7 @@ class verb extends db_object
 
     function __construct(int $id = 0, string $name = '', string $code_id = '')
     {
-        parent::__construct();
+        parent::__construct($code_id);
         if ($id > 0) {
             $this->set_id($id);
         }
@@ -152,7 +152,7 @@ class verb extends db_object
         $this->id = 0;
         $this->set_user(null);
         $this->code_id = null;
-        $this->name = null;
+        $this->name = '';
         $this->plural = null;
         $this->reverse = null;
         $this->rev_plural = null;
@@ -177,7 +177,9 @@ class verb extends db_object
         $result = parent::row_mapper($db_row, $id_fld);
         if ($result) {
             if (array_key_exists(sql_db::FLD_CODE_ID, $db_row)) {
-                $this->code_id = $db_row[sql_db::FLD_CODE_ID];
+                if ($db_row[sql_db::FLD_CODE_ID] != null) {
+                    $this->set_code_id($db_row[sql_db::FLD_CODE_ID]);
+                }
             }
             $this->set_name($db_row[$name_fld]);
             if (array_key_exists(self::FLD_PLURAL, $db_row)) {
@@ -316,7 +318,7 @@ class verb extends db_object
     /**
      * @return verb_api the verb frontend api object
      */
-    function api_obj(): verb_api
+    function api_verb_obj(): verb_api
     {
         $api_obj = new verb_api();
         $api_obj->set_id($this->id());
@@ -329,7 +331,7 @@ class verb extends db_object
      */
     function api_json(): string
     {
-        return $this->api_obj()->get_json();
+        return $this->api_verb_obj()->get_json();
     }
 
 
@@ -366,7 +368,9 @@ class verb extends db_object
      */
     function load_sql_by_id(sql_creator $sc, int $id, string $class = self::class): sql_par
     {
-        return parent::load_sql_by_id($sc, $id, $class);
+        $lib = new library();
+        $class = $lib->class_to_name($class);
+        return parent::load_sql_by_id_fwd($sc, $id, $class);
     }
 
     /**
@@ -376,9 +380,9 @@ class verb extends db_object
      * @param string $name the name of the verb
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_name(sql_creator $sc, string $name): sql_par
+    function load_sql_by_name(sql_creator $sc, string $name, string $class = self::class): sql_par
     {
-        $qp = $this->load_sql($sc, sql_db::FLD_NAME, self::class);
+        $qp = $this->load_sql($sc, sql_db::FLD_NAME, $class);
         $sc->add_where(self::FLD_NAME, $name, sql_par_type::TEXT_OR);
         $sc->add_where(self::FLD_FORMULA, $name, sql_par_type::TEXT_OR);
         $qp->sql = $sc->sql();
@@ -394,9 +398,9 @@ class verb extends db_object
      * @param string $code_id the code id of the verb
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_code_id(sql_creator $sc, string $code_id): sql_par
+    function load_sql_by_code_id(sql_creator $sc, string $code_id, string $class = self::class): sql_par
     {
-        $qp = $this->load_sql($sc, 'code_id', self::class);
+        $qp = $this->load_sql($sc, 'code_id', $class);
         $sc->add_where(sql_db::FLD_CODE_ID, $code_id);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();

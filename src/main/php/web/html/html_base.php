@@ -698,9 +698,9 @@ class html_base
         $result = "";
 
         foreach ($item_lst as $item) {
-            if ($item->id != null) {
-                $url = $this->url($class . api::UPDATE, $item->id, $back);
-                $result .= $this->ref($url, $item->name);
+            if ($item->id() != null) {
+                $url = $this->url($class . api::UPDATE, $item->id(), $back);
+                $result .= $this->ref($url, $item->name());
                 $result .= '<br>';
             }
         }

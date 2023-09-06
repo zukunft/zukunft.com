@@ -474,7 +474,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
                     $api_obj->set_from($this->fob->obj()->api_obj()->phrase());
                 }
             }
-            $api_obj->set_verb($this->verb->api_obj());
+            $api_obj->set_verb($this->verb->api_verb_obj());
             if ($this->tob->obj() != null) {
                 if ($this->tob->obj()->id() <> 0 or $this->tob->obj()->name() != '') {
                     $api_obj->set_to($this->tob->obj()?->api_obj()->phrase());
