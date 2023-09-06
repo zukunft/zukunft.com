@@ -174,6 +174,15 @@ class component_link extends sandbox_link_with_type
      */
 
     /**
+     * rename to standard link to object to view
+     * @param view $msk
+     */
+    function set_view(view $msk): void
+    {
+        $this->fob = $msk;
+    }
+
+    /**
      * rename to standard link to object to component
      * @param component $cmp
      */
@@ -451,8 +460,8 @@ class component_link extends sandbox_link_with_type
         $id = parent::load_by_link_id($dsp->id(), 0, $cmp->id(), $class);
         // no need to reload the linked objects, just assign it
         if ($id != 0) {
-            $this->fob = $dsp;
-            $this->tob = $cmp;
+            $this->set_view($dsp);
+            $this->set_component($cmp);
         }
         return $id;
     }
@@ -480,20 +489,24 @@ class component_link extends sandbox_link_with_type
     function load_objects(): bool
     {
         $result = true;
-        if (!isset($this->fob) and $this->fob->id() > 0) {
-            $dsp = new view($this->user());
-            if ($dsp->load_by_id($this->fob->id())) {
-                $this->fob = $dsp;
-            } else {
-                $result = false;
+        if ($this->view() != null) {
+            if ($this->view()->id() > 0 and $this->view()->name() == '') {
+                $dsp = new view($this->user());
+                if ($dsp->load_by_id($this->view()->id())) {
+                    $this->set_view($dsp);
+                } else {
+                    $result = false;
+                }
             }
         }
-        if (!isset($this->tob) and $this->tob->id() > 0) {
-            $cmp = new component($this->user());
-            if ($cmp->load_by_id($this->tob->id())) {
-                $this->tob = $cmp;
-            } else {
-                $result = false;
+        if ($this->component() != null) {
+            if ($this->component()->id() > 0 and $this->component()->name() == '') {
+                $cmp = new component($this->user());
+                if ($cmp->load_by_id($this->component()->id())) {
+                    $this->set_component($cmp);
+                } else {
+                    $result = false;
+                }
             }
         }
         return $result;
@@ -862,7 +875,7 @@ class component_link extends sandbox_link_with_type
         global $db_con;
         return $db_con->insert(
             array($this->from_name . sql_db::FLD_EXT_ID, $this->to_name . sql_db::FLD_EXT_ID, "user_id", 'order_nbr'),
-            array($this->fob->id, $this->tob->id, $this->user()->id, $this->order_nbr));
+            array($this->view()->id(), $this->component()->id(), $this->user()->id(), $this->order_nbr));
     }
 
 }

@@ -597,8 +597,8 @@ class view extends sandbox_typed
             if (!$test_obj) {
                 $cmp->save();
                 $cmp_lnk = new component_link($this->user());
-                $cmp_lnk->fob->set_id($this->id());
-                $cmp_lnk->tob->set_id($cmp->id());
+                $cmp_lnk->view()->set_id($this->id());
+                $cmp_lnk->component()->set_id($cmp->id());
                 $cmp_lnk->order_nbr = $pos;
                 $cmp_lnk->pos_type_id = 0;
                 $cmp_lnk->pos_code = '';

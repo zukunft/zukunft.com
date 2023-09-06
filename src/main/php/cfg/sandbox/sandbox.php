@@ -2269,6 +2269,12 @@ class sandbox extends db_object
             if ($this->id <= 0) {
                 log_warning('Delete failed', $this->obj_name . '->del', 'Delete failed, because it seems that the ' . $this->obj_name . ' ' . $this->dsp_id() . ' has been deleted in the meantime.', (new Exception)->getTraceAsString(), $this->usr);
             } else {
+                // reload the objects if needed
+                if ($this->obj_type == self::TYPE_LINK) {
+                    if (!$this->load_objects()) {
+                        $msg .= 'Reloading of linked objects ' . $this->obj_name . ' ' . $this->dsp_id() . ' failed.';
+                    }
+                }
                 // check if the object simply can be deleted, because it has never been used
                 if (!$this->used_by_someone_else()) {
                     $msg .= $this->del_exe();

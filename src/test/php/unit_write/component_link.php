@@ -99,9 +99,7 @@ class component_link_test
         $log->old_from_id = $dsp->id();
         $log->old_to_id = $cmp->id();
         $result = $log->dsp_last(true);
-        // TODO activate
-        //$target = 'zukunft.com system test partner unlinked System Test View Renamed from System Test View Component';
-        $target = 'zukunft.com system test partner ';
+        $target = 'zukunft.com system test partner unlinked System Test View Renamed from System Test View Component';
         $t->display('view component_link->unlink_dsp logged for "' . $dsp->name() . '" to "' . $cmp->name() . '" and user "' . $t->usr2->name . '"', $target, $result);
 
 
@@ -135,9 +133,7 @@ class component_link_test
         $log->old_from_id = $dsp->id();
         $log->old_to_id = $cmp->id();
         $result = $log->dsp_last(true);
-        // TODO activate
         $target = 'zukunft.com system test unlinked System Test View Renamed from System Test View Component';
-        $target = 'zukunft.com system test ';
         $t->display('view component_link->unlink_dsp logged of "' . $dsp->name() . '" from "' . $cmp->name() . '"', $target, $result);
 
         // check if the view component is not used any more for both users

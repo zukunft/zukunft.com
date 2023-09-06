@@ -77,6 +77,21 @@ class sandbox_link extends sandbox
 
 
     /*
+     * set and get
+     */
+
+    function fob(): object
+    {
+        return $this->fob;
+    }
+
+    function tob(): object
+    {
+        return $this->tob;
+    }
+
+
+    /*
      * loading / database access object (DAO) functions
      */
 
@@ -304,10 +319,10 @@ class sandbox_link extends sandbox
         $log = new change_log_link($this->user());
         $log->action = change_log_action::DELETE;
         $log->set_table($this->obj_name . sql_db::TABLE_EXTENSION);
-        $log->old_from = $this->fob;
-        $log->old_to = $this->tob;
+        $log->old_from = $this->fob();
+        $log->old_to = $this->tob();
 
-        $log->row_id = $this->id;
+        $log->row_id = $this->id();
         $log->add();
 
         return $log;

@@ -728,6 +728,7 @@ class component extends sandbox_typed
             log_debug($this->dsp_id() . ' from "' . $dsp->name . '" (' . $dsp->id . ')');
             $dsp_lnk = new component_link($this->user());
             $dsp_lnk->load_by_link($dsp, $this);
+            $dsp_lnk->load_objects();
             $msg = $dsp_lnk->del();
             $result .= $msg->get_last_message();
         } else {
