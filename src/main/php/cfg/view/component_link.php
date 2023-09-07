@@ -83,12 +83,14 @@ class component_link extends sandbox_link_with_type
         sandbox::FLD_PROTECT
     );
 
+
     /*
      * code links
      */
 
     const POS_BELOW = 1;  // the view component is placed below the previous component
     const POS_SIDE = 2;   // the view component is placed on the right (or left for right to left writing) side of the previous component
+
 
     /*
      * object vars
@@ -622,22 +624,20 @@ class component_link extends sandbox_link_with_type
                 log_debug('component_link->move check order numbers for ' . $this->fob->dsp_id());
                 // TODO define the common sorting start number, which is 1 and not 0
                 $order_nbr = 1;
-                if ($this->fob->cmp_lst != null) {
-                    foreach ($this->fob->cmp_lst->lst() as $entry) {
-                        // get the component link (TODO add the order number to the entry lst, so that this loading is not needed)
-                        $cmp_lnk = new component_link($this->user());
-                        $dsp = new view($this->user());
-                        $dsp->load_by_id($this->fob->id());
-                        $cmp_lnk->load_by_link($dsp, $entry);
+                if ($this->view()->cmp_lnk_lst != null) {
+                    foreach ($this->view()->cmp_lnk_lst->lst() as $cmp_lnk) {
                         // fix any wrong order numbers
                         if ($cmp_lnk->order_nbr != $order_nbr) {
-                            log_debug('component_link->move check order number of the view component ' . $entry->dsp_id() . ' corrected from ' . $cmp_lnk->order_nbr . ' to ' . $order_nbr . ' in ' . $this->fob->dsp_id());
+                            log_debug('check order number of the view component '
+                                . $cmp_lnk->dsp_id() . ' corrected from ' . $cmp_lnk->order_nbr
+                                . ' to ' . $order_nbr . ' in ' . $this->fob->dsp_id());
                             //zu_err('Order number of the view component "'.$entry->name.'" corrected from '.$cmp_lnk->order_nbr.' to '.$order_nbr.'.', "component_link->move");
                             $cmp_lnk->order_nbr = $order_nbr;
                             $cmp_lnk->save();
                             $order_number_corrected = true;
                         }
-                        log_debug('component_link->move check order numbers checked for ' . $this->fob->dsp_id() . ' and ' . $entry->dsp_id() . ' at position ' . $order_nbr);
+                        log_debug('component_link->move check order numbers checked for '
+                            . $this->fob->dsp_id() . ' and ' . $cmp_lnk->dsp_id() . ' at position ' . $order_nbr);
                         $order_nbr++;
                     }
                 }

@@ -92,6 +92,7 @@ use cfg\language_list;
 use cfg\library;
 use cfg\phrase;
 use cfg\phrase_group;
+use cfg\phrase_group_list;
 use cfg\phrase_list;
 use cfg\phrase_type;
 use cfg\phrase_types;
@@ -599,6 +600,13 @@ class create_test_objects extends test_base
         $grp = $lst->get_grp(false);
         $grp->grp_name = phrase_group_api::TN_READ;
         return $grp;
+    }
+
+    function dummy_phrase_group_list(): phrase_group_list
+    {
+        $lst = new phrase_group_list($this->usr1);
+        $lst->add($this->dummy_phrase_group());
+        return $lst;
     }
 
     function dummy_term(): term

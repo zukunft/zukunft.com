@@ -889,27 +889,6 @@ class phrase extends combine_named
      * display functions
      */
 
-    /**
-     * display the unique id fields
-     */
-    function dsp_id(): string
-    {
-        $result = '';
-
-        if ($this->name() <> '') {
-            $result .= '"' . $this->name() . '"';
-            if ($this->id() > 0) {
-                $result .= ' (' . $this->id() . ')';
-            }
-        } else {
-            $result .= $this->id();
-        }
-        if ($this->user() != null) {
-            $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
-        }
-        return $result;
-    }
-
 // return the name (just because all objects should have a name function)
     function dsp_name(): string
     {
@@ -1459,6 +1438,23 @@ class phrase extends combine_named
             $msg->add_message($wrd->save());
         }
         return $msg;
+    }
+
+
+    /*
+     * debug
+     */
+
+    /**
+     * @return string the unique id fields
+     */
+    function dsp_id(): string
+    {
+        if ($this->obj() != null) {
+            return $this->obj()->dsp_id() . ' as phrase';
+        } else {
+            return 'phrase with null object';
+        }
     }
 
 }

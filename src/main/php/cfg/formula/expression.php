@@ -423,27 +423,6 @@ class expression
 
 
     /*
-     * display functions
-     */
-
-    /**
-     * format the expression name to use it for debugging
-     */
-    function dsp_id(): string
-    {
-        // $result = '"' . $this->usr_text . '" (' . $this->ref_text . ')';
-        // the user is no most cases no extra info
-        // $result .= ' for user '.$this->usr->name.'';
-        return '"' . $this->user_text() . '" (' . $this->ref_text() . ')';
-    }
-
-    function name(): string
-    {
-        return $this->usr_text;
-    }
-
-
-    /*
      * convert
      * internal function to convert from reference text to user text and back
      */
@@ -1167,6 +1146,27 @@ class expression
         //$phr_lst->load();
         log_debug($lib->dsp_count($phr_lst->lst()));
         return $phr_lst;
+    }
+
+
+    /*
+     * debug
+     */
+
+    /**
+     * format the expression name to use it for debugging
+     */
+    function dsp_id(): string
+    {
+        // $result = '"' . $this->usr_text . '" (' . $this->ref_text . ')';
+        // the user is no most cases no extra info
+        // $result .= ' for user '.$this->usr->name.'';
+        return '"' . $this->user_text() . '" (' . $this->ref_text() . ')';
+    }
+
+    function name(): string
+    {
+        return $this->usr_text;
     }
 
 }

@@ -210,7 +210,48 @@ class figure_list extends sandbox_list
 
 
     /*
-     * display functions
+     * display
+     */
+
+    /*
+     * TODO review
+     */
+    function get_first_id(): int
+    {
+        $result = 0;
+        if ($this != null) {
+            if (count($this->lst()) > 0) {
+                $fig = $this->get(0);
+                if ($fig != null) {
+                    $result = $fig->id();
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * TODO to be moved to the frontend object
+     * return the html code to display a value
+     * this is the opposite of the convert function
+     * this function is called from dsp_id, so no other call is allowed
+     */
+    function display($back = ''): string
+    {
+        $result = '';
+
+        foreach ($this->lst() as $fig) {
+            $t = new test_api();
+            $fig_dsp = $t->dsp_obj($fig, new figure_dsp());
+            $result .= $fig_dsp->display($back) . ' ';
+        }
+
+        return $result;
+    }
+
+
+    /*
+     * debug
      */
 
     /**
@@ -263,43 +304,5 @@ class figure_list extends sandbox_list
         }
         return $result;
     }
-
-    /*
-     * TODO review
-     */
-    function get_first_id(): int
-    {
-        $result = 0;
-        if ($this != null) {
-            if (count($this->lst()) > 0) {
-                $fig = $this->get(0);
-                if ($fig != null) {
-                    $result = $fig->id();
-                }
-            }
-        }
-        return $result;
-    }
-
-    /**
-     * TODO to be moved to the frontend object
-     * return the html code to display a value
-     * this is the opposite of the convert function
-     * this function is called from dsp_id, so no other call is allowed
-     */
-    function display($back = ''): string
-    {
-        $result = '';
-
-        foreach ($this->lst() as $fig) {
-            $t = new test_api();
-            $fig_dsp = $t->dsp_obj($fig, new figure_dsp());
-            $result .= $fig_dsp->display($back) . ' ';
-        }
-
-        return $result;
-    }
-
-
 
 }

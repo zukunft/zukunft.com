@@ -228,7 +228,7 @@ class formula_element extends db_object
     }
 
     /*
-     * display functions
+     * debug
      */
 
     /**

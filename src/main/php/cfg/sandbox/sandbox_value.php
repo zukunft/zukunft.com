@@ -122,32 +122,10 @@ class sandbox_value extends sandbox
         $api_obj->set_number($this->number);
     }
 
-    /**
-     * fill a similar object that is extended with display interface functions
-     *
-     * @param  object $dsp_obj the object fill with all user sandbox value
-     */
-    function fill_dsp_obj(object $dsp_obj): void
-    {
-        parent::fill_dsp_obj($dsp_obj);
 
-        $dsp_obj->set_number($this->number);
-    }
-
-    /**
-     * return best possible identification for this object mainly used for debugging
+    /*
+     * save
      */
-    function dsp_id(): string
-    {
-        $result = '';
-        if (isset($this->grp)) {
-            $result .= $this->grp->dsp_id();
-        }
-        if ($this->user() != null) {
-            $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
-        }
-        return $result;
-    }
 
     /**
      * set the log entry parameter for a new value object
@@ -205,6 +183,26 @@ class sandbox_value extends sandbox
     {
 
         return 'The user sandbox save_id_fields does not support ' . $this->obj_type . ' for ' . $this->obj_name;
+    }
+
+
+    /*
+     * debug
+     */
+
+    /**
+     * return best possible identification for this object mainly used for debugging
+     */
+    function dsp_id(): string
+    {
+        $result = '';
+        if (isset($this->grp)) {
+            $result .= $this->grp->dsp_id();
+        }
+        if ($this->user() != null) {
+            $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
+        }
+        return $result;
     }
 
 }

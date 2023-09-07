@@ -292,7 +292,7 @@ class figure extends combine_object
 
 
     /*
-     * display
+     * debug
      */
 
     /**

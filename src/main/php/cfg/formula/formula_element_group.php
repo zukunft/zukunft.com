@@ -59,32 +59,8 @@ class formula_element_group
 
 
     /*
-    display functions
-    */
-
-    /**
-     * display the unique id fields
+     * display
      */
-    function dsp_id(): string
-    {
-        $lib = new library();
-        $id = $lib->dsp_array($this->ids());
-        $name = $lib->dsp_array($this->names());
-        $phr_name = '';
-        if (isset($this->phr_lst)) {
-            $phr_name = $this->phr_lst->dsp_name();
-        }
-        if ($name <> '') {
-            $result = '"' . $name . '" (' . $id . ')';
-        } else {
-            $result = 'id (' . $id . ')';
-        }
-        if ($phr_name <> '') {
-            $result .= ' and ' . $phr_name;
-        }
-
-        return $result;
-    }
 
     /**
      * show the element group name to the user in the most simple form (without any ids)
@@ -95,20 +71,6 @@ class formula_element_group
         return $lib->dsp_array($this->names());
     }
 
-    // list of the formula element names independent of the element type
-    // this function is called from dsp_id, so no other call is allowed
-    private function names(): array
-    {
-        $result = array();
-
-        foreach ($this->lst as $frm_elm) {
-            // display the formula element name
-            $result[] .= $frm_elm->name();
-        }
-
-        return $result;
-    }
-
     // TODO handle multi entry cases if needed
     function id(): int
     {
@@ -117,26 +79,6 @@ class formula_element_group
         } else {
             return 0;
         }
-    }
-
-    private function ids(): array
-    {
-        $result = array();
-        if (isset($this->lst)) {
-            foreach ($this->lst as $frm_elm) {
-                // use only valid ids
-                if ($frm_elm->id() <> 0) {
-                    $result[] = $frm_elm->id();
-                } else {
-                    if ($frm_elm->obj != null) {
-                        if ($frm_elm->obj->id() <> 0) {
-                            $result[] = $frm_elm->obj->id();
-                        }
-                    }
-                }
-            }
-        }
-        return $result;
     }
 
     // recreate the element group symbol based on the element list ($this->lst)
@@ -395,6 +337,71 @@ class formula_element_group
 
 
         log_debug('result "' . $result . '"');
+        return $result;
+    }
+
+
+    /*
+     * debug
+     */
+
+    /**
+     * display the unique id fields
+     */
+    function dsp_id(): string
+    {
+        $lib = new library();
+        $id = $lib->dsp_array($this->ids());
+        $name = $lib->dsp_array($this->names());
+        $phr_name = '';
+        if (isset($this->phr_lst)) {
+            $phr_name = $this->phr_lst->dsp_name();
+        }
+        if ($name <> '') {
+            $result = '"' . $name . '" (' . $id . ')';
+        } else {
+            $result = 'id (' . $id . ')';
+        }
+        if ($phr_name <> '') {
+            $result .= ' and ' . $phr_name;
+        }
+
+        return $result;
+    }
+
+    private function ids(): array
+    {
+        $result = array();
+        if (isset($this->lst)) {
+            foreach ($this->lst as $frm_elm) {
+                // use only valid ids
+                if ($frm_elm->id() <> 0) {
+                    $result[] = $frm_elm->id();
+                } else {
+                    if ($frm_elm->obj != null) {
+                        if ($frm_elm->obj->id() <> 0) {
+                            $result[] = $frm_elm->obj->id();
+                        }
+                    }
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * list of the formula element names independent of the element type
+     * this function is called from dsp_id, so no other call is allowed
+     */
+    private function names(): array
+    {
+        $result = array();
+
+        foreach ($this->lst as $frm_elm) {
+            // display the formula element name
+            $result[] .= $frm_elm->name();
+        }
+
         return $result;
     }
 

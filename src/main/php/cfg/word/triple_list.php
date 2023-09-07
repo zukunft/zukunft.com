@@ -492,47 +492,9 @@ class triple_list extends sandbox_list
         return $exp_triples;
     }
 
-
     /*
      * display functions
      */
-
-    // description of the triple list for debugging
-    function dsp_id(): string
-    {
-        $result = '';
-
-        $lib = new library();
-        $id = $lib->dsp_array($this->ids);
-        $name = $this->name();
-        if ($name <> '') {
-            $result .= '"' . $name . '" (' . $id . ')';
-        } else {
-            $result .= 'id (' . $id . ')';
-        }
-
-        return $result;
-    }
-
-    // description of the triple list for the user
-    function name(): string
-    {
-        $lib = new library();
-        return $lib->dsp_array($this->names());
-    }
-
-    // return a list of the triple names
-    // this function is called from dsp_id, so no other call is allowed
-    function names(): array
-    {
-        $result = array();
-        foreach ($this->lst() as $lnk) {
-            if ($lnk->name() <> '') {
-                $result[] = $lnk->name();
-            }
-        }
-        return $result;
-    }
 
     /**
      * TODO move to the frontend
@@ -728,6 +690,52 @@ class triple_list extends sandbox_list
             $phr_lst->add($lnk->phrase());
         }
         return $phr_lst;
+    }
+
+
+    /*
+     * debug
+     */
+
+    // description of the triple list for debugging
+    function dsp_id(): string
+    {
+        $result = '';
+
+        $lib = new library();
+        $id = $lib->dsp_array($this->ids);
+        $name = $this->name();
+        if ($name <> '') {
+            $result .= '"' . $name . '" (' . $id . ')';
+        } else {
+            $result .= 'id (' . $id . ')';
+        }
+
+        return $result;
+    }
+
+    /**
+     * @return string description of the triple list for the user
+     */
+    function name(): string
+    {
+        $lib = new library();
+        return $lib->dsp_array($this->names());
+    }
+
+    /**
+     * this function is called from dsp_id, so no other call is allowed
+     * @return array with a list of the triple names
+     */
+    function names(): array
+    {
+        $result = array();
+        foreach ($this->lst() as $lnk) {
+            if ($lnk->name() <> '') {
+                $result[] = $lnk->name();
+            }
+        }
+        return $result;
     }
 
 }

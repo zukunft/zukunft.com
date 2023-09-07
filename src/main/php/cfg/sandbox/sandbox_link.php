@@ -253,35 +253,6 @@ class sandbox_link extends sandbox
 
 
     /*
-     * debug
-     */
-
-    /**
-     * return best possible identification for this object mainly used for debugging
-     */
-    function dsp_id(): string
-    {
-        $result = '';
-        if (isset($this->fob) or isset($this->tob)) {
-            if (isset($this->fob)) {
-                $result .= 'from ' . $this->fob->dsp_id() . ' ';
-            }
-            if (isset($this->tob)) {
-                $result .= 'to ' . $this->tob->dsp_id();
-            }
-            $result .= ' of type ';
-        } else {
-            $result .= $this->name() . ' (' . $this->id . ') of type ';
-        }
-        $result .= $this->obj_name . ' ' . $this->obj_type;
-        if ($this->user() != null) {
-            $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
-        }
-        return $result;
-    }
-
-
-    /*
      * log
      */
 
@@ -544,6 +515,40 @@ class sandbox_link extends sandbox
 
         return $result;
     }
+
+
+    /*
+     * debug
+     */
+
+    /**
+     * @return string with the best possible identification for this object mainly used for debugging
+     */
+    function dsp_id(): string
+    {
+        $result = '';
+        if (isset($this->fob) or isset($this->tob)) {
+            if (isset($this->fob)) {
+                $result .= 'from ' . $this->fob->dsp_id() . ' ';
+            }
+            if (isset($this->tob)) {
+                $result .= 'to ' . $this->tob->dsp_id();
+            }
+            $result .= ' named ';
+        } else {
+            $result .= $this->name() . ' (' . $this->id() . ') of type ';
+        }
+        $result .= $this::class;
+        if ($this->user() != null) {
+            $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
+        }
+        return $result;
+    }
+
+
+    /*
+     * internal
+     */
 
     /**
      * dummy function definition that should not be called

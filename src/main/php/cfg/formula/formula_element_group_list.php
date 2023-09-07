@@ -37,7 +37,7 @@ class formula_element_group_list extends sandbox_list
     // array $lst is the list of formula element groups
 
     /*
-     * debug functions
+     * debug
      */
 
     /**
@@ -64,14 +64,7 @@ class formula_element_group_list extends sandbox_list
                     $pos++;
                 }
             }
-            if (count($this->lst()) > $pos) {
-                $result .= ' ... total ' . $lib->dsp_count($this->lst());
-            }
-            if ($debug > DEBUG_SHOW_USER) {
-                if ($this->user() != null) {
-                    $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
-                }
-            }
+            $result .= parent::dsp_id_remaining($pos);
         }
         return $result;
     }

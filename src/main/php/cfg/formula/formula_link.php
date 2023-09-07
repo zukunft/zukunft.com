@@ -378,41 +378,10 @@ class formula_link extends sandbox_link_with_type
         return phrase::FLD_ID;
     }
 
+
     /*
      * display functions
      */
-
-    /**
-     * @return string the unique id of the formula link
-     */
-    function dsp_id(): string
-    {
-        $result = '';
-
-        if ($this->fob != null) {
-            if ($this->fob->name() <> '') {
-                $result .= $this->fob->name() . ' '; // e.g. Company details
-                $result .= ' (' . $this->fob->id . ')';
-            }
-        }
-        if ($this->tob != null) {
-            if ($this->tob->name() <> '') {
-                if ($result != '') {
-                    $result .= ' ';
-                }
-                $result .= $this->tob->name();     // e.g. cash flow statement
-                $result .= ' (' . $this->tob->id() . ')';
-            }
-        }
-
-        if ($this->id > 0) {
-            $result .= ' -> ' . $this->id;
-        }
-        if ($this->user() != null) {
-            $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
-        }
-        return $result;
-    }
 
     /**
      * @return string the html code to display the link name

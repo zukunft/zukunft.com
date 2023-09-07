@@ -959,27 +959,6 @@ class term extends combine_named
      * information functions
      */
 
-    /**
-     * display the unique id fields
-     */
-    function dsp_id(): string
-    {
-        $result = '';
-
-        if ($this->name() <> '') {
-            $result .= '"' . $this->name() . '"';
-            if ($this->id() > 0) {
-                $result .= ' (' . $this->id() . ')';
-            }
-        } else {
-            $result .= $this->id();
-        }
-        if ($this->user()->id() > 0) {
-            $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
-        }
-        return $result;
-    }
-
     function is_time(): bool
     {
         $result = false;
@@ -990,6 +969,23 @@ class term extends combine_named
             }
         }
         return $result;
+    }
+
+
+    /*
+     * debug
+     */
+
+    /**
+     * @return string the unique id fields
+     */
+    function dsp_id(): string
+    {
+        if ($this->obj() != null) {
+            return $this->obj()->dsp_id() . ' as term';
+        } else {
+            return 'term with null object';
+        }
     }
 
 }

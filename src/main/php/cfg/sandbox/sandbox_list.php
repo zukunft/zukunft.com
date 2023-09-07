@@ -301,7 +301,7 @@ class sandbox_list extends base_list
 
 
     /*
-     * debug functions
+     * debug
      */
 
     /**
@@ -338,17 +338,32 @@ class sandbox_list extends base_list
                     $pos++;
                 }
             }
-            if (count($this->lst()) > $pos) {
-                $result .= ' ... total ' . $lib->dsp_count($this->lst());
-            }
-            if ($debug > DEBUG_SHOW_USER) {
-                if ($this->user() != null) {
-                    $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
-                }
+            $result .= $this->dsp_id_remaining($pos);
+        }
+        return $result;
+    }
+
+    /**
+     * @param int $pos the first list id that has not yet been shown
+     * @return string a short summary of the remaining ids
+     */
+    protected function dsp_id_remaining(int $pos, ): string
+    {
+        global $debug;
+        $lib = new library();
+        $result = '';
+
+        if (count($this->lst()) > $pos) {
+            $result .= ' ... total ' . $lib->dsp_count($this->lst());
+        }
+        if ($debug > DEBUG_SHOW_USER) {
+            if ($this->user() != null) {
+                $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
             }
         }
         return $result;
     }
+
 
     /**
      * to show the list name to the user in the most simple form (without any ids)
