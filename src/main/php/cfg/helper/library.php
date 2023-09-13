@@ -1442,6 +1442,10 @@ class library
         if ($result) {
             if ($json == '') {
                 $result = false;
+            // avoid handling a simple string with high-quotes as a json
+            } elseif (!(str_contains($text, '[')
+                or str_contains($text, '{'))) {
+                $result = false;
             }
         }
         return $result;

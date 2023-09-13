@@ -308,4 +308,18 @@ class type_object extends db_object implements JsonSerializable
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
+
+    /*
+     * debug
+     */
+
+    /**
+     * @return string with the unique database id mainly for child dsp_id() functions
+     */
+    function dsp_id(): string
+    {
+
+        return $this->name . '/' . $this->code_id() . parent::dsp_id();
+    }
+
 }

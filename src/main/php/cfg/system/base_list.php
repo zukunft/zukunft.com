@@ -291,4 +291,53 @@ class base_list
         return $result;
     }
 
+
+    /*
+     * debug
+     */
+
+    /**
+     * @return string with the first unique id of the list elements
+     */
+    function dsp_id(): string
+    {
+        global $debug;
+        $result = '';
+
+        // show at least 4 elements by name
+        $min_names = $debug;
+        if ($min_names < LIST_MIN_NAMES) {
+            $min_names = LIST_MIN_NAMES;
+        }
+
+
+        if ($this->lst() != null) {
+            $pos = 0;
+            foreach ($this->lst() as $db_obj) {
+                if ($min_names > $pos) {
+                    if ($result <> '') $result .= ' / ';
+                    $result .= $db_obj->dsp_id();
+                    $pos++;
+                }
+            }
+            $result .= $this->dsp_id_remaining($pos);
+        }
+        return $result;
+    }
+
+    /**
+     * @param int $pos the first list id that has not yet been shown
+     * @return string a short summary of the remaining ids
+     */
+    protected function dsp_id_remaining(int $pos, ): string
+    {
+        $lib = new library();
+        $result = '';
+
+        if (count($this->lst()) > $pos) {
+            $result .= ' ... total ' . $lib->dsp_count($this->lst());
+        }
+        return $result;
+    }
+
 }

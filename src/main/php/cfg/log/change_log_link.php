@@ -236,7 +236,7 @@ class change_log_link extends change_log
         return $this->load($qp);
     }
 
-    private function dsp_id(): string
+    function dsp_id(): string
     {
         $result = '';
 

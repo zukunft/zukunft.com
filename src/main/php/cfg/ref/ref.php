@@ -609,7 +609,7 @@ class ref extends sandbox_link_with_type
             }
         }
         if (isset($this->ref_type)) {
-            $result .= 'to "' . $this->ref_type->name . '"';
+            $result .= ' to "' . $this->ref_type->name . '"';
         } else {
             if (isset($this->ref_type)) {
                 if ($this->ref_type->id > 0) {

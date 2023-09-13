@@ -276,4 +276,18 @@ class db_object
         return 0;
     }
 
+
+    /*
+     * debug
+     */
+
+    /**
+     * @return string with the unique database id mainly for child dsp_id() functions
+     */
+    function dsp_id(): string
+    {
+
+        return ' (' . $this->id() . ')';
+    }
+
 }

@@ -736,6 +736,7 @@ class create_test_objects extends test_base
     function dummy_figure_value(): figure
     {
         $val = $this->dummy_value();
+        $val->last_update = new DateTime(self::DUMMY_DATETIME);
         return $val->figure();
     }
 

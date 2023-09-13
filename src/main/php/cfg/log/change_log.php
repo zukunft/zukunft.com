@@ -61,6 +61,7 @@ include_once API_LOG_PATH . 'change_log.php';
 use api\change_log_api;
 use cfg\component\component;
 use DateTime;
+use DateTimeInterface;
 use Exception;
 
 class change_log extends db_object
@@ -568,5 +569,23 @@ class change_log extends db_object
         return true;
     }
 
+
+    /*
+     * debug
+     */
+
+    /**
+     * @return string with the unique database id mainly for child dsp_id() functions
+     */
+    function dsp_id(): string
+    {
+
+        return 'change log id ' . $this->id()
+            . ' at ' . $this->change_time->format(DateTimeInterface::ATOM)
+            . ' ' . $this->action()
+            . ' ' . $this->table()
+            . ' ' . $this->field()
+            . ' row ' . $this->row_id;
+    }
 
 }

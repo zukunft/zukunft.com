@@ -43,6 +43,7 @@ include_once API_LOG_PATH . 'system_log.php';
 use cfg\db\sql_creator;
 use controller\log\system_log_api;
 use DateTime;
+use DateTimeInterface;
 
 class system_log extends db_object
 {
@@ -341,6 +342,22 @@ class system_log extends db_object
         }
 
         return $result;
+    }
+
+
+    /*
+     * debug
+     */
+
+    /**
+     * @return string with the unique database id mainly for child dsp_id() functions
+     */
+    function dsp_id(): string
+    {
+
+        return 'system log id ' . $this->id()
+            . ' at ' . $this->log_time->format(DateTimeInterface::ATOM)
+            . ' row ' . $this->log_text;
     }
 
 }
