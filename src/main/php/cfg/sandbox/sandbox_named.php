@@ -379,30 +379,6 @@ class sandbox_named extends sandbox
 
 
     /*
-     * debug
-     */
-
-    /**
-     * @return string the best possible identification for this object mainly used for debugging
-     */
-    function dsp_id(): string
-    {
-        $result = '';
-        if ($this->name() <> '') {
-            $result .= '"' . $this->name() . '"';
-            if ($this->id > 0) {
-                $result .= ' (' . $this->id . ')';
-            }
-        } else {
-            $result .= $this->id;
-        }
-        if ($this->user() != null) {
-            $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
-        }
-        return $result;
-    }
-
-    /*
      * save
      */
 
@@ -781,6 +757,25 @@ class sandbox_named extends sandbox
             }
         }
 
+        return $result;
+    }
+
+
+    /*
+     * debug
+     */
+
+    /**
+     * @return string the best possible identification for this object mainly used for debugging
+     */
+    function dsp_id(): string
+    {
+        $result = '';
+        if ($this->name() <> '') {
+            $result .= '"' . $this->name() . '"';
+        }
+        $result .= parent::dsp_id();
+        $result .= $this->dsp_id_user();
         return $result;
     }
 

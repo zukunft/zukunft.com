@@ -191,16 +191,29 @@ class sandbox_value extends sandbox
      */
 
     /**
-     * return best possible identification for this object mainly used for debugging
+     * @return string with the best possible identification for this value mainly used for debugging
      */
     function dsp_id(): string
     {
+        $result = $this->dsp_id_entry();
+        $result .= parent::dsp_id();
+        $result .= $this->dsp_id_user();
+        return $result;
+    }
+
+    /**
+     * @return string with the short identification for this value mainly used for debugging
+     */
+    function dsp_id_entry(): string
+    {
         $result = '';
         if (isset($this->grp)) {
-            $result .= $this->grp->dsp_id();
+            $result .= '"' . $this->grp->name() . '" ';
         }
-        if ($this->user() != null) {
-            $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
+        if ($this->number() != null) {
+            $result .= $this->number();
+        } else {
+            $result .= 'null';
         }
         return $result;
     }

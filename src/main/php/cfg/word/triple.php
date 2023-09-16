@@ -1292,57 +1292,10 @@ class triple extends sandbox_link_typed implements JsonSerializable
         return $result;
     }
 
+
     /*
-    display functions
-    */
-
-    /**
-     * display the unique id fields
-     * TODO check if $this->load_objects(); needs to be called from the calling function upfront
+     * display
      */
-    function dsp_id(): string
-    {
-        $result = '';
-
-        if ($this->fob->name() <> '' and $this->verb->name() <> '' and $this->tob->name() <> '') {
-            $result .= $this->fob->name() . ' '; // e.g. Australia
-            $result .= $this->verb->name() . ' '; // e.g. is a
-            $result .= $this->tob->name();       // e.g. Country
-        }
-        $result .= ' (' . $this->fob->id() . ',' . $this->verb->id() . ',' . $this->tob->id();
-        if ($this->id() > 0) {
-            $result .= ' -> ' . $this->id() . ')';
-        }
-        if ($this->user() != null) {
-            $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
-        }
-        return $result;
-    }
-
-    /**
-     * either the user edited description
-     * or the generic name e.g. Australia is a Country
-     * or for the verb is 'is' the category in brackets e.g. Zurich (Canton) or Zurich (City)
-     */
-    function name(bool $ignore_excluded = false): string
-    {
-        $result = '';
-
-        if (!$this->is_excluded() or $ignore_excluded) {
-            if ($this->name <> '') {
-                // use the object
-                $result = $this->name;
-            } elseif ($this->name_given() <> '') {
-                // use the user defined description
-                $result = $this->name_given();
-            } else {
-                // or use the standard generic description
-                $result = $this->name_generated();
-            }
-        }
-
-        return $result;
-    }
 
     /**
      * @return string the generated name based on the linked phrases
@@ -2180,6 +2133,57 @@ class triple extends sandbox_link_typed implements JsonSerializable
 
         // if the user confirms the deletion, the removal process is started with a retry of the triple deletion at the end
         $result->add($grp_lst->del());
+
+        return $result;
+    }
+
+
+    /*
+     * debug
+     */
+
+    /**
+     * @return string with the unique id fields
+     * TODO check if $this->load_objects(); needs to be called from the calling function upfront
+     */
+    function dsp_id(): string
+    {
+        $result = '';
+
+        if ($this->fob->name() <> '' and $this->verb->name() <> '' and $this->tob->name() <> '') {
+            $result .= '"' . $this->fob->name() . '" "'; // e.g. Australia
+            $result .= $this->verb->name() . '" "'; // e.g. is a
+            $result .= $this->tob->name() . '"';       // e.g. Country
+        }
+        $result .= ' (' . $this->fob->id() . ',' . $this->verb->id() . ',' . $this->tob->id();
+        if ($this->id() > 0) {
+            $result .= ' -> triple_id ' . $this->id() . ')';
+        }
+        $result .= $this->dsp_id_user();
+        return $result;
+    }
+
+    /**
+     * either the user edited description
+     * or the generic name e.g. Australia is a Country
+     * or for the verb is 'is' the category in brackets e.g. Zurich (Canton) or Zurich (City)
+     */
+    function name(bool $ignore_excluded = false): string
+    {
+        $result = '';
+
+        if (!$this->is_excluded() or $ignore_excluded) {
+            if ($this->name <> '') {
+                // use the object
+                $result = $this->name;
+            } elseif ($this->name_given() <> '') {
+                // use the user defined description
+                $result = $this->name_given();
+            } else {
+                // or use the standard generic description
+                $result = $this->name_generated();
+            }
+        }
 
         return $result;
     }

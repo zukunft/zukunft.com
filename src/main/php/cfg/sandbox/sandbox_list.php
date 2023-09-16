@@ -309,7 +309,7 @@ class sandbox_list extends base_list
     function dsp_id(): string
     {
         global $debug;
-        $lib = new library();
+
         $result = '';
 
         // show at least 4 elements by name
@@ -318,25 +318,29 @@ class sandbox_list extends base_list
             $min_names = LIST_MIN_NAMES;
         }
 
-
+        $id = $this->ids_txt($min_names);
         if ($this->lst() != null) {
-            $pos = 0;
-            foreach ($this->lst() as $sbx_obj) {
-                if ($min_names > $pos) {
-                    if ($result <> '') $result .= ' / ';
-                    $name = $sbx_obj->name();
-                    if ($sbx_obj::class == value::class) {
-                        $name .= $sbx_obj->number();
+            $id_field = $this::class . '_id';
+            if ($this->count() > 0) {
+                $first_obj = $this->lst()[array_key_first($this->lst())];
+                $id_field = $first_obj->id_field();
+            }
+            if ($this::class == value_list::class) {
+                foreach ($this->lst() as $val) {
+                    if ($result != '') {
+                        $result .= ' / ';
                     }
-                    if ($name <> '""') {
-                        $name = $name . ' (' . $sbx_obj->id() . ')';
-                    } else {
-                        $name = $sbx_obj->id();
-                    }
-                    $result .= $name;
-                    $pos++;
+                    $result .= $val->dsp_id_entry();
+                }
+                $result .= ' (' . $id_field . ' ' . $id . ')';
+            } else {
+                if ($this->name($min_names) <> '""') {
+                    $result .= $this->name($min_names) . ' (' . $id_field . ' ' . $id . ')';
+                } else {
+                    $result .= $id_field . ' ' . $id;
                 }
             }
+            $pos = max($this->count(), $min_names);
             $result .= $this->dsp_id_remaining($pos);
         }
         return $result;
@@ -346,7 +350,7 @@ class sandbox_list extends base_list
      * @param int $pos the first list id that has not yet been shown
      * @return string a short summary of the remaining ids
      */
-    protected function dsp_id_remaining(int $pos, ): string
+    protected function dsp_id_remaining(int $pos,): string
     {
         global $debug;
         $lib = new library();
@@ -355,7 +359,7 @@ class sandbox_list extends base_list
         if (count($this->lst()) > $pos) {
             $result .= ' ... total ' . $lib->dsp_count($this->lst());
         }
-        if ($debug > DEBUG_SHOW_USER) {
+        if ($debug > DEBUG_SHOW_USER or $debug == 0) {
             if ($this->user() != null) {
                 $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
             }
@@ -367,23 +371,41 @@ class sandbox_list extends base_list
     /**
      * to show the list name to the user in the most simple form (without any ids)
      * this function is called from dsp_id, so no other call is allowed
+     *
+     * @param ?int $limit the max number of ids to show
      * @return string a simple name of the list
      */
-    function name(): string
+    function name(int $limit = null): string
     {
-        return implode(", ", $this->names());
+        return '"' . implode('","', $this->names($limit)) . '"';
     }
 
     /**
+     * @param ?int $limit the max number of ids to show
      * @return array with all names of the list
      */
-    function names(): array
+    function names(int $limit = null): array
     {
         $result = [];
+        $pos = 0;
         foreach ($this->lst() as $sbx_obj) {
-            $result[] = $sbx_obj->name();
+            if ($pos <= $limit or $limit == null) {
+                $result[] = $sbx_obj->name();
+                $pos++;
+            }
         }
         return $result;
+    }
+
+    /**
+     * @param ?int $limit the max number of ids to show
+     * @return string with the list of the sandbox object ids as a SQL compatible text,
+     * but actually used onl< for debugging?
+     */
+    private function ids_txt(int $limit = null): string
+    {
+        $lib = new library();
+        return $lib->sql_array($this->ids($limit));
     }
 
 }

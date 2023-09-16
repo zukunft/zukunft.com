@@ -926,10 +926,17 @@ class create_test_objects extends test_base
         return $lst;
     }
 
+    function dummy_component_link(): component_link
+    {
+        $lnk = new component_link($this->usr1);
+        $lnk->set(1, $this->dummy_view(), $this->dummy_component(), 1);
+        return $lnk;
+    }
+
     function dummy_component_link_list(): component_link_list
     {
         $lst = new component_link_list($this->usr1);
-        $lst->add(1, $this->dummy_view(), $this->dummy_component(), 1);
+        $lst->add_link($this->dummy_component_link());
         return $lst;
     }
 

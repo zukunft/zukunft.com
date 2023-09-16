@@ -451,6 +451,7 @@ class batch_job extends db_object
     {
     }
 
+
     /*
      * debug
      */

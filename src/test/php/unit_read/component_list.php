@@ -67,7 +67,7 @@ class component_list_unit_db_tests
         $cmp_lst = new component_list($t->usr1);
         $cmp_lst->load_by_view_id(1);
         $result = $cmp_lst->name();
-        $target = component_api::TN_READ;
+        $target = '"' . component_api::TN_READ . '"';
         $t->assert($test_name . '1', $result, $target);
 
         $test_name = 'loading the api message creation of the api index file for ';

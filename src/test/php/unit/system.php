@@ -72,19 +72,19 @@ class system_unit_tests
         // create a dummy object of each object and test that the dsp_id debug function does not cause an infinite loop
         $test_name = 'debug word id';
         $wrd = $t->dummy_word();
-        $target = '"Mathematics" (1) for user 1 (zukunft.com system test)';
+        $target = '"Mathematics" (word_id 1) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $wrd->dsp_id(), $target);
         $test_name = 'debug word list id';
         $lst = $t->dummy_word_list();
-        $target = '"Mathematics","constant","Pi","Euler\'s constant" (1,2,3,4) for user 1 (zukunft.com system test)';
+        $target = '"Mathematics","constant","Pi","Euler\'s constant" (word_id 1,2,3,4) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $lst->dsp_id(), $target);
         $test_name = 'debug verb id';
-        $vrb = $t->dummy_word();
-        $target = '"Mathematics" (1) for user 1 (zukunft.com system test)';
+        $vrb = $t->dummy_verb();
+        $target = 'not set/not_set (verb_id 1) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $vrb->dsp_id(), $target);
         $test_name = 'debug triple id';
         $trp = $t->dummy_triple();
-        $target = 'constant is a Mathematics (2,3,1 -> 1) for user 1 (zukunft.com system test)';
+        $target = '"constant" "is a" "Mathematics" (2,3,1 -> triple_id 1) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $trp->dsp_id(), $target);
         $test_name = 'debug triple_list id';
         $trp_lst = $t->dummy_triple_list();
@@ -92,7 +92,7 @@ class system_unit_tests
         $t->assert($test_name, $trp_lst->dsp_id(), $target);
         $test_name = 'debug phrase id';
         $phr = $t->dummy_triple()->phrase();
-        $target = 'constant is a Mathematics (2,3,1 -> 1) for user 1 (zukunft.com system test) as phrase';
+        $target = '"constant" "is a" "Mathematics" (2,3,1 -> triple_id 1) for user 1 (zukunft.com system test) as phrase';
         $t->assert($test_name, $phr->dsp_id(), $target);
         $test_name = 'debug phrase_list id';
         $phr_lst = $t->dummy_phrase_list();
@@ -108,27 +108,27 @@ class system_unit_tests
         $t->assert($test_name, $grp_lst->dsp_id(), $target);
         $test_name = 'debug term id';
         $trm = $t->dummy_word()->term();
-        $target = '"Mathematics" (1) for user 1 (zukunft.com system test) as term';
+        $target = '"Mathematics" (word_id 1) for user 1 (zukunft.com system test) as term';
         $t->assert($test_name, $trm->dsp_id(), $target);
         $test_name = 'debug term_list id';
         $trm_lst = $t->dummy_word();
-        $target = '"Mathematics" (1) for user 1 (zukunft.com system test)';
+        $target = '"Mathematics" (word_id 1) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $trm_lst->dsp_id(), $target);
         $test_name = 'debug value id';
         $val = $t->dummy_value();
-        $target = '"Pi (math)" (1)';
+        $target = '"Pi (math)" 3.1415926535898 (value_id 1) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $val->dsp_id(), $target);
         $test_name = 'debug value_list id';
         $val_lst = $t->dummy_value_list();
-        $target = 'Pi (math)3.1415926535898 (1)';
+        $target = '"Pi (math)" 3.1415926535898 (value_id 1) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $val_lst->dsp_id(), $target);
         $test_name = 'debug value_phrase_link id'; // TODO
         $val_lnk = $t->dummy_word();
-        $target = '"Mathematics" (1) for user 1 (zukunft.com system test)';
+        $target = '"Mathematics" (word_id 1) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $val_lnk->dsp_id(), $target);
         $test_name = 'debug formula id';
         $frm = $t->dummy_formula();
-        $target = '"scale minute to sec" (1) for user 1 (zukunft.com system test)';
+        $target = '"scale minute to sec" (formula_id 1) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $frm->dsp_id(), $target);
         $test_name = 'debug formula_list id';
         $frm_lst = $t->dummy_formula_list();
@@ -136,11 +136,11 @@ class system_unit_tests
         $t->assert($test_name, $frm_lst->dsp_id(), $target);
         $test_name = 'debug formula_link id'; // TODO
         $frm_lnk = $t->dummy_word();
-        $target = '"Mathematics" (1) for user 1 (zukunft.com system test)';
+        $target = '"Mathematics" (word_id 1) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $frm_lnk->dsp_id(), $target);
         $test_name = 'debug formula_element id'; // TODO
         $elm = $t->dummy_word();
-        $target = '"Mathematics" (1) for user 1 (zukunft.com system test)';
+        $target = '"Mathematics" (word_id 1) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $elm->dsp_id(), $target);
         $test_name = 'debug expression id';
         $exp = $t->dummy_formula()->expression();
@@ -156,7 +156,7 @@ class system_unit_tests
         $t->assert($test_name, $res_lst->dsp_id(), $target);
         $test_name = 'debug figure id';
         $fig = $t->dummy_figure_value();
-        $target = 'value 3.1415926535898  2022-12-26 18:23:45"Pi (math)" (1)';
+        $target = 'value figure "Pi (math)" 3.1415926535898 (value_id 1) for user 1 (zukunft.com system test) 2022-12-26 18:23:45';
         $t->assert($test_name, $fig->dsp_id(), $target);
         $test_name = 'debug figure_list id';
         $fig_lst = $t->dummy_figure_list();
@@ -164,31 +164,31 @@ class system_unit_tests
         $t->assert($test_name, $fig_lst->dsp_id(), $target);
         $test_name = 'debug view id';
         $msk = $t->dummy_view();
-        $target = '"Word" (1) for user 1 (zukunft.com system test)';
+        $target = '"Word" (view_id 1) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $msk->dsp_id(), $target);
         $test_name = 'debug view_list id';
         $msk_lst = $t->dummy_view_list();
-        $target = 'Word (1) / Add word (3)';
+        $target = '"Word","Add word" (view_id 1,3) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $msk_lst->dsp_id(), $target);
         $test_name = 'debug component id';
         $cmp = $t->dummy_component();
-        $target = '"Word" (1) for user 1 (zukunft.com system test)';
+        $target = '"Word" (component_id 1) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $cmp->dsp_id(), $target);
         $test_name = 'debug component_list id';
         $cmp_lst = $t->dummy_component_list();
-        $target = 'Word (1)';
+        $target = '"Word" (component_id 1) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $cmp_lst->dsp_id(), $target);
-        $test_name = 'debug component_link id'; // TODO
-        $cmp_lnk = $t->dummy_component_link_list();
-        $target = 'ERROR: name function not overwritten by child (1)';
+        $test_name = 'debug component_link id';
+        $cmp_lnk = $t->dummy_component_link();
+        $target = '"Word" in "Word" (1,1 -> 1)from "Word" (view_id 1) for user 1 (zukunft.com system test) to "Word" (component_id 1) for user 1 (zukunft.com system test) named cfg\component_link (component_link_id 1)';
         $t->assert($test_name, $cmp_lnk->dsp_id(), $target);
         $test_name = 'debug component_link_list id';
         $cmp_lnk_lst = $t->dummy_component_link_list();
-        $target = 'ERROR: name function not overwritten by child (1)';
+        $target = '"Word" (component_link_id 1) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $cmp_lnk_lst->dsp_id(), $target);
         $test_name = 'debug source id';
         $src = $t->dummy_source();
-        $target = '"The International System of Units" (3) for user 1 (zukunft.com system test)';
+        $target = '"The International System of Units" (source_id 3) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $src->dsp_id(), $target);
         $test_name = 'debug ref id';
         $ref = $t->dummy_reference();
@@ -196,7 +196,7 @@ class system_unit_tests
         $t->assert($test_name, $ref->dsp_id(), $target);
         $test_name = 'debug language id';
         $lan = $t->dummy_language();
-        $target = 'English/english (1)';
+        $target = 'English/english (language_id 1)';
         $t->assert($test_name, $lan->dsp_id(), $target);
         $test_name = 'debug change_log id';
         $chg = $t->dummy_change_log_list_named();
@@ -206,9 +206,9 @@ class system_unit_tests
         $log = $t->dummy_sys_log();
         $target = 'system log id 1 at 2023-01-03T20:59:59+01:00 row the log text that describes the problem for the user or system admin';
         $t->assert($test_name, $log->dsp_id(), $target);
-        $test_name = 'debug batch_job id'; // TODO
-        $job = $t->dummy_word();
-        $target = '"Mathematics" (1) for user 1 (zukunft.com system test)';
+        $test_name = 'debug batch_job id';
+        $job = $t->dummy_job();
+        $target = 'base_import for id 1 (1) for user 1 (zukunft.com system)';
         $t->assert($test_name, $job->dsp_id(), $target);
 
 

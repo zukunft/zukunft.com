@@ -569,27 +569,8 @@ class verb extends type_object
 
 
     /*
-    display functions
-    */
-
-    // display the unique id fields (used also for debugging)
-    function dsp_id(): string
-    {
-        $result = '';
-
-        if ($this->name <> '') {
-            $result .= '"' . $this->name . '"';
-            if ($this->id > 0) {
-                $result .= ' (' . $this->id . ')';
-            }
-        } else {
-            $result .= $this->id;
-        }
-        if ($this->user() != null) {
-            $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
-        }
-        return $result;
-    }
+     * display
+     */
 
     function name(): string
     {
@@ -1214,6 +1195,22 @@ class verb extends type_object
             }
         }
 
+        return $result;
+    }
+
+    /*
+     * debug
+     */
+
+    /**
+     * @return string display the unique id fields (used also for debugging)
+     */
+    function dsp_id(): string
+    {
+        $result = parent::dsp_id();
+        if ($this->user() != null) {
+            $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
+        }
         return $result;
     }
 

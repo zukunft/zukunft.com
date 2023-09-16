@@ -520,7 +520,7 @@ class phrase_group_list extends sandbox_list
     /**
      * @return array with the database ids of all objects of this list
      */
-    function ids(): array
+    function ids(int $limit = null): array
     {
         $result = array();
         foreach ($this->lst() as $sbx_obj) {
@@ -574,7 +574,7 @@ class phrase_group_list extends sandbox_list
     /**
      * create a useful (but not unique!) name of the phrase group list mainly used for debugging
      */
-    function name(): string
+    function name(int $limit = null): string
     {
         global $debug;
         $lib = new library();
@@ -593,7 +593,7 @@ class phrase_group_list extends sandbox_list
     /**
      * return a list of the word names
      */
-    function names(): array
+    function names(int $limit = null): array
     {
         $result = array();
         foreach ($this->lst() as $phr_lst) {

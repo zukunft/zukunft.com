@@ -286,8 +286,11 @@ class db_object
      */
     function dsp_id(): string
     {
-
-        return ' (' . $this->id() . ')';
+        if ($this->id() != 0) {
+            return ' (' . $this->id_field() . ' ' . $this->id() . ')';
+        } else {
+            return ' (' . $this->id_field() . ' no set)';
+        }
     }
 
 }

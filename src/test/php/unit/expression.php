@@ -116,14 +116,14 @@ class expression_unit_tests
         $exp->ref_text($trm_lst);
         $elm_grp_lst = $exp->element_grp_lst($trm_lst);
         $result = $elm_grp_lst->dsp_id();
-        $target = '"parts,of" (2,3) / "total" (4)';
+        $target = '"parts,of" (2,3) / "total" (4) for user 1 (zukunft.com system test)';
         //$target = '"' . formula_api::TN_PERCENT . '" (1)';
         $t->assert($test_name, $result, $target);
 
         // test the element list of the right side
         $elm_grp_lst = $exp->element_list($trm_lst);
         $result = $elm_grp_lst->dsp_id();
-        $target = 'parts (2) / of (3) / total (4)';
+        $target = '"parts","of","total" (formula_element_id 2,3,4) for user 1 (zukunft.com system test)';
         //$target = '"' . formula_api::TN_PERCENT . '" (1)';
         $t->assert($test_name, $result, $target);
 
@@ -150,7 +150,7 @@ class expression_unit_tests
         $test_name = 'test the formula element list';
         $elm_lst = $exp->element_list($trm_lst);
         $result = $elm_lst->dsp_id();
-        $target = 'this (18) / prior (20) / prior (20)';
+        $target = '"this","prior","prior" (formula_element_id 18,20,20) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $result, $target);
 
         // element_special_following_frm

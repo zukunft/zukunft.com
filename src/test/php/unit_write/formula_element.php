@@ -129,7 +129,7 @@ class formula_element_test
 
         if (!$elm_lst->is_empty()) {
             $result = $elm_lst->name();
-            $target = 'Country, can be used as a differentiator for, Canton, System Test Word Total';
+            $target = '"Country","can be used as a differentiator for","Canton","System Test Word Total"';
             $t->dsp_contains(', formula_element_list->dsp_id', $target, $result);
         } else {
             $result = 'formula element list not set';

@@ -220,30 +220,28 @@ class component_link_list extends sandbox_list
      */
 
     /**
-     * add a view component link to the list without saving it to the database
+     * add a view component link based on parts to the list without saving it to the database
+     * @return true if the link has been added
      */
     function add(int $id, view $msk, component $cmp, int $pos): bool
     {
-        $do_add = true;
+        $new_lnk = new component_link($this->user());
+        $new_lnk->set($id, $msk, $cmp, $pos);
+        return $this->add_link($new_lnk);
+    }
 
-        if (!$this->is_empty()) {
-            foreach ($this->lst() as $lnk) {
-                if ($lnk->view()->id() == $msk->id()
-                    and $lnk->component()->id() == $cmp->id()
-                    and $lnk->pos() == $pos) {
-                    $do_add = false;
-                }
-            }
+    /**
+     * add a view component link to the list without saving it to the database
+     * @return true if the link has been added
+     */
+    function add_link(component_link $lnk_to_add): bool
+    {
+        $added = false;
+        if ($this->can_add($lnk_to_add)) {
+            $this->add_obj($lnk_to_add);
+            $added = true;
         }
-        if ($do_add) {
-            $new_lnk = new component_link($this->user());
-            $new_lnk->set_id($id);
-            $new_lnk->fob = $msk;
-            $new_lnk->tob = $cmp;
-            $new_lnk->order_nbr = $pos;
-            $this->add_obj($new_lnk);
-        }
-        return $do_add;
+        return $added;
     }
 
     /**
@@ -260,6 +258,27 @@ class component_link_list extends sandbox_list
             }
         }
         return new user_message();
+    }
+
+
+    /*
+     * check
+     */
+
+    private function can_add(component_link $lnk_to_add): bool
+    {
+        $can_add = true;
+
+        if (!$this->is_empty()) {
+            foreach ($this->lst() as $lnk) {
+                if ($lnk->view()->id() == $lnk_to_add->view()->id()
+                    and $lnk->component()->id() == $lnk_to_add->component()->id()
+                    and $lnk->pos() == $lnk_to_add->pos()) {
+                    $can_add = false;
+                }
+            }
+        }
+        return $can_add;
     }
 
 
@@ -304,7 +323,7 @@ class component_link_list extends sandbox_list
     /**
      * @return array with all component names linked usually to one view
      */
-    function names(): array
+    function names(int $limit = null): array
     {
         $result = array();
         foreach ($this->lst() as $lnk) {

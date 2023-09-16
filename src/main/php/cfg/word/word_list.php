@@ -1211,81 +1211,12 @@ class word_list extends sandbox_list
     /**
      * @return array list of the word ids
      */
-    function ids(): array
+    function ids(int $limit = null): array
     {
         $result = array();
         foreach ($this->lst() as $wrd) {
             if ($wrd->id() > 0) {
                 $result[] = $wrd->id();
-            }
-        }
-        return $result;
-    }
-
-    /**
-     * @return string with the list of the word ids as a SQL compatible text
-     */
-    function ids_txt(): string
-    {
-        $lib = new library();
-        return $lib->sql_array($this->ids());
-    }
-
-
-    /*
-     *  display
-     */
-
-    /**
-     * @return string with the best possible id for this element mainly used for debugging
-     */
-    function dsp_id(): string
-    {
-        $id = $this->ids_txt();
-        if ($this->name() <> '""') {
-            $result = $this->name() . ' (' . $id . ')';
-        } else {
-            $result = $id;
-        }
-        if ($this->user() != null) {
-            $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
-        }
-
-        return $result;
-    }
-
-    /**
-     * this function is called from dsp_id, so no call of another function is allowed
-     * @return string with all names of the list
-     */
-    function name(): string
-    {
-        global $debug;
-        $lib = new library();
-        $result = '';
-
-        if ($debug > 10) {
-            $result .= '"' . implode('","', $this->names()) . '"';
-        } else {
-            $result .= '"' . implode('","', array_slice($this->names(), 0, 7));
-            if (count($this->names()) > 8) {
-                $result .= ' ... total ' . $lib->dsp_count($this->lst());
-            }
-            $result .= '"';
-        }
-        return $result;
-    }
-
-    /**
-     * this function is called from dsp_id, so no call of another function is allowed
-     * @return array a list of the word names
-     */
-    function names(): array
-    {
-        $result = array();
-        foreach ($this->lst() as $wrd) {
-            if (isset($wrd)) {
-                $result[] = $wrd->name();
             }
         }
         return $result;

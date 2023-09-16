@@ -464,7 +464,7 @@ class term_list extends sandbox_list_named
     /**
      * @return string with all names of the list
      */
-    function name(): string
+    function name(int $limit = null): string
     {
         $name_lst = $this->names();
         return '"' . implode('","', $name_lst) . '"';
@@ -475,7 +475,7 @@ class term_list extends sandbox_list_named
      * this function is called from dsp_id, so no call of another function is allowed
      * TODO move to a parent object for phrase list and term list
      */
-    function names(): array
+    function names(int $limit = null): array
     {
         $name_lst = array();
         foreach ($this->lst() as $trm) {

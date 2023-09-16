@@ -328,9 +328,10 @@ class result_list extends sandbox_list
     }
 
     /**
-     * return one string with all names of the list
+     * @param ?int $limit the max number of ids to show
+     * @return string one string with all names of the list
      */
-    function name(): string
+    function name(int $limit = null): string
     {
         global $debug;
         $lib = new library();
@@ -357,7 +358,7 @@ class result_list extends sandbox_list
     /**
      * return a list of the formula result ids
      */
-    function ids(): array
+    function ids(int $limit = null): array
     {
         $result = array();
         if (!$this->is_empty()) {
@@ -374,7 +375,7 @@ class result_list extends sandbox_list
     /**
      * return a list of the formula result names
      */
-    function names(): array
+    function names(int $limit = null): array
     {
         $result = array();
         $lib = new library();

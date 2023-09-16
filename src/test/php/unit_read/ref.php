@@ -96,7 +96,7 @@ class ref_unit_db_tests
         $src_lst = new source_list($t->usr1);
         $src_lst->load_by_ids([1]);
         $result = $src_lst->name();
-        $target = source_api::TN_READ;
+        $target = '"' . source_api::TN_READ . '"';
         $t->assert($test_name . $src_lst->dsp_id(), $result, $target);
 
         $test_name = 'loading the api message creation of the api index file for ';

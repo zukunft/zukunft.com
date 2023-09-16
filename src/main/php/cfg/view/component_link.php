@@ -176,6 +176,22 @@ class component_link extends sandbox_link_with_type
      */
 
     /**
+     * set the most relevant vars of a component link with one function
+     * @param int $id
+     * @param view $msk
+     * @param component $cmp
+     * @param int $pos
+     * @return void
+     */
+    function set(int $id, view $msk, component $cmp, int $pos): void
+    {
+        parent::set_id($id);
+        $this->set_view($msk);
+        $this->set_component($cmp);
+        $this->set_pos($pos);
+    }
+
+    /**
      * rename to standard link to object to view
      * @param view $msk
      */
@@ -191,6 +207,15 @@ class component_link extends sandbox_link_with_type
     function set_component(component $cmp): void
     {
         $this->tob = $cmp;
+    }
+
+    /**
+     * set the position of this link
+     * @param int $pos
+     */
+    function set_pos(int $pos): void
+    {
+        $this->order_nbr = $pos;
     }
 
     /**
@@ -540,41 +565,6 @@ class component_link extends sandbox_link_with_type
      */
 
     /**
-     * display the unique id fields
-     * NEVER call any methods from this function because this function is used for debugging and a call can cause an endless loop
-     * @returns string a programmer readable description of the link for unique identification
-     */
-    function dsp_id(): string
-    {
-        $result = '';
-
-        if (isset($this->fob) and isset($this->tob)) {
-            if ($this->fob->name() <> '' and $this->tob->name() <> '') {
-                $result .= '"' . $this->tob->name() . '" in "'; // e.g. Company details
-                $result .= $this->fob->name() . '"';     // e.g. cash flow statement
-            }
-            if ($this->fob->id <> 0 and $this->tob->id <> 0) {
-                $result .= ' (' . $this->fob->id . ',' . $this->tob->id;
-            }
-            // fallback
-            if ($result == '') {
-                $result .= $this->fob->dsp_id() . ' to ' . $this->tob->dsp_id();
-            }
-        } else {
-            $result .= 'view component objects not set';
-        }
-        if ($this->id > 0) {
-            $result .= ' -> ' . $this->id . ')';
-        } else {
-            $result .= ', but no link id)';
-        }
-        if ($this->user() != null) {
-            $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
-        }
-        return $result;
-    }
-
-    /**
      * @return string the name of the preloaded view component position type
      */
     private function pos_type_name(): string
@@ -876,6 +866,44 @@ class component_link extends sandbox_link_with_type
         return $db_con->insert(
             array($this->from_name . sql_db::FLD_EXT_ID, $this->to_name . sql_db::FLD_EXT_ID, "user_id", 'order_nbr'),
             array($this->view()->id(), $this->component()->id(), $this->user()->id(), $this->order_nbr));
+    }
+
+
+    /*
+     * debug
+     */
+
+    /**
+     * display the unique id fields
+     * NEVER call any methods from this function because this function is used for debugging and a call can cause an endless loop
+     * @returns string a programmer readable description of the link for unique identification
+     */
+    function dsp_id(): string
+    {
+        $result = '';
+
+        if (isset($this->fob) and isset($this->tob)) {
+            if ($this->fob->name() <> '' and $this->tob->name() <> '') {
+                $result .= '"' . $this->tob->name() . '" in "'; // e.g. Company details
+                $result .= $this->fob->name() . '"';     // e.g. cash flow statement
+            }
+            if ($this->fob->id <> 0 and $this->tob->id <> 0) {
+                $result .= ' (' . $this->fob->id . ',' . $this->tob->id;
+            }
+            // fallback
+            if ($result == '') {
+                $result .= $this->fob->dsp_id() . ' to ' . $this->tob->dsp_id();
+            }
+        } else {
+            $result .= 'view component objects not set';
+        }
+        if ($this->id > 0) {
+            $result .= ' -> ' . $this->id . ')';
+        } else {
+            $result .= ', but no link id)';
+        }
+        $result .= parent::dsp_id();
+        return $result;
     }
 
 }

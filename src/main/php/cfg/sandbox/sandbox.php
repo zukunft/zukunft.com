@@ -587,32 +587,6 @@ class sandbox extends db_object
 
 
     /*
-     * debug
-     */
-
-    /**
-     * @returns string best possible identification for this object mainly used for debugging
-     */
-    function dsp_id(): string
-    {
-        $result = '';
-        if ($this->user() != null) {
-            $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
-        }
-        return $result;
-    }
-
-    /**
-     * @return string a message to use a different name
-     */
-    function id_used_msg(sandbox $obj_to_add): string
-    {
-        return 'A ' . $this->obj_name . ' with the name ' . $obj_to_add->dsp_id() . ' already exists. '
-            . 'Please use another ' . $obj_to_add->obj_name . ' name.';
-    }
-
-
-    /*
      *  check functions
      */
 
@@ -2426,6 +2400,32 @@ class sandbox extends db_object
     {
         $msg = 'ERROR: the type name function should have been overwritten by the child object';
         return log_err($msg);
+    }
+
+
+    /*
+     * debug
+     */
+
+    /**
+     * @returns string best possible identification for this object mainly used for debugging
+     */
+    function dsp_id_user(): string
+    {
+        $result = '';
+        if ($this->user() != null) {
+            $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
+        }
+        return $result;
+    }
+
+    /**
+     * @return string a message to use a different name
+     */
+    function id_used_msg(sandbox $obj_to_add): string
+    {
+        return 'A ' . $this->obj_name . ' with the name ' . $obj_to_add->dsp_id() . ' already exists. '
+            . 'Please use another ' . $obj_to_add->obj_name . ' name.';
     }
 
 }

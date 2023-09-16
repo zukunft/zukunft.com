@@ -303,16 +303,14 @@ class figure extends combine_object
 
         $result = '';
         if ($this->is_result()) {
-            $result .= 'result';
+            $result .= 'result figure ';
         } else {
-            $result .= 'value';
+            $result .= 'value figure ';
         }
-        $result .= ' ' . $this->number();
-        $result .= ' ' . $this->symbol();
-        $result .= ' ' . $this->last_update()->format('Y-m-d H:i:s');
         if (isset($this->obj)) {
             $result .= $this->obj->dsp_id();
         }
+        $result .= ' ' . $this->last_update()->format('Y-m-d H:i:s');
 
         return $result;
     }

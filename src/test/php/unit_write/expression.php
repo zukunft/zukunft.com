@@ -119,13 +119,13 @@ class expression_test
         // ... and all elements used in the formula
         $elm_lst = $exp_sector->element_list();
         $result = $elm_lst->name();
-        $target = 'Country, can be used as a differentiator for, Canton, System Test Word Total';
+        $target = '"Country","can be used as a differentiator for","Canton","System Test Word Total"';
         $t->assert('element_lst for "' . $exp_sector->dsp_id() . '"', $result, $target);
 
         // ... and all element groups used in the formula
         $elm_grp_lst = $exp_sector->element_grp_lst();
         $result = $elm_grp_lst->name();
-        $target = 'Country,can be used as a differentiator for,Canton, System Test Word Total';
+        $target = '"Country,can be used as a differentiator for,Canton","System Test Word Total"';
         $t->assert('element_grp_lst for "' . $exp_sector->dsp_id() . '"', $result, $target);
 
         // test getting the phrases if the formula contains a verb

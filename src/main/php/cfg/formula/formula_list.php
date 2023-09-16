@@ -646,7 +646,7 @@ class formula_list extends sandbox_list
         return $result;
     }
 
-    function name(): string
+    function name(int $limit = null): string
     {
         $lib = new library();
         return $lib->dsp_array($this->names());
@@ -655,7 +655,7 @@ class formula_list extends sandbox_list
     /**
      * this function is called from dsp_id, so no other call is allowed
      */
-    function names(): array
+    function names(int $limit = null): array
     {
         $result = array();
         if ($this->lst() != null) {

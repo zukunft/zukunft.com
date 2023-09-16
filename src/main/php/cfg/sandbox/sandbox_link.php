@@ -518,6 +518,22 @@ class sandbox_link extends sandbox
 
 
     /*
+     * internal
+     */
+
+    /**
+     * dummy function definition that should not be called
+     * TODO check why it is called
+     * @return string
+     */
+    protected function check_preserved(): string
+    {
+        log_warning('The dummy parent method get_similar has been called, which should never happen');
+        return '';
+    }
+
+
+    /*
      * debug
      */
 
@@ -539,26 +555,8 @@ class sandbox_link extends sandbox
             $result .= $this->name() . ' (' . $this->id() . ') of type ';
         }
         $result .= $this::class;
-        if ($this->user() != null) {
-            $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
-        }
+        $result .= parent::dsp_id();
         return $result;
-    }
-
-
-    /*
-     * internal
-     */
-
-    /**
-     * dummy function definition that should not be called
-     * TODO check why it is called
-     * @return string
-     */
-    protected function check_preserved(): string
-    {
-        log_warning('The dummy parent method get_similar has been called, which should never happen');
-        return '';
     }
 
 }

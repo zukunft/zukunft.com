@@ -191,15 +191,20 @@ class base_list
     }
 
     /**
+     * @param ?int $limit the max number of ids to show
      * @return array with the database ids of all objects of this list
      */
-    function ids(): array
+    function ids(int $limit = null): array
     {
         $result = array();
+        $pos = 0;
         foreach ($this->lst as $sbx_obj) {
-            // use only valid ids
-            if ($sbx_obj->id() <> 0) {
-                $result[] = $sbx_obj->id();
+            if ($pos <= $limit or $limit == null) {
+                // use only valid ids
+                if ($sbx_obj->id() <> 0) {
+                    $result[] = $sbx_obj->id();
+                    $pos++;
+                }
             }
         }
         return $result;
@@ -314,7 +319,7 @@ class base_list
         if ($this->lst() != null) {
             $pos = 0;
             foreach ($this->lst() as $db_obj) {
-                if ($min_names > $pos) {
+                if ($pos < $min_names) {
                     if ($result <> '') $result .= ' / ';
                     $result .= $db_obj->dsp_id();
                     $pos++;
@@ -329,7 +334,7 @@ class base_list
      * @param int $pos the first list id that has not yet been shown
      * @return string a short summary of the remaining ids
      */
-    protected function dsp_id_remaining(int $pos, ): string
+    protected function dsp_id_remaining(int $pos): string
     {
         $lib = new library();
         $result = '';

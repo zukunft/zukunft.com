@@ -717,7 +717,7 @@ class triple_list extends sandbox_list
     /**
      * @return string description of the triple list for the user
      */
-    function name(): string
+    function name(int $limit = null): string
     {
         $lib = new library();
         return $lib->dsp_array($this->names());
@@ -727,7 +727,7 @@ class triple_list extends sandbox_list
      * this function is called from dsp_id, so no other call is allowed
      * @return array with a list of the triple names
      */
-    function names(): array
+    function names(int $limit = null): array
     {
         $result = array();
         foreach ($this->lst() as $lnk) {

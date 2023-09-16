@@ -1225,21 +1225,6 @@ class value extends sandbox_value
      */
 
     /**
-     * create and return the description for this value for debugging
-     */
-    function dsp_id(): string
-    {
-        $result = '';
-
-        if ($this->grp->phr_lst != null) {
-            $result .= $this->grp->phr_lst->dsp_id();
-        }
-        $result .= $this->usr_value;
-
-        return $result;
-    }
-
-    /**
      * create and return the description for this value
      * TODO check if $this->load_phrases() needs to be called before calling this function
      */

@@ -270,7 +270,7 @@ class figure_list extends sandbox_list
         return $result;
     }
 
-    function name(): string
+    function name(int $limit = null): string
     {
         $result = '';
 
@@ -293,7 +293,7 @@ class figure_list extends sandbox_list
     /**
      * this function is called from dsp_id, so no other call is allowed
      */
-    function ids(): array
+    function ids(int $limit = null): array
     {
         $result = array();
         foreach ($this->lst() as $fig) {
