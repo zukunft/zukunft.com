@@ -92,4 +92,6 @@ class api
 
     const FLD_USER_ID = 'user_id';
 
+    // phrase api specific fields
+    const FLD_PHRASE_CLASS = 'class';
 }

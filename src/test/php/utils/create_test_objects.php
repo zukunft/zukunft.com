@@ -118,6 +118,7 @@ use cfg\user;
 use cfg\user_profile_list;
 use cfg\value;
 use cfg\value_list;
+use cfg\value_phrase_link;
 use cfg\verb;
 use cfg\verb_list;
 use cfg\view;
@@ -573,6 +574,25 @@ class create_test_objects extends test_base
         return $lst;
     }
 
+    public function dummy_phrase_list_pi(): phrase_list
+    {
+        $lst = new phrase_list($this->usr1);
+        $lst->add($this->dummy_triple_pi()->phrase());
+        return $lst;
+    }
+
+    /**
+     * @return phrase_list the phrases relevant for having a second entry in the phrase group list
+     */
+    public function dummy_phrase_list_zh(): phrase_list
+    {
+        $lst = new phrase_list($this->usr1);
+        $lst->add($this->dummy_word_zh()->phrase());
+        $lst->add($this->dummy_word_inhabitant()->phrase());
+        $lst->add($this->dummy_word_2019()->phrase());
+        return $lst;
+    }
+
     /**
      * @return phrase_list the phrases relevant for testing the increase formula
      */
@@ -596,9 +616,17 @@ class create_test_objects extends test_base
 
     function dummy_phrase_group(): phrase_group
     {
-        $lst = $this->dummy_phrase_list();
+        $lst = $this->dummy_phrase_list_pi();
         $grp = $lst->get_grp(false);
         $grp->grp_name = phrase_group_api::TN_READ;
+        return $grp;
+    }
+
+    function dummy_phrase_group_zh(): phrase_group
+    {
+        $lst = $this->dummy_phrase_list_zh();
+        $grp = $lst->get_grp(false);
+        $grp->grp_name = phrase_group_api::TN_ZH_2019;
         return $grp;
     }
 
@@ -663,15 +691,29 @@ class create_test_objects extends test_base
 
     function dummy_value(): value
     {
-        $grp = new phrase_group($this->usr1, 1, array(phrase_group_api::TN_READ));
+        $grp = $this->dummy_phrase_group();
         return new value($this->usr1, 1, round(value_api::TV_READ, 13), $grp);
+    }
+
+    function dummy_value_zh(): value
+    {
+        $grp = $this->dummy_phrase_group_zh();
+        return new value($this->usr1, 2,value_api::TV_CITY_ZH_INHABITANTS_2019, $grp);
     }
 
     function dummy_value_list(): value_list
     {
         $lst = new value_list($this->usr1);
         $lst->add($this->dummy_value());
+        $lst->add($this->dummy_value_zh());
         return $lst;
+    }
+
+    function dummy_value_phrase_link(): value_phrase_link
+    {
+        $lnk = new value_phrase_link($this->usr1);
+        $lnk->set(1, $this->dummy_value(), $this->dummy_word()->phrase());
+        return $lnk;
     }
 
     function dummy_formula(): formula
@@ -923,6 +965,7 @@ class create_test_objects extends test_base
     {
         $lst = new component_list($this->usr1);
         $lst->add($this->dummy_component());
+        $lst->add($this->dummy_component_word_add_share_type());
         return $lst;
     }
 

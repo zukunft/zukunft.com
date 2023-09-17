@@ -120,11 +120,11 @@ class system_unit_tests
         $t->assert($test_name, $val->dsp_id(), $target);
         $test_name = 'debug value_list id';
         $val_lst = $t->dummy_value_list();
-        $target = '"Pi (math)" 3.1415926535898 (value_id 1) for user 1 (zukunft.com system test)';
+        $target = '"Pi (math)" 3.1415926535898 / "inhabitant in the city of Zurich (2019)" 415367 (value_id 1,2) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $val_lst->dsp_id(), $target);
-        $test_name = 'debug value_phrase_link id'; // TODO
-        $val_lnk = $t->dummy_word();
-        $target = '"Mathematics" (word_id 1) for user 1 (zukunft.com system test)';
+        $test_name = 'debug value_phrase_link id';
+        $val_lnk = $t->dummy_value_phrase_link();
+        $target = 'link "Pi (math)" 3.1415926535898 (value_id 1) to "Mathematics" (word_id 1) as phrase for zukunft.com system test (1)';
         $t->assert($test_name, $val_lnk->dsp_id(), $target);
         $test_name = 'debug formula id';
         $frm = $t->dummy_formula();
@@ -176,7 +176,7 @@ class system_unit_tests
         $t->assert($test_name, $cmp->dsp_id(), $target);
         $test_name = 'debug component_list id';
         $cmp_lst = $t->dummy_component_list();
-        $target = '"Word" (component_id 1) for user 1 (zukunft.com system test)';
+        $target = '"Word","form field share type" (component_id 1,6) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $cmp_lst->dsp_id(), $target);
         $test_name = 'debug component_link id';
         $cmp_lnk = $t->dummy_component_link();

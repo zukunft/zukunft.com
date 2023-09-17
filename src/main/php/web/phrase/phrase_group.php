@@ -37,8 +37,10 @@ namespace html\phrase;
 include_once WEB_SANDBOX_PATH . 'sandbox_named.php';
 
 use api\api;
+use api\phrase_api;
 use html\sandbox\sandbox_named as sandbox_named_dsp;
 use html\word\word as word_dsp;
+use html\word\triple as triple_dsp;
 use html\phrase\phrase as phrase_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
 
@@ -91,23 +93,33 @@ class phrase_group extends sandbox_named_dsp
             if (array_key_exists(api::FLD_PHRASES, $json_array)) {
                 $phr_lst = $json_array[api::FLD_PHRASES];
                 foreach ($phr_lst as $phr_json) {
-                    $wrd = new word_dsp();
-                    $wrd->set_from_json_array($phr_json);
-                    $phr = new phrase_dsp();
-                    $phr->set_obj($wrd);
-                    $this->lst[] = $phr;
+                    $this->set_phrase_from_json_array($phr_json);
                 }
             }
         } else {
             // create phrase group based on the phrase list as fallback
             foreach ($json_array as $phr_json) {
-                $wrd = new word_dsp();
-                $wrd->set_from_json_array($phr_json);
-                $phr = new phrase_dsp();
-                $phr->set_obj($wrd);
-                $this->lst[] = $phr;
+                $this->set_phrase_from_json_array($phr_json);
             }
         }
+    }
+
+    /**
+     * @param array $phr_json the json array of a phrase
+     * @return void
+     */
+    private function set_phrase_from_json_array(array $phr_json): void
+    {
+        $wrd_or_trp = new word_dsp();
+        if (array_key_exists(api::FLD_PHRASE_CLASS, $phr_json)) {
+            if ($phr_json[api::FLD_PHRASE_CLASS] == phrase_api::CLASS_TRIPLE) {
+                $wrd_or_trp = new triple_dsp();
+            }
+        }
+        $wrd_or_trp->set_from_json_array($phr_json);
+        $phr = new phrase_dsp();
+        $phr->set_obj($wrd_or_trp);
+        $this->lst[] = $phr;
     }
 
     function set_lst($lst): void

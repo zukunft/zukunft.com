@@ -766,16 +766,19 @@ class sandbox_named extends sandbox
      */
 
     /**
+     * @param bool $full false if a short version e.g. for lists should be returned
      * @return string the best possible identification for this object mainly used for debugging
      */
-    function dsp_id(): string
+    function dsp_id(bool $full = true): string
     {
         $result = '';
         if ($this->name() <> '') {
             $result .= '"' . $this->name() . '"';
         }
         $result .= parent::dsp_id();
-        $result .= $this->dsp_id_user();
+        if ($full) {
+            $result .= $this->dsp_id_user();
+        }
         return $result;
     }
 

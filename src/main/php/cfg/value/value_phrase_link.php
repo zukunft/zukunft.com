@@ -112,6 +112,33 @@ class value_phrase_link extends db_object
      * set and get
      */
 
+    function set(int $id, value $val, phrase $phr): void
+    {
+        $this->set_id($id);
+        $this->set_value($val);
+        $this->set_phrase($phr);
+    }
+
+    function set_value(value $val): void
+    {
+        $this->val = $val;
+    }
+
+    function value(): value
+    {
+        return $this->val;
+    }
+
+    function set_phrase(phrase $phr): void
+    {
+        $this->phr = $phr;
+    }
+
+    function phrase(): phrase
+    {
+        return $this->phr;
+    }
+
     /**
      * set the user of the value phrase link
      *
@@ -130,6 +157,7 @@ class value_phrase_link extends db_object
     {
         return $this->usr;
     }
+
 
     /*
      * loading
@@ -206,17 +234,6 @@ class value_phrase_link extends db_object
         return $result;
     }
 
-    /*
-     *  display functions
-     */
-
-    /**
-     * create and return the description for this value for debugging
-     */
-    function dsp_id(): string
-    {
-        return 'link ' . $this->val->dsp_id() . ' to ' . $this->phr->dsp_id() . ' for ' . $this->user()->dsp_id();
-    }
 
     /*
      *  save functions
@@ -394,6 +411,20 @@ class value_phrase_link extends db_object
 
         log_debug($result);
         return $result;
+    }
+
+
+    /*
+     * debug
+     */
+
+    /**
+     * @return string with the description for this value phrase link for debugging
+     */
+    function dsp_id(): string
+    {
+        return 'link ' . $this->val->dsp_id_short()
+            . ' to ' . $this->phr->dsp_id(false) . ' for ' . $this->user()->dsp_id();
     }
 
 }

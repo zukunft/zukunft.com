@@ -162,7 +162,7 @@ class triple extends sandbox_typed
         if ($this->type_id() == null) {
             return null;
         } else {
-            return $phrase_types->get_by_id($this->type_id());
+            return $phrase_types->get($this->type_id());
         }
     }
 

@@ -195,14 +195,23 @@ class sandbox_value extends sandbox
      */
     function dsp_id(): string
     {
-        $result = $this->dsp_id_entry();
-        $result .= parent::dsp_id();
+        $result = $this->dsp_id_short();
         $result .= $this->dsp_id_user();
         return $result;
     }
 
     /**
-     * @return string with the short identification for this value mainly used for debugging
+     * @return string with the short identification for links
+     */
+    function dsp_id_short(): string
+    {
+        $result = $this->dsp_id_entry();
+        $result .= parent::dsp_id();
+        return $result;
+    }
+
+    /**
+     * @return string with the short identification for lists
      */
     function dsp_id_entry(): string
     {

@@ -1446,12 +1446,13 @@ class phrase extends combine_named
      */
 
     /**
+     * @param bool $full false if a short version e.g. for lists should be returned
      * @return string the unique id fields
      */
-    function dsp_id(): string
+    function dsp_id(bool $full = true): string
     {
         if ($this->obj() != null) {
-            return $this->obj()->dsp_id() . ' as phrase';
+            return $this->obj()->dsp_id($full) . ' as phrase';
         } else {
             return 'phrase with null object';
         }
