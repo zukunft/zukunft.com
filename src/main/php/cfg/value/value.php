@@ -1281,7 +1281,7 @@ class value extends sandbox_value
     {
         log_debug('value->res_lst_depending group id "' . $this->grp->id() . '" for user ' . $this->user()->name . '');
         $res_lst = new result_list($this->user());
-        $res_lst->load($this->grp, true);
+        $res_lst->load_by_obj($this->grp, true);
 
         log_debug('done');
         return $res_lst;

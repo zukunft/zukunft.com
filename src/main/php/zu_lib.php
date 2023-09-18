@@ -285,39 +285,39 @@ use html\phrase\phrase_group as phrase_group_dsp;
     the target model object structure is:
 
     db_object - all database objects that have a unique id
-        verb - named object not part of the user sandbox because each verb / predicate is expected to have it own behavior; user can only request new verbs
-        phrase_group - a sorted list of phrases
-        phrase_group_link - db index to find a phrase group by the phrase (not the db normal form to speed up)
-            phrase_group_word_link - phrase_group_link for a word
-            phrase_group_triple_link - phrase_group_link for a triple
-        formula_element - the parameters / parts of a formula expression for fast finding of dependencies (not the db normal form to speed up)
-        change_log - to log a change done by a user
-            change_log_named - log of user changes in named objects e.g. word, triple, ...
-            change_log_link - log of the link changes by a user
-        system_log - log entries by the system to improve the setup and code
-        batch_job - to handle processes that takes longer than the user is expected to wait
-        ip_range - to filter requests from the internet
-        sandbox - a user sandbox object
-            sandbox_named - user sandbox objects that have a given name
-                sandbox_typed - named sandbox object that have a type and a predefined behavior
-                    word - the base object to find values
-                    formulas - a calculation rule
-                    view - to show an object to the user
-                    component - an formatting element for the user view e.g. to show a word or number
-                    source - a non automatic source for a value
-            sandbox_Link - user sandbox objects that link two objects
-                sandbox_link_named - user sandbox objects that link two objects
-                    sandbox_link_typed - objects that have additional a type and a predefined behavior
-                        triple - link two words with a predicate / verb
-                        view_term_link - link a view to a term
-                    sandbox_link_with_type - TODO combine with sandbox_link_typed?
-                        formula_link - link a formula to a phrase
-                        component_link - to assign a component to a view
-                        ref - to link a value to an external source
-            sandbox_value - to save a user specific numbers
-                value - a single number added by the user
-                result - one calculated numeric result
-                value_time_series - a list of very similar numbers added by the user e.g. that only have a different timestamp  (TODO rename to series)
+        db_object_user - all objects that are user specific
+            phrase_group - a sorted list of phrases
+            phrase_group_link - db index to find a phrase group by the phrase (not the db normal form to speed up)
+                phrase_group_word_link - phrase_group_link for a word
+                phrase_group_triple_link - phrase_group_link for a triple
+            formula_element - the parameters / parts of a formula expression for fast finding of dependencies (not the db normal form to speed up)
+            change_log - to log a change done by a user
+                change_log_named - log of user changes in named objects e.g. word, triple, ...
+                change_log_link - log of the link changes by a user
+            system_log - log entries by the system to improve the setup and code
+            batch_job - to handle processes that takes longer than the user is expected to wait
+            ip_range - to filter requests from the internet
+            sandbox - a user sandbox object
+                sandbox_named - user sandbox objects that have a given name
+                    sandbox_typed - named sandbox object that have a type and a predefined behavior
+                        word - the base object to find values
+                        formulas - a calculation rule
+                        view - to show an object to the user
+                        component - an formatting element for the user view e.g. to show a word or number
+                        source - a non automatic source for a value
+                sandbox_Link - user sandbox objects that link two objects
+                    sandbox_link_named - user sandbox objects that link two objects
+                        sandbox_link_typed - objects that have additional a type and a predefined behavior
+                            triple - link two words with a predicate / verb
+                            view_term_link - link a view to a term
+                        sandbox_link_with_type - TODO combine with sandbox_link_typed?
+                            formula_link - link a formula to a phrase
+                            component_link - to assign a component to a view
+                            ref - to link a value to an external source
+                sandbox_value - to save a user specific numbers
+                    value - a single number added by the user
+                    result - one calculated numeric result
+                    value_time_series - a list of very similar numbers added by the user e.g. that only have a different timestamp  (TODO rename to series)
     base_list - a list with pages
         change_log_list - to forward changes to the UI
         system_log_list - to forward the system log entries to the UI
@@ -349,6 +349,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
         language - to define how the UI should look like
         language_form - to differentiate the word and triple name forms e.g. plural
     type_list - list of type_objects that is only load once a startup in the frontend
+        verb - named object not part of the user sandbox because each verb / predicate is expected to have it own behavior; user can only request new verbs
         view_sys_list - list of all view used by the system itself
         phrase_types - list of all word or triple types
         verb_list - list of all verbs
@@ -1101,17 +1102,22 @@ function prg_restart(string $code_name): sql_db
             $db_con = null;
         }
 
+        // create a virtual one-time system user to load the system users
+        $usr_sys = new user();
+        $usr_sys->set_id(user::SYSTEM_ID);
+        $usr_sys->name = user::SYSTEM_NAME;
+
         // preload all types from the database
         $sys_typ_lst = new type_lists();
-        $sys_typ_lst->load($db_con, null);
+        $sys_typ_lst->load($db_con, $usr_sys);
 
-        $log = new change_log(null);
+        $log = new change_log($usr_sys);
         $db_changed = $log->create_log_references($db_con);
 
         // reload the type list if needed and trigger an update in the frontend
         // even tough the update of the preloaded list should already be done by the single adds
         if ($db_changed) {
-            $sys_typ_lst->load($db_con, null);
+            $sys_typ_lst->load($db_con, $usr_sys);
         }
 
     }

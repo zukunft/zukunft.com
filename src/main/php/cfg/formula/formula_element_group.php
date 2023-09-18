@@ -346,7 +346,7 @@ class formula_element_group
      */
 
     /**
-     * display the unique id fields
+     * @return string with the unique id fields
      */
     function dsp_id(): string
     {

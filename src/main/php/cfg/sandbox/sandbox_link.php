@@ -80,9 +80,19 @@ class sandbox_link extends sandbox
      * set and get
      */
 
+    function set_fob(object $fob): void
+    {
+        $this->fob = $fob;
+    }
+
     function fob(): object
     {
         return $this->fob;
+    }
+
+    function set_tob(object $tob): void
+    {
+        $this->tob = $tob;
     }
 
     function tob(): object
@@ -543,19 +553,17 @@ class sandbox_link extends sandbox
     function dsp_id(): string
     {
         $result = '';
-        if (isset($this->fob) or isset($this->tob)) {
-            if (isset($this->fob)) {
-                $result .= 'from ' . $this->fob->dsp_id() . ' ';
+        if ($this->fob != null or $this->tob != null) {
+            if ($this->fob != null) {
+                $result .= 'from ' . $this->fob->dsp_id(false) . ' ';
             }
-            if (isset($this->tob)) {
-                $result .= 'to ' . $this->tob->dsp_id();
+            if ($this->tob != null) {
+                $result .= 'to ' . $this->tob->dsp_id(false);
             }
-            $result .= ' named ';
         } else {
-            $result .= $this->name() . ' (' . $this->id() . ') of type ';
+            $result .= $this->name() . ' (' . $this->id() . ') of type ' . $this::class;
         }
-        $result .= $this::class;
-        $result .= parent::dsp_id();
+        $result .= ' as' . parent::dsp_id();
         return $result;
     }
 

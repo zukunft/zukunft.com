@@ -1135,32 +1135,8 @@ class result extends sandbox_value
     }
 
     /*
-     *  display functions
+     * display
      */
-
-    /**
-     * display the value with the unique id fields
-     */
-    function dsp_id(): string
-    {
-        $result = '';
-
-        if ($this->value != null) {
-            $result .= $this->value . ' ';
-        }
-        if (isset($this->grp->phr_lst)) {
-            $result .= $this->grp->phr_lst->dsp_id();
-        }
-        if ($result <> '') {
-            $result .= ' (' . $this->id() . ')';
-        } else {
-            $result .= $this->id();
-        }
-        if ($this->user() != null) {
-            $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
-        }
-        return $result;
-    }
 
     /**
      * this function is called from dsp_id, so no other call is allowed
@@ -1625,4 +1601,5 @@ class result extends sandbox_value
         return $result;
 
     }
+
 }

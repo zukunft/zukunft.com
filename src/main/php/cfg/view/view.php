@@ -477,14 +477,22 @@ class view extends sandbox_typed
 
     /**
      * load all parts of this view for this user
+     * @param sql_db|null $db_con_given the database connection as a parameter for the initial load of the system views
      * @return bool false if a technical error on loading has occurred; an empty list if fine and returns true
      */
-    function load_components(): bool
+    function load_components(?sql_db $db_con_given = null): bool
     {
+        global $db_con;
+
         log_debug($this->dsp_id());
 
+        $db_con_used = $db_con_given;
+        if ($db_con_used == null) {
+            $db_con_used = $db_con;
+        }
+
         $this->cmp_lnk_lst = new component_link_list($this->user());
-        $result = $this->cmp_lnk_lst->load_by_view_with_components($this);
+        $result = $this->cmp_lnk_lst->load_by_view_with_components($this, $db_con_used);
         log_debug($this->cmp_lnk_lst->count() . ' loaded for ' . $this->dsp_id());
 
         return $result;

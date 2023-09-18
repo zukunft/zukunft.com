@@ -42,7 +42,7 @@ namespace cfg;
 include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';
 include_once DB_PATH . 'sql_par_type.php';
-include_once MODEL_HELPER_PATH . 'db_object.php';
+include_once MODEL_HELPER_PATH . 'db_object_user.php';
 include_once MODEL_PHRASE_PATH . 'phrase_type.php';
 include_once MODEL_SANDBOX_PATH . 'protection_type.php';
 include_once MODEL_SANDBOX_PATH . 'share_type.php';
@@ -52,7 +52,7 @@ use cfg\db\sql_par_type;
 use model\export\exp_obj;
 use Exception;
 
-class sandbox extends db_object
+class sandbox extends db_object_user
 {
 
     /*
@@ -160,11 +160,9 @@ class sandbox extends db_object
      */
     function __construct(user $usr)
     {
-        parent::__construct();
+        parent::__construct($usr);
         // the default type that is overwritten by the child objects
         $this->obj_type = self::TYPE_NAMED;
-
-        $this->set_user($usr);
     }
 
     /**
@@ -183,17 +181,6 @@ class sandbox extends db_object
     /*
      * set and get
      */
-
-    /**
-     * set the user of the user sandbox object
-     *
-     * @param user $usr the person who wants to access the object e.g. the word
-     * @return void
-     */
-    function set_user(user $usr): void
-    {
-        $this->usr = $usr;
-    }
 
     /**
      * set the excluded field from a database value
@@ -227,14 +214,6 @@ class sandbox extends db_object
     function include(): void
     {
         $this->excluded = false;
-    }
-
-    /**
-     * @return user the person who wants to see a word, verb, triple, formula, view or result
-     */
-    function user(): user
-    {
-        return $this->usr;
     }
 
     /**
@@ -301,7 +280,7 @@ class sandbox extends db_object
     {
         $dsp_obj->set_id($this->id());
         $dsp_obj->usr_cfg_id = $this->usr_cfg_id;
-        $dsp_obj->usr = $this->usr;
+        $dsp_obj->usr = $this->user();
         $dsp_obj->owner_id = $this->owner_id;
         $dsp_obj->excluded = $this->is_excluded();
     }
@@ -536,7 +515,7 @@ class sandbox extends db_object
             if ($this->owner_id > 0) {
                 $usr = new user;
                 if ($usr->load_by_id($this->owner_id)) {
-                    $this->usr = $usr;
+                    $this->set_user($usr);
                     $result = true;
                 }
             } else {
@@ -828,7 +807,7 @@ class sandbox extends db_object
             $std = clone $this;
             $std->reset();
             $std->id = $this->id;
-            $std->usr = $this->usr;
+            $std->set_user($this->user());
             $std->load_standard();
 
             $db_con->set_type($this->obj_name);
@@ -840,7 +819,7 @@ class sandbox extends db_object
             $this->owner_id = $new_owner_id;
             $new_owner = new user;
             if ($new_owner->load_by_id($new_owner_id)) {
-                $this->usr = $new_owner;
+                $this->set_user($new_owner);
             } else {
                 $result = false;
             }
@@ -1287,7 +1266,7 @@ class sandbox extends db_object
     {
         log_debug($this->dsp_id());
 
-        $log = new change_log_named($this->usr);
+        $log = new change_log_named($this->user());
 
         $log->action = change_log_action::ADD;
         // TODO add the table exceptions from sql_db
@@ -1304,7 +1283,7 @@ class sandbox extends db_object
     function log_link_add(): change_log_link
     {
         log_err('The dummy parent method get_similar has been called, which should never happen');
-        return new change_log_link($this->usr);
+        return new change_log_link($this->user());
     }
 
     /**
@@ -1313,7 +1292,7 @@ class sandbox extends db_object
     private function log_upd_common($log)
     {
         log_debug($this->dsp_id());
-        $log->usr = $this->usr;
+        $log->set_user($this->user());
         $log->action = change_log_action::UPDATE;
         if ($this->can_change()) {
             // TODO add the table exceptions from sql_db
@@ -1331,7 +1310,7 @@ class sandbox extends db_object
     function log_upd_field(): change_log_named
     {
         log_debug($this->dsp_id());
-        $log = new change_log_named($this->usr);
+        $log = new change_log_named($this->user());
         return $this->log_upd_common($log);
     }
 
@@ -1341,7 +1320,7 @@ class sandbox extends db_object
     function log_upd_link(): change_log_link
     {
         log_debug($this->dsp_id());
-        $log = new change_log_link($this->usr);
+        $log = new change_log_link($this->user());
         return $this->log_upd_common($log);
     }
 
@@ -1367,7 +1346,7 @@ class sandbox extends db_object
     function log_del_link(): change_log_link
     {
         log_err('The dummy parent method get_similar has been called, which should never happen');
-        return new change_log_link($this->usr);
+        return new change_log_link($this->user());
     }
 
     /**
@@ -1377,7 +1356,7 @@ class sandbox extends db_object
     function log_del(): change_log_named
     {
         log_err('The dummy parent method get_similar has been called, which should never happen');
-        return new change_log_named($this->usr);
+        return new change_log_named($this->user());
     }
 
     /**
@@ -1500,7 +1479,7 @@ class sandbox extends db_object
      */
     function save_field_excluded_log(sandbox $db_rec): change_log
     {
-        $log = new change_log($this->usr);
+        $log = new change_log($this->user());
         if ($db_rec->is_excluded() <> $this->is_excluded()) {
             if ($this->is_excluded()) {
                 if ($this->obj_type == self::TYPE_LINK) {
@@ -2040,7 +2019,7 @@ class sandbox extends db_object
                     // done first, because it needs to be done for user and general object values
                     $db_rec = clone $this;
                     $db_rec->reset();
-                    $db_rec->usr = $this->usr;
+                    $db_rec->set_user($this->user());
                     if ($db_rec->load_by_id($this->id, $db_rec::class) != $this->id()) {
                         $result .= 'Reloading of user ' . $this->obj_name . ' failed';
                     } else {
@@ -2065,7 +2044,7 @@ class sandbox extends db_object
                     $std_rec = clone $this;
                     $std_rec->reset();
                     $std_rec->id = $this->id;
-                    $std_rec->usr = $this->usr; // must also be set to allow to take the ownership
+                    $std_rec->set_user($this->user()); // must also be set to allow to take the ownership
                     if ($result == '') {
                         if (!$std_rec->load_standard()) {
                             $result .= 'Reloading of the default values for ' . $this->obj_name . ' failed';
@@ -2163,7 +2142,7 @@ class sandbox extends db_object
 
                 // and the corresponding word if possible
                 if ($result->is_ok()) {
-                    $wrd = new word($this->usr);
+                    $wrd = new word($this->user());
                     $wrd->load_by_name($this->name());
                     $wrd->type_id = $phrase_types->id(phrase_type::FORMULA_LINK);
                     $msg = $wrd->del();
@@ -2201,7 +2180,7 @@ class sandbox extends db_object
                 $result->add_message($msg);
                 log_debug('of ' . $this->dsp_id() . ' done');
             } else {
-                log_err('Delete failed for ' . $this->obj_name, $this->obj_name . '->del_exe', 'Delete failed, because removing the user settings for ' . $this->obj_name . ' ' . $this->dsp_id() . ' returns ' . $msg, (new Exception)->getTraceAsString(), $this->usr);
+                log_err('Delete failed for ' . $this->obj_name, $this->obj_name . '->del_exe', 'Delete failed, because removing the user settings for ' . $this->obj_name . ' ' . $this->dsp_id() . ' returns ' . $msg, (new Exception)->getTraceAsString(), $this->user());
             }
         }
 
@@ -2236,12 +2215,12 @@ class sandbox extends db_object
         }
 
         if (!$reloaded) {
-            log_warning('Reload of for deletion has lead to unexpected', $this->obj_name . '->del', 'Reload of ' . $this->obj_name . ' ' . $this->dsp_id() . ' for deletion or exclude has unexpectedly lead to ' . $msg . '.', (new Exception)->getTraceAsString(), $this->usr);
+            log_warning('Reload of for deletion has lead to unexpected', $this->obj_name . '->del', 'Reload of ' . $this->obj_name . ' ' . $this->dsp_id() . ' for deletion or exclude has unexpectedly lead to ' . $msg . '.', (new Exception)->getTraceAsString(), $this->user());
         } else {
             log_debug('reloaded ' . $this->dsp_id());
             // check if the object is still valid
             if ($this->id <= 0) {
-                log_warning('Delete failed', $this->obj_name . '->del', 'Delete failed, because it seems that the ' . $this->obj_name . ' ' . $this->dsp_id() . ' has been deleted in the meantime.', (new Exception)->getTraceAsString(), $this->usr);
+                log_warning('Delete failed', $this->obj_name . '->del', 'Delete failed, because it seems that the ' . $this->obj_name . ' ' . $this->dsp_id() . ' has been deleted in the meantime.', (new Exception)->getTraceAsString(), $this->user());
             } else {
                 // reload the objects if needed
                 if ($this->obj_type == self::TYPE_LINK) {
@@ -2259,7 +2238,7 @@ class sandbox extends db_object
                         // get median user
                         $new_owner_id = $this->median_user();
                         if ($new_owner_id == 0) {
-                            log_err('Delete failed', $this->obj_name . '->del', 'Delete failed, because no median user found for ' . $this->obj_name . ' ' . $this->dsp_id() . ' but change is nevertheless not allowed.', (new Exception)->getTraceAsString(), $this->usr);
+                            log_err('Delete failed', $this->obj_name . '->del', 'Delete failed, because no median user found for ' . $this->obj_name . ' ' . $this->dsp_id() . ' but change is nevertheless not allowed.', (new Exception)->getTraceAsString(), $this->user());
                         } else {
                             log_debug('set owner for ' . $this->dsp_id() . ' to user id "' . $new_owner_id . '"');
 
@@ -2295,7 +2274,7 @@ class sandbox extends db_object
 
                         $db_rec = clone $this;
                         $db_rec->reset();
-                        $db_rec->usr = $this->usr;
+                        $db_rec->set_user($this->user());
                         if ($db_rec->load_by_id($this->id, $db_rec::class)) {
                             log_debug('reloaded ' . $db_rec->dsp_id() . ' from database');
                             if ($this->obj_type == self::TYPE_LINK) {
@@ -2308,7 +2287,7 @@ class sandbox extends db_object
                             $std_rec = clone $this;
                             $std_rec->reset();
                             $std_rec->id = $this->id;
-                            $std_rec->usr = $this->usr; // must also be set to allow to take the ownership
+                            $std_rec->set_user($this->user()); // must also be set to allow to take the ownership
                             if (!$std_rec->load_standard()) {
                                 $msg .= 'Reloading of standard ' . $this->obj_name . ' ' . $this->dsp_id() . ' failed.';
                             }
@@ -2326,6 +2305,15 @@ class sandbox extends db_object
 
         $result->add_message($msg);
         return $result;
+    }
+
+    /**
+     * @return string a message to use a different name
+     */
+    function id_used_msg(sandbox $obj_to_add): string
+    {
+        return 'A ' . $this->obj_name . ' with the name ' . $obj_to_add->dsp_id() . ' already exists. '
+            . 'Please use another ' . $obj_to_add->obj_name . ' name.';
     }
 
     /**
@@ -2400,32 +2388,6 @@ class sandbox extends db_object
     {
         $msg = 'ERROR: the type name function should have been overwritten by the child object';
         return log_err($msg);
-    }
-
-
-    /*
-     * debug
-     */
-
-    /**
-     * @returns string best possible identification for this object mainly used for debugging
-     */
-    function dsp_id_user(): string
-    {
-        $result = '';
-        if ($this->user() != null) {
-            $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
-        }
-        return $result;
-    }
-
-    /**
-     * @return string a message to use a different name
-     */
-    function id_used_msg(sandbox $obj_to_add): string
-    {
-        return 'A ' . $this->obj_name . ' with the name ' . $obj_to_add->dsp_id() . ' already exists. '
-            . 'Please use another ' . $obj_to_add->obj_name . ' name.';
     }
 
 }

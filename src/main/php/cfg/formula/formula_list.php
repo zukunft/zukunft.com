@@ -631,20 +631,8 @@ class formula_list extends sandbox_list
 
 
     /*
-     * display functions
+     * display
      */
-
-    /**
-     * return the loaded formula names for debugging
-     */
-    function dsp_id(): string
-    {
-        $result = $this->name();
-        if ($result <> '') {
-            $result = '"' . $result . '"';
-        }
-        return $result;
-    }
 
     function name(int $limit = null): string
     {

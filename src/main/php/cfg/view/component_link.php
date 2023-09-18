@@ -238,9 +238,9 @@ class component_link extends sandbox_link_with_type
 
     /**
      * expose the order number as pos
-     * @return int
+     * @return int|null
      */
-    function pos(): int
+    function pos(): ?int
     {
         return $this->order_nbr;
     }
@@ -655,13 +655,13 @@ class component_link extends sandbox_link_with_type
                 $order_nbr = 1;
                 $prev_entry = null;
                 $prev_entry_down = false;
-                if ($this->fob->cmp_lst != null) {
-                    foreach ($this->fob->cmp_lst->lst() as $entry) {
+                if ($this->fob->cmp_lnk_lst != null) {
+                    foreach ($this->fob->cmp_lnk_lst->lst() as $cmp_lnk) {
                         // get the component link (TODO add the order number to the entry lst, so that this loading is not needed)
-                        $cmp_lnk = new component_link($this->user());
-                        $dsp = new view($this->user());
-                        $dsp->load_by_id($this->fob->id());
-                        $cmp_lnk->load_by_link($dsp, $entry);
+                        //$cmp_lnk = new component_link($this->user());
+                        //$dsp = new view($this->user());
+                        //$dsp->load_by_id($this->fob->id());
+                        //$cmp_lnk->load_by_link($dsp, $entry);
                         if ($prev_entry_down) {
                             if (isset($prev_entry)) {
                                 log_debug('component_link->move order number of the view component ' . $prev_entry->tob->dsp_id() . ' changed from ' . $prev_entry->order_nbr . ' to ' . $order_nbr . ' in ' . $this->fob->dsp_id());
@@ -675,7 +675,7 @@ class component_link extends sandbox_link_with_type
                             $result = true;
                             $prev_entry_down = false;
                         }
-                        if ($entry->id == $this->tob->id()) {
+                        if ($cmp_lnk->id() == $this->tob->id()) {
                             if ($direction == 'up') {
                                 if ($cmp_lnk->order_nbr > 0) {
                                     log_debug('component_link->move order number of the view component ' . $cmp_lnk->tob->dsp_id() . ' changed from ' . $cmp_lnk->order_nbr . ' to ' . $order_nbr . ' - 1 in ' . $this->fob->dsp_id());
@@ -874,35 +874,18 @@ class component_link extends sandbox_link_with_type
      */
 
     /**
-     * display the unique id fields
-     * NEVER call any methods from this function because this function is used for debugging and a call can cause an endless loop
      * @returns string a programmer readable description of the link for unique identification
+     * NEVER call any methods from this function because this function is used for debugging and a call can cause an endless loop
      */
     function dsp_id(): string
     {
-        $result = '';
-
-        if (isset($this->fob) and isset($this->tob)) {
-            if ($this->fob->name() <> '' and $this->tob->name() <> '') {
-                $result .= '"' . $this->tob->name() . '" in "'; // e.g. Company details
-                $result .= $this->fob->name() . '"';     // e.g. cash flow statement
-            }
-            if ($this->fob->id <> 0 and $this->tob->id <> 0) {
-                $result .= ' (' . $this->fob->id . ',' . $this->tob->id;
-            }
-            // fallback
-            if ($result == '') {
-                $result .= $this->fob->dsp_id() . ' to ' . $this->tob->dsp_id();
-            }
+        $result = parent::dsp_id();
+        $pos = $this->pos();
+        if ($pos != null) {
+            $result .= ' at pos ' . $pos;
         } else {
-            $result .= 'view component objects not set';
+            $result .= ' without pos';
         }
-        if ($this->id > 0) {
-            $result .= ' -> ' . $this->id . ')';
-        } else {
-            $result .= ', but no link id)';
-        }
-        $result .= parent::dsp_id();
         return $result;
     }
 

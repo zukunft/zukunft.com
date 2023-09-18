@@ -296,7 +296,7 @@ class figure extends combine_object
      */
 
     /**
-     * display the unique id fields of a figure mainly for debugging
+     * @return string the unique id fields of a figure mainly for debugging
      */
     function dsp_id(): string
     {

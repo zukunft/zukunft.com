@@ -303,6 +303,14 @@ class user extends db_object
         $this->email = $email;
     }
 
+    /**
+     * @return string the unique username for this pod
+     */
+    function name(): string
+    {
+        return $this->name;
+    }
+
 
 
     /*
@@ -959,11 +967,6 @@ class user extends db_object
     }
 
     //
-    function dsp_id(): string
-    {
-        return $this->name . ' (' . $this->id . ')';
-    }
-
     // create the display user object based on the object (not needed any more if always the display user object is used)
     function dsp_user(): user_dsp
     {
@@ -1146,4 +1149,15 @@ class user extends db_object
         }
         return $result;
     }
+
+
+    /*
+     * debug
+     */
+
+    function dsp_id(): string
+    {
+        return $this->name . ' (' . $this->id . ')';
+    }
+
 }

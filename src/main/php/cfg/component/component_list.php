@@ -206,14 +206,20 @@ class component_list extends sandbox_list
      * load the components selected by the id
      *
      * @param array $ids of components ids that should be loaded
+     * @param sql_db|null $db_con_given the database connection as a parameter for the initial load of the system views
      * @return bool true if at least one component has been loaded
      */
-    function load_by_ids(array $ids): bool
+    function load_by_ids(array $ids, ?sql_db $db_con_given = null): bool
     {
         global $db_con;
 
-        $qp = $this->load_sql_by_ids($db_con->sql_creator(), $ids);
-        return $this->load($qp);
+        $db_con_used = $db_con_given;
+        if ($db_con_used == null) {
+            $db_con_used = $db_con;
+        }
+
+        $qp = $this->load_sql_by_ids($db_con_used->sql_creator(), $ids);
+        return $this->load_sys($qp, false, $db_con_used);
     }
 
     /**

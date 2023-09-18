@@ -1154,7 +1154,7 @@ class expression
      */
 
     /**
-     * format the expression name to use it for debugging
+     * @return string with the expression name to use it for debugging
      */
     function dsp_id(): string
     {

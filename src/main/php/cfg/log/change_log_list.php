@@ -114,7 +114,7 @@ class change_log_list extends base_list
             $field_name,
             $wrd->id(),
             $usr);
-        return $this->load($qp);
+        return $this->load($qp, $usr);
     }
 
     /**
@@ -133,7 +133,7 @@ class change_log_list extends base_list
             $field_name,
             $trp->id(),
             $usr);
-        return $this->load($qp);
+        return $this->load($qp, $usr);
     }
 
     /**
@@ -152,7 +152,7 @@ class change_log_list extends base_list
             $field_name,
             $trp->id(),
             $usr);
-        return $this->load($qp);
+        return $this->load($qp, $usr);
     }
 
     /**
@@ -171,7 +171,7 @@ class change_log_list extends base_list
             $field_name,
             $val->id(),
             $usr);
-        return $this->load($qp);
+        return $this->load($qp, $usr);
     }
 
     /**
@@ -190,7 +190,7 @@ class change_log_list extends base_list
             $field_name,
             $trp->id(),
             $usr);
-        return $this->load($qp);
+        return $this->load($qp, $usr);
     }
 
     /**
@@ -209,7 +209,7 @@ class change_log_list extends base_list
             $field_name,
             $src->id(),
             $usr);
-        return $this->load($qp);
+        return $this->load($qp, $usr);
     }
 
     /**
@@ -228,7 +228,7 @@ class change_log_list extends base_list
             $field_name,
             $dsp->id(),
             $usr);
-        return $this->load($qp);
+        return $this->load($qp, $usr);
     }
 
     /**
@@ -247,7 +247,7 @@ class change_log_list extends base_list
             $field_name,
             $cmp->id(),
             $usr);
-        return $this->load($qp);
+        return $this->load($qp, $usr);
     }
 
 
@@ -338,10 +338,9 @@ class change_log_list extends base_list
      * @param sql_par $qp the SQL statement, the unique name of the SQL statement and the parameter list
      * @return bool true if at least one change found
      */
-    private function load(sql_par $qp): bool
+    private function load(sql_par $qp, user $usr): bool
     {
         global $db_con;
-        global $usr;
         $result = false;
 
         if ($qp->name == '') {

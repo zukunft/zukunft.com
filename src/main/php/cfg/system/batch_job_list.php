@@ -224,7 +224,7 @@ class batch_job_list extends base_list
 
         foreach ($this->lst() as $chk_job) {
             if ($chk_job->frm == $job->frm) {
-                if ($chk_job->usr == $job->usr) {
+                if ($chk_job->usr == $job->user()) {
                     if (in_array($chk_job->phr_lst->id(), $chk_phr_lst_ids)) {
                         $msg = 'Job for phrases ' . $chk_job->phr_lst->name() . ' is already in the list of active jobs';
                         $result->add_message($msg);

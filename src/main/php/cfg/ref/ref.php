@@ -577,7 +577,7 @@ class ref extends sandbox_link_with_type
      */
 
     /**
-     * display the unique id fields
+     * @return string with the unique id fields
      */
     function dsp_id(): string
     {
@@ -593,7 +593,7 @@ class ref extends sandbox_link_with_type
     }
 
     /**
-     * create the unique name
+     * @return string with the unique name
      */
     function name(): string
     {

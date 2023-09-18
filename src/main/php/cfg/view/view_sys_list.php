@@ -132,7 +132,7 @@ class view_sys_list extends type_list
             foreach ($db_lst as $db_row) {
                 $dsp = new view($this->usr);
                 $dsp->row_mapper_sandbox($db_row);
-                $dsp->load_components();
+                $dsp->load_components($db_con);
                 $this->add($dsp);
             }
         }

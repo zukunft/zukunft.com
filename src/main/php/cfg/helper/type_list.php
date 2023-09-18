@@ -389,35 +389,6 @@ class type_list
 
 
     /*
-     * display functions
-     */
-
-    /**
-     * @return string the verb list with the internal database ids for debugging
-     */
-    function dsp_id(): string
-    {
-        $names = '';
-        $ids = '';
-        if (!$this->is_empty()) {
-            foreach ($this->lst as $key => $type) {
-                if ($names != '') {
-                    $names .= ', ';
-                }
-                $names .= '"' . $type->name() . '"';
-
-                if ($ids != '') {
-                    $ids .= ', ';
-                }
-                $ids .= $key;
-            }
-        }
-        return $names . ' (' . $ids . ')';
-    }
-
-
-
-    /*
      * unit test support functions
      */
 
@@ -460,6 +431,34 @@ class type_list
             $result[] = $component_types->id($code_id);
         }
         return $result;
+    }
+
+
+    /*
+     * debug
+     */
+
+    /**
+     * @return string the verb list with the internal database ids for debugging
+     */
+    function dsp_id(): string
+    {
+        $names = '';
+        $ids = '';
+        if (!$this->is_empty()) {
+            foreach ($this->lst as $key => $type) {
+                if ($names != '') {
+                    $names .= ', ';
+                }
+                $names .= '"' . $type->name() . '"';
+
+                if ($ids != '') {
+                    $ids .= ', ';
+                }
+                $ids .= $key;
+            }
+        }
+        return $names . ' (' . $ids . ')';
     }
 
 }

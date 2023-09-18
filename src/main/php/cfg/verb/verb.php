@@ -1207,9 +1207,12 @@ class verb extends type_object
      */
     function dsp_id(): string
     {
+        global $debug;
         $result = parent::dsp_id();
-        if ($this->user() != null) {
-            $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
+        if ($debug > DEBUG_SHOW_USER or $debug == 0) {
+            if ($this->user() != null) {
+                $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
+            }
         }
         return $result;
     }

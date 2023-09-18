@@ -534,11 +534,12 @@ class phrase_group_list extends sandbox_list
 
 
     /*
-      display functions
-      -----------------
-    */
+     * debug
+     */
 
-    // display the unique id fields
+    /**
+     * @return string with the unique id fields
+     */
     function dsp_id(): string
     {
         global $debug;

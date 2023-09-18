@@ -225,7 +225,7 @@ class result_list extends sandbox_list
      * @param bool $by_source set to true to force the selection e.g. by source phrase group id
      * @return bool true if value or phrases are found
      */
-    function load(object $obj, bool $by_source = false): bool
+    function load_by_obj(object $obj, bool $by_source = false): bool
     {
         global $db_con;
         $result = false;
@@ -287,45 +287,8 @@ class result_list extends sandbox_list
 
 
     /*
-     * display functions
+     * display
      */
-
-    // return best possible id for this element mainly used for debugging
-    function dsp_id(): string
-    {
-        global $debug;
-        $result = '';
-        $lib = new library();
-
-        if ($debug > 10) {
-            if (!$this->is_empty()) {
-                foreach ($this->lst() as $res) {
-                    $result .= $res->dsp_id();
-                    $result .= ' (' . $res->id() . ') - ';
-                }
-            }
-        } else {
-            $nbr = 1;
-            if (!$this->is_empty()) {
-                foreach ($this->lst() as $res) {
-                    if ($nbr <= 5) {
-                        $result .= $res->dsp_id();
-                        $result .= ' (' . $res->id() . ') - ';
-                    }
-                    $nbr++;
-                }
-            }
-            if ($nbr > 5) {
-                $result .= ' ... total ' . $lib->dsp_count($this->lst());
-            }
-        }
-        /*
-        if ($this->user() != null) {
-          $result .= ' for user '.$this->user()->name;
-        }
-        */
-        return $result;
-    }
 
     /**
      * @param ?int $limit the max number of ids to show
@@ -753,7 +716,7 @@ class result_list extends sandbox_list
 
         // first calculate the standard values for all user and then the user specific values
         // than loop over the users and check if the user has changed any value, formula or formula assignment
-        $usr_lst = new user_list;
+        $usr_lst = new user_list($this->user());
         $usr_lst->load_active();
 
         $lib = new library();

@@ -77,9 +77,12 @@ use cfg\component\component_type;
 use cfg\component\component_type_list;
 use cfg\component_link;
 use cfg\component_link_list;
+use cfg\expression;
 use cfg\figure;
 use cfg\figure_list;
 use cfg\formula;
+use cfg\formula_element;
+use cfg\formula_element_list;
 use cfg\formula_element_type_list;
 use cfg\formula_link;
 use cfg\formula_link_type_list;
@@ -563,6 +566,11 @@ class create_test_objects extends test_base
         return $lst;
     }
 
+    function dummy_phrase(): phrase
+    {
+        return $this->dummy_word()->phrase();
+    }
+
     public function dummy_phrase_list(): phrase_list
     {
         $lst = new phrase_list($this->usr1);
@@ -712,7 +720,7 @@ class create_test_objects extends test_base
     function dummy_value_phrase_link(): value_phrase_link
     {
         $lnk = new value_phrase_link($this->usr1);
-        $lnk->set(1, $this->dummy_value(), $this->dummy_word()->phrase());
+        $lnk->set(1, $this->dummy_value(), $this->dummy_phrase());
         return $lnk;
     }
 
@@ -739,6 +747,31 @@ class create_test_objects extends test_base
         $lst = new formula_list($this->usr1);
         $lst->add($this->dummy_formula());
         return $lst;
+    }
+
+    function dummy_formula_link(): formula_link
+    {
+        $lnk = new formula_link($this->usr1);
+        $lnk->set(1, $this->dummy_formula(), $this->dummy_word()->phrase());
+        return $lnk;
+    }
+
+    function dummy_expression(): expression
+    {
+        return $this->dummy_formula()->expression();
+    }
+
+    function dummy_element(): formula_element
+    {
+        $lst = $this->dummy_element_list();
+        return $lst->lst()[0];
+    }
+
+    function dummy_element_list(): formula_element_list
+    {
+        $trm_lst = $this->dummy_term_list_time();
+        $exp = $this->dummy_formula()->expression($trm_lst);
+        return $exp->element_list($trm_lst);
     }
 
     function dummy_result(): result

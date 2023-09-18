@@ -164,15 +164,10 @@ class type_lists
 
         $result = true;
 
-        // create a virtual one-time system user to load the system users
-        $usr_sys = new user();
-        $usr_sys->set_id(user::SYSTEM_ID);
-        $usr_sys->name = user::SYSTEM_NAME;
-
         // load backend only default records
         $sys_log_stati = new sys_log_status();
         $sys_log_stati->load($db_con);
-        $system_users = new user_list($usr_sys);
+        $system_users = new user_list($usr);
         $system_users->load_system($db_con);
 
         // load the type database enum

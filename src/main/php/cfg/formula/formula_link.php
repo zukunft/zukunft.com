@@ -138,26 +138,43 @@ class formula_link extends sandbox_link_with_type
         return $result;
     }
 
+
     /*
-     * load functions
+     * set and get
      */
 
     /**
-     * create an SQL statement to retrieve the user specific formula link from the database
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement base on the parameters set in $this
+     * set the main vars with one function
+     * @param int $id the database id of the link
+     * @param formula $frm the formula that should be linked
+     * @param phrase $phr the phrase to which the formula should be linked
+     * @return void
      */
-    function load_sql_user_changes(sql_creator $sc, string $class = self::class): sql_par
+    function set(int $id, formula $frm, phrase $phr): void
     {
-        $sc->set_type($class, true);
-        return parent::load_sql_user_changes($sc, $class);
+        $this->set_id($id);
+        $this->set_formula($frm);
+        $this->set_phrase($phr);
     }
 
-    protected function all_sandbox_fields(): array
+    /**
+     * rename and cast the parent from object function
+     * @param formula $frm the formula that should be linked
+     * @return void
+     */
+    function set_formula(formula $frm): void
     {
-        return self::ALL_SANDBOX_FLD_NAMES;
+        $this->set_fob($frm);
+    }
+
+    /**
+     * rename and cast the parent from object function
+     * @param phrase $phr the phrase to which the formula should be linked
+     * @return void
+     */
+    function set_phrase(phrase $phr): void
+    {
+        $this->set_tob($phr);
     }
 
 
@@ -225,8 +242,21 @@ class formula_link extends sandbox_link_with_type
 
 
     /*
-     * load functions
+     * load
      */
+
+    /**
+     * create an SQL statement to retrieve the user specific formula link from the database
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement base on the parameters set in $this
+     */
+    function load_sql_user_changes(sql_creator $sc, string $class = self::class): sql_par
+    {
+        $sc->set_type($class, true);
+        return parent::load_sql_user_changes($sc, $class);
+    }
 
     /**
      * create the common part of an SQL statement to retrieve the parameters of a formula link from the database
@@ -640,6 +670,12 @@ class formula_link extends sandbox_link_with_type
         }
 
         return $result;
+    }
+
+
+    protected function all_sandbox_fields(): array
+    {
+        return self::ALL_SANDBOX_FLD_NAMES;
     }
 
 }

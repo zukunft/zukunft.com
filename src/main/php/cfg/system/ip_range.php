@@ -285,35 +285,6 @@ class ip_range extends db_object
 
 
     /*
-     * display
-     */
-
-    /**
-     * @return string with the unique name of the ip range
-     */
-    function name(): string
-    {
-        return 'from ' . $this->from . ' to ' . $this->to;
-    }
-
-    /**
-     * @return string to display the identifying ip range fields e.g. for a debug message
-     */
-    function dsp_id(): string
-    {
-        $result = self::OBJ_NAME . ' ' . $this->name();
-        if ($result <> '') {
-            if ($this->id > 0) {
-                $result .= ' (' . $this->id . ')';
-            }
-        } else {
-            $result .= $this->id;
-        }
-        return $result;
-    }
-
-
-    /*
      * check
      */
 
@@ -562,6 +533,35 @@ class ip_range extends db_object
     public function id_field(): string
     {
         return self::FLD_ID;
+    }
+
+
+    /*
+     * debug
+     */
+
+    /**
+     * @return string to display the identifying ip range fields e.g. for a debug message
+     */
+    function dsp_id(): string
+    {
+        $result = self::OBJ_NAME . ' ' . $this->name();
+        if ($result <> '') {
+            if ($this->id > 0) {
+                $result .= ' (' . $this->id . ')';
+            }
+        } else {
+            $result .= $this->id;
+        }
+        return $result;
+    }
+
+    /**
+     * @return string with the unique name of the ip range
+     */
+    function name(): string
+    {
+        return 'from ' . $this->from . ' to ' . $this->to;
     }
 
 }

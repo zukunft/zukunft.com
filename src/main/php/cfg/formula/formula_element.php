@@ -35,11 +35,13 @@
 
 namespace cfg;
 
+include_once MODEL_HELPER_PATH . 'db_object_user.php';
+
 use cfg\db\sql_creator;
 use html\word\word as word_dsp;
 use html\formula\formula as formula_dsp;
 
-class formula_element extends db_object
+class formula_element extends db_object_user
 {
 
     // the allowed objects types for a formula element
@@ -71,7 +73,6 @@ class formula_element extends db_object
 
     // TODO should be actually just the linked formula id that extends the term
 
-    public user $usr;                // the person who has requested the formula element
     public string $type = '';        // the word, verb or formula class name to direct the links
     public ?string $symbol = null;   // the database reference symbol for formula expressions
     public ?object $obj = null;      // the word, verb or formula object
@@ -89,8 +90,7 @@ class formula_element extends db_object
      */
     function __construct(user $usr)
     {
-        parent::__construct();
-        $this->usr = $usr;
+        parent::__construct($usr);
     }
 
     /**
@@ -137,11 +137,6 @@ class formula_element extends db_object
         return $this->obj?->id;
     }
 
-    function user(): user
-    {
-        return $this->usr;
-    }
-
 
     /*
      * load
@@ -174,32 +169,32 @@ class formula_element extends db_object
      */
     function load_obj_by_id(int $id, string $class = self::class): int
     {
-        if ($id != 0 and $this->usr->is_set()) {
+        if ($id != 0 and $this->user()->is_set()) {
             if ($this->type == self::TYPE_WORD) {
-                $wrd = new word($this->usr);
+                $wrd = new word($this->user());
                 $wrd->load_by_id($id, word::class);
                 $this->symbol = expression::WORD_START . $wrd->id() . expression::WORD_END;
                 $this->obj = $wrd;
             } elseif ($this->type == self::TYPE_TRIPLE) {
-                $trp = new triple($this->usr);
+                $trp = new triple($this->user());
                 $trp->load_by_id($id);
                 $this->symbol = expression::TRIPLE_START . $trp->id() . expression::TRIPLE_END;
                 $this->obj = $trp;
             } elseif ($this->type == self::TYPE_VERB) {
                 $vrb = new verb;
-                $vrb->set_user($this->usr);
+                $vrb->set_user($this->user());
                 $vrb->load_by_id($id);
                 $this->symbol = expression::TRIPLE_START . $vrb->id . expression::TRIPLE_END;
                 $this->obj = $vrb;
             }
             if ($this->type == self::TYPE_FORMULA) {
-                $frm = new formula($this->usr);
+                $frm = new formula($this->user());
                 $frm->load_by_id($id, formula::class);
                 $this->symbol = expression::FORMULA_START . $frm->id() . expression::FORMULA_END;
                 $this->obj = $frm;
                 /*
                 // in case of a formula load also the corresponding word
-                $wrd = new word($this->usr);
+                $wrd = new word($this->user());
                 $wrd->load_by_name($frm->name, word::class);
                 $this->wrd_obj = $wrd;
                 */
@@ -253,9 +248,7 @@ class formula_element extends db_object
                 $result .= '(' . $this->obj->id() . ')';
             }
         }
-        if ($this->usr->is_set()) {
-            $result .= ' for user ' . $this->usr->id . ' (' . $this->usr->name . ')';
-        }
+        $result .= $this->dsp_id_user();
 
         return $result;
     }

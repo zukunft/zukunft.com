@@ -80,7 +80,8 @@ class expression_unit_tests
         $exp->ref_text($trm_lst);
         $phr_lst = $exp->phr_lst($trm_lst);
         $result = $phr_lst->dsp_id();
-        $target = '"' . formula_api::TN_PI . '","' . formula_api::TN_CIRCUMFERENCE . '" (-2,1)';
+        $target = '"' . formula_api::TN_PI . '","' . formula_api::TN_CIRCUMFERENCE
+            . '" (phrase_id 1,-2) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $result, $target);
 
         // test the phrase list of the left side
@@ -92,13 +93,13 @@ class expression_unit_tests
         $exp->ref_text($trm_lst);
         $phr_lst = $exp->res_phr_lst($trm_lst);
         $result = $phr_lst->dsp_id();
-        $target = '"' . formula_api::TN_PERCENT . '" (1)';
+        $target = '"' . formula_api::TN_PERCENT . '" (phrase_id 1) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $result, $target);
 
         // the phrase list for the calc part should be empty, because it contains only formulas
         $phr_lst = $exp->phr_lst($trm_lst);
         $result = $phr_lst->dsp_id();
-        $target = 'null';
+        $target = '';
         $t->assert($test_name, $result, $target);
 
         // test the element group list of the right side
@@ -191,7 +192,7 @@ class expression_unit_tests
         $exp_sector->set_ref_text(formula_api::TR_PARTS_IN_PERCENT);
         $phr_lst = $exp_sector->phr_id_lst_as_phr_lst($exp_sector->r_part());
         $result = $phr_lst->dsp_id();
-        $target = '"","" (2,4)';
+        $target = '"","" (phrase_id 2,4) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $result, $target);
 
         $test_name = 'result phrase list with id from the reference text';
@@ -199,7 +200,7 @@ class expression_unit_tests
         $exp_scale->set_ref_text(formula_api::TR_SCALE_MIO);
         $phr_lst = $exp_scale->phr_id_lst_as_phr_lst($exp_scale->res_part());
         $result = $phr_lst->dsp_id();
-        $target = '1';
+        $target = 'phrase_id 1 for user 1 (zukunft.com system test)';
         $t->assert($test_name, $result, $target);
 
     }

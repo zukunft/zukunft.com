@@ -238,9 +238,26 @@ class sandbox_list extends base_list
      */
     protected function load(sql_par $qp, bool $load_all = false): bool
     {
+        return $this->load_sys($qp, $load_all);
+    }
+
+    /**
+     * load a list of sandbox objects (e.g. phrases or values) based on the given query parameters
+     * @param sql_par $qp the SQL statement, the unique name of the SQL statement and the parameter list
+     * @param bool $load_all force to include also the excluded phrases e.g. for admins
+     * @param sql_db|null $db_con_given the database connection as a parameter for the initial load of the system views
+     * @return bool true if at least one object has been loaded
+     */
+    protected function load_sys(sql_par $qp, bool $load_all = false, ?sql_db $db_con_given = null): bool
+    {
 
         global $db_con;
         $result = false;
+
+        $db_con_used = $db_con_given;
+        if ($db_con_used == null) {
+            $db_con_used = $db_con;
+        }
 
         // check the all minimal input parameters are set
         if ($this->user()->id() <= 0) {
@@ -248,7 +265,7 @@ class sandbox_list extends base_list
         } elseif ($qp->name == '') {
             log_err('The query name cannot be created to load a ' . self::class, self::class . '->load');
         } else {
-            $db_lst = $db_con->get($qp);
+            $db_lst = $db_con_used->get($qp);
             $result = $this->rows_mapper($db_lst, $load_all);
         }
         return $result;
@@ -304,7 +321,7 @@ class sandbox_list extends base_list
      */
 
     /**
-     * @return string to display the unique id fields
+     * @return string with a unique description of at least some entries of this list for debugging
      */
     function dsp_id(): string
     {
@@ -325,7 +342,8 @@ class sandbox_list extends base_list
                 $first_obj = $this->lst()[array_key_first($this->lst())];
                 $id_field = $first_obj->id_field();
             }
-            if ($this::class == value_list::class) {
+            if ($this::class == value_list::class
+            or $this::class == result_list::class) {
                 foreach ($this->lst() as $val) {
                     if ($result != '') {
                         $result .= ' / ';
@@ -334,8 +352,9 @@ class sandbox_list extends base_list
                 }
                 $result .= ' (' . $id_field . ' ' . $id . ')';
             } else {
-                if ($this->name($min_names) <> '""') {
-                    $result .= $this->name($min_names) . ' (' . $id_field . ' ' . $id . ')';
+                $name = $this->name($min_names);
+                if ($name <> '""') {
+                    $result .= $name . ' (' . $id_field . ' ' . $id . ')';
                 } else {
                     $result .= $id_field . ' ' . $id;
                 }

@@ -156,13 +156,20 @@ class component_link_list extends sandbox_list
      * interface function to load all component links of the given view
      *
      * @param view $dsp if set to get all links for this view
+     * @param sql_db|null $db_con_given the database connection as a parameter for the initial load of the system views
      * @return bool true if phrases are found
      */
-    function load_by_view(view $dsp): bool
+    function load_by_view(view $dsp, ?sql_db $db_con_given = null): bool
     {
         global $db_con;
-        $qp = $this->load_sql_by_view($db_con->sql_creator(), $dsp);
-        return $this->load($qp);
+
+        $db_con_used = $db_con_given;
+        if ($db_con_used == null) {
+            $db_con_used = $db_con;
+        }
+
+        $qp = $this->load_sql_by_view($db_con_used->sql_creator(), $dsp);
+        return $this->load_sys($qp, false, $db_con_given);
     }
 
     /**
@@ -170,12 +177,13 @@ class component_link_list extends sandbox_list
      * TODO (speed) combine the sql statements
      *
      * @param view $dsp if set to get all links for this view
+     * @param sql_db|null $db_con_given the database connection as a parameter for the initial load of the system views
      * @return bool true if phrases are found
      */
-    function load_by_view_with_components(view $dsp): bool
+    function load_by_view_with_components(view $dsp, ?sql_db $db_con_given = null): bool
     {
-        if ($this->load_by_view($dsp)) {
-            return $this->load_components();
+        if ($this->load_by_view($dsp, $db_con_given)) {
+            return $this->load_components($db_con_given);
         } else {
             return false;
         }
@@ -196,13 +204,14 @@ class component_link_list extends sandbox_list
 
     /**
      * load the components of this list
+     * @param sql_db|null $db_con_given the database connection as a parameter for the initial load of the system views
      * @return bool true if the loading of the component has been successful
      */
-    function load_components(): bool
+    function load_components(?sql_db $db_con_given = null): bool
     {
         $ids = $this->cmp_ids();
         $cmp_lst = new component_list($this->user());
-        $result = $cmp_lst->load_by_ids($ids);
+        $result = $cmp_lst->load_by_ids($ids, $db_con_given);
         if ($result) {
             foreach ($this->lst() as $lnk) {
                 $cmp = $cmp_lst->get_by_id($lnk->component()->id());

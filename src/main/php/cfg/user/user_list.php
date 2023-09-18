@@ -64,6 +64,15 @@ class user_list
 
 
     /*
+     * set and get
+     */
+
+    function lst(): array
+    {
+        return $this->lst;
+    }
+
+    /*
      * load
      */
 

@@ -115,7 +115,7 @@ class change_log_named extends change_log
             $usr = new user();
             $usr->set_id($db_row[user::FLD_ID]);
             $usr->name = $db_row[user::FLD_NAME];
-            $this->usr = $usr;
+            $this->set_user($usr);
             log_debug('Change ' . $this->id() . ' loaded', $debug - 8);
         }
         return $result;
@@ -179,7 +179,7 @@ class change_log_named extends change_log
         $sc->set_type(sql_db::TBL_CHANGE);
         $qp->name .= $query_name;
         $sc->set_name($qp->name);
-        $sc->set_usr($this->usr->id);
+        $sc->set_usr($this->user()->id());
         $sc->set_fields(self::FLD_NAMES);
         $sc->set_join_fields(array(user::FLD_NAME), sql_db::TBL_USER);
         $sc->set_join_fields(array(change_log_field::FLD_TABLE), sql_db::TBL_CHANGE_FIELD);
@@ -246,7 +246,7 @@ class change_log_named extends change_log
         $qp->name .= 'user';
         $db_con->set_type(sql_db::TBL_CHANGE);
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->usr->id);
+        $db_con->set_usr($this->user()->id());
         $db_con->set_fields(self::FLD_NAMES);
         $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
@@ -284,7 +284,7 @@ class change_log_named extends change_log
                    OR f.table_id = " . $change_log_tables->id(change_log_table::WORD_USR) . ") AND ";
             $sql_row = '';
             $sql_user = 's.user_id = u.user_id
-                AND s.user_id = ' . $this->usr->id . ' ';
+                AND s.user_id = ' . $this->user()->id() . ' ';
         } elseif ($type == word::class) {
             //$db_con->add_par(sql_par_type::INT, $change_log_tables->id(change_log_table::WORD));
             //$db_con->add_par(sql_par_type::INT, $change_log_tables->id(change_log_table::WORD_USR));
@@ -326,7 +326,7 @@ class change_log_named extends change_log
             ORDER BY s.change_time DESC
                LIMIT " . $this->size . ";";
             log_debug('user_log_display->dsp_hist ' . $qp->sql);
-            $db_con->usr_id = $this->usr->id;
+            $db_con->usr_id = $this->user()->id();
         }
         return $qp;
     }
@@ -387,9 +387,9 @@ class change_log_named extends change_log
             if (!$ex_time) {
                 $result .= date_format($this->time(), $usr_cfg->date_time_format()) . ' ';
             }
-            if ($this->usr != null) {
-                if ($this->usr->name <> '') {
-                    $result .= $this->usr->name . ' ';
+            if ($this->user() != null) {
+                if ($this->user()->name() <> '') {
+                    $result .= $this->user()->name() . ' ';
                 }
             }
             if ($this->old_value <> '') {
@@ -427,7 +427,7 @@ class change_log_named extends change_log
         $sql_fields = array();
         $sql_values = array();
         $sql_fields[] = "user_id";
-        $sql_values[] = $this->usr->id;
+        $sql_values[] = $this->user()->id();
         $sql_fields[] = "change_action_id";
         $sql_values[] = $this->action_id;
         $sql_fields[] = "change_field_id";
@@ -451,16 +451,16 @@ class change_log_named extends change_log
         //$db_con = new mysql;
         $db_type = $db_con->get_type();
         $db_con->set_type(sql_db::TBL_CHANGE);
-        $db_con->set_usr($this->usr->id);
+        $db_con->set_usr($this->user()->id());
         $log_id = $db_con->insert($sql_fields, $sql_values);
 
         if ($log_id <= 0) {
             // write the error message in steps to get at least some message if the parameters has caused the error
-            if ($this->usr == null) {
+            if ($this->user() == null) {
                 log_fatal("Insert to change log failed.", "user_log->add", 'Insert to change log failed', (new Exception)->getTraceAsString());
             } else {
-                log_fatal("Insert to change log failed with (" . $this->usr->dsp_id() . "," . $this->action . "," . $this->table() . "," . $this->field() . ")", "user_log->add");
-                log_fatal("Insert to change log failed with (" . $this->usr->dsp_id() . "," . $this->action . "," . $this->table() . "," . $this->field() . "," . $this->old_value . "," . $this->new_value . "," . $this->row_id . ")", "user_log->add");
+                log_fatal("Insert to change log failed with (" . $this->user()->dsp_id() . "," . $this->action . "," . $this->table() . "," . $this->field() . ")", "user_log->add");
+                log_fatal("Insert to change log failed with (" . $this->user()->dsp_id() . "," . $this->action . "," . $this->table() . "," . $this->field() . "," . $this->old_value . "," . $this->new_value . "," . $this->row_id . ")", "user_log->add");
             }
             $result = False;
         } else {
@@ -480,29 +480,28 @@ class change_log_named extends change_log
      */
     function add_ref($row_id): bool
     {
-        log_debug("user_log->add_ref (" . $row_id . " to " . $this->id() . " for user " . $this->usr->dsp_id() . ")");
+        log_debug("user_log->add_ref (" . $row_id . " to " . $this->id() . " for user " . $this->user()->dsp_id() . ")");
 
         global $db_con;
         $result = false;
 
         $db_type = $db_con->get_type();
         $db_con->set_type(sql_db::TBL_CHANGE);
-        $db_con->set_usr($this->usr->id);
+        $db_con->set_usr($this->user()->id());
         if ($db_con->update($this->id(), "row_id", $row_id)) {
             // restore the type before saving the log
             $db_con->set_type($db_type);
             $result = True;
         } else {
             // write the error message in steps to get at least some message if the parameters has caused the error
-            if ($this->usr == null) {
+            if ($this->user() == null) {
                 log_fatal("Update of reference in the change log failed.", "user_log->add_ref", 'Update of reference in the change log failed', (new Exception)->getTraceAsString());
             } else {
-                log_fatal("Update of reference in the change log failed with (" . $this->usr->dsp_id() . "," . $this->action . "," . $this->table() . "," . $this->field() . ")", "user_log->add_ref");
-                log_fatal("Update of reference in the change log failed with (" . $this->usr->dsp_id() . "," . $this->action . "," . $this->table() . "," . $this->field() . "," . $this->old_value . "," . $this->new_value . "," . $this->row_id . ")", "user_log->add_ref");
+                log_fatal("Update of reference in the change log failed with (" . $this->user()->dsp_id() . "," . $this->action . "," . $this->table() . "," . $this->field() . ")", "user_log->add_ref");
+                log_fatal("Update of reference in the change log failed with (" . $this->user()->dsp_id() . "," . $this->action . "," . $this->table() . "," . $this->field() . "," . $this->old_value . "," . $this->new_value . "," . $this->row_id . ")", "user_log->add_ref");
             }
         }
         return $result;
     }
-
 
 }

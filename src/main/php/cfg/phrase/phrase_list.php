@@ -1304,21 +1304,6 @@ class phrase_list extends sandbox_list_named
      */
 
     /**
-     * return best possible id for this element mainly used for debugging
-     */
-    function dsp_id(): string
-    {
-        $lib = new library();
-        $name = $this->dsp_name();
-        if ($name <> '""') {
-            $result = $name . ' (' . $lib->dsp_array($this->id_lst()) . ')';
-        } else {
-            $result = $lib->dsp_array($this->id_lst());
-        }
-        return $result;
-    }
-
-    /**
      * return one string with all names of the list with the link
      */
     function name_linked(): string

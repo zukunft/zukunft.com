@@ -71,6 +71,7 @@ A user updates a formula
 
 namespace cfg;
 
+include_once MODEL_HELPER_PATH . 'db_object_user.php';
 include_once API_SYSTEM_PATH . 'batch_job.php';
 
 use api\batch_job_api;
@@ -78,7 +79,7 @@ use cfg\db\sql_creator;
 use DateTime;
 use DateTimeInterface;
 
-class batch_job extends db_object
+class batch_job extends db_object_user
 {
 
     const STATUS_NEW = 'new'; // the job is not yet assigned to any calc engine
@@ -126,7 +127,6 @@ class batch_job extends db_object
     public ?DateTime $request_time = null;  // time when the job has been requested
     public ?DateTime $start_time = null;    // start time of the job execution
     public ?DateTime $end_time = null;      // end time of the job execution
-    public ?user $usr = null;               // the user who has done the request and whose data needs to be updated
     private ?int $type_id;                  // id of the batch type e.g. "update value", "add formula", ... because getting the type is fast from the preloaded type list
     public ?int $row_id = null;             // the id of the related object e.g. if a value has been updated the value_id
     public string $status;
@@ -150,9 +150,8 @@ class batch_job extends db_object
      */
     function __construct(user $usr, DateTime $request_time = new DateTime())
     {
-        parent::__construct();
+        parent::__construct($usr);
         $this->request_time = $request_time;
-        $this->usr = $usr;
         $this->status = self::STATUS_NEW;
         $this->priority = self::PRIO_LOWEST;
         $this->type_id = 0;
@@ -224,7 +223,7 @@ class batch_job extends db_object
      */
     function api_obj(): batch_job_api
     {
-        $api_obj = new batch_job_api($this->usr);
+        $api_obj = new batch_job_api($this->user());
         $api_obj->id = $this->id;
         // TODO use time zone?
         $api_obj->request_time = $this->request_time->format(DateTimeInterface::ATOM);
@@ -267,7 +266,7 @@ class batch_job extends db_object
         $sc->set_type(sql_db::TBL_TASK);
 
         $sc->set_name($qp->name);
-        $sc->set_usr($this->usr->id);
+        $sc->set_usr($this->user()->id());
         $sc->set_fields(self::FLD_NAMES);
 
         return $qp;
@@ -362,9 +361,6 @@ class batch_job extends db_object
             } else {
                 log_debug('row_id ok');
                 if (isset($this->obj) or $code_id == batch_job_type_list::BASE_IMPORT) {
-                    if (!isset($this->usr)) {
-                        $this->usr = $this->obj->usr;
-                    }
                     if (isset($this->obj)) {
                         $this->row_id = $this->obj->id();
                     }
@@ -372,9 +368,9 @@ class batch_job extends db_object
                     //$db_con = New mysql;
                     $db_type = $db_con->get_type();
                     $db_con->set_type(sql_db::TBL_TASK);
-                    $db_con->set_usr($this->usr->id);
+                    $db_con->set_usr($this->user()->id());
                     $job_id = $db_con->insert(array(user::FLD_ID, self::FLD_TIME_REQUEST, self::FLD_TYPE, self::FLD_ROW),
-                        array($this->usr->id, 'Now()', $this->type_id(), $this->row_id));
+                        array($this->user()->id(), 'Now()', $this->type_id(), $this->row_id));
                     $this->request_time = new DateTime();
 
                     // execute the job if possible
@@ -401,7 +397,7 @@ class batch_job extends db_object
 
         // load all depending formula results
         if (isset($this->obj)) {
-            log_debug('get list for user ' . $this->obj->user()->name);
+            log_debug('get list for user ' . $this->obj->user()->name());
             $res_lst = $this->obj->res_lst_depending();
             if ($res_lst != null) {
                 log_debug('got ' . $res_lst->dsp_id());
@@ -418,7 +414,7 @@ class batch_job extends db_object
         //$db_con = New mysql;
         $db_type = $db_con->get_type();
         $db_con->set_type(sql_db::TBL_TASK);
-        $db_con->usr_id = $this->usr->id;
+        $db_con->usr_id = $this->user()->id();
         $result = $db_con->update($this->id, 'end_time', 'Now()');
         $db_con->set_type($db_type);
 
@@ -433,7 +429,7 @@ class batch_job extends db_object
         global $db_con;
         //$db_con = New mysql;
         $db_type = $db_con->get_type();
-        $db_con->usr_id = $this->usr->id;
+        $db_con->usr_id = $this->user()->id();
         $db_con->set_type(sql_db::TBL_TASK);
         $result = $db_con->update($this->id, 'start_time', 'Now()');
 
@@ -483,9 +479,7 @@ class batch_job extends db_object
         if ($this->id > 0) {
             $result .= ' (' . $this->id . ')';
         }
-        if (isset($this->usr)) {
-            $result .= ' for user ' . $this->usr->id . ' (' . $this->usr->name . ')';
-        }
+        $result .= $this->dsp_id_user();
         return $result;
     }
 

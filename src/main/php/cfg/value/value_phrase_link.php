@@ -39,7 +39,11 @@
 
 namespace cfg;
 
-class value_phrase_link extends db_object
+use Exception;
+
+include_once MODEL_HELPER_PATH . 'db_object_user.php';
+
+class value_phrase_link extends db_object_user
 {
     // object specific database and JSON object field names
     const FLD_ID = 'value_phrase_link_id';
@@ -58,7 +62,6 @@ class value_phrase_link extends db_object
     );
 
     // database fields
-    private user $usr;     // the person for whom the value word is loaded, so to say the viewer
     public value $val;     // the value object to which the words are linked
     public phrase $phr;    // the word (not the triple) object to be linked to the value
     // maybe not used at the moment
@@ -75,8 +78,7 @@ class value_phrase_link extends db_object
      */
     function __construct(user $usr)
     {
-        parent::__construct();
-        $this->set_user($usr);
+        parent::__construct($usr);
         $this->val = new value($usr);
         $this->phr = new phrase($usr);
 
@@ -137,25 +139,6 @@ class value_phrase_link extends db_object
     function phrase(): phrase
     {
         return $this->phr;
-    }
-
-    /**
-     * set the user of the value phrase link
-     *
-     * @param user $usr the person who wants to access the value phrase link
-     * @return void
-     */
-    function set_user(user $usr): void
-    {
-        $this->usr = $usr;
-    }
-
-    /**
-     * @return user the person who wants to see the value phrase link
-     */
-    function user(): user
-    {
-        return $this->usr;
     }
 
 
@@ -246,7 +229,7 @@ class value_phrase_link extends db_object
     private function log_add(): change_log_link
     {
         log_debug('val_lnk->log_add for "' . $this->phr->id() . ' to ' . $this->val->id());
-        $log = new change_log_link($this->usr);
+        $log = new change_log_link($this->user());
         $log->action = change_log_action::ADD;
         $log->set_table(change_log_table::VALUE_PHRASE_LINK);
         $log->new_from = $this->val;
@@ -262,7 +245,7 @@ class value_phrase_link extends db_object
     private function log_upd($db_rec): change_log_link
     {
         log_debug('val_lnk->log_upd for "' . $this->phr->id() . ' to ' . $this->val->id());
-        $log = new change_log_link($this->usr);
+        $log = new change_log_link($this->user());
         $log->action = change_log_action::UPDATE;
         $log->set_table(change_log_table::VALUE_PHRASE_LINK); // no user sandbox for links, only the values itself can differ from user to user
         //$log->set_field(phrase::FLD_ID);
@@ -334,7 +317,7 @@ class value_phrase_link extends db_object
             if ($this->id <= 0) {
                 log_debug("val_lnk->save check if word " . $this->phr->name() . " is already linked to " . $this->val->id() . ".");
                 // check if a value_phrase_link with the same word is already in the database
-                $db_chk = new value_phrase_link($this->usr);
+                $db_chk = new value_phrase_link($this->user());
                 $db_chk->val = $this->val;
                 $db_chk->phr = $this->phr;
                 $db_chk->load_lnk();
@@ -362,7 +345,7 @@ class value_phrase_link extends db_object
                 log_debug('update "' . $this->id . '"');
                 // read the database values to be able to check if something has been changed; done first,
                 // because it needs to be done for user and general formulas
-                $db_rec = new value_phrase_link($this->usr);
+                $db_rec = new value_phrase_link($this->user());
                 $db_rec->id = $this->id;
                 $db_rec->load_lnk();
                 log_debug("database value_phrase_link loaded (" . $db_rec->id . ")");

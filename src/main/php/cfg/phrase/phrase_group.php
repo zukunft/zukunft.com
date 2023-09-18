@@ -43,7 +43,7 @@
 namespace cfg;
 
 include_once DB_PATH . 'sql_par_type.php';
-include_once MODEL_HELPER_PATH . 'db_object.php';
+include_once MODEL_HELPER_PATH . 'db_object_user.php';
 include_once MODEL_PHRASE_PATH . 'phr_ids.php';
 include_once MODEL_PHRASE_PATH . 'phrase_list.php';
 include_once MODEL_PHRASE_PATH . 'phrase_group_word_link.php';
@@ -55,7 +55,7 @@ use cfg\db\sql_creator;
 use cfg\db\sql_par_type;
 use model\export\exp_obj;
 
-class phrase_group extends db_object
+class phrase_group extends db_object_user
 {
 
     /*
@@ -92,7 +92,6 @@ class phrase_group extends db_object
     public ?string $auto_name;    // the automatically created generic name for the word group, used for a quick display of values
 
     // in memory only fields
-    private user $usr;             // the user object of the person for whom the word and triple list is loaded, so to say the viewer
     public ?array $id_order = array();       // the ids from above in the order that the user wants to see them
 
 
@@ -106,23 +105,22 @@ class phrase_group extends db_object
      */
     function __construct(user $usr, int $id = 0, array $prh_names = [])
     {
-        parent::__construct();
-        $this->set_user($usr);
+        parent::__construct($usr);
 
         $this->reset();
 
         if ($id > 0) {
-            $this->id = $id;
+            $this->set_id($id);
         }
         $this->add_phrase_names($prh_names);
     }
 
     private function reset(): void
     {
-        $this->id = 0;
+        $this->set_id(0);
         $this->grp_name = null;
         $this->auto_name = null;
-        $this->phr_lst = new phrase_list($this->usr);
+        $this->phr_lst = new phrase_list($this->user());
         $this->id_order_txt = null;
 
         $this->id_order = array();
@@ -159,25 +157,6 @@ class phrase_group extends db_object
     /*
      * set and get
      */
-
-    /**
-     * set the user of the phrase group
-     *
-     * @param user $usr the person who wants to access the phrase group
-     * @return void
-     */
-    function set_user(user $usr): void
-    {
-        $this->usr = $usr;
-    }
-
-    /**
-     * @return user the person who wants to see the phrase group
-     */
-    function user(): user
-    {
-        return $this->usr;
-    }
 
     function set_name(string $name = ''): void
     {
@@ -304,7 +283,7 @@ class phrase_group extends db_object
      */
     function load_by_ids(phr_ids $ids): bool
     {
-        $phr_lst = new phrase_list($this->usr);
+        $phr_lst = new phrase_list($this->user());
         $phr_lst->load_names_by_ids($ids);
         return $this->load_by_lst($phr_lst);
     }
@@ -595,7 +574,7 @@ class phrase_group extends db_object
             foreach ($prh_names as $prh_name) {
                 if (!in_array($prh_name, $this->phr_lst->names())) {
                     // if only the name is know, add a simple word
-                    $wrd = new word($this->usr);
+                    $wrd = new word($this->user());
                     $wrd->set($wrd_id, $prh_name);
                     $this->add_word($wrd);
                     $result = true;
@@ -612,69 +591,12 @@ class phrase_group extends db_object
      */
 
     /**
-     * return best possible id for this element mainly used for debugging
-     */
-    function dsp_id(): string
-    {
-        $result = '';
-
-        if ($this->name() <> '') {
-            $result .= '"' . $this->name() . '" (' . $this->id . ')';
-        } else {
-            $result .= $this->id;
-        }
-        if ($this->grp_name <> '') {
-            $result .= ' as "' . $this->grp_name . '"';
-        }
-        if ($result == '') {
-            if (isset($this->phr_lst)) {
-                $result .= ' for phrases ' . $this->phr_lst->dsp_id();
-            }
-        }
-        if ($this->user() != null) {
-            $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
-        }
-
-        return $result;
-    }
-
-    /**
-     * @return string with the group name
-     */
-    function name(): string
-    {
-        if ($this->grp_name <> '') {
-            // use the user defined description
-            $result = $this->grp_name;
-        } else {
-            // or use the standard generic description
-            $name_lst = $this->phr_lst->names();
-            $result = implode(",", $name_lst);
-        }
-
-        return $result;
-    }
-
-    /**
-     * @return array a list of the word and triple names
-     */
-    function names(): array
-    {
-        log_debug();
-
-        // if not yet done, load, the words and triple list
-        $this->load_lst();
-
-        return $this->phr_lst->names();
-    }
-
-    /**
      * return the first value related to the word lst
      * or an array with the value and the user_id if the result is user specific
      */
     function value(): value
     {
-        $val = new value($this->usr);
+        $val = new value($this->user());
         $val->load_by_grp($this);
 
         log_debug($val->grp->dsp_id() . ' for "' . $this->user()->name . '" is ' . $val->number());
@@ -994,7 +916,7 @@ class phrase_group extends db_object
         $result->add_message($msg);
 
         // delete the related value
-        $val = new value($this->usr);
+        $val = new value($this->user());
         $val->load_by_grp($this);
 
         if ($val->id > 0) {
@@ -1053,6 +975,66 @@ class phrase_group extends db_object
 
         asort($result);
         return $result;
+    }
+
+
+    /*
+     * debug
+     */
+
+    /**
+     * @return string with the best possible id for this element mainly used for debugging
+     */
+    function dsp_id(): string
+    {
+        $result = '';
+
+        if ($this->name() <> '') {
+            $result .= '"' . $this->name() . '" (phrase_group_id ' . $this->id . ')';
+        } else {
+            $result .= 'phrase_group_id ' . $this->id;
+        }
+        if ($this->grp_name <> '') {
+            $result .= ' as "' . $this->grp_name . '"';
+        }
+        if ($result == '') {
+            if (isset($this->phr_lst)) {
+                $result .= ' for phrases ' . $this->phr_lst->dsp_id();
+            }
+        }
+        $result .= $this->dsp_id_user();
+
+        return $result;
+    }
+
+    /**
+     * @return string with the group name
+     */
+    function name(): string
+    {
+        if ($this->grp_name <> '') {
+            // use the user defined description
+            $result = $this->grp_name;
+        } else {
+            // or use the standard generic description
+            $name_lst = $this->phr_lst->names();
+            $result = implode(",", $name_lst);
+        }
+
+        return $result;
+    }
+
+    /**
+     * @return array a list of the word and triple names
+     */
+    function names(): array
+    {
+        log_debug();
+
+        // if not yet done, load, the words and triple list
+        $this->load_lst();
+
+        return $this->phr_lst->names();
     }
 
 }

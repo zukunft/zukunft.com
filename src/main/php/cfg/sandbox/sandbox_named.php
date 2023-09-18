@@ -396,7 +396,7 @@ class sandbox_named extends sandbox
         $log->action = change_log_action::ADD;
         $log->set_table($this->obj_name . sql_db::TABLE_EXTENSION);
         $log->set_field($this->obj_name . '_name');
-        $log->usr = $this->user();
+        $log->set_user($this->user());
         $log->old_value = '';
         $log->new_value = $this->name();
         $log->row_id = 0;

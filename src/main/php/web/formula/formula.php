@@ -513,7 +513,7 @@ class formula extends sandbox_typed
         // display some sample values
         log_debug("value list");
         $res_lst = new result_list($usr);
-        $res_lst->load($this);
+        $res_lst->load_by_obj($this);
         $sample_val = $res_lst->display($back);
         if (trim($sample_val) <> "") {
             if ($this->name_wrd != null) {

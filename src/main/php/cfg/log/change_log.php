@@ -53,7 +53,7 @@ cache table, field and action id to speed up, because this will never change
 
 namespace cfg;
 
-include_once MODEL_HELPER_PATH . 'type_object.php';
+include_once MODEL_HELPER_PATH . 'db_object_user.php';
 include_once MODEL_VALUE_PATH . 'value.php';
 include_once MODEL_VALUE_PATH . 'value_phrase_link.php';
 include_once API_LOG_PATH . 'change_log.php';
@@ -64,7 +64,7 @@ use DateTime;
 use DateTimeInterface;
 use Exception;
 
-class change_log extends db_object
+class change_log extends db_object_user
 {
 
     /*
@@ -81,7 +81,6 @@ class change_log extends db_object
      * object vars
      */
 
-    public ?user $usr = null;          // the user who has done the change
     public ?string $action = null;     // text for the user action e.g. "add", "update" or "delete"
     protected ?int $action_id = null;  // database id for the action text
     public ?int $table_id = null;     // database id for the table text
@@ -101,10 +100,7 @@ class change_log extends db_object
      */
     function __construct(?user $usr)
     {
-        parent::__construct();
-        if ($usr != null) {
-            $this->set_user($usr);
-        }
+        parent::__construct($usr);
     }
 
 
@@ -115,8 +111,8 @@ class change_log extends db_object
 
     function fill_api_obj(change_log_api $api_obj): change_log_api
     {
-        if ($this->usr != null) {
-            $api_obj->usr = $this->usr->api_obj();
+        if ($this->user() != null) {
+            $api_obj->usr = $this->user()->api_obj();
         }
         $api_obj->action_id = $this->action_id;
         $api_obj->table_id = $this->table_id;
@@ -130,16 +126,6 @@ class change_log extends db_object
     /*
      * set and get
      */
-
-    function set_user(user $usr): void
-    {
-        $this->usr = $usr;
-    }
-
-    function user(): user
-    {
-        return $this->usr;
-    }
 
     /**
      * set the action of this change log object and to add a new action to the database if needed
@@ -549,7 +535,9 @@ class change_log extends db_object
      */
     function dsp_last(bool $ex_time = false): string
     {
-        return 'Error: either the named or link user log function should be used';
+        $msg = 'Error: either the named or link user log function should be used';
+        log_err($msg);
+        return $msg;
     }
 
     /**

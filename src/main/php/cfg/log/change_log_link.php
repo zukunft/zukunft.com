@@ -146,7 +146,7 @@ class change_log_link extends change_log
             $usr = new user();
             $usr->set_id($db_row[user::FLD_ID]);
             $usr->name = $db_row[user::FLD_NAME];
-            $this->usr = $usr;
+            $this->set_user($usr);
         }
         return $result;
     }
@@ -211,7 +211,7 @@ class change_log_link extends change_log
         }
 
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->usr->id);
+        $db_con->set_usr($this->user()->id());
         $db_con->set_fields(self::FLD_NAMES);
         $db_con->set_join_fields(array(user::FLD_NAME), sql_db::TBL_USER);
 
@@ -236,37 +236,6 @@ class change_log_link extends change_log
         return $this->load($qp);
     }
 
-    function dsp_id(): string
-    {
-        $result = '';
-
-        if (isset($this->usr)) {
-            $result .= 'user_log_link for user ' . $this->usr->dsp_id();
-        }
-        $result .= ' action ' . $this->action . ' (' . $this->action_id . ')';
-        $result .= ' table ' . $this->table() . ' (' . $this->table_id . ')';
-        if (isset($this->old_from)) {
-            $result .= ' from old ' . $this->old_from->dsp_id();
-        }
-        if (isset($this->old_link)) {
-            $result .= ' link old ' . $this->old_link->dsp_id();
-        }
-        if (isset($this->old_to)) {
-            $result .= ' to old ' . $this->old_to->dsp_id();
-        }
-        if (isset($this->new_from)) {
-            $result .= ' from new ' . $this->new_from->dsp_id();
-        }
-        if (isset($this->new_link)) {
-            $result .= ' link new ' . $this->new_link->dsp_id();
-        }
-        if (isset($this->new_to)) {
-            $result .= ' to new ' . $this->new_to->dsp_id();
-        }
-
-        return $result;
-    }
-
     // identical to the functions in user_log (maybe move to a common object??)
     protected function add_table(sql_db $db_con, string $table_name = ''): int
     {
@@ -274,7 +243,7 @@ class change_log_link extends change_log
         if ($table_name == "") {
             log_err("missing table name", "user_log_link->set_table");
         }
-        if ($this->usr->id <= 0) {
+        if ($this->user()->id() <= 0) {
             log_err("missing user", "user_log_link->set_table");
         }
 
@@ -303,7 +272,7 @@ class change_log_link extends change_log
         if ($this->action == "") {
             log_err("missing action name", "user_log_link->set_action");
         }
-        if ($this->usr->id <= 0) {
+        if ($this->user()->id() <= 0) {
             log_err("missing user", "user_log_link->set_action");
         }
 
@@ -328,12 +297,12 @@ class change_log_link extends change_log
     // functions used utils each call is done with the object instead of the id
     private function set_usr(): void
     {
-        log_debug('user_log_link->set_usr for ' . $this->usr->dsp_id());
-        if (!isset($this->usr)) {
+        log_debug('user_log_link->set_usr for ' . $this->user()->dsp_id());
+        if ($this->user() != null) {
             $usr = new user;
-            $usr->load_by_id($this->usr->id);
-            $this->usr = $usr;
-            log_debug('user_log_link->set_usr got ' . $this->usr->name);
+            $usr->load_by_id($this->user()->id());
+            $this->set_user($usr);
+            log_debug('user_log_link->set_usr got ' . $this->user()->name);
         }
     }
 
@@ -343,7 +312,7 @@ class change_log_link extends change_log
         $result = '';
         if ($id > 0) {
             $this->set_usr();
-            $wrd = new word($this->usr);
+            $wrd = new word($this->user());
             $wrd->load_by_id($id);
             $result = $wrd->name();
             log_debug('user_log_link->word_name got ' . $result);
@@ -373,7 +342,7 @@ class change_log_link extends change_log
     function add_link()
     {
         global $db_con;
-        log_debug("user_log_link->add_link (u" . $this->usr->id . " " . $this->action . " " . $this->table() .
+        log_debug("user_log_link->add_link (u" . $this->user()->id() . " " . $this->action . " " . $this->table() .
             ",of" . $this->old_from . ",ol" . $this->old_link . ",ot" . $this->old_to .
             ",nf" . $this->new_from . ",nl" . $this->new_link . ",nt" . $this->new_to . ",r" . $this->row_id . ")");
 
@@ -385,7 +354,7 @@ class change_log_link extends change_log
         $sql_fields = array();
         $sql_values = array();
         $sql_fields[] = "user_id";
-        $sql_values[] = $this->usr->id;
+        $sql_values[] = $this->user()->id();
         $sql_fields[] = "change_action_id";
         $sql_values[] = $this->action_id;
         $sql_fields[] = "change_table_id";
@@ -411,7 +380,7 @@ class change_log_link extends change_log
         //$db_con = new mysql;
         $db_type = $db_con->get_type();
         $db_con->set_type(sql_db::TBL_CHANGE_LINK);
-        $db_con->set_usr($this->usr->id);
+        $db_con->set_usr($this->user()->id());
         $log_id = $db_con->insert($sql_fields, $sql_values);
 
         if ($log_id <= 0) {
@@ -419,9 +388,9 @@ class change_log_link extends change_log
             $func_name = 'user_log_link->add_link';
             $msg_text = 'Insert to link log failed';
             $traceback = (new Exception)->getTraceAsString();
-            log_fatal($msg_text, $func_name, '', $traceback, $this->usr);
+            log_fatal($msg_text, $func_name, '', $traceback, $this->user());
             $msg_description = $msg_text . ' with ' . $this->dsp_id();
-            log_fatal($msg_text, $func_name, $msg_description, $traceback, $this->usr);
+            log_fatal($msg_text, $func_name, $msg_description, $traceback, $this->user());
             $result = False;
         } else {
             $this->set_id($log_id);
@@ -474,7 +443,7 @@ class change_log_link extends change_log
      */
     function add(): bool
     {
-        log_debug('do "' . $this->action . '" of "' . $this->table() . '" for user ' . $this->usr->dsp_id());
+        log_debug('do "' . $this->action . '" of "' . $this->table() . '" for user ' . $this->user()->dsp_id());
 
         global $db_con;
 
@@ -573,7 +542,7 @@ class change_log_link extends change_log
         $sql_fields = array();
         $sql_values = array();
         $sql_fields[] = user::FLD_ID;
-        $sql_values[] = $this->usr->id;
+        $sql_values[] = $this->user()->id();
         $sql_fields[] = 'change_action_id';
         $sql_values[] = $this->action_id;
         $sql_fields[] = 'change_table_id';
@@ -613,7 +582,7 @@ class change_log_link extends change_log
         //$db_con = new mysql;
         $db_type = $db_con->get_type();
         $db_con->set_type(sql_db::TBL_CHANGE_LINK);
-        $db_con->set_usr($this->usr->id);
+        $db_con->set_usr($this->user()->id());
         $log_id = $db_con->insert($sql_fields, $sql_values);
 
         if ($log_id <= 0) {
@@ -621,9 +590,9 @@ class change_log_link extends change_log
             $func_name = 'user_log_link->add';
             $msg_text = 'Insert to change log failed';
             $traceback = (new Exception)->getTraceAsString();
-            log_fatal($msg_text, $func_name, '', $traceback, $this->usr);
+            log_fatal($msg_text, $func_name, '', $traceback, $this->user());
             $msg_description = $msg_text . ' with ' . $this->dsp_id();
-            log_fatal($msg_text, $func_name, $msg_description, $traceback, $this->usr);
+            log_fatal($msg_text, $func_name, $msg_description, $traceback, $this->user());
             $result = False;
         } else {
             $this->set_id($log_id);
@@ -641,25 +610,63 @@ class change_log_link extends change_log
     // but the log entry has been created upfront to make sure that logging is complete
     function add_ref($row_id): bool
     {
-        log_debug($row_id . " to " . $this->id() . " for user " . $this->usr->dsp_id());
+        log_debug($row_id . " to " . $this->id() . " for user " . $this->user()->dsp_id());
 
         global $db_con;
 
         $result = true;
         $db_type = $db_con->get_type();
         $db_con->set_type(sql_db::TBL_CHANGE_LINK);
-        $db_con->set_usr($this->usr->id);
+        $db_con->set_usr($this->user()->id());
         if (!$db_con->update($this->id(), 'row_id', $row_id)) {
             // write the error message in steps to get at least some message if the parameters causes an additional the error
             $func_name = 'user_log_link->add_ref';
             $msg_text = 'Insert to change ref log failed';
             $traceback = (new Exception)->getTraceAsString();
             $msg_description = $msg_text . ' with ' . $this->dsp_id();
-            log_fatal($msg_text, $func_name, $msg_description, $traceback, $this->usr);
+            log_fatal($msg_text, $func_name, $msg_description, $traceback, $this->user());
             $result = False;
         }
         // restore the type before saving the log
         $db_con->set_type($db_type);
+        return $result;
+    }
+
+    /*
+     * debug
+     */
+
+    /**
+     * @return string with the unique log entry description for debugging
+     */
+    function dsp_id(): string
+    {
+        $result = '';
+
+        if ($this->user() != null) {
+            $result .= 'user_log_link for user ' . $this->user()->dsp_id();
+        }
+        $result .= ' action ' . $this->action . ' (' . $this->action_id . ')';
+        $result .= ' table ' . $this->table() . ' (' . $this->table_id . ')';
+        if (isset($this->old_from)) {
+            $result .= ' from old ' . $this->old_from->dsp_id();
+        }
+        if (isset($this->old_link)) {
+            $result .= ' link old ' . $this->old_link->dsp_id();
+        }
+        if (isset($this->old_to)) {
+            $result .= ' to old ' . $this->old_to->dsp_id();
+        }
+        if (isset($this->new_from)) {
+            $result .= ' from new ' . $this->new_from->dsp_id();
+        }
+        if (isset($this->new_link)) {
+            $result .= ' link new ' . $this->new_link->dsp_id();
+        }
+        if (isset($this->new_to)) {
+            $result .= ' to new ' . $this->new_to->dsp_id();
+        }
+
         return $result;
     }
 
