@@ -285,18 +285,18 @@ use html\phrase\phrase_group as phrase_group_dsp;
     the target model object structure is:
 
     db_object - all database objects that have a unique id
+        phrase_group_link - db index to find a phrase group by the phrase (not the db normal form to speed up)
+            phrase_group_word_link - phrase_group_link for a word
+            phrase_group_triple_link - phrase_group_link for a triple
+        system_log - log entries by the system to improve the setup and code
+        ip_range - to filter requests from the internet
         db_object_user - all objects that are user specific
             phrase_group - a sorted list of phrases
-            phrase_group_link - db index to find a phrase group by the phrase (not the db normal form to speed up)
-                phrase_group_word_link - phrase_group_link for a word
-                phrase_group_triple_link - phrase_group_link for a triple
             formula_element - the parameters / parts of a formula expression for fast finding of dependencies (not the db normal form to speed up)
             change_log - to log a change done by a user
                 change_log_named - log of user changes in named objects e.g. word, triple, ...
                 change_log_link - log of the link changes by a user
-            system_log - log entries by the system to improve the setup and code
             batch_job - to handle processes that takes longer than the user is expected to wait
-            ip_range - to filter requests from the internet
             sandbox - a user sandbox object
                 sandbox_named - user sandbox objects that have a given name
                     sandbox_typed - named sandbox object that have a type and a predefined behavior

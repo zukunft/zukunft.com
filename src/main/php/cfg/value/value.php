@@ -724,15 +724,13 @@ class value extends sandbox_value
     /**
      * rebuild the word and triple list based on the group id
      */
-    function load_grp_by_id()
+    function load_grp_by_id(): void
     {
         // if the group object is missing
         if ($this->grp->id() > 0) {
             // ... load the group related objects means the word and triple list
             $grp = new phrase_group($this->user()); // in case the word names and word links can be user specific maybe the owner should be used here
-            $grp->set_id($this->grp->id());
-            $grp->get();
-            $grp->load_by_obj_vars(); // to make sure that the word and triple object lists are loaded
+            $grp->load_by_id($this->grp->id()); // to make sure that the word and triple object lists are loaded
             if ($grp->id() > 0) {
                 $this->grp = $grp;
             }

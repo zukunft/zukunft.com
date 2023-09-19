@@ -5,6 +5,10 @@
     model/phrase/phrase_group.php - a combination of a word list and a triple_list
     -----------------------------
 
+    TODO use a new table group_links to link the phrases to a group
+    TODO remove the fields word_ids and triple_ids
+    TODO rename to group (and element_group to combination)
+
     a kind of phrase list, but separated into two different lists
 
     a phrase group is always an unsorted list of phrases and is used to select a value
@@ -84,12 +88,12 @@ class phrase_group extends db_object_user
      */
 
     // database fields
-    public ?string $grp_name;     // maybe later the user should have the possibility to overwrite the generic name, but this is not user at the moment
+    public ?string $name;         // maybe later the user should have the possibility to overwrite the generic name, but this is not user at the moment
     public phrase_list $phr_lst;  // the phrase list object
     public ?string $id_order_txt; // the ids from above in the order that the user wants to see them
 
     // to deprecate
-    public ?string $auto_name;    // the automatically created generic name for the word group, used for a quick display of values
+    public ?string $description;    // the automatically created generic name for the word group, used for a quick display of values
 
     // in memory only fields
     public ?array $id_order = array();       // the ids from above in the order that the user wants to see them
@@ -118,8 +122,8 @@ class phrase_group extends db_object_user
     private function reset(): void
     {
         $this->set_id(0);
-        $this->grp_name = null;
-        $this->auto_name = null;
+        $this->name = null;
+        $this->description = null;
         $this->phr_lst = new phrase_list($this->user());
         $this->id_order_txt = null;
 
@@ -137,8 +141,8 @@ class phrase_group extends db_object_user
     {
         $result = parent::row_mapper($db_row, self::FLD_ID);
         if ($result) {
-            $this->grp_name = $db_row[self::FLD_NAME];
-            $this->auto_name = $db_row[self::FLD_DESCRIPTION];
+            $this->name = $db_row[self::FLD_NAME];
+            $this->description = $db_row[self::FLD_DESCRIPTION];
             $wrd_ids = null;
             if ($db_row[self::FLD_WORD_IDS] != null) {
                 $wrd_ids = array_map('intval', explode(',', $db_row[self::FLD_WORD_IDS]));
@@ -161,10 +165,10 @@ class phrase_group extends db_object_user
     function set_name(string $name = ''): void
     {
         if ($name != '') {
-            $this->grp_name = $name;
+            $this->name = $name;
         } else {
             if ($this->phr_lst->count() > 0) {
-                $this->grp_name = implode(',', $this->phr_lst->names());
+                $this->name = implode(',', $this->phr_lst->names());
             } else {
                 log_warning('name of phrase group ' . $this->dsp_id() . ' missing');
             }
@@ -246,11 +250,16 @@ class phrase_group extends db_object_user
         return $this->load_sql_select_qp($db_con, $qp);
     }
 
-    // TODO review
+    /**
+     * just set the class name for the user sandbox function
+     * load a word object by database id
+     * @param int $id the id of the word
+     * @param string $class the word class name
+     * @return int the id of the object found and zero if nothing is found
+     */
     function load_by_id(int $id, string $class = self::class): int
     {
-        $this->set_id($id);
-        return $this->load_by_obj_vars();
+        return parent::load_by_id($id, $class);
     }
 
     /**
@@ -327,7 +336,7 @@ class phrase_group extends db_object_user
             return 'trp_ids';
         } elseif (count($this->phr_lst->wrd_ids()) > 0) {
             return 'wrd_ids';
-        } elseif ($this->grp_name != '') {
+        } elseif ($this->name != '') {
             return sql_db::FLD_NAME;
         } else {
             log_err('Either the database ID (' . $this->id . ') or the ' .
@@ -361,8 +370,8 @@ class phrase_group extends db_object_user
         } elseif ($wrd_txt != '') {
             $db_con->add_par(sql_par_type::TEXT, $wrd_txt);
             $qp->sql = $db_con->select_by_field_list(array(self::FLD_WORD_IDS));
-        } elseif ($this->grp_name != '') {
-            $db_con->add_par(sql_par_type::TEXT, $this->grp_name);
+        } elseif ($this->name != '') {
+            $db_con->add_par(sql_par_type::TEXT, $this->name);
             $qp->sql = $db_con->select_by_field_list(array(self::FLD_NAME));
         }
         $qp->par = $db_con->get_par();
@@ -677,7 +686,7 @@ class phrase_group extends db_object_user
         $group_name = $this->phr_lst->dsp_name();
 
         // update the name if possible and needed
-        if ($this->auto_name <> $group_name and $do_save) {
+        if ($this->description <> $group_name and $do_save) {
             if ($this->id > 0) {
                 // update the generic name in the database
                 $db_con->usr_id = $this->user()->id();
@@ -687,7 +696,7 @@ class phrase_group extends db_object_user
                 }
                 log_debug('updated to ' . $group_name);
             }
-            $this->auto_name = $group_name;
+            $this->description = $group_name;
         }
         log_debug('group name ' . $group_name);
 
@@ -742,7 +751,7 @@ class phrase_group extends db_object_user
         foreach ($api_json as $key => $value) {
 
             if ($key == exp_obj::FLD_NAME) {
-                $this->grp_name = $value;
+                $this->name = $value;
             }
         }
 
@@ -787,7 +796,7 @@ class phrase_group extends db_object_user
 
                 $db_con->set_type(sql_db::TBL_PHRASE_GROUP);
                 $this->id = $db_con->insert(array(self::FLD_WORD_IDS, self::FLD_TRIPLE_IDS, self::FLD_DESCRIPTION),
-                    array($wrd_id_txt, $trp_id_txt, $this->auto_name));
+                    array($wrd_id_txt, $trp_id_txt, $this->description));
             } else {
                 log_err('Either a word (' . $wrd_id_txt . ') or triple (' . $trp_id_txt . ')  must be set to create a group for ' . $this->dsp_id() . '.', 'phrase_group->save_id');
             }
@@ -994,8 +1003,8 @@ class phrase_group extends db_object_user
         } else {
             $result .= 'phrase_group_id ' . $this->id;
         }
-        if ($this->grp_name <> '') {
-            $result .= ' as "' . $this->grp_name . '"';
+        if ($this->name <> '') {
+            $result .= ' as "' . $this->name . '"';
         }
         if ($result == '') {
             if (isset($this->phr_lst)) {
@@ -1012,9 +1021,9 @@ class phrase_group extends db_object_user
      */
     function name(): string
     {
-        if ($this->grp_name <> '') {
+        if ($this->name <> '') {
             // use the user defined description
-            $result = $this->grp_name;
+            $result = $this->name;
         } else {
             // or use the standard generic description
             $name_lst = $this->phr_lst->names();

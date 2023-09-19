@@ -626,7 +626,7 @@ class create_test_objects extends test_base
     {
         $lst = $this->dummy_phrase_list_pi();
         $grp = $lst->get_grp(false);
-        $grp->grp_name = phrase_group_api::TN_READ;
+        $grp->name = phrase_group_api::TN_READ;
         return $grp;
     }
 
@@ -634,7 +634,7 @@ class create_test_objects extends test_base
     {
         $lst = $this->dummy_phrase_list_zh();
         $grp = $lst->get_grp(false);
-        $grp->grp_name = phrase_group_api::TN_ZH_2019;
+        $grp->name = phrase_group_api::TN_ZH_2019;
         return $grp;
     }
 
@@ -1680,7 +1680,7 @@ class create_test_objects extends test_base
     function load_phrase_group_by_name(string $phrase_group_name): phrase_group
     {
         $phr_grp = new phrase_group($this->usr1);
-        $phr_grp->grp_name = $phrase_group_name;
+        $phr_grp->name = $phrase_group_name;
         $phr_grp->load_by_obj_vars();
         return $phr_grp;
     }
@@ -1695,7 +1695,7 @@ class create_test_objects extends test_base
     {
         $phr_grp = new phrase_group($this->usr1);
         $phr_grp->phr_lst = $this->load_phrase_list($array_of_phrase_str);
-        $phr_grp->grp_name = $phrase_group_name;
+        $phr_grp->name = $phrase_group_name;
         $phr_grp->get();
         return $phr_grp;
     }

@@ -96,7 +96,7 @@ class phrase_group_unit_tests
 
         // sql to load the phrase group by name
         $phr_grp = new phrase_group($usr);
-        $phr_grp->grp_name = phrase_group_api::TN_READ;
+        $phr_grp->name = phrase_group_api::TN_READ;
         $t->assert_load_sql_obj_vars($db_con, $phr_grp);
 
         // sql to load the word list ids
