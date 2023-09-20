@@ -6,8 +6,13 @@
     -----------------------------
 
     TODO use a new table group_links to link the phrases to a group
-    TODO remove the fields word_ids and triple_ids
+    TODO add a order_nbr field to the group_links table
+    TODO remove the fields word_ids, triple_ids and id_order
     TODO rename to group (and element_group to combination)
+    TODO move name and description to user_groups
+    TODO use 32 bit key for the phrase_id (and prepare a 64 bit key in needed)
+    TODO use 512 bit key for phrase groups for up to 16 phrases
+    TODO prepare a 4096 key for long phrase groups up to 64 phrases
 
     a kind of phrase list, but separated into two different lists
 

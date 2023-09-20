@@ -384,6 +384,22 @@ COMMENT ON COLUMN phrase_groups.id_order is 'the phrase ids in the order that th
 -- --------------------------------------------------------
 
 --
+-- Table structure for table group_links
+--
+
+CREATE TABLE IF NOT EXISTS group_links
+(
+    group_word_link_id BIGSERIAL PRIMARY KEY,
+    group_id           bigint NOT NULL,
+    phrase_id          bigint NOT NULL,
+    order_nbr          bigint     NULL
+);
+
+COMMENT ON TABLE group_links is 'link phrases to a phrase group for database based selections';
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table phrase_group_word_links
 --
 
@@ -808,6 +824,40 @@ COMMENT ON TABLE user_phrase_groups is 'to reduce the number of value to term li
 COMMENT ON COLUMN user_phrase_groups.phrase_group_name is 'if this is set a manual group for fast selection';
 COMMENT ON COLUMN user_phrase_groups.auto_description is 'the automatic created user readable description';
 COMMENT ON COLUMN user_phrase_groups.id_order is 'the phrase ids in the order that the user wants to see them';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table user_groups
+--
+
+CREATE TABLE IF NOT EXISTS user_groups
+(
+    group_id    BIGSERIAL PRIMARY KEY,
+    user_id     bigint NOT NULL,
+    group_name  varchar(1000) DEFAULT NULL,
+    description varchar(4000) DEFAULT NULL
+);
+
+COMMENT ON TABLE user_phrase_groups is 'to reduce the number of value to term links';
+COMMENT ON COLUMN user_phrase_groups.phrase_group_name is 'if this is set a manual group for fast selection';
+COMMENT ON COLUMN user_phrase_groups.auto_description is 'the automatic created user readable description';
+COMMENT ON COLUMN user_phrase_groups.id_order is 'the phrase ids in the order that the user wants to see them';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table user_group_links
+--
+
+CREATE TABLE IF NOT EXISTS user_group_links
+(
+    group_link_id BIGSERIAL PRIMARY KEY,
+    user_id       bigint   DEFAULT NULL,
+    excluded      smallint DEFAULT NULL
+);
+
+COMMENT ON TABLE user_group_links is 'view for fast group selection based on a triple';
 
 -- --------------------------------------------------------
 
@@ -1834,6 +1884,12 @@ CREATE INDEX result_user_idx ON results (user_id);
 CREATE UNIQUE INDEX phrase_group_term_idx ON phrase_groups (word_ids, triple_ids);
 
 --
+-- Indexes for table group_links
+--
+CREATE INDEX group_link_group_idx ON group_links (group_id);
+CREATE INDEX group_link_idx ON group_links (phrase_id);
+
+--
 -- Indexes for table phrase_group_word_links
 --
 CREATE INDEX phrase_group_word_link_group_idx ON phrase_group_word_links (phrase_group_id);
@@ -1905,11 +1961,24 @@ CREATE INDEX user_formula_link_user_idx ON user_formula_links (user_id);
 CREATE INDEX user_formula_link_type_idx ON user_formula_links (link_type_id);
 
 --
+-- Indexes for table user_groups
+--
+CREATE UNIQUE INDEX user_group_unique_id ON user_groups (group_id, user_id);
+CREATE INDEX user_group_idx ON user_groups (group_id);
+CREATE INDEX user_group_user_idx ON user_groups (user_id);
+
+--
 -- Indexes for table user_phrase_groups
 --
 CREATE UNIQUE INDEX user_phrase_group_unique_id ON user_phrase_groups (phrase_group_id, user_id);
 CREATE INDEX user_phrase_group_idx ON user_phrase_groups (phrase_group_id);
 CREATE INDEX user_phrase_group_user_idx ON user_phrase_groups (user_id);
+
+-- Indexes for table user_group_links
+--
+CREATE UNIQUE INDEX user_group_link_unique_idx ON user_group_links (group_link_id, user_id);
+CREATE INDEX user_group_link_idx ON user_group_links (group_link_id);
+CREATE INDEX user_group_user_idx ON user_group_links (user_id);
 
 --
 -- Indexes for table user_phrase_group_word_links
@@ -2113,6 +2182,13 @@ ALTER TABLE results
     ADD CONSTRAINT results_fk_2 FOREIGN KEY (user_id) REFERENCES users (user_id);
 
 --
+-- Constraints for table group_links
+--
+ALTER TABLE group_links
+    ADD CONSTRAINT group_links_fk_1 FOREIGN KEY (group_id) REFERENCES groups (group_id),
+    ADD CONSTRAINT group_links_fk_2 FOREIGN KEY (phrase_id) REFERENCES phrases (phrase_id);
+
+--
 -- Constraints for table phrase_group_word_links
 --
 ALTER TABLE phrase_group_word_links
@@ -2179,11 +2255,25 @@ ALTER TABLE user_formula_links
     ADD CONSTRAINT user_formula_links_fk_3 FOREIGN KEY (link_type_id) REFERENCES formula_link_types (formula_link_type_id);
 
 --
+-- Constraints for table user_groups
+--
+ALTER TABLE user_groups
+    ADD CONSTRAINT user_groups_fk_1 FOREIGN KEY (group_id) REFERENCES groups (group_id),
+    ADD CONSTRAINT user_groups_fk_2 FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
 -- Constraints for table user_phrase_groups
 --
 ALTER TABLE user_phrase_groups
     ADD CONSTRAINT user_phrase_groups_fk_1 FOREIGN KEY (phrase_group_id) REFERENCES phrase_groups (phrase_group_id),
     ADD CONSTRAINT user_phrase_groups_fk_2 FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- Constraints for table user_group_word_links
+--
+ALTER TABLE user_group_links
+    ADD CONSTRAINT user_group_word_links_fk_1 FOREIGN KEY (group_link_id) REFERENCES group_links (group_link_id),
+    ADD CONSTRAINT user_group_word_links_fk_2 FOREIGN KEY (user_id) REFERENCES users (user_id);
 
 --
 -- Constraints for table user_phrase_group_word_links
