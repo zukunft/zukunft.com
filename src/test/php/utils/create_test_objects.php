@@ -590,6 +590,105 @@ class create_test_objects extends test_base
     }
 
     /**
+     * @return phrase_list with 16 entries to test the normal group id creation
+     * 1    ...../+
+     * 11    .....9-
+     * 12    .....A+
+     * 37    .....Z-
+     * 38    .....a+
+     * 64    ..../.-
+     * 376    ....3s+
+     * 2367    ....Yz-
+     * 13108    ...1Ao+
+     * 82124    ...I1A-
+     * 505294    ../vLC+
+     * 2815273    ..8jId-
+     * 17192845    .//ZSB+
+     * 106841477    .4LYK3-
+     * 628779863    .ZSahL+
+     * 3516593476    1FajJ2-
+     */
+    public function dummy_phrase_list_16(): phrase_list
+    {
+        $lst = new phrase_list($this->usr1);
+        $wrd = $this->dummy_word();
+        $wrd->set_id(1);
+        $wrd->set_name('word1');
+        $lst->add($wrd->phrase());
+        $trp = $this->dummy_triple();
+        $trp->set_id(11);
+        $trp->set_name('triple1');
+        $lst->add($trp->phrase());
+        $wrd = $this->dummy_word();
+        $wrd->set_id(12);
+        $wrd->set_name('word2');
+        $lst->add($wrd->phrase());
+        $trp = $this->dummy_triple();
+        $trp->set_id(37);
+        $trp->set_name('triple2');
+        $lst->add($trp->phrase());
+        $wrd = $this->dummy_word();
+        $wrd->set_id(38);
+        $wrd->set_name('word3');
+        $lst->add($wrd->phrase());
+        $trp = $this->dummy_triple();
+        $trp->set_id(64);
+        $trp->set_name('triple3');
+        $lst->add($trp->phrase());
+        $wrd = $this->dummy_word();
+        $wrd->set_id(376);
+        $wrd->set_name('word4');
+        $lst->add($wrd->phrase());
+        $trp = $this->dummy_triple();
+        $trp->set_id(2367);
+        $trp->set_name('triple4');
+        $lst->add($trp->phrase());
+        $wrd = $this->dummy_word();
+        $wrd->set_id(13108);
+        $wrd->set_name('word5');
+        $lst->add($wrd->phrase());
+        $trp = $this->dummy_triple();
+        $trp->set_id(82124);
+        $trp->set_name('triple5');
+        $lst->add($trp->phrase());
+        $wrd = $this->dummy_word();
+        $wrd->set_id(505294);
+        $wrd->set_name('word6');
+        $lst->add($wrd->phrase());
+        $trp = $this->dummy_triple();
+        $trp->set_id(2815273);
+        $trp->set_name('triple6');
+        $lst->add($trp->phrase());
+        $wrd = $this->dummy_word();
+        $wrd->set_id(17192845);
+        $wrd->set_name('word7');
+        $lst->add($wrd->phrase());
+        $trp = $this->dummy_triple();
+        $trp->set_id(106841477);
+        $trp->set_name('triple7');
+        $lst->add($trp->phrase());
+        $wrd = $this->dummy_word();
+        $wrd->set_id(628779863);
+        $wrd->set_name('word8');
+        $lst->add($wrd->phrase());
+        $trp = $this->dummy_triple();
+        $trp->set_id(3516593476);
+        $trp->set_name('triple8');
+        $lst->add($trp->phrase());
+        return $lst;
+    }
+
+    public function dummy_phrase_list_17_plus(): phrase_list
+    {
+        $lst = $this->dummy_phrase_list_16();
+        $wrd = $this->dummy_word();
+        $wrd->set_id(987654321);
+        $wrd->set_name('word17');
+        $lst->add($wrd->phrase());
+        return $lst;
+    }
+
+    /**
      * @return phrase_list the phrases relevant for having a second entry in the phrase group list
      */
     public function dummy_phrase_list_zh(): phrase_list
@@ -706,7 +805,7 @@ class create_test_objects extends test_base
     function dummy_value_zh(): value
     {
         $grp = $this->dummy_phrase_group_zh();
-        return new value($this->usr1, 2,value_api::TV_CITY_ZH_INHABITANTS_2019, $grp);
+        return new value($this->usr1, 2, value_api::TV_CITY_ZH_INHABITANTS_2019, $grp);
     }
 
     function dummy_value_list(): value_list

@@ -33,12 +33,14 @@
 namespace test;
 
 include_once API_PHRASE_PATH . 'phrase_group.php';
+include_once MODEL_GROUP_PATH . 'group_id.php';
 include_once MODEL_PHRASE_PATH . 'phrase_group_word_link.php';
 include_once MODEL_PHRASE_PATH . 'phrase_group_triple_link.php';
 include_once MODEL_PHRASE_PATH . 'phrase_group_list.php';
 
 use api\phrase_group_api;
 use api\word_api;
+use cfg\group\group_id;
 use cfg\library;
 use cfg\phrase_group;
 use cfg\phrase_group_link;
@@ -67,6 +69,28 @@ class phrase_group_unit_tests
         $usr->set_id(1);
 
         $t->header('Unit tests of the phrase group class (src/main/php/model/phrase/phrase_group.php)');
+
+        $t->subheader('Group id tests');
+        $grp_id = new group_id();
+        $t->assert('group_id word list', $grp_id->alpha_num($t->dummy_word_list()->phrase_lst()),
+            '...../+.....0+.....1+.....2+......+......+......+......+......+......+......+......+......+......+......+......+');
+        $t->assert('group_id triple list', $grp_id->alpha_num($t->dummy_triple_list()->phrase_lst()),
+            '-2');
+        $phr_lst = new phrase_list($usr);
+        $phr_lst->merge($t->dummy_word_list()->phrase_lst());
+        $phr_lst->merge($t->dummy_triple_list()->phrase_lst());
+        $t->assert('group_id combine phrase list', $grp_id->alpha_num($phr_lst),
+            '...../+.....0+.....1+.....2+.....0-......+......+......+......+......+......+......+......+......+......+......+');
+        $t->assert('group_id phrase list', $grp_id->alpha_num($t->dummy_phrase_list()),
+            '...../+.....0+.....1+...../-.....0-......+......+......+......+......+......+......+......+......+......+......+');
+        $t->assert('group_id phrase list 16', $grp_id->alpha_num($t->dummy_phrase_list_16()),
+            '...../+.....9-.....A+.....Z-.....a+..../.-....3s+....Yz-...1Ao+...I1A-../vLC+..8jId-.//ZSB+.4LYK3-.ZSahL+1FajJ2-');
+        $t->assert('group_id phrase list 16', $grp_id->alpha_num($t->dummy_phrase_list_17_plus()),
+            '...../+.....9-.....A+.....Z-.....a+..../.-....3s+....Yz-...1Ao+...I1A-../vLC+..8jId-.//ZSB+.4LYK3-.ZSahL+1FajJ2-.uraWl+');
+        $t->assert('group_id revers phrase list 16',
+            implode(',', $grp_id->int_array('...../+.....9-.....A+.....Z-.....a+..../.-....3s+....Yz-...1Ao+...I1A-../vLC+..8jId-.//ZSB+.4LYK3-.ZSahL+1FajJ2-')),
+            '1,-11,12,-37,38,-64,376,-2367,13108,-82124,505294,-2815273,17192845,-106841477,628779863,-3516593476');
+
 
         $t->subheader('SQL statement tests');
         $phr_grp = new phrase_group($usr);

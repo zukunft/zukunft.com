@@ -384,6 +384,28 @@ COMMENT ON COLUMN phrase_groups.id_order is 'the phrase ids in the order that th
 -- --------------------------------------------------------
 
 --
+-- Table structure for table phrase_groups
+--
+
+CREATE TABLE IF NOT EXISTS phrase_groups
+(
+    phrase_group_id   BIGSERIAL PRIMARY KEY,
+    phrase_group_name varchar(1000) DEFAULT NULL,
+    auto_description  varchar(4000) DEFAULT NULL,
+    word_ids          varchar(255)  DEFAULT NULL,
+    triple_ids        varchar(255)  DEFAULT NULL,
+    id_order          varchar(512)  DEFAULT NULL
+);
+
+COMMENT ON TABLE phrase_groups is 'to reduce the number of value to term links';
+COMMENT ON COLUMN phrase_groups.phrase_group_name is 'if this is set a manual group for fast selection';
+COMMENT ON COLUMN phrase_groups.auto_description is 'the automatic created user readable description';
+COMMENT ON COLUMN phrase_groups.triple_ids is 'one field link to the table term_links';
+COMMENT ON COLUMN phrase_groups.id_order is 'the phrase ids in the order that the user wants to see them';
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table group_links
 --
 

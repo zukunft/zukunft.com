@@ -353,6 +353,24 @@ CREATE TABLE IF NOT EXISTS `language_forms`
 -- --------------------------------------------------------
 
 --
+-- Table structure for table`groups`
+--
+
+CREATE TABLE IF NOT EXISTS `groups`
+(
+    `group_id`    int(11) NOT NULL,
+    `group_name`  varchar(1000) DEFAULT NULL COMMENT 'if this is set a manual group for fast selection',
+    `description` varchar(4000) DEFAULT NULL COMMENT 'the automatic created user readable description',
+    `word_ids`    varchar(255)  DEFAULT NULL,
+    `triple_ids`  varchar(255)  DEFAULT NULL COMMENT 'one field link to the table term_links',
+    `id_order`    varchar(512)  DEFAULT NULL COMMENT 'the phrase ids in the order that the user wants to see them'
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 1
+  DEFAULT CHARSET = utf8 COMMENT ='to reduce the number of value to term links';
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table`phrase_groups`
 --
 

@@ -226,6 +226,11 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO use separate kafka topics for values and results of each pod e.g. switzerland_values for all updates related to Switzerland
     TODO allow to assign users to an admin and offer each admin to use different settings for "his" users so that different behavior due to setting changes can be tested to the same pod
 
+    TODO keep in the frontend the phrases that are relevant for the user at the moment
+         calculate the the frontend real-time the value with the relevant precision
+         calculate in the backend the value with may precision but only if the server is idle
+         or the precision might get below the threshold relevant for the user
+
 
     TODO add data optimizers for read time, write time and space usage
          e.g. select the queries most often used with the longest exe time by data transferred
@@ -463,6 +468,7 @@ const MODEL_USER_PATH = MODEL_PATH . 'user' . DIRECTORY_SEPARATOR;
 const MODEL_SANDBOX_PATH = MODEL_PATH . 'sandbox' . DIRECTORY_SEPARATOR;
 const MODEL_WORD_PATH = MODEL_PATH . 'word' . DIRECTORY_SEPARATOR;
 const MODEL_PHRASE_PATH = MODEL_PATH . 'phrase' . DIRECTORY_SEPARATOR;
+const MODEL_GROUP_PATH = MODEL_PATH . 'group' . DIRECTORY_SEPARATOR;
 const MODEL_VERB_PATH = MODEL_PATH . 'verb' . DIRECTORY_SEPARATOR;
 const MODEL_VALUE_PATH = MODEL_PATH . 'value' . DIRECTORY_SEPARATOR;
 const MODEL_REF_PATH = MODEL_PATH . 'ref' . DIRECTORY_SEPARATOR;
