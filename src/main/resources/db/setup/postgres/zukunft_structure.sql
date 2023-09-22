@@ -362,6 +362,57 @@ COMMENT ON COLUMN language_forms.language_form_name is 'type of adjustment of a 
 -- --------------------------------------------------------
 
 --
+-- Table structure for table groups
+--
+
+CREATE TABLE IF NOT EXISTS groups
+(
+    group_id    char(112) PRIMARY KEY,
+    group_name  varchar(1000) DEFAULT NULL,
+    description varchar(4000) DEFAULT NULL
+);
+
+COMMENT ON TABLE groups is 'to add a user given name using a 512 bit group id index for up to 16 32 bit phrase ids including the order';
+COMMENT ON COLUMN groups.group_name is 'the name given by a user to display the group (does not need to be unique))';
+COMMENT ON COLUMN groups.description is 'the description of the group given by a user';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table group_twos
+--
+
+CREATE TABLE IF NOT EXISTS group_twos
+(
+    group_id    BIGSERIAL PRIMARY KEY,
+    group_name  varchar(1000) DEFAULT NULL,
+    description varchar(4000) DEFAULT NULL
+);
+
+COMMENT ON TABLE group_twos is 'to add a user given name using a 64 bit bigint group id index for up to two 32 bit phrase ids including the order';
+COMMENT ON COLUMN group_twos.group_name is 'the name given by a user to display the group (does not need to be unique))';
+COMMENT ON COLUMN group_twos.description is 'the description of the group given by a user';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table group_bigs
+--
+
+CREATE TABLE IF NOT EXISTS group_bigs
+(
+    group_id    text PRIMARY KEY,
+    group_name  varchar(1000) DEFAULT NULL,
+    description varchar(4000) DEFAULT NULL
+);
+
+COMMENT ON TABLE group_bigs is 'to add a user given name using text group id index for an almost unlimited number of phrase ids including the order';
+COMMENT ON COLUMN group_bigs.group_name is 'the name given by a user to display the group (does not need to be unique))';
+COMMENT ON COLUMN group_bigs.description is 'the description of the group given by a user';
+
+-- --------------------------------------------------------
+
+-- TODO deprecate
 -- Table structure for table phrase_groups
 --
 
@@ -384,24 +435,60 @@ COMMENT ON COLUMN phrase_groups.id_order is 'the phrase ids in the order that th
 -- --------------------------------------------------------
 
 --
--- Table structure for table phrase_groups
+-- Table structure for table group_links
 --
 
-CREATE TABLE IF NOT EXISTS phrase_groups
+CREATE TABLE IF NOT EXISTS group_links
 (
-    phrase_group_id   BIGSERIAL PRIMARY KEY,
-    phrase_group_name varchar(1000) DEFAULT NULL,
-    auto_description  varchar(4000) DEFAULT NULL,
-    word_ids          varchar(255)  DEFAULT NULL,
-    triple_ids        varchar(255)  DEFAULT NULL,
-    id_order          varchar(512)  DEFAULT NULL
+    group_id  char(112) PRIMARY KEY,
+    phrase_id bigint NOT NULL
 );
 
-COMMENT ON TABLE phrase_groups is 'to reduce the number of value to term links';
-COMMENT ON COLUMN phrase_groups.phrase_group_name is 'if this is set a manual group for fast selection';
-COMMENT ON COLUMN phrase_groups.auto_description is 'the automatic created user readable description';
-COMMENT ON COLUMN phrase_groups.triple_ids is 'one field link to the table term_links';
-COMMENT ON COLUMN phrase_groups.id_order is 'the phrase ids in the order that the user wants to see them';
+COMMENT ON TABLE group_links is 'link phrases to a phrase group for database based selections';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table group_two_links
+--
+
+CREATE TABLE IF NOT EXISTS group_two_links
+(
+    group_id  BIGSERIAL PRIMARY KEY,
+    phrase_id bigint NOT NULL
+);
+
+COMMENT ON TABLE group_two_links is 'link phrases to a short phrase group for database based selections';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table group_big_links
+--
+
+CREATE TABLE IF NOT EXISTS group_big_links
+(
+    group_id  BIGSERIAL PRIMARY KEY,
+    phrase_id bigint NOT NULL
+);
+
+COMMENT ON TABLE group_big_links is 'link phrases to a long phrase group for database based selections';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table group_links
+--
+
+CREATE TABLE IF NOT EXISTS group_links
+(
+    group_word_link_id BIGSERIAL PRIMARY KEY,
+    group_id           bigint NOT NULL,
+    phrase_id          bigint NOT NULL,
+    order_nbr          bigint     NULL
+);
+
+COMMENT ON TABLE group_links is 'link phrases to a phrase group for database based selections';
 
 -- --------------------------------------------------------
 
