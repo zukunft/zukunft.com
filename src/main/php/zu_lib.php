@@ -247,6 +247,22 @@ use html\phrase\phrase_group as phrase_group_dsp;
               check the context overlapping between two pods
               and suggest data transfer if this will reduce traffic
 
+    TODO create a table optimizer that
+        1. get the most often used phrase e.g. inhabitants and create a table e.g. phrase_inhabitants
+        2. get the most often used parent phrase within the table and use it for the row index of the table e.g. city and rename the table e.g. to phrase_city_inhabitants
+        3. get the most often used phrase that match the table an row phrase e.q. 2019, 2020 and create a field for each phrase
+        4. add result columns to the table and add formula id to the column name (source phrases?)
+        5. add text and date columns to the table
+        this is limited by the pod settings for much phrase tables e.g. 3 for testing
+        and by the max db columns e.g. 256
+
+    TODO When saving (or loading) data do these checks
+         is table phrase
+            -> if yes: is row and col phrase -> get from table
+            -> if no, get from value_standard or value_two or value or value_big table
+         when loading data try to read many rows with all col at once
+    TODO check mix of value and result (source phrases?)
+         add text, date and other data format columns
 
     TODO create a table startup page with a
          Table with two col and two rows and four last used pages below. If now last used pages show the demo pages.
