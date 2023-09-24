@@ -88,6 +88,8 @@ class sql_db
     const TBL_FORMULA_ELEMENT = 'formula_element';
     const TBL_FORMULA_ELEMENT_TYPE = 'formula_element_type';
     const TBL_RESULT = 'result';
+    const TBL_RESULT_TWO = 'result_two';
+    const TBL_RESULT_BIG = 'result_big';
     const TBL_VIEW = 'view';
     const TBL_VIEW_TYPE = 'view_type';
     const TBL_COMPONENT = 'component';

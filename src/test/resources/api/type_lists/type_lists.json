@@ -734,6 +734,54 @@
         "code_id": "base_import",
         "comment": "import the base configuration by a system user on initial setup",
         "id": 11
+      },
+      {
+        "name": "move to prime",
+        "code_id": "phrase_to_prime",
+        "comment": "move an often used phrase to the prime phrases by creating a clone with a low id and create new links and switch over and remove the old",
+        "id": 12
+      },
+      {
+        "name": "move from prime",
+        "code_id": "phrase_from_prime",
+        "comment": "move a less often used phrase to the non prime phrases by creating a clone with a higher id and create new links and switch over and remove the old",
+        "id": 13
+      },
+      {
+        "name": "create table",
+        "code_id": "table_create",
+        "comment": "create a new table for values and results related to one phrase",
+        "id": 14
+      },
+      {
+        "name": "clone table",
+        "code_id": "table_clone",
+        "comment": "copy the values and results related to one phrase to another pod",
+        "id": 15
+      },
+      {
+        "name": "switch table",
+        "code_id": "table_switch",
+        "comment": "copy the values and results related to one phrase to another pod",
+        "id": 16
+      },
+      {
+        "name": "sync table",
+        "code_id": "table_sync",
+        "comment": "force to sync a cloned phrase table with the original pod",
+        "id": 17
+      },
+      {
+        "name": "remove clone",
+        "code_id": "table_remove",
+        "comment": "remove a cloned phrase table that is not used very often",
+        "id": 18
+      },
+      {
+        "name": "delete table",
+        "code_id": "table_delete",
+        "comment": "remove a phrase table to replace it with a better fitting table",
+        "id": 19
       }
     ],
     "change_log_actions": [

@@ -203,10 +203,13 @@ class test_unit extends test_cleanup
         (new string_unit_tests)->run($this); // test functions not yet split into single unit tests
         (new math_tests)->run($this);
         (new system_unit_tests)->run($this);
-        (new test_api)->run_openapi_test($this);
+        (new system_log_unit_tests)->run($this); // TODO add assert_api_to_dsp
+        (new change_log_unit_tests)->run($this); // TODO add assert_api_to_dsp  // TODO for version 0.0.6 add import test
+        (new batch_job_unit_tests)->run($this); // TODO add assert_api_to_dsp
         (new user_unit_tests)->run($this);
         (new user_list_unit_tests)->run($this);
         (new sandbox_unit_tests)->run($this);
+        (new language_unit_tests)->run($this); // TODO add assert_api_to_dsp
 
         // do the user object unit tests
         (new word_unit_tests)->run($this);
@@ -220,6 +223,7 @@ class test_unit extends test_cleanup
         (new group_list_unit_tests)->run($this); // TODO add assert_api_to_dsp
         (new term_unit_tests)->run($this);
         (new term_list_unit_tests)->run($this);
+        (new ref_unit_tests)->run($this);
         (new value_unit_tests)->run($this);
         (new value_list_unit_tests)->run($this);
         (new value_phrase_link_unit_tests)->run($this);
@@ -238,13 +242,9 @@ class test_unit extends test_cleanup
         (new component_list_unit_tests)->run($this); // TODO add assert_api_to_dsp
         (new component_link_unit_tests)->run($this); // TODO add assert_api_to_dsp
         (new component_link_list_unit_tests)->run($this);
-        (new ref_unit_tests)->run($this);
-        (new language_unit_tests)->run($this); // TODO add assert_api_to_dsp
-        (new change_log_unit_tests)->run($this); // TODO add assert_api_to_dsp  // TODO for version 0.0.6 add import test
-        (new system_log_unit_tests)->run($this); // TODO add assert_api_to_dsp
-        (new batch_job_unit_tests)->run($this); // TODO add assert_api_to_dsp
 
         // do the UI unit tests
+        (new test_api)->run_openapi_test($this);
         (new html_unit_tests)->run($this);
         (new type_list_html_tests)->run($this);
         (new user_html_tests)->run($this);

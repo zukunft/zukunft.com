@@ -33,6 +33,8 @@
 namespace cfg;
 
 use cfg\component\component;
+use cfg\result\result_two;
+use Couchbase\Group;
 
 class db_check
 {
@@ -301,6 +303,10 @@ class db_check
         $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . self::TBL_WORD, 'word_type_id', phrase::FLD_TYPE);
         $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . self::TBL_TRIPLE, 'word_type_id', phrase::FLD_TYPE);
         $result .= $db_con->change_column_name(sql_db::TBL_FORMULA_LINK_TYPE, 'word_type_id', phrase::FLD_TYPE);
+
+        $result .= $db_con->change_table_name('results', result_two::class);
+        $result .= $db_con->change_table_name('user_phrase_groups', sql_db::TBL_USER_PREFIX . group::class);
+
         // TODO set default profile_id in users to 1
         if ($db_con->db_type == sql_db::MYSQL) {
             $sql = 'UPDATE' . ' `users` SET `user_profile_id` = 1 WHERE `user_profile_id`= NULL';
@@ -440,6 +446,8 @@ class db_check
             } else {
                 $db_type = substr($table_name, 0, -1);
             }
+            // TODO ignore empty rows
+            // TODO ignore comma within text e.g. allow 'one, two and three'
             log_debug('load "' . $table_name . '"', $debug - 6);
             if (($handle = fopen($csv_path, "r")) !== FALSE) {
                 $continue = true;

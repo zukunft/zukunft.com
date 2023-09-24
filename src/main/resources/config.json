@@ -152,6 +152,13 @@
       "protection": "admin_protection"
     },
     {
+      "from": "system config database phrase table max",
+      "verb": "is a",
+      "to": "system config database",
+      "type": "hidden_triple",
+      "protection": "admin_protection"
+    },
+    {
       "from": "system config database update block size",
       "verb": "is a",
       "to": "system config database",
@@ -233,6 +240,7 @@
     "system config database retry start delay in sec": 1,
     "system config database retry max delay in sec": 3600,
     "system config database update block size": 100,
+    "system config database phrase table max": 3,
     "system config target number of selection entries": 7,
     "system config automatic created years": 10,
     "system config min percent to suggest": 0.3,

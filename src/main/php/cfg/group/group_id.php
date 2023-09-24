@@ -23,6 +23,9 @@
     this has the advantage that no separate table for the group is needed,
     unless a user changed the name of the group or added a description
 
+    TODO move the 32k most often used phrases to a phrase_most view
+    TODO use a 8 byte key for up to 4 most often used phrase group
+
 
     This file is part of zukunft.com - calc with words
 
