@@ -293,3 +293,273 @@ ALTER TABLE user_value_time_series
 --
 ALTER TABLE user_values
     ADD CONSTRAINT user_values_fk_4 FOREIGN KEY (protect_id) REFERENCES protection_types (protection_type_id);
+
+-- --------------------------------------------------------
+-- September 2023 changes
+-- --------------------------------------------------------
+
+--
+-- Table structure for public values that have never changed the owner, does not have a description and are rarely updated
+--
+
+CREATE TABLE IF NOT EXISTS value_standard
+(
+    group_id      char(112) PRIMARY KEY,
+    numeric_value double precision NOT NULL,
+    source_id     bigint DEFAULT NULL
+);
+
+COMMENT ON TABLE value_standard is 'for public unprotected values that have never changed the owner, does not have a description and are rarely updated';
+COMMENT ON COLUMN value_standard.group_id is 'the prime index to find the value';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for the most often requested values related up to four prime phrase
+--
+
+CREATE TABLE IF NOT EXISTS value_prime
+(
+    group_id        BIGSERIAL PRIMARY KEY,
+    user_id         bigint                    DEFAULT NULL,
+    numeric_value   double precision NOT NULL,
+    source_id       bigint                    DEFAULT NULL,
+    last_update     timestamp        NULL     DEFAULT NULL,
+    description     text,
+    excluded        smallint                  DEFAULT NULL,
+    share_type_id   smallint                  DEFAULT NULL,
+    protect_id      bigint           NOT NULL DEFAULT '1'
+);
+
+COMMENT ON TABLE value_prime is 'for the most often used values';
+COMMENT ON COLUMN value_prime.group_id is 'temp field to increase speed created by the value term links';
+COMMENT ON COLUMN value_prime.user_id is 'the owner / creator of the value';
+COMMENT ON COLUMN value_prime.last_update is 'for fast recalculation';
+COMMENT ON COLUMN value_prime.description is 'temp field used during dev phase for easy value to trm assigns';
+COMMENT ON COLUMN value_prime.excluded is 'the default exclude setting for most users';
+
+--
+-- Table structure to store the user specific changes for the most often requested values related up to four prime phrase
+--
+
+CREATE TABLE IF NOT EXISTS user_value_prime
+(
+    group_id        BIGSERIAL NOT NULL,
+    user_id         bigint                    DEFAULT NULL,
+    numeric_value   double precision NOT NULL,
+    source_id       bigint                    DEFAULT NULL,
+    last_update     timestamp        NULL     DEFAULT NULL,
+    description     text,
+    excluded        smallint                  DEFAULT NULL,
+    share_type_id   smallint                  DEFAULT NULL,
+    protect_id      bigint           NOT NULL DEFAULT '1'
+);
+
+COMMENT ON TABLE user_value_prime is 'the user specific changes of the most often used values';
+COMMENT ON COLUMN user_value_prime.group_id is 'temp field to increase speed created by the value term links';
+COMMENT ON COLUMN user_value_prime.user_id is 'the owner / creator of the value';
+COMMENT ON COLUMN user_value_prime.last_update is 'for fast recalculation';
+COMMENT ON COLUMN user_value_prime.description is 'temp field used during dev phase for easy value to trm assigns';
+COMMENT ON COLUMN user_value_prime.excluded is 'the default exclude setting for most users';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for values related to more than 16 phrases
+--
+
+CREATE TABLE IF NOT EXISTS value_big
+(
+    group_id        TEXT NOT NULL,
+    user_id         bigint                    DEFAULT NULL,
+    numeric_value   double precision NOT NULL,
+    source_id       bigint                    DEFAULT NULL,
+    last_update     timestamp        NULL     DEFAULT NULL,
+    description     text,
+    excluded        smallint                  DEFAULT NULL,
+    share_type_id   smallint                  DEFAULT NULL,
+    protect_id      bigint           NOT NULL DEFAULT '1'
+);
+
+COMMENT ON TABLE value_big is 'for numeric values related to more than 16 phrases';
+COMMENT ON COLUMN value_big.group_id is 'temp field to increase speed created by the value term links';
+COMMENT ON COLUMN value_big.user_id is 'the owner / creator of the value';
+COMMENT ON COLUMN value_big.last_update is 'for fast recalculation';
+COMMENT ON COLUMN value_big.description is 'temp field used during dev phase for easy value to trm assigns';
+COMMENT ON COLUMN value_big.excluded is 'the default exclude setting for most users';
+
+--
+-- Table structure to store the user specific changes of values related to more than 16 phrases
+--
+
+CREATE TABLE IF NOT EXISTS user_value_big
+(
+    group_id        TEXT NOT NULL,
+    user_id         bigint                    DEFAULT NULL,
+    numeric_value   double precision NOT NULL,
+    source_id       bigint                    DEFAULT NULL,
+    last_update     timestamp        NULL     DEFAULT NULL,
+    description     text,
+    excluded        smallint                  DEFAULT NULL,
+    share_type_id   smallint                  DEFAULT NULL,
+    protect_id      bigint           NOT NULL DEFAULT '1'
+);
+
+COMMENT ON TABLE user_value_big is 'the user specific changes of numeric values related to more than 16 phrases';
+COMMENT ON COLUMN user_value_big.group_id is 'temp field to increase speed created by the value term links';
+COMMENT ON COLUMN user_value_big.user_id is 'the owner / creator of the value';
+COMMENT ON COLUMN user_value_big.last_update is 'for fast recalculation';
+COMMENT ON COLUMN user_value_big.description is 'temp field used during dev phase for easy value to trm assigns';
+COMMENT ON COLUMN user_value_big.excluded is 'the default exclude setting for most users';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for text values where the text might be long and where the text is expected to be never user in a search
+--
+
+CREATE TABLE IF NOT EXISTS value_text
+(
+    group_id        char(112) PRIMARY KEY,
+    text_value      text NOT NULL,
+    user_id         bigint                    DEFAULT NULL,
+    source_id       bigint                    DEFAULT NULL,
+    description     text,
+    excluded        smallint                  DEFAULT NULL,
+    last_update     timestamp        NULL     DEFAULT NULL,
+    share_type_id   smallint                  DEFAULT NULL,
+    protect_id      bigint           NOT NULL DEFAULT '1'
+);
+
+COMMENT ON TABLE value_text is 'for the most often used text values';
+COMMENT ON COLUMN value_text.group_id is 'the prime index to find the values';
+COMMENT ON COLUMN value_text.user_id is 'the owner / creator of the value';
+COMMENT ON COLUMN value_text.last_update is 'for fast recalculation';
+COMMENT ON COLUMN value_text.description is 'temp field used during dev phase for easy value to trm assigns';
+COMMENT ON COLUMN value_text.excluded is 'the default exclude setting for most users';
+
+--
+-- Table structure to store the user specific changes of text values where the text might be long and where the text is expected to be never user in a search
+--
+
+CREATE TABLE IF NOT EXISTS user_value_text
+(
+    group_id        char(112) NOT NULL,
+    user_id         bigint                    DEFAULT NULL,
+    text_value      text NOT NULL,
+    source_id       bigint                    DEFAULT NULL,
+    description     text,
+    excluded        smallint                  DEFAULT NULL,
+    last_update     timestamp        NULL     DEFAULT NULL,
+    share_type_id   smallint                  DEFAULT NULL,
+    protect_id      bigint           NOT NULL DEFAULT '1'
+);
+
+COMMENT ON TABLE user_value_text is 'to store the user specific changes of the most often used text values';
+COMMENT ON COLUMN user_value_text.group_id is 'the prime index to find the values';
+COMMENT ON COLUMN user_value_text.user_id is 'the owner / creator of the value';
+COMMENT ON COLUMN user_value_text.last_update is 'for fast recalculation';
+COMMENT ON COLUMN user_value_text.description is 'temp field used during dev phase for easy value to trm assigns';
+COMMENT ON COLUMN user_value_text.excluded is 'the default exclude setting for most users';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for time values where the time is expected to be never user in a search
+--
+
+CREATE TABLE IF NOT EXISTS value_time
+(
+    group_id        char(112) PRIMARY KEY,
+    time_value      timestamp NOT NULL,
+    user_id         bigint                    DEFAULT NULL,
+    source_id       bigint                    DEFAULT NULL,
+    description     text,
+    excluded        smallint                  DEFAULT NULL,
+    last_update     timestamp        NULL     DEFAULT NULL,
+    share_type_id   smallint                  DEFAULT NULL,
+    protect_id      bigint           NOT NULL DEFAULT '1'
+);
+
+COMMENT ON TABLE value_time is 'for the most often used time values';
+COMMENT ON COLUMN value_time.group_id is 'the prime index to find the values';
+COMMENT ON COLUMN value_time.user_id is 'the owner / creator of the value';
+COMMENT ON COLUMN value_time.last_update is 'for fast recalculation';
+COMMENT ON COLUMN value_time.description is 'temp field used during dev phase for easy value to trm assigns';
+COMMENT ON COLUMN value_time.excluded is 'the default exclude setting for most users';
+
+--
+-- Table structure to store the user specific changes of time values where the time is expected to be never user in a search
+--
+
+CREATE TABLE IF NOT EXISTS user_value_time
+(
+    group_id        char(112) NOT NULL,
+    user_id         bigint                    DEFAULT NULL,
+    time_value      timestamp NOT NULL,
+    source_id       bigint                    DEFAULT NULL,
+    description     text,
+    excluded        smallint                  DEFAULT NULL,
+    last_update     timestamp        NULL     DEFAULT NULL,
+    share_type_id   smallint                  DEFAULT NULL,
+    protect_id      bigint           NOT NULL DEFAULT '1'
+);
+
+COMMENT ON TABLE user_value_time is 'to store the user specific changes of the most often used time values';
+COMMENT ON COLUMN user_value_time.group_id is 'the prime index to find the values';
+COMMENT ON COLUMN user_value_time.user_id is 'the owner / creator of the value';
+COMMENT ON COLUMN user_value_time.last_update is 'for fast recalculation';
+COMMENT ON COLUMN user_value_time.description is 'temp field used during dev phase for easy value to trm assigns';
+COMMENT ON COLUMN user_value_time.excluded is 'the default exclude setting for most users';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for geo location values
+--
+
+CREATE TABLE IF NOT EXISTS value_geo
+(
+    group_id        char(112) PRIMARY KEY,
+    geo_value       point NOT NULL,
+    user_id         bigint                    DEFAULT NULL,
+    source_id       bigint                    DEFAULT NULL,
+    description     text,
+    excluded        smallint                  DEFAULT NULL,
+    last_update     timestamp        NULL     DEFAULT NULL,
+    share_type_id   smallint                  DEFAULT NULL,
+    protect_id      bigint           NOT NULL DEFAULT '1'
+);
+
+COMMENT ON TABLE value_geo is 'for the most often used geo location values';
+COMMENT ON COLUMN value_geo.group_id is 'the prime index to find the values';
+COMMENT ON COLUMN value_geo.user_id is 'the owner / creator of the value';
+COMMENT ON COLUMN value_geo.last_update is 'for fast recalculation';
+COMMENT ON COLUMN value_geo.description is 'temp field used during dev phase for easy value to trm assigns';
+COMMENT ON COLUMN value_geo.excluded is 'the default exclude setting for most users';
+
+--
+-- Table structure to store the user specific changes of geo location values
+--
+
+CREATE TABLE IF NOT EXISTS user_value_geo
+(
+    group_id        char(112) NOT NULL,
+    user_id         bigint                    DEFAULT NULL,
+    geo_value       point NOT NULL,
+    source_id       bigint                    DEFAULT NULL,
+    description     text,
+    excluded        smallint                  DEFAULT NULL,
+    last_update     timestamp        NULL     DEFAULT NULL,
+    share_type_id   smallint                  DEFAULT NULL,
+    protect_id      bigint           NOT NULL DEFAULT '1'
+);
+
+COMMENT ON TABLE user_value_geo is 'to store the user specific changes of the most often used geo location values';
+COMMENT ON COLUMN user_value_geo.group_id is 'the prime index to find the values';
+COMMENT ON COLUMN user_value_geo.user_id is 'the owner / creator of the value';
+COMMENT ON COLUMN user_value_geo.last_update is 'for fast recalculation';
+COMMENT ON COLUMN user_value_geo.description is 'temp field used during dev phase for easy value to trm assigns';
+COMMENT ON COLUMN user_value_geo.excluded is 'the default exclude setting for most users';
+
+-- --------------------------------------------------------

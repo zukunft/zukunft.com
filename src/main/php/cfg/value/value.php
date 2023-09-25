@@ -1255,7 +1255,7 @@ class value extends sandbox_value
      * once the user has given an answer it saves the answer in the database and uses it for the next values
      * if the type of the value differs the user should be asked again
      */
-    function convert()
+    function convert(): string
     {
         log_debug('value->convert (' . $this->usr_value . ',u' . $this->user()->id() . ')');
         $result = $this->usr_value;

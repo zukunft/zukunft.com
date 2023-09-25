@@ -18,6 +18,37 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Table structure for the core configuration of this pod e.g. the program version or pod url
+--
+
+CREATE TABLE IF NOT EXISTS `config`
+(
+    `config_id`   int(11)                         NOT NULL,
+    `config_name` varchar(200)                    DEFAULT NULL COMMENT 'short name of the configuration entry to be shown to the admin',
+    `code_id`     varchar(100) CHARACTER SET utf8 NOT NULL,
+    `value`       varchar(100) CHARACTER SET utf8 DEFAULT NULL,
+    `description` text
+) ENGINE = InnoDB
+  DEFAULT CHARSET = latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for system log types e.g. info, warning and error
+--
+
+CREATE TABLE IF NOT EXISTS `sys_log_types`
+(
+    `sys_log_type_id` int(11)      NOT NULL,
+    `type_name`       varchar(200) NOT NULL,
+    `code_id`         varchar(50)  NOT NULL
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 1
+  DEFAULT CHARSET = utf8;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table`calc_and_cleanup_tasks`
 --
 
@@ -167,22 +198,6 @@ CREATE TABLE IF NOT EXISTS `comments`
     `comment`    text     NOT NULL
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8 COMMENT ='separate table because it is expected that only a few record';
-
--- --------------------------------------------------------
-
---
--- Table structure for table`config`
---
-
-CREATE TABLE IF NOT EXISTS `config`
-(
-    `config_id`   int(11)                         NOT NULL,
-    `config_name` varchar(100)                    DEFAULT NULL COMMENT 'short name of the configuration entry to be shown to the user',
-    `code_id`     varchar(100) CHARACTER SET utf8 NOT NULL,
-    `value`       varchar(100) CHARACTER SET utf8 DEFAULT NULL,
-    `description` text
-) ENGINE = InnoDB
-  DEFAULT CHARSET = latin1;
 
 -- --------------------------------------------------------
 
@@ -616,21 +631,6 @@ CREATE TABLE IF NOT EXISTS `sys_log_status`
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
   DEFAULT CHARSET = utf8 COMMENT ='Status of internal errors';
-
--- --------------------------------------------------------
-
---
--- Table structure for table`sys_log_types`
---
-
-CREATE TABLE IF NOT EXISTS `sys_log_types`
-(
-    `sys_log_type_id` int(11)      NOT NULL,
-    `type_name`       varchar(200) NOT NULL,
-    `code_id`         varchar(50)  NOT NULL
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8;
 
 -- --------------------------------------------------------
 

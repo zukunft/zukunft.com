@@ -15,16 +15,19 @@ ALTER DATABASE zukunft SET search_path TO public;
 CREATE TABLE IF NOT EXISTS config
 (
     config_id   BIGSERIAL PRIMARY KEY,
-    config_name varchar(100) DEFAULT NULL,
+    config_name varchar(200) DEFAULT NULL,
     code_id     varchar(100) NOT NULL,
     value       varchar(100) DEFAULT NULL,
     description text
 );
 
+COMMENT ON TABLE config is 'core configuration of this pod e.g. the program version or pod url';
+COMMENT ON COLUMN config.config_name is 'short name of the configuration entry to be shown to the admin';
+
 -- --------------------------------------------------------
 
 --
--- Table structure for table sys_log_types
+-- Table structure for system log types e.g. info, warning and error
 --
 
 CREATE TABLE IF NOT EXISTS sys_log_types
@@ -33,6 +36,8 @@ CREATE TABLE IF NOT EXISTS sys_log_types
     type_name       varchar(200) NOT NULL,
     code_id         varchar(50)  NOT NULL
 );
+
+COMMENT ON TABLE sys_log_types is 'system log types e.g. info, warning and error';
 
 --
 -- Table structure for table sys_log_status
@@ -429,7 +434,7 @@ COMMENT ON COLUMN share_types.description is 'to explain the code action of the 
 
 CREATE TABLE IF NOT EXISTS phrase_types
 (
-    phrase_type_id   BIGSERIAL PRIMARY KEY,
+    phrase_type_id BIGSERIAL PRIMARY KEY,
     type_name      varchar(200) NOT NULL,
     description    text,
     code_id        varchar(100) DEFAULT NULL,
@@ -500,8 +505,6 @@ COMMENT ON COLUMN words.view_id is 'the default mask for this word';
 COMMENT ON COLUMN words.values is 'number of values linked to the word, which gives an indication of the importance';
 COMMENT ON COLUMN words.excluded is 'to deactivate to word and remove it from selection lists without losing related values';
 COMMENT ON COLUMN words.inactive is 'true if the word is not yet active e.g. because it is moved to the prime words with a 16 bit id';
-
--- --------------------------------------------------------
 
 --
 -- Table structure for user specific word changes
@@ -633,6 +636,7 @@ CREATE TABLE IF NOT EXISTS triples
     triple_condition_id      bigint            DEFAULT NULL,
     triple_condition_type_id bigint            DEFAULT NULL,
     phrase_type_id           bigint            DEFAULT NULL,
+    view_id                  bigint            DEFAULT NULL,
     values                   bigint            DEFAULT NULL,
     excluded                 smallint          DEFAULT NULL,
     share_type_id            smallint          DEFAULT NULL,
@@ -653,13 +657,15 @@ COMMENT ON COLUMN triples.description is 'as for all other named objects an expl
 
 CREATE TABLE IF NOT EXISTS user_triples
 (
-    triple_id   BIGSERIAL PRIMARY KEY,
+    triple_id       BIGSERIAL PRIMARY KEY,
     user_id         bigint            DEFAULT NULL,
+    language_id     bigint   NOT NULL DEFAULT 1,
     triple_name     varchar(200)      DEFAULT NULL,
     name_given      varchar(200)      DEFAULT NULL,
     name_generated  varchar(200)      DEFAULT NULL,
     description     text,
     phrase_type_id  bigint            DEFAULT NULL,
+    view_id         bigint            DEFAULT NULL,
     values          bigint            DEFAULT NULL,
     excluded        smallint          DEFAULT NULL,
     share_type_id   smallint          DEFAULT NULL,
@@ -689,22 +695,22 @@ CREATE TABLE IF NOT EXISTS phrase_tables
 -- Table structure for phrase group names
 --
 
-CREATE TABLE IF NOT EXISTS "group"
+CREATE TABLE IF NOT EXISTS groups
 (
     group_id    char(112) PRIMARY KEY,
     group_name  varchar(1000) DEFAULT NULL,
     description varchar(4000) DEFAULT NULL
 );
 
-COMMENT ON TABLE "group" is 'to add a user given name using a 512 bit group id index for up to 16 16 bit phrase ids including the order';
-COMMENT ON COLUMN "group".group_name is 'the name given by a user to display the group (does not need to be unique))';
-COMMENT ON COLUMN "group".description is 'the description of the group given by a user';
+COMMENT ON TABLE groups is 'to add a user given name using a 512 bit group id index for up to 16 16 bit phrase ids including the order';
+COMMENT ON COLUMN groups.group_name is 'the name given by a user to display the group (does not need to be unique))';
+COMMENT ON COLUMN groups.description is 'the description of the group given by a user';
 
 --
 -- Table structure for saving a user specific group name
 --
 
-CREATE TABLE IF NOT EXISTS user_group
+CREATE TABLE IF NOT EXISTS user_groups
 (
     group_id    char(112) PRIMARY KEY,
     user_id     bigint NOT NULL,
@@ -712,9 +718,9 @@ CREATE TABLE IF NOT EXISTS user_group
     description varchar(4000) DEFAULT NULL
 );
 
-COMMENT ON TABLE user_group is 'to link the user specific name to the standard group';
-COMMENT ON COLUMN user_group.group_name is 'the user specific group name which can contain the phrase names in a different order';
-COMMENT ON COLUMN user_group.description is 'the user specific description for mouse over helps';
+COMMENT ON TABLE user_groups is 'to link the user specific name to the standard group';
+COMMENT ON COLUMN user_groups.group_name is 'the user specific group name which can contain the phrase names in a different order';
+COMMENT ON COLUMN user_groups.description is 'the user specific description for mouse over helps';
 
 --
 -- Table structure for phrase group names of up to four prime phrases
@@ -798,9 +804,9 @@ COMMENT ON TABLE group_link is 'link phrases to a phrase group for database base
 CREATE TABLE IF NOT EXISTS user_group_link
 (
     group_id  char(112) NOT NULL,
-    phrase_id bigint NOT NULL,
-    user_id   bigint   DEFAULT NULL,
-    excluded  smallint DEFAULT NULL
+    phrase_id bigint    NOT NULL,
+    user_id   bigint    DEFAULT NULL,
+    excluded  smallint  DEFAULT NULL
 );
 
 COMMENT ON TABLE user_group_link is 'to ex- or include user specific link to the standard group';
@@ -811,7 +817,7 @@ COMMENT ON TABLE user_group_link is 'to ex- or include user specific link to the
 
 CREATE TABLE IF NOT EXISTS group_prime_link
 (
-    group_id  BIGSERIAL PRIMARY KEY,
+    group_id  BIGSERIAL,
     phrase_id bigint NOT NULL
 );
 
@@ -821,15 +827,15 @@ COMMENT ON TABLE group_prime_link is 'link phrases to a short phrase group for d
 -- Table structure for user specific links of up to four prime phrases per group
 --
 
-CREATE TABLE IF NOT EXISTS user_group_link_prime
+CREATE TABLE IF NOT EXISTS user_group_prime_link
 (
-    group_id  BIGSERIAL PRIMARY KEY,
-    phrase_id bigint NOT NULL,
-    user_id   bigint   DEFAULT NULL,
-    excluded  smallint DEFAULT NULL
+    group_id  BIGSERIAL,
+    phrase_id bigint    NOT NULL,
+    user_id   bigint    DEFAULT NULL,
+    excluded  smallint  DEFAULT NULL
 );
 
-COMMENT ON TABLE user_group_link_prime is 'user specific link to groups with up to four prime phrase';
+COMMENT ON TABLE user_group_prime_link is 'user specific link to groups with up to four prime phrase';
 
 --
 -- Table structure to link up more than 16 phrases to a group
@@ -837,7 +843,7 @@ COMMENT ON TABLE user_group_link_prime is 'user specific link to groups with up 
 
 CREATE TABLE IF NOT EXISTS group_big_link
 (
-    group_id    text PRIMARY KEY,
+    group_id  text,
     phrase_id bigint NOT NULL
 );
 
@@ -847,15 +853,15 @@ COMMENT ON TABLE group_big_link is 'link phrases to a long phrase group for data
 -- Table structure for user specific links for more than 16 phrases per group
 --
 
-CREATE TABLE IF NOT EXISTS user_group_link_big
+CREATE TABLE IF NOT EXISTS user_group_big_link
 (
-    group_id  text PRIMARY KEY,
-    phrase_id bigint NOT NULL,
+    group_id  text,
+    phrase_id bigint   NOT NULL,
     user_id   bigint   DEFAULT NULL,
     excluded  smallint DEFAULT NULL
 );
 
-COMMENT ON TABLE user_group_link_big is 'to ex- or include user specific link to the standard group';
+COMMENT ON TABLE user_group_big_link is 'to ex- or include user specific link to the standard group';
 
 -- --------------------------------------------------------
 
@@ -1019,7 +1025,7 @@ COMMENT ON COLUMN value_standard.group_id is 'the prime index to find the value'
 -- Table structure for values
 --
 
-CREATE TABLE IF NOT EXISTS value
+CREATE TABLE IF NOT EXISTS values
 (
     group_id        char(112) PRIMARY KEY,
     numeric_value   double precision NOT NULL,
@@ -1032,12 +1038,31 @@ CREATE TABLE IF NOT EXISTS value
     protect_id      bigint           NOT NULL DEFAULT '1'
 );
 
-COMMENT ON TABLE value is 'for numeric values related to up to 16 phrases';
-COMMENT ON COLUMN value.group_id is 'the prime index to find the values';
-COMMENT ON COLUMN value.user_id is 'the owner / creator of the value';
-COMMENT ON COLUMN value.last_update is 'for fast recalculation';
-COMMENT ON COLUMN value.description is 'temp field used during dev phase for easy value to trm assigns';
-COMMENT ON COLUMN value.excluded is 'the default exclude setting for most users';
+COMMENT ON TABLE values is 'for numeric values related to up to 16 phrases';
+COMMENT ON COLUMN values.group_id is 'the prime index to find the values';
+COMMENT ON COLUMN values.user_id is 'the owner / creator of the value';
+COMMENT ON COLUMN values.last_update is 'for fast recalculation';
+COMMENT ON COLUMN values.description is 'temp field used during dev phase for easy value to trm assigns';
+COMMENT ON COLUMN values.excluded is 'the default exclude setting for most users';
+
+--
+-- Table structure for table user_values
+--
+
+CREATE TABLE IF NOT EXISTS user_values
+(
+    group_id      char(112) NOT NULL,
+    user_id       bigint    NOT NULL,
+    numeric_value double precision DEFAULT NULL,
+    source_id     bigint           DEFAULT NULL,
+    excluded      smallint         DEFAULT NULL,
+    last_update   timestamp NULL   DEFAULT NULL,
+    share_type_id bigint           DEFAULT NULL,
+    protect_id    bigint           DEFAULT NULL
+);
+
+COMMENT ON TABLE user_values is 'for quick access to the user specific values';
+COMMENT ON COLUMN user_values.last_update is 'for fast calculation of the updates';
 
 -- --------------------------------------------------------
 
@@ -1065,15 +1090,13 @@ COMMENT ON COLUMN value_prime.last_update is 'for fast recalculation';
 COMMENT ON COLUMN value_prime.description is 'temp field used during dev phase for easy value to trm assigns';
 COMMENT ON COLUMN value_prime.excluded is 'the default exclude setting for most users';
 
--- --------------------------------------------------------
-
 --
--- Table structure for values related to more than 16 phrases
+-- Table structure to store the user specific changes for the most often requested values related up to four prime phrase
 --
 
-CREATE TABLE IF NOT EXISTS value_big
+CREATE TABLE IF NOT EXISTS user_value_prime
 (
-    group_id        TEXT PRIMARY KEY,
+    group_id        BIGSERIAL NOT NULL,
     user_id         bigint                    DEFAULT NULL,
     numeric_value   double precision NOT NULL,
     source_id       bigint                    DEFAULT NULL,
@@ -1084,12 +1107,62 @@ CREATE TABLE IF NOT EXISTS value_big
     protect_id      bigint           NOT NULL DEFAULT '1'
 );
 
-COMMENT ON TABLE value is 'for numeric values related to more than 16 phrases';
+COMMENT ON TABLE user_value_prime is 'the user specific changes of the most often used values';
+COMMENT ON COLUMN user_value_prime.group_id is 'temp field to increase speed created by the value term links';
+COMMENT ON COLUMN user_value_prime.user_id is 'the owner / creator of the value';
+COMMENT ON COLUMN user_value_prime.last_update is 'for fast recalculation';
+COMMENT ON COLUMN user_value_prime.description is 'temp field used during dev phase for easy value to trm assigns';
+COMMENT ON COLUMN user_value_prime.excluded is 'the default exclude setting for most users';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for values related to more than 16 phrases
+--
+
+CREATE TABLE IF NOT EXISTS value_big
+(
+    group_id        TEXT NOT NULL,
+    user_id         bigint                    DEFAULT NULL,
+    numeric_value   double precision NOT NULL,
+    source_id       bigint                    DEFAULT NULL,
+    last_update     timestamp        NULL     DEFAULT NULL,
+    description     text,
+    excluded        smallint                  DEFAULT NULL,
+    share_type_id   smallint                  DEFAULT NULL,
+    protect_id      bigint           NOT NULL DEFAULT '1'
+);
+
+COMMENT ON TABLE value_big is 'for numeric values related to more than 16 phrases';
 COMMENT ON COLUMN value_big.group_id is 'temp field to increase speed created by the value term links';
 COMMENT ON COLUMN value_big.user_id is 'the owner / creator of the value';
 COMMENT ON COLUMN value_big.last_update is 'for fast recalculation';
 COMMENT ON COLUMN value_big.description is 'temp field used during dev phase for easy value to trm assigns';
 COMMENT ON COLUMN value_big.excluded is 'the default exclude setting for most users';
+
+--
+-- Table structure to store the user specific changes of values related to more than 16 phrases
+--
+
+CREATE TABLE IF NOT EXISTS user_value_big
+(
+    group_id        TEXT NOT NULL,
+    user_id         bigint                    DEFAULT NULL,
+    numeric_value   double precision NOT NULL,
+    source_id       bigint                    DEFAULT NULL,
+    last_update     timestamp        NULL     DEFAULT NULL,
+    description     text,
+    excluded        smallint                  DEFAULT NULL,
+    share_type_id   smallint                  DEFAULT NULL,
+    protect_id      bigint           NOT NULL DEFAULT '1'
+);
+
+COMMENT ON TABLE user_value_big is 'the user specific changes of numeric values related to more than 16 phrases';
+COMMENT ON COLUMN user_value_big.group_id is 'temp field to increase speed created by the value term links';
+COMMENT ON COLUMN user_value_big.user_id is 'the owner / creator of the value';
+COMMENT ON COLUMN user_value_big.last_update is 'for fast recalculation';
+COMMENT ON COLUMN user_value_big.description is 'temp field used during dev phase for easy value to trm assigns';
+COMMENT ON COLUMN user_value_big.excluded is 'the default exclude setting for most users';
 
 -- --------------------------------------------------------
 
@@ -1117,6 +1190,30 @@ COMMENT ON COLUMN value_text.last_update is 'for fast recalculation';
 COMMENT ON COLUMN value_text.description is 'temp field used during dev phase for easy value to trm assigns';
 COMMENT ON COLUMN value_text.excluded is 'the default exclude setting for most users';
 
+--
+-- Table structure to store the user specific changes of text values where the text might be long and where the text is expected to be never user in a search
+--
+
+CREATE TABLE IF NOT EXISTS user_value_text
+(
+    group_id        char(112) NOT NULL,
+    user_id         bigint                    DEFAULT NULL,
+    text_value      text NOT NULL,
+    source_id       bigint                    DEFAULT NULL,
+    description     text,
+    excluded        smallint                  DEFAULT NULL,
+    last_update     timestamp        NULL     DEFAULT NULL,
+    share_type_id   smallint                  DEFAULT NULL,
+    protect_id      bigint           NOT NULL DEFAULT '1'
+);
+
+COMMENT ON TABLE user_value_text is 'to store the user specific changes of the most often used text values';
+COMMENT ON COLUMN user_value_text.group_id is 'the prime index to find the values';
+COMMENT ON COLUMN user_value_text.user_id is 'the owner / creator of the value';
+COMMENT ON COLUMN user_value_text.last_update is 'for fast recalculation';
+COMMENT ON COLUMN user_value_text.description is 'temp field used during dev phase for easy value to trm assigns';
+COMMENT ON COLUMN user_value_text.excluded is 'the default exclude setting for most users';
+
 -- --------------------------------------------------------
 
 --
@@ -1142,6 +1239,30 @@ COMMENT ON COLUMN value_time.user_id is 'the owner / creator of the value';
 COMMENT ON COLUMN value_time.last_update is 'for fast recalculation';
 COMMENT ON COLUMN value_time.description is 'temp field used during dev phase for easy value to trm assigns';
 COMMENT ON COLUMN value_time.excluded is 'the default exclude setting for most users';
+
+--
+-- Table structure to store the user specific changes of time values where the time is expected to be never user in a search
+--
+
+CREATE TABLE IF NOT EXISTS user_value_time
+(
+    group_id        char(112) NOT NULL,
+    user_id         bigint                    DEFAULT NULL,
+    time_value      timestamp NOT NULL,
+    source_id       bigint                    DEFAULT NULL,
+    description     text,
+    excluded        smallint                  DEFAULT NULL,
+    last_update     timestamp        NULL     DEFAULT NULL,
+    share_type_id   smallint                  DEFAULT NULL,
+    protect_id      bigint           NOT NULL DEFAULT '1'
+);
+
+COMMENT ON TABLE user_value_time is 'to store the user specific changes of the most often used time values';
+COMMENT ON COLUMN user_value_time.group_id is 'the prime index to find the values';
+COMMENT ON COLUMN user_value_time.user_id is 'the owner / creator of the value';
+COMMENT ON COLUMN user_value_time.last_update is 'for fast recalculation';
+COMMENT ON COLUMN user_value_time.description is 'temp field used during dev phase for easy value to trm assigns';
+COMMENT ON COLUMN user_value_time.excluded is 'the default exclude setting for most users';
 
 -- --------------------------------------------------------
 
@@ -1169,53 +1290,85 @@ COMMENT ON COLUMN value_geo.last_update is 'for fast recalculation';
 COMMENT ON COLUMN value_geo.description is 'temp field used during dev phase for easy value to trm assigns';
 COMMENT ON COLUMN value_geo.excluded is 'the default exclude setting for most users';
 
+--
+-- Table structure to store the user specific changes of geo location values
+--
+
+CREATE TABLE IF NOT EXISTS user_value_geo
+(
+    group_id        char(112) NOT NULL,
+    user_id         bigint                    DEFAULT NULL,
+    geo_value       point NOT NULL,
+    source_id       bigint                    DEFAULT NULL,
+    description     text,
+    excluded        smallint                  DEFAULT NULL,
+    last_update     timestamp        NULL     DEFAULT NULL,
+    share_type_id   smallint                  DEFAULT NULL,
+    protect_id      bigint           NOT NULL DEFAULT '1'
+);
+
+COMMENT ON TABLE user_value_geo is 'to store the user specific changes of the most often used geo location values';
+COMMENT ON COLUMN user_value_geo.group_id is 'the prime index to find the values';
+COMMENT ON COLUMN user_value_geo.user_id is 'the owner / creator of the value';
+COMMENT ON COLUMN user_value_geo.last_update is 'for fast recalculation';
+COMMENT ON COLUMN user_value_geo.description is 'temp field used during dev phase for easy value to trm assigns';
+COMMENT ON COLUMN user_value_geo.excluded is 'the default exclude setting for most users';
+
 -- --------------------------------------------------------
 
 --
--- Table structure for table formula_link_types
+-- Table structure for table value_time_series
 --
 
-CREATE TABLE IF NOT EXISTS formula_link_types
+CREATE TABLE IF NOT EXISTS value_time_series
 (
-    formula_link_type_id BIGSERIAL PRIMARY KEY,
-    type_name            varchar(200) NOT NULL,
-    code_id              varchar(100)          DEFAULT NULL,
-    formula_id           bigint       NOT NULL DEFAULT 1,
-    phrase_type_id         bigint       NOT NULL,
-    link_type_id         bigint       NOT NULL,
-    description          text
+    value_time_series_id BIGSERIAL PRIMARY KEY,
+    user_id              bigint    NOT NULL,
+    source_id            bigint         DEFAULT NULL,
+    phrase_group_id      bigint    NOT NULL,
+    excluded             smallint       DEFAULT NULL,
+    share_type_id        bigint         DEFAULT NULL,
+    protect_id           bigint    NOT NULL,
+    last_update          timestamp NULL DEFAULT NULL
 );
 
+COMMENT ON TABLE value_time_series is 'common parameters for a list of intra-day values';
+
+-- --------------------------------------------------------
+
 --
--- Table structure for table formula_links
+-- Table structure for table value_time_series
 --
 
-CREATE TABLE IF NOT EXISTS formula_links
+CREATE TABLE IF NOT EXISTS user_value_time_series
 (
-    formula_link_id BIGSERIAL PRIMARY KEY,
-    user_id         bigint   DEFAULT NULL,
-    formula_id      bigint NOT NULL,
-    phrase_id       bigint NOT NULL,
-    link_type_id    bigint   DEFAULT NULL,
-    order_nbr       bigint DEFAULT NULL,
-    excluded        smallint DEFAULT NULL
+    value_time_series_id BIGSERIAL NOT NULL,
+    user_id              bigint    NOT NULL,
+    source_id            bigint         DEFAULT NULL,
+    excluded             smallint       DEFAULT NULL,
+    share_type_id        bigint         DEFAULT NULL,
+    protect_id           bigint    NOT NULL,
+    last_update          timestamp NULL DEFAULT NULL
 );
 
-COMMENT ON TABLE formula_links is 'if the term pattern of a value matches this term pattern';
+COMMENT ON TABLE user_value_time_series is 'common parameters for a user specific list of intra-day values';
+
+-- --------------------------------------------------------
 
 --
--- Table structure for table user_formula_links
+-- Table structure for table value_ts_data
 --
 
-CREATE TABLE IF NOT EXISTS user_formula_links
+CREATE TABLE IF NOT EXISTS value_ts_data
 (
-    formula_link_id BIGSERIAL PRIMARY KEY,
-    user_id         bigint NOT NULL,
-    link_type_id    bigint   DEFAULT NULL,
-    excluded        smallint DEFAULT NULL
+    value_time_series_id BIGSERIAL PRIMARY KEY,
+    val_time             timestamp NOT NULL,
+    number               float     NOT NULL
 );
 
-COMMENT ON TABLE user_formula_links is 'if the term pattern of a value matches this term pattern ';
+COMMENT ON TABLE value_ts_data is 'for efficient saving of daily or intra-day values';
+
+-- --------------------------------------------------------
 
 --
 -- Table structure for table formula_element_types
@@ -1308,6 +1461,52 @@ CREATE TABLE IF NOT EXISTS user_formulas
     excluded          smallint       DEFAULT NULL
 );
 
+--
+-- Table structure for table formula_link_types
+--
+
+CREATE TABLE IF NOT EXISTS formula_link_types
+(
+    formula_link_type_id BIGSERIAL PRIMARY KEY,
+    type_name            varchar(200) NOT NULL,
+    code_id              varchar(100)          DEFAULT NULL,
+    formula_id           bigint       NOT NULL DEFAULT 1,
+    phrase_type_id         bigint       NOT NULL,
+    link_type_id         bigint       NOT NULL,
+    description          text
+);
+
+--
+-- Table structure for table formula_links
+--
+
+CREATE TABLE IF NOT EXISTS formula_links
+(
+    formula_link_id BIGSERIAL PRIMARY KEY,
+    user_id         bigint   DEFAULT NULL,
+    formula_id      bigint NOT NULL,
+    phrase_id       bigint NOT NULL,
+    link_type_id    bigint   DEFAULT NULL,
+    order_nbr       bigint DEFAULT NULL,
+    excluded        smallint DEFAULT NULL
+);
+
+COMMENT ON TABLE formula_links is 'if the term pattern of a value matches this term pattern';
+
+--
+-- Table structure for table user_formula_links
+--
+
+CREATE TABLE IF NOT EXISTS user_formula_links
+(
+    formula_link_id BIGSERIAL NOT NULL,
+    user_id         bigint    NOT NULL,
+    link_type_id    bigint    DEFAULT NULL,
+    excluded        smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE user_formula_links is 'if the term pattern of a value matches this term pattern ';
+
 -- --------------------------------------------------------
 
 --
@@ -1327,7 +1526,7 @@ COMMENT ON COLUMN result_standard.group_id is 'the prime index to find the resul
 -- Table structure for results with more information to trace the calculation
 --
 
-CREATE TABLE IF NOT EXISTS result
+CREATE TABLE IF NOT EXISTS results
 (
     group_id        char(112) PRIMARY KEY,
     result          double precision,
@@ -1337,12 +1536,12 @@ CREATE TABLE IF NOT EXISTS result
     last_update     timestamp NULL DEFAULT NULL
 );
 
-COMMENT ON TABLE result is 'table to cache the formula results with the information to trace the result';
-COMMENT ON COLUMN result.group_id is 'the prime index to find the results';
-COMMENT ON COLUMN result.formula_id is 'the id of the formula which has been used to calculate the result number';
-COMMENT ON COLUMN result.source_group_id is 'the sorted phrase list used to calculate the result number';
-COMMENT ON COLUMN result.user_id is 'the id of the user who has requested the calculation';
-COMMENT ON COLUMN result.last_update is 'time of last value update mainly used for recovery in case of inconsistencies, empty in case this value is dirty and needs to be updated';
+COMMENT ON TABLE results is 'table to cache the formula results with the information to trace the result';
+COMMENT ON COLUMN results.group_id is 'the prime index to find the results';
+COMMENT ON COLUMN results.formula_id is 'the id of the formula which has been used to calculate the result number';
+COMMENT ON COLUMN results.source_group_id is 'the sorted phrase list used to calculate the result number';
+COMMENT ON COLUMN results.user_id is 'the id of the user who has requested the calculation';
+COMMENT ON COLUMN results.last_update is 'time of last value update mainly used for recovery in case of inconsistencies, empty in case this value is dirty and needs to be updated';
 
 --
 -- Table structure for the most often requested results related up to four prime phrase
@@ -1569,12 +1768,12 @@ COMMENT ON COLUMN component_links.position_type is '1=side, 2 =below';
 CREATE TABLE IF NOT EXISTS user_component_links
 (
     component_link_id bigint   NOT NULL,
-    user_id                bigint   NOT NULL,
-    order_nbr              bigint            DEFAULT NULL,
-    position_type          bigint            DEFAULT NULL,
-    excluded               smallint          DEFAULT NULL,
-    share_type_id          smallint          DEFAULT NULL,
-    protect_id             smallint NOT NULL DEFAULT '1'
+    user_id           bigint   NOT NULL,
+    order_nbr         bigint            DEFAULT NULL,
+    position_type     bigint            DEFAULT NULL,
+    excluded          smallint          DEFAULT NULL,
+    share_type_id     smallint          DEFAULT NULL,
+    protect_id        smallint NOT NULL DEFAULT '1'
 );
 
 -- --------------------------------------------------------
@@ -1627,89 +1826,6 @@ CREATE TABLE IF NOT EXISTS user_view_term_links
     protect_id        smallint NOT NULL DEFAULT NULL
 );
 
-
-
-
-
--- --------------------------------------------------------
-
---
--- Table structure for table value_time_series
---
-
-CREATE TABLE IF NOT EXISTS value_time_series
-(
-    value_time_series_id BIGSERIAL PRIMARY KEY,
-    user_id              bigint    NOT NULL,
-    source_id            bigint         DEFAULT NULL,
-    phrase_group_id      bigint    NOT NULL,
-    excluded             smallint       DEFAULT NULL,
-    share_type_id        bigint         DEFAULT NULL,
-    protect_id           bigint    NOT NULL,
-    last_update          timestamp NULL DEFAULT NULL
-);
-
-COMMENT ON TABLE value_time_series is 'common parameters for a list of intra-day values';
-
--- --------------------------------------------------------
-
---
--- Table structure for table value_time_series
---
-
-CREATE TABLE IF NOT EXISTS user_value_time_series
-(
-    value_time_series_id BIGSERIAL NOT NULL,
-    user_id              bigint    NOT NULL,
-    source_id            bigint         DEFAULT NULL,
-    excluded             smallint       DEFAULT NULL,
-    share_type_id        bigint         DEFAULT NULL,
-    protect_id           bigint    NOT NULL,
-    last_update          timestamp NULL DEFAULT NULL
-);
-
-COMMENT ON TABLE user_value_time_series is 'common parameters for a user specific list of intra-day values';
-
--- --------------------------------------------------------
-
---
--- Table structure for table value_ts_data
---
-
-CREATE TABLE IF NOT EXISTS value_ts_data
-(
-    value_time_series_id BIGSERIAL PRIMARY KEY,
-    val_time             timestamp NOT NULL,
-    number               float     NOT NULL
-);
-
-COMMENT ON TABLE value_ts_data is 'for efficient saving of daily or intra-day values';
-
--- --------------------------------------------------------
-
---
--- Table structure for table user_values
---
-
-CREATE TABLE IF NOT EXISTS user_values
-(
-    value_id      bigint    NOT NULL,
-    user_id       bigint    NOT NULL,
-    numeric_value double precision DEFAULT NULL,
-    source_id     bigint           DEFAULT NULL,
-    excluded      smallint         DEFAULT NULL,
-    share_type_id bigint           DEFAULT NULL,
-    protect_id    bigint           DEFAULT NULL,
-    last_update   timestamp NULL   DEFAULT NULL
-);
-
-COMMENT ON TABLE user_values is 'for quick access to the user specific values';
-COMMENT ON COLUMN user_values.last_update is 'for fast calculation of the updates';
-
-
-
-
-
 -- --------------------------------------------------------
 
 --
@@ -1738,42 +1854,6 @@ COMMENT ON COLUMN value_formula_links.condition_formula_id is 'if true or 1  to 
 -- --------------------------------------------------------
 
 --
--- Table structure for table value_phrase_links
---
-
-CREATE TABLE IF NOT EXISTS value_phrase_links
-(
-    value_phrase_link_id BIGSERIAL PRIMARY KEY,
-    user_id              bigint           DEFAULT NULL,
-    value_id             bigint NOT NULL,
-    phrase_id            bigint NOT NULL,
-    weight               double precision DEFAULT NULL,
-    link_type_id         bigint           DEFAULT NULL,
-    condition_formula_id bigint           DEFAULT NULL
-);
-
-COMMENT ON TABLE value_phrase_links is 'link single word or triple to a value only for fast search';
-COMMENT ON COLUMN value_phrase_links.condition_formula_id is 'formula_id of a formula with a boolean result; the term is only added if formula result is true';
-
--- --------------------------------------------------------
-
---
--- Table structure for table value_relations
---
-
-CREATE TABLE IF NOT EXISTS value_relations
-(
-    value_link_id BIGSERIAL PRIMARY KEY,
-    from_value    bigint NOT NULL,
-    to_value      bigint NOT NULL,
-    link_type_id  bigint NOT NULL
-);
-
-COMMENT ON TABLE value_relations is 'to link two values directly; maybe not used';
-
--- --------------------------------------------------------
-
---
 -- Structure for view phrase_prime (phrases with an id less than 2^16 so that 4 phrase id fit in a 64 bit db key)
 --
 
@@ -1790,21 +1870,21 @@ SELECT w.word_id   AS phrase_id,
 FROM words AS w
 WHERE w.word_id < 32767 -- 2^16 / 2 - 1
 UNION
-SELECT (l.triple_id * -(1)) AS phrase_id,
-       l.user_id,
-       CASE WHEN (l.triple_name IS NULL) THEN
-            CASE WHEN (l.name_given IS NULL)
-                 THEN l.name_generated
-                 ELSE l.name_given END
-            ELSE l.triple_name END AS phrase_name,
-       l.description,
-       l.values,
-       l.phrase_type_id,
-       l.excluded,
-       l.share_type_id,
-       l.protect_id
-FROM triples AS l
-WHERE l.triple_id < 32767; -- 2^16 / 2 - 1
+SELECT (t.triple_id * -(1)) AS phrase_id,
+       t.user_id,
+       CASE WHEN (t.triple_name IS NULL) THEN
+            CASE WHEN (t.name_given IS NULL)
+                 THEN t.name_generated
+                 ELSE t.name_given END
+            ELSE t.triple_name END AS phrase_name,
+       t.description,
+       t.values,
+       t.phrase_type_id,
+       t.excluded,
+       t.share_type_id,
+       t.protect_id
+FROM triples AS t
+WHERE t.triple_id < 32767; -- 2^16 / 2 - 1
 
 --
 -- Structure for view phrases
@@ -1822,20 +1902,51 @@ SELECT w.word_id   AS phrase_id,
        w.protect_id
 FROM words AS w
 UNION
-SELECT (l.triple_id * -(1)) AS phrase_id,
-       l.user_id,
-       CASE WHEN (l.triple_name IS NULL) THEN
-            CASE WHEN (l.name_given IS NULL)
-                 THEN l.name_generated
-                 ELSE l.name_given END
-            ELSE l.triple_name END AS phrase_name,
-       l.description,
-       l.values,
-       l.phrase_type_id,
-       l.excluded,
-       l.share_type_id,
-       l.protect_id
-FROM triples AS l;
+SELECT (t.triple_id * -(1)) AS phrase_id,
+       t.user_id,
+       CASE WHEN (t.triple_name IS NULL) THEN
+            CASE WHEN (t.name_given IS NULL)
+                 THEN t.name_generated
+                 ELSE t.name_given END
+            ELSE t.triple_name END AS phrase_name,
+       t.description,
+       t.values,
+       t.phrase_type_id,
+       t.excluded,
+       t.share_type_id,
+       t.protect_id
+FROM triples AS t;
+
+--
+-- Structure for the user_phrases view
+--
+
+CREATE OR REPLACE VIEW user_prime_phrases AS
+SELECT w.word_id   AS phrase_id,
+       w.user_id,
+       w.word_name AS phrase_name,
+       w.description,
+       w.values,
+       w.excluded,
+       w.share_type_id,
+       w.protect_id
+FROM user_words AS w
+WHERE w.word_id < 32767 -- 2^16 / 2 - 1
+UNION
+SELECT (t.triple_id * -(1)) AS phrase_id,
+       t.user_id,
+       CASE WHEN (t.triple_name IS NULL) THEN
+            CASE WHEN (t.name_given IS NULL)
+                 THEN t.name_generated
+                 ELSE t.name_given END
+            ELSE t.triple_name END AS phrase_name,
+       t.description,
+       t.values,
+       t.excluded,
+       t.share_type_id,
+       t.protect_id
+FROM user_triples AS t
+WHERE t.triple_id < 32767; -- 2^16 / 2 - 1
 
 --
 -- Structure for the user_phrases view
@@ -1852,19 +1963,19 @@ SELECT w.word_id   AS phrase_id,
        w.protect_id
   FROM user_words AS w
 UNION
-SELECT (l.triple_id * -(1))                                                    AS phrase_id,
-       l.user_id,
-       CASE WHEN (l.triple_name IS NULL) THEN
-                CASE WHEN (l.name_given IS NULL)
-                     THEN l.name_generated
-                     ELSE l.name_given END
-            ELSE l.triple_name END AS phrase_name,
-       l.description,
-       l.values,
-       l.excluded,
-       l.share_type_id,
-       l.protect_id
-  FROM user_triples AS l;
+SELECT (t.triple_id * -(1)) AS phrase_id,
+       t.user_id,
+       CASE WHEN (t.triple_name IS NULL) THEN
+            CASE WHEN (t.name_given IS NULL)
+                 THEN t.name_generated
+                 ELSE t.name_given END
+            ELSE t.triple_name END AS phrase_name,
+       t.description,
+       t.values,
+       t.excluded,
+       t.share_type_id,
+       t.protect_id
+  FROM user_triples AS t;
 
 --
 -- Structure for view terms
@@ -1885,22 +1996,22 @@ SELECT ((w.word_id * 2) - 1) AS term_id,
 FROM words AS w
 WHERE w.phrase_type_id <> 10 OR w.phrase_type_id IS NULL
 UNION
-SELECT ((l.triple_id * -2) + 1)                                                  AS term_id,
-       l.user_id,
-       CASE WHEN (l.triple_name IS NULL) THEN
-                CASE WHEN (l.name_given IS NULL)
-                     THEN l.name_generated
-                     ELSE l.name_given END
-            ELSE l.triple_name END AS phrase_name,
-       l.description,
-       l.values                                                                     AS usage,
-       l.phrase_type_id,
-       l.excluded,
-       l.share_type_id,
-       l.protect_id,
+SELECT ((t.triple_id * -2) + 1)                                                  AS term_id,
+       t.user_id,
+       CASE WHEN (t.triple_name IS NULL) THEN
+                CASE WHEN (t.name_given IS NULL)
+                     THEN t.name_generated
+                     ELSE t.name_given END
+            ELSE t.triple_name END AS phrase_name,
+       t.description,
+       t.values                                                                     AS usage,
+       t.phrase_type_id,
+       t.excluded,
+       t.share_type_id,
+       t.protect_id,
        ''                    AS formula_text,
        ''                    AS resolved_text
-FROM triples AS l
+FROM triples AS t
 UNION
 SELECT (f.formula_id * 2) AS term_id,
        f.user_id,
@@ -1947,21 +2058,21 @@ SELECT ((w.word_id * 2) - 1) AS term_id,
 FROM user_words AS w
 WHERE w.phrase_type_id <> 10
 UNION
-SELECT ((l.triple_id * -2) + 1)  AS term_id,
-       l.user_id,
-       CASE WHEN (l.triple_name IS NULL) THEN
-                CASE WHEN (l.name_given IS NULL)
-                     THEN l.name_generated
-                     ELSE l.name_given END
-            ELSE l.triple_name END AS phrase_name,
-       l.description,
-       l.values                  AS usage,
-       l.excluded,
-       l.share_type_id,
-       l.protect_id,
+SELECT ((t.triple_id * -2) + 1)  AS term_id,
+       t.user_id,
+       CASE WHEN (t.triple_name IS NULL) THEN
+                CASE WHEN (t.name_given IS NULL)
+                     THEN t.name_generated
+                     ELSE t.name_given END
+            ELSE t.triple_name END AS phrase_name,
+       t.description,
+       t.values                  AS usage,
+       t.excluded,
+       t.share_type_id,
+       t.protect_id,
        ''                        AS formula_text,
        ''                        AS resolved_text
-FROM user_triples AS l
+FROM user_triples AS t
 UNION
 SELECT (f.formula_id * 2) AS term_id,
        f.user_id,
@@ -1988,40 +2099,6 @@ SELECT (v.verb_id * -2) AS term_id,
 FROM verbs AS v
 ;
 
--- --------------------------------------------------------
-
---
--- Structure for view phrase_group_phrase_links
---
-
-CREATE OR REPLACE VIEW phrase_group_phrase_links AS
-SELECT w.phrase_group_word_link_id AS phrase_group_phrase_link_id,
-       w.phrase_group_id           AS phrase_group_id,
-       w.word_id                   AS phrase_id
-FROM phrase_group_word_links AS w
-UNION
-SELECT t.phrase_group_triple_link_id AS phrase_group_phrase_link_id,
-       t.phrase_group_id             AS phrase_group_id,
-       (t.triple_id * -(1))          AS phrase_id
-FROM phrase_group_triple_links AS t;
-
--- --------------------------------------------------------
-
---
--- Structure for view user_phrase_group_phrase_links
---
-
-CREATE OR REPLACE VIEW user_phrase_group_phrase_links AS
-SELECT w.phrase_group_word_link_id AS phrase_group_phrase_link_id,
-       w.user_id                   AS user_id,
-       w.excluded                  AS excluded
-FROM user_phrase_group_word_links AS w
-UNION
-SELECT t.phrase_group_triple_link_id AS phrase_group_phrase_link_id,
-       t.user_id                     AS user_id,
-       t.excluded                    AS excluded
-FROM user_phrase_group_triple_links AS t;
-
 --
 -- Structure for view change_table_fields
 --
@@ -2035,106 +2112,19 @@ FROM change_fields AS f,
      change_tables AS t
 WHERE f.table_id = t.change_table_id;
 
---
--- Indexes for dumped tables
---
+-- --------------------------------------------------------
 
 --
--- Indexes for table changes
+-- Indexes for tables
+-- remark: no index needed for preloaded tables such as phrase types
 --
-CREATE INDEX change_table_idx ON changes (change_field_id, row_id);
-CREATE INDEX change_action_idx ON changes (change_action_id);
 
---
--- Indexes for table change_fields
---
-CREATE INDEX change_field_table_idx ON change_fields (table_id);
-
---
--- Indexes for table change_links
---
-CREATE INDEX change_link_user_idx ON change_links (user_id);
-CREATE INDEX change_link_table_idx ON change_links (change_table_id);
-CREATE INDEX change_link_action_idx ON change_links (change_action_id);
+-- --------------------------------------------------------
 
 --
 -- Indexes for table config
 --
 CREATE UNIQUE INDEX config_idx ON config (code_id);
-
---
--- Indexes for table formulas
---
-CREATE UNIQUE INDEX formula_name_idx ON formulas (formula_name);
-CREATE INDEX formula_user_idx ON formulas (user_id);
-CREATE INDEX formula_type_idx ON formulas (formula_type_id);
-CREATE INDEX formula_protect_idx ON formulas (protect_id);
-
---
--- Indexes for table formula_elements
---
-CREATE INDEX formula_element_idx ON formula_elements (formula_id);
-CREATE INDEX formula_element_type_idx ON formula_elements (formula_element_type_id);
-
---
--- Indexes for table formula_links
---
-CREATE INDEX formula_link_user_idx ON formula_links (user_id);
-CREATE INDEX formula_link_idx ON formula_links (formula_id);
-CREATE INDEX formula_link_type_idx ON formula_links (link_type_id);
-
---
--- Indexes for table results
---
-CREATE UNIQUE INDEX result_idx ON results (formula_id, user_id, phrase_group_id,
-                                                         source_phrase_group_id);
-CREATE INDEX result_user_idx ON results (user_id);
-
---
--- Indexes for table phrase_groups
---
-CREATE UNIQUE INDEX phrase_group_term_idx ON phrase_groups (word_ids, triple_ids);
-
---
--- Indexes for table group_links
---
-CREATE INDEX group_link_group_idx ON group_link (group_id);
-CREATE INDEX group_link_idx ON group_link (phrase_id);
-
---
--- Indexes for table phrase_group_word_links
---
-CREATE INDEX phrase_group_word_link_group_idx ON phrase_group_word_links (phrase_group_id);
-CREATE INDEX phrase_group_word_link_idx ON phrase_group_word_links (word_id);
-
---
--- Indexes for table phrase_group_triple_links
---
-CREATE INDEX phrase_group_triple_link_group_idx ON phrase_group_triple_links (phrase_group_id);
-CREATE INDEX phrase_group_triple_link_idx ON phrase_group_triple_links (triple_id);
-
---
--- Indexes for table protection_types
---
-CREATE UNIQUE INDEX protection_type_idx ON protection_types (protection_type_id);
-
---
--- Indexes for table refs
---
-CREATE UNIQUE INDEX ref_phrase_type_idx ON refs (phrase_id, ref_type_id);
-CREATE INDEX ref_type_idx ON refs (ref_type_id);
-
---
--- Indexes for table ref_types
---
-CREATE UNIQUE INDEX ref_type_name_idx ON ref_types (type_name, code_id);
-
---
--- Indexes for table source_values
---
-CREATE INDEX source_value_value_idx ON source_values (value_id);
-CREATE INDEX source_value_source_idx ON source_values (source_id);
-CREATE INDEX source_value_user_idx ON source_values (user_id);
 
 --
 -- Indexes for table sys_log
@@ -2150,10 +2140,298 @@ CREATE INDEX sys_log_status_idx ON sys_log (sys_log_status_id);
 CREATE INDEX sys_script_time_idx ON sys_script_times (sys_script_id);
 
 --
+-- Indexes for table calc_and_cleanup_tasks
+--
+CREATE INDEX calc_and_cleanup_tasks_user_idx ON calc_and_cleanup_tasks (user_id);
+CREATE INDEX calc_and_cleanup_tasks_request_idx ON calc_and_cleanup_tasks (request_time);
+CREATE INDEX calc_and_cleanup_tasks_start_idx ON calc_and_cleanup_tasks (start_time);
+CREATE INDEX calc_and_cleanup_tasks_type_idx ON calc_and_cleanup_tasks (calc_and_cleanup_task_type_id);
+
+-- --------------------------------------------------------
+
+--
 -- Indexes for table users
 --
 CREATE UNIQUE INDEX user_name_idx ON users (user_name);
 CREATE INDEX user_type_idx ON users (user_type_id);
+
+-- --------------------------------------------------------
+
+--
+-- Indexes for table change_fields
+--
+CREATE INDEX change_field_table_idx ON change_fields (table_id);
+
+--
+-- Indexes for table changes
+--
+CREATE INDEX change_table_idx ON changes (change_field_id, row_id);
+CREATE INDEX change_action_idx ON changes (change_action_id);
+
+--
+-- Indexes for table change_links
+--
+CREATE INDEX change_link_user_idx ON change_links (user_id);
+CREATE INDEX change_link_table_idx ON change_links (change_table_id);
+CREATE INDEX change_link_action_idx ON change_links (change_action_id);
+
+-- --------------------------------------------------------
+
+--
+-- Indexes for table words
+--
+CREATE UNIQUE INDEX word_name_idx ON words (word_name);
+CREATE INDEX word_type_idx ON words (phrase_type_id);
+CREATE INDEX word_view_idx ON words (view_id);
+
+--
+-- Indexes for table user_words
+--
+ALTER TABLE user_words ADD CONSTRAINT user_words_pkey PRIMARY KEY (word_id, user_id, language_id);
+CREATE INDEX user_word_user_idx ON user_words (user_id);
+CREATE INDEX user_word_language_idx ON user_words (language_id);
+CREATE INDEX user_word_type_idx ON user_words (phrase_type_id);
+CREATE INDEX user_word_view_idx ON user_words (view_id);
+
+--
+-- Indexes for table triples
+--
+CREATE UNIQUE INDEX triple_name_idx ON triples (triple_name);
+CREATE INDEX triple_type_idx ON triples (phrase_type_id);
+CREATE INDEX triple_view_idx ON triples (view_id);
+
+--
+-- Indexes for table user_triples
+--
+CREATE UNIQUE INDEX user_triple_unique_idx ON user_triples (triple_id, user_id, language_id);
+CREATE INDEX user_triple_user_idx ON user_triples (user_id);
+CREATE INDEX user_triple_idx ON user_triples (triple_id);
+CREATE INDEX user_triple_language_idx ON user_words (language_id);
+CREATE INDEX user_triple_type_idx ON user_words (phrase_type_id);
+CREATE INDEX user_triple_view_idx ON user_words (view_id);
+
+-- --------------------------------------------------------
+
+--
+-- Indexes for table groups
+--
+CREATE UNIQUE INDEX group_name_idx ON groups (group_name);
+
+--
+-- Indexes for table user_groups
+--
+CREATE UNIQUE INDEX user_group_name_idx ON user_groups (group_name, user_id);
+CREATE INDEX user_group_idx ON user_groups (group_id);
+CREATE INDEX user_group_user_idx ON user_groups (user_id);
+
+--
+-- Indexes for table prime groups
+--
+CREATE UNIQUE INDEX group_prime_name_idx ON group_prime (group_name);
+
+--
+-- Indexes for table user_groups
+--
+CREATE UNIQUE INDEX user_group_prime_name_idx ON user_group_prime (group_name, user_id);
+CREATE INDEX user_group_prime_idx ON user_groups (group_id);
+CREATE INDEX user_group_prime_user_idx ON user_groups (user_id);
+
+--
+-- Indexes for table big groups
+--
+CREATE UNIQUE INDEX group_big_name_idx ON group_big (group_name);
+
+--
+-- Indexes for table user_groups
+--
+CREATE UNIQUE INDEX user_group_big_name_idx ON user_group_big (group_name, user_id);
+CREATE INDEX user_group_big_idx ON user_groups (group_id);
+CREATE INDEX user_group_big_user_idx ON user_groups (user_id);
+
+--
+-- Indexes for table group_links
+--
+CREATE UNIQUE INDEX group_link_idx ON group_link (group_id, phrase_id);
+CREATE INDEX group_link_phrase_idx ON group_link (phrase_id);
+
+--
+-- Indexes for table user_group_links
+--
+CREATE UNIQUE INDEX user_group_link_idx ON user_group_link (group_id, phrase_id, user_id);
+CREATE INDEX user_group_link_phrase_idx ON user_group_link (phrase_id, user_id);
+
+--
+-- Indexes for table prime group links
+--
+CREATE UNIQUE INDEX group_prime_link_idx ON group_prime_link (group_id, phrase_id);
+CREATE INDEX group_prime_link_phrase_idx ON group_prime_link (phrase_id);
+
+--
+-- Indexes for table prime user group links
+--
+CREATE UNIQUE INDEX user_group_prime_link_idx ON user_group_prime_link (group_id, phrase_id, user_id);
+CREATE INDEX user_group_prime_link_phrase_idx ON user_group_prime_link (phrase_id, user_id);
+
+--
+-- Indexes for table big group links
+--
+CREATE UNIQUE INDEX group_big_link_idx ON group_big_link (group_id, phrase_id);
+CREATE INDEX group_big_link_phrase_idx ON group_big_link (phrase_id);
+
+--
+-- Indexes for table big user group links
+--
+CREATE UNIQUE INDEX user_group_big_link_idx ON user_group_big_link (group_id, phrase_id, user_id);
+CREATE INDEX user_group_big_link_phrase_idx ON user_group_big_link (phrase_id, user_id);
+
+-- --------------------------------------------------------
+
+--
+-- Indexes for table sources
+--
+CREATE INDEX source_name_idx ON sources (source_name);
+CREATE INDEX source_type_idx ON sources (source_type_id);
+
+--
+-- Indexes for table user_sources
+--
+ALTER TABLE user_sources ADD CONSTRAINT user_source_pkey PRIMARY KEY (source_id, user_id);
+CREATE INDEX user_source_user_idx ON user_sources (user_id);
+CREATE INDEX user_source_idx ON user_sources (source_id);
+CREATE INDEX user_source_type_idx ON user_sources (source_type_id);
+
+--
+-- Indexes for table source_values
+--
+CREATE INDEX source_value_value_idx ON source_values (value_id);
+CREATE INDEX source_value_source_idx ON source_values (source_id);
+CREATE INDEX source_value_user_idx ON source_values (user_id);
+
+--
+-- Indexes for table refs
+--
+CREATE UNIQUE INDEX ref_phrase_type_idx ON refs (phrase_id, ref_type_id);
+CREATE INDEX ref_type_idx ON refs (ref_type_id);
+
+--
+-- Indexes for table user_refs
+--
+ALTER TABLE user_refs ADD CONSTRAINT user_ref_pkey PRIMARY KEY (ref_id, user_id);
+CREATE INDEX user_ref_user_idx ON user_refs (user_id);
+CREATE INDEX user_ref_idx ON user_refs (ref_id);
+
+-- --------------------------------------------------------
+
+--
+-- Indexes for table value_standard
+--
+CREATE INDEX value_standard_idx ON value_standard (group_id);
+
+--
+-- Indexes for table values
+--
+CREATE INDEX value_group_idx ON "values" (group_id);
+CREATE INDEX value_user_idx ON "values" (user_id);
+CREATE INDEX value_source_idx ON "values" (source_id);
+
+--
+-- Indexes for table user_values
+--
+ALTER TABLE user_values ADD CONSTRAINT user_value_pkey PRIMARY KEY (group_id, user_id);
+CREATE INDEX user_value_user_idx ON user_values (user_id);
+CREATE INDEX user_value_source_idx ON user_values (source_id);
+
+--
+-- Indexes for table value_prime
+--
+CREATE INDEX value_prime_group_idx ON value_prime (group_id);
+CREATE INDEX value_prime_user_idx ON value_prime (user_id);
+CREATE INDEX value_prime_source_idx ON value_prime (source_id);
+
+--
+-- Indexes for table user_value_prime
+--
+ALTER TABLE user_value_prime ADD CONSTRAINT user_value_prime_pkey PRIMARY KEY (group_id, user_id);
+CREATE INDEX user_value_prime_user_idx ON user_value_prime (user_id);
+CREATE INDEX user_value_prime_source_idx ON user_value_prime (source_id);
+
+--
+-- Indexes for table value_big
+--
+CREATE INDEX value_big_group_idx ON value_big (group_id);
+CREATE INDEX value_big_user_idx ON value_big (user_id);
+CREATE INDEX value_big_source_idx ON value_big (source_id);
+
+--
+-- Indexes for table user_value_big
+--
+ALTER TABLE user_value_big ADD CONSTRAINT user_value_big_pkey PRIMARY KEY (group_id, user_id);
+CREATE INDEX user_value_big_user_idx ON user_value_big (user_id);
+CREATE INDEX user_value_big_source_idx ON user_value_big (source_id);
+
+--
+-- Indexes for table value_text
+--
+CREATE INDEX value_text_group_idx ON value_text (group_id);
+CREATE INDEX value_text_user_idx ON value_text (user_id);
+CREATE INDEX value_text_source_idx ON value_text (source_id);
+
+--
+-- Indexes for table user_value_text
+--
+ALTER TABLE user_value_text ADD CONSTRAINT user_value_text_pkey PRIMARY KEY (group_id, user_id);
+CREATE INDEX user_value_text_user_idx ON user_value_text (user_id);
+CREATE INDEX user_value_text_source_idx ON user_value_text (source_id);
+
+--
+-- Indexes for table value_time
+--
+CREATE INDEX value_time_group_idx ON value_time (group_id);
+CREATE INDEX value_time_user_idx ON value_time (user_id);
+CREATE INDEX value_time_source_idx ON value_time (source_id);
+
+--
+-- Indexes for table user_value_time
+--
+ALTER TABLE user_value_time ADD CONSTRAINT user_value_time_pkey PRIMARY KEY (group_id, user_id);
+CREATE INDEX user_value_time_user_idx ON user_value_time (user_id);
+CREATE INDEX user_value_time_source_idx ON user_value_time (source_id);
+
+--
+-- Indexes for table value_geo
+--
+CREATE INDEX value_geo_group_idx ON value_geo (group_id);
+CREATE INDEX value_geo_user_idx ON value_geo (user_id);
+CREATE INDEX value_geo_source_idx ON value_geo (source_id);
+
+--
+-- Indexes for table user_value_geo
+--
+ALTER TABLE user_value_geo ADD CONSTRAINT user_value_geo_pkey PRIMARY KEY (group_id, user_id);
+CREATE INDEX user_value_geo_user_idx ON user_value_geo (user_id);
+CREATE INDEX user_value_geo_source_idx ON user_value_geo (source_id);
+
+-- --------------------------------------------------------
+
+--
+-- Indexes for table value_ts_data
+--
+CREATE INDEX value_time_series_idx ON value_ts_data (value_time_series_id, val_time);
+
+-- --------------------------------------------------------
+
+--
+-- Indexes for table formula_elements
+--
+CREATE INDEX formula_element_idx ON formula_elements (formula_id);
+CREATE INDEX formula_element_type_idx ON formula_elements (formula_element_type_id);
+
+--
+-- Indexes for table formulas
+--
+CREATE UNIQUE INDEX formula_name_idx ON formulas (formula_name);
+CREATE INDEX formula_user_idx ON formulas (user_id);
+CREATE INDEX formula_type_idx ON formulas (formula_type_id);
 
 --
 -- Indexes for table user_formulas
@@ -2162,7 +2440,13 @@ CREATE UNIQUE INDEX user_formula_unique_idx ON user_formulas (formula_id, user_i
 CREATE INDEX user_formula_idx ON user_formulas (formula_id);
 CREATE INDEX user_formula_user_idx ON user_formulas (user_id);
 CREATE INDEX user_formula_type_idx ON user_formulas (formula_type_id);
-CREATE INDEX user_formula_share_idx ON user_formulas (share_type_id);
+
+--
+-- Indexes for table formula_links
+--
+CREATE INDEX formula_link_user_idx ON formula_links (user_id);
+CREATE INDEX formula_link_idx ON formula_links (formula_id);
+CREATE INDEX formula_link_type_idx ON formula_links (link_type_id);
 
 --
 -- Indexes for table user_formula_links
@@ -2172,142 +2456,27 @@ CREATE INDEX user_formula_link_idx ON user_formula_links (formula_link_id);
 CREATE INDEX user_formula_link_user_idx ON user_formula_links (user_id);
 CREATE INDEX user_formula_link_type_idx ON user_formula_links (link_type_id);
 
---
--- Indexes for table user_groups
---
-CREATE UNIQUE INDEX user_group_unique_id ON user_group (group_id, user_id);
-CREATE INDEX user_group_idx ON user_group (group_id);
-CREATE INDEX user_group_user_idx ON user_group (user_id);
+-- --------------------------------------------------------
 
 --
--- Indexes for table user_phrase_groups
+-- Indexes for results
 --
-CREATE UNIQUE INDEX user_phrase_group_unique_id ON user_phrase_groups (phrase_group_id, user_id);
-CREATE INDEX user_phrase_group_idx ON user_phrase_groups (phrase_group_id);
-CREATE INDEX user_phrase_group_user_idx ON user_phrase_groups (user_id);
+CREATE UNIQUE INDEX result_idx ON results (group_id, formula_id, source_group_id, user_id);
+CREATE INDEX result_formula_idx ON results (formula_id);
+CREATE INDEX result_source_idx ON results (source_group_id);
+CREATE INDEX result_user_idx ON results (user_id);
 
--- Indexes for table user_group_links
---
-CREATE UNIQUE INDEX user_group_link_unique_idx ON user_group_link (group_id, phrase_id, user_id);
-CREATE INDEX user_group_link_idx ON user_group_link (group_id, phrase_id);
-CREATE INDEX user_group_user_idx ON user_group_link (user_id);
+CREATE UNIQUE INDEX result_prime_idx ON result_prime (group_id, formula_id, source_group_id, user_id);
+CREATE INDEX result_prime_formula_idx ON result_prime (formula_id);
+CREATE INDEX result_prime_source_idx ON result_prime (source_group_id);
+CREATE INDEX result_prime_user_idx ON result_prime (user_id);
 
---
--- Indexes for table user_phrase_group_word_links
---
-CREATE UNIQUE INDEX user_phrase_group_word_link_unique_idx ON user_phrase_group_word_links (phrase_group_word_link_id, user_id);
-CREATE INDEX user_phrase_group_word_link_idx ON user_phrase_group_word_links (phrase_group_word_link_id);
-CREATE INDEX user_phrase_group_word_user_idx ON user_phrase_group_word_links (user_id);
+CREATE UNIQUE INDEX result_big_idx ON result_big (group_id, formula_id, source_group_id, user_id);
+CREATE INDEX result_big_formula_idx ON result_big (formula_id);
+CREATE INDEX result_big_source_idx ON result_big (source_group_id);
+CREATE INDEX result_big_user_idx ON result_big (user_id);
 
---
--- Indexes for table user_phrase_group_triple_links
---
-CREATE UNIQUE INDEX user_phrase_group_triple_link_unique_idx ON user_phrase_group_triple_links (phrase_group_triple_link_id, user_id);
-CREATE INDEX user_phrase_group_triple_link_idx ON user_phrase_group_triple_links (phrase_group_triple_link_id);
-CREATE INDEX user_phrase_group_triple_user_idx ON user_phrase_group_triple_links (user_id);
-
---
--- Indexes for table user_sources
---
-ALTER TABLE user_sources
-    ADD CONSTRAINT user_source_pkey PRIMARY KEY (source_id, user_id);
-CREATE INDEX user_source_user_idx ON user_sources (user_id);
-CREATE INDEX user_source_idx ON user_sources (source_id);
-CREATE INDEX user_source_type_idx ON user_sources (source_type_id);
-
---
--- Indexes for table user_refs
---
-ALTER TABLE user_refs
-    ADD CONSTRAINT user_ref_pkey PRIMARY KEY (ref_id, user_id);
-CREATE INDEX user_ref_user_idx ON user_refs (user_id);
-CREATE INDEX user_ref_idx ON user_refs (ref_id);
-
---
--- Indexes for table user_values
---
-ALTER TABLE user_values
-    ADD CONSTRAINT user_value_pkey PRIMARY KEY (value_id, user_id);
-CREATE INDEX user_value_user_idx ON user_values (user_id);
-CREATE INDEX user_value_source_idx ON user_values (source_id);
-CREATE INDEX user_value_value_idx ON user_values (value_id);
-CREATE INDEX user_value_share_idx ON user_values (share_type_id);
-CREATE INDEX user_value_protection_idx ON user_values (protect_id);
-
---
--- Indexes for table user_values
---
-ALTER TABLE user_value_time_series
-    ADD CONSTRAINT user_value_time_series_pkey PRIMARY KEY (value_time_series_id, user_id);
-CREATE INDEX user_value_time_series_user_idx ON user_value_time_series (user_id);
-CREATE INDEX user_value_time_series_source_idx ON user_value_time_series (source_id);
-CREATE INDEX user_value_time_series_share_idx ON user_value_time_series (share_type_id);
-CREATE INDEX user_value_time_series_protection_idx ON user_value_time_series (protect_id);
-
---
--- Indexes for table user_views
---
-ALTER TABLE user_views
-    ADD CONSTRAINT user_view_pkey PRIMARY KEY (view_id, user_id);
-CREATE INDEX user_view_user_idx ON user_views (user_id);
-CREATE INDEX user_view_type_idx ON user_views (view_type_id);
-CREATE INDEX user_view_idx ON user_views (view_id);
-
---
--- Indexes for table user_components
---
-ALTER TABLE user_components
-    ADD CONSTRAINT user_component_pkey PRIMARY KEY (component_id, user_id);
-CREATE INDEX user_component_user_idx ON user_components (user_id);
-CREATE INDEX user_component_idx ON user_components (component_id);
-CREATE INDEX user_component_type_idx ON user_components (component_type_id);
-
---
--- Indexes for table user_component_links
---
-ALTER TABLE user_component_links
-    ADD CONSTRAINT user_component_link_pkey PRIMARY KEY (component_link_id, user_id);
-CREATE INDEX user_component_link_user_idx ON user_component_links (user_id);
-CREATE INDEX user_component_link_position_idx ON user_component_links (position_type);
-CREATE INDEX user_component_link_view_idx ON user_component_links (component_link_id);
-
---
--- Indexes for table user_words
---
-ALTER TABLE user_words
-    ADD CONSTRAINT user_words_pkey PRIMARY KEY (word_id, user_id, language_id);
-CREATE INDEX user_word_user_idx ON user_words (user_id);
-CREATE INDEX user_word_language_idx ON user_words (language_id);
-CREATE INDEX user_phrase_type_idx ON user_words (phrase_type_id);
-CREATE INDEX user_word_view_idx ON user_words (view_id);
-
---
--- Indexes for table user_triples
---
-CREATE UNIQUE INDEX user_triple_unique_idx ON user_triples (triple_id, user_id);
-CREATE INDEX user_triple_idx ON user_triples (triple_id);
-CREATE INDEX user_triple_user_idx ON user_triples (user_id);
-
---
--- Indexes for table values
---
-CREATE INDEX value_user_idx ON "values" (user_id);
-CREATE INDEX value_source_idx ON "values" (source_id);
-CREATE INDEX value_phrase_group_idx ON "values" (phrase_group_id);
-CREATE INDEX value_protection_idx ON "values" (protect_id);
-
---
--- Indexes for table value_phrase_links
---
-CREATE UNIQUE INDEX value_phrase_link_user_idx ON value_phrase_links (user_id, value_id, phrase_id);
-CREATE INDEX value_phrase_link_value_idx ON value_phrase_links (value_id);
-CREATE INDEX value_phrase_link_phrase_idx ON value_phrase_links (phrase_id);
-
-
---
--- Indexes for table value_ts_data
---
-CREATE INDEX value_time_series_idx ON value_ts_data (value_time_series_id, val_time);
+-- --------------------------------------------------------
 
 --
 -- Indexes for table views
@@ -2315,9 +2484,25 @@ CREATE INDEX value_time_series_idx ON value_ts_data (value_time_series_id, val_t
 CREATE INDEX view_type_idx ON views (view_type_id);
 
 --
+-- Indexes for table user_views
+--
+ALTER TABLE user_views ADD CONSTRAINT user_view_pkey PRIMARY KEY (view_id, user_id);
+CREATE INDEX user_view_user_idx ON user_views (user_id);
+CREATE INDEX user_view_type_idx ON user_views (view_type_id);
+CREATE INDEX user_view_idx ON user_views (view_id);
+
+--
 -- Indexes for table components
 --
 CREATE INDEX component_formula_idx ON components (formula_id);
+
+--
+-- Indexes for table user_components
+--
+ALTER TABLE user_components ADD CONSTRAINT user_component_pkey PRIMARY KEY (component_id, user_id);
+CREATE INDEX user_component_user_idx ON user_components (user_id);
+CREATE INDEX user_component_idx ON user_components (component_id);
+CREATE INDEX user_component_type_idx ON user_components (component_type_id);
 
 --
 -- Indexes for table component_links
@@ -2326,36 +2511,61 @@ CREATE INDEX component_link_idx ON component_links (view_id);
 CREATE INDEX component_link_component_idx ON component_links (component_id);
 CREATE INDEX component_link_position__idx ON component_links (position_type);
 
+--
+-- Indexes for table user_component_links
+--
+ALTER TABLE user_component_links ADD CONSTRAINT user_component_link_pkey PRIMARY KEY (component_link_id, user_id);
+CREATE INDEX user_component_link_user_idx ON user_component_links (user_id);
+CREATE INDEX user_component_link_position_idx ON user_component_links (position_type);
+CREATE INDEX user_component_link_view_idx ON user_component_links (component_link_id);
+
+-- --------------------------------------------------------
 
 --
--- Indexes for table words
---
-CREATE UNIQUE INDEX word_name_idx ON words (word_name);
-CREATE INDEX phrase_type_idx ON words (phrase_type_id);
-CREATE INDEX word_view_idx ON words (view_id);
-
-
---
--- Constraints for dumped tables
+-- foreign key constraints and auto_increment for tables
 --
 
---
--- AUTO_INCREMENT for exported tables
---
-
+-- --------------------------------------------------------
 
 --
--- Constraints for table changes
+-- Constraints for table sys_log
 --
-ALTER TABLE changes
-    ADD CONSTRAINT changes_fk_1 FOREIGN KEY (change_field_id) REFERENCES change_fields (change_field_id),
-    ADD CONSTRAINT changes_fk_2 FOREIGN KEY (change_action_id) REFERENCES change_actions (change_action_id);
+ALTER TABLE sys_log
+    ADD CONSTRAINT sys_log_fk_1 FOREIGN KEY (sys_log_type_id) REFERENCES sys_log_types (sys_log_type_id),
+    ADD CONSTRAINT sys_log_fk_2 FOREIGN KEY (sys_log_status_id) REFERENCES sys_log_status (sys_log_status_id),
+    ADD CONSTRAINT sys_log_fk_3 FOREIGN KEY (sys_log_function_id) REFERENCES sys_log_functions (sys_log_function_id);
+
+--
+-- Constraints for table sys_script_times
+--
+ALTER TABLE sys_script_times
+    ADD CONSTRAINT sys_script_times_fk_1 FOREIGN KEY (sys_script_id) REFERENCES sys_scripts (sys_script_id);
+
+--
+-- Constraints for table calc_and_cleanup_tasks
+--
+ALTER TABLE calc_and_cleanup_tasks
+    ADD CONSTRAINT calc_and_cleanup_tasks_fk_1 FOREIGN KEY (calc_and_cleanup_task_type_id) REFERENCES calc_and_cleanup_task_types (calc_and_cleanup_task_type_id);
+
+--
+-- Constraints for table users
+--
+ALTER TABLE users
+    ADD CONSTRAINT users_fk_1 FOREIGN KEY (user_type_id) REFERENCES user_types (user_type_id),
+    ADD CONSTRAINT users_fk_2 FOREIGN KEY (user_profile_id) REFERENCES user_profiles (profile_id);
 
 --
 -- Constraints for table change_fields
 --
 ALTER TABLE change_fields
     ADD CONSTRAINT change_fields_fk_1 FOREIGN KEY (table_id) REFERENCES change_tables (change_table_id);
+
+--
+-- Constraints for table changes
+--
+ALTER TABLE changes
+    ADD CONSTRAINT changes_fk_1 FOREIGN KEY (change_action_id) REFERENCES change_actions (change_action_id),
+    ADD CONSTRAINT changes_fk_2 FOREIGN KEY (change_field_id) REFERENCES change_fields (change_field_id);
 
 --
 -- Constraints for table change_links
@@ -2366,140 +2576,120 @@ ALTER TABLE change_links
     ADD CONSTRAINT change_links_fk_3 FOREIGN KEY (change_action_id) REFERENCES change_actions (change_action_id);
 
 --
--- Constraints for table formulas
+-- Constraints for table change_fields
 --
-ALTER TABLE formulas
-    ADD CONSTRAINT formulas_fk_1 FOREIGN KEY (formula_type_id) REFERENCES formula_types (formula_type_id),
-    ADD CONSTRAINT formulas_fk_2 FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT formulas_fk_3 FOREIGN KEY (protect_id) REFERENCES protection_types (protection_type_id);
+ALTER TABLE language_forms
+    ADD CONSTRAINT language_forms_fk_1 FOREIGN KEY (language_id) REFERENCES languages (language_id);
 
 --
--- Constraints for table formula_elements
+-- Constraints for table words
 --
-ALTER TABLE formula_elements
-    ADD CONSTRAINT formula_elements_fk_1 FOREIGN KEY (formula_element_type_id) REFERENCES formula_element_types (formula_element_type_id),
-    ADD CONSTRAINT formula_elements_fk_2 FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
+ALTER TABLE words
+    ADD CONSTRAINT word_name UNIQUE (word_name);
+ALTER TABLE words
+    ADD CONSTRAINT words_fk_1 FOREIGN KEY (view_id) REFERENCES views (view_id),
+    ADD CONSTRAINT words_fk_2 FOREIGN KEY (phrase_type_id) REFERENCES phrase_types (phrase_type_id);
 
 --
--- Constraints for table formula_links
+-- Constraints for table user_words
 --
-ALTER TABLE formula_links
-    ADD CONSTRAINT formula_links_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id);
+ALTER TABLE user_words
+    ADD CONSTRAINT user_words_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_words_fk_2 FOREIGN KEY (phrase_type_id) REFERENCES phrase_types (phrase_type_id),
+    ADD CONSTRAINT user_words_fk_3 FOREIGN KEY (view_id) REFERENCES views (view_id),
+    ADD CONSTRAINT user_words_fk_4 FOREIGN KEY (word_id) REFERENCES words (word_id);
 
 --
--- Constraints for table results
+-- Constraints for table word_periods
 --
-ALTER TABLE results
-    ADD CONSTRAINT results_fk_1 FOREIGN KEY (formula_id) REFERENCES formulas (formula_id),
-    ADD CONSTRAINT results_fk_2 FOREIGN KEY (user_id) REFERENCES users (user_id);
+ALTER TABLE word_periods
+    ADD CONSTRAINT word_periods_fk_1 FOREIGN KEY (word_id) REFERENCES words (word_id);
 
 --
--- Constraints for table group_links
+-- Constraints for table triples
 --
-ALTER TABLE group_link
-    ADD CONSTRAINT group_links_fk_1 FOREIGN KEY (group_id) REFERENCES "group" (group_id),
-    ADD CONSTRAINT group_links_fk_2 FOREIGN KEY (phrase_id) REFERENCES phrases (phrase_id);
+ALTER TABLE triples
+    ADD CONSTRAINT triple_name UNIQUE (triple_name);
+ALTER TABLE triples
+    ADD CONSTRAINT triples_fk_2 FOREIGN KEY (verb_id) REFERENCES verbs (verb_id),
+    ADD CONSTRAINT triples_fk_4 FOREIGN KEY (view_id) REFERENCES views (view_id),
+    ADD CONSTRAINT triples_fk_5 FOREIGN KEY (phrase_type_id) REFERENCES phrase_types (phrase_type_id);
+
+-- ADD CONSTRAINT triples_fk_1 FOREIGN KEY (from_phrase_id) REFERENCES phrases (phrase_id),
+-- ADD CONSTRAINT triples_fk_3 FOREIGN KEY (to_phrase_id) REFERENCES phrases (phrase_id),
 
 --
--- Constraints for table phrase_group_word_links
+-- Constraints for table user_triples
 --
-ALTER TABLE phrase_group_word_links
-    ADD CONSTRAINT phrase_group_word_links_fk_1 FOREIGN KEY (phrase_group_id) REFERENCES phrase_groups (phrase_group_id),
-    ADD CONSTRAINT phrase_group_word_links_fk_2 FOREIGN KEY (word_id) REFERENCES words (word_id);
-
---
--- Constraints for table phrase_group_triple_links
---
-ALTER TABLE phrase_group_triple_links
-    ADD CONSTRAINT phrase_group_triple_links_fk_1 FOREIGN KEY (phrase_group_id) REFERENCES phrase_groups (phrase_group_id),
-    ADD CONSTRAINT phrase_group_triple_links_fk_2 FOREIGN KEY (triple_id) REFERENCES triples (triple_id);
-
---
--- Constraints for table refs
---
-ALTER TABLE refs
-    ADD CONSTRAINT refs_fk_1 FOREIGN KEY (ref_type_id) REFERENCES ref_types (ref_type_id);
-
---
--- Constraints for table source_values
---
-ALTER TABLE source_values
-    ADD CONSTRAINT source_values_fk_3 FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT source_values_fk_1 FOREIGN KEY (value_id) REFERENCES values (value_id),
-    ADD CONSTRAINT source_values_fk_2 FOREIGN KEY (source_id) REFERENCES sources (source_id);
-
---
--- Constraints for table sys_log
---
-ALTER TABLE sys_log
-    ADD CONSTRAINT sys_log_fk_1 FOREIGN KEY (sys_log_status_id) REFERENCES sys_log_status (sys_log_status_id),
-    ADD CONSTRAINT sys_log_fk_2 FOREIGN KEY (sys_log_function_id) REFERENCES sys_log_functions (sys_log_function_id),
-    ADD CONSTRAINT sys_log_fk_3 FOREIGN KEY (sys_log_type_id) REFERENCES sys_log_types (sys_log_type_id);
-
---
--- Constraints for table sys_script_times
---
-ALTER TABLE sys_script_times
-    ADD CONSTRAINT sys_script_times_fk_1 FOREIGN KEY (sys_script_id) REFERENCES sys_scripts (sys_script_id);
-
---
--- Constraints for table users
---
-ALTER TABLE users
-    ADD CONSTRAINT users_fk_1 FOREIGN KEY (user_type_id) REFERENCES user_types (user_type_id),
-    ADD CONSTRAINT users_fk_2 FOREIGN KEY (user_profile_id) REFERENCES user_profiles (profile_id);
-
---
--- Constraints for table user_formulas
---
-ALTER TABLE user_formulas
-    ADD CONSTRAINT user_formulas_fk_4 FOREIGN KEY (share_type_id) REFERENCES share_types (share_type_id),
-    ADD CONSTRAINT user_formulas_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT user_formulas_fk_2 FOREIGN KEY (formula_type_id) REFERENCES formula_types (formula_type_id),
-    ADD CONSTRAINT user_formulas_fk_3 FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
-
---
--- Constraints for table user_formula_links
---
-ALTER TABLE user_formula_links
-    ADD CONSTRAINT user_formula_links_fk_1 FOREIGN KEY (formula_link_id) REFERENCES formula_links (formula_link_id),
-    ADD CONSTRAINT user_formula_links_fk_2 FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT user_formula_links_fk_3 FOREIGN KEY (link_type_id) REFERENCES formula_link_types (formula_link_type_id);
+ALTER TABLE user_triples
+    ADD CONSTRAINT user_triples_fk_1 FOREIGN KEY (triple_id) REFERENCES triples (triple_id),
+    ADD CONSTRAINT user_triples_fk_2 FOREIGN KEY (user_id) REFERENCES users (user_id);
 
 --
 -- Constraints for table user_groups
 --
-ALTER TABLE user_group
-    ADD CONSTRAINT user_groups_fk_1 FOREIGN KEY (group_id) REFERENCES "group" (group_id),
+ALTER TABLE user_groups
+    ADD CONSTRAINT user_groups_fk_1 FOREIGN KEY (group_id) REFERENCES groups (group_id),
     ADD CONSTRAINT user_groups_fk_2 FOREIGN KEY (user_id) REFERENCES users (user_id);
 
 --
--- Constraints for table user_phrase_groups
+-- Constraints for table user_group_prime
 --
-ALTER TABLE user_phrase_groups
-    ADD CONSTRAINT user_phrase_groups_fk_1 FOREIGN KEY (phrase_group_id) REFERENCES phrase_groups (phrase_group_id),
-    ADD CONSTRAINT user_phrase_groups_fk_2 FOREIGN KEY (user_id) REFERENCES users (user_id);
+ALTER TABLE user_group_prime
+    ADD CONSTRAINT user_group_prime_fk_1 FOREIGN KEY (group_id) REFERENCES group_prime (group_id),
+    ADD CONSTRAINT user_group_prime_fk_2 FOREIGN KEY (user_id) REFERENCES users (user_id);
 
 --
--- Constraints for table user_group_word_links
+-- Constraints for table user_group_big
+--
+ALTER TABLE user_group_big
+    ADD CONSTRAINT user_group_big_fk_1 FOREIGN KEY (group_id) REFERENCES group_big (group_id),
+    ADD CONSTRAINT user_group_big_fk_2 FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- Constraints for table group_links
+--
+-- ALTER TABLE group_link
+--     ADD CONSTRAINT group_link_fk_1 FOREIGN KEY (phrase_id) REFERENCES phrases (phrase_id);
+
+--
+-- Constraints for table group_links
 --
 ALTER TABLE user_group_link
-    ADD CONSTRAINT user_group_word_links_fk_1 FOREIGN KEY (phrase_id) REFERENCES group_link (phrase_id),
-    ADD CONSTRAINT user_group_word_links_fk_2 FOREIGN KEY (user_id) REFERENCES users (user_id);
+    ADD CONSTRAINT user_group_link_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id);
+--    ADD CONSTRAINT user_group_link_fk_2 FOREIGN KEY (phrase_id) REFERENCES phrases (phrase_id);
 
 --
--- Constraints for table user_phrase_group_word_links
+-- Constraints for table group_prime_link
 --
-ALTER TABLE user_phrase_group_word_links
-    ADD CONSTRAINT user_phrase_group_word_links_fk_1 FOREIGN KEY (phrase_group_word_link_id) REFERENCES phrase_group_word_links (phrase_group_word_link_id),
-    ADD CONSTRAINT user_phrase_group_word_links_fk_2 FOREIGN KEY (user_id) REFERENCES users (user_id);
+-- ALTER TABLE group_prime_link
+--    ADD CONSTRAINT group_prime_link_fk_1 FOREIGN KEY (phrase_id) REFERENCES phrases (phrase_id);
 
 --
--- Constraints for table user_phrase_group_triple_links
+-- Constraints for table user_group_prime_link
 --
-ALTER TABLE user_phrase_group_triple_links
-    ADD CONSTRAINT user_phrase_group_triple_links_fk_1 FOREIGN KEY (phrase_group_triple_link_id) REFERENCES phrase_group_triple_links (phrase_group_triple_link_id),
-    ADD CONSTRAINT user_phrase_group_triple_links_fk_2 FOREIGN KEY (user_id) REFERENCES users (user_id);
+ALTER TABLE user_group_prime_link
+    ADD CONSTRAINT user_group_prime_links_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id);
+--  ADD CONSTRAINT user_group_prime_links_fk_2 FOREIGN KEY (phrase_id) REFERENCES phrases (phrase_id);
+
+--
+-- Constraints for table group_big_link
+--
+-- ALTER TABLE group_big_link
+--    ADD CONSTRAINT group_big_link_fk_1 FOREIGN KEY (phrase_id) REFERENCES phrases (phrase_id);
+
+--
+-- Constraints for table user_group_big_link
+--
+ALTER TABLE user_group_big_link
+    ADD CONSTRAINT user_group_big_links_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id);
+--    ADD CONSTRAINT user_group_big_links_fk_2 FOREIGN KEY (phrase_id) REFERENCES phrases (phrase_id);
+
+--
+-- Constraints for table sources
+--
+ALTER TABLE sources
+    ADD CONSTRAINT sources_fk_1 FOREIGN KEY (source_type_id) REFERENCES source_types (source_type_id);
 
 --
 -- Constraints for table user_sources
@@ -2509,11 +2699,39 @@ ALTER TABLE user_sources
     ADD CONSTRAINT user_sources_fk_2 FOREIGN KEY (user_id) REFERENCES users (user_id);
 
 --
+-- Constraints for table refs
+--
+ALTER TABLE refs
+    ADD CONSTRAINT refs_fk_1 FOREIGN KEY (ref_type_id) REFERENCES ref_types (ref_type_id);
+
+--
 -- Constraints for table user_refs
 --
 ALTER TABLE user_refs
     ADD CONSTRAINT user_refs_fk_1 FOREIGN KEY (ref_id) REFERENCES refs (ref_id),
     ADD CONSTRAINT user_refs_fk_2 FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- Constraints for table source_values
+--
+ALTER TABLE source_values
+    ADD CONSTRAINT source_values_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT source_values_fk_2 FOREIGN KEY (source_id) REFERENCES sources (source_id);
+
+--
+-- Constraints for table value_standard
+--
+ALTER TABLE value_standard
+    ADD CONSTRAINT value_standard_fk_1 FOREIGN KEY (source_id) REFERENCES sources (source_id);
+
+--
+-- Constraints for table values
+--
+ALTER TABLE values
+    ADD CONSTRAINT values_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT values_fk_2 FOREIGN KEY (source_id) REFERENCES sources (source_id),
+    ADD CONSTRAINT values_fk_3 FOREIGN KEY (group_id) REFERENCES groups (group_id),
+    ADD CONSTRAINT values_fk_4 FOREIGN KEY (protect_id) REFERENCES protection_types (protection_type_id);
 
 --
 -- Constraints for table user_values
@@ -2534,12 +2752,63 @@ ALTER TABLE user_value_time_series
     ADD CONSTRAINT user_value_time_series_fk_4 FOREIGN KEY (protect_id) REFERENCES protection_types (protection_type_id);
 
 --
+-- Constraints for table formulas
+--
+ALTER TABLE formulas
+    ADD CONSTRAINT formulas_fk_1 FOREIGN KEY (formula_type_id) REFERENCES formula_types (formula_type_id),
+    ADD CONSTRAINT formulas_fk_2 FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT formulas_fk_3 FOREIGN KEY (protect_id) REFERENCES protection_types (protection_type_id);
+
+--
+-- Constraints for table user_formulas
+--
+ALTER TABLE user_formulas
+    ADD CONSTRAINT user_formulas_fk_4 FOREIGN KEY (share_type_id) REFERENCES share_types (share_type_id),
+    ADD CONSTRAINT user_formulas_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_formulas_fk_2 FOREIGN KEY (formula_type_id) REFERENCES formula_types (formula_type_id),
+    ADD CONSTRAINT user_formulas_fk_3 FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
+
+--
+-- Constraints for table formula_elements
+--
+ALTER TABLE formula_elements
+    ADD CONSTRAINT formula_elements_fk_1 FOREIGN KEY (formula_element_type_id) REFERENCES formula_element_types (formula_element_type_id),
+    ADD CONSTRAINT formula_elements_fk_2 FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
+
+--
+-- Constraints for table formula_links
+--
+ALTER TABLE formula_links
+    ADD CONSTRAINT formula_links_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- Constraints for table user_formula_links
+--
+ALTER TABLE user_formula_links
+    ADD CONSTRAINT user_formula_links_fk_1 FOREIGN KEY (formula_link_id) REFERENCES formula_links (formula_link_id),
+    ADD CONSTRAINT user_formula_links_fk_2 FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_formula_links_fk_3 FOREIGN KEY (link_type_id) REFERENCES formula_link_types (formula_link_type_id);
+
+--
+-- Constraints for table results
+--
+ALTER TABLE results
+    ADD CONSTRAINT results_fk_1 FOREIGN KEY (formula_id) REFERENCES formulas (formula_id),
+    ADD CONSTRAINT results_fk_2 FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
 -- Constraints for table user_views
 --
 ALTER TABLE user_views
     ADD CONSTRAINT user_views_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id),
     ADD CONSTRAINT user_views_fk_2 FOREIGN KEY (view_type_id) REFERENCES view_types (view_type_id),
     ADD CONSTRAINT user_views_fk_3 FOREIGN KEY (view_id) REFERENCES views (view_id);
+
+--
+-- Constraints for table components
+--
+ALTER TABLE components
+    ADD CONSTRAINT components_fk_2 FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
 
 --
 -- Constraints for table user_components
@@ -2550,45 +2819,6 @@ ALTER TABLE user_components
     ADD CONSTRAINT user_components_fk_3 FOREIGN KEY (component_type_id) REFERENCES component_types (component_type_id);
 
 --
--- Constraints for table user_component_links
---
-ALTER TABLE user_component_links
-    ADD CONSTRAINT user_component_links_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT user_component_links_fk_2 FOREIGN KEY (component_link_id) REFERENCES component_links (component_link_id),
-    ADD CONSTRAINT user_component_links_fk_3 FOREIGN KEY (position_type) REFERENCES component_position_types (component_position_type_id);
-
---
--- Constraints for table user_words
---
-ALTER TABLE user_words
-    ADD CONSTRAINT user_words_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT user_words_fk_2 FOREIGN KEY (phrase_type_id) REFERENCES phrase_types (phrase_type_id),
-    ADD CONSTRAINT user_words_fk_3 FOREIGN KEY (view_id) REFERENCES views (view_id),
-    ADD CONSTRAINT user_words_fk_4 FOREIGN KEY (word_id) REFERENCES words (word_id);
-
---
--- Constraints for table user_triples
---
-ALTER TABLE user_triples
-    ADD CONSTRAINT user_triples_fk_1 FOREIGN KEY (triple_id) REFERENCES triples (triple_id),
-    ADD CONSTRAINT user_triples_fk_2 FOREIGN KEY (user_id) REFERENCES users (user_id);
-
---
--- Constraints for table values
---
-ALTER TABLE values
-    ADD CONSTRAINT values_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT values_fk_2 FOREIGN KEY (source_id) REFERENCES sources (source_id),
-    ADD CONSTRAINT values_fk_3 FOREIGN KEY (phrase_group_id) REFERENCES phrase_groups (phrase_group_id),
-    ADD CONSTRAINT values_fk_4 FOREIGN KEY (protect_id) REFERENCES protection_types (protection_type_id);
-
---
--- Constraints for table components
---
-ALTER TABLE components
-    ADD CONSTRAINT components_fk_2 FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
-
---
 -- Constraints for table component_links
 --
 ALTER TABLE component_links
@@ -2597,21 +2827,12 @@ ALTER TABLE component_links
     ADD CONSTRAINT component_links_fk_3 FOREIGN KEY (component_id) REFERENCES components (component_id);
 
 --
--- Constraints for table words
+-- Constraints for table user_component_links
 --
-ALTER TABLE words
-    ADD CONSTRAINT word_name UNIQUE (word_name);
-ALTER TABLE words
-    ADD CONSTRAINT words_fk_1 FOREIGN KEY (view_id) REFERENCES views (view_id),
-    ADD CONSTRAINT words_fk_2 FOREIGN KEY (phrase_type_id) REFERENCES phrase_types (phrase_type_id);
-
---
--- Constraints for table word_periods
---
-ALTER TABLE word_periods
-    ADD CONSTRAINT word_periods_fk_1 FOREIGN KEY (word_id) REFERENCES words (word_id);
-
-
+ALTER TABLE user_component_links
+    ADD CONSTRAINT user_component_links_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_component_links_fk_2 FOREIGN KEY (component_link_id) REFERENCES component_links (component_link_id),
+    ADD CONSTRAINT user_component_links_fk_3 FOREIGN KEY (position_type) REFERENCES component_position_types (component_position_type_id);
 
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

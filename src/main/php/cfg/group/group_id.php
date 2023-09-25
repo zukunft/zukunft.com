@@ -59,57 +59,124 @@ class group_id
 {
 
     /**
-     * create the database key for a phrase group
-     * TODO if the phrase list contains only 1 or 2 phrase use a 64 bit bigint number as key
-     * @param phrase_list $phr_lst list of words or triples
-     * @return string the 512 bit db key of up to 16 32 bit phrase ids in alpha_num format
+     * @return int|string the group id based on the given phrase list
+     *                    as 64-bit integer, 512-bit key as 112 chars or list of more than 16 keys with 6 chars
      */
-    function alpha_num(phrase_list $phr_lst): string
+    function get_id(phrase_list $phr_lst): int|string
     {
-        $db_key = '';
-        if ($phr_lst->count() <= 1) {
-            foreach ($phr_lst->lst() as $phr) {
-                $db_key .= $phr->id();
-            }
+        if ($phr_lst->count() <= 4 and $phr_lst->prime_only()) {
+            $db_key = $this->int_group_id($phr_lst);
         } elseif ($phr_lst->count() <= 16) {
-            $i = 16;
-            foreach ($phr_lst->lst() as $phr) {
-                $db_key .= $this->int2alpha_num($phr->id());
-                $i--;
-            }
-            // fill the remaining key entries with zero keys to always have the same key size
-            while ($i > 0) {
-                $db_key .= $this->int2alpha_num(0);
-                $i--;
-            }
+            $db_key = $this->alpha_num($phr_lst);
         } else {
-            foreach ($phr_lst->lst() as $phr) {
-                $db_key .= $this->int2alpha_num($phr->id());
-            }
+            $db_key = $this->alpha_num_big($phr_lst);
         }
         return $db_key;
     }
 
     /**
-     * @param string $grp_id
+     * @param int|string $grp_id
      * @return array
      */
-    function int_array(string $grp_id): array
+    function get_array(int|string $grp_id): array
     {
-        $result = [];
-        $signs = array_values(array_filter(str_split($grp_id), fn($value) => $value == '+' || $value == '-'));
-        $id_keys = preg_split("/[+-]/", $grp_id);
-        foreach ($id_keys as $key => $id_key) {
-            $id = $this->alpha_num2int($id_key);
-            if ($id != 0) {
-                if ($signs[$key] == '-') {
-                    $result[] .= $id * -1;
-                } else {
-                    $result[] .= $id;
+        if (is_int($grp_id)) {
+            $result = $this->int_array($grp_id);
+        } else {
+            $result = [];
+            $signs = array_values(array_filter(str_split($grp_id), fn($value) => $value == '+' || $value == '-'));
+            $id_keys = preg_split("/[+-]/", $grp_id);
+            foreach ($id_keys as $key => $id_key) {
+                $id = $this->alpha_num2int($id_key);
+                if ($id != 0) {
+                    if ($signs[$key] == '-') {
+                        $result[] = $id * -1;
+                    } else {
+                        $result[] = $id;
+                    }
                 }
             }
         }
         return $result;
+    }
+
+    function int_array(int $grp_id): array
+    {
+        $result = [];
+        $bin_key = decbin($grp_id);
+        $bin_key = str_pad($bin_key, 64, "0", STR_PAD_LEFT);
+        while ($bin_key != '') {
+            $sign = substr($bin_key, 0, 1);
+            $id = bindec(substr($bin_key, 1, 15));
+            if ($id != 0) {
+                if ($sign == 1) {
+                    $result[] = $id * -1;
+                } else {
+                    $result[] = $id;
+                }
+            }
+            $bin_key = substr($bin_key, 16);
+        }
+
+        return $result;
+    }
+
+    /**
+     * TODO check that system is running on 64 bit hardware
+     * @param phrase_list $phr_lst list of words or triples
+     * @return int the group id based on the given phrase list as 64-bit integer
+     */
+    private function int_group_id(phrase_list $phr_lst): int
+    {
+        $keys = [];
+        foreach ($phr_lst->lst() as $phr) {
+            $id = $phr->id();
+            $key = str_pad(decbin(abs($id)), 15, "0", STR_PAD_LEFT);
+            if ($id < 0) {
+                $key = '1' . $key;
+            } else {
+                $key = '0' . $key;
+            }
+            $keys[] = $key;
+        }
+        $bin_key = implode("", $keys);
+        $bin_key = str_pad($bin_key, 64, "0", STR_PAD_LEFT);
+        return bindec($bin_key);
+    }
+
+    /**
+     * create the database key for a phrase group
+     * @param phrase_list $phr_lst list of words or triples
+     * @return string the 512 bit db key of up to 16 32 bit phrase ids in alpha_num format
+     */
+    private function alpha_num(phrase_list $phr_lst): string
+    {
+        $db_key = '';
+        $i = 16;
+        foreach ($phr_lst->lst() as $phr) {
+            $db_key .= $this->int2alpha_num($phr->id());
+            $i--;
+        }
+        // fill the remaining key entries with zero keys to always have the same key size
+        while ($i > 0) {
+            $db_key .= $this->int2alpha_num(0);
+            $i--;
+        }
+        return $db_key;
+    }
+
+    /**
+     * create the database key for a phrase group
+     * @param phrase_list $phr_lst list of words or triples
+     * @return string the group id based on the given phrase list of more than 16 keys with 6 chars
+     */
+    private function alpha_num_big(phrase_list $phr_lst): string
+    {
+        $db_key = '';
+        foreach ($phr_lst->lst() as $phr) {
+            $db_key .= $this->int2alpha_num($phr->id());
+        }
+        return $db_key;
     }
 
     /**
@@ -178,7 +245,7 @@ class group_id
                 $digit = $digit - 59;
             }
             $result = $result + $digit;
-            $key =  substr($key, 1);
+            $key = substr($key, 1);
         }
         return $result;
     }

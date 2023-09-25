@@ -109,7 +109,7 @@ class base_list
     }
 
     /**
-     * @returns true if the list has been replaced
+     * @return true if the list has been replaced
      */
     function set_lst(array $lst): bool
     {
@@ -169,7 +169,7 @@ class base_list
      */
     function count(): int
     {
-        if ($this->lst == null) {
+        if ($this->lst() == null) {
             return 0;
         } else {
             return count($this->lst);
@@ -182,7 +182,7 @@ class base_list
     function is_empty(): bool
     {
         $result = true;
-        if ($this->lst != null) {
+        if ($this->lst() != null) {
             if (count($this->lst) > 0) {
                 $result = false;
             }

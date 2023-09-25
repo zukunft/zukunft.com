@@ -144,6 +144,24 @@ class phrase_list extends sandbox_list_named
         return $msg;
     }
 
+    /**
+     * @return bool if the ids has been set
+     */
+    function set_ids(array $ids): bool
+    {
+        $result = true;
+        $pos = 0;
+        foreach ($this->lst() as $sbx_obj) {
+            if (array_key_exists($pos, $ids)) {
+                $sbx_obj->set_id($ids[$pos]);
+            } else {
+                $result = false;
+            }
+            $pos++;
+        }
+        return $result;
+    }
+
 
     /*
      * load function
@@ -1386,17 +1404,18 @@ class phrase_list extends sandbox_list_named
 
 
     /*
-     *  information functions
+     *  information
      */
 
     /**
-     * @return bool true if the list has no entry
+     * @returns bool true if none of the phrase list id needs more than 16 bit
+     *          the most often used phrases should have an id below 2^16 / 2 - 1 = 32767
      */
-    function is_empty(): bool
+    function prime_only(): bool
     {
         $result = true;
-        if ($this->lst() != null) {
-            if (count($this->lst()) > 0) {
+        foreach ($this->lst() as $phr) {
+            if ($phr->id() > 32767 or $phr->id() < -32767) {
                 $result = false;
             }
         }
