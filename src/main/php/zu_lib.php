@@ -225,6 +225,8 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO use zeroMQ or Kafka to sync the insert and update statements between the pod
     TODO use separate kafka topics for values and results of each pod e.g. switzerland_values for all updates related to Switzerland
     TODO allow to assign users to an admin and offer each admin to use different settings for "his" users so that different behavior due to setting changes can be tested to the same pod
+    TODO add a table with process steps with step_id, name, description, code_id
+    TODO add a table with process_next_step with step_next_id, from_step_id, to_step_id, name, description, user_profile, user_id, batch_job_id
 
     TODO keep in the frontend the phrases that are relevant for the user at the moment
          calculate the the frontend real-time the value with the relevant precision
