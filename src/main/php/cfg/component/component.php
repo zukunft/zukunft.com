@@ -65,7 +65,6 @@ class component extends sandbox_typed
     // the database and JSON object field names used only for view components links
     const FLD_ID = 'component_id';
     const FLD_NAME = 'component_name';
-    const FLD_DESCRIPTION = 'description';
     const FLD_TYPE = 'component_type_id';
     const FLD_POSITION = 'position';
     const FLD_UI_MSG_ID = 'ui_msg_code_id';

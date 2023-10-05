@@ -66,6 +66,7 @@ use cfg\formula;
 use cfg\formula_list;
 use cfg\library;
 use cfg\phr_ids;
+use cfg\phrase;
 use cfg\phrase_list;
 use cfg\ref;
 use cfg\result;
@@ -76,6 +77,7 @@ use cfg\sandbox_named;
 use cfg\source;
 use cfg\sql_db;
 use cfg\sql_par;
+use cfg\term;
 use cfg\triple;
 use cfg\triple_list;
 use cfg\trm_ids;
@@ -1006,6 +1008,31 @@ class test_base
             $qp = $usr_obj->load_sql_like($db_con->sql_creator(), $pattern);
             $result = $this->assert_qp($qp, $db_con->db_type);
         }
+        return $result;
+    }
+
+    /**
+     * check the SQL statements to load a sandbox object by term
+     *
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param sandbox $usr_obj the user sandbox object e.g. a view
+     * @param term $trm the term used for the sql statement creation
+     * @return bool true if all tests are fine
+     */
+    function assert_sql_by_term(sql_db $db_con, sandbox $usr_obj, term $trm): bool
+    {
+        // check the Postgres query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $usr_obj->load_sql_by_term($db_con->sql_creator(), $trm);
+        $result = $this->assert_qp($qp, $db_con->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $usr_obj->load_sql_by_term($db_con->sql_creator(), $trm);
+            $result = $this->assert_qp($qp, $db_con->db_type);
+        }
+
         return $result;
     }
 

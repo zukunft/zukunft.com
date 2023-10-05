@@ -58,7 +58,6 @@ class view extends sandbox_typed
     const FLD_ID = 'view_id';
     const FLD_NAME = 'view_name';
     const FLD_TYPE = 'view_type_id';
-    const FLD_DESCRIPTION = 'description';
     // the JSON object field names
     const FLD_COMPONENT = 'components';
 
@@ -371,6 +370,30 @@ class view extends sandbox_typed
     {
         $qp = $this->load_sql($sc, 'code_id', $class);
         $sc->add_where(sql_db::FLD_CODE_ID, $code_id);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve a view by the phrase from the database
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param term $trm the code id of the view
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_term(sql_creator $sc, term $trm, string $class = self::class): sql_par
+    {
+        $qp = $this->load_sql($sc, 'phrase', $class);
+        $sc->set_join_fields(
+            view_term_link::FLD_NAMES,
+            sql_db::TBL_VIEW_TERM_LINK,
+            view::FLD_ID,
+            view::FLD_ID);
+        $sc->add_where(sql_db::LNK_TBL . '.' . term::FLD_ID, $trm->id());
+        //$sc->set_order(component_link::FLD_ORDER_NBR, '', sql_db::LNK_TBL);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 

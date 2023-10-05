@@ -63,6 +63,7 @@ class view_unit_tests
         $t->assert_sql_by_id($db_con, $dsp);
         $t->assert_sql_by_name($db_con, $dsp);
         $t->assert_sql_by_code_id($db_con, $dsp);
+        $t->assert_sql_by_term($db_con, $dsp, $t->dummy_term());
 
 
         $t->subheader('SQL statement tests');
