@@ -378,6 +378,8 @@ class view extends sandbox_typed
 
     /**
      * create an SQL statement to retrieve a view by the phrase from the database
+     * TODO include user_view_term_links into the selection
+     * TODO take the usage into account for the selection of the view
      *
      * @param sql_creator $sc with the target db_type set
      * @param term $trm the code id of the view
@@ -386,7 +388,7 @@ class view extends sandbox_typed
      */
     function load_sql_by_term(sql_creator $sc, term $trm, string $class = self::class): sql_par
     {
-        $qp = $this->load_sql($sc, 'phrase', $class);
+        $qp = $this->load_sql($sc, 'term', $class);
         $sc->set_join_fields(
             view_term_link::FLD_NAMES,
             sql_db::TBL_VIEW_TERM_LINK,
@@ -415,37 +417,6 @@ class view extends sandbox_typed
         return parent::load($qp);
     }
 
-    // TODO review and add a unit test
-    function load_by_phrase_sql(sql_db $db_con, phrase $phr): sql_par
-    {
-        $qp = parent::load_sql_obj_vars($db_con->sql_creator(), self::class);
-
-        // sql to get the id of the most often used view
-        $db_con_tmp = new sql_db();
-        $db_con_tmp->set_type(sql_db::TBL_VIEW);
-        $db_con->set_name($qp->name);
-        $db_con_tmp->set_usr($this->user()->id());
-        $db_con_tmp->set_where_std($phr->id());
-        $sql = "SELECT u.view_id, count(u.user_id) AS users
-                       FROM words w 
-                  LEFT JOIN user_words u ON u.word_id = w.word_id 
-                      WHERE w.word_id = " . $db_con_tmp->par_name() . "
-                   GROUP BY u.view_id
-                      LIMIT 1";
-
-        // load all parameters of the view with one sql statement
-        $db_con->set_type(sql_db::TBL_VIEW);
-        $db_con->set_usr($this->user()->id());
-        $db_con->set_fields(self::FLD_NAMES);
-        $db_con->set_usr_fields(self::FLD_NAMES_USR);
-        $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
-        //$db_con->set_from($sql);
-        //$qp->sql = $db_con->select_by_sub_id();
-        $qp->par = $db_con->get_par();
-
-        return $qp;
-    }
-
     /**
      * load the suggested view for a phrase
      * @param phrase $phr the phrase for which the most often used view should be loaded
@@ -455,7 +426,21 @@ class view extends sandbox_typed
     {
         global $db_con;
 
-        $qp = $this->load_by_phrase_sql($db_con, $phr);
+        $qp = $this->load_sql_by_term($db_con, $phr->term());
+        $db_view = $db_con->get1($qp);
+        return $this->row_mapper_sandbox($db_view);
+    }
+
+    /**
+     * load the suggested view for a term
+     * @param term $trm the word, triple, verb or formula for which the most often used view should be loaded
+     * @return bool true if at least one view is found
+     */
+    function load_by_term(term $trm): bool
+    {
+        global $db_con;
+
+        $qp = $this->load_sql_by_term($db_con, $trm);
         $db_view = $db_con->get1($qp);
         return $this->row_mapper_sandbox($db_view);
     }

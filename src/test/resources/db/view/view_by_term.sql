@@ -1,4 +1,4 @@
-PREPARE view_by_phrase (int, int) AS
+PREPARE view_by_term (int, int) AS
     SELECT
                 s.view_id,
                 u.view_id AS user_view_id,
