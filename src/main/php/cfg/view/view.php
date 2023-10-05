@@ -559,7 +559,7 @@ class view extends sandbox_typed
 
 
     /*
-     * display function
+     * display
      */
 
     /**
@@ -668,42 +668,6 @@ class view extends sandbox_typed
         }
         return $result;
     }
-
-    /**
-     * create a selection page where the user can select a view that should be used for a word
-     */
-    function selector_page($wrd_id, $back): string
-    {
-        log_debug($this->id . ',' . $wrd_id);
-
-        global $db_con;
-        $result = '';
-
-        $dsp_lst = new view_list($this->user());
-        $dsp_lst->load_sbx_names($this);
-
-        $call = '/http/view.php?words=' . $wrd_id;
-        $field = 'new_id';
-
-        foreach ($dsp_lst as $dsp) {
-            $view_id = $dsp->id();;
-            $view_name = $dsp->name();
-            if ($view_id == $this->id) {
-                $result .= '<b><a href="' . $call . '&' . $field . '=' . $view_id . '">' . $view_name . '</a></b> ';
-            } else {
-                $result .= '<a href="' . $call . '&' . $field . '=' . $view_id . '">' . $view_name . '</a> ';
-            }
-            $call_edit = '/http/view_edit.php?id=' . $view_id . '&word=' . $wrd_id . '&back=' . $back;
-            $result .= \html\btn_edit('design the view', $call_edit) . ' ';
-            $call_del = '/http/view_del.php?id=' . $view_id . '&word=' . $wrd_id . '&back=' . $back;
-            $result .= \html\btn_del('delete the view', $call_del) . ' ';
-            $result .= '<br>';
-        }
-
-        log_debug('done');
-        return $result;
-    }
-
 
     /*
      * im- and export

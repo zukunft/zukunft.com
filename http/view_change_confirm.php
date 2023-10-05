@@ -86,7 +86,7 @@ if ($usr->id() > 0) {
     if ($view_id <= 0) {
         $result .= $html->dsp_err('view not found');
     } else {
-        $dsp = new view($usr);
+        $dsp = new view_dsp();
         $dsp->set_id($view_id);
         $result .= $dsp->selector_page($word_id, $back);
     }

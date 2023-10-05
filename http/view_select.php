@@ -85,7 +85,7 @@ if ($usr->id() > 0) {
     }
 
     // allow to change to type
-    $msk = new view($usr);
+    $msk = new view_dsp();
     $msk->set_id($view_id);
     $result .= $msk->selector_page($word_id, $back);
 
