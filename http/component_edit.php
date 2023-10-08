@@ -120,8 +120,8 @@ if ($usr->id() > 0) {
             if (isset($_GET[api::FLD_PHRASE_ROW])) {
                 $cmp->load_row_phrase($_GET[api::FLD_PHRASE_ROW]);
             } //
-            if (isset($_GET['word_col'])) {
-                $cmp->word_id_col = $_GET['word_col'];
+            if (isset($_GET[api::FLD_PHRASE_COL])) {
+                $cmp->load_col_phrase($_GET[api::FLD_PHRASE_ROW]);
             } //
 
             // save the changes
