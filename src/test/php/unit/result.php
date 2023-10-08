@@ -37,12 +37,12 @@ include_once API_RESULT_PATH . 'result.php';
 use api\result_api;
 use api\word_api;
 use cfg\formula;
-use cfg\phrase_group;
-use cfg\phrase_group_list;
-use html\result\result as result_dsp;
+use cfg\group\group;
+use cfg\group\group_list;
 use cfg\phrase_list;
 use cfg\result;
 use cfg\sql_db;
+use html\result\result as result_dsp;
 
 class result_unit_tests
 {
@@ -123,7 +123,7 @@ class result_unit_tests
     private function assert_sql_by_group(test_cleanup $t, sql_db $db_con, result $res): void
     {
         // prepare
-        $grp = new phrase_group($t->usr1);
+        $grp = new group($t->usr1);
         $grp->set_id(1);
 
         // check the Postgres query syntax
@@ -153,7 +153,7 @@ class result_unit_tests
         // prepare
         $frm = new formula($t->usr1);
         $frm->set_id(2);
-        $grp = new phrase_group($t->usr1);
+        $grp = new group($t->usr1);
         $grp->set_id(3);
 
         // check the Postgres query syntax
@@ -183,11 +183,11 @@ class result_unit_tests
         // prepare
         $frm = new formula($t->usr1);
         $frm->set_id(2);
-        $grp1 = new phrase_group($t->usr1);
+        $grp1 = new group($t->usr1);
         $grp1->set_id(3);
-        $grp2 = new phrase_group($t->usr1);
+        $grp2 = new group($t->usr1);
         $grp2->set_id(4);
-        $lst = new phrase_group_list($t->usr1);
+        $lst = new group_list($t->usr1);
         $lst->add($grp1);
         $lst->add($grp2);
 
@@ -216,7 +216,7 @@ class result_unit_tests
         sql_db $db_con,
         result $res): void
     {
-        $grp = new phrase_group($t->usr1);
+        $grp = new group($t->usr1);
         $grp->set_id(7);
 
         // check the Postgres query syntax

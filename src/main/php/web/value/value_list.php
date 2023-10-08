@@ -36,18 +36,16 @@ namespace html\value;
 
 include_once WEB_PHRASE_PATH . 'phrase_group_list.php';
 
-use api\phrase_list_api;
+use cfg\group\group;
+use cfg\library;
 use cfg\phr_ids;
-use cfg\phrase_group;
 use cfg\phrase_list;
 use html\api;
-use html\button;
 use html\html_base;
 use html\list_dsp;
-use html\phrase\phrase_list as phrase_list_dsp;
 use html\phrase\phrase_group_list as phrase_group_list_dsp;
+use html\phrase\phrase_list as phrase_list_dsp;
 use html\value\value as value_dsp;
-use cfg\library;
 use html\word\word as word_dsp;
 
 class value_list extends list_dsp
@@ -336,7 +334,7 @@ class value_list extends list_dsp
 
                 // check if row is empty
                 $row_has_value = false;
-                $grp = new phrase_group($usr);
+                $grp = new group($usr);
                 $grp->load_by_ids(new phr_ids($wrd_ids));
                 foreach ($time_lst->lst() as $time_wrd) {
                     $tbl_value = $used_value_lst->get_by_grp($grp, $time_wrd);
@@ -360,7 +358,7 @@ class value_list extends list_dsp
 
                         // get the phrase group for the value row
                         // to be done for the list at once
-                        $grp = new phrase_group($usr);
+                        $grp = new group($usr);
                         $grp->load_by_ids(new phr_ids($val_wrd_ids));
                         $lib = new library();
                         log_debug("val ids " . $lib->dsp_array($val_wrd_ids) . " = " . $grp->id() . ".");
@@ -462,7 +460,7 @@ class value_list extends list_dsp
 
                                 // get the phrase group for the value row
                                 // to be done for the list at once
-                                $grp = new phrase_group($usr);
+                                $grp = new group($usr);
                                 $grp->load_by_ids(new phr_ids($val_wrd_ids));
                                 $lib = new library();
                                 log_debug("val ids " . $lib->dsp_array($val_wrd_ids) . " = " . $grp->id() . ".");

@@ -33,7 +33,7 @@
 namespace test;
 
 use cfg\formula;
-use cfg\phrase_group;
+use cfg\group\group;
 use cfg\result_list;
 use cfg\sql_db;
 use cfg\triple;
@@ -68,13 +68,13 @@ class result_list_unit_tests
 
         // sql to load a list of results by the phrase group id
         $res_lst = new result_list($usr);
-        $grp = new phrase_group($usr);
+        $grp = new group($usr);
         $grp->set_id(2);
         $t->assert_sql_list_by_ref($db_con, $res_lst, $grp);
 
         // sql to load a list of results by the source phrase group id
         $res_lst = new result_list($usr);
-        $grp = new phrase_group($usr);
+        $grp = new group($usr);
         $grp->set_id(2);
         $t->assert_sql_list_by_ref($db_con, $res_lst, $grp, true);
 

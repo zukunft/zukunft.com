@@ -45,7 +45,7 @@ use controller\log\system_log_api;
 use DateTime;
 use DateTimeInterface;
 
-class system_log extends db_object
+class system_log extends db_id_object
 {
 
     /*
@@ -266,7 +266,7 @@ class system_log extends db_object
     /**
      * @return string sys_log_id instead of system_log_id
      */
-    public function id_field(): string
+    function id_field(): string
     {
         return self::FLD_ID;
     }

@@ -38,13 +38,15 @@ include_once SERVICE_EXPORT_PATH . 'value_list_exp.php';
 use api\value_list_api;
 use cfg\db\sql_creator;
 use cfg\db\sql_par_type;
+use cfg\group\group;
+use cfg\group\group_list;
+use controller\controller;
+use html\button;
+use html\html_base;
 use html\phrase\phrase_list as phrase_list_dsp;
 use model\export\exp_obj;
 use model\export\source_exp;
 use model\export\value_list_exp;
-use controller\controller;
-use html\button;
-use html\html_base;
 
 class value_list extends sandbox_list
 {
@@ -229,11 +231,11 @@ class value_list extends sandbox_list
             $db_con->set_fields(value::FLD_NAMES);
             $db_con->set_usr_num_fields(value::FLD_NAMES_NUM_USR);
             $db_con->set_usr_only_fields(value::FLD_NAMES_USR_ONLY);
-            $db_con->set_join_fields(array(phrase_group::FLD_ID), sql_db::TBL_PHRASE_GROUP);
+            $db_con->set_join_fields(array(group::FLD_ID), sql_db::TBL_GROUP);
             if ($this->phr->is_word()) {
-                $db_con->set_join_fields(array(word::FLD_ID), sql_db::TBL_PHRASE_GROUP_WORD_LINK, phrase_group::FLD_ID, phrase_group::FLD_ID);
+                $db_con->set_join_fields(array(word::FLD_ID), sql_db::TBL_GROUP_LINK, group::FLD_ID, group::FLD_ID);
             } else {
-                $db_con->set_join_fields(array(triple::FLD_ID), sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK, phrase_group::FLD_ID, phrase_group::FLD_ID);
+                $db_con->set_join_fields(array(triple::FLD_ID), sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK, group::FLD_ID, group::FLD_ID);
             }
             if ($this->phr != null) {
                 if ($this->phr->id() <> 0) {
@@ -497,7 +499,7 @@ class value_list extends sandbox_list
                             $val->set_number($db_val[value::FLD_VALUE]);
                             $val->set_source_id($db_val[source::FLD_ID]);
                             $val->last_update = $lib->get_datetime($db_val[value::FLD_LAST_UPDATE]);
-                            $val->grp->set_id($db_val[phrase_group::FLD_ID]);
+                            $val->grp->set_id($db_val[group::FLD_ID]);
                             $this->add_obj($val);
                         }
                     }
@@ -1037,11 +1039,11 @@ class value_list extends sandbox_list
     /**
      * return a list of phrase groups for all values of this list
      */
-    function phrase_groups(): phrase_group_list
+    function phrase_groups(): group_list
     {
         log_debug();
         $lib = new library();
-        $grp_lst = new phrase_group_list($this->user());
+        $grp_lst = new group_list($this->user());
         foreach ($this->lst() as $val) {
             if (!isset($val->grp)) {
                 $val->load_grp_by_id();

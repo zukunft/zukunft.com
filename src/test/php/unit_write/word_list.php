@@ -35,9 +35,9 @@ namespace test\write;
 use api\value_api;
 use api\word_api;
 use cfg\foaf_direction;
+use cfg\group\group;
 use cfg\library;
 use cfg\phr_ids;
-use cfg\phrase_group;
 use cfg\verb;
 use cfg\word_list;
 use cfg\word_select_direction;
@@ -271,7 +271,7 @@ class word_list_test
         // test group id
         $wrd_lst = new word_list($usr);
         $wrd_lst->load_by_names(array(word_api::TN_ZH, word_api::TN_2021, word_api::TN_CHF, word_api::TN_MIO));
-        $grp = new phrase_group($usr);
+        $grp = new group($usr);
         $grp->load_by_ids((new phr_ids($wrd_lst->ids())));
         $result = $grp->get_id();
         $target = 1; // the creation should be tested, but how?

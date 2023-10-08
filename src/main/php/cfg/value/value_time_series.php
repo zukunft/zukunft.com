@@ -37,6 +37,7 @@
 namespace cfg;
 
 use cfg\db\sql_creator;
+use cfg\group\group;
 use DateTime;
 
 class value_time_series extends sandbox_value
@@ -53,7 +54,7 @@ class value_time_series extends sandbox_value
     // all database field names excluding the id and excluding the user specific fields
     const FLD_NAMES = array(
         user::FLD_ID,
-        phrase_group::FLD_ID
+        group::FLD_ID
     );
 
     // list of the user specific numeric database field names
@@ -74,7 +75,7 @@ class value_time_series extends sandbox_value
      */
 
     // related objects used also for database mapping
-    public phrase_group $grp;  // phrases (word or triple) group object for this value
+    public group $grp;  // phrases (word or triple) group object for this value
     public ?source $source;    // the source object
 
     /*
@@ -100,7 +101,7 @@ class value_time_series extends sandbox_value
     {
         parent::reset();
 
-        $this->grp = new phrase_group($this->user());
+        $this->grp = new group($this->user());
         $this->source = null;
 
         $this->last_update = new DateTime();
@@ -128,7 +129,7 @@ class value_time_series extends sandbox_value
         $lib = new library();
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, self::FLD_ID);
         if ($result) {
-            $this->grp->id = $db_row[phrase_group::FLD_ID];
+            $this->grp->id = $db_row[group::FLD_ID];
             if ($db_row[source::FLD_ID] > 0) {
                 $this->source = new source($this->user());
                 $this->source->id = $db_row[source::FLD_ID];
@@ -160,7 +161,7 @@ class value_time_series extends sandbox_value
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    protected function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
+    function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
         $qp = parent::load_sql_obj_vars($sc, $class);
         $qp->name .= $query_name;
@@ -192,13 +193,13 @@ class value_time_series extends sandbox_value
      * create an SQL statement to retrieve a time series by the phrase group from the database
      *
      * @param sql_creator $sc with the target db_type set
-     * @param phrase_group $grp the phrase group to which the time series should be loaded
+     * @param group $grp the phrase group to which the time series should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_grp(sql_creator $sc, phrase_group $grp): sql_par
+    function load_sql_by_grp(sql_creator $sc, group $grp): sql_par
     {
-        $qp = $this->load_sql($sc, phrase_group::FLD_ID);
-        $sc->add_where(phrase_group::FLD_ID, $grp->id());
+        $qp = $this->load_sql($sc, group::FLD_ID);
+        $sc->add_where(group::FLD_ID, $grp->id());
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -221,10 +222,10 @@ class value_time_series extends sandbox_value
     /**
      * load a row from the database selected by id
      * TODO load the related time series data
-     * @param phrase_group $grp the phrase group to which the time series should be loaded
+     * @param group $grp the phrase group to which the time series should be loaded
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_grp(phrase_group $grp): int
+    function load_by_grp(group $grp): int
     {
         global $db_con;
 
@@ -252,7 +253,7 @@ class value_time_series extends sandbox_value
         if ($log->id() > 0) {
             $db_con->set_type(sql_db::TBL_VALUE_TIME_SERIES);
             $this->id = $db_con->insert(
-                array(phrase_group::FLD_ID, user::FLD_ID, self::FLD_LAST_UPDATE),
+                array(group::FLD_ID, user::FLD_ID, self::FLD_LAST_UPDATE),
                 array($this->grp->id, $this->user()->id, "Now()"));
             if ($this->id > 0) {
                 // update the reference in the log

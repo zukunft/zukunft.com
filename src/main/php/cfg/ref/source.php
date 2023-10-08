@@ -253,14 +253,13 @@ class source extends sandbox_typed
      *
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
-     * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    protected function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
+    function load_sql(sql_creator $sc, string $query_name): sql_par
     {
-        $sc->set_type(source::class);
+        $sc->set_type($this::class);
         return parent::load_sql_fields(
-            $sc, $query_name, $class,
+            $sc, $query_name,
             self::FLD_NAMES,
             self::FLD_NAMES_USR,
             self::FLD_NAMES_NUM_USR

@@ -33,7 +33,7 @@
 namespace cfg;
 
 // TODO dismiss???
-class db_object_named extends db_object
+class db_object_named extends db_id_object
 {
 
 }

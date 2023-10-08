@@ -31,14 +31,22 @@
 
 */
 
-namespace cfg;
+namespace cfg\group;
 
 include_once DB_PATH . 'sql_par_type.php';
 
 use cfg\db\sql_creator;
-use cfg\db\sql_par_type;
+use cfg\library;
+use cfg\phrase;
+use cfg\phrase_list;
+use cfg\sandbox_list;
+use cfg\sql_db;
+use cfg\sql_par;
+use cfg\triple;
+use cfg\user_message;
+use cfg\word;
 
-class phrase_group_list extends sandbox_list
+class group_list extends sandbox_list
 {
 
     public ?array $time_lst = null;     // the list of the time phrase (the add function)
@@ -61,7 +69,7 @@ class phrase_group_list extends sandbox_list
      */
     protected function load_names_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
-        $grp = new phrase_group($this->user());
+        $grp = new group($this->user());
         return $grp->load_sql($sc, $query_name, $class);
     }
 
@@ -76,8 +84,15 @@ class phrase_group_list extends sandbox_list
     function load_names_sql_by_ids(sql_creator $sc, array $grp_ids, int $limit = 0, int $offset = 0): sql_par
     {
         $qp = $this->load_names_sql($sc, 'ids_fast');
-        $sc->add_where(phrase_group::FLD_ID, $grp_ids);
-        $sc->set_order(phrase_group::FLD_ID);
+
+        // change query name from group to group_list
+        $lib = new library();
+        $class = $lib->class_to_name(self::class);
+        $qp->name = $class . '_by_ids_fast';
+        $sc->set_name($qp->name);
+
+        $sc->add_where(group::FLD_ID, $grp_ids);
+        $sc->set_order(group::FLD_ID);
         $sc->set_page($limit, $offset);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -86,6 +101,7 @@ class phrase_group_list extends sandbox_list
 
     /**
      * create the common part of an SQL statement to get a list of phrase groups from the database
+     * TODO combine standard with prime and big
      *
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
@@ -94,12 +110,24 @@ class phrase_group_list extends sandbox_list
      */
     protected function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
-        $grp = new phrase_group($this->user());
-        return $grp->load_sql($sc, $query_name, $class);
+        $grp = new group($this->user());
+        $qp = $grp->load_sql($sc, $query_name);
+
+        // change query name from group to group_list
+        $lib = new library();
+        $class = $lib->class_to_name(self::class);
+        $qp->name = $class . '_by_' . $query_name;
+        $sc->set_name($qp->name);
+
+        return $qp;
     }
 
     /**
      * set the SQL query parameters to load a list of phrase groups by the ids
+     * TODO combine standard with prime and big
+     * TODO add load test to compare like matching with link table matching
+     * TODO for prime use binary key like matching
+     *
      * @param sql_creator $sc with the target db_type set
      * @param array $grp_ids a list of int values with the group ids
      * @param int $limit the number of rows to return
@@ -109,8 +137,8 @@ class phrase_group_list extends sandbox_list
     function load_sql_by_ids(sql_creator $sc, array $grp_ids, int $limit = 0, int $offset = 0): sql_par
     {
         $qp = $this->load_sql($sc, 'ids');
-        $sc->add_where(phrase_group::FLD_ID, $grp_ids);
-        $sc->set_order(phrase_group::FLD_ID);
+        $sc->add_where(group::FLD_ID, $grp_ids);
+        $sc->set_order(group::FLD_ID);
         $sc->set_page($limit, $offset);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -118,7 +146,9 @@ class phrase_group_list extends sandbox_list
     }
 
     /**
-     * set the SQL query parameters to load a list of phrase groups by the ids
+     * set the SQL query parameters to load a list of groups by a phrase id
+     * TODO add pattern matching for 64-bit, 512-bit and text group_id
+     *
      * @param sql_creator $sc with the target db_type set
      * @param phrase $phr the phrase to which all linked groups should be returned
      * @param int $limit the number of rows to return
@@ -128,26 +158,18 @@ class phrase_group_list extends sandbox_list
     function load_sql_by_phr(sql_creator $sc, phrase $phr, int $limit = 0, int $offset = 0): sql_par
     {
         $qp = $this->load_sql($sc, 'phr');
-        if ($phr->is_word()) {
-            $qp->name .= '_wrd';
-            $sc->set_name($qp->name);
-            $sc->set_join_fields(
-                array(word::FLD_ID),
-                sql_db::TBL_PHRASE_GROUP_WORD_LINK,
-                phrase_group::FLD_ID,
-                phrase_group::FLD_ID);
-            $sc->add_where(sql_db::LNK_TBL . '.' . word::FLD_ID, $phr->obj_id());
-        } else {
-            $qp->name .= '_trp';
-            $sc->set_name($qp->name);
-            $sc->set_join_fields(
-                array(triple::FLD_ID),
-                sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK,
-                phrase_group::FLD_ID,
-                phrase_group::FLD_ID);
-            $sc->add_where(sql_db::LNK_TBL . '.' . triple::FLD_ID, $phr->obj_id());
-        }
-        $sc->set_order(phrase_group::FLD_ID);
+        // overwrite the query name
+        $lib = new library();
+        $class = $lib->class_to_name($this::class);
+        $qp->name = $class . '_by_phr';
+        $sc->set_name($qp->name);
+        $sc->set_join_fields(
+            array(phrase::FLD_ID),
+            sql_db::TBL_GROUP_LINK,
+            group::FLD_ID,
+            group::FLD_ID);
+        $sc->add_where(sql_db::LNK_TBL . '.' . phrase::FLD_ID, $phr->obj_id());
+        $sc->set_order(group::FLD_ID);
         $sc->set_page($limit, $offset);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -170,7 +192,7 @@ class phrase_group_list extends sandbox_list
         $db_rows = $db_con->get($qp);
         if ($db_rows != null) {
             foreach ($db_rows as $db_row) {
-                $phr_grp = new phrase_group($this->user());
+                $phr_grp = new group($this->user());
                 $phr_grp->row_mapper($db_row);
                 $this->add_obj($phr_grp);
                 $result = true;
@@ -227,9 +249,9 @@ class phrase_group_list extends sandbox_list
 
     /**
      * add a phrase group if it is not yet part of the list
-     * @param phrase_group $grp
+     * @param group $grp
      */
-    function add(phrase_group $grp): void
+    function add(group $grp): void
     {
         log_debug($grp->id());
         $do_add = false;
@@ -409,11 +431,11 @@ class phrase_group_list extends sandbox_list
             foreach ($val_rows as $val_row) {
                 // add the phrase group of the value or formula result add the time using a combined index
                 // because a time word should never be part of a phrase group to have a useful number of groups
-                log_debug('add id ' . $val_row[phrase_group::FLD_ID]);
+                log_debug('add id ' . $val_row[group::FLD_ID]);
                 // log_debug('add time id ' . $val_row[value::FLD_TIME_WORD]);
                 // remove the formula name phrase and the result phrases from the value phrases to avoid potentials loops and
-                $val_grp = new phrase_group($this->user());
-                $val_grp->load_by_id($val_row[phrase_group::FLD_ID]);
+                $val_grp = new group($this->user());
+                $val_grp->load_by_id($val_row[group::FLD_ID]);
                 $used_phr_lst = clone $val_grp->phr_lst;
                 log_debug('used_phr_lst ' . $used_phr_lst->dsp_id());
                 // exclude the formula name

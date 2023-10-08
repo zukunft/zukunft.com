@@ -434,7 +434,7 @@ class controller
      * @param string $body_key to select a body part of the api message
      * @return array the message body if everything has been fine or an empty array
      */
-    public function check_api_msg(array $api_msg, string $body_key = controller::API_BODY): array
+    function check_api_msg(array $api_msg, string $body_key = controller::API_BODY): array
     {
         $msg_ok = true;
         $body = array();

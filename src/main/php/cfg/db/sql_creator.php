@@ -59,8 +59,7 @@ class sql_creator
         sql_db::TBL_FORMULA_ELEMENT,
         sql_db::TBL_COMPONENT_LINK,
         sql_db::TBL_VALUE_PHRASE_LINK,
-        sql_db::TBL_PHRASE_GROUP_WORD_LINK,
-        sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK,
+        sql_db::TBL_GROUP_LINK,
         sql_db::TBL_VIEW_TERM_LINK,
         sql_db::TBL_REF,
         sql_db::TBL_IP,
@@ -323,9 +322,10 @@ class sql_creator
      *
      * @param string $class is a string that is used to select the table name, the id field and the name field
      * @param bool $usr_table if it is true the user table instead of the standard table is used
+     * @param string $ext the table name extension e.g. to switch between standard and prime values
      * @return bool true if setting the type was successful
      */
-    function set_type(string $class, bool $usr_table = false): bool
+    function set_type(string $class, bool $usr_table = false, string $ext = ''): bool
     {
         global $usr;
 
@@ -340,7 +340,7 @@ class sql_creator
                 $this->set_usr($usr->id()); // by default use the session user id
             }
         }
-        $this->set_table($usr_table);
+        $this->set_table($usr_table, $ext);
         $this->set_id_field();
         return true;
     }
@@ -1686,6 +1686,37 @@ class sql_creator
     }
 
     /**
+     * @return string the sql statement to creat a table
+     */
+    function table_create(string $tbl_comment = ''): string
+    {
+        $sql = '';
+
+        // set the header comments
+        $sql .= '-- ';
+        $sql .= '-- table structure ';
+        if ($tbl_comment != '') {
+            $sql .= $tbl_comment;
+        } else {
+            $sql .= $this->table;
+        }
+        $sql .= ' ';
+        $sql .= '-- ';
+        $sql .= ' ';
+
+        // create the main sql
+        $sql .= 'CREATE TABLE IF NOT EXISTS ' . $this->table . ' ';
+        $sql .= '';
+
+        // loop over the fields
+
+        // add the table comment
+        // loop over the comments
+
+        return $sql;
+    }
+
+    /**
      * @return int the number of parameter types actually used e.g. excluding "is null"
      */
     private function used_par_types(): int
@@ -1916,7 +1947,7 @@ class sql_creator
      * @param string $fld the name of the field that should be escaped
      * @return string the valid field name to the given sql dialect
      */
-    public function name_sql_esc(string $fld): string
+    function name_sql_esc(string $fld): string
     {
         switch ($this->db_type) {
             case sql_db::POSTGRES:
@@ -2069,10 +2100,11 @@ class sql_creator
 
     /**
      * set the table name and init some related parameters
-     * @param bool $usr_table true if the user sandbox tabel should be used
+     * @param bool $usr_table true if the user sandbox table should be used
+     * @param string $ext the table name extension e.g. to switch between standard and prime values
      * @return void
      */
-    private function set_table(bool $usr_table = false): void
+    private function set_table(bool $usr_table = false, string $ext = ''): void
     {
         global $debug;
         if ($usr_table) {
@@ -2080,6 +2112,7 @@ class sql_creator
             $this->usr_only_query = true;
         } else {
             $this->table = $this->get_table_name($this->type);
+            $this->table .= $ext;
         }
         log_debug('to "' . $this->table . '"', $debug - 20);
     }

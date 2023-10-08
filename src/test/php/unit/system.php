@@ -100,7 +100,7 @@ class system_unit_tests
         $t->assert($test_name, $phr_lst->dsp_id(), $target);
         $test_name = 'debug phrase_group id';
         $grp = $t->dummy_phrase_group();
-        $target = '"Pi (math)" (phrase_group_id 1) as "Pi (math)" for user 1 (zukunft.com system test)';
+        $target = '"Pi (math)" (group_id 1) as "Pi (math)" for user 1 (zukunft.com system test)';
         $t->assert($test_name, $grp->dsp_id(), $target);
         $test_name = 'debug group_list id';
         $grp_lst = $t->dummy_phrase_group_list();
@@ -261,7 +261,7 @@ class system_unit_tests
         $t->subheader('ip list sql tests');
 
         $ip_lst = new ip_range_list();
-        $t->assert_load_sql_obj_vars($db_con, $ip_lst);
+        $t->assert_sql_by_obj_vars($db_con, $ip_lst);
 
 
         $t->subheader('user list loading sql tests');

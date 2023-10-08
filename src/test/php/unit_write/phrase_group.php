@@ -35,7 +35,7 @@ namespace test\write;
 
 use api\triple_api;
 use api\word_api;
-use cfg\phrase_group;
+use cfg\group\group;
 use cfg\phrase_list;
 use cfg\word_list;
 use test\test_cleanup;
@@ -54,7 +54,7 @@ class phrase_group_test
         // test getting the phrase group id based on word names
         $wrd_lst = new word_list($usr);
         $wrd_lst->load_by_names(array(word_api::TN_ZH, word_api::TN_CANTON, word_api::TN_INHABITANTS, word_api::TN_MIO));
-        $phr_grp = new phrase_group($usr);
+        $phr_grp = new group($usr);
         $phr_grp->load_by_lst($wrd_lst->phrase_lst());
         $result = $phr_grp->id();
         $target = 0;
@@ -67,7 +67,7 @@ class phrase_group_test
         // ... and if the time word is correctly excluded
         $wrd_lst = new word_list($usr);
         $wrd_lst->load_by_names(array(word_api::TN_ZH, word_api::TN_CANTON, word_api::TN_INHABITANTS, word_api::TN_MIO, word_api::TN_2020));
-        $phr_grp = new phrase_group($usr);
+        $phr_grp = new group($usr);
         $phr_grp->load_by_lst($wrd_lst->phrase_lst());
         $result = $phr_grp->id();
         //if ($result > 0 and $result != $id_without_year) {
@@ -79,7 +79,7 @@ class phrase_group_test
 
         // load based on id
         if ($phr_grp->id() > 0) {
-            $phr_grp_reload = new phrase_group($usr);
+            $phr_grp_reload = new group($usr);
             $phr_grp_reload->load_by_id($phr_grp->id());
             $wrd_lst_reloaded = $phr_grp_reload->phr_lst->wrd_lst();
             $result = array_diff(
@@ -109,7 +109,7 @@ class phrase_group_test
         $phr_lst = new phrase_list($usr);
         $phr_lst->load_by_names(array(word_api::TN_ZH, word_api::TN_CANTON, word_api::TN_INHABITANTS));
         $grp = $phr_lst->get_grp();
-        $grp_check = new phrase_group($usr);
+        $grp_check = new group($usr);
         $grp_check->load_by_id($grp->id());
         $result = $grp_check->load_link_ids_for_testing();
         $target = $grp->phr_lst->id_lst();
@@ -119,7 +119,7 @@ class phrase_group_test
         $phr_lst = new phrase_list($usr);
         $phr_lst->load_by_names(array(word_api::TN_ZH, word_api::TN_CANTON, word_api::TN_INHABITANTS, word_api::TN_MIO, word_api::TN_2020));
         $grp = $phr_lst->get_grp();
-        $grp_check = new phrase_group($usr);
+        $grp_check = new group($usr);
         $grp_check->load_by_id($grp->id());
         $result = $grp_check->load_link_ids_for_testing();
         $target = $grp->phr_lst->id_lst();

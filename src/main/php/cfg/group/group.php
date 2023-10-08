@@ -49,22 +49,35 @@
 
 */
 
-namespace cfg;
+namespace cfg\group;
 
 include_once DB_PATH . 'sql_par_type.php';
+include_once MODEL_HELPER_PATH . 'db_object.php';
 include_once MODEL_HELPER_PATH . 'db_object_user.php';
 include_once MODEL_PHRASE_PATH . 'phr_ids.php';
 include_once MODEL_PHRASE_PATH . 'phrase_list.php';
-include_once MODEL_PHRASE_PATH . 'phrase_group_word_link.php';
-include_once MODEL_PHRASE_PATH . 'phrase_group_triple_link.php';
+include_once MODEL_PHRASE_PATH . 'group_phrase_link.php';
 include_once API_PHRASE_PATH . 'phrase_group.php';
 
 use api\phrase_group_api;
 use cfg\db\sql_creator;
 use cfg\db\sql_par_type;
+use cfg\db_object;
+use cfg\library;
+use cfg\phr_ids;
+use cfg\phrase;
+use cfg\phrase_list;
+use cfg\result;
+use cfg\sql_db;
+use cfg\sql_par;
+use cfg\triple;
+use cfg\user;
+use cfg\user_message;
+use cfg\value;
+use cfg\word;
 use model\export\exp_obj;
 
-class phrase_group extends db_object_user
+class group extends db_object
 {
 
     /*
@@ -72,19 +85,17 @@ class phrase_group extends db_object_user
      */
 
     // object specific database and JSON object field names
-    const FLD_ID = 'phrase_group_id';
-    const FLD_NAME = 'phrase_group_name';
-    const FLD_DESCRIPTION = 'auto_description';
-    const FLD_WORD_IDS = 'word_ids';
-    const FLD_TRIPLE_IDS = 'triple_ids';
-    const FLD_ORDER = 'id_order';
+    const FLD_ID = 'group_id';
+    const FLD_NAME = 'group_name';
+    const FLD_DESCRIPTION = 'description';
+
+    const TBL_COMMENT = 'to add a user given name using a 512 bit group id index for up to 16 16 bit phrase ids including the order';
+    const TBL_EXT_PRIME = '_prime'; // the table name extension for up to four prime phrase ids
+    const TBL_EXT_BIG = '_big'; // the table name extension for more than 16 phrase ids
 
     // all database field names excluding the id
     const FLD_NAMES = array(
-        self::FLD_DESCRIPTION,
-        self::FLD_WORD_IDS,
-        self::FLD_TRIPLE_IDS,
-        self::FLD_ORDER
+        self::FLD_DESCRIPTION
     );
 
 
@@ -93,15 +104,11 @@ class phrase_group extends db_object_user
      */
 
     // database fields
-    public ?string $name;         // maybe later the user should have the possibility to overwrite the generic name, but this is not user at the moment
-    public phrase_list $phr_lst;  // the phrase list object
-    public ?string $id_order_txt; // the ids from above in the order that the user wants to see them
-
-    // to deprecate
-    public ?string $description;    // the automatically created generic name for the word group, used for a quick display of values
-
-    // in memory only fields
-    public ?array $id_order = array();       // the ids from above in the order that the user wants to see them
+    public int|string $id;       // the id of the group as a backup for the order until the unit and integration test are complete
+    public phrase_list $phr_lst; // the phrase list object
+    private user $usr;           // the person for whom the object is loaded, so to say the viewer
+    public ?string $name;        // maybe later the user should have the possibility to overwrite the generic name, but this is not user at the moment
+    public ?string $description; // the automatically created generic name for the word group, used for a quick display of values
 
 
     /*
@@ -112,9 +119,9 @@ class phrase_group extends db_object_user
      * set the user which is needed in all cases
      * @param user $usr the user who requested to see this phrase group
      */
-    function __construct(user $usr, int $id = 0, array $prh_names = [])
+    function __construct(user $usr, int|string $id = 0, array $prh_names = [])
     {
-        parent::__construct($usr);
+        $this->set_user($usr);
 
         $this->reset();
 
@@ -130,34 +137,31 @@ class phrase_group extends db_object_user
         $this->name = null;
         $this->description = null;
         $this->phr_lst = new phrase_list($this->user());
-        $this->id_order_txt = null;
-
-        $this->id_order = array();
     }
 
     /**
      * map the database fields to one db row to this phrase group object
      *
      * @param array|null $db_row with the data directly from the database
-     * @param string $id_fld the name of the id field as set in the child class
+     * @param string $id_fld the name of the id field
      * @return bool true if one phrase group is found
      */
     function row_mapper(?array $db_row, string $id_fld = ''): bool
     {
-        $result = parent::row_mapper($db_row, self::FLD_ID);
+        $result = false;
+        $this->set_id(0);
+        if ($db_row != null) {
+            if (array_key_exists(self::FLD_ID, $db_row)) {
+                $this->set_id($db_row[self::FLD_ID]);
+                $grp_id = new group_id();
+                $phr_ids = new phr_ids($grp_id->get_array($db_row[self::FLD_ID]));
+                $this->load_lst($phr_ids);
+                $result = true;
+            }
+        }
         if ($result) {
             $this->name = $db_row[self::FLD_NAME];
             $this->description = $db_row[self::FLD_DESCRIPTION];
-            $wrd_ids = null;
-            if ($db_row[self::FLD_WORD_IDS] != null) {
-                $wrd_ids = array_map('intval', explode(',', $db_row[self::FLD_WORD_IDS]));
-            }
-            $trp_ids = null;
-            if ($db_row[self::FLD_TRIPLE_IDS] != null) {
-                $trp_ids = array_map('intval', explode(',', $db_row[self::FLD_TRIPLE_IDS]));
-            }
-            $phr_ids = new phr_ids($wrd_ids, $trp_ids);
-            $this->load_lst($phr_ids);
         }
         return $result;
     }
@@ -166,6 +170,34 @@ class phrase_group extends db_object_user
     /*
      * set and get
      */
+
+    /**
+     * set the unique database id of this group
+     * @param int|string $id either a 62-bit int, a 512-bit id with 16 phrase ids or a text with more than 16 +/- seperated 6 char alpha_num coded phrase ids
+     */
+    function set_id(int|string $id): void
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * set the unique database id of this group
+     * @param int|string $id either a 62-bit int, a 512-bit id with 16 phrase ids or a text with more than 16 +/- seperated 6 char alpha_num coded phrase ids
+     */
+    function set_id_from_phrase_list(phrase_list $phr_lst): void
+    {
+        $grp_id = new group_id();
+        $this->id = $grp_id->get_id($phr_lst);
+    }
+
+    /**
+     * @return int|string either a 62-bit int, a 512-bit id with 16 phrase ids or a text with more than 16 +/- seperated 6 char alpha_num coded phrase ids
+     * the internal null value is used to detect if database saving has been tried
+     */
+    function id(): int|string
+    {
+        return $this->id;
+    }
 
     function set_name(string $name = ''): void
     {
@@ -178,6 +210,25 @@ class phrase_group extends db_object_user
                 log_warning('name of phrase group ' . $this->dsp_id() . ' missing');
             }
         }
+    }
+
+    /**
+     * set the user of the user sandbox object
+     *
+     * @param user $usr the person who wants to access the object e.g. the word
+     * @return void
+     */
+    function set_user(user $usr): void
+    {
+        $this->usr = $usr;
+    }
+
+    /**
+     * @return user the person who wants to see a word, verb, triple, formula, view or result
+     */
+    function user(): user
+    {
+        return $this->usr;
     }
 
 
@@ -210,24 +261,79 @@ class phrase_group extends db_object_user
 
 
     /*
+     * sql create
+     */
+
+    /**
+     * the sql statement to create the table for this (or a child) object
+     *
+     * @param sql_creator $sc ith the target db_type set
+     * @return string the sql statement to create the table
+     */
+    function sql_table(sql_creator $sc): string
+    {
+        return parent::sql_table($sc);
+    }
+
+
+    /*
      * load
      */
 
     /**
-     * create the common part of an SQL statement to retrieve the complete phrase group from the database
+     * create an SQL statement to retrieve a user sandbox object by id from the database
      *
      * @param sql_creator $sc with the target db_type set
-     * @param string $query_name the name of the query use to prepare and call the query
-     * @param string $class the name of this class from where the call has been triggered
+     * @param int|string $id the id of the phrase group, which can also be a string representing a 512-bit key
+     * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
+    function load_sql_by_id(sql_creator $sc, int|string $id, string $class = self::class): sql_par
     {
-        $qp = parent::load_sql($sc, $query_name, $class);
+        $grp_id = new group_id();
+        $ext = '';
+        if ($grp_id->is_prime($id)) {
+            $ext = self::TBL_EXT_PRIME;
+        } elseif ($grp_id->is_big($id)) {
+            $ext = self::TBL_EXT_BIG;
+        }
+        $qp = $this->load_sql_multi($sc, sql_db::FLD_ID, $class, $ext);
+        $sc->add_where($this->id_field(), $id);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
 
-        $sc->set_type(self::class);
-        $sc->set_name($qp->name);
-        $sc->set_fields(self::FLD_NAMES);
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve a phrase groups from the database
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param phrase_list $phr_lst list of phrases that should all be used to create the group id
+     * @return sql_par the SQL statement base on the parameters set in $this
+     */
+    function load_sql_by_phrase_list(sql_creator $sc, phrase_list $phr_lst): sql_par
+    {
+        $grp_id = new group_id();
+        return $this->load_sql_by_id($sc, $grp_id->get_id($phr_lst));
+    }
+
+    /**
+     * create an SQL statement to retrieve a phrase groups by name from the database
+     * only selects groups where the default name has been overwritten by the user
+     * TODO check that the user does not use a group name that matches the generated name of another group
+     * TODO include the prime and big tables into the search
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param string $name the name of the phrase group
+     * @return sql_par the SQL statement base on the parameters set in $this
+     */
+    function load_sql_by_name(sql_creator $sc, string $name): sql_par
+    {
+        $qp = $this->load_sql($sc, sql_db::FLD_NAME);
+        $sc->add_where(self::FLD_NAME, $name);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
 
         return $qp;
     }
@@ -256,6 +362,18 @@ class phrase_group extends db_object_user
     }
 
     /**
+     * load one database row e.g. word, triple, value, formula, result, view, component or log entry from the database
+     * @param sql_par $qp the query parameters created by the calling function
+     * @return int the id of the object found and zero if nothing is found
+     */
+    protected function load(sql_par $qp): int
+    {
+        parent::load_without_id_return($qp);
+        return $this->id();
+    }
+
+    /**
+     * TODO move (and other functions) to db_object and rename the existing db_object to db_id_object
      * just set the class name for the user sandbox function
      * load a word object by database id
      * @param int $id the id of the word
@@ -264,7 +382,14 @@ class phrase_group extends db_object_user
      */
     function load_by_id(int $id, string $class = self::class): int
     {
-        return parent::load_by_id($id, $class);
+        global $db_con;
+
+        log_debug($id);
+        if ($class == '') {
+            $class = $this::class;
+        }
+        $qp = $this->load_sql_by_id($db_con->sql_creator(), $id, $class);
+        return $this->load($qp);
     }
 
     /**
@@ -335,12 +460,8 @@ class phrase_group extends db_object_user
     {
         if ($this->id != 0) {
             return sql_db::FLD_ID;
-        } elseif (count($this->phr_lst->wrd_ids()) > 0 and count($this->phr_lst->trp_ids()) > 0) {
-            return 'wrd_and_trp_ids';
-        } elseif (count($this->phr_lst->trp_ids()) > 0) {
-            return 'trp_ids';
-        } elseif (count($this->phr_lst->wrd_ids()) > 0) {
-            return 'wrd_ids';
+        } elseif (!$this->phr_lst->is_empty()) {
+            return 'phr_ids';
         } elseif ($this->name != '') {
             return sql_db::FLD_NAME;
         } else {
@@ -360,21 +481,11 @@ class phrase_group extends db_object_user
      */
     private function load_sql_select_qp(sql_db $db_con, sql_par $qp): sql_par
     {
-        $wrd_txt = implode(',', $this->phr_lst->wrd_ids());
-        $trp_txt = implode(',', $this->phr_lst->trp_ids());
         if ($this->id != 0) {
             $db_con->add_par(sql_par_type::INT, $this->id);
             $qp->sql = $db_con->select_by_set_id();
-        } elseif ($wrd_txt != '' and $trp_txt != '') {
-            $db_con->add_par(sql_par_type::TEXT, $wrd_txt);
-            $db_con->add_par(sql_par_type::TEXT, $trp_txt);
-            $qp->sql = $db_con->select_by_field_list(array(self::FLD_WORD_IDS, self::FLD_TRIPLE_IDS));
-        } elseif ($trp_txt != '') {
-            $db_con->add_par(sql_par_type::TEXT, $trp_txt);
-            $qp->sql = $db_con->select_by_field_list(array(self::FLD_TRIPLE_IDS));
-        } elseif ($wrd_txt != '') {
-            $db_con->add_par(sql_par_type::TEXT, $wrd_txt);
-            $qp->sql = $db_con->select_by_field_list(array(self::FLD_WORD_IDS));
+        } elseif (!$this->phr_lst->is_empty()) {
+            $this->set_id_from_phrase_list($this->phr_lst);
         } elseif ($this->name != '') {
             $db_con->add_par(sql_par_type::TEXT, $this->name);
             $qp->sql = $db_con->select_by_field_list(array(self::FLD_NAME));
@@ -695,7 +806,7 @@ class phrase_group extends db_object_user
             if ($this->id > 0) {
                 // update the generic name in the database
                 $db_con->usr_id = $this->user()->id();
-                $db_con->set_type(sql_db::TBL_PHRASE_GROUP);
+                $db_con->set_type(sql_db::TBL_GROUP);
                 if ($db_con->update($this->id, self::FLD_DESCRIPTION, $group_name)) {
                     $result = $group_name;
                 }
@@ -709,7 +820,7 @@ class phrase_group extends db_object_user
     }
 
 
-    function get_ex_time(): phrase_group
+    function get_ex_time(): group
     {
         $phr_lst = $this->phr_lst;
         $phr_lst->ex_time();
@@ -785,25 +896,11 @@ class phrase_group extends db_object_user
             $this->generic_name();
 
             // write new group
-            $wrd_id_txt = implode(',', $this->phr_lst->wrd_ids());
-            $trp_id_txt = implode(',', $this->phr_lst->trp_ids());
-            if ($wrd_id_txt <> '' or $trp_id_txt <> '') {
-                $db_con->usr_id = $this->user()->id();
-
-                if (strlen($wrd_id_txt) > 255) {
-                    log_err('Too many words assigned to one value ("' . $wrd_id_txt . '" is longer than the max database size of 255).', "phrase_group->set_wrd_id_txt");
-                    $wrd_id_txt = substr($wrd_id_txt, 0, 255);
-                }
-                if (strlen($trp_id_txt) > 255) {
-                    log_err('Too many triple assigned to one value ("' . $wrd_id_txt . '" is longer than the max database size of 255).', "phrase_group->set_wrd_id_txt");
-                    $trp_id_txt = substr($trp_id_txt, 0, 255);
-                }
-
-                $db_con->set_type(sql_db::TBL_PHRASE_GROUP);
-                $this->id = $db_con->insert(array(self::FLD_WORD_IDS, self::FLD_TRIPLE_IDS, self::FLD_DESCRIPTION),
-                    array($wrd_id_txt, $trp_id_txt, $this->description));
+            if (!$this->phr_lst->is_empty()) {
+                $grp_id = new group_id();
+                $this->set_id($grp_id->get_id($this->phr_lst));
             } else {
-                log_err('Either a word (' . $wrd_id_txt . ') or triple (' . $trp_id_txt . ')  must be set to create a group for ' . $this->dsp_id() . '.', 'phrase_group->save_id');
+                log_err('The phrase list must be set to create a group for ' . $this->dsp_id() . '.', 'phrase_group->save_id');
             }
         }
 
@@ -836,14 +933,12 @@ class phrase_group extends db_object_user
         $db_con->usr_id = $this->user()->id();
 
         // switch between the word and triple settings
+        $lnk = new group_link();
+        $qp = $lnk->load_by_group_id_sql($db_con, $this);
         if ($type == sql_db::TBL_WORD) {
-            $lnk = new phrase_group_word_link();
-            $qp = $lnk->load_by_group_id_sql($db_con, $this);
-            $table_name = $db_con->get_table_name(sql_db::TBL_PHRASE_GROUP_WORD_LINK);
+            $table_name = $db_con->get_table_name(sql_db::TBL_GROUP_LINK);
             $field_name = word::FLD_ID;
         } else {
-            $lnk = new phrase_group_triple_link();
-            $qp = $lnk->load_by_group_id_sql($db_con, $this);
             $table_name = $db_con->get_table_name(sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK);
             $field_name = triple::FLD_ID;
         }
@@ -919,7 +1014,7 @@ class phrase_group extends db_object_user
         global $db_con;
         $result = new user_message();
 
-        $db_con->set_type(sql_db::TBL_PHRASE_GROUP_WORD_LINK);
+        $db_con->set_type(sql_db::TBL_GROUP_LINK);
         $db_con->usr_id = $this->user()->id();
         $msg = $db_con->delete(self::FLD_ID, $this->id);
         $result->add_message($msg);
@@ -933,7 +1028,7 @@ class phrase_group extends db_object_user
         $val = new value($this->user());
         $val->load_by_grp($this);
 
-        if ($val->id > 0) {
+        if ($val->id() > 0) {
             $val->del();
         }
 
@@ -952,7 +1047,7 @@ class phrase_group extends db_object_user
         global $db_con;
         $result = $this->del_phr_links();
 
-        $db_con->set_type(sql_db::TBL_PHRASE_GROUP);
+        $db_con->set_type(sql_db::TBL_GROUP);
         $db_con->usr_id = $this->user()->id();
         $msg = $db_con->delete(self::FLD_ID, $this->id);
         $result->add_message($msg);
@@ -980,7 +1075,7 @@ class phrase_group extends db_object_user
         $db_con->set_name($qp->name);
         $db_con->set_fields(array(phrase::FLD_ID));
         $db_con->add_par(sql_par_type::INT, $this->id);
-        $qp->sql = $db_con->select_by_field(phrase_group::FLD_ID);
+        $qp->sql = $db_con->select_by_field(group::FLD_ID);
         $qp->par = $db_con->get_par();
         $lnk_id_lst = $db_con->get($qp);
         foreach ($lnk_id_lst as $db_row) {
@@ -1004,9 +1099,9 @@ class phrase_group extends db_object_user
         $result = '';
 
         if ($this->name() <> '') {
-            $result .= '"' . $this->name() . '" (phrase_group_id ' . $this->id . ')';
+            $result .= '"' . $this->name() . '" (group_id ' . $this->id . ')';
         } else {
-            $result .= 'phrase_group_id ' . $this->id;
+            $result .= 'group_id ' . $this->id;
         }
         if ($this->name <> '') {
             $result .= ' as "' . $this->name . '"';
@@ -1016,7 +1111,12 @@ class phrase_group extends db_object_user
                 $result .= ' for phrases ' . $this->phr_lst->dsp_id();
             }
         }
-        $result .= $this->dsp_id_user();
+        global $debug;
+        if ($debug > DEBUG_SHOW_USER or $debug == 0) {
+            if ($this->user() != null) {
+                $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
+            }
+        }
 
         return $result;
     }

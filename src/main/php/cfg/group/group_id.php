@@ -75,12 +75,14 @@ class group_id
     }
 
     /**
-     * @param int|string $grp_id
-     * @return array
+     * get the sorted array of phrase ids from the given group id
+     *
+     * @param int|string $grp_id either a 64-bit integer group id, a 512-bit alpha_num group id or a text of more than 16 +/- seperated 6 alpha_num char phrase ids
+     * @return array a sorted list of phrase ids
      */
     function get_array(int|string $grp_id): array
     {
-        if (is_int($grp_id)) {
+        if ($this->is_prime($grp_id)) {
             $result = $this->int_array($grp_id);
         } else {
             $result = [];
@@ -98,6 +100,32 @@ class group_id
             }
         }
         return $result;
+    }
+
+    /**
+     * @param int|string $grp_id
+     * @return bool true if the $grp_id represents up to four prime phrase ids
+     */
+    function is_prime(int|string $grp_id): bool
+    {
+        if (is_int($grp_id)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @param int|string $grp_id
+     * @return bool true if the $grp_id represents more then 16 phrase ids
+     */
+    function is_big(int|string $grp_id): bool
+    {
+        if (strlen($grp_id) > 112) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     function int_array(int $grp_id): array

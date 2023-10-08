@@ -225,6 +225,9 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO use zeroMQ or Kafka to sync the insert and update statements between the pod
     TODO use separate kafka topics for values and results of each pod e.g. switzerland_values for all updates related to Switzerland
     TODO allow to assign users to an admin and offer each admin to use different settings for "his" users so that different behavior due to setting changes can be tested to the same pod
+    TODO use prioritized change streams in the frontend e.g. updates of values have a higher priority than updates of results
+    TODO use prioritized change streams to synchronize the databases with out and in cache tables to avoid loss of data due to communication issues
+    TODO for prioritized change streams use transfer and process block size parameters e.g. 100 changes are send to another pod and removed from the out cache not before the destination pod has confirmed the writing to the in cache table
     TODO add a table with process steps with step_id, name, description, code_id
     TODO add a table with process_next_step with step_next_id, from_step_id, to_step_id, name, description, user_profile, user_id, batch_job_id
 

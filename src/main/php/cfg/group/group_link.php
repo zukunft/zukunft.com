@@ -31,30 +31,36 @@
 
 */
 
-namespace cfg;
+namespace cfg\group;
 
 include_once DB_PATH . 'sql_par_type.php';
 
 use cfg\db\sql_creator;
 use cfg\db\sql_par_type;
+use cfg\db_id_object;
+use cfg\sql_db;
+use cfg\sql_par;
+use cfg\triple;
 
-class phrase_group_triple_link extends phrase_group_link
+class group_link extends db_id_object
 {
     // object specific database and JSON object field names
     const FLD_ID = 'phrase_group_triple_link_id';
 
     // all database field names excluding the id
     const FLD_NAMES = array(
-        phrase_group::FLD_ID,
+        group::FLD_ID,
         triple::FLD_ID
     );
 
     // database fields
+    public int $grp_id;    // the phrase group id and not the object to reduce the memory usage
     public int $trp_id;    // the triple id and not the object to reduce the memory usage
 
     function __construct()
     {
         parent::__construct();
+        $this->grp_id = 0;
         $this->trp_id = 0;
     }
 
@@ -69,7 +75,7 @@ class phrase_group_triple_link extends phrase_group_link
     {
         $result = parent::row_mapper($db_row, self::FLD_ID);
         if ($result) {
-            $this->grp_id = $db_row[phrase_group::FLD_ID];
+            $this->grp_id = $db_row[group::FLD_ID];
             $this->trp_id = $db_row[triple::FLD_ID];
         }
         return $result;
@@ -88,7 +94,7 @@ class phrase_group_triple_link extends phrase_group_link
      * @param string $class the name of this class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    protected function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
+    function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
         $qp = parent::load_sql($sc, $query_name, $class);
 
@@ -103,10 +109,10 @@ class phrase_group_triple_link extends phrase_group_link
      * create an SQL statement to retrieve the phrase group triple links related to a group id
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param phrase_group $grp the phrase group which should be used for the selection
+     * @param group $grp the phrase group which should be used for the selection
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_by_group_id_sql(sql_db $db_con, phrase_group $grp): sql_par
+    function load_by_group_id_sql(sql_db $db_con, group $grp): sql_par
     {
         $db_con->set_type(self::class);
         $qp = new sql_par(self::class);
@@ -121,7 +127,7 @@ class phrase_group_triple_link extends phrase_group_link
         }
         $db_con->set_name($qp->name);
         $db_con->set_fields(self::FLD_NAMES);
-        $qp->sql = $db_con->select_by_field(phrase_group::FLD_ID);
+        $qp->sql = $db_con->select_by_field(group::FLD_ID);
         $qp->par = $db_con->get_par();
 
         return $qp;

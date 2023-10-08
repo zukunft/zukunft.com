@@ -256,7 +256,7 @@ class view extends sandbox_typed
      * without javascript this is the top right corner
      * with    javascript this is a bar on the top
      */
-    public function dsp_navbar(string $back = ''): string
+    function dsp_navbar(string $back = ''): string
     {
         log_debug();
         $result = '';

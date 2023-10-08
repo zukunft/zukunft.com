@@ -50,7 +50,7 @@ use cfg\db\sql_par_type;
 use JsonSerializable;
 use model\db_cl;
 
-class type_object extends db_object implements JsonSerializable
+class type_object extends db_id_object implements JsonSerializable
 {
 
     /*

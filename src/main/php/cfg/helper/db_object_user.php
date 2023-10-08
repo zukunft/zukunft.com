@@ -34,7 +34,7 @@ namespace cfg;
 
 include_once MODEL_HELPER_PATH . 'db_object.php';
 
-class db_object_user extends db_object
+class db_object_user extends db_id_object
 {
 
     /*

@@ -47,9 +47,11 @@ include_once API_WORD_PATH . 'word_list.php';
 use api\word_list_api;
 use cfg\db\sql_creator;
 use cfg\db\sql_par_type;
+use cfg\group\group;
+use cfg\group\group_link;
+use cfg\group\phrase_group_word_link;
 use html\word\word as word_dsp;
 use html\word\word_list as word_list_dsp;
-use im_export\export;
 
 class word_list extends sandbox_list
 {
@@ -223,9 +225,9 @@ class word_list extends sandbox_list
 
             // create the sub query
             $sub_sc = clone $sc;
-            $sub_sc->set_type(phrase_group_word_link::class);
-            $sub_sc->set_fields(array(word::FLD_ID));
-            $sub_sc->add_where(phrase_group::FLD_ID, $grp_id);
+            $sub_sc->set_type(group_link::class);
+            $sub_sc->set_fields(array(phrase::FLD_ID));
+            $sub_sc->add_where(group::FLD_ID, $grp_id);
 
             // use the sub query
             $sc->add_where(word::FLD_ID, $sub_sc->sql(1, false), sql_par_type::INT_SUB_IN);
@@ -1230,17 +1232,17 @@ class word_list extends sandbox_list
     /**
      * get the best matching phrase group
      */
-    function get_grp(): ?phrase_group
+    function get_grp(): ?group
     {
         log_debug('->get_grp');
 
-        $grp = new phrase_group($this->user());
+        $grp = new group($this->user());
 
         // get or create the group
         if (count($this->ids()) <= 0) {
             log_err('Cannot create phrase group for an empty list.', 'word_list->get_grp');
         } else {
-            $grp = new phrase_group($this->user());
+            $grp = new group($this->user());
             $grp->load_by_ids((new phr_ids($this->ids())));
         }
 
@@ -1292,7 +1294,7 @@ class word_list extends sandbox_list
     {
         $val = new value($this->user());
         $phr_lst = $this->phrase_lst();
-        $phr_grp = new phrase_group($this->user());
+        $phr_grp = new group($this->user());
         $phr_grp->load_by_lst($phr_lst);
         $val->load_by_grp($phr_grp);
 

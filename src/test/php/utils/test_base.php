@@ -60,7 +60,7 @@ use cfg\combine_object;
 use cfg\component\component;
 use cfg\component\component_list;
 use cfg\config;
-use cfg\db_object;
+use cfg\db_id_object;
 use cfg\fig_ids;
 use cfg\formula;
 use cfg\formula_list;
@@ -735,15 +735,15 @@ class test_base
      *
      * @param string $dsp_code_id the code id of the view that should be tested
      * @param user $usr to define for which user the view should be created
-     * @param db_object|null $dbo the database object that should be shown
+     * @param db_id_object|null $dbo the database object that should be shown
      * @param int $id the id of the database object that should be loaded and send to the frontend
      * @return bool true if the generated view matches the expected
      */
     function assert_view(
-        string     $dsp_code_id,
-        user       $usr,
-        ?db_object $dbo = null,
-        int        $id = 0): bool
+        string        $dsp_code_id,
+        user          $usr,
+        ?db_id_object $dbo = null,
+        int           $id = 0): bool
     {
         $lib = new library();
 
@@ -855,6 +855,35 @@ class test_base
     /*
      * SQL for db_object
      */
+
+    /**
+     * check the SQL statement to create the sql table
+     * for all allowed SQL database dialects
+     *
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param object $usr_obj the user sandbox object e.g. a word
+     * @return bool true if all tests are fine
+     */
+    function assert_sql_table_create(sql_db $db_con, object $usr_obj): bool
+    {
+        $lib = new library();
+        $class = $lib->class_to_name($usr_obj::class);
+        // check the Postgres query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $name = $class . '_create';
+        $expected_sql = $this->assert_sql_expected($name, $db_con->db_type);
+        $actual_sql = $usr_obj->sql_table($db_con->sql_creator(), $class);
+        $result = $this->assert_sql($name, $actual_sql, $expected_sql);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $expected_sql = $this->assert_sql_expected($name, $db_con->db_type);
+            $actual_sql = $usr_obj->sql_table($db_con->sql_creator(), $class);
+            $result = $this->assert_sql($name, $actual_sql, $expected_sql);
+        }
+        return $result;
+    }
 
     /**
      * check the SQL statement to load a db object by id
@@ -1292,9 +1321,33 @@ class test_base
         return $result;
     }
 
+    /**
+     * check the SQL statements to load a group by phrase list for all allowed SQL database dialects
+     *
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param object $usr_obj the user sandbox object e.g. a word
+     * @param phrase $phr with the names of the objects that should be loaded
+     * @return bool true if all tests are fine
+     */
+    function assert_sql_by_phrase(sql_db $db_con, object $usr_obj, phrase $phr): bool
+    {
+        // check the Postgres query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $usr_obj->load_sql_by_phr($db_con->sql_creator(), $phr);
+        $result = $this->assert_qp($qp, $db_con->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $usr_obj->load_sql_by_phr($db_con->sql_creator(), $phr);
+            $result = $this->assert_qp($qp, $db_con->db_type);
+        }
+        return $result;
+    }
+
 
     /*
-     * SQL for list by ..
+     * SQL for list by ...
      */
 
     /**
@@ -1360,18 +1413,7 @@ class test_base
      */
     function assert_qp(sql_par $qp, string $dialect = ''): bool
     {
-        if ($dialect == sql_db::POSTGRES) {
-            $file_name_ext = '';
-        } elseif ($dialect == sql_db::MYSQL) {
-            $file_name_ext = self::FILE_MYSQL;
-        } else {
-            $file_name_ext = $dialect;
-        }
-        $file_name = $this->resource_path . $qp->name . $file_name_ext . self::FILE_EXT;
-        $expected_sql = $this->file($file_name);
-        if ($expected_sql == '') {
-            $expected_sql = 'File ' . $file_name . ' with the expected SQL statement is missing.';
-        }
+        $expected_sql = $this->assert_sql_expected($qp->name, $dialect);
         $result = $this->assert_sql(
             $this->name . $qp->name . '_' . $dialect,
             $qp->sql,
@@ -1384,6 +1426,32 @@ class test_base
         }
 
         return $result;
+    }
+
+    /**
+     * build the filename where the expected sql statement is saved
+     *
+     * @param string $name the unique name of the query
+     * @param string $dialect the db dialect
+     * @return string the filename including the resource path
+     */
+    function assert_sql_expected(string $name, string $dialect = ''): string
+    {
+        if ($dialect == sql_db::POSTGRES) {
+            $file_name_ext = '';
+        } elseif ($dialect == sql_db::MYSQL) {
+            $file_name_ext = self::FILE_MYSQL;
+        } else {
+            $file_name_ext = $dialect;
+        }
+        $file_name =  $this->resource_path . $name . $file_name_ext . self::FILE_EXT;
+        $expected_sql = $this->file($file_name);
+        if ($expected_sql == '') {
+            $msg = 'File ' . $file_name . ' with the expected SQL statement is missing.';
+            log_err($msg);
+            $expected_sql = $msg;
+        }
+        return $expected_sql;
     }
 
     /**
@@ -1436,7 +1504,7 @@ class test_base
      * @param string $db_type to define the database type if it does not match the class
      * @return bool true if all tests are fine
      */
-    function assert_load_sql_obj_vars(sql_db $db_con, object $usr_obj, string $db_type = ''): bool
+    function assert_sql_by_obj_vars(sql_db $db_con, object $usr_obj, string $db_type = ''): bool
     {
         if ($db_type == '') {
             $db_type = get_class($usr_obj);
@@ -1463,7 +1531,7 @@ class test_base
      * @param string $name the name
      * @return bool true if all tests are fine
      */
-    function assert_load(db_object $usr_obj, string $name): bool
+    function assert_load(db_id_object $usr_obj, string $name): bool
     {
         // check the loading via id and check the name
         $usr_obj->load_by_id(1, $usr_obj::class);

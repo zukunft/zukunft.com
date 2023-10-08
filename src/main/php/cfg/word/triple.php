@@ -39,15 +39,14 @@ include_once MODEL_SANDBOX_PATH . 'sandbox_link_typed.php';
 include_once SERVICE_EXPORT_PATH . 'triple_exp.php';
 
 use api\api;
+use api\triple_api;
 use cfg\db\sql_creator;
 use cfg\db\sql_par_type;
+use cfg\group\group_list;
+use html\html_base;
+use JsonSerializable;
 use model\export\exp_obj;
 use model\export\triple_exp;
-use controller\controller;
-use api\triple_api;
-use html\html_base;
-use html\word\triple as triple_dsp;
-use JsonSerializable;
 
 global $phrase_types;
 
@@ -653,7 +652,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    protected function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
+    function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
         $qp = parent::load_sql_obj_vars($sc, $class);
         $qp->name .= $query_name;
@@ -2119,7 +2118,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
         $result = new user_message();
 
         // collect all phrase groups where this triple is used
-        $grp_lst = new phrase_group_list($this->user());
+        $grp_lst = new group_list($this->user());
         $grp_lst->load_by_phr($this->phrase());
 
         // collect all values related to this triple

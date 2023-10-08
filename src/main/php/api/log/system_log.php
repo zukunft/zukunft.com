@@ -37,11 +37,11 @@ include_once WEB_HTML_PATH . 'api.php';
 
 use html\api;
 use html\html_base;
-use cfg\db_object;
+use cfg\db_id_object;
 use cfg\sys_log_status;
 use cfg\user;
 
-class system_log_api extends db_object
+class system_log_api extends db_id_object
 {
 
     CONST TV_TIME = '2023-01-03T20:59:59+0100'; // time for unit tests

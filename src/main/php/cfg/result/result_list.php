@@ -37,6 +37,8 @@ include_once API_RESULT_PATH . 'result_list.php';
 
 use api\result_list_api;
 use cfg\db\sql_par_type;
+use cfg\group\group;
+use cfg\group\group_list;
 use Exception;
 use html\formula\formula as formula_dsp;
 use html\html_base;
@@ -112,11 +114,11 @@ class result_list extends sandbox_list
             if (get_class($obj) == formula::class
                 or get_class($obj) == formula_dsp::class) {
                 $sql_by .= formula::FLD_ID;
-            } elseif (get_class($obj) == phrase_group::class) {
+            } elseif (get_class($obj) == group::class) {
                 if ($by_source) {
                     $sql_by .= result::FLD_SOURCE_GRP;
                 } else {
-                    $sql_by .= phrase_group::FLD_ID;
+                    $sql_by .= group::FLD_ID;
                 }
             } elseif (get_class($obj) == word::class or get_class($obj) == word_dsp::class) {
                 $sql_by .= word::FLD_ID;
@@ -138,13 +140,13 @@ class result_list extends sandbox_list
                 if (get_class($obj) == formula::class) {
                     $db_con->add_par(sql_par_type::INT, $obj->id());
                     $qp->sql = $db_con->select_by_field_list(array(formula::FLD_ID));
-                } elseif (get_class($obj) == phrase_group::class) {
+                } elseif (get_class($obj) == group::class) {
                     $db_con->add_par(sql_par_type::INT, $obj->id());
                     $link_fields = array();
                     if ($by_source) {
                         $link_fields[] = result::FLD_SOURCE_GRP;
                     } else {
-                        $link_fields[] = phrase_group::FLD_ID;
+                        $link_fields[] = group::FLD_ID;
                     }
                     $qp->sql = $db_con->select_by_field_list($link_fields);
                 } elseif (get_class($obj) == word::class or get_class($obj) == word_dsp::class) {
@@ -152,7 +154,7 @@ class result_list extends sandbox_list
                     $db_con->add_par(sql_par_type::INT, $obj->id(), false, true);
                     $db_con->set_join_fields(
                         array(result::FLD_GRP),
-                        sql_db::TBL_PHRASE_GROUP_WORD_LINK,
+                        sql_db::TBL_GROUP_LINK,
                         result::FLD_GRP,
                         result::FLD_GRP);
                     $qp->sql = $db_con->select_by_field_list(array(word::FLD_ID));
@@ -707,7 +709,7 @@ class result_list extends sandbox_list
         // this is a kind of word group list, where for each word group list several results are possible,
         // because there may be one value and several results for the same word group
         log_debug('get all values used in the formula ' . $frm->usr_text . ' that are related to one of the phrases assigned ' . $phr_lst_frm_assigned->dsp_name());
-        $phr_grp_lst_val = new phrase_group_list($this->user()); // by default the calling user is used, but if needed the value for other users also needs to be updated
+        $phr_grp_lst_val = new group_list($this->user()); // by default the calling user is used, but if needed the value for other users also needs to be updated
         $phr_grp_lst_val->get_by_val_with_one_phr_each($phr_lst_frm_assigned, $phr_lst_frm_used, $phr_frm, $phr_lst_res);
         $phr_grp_lst_val->get_by_res_with_one_phr_each($phr_lst_frm_assigned, $phr_lst_frm_used, $phr_frm, $phr_lst_res);
         $phr_grp_lst_val->get_by_val_special($phr_lst_frm_assigned, $phr_lst_preset, $phr_frm, $phr_lst_res); // for predefined formulas ...

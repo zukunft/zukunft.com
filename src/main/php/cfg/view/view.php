@@ -223,7 +223,7 @@ class view extends sandbox_typed
     /**
      * @return int the number of linked components of this view
      */
-    public function component_links(): int
+    function component_links(): int
     {
         return $this->component_link_list()->count();
     }
@@ -347,11 +347,11 @@ class view extends sandbox_typed
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    protected function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
+    function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
         $sc->set_type($class);
         return parent::load_sql_fields(
-            $sc, $query_name, $class,
+            $sc, $query_name,
             self::FLD_NAMES,
             self::FLD_NAMES_USR,
             self::FLD_NAMES_NUM_USR

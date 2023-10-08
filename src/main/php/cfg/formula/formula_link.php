@@ -265,7 +265,7 @@ class formula_link extends sandbox_link_with_type
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    protected function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
+    function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
         $qp = parent::load_sql_obj_vars($sc, $class);
         $qp->name .= $query_name;

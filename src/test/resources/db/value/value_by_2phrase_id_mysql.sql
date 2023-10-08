@@ -14,6 +14,6 @@ PREPARE value_by_2phrase_id FROM
   LEFT JOIN user_values u ON s.value_id = u.value_id
                          AND u.user_id = ?
       WHERE s.phrase_group_id IN (SELECT l1.phrase_group_id
-                                    FROM phrase_group_word_links l1
+                                    FROM group_links l1
                                    WHERE l1.word_id = ?)';
 

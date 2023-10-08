@@ -52,10 +52,11 @@ use api\api;
 use api\word_api;
 use cfg\db\sql_creator;
 use cfg\db\sql_par_type;
+use cfg\group\group_list;
+use html\word\word as word_dsp;
 use model\export\exp_obj;
 use model\export\sandbox_exp_named;
 use model\export\word_exp;
-use html\word\word as word_dsp;
 
 class word extends sandbox_typed
 {
@@ -412,6 +413,22 @@ class word extends sandbox_typed
 
 
     /*
+     * sql create
+     */
+
+    /**
+     * the sql statement to create the table
+     *
+     * @param sql_creator $sc ith the target db_type set
+     * @return string the sql statement to create the table
+     */
+    function sql_table(sql_creator $sc): string
+    {
+        $sc->set_type(word::class);
+        return parent::sql_table($sc);
+    }
+
+    /*
      * loading / database access object (DAO) functions
      */
 
@@ -461,7 +478,7 @@ class word extends sandbox_typed
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    protected function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
+    function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
         // TODO check if and where it is needed to exclude the formula words
         // global $phrase_types;
@@ -1668,7 +1685,7 @@ class word extends sandbox_typed
         $result = new user_message();
 
         // collect all phrase groups where this word is used
-        $grp_lst = new phrase_group_list($this->user());
+        $grp_lst = new group_list($this->user());
         $grp_lst->load_by_phr($this->phrase());
 
         // collect all triples where this word is used

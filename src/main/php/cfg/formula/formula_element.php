@@ -150,7 +150,7 @@ class formula_element extends db_object_user
      * @param string $class the name of this class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    protected function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
+    function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
         $qp = parent::load_sql($sc, $query_name, $class);
 
@@ -214,12 +214,11 @@ class formula_element extends db_object_user
      *
      * @param sql_creator $sc with the target db_type set
      * @param int $id the id of the user sandbox object
-     * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql_creator $sc, int $id, string $class = self::class): sql_par
+    function load_sql_by_id(sql_creator $sc, int $id): sql_par
     {
-        return parent::load_sql_by_id($sc, $id, self::class);
+        return parent::load_sql_by_id($sc, $id);
     }
 
     /*

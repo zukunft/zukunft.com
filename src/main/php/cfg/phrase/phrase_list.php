@@ -51,10 +51,12 @@ include_once MODEL_WORD_PATH . 'word_list.php';
 include_once MODEL_WORD_PATH . 'triple_list.php';
 include_once MODEL_PHRASE_PATH . 'trm_ids.php';
 include_once MODEL_PHRASE_PATH . 'term_list.php';
+include_once MODEL_GROUP_PATH . 'group.php';
 
 use api\phrase_list_api;
 use cfg\db\sql_creator;
 use cfg\db\sql_par_type;
+use cfg\group\group;
 use html\word\word as word_dsp;
 
 class phrase_list extends sandbox_list_named
@@ -2061,9 +2063,9 @@ class phrase_list extends sandbox_list_named
     /**
      * get the best matching phrase group (but don't create a new group)
      * @param bool $do_save can be set to false for unit testing
-     * @return phrase_group|null the best matching phrase group or null if no group matches
+     * @return group|null the best matching phrase group or null if no group matches
      */
-    function get_grp(bool $do_save = true): ?phrase_group
+    function get_grp(bool $do_save = true): ?group
     {
         log_debug($this->dsp_id());
         $grp = null;
@@ -2072,7 +2074,7 @@ class phrase_list extends sandbox_list_named
         if ($this->is_empty()) {
             log_err('Cannot create phrase group for an empty list.', 'phrase_list->get_grp');
         } else {
-            $grp = new phrase_group($this->user());
+            $grp = new group($this->user());
             $grp->phr_lst = clone $this;
             $grp->get($do_save);
         }

@@ -32,36 +32,21 @@
 
 namespace cfg;
 
-use api\system\db_object as db_object_api;
 use cfg\db\sql_creator;
 
 class db_object
 {
 
-    /*
-     * object vars
-     */
-
-    // database fields that are used in all model objects
-    // the database id is the unique prime key
-    protected int $id;
-
+    // dummy const to be overwritten by the child objects
+    const TBL_COMMENT = '';
+    const FLD_NAMES = array();
 
     /*
      * construct and map
      */
 
     /**
-     * reset the id to null to indicate that the database object has not been loaded
-     */
-    function __construct()
-    {
-        $this->set_id(0);
-    }
-
-    /**
-     * map the database fields to the object fields
-     * to be extended by the child functions
+     * dummy map function to be overwritten by the child object
      *
      * @param array|null $db_row with the data directly from the database
      * @param string $id_fld the name of the id field as set in the child class
@@ -69,61 +54,24 @@ class db_object
      */
     function row_mapper(?array $db_row, string $id_fld = ''): bool
     {
-        $result = false;
-        $this->set_id(0);
-        if ($db_row != null) {
-            if (array_key_exists($id_fld, $db_row)) {
-                if ($db_row[$id_fld] != 0) {
-                    $this->set_id($db_row[$id_fld]);
-                    $result = true;
-                }
-            }
-        }
-        return $result;
+        return false;
     }
 
 
     /*
-     * set and get
+     * sql create
      */
 
     /**
-     * set the unique database id of a database object
-     * @param int $id used in the row mapper and to set a dummy database id for unit tests
+     * the sql statement to create the table for this (or a child) object
+     *
+     * @param sql_creator $sc ith the target db_type set
+     * @return string the sql statement to create the table
      */
-    function set_id(int $id): void
+    function sql_table(sql_creator $sc): string
     {
-        $this->id = $id;
-    }
-
-    /**
-     * @return int the database id which is not 0 if the object has been saved
-     * the internal null value is used to detect if database saving has been tried
-     */
-    function id(): int
-    {
-        return $this->id;
-    }
-
-
-    /*
-     * cast
-     */
-
-    /**
-     * @return db_object_api the source frontend api object
-     */
-    function api_db_obj(): db_object_api
-    {
-        return new db_object_api($this->id());
-    }
-
-    /**
-     * @returns string the api json message for the object as a string
-     */
-    function api_json(): string
-    {
-        return $this->api_db_obj()->get_json();
+        $sc->set_type($this::class);
+        return $sc->table_create($this::TBL_COMMENT);
     }
 
 
@@ -132,32 +80,49 @@ class db_object
      */
 
     /**
-     * parent function to create the common part of an SQL statement
+     * parent function to create the common part of an SQL statement for group, value and result tables
      * child object sets the table and fields in the db sql builder
      *
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name of the selection fields to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
+     * @param string $ext the table name extension e.g. to switch between standard and prime values
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    protected function load_sql(sql_creator $sc, string $query_name, string $class): sql_par
+    public function load_sql_multi(sql_creator $sc, string $query_name, string $class, string $ext = ''): sql_par
     {
-        $qp = new sql_par($class);
+        $qp = new sql_par($class . $ext);
         $qp->name .= $query_name;
+        $sc->set_type($class, false, $ext);
+        $sc->set_name($qp->name);
+        $sc->set_fields($this::FLD_NAMES);
+
         return $qp;
+    }
+
+    /**
+     * parent function to create the common part of an SQL statement
+     * child object sets the table and fields in the db sql builder
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param string $query_name the name of the selection fields to make the query name unique
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql(sql_creator $sc, string $query_name): sql_par
+    {
+        return $this->load_sql_multi($sc, $query_name, $this::class);
     }
 
     /**
      * create an SQL statement to retrieve a user sandbox object by id from the database
      *
      * @param sql_creator $sc with the target db_type set
-     * @param int $id the id of the user sandbox object
-     * @param string $class the name of the child class from where the call has been triggered
+     * @param int|string $id the id of the user sandbox object
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql_creator $sc, int $id, string $class = self::class): sql_par
+    function load_sql_by_id_str(sql_creator $sc, int|string $id): sql_par
     {
-        $qp = $this->load_sql($sc, sql_db::FLD_ID, $class);
+        $qp = $this->load_sql($sc, sql_db::FLD_ID);
         $sc->add_where($this->id_field(), $id);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -166,38 +131,15 @@ class db_object
     }
 
     /**
-     * load one database row e.g. word, triple, value, formula, result, view, component or log entry from the database
+     * load one database row e.g. group (where the id might be a string), word, triple, value, formula, result, view, component or log entry from the database
      * @param sql_par $qp the query parameters created by the calling function
-     * @return int the id of the object found and zero if nothing is found
      */
-    protected function load(sql_par $qp): int
+    protected function load_without_id_return(sql_par $qp): void
     {
         global $db_con;
 
         $db_row = $db_con->get1($qp);
         $this->row_mapper($db_row);
-        return $this->id();
-    }
-
-
-    /*
-     * im- and export
-     */
-
-    /**
-     * general part to import a database object from a JSON array object
-     *
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
-     */
-    function import_db_obj(db_object $db_obj, object $test_obj = null): user_message
-    {
-        $result = new user_message();
-        // add a dummy id for unit testing
-        if ($test_obj) {
-            $db_obj->set_id($test_obj->seq_id());
-        }
-        return $result;
     }
 
 
@@ -206,91 +148,14 @@ class db_object
      */
 
     /**
-     * @return bool true if the object has a valid database id
-     */
-    function isset(): bool
-    {
-        if ($this->id == null) {
-            return false;
-        } else {
-            if ($this->id != 0) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-    }
-
-    /**
      * function that can be overwritten by the child object
      * e.g. if the object name does not match the generated id field name
      * @return string the field name of the prime database index of the object
      */
-    public function id_field(): string
+    function id_field(): string
     {
         $lib = new library();
         return $lib->class_to_name($this::class) . sql_db::FLD_EXT_ID;
-    }
-
-
-    /*
-     * dummy functions that should always be overwritten by the child
-     */
-
-    /**
-     * get the name of the database object (only used by named objects)
-     *
-     * @return string the name from the object e.g. word using the same function as the phrase and term
-     */
-    function name(): string
-    {
-        return 'ERROR: name function not overwritten by child';
-    }
-
-    /**
-     * load a row from the database selected by id
-     * @param int $id the id of the word, triple, formula, verb, view or view component
-     * @param string $class the name of the child class from where the call has been triggered
-     * @return int the id of the object found and zero if nothing is found
-     */
-    function load_by_id(int $id, string $class = ''): int
-    {
-        global $db_con;
-
-        log_debug($id);
-        if ($class == '') {
-            $class = $this::class;
-        }
-        $qp = $this->load_sql_by_id($db_con->sql_creator(), $id, $class);
-        return $this->load($qp);
-    }
-
-    /**
-     * load a row from the database selected by name (only used by named objects)
-     * @param string $name the name of the word, triple, formula, verb, view or view component
-     * @param string $class the name of the child class from where the call has been triggered
-     * @return int the id of the object found and zero if nothing is found
-     */
-    function load_by_name(string $name, string $class = ''): int
-    {
-        return 0;
-    }
-
-
-    /*
-     * debug
-     */
-
-    /**
-     * @return string with the unique database id mainly for child dsp_id() functions
-     */
-    function dsp_id(): string
-    {
-        if ($this->id() != 0) {
-            return ' (' . $this->id_field() . ' ' . $this->id() . ')';
-        } else {
-            return ' (' . $this->id_field() . ' no set)';
-        }
     }
 
 }

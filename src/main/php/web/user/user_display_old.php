@@ -33,8 +33,8 @@ use cfg\component\component;
 use cfg\component_link;
 use cfg\formula;
 use cfg\formula_link;
+use cfg\group\group;
 use cfg\phrase;
-use cfg\phrase_group;
 use cfg\sandbox;
 use cfg\sandbox_named;
 use cfg\source;
@@ -583,7 +583,7 @@ class user_dsp_old extends user
                 $val_usr->set_number($val_row['usr_value']);
                 $val_usr->set_source_id($val_row['usr_source']);
                 $val_usr->set_excluded($val_row['usr_excluded']);
-                $val_usr->grp->set_id($val_row[phrase_group::FLD_ID]);
+                $val_usr->grp->set_id($val_row[group::FLD_ID]);
                 $val_usr->load_phrases();
 
                 // to review: try to avoid using load_test_user

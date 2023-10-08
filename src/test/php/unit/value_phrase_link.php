@@ -63,14 +63,14 @@ class value_phrase_link_unit_tests
         // sql to load a value phrase link by id
         $val_phr_lnk = new value_phrase_link($usr);
         $val_phr_lnk->set_id(1);
-        $t->assert_load_sql_obj_vars($db_con, $val_phr_lnk);
+        $t->assert_sql_by_obj_vars($db_con, $val_phr_lnk);
 
         // sql to load a value phrase link by value, phrase and user id
         $val_phr_lnk = new value_phrase_link($usr);
         $val_phr_lnk->set_id(0);
         $val_phr_lnk->val->set_id(1);
         $val_phr_lnk->phr->set_id(2);
-        $t->assert_load_sql_obj_vars($db_con, $val_phr_lnk);
+        $t->assert_sql_by_obj_vars($db_con, $val_phr_lnk);
 
 
         $t->subheader('Database list query creation tests');

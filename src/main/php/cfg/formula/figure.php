@@ -43,9 +43,8 @@ include_once MODEL_USER_PATH . 'user.php';
 
 use api\api;
 use api\figure_api;
-use controller\controller;
+use cfg\group\group;
 use DateTime;
-use html\figure\figure as figure_dsp;
 
 class figure extends combine_object
 {
@@ -59,7 +58,7 @@ class figure extends combine_object
 
     // the common figure database field names excluding the id and excluding the user specific fields
     const FLD_NAMES = array(
-        phrase_group::FLD_ID
+        group::FLD_ID
     );
 
 

@@ -70,9 +70,9 @@ class sql_db
     const TBL_TRIPLE = 'triple';
     const TBL_VERB = 'verb';
     const TBL_PHRASE = 'phrase';
-    const TBL_PHRASE_GROUP = 'phrase_group';
-    const TBL_PHRASE_GROUP_WORD_LINK = 'phrase_group_word_link';
-    const TBL_PHRASE_GROUP_TRIPLE_LINK = 'phrase_group_triple_link';
+    const TBL_GROUP = 'group';
+    const TBL_GROUP_LINK = 'group_link';
+    const TBL_PHRASE_GROUP_TRIPLE_LINK = 'group_link';
     const TBL_VALUE = 'value';
     const TBL_VALUE_TIME_SERIES = 'value_time_series';
     const TBL_VALUE_TIME_SERIES_DATA = 'value_ts_data';
@@ -122,7 +122,7 @@ class sql_db
     const TBL_USER_PREFIX = 'user_';
 
     // the synthetic view tables (VT) for union query creation
-    const VT_PHRASE_GROUP_LINK = 'phrase_group_phrase_link';
+    const VT_PHRASE_GROUP_LINK = 'group_link';
     const VT_TABLE_FIELD = 'change_table_field';
 
     // difference between the object name and the table name
@@ -151,8 +151,7 @@ class sql_db
         sql_db::TBL_FORMULA_ELEMENT,
         sql_db::TBL_COMPONENT_LINK,
         sql_db::TBL_VALUE_PHRASE_LINK,
-        sql_db::TBL_PHRASE_GROUP_WORD_LINK,
-        sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK,
+        sql_db::TBL_GROUP_LINK,
         sql_db::TBL_VIEW_TERM_LINK,
         sql_db::TBL_REF,
         sql_db::TBL_IP,

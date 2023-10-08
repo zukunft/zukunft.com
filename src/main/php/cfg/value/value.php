@@ -63,15 +63,15 @@ include_once SERVICE_EXPORT_PATH . 'json.php';
 use api\api;
 use api\value_api;
 use cfg\db\sql_creator;
+use cfg\group\group;
+use DateTime;
+use Exception;
+use html\value\value as value_dsp;
+use im_export\export;
+use math;
 use model\export\exp_obj;
 use model\export\source_exp;
 use model\export\value_exp;
-use controller\controller;
-use html\value\value as value_dsp;
-use im_export\export;
-use DateTime;
-use Exception;
-use math;
 
 class value extends sandbox_value
 {
@@ -87,7 +87,7 @@ class value extends sandbox_value
 
     // all database field names excluding the id and excluding the user specific fields
     const FLD_NAMES = array(
-        phrase_group::FLD_ID
+        group::FLD_ID
     );
     // list of the user specific numeric database field names
     const FLD_NAMES_NUM_USR = array(
@@ -117,7 +117,7 @@ class value extends sandbox_value
      */
 
     // related database objects
-    public phrase_group $grp;  // phrases (word or triple) group object for this value
+    public group $grp;  // phrases (word or triple) group object for this value
     public ?source $source;    // the source object
     private string $symbol = '';               // the symbol of the related formula element
 
@@ -139,7 +139,7 @@ class value extends sandbox_value
      * set the user sandbox type for a value object and set the user, which is needed in all cases
      * @param user $usr the user who requested to see this value
      */
-    function __construct(user $usr, int $id = 0, ?float $num_val = null, ?phrase_group $phr_grp = null)
+    function __construct(user $usr, int $id = 0, ?float $num_val = null, ?group $phr_grp = null)
     {
         parent::__construct($usr);
         $this->obj_type = sandbox::TYPE_VALUE;
@@ -165,7 +165,7 @@ class value extends sandbox_value
     {
         parent::reset();
 
-        $this->grp = new phrase_group($this->user());
+        $this->grp = new group($this->user());
         $this->source = null;
 
         $this->last_update = null;
@@ -201,7 +201,7 @@ class value extends sandbox_value
         if ($result) {
             $this->number = $db_row[self::FLD_VALUE];
             // TODO check if phrase_group_id and time_word_id are user specific or time series specific
-            $this->grp->set_id($db_row[phrase_group::FLD_ID]);
+            $this->grp->set_id($db_row[group::FLD_ID]);
             $this->set_source_id($db_row[source::FLD_ID]);
             $this->last_update = $lib->get_datetime($db_row[self::FLD_LAST_UPDATE]);
         }
@@ -259,12 +259,12 @@ class value extends sandbox_value
         return $this->symbol;
     }
 
-    function set_grp(phrase_group $grp): void
+    function set_grp(group $grp): void
     {
         $this->grp = $grp;
     }
 
-    function grp(): phrase_group
+    function grp(): group
     {
         return $this->grp;
     }
@@ -396,7 +396,7 @@ class value extends sandbox_value
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    protected function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
+    function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
         $qp = parent::load_sql($sc, $query_name, $class);
 
@@ -428,11 +428,11 @@ class value extends sandbox_value
      * create an SQL statement to retrieve a value by phrase group from the database
      *
      * @param sql_creator $sc with the target db_type set
-     * @param phrase_group $grp the id of the phrase group
+     * @param group $grp the id of the phrase group
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_grp(sql_creator $sc, phrase_group $grp, string $class = self::class): sql_par
+    function load_sql_by_grp(sql_creator $sc, group $grp, string $class = self::class): sql_par
     {
         $qp = $this->load_sql($sc, 'phrase_group_id', $class);
         $sc->set_name($qp->name);
@@ -440,7 +440,7 @@ class value extends sandbox_value
         $sc->set_fields(self::FLD_NAMES);
         $sc->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
         $sc->set_usr_only_fields(self::FLD_NAMES_USR_ONLY);
-        $sc->add_where(phrase_group::FLD_ID, $grp->id());
+        $sc->add_where(group::FLD_ID, $grp->id());
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -484,7 +484,7 @@ class value extends sandbox_value
         if ($this->id() > 0) {
             $sql_where = $sc->where_id(self::FLD_ID, $this->id, true);
         } elseif ($this->grp->id() > 0) {
-            $sql_where = $sc->where_par(array(phrase_group::FLD_ID), array($this->grp->id()), true);
+            $sql_where = $sc->where_par(array(group::FLD_ID), array($this->grp->id()), true);
         } elseif ($this->grp->phr_lst != null) {
             // create the SQL to select a phrase group which needs to inside load_sql for correct parameter counting
             $phr_lst = clone $this->grp->phr_lst;
@@ -500,14 +500,14 @@ class value extends sandbox_value
                 $sql_grp_from .= 'phrase_group_word_links l' . $pos;
                 $pos_prior = $pos - 1;
                 if ($sql_grp_where <> '') {
-                    $sql_grp_where .= ' AND l' . $pos_prior . '.' . phrase_group::FLD_ID . ' = l' . $pos . '.' . phrase_group::FLD_ID . ' AND ';
+                    $sql_grp_where .= ' AND l' . $pos_prior . '.' . group::FLD_ID . ' = l' . $pos . '.' . group::FLD_ID . ' AND ';
                 }
                 $sc->add_where(self::FLD_ID, $phr->id());
                 $sql_grp_where .= ' l' . $pos . '.word_id = ' . $sc->par_name();
                 $pos++;
             }
             $sql_avoid_code_check_prefix = "SELECT";
-            $sql_grp = 's.phrase_group_id IN (' . $sql_avoid_code_check_prefix . ' l1.' . phrase_group::FLD_ID . ' 
+            $sql_grp = 's.phrase_group_id IN (' . $sql_avoid_code_check_prefix . ' l1.' . group::FLD_ID . ' 
                           FROM ' . $sql_grp_from . ' 
                          WHERE ' . $sql_grp_where . ')';
             $sql_where .= $sql_grp;
@@ -529,11 +529,11 @@ class value extends sandbox_value
 
     /**
      * load a value by the phrase group
-     * @param phrase_group $grp the id of the phrase group
+     * @param group $grp the id of the phrase group
      * @param string $class the name of the child class from where the call has been triggered
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_grp(phrase_group $grp, string $class = self::class): int
+    function load_by_grp(group $grp, string $class = self::class): int
     {
         global $db_con;
 
@@ -729,7 +729,7 @@ class value extends sandbox_value
         // if the group object is missing
         if ($this->grp->id() > 0) {
             // ... load the group related objects means the word and triple list
-            $grp = new phrase_group($this->user()); // in case the word names and word links can be user specific maybe the owner should be used here
+            $grp = new group($this->user()); // in case the word names and word links can be user specific maybe the owner should be used here
             $grp->load_by_id($this->grp->id()); // to make sure that the word and triple object lists are loaded
             if ($grp->id() > 0) {
                 $this->grp = $grp;
@@ -1137,7 +1137,7 @@ class value extends sandbox_value
         foreach ($api_json as $key => $value) {
 
             if ($key == export::WORDS) {
-                $grp = new phrase_group($this->user());
+                $grp = new group($this->user());
                 $result->add($grp->save_from_api_msg($value, $do_save));
                 if ($result->is_ok()) {
                     $this->grp = $value;
@@ -1813,7 +1813,7 @@ class value extends sandbox_value
             if ($log->add()) {
                 $db_con->set_type(sql_db::TBL_VALUE);
                 $result = $db_con->update($this->id,
-                    array(phrase_group::FLD_ID),
+                    array(group::FLD_ID),
                     array($this->grp->id()));
             }
         }
@@ -1914,7 +1914,7 @@ class value extends sandbox_value
             // insert the value
             $db_con->set_type(sql_db::TBL_VALUE);
             $this->set_id($db_con->insert(
-                array(phrase_group::FLD_ID, user::FLD_ID, self::FLD_VALUE, self::FLD_LAST_UPDATE),
+                array(group::FLD_ID, user::FLD_ID, self::FLD_VALUE, self::FLD_LAST_UPDATE),
                 array($this->grp->id, $this->user()->id, $this->number, "Now()")));
             if ($this->id() > 0) {
                 // update the reference in the log

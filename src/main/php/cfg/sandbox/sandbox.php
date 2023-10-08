@@ -442,22 +442,21 @@ class sandbox extends db_object_user
      * prepare the SQL parameter to load a single user specific value
      *
      * @param sql_creator $sc with the target db_type set
-     * @param string $class the name of the child class from where the call has been triggered
+     * @param string $query_name the name of the selection fields to make the query name unique
+     * @param array $fields list of the fields from the child object
+     * @param array $usr_fields list of the user specified fields from the child object
+     * @param array $usr_num_fields list of the fields from the child object
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_fields(
         sql_creator $sc,
         string      $query_name,
-        string      $class,
         array       $fields,
         array       $usr_fields,
         array       $usr_num_fields,
     ): sql_par
     {
-        $qp = new sql_par($class);
-        $qp->name .= $query_name;
-
-        $sc->set_name($qp->name);
+        $qp = parent::load_sql($sc, $query_name);
         $sc->set_usr($this->user()->id);
         $sc->set_fields($fields);
         $sc->set_usr_fields($usr_fields);

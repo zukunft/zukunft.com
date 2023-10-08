@@ -34,9 +34,7 @@ namespace test;
 
 include_once MODEL_PHRASE_PATH . 'phrase_group_list.php';
 
-use cfg\phrase;
-use cfg\phrase_group_list;
-use cfg\library;
+use cfg\group\group_list;
 use cfg\sql_db;
 
 class group_list_unit_tests
@@ -57,7 +55,7 @@ class group_list_unit_tests
         $t->subheader('Database query creation tests');
 
         // load by triple ids
-        $grp_lst = new phrase_group_list($usr);
+        $grp_lst = new group_list($usr);
         $t->assert_sql_by_ids($db_con, $grp_lst, array(3,2,4));
         $t->assert_sql_names_by_ids($db_con, $grp_lst, array(3,2,4));
         $this->assert_sql_by_phrase($t, $db_con, $grp_lst);
@@ -69,10 +67,10 @@ class group_list_unit_tests
      *
      * @param test_cleanup $t the testing object with the error counter
      * @param sql_db $db_con does not need to be connected to a real database
-     * @param phrase_group_list $lst the phrase group list object used for testing
+     * @param group_list $lst the phrase group list object used for testing
      * @return void true if all tests are fine
      */
-    private function assert_sql_by_phrase(test_cleanup $t, sql_db $db_con, phrase_group_list $lst): void
+    private function assert_sql_by_phrase(test_cleanup $t, sql_db $db_con, group_list $lst): void
     {
         // prepare
         $wrd = $t->dummy_word();

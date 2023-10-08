@@ -41,9 +41,9 @@ use cfg\config;
 use cfg\db\sql_creator;
 use cfg\formula;
 use cfg\formula_link;
+use cfg\group\group;
 use cfg\library;
 use cfg\phrase;
-use cfg\phrase_group;
 use cfg\sandbox;
 use cfg\sandbox_named;
 use cfg\source;
@@ -533,18 +533,18 @@ class sandbox_unit_tests
 
         // ... same for the special case of a table without name e.g. the value table
         $db_con->set_type(sql_db::TBL_VALUE);
-        $db_con->set_fields(array(phrase_group::FLD_ID));
+        $db_con->set_fields(array(group::FLD_ID));
         $db_con->set_usr_num_fields(
             array(value::FLD_VALUE, source::FLD_ID, sandbox::FLD_PROTECT, value::FLD_LAST_UPDATE));
         $db_con->set_usr_bool_fields(array(sandbox::FLD_EXCLUDED));
         $db_con->set_usr_only_fields(array(sandbox::FLD_SHARE));
-        $db_con->set_where_text('s.' . phrase_group::FLD_ID . ' = 1');
+        $db_con->set_where_text('s.' . group::FLD_ID . ' = 1');
         $created_sql = $db_con->select_by_set_id();
         $expected_sql = "SELECT 
                     s.value_id,
                     u.value_id AS user_value_id,
                     s.user_id,
-                    s.phrase_group_id,
+                    s.group_id,
                     CASE WHEN (u.numeric_value      IS           NULL) THEN s.numeric_value        ELSE u.numeric_value        END AS numeric_value,
                     CASE WHEN (u.source_id          IS           NULL) THEN s.source_id            ELSE u.source_id            END AS source_id,
                     CASE WHEN (u.protect_id         IS           NULL) THEN s.protect_id           ELSE u.protect_id           END AS protect_id,
@@ -554,7 +554,7 @@ class sandbox_unit_tests
                FROM values s 
           LEFT JOIN user_values u ON s.value_id = u.value_id 
                                  AND u.user_id = 1 
-              WHERE s.phrase_group_id = 1;";
+              WHERE s.group_id = 1;";
         $t->display('Postgres user sandbox value select by where text', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // ... same for a link table
@@ -974,7 +974,7 @@ class sandbox_unit_tests
 
         // ... same for the special case of a table without name e.g. the value table
         $db_con->set_type(sql_db::TBL_VALUE);
-        $db_con->set_fields(array(phrase_group::FLD_ID));
+        $db_con->set_fields(array(group::FLD_ID));
         $db_con->set_usr_fields(array(
             value::FLD_VALUE,
             source::FLD_ID,
@@ -982,14 +982,14 @@ class sandbox_unit_tests
             sandbox::FLD_PROTECT,
             sandbox::FLD_EXCLUDED));
         $db_con->set_usr_only_fields(array(sandbox::FLD_SHARE));
-        $db_con->set_where_text('s.phrase_group_id = 1');
+        $db_con->set_where_text('s.group_id = 1');
         $created_sql = $db_con->select_by_set_id();
         $sql_avoid_code_check_prefix = "SELECT";
         $expected_sql = $sql_avoid_code_check_prefix . " 
                     s.value_id,
                     u.value_id AS user_value_id,
                     s.user_id,
-                    s.phrase_group_id,
+                    s.group_id,
                     IF(u.numeric_value         IS NULL, s.numeric_value,         u.numeric_value)         AS numeric_value,
                     IF(u.source_id          IS NULL, s.source_id,          u.source_id)          AS source_id,
                     IF(u.last_update        IS NULL, s.last_update,        u.last_update)        AS last_update,
@@ -999,7 +999,7 @@ class sandbox_unit_tests
                FROM `values` s 
           LEFT JOIN user_values u ON s.value_id = u.value_id 
                                  AND u.user_id = 1 
-              WHERE s.phrase_group_id = 1;";
+              WHERE s.group_id = 1;";
         $t->display('MySQL user sandbox value select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // ... same for a link table
@@ -1242,18 +1242,18 @@ class sandbox_unit_tests
                     " . $db_con->get_usr_field(sandbox::FLD_EXCLUDED, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
                     " . $db_con->get_usr_field(value::FLD_LAST_UPDATE, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
                     " . $db_con->get_usr_field(source::FLD_ID, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                     v.phrase_group_id,
+                     v.group_id,
                      g.word_ids,
                      g.triple_ids
-                FROM phrase_groups g, " . $db_con->get_table_name_esc(sql_db::TBL_VALUE) . " v 
+                FROM groups g, " . $db_con->get_table_name_esc(sql_db::TBL_VALUE) . " v 
            LEFT JOIN user_values u ON u.value_id = v.value_id 
                                   AND u.user_id = 1
-               WHERE g.phrase_group_id = v.phrase_group_id 
+               WHERE g.group_id = v.group_id 
                  AND v.value_id IN ( SELECT value_id 
                                        FROM value_phrase_links 
                                       WHERE phrase_id = 1
                                    GROUP BY value_id )
-            ORDER BY v.phrase_group_id
+            ORDER BY v.group_id
                LIMIT " . $limit . ";";
         $expected_sql = "SELECT v.value_id,
                      u.value_id AS user_value_id,
@@ -1262,18 +1262,18 @@ class sandbox_unit_tests
                      CASE WHEN (u.excluded    IS NULL) THEN v.excluded    ELSE u.excluded    END AS excluded,
                      CASE WHEN (u.last_update IS NULL) THEN v.last_update ELSE u.last_update END AS last_update,
                      CASE WHEN (u.source_id   IS NULL) THEN v.source_id   ELSE u.source_id   END AS source_id,
-                     v.phrase_group_id,
+                     v.group_id,
                      g.word_ids,
                      g.triple_ids
-                FROM phrase_groups g, values v 
+                FROM groups g, values v 
            LEFT JOIN user_values u ON u.value_id = v.value_id 
                                   AND u.user_id = 1 
-               WHERE g.phrase_group_id = v.phrase_group_id 
+               WHERE g.group_id = v.group_id 
                  AND v.value_id IN ( SELECT value_id 
                                        FROM value_phrase_links 
                                       WHERE phrase_id = 1
                                    GROUP BY value_id )
-            ORDER BY v.phrase_group_id
+            ORDER BY v.group_id
                LIMIT 10;";
         $t->display('value list load query', $lib->trim($expected_sql), $lib->trim($created_sql));
 

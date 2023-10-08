@@ -63,7 +63,7 @@ include_once MODEL_PHRASE_PATH . 'phrase.php';
 use api\api;
 use api\phrase_api;
 use cfg\db\sql_creator;
-use html\html_selector;
+use cfg\group\group_list;
 use html\phrase\phrase as phrase_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\word\triple as triple_dsp;
@@ -877,9 +877,9 @@ class phrase extends combine_named
         return $phr_lst->foaf_related();
     }
 
-    function groups(): phrase_group_list
+    function groups(): group_list
     {
-        $lst = new phrase_group_list($this->user());
+        $lst = new group_list($this->user());
         $lst->load_by_phr($this);
         return $lst;
     }

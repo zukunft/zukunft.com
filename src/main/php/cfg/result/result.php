@@ -49,12 +49,14 @@ include_once SERVICE_EXPORT_PATH . 'result_exp.php';
 use api\result_api;
 use cfg\db\sql_creator;
 use cfg\db\sql_par_type;
+use cfg\group\group;
+use cfg\group\group_list;
+use DateTime;
+use html\formula\formula as formula_dsp;
+use html\html_base;
+use im_export\export;
 use model\export\exp_obj;
 use model\export\result_exp;
-use DateTime;
-use html\html_base;
-use html\formula\formula as formula_dsp;
-use im_export\export;
 
 class result extends sandbox_value
 {
@@ -88,9 +90,9 @@ class result extends sandbox_value
      */
 
     // database fields
-    public ?phrase_group $src_grp = null;      // the phrase group used that selected the numbers to calculate this result
+    public ?group $src_grp = null;      // the phrase group used that selected the numbers to calculate this result
     public formula $frm;                       // the formula object used to calculate this result
-    public phrase_group $grp;                  // the phrase group of the result
+    public group $grp;                  // the phrase group of the result
     public ?float $value = null;               // ... and finally the numeric value
     public ?bool $is_std = True;               // true as long as no user specific value, formula or assignment is used for this result
 
@@ -125,8 +127,8 @@ class result extends sandbox_value
     {
         $this->set_id(0);
         $this->frm = new formula($this->user());
-        $this->grp = new phrase_group($this->user());
-        $this->src_grp = new phrase_group($this->user());
+        $this->grp = new group($this->user());
+        $this->src_grp = new group($this->user());
     }
 
     /**
@@ -161,12 +163,12 @@ class result extends sandbox_value
      * set and get
      */
 
-    function set_grp(phrase_group $grp): void
+    function set_grp(group $grp): void
     {
         $this->grp = $grp;
     }
 
-    function grp(): phrase_group
+    function grp(): group
     {
         return $this->grp;
     }
@@ -299,10 +301,10 @@ class result extends sandbox_value
      * prepare the query parameter to load a results by phrase group id
      *
      * @param sql_creator $sc with the target db_type set
-     * @param phrase_group $grp the group used for the selection
+     * @param group $grp the group used for the selection
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    private function load_sql_by_grp_prepare(sql_creator $sc, phrase_group $grp): sql_par
+    private function load_sql_by_grp_prepare(sql_creator $sc, group $grp): sql_par
     {
         $qp = $this->load_sql($sc, 'grp');
         $sc->set_name($qp->name);
@@ -314,10 +316,10 @@ class result extends sandbox_value
      * create the SQL to load a default results for all users by phrase group id
      *
      * @param sql_creator $sc with the target db_type set
-     * @param phrase_group $grp the group used for the selection
+     * @param group $grp the group used for the selection
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_std_by_grp(sql_creator $sc, phrase_group $grp): sql_par
+    function load_sql_std_by_grp(sql_creator $sc, group $grp): sql_par
     {
         $sc->set_type(self::class);
         $sc->set_fields(array_merge(self::FLD_NAMES, array(user::FLD_ID)));
@@ -330,10 +332,10 @@ class result extends sandbox_value
      * create the SQL to load a results by phrase group id
      *
      * @param sql_creator $sc with the target db_type set
-     * @param phrase_group $grp the group used for the selection
+     * @param group $grp the group used for the selection
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_grp(sql_creator $sc, phrase_group $grp): sql_par
+    function load_sql_by_grp(sql_creator $sc, group $grp): sql_par
     {
         $qp = $this->load_sql($sc, 'grp');
         $sc->set_name($qp->name);
@@ -348,10 +350,10 @@ class result extends sandbox_value
      *
      * @param sql_creator $sc with the target db_type set
      * @param formula $frm the formula used for the selection
-     * @param phrase_group $grp the group used for the selection
+     * @param group $grp the group used for the selection
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_frm_grp(sql_creator $sc, formula $frm, phrase_group $grp): sql_par
+    function load_sql_by_frm_grp(sql_creator $sc, formula $frm, group $grp): sql_par
     {
         $qp = $this->load_sql($sc, 'frm_grp');
         $sc->set_name($qp->name);
@@ -367,10 +369,10 @@ class result extends sandbox_value
      *
      * @param sql_creator $sc with the target db_type set
      * @param formula $frm the formula used for the selection
-     * @param phrase_group_list $lst the group used for the selection
+     * @param group_list $lst the group used for the selection
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_frm_grp_lst(sql_creator $sc, formula $frm, phrase_group_list $lst): sql_par
+    function load_sql_by_frm_grp_lst(sql_creator $sc, formula $frm, group_list $lst): sql_par
     {
         $qp = $this->load_sql($sc, 'frm_grp_lst');
         $sc->set_name($qp->name);
@@ -438,10 +440,10 @@ class result extends sandbox_value
     /**
      * load all a result by the phrase group id and time phrase
      *
-     * @param phrase_group $grp to select the result
+     * @param group $grp to select the result
      * @return bool true if result has been loaded
      */
-    function load_by_grp(phrase_group $grp, ?int $time_phr_id = null): bool
+    function load_by_grp(group $grp, ?int $time_phr_id = null): bool
     {
         global $db_con;
         $result = false;
@@ -467,10 +469,10 @@ class result extends sandbox_value
     /**
      * load all a default results for all users by the phrase group id and time phrase
      *
-     * @param phrase_group $grp to select the result
+     * @param group $grp to select the result
      * @return bool true if result has been loaded
      */
-    function load_std_by_grp(phrase_group $grp): bool
+    function load_std_by_grp(group $grp): bool
     {
         global $db_con;
         $result = false;
@@ -497,10 +499,10 @@ class result extends sandbox_value
      * load all a result by the phrase group id and time phrase
      *
      * @param formula $frm to select the result
-     * @param phrase_group $grp to select the result
+     * @param group $grp to select the result
      * @return bool true if result has been loaded
      */
-    function load_by_formula_and_group(formula $frm, phrase_group $grp): bool
+    function load_by_formula_and_group(formula $frm, group $grp): bool
     {
         global $db_con;
         $result = false;
@@ -528,10 +530,10 @@ class result extends sandbox_value
      * load all a result by the phrase group id and time phrase
      *
      * @param formula $frm to select the result
-     * @param phrase_group_list $lst the group used for the selection
+     * @param group_list $lst the group used for the selection
      * @return bool true if result has been loaded
      */
-    function load_by_formula_and_group_list(formula $frm, phrase_group_list $lst): bool
+    function load_by_formula_and_group_list(formula $frm, group_list $lst): bool
     {
         global $db_con;
         $result = false;
@@ -854,7 +856,7 @@ class result extends sandbox_value
         if ($this->src_grp->id() > 0) {
             if ($this->src_grp->phr_lst == null or $force_reload) {
                 log_debug('for source group "' . $this->src_grp->id() . '"');
-                $phr_grp = new phrase_group($this->user());
+                $phr_grp = new group($this->user());
                 $phr_grp->load_by_id($this->src_grp->id());
                 if (!$phr_grp->phr_lst->empty()) {
                     $this->src_grp->phr_lst = $phr_grp->phr_lst;
@@ -882,7 +884,7 @@ class result extends sandbox_value
         if ($this->grp->id() > 0) {
             if ($this->grp->phr_lst == null or $force_reload) {
                 log_debug('for group "' . $this->grp->id() . '"');
-                $phr_grp = new phrase_group($this->user());
+                $phr_grp = new group($this->user());
                 $phr_grp->load_by_id($this->grp->id());
                 if (!$phr_grp->phr_lst->empty()) {
                     $this->grp->phr_lst = $phr_grp->phr_lst;
@@ -1049,7 +1051,7 @@ class result extends sandbox_value
             // TODO include triples
             if (count($this->src_grp->phr_lst->id_lst()) > 0) {
                 log_debug("source group for " . $this->src_grp->phr_lst->dsp_id() . ".");
-                $grp = new phrase_group($this->user());
+                $grp = new group($this->user());
                 $grp->load_by_lst($this->src_grp->phr_lst);
                 $this->src_grp->set_id($grp->get_id());
             }
@@ -1063,7 +1065,7 @@ class result extends sandbox_value
         if (isset($this->grp->phr_lst)) {
             // get the word group id (and create the group if needed)
             // TODO include triples
-            $grp = new phrase_group($this->user());
+            $grp = new group($this->user());
             $grp->load_by_lst($this->grp->phr_lst);
             $this->grp->set_id($grp->get_id());
             log_debug("group id " . $this->grp->id() . " for " . $this->grp->phr_lst->dsp_name() . ".");

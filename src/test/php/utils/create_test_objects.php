@@ -89,13 +89,13 @@ use cfg\formula_link_type_list;
 use cfg\formula_list;
 use cfg\formula_type;
 use cfg\formula_type_list;
+use cfg\group\group;
+use cfg\group\group_list;
 use cfg\language;
 use cfg\language_form_list;
 use cfg\language_list;
 use cfg\library;
 use cfg\phrase;
-use cfg\phrase_group;
-use cfg\phrase_group_list;
 use cfg\phrase_list;
 use cfg\phrase_type;
 use cfg\phrase_types;
@@ -571,7 +571,7 @@ class create_test_objects extends test_base
         return $this->dummy_word()->phrase();
     }
 
-    public function dummy_phrase_list(): phrase_list
+    function dummy_phrase_list(): phrase_list
     {
         $lst = new phrase_list($this->usr1);
         $lst->add($this->dummy_word()->phrase());
@@ -582,7 +582,17 @@ class create_test_objects extends test_base
         return $lst;
     }
 
-    public function dummy_phrase_list_pi(): phrase_list
+    function dummy_phrase_list_prime(): phrase_list
+    {
+        $lst = new phrase_list($this->usr1);
+        $lst->add($this->dummy_word()->phrase());
+        $lst->add($this->dummy_word_const()->phrase());
+        $lst->add($this->dummy_triple()->phrase());
+        $lst->add($this->dummy_triple_pi()->phrase());
+        return $lst;
+    }
+
+    function dummy_phrase_list_pi(): phrase_list
     {
         $lst = new phrase_list($this->usr1);
         $lst->add($this->dummy_triple_pi()->phrase());
@@ -608,7 +618,7 @@ class create_test_objects extends test_base
      * 628779863    .ZSahL+
      * 3516593476    1FajJ2-
      */
-    public function dummy_phrase_list_16(): phrase_list
+    function dummy_phrase_list_16(): phrase_list
     {
         $lst = new phrase_list($this->usr1);
         $wrd = $this->dummy_word();
@@ -678,7 +688,7 @@ class create_test_objects extends test_base
         return $lst;
     }
 
-    public function dummy_phrase_list_17_plus(): phrase_list
+    function dummy_phrase_list_17_plus(): phrase_list
     {
         $lst = $this->dummy_phrase_list_16();
         $wrd = $this->dummy_word();
@@ -691,7 +701,7 @@ class create_test_objects extends test_base
     /**
      * @return phrase_list the phrases relevant for having a second entry in the phrase group list
      */
-    public function dummy_phrase_list_zh(): phrase_list
+    function dummy_phrase_list_zh(): phrase_list
     {
         $lst = new phrase_list($this->usr1);
         $lst->add($this->dummy_word_zh()->phrase());
@@ -703,7 +713,7 @@ class create_test_objects extends test_base
     /**
      * @return phrase_list the phrases relevant for testing the increase formula
      */
-    public function dummy_phrase_list_increase(): phrase_list
+    function dummy_phrase_list_increase(): phrase_list
     {
         $lst = new phrase_list($this->usr1);
         $lst->add($this->dummy_word_pct()->phrase());
@@ -721,7 +731,7 @@ class create_test_objects extends test_base
         return new phrase_list_dsp($this->dummy_phrase_list()->api_json());
     }
 
-    function dummy_phrase_group(): phrase_group
+    function dummy_phrase_group(): group
     {
         $lst = $this->dummy_phrase_list_pi();
         $grp = $lst->get_grp(false);
@@ -729,7 +739,7 @@ class create_test_objects extends test_base
         return $grp;
     }
 
-    function dummy_phrase_group_zh(): phrase_group
+    function dummy_phrase_group_zh(): group
     {
         $lst = $this->dummy_phrase_list_zh();
         $grp = $lst->get_grp(false);
@@ -737,9 +747,9 @@ class create_test_objects extends test_base
         return $grp;
     }
 
-    function dummy_phrase_group_list(): phrase_group_list
+    function dummy_phrase_group_list(): group_list
     {
-        $lst = new phrase_group_list($this->usr1);
+        $lst = new group_list($this->usr1);
         $lst->add($this->dummy_phrase_group());
         return $lst;
     }
@@ -1762,9 +1772,9 @@ class create_test_objects extends test_base
     /**
      * load a phrase group by the list of phrase names
      * @param array $array_of_phrase_str with the names of the words or triples
-     * @return phrase_group
+     * @return group
      */
-    function load_phrase_group(array $array_of_phrase_str): phrase_group
+    function load_phrase_group(array $array_of_phrase_str): group
     {
         return $this->load_phrase_list($array_of_phrase_str)->get_grp();
     }
@@ -1774,11 +1784,11 @@ class create_test_objects extends test_base
      * which can be either the name set by the users
      * or the automatically created name based on the phrases
      * @param string $phrase_group_name
-     * @return phrase_group
+     * @return group
      */
-    function load_phrase_group_by_name(string $phrase_group_name): phrase_group
+    function load_phrase_group_by_name(string $phrase_group_name): group
     {
-        $phr_grp = new phrase_group($this->usr1);
+        $phr_grp = new group($this->usr1);
         $phr_grp->name = $phrase_group_name;
         $phr_grp->load_by_obj_vars();
         return $phr_grp;
@@ -1788,11 +1798,11 @@ class create_test_objects extends test_base
      * add a phrase group to the database
      * @param array $array_of_phrase_str the phrase names
      * @param string $phrase_group_name the name that should be shown to the user
-     * @return phrase_group the phrase group object including the database is
+     * @return group the phrase group object including the database is
      */
-    function add_phrase_group(array $array_of_phrase_str, string $phrase_group_name): phrase_group
+    function add_phrase_group(array $array_of_phrase_str, string $phrase_group_name): group
     {
-        $phr_grp = new phrase_group($this->usr1);
+        $phr_grp = new group($this->usr1);
         $phr_grp->phr_lst = $this->load_phrase_list($array_of_phrase_str);
         $phr_grp->name = $phrase_group_name;
         $phr_grp->get();
@@ -1869,14 +1879,14 @@ class create_test_objects extends test_base
         return $val;
     }
 
-    function load_value_by_phr_grp(phrase_group $phr_grp): value
+    function load_value_by_phr_grp(group $phr_grp): value
     {
         $val = new value($this->usr1);
         $val->load_by_grp($phr_grp);
         return $val;
     }
 
-    function add_value_by_phr_grp(phrase_group $phr_grp, float $target): value
+    function add_value_by_phr_grp(group $phr_grp, float $target): value
     {
         $val = $this->load_value_by_phr_grp($phr_grp);
         if ($val->id() == 0) {
@@ -1888,7 +1898,7 @@ class create_test_objects extends test_base
         return $val;
     }
 
-    function test_value_by_phr_grp(phrase_group $phr_grp, float $target): value
+    function test_value_by_phr_grp(group $phr_grp, float $target): value
     {
         $val = $this->add_value_by_phr_grp($phr_grp, $target);
         $result = $val->number();
@@ -1896,7 +1906,7 @@ class create_test_objects extends test_base
         return $val;
     }
 
-    function del_value_by_phr_grp(phrase_group $phr_grp): bool
+    function del_value_by_phr_grp(group $phr_grp): bool
     {
         $val = $this->load_value_by_phr_grp($phr_grp);
         if ($val->del()) {

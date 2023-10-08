@@ -427,7 +427,7 @@ class formula extends sandbox_typed
      * @param string $class the name of this class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    protected function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
+    function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
         // maybe the formula name should be excluded from the user sandbox to avoid confusion
         return parent::load_sql_usr_num($sc, $this, $query_name);
@@ -499,7 +499,7 @@ class formula extends sandbox_typed
     /**
      * @return string with the id field name of the formula (not the formula word)
      */
-    public function id_field(): string
+    function id_field(): string
     {
         return self::FLD_ID;
     }

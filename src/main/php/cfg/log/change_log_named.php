@@ -168,14 +168,15 @@ class change_log_named extends change_log
 
     /**
      * create the common part of an SQL statement to retrieve the parameters of the change log
+     * TODO use class name instead of TBL_CHANGE
      *
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_creator $sc, string $query_name, string $class): sql_par
+    function load_sql(sql_creator $sc, string $query_name): sql_par
     {
-        $qp = new sql_par(self::class);
+        $qp = new sql_par($this::class);
         $sc->set_type(sql_db::TBL_CHANGE);
         $qp->name .= $query_name;
         $sc->set_name($qp->name);

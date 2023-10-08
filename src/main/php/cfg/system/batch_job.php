@@ -262,7 +262,7 @@ class batch_job extends db_object_user
      */
     function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
-        $qp = parent::load_sql($sc, $query_name, $class);
+        $qp = parent::load_sql_multi($sc, $query_name, $class);
         $sc->set_type(sql_db::TBL_TASK);
 
         $sc->set_name($qp->name);
@@ -318,7 +318,7 @@ class batch_job extends db_object_user
      * TODO align the field name with the object
      * @return string calc_and_cleanup_task_id instead of batch_job
      */
-    public function id_field(): string
+    function id_field(): string
     {
         return self::FLD_ID;
     }

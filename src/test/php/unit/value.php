@@ -36,11 +36,11 @@ include_once MODEL_VALUE_PATH . 'value_time_series.php';
 
 use api\phrase_group_api;
 use api\value_api;
-use html\value\value as value_dsp;
-use cfg\phrase_group;
+use cfg\group\group;
 use cfg\sql_db;
 use cfg\value;
 use cfg\value_time_series;
+use html\value\value as value_dsp;
 
 class value_unit_tests
 {
@@ -96,7 +96,7 @@ class value_unit_tests
         $t->subheader('Convert and API unit tests');
 
         // casting API
-        $grp = new phrase_group($usr, 1,  array(phrase_group_api::TN_READ));
+        $grp = new group($usr, 1,  array(phrase_group_api::TN_READ));
         $val = new value($usr, 1, round(value_api::TV_READ, 13), $grp);
         $t->assert_api($val);
 
@@ -136,7 +136,7 @@ class value_unit_tests
     {
         global $usr;
 
-        $phr_grp = new phrase_group($usr);
+        $phr_grp = new group($usr);
         $phr_grp->set_id(1);
 
         // check the Postgres query syntax
