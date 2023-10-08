@@ -43,6 +43,7 @@ use cfg\component_link;
 use cfg\component_link_list;
 use cfg\db\sql_creator;
 use cfg\formula;
+use cfg\phrase;
 use cfg\sandbox;
 use cfg\sandbox_named;
 use cfg\sandbox_typed;
@@ -116,8 +117,6 @@ class component extends sandbox_typed
 
     // database fields additional to the user sandbox fields for the view component
     public ?int $order_nbr = null;          // the position in the linked view
-    public ?int $word_id_row = null;        // if the view component uses a related word tree this is the start node
-    //                                         e.g. for "company" the start node could be "cash flow statement" to show the cash flow for any company
     public ?int $link_type_id = null;       // the word link type used to build the word tree started with the $start_word_id
     public ?int $formula_id = null;         // to select a formula (no used case at the moment)
     public ?int $word_id_col = null;        // for a table to defined which columns should be used (if not defined by the calling word)
@@ -137,9 +136,9 @@ class component extends sandbox_typed
 
     // linked fields
     public ?object $obj = null;             // the object that should be shown to the user
-    public ?word $wrd_row = null;           // the word object for $word_id_row
-    public ?word $wrd_col = null;           // the word object for $word_id_col
-    public ?word $wrd_col2 = null;          // the word object for $word_id_col2
+    public ?phrase $row_phrase = null;           // if the view component uses a related word tree this is the start node e.g. for "company" the start node could be "cash flow statement" to show the cash flow for any company
+    public ?phrase $col_phrase = null;           // the word object for $word_id_col
+    public ?phrase $col_sub_phrase = null;          // the word object for $word_id_col2
     public ?formula $frm = null;            // the formula object for $formula_id
 
     /*
@@ -168,14 +167,13 @@ class component extends sandbox_typed
 
         $this->order_nbr = null;
         $this->type_id = null;
-        $this->word_id_row = null;
         $this->link_type_id = null;
         $this->formula_id = null;
         $this->word_id_col = null;
         $this->word_id_col2 = null;
-        $this->wrd_row = null;
-        $this->wrd_col = null;
-        $this->wrd_col2 = null;
+        $this->row_phrase = null;
+        $this->col_phrase = null;
+        $this->col_sub_phrase = null;
         $this->frm = null;
         $this->code_id = '';
         $this->ui_msg_code_id = '';
@@ -238,7 +236,7 @@ class component extends sandbox_typed
                 $this->type_id = $db_row[self::FLD_TYPE];
             }
             if (array_key_exists(self::FLD_ROW_PHRASE, $db_row)) {
-                $this->word_id_row = $db_row[self::FLD_ROW_PHRASE];
+                $this->load_row_phrase($db_row[self::FLD_ROW_PHRASE]);
             }
             if (array_key_exists(self::FLD_LINK_TYPE, $db_row)) {
                 $this->link_type_id = $db_row[self::FLD_LINK_TYPE];
@@ -286,6 +284,24 @@ class component extends sandbox_typed
     {
         global $component_types;
         $this->type_id = $component_types->id($type_code_id);
+    }
+
+    function row_phrase_id(): int
+    {
+        if ($this->row_phrase != null) {
+            return $this->row_phrase->id();
+        } else {
+            return 0;
+        }
+    }
+
+    function row_phrase_name(): string
+    {
+        if ($this->row_phrase != null) {
+            return $this->row_phrase->name();
+        } else {
+            return 0;
+        }
     }
 
 
@@ -368,7 +384,7 @@ class component extends sandbox_typed
     function load_phrases(): bool
     {
         $result = true;
-        $this->load_wrd_row();
+        $this->load_row_phrase();
         $this->load_wrd_col();
         $this->load_wrd_col2();
         $this->load_formula();
@@ -376,15 +392,24 @@ class component extends sandbox_typed
         return $result;
     }
 
-    //
-    function load_wrd_row(): string
+    /**
+     * load the phrase that should be used for the rows of a table
+     * or the left Y-axis of a chart
+     *
+     * @param int|null $id the id of suggested the row phrase
+     * @return string
+     */
+    function load_row_phrase(?int $id = null): int
     {
-        $result = '';
-        if ($this->word_id_row > 0) {
-            $wrd_row = new word($this->user());
-            $wrd_row->load_by_id($this->word_id_row, word::class);
-            $this->wrd_row = $wrd_row;
-            $result = $wrd_row->name();
+        $result = 0;
+        if ($id != null) {
+            if ($id != 0) {
+                $row_phr = new phrase($this->user());
+                if ($row_phr->load_by_id($id) != 0) {
+                    $this->row_phrase = $row_phr;
+                    $result = $id;
+                }
+            }
         }
         return $result;
     }
@@ -401,7 +426,7 @@ class component extends sandbox_typed
         if ($this->word_id_col > 0) {
             $wrd_col = new word($this->user());
             $wrd_col->load_by_id($this->word_id_col, word::class);
-            $this->wrd_col = $wrd_col;
+            $this->col_phrase = $wrd_col;
             $result = $wrd_col->name();
         }
         return $result;
@@ -414,7 +439,7 @@ class component extends sandbox_typed
         if ($this->word_id_col2 > 0) {
             $wrd_col2 = new word($this->user());
             $wrd_col2->load_by_id($this->word_id_col2, word::class);
-            $this->wrd_col2 = $wrd_col2;
+            $this->col_sub_phrase = $wrd_col2;
             $result = $wrd_col2->name();
         }
         return $result;
@@ -598,14 +623,14 @@ class component extends sandbox_typed
         }
         $result->code_id = $this->code_id;
         $result->ui_msg_code_id = $this->ui_msg_code_id;
-        if (isset($this->wrd_row)) {
-            $result->row = $this->wrd_row->name();
+        if (isset($this->row_phrase)) {
+            $result->row = $this->row_phrase->name();
         }
-        if (isset($this->wrd_col)) {
-            $result->column = $this->wrd_col->name();
+        if (isset($this->col_phrase)) {
+            $result->column = $this->col_phrase->name();
         }
-        if (isset($this->wrd_col2)) {
-            $result->column2 = $this->wrd_col2->name();
+        if (isset($this->col_sub_phrase)) {
+            $result->column2 = $this->col_sub_phrase->name();
         }
         if ($this->description <> '') {
             $result->description = $this->description;
@@ -847,15 +872,15 @@ class component extends sandbox_typed
     function save_field_wrd_row(sql_db $db_con, component $db_rec, component $std_rec): string
     {
         $result = '';
-        if ($db_rec->word_id_row <> $this->word_id_row) {
+        if ($db_rec->row_phrase_id() <> $this->row_phrase_id()) {
             $log = $this->log_upd();
-            $log->old_value = $db_rec->load_wrd_row();
-            $log->old_id = $db_rec->word_id_row;
-            $log->new_value = $this->load_wrd_row();
-            $log->new_id = $this->word_id_row;
-            $log->std_value = $std_rec->load_wrd_row();
-            $log->std_id = $std_rec->word_id_row;
-            $log->row_id = $this->id;
+            $log->old_value = $db_rec->row_phrase_name();
+            $log->old_id = $db_rec->row_phrase_id();
+            $log->new_value = $this->row_phrase_name();
+            $log->new_id = $this->row_phrase_id();
+            $log->std_value = $std_rec->row_phrase_name();
+            $log->std_id = $std_rec->row_phrase_id();
+            $log->row_id = $this->id();
             $log->set_field(self::FLD_ROW_PHRASE);
             $result = $this->save_field_user($db_con, $log);
         }

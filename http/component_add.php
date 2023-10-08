@@ -117,7 +117,7 @@ if ($usr->id() > 0) {
             $cmp->type_id = $_GET['type'];
         } //
         if (isset($_GET['word_row'])) {
-            $cmp->word_id_row = $_GET['word_row'];
+            $cmp->load_row_phrase($_GET['word_row']);
         } //
         if (isset($_GET['word_col'])) {
             $cmp->word_id_col = $_GET['word_col'];

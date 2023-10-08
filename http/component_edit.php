@@ -30,6 +30,7 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
+use api\api;
 use cfg\component\component;
 use cfg\user;
 use cfg\view;
@@ -116,8 +117,8 @@ if ($usr->id() > 0) {
             if (isset($_GET['type'])) {
                 $cmp->type_id = $_GET['type'];
             } //
-            if (isset($_GET['word_row'])) {
-                $cmp->word_id_row = $_GET['word_row'];
+            if (isset($_GET[api::FLD_PHRASE_ROW])) {
+                $cmp->load_row_phrase($_GET[api::FLD_PHRASE_ROW]);
             } //
             if (isset($_GET['word_col'])) {
                 $cmp->word_id_col = $_GET['word_col'];
