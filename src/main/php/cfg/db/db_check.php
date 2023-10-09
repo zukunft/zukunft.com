@@ -33,8 +33,8 @@
 namespace cfg;
 
 use cfg\component\component;
+use cfg\group\group;
 use cfg\result\result_two;
-use Couchbase\Group;
 
 class db_check
 {
@@ -306,6 +306,7 @@ class db_check
 
         $result .= $db_con->change_table_name('results', result_two::class);
         $result .= $db_con->change_table_name('user_phrase_groups', sql_db::TBL_USER_PREFIX . group::class);
+        $result .= $db_con->change_column_name(sql_db::TBL_VALUE, 'phrase_group_id', group::FLD_ID);
 
         // TODO set default profile_id in users to 1
         if ($db_con->db_type == sql_db::MYSQL) {

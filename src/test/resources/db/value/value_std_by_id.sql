@@ -1,6 +1,6 @@
 PREPARE value_std_by_id (int) AS
     SELECT value_id,
-           phrase_group_id,
+           group_id,
            numeric_value,
            source_id,
            last_update,

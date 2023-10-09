@@ -2,7 +2,7 @@
 
 /*
 
-    model/phrase/phrase_group_triple_link.php - only for fast selection of the phrase group assigned to one triple
+    model/phrase/group_triple_link.php - only for fast selection of the phrase group assigned to one triple
     -----------------------------------------
 
     replication of the words linked to a phrase group saved in the triple_ids field
@@ -45,7 +45,7 @@ use cfg\triple;
 class group_link extends db_id_object
 {
     // object specific database and JSON object field names
-    const FLD_ID = 'phrase_group_triple_link_id';
+    const FLD_ID = 'group_triple_link_id';
 
     // all database field names excluding the id
     const FLD_NAMES = array(

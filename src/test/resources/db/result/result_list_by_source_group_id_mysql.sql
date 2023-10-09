@@ -1,4 +1,4 @@
-PREPARE result_by_frm_grp_lst FROM
+PREPARE result_list_by_source_group_id FROM
    'SELECT result_id,
            formula_id,
            user_id,
@@ -8,5 +8,4 @@ PREPARE result_by_frm_grp_lst FROM
            last_update,
            dirty
       FROM results
-     WHERE formula_id = ?
-       AND group_id IN (?)';
+     WHERE source_group_id = ?';

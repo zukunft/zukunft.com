@@ -547,7 +547,7 @@ class user_dsp_old extends user
                     v.source_id                                                                        AS std_source, 
                     CASE WHEN (u.excluded   <> '' IS NOT TRUE) THEN v.excluded   ELSE u.excluded   END AS usr_excluded,
                     v.excluded                                                                         AS std_excluded, 
-                    v.phrase_group_id
+                    v.group_id
                FROM user_values u,
                     values v
               WHERE u.user_id = " . $this->id . "

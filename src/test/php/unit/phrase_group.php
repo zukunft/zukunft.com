@@ -113,16 +113,7 @@ class group_unit_tests
         $t->assert_sql_by_name($db_con, $grp);
 
 
-        $t->header('Unit tests of the phrase group word link class (src/main/php/model/phrase/phrase_group_triple.php)');
-
-        $t->subheader('SQL statement tests');
-
-        // sql to load a list of groups by one word phrase
-        $grp_lst = new group_list($usr);
-        $t->assert_sql_by_phrase($db_con, $grp_lst, $t->dummy_word()->phrase());
-
-
-        $t->header('Unit tests of the phrase group word link class (src/main/php/model/phrase/phrase_group_triple.php)');
+        $t->header('Unit tests of the phrase group link class (src/main/php/model/group/group_link.php)');
 
         $t->subheader('SQL statement tests');
 

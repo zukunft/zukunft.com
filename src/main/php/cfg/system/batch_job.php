@@ -57,7 +57,7 @@ One Sample
 
 A user updates a formula
  -> update the formula results for this user and this formula
-    -> get all values and create a calculation request (phrase_group_list->get_by_val_with_one_phr_each)
+    -> get all values and create a calculation request (group_list->get_by_val_with_one_phr_each)
       -> get based on the assigned words and used words
     -> get all formula results and create a calculation request
       -> get all depending formulas

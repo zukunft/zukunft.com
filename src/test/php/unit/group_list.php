@@ -58,49 +58,8 @@ class group_list_unit_tests
         $grp_lst = new group_list($usr);
         $t->assert_sql_by_ids($db_con, $grp_lst, array(3,2,4));
         $t->assert_sql_names_by_ids($db_con, $grp_lst, array(3,2,4));
-        $this->assert_sql_by_phrase($t, $db_con, $grp_lst);
+        $t->assert_sql_by_phrase($db_con, $grp_lst, $t->dummy_word()->phrase());
 
-    }
-
-    /**
-     * check the SQL statements creation to get all phrase groups related to obe phrase
-     *
-     * @param test_cleanup $t the testing object with the error counter
-     * @param sql_db $db_con does not need to be connected to a real database
-     * @param group_list $lst the phrase group list object used for testing
-     * @return void true if all tests are fine
-     */
-    private function assert_sql_by_phrase(test_cleanup $t, sql_db $db_con, group_list $lst): void
-    {
-        // prepare
-        $wrd = $t->dummy_word();
-        $trp = $t->dummy_triple();
-
-        // check the Postgres query syntax
-        $db_con->db_type = sql_db::POSTGRES;
-        $qp = $lst->load_sql_by_phr($db_con->sql_creator(), $wrd->phrase());
-        $result = $t->assert_qp($qp, $db_con->db_type);
-
-        // ... and check the MySQL query syntax
-        if ($result) {
-            $db_con->db_type = sql_db::MYSQL;
-            $qp = $lst->load_sql_by_phr($db_con->sql_creator(), $wrd->phrase());
-            $t->assert_qp($qp, $db_con->db_type);
-        }
-
-        // ... and for a triple with Postgres query syntax
-        if ($result) {
-            $db_con->db_type = sql_db::POSTGRES;
-            $qp = $lst->load_sql_by_phr($db_con->sql_creator(), $trp->phrase());
-            $t->assert_qp($qp, $db_con->db_type);
-        }
-
-        // ... and check the MySQL query syntax
-        if ($result) {
-            $db_con->db_type = sql_db::MYSQL;
-            $qp = $lst->load_sql_by_phr($db_con->sql_creator(), $trp->phrase());
-            $t->assert_qp($qp, $db_con->db_type);
-        }
     }
 
 }

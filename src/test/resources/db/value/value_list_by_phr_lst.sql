@@ -2,7 +2,7 @@ PREPARE value_list_by_phr_lst (int, int[]) AS
     SELECT s.value_id,
            u.value_id AS user_value_id,
            s.user_id,
-           s.phrase_group_id,
+           s.group_id,
            l.value_id,
            CASE WHEN (u.numeric_value      IS NULL) THEN s.numeric_value      ELSE u.numeric_value      END AS numeric_value,
            CASE WHEN (u.source_id          IS NULL) THEN s.source_id          ELSE u.source_id          END AS source_id,

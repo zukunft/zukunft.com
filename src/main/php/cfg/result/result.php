@@ -67,8 +67,8 @@ class result extends sandbox_value
 
     // database fields only used for results
     const FLD_ID = 'result_id';
-    const FLD_SOURCE_GRP = 'source_phrase_group_id';
-    const FLD_GRP = 'phrase_group_id';
+    const FLD_SOURCE_GRP = 'source_group_id';
+    const FLD_GRP = 'group_id';
     const FLD_VALUE = 'result';
     const FLD_LAST_UPDATE = 'last_update';
     const FLD_DIRTY = 'dirty';
@@ -691,7 +691,7 @@ class result extends sandbox_value
                 if ($sql_where != '') {
                     $sql_where .= ' AND ';
                 }
-                $sql_where .= " source_phrase_group_id = " . $db_con->par_name() . "
+                $sql_where .= " source_group_id = " . $db_con->par_name() . "
                            AND (user_id = " . $db_con->par_name() . " OR user_id = 0 OR user_id IS NULL) ";
                 $sql_order = " ORDER BY user_id DESC";
             } else {
@@ -701,7 +701,7 @@ class result extends sandbox_value
                     if ($sql_where != '') {
                         $sql_where .= ' AND ';
                     }
-                    $sql_where .= " source_phrase_group_id = " . $db_con->par_name() . " AND ";
+                    $sql_where .= " source_group_id = " . $db_con->par_name() . " AND ";
                     $sql_order = " ORDER BY user_id";
                 }
             }
@@ -716,7 +716,7 @@ class result extends sandbox_value
                 if ($sql_where != '') {
                     $sql_where .= ' AND ';
                 }
-                $sql_where .= " phrase_group_id = " . $db_con->par_name() . "
+                $sql_where .= " group_id = " . $db_con->par_name() . "
                           AND (user_id = " . $db_con->par_name() . " OR user_id = 0 OR user_id IS NULL)";
                 $sql_order = " ORDER BY user_id DESC";
             } else {
@@ -726,7 +726,7 @@ class result extends sandbox_value
                     if ($sql_where != '') {
                         $sql_where .= ' AND ';
                     }
-                    $sql_where .= " phrase_group_id = " . $db_con->par_name() . " ";
+                    $sql_where .= " group_id = " . $db_con->par_name() . " ";
                     $sql_order = "ORDER BY user_id";
                 }
             }
@@ -793,17 +793,17 @@ class result extends sandbox_value
                                 if ($sql_grp_from <> '') {
                                     $sql_grp_from .= ',';
                                 }
-                                $sql_grp_from .= 'phrase_group_word_links l' . $pos;
+                                $sql_grp_from .= 'group_word_links l' . $pos;
                                 $pos_prior = $pos - 1;
                                 if ($sql_grp_where <> '') {
-                                    $sql_grp_where .= ' AND l' . $pos_prior . '.phrase_group_id = l' . $pos . '.phrase_group_id AND ';
+                                    $sql_grp_where .= ' AND l' . $pos_prior . '.group_id = l' . $pos . '.group_id AND ';
                                 }
                                 $qp->name .= '_word_id';
                                 $db_con->add_par(sql_par_type::INT, $phr->id());
                                 $sql_grp_where .= ' l' . $pos . '.word_id = ' . $db_con->par_name();
                                 $pos++;
                             }
-                            $sql_grp = 'SELECT' . ' l1.phrase_group_id 
+                            $sql_grp = 'SELECT' . ' l1.group_id 
                             FROM ' . $sql_grp_from . ' 
                           WHERE ' . $sql_grp_where;
                             // TODO:
@@ -812,7 +812,7 @@ class result extends sandbox_value
                             // select also the time
                             $sql_val = "SELECT result_id 
                             FROM results
-                          WHERE phrase_group_id IN (" . $sql_grp . ");";
+                          WHERE group_id IN (" . $sql_grp . ");";
                             log_debug('sql val "' . $sql_val . '"');
                             //$db_con = new mysql;
                             $db_con->usr_id = $this->user()->id();
@@ -1336,7 +1336,7 @@ class result extends sandbox_value
             $sql = "SELECT result_id, formula_id
                 FROM results 
                WHERE " . $sql_in . "
-                 AND phrase_group_id = " . $this->grp->id() . "
+                 AND group_id = " . $this->grp->id() . "
                  AND user_id         = " . $this->user()->id() . ";";
             //$db_con = New mysql;
             $db_con->usr_id = $this->user()->id();

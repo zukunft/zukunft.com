@@ -2,12 +2,12 @@ PREPARE result_list_by_triple_id (int) AS
     SELECT s.result_id,
            s.formula_id,
            s.user_id,
-           s.source_phrase_group_id,
-           s.phrase_group_id,
+           s.source_group_id,
+           s.group_id,
            s.result,
            s.last_update,
            s.dirty,
-           l.phrase_group_id
+           l.group_id
       FROM results s
- LEFT JOIN phrase_group_triple_links l ON s.phrase_group_id = l.phrase_group_id
+ LEFT JOIN group_links l ON s.group_id = l.group_id
      WHERE l.triple_id = $1;

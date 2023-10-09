@@ -1,5 +1,5 @@
-PREPARE result_by_frm_grp_lst FROM
-   'SELECT result_id,
+PREPARE result_list_by_source_group_id (int) AS
+    SELECT result_id,
            formula_id,
            user_id,
            source_group_id,
@@ -8,5 +8,4 @@ PREPARE result_by_frm_grp_lst FROM
            last_update,
            dirty
       FROM results
-     WHERE formula_id = ?
-       AND group_id IN (?)';
+     WHERE source_group_id = $1;

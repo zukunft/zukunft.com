@@ -2,7 +2,7 @@
 
 /*
 
-    model/phrase/phrase_group_list.php - a list of word and triple groups
+    model/phrase/group_list.php - a list of word and triple groups
     ----------------------------------
 
     TODO base on sandbox_list
@@ -342,19 +342,19 @@ class group_list extends sandbox_list
         // create the group selection
         $sql_group = '';
         if (count($phr_linked->ids) > 0 and count($phr_used->ids) > 0) {
-            $sql_group = 'SELECT l1.phrase_group_id
-                      FROM phrase_group_phrase_links l1
-                 LEFT JOIN user_phrase_group_phrase_links u1 ON u1.phrase_group_phrase_link_id = l1.phrase_group_phrase_link_id 
+            $sql_group = 'SELECT l1.group_id
+                      FROM group_phrase_links l1
+                 LEFT JOIN user_group_phrase_links u1 ON u1.group_phrase_link_id = l1.group_phrase_link_id 
                                                             AND u1.user_id = ' . $this->user()->id() . ',
-                           phrase_group_phrase_links l2
-                 LEFT JOIN user_phrase_group_phrase_links u2 ON u2.phrase_group_phrase_link_id = l2.phrase_group_phrase_link_id 
+                           group_phrase_links l2
+                 LEFT JOIN user_group_phrase_links u2 ON u2.group_phrase_link_id = l2.group_phrase_link_id 
                                                             AND u2.user_id = ' . $this->user()->id() . '
                      WHERE l1.phrase_id IN (' . $phr_linked_ex->ids_txt() . ')  
                        AND l2.phrase_id IN (' . $phr_used_ex->ids_txt() . ')
-                       AND l1.phrase_group_id = l2.phrase_group_id
+                       AND l1.group_id = l2.group_id
                        AND COALESCE(u1.excluded, 0) <> 1
                        AND COALESCE(u2.excluded, 0) <> 1
-                  GROUP BY l1.phrase_group_id';
+                  GROUP BY l1.group_id';
         } else {
             log_warning('Phrases missing while loading the phrase groups');
             // e.g. if "Sales" is assigned, but never  used in the formula no value needs to be calculated, so no group should be used
@@ -379,20 +379,20 @@ class group_list extends sandbox_list
         // TODO use sql builder
         if ($type == 'value') {
             $sql_select = 'SELECT v.value_id,
-                            v.phrase_group_id
+                            v.group_id
                        FROM values v';
         } else {
             $sql_select = 'SELECT v.result_id AS value_id,
-                            v.phrase_group_id
+                            v.group_id
                        FROM results v';
         }
 
         // combine the selections
         $sql = '';
-        $sql_group_by = ' GROUP BY value_id, phrase_group_id LIMIT 500'; // limit is only set for testing: remove for release!
+        $sql_group_by = ' GROUP BY value_id, group_id LIMIT 500'; // limit is only set for testing: remove for release!
         if ($sql_group <> '') {
             // select values only by the group
-            $sql = $sql_select . ', ( ' . $sql_group . ') AS g WHERE v.phrase_group_id = g.phrase_group_id' . $sql_group_by . ';';
+            $sql = $sql_select . ', ( ' . $sql_group . ') AS g WHERE v.group_id = g.group_id' . $sql_group_by . ';';
         }
 
         log_debug('sql "' . $sql . '"');
@@ -622,7 +622,7 @@ class group_list extends sandbox_list
         foreach ($this->lst() as $phr_lst) {
             $result[] = $phr_lst->name();
         }
-        log_debug('phrase_group_list->names ' . implode(" / ", $result));
+        log_debug('group_list->names ' . implode(" / ", $result));
         return $result;
     }
 

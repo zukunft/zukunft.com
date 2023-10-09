@@ -369,7 +369,7 @@ class value_list extends sandbox_list
                     " . $db_con->get_usr_field(sandbox::FLD_EXCLUDED, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
                     " . $db_con->get_usr_field(value::FLD_LAST_UPDATE, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
                     " . $db_con->get_usr_field(source::FLD_ID, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                      v.phrase_group_id
+                      v.group_id
                   FROM " . $db_con->get_table_name_esc(sql_db::TBL_VALUE) . " v 
             LEFT JOIN user_values u ON u.value_id = v.value_id 
                                     AND u.user_id = " . $this->user()->id() . " 
@@ -377,7 +377,7 @@ class value_list extends sandbox_list
                                         FROM value_phrase_links 
                                         WHERE phrase_id IN (" . implode(",", $this->phr_lst->id_lst()) . ")
                                     GROUP BY value_id )
-              ORDER BY v.phrase_group_id;";
+              ORDER BY v.group_id;";
         return $sql;
     }
 
@@ -454,7 +454,7 @@ class value_list extends sandbox_list
                     " . $db_con->get_usr_field(value::FLD_LAST_UPDATE, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
                     " . $db_con->get_usr_field(source::FLD_ID, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
                        v.user_id,
-                       v.phrase_group_id
+                       v.group_id
                   FROM " . $db_con->get_table_name_esc(sql_db::TBL_VALUE) . " v 
              LEFT JOIN user_values u ON u.value_id = v.value_id 
                                     AND u.user_id = " . $this->user()->id() . " 
@@ -462,7 +462,7 @@ class value_list extends sandbox_list
                                          FROM " . $sql_from . "
                                               " . $db_con->get_table_name_esc(sql_db::TBL_VALUE) . " v
                                               " . $sql_where . " )
-              ORDER BY v.phrase_group_id;";
+              ORDER BY v.group_id;";
         }
 
         if ($get_name) {

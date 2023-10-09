@@ -5,6 +5,7 @@ PREPARE result_list_by_group_id FROM
            source_group_id,
            group_id,
            result,
-           last_update
+           last_update,
+           dirty
       FROM results
      WHERE group_id = ?';

@@ -2,7 +2,7 @@
 
 /*
 
-    model/phrase/phrase_group.php - a combination of a word list and a triple_list
+    model/phrase/group.php - a combination of a word list and a triple_list
     -----------------------------
 
     TODO use a new table group_links to link the phrases to a group
@@ -558,7 +558,7 @@ class group extends db_object
     {
         $wrd_lst = $this->phr_lst->wrd_lst();
 
-        $sql_name = 'phrase_group_by_';
+        $sql_name = 'group_by_';
         if ($this->id != 0) {
             $sql_name .= sql_db::FLD_ID;
         } elseif (!$wrd_lst->is_empty()) {
@@ -571,8 +571,8 @@ class group extends db_object
         $sql_from_prefix = '';
         $sql_where = '';
         if ($this->id != 0) {
-            $sql_from .= 'phrase_groups ';
-            $sql_where .= 'phrase_group_id = ' . $this->id;
+            $sql_from .= 'groups ';
+            $sql_where .= 'group_id = ' . $this->id;
         } else {
             $pos = 1;
             $prev_pos = 1;
@@ -581,9 +581,9 @@ class group extends db_object
                 if ($wrd != null) {
                     if ($wrd->id() <> 0) {
                         if ($sql_from == '') {
-                            $sql_from .= 'phrase_group_word_links l' . $pos;
+                            $sql_from .= 'group_word_links l' . $pos;
                         } else {
-                            $sql_from .= ', phrase_group_word_links l' . $pos;
+                            $sql_from .= ', group_word_links l' . $pos;
                         }
                         if ($sql_where == '') {
                             $sql_where .= 'l' . $pos . '.word_id = ' . $wrd->id();
@@ -596,10 +596,10 @@ class group extends db_object
                 $pos++;
             }
         }
-        $sql = "SELECT " . $sql_from_prefix . "phrase_group_id 
+        $sql = "SELECT " . $sql_from_prefix . "group_id 
                   FROM " . $sql_from . "
                  WHERE " . $sql_where . "
-              GROUP BY " . $sql_from_prefix . "phrase_group_id;";
+              GROUP BY " . $sql_from_prefix . "group_id;";
         log_debug('sql ' . $sql);
 
         if ($get_name) {
@@ -613,7 +613,7 @@ class group extends db_object
     /*
     // get the best matching group for a word list
     // at the moment "best matching" is defined as the highest number of results
-    private function get_by_wrd_lst(): phrase_group
+    private function get_by_wrd_lst(): group
     {
 
         global $db_con;
@@ -630,9 +630,9 @@ class group extends db_object
                 $sql_where = '';
                 foreach ($wrd_lst->ids as $wrd_id) {
                     if ($sql_from == '') {
-                        $sql_from .= 'phrase_group_word_links l' . $pos;
+                        $sql_from .= 'group_word_links l' . $pos;
                     } else {
-                        $sql_from .= ', phrase_group_word_links l' . $pos;
+                        $sql_from .= ', group_word_links l' . $pos;
                     }
                     if ($sql_where == '') {
                         $sql_where .= 'l' . $pos . '.word_id = ' . $wrd_id;
@@ -642,29 +642,29 @@ class group extends db_object
                     $prev_pos = $pos;
                     $pos++;
                 }
-                $sql = "SELECT" . " l1.phrase_group_id
+                $sql = "SELECT" . " l1.group_id
                   FROM " . $sql_from . "
                  WHERE " . $sql_where . "
-              GROUP BY l1.phrase_group_id;";
-                log_debug('phrase_group->get_by_wrd_lst sql ' . $sql);
+              GROUP BY l1.group_id;";
+                log_debug('group->get_by_wrd_lst sql ' . $sql);
                 //$db_con = New mysql;
                 $db_con->usr_id = $this->user()->id();
                 $db_grp = $db_con->get1_old($sql);
                 if ($db_grp != null) {
-                    $this->id = $db_grp[phrase_group::FLD_ID];
+                    $this->id = $db_grp[group::FLD_ID];
                     if ($this->id > 0) {
-                        log_debug('phrase_group->get_by_wrd_lst got id ' . $this->id);
+                        log_debug('group->get_by_wrd_lst got id ' . $this->id);
                         $result = $this->load();
-                        log_debug('phrase_group->get_by_wrd_lst ' . $result . ' found <' . $this->id . '> for ' . $wrd_lst->name() . ' and user ' . $this->user()->name);
+                        log_debug('group->get_by_wrd_lst ' . $result . ' found <' . $this->id . '> for ' . $wrd_lst->name() . ' and user ' . $this->user()->name);
                     } else {
-                        log_warning('No group found for words ' . $wrd_lst->name() . '.', "phrase_group->get_by_wrd_lst");
+                        log_warning('No group found for words ' . $wrd_lst->name() . '.', "group->get_by_wrd_lst");
                     }
                 }
             } else {
-                log_warning("Word list is empty.", "phrase_group->get_by_wrd_lst");
+                log_warning("Word list is empty.", "group->get_by_wrd_lst");
             }
         } else {
-            log_warning("Word list is missing.", "phrase_group->get_by_wrd_lst");
+            log_warning("Word list is missing.", "group->get_by_wrd_lst");
         }
 
         return $this;
@@ -832,7 +832,7 @@ class group extends db_object
     private function selector()
     {
         $result = '';
-        log_debug('phrase_group->selector for ' . $this->id . ' and user "' . $this->user()->name . '"');
+        log_debug('group->selector for ' . $this->id . ' and user "' . $this->user()->name . '"');
 
         new function: load_main_type to load all word and phrase types with one query
 
@@ -969,7 +969,7 @@ class group extends db_object
             foreach ($add_ids as $add_id) {
                 if ($add_id <> '') {
                     if ($sql == '') {
-                        $sql = 'INSERT INTO ' . $table_name . ' (phrase_group_id, ' . $field_name . ') VALUES ';
+                        $sql = 'INSERT INTO ' . $table_name . ' (group_id, ' . $field_name . ') VALUES ';
                     }
                     $sql .= " (" . $this->id . "," . $add_id . ") ";
                     $add_nbr++;
@@ -981,7 +981,7 @@ class group extends db_object
                 }
             }
             if ($sql <> '') {
-                //$sql_result = $db_con->exe($sql, 'phrase_group->save_phr_links', array());
+                //$sql_result = $db_con->exe($sql, 'group->save_phr_links', array());
                 $lib = new library();
                 $result = $db_con->exe_try('Adding of group links "' . $lib->dsp_array($add_ids) . '" for ' . $this->id,
                     $sql);
@@ -994,9 +994,9 @@ class group extends db_object
         if (count($del_ids) > 0) {
             log_debug('del ' . implode(",", $del_ids));
             $sql = 'DELETE FROM ' . $table_name . ' 
-               WHERE phrase_group_id = ' . $this->id . '
+               WHERE group_id = ' . $this->id . '
                 ' . $lib->sql_array($del_ids, ' AND ' . $field_name . ' IN (', ')') . ';';
-            //$sql_result = $db_con->exe($sql, "phrase_group->delete_phr_links", array());
+            //$sql_result = $db_con->exe($sql, "group->delete_phr_links", array());
             $result = $db_con->exe_try('Removing of group links "' . $lib->dsp_array($del_ids) . '" from ' . $this->id,
                 $sql);
         }

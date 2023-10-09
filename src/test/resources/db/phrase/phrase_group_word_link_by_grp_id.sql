@@ -1,7 +1,7 @@
-PREPARE phrase_group_word_link_by_grp_id (int) AS
+PREPARE group_word_link_by_grp_id (int) AS
     SELECT
-           phrase_group_word_link_id,
-           phrase_group_id,
+           group_word_link_id,
+           group_id,
            word_id
-      FROM phrase_group_word_links
-     WHERE phrase_group_id = $1;
+      FROM group_word_links
+     WHERE group_id = $1;

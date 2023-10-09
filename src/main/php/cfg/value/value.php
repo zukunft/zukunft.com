@@ -434,7 +434,7 @@ class value extends sandbox_value
      */
     function load_sql_by_grp(sql_creator $sc, group $grp, string $class = self::class): sql_par
     {
-        $qp = $this->load_sql($sc, 'phrase_group_id', $class);
+        $qp = $this->load_sql($sc, 'group_id', $class);
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
         $sc->set_fields(self::FLD_NAMES);
@@ -463,7 +463,7 @@ class value extends sandbox_value
         if ($this->id() > 0) {
             $qp->name .= sql_db::FLD_ID;
         } elseif ($this->grp->id() > 0) {
-            $qp->name .= 'phrase_group_id';
+            $qp->name .= 'group_id';
         } elseif ($this->grp->phr_lst != null) {
             $phr_lst = clone $this->grp->phr_lst;
             $pos = 1;
@@ -497,7 +497,7 @@ class value extends sandbox_value
                 if ($sql_grp_from <> '') {
                     $sql_grp_from .= ',';
                 }
-                $sql_grp_from .= 'phrase_group_word_links l' . $pos;
+                $sql_grp_from .= 'group_word_links l' . $pos;
                 $pos_prior = $pos - 1;
                 if ($sql_grp_where <> '') {
                     $sql_grp_where .= ' AND l' . $pos_prior . '.' . group::FLD_ID . ' = l' . $pos . '.' . group::FLD_ID . ' AND ';
@@ -507,7 +507,7 @@ class value extends sandbox_value
                 $pos++;
             }
             $sql_avoid_code_check_prefix = "SELECT";
-            $sql_grp = 's.phrase_group_id IN (' . $sql_avoid_code_check_prefix . ' l1.' . group::FLD_ID . ' 
+            $sql_grp = 's.group_id IN (' . $sql_avoid_code_check_prefix . ' l1.' . group::FLD_ID . ' 
                           FROM ' . $sql_grp_from . ' 
                          WHERE ' . $sql_grp_where . ')';
             $sql_where .= $sql_grp;
