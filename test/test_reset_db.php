@@ -280,8 +280,6 @@ function run_db_seq_reset(): void
     // the sequence names of the tables to reset
     $seq_names = array(
         'value_phrase_links_value_phrase_link_id_seq',
-        'values_value_id_seq',
-        'results_result_id_seq',
         'formula_elements_formula_element_id_seq',
         'formula_element_types_formula_element_type_id_seq',
         'formula_links_formula_link_id_seq',
@@ -293,9 +291,9 @@ function run_db_seq_reset(): void
         'component_types_component_type_id_seq',
         'views_view_id_seq',
         'view_types_view_type_id_seq',
-        'phrase_groups_phrase_group_id_seq',
-        'phrase_group_word_links_phrase_group_word_link_id_seq',
-        'phrase_group_triple_links_phrase_group_triple_link_id_seq',
+        'groups_prime_group_id_seq',
+        'groups_prime_link_group_id_seq',
+        'group_links_group_link_id_seq',
         'verbs_verb_id_seq',
         'triples_triple_id_seq',
         'words_word_id_seq',

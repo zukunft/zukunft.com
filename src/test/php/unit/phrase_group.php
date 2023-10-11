@@ -35,7 +35,6 @@ namespace test;
 include_once API_PHRASE_PATH . 'phrase_group.php';
 include_once MODEL_GROUP_PATH . 'group_id.php';
 include_once MODEL_GROUP_PATH . 'group_link.php';
-include_once MODEL_PHRASE_PATH . 'phrase_group_triple_link.php';
 include_once MODEL_GROUP_PATH . 'group_list.php';
 
 use api\phrase_group_api;

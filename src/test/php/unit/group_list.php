@@ -32,7 +32,7 @@
 
 namespace test;
 
-include_once MODEL_PHRASE_PATH . 'phrase_group_list.php';
+include_once MODEL_GROUP_PATH . 'group_list.php';
 
 use cfg\group\group_list;
 use cfg\sql_db;

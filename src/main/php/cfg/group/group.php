@@ -56,7 +56,7 @@ include_once MODEL_HELPER_PATH . 'db_object.php';
 include_once MODEL_HELPER_PATH . 'db_object_user.php';
 include_once MODEL_PHRASE_PATH . 'phr_ids.php';
 include_once MODEL_PHRASE_PATH . 'phrase_list.php';
-include_once MODEL_PHRASE_PATH . 'group_phrase_link.php';
+include_once MODEL_GROUP_PATH . 'group_link.php';
 include_once API_PHRASE_PATH . 'phrase_group.php';
 
 use api\phrase_group_api;

@@ -33,7 +33,7 @@
 namespace test;
 
 include_once MODEL_REF_PATH . 'source.php';
-include_once MODEL_PHRASE_PATH . 'phrase_group.php';
+include_once MODEL_GROUP_PATH . 'group.php';
 include_once MODEL_VALUE_PATH . 'value.php';
 
 use cfg\component\component;

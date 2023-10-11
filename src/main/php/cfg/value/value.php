@@ -53,7 +53,7 @@ namespace cfg;
 
 include_once MODEL_SANDBOX_PATH . 'sandbox_value.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_PHRASE_PATH . 'phrase_group.php';
+include_once MODEL_GROUP_PATH . 'group.php';
 include_once MODEL_FORMULA_PATH . 'figure.php';
 include_once MODEL_VALUE_PATH . 'value_phrase_link_list.php';
 include_once SERVICE_EXPORT_PATH . 'source_exp.php';

@@ -97,11 +97,11 @@ class sandbox extends db_object_user
         self::FLD_SHARE,
         self::FLD_PROTECT
     );
-    // list of all user sandbox database types
+    // list of all user sandbox database types with a standard ID
+    // so exclude values and result TODO check missing owner for values and results
     const DB_TYPES = array(
         sql_db::TBL_WORD,
         sql_db::TBL_TRIPLE,
-        sql_db::TBL_VALUE,
         sql_db::TBL_FORMULA,
         sql_db::TBL_FORMULA_LINK,
         sql_db::TBL_VIEW,
