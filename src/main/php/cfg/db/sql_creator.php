@@ -300,7 +300,7 @@ class sql_creator
      * @param string $given_name to overwrite the id field name
      * @return void
      */
-    private function set_id_field(string $given_name = ''): void
+    function set_id_field(string $given_name = ''): void
     {
         if ($given_name != '') {
             $this->id_field = $given_name;

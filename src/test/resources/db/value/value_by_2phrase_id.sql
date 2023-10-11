@@ -1,6 +1,6 @@
 PREPARE value_by_2phrase_id (int, int) AS
-    SELECT s.value_id,
-           u.value_id                                                            AS user_value_id,
+    SELECT s.group_id,
+           u.group_id                                                            AS user_group_id,
            s.user_id,
            s.group_id,
            CASE WHEN (u.numeric_value      IS NULL) THEN s.numeric_value      ELSE u.numeric_value      END  AS numeric_value,
@@ -10,7 +10,7 @@ PREPARE value_by_2phrase_id (int, int) AS
            CASE WHEN (u.protect_id         IS NULL) THEN s.protect_id         ELSE u.protect_id         END  AS protect_id,
            u.share_type_id
       FROM values s
- LEFT JOIN user_values u ON s.value_id = u.value_id AND u.user_id = $1
+ LEFT JOIN user_values u ON s.group_id = u.group_id AND u.user_id = $1
      WHERE s.group_id IN (SELECT l1.group_id
-                                  FROM group_word_links l1
+                                  FROM group_links l1
                                  WHERE l1.word_id = $2);

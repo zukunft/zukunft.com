@@ -1,5 +1,5 @@
 PREPARE result_list_by_word_id FROM
-   'SELECT s.result_id,
+   'SELECT s.group_id,
            s.formula_id,
            s.user_id,
            s.source_group_id,

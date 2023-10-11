@@ -777,7 +777,7 @@ class result_list extends sandbox_list
 
         // list all related formula results
         $formula_links = '';
-        $sql = "SELECT l.formula_id, f.formula_text FROM value_formula_links l, formulas f WHERE l.value_id = " . $val->id() . " AND l.formula_id = f.formula_id;";
+        $sql = "SELECT l.formula_id, f.formula_text FROM value_formula_links l, formulas f WHERE l.group_id = " . $val->id() . " AND l.formula_id = f.formula_id;";
         //$db_con = New mysql;
         $db_con->usr_id = $this->user()->id();
         $db_lst = $db_con->get_old($sql);

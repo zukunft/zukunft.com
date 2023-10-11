@@ -95,6 +95,7 @@ use cfg\language;
 use cfg\language_form_list;
 use cfg\language_list;
 use cfg\library;
+use cfg\log\system_log;
 use cfg\phrase;
 use cfg\phrase_list;
 use cfg\phrase_type;
@@ -109,7 +110,6 @@ use cfg\source;
 use cfg\source_type;
 use cfg\source_type_list;
 use cfg\sys_log_status;
-use cfg\system_log;
 use cfg\system_log_list;
 use cfg\term;
 use cfg\term_list;
@@ -734,7 +734,7 @@ class create_test_objects extends test_base
     function dummy_phrase_group(): group
     {
         $lst = $this->dummy_phrase_list_pi();
-        $grp = $lst->get_grp(false);
+        $grp = $lst->get_grp_id(false);
         $grp->name = phrase_group_api::TN_READ;
         return $grp;
     }
@@ -742,7 +742,7 @@ class create_test_objects extends test_base
     function dummy_phrase_group_zh(): group
     {
         $lst = $this->dummy_phrase_list_zh();
-        $grp = $lst->get_grp(false);
+        $grp = $lst->get_grp_id(false);
         $grp->name = phrase_group_api::TN_ZH_2019;
         return $grp;
     }
@@ -1776,7 +1776,7 @@ class create_test_objects extends test_base
      */
     function load_phrase_group(array $array_of_phrase_str): group
     {
-        return $this->load_phrase_list($array_of_phrase_str)->get_grp();
+        return $this->load_phrase_list($array_of_phrase_str)->get_grp_id();
     }
 
     /**
@@ -1836,7 +1836,7 @@ class create_test_objects extends test_base
 
         // the time separation is done here until there is a phrase series value table that can be used also to time phrases
         $phr_lst = $this->load_phrase_list($array_of_word_str);
-        $phr_grp = $phr_lst->get_grp();
+        $phr_grp = $phr_lst->get_grp_id();
 
         $val = new value($this->usr1);
         if ($phr_grp == null) {
@@ -1852,7 +1852,7 @@ class create_test_objects extends test_base
         $val = $this->load_value($array_of_word_str);
         if ($val->id() == 0) {
             $phr_lst = $this->load_phrase_list($array_of_word_str);
-            $phr_grp = $phr_lst->get_grp();
+            $phr_grp = $phr_lst->get_grp_id();
 
             // getting the latest value if selected without time phrase should be done when reading the value
             //$time_phr = $phr_lst->time_useful();

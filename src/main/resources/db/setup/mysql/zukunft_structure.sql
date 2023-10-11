@@ -970,7 +970,7 @@ CREATE TABLE IF NOT EXISTS `user_sources`
 
 CREATE TABLE IF NOT EXISTS `source_values`
 (
-    `value_id`     int(11) NOT NULL,
+    `group_id`     int(11) NOT NULL,
     `source_id`    int(11) NOT NULL,
     `user_id`      int(11) NOT NULL,
     `source_value` double  NOT NULL
@@ -1132,7 +1132,7 @@ CREATE TABLE IF NOT EXISTS `values_prime`
 
 CREATE TABLE IF NOT EXISTS `user_values_prime`
 (
-    `value_id`      int(11)   NOT NULL,
+    `group_id`      int(11)   NOT NULL,
     `user_id`       int(11)   NOT NULL,
     `numeric_value` double         DEFAULT NULL,
     `source_id`     int(11)        DEFAULT NULL,
@@ -1279,7 +1279,7 @@ CREATE TABLE IF NOT EXISTS `formula_types`
 
 CREATE TABLE IF NOT EXISTS `results`
 (
-    `result_id`              int(11)   NOT NULL,
+    `group_id`              int(11)   NOT NULL,
     `formula_id`             int(11)   NOT NULL,
     `user_id`                int(11)        DEFAULT NULL,
     `source_phrase_group_id` int(11)        DEFAULT NULL,
@@ -1538,7 +1538,7 @@ CREATE TABLE IF NOT EXISTS `user_component_links`
 CREATE TABLE IF NOT EXISTS `value_formula_links`
 (
     `value_formula_link_id` int(11) NOT NULL,
-    `value_id`              int(11) DEFAULT NULL,
+    `group_id`              int(11) DEFAULT NULL,
     `formula_id`            int(11) DEFAULT NULL,
     `user_id`               int(11) DEFAULT NULL,
     `condition_formula_id`  int(11) DEFAULT NULL COMMENT 'if true or 1  to formula is preferred',
@@ -1557,7 +1557,7 @@ CREATE TABLE IF NOT EXISTS `value_phrase_links`
 (
     `value_phrase_link_id` int(11) NOT NULL,
     `user_id`              int(11) DEFAULT NULL,
-    `value_id`             int(11) NOT NULL,
+    `group_id`             int(11) NOT NULL,
     `phrase_id`            int(11) NOT NULL,
     `weight`               double  DEFAULT NULL,
     `link_type_id`         int(11) DEFAULT NULL,
@@ -2126,7 +2126,7 @@ ALTER TABLE `formula_types`
 -- Indexes for table`results`
 --
 ALTER TABLE `results`
-    ADD PRIMARY KEY (`result_id`),
+    ADD PRIMARY KEY (`group_id`),
     ADD UNIQUE KEY `formula_id_2` (`formula_id`, `user_id`, `phrase_group_id`,
                                    `source_phrase_group_id`),
     ADD KEY `user_id` (`user_id`);
@@ -2223,8 +2223,8 @@ ALTER TABLE `source_types`
 -- Indexes for table`source_values`
 --
 ALTER TABLE `source_values`
-    ADD PRIMARY KEY (`value_id`, `source_id`, `user_id`),
-    ADD KEY `value_id` (`value_id`),
+    ADD PRIMARY KEY (`group_id`, `source_id`, `user_id`),
+    ADD KEY `group_id` (`group_id`),
     ADD KEY `source_id` (`source_id`),
     ADD KEY `user_id` (`user_id`);
 
@@ -2376,10 +2376,10 @@ ALTER TABLE `user_types`
 -- Indexes for table`user_values`
 --
 ALTER TABLE `user_values`
-    ADD PRIMARY KEY (`value_id`, `user_id`),
+    ADD PRIMARY KEY (`group_id`, `user_id`),
     ADD KEY `user_id` (`user_id`),
     ADD KEY `source_id` (`source_id`),
-    ADD KEY `value_id` (`value_id`),
+    ADD KEY `group_id` (`group_id`),
     ADD KEY `share_type` (`share_type_id`),
     ADD KEY `protect_id` (`protect_id`);
 
@@ -2390,7 +2390,7 @@ ALTER TABLE `user_value_time_series`
     ADD PRIMARY KEY (`value_time_series_id`, `user_id`),
     ADD KEY `user_id` (`user_id`),
     ADD KEY `source_id` (`source_id`),
-    ADD KEY `value_id` (`value_time_series_id`),
+    ADD KEY `group_id` (`value_time_series_id`),
     ADD KEY `share_type` (`share_type_id`),
     ADD KEY `protect_id` (`protect_id`);
 
@@ -2444,7 +2444,7 @@ ALTER TABLE `user_triples`
 -- Indexes for table`values`
 --
 ALTER TABLE `values`
-    ADD PRIMARY KEY (`value_id`),
+    ADD PRIMARY KEY (`group_id`),
     ADD KEY `user_id` (`user_id`),
     ADD KEY `source_id` (`source_id`),
     ADD KEY `phrase_group_id` (`phrase_group_id`),
@@ -2461,8 +2461,8 @@ ALTER TABLE `value_formula_links`
 --
 ALTER TABLE `value_phrase_links`
     ADD PRIMARY KEY (`value_phrase_link_id`),
-    ADD UNIQUE KEY `user_id` (`user_id`, `value_id`, `phrase_id`),
-    ADD KEY `value_id` (`value_id`),
+    ADD UNIQUE KEY `user_id` (`user_id`, `group_id`, `phrase_id`),
+    ADD KEY `group_id` (`group_id`),
     ADD KEY `phrase_id` (`phrase_id`);
 
 --
@@ -2664,7 +2664,7 @@ ALTER TABLE `formula_types`
 -- AUTO_INCREMENT for table`results`
 --
 ALTER TABLE `results`
-    MODIFY `result_id` int(11) NOT NULL AUTO_INCREMENT;
+    MODIFY `group_id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table`import_source`
 --
@@ -2794,7 +2794,7 @@ ALTER TABLE `user_types`
 -- AUTO_INCREMENT for table`values`
 --
 ALTER TABLE `values`
-    MODIFY `value_id` int(11) NOT NULL AUTO_INCREMENT;
+    MODIFY `group_id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table`value_formula_links`
 --
@@ -2965,7 +2965,7 @@ ALTER TABLE `refs`
 --
 ALTER TABLE `source_values`
     ADD CONSTRAINT `source_values_fk_3` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
-    ADD CONSTRAINT `source_values_fk_1` FOREIGN KEY (`value_id`) REFERENCES `values` (`value_id`),
+    ADD CONSTRAINT `source_values_fk_1` FOREIGN KEY (`group_id`) REFERENCES `values` (`group_id`),
     ADD CONSTRAINT `source_values_fk_2` FOREIGN KEY (`source_id`) REFERENCES `sources` (`source_id`);
 
 --

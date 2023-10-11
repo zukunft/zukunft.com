@@ -57,6 +57,7 @@ include_once MODEL_HELPER_PATH . 'db_object_user.php';
 include_once MODEL_PHRASE_PATH . 'phr_ids.php';
 include_once MODEL_PHRASE_PATH . 'phrase_list.php';
 include_once MODEL_GROUP_PATH . 'group_link.php';
+include_once MODEL_GROUP_PATH . 'group_id.php';
 include_once API_PHRASE_PATH . 'phrase_group.php';
 
 use api\phrase_group_api;
@@ -824,7 +825,7 @@ class group extends db_object
     {
         $phr_lst = $this->phr_lst;
         $phr_lst->ex_time();
-        return $phr_lst->get_grp();
+        return $phr_lst->get_grp_id();
     }
 
     /*

@@ -582,14 +582,6 @@ class phrase extends combine_named
         return $this->load($qp);
     }
 
-    /**
-     * @return string with the id field name of the phrase
-     */
-    function id_field(): string
-    {
-        return self::FLD_ID;
-    }
-
     function name_field(): string
     {
         return self::FLD_NAME;

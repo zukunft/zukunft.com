@@ -69,7 +69,7 @@ class batch_job_test
         $phr_lst->load_by_names(array(word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_MIO, word_api::TN_2020));
         $phr_lst->ex_time();
         $val = new value($usr);
-        $val->load_by_grp($phr_lst->get_grp());
+        $val->load_by_grp($phr_lst->get_grp_id());
         $result = $val->number();
         $target = value_api::TV_CH_INHABITANTS_2020_IN_MIO;
         $t->display('batch_job->value to link', $target, $result);

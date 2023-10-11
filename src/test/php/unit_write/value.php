@@ -107,7 +107,7 @@ class value_test
             // test load by phrase list first to get the value id
             $phr_lst = $t->load_phrase_list(array(word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_MIO, word_api::TN_2020));
             $val_by_phr_lst = new value($t->usr1);
-            $val_by_phr_lst->load_by_grp($phr_lst->get_grp());
+            $val_by_phr_lst->load_by_grp($phr_lst->get_grp_id());
             $result = $val_by_phr_lst->number();
             $target = value_api::TV_CH_INHABITANTS_2020_IN_MIO;
             $t->display(', value->load for another word list ' . $phr_lst->dsp_name(), $target, $result);
@@ -226,7 +226,7 @@ class value_test
         $dest_phr_lst = new phrase_list($t->usr1);
         $dest_phr_lst->load_by_names(array(word_api::TN_INHABITANTS, word_api::TN_ONE));
         $mio_val = new value($t->usr1);
-        $mio_val->load_by_grp($phr_lst->get_grp());
+        $mio_val->load_by_grp($phr_lst->get_grp_id());
         $result = $mio_val->scale($dest_phr_lst);
         $target = value_api::TV_CH_INHABITANTS_2020_IN_MIO * 1000000;
         $t->display(', value->val_scaling for a word list ' . $phr_lst->dsp_id() . '', $target, $result);
@@ -234,7 +234,7 @@ class value_test
         // test the figure object creation
         $phr_lst = $t->load_phrase_list(array(word_api::TN_CANTON, word_api::TN_ZH, word_api::TN_INHABITANTS, word_api::TN_MIO, word_api::TN_2020));
         $mio_val = new value_dsp_old($t->usr1);
-        $mio_val->load_by_grp($phr_lst->get_grp());
+        $mio_val->load_by_grp($phr_lst->get_grp_id());
         $fig = $mio_val->figure();
         $fig_dsp = $t->dsp_obj($fig, new figure_dsp());
         $result = $fig_dsp->display_linked('1');

@@ -1,5 +1,5 @@
 PREPARE result_by_id FROM
-   'SELECT result_id,
+   'SELECT group_id,
            formula_id,
            user_id,
            source_group_id,
@@ -8,4 +8,4 @@ PREPARE result_by_id FROM
            last_update,
            dirty
       FROM results
-     WHERE result_id = ?';
+     WHERE group_id = ?';

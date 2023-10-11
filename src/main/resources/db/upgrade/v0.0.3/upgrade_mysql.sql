@@ -285,7 +285,7 @@ ALTER TABLE `user_value_time_series`
     ADD PRIMARY KEY (`value_time_series_id`, `user_id`),
     ADD KEY `user_id` (`user_id`),
     ADD KEY `source_id` (`source_id`),
-    ADD KEY `value_id` (`value_time_series_id`),
+    ADD KEY `group_id` (`value_time_series_id`),
     ADD KEY `share_type` (`share_type_id`),
     ADD KEY `protect_id` (`protect_id`);
 

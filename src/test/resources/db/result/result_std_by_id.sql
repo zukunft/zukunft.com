@@ -1,5 +1,5 @@
 PREPARE result_std_by_id (int) AS
-    SELECT result_id,
+    SELECT group_id,
            formula_id,
            user_id,
            source_group_id,
@@ -8,4 +8,4 @@ PREPARE result_std_by_id (int) AS
            last_update,
            dirty
       FROM results
-     WHERE result_id = $1;
+     WHERE group_id = $1;

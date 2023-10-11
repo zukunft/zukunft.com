@@ -1,5 +1,5 @@
 PREPARE result_by_usr_cfg FROM
-   'SELECT result_id
+   'SELECT group_id
       FROM user_results
-     WHERE result_id = ?
+     WHERE group_id = ?
        AND user_id = ?';

@@ -496,14 +496,6 @@ class formula extends sandbox_typed
         return parent::load_by_name($name, $class);
     }
 
-    /**
-     * @return string with the id field name of the formula (not the formula word)
-     */
-    function id_field(): string
-    {
-        return self::FLD_ID;
-    }
-
     function name_field(): string
     {
         return self::FLD_NAME;
@@ -805,7 +797,7 @@ class formula extends sandbox_typed
     {
         $rst = new result($this->user());
         $rst->frm = $this;
-        $rst->src_grp = $phr_lst->get_grp();
+        $rst->src_grp = $phr_lst->get_grp_id();
         $rst->ref_text = $this->ref_text_r;
         $rst->num_text = $this->ref_text_r;
         $rst->src_grp->phr_lst = clone $phr_lst;

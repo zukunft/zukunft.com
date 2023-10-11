@@ -318,16 +318,16 @@ class button
     /**
      * display a button to adjust a value
      */
-    function edit_value($phr_lst, $value_id, $back): string
+    function edit_value($phr_lst, $group_id, $back): string
     {
-        log_debug($phr_lst->name() . ",v" . $value_id . ",b" . $back);
+        log_debug($phr_lst->name() . ",v" . $group_id . ",b" . $back);
 
         if (!empty($phr_lst->ids)) {
             $this->title = "change the value for " . $phr_lst->name();
         } else {
             $this->title = "change this value";
         }
-        $this->call = '/http/value_edit.php?id=' . $value_id . '&back=' . $back;
+        $this->call = '/http/value_edit.php?id=' . $group_id . '&back=' . $back;
         $result = $this->edit();
         log_debug($result);
         return $result;
@@ -336,16 +336,16 @@ class button
     /**
      * display a button to exclude a value
      */
-    function del_value($phr_lst, $value_id, $back): string
+    function del_value($phr_lst, $group_id, $back): string
     {
-        log_debug($phr_lst->name() . ",v" . $value_id . ",b" . $back);
+        log_debug($phr_lst->name() . ",v" . $group_id . ",b" . $back);
 
         if (!empty($phr_lst->ids)) {
             $this->title = "delete the value for " . $phr_lst->name();
         } else {
             $this->title = "delete this value";
         }
-        $this->call = '/http/value_del.php?id=' . $value_id . '&back=' . $back;
+        $this->call = '/http/value_del.php?id=' . $group_id . '&back=' . $back;
         $result = $this->del();
         log_debug($result);
         return $result;

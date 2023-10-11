@@ -452,6 +452,8 @@ use html\phrase\phrase_group as phrase_group_dsp;
 */
 
 use cfg\db_check;
+use cfg\sys_log_function;
+use cfg\sys_log_status;
 use cfg\type_lists;
 use cfg\verb_list;
 use cfg\view;
@@ -692,6 +694,12 @@ const ZUH_IMG_EDIT = "/src/main/resources/images/button_edit.svg";
 const ZUH_IMG_DEL = "/src/main/resources/images/button_del.svg";
 const ZUH_IMG_UNDO = "/src/main/resources/images/button_undo.svg";
 
+// classes that use a standard sql sequence for the database id
+const SQL_STD_CLASSES = [
+    sys_log_status::class,
+    sys_log_functions::class
+];
+
 # list of JSON files that define the base configuration of zukunft.com that is supposed never to be changed
 define("PATH_BASE_CONFIG_FILES", ROOT_PATH . 'src/main/resources/');
 const PATH_BASE_CODE_LINK_FILES = PATH_BASE_CONFIG_FILES . 'db_code_links/';
@@ -898,7 +906,7 @@ function log_msg(string $msg_text,
 
             $sys_log_msg_lst[] = $msg_type_text;
             if ($msg_log_level > LOG_LEVEL or $force_log) {
-                $used_db_con->set_type(sql_db::TBL_SYS_LOG_FUNCTION);
+                $used_db_con->set_type(sys_log_function::class);
                 $function_id = $used_db_con->get_id($function_name);
                 if ($function_id <= 0) {
                     $function_id = $used_db_con->add_id($function_name);

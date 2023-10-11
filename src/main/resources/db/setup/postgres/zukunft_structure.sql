@@ -28,6 +28,7 @@ COMMENT ON COLUMN config.config_name is 'short name of the configuration entry t
 
 --
 -- Table structure for system log types e.g. info, warning and error
+-- TODO change to an enum because this will probably never change
 --
 
 CREATE TABLE IF NOT EXISTS sys_log_types
@@ -981,7 +982,7 @@ CREATE TABLE IF NOT EXISTS user_sources
 
 CREATE TABLE IF NOT EXISTS source_values
 (
-    value_id     BIGSERIAL PRIMARY KEY,
+    group_id     BIGSERIAL PRIMARY KEY,
     source_id    bigint           NOT NULL,
     user_id      bigint           NOT NULL,
     source_value double precision NOT NULL
@@ -2344,7 +2345,7 @@ CREATE TABLE IF NOT EXISTS user_view_term_links
 CREATE TABLE IF NOT EXISTS value_formula_links
 (
     value_formula_link_id BIGSERIAL PRIMARY KEY,
-    value_id              bigint DEFAULT NULL,
+    group_id              bigint DEFAULT NULL,
     formula_id            bigint DEFAULT NULL,
     user_id               bigint DEFAULT NULL,
     condition_formula_id  bigint DEFAULT NULL,
@@ -2806,7 +2807,7 @@ CREATE INDEX user_source_type_idx ON user_sources (source_type_id);
 --
 -- Indexes for table source_values
 --
-CREATE INDEX source_value_value_idx ON source_values (value_id);
+CREATE INDEX source_value_group_idx ON source_values (group_id);
 CREATE INDEX source_value_source_idx ON source_values (source_id);
 CREATE INDEX source_value_user_idx ON source_values (user_id);
 
@@ -3071,7 +3072,7 @@ CREATE INDEX user_formula_link_type_idx ON user_formula_links (link_type_id);
 --
 -- Indexes for results
 --
-CREATE UNIQUE INDEX result_idx ON results (group_id, formula_id, source_group_id, user_id);
+CREATE UNIQUE INDEX group_idx ON results (group_id, formula_id, source_group_id, user_id);
 CREATE INDEX result_formula_idx ON results (formula_id);
 CREATE INDEX result_source_idx ON results (source_group_id);
 CREATE INDEX result_user_idx ON results (user_id);

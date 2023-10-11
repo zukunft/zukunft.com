@@ -279,7 +279,7 @@ class value_phrase_link extends db_object_user
         // check duplicates
         $sql = "SELECT value_phrase_link_id 
               FROM value_phrase_links 
-             WHERE value_id = " . $this->val->id() . " 
+             WHERE group_id = " . $this->val->id() . " 
                AND phrase_id  = " . $this->phr->id() . " 
                AND value_phrase_link_id <> " . $this->id . ";";
         $db_row = $db_con->get1($sql);
@@ -287,7 +287,7 @@ class value_phrase_link extends db_object_user
         if ($this->id > 0) {
             //$result = $db_con->delete(array(value::FLD_ID,phrase::FLD_ID,'value_phrase_link_id'), array($this->val->id,$this->phr->id,$this->id));
             $sql_del = "DELETE FROM value_phrase_links 
-                    WHERE value_id = " . $this->val->id() . " 
+                    WHERE group_id = " . $this->val->id() . " 
                       AND phrase_id  = " . $this->phr->id() . " 
                       AND value_phrase_link_id <> " . $this->id . ";";
             $sql_result = $db_con->exe($sql_del, $this->user()->id(), sys_log_level::ERROR, "val_lnk->update", (new Exception)->getTraceAsString());
@@ -333,7 +333,7 @@ class value_phrase_link extends db_object_user
                 if ($log->id() > 0) {
                     // insert the new value_phrase_link
                     $db_con->set_type(sql_db::TBL_VALUE_PHRASE_LINK);
-                    $this->id = $db_con->insert(array("value_id", "word_id"), array($this->val->id(), $this->phr->id()));
+                    $this->id = $db_con->insert(array("group_id", "word_id"), array($this->val->id(), $this->phr->id()));
                     if ($this->id > 0) {
                         // update the id in the log
                         $result = $log->add_ref($this->id);

@@ -64,7 +64,7 @@ class value_list_unit_db_tests
         $target_lst->add($e);
         $test_name = 'Loading pi and e via value list is the same as single loading';
         $t->assert($test_name, $val_lst->dsp_id(), $target_lst->dsp_id());
-        $target = '"" 3.1415926535898 / "" 0.57721566490153 (value_id 1,2) for user 2 (zukunft.com system test)';
+        $target = '"" 3.1415926535898 / "" 0.57721566490153 (group_id 1,2) for user 2 (zukunft.com system test)';
         $test_name = 'A value list with pi and e matches the expected result';
         $t->assert($test_name, $val_lst->dsp_id(), $target);
 

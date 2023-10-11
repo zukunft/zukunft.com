@@ -93,7 +93,7 @@ class phrase_group_test
         // test getting the phrase group id based on word and word link ids
         $phr_lst = new phrase_list($usr);
         $phr_lst->load_by_names(array(triple_api::TN_ZH_CITY, word_api::TN_INHABITANTS));
-        $zh_city_grp = $phr_lst->get_grp();
+        $zh_city_grp = $phr_lst->get_grp_id();
         $result = $zh_city_grp->get_id();
         if ($result > 0) {
             $target = $result;
@@ -108,7 +108,7 @@ class phrase_group_test
         // test if the phrase group links are correctly recreated when a group is updated
         $phr_lst = new phrase_list($usr);
         $phr_lst->load_by_names(array(word_api::TN_ZH, word_api::TN_CANTON, word_api::TN_INHABITANTS));
-        $grp = $phr_lst->get_grp();
+        $grp = $phr_lst->get_grp_id();
         $grp_check = new group($usr);
         $grp_check->load_by_id($grp->id());
         $result = $grp_check->load_link_ids_for_testing();
@@ -118,7 +118,7 @@ class phrase_group_test
         // second test if the phrase group links are correctly recreated when a group is updated
         $phr_lst = new phrase_list($usr);
         $phr_lst->load_by_names(array(word_api::TN_ZH, word_api::TN_CANTON, word_api::TN_INHABITANTS, word_api::TN_MIO, word_api::TN_2020));
-        $grp = $phr_lst->get_grp();
+        $grp = $phr_lst->get_grp_id();
         $grp_check = new group($usr);
         $grp_check->load_by_id($grp->id());
         $result = $grp_check->load_link_ids_for_testing();

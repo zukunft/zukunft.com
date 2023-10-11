@@ -127,6 +127,9 @@ class value_list extends sandbox_list
         $qp->name .= $query_name;
 
         $sc->set_type(value::class);
+        // overwrite the standard id field name (value_id) with the main database id field for values "group_id"
+        $val = new value($this->user());
+        $sc->set_id_field($val->id_field());
         $sc->set_name($qp->name);
 
         $sc->set_usr($this->user()->id());
@@ -205,6 +208,9 @@ class value_list extends sandbox_list
         $lib = new library();
         $class = $lib->class_to_name(self::class);
         $db_con->set_type(sql_db::TBL_VALUE);
+        // overwrite the standard id field name (value_id) with the main database id field for values "group_id"
+        $val = new value($this->user());
+        $db_con->set_id_field($val->id_field());
         $qp = new sql_par($class);
         $sql_name = $class . '_by_';
         $sql_name_ext = '';
@@ -309,6 +315,9 @@ class value_list extends sandbox_list
     function load_by_phr_sql(sql_db $db_con, phrase $phr): sql_par
     {
         $db_con->set_type(sql_db::TBL_VALUE);
+        // overwrite the standard id field name (value_id) with the main database id field for values "group_id"
+        $val = new value($this->user());
+        $db_con->set_id_field($val->id_field());
         $qp = new sql_par(self::class);
         $qp->name .= 'phrase_id';
 
@@ -362,8 +371,8 @@ class value_list extends sandbox_list
     function load_all_sql(): string
     {
         global $db_con;
-        $sql = "SELECT v.value_id,
-                      u.value_id AS user_value_id,
+        $sql = "SELECT v.group_id,
+                      u.group_id AS user_group_id,
                       v.user_id,
                     " . $db_con->get_usr_field(value::FLD_VALUE, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
                     " . $db_con->get_usr_field(sandbox::FLD_EXCLUDED, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
@@ -371,12 +380,12 @@ class value_list extends sandbox_list
                     " . $db_con->get_usr_field(source::FLD_ID, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
                       v.group_id
                   FROM " . $db_con->get_table_name_esc(sql_db::TBL_VALUE) . " v 
-            LEFT JOIN user_values u ON u.value_id = v.value_id 
+            LEFT JOIN user_values u ON u.group_id = v.group_id 
                                     AND u.user_id = " . $this->user()->id() . " 
-                WHERE v.value_id IN ( SELECT value_id 
+                WHERE v.group_id IN ( SELECT group_id 
                                         FROM value_phrase_links 
                                         WHERE phrase_id IN (" . implode(",", $this->phr_lst->id_lst()) . ")
-                                    GROUP BY value_id )
+                                    GROUP BY group_id )
               ORDER BY v.group_id;";
         return $sql;
     }
@@ -440,15 +449,15 @@ class value_list extends sandbox_list
                 $sql_pos = $sql_pos + 1;
                 $sql_from = $sql_from . " value_phrase_links l" . $sql_pos . ", ";
                 if ($sql_pos == 1) {
-                    $sql_where = $sql_where . " WHERE l" . $sql_pos . ".phrase_id = " . $phr_id . " AND l" . $sql_pos . ".value_id = v.value_id ";
+                    $sql_where = $sql_where . " WHERE l" . $sql_pos . ".phrase_id = " . $phr_id . " AND l" . $sql_pos . ".group_id = v.group_id ";
                 } else {
-                    $sql_where = $sql_where . "   AND l" . $sql_pos . ".phrase_id = " . $phr_id . " AND l" . $sql_pos . ".value_id = v.value_id ";
+                    $sql_where = $sql_where . "   AND l" . $sql_pos . ".phrase_id = " . $phr_id . " AND l" . $sql_pos . ".group_id = v.group_id ";
                 }
             }
         }
 
         if ($sql_where <> '') {
-            $sql = "SELECT DISTINCT v.value_id,
+            $sql = "SELECT DISTINCT v.group_id,
                     " . $db_con->get_usr_field(value::FLD_VALUE, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
                     " . $db_con->get_usr_field(sandbox::FLD_EXCLUDED, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
                     " . $db_con->get_usr_field(value::FLD_LAST_UPDATE, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
@@ -456,9 +465,9 @@ class value_list extends sandbox_list
                        v.user_id,
                        v.group_id
                   FROM " . $db_con->get_table_name_esc(sql_db::TBL_VALUE) . " v 
-             LEFT JOIN user_values u ON u.value_id = v.value_id 
+             LEFT JOIN user_values u ON u.group_id = v.group_id 
                                     AND u.user_id = " . $this->user()->id() . " 
-                 WHERE v.value_id IN ( SELECT DISTINCT v.value_id 
+                 WHERE v.group_id IN ( SELECT DISTINCT v.group_id 
                                          FROM " . $sql_from . "
                                               " . $db_con->get_table_name_esc(sql_db::TBL_VALUE) . " v
                                               " . $sql_where . " )
@@ -590,7 +599,7 @@ class value_list extends sandbox_list
             if ($key == self::FLD_EX_CONTEXT) {
                 $phr_lst = new phrase_list($this->user());
                 $result->add($phr_lst->import_lst($value, $test_obj));
-                $val->grp = $phr_lst->get_grp($do_save);
+                $val->grp = $phr_lst->get_grp_id($do_save);
             }
 
             if ($key == exp_obj::FLD_TIMESTAMP) {
@@ -639,7 +648,7 @@ class value_list extends sandbox_list
                         }
                         $phr_lst_to_add->add($val_phr);
                         $val_to_add->set_number($val_number);
-                        $val_to_add->grp = $phr_lst_to_add->get_grp($do_save);
+                        $val_to_add->grp = $phr_lst_to_add->get_grp_id($do_save);
                         if ($test_obj) {
                             $val_to_add->set_id($test_obj->seq_id());
                         } else {
@@ -1120,10 +1129,10 @@ class value_list extends sandbox_list
         $result = array();
 
         if ($phr_id > 0 and !empty($phr_ids)) {
-            $sql = "SELECT l1.value_id
+            $sql = "SELECT l1.group_id
                 FROM value_phrase_links l1,
                     value_phrase_links l2
-              WHERE l1.value_id = l2.value_id
+              WHERE l1.group_id = l2.group_id
                 AND l1.phrase_id = " . $phr_id . "
                 AND l2.phrase_id IN (" . implode(",", $phr_ids) . ");";
             //$db_con = New mysql;
@@ -1150,34 +1159,34 @@ class value_list extends sandbox_list
 
         if ($phr_id > 0 and !empty($phr_ids) and !empty($val_ids)) {
             $phr_ids[] = $phr_id; // add the main word to the exclude words
-            $sql = "SELECT l.value_id,
+            $sql = "SELECT l.group_id,
                     " . $db_con->get_usr_field(value::FLD_VALUE, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
                     l.phrase_id, 
                     v.excluded, 
                     u.excluded AS user_excluded 
                 FROM value_phrase_links l,
                     " . $db_con->get_table_name_esc(sql_db::TBL_VALUE) . " v 
-          LEFT JOIN user_values u ON v.value_id = u.value_id AND u.user_id = " . $user_id . " 
-              WHERE l.value_id = v.value_id
+          LEFT JOIN user_values u ON v.group_id = u.group_id AND u.user_id = " . $user_id . " 
+              WHERE l.group_id = v.group_id
                 AND l.phrase_id NOT IN (" . implode(",", $phr_ids) . ")
-                AND l.value_id IN (" . implode(",", $val_ids) . ")
+                AND l.group_id IN (" . implode(",", $val_ids) . ")
                 AND (u.excluded IS NULL OR u.excluded = 0) 
-            GROUP BY l.value_id, l.phrase_id;";
+            GROUP BY l.group_id, l.phrase_id;";
             //$db_con = New mysql;
             $db_con->usr_id = $this->user()->id();
             $db_lst = $db_con->get_old($sql);
-            $value_id = -1; // set to an id that is never used to force the creation of a new entry at start
+            $group_id = -1; // set to an id that is never used to force the creation of a new entry at start
             foreach ($db_lst as $db_val) {
-                if ($value_id == $db_val[value::FLD_ID]) {
+                if ($group_id == $db_val[value::FLD_ID]) {
                     $phr_result[] = $db_val[phrase::FLD_ID];
                 } else {
-                    if ($value_id >= 0) {
+                    if ($group_id >= 0) {
                         // remember the previous values
                         $row_result[] = $phr_result;
-                        $result[$value_id] = $row_result;
+                        $result[$group_id] = $row_result;
                     }
                     // remember the values for a new result row
-                    $value_id = $db_val[value::FLD_ID];
+                    $group_id = $db_val[value::FLD_ID];
                     $val_num = $db_val[value::FLD_VALUE];
                     $row_result = array();
                     $row_result[] = $val_num;
@@ -1185,10 +1194,10 @@ class value_list extends sandbox_list
                     $phr_result[] = $db_val[phrase::FLD_ID];
                 }
             }
-            if ($value_id >= 0) {
+            if ($group_id >= 0) {
                 // remember the last values
                 $row_result[] = $phr_result;
-                $result[$value_id] = $row_result;
+                $result[$group_id] = $row_result;
             }
         }
 

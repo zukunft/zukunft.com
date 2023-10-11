@@ -29,18 +29,30 @@
   
 */
 
-namespace cfg;
+namespace cfg\log;
 
 include_once MODEL_HELPER_PATH . 'db_object.php';
 include_once MODEL_HELPER_PATH . 'type_list.php';
 include_once MODEL_HELPER_PATH . 'type_object.php';
+include_once MODEL_SYSTEM_PATH . 'sys_log_function.php';
 include_once MODEL_LOG_PATH . 'change_log_named.php';
 include_once MODEL_LOG_PATH . 'change_log_action.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
 include_once API_SANDBOX_PATH . 'sandbox_value.php';
 include_once API_LOG_PATH . 'system_log.php';
 
+use cfg\change_log_action;
+use cfg\change_log_named;
 use cfg\db\sql_creator;
+use cfg\db_id_object;
+use cfg\library;
+use cfg\sandbox;
+use cfg\sql_db;
+use cfg\sql_par;
+use cfg\sys_log_function;
+use cfg\type_list;
+use cfg\type_object;
+use cfg\user;
 use controller\log\system_log_api;
 use DateTime;
 use DateTimeInterface;
@@ -206,7 +218,7 @@ class system_log extends db_id_object
 
         $sc->set_name($qp->name);
         $sc->set_fields(self::FLD_NAMES);
-        $sc->set_join_fields(array(self::FLD_FUNCTION_NAME), sql_db::TBL_SYS_LOG_FUNCTION);
+        $sc->set_join_fields(array(self::FLD_FUNCTION_NAME), sys_log_function::class);
         $sc->set_join_fields(array(type_object::FLD_NAME), sql_db::TBL_SYS_LOG_STATUS);
         $sc->set_join_fields(array(sandbox::FLD_USER_NAME), sql_db::TBL_USER);
         $sc->set_join_fields(array(sandbox::FLD_USER_NAME . ' AS ' . self::FLD_SOLVER_NAME), sql_db::TBL_USER, self::FLD_SOLVER);

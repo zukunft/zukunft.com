@@ -1,5 +1,5 @@
 PREPARE result_by_grp_std (int) AS
-    SELECT result_id,
+    SELECT group_id,
            formula_id,
            user_id,
            source_group_id,

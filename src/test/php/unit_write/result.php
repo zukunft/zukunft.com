@@ -62,7 +62,7 @@ class result_test
         $phr_lst->add_name(formula_api::TN_RENAMED);
         $phr_lst->add_name(word_api::TN_PCT);
         $phr_lst->add_name(word_api::TN_INHABITANTS);
-        $ch_up_grp = $phr_lst->get_grp();
+        $ch_up_grp = $phr_lst->get_grp_id();
         if ($ch_up_grp->id() > 0) {
             $ch_increase = new result($usr);
             $ch_increase->load_by_grp($ch_up_grp);
@@ -81,7 +81,7 @@ class result_test
         $phr_lst->add_name(word_api::TN_2020);
         $time_phr = $phr_lst->time_useful();
         $phr_lst->ex_time();
-        $ch_up_grp = $phr_lst->get_grp();
+        $ch_up_grp = $phr_lst->get_grp_id();
         if ($ch_up_grp->id() > 0) {
             $ch_increase = new result($usr);
             $ch_increase->load_by_grp($ch_up_grp, $time_phr->id());
@@ -105,7 +105,7 @@ class result_test
         $phr_lst = new phrase_list($usr);
         $phr_lst->load_by_names(array(word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_2020, word_api::TN_IN_K));
         $phr_lst->ex_time();
-        $ch_k_grp = $phr_lst->get_grp();
+        $ch_k_grp = $phr_lst->get_grp_id();
         /*
         $dest_wrd_lst = new word_list($usr);
         $dest_wrd_lst->add_name(word_api::TN_INHABITANTS);
@@ -135,7 +135,7 @@ class result_test
         $phr_lst->load_by_names(array(word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_2020));
         $phr_lst->ex_time();
         $val_best_guess = new value($usr);
-        $val_best_guess->load_by_grp($phr_lst->get_grp());
+        $val_best_guess->load_by_grp($phr_lst->get_grp_id());
         $result = $val_best_guess->number();
         // TODO check why this value sometimes switch
         /*

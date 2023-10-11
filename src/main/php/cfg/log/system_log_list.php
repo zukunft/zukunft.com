@@ -46,6 +46,7 @@ include_once WEB_LOG_PATH . 'system_log_list.php';
 include_once WEB_LOG_PATH . 'system_log_list_old.php';
 
 use cfg\db\sql_par_type;
+use cfg\log\system_log;
 use controller\log\system_log_list_api;
 use html\log\system_log_list_dsp_old;
 
@@ -171,7 +172,7 @@ class system_log_list extends base_list
             $db_con->set_name($qp->name);
             $db_con->set_usr($this->user()->id());
             $db_con->set_fields(system_log::FLD_NAMES);
-            $db_con->set_join_fields(array(system_log::FLD_FUNCTION_NAME), sql_db::TBL_SYS_LOG_FUNCTION);
+            $db_con->set_join_fields(array(system_log::FLD_FUNCTION_NAME), sys_log_function::class);
             $db_con->set_join_fields(array(type_object::FLD_NAME), sql_db::TBL_SYS_LOG_STATUS);
             $db_con->set_join_fields(array(sandbox::FLD_USER_NAME), sql_db::TBL_USER);
             $db_con->set_join_fields(array(

@@ -1319,7 +1319,7 @@ COMMENT ON COLUMN result_big.last_update is 'time of last value update mainly us
 -- --------------------------------------------------------
 
 alter table results
-    drop column result_id;
+    drop column group_id;
 
 alter table results
     rename column source_phrase_group_id to source_group_id;
@@ -1336,12 +1336,12 @@ alter table results
 alter table results
     drop column dirty;
 
-drop index formula_value_idx;
+drop index formula_group_idx;
 
 alter table results
     drop column source_time_id;
 
-create unique index formula_value_idx
+create unique index formula_group_idx
     on results (formula_id, user_id, phrase_group_id, source_phrase_group_id, source_time_id);
 
 -- --------------------------------------------------------

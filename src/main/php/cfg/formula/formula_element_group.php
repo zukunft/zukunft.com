@@ -248,7 +248,7 @@ class formula_element_group
             $val_phr_lst->set_lst($val_phr_lst_sort);
 
             //asort($val_phr_lst);
-            $val_phr_grp = $val_phr_lst->get_grp();
+            $val_phr_grp = $val_phr_lst->get_grp_id();
             log_debug('words group for "' . $val_phr_lst->dsp_name() . '" = ' . $val_phr_grp->id());
 
             // try to get a normal value set by the user directly for the phrase list

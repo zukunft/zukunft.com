@@ -37,6 +37,7 @@ include_once MODEL_LOG_PATH . 'system_log_list.php';
 include_once API_LOG_PATH . 'system_log.php';
 
 use cfg\config;
+use cfg\log\system_log;
 use controller\log\system_log_api;
 use DateTime;
 use cfg\ip_range;
@@ -44,7 +45,6 @@ use cfg\ip_range_list;
 use cfg\library;
 use cfg\sql_db;
 use cfg\sys_log_status;
-use cfg\system_log;
 use cfg\system_log_list;
 
 class system_unit_tests
@@ -100,7 +100,7 @@ class system_unit_tests
         $t->assert($test_name, $phr_lst->dsp_id(), $target);
         $test_name = 'debug phrase_group id';
         $grp = $t->dummy_phrase_group();
-        $target = '"Pi (math)" (group_id 1) as "Pi (math)" for user 1 (zukunft.com system test)';
+        $target = '"Pi (math)" (group_id 32770) as "Pi (math)" for user 1 (zukunft.com system test)';
         $t->assert($test_name, $grp->dsp_id(), $target);
         $test_name = 'debug group_list id';
         $grp_lst = $t->dummy_phrase_group_list();
@@ -116,15 +116,15 @@ class system_unit_tests
         $t->assert($test_name, $trm_lst->dsp_id(), $target);
         $test_name = 'debug value id';
         $val = $t->dummy_value();
-        $target = '"Pi (math)" 3.1415926535898 (value_id 1) for user 1 (zukunft.com system test)';
+        $target = '"Pi (math)" 3.1415926535898 (group_id 1) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $val->dsp_id(), $target);
         $test_name = 'debug value_list id';
         $val_lst = $t->dummy_value_list();
-        $target = '"Pi (math)" 3.1415926535898 / "inhabitant in the city of Zurich (2019)" 415367 (value_id 1,2) for user 1 (zukunft.com system test)';
+        $target = '"Pi (math)" 3.1415926535898 / "inhabitant in the city of Zurich (2019)" 415367 (group_id 1,2) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $val_lst->dsp_id(), $target);
         $test_name = 'debug value_phrase_link id';
         $val_lnk = $t->dummy_value_phrase_link();
-        $target = 'link "Pi (math)" 3.1415926535898 (value_id 1) to "Mathematics" (word_id 1) as phrase for zukunft.com system test (1)';
+        $target = 'link "Pi (math)" 3.1415926535898 (group_id 1) to "Mathematics" (word_id 1) as phrase for zukunft.com system test (1)';
         $t->assert($test_name, $val_lnk->dsp_id(), $target);
         $test_name = 'debug formula id';
         $frm = $t->dummy_formula();
@@ -152,15 +152,15 @@ class system_unit_tests
         $t->assert($test_name, $exp->dsp_id(), $target);
         $test_name = 'debug result id';
         $res = $t->dummy_result();
-        $target = '"Mathematics" 123456 (result_id 1) for user 1 (zukunft.com system test)';
+        $target = '"Mathematics" 123456 (group_id 1) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $res->dsp_id(), $target);
         $test_name = 'debug result_list id';
         $res_lst = $t->dummy_result_list();
-        $target = '"Mathematics" 123456 (result_id 1) for user 1 (zukunft.com system test)';
+        $target = '"Mathematics" 123456 (group_id 1) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $res_lst->dsp_id(), $target);
         $test_name = 'debug figure id';
         $fig = $t->dummy_figure_value();
-        $target = 'value figure "Pi (math)" 3.1415926535898 (value_id 1) for user 1 (zukunft.com system test) 2022-12-26 18:23:45';
+        $target = 'value figure "Pi (math)" 3.1415926535898 (group_id 1) for user 1 (zukunft.com system test) 2022-12-26 18:23:45';
         $t->assert($test_name, $fig->dsp_id(), $target);
         $test_name = 'debug figure_list id';
         $fig_lst = $t->dummy_figure_list();

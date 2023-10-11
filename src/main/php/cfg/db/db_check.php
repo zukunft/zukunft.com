@@ -147,7 +147,7 @@ class db_check
         $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . self::TBL_TRIPLE, 'word_link_id', sql_db::TBL_USER_PREFIX . 'triple_id');
         $result .= $db_con->change_table_name('view_word_link', sql_db::TBL_VIEW_TERM_LINK);
         $result .= $db_con->change_table_name('formula_value', sql_db::TBL_RESULT);
-        $result .= $db_con->change_column_name(sql_db::TBL_RESULT, 'formula_value_id', 'result_id');
+        $result .= $db_con->change_column_name(sql_db::TBL_RESULT, 'formula_group_id', 'group_id');
         $result .= $db_con->change_column_name(sql_db::TBL_RESULT, 'formula_value', 'result');
         $result .= $db_con->change_table_name('view_component', sql_db::TBL_COMPONENT);
         $result .= $db_con->change_column_name(sql_db::TBL_COMPONENT, 'view_component_id', component::FLD_ID);
@@ -289,7 +289,7 @@ class db_check
         $result .= $db_con->column_allow_null(sql_db::TBL_VALUE_TIME_SERIES, 'protect_id');
         $result .= $db_con->column_allow_null(sql_db::TBL_USER_PREFIX . sql_db::TBL_SOURCE, 'source_name');
         $result .= $db_con->column_allow_null(sql_db::TBL_USER_PREFIX . sql_db::TBL_SOURCE, 'url');
-        $result .= $db_con->column_allow_null(sql_db::TBL_SYS_LOG_FUNCTION, 'sys_log_function_name');
+        $result .= $db_con->column_allow_null(sys_log_function::class, 'sys_log_function_name');
         $result .= $db_con->column_allow_null(sql_db::TBL_TASK, 'start_time');
         $result .= $db_con->column_allow_null(sql_db::TBL_TASK, 'end_time');
         $result .= $db_con->column_allow_null(sql_db::TBL_TASK, 'row_id');

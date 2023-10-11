@@ -260,7 +260,7 @@ class value_dsp_old extends value
         $html = new html_base();
 
         // get value changes by the user that are not standard
-        $sql = "SELECT v.value_id,
+        $sql = "SELECT v.group_id,
                     " . $db_con->get_usr_field(value::FLD_VALUE, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
                    t.word_id,
                    t.word_name
@@ -268,10 +268,10 @@ class value_dsp_old extends value
                    value_phrase_links lt,
                    words t,
                    " . $db_con->get_table_name_esc(sql_db::TBL_VALUE) . " v
-         LEFT JOIN user_values u ON v.value_id = u.value_id AND u.user_id = " . $this->user()->id() . " 
+         LEFT JOIN user_values u ON v.group_id = u.group_id AND u.user_id = " . $this->user()->id() . " 
              WHERE l.phrase_id = " . $wrd_id . "
-               AND l.value_id = v.value_id
-               AND v.value_id = lt.value_id
+               AND l.group_id = v.group_id
+               AND v.group_id = lt.group_id
                AND lt.phrase_id <> " . $wrd_id . "
                AND lt.phrase_id = t.word_id
                AND (u.excluded IS NULL OR u.excluded = 0) 
@@ -282,7 +282,7 @@ class value_dsp_old extends value
 
         // prepare to show where the user uses different value than a normal viewer
         $row_nbr = 0;
-        $value_id = 0;
+        $group_id = 0;
         $word_names = "";
         $result .= $html->dsp_tbl_start_hist();
         foreach ($db_lst as $db_row) {
@@ -295,15 +295,15 @@ class value_dsp_old extends value
                 $row_nbr++;
             }
 
-            $new_value_id = $db_row["value_id"];
+            $new_group_id = $db_row["group_id"];
             $wrd = new word_dsp();
             $wrd->set_id($db_row["word_id"]);
             $wrd->set_name($db_row["word_name"]);
-            if ($value_id <> $new_value_id) {
+            if ($group_id <> $new_group_id) {
                 if ($word_names <> "") {
                     // display a row if the value has changed and
                     $result .= '<tr>';
-                    $result .= '<td><a href="/http/value_edit.php?id=' . $value_id . '&back=' . $back . '" class="grey">' . $row_value . '</a></td>';
+                    $result .= '<td><a href="/http/value_edit.php?id=' . $group_id . '&back=' . $back . '" class="grey">' . $row_value . '</a></td>';
                     $result .= '<td>' . $word_names . '</td>';
                     $result .= '</tr>';
                     $row_nbr++;
@@ -311,7 +311,7 @@ class value_dsp_old extends value
                 // prepare a new value display
                 $row_value = $db_row["numeric_value"];
                 $word_names = $wrd->dsp_obj()->display_linked(api::STYLE_GREY);
-                $value_id = $new_value_id;
+                $group_id = $new_group_id;
             } else {
                 $word_names .= ", " . $wrd->dsp_obj()->display_linked(api::STYLE_GREY);
             }
@@ -319,7 +319,7 @@ class value_dsp_old extends value
         // display the last row if there has been at least one word
         if ($word_names <> "") {
             $result .= '<tr>';
-            $result .= '<td><a href="/http/value_edit.php?id=' . $value_id . '&back=' . $back . '" class="grey">' . $row_value . '</a></td>';
+            $result .= '<td><a href="/http/value_edit.php?id=' . $group_id . '&back=' . $back . '" class="grey">' . $row_value . '</a></td>';
             $result .= '<td>' . $word_names . '</td>';
             $result .= '</tr>';
         }

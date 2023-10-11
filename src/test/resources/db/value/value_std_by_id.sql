@@ -1,6 +1,5 @@
 PREPARE value_std_by_id (int) AS
-    SELECT value_id,
-           group_id,
+    SELECT group_id,
            numeric_value,
            source_id,
            last_update,
@@ -8,4 +7,4 @@ PREPARE value_std_by_id (int) AS
            protect_id,
            user_id
     FROM values
-    WHERE value_id = $1;
+    WHERE group_id = $1;

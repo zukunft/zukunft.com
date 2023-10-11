@@ -378,18 +378,18 @@ class group_list extends sandbox_list
         // create the value or result selection
         // TODO use sql builder
         if ($type == 'value') {
-            $sql_select = 'SELECT v.value_id,
+            $sql_select = 'SELECT v.group_id,
                             v.group_id
                        FROM values v';
         } else {
-            $sql_select = 'SELECT v.result_id AS value_id,
+            $sql_select = 'SELECT v.group_id AS group_id,
                             v.group_id
                        FROM results v';
         }
 
         // combine the selections
         $sql = '';
-        $sql_group_by = ' GROUP BY value_id, group_id LIMIT 500'; // limit is only set for testing: remove for release!
+        $sql_group_by = ' GROUP BY group_id, group_id LIMIT 500'; // limit is only set for testing: remove for release!
         if ($sql_group <> '') {
             // select values only by the group
             $sql = $sql_select . ', ( ' . $sql_group . ') AS g WHERE v.group_id = g.group_id' . $sql_group_by . ';';
@@ -449,7 +449,7 @@ class group_list extends sandbox_list
                     $phr_lst_res_name = $phr_lst_res->dsp_id();
                 }
                 // add the group to the calculation list if the group is not yet in the list
-                $grp_to_add = $used_phr_lst->get_grp();
+                $grp_to_add = $used_phr_lst->get_grp_id();
                 if ($grp_to_add->id() <> $val_grp->id()) {
                     log_debug('group ' . $grp_to_add->dsp_id() . ' used instead of ' . $val_grp->dsp_id() . ' because ' . $phr_frm->dsp_id() . ' and  ' . $phr_lst_res_name . ' are part of the formula and have been remove from the phrase group selection');
                     $changed++;

@@ -66,7 +66,7 @@ class result extends sandbox_value
      */
 
     // database fields only used for results
-    const FLD_ID = 'result_id';
+    const FLD_ID = 'group_id';
     const FLD_SOURCE_GRP = 'source_group_id';
     const FLD_GRP = 'group_id';
     const FLD_VALUE = 'result';
@@ -231,7 +231,7 @@ class result extends sandbox_value
         $api_obj = new result_api($this->id);
         $api_obj->set_number($this->value);
         if ($this->grp->phr_lst != null) {
-            $grp = $this->grp->phr_lst->get_grp($do_save);
+            $grp = $this->grp->phr_lst->get_grp_id($do_save);
             $api_obj->set_grp($grp->api_obj());
         }
         return $api_obj;
@@ -277,6 +277,8 @@ class result extends sandbox_value
         $qp = parent::load_sql($sc, $query_name, $class);
 
         $sc->set_type($class);
+        // overwrite the standard id field name (result_id) with the main database id field for results "group_id"
+        $sc->set_id_field($this->id_field());
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id);
         $sc->set_fields(self::FLD_NAMES);
@@ -568,7 +570,7 @@ class result extends sandbox_value
             $res_usr = $this->user();
             $this->reset();
             $this->set_user($res_usr);
-            $grp = $phr_lst->get_grp();
+            $grp = $phr_lst->get_grp_id();
             $result = $this->load_by_grp($grp, $time_phr_id);
         } else {
             log_err('The result phrase list and the user must be set ' .
@@ -652,7 +654,7 @@ class result extends sandbox_value
                 if (isset($phr_lst)) {
                     $this->grp->phr_lst = $phr_lst;
                     log_debug('get group for ' . $phr_lst->dsp_name() . ' (including formula name)');
-                    $phr_grp = $phr_lst->get_grp();
+                    $phr_grp = $phr_lst->get_grp_id();
                     if (isset($phr_grp)) {
                         if ($phr_grp->id() > 0) {
                             $this->grp = $phr_grp;
@@ -672,7 +674,7 @@ class result extends sandbox_value
             if ($this->src_grp->id() <= 0 and $this->src_grp->phr_lst != null) {
 
                 if (!$this->src_grp->phr_lst->is_empty()) {
-                    $phr_grp = $this->src_grp->phr_lst->get_grp();
+                    $phr_grp = $this->src_grp->phr_lst->get_grp_id();
                     if (isset($phr_grp)) {
                         if ($phr_grp->id() > 0) {
                             $this->src_grp->set_id($phr_grp->id());
@@ -810,7 +812,7 @@ class result extends sandbox_value
                             // count the number of phrases per group
                             // and add the user specific phrase links
                             // select also the time
-                            $sql_val = "SELECT result_id 
+                            $sql_val = "SELECT group_id 
                             FROM results
                           WHERE group_id IN (" . $sql_grp . ");";
                             log_debug('sql val "' . $sql_val . '"');
@@ -824,7 +826,7 @@ class result extends sandbox_value
                                     if ($this->id() > 0) {
                                         $qp->name .= '_guess_res_id';
                                         $db_con->add_par(sql_par_type::INT, $this->id());
-                                        $sql_where = "result_id = " . $db_con->par_name();
+                                        $sql_where = "group_id = " . $db_con->par_name();
                                         $this->load_rec($qp, $sql_where);
                                         log_debug('best guess id (' . $this->id() . ')');
                                     }
@@ -931,6 +933,22 @@ class result extends sandbox_value
 
 
     /*
+     * information
+     */
+
+    /**
+     * overwrites the standard db_object function because
+     * the main id field of result is not result_id, but group_id
+     * @return string the field name of the prime database index of the object
+     */
+    function id_field(): string
+    {
+        $lib = new library();
+        return $lib->class_to_name(group::class) . sql_db::FLD_EXT_ID;
+    }
+
+
+    /*
      * im- and export
      */
 
@@ -958,7 +976,7 @@ class result extends sandbox_value
                 $phr_lst = new phrase_list($this->user());
                 $result->add($phr_lst->import_lst($res, $test_obj));
                 if ($result->is_ok()) {
-                    $phr_grp = $phr_lst->get_grp($do_save);
+                    $phr_grp = $phr_lst->get_grp_id($do_save);
                     log_debug('got word group ' . $phr_grp->dsp_id());
                     $this->set_grp($phr_grp);
                     log_debug('set grp id to ' . $this->grp->id());
@@ -1333,7 +1351,7 @@ class result extends sandbox_value
         // get formula results that may need an update (maybe include also word groups that have any word of the updated word group)
         if (!empty($frm_ids)) {
             $sql_in = $lib->sql_array($frm_ids, ' formula_id IN (', ') ');
-            $sql = "SELECT result_id, formula_id
+            $sql = "SELECT group_id, formula_id
                 FROM results 
                WHERE " . $sql_in . "
                  AND group_id = " . $this->grp->id() . "

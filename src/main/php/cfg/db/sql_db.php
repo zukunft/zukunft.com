@@ -108,7 +108,6 @@ class sql_db
     const TBL_IP = 'user_blocked_ip';
     const TBL_SYS_LOG = 'sys_log';
     const TBL_SYS_LOG_STATUS = 'sys_log_status';
-    const TBL_SYS_LOG_FUNCTION = 'sys_log_function';
     const TBL_SYS_SCRIPT = 'sys_script'; // to log the execution times for code optimising
     const TBL_TASK = 'calc_and_cleanup_task';
     const TBL_TASK_TYPE = 'calc_and_cleanup_task_type';
@@ -405,6 +404,7 @@ class sql_db
         return $this->reconnect_delay;
     }
 
+
     /*
      * open/close the connection to MySQL
      */
@@ -642,9 +642,9 @@ class sql_db
      */
     function add_par(
         sql_par_type $par_type,
-        string $value,
-        bool   $named = false,
-        bool   $use_link = false): void
+        string       $value,
+        bool         $named = false,
+        bool         $use_link = false): void
     {
         $this->par_types[] = $par_type;
         $this->par_values[] = $value;
@@ -1430,7 +1430,7 @@ class sql_db
         return $result;
     }
 
-    private function set_id_field(string $given_name = ''): void
+    function set_id_field(string $given_name = ''): void
     {
         if ($given_name != '') {
             $this->id_field = $given_name;
@@ -3001,7 +3001,7 @@ class sql_db
             switch ($type) {
                 case sql_par_type::INT_LIST:
                 case sql_par_type::INT_LIST_OR:
-                $result[] = 'int[]';
+                    $result[] = 'int[]';
                     break;
                 case sql_par_type::INT_OR:
                 case sql_par_type::INT_NOT:
@@ -3097,7 +3097,7 @@ class sql_db
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      *                 in the previous set dialect
      */
-    function load_sql_not_changed(int $id, ?int $owner_id = 0): sql_par
+    function load_sql_not_changed(int $id, ?int $owner_id = 0, string $id_field = ''): sql_par
     {
         $qp = new sql_par($this->type);
         $qp->name .= 'not_changed';
@@ -3107,7 +3107,7 @@ class sql_db
         $this->set_name($qp->name);
         $this->set_usr($this->usr_id);
         $this->set_table();
-        $this->set_id_field();
+        $this->set_id_field($id_field);
         $this->set_fields(array(user::FLD_ID));
         if ($id == 0) {
             log_err('The id must be set to detect if the link has been changed');
@@ -3649,7 +3649,7 @@ class sql_db
 
     /**
      * reset the seq number
-     * @param string $type the class name to which the related table should be resetted
+     * @param string $type the class name to which the related table should be reset
      * @return string any warning message to be shown to the admin user
      */
     function seq_reset(string $type): string
@@ -3657,7 +3657,7 @@ class sql_db
         $msg = '';
         $this->set_type($type);
         $sql_max = 'SELECT MAX(' . $this->name_sql_esc($this->id_field) . ') AS max_id FROM ' . $this->name_sql_esc($this->table) . ';';
-        // $db_con->set_fields(array('MAX(value_id) AS max_id'));
+        // $db_con->set_fields(array('MAX(group_id) AS max_id'));
         // $sql_max = $db_con->select();
         $max_row = $this->get1_internal($sql_max);
         if ($max_row == null) {

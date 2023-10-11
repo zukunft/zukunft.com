@@ -562,14 +562,6 @@ class word extends sandbox_typed
         return $this->id();
     }
 
-    /**
-     * @return string with the id field name of the word (not the related formula)
-     */
-    function id_field(): string
-    {
-        return self::FLD_ID;
-    }
-
     function name_field(): string
     {
         return self::FLD_NAME;
@@ -1299,7 +1291,7 @@ class word extends sandbox_typed
 
         $sql = 'UPDATE words t
              SET ' . $db_con->sf("values") . ' = ( 
-          SELECT COUNT(value_id) 
+          SELECT COUNT(group_id) 
             FROM value_phrase_links l
            WHERE l.phrase_id = t.word_id);';
         $db_con->exe_try('Calculate word usage', $sql);

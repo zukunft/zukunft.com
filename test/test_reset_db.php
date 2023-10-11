@@ -51,12 +51,14 @@ use cfg\formula_link_type_list;
 use cfg\formula_type_list;
 use cfg\language_form_list;
 use cfg\language_list;
+use cfg\library;
 use cfg\phrase_types;
 use cfg\protection_type_list;
 use cfg\ref_type_list;
 use cfg\share_type_list;
 use cfg\source_type_list;
 use cfg\sql_db;
+use cfg\sys_log_function;
 use cfg\user;
 use cfg\view_type_list;
 use html\html_base;
@@ -144,6 +146,8 @@ if ($usr->id() > 0) {
  */
 function run_db_truncate(): void
 {
+    $lib = new library();
+
     // the tables in order to avoid the usage of CASCADE
     $table_names = array(
         sql_db::TBL_VALUE_PHRASE_LINK,
@@ -195,7 +199,7 @@ function run_db_truncate(): void
         sql_db::TBL_TASK,
         sql_db::TBL_SYS_LOG,
         sql_db::TBL_SYS_LOG_STATUS,
-        sql_db::TBL_SYS_LOG_FUNCTION,
+        sys_log_function::class,
         sql_db::TBL_SHARE,
         sql_db::TBL_PROTECTION,
         sql_db::TBL_USER,
@@ -206,7 +210,9 @@ function run_db_truncate(): void
     $html->echo('truncate ');
     $html->echo("\n");
 
-    foreach ($table_names as $table_name) {
+
+    foreach ($table_names as $class) {
+        $table_name = $lib->class_to_name($class);
         run_table_truncate($table_name);
     }
 
@@ -278,7 +284,10 @@ function run_table_truncate(string $table_name): void
 function run_db_seq_reset(): void
 {
     // the sequence names of the tables to reset
+    // TODO base the list on the class list const and a sequence name function
     $seq_names = array(
+        'sys_log_status_sys_log_status_id_seq',
+        'sys_log_sys_log_id_seq',
         'value_phrase_links_value_phrase_link_id_seq',
         'formula_elements_formula_element_id_seq',
         'formula_element_types_formula_element_type_id_seq',
@@ -292,8 +301,7 @@ function run_db_seq_reset(): void
         'views_view_id_seq',
         'view_types_view_type_id_seq',
         'groups_prime_group_id_seq',
-        'groups_prime_link_group_id_seq',
-        'group_links_group_link_id_seq',
+        'groups_prime_links_group_id_seq',
         'verbs_verb_id_seq',
         'triples_triple_id_seq',
         'words_word_id_seq',
@@ -311,7 +319,6 @@ function run_db_seq_reset(): void
         'calc_and_cleanup_task_types_calc_and_cleanup_task_type_id_seq',
         'calc_and_cleanup_tasks_calc_and_cleanup_task_id_seq',
         'sys_scripts_sys_script_id_seq',
-        'sys_log_sys_log_id_seq',
         'sys_log_status_sys_log_status_id_seq',
         'sys_log_functions_sys_log_function_id_seq',
         'share_types_share_type_id_seq',

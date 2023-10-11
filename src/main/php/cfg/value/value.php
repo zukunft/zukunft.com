@@ -81,7 +81,7 @@ class value extends sandbox_value
      */
 
     // object specific database and JSON object field names
-    const FLD_ID = 'value_id';
+    const FLD_ID = 'group_id';
     const FLD_VALUE = 'numeric_value';
     const FLD_LAST_UPDATE = 'last_update';
 
@@ -370,6 +370,8 @@ class value extends sandbox_value
     function load_standard_sql(sql_creator $sc, string $class = self::class): sql_par
     {
         $sc->set_type(self::class);
+        // overwrite the standard id field name (value_id) with the main database id field for values "group_id"
+        $sc->set_id_field($this->id_field());
         $sc->set_fields(array_merge(self::FLD_NAMES, self::FLD_NAMES_NUM_USR, array(user::FLD_ID)));
 
         return parent::load_standard_sql($sc, $class);
@@ -401,6 +403,8 @@ class value extends sandbox_value
         $qp = parent::load_sql($sc, $query_name, $class);
 
         $sc->set_type(self::class);
+        // overwrite the standard id field name (value_id) with the main database id field for values "group_id"
+        $sc->set_id_field($this->id_field());
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
         $sc->set_fields(self::FLD_NAMES);
@@ -565,7 +569,7 @@ class value extends sandbox_value
     {
         $phr_lst = new phrase_list($this->user());
         $phr_lst->load_names_by_ids((new phr_ids($phr_ids)));
-        return $this->load_by_grp($phr_lst->get_grp());
+        return $this->load_by_grp($phr_lst->get_grp_id());
     }
 
     /**
@@ -603,7 +607,7 @@ class value extends sandbox_value
                             $val_id_row = $val_ids_rows[0];
                             $this->id() = $val_id_row[self::FLD_ID];
                             if ($this->id() > 0) {
-                                $sql_where = "s.value_id = " . $this->id();
+                                $sql_where = "s.group_id = " . $this->id();
                                 $qp = $this->load_sql($db_con);
                                 $db_val = $db_con->get1($qp);
                                 $this->row_mapper($db_val, true);
@@ -640,7 +644,7 @@ class value extends sandbox_value
                 $phr_lst_unscaled = clone $this->grp->phr_lst;
                 $phr_lst_unscaled->ex_scaling();
                 log_debug('try unscaled with ' . $phr_lst_unscaled->dsp_id());
-                $grp_unscale = $phr_lst_unscaled->get_grp();
+                $grp_unscale = $phr_lst_unscaled->get_grp_id();
                 $this->load_by_grp($grp_unscale);
                 // if not found try with converted measure
                 if ($this->id() <= 0) {
@@ -648,7 +652,7 @@ class value extends sandbox_value
                     $phr_lst_converted = clone $phr_lst_unscaled;
                     $phr_lst_converted->ex_measure();
                     log_debug('try converted with ' . $phr_lst_converted->dsp_id());
-                    $grp_unscale = $phr_lst_converted->get_grp();
+                    $grp_unscale = $phr_lst_converted->get_grp_id();
                     $this->grp->set_id($grp_unscale->id());
                     $this->load_by_grp($grp_unscale);
                     // TODO:
@@ -762,6 +766,23 @@ class value extends sandbox_value
         */
         log_debug('done');
     }
+
+
+    /*
+     * information
+     */
+
+    /**
+     * overwrites the standard db_object function because
+     * the main id field of value is not value_id, but group_id
+     * @return string the field name of the prime database index of the object
+     */
+    function id_field(): string
+    {
+        $lib = new library();
+        return $lib->class_to_name(group::class) . sql_db::FLD_EXT_ID;
+    }
+
 
     /*
      * Interface functions
@@ -986,7 +1007,7 @@ class value extends sandbox_value
                 $phr_lst = new phrase_list($this->user());
                 $result->add($phr_lst->import_lst($value, $test_obj));
                 if ($result->is_ok()) {
-                    $phr_grp = $phr_lst->get_grp($do_save);
+                    $phr_grp = $phr_lst->get_grp_id($do_save);
                     $this->grp = $phr_grp;
                 }
             }
@@ -1040,7 +1061,7 @@ class value extends sandbox_value
 
         if ($msg->is_ok()) {
             $phr_lst->add($phr);
-            $phr_grp = $phr_lst->get_grp($do_save);
+            $phr_grp = $phr_lst->get_grp_id($do_save);
             $this->grp = $phr_grp;
             $this->number = $value;
 
@@ -1344,7 +1365,7 @@ class value extends sandbox_value
     function not_changed_sql(sql_db $db_con): sql_par
     {
         $db_con->set_type(sql_db::TBL_VALUE);
-        return $db_con->load_sql_not_changed($this->id, $this->owner_id);
+        return $db_con->load_sql_not_changed($this->id, $this->owner_id, $this->id_field());
     }
 
     /**
@@ -1457,6 +1478,8 @@ class value extends sandbox_value
     function load_sql_user_changes(sql_creator $sc, string $class = self::class): sql_par
     {
         $sc->set_type(self::class, true);
+        // overwrite the standard id field name (value_id) with the main database id field for values "group_id"
+        $sc->set_id_field($this->id_field());
         return parent::load_sql_user_changes($sc, $class);
     }
 
@@ -1546,7 +1569,7 @@ class value extends sandbox_value
                 foreach ($add_ids as $add_id) {
                     if ($add_id <> '') {
                         if ($sql == '') {
-                            $sql = 'INSERT INTO ' . $table_name . ' (value_id, ' . $field_name . ') VALUES ';
+                            $sql = 'INSERT INTO ' . $table_name . ' (group_id, ' . $field_name . ') VALUES ';
                         }
                         $sql .= " (" . $this->id() . "," . $add_id . ") ";
                         $add_nbr++;
@@ -1585,7 +1608,7 @@ class value extends sandbox_value
                 $sql_ids = $lib->sql_array($del_ids,
                     ' AND ' . $field_name . ' IN (', ')');
                 $sql = 'DELETE FROM ' . $table_name . ' 
-               WHERE value_id = ' . $this->id() . $sql_ids;
+               WHERE group_id = ' . $this->id() . $sql_ids;
                 //$sql_result = $db_con->exe($sql, "value->upd_phr_links_delete", array());
                 try {
                     $sql_result = $db_con->exe($sql);
@@ -1651,7 +1674,7 @@ class value extends sandbox_value
         $db_con = new mysql;
         $db_con->usr_id = $this->user()->id();
         $db_con->set_type(sql_db::TBL_VALUE_PHRASE_LINK);
-        $val_wrd_id = $db_con->insert(array("value_id","phrase_id"), array($this->id,$phr_id));
+        $val_wrd_id = $db_con->insert(array("group_id","phrase_id"), array($this->id,$phr_id));
         if ($val_wrd_id > 0) {
           // get the link id, but updating the reference in the log should not be done, because the row id should be the ref to the original value
           // TODO: call the word group creation
@@ -1676,7 +1699,7 @@ class value extends sandbox_value
         $db_con = new mysql;
         $db_con->usr_id = $this->user()->id();
         $db_con->set_type(sql_db::TBL_VALUE_PHRASE_LINK);
-        $result = $db_con->delete(array("value_id","phrase_id"), array($this->id,$wrd->id()));
+        $result = $db_con->delete(array("group_id","phrase_id"), array($this->id,$wrd->id()));
         //$result = str_replace ('1','',$result);
       }
     } else {

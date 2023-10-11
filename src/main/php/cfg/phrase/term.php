@@ -802,14 +802,6 @@ class term extends combine_named
         return $result;
     }
 
-    /**
-     * @return string with the id field name of the term
-     */
-    function id_field(): string
-    {
-        return self::FLD_ID;
-    }
-
     function name_field(): string
     {
         return self::FLD_NAME;

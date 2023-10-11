@@ -539,7 +539,7 @@ class user_dsp_old extends user
         // get all values changed by the user to a non standard value
         if (SQL_DB_TYPE == sql_db::POSTGRES) {
             $sql = "SELECT 
-                    u.value_id                                                                         AS id, 
+                    u.group_id                                                                         AS id, 
                     v.user_id                                                                          AS owner_id, 
                     CASE WHEN (u.user_value <> '' IS NOT TRUE) THEN v.numeric_value ELSE u.user_value END AS usr_value, 
                     v.numeric_value                                                                       AS std_value, 
@@ -551,10 +551,10 @@ class user_dsp_old extends user
                FROM user_values u,
                     values v
               WHERE u.user_id = " . $this->id . "
-                AND u.value_id = v.value_id;";
+                AND u.group_id = v.group_id;";
         } else {
             $sql = "SELECT 
-                    u.value_id                                           AS id, 
+                    u.group_id                                           AS id, 
                     v.user_id                                            AS owner_id, 
                     IF(u.numeric_value IS NULL, v.numeric_value, u.numeric_value) AS usr_value, 
                     v.numeric_value                                         AS std_value, 
@@ -566,7 +566,7 @@ class user_dsp_old extends user
                FROM user_values u,
                     `values` v
               WHERE u.user_id = " . $this->id . "
-                AND u.value_id = v.value_id;";
+                AND u.group_id = v.group_id;";
         }
         $val_lst = $db_con->get_old($sql);
 
@@ -627,7 +627,7 @@ class user_dsp_old extends user
 
                     // format the value of other users
                     $sandbox_other = '';
-                    $sql_other = "SELECT v.value_id, 
+                    $sql_other = "SELECT v.group_id, 
                                u.user_id, 
                                u.user_value, 
                                u.source_id, 
@@ -635,8 +635,8 @@ class user_dsp_old extends user
                           FROM user_values u,
                                `values` v
                          WHERE u.user_id <> " . $this->id . "
-                           AND u.value_id = v.value_id
-                           AND u.value_id = " . $val_row['id'] . "
+                           AND u.group_id = v.group_id
+                           AND u.group_id = " . $val_row['id'] . "
                            AND (u.excluded <> 1 OR u.excluded is NULL);";
                     log_debug('user_dsp->dsp_sandbox_val other sql (' . $sql_other . ')');
                     $val_lst_other = $db_con->get_old($sql_other);
