@@ -132,6 +132,9 @@ class result_list extends sandbox_list
             $qp->name = '';
         } else {
             $db_con->set_type(sql_db::TBL_RESULT);
+            // overwrite the standard id field name (result_id) with the main database id field for results "group_id"
+            $res = new result($this->user());
+            $db_con->set_id_field($res->id_field());
             $qp->name .= $sql_by;
             $db_con->set_name(substr($qp->name, 0, 62));
             $db_con->set_fields(result::FLD_NAMES);

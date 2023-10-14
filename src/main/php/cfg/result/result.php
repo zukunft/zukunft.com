@@ -259,6 +259,8 @@ class result extends sandbox_value
     function load_standard_sql(sql_creator $sc, string $class = self::class): sql_par
     {
         $sc->set_type($class);
+        // overwrite the standard id field name (result_id) with the main database id field for results "group_id"
+        $sc->set_id_field($this->id_field());
         $sc->set_fields(array_merge(self::FLD_NAMES, array(user::FLD_ID)));
 
         return parent::load_standard_sql($sc, $class);
@@ -324,6 +326,8 @@ class result extends sandbox_value
     function load_sql_std_by_grp(sql_creator $sc, group $grp): sql_par
     {
         $sc->set_type(self::class);
+        // overwrite the standard id field name (result_id) with the main database id field for results "group_id"
+        $sc->set_id_field($this->id_field());
         $sc->set_fields(array_merge(self::FLD_NAMES, array(user::FLD_ID)));
 
         $qp = $this->load_sql_by_grp_prepare($sc, $grp);
@@ -395,6 +399,8 @@ class result extends sandbox_value
     function load_sql_user_changes(sql_creator $sc, string $class = self::class): sql_par
     {
         $sc->set_type(self::class, true);
+        // overwrite the standard id field name (result_id) with the main database id field for results "group_id"
+        $sc->set_id_field($this->id_field());
         return parent::load_sql_user_changes($sc, $class);
     }
 

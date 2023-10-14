@@ -3,7 +3,6 @@ PREPARE result_list_by_source_group_id FROM
            formula_id,
            user_id,
            source_group_id,
-           group_id,
            result,
            last_update,
            dirty
