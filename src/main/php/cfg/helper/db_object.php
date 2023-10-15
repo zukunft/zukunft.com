@@ -89,7 +89,11 @@ class db_object
      * @param string $ext the table name extension e.g. to switch between standard and prime values
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    public function load_sql_multi(sql_creator $sc, string $query_name, string $class, string $ext = ''): sql_par
+    public function load_sql_multi(
+        sql_creator $sc,
+        string $query_name,
+        string $class,
+        string $ext = ''): sql_par
     {
         $qp = new sql_par($class . $ext);
         $qp->name .= $query_name;

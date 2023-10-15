@@ -436,7 +436,7 @@ class group_list extends sandbox_list
                 // remove the formula name phrase and the result phrases from the value phrases to avoid potentials loops and
                 $val_grp = new group($this->user());
                 $val_grp->load_by_id($val_row[group::FLD_ID]);
-                $used_phr_lst = clone $val_grp->phr_lst;
+                $used_phr_lst = clone $val_grp->phrase_list();
                 log_debug('used_phr_lst ' . $used_phr_lst->dsp_id());
                 // exclude the formula name
                 $used_phr_lst->del($phr_frm);

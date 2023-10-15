@@ -31,12 +31,11 @@
 
 */
 
-// standard zukunft header for callable php files to allow debugging and lib loading
-global $debug;
-
 use cfg\user;
 use test\test_unit_read_db;
 
+// standard zukunft header for callable php files to allow debugging and lib loading
+global $debug;
 $debug = $_GET['debug'] ?? 0;
 
 // load the main functions

@@ -1012,6 +1012,8 @@ function log_err(string $msg_text,
                  string $function_trace = '',
                  ?user  $calling_usr = null): string
 {
+    global $errors;
+    $errors++;
     return log_msg($msg_text,
         $msg_description,
         sys_log_level::ERROR,
@@ -1086,13 +1088,14 @@ function log_fatal(string $msg_text,
  */
 function prg_start(string $code_name, string $style = "", $echo_header = true): sql_db
 {
-    global $sys_time_start, $sys_script;
+    global $sys_time_start, $sys_script, $errors;
 
     // resume session (based on cookies)
     session_start();
 
     $sys_time_start = time();
     $sys_script = $code_name;
+    $errors = 0;
 
     log_debug($code_name . ': session_start');
 

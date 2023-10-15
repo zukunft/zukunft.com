@@ -116,13 +116,13 @@ class value_dsp_old extends value
         $val_btn_title = '';
         $url_phr = '';
         $this->load_phrases();
-        if (isset($this->grp->phr_lst)) {
-            if (!empty($this->grp->phr_lst->lst())) {
-                $val_btn_title = "add new value similar to " . htmlentities($this->grp->phr_lst->dsp_name());
+        if ($this->grp->phrase_list()->is_empty()) {
+            if (!empty($this->grp->phrase_list()->lst())) {
+                $val_btn_title = "add new value similar to " . htmlentities($this->grp->phrase_list()->dsp_name());
             } else {
                 $val_btn_title = "add new value";
             }
-            $url_phr = $this->grp->phr_lst->id_url_long();
+            $url_phr = $this->grp->phrase_list()->id_url_long();
         }
 
         $val_btn_call = '/http/value_add.php?back=' . $back . $url_phr;
@@ -146,8 +146,8 @@ class value_dsp_old extends value
         if (!is_null($this->number)) {
             // load the list of phrases if needed
             $this->reload_if_needed();
-            if (!$this->grp->phr_lst->is_empty()) {
-                if ($this->grp->phr_lst->has_percent()) {
+            if (!$this->grp->phrase_list()->is_empty()) {
+                if ($this->grp->phrase_list()->has_percent()) {
                     $result = round($this->number * 100, $this->user()->percent_decimals) . "%";
                 } else {
                     if ($this->number >= 1000 or $this->number <= -1000) {
@@ -398,7 +398,7 @@ class value_dsp_old extends value
       */
 
             // assign the type to the phrases
-            $phr_lst = clone $this->grp->phr_lst;
+            $phr_lst = clone $this->grp->phrase_list();
             foreach ($phr_lst->lst() as $phr) {
                 $phr->set_user($this->user());
                 foreach (array_keys($this->ids()) as $pos) {
@@ -530,7 +530,7 @@ class value_dsp_old extends value
 
             // show the time phrase
             log_debug('show time');
-            $time_lst = $this->grp->phr_lst->time_lst();
+            $time_lst = $this->grp->phrase_list()->time_lst();
             $has_time = false;
             foreach ($time_lst->lst() as $time_phr) {
                 $result .= '  <tr>';
@@ -679,7 +679,7 @@ class value_dsp_old extends value
     private function is_loaded(): bool
     {
         $result = true;
-        if ($this->grp->phr_lst->is_empty()) {
+        if ($this->grp->phrase_list()->is_empty()) {
             $result = false;
         }
         return $result;

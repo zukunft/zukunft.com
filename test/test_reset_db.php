@@ -64,6 +64,8 @@ use cfg\view_type_list;
 use html\html_base;
 use test\test_unit_read_db;
 
+global $errors;
+
 // open database and display header
 $db_con = prg_start("test_reset_db");
 
@@ -136,6 +138,10 @@ if ($usr->id() > 0) {
         // create the database from the sql structure file
 
         // reload the system database rows (all db rows, that have a code id)
+
+        echo "\n";
+        echo $errors . ' internal errors';
+
     }
 }
 
@@ -301,7 +307,6 @@ function run_db_seq_reset(): void
         'views_view_id_seq',
         'view_types_view_type_id_seq',
         'groups_prime_group_id_seq',
-        'groups_prime_links_group_id_seq',
         'verbs_verb_id_seq',
         'triples_triple_id_seq',
         'words_word_id_seq',

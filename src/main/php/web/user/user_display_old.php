@@ -605,8 +605,8 @@ class user_dsp_old extends user
 
                     // prepare the row values
                     $sandbox_item_name = '';
-                    if (!$val_usr->grp->phr_lst->is_empty()) {
-                        $phr_lst_dsp = new phrase_list_dsp($val_usr->grp->phr_lst->api_json());
+                    if (!$val_usr->grp->phrase_list()->is_empty()) {
+                        $phr_lst_dsp = new phrase_list_dsp($val_usr->grp->phrase_list()->api_json());
                         $sandbox_item_name = $phr_lst_dsp->display_linked();
                     }
 

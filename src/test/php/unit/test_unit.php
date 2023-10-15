@@ -146,6 +146,8 @@ class test_unit extends test_cleanup
         global $usr;
         global $usr_sys;
         global $user_profiles;
+        global $errors;
+        $errors = 0;
         $global_db_con = $db_con;
         $global_sql_names = $sql_names;
         $global_usr = $usr;

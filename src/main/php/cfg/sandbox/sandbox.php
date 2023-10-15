@@ -530,7 +530,10 @@ class sandbox extends db_object_user
     }
 
     /**
-     * load one database row e.g. word, triple, value, formula, result, view or component from the database
+     * load one database row e.g. word, triple, formula, view or component from the database
+     * for values and result the db key might be an 512-bit id or even a string
+     * so for values and results the load_non_int_db_key function is used instead of this load function
+     *
      * @param sql_par $qp the query parameters created by the calling function
      * @return int the id of the object found and zero if nothing is found
      */

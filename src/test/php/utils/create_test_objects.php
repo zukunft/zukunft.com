@@ -890,7 +890,7 @@ class create_test_objects extends test_base
         $phr_lst = new phrase_list($this->usr1);
         $phr_lst->add($wrd->phrase());
         $res->set_id(1);
-        $res->grp->phr_lst = $phr_lst;
+        $res->grp->set_phrase_list($phr_lst);
         $res->value = result_api::TV_INT;
         return $res;
     }
@@ -901,7 +901,7 @@ class create_test_objects extends test_base
         $wrd_pct = $this->new_word(word_api::TN_PCT, 2, phrase_type::PERCENT);
         $phr_lst = new phrase_list($this->usr1);
         $phr_lst->add($wrd_pct->phrase());
-        $res->grp->phr_lst = $phr_lst;
+        $res->grp->set_phrase_list($phr_lst);
         $res->value = 0.01234;
         return $res;
     }
@@ -1803,7 +1803,7 @@ class create_test_objects extends test_base
     function add_phrase_group(array $array_of_phrase_str, string $phrase_group_name): group
     {
         $phr_grp = new group($this->usr1);
-        $phr_grp->phr_lst = $this->load_phrase_list($array_of_phrase_str);
+        $phr_grp->set_phrase_list($this->load_phrase_list($array_of_phrase_str));
         $phr_grp->name = $phrase_group_name;
         $phr_grp->get();
         return $phr_grp;

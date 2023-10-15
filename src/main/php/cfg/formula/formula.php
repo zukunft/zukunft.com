@@ -800,8 +800,8 @@ class formula extends sandbox_typed
         $rst->src_grp = $phr_lst->get_grp_id();
         $rst->ref_text = $this->ref_text_r;
         $rst->num_text = $this->ref_text_r;
-        $rst->src_grp->phr_lst = clone $phr_lst;
-        $rst->grp->phr_lst = clone $phr_lst;
+        $rst->src_grp->set_phrase_list(clone $phr_lst);
+        $rst->grp->set_phrase_list(clone $phr_lst);
         if ($rst->last_val_update < $this->last_update) {
             $rst->last_val_update = $this->last_update;
         }

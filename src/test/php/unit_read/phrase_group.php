@@ -53,7 +53,7 @@ class phrase_group_unit_db_tests
         $grp_check = new group($t->usr1);
         $grp_check->load_by_id($grp->id());
         $result = $grp_check->load_link_ids_for_testing();
-        $target = $grp->phr_lst->id_lst();
+        $target = $grp->phrase_list()->id_lst();
         $t->display('phrase_group->load_link_ids for ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
 
         // second test if the phrase group links are correctly recreated when a group is updated
@@ -63,7 +63,7 @@ class phrase_group_unit_db_tests
         $grp_check = new group($t->usr1);
         $grp_check->load_by_id($grp->id());
         $result = $grp_check->load_link_ids_for_testing();
-        $target = $grp->phr_lst->id_lst();
+        $target = $grp->phrase_list()->id_lst();
         $t->display('phrase_group->load_link_ids for ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
 
     }

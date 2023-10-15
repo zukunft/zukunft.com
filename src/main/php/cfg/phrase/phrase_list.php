@@ -2073,7 +2073,7 @@ class phrase_list extends sandbox_list_named
             $grp = new group($this->user());
             $grp_id = new group_id();
             $grp->set_id($grp_id->get_id($this));
-            $grp->phr_lst = clone $this;
+            $grp->set_phrase_list(clone $this);
         }
         return $grp;
     }

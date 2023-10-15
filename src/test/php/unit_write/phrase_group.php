@@ -81,7 +81,7 @@ class phrase_group_test
         if ($phr_grp->id() > 0) {
             $phr_grp_reload = new group($usr);
             $phr_grp_reload->load_by_id($phr_grp->id());
-            $wrd_lst_reloaded = $phr_grp_reload->phr_lst->wrd_lst();
+            $wrd_lst_reloaded = $phr_grp_reload->phrase_list()->wrd_lst();
             $result = array_diff(
                 array(word_api::TN_MIO, word_api::TN_ZH, word_api::TN_CANTON, word_api::TN_INHABITANTS, word_api::TN_CH),
                 $wrd_lst_reloaded->names()
@@ -112,7 +112,7 @@ class phrase_group_test
         $grp_check = new group($usr);
         $grp_check->load_by_id($grp->id());
         $result = $grp_check->load_link_ids_for_testing();
-        $target = $grp->phr_lst->id_lst();
+        $target = $grp->phrase_list()->id_lst();
         $t->display('phrase_group->load_link_ids for ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
 
         // second test if the phrase group links are correctly recreated when a group is updated
@@ -122,7 +122,7 @@ class phrase_group_test
         $grp_check = new group($usr);
         $grp_check->load_by_id($grp->id());
         $result = $grp_check->load_link_ids_for_testing();
-        $target = $grp->phr_lst->id_lst();
+        $target = $grp->phrase_list()->id_lst();
         $t->display('phrase_group->load_link_ids for ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
 
         // test value

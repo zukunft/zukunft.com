@@ -1878,6 +1878,7 @@ class test_base
      */
     function dsp_result(): void
     {
+        global $errors;
 
         echo "\n";
         $since_start = microtime(true) - $this->start_time;
@@ -1887,7 +1888,9 @@ class test_base
         echo "\n";
         echo $this->timeout_counter . ' timeouts';
         echo "\n";
-        echo $this->error_counter . ' errors';
+        echo $this->error_counter . ' test errors';
+        echo "\n";
+        echo $errors . ' internal errors';
     }
 
     /**

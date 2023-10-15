@@ -296,7 +296,7 @@ class value extends sandbox_value
                 $phr_lst = new phrase_list($this->user());
                 $msg->add($phr_lst->set_by_api_json($value));
                 if ($msg->is_ok()) {
-                    $this->grp->phr_lst = $phr_lst;
+                    $this->grp->set_phrase_list($phr_lst);
                 }
             }
 
@@ -340,12 +340,12 @@ class value extends sandbox_value
 
     function wrd_lst(): word_list
     {
-        return $this->grp->phr_lst->wrd_lst();
+        return $this->grp->phrase_list()->wrd_lst();
     }
 
     function trp_lst(): triple_list
     {
-        return $this->grp->phr_lst->trp_lst();
+        return $this->grp->phrase_list()->trp_lst();
     }
 
     /**
@@ -353,7 +353,7 @@ class value extends sandbox_value
      */
     function ids(): array
     {
-        return $this->grp->phr_lst->ids();
+        return $this->grp->phrase_list()->ids();
     }
 
 
@@ -396,13 +396,18 @@ class value extends sandbox_value
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
+     * @param string $ext the table name extension e.g. to switch between standard and prime values
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
+    function load_sql(
+        sql_creator $sc,
+        string $query_name,
+        string $class = self::class,
+        string $ext = ''
+    ): sql_par
     {
-        $qp = parent::load_sql($sc, $query_name, $class);
+        $qp = parent::load_sql_multi($sc, $query_name, $class, $ext);
 
-        $sc->set_type(self::class);
         // overwrite the standard id field name (value_id) with the main database id field for values "group_id"
         $sc->set_id_field($this->id_field());
         $sc->set_name($qp->name);
@@ -438,13 +443,18 @@ class value extends sandbox_value
      */
     function load_sql_by_grp(sql_creator $sc, group $grp, string $class = self::class): sql_par
     {
-        $qp = $this->load_sql($sc, 'group_id', $class);
+        $ext = $grp->table_extension();
+        $qp = $this->load_sql($sc, 'group_id', $class, $ext);
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
         $sc->set_fields(self::FLD_NAMES);
         $sc->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
         $sc->set_usr_only_fields(self::FLD_NAMES_USR_ONLY);
-        $sc->add_where(group::FLD_ID, $grp->id());
+        if ($grp->is_prime()) {
+            $sc->add_where(group::FLD_ID, $grp->id());
+        } else {
+            $sc->add_where(group::FLD_ID, $grp->id());
+        }
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -468,8 +478,8 @@ class value extends sandbox_value
             $qp->name .= sql_db::FLD_ID;
         } elseif ($this->grp->id() > 0) {
             $qp->name .= 'group_id';
-        } elseif ($this->grp->phr_lst != null) {
-            $phr_lst = clone $this->grp->phr_lst;
+        } elseif ($this->grp->phrase_list() != null) {
+            $phr_lst = clone $this->grp->phrase_list();
             $pos = 1;
             foreach ($phr_lst->lst() as $phr) {
                 $pos++;
@@ -489,9 +499,9 @@ class value extends sandbox_value
             $sql_where = $sc->where_id(self::FLD_ID, $this->id, true);
         } elseif ($this->grp->id() > 0) {
             $sql_where = $sc->where_par(array(group::FLD_ID), array($this->grp->id()), true);
-        } elseif ($this->grp->phr_lst != null) {
+        } elseif ($this->grp->phrase_list() != null) {
             // create the SQL to select a phrase group which needs to inside load_sql for correct parameter counting
-            $phr_lst = clone $this->grp->phr_lst;
+            $phr_lst = clone $this->grp->phrase_list();
 
             // the phrase groups with the least number of additional words that have at least one result
             $sql_grp_from = '';
@@ -543,10 +553,10 @@ class value extends sandbox_value
 
         log_debug($grp->dsp_id());
         $qp = $this->load_sql_by_grp($db_con->sql_creator(), $grp, $class);
-        $id = $this->load($qp);
+        $id = $this->load_non_int_db_key($qp);
 
         // use the given phrase list
-        if ($this->phr_lst()->is_empty() and !$grp->phr_lst->is_empty()) {
+        if ($this->phr_lst()->is_empty() and !$grp->phrase_list()->is_empty()) {
             $this->grp = $grp;
             /*
         } else {
@@ -558,6 +568,21 @@ class value extends sandbox_value
         }
 
         return $id;
+    }
+
+    /**
+     * load one database row e.g. value or result from the database
+     * where the prime key is not nessesarry and integer
+     * @param sql_par $qp the query parameters created by the calling function
+     * @return int|string the id of the object found and zero if nothing is found
+     */
+    protected function load_non_int_db_key(sql_par $qp): int|string
+    {
+        global $db_con;
+
+        $db_row = $db_con->get1($qp);
+        $this->row_mapper_sandbox($db_row);
+        return $this->id();
     }
 
     /**
@@ -637,11 +662,11 @@ class value extends sandbox_value
         // if not found try without scaling
         if ($this->id() <= 0) {
             $this->load_phrases();
-            if (!isset($this->grp->phr_lst)) {
+            if (!$this->grp->phrase_list()->is_empty()) {
                 log_err('No phrases found for ' . $this->dsp_id() . '.', 'value->load_best');
             } else {
                 // try to get a value with another scaling
-                $phr_lst_unscaled = clone $this->grp->phr_lst;
+                $phr_lst_unscaled = clone $this->grp->phrase_list();
                 $phr_lst_unscaled->ex_scaling();
                 log_debug('try unscaled with ' . $phr_lst_unscaled->dsp_id());
                 $grp_unscale = $phr_lst_unscaled->get_grp_id();
@@ -844,7 +869,7 @@ class value extends sandbox_value
      */
     function phr_lst(): phrase_list
     {
-        return $this->grp->phr_lst;
+        return $this->grp->phrase_list();
     }
 
     /**
@@ -852,7 +877,7 @@ class value extends sandbox_value
      */
     function phr_names(): array
     {
-        return $this->grp->phr_lst->names();
+        return $this->grp->phrase_list()->names();
     }
 
 
@@ -906,16 +931,16 @@ class value extends sandbox_value
             log_debug("To scale a value the number should not be empty.");
         } elseif (is_null($this->user()->id())) {
             log_warning("To scale a value the user must be defined.", "value->scale");
-        } elseif ($this->grp->phr_lst->is_empty()) {
+        } elseif ($this->grp->phrase_list()->is_empty()) {
             log_warning("To scale a value the word list should be loaded by the calling method.", "value->scale");
         } else {
             log_debug($this->number . ' for ' . $this->grp->dsp_id() . ' (user ' . $this->user()->id() . ')');
 
             // if it has a scaling word, scale it to one
-            if ($this->grp->phr_lst->has_scaling()) {
+            if ($this->grp->phrase_list()->has_scaling()) {
                 log_debug('value words have a scaling words');
                 // get any scaling words related to the value
-                $scale_wrd_lst = $this->grp->phr_lst->scaling_lst();
+                $scale_wrd_lst = $this->grp->phrase_list()->scaling_lst();
                 if (count($scale_wrd_lst->lst()) > 1) {
                     log_warning('Only one scale word can be taken into account in the current version, but not a list like ' . $scale_wrd_lst->name() . '.', "value->scale");
                 } else {
@@ -1095,7 +1120,7 @@ class value extends sandbox_value
         log_debug('get words');
         $wrd_lst = array();
         // TODO use the triple export_obj function
-        if (!$this->grp->phr_lst->is_empty()) {
+        if (!$this->grp->phrase_list()->is_empty()) {
             if (!$this->wrd_lst()->is_empty()) {
                 foreach ($this->wrd_lst()->lst() as $wrd) {
                     $wrd_lst[] = $wrd->name();
@@ -1109,7 +1134,7 @@ class value extends sandbox_value
         // add the triples
         $triples_lst = array();
         // TODO use the triple export_obj function
-        if (!$this->grp->phr_lst->is_empty()) {
+        if (!$this->grp->phrase_list()->is_empty()) {
             if (!$this->trp_lst()->is_empty()) {
                 foreach ($this->trp_lst()->lst as $lnk) {
                     $triples_lst[] = $lnk->name();
@@ -1535,7 +1560,7 @@ class value extends sandbox_value
         // get the list of phrases assigned to this value based on the phrase group
         // this list is the master
         $this->grp->load_by_obj_vars();
-        $phr_lst = $this->grp->phr_lst;
+        $phr_lst = $this->grp->phrase_list();
         if ($phr_lst == null) {
             log_err('Cannot load phrases for value "' . $this->dsp_id() . '" and group "' . $this->grp->dsp_id() . '".', "value->upd_phr_links");
         } else {
@@ -1938,7 +1963,7 @@ class value extends sandbox_value
             $db_con->set_type(sql_db::TBL_VALUE);
             $this->set_id($db_con->insert(
                 array(group::FLD_ID, user::FLD_ID, self::FLD_VALUE, self::FLD_LAST_UPDATE),
-                array($this->grp->id, $this->user()->id, $this->number, "Now()")));
+                array($this->grp->id(), $this->user()->id, $this->number, "Now()")));
             if ($this->id() > 0) {
                 // update the reference in the log
                 if (!$log->add_ref($this->id())) {

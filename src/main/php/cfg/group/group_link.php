@@ -117,9 +117,9 @@ class group_link extends db_id_object
         $db_con->set_type(self::class);
         $qp = new sql_par(self::class);
 
-        if ($grp->id > 0) {
+        if ($grp->id() > 0) {
             $qp->name .= 'grp_id';
-            $db_con->add_par(sql_par_type::INT, $grp->id);
+            $db_con->add_par(sql_par_type::INT, $grp->id());
         } else {
             log_err('The phrase group id must be set ' .
                 'to load a ' . self::class, self::class . '->load_by_group_id_sql');

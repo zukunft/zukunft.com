@@ -3253,6 +3253,8 @@ class sql_db
                 } else {
                     // return the database row id if the value is not a time series number
                     if ($this->type != sql_db::TBL_VALUE_TIME_SERIES_DATA
+                        and $this->type != sql_db::TBL_VALUE
+                        and $this->type != sql_db::TBL_RESULT
                         and $this->type != sql_db::TBL_LANGUAGE_FORM
                         and $this->type != sql_db::TBL_USER_OFFICIAL_TYPE
                         and $this->type != sql_db::TBL_USER_TYPE) {

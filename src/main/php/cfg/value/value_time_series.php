@@ -129,7 +129,7 @@ class value_time_series extends sandbox_value
         $lib = new library();
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, self::FLD_ID);
         if ($result) {
-            $this->grp->id = $db_row[group::FLD_ID];
+            $this->grp->set_id($db_row[group::FLD_ID]);
             if ($db_row[source::FLD_ID] > 0) {
                 $this->source = new source($this->user());
                 $this->source->id = $db_row[source::FLD_ID];
@@ -254,7 +254,7 @@ class value_time_series extends sandbox_value
             $db_con->set_type(sql_db::TBL_VALUE_TIME_SERIES);
             $this->id = $db_con->insert(
                 array(group::FLD_ID, user::FLD_ID, self::FLD_LAST_UPDATE),
-                array($this->grp->id, $this->user()->id, "Now()"));
+                array($this->grp->id(), $this->user()->id, "Now()"));
             if ($this->id > 0) {
                 // update the reference in the log
                 if (!$log->add_ref($this->id)) {

@@ -105,11 +105,11 @@ class group extends db_object
      */
 
     // database fields
-    public int|string $id;       // the id of the group as a backup for the order until the unit and integration test are complete
-    public phrase_list $phr_lst; // the phrase list object
-    private user $usr;           // the person for whom the object is loaded, so to say the viewer
-    public ?string $name;        // maybe later the user should have the possibility to overwrite the generic name, but this is not user at the moment
-    public ?string $description; // the automatically created generic name for the word group, used for a quick display of values
+    private int|string $id;       // the id of the group as a backup for the order until the unit and integration test are complete
+    private phrase_list $phr_lst; // the phrase list object
+    private user $usr;            // the person for whom the object is loaded, so to say the viewer
+    public ?string $name;         // maybe later the user should have the possibility to overwrite the generic name, but this is not user at the moment
+    public ?string $description;  // the automatically created generic name for the word group, used for a quick display of values
 
 
     /*
@@ -173,6 +173,18 @@ class group extends db_object
      */
 
     /**
+     * set the phrase list of this group
+     * and return the unique database id of this group
+     * @param phrase_list $phr_lst sorted list of phrases for this group
+     * @return int|string $id either a 62-bit int, a 512-bit id with 16 phrase ids or a text with more than 16 +/- seperated 6 char alpha_num coded phrase ids
+     */
+    function set_phrase_list(phrase_list $phr_lst): int|string
+    {
+        $this->phr_lst = $phr_lst;
+        return $this->set_id_from_phrase_list($phr_lst);
+    }
+
+    /**
      * set the unique database id of this group
      * @param int|string $id either a 62-bit int, a 512-bit id with 16 phrase ids or a text with more than 16 +/- seperated 6 char alpha_num coded phrase ids
      */
@@ -182,13 +194,26 @@ class group extends db_object
     }
 
     /**
-     * set the unique database id of this group
-     * @param int|string $id either a 62-bit int, a 512-bit id with 16 phrase ids or a text with more than 16 +/- seperated 6 char alpha_num coded phrase ids
+     * set the user given name for this group
+     * @param string $name the name as given by the user
+     * @return void
      */
-    function set_id_from_phrase_list(phrase_list $phr_lst): void
+    function set_name(string $name = ''): void
     {
-        $grp_id = new group_id();
-        $this->id = $grp_id->get_id($phr_lst);
+        if ($name != '') {
+            $this->name = $name;
+        } else {
+            if ($this->phrase_list()->count() > 0) {
+                $this->name = implode(',', $this->phr_lst->names());
+            } else {
+                log_warning('name of phrase group ' . $this->dsp_id() . ' missing');
+            }
+        }
+    }
+
+    function phrase_list(): phrase_list
+    {
+        return $this->phr_lst;
     }
 
     /**
@@ -200,17 +225,19 @@ class group extends db_object
         return $this->id;
     }
 
-    function set_name(string $name = ''): void
+    /**
+     * @return string the extension for the table name based on the id
+     */
+    function table_extension(): string
     {
-        if ($name != '') {
-            $this->name = $name;
-        } else {
-            if ($this->phr_lst->count() > 0) {
-                $this->name = implode(',', $this->phr_lst->names());
-            } else {
-                log_warning('name of phrase group ' . $this->dsp_id() . ' missing');
-            }
+        $ext = '';
+        $grp_id = new group_id();
+        if ($grp_id->is_prime($this->id())) {
+            $ext = self::TBL_EXT_PRIME;
+        } elseif ($grp_id->is_big($this->id())) {
+            $ext = self::TBL_EXT_BIG;
         }
+        return $ext;
     }
 
     /**
@@ -232,6 +259,18 @@ class group extends db_object
         return $this->usr;
     }
 
+    /**
+     * set the unique database id of this group
+     * @param phrase_list $phr_lst sorted list of phrases for this group
+     * @return int|string $id either a 62-bit int, a 512-bit id with 16 phrase ids or a text with more than 16 +/- seperated 6 char alpha_num coded phrase ids
+     */
+    private function set_id_from_phrase_list(phrase_list $phr_lst): int|string
+    {
+        $grp_id = new group_id();
+        $this->set_id($grp_id->get_id($phr_lst));
+        return $this->id();
+    }
+
 
     /*
      * cast
@@ -244,7 +283,7 @@ class group extends db_object
     {
         $api_obj = new phrase_group_api();
         $api_obj->reset_lst();
-        foreach ($this->phr_lst->lst() as $phr) {
+        foreach ($this->phrase_list()->lst() as $phr) {
             $api_obj->add($phr->api_obj());
         }
         $api_obj->set_id($this->id());
@@ -291,13 +330,8 @@ class group extends db_object
      */
     function load_sql_by_id(sql_creator $sc, int|string $id, string $class = self::class): sql_par
     {
-        $grp_id = new group_id();
-        $ext = '';
-        if ($grp_id->is_prime($id)) {
-            $ext = self::TBL_EXT_PRIME;
-        } elseif ($grp_id->is_big($id)) {
-            $ext = self::TBL_EXT_BIG;
-        }
+        $this->set_id($id);
+        $ext = $this->table_extension();
         $qp = $this->load_sql_multi($sc, sql_db::FLD_ID, $class, $ext);
         $sc->add_where($this->id_field(), $id);
         $qp->sql = $sc->sql();
@@ -409,7 +443,7 @@ class group extends db_object
         } else {
             $db_row = $db_con->get1($qp);
             $result = $this->row_mapper($db_row);
-            if ($result and $this->phr_lst->empty()) {
+            if ($result and $this->phrase_list()->empty()) {
                 $this->load_lst();
             }
         }
@@ -437,7 +471,7 @@ class group extends db_object
     {
         // TODO review
         // $phr_lst->ex_time();
-        $this->phr_lst = $phr_lst;
+        $this->set_phrase_list($phr_lst);
         return $this->load_by_obj_vars();
     }
 
@@ -446,11 +480,11 @@ class group extends db_object
      */
     private function load_lst(?phr_ids $ids = null): void
     {
-        if (!$this->phr_lst->loaded($ids)) {
+        if (!$this->phrase_list()->loaded($ids)) {
             if ($ids == null) {
-                $ids = $this->phr_lst->phrase_ids();
+                $ids = $this->phrase_list()->phrase_ids();
             }
-            $this->phr_lst->load_by_ids($ids);
+            $this->phrase_list()->load_by_ids($ids);
         }
     }
 
@@ -461,7 +495,7 @@ class group extends db_object
     {
         if ($this->id != 0) {
             return sql_db::FLD_ID;
-        } elseif (!$this->phr_lst->is_empty()) {
+        } elseif (!$this->phrase_list()->is_empty()) {
             return 'phr_ids';
         } elseif ($this->name != '') {
             return sql_db::FLD_NAME;
@@ -485,8 +519,8 @@ class group extends db_object
         if ($this->id != 0) {
             $db_con->add_par(sql_par_type::INT, $this->id);
             $qp->sql = $db_con->select_by_set_id();
-        } elseif (!$this->phr_lst->is_empty()) {
-            $this->set_id_from_phrase_list($this->phr_lst);
+        } elseif (!$this->phrase_list()->is_empty()) {
+            $this->set_id_from_phrase_list($this->phrase_list());
         } elseif ($this->name != '') {
             $db_con->add_par(sql_par_type::TEXT, $this->name);
             $qp->sql = $db_con->select_by_field_list(array(self::FLD_NAME));
@@ -557,7 +591,7 @@ class group extends db_object
      */
     function get_by_wrd_lst_sql(bool $get_name = false): string
     {
-        $wrd_lst = $this->phr_lst->wrd_lst();
+        $wrd_lst = $this->phrase_list()->wrd_lst();
 
         $sql_name = 'group_by_';
         if ($this->id != 0) {
@@ -620,7 +654,7 @@ class group extends db_object
         global $db_con;
         $result = null;
 
-        $wrd_lst = $this->phr_lst->wrd_lst();
+        $wrd_lst = $this->phrase_list()->wrd_lst();
 
         if (isset($wrd_lst)) {
             if ($wrd_lst->lst > 0) {
@@ -698,7 +732,7 @@ class group extends db_object
         if (count($prh_names) > 0) {
             $wrd_id = 1;
             foreach ($prh_names as $prh_name) {
-                if (!in_array($prh_name, $this->phr_lst->names())) {
+                if (!in_array($prh_name, $this->phrase_list()->names())) {
                     // if only the name is know, add a simple word
                     $wrd = new word($this->user());
                     $wrd->set($wrd_id, $prh_name);
@@ -712,8 +746,32 @@ class group extends db_object
         return $result;
     }
 
+
     /*
-     * display functions
+     * information
+     */
+
+    /**
+     * @return bool true if this group has less than 5 phrase ids
+     *              and all have a low id number which means that they are often used and classified as prime phrases
+     */
+    function is_prime(): bool
+    {
+        $grp_id = new group_id();
+        $id = $grp_id->get_id($this->phr_lst);
+        return $grp_id->is_prime($id);
+    }
+
+    function is_big(): bool
+    {
+        $grp_id = new group_id();
+        $id = $grp_id->get_id($this->phr_lst);
+        return $grp_id->is_big($id);
+    }
+
+
+    /*
+     * display
      */
 
     /**
@@ -736,7 +794,7 @@ class group extends db_object
     function time(): phrase
     {
         $phr = new phrase($this->user());
-        $phr_lst = $this->phr_lst->time_lst();
+        $phr_lst = $this->phrase_list()->time_lst();
         if (!$phr_lst->is_empty()) {
             // TODO use a new "most relevant" function
             $phr = $phr_lst->lst()[0];
@@ -800,7 +858,7 @@ class group extends db_object
         }
 
         // TODO take the order into account
-        $group_name = $this->phr_lst->dsp_name();
+        $group_name = $this->phrase_list()->dsp_name();
 
         // update the name if possible and needed
         if ($this->description <> $group_name and $do_save) {
@@ -823,7 +881,7 @@ class group extends db_object
 
     function get_ex_time(): group
     {
-        $phr_lst = $this->phr_lst;
+        $phr_lst = $this->phrase_list();
         $phr_lst->ex_time();
         return $phr_lst->get_grp_id();
     }
@@ -897,9 +955,9 @@ class group extends db_object
             $this->generic_name();
 
             // write new group
-            if (!$this->phr_lst->is_empty()) {
+            if (!$this->phrase_list()->is_empty()) {
                 $grp_id = new group_id();
-                $this->set_id($grp_id->get_id($this->phr_lst));
+                $this->set_id($grp_id->get_id($this->phrase_list()));
             } else {
                 log_err('The phrase list must be set to create a group for ' . $this->dsp_id() . '.', 'phrase_group->save_id');
             }
@@ -956,11 +1014,11 @@ class group extends db_object
 
         // switch between the word and triple settings
         if ($type == sql_db::TBL_WORD) {
-            $add_ids = array_diff($this->phr_lst->wrd_ids(), $db_ids);
-            $del_ids = array_diff($db_ids, $this->phr_lst->wrd_ids());
+            $add_ids = array_diff($this->phrase_list()->wrd_ids(), $db_ids);
+            $del_ids = array_diff($db_ids, $this->phrase_list()->wrd_ids());
         } else {
-            $add_ids = array_diff($this->phr_lst->trp_ids(), $db_ids);
-            $del_ids = array_diff($db_ids, $this->phr_lst->trp_ids());
+            $add_ids = array_diff($this->phrase_list()->trp_ids(), $db_ids);
+            $del_ids = array_diff($db_ids, $this->phrase_list()->trp_ids());
         }
 
         // add the missing links
@@ -1108,8 +1166,8 @@ class group extends db_object
             $result .= ' as "' . $this->name . '"';
         }
         if ($result == '') {
-            if (isset($this->phr_lst)) {
-                $result .= ' for phrases ' . $this->phr_lst->dsp_id();
+            if (!$this->phrase_list()->is_empty()) {
+                $result .= ' for phrases ' . $this->phrase_list()->dsp_id();
             }
         }
         global $debug;
@@ -1132,7 +1190,7 @@ class group extends db_object
             $result = $this->name;
         } else {
             // or use the standard generic description
-            $name_lst = $this->phr_lst->names();
+            $name_lst = $this->phrase_list()->names();
             $result = implode(",", $name_lst);
         }
 
@@ -1149,7 +1207,7 @@ class group extends db_object
         // if not yet done, load, the words and triple list
         $this->load_lst();
 
-        return $this->phr_lst->names();
+        return $this->phrase_list()->names();
     }
 
 }
