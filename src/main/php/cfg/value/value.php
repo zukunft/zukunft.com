@@ -1943,6 +1943,27 @@ class value extends sandbox_value
     }
 
     /**
+     * create the sql statement to add a new value to the database
+     * @param sql_creator $sc with the target db_type set
+     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     */
+    function add_sql(sql_creator $sc): sql_par
+    {
+        $lib = new library();
+        $class = $lib->class_to_name($this::class);
+        $ext = $this->grp->table_extension();
+        $qp = new sql_par($class . $ext);
+        $qp->name = $class . $ext . '_insert';
+        $sc->set_type($class, false, $ext);
+        $sc->set_name($qp->name);
+        $fields = array(group::FLD_ID, user::FLD_ID, self::FLD_VALUE, self::FLD_LAST_UPDATE);
+        $values = array($this->grp->id(), $this->user()->id, $this->number, "Now()");
+        $qp->sql = $sc->sql_insert($fields, $values);
+        $qp->par = $values;
+        return $qp;
+    }
+
+    /**
      * add a new value
      * @return user_message with status ok
      *                      or if something went wrong

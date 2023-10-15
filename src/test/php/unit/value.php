@@ -63,6 +63,7 @@ class value_unit_tests
         $t->subheader('SQL user sandbox statement tests');
 
         $val = new value($usr);
+        $t->assert_sql_insert($db_con, $val);
         $t->assert_sql_by_id($db_con, $val);
         $this->assert_sql_by_grp($t, $db_con, $val);
 

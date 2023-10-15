@@ -683,11 +683,7 @@ class sql_creator
 
         // set the default parameter type
         if ($spt == null) {
-            $spt = match (gettype($fld_val)) {
-                'string' => sql_par_type::TEXT,
-                'array' => sql_par_type::INT_LIST,
-                default => sql_par_type::INT,
-            };
+            $spt = $this->get_sql_par_type($fld_val);
         }
 
         // format the values if needed
@@ -769,6 +765,58 @@ class sql_creator
     }
 
     /**
+     * create the sql statement to add a row to the database
+     * @param array $fields with the fields names to add
+     * @param array $values with the field values to add
+     * @param bool $log_err false if
+     * @return string the prepared sql insert statement
+     */
+    function sql_insert(array $fields, array $values, bool $log_err = true): string
+    {
+        $lib = new library();
+
+        // check if the minimum parameters are set
+        if ($this->query_name == '') {
+            log_err('SQL statement is not yet named');
+        }
+        $sql_fld = '';
+        $sql_par = '';
+        if (count($fields) <> count($values)) {
+            if ($log_err) {
+                log_fatal_db(
+                    'MySQL insert call with different number of fields (' . $lib->dsp_count($fields)
+                    . ': ' . $lib->dsp_array($fields) . ') and values (' . $lib->dsp_count($values)
+                    . ': ' . $lib->dsp_array($values) . ').', "user_log->add");
+            }
+        } else {
+            // escape the field names if needed
+            foreach (array_keys($fields) as $i) {
+                $fields[$i] = $this->name_sql_esc($fields[$i]);
+            }
+            $sql_fld = $lib->sql_array($fields, ' (', ') ');
+
+            // gat the value parameter types
+            $par_pos = 1;
+            foreach (array_keys($values) as $i) {
+                $this->par_types[] = $this->get_sql_par_type($values[$i]);
+                $this->par_values[] = $values[$i];
+                $this->par_fields[] = $this->par_name($par_pos);
+                $par_pos++;
+            }
+            $sql_par = $lib->sql_array($this->par_fields, ' (', ') ');
+        }
+
+        // create a prepare SQL statement if possible
+        $sql = $this->prepare_sql('INSERT');
+        $sql .= ' INTO ' . $this->name_sql_esc($this->table);
+        $sql .= $sql_fld;
+        $sql .= ' VALUES ';
+        $sql .= $sql_par;
+
+        return $this->end_sql($sql);
+    }
+
+    /**
      * define the fields that should be returned in a select query
      * @param string $fld_name list of the non-user specific fields that should be loaded from the database
      * @param sql_par_type $spt the aggregation type for the field
@@ -819,6 +867,19 @@ class sql_creator
                 $this->join_usr_added = true;
             }
         }
+    }
+
+    /**
+     * @param string|array|int|null $fld_val the field value to detect the sql parameter type that should be used
+     * @return sql_par_type the prime sql parameter type
+     */
+    private function get_sql_par_type(string|array|int|null $fld_val): sql_par_type
+    {
+        return match (gettype($fld_val)) {
+            "NULL", 'string' => sql_par_type::TEXT,
+            'array' => sql_par_type::INT_LIST,
+            default => sql_par_type::INT,
+        };
     }
 
     /**
@@ -1650,9 +1711,10 @@ class sql_creator
     }
 
     /**
+     * @param string $sql_statement_type either SELECT, INSERT, UPDATE or DELETE
      * @return string with the SQL prepare statement for the current query
      */
-    private function prepare_sql(): string
+    private function prepare_sql(string $sql_statement_type = 'SELECT'): string
     {
         $sql = '';
         if (count($this->par_types) > 0
@@ -1662,17 +1724,17 @@ class sql_creator
             or $this->join4_sub_query) {
             // used for sub queries
             if ($this->query_name == '') {
-                $sql = "SELECT";
+                $sql = $sql_statement_type;
             } else {
                 if ($this->db_type == sql_db::POSTGRES) {
                     $par_types = $this->par_types_to_postgres();
                     if ($this->used_par_types() > 0) {
-                        $sql = 'PREPARE ' . $this->query_name . ' (' . implode(', ', $par_types) . ') AS SELECT';
+                        $sql = 'PREPARE ' . $this->query_name . ' (' . implode(', ', $par_types) . ') AS ' . $sql_statement_type;
                     } else {
-                        $sql = 'PREPARE ' . $this->query_name . ' AS SELECT';
+                        $sql = 'PREPARE ' . $this->query_name . ' AS ' . $sql_statement_type;
                     }
                 } elseif ($this->db_type == sql_db::MYSQL) {
-                    $sql = "PREPARE " . $this->query_name . " FROM 'SELECT";
+                    $sql = "PREPARE " . $this->query_name . " FROM '" . $sql_statement_type;
                     $this->end = "';";
                 } else {
                     log_err('Prepare SQL not yet defined for SQL dialect ' . $this->db_type);
@@ -1680,7 +1742,7 @@ class sql_creator
             }
         } else {
             if ($this->sub_query) {
-                $sql = "SELECT";
+                $sql = $sql_statement_type;
             } else {
                 log_err('Query name is given, but parameters types are missing for ' . $this->query_name);
             }
@@ -1725,7 +1787,7 @@ class sql_creator
     private function used_par_types(): int
     {
         $result = 0;
-        foreach ($this->par_types_to_postgres() AS $par_type) {
+        foreach ($this->par_types_to_postgres() as $par_type) {
             if ($par_type != '') {
                 $result++;
             }
