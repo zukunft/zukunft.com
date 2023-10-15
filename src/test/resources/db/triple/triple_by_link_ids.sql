@@ -1,4 +1,4 @@
-PREPARE triple_by_link_ids (int, int, int, int) AS
+PREPARE triple_by_link_ids (bigint, bigint, bigint, bigint) AS
     SELECT
                 s.triple_id,
                 u.triple_id AS user_triple_id,

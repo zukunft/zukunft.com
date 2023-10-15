@@ -1,4 +1,4 @@
-PREPARE group_list_by_ids_fast (int[], int, int) AS
+PREPARE group_list_by_ids_fast (bigint[], bigint, bigint) AS
     SELECT
             group_id,
             group_name,

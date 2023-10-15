@@ -1,4 +1,4 @@
-PREPARE formula_list_by_name_like (int, text) AS
+PREPARE formula_list_by_name_like (bigint, text) AS
     SELECT s.formula_id,
            u.formula_id AS user_formula_id,
            s.user_id,

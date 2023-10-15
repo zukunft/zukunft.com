@@ -1,4 +1,4 @@
-PREPARE value_by_3phrase_id (int, int, int) AS
+PREPARE value_by_3phrase_id (bigint, bigint, bigint) AS
     SELECT s.group_id,
            u.group_id                                                            AS user_group_id,
            s.user_id,

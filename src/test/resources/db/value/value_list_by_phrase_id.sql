@@ -1,4 +1,4 @@
-PREPARE value_list_by_phrase_id (int, int) AS
+PREPARE value_list_by_phrase_id (bigint, bigint) AS
     SELECT s.group_id,
            u.group_id AS user_group_id,
            s.user_id,

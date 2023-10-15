@@ -1,4 +1,4 @@
-PREPARE value_std_by_id (int) AS
+PREPARE value_std_by_id (bigint) AS
     SELECT group_id,
            numeric_value,
            source_id,

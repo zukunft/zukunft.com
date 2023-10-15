@@ -1,4 +1,4 @@
-PREPARE word_list_by_children (int, int[]) AS
+PREPARE word_list_by_children (bigint, bigint[]) AS
     SELECT
            s.word_id,
            u.word_id AS user_word_id,

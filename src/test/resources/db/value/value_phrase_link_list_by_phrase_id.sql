@@ -1,4 +1,4 @@
-PREPARE value_phrase_link_list_by_phrase_id (int) AS
+PREPARE value_phrase_link_list_by_phrase_id (bigint) AS
     SELECT s.value_phrase_link_id,
            s.user_id,
            s.group_id,

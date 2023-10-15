@@ -1,4 +1,4 @@
-PREPARE component_link_by_usr_cfg (int, int) AS
+PREPARE component_link_by_usr_cfg (bigint, bigint) AS
     SELECT component_link_id,
            order_nbr,
            position_type,

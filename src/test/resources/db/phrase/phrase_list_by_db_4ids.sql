@@ -1,4 +1,4 @@
-PREPARE phrase_list_by_db_4ids (int, int, int, int, int) AS
+PREPARE phrase_list_by_db_4ids (bigint, bigint, bigint, bigint, bigint) AS
     SELECT s.phrase_id,
            u.phrase_id AS user_phrase_id,
            s.user_id,

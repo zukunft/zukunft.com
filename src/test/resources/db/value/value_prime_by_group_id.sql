@@ -1,4 +1,4 @@
-PREPARE value_prime_by_group_id (int, int) AS
+PREPARE value_prime_by_group_id (bigint, bigint) AS
     SELECT s.group_id,
            u.group_id                                                            AS user_group_id,
            s.user_id,

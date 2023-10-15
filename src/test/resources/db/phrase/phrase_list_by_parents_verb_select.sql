@@ -1,4 +1,4 @@
-PREPARE phrase_list_by_parents_verb_select (int,int[],int) AS
+PREPARE phrase_list_by_parents_verb_select (bigint, bigint[], bigint) AS
     SELECT s.phrase_id,
            u.phrase_id AS user_phrase_id,
            s.user_id,

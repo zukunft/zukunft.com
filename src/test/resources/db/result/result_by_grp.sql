@@ -1,4 +1,4 @@
-PREPARE result_by_grp (int) AS
+PREPARE result_by_grp (bigint) AS
     SELECT group_id,
            formula_id,
            user_id,

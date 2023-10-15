@@ -1,4 +1,4 @@
-PREPARE formula_link_by_not_changed_not_owned (int, int) AS
+PREPARE formula_link_by_not_changed_not_owned (bigint, bigint) AS
     SELECT user_id
       FROM user_formula_links
      WHERE formula_link_id = $1

@@ -1,4 +1,4 @@
-PREPARE group_prime_by_id (int) AS
+PREPARE group_prime_by_id (bigint) AS
     SELECT group_id,
            group_name,
            description

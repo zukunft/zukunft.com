@@ -1,4 +1,4 @@
-PREPARE value_time_series_by_id (int, int) AS
+PREPARE value_time_series_by_id (bigint, bigint) AS
     SELECT s.value_time_series_id,
            u.value_time_series_id AS user_value_time_series_id,
            s.user_id,

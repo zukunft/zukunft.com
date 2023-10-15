@@ -1,4 +1,4 @@
-PREPARE figure_list_by_ids (int[]) AS
+PREPARE figure_list_by_ids (bigint[]) AS
     SELECT
             figure_id,
             figure_name,

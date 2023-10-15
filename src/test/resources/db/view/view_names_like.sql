@@ -1,4 +1,4 @@
-PREPARE view_names_like (int, text, int, int) AS
+PREPARE view_names_like (bigint, text, bigint, bigint) AS
          SELECT s.view_id,
                 u.view_id AS user_view_id,
                 s.user_id,

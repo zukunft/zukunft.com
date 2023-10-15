@@ -1,4 +1,4 @@
-PREPARE word_by_usr_cfg (int,int) AS
+PREPARE word_by_usr_cfg (bigint, bigint) AS
     SELECT
             word_id,
             word_name,

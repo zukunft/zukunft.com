@@ -1,4 +1,4 @@
-PREPARE source_type (int, int) AS
+PREPARE source_type (bigint, bigint) AS
     SELECT source_type_id,
            type_name,
            description,

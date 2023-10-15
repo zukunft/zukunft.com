@@ -1,4 +1,4 @@
-PREPARE group_triple_link_by_id (int) AS
+PREPARE group_triple_link_by_id (bigint) AS
     SELECT group_triple_link_id,
            group_id,
            triple_id

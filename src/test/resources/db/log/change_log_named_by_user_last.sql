@@ -1,4 +1,4 @@
-PREPARE change_log_named_by_user_last (int) AS
+PREPARE change_log_named_by_user_last (bigint) AS
     SELECT s.change_id,
            s.user_id,
            s.change_time,

@@ -1,4 +1,4 @@
-PREPARE verb_list_all (int, int) AS
+PREPARE verb_list_all (bigint, bigint) AS
     SELECT
            verb_id,
            verb_name,

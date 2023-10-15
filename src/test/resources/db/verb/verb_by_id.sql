@@ -1,4 +1,4 @@
-PREPARE verb_by_id (int) AS
+PREPARE verb_by_id (bigint) AS
     SELECT verb_id,
            verb_name,
            code_id,

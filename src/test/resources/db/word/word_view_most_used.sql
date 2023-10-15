@@ -1,4 +1,4 @@
-PREPARE word_view_most_used (int) AS
+PREPARE word_view_most_used (bigint) AS
     SELECT s.word_id,
            s.word_name,
            s.view_id

@@ -1,4 +1,4 @@
-PREPARE word_by_changer (int) AS
+PREPARE word_by_changer (bigint) AS
     SELECT word_id,
            word_name,
            user_id

@@ -1,4 +1,4 @@
-PREPARE word_by_changer_ex_owner (int,int) AS
+PREPARE word_by_changer_ex_owner (bigint, bigint) AS
     SELECT word_id,
            word_name,
            user_id

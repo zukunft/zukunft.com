@@ -1,4 +1,4 @@
-PREPARE value_by_usr_cfg (int, int) AS
+PREPARE value_by_usr_cfg (bigint, bigint) AS
     SELECT group_id,
            numeric_value,
            source_id,

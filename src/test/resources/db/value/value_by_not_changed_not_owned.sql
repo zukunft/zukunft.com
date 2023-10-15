@@ -1,4 +1,4 @@
-PREPARE value_by_not_changed_not_owned (int, int) AS
+PREPARE value_by_not_changed_not_owned (bigint, bigint) AS
     SELECT user_id
       FROM user_values
      WHERE group_id = $1

@@ -1,4 +1,4 @@
-PREPARE result_std_by_id_grp (int) AS
+PREPARE result_std_by_id_grp (bigint) AS
     SELECT group_id,
            formula_id,
            user_id,

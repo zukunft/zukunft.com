@@ -1,4 +1,4 @@
-PREPARE value_list_by_triple_id (int, int, int) AS
+PREPARE value_list_by_triple_id (bigint, bigint, bigint) AS
     SELECT v.group_id,
            u.group_id                                                                        AS user_group_id,
            v.user_id,

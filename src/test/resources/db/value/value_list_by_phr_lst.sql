@@ -1,4 +1,4 @@
-PREPARE value_list_by_phr_lst (int, int[]) AS
+PREPARE value_list_by_phr_lst (bigint, bigint[]) AS
     SELECT s.group_id,
            u.group_id AS user_group_id,
            s.user_id,

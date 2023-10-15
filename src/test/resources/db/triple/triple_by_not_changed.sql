@@ -1,4 +1,4 @@
-PREPARE triple_by_not_changed (int) AS
+PREPARE triple_by_not_changed (bigint) AS
      SELECT user_id
        FROM user_triples
       WHERE triple_id = $1

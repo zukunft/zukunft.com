@@ -1,4 +1,4 @@
-PREPARE view_by_id (int,int) AS
+PREPARE view_by_id (bigint,bigint) AS
     SELECT
                s.view_id,
                u.view_id AS user_view_id,

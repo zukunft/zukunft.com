@@ -1,4 +1,4 @@
-PREPARE result_list_by_triple_id (int) AS
+PREPARE result_list_by_triple_id (bigint) AS
     SELECT s.group_id,
            s.formula_id,
            s.user_id,

@@ -1,4 +1,4 @@
-PREPARE source_by_not_changed (int) AS
+PREPARE source_by_not_changed (bigint) AS
      SELECT user_id
        FROM user_sources
       WHERE source_id = $1

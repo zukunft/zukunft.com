@@ -1,4 +1,4 @@
-PREPARE change_log_link_by_table (int) AS
+PREPARE change_log_link_by_table (bigint) AS
     SELECT s.change_link_id,
            s.user_id,
            s.change_table_id,

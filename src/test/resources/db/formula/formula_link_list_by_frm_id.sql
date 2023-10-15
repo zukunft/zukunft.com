@@ -1,4 +1,4 @@
-PREPARE formula_link_list_by_frm_id (int, int) AS
+PREPARE formula_link_list_by_frm_id (bigint, bigint) AS
     SELECT s.formula_link_id,
            u.formula_link_id AS user_formula_link_id,
            s.user_id,

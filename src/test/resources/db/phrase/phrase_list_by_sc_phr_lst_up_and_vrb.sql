@@ -1,4 +1,4 @@
-PREPARE phrase_list_by_sc_phr_lst_up_and_vrb (int,int[],int) AS
+PREPARE phrase_list_by_sc_phr_lst_up_and_vrb (bigint, bigint[], bigint) AS
     SELECT s.phrase_id,
            u.phrase_id AS user_phrase_id,
            s.user_id,

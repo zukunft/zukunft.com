@@ -1,4 +1,4 @@
-PREPARE result_list_by_formula_id (int) AS
+PREPARE result_list_by_formula_id (bigint) AS
     SELECT group_id,
            formula_id,
            user_id,

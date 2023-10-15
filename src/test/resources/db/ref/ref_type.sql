@@ -1,4 +1,4 @@
-PREPARE ref_type (int, int) AS
+PREPARE ref_type (bigint, bigint) AS
     SELECT ref_type_id,
            type_name,
            description,

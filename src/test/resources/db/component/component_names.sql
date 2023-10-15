@@ -1,4 +1,4 @@
-PREPARE component_names (int, int, int) AS
+PREPARE component_names (bigint, bigint, bigint) AS
          SELECT s.component_id,
                 u.component_id AS user_component_id,
                 s.user_id,

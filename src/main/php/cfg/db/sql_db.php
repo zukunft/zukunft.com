@@ -3001,11 +3001,12 @@ class sql_db
             switch ($type) {
                 case sql_par_type::INT_LIST:
                 case sql_par_type::INT_LIST_OR:
-                    $result[] = 'int[]';
+                    $result[] = 'bigint[]';
                     break;
+                case sql_par_type::INT:
                 case sql_par_type::INT_OR:
                 case sql_par_type::INT_NOT:
-                    $result[] = 'int';
+                    $result[] = 'bigint';
                     break;
                 case sql_par_type::TEXT_LIST:
                     $result[] = 'text[]';

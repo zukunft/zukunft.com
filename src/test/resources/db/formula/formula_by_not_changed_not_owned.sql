@@ -1,4 +1,4 @@
-PREPARE formula_by_not_changed_not_owned (int, int) AS
+PREPARE formula_by_not_changed_not_owned (bigint, bigint) AS
     SELECT user_id
       FROM user_formulas
      WHERE formula_id = $1

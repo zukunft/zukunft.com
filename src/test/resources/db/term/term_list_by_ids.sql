@@ -1,4 +1,4 @@
-PREPARE term_list_by_ids (int,int[]) AS
+PREPARE term_list_by_ids (bigint,bigint[]) AS
     SELECT s.term_id,
            u.term_id AS user_term_id,
            s.user_id,

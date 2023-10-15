@@ -1,4 +1,4 @@
-PREPARE triple_std_by_id (int) AS
+PREPARE triple_std_by_id (bigint) AS
     SELECT triple_id,
            from_phrase_id,
            verb_id,

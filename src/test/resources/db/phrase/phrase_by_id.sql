@@ -1,4 +1,4 @@
-PREPARE phrase_by_id (int, int) AS
+PREPARE phrase_by_id (bigint, bigint) AS
     SELECT s.phrase_id,
            u.phrase_id AS user_phrase_id,
            s.user_id,

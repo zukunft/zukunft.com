@@ -1,4 +1,4 @@
-PREPARE formula_std_by_id (int) AS
+PREPARE formula_std_by_id (bigint) AS
     SELECT formula_id,
            formula_name,
            formula_text,

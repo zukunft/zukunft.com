@@ -1,4 +1,4 @@
-PREPARE view_by_usr_cfg (int, int) AS
+PREPARE view_by_usr_cfg (bigint, bigint) AS
     SELECT view_id,
            view_name,
            description,

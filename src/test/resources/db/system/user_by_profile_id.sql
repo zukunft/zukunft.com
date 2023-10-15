@@ -1,4 +1,4 @@
-PREPARE user_by_profile_id (int) AS
+PREPARE user_by_profile_id (bigint) AS
     SELECT user_id,
            user_name,
            code_id,

@@ -1,4 +1,4 @@
-PREPARE system_log_by_id (int) AS
+PREPARE system_log_by_id (bigint) AS
     SELECT s.sys_log_id,
            s.user_id,
            s.solver_id,

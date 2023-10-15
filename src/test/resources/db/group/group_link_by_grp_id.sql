@@ -1,4 +1,4 @@
-PREPARE group_link_by_grp_id (text, int) AS
+PREPARE group_link_by_grp_id (text, bigint) AS
     SELECT group_id,
            phrase_id
       FROM group_links

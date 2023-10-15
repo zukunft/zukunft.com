@@ -1,4 +1,4 @@
-PREPARE verb_list_by_phr_id_up (int, int) AS
+PREPARE verb_list_by_phr_id_up (bigint, bigint) AS
     SELECT
             s.triple_id,
             u.triple_id AS user_triple_id,

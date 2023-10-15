@@ -48,6 +48,9 @@ class sql_creator
     const NULL_VALUE = 'NULL';
     const MAX_PREFIX = 'max_';
 
+    // postgres parameter types for prepared queries
+    const PG_PAR_INT = 'bigint';
+
     // classes where the table that do not have a name
     // e.g. sql_db::TBL_TRIPLE is a link which hase a name, but the generated name can be overwritten, so the standard field naming is not used
     const DB_TYPES_NOT_NAMED = [
@@ -2301,6 +2304,7 @@ class sql_creator
 
     /**
      * convert the parameter type list to make valid for postgres
+     * TODO move postgres const to a separate class sql_pg
      * @return array with the postgres parameter types
      */
     private function par_types_to_postgres(): array
@@ -2311,8 +2315,9 @@ class sql_creator
             switch ($type) {
                 case sql_par_type::INT_LIST:
                 case sql_par_type::INT_LIST_OR:
-                    $result[] = 'int[]';
+                    $result[] = self::PG_PAR_INT . '[]';
                     break;
+                case sql_par_type::INT:
                 case sql_par_type::INT_OR:
                 case sql_par_type::INT_HIGHER:
                 case sql_par_type::INT_LOWER:
@@ -2322,7 +2327,7 @@ class sql_creator
                 case sql_par_type::INT_SUB_IN:
                 case sql_par_type::LIMIT:
                 case sql_par_type::OFFSET:
-                    $result[] = 'int';
+                    $result[] = self::PG_PAR_INT;
                     break;
                 case sql_par_type::TEXT_LIST:
                     $result[] = 'text[]';

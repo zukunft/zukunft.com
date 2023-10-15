@@ -1,4 +1,4 @@
-PREPARE triple_list_by_phr (int, int, int) AS
+PREPARE triple_list_by_phr (bigint, bigint, bigint) AS
     SELECT s.triple_id,
            u.triple_id AS user_triple_id,
            s.user_id,

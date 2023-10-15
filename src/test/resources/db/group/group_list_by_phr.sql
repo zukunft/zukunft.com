@@ -1,4 +1,4 @@
-PREPARE group_list_by_phr (int, int, int) AS
+PREPARE group_list_by_phr (bigint, bigint, bigint) AS
     SELECT
             s.group_id,
             s.group_name,

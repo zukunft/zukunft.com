@@ -1,4 +1,4 @@
-PREPARE formula_link_std_by_id (int) AS
+PREPARE formula_link_std_by_id (bigint) AS
     SELECT formula_link_id,
            formula_id,
            phrase_id,

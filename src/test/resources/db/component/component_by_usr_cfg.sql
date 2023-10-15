@@ -1,4 +1,4 @@
-PREPARE component_by_usr_cfg (int, int) AS
+PREPARE component_by_usr_cfg (bigint, bigint) AS
     SELECT component_id,
            component_name,
            description,
