@@ -48,7 +48,8 @@ class sandbox_value extends sandbox
 
     // database fields only used for the value object
     protected ?float $number; // simply the numeric value
-    public ?DateTime $last_update = null; // the time of the last update of fields that may influence the calculated results
+    private ?DateTime $last_update = null; // the time of the last update of fields that may influence the calculated results; also used to detect if the value has been saved
+
 
     /*
      * construct and map
@@ -60,10 +61,16 @@ class sandbox_value extends sandbox
     function __construct(user $usr)
     {
         parent::__construct($usr);
-
-        $this->set_number(null);
-        $this->last_update = null;
+        $this->reset();
     }
+
+    function reset(): void
+    {
+        parent::reset();
+        $this->set_number(null);
+        $this->set_last_update(null);
+    }
+
 
     /*
      * set and get
@@ -91,10 +98,10 @@ class sandbox_value extends sandbox
     /**
      * set the timestamp of the last update of this value
      *
-     * @param DateTime the timestamp when this value has been updated eiter by the user or a calculatio job
+     * @param DateTime|null $last_update the timestamp when this value has been updated eiter by the user or a calculatio job
      * @return void
      */
-    function set_last_update(DateTime $last_update): void
+    function set_last_update(?DateTime $last_update): void
     {
         $this->last_update = $last_update;
     }
@@ -105,6 +112,23 @@ class sandbox_value extends sandbox
     function last_update(): ?DateTime
     {
         return $this->last_update;
+    }
+
+
+    /*
+     * information
+     */
+
+    /**
+     * @return bool true if the value has been at least once saved to the database
+     */
+    function is_saved(): bool
+    {
+        if ($this->last_update() == null) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
 

@@ -1145,6 +1145,44 @@ CREATE TABLE IF NOT EXISTS `user_values_prime`
 
 -- --------------------------------------------------------
 
+--
+-- Table structure for numeric values related to more than 16 phrases
+--
+
+CREATE TABLE IF NOT EXISTS `values_big`
+(
+    `group_id`        text NOT NULL COMMENT 'the big index to find the value',
+    `numeric_value`   double    NOT NULL,
+    `user_id`         int(11)            DEFAULT NULL COMMENT 'the owner / creator of the value',
+    `source_id`       int(11)            DEFAULT NULL,
+    `description`     text COMMENT 'temp field used during dev phase for easy value to trm assigns',
+    `excluded`        tinyint(4)         DEFAULT NULL COMMENT 'the default exclude setting for most users',
+    `last_update`     timestamp NULL     DEFAULT NULL COMMENT 'for fast recalculation',
+    `share_type_id`   smallint           DEFAULT NULL,
+    `protect_id`      int(11)   NOT NULL DEFAULT '1'
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 1
+  DEFAULT CHARSET = utf8 COMMENT ='long list';
+
+--
+-- Table structure to store the user specific changes of values related to more than 16 phrases
+--
+
+CREATE TABLE IF NOT EXISTS `user_values_big`
+(
+    `group_id`      text   NOT NULL,
+    `user_id`       int(11)   NOT NULL,
+    `numeric_value` double         DEFAULT NULL,
+    `source_id`     int(11)        DEFAULT NULL,
+    `excluded`      tinyint(4)     DEFAULT NULL,
+    `share_type_id` int(11)        DEFAULT NULL,
+    `protect_id`    int(11)        DEFAULT NULL,
+    `last_update`   timestamp NULL DEFAULT NULL COMMENT 'for fast calculation of the updates'
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8 COMMENT ='for quick access to the user specific values';
+
+-- --------------------------------------------------------
+
 -- .....
 
 -- --------------------------------------------------------

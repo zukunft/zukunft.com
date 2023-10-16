@@ -44,6 +44,11 @@ use Exception;
 class sql_creator
 {
 
+    // common SQL const that must exist in all used sql dialects
+    const SELECT = 'SELECT';
+    const INSERT = 'INSERT';
+    const UPDATE = 'UPDATE';
+
     // sql const used for this sql statement creator
     const NULL_VALUE = 'NULL';
     const MAX_PREFIX = 'max_';
@@ -784,7 +789,7 @@ class sql_creator
         if (count($fields) <> count($values)) {
             if ($log_err) {
                 log_fatal_db(
-                    'MySQL insert call with different number of fields (' . $lib->dsp_count($fields)
+                    'SQL insert call with different number of fields (' . $lib->dsp_count($fields)
                     . ': ' . $lib->dsp_array($fields) . ') and values (' . $lib->dsp_count($values)
                     . ': ' . $lib->dsp_array($values) . ').', "user_log->add");
             }
@@ -807,13 +812,71 @@ class sql_creator
         }
 
         // create a prepare SQL statement if possible
-        $sql = $this->prepare_sql('INSERT');
+        $sql = $this->prepare_sql(self::INSERT);
         $sql .= ' INTO ' . $this->name_sql_esc($this->table);
         $sql .= $sql_fld;
         $sql .= ' VALUES ';
         $sql .= $sql_par;
 
-        return $this->end_sql($sql);
+        return $this->end_sql($sql, self::INSERT);
+    }
+
+    function sql_update(
+        string $id_field,
+        string|int $id,
+        array $fields,
+        array $values,
+        bool $log_err = true): string
+    {
+        $lib = new library();
+        $id_field_par = '';
+
+        // check if the minimum parameters are set
+        if ($this->query_name == '') {
+            log_err('SQL statement is not yet named');
+        }
+        if (count($fields) <> count($values)) {
+            if ($log_err) {
+                log_fatal_db(
+                    'SQL update call with different number of fields (' . $lib->dsp_count($fields)
+                    . ': ' . $lib->dsp_array($fields) . ') and values (' . $lib->dsp_count($values)
+                    . ': ' . $lib->dsp_array($values) . ').', "user_log->add");
+            }
+        } else {
+            // escape the field names if needed
+            foreach (array_keys($fields) as $i) {
+                $fields[$i] = $this->name_sql_esc($fields[$i]);
+            }
+
+            // gat the value parameter types
+            $par_pos = 1;
+            foreach (array_keys($values) as $i) {
+                $this->par_types[] = $this->get_sql_par_type($values[$i]);
+                $this->par_values[] = $values[$i];
+                $this->par_fields[] = $this->par_name($par_pos);
+                $par_pos++;
+            }
+            $this->par_types[] = $this->get_sql_par_type($id);
+            $this->par_values[] = $id;
+            $id_field_par = $this->par_name($par_pos);
+        }
+
+        // create a prepare SQL statement if possible
+        $sql = $this->prepare_sql(self::UPDATE);
+        $sql .= ' ' . $this->name_sql_esc($this->table);
+        $sql_set = '';
+        foreach (array_keys($fields) as $i) {
+            if ($sql_set == '') {
+                $sql_set .= ' SET ';
+            } else {
+                $sql_set .= ', ';
+            }
+            $sql_set .= $fields[$i] . ' = ' . $this->par_fields[$i];
+        }
+        $sql .= $sql_set;
+        $sql .= ' WHERE ' . $id_field . ' = ' . $id_field_par;
+
+        return $this->end_sql($sql, self::UPDATE);
     }
 
     /**
@@ -870,13 +933,18 @@ class sql_creator
     }
 
     /**
-     * @param string|array|int|null $fld_val the field value to detect the sql parameter type that should be used
+     * @param string|array|float|int|null $fld_val the field value to detect the sql parameter type that should be used
      * @return sql_par_type the prime sql parameter type
      */
-    private function get_sql_par_type(string|array|int|null $fld_val): sql_par_type
+    private function get_sql_par_type(string|array|float|int|null $fld_val): sql_par_type
     {
+        $text_type = sql_par_type::TEXT;
+        if ($fld_val == 'Now()') {
+            $text_type = sql_par_type::TIME;
+        }
         return match (gettype($fld_val)) {
-            "NULL", 'string' => sql_par_type::TEXT,
+            "NULL", 'string' => $text_type,
+            'double' => sql_par_type::FLOAT,
             'array' => sql_par_type::INT_LIST,
             default => sql_par_type::INT,
         };
@@ -1798,8 +1866,21 @@ class sql_creator
     /**
      * @return string with the SQL closing statement for the current query
      */
-    private function end_sql(string $sql): string
+    private function end_sql(string $sql, string $sql_statement_type = 'SELECT'): string
     {
+        if ($sql_statement_type == self::INSERT) {
+            if ($this->db_type == sql_db::POSTGRES) {
+                // return the database row id if the value is not a time series number
+                if ($this->type != sql_db::TBL_VALUE_TIME_SERIES_DATA
+                    and $this->type != sql_db::TBL_VALUE
+                    and $this->type != sql_db::TBL_RESULT
+                    and $this->type != sql_db::TBL_LANGUAGE_FORM
+                    and $this->type != sql_db::TBL_USER_OFFICIAL_TYPE
+                    and $this->type != sql_db::TBL_USER_TYPE) {
+                    $sql = $sql . ' RETURNING ' . $this->id_field;
+                }
+            }
+        }
         if ($this->end == '') {
             $this->end = ';';
         }

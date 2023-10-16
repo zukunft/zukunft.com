@@ -168,8 +168,6 @@ class value extends sandbox_value
         $this->grp = new group($this->user());
         $this->source = null;
 
-        $this->last_update = null;
-
         // deprecated fields
         $this->time_stamp = null;
 
@@ -203,7 +201,7 @@ class value extends sandbox_value
             // TODO check if phrase_group_id and time_word_id are user specific or time series specific
             $this->grp->set_id($db_row[group::FLD_ID]);
             $this->set_source_id($db_row[source::FLD_ID]);
-            $this->last_update = $lib->get_datetime($db_row[self::FLD_LAST_UPDATE]);
+            $this->set_last_update($lib->get_datetime($db_row[self::FLD_LAST_UPDATE]));
         }
         return $result;
     }
@@ -1743,12 +1741,12 @@ class value extends sandbox_value
 
         $result = '';
 
-        $this->last_update = new DateTime();
+        $this->set_last_update(new DateTime());
         $db_con->set_type(sql_db::TBL_VALUE);
         if (!$db_con->update($this->id, value::FLD_LAST_UPDATE, 'Now()')) {
             $result = 'setting of value update trigger failed';
         }
-        log_debug('value->save_field_trigger_update timestamp of ' . $this->id() . ' updated to "' . $this->last_update->format('Y-m-d H:i:s') . '"');
+        log_debug('value->save_field_trigger_update timestamp of ' . $this->id() . ' updated to "' . $this->last_update()->format('Y-m-d H:i:s') . '"');
 
         // trigger the batch job
         // save the pending update to the database for the batch calculation
@@ -1943,22 +1941,50 @@ class value extends sandbox_value
     }
 
     /**
-     * create the sql statement to add a new value to the database
      * @param sql_creator $sc with the target db_type set
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     * @return sql_par the common part for insert and update sql statements
      */
-    function add_sql(sql_creator $sc): sql_par
+    private function sql_common(sql_creator $sc): sql_par
     {
         $lib = new library();
         $class = $lib->class_to_name($this::class);
         $ext = $this->grp->table_extension();
         $qp = new sql_par($class . $ext);
-        $qp->name = $class . $ext . '_insert';
+        $qp->name = $class . $ext;
         $sc->set_type($class, false, $ext);
+        return $qp;
+    }
+
+    /**
+     * create the sql statement to add a new value to the database
+     * @param sql_creator $sc with the target db_type set
+     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     */
+    function sql_insert(sql_creator $sc): sql_par
+    {
+        $qp = $this->sql_common($sc);
+        $qp->name .= '_insert';
         $sc->set_name($qp->name);
         $fields = array(group::FLD_ID, user::FLD_ID, self::FLD_VALUE, self::FLD_LAST_UPDATE);
         $values = array($this->grp->id(), $this->user()->id, $this->number, "Now()");
         $qp->sql = $sc->sql_insert($fields, $values);
+        $qp->par = $values;
+        return $qp;
+    }
+
+    /**
+     * create the sql statement to update a value in the database
+     * @param sql_creator $sc with the target db_type set
+     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     */
+    function sql_update(sql_creator $sc): sql_par
+    {
+        $qp = $this->sql_common($sc);
+        $qp->name .= '_update';
+        $sc->set_name($qp->name);
+        $fields = array(self::FLD_VALUE, self::FLD_LAST_UPDATE);
+        $values = array($this->number, "Now()");
+        $qp->sql = $sc->sql_update($this->id_field(),  $this->id(), $fields, $values);
         $qp->par = $values;
         return $qp;
     }
@@ -1972,7 +1998,7 @@ class value extends sandbox_value
      */
     function add(): user_message
     {
-        log_debug('value->add the value ' . $this->dsp_id());
+        log_debug();
 
         global $db_con;
         $result = new user_message();
@@ -1981,11 +2007,16 @@ class value extends sandbox_value
         $log = $this->log_add();
         if ($log->id() > 0) {
             // insert the value
-            $db_con->set_type(sql_db::TBL_VALUE);
-            $this->set_id($db_con->insert(
-                array(group::FLD_ID, user::FLD_ID, self::FLD_VALUE, self::FLD_LAST_UPDATE),
-                array($this->grp->id(), $this->user()->id, $this->number, "Now()")));
-            if ($this->id() > 0) {
+            $qp = $this->sql_insert($db_con->sql_creator());
+            try {
+                $db_con->exe_par($qp);
+            } catch (Exception $e) {
+                $msg = 'Insert';
+                $trace_link = log_err($msg . log::MSG_ERR_USING . $qp->sql . log::MSG_ERR_BECAUSE . $e->getMessage());
+            }
+            //$db_con->set_type(sql_db::TBL_VALUE);
+            //$this->set_id($db_con->insert(array(group::FLD_ID, user::FLD_ID, self::FLD_VALUE, self::FLD_LAST_UPDATE), array($this->grp->id(), $this->user()->id, $this->number, "Now()")));
+            if ($this->id() != 0) {
                 // update the reference in the log
                 if (!$log->add_ref($this->id())) {
                     $result->add_message('adding the value reference in the system log failed');
@@ -2018,39 +2049,29 @@ class value extends sandbox_value
 
     /**
      * insert or update a number in the database or save a user specific number
+     * @return string in case of a problem the message that should be shown to the user
      */
     function save(): string
     {
-        log_debug('->save');
+        log_debug();
 
         global $db_con;
         $result = '';
 
-        // build the database object because the is anyway needed
-        $db_con->set_type(sql_db::TBL_VALUE);
-        $db_con->set_usr($this->user()->id());
-
         // check if a new value is supposed to be added
-        if ($this->id() <= 0) {
-            log_debug('value->save check if a value for "' . $this->name() . '" and user ' . $this->user()->name . ' is already in the database');
-            // check if a value for this words is already in the database
+        // TODO combine this db call with the add or update to one SQL sequence with one commit at the end
+        if (!$this->is_saved()) {
+            log_debug('check if a value ' . $this->dsp_id() . ' is already in the database');
+            // check if a value for these phrases is already in the database
             $db_chk = new value($this->user());
-            //$db_chk->time_phr = $this->time_phr;
-            //$db_chk->time_stamp = $this->time_stamp;
             $db_chk->load_by_grp($this->grp);
-            if ($db_chk->id() > 0) {
-                if ($this->grp->id() != 0 and $this->user() == null) {
-                    log_debug('value for "' . $this->grp->name() . '" and user ' . $this->user()->name . ' is already in the database and will be updated');
-                } else {
-                    log_debug('value is empty');
-                }
-                $this->set_id($db_chk->id());
+            if ($db_chk->is_saved()) {
+                $this->set_last_update($db_chk->last_update());
             }
         }
 
-        if ($this->id() <= 0) {
-            log_debug('value->save "' . $this->name() . '": ' . $this->number . ' for user ' . $this->user()->name . ' as a new value');
-
+        if (!$this->is_saved()) {
+            log_debug('add ' . $this->dsp_id());
             $result .= $this->add($db_con)->get_last_message();
         } else {
             log_debug('update id ' . $this->id() . ' to save "' . $this->number . '" for user ' . $this->user()->id());

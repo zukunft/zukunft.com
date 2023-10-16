@@ -57,13 +57,15 @@ class value_unit_tests
         $json_file = 'unit/value/speed_of_light.json';
         $usr->set_id(1);
 
+
         $t->header('Unit tests of the value class (src/main/php/model/value/value.php)');
 
+        $t->subheader('SQL statement creation tests');
 
-        $t->subheader('SQL user sandbox statement tests');
-
-        $val = new value($usr);
+        $t->subheader('for often used (prime) values');
+        $val = $t->dummy_value();
         $t->assert_sql_insert($db_con, $val);
+        $t->assert_sql_update($db_con, $val);
         $t->assert_sql_by_id($db_con, $val);
         $this->assert_sql_by_grp($t, $db_con, $val);
 
@@ -74,6 +76,17 @@ class value_unit_tests
         $val->set_id(1);
         $t->assert_sql_not_changed($db_con, $val);
         $t->assert_sql_user_changes($db_con, $val);
+
+        $t->subheader('for values related to up to 16 phrases');
+        $val = $t->dummy_value_16();
+        $t->assert_sql_insert($db_con, $val);
+        $t->assert_sql_update($db_con, $val);
+
+        $t->subheader('for values related to more than 16 phrases');
+        $val = $t->dummy_value_17_plus();
+        $t->assert_sql_insert($db_con, $val);
+        $t->assert_sql_update($db_con, $val);
+
 
         $t->subheader('Database query creation tests');
 

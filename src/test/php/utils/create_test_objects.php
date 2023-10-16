@@ -739,6 +739,22 @@ class create_test_objects extends test_base
         return $grp;
     }
 
+    function dummy_phrase_group_16(): group
+    {
+        $lst = $this->dummy_phrase_list_16();
+        $grp = $lst->get_grp_id(false);
+        $grp->name = phrase_group_api::TN_READ;
+        return $grp;
+    }
+
+    function dummy_phrase_group_17_plus(): group
+    {
+        $lst = $this->dummy_phrase_list_17_plus();
+        $grp = $lst->get_grp_id(false);
+        $grp->name = phrase_group_api::TN_READ;
+        return $grp;
+    }
+
     function dummy_phrase_group_zh(): group
     {
         $lst = $this->dummy_phrase_list_zh();
@@ -809,6 +825,18 @@ class create_test_objects extends test_base
     function dummy_value(): value
     {
         $grp = $this->dummy_phrase_group();
+        return new value($this->usr1, 1, round(value_api::TV_READ, 13), $grp);
+    }
+
+    function dummy_value_16(): value
+    {
+        $grp = $this->dummy_phrase_group_16();
+        return new value($this->usr1, 1, round(value_api::TV_READ, 13), $grp);
+    }
+
+    function dummy_value_17_plus(): value
+    {
+        $grp = $this->dummy_phrase_group_17_plus();
         return new value($this->usr1, 1, round(value_api::TV_READ, 13), $grp);
     }
 
@@ -920,7 +948,7 @@ class create_test_objects extends test_base
     function dummy_figure_value(): figure
     {
         $val = $this->dummy_value();
-        $val->last_update = new DateTime(self::DUMMY_DATETIME);
+        $val->set_last_update(new DateTime(self::DUMMY_DATETIME));
         return $val->figure();
     }
 

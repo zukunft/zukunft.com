@@ -103,8 +103,6 @@ class value_time_series extends sandbox_value
 
         $this->grp = new group($this->user());
         $this->source = null;
-
-        $this->last_update = new DateTime();
     }
 
     /*
@@ -134,7 +132,7 @@ class value_time_series extends sandbox_value
                 $this->source = new source($this->user());
                 $this->source->id = $db_row[source::FLD_ID];
             }
-            $this->last_update = $lib->get_datetime($db_row[self::FLD_LAST_UPDATE], $this->dsp_id());
+            $this->set_last_update($lib->get_datetime($db_row[self::FLD_LAST_UPDATE], $this->dsp_id()));
         }
         return $result;
     }

@@ -35,6 +35,7 @@ enum sql_par_type: string
 {
 
     // the parameter types for prepared queries independent of the SQL dialect
+    case FLOAT = 'numeric'; // a normal format for numbers
     case INT = 'int'; // a normal integer e.g. the unique database row id / prime index
     case INT_HIGHER = 'int_higher'; // the result includes the given int value an all rows with a higher value
     case INT_LOWER = 'int_lower'; //
@@ -57,6 +58,7 @@ enum sql_par_type: string
     case CONST_NOT_IN = 'const_not_in';
     case IS_NULL = 'is_null';
     case NOT_NULL = 'not_null';
+    case TIME = 'timestamp'; // e.g. for now()
 
     // parameter types to calculate the result for a group
     case MIN = 'min';

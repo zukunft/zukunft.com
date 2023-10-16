@@ -1548,6 +1548,14 @@ class sql_db
     }
 
     /**
+     * @throws Exception the message that should be shown to the system admin for debugging
+     */
+    function exe_par(sql_par $qp): object
+    {
+        return $this->exe($qp->sql, $qp->name, $qp->par);
+    }
+
+    /**
      * execute an change SQL statement on the active database (either Postgres or MySQL)
      * similar to exe_try, but without exception handling
      *
