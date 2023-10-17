@@ -81,11 +81,21 @@ class value_unit_tests
         $val = $t->dummy_value_16();
         $t->assert_sql_insert($db_con, $val);
         $t->assert_sql_update($db_con, $val);
+        // TODO activate
+        //$this->assert_sql_by_grp($t, $db_con, $val);
+
+        // ... and the related default value
+        $t->assert_sql_standard($db_con, $val);
 
         $t->subheader('for values related to more than 16 phrases');
         $val = $t->dummy_value_17_plus();
         $t->assert_sql_insert($db_con, $val);
         $t->assert_sql_update($db_con, $val);
+        // TODO activate
+        //$this->assert_sql_by_grp($t, $db_con, $val);
+
+        // ... and the related default value
+        $t->assert_sql_standard($db_con, $val);
 
 
         $t->subheader('Database query creation tests');

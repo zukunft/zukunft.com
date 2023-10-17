@@ -367,12 +367,23 @@ class value extends sandbox_value
      */
     function load_standard_sql(sql_creator $sc, string $class = self::class): sql_par
     {
-        $sc->set_type(self::class);
-        // overwrite the standard id field name (value_id) with the main database id field for values "group_id"
+        $ext = $this->grp->table_extension();
+        $qp = new sql_par($class . $ext, true);
+        $qp->name .= sql_db::FLD_ID;
+        $sc->set_type($class, false, $ext);
+        $sc->set_name($qp->name);
         $sc->set_id_field($this->id_field());
         $sc->set_fields(array_merge(self::FLD_NAMES, self::FLD_NAMES_NUM_USR, array(user::FLD_ID)));
 
-        return parent::load_standard_sql($sc, $class);
+        if ($this->grp->is_prime()) {
+            $sc->add_where(group::FLD_ID, $this->grp->id());
+        } else {
+            $sc->add_where(group::FLD_ID, $this->grp->id());
+        }
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
+        return $qp;
     }
 
     /**
@@ -893,7 +904,7 @@ class value extends sandbox_value
 
         // reload the value to include all changes
         log_debug('value->check id ' . $this->id() . ', for user ' . $this->user()->name);
-        $this->load_by_id($this->id());
+        $this->load_by_grp($this->grp());
         log_debug('value->check load phrases');
         $this->load_phrases();
         log_debug('value->check phrases loaded');
@@ -1109,7 +1120,7 @@ class value extends sandbox_value
 
         // reload the value parameters
         if ($do_load) {
-            $this->load_by_id($this->id());
+            $this->load_by_grp($this->grp());
             log_debug('load phrases');
             $this->load_phrases();
         }
@@ -2081,10 +2092,10 @@ class value extends sandbox_value
             // read the database value to be able to check if something has been changed
             // done first, because it needs to be done for user and general values
             $db_rec = new value($this->user());
-            $db_rec->load_by_id($this->id());
+            $db_rec->load_by_grp($this->grp());
             log_debug("old database value loaded (" . $db_rec->number . ") with group " . $db_rec->grp->id() . ".");
             $std_rec = new value($this->user()); // user must also be set to allow to take the ownership
-            $std_rec->set_id($this->id());
+            $std_rec->set_grp($this->grp());
             $std_rec->load_standard();
             log_debug("standard value settings loaded (" . $std_rec->number . ")");
 

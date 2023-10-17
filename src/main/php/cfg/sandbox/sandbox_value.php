@@ -116,6 +116,25 @@ class sandbox_value extends sandbox
 
 
     /*
+     * load
+     */
+
+    /**
+     * load the value parameters for all users
+     * @param sql_par|null $qp the query parameter created by the function of the child object e.g. word->load_standard
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return bool true if the standard object has been loaded
+     */
+    function load_standard(?sql_par $qp = null, string $class = ''): bool
+    {
+        global $db_con;
+
+        $db_row = $db_con->get1($qp);
+        return $this->row_mapper_sandbox($db_row, true, false);
+    }
+
+
+    /*
      * information
      */
 
