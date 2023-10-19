@@ -47,7 +47,7 @@ $result = $usr->get(); // to check from which ip the user has logged in
 if ($usr->id() > 0) {
     $db_con->set_type(sql_db::TBL_USER);
     $db_con->set_usr($usr->id());
-    if (!$db_con->update($usr->id(), "last_logoff", "Now()")) {
+    if (!$db_con->update($usr->id(), "last_logoff", sql_creator::NOW)) {
         log_err('Logout time update failed for ' . $usr->id());
     }
 }

@@ -1517,4 +1517,29 @@ class library
         return $this->str_right_of_or_all($class, '\\');
     }
 
+    /*
+     * shorten a list of fields for sql query naming
+     */
+
+    /**
+     * shorten the sql names e.g. because the name length of queries is limited
+     * @param array $sql_names with long sql names
+     * @return array with short sql names
+     */
+    function sql_name_shorten(array $sql_names): array
+    {
+        $result = [];
+        foreach ($sql_names as $name) {
+            $result[] = match ($name) {
+                value::FLD_ID => 'grp',
+                user::FLD_ID => 'usr',
+                source::FLD_ID => 'src',
+                value::FLD_VALUE => 'val',
+                value::FLD_LAST_UPDATE => 'upd',
+                default => $name
+            };
+        }
+        return $result;
+    }
+
 }

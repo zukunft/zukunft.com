@@ -35,7 +35,10 @@
 namespace cfg;
 
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
+include_once MODEL_GROUP_PATH . 'group.php';
 
+use cfg\db\sql_creator;
+use cfg\group\group;
 use DateTime;
 use Exception;
 
@@ -47,6 +50,7 @@ class sandbox_value extends sandbox
      */
 
     // database fields only used for the value object
+    public group $grp;  // phrases (word or triple) group object for this value
     protected ?float $number; // simply the numeric value
     private ?DateTime $last_update = null; // the time of the last update of fields that may influence the calculated results; also used to detect if the value has been saved
 
@@ -75,6 +79,16 @@ class sandbox_value extends sandbox
     /*
      * set and get
      */
+
+    function set_grp(group $grp): void
+    {
+        $this->grp = $grp;
+    }
+
+    function grp(): group
+    {
+        return $this->grp;
+    }
 
     /**
      * set the numeric value of the user sandbox object
@@ -226,6 +240,129 @@ class sandbox_value extends sandbox
     {
 
         return 'The user sandbox save_id_fields does not support ' . $this->obj_type . ' for ' . $this->obj_name;
+    }
+
+
+    /**
+     * @param sql_creator $sc with the target db_type set
+     * @return sql_par the common part for insert and update sql statements
+     */
+    protected function sql_common(sql_creator $sc): sql_par
+    {
+        $lib = new library();
+        $class = $lib->class_to_name($this::class);
+        $ext = $this->grp->table_extension();
+        $qp = new sql_par($class . $ext);
+        $qp->name = $class . $ext;
+        $sc->set_type($class, false, $ext);
+        return $qp;
+    }
+
+    /**
+     * create the sql statement to update a value in the database
+     * @param sql_creator $sc with the target db_type set
+     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     */
+    function sql_update(
+        sql_creator $sc,
+        array $fields = [],
+        array $values = []
+    ): sql_par
+    {
+        $qp = $this->sql_common($sc);
+        $qp->name .= '_update';
+        $sc->set_name($qp->name);
+        $qp->sql = $sc->sql_update($this->id_field(),  $this->id(), $fields, $values);
+        $qp->par = $values;
+        return $qp;
+    }
+
+
+    /**
+     * actually update a field in the main database record or the user sandbox
+     * the usr id is taken into account in sql_db->update (maybe move outside)
+     *
+     * for values the log should show to the user just which value has been changed
+     * but the technical log needs to remember in which actual table the change has been saved
+     *
+     * @param sql_db $db_con the active database connection that should be used
+     * @param change_log_named|change_log_link $log the log object to track the change and allow a rollback
+     * @return string an empty string if everything is fine or the message that should be shown to the user
+     */
+    function save_field_user(
+        sql_db $db_con,
+        change_log_named|change_log_link $log
+    ): string
+    {
+        $result = '';
+
+        if ($log->new_id > 0) {
+            $new_value = $log->new_id;
+            $std_value = $log->std_id;
+        } else {
+            $new_value = $log->new_value;
+            $std_value = $log->std_value;
+        }
+        $ext = $this->grp()->table_extension();
+        if ($log->add()) {
+            if ($this->can_change()) {
+                if ($new_value == $std_value) {
+                    if ($this->has_usr_cfg()) {
+                        log_debug('remove user change');
+                        $db_con->set_type(sql_db::TBL_USER_PREFIX . $this->obj_name . $ext);
+                        $db_con->set_usr($this->user()->id);
+                        $qp = $this->sql_update($db_con->sql_creator(), array($log->field()), array(null));
+                        try {
+                            $db_con->exe_par($qp);
+                        } catch (Exception $e) {
+                            $result = 'remove of ' . $log->field() . ' failed';
+                            $trace_link = log_err($result . log::MSG_ERR_USING . $qp->sql . log::MSG_ERR_BECAUSE . $e->getMessage());
+                        }
+                    }
+                    $this->del_usr_cfg_if_not_needed(); // don't care what the result is, because in most cases it is fine to keep the user sandbox row
+                } else {
+                    $db_con->set_type($this->obj_name . $ext);
+                    $db_con->set_usr($this->user()->id);
+                    $qp = $this->sql_update($db_con->sql_creator(), array($log->field()), array($new_value));
+                    try {
+                        $db_con->exe_par($qp);
+                    } catch (Exception $e) {
+                        $result = 'update of ' . $log->field() . ' to ' . $new_value . ' failed';
+                        $trace_link = log_err($result . log::MSG_ERR_USING . $qp->sql . log::MSG_ERR_BECAUSE . $e->getMessage());
+                    }
+                }
+            } else {
+                if (!$this->has_usr_cfg()) {
+                    if (!$this->add_usr_cfg()) {
+                        $result = 'creation of user sandbox for ' . $log->field() . ' failed';
+                    }
+                }
+                if ($result == '') {
+                    $db_con->set_type(sql_db::TBL_USER_PREFIX . $this->obj_name . $ext);
+                    $db_con->set_usr($this->user()->id);
+                    if ($new_value == $std_value) {
+                        log_debug('remove user change');
+                        $qp = $this->sql_update($db_con->sql_creator(), array($log->field()), array(Null));
+                        try {
+                            $db_con->exe_par($qp);
+                        } catch (Exception $e) {
+                            $result = 'remove of user value for ' . $log->field() . ' failed';
+                            $trace_link = log_err($result . log::MSG_ERR_USING . $qp->sql . log::MSG_ERR_BECAUSE . $e->getMessage());
+                        }
+                    } else {
+                        $qp = $this->sql_update($db_con->sql_creator(), array($log->field()), array($new_value));
+                        try {
+                            $db_con->exe_par($qp);
+                        } catch (Exception $e) {
+                            $result = 'update of user value for ' . $log->field() . ' to ' . $new_value . ' failed';
+                            $trace_link = log_err($result . log::MSG_ERR_USING . $qp->sql . log::MSG_ERR_BECAUSE . $e->getMessage());
+                        }
+                    }
+                    $this->del_usr_cfg_if_not_needed(); // don't care what the result is, because in most cases it is fine to keep the user sandbox row
+                }
+            }
+        }
+        return $result;
     }
 
 

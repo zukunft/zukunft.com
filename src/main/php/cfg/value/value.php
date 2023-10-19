@@ -117,7 +117,6 @@ class value extends sandbox_value
      */
 
     // related database objects
-    public group $grp;  // phrases (word or triple) group object for this value
     public ?source $source;    // the source object
     private string $symbol = '';               // the symbol of the related formula element
 
@@ -255,16 +254,6 @@ class value extends sandbox_value
     function symbol(): string
     {
         return $this->symbol;
-    }
-
-    function set_grp(group $grp): void
-    {
-        $this->grp = $grp;
-    }
-
-    function grp(): group
-    {
-        return $this->grp;
     }
 
     /**
@@ -1753,9 +1742,14 @@ class value extends sandbox_value
         $result = '';
 
         $this->set_last_update(new DateTime());
-        $db_con->set_type(sql_db::TBL_VALUE);
-        if (!$db_con->update($this->id, value::FLD_LAST_UPDATE, 'Now()')) {
+        $ext = $this->grp()->table_extension();
+        $db_con->set_type(sql_db::TBL_VALUE . $ext);
+        $qp = $this->sql_update($db_con->sql_creator(), array(value::FLD_LAST_UPDATE), array(sql_creator::NOW));
+        try {
+            $db_con->exe_par($qp);
+        } catch (Exception $e) {
             $result = 'setting of value update trigger failed';
+            $trace_link = log_err($result . log::MSG_ERR_USING . $qp->sql . log::MSG_ERR_BECAUSE . $e->getMessage());
         }
         log_debug('value->save_field_trigger_update timestamp of ' . $this->id() . ' updated to "' . $this->last_update()->format('Y-m-d H:i:s') . '"');
 
@@ -1819,6 +1813,8 @@ class value extends sandbox_value
 
     /**
      * save the value number and the source
+     * TODO combine the log and update sql to one statement
+     *
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
      * @param value|sandbox $db_rec the database record before the saving
      * @param value|sandbox $std_rec the database record defined as standard because it is used by most users
@@ -1952,21 +1948,6 @@ class value extends sandbox_value
     }
 
     /**
-     * @param sql_creator $sc with the target db_type set
-     * @return sql_par the common part for insert and update sql statements
-     */
-    private function sql_common(sql_creator $sc): sql_par
-    {
-        $lib = new library();
-        $class = $lib->class_to_name($this::class);
-        $ext = $this->grp->table_extension();
-        $qp = new sql_par($class . $ext);
-        $qp->name = $class . $ext;
-        $sc->set_type($class, false, $ext);
-        return $qp;
-    }
-
-    /**
      * create the sql statement to add a new value to the database
      * @param sql_creator $sc with the target db_type set
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
@@ -1977,7 +1958,7 @@ class value extends sandbox_value
         $qp->name .= '_insert';
         $sc->set_name($qp->name);
         $fields = array(group::FLD_ID, user::FLD_ID, self::FLD_VALUE, self::FLD_LAST_UPDATE);
-        $values = array($this->grp->id(), $this->user()->id, $this->number, "Now()");
+        $values = array($this->grp->id(), $this->user()->id, $this->number, sql_creator::NOW);
         $qp->sql = $sc->sql_insert($fields, $values);
         $qp->par = $values;
         return $qp;
@@ -1988,15 +1969,33 @@ class value extends sandbox_value
      * @param sql_creator $sc with the target db_type set
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_update(sql_creator $sc): sql_par
+    function sql_update(
+        sql_creator $sc,
+        array $fields = [],
+        array $values = []
+    ): sql_par
     {
+        $lib = new library();
         $qp = $this->sql_common($sc);
-        $qp->name .= '_update';
+        if (count($fields) == 0) {
+            $fields = array(self::FLD_VALUE, self::FLD_LAST_UPDATE);
+        }
+        if (count($values) == 0) {
+            $values = array($this->number, sql_creator::NOW);
+        }
+        $fld_name = implode('_', $lib->sql_name_shorten($fields));
+        $qp->name .= '_update_' . $fld_name;
         $sc->set_name($qp->name);
-        $fields = array(self::FLD_VALUE, self::FLD_LAST_UPDATE);
-        $values = array($this->number, "Now()");
         $qp->sql = $sc->sql_update($this->id_field(),  $this->id(), $fields, $values);
-        $qp->par = $values;
+        $values[] = $this->id();
+        $par_values = [];
+        foreach (array_keys($values) as $i) {
+            if ($values[$i] != sql_creator::NOW) {
+                $par_values[$i] = $values[$i];
+            }
+        }
+
+        $qp->par = $par_values;
         return $qp;
     }
 
@@ -2026,7 +2025,7 @@ class value extends sandbox_value
                 $trace_link = log_err($msg . log::MSG_ERR_USING . $qp->sql . log::MSG_ERR_BECAUSE . $e->getMessage());
             }
             //$db_con->set_type(sql_db::TBL_VALUE);
-            //$this->set_id($db_con->insert(array(group::FLD_ID, user::FLD_ID, self::FLD_VALUE, self::FLD_LAST_UPDATE), array($this->grp->id(), $this->user()->id, $this->number, "Now()")));
+            //$this->set_id($db_con->insert(array(group::FLD_ID, user::FLD_ID, self::FLD_VALUE, self::FLD_LAST_UPDATE), array($this->grp->id(), $this->user()->id, $this->number, sql_creator::NOW)));
             if ($this->id() != 0) {
                 // update the reference in the log
                 if (!$log->add_ref($this->id())) {

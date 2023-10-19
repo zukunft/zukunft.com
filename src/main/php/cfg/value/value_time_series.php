@@ -252,7 +252,7 @@ class value_time_series extends sandbox_value
             $db_con->set_type(sql_db::TBL_VALUE_TIME_SERIES);
             $this->id = $db_con->insert(
                 array(group::FLD_ID, user::FLD_ID, self::FLD_LAST_UPDATE),
-                array($this->grp->id(), $this->user()->id, "Now()"));
+                array($this->grp->id(), $this->user()->id, sql_creator::NOW));
             if ($this->id > 0) {
                 // update the reference in the log
                 if (!$log->add_ref($this->id)) {

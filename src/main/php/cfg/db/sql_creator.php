@@ -48,6 +48,7 @@ class sql_creator
     const SELECT = 'SELECT';
     const INSERT = 'INSERT';
     const UPDATE = 'UPDATE';
+    const NOW = 'Now()';
 
     // sql const used for this sql statement creator
     const NULL_VALUE = 'NULL';
@@ -845,16 +846,20 @@ class sql_creator
         } else {
             // escape the field names if needed
             foreach (array_keys($fields) as $i) {
-                $fields[$i] = $this->name_sql_esc($fields[$i]);
+                if ($values[$i] != sql_creator::NOW) {
+                    $fields[$i] = $this->name_sql_esc($fields[$i]);
+                }
             }
 
             // gat the value parameter types
             $par_pos = 1;
             foreach (array_keys($values) as $i) {
-                $this->par_types[] = $this->get_sql_par_type($values[$i]);
-                $this->par_values[] = $values[$i];
-                $this->par_fields[] = $this->par_name($par_pos);
-                $par_pos++;
+                if ($values[$i] != sql_creator::NOW) {
+                    $this->par_types[] = $this->get_sql_par_type($values[$i]);
+                    $this->par_fields[$par_pos] = $this->par_name($par_pos);
+                    $this->par_values[] = $values[$i];
+                    $par_pos++;
+                }
             }
             $this->par_types[] = $this->get_sql_par_type($id);
             $this->par_values[] = $id;
@@ -865,13 +870,19 @@ class sql_creator
         $sql = $this->prepare_sql(self::UPDATE);
         $sql .= ' ' . $this->name_sql_esc($this->table);
         $sql_set = '';
+        $par_pos = 1;
         foreach (array_keys($fields) as $i) {
             if ($sql_set == '') {
                 $sql_set .= ' SET ';
             } else {
                 $sql_set .= ', ';
             }
-            $sql_set .= $fields[$i] . ' = ' . $this->par_fields[$i];
+            if ($values[$i] != sql_creator::NOW) {
+                $sql_set .= $fields[$i] . ' = ' . $this->par_fields[$par_pos];
+                $par_pos++;
+            } else {
+                $sql_set .= $fields[$i] . ' = ' . $values[$i];
+            }
         }
         $sql .= $sql_set;
         $sql .= ' WHERE ' . $id_field . ' = ' . $id_field_par;
@@ -939,7 +950,7 @@ class sql_creator
     private function get_sql_par_type(string|array|float|int|null $fld_val): sql_par_type
     {
         $text_type = sql_par_type::TEXT;
-        if ($fld_val == 'Now()') {
+        if ($fld_val == sql_creator::NOW) {
             $text_type = sql_par_type::TIME;
         }
         return match (gettype($fld_val)) {

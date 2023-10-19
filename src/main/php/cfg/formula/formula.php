@@ -1953,7 +1953,7 @@ class formula extends sandbox_typed
         $result = '';
         $this->last_update = new DateTime();
         $db_con->set_type(sql_db::TBL_FORMULA);
-        if (!$db_con->update($this->id(), self::FLD_LAST_UPDATE, 'Now()')) {
+        if (!$db_con->update($this->id(), self::FLD_LAST_UPDATE, sql_creator::NOW)) {
             $result = 'saving the update trigger for formula ' . $this->dsp_id() . ' failed';
         }
 
@@ -2251,7 +2251,7 @@ class formula extends sandbox_typed
             // include the formula_text and the resolved_text, because they should never be empty which is also forced by the db structure
             $this->set_id($db_con->insert(
                 array(self::FLD_NAME, user::FLD_ID, self::FLD_LAST_UPDATE, self::FLD_FORMULA_TEXT, self::FLD_FORMULA_USER_TEXT),
-                array($this->name(), $this->user()->id, "Now()", $this->ref_text, $this->usr_text)));
+                array($this->name(), $this->user()->id, sql_creator::NOW, $this->ref_text, $this->usr_text)));
             if ($this->id() > 0) {
                 log_debug('->add formula ' . $this->dsp_id() . ' has been added as ' . $this->id);
                 // update the id in the log for the correct reference

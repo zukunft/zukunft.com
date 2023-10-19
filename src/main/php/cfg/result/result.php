@@ -1586,7 +1586,7 @@ class result extends sandbox_value
                     $db_con->set_type(sql_db::TBL_RESULT);
                     if ($db_con->update($row_id,
                         array(result::FLD_VALUE, result::FLD_LAST_UPDATE),
-                        array($this->value, 'Now()'))) {
+                        array($this->value, sql_creator::NOW))) {
                         $this->id = $row_id;
                         $result = $row_id;
                     }
@@ -1612,7 +1612,7 @@ class result extends sandbox_value
                     $field_values[] = $this->user()->id();
                 }
                 $field_names[] = result::FLD_LAST_UPDATE;
-                //$field_values[] = 'Now()'; // replaced with time of last change that has been included in the calculation
+                //$field_values[] = sql_creator::NOW; // replaced with time of last change that has been included in the calculation
                 $field_values[] = $this->last_val_update->format('Y-m-d H:i:s');
                 $db_con->set_type(sql_db::TBL_RESULT);
                 $id = $db_con->insert($field_names, $field_values);
