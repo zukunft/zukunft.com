@@ -1396,7 +1396,12 @@ class sql_db
         return $this->name_sql_esc($this->get_table_name($type));
     }
 
-    //
+    /**
+     * set the table name based on the already set type / class
+     * TODO use always the user table flag
+     * @param $usr_table
+     * @return void
+     */
     private function set_table($usr_table = false): void
     {
         global $debug;

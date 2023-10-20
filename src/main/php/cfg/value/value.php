@@ -467,11 +467,12 @@ class value extends sandbox_value
      */
     function load_sql_obj_vars(sql_creator $sc, string $class = self::class): sql_par
     {
+        $ext = $this->grp->table_extension();
         $qp = parent::load_sql_obj_vars($sc, $class);
         $sql_where = '';
         $sql_grp = '';
 
-        $sc->set_type(self::class);
+        $sc->set_type($class, false, $ext);
         if ($this->id() > 0) {
             $qp->name .= sql_db::FLD_ID;
         } elseif ($this->grp->id() > 0) {
@@ -1382,12 +1383,14 @@ class value extends sandbox_value
     }
 
     /**
+     * TODO switch to sql creator
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      *                 to check if the value has been changed
      */
     function not_changed_sql(sql_db $db_con): sql_par
     {
-        $db_con->set_type(sql_db::TBL_VALUE);
+        $ext = $this->grp->table_extension();
+        $db_con->set_type(self::class, false, $ext);
         return $db_con->load_sql_not_changed($this->id, $this->owner_id, $this->id_field());
     }
 
@@ -1478,7 +1481,8 @@ class value extends sandbox_value
             }
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
-                $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_VALUE);
+                $ext = $this->grp->table_extension();
+                $db_con->set_type($class, true, $ext);
                 $log_id = $db_con->insert(array(self::FLD_ID, user::FLD_ID), array($this->id, $this->user()->id()));
                 if ($log_id <= 0) {
                     log_err('Insert of user_value failed.');
