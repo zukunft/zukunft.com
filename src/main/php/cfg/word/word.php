@@ -424,7 +424,7 @@ class word extends sandbox_typed
      */
     function sql_table(sql_creator $sc): string
     {
-        $sc->set_type(word::class);
+        $sc->set_class(word::class);
         return parent::sql_table($sc);
     }
 
@@ -441,7 +441,7 @@ class word extends sandbox_typed
      */
     function load_standard_sql(sql_creator $sc, string $class = self::class): sql_par
     {
-        $sc->set_type(word::class);
+        $sc->set_class(word::class);
         $sc->set_fields(array_merge(
             self::FLD_NAMES,
             self::FLD_NAMES_USR,
@@ -642,7 +642,7 @@ class word extends sandbox_typed
      */
     function view_sql(sql_db $db_con): sql_par
     {
-        $db_con->set_type(word::class);
+        $db_con->set_class(word::class);
         $db_con->set_usr($this->user()->id());
         $db_con->set_fields(array(self::FLD_VIEW));
         $db_con->set_join_usr_count_fields(array(user::FLD_ID), word::class);
@@ -714,7 +714,7 @@ class word extends sandbox_typed
 
         global $db_con;
 
-        $db_con->set_type(sql_db::TBL_FORMULA_LINK);
+        $db_con->set_class(sql_db::TBL_FORMULA_LINK);
         $qp = new sql_par(self::class);
         $qp->name = 'word_formula_by_id';
         $db_con->set_name($qp->name);
@@ -1245,7 +1245,7 @@ class word extends sandbox_typed
 
         $link_id = $verbs->id(verb::FOLLOW);
         $db_con->usr_id = $this->user()->id();
-        $db_con->set_type(sql_db::TBL_TRIPLE);
+        $db_con->set_class(sql_db::TBL_TRIPLE);
         $key_result = $db_con->get_value_2key('from_phrase_id', 'to_phrase_id', $this->id, verb::FLD_ID, $link_id);
         if (is_numeric($key_result)) {
             $id = intval($key_result);
@@ -1271,7 +1271,7 @@ class word extends sandbox_typed
 
         $link_id = $verbs->id(verb::FOLLOW);
         $db_con->usr_id = $this->user()->id();
-        $db_con->set_type(sql_db::TBL_TRIPLE);
+        $db_con->set_class(sql_db::TBL_TRIPLE);
         $key_result = $db_con->get_value_2key('to_phrase_id', 'from_phrase_id', $this->id, verb::FLD_ID, $link_id);
         if (is_numeric($key_result)) {
             $id = intval($key_result);
@@ -1460,7 +1460,7 @@ class word extends sandbox_typed
      */
     function not_changed_sql(sql_db $db_con): sql_par
     {
-        $db_con->set_type(word::class);
+        $db_con->set_class(word::class);
         return $db_con->load_sql_not_changed($this->id, $this->owner_id);
     }
 
@@ -1528,7 +1528,7 @@ class word extends sandbox_typed
      */
     function load_sql_user_changes(sql_creator $sc, string $class = self::class): sql_par
     {
-        $sc->set_type(word::class, true);
+        $sc->set_class(word::class, true);
         return parent::load_sql_user_changes($sc, $class);
     }
 
@@ -1579,7 +1579,7 @@ class word extends sandbox_typed
                 //$db_con = new mysql;
                 $db_con->usr_id = $this->user()->id();
                 if ($this->can_change()) {
-                    $db_con->set_type(word::class);
+                    $db_con->set_class(word::class);
                     if (!$db_con->update($this->id, "view_id", $view_id)) {
                         $result = 'setting of view failed';
                     }
@@ -1590,7 +1590,7 @@ class word extends sandbox_typed
                         }
                     }
                     if ($result == '') {
-                        $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_WORD);
+                        $db_con->set_class(sql_db::TBL_USER_PREFIX . sql_db::TBL_WORD);
                         if (!$db_con->update($this->id, "view_id", $view_id)) {
                             $result = 'setting of view for user failed';
                         }

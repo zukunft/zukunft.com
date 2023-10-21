@@ -164,7 +164,7 @@ class change_log_link extends change_log
     {
         $qp = new sql_par(self::class);
         $qp->name .= 'user_last';
-        $sc->set_type(sql_db::TBL_CHANGE_LINK);
+        $sc->set_class(sql_db::TBL_CHANGE_LINK);
 
         $sc->set_name($qp->name);
         $sc->set_usr($usr->id);
@@ -182,7 +182,7 @@ class change_log_link extends change_log
     {
         $qp = new sql_par(self::class);
         $qp->name .= 'table';
-        $db_con->set_type(sql_db::TBL_CHANGE_LINK);
+        $db_con->set_class(sql_db::TBL_CHANGE_LINK);
 
         $fields = [];
         $values = [];
@@ -248,8 +248,8 @@ class change_log_link extends change_log
         }
 
         // if e.g. a "value" is changed $table_name is "values" and the reference 1 is saved in the log to save space
-        $db_type = $db_con->get_type();
-        $db_con->set_type(sql_db::TBL_CHANGE_TABLE);
+        $db_type = $db_con->get_class();
+        $db_con->set_class(sql_db::TBL_CHANGE_TABLE);
         $table_id = $db_con->get_id($table_name);
 
         // add new table name if needed
@@ -262,7 +262,7 @@ class change_log_link extends change_log
             log_fatal("Insert to change log failed due to table id failure.", "user_log->add");
         }
         // restore the type before saving the log
-        $db_con->set_type($db_type);
+        $db_con->set_class($db_type);
         return $table_id;
     }
 
@@ -277,8 +277,8 @@ class change_log_link extends change_log
         }
 
         // if e.g. the action is "add" the reference 1 is saved in the log table to save space
-        $db_type = $db_con->get_type();
-        $db_con->set_type(sql_db::TBL_CHANGE_ACTION);
+        $db_type = $db_con->get_class();
+        $db_con->set_class(sql_db::TBL_CHANGE_ACTION);
         $action_id = $db_con->get_id($this->action);
 
         // add new action name if needed
@@ -291,7 +291,7 @@ class change_log_link extends change_log
             log_fatal("Insert to change log failed due to action id failure.", "user_log_link->set_action");
         }
         // restore the type before saving the log
-        $db_con->set_type($db_type);
+        $db_con->set_class($db_type);
     }
 
     // functions used utils each call is done with the object instead of the id
@@ -325,7 +325,7 @@ class change_log_link extends change_log
         global $db_con;
         $result = '';
         //$db_con = new mysql;
-        $db_con->set_type(source::class);
+        $db_con->set_class(source::class);
         $result .= $db_con->get_name($id);
         return $result;
     }
@@ -378,8 +378,8 @@ class change_log_link extends change_log
         $sql_values[] = $this->row_id;
 
         //$db_con = new mysql;
-        $db_type = $db_con->get_type();
-        $db_con->set_type(sql_db::TBL_CHANGE_LINK);
+        $db_type = $db_con->get_class();
+        $db_con->set_class(sql_db::TBL_CHANGE_LINK);
         $db_con->set_usr($this->user()->id());
         $log_id = $db_con->insert($sql_fields, $sql_values);
 
@@ -397,7 +397,7 @@ class change_log_link extends change_log
             $result = True;
         }
         // restore the type before saving the log
-        $db_con->set_type($db_type);
+        $db_con->set_class($db_type);
 
         log_debug(zu_dsp_bool($result));
         return $result;
@@ -415,7 +415,7 @@ class change_log_link extends change_log
 
         //$this->add_table();
 
-        $db_type = $db_con->get_type();
+        $db_type = $db_con->get_class();
         $qp = $this->load_sql_by_vars($db_con, $this->table_id);
         $db_row = $db_con->get1($qp);
         $this->row_mapper($db_row);
@@ -433,7 +433,7 @@ class change_log_link extends change_log
             }
         }
         // restore the type before saving the log
-        $db_con->set_type($db_type);
+        $db_con->set_class($db_type);
         return $result;
     }
 
@@ -580,8 +580,8 @@ class change_log_link extends change_log
         $sql_values[] = $this->row_id;
 
         //$db_con = new mysql;
-        $db_type = $db_con->get_type();
-        $db_con->set_type(sql_db::TBL_CHANGE_LINK);
+        $db_type = $db_con->get_class();
+        $db_con->set_class(sql_db::TBL_CHANGE_LINK);
         $db_con->set_usr($this->user()->id());
         $log_id = $db_con->insert($sql_fields, $sql_values);
 
@@ -599,7 +599,7 @@ class change_log_link extends change_log
             $result = True;
         }
         // restore the type before saving the log
-        $db_con->set_type($db_type);
+        $db_con->set_class($db_type);
 
         log_debug(zu_dsp_bool($result));
         return $result;
@@ -615,8 +615,8 @@ class change_log_link extends change_log
         global $db_con;
 
         $result = true;
-        $db_type = $db_con->get_type();
-        $db_con->set_type(sql_db::TBL_CHANGE_LINK);
+        $db_type = $db_con->get_class();
+        $db_con->set_class(sql_db::TBL_CHANGE_LINK);
         $db_con->set_usr($this->user()->id());
         if (!$db_con->update($this->id(), 'row_id', $row_id)) {
             // write the error message in steps to get at least some message if the parameters causes an additional the error
@@ -628,7 +628,7 @@ class change_log_link extends change_log
             $result = False;
         }
         // restore the type before saving the log
-        $db_con->set_type($db_type);
+        $db_con->set_class($db_type);
         return $result;
     }
 

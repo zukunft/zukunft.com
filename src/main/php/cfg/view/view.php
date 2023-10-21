@@ -309,7 +309,7 @@ class view extends sandbox_typed
      */
     function load_standard_sql(sql_creator $sc, string $class = self::class): sql_par
     {
-        $sc->set_type($class);
+        $sc->set_class($class);
         $sc->set_fields(array_merge(
             self::FLD_NAMES,
             self::FLD_NAMES_USR,
@@ -349,7 +349,7 @@ class view extends sandbox_typed
      */
     function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
-        $sc->set_type($class);
+        $sc->set_class($class);
         return parent::load_sql_fields(
             $sc, $query_name,
             self::FLD_NAMES,
@@ -464,7 +464,7 @@ class view extends sandbox_typed
             log_err("Either the database ID (" . $this->id . "), the view name (" . $this->name . ") or the code_id (" . $this->code_id . ")  must be set to load the components of a view.", "view->load_components_sql");
         }
 
-        $db_con->set_type(sql_db::TBL_COMPONENT_LINK);
+        $db_con->set_class(sql_db::TBL_COMPONENT_LINK);
         $db_con->set_usr($this->user()->id());
         $db_con->set_name($qp->name);
         $db_con->set_fields(component_link::FLD_NAMES);
@@ -831,7 +831,7 @@ class view extends sandbox_typed
      */
     function load_sql_user_changes(sql_creator $sc, string $class = self::class): sql_par
     {
-        $sc->set_type($class, true);
+        $sc->set_class($class, true);
         $sc->set_fields(array_merge(
             self::FLD_NAMES_USR,
             self::FLD_NAMES_NUM_USR

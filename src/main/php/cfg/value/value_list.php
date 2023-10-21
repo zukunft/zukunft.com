@@ -126,7 +126,7 @@ class value_list extends sandbox_list
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
 
-        $sc->set_type(value::class);
+        $sc->set_class(value::class);
         // overwrite the standard id field name (value_id) with the main database id field for values "group_id"
         $val = new value($this->user());
         $sc->set_id_field($val->id_field());
@@ -207,7 +207,7 @@ class value_list extends sandbox_list
     {
         $lib = new library();
         $class = $lib->class_to_name(self::class);
-        $db_con->set_type(sql_db::TBL_VALUE);
+        $db_con->set_class(value::class);
         // overwrite the standard id field name (value_id) with the main database id field for values "group_id"
         $val = new value($this->user());
         $db_con->set_id_field($val->id_field());
@@ -314,7 +314,7 @@ class value_list extends sandbox_list
      */
     function load_by_phr_sql(sql_db $db_con, phrase $phr): sql_par
     {
-        $db_con->set_type(sql_db::TBL_VALUE);
+        $db_con->set_class(value::class);
         // overwrite the standard id field name (value_id) with the main database id field for values "group_id"
         $val = new value($this->user());
         $db_con->set_id_field($val->id_field());
@@ -379,7 +379,7 @@ class value_list extends sandbox_list
                     " . $db_con->get_usr_field(value::FLD_LAST_UPDATE, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
                     " . $db_con->get_usr_field(source::FLD_ID, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
                       v.group_id
-                  FROM " . $db_con->get_table_name_esc(sql_db::TBL_VALUE) . " v 
+                  FROM " . $db_con->get_table_name_esc(value::class) . " v 
             LEFT JOIN user_values u ON u.group_id = v.group_id 
                                     AND u.user_id = " . $this->user()->id() . " 
                 WHERE v.group_id IN ( SELECT group_id 
@@ -464,12 +464,12 @@ class value_list extends sandbox_list
                     " . $db_con->get_usr_field(source::FLD_ID, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
                        v.user_id,
                        v.group_id
-                  FROM " . $db_con->get_table_name_esc(sql_db::TBL_VALUE) . " v 
+                  FROM " . $db_con->get_table_name_esc(value::class) . " v 
              LEFT JOIN user_values u ON u.group_id = v.group_id 
                                     AND u.user_id = " . $this->user()->id() . " 
                  WHERE v.group_id IN ( SELECT DISTINCT v.group_id 
                                          FROM " . $sql_from . "
-                                              " . $db_con->get_table_name_esc(sql_db::TBL_VALUE) . " v
+                                              " . $db_con->get_table_name_esc(value::class) . " v
                                               " . $sql_where . " )
               ORDER BY v.group_id;";
         }
@@ -1099,7 +1099,7 @@ class value_list extends sandbox_list
         $result = true;
 
         // the id and the user must be set
-        $db_con->set_type(sql_db::TBL_VALUE);
+        $db_con->set_class(value::class);
         $db_con->set_usr($this->user()->id());
         $sql = $db_con->select_by_set_id();
         $db_val_lst = $db_con->get_old($sql);
@@ -1165,7 +1165,7 @@ class value_list extends sandbox_list
                     v.excluded, 
                     u.excluded AS user_excluded 
                 FROM value_phrase_links l,
-                    " . $db_con->get_table_name_esc(sql_db::TBL_VALUE) . " v 
+                    " . $db_con->get_table_name_esc(value::class) . " v
           LEFT JOIN user_values u ON v.group_id = u.group_id AND u.user_id = " . $user_id . " 
               WHERE l.group_id = v.group_id
                 AND l.phrase_id NOT IN (" . implode(",", $phr_ids) . ")

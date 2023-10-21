@@ -102,7 +102,7 @@ class source_list extends sandbox_list_named
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
 
-        $sc->set_type(source::class);
+        $sc->set_class(source::class);
         $sc->set_name($qp->name);
 
         $sc->set_fields(source::FLD_NAMES);

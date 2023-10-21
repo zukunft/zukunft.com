@@ -84,7 +84,7 @@ if (isset($_POST['submit'])) {
             // create a session, and session variables,
             $pw_hash = hash('sha256', mysqli_real_escape_string($db_con->mysql, $_POST['password']));
             //$pw_hash = password_hash($_POST['password'], password_DEFAULT);
-            $db_con->set_type(sql_db::TBL_USER);
+            $db_con->set_class(sql_db::TBL_USER);
             $db_con->set_usr(SYSTEM_USER_ID);
             $db_con->update($usr_id, array('password', 'activation_key', 'activation_key_timeout'), array($pw_hash, '', 'NOW()'));
             /*

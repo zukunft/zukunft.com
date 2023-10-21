@@ -160,7 +160,7 @@ class ip_range extends db_id_object
     function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
         $qp = parent::load_sql($sc, $query_name, $class);
-        $sc->set_type(sql_db::TBL_IP);
+        $sc->set_class(sql_db::TBL_IP);
 
         $sc->set_name($qp->name);
         $sc->set_fields(self::FLD_NAMES);
@@ -176,7 +176,7 @@ class ip_range extends db_id_object
      */
     function load_sql_by_vars(sql_db $db_con): sql_par
     {
-        $db_con->set_type(sql_db::TBL_IP);
+        $db_con->set_class(sql_db::TBL_IP);
         $lib = new library();
         $class = $lib->class_to_name(self::class);
         $qp = new sql_par($class);
@@ -324,7 +324,7 @@ class ip_range extends db_id_object
     {
         $result = '';
         if ($log->add()) {
-            $db_con->set_type(sql_db::TBL_IP);
+            $db_con->set_class(sql_db::TBL_IP);
             if (!$db_con->update($this->id, $log->field(), $log->new_value)) {
                 $result .= 'updating ' . $log->field() . ' to ' . $log->new_value . ' for ' . self::OBJ_NAME . ' ' . $this->dsp_id() . ' failed';
             }
@@ -434,7 +434,7 @@ class ip_range extends db_id_object
         $log = $this->log_add();
         if ($log->id() > 0) {
             // insert the new ip range
-            $db_con->set_type(sql_db::TBL_IP);
+            $db_con->set_class(sql_db::TBL_IP);
             $db_con->set_usr($this->user()->id());
 
             $this->id = $db_con->insert(
@@ -494,7 +494,7 @@ class ip_range extends db_id_object
 
         // build the database object because this is needed anyway
         $db_con->set_usr($this->user()->id());
-        $db_con->set_type(sql_db::TBL_IP);
+        $db_con->set_class(sql_db::TBL_IP);
 
         // check if the external reference is supposed to be added
         if ($this->id <= 0) {

@@ -480,7 +480,7 @@ class sandbox extends db_object_user
         $qp = new sql_par($sbx::class);
         $qp->name .= $query_name;
 
-        $sc->set_type($lib->class_to_name($sbx::class));
+        $sc->set_class($lib->class_to_name($sbx::class));
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
         $sc->set_fields($sbx::FLD_NAMES);
@@ -519,7 +519,7 @@ class sandbox extends db_object_user
                 }
             } else {
                 // take the ownership if it is not yet done. The ownership is probably missing due to an error in an older program version.
-                $db_con->set_type($this->obj_name);
+                $db_con->set_class($this->obj_name);
                 $db_con->set_usr($this->user()->id);
                 if ($db_con->update($this->id, user::FLD_ID, $this->user()->id)) {
                     $result = true;
@@ -728,7 +728,7 @@ class sandbox extends db_object_user
         if ($this->owner_id > 0) {
             $qp->name .= '_ex_owner';
         }
-        $db_con->set_type($this->obj_name, true);
+        $db_con->set_class($this->obj_name, true);
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->user()->id);
         $db_con->set_fields(array(user::FLD_ID));
@@ -812,7 +812,7 @@ class sandbox extends db_object_user
             $std->set_user($this->user());
             $std->load_standard();
 
-            $db_con->set_type($this->obj_name);
+            $db_con->set_class($this->obj_name);
             $db_con->set_usr($this->user()->id);
             if (!$db_con->update($this->id, user::FLD_ID, $new_owner_id)) {
                 $result = false;
@@ -872,7 +872,7 @@ class sandbox extends db_object_user
         if ($this->owner_id > 0) {
             $qp->name .= '_ex_owner';
         }
-        $db_con->set_type($this->obj_name, true);
+        $db_con->set_class($this->obj_name, true);
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->user()->id);
         $db_con->set_fields(array(user::FLD_ID));
@@ -895,7 +895,7 @@ class sandbox extends db_object_user
         global $db_con;
 
         $user_id = 0;
-        $db_con->set_type($this->obj_name);
+        $db_con->set_class($this->obj_name);
         $db_con->set_usr($this->user()->id);
         $qp = $this->changer_sql($db_con);
         $db_row = $db_con->get1($qp);
@@ -920,7 +920,7 @@ class sandbox extends db_object_user
         $qp->name .= 'user_list';
 
         $class = $lib->class_to_name($this::class);
-        $sc->set_type($class, true);
+        $sc->set_class($class, true);
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
         $sc->set_join_fields(
@@ -1107,7 +1107,7 @@ class sandbox extends db_object_user
             $class = $lib->class_to_name($class);
 
             // check again if there ist not yet a record
-            $db_con->set_type($this->obj_name, true);
+            $db_con->set_class($this->obj_name, true);
             $qp = new sql_par($class);
             $qp->name = $class . '_add_usr_cfg';
             $db_con->set_name($qp->name);
@@ -1121,7 +1121,7 @@ class sandbox extends db_object_user
             }
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
-                $db_con->set_type(sql_db::TBL_USER_PREFIX . $this->obj_name);
+                $db_con->set_class(sql_db::TBL_USER_PREFIX . $this->obj_name);
                 $db_con->set_usr($this->user()->id);
                 $log_id = $db_con->insert(array($this->id_field(), user::FLD_ID), array($this->id, $this->user()->id));
                 if ($log_id <= 0) {
@@ -1408,7 +1408,7 @@ class sandbox extends db_object_user
                 if ($new_value == $std_value) {
                     if ($this->has_usr_cfg()) {
                         log_debug('remove user change');
-                        $db_con->set_type(sql_db::TBL_USER_PREFIX . $this->obj_name);
+                        $db_con->set_class(sql_db::TBL_USER_PREFIX . $this->obj_name);
                         $db_con->set_usr($this->user()->id);
                         if (!$db_con->update($this->id, $log->field(), Null)) {
                             $result = 'remove of ' . $log->field() . ' failed';
@@ -1416,7 +1416,7 @@ class sandbox extends db_object_user
                     }
                     $this->del_usr_cfg_if_not_needed(); // don't care what the result is, because in most cases it is fine to keep the user sandbox row
                 } else {
-                    $db_con->set_type($this->obj_name);
+                    $db_con->set_class($this->obj_name);
                     $db_con->set_usr($this->user()->id);
                     if (!$db_con->update($this->id, $log->field(), $new_value)) {
                         $result = 'update of ' . $log->field() . ' to ' . $new_value . ' failed';
@@ -1429,7 +1429,7 @@ class sandbox extends db_object_user
                     }
                 }
                 if ($result == '') {
-                    $db_con->set_type(sql_db::TBL_USER_PREFIX . $this->obj_name);
+                    $db_con->set_class(sql_db::TBL_USER_PREFIX . $this->obj_name);
                     $db_con->set_usr($this->user()->id);
                     if ($new_value == $std_value) {
                         log_debug('remove user change');
@@ -1466,7 +1466,7 @@ class sandbox extends db_object_user
             $new_value = $log->new_value;
         }
         if ($log->add()) {
-            $db_con->set_type($this->obj_name);
+            $db_con->set_class($this->obj_name);
             $db_con->set_usr($this->user()->id);
             if (!$db_con->update($this->id, $log->field(), $new_value)) {
                 $result = 'update of value for ' . $log->field() . ' to ' . $new_value . ' failed';
@@ -1519,7 +1519,7 @@ class sandbox extends db_object_user
             $std_value = $std_rec->is_excluded();
             // similar to $this->save_field_do
             if ($this->can_change()) {
-                $db_con->set_type($this->obj_name);
+                $db_con->set_class($this->obj_name);
                 $db_con->set_usr($this->user()->id);
                 if (!$db_con->update($this->id, $log->field(), $new_value)) {
                     $result .= 'excluding of ' . $this->obj_name . ' failed';
@@ -1531,7 +1531,7 @@ class sandbox extends db_object_user
                     }
                 }
                 if ($result == '') {
-                    $db_con->set_type(sql_db::TBL_USER_PREFIX . $this->obj_name);
+                    $db_con->set_class(sql_db::TBL_USER_PREFIX . $this->obj_name);
                     $db_con->set_usr($this->user()->id);
                     if ($new_value == $std_value) {
                         if (!$db_con->update($this->id, $log->field(), Null)) {
@@ -1590,7 +1590,7 @@ class sandbox extends db_object_user
                     }
                 }
                 if ($result == '') {
-                    $db_con->set_type(sql_db::TBL_USER_PREFIX . $this->obj_name);
+                    $db_con->set_class(sql_db::TBL_USER_PREFIX . $this->obj_name);
                     $db_con->set_usr($this->user()->id);
                     if (!$db_con->update($this->id, $log->field(), $new_value)) {
                         $result = 'setting of share type failed';
@@ -1963,7 +1963,7 @@ class sandbox extends db_object_user
             }
 
             // configure the global database connection object for the select, insert, update and delete queries
-            $db_con->set_type($this->obj_name);
+            $db_con->set_class($this->obj_name);
             $db_con->set_usr($this->user()->id);
 
             // create an object to check possible duplicates
@@ -2031,7 +2031,7 @@ class sandbox extends db_object_user
                                 $result .= 'Reloading of the object for ' . $this->obj_name . ' failed';
                             }
                             // configure the global database connection object again to overwrite any changes from load_objects
-                            $db_con->set_type($this->obj_name);
+                            $db_con->set_class($this->obj_name);
                             $db_con->set_usr($this->user()->id);
                         }
                         // relevant is if there is a user config in the database
@@ -2128,7 +2128,7 @@ class sandbox extends db_object_user
 
                 // and the corresponding formula elements
                 if ($result->is_ok()) {
-                    $db_con->set_type(sql_db::TBL_FORMULA_ELEMENT);
+                    $db_con->set_class(sql_db::TBL_FORMULA_ELEMENT);
                     $db_con->set_usr($this->user()->id);
                     $msg = $db_con->delete(sql_db::TBL_FORMULA . sql_db::FLD_EXT_ID, $this->id);
                     $result->add_message($msg);
@@ -2136,7 +2136,7 @@ class sandbox extends db_object_user
 
                 // and the corresponding results
                 if ($result->is_ok()) {
-                    $db_con->set_type(sql_db::TBL_RESULT);
+                    $db_con->set_class(sql_db::TBL_RESULT);
                     $db_con->set_usr($this->user()->id);
                     $msg = $db_con->delete(sql_db::TBL_FORMULA . sql_db::FLD_EXT_ID, $this->id);
                     $result->add_message($msg);
@@ -2167,7 +2167,7 @@ class sandbox extends db_object_user
 
             // delete first all user configuration that have also been excluded
             if ($result->is_ok()) {
-                $db_con->set_type(sql_db::TBL_USER_PREFIX . $this->obj_name);
+                $db_con->set_class(sql_db::TBL_USER_PREFIX . $this->obj_name);
                 $db_con->set_usr($this->user()->id);
                 $msg = $db_con->delete(
                     array($this->obj_name . sql_db::FLD_EXT_ID, 'excluded'),
@@ -2176,7 +2176,7 @@ class sandbox extends db_object_user
             }
             if ($result->is_ok()) {
                 // finally, delete the object
-                $db_con->set_type($this->obj_name);
+                $db_con->set_class($this->obj_name);
                 $db_con->set_usr($this->user()->id);
                 $msg = $db_con->delete($this->id_field(), $this->id);
                 $result->add_message($msg);

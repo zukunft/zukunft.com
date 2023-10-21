@@ -154,7 +154,7 @@ class formula_list extends sandbox_list
      */
     function load_sql(sql_creator $sc, string $query_name = ''): sql_par
     {
-        $sc->set_type(formula::class);
+        $sc->set_class(formula::class);
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
         $sc->set_name($qp->name);
@@ -375,7 +375,7 @@ class formula_list extends sandbox_list
     {
         $lib = new library();
         $class = $lib->class_to_name(self::class);
-        $db_con->set_type(sql_db::TBL_FORMULA);
+        $db_con->set_class(sql_db::TBL_FORMULA);
         $qp = new sql_par($class);
         $db_con->set_usr($this->user()->id());
         $db_con->set_all();

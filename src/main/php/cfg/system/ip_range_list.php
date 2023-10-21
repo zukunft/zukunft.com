@@ -70,7 +70,7 @@ class ip_range_list extends base_list
         $qp = new sql_par(self::class);
         $qp->name .= 'active';
 
-        $db_con->set_type(sql_db::TBL_IP);
+        $db_con->set_class(sql_db::TBL_IP);
         $db_con->set_name($qp->name);
         $db_con->set_fields(ip_range::FLD_NAMES);
         $db_con->set_where_id(ip_range::FLD_ACTIVE, sql_db::VAL_BOOL_TRUE);

@@ -906,7 +906,7 @@ function log_msg(string $msg_text,
 
             $sys_log_msg_lst[] = $msg_type_text;
             if ($msg_log_level > LOG_LEVEL or $force_log) {
-                $used_db_con->set_type(sys_log_function::class);
+                $used_db_con->set_class(sys_log_function::class);
                 $function_id = $used_db_con->get_id($function_name);
                 if ($function_id <= 0) {
                     $function_id = $used_db_con->add_id($function_name);
@@ -933,7 +933,7 @@ function log_msg(string $msg_text,
                     $fields[] = "user_id";
                     $values[] = $user_id;
                 }
-                $used_db_con->set_type(sql_db::TBL_SYS_LOG);
+                $used_db_con->set_class(sql_db::TBL_SYS_LOG);
 
                 $sys_log_id = $used_db_con->insert($fields, $values, false);
                 //$sql_result = mysqli_query($sql) or die('zukunft.com system log failed by query '.$sql.': '.mysqli_error().'. If this happens again, please send this message to errors@zukunft.com.');
@@ -1370,7 +1370,7 @@ function zu_trim($text): string
 function sql_lst($type): string
 {
     global $db_con;
-    $db_con->set_type($type);
+    $db_con->set_class($type);
     return $db_con->sql_std_lst();
 }
 
@@ -1378,7 +1378,7 @@ function sql_lst($type): string
 function sql_lst_usr($type, $usr): string
 {
     global $db_con;
-    $db_con->set_type($type);
+    $db_con->set_class($type);
     $db_con->usr_id = $usr->id();
     return $db_con->sql_std_lst_usr();
 }

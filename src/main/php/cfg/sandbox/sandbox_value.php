@@ -254,7 +254,7 @@ class sandbox_value extends sandbox
         $ext = $this->grp->table_extension();
         $qp = new sql_par($class . $ext);
         $qp->name = $class . $ext;
-        $sc->set_type($class, false, $ext);
+        $sc->set_class($class, false, $ext);
         return $qp;
     }
 
@@ -309,7 +309,7 @@ class sandbox_value extends sandbox
                 if ($new_value == $std_value) {
                     if ($this->has_usr_cfg()) {
                         log_debug('remove user change');
-                        $db_con->set_type(sql_db::TBL_USER_PREFIX . $this->obj_name . $ext);
+                        $db_con->set_class(sql_db::TBL_USER_PREFIX . $this->obj_name . $ext);
                         $db_con->set_usr($this->user()->id);
                         $qp = $this->sql_update($db_con->sql_creator(), array($log->field()), array(null));
                         try {
@@ -321,7 +321,7 @@ class sandbox_value extends sandbox
                     }
                     $this->del_usr_cfg_if_not_needed(); // don't care what the result is, because in most cases it is fine to keep the user sandbox row
                 } else {
-                    $db_con->set_type($this->obj_name . $ext);
+                    $db_con->set_class($this->obj_name . $ext);
                     $db_con->set_usr($this->user()->id);
                     $qp = $this->sql_update($db_con->sql_creator(), array($log->field()), array($new_value));
                     try {
@@ -338,7 +338,7 @@ class sandbox_value extends sandbox
                     }
                 }
                 if ($result == '') {
-                    $db_con->set_type(sql_db::TBL_USER_PREFIX . $this->obj_name . $ext);
+                    $db_con->set_class(sql_db::TBL_USER_PREFIX . $this->obj_name . $ext);
                     $db_con->set_usr($this->user()->id);
                     if ($new_value == $std_value) {
                         log_debug('remove user change');

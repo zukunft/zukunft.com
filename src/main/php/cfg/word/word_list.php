@@ -161,7 +161,7 @@ class word_list extends sandbox_list
      */
     function load_sql(sql_creator $sc, string $query_name = ''): sql_par
     {
-        $sc->set_type(word::class);
+        $sc->set_class(word::class);
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
         $sc->set_name($qp->name);
@@ -225,7 +225,7 @@ class word_list extends sandbox_list
 
             // create the sub query
             $sub_sc = clone $sc;
-            $sub_sc->set_type(group_link::class);
+            $sub_sc->set_class(group_link::class);
             $sub_sc->set_fields(array(phrase::FLD_ID));
             $sub_sc->add_where(group::FLD_ID, $grp_id);
 

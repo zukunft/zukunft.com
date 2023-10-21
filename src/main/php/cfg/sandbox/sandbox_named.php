@@ -502,7 +502,7 @@ class sandbox_named extends sandbox
 
             // insert the new object and save the object key
             // TODO check that always before a db action is called the db type is set correctly
-            $db_con->set_type($this->obj_name);
+            $db_con->set_class($this->obj_name);
             $db_con->set_usr($this->user()->id);
             $this->id = $db_con->insert(array($this->obj_name . '_name', "user_id"), array($this->name, $this->user()->id));
 
@@ -629,7 +629,7 @@ class sandbox_named extends sandbox
 
             $log->row_id = $this->id;
             if ($log->add()) {
-                $db_con->set_type($this->obj_name);
+                $db_con->set_class($this->obj_name);
                 $db_con->set_usr($this->user()->id);
                 if (!$db_con->update($this->id,
                     array($this->obj_name . '_name'),

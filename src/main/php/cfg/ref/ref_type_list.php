@@ -65,7 +65,7 @@ class ref_type_list extends type_list
         string $query_name = 'all',
         string $order_field = ''): sql_par
     {
-        $sc->set_type($db_type);
+        $sc->set_class($db_type);
         $qp = new sql_par($db_type);
         $qp->name = $db_type;
         $sc->set_name($qp->name);

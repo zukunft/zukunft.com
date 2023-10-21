@@ -469,7 +469,7 @@ class phrase extends combine_named
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
 
-        $sc->set_type(self::class);
+        $sc->set_class(self::class);
         $sc->set_name($qp->name);
 
         $sc->set_fields(self::FLD_NAMES);
@@ -665,7 +665,7 @@ class phrase extends combine_named
     {
         global $db_con;
 
-        $db_con->set_type(sql_db::TBL_FORMULA_LINK);
+        $db_con->set_class(sql_db::TBL_FORMULA_LINK);
         $qp = new sql_par(self::class);
         $qp->name = 'phrase_formula_by_id';
         $db_con->set_name($qp->name);
@@ -1298,7 +1298,7 @@ class phrase extends combine_named
         //$link_id = cl(db_cl::VERB, verb::FOLLOW);
         //$db_con = new mysql;
         $db_con->usr_id = $this->user()->id();
-        $db_con->set_type(sql_db::TBL_TRIPLE);
+        $db_con->set_class(sql_db::TBL_TRIPLE);
         $key_result = $db_con->get_value_2key('from_phrase_id', 'to_phrase_id', $this->id(), verb::FLD_ID, $link_id);
         if (is_numeric($key_result)) {
             $id = intval($key_result);
@@ -1327,7 +1327,7 @@ class phrase extends combine_named
         //$link_id = cl(db_cl::VERB, verb::FOLLOW);
         //$db_con = new mysql;
         $db_con->usr_id = $this->user()->id();
-        $db_con->set_type(sql_db::TBL_TRIPLE);
+        $db_con->set_class(sql_db::TBL_TRIPLE);
         $key_result = $db_con->get_value_2key('to_phrase_id', 'from_phrase_id', $this->id(), verb::FLD_ID, $link_id);
         if (is_numeric($key_result)) {
             $id = intval($key_result);

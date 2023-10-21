@@ -103,7 +103,7 @@ class component_link_list extends sandbox_list
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
 
-        $sc->set_type(component_link::class);
+        $sc->set_class(component_link::class);
         $sc->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
         $sc->set_usr($this->user()->id());
         $sc->set_fields(component_link::FLD_NAMES);

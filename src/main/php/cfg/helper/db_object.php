@@ -70,7 +70,7 @@ class db_object
      */
     function sql_table(sql_creator $sc): string
     {
-        $sc->set_type($this::class);
+        $sc->set_class($this::class);
         return $sc->table_create($this::TBL_COMMENT);
     }
 
@@ -95,9 +95,11 @@ class db_object
         string $class,
         string $ext = ''): sql_par
     {
-        $qp = new sql_par($class . $ext);
+        $lib = new library();
+        $tbl_name = $lib->class_to_name($class);
+        $qp = new sql_par($tbl_name . $ext);
         $qp->name .= $query_name;
-        $sc->set_type($class, false, $ext);
+        $sc->set_class($class, false, $ext);
         $sc->set_name($qp->name);
         $sc->set_fields($this::FLD_NAMES);
 

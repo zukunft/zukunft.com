@@ -178,7 +178,7 @@ class type_list
     {
         $lib = new library();
         $db_type = $lib->class_to_name($class);
-        $sc->set_type($db_type);
+        $sc->set_class($db_type);
         $qp = new sql_par($db_type);
         $qp->name = $db_type . '_' . $query_name;
         $sc->set_name($qp->name);

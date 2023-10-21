@@ -294,7 +294,7 @@ class ref extends sandbox_link_with_type
      */
     function load_standard_sql(sql_creator $sc, string $class = self::class): sql_par
     {
-        $sc->set_type($class);
+        $sc->set_class($class);
         $sc->set_fields(array_merge(
             self::FLD_NAMES,
             self::FLD_NAMES_USR,
@@ -804,7 +804,7 @@ class ref extends sandbox_link_with_type
         $log = $this->log_link_add();
         if ($log->id() > 0) {
             // insert the new reference
-            $db_con->set_type(sql_db::TBL_REF);
+            $db_con->set_class(sql_db::TBL_REF);
             $db_con->set_usr($this->user()->id());
 
             $this->id = $db_con->insert(
@@ -869,7 +869,7 @@ class ref extends sandbox_link_with_type
         if ($this->user() != null) {
             $db_con->set_usr($this->user()->id());
         }
-        $db_con->set_type(sql_db::TBL_REF);
+        $db_con->set_class(sql_db::TBL_REF);
 
         // check if the external reference is supposed to be added
         if ($this->id <= 0) {
@@ -905,7 +905,7 @@ class ref extends sandbox_link_with_type
             if ($this->external_key <> $db_rec->external_key) {
                 $log = $this->log_link_upd($db_rec);
                 if ($log->id() > 0) {
-                    $db_con->set_type(sql_db::TBL_REF);
+                    $db_con->set_class(sql_db::TBL_REF);
                     if ($db_con->update($this->id, self::FLD_EX_KEY, $this->external_key)) {
                         log_debug('ref->save update ... done.');
                     }
@@ -943,7 +943,7 @@ class ref extends sandbox_link_with_type
             } else {
                 $log = $this->log_link_del();
                 if ($log->id() > 0) {
-                    $db_con->set_type(sql_db::TBL_REF);
+                    $db_con->set_class(sql_db::TBL_REF);
                     $del_result = $db_con->delete(self::FLD_ID, $this->id);
                     if ($del_result == '') {
                         log_debug('done.');

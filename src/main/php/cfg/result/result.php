@@ -258,7 +258,7 @@ class result extends sandbox_value
      */
     function load_standard_sql(sql_creator $sc, string $class = self::class): sql_par
     {
-        $sc->set_type($class);
+        $sc->set_class($class);
         // overwrite the standard id field name (result_id) with the main database id field for results "group_id"
         $sc->set_id_field($this->id_field());
         $sc->set_fields(array_merge(self::FLD_NAMES, array(user::FLD_ID)));
@@ -278,7 +278,7 @@ class result extends sandbox_value
     {
         $qp = parent::load_sql($sc, $query_name, $class);
 
-        $sc->set_type($class);
+        $sc->set_class($class);
         // overwrite the standard id field name (result_id) with the main database id field for results "group_id"
         $sc->set_id_field($this->id_field());
         $sc->set_name($qp->name);
@@ -325,7 +325,7 @@ class result extends sandbox_value
      */
     function load_sql_std_by_grp(sql_creator $sc, group $grp): sql_par
     {
-        $sc->set_type(self::class);
+        $sc->set_class(self::class);
         // overwrite the standard id field name (result_id) with the main database id field for results "group_id"
         $sc->set_id_field($this->id_field());
         $sc->set_fields(array_merge(self::FLD_NAMES, array(user::FLD_ID)));
@@ -398,7 +398,7 @@ class result extends sandbox_value
      */
     function load_sql_user_changes(sql_creator $sc, string $class = self::class): sql_par
     {
-        $sc->set_type(self::class, true);
+        $sc->set_class(self::class, true);
         // overwrite the standard id field name (result_id) with the main database id field for results "group_id"
         $sc->set_id_field($this->id_field());
         return parent::load_sql_user_changes($sc, $class);
@@ -672,7 +672,7 @@ class result extends sandbox_value
                 log_debug('group not found!');
             }
 
-            $db_con->set_type(sql_db::TBL_RESULT);
+            $db_con->set_class(sql_db::TBL_RESULT);
             $qp = new sql_par(self::class);
             $qp->name = 'res_by_';
 
@@ -1567,7 +1567,7 @@ class result extends sandbox_value
             // build the database object because the is anyway needed
             //$db_con = new mysql;
             $db_con->set_usr($this->user()->id);
-            $db_con->set_type(sql_db::TBL_RESULT);
+            $db_con->set_class(sql_db::TBL_RESULT);
 
             // build the word list if needed to separate the time word from the word list
             $this->save_prepare_wrds();
@@ -1583,7 +1583,7 @@ class result extends sandbox_value
             // if value exists, check it an update is needed
             if ($row_id > 0) {
                 if ($db_con->sf($db_val) <> $db_con->sf($this->value)) {
-                    $db_con->set_type(sql_db::TBL_RESULT);
+                    $db_con->set_class(sql_db::TBL_RESULT);
                     if ($db_con->update($row_id,
                         array(result::FLD_VALUE, result::FLD_LAST_UPDATE),
                         array($this->value, sql_creator::NOW))) {
@@ -1614,7 +1614,7 @@ class result extends sandbox_value
                 $field_names[] = result::FLD_LAST_UPDATE;
                 //$field_values[] = sql_creator::NOW; // replaced with time of last change that has been included in the calculation
                 $field_values[] = $this->last_val_update->format('Y-m-d H:i:s');
-                $db_con->set_type(sql_db::TBL_RESULT);
+                $db_con->set_class(sql_db::TBL_RESULT);
                 $id = $db_con->insert($field_names, $field_values);
                 $this->id = $id;
                 $result = $id;

@@ -67,7 +67,7 @@ class config
             log_err("The code id must be set", "config->get_sql");
         }
 
-        $db_con->set_type(sql_db::TBL_CONFIG);
+        $db_con->set_class(sql_db::TBL_CONFIG);
         $qp = new sql_par(self::class);
         $qp->name .= 'get';
         $db_con->set_name($qp->name);

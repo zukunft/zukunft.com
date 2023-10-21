@@ -140,7 +140,7 @@ class term_list extends sandbox_list_named
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
 
-        $sc->set_type(term::class);
+        $sc->set_class(term::class);
         $sc->set_name($qp->name);
 
         $sc->set_fields(term::FLD_NAMES);

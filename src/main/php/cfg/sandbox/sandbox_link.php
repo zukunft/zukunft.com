@@ -347,7 +347,7 @@ class sandbox_link extends sandbox
 
             // insert the new object and save the object key
             // TODO check that always before a db action is called the db type is set correctly
-            $db_con->set_type($this->obj_name);
+            $db_con->set_class($this->obj_name);
             $db_con->set_usr($this->user()->id);
             $this->id = $this->add_insert();
 
@@ -436,7 +436,7 @@ class sandbox_link extends sandbox
 
             $log->row_id = $this->id;
             if ($log->add()) {
-                $db_con->set_type($this->obj_name);
+                $db_con->set_class($this->obj_name);
                 $db_con->set_usr($this->user()->id);
                 if (!$db_con->update($this->id,
                     array($this->from_name . sql_db::FLD_EXT_ID, $this->from_name . sql_db::FLD_EXT_ID),

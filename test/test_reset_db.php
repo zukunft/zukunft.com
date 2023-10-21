@@ -60,6 +60,7 @@ use cfg\source_type_list;
 use cfg\sql_db;
 use cfg\sys_log_function;
 use cfg\user;
+use cfg\value;
 use cfg\view_type_list;
 use html\html_base;
 use test\test_unit_read_db;
@@ -157,8 +158,8 @@ function run_db_truncate(): void
     // the tables in order to avoid the usage of CASCADE
     $table_names = array(
         sql_db::TBL_VALUE_PHRASE_LINK,
-        sql_db::TBL_USER_PREFIX . sql_db::TBL_VALUE,
-        sql_db::TBL_VALUE,
+        sql_db::TBL_USER_PREFIX . value::class,
+        value::class,
         sql_db::TBL_RESULT,
         sql_db::TBL_FORMULA_ELEMENT,
         sql_db::TBL_FORMULA_ELEMENT_TYPE,

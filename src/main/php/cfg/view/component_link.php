@@ -301,7 +301,7 @@ class component_link extends sandbox_link_with_type
             $this->id = 0;
         }
 
-        $sc->set_type(self::class);
+        $sc->set_class(self::class);
         $qp = new sql_par(self::class);
         if ($this->id != 0) {
             $qp->name .= 'std_id';
@@ -366,7 +366,7 @@ class component_link extends sandbox_link_with_type
         $qp = parent::load_sql_obj_vars($sc, $class);
         $qp->name .= $query_name;
 
-        $sc->set_type($class);
+        $sc->set_class($class);
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
         $sc->set_fields(self::FLD_NAMES_LINK);
@@ -422,7 +422,7 @@ class component_link extends sandbox_link_with_type
         $qp = parent::load_sql_obj_vars($sc, self::class);
         $qp->name .= 'max_pos';
 
-        $sc->set_type(self::class);
+        $sc->set_class(self::class);
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
         $sc->add_usr_grp_field(self::FLD_ORDER_NBR, sql_par_type::MAX);
@@ -736,7 +736,7 @@ class component_link extends sandbox_link_with_type
             }
 
             // check again if there is not yet a record
-            $db_con->set_type(sql_db::TBL_COMPONENT_LINK, true);
+            $db_con->set_class(sql_db::TBL_COMPONENT_LINK, true);
             $qp = new sql_par(self::class);
             $qp->name = 'component_link_add_usr_cfg';
             $db_con->set_name($qp->name);
@@ -750,7 +750,7 @@ class component_link extends sandbox_link_with_type
             }
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
-                $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_COMPONENT_LINK);
+                $db_con->set_class(sql_db::TBL_USER_PREFIX . sql_db::TBL_COMPONENT_LINK);
                 $log_id = $db_con->insert(array(self::FLD_ID, user::FLD_ID), array($this->id, $this->user()->id()));
                 if ($log_id <= 0) {
                     log_err('Insert of user_component_link failed.');
@@ -793,7 +793,7 @@ class component_link extends sandbox_link_with_type
      */
     function load_sql_user_changes(sql_creator $sc, string $class = self::class): sql_par
     {
-        $sc->set_type($class, true);
+        $sc->set_class($class, true);
         return parent::load_sql_user_changes($sc, $class);
     }
 

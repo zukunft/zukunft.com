@@ -386,7 +386,7 @@ class group extends db_object
      */
     function load_sql_obj_vars(sql_db $db_con): sql_par
     {
-        $db_con->set_type(self::class);
+        $db_con->set_class(self::class);
         $qp = new sql_par(self::class);
         $qp->name .= $this->load_sql_name_ext();
         $db_con->set_name($qp->name);
@@ -865,7 +865,7 @@ class group extends db_object
             if ($this->id > 0) {
                 // update the generic name in the database
                 $db_con->usr_id = $this->user()->id();
-                $db_con->set_type(sql_db::TBL_GROUP);
+                $db_con->set_class(sql_db::TBL_GROUP);
                 if ($db_con->update($this->id, self::FLD_DESCRIPTION, $group_name)) {
                     $result = $group_name;
                 }
@@ -1073,12 +1073,12 @@ class group extends db_object
         global $db_con;
         $result = new user_message();
 
-        $db_con->set_type(sql_db::TBL_GROUP_LINK);
+        $db_con->set_class(sql_db::TBL_GROUP_LINK);
         $db_con->usr_id = $this->user()->id();
         $msg = $db_con->delete(self::FLD_ID, $this->id);
         $result->add_message($msg);
 
-        $db_con->set_type(sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK);
+        $db_con->set_class(sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK);
         $db_con->usr_id = $this->user()->id();
         $msg = $db_con->delete(self::FLD_ID, $this->id);
         $result->add_message($msg);
@@ -1106,7 +1106,7 @@ class group extends db_object
         global $db_con;
         $result = $this->del_phr_links();
 
-        $db_con->set_type(sql_db::TBL_GROUP);
+        $db_con->set_class(sql_db::TBL_GROUP);
         $db_con->usr_id = $this->user()->id();
         $msg = $db_con->delete(self::FLD_ID, $this->id);
         $result->add_message($msg);
@@ -1127,7 +1127,7 @@ class group extends db_object
         global $db_con;
         $result = array();
 
-        $db_con->set_type(sql_db::VT_PHRASE_GROUP_LINK);
+        $db_con->set_class(sql_db::VT_PHRASE_GROUP_LINK);
         $db_con->usr_id = $this->user()->id();
         $qp = new sql_par(self::class);
         $qp->name .= 'test_link_ids';

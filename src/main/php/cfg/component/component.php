@@ -349,7 +349,7 @@ class component extends sandbox_typed
      */
     function load_standard_sql(sql_creator $sc, string $class = self::class): sql_par
     {
-        $sc->set_type(self::class);
+        $sc->set_class(self::class);
         $sc->set_fields(array_merge(
             self::FLD_NAMES,
             self::FLD_NAMES_USR,
@@ -807,7 +807,7 @@ class component extends sandbox_typed
             log_debug('for "' . $this->dsp_id() . ' und user ' . $this->user()->name);
 
             // check again if there ist not yet a record
-            $db_con->set_type(sql_db::TBL_COMPONENT, true);
+            $db_con->set_class(sql_db::TBL_COMPONENT, true);
             $qp = new sql_par(self::class);
             $qp->name = 'component_del_usr_cfg_if';
             $db_con->set_name($qp->name);
@@ -822,7 +822,7 @@ class component extends sandbox_typed
             }
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
-                $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_COMPONENT);
+                $db_con->set_class(sql_db::TBL_USER_PREFIX . sql_db::TBL_COMPONENT);
                 $log_id = $db_con->insert(array(component::FLD_ID, user::FLD_ID), array($this->id, $this->user()->id()));
                 if ($log_id <= 0) {
                     log_err('Insert of user_component failed.');
@@ -846,7 +846,7 @@ class component extends sandbox_typed
      */
     function load_sql_user_changes(sql_creator $sc, string $class = self::class): sql_par
     {
-        $sc->set_type(self::class, true);
+        $sc->set_class(self::class, true);
         $sc->set_fields(array_merge(
             self::FLD_NAMES_USR,
             self::FLD_NAMES_NUM_USR

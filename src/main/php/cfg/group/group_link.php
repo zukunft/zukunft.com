@@ -98,7 +98,7 @@ class group_link extends db_id_object
     {
         $qp = parent::load_sql($sc, $query_name, $class);
 
-        $sc->set_type($class);
+        $sc->set_class($class);
         $sc->set_name($qp->name);
         $sc->set_fields(self::FLD_NAMES);
 
@@ -114,7 +114,7 @@ class group_link extends db_id_object
      */
     function load_by_group_id_sql(sql_db $db_con, group $grp): sql_par
     {
-        $db_con->set_type(self::class);
+        $db_con->set_class(self::class);
         $qp = new sql_par(self::class);
 
         if ($grp->id() > 0) {
@@ -141,7 +141,7 @@ class group_link extends db_id_object
      */
     function load_sql_obj_vars(sql_db $db_con): sql_par
     {
-        $db_con->set_type(sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK);
+        $db_con->set_class(sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK);
         $qp = new sql_par(self::class);
 
         if ($this->id > 0) {

@@ -351,7 +351,7 @@ class verb extends type_object
     {
         $qp = parent::load_sql($sc, $query_name, $class);
 
-        $sc->set_type(self::class);
+        $sc->set_class(self::class);
         $sc->set_name($qp->name);
         $sc->set_fields(self::FLD_NAMES);
 
@@ -698,7 +698,7 @@ class verb extends type_object
         $qp = new sql_par(verb::class);
 
         $qp->name .= 'usage';
-        $db_con->set_type(word::class);
+        $db_con->set_class(word::class);
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->user()->id());
         $db_con->set_fields(self::FLD_NAMES);
@@ -826,7 +826,7 @@ class verb extends type_object
         }
         if ($log->add()) {
             if ($this->can_change()) {
-                $db_con->set_type(sql_db::TBL_VERB);
+                $db_con->set_class(sql_db::TBL_VERB);
                 if (!$db_con->update($this->id, $log->field(), $new_value)) {
                     $result .= 'updating ' . $log->field() . ' to ' . $new_value . ' for verb ' . $this->dsp_id() . ' failed';
                 }
@@ -1030,7 +1030,7 @@ class verb extends type_object
         $log = $this->log_add();
         if ($log->id() > 0) {
             // insert the new verb
-            $db_con->set_type(sql_db::TBL_VERB);
+            $db_con->set_class(sql_db::TBL_VERB);
             $this->id = $db_con->insert(self::FLD_NAME, $this->name);
             if ($this->id > 0) {
                 // update the id in the log
@@ -1093,7 +1093,7 @@ class verb extends type_object
 
         // build the database object because the is anyway needed
         $db_con->set_usr($this->user()->id());
-        $db_con->set_type(sql_db::TBL_VERB);
+        $db_con->set_class(sql_db::TBL_VERB);
 
         // check if a new verb is supposed to be added
         if ($this->id <= 0) {
@@ -1186,7 +1186,7 @@ class verb extends type_object
                 $log = $this->log_del();
                 if ($log->id() > 0) {
                     $db_con->usr_id = $this->user()->id();
-                    $db_con->set_type(sql_db::TBL_VERB);
+                    $db_con->set_class(sql_db::TBL_VERB);
                     $result = $db_con->delete(self::FLD_ID, $this->id);
                 }
             } else {

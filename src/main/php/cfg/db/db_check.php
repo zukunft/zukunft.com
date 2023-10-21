@@ -109,7 +109,7 @@ class db_check
         $result = true;
 
         foreach (sandbox::DB_TYPES as $db_type) {
-            $db_con->set_type($db_type);
+            $db_con->set_class($db_type);
             $db_lst = $db_con->missing_owner();
             if ($db_lst != null) {
                 $result = $db_con->set_default_owner();
@@ -124,12 +124,13 @@ class db_check
     function db_upgrade_0_0_3(sql_db $db_con): string
     {
         $cfg = new config();
+        $lib = new library();
 
         // prepare to remove the time word from the values
         $msg = $this->db_move_time_phrase_to_group();
         if ($msg->is_ok()) {
             //
-            $msg->add($db_con->del_field(sql_db::TBL_VALUE, 'time_word_id'));
+            $msg->add($db_con->del_field($lib->class_to_name(value::class), 'time_word_id'));
             $msg->add($db_con->del_field(sql_db::TBL_RESULT, 'time_word_id'));
         }
 
@@ -217,7 +218,7 @@ class db_check
         $result .= $db_con->change_column_name(sql_db::TBL_LANGUAGE_FORM, 'lanuages_id', 'language_id');
         $result .= $db_con->change_column_name(sql_db::TBL_LANGUAGE_FORM, 'lanuages_form_id', 'language_form_id');
         $result .= $db_con->change_column_name(sql_db::TBL_LANGUAGE_FORM, 'lanuages_form_name', 'language_form_name');
-        $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_VALUE, 'user_value', 'word_value');
+        $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . $lib->class_to_name(value::class), 'user_value', 'word_value');
         $result .= $db_con->change_column_name(sql_db::TBL_VALUE_TIME_SERIES, 'value_time_serie_id', 'value_time_series_id');
         $result .= $db_con->change_column_name(sql_db::TBL_IP, 'isactive', 'is_active');
         $result .= $db_con->change_column_name(sql_db::TBL_USER, 'isactive', 'is_active');
@@ -242,8 +243,8 @@ class db_check
         $result .= $db_con->change_column_name(sql_db::TBL_TASK_TYPE, 'calc_and_cleanup_task_type_name', 'type_name');
         $result .= $db_con->change_column_name(sql_db::TBL_USER_PROFILE, 'comment', sandbox_named::FLD_DESCRIPTION);
         $result .= $db_con->change_column_name(sql_db::TBL_FORMULA, 'protection_type_id', 'protect_id');
-        $result .= $db_con->change_column_name(sql_db::TBL_VALUE, 'protection_type_id', 'protect_id');
-        $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_VALUE, 'protection_type_id', 'protect_id');
+        $result .= $db_con->change_column_name($lib->class_to_name(value::class), 'protection_type_id', 'protect_id');
+        $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . $lib->class_to_name(value::class), 'protection_type_id', 'protect_id');
         $result .= $db_con->change_column_name(sql_db::TBL_VALUE_TIME_SERIES, 'protection_type_id', 'protect_id');
         $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_VALUE_TIME_SERIES, 'protection_type_id', 'protect_id');
         $result .= $db_con->change_column_name(sql_db::TBL_RESULT, 'source_time_word_id', 'source_time_id');
@@ -282,10 +283,10 @@ class db_check
         $result .= $db_con->column_allow_null(sql_db::TBL_CHANGE_FIELD, 'code_id');
         $result .= $db_con->column_allow_null(sql_db::TBL_VIEW, sandbox_named::FLD_DESCRIPTION);
         $result .= $db_con->column_allow_null(sql_db::TBL_COMPONENT_TYPE, 'description');
-        $result .= $db_con->column_allow_null(sql_db::TBL_VALUE, sandbox::FLD_EXCLUDED);
-        $result .= $db_con->column_allow_null(sql_db::TBL_VALUE, 'protect_id');
+        $result .= $db_con->column_allow_null($lib->class_to_name(value::class), sandbox::FLD_EXCLUDED);
+        $result .= $db_con->column_allow_null($lib->class_to_name(value::class), 'protect_id');
         $result .= $db_con->column_allow_null(sql_db::TBL_FORMULA_LINK, 'link_type_id');
-        $result .= $db_con->column_allow_null(sql_db::TBL_USER_PREFIX . sql_db::TBL_VALUE, 'protect_id');
+        $result .= $db_con->column_allow_null(sql_db::TBL_USER_PREFIX . $lib->class_to_name(value::class), 'protect_id');
         $result .= $db_con->column_allow_null(sql_db::TBL_VALUE_TIME_SERIES, 'protect_id');
         $result .= $db_con->column_allow_null(sql_db::TBL_USER_PREFIX . sql_db::TBL_SOURCE, 'source_name');
         $result .= $db_con->column_allow_null(sql_db::TBL_USER_PREFIX . sql_db::TBL_SOURCE, 'url');
@@ -294,8 +295,8 @@ class db_check
         $result .= $db_con->column_allow_null(sql_db::TBL_TASK, 'end_time');
         $result .= $db_con->column_allow_null(sql_db::TBL_TASK, 'row_id');
         $result .= $db_con->column_force_not_null(sql_db::TBL_USER_PREFIX . sql_db::TBL_SOURCE, user::FLD_ID);
-        $result .= $db_con->change_column_name(sql_db::TBL_VALUE, 'word_value', value::FLD_VALUE);
-        $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_VALUE, 'word_value', value::FLD_VALUE);
+        $result .= $db_con->change_column_name($lib->class_to_name(value::class), 'word_value', value::FLD_VALUE);
+        $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . $lib->class_to_name(value::class), 'word_value', value::FLD_VALUE);
         $result .= $db_con->change_table_name('word_types', sql_db::TBL_PHRASE_TYPE);
         $result .= $db_con->change_column_name(sql_db::TBL_PHRASE_TYPE, 'word_type_id', phrase::FLD_TYPE);
         $result .= $db_con->change_column_name(self::TBL_WORD, 'word_type_id', phrase::FLD_TYPE);
@@ -306,7 +307,7 @@ class db_check
 
         $result .= $db_con->change_table_name('results', result_two::class);
         $result .= $db_con->change_table_name('user_phrase_groups', sql_db::TBL_USER_PREFIX . group::class);
-        $result .= $db_con->change_column_name(sql_db::TBL_VALUE, 'phrase_group_id', group::FLD_ID);
+        $result .= $db_con->change_column_name($lib->class_to_name(value::class), 'phrase_group_id', group::FLD_ID);
 
         // TODO set default profile_id in users to 1
         if ($db_con->db_type == sql_db::MYSQL) {
@@ -484,7 +485,7 @@ class db_check
                                     $update_col_names[] = $col_names[$i];
                                     $update_col_values[] = trim($data[$i]);
                                 }
-                                $db_con->set_type($db_type);
+                                $db_con->set_class($db_type);
                                 $db_con->insert($update_col_names, $update_col_values);
                             } else {
                                 // check, which values need to be updates
@@ -502,7 +503,7 @@ class db_check
                                 }
                                 // update the values is needed
                                 if (count($update_col_names) > 0) {
-                                    $db_con->set_type($db_type);
+                                    $db_con->set_class($db_type);
                                     $db_con->update($id, $update_col_names, $update_col_values);
                                 }
                             }

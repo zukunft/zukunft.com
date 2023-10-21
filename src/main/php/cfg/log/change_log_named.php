@@ -177,7 +177,7 @@ class change_log_named extends change_log
     function load_sql(sql_creator $sc, string $query_name): sql_par
     {
         $qp = new sql_par($this::class);
-        $sc->set_type(sql_db::TBL_CHANGE);
+        $sc->set_class(sql_db::TBL_CHANGE);
         $qp->name .= $query_name;
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
@@ -245,7 +245,7 @@ class change_log_named extends change_log
     {
         $qp = new sql_par(self::class);
         $qp->name .= 'user';
-        $db_con->set_type(sql_db::TBL_CHANGE);
+        $db_con->set_class(sql_db::TBL_CHANGE);
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->user()->id());
         $db_con->set_fields(self::FLD_NAMES);
@@ -341,7 +341,7 @@ class change_log_named extends change_log
 
         global $db_con;
 
-        $db_type = $db_con->get_type();
+        $db_type = $db_con->get_class();
         $qp = $this->load_sql_by_user($db_con->sql_creator(), $usr);
         $db_row = $db_con->get1($qp);
 
@@ -349,7 +349,7 @@ class change_log_named extends change_log
         $result = $this->dsp($db_row, $ex_time);
 
         // restore the type before saving the log
-        $db_con->set_type($db_type);
+        $db_con->set_class($db_type);
         return $result;
     }
 
@@ -363,7 +363,7 @@ class change_log_named extends change_log
 
         global $db_con;
 
-        $db_type = $db_con->get_type();
+        $db_type = $db_con->get_class();
         $qp = $this->load_sql_by_field_row($db_con->sql_creator(), $this->field_id, $this->row_id);
         $db_row = $db_con->get1($qp);
 
@@ -371,7 +371,7 @@ class change_log_named extends change_log
         $result = $this->dsp($db_row, $ex_time);
 
         // restore the type before saving the log
-        $db_con->set_type($db_type);
+        $db_con->set_class($db_type);
         return $result;
     }
 
@@ -450,8 +450,8 @@ class change_log_named extends change_log
         $sql_values[] = $this->row_id;
 
         //$db_con = new mysql;
-        $db_type = $db_con->get_type();
-        $db_con->set_type(sql_db::TBL_CHANGE);
+        $db_type = $db_con->get_class();
+        $db_con->set_class(sql_db::TBL_CHANGE);
         $db_con->set_usr($this->user()->id());
         $log_id = $db_con->insert($sql_fields, $sql_values);
 
@@ -467,7 +467,7 @@ class change_log_named extends change_log
         } else {
             $this->set_id($log_id);
             // restore the type before saving the log
-            $db_con->set_type($db_type);
+            $db_con->set_class($db_type);
             $result = True;
         }
 
@@ -486,12 +486,12 @@ class change_log_named extends change_log
         global $db_con;
         $result = false;
 
-        $db_type = $db_con->get_type();
-        $db_con->set_type(sql_db::TBL_CHANGE);
+        $db_type = $db_con->get_class();
+        $db_con->set_class(sql_db::TBL_CHANGE);
         $db_con->set_usr($this->user()->id());
         if ($db_con->update($this->id(), "row_id", $row_id)) {
             // restore the type before saving the log
-            $db_con->set_type($db_type);
+            $db_con->set_class($db_type);
             $result = True;
         } else {
             // write the error message in steps to get at least some message if the parameters has caused the error

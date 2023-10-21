@@ -34,11 +34,19 @@ namespace cfg\db;
 include_once DB_PATH . 'sql_db.php';
 include_once MODEL_SYSTEM_PATH . 'log.php';
 
+use cfg\component_link;
+use cfg\formula_element;
+use cfg\formula_link;
 use cfg\library;
+use cfg\result;
 use cfg\sql_db;
 use cfg\sys_log_level;
+use cfg\triple;
 use cfg\user;
+use cfg\value;
+use cfg\value_time_series;
 use cfg\view;
+use cfg\view_term_link;
 use Exception;
 
 class sql_creator
@@ -60,16 +68,16 @@ class sql_creator
     // classes where the table that do not have a name
     // e.g. sql_db::TBL_TRIPLE is a link which hase a name, but the generated name can be overwritten, so the standard field naming is not used
     const DB_TYPES_NOT_NAMED = [
-        sql_db::TBL_TRIPLE,
-        sql_db::TBL_VALUE,
-        sql_db::TBL_VALUE_TIME_SERIES,
-        sql_db::TBL_FORMULA_LINK,
-        sql_db::TBL_RESULT,
-        sql_db::TBL_FORMULA_ELEMENT,
-        sql_db::TBL_COMPONENT_LINK,
+        triple::class,
+        value::class,
+        value_time_series::class,
+        formula_link::class,
+        result::class,
+        formula_element::class,
+        component_link::class,
         sql_db::TBL_VALUE_PHRASE_LINK,
         sql_db::TBL_GROUP_LINK,
-        sql_db::TBL_VIEW_TERM_LINK,
+        view_term_link::class,
         sql_db::TBL_REF,
         sql_db::TBL_IP,
         sql_db::TBL_CHANGE,
@@ -83,7 +91,7 @@ class sql_creator
     private ?int $usr_id;           // the user id of the person who request the database changes
     private ?int $usr_view_id;      // the user id of the person which values should be returned e.g. an admin might want to check the data of an user
     private ?string $db_type;       // the database type which should be used for this connection e.g. Postgres or MYSQL
-    private ?string $type;          // based of this database object type the table name and the standard fields are defined e.g. for type "word" the field "word_name" is used
+    private ?string $class;         // the object class name used for the table name and the standard fields are defined e.g. for type "cfg\word" the table "words" and the field "word_name" is used
     private ?string $table;         // name of the table that is used for the next query
     private ?string $query_name;    // unique name of the query to precompile and use the query
     private bool $usr_query;        // true, if the query is expected to retrieve user specific data
@@ -196,7 +204,7 @@ class sql_creator
     {
         $this->usr_id = null;
         $this->usr_view_id = null;
-        $this->type = '';
+        $this->class = '';
         $this->table = '';
         $this->query_name = '';
         $this->usr_query = false;
@@ -314,7 +322,7 @@ class sql_creator
         if ($given_name != '') {
             $this->id_field = $given_name;
         } else {
-            $this->id_field = $this->get_id_field_name($this->type);
+            $this->id_field = $this->get_id_field_name($this->class);
         }
     }
 
@@ -334,12 +342,12 @@ class sql_creator
      * @param string $ext the table name extension e.g. to switch between standard and prime values
      * @return bool true if setting the type was successful
      */
-    function set_type(string $class, bool $usr_table = false, string $ext = ''): bool
+    function set_class(string $class, bool $usr_table = false, string $ext = ''): bool
     {
         global $usr;
 
         $this->reset();
-        $this->type = $this->class_to_name($class);
+        $this->class = $class;
         if ($usr == null) {
             $this->set_usr(SYSTEM_USER_ID); // if the session user is not yet set, use the system user id to test the database compatibility
         } else {
@@ -823,11 +831,11 @@ class sql_creator
     }
 
     function sql_update(
-        string $id_field,
+        string     $id_field,
         string|int $id,
-        array $fields,
-        array $values,
-        bool $log_err = true): string
+        array      $fields,
+        array      $values,
+        bool       $log_err = true): string
     {
         $lib = new library();
         $id_field_par = '';
@@ -1018,19 +1026,19 @@ class sql_creator
             $field_lst[] = $this->id_field;
             if ($this->usr_query) {
                 // user can change the name of an object, that's why the target field list is either $usr_field_lst or $field_lst
-                if (!in_array($this->type, self::DB_TYPES_NOT_NAMED)) {
+                if (!in_array($this->class, self::DB_TYPES_NOT_NAMED)) {
                     $usr_field_lst[] = $this->name_field();
                 }
                 if (!$this->all_query) {
                     $field_lst[] = user::FLD_ID;
                 }
             } else {
-                if (!in_array($this->type, self::DB_TYPES_NOT_NAMED)) {
+                if (!in_array($this->class, self::DB_TYPES_NOT_NAMED)) {
                     $field_lst[] = $this->name_field();
                 }
             }
             // user cannot change the links like they can change the name, instead a link is removed and another link is created
-            if (in_array($this->type, sql_db::DB_TYPES_LINK)) {
+            if (in_array($this->class, sql_db::DB_TYPES_LINK)) {
                 // allow also using the set_fields method for link fields e.g. for more complex where cases
                 if ($this->id_from_field <> '') {
                     $field_lst[] = $this->id_from_field;
@@ -1274,7 +1282,7 @@ class sql_creator
         $join_id_field = '';
         if ($this->grp_query) {
             $sc_sub = clone $this;
-            $sc_sub->set_type($this->type);
+            $sc_sub->set_class($this->class);
             $sc_sub->sub_query = true;
             $sc_sub->set_usr($this->usr_id);
             $sc_sub->set_usr_num_fields($this->grp_field_lst);
@@ -1879,15 +1887,16 @@ class sql_creator
      */
     private function end_sql(string $sql, string $sql_statement_type = 'SELECT'): string
     {
+        $lib = new library();
         if ($sql_statement_type == self::INSERT) {
             if ($this->db_type == sql_db::POSTGRES) {
                 // return the database row id if the value is not a time series number
-                if ($this->type != sql_db::TBL_VALUE_TIME_SERIES_DATA
-                    and $this->type != sql_db::TBL_VALUE
-                    and $this->type != sql_db::TBL_RESULT
-                    and $this->type != sql_db::TBL_LANGUAGE_FORM
-                    and $this->type != sql_db::TBL_USER_OFFICIAL_TYPE
-                    and $this->type != sql_db::TBL_USER_TYPE) {
+                if ($this->class != sql_db::TBL_VALUE_TIME_SERIES_DATA
+                    and $this->class != $lib->class_to_name(value::class)
+                    and $this->class != sql_db::TBL_RESULT
+                    and $this->class != sql_db::TBL_LANGUAGE_FORM
+                    and $this->class != sql_db::TBL_USER_OFFICIAL_TYPE
+                    and $this->class != sql_db::TBL_USER_TYPE) {
                     $sql = $sql . ' RETURNING ' . $this->id_field;
                 }
             }
@@ -2002,10 +2011,10 @@ class sql_creator
                     }
                 } else {
                     // return the database row id if the value is not a time series number
-                    if ($this->type != sql_db::TBL_VALUE_TIME_SERIES_DATA
-                        and $this->type != sql_db::TBL_LANGUAGE_FORM
-                        and $this->type != sql_db::TBL_USER_OFFICIAL_TYPE
-                        and $this->type != sql_db::TBL_USER_TYPE) {
+                    if ($this->class != sql_db::TBL_VALUE_TIME_SERIES_DATA
+                        and $this->class != sql_db::TBL_LANGUAGE_FORM
+                        and $this->class != sql_db::TBL_USER_OFFICIAL_TYPE
+                        and $this->class != sql_db::TBL_USER_TYPE) {
                         $sql = $sql . ' RETURNING ' . $this->id_field . ';';
                     }
 
@@ -2033,7 +2042,7 @@ class sql_creator
                                 log_err('Execution of ' . $sql . ' failed due to ' . $sql_error);
                             }
                         } else {
-                            if ($this->type != sql_db::TBL_VALUE_TIME_SERIES_DATA) {
+                            if ($this->class != sql_db::TBL_VALUE_TIME_SERIES_DATA) {
                                 if (is_resource($sql_result) or $sql_result::class == 'PgSql\Result') {
                                     $result = pg_fetch_array($sql_result)[0];
                                 } else {
@@ -2128,12 +2137,14 @@ class sql_creator
 
     /**
      * get the database field name of the primary index of a database table
-     * @param string $type the database object name
+     * @param string $class the sandbox object class name
      * @return string the database primary index field name base of the object name set before
      */
-    function get_id_field_name(string $type): string
+    function get_id_field_name(string $class): string
     {
         $lib = new library();
+
+        $type = $lib->class_to_name($class);
 
         // exceptions for user overwrite tables
         // but not for the user type table, because this is not part of the sandbox tables
@@ -2265,10 +2276,10 @@ class sql_creator
     {
         global $debug;
         if ($usr_table) {
-            $this->table = sql_db::USER_PREFIX . $this->get_table_name($this->type);
+            $this->table = sql_db::USER_PREFIX . $this->get_table_name($this->class);
             $this->usr_only_query = true;
         } else {
-            $this->table = $this->get_table_name($this->type);
+            $this->table = $this->get_table_name($this->class);
             $this->table .= $ext;
         }
         log_debug('to "' . $this->table . '"', $debug - 20);
@@ -2283,13 +2294,16 @@ class sql_creator
     /**
      * functions for the standard naming of tables
      *
-     * @param string $type the database object name
+     * @param string $class the database object name
      * @return string the database table name
      */
-    function get_table_name(string $type): string
+    function get_table_name(string $class): string
     {
+        $lib = new library();
+        $tbl_name = $lib->class_to_name($class);
+
         // set the standard table name based on the type
-        $result = $type . "s";
+        $result = $tbl_name . "s";
         // exceptions from the standard table for 'nicer' names
         if ($result == 'value_time_seriess') {
             $result = 'value_time_series';
@@ -2339,18 +2353,14 @@ class sql_creator
 
     /**
      * the expect name field based on the given database object name
-     * @param string $type the name of the database object
      * @return string the field name of the unique database name used as an index
      */
-    private function name_field(string $type = ''): string
+    private function name_field(): string
     {
         global $debug;
 
         $lib = new library();
-
-        if ($type == '') {
-            $type = $this->type;
-        }
+        $type = $lib->class_to_name($this->class);
 
         // exceptions for user overwrite tables
         if (str_starts_with($type, sql_db::TBL_USER_PREFIX)) {

@@ -142,7 +142,7 @@ class value extends sandbox_value
     {
         parent::__construct($usr);
         $this->obj_type = sandbox::TYPE_VALUE;
-        $this->obj_name = sql_db::TBL_VALUE;
+        $this->obj_name = self::class;
 
         $this->rename_can_switch = UI_CAN_CHANGE_VALUE;
 
@@ -359,16 +359,12 @@ class value extends sandbox_value
         $ext = $this->grp->table_extension();
         $qp = new sql_par($class . $ext, true);
         $qp->name .= sql_db::FLD_ID;
-        $sc->set_type($class, false, $ext);
+        $sc->set_class($class, false, $ext);
         $sc->set_name($qp->name);
         $sc->set_id_field($this->id_field());
         $sc->set_fields(array_merge(self::FLD_NAMES, self::FLD_NAMES_NUM_USR, array(user::FLD_ID)));
 
-        if ($this->grp->is_prime()) {
-            $sc->add_where(group::FLD_ID, $this->grp->id());
-        } else {
-            $sc->add_where(group::FLD_ID, $this->grp->id());
-        }
+        $sc->add_where(group::FLD_ID, $this->grp->id());
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -399,9 +395,9 @@ class value extends sandbox_value
      */
     function load_sql(
         sql_creator $sc,
-        string $query_name,
-        string $class = self::class,
-        string $ext = ''
+        string      $query_name,
+        string      $class = self::class,
+        string      $ext = ''
     ): sql_par
     {
         $qp = parent::load_sql_multi($sc, $query_name, $class, $ext);
@@ -472,7 +468,7 @@ class value extends sandbox_value
         $sql_where = '';
         $sql_grp = '';
 
-        $sc->set_type($class, false, $ext);
+        $sc->set_class($class, false, $ext);
         if ($this->id() > 0) {
             $qp->name .= sql_db::FLD_ID;
         } elseif ($this->grp->id() > 0) {
@@ -1390,7 +1386,7 @@ class value extends sandbox_value
     function not_changed_sql(sql_db $db_con): sql_par
     {
         $ext = $this->grp->table_extension();
-        $db_con->set_type(self::class, false, $ext);
+        $db_con->set_class(self::class, false, $ext);
         return $db_con->load_sql_not_changed($this->id, $this->owner_id, $this->id_field());
     }
 
@@ -1482,7 +1478,7 @@ class value extends sandbox_value
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
                 $ext = $this->grp->table_extension();
-                $db_con->set_type($class, true, $ext);
+                $db_con->set_class($class, true, $ext);
                 $log_id = $db_con->insert(array(self::FLD_ID, user::FLD_ID), array($this->id, $this->user()->id()));
                 if ($log_id <= 0) {
                     log_err('Insert of user_value failed.');
@@ -1504,7 +1500,8 @@ class value extends sandbox_value
      */
     function load_sql_user_changes(sql_creator $sc, string $class = self::class): sql_par
     {
-        $sc->set_type(self::class, true);
+        $ext = $this->grp->table_extension();
+        $sc->set_class($class, true, $ext);
         // overwrite the standard id field name (value_id) with the main database id field for values "group_id"
         $sc->set_id_field($this->id_field());
         return parent::load_sql_user_changes($sc, $class);
@@ -1747,7 +1744,7 @@ class value extends sandbox_value
 
         $this->set_last_update(new DateTime());
         $ext = $this->grp()->table_extension();
-        $db_con->set_type(sql_db::TBL_VALUE . $ext);
+        $db_con->set_class(self::class, false, $ext);
         $qp = $this->sql_update($db_con->sql_creator(), array(value::FLD_LAST_UPDATE), array(sql_creator::NOW));
         try {
             $db_con->exe_par($qp);
@@ -1762,7 +1759,7 @@ class value extends sandbox_value
         log_debug('value->save_field_trigger_update group id "' . $this->grp->id() . '" for user ' . $this->user()->name . '');
         if ($this->id() > 0) {
             $job = new batch_job($this->user());
-            $job->set_type(batch_job_type_list::VALUE_UPDATE);
+            $job->set_class(batch_job_type_list::VALUE_UPDATE);
             $job->obj = $this;
             $job->add();
         } else {
@@ -1868,7 +1865,8 @@ class value extends sandbox_value
             $log->row_id = $this->id();
             $log->set_field(change_log_field::FLD_VALUE_GROUP);
             if ($log->add()) {
-                $db_con->set_type(sql_db::TBL_VALUE);
+                $ext = $this->grp->table_extension();
+                $db_con->set_class(self::class, false, $ext);
                 $result = $db_con->update($this->id,
                     array(group::FLD_ID),
                     array($this->grp->id()));
@@ -1975,8 +1973,8 @@ class value extends sandbox_value
      */
     function sql_update(
         sql_creator $sc,
-        array $fields = [],
-        array $values = []
+        array       $fields = [],
+        array       $values = []
     ): sql_par
     {
         $lib = new library();
@@ -1990,7 +1988,7 @@ class value extends sandbox_value
         $fld_name = implode('_', $lib->sql_name_shorten($fields));
         $qp->name .= '_update_' . $fld_name;
         $sc->set_name($qp->name);
-        $qp->sql = $sc->sql_update($this->id_field(),  $this->id(), $fields, $values);
+        $qp->sql = $sc->sql_update($this->id_field(), $this->id(), $fields, $values);
         $values[] = $this->id();
         $par_values = [];
         foreach (array_keys($values) as $i) {
@@ -2028,7 +2026,7 @@ class value extends sandbox_value
                 $msg = 'Insert';
                 $trace_link = log_err($msg . log::MSG_ERR_USING . $qp->sql . log::MSG_ERR_BECAUSE . $e->getMessage());
             }
-            //$db_con->set_type(sql_db::TBL_VALUE);
+            //$db_con->set_type(self::class);
             //$this->set_id($db_con->insert(array(group::FLD_ID, user::FLD_ID, self::FLD_VALUE, self::FLD_LAST_UPDATE), array($this->grp->id(), $this->user()->id, $this->number, sql_creator::NOW)));
             if ($this->id() != 0) {
                 // update the reference in the log

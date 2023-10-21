@@ -154,7 +154,7 @@ class value_phrase_link extends db_object_user
      */
     function load_sql_obj_vars(sql_db $db_con): sql_par
     {
-        $db_con->set_type(sql_db::TBL_VALUE_PHRASE_LINK);
+        $db_con->set_class(sql_db::TBL_VALUE_PHRASE_LINK);
         $qp = new sql_par(self::class);
         $sql_where = '';
 
@@ -265,7 +265,7 @@ class value_phrase_link extends db_object_user
         if ($db_rec->wrd->id <> $this->phr->id()) {
             $log = $this->log_upd($db_con);
             if ($log->add()) {
-                $db_con->set_type(sql_db::TBL_VALUE_PHRASE_LINK);
+                $db_con->set_class(sql_db::TBL_VALUE_PHRASE_LINK);
                 $result .= $db_con->update($this->id, phrase::FLD_ID, $this->phr->id());
             }
         }
@@ -310,7 +310,7 @@ class value_phrase_link extends db_object_user
 
         global $db_con;
         $db_con->set_usr($this->user()->id());
-        $db_con->set_type(sql_db::TBL_VALUE_PHRASE_LINK);
+        $db_con->set_class(sql_db::TBL_VALUE_PHRASE_LINK);
 
         if (!$this->used()) {
             // check if a new value is supposed to be added
@@ -332,7 +332,7 @@ class value_phrase_link extends db_object_user
                 $log = $this->log_add();
                 if ($log->id() > 0) {
                     // insert the new value_phrase_link
-                    $db_con->set_type(sql_db::TBL_VALUE_PHRASE_LINK);
+                    $db_con->set_class(sql_db::TBL_VALUE_PHRASE_LINK);
                     $this->id = $db_con->insert(array("group_id", "word_id"), array($this->val->id(), $this->phr->id()));
                     if ($this->id > 0) {
                         // update the id in the log
@@ -382,7 +382,7 @@ class value_phrase_link extends db_object_user
             if ($log->id() > 0) {
                 //$db_con = new mysql;
                 $db_con->usr_id = $this->user()->id();
-                $db_con->set_type(sql_db::TBL_VALUE_PHRASE_LINK);
+                $db_con->set_class(sql_db::TBL_VALUE_PHRASE_LINK);
                 $result .= $db_con->delete(array(value::FLD_ID, phrase::FLD_ID), array($this->val->id(), $this->phr->id()));
             }
         } else {

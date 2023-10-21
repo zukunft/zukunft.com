@@ -52,7 +52,7 @@ class value_phrase_link_list extends sandbox_list
      */
     function load_sql(sql_db $db_con, ?phrase $phr = null, ?value $val = null): sql_par
     {
-        $db_con->set_type(sql_db::TBL_VALUE_PHRASE_LINK);
+        $db_con->set_class(sql_db::TBL_VALUE_PHRASE_LINK);
         $qp = new sql_par(self::class);
         $sql_by = '';
 
@@ -75,7 +75,7 @@ class value_phrase_link_list extends sandbox_list
             $db_con->set_usr($this->user()->id());
             $db_con->set_fields(value_phrase_link::FLD_NAMES);
             if ($val != null) {
-                $db_con->set_join_fields(array(group::FLD_ID), sql_db::TBL_VALUE, group::FLD_ID, group::FLD_ID);
+                $db_con->set_join_fields(array(group::FLD_ID), value::class, group::FLD_ID, group::FLD_ID);
             } else {
                 $db_con->set_join_fields(array(phrase::FLD_ID), sql_db::TBL_PHRASE);
             }

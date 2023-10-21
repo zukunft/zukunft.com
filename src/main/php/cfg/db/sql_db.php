@@ -73,7 +73,6 @@ class sql_db
     const TBL_GROUP = 'group';
     const TBL_GROUP_LINK = 'group_link';
     const TBL_PHRASE_GROUP_TRIPLE_LINK = 'group_link';
-    const TBL_VALUE = 'value';
     const TBL_VALUE_TIME_SERIES = 'value_time_series';
     const TBL_VALUE_TIME_SERIES_DATA = 'value_ts_data';
     const TBL_VALUE_PHRASE_LINK = 'value_phrase_link';
@@ -88,8 +87,6 @@ class sql_db
     const TBL_FORMULA_ELEMENT = 'formula_element';
     const TBL_FORMULA_ELEMENT_TYPE = 'formula_element_type';
     const TBL_RESULT = 'result';
-    const TBL_RESULT_TWO = 'result_two';
-    const TBL_RESULT_BIG = 'result_big';
     const TBL_VIEW = 'view';
     const TBL_VIEW_TYPE = 'view_type';
     const TBL_COMPONENT = 'component';
@@ -143,7 +140,7 @@ class sql_db
     // e.g. sql_db::TBL_TRIPLE is a link which hase a name, but the generated name can be overwritten, so the standard field naming is not used
     const DB_TYPES_NOT_NAMED = [
         sql_db::TBL_TRIPLE,
-        sql_db::TBL_VALUE,
+        value::class,
         sql_db::TBL_VALUE_TIME_SERIES,
         sql_db::TBL_FORMULA_LINK,
         sql_db::TBL_RESULT,
@@ -220,7 +217,7 @@ class sql_db
     public ?int $usr_id = null;                     // the user id of the person who request the database changes
     private ?int $usr_view_id = null;               // the user id of the person which values should be returned e.g. an admin might want to check the data of an user
 
-    private ?string $type = '';                     // based of this database object type the table name and the standard fields are defined e.g. for type "word" the field "word_name" is used
+    private ?string $class = '';                    // based of this database object type the table name and the standard fields are defined e.g. for type "word" the field "word_name" is used
     private ?string $table = '';                    // name of the table that is used for the next query
     private ?string $id_field = '';                 // primary key field of the table used
     private ?string $id_from_field = '';            // only for link objects the id field of the source object
@@ -589,20 +586,18 @@ class sql_db
      * define the table that should be used for the next select, insert, update or delete statement
      * resets all previous db query settings such as fields, user_fields, so this should be the first statement when defining a database query
      * TODO check that this is always called directly before the query is created, so that
+     * TODO should be deprecated and the sql creator should be used instead
      *
      * @param string $class is a string that is used to select the table name, the id field and the name field
      * @param bool $usr_table if it is true the user table instead of the standard table is used
      * @return bool true if setting the type was successful
      */
-    function set_type(string $class, bool $usr_table = false): bool
+    function set_class(string $class, bool $usr_table = false, string $ext = ''): bool
     {
         global $usr;
 
-        $lib = new library();
-        $class = $lib->class_to_name($class);
-
         $this->reset();
-        $this->type = $class;
+        $this->class = $class;
         if ($usr == null) {
             $this->set_usr(SYSTEM_USER_ID); // if the session user is not yet set, use the system user id to test the database compatibility
         } else {
@@ -612,15 +607,15 @@ class sql_db
                 $this->set_usr($usr->id()); // by default use the session user id
             }
         }
-        $this->set_table($usr_table);
+        $this->set_table($usr_table, $ext);
         $this->set_id_field();
         $this->set_name_field();
         return true;
     }
 
-    function get_type(): string
+    function get_class(): string
     {
-        return $this->type;
+        return $this->class;
     }
 
     /**
@@ -1086,6 +1081,7 @@ class sql_db
 
     private function set_field_statement($has_id): void
     {
+        $lib = new library();
         if ($has_id) {
             // add the fields that part of all standard tables so id and name on top of the field list
             $field_lst = [];
@@ -1093,19 +1089,19 @@ class sql_db
             $field_lst[] = $this->id_field;
             if ($this->usr_query) {
                 // user can change the name of an object, that's why the target field list is either $usr_field_lst or $field_lst
-                if (!in_array($this->type, sql_db::DB_TYPES_NOT_NAMED)) {
+                if (!in_array($this->class, sql_db::DB_TYPES_NOT_NAMED)) {
                     $usr_field_lst[] = $this->name_field;
                 }
                 if (!$this->all_query) {
                     $field_lst[] = user::FLD_ID;
                 }
             } else {
-                if (!in_array($this->type, sql_db::DB_TYPES_NOT_NAMED)) {
+                if (!in_array($this->class, sql_db::DB_TYPES_NOT_NAMED)) {
                     $field_lst[] = $this->name_field;
                 }
             }
             // user cannot change the links like they can change the name, instead a link is removed and another link is created
-            if (in_array($this->type, sql_db::DB_TYPES_LINK)) {
+            if (in_array($this->class, sql_db::DB_TYPES_LINK)) {
                 // allow also using the set_fields method for link fields e.g. for more complex where cases
                 if ($this->id_from_field <> '') {
                     $field_lst[] = $this->id_from_field;
@@ -1337,8 +1333,11 @@ class sql_db
     /**
      * functions for the standard naming of tables
      */
-    function get_table_name($type): string
+    function get_table_name(string $class): string
     {
+        $lib = new library();
+        $type = $lib->class_to_name($class);
+
         // set the standard table name based on the type
         $result = $type . "s";
         // exceptions from the standard table for 'nicer' names
@@ -1391,30 +1390,36 @@ class sql_db
     /**
      * similar to get_table_name, but for direct use in sql statements
      */
-    function get_table_name_esc($type): string
+    function get_table_name_esc(string $class): string
     {
-        return $this->name_sql_esc($this->get_table_name($type));
+        return $this->name_sql_esc($this->get_table_name($class));
     }
 
     /**
      * set the table name based on the already set type / class
      * TODO use always the user table flag
      * @param $usr_table
+     * @param string $ext the table name extension e.g. to switch between standard and prime values
      * @return void
      */
-    private function set_table($usr_table = false): void
+    private function set_table($usr_table = false, string $ext = ''): void
     {
         global $debug;
+
+        $lib = new library();
+        $type = $lib->class_to_name($this->class);
+
         if ($usr_table) {
-            $this->table = sql_db::USER_PREFIX . $this->get_table_name($this->type);
+            $this->table = sql_db::USER_PREFIX . $this->get_table_name($type);
             $this->usr_only_query = true;
         } else {
-            $this->table = $this->get_table_name($this->type);
+            $this->table = $this->get_table_name($type);
+            $this->table .= $ext;
         }
         log_debug('to "' . $this->table . '"', $debug - 20);
     }
 
-    function get_id_field_name($type): string
+    function get_id_field_name(string $type): string
     {
         $lib = new library();
 
@@ -1437,10 +1442,17 @@ class sql_db
 
     function set_id_field(string $given_name = ''): void
     {
+        $lib = new library();
+        $type = $lib->class_to_name($this->class);
+
         if ($given_name != '') {
             $this->id_field = $given_name;
         } else {
-            $this->id_field = $this->get_id_field_name($this->type);
+            $this->id_field = $this->get_id_field_name($type);
+        }
+        // exceptions to be adjusted
+        if ($this->id_field == 'blocked_ips_id') {
+            $this->id_field = 'user_blocked_id';
         }
     }
 
@@ -1516,7 +1528,10 @@ class sql_db
     {
         global $debug;
 
-        $result = $this->get_name_field($this->type);
+        $lib = new library();
+        $type = $lib->class_to_name($this->class);
+
+        $result = $this->get_name_field($type);
         log_debug('to "' . $result . '"', $debug - 20);
         $this->name_field = $result;
     }
@@ -1962,9 +1977,9 @@ class sql_db
     function get_value($field_name, $id_name, $id)
     {
         $result = '';
-        log_debug($field_name . ' from ' . $this->type . ' where ' . $id_name . ' = ' . $this->sf($id));
+        log_debug($field_name . ' from ' . $this->class . ' where ' . $id_name . ' = ' . $this->sf($id));
 
-        if ($this->type <> '') {
+        if ($this->class <> '') {
             $this->set_table();
 
             // set fallback values
@@ -2003,7 +2018,7 @@ class sql_db
     function get_value_2key($field_name, $id1_name, $id1, $id2_name, $id2)
     {
         $result = '';
-        log_debug($field_name . ' from ' . $this->type . ' where ' . $id1_name . ' = ' . $id1 . ' and ' . $id2_name . ' = ' . $id2);
+        log_debug($field_name . ' from ' . $this->class . ' where ' . $id1_name . ' = ' . $id1 . ' and ' . $id2_name . ' = ' . $id2);
 
         $this->set_table();
         $sql = "SELECT " . $this->name_sql_esc($field_name) .
@@ -2037,7 +2052,7 @@ class sql_db
     function get_id($name): string
     {
         $result = '';
-        log_debug('for "' . $name . '" of the db object "' . $this->type . '"');
+        log_debug('for "' . $name . '" of the db object "' . $this->class . '"');
 
         $this->set_table();
         $this->set_id_field();
@@ -2054,7 +2069,7 @@ class sql_db
     function get_name($id)
     {
         $result = '';
-        log_debug('for "' . $id . '" of the db object "' . $this->type . '"');
+        log_debug('for "' . $id . '" of the db object "' . $this->class . '"');
 
         $this->set_table();
         $this->set_id_field();
@@ -2071,7 +2086,7 @@ class sql_db
     function get_id_2key($name, $field2_name, $field2_value)
     {
         $result = '';
-        log_debug('for "' . $name . ',' . $field2_name . ',' . $field2_value . '" of the db object "' . $this->type . '"');
+        log_debug('for "' . $name . ',' . $field2_name . ',' . $field2_value . '" of the db object "' . $this->class . '"');
 
         $this->set_table();
         $this->set_id_field();
@@ -2087,7 +2102,7 @@ class sql_db
      */
     function sql_std_lst_usr(): string
     {
-        log_debug($this->type);
+        log_debug($this->class);
 
         $this->set_table();
         $this->set_id_field();
@@ -2102,7 +2117,7 @@ class sql_db
               ORDER BY t.".$this->name_field.";";
         */
         $sql_where = '';
-        if ($this->type == 'view') {
+        if ($this->class == 'view') {
             $sql_where = ' WHERE t.code_id IS NULL ';
         }
         if ($this->db_type == sql_db::POSTGRES) {
@@ -2136,7 +2151,7 @@ class sql_db
      */
     function sql_std_lst(): string
     {
-        log_debug("sql_db->sql_std_lst (" . $this->type . ")");
+        log_debug("sql_db->sql_std_lst (" . $this->class . ")");
 
         $this->set_table();
         $this->set_id_field();
@@ -2255,7 +2270,7 @@ class sql_db
         }
 
         if ($result == '') {
-            log_err('Internal error: to find a ' . $this->type . ' either the id, name or code_id must be set', 'sql->set_where');
+            log_err('Internal error: to find a ' . $this->class . ' either the id, name or code_id must be set', 'sql->set_where');
         } else {
             $this->where = ' WHERE ' . $result;
         }
@@ -2285,7 +2300,7 @@ class sql_db
             // select one link by the from and to id
         } elseif ($id_from <> 0 and $id_to <> 0) {
             if ($this->id_from_field == '' or $this->id_to_field == '') {
-                log_err('Internal error: to find a ' . $this->type . ' the link fields must be defined', 'sql->set_where_link_no_fld');
+                log_err('Internal error: to find a ' . $this->class . ' the link fields must be defined', 'sql->set_where_link_no_fld');
             } else {
                 if ($this->usr_query or $this->join <> '') {
                     $result .= sql_db::STD_TBL . '.';
@@ -2299,7 +2314,7 @@ class sql_db
                 $result .= $this->id_to_field . " = " . $this->par_name();
                 if ($id_type <> 0) {
                     if ($this->id_link_field == '') {
-                        log_err('Internal error: to find a ' . $this->type . ' the link type field must be defined', 'sql->set_where_link_no_fld');
+                        log_err('Internal error: to find a ' . $this->class . ' the link type field must be defined', 'sql->set_where_link_no_fld');
                     } else {
                         $result .= ' AND ';
                         if ($this->usr_query or $this->join <> '') {
@@ -2313,7 +2328,7 @@ class sql_db
             }
         } elseif ($id_from <> 0) {
             if ($this->id_from_field == '') {
-                log_err('Internal error: to find a ' . $this->type . ' the from field must be defined', 'sql->set_where_link_no_fld');
+                log_err('Internal error: to find a ' . $this->class . ' the from field must be defined', 'sql->set_where_link_no_fld');
             } else {
                 if ($this->usr_query or $this->join <> '') {
                     $result .= sql_db::STD_TBL . '.';
@@ -2323,7 +2338,7 @@ class sql_db
             }
         } elseif ($id_to <> 0) {
             if ($this->id_to_field == '') {
-                log_err('Internal error: to find a ' . $this->type . ' the to field must be defined', 'sql->set_where_link_no_fld');
+                log_err('Internal error: to find a ' . $this->class . ' the to field must be defined', 'sql->set_where_link_no_fld');
             } else {
                 if ($this->usr_query or $this->join <> '') {
                     $result .= sql_db::STD_TBL . '.';
@@ -2332,11 +2347,11 @@ class sql_db
                 $result .= $this->id_to_field . ' = ' . $this->par_name();
             }
         } else {
-            log_err('Internal error: to find a ' . $this->type . ' the a field must be defined', 'sql->set_where_link_no_fld');
+            log_err('Internal error: to find a ' . $this->class . ' the a field must be defined', 'sql->set_where_link_no_fld');
         }
 
         if ($result == '') {
-            log_err('Internal error: to find a ' . $this->type . ' either the id or the from and to id must be set', 'sql->set_where_link_no_fld');
+            log_err('Internal error: to find a ' . $this->class . ' either the id or the from and to id must be set', 'sql->set_where_link_no_fld');
         } else {
             $this->where = ' WHERE ' . $result;
         }
@@ -2387,7 +2402,7 @@ class sql_db
         }
 
         if ($result == '') {
-            log_err('Internal error: to find a ' . $this->type . ' either the id, name or code_id must be set', 'sql->set_where');
+            log_err('Internal error: to find a ' . $this->class . ' either the id, name or code_id must be set', 'sql->set_where');
         } else {
             $this->where = ' WHERE ' . $result;
         }
@@ -2962,7 +2977,7 @@ class sql_db
     function count(string $type_name = '', string $id_fld = ''): ?int
     {
         if ($type_name != '') {
-            $this->set_type($type_name);
+            $this->set_class($type_name);
         }
         return $this->get1_int($this->count_qp());
     }
@@ -2974,10 +2989,10 @@ class sql_db
     function count_qp(string $class_name = '', string $id_fld = ''): sql_par
     {
         if ($class_name == '') {
-            $class_name = $this->type;
+            $class_name = $this->class;
         }
         $qp = new sql_par($class_name);
-        $qp->name = $this->type . '_count';
+        $qp->name = $this->class . '_count';
         $qp->sql = $this->count_sql($qp->name, $id_fld);
         return $qp;
     }
@@ -2990,10 +3005,10 @@ class sql_db
     function count_sql(string $sql_name = '', string $id_fld = ''): string
     {
         if ($id_fld == '') {
-            $id_fld = $this->type . self::FLD_EXT_ID;
+            $id_fld = $this->class . self::FLD_EXT_ID;
         }
         if ($sql_name == '') {
-            $sql_name = $this->type . '_count';
+            $sql_name = $this->class . '_count';
         }
         $sql = 'PREPARE ' . $sql_name . ' AS
                     SELECT count(' . self::STD_TBL . '.' . $id_fld . ') + count(' . self::USR_TBL . '.' . $id_fld . ') AS count
@@ -3113,7 +3128,7 @@ class sql_db
      */
     function load_sql_not_changed(int $id, ?int $owner_id = 0, string $id_field = ''): sql_par
     {
-        $qp = new sql_par($this->type);
+        $qp = new sql_par($this->class);
         $qp->name .= 'not_changed';
         if ($owner_id > 0) {
             $qp->name .= '_not_owned';
@@ -3150,7 +3165,7 @@ class sql_db
     function missing_owner_sql(): sql_par
     {
         $qp = new sql_par('missing_owner');
-        $qp->name .= $this->type;
+        $qp->name .= $this->class;
         $this->set_name($qp->name);
         $this->set_usr($this->usr_id);
         $this->set_table();
@@ -3168,7 +3183,7 @@ class sql_db
     function missing_owner(): array
     {
         global $debug;
-        log_debug("sql_db->missing_owner (" . $this->type . ")", $debug - 4);
+        log_debug("sql_db->missing_owner (" . $this->class . ")", $debug - 4);
         $qp = $this->missing_owner_sql();
         return $this->get($qp);
     }
@@ -3178,7 +3193,7 @@ class sql_db
      */
     function set_default_owner(): bool
     {
-        log_debug("sql_db->set_default_owner (" . $this->type . ")");
+        log_debug("sql_db->set_default_owner (" . $this->class . ")");
         $result = true;
 
         // get the system user id
@@ -3266,12 +3281,12 @@ class sql_db
                     }
                 } else {
                     // return the database row id if the value is not a time series number
-                    if ($this->type != sql_db::TBL_VALUE_TIME_SERIES_DATA
-                        and $this->type != sql_db::TBL_VALUE
-                        and $this->type != sql_db::TBL_RESULT
-                        and $this->type != sql_db::TBL_LANGUAGE_FORM
-                        and $this->type != sql_db::TBL_USER_OFFICIAL_TYPE
-                        and $this->type != sql_db::TBL_USER_TYPE) {
+                    if ($this->class != sql_db::TBL_VALUE_TIME_SERIES_DATA
+                        and $this->class != value::class
+                        and $this->class != sql_db::TBL_RESULT
+                        and $this->class != sql_db::TBL_LANGUAGE_FORM
+                        and $this->class != sql_db::TBL_USER_OFFICIAL_TYPE
+                        and $this->class != sql_db::TBL_USER_TYPE) {
                         $sql = $sql . ' RETURNING ' . $this->id_field . ';';
                     }
 
@@ -3299,7 +3314,7 @@ class sql_db
                                 log_err('Execution of ' . $sql . ' failed due to ' . $sql_error);
                             }
                         } else {
-                            if ($this->type != sql_db::TBL_VALUE_TIME_SERIES_DATA) {
+                            if ($this->class != sql_db::TBL_VALUE_TIME_SERIES_DATA) {
                                 if (is_resource($sql_result) or $sql_result::class == 'PgSql\Result') {
                                     $result = pg_fetch_array($sql_result)[0];
                                 } else {
@@ -3366,7 +3381,7 @@ class sql_db
      */
     function add_id($name): int
     {
-        log_debug($name . ' to ' . $this->type);
+        log_debug($name . ' to ' . $this->class);
 
         $this->set_table();
         $this->set_name_field();
@@ -3381,7 +3396,7 @@ class sql_db
      */
     function add_id_2key($name, $field2_name, $field2_value): int
     {
-        log_debug($name . ',' . $field2_name . ',' . $field2_value . ' to ' . $this->type);
+        log_debug($name . ',' . $field2_name . ',' . $field2_value . ' to ' . $this->class);
 
         $this->set_table();
         $this->set_name_field();
@@ -3402,7 +3417,7 @@ class sql_db
         global $debug;
         $lib = new library();
 
-        log_debug('of ' . $this->type . ' row ' . $lib->dsp_var($id) . ' ' . $lib->dsp_var($fields) . ' with "' . $lib->dsp_var($values) . '" for user ' . $this->usr_id, $debug - 7);
+        log_debug('of ' . $this->class . ' row ' . $lib->dsp_var($id) . ' ' . $lib->dsp_var($fields) . ' with "' . $lib->dsp_var($values) . '" for user ' . $this->usr_id, $debug - 7);
 
         $result = true;
 
@@ -3423,9 +3438,9 @@ class sql_db
 
         // set the where clause user sandbox? ('.substr($this->type,0,4).')');
         $sql_where = ' WHERE ' . $this->id_field . ' = ' . $this->sf($id);
-        if (substr($this->type, 0, 4) == 'user') {
+        if (substr($this->class, 0, 4) == 'user') {
             // ... but not for the user table itself
-            if ($this->type <> sql_db::TBL_USER and $this->type <> sql_db::TBL_USER_PROFILE and $this->type <> sql_db::TBL_USER_TYPE) {
+            if ($this->class <> sql_db::TBL_USER and $this->class <> sql_db::TBL_USER_PROFILE and $this->class <> sql_db::TBL_USER_TYPE) {
                 $sql_where .= ' AND user_id = ' . $this->usr_id;
             }
         }
@@ -3483,9 +3498,9 @@ class sql_db
     {
         $lib = new library();
         if (is_array($id_fields)) {
-            log_debug('in "' . $this->type . '" WHERE "' . $lib->dsp_array($id_fields) . '" IS "' . $lib->dsp_array($id_values) . '" for user ' . $this->usr_id);
+            log_debug('in "' . $this->class . '" WHERE "' . $lib->dsp_array($id_fields) . '" IS "' . $lib->dsp_array($id_values) . '" for user ' . $this->usr_id);
         } else {
-            log_debug('in "' . $this->type . '" WHERE "' . $id_fields . '" IS "' . $id_values . '" for user ' . $this->usr_id);
+            log_debug('in "' . $this->class . '" WHERE "' . $id_fields . '" IS "' . $id_values . '" for user ' . $this->usr_id);
 
         }
 
@@ -3513,7 +3528,7 @@ class sql_db
         }
 
         log_debug('sql "' . $sql . '"');
-        return $this->exe_try('Deleting of ' . $this->type, $sql, '', array(), sys_log_level::FATAL);
+        return $this->exe_try('Deleting of ' . $this->class, $sql, '', array(), sys_log_level::FATAL);
     }
 
     /*
@@ -3671,7 +3686,7 @@ class sql_db
     function seq_reset(string $type): string
     {
         $msg = '';
-        $this->set_type($type);
+        $this->set_class($type);
         $sql_max = 'SELECT MAX(' . $this->name_sql_esc($this->id_field) . ') AS max_id FROM ' . $this->name_sql_esc($this->table) . ';';
         // $db_con->set_fields(array('MAX(group_id) AS max_id'));
         // $sql_max = $db_con->select();

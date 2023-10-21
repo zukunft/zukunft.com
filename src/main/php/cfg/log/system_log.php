@@ -214,7 +214,7 @@ class system_log extends db_id_object
     function load_sql(sql_creator $sc, string $query_name = sql_db::FLD_ID, string $class = self::class): sql_par
     {
         $qp = parent::load_sql($sc, $query_name, $class);
-        $sc->set_type(sql_db::TBL_SYS_LOG);
+        $sc->set_class(sql_db::TBL_SYS_LOG);
 
         $sc->set_name($qp->name);
         $sc->set_fields(self::FLD_NAMES);
@@ -294,7 +294,7 @@ class system_log extends db_id_object
         log_debug();
         $result = true;
         if ($log->add()) {
-            $db_con->set_type(sql_db::TBL_SYS_LOG);
+            $db_con->set_class(sql_db::TBL_SYS_LOG);
             $result = $db_con->update($this->id(), $log->field(), $log->new_id);
         }
         return $result;
@@ -335,7 +335,7 @@ class system_log extends db_id_object
 
         // build the database object because the is anyway needed
         $db_con->set_usr($this->user()->id());
-        $db_con->set_type(sql_db::TBL_SYS_LOG);
+        $db_con->set_class(sql_db::TBL_SYS_LOG);
 
         if ($this->id() > 0) {
             $db_rec = new system_log;

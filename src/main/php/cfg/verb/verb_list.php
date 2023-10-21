@@ -123,7 +123,7 @@ class verb_list extends type_list
         }
 
         if ($qp->name != '') {
-            $db_con->set_type(sql_db::TBL_TRIPLE);
+            $db_con->set_class(sql_db::TBL_TRIPLE);
             $db_con->set_name($qp->name);
             $db_con->set_usr($this->user()->id());
             $db_con->set_usr_num_fields(array(sandbox::FLD_EXCLUDED));
@@ -204,7 +204,7 @@ class verb_list extends type_list
         string      $query_name = 'all',
         string      $order_field = verb::FLD_ID): sql_par
     {
-        $sc->set_type(verb::class);
+        $sc->set_class(verb::class);
         $qp = new sql_par($class);
         $qp->name = $class . '_' . $query_name;
 

@@ -145,7 +145,7 @@ class value_time_series extends sandbox_value
      */
     function load_standard_sql(sql_creator $sc, string $class = self::class): sql_par
     {
-        $sc->set_type(self::class);
+        $sc->set_class(self::class);
         $sc->set_fields(array_merge(self::FLD_NAMES, self::FLD_NAMES_NUM_USR));
 
         return parent::load_standard_sql($sc, $class);
@@ -164,7 +164,7 @@ class value_time_series extends sandbox_value
         $qp = parent::load_sql_obj_vars($sc, $class);
         $qp->name .= $query_name;
 
-        $sc->set_type(self::class);
+        $sc->set_class($class);
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
         $sc->set_fields(self::FLD_NAMES);
@@ -249,7 +249,7 @@ class value_time_series extends sandbox_value
         // log the insert attempt first
         $log = $this->log_add();
         if ($log->id() > 0) {
-            $db_con->set_type(sql_db::TBL_VALUE_TIME_SERIES);
+            $db_con->set_class(sql_db::TBL_VALUE_TIME_SERIES);
             $this->id = $db_con->insert(
                 array(group::FLD_ID, user::FLD_ID, self::FLD_LAST_UPDATE),
                 array($this->grp->id(), $this->user()->id, sql_creator::NOW));
@@ -289,7 +289,7 @@ class value_time_series extends sandbox_value
         $result = '';
 
         // build the database object because the is anyway needed
-        $db_con->set_type(sql_db::TBL_VALUE_TIME_SERIES);
+        $db_con->set_class(sql_db::TBL_VALUE_TIME_SERIES);
         $db_con->set_usr($this->user()->id());
 
         // check if a new time series is supposed to be added

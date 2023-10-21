@@ -140,7 +140,7 @@ class component_list extends sandbox_list
     function load_sql(sql_creator $sc, string $class = self::class): sql_par
     {
         $qp = new sql_par($class);
-        $sc->set_type(sql_db::TBL_COMPONENT);
+        $sc->set_class(sql_db::TBL_COMPONENT);
         $sc->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
         $sc->set_usr($this->user()->id());
         $sc->set_fields(component::FLD_NAMES);

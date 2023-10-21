@@ -156,7 +156,8 @@ class sandbox_list extends base_list
         $qp = new sql_par($sbx::class, false, true);
         $qp->name .= 'names';
 
-        $sc->set_type($lib->class_to_name($sbx::class));
+        //$sc->set_class($lib->class_to_name($sbx::class));
+        $sc->set_class($sbx::class);
         $sc->set_name($qp->name);  // assign incomplete name to force the usage of the user as a parameter
         $sc->set_usr($this->user()->id());
         $sc->set_fields(array($sbx->id_field()));

@@ -78,7 +78,7 @@ if ($usr->id() > 0) {
 
             // save activation key
             $key = getRandomKey();
-            $db_con->set_type(sql_db::TBL_USER);
+            $db_con->set_class(sql_db::TBL_USER);
             $db_con->set_usr($usr->id());
             if (!$db_con->update($db_usr->id(), array("activation_key", "activation_key_timeout"), array($db_con->sf($key), 'NOW() + INTERVAL 1 DAY'))) {
                 log_err('Saving of activation key failed for user ' . $db_usr->id(), 'login_reset');

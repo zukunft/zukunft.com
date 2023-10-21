@@ -150,7 +150,7 @@ class triple_list extends sandbox_list
      */
     function load_sql(sql_creator $sc): sql_par
     {
-        $sc->set_type(triple::class);
+        $sc->set_class(triple::class);
         $qp = new sql_par(self::class);
         $sc->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
         $sc->set_usr($this->user()->id());
@@ -420,7 +420,7 @@ class triple_list extends sandbox_list
                 ' . $db_con->get_usr_field(phrase::FLD_TYPE, 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_VAL, phrase::FLD_TYPE . $pos) . ',
                 ' . $db_con->get_usr_field(view::FLD_ID, 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_VAL, view::FLD_ID . $pos) . ',
                 ' . $db_con->get_usr_field(sandbox::FLD_EXCLUDED, 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_VAL, sandbox::FLD_EXCLUDED . $pos) . ',
-                  t' . $pos . '.' . $db_con->get_table_name_esc(sql_db::TBL_VALUE) . ' AS values' . $pos;
+                  t' . $pos . '.' . $db_con->get_table_name_esc(value::class) . ' AS values' . $pos;
     }
 
     private function load_wrd_from($pos): string

@@ -945,17 +945,15 @@ class test_base
      */
     function assert_sql_by_id(sql_db $db_con, object $usr_obj): bool
     {
-        $lib = new library();
-        $class = $lib->class_to_name($usr_obj::class);
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $usr_obj->load_sql_by_id($db_con->sql_creator(), 1, $class);
+        $qp = $usr_obj->load_sql_by_id($db_con->sql_creator(), 1, $usr_obj::class);
         $result = $this->assert_qp($qp, $db_con->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
-            $qp = $usr_obj->load_sql_by_id($db_con->sql_creator(), 1, $class);
+            $qp = $usr_obj->load_sql_by_id($db_con->sql_creator(), 1, $usr_obj::class);
             $result = $this->assert_qp($qp, $db_con->db_type);
         }
         return $result;
