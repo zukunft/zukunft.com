@@ -2,8 +2,10 @@
 
 /*
 
-    model/helper/db_object.php - a base object for all model database objects which just contains the unique id
-    --------------------------
+    model/helper/db_object_non_seq_id.php - a base object for all model database objects which have a custom unique id
+    -------------------------------------
+
+    similar to db_object_seq_id
 
 
     This file is part of zukunft.com - calc with words
@@ -37,7 +39,7 @@ include_once MODEL_HELPER_PATH . 'db_object.php';
 use api\system\db_object as db_object_api;
 use cfg\db\sql_creator;
 
-class db_id_object extends db_object
+class db_object_non_seq_id extends db_object
 {
 
     /*
@@ -46,7 +48,7 @@ class db_id_object extends db_object
 
     // database fields that are used in all model objects
     // the database id is the unique prime key
-    protected int $id;
+    protected int|string $id;
 
 
     /*
@@ -58,7 +60,7 @@ class db_id_object extends db_object
      */
     function __construct()
     {
-        $this->set_id(0);
+        $this->id = 0;
     }
 
     /**
@@ -91,18 +93,18 @@ class db_id_object extends db_object
 
     /**
      * set the unique database id of a database object
-     * @param int $id used in the row mapper and to set a dummy database id for unit tests
+     * @param int|string $id used in the row mapper and to set a dummy database id for unit tests
      */
-    function set_id(int $id): void
+    function set_id(int|string $id): void
     {
         $this->id = $id;
     }
 
     /**
-     * @return int the database id which is not 0 if the object has been saved
+     * @return int|string the database id which is not 0 if the object has been saved
      * the internal null value is used to detect if database saving has been tried
      */
-    function id(): int
+    function id(): int|string
     {
         return $this->id;
     }
@@ -137,10 +139,10 @@ class db_id_object extends db_object
      * create an SQL statement to retrieve a user sandbox object by id from the database
      *
      * @param sql_creator $sc with the target db_type set
-     * @param int $id the id of the user sandbox object
+     * @param int|string $id the id of the user sandbox object
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql_creator $sc, int $id): sql_par
+    function load_sql_by_id(sql_creator $sc, int|string $id): sql_par
     {
         return parent::load_sql_by_id_str($sc, $id);
     }
@@ -148,9 +150,9 @@ class db_id_object extends db_object
     /**
      * load one database row e.g. word, triple, value, formula, result, view, component or log entry from the database
      * @param sql_par $qp the query parameters created by the calling function
-     * @return int the id of the object found and zero if nothing is found
+     * @return int|string the id of the object found and zero if nothing is found
      */
-    protected function load(sql_par $qp): int
+    protected function load(sql_par $qp): int|string
     {
         parent::load_without_id_return($qp);
         return $this->id();
@@ -167,7 +169,7 @@ class db_id_object extends db_object
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_db_obj(db_id_object $db_obj, object $test_obj = null): user_message
+    function import_db_obj(db_object_non_seq_id $db_obj, object $test_obj = null): user_message
     {
         $result = new user_message();
         // add a dummy id for unit testing
@@ -215,27 +217,16 @@ class db_id_object extends db_object
 
     /**
      * load a row from the database selected by id
-     * @param int $id the id of the word, triple, formula, verb, view or view component
+     * @param int|string $id the id of the word, triple, formula, verb, view or view component
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_id(int $id): int
+    function load_by_id(int|string $id): int
     {
         global $db_con;
 
         log_debug($id);
         $qp = $this->load_sql_by_id($db_con->sql_creator(), $id);
         return $this->load($qp);
-    }
-
-    /**
-     * load a row from the database selected by name (only used by named objects)
-     * @param string $name the name of the word, triple, formula, verb, view or view component
-     * @param string $class the name of the child class from where the call has been triggered
-     * @return int the id of the object found and zero if nothing is found
-     */
-    function load_by_name(string $name, string $class = ''): int
-    {
-        return 0;
     }
 
 

@@ -60,7 +60,7 @@ use cfg\combine_object;
 use cfg\component\component;
 use cfg\component\component_list;
 use cfg\config;
-use cfg\db_id_object;
+use cfg\db_object_seq_id;
 use cfg\fig_ids;
 use cfg\formula;
 use cfg\formula_list;
@@ -74,6 +74,7 @@ use cfg\result_list;
 use cfg\sandbox;
 use cfg\sandbox_link_named;
 use cfg\sandbox_named;
+use cfg\sandbox_value;
 use cfg\source;
 use cfg\sql_db;
 use cfg\sql_par;
@@ -735,15 +736,15 @@ class test_base
      *
      * @param string $dsp_code_id the code id of the view that should be tested
      * @param user $usr to define for which user the view should be created
-     * @param db_id_object|null $dbo the database object that should be shown
+     * @param db_object_seq_id|null $dbo the database object that should be shown
      * @param int $id the id of the database object that should be loaded and send to the frontend
      * @return bool true if the generated view matches the expected
      */
     function assert_view(
-        string        $dsp_code_id,
-        user          $usr,
-        ?db_id_object $dbo = null,
-        int           $id = 0): bool
+        string            $dsp_code_id,
+        user              $usr,
+        ?db_object_seq_id $dbo = null,
+        int               $id = 0): bool
     {
         $lib = new library();
 
@@ -964,10 +965,10 @@ class test_base
      * for all allowed SQL database dialects
      *
      * @param sql_db $db_con does not need to be connected to a real database
-     * @param sandbox $usr_obj the user sandbox object e.g. a word
+     * @param sandbox|sandbox_value $usr_obj the user sandbox object e.g. a word
      * @return bool true if all tests are fine
      */
-    function assert_sql_standard(sql_db $db_con, sandbox $usr_obj): bool
+    function assert_sql_standard(sql_db $db_con, sandbox|sandbox_value $usr_obj): bool
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
@@ -988,10 +989,10 @@ class test_base
      * e.g. the value a user has changed of word, triple, value or formulas
      *
      * @param sql_db $db_con does not need to be connected to a real database
-     * @param sandbox $usr_obj the user sandbox object e.g. a word
+     * @param sandbox|sandbox_value $usr_obj the user sandbox object e.g. a word
      * @return bool true if all tests are fine
      */
-    function assert_sql_user_changes(sql_db $db_con, sandbox $usr_obj): bool
+    function assert_sql_user_changes(sql_db $db_con, sandbox|sandbox_value $usr_obj): bool
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
@@ -1549,24 +1550,24 @@ class test_base
      *
      * @param sql_db $db_con does not need to be connected to a real database
      * @param object $usr_obj the user sandbox object e.g. a word
-     * @param string $db_type to define the database type if it does not match the class
+     * @param string $class to define the database type if it does not match the class
      * @return bool true if all tests are fine
      */
-    function assert_sql_by_obj_vars(sql_db $db_con, object $usr_obj, string $db_type = ''): bool
+    function assert_sql_by_obj_vars(sql_db $db_con, object $usr_obj, string $class = ''): bool
     {
-        if ($db_type == '') {
-            $db_type = get_class($usr_obj);
+        if ($class == '') {
+            $class = get_class($usr_obj);
         }
 
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $usr_obj->load_sql_obj_vars($db_con, $db_type);
+        $qp = $usr_obj->load_sql_obj_vars($db_con, $class);
         $result = $this->assert_qp($qp, $db_con->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
-            $qp = $usr_obj->load_sql_obj_vars($db_con, $db_type);
+            $qp = $usr_obj->load_sql_obj_vars($db_con, $class);
             $result = $this->assert_qp($qp, $db_con->db_type);
         }
         return $result;
@@ -1579,7 +1580,7 @@ class test_base
      * @param string $name the name
      * @return bool true if all tests are fine
      */
-    function assert_load(db_id_object $usr_obj, string $name): bool
+    function assert_load(db_object_seq_id $usr_obj, string $name): bool
     {
         // check the loading via id and check the name
         $usr_obj->load_by_id(1, $usr_obj::class);
@@ -1621,10 +1622,10 @@ class test_base
      * e.g. word, triple, value or formulas
      *
      * @param sql_db $db_con does not need to be connected to a real database
-     * @param sandbox $usr_obj the user sandbox object e.g. a word
+     * @param sandbox|sandbox_value $usr_obj the user sandbox object e.g. a word
      * @return bool true if all tests are fine
      */
-    function assert_sql_not_changed(sql_db $db_con, sandbox $usr_obj): bool
+    function assert_sql_not_changed(sql_db $db_con, sandbox|sandbox_value $usr_obj): bool
     {
         // check the Postgres query syntax
         $usr_obj->owner_id = 0;

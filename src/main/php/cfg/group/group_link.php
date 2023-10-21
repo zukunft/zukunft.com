@@ -37,12 +37,12 @@ include_once DB_PATH . 'sql_par_type.php';
 
 use cfg\db\sql_creator;
 use cfg\db\sql_par_type;
-use cfg\db_id_object;
+use cfg\db_object_seq_id;
 use cfg\sql_db;
 use cfg\sql_par;
 use cfg\triple;
 
-class group_link extends db_id_object
+class group_link extends db_object_seq_id
 {
     // object specific database and JSON object field names
     const FLD_ID = 'group_triple_link_id';

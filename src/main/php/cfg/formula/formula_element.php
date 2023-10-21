@@ -35,13 +35,13 @@
 
 namespace cfg;
 
-include_once MODEL_HELPER_PATH . 'db_object_user.php';
+include_once MODEL_HELPER_PATH . 'db_object_seq_id_user.php';
 
 use cfg\db\sql_creator;
 use html\word\word as word_dsp;
 use html\formula\formula as formula_dsp;
 
-class formula_element extends db_object_user
+class formula_element extends db_object_seq_id_user
 {
 
     // the allowed objects types for a formula element

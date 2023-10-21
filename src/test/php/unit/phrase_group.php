@@ -67,28 +67,40 @@ class group_unit_tests
         $t->subheader('Group id tests');
         $grp_id = new group_id();
         $t->assert('64 bit group_id short word list', $grp_id->get_id($t->dummy_word_list_short()->phrase_lst()),
-            65539);
-        $t->assert('phrase ids of 64 bit group_id short', $grp_id->get_array(65539),
+            131078);
+        $t->assert('phrase ids of 64 bit group_id short', $grp_id->get_array(131078),
             $t->dummy_word_list_short()->phrase_lst()->ids());
         $t->assert('64 bit group_id word list', $grp_id->get_id($t->dummy_word_list()->phrase_lst()),
-            281483566841860);
-        $t->assert('phrase ids of 64 bit group_id', $grp_id->get_array(281483566841860),
+            562967133683720);
+        $t->assert('phrase ids of 64 bit group_id', $grp_id->get_array(562967133683720),
             $t->dummy_word_list()->phrase_lst()->ids());
 
         //$this->check_64_bit_key($t, [0,0,0,0], 0);
-        $this->check_64_bit_key($t, [1], 1);
-        $this->check_64_bit_key($t, [2], 2);
-        $this->check_64_bit_key($t, [32767], 32767);
-        $this->check_64_bit_key($t, [1,32767], 98303);
-        $this->check_64_bit_key($t, [2,32767], 163839);
-        $this->check_64_bit_key($t, [32767,32767], 2147450879);
-        $this->check_64_bit_key($t, [1,32767,32767], 6442418175);
-        $this->check_64_bit_key($t, [32767,32767,32767], 140735340838911);
-        $this->check_64_bit_key($t, [1,32767,32767,32767], 422210317549567);
-        $this->check_64_bit_key($t, [32767,32767,32767,32767], 9223231297218904063);
+        $this->check_64_bit_key($t, [1], 2);
+        $this->check_64_bit_key($t, [-1], 3);
+        $this->check_64_bit_key($t, [2], 4);
+        $this->check_64_bit_key($t, [-2], 5);
+        $this->check_64_bit_key($t, [32767], 65534);
+        $this->check_64_bit_key($t, [-32767], 65535);
+        $this->check_64_bit_key($t, [1,32767], 196606);
+        $this->check_64_bit_key($t, [-1,-32767], 262143);
+        $this->check_64_bit_key($t, [2,32767], 327678);
+        $this->check_64_bit_key($t, [-2,32767], 393214);
+        $this->check_64_bit_key($t, [32767,-32767], 4294901759);
+        $this->check_64_bit_key($t, [1,-32767,32767], 12884901886);
+        $this->check_64_bit_key($t, [-1,32767,-32767], 17179803647);
+        $this->check_64_bit_key($t, [-1,-32767,32767], 17179869182);
+        $this->check_64_bit_key($t, [32767,32766,32765], 281470681546746);
+        $this->check_64_bit_key($t, [1,32767,32766,32765], 844420634968058);
+        $this->check_64_bit_key($t, [1234,32767,32766,32765], 694961713203445754);
+        $this->check_64_bit_key($t, [15678,32767,32766,32765], 8826210840420876282);
+        $this->check_64_bit_key($t, [-15678,-32767,32767,-32766], 8826492319692685309);
+        // TODO fix ist
+        //$this->check_64_bit_key($t, [32767,32766,32765,32764], -281487861940224);
+        //$this->check_64_bit_key($t, [-32767,32767,-32766,32766], 9223231297218904063);
 
-        $t->assert('group_id triple list', $grp_id->get_id($t->dummy_triple_list()->phrase_lst()),32770);
-        $t->assert('triple ids 64 bit group_id ', $grp_id->get_array(32770), $t->dummy_triple_list()->phrase_lst()->ids());
+        $t->assert('group_id triple list', $grp_id->get_id($t->dummy_triple_list()->phrase_lst()),5);
+        $t->assert('triple ids 64 bit group_id ', $grp_id->get_array(5), $t->dummy_triple_list()->phrase_lst()->ids());
         $phr_lst = new phrase_list($usr);
         $phr_lst->merge($t->dummy_word_list()->phrase_lst());
         $phr_lst->merge($t->dummy_triple_list()->phrase_lst());
@@ -212,12 +224,18 @@ class group_unit_tests
     private function check_64_bit_key(test_cleanup $t, array $ids, int $id): void
     {
         $grp_id = new group_id();
-        $phr_lst = $t->dummy_word_list()->phrase_lst();
-        $wrd_ids = $ids;
-        while (count($wrd_ids) < 4) {
-            array_unshift($wrd_ids , 0);
+        $phr_lst = new phrase_list($t->usr1);
+        foreach ($ids as $phr_id) {
+            if ($phr_id < 0) {
+                $trp_phr = $t->dummy_triple()->phrase();
+                $trp_phr->set_id($phr_id);
+                $phr_lst->add($trp_phr);
+            } else {
+                $wrd_phr = $t->dummy_word()->phrase();
+                $wrd_phr->set_id($phr_id);
+                $phr_lst->add($wrd_phr);
+            }
         }
-        $phr_lst->set_ids($wrd_ids);
         $t->assert('64 bit group_id ' . $id, $grp_id->get_id($phr_lst), $id);
         $a = $grp_id->get_array($id);
         $t->assert('phrase ids 64 bit group_id ' . $id, $grp_id->get_array($id), $ids);

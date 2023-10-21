@@ -282,7 +282,7 @@ class result extends sandbox_value
         // overwrite the standard id field name (result_id) with the main database id field for results "group_id"
         $sc->set_id_field($this->id_field());
         $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id);
+        $sc->set_usr($this->user()->id());
         $sc->set_fields(self::FLD_NAMES);
 
         return $qp;
@@ -292,11 +292,11 @@ class result extends sandbox_value
      * create the SQL to load a results by the id
      *
      * @param sql_creator $sc with the target db_type set
-     * @param int $id the id of the result
+     * @param int|string $id the id of the result
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql_creator $sc, int $id, string $class = self::class): sql_par
+    function load_sql_by_id(sql_creator $sc, int|string $id, string $class = self::class): sql_par
     {
         return parent::load_sql_by_id($sc, $id, $class);
     }
@@ -407,11 +407,11 @@ class result extends sandbox_value
     /**
      * load (or force reload from database of) a result by the id
      *
-     * @param int $id the unique database id of the result that should be loaded
+     * @param int|string $id the unique database id of the result that should be loaded
      * @param string $class always the result class just to be compatible with the parent function
      * @return int true if result has been loaded
      */
-    function load_by_id(int $id = 0, string $class = self::class): int
+    function load_by_id(int|string $id = 0, string $class = self::class): int
     {
         global $db_con;
         $result = 0;
@@ -596,7 +596,7 @@ class result extends sandbox_value
     function load_sql_where(sql_db $db_con, sql_par $qp, string $sql_where = ''): sql_par
     {
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id);
+        $db_con->set_usr($this->user()->id());
         $db_con->set_fields(self::FLD_NAMES);
         $db_con->set_where_text($sql_where);
         $qp->sql = $db_con->select_by_set_id();
@@ -695,7 +695,7 @@ class result extends sandbox_value
             if ($this->src_grp->id() > 0 and $this->user()->id() > 0) {
                 $qp->name .= '_usr_src_phr_grp';
                 $db_con->add_par(sql_par_type::INT, $this->src_grp->id());
-                $db_con->add_par(sql_par_type::INT, $this->user()->id);
+                $db_con->add_par(sql_par_type::INT, $this->user()->id());
                 if ($sql_where != '') {
                     $sql_where .= ' AND ';
                 }
@@ -720,7 +720,7 @@ class result extends sandbox_value
             if ($this->grp->id() > 0 and $this->user()->id() > 0) {
                 $qp->name .= '_usr_phr_grp';
                 $db_con->add_par(sql_par_type::INT, $this->grp->id());
-                $db_con->add_par(sql_par_type::INT, $this->user()->id);
+                $db_con->add_par(sql_par_type::INT, $this->user()->id());
                 if ($sql_where != '') {
                     $sql_where .= ' AND ';
                 }
@@ -1566,7 +1566,7 @@ class result extends sandbox_value
 
             // build the database object because the is anyway needed
             //$db_con = new mysql;
-            $db_con->set_usr($this->user()->id);
+            $db_con->set_usr($this->user()->id());
             $db_con->set_class(sql_db::TBL_RESULT);
 
             // build the word list if needed to separate the time word from the word list

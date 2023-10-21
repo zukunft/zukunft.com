@@ -41,9 +41,9 @@ namespace cfg;
 
 use Exception;
 
-include_once MODEL_HELPER_PATH . 'db_object_user.php';
+include_once MODEL_HELPER_PATH . 'db_object_seq_id_user.php';
 
-class value_phrase_link extends db_object_user
+class value_phrase_link extends db_object_seq_id_user
 {
     // object specific database and JSON object field names
     const FLD_ID = 'value_phrase_link_id';
@@ -165,7 +165,7 @@ class value_phrase_link extends db_object_user
                 array(self::FLD_ID),
                 array($this->id)
             );
-        } elseif ($this->val->id() > 0 and $this->phr->id() > 0 and $this->user()->id() > 0) {
+        } elseif ($this->val->id() != 0 and $this->phr->id() > 0 and $this->user()->id() > 0) {
             $qp->name .= 'val_phr_usr_id';
             $sql_where .= $db_con->where_par(
                 array(value::FLD_ID, phrase::FLD_ID, user::FLD_ID),

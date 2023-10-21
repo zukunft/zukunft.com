@@ -931,7 +931,7 @@ class term extends combine_named
     /**
      * create a message text that the name is already used
      */
-    function id_used_msg(db_id_object $obj_to_add): string
+    function id_used_msg(db_object_seq_id $obj_to_add): string
     {
         $lib = new library();
         $html = new html_base();

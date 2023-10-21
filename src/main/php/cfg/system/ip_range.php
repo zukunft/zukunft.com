@@ -32,14 +32,14 @@
 
 namespace cfg;
 
-include_once MODEL_HELPER_PATH . 'db_id_object.php';
+include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
 include_once DB_PATH . 'sql_creator.php';
 include_once DB_PATH . 'sql_par_type.php';
 
 use cfg\db\sql_creator;
 use cfg\db\sql_par_type;
 
-class ip_range extends db_id_object
+class ip_range extends db_object_seq_id
 {
 
     const OBJ_NAME = 'ip range';

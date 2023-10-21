@@ -53,7 +53,6 @@ namespace cfg\group;
 
 include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_HELPER_PATH . 'db_object.php';
-include_once MODEL_HELPER_PATH . 'db_object_user.php';
 include_once MODEL_PHRASE_PATH . 'phr_ids.php';
 include_once MODEL_PHRASE_PATH . 'phrase_list.php';
 include_once MODEL_GROUP_PATH . 'group_link.php';

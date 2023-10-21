@@ -134,8 +134,8 @@ class group_id
         $bin_key = decbin($grp_id);
         $bin_key = str_pad($bin_key, 64, "0", STR_PAD_LEFT);
         while ($bin_key != '') {
-            $sign = substr($bin_key, 0, 1);
-            $id = bindec(substr($bin_key, 1, 15));
+            $id = bindec(substr($bin_key, 0, 15));
+            $sign = substr($bin_key, 15, 1);
             if ($id != 0) {
                 if ($sign == 1) {
                     $result[] = $id * -1;
@@ -159,17 +159,24 @@ class group_id
         $keys = [];
         foreach ($phr_lst->lst() as $phr) {
             $id = $phr->id();
-            $key = str_pad(decbin(abs($id)), 15, "0", STR_PAD_LEFT);
+            $key = str_pad(decbin(abs($id)), 15, '0', STR_PAD_LEFT);
             if ($id < 0) {
-                $key = '1' . $key;
+                $key = $key . '1';
             } else {
-                $key = '0' . $key;
+                $key = $key . '0';
             }
             $keys[] = $key;
         }
-        $bin_key = implode("", $keys);
-        $bin_key = str_pad($bin_key, 64, "0", STR_PAD_LEFT);
-        return bindec($bin_key);
+        while (count($keys) < 4 ) {
+            array_unshift($keys , str_repeat('0', 16));
+        }
+        $bin_key = implode('', $keys);
+        $bin_key = str_pad($bin_key, 64, '0', STR_PAD_LEFT);
+        $result = (int)bindec($bin_key);
+        if ($result > PHP_INT_MAX or $result < PHP_INT_MIN) {
+            log_err('Integer size on this system is not the expected 64 bit');
+        }
+        return $result;
     }
 
     /**

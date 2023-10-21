@@ -44,7 +44,7 @@ include_once API_LOG_PATH . 'system_log.php';
 use cfg\change_log_action;
 use cfg\change_log_named;
 use cfg\db\sql_creator;
-use cfg\db_id_object;
+use cfg\db_object_seq_id;
 use cfg\library;
 use cfg\sandbox;
 use cfg\sql_db;
@@ -57,7 +57,7 @@ use controller\log\system_log_api;
 use DateTime;
 use DateTimeInterface;
 
-class system_log extends db_id_object
+class system_log extends db_object_seq_id
 {
 
     /*

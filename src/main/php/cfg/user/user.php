@@ -61,7 +61,7 @@ use model\export\exp_obj;
 use Exception;
 use html\user\user as user_dsp;
 
-class user extends db_id_object
+class user extends db_object_seq_id
 {
 
     /*

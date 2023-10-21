@@ -153,7 +153,7 @@ class user_list
         return $qp;
     }
 
-    private function load_sql_count_changes_dbo(db_id_object $dbo): string
+    private function load_sql_count_changes_dbo(db_object $dbo): string
     {
         $lib = new library();
         $class = $lib->class_to_name($dbo::class);

@@ -71,7 +71,7 @@ A user updates a formula
 
 namespace cfg;
 
-include_once MODEL_HELPER_PATH . 'db_object_user.php';
+include_once MODEL_HELPER_PATH . 'db_object_seq_id_user.php';
 include_once API_SYSTEM_PATH . 'batch_job.php';
 
 use api\batch_job_api;
@@ -79,7 +79,7 @@ use cfg\db\sql_creator;
 use DateTime;
 use DateTimeInterface;
 
-class batch_job extends db_object_user
+class batch_job extends db_object_seq_id_user
 {
 
     const STATUS_NEW = 'new'; // the job is not yet assigned to any calc engine

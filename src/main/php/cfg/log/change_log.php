@@ -53,7 +53,7 @@ cache table, field and action id to speed up, because this will never change
 
 namespace cfg;
 
-include_once MODEL_HELPER_PATH . 'db_object_user.php';
+include_once MODEL_HELPER_PATH . 'db_object_seq_id_user.php';
 include_once MODEL_VALUE_PATH . 'value.php';
 include_once MODEL_VALUE_PATH . 'value_phrase_link.php';
 include_once API_LOG_PATH . 'change_log.php';
@@ -64,7 +64,7 @@ use DateTime;
 use DateTimeInterface;
 use Exception;
 
-class change_log extends db_object_user
+class change_log extends db_object_seq_id_user
 {
 
     /*

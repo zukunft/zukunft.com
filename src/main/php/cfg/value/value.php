@@ -246,6 +246,21 @@ class value extends sandbox_value
      * set and get
      */
 
+    /**
+     * set the unique database id of a database object
+     * @param int|string $id used in the row mapper and to set a dummy database id for unit tests
+     */
+    function set_id(int|string $id): void
+    {
+        $this->id = $id;
+        $this->grp()->set_id($id);
+    }
+
+    function id(): int|string
+    {
+        return $this->grp()->id();
+    }
+
     function set_symbol(string $symbol): void
     {
         $this->symbol = $symbol;
@@ -418,11 +433,11 @@ class value extends sandbox_value
      * added to value just to assign the class for the user sandbox object
      *
      * @param sql_creator $sc with the target db_type set
-     * @param int $id the id of the value
+     * @param int|string $id the id of the value
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql_creator $sc, int $id, string $class = self::class): sql_par
+    function load_sql_by_id(sql_creator $sc, int|string $id, string $class = self::class): sql_par
     {
         return parent::load_sql_by_id($sc, $id, $class);
     }
@@ -1479,6 +1494,21 @@ class value extends sandbox_value
                 // create an entry in the user sandbox
                 $ext = $this->grp->table_extension();
                 $db_con->set_class($class, true, $ext);
+                $qp = $this->sql_insert($db_con->sql_creator());
+                try {
+                    $log_id = $db_con->exe_par($qp);
+                    if ($log_id <= 0) {
+                        log_err('Insert of user_value failed.');
+                        $result = false;
+                    } else {
+                        $result = true;
+                    }
+                } catch (Exception $e) {
+                    $result = 'Insert of user_value failed.';
+                    $trace_link = log_err($result . log::MSG_ERR_USING . $qp->sql . log::MSG_ERR_BECAUSE . $e->getMessage());
+                    $result = false;
+                }
+                /*
                 $log_id = $db_con->insert(array(self::FLD_ID, user::FLD_ID), array($this->id, $this->user()->id()));
                 if ($log_id <= 0) {
                     log_err('Insert of user_value failed.');
@@ -1486,6 +1516,7 @@ class value extends sandbox_value
                 } else {
                     $result = true;
                 }
+                */
             }
         }
         return $result;
@@ -1817,11 +1848,11 @@ class value extends sandbox_value
      * TODO combine the log and update sql to one statement
      *
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param value|sandbox $db_rec the database record before the saving
-     * @param value|sandbox $std_rec the database record defined as standard because it is used by most users
+     * @param value|sandbox_non_seq_id $db_rec the database record before the saving
+     * @param value|sandbox_non_seq_id $std_rec the database record defined as standard because it is used by most users
      * @return string if not empty the message that should be shown to the user
      */
-    function save_fields(sql_db $db_con, value|sandbox $db_rec, value|sandbox $std_rec): string
+    function save_fields(sql_db $db_con, value|sandbox_non_seq_id $db_rec, value|sandbox_non_seq_id $std_rec): string
     {
         $result = $this->save_field_number($db_con, $db_rec, $std_rec);
         $result .= $this->save_field_source($db_con, $db_rec, $std_rec);
@@ -1836,7 +1867,7 @@ class value extends sandbox_value
      * updated the view component name (which is the id field)
      * should only be called if the user is the owner and nobody has used the display component link
      */
-    function save_id_fields(sql_db $db_con, sandbox $db_rec, sandbox $std_rec): string
+    function save_id_fields(sql_db $db_con, value|sandbox_non_seq_id $db_rec, value|sandbox_non_seq_id $std_rec): string
     {
         log_debug('value->save_id_fields');
         $result = '';
@@ -1859,9 +1890,9 @@ class value extends sandbox_value
             if (isset($std_rec->grp)) {
                 $log->std_value = $std_rec->grp->name();
             }
-            $log->old_id = $db_rec->grp->id();
-            $log->new_id = $this->grp->id();
-            $log->std_id = $std_rec->grp->id();
+            $log->old_id = $db_rec->grp()->id();
+            $log->new_id = $this->grp()->id();
+            $log->std_id = $std_rec->grp()->id();
             $log->row_id = $this->id();
             $log->set_field(change_log_field::FLD_VALUE_GROUP);
             if ($log->add()) {
@@ -1897,13 +1928,13 @@ class value extends sandbox_value
     /**
      * check if the id parameters are supposed to be changed
      */
-    function save_id_if_updated($db_con, sandbox $db_rec, sandbox $std_rec): string
+    function save_id_if_updated($db_con, sandbox_non_seq_id $db_rec, sandbox_non_seq_id $std_rec): string
     {
         log_debug('value->save_id_if_updated has name changed from "' . $db_rec->dsp_id() . '" to "' . $this->dsp_id() . '"');
         $result = '';
 
         // if the phrases or time has changed, check if value with the same phrases/time already exists
-        if ($db_rec->grp->id() <> $this->grp->id() or $db_rec->time_stamp <> $this->time_stamp) {
+        if ($db_rec->grp()->id() <> $this->grp()->id() or $db_rec->time_stamp <> $this->time_stamp) {
             // check if a value with the same phrases/time is already in the database
             $chk_val = new value($this->user());
             //$chk_val->time_phr = $this->time_phr;
@@ -1960,7 +1991,7 @@ class value extends sandbox_value
         $qp->name .= '_insert';
         $sc->set_name($qp->name);
         $fields = array(group::FLD_ID, user::FLD_ID, self::FLD_VALUE, self::FLD_LAST_UPDATE);
-        $values = array($this->grp->id(), $this->user()->id, $this->number, sql_creator::NOW);
+        $values = array($this->grp->id(), $this->user()->id(), $this->number, sql_creator::NOW);
         $qp->sql = $sc->sql_insert($fields, $values);
         $qp->par = $values;
         return $qp;

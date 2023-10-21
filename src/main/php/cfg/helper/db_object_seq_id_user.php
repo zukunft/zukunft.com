@@ -2,8 +2,11 @@
 
 /*
 
-    model/helper/db_object_user.php - a base object for all user specific database objects
-    -------------------------------
+    model/helper/db_id_object_user.php - a base object for all user specific database id objects
+    ----------------------------------
+
+    same as db_object_user but for database objects that have an auto sequence prime id
+    TODO should be merged once php allows aggregating extends e.g. sandbox extends db_object, db_user_object
 
 
     This file is part of zukunft.com - calc with words
@@ -34,7 +37,7 @@ namespace cfg;
 
 include_once MODEL_HELPER_PATH . 'db_object.php';
 
-class db_object_user extends db_id_object
+class db_object_seq_id_user extends db_object_seq_id
 {
 
     /*

@@ -130,7 +130,7 @@ class value_time_series extends sandbox_value
             $this->grp->set_id($db_row[group::FLD_ID]);
             if ($db_row[source::FLD_ID] > 0) {
                 $this->source = new source($this->user());
-                $this->source->id = $db_row[source::FLD_ID];
+                $this->source->set_id($db_row[source::FLD_ID]);
             }
             $this->set_last_update($lib->get_datetime($db_row[self::FLD_LAST_UPDATE], $this->dsp_id()));
         }
@@ -208,11 +208,11 @@ class value_time_series extends sandbox_value
      * just set the class name for the user sandbox function
      * load a reference object by database id
      * TODO load the related time series data
-     * @param int $id the id of the reference
+     * @param int|string $id the id of the reference
      * @param string $class the reference class name
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_id(int $id, string $class = self::class): int
+    function load_by_id(int|string $id, string $class = self::class): int
     {
         return parent::load_by_id($id, $class);
     }
@@ -252,7 +252,7 @@ class value_time_series extends sandbox_value
             $db_con->set_class(sql_db::TBL_VALUE_TIME_SERIES);
             $this->id = $db_con->insert(
                 array(group::FLD_ID, user::FLD_ID, self::FLD_LAST_UPDATE),
-                array($this->grp->id(), $this->user()->id, sql_creator::NOW));
+                array($this->grp->id(), $this->user()->id(), sql_creator::NOW));
             if ($this->id > 0) {
                 // update the reference in the log
                 if (!$log->add_ref($this->id)) {

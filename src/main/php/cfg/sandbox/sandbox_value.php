@@ -34,7 +34,7 @@
 
 namespace cfg;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_non_seq_id.php';
 include_once MODEL_GROUP_PATH . 'group.php';
 
 use cfg\db\sql_creator;
@@ -42,7 +42,7 @@ use cfg\group\group;
 use DateTime;
 use Exception;
 
-class sandbox_value extends sandbox
+class sandbox_value extends sandbox_non_seq_id
 {
 
     /*
@@ -71,6 +71,7 @@ class sandbox_value extends sandbox
     function reset(): void
     {
         parent::reset();
+        $this->set_grp(new group($this->user()));
         $this->set_number(null);
         $this->set_last_update(null);
     }
@@ -231,12 +232,12 @@ class sandbox_value extends sandbox
      * updated the object id fields (e.g. for a word or formula the name, and for a link the linked ids)
      * should only be called if the user is the owner and nobody has used the display component link
      * @param sql_db $db_con the active database connection
-     * @param sandbox $db_rec the database record before the saving
-     * @param sandbox $std_rec the database record defined as standard because it is used by most users
+     * @param sandbox_non_seq_id $db_rec the database record before the saving
+     * @param sandbox_non_seq_id $std_rec the database record defined as standard because it is used by most users
      * @returns string either the id of the updated or created source or a message to the user with the reason, why it has failed
      * @throws Exception
      */
-    function save_id_fields(sql_db $db_con, sandbox $db_rec, sandbox $std_rec): string
+    function save_id_fields(sql_db $db_con, sandbox_non_seq_id $db_rec, sandbox_non_seq_id $std_rec): string
     {
 
         return 'The user sandbox save_id_fields does not support ' . $this->obj_type . ' for ' . $this->obj_name;
@@ -310,7 +311,7 @@ class sandbox_value extends sandbox
                     if ($this->has_usr_cfg()) {
                         log_debug('remove user change');
                         $db_con->set_class(sql_db::TBL_USER_PREFIX . $this->obj_name . $ext);
-                        $db_con->set_usr($this->user()->id);
+                        $db_con->set_usr($this->user()->id());
                         $qp = $this->sql_update($db_con->sql_creator(), array($log->field()), array(null));
                         try {
                             $db_con->exe_par($qp);
@@ -322,7 +323,7 @@ class sandbox_value extends sandbox
                     $this->del_usr_cfg_if_not_needed(); // don't care what the result is, because in most cases it is fine to keep the user sandbox row
                 } else {
                     $db_con->set_class($this->obj_name . $ext);
-                    $db_con->set_usr($this->user()->id);
+                    $db_con->set_usr($this->user()->id());
                     $qp = $this->sql_update($db_con->sql_creator(), array($log->field()), array($new_value));
                     try {
                         $db_con->exe_par($qp);
@@ -339,7 +340,7 @@ class sandbox_value extends sandbox
                 }
                 if ($result == '') {
                     $db_con->set_class(sql_db::TBL_USER_PREFIX . $this->obj_name . $ext);
-                    $db_con->set_usr($this->user()->id);
+                    $db_con->set_usr($this->user()->id());
                     if ($new_value == $std_value) {
                         log_debug('remove user change');
                         $qp = $this->sql_update($db_con->sql_creator(), array($log->field()), array(Null));
