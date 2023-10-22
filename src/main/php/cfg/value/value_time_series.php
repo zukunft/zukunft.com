@@ -250,7 +250,7 @@ class value_time_series extends sandbox_value
         $log = $this->log_add();
         if ($log->id() > 0) {
             $db_con->set_class(sql_db::TBL_VALUE_TIME_SERIES);
-            $this->id = $db_con->insert(
+            $this->id = $db_con->insert_old(
                 array(group::FLD_ID, user::FLD_ID, self::FLD_LAST_UPDATE),
                 array($this->grp->id(), $this->user()->id(), sql_creator::NOW));
             if ($this->id > 0) {

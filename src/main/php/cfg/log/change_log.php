@@ -461,7 +461,7 @@ class change_log extends db_object_seq_id_user
             // save also the code_id
             if ($table_id > 0) {
                 $db_con->set_class(sql_db::TBL_CHANGE_TABLE);
-                $db_con->update($table_id, array('code_id'), array($table_name));
+                $db_con->update_old($table_id, array('code_id'), array($table_name));
             }
         }
         if ($table_id > 0) {

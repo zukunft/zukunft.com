@@ -823,7 +823,7 @@ class component extends sandbox_typed
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
                 $db_con->set_class(sql_db::TBL_USER_PREFIX . sql_db::TBL_COMPONENT);
-                $log_id = $db_con->insert(array(component::FLD_ID, user::FLD_ID), array($this->id, $this->user()->id()));
+                $log_id = $db_con->insert_old(array(component::FLD_ID, user::FLD_ID), array($this->id, $this->user()->id()));
                 if ($log_id <= 0) {
                     log_err('Insert of user_component failed.');
                     $result = false;

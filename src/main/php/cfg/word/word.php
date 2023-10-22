@@ -1580,7 +1580,7 @@ class word extends sandbox_typed
                 $db_con->usr_id = $this->user()->id();
                 if ($this->can_change()) {
                     $db_con->set_class(word::class);
-                    if (!$db_con->update($this->id, "view_id", $view_id)) {
+                    if (!$db_con->update_old($this->id, "view_id", $view_id)) {
                         $result = 'setting of view failed';
                     }
                 } else {
@@ -1591,7 +1591,7 @@ class word extends sandbox_typed
                     }
                     if ($result == '') {
                         $db_con->set_class(sql_db::TBL_USER_PREFIX . sql_db::TBL_WORD);
-                        if (!$db_con->update($this->id, "view_id", $view_id)) {
+                        if (!$db_con->update_old($this->id, "view_id", $view_id)) {
                             $result = 'setting of view for user failed';
                         }
                     }

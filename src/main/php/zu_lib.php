@@ -935,7 +935,7 @@ function log_msg(string $msg_text,
                 }
                 $used_db_con->set_class(sql_db::TBL_SYS_LOG);
 
-                $sys_log_id = $used_db_con->insert($fields, $values, false);
+                $sys_log_id = $used_db_con->insert_old($fields, $values, false);
                 //$sql_result = mysqli_query($sql) or die('zukunft.com system log failed by query '.$sql.': '.mysqli_error().'. If this happens again, please send this message to errors@zukunft.com.');
                 //$sys_log_id = mysqli_insert_id();
             }

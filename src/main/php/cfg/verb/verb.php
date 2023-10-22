@@ -827,7 +827,7 @@ class verb extends type_object
         if ($log->add()) {
             if ($this->can_change()) {
                 $db_con->set_class(sql_db::TBL_VERB);
-                if (!$db_con->update($this->id, $log->field(), $new_value)) {
+                if (!$db_con->update_old($this->id, $log->field(), $new_value)) {
                     $result .= 'updating ' . $log->field() . ' to ' . $new_value . ' for verb ' . $this->dsp_id() . ' failed';
                 }
 
@@ -1031,7 +1031,7 @@ class verb extends type_object
         if ($log->id() > 0) {
             // insert the new verb
             $db_con->set_class(sql_db::TBL_VERB);
-            $this->id = $db_con->insert(self::FLD_NAME, $this->name);
+            $this->id = $db_con->insert_old(self::FLD_NAME, $this->name);
             if ($this->id > 0) {
                 // update the id in the log
                 if (!$log->add_ref($this->id)) {

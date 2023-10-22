@@ -325,7 +325,7 @@ class ip_range extends db_object_seq_id
         $result = '';
         if ($log->add()) {
             $db_con->set_class(sql_db::TBL_IP);
-            if (!$db_con->update($this->id, $log->field(), $log->new_value)) {
+            if (!$db_con->update_old($this->id, $log->field(), $log->new_value)) {
                 $result .= 'updating ' . $log->field() . ' to ' . $log->new_value . ' for ' . self::OBJ_NAME . ' ' . $this->dsp_id() . ' failed';
             }
 
@@ -437,7 +437,7 @@ class ip_range extends db_object_seq_id
             $db_con->set_class(sql_db::TBL_IP);
             $db_con->set_usr($this->user()->id());
 
-            $this->id = $db_con->insert(
+            $this->id = $db_con->insert_old(
                 array(self::FLD_FROM, self::FLD_TO, self::FLD_REASON, self::FLD_ACTIVE),
                 array($this->from, $this->to, $this->reason, $this->active));
             if ($this->id > 0) {

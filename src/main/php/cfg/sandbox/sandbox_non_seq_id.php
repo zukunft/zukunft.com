@@ -523,7 +523,7 @@ class sandbox_non_seq_id extends db_object_non_seq_id_user
                 // take the ownership if it is not yet done. The ownership is probably missing due to an error in an older program version.
                 $db_con->set_class($this->obj_name);
                 $db_con->set_usr($this->user()->id());
-                if ($db_con->update($this->id, user::FLD_ID, $this->user()->id())) {
+                if ($db_con->update_old($this->id, user::FLD_ID, $this->user()->id())) {
                     $result = true;
                 }
             }
@@ -816,7 +816,7 @@ class sandbox_non_seq_id extends db_object_non_seq_id_user
 
             $db_con->set_class($this->obj_name);
             $db_con->set_usr($this->user()->id());
-            if (!$db_con->update($this->id, user::FLD_ID, $new_owner_id)) {
+            if (!$db_con->update_old($this->id, user::FLD_ID, $new_owner_id)) {
                 $result = false;
             }
 
@@ -1125,7 +1125,7 @@ class sandbox_non_seq_id extends db_object_non_seq_id_user
                 // create an entry in the user sandbox
                 $db_con->set_class(sql_db::TBL_USER_PREFIX . $this->obj_name);
                 $db_con->set_usr($this->user()->id());
-                $log_id = $db_con->insert(array($this->id_field(), user::FLD_ID), array($this->id, $this->user()->id()));
+                $log_id = $db_con->insert_old(array($this->id_field(), user::FLD_ID), array($this->id, $this->user()->id()));
                 if ($log_id <= 0) {
                     log_err('Insert of ' . sql_db::USER_PREFIX . $this->obj_name . ' failed.');
                     $result = false;
@@ -1412,7 +1412,7 @@ class sandbox_non_seq_id extends db_object_non_seq_id_user
                         log_debug('remove user change');
                         $db_con->set_class(sql_db::TBL_USER_PREFIX . $this->obj_name);
                         $db_con->set_usr($this->user()->id());
-                        if (!$db_con->update($this->id, $log->field(), Null)) {
+                        if (!$db_con->update_old($this->id, $log->field(), Null)) {
                             $result = 'remove of ' . $log->field() . ' failed';
                         }
                     }
@@ -1420,7 +1420,7 @@ class sandbox_non_seq_id extends db_object_non_seq_id_user
                 } else {
                     $db_con->set_class($this->obj_name);
                     $db_con->set_usr($this->user()->id());
-                    if (!$db_con->update($this->id, $log->field(), $new_value)) {
+                    if (!$db_con->update_old($this->id, $log->field(), $new_value)) {
                         $result = 'update of ' . $log->field() . ' to ' . $new_value . ' failed';
                     }
                 }
@@ -1435,11 +1435,11 @@ class sandbox_non_seq_id extends db_object_non_seq_id_user
                     $db_con->set_usr($this->user()->id());
                     if ($new_value == $std_value) {
                         log_debug('remove user change');
-                        if (!$db_con->update($this->id, $log->field(), Null)) {
+                        if (!$db_con->update_old($this->id, $log->field(), Null)) {
                             $result = 'remove of user value for ' . $log->field() . ' failed';
                         }
                     } else {
-                        if (!$db_con->update($this->id, $log->field(), $new_value)) {
+                        if (!$db_con->update_old($this->id, $log->field(), $new_value)) {
                             $result = 'update of user value for ' . $log->field() . ' to ' . $new_value . ' failed';
                         }
                     }
@@ -1470,7 +1470,7 @@ class sandbox_non_seq_id extends db_object_non_seq_id_user
         if ($log->add()) {
             $db_con->set_class($this->obj_name);
             $db_con->set_usr($this->user()->id());
-            if (!$db_con->update($this->id, $log->field(), $new_value)) {
+            if (!$db_con->update_old($this->id, $log->field(), $new_value)) {
                 $result = 'update of value for ' . $log->field() . ' to ' . $new_value . ' failed';
             }
         }
@@ -1523,7 +1523,7 @@ class sandbox_non_seq_id extends db_object_non_seq_id_user
             if ($this->can_change()) {
                 $db_con->set_class($this->obj_name);
                 $db_con->set_usr($this->user()->id());
-                if (!$db_con->update($this->id, $log->field(), $new_value)) {
+                if (!$db_con->update_old($this->id, $log->field(), $new_value)) {
                     $result .= 'excluding of ' . $this->obj_name . ' failed';
                 }
             } else {
@@ -1536,11 +1536,11 @@ class sandbox_non_seq_id extends db_object_non_seq_id_user
                     $db_con->set_class(sql_db::TBL_USER_PREFIX . $this->obj_name);
                     $db_con->set_usr($this->user()->id());
                     if ($new_value == $std_value) {
-                        if (!$db_con->update($this->id, $log->field(), Null)) {
+                        if (!$db_con->update_old($this->id, $log->field(), Null)) {
                             $result .= 'include of ' . $this->obj_name . ' for user failed';
                         }
                     } else {
-                        if (!$db_con->update($this->id, $log->field(), $new_value)) {
+                        if (!$db_con->update_old($this->id, $log->field(), $new_value)) {
                             $result .= 'excluding of ' . $this->obj_name . ' for user failed';
                         }
                     }
@@ -1594,7 +1594,7 @@ class sandbox_non_seq_id extends db_object_non_seq_id_user
                 if ($result == '') {
                     $db_con->set_class(sql_db::TBL_USER_PREFIX . $this->obj_name);
                     $db_con->set_usr($this->user()->id());
-                    if (!$db_con->update($this->id, $log->field(), $new_value)) {
+                    if (!$db_con->update_old($this->id, $log->field(), $new_value)) {
                         $result = 'setting of share type failed';
                     }
                 }

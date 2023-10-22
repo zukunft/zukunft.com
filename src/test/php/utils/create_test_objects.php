@@ -1878,7 +1878,7 @@ class create_test_objects extends test_base
     function add_value(array $array_of_word_str, float $target): value
     {
         $val = $this->load_value($array_of_word_str);
-        if ($val->id() == 0) {
+        if (!$val->is_saved()) {
             $phr_lst = $this->load_phrase_list($array_of_word_str);
             $phr_grp = $phr_lst->get_grp_id();
 

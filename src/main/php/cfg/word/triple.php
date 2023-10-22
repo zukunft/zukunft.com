@@ -634,7 +634,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
                 log_debug('triple->load_standard check if name ' . $this->dsp_id() . ' needs to be updated to "' . $new_name . '"');
                 if ($new_name <> $this->name) {
                     $db_con->set_class(sql_db::TBL_TRIPLE);
-                    $result = $db_con->update($this->id(), self::FLD_NAME_GIVEN, $new_name);
+                    $result = $db_con->update_old($this->id(), self::FLD_NAME_GIVEN, $new_name);
                     $this->name = $new_name;
                 }
             }
@@ -752,7 +752,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
             log_debug('triple->load check if name ' . $this->dsp_id() . ' needs to be updated to "' . $new_name . '"');
             if ($new_name <> $this->name_generated) {
                 $db_con->set_class(sql_db::TBL_TRIPLE);
-                $db_con->update($this->id(), self::FLD_NAME_AUTO, $new_name);
+                $db_con->update_old($this->id(), self::FLD_NAME_AUTO, $new_name);
                 $this->set_name_generated($new_name);
             }
         }
@@ -1576,7 +1576,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
                 $db_con->set_class(sql_db::TBL_USER_PREFIX . sql_db::TBL_TRIPLE);
-                $log_id = $db_con->insert(array(self::FLD_ID, user::FLD_ID), array($this->id(), $this->user()->id()));
+                $log_id = $db_con->insert_old(array(self::FLD_ID, user::FLD_ID), array($this->id(), $this->user()->id()));
                 if ($log_id <= 0) {
                     log_err('Insert of user_triple failed.');
                     $result = false;
@@ -1865,7 +1865,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
             //$log->set_field(self::FLD_FROM);
             if ($log->add()) {
                 $db_con->set_class(sql_db::TBL_TRIPLE);
-                if (!$db_con->update($this->id(),
+                if (!$db_con->update_old($this->id(),
                     array("from_phrase_id", "verb_id", "to_phrase_id"),
                     array($this->fob->id(), $this->verb->id(), $this->tob->id()))) {
                     $result = 'Update of work link name failed';
@@ -1962,7 +1962,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
         if ($log->id() > 0) {
             // insert the new triple
             $db_con->set_class(sql_db::TBL_TRIPLE);
-            $this->set_id($db_con->insert(array("from_phrase_id", "verb_id", "to_phrase_id", "user_id"),
+            $this->set_id($db_con->insert_old(array("from_phrase_id", "verb_id", "to_phrase_id", "user_id"),
                 array($this->fob->id(), $this->verb->id(), $this->tob->id(), $this->user()->id())));
             // TODO make sure on all add functions that the database object is always set
             //array($this->fob->id(), $this->verb->id() , $this->tob->id(), $this->user()->id()));

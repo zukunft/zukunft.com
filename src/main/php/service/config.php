@@ -191,7 +191,7 @@ class config
 
         $db_value = $this->default_value($code_id);
         $db_description = $this->default_description($code_id);
-        $db_id = $db_con->insert(
+        $db_id = $db_con->insert_old(
             array(
                 sql_db::FLD_CODE_ID,
                 sql_db::FLD_VALUE,
@@ -217,7 +217,7 @@ class config
     private function add(string $code_id, string $value, string $description, sql_db $db_con): bool
     {
         $result = false;
-        $db_id = $db_con->insert(
+        $db_id = $db_con->insert_old(
             array(
                 sql_db::FLD_CODE_ID,
                 sql_db::FLD_VALUE,
@@ -243,7 +243,7 @@ class config
     private function update(string $code_id, string $value, string $description, sql_db $db_con): bool
     {
         $result = false;
-        $db_id = $db_con->update(
+        $db_id = $db_con->update_old(
             $code_id,
             array(
                 sql_db::FLD_VALUE,

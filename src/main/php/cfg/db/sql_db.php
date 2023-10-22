@@ -3227,6 +3227,34 @@ class sql_db
     */
 
     /**
+     * execute an insert sql statement and return a message to the user if something has gone wrong
+     * the message to the user includes also the suggested solution
+     * or the id of the created database row if successful
+     * @param sql_par $qp the sql statement with the name of the prepare query and parameter for this execution
+     * @param string $description for the user to identify the statement
+     * @return user_message
+     */
+    function insert(sql_par $qp, string $description): user_message
+    {
+        $result = new user_message();
+        $err_msg = 'Insert of ' . $description . ' failed.';
+        try {
+            $db_row = $this->exe_par($qp);
+            if ($db_row == 0 or $db_row == '') {
+                log_err($err_msg);
+                $result->add_message($err_msg);
+            } else {
+                $result->set_db_row_id($this->exe_par($qp));
+            }
+        } catch (Exception $e) {
+            $trace_link = log_err($err_msg . log::MSG_ERR_USING . $qp->sql . log::MSG_ERR_BECAUSE . $e->getMessage());
+            $result->add_message($trace_link);
+        }
+
+        return $result;
+    }
+
+    /**
      * insert a new record in the database
      * similar to exe, but returning the row id added to be able to update
      * e.g. the log entry with the row id of the real row added
@@ -3236,7 +3264,7 @@ class sql_db
      *      add the return type (allowed since php version 7.0, but array|string is allowed with 8.0 or higher
      *      if $log_err is false, no further errors will reported to prevent endless looping from the error logging itself
      */
-    function insert($fields, $values, bool $log_err = true): int
+    function insert_old($fields, $values, bool $log_err = true): int
     {
         $result = 0;
         $is_valid = false;
@@ -3385,7 +3413,7 @@ class sql_db
 
         $this->set_table();
         $this->set_name_field();
-        $result = $this->insert($this->name_field, $name);
+        $result = $this->insert_old($this->name_field, $name);
 
         log_debug('is "' . $result . '"');
         return $result;
@@ -3401,7 +3429,7 @@ class sql_db
         $this->set_table();
         $this->set_name_field();
         //zu_debug('sql_db->add_id_2key add "'.$this->name_field.','.$field2_name.'" "'.$name.','.$field2_value.'"');
-        $result = $this->insert(array($this->name_field, $field2_name), array($name, $field2_value));
+        $result = $this->insert_old(array($this->name_field, $field2_name), array($name, $field2_value));
 
         log_debug('is "' . $result . '"');
         return $result;
@@ -3409,10 +3437,12 @@ class sql_db
 
     /**
      * update some values in a table
+     * TODO separate the sql statement creation from the update statement execution
+     *      e.g. to use the IDE check functionality for the created sql statements
      * $id is the primary id of the db table or an array with the ids of the primary keys
      * @return bool false if the update has failed (and the error messages are logged)
      */
-    function update($id, $fields, $values, string $id_field = ''): bool
+    function update_old($id, $fields, $values, string $id_field = ''): bool
     {
         global $debug;
         $lib = new library();
@@ -3485,7 +3515,7 @@ class sql_db
     function update_name($id, $name): bool
     {
         $this->set_name_field();
-        return $this->update($id, $this->name_field, $name);
+        return $this->update_old($id, $this->name_field, $name);
     }
 
     /**

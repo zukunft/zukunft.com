@@ -486,7 +486,7 @@ class db_check
                                     $update_col_values[] = trim($data[$i]);
                                 }
                                 $db_con->set_class($db_type);
-                                $db_con->insert($update_col_names, $update_col_values);
+                                $db_con->insert_old($update_col_names, $update_col_values);
                             } else {
                                 // check, which values need to be updates
                                 for ($i = 1; $i < count($data); $i++) {
@@ -504,7 +504,7 @@ class db_check
                                 // update the values is needed
                                 if (count($update_col_names) > 0) {
                                     $db_con->set_class($db_type);
-                                    $db_con->update($id, $update_col_names, $update_col_values);
+                                    $db_con->update_old($id, $update_col_names, $update_col_values);
                                 }
                             }
                         }

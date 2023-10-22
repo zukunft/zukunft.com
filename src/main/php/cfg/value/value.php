@@ -123,9 +123,6 @@ class value extends sandbox_value
     // deprecated fields
     public ?DateTime $time_stamp = null;  // the time stamp for this value (if this is set, the time wrd is supposed to be empty and the value is saved in the time_series table)
 
-    // deprecated derived database fields
-    public ?DateTime $update_time = null; // time of the last update, which could also be taken from the change log
-
     // field for user interaction
     public ?string $usr_value = null;     // the raw value as the user has entered it including formatting chars such as the thousand separator
 
@@ -157,7 +154,6 @@ class value extends sandbox_value
         if ($phr_grp != null) {
             $this->set_grp($phr_grp);
         }
-        $this->set_last_update(new DateTime());
     }
 
     function reset(): void
@@ -170,7 +166,7 @@ class value extends sandbox_value
         // deprecated fields
         $this->time_stamp = null;
 
-        $this->update_time = null;
+        $this->set_last_update(null);
         $this->share_id = null;
         $this->protection_id = null;
 
@@ -1898,7 +1894,7 @@ class value extends sandbox_value
             if ($log->add()) {
                 $ext = $this->grp->table_extension();
                 $db_con->set_class(self::class, false, $ext);
-                $result = $db_con->update($this->id,
+                $result = $db_con->update_old($this->id,
                     array(group::FLD_ID),
                     array($this->grp->id()));
             }
@@ -1983,15 +1979,21 @@ class value extends sandbox_value
     /**
      * create the sql statement to add a new value to the database
      * @param sql_creator $sc with the target db_type set
+     * @param bool $usr_tbl true if a db row should be added to the user table
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_insert(sql_creator $sc): sql_par
+    function sql_insert(sql_creator $sc, bool $usr_tbl = false): sql_par
     {
-        $qp = $this->sql_common($sc);
+        $qp = $this->sql_common($sc, $usr_tbl);
         $qp->name .= '_insert';
         $sc->set_name($qp->name);
-        $fields = array(group::FLD_ID, user::FLD_ID, self::FLD_VALUE, self::FLD_LAST_UPDATE);
-        $values = array($this->grp->id(), $this->user()->id(), $this->number, sql_creator::NOW);
+        if ($usr_tbl) {
+            $fields = array(group::FLD_ID, user::FLD_ID);
+            $values = array($this->grp->id(), $this->user()->id());
+        } else {
+            $fields = array(group::FLD_ID, user::FLD_ID, self::FLD_VALUE, self::FLD_LAST_UPDATE);
+            $values = array($this->grp->id(), $this->user()->id(), $this->number, sql_creator::NOW);
+        }
         $qp->sql = $sc->sql_insert($fields, $values);
         $qp->par = $values;
         return $qp;
@@ -2000,16 +2002,18 @@ class value extends sandbox_value
     /**
      * create the sql statement to update a value in the database
      * @param sql_creator $sc with the target db_type set
+     * @param bool $usr_tbl true if the user table row should be updated
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_update(
         sql_creator $sc,
         array       $fields = [],
-        array       $values = []
+        array       $values = [],
+        bool $usr_tbl = false
     ): sql_par
     {
         $lib = new library();
-        $qp = $this->sql_common($sc);
+        $qp = $this->sql_common($sc, $usr_tbl);
         if (count($fields) == 0) {
             $fields = array(self::FLD_VALUE, self::FLD_LAST_UPDATE);
         }
@@ -2018,6 +2022,9 @@ class value extends sandbox_value
         }
         $fld_name = implode('_', $lib->sql_name_shorten($fields));
         $qp->name .= '_update_' . $fld_name;
+        if ($usr_tbl) {
+            $qp->name .= '_user';
+        }
         $sc->set_name($qp->name);
         $qp->sql = $sc->sql_update($this->id_field(), $this->id(), $fields, $values);
         $values[] = $this->id();
@@ -2050,12 +2057,9 @@ class value extends sandbox_value
         $log = $this->log_add();
         if ($log->id() > 0) {
             // insert the value
-            $qp = $this->sql_insert($db_con->sql_creator());
-            try {
-                $db_con->exe_par($qp);
-            } catch (Exception $e) {
-                $msg = 'Insert';
-                $trace_link = log_err($msg . log::MSG_ERR_USING . $qp->sql . log::MSG_ERR_BECAUSE . $e->getMessage());
+            $ins_result = $db_con->insert($this->sql_insert($db_con->sql_creator()), 'add value');
+            if ($ins_result->has_row()) {
+                $this->set_id($ins_result->get_row_id());
             }
             //$db_con->set_type(self::class);
             //$this->set_id($db_con->insert(array(group::FLD_ID, user::FLD_ID, self::FLD_VALUE, self::FLD_LAST_UPDATE), array($this->grp->id(), $this->user()->id, $this->number, sql_creator::NOW)));

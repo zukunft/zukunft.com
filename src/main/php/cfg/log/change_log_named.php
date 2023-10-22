@@ -453,7 +453,7 @@ class change_log_named extends change_log
         $db_type = $db_con->get_class();
         $db_con->set_class(sql_db::TBL_CHANGE);
         $db_con->set_usr($this->user()->id());
-        $log_id = $db_con->insert($sql_fields, $sql_values);
+        $log_id = $db_con->insert_old($sql_fields, $sql_values);
 
         if ($log_id <= 0) {
             // write the error message in steps to get at least some message if the parameters has caused the error
@@ -489,7 +489,7 @@ class change_log_named extends change_log
         $db_type = $db_con->get_class();
         $db_con->set_class(sql_db::TBL_CHANGE);
         $db_con->set_usr($this->user()->id());
-        if ($db_con->update($this->id(), "row_id", $row_id)) {
+        if ($db_con->update_old($this->id(), "row_id", $row_id)) {
             // restore the type before saving the log
             $db_con->set_class($db_type);
             $result = True;

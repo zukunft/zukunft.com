@@ -865,7 +865,7 @@ class group extends db_object
                 // update the generic name in the database
                 $db_con->usr_id = $this->user()->id();
                 $db_con->set_class(sql_db::TBL_GROUP);
-                if ($db_con->update($this->id, self::FLD_DESCRIPTION, $group_name)) {
+                if ($db_con->update_old($this->id, self::FLD_DESCRIPTION, $group_name)) {
                     $result = $group_name;
                 }
                 log_debug('updated to ' . $group_name);

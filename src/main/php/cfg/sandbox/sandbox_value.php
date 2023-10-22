@@ -245,32 +245,39 @@ class sandbox_value extends sandbox_non_seq_id
 
 
     /**
+     * the common part of the sql statement creation for insert and update statements
      * @param sql_creator $sc with the target db_type set
+     * @param bool $usr_tbl true if a db row should be added to the user table
      * @return sql_par the common part for insert and update sql statements
      */
-    protected function sql_common(sql_creator $sc): sql_par
+    protected function sql_common(sql_creator $sc, bool $usr_tbl = false): sql_par
     {
         $lib = new library();
         $class = $lib->class_to_name($this::class);
         $ext = $this->grp->table_extension();
         $qp = new sql_par($class . $ext);
         $qp->name = $class . $ext;
-        $sc->set_class($class, false, $ext);
+        if ($usr_tbl) {
+            $qp->name .= '_user';
+        }
+        $sc->set_class($class, $usr_tbl, $ext);
         return $qp;
     }
 
     /**
      * create the sql statement to update a value in the database
      * @param sql_creator $sc with the target db_type set
+     * @param bool $usr_tbl true if the user table row should be updated
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_update(
         sql_creator $sc,
         array $fields = [],
-        array $values = []
+        array $values = [],
+        bool $usr_tbl = false
     ): sql_par
     {
-        $qp = $this->sql_common($sc);
+        $qp = $this->sql_common($sc, $usr_tbl);
         $qp->name .= '_update';
         $sc->set_name($qp->name);
         $qp->sql = $sc->sql_update($this->id_field(),  $this->id(), $fields, $values);

@@ -990,7 +990,7 @@ class user extends db_object_seq_id
         //$db_con = new mysql;
         $db_con->usr_id = $this->id;
         $db_con->set_class(sql_db::TBL_USER);
-        return $db_con->update($this->id, 'source_id', $source_id);
+        return $db_con->update_old($this->id, 'source_id', $source_id);
     }
 
     // remember the last source that the user has used
@@ -1041,7 +1041,7 @@ class user extends db_object_seq_id
             $log->set_field($fld_name);
             if ($log->add()) {
                 $db_con->set_class(sql_db::TBL_USER);
-                $result = $db_con->update($this->id, $log->field(), $log->new_value);
+                $result = $db_con->update_old($this->id, $log->field(), $log->new_value);
             }
         }
     }
@@ -1103,39 +1103,39 @@ class user extends db_object_seq_id
         if ($this->id <= 0) {
             log_debug(" add (" . $this->name . ")");
 
-            $this->id = $db_con->insert("user_name", $this->name);
+            $this->id = $db_con->insert_old("user_name", $this->name);
             // log the changes???
             if ($this->id > 0) {
                 // add the description of the user
-                if (!$db_con->update($this->id, sandbox_named::FLD_DESCRIPTION, $this->description)) {
+                if (!$db_con->update_old($this->id, sandbox_named::FLD_DESCRIPTION, $this->description)) {
                     $result = 'Saving of user description ' . $this->id . ' failed.';
                 }
                 // add the email of the user
-                if (!$db_con->update($this->id, self::FLD_EMAIL, $this->email)) {
+                if (!$db_con->update_old($this->id, self::FLD_EMAIL, $this->email)) {
                     $result = 'Saving of user email ' . $this->id . ' failed.';
                 }
                 // add the first name of the user
-                if (!$db_con->update($this->id, self::FLD_FIRST_NAME, $this->first_name)) {
+                if (!$db_con->update_old($this->id, self::FLD_FIRST_NAME, $this->first_name)) {
                     $result = 'Saving of user first name ' . $this->id . ' failed.';
                 }
                 // add the last name of the user
-                if (!$db_con->update($this->id, self::FLD_LAST_NAME, $this->last_name)) {
+                if (!$db_con->update_old($this->id, self::FLD_LAST_NAME, $this->last_name)) {
                     $result = 'Saving of user last name ' . $this->id . ' failed.';
                 }
                 // add the code of the user
                 if ($this->code_id != '') {
-                    if (!$db_con->update($this->id, self::FLD_CODE_ID, $this->code_id)) {
+                    if (!$db_con->update_old($this->id, self::FLD_CODE_ID, $this->code_id)) {
                         $result = 'Saving of user code id ' . $this->id . ' failed.';
                     }
                 }
                 // add the profile of the user
-                if (!$db_con->update($this->id, self::FLD_USER_PROFILE, $this->profile_id)) {
+                if (!$db_con->update_old($this->id, self::FLD_USER_PROFILE, $this->profile_id)) {
                     $result = 'Saving of user profile ' . $this->id . ' failed.';
                 }
                 // add the ip address to the user, but never for system users
                 if ($this->profile_id != $user_profiles->id(user_profile::SYSTEM)
                     and $this->profile_id != $user_profiles->id(user_profile::TEST)) {
-                    if (!$db_con->update($this->id, self::FLD_IP_ADDRESS, $this->get_ip())) {
+                    if (!$db_con->update_old($this->id, self::FLD_IP_ADDRESS, $this->get_ip())) {
                         $result = 'Saving of user ' . $this->id . ' failed.';
                     }
                 }

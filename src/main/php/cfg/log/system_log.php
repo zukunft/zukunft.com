@@ -295,7 +295,7 @@ class system_log extends db_object_seq_id
         $result = true;
         if ($log->add()) {
             $db_con->set_class(sql_db::TBL_SYS_LOG);
-            $result = $db_con->update($this->id(), $log->field(), $log->new_id);
+            $result = $db_con->update_old($this->id(), $log->field(), $log->new_id);
         }
         return $result;
     }

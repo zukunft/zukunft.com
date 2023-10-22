@@ -5,6 +5,6 @@ PREPARE value_by_usr_cfg FROM
            last_update,
            excluded,
            protect_id
-      FROM user_values
+      FROM user_values_prime
      WHERE group_id = ?
        AND user_id = ?';

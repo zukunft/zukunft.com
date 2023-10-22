@@ -807,7 +807,7 @@ class ref extends sandbox_link_with_type
             $db_con->set_class(sql_db::TBL_REF);
             $db_con->set_usr($this->user()->id());
 
-            $this->id = $db_con->insert(
+            $this->id = $db_con->insert_old(
                 array(phrase::FLD_ID, self::FLD_EX_KEY, self::FLD_TYPE),
                 array($this->phr->id(), $this->external_key, $this->ref_type->id));
             if ($this->id > 0) {
@@ -906,7 +906,7 @@ class ref extends sandbox_link_with_type
                 $log = $this->log_link_upd($db_rec);
                 if ($log->id() > 0) {
                     $db_con->set_class(sql_db::TBL_REF);
-                    if ($db_con->update($this->id, self::FLD_EX_KEY, $this->external_key)) {
+                    if ($db_con->update_old($this->id, self::FLD_EX_KEY, $this->external_key)) {
                         log_debug('ref->save update ... done.');
                     }
                 }

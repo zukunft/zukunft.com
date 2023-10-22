@@ -2275,13 +2275,12 @@ class sql_creator
     private function set_table(bool $usr_table = false, string $ext = ''): void
     {
         global $debug;
+        $this->table = '';
         if ($usr_table) {
-            $this->table = sql_db::USER_PREFIX . $this->get_table_name($this->class);
-            $this->usr_only_query = true;
-        } else {
-            $this->table = $this->get_table_name($this->class);
-            $this->table .= $ext;
+            $this->table = sql_db::USER_PREFIX;
         }
+        $this->table .= $this->get_table_name($this->class);
+        $this->table .= $ext;
         log_debug('to "' . $this->table . '"', $debug - 20);
     }
 

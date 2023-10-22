@@ -86,7 +86,7 @@ if (isset($_POST['submit'])) {
             //$pw_hash = password_hash($_POST['password'], password_DEFAULT);
             $db_con->set_class(sql_db::TBL_USER);
             $db_con->set_usr(SYSTEM_USER_ID);
-            $db_con->update($usr_id, array('password', 'activation_key', 'activation_key_timeout'), array($pw_hash, '', 'NOW()'));
+            $db_con->update_old($usr_id, array('password', 'activation_key', 'activation_key_timeout'), array($pw_hash, '', 'NOW()'));
             /*
             $sql = sprintf("UPDATE users
                           SET password       = '%s',

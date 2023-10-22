@@ -369,7 +369,7 @@ class batch_job extends db_object_seq_id_user
                     $db_type = $db_con->get_class();
                     $db_con->set_class(sql_db::TBL_TASK);
                     $db_con->set_usr($this->user()->id());
-                    $job_id = $db_con->insert(array(user::FLD_ID, self::FLD_TIME_REQUEST, self::FLD_TYPE, self::FLD_ROW),
+                    $job_id = $db_con->insert_old(array(user::FLD_ID, self::FLD_TIME_REQUEST, self::FLD_TYPE, self::FLD_ROW),
                         array($this->user()->id(), sql_creator::NOW, $this->type_id(), $this->row_id));
                     $this->request_time = new DateTime();
 
@@ -415,7 +415,7 @@ class batch_job extends db_object_seq_id_user
         $db_type = $db_con->get_class();
         $db_con->set_class(sql_db::TBL_TASK);
         $db_con->usr_id = $this->user()->id();
-        $result = $db_con->update($this->id, 'end_time', sql_creator::NOW);
+        $result = $db_con->update_old($this->id, 'end_time', sql_creator::NOW);
         $db_con->set_class($db_type);
 
         log_debug('done with ' . $result);
@@ -431,7 +431,7 @@ class batch_job extends db_object_seq_id_user
         $db_type = $db_con->get_class();
         $db_con->usr_id = $this->user()->id();
         $db_con->set_class(sql_db::TBL_TASK);
-        $result = $db_con->update($this->id, 'start_time', sql_creator::NOW);
+        $result = $db_con->update_old($this->id, 'start_time', sql_creator::NOW);
 
         log_debug($this->type_code_id() . ' with ' . $result);
         if ($this->type_code_id() == batch_job_type_list::VALUE_UPDATE) {

@@ -33,6 +33,8 @@
 
 use cfg\user;
 use test\test_unit_read_db;
+use test\write\value_test;
+use test\write\word_test;
 
 // standard zukunft header for callable php files to allow debugging and lib loading
 global $debug;
@@ -48,7 +50,7 @@ include_once PHP_PATH . 'zu_lib.php';
 $db_con = prg_start("test_quick");
 
 // load the testing base functions
-include_once '../src/test/php/utils/test_base.php';
+include_once PHP_TEST_PATH . 'utils/test_base.php';
 
 // load the session user parameters
 $start_usr = new user;
@@ -61,7 +63,8 @@ if ($start_usr->id() > 0) {
         // prepare testing
         $usr = $start_usr;
         $t = new test_unit_read_db();
-        $t->init_unit_db_tests();
+        // TODO activate
+        //$t->init_unit_db_tests();
 
         // run the unit tests without database connection (is so fast, that it can be tested always)
         $t->run_unit();
@@ -69,6 +72,11 @@ if ($start_usr->id() > 0) {
         // reload the setting lists after using dummy list for the unit tests
         $db_con->close();
         $db_con = prg_restart("reload cache after unit testing");
+
+        // create the testing users
+        $t->set_users();
+        global $usr;
+        $usr = $t->usr1;
 
         // switch to the test user
         $usr = new user;
@@ -90,15 +98,19 @@ if ($start_usr->id() > 0) {
         if ($usr->id() > 0) {
 
             // create the testing users
-            $t->set_users();
+            //$t->set_users();
 
             // cleanup also before testing to remove any leftovers
-            $t->cleanup_check();
+            //$t->cleanup_check();
 
             // -----------------------------------------------
             // start testing the selected system functionality
             // -----------------------------------------------
 
+            (new word_test())->create_test_words($t);
+            (new value_test())->create_test_values($t);
+
+            /*
             $t->usr1->load_usr_data();
             $t->run_unit_db_tests($t);
 
@@ -108,6 +120,7 @@ if ($start_usr->id() > 0) {
             // test the api write functionality
             $t->test_api_write_no_rest_all();
             $t->test_api_write_all();
+            */
 
             /*
             create_test_words($t);

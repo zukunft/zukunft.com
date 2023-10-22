@@ -321,7 +321,7 @@ class sandbox_link extends sandbox
     function add_insert(): int
     {
         global $db_con;
-        return $db_con->insert(
+        return $db_con->insert_old(
             array($this->from_name . sql_db::FLD_EXT_ID, $this->to_name . sql_db::FLD_EXT_ID, "user_id"),
             array($this->fob->id, $this->tob->id, $this->user()->id));
     }
@@ -438,7 +438,7 @@ class sandbox_link extends sandbox
             if ($log->add()) {
                 $db_con->set_class($this->obj_name);
                 $db_con->set_usr($this->user()->id);
-                if (!$db_con->update($this->id,
+                if (!$db_con->update_old($this->id,
                     array($this->from_name . sql_db::FLD_EXT_ID, $this->from_name . sql_db::FLD_EXT_ID),
                     array($this->fob->id, $this->tob->id))) {
                     $result .= 'update from link to ' . $this->from_name . 'failed';

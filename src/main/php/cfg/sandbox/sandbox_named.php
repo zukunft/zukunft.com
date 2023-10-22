@@ -504,7 +504,7 @@ class sandbox_named extends sandbox
             // TODO check that always before a db action is called the db type is set correctly
             $db_con->set_class($this->obj_name);
             $db_con->set_usr($this->user()->id);
-            $this->id = $db_con->insert(array($this->obj_name . '_name', "user_id"), array($this->name, $this->user()->id));
+            $this->id = $db_con->insert_old(array($this->obj_name . '_name', "user_id"), array($this->name, $this->user()->id));
 
             // save the object fields if saving the key was successful
             if ($this->id > 0) {
@@ -631,7 +631,7 @@ class sandbox_named extends sandbox
             if ($log->add()) {
                 $db_con->set_class($this->obj_name);
                 $db_con->set_usr($this->user()->id);
-                if (!$db_con->update($this->id,
+                if (!$db_con->update_old($this->id,
                     array($this->obj_name . '_name'),
                     array($this->name))) {
                     $result .= 'update of name to ' . $this->name() . 'failed';

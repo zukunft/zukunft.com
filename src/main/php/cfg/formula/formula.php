@@ -1532,7 +1532,7 @@ class formula extends sandbox_typed
             $db_con->set_class(sql_db::TBL_FORMULA_ELEMENT);
             $field_names[] = 'order_nbr';
             $field_values[] = $elm_order_nbr;
-            $add_result = $db_con->insert($field_names, $field_values);
+            $add_result = $db_con->insert_old($field_names, $field_values);
             // in this case the row id is not needed, but for testing the number of action should be indicated by adding a '1' to the result string
             //if ($add_result > 0) {
             //    $result .= '1';
@@ -1819,7 +1819,7 @@ class formula extends sandbox_typed
             if (!$this->check_usr_cfg()) {
                 // create an entry in the user sandbox
                 $db_con->set_class(sql_db::TBL_USER_PREFIX . sql_db::TBL_FORMULA);
-                $log_id = $db_con->insert(array(self::FLD_ID, user::FLD_ID), array($this->id(), $this->user()->id));
+                $log_id = $db_con->insert_old(array(self::FLD_ID, user::FLD_ID), array($this->id(), $this->user()->id));
                 if ($log_id <= 0) {
                     log_err('Insert of user_formula failed.');
                     $result = false;
@@ -1953,7 +1953,7 @@ class formula extends sandbox_typed
         $result = '';
         $this->last_update = new DateTime();
         $db_con->set_class(sql_db::TBL_FORMULA);
-        if (!$db_con->update($this->id(), self::FLD_LAST_UPDATE, sql_creator::NOW)) {
+        if (!$db_con->update_old($this->id(), self::FLD_LAST_UPDATE, sql_creator::NOW)) {
             $result = 'saving the update trigger for formula ' . $this->dsp_id() . ' failed';
         }
 
@@ -2123,7 +2123,7 @@ class formula extends sandbox_typed
             $log->set_field(self::FLD_NAME);
             if ($log->add()) {
                 $db_con->set_class(sql_db::TBL_FORMULA);
-                if (!$db_con->update($this->id(),
+                if (!$db_con->update_old($this->id(),
                     array(self::FLD_NAME),
                     array($this->name()))) {
                     $result .= 'formula ' . $db_rec->name() . ' cannot be renamed to ' . $this->name();
@@ -2249,7 +2249,7 @@ class formula extends sandbox_typed
             // insert the new formula
             $db_con->set_class(sql_db::TBL_FORMULA);
             // include the formula_text and the resolved_text, because they should never be empty which is also forced by the db structure
-            $this->set_id($db_con->insert(
+            $this->set_id($db_con->insert_old(
                 array(self::FLD_NAME, user::FLD_ID, self::FLD_LAST_UPDATE, self::FLD_FORMULA_TEXT, self::FLD_FORMULA_USER_TEXT),
                 array($this->name(), $this->user()->id, sql_creator::NOW, $this->ref_text, $this->usr_text)));
             if ($this->id() > 0) {

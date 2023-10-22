@@ -62,9 +62,11 @@ class value_unit_tests
 
         $t->subheader('SQL statement creation tests');
 
+        // TODO add sql insert and update tests to all db objects
         $t->subheader('for often used (prime) values');
         $val = $t->dummy_value();
         $t->assert_sql_insert($db_con, $val);
+        $t->assert_sql_insert($db_con, $val, true);
         $t->assert_sql_update($db_con, $val);
         $t->assert_sql_by_id($db_con, $val);
         $this->assert_sql_by_grp($t, $db_con, $val);
