@@ -4,7 +4,6 @@ PREPARE result_list_by_formula_id FROM
            user_id,
            source_group_id,
            result,
-           last_update,
-           dirty
+           last_update
       FROM results
      WHERE formula_id = ?';

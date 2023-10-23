@@ -33,6 +33,7 @@
 
 use cfg\user;
 use test\test_unit_read_db;
+use test\write\triple_test;
 use test\write\value_test;
 use test\write\word_test;
 
@@ -108,6 +109,7 @@ if ($start_usr->id() > 0) {
             // -----------------------------------------------
 
             (new word_test())->create_test_words($t);
+            (new triple_test())->create_test_triples($t);
             (new value_test())->create_test_values($t);
 
             /*

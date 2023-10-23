@@ -120,7 +120,7 @@ class word_api extends sandbox_typed_api
     const TD_UPD_API = 'System Test Word API Description Renamed';
 
 
-    // word groups for creating the test words and remove them after the test
+    // word groups for creating the test words and remove some after the test
     const RESERVED_WORDS = array(
         word::SYSTEM_CONFIG,
         self::TN_READ,
@@ -136,6 +136,7 @@ class word_api extends sandbox_typed_api
         self::TN_CITY,
         self::TN_ZH,
         self::TN_INHABITANT,
+        self::TN_INHABITANTS,
         self::TN_YEAR,
         self::TN_2015,
         self::TN_2016,

@@ -71,7 +71,7 @@ class db_object
     function sql_table(sql_creator $sc): string
     {
         $sc->set_class($this::class);
-        return $sc->table_create($this::TBL_COMMENT);
+        return $sc->table_create([], $this::TBL_COMMENT);
     }
 
 

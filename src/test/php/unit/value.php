@@ -61,6 +61,8 @@ class value_unit_tests
         $t->header('Unit tests of the value class (src/main/php/model/value/value.php)');
 
         $t->subheader('SQL statement creation tests');
+        $val = $t->dummy_value();
+        $t->assert_sql_table_create($db_con, $val);
 
         // TODO add sql insert and update tests to all db objects
         $t->subheader('for often used (prime) values');

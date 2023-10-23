@@ -80,8 +80,7 @@ class result extends sandbox_value
         self::FLD_SOURCE_GRP,
         self::FLD_GRP,
         self::FLD_VALUE,
-        self::FLD_LAST_UPDATE,
-        self::FLD_DIRTY
+        self::FLD_LAST_UPDATE
     );
 
 
@@ -98,7 +97,6 @@ class result extends sandbox_value
 
     // to deprecate
     public ?DateTime $last_update = null;      // ... and the time of the last update; all updates up to this time are included in this result
-    public ?bool $dirty = null;                // true as long as an update is pending
 
 
     // in memory only fields (all methods except load and save should use the wrd_lst object not the ids and not the group id)
@@ -150,7 +148,6 @@ class result extends sandbox_value
             $this->owner_id = $db_row[user::FLD_ID];
             $this->last_update = $lib->get_datetime($db_row[self::FLD_LAST_UPDATE]);
             $this->last_val_update = $lib->get_datetime($db_row[self::FLD_LAST_UPDATE]);
-            $this->dirty = $db_row[self::FLD_DIRTY];
 
             $this->load_phrases(true);
         }

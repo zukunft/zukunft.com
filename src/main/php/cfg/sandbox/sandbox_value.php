@@ -38,6 +38,8 @@ include_once MODEL_SANDBOX_PATH . 'sandbox_non_seq_id.php';
 include_once MODEL_GROUP_PATH . 'group.php';
 
 use cfg\db\sql_creator;
+use cfg\db\sql_field_default;
+use cfg\db\sql_field_type;
 use cfg\group\group;
 use DateTime;
 use Exception;

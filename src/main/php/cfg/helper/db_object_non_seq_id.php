@@ -48,6 +48,7 @@ class db_object_non_seq_id extends db_object
 
     // database fields that are used in all model objects
     // the database id is the unique prime key
+    // TODO actually not needed on this level, because the id may be generated and remembered in a linked object e.g. the group
     protected int|string $id;
 
 

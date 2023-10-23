@@ -4,8 +4,7 @@ PREPARE result_by_frm_grp (bigint, bigint) AS
            user_id,
            source_group_id,
            result,
-           last_update,
-           dirty
+           last_update
       FROM results
      WHERE formula_id = $1
        AND group_id = $2;

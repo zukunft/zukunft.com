@@ -63,6 +63,8 @@ include_once SERVICE_EXPORT_PATH . 'json.php';
 use api\api;
 use api\value_api;
 use cfg\db\sql_creator;
+use cfg\db\sql_field_default;
+use cfg\db\sql_field_type;
 use cfg\group\group;
 use DateTime;
 use Exception;
@@ -83,7 +85,19 @@ class value extends sandbox_value
     // object specific database and JSON object field names
     const FLD_ID = 'group_id';
     const FLD_VALUE = 'numeric_value';
+    const FLD_VALUE_TEXT = 'text_value';
     const FLD_LAST_UPDATE = 'last_update';
+
+    // the table name extension for public unprotected values related up to four prime phrase
+    const TBL_EXT_STD = '_standard';
+    const TBL_COMMENT_STD_PRIME = 'for public unprotected values related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated';
+    const TBL_COMMENT_STD = 'for public unprotected values that have never changed the owner, does not have a description and are rarely updated';
+    const TBL_COMMENT = 'for values related to up to 16 phrases';
+    const TBL_COMMENT_USER = 'for user specific changes of values related to up to 16 phrases';
+    const TBL_COMMENT_PRIME = 'for the most often requested values related up to four prime phrase';
+    const TBL_COMMENT_PRIME_USER = 'to store the user specific changes for the most often requested values related up to four prime phrase';
+    const TBL_COMMENT_BIG = 'for values related to more than 16 phrases';
+    const TBL_COMMENT_BIG_USER = 'to store the user specific changes of values related to more than 16 phrases';
 
     // all database field names excluding the id and excluding the user specific fields
     const FLD_NAMES = array(
@@ -109,6 +123,44 @@ class value extends sandbox_value
     // e.g. the standard value does not need the share type, because it is by definition public (even if share types within a group of users needs to be defined, the value for the user group are also user sandbox table)
     const FLD_NAMES_USR_ONLY = array(
         sandbox::FLD_SHARE
+    );
+
+    // field lists for the table creation
+    const FLD_KEY_PRIME = array(
+        [group::FLD_ID, sql_field_type::KEY_INT, sql_field_default::NOT_NULL, 'the 64-bit prime index to find the value'],
+    );
+    const FLD_KEY_PRIME_USER = array(
+        [group::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, 'the 64-bit prime index to find the user values'],
+    );
+    const FLD_KEY = array(
+        [group::FLD_ID, sql_field_type::KEY_512, sql_field_default::NOT_NULL, 'the 512-bit prime index to find the value'],
+    );
+    const FLD_KEY_USER = array(
+        [group::FLD_ID, sql_field_type::BIT_512, sql_field_default::NOT_NULL, 'the 512-bit prime index to find the user values'],
+    );
+    const FLD_KEY_BIG = array(
+        [group::FLD_ID, sql_field_type::KEY_TEXT, sql_field_default::NOT_NULL, 'the text index to find value related to more than 16 phrases'],
+    );
+    const FLD_KEY_BIG_USER = array(
+        [group::FLD_ID, sql_field_type::TEXT, sql_field_default::NOT_NULL, 'the text index to find the user values related to more than 16 phrases'],
+    );
+    const FLD_ALL_VALUE_NUM = array(
+        [value::FLD_VALUE, sql_field_type::NUMERIC_FLOAT, sql_field_default::NOT_NULL, 'the numeric value given by the user'],
+    );
+    const FLD_ALL_VALUE_NUM_USER = array(
+        [value::FLD_VALUE, sql_field_type::NUMERIC_FLOAT, sql_field_default::NULL, 'the user specific numeric value change'],
+    );
+    const FLD_ALL_VALUE_TEXT = array(
+        [value::FLD_VALUE_TEXT, sql_field_type::TEXT, sql_field_default::NOT_NULL, 'the text value given by the user'],
+    );
+    const FLD_ALL_VALUE_TEXT_USER = array(
+        [value::FLD_VALUE_TEXT, sql_field_type::TEXT, sql_field_default::NULL, 'the user specific text value change'],
+    );
+    const FLD_ALL_SOURCE = array(
+        [source::FLD_ID, sql_field_type::INT, sql_field_default::NULL, 'the source of the value as given by the user'],
+    );
+    const FLD_ALL_CHANGED = array(
+        [value::FLD_LAST_UPDATE, sql_field_type::TIME, sql_field_default::NULL, 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation'],
     );
 
 
@@ -356,6 +408,103 @@ class value extends sandbox_value
 
 
     /*
+     * sql create
+     */
+
+    /**
+     * the sql statements to create all tables used to store values in the database
+     *
+     * @param sql_creator $sc ith the target db_type set
+     * @return string the sql statement to create the table
+     */
+    function sql_table(sql_creator $sc): string
+    {
+
+        $sql = $this->sql_table_one_type(
+            $sc,
+            self::FLD_ALL_VALUE_NUM,
+            self::FLD_ALL_VALUE_NUM_USER)
+        ;
+        $sql .= $this->sql_table_one_type(
+            $sc,
+            self::FLD_ALL_VALUE_TEXT,
+            self::FLD_ALL_VALUE_TEXT_USER,
+            '_text'
+        );
+        return $sql;
+    }
+
+    /**
+     * create the sql statements for a set (standard, prime and big) tables
+     * for one field type e.g. numeric value, text values
+     *
+     * @param sql_creator $sc
+     * @param array $fld_par the parameters for the value field e.g. for a numeric field, text, time or geo
+     * @param array $fld_par_usr the user specific parameters for the value field
+     * @param string $ext_type the additional table extension for the field type
+     * @return string the sql statement to create the tables
+     */
+    private function sql_table_one_type(
+        sql_creator $sc,
+        array $fld_par,
+        array $fld_par_usr,
+        string $ext_type = ''): string
+    {
+
+        $sql = $sc->sql_separator();
+        $sc->set_class($this::class, false, $ext_type . self::TBL_EXT_STD . group::TBL_EXT_PRIME);
+        $sql .= $sc->table_create(array_merge(
+            self::FLD_KEY_PRIME,
+            $fld_par,
+            self::FLD_ALL_SOURCE
+        ), $this::TBL_COMMENT_STD_PRIME);
+        $sc->set_class($this::class, false, $ext_type . self::TBL_EXT_STD);
+        $sql .= $sc->table_create(array_merge(
+            self::FLD_KEY,
+            $fld_par,
+            self::FLD_ALL_SOURCE
+        ), $this::TBL_COMMENT_STD);
+
+        $sql .= $sc->sql_separator();
+        $std_fields = array_merge(
+            $fld_par,
+            self::FLD_ALL_SOURCE,
+            self::FLD_ALL_CHANGED,
+            sandbox::FLD_ALL_OWNER,
+            sandbox::FLD_ALL);
+        $std_usr_fields = array_merge(
+            sandbox::FLD_ALL_CHANGER,
+            $fld_par_usr,
+            self::FLD_ALL_SOURCE,
+            self::FLD_ALL_CHANGED,
+            sandbox::FLD_ALL);
+        $fields = array_merge(self::FLD_KEY, $std_fields);
+        $sc->set_class($this::class, false, $ext_type);
+        $sql .= $sc->table_create($fields, $this::TBL_COMMENT);
+        $fields = array_merge(self::FLD_KEY_USER, $std_usr_fields);
+        $sc->set_class($this::class, true, $ext_type);
+        $sql .= $sc->table_create($fields, $this::TBL_COMMENT_USER);
+
+        $sql .= $sc->sql_separator();
+        $fields = array_merge(self::FLD_KEY_PRIME, $std_fields);
+        $sc->set_class($this::class, false, $ext_type . group::TBL_EXT_PRIME);
+        $sql .= $sc->table_create($fields, $this::TBL_COMMENT_PRIME);
+        $fields = array_merge(self::FLD_KEY_PRIME_USER, $std_usr_fields);
+        $sc->set_class($this::class, true, $ext_type . group::TBL_EXT_PRIME);
+        $sql .= $sc->table_create($fields, $this::TBL_COMMENT_PRIME_USER);
+
+        $sql .= $sc->sql_separator();
+        $fields = array_merge(self::FLD_KEY_BIG, $std_fields);
+        $sc->set_class($this::class, false, $ext_type . group::TBL_EXT_BIG);
+        $sql .= $sc->table_create($fields, $this::TBL_COMMENT_BIG);
+        $fields = array_merge(self::FLD_KEY_BIG_USER, $std_usr_fields);
+        $sc->set_class($this::class, true, $ext_type . group::TBL_EXT_BIG);
+        $sql .= $sc->table_create($fields, $this::TBL_COMMENT_BIG_USER);
+        return $sql;
+    }
+
+
+    /*
      * database load functions that reads the object from the database
      */
 
@@ -578,7 +727,7 @@ class value extends sandbox_value
 
     /**
      * load one database row e.g. value or result from the database
-     * where the prime key is not nessesarry and integer
+     * where the prime key is not necessary and integer
      * @param sql_par $qp the query parameters created by the calling function
      * @return int|string the id of the object found and zero if nothing is found
      */
@@ -1786,7 +1935,7 @@ class value extends sandbox_value
         log_debug('value->save_field_trigger_update group id "' . $this->grp->id() . '" for user ' . $this->user()->name . '');
         if ($this->id() > 0) {
             $job = new batch_job($this->user());
-            $job->set_class(batch_job_type_list::VALUE_UPDATE);
+            $job->set_type(batch_job_type_list::VALUE_UPDATE);
             $job->obj = $this;
             $job->add();
         } else {

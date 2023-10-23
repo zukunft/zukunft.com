@@ -1317,17 +1317,15 @@ CREATE TABLE IF NOT EXISTS `formula_types`
 
 CREATE TABLE IF NOT EXISTS `results`
 (
-    `group_id`              int(11)   NOT NULL,
-    `formula_id`             int(11)   NOT NULL,
-    `user_id`                int(11)        DEFAULT NULL,
-    `source_phrase_group_id` int(11)        DEFAULT NULL,
-    `phrase_group_id`        int(11)        DEFAULT '0' COMMENT 'temp field for fast data collection; no single links to terms because this is just a cache table and can be recreated by the underlying tables',
-    `result`                 double    NOT NULL,
-    `last_update`            timestamp NULL DEFAULT NULL COMMENT 'time of last value update mainly used for recovery in case of inconsistencies, empty in case this value is dirty',
-    `dirty`                  tinyint(4)     DEFAULT NULL
+    `group_id`        int(11)   NOT NULL,
+    `formula_id`      int(11)   NOT NULL,
+    `user_id`         int(11)   DEFAULT NULL,
+    `source_group_id` int(11)   DEFAULT NULL,
+    `result`          double    NOT NULL,
+    `last_update`     timestamp NULL DEFAULT NULL COMMENT 'time of last value update mainly used for recovery in case of inconsistencies, empty in case this value is dirty'
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8 COMMENT ='temp table to cache the formula results';
+  DEFAULT CHARSET = utf8 COMMENT ='table to cache the formula results';
 
 -- --------------------------------------------------------
 

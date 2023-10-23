@@ -33,6 +33,9 @@ namespace cfg\db;
 
 include_once DB_PATH . 'sql_db.php';
 include_once MODEL_SYSTEM_PATH . 'log.php';
+include_once MODEL_DB_PATH . 'sql_field_type.php';
+include_once MODEL_DB_PATH . 'sql_field_default.php';
+include_once MODEL_DB_PATH . 'sql_pg.php';
 
 use cfg\component_link;
 use cfg\formula_element;
@@ -57,6 +60,9 @@ class sql_creator
     const INSERT = 'INSERT';
     const UPDATE = 'UPDATE';
     const NOW = 'Now()';
+
+    // enum values used for the table creation
+    const fld_type_ = '';
 
     // sql const used for this sql statement creator
     const NULL_VALUE = 'NULL';
@@ -1838,9 +1844,13 @@ class sql_creator
     }
 
     /**
-     * @return string the sql statement to creat a table
+     * generate a sql statement to create one database table
+     *
+     * @param array $fields with the field names, types and default value
+     * @param string $tbl_comment describe the purpose of the table for the developer only
+     * @return string the sql statement to create a table
      */
-    function table_create(string $tbl_comment = ''): string
+    function table_create(array $fields, string $tbl_comment = ''): string
     {
         $sql = '';
 
@@ -1861,10 +1871,47 @@ class sql_creator
         $sql .= '';
 
         // loop over the fields
+        $sql .= '(';
+        $sql_fields = '';
+        foreach ($fields as $field) {
+            if ($sql_fields != '') {
+                $sql_fields .= ', ';
+            }
+            $name = $field[0];
+            $type = $field[1];
+            $default = $field[2];
+            $default = $default->pg_type();
+            $comment = $field[3];
+            if ($this->db_type() == sql_db::POSTGRES) {
+                if ($type->is_key()) {
+                    $default = sql_pg::FLD_KEY;
+                }
+            }
+            $sql_fields .= '    ' . $name . ' ' . $type->pg_type() . ' ' . $default;
+        }
+        $sql .= $sql_fields . '); ';
 
         // add the table comment
-        // loop over the comments
+        $sql .= "COMMENT ON TABLE " . $this->table . " IS '" . $tbl_comment . "'; ";
 
+        // loop over the comments
+        foreach ($fields as $field) {
+            $name = $field[0];
+            $comment = $field[3];
+            $sql .= "COMMENT ON COLUMN " . $this->table . "." . $name . " IS '" . $comment . "'; ";
+        }
+
+        return $sql;
+    }
+
+    /**
+     * @return string a sql separator just to improve formatting
+     */
+    function sql_separator(): string
+    {
+        $sql = ' ';
+        $sql .= '-- --------------------------------------------------------';
+        $sql .= ' ';
         return $sql;
     }
 

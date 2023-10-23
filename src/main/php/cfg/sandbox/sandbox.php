@@ -50,6 +50,8 @@ include_once MODEL_SANDBOX_PATH . 'protection_type.php';
 include_once MODEL_SANDBOX_PATH . 'share_type.php';
 
 use cfg\db\sql_creator;
+use cfg\db\sql_field_default;
+use cfg\db\sql_field_type;
 use cfg\db\sql_par_type;
 use model\export\exp_obj;
 use Exception;
@@ -110,6 +112,19 @@ class sandbox extends db_object_seq_id_user
         sql_db::TBL_COMPONENT,
         sql_db::TBL_COMPONENT_LINK
     );
+
+    const FLD_ALL_OWNER = array(
+        [user::FLD_ID, sql_field_type::INT, sql_field_default::NULL, 'the owner / creator of the value'],
+    );
+    const FLD_ALL_CHANGER = array(
+        [user::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, 'the changer of the value'],
+    );
+    const FLD_ALL = array(
+        [self::FLD_EXCLUDED, sql_field_type::BOOL, sql_field_default::NULL, 'true if a user, but not all, have removed it'],
+        [self::FLD_SHARE, sql_field_type::INT_SMALL, sql_field_default::NULL, 'to restrict the access'],
+        [self::FLD_PROTECT, sql_field_type::INT_SMALL, sql_field_default::NULL, 'to protect against unwanted changes'],
+    );
+
 
 
     /*
