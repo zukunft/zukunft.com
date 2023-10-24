@@ -46,6 +46,7 @@ enum sql_field_type: string
     case INT_SMALL = 'smallint'; // the integer type for a very limited number of entries
     case BOOL = 'bool'; // the one bit true/false type
     case TIME = 'time'; // for the iso timestamp format
+    case GEO = 'geo'; // for a geolocation
     case NUMERIC_FLOAT = 'float'; // a float value with double precision
 
     public function pg_type(): string
@@ -58,6 +59,7 @@ enum sql_field_type: string
             self::INT_SMALL, self::BOOL => 'smallint',
             self::NUMERIC_FLOAT => 'double precision',
             self::TIME => 'timestamp',
+            self::GEO => 'point',
             default => 'postgres type ' . $this->value .' missing',
         };
     }
@@ -72,6 +74,7 @@ enum sql_field_type: string
             self::INT_SMALL, self::BOOL => 'smallint',
             self::NUMERIC_FLOAT => 'double precision',
             self::TIME => 'timestamp',
+            self::GEO => 'point',
             default => 'MySQL type ' . $this->value .' missing',
         };
     }

@@ -86,18 +86,29 @@ class value extends sandbox_value
     const FLD_ID = 'group_id';
     const FLD_VALUE = 'numeric_value';
     const FLD_VALUE_TEXT = 'text_value';
+    const FLD_VALUE_TIME = 'time_value';
+    const FLD_VALUE_GEO = 'geo_value';
     const FLD_LAST_UPDATE = 'last_update';
 
     // the table name extension for public unprotected values related up to four prime phrase
     const TBL_EXT_STD = '_standard';
-    const TBL_COMMENT_STD_PRIME = 'for public unprotected values related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated';
-    const TBL_COMMENT_STD = 'for public unprotected values that have never changed the owner, does not have a description and are rarely updated';
-    const TBL_COMMENT = 'for values related to up to 16 phrases';
-    const TBL_COMMENT_USER = 'for user specific changes of values related to up to 16 phrases';
-    const TBL_COMMENT_PRIME = 'for the most often requested values related up to four prime phrase';
-    const TBL_COMMENT_PRIME_USER = 'to store the user specific changes for the most often requested values related up to four prime phrase';
-    const TBL_COMMENT_BIG = 'for values related to more than 16 phrases';
-    const TBL_COMMENT_BIG_USER = 'to store the user specific changes of values related to more than 16 phrases';
+    const TBL_COMMENT_STD = 'for public unprotected ';
+    const TBL_COMMENT_STD_PRIME_CONT = ' values related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated';
+    const TBL_COMMENT_STD_CONT = ' values that have never changed the owner, does not have a description and are rarely updated';
+    const TBL_COMMENT = 'for ';
+    const TBL_COMMENT_CONT = ' values related to up to 16 phrases';
+    const TBL_COMMENT_USER = 'for user specific changes of ';
+    const TBL_COMMENT_PRIME = 'for the most often requested ';
+    const TBL_COMMENT_PRIME_CONT = ' values related up to four prime phrase';
+    const TBL_COMMENT_PRIME_USER = 'to store the user specific changes for the most often requested ';
+    const TBL_COMMENT_PRIME_USER_CONT = ' values related up to four prime phrase';
+    const TBL_COMMENT_BIG_CONT = ' values related to more than 16 phrases';
+    const TBL_COMMENT_BIG_USER = 'to store the user specific changes of ';
+    const TBL_COMMENT_BIG_USER_CONT = ' values related to more than 16 phrases';
+    const TBL_COMMENT_TYPE_NUMBER = 'numeric';
+    const TBL_COMMENT_TYPE_TEXT = 'text';
+    const TBL_COMMENT_TYPE_TIME = 'time';
+    const TBL_COMMENT_TYPE_GEO = 'geo';
 
     // all database field names excluding the id and excluding the user specific fields
     const FLD_NAMES = array(
@@ -153,8 +164,20 @@ class value extends sandbox_value
     const FLD_ALL_VALUE_TEXT = array(
         [value::FLD_VALUE_TEXT, sql_field_type::TEXT, sql_field_default::NOT_NULL, 'the text value given by the user'],
     );
+    const FLD_ALL_VALUE_TIME = array(
+        [value::FLD_VALUE_TIME, sql_field_type::TIME, sql_field_default::NOT_NULL, 'the timestamp given by the user'],
+    );
+    const FLD_ALL_VALUE_GEO = array(
+        [value::FLD_VALUE_GEO, sql_field_type::GEO, sql_field_default::NOT_NULL, 'the geolocation given by the user'],
+    );
     const FLD_ALL_VALUE_TEXT_USER = array(
         [value::FLD_VALUE_TEXT, sql_field_type::TEXT, sql_field_default::NULL, 'the user specific text value change'],
+    );
+    const FLD_ALL_VALUE_TIME_USER = array(
+        [value::FLD_VALUE_TIME, sql_field_type::TIME, sql_field_default::NULL, 'the user specific timestamp change'],
+    );
+    const FLD_ALL_VALUE_GEO_USER = array(
+        [value::FLD_VALUE_GEO, sql_field_type::GEO, sql_field_default::NULL, 'the user specific geolocation change'],
     );
     const FLD_ALL_SOURCE = array(
         [source::FLD_ID, sql_field_type::INT, sql_field_default::NULL, 'the source of the value as given by the user'],
@@ -423,13 +446,26 @@ class value extends sandbox_value
         $sql = $this->sql_table_one_type(
             $sc,
             self::FLD_ALL_VALUE_NUM,
-            self::FLD_ALL_VALUE_NUM_USER)
-        ;
+            self::FLD_ALL_VALUE_NUM_USER,
+            '', 'numeric'
+        );
         $sql .= $this->sql_table_one_type(
             $sc,
             self::FLD_ALL_VALUE_TEXT,
             self::FLD_ALL_VALUE_TEXT_USER,
-            '_text'
+            '_text', 'text'
+        );
+        $sql .= $this->sql_table_one_type(
+            $sc,
+            self::FLD_ALL_VALUE_TIME,
+            self::FLD_ALL_VALUE_TIME_USER,
+            '_time', 'time'
+        );
+        $sql .= $this->sql_table_one_type(
+            $sc,
+            self::FLD_ALL_VALUE_GEO,
+            self::FLD_ALL_VALUE_GEO_USER,
+            '_geo', 'geo'
         );
         return $sql;
     }
@@ -446,9 +482,10 @@ class value extends sandbox_value
      */
     private function sql_table_one_type(
         sql_creator $sc,
-        array $fld_par,
-        array $fld_par_usr,
-        string $ext_type = ''): string
+        array       $fld_par,
+        array       $fld_par_usr,
+        string      $ext_type = '',
+        string      $type_name = ''): string
     {
 
         $sql = $sc->sql_separator();
@@ -457,13 +494,13 @@ class value extends sandbox_value
             self::FLD_KEY_PRIME,
             $fld_par,
             self::FLD_ALL_SOURCE
-        ), $this::TBL_COMMENT_STD_PRIME);
+        ), $this::TBL_COMMENT_STD . $type_name . $this::TBL_COMMENT_STD_PRIME_CONT);
         $sc->set_class($this::class, false, $ext_type . self::TBL_EXT_STD);
         $sql .= $sc->table_create(array_merge(
             self::FLD_KEY,
             $fld_par,
             self::FLD_ALL_SOURCE
-        ), $this::TBL_COMMENT_STD);
+        ), $this::TBL_COMMENT_STD . $type_name . $this::TBL_COMMENT_STD_CONT);
 
         $sql .= $sc->sql_separator();
         $std_fields = array_merge(
@@ -480,26 +517,26 @@ class value extends sandbox_value
             sandbox::FLD_ALL);
         $fields = array_merge(self::FLD_KEY, $std_fields);
         $sc->set_class($this::class, false, $ext_type);
-        $sql .= $sc->table_create($fields, $this::TBL_COMMENT);
+        $sql .= $sc->table_create($fields, $this::TBL_COMMENT . $type_name . $this::TBL_COMMENT_CONT);
         $fields = array_merge(self::FLD_KEY_USER, $std_usr_fields);
         $sc->set_class($this::class, true, $ext_type);
-        $sql .= $sc->table_create($fields, $this::TBL_COMMENT_USER);
+        $sql .= $sc->table_create($fields, $this::TBL_COMMENT_USER . $type_name . $this::TBL_COMMENT_CONT);
 
         $sql .= $sc->sql_separator();
         $fields = array_merge(self::FLD_KEY_PRIME, $std_fields);
         $sc->set_class($this::class, false, $ext_type . group::TBL_EXT_PRIME);
-        $sql .= $sc->table_create($fields, $this::TBL_COMMENT_PRIME);
+        $sql .= $sc->table_create($fields, $this::TBL_COMMENT_PRIME . $type_name . $this::TBL_COMMENT_PRIME_CONT);
         $fields = array_merge(self::FLD_KEY_PRIME_USER, $std_usr_fields);
         $sc->set_class($this::class, true, $ext_type . group::TBL_EXT_PRIME);
-        $sql .= $sc->table_create($fields, $this::TBL_COMMENT_PRIME_USER);
+        $sql .= $sc->table_create($fields, $this::TBL_COMMENT_PRIME_USER . $type_name . $this::TBL_COMMENT_PRIME_USER_CONT);
 
         $sql .= $sc->sql_separator();
         $fields = array_merge(self::FLD_KEY_BIG, $std_fields);
         $sc->set_class($this::class, false, $ext_type . group::TBL_EXT_BIG);
-        $sql .= $sc->table_create($fields, $this::TBL_COMMENT_BIG);
+        $sql .= $sc->table_create($fields, $this::TBL_COMMENT . $type_name . $this::TBL_COMMENT_BIG_CONT);
         $fields = array_merge(self::FLD_KEY_BIG_USER, $std_usr_fields);
         $sc->set_class($this::class, true, $ext_type . group::TBL_EXT_BIG);
-        $sql .= $sc->table_create($fields, $this::TBL_COMMENT_BIG_USER);
+        $sql .= $sc->table_create($fields, $this::TBL_COMMENT_BIG_USER . $type_name . $this::TBL_COMMENT_BIG_USER_CONT);
         return $sql;
     }
 
@@ -2158,7 +2195,7 @@ class value extends sandbox_value
         sql_creator $sc,
         array       $fields = [],
         array       $values = [],
-        bool $usr_tbl = false
+        bool        $usr_tbl = false
     ): sql_par
     {
         $lib = new library();
