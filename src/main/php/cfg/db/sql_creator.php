@@ -1854,20 +1854,23 @@ class sql_creator
     {
         $sql = '';
 
+        // escape the names depending on the db dialect
+        $table_used = $this->name_sql_esc($this->table);
+
         // set the header comments
         $sql .= '-- ';
         $sql .= '-- table structure ';
         if ($tbl_comment != '') {
             $sql .= $tbl_comment;
         } else {
-            $sql .= $this->table;
+            $sql .= $table_used;
         }
         $sql .= ' ';
         $sql .= '-- ';
         $sql .= ' ';
 
         // create the main sql
-        $sql .= 'CREATE TABLE IF NOT EXISTS ' . $this->table . ' ';
+        $sql .= 'CREATE TABLE IF NOT EXISTS ' . $table_used . ' ';
         $sql .= '';
 
         // loop over the fields
@@ -1877,28 +1880,46 @@ class sql_creator
             if ($sql_fields != '') {
                 $sql_fields .= ', ';
             }
-            $name = $field[0];
+            $name = $this->name_sql_esc($field[0]);
             $type = $field[1];
+            if ($this->db_type() == sql_db::POSTGRES) {
+                $type_used = $type->pg_type();
+            } elseif ($this->db_type() == sql_db::MYSQL) {
+                $type_used = $type->mysql_type();
+            } else {
+                $type_used = 'field type for ' . $this->db_type() . ' missing';
+            }
             $default = $field[2];
-            $default = $default->pg_type();
+            $default_used = $default->pg_type();
             $comment = $field[3];
             if ($this->db_type() == sql_db::POSTGRES) {
                 if ($type->is_key()) {
-                    $default = sql_pg::FLD_KEY;
+                    $default_used = sql_pg::FLD_KEY;
                 }
             }
-            $sql_fields .= '    ' . $name . ' ' . $type->pg_type() . ' ' . $default;
+            $comment_used = '';
+            if ($this->db_type() == sql_db::MYSQL) {
+                $comment_used = " COMMENT = '" . $comment . "'";
+            }
+            $sql_fields .= '    ' . $name . ' ' . $type_used . ' ' . $default_used . $comment_used;
         }
-        $sql .= $sql_fields . '); ';
+        $sql .= $sql_fields . ')';
+        if ($this->db_type() == sql_db::MYSQL) {
+            $sql .= ' ENGINE = InnoDB DEFAULT CHARSET = utf8 ';
+            $sql .= "COMMENT = '" . $tbl_comment . "'";
+        }
+        $sql .= '; ';
 
         // add the table comment
-        $sql .= "COMMENT ON TABLE " . $this->table . " IS '" . $tbl_comment . "'; ";
+        if ($this->db_type() == sql_db::POSTGRES) {
+            $sql .= "COMMENT ON TABLE " . $table_used . " IS '" . $tbl_comment . "'; ";
 
-        // loop over the comments
-        foreach ($fields as $field) {
-            $name = $field[0];
-            $comment = $field[3];
-            $sql .= "COMMENT ON COLUMN " . $this->table . "." . $name . " IS '" . $comment . "'; ";
+            // loop over the comments
+            foreach ($fields as $field) {
+                $name = $field[0];
+                $comment = $field[3];
+                $sql .= "COMMENT ON COLUMN " . $table_used . "." . $name . " IS '" . $comment . "'; ";
+            }
         }
 
         return $sql;

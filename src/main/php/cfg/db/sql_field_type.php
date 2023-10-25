@@ -67,12 +67,12 @@ enum sql_field_type: string
     public function mysql_type(): string
     {
         return match($this) {
-            self::KEY_INT => 'BIGSERIAL',
+            self::KEY_INT => 'bigint',
             self::KEY_512, self::BIT_512 => 'char(112)',
             self::KEY_TEXT, self::TEXT => 'text',
             self::INT => 'bigint',
             self::INT_SMALL, self::BOOL => 'smallint',
-            self::NUMERIC_FLOAT => 'double precision',
+            self::NUMERIC_FLOAT => 'double',
             self::TIME => 'timestamp',
             self::GEO => 'point',
             default => 'MySQL type ' . $this->value .' missing',
