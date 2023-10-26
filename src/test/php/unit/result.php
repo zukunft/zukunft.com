@@ -63,9 +63,10 @@ class result_unit_tests
         $t->header('Unit tests of the result class (src/main/php/model/formula/result.php)');
 
         $t->subheader('SQL creation tests');
+        $res = new result($usr);
+        $t->assert_sql_table_create($db_con, $res);
 
         // check the sql to load a result by the id
-        $res = new result($usr);
         $t->assert_sql_by_id($db_con, $res);
         $this->assert_sql_by_group($t, $db_con, $res);
         $this->assert_sql_by_formula_and_group($t, $db_con, $res);

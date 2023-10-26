@@ -70,19 +70,19 @@ class sandbox_value extends sandbox_non_seq_id
 
     // field lists for the table creation
     const FLD_KEY_PRIME = array(
-        [group::FLD_ID, sql_field_type::KEY_INT, sql_field_default::NOT_NULL, 'the 64-bit prime index to find the value'],
+        [group::FLD_ID, sql_field_type::KEY_INT, sql_field_default::NOT_NULL, 'the 64-bit prime index to find the'],
     );
     const FLD_KEY_PRIME_USER = array(
         [group::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, 'the 64-bit prime index to find the user values'],
     );
     const FLD_KEY = array(
-        [group::FLD_ID, sql_field_type::KEY_512, sql_field_default::NOT_NULL, 'the 512-bit prime index to find the value'],
+        [group::FLD_ID, sql_field_type::KEY_512, sql_field_default::NOT_NULL, 'the 512-bit prime index to find the'],
     );
     const FLD_KEY_USER = array(
-        [group::FLD_ID, sql_field_type::BIT_512, sql_field_default::NOT_NULL, 'the 512-bit prime index to find the user values'],
+        [group::FLD_ID, sql_field_type::KEY_PART_512, sql_field_default::NOT_NULL, 'the 512-bit prime index to find the user'],
     );
     const FLD_KEY_BIG = array(
-        [group::FLD_ID, sql_field_type::KEY_TEXT, sql_field_default::NOT_NULL, 'the text index to find value related to more than 16 phrases'],
+        [group::FLD_ID, sql_field_type::KEY_TEXT, sql_field_default::NOT_NULL, 'the variable text index to find'],
     );
     const FLD_KEY_BIG_USER = array(
         [group::FLD_ID, sql_field_type::TEXT, sql_field_default::NOT_NULL, 'the text index to find the user values related to more than 16 phrases'],
@@ -271,13 +271,13 @@ class sandbox_value extends sandbox_non_seq_id
             self::FLD_KEY_PRIME,
             $fld_par,
             self::FLD_ALL_SOURCE
-        ), $this::TBL_COMMENT_STD . $type_name . $this::TBL_COMMENT_STD_PRIME_CONT);
+        ), $type_name, $this::TBL_COMMENT_STD . $type_name . $this::TBL_COMMENT_STD_PRIME_CONT);
         $sc->set_class($this::class, false, $ext_type . self::TBL_EXT_STD);
         $sql .= $sc->table_create(array_merge(
             self::FLD_KEY,
             $fld_par,
             self::FLD_ALL_SOURCE
-        ), $this::TBL_COMMENT_STD . $type_name . $this::TBL_COMMENT_STD_CONT);
+        ), $type_name, $this::TBL_COMMENT_STD . $type_name . $this::TBL_COMMENT_STD_CONT);
 
         $sql .= $sc->sql_separator();
         $std_fields = array_merge(
@@ -294,26 +294,26 @@ class sandbox_value extends sandbox_non_seq_id
             sandbox::FLD_ALL);
         $fields = array_merge(self::FLD_KEY, $std_fields);
         $sc->set_class($this::class, false, $ext_type);
-        $sql .= $sc->table_create($fields, $this::TBL_COMMENT . $type_name . $this::TBL_COMMENT_CONT);
+        $sql .= $sc->table_create($fields, $type_name, $this::TBL_COMMENT . $type_name . $this::TBL_COMMENT_CONT);
         $fields = array_merge(self::FLD_KEY_USER, $std_usr_fields);
         $sc->set_class($this::class, true, $ext_type);
-        $sql .= $sc->table_create($fields, $this::TBL_COMMENT_USER . $type_name . $this::TBL_COMMENT_CONT);
+        $sql .= $sc->table_create($fields, $type_name, $this::TBL_COMMENT_USER . $type_name . $this::TBL_COMMENT_CONT);
 
         $sql .= $sc->sql_separator();
         $fields = array_merge(self::FLD_KEY_PRIME, $std_fields);
         $sc->set_class($this::class, false, $ext_type . group::TBL_EXT_PRIME);
-        $sql .= $sc->table_create($fields, $this::TBL_COMMENT_PRIME . $type_name . $this::TBL_COMMENT_PRIME_CONT);
+        $sql .= $sc->table_create($fields, $type_name, $this::TBL_COMMENT_PRIME . $type_name . $this::TBL_COMMENT_PRIME_CONT);
         $fields = array_merge(self::FLD_KEY_PRIME_USER, $std_usr_fields);
         $sc->set_class($this::class, true, $ext_type . group::TBL_EXT_PRIME);
-        $sql .= $sc->table_create($fields, $this::TBL_COMMENT_PRIME_USER . $type_name . $this::TBL_COMMENT_PRIME_USER_CONT);
+        $sql .= $sc->table_create($fields, $type_name, $this::TBL_COMMENT_PRIME_USER . $type_name . $this::TBL_COMMENT_PRIME_USER_CONT);
 
         $sql .= $sc->sql_separator();
         $fields = array_merge(self::FLD_KEY_BIG, $std_fields);
         $sc->set_class($this::class, false, $ext_type . group::TBL_EXT_BIG);
-        $sql .= $sc->table_create($fields, $this::TBL_COMMENT . $type_name . $this::TBL_COMMENT_BIG_CONT);
+        $sql .= $sc->table_create($fields, $type_name, $this::TBL_COMMENT . $type_name . $this::TBL_COMMENT_BIG_CONT);
         $fields = array_merge(self::FLD_KEY_BIG_USER, $std_usr_fields);
         $sc->set_class($this::class, true, $ext_type . group::TBL_EXT_BIG);
-        $sql .= $sc->table_create($fields, $this::TBL_COMMENT_BIG_USER . $type_name . $this::TBL_COMMENT_BIG_USER_CONT);
+        $sql .= $sc->table_create($fields, $type_name, $this::TBL_COMMENT_BIG_USER . $type_name . $this::TBL_COMMENT_BIG_USER_CONT);
         return $sql;
     }
 

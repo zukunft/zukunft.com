@@ -1156,7 +1156,7 @@ CREATE TABLE IF NOT EXISTS user_values
 );
 
 COMMENT ON TABLE user_values                IS 'for user specific changes of values related to up to 16 phrases';
-COMMENT ON COLUMN user_values.group_id      IS 'the 512-bit prime index to find the user values';
+COMMENT ON COLUMN user_values.group_id      IS 'the 512-bit prime index to find the user numeric value';
 COMMENT ON COLUMN user_values.user_id       IS 'the changer of the value';
 COMMENT ON COLUMN user_values.numeric_value IS 'the user specific numeric value change';
 COMMENT ON COLUMN user_values.source_id     IS 'the source of the value as given by the user';

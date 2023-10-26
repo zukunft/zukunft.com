@@ -117,7 +117,7 @@ class sandbox extends db_object_seq_id_user
         [user::FLD_ID, sql_field_type::INT, sql_field_default::NULL, 'the owner / creator of the value'],
     );
     const FLD_ALL_CHANGER = array(
-        [user::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, 'the changer of the value'],
+        [user::FLD_ID, sql_field_type::KEY_PART_INT, sql_field_default::NOT_NULL, 'the changer of the '],
     );
     const FLD_ALL = array(
         [self::FLD_EXCLUDED, sql_field_type::BOOL, sql_field_default::NULL, 'true if a user, but not all, have removed it'],

@@ -1847,10 +1847,11 @@ class sql_creator
      * generate a sql statement to create one database table
      *
      * @param array $fields with the field names, types and default value
+     * @param string $type_name the name of the value type
      * @param string $tbl_comment describe the purpose of the table for the developer only
      * @return string the sql statement to create a table
      */
-    function table_create(array $fields, string $tbl_comment = ''): string
+    function table_create(array $fields, string $type_name = '', string $tbl_comment = ''): string
     {
         $sql = '';
 
@@ -1899,7 +1900,11 @@ class sql_creator
             }
             $comment_used = '';
             if ($this->db_type() == sql_db::MYSQL) {
-                $comment_used = " COMMENT = '" . $comment . "'";
+                $comment_used = " COMMENT = '" . $comment;
+                if ($type->is_key() or $type->is_key_part()) {
+                    $comment_used .= ' ' . $type_name;
+                }
+                $comment_used .= "'";
             }
             $sql_fields .= '    ' . $name . ' ' . $type_used . ' ' . $default_used . $comment_used;
         }
@@ -1917,8 +1922,13 @@ class sql_creator
             // loop over the comments
             foreach ($fields as $field) {
                 $name = $field[0];
+                $type = $field[1];
                 $comment = $field[3];
-                $sql .= "COMMENT ON COLUMN " . $table_used . "." . $name . " IS '" . $comment . "'; ";
+                $sql .= "COMMENT ON COLUMN " . $table_used . "." . $name . " IS '" . $comment;
+                if ($type->is_key() or $type->is_key_part()) {
+                    $sql .= ' ' . $type_name;
+                }
+                $sql .= "'; ";
             }
         }
 
