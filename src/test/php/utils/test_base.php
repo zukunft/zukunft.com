@@ -887,7 +887,7 @@ class test_base
     }
 
     /**
-     * check the SQL statement to create the indices related to an sql table
+     * check the SQL statement to create the indices related to a table
      * for all allowed SQL database dialects
      *
      * @param sql_db $db_con does not need to be connected to a real database
@@ -910,6 +910,35 @@ class test_base
             $db_con->db_type = sql_db::MYSQL;
             $expected_sql = $this->assert_sql_expected($name, $db_con->db_type);
             $actual_sql = $usr_obj->sql_index($db_con->sql_creator(), $class);
+            $result = $this->assert_sql($name, $actual_sql, $expected_sql);
+        }
+        return $result;
+    }
+
+    /**
+     * check the SQL statement to create the foreign keys related to a table
+     * for all allowed SQL database dialects
+     *
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param object $usr_obj the user sandbox object e.g. a word
+     * @return bool true if all tests are fine
+     */
+    function assert_sql_foreign_key_create(sql_db $db_con, object $usr_obj): bool
+    {
+        $lib = new library();
+        $class = $lib->class_to_name($usr_obj::class);
+        // check the Postgres query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $name = $class . '_foreign_key';
+        $expected_sql = $this->assert_sql_expected($name, $db_con->db_type);
+        $actual_sql = $usr_obj->sql_foreign_key($db_con->sql_creator(), $class);
+        $result = $this->assert_sql($name, $actual_sql, $expected_sql);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $expected_sql = $this->assert_sql_expected($name, $db_con->db_type);
+            $actual_sql = $usr_obj->sql_foreign_key($db_con->sql_creator(), $class);
             $result = $this->assert_sql($name, $actual_sql, $expected_sql);
         }
         return $result;

@@ -3159,7 +3159,7 @@ CREATE INDEX user_component_link_view_idx ON user_component_links (component_lin
 -- --------------------------------------------------------
 
 --
--- Constraints for table sys_log
+-- constraints for table sys_log
 --
 ALTER TABLE sys_log
     ADD CONSTRAINT sys_log_fk_1 FOREIGN KEY (sys_log_type_id) REFERENCES sys_log_types (sys_log_type_id),
@@ -3167,39 +3167,39 @@ ALTER TABLE sys_log
     ADD CONSTRAINT sys_log_fk_3 FOREIGN KEY (sys_log_function_id) REFERENCES sys_log_functions (sys_log_function_id);
 
 --
--- Constraints for table sys_script_times
+-- constraints for table sys_script_times
 --
 ALTER TABLE sys_script_times
     ADD CONSTRAINT sys_script_times_fk_1 FOREIGN KEY (sys_script_id) REFERENCES sys_scripts (sys_script_id);
 
 --
--- Constraints for table calc_and_cleanup_tasks
+-- constraints for table calc_and_cleanup_tasks
 --
 ALTER TABLE calc_and_cleanup_tasks
     ADD CONSTRAINT calc_and_cleanup_tasks_fk_1 FOREIGN KEY (calc_and_cleanup_task_type_id) REFERENCES calc_and_cleanup_task_types (calc_and_cleanup_task_type_id);
 
 --
--- Constraints for table users
+-- constraints for table users
 --
 ALTER TABLE users
     ADD CONSTRAINT users_fk_1 FOREIGN KEY (user_type_id) REFERENCES user_types (user_type_id),
     ADD CONSTRAINT users_fk_2 FOREIGN KEY (user_profile_id) REFERENCES user_profiles (profile_id);
 
 --
--- Constraints for table change_fields
+-- constraints for table change_fields
 --
 ALTER TABLE change_fields
     ADD CONSTRAINT change_fields_fk_1 FOREIGN KEY (table_id) REFERENCES change_tables (change_table_id);
 
 --
--- Constraints for table changes
+-- constraints for table changes
 --
 ALTER TABLE changes
     ADD CONSTRAINT changes_fk_1 FOREIGN KEY (change_action_id) REFERENCES change_actions (change_action_id),
     ADD CONSTRAINT changes_fk_2 FOREIGN KEY (change_field_id) REFERENCES change_fields (change_field_id);
 
 --
--- Constraints for table change_links
+-- constraints for table change_links
 --
 ALTER TABLE change_links
     ADD CONSTRAINT change_links_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE NO ACTION,
@@ -3207,13 +3207,13 @@ ALTER TABLE change_links
     ADD CONSTRAINT change_links_fk_3 FOREIGN KEY (change_action_id) REFERENCES change_actions (change_action_id);
 
 --
--- Constraints for table change_fields
+-- constraints for table change_fields
 --
 ALTER TABLE language_forms
     ADD CONSTRAINT language_forms_fk_1 FOREIGN KEY (language_id) REFERENCES languages (language_id);
 
 --
--- Constraints for table words
+-- constraints for table words
 --
 ALTER TABLE words
     ADD CONSTRAINT word_name UNIQUE (word_name);
@@ -3222,7 +3222,7 @@ ALTER TABLE words
     ADD CONSTRAINT words_fk_2 FOREIGN KEY (phrase_type_id) REFERENCES phrase_types (phrase_type_id);
 
 --
--- Constraints for table user_words
+-- constraints for table user_words
 --
 ALTER TABLE user_words
     ADD CONSTRAINT user_words_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id),
@@ -3231,13 +3231,13 @@ ALTER TABLE user_words
     ADD CONSTRAINT user_words_fk_4 FOREIGN KEY (word_id) REFERENCES words (word_id);
 
 --
--- Constraints for table word_periods
+-- constraints for table word_periods
 --
 ALTER TABLE word_periods
     ADD CONSTRAINT word_periods_fk_1 FOREIGN KEY (word_id) REFERENCES words (word_id);
 
 --
--- Constraints for table triples
+-- constraints for table triples
 --
 ALTER TABLE triples
     ADD CONSTRAINT triple_name UNIQUE (triple_name);
@@ -3250,119 +3250,119 @@ ALTER TABLE triples
 -- ADD CONSTRAINT triples_fk_3 FOREIGN KEY (to_phrase_id) REFERENCES phrases (phrase_id),
 
 --
--- Constraints for table user_triples
+-- constraints for table user_triples
 --
 ALTER TABLE user_triples
     ADD CONSTRAINT user_triples_fk_1 FOREIGN KEY (triple_id) REFERENCES triples (triple_id),
     ADD CONSTRAINT user_triples_fk_2 FOREIGN KEY (user_id) REFERENCES users (user_id);
 
 --
--- Constraints for table user_groups
+-- constraints for table user_groups
 --
 ALTER TABLE user_groups
     ADD CONSTRAINT user_groups_fk_1 FOREIGN KEY (group_id) REFERENCES groups (group_id),
     ADD CONSTRAINT user_groups_fk_2 FOREIGN KEY (user_id) REFERENCES users (user_id);
 
 --
--- Constraints for table user_groups_prime
+-- constraints for table user_groups_prime
 --
 ALTER TABLE user_groups_prime
     ADD CONSTRAINT user_groups_prime_fk_1 FOREIGN KEY (group_id) REFERENCES groups_prime (group_id),
     ADD CONSTRAINT user_groups_prime_fk_2 FOREIGN KEY (user_id) REFERENCES users (user_id);
 
 --
--- Constraints for table user_groups_big
+-- constraints for table user_groups_big
 --
 ALTER TABLE user_groups_big
     ADD CONSTRAINT user_groups_big_fk_1 FOREIGN KEY (group_id) REFERENCES groups_big (group_id),
     ADD CONSTRAINT user_groups_big_fk_2 FOREIGN KEY (user_id) REFERENCES users (user_id);
 
 --
--- Constraints for table group_links
+-- constraints for table group_links
 --
 -- ALTER TABLE group_link
 --     ADD CONSTRAINT group_link_fk_1 FOREIGN KEY (phrase_id) REFERENCES phrases (phrase_id);
 
 --
--- Constraints for table group_links
+-- constraints for table group_links
 --
 ALTER TABLE user_group_links
     ADD CONSTRAINT user_group_link_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id);
 --    ADD CONSTRAINT user_group_link_fk_2 FOREIGN KEY (phrase_id) REFERENCES phrases (phrase_id);
 
 --
--- Constraints for table groups_prime_link
+-- constraints for table groups_prime_link
 --
 -- ALTER TABLE groups_prime_link
 --    ADD CONSTRAINT groups_prime_link_fk_1 FOREIGN KEY (phrase_id) REFERENCES phrases (phrase_id);
 
 --
--- Constraints for table user_groups_prime_link
+-- constraints for table user_groups_prime_link
 --
 ALTER TABLE user_group_prime_links
     ADD CONSTRAINT user_group_prime_links_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id);
 --  ADD CONSTRAINT user_group_prime_links_fk_2 FOREIGN KEY (phrase_id) REFERENCES phrases (phrase_id);
 
 --
--- Constraints for table groups_big_link
+-- constraints for table groups_big_link
 --
 -- ALTER TABLE groups_big_link
 --    ADD CONSTRAINT groups_big_link_fk_1 FOREIGN KEY (phrase_id) REFERENCES phrases (phrase_id);
 
 --
--- Constraints for table user_groups_big_link
+-- constraints for table user_groups_big_link
 --
 ALTER TABLE user_group_big_links
     ADD CONSTRAINT user_group_big_links_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id);
 --    ADD CONSTRAINT user_group_big_links_fk_2 FOREIGN KEY (phrase_id) REFERENCES phrases (phrase_id);
 
 --
--- Constraints for table sources
+-- constraints for table sources
 --
 ALTER TABLE sources
     ADD CONSTRAINT sources_fk_1 FOREIGN KEY (source_type_id) REFERENCES source_types (source_type_id);
 
 --
--- Constraints for table user_sources
+-- constraints for table user_sources
 --
 ALTER TABLE user_sources
     ADD CONSTRAINT user_sources_fk_1 FOREIGN KEY (source_id) REFERENCES sources (source_id),
     ADD CONSTRAINT user_sources_fk_2 FOREIGN KEY (user_id) REFERENCES users (user_id);
 
 --
--- Constraints for table refs
+-- constraints for table refs
 --
 ALTER TABLE refs
     ADD CONSTRAINT refs_fk_1 FOREIGN KEY (ref_type_id) REFERENCES ref_types (ref_type_id);
 
 --
--- Constraints for table user_refs
+-- constraints for table user_refs
 --
 ALTER TABLE user_refs
     ADD CONSTRAINT user_refs_fk_1 FOREIGN KEY (ref_id) REFERENCES refs (ref_id),
     ADD CONSTRAINT user_refs_fk_2 FOREIGN KEY (user_id) REFERENCES users (user_id);
 
 --
--- Constraints for table source_values
+-- constraints for table source_values
 --
 ALTER TABLE source_values
     ADD CONSTRAINT source_values_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id),
     ADD CONSTRAINT source_values_fk_2 FOREIGN KEY (source_id) REFERENCES sources (source_id);
 
 --
--- Constraints for table values_standard_prime
+-- constraints for table values_standard_prime
 --
 ALTER TABLE values_standard_prime
     ADD CONSTRAINT values_standard_prime_fk_1 FOREIGN KEY (source_id) REFERENCES sources (source_id);
 
 --
--- Constraints for table values_standard
+-- constraints for table values_standard
 --
 ALTER TABLE values_standard
     ADD CONSTRAINT values_standard_fk_1 FOREIGN KEY (source_id) REFERENCES sources (source_id);
 
 --
--- Constraints for table values
+-- constraints for table values
 --
 ALTER TABLE values
     ADD CONSTRAINT values_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id),
@@ -3371,7 +3371,7 @@ ALTER TABLE values
     ADD CONSTRAINT values_fk_4 FOREIGN KEY (protect_id) REFERENCES protection_types (protection_type_id);
 
 --
--- Constraints for table user_values
+-- constraints for table user_values
 --
 ALTER TABLE user_values
     ADD CONSTRAINT user_values_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id),
@@ -3380,7 +3380,7 @@ ALTER TABLE user_values
     ADD CONSTRAINT user_values_fk_4 FOREIGN KEY (protect_id) REFERENCES protection_types (protection_type_id);
 
 --
--- Constraints for table user_value_time_series
+-- constraints for table user_value_time_series
 --
 ALTER TABLE user_value_time_series
     ADD CONSTRAINT user_value_time_series_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id),
@@ -3389,7 +3389,7 @@ ALTER TABLE user_value_time_series
     ADD CONSTRAINT user_value_time_series_fk_4 FOREIGN KEY (protect_id) REFERENCES protection_types (protection_type_id);
 
 --
--- Constraints for table formulas
+-- constraints for table formulas
 --
 ALTER TABLE formulas
     ADD CONSTRAINT formulas_fk_1 FOREIGN KEY (formula_type_id) REFERENCES formula_types (formula_type_id),
@@ -3397,7 +3397,7 @@ ALTER TABLE formulas
     ADD CONSTRAINT formulas_fk_3 FOREIGN KEY (protect_id) REFERENCES protection_types (protection_type_id);
 
 --
--- Constraints for table user_formulas
+-- constraints for table user_formulas
 --
 ALTER TABLE user_formulas
     ADD CONSTRAINT user_formulas_fk_4 FOREIGN KEY (share_type_id) REFERENCES share_types (share_type_id),
@@ -3406,20 +3406,20 @@ ALTER TABLE user_formulas
     ADD CONSTRAINT user_formulas_fk_3 FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
 
 --
--- Constraints for table formula_elements
+-- constraints for table formula_elements
 --
 ALTER TABLE formula_elements
     ADD CONSTRAINT formula_elements_fk_1 FOREIGN KEY (formula_element_type_id) REFERENCES formula_element_types (formula_element_type_id),
     ADD CONSTRAINT formula_elements_fk_2 FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
 
 --
--- Constraints for table formula_links
+-- constraints for table formula_links
 --
 ALTER TABLE formula_links
     ADD CONSTRAINT formula_links_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id);
 
 --
--- Constraints for table user_formula_links
+-- constraints for table user_formula_links
 --
 ALTER TABLE user_formula_links
     ADD CONSTRAINT user_formula_links_fk_1 FOREIGN KEY (formula_link_id) REFERENCES formula_links (formula_link_id),
@@ -3427,14 +3427,14 @@ ALTER TABLE user_formula_links
     ADD CONSTRAINT user_formula_links_fk_3 FOREIGN KEY (link_type_id) REFERENCES formula_link_types (formula_link_type_id);
 
 --
--- Constraints for table results
+-- constraints for table results
 --
 ALTER TABLE results
     ADD CONSTRAINT results_fk_1 FOREIGN KEY (formula_id) REFERENCES formulas (formula_id),
     ADD CONSTRAINT results_fk_2 FOREIGN KEY (user_id) REFERENCES users (user_id);
 
 --
--- Constraints for table user_views
+-- constraints for table user_views
 --
 ALTER TABLE user_views
     ADD CONSTRAINT user_views_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id),
@@ -3442,13 +3442,13 @@ ALTER TABLE user_views
     ADD CONSTRAINT user_views_fk_3 FOREIGN KEY (view_id) REFERENCES views (view_id);
 
 --
--- Constraints for table components
+-- constraints for table components
 --
 ALTER TABLE components
     ADD CONSTRAINT components_fk_2 FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
 
 --
--- Constraints for table user_components
+-- constraints for table user_components
 --
 ALTER TABLE user_components
     ADD CONSTRAINT user_components_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id),
@@ -3456,7 +3456,7 @@ ALTER TABLE user_components
     ADD CONSTRAINT user_components_fk_3 FOREIGN KEY (component_type_id) REFERENCES component_types (component_type_id);
 
 --
--- Constraints for table component_links
+-- constraints for table component_links
 --
 ALTER TABLE component_links
     ADD CONSTRAINT component_links_fk_1 FOREIGN KEY (view_id) REFERENCES views (view_id),
@@ -3464,7 +3464,7 @@ ALTER TABLE component_links
     ADD CONSTRAINT component_links_fk_3 FOREIGN KEY (component_id) REFERENCES components (component_id);
 
 --
--- Constraints for table user_component_links
+-- constraints for table user_component_links
 --
 ALTER TABLE user_component_links
     ADD CONSTRAINT user_component_links_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id),

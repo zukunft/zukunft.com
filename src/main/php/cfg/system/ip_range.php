@@ -33,7 +33,7 @@
 namespace cfg;
 
 include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
-include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql.php';
 include_once DB_PATH . 'sql_par_type.php';
 
 use cfg\db\sql;

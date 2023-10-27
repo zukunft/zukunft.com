@@ -1952,10 +1952,9 @@ class sql
      * generate a sql statement to create the indices for one database table
      *
      * @param array $fields with the field names, types and default value
-     * @param string $type_name the name of the value type
      * @return string the sql statement to create the indices for a table
      */
-    function index_create(array $fields, string $type_name = ''): string
+    function index_create(array $fields): string
     {
         $sql = '';
 
@@ -2009,6 +2008,52 @@ class sql
             $sql_field .= implode(', ', $field_lst) . '; ';
         }
         $sql .= $sql_field;
+        return $sql;
+    }
+
+    /**
+     * generate a sql statement to create the foreign keys for one database table
+     *
+     * @param array $fields with the field names, types and default value
+     * @return string the sql statement to create the indices for a table
+     */
+    function foreign_key_create(array $fields): string
+    {
+        $sql = '';
+        $lib = new library();
+
+        // create the foreign key sql statements
+        $sql_fields = '';
+        $field_lst = [];
+        foreach ($fields as $field) {
+            $name = $field[sql::FLD_POS_NAME];
+            $link = $field[sql::FLD_POS_FOREIGN_LINK];
+            $link_used = $lib->class_to_name($link);
+            if ($link_used != '') {
+                // set the header comments
+                if ($sql == '') {
+                    $sql .= '-- ';
+                    $sql .= '-- constraints for table ' . $this->table;
+                    $sql .= ' ';
+                    $sql .= '-- ';
+                    $sql .= ' ';
+                    $sql .= 'ALTER TABLE ' . $this->name_sql_esc($this->table);
+                }
+                if ($this->db_type() == sql_db::POSTGRES) {
+                    $sql_field = ' ADD CONSTRAINT ' . $this->table . '_' . $link_used . '_fk';
+                    $sql_field .= ' FOREIGN KEY (' . $name . ') REFERENCES ' . $link_used .  's (' . $name . ')';
+                    $field_lst[] = $sql_field;
+                } elseif ($this->db_type() == sql_db::MYSQL) {
+                    $sql_field = ' ADD CONSTRAINT ' . $this->table . '_' . $link_used . '_fk';
+                    $sql_field .= ' FOREIGN KEY (' . $name . ') REFERENCES ' . $link_used .  's (' . $name . ')';
+                    $field_lst[] = $sql_field;
+                }
+            }
+        }
+        if (count($field_lst) > 0) {
+            $sql_fields = implode(', ', $field_lst) . '; ';
+        }
+        $sql .= $sql_fields;
         return $sql;
     }
 

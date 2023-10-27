@@ -35,7 +35,7 @@ namespace cfg;
 
 include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
 include_once API_VIEW_PATH . 'component_link_list.php';
-include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql.php';
 include_once DB_PATH . 'sql_par_type.php';
 
 use api\view\component_link_list as component_link_list_api;

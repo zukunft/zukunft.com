@@ -69,6 +69,7 @@ class sandbox_value extends sandbox_non_seq_id
 
 
     // field lists for the table creation
+    // the group is not a foreign key, because if the name is not changed by the user an entry in the group table is not needed
     const FLD_KEY_PRIME = array(
         [group::FLD_ID, sql_field_type::KEY_INT, sql_field_default::NOT_NULL, '', '', 'the 64-bit prime index to find the'],
     );
@@ -112,7 +113,7 @@ class sandbox_value extends sandbox_non_seq_id
         [value::FLD_VALUE_GEO, sql_field_type::GEO, sql_field_default::NULL, '', '', 'the user specific geolocation change'],
     );
     const FLD_ALL_SOURCE = array(
-        [source::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', 'the source of the value as given by the user'],
+        [source::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, source::class, 'the source of the value as given by the user'],
     );
     const FLD_ALL_CHANGED = array(
         [value::FLD_LAST_UPDATE, sql_field_type::TIME, sql_field_default::NULL, '', '', 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation'],
@@ -233,6 +234,18 @@ class sandbox_value extends sandbox_non_seq_id
     }
 
     /**
+     * the sql statements to create all foreign keys for the tables
+     *
+     * @param sql $sc ith the target db_type set
+     * @return string the sql statement to create the table
+     */
+    function sql_foreign_key(sql $sc): string
+    {
+
+        return $this->sql_creator($sc, 2);
+    }
+
+    /**
      * the sql statements to create either all tables ($pos = 0), the indices ($pos = 1) or the foreign keys ($pos = 2)
      * used to store values in the database
      *
@@ -295,17 +308,20 @@ class sandbox_value extends sandbox_non_seq_id
 
         $sql = $sc->sql_separator();
         $sql_index = $sc->sql_separator();
+        $sql_foreign = $sc->sql_separator();
 
         $sc->set_class($this::class, false, $ext_type . self::TBL_EXT_STD . group::TBL_EXT_PRIME);
         $fields = array_merge(self::FLD_KEY_PRIME, $fld_par, self::FLD_ALL_SOURCE);
         $sql .= $sc->table_create($fields, $type_name,
             $this::TBL_COMMENT_STD . $type_name . $this::TBL_COMMENT_STD_PRIME_CONT);
         $sql_index .= $sc->index_create($fields, $type_name);
+        $sql_foreign .= $sc->foreign_key_create($fields, $type_name);
         $sc->set_class($this::class, false, $ext_type . self::TBL_EXT_STD);
         $fields = array_merge(self::FLD_KEY, $fld_par, self::FLD_ALL_SOURCE);
         $sql .= $sc->table_create($fields, $type_name,
             $this::TBL_COMMENT_STD . $type_name . $this::TBL_COMMENT_STD_CONT);
         $sql_index .= $sc->index_create($fields, $type_name);
+        $sql_foreign .= $sc->foreign_key_create($fields, $type_name);
 
         $sql .= $sc->sql_separator();
         $std_fields = array_merge(
@@ -324,32 +340,38 @@ class sandbox_value extends sandbox_non_seq_id
         $sc->set_class($this::class, false, $ext_type);
         $sql .= $sc->table_create($fields, $type_name, $this::TBL_COMMENT . $type_name . $this::TBL_COMMENT_CONT);
         $sql_index .= $sc->index_create($fields, $type_name);
+        $sql_foreign .= $sc->foreign_key_create($fields, $type_name);
         $fields = array_merge(self::FLD_KEY_USER, $std_usr_fields);
         $sc->set_class($this::class, true, $ext_type);
         $sql .= $sc->table_create($fields, $type_name, $this::TBL_COMMENT_USER . $type_name . $this::TBL_COMMENT_CONT);
         $sql_index .= $sc->index_create($fields, $type_name);
+        $sql_foreign .= $sc->foreign_key_create($fields, $type_name);
 
         $sql .= $sc->sql_separator();
         $fields = array_merge(self::FLD_KEY_PRIME, $std_fields);
         $sc->set_class($this::class, false, $ext_type . group::TBL_EXT_PRIME);
         $sql .= $sc->table_create($fields, $type_name, $this::TBL_COMMENT_PRIME . $type_name . $this::TBL_COMMENT_PRIME_CONT);
         $sql_index .= $sc->index_create($fields, $type_name);
+        $sql_foreign .= $sc->foreign_key_create($fields, $type_name);
         $fields = array_merge(self::FLD_KEY_PRIME_USER, $std_usr_fields);
         $sc->set_class($this::class, true, $ext_type . group::TBL_EXT_PRIME);
         $sql .= $sc->table_create($fields, $type_name, $this::TBL_COMMENT_PRIME_USER . $type_name . $this::TBL_COMMENT_PRIME_USER_CONT);
         $sql_index .= $sc->index_create($fields, $type_name);
+        $sql_foreign .= $sc->foreign_key_create($fields, $type_name);
 
         $sql .= $sc->sql_separator();
         $fields = array_merge(self::FLD_KEY_BIG, $std_fields);
         $sc->set_class($this::class, false, $ext_type . group::TBL_EXT_BIG);
         $sql .= $sc->table_create($fields, $type_name, $this::TBL_COMMENT . $type_name . $this::TBL_COMMENT_BIG_CONT);
         $sql_index .= $sc->index_create($fields, $type_name);
+        $sql_foreign .= $sc->foreign_key_create($fields, $type_name);
         $fields = array_merge(self::FLD_KEY_BIG_USER, $std_usr_fields);
         $sc->set_class($this::class, true, $ext_type . group::TBL_EXT_BIG);
         $sql .= $sc->table_create($fields, $type_name, $this::TBL_COMMENT_BIG_USER . $type_name . $this::TBL_COMMENT_BIG_USER_CONT);
         $sql_index .= $sc->index_create($fields, $type_name);
+        $sql_foreign .= $sc->foreign_key_create($fields, $type_name);
 
-        return [$sql, $sql_index];
+        return [$sql, $sql_index, $sql_foreign];
     }
 
 
