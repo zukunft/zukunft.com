@@ -49,7 +49,7 @@ include_once MODEL_PHRASE_PATH . 'phrase_type.php';
 include_once MODEL_SANDBOX_PATH . 'protection_type.php';
 include_once MODEL_SANDBOX_PATH . 'share_type.php';
 
-use cfg\db\sql_creator;
+use cfg\db\sql;
 use cfg\db\sql_par_type;
 use model\export\exp_obj;
 use Exception;
@@ -376,11 +376,11 @@ class sandbox_non_seq_id extends db_object_non_seq_id_user
 
     /**
      * create the SQL to load the single default value always by the id
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql_creator $sc, string $class = self::class): sql_par
+    function load_standard_sql(sql $sc, string $class = self::class): sql_par
     {
         $qp = new sql_par($class, true);
         $qp->name .= sql_db::FLD_ID;
@@ -396,11 +396,11 @@ class sandbox_non_seq_id extends db_object_non_seq_id_user
 
     /**
      * create the SQL to load the single default value always by something else than the main id
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param sql_par $qp the query parameters with the class and name already set
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql_by(sql_creator $sc, sql_par $qp): sql_par
+    function load_standard_sql_by(sql $sc, sql_par $qp): sql_par
     {
         $qp->name .= '_std';
         $sc->set_name($qp->name);
@@ -443,7 +443,7 @@ class sandbox_non_seq_id extends db_object_non_seq_id_user
     /**
      * prepare the SQL parameter to load a single user specific value
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $query_name the name of the selection fields to make the query name unique
      * @param array $fields list of the fields from the child object
      * @param array $usr_fields list of the user specified fields from the child object
@@ -451,11 +451,11 @@ class sandbox_non_seq_id extends db_object_non_seq_id_user
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_fields(
-        sql_creator $sc,
-        string      $query_name,
-        array       $fields,
-        array       $usr_fields,
-        array       $usr_num_fields,
+        sql    $sc,
+        string $query_name,
+        array  $fields,
+        array  $usr_fields,
+        array  $usr_num_fields,
     ): sql_par
     {
         $qp = parent::load_sql($sc, $query_name);
@@ -470,12 +470,12 @@ class sandbox_non_seq_id extends db_object_non_seq_id_user
     /**
      * create the SQL to load a sandbox object with numeric user specific fields
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param sandbox $sbx the name of the child class from where the call has been triggered
      * @param string $query_name the name extension to make the query name unique
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_usr_num(sql_creator $sc, sandbox_non_seq_id $sbx, string $query_name): sql_par
+    function load_sql_usr_num(sql $sc, sandbox_non_seq_id $sbx, string $query_name): sql_par
     {
         $lib = new library();
 
@@ -496,11 +496,11 @@ class sandbox_non_seq_id extends db_object_non_seq_id_user
      * create the SQL to load a single user specific value
      * TODO replace by load_sql_usr or load_sql_usr_num
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_obj_vars(sql_creator $sc, string $class): sql_par
+    function load_sql_obj_vars(sql $sc, string $class): sql_par
     {
         return new sql_par($class);
     }
@@ -911,10 +911,10 @@ class sandbox_non_seq_id extends db_object_non_seq_id_user
 
     /**
      * create an SQL statement to get a list of all user that have ever changed the object
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_of_users_that_changed(sql_creator $sc): sql_par
+    function load_sql_of_users_that_changed(sql $sc): sql_par
     {
         $lib = new library();
 
@@ -1140,11 +1140,11 @@ class sandbox_non_seq_id extends db_object_non_seq_id_user
     /**
      * create an SQL statement to retrieve the user changes of the current object
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_user_changes(sql_creator $sc, string $class = self::class): sql_par
+    function load_sql_user_changes(sql $sc, string $class = self::class): sql_par
     {
         $qp = new sql_par($class);
         $qp->name .= 'usr_cfg';

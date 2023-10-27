@@ -31,7 +31,7 @@
 
 namespace cfg;
 
-use cfg\db\sql_creator;
+use cfg\db\sql;
 
 include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';
@@ -53,14 +53,14 @@ class ref_type_list extends type_list
     /**
      * overwrite the user_type_list function to create the SQL to load the ref types
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $db_type the database name e.g. the table name without s
      * @param string $query_name the name extension to make the query name unique
      * @param string $order_field set if the type list should e.g. be sorted by the name instead of the id
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql(
-        sql_creator $sc,
+        sql    $sc,
         string $db_type,
         string $query_name = 'all',
         string $order_field = ''): sql_par
@@ -82,11 +82,11 @@ class ref_type_list extends type_list
     /**
      * create an SQL statement to load all refs types from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $db_type the class name to be compatible with the user sandbox load_sql functions
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_all(sql_creator $sc, string $db_type): sql_par
+    function load_sql_all(sql $sc, string $db_type): sql_par
     {
         $qp = $this->load_sql($sc, $db_type);
         $sc->set_page(SQL_ROW_MAX, 0);

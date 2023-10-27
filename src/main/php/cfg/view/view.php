@@ -42,7 +42,7 @@ include_once SERVICE_EXPORT_PATH . 'component_exp.php';
 
 use api\view\view as view_api;
 use cfg\component\component;
-use cfg\db\sql_creator;
+use cfg\db\sql;
 use cfg\db\sql_par_type;
 use model\export\exp_obj;
 use model\export\view_exp;
@@ -303,11 +303,11 @@ class view extends sandbox_typed
     /**
      * create the SQL to load the default view always by the id
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql_creator $sc, string $class = self::class): sql_par
+    function load_standard_sql(sql $sc, string $class = self::class): sql_par
     {
         $sc->set_class($class);
         $sc->set_fields(array_merge(
@@ -342,12 +342,12 @@ class view extends sandbox_typed
     /**
      * create the common part of an SQL statement to retrieve the parameters of a view from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
+    function load_sql(sql $sc, string $query_name, string $class = self::class): sql_par
     {
         $sc->set_class($class);
         return parent::load_sql_fields(
@@ -361,12 +361,12 @@ class view extends sandbox_typed
     /**
      * create an SQL statement to retrieve a view by code id from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $code_id the code id of the view
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_code_id(sql_creator $sc, string $code_id, string $class): sql_par
+    function load_sql_by_code_id(sql $sc, string $code_id, string $class): sql_par
     {
         $qp = $this->load_sql($sc, 'code_id', $class);
         $sc->add_where(sql_db::FLD_CODE_ID, $code_id);
@@ -381,12 +381,12 @@ class view extends sandbox_typed
      * TODO include user_view_term_links into the selection
      * TODO take the usage into account for the selection of the view
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param term $trm the code id of the view
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_term(sql_creator $sc, term $trm, string $class = self::class): sql_par
+    function load_sql_by_term(sql $sc, term $trm, string $class = self::class): sql_par
     {
         $qp = $this->load_sql($sc, 'term', $class);
         $sc->set_join_fields(
@@ -546,10 +546,10 @@ class view extends sandbox_typed
     }
 
     /**
-     * @param sql_creator $sc the sql creator without view joins
-     * @return sql_creator the sql creator with the view join set
+     * @param sql $sc the sql creator without view joins
+     * @return sql the sql creator with the view join set
      */
-    function set_join(sql_creator $sc): sql_creator
+    function set_join(sql $sc): sql
     {
         $sc->set_join_fields(view::FLD_NAMES, sql_db::TBL_VIEW);
         $sc->set_join_usr_fields(view::FLD_NAMES_USR, sql_db::TBL_VIEW);
@@ -825,11 +825,11 @@ class view extends sandbox_typed
     /**
      * create an SQL statement to retrieve the user changes of the current view
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_user_changes(sql_creator $sc, string $class = self::class): sql_par
+    function load_sql_user_changes(sql $sc, string $class = self::class): sql_par
     {
         $sc->set_class($class, true);
         $sc->set_fields(array_merge(

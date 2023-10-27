@@ -37,7 +37,7 @@ namespace cfg;
 include_once MODEL_SANDBOX_PATH . 'sandbox_non_seq_id.php';
 include_once MODEL_GROUP_PATH . 'group.php';
 
-use cfg\db\sql_creator;
+use cfg\db\sql;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\group\group;
@@ -70,52 +70,52 @@ class sandbox_value extends sandbox_non_seq_id
 
     // field lists for the table creation
     const FLD_KEY_PRIME = array(
-        [group::FLD_ID, sql_field_type::KEY_INT, sql_field_default::NOT_NULL, 'the 64-bit prime index to find the'],
+        [group::FLD_ID, sql_field_type::KEY_INT, sql_field_default::NOT_NULL, '', '', 'the 64-bit prime index to find the'],
     );
     const FLD_KEY_PRIME_USER = array(
-        [group::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, 'the 64-bit prime index to find the user values'],
+        [group::FLD_ID, sql_field_type::KEY_PART_INT, sql_field_default::NOT_NULL, '', '', 'the 64-bit prime index to find the user'],
     );
     const FLD_KEY = array(
-        [group::FLD_ID, sql_field_type::KEY_512, sql_field_default::NOT_NULL, 'the 512-bit prime index to find the'],
+        [group::FLD_ID, sql_field_type::KEY_512, sql_field_default::NOT_NULL, '', '', 'the 512-bit prime index to find the'],
     );
     const FLD_KEY_USER = array(
-        [group::FLD_ID, sql_field_type::KEY_PART_512, sql_field_default::NOT_NULL, 'the 512-bit prime index to find the user'],
+        [group::FLD_ID, sql_field_type::KEY_PART_512, sql_field_default::NOT_NULL, '', '', 'the 512-bit prime index to find the user'],
     );
     const FLD_KEY_BIG = array(
-        [group::FLD_ID, sql_field_type::KEY_TEXT, sql_field_default::NOT_NULL, 'the variable text index to find'],
+        [group::FLD_ID, sql_field_type::KEY_TEXT, sql_field_default::NOT_NULL, '', '', 'the variable text index to find'],
     );
     const FLD_KEY_BIG_USER = array(
-        [group::FLD_ID, sql_field_type::TEXT, sql_field_default::NOT_NULL, 'the text index to find the user values related to more than 16 phrases'],
+        [group::FLD_ID, sql_field_type::KEY_PART_TEXT, sql_field_default::NOT_NULL, '', '', 'the text index for more than 16 phrases to find the'],
     );
     const FLD_ALL_VALUE_NUM = array(
-        [value::FLD_VALUE, sql_field_type::NUMERIC_FLOAT, sql_field_default::NOT_NULL, 'the numeric value given by the user'],
+        [value::FLD_VALUE, sql_field_type::NUMERIC_FLOAT, sql_field_default::NOT_NULL, '', '', 'the numeric value given by the user'],
     );
     const FLD_ALL_VALUE_NUM_USER = array(
-        [value::FLD_VALUE, sql_field_type::NUMERIC_FLOAT, sql_field_default::NULL, 'the user specific numeric value change'],
+        [value::FLD_VALUE, sql_field_type::NUMERIC_FLOAT, sql_field_default::NULL, '', '', 'the user specific numeric value change'],
     );
     const FLD_ALL_VALUE_TEXT = array(
-        [value::FLD_VALUE_TEXT, sql_field_type::TEXT, sql_field_default::NOT_NULL, 'the text value given by the user'],
+        [value::FLD_VALUE_TEXT, sql_field_type::TEXT, sql_field_default::NOT_NULL, '', '', 'the text value given by the user'],
     );
     const FLD_ALL_VALUE_TIME = array(
-        [value::FLD_VALUE_TIME, sql_field_type::TIME, sql_field_default::NOT_NULL, 'the timestamp given by the user'],
+        [value::FLD_VALUE_TIME, sql_field_type::TIME, sql_field_default::NOT_NULL, '', '', 'the timestamp given by the user'],
     );
     const FLD_ALL_VALUE_GEO = array(
-        [value::FLD_VALUE_GEO, sql_field_type::GEO, sql_field_default::NOT_NULL, 'the geolocation given by the user'],
+        [value::FLD_VALUE_GEO, sql_field_type::GEO, sql_field_default::NOT_NULL, '', '', 'the geolocation given by the user'],
     );
     const FLD_ALL_VALUE_TEXT_USER = array(
-        [value::FLD_VALUE_TEXT, sql_field_type::TEXT, sql_field_default::NULL, 'the user specific text value change'],
+        [value::FLD_VALUE_TEXT, sql_field_type::TEXT, sql_field_default::NULL, '', '', 'the user specific text value change'],
     );
     const FLD_ALL_VALUE_TIME_USER = array(
-        [value::FLD_VALUE_TIME, sql_field_type::TIME, sql_field_default::NULL, 'the user specific timestamp change'],
+        [value::FLD_VALUE_TIME, sql_field_type::TIME, sql_field_default::NULL, '', '', 'the user specific timestamp change'],
     );
     const FLD_ALL_VALUE_GEO_USER = array(
-        [value::FLD_VALUE_GEO, sql_field_type::GEO, sql_field_default::NULL, 'the user specific geolocation change'],
+        [value::FLD_VALUE_GEO, sql_field_type::GEO, sql_field_default::NULL, '', '', 'the user specific geolocation change'],
     );
     const FLD_ALL_SOURCE = array(
-        [source::FLD_ID, sql_field_type::INT, sql_field_default::NULL, 'the source of the value as given by the user'],
+        [source::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', 'the source of the value as given by the user'],
     );
     const FLD_ALL_CHANGED = array(
-        [value::FLD_LAST_UPDATE, sql_field_type::TIME, sql_field_default::NULL, 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation'],
+        [value::FLD_LAST_UPDATE, sql_field_type::TIME, sql_field_default::NULL, '', '', 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation'],
     );
 
 
@@ -211,73 +211,101 @@ class sandbox_value extends sandbox_non_seq_id
     /**
      * the sql statements to create all tables used to store values in the database
      *
-     * @param sql_creator $sc ith the target db_type set
+     * @param sql $sc ith the target db_type set
      * @return string the sql statement to create the table
      */
-    function sql_table(sql_creator $sc): string
+    function sql_table(sql $sc): string
     {
 
-        $sql = $this->sql_table_one_type(
+        return $this->sql_creator($sc, 0);
+    }
+
+    /**
+     * the sql statements to create all indices for the tables used to store values in the database
+     *
+     * @param sql $sc ith the target db_type set
+     * @return string the sql statement to create the table
+     */
+    function sql_index(sql $sc): string
+    {
+
+        return $this->sql_creator($sc, 1);
+    }
+
+    /**
+     * the sql statements to create either all tables ($pos = 0), the indices ($pos = 1) or the foreign keys ($pos = 2)
+     * used to store values in the database
+     *
+     * @param sql $sc ith the target db_type set
+     * @return string the sql statement to create the table
+     */
+    private function sql_creator(sql $sc, int $pos): string
+    {
+
+        $sql_array = $this->sql_one_type(
             $sc,
             self::FLD_ALL_VALUE_NUM,
             self::FLD_ALL_VALUE_NUM_USER,
             '', $this::TYPE_NUMBER
         );
-        $sql .= $this->sql_table_one_type(
+        $sql = $sql_array[$pos];
+        $sql_array = $this->sql_one_type(
             $sc,
             self::FLD_ALL_VALUE_TEXT,
             self::FLD_ALL_VALUE_TEXT_USER,
             '_' . $this::TYPE_TEXT, $this::TYPE_TEXT
         );
-        $sql .= $this->sql_table_one_type(
+        $sql .= $sql_array[$pos];
+        $sql_array = $this->sql_one_type(
             $sc,
             self::FLD_ALL_VALUE_TIME,
             self::FLD_ALL_VALUE_TIME_USER,
             '_' . $this::TYPE_TIME, $this::TYPE_TIME
         );
-        $sql .= $this->sql_table_one_type(
+        $sql .= $sql_array[$pos];
+        $sql_array = $this->sql_one_type(
             $sc,
             self::FLD_ALL_VALUE_GEO,
             self::FLD_ALL_VALUE_GEO_USER,
             '_' . $this::TYPE_GEO, $this::TYPE_GEO
         );
+        $sql .= $sql_array[$pos];
         return $sql;
     }
-
     /**
      * create the sql statements for a set (standard, prime and big) tables
      * for one field type e.g. numeric value, text values
      *
-     * @param sql_creator $sc
+     * @param sql $sc
      * @param array $fld_par the parameters for the value field e.g. for a numeric field, text, time or geo
      * @param array $fld_par_usr the user specific parameters for the value field
      * @param string $ext_type the additional table extension for the field type
      * @param string $type_name the name of the value type
-     * @return string the sql statement to create the tables
+     * @return array the sql statements to create the tables, indices and foreign keys
      */
-    protected function sql_table_one_type(
-        sql_creator $sc,
-        array       $fld_par,
-        array       $fld_par_usr,
-        string      $ext_type = '',
-        string      $type_name = ''): string
+    protected function sql_one_type(
+        sql    $sc,
+        array  $fld_par,
+        array  $fld_par_usr,
+        string $ext_type = '',
+        string $type_name = ''): array
     {
         $lib = new library();
         $type_name .= ' ' . $lib->class_to_name($this::class);
 
         $sql = $sc->sql_separator();
+        $sql_index = $sc->sql_separator();
+
         $sc->set_class($this::class, false, $ext_type . self::TBL_EXT_STD . group::TBL_EXT_PRIME);
-        $sql .= $sc->table_create(array_merge(
-            self::FLD_KEY_PRIME,
-            $fld_par,
-            self::FLD_ALL_SOURCE
-        ), $type_name, $this::TBL_COMMENT_STD . $type_name . $this::TBL_COMMENT_STD_PRIME_CONT);
+        $fields = array_merge(self::FLD_KEY_PRIME, $fld_par, self::FLD_ALL_SOURCE);
+        $sql .= $sc->table_create($fields, $type_name,
+            $this::TBL_COMMENT_STD . $type_name . $this::TBL_COMMENT_STD_PRIME_CONT);
+        $sql_index .= $sc->index_create($fields, $type_name);
         $sc->set_class($this::class, false, $ext_type . self::TBL_EXT_STD);
-        $sql .= $sc->table_create(array_merge(
-            self::FLD_KEY,
-            $fld_par,
-            self::FLD_ALL_SOURCE
-        ), $type_name, $this::TBL_COMMENT_STD . $type_name . $this::TBL_COMMENT_STD_CONT);
+        $fields = array_merge(self::FLD_KEY, $fld_par, self::FLD_ALL_SOURCE);
+        $sql .= $sc->table_create($fields, $type_name,
+            $this::TBL_COMMENT_STD . $type_name . $this::TBL_COMMENT_STD_CONT);
+        $sql_index .= $sc->index_create($fields, $type_name);
 
         $sql .= $sc->sql_separator();
         $std_fields = array_merge(
@@ -295,26 +323,33 @@ class sandbox_value extends sandbox_non_seq_id
         $fields = array_merge(self::FLD_KEY, $std_fields);
         $sc->set_class($this::class, false, $ext_type);
         $sql .= $sc->table_create($fields, $type_name, $this::TBL_COMMENT . $type_name . $this::TBL_COMMENT_CONT);
+        $sql_index .= $sc->index_create($fields, $type_name);
         $fields = array_merge(self::FLD_KEY_USER, $std_usr_fields);
         $sc->set_class($this::class, true, $ext_type);
         $sql .= $sc->table_create($fields, $type_name, $this::TBL_COMMENT_USER . $type_name . $this::TBL_COMMENT_CONT);
+        $sql_index .= $sc->index_create($fields, $type_name);
 
         $sql .= $sc->sql_separator();
         $fields = array_merge(self::FLD_KEY_PRIME, $std_fields);
         $sc->set_class($this::class, false, $ext_type . group::TBL_EXT_PRIME);
         $sql .= $sc->table_create($fields, $type_name, $this::TBL_COMMENT_PRIME . $type_name . $this::TBL_COMMENT_PRIME_CONT);
+        $sql_index .= $sc->index_create($fields, $type_name);
         $fields = array_merge(self::FLD_KEY_PRIME_USER, $std_usr_fields);
         $sc->set_class($this::class, true, $ext_type . group::TBL_EXT_PRIME);
         $sql .= $sc->table_create($fields, $type_name, $this::TBL_COMMENT_PRIME_USER . $type_name . $this::TBL_COMMENT_PRIME_USER_CONT);
+        $sql_index .= $sc->index_create($fields, $type_name);
 
         $sql .= $sc->sql_separator();
         $fields = array_merge(self::FLD_KEY_BIG, $std_fields);
         $sc->set_class($this::class, false, $ext_type . group::TBL_EXT_BIG);
         $sql .= $sc->table_create($fields, $type_name, $this::TBL_COMMENT . $type_name . $this::TBL_COMMENT_BIG_CONT);
+        $sql_index .= $sc->index_create($fields, $type_name);
         $fields = array_merge(self::FLD_KEY_BIG_USER, $std_usr_fields);
         $sc->set_class($this::class, true, $ext_type . group::TBL_EXT_BIG);
         $sql .= $sc->table_create($fields, $type_name, $this::TBL_COMMENT_BIG_USER . $type_name . $this::TBL_COMMENT_BIG_USER_CONT);
-        return $sql;
+        $sql_index .= $sc->index_create($fields, $type_name);
+
+        return [$sql, $sql_index];
     }
 
 
@@ -434,11 +469,11 @@ class sandbox_value extends sandbox_non_seq_id
 
     /**
      * the common part of the sql statement creation for insert and update statements
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param bool $usr_tbl true if a db row should be added to the user table
      * @return sql_par the common part for insert and update sql statements
      */
-    protected function sql_common(sql_creator $sc, bool $usr_tbl = false): sql_par
+    protected function sql_common(sql $sc, bool $usr_tbl = false): sql_par
     {
         $lib = new library();
         $class = $lib->class_to_name($this::class);
@@ -454,21 +489,21 @@ class sandbox_value extends sandbox_non_seq_id
 
     /**
      * create the sql statement to update a value in the database
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param bool $usr_tbl true if the user table row should be updated
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_update(
-        sql_creator $sc,
+        sql   $sc,
         array $fields = [],
         array $values = [],
-        bool $usr_tbl = false
+        bool  $usr_tbl = false
     ): sql_par
     {
         $qp = $this->sql_common($sc, $usr_tbl);
         $qp->name .= '_update';
         $sc->set_name($qp->name);
-        $qp->sql = $sc->sql_update($this->id_field(),  $this->id(), $fields, $values);
+        $qp->sql = $sc->sql_update($this->id_field(), $this->id(), $fields, $values);
         $qp->par = $values;
         return $qp;
     }
@@ -486,7 +521,7 @@ class sandbox_value extends sandbox_non_seq_id
      * @return string an empty string if everything is fine or the message that should be shown to the user
      */
     function save_field_user(
-        sql_db $db_con,
+        sql_db                           $db_con,
         change_log_named|change_log_link $log
     ): string
     {

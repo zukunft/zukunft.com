@@ -50,7 +50,7 @@ include_once WEB_FORMULA_PATH . 'formula.php';
 include_once WEB_WORD_PATH . 'word.php';
 
 use api\formula_api;
-use cfg\db\sql_creator;
+use cfg\db\sql;
 use cfg\db\sql_par_type;
 use model\export\exp_obj;
 use model\export\formula_exp;
@@ -383,11 +383,11 @@ class formula extends sandbox_typed
     /**
      * create the SQL to load the default formula always by the id
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql_creator $sc, string $class = self::class): sql_par
+    function load_standard_sql(sql $sc, string $class = self::class): sql_par
     {
         $sc->set_class($class);
         $sc->set_fields(array_merge(
@@ -422,12 +422,12 @@ class formula extends sandbox_typed
      * create the common part of an SQL statement to retrieve
      * the parameters of a formula from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $query_name the name of the selection fields to make the query name unique
      * @param string $class the name of this class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
+    function load_sql(sql $sc, string $query_name, string $class = self::class): sql_par
     {
         // maybe the formula name should be excluded from the user sandbox to avoid confusion
         return parent::load_sql_usr_num($sc, $this, $query_name);
@@ -1859,11 +1859,11 @@ class formula extends sandbox_typed
     /**
      * create an SQL statement to retrieve the user changes of the current formula
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_user_changes(sql_creator $sc, string $class = self::class): sql_par
+    function load_sql_user_changes(sql $sc, string $class = self::class): sql_par
     {
         $sc->set_class($class, true);
         $sc->set_fields(array_merge(
@@ -1953,7 +1953,7 @@ class formula extends sandbox_typed
         $result = '';
         $this->last_update = new DateTime();
         $db_con->set_class(sql_db::TBL_FORMULA);
-        if (!$db_con->update_old($this->id(), self::FLD_LAST_UPDATE, sql_creator::NOW)) {
+        if (!$db_con->update_old($this->id(), self::FLD_LAST_UPDATE, sql::NOW)) {
             $result = 'saving the update trigger for formula ' . $this->dsp_id() . ' failed';
         }
 
@@ -2251,7 +2251,7 @@ class formula extends sandbox_typed
             // include the formula_text and the resolved_text, because they should never be empty which is also forced by the db structure
             $this->set_id($db_con->insert_old(
                 array(self::FLD_NAME, user::FLD_ID, self::FLD_LAST_UPDATE, self::FLD_FORMULA_TEXT, self::FLD_FORMULA_USER_TEXT),
-                array($this->name(), $this->user()->id, sql_creator::NOW, $this->ref_text, $this->usr_text)));
+                array($this->name(), $this->user()->id, sql::NOW, $this->ref_text, $this->usr_text)));
             if ($this->id() > 0) {
                 log_debug('->add formula ' . $this->dsp_id() . ' has been added as ' . $this->id);
                 // update the id in the log for the correct reference

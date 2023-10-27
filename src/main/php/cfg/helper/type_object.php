@@ -45,7 +45,7 @@ include_once DB_PATH . 'sql_par_type.php';
 include_once API_SANDBOX_PATH . 'type_object.php';
 
 use api\type_object_api;
-use cfg\db\sql_creator;
+use cfg\db\sql;
 use cfg\db\sql_par_type;
 use JsonSerializable;
 use model\db_cl;
@@ -191,12 +191,12 @@ class type_object extends db_object_seq_id implements JsonSerializable
     /**
      * create an SQL statement to retrieve a type object by id from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param int $id the id of the type object
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql_creator $sc, int $id, string $class = ''): sql_par
+    function load_sql_by_id(sql $sc, int $id, string $class = ''): sql_par
     {
         $typ_lst = new type_list();
         $qp = $typ_lst->load_sql($sc, $class, sql_db::FLD_ID);
@@ -209,12 +209,12 @@ class type_object extends db_object_seq_id implements JsonSerializable
 
     /**
      * synthetic creation of grandparent:: for verb
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param int $id the id of the type object
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id_fwd(sql_creator $sc, int $id, string $class = ''): sql_par
+    function load_sql_by_id_fwd(sql $sc, int $id, string $class = ''): sql_par
     {
         return parent::load_sql_by_id($sc, $id, $class);
     }
@@ -222,12 +222,12 @@ class type_object extends db_object_seq_id implements JsonSerializable
     /**
      * create an SQL statement to retrieve a type object by name from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $name the name of the source
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_name(sql_creator $sc, string $name, string $class = ''): sql_par
+    function load_sql_by_name(sql $sc, string $name, string $class = ''): sql_par
     {
         $typ_lst = new type_list();
         $qp = $typ_lst->load_sql($sc, $class, sql_db::FLD_NAME);
@@ -241,12 +241,12 @@ class type_object extends db_object_seq_id implements JsonSerializable
     /**
      * create an SQL statement to retrieve a type object by code id from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $code_id the code id of the source
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_code_id(sql_creator $sc, string $code_id, string $class = ''): sql_par
+    function load_sql_by_code_id(sql $sc, string $code_id, string $class = ''): sql_par
     {
         $typ_lst = new type_list();
         $qp = $typ_lst->load_sql($sc, $class, 'code_id');

@@ -392,10 +392,17 @@ class string_unit_tests
         // ... sql files
         $test_result = $t->file('/web/system/result.sql');
         $test_target = $t->file('/web/system/target.sql');
-        // TODO activate
-        //$result = $lib->diff_msg($test_result, $test_target);
-        //$target = '64//+{"id":65,"code_id":"18excluded","name":"18excluded","comment":""}//, 65//+{"id":66,"code_id":"14excluded","name":"14excluded","comment":""}// ... and 1 more';
-        //$t->assert("diff_msg, sql in long string", $result, $target);
+        $result = $lib->diff_msg($test_result, $test_target);
+        $target = '165//-,s.phrase_type_id,l.verb_id////+,
+            s.from_phrase_id,
+            s.verb_id//931//- LEFT// and 147 more';
+        $t->assert("diff_msg, sql in long string", $result, $target);
+        // ... sql files
+        $test_result = $t->file('/web/system/result_long.sql');
+        $test_target = $t->file('/web/system/target_long.sql');
+        $result = $lib->diff_msg($test_result, $test_target);
+        $target = "6185//- values';////+ values numeric value';//8843//+ phrases numeric value'; COMMENT ON COLUMN user_values_big.user_id// and 8093 more";
+        $t->assert("diff_msg, sql in long string", $result, $target);
         // html array size
         $test_result = '<a href="/http/result_edit.php?id=12&back=1" title="1.55">1.55</a>';
         $test_target = '<a href="/http/value_edit.php?id=12&back=1" title="1.55">1.55</a>';

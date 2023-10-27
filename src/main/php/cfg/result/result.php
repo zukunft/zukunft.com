@@ -47,7 +47,7 @@ include_once DB_PATH . 'sql_par_type.php';
 include_once SERVICE_EXPORT_PATH . 'result_exp.php';
 
 use api\result_api;
-use cfg\db\sql_creator;
+use cfg\db\sql;
 use cfg\db\sql_par_type;
 use cfg\group\group;
 use cfg\group\group_list;
@@ -249,11 +249,11 @@ class result extends sandbox_value
 
     /**
      * create the SQL to load the single default result always by the id
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql_creator $sc, string $class = self::class): sql_par
+    function load_standard_sql(sql $sc, string $class = self::class): sql_par
     {
         $sc->set_class($class);
         // overwrite the standard id field name (result_id) with the main database id field for results "group_id"
@@ -266,12 +266,12 @@ class result extends sandbox_value
     /**
      * create the SQL to load a results
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $query_name the unique name of the query e.g. id or name
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
+    function load_sql(sql $sc, string $query_name, string $class = self::class): sql_par
     {
         $qp = parent::load_sql($sc, $query_name, $class);
 
@@ -288,12 +288,12 @@ class result extends sandbox_value
     /**
      * create the SQL to load a results by the id
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param int|string $id the id of the result
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql_creator $sc, int|string $id, string $class = self::class): sql_par
+    function load_sql_by_id(sql $sc, int|string $id, string $class = self::class): sql_par
     {
         return parent::load_sql_by_id($sc, $id, $class);
     }
@@ -301,11 +301,11 @@ class result extends sandbox_value
     /**
      * prepare the query parameter to load a results by phrase group id
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param group $grp the group used for the selection
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    private function load_sql_by_grp_prepare(sql_creator $sc, group $grp): sql_par
+    private function load_sql_by_grp_prepare(sql $sc, group $grp): sql_par
     {
         $qp = $this->load_sql($sc, 'grp');
         $sc->set_name($qp->name);
@@ -316,11 +316,11 @@ class result extends sandbox_value
     /**
      * create the SQL to load a default results for all users by phrase group id
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param group $grp the group used for the selection
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_std_by_grp(sql_creator $sc, group $grp): sql_par
+    function load_sql_std_by_grp(sql $sc, group $grp): sql_par
     {
         $sc->set_class(self::class);
         // overwrite the standard id field name (result_id) with the main database id field for results "group_id"
@@ -334,11 +334,11 @@ class result extends sandbox_value
     /**
      * create the SQL to load a results by phrase group id
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param group $grp the group used for the selection
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_grp(sql_creator $sc, group $grp): sql_par
+    function load_sql_by_grp(sql $sc, group $grp): sql_par
     {
         $qp = $this->load_sql($sc, 'grp');
         $sc->set_name($qp->name);
@@ -351,12 +351,12 @@ class result extends sandbox_value
     /**
      * create the SQL to load a results by formula id and phrase group id
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param formula $frm the formula used for the selection
      * @param group $grp the group used for the selection
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_frm_grp(sql_creator $sc, formula $frm, group $grp): sql_par
+    function load_sql_by_frm_grp(sql $sc, formula $frm, group $grp): sql_par
     {
         $qp = $this->load_sql($sc, 'frm_grp');
         $sc->set_name($qp->name);
@@ -370,12 +370,12 @@ class result extends sandbox_value
     /**
      * create the SQL to load a results by formula id and phrase group id
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param formula $frm the formula used for the selection
      * @param group_list $lst the group used for the selection
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_frm_grp_lst(sql_creator $sc, formula $frm, group_list $lst): sql_par
+    function load_sql_by_frm_grp_lst(sql $sc, formula $frm, group_list $lst): sql_par
     {
         $qp = $this->load_sql($sc, 'frm_grp_lst');
         $sc->set_name($qp->name);
@@ -389,11 +389,11 @@ class result extends sandbox_value
     /**
      * create an SQL statement to retrieve the user changes of the current result
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_user_changes(sql_creator $sc, string $class = self::class): sql_par
+    function load_sql_user_changes(sql $sc, string $class = self::class): sql_par
     {
         $sc->set_class(self::class, true);
         // overwrite the standard id field name (result_id) with the main database id field for results "group_id"
@@ -1583,7 +1583,7 @@ class result extends sandbox_value
                     $db_con->set_class(sql_db::TBL_RESULT);
                     if ($db_con->update_old($row_id,
                         array(result::FLD_VALUE, result::FLD_LAST_UPDATE),
-                        array($this->value, sql_creator::NOW))) {
+                        array($this->value, sql::NOW))) {
                         $this->id = $row_id;
                         $result = $row_id;
                     }

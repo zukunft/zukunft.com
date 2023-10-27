@@ -36,7 +36,7 @@
 
 namespace cfg;
 
-use cfg\db\sql_creator;
+use cfg\db\sql;
 use cfg\group\group;
 use DateTime;
 
@@ -139,11 +139,11 @@ class value_time_series extends sandbox_value
 
     /**
      * create the SQL to load the default time series always by the id
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $class the name of this class
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql_creator $sc, string $class = self::class): sql_par
+    function load_standard_sql(sql $sc, string $class = self::class): sql_par
     {
         $sc->set_class(self::class);
         $sc->set_fields(array_merge(self::FLD_NAMES, self::FLD_NAMES_NUM_USR));
@@ -154,12 +154,12 @@ class value_time_series extends sandbox_value
     /**
      * create the common part of an SQL statement to retrieve the parameters of a time series from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
+    function load_sql(sql $sc, string $query_name, string $class = self::class): sql_par
     {
         $qp = parent::load_sql_obj_vars($sc, $class);
         $qp->name .= $query_name;
@@ -190,11 +190,11 @@ class value_time_series extends sandbox_value
     /**
      * create an SQL statement to retrieve a time series by the phrase group from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param group $grp the phrase group to which the time series should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_grp(sql_creator $sc, group $grp): sql_par
+    function load_sql_by_grp(sql $sc, group $grp): sql_par
     {
         $qp = $this->load_sql($sc, group::FLD_ID);
         $sc->add_where(group::FLD_ID, $grp->id());
@@ -252,7 +252,7 @@ class value_time_series extends sandbox_value
             $db_con->set_class(sql_db::TBL_VALUE_TIME_SERIES);
             $this->id = $db_con->insert_old(
                 array(group::FLD_ID, user::FLD_ID, self::FLD_LAST_UPDATE),
-                array($this->grp->id(), $this->user()->id(), sql_creator::NOW));
+                array($this->grp->id(), $this->user()->id(), sql::NOW));
             if ($this->id > 0) {
                 // update the reference in the log
                 if (!$log->add_ref($this->id)) {

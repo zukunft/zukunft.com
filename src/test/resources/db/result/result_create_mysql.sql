@@ -81,7 +81,7 @@ CREATE TABLE IF NOT EXISTS results_prime
 
 CREATE TABLE IF NOT EXISTS user_results_prime
 (
-    group_id      bigint        NOT NULL COMMENT = 'the 64-bit prime index to find the user values',
+    group_id      bigint        NOT NULL COMMENT = 'the 64-bit prime index to find the user numeric result',
     user_id       bigint        NOT NULL COMMENT = 'the changer of the numeric result',
     numeric_value double    DEFAULT NULL COMMENT = 'the user specific numeric value change',
     source_id     bigint    DEFAULT NULL COMMENT = 'the source of the value as given by the user',
@@ -115,7 +115,7 @@ CREATE TABLE IF NOT EXISTS results_big
 
 CREATE TABLE IF NOT EXISTS user_results_big
 (
-    group_id      text          NOT NULL COMMENT = 'the text index to find the user values related to more than 16 phrases',
+    group_id      text          NOT NULL COMMENT = 'the text index for more than 16 phrases to find the numeric result',
     user_id       bigint        NOT NULL COMMENT = 'the changer of the numeric result',
     numeric_value double    DEFAULT NULL COMMENT = 'the user specific numeric value change',
     source_id     bigint    DEFAULT NULL COMMENT = 'the source of the value as given by the user',
@@ -207,7 +207,7 @@ CREATE TABLE IF NOT EXISTS results_text_prime
 
 CREATE TABLE IF NOT EXISTS user_results_text_prime
 (
-    group_id      bigint        NOT NULL COMMENT = 'the 64-bit prime index to find the user values',
+    group_id      bigint        NOT NULL COMMENT = 'the 64-bit prime index to find the user text result',
     user_id       bigint        NOT NULL COMMENT = 'the changer of the text result',
     text_value    text      DEFAULT NULL COMMENT = 'the user specific text value change',
     source_id     bigint    DEFAULT NULL COMMENT = 'the source of the value as given by the user',
@@ -241,7 +241,7 @@ CREATE TABLE IF NOT EXISTS results_text_big
 
 CREATE TABLE IF NOT EXISTS user_results_text_big
 (
-    group_id      text          NOT NULL COMMENT = 'the text index to find the user values related to more than 16 phrases',
+    group_id      text          NOT NULL COMMENT = 'the text index for more than 16 phrases to find the text result',
     user_id       bigint        NOT NULL COMMENT = 'the changer of the text result',
     text_value    text      DEFAULT NULL COMMENT = 'the user specific text value change',
     source_id     bigint    DEFAULT NULL COMMENT = 'the source of the value as given by the user',
@@ -333,7 +333,7 @@ CREATE TABLE IF NOT EXISTS results_time_prime
 
 CREATE TABLE IF NOT EXISTS user_results_time_prime
 (
-    group_id      bigint        NOT NULL COMMENT = 'the 64-bit prime index to find the user values',
+    group_id      bigint        NOT NULL COMMENT = 'the 64-bit prime index to find the user time result',
     user_id       bigint        NOT NULL COMMENT = 'the changer of the time result',
     time_value    timestamp DEFAULT NULL COMMENT = 'the user specific timestamp change',
     source_id     bigint    DEFAULT NULL COMMENT = 'the source of the value as given by the user',
@@ -367,7 +367,7 @@ CREATE TABLE IF NOT EXISTS results_time_big
 
 CREATE TABLE IF NOT EXISTS user_results_time_big
 (
-    group_id      text          NOT NULL COMMENT = 'the text index to find the user values related to more than 16 phrases',
+    group_id      text          NOT NULL COMMENT = 'the text index for more than 16 phrases to find the time result',
     user_id       bigint        NOT NULL COMMENT = 'the changer of the time result',
     time_value    timestamp DEFAULT NULL COMMENT = 'the user specific timestamp change',
     source_id     bigint    DEFAULT NULL COMMENT = 'the source of the value as given by the user',
@@ -459,7 +459,7 @@ CREATE TABLE IF NOT EXISTS results_geo_prime
 
 CREATE TABLE IF NOT EXISTS user_results_geo_prime
 (
-    group_id      bigint        NOT NULL COMMENT = 'the 64-bit prime index to find the user values',
+    group_id      bigint        NOT NULL COMMENT = 'the 64-bit prime index to find the user geo result',
     user_id       bigint        NOT NULL COMMENT = 'the changer of the geo result',
     geo_value     point     DEFAULT NULL COMMENT = 'the user specific geolocation change',
     source_id     bigint    DEFAULT NULL COMMENT = 'the source of the value as given by the user',
@@ -493,7 +493,7 @@ CREATE TABLE IF NOT EXISTS results_geo_big
 
 CREATE TABLE IF NOT EXISTS user_results_geo_big
 (
-    group_id      text          NOT NULL COMMENT = 'the text index to find the user values related to more than 16 phrases',
+    group_id      text          NOT NULL COMMENT = 'the text index for more than 16 phrases to find the geo result',
     user_id       bigint        NOT NULL COMMENT = 'the changer of the geo result',
     geo_value     point     DEFAULT NULL COMMENT = 'the user specific geolocation change',
     source_id     bigint    DEFAULT NULL COMMENT = 'the source of the value as given by the user',

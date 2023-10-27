@@ -31,7 +31,7 @@
 
 namespace cfg;
 
-use cfg\db\sql_creator;
+use cfg\db\sql;
 
 include_once MODEL_SANDBOX_PATH . 'sandbox_link_with_type.php';
 
@@ -248,11 +248,11 @@ class formula_link extends sandbox_link_with_type
     /**
      * create an SQL statement to retrieve the user specific formula link from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement base on the parameters set in $this
      */
-    function load_sql_user_changes(sql_creator $sc, string $class = self::class): sql_par
+    function load_sql_user_changes(sql $sc, string $class = self::class): sql_par
     {
         $sc->set_class($class, true);
         return parent::load_sql_user_changes($sc, $class);
@@ -261,11 +261,11 @@ class formula_link extends sandbox_link_with_type
     /**
      * create the common part of an SQL statement to retrieve the parameters of a formula link from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
+    function load_sql(sql $sc, string $query_name, string $class = self::class): sql_par
     {
         $qp = parent::load_sql_obj_vars($sc, $class);
         $qp->name .= $query_name;
@@ -298,11 +298,11 @@ class formula_link extends sandbox_link_with_type
     /**
      * create an SQL statement to retrieve the parameters of the standard formula link from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql_creator $sc, string $class = self::class): sql_par
+    function load_standard_sql(sql $sc, string $class = self::class): sql_par
     {
         $sc->set_class($class);
         $qp = new sql_par($class, true);

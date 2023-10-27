@@ -38,7 +38,7 @@ include_once MODEL_VALUE_PATH . 'value.php';
 
 use cfg\component\component;
 use cfg\config;
-use cfg\db\sql_creator;
+use cfg\db\sql;
 use cfg\formula;
 use cfg\formula_link;
 use cfg\group\group;
@@ -226,7 +226,7 @@ class sandbox_unit_tests
         $t->display('MySQL select max', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // test a simple SQL select creation for Postgres without the standard id and name identification
-        $sc = new sql_creator();
+        $sc = new sql();
         $sc->set_db_type(sql_db::POSTGRES);
         $sc->set_class(sql_db::TBL_CONFIG);
         $sc->set_name('query_test');

@@ -38,7 +38,7 @@ include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
 use api\component\component_list AS component_list_api;
 use cfg\combine_named;
 use cfg\component_link;
-use cfg\db\sql_creator;
+use cfg\db\sql;
 use cfg\db\sql_par_type;
 use cfg\sandbox_link_named;
 use cfg\sandbox_list;
@@ -102,7 +102,7 @@ class component_list extends sandbox_list
      * the SQL statement to load only the view id and name
      * to exclude the system component from the user selection
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param sandbox_named|sandbox_link_named|combine_named $sbx the single child object
      * @param string $pattern the pattern to filter the views
      * @param int $limit the number of rows to return
@@ -110,7 +110,7 @@ class component_list extends sandbox_list
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_names(
-        sql_creator                                    $sc,
+        sql                                            $sc,
         sandbox_named|sandbox_link_named|combine_named $sbx,
         string                                         $pattern = '',
         int                                            $limit = 0,
@@ -133,11 +133,11 @@ class component_list extends sandbox_list
 
     /**
      * set the common SQL query parameters to load a list of components
-     * @param sql_creator $sc the db connection object as a function parameter for unit testing
+     * @param sql $sc the db connection object as a function parameter for unit testing
      * @param string $class the name of this class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_creator $sc, string $class = self::class): sql_par
+    function load_sql(sql $sc, string $class = self::class): sql_par
     {
         $qp = new sql_par($class);
         $sc->set_class(sql_db::TBL_COMPONENT);
@@ -152,14 +152,14 @@ class component_list extends sandbox_list
     /**
      * create an SQL statement to retrieve a list of sources from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_ids(sql_creator $sc, array $ids): sql_par
+    function load_sql_by_ids(sql $sc, array $ids): sql_par
     {
         $qp = $this->load_sql($sc, 'ids');
         $sc->add_where(component::FLD_ID, $ids);
-        $sc->set_order(component::FLD_ID, sql_db::ORDER_ASC);
+        $sc->set_order(component::FLD_ID, sql::ORDER_ASC);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -168,11 +168,11 @@ class component_list extends sandbox_list
 
     /**
      * set the SQL query parameters to load a list of components by the view id
-     * @param sql_creator $sc the db connection object as a function parameter for unit testing
+     * @param sql $sc the db connection object as a function parameter for unit testing
      * @param int $id the id of the view to which the components should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_view_id(sql_creator $sc, int $id): sql_par
+    function load_sql_by_view_id(sql $sc, int $id): sql_par
     {
         $qp = $this->load_sql($sc);
         $qp->name .= 'view_id';

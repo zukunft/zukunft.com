@@ -42,7 +42,7 @@ include_once MODEL_WORD_PATH . 'word.php';
 include_once MODEL_WORD_PATH . 'triple.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 
-use cfg\db\sql_creator;
+use cfg\db\sql;
 use cfg\db\sql_par_type;
 use html\html_base;
 
@@ -192,17 +192,17 @@ class verb_list extends type_list
     /**
      * common part to create an SQL statement to load all verbs from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $class the class name to be compatible with the user sandbox load_sql functions
      * @param string $query_name the name extension to make the query name unique
      * @param string $order_field set if the type list should e.g. be sorted by the name instead of the id
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql(
-        sql_creator $sc,
-        string      $class = self::class,
-        string      $query_name = 'all',
-        string      $order_field = verb::FLD_ID): sql_par
+        sql    $sc,
+        string $class = self::class,
+        string $query_name = 'all',
+        string $order_field = verb::FLD_ID): sql_par
     {
         $sc->set_class(verb::class);
         $qp = new sql_par($class);
@@ -220,11 +220,11 @@ class verb_list extends type_list
     /**
      * create an SQL statement to load all verbs from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $db_type the class name to be compatible with the user sandbox load_sql functions
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_all(sql_creator $sc, string $db_type): sql_par
+    function load_sql_all(sql $sc, string $db_type): sql_par
     {
         $qp = $this->load_sql($sc, $db_type);
         $sc->set_page(SQL_ROW_MAX, 0);

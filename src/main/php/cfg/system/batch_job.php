@@ -75,7 +75,7 @@ include_once MODEL_HELPER_PATH . 'db_object_seq_id_user.php';
 include_once API_SYSTEM_PATH . 'batch_job.php';
 
 use api\batch_job_api;
-use cfg\db\sql_creator;
+use cfg\db\sql;
 use DateTime;
 use DateTimeInterface;
 
@@ -255,12 +255,12 @@ class batch_job extends db_object_seq_id_user
     /**
      * create the common part of an SQL statement to retrieve the parameters of a batch job from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $query_name the name of the selection fields to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
+    function load_sql(sql $sc, string $query_name, string $class = self::class): sql_par
     {
         $qp = parent::load_sql_multi($sc, $query_name, $class);
         $sc->set_class(sql_db::TBL_TASK);
@@ -275,12 +275,12 @@ class batch_job extends db_object_seq_id_user
     /**
      * create an SQL statement to retrieve a batch job by id from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param int $id the id of the user sandbox object
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql_creator $sc, int $id, string $class = self::class): sql_par
+    function load_sql_by_id(sql $sc, int $id, string $class = self::class): sql_par
     {
         return parent::load_sql_by_id($sc, $id, $class);
     }
@@ -370,7 +370,7 @@ class batch_job extends db_object_seq_id_user
                     $db_con->set_class(sql_db::TBL_TASK);
                     $db_con->set_usr($this->user()->id());
                     $job_id = $db_con->insert_old(array(user::FLD_ID, self::FLD_TIME_REQUEST, self::FLD_TYPE, self::FLD_ROW),
-                        array($this->user()->id(), sql_creator::NOW, $this->type_id(), $this->row_id));
+                        array($this->user()->id(), sql::NOW, $this->type_id(), $this->row_id));
                     $this->request_time = new DateTime();
 
                     // execute the job if possible
@@ -415,7 +415,7 @@ class batch_job extends db_object_seq_id_user
         $db_type = $db_con->get_class();
         $db_con->set_class(sql_db::TBL_TASK);
         $db_con->usr_id = $this->user()->id();
-        $result = $db_con->update_old($this->id, 'end_time', sql_creator::NOW);
+        $result = $db_con->update_old($this->id, 'end_time', sql::NOW);
         $db_con->set_class($db_type);
 
         log_debug('done with ' . $result);
@@ -431,7 +431,7 @@ class batch_job extends db_object_seq_id_user
         $db_type = $db_con->get_class();
         $db_con->usr_id = $this->user()->id();
         $db_con->set_class(sql_db::TBL_TASK);
-        $result = $db_con->update_old($this->id, 'start_time', sql_creator::NOW);
+        $result = $db_con->update_old($this->id, 'start_time', sql::NOW);
 
         log_debug($this->type_code_id() . ' with ' . $result);
         if ($this->type_code_id() == batch_job_type_list::VALUE_UPDATE) {

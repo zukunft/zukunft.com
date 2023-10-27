@@ -41,6 +41,7 @@ enum sql_field_type: string
 
     // data field types used
     case TEXT = 'text'; // a text with variable length that can be used for a combined index without auto increase
+    case KEY_PART_TEXT = 'textKeyPart'; // a text with variable length that is part of a combined index
     case KEY_PART_512 = '512bitKeyPart'; // a 512-bit text for a combined index without auto increase
     case KEY_PART_INT = 'bigintKeyPart'; // an integer that is part of a combined index
     case INT = 'bigint'; // the standard integer type
@@ -55,7 +56,7 @@ enum sql_field_type: string
         return match($this) {
             self::KEY_INT => 'BIGSERIAL',
             self::KEY_512, self::KEY_PART_512 => 'char(112)',
-            self::KEY_TEXT, self::TEXT => 'text',
+            self::TEXT, self::KEY_TEXT, self::KEY_PART_TEXT => 'text',
             self::INT, self::KEY_PART_INT => 'bigint',
             self::INT_SMALL, self::BOOL => 'smallint',
             self::NUMERIC_FLOAT => 'double precision',
@@ -70,7 +71,7 @@ enum sql_field_type: string
         return match($this) {
             self::KEY_INT => 'bigint',
             self::KEY_512, self::KEY_PART_512 => 'char(112)',
-            self::KEY_TEXT, self::TEXT => 'text',
+            self::TEXT, self::KEY_TEXT, self::KEY_PART_TEXT => 'text',
             self::INT, self::KEY_PART_INT => 'bigint',
             self::INT_SMALL, self::BOOL => 'smallint',
             self::NUMERIC_FLOAT => 'double',
@@ -91,7 +92,7 @@ enum sql_field_type: string
     public function is_key_part(): bool
     {
         return match($this) {
-            self::KEY_PART_512, self::KEY_PART_INT => true,
+            self::KEY_PART_512, self::KEY_PART_INT, self::KEY_PART_TEXT => true,
             default => false,
         };
     }

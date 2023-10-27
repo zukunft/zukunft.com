@@ -1105,16 +1105,18 @@ class library
         $to_keys = array_keys($to);
         $from_pos = 0;
         $to_pos = 0;
+        $to_last_match_pos = 0;
 
         // check if the from parts are also part of to
         while ($from_pos < count($from)) {
             if (!array_key_exists($to_pos, $to_keys)) {
-                log_err('To pos ' . $to_pos . ' not found in ' . implode(",", $to) . ' when comparing to ' . implode(",", $from));
+                $to_pos = $to_last_match_pos;
             }
             if ($from[$from_keys[$from_pos]] == $to[$to_keys[$to_pos]]) {
                 $diff_part[] = $to_sep[$to_keys[$to_pos]];
                 $diff_type[] = self::STR_DIFF_UNCHANGED;
                 if ($to_pos < count($to)) {
+                    $to_last_match_pos = $to_pos;
                     $to_pos++;
                 }
                 $from_pos++;

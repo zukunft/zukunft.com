@@ -33,7 +33,7 @@ namespace cfg;
 
 include_once DB_PATH . 'sql_par_type.php';
 
-use cfg\db\sql_creator;
+use cfg\db\sql;
 use cfg\db\sql_par_type;
 
 class formula_link_list extends sandbox_list
@@ -66,11 +66,11 @@ class formula_link_list extends sandbox_list
     /**
      * set the SQL query parameters to load a list of formula links
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $query_name the name of the selection fields to make the query name unique
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_creator $sc, string $query_name): sql_par
+    function load_sql(sql $sc, string $query_name): sql_par
     {
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
@@ -105,11 +105,11 @@ class formula_link_list extends sandbox_list
 
     /**
      * set the SQL query parameters to load a list of formula links by the formula id
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param int $frm_id the id of the formula which links should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_frm_id(sql_creator $sc, int $frm_id): sql_par
+    function load_sql_by_frm_id(sql $sc, int $frm_id): sql_par
     {
         $qp = $this->load_sql($sc, 'frm_id');
         if ($frm_id > 0) {

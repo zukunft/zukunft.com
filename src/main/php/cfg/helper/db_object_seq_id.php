@@ -37,7 +37,7 @@ namespace cfg;
 include_once MODEL_HELPER_PATH . 'db_object.php';
 
 use api\system\db_object as db_object_api;
-use cfg\db\sql_creator;
+use cfg\db\sql;
 
 class db_object_seq_id extends db_object
 {
@@ -138,11 +138,11 @@ class db_object_seq_id extends db_object
     /**
      * create an SQL statement to retrieve a user sandbox object by id from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param int $id the id of the user sandbox object
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql_creator $sc, int $id): sql_par
+    function load_sql_by_id(sql $sc, int $id): sql_par
     {
         return parent::load_sql_by_id_str($sc, $id);
     }

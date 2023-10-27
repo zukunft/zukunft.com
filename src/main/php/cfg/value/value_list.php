@@ -36,7 +36,7 @@ include_once API_VALUE_PATH . 'value_list.php';
 include_once SERVICE_EXPORT_PATH . 'value_list_exp.php';
 
 use api\value_list_api;
-use cfg\db\sql_creator;
+use cfg\db\sql;
 use cfg\db\sql_par_type;
 use cfg\group\group;
 use cfg\group\group_list;
@@ -117,11 +117,11 @@ class value_list extends sandbox_list
 
     /**
      * set the SQL query parameters to load a list of values
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_creator $sc, string $query_name): sql_par
+    function load_sql(sql $sc, string $query_name): sql_par
     {
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
@@ -143,11 +143,11 @@ class value_list extends sandbox_list
     /**
      * create an SQL statement to retrieve a list of value by the id from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param array $ids value ids that should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_ids(sql_creator $sc, array $ids): sql_par
+    function load_sql_by_ids(sql $sc, array $ids): sql_par
     {
         $qp = $this->load_sql($sc, 'ids');
         $sc->add_where(value::FLD_ID, $ids, sql_par_type::INT_LIST);
@@ -161,11 +161,11 @@ class value_list extends sandbox_list
     /**
      * create an SQL statement to retrieve a list of value by the id from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param phrase_list $phr_lst phrase list to which all related values should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_phr_lst(sql_creator $sc, phrase_list $phr_lst): sql_par
+    function load_sql_by_phr_lst(sql $sc, phrase_list $phr_lst): sql_par
     {
         $qp = $this->load_sql($sc, 'phr_lst');
         $sc->set_join_fields(

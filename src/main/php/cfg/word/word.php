@@ -50,7 +50,7 @@ include_once SERVICE_EXPORT_PATH . 'word_exp.php';
 
 use api\api;
 use api\word_api;
-use cfg\db\sql_creator;
+use cfg\db\sql;
 use cfg\db\sql_par_type;
 use cfg\group\group_list;
 use html\word\word as word_dsp;
@@ -419,10 +419,10 @@ class word extends sandbox_typed
     /**
      * the sql statement to create the table
      *
-     * @param sql_creator $sc ith the target db_type set
+     * @param sql $sc ith the target db_type set
      * @return string the sql statement to create the table
      */
-    function sql_table(sql_creator $sc): string
+    function sql_table(sql $sc): string
     {
         $sc->set_class(word::class);
         return parent::sql_table($sc);
@@ -435,11 +435,11 @@ class word extends sandbox_typed
     /**
      * create the SQL to load the default word always by the id
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql_creator $sc, string $class = self::class): sql_par
+    function load_standard_sql(sql $sc, string $class = self::class): sql_par
     {
         $sc->set_class(word::class);
         $sc->set_fields(array_merge(
@@ -473,12 +473,12 @@ class word extends sandbox_typed
     /**
      * create the common part of an SQL statement to retrieve the parameters of a word from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
+    function load_sql(sql $sc, string $query_name, string $class = self::class): sql_par
     {
         // TODO check if and where it is needed to exclude the formula words
         // global $phrase_types;
@@ -492,12 +492,12 @@ class word extends sandbox_typed
      * create an SQL statement to retrieve a word by id from the database
      * added to word just to assign the class for the user sandbox object
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param int $id the id of the user sandbox object
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql_creator $sc, int $id, string $class = self::class): sql_par
+    function load_sql_by_id(sql $sc, int $id, string $class = self::class): sql_par
     {
         return parent::load_sql_by_id($sc, $id, $class);
     }
@@ -505,11 +505,11 @@ class word extends sandbox_typed
     /**
      * create an SQL statement to retrieve a word representing a formula by name
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $name the name of the formula
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_formula_name(sql_creator $sc, string $name): sql_par
+    function load_sql_by_formula_name(sql $sc, string $name): sql_par
     {
         global $phrase_types;
         $qp = parent::load_sql_usr_num($sc, $this, formula::FLD_NAME);
@@ -1522,11 +1522,11 @@ class word extends sandbox_typed
     /**
      * create an SQL statement to retrieve the user changes of the current word
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_user_changes(sql_creator $sc, string $class = self::class): sql_par
+    function load_sql_user_changes(sql $sc, string $class = self::class): sql_par
     {
         $sc->set_class(word::class, true);
         return parent::load_sql_user_changes($sc, $class);

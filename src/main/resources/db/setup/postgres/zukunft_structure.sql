@@ -1210,7 +1210,7 @@ CREATE TABLE IF NOT EXISTS user_values_prime
 );
 
 COMMENT ON TABLE user_values_prime                IS 'to store the user specific changes for the most often requested values related up to four prime phrase';
-COMMENT ON COLUMN user_values_prime.group_id      IS 'the 64-bit prime index to find the user values';
+COMMENT ON COLUMN user_values_prime.group_id      IS 'the 64-bit prime index to find the user numeric value';
 COMMENT ON COLUMN user_values_prime.user_id       IS 'the changer of the value';
 COMMENT ON COLUMN user_values_prime.numeric_value IS 'the user specific numeric value change';
 COMMENT ON COLUMN user_values_prime.source_id     IS 'the source of the value as given by the user';
@@ -1286,8 +1286,8 @@ CREATE TABLE IF NOT EXISTS values_text_standard_prime
     source_id  int DEFAULT NULL
 );
 
-COMMENT ON TABLE value_text_standard_prime IS 'for public unprotected text values related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated';
-COMMENT ON COLUMN value_text_standard_prime.group_id IS 'the prime index to find the value';
+COMMENT ON TABLE values_text_standard_prime IS 'for public unprotected text values related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated';
+COMMENT ON COLUMN values_text_standard_prime.group_id IS 'the prime index to find the value';
 
 --
 -- table structure for public text values that have never changed the owner, does not have a description and are rarely updated
@@ -2898,7 +2898,7 @@ CREATE INDEX user_values_big_source_idx ON user_values_big (source_id);
 --
 -- Indexes for table value_text_standard_prime
 --
-CREATE INDEX value_text_standard_prime_source_idx ON value_text_standard_prime (source_id);
+CREATE INDEX value_text_standard_prime_source_idx ON values_text_standard_prime (source_id);
 
 --
 -- Indexes for table value_text_standard

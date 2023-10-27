@@ -32,7 +32,7 @@
 
 namespace cfg;
 
-use cfg\db\sql_creator;
+use cfg\db\sql;
 
 class db_object
 {
@@ -65,10 +65,10 @@ class db_object
     /**
      * the sql statement to create the table for this (or a child) object
      *
-     * @param sql_creator $sc ith the target db_type set
+     * @param sql $sc ith the target db_type set
      * @return string the sql statement to create the table
      */
-    function sql_table(sql_creator $sc): string
+    function sql_table(sql $sc): string
     {
         $sc->set_class($this::class);
         return $sc->table_create([], '', $this::TBL_COMMENT);
@@ -83,14 +83,14 @@ class db_object
      * parent function to create the common part of an SQL statement for group, value and result tables
      * child object sets the table and fields in the db sql builder
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $query_name the name of the selection fields to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
      * @param string $ext the table name extension e.g. to switch between standard and prime values
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     public function load_sql_multi(
-        sql_creator $sc,
+        sql    $sc,
         string $query_name,
         string $class,
         string $ext = ''): sql_par
@@ -110,11 +110,11 @@ class db_object
      * parent function to create the common part of an SQL statement
      * child object sets the table and fields in the db sql builder
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $query_name the name of the selection fields to make the query name unique
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_creator $sc, string $query_name): sql_par
+    function load_sql(sql $sc, string $query_name): sql_par
     {
         return $this->load_sql_multi($sc, $query_name, $this::class);
     }
@@ -122,11 +122,11 @@ class db_object
     /**
      * create an SQL statement to retrieve a user sandbox object by id from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param int|string $id the id of the user sandbox object
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id_str(sql_creator $sc, int|string $id): sql_par
+    function load_sql_by_id_str(sql $sc, int|string $id): sql_par
     {
         $qp = $this->load_sql($sc, sql_db::FLD_ID);
         $sc->add_where($this->id_field(), $id);

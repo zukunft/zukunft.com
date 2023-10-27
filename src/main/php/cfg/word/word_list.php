@@ -45,7 +45,7 @@ include_once MODEL_HELPER_PATH . 'foaf_direction.php';
 include_once API_WORD_PATH . 'word_list.php';
 
 use api\word_list_api;
-use cfg\db\sql_creator;
+use cfg\db\sql;
 use cfg\db\sql_par_type;
 use cfg\group\group;
 use cfg\group\group_link;
@@ -126,7 +126,7 @@ class word_list extends sandbox_list
      * add formula word filter to
      * the SQL statement to load only the word id and name
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param sandbox_named|sandbox_link_named|combine_named $sbx the single child object
      * @param string $pattern the pattern to filter the words
      * @param int $limit the number of rows to return
@@ -134,7 +134,7 @@ class word_list extends sandbox_list
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_names(
-        sql_creator                                    $sc,
+        sql                                            $sc,
         sandbox_named|sandbox_link_named|combine_named $sbx,
         string                                         $pattern = '',
         int                                            $limit = 0,
@@ -155,11 +155,11 @@ class word_list extends sandbox_list
 
     /**
      * set the SQL query parameters to load a list of words
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_creator $sc, string $query_name = ''): sql_par
+    function load_sql(sql $sc, string $query_name = ''): sql_par
     {
         $sc->set_class(word::class);
         $qp = new sql_par(self::class);
@@ -176,11 +176,11 @@ class word_list extends sandbox_list
 
     /**
      * set the SQL query parameters to load a list of words by the ids
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param array $wrd_ids a list of int values with the word ids
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_ids(sql_creator $sc, array $wrd_ids): sql_par
+    function load_sql_by_ids(sql $sc, array $wrd_ids): sql_par
     {
         $qp = $this->load_sql($sc, 'ids');
         if (count($wrd_ids) > 0) {
@@ -195,11 +195,11 @@ class word_list extends sandbox_list
 
     /**
      * set the SQL query parameters to load a list of words by the names
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param array $wrd_names a list of strings with the word names
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_names(sql_creator $sc, array $wrd_names): sql_par
+    function load_sql_by_names(sql $sc, array $wrd_names): sql_par
     {
         $qp = $this->load_sql($sc, 'names');
         if (count($wrd_names) > 0) {
@@ -214,11 +214,11 @@ class word_list extends sandbox_list
 
     /**
      * set the SQL query parameters to load a list of words by the phrase group id
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param int $grp_id the id of the phrase group
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_grp_id(sql_creator $sc, int $grp_id): sql_par
+    function load_sql_by_grp_id(sql $sc, int $grp_id): sql_par
     {
         $qp = $this->load_sql($sc, 'group');
         if ($grp_id > 0) {
@@ -241,11 +241,11 @@ class word_list extends sandbox_list
 
     /**
      * set the SQL query parameters to load a list of words by the type
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param int $type_id the id of the word type
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_type(sql_creator $sc, int $type_id): sql_par
+    function load_sql_by_type(sql $sc, int $type_id): sql_par
     {
         $qp = $this->load_sql($sc, 'type');
         if ($type_id > 0) {
@@ -260,11 +260,11 @@ class word_list extends sandbox_list
 
     /**
      * set the SQL query parameters to load a list of words by a word pattern
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $pattern the text part that should be used to select the words
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_like(sql_creator $sc, string $pattern = ''): sql_par
+    function load_sql_like(sql $sc, string $pattern = ''): sql_par
     {
         $qp = $this->load_sql($sc, 'name_like');
         if ($pattern != '') {
@@ -281,12 +281,12 @@ class word_list extends sandbox_list
      * create the sql statement to select the related words
      * the relation can be narrowed with a verb id
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param verb|null $vrb if set to select only words linked with this verb
      * @param foaf_direction $direction to define the link direction
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_linked_words(sql_creator $sc, ?verb $vrb, foaf_direction $direction): sql_par
+    function load_sql_linked_words(sql $sc, ?verb $vrb, foaf_direction $direction): sql_par
     {
         $qp = $this->load_sql($sc);
         $join_field = '';

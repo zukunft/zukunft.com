@@ -41,7 +41,7 @@ use cfg\change_log_link;
 use cfg\change_log_table;
 use cfg\component_link;
 use cfg\component_link_list;
-use cfg\db\sql_creator;
+use cfg\db\sql;
 use cfg\formula;
 use cfg\phrase;
 use cfg\sandbox;
@@ -343,11 +343,11 @@ class component extends sandbox_typed
     /**
      * create the SQL to load the default view always by the id
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql_creator $sc, string $class = self::class): sql_par
+    function load_standard_sql(sql $sc, string $class = self::class): sql_par
     {
         $sc->set_class(self::class);
         $sc->set_fields(array_merge(
@@ -384,12 +384,12 @@ class component extends sandbox_typed
     /**
      * create the common part of an SQL statement to retrieve the parameters of a view component from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
+    function load_sql(sql $sc, string $query_name, string $class = self::class): sql_par
     {
         return parent::load_sql_usr_num($sc, $this, $query_name);
     }
@@ -542,10 +542,10 @@ class component extends sandbox_typed
 
     /**
      * TODO use a set_join function for all not simple sql joins
-     * @param sql_creator $sc the sql creator without component joins
-     * @return sql_creator the sql creator with the components join set
+     * @param sql $sc the sql creator without component joins
+     * @return sql the sql creator with the components join set
      */
-    function set_join(sql_creator $sc): sql_creator
+    function set_join(sql $sc): sql
     {
         $sc->set_join_fields(component::FLD_NAMES, sql_db::TBL_COMPONENT);
         $sc->set_join_usr_fields(component::FLD_NAMES_USR, sql_db::TBL_COMPONENT);
@@ -840,11 +840,11 @@ class component extends sandbox_typed
     /**
      * create an SQL statement to retrieve the user changes of the current view component
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_user_changes(sql_creator $sc, string $class = self::class): sql_par
+    function load_sql_user_changes(sql $sc, string $class = self::class): sql_par
     {
         $sc->set_class(self::class, true);
         $sc->set_fields(array_merge(

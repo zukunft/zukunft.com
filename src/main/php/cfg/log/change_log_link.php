@@ -46,7 +46,7 @@
 
 namespace cfg;
 
-use cfg\db\sql_creator;
+use cfg\db\sql;
 use Exception;
 
 include_once DB_PATH . 'sql_db.php';
@@ -156,11 +156,11 @@ class change_log_link extends change_log
      * TODO use always limit queries to avoid long runners
      * create an SQL statement to retrieve a change long entry for links by the changing user
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param user $usr the id of the user sandbox object
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_user(sql_creator $sc, user $usr): sql_par
+    function load_sql_by_user(sql $sc, user $usr): sql_par
     {
         $qp = new sql_par(self::class);
         $qp->name .= 'user_last';
@@ -172,7 +172,7 @@ class change_log_link extends change_log
         $sc->set_join_fields(array(user::FLD_NAME), sql_db::TBL_USER);
 
         $sc->add_where(user::FLD_ID, $usr->id);
-        $sc->set_order(self::FLD_ID, sql_db::ORDER_DESC);
+        $sc->set_order(self::FLD_ID, sql::ORDER_DESC);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
         return $qp;
@@ -216,7 +216,7 @@ class change_log_link extends change_log
         $db_con->set_join_fields(array(user::FLD_NAME), sql_db::TBL_USER);
 
         $db_con->set_where_text($db_con->where_par($fields, $values));
-        $db_con->set_order(self::FLD_ID, sql_db::ORDER_DESC);
+        $db_con->set_order(self::FLD_ID, sql::ORDER_DESC);
         $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
 

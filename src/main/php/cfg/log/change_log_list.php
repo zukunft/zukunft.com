@@ -41,7 +41,7 @@ include_once MODEL_SYSTEM_PATH . 'base_list.php';
 
 use api\change_log_list_api;
 use cfg\component\component;
-use cfg\db\sql_creator;
+use cfg\db\sql;
 use html\log\change_log_list as change_log_list_dsp;
 
 class change_log_list extends base_list
@@ -301,7 +301,7 @@ class change_log_list extends base_list
      * e.g. the when and how a user has changed the way a word should be shown in the user interface
      * only public for SQL unit testing
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $table_name the table name of the user sandbox object e.g. 'word'
      * @param string $field_name the field that has been change e.g. 'view'
      * @param int $id the database id of the user sandbox object that has been changed
@@ -309,7 +309,7 @@ class change_log_list extends base_list
      * @return sql_par
      */
     function load_sql_obj_fld(
-        sql_creator $sc,
+        sql    $sc,
         string $table_name,
         string $field_name,
         int    $id,

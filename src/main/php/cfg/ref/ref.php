@@ -58,7 +58,7 @@ include_once MODEL_REF_PATH . 'source.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
 
-use cfg\db\sql_creator;
+use cfg\db\sql;
 use model\export\exp_obj;
 use model\export\ref_exp;
 use api\ref_api;
@@ -288,11 +288,11 @@ class ref extends sandbox_link_with_type
     /**
      * create the SQL to load the default ref always by the id
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql_creator $sc, string $class = self::class): sql_par
+    function load_standard_sql(sql $sc, string $class = self::class): sql_par
     {
         $sc->set_class($class);
         $sc->set_fields(array_merge(
@@ -326,12 +326,12 @@ class ref extends sandbox_link_with_type
     /**
      * create the common part of an SQL statement to retrieve the parameters of a ref from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
+    function load_sql(sql $sc, string $query_name, string $class = self::class): sql_par
     {
         return parent::load_sql_usr_num($sc, $this, $query_name);
     }
@@ -339,12 +339,12 @@ class ref extends sandbox_link_with_type
     /**
      * create an SQL statement to retrieve a ref by id from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param int $phr_id the id of the phrase that is referenced
      * @param int $type_id the id of the reference type
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_link_ids(sql_creator $sc, int $phr_id, int $type_id): sql_par
+    function load_sql_by_link_ids(sql $sc, int $phr_id, int $type_id): sql_par
     {
         $qp = $this->load_sql($sc, 'link_ids');
         $sc->add_where(phrase::FLD_ID, $phr_id);

@@ -43,7 +43,7 @@ include_once API_LOG_PATH . 'system_log.php';
 
 use cfg\change_log_action;
 use cfg\change_log_named;
-use cfg\db\sql_creator;
+use cfg\db\sql;
 use cfg\db_object_seq_id;
 use cfg\library;
 use cfg\sandbox;
@@ -205,13 +205,13 @@ class system_log extends db_object_seq_id
     /**
      * create the SQL statement to load one system log entry
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @param string $class the name of this class from where the call has been triggered
      * @return sql_par the database depending on sql statement to load a system error from the log table
      *                 and the unique name for the query
      */
-    function load_sql(sql_creator $sc, string $query_name = sql_db::FLD_ID, string $class = self::class): sql_par
+    function load_sql(sql $sc, string $query_name = sql_db::FLD_ID, string $class = self::class): sql_par
     {
         $qp = parent::load_sql($sc, $query_name, $class);
         $sc->set_class(sql_db::TBL_SYS_LOG);
@@ -229,12 +229,12 @@ class system_log extends db_object_seq_id
     /**
      * create an SQL statement to retrieve a system log entry by id from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param int $id the id of the user sandbox object
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql_creator $sc, int $id, string $class = self::class): sql_par
+    function load_sql_by_id(sql $sc, int $id, string $class = self::class): sql_par
     {
 
         $qp = $this->load_sql($sc, sql_db::FLD_ID, $class);

@@ -132,7 +132,7 @@ CREATE TABLE IF NOT EXISTS user_values_prime
 );
 
 COMMENT ON TABLE user_values_prime                IS 'to store the user specific changes for the most often requested numeric values related up to four prime phrase';
-COMMENT ON COLUMN user_values_prime.group_id      IS 'the 64-bit prime index to find the user values';
+COMMENT ON COLUMN user_values_prime.group_id      IS 'the 64-bit prime index to find the user numeric value';
 COMMENT ON COLUMN user_values_prime.user_id       IS 'the changer of the numeric value';
 COMMENT ON COLUMN user_values_prime.numeric_value IS 'the user specific numeric value change';
 COMMENT ON COLUMN user_values_prime.source_id     IS 'the source of the value as given by the user';
@@ -186,7 +186,7 @@ CREATE TABLE IF NOT EXISTS user_values_big
 );
 
 COMMENT ON TABLE user_values_big                IS 'to store the user specific changes of numeric values related to more than 16 phrases';
-COMMENT ON COLUMN user_values_big.group_id      IS 'the text index to find the user values related to more than 16 phrases';
+COMMENT ON COLUMN user_values_big.group_id      IS 'the text index for more than 16 phrases to find the numeric value';
 COMMENT ON COLUMN user_values_big.user_id       IS 'the changer of the numeric value';
 COMMENT ON COLUMN user_values_big.numeric_value IS 'the user specific numeric value change';
 COMMENT ON COLUMN user_values_big.source_id     IS 'the source of the value as given by the user';
@@ -328,7 +328,7 @@ CREATE TABLE IF NOT EXISTS user_values_text_prime
 );
 
 COMMENT ON TABLE user_values_text_prime                IS 'to store the user specific changes for the most often requested text values related up to four prime phrase';
-COMMENT ON COLUMN user_values_text_prime.group_id      IS 'the 64-bit prime index to find the user values';
+COMMENT ON COLUMN user_values_text_prime.group_id      IS 'the 64-bit prime index to find the user text value';
 COMMENT ON COLUMN user_values_text_prime.user_id       IS 'the changer of the text value';
 COMMENT ON COLUMN user_values_text_prime.text_value    IS 'the user specific text value change';
 COMMENT ON COLUMN user_values_text_prime.source_id     IS 'the source of the value as given by the user';
@@ -382,7 +382,7 @@ CREATE TABLE IF NOT EXISTS user_values_text_big
 );
 
 COMMENT ON TABLE user_values_text_big                IS 'to store the user specific changes of text values related to more than 16 phrases';
-COMMENT ON COLUMN user_values_text_big.group_id      IS 'the text index to find the user values related to more than 16 phrases';
+COMMENT ON COLUMN user_values_text_big.group_id      IS 'the text index for more than 16 phrases to find the text value';
 COMMENT ON COLUMN user_values_text_big.user_id       IS 'the changer of the text value';
 COMMENT ON COLUMN user_values_text_big.text_value    IS 'the user specific text value change';
 COMMENT ON COLUMN user_values_text_big.source_id     IS 'the source of the value as given by the user';
@@ -524,7 +524,7 @@ CREATE TABLE IF NOT EXISTS user_values_time_prime
 );
 
 COMMENT ON TABLE user_values_time_prime                IS 'to store the user specific changes for the most often requested time values related up to four prime phrase';
-COMMENT ON COLUMN user_values_time_prime.group_id      IS 'the 64-bit prime index to find the user values';
+COMMENT ON COLUMN user_values_time_prime.group_id      IS 'the 64-bit prime index to find the user time value';
 COMMENT ON COLUMN user_values_time_prime.user_id       IS 'the changer of the time value';
 COMMENT ON COLUMN user_values_time_prime.time_value    IS 'the user specific timestamp change';
 COMMENT ON COLUMN user_values_time_prime.source_id     IS 'the source of the value as given by the user';
@@ -578,7 +578,7 @@ CREATE TABLE IF NOT EXISTS user_values_time_big
 );
 
 COMMENT ON TABLE user_values_time_big                IS 'to store the user specific changes of time values related to more than 16 phrases';
-COMMENT ON COLUMN user_values_time_big.group_id      IS 'the text index to find the user values related to more than 16 phrases';
+COMMENT ON COLUMN user_values_time_big.group_id      IS 'the text index for more than 16 phrases to find the time value';
 COMMENT ON COLUMN user_values_time_big.user_id       IS 'the changer of the time value';
 COMMENT ON COLUMN user_values_time_big.time_value    IS 'the user specific timestamp change';
 COMMENT ON COLUMN user_values_time_big.source_id     IS 'the source of the value as given by the user';
@@ -720,7 +720,7 @@ CREATE TABLE IF NOT EXISTS user_values_geo_prime
 );
 
 COMMENT ON TABLE user_values_geo_prime                IS 'to store the user specific changes for the most often requested geo values related up to four prime phrase';
-COMMENT ON COLUMN user_values_geo_prime.group_id      IS 'the 64-bit prime index to find the user values';
+COMMENT ON COLUMN user_values_geo_prime.group_id      IS 'the 64-bit prime index to find the user geo value';
 COMMENT ON COLUMN user_values_geo_prime.user_id       IS 'the changer of the geo value';
 COMMENT ON COLUMN user_values_geo_prime.geo_value     IS 'the user specific geolocation change';
 COMMENT ON COLUMN user_values_geo_prime.source_id     IS 'the source of the value as given by the user';
@@ -774,7 +774,7 @@ CREATE TABLE IF NOT EXISTS user_values_geo_big
 );
 
 COMMENT ON TABLE user_values_geo_big                IS 'to store the user specific changes of geo values related to more than 16 phrases';
-COMMENT ON COLUMN user_values_geo_big.group_id      IS 'the text index to find the user values related to more than 16 phrases';
+COMMENT ON COLUMN user_values_geo_big.group_id      IS 'the text index for more than 16 phrases to find the geo value';
 COMMENT ON COLUMN user_values_geo_big.user_id       IS 'the changer of the geo value';
 COMMENT ON COLUMN user_values_geo_big.geo_value     IS 'the user specific geolocation change';
 COMMENT ON COLUMN user_values_geo_big.source_id     IS 'the source of the value as given by the user';

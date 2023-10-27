@@ -45,6 +45,7 @@ include_once API_LOG_PATH . 'system_log_list.php';
 include_once WEB_LOG_PATH . 'system_log_list.php';
 include_once WEB_LOG_PATH . 'system_log_list_old.php';
 
+use cfg\db\sql;
 use cfg\db\sql_par_type;
 use cfg\log\system_log;
 use controller\log\system_log_list_api;
@@ -179,7 +180,7 @@ class system_log_list extends base_list
                 sandbox::FLD_USER_NAME . ' AS ' . system_log::FLD_SOLVER_NAME),
                 sql_db::TBL_USER, system_log::FLD_SOLVER);
             $db_con->set_where_text($sql_where);
-            $db_con->set_order(system_log::FLD_TIME, sql_db::ORDER_DESC);
+            $db_con->set_order(system_log::FLD_TIME, sql::ORDER_DESC);
             $db_con->set_page_par($this->size, $this->page);
             $sql = $db_con->select_by_set_id();
             $qp->sql = $sql;

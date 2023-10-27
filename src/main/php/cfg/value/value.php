@@ -62,7 +62,7 @@ include_once SERVICE_EXPORT_PATH . 'json.php';
 
 use api\api;
 use api\value_api;
-use cfg\db\sql_creator;
+use cfg\db\sql;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\group\group;
@@ -366,11 +366,11 @@ class value extends sandbox_value
 
     /**
      * create the SQL to load the single default value always by the id
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql_creator $sc, string $class = self::class): sql_par
+    function load_standard_sql(sql $sc, string $class = self::class): sql_par
     {
         $ext = $this->grp->table_extension();
         $qp = new sql_par($class . $ext, true);
@@ -403,17 +403,17 @@ class value extends sandbox_value
     /**
      * create the common part of an SQL statement to retrieve the parameters of a value from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
      * @param string $ext the table name extension e.g. to switch between standard and prime values
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql(
-        sql_creator $sc,
-        string      $query_name,
-        string      $class = self::class,
-        string      $ext = ''
+        sql    $sc,
+        string $query_name,
+        string $class = self::class,
+        string $ext = ''
     ): sql_par
     {
         $qp = parent::load_sql_multi($sc, $query_name, $class, $ext);
@@ -433,12 +433,12 @@ class value extends sandbox_value
      * create an SQL statement to retrieve a value by id from the database
      * added to value just to assign the class for the user sandbox object
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param int|string $id the id of the value
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql_creator $sc, int|string $id, string $class = self::class): sql_par
+    function load_sql_by_id(sql $sc, int|string $id, string $class = self::class): sql_par
     {
         return parent::load_sql_by_id($sc, $id, $class);
     }
@@ -446,12 +446,12 @@ class value extends sandbox_value
     /**
      * create an SQL statement to retrieve a value by phrase group from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param group $grp the id of the phrase group
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_grp(sql_creator $sc, group $grp, string $class = self::class): sql_par
+    function load_sql_by_grp(sql $sc, group $grp, string $class = self::class): sql_par
     {
         $ext = $grp->table_extension();
         $qp = $this->load_sql($sc, 'group_id', $class, $ext);
@@ -474,10 +474,10 @@ class value extends sandbox_value
     /**
      * create the SQL to load a single user specific value
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_obj_vars(sql_creator $sc, string $class = self::class): sql_par
+    function load_sql_obj_vars(sql $sc, string $class = self::class): sql_par
     {
         $ext = $this->grp->table_extension();
         $qp = parent::load_sql_obj_vars($sc, $class);
@@ -1526,11 +1526,11 @@ class value extends sandbox_value
     /**
      * create an SQL statement to retrieve the user changes of the current value
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_user_changes(sql_creator $sc, string $class = self::class): sql_par
+    function load_sql_user_changes(sql $sc, string $class = self::class): sql_par
     {
         $ext = $this->grp->table_extension();
         $sc->set_class($class, true, $ext);
@@ -1777,7 +1777,7 @@ class value extends sandbox_value
         $this->set_last_update(new DateTime());
         $ext = $this->grp()->table_extension();
         $db_con->set_class(self::class, false, $ext);
-        $qp = $this->sql_update($db_con->sql_creator(), array(value::FLD_LAST_UPDATE), array(sql_creator::NOW));
+        $qp = $this->sql_update($db_con->sql_creator(), array(value::FLD_LAST_UPDATE), array(sql::NOW));
         try {
             $db_con->exe_par($qp);
         } catch (Exception $e) {
@@ -1983,11 +1983,11 @@ class value extends sandbox_value
 
     /**
      * create the sql statement to add a new value to the database
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param bool $usr_tbl true if a db row should be added to the user table
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_insert(sql_creator $sc, bool $usr_tbl = false): sql_par
+    function sql_insert(sql $sc, bool $usr_tbl = false): sql_par
     {
         $qp = $this->sql_common($sc, $usr_tbl);
         $qp->name .= '_insert';
@@ -1997,7 +1997,7 @@ class value extends sandbox_value
             $values = array($this->grp->id(), $this->user()->id());
         } else {
             $fields = array(group::FLD_ID, user::FLD_ID, self::FLD_VALUE, self::FLD_LAST_UPDATE);
-            $values = array($this->grp->id(), $this->user()->id(), $this->number, sql_creator::NOW);
+            $values = array($this->grp->id(), $this->user()->id(), $this->number, sql::NOW);
         }
         $qp->sql = $sc->sql_insert($fields, $values);
         $qp->par = $values;
@@ -2006,15 +2006,15 @@ class value extends sandbox_value
 
     /**
      * create the sql statement to update a value in the database
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param bool $usr_tbl true if the user table row should be updated
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_update(
-        sql_creator $sc,
-        array       $fields = [],
-        array       $values = [],
-        bool        $usr_tbl = false
+        sql   $sc,
+        array $fields = [],
+        array $values = [],
+        bool  $usr_tbl = false
     ): sql_par
     {
         $lib = new library();
@@ -2023,7 +2023,7 @@ class value extends sandbox_value
             $fields = array(self::FLD_VALUE, self::FLD_LAST_UPDATE);
         }
         if (count($values) == 0) {
-            $values = array($this->number, sql_creator::NOW);
+            $values = array($this->number, sql::NOW);
         }
         $fld_name = implode('_', $lib->sql_name_shorten($fields));
         $qp->name .= '_update_' . $fld_name;
@@ -2035,7 +2035,7 @@ class value extends sandbox_value
         $values[] = $this->id();
         $par_values = [];
         foreach (array_keys($values) as $i) {
-            if ($values[$i] != sql_creator::NOW) {
+            if ($values[$i] != sql::NOW) {
                 $par_values[$i] = $values[$i];
             }
         }

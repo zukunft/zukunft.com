@@ -49,7 +49,7 @@ include_once SERVICE_EXPORT_PATH . 'source_exp.php';
 include_once WEB_REF_PATH . 'source.php';
 
 use api\source_api;
-use cfg\db\sql_creator;
+use cfg\db\sql;
 use model\export\exp_obj;
 use model\export\source_exp;
 
@@ -213,11 +213,11 @@ class source extends sandbox_typed
     /**
      * create the SQL to load the default source always by the id
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql_creator $sc, string $class = self::class): sql_par
+    function load_standard_sql(sql $sc, string $class = self::class): sql_par
     {
         $sc->set_class(source::class);
         $sc->set_fields(array_merge(
@@ -251,11 +251,11 @@ class source extends sandbox_typed
     /**
      * create the common part of an SQL statement to retrieve the parameters of a source from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_creator $sc, string $query_name): sql_par
+    function load_sql(sql $sc, string $query_name): sql_par
     {
         $sc->set_class($this::class);
         return parent::load_sql_fields(
@@ -269,12 +269,12 @@ class source extends sandbox_typed
     /**
      * create an SQL statement to retrieve a source by code id from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $code_id the code id of the source
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_code_id(sql_creator $sc, string $code_id, string $class): sql_par
+    function load_sql_by_code_id(sql $sc, string $code_id, string $class): sql_par
     {
         $qp = $this->load_sql($sc, 'code_id', $class);
         $sc->add_where(sql_db::FLD_CODE_ID, $code_id);
@@ -502,11 +502,11 @@ class source extends sandbox_typed
     /**
      * create an SQL statement to retrieve the user changes of the current source
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_user_changes(sql_creator $sc, string $class = self::class): sql_par
+    function load_sql_user_changes(sql $sc, string $class = self::class): sql_par
     {
         $sc->set_class(source::class, true);
         return parent::load_sql_user_changes($sc, $class);

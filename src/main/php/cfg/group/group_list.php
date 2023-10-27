@@ -35,7 +35,7 @@ namespace cfg\group;
 
 include_once DB_PATH . 'sql_par_type.php';
 
-use cfg\db\sql_creator;
+use cfg\db\sql;
 use cfg\library;
 use cfg\phrase;
 use cfg\phrase_list;
@@ -63,11 +63,11 @@ class group_list extends sandbox_list
     /**
      * create the common part of an SQL statement to get a list of phrase groups names from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    protected function load_names_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
+    protected function load_names_sql(sql $sc, string $query_name, string $class = self::class): sql_par
     {
         $grp = new group($this->user());
         return $grp->load_sql($sc, $query_name, $class);
@@ -75,13 +75,13 @@ class group_list extends sandbox_list
 
     /**
      * set the SQL query parameters to load a list of phrase groups names by the ids
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param array $grp_ids a list of int values with the group ids
      * @param int $limit the number of rows to return
      * @param int $offset jump over these number of pages
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_names_sql_by_ids(sql_creator $sc, array $grp_ids, int $limit = 0, int $offset = 0): sql_par
+    function load_names_sql_by_ids(sql $sc, array $grp_ids, int $limit = 0, int $offset = 0): sql_par
     {
         $qp = $this->load_names_sql($sc, 'ids_fast');
 
@@ -103,12 +103,12 @@ class group_list extends sandbox_list
      * create the common part of an SQL statement to get a list of phrase groups from the database
      * TODO combine standard with prime and big
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    protected function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
+    protected function load_sql(sql $sc, string $query_name, string $class = self::class): sql_par
     {
         $grp = new group($this->user());
         $qp = $grp->load_sql($sc, $query_name);
@@ -128,13 +128,13 @@ class group_list extends sandbox_list
      * TODO add load test to compare like matching with link table matching
      * TODO for prime use binary key like matching
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param array $grp_ids a list of int values with the group ids
      * @param int $limit the number of rows to return
      * @param int $offset jump over these number of pages
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_ids(sql_creator $sc, array $grp_ids, int $limit = 0, int $offset = 0): sql_par
+    function load_sql_by_ids(sql $sc, array $grp_ids, int $limit = 0, int $offset = 0): sql_par
     {
         $qp = $this->load_sql($sc, 'ids');
         $sc->add_where(group::FLD_ID, $grp_ids);
@@ -149,13 +149,13 @@ class group_list extends sandbox_list
      * set the SQL query parameters to load a list of groups by a phrase id
      * TODO add pattern matching for 64-bit, 512-bit and text group_id
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param phrase $phr the phrase to which all linked groups should be returned
      * @param int $limit the number of rows to return
      * @param int $offset jump over these number of pages
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_phr(sql_creator $sc, phrase $phr, int $limit = 0, int $offset = 0): sql_par
+    function load_sql_by_phr(sql $sc, phrase $phr, int $limit = 0, int $offset = 0): sql_par
     {
         $qp = $this->load_sql($sc, 'phr');
         // overwrite the query name

@@ -38,7 +38,7 @@
 
 namespace cfg;
 
-use cfg\db\sql_creator;
+use cfg\db\sql;
 use Exception;
 
 include_once MODEL_LOG_PATH . 'change_log_link.php';
@@ -108,14 +108,14 @@ class sandbox_link extends sandbox
     /**
      * create an SQL statement to retrieve a user sandbox link by the ids of the linked objects from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param int $from the subject object id
      * @param int $type the predicate object id
      * @param int $to the object (grammar) object id
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_link(sql_creator $sc, int $from, int $type, int $to, string $class): sql_par
+    function load_sql_by_link(sql $sc, int $from, int $type, int $to, string $class): sql_par
     {
         if ($type > 0) {
             $qp = $this->load_sql($sc, 'link_type_ids', $class);

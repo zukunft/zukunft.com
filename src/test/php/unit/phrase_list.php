@@ -34,7 +34,7 @@ include_once MODEL_PHRASE_PATH . 'phrase_list.php';
 use api\phrase_api;
 use api\triple_api;
 use api\word_api;
-use cfg\db\sql_creator;
+use cfg\db\sql;
 use cfg\foaf_direction;
 use cfg\phrase_type;
 use html\phrase\phrase_list as phrase_list_dsp;
@@ -248,7 +248,7 @@ class phrase_list_unit_tests
      * @param foaf_direction $direction to define the link direction
      */
     private function assert_sql_linked_phrases(
-        sql_creator    $sc,
+        sql            $sc,
         test_cleanup   $t,
         object         $usr_obj,
         ?verb          $vrb,

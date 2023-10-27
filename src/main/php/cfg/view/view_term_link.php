@@ -32,7 +32,7 @@
 namespace cfg;
 
 use api\view\view as view_api;
-use cfg\db\sql_creator;
+use cfg\db\sql;
 use model\export\exp_obj;
 use model\export\view_exp;
 
@@ -68,12 +68,12 @@ class view_term_link extends sandbox_link_typed
     /**
      * create the common part of an SQL statement to retrieve a view term link from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
+    function load_sql(sql $sc, string $query_name, string $class = self::class): sql_par
     {
         $qp = parent::load_sql_obj_vars($sc, $class);
         $qp->name .= $query_name;

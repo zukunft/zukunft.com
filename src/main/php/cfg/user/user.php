@@ -54,7 +54,7 @@ include_once MODEL_USER_PATH . 'user_profile.php';
 include_once SERVICE_EXPORT_PATH . 'user_exp.php';
 
 use api\user_api;
-use cfg\db\sql_creator;
+use cfg\db\sql;
 use cfg\db\sql_par_type;
 use model\export\user_exp;
 use model\export\exp_obj;
@@ -370,12 +370,12 @@ class user extends db_object_seq_id
     /**
      * create the common part of an SQL statement to retrieve the parameters of a user from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $query_name the name of the query use to prepare and call the query
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
+    function load_sql(sql $sc, string $query_name, string $class = self::class): sql_par
     {
         $qp = parent::load_sql($sc, $query_name, $class);
 
@@ -398,12 +398,12 @@ class user extends db_object_seq_id
     /**
      * create an SQL statement to retrieve a user by id from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param int $id the id of the user
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql_creator $sc, int $id, string $class = self::class): sql_par
+    function load_sql_by_id(sql $sc, int $id, string $class = self::class): sql_par
     {
         $qp = $this->load_sql($sc, sql_db::FLD_ID, $class);
         $sc->add_where(self::FLD_ID, $id);
@@ -416,12 +416,12 @@ class user extends db_object_seq_id
     /**
      * create an SQL statement to retrieve a user by name from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $name the name of the user
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_name(sql_creator $sc, string $name, string $class = self::class): sql_par
+    function load_sql_by_name(sql $sc, string $name, string $class = self::class): sql_par
     {
         $qp = $this->load_sql($sc, sql_db::FLD_NAME, $class);
         $sc->add_where(self::FLD_NAME, $name);
@@ -434,12 +434,12 @@ class user extends db_object_seq_id
     /**
      * create an SQL statement to retrieve a user by email from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $email the email of the user
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_email(sql_creator $sc, string $email, string $class = self::class): sql_par
+    function load_sql_by_email(sql $sc, string $email, string $class = self::class): sql_par
     {
         $qp = $this->load_sql($sc, 'email', $class);
         $sc->add_where(self::FLD_EMAIL, $email);
@@ -452,13 +452,13 @@ class user extends db_object_seq_id
     /**
      * create an SQL statement to retrieve a user by name or email from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $name the name of the user
      * @param string $email the email of the user
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_name_or_email(sql_creator $sc, string $name, string $email, string $class = self::class): sql_par
+    function load_sql_by_name_or_email(sql $sc, string $name, string $email, string $class = self::class): sql_par
     {
         $qp = $this->load_sql($sc, 'name_or_email', $class);
         $sc->add_where(self::FLD_NAME, $name, sql_par_type::TEXT_OR);
@@ -472,12 +472,12 @@ class user extends db_object_seq_id
     /**
      * create an SQL statement to retrieve a user with the ip from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $ip_addr the ip address with which the user has logged in
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_ip(sql_creator $sc, string $ip_addr, string $class = self::class): sql_par
+    function load_sql_by_ip(sql $sc, string $ip_addr, string $class = self::class): sql_par
     {
         $qp = $this->load_sql($sc, 'ip', $class);
         $sc->add_where(self::FLD_IP_ADDRESS, $ip_addr);
@@ -490,12 +490,12 @@ class user extends db_object_seq_id
     /**
      * create an SQL statement to retrieve a user with the profile from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param int $profile_id the id of the profile of which the first matching user should be loaded
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_profile(sql_creator $sc, int $profile_id, string $class = self::class): sql_par
+    function load_sql_by_profile(sql $sc, int $profile_id, string $class = self::class): sql_par
     {
         $qp = $this->load_sql($sc, 'profile', $class);
         $sc->add_where(self::FLD_USER_PROFILE, $profile_id);

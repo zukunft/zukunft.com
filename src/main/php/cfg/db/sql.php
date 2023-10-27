@@ -2,8 +2,8 @@
 
 /*
 
-    model/db/sql_creator.php - create sql statements for different database dialects
-    ------------------------
+    model/db/sql.php - create sql statements for different database dialects
+    ----------------
 
     This file is part of zukunft.com - calc with words
 
@@ -52,20 +52,25 @@ use cfg\view;
 use cfg\view_term_link;
 use Exception;
 
-class sql_creator
+class sql
 {
 
     // common SQL const that must exist in all used sql dialects
+    // or the say it another way: used SQL elements that are the same in all used dialects
     const SELECT = 'SELECT';
     const INSERT = 'INSERT';
     const UPDATE = 'UPDATE';
     const NOW = 'Now()';
+    const ORDER_ASC = 'ASC';
+    const ORDER_DESC = 'DESC';
+    const NULL_VALUE = 'NULL';
+    const INDEX = 'INDEX';
+    const UNIQUE = 'UNIQUE INDEX';
 
     // enum values used for the table creation
     const fld_type_ = '';
 
     // sql const used for this sql statement creator
-    const NULL_VALUE = 'NULL';
     const MAX_PREFIX = 'max_';
 
     // postgres parameter types for prepared queries
@@ -92,6 +97,14 @@ class sql_creator
         sql_db::TBL_TASK,
         sql_db::VT_PHRASE_GROUP_LINK
     ];
+
+    // name the positions in the field definition array
+    private const FLD_POS_NAME = 0;
+    private const FLD_POS_TYPE = 1;
+    private const FLD_POS_DEFAULT_VALUE = 2;
+    private const FLD_POS_INDEX = 3;
+    private const FLD_POS_FOREIGN_LINK = 4;
+    private const FLD_POS_COMMENT = 5;
 
     // parameters for the sql creation that are set step by step with the functions of the sql creator
     private ?int $usr_id;           // the user id of the person who request the database changes
@@ -860,7 +873,7 @@ class sql_creator
         } else {
             // escape the field names if needed
             foreach (array_keys($fields) as $i) {
-                if ($values[$i] != sql_creator::NOW) {
+                if ($values[$i] != sql::NOW) {
                     $fields[$i] = $this->name_sql_esc($fields[$i]);
                 }
             }
@@ -868,7 +881,7 @@ class sql_creator
             // gat the value parameter types
             $par_pos = 1;
             foreach (array_keys($values) as $i) {
-                if ($values[$i] != sql_creator::NOW) {
+                if ($values[$i] != sql::NOW) {
                     $this->par_types[] = $this->get_sql_par_type($values[$i]);
                     $this->par_fields[$par_pos] = $this->par_name($par_pos);
                     $this->par_values[] = $values[$i];
@@ -891,7 +904,7 @@ class sql_creator
             } else {
                 $sql_set .= ', ';
             }
-            if ($values[$i] != sql_creator::NOW) {
+            if ($values[$i] != sql::NOW) {
                 $sql_set .= $fields[$i] . ' = ' . $this->par_fields[$par_pos];
                 $par_pos++;
             } else {
@@ -964,7 +977,7 @@ class sql_creator
     private function get_sql_par_type(string|array|float|int|null $fld_val): sql_par_type
     {
         $text_type = sql_par_type::TEXT;
-        if ($fld_val == sql_creator::NOW) {
+        if ($fld_val == sql::NOW) {
             $text_type = sql_par_type::TIME;
         }
         return match (gettype($fld_val)) {
@@ -1106,7 +1119,7 @@ class sql_creator
             $field = $this->name_sql_esc($field);
             $result = $this->sep($result);
             // TODO add min
-            $result .= ' max(' . sql_db::GRP_TBL . '.' . $field . ') AS ' . sql_creator::MAX_PREFIX . $field;
+            $result .= ' max(' . sql_db::GRP_TBL . '.' . $field . ') AS ' . sql::MAX_PREFIX . $field;
         }
 
         // add join fields
@@ -1723,7 +1736,7 @@ class sql_creator
      */
     function set_order(string $order_field, string $direction = '', string $table_prefix = ''): void
     {
-        if ($direction <> sql_db::ORDER_DESC) {
+        if ($direction <> sql::ORDER_DESC) {
             $direction = '';
         }
         if ($table_prefix == '') {
@@ -1881,8 +1894,8 @@ class sql_creator
             if ($sql_fields != '') {
                 $sql_fields .= ', ';
             }
-            $name = $this->name_sql_esc($field[0]);
-            $type = $field[1];
+            $name = $this->name_sql_esc($field[sql::FLD_POS_NAME]);
+            $type = $field[sql::FLD_POS_TYPE];
             if ($this->db_type() == sql_db::POSTGRES) {
                 $type_used = $type->pg_type();
             } elseif ($this->db_type() == sql_db::MYSQL) {
@@ -1890,9 +1903,9 @@ class sql_creator
             } else {
                 $type_used = 'field type for ' . $this->db_type() . ' missing';
             }
-            $default = $field[2];
+            $default = $field[sql::FLD_POS_DEFAULT_VALUE];
             $default_used = $default->pg_type();
-            $comment = $field[3];
+            $comment = $field[sql::FLD_POS_COMMENT];
             if ($this->db_type() == sql_db::POSTGRES) {
                 if ($type->is_key()) {
                     $default_used = sql_pg::FLD_KEY;
@@ -1921,9 +1934,9 @@ class sql_creator
 
             // loop over the comments
             foreach ($fields as $field) {
-                $name = $field[0];
-                $type = $field[1];
-                $comment = $field[3];
+                $name = $field[sql::FLD_POS_NAME];
+                $type = $field[sql::FLD_POS_TYPE];
+                $comment = $field[sql::FLD_POS_COMMENT];
                 $sql .= "COMMENT ON COLUMN " . $table_used . "." . $name . " IS '" . $comment;
                 if ($type->is_key() or $type->is_key_part()) {
                     $sql .= ' ' . $type_name;
@@ -1932,6 +1945,70 @@ class sql_creator
             }
         }
 
+        return $sql;
+    }
+
+    /**
+     * generate a sql statement to create the indices for one database table
+     *
+     * @param array $fields with the field names, types and default value
+     * @param string $type_name the name of the value type
+     * @return string the sql statement to create the indices for a table
+     */
+    function index_create(array $fields, string $type_name = ''): string
+    {
+        $sql = '';
+
+        // set the header comments
+        $sql .= '-- ';
+        $sql .= '-- indexes for table ' . $this->table;
+        $sql .= ' ';
+        $sql .= '-- ';
+        $sql .= ' ';
+
+        // create the primary key sql
+        $prime_keys = [];
+        foreach ($fields as $field) {
+            $type = $field[sql::FLD_POS_TYPE];
+            if ($type->is_key_part()) {
+                $prime_keys[] = $field[sql::FLD_POS_NAME];
+            }
+        }
+        if (count($prime_keys) > 0) {
+            $sql .= 'ALTER TABLE ' . $this->name_sql_esc($this->table);
+            if ($this->db_type() == sql_db::POSTGRES) {
+                $sql .= ' ADD CONSTRAINT ' . $this->table . '_pkey PRIMARY KEY (';
+                $sql .= implode(', ', $prime_keys);
+                $sql .= '); ';
+            } elseif ($this->db_type() == sql_db::MYSQL) {
+                $sql .= ' ADD PRIMARY KEY (';
+                $sql .= implode(', ', $prime_keys);
+                $sql .= '), ';
+            }
+        } else {
+            if ($this->db_type() == sql_db::MYSQL) {
+                $sql .= 'ALTER TABLE ' . $this->name_sql_esc($this->table);
+            }
+        }
+
+        // create the index create sql
+        $sql_field = '';
+        $field_lst = [];
+        foreach ($fields as $field) {
+            $name = $field[sql::FLD_POS_NAME];
+            $index = $field[sql::FLD_POS_INDEX];
+            if ($index != '') {
+                if ($this->db_type() == sql_db::POSTGRES) {
+                    $sql_field .= 'CREATE ' . $index . ' ' . $this->table . '_' . $name . 'x ON ' . $this->name_sql_esc($this->table) . ' (' . $name . '); ';
+                } elseif ($this->db_type() == sql_db::MYSQL) {
+                    $field_lst[] = ' ADD KEY ' . $this->table . '_' . $name . 'x (' . $name . ')';
+                }
+            }
+        }
+        if (count($field_lst) > 0) {
+            $sql_field .= implode(', ', $field_lst) . '; ';
+        }
+        $sql .= $sql_field;
         return $sql;
     }
 

@@ -36,9 +36,10 @@
 namespace cfg;
 
 include_once DB_PATH . 'sql_par_type.php';
+include_once MODEL_DB_PATH . 'sql.php';
 include_once MODEL_SYSTEM_PATH . 'log.php';
 
-use cfg\db\sql_creator;
+use cfg\db\sql;
 use cfg\db\sql_par_type;
 use DateTime;
 use Exception;
@@ -166,10 +167,6 @@ class sql_db
     // TODO set automatically by set_link_fields???
     const DB_TYPES_LINK = [sql_db::TBL_TRIPLE, sql_db::TBL_FORMULA_LINK, sql_db::TBL_COMPONENT_LINK, sql_db::TBL_REF];
 
-    const ORDER_ASC = 'ASC';
-    const ORDER_DESC = 'DESC';
-
-    const NULL_VALUE = 'NULL';
 
     // open used name extension for the prepared sql statements
     const FLD_ID = 'id';                          // used also to name the sql statements
@@ -2548,7 +2545,7 @@ class sql_db
      */
     function set_order(string $order_field, string $direction = '', string $table_prefix = ''): void
     {
-        if ($direction <> self::ORDER_DESC) {
+        if ($direction <> sql::ORDER_DESC) {
             $direction = '';
         }
         if ($table_prefix == '') {
@@ -3625,8 +3622,8 @@ class sql_db
         $result = $field_value;
 
         // add the formatting for the sql statement
-        if (trim($result) == "" or trim($result) == self::NULL_VALUE) {
-            $result = self::NULL_VALUE;
+        if (trim($result) == "" or trim($result) == sql::NULL_VALUE) {
+            $result = sql::NULL_VALUE;
         } else {
             if ($forced_format == sql_db::FLD_FORMAT_VAL) {
                 if (str_starts_with($result, "'") and str_ends_with($result, "'")) {
@@ -3658,8 +3655,8 @@ class sql_db
         $result = $field_value;
 
         // add the formatting for the sql statement
-        if (trim($result) == "" or trim($result) == self::NULL_VALUE) {
-            $result = self::NULL_VALUE;
+        if (trim($result) == "" or trim($result) == sql::NULL_VALUE) {
+            $result = sql::NULL_VALUE;
         } else {
             if ($forced_format == sql_db::FLD_FORMAT_VAL) {
                 if (str_starts_with($result, "'") and str_ends_with($result, "'")) {
@@ -4202,11 +4199,11 @@ class sql_db
     }
 
     /**
-     * @return sql_creator with the same db_type
+     * @return sql with the same db_type
      */
-    function sql_creator(): sql_creator
+    function sql_creator(): sql
     {
-        $sc = new sql_creator();
+        $sc = new sql();
         $sc->set_db_type($this->db_type);
         return $sc;
     }

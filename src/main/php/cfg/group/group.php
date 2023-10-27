@@ -60,7 +60,7 @@ include_once MODEL_GROUP_PATH . 'group_id.php';
 include_once API_PHRASE_PATH . 'phrase_group.php';
 
 use api\phrase_group_api;
-use cfg\db\sql_creator;
+use cfg\db\sql;
 use cfg\db\sql_par_type;
 use cfg\db_object;
 use cfg\library;
@@ -306,10 +306,10 @@ class group extends db_object
     /**
      * the sql statement to create the table for this (or a child) object
      *
-     * @param sql_creator $sc ith the target db_type set
+     * @param sql $sc ith the target db_type set
      * @return string the sql statement to create the table
      */
-    function sql_table(sql_creator $sc): string
+    function sql_table(sql $sc): string
     {
         return parent::sql_table($sc);
     }
@@ -322,12 +322,12 @@ class group extends db_object
     /**
      * create an SQL statement to retrieve a user sandbox object by id from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param int|string $id the id of the phrase group, which can also be a string representing a 512-bit key
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql_creator $sc, int|string $id, string $class = self::class): sql_par
+    function load_sql_by_id(sql $sc, int|string $id, string $class = self::class): sql_par
     {
         $this->set_id($id);
         $ext = $this->table_extension();
@@ -342,11 +342,11 @@ class group extends db_object
     /**
      * create an SQL statement to retrieve a phrase groups from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param phrase_list $phr_lst list of phrases that should all be used to create the group id
      * @return sql_par the SQL statement base on the parameters set in $this
      */
-    function load_sql_by_phrase_list(sql_creator $sc, phrase_list $phr_lst): sql_par
+    function load_sql_by_phrase_list(sql $sc, phrase_list $phr_lst): sql_par
     {
         $grp_id = new group_id();
         return $this->load_sql_by_id($sc, $grp_id->get_id($phr_lst));
@@ -358,11 +358,11 @@ class group extends db_object
      * TODO check that the user does not use a group name that matches the generated name of another group
      * TODO include the prime and big tables into the search
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $name the name of the phrase group
      * @return sql_par the SQL statement base on the parameters set in $this
      */
-    function load_sql_by_name(sql_creator $sc, string $name): sql_par
+    function load_sql_by_name(sql $sc, string $name): sql_par
     {
         $qp = $this->load_sql($sc, sql_db::FLD_NAME);
         $sc->add_where(self::FLD_NAME, $name);

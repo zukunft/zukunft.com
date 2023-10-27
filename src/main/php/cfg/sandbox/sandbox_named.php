@@ -49,7 +49,7 @@ use api\phrase_api;
 use api\source_api;
 use api\view\view as view_api;
 use api\word_api;
-use cfg\db\sql_creator;
+use cfg\db\sql;
 use cfg\db\sql_par_type;
 use Exception;
 use model\export\exp_obj;
@@ -247,11 +247,11 @@ class sandbox_named extends sandbox
 
     /**
      * create the SQL to load the single default value always by the id or name
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql_creator $sc, string $class = self::class): sql_par
+    function load_standard_sql(sql $sc, string $class = self::class): sql_par
     {
         $qp = new sql_par($class, true);
         if ($this->id() != 0) {
@@ -298,12 +298,12 @@ class sandbox_named extends sandbox
     /**
      * create an SQL statement to retrieve a term by name from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $name the name of the term and the related word, triple, formula or verb
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_name(sql_creator $sc, string $name, string $class): sql_par
+    function load_sql_by_name(sql $sc, string $name, string $class): sql_par
     {
         $qp = $this->load_sql($sc, sql_db::FLD_NAME, $class);
         $sc->add_where($this->name_field(), $name, sql_par_type::TEXT_USR);

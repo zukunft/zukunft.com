@@ -62,7 +62,7 @@ include_once MODEL_PHRASE_PATH . 'phrase.php';
 
 use api\api;
 use api\phrase_api;
-use cfg\db\sql_creator;
+use cfg\db\sql;
 use cfg\group\group_list;
 use html\phrase\phrase as phrase_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
@@ -459,12 +459,12 @@ class phrase extends combine_named
      * create the common part of an SQL statement to retrieve a phrase from the database view
      * uses the phrase view which includes only the most relevant fields of words or triples
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $query_name the name of the query use to prepare and call the query
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     private
-    function load_sql(sql_creator $sc, string $query_name): sql_par
+    function load_sql(sql $sc, string $query_name): sql_par
     {
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
@@ -482,12 +482,12 @@ class phrase extends combine_named
     /**
      * create an SQL statement to retrieve a phrase by phrase id (not the object id) from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param int $id the id of the phrase as defined in the database phrase view
      * @param string $class the name of this class
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql_creator $sc, int $id, string $class = self::class): sql_par
+    function load_sql_by_id(sql $sc, int $id, string $class = self::class): sql_par
     {
         $qp = $this->load_sql($sc, sql_db::FLD_ID);
         $sc->add_where(phrase::FLD_ID, $id);
@@ -500,12 +500,12 @@ class phrase extends combine_named
     /**
      * create an SQL statement to retrieve a phrase by name from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $name the name of the phrase and the related word, triple, formula or verb
      * @param string $class the name of this class
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_name(sql_creator $sc, string $name, string $class = self::class): sql_par
+    function load_sql_by_name(sql $sc, string $name, string $class = self::class): sql_par
     {
         $qp = $this->load_sql($sc, sql_db::FLD_NAME);
         $sc->add_where(phrase::FLD_NAME, $name);
