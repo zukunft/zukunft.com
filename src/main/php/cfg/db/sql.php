@@ -1913,7 +1913,7 @@ class sql
             }
             $comment_used = '';
             if ($this->db_type() == sql_db::MYSQL) {
-                $comment_used = " COMMENT = '" . $comment;
+                $comment_used = " COMMENT '" . $comment;
                 if ($type->is_key() or $type->is_key_part()) {
                     $comment_used .= ' ' . $type_name;
                 }
@@ -1924,7 +1924,7 @@ class sql
         $sql .= $sql_fields . ')';
         if ($this->db_type() == sql_db::MYSQL) {
             $sql .= ' ENGINE = InnoDB DEFAULT CHARSET = utf8 ';
-            $sql .= "COMMENT = '" . $tbl_comment . "'";
+            $sql .= "COMMENT '" . $tbl_comment . "'";
         }
         $sql .= '; ';
 
