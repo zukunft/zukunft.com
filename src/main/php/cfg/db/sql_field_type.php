@@ -44,6 +44,7 @@ enum sql_field_type: string
     case KEY_PART_TEXT = 'textKeyPart'; // a text with variable length that is part of a combined index
     case KEY_PART_512 = '512bitKeyPart'; // a 512-bit text for a combined index without auto increase
     case KEY_PART_INT = 'bigintKeyPart'; // an integer that is part of a combined index
+    case REF_512 = '512bitRef'; // a 512-bit foreign key
     case INT = 'bigint'; // the standard integer type
     case INT_SMALL = 'smallint'; // the integer type for a very limited number of entries
     case BOOL = 'bool'; // the one bit true/false type
@@ -55,7 +56,7 @@ enum sql_field_type: string
     {
         return match($this) {
             self::KEY_INT => 'BIGSERIAL',
-            self::KEY_512, self::KEY_PART_512 => 'char(112)',
+            self::KEY_512, self::KEY_PART_512, self::REF_512 => 'char(112)',
             self::TEXT, self::KEY_TEXT, self::KEY_PART_TEXT => 'text',
             self::INT, self::KEY_PART_INT => 'bigint',
             self::INT_SMALL, self::BOOL => 'smallint',
@@ -69,10 +70,9 @@ enum sql_field_type: string
     public function mysql_type(): string
     {
         return match($this) {
-            self::KEY_INT => 'bigint',
-            self::KEY_512, self::KEY_PART_512 => 'char(112)',
+            self::KEY_INT, self::INT, self::KEY_PART_INT => 'bigint',
+            self::KEY_512, self::KEY_PART_512, self::REF_512 => 'char(112)',
             self::TEXT, self::KEY_TEXT, self::KEY_PART_TEXT => 'text',
-            self::INT, self::KEY_PART_INT => 'bigint',
             self::INT_SMALL, self::BOOL => 'smallint',
             self::NUMERIC_FLOAT => 'double',
             self::TIME => 'timestamp',

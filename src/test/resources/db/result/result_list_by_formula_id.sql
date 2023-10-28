@@ -3,7 +3,7 @@ PREPARE result_list_by_formula_id (bigint) AS
            formula_id,
            user_id,
            source_group_id,
-           result,
+           numeric_value,
            last_update
       FROM results
      WHERE formula_id = $1;

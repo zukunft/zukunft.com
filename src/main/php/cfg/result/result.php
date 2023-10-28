@@ -48,6 +48,8 @@ include_once SERVICE_EXPORT_PATH . 'result_exp.php';
 
 use api\result_api;
 use cfg\db\sql;
+use cfg\db\sql_field_default;
+use cfg\db\sql_field_type;
 use cfg\db\sql_par_type;
 use cfg\group\group;
 use cfg\group\group_list;
@@ -69,7 +71,7 @@ class result extends sandbox_value
     const FLD_ID = 'group_id';
     const FLD_SOURCE_GRP = 'source_group_id';
     const FLD_GRP = 'group_id';
-    const FLD_VALUE = 'result';
+    const FLD_VALUE = 'numeric_value';
     const FLD_LAST_UPDATE = 'last_update';
     const FLD_DIRTY = 'dirty';
 
@@ -82,7 +84,31 @@ class result extends sandbox_value
         self::FLD_VALUE,
         self::FLD_LAST_UPDATE
     );
+    const FLD_ALL_CHANGED = array(
+        [value::FLD_LAST_UPDATE, sql_field_type::TIME, sql_field_default::NULL, '', '', 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation'],
+        [formula::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, formula::class, 'the id of the formula which has been used to calculate this result'],
+    );
+    const FLD_ALL_SOURCE = array();
+    const FLD_ALL_SOURCE_GROUP = array(
+        ['source_' . group::FLD_ID, sql_field_type::REF_512, sql_field_default::NULL, sql::INDEX, '', '512-bit reference to the sorted phrase list used to calculate this result'],
+    );
+    const FLD_ALL_SOURCE_GROUP_PRIME = array(
+        ['source_' . group::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', '64-bit reference to the sorted phrase list used to calculate this result'],
+    );
+    const FLD_ALL_SOURCE_GROUP_BIG = array(
+        ['source_' . group::FLD_ID, sql_field_type::TEXT, sql_field_default::NULL, sql::INDEX, '', 'text reference to the sorted phrase list used to calculate this result'],
+    );
+    const FLD_ALL_OWNER = array(
+        [user::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, user::class, 'the id of the user who has requested the calculation'],
+    );
+    const FLD_ALL_CHANGER = array(
+        [user::FLD_ID, sql_field_type::KEY_PART_INT, sql_field_default::NOT_NULL, sql::INDEX, user::class, 'the id of the user who has requested the change of the '],
+    );
 
+    const TBL_COMMENT = 'to cache the formula ';
+    const TBL_COMMENT_PRIME = 'to cache the formula most often requested ';
+    const TBL_COMMENT_STD = 'to cache the formula public unprotected ';
+    const TBL_COMMENT_USER = 'to cache the user specific changes of ';
 
     /*
      * object vars

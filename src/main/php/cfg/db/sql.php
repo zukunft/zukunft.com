@@ -1966,6 +1966,7 @@ class sql
         $sql .= ' ';
 
         // create the primary key sql
+        $sql_table = '';
         $prime_keys = [];
         foreach ($fields as $field) {
             $type = $field[sql::FLD_POS_TYPE];
@@ -1986,7 +1987,7 @@ class sql
             }
         } else {
             if ($this->db_type() == sql_db::MYSQL) {
-                $sql .= 'ALTER TABLE ' . $this->name_sql_esc($this->table);
+                $sql_table .= 'ALTER TABLE ' . $this->name_sql_esc($this->table);
             }
         }
 
@@ -2005,7 +2006,7 @@ class sql
             }
         }
         if (count($field_lst) > 0) {
-            $sql_field .= implode(', ', $field_lst) . '; ';
+            $sql_field .= $sql_table . implode(', ', $field_lst) . '; ';
         }
         $sql .= $sql_field;
         return $sql;
@@ -2023,6 +2024,7 @@ class sql
         $lib = new library();
 
         // create the foreign key sql statements
+        $sql_table = '';
         $sql_fields = '';
         $field_lst = [];
         foreach ($fields as $field) {
@@ -2033,11 +2035,9 @@ class sql
                 // set the header comments
                 if ($sql == '') {
                     $sql .= '-- ';
-                    $sql .= '-- constraints for table ' . $this->table;
-                    $sql .= ' ';
+                    $sql .= '-- constraints for table ' . $this->table . ' ';
                     $sql .= '-- ';
-                    $sql .= ' ';
-                    $sql .= 'ALTER TABLE ' . $this->name_sql_esc($this->table);
+                    $sql_table .= 'ALTER TABLE ' . $this->name_sql_esc($this->table);
                 }
                 if ($this->db_type() == sql_db::POSTGRES) {
                     $sql_field = ' ADD CONSTRAINT ' . $this->table . '_' . $link_used . '_fk';
@@ -2051,7 +2051,7 @@ class sql
             }
         }
         if (count($field_lst) > 0) {
-            $sql_fields = implode(', ', $field_lst) . '; ';
+            $sql_fields = $sql_table . implode(', ', $field_lst) . '; ';
         }
         $sql .= $sql_fields;
         return $sql;
@@ -2063,7 +2063,7 @@ class sql
     function sql_separator(): string
     {
         $sql = ' ';
-        $sql .= '-- --------------------------------------------------------';
+        $sql .= '-- -------------------------------------------------------- ';
         $sql .= ' ';
         return $sql;
     }

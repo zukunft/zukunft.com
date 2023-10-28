@@ -2052,20 +2052,27 @@ COMMENT ON COLUMN result_standard.group_id IS 'the prime index to find the resul
 
 CREATE TABLE IF NOT EXISTS results
 (
-    group_id        char(112) PRIMARY KEY,
-    result          double precision,
-    formula_id      bigint         NOT NULL,
-    source_group_id char(112)      DEFAULT NULL,
-    user_id         bigint         DEFAULT NULL,
-    last_update     timestamp NULL DEFAULT NULL
+    group_id        char(112)        PRIMARY KEY,
+    numeric_value   double precision NOT NULL,
+    last_update     timestamp        DEFAULT NULL,
+    formula_id      bigint           NOT NULL,
+    source_group_id char(112)        DEFAULT NULL,
+    user_id         bigint           DEFAULT NULL,
+    excluded        smallint         DEFAULT NULL,
+    share_type_id   smallint         DEFAULT NULL,
+    protect_id      smallint         DEFAULT NULL
 );
 
-COMMENT ON TABLE results IS 'table to cache the formula results with the information to trace the result';
-COMMENT ON COLUMN results.group_id IS 'the prime index to find the results';
-COMMENT ON COLUMN results.formula_id IS 'the id of the formula which has been used to calculate the result number';
-COMMENT ON COLUMN results.source_group_id IS 'the sorted phrase list used to calculate the result number';
-COMMENT ON COLUMN results.user_id IS 'the id of the user who has requested the calculation';
-COMMENT ON COLUMN results.last_update IS 'time of last value update mainly used for recovery in case of inconsistencies, empty in case this value is dirty and needs to be updated';
+COMMENT ON TABLE results                  IS 'table to cache the formula numeric results related to up to 16 phrases';
+COMMENT ON COLUMN results.group_id        IS 'the 512-bit prime index to find the numeric result';
+COMMENT ON COLUMN results.numeric_value   IS 'the numeric value given by the user';
+COMMENT ON COLUMN results.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN results.formula_id      IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN results.source_group_id IS 'the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN results.user_id         IS 'the id of the user who has requested the calculation';
+COMMENT ON COLUMN results.excluded        IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN results.share_type_id   IS 'to restrict the access';
+COMMENT ON COLUMN results.protect_id      IS 'to protect against unwanted changes';
 
 --
 -- table structure for the most often requested results related up to four prime phrase

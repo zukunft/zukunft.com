@@ -3,7 +3,7 @@ PREPARE result_by_grp_std FROM
            formula_id,
            user_id,
            source_group_id,
-           result,
+           numeric_value,
            last_update
       FROM results
      WHERE group_id = ?';
