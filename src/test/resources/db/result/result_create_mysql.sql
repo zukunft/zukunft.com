@@ -101,7 +101,7 @@ CREATE TABLE IF NOT EXISTS user_results_prime
 
 CREATE TABLE IF NOT EXISTS results_big
 (
-    group_id        text          NOT NULL COMMENT 'the variable text index to find numeric result',
+    group_id        char(255)     NOT NULL COMMENT 'the variable text index to find numeric result',
     source_group_id text      DEFAULT NULL COMMENT 'text reference to the sorted phrase list used to calculate this result',
     numeric_value   double        NOT NULL COMMENT 'the numeric value given by the user',
     last_update     timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
@@ -118,7 +118,7 @@ CREATE TABLE IF NOT EXISTS results_big
 
 CREATE TABLE IF NOT EXISTS user_results_big
 (
-    group_id        text          NOT NULL COMMENT 'the text index for more than 16 phrases to find the numeric result',
+    group_id        char(255)     NOT NULL COMMENT 'the text index for more than 16 phrases to find the numeric result',
     source_group_id text      DEFAULT NULL COMMENT 'text reference to the sorted phrase list used to calculate this result',
     user_id         bigint        NOT NULL COMMENT 'the id of the user who has requested the change of the numeric result',
     numeric_value   double    DEFAULT NULL COMMENT 'the user specific numeric value change',
@@ -231,7 +231,7 @@ CREATE TABLE IF NOT EXISTS user_results_text_prime
 
 CREATE TABLE IF NOT EXISTS results_text_big
 (
-    group_id        text          NOT NULL COMMENT 'the variable text index to find text result',
+    group_id        char(255)     NOT NULL COMMENT 'the variable text index to find text result',
     source_group_id text      DEFAULT NULL COMMENT 'text reference to the sorted phrase list used to calculate this result',
     text_value      text          NOT NULL COMMENT 'the text value given by the user',
     last_update     timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
@@ -248,7 +248,7 @@ CREATE TABLE IF NOT EXISTS results_text_big
 
 CREATE TABLE IF NOT EXISTS user_results_text_big
 (
-    group_id        text          NOT NULL COMMENT 'the text index for more than 16 phrases to find the text result',
+    group_id        char(255)     NOT NULL COMMENT 'the text index for more than 16 phrases to find the text result',
     source_group_id text      DEFAULT NULL COMMENT 'text reference to the sorted phrase list used to calculate this result',
     user_id         bigint        NOT NULL COMMENT 'the id of the user who has requested the change of the text result',
     text_value      text      DEFAULT NULL COMMENT 'the user specific text value change',
@@ -361,7 +361,7 @@ CREATE TABLE IF NOT EXISTS user_results_time_prime
 
 CREATE TABLE IF NOT EXISTS results_time_big
 (
-    group_id        text          NOT NULL COMMENT 'the variable text index to find time result',
+    group_id        char(255)     NOT NULL COMMENT 'the variable text index to find time result',
     source_group_id text      DEFAULT NULL COMMENT 'text reference to the sorted phrase list used to calculate this result',
     time_value      timestamp     NOT NULL COMMENT 'the timestamp given by the user',
     last_update     timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
@@ -378,7 +378,7 @@ CREATE TABLE IF NOT EXISTS results_time_big
 
 CREATE TABLE IF NOT EXISTS user_results_time_big
 (
-    group_id        text          NOT NULL COMMENT 'the text index for more than 16 phrases to find the time result',
+    group_id        char(255)     NOT NULL COMMENT 'the text index for more than 16 phrases to find the time result',
     source_group_id text      DEFAULT NULL COMMENT 'text reference to the sorted phrase list used to calculate this result',
     user_id         bigint        NOT NULL COMMENT 'the id of the user who has requested the change of the time result',
     time_value      timestamp DEFAULT NULL COMMENT 'the user specific timestamp change',
@@ -491,7 +491,7 @@ CREATE TABLE IF NOT EXISTS user_results_geo_prime
 
 CREATE TABLE IF NOT EXISTS results_geo_big
 (
-    group_id        text          NOT NULL COMMENT 'the variable text index to find geo result',
+    group_id        char(255)     NOT NULL COMMENT 'the variable text index to find geo result',
     source_group_id text      DEFAULT NULL COMMENT 'text reference to the sorted phrase list used to calculate this result',
     geo_value       point         NOT NULL COMMENT 'the geolocation given by the user',
     last_update     timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
@@ -508,7 +508,7 @@ CREATE TABLE IF NOT EXISTS results_geo_big
 
 CREATE TABLE IF NOT EXISTS user_results_geo_big
 (
-    group_id        text          NOT NULL COMMENT 'the text index for more than 16 phrases to find the geo result',
+    group_id        char(255)     NOT NULL COMMENT 'the text index for more than 16 phrases to find the geo result',
     source_group_id text      DEFAULT NULL COMMENT 'text reference to the sorted phrase list used to calculate this result',
     user_id         bigint        NOT NULL COMMENT 'the id of the user who has requested the change of the geo result',
     geo_value       point     DEFAULT NULL COMMENT 'the user specific geolocation change',

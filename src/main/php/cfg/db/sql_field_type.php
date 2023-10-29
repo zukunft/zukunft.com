@@ -72,7 +72,8 @@ enum sql_field_type: string
         return match($this) {
             self::KEY_INT, self::INT, self::KEY_PART_INT => 'bigint',
             self::KEY_512, self::KEY_PART_512, self::REF_512 => 'char(112)',
-            self::TEXT, self::KEY_TEXT, self::KEY_PART_TEXT => 'text',
+            self::KEY_TEXT, self::KEY_PART_TEXT => 'char(255)',
+            self::TEXT => 'text',
             self::INT_SMALL, self::BOOL => 'smallint',
             self::NUMERIC_FLOAT => 'double',
             self::TIME => 'timestamp',

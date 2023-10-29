@@ -33,13 +33,20 @@
 namespace cfg;
 
 use cfg\db\sql;
+use cfg\db\sql_field_default;
+use cfg\db\sql_field_type;
 
 class db_object
 {
 
     // dummy const to be overwritten by the child objects
+    // description of the table for the sql table creation
     const TBL_COMMENT = '';
+    // list of the table fields for the standard read query
     const FLD_NAMES = array();
+    // fields that can be changed by the user with the parameters for the table creation
+    const FLD_LST_CREATE_CHANGEABLE = array();
+
 
     /*
      * construct and map
@@ -66,12 +73,22 @@ class db_object
      * the sql statement to create the table for this (or a child) object
      *
      * @param sql $sc ith the target db_type set
+     * @param array $fields array with all fields and all parameter for the table creation in a two-dimensional array
+     * @param string $tbl_comment if given the comment that should be added to the sql create table statement
      * @return string the sql statement to create the table
      */
-    function sql_table(sql $sc): string
+    function sql_table_create(sql $sc, array $fields = [], string $tbl_comment = ''): string
     {
-        $sc->set_class($this::class);
-        return $sc->table_create([], '', $this::TBL_COMMENT);
+        if ($sc->get_table() == '') {
+            $sc->set_class($this::class);
+        }
+        if ($fields == []) {
+            $fields = array_merge(sandbox_value::FLD_KEY, $this::FLD_LST_CREATE_CHANGEABLE);
+        }
+        if ($tbl_comment == '') {
+            $tbl_comment = $this::TBL_COMMENT;
+        }
+        return $sc->table_create($fields, '', $tbl_comment);
     }
 
 

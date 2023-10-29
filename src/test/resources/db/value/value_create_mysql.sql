@@ -99,7 +99,7 @@ CREATE TABLE IF NOT EXISTS user_values_prime
 
 CREATE TABLE IF NOT EXISTS values_big
 (
-    group_id      text          NOT NULL COMMENT 'the variable text index to find numeric value',
+    group_id      char(255)     NOT NULL COMMENT 'the variable text index to find numeric value',
     numeric_value double        NOT NULL COMMENT 'the numeric value given by the user',
     source_id     bigint    DEFAULT NULL COMMENT 'the source of the value as given by the user',
     last_update   timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
@@ -115,7 +115,7 @@ CREATE TABLE IF NOT EXISTS values_big
 
 CREATE TABLE IF NOT EXISTS user_values_big
 (
-    group_id      text          NOT NULL COMMENT 'the text index for more than 16 phrases to find the numeric value',
+    group_id      char(255)     NOT NULL COMMENT 'the text index for more than 16 phrases to find the numeric value',
     user_id       bigint        NOT NULL COMMENT 'the changer of the numeric value',
     numeric_value double    DEFAULT NULL COMMENT 'the user specific numeric value change',
     source_id     bigint    DEFAULT NULL COMMENT 'the source of the value as given by the user',
@@ -225,7 +225,7 @@ CREATE TABLE IF NOT EXISTS user_values_text_prime
 
 CREATE TABLE IF NOT EXISTS values_text_big
 (
-    group_id      text          NOT NULL COMMENT 'the variable text index to find text value',
+    group_id      char(255)     NOT NULL COMMENT 'the variable text index to find text value',
     text_value    text          NOT NULL COMMENT 'the text value given by the user',
     source_id     bigint    DEFAULT NULL COMMENT 'the source of the value as given by the user',
     last_update   timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
@@ -241,7 +241,7 @@ CREATE TABLE IF NOT EXISTS values_text_big
 
 CREATE TABLE IF NOT EXISTS user_values_text_big
 (
-    group_id      text          NOT NULL COMMENT 'the text index for more than 16 phrases to find the text value',
+    group_id      char(255)     NOT NULL COMMENT 'the text index for more than 16 phrases to find the text value',
     user_id       bigint        NOT NULL COMMENT 'the changer of the text value',
     text_value    text      DEFAULT NULL COMMENT 'the user specific text value change',
     source_id     bigint    DEFAULT NULL COMMENT 'the source of the value as given by the user',
@@ -351,7 +351,7 @@ CREATE TABLE IF NOT EXISTS user_values_time_prime
 
 CREATE TABLE IF NOT EXISTS values_time_big
 (
-    group_id      text          NOT NULL COMMENT 'the variable text index to find time value',
+    group_id      char(255)     NOT NULL COMMENT 'the variable text index to find time value',
     time_value    timestamp     NOT NULL COMMENT 'the timestamp given by the user',
     source_id     bigint    DEFAULT NULL COMMENT 'the source of the value as given by the user',
     last_update   timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
@@ -367,7 +367,7 @@ CREATE TABLE IF NOT EXISTS values_time_big
 
 CREATE TABLE IF NOT EXISTS user_values_time_big
 (
-    group_id      text          NOT NULL COMMENT 'the text index for more than 16 phrases to find the time value',
+    group_id      char(255)     NOT NULL COMMENT 'the text index for more than 16 phrases to find the time value',
     user_id       bigint        NOT NULL COMMENT 'the changer of the time value',
     time_value    timestamp DEFAULT NULL COMMENT 'the user specific timestamp change',
     source_id     bigint    DEFAULT NULL COMMENT 'the source of the value as given by the user',
@@ -477,7 +477,7 @@ CREATE TABLE IF NOT EXISTS user_values_geo_prime
 
 CREATE TABLE IF NOT EXISTS values_geo_big
 (
-    group_id      text          NOT NULL COMMENT 'the variable text index to find geo value',
+    group_id      char(255)     NOT NULL COMMENT 'the variable text index to find geo value',
     geo_value     point         NOT NULL COMMENT 'the geolocation given by the user',
     source_id     bigint    DEFAULT NULL COMMENT 'the source of the value as given by the user',
     last_update   timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
@@ -493,7 +493,7 @@ CREATE TABLE IF NOT EXISTS values_geo_big
 
 CREATE TABLE IF NOT EXISTS user_values_geo_big
 (
-    group_id      text          NOT NULL COMMENT 'the text index for more than 16 phrases to find the geo value',
+    group_id      char(255)     NOT NULL COMMENT 'the text index for more than 16 phrases to find the geo value',
     user_id       bigint        NOT NULL COMMENT 'the changer of the geo value',
     geo_value     point     DEFAULT NULL COMMENT 'the user specific geolocation change',
     source_id     bigint    DEFAULT NULL COMMENT 'the source of the value as given by the user',

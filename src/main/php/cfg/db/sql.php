@@ -2484,6 +2484,14 @@ class sql
         log_debug('to "' . $this->table . '"', $debug - 20);
     }
 
+    /**
+     * @return string the name of the table as defined by set_table, so including the prefix and extension
+     */
+    function get_table(): string
+    {
+        return $this->table;
+    }
+
 
     /*
      * for all tables some standard fields such as "word_name" are used

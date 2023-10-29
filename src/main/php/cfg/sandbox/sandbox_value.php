@@ -70,17 +70,17 @@ class sandbox_value extends sandbox_non_seq_id
 
     // field lists for the table creation
     // the group is not a foreign key, because if the name is not changed by the user an entry in the group table is not needed
-    const FLD_KEY_PRIME = array(
-        [group::FLD_ID, sql_field_type::KEY_INT, sql_field_default::NOT_NULL, '', '', 'the 64-bit prime index to find the'],
-    );
-    const FLD_KEY_PRIME_USER = array(
-        [group::FLD_ID, sql_field_type::KEY_PART_INT, sql_field_default::NOT_NULL, '', '', 'the 64-bit prime index to find the user'],
-    );
     const FLD_KEY = array(
         [group::FLD_ID, sql_field_type::KEY_512, sql_field_default::NOT_NULL, '', '', 'the 512-bit prime index to find the'],
     );
     const FLD_KEY_USER = array(
         [group::FLD_ID, sql_field_type::KEY_PART_512, sql_field_default::NOT_NULL, '', '', 'the 512-bit prime index to find the user'],
+    );
+    const FLD_KEY_PRIME = array(
+        [group::FLD_ID, sql_field_type::KEY_INT, sql_field_default::NOT_NULL, '', '', 'the 64-bit prime index to find the'],
+    );
+    const FLD_KEY_PRIME_USER = array(
+        [group::FLD_ID, sql_field_type::KEY_PART_INT, sql_field_default::NOT_NULL, '', '', 'the 64-bit prime index to find the user'],
     );
     const FLD_KEY_BIG = array(
         [group::FLD_ID, sql_field_type::KEY_TEXT, sql_field_default::NOT_NULL, '', '', 'the variable text index to find'],
@@ -294,6 +294,7 @@ class sandbox_value extends sandbox_non_seq_id
         $sql .= $sql_array[$pos];
         return $sql;
     }
+
     /**
      * create the sql statements for a set (standard, prime and big) tables
      * for one field type e.g. numeric value, text values

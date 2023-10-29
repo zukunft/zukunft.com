@@ -61,6 +61,8 @@ include_once API_PHRASE_PATH . 'phrase_group.php';
 
 use api\phrase_group_api;
 use cfg\db\sql;
+use cfg\db\sql_field_default;
+use cfg\db\sql_field_type;
 use cfg\db\sql_par_type;
 use cfg\db_object;
 use cfg\library;
@@ -68,6 +70,7 @@ use cfg\phr_ids;
 use cfg\phrase;
 use cfg\phrase_list;
 use cfg\result;
+use cfg\sandbox_value;
 use cfg\sql_db;
 use cfg\sql_par;
 use cfg\triple;
@@ -89,9 +92,19 @@ class group extends db_object
     const FLD_NAME = 'group_name';
     const FLD_DESCRIPTION = 'description';
 
-    const TBL_COMMENT = 'to add a user given name using a 512 bit group id index for up to 16 16 bit phrase ids including the order';
+    // comments used for the database creation
+    const TBL_COMMENT = 'to add a user given name using a 512-bit group id index for up to 16 32-bit phrase ids including the order';
+    const TBL_COMMENT_PRIME = 'to add a user given name using a 64-bit group id index for up to four 16-bit phrase ids including the order';
+    const TBL_COMMENT_BIG = 'to add a user given name using a group id index with a variable length for more than 16 32-bit phrase ids including the order';
     const TBL_EXT_PRIME = '_prime'; // the table name extension for up to four prime phrase ids
     const TBL_EXT_BIG = '_big'; // the table name extension for more than 16 phrase ids
+
+    // list of fields with parameters used for the database creation
+    // the fields that can be changed by the user
+    const FLD_LST_CREATE_CHANGEABLE = array(
+        [self::FLD_NAME, sql_field_type::TEXT, sql_field_default::NULL, '', '', 'the user specific group name which can contain the phrase names in a different order to display the group (does not need to be unique)'],
+        [self::FLD_DESCRIPTION, sql_field_type::TEXT, sql_field_default::NULL, '', '', 'the user specific description for mouse over helps'],
+    );
 
     // all database field names excluding the id
     const FLD_NAMES = array(
@@ -311,7 +324,18 @@ class group extends db_object
      */
     function sql_table(sql $sc): string
     {
-        return parent::sql_table($sc);
+        $sql = '';
+        $sql = $sc->sql_separator();
+        $sc->set_class($this::class, true);
+        $fields = array_merge(sandbox_value::FLD_KEY_USER, sandbox_value::FLD_ALL_CHANGER, $this::FLD_LST_CREATE_CHANGEABLE);
+        $sql .= parent::sql_table_create($sc, $fields);
+        $sc->set_class($this::class, true, group::TBL_EXT_PRIME);
+        $fields = array_merge(sandbox_value::FLD_KEY_PRIME_USER, sandbox_value::FLD_ALL_CHANGER, $this::FLD_LST_CREATE_CHANGEABLE);
+        $sql .= parent::sql_table_create($sc, $fields, $this::TBL_COMMENT_PRIME);
+        $sc->set_class($this::class, true, group::TBL_EXT_BIG);
+        $fields = array_merge(sandbox_value::FLD_KEY_BIG_USER, sandbox_value::FLD_ALL_CHANGER, $this::FLD_LST_CREATE_CHANGEABLE);
+        $sql .= parent::sql_table_create($sc, $fields, $this::TBL_COMMENT_BIG);
+        return $sql;
     }
 
 

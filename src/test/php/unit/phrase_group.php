@@ -117,9 +117,13 @@ class group_unit_tests
             '1,-11,12,-37,38,-64,376,-2367,13108,-82124,505294,-2815273,17192845,-106841477,628779863,-3516593476');
         $grp_id = 0;
 
-        $t->subheader('SQL statement tests');
+        $t->subheader('SQL statements - setup');
         $grp = new group($usr);
         $t->assert_sql_table_create($db_con, $grp);
+        //$t->assert_sql_index_create($db_con, $grp);
+        //$t->assert_sql_foreign_key_create($db_con, $grp);
+
+        $t->subheader('SQL statements - read');
         $this->assert_sql_by_phrase_list($t, $db_con);
         $t->assert_sql_by_name($db_con, $grp);
 

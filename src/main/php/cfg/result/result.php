@@ -110,6 +110,7 @@ class result extends sandbox_value
     const TBL_COMMENT_STD = 'to cache the formula public unprotected ';
     const TBL_COMMENT_USER = 'to cache the user specific changes of ';
 
+
     /*
      * object vars
      */
