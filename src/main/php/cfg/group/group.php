@@ -396,9 +396,9 @@ class group extends db_object
         if ($usr_table) {
             $fields = array_merge($key_fld, sandbox_value::FLD_ALL_CHANGER, $this::FLD_LST_CREATE_CHANGEABLE);
         }
-        $sql_lst[0] .= parent::sql_table_create($sc, $fields, $tbl_comment);
-        $sql_lst[1] .= parent::sql_index_create($sc, $fields);
-        $sql_lst[2] .= parent::sql_foreign_key_create($sc, $fields);
+        $sql_lst[0] .= parent::sql_table_create($sc, $usr_table, $fields, $tbl_comment);
+        $sql_lst[1] .= parent::sql_index_create($sc, $usr_table, $fields);
+        $sql_lst[2] .= parent::sql_foreign_key_create($sc, $usr_table, $fields);
         return $sql_lst;
     }
 

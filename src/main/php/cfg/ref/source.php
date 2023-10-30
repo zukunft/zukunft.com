@@ -50,6 +50,8 @@ include_once WEB_REF_PATH . 'source.php';
 
 use api\source_api;
 use cfg\db\sql;
+use cfg\db\sql_field_default;
+use cfg\db\sql_field_type;
 use model\export\exp_obj;
 use model\export\source_exp;
 
@@ -65,6 +67,18 @@ class source extends sandbox_typed
     const FLD_NAME = 'source_name';
     const FLD_TYPE = 'source_type_id';
     const FLD_URL = 'url';
+
+    // comments used for the database creation
+    const TBL_COMMENT = 'for the original sources for the numeric, time and geo values';
+
+    // list of fields that can be changed by the user
+    const FLD_LST_CREATE_CHANGEABLE = array(
+        [self::FLD_NAME, sql_field_type::NAME, sql_field_default::NOT_NULL, sql::INDEX, '', 'the unique name of the source used e.g. as the primary search key'],
+        [self::FLD_DESCRIPTION, sql_field_type::TEXT, sql_field_default::NULL, '', '', 'the user specific description of the source for mouse over helps'],
+        [self::FLD_TYPE, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', 'link to the source type'],
+        [self::FLD_URL, sql_field_type::TEXT, sql_field_default::NULL, '', '', 'the url of the source'],
+        [sql_db::FLD_CODE_ID, sql_field_type::CODE_ID, sql_field_default::NULL, '', '', 'to select sources used by this program'],
+    );
 
     // all database field names excluding the id used to identify if there are some user specific changes
     const FLD_NAMES = array(

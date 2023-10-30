@@ -73,17 +73,18 @@ class db_object
      * the sql statement to create the table for this (or a child) object
      *
      * @param sql $sc ith the target db_type set
+     * @param bool $usr_table true if the table should save the user specific changes
      * @param array $fields array with all fields and all parameter for the table creation in a two-dimensional array
      * @param string $tbl_comment if given the comment that should be added to the sql create table statement
      * @return string the sql statement to create the table
      */
-    function sql_table_create(sql $sc, array $fields = [], string $tbl_comment = ''): string
+    function sql_table_create(sql $sc, bool $usr_table = false, array $fields = [], string $tbl_comment = ''): string
     {
         if ($sc->get_table() == '') {
-            $sc->set_class($this::class);
+            $sc->set_class($this::class, $usr_table);
         }
         if ($fields == []) {
-            $fields = array_merge(sandbox_value::FLD_KEY, $this::FLD_LST_CREATE_CHANGEABLE);
+            $fields = $this->sql_all_field_par($usr_table);
         }
         if ($tbl_comment == '') {
             $tbl_comment = $this::TBL_COMMENT;
@@ -95,16 +96,17 @@ class db_object
      * the sql statement to create the indices for this (or a child) object
      *
      * @param sql $sc ith the target db_type set
+     * @param bool $usr_table true if the table should save the user specific changes
      * @param array $fields array with all fields and all parameter for the table creation in a two-dimensional array
      * @return string the sql statement to create the table
      */
-    function sql_index_create(sql $sc, array $fields = []): string
+    function sql_index_create(sql $sc, bool $usr_table = false, array $fields = []): string
     {
         if ($sc->get_table() == '') {
-            $sc->set_class($this::class);
+            $sc->set_class($this::class, $usr_table);
         }
         if ($fields == []) {
-            $fields = array_merge(sandbox_value::FLD_KEY, $this::FLD_LST_CREATE_CHANGEABLE);
+            $fields = $this->sql_all_field_par($usr_table);
         }
         return $sc->index_create($fields);
     }
@@ -113,18 +115,56 @@ class db_object
      * the sql statement to create the foreign keys for this (or a child) object
      *
      * @param sql $sc ith the target db_type set
+     * @param bool $usr_table true if the table should save the user specific changes
      * @param array $fields array with all fields and all parameter for the table creation in a two-dimensional array
      * @return string the sql statement to create the table
      */
-    function sql_foreign_key_create(sql $sc, array $fields = []): string
+    function sql_foreign_key_create(sql $sc, bool $usr_table = false, array $fields = []): string
     {
         if ($sc->get_table() == '') {
-            $sc->set_class($this::class);
+            $sc->set_class($this::class, $usr_table);
         }
         if ($fields == []) {
-            $fields = array_merge(sandbox_value::FLD_KEY, $this::FLD_LST_CREATE_CHANGEABLE);
+            $fields = $this->sql_all_field_par($usr_table);
         }
         return $sc->foreign_key_create($fields);
+    }
+
+    /**
+     * @return array[] with the parameters of the table fields
+     */
+    private function sql_all_field_par(bool $usr_table = false): array
+    {
+        $fields = [];
+        if (!$usr_table) {
+            $fields = array_merge($this->sql_id_field_par($usr_table), sandbox::FLD_ALL_OWNER);
+        } else {
+            $fields = array_merge($this->sql_id_field_par($usr_table), sandbox::FLD_ALL_CHANGER);
+        }
+        $fields = array_merge($fields, $this::FLD_LST_CREATE_CHANGEABLE);
+        return array_merge($fields, sandbox::FLD_ALL);
+    }
+
+    /**
+     * @return array[] with the parameters of the table key field
+     */
+    private function sql_id_field_par(bool $usr_table = false): array
+    {
+        if (!$usr_table) {
+            return array([
+                $this->id_field(),
+                sql_field_type::KEY_INT,
+                sql_field_default::NOT_NULL,
+                '', '',
+                'the internal unique primary index']);
+        } else {
+            return array([
+                $this->id_field(),
+                sql_field_type::KEY_PART_INT,
+                sql_field_default::NOT_NULL,
+                sql::INDEX, $this::class,
+                'with the user_id the internal unique primary index']);
+        }
     }
 
 

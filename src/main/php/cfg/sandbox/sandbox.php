@@ -81,6 +81,19 @@ class sandbox extends db_object_seq_id_user
     const FLD_SHARE = "share_type_id";  // field name for the share permission
     const FLD_PROTECT = "protect_id";   // field name for the protection level
 
+    // field lists for the table creation
+    const FLD_ALL_OWNER = array(
+        [user::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, user::class, 'the owner / creator of the value'],
+    );
+    const FLD_ALL_CHANGER = array(
+        [user::FLD_ID, sql_field_type::KEY_PART_INT, sql_field_default::NOT_NULL, sql::INDEX, user::class, 'the changer of the '],
+    );
+    const FLD_ALL = array(
+        [self::FLD_EXCLUDED, sql_field_type::BOOL, sql_field_default::NULL, '', '', 'true if a user, but not all, have removed it'],
+        [self::FLD_SHARE, sql_field_type::INT_SMALL, sql_field_default::NULL, '', '', 'to restrict the access'],
+        [self::FLD_PROTECT, sql_field_type::INT_SMALL, sql_field_default::NULL, '', '', 'to protect against unwanted changes'],
+    );
+
     // numeric and user specific database field names that are user for most user sandbox objects
     const FLD_NAMES_NUM_USR_SBX = array(
         self::FLD_EXCLUDED,
@@ -112,13 +125,6 @@ class sandbox extends db_object_seq_id_user
         sql_db::TBL_COMPONENT,
         sql_db::TBL_COMPONENT_LINK
     );
-
-    const FLD_ALL = array(
-        [self::FLD_EXCLUDED, sql_field_type::BOOL, sql_field_default::NULL, '', '', 'true if a user, but not all, have removed it'],
-        [self::FLD_SHARE, sql_field_type::INT_SMALL, sql_field_default::NULL, '', '', 'to restrict the access'],
-        [self::FLD_PROTECT, sql_field_type::INT_SMALL, sql_field_default::NULL, '', '', 'to protect against unwanted changes'],
-    );
-
 
 
     /*
@@ -376,6 +382,56 @@ class sandbox extends db_object_seq_id_user
         global $protection_types;
         $this->share_id = $share_types->id(share_type::PUBLIC);
         $this->protection_id = $protection_types->id(protection_type::NO_PROTECT);
+    }
+
+
+    /*
+     * sql create
+     */
+
+    /**
+     * the sql statement to create the tables of a sandbox object
+     *
+     * @param sql $sc ith the target db_type set
+     * @return string the sql statement to create the table
+     */
+    function sql_table(sql $sc): string
+    {
+        $sql = $sc->sql_separator();
+        $sql .= $this->sql_table_create($sc);
+        $sc->set_class($this::class, true);
+        $sql .= $this->sql_table_create($sc, true);
+        return $sql;
+    }
+
+    /**
+     * the sql statement to create the database indices of a sandbox object
+     *
+     * @param sql $sc ith the target db_type set
+     * @return string the sql statement to create the indices
+     */
+    function sql_index(sql $sc): string
+    {
+        $sql = $sc->sql_separator();
+        $sql .= $this->sql_index_create($sc);
+        $sc->set_class($this::class, true);
+        $sql .= $this->sql_index_create($sc, true);
+        return $sql;
+    }
+
+    /**
+     * the sql statement to create the foreign keys of a sandbox object
+     *
+     * @param sql $sc ith the target db_type set
+     * @return string the sql statement to create the foreign keys
+     */
+    function sql_foreign_key(sql $sc): string
+    {
+        $sql = $sc->sql_separator();
+        $sql .= $this->sql_foreign_key_create($sc);
+        $sc->set_class($this::class, true);
+        $sql .= $this->sql_foreign_key_create($sc, true);
+        return $sql;
     }
 
 

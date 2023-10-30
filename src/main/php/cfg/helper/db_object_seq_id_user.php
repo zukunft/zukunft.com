@@ -35,6 +35,8 @@
 
 namespace cfg;
 
+use cfg\db\sql;
+
 include_once MODEL_HELPER_PATH . 'db_object.php';
 
 class db_object_seq_id_user extends db_object_seq_id

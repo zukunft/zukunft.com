@@ -2011,9 +2011,22 @@ class sql
             $index = $field[sql::FLD_POS_INDEX];
             if ($index != '') {
                 if ($this->db_type() == sql_db::POSTGRES) {
-                    $sql_field .= 'CREATE ' . $index . ' ' . $this->table . '_' . $name . 'x ON ' . $this->name_sql_esc($this->table) . ' (' . $name . '); ';
+                    $sql_field .= 'CREATE ' . $index . ' ' . $this->table . '_';
+                    if (str_ends_with($name, '_id')) {
+                        $sql_field .= $name . 'x';
+                    } else {
+                        $sql_field .= $name . '_idx';
+                    }
+                    $sql_field .= ' ON ' . $this->name_sql_esc($this->table) . ' (' . $name . '); ';
                 } elseif ($this->db_type() == sql_db::MYSQL) {
-                    $field_lst[] = ' ADD KEY ' . $this->table . '_' . $name . 'x (' . $name . ')';
+                    $mysql_field = ' ADD KEY ' . $this->table . '_';
+                    if (str_ends_with($name, '_id')) {
+                        $mysql_field .= $name . 'x';
+                    } else {
+                        $mysql_field .= $name . '_idx';
+                    }
+                    $mysql_field .= ' (' . $name . ')';
+                    $field_lst[] = $mysql_field;
                 }
             }
         }

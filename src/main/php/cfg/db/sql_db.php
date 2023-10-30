@@ -1567,9 +1567,9 @@ class sql_db
     /**
      * @throws Exception the message that should be shown to the system admin for debugging
      */
-    function exe_par(sql_par $qp): object
+    function exe_par(sql_par $qp): string
     {
-        return $this->exe($qp->sql, $qp->name, $qp->par);
+        return $this->exe_try('', $qp->sql, $qp->name, $qp->par);
     }
 
     /**
@@ -3241,7 +3241,7 @@ class sql_db
                 log_err($err_msg);
                 $result->add_message($err_msg);
             } else {
-                $result->set_db_row_id($this->exe_par($qp));
+                $result->set_db_row_id($db_row);
             }
         } catch (Exception $e) {
             $trace_link = log_err($err_msg . log::MSG_ERR_USING . $qp->sql . log::MSG_ERR_BECAUSE . $e->getMessage());
