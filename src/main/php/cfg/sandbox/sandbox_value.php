@@ -77,7 +77,7 @@ class sandbox_value extends sandbox_non_seq_id
         [group::FLD_ID, sql_field_type::KEY_PART_512, sql_field_default::NOT_NULL, '', '', 'the 512-bit prime index to find the user'],
     );
     const FLD_KEY_PRIME = array(
-        [group::FLD_ID, sql_field_type::KEY_INT, sql_field_default::NOT_NULL, '', '', 'the 64-bit prime index to find the'],
+        [group::FLD_ID, sql_field_type::KEY_INT_NO_AUTO, sql_field_default::NOT_NULL, '', '', 'the 64-bit prime index to find the'],
     );
     const FLD_KEY_PRIME_USER = array(
         [group::FLD_ID, sql_field_type::KEY_PART_INT, sql_field_default::NOT_NULL, '', '', 'the 64-bit prime index to find the user'],
@@ -226,7 +226,6 @@ class sandbox_value extends sandbox_non_seq_id
      */
     function sql_table(sql $sc): string
     {
-
         return $this->sql_creator($sc, 0);
     }
 
@@ -234,11 +233,10 @@ class sandbox_value extends sandbox_non_seq_id
      * the sql statements to create all indices for the tables used to store values in the database
      *
      * @param sql $sc ith the target db_type set
-     * @return string the sql statement to create the table
+     * @return string the sql statement to create the indices of the value tables
      */
     function sql_index(sql $sc): string
     {
-
         return $this->sql_creator($sc, 1);
     }
 
@@ -246,11 +244,10 @@ class sandbox_value extends sandbox_non_seq_id
      * the sql statements to create all foreign keys for the tables
      *
      * @param sql $sc ith the target db_type set
-     * @return string the sql statement to create the table
+     * @return string the sql statement to create the foreign keys of a value table
      */
     function sql_foreign_key(sql $sc): string
     {
-
         return $this->sql_creator($sc, 2);
     }
 

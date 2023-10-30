@@ -91,6 +91,42 @@ class db_object
         return $sc->table_create($fields, '', $tbl_comment);
     }
 
+    /**
+     * the sql statement to create the indices for this (or a child) object
+     *
+     * @param sql $sc ith the target db_type set
+     * @param array $fields array with all fields and all parameter for the table creation in a two-dimensional array
+     * @return string the sql statement to create the table
+     */
+    function sql_index_create(sql $sc, array $fields = []): string
+    {
+        if ($sc->get_table() == '') {
+            $sc->set_class($this::class);
+        }
+        if ($fields == []) {
+            $fields = array_merge(sandbox_value::FLD_KEY, $this::FLD_LST_CREATE_CHANGEABLE);
+        }
+        return $sc->index_create($fields);
+    }
+
+    /**
+     * the sql statement to create the foreign keys for this (or a child) object
+     *
+     * @param sql $sc ith the target db_type set
+     * @param array $fields array with all fields and all parameter for the table creation in a two-dimensional array
+     * @return string the sql statement to create the table
+     */
+    function sql_foreign_key_create(sql $sc, array $fields = []): string
+    {
+        if ($sc->get_table() == '') {
+            $sc->set_class($this::class);
+        }
+        if ($fields == []) {
+            $fields = array_merge(sandbox_value::FLD_KEY, $this::FLD_LST_CREATE_CHANGEABLE);
+        }
+        return $sc->foreign_key_create($fields);
+    }
+
 
     /*
      * load

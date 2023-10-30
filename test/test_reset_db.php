@@ -307,7 +307,6 @@ function run_db_seq_reset(): void
         'component_types_component_type_id_seq',
         'views_view_id_seq',
         'view_types_view_type_id_seq',
-        'groups_prime_group_id_seq',
         'verbs_verb_id_seq',
         'triples_triple_id_seq',
         'words_word_id_seq',

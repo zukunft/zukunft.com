@@ -1968,22 +1968,34 @@ class sql
         // create the primary key sql
         $sql_table = '';
         $prime_keys = [];
+        $index_fields = [];
         foreach ($fields as $field) {
             $type = $field[sql::FLD_POS_TYPE];
-            if ($type->is_key_part()) {
+            $index = $field[sql::FLD_POS_INDEX];
+            if ($type->is_key() or $type->is_key_part()) {
                 $prime_keys[] = $field[sql::FLD_POS_NAME];
+            }
+            if ($index != '') {
+                $index_fields[] = $field[sql::FLD_POS_NAME];
             }
         }
         if (count($prime_keys) > 0) {
-            $sql .= 'ALTER TABLE ' . $this->name_sql_esc($this->table);
             if ($this->db_type() == sql_db::POSTGRES) {
-                $sql .= ' ADD CONSTRAINT ' . $this->table . '_pkey PRIMARY KEY (';
-                $sql .= implode(', ', $prime_keys);
-                $sql .= '); ';
+                if (count($prime_keys) > 1) {
+                    $sql .= 'ALTER TABLE ' . $this->name_sql_esc($this->table);
+                    $sql .= ' ADD CONSTRAINT ' . $this->table . '_pkey PRIMARY KEY (';
+                    $sql .= implode(', ', $prime_keys);
+                    $sql .= '); ';
+                }
             } elseif ($this->db_type() == sql_db::MYSQL) {
+                $sql .= 'ALTER TABLE ' . $this->name_sql_esc($this->table);
                 $sql .= ' ADD PRIMARY KEY (';
                 $sql .= implode(', ', $prime_keys);
-                $sql .= '), ';
+                if (count($index_fields)  > 0) {
+                    $sql .= '), ';
+                } else {
+                    $sql .= '); ';
+                }
             }
         } else {
             if ($this->db_type() == sql_db::MYSQL) {

@@ -7,7 +7,7 @@
 
 CREATE TABLE IF NOT EXISTS results_standard_prime
 (
-    group_id      BIGSERIAL        PRIMARY KEY,
+    group_id      bigint           PRIMARY KEY,
     numeric_value double precision NOT NULL
 );
 
@@ -95,7 +95,7 @@ COMMENT ON COLUMN user_results.protect_id      IS 'to protect against unwanted c
 
 CREATE TABLE IF NOT EXISTS results_prime
 (
-    group_id        BIGSERIAL        PRIMARY KEY,
+    group_id        bigint           PRIMARY KEY,
     source_group_id bigint           DEFAULT NULL,
     numeric_value   double precision     NOT NULL,
     last_update     timestamp        DEFAULT NULL,
@@ -211,7 +211,7 @@ COMMENT ON COLUMN user_results_big.protect_id      IS 'to protect against unwant
 
 CREATE TABLE IF NOT EXISTS results_text_standard_prime
 (
-    group_id   BIGSERIAL PRIMARY KEY,
+    group_id   bigint    PRIMARY KEY,
     text_value text      NOT NULL
 );
 
@@ -299,7 +299,7 @@ COMMENT ON COLUMN user_results_text.protect_id      IS 'to protect against unwan
 
 CREATE TABLE IF NOT EXISTS results_text_prime
 (
-    group_id        BIGSERIAL PRIMARY KEY,
+    group_id        bigint    PRIMARY KEY,
     source_group_id bigint    DEFAULT NULL,
     text_value      text          NOT NULL,
     last_update     timestamp DEFAULT NULL,
@@ -415,7 +415,7 @@ COMMENT ON COLUMN user_results_text_big.protect_id      IS 'to protect against u
 
 CREATE TABLE IF NOT EXISTS results_time_standard_prime
 (
-    group_id   BIGSERIAL PRIMARY KEY,
+    group_id   bigint    PRIMARY KEY,
     time_value timestamp NOT NULL
 );
 
@@ -503,7 +503,7 @@ COMMENT ON COLUMN user_results_time.protect_id      IS 'to protect against unwan
 
 CREATE TABLE IF NOT EXISTS results_time_prime
 (
-    group_id        BIGSERIAL PRIMARY KEY,
+    group_id        bigint    PRIMARY KEY,
     source_group_id bigint    DEFAULT NULL,
     time_value      timestamp     NOT NULL,
     last_update     timestamp DEFAULT NULL,
@@ -619,7 +619,7 @@ COMMENT ON COLUMN user_results_time_big.protect_id      IS 'to protect against u
 
 CREATE TABLE IF NOT EXISTS results_geo_standard_prime
 (
-    group_id   BIGSERIAL PRIMARY KEY,
+    group_id   bigint    PRIMARY KEY,
     geo_value  point     NOT NULL
 );
 
@@ -707,7 +707,7 @@ COMMENT ON COLUMN user_results_geo.protect_id      IS 'to protect against unwant
 
 CREATE TABLE IF NOT EXISTS results_geo_prime
 (
-    group_id        BIGSERIAL PRIMARY KEY,
+    group_id        bigint    PRIMARY KEY,
     source_group_id bigint    DEFAULT NULL,
     geo_value       point         NOT NULL,
     last_update     timestamp DEFAULT NULL,

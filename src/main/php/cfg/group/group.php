@@ -317,25 +317,89 @@ class group extends db_object
      */
 
     /**
-     * the sql statement to create the table for this (or a child) object
+     * the sql statement to create the group tables
      *
      * @param sql $sc ith the target db_type set
      * @return string the sql statement to create the table
      */
     function sql_table(sql $sc): string
     {
-        $sql = '';
+        return $this->sql_creator($sc)[0];
+    }
+
+    /**
+     * the sql statements to create all indices for the group tables used to store the group name changes of a user
+     *
+     * @param sql $sc ith the target db_type set
+     * @return string the sql statement to create the indices
+     */
+    function sql_index(sql $sc): string
+    {
+        return $this->sql_creator($sc)[1];
+    }
+
+    /**
+     * the sql statements to create all foreign keys for the group tables used to store the group name changes of a user
+     *
+     * @param sql $sc ith the target db_type set
+     * @return string the sql statement to create the foreign keys
+     */
+    function sql_foreign_key(sql $sc): string
+    {
+        return $this->sql_creator($sc)[2];
+    }
+
+    /**
+     * the sql statements to create
+     * 0 => the group tables
+     * 1 => all indices for the group tables used to store the group name changes of a user
+     * 1 => all foreign keys for the group tables used to store the group name changes of a user
+     *
+     * @param sql $sc with the target db_type set
+     * @return array the sql statement to create the table
+     */
+    private function sql_creator(sql $sc): array
+    {
         $sql = $sc->sql_separator();
-        $sc->set_class($this::class, true);
-        $fields = array_merge(sandbox_value::FLD_KEY_USER, sandbox_value::FLD_ALL_CHANGER, $this::FLD_LST_CREATE_CHANGEABLE);
-        $sql .= parent::sql_table_create($sc, $fields);
-        $sc->set_class($this::class, true, group::TBL_EXT_PRIME);
-        $fields = array_merge(sandbox_value::FLD_KEY_PRIME_USER, sandbox_value::FLD_ALL_CHANGER, $this::FLD_LST_CREATE_CHANGEABLE);
-        $sql .= parent::sql_table_create($sc, $fields, $this::TBL_COMMENT_PRIME);
-        $sc->set_class($this::class, true, group::TBL_EXT_BIG);
-        $fields = array_merge(sandbox_value::FLD_KEY_BIG_USER, sandbox_value::FLD_ALL_CHANGER, $this::FLD_LST_CREATE_CHANGEABLE);
-        $sql .= parent::sql_table_create($sc, $fields, $this::TBL_COMMENT_BIG);
-        return $sql;
+        $sql_index = $sc->sql_separator();
+        $sql_foreign = $sc->sql_separator();
+        $sql_lst = [$sql, $sql_index, $sql_foreign];
+        $sql_lst = $this->sql_one_tbl($sc, false, '', sandbox_value::FLD_KEY, $this::TBL_COMMENT, $sql_lst);
+        $sql_lst = $this->sql_one_tbl($sc, true, '', sandbox_value::FLD_KEY_USER, $this::TBL_COMMENT, $sql_lst);
+        $sql_lst = $this->sql_one_tbl($sc, false, group::TBL_EXT_PRIME, sandbox_value::FLD_KEY_PRIME, $this::TBL_COMMENT_PRIME, $sql_lst);
+        $sql_lst = $this->sql_one_tbl($sc, true, group::TBL_EXT_PRIME, sandbox_value::FLD_KEY_PRIME_USER, $this::TBL_COMMENT_PRIME, $sql_lst);
+        $sql_lst = $this->sql_one_tbl($sc, false, group::TBL_EXT_BIG, sandbox_value::FLD_KEY_BIG, $this::TBL_COMMENT_BIG, $sql_lst);
+        return $this->sql_one_tbl($sc, true, group::TBL_EXT_BIG, sandbox_value::FLD_KEY_BIG_USER, $this::TBL_COMMENT_BIG, $sql_lst);
+    }
+
+    /**
+     * add the sql statements for one table to the given array of sql statements
+     * @param sql $sc the sql creator object with the target db_type set
+     * @param bool $usr_table true if the table should save the user specific changes
+     * @param string $tbl_ext the table extension e.g. prime for a short list of primarily used phrases
+     * @param array $key_fld with the parameter for the table primary key field
+     * @param string $tbl_comment the comment for the table in the sql statement
+     * @param array $sql_lst the list with the sql statements created until now
+     * @return array the list of sql statements including the statements created by this function call
+     */
+    private function sql_one_tbl(
+        sql $sc,
+        bool $usr_table,
+        string $tbl_ext,
+        array $key_fld,
+        string $tbl_comment,
+        array $sql_lst
+    ): array
+    {
+        $sc->set_class($this::class, $usr_table, $tbl_ext);
+        $fields = array_merge($key_fld, sandbox_value::FLD_ALL_OWNER, $this::FLD_LST_CREATE_CHANGEABLE);
+        if ($usr_table) {
+            $fields = array_merge($key_fld, sandbox_value::FLD_ALL_CHANGER, $this::FLD_LST_CREATE_CHANGEABLE);
+        }
+        $sql_lst[0] .= parent::sql_table_create($sc, $fields, $tbl_comment);
+        $sql_lst[1] .= parent::sql_index_create($sc, $fields);
+        $sql_lst[2] .= parent::sql_foreign_key_create($sc, $fields);
+        return $sql_lst;
     }
 
 

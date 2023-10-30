@@ -36,6 +36,7 @@ enum sql_field_type: string
 
     // prime table index fields
     case KEY_INT = 'intKey'; // a 64-bit integer prime index with auto increase by 1
+    case KEY_INT_NO_AUTO = 'intKeyNoAuto'; // a 64-bit integer prime index without auto increase
     case KEY_512 = '512bitKey'; // a 512-bit prime index without auto increase
     case KEY_TEXT = 'textKey'; // a long string prime index without auto increase
 
@@ -58,7 +59,7 @@ enum sql_field_type: string
             self::KEY_INT => 'BIGSERIAL',
             self::KEY_512, self::KEY_PART_512, self::REF_512 => 'char(112)',
             self::TEXT, self::KEY_TEXT, self::KEY_PART_TEXT => 'text',
-            self::INT, self::KEY_PART_INT => 'bigint',
+            self::INT, self::KEY_INT_NO_AUTO, self::KEY_PART_INT => 'bigint',
             self::INT_SMALL, self::BOOL => 'smallint',
             self::NUMERIC_FLOAT => 'double precision',
             self::TIME => 'timestamp',
@@ -70,7 +71,7 @@ enum sql_field_type: string
     public function mysql_type(): string
     {
         return match($this) {
-            self::KEY_INT, self::INT, self::KEY_PART_INT => 'bigint',
+            self::KEY_INT, self::INT, self::KEY_INT_NO_AUTO, self::KEY_PART_INT => 'bigint',
             self::KEY_512, self::KEY_PART_512, self::REF_512 => 'char(112)',
             self::KEY_TEXT, self::KEY_PART_TEXT => 'char(255)',
             self::TEXT => 'text',
@@ -85,7 +86,7 @@ enum sql_field_type: string
     public function is_key(): bool
     {
         return match($this) {
-            self::KEY_INT, self::KEY_512, self::KEY_TEXT => true,
+            self::KEY_INT, self::KEY_INT_NO_AUTO, self::KEY_512, self::KEY_TEXT => true,
             default => false,
         };
     }

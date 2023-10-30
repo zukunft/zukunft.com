@@ -4,7 +4,6 @@
 -- constraints for table values_standard_prime
 --
 ALTER TABLE values_standard_prime
-
     ADD CONSTRAINT values_standard_prime_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
 
 --
@@ -61,7 +60,6 @@ ALTER TABLE user_values_big
 -- constraints for table values_text_standard_prime 
 -- 
 ALTER TABLE values_text_standard_prime
-
     ADD CONSTRAINT values_text_standard_prime_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
 
 --
@@ -118,7 +116,6 @@ ALTER TABLE user_values_text_big
 -- constraints for table values_time_standard_prime 
 -- 
 ALTER TABLE values_time_standard_prime
-
     ADD CONSTRAINT values_time_standard_prime_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
 
 --
@@ -175,7 +172,6 @@ ALTER TABLE user_values_time_big
 -- constraints for table values_geo_standard_prime
 -- 
 ALTER TABLE values_geo_standard_prime
-
     ADD CONSTRAINT values_geo_standard_prime_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
 
 --

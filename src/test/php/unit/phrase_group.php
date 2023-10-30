@@ -120,8 +120,8 @@ class group_unit_tests
         $t->subheader('SQL statements - setup');
         $grp = new group($usr);
         $t->assert_sql_table_create($db_con, $grp);
-        //$t->assert_sql_index_create($db_con, $grp);
-        //$t->assert_sql_foreign_key_create($db_con, $grp);
+        $t->assert_sql_index_create($db_con, $grp);
+        $t->assert_sql_foreign_key_create($db_con, $grp);
 
         $t->subheader('SQL statements - read');
         $this->assert_sql_by_phrase_list($t, $db_con);

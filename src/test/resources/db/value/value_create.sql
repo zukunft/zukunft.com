@@ -7,7 +7,7 @@
 
 CREATE TABLE IF NOT EXISTS values_standard_prime
 (
-    group_id      BIGSERIAL        PRIMARY KEY,
+    group_id      bigint           PRIMARY KEY,
     numeric_value double precision NOT NULL,
     source_id     bigint           DEFAULT NULL
 );
@@ -95,7 +95,7 @@ COMMENT ON COLUMN user_values.protect_id    IS 'to protect against unwanted chan
 
 CREATE TABLE IF NOT EXISTS values_prime
 (
-    group_id        BIGSERIAL        PRIMARY KEY,
+    group_id        bigint           PRIMARY KEY,
     numeric_value   double precision NOT NULL,
     source_id       bigint           DEFAULT NULL,
     last_update     timestamp        DEFAULT NULL,
@@ -203,7 +203,7 @@ COMMENT ON COLUMN user_values_big.protect_id    IS 'to protect against unwanted 
 
 CREATE TABLE IF NOT EXISTS values_text_standard_prime
 (
-    group_id   BIGSERIAL PRIMARY KEY,
+    group_id   bigint    PRIMARY KEY,
     text_value text      NOT NULL,
     source_id  bigint    DEFAULT NULL
 );
@@ -291,7 +291,7 @@ COMMENT ON COLUMN user_values_text.protect_id    IS 'to protect against unwanted
 
 CREATE TABLE IF NOT EXISTS values_text_prime
 (
-    group_id      BIGSERIAL PRIMARY KEY,
+    group_id      bigint    PRIMARY KEY,
     text_value    text      NOT NULL,
     source_id     bigint    DEFAULT NULL,
     last_update   timestamp DEFAULT NULL,
@@ -399,7 +399,7 @@ COMMENT ON COLUMN user_values_text_big.protect_id    IS 'to protect against unwa
 
 CREATE TABLE IF NOT EXISTS values_time_standard_prime
 (
-    group_id   BIGSERIAL PRIMARY KEY,
+    group_id   bigint    PRIMARY KEY,
     time_value timestamp NOT NULL,
     source_id  bigint    DEFAULT NULL
 );
@@ -487,7 +487,7 @@ COMMENT ON COLUMN user_values_time.protect_id    IS 'to protect against unwanted
 
 CREATE TABLE IF NOT EXISTS values_time_prime
 (
-    group_id      BIGSERIAL PRIMARY KEY,
+    group_id      bigint    PRIMARY KEY,
     time_value    timestamp NOT NULL,
     source_id     bigint    DEFAULT NULL,
     last_update   timestamp DEFAULT NULL,
@@ -595,7 +595,7 @@ COMMENT ON COLUMN user_values_time_big.protect_id    IS 'to protect against unwa
 
 CREATE TABLE IF NOT EXISTS values_geo_standard_prime
 (
-    group_id   BIGSERIAL PRIMARY KEY,
+    group_id   bigint    PRIMARY KEY,
     geo_value  point     NOT NULL,
     source_id  bigint    DEFAULT NULL
 );
@@ -683,7 +683,7 @@ COMMENT ON COLUMN user_values_geo.protect_id    IS 'to protect against unwanted 
 
 CREATE TABLE IF NOT EXISTS values_geo_prime
 (
-    group_id      BIGSERIAL PRIMARY KEY,
+    group_id      bigint    PRIMARY KEY,
     geo_value     point     NOT NULL,
     source_id     bigint    DEFAULT NULL,
     last_update   timestamp DEFAULT NULL,
