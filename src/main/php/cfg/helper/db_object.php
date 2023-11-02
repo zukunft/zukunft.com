@@ -93,6 +93,21 @@ class db_object
     }
 
     /**
+     * the name of the sql table for this (or a child) object
+     *
+     * @param sql $sc ith the target db_type set
+     * @param bool $usr_table true if the table should save the user specific changes
+     * @return string the sql statement to create the table
+     */
+    function sql_truncate_create(sql $sc, bool $usr_table = false): string
+    {
+        if ($sc->get_table() == '') {
+            $sc->set_class($this::class, $usr_table);
+        }
+        return 'TRUNCATE ' . $sc->get_table() . ' CASCADE; ';
+    }
+
+    /**
      * the sql statement to create the indices for this (or a child) object
      *
      * @param sql $sc ith the target db_type set

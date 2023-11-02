@@ -350,6 +350,17 @@ class group extends db_object
     }
 
     /**
+     * the sql statements to truncate the group tables
+     *
+     * @param sql $sc ith the target db_type set
+     * @return string the sql statement to create the table
+     */
+    function sql_truncate(sql $sc): string
+    {
+        return $this->sql_creator($sc)[3];
+    }
+
+    /**
      * the sql statements to create
      * 0 => the group tables
      * 1 => all indices for the group tables used to store the group name changes of a user
@@ -363,7 +374,8 @@ class group extends db_object
         $sql = $sc->sql_separator();
         $sql_index = $sc->sql_separator();
         $sql_foreign = $sc->sql_separator();
-        $sql_lst = [$sql, $sql_index, $sql_foreign];
+        $sql_truncate = $sc->sql_separator();
+        $sql_lst = [$sql, $sql_index, $sql_foreign, $sql_truncate];
         $sql_lst = $this->sql_one_tbl($sc, false, '', sandbox_value::FLD_KEY, $this::TBL_COMMENT, $sql_lst);
         $sql_lst = $this->sql_one_tbl($sc, true, '', sandbox_value::FLD_KEY_USER, $this::TBL_COMMENT, $sql_lst);
         $sql_lst = $this->sql_one_tbl($sc, false, group::TBL_EXT_PRIME, sandbox_value::FLD_KEY_PRIME, $this::TBL_COMMENT_PRIME, $sql_lst);
@@ -399,6 +411,7 @@ class group extends db_object
         $sql_lst[0] .= parent::sql_table_create($sc, $usr_table, $fields, $tbl_comment);
         $sql_lst[1] .= parent::sql_index_create($sc, $usr_table, $fields);
         $sql_lst[2] .= parent::sql_foreign_key_create($sc, $usr_table, $fields);
+        $sql_lst[3] .= parent::sql_truncate_create($sc, $usr_table);
         return $sql_lst;
     }
 
