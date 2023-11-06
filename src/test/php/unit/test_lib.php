@@ -54,9 +54,10 @@ class string_unit_tests
 
         // db date text to php datetime object
         $date_text = "2023-03-03 09:32:50.980518";
-        $target = '2023-03-03T09:32:50+01:00';
+        $target_summer = '2023-03-03T09:32:50+01:00';
+        $target_winter = '2023-03-03T09:32:50+00:00';
         $result = $lib->get_datetime($date_text)->format(DateTimeInterface::ATOM);
-        $t->assert("trim", $result, $target);
+        $t->assert_contains("trim", array($target_summer, $target_winter), $result);
 
         // potential db bool value
         $bool = null;

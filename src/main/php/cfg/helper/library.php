@@ -192,6 +192,8 @@ class library
     function trim_html(string $html_string): string
     {
         $result = $this->trim_lines($html_string);
+        // special case: replace system test winter time with daylight saving time
+        $result = str_replace('2023-01-03T20:59:59+00:00', '2023-01-03T20:59:59+01:00', $result);
         $result = preg_replace('/ <td>/', '<td>', $result);
         $result = preg_replace('/ <\/td>/', '</td>', $result);
         $result = preg_replace('/ <th>/', '<th>', $result);

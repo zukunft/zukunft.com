@@ -40,6 +40,7 @@ include_once MODEL_DB_PATH . 'sql_pg.php';
 use cfg\component_link;
 use cfg\formula_element;
 use cfg\formula_link;
+use cfg\group\group;
 use cfg\library;
 use cfg\result;
 use cfg\sql_db;
@@ -97,6 +98,12 @@ class sql
         sql_db::TBL_TASK,
         sql_db::VT_PHRASE_GROUP_LINK
     ];
+    // classes where the tables have no auto increase id
+    const DB_TYPES_NO_SEQ = [
+        group::class,
+        value::class,
+        result::class
+    ];
 
     // name the positions in the field definition array
     private const FLD_POS_NAME = 0;
@@ -111,7 +118,7 @@ class sql
     private ?int $usr_view_id;      // the user id of the person which values should be returned e.g. an admin might want to check the data of an user
     private ?string $db_type;       // the database type which should be used for this connection e.g. Postgres or MYSQL
     private ?string $class;         // the object class name used for the table name and the standard fields are defined e.g. for type "cfg\word" the table "words" and the field "word_name" is used
-    private ?string $table;         // name of the table that is used for the next query
+    private ?string $table;         // name of the table that is used for the next query including the extension if one class lead to many tables e.g. values_prime
     private ?string $query_name;    // unique name of the query to precompile and use the query
     private bool $usr_query;        // true, if the query is expected to retrieve user specific data
     private bool $grp_query;        // true, if the query should calculate the value for a group of database rows; cannot be combined with other query types
@@ -813,7 +820,7 @@ class sql
             log_err('SQL statement is not yet named');
         }
         $sql_fld = '';
-        $sql_par = '';
+        $sql_val = '';
         if (count($fields) <> count($values)) {
             if ($log_err) {
                 log_fatal_db(
@@ -831,12 +838,16 @@ class sql
             // gat the value parameter types
             $par_pos = 1;
             foreach (array_keys($values) as $i) {
-                $this->par_types[] = $this->get_sql_par_type($values[$i]);
                 $this->par_values[] = $values[$i];
-                $this->par_fields[] = $this->par_name($par_pos);
-                $par_pos++;
+                if ($values[$i] != sql::NOW) {
+                    $this->par_types[] = $this->get_sql_par_type($values[$i]);
+                    $this->par_fields[] = $this->par_name($par_pos);
+                    $par_pos++;
+                } else {
+                    $this->par_fields[] = $values[$i];
+                }
             }
-            $sql_par = $lib->sql_array($this->par_fields, ' (', ') ');
+            $sql_val = $lib->sql_array($this->par_fields, ' (', ') ');
         }
 
         // create a prepare SQL statement if possible
@@ -844,7 +855,7 @@ class sql
         $sql .= ' INTO ' . $this->name_sql_esc($this->table);
         $sql .= $sql_fld;
         $sql .= ' VALUES ';
-        $sql .= $sql_par;
+        $sql .= $sql_val;
 
         return $this->end_sql($sql, self::INSERT);
     }
@@ -1991,7 +2002,7 @@ class sql
                 $sql .= 'ALTER TABLE ' . $this->name_sql_esc($this->table);
                 $sql .= ' ADD PRIMARY KEY (';
                 $sql .= implode(', ', $prime_keys);
-                if (count($index_fields)  > 0) {
+                if (count($index_fields) > 0) {
                     $sql .= '), ';
                 } else {
                     $sql .= '); ';
@@ -2066,11 +2077,11 @@ class sql
                 }
                 if ($this->db_type() == sql_db::POSTGRES) {
                     $sql_field = ' ADD CONSTRAINT ' . $this->table . '_' . $link_used . '_fk';
-                    $sql_field .= ' FOREIGN KEY (' . $name . ') REFERENCES ' . $link_used .  's (' . $name . ')';
+                    $sql_field .= ' FOREIGN KEY (' . $name . ') REFERENCES ' . $link_used . 's (' . $name . ')';
                     $field_lst[] = $sql_field;
                 } elseif ($this->db_type() == sql_db::MYSQL) {
                     $sql_field = ' ADD CONSTRAINT ' . $this->table . '_' . $link_used . '_fk';
-                    $sql_field .= ' FOREIGN KEY (' . $name . ') REFERENCES ' . $link_used .  's (' . $name . ')';
+                    $sql_field .= ' FOREIGN KEY (' . $name . ') REFERENCES ' . $link_used . 's (' . $name . ')';
                     $field_lst[] = $sql_field;
                 }
             }
@@ -2116,13 +2127,16 @@ class sql
         if ($sql_statement_type == self::INSERT) {
             if ($this->db_type == sql_db::POSTGRES) {
                 // return the database row id if the value is not a time series number
-                if ($this->class != sql_db::TBL_VALUE_TIME_SERIES_DATA
+                if (!in_array($this->class, self::DB_TYPES_NO_SEQ)
+                    and $this->class != sql_db::TBL_VALUE_TIME_SERIES_DATA
                     and $this->class != $lib->class_to_name(value::class)
                     and $this->class != sql_db::TBL_RESULT
                     and $this->class != sql_db::TBL_LANGUAGE_FORM
                     and $this->class != sql_db::TBL_USER_OFFICIAL_TYPE
                     and $this->class != sql_db::TBL_USER_TYPE) {
                     $sql = $sql . ' RETURNING ' . $this->id_field;
+                    // TODO check if not the next line needs to be used
+                    // $sql = $sql . " SELECT currval('" . $this->id_field . "_seq'); ";
                 }
             }
         }

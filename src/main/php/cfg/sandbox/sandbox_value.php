@@ -505,14 +505,14 @@ class sandbox_value extends sandbox_non_seq_id
     protected function sql_common(sql $sc, bool $usr_tbl = false): sql_par
     {
         $lib = new library();
-        $class = $lib->class_to_name($this::class);
         $ext = $this->grp->table_extension();
-        $qp = new sql_par($class . $ext);
-        $qp->name = $class . $ext;
+        $sc->set_class($this::class, $usr_tbl, $ext);
+        $sql_name = $lib->class_to_name($this::class);
+        $qp = new sql_par($sql_name . $ext);
+        $qp->name = $sql_name . $ext;
         if ($usr_tbl) {
             $qp->name .= '_user';
         }
-        $sc->set_class($class, $usr_tbl, $ext);
         return $qp;
     }
 

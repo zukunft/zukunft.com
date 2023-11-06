@@ -374,7 +374,7 @@ class group extends db_object
         $sql = $sc->sql_separator();
         $sql_index = $sc->sql_separator();
         $sql_foreign = $sc->sql_separator();
-        $sql_truncate = $sc->sql_separator();
+        $sql_truncate = '';
         $sql_lst = [$sql, $sql_index, $sql_foreign, $sql_truncate];
         $sql_lst = $this->sql_one_tbl($sc, false, '', sandbox_value::FLD_KEY, $this::TBL_COMMENT, $sql_lst);
         $sql_lst = $this->sql_one_tbl($sc, true, '', sandbox_value::FLD_KEY_USER, $this::TBL_COMMENT, $sql_lst);

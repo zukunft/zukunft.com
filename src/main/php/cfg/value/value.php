@@ -2000,7 +2000,14 @@ class value extends sandbox_value
             $values = array($this->grp->id(), $this->user()->id(), $this->number, sql::NOW);
         }
         $qp->sql = $sc->sql_insert($fields, $values);
-        $qp->par = $values;
+        $par_values = [];
+        foreach (array_keys($values) as $i) {
+            if ($values[$i] != sql::NOW) {
+                $par_values[$i] = $values[$i];
+            }
+        }
+
+        $qp->par = $par_values;
         return $qp;
     }
 

@@ -45,10 +45,12 @@ use cfg\change_log_table;
 use cfg\component\component_pos_type_list;
 use cfg\component\component_type_list;
 use cfg\config;
+use cfg\db\sql;
 use cfg\db_check;
 use cfg\formula_element_type_list;
 use cfg\formula_link_type_list;
 use cfg\formula_type_list;
+use cfg\group\group;
 use cfg\language_form_list;
 use cfg\language_list;
 use cfg\library;
@@ -88,7 +90,7 @@ if ($usr->id() > 0) {
         $sys_usr = $usr;
 
         // run reset the main database tables
-        run_db_truncate();
+        run_db_truncate($sys_usr);
         run_db_seq_reset();
         run_db_config_reset();
 
@@ -151,7 +153,7 @@ if ($usr->id() > 0) {
 /**
  * truncate all tables (use only for system testing)
  */
-function run_db_truncate(): void
+function run_db_truncate(user $sys_usr): void
 {
     $lib = new library();
 
@@ -217,7 +219,21 @@ function run_db_truncate(): void
     $html->echo('truncate ');
     $html->echo("\n");
 
+    // truncate tables that have already a build in truncate statement creation
+    $sql = '';
+    $sc = new sql();
+    $grp = new group($sys_usr);
+    $sql .= $grp->sql_truncate($sc);
 
+    global $db_con;
+
+    try {
+        $db_con->exe($sql);
+    } catch (Exception $e) {
+        log_err('Cannot truncate based on sql ' . $sql . '" because: ' . $e->getMessage());
+    }
+
+    // truncate the other tables
     foreach ($table_names as $class) {
         $table_name = $lib->class_to_name($class);
         run_table_truncate($table_name);

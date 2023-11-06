@@ -1,5 +1,3 @@
--- --------------------------------------------------------
-
 TRUNCATE groups CASCADE;
 TRUNCATE user_groups CASCADE;
 TRUNCATE groups_prime CASCADE;

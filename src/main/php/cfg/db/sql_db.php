@@ -1580,14 +1580,19 @@ class sql_db
      * @param string $sql_name the unique name of the sql statement
      * @param array $sql_array the values that should be used for executing the precompiled SQL statement
      * @param int $log_level the log level is given by the calling function because after some errors the program may nevertheless continue
-     * @return object the message that should be shown to the user if something went wrong or an empty string
+     * @return \PgSql\Result|mysqli_result the result of the sql statement
      * @throws Exception the message that should be shown to the system admin for debugging
      *
      * TODO add the writing of potential sql errors to the sys log table to the sql execution
      * TODO includes the user to be able to ask the user for details how the error has been created
      * TODO with php 8 switch to the union return type resource|false
      */
-    function exe(string $sql, string $sql_name = '', array $sql_array = array(), int $log_level = sys_log_level::ERROR)
+    function exe(
+        string $sql,
+        string $sql_name = '',
+        array  $sql_array = array(),
+        int    $log_level = sys_log_level::ERROR
+    ): \PgSql\Result|mysqli_result
     {
         global $debug;
         $lib = new library();
@@ -1613,7 +1618,7 @@ class sql_db
      * @param string $sql_name the unique name of the sql statement
      * @param array $sql_array the values that should be used for executing the precompiled SQL statement
      * @param int $log_level the log level is given by the calling function because after some errors the program may nevertheless continue
-     * @return resource the message that should be shown to the user if something went wrong or an empty string
+     * @return \PgSql\Result the message that should be shown to the user if something went wrong or an empty string
      * @throws Exception the message that should be shown to the system admin for debugging
      *
      * TODO switch return type to bool|resource with PHP 8.0
@@ -1621,7 +1626,12 @@ class sql_db
      * TODO includes the user to be able to ask the user for details how the error has been created
      * TODO with php 8 switch to the union return type resource|false
      */
-    private function exe_postgres(string $sql, string $sql_name = '', array $sql_array = array(), int $log_level = sys_log_level::ERROR)
+    private function exe_postgres(
+        string $sql,
+        string $sql_name = '',
+        array  $sql_array = array(),
+        int    $log_level = sys_log_level::ERROR
+    ): \PgSql\Result
     {
         global $debug;
 
@@ -3233,15 +3243,28 @@ class sql_db
      */
     function insert(sql_par $qp, string $description): user_message
     {
+        global $db_con;
         $result = new user_message();
         $err_msg = 'Insert of ' . $description . ' failed.';
         try {
-            $db_row = $this->exe_par($qp);
-            if ($db_row == 0 or $db_row == '') {
+            $sql_result = $this->exe($qp->sql, $qp->name, $qp->par);
+            $result = 0;
+            if ($this->db_type == sql_db::POSTGRES) {
+                $sql_error = pg_result_error($sql_result);
+                if ($sql_error != '') {
+                    log_err($sql_error . ' while executing ' . $qp->sql);
+                } else {
+                    $result = pg_fetch_array($sql_result)[0];
+                    //$result = $db_con->lastInsertId('yourIdColumn');
+                }
+            } else {
+                $result = mysqli_fetch_array($sql_result, MYSQLI_BOTH);
+            }
+            if ($result == 0 or $result == '') {
                 log_err($err_msg);
                 $result->add_message($err_msg);
             } else {
-                $result->set_db_row_id($db_row);
+                $result->set_db_row_id($result);
             }
         } catch (Exception $e) {
             $trace_link = log_err($err_msg . log::MSG_ERR_USING . $qp->sql . log::MSG_ERR_BECAUSE . $e->getMessage());
