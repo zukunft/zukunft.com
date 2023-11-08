@@ -2127,8 +2127,7 @@ class sql
         if ($sql_statement_type == self::INSERT) {
             if ($this->db_type == sql_db::POSTGRES) {
                 // return the database row id if the value is not a time series number
-                if (!in_array($this->class, self::DB_TYPES_NO_SEQ)
-                    and $this->class != sql_db::TBL_VALUE_TIME_SERIES_DATA
+                if ($this->class != sql_db::TBL_VALUE_TIME_SERIES_DATA
                     and $this->class != $lib->class_to_name(value::class)
                     and $this->class != sql_db::TBL_RESULT
                     and $this->class != sql_db::TBL_LANGUAGE_FORM

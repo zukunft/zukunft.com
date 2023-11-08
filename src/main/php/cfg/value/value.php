@@ -1990,6 +1990,8 @@ class value extends sandbox_value
     function sql_insert(sql $sc, bool $usr_tbl = false): sql_par
     {
         $qp = $this->sql_common($sc, $usr_tbl);
+        // overwrite the standard auto increase id field name
+        $sc->set_id_field($this->id_field());
         $qp->name .= '_insert';
         $sc->set_name($qp->name);
         if ($usr_tbl) {
@@ -2082,11 +2084,13 @@ class value extends sandbox_value
                 }
 
                 // update the phrase links for fast searching
+                /*
                 $upd_result = $this->upd_phr_links();
                 if ($upd_result != '') {
                     $result->add_message('Adding the phrase links of the value failed because ' . $upd_result);
                     $this->set_id(0);
                 }
+                */
 
                 if ($this->id() > 0) {
                     // create an empty db_rec element to force saving of all set fields

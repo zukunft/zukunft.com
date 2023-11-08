@@ -159,7 +159,6 @@ function run_db_truncate(user $sys_usr): void
 
     // the tables in order to avoid the usage of CASCADE
     $table_names = array(
-        sql_db::TBL_VALUE_PHRASE_LINK,
         sql_db::TBL_USER_PREFIX . value::class,
         value::class,
         sql_db::TBL_RESULT,
@@ -311,7 +310,6 @@ function run_db_seq_reset(): void
     $seq_names = array(
         'sys_log_status_sys_log_status_id_seq',
         'sys_log_sys_log_id_seq',
-        'value_phrase_links_value_phrase_link_id_seq',
         'formula_elements_formula_element_id_seq',
         'formula_element_types_formula_element_type_id_seq',
         'formula_links_formula_link_id_seq',
