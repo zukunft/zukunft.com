@@ -33,8 +33,8 @@ namespace cfg;
 
 use api\view\view as view_api;
 use cfg\db\sql;
-use model\export\exp_obj;
-use model\export\view_exp;
+use cfg\export\sandbox_exp;
+use cfg\export\view_exp;
 
 class view_term_link extends sandbox_link_typed
 {

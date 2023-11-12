@@ -1,4 +1,4 @@
-PREPARE change_log_named_by_dsp_of_wrd (bigint,bigint) AS
+PREPARE change_by_dsp_of_trp (bigint,bigint) AS
     SELECT s.change_id,
            s.user_id,
            s.change_time,

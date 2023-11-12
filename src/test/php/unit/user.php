@@ -32,8 +32,6 @@
 
 namespace test;
 
-use api\user_api;
-use cfg\phrase_type;
 use cfg\sql_db;
 use cfg\user;
 use cfg\user_list;

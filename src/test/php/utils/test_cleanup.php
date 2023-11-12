@@ -33,13 +33,13 @@
 namespace test;
 
 use api\component\component_api;
-use api\formula_api;
-use api\phrase_api;
-use api\source_api;
-use api\triple_api;
-use api\verb_api;
+use api\formula\formula_api;
+use api\phrase\phrase_api;
+use api\ref\source_api;
+use api\word\triple_api;
+use api\verb\verb_api;
 use api\view\view as view_api;
-use api\word_api;
+use api\word\word_api;
 use cfg\formula;
 use cfg\formula_type;
 use cfg\library;

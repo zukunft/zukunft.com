@@ -30,8 +30,8 @@
 */
 
 use controller\controller;
-use cfg\user;
-use cfg\component\component_list;
+use cfg\log\user;
+use cfg\log\component\component_list;
 use api\component\component_list as component_list_api;
 
 // standard zukunft header for callable php files to allow debugging and lib loading

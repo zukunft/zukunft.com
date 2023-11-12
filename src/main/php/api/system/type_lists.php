@@ -29,7 +29,7 @@
 
 */
 
-namespace api;
+namespace api\system;
 
 include_once API_PATH . 'message_header.php';
 

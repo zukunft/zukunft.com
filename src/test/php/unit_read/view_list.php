@@ -33,8 +33,8 @@
 namespace unit_read;
 
 use api\view\view as view_api;
-use cfg\library;
-use cfg\view_list;
+use cfg\log\library;
+use cfg\log\view_list;
 use test\test_cleanup;
 
 class view_list_unit_db_tests

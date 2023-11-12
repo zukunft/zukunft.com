@@ -33,11 +33,11 @@
 use controller\controller;
 use html\html_base;
 use html\view\view as view_dsp;
-use cfg\system_log;
-use cfg\system_log_list;
-use cfg\user;
-use cfg\user_profile;
-use cfg\view;
+use cfg\log\system_log;
+use cfg\log\system_log_list;
+use cfg\log\user;
+use cfg\log\user_profile;
+use cfg\log\view;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . '/../';

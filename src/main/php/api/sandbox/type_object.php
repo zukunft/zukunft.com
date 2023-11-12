@@ -35,7 +35,7 @@
 
 */
 
-namespace api;
+namespace api\sandbox;
 
 class type_object_api
 {

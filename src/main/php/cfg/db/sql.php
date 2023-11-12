@@ -50,7 +50,6 @@ use cfg\triple;
 use cfg\user;
 use cfg\value;
 use cfg\value_time_series;
-use cfg\view;
 use cfg\view_term_link;
 use Exception;
 

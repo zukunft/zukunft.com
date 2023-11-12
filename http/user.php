@@ -30,16 +30,16 @@
 
 */
 
-use cfg\component\component;
-use cfg\component_link;
-use cfg\formula;
-use cfg\formula_link;
-use cfg\triple;
-use cfg\user;
-use cfg\user_profile;
-use cfg\value;
-use cfg\view;
-use cfg\word;
+use cfg\log\component\component;
+use cfg\log\component_link;
+use cfg\log\formula;
+use cfg\log\formula_link;
+use cfg\log\triple;
+use cfg\log\user;
+use cfg\log\user_profile;
+use cfg\log\value;
+use cfg\log\view;
+use cfg\log\word;
 use controller\controller;
 use html\html_base;
 use html\view\view as view_dsp;

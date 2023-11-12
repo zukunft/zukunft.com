@@ -32,11 +32,11 @@
 
 namespace test\write;
 
-use api\formula_api;
-use api\value_api;
-use api\word_api;
-use cfg\phrase_list;
-use cfg\value;
+use api\system\formula_api;
+use api\system\value_api;
+use api\system\word_api;
+use cfg\log\phrase_list;
+use cfg\log\value;
 use test\test_cleanup;
 use const test\TIMEOUT_LIMIT_DB_MULTI;
 use const test\TIMEOUT_LIMIT_LONG;

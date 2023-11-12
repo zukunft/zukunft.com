@@ -34,7 +34,7 @@ namespace test;
 
 include_once WEB_PHRASE_PATH . 'phrase.php';
 
-use api\word_api;
+use api\word\word_api;
 use cfg\phrase_type;
 use html\word\word as word_dsp;
 use html\word\triple as triple_dsp;

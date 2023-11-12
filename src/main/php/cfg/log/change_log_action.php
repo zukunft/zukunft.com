@@ -29,9 +29,13 @@
 
 */
 
-namespace cfg;
+namespace cfg\log;
 
 global $change_log_actions;
+
+use cfg\sql_db;
+use cfg\type_list;
+use cfg\type_object;
 
 class change_log_action extends type_list
 {

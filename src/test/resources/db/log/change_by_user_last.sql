@@ -1,4 +1,4 @@
-PREPARE change_log_named_by_dsp_of_trp (bigint,bigint) AS
+PREPARE change_by_user_last (bigint) AS
     SELECT s.change_id,
            s.user_id,
            s.change_time,
@@ -14,7 +14,5 @@ PREPARE change_log_named_by_dsp_of_trp (bigint,bigint) AS
       FROM changes s
  LEFT JOIN users l ON s.user_id = l.user_id
  LEFT JOIN change_fields l2 ON s.change_field_id = l2.change_field_id
-     WHERE s.change_field_id = $1
-       AND s.row_id = $2
-  ORDER BY s.change_time DESC
-     LIMIT 20;
+     WHERE s.user_id = $1
+  ORDER BY s.change_time DESC;

@@ -54,7 +54,7 @@ namespace test;
 
 include_once MODEL_USER_PATH . 'user.php';
 
-use cfg\change_log_named;
+use cfg\log\change;
 use cfg\combine_named;
 use cfg\combine_object;
 use cfg\component\component;
@@ -2224,7 +2224,7 @@ class test_base
         if ($usr == null) {
             $usr = $this->usr1;
         }
-        $log = new change_log_named($this->usr1);
+        $log = new change($this->usr1);
         return $log->dsp_last_user(true, $usr);
     }
 

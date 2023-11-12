@@ -32,10 +32,10 @@
 
 namespace test\write;
 
-use api\source_api;
-use cfg\change_log_field;
-use cfg\change_log_named;
-use cfg\change_log_table;
+use api\ref\source_api;
+use cfg\log\change_log_field;
+use cfg\log\change;
+use cfg\log\change_log_table;
 use cfg\sandbox_named;
 use cfg\source;
 use test\test_cleanup;
@@ -70,7 +70,7 @@ class source_test
 
         // ... check if the source creation has been logged
         if ($src_add->id() > 0) {
-            $log = new change_log_named($t->usr1);
+            $log = new change($t->usr1);
             $log->set_table(change_log_table::SOURCE);
             $log->set_field(change_log_field::FLD_SOURCE_NAME);
             $log->row_id = $src_add->id();
@@ -105,7 +105,7 @@ class source_test
         $t->display('source->load renamed source "' . source_api::TN_RENAMED . '"', $target, $result);
 
         // check if the source renaming has been logged
-        $log = new change_log_named($t->usr1);
+        $log = new change($t->usr1);
         $log->set_table(change_log_table::SOURCE);
         $log->set_field(change_log_field::FLD_SOURCE_NAME);
         $log->row_id = $src_renamed->id();
@@ -130,7 +130,7 @@ class source_test
         $t->display('source->load description for "' . source_api::TN_RENAMED . '"', $target, $result);
 
         // check if the source parameter adding have been logged
-        $log = new change_log_named($t->usr1);
+        $log = new change($t->usr1);
         $log->set_table(change_log_table::SOURCE);
         $log->set_field(change_log_field::FLD_SOURCE_URL);
         $log->row_id = $src_reloaded->id();

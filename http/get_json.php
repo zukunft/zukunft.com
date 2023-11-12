@@ -32,8 +32,8 @@
 
 use controller\controller;
 use im_export\json_io;
-use cfg\phrase_list;
-use cfg\user;
+use cfg\log\phrase_list;
+use cfg\log\user;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . '/../';

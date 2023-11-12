@@ -37,7 +37,7 @@ include_once MODEL_GROUP_PATH . 'group_id.php';
 include_once MODEL_GROUP_PATH . 'group_link.php';
 include_once MODEL_GROUP_PATH . 'group_list.php';
 
-use api\phrase_group_api;
+use api\phrase\phrase_group_api;
 use cfg\group\group_id;
 use cfg\group\group;
 use cfg\group\group_link;

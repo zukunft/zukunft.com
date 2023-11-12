@@ -31,7 +31,7 @@
 
 namespace cfg;
 
-use model\export\exp_obj;
+use cfg\export\sandbox_exp;
 
 include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
 
@@ -129,10 +129,10 @@ class sandbox_link_named extends sandbox_link
 
         // reset of object not needed, because the calling function has just created the object
         foreach ($in_ex_json as $key => $value) {
-            if ($key == exp_obj::FLD_NAME) {
+            if ($key == sandbox_exp::FLD_NAME) {
                 $this->set_name($value);
             }
-            if ($key == exp_obj::FLD_DESCRIPTION) {
+            if ($key == sandbox_exp::FLD_DESCRIPTION) {
                 $this->description = $value;
             }
         }

@@ -317,10 +317,10 @@ class ip_range extends db_object_seq_id
     /**
      * actually update a formula field in the main database record
      * @param sql_db $db_con the active database connection
-     * @param change_log_named $log with the action and table already set
+     * @param change $log with the action and table already set
      * @return string string any message that should be shown to the user or an empty string if everything is fine
      */
-    private function save_field_do(sql_db $db_con, change_log_named $log): string
+    private function save_field_do(sql_db $db_con, change $log): string
     {
         $result = '';
         if ($log->add()) {
@@ -377,13 +377,13 @@ class ip_range extends db_object_seq_id
 
     /**
      * set the log entry parameter for a new ip range
-     * @return change_log_named with the action set to add
+     * @return change with the action set to add
      */
-    function log_add(): change_log_named
+    function log_add(): change
     {
         log_debug('->log_add ' . $this->dsp_id());
 
-        $log = new change_log_named($this->user());
+        $log = new change($this->user());
         $log->action = change_log_action::ADD;
         $log->set_table(sql_db::TBL_IP);
         $log->set_field(self::FLD_FROM . '_' . self::FLD_TO);
@@ -395,12 +395,12 @@ class ip_range extends db_object_seq_id
 
     /**
      * set the main log entry parameters for updating one verb field
-     * @return change_log_named with the action set to update
+     * @return change with the action set to update
      */
-    private function log_upd(): change_log_named
+    private function log_upd(): change
     {
         log_debug('->log_upd ' . $this->dsp_id());
-        $log = new change_log_named($this->user());
+        $log = new change($this->user());
         $log->action = change_log_action::UPDATE;
         $log->set_table(sql_db::TBL_IP);
 

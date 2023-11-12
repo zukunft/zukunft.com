@@ -38,9 +38,9 @@ include_once WEB_FORMULA_PATH . 'formula.php';
 include_once WEB_VERB_PATH . 'verb.php';
 include_once WEB_PHRASE_PATH . 'term.php';
 
-use api\formula_api;
-use api\triple_api;
-use api\word_api;
+use api\formula\formula_api;
+use api\word\triple_api;
+use api\word\word_api;
 use html\formula\formula as formula_dsp;
 use html\phrase\term as term_dsp;
 use html\word\word as word_dsp;

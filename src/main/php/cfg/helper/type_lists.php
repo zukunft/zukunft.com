@@ -63,9 +63,12 @@ include_once MODEL_LOG_PATH . 'change_log_action.php';
 include_once MODEL_LOG_PATH . 'change_log_table.php';
 include_once MODEL_LOG_PATH . 'change_log_field.php';
 
-use api\type_lists_api;
+use api\system\type_lists_api;
 use cfg\component\component_pos_type_list;
 use cfg\component\component_type_list;
+use cfg\log\change_log_action;
+use cfg\log\change_log_field;
+use cfg\log\change_log_table;
 use controller\controller;
 
 class type_lists

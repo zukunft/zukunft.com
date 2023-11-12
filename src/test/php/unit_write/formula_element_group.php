@@ -39,12 +39,12 @@
 
 namespace test\write;
 
-use api\formula_api;
-use api\word_api;
+use api\system\formula_api;
+use api\system\word_api;
 use html\figure\figure as figure_dsp;
 use html\value\value as value_dsp;
-use cfg\library;
-use cfg\phrase_list;
+use cfg\log\library;
+use cfg\log\phrase_list;
 use test\test_api;
 use test\test_cleanup;
 

@@ -58,11 +58,13 @@ include_once MODEL_REF_PATH . 'source.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
 
+use api\ref\ref_api;
 use cfg\db\sql;
-use model\export\exp_obj;
-use model\export\ref_exp;
-use api\ref_api;
-use html\ref\ref as ref_dsp;
+use cfg\export\sandbox_exp;
+use cfg\export\ref_exp;
+use cfg\log\change_log_action;
+use cfg\log\change_log_link;
+use cfg\log\change_log_table;
 
 class ref extends sandbox_link_with_type
 {
@@ -500,7 +502,7 @@ class ref extends sandbox_link_with_type
         $ref_lst = new ref_type_list();
         // reset of object not needed, because the calling function has just created the object
         foreach ($in_ex_json as $key => $value) {
-            if ($key == exp_obj::FLD_SOURCE) {
+            if ($key == sandbox_exp::FLD_SOURCE) {
                 $src = new source($this->user());
                 if (!$test_obj) {
                     $src->load_by_name($value, source::class);
@@ -512,7 +514,7 @@ class ref extends sandbox_link_with_type
                 }
                 $this->source = $src;
             }
-            if ($key == exp_obj::FLD_TYPE) {
+            if ($key == sandbox_exp::FLD_TYPE) {
                 $this->ref_type = $ref_lst->get_ref_type($value);
 
                 if ($this->ref_type == null) {
@@ -522,10 +524,10 @@ class ref extends sandbox_link_with_type
                     log_debug('ref_type set based on ' . $value . ' (' . $this->ref_type->name . ')');
                 }
             }
-            if ($key == exp_obj::FLD_NAME) {
+            if ($key == sandbox_exp::FLD_NAME) {
                 $this->external_key = $value;
             }
-            if ($key == exp_obj::FLD_DESCRIPTION) {
+            if ($key == sandbox_exp::FLD_DESCRIPTION) {
                 $this->description = $value;
             }
             if ($key == self::FLD_URL) {
@@ -548,7 +550,7 @@ class ref extends sandbox_link_with_type
      * create a reference object for export (so excluding e.g. the database id)
      * @return ref_exp a reduced reference object for the JSON message creation
      */
-    function export_obj(bool $do_load = true): exp_obj
+    function export_obj(bool $do_load = true): sandbox_exp
     {
         $result = new ref_exp();
 

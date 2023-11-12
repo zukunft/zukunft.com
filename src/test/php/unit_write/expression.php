@@ -32,9 +32,9 @@
 
 namespace test\write;
 
-use api\formula_api;
-use api\word_api;
-use cfg\expression;
+use api\system\formula_api;
+use api\system\word_api;
+use cfg\log\expression;
 use test\test_cleanup;
 use const test\TIMEOUT_LIMIT_LONG;
 use const test\TIMEOUT_LIMIT_PAGE_LONG;

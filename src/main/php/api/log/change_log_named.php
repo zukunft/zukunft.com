@@ -30,7 +30,7 @@
 
 */
 
-namespace api;
+namespace api\log;
 
 include_once API_LOG_PATH . 'change_log.php';
 

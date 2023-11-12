@@ -30,8 +30,8 @@
 
 */
 
-use cfg\triple;
-use cfg\user;
+use cfg\log\triple;
+use cfg\log\user;
 use controller\controller;
 
 $debug = $_GET['debug'] ?? 0;

@@ -32,13 +32,15 @@
 
 */
 
-namespace api;
+namespace api\sandbox;
 
 include_once API_SANDBOX_PATH . 'sandbox.php';
 include_once API_PHRASE_PATH . 'phrase_list.php';
 include_once API_PHRASE_PATH . 'phrase_group.php';
 include_once WEB_PHRASE_PATH . 'phrase_group.php';
 
+use api\phrase\phrase_group_api;
+use api\phrase\phrase_list_api;
 use html\phrase\phrase_group as phrase_group_dsp;
 
 class sandbox_value_api extends sandbox_api
@@ -66,12 +68,12 @@ class sandbox_value_api extends sandbox_api
      * set and get
      */
 
-    function set_grp(phrase_group_api $grp)
+    function set_grp(phrase_group_api $grp): void
     {
         $this->grp = $grp;
     }
 
-    function set_number(?float $number)
+    function set_number(?float $number): void
     {
         $this->number = $number;
     }

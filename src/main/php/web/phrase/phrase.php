@@ -38,9 +38,8 @@ include_once API_PHRASE_PATH . 'phrase.php';
 include_once WEB_WORD_PATH . 'word.php';
 include_once WEB_WORD_PATH . 'triple.php';
 
-use api\combine_object_api;
-use api\phrase_api;
-use api\word_api;
+use api\phrase\phrase_api;
+use api\sandbox\combine_object_api;
 use api\api;
 use cfg\foaf_direction;
 use cfg\verb_list;
@@ -48,12 +47,10 @@ use html\api as api_dsp;
 use html\button;
 use html\combine_named_dsp;
 use html\html_base;
-use html\html_selector;
 use html\msg;
 use html\word\word as word_dsp;
 use html\word\triple as triple_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
-use controller\controller;
 
 class phrase extends combine_named_dsp
 {

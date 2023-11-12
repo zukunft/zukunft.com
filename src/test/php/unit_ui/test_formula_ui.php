@@ -30,8 +30,8 @@
 
 */
 
-use api\formula_api;
-use api\word_api;
+use api\system\formula_api;
+use api\system\word_api;
 use test\test_cleanup;
 use const test\TIMEOUT_LIMIT_PAGE;
 use const test\TIMEOUT_LIMIT_PAGE_LONG;

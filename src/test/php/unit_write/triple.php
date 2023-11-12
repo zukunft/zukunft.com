@@ -32,11 +32,11 @@
 
 namespace test\write;
 
-use api\phrase_api;
-use api\triple_api;
-use api\word_api;
-use cfg\change_log_link;
-use cfg\change_log_table;
+use api\phrase\phrase_api;
+use api\word\triple_api;
+use api\word\word_api;
+use cfg\log\change_log_link;
+use cfg\log\change_log_table;
 use cfg\formula;
 use cfg\library;
 use cfg\triple;

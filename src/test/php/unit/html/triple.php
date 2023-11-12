@@ -32,7 +32,7 @@
 
 namespace unit\html;
 
-use api\word_api;
+use api\word\word_api;
 use html\html_base;
 use html\word\triple as triple_dsp;
 use html\word\word as word_dsp;

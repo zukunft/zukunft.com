@@ -30,8 +30,9 @@
 
 */
 
-namespace api;
+namespace api\word;
 
+use api\sandbox\list_api;
 use cfg\phrase_type;
 use html\word\triple_list;
 

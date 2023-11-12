@@ -39,9 +39,9 @@ include_once SERVICE_IMPORT_PATH . 'import_file.php';
 
 use cfg\batch_job;
 use cfg\batch_job_type_list;
-use cfg\change_log_action;
-use cfg\change_log_field;
-use cfg\change_log_table;
+use cfg\log\change_log_action;
+use cfg\log\change_log_field;
+use cfg\log\change_log_table;
 use cfg\component\component_pos_type_list;
 use cfg\component\component_type_list;
 use cfg\config;

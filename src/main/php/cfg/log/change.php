@@ -29,21 +29,28 @@
 
 */
 
-namespace cfg;
+namespace cfg\log;
 
 include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_LOG_PATH . 'change_log.php';
 include_once API_LOG_PATH . 'change_log_named.php';
 include_once WEB_LOG_PATH . 'change_log_named.php';
 
-use api\change_log_named_api;
-use api\user_config;
+use api\log\change_log_named_api;
+use api\sandbox\user_config;
 use cfg\component\component;
 use cfg\db\sql;
+use cfg\formula;
+use cfg\sql_db;
+use cfg\sql_par;
+use cfg\user;
+use cfg\value;
+use cfg\view;
+use cfg\word;
 use Exception;
 use html\log\change_log_named as change_log_named_dsp;
 
-class change_log_named extends change_log
+class change extends change_log
 {
 
     /*
@@ -206,7 +213,7 @@ class change_log_named extends change_log
             $usr = $this->user();
         }
 
-        $sc->add_where(user::FLD_ID, $usr->id);
+        $sc->add_where(user::FLD_ID, $usr->id());
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
         return $qp;
@@ -224,10 +231,10 @@ class change_log_named extends change_log
     {
         $qp = $this->load_sql($sc, 'field_row', self::class);
         if ($field_id != null) {
-            $sc->add_where(change_log_named::FLD_FIELD_ID, $field_id);
+            $sc->add_where(change::FLD_FIELD_ID, $field_id);
         }
         if ($field_id != null) {
-            $sc->add_where(change_log_named::FLD_ROW_ID, $row_id);
+            $sc->add_where(change::FLD_ROW_ID, $row_id);
         }
         //$fields[] = user::FLD_ID;
         $sc->set_page();

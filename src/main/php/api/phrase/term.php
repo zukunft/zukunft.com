@@ -29,7 +29,7 @@
 
 */
 
-namespace api;
+namespace api\phrase;
 
 include_once API_SANDBOX_PATH . 'combine_named.php';
 include_once API_WORD_PATH . 'word.php';
@@ -42,18 +42,18 @@ include_once WEB_FORMULA_PATH . 'formula.php';
 include_once WEB_VERB_PATH . 'verb.php';
 include_once WEB_PHRASE_PATH . 'term.php';
 
-use controller\controller;
+use api\api;
+use api\formula\formula_api;
+use api\sandbox\combine_named_api;
+use api\sandbox\combine_object_api;
+use api\verb\verb_api;
+use api\word\triple_api;
+use api\word\word_api;
 use html\phrase\phrase as phrase_dsp;
 use html\word\word as word_dsp;
 use html\word\triple as triple_dsp;
 use html\formula\formula as formula_dsp;
 use html\verb\verb as verb_dsp;
-use html\phrase\term as term_dsp;
-use cfg\phrase_type;
-use cfg\word;
-use cfg\triple;
-use cfg\formula;
-use cfg\verb;
 use JsonSerializable;
 
 class term_api extends combine_named_api implements JsonSerializable

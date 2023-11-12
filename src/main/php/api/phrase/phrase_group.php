@@ -30,9 +30,10 @@
 
 */
 
-namespace api;
+namespace api\phrase;
 
-use controller\controller;
+use api\api;
+use api\sandbox\sandbox_named_api;
 use html\phrase\phrase_group as phrase_group_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
 use JsonSerializable;

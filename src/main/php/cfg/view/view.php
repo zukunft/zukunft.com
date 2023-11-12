@@ -44,8 +44,8 @@ use api\view\view as view_api;
 use cfg\component\component;
 use cfg\db\sql;
 use cfg\db\sql_par_type;
-use model\export\exp_obj;
-use model\export\view_exp;
+use cfg\export\sandbox_exp;
+use cfg\export\view_exp;
 
 class view extends sandbox_typed
 {
@@ -694,7 +694,7 @@ class view extends sandbox_typed
         // first save the parameters of the view itself
         foreach ($in_ex_json as $key => $value) {
 
-            if ($key == exp_obj::FLD_TYPE) {
+            if ($key == sandbox_exp::FLD_TYPE) {
                 if ($value != '') {
                     $type_id = $this->type_id_by_code_id($value);
                     if ($type_id == type_list::CODE_ID_NOT_FOUND) {
@@ -704,7 +704,7 @@ class view extends sandbox_typed
                     }
                 }
             }
-            if ($key == exp_obj::FLD_CODE_ID) {
+            if ($key == sandbox_exp::FLD_CODE_ID) {
                 if ($value != '') {
                     if ($this->user()->is_admin() or $this->user()->is_system()) {
                         $this->code_id = $value;
@@ -738,16 +738,16 @@ class view extends sandbox_typed
                     // do not overwrite an existing component
                     // instead just add the existing component
                     if (count($json_cmp) == 2
-                        and array_key_exists(exp_obj::FLD_POSITION, $json_cmp)
-                        and array_key_exists(exp_obj::FLD_NAME, $json_cmp)) {
-                        $cmp->load_by_name($json_cmp[exp_obj::FLD_NAME]);
+                        and array_key_exists(sandbox_exp::FLD_POSITION, $json_cmp)
+                        and array_key_exists(sandbox_exp::FLD_NAME, $json_cmp)) {
+                        $cmp->load_by_name($json_cmp[sandbox_exp::FLD_NAME]);
                         // if the component does not jet exist
                         // nevertheless create the component
                         // but send a warning message
                         if ($cmp->id() <= 0) {
-                            log_warning('Component ' . $json_cmp[exp_obj::FLD_NAME]
+                            log_warning('Component ' . $json_cmp[sandbox_exp::FLD_NAME]
                                 . ' has not yet been created, but is supposed to be at position '
-                                . $json_cmp[exp_obj::FLD_POSITION] . ' of a view ');
+                                . $json_cmp[sandbox_exp::FLD_POSITION] . ' of a view ');
                             $cmp->import_obj($json_cmp, $test_obj);
                         }
                     } else {
@@ -771,7 +771,7 @@ class view extends sandbox_typed
     /**
      * export mapper: create an object for the export
      */
-    function export_obj(bool $do_load = true): exp_obj
+    function export_obj(bool $do_load = true): sandbox_exp
     {
         log_debug($this->dsp_id());
         $result = new view_exp();

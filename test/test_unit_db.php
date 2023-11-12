@@ -33,7 +33,7 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
-use cfg\user;
+use cfg\log\user;
 use test\test_unit_read_db;
 
 global $debug;

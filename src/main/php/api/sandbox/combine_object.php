@@ -37,7 +37,7 @@
 
 */
 
-namespace api;
+namespace api\sandbox;
 
 class combine_object_api
 {

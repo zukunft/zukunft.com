@@ -34,8 +34,8 @@ namespace test;
 
 include_once MODEL_VALUE_PATH . 'value_time_series.php';
 
-use api\phrase_group_api;
-use api\value_api;
+use api\phrase\phrase_group_api;
+use api\value\value_api;
 use cfg\group\group;
 use cfg\sql_db;
 use cfg\value;

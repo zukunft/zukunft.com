@@ -44,7 +44,7 @@ namespace cfg;
 include_once API_WORD_PATH . 'triple_list.php';
 include_once DB_PATH . 'sql_par_type.php';
 
-use api\triple_list_api;
+use api\word\triple_list_api;
 use cfg\db\sql;
 use cfg\db\sql_par_type;
 use html\html_base;

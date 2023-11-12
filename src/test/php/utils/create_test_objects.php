@@ -50,26 +50,26 @@ include_once WEB_FORMULA_PATH . 'formula.php';
 
 use api\api;
 use api\component\component_api;
-use api\formula_api;
-use api\phrase_group_api;
-use api\ref_api;
-use api\result_api;
-use api\source_api;
-use api\triple_api;
-use api\type_lists_api;
-use api\value_api;
-use api\verb_api;
+use api\formula\formula_api;
+use api\phrase\phrase_group_api;
+use api\ref\ref_api;
+use api\result\result_api;
+use api\ref\source_api;
+use api\word\triple_api;
+use api\system\type_lists_api;
+use api\value\value_api;
+use api\verb\verb_api;
 use api\view\view as view_api;
-use api\word_api;
+use api\word\word_api;
 use api_message;
 use cfg\batch_job;
 use cfg\batch_job_list;
 use cfg\batch_job_type_list;
-use cfg\change_log_action;
-use cfg\change_log_field;
-use cfg\change_log_list;
-use cfg\change_log_named;
-use cfg\change_log_table;
+use cfg\log\change_log_action;
+use cfg\log\change_log_field;
+use cfg\log\change_log_list;
+use cfg\log\change;
+use cfg\log\change_log_table;
 use cfg\component\component;
 use cfg\component\component_list;
 use cfg\component\component_pos_type_list;
@@ -96,6 +96,7 @@ use cfg\language_form_list;
 use cfg\language_list;
 use cfg\library;
 use cfg\log\system_log;
+use cfg\log\system_log_list;
 use cfg\phrase;
 use cfg\phrase_list;
 use cfg\phrase_type;
@@ -110,7 +111,6 @@ use cfg\source;
 use cfg\source_type;
 use cfg\source_type_list;
 use cfg\sys_log_status;
-use cfg\system_log_list;
 use cfg\term;
 use cfg\term_list;
 use cfg\triple;
@@ -1185,13 +1185,13 @@ class create_test_objects extends test_base
     }
 
     /**
-     * @return change_log_named a change log entry of a named user sandbox object with some dummy values
+     * @return change a change log entry of a named user sandbox object with some dummy values
      */
-    function dummy_log_named(): change_log_named
+    function dummy_change_log_named(): change
     {
         global $usr_sys;
 
-        $chg = new change_log_named($usr_sys);
+        $chg = new change($usr_sys);
         $chg->set_time_str(self::DUMMY_DATETIME);
         $chg->set_action(change_log_action::ADD);
         $chg->set_table(change_log_table::WORD);
@@ -1260,7 +1260,7 @@ class create_test_objects extends test_base
     function dummy_change_log_list_named(): change_log_list
     {
         $log_lst = new change_log_list();
-        $log_lst->add($this->dummy_log_named());
+        $log_lst->add($this->dummy_change_log_named());
         return $log_lst;
     }
 

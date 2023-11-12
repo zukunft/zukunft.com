@@ -34,9 +34,9 @@ namespace controller\log;
 include_once API_PATH . 'message_header.php';
 
 use api_message;
-use controller\controller;
 use cfg\sql_db;
 use cfg\user;
+use controller\controller;
 use JsonSerializable;
 
 class system_log_list_api extends api_message implements JsonSerializable

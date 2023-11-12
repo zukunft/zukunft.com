@@ -44,12 +44,11 @@ include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_HELPER_PATH . 'foaf_direction.php';
 include_once API_WORD_PATH . 'word_list.php';
 
-use api\word_list_api;
+use api\word\word_list_api;
 use cfg\db\sql;
 use cfg\db\sql_par_type;
 use cfg\group\group;
 use cfg\group\group_link;
-use cfg\group\phrase_group_word_link;
 use html\word\word as word_dsp;
 use html\word\word_list as word_list_dsp;
 

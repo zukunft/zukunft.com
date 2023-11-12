@@ -32,12 +32,12 @@
 
 namespace test;
 
-use api\phrase_group_api;
-use api\triple_api;
-use api\value_api;
-use api\word_api;
-use cfg\phrase_list;
-use cfg\value;
+use api\system\phrase_group_api;
+use api\system\triple_api;
+use api\system\value_api;
+use api\system\word_api;
+use cfg\log\phrase_list;
+use cfg\log\value;
 
 class value_unit_db_tests
 {

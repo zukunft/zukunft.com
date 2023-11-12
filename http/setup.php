@@ -9,9 +9,9 @@
 */
 
 // standard start for all php code that can be called
-use cfg\phrase_type;
+use cfg\log\phrase_type;
 use controller\controller;
-use cfg\user;
+use cfg\log\user;
 
 if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 const ROOT_PATH = __DIR__ . '/../';

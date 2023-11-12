@@ -29,7 +29,9 @@
 
 */
 
-namespace api;
+namespace api\phrase;
+
+use api\sandbox\type_object_api;
 
 class phrase_type_api extends type_object_api
 {

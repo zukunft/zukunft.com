@@ -29,7 +29,7 @@
 
 */
 
-namespace api;
+namespace api\user;
 
 class user_api
 {

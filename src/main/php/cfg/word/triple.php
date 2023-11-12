@@ -39,14 +39,18 @@ include_once MODEL_SANDBOX_PATH . 'sandbox_link_typed.php';
 include_once SERVICE_EXPORT_PATH . 'triple_exp.php';
 
 use api\api;
-use api\triple_api;
+use api\word\triple_api;
 use cfg\db\sql;
 use cfg\db\sql_par_type;
 use cfg\group\group_list;
+use cfg\log\change;
+use cfg\log\change_log_action;
+use cfg\log\change_log_link;
+use cfg\log\change_log_table;
 use html\html_base;
 use JsonSerializable;
-use model\export\exp_obj;
-use model\export\triple_exp;
+use cfg\export\sandbox_exp;
+use cfg\export\triple_exp;
 
 global $phrase_types;
 
@@ -1147,7 +1151,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
         $result = parent::import_obj($in_ex_json, $test_obj);
 
         foreach ($in_ex_json as $key => $value) {
-            if ($key == exp_obj::FLD_TYPE) {
+            if ($key == sandbox_exp::FLD_TYPE) {
                 $this->type_id = $phrase_types->id($value);
             }
             if ($key == self::FLD_EX_FROM) {
@@ -1184,7 +1188,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
                 }
                 $this->verb = $vrb;
             }
-            if ($key == exp_obj::FLD_VIEW) {
+            if ($key == sandbox_exp::FLD_VIEW) {
                 $trp_view = new view($this->user());
                 if (!$test_obj) {
                     $trp_view->load_by_name($value, view::class);
@@ -1238,7 +1242,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
      * create a triple object for the export
      * @return triple_exp a reduced triple object that can be used to create a JSON message
      */
-    function export_obj(bool $do_load = true): exp_obj
+    function export_obj(bool $do_load = true): sandbox_exp
     {
         global $phrase_types;
         global $share_types;
@@ -1662,9 +1666,9 @@ class triple extends sandbox_link_typed implements JsonSerializable
     /**
      * set the main log entry parameters for updating one display triple field
      */
-    function log_upd_field(): change_log_named
+    function log_upd_field(): change
     {
-        $log = new change_log_named($this->user());
+        $log = new change($this->user());
         $log->action = change_log_action::UPDATE;
         if ($this->can_change()) {
             $log->set_table(change_log_table::TRIPLE);

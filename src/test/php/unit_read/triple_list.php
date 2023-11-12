@@ -32,10 +32,10 @@
 
 namespace unit_read;
 
-use api\formula_api;
-use api\triple_api;
-use cfg\formula;
-use cfg\triple_list;
+use api\system\formula_api;
+use api\system\triple_api;
+use cfg\log\formula;
+use cfg\log\triple_list;
 use test\test_cleanup;
 
 class triple_list_unit_db_tests

@@ -32,10 +32,10 @@
 
 namespace test;
 
-use api\user_api;
-use cfg\user_profile_list;
-use cfg\user;
-use cfg\user_profile;
+use api\system\user_api;
+use cfg\log\user_profile_list;
+use cfg\log\user;
+use cfg\log\user_profile;
 
 class user_unit_db_tests
 {

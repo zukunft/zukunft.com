@@ -29,7 +29,7 @@
   
 */
 
-namespace cfg;
+namespace cfg\log;
 
 include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';
@@ -45,9 +45,16 @@ include_once API_LOG_PATH . 'system_log_list.php';
 include_once WEB_LOG_PATH . 'system_log_list.php';
 include_once WEB_LOG_PATH . 'system_log_list_old.php';
 
+use cfg\base_list;
 use cfg\db\sql;
 use cfg\db\sql_par_type;
-use cfg\log\system_log;
+use cfg\sandbox;
+use cfg\sql_db;
+use cfg\sql_par;
+use cfg\sys_log_function;
+use cfg\sys_log_status;
+use cfg\type_object;
+use cfg\user;
 use controller\log\system_log_list_api;
 use html\log\system_log_list_dsp_old;
 

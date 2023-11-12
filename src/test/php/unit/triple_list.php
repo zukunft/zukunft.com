@@ -35,7 +35,7 @@ namespace test;
 include_once MODEL_WORD_PATH . 'triple_list.php';
 include_once WEB_WORD_PATH . 'triple_list.php';
 
-use api\triple_api;
+use api\word\triple_api;
 use cfg\foaf_direction;
 use cfg\phrase_list;
 use cfg\triple;

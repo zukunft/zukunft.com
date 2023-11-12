@@ -46,7 +46,7 @@ namespace cfg;
 include_once DB_PATH . 'sql_par_type.php';
 include_once SERVICE_EXPORT_PATH . 'result_exp.php';
 
-use api\result_api;
+use api\result\result_api;
 use cfg\db\sql;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
@@ -57,8 +57,8 @@ use DateTime;
 use html\formula\formula as formula_dsp;
 use html\html_base;
 use im_export\export;
-use model\export\exp_obj;
-use model\export\result_exp;
+use cfg\export\sandbox_exp;
+use cfg\export\result_exp;
 
 class result extends sandbox_value
 {
@@ -1026,7 +1026,7 @@ class result extends sandbox_value
             }
             */
 
-            if ($key == exp_obj::FLD_NUMBER) {
+            if ($key == sandbox_exp::FLD_NUMBER) {
                 $this->value = $res;
             }
 

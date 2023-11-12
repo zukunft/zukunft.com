@@ -33,15 +33,15 @@ namespace html\log;
 
 include_once API_SANDBOX_PATH . 'user_config.php';
 
-use api\change_log_named_api;
-use api\user_config;
+use api\log\change_log_named_api;
+use api\sandbox\user_config;
 use html\api;
 use html\button;
 use html\html_base;
 use html\msg;
 use html\system\back_trace;
-use cfg\change_log_action;
-use cfg\change_log_table;
+use cfg\log\change_log_action;
+use cfg\log\change_log_table;
 use cfg\formula;
 
 class change_log_named extends change_log_named_api

@@ -34,8 +34,8 @@ namespace test;
 
 include_once MODEL_USER_PATH . 'user_message.php';
 
-use DateTimeInterface;
 use cfg\library;
+use DateTimeInterface;
 use cfg\user_message;
 
 global $db_con;

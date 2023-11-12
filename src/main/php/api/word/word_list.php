@@ -30,9 +30,9 @@
 
 */
 
-namespace api;
+namespace api\word;
 
-use cfg\phrase_type;
+use api\sandbox\list_api;
 use html\word\word_list as word_list_dsp;
 
 class word_list_api extends list_api

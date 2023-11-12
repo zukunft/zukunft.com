@@ -49,11 +49,11 @@ include_once API_FORMULA_PATH . 'formula.php';
 include_once WEB_FORMULA_PATH . 'formula.php';
 include_once WEB_WORD_PATH . 'word.php';
 
-use api\formula_api;
+use api\formula\formula_api;
 use cfg\db\sql;
 use cfg\db\sql_par_type;
-use model\export\exp_obj;
-use model\export\formula_exp;
+use cfg\export\sandbox_exp;
+use cfg\export\formula_exp;
 use DateTime;
 use Exception;
 use html\word\word as word_dsp;
@@ -1251,7 +1251,7 @@ class formula extends sandbox_typed
         $this->set_user($usr);
         $result = parent::import_obj($in_ex_json, $test_obj);
         foreach ($in_ex_json as $key => $value) {
-            if ($key == exp_obj::FLD_TYPE) {
+            if ($key == sandbox_exp::FLD_TYPE) {
                 $this->type_id = $formula_types->id($value);
             }
             if ($key == self::FLD_EXPRESSION) {
@@ -1323,9 +1323,9 @@ class formula extends sandbox_typed
      * @param bool $do_load true if the result should be validated again before export
      *                      use false for a faster export and unit tests
      * TODO check where if the exp_obj can be replaced with a simple array or the other way round
-     * @return exp_obj with the reduced formula object that can be used to create a JSON message
+     * @return sandbox_exp with the reduced formula object that can be used to create a JSON message
      */
-    function export_obj(bool $do_load = true): exp_obj
+    function export_obj(bool $do_load = true): sandbox_exp
     {
         global $formula_types;
         global $share_types;

@@ -53,11 +53,11 @@ include_once MODEL_SYSTEM_PATH . 'ip_range_list.php';
 include_once MODEL_USER_PATH . 'user_profile.php';
 include_once SERVICE_EXPORT_PATH . 'user_exp.php';
 
-use api\user_api;
+use api\user\user_api;
 use cfg\db\sql;
 use cfg\db\sql_par_type;
-use model\export\user_exp;
-use model\export\exp_obj;
+use cfg\export\user_exp;
+use cfg\export\sandbox_exp;
 use Exception;
 use html\user\user as user_dsp;
 
@@ -798,10 +798,10 @@ class user extends db_object_seq_id
         // reset all parameters of this user object
         $this->reset();
         foreach ($json_obj as $key => $value) {
-            if ($key == exp_obj::FLD_NAME) {
+            if ($key == sandbox_exp::FLD_NAME) {
                 $this->name = $value;
             }
-            if ($key == exp_obj::FLD_DESCRIPTION) {
+            if ($key == sandbox_exp::FLD_DESCRIPTION) {
                 $this->description = $value;
             }
             if ($key == self::FLD_EMAIL) {
@@ -819,7 +819,7 @@ class user extends db_object_seq_id
             if ($key == self::FLD_EX_PROFILE) {
                 $this->profile_id = $user_profiles->id($value);
             }
-            if ($key == exp_obj::FLD_CODE_ID) {
+            if ($key == sandbox_exp::FLD_CODE_ID) {
                 if ($profile_id == $user_profiles->id(user_profile::ADMIN)
                     or $profile_id == $user_profiles->id(user_profile::SYSTEM)) {
                     $this->code_id = $value;
@@ -847,9 +847,9 @@ class user extends db_object_seq_id
     /**
      * create a user object for the export
      * @param bool $do_load to switch off the database load for unit tests
-     * @return exp_obj the filled object used to create the json
+     * @return sandbox_exp the filled object used to create the json
      */
-    function export_obj(bool $do_load = true): exp_obj
+    function export_obj(bool $do_load = true): sandbox_exp
     {
         log_debug();
         $result = new user_exp();
@@ -1014,10 +1014,10 @@ class user extends db_object_seq_id
     }
 
     // set the main log entry parameters for updating one word field
-    private function log_upd(): change_log_named
+    private function log_upd(): change
     {
         log_debug(' user ' . $this->name);
-        $log = new change_log_named($this);
+        $log = new change($this);
         $log->action = change_log_action::UPDATE;
         $log->set_table(change_log_table::USER);
 

@@ -30,8 +30,9 @@
 
 */
 
-namespace api;
+namespace api\log;
 
+use api\sandbox\list_api;
 use JsonSerializable;
 
 class change_log_list_api extends list_api implements JsonSerializable

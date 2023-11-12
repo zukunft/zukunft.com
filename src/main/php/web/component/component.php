@@ -37,7 +37,7 @@ namespace html\component;
 include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
 
 use api\api;
-use api\word_api;
+use api\word\word_api;
 use cfg\component\component_type;
 use cfg\component_link_list;
 use cfg\library;
@@ -866,7 +866,7 @@ class component extends sandbox_typed
         $log_dsp = new user_log_display($this->user());
         $log_dsp->id = $this->id;
         $log_dsp->usr = $this->user();
-        $log_dsp->type = \cfg\component\component::class;
+        $log_dsp->type = component::class;
         $log_dsp->page = $page;
         $log_dsp->size = $size;
         $log_dsp->call = $call;

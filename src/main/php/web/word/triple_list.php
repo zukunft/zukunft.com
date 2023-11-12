@@ -34,7 +34,7 @@ namespace html\word;
 include_once WEB_SANDBOX_PATH . 'list.php';
 
 
-use cfg\phrase_type;
+use cfg\log\phrase_type;
 use html\html_base;
 use html\list_dsp;
 use html\word\triple as triple_dsp;

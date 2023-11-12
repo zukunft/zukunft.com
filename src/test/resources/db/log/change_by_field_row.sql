@@ -1,4 +1,4 @@
-PREPARE change_log_named_by_field_row (bigint, bigint, bigint, bigint) AS
+PREPARE change_by_field_row (bigint, bigint, bigint, bigint) AS
     SELECT s.change_id,
            s.user_id,
            s.change_time,

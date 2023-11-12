@@ -39,13 +39,13 @@
 */
 
 use controller\controller;
-use cfg\system_log;
+use cfg\log\system_log;
 use html\log\system_log as system_log_dsp;
 use html\html_base;
 use html\view\view as view_dsp;
-use cfg\user;
-use cfg\view;
-use cfg\word;
+use cfg\log\user;
+use cfg\log\view;
+use cfg\log\word;
 
 function err_dsp($err_id, $user_id): string
 {

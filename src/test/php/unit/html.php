@@ -37,10 +37,12 @@ include_once WEB_HTML_PATH . 'button.php';
 include_once WEB_RESULT_PATH . 'result_list.php';
 
 use api\component\component_api;
-use api\phrase_api;
-use api\result_api;
-use api\value_api;
-use api\word_api;
+use api\phrase\phrase_api;
+use api\phrase\phrase_group_api;
+use api\phrase\phrase_list_api;
+use api\result\result_api;
+use api\value\value_api;
+use api\word\word_api;
 use cfg\component\component;
 use cfg\component\component_type;
 use cfg\library;
@@ -49,7 +51,6 @@ use cfg\verb_list;
 use controller\controller;
 use html\button;
 use html\html_base;
-use html\html_selector;
 use html\msg;
 use html\result\result as result_dsp;
 use html\result\result_list as result_list_dsp;
@@ -132,50 +133,50 @@ class html_unit_tests
 
         // create a test set of phrase groups
         $grp_id = 1;
-        $phr_grp_city = new \api\phrase_group_api($grp_id); $grp_id++;
+        $phr_grp_city = new phrase_group_api($grp_id); $grp_id++;
         $phr_grp_city->add($phr_zh);
         $phr_grp_city->add($phr_city);
         $phr_grp_city->add($phr_inhabitant);
         $phr_grp_city->add($phr_2019);
-        $phr_grp_canton = new \api\phrase_group_api($grp_id); $grp_id++;
+        $phr_grp_canton = new phrase_group_api($grp_id); $grp_id++;
         $phr_grp_canton->add($phr_zh);
         $phr_grp_canton->add($phr_canton);
         $phr_grp_canton->add($phr_inhabitant);
         $phr_grp_canton->add($phr_mio);
         $phr_grp_canton->add($phr_2019);
-        $phr_grp_ch = new \api\phrase_group_api($grp_id);
+        $phr_grp_ch = new phrase_group_api($grp_id);
         $phr_grp_ch->add($phr_ch);
         $phr_grp_ch->add($phr_mio);
         $phr_grp_ch->add($phr_inhabitant);
         $phr_grp_ch->add($phr_2019);
-        $phr_grp_city_pct = new \api\phrase_group_api($grp_id); $grp_id++;
+        $phr_grp_city_pct = new phrase_group_api($grp_id); $grp_id++;
         $phr_grp_city_pct->add($phr_zh);
         $phr_grp_city_pct->add($phr_city);
         $phr_grp_city_pct->add($phr_inhabitant);
         $phr_grp_city_pct->add($phr_2019);
         $phr_grp_city_pct->add($phr_pct);
-        $phr_grp_canton_pct = new \api\phrase_group_api($grp_id); $grp_id++;
+        $phr_grp_canton_pct = new phrase_group_api($grp_id); $grp_id++;
         $phr_grp_canton_pct->add($phr_zh);
         $phr_grp_canton_pct->add($phr_canton);
         $phr_grp_canton_pct->add($phr_inhabitant);
         $phr_grp_canton_pct->add($phr_2019);
         $phr_grp_canton_pct->add($phr_pct);
-        $phr_lst_context = new \api\phrase_list_api();
+        $phr_lst_context = new phrase_list_api();
         $phr_lst_context->add($phr_inhabitant);
 
         // create the value for the inhabitants of the city of zurich
         $val_id = 1;
-        $val_city = new \api\value_api($val_id); $val_id++;
+        $val_city = new value_api($val_id); $val_id++;
         $val_city->set_grp($phr_grp_city);
         $val_city->set_number(value_api::TV_CITY_ZH_INHABITANTS_2019);
 
         // create the value for the inhabitants of the city of zurich
-        $val_canton = new \api\value_api($val_id); $val_id++;
+        $val_canton = new value_api($val_id); $val_id++;
         $val_canton->set_grp($phr_grp_canton);
         $val_canton->set_number(value_api::TV_CANTON_ZH_INHABITANTS_2020_IN_MIO);
 
         // create the value for the inhabitants of Switzerland
-        $val_ch = new \api\value_api($val_id);
+        $val_ch = new value_api($val_id);
         $val_ch->set_grp($phr_grp_ch);
         $val_ch->set_number(value_api::TV_CH_INHABITANTS_2019_IN_MIO);
 
@@ -208,7 +209,7 @@ class html_unit_tests
         $cmp_dsp = new component_dsp($cmp->api_json());
         $t->html_test($cmp_dsp->html(), 'component_text', $t);
 
-        $wrd = new \api\word_api();
+        $wrd = new word_api();
         $wrd->set_name(word_api::TN_ADD);
         $cmp->obj = $wrd;
 

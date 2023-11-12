@@ -34,7 +34,7 @@ namespace cfg;
 include_once DB_PATH . 'sql_par_type.php';
 include_once API_FORMULA_PATH . 'formula_list.php';
 
-use api\formula_list_api;
+use api\formula\formula_list_api;
 use cfg\db\sql;
 use cfg\db\sql_par_type;
 use html\formula\formula as formula_dsp;

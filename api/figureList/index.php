@@ -32,11 +32,11 @@
   
 */
 
-use cfg\fig_ids;
+use cfg\log\fig_ids;
 use controller\controller;
-use cfg\user;
-use cfg\figure_list;
-use api\figure_list_api;
+use cfg\log\user;
+use cfg\log\figure_list;
+use api\system\figure_list_api;
 
 // standard zukunft header for callable php files to allow debugging and lib loading
 global $debug;

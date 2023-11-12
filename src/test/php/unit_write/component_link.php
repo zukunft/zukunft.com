@@ -34,11 +34,11 @@ namespace test\write;
 
 use api\component\component_api;
 use api\view\view as view_api;
-use cfg\change_log_link;
-use cfg\change_log_table;
-use cfg\component\component;
-use cfg\component_link;
-use cfg\view;
+use cfg\log\change_log_link;
+use cfg\log\change_log_table;
+use cfg\log\component\component;
+use cfg\log\component_link;
+use cfg\log\view;
 use test\test_cleanup;
 use const test\TIMEOUT_LIMIT_DB_MULTI;
 

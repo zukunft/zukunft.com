@@ -28,10 +28,10 @@
 
 namespace test;
 
-use api\formula_api;
-use api\triple_api;
-use api\verb_api;
-use api\word_api;
+use api\formula\formula_api;
+use api\word\triple_api;
+use api\verb\verb_api;
+use api\word\word_api;
 use cfg\phrase_list;
 use cfg\trm_ids;
 use html\html_base;

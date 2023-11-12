@@ -31,7 +31,7 @@
 
 */
 
-namespace api;
+namespace api\sandbox;
 
 use JsonSerializable;
 

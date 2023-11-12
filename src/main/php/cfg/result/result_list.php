@@ -35,7 +35,7 @@ include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
 include_once API_RESULT_PATH . 'result_list.php';
 
-use api\result_list_api;
+use api\result\result_list_api;
 use cfg\db\sql;
 use cfg\db\sql_par_type;
 use cfg\group\group;

@@ -29,7 +29,7 @@
 
 */
 
-namespace api;
+namespace api\system;
 
 include_once MODEL_HELPER_PATH . 'db_object.php';
 include_once MODEL_USER_PATH . 'user.php';

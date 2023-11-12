@@ -30,9 +30,9 @@
 */
 
 use controller\controller;
-use cfg\user;
-use cfg\verb;
-use api\verb_api;
+use cfg\log\user;
+use cfg\log\verb;
+use api\system\verb_api;
 
 // standard zukunft header for callable php files to allow debugging and lib loading
 global $debug;

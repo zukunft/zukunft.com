@@ -35,20 +35,23 @@ namespace cfg;
 
 include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_HELPER_PATH . 'db_object.php';
-include_once MODEL_LOG_PATH . 'change_log_named.php';
+include_once MODEL_LOG_PATH . 'change.php';
 include_once API_VERB_PATH . 'verb.php';
 include_once SERVICE_EXPORT_PATH . 'verb_exp.php';
 include_once SERVICE_EXPORT_PATH . 'sandbox_exp_named.php';
 
-use api\verb_api;
+use api\verb\verb_api;
 use cfg\db\sql;
 use cfg\db\sql_par_type;
-use model\export\exp_obj;
-use model\export\sandbox_exp_named;
+use cfg\export\sandbox_exp;
+use cfg\export\sandbox_exp_named;
+use cfg\export\verb_exp;
+use cfg\log\change;
+use cfg\log\change_log_action;
+use cfg\log\change_log_table;
 use html\html_base;
 use html\html_selector;
 use html\verb\verb as verb_dsp;
-use verb_exp;
 
 class verb extends type_object
 {
@@ -488,17 +491,17 @@ class verb extends type_object
         $this->reset();
         $this->set_user($usr);
         foreach ($json_obj as $key => $value) {
-            if ($key == exp_obj::FLD_NAME) {
+            if ($key == sandbox_exp::FLD_NAME) {
                 $this->name = $value;
             }
-            if ($key == exp_obj::FLD_CODE_ID) {
+            if ($key == sandbox_exp::FLD_CODE_ID) {
                 if ($value != '') {
                     if ($this->user()->is_admin() or $this->user()->is_system()) {
                         $this->code_id = $value;
                     }
                 }
             }
-            if ($key == exp_obj::FLD_DESCRIPTION) {
+            if ($key == sandbox_exp::FLD_DESCRIPTION) {
                 $this->description = $value;
             }
             if ($key == self::FLD_REVERSE) {
@@ -771,10 +774,10 @@ class verb extends type_object
     }
 
     // set the log entry parameter for a new verb
-    private function log_add(): change_log_named
+    private function log_add(): change
     {
         log_debug('verb->log_add ' . $this->dsp_id());
-        $log = new change_log_named($this->usr);
+        $log = new change($this->usr);
         $log->action = change_log_action::ADD;
         $log->set_table(change_log_table::VERB);
         $log->set_field(self::FLD_NAME);
@@ -787,10 +790,10 @@ class verb extends type_object
     }
 
     // set the main log entry parameters for updating one verb field
-    private function log_upd(): change_log_named
+    private function log_upd(): change
     {
         log_debug('verb->log_upd ' . $this->dsp_id() . ' for user ' . $this->user()->name);
-        $log = new change_log_named($this->usr);
+        $log = new change($this->usr);
         $log->action = change_log_action::UPDATE;
         $log->set_table(change_log_table::VERB);
 
@@ -798,10 +801,10 @@ class verb extends type_object
     }
 
     // set the log entry parameter to delete a verb
-    private function log_del(): change_log_named
+    private function log_del(): change
     {
         log_debug('verb->log_del ' . $this->dsp_id() . ' for user ' . $this->user()->name);
-        $log = new change_log_named($this->usr);
+        $log = new change($this->usr);
         $log->action = change_log_action::DELETE;
         $log->set_table(change_log_table::VERB);
         $log->set_field(self::FLD_NAME);

@@ -39,6 +39,8 @@
 namespace cfg;
 
 use cfg\db\sql;
+use cfg\log\change_log_action;
+use cfg\log\change_log_link;
 use Exception;
 
 include_once MODEL_LOG_PATH . 'change_log_link.php';

@@ -30,11 +30,12 @@
 
 */
 
-namespace api;
+namespace api\formula;
 
 include_once API_SANDBOX_PATH . 'list.php';
 include_once API_FORMULA_PATH . 'figure.php';
 
+use api\sandbox\list_api;
 use JsonSerializable;
 
 class figure_list_api extends list_api implements JsonSerializable

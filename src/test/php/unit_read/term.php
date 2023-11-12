@@ -32,16 +32,16 @@
 
 namespace test;
 
-use api\formula_api;
-use api\triple_api;
-use api\verb_api;
-use api\word_api;
-use cfg\formula;
-use cfg\phrase;
-use cfg\term;
-use cfg\triple;
-use cfg\verb;
-use cfg\word;
+use api\system\formula_api;
+use api\system\triple_api;
+use api\system\verb_api;
+use api\system\word_api;
+use cfg\log\formula;
+use cfg\log\phrase;
+use cfg\log\term;
+use cfg\log\triple;
+use cfg\log\verb;
+use cfg\log\word;
 
 class term_unit_db_tests
 {

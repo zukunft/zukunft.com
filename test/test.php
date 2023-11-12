@@ -131,7 +131,7 @@
 
 */
 
-use cfg\user;
+use cfg\log\user;
 use test\string_unit_tests;
 use test\term_list_unit_db_tests;
 use test\test_unit_read_db;

@@ -30,7 +30,9 @@
 
 */
 
-namespace api;
+namespace api\ref;
+
+use api\sandbox\sandbox_api;
 
 class ref_api extends sandbox_api
 {

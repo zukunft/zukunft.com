@@ -29,12 +29,12 @@
   
 */
 
-use cfg\phrase;
+use cfg\log\phrase;
 use controller\controller;
-use cfg\user;
-use cfg\phr_ids;
-use cfg\phrase_list;
-use api\phrase_list_api;
+use cfg\log\user;
+use cfg\log\phr_ids;
+use cfg\log\phrase_list;
+use api\system\phrase_list_api;
 
 // standard zukunft header for callable php files to allow debugging and lib loading
 global $debug;

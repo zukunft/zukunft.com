@@ -38,8 +38,6 @@ include_once WEB_SANDBOX_PATH . 'sandbox_value.php';
 include_once API_SANDBOX_PATH . 'sandbox.php';
 include_once API_SANDBOX_PATH . 'sandbox_value.php';
 
-use api\sandbox_api;
-use api\sandbox_value_api;
 use controller\controller;
 use api\api;
 use html\api as api_dsp;

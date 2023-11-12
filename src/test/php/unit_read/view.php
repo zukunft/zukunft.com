@@ -34,13 +34,13 @@ namespace test;
 
 use api\component\component_api;
 use api\view\view as view_api;
-use cfg\component\component;
-use cfg\component\component_type;
-use cfg\component\component_type_list;
-use cfg\view;
-use cfg\view_sys_list;
-use cfg\view_type;
-use cfg\view_type_list;
+use cfg\log\component\component;
+use cfg\log\component\component_type;
+use cfg\log\component\component_type_list;
+use cfg\log\view;
+use cfg\log\view_sys_list;
+use cfg\log\view_type;
+use cfg\log\view_type_list;
 use controller\controller;
 
 class view_unit_db_tests

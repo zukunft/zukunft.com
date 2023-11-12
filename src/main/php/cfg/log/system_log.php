@@ -35,14 +35,14 @@ include_once MODEL_HELPER_PATH . 'db_object.php';
 include_once MODEL_HELPER_PATH . 'type_list.php';
 include_once MODEL_HELPER_PATH . 'type_object.php';
 include_once MODEL_SYSTEM_PATH . 'sys_log_function.php';
-include_once MODEL_LOG_PATH . 'change_log_named.php';
+include_once MODEL_LOG_PATH . 'change.php';
 include_once MODEL_LOG_PATH . 'change_log_action.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
 include_once API_SANDBOX_PATH . 'sandbox_value.php';
 include_once API_LOG_PATH . 'system_log.php';
 
-use cfg\change_log_action;
-use cfg\change_log_named;
+use cfg\log\change_log_action;
+use cfg\log\change;
 use cfg\db\sql;
 use cfg\db_object_seq_id;
 use cfg\library;
@@ -263,12 +263,12 @@ class system_log extends db_object_seq_id
 
     /**
      * set the main log entry parameters for updating one error field
-     * @return change_log_named the log object with the update presets
+     * @return change the log object with the update presets
      */
-    private function log_upd(): change_log_named
+    private function log_upd(): change
     {
         log_debug();
-        $log = new change_log_named($this->user());
+        $log = new change($this->user());
         $log->action = change_log_action::UPDATE;
         $log->set_table(sql_db::TBL_SYS_LOG);
 
@@ -286,10 +286,10 @@ class system_log extends db_object_seq_id
     /**
      * actually update an error field in the main database record or the user sandbox
      * @param sql_db $db_con the active database connection
-     * @param change_log_named $log the log object with the update presets
+     * @param change $log the log object with the update presets
      * @return bool true if the field has been updated
      */
-    private function save_field_do(sql_db $db_con, change_log_named $log): bool
+    private function save_field_do(sql_db $db_con, change $log): bool
     {
         log_debug();
         $result = true;

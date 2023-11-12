@@ -52,19 +52,36 @@ TODO:
 
 */
 
-namespace cfg;
+namespace cfg\log;
 
 include_once MODEL_HELPER_PATH . 'db_object_seq_id_user.php';
 include_once MODEL_VALUE_PATH . 'value.php';
 include_once MODEL_VALUE_PATH . 'value_phrase_link.php';
 include_once API_LOG_PATH . 'change_log.php';
 
-use api\change_log_api;
+use api\log\change_log_api;
+use cfg\component_link;
+use cfg\db_object_seq_id_user;
+use cfg\formula;
+use cfg\formula_link;
+use cfg\library;
 use cfg\component\component;
 use cfg\db\sql;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\group\group;
+use cfg\ref;
+use cfg\source;
+use cfg\sql_db;
+use cfg\triple;
+use cfg\type_object;
+use cfg\user;
+use cfg\value;
+use cfg\value_phrase_link;
+use cfg\verb;
+use cfg\view;
+use cfg\view_term_link;
+use cfg\word;
 use DateTime;
 use DateTimeInterface;
 use Exception;
@@ -394,7 +411,7 @@ class change_log extends db_object_seq_id_user
         $sc->set_class($this::class, false, $ext_type);
         $fields = array_merge(self::FLD_LST_KEY, $fld_row_id, $this::FLD_LST_CHANGE);
         $sql .= $sc->table_create($fields, $type_name,
-            $this::TBL_COMMENT . $type_name);
+            $this::TBL_COMMENT);
         $sql_index .= $sc->index_create($fields);
         $sql_foreign .= $sc->foreign_key_create($fields);
 

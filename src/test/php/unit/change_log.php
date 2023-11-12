@@ -33,18 +33,16 @@
 namespace test;
 
 include_once WEB_LOG_PATH . 'user_log_display.php';
-include_once MODEL_LOG_PATH . 'change_log_named.php';
+include_once MODEL_LOG_PATH . 'change.php';
 include_once MODEL_LOG_PATH . 'change_log_link.php';
 
-use api\triple_api;
-use html\log\user_log_display;
-use cfg\change_log_field;
-use cfg\change_log_link;
-use cfg\change_log_list;
-use cfg\change_log_named;
-use cfg\change_log_table;
+use api\word\triple_api;
 use cfg\library;
 use cfg\sql_db;
+use html\log\user_log_display;
+use cfg\log\change_log_link;
+use cfg\log\change_log_list;
+use cfg\log\change;
 use cfg\triple;
 use cfg\user;
 use cfg\word;
@@ -63,11 +61,18 @@ class change_log_unit_tests
         $t->resource_path = 'db/log/';
         $usr->set_id(1);
 
+
         $t->header('Unit tests of the user log display class (src/main/php/log/change_log_*.php)');
 
-        $t->subheader('SQL statement tests');
+        $t->subheader('SQL statement creation tests');
+        $log = $t->dummy_change_log_named();
+        // TODO activate
+        //$t->assert_sql_table_create($db_con, $log);
+        //$t->assert_sql_index_create($db_con, $log);
+        //$t->assert_sql_foreign_key_create($db_con, $log);
 
-        $log = new change_log_named($usr);
+        $t->subheader('SQL statement tests');
+        $log = new change($usr);
         $t->assert_sql_by_user($db_con, $log);
 
         $log = new change_log_link($usr);
@@ -87,7 +92,7 @@ class change_log_unit_tests
 
         // sql to load a log entry by field and row id
         // TODO check that user specific changes are included in the list of changes
-        $log = new change_log_named($usr);
+        $log = new change($usr);
         $this->assert_sql_named_by_field_row($t, $db_con, $log);
 
         // sql to load a log entry by field and row id
@@ -122,9 +127,9 @@ class change_log_unit_tests
      *
      * @param test_cleanup $t the test environment
      * @param sql_db $db_con does not need to be connected to a real database
-     * @param change_log_named $log the user sandbox object e.g. a word
+     * @param change $log the user sandbox object e.g. a word
      */
-    private function assert_sql_named_by_field_row(test_cleanup $t, sql_db $db_con, change_log_named $log): void
+    private function assert_sql_named_by_field_row(test_cleanup $t, sql_db $db_con, change $log): void
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;

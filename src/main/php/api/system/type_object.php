@@ -38,11 +38,9 @@
 
 */
 
-namespace api;
+namespace api\system;
 
 include_once API_SYSTEM_PATH . 'db_object.php';
-
-use api\system\db_object;
 
 class type_api extends db_object
 {

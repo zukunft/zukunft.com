@@ -31,8 +31,8 @@ namespace test;
 include_once MODEL_FORMULA_PATH . 'formula_list.php';
 include_once WEB_FORMULA_PATH . 'formula_list.php';
 
-use api\formula_api;
-use api\word_api;
+use api\formula\formula_api;
+use api\word\word_api;
 use cfg\formula;
 use cfg\triple;
 use cfg\verb;

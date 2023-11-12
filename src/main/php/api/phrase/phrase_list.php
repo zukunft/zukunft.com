@@ -30,11 +30,12 @@
 
 */
 
-namespace api;
+namespace api\phrase;
 
 include_once API_SANDBOX_PATH . 'list.php';
 include_once WEB_PHRASE_PATH . 'phrase_list.php';
 
+use api\sandbox\list_api;
 use html\phrase\phrase_list as phrase_list_dsp;
 use JsonSerializable;
 

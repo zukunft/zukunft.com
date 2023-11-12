@@ -30,14 +30,14 @@
 
 */
 
-namespace api;
+namespace api\verb;
 
 include_once API_SANDBOX_PATH . 'sandbox_named.php';
 include_once MODEL_VERB_PATH . 'verb.php';
 include_once WEB_PHRASE_PATH . 'term.php';
 
-use cfg\verb;
-use html\phrase\term as term_dsp;
+use api\phrase\term_api;
+use api\sandbox\sandbox_named_api;
 
 class verb_api extends sandbox_named_api
 {

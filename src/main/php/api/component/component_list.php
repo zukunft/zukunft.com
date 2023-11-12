@@ -32,7 +32,7 @@
 
 namespace api\component;
 
-use api\list_api;
+use api\sandbox\list_api;
 use html\word\word_list as word_list_dsp;
 
 class component_list extends list_api

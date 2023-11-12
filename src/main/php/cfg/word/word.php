@@ -49,14 +49,14 @@ include_once MODEL_REF_PATH . 'ref.php';
 include_once SERVICE_EXPORT_PATH . 'word_exp.php';
 
 use api\api;
-use api\word_api;
+use api\word\word_api;
 use cfg\db\sql;
 use cfg\db\sql_par_type;
 use cfg\group\group_list;
 use html\word\word as word_dsp;
-use model\export\exp_obj;
-use model\export\sandbox_exp_named;
-use model\export\word_exp;
+use cfg\export\sandbox_exp;
+use cfg\export\sandbox_exp_named;
+use cfg\export\word_exp;
 
 class word extends sandbox_typed
 {
@@ -759,7 +759,7 @@ class word extends sandbox_typed
         $this->set_user($usr);
         $result = parent::import_obj($in_ex_json, $test_obj);
         foreach ($in_ex_json as $key => $value) {
-            if ($key == exp_obj::FLD_TYPE) {
+            if ($key == sandbox_exp::FLD_TYPE) {
                 $this->type_id = $phrase_types->id($value);
             }
             if ($key == self::FLD_PLURAL) {
@@ -768,7 +768,7 @@ class word extends sandbox_typed
                 }
             }
             // TODO change to view object like in triple
-            if ($key == exp_obj::FLD_VIEW) {
+            if ($key == sandbox_exp::FLD_VIEW) {
                 $wrd_view = new view($this->user());
                 if (!$test_obj) {
                     $wrd_view->load_by_name($value, view::class);
@@ -891,13 +891,13 @@ class word extends sandbox_typed
 
         foreach ($api_json as $key => $value) {
 
-            if ($key == exp_obj::FLD_NAME) {
+            if ($key == sandbox_exp::FLD_NAME) {
                 $this->name = $value;
             }
-            if ($key == exp_obj::FLD_DESCRIPTION) {
+            if ($key == sandbox_exp::FLD_DESCRIPTION) {
                 $this->description = $value;
             }
-            if ($key == exp_obj::FLD_TYPE_ID) {
+            if ($key == sandbox_exp::FLD_TYPE_ID) {
                 $this->type_id = $value;
             }
         }
@@ -1536,13 +1536,13 @@ class word extends sandbox_typed
      * set the log entry parameters for a value update
      */
     private
-    function log_upd_view($view_id): change_log_named
+    function log_upd_view($view_id): change
     {
         log_debug($this->dsp_id() . ' for user ' . $this->user()->name);
         $msk_new = new view($this->user());
         $msk_new->load_by_id($view_id);
 
-        $log = new change_log_named($this->user());
+        $log = new change($this->user());
         $log->action = change_log_action::UPDATE;
         $log->set_table(change_log_table::WORD);
         $log->set_field(self::FLD_VIEW);

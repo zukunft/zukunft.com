@@ -452,19 +452,17 @@ use html\phrase\phrase_group as phrase_group_dsp;
 */
 
 use cfg\db_check;
-use cfg\sys_log_function;
-use cfg\sys_log_status;
-use cfg\type_lists;
-use cfg\verb_list;
-use cfg\view;
-use cfg\view_sys_list;
-use html\html_base;
-use html\view\view as view_dsp;
-use cfg\change_log;
 use cfg\library;
 use cfg\sql_db;
 use cfg\sys_log_level;
+use cfg\sys_log_status;
+use cfg\sys_log_function;
+use cfg\type_lists;
 use cfg\user;
+use cfg\view;
+use html\html_base;
+use html\view\view as view_dsp;
+use cfg\log\change_log;
 use test\test_cleanup;
 
 // the fixed system user
@@ -698,7 +696,7 @@ const ZUH_IMG_UNDO = "/src/main/resources/images/button_undo.svg";
 // classes that use a standard sql sequence for the database id
 const SQL_STD_CLASSES = [
     sys_log_status::class,
-    sys_log_functions::class
+    sys_log_function::class
 ];
 
 # list of JSON files that define the base configuration of zukunft.com that is supposed never to be changed

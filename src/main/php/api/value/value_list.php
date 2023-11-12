@@ -30,10 +30,11 @@
 
 */
 
-namespace api;
+namespace api\value;
 
 include_once API_SANDBOX_PATH . 'list_value.php';
 
+use api\sandbox\list_value_api;
 use html\value\value_list as value_list_dsp;
 
 class value_list_api extends list_value_api

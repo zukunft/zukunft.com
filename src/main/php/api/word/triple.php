@@ -30,11 +30,13 @@
 
 */
 
-namespace api;
+namespace api\word;
 
+use api\phrase\phrase_api;
+use api\phrase\term_api;
+use api\sandbox\sandbox_typed_api;
+use api\verb\verb_api;
 use cfg\phrase_type;
-use html\phrase\term as term_dsp;
-use cfg\triple;
 
 class triple_api extends sandbox_typed_api
 {

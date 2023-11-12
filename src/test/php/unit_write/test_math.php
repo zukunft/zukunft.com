@@ -30,8 +30,8 @@
 
 */
 
-use api\word_api;
-use cfg\word_list;
+use api\system\word_api;
+use cfg\log\word_list;
 use test\test_cleanup;
 use const test\TIMEOUT_LIMIT_LONG;
 use const test\TW_ABB;

@@ -36,8 +36,8 @@ include_once API_SANDBOX_PATH . 'sandbox_typed.php';
 include_once API_COMPONENT_PATH . 'component_list.php';
 include_once API_VIEW_PATH . 'component_link_list.php';
 
-use api\sandbox_typed_api;
 use api\component\component_list AS component_list_api;
+use api\sandbox\sandbox_typed_api;
 use api\view\component_link_list AS component_link_list_api;
 
 class view extends sandbox_typed_api

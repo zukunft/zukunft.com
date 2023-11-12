@@ -42,7 +42,7 @@ use cfg\component\component;
 use api\view\component_link as component_link_api;
 use cfg\db\sql;
 use cfg\db\sql_par_type;
-use model\export\exp_obj;
+use cfg\export\sandbox_exp;
 
 class component_link extends sandbox_link_with_type
 {
@@ -772,7 +772,7 @@ class component_link extends sandbox_link_with_type
      * fill the component export object to create a json
      * which does not include the internal database id
      */
-    function export_obj(bool $do_load = true): exp_obj
+    function export_obj(bool $do_load = true): sandbox_exp
     {
         $result = $this->tob->export_obj($do_load);
         if ($this->order_nbr >= 0) {

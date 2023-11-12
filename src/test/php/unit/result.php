@@ -34,8 +34,8 @@ namespace test;
 
 include_once API_RESULT_PATH . 'result.php';
 
-use api\result_api;
-use api\word_api;
+use api\result\result_api;
+use api\word\word_api;
 use cfg\formula;
 use cfg\group\group;
 use cfg\group\group_list;

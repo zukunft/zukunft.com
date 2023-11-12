@@ -34,14 +34,13 @@ namespace test\write;
 
 include_once MODEL_VALUE_PATH . 'value_dsp.php';
 
-use api\triple_api;
-use api\value_api;
-use api\word_api;
+use api\value\value_api;
+use api\word\word_api;
+use api\word\triple_api;
 use html\figure\figure as figure_dsp;
-use html\value\value as value_dsp;
-use cfg\change_log_field;
-use cfg\change_log_named;
-use cfg\change_log_table;
+use cfg\log\change_log_field;
+use cfg\log\change;
+use cfg\log\change_log_table;
 use cfg\library;
 use cfg\phrase_list;
 use cfg\value;
@@ -286,7 +285,7 @@ class value_test
 
         // ... check if the value adding has been logged
         if ($add_val->id() > 0) {
-            $log = new change_log_named($t->usr1);
+            $log = new change($t->usr1);
             $log->set_table(change_log_table::VALUE);
             $log->set_field(change_log_field::FLD_NUMERIC_VALUE);
             $log->row_id = $add_val->id();
@@ -328,7 +327,7 @@ class value_test
 
         // ... check if the value adding has been logged
         if ($add_val->id() > 0) {
-            $log = new change_log_named($t->usr1);
+            $log = new change($t->usr1);
             $log->set_table(change_log_table::VALUE);
             $log->set_field(change_log_field::FLD_NUMERIC_VALUE);
             $log->row_id = $add_val2->id();
@@ -356,7 +355,7 @@ class value_test
 
         // ... check if the value change has been logged
         if ($added_val->id() > 0) {
-            $log = new change_log_named($t->usr1);
+            $log = new change($t->usr1);
             $log->set_table(change_log_table::VALUE);
             $log->set_field(change_log_field::FLD_NUMERIC_VALUE);
             $log->row_id = $added_val->id();
@@ -394,7 +393,7 @@ class value_test
         $val_usr2 = new value($t->usr2);
         $val_usr2->load_by_id($added_val_id);
         if ($val_usr2->id() > 0) {
-            $log = new change_log_named($t->usr2);
+            $log = new change($t->usr2);
             $log->set_table(change_log_table::VALUE_USR);
             $log->set_field(change_log_field::FLD_NUMERIC_VALUE);
             $log->row_id = $val_usr2->id();
@@ -429,7 +428,7 @@ class value_test
         $val_usr2 = new value($t->usr2);
         $val_usr2->load_by_grp($phr_grp);
         if ($val_usr2->id() > 0) {
-            $log = new change_log_named($t->usr2);
+            $log = new change($t->usr2);
             $log->set_table(change_log_table::VALUE_USR);
             $log->set_field(change_log_field::FLD_NUMERIC_VALUE);
             $log->row_id = $val_usr2->id();

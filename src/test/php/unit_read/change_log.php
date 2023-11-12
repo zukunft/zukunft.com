@@ -33,16 +33,16 @@
 namespace test;
 
 use api\component\component_api;
-use api\formula_api;
-use api\source_api;
-use api\triple_api;
-use api\value_api;
-use api\verb_api;
+use api\system\formula_api;
+use api\system\source_api;
+use api\system\triple_api;
+use api\system\value_api;
+use api\system\verb_api;
 use api\view\view as view_api;
-use api\word_api;
-use cfg\change_log_field;
-use cfg\change_log_list;
-use cfg\word;
+use api\system\word_api;
+use cfg\log\change_log_field;
+use cfg\log\change_log_list;
+use cfg\log\word;
 
 class change_log_unit_db_tests
 {

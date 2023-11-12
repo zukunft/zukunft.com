@@ -32,11 +32,11 @@
 
 namespace unit\html;
 
-use api\term_api;
-use api\word_api;
+use api\system\term_api;
+use api\system\word_api;
 use html\html_base;
 use html\phrase\term_list as term_list_dsp;
-use cfg\verb;
+use cfg\log\verb;
 use test\test_cleanup;
 
 class term_list

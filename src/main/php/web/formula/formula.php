@@ -299,7 +299,7 @@ class formula extends sandbox_typed
         global $usr;
         $log_dsp = new user_log_display($usr);
         $log_dsp->id = $this->id;
-        $log_dsp->type = \cfg\formula::class;
+        $log_dsp->type = \cfg\log\formula::class;
         $log_dsp->page = $page;
         $log_dsp->size = $size;
         $log_dsp->call = $call;

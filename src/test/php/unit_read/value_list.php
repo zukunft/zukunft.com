@@ -32,12 +32,12 @@
 
 namespace test;
 
-use api\word_api;
-use cfg\config;
-use cfg\phrase;
-use cfg\value;
-use cfg\value_list;
-use cfg\word;
+use api\system\word_api;
+use cfg\log\config;
+use cfg\log\phrase;
+use cfg\log\value;
+use cfg\log\value_list;
+use cfg\log\word;
 
 class value_list_unit_db_tests
 {

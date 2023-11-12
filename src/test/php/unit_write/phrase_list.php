@@ -32,16 +32,16 @@
 
 namespace test\write;
 
-use api\phrase_api;
-use api\triple_api;
-use api\word_api;
-use cfg\phrase_type;
-use cfg\library;
-use cfg\phr_ids;
-use cfg\phrase_list;
-use cfg\triple;
-use cfg\verb;
-use cfg\word_list;
+use api\system\phrase_api;
+use api\system\triple_api;
+use api\system\word_api;
+use cfg\log\phrase_type;
+use cfg\log\library;
+use cfg\log\phr_ids;
+use cfg\log\phrase_list;
+use cfg\log\triple;
+use cfg\log\verb;
+use cfg\log\word_list;
 use test\test_cleanup;
 use const test\TW_2017;
 use const test\TW_ABB;

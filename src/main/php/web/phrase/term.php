@@ -41,9 +41,8 @@ include_once WEB_FORMULA_PATH . 'formula.php';
 include_once WEB_VERB_PATH . 'verb.php';
 
 use api\api;
-use api\combine_object_api;
-use api\term_api;
-use controller\controller;
+use api\phrase\term_api;
+use api\sandbox\combine_object_api;
 use html\combine_named_dsp;
 use html\formula\formula as formula_dsp;
 use html\verb\verb as verb_dsp;

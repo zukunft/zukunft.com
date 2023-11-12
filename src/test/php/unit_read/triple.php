@@ -32,13 +32,13 @@
 
 namespace unit_read;
 
-use api\triple_api;
-use cfg\phrase;
-use cfg\phrase_type;
-use cfg\phrase_types;
-use cfg\verb;
-use cfg\triple;
-use cfg\triple_list;
+use api\system\triple_api;
+use cfg\log\phrase;
+use cfg\log\phrase_type;
+use cfg\log\phrase_types;
+use cfg\log\verb;
+use cfg\log\triple;
+use cfg\log\triple_list;
 use test\test_cleanup;
 
 class triple_unit_db_tests

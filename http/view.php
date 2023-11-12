@@ -37,9 +37,9 @@
 use controller\controller;
 use html\api;
 use html\view\view as view_dsp;
-use cfg\user;
-use cfg\view;
-use cfg\word;
+use cfg\log\user;
+use cfg\log\view;
+use cfg\log\word;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . '/../';

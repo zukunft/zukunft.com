@@ -32,7 +32,7 @@
 
 namespace test;
 
-use api\formula_api;
+use api\system\formula_api;
 
 class expression_unit_db_tests
 {

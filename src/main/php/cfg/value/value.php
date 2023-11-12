@@ -70,19 +70,20 @@ include_once SERVICE_EXPORT_PATH . 'value_exp.php';
 include_once SERVICE_EXPORT_PATH . 'json.php';
 
 use api\api;
-use api\value_api;
+use api\value\value_api;
 use cfg\db\sql;
-use cfg\db\sql_field_default;
-use cfg\db\sql_field_type;
 use cfg\group\group;
+use cfg\log\change;
+use cfg\log\change_log_action;
+use cfg\log\change_log_table;
 use DateTime;
 use Exception;
 use html\value\value as value_dsp;
 use im_export\export;
 use math;
-use model\export\exp_obj;
-use model\export\source_exp;
-use model\export\value_exp;
+use cfg\export\sandbox_exp;
+use cfg\export\source_exp;
+use cfg\export\value_exp;
 
 class value extends sandbox_value
 {
@@ -312,7 +313,7 @@ class value extends sandbox_value
                 }
             }
 
-            if ($key == exp_obj::FLD_TIMESTAMP) {
+            if ($key == sandbox_exp::FLD_TIMESTAMP) {
                 if (strtotime($value)) {
                     $this->time_stamp = $lib->get_datetime($value, $this->dsp_id(), 'JSON import');
                 } else {
@@ -320,7 +321,7 @@ class value extends sandbox_value
                 }
             }
 
-            if ($key == exp_obj::FLD_NUMBER) {
+            if ($key == sandbox_exp::FLD_NUMBER) {
                 if (is_numeric($value)) {
                     $this->number = $value;
                 } else {
@@ -1122,7 +1123,7 @@ class value extends sandbox_value
     /**
      * create an object for the export
      */
-    function export_obj(bool $do_load = true): exp_obj
+    function export_obj(bool $do_load = true): sandbox_exp
     {
         global $share_types;
         global $protection_types;
@@ -1241,7 +1242,7 @@ class value extends sandbox_value
         global $protection_types;
         $lib = new library();
 
-        if ($key == exp_obj::FLD_TIMESTAMP) {
+        if ($key == sandbox_exp::FLD_TIMESTAMP) {
             if (strtotime($value)) {
                 $this->time_stamp = $lib->get_datetime($value, $this->dsp_id(), 'JSON import');
             } else {
@@ -1249,7 +1250,7 @@ class value extends sandbox_value
             }
         }
 
-        if ($key == exp_obj::FLD_NUMBER) {
+        if ($key == sandbox_exp::FLD_NUMBER) {
             if (is_numeric($value)) {
                 $this->number = $value;
             } else {
@@ -1531,10 +1532,10 @@ class value extends sandbox_value
     /**
      * set the log entry parameters for a value update
      */
-    function log_upd(): change_log_named
+    function log_upd(): change
     {
         log_debug('value->log_upd "' . $this->number . '" for user ' . $this->user()->id());
-        $log = new change_log_named($this->user());
+        $log = new change($this->user());
         $log->action = change_log_action::UPDATE;
         if ($this->can_change()) {
             $log->set_table(change_log_table::VALUE);

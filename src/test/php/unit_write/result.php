@@ -34,13 +34,13 @@
 
 namespace test\write;
 
-use api\formula_api;
-use api\result_api;
-use api\word_api;
-use cfg\phrase_list;
-use cfg\result;
-use cfg\result_list;
-use cfg\value;
+use api\system\formula_api;
+use api\system\result_api;
+use api\system\word_api;
+use cfg\log\phrase_list;
+use cfg\log\result;
+use cfg\log\result_list;
+use cfg\log\value;
 use test\test_cleanup;
 use const test\TIMEOUT_LIMIT_LONG;
 use const test\TIMEOUT_LIMIT_PAGE;

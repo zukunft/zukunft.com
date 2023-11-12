@@ -40,7 +40,7 @@ include_once DB_PATH . 'sql_par_type.php';
 include_once API_SYSTEM_PATH . 'batch_job_list.php';
 include_once MODEL_SYSTEM_PATH . 'base_list.php';
 
-use api\batch_job_list_api;
+use api\system\batch_job_list_api;
 use cfg\db\sql;
 use cfg\db\sql_par_type;
 use DateTime;

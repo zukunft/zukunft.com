@@ -44,15 +44,18 @@ include_once API_COMPONENT_PATH . 'component.php';
 include_once API_WORD_PATH . 'word.php';
 
 use api\component\component_api;
-use api\formula_api;
-use api\phrase_api;
-use api\source_api;
+use api\formula\formula_api;
+use api\phrase\phrase_api;
+use api\ref\source_api;
 use api\view\view as view_api;
-use api\word_api;
+use api\word\word_api;
 use cfg\db\sql;
 use cfg\db\sql_par_type;
+use cfg\log\change;
+use cfg\log\change_log_action;
+use cfg\log\change_log_link;
 use Exception;
-use model\export\exp_obj;
+use cfg\export\sandbox_exp;
 
 class sandbox_named extends sandbox
 {
@@ -365,10 +368,10 @@ class sandbox_named extends sandbox
     {
         $result = parent::import_obj($in_ex_json, $test_obj);
         foreach ($in_ex_json as $key => $value) {
-            if ($key == exp_obj::FLD_NAME) {
+            if ($key == sandbox_exp::FLD_NAME) {
                 $this->set_name($value);
             }
-            if ($key == exp_obj::FLD_DESCRIPTION) {
+            if ($key == sandbox_exp::FLD_DESCRIPTION) {
                 if ($value <> '') {
                     $this->description = $value;
                 }
@@ -387,11 +390,11 @@ class sandbox_named extends sandbox
      * for all not named objects like links, this function is overwritten
      * e.g. that the user can see "added formula 'scale millions' to word 'mio'"
      */
-    function log_add(): change_log_named
+    function log_add(): change
     {
         log_debug($this->dsp_id());
 
-        $log = new change_log_named($this->user());
+        $log = new change($this->user());
         // TODO add the table exceptions from sql_db
         $log->action = change_log_action::ADD;
         $log->set_table($this->obj_name . sql_db::TABLE_EXTENSION);
@@ -409,11 +412,11 @@ class sandbox_named extends sandbox
      * set the log entry parameter to delete a object
      * @returns change_log_link with the object presets e.g. th object name
      */
-    function log_del(): change_log_named
+    function log_del(): change
     {
         log_debug($this->dsp_id());
 
-        $log = new change_log_named($this->user());
+        $log = new change($this->user());
         $log->action = change_log_action::DELETE;
         $log->set_table($this->obj_name . sql_db::TABLE_EXTENSION);
         $log->set_field($this->obj_name . '_name');

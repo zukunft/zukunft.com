@@ -35,7 +35,7 @@ include_once DB_PATH . 'sql_par_type.php';
 include_once API_VALUE_PATH . 'value_list.php';
 include_once SERVICE_EXPORT_PATH . 'value_list_exp.php';
 
-use api\value_list_api;
+use api\value\value_list_api;
 use cfg\db\sql;
 use cfg\db\sql_par_type;
 use cfg\group\group;
@@ -44,9 +44,9 @@ use controller\controller;
 use html\button;
 use html\html_base;
 use html\phrase\phrase_list as phrase_list_dsp;
-use model\export\exp_obj;
-use model\export\source_exp;
-use model\export\value_list_exp;
+use cfg\export\sandbox_exp;
+use cfg\export\source_exp;
+use cfg\export\value_list_exp;
 
 class value_list extends sandbox_list
 {
@@ -602,7 +602,7 @@ class value_list extends sandbox_list
                 $val->grp = $phr_lst->get_grp_id($do_save);
             }
 
-            if ($key == exp_obj::FLD_TIMESTAMP) {
+            if ($key == sandbox_exp::FLD_TIMESTAMP) {
                 if (strtotime($value)) {
                     $val->time_stamp = $lib->get_datetime($value, $val->dsp_id(), 'JSON import');
                 } else {
@@ -667,7 +667,7 @@ class value_list extends sandbox_list
     /**
      * create a value list object for the JSON export
      */
-    function export_obj(bool $do_load = true): exp_obj
+    function export_obj(bool $do_load = true): sandbox_exp
     {
         log_debug();
         $result = new value_list_exp();

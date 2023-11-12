@@ -32,7 +32,7 @@
 
 */
 
-namespace api;
+namespace api\sandbox;
 
 include_once API_SANDBOX_PATH . 'combine_object.php';
 

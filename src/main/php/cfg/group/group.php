@@ -59,12 +59,12 @@ include_once MODEL_GROUP_PATH . 'group_link.php';
 include_once MODEL_GROUP_PATH . 'group_id.php';
 include_once API_PHRASE_PATH . 'phrase_group.php';
 
-use api\phrase_group_api;
+use api\phrase\phrase_group_api;
+use cfg\db_object;
 use cfg\db\sql;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par_type;
-use cfg\db_object;
 use cfg\library;
 use cfg\phr_ids;
 use cfg\phrase;
@@ -78,7 +78,7 @@ use cfg\user;
 use cfg\user_message;
 use cfg\value;
 use cfg\word;
-use model\export\exp_obj;
+use cfg\export\sandbox_exp;
 
 class group extends db_object
 {
@@ -1025,7 +1025,7 @@ class group extends db_object
 
         foreach ($api_json as $key => $value) {
 
-            if ($key == exp_obj::FLD_NAME) {
+            if ($key == sandbox_exp::FLD_NAME) {
                 $this->name = $value;
             }
         }

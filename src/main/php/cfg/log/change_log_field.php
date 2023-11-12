@@ -29,7 +29,11 @@
 
 */
 
-namespace cfg;
+namespace cfg\log;
+
+use cfg\sql_db;
+use cfg\type_list;
+use cfg\type_object;
 
 include_once DB_PATH . 'sql_db.php';
 include_once MODEL_LOG_PATH . 'change_log_table.php';

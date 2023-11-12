@@ -30,7 +30,9 @@
 
 */
 
-namespace api;
+namespace api\ref;
+
+use api\sandbox\sandbox_typed_api;
 
 include_once API_SANDBOX_PATH . 'sandbox_typed.php';
 

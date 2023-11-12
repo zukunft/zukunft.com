@@ -35,9 +35,8 @@ include_once MODEL_FORMULA_PATH . 'fig_ids.php';
 include_once API_FORMULA_PATH . 'figure_list.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
 
-use api\figure_list_api;
+use api\formula\figure_list_api;
 use cfg\db\sql;
-use cfg\db\sql_par_type;
 use html\figure\figure as figure_dsp;
 use html\value\value as value_dsp;
 use test\test_api;

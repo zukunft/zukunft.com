@@ -32,7 +32,7 @@
 
 namespace api\view;
 
-use api\sandbox_api;
+use api\sandbox\sandbox_api;
 use api\view\view as view_api;
 use api\component\component_api;
 use JsonSerializable;

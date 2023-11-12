@@ -31,7 +31,7 @@
 
 */
 
-use cfg\user;
+use cfg\log\user;
 use test\test_unit_read_db;
 use test\write\triple_test;
 use test\write\value_test;

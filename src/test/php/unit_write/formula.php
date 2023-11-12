@@ -32,19 +32,19 @@
 
 namespace test\write;
 
-use api\formula_api;
-use api\result_api;
-use api\word_api;
-use cfg\formula_type;
-use html\formula\formula as formula_dsp;
-use cfg\change_log_field;
-use cfg\change_log_named;
-use cfg\change_log_table;
-use cfg\formula;
+use api\formula\formula_api;
+use api\result\result_api;
+use api\word\word_api;
 use cfg\formula_list;
+use cfg\formula_type;
+use cfg\word;
+use html\formula\formula as formula_dsp;
+use cfg\log\change_log_field;
+use cfg\log\change;
+use cfg\log\change_log_table;
+use cfg\formula;
 use cfg\phrase_list;
 use cfg\sandbox_named;
-use cfg\word;
 use test\test_cleanup;
 use const test\TIMEOUT_LIMIT_DB_MULTI;
 use const test\TIMEOUT_LIMIT_PAGE;
@@ -311,7 +311,7 @@ class formula_test
         $t->display('formula->load the added "' . $frm->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI); // time limit???
 
         // ... check the correct logging
-        $log = new change_log_named($t->usr1);
+        $log = new change($t->usr1);
         $log->set_table(change_log_table::FORMULA);
         $log->set_field(change_log_field::FLD_FORMULA_NAME);
         $log->row_id = $frm->id();
@@ -346,7 +346,7 @@ class formula_test
         $t->display('formula->load renamed formula "' . formula_api::TN_RENAMED . '"', $target, $result);
 
         // ... and if the formula renaming has been logged
-        $log = new change_log_named($t->usr1);
+        $log = new change($t->usr1);
         $log->set_table(change_log_table::FORMULA);
         $log->set_field(change_log_field::FLD_FORMULA_NAME);
         $log->row_id = $frm_renamed->id();
@@ -382,7 +382,7 @@ class formula_test
         $t->display('formula->load need_all_val for "' . formula_api::TN_RENAMED . '"', $target, $result);
 
         // ... and if the formula parameter adding have been logged
-        $log = new change_log_named($t->usr1);
+        $log = new change($t->usr1);
         $log->set_table(change_log_table::FORMULA);
         $log->set_field(change_log_field::FLD_FORMULA_USR_TEXT);
         $log->row_id = $frm_reloaded->id();

@@ -48,12 +48,12 @@ include_once SERVICE_EXPORT_PATH . 'sandbox_exp.php';
 include_once SERVICE_EXPORT_PATH . 'source_exp.php';
 include_once WEB_REF_PATH . 'source.php';
 
-use api\source_api;
+use api\ref\source_api;
 use cfg\db\sql;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
-use model\export\exp_obj;
-use model\export\source_exp;
+use cfg\export\sandbox_exp;
+use cfg\export\source_exp;
 
 class source extends sandbox_typed
 {
@@ -385,7 +385,7 @@ class source extends sandbox_typed
             if ($key == self::FLD_URL) {
                 $this->url = $value;
             }
-            if ($key == exp_obj::FLD_TYPE) {
+            if ($key == sandbox_exp::FLD_TYPE) {
                 $this->type_id = $source_types->id($value);
             }
         }
@@ -403,9 +403,9 @@ class source extends sandbox_typed
     /**
      * create an object for the export
      * @param bool $do_load to switch off the database load for unit tests
-     * @return exp_obj the filled object used to create the json
+     * @return sandbox_exp the filled object used to create the json
      */
-    function export_obj(bool $do_load = true): exp_obj
+    function export_obj(bool $do_load = true): sandbox_exp
     {
         log_debug();
         $result = new source_exp();
@@ -442,16 +442,16 @@ class source extends sandbox_typed
 
         foreach ($api_json as $key => $value) {
 
-            if ($key == exp_obj::FLD_NAME) {
+            if ($key == sandbox_exp::FLD_NAME) {
                 $this->name = $value;
             }
             if ($key == self::FLD_URL) {
                 $this->url = $value;
             }
-            if ($key == exp_obj::FLD_DESCRIPTION) {
+            if ($key == sandbox_exp::FLD_DESCRIPTION) {
                 $this->description = $value;
             }
-            if ($key == exp_obj::FLD_TYPE_ID) {
+            if ($key == sandbox_exp::FLD_TYPE_ID) {
                 $this->type_id = $value;
             }
         }

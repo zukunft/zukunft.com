@@ -33,7 +33,7 @@
 
 namespace model;
 
-use cfg\type_object;
+use cfg\log\type_object;
 
 class db_cl
 {

@@ -30,11 +30,13 @@
 
 */
 
-namespace model\export;
+namespace cfg\export;
+
+use cfg\export\sandbox_exp;
 
 include_once SERVICE_EXPORT_PATH . 'sandbox_exp.php';
 
-class sandbox_exp_named extends exp_obj
+class sandbox_exp_named extends sandbox_exp
 {
 
     // field names used for JSON creation

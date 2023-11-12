@@ -53,7 +53,11 @@ use cfg\db\sql;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par_type;
-use model\export\exp_obj;
+use cfg\export\sandbox_exp;
+use cfg\log\change;
+use cfg\log\change_log;
+use cfg\log\change_log_action;
+use cfg\log\change_log_link;
 use Exception;
 
 class sandbox extends db_object_seq_id_user
@@ -771,12 +775,12 @@ class sandbox extends db_object_seq_id_user
      * create an object for the export which does not include the internal references
      * to be overwritten by the child object
      *
-     * @return exp_obj a reduced export object that can be used to create a JSON message
+     * @return sandbox_exp a reduced export object that can be used to create a JSON message
      */
-    function export_obj(): exp_obj
+    function export_obj(): sandbox_exp
     {
         log_warning($this::class . ' does not have an expected instance of the export_obj function');
-        return (new exp_obj());
+        return (new sandbox_exp());
     }
 
 
@@ -1331,11 +1335,11 @@ class sandbox extends db_object_seq_id_user
      * for all not named objects like links, this function is overwritten
      * e.g. that the user can see "added formula 'scale millions' to word 'mio'"
      */
-    function log_add(): change_log_named
+    function log_add(): change
     {
         log_debug($this->dsp_id());
 
-        $log = new change_log_named($this->user());
+        $log = new change($this->user());
 
         $log->action = change_log_action::ADD;
         // TODO add the table exceptions from sql_db
@@ -1376,10 +1380,10 @@ class sandbox extends db_object_seq_id_user
     /**
      * create a log object for an update of an object field
      */
-    function log_upd_field(): change_log_named
+    function log_upd_field(): change
     {
         log_debug($this->dsp_id());
-        $log = new change_log_named($this->user());
+        $log = new change($this->user());
         return $this->log_upd_common($log);
     }
 
@@ -1420,12 +1424,12 @@ class sandbox extends db_object_seq_id_user
 
     /**
      * dummy function definition that will be overwritten by the child object
-     * @return change_log_named
+     * @return change
      */
-    function log_del(): change_log_named
+    function log_del(): change
     {
         log_err('The dummy parent method get_similar has been called, which should never happen');
-        return new change_log_named($this->user());
+        return new change($this->user());
     }
 
     /**
@@ -1456,10 +1460,10 @@ class sandbox extends db_object_seq_id_user
      * actually update a field in the main database record or the user sandbox
      * the usr id is taken into account in sql_db->update (maybe move outside)
      * @param sql_db $db_con the active database connection that should be used
-     * @param change_log_named|change_log_link $log the log object to track the change and allow a rollback
+     * @param change|change_log_link $log the log object to track the change and allow a rollback
      * @return string an empty string if everything is fine or the message that should be shown to the user
      */
-    function save_field_user(sql_db $db_con, change_log_named|change_log_link $log): string
+    function save_field_user(sql_db $db_con, change|change_log_link $log): string
     {
         $result = '';
 
@@ -1520,10 +1524,10 @@ class sandbox extends db_object_seq_id_user
      * without user the user sandbox
      * the usr id is taken into account in sql_db->update (maybe move outside)
      * @param sql_db $db_con the active database connection that should be used
-     * @param change_log_named|change_log_link $log the log object to track the change and allow a rollback
+     * @param change|change_log_link $log the log object to track the change and allow a rollback
      * @return string an empty string if everything is fine or the message that should be shown to the user
      */
-    function save_field(sql_db $db_con, change_log_named|change_log_link $log): string
+    function save_field(sql_db $db_con, change|change_log_link $log): string
     {
         $result = '';
 

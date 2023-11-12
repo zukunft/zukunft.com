@@ -30,9 +30,9 @@
 
 */
 
-namespace api;
+namespace api\system;
 
-use cfg\phrase_type;
+use api\sandbox\list_api;
 use JsonSerializable;
 
 class batch_job_list_api extends list_api implements JsonSerializable

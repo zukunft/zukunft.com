@@ -33,9 +33,9 @@
 
 */
 
-namespace model\export;
+namespace cfg\export;
 
-class exp_obj
+class sandbox_exp
 {
     // the field names used for the im- and export in the json or yaml format
     const FLD_NAME = 'name';

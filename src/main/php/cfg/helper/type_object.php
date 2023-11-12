@@ -44,9 +44,8 @@ namespace cfg;
 include_once DB_PATH . 'sql_par_type.php';
 include_once API_SANDBOX_PATH . 'type_object.php';
 
-use api\type_object_api;
+use api\sandbox\type_object_api;
 use cfg\db\sql;
-use cfg\db\sql_par_type;
 use JsonSerializable;
 use model\db_cl;
 

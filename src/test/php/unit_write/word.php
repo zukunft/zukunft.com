@@ -32,14 +32,14 @@
 
 namespace test\write;
 
-use api\formula_api;
-use api\triple_api;
-use api\word_api;
-use html\word\word as word_dsp;
+use api\formula\formula_api;
+use api\word\triple_api;
+use api\word\word_api;
 use cfg\phrase_type;
-use cfg\change_log_field;
-use cfg\change_log_named;
-use cfg\change_log_table;
+use html\word\word as word_dsp;
+use cfg\log\change_log_field;
+use cfg\log\change;
+use cfg\log\change_log_table;
 use cfg\formula;
 use cfg\library;
 use cfg\sandbox_named;
@@ -314,7 +314,7 @@ class word_test
 
         // ... check if the word creation has been logged
         if ($wrd_add->id() > 0) {
-            $log = new change_log_named($t->usr1);
+            $log = new change($t->usr1);
             $log->set_table(change_log_table::WORD);
             $log->set_field(change_log_field::FLD_WORD_NAME);
             $log->row_id = $wrd_add->id();
@@ -349,7 +349,7 @@ class word_test
         $t->display('word->load renamed word "' . word_api::TN_RENAMED . '"', $target, $result);
 
         // check if the word renaming has been logged
-        $log = new change_log_named($t->usr1);
+        $log = new change($t->usr1);
         $log->set_table(change_log_table::WORD);
         $log->set_field(change_log_field::FLD_WORD_NAME);
         $log->row_id = $wrd_renamed->id();
@@ -379,7 +379,7 @@ class word_test
         $t->display('word->load type_id for "' . word_api::TN_RENAMED . '"', $target, $result);
 
         // check if the word parameter adding have been logged
-        $log = new change_log_named($t->usr1);
+        $log = new change($t->usr1);
         $log->set_table(change_log_table::WORD);
         $log->set_field(change_log_field::FLD_WORD_PLURAL);
         $log->row_id = $wrd_reloaded->id();

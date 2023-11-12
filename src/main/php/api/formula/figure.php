@@ -30,10 +30,13 @@
 
 */
 
-namespace api;
+namespace api\formula;
 
 include_once API_SANDBOX_PATH . 'combine_object.php';
 
+use api\result\result_api;
+use api\sandbox\combine_object_api;
+use api\value\value_api;
 use JsonSerializable;
 
 class figure_api extends combine_object_api implements JsonSerializable

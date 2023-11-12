@@ -35,12 +35,12 @@ namespace test;
 include_once API_WORD_PATH . 'word.php';
 include_once API_WORD_PATH . 'triple.php';
 
-use api\verb_api;
-use api\word_api;
-use api\triple_api;
-use cfg\word;
-use cfg\verb;
-use cfg\verb_list;
+use api\system\verb_api;
+use api\system\word_api;
+use api\system\triple_api;
+use cfg\log\word;
+use cfg\log\verb;
+use cfg\log\verb_list;
 
 class verb_unit_db_tests
 {

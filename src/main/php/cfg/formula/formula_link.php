@@ -32,6 +32,9 @@
 namespace cfg;
 
 use cfg\db\sql;
+use cfg\log\change;
+use cfg\log\change_log_action;
+use cfg\log\change_log_table;
 
 include_once MODEL_SANDBOX_PATH . 'sandbox_link_with_type.php';
 
@@ -536,11 +539,11 @@ class formula_link extends sandbox_link_with_type
     /**
      * set the main log entry parameters for updating one display word link field
      * e.g. that the user can see "moved formula list to position 3 in word view"
-     * @return change_log_named the change log object with the presets for formula links
+     * @return change the change log object with the presets for formula links
      */
-    function log_upd_field(): change_log_named
+    function log_upd_field(): change
     {
-        $log = new change_log_named($this->user());
+        $log = new change($this->user());
         $log->action = change_log_action::UPDATE;
         if ($this->can_change()) {
             $log->set_table(change_log_table::FORMULA_LINK);

@@ -33,8 +33,8 @@
 use controller\controller;
 use html\html_base;
 use html\view\view as view_dsp;
-use cfg\user;
-use cfg\view;
+use cfg\log\user;
+use cfg\log\view;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . '/../';

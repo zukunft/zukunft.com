@@ -39,7 +39,7 @@ include_once MODEL_PHRASE_PATH . 'term.php';
 include_once WEB_PHRASE_PATH . 'term_list.php';
 include_once API_PHRASE_PATH . 'term_list.php';
 
-use api\term_list_api;
+use api\phrase\term_list_api;
 use cfg\db\sql;
 use cfg\db\sql_par_type;
 use html\phrase\term_list as term_list_dsp;

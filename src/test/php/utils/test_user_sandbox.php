@@ -30,9 +30,9 @@
 
 */
 
-use cfg\phrase_type;
-use cfg\source;
-use cfg\word;
+use cfg\log\phrase_type;
+use cfg\log\source;
+use cfg\log\word;
 use test\test_cleanup;
 use const test\TS_IPCC_AR6_SYNTHESIS;
 use const test\TS_IPCC_AR6_SYNTHESIS_URL;

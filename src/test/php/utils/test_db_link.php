@@ -30,7 +30,7 @@
 
 */
 
-use cfg\change_log_table;
+use cfg\log\change_log_table;
 use test\test_cleanup;
 
 function run_db_link_test(test_cleanup $t): void

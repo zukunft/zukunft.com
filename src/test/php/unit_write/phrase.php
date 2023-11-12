@@ -32,14 +32,14 @@
 
 namespace test\write;
 
-use api\phrase_api;
-use api\triple_api;
-use api\word_api;
-use cfg\library;
-use cfg\phrase;
-use cfg\triple;
-use cfg\verb;
-use cfg\word;
+use api\system\phrase_api;
+use api\system\triple_api;
+use api\system\word_api;
+use cfg\log\library;
+use cfg\log\phrase;
+use cfg\log\triple;
+use cfg\log\verb;
+use cfg\log\word;
 use test\test_cleanup;
 use html\phrase\phrase as phrase_dsp;
 use const test\TIMEOUT_LIMIT_PAGE;

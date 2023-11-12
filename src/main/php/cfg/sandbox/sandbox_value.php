@@ -41,6 +41,10 @@ use cfg\db\sql;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\group\group;
+use cfg\log\change;
+use cfg\log\change_log_action;
+use cfg\log\change_log_field;
+use cfg\log\change_log_link;
 use DateTime;
 use Exception;
 
@@ -442,11 +446,11 @@ class sandbox_value extends sandbox_non_seq_id
      * for all not named objects like links, this function is overwritten
      * e.g. that the user can see "added formula 'scale millions' to word 'mio'"
      */
-    function log_add(): change_log_named
+    function log_add(): change
     {
         log_debug($this->dsp_id());
 
-        $log = new change_log_named($this->user());
+        $log = new change($this->user());
         $log->action = change_log_action::ADD;
         $log->set_table($this->obj_name . sql_db::TABLE_EXTENSION);
         $log->set_field(change_log_field::FLD_NUMERIC_VALUE);
@@ -461,22 +465,22 @@ class sandbox_value extends sandbox_non_seq_id
 
     /**
      * TODO create and use change_log_value
-     * @return change_log_named
+     * @return change
      */
-    function log_add_value(): change_log_named
+    function log_add_value(): change
     {
-        return new change_log_named($this->user());
+        return new change($this->user());
     }
 
     /**
      * set the log entry parameter to delete a object
      * @returns change_log_link with the object presets e.g. th object name
      */
-    function log_del(): change_log_named
+    function log_del(): change
     {
         log_debug($this->dsp_id());
 
-        $log = new change_log_named($this->user());
+        $log = new change($this->user());
         $log->action = change_log_action::DELETE;
         $log->set_table($this->obj_name . sql_db::TABLE_EXTENSION);
         $log->set_field(change_log_field::FLD_NUMERIC_VALUE);
@@ -555,12 +559,12 @@ class sandbox_value extends sandbox_non_seq_id
      * but the technical log needs to remember in which actual table the change has been saved
      *
      * @param sql_db $db_con the active database connection that should be used
-     * @param change_log_named|change_log_link $log the log object to track the change and allow a rollback
+     * @param change|change_log_link $log the log object to track the change and allow a rollback
      * @return string an empty string if everything is fine or the message that should be shown to the user
      */
     function save_field_user(
         sql_db                           $db_con,
-        change_log_named|change_log_link $log
+        change|change_log_link $log
     ): string
     {
         $result = '';

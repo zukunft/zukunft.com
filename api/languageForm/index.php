@@ -33,8 +33,8 @@
 */
 
 use controller\controller;
-use cfg\user;
-use cfg\language_form;
+use cfg\log\user;
+use cfg\log\language_form;
 
 // standard zukunft header for callable php files to allow debugging and lib loading
 global $debug;

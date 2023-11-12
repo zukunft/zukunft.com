@@ -31,9 +31,9 @@ namespace test;
 include_once MODEL_PHRASE_PATH . 'phr_ids.php';
 include_once MODEL_PHRASE_PATH . 'phrase_list.php';
 
-use api\phrase_api;
-use api\triple_api;
-use api\word_api;
+use api\phrase\phrase_api;
+use api\word\triple_api;
+use api\word\word_api;
 use cfg\db\sql;
 use cfg\foaf_direction;
 use cfg\phrase_type;

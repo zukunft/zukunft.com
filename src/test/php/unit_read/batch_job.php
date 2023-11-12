@@ -32,9 +32,9 @@
 
 namespace test;
 
-use cfg\batch_job_list;
-use cfg\batch_job_type_list;
-use cfg\user;
+use cfg\log\batch_job_list;
+use cfg\log\batch_job_type_list;
+use cfg\log\user;
 
 class batch_job_unit_db_tests
 {

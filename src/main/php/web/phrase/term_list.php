@@ -34,20 +34,14 @@
 
 namespace html\phrase;
 
-use api\combine_object_api;
-use api\term_api;
-use html\html_selector;
+use api\phrase\term_api;
+use api\sandbox\combine_object_api;
 use html\list_dsp;
-use html\phrase\term as term_dsp;
 use html\word\word as word_dsp;
 use html\word\triple as triple_dsp;
 use html\formula\formula as formula_dsp;
 use html\verb\verb as verb_dsp;
-use cfg\formula;
 use cfg\library;
-use cfg\triple;
-use cfg\verb;
-use cfg\word;
 
 include_once WEB_SANDBOX_PATH . 'list.php';
 

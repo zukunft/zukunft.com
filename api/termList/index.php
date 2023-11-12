@@ -30,10 +30,10 @@
 */
 
 use controller\controller;
-use cfg\user;
-use cfg\trm_ids;
-use cfg\term_list;
-use api\term_list_api;
+use cfg\log\user;
+use cfg\log\trm_ids;
+use cfg\log\term_list;
+use api\system\term_list_api;
 
 // standard zukunft header for callable php files to allow debugging and lib loading
 global $debug;

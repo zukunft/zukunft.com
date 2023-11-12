@@ -36,25 +36,24 @@ namespace cfg\component;
 include_once DB_PATH . 'sql_par_type.php';
 
 use api\component\component_api;
-use cfg\change_log_action;
-use cfg\change_log_link;
-use cfg\change_log_table;
+use cfg\export\component_exp;
+use cfg\log\change_log_action;
+use cfg\log\change_log_link;
+use cfg\log\change_log_table;
 use cfg\component_link;
 use cfg\component_link_list;
-use cfg\db\sql;
 use cfg\formula;
 use cfg\phrase;
 use cfg\sandbox;
 use cfg\sandbox_named;
 use cfg\sandbox_typed;
+use cfg\db\sql;
 use cfg\sql_db;
 use cfg\sql_par;
 use cfg\user;
 use cfg\user_message;
 use cfg\word;
-use html\component\component as component_dsp;
-use model\export\exp_obj;
-use model\export\component_exp;
+use cfg\export\sandbox_exp;
 
 class component extends sandbox_typed
 {
@@ -604,21 +603,21 @@ class component extends sandbox_typed
             if ($key == self::FLD_POSITION) {
                 $this->order_nbr = $value;
             }
-            if ($key == exp_obj::FLD_TYPE) {
+            if ($key == sandbox_exp::FLD_TYPE) {
                 if ($value != '') {
                     if ($this->user()->is_admin() or $this->user()->is_system()) {
                         $this->type_id = $this->type_id_by_code_id($value);
                     }
                 }
             }
-            if ($key == exp_obj::FLD_CODE_ID) {
+            if ($key == sandbox_exp::FLD_CODE_ID) {
                 if ($value != '') {
                     if ($this->user()->is_admin() or $this->user()->is_system()) {
                         $this->code_id = $value;
                     }
                 }
             }
-            if ($key == exp_obj::FLD_UI_MSG_ID) {
+            if ($key == sandbox_exp::FLD_UI_MSG_ID) {
                 if ($value != '') {
                     if ($this->user()->is_admin() or $this->user()->is_system()) {
                         $this->ui_msg_code_id = $value;
@@ -642,7 +641,7 @@ class component extends sandbox_typed
      * fill the component export object to create a json
      * which does not include the internal database id
      */
-    function export_obj(bool $do_load = true): exp_obj
+    function export_obj(bool $do_load = true): sandbox_exp
     {
         log_debug('component->export_obj ' . $this->dsp_id());
         $result = new component_exp();

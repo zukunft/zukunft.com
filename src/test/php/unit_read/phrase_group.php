@@ -32,9 +32,9 @@
 
 namespace test;
 
-use api\word_api;
-use cfg\group\group;
-use cfg\phrase_list;
+use api\system\word_api;
+use cfg\log\group\group;
+use cfg\log\phrase_list;
 
 class phrase_group_unit_db_tests
 {

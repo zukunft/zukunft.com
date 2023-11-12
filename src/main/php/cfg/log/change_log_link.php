@@ -44,13 +44,20 @@
   
 */
 
-namespace cfg;
+namespace cfg\log;
 
 use cfg\db\sql;
+use cfg\source;
+use cfg\sql_db;
+use cfg\sql_par;
+use cfg\user;
+use cfg\word;
 use Exception;
 
+include_once MODEL_LOG_PATH . 'change_log.php';
 include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';
+include_once MODEL_USER_PATH . 'user.php';
 
 class change_log_link extends change_log
 {

@@ -30,7 +30,9 @@
 
 */
 
-namespace api;
+namespace api\sandbox;
+
+use api\sandbox\sandbox_api;
 
 include_once API_SANDBOX_PATH . 'sandbox.php';
 

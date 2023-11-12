@@ -1,4 +1,4 @@
-PREPARE change_log_named_by_user_last FROM
+PREPARE change_by_user_last FROM
     'SELECT s.change_id,
             s.user_id,
             s.change_time,

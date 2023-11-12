@@ -35,7 +35,7 @@
 */
 
 use controller\controller;
-use cfg\user;
+use cfg\log\user;
 
 // standard zukunft header for callable php files to allow debugging and lib loading
 global $debug;

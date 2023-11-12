@@ -34,7 +34,7 @@ namespace unit\html;
 
 include_once WEB_WORD_PATH . 'word_list.php';
 
-use api\word_api;
+use api\word\word_api;
 use cfg\phrase_type;
 use html\html_base;
 use html\word\word as word_dsp;
