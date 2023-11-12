@@ -69,7 +69,10 @@ class result extends sandbox_value
 
     // database fields only used for results
     const FLD_ID = 'group_id';
+    const FLD_SOURCE = 'source_';
+    // TODO replace with result::FLD_SOURCE . group::FLD_ID
     const FLD_SOURCE_GRP = 'source_group_id';
+    // TODO replace with group::FLD_ID
     const FLD_GRP = 'group_id';
     const FLD_VALUE = 'numeric_value';
     const FLD_LAST_UPDATE = 'last_update';
@@ -90,13 +93,13 @@ class result extends sandbox_value
     );
     const FLD_ALL_SOURCE = array();
     const FLD_ALL_SOURCE_GROUP = array(
-        ['source_' . group::FLD_ID, sql_field_type::REF_512, sql_field_default::NULL, sql::INDEX, '', '512-bit reference to the sorted phrase list used to calculate this result'],
+        [self::FLD_SOURCE . group::FLD_ID, sql_field_type::REF_512, sql_field_default::NULL, sql::INDEX, '', '512-bit reference to the sorted phrase list used to calculate this result'],
     );
     const FLD_ALL_SOURCE_GROUP_PRIME = array(
-        ['source_' . group::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', '64-bit reference to the sorted phrase list used to calculate this result'],
+        [self::FLD_SOURCE . group::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', '64-bit reference to the sorted phrase list used to calculate this result'],
     );
     const FLD_ALL_SOURCE_GROUP_BIG = array(
-        ['source_' . group::FLD_ID, sql_field_type::TEXT, sql_field_default::NULL, sql::INDEX, '', 'text reference to the sorted phrase list used to calculate this result'],
+        [self::FLD_SOURCE . group::FLD_ID, sql_field_type::TEXT, sql_field_default::NULL, sql::INDEX, '', 'text reference to the sorted phrase list used to calculate this result'],
     );
     const FLD_ALL_OWNER = array(
         [user::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, user::class, 'the id of the user who has requested the calculation'],
@@ -169,7 +172,7 @@ class result extends sandbox_value
         $result = parent::row_mapper($db_row, self::FLD_ID);
         if ($result) {
             $this->frm->set_id($db_row[formula::FLD_ID]);
-            $this->grp->set_id($db_row[self::FLD_GRP]);
+            $this->grp->set_id($db_row[group::FLD_ID]);
             $this->src_grp->set_id($db_row[self::FLD_SOURCE_GRP]);
             $this->value = $db_row[self::FLD_VALUE];
             $this->owner_id = $db_row[user::FLD_ID];

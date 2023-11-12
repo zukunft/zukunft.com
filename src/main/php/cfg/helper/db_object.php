@@ -72,7 +72,7 @@ class db_object
     /**
      * the sql statement to create the table for this (or a child) object
      *
-     * @param sql $sc ith the target db_type set
+     * @param sql $sc with the target db_type set
      * @param bool $usr_table true if the table should save the user specific changes
      * @param array $fields array with all fields and all parameter for the table creation in a two-dimensional array
      * @param string $tbl_comment if given the comment that should be added to the sql create table statement
@@ -95,7 +95,7 @@ class db_object
     /**
      * the name of the sql table for this (or a child) object
      *
-     * @param sql $sc ith the target db_type set
+     * @param sql $sc with the target db_type set
      * @param bool $usr_table true if the table should save the user specific changes
      * @return string the sql statement to create the table
      */
@@ -110,7 +110,7 @@ class db_object
     /**
      * the sql statement to create the indices for this (or a child) object
      *
-     * @param sql $sc ith the target db_type set
+     * @param sql $sc with the target db_type set
      * @param bool $usr_table true if the table should save the user specific changes
      * @param array $fields array with all fields and all parameter for the table creation in a two-dimensional array
      * @return string the sql statement to create the table
@@ -129,7 +129,7 @@ class db_object
     /**
      * the sql statement to create the foreign keys for this (or a child) object
      *
-     * @param sql $sc ith the target db_type set
+     * @param sql $sc with the target db_type set
      * @param bool $usr_table true if the table should save the user specific changes
      * @param array $fields array with all fields and all parameter for the table creation in a two-dimensional array
      * @return string the sql statement to create the table

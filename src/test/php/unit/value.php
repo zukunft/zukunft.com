@@ -72,6 +72,7 @@ class value_unit_tests
         $t->assert_sql_insert($db_con, $val);
         $t->assert_sql_insert($db_con, $val, true);
         $t->assert_sql_update($db_con, $val);
+        $t->assert_sql_update($db_con, $val, true);
         $t->assert_sql_by_id($db_con, $val);
         $this->assert_sql_by_grp($t, $db_con, $val);
 
@@ -86,6 +87,7 @@ class value_unit_tests
         $t->subheader('for values related to up to 16 phrases');
         $val = $t->dummy_value_16();
         $t->assert_sql_insert($db_con, $val);
+        $t->assert_sql_insert($db_con, $val, true);
         $t->assert_sql_update($db_con, $val);
         // TODO activate
         //$this->assert_sql_by_grp($t, $db_con, $val);

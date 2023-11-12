@@ -1451,6 +1451,44 @@ class sandbox_non_seq_id extends db_object_non_seq_id_user
     }
 
     /**
+     * create the sql statement to update a value in the database
+     * to be overwritten by child object
+     *
+     * @param sql $sc with the target db_type set
+     * @param bool $usr_tbl true if the user table row should be updated
+     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     */
+    function sql_update(
+        sql   $sc,
+        array $fields = [],
+        array $values = [],
+        bool  $usr_tbl = false
+    ): sql_par
+    {
+        $lib = new library();
+        $sc->set_class($this::class, $usr_tbl);
+        $sql_name = $lib->class_to_name($this::class);
+        $qp = new sql_par($sql_name);
+        $qp->name = $sql_name;
+        if ($usr_tbl) {
+            $qp->name .= '_user';
+        }
+        $qp->name .= '_update';
+        $sc->set_name($qp->name);
+        $qp->sql = $sc->sql_update($this->id_field(), $this->id(), $fields, $values);
+        $values[] = $this->id();
+        $par_values = [];
+        foreach (array_keys($values) as $i) {
+            if ($values[$i] != sql::NOW) {
+                $par_values[$i] = $values[$i];
+            }
+        }
+
+        $qp->par = $par_values;
+        return $qp;
+    }
+
+    /**
      * actually update a field in the main database record
      * without user the user sandbox
      * the usr id is taken into account in sql_db->update (maybe move outside)
@@ -1556,8 +1594,8 @@ class sandbox_non_seq_id extends db_object_non_seq_id_user
     /**
      * save the share level in the database if allowed
      * @param sql_db $db_con the active database connection that should be used
-     * @param sandbox $db_rec the object as saved in the database before this field is updated
-     * @param sandbox $std_rec the default object without user specific changes
+     * @param sandbox_non_seq_id $db_rec the object as saved in the database before this field is updated
+     * @param sandbox_non_seq_id $std_rec the default object without user specific changes
      * @return string the message that should be shown to the user
      */
     function save_field_share(sql_db $db_con, sandbox_non_seq_id $db_rec, sandbox_non_seq_id $std_rec): string
@@ -1594,9 +1632,9 @@ class sandbox_non_seq_id extends db_object_non_seq_id_user
                 if ($result == '') {
                     $db_con->set_class(sql_db::TBL_USER_PREFIX . $this->obj_name);
                     $db_con->set_usr($this->user()->id());
-                    if (!$db_con->update_old($this->id, $log->field(), $new_value)) {
-                        $result = 'setting of share type failed';
-                    }
+                    $qp = $this->sql_update($db_con->sql_creator(), array($log->field()), array($new_value), true);
+                    $usr_msg = $db_con->update($qp, 'setting of share type');
+                    $result = $usr_msg->get_message();
                 }
             }
         }

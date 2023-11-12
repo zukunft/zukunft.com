@@ -63,6 +63,11 @@ class ref_unit_tests
         $t->assert_sql_by_id($db_con, $ref);
         $this->assert_sql_link_ids($t, $db_con, $ref);
 
+        // sql to load a ref by id
+        $ref = new ref($usr);
+        $ref->set_id(3);
+        $t->assert_sql_standard($db_con, $ref);
+
         // sql to load the ref types
         $ref_type_list = new ref_type_list();
         $t->assert_sql_all($db_con, $ref_type_list, sql_db::TBL_REF_TYPE);

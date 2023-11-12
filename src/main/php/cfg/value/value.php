@@ -5,7 +5,16 @@
     model/value/value.php - the main number object
     ---------------------
 
+    TODO: split the group_id key into single phrase keys for faster db index based selection
     TODO: always use the phrase group as master and update the value phrase links as slave
+
+    TODO: to read a value
+          first check the fastest and least used cache pod for the given phrase (not phrase list or group!)
+          second check inside the pod for the expected value table oder OLAP cube
+          e.g. a classic table e.g. for swiss addresses
+          or an OLAP cube for XBRL values
+          or a key-value table for a group of 1, 2, 4, 8, 16 and more phrases (or s standard table if public)
+
 
     TODO: move the time word to the phrase group because otherwise a geo tag or an area also needs to be seperated
 
@@ -1336,7 +1345,7 @@ class value extends sandbox_value
     {
         log_debug('value->res_lst_depending group id "' . $this->grp->id() . '" for user ' . $this->user()->name . '');
         $res_lst = new result_list($this->user());
-        $res_lst->load_by_obj($this->grp, true);
+        $res_lst->load_by_grp($this->grp, true);
 
         log_debug('done');
         return $res_lst;
@@ -1495,29 +1504,9 @@ class value extends sandbox_value
                 // create an entry in the user sandbox
                 $ext = $this->grp->table_extension();
                 $db_con->set_class($class, true, $ext);
-                $qp = $this->sql_insert($db_con->sql_creator());
-                try {
-                    $log_id = $db_con->exe_par($qp);
-                    if ($log_id <= 0) {
-                        log_err('Insert of user_value failed.');
-                        $result = false;
-                    } else {
-                        $result = true;
-                    }
-                } catch (Exception $e) {
-                    $result = 'Insert of user_value failed.';
-                    $trace_link = log_err($result . log::MSG_ERR_USING . $qp->sql . log::MSG_ERR_BECAUSE . $e->getMessage());
-                    $result = false;
-                }
-                /*
-                $log_id = $db_con->insert(array(self::FLD_ID, user::FLD_ID), array($this->id, $this->user()->id()));
-                if ($log_id <= 0) {
-                    log_err('Insert of user_value failed.');
-                    $result = false;
-                } else {
-                    $result = true;
-                }
-                */
+                $qp = $this->sql_insert($db_con->sql_creator(), true);
+                $usr_msg = $db_con->insert($qp, 'add user specific value');
+                $result = $usr_msg->is_ok();
             }
         }
         return $result;
@@ -1865,6 +1854,70 @@ class value extends sandbox_value
     }
 
     /**
+     * get a list of database fields that have been updated
+     *
+     * @param value $val the compare value to detect the changed fields
+     * @return array list of the database field names that have been updated
+     */
+    function changed_db_fields(value $val): array
+    {
+        $is_updated = false;
+        $result = [];
+        if ($val->number() <> $this->number()) {
+            $result[] = self::FLD_VALUE;
+            $is_updated = true;
+        }
+        if ($val->get_source_id() <> $this->get_source_id()) {
+            $result[] = source::FLD_ID;
+            $is_updated = true;
+        }
+        if ($val->share_id <> $this->share_id) {
+            $result[] = self::FLD_SHARE;
+            $is_updated = true;
+        }
+        if ($val->protection_id <> $this->protection_id) {
+            $result[] = self::FLD_PROTECT;
+            $is_updated = true;
+        }
+        if ($is_updated) {
+            $result[] = self::FLD_LAST_UPDATE;
+        }
+        return $result;
+    }
+
+    /**
+     * get a list of database field values that have been updated
+     *
+     * @param value $val the compare value to detect the changed fields
+     * @return array list of the database field values that have been updated
+     */
+    function changed_db_values(value $val): array
+    {
+        $is_updated = false;
+        $result = [];
+        if ($val->number() <> $this->number()) {
+            $result[] = $this->number();
+            $is_updated = true;
+        }
+        if ($val->get_source_id() <> $this->get_source_id()) {
+            $result[] = $this->get_source_id();
+            $is_updated = true;
+        }
+        if ($val->share_id <> $this->share_id) {
+            $result[] = $this->share_id;
+            $is_updated = true;
+        }
+        if ($val->protection_id <> $this->protection_id) {
+            $result[] = $this->protection_id;
+            $is_updated = true;
+        }
+        if ($is_updated) {
+            $result[] = sql::NOW;
+        }
+        return $result;
+    }
+
+    /**
      * updated the view component name (which is the id field)
      * should only be called if the user is the owner and nobody has used the display component link
      */
@@ -2036,9 +2089,6 @@ class value extends sandbox_value
         }
         $fld_name = implode('_', $lib->sql_name_shorten($fields));
         $qp->name .= '_update_' . $fld_name;
-        if ($usr_tbl) {
-            $qp->name .= '_user';
-        }
         $sc->set_name($qp->name);
         $qp->sql = $sc->sql_update($this->id_field(), $this->id(), $fields, $values);
         $values[] = $this->id();
@@ -2079,8 +2129,13 @@ class value extends sandbox_value
             //$this->set_id($db_con->insert(array(group::FLD_ID, user::FLD_ID, self::FLD_VALUE, self::FLD_LAST_UPDATE), array($this->grp->id(), $this->user()->id, $this->number, sql_creator::NOW)));
             if ($this->id() != 0) {
                 // update the reference in the log
-                if (!$log->add_ref($this->id())) {
-                    $result->add_message('adding the value reference in the system log failed');
+                if ($this->grp()->is_prime()) {
+                    if (!$log->add_ref($this->id())) {
+                        $result->add_message('adding the value reference in the system log failed');
+                    }
+                } else {
+                    // TODO: save in the value or value big change log
+                    $log = $this->log_add_value();
                 }
 
                 // update the phrase links for fast searching

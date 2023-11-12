@@ -319,7 +319,7 @@ class group extends db_object
     /**
      * the sql statement to create the group tables
      *
-     * @param sql $sc ith the target db_type set
+     * @param sql $sc with the target db_type set
      * @return string the sql statement to create the table
      */
     function sql_table(sql $sc): string
@@ -330,7 +330,7 @@ class group extends db_object
     /**
      * the sql statements to create all indices for the group tables used to store the group name changes of a user
      *
-     * @param sql $sc ith the target db_type set
+     * @param sql $sc with the target db_type set
      * @return string the sql statement to create the indices
      */
     function sql_index(sql $sc): string
@@ -341,7 +341,7 @@ class group extends db_object
     /**
      * the sql statements to create all foreign keys for the group tables used to store the group name changes of a user
      *
-     * @param sql $sc ith the target db_type set
+     * @param sql $sc with the target db_type set
      * @return string the sql statement to create the foreign keys
      */
     function sql_foreign_key(sql $sc): string
@@ -352,7 +352,7 @@ class group extends db_object
     /**
      * the sql statements to truncate the group tables
      *
-     * @param sql $sc ith the target db_type set
+     * @param sql $sc with the target db_type set
      * @return string the sql statement to create the table
      */
     function sql_truncate(sql $sc): string

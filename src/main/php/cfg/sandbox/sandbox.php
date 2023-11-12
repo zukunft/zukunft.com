@@ -392,7 +392,7 @@ class sandbox extends db_object_seq_id_user
     /**
      * the sql statement to create the tables of a sandbox object
      *
-     * @param sql $sc ith the target db_type set
+     * @param sql $sc with the target db_type set
      * @return string the sql statement to create the table
      */
     function sql_table(sql $sc): string
@@ -407,7 +407,7 @@ class sandbox extends db_object_seq_id_user
     /**
      * the sql statement to create the database indices of a sandbox object
      *
-     * @param sql $sc ith the target db_type set
+     * @param sql $sc with the target db_type set
      * @return string the sql statement to create the indices
      */
     function sql_index(sql $sc): string
@@ -422,7 +422,7 @@ class sandbox extends db_object_seq_id_user
     /**
      * the sql statement to create the foreign keys of a sandbox object
      *
-     * @param sql $sc ith the target db_type set
+     * @param sql $sc with the target db_type set
      * @return string the sql statement to create the foreign keys
      */
     function sql_foreign_key(sql $sc): string
@@ -547,7 +547,7 @@ class sandbox extends db_object_seq_id_user
         $qp = new sql_par($sbx::class);
         $qp->name .= $query_name;
 
-        $sc->set_class($lib->class_to_name($sbx::class));
+        $sc->set_class($sbx::class);
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
         $sc->set_fields($sbx::FLD_NAMES);

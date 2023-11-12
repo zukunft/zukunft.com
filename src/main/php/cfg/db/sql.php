@@ -42,6 +42,7 @@ use cfg\formula_element;
 use cfg\formula_link;
 use cfg\group\group;
 use cfg\library;
+use cfg\ref;
 use cfg\result;
 use cfg\sql_db;
 use cfg\sys_log_level;
@@ -90,7 +91,7 @@ class sql
         sql_db::TBL_VALUE_PHRASE_LINK,
         sql_db::TBL_GROUP_LINK,
         view_term_link::class,
-        sql_db::TBL_REF,
+        ref::class,
         sql_db::TBL_IP,
         sql_db::TBL_CHANGE,
         sql_db::TBL_CHANGE_LINK,

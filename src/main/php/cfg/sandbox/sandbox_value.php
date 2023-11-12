@@ -221,7 +221,7 @@ class sandbox_value extends sandbox_non_seq_id
     /**
      * the sql statements to create all tables used to store values in the database
      *
-     * @param sql $sc ith the target db_type set
+     * @param sql $sc with the target db_type set
      * @return string the sql statement to create the table
      */
     function sql_table(sql $sc): string
@@ -232,7 +232,7 @@ class sandbox_value extends sandbox_non_seq_id
     /**
      * the sql statements to create all indices for the tables used to store values in the database
      *
-     * @param sql $sc ith the target db_type set
+     * @param sql $sc with the target db_type set
      * @return string the sql statement to create the indices of the value tables
      */
     function sql_index(sql $sc): string
@@ -243,7 +243,7 @@ class sandbox_value extends sandbox_non_seq_id
     /**
      * the sql statements to create all foreign keys for the tables
      *
-     * @param sql $sc ith the target db_type set
+     * @param sql $sc with the target db_type set
      * @return string the sql statement to create the foreign keys of a value table
      */
     function sql_foreign_key(sql $sc): string
@@ -255,7 +255,7 @@ class sandbox_value extends sandbox_non_seq_id
      * the sql statements to create either all tables ($pos = 0), the indices ($pos = 1) or the foreign keys ($pos = 2)
      * used to store values in the database
      *
-     * @param sql $sc ith the target db_type set
+     * @param sql $sc with the target db_type set
      * @return string the sql statement to create the table
      */
     private function sql_creator(sql $sc, int $pos): string
@@ -460,6 +460,15 @@ class sandbox_value extends sandbox_non_seq_id
     }
 
     /**
+     * TODO create and use change_log_value
+     * @return change_log_named
+     */
+    function log_add_value(): change_log_named
+    {
+        return new change_log_named($this->user());
+    }
+
+    /**
      * set the log entry parameter to delete a object
      * @returns change_log_link with the object presets e.g. th object name
      */
@@ -568,28 +577,23 @@ class sandbox_value extends sandbox_non_seq_id
             if ($this->can_change()) {
                 if ($new_value == $std_value) {
                     if ($this->has_usr_cfg()) {
-                        log_debug('remove user change');
+                        $msg = 'remove user change of ' . $log->field();
+                        log_debug($msg);
                         $db_con->set_class(sql_db::TBL_USER_PREFIX . $this->obj_name . $ext);
                         $db_con->set_usr($this->user()->id());
                         $qp = $this->sql_update($db_con->sql_creator(), array($log->field()), array(null));
-                        try {
-                            $db_con->exe_par($qp);
-                        } catch (Exception $e) {
-                            $result = 'remove of ' . $log->field() . ' failed';
-                            $trace_link = log_err($result . log::MSG_ERR_USING . $qp->sql . log::MSG_ERR_BECAUSE . $e->getMessage());
-                        }
+                        $usr_msg = $db_con->update($qp, $msg);
+                        $result = $usr_msg->get_message();
                     }
                     $this->del_usr_cfg_if_not_needed(); // don't care what the result is, because in most cases it is fine to keep the user sandbox row
                 } else {
+                    $msg = 'update of ' . $log->field() . ' to ' . $new_value;
+                    log_debug($msg);
                     $db_con->set_class($this->obj_name . $ext);
                     $db_con->set_usr($this->user()->id());
                     $qp = $this->sql_update($db_con->sql_creator(), array($log->field()), array($new_value));
-                    try {
-                        $db_con->exe_par($qp);
-                    } catch (Exception $e) {
-                        $result = 'update of ' . $log->field() . ' to ' . $new_value . ' failed';
-                        $trace_link = log_err($result . log::MSG_ERR_USING . $qp->sql . log::MSG_ERR_BECAUSE . $e->getMessage());
-                    }
+                    $usr_msg = $db_con->update($qp, $msg);
+                    $result = $usr_msg->get_message();
                 }
             } else {
                 if (!$this->has_usr_cfg()) {
@@ -601,22 +605,17 @@ class sandbox_value extends sandbox_non_seq_id
                     $db_con->set_class(sql_db::TBL_USER_PREFIX . $this->obj_name . $ext);
                     $db_con->set_usr($this->user()->id());
                     if ($new_value == $std_value) {
-                        log_debug('remove user change');
+                        $msg = 'remove user change of ' . $log->field();
+                        log_debug($msg);
                         $qp = $this->sql_update($db_con->sql_creator(), array($log->field()), array(Null));
-                        try {
-                            $db_con->exe_par($qp);
-                        } catch (Exception $e) {
-                            $result = 'remove of user value for ' . $log->field() . ' failed';
-                            $trace_link = log_err($result . log::MSG_ERR_USING . $qp->sql . log::MSG_ERR_BECAUSE . $e->getMessage());
-                        }
+                        $usr_msg = $db_con->update($qp, $msg);
+                        $result = $usr_msg->get_message();
                     } else {
+                        $msg = 'update of ' . $log->field() . ' to ' . $new_value;
+                        log_debug($msg);
                         $qp = $this->sql_update($db_con->sql_creator(), array($log->field()), array($new_value));
-                        try {
-                            $db_con->exe_par($qp);
-                        } catch (Exception $e) {
-                            $result = 'update of user value for ' . $log->field() . ' to ' . $new_value . ' failed';
-                            $trace_link = log_err($result . log::MSG_ERR_USING . $qp->sql . log::MSG_ERR_BECAUSE . $e->getMessage());
-                        }
+                        $usr_msg = $db_con->update($qp, $msg);
+                        $result = $usr_msg->get_message();
                     }
                     $this->del_usr_cfg_if_not_needed(); // don't care what the result is, because in most cases it is fine to keep the user sandbox row
                 }

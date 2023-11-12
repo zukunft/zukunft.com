@@ -3234,16 +3234,18 @@ class sql_db
     */
 
     /**
-     * execute an insert sql statement and return a message to the user if something has gone wrong
-     * the message to the user includes also the suggested solution
+     * execute an insert sql statement
+     * and return a message to the user if something has gone wrong
+     * and a suggested solution to fix the issue
+     * and alternative solution if possible
      * or the id of the created database row if successful
+     *
      * @param sql_par $qp the sql statement with the name of the prepare query and parameter for this execution
      * @param string $description for the user to identify the statement
      * @return user_message
      */
     function insert(sql_par $qp, string $description): user_message
     {
-        global $db_con;
         $result = new user_message();
         $err_msg = 'Insert of ' . $description . ' failed.';
         try {
@@ -3265,6 +3267,39 @@ class sql_db
                 $result->add_message($err_msg);
             } else {
                 $result->set_db_row_id($db_id);
+            }
+        } catch (Exception $e) {
+            $trace_link = log_err($err_msg . log::MSG_ERR_USING . $qp->sql . log::MSG_ERR_BECAUSE . $e->getMessage());
+            $result->add_message($trace_link);
+        }
+
+        return $result;
+    }
+
+    /**
+     * execute an update sql statement
+     * and return a message to the user if something has gone wrong
+     * and a suggested solution to fix the issue
+     * and alternative solution if possible
+     * or the true if successful
+     *
+     * @param sql_par $qp the sql statement with the name of the prepare query and parameter for this execution
+     * @param string $description for the user to identify the statement
+     * @return user_message
+     */
+    function update(sql_par $qp, string $description): user_message
+    {
+        $result = new user_message();
+        $err_msg = 'Update of ' . $description . ' failed';
+        try {
+            $sql_result = $this->exe($qp->sql, $qp->name, $qp->par);
+            if ($this->db_type == sql_db::POSTGRES) {
+                $sql_error = pg_result_error($sql_result);
+                if ($sql_error != '') {
+                    $err_msg .= ' due to ' . $sql_error;
+                    log_err($err_msg);
+                    $result->add_message($err_msg);
+                }
             }
         } catch (Exception $e) {
             $trace_link = log_err($err_msg . log::MSG_ERR_USING . $qp->sql . log::MSG_ERR_BECAUSE . $e->getMessage());

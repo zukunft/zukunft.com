@@ -46,8 +46,9 @@ for each normal table there is an overwrite table with the user changes/overwrit
 maybe for each huge table is also a log table with the hist of the user changes
 
 TODO:
-
-cache table, field and action id to speed up, because this will never change
+        cache table, field and action id to speed up, because this will never change
+        auto archive the log if the number of changes gets too big
+        only log the changes of this pod and used the pod distribution table to get changes from other pods
 
 */
 
@@ -60,6 +61,10 @@ include_once API_LOG_PATH . 'change_log.php';
 
 use api\change_log_api;
 use cfg\component\component;
+use cfg\db\sql;
+use cfg\db\sql_field_default;
+use cfg\db\sql_field_type;
+use cfg\group\group;
 use DateTime;
 use DateTimeInterface;
 use Exception;
@@ -71,10 +76,29 @@ class change_log extends db_object_seq_id_user
      * database link
      */
 
-    // user log database and JSON object field names
+    // change log database and JSON object field names
     const FLD_ID = 'change_id';
     const FLD_CHANGE_TIME = 'change_time';
     const FLD_ACTION = 'change_action_id';
+    const FLD_ROW_ID = 'row_id';
+
+    // sql table comments
+    const TBL_COMMENT = 'to log all changes done by any user';
+
+    // field lists for the sql table creation that are used for all change logs (incl. value and link changes)
+    const FLD_LST_KEY = array(
+        [self::FLD_ID, sql_field_type::KEY_INT, sql_field_default::NOT_NULL, '', '', 'the prime key to identify the change'],
+        [self::FLD_CHANGE_TIME, sql_field_type::TIME, sql_field_default::TIMESTAMP, '', '', 'time when the user has confirmed the change'],
+        [user::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, user::class, 'reference to the user who has done the change'],
+        [self::FLD_ACTION, sql_field_type::INT_SMALL, sql_field_default::NOT_NULL, '', '', 'the curl action'],
+    );
+    // field list to log the actual change that is overwritten by the child object e.g. for named, value and link tables
+    const FLD_LST_CHANGE = array(
+    );
+    // field list to identify the database row in the table that has been changed
+    const FLD_LST_ROW_ID = array(
+        [self::FLD_ROW_ID, sql_field_type::INT, sql_field_default::NULL, '', '', 'the prime id in the table with the change'],
+    );
 
 
     /*
@@ -282,6 +306,99 @@ class change_log extends db_object_seq_id_user
     function time(): DateTime
     {
         return $this->change_time;
+    }
+
+
+    /*
+     * sql create
+     */
+
+    /**
+     * the sql statements to create a change log table
+     *
+     * @param sql $sc with the target db_type set
+     * @return string the sql statement to create the table
+     */
+    function sql_table(sql $sc): string
+    {
+        return $this->sql_creator($sc, 0);
+    }
+
+
+    /**
+     * the sql statements to create all indices for a change log table
+     *
+     * @param sql $sc with the target db_type set
+     * @return string the sql statement to create the indices of the change log tables
+     */
+    function sql_index(sql $sc): string
+    {
+        return $this->sql_creator($sc, 1);
+    }
+
+    /**
+     * the sql statements to create all foreign keys for a change log table
+     *
+     * @param sql $sc with the target db_type set
+     * @return string the sql statement to create the foreign keys of a change log table
+     */
+    function sql_foreign_key(sql $sc): string
+    {
+        return $this->sql_creator($sc, 2);
+    }
+
+    /**
+     * the sql statements to create either
+     * all tables ($pos = 0),
+     * the indices ($pos = 1)
+     * or the foreign keys ($pos = 2)
+     * used to store values in the database
+     *
+     * @param sql $sc with the target db_type set
+     * @return string the sql statement to create the table
+     */
+    protected function sql_creator(sql $sc, int $pos): string
+    {
+
+        $sql_array = $this->sql_one_type(
+            $sc,
+            self::FLD_LST_ROW_ID,
+            '', ''
+        );
+        return $sql_array[$pos];
+    }
+
+    /**
+     * create the sql statements for one or a set of change tables
+     * e.g. for bigint or text row id
+     *
+     * @param sql $sc
+     * @param array $fld_row_id the parameters for the value field e.g. for a numeric field, text, time or geo
+     * @param string $ext_type the additional table extension for the field type
+     * @param string $type_name the name of the value type
+     * @return array the sql statements to create the tables, indices and foreign keys
+     */
+    protected function sql_one_type(
+        sql    $sc,
+        array  $fld_row_id,
+        string $ext_type = '',
+        string $type_name = ''): array
+    {
+        $lib = new library();
+        $type_name .= ' ' . $lib->class_to_name($this::class);
+
+        $sql = $sc->sql_separator();
+        $sql_index = $sc->sql_separator();
+        $sql_foreign = $sc->sql_separator();
+
+        $sc->set_class($this::class, false, $ext_type);
+        $fields = array_merge(self::FLD_LST_KEY, $fld_row_id, $this::FLD_LST_CHANGE);
+        $sql .= $sc->table_create($fields, $type_name,
+            $this::TBL_COMMENT . $type_name);
+        $sql_index .= $sc->index_create($fields);
+        $sql_foreign .= $sc->foreign_key_create($fields);
+
+        return [$sql, $sql_index, $sql_foreign];
     }
 
 

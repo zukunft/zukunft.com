@@ -64,6 +64,7 @@ use cfg\db_object_seq_id;
 use cfg\fig_ids;
 use cfg\formula;
 use cfg\formula_list;
+use cfg\group\group;
 use cfg\library;
 use cfg\phr_ids;
 use cfg\phrase;
@@ -1005,20 +1006,24 @@ class test_base
      *
      * @param sql_db $db_con does not need to be connected to a real database
      * @param object $usr_obj the user sandbox object e.g. a word
+     * @param bool $usr_tbl true if a db row should be added to the user table
      * @return bool true if all tests are fine
      */
-    function assert_sql_update(sql_db $db_con, object $usr_obj): bool
+    function assert_sql_update(sql_db $db_con, object $usr_obj, bool $usr_tbl = false): bool
     {
-        $lib = new library();
+        $empty_usr_obj = clone $usr_obj;
+        $empty_usr_obj->reset();
+        $fields = $usr_obj->changed_db_fields($empty_usr_obj);
+        $values = $usr_obj->changed_db_values($empty_usr_obj);
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $usr_obj->sql_update($db_con->sql_creator());
+        $qp = $usr_obj->sql_update($db_con->sql_creator(), $fields, $values, $usr_tbl);
         $result = $this->assert_qp($qp, $db_con->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
-            $qp = $usr_obj->sql_update($db_con->sql_creator());
+            $qp = $usr_obj->sql_update($db_con->sql_creator(), $fields, $values, $usr_tbl);
             $result = $this->assert_qp($qp, $db_con->db_type);
         }
         return $result;
@@ -1482,6 +1487,39 @@ class test_base
         return $result;
     }
 
+    /**
+     * check the SQL statements to load a list of result by group
+     *
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param object $usr_obj the user sandbox object e.g. a word
+     * @param group $grp with the phrase to select the results
+     * @param bool $by_source set to true to force the selection e.g. by source phrase group id
+     * @return bool true if all tests are fine
+     */
+    function assert_sql_by_group(sql_db $db_con, object $usr_obj, group $grp, bool $by_source = false): bool
+    {
+        // check the Postgres query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        if ($by_source) {
+            $qp = $usr_obj->load_sql_by_src_grp($db_con->sql_creator(), $grp);
+        } else {
+            $qp = $usr_obj->load_sql_by_grp($db_con->sql_creator(), $grp);
+        }
+        $result = $this->assert_qp($qp, $db_con->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            if ($by_source) {
+                $qp = $usr_obj->load_sql_by_src_grp($db_con->sql_creator(), $grp);
+            } else {
+                $qp = $usr_obj->load_sql_by_grp($db_con->sql_creator(), $grp);
+            }
+            $result = $this->assert_qp($qp, $db_con->db_type);
+        }
+        return $result;
+    }
+
 
     /*
      * SQL for list by ...
@@ -1500,13 +1538,13 @@ class test_base
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $lst_obj->load_sql($db_con, $select_obj, $by_source);
+        $qp = $lst_obj->load_sql_by_obj($db_con, $select_obj, $by_source);
         $result = $this->assert_qp($qp, $db_con->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
-            $qp = $lst_obj->load_sql($db_con, $select_obj, $by_source);
+            $qp = $lst_obj->load_sql_by_obj($db_con, $select_obj, $by_source);
             $result = $this->assert_qp($qp, $db_con->db_type);
         }
         return $result;

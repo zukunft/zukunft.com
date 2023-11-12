@@ -419,7 +419,7 @@ class word extends sandbox_typed
     /**
      * the sql statement to create the table
      *
-     * @param sql $sc ith the target db_type set
+     * @param sql $sc with the target db_type set
      * @return string the sql statement to create the table
      */
     function sql_table(sql $sc): string

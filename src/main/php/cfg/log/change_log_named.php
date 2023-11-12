@@ -71,6 +71,7 @@ class change_log_named extends change_log
         self::FLD_NEW_ID
     );
 
+
     /*
      * object vars
      */
@@ -82,6 +83,7 @@ class change_log_named extends change_log
     public ?int $new_id = null;            // the reference id after the user change e.g. for fields using a sub table such as status
     public string|float|int|null $std_value = null;  // the standard field value for all users that does not have changed it
     public ?int $std_id = null;        // the standard reference id for all users that does not have changed it
+
 
     /*
      * construct and map
@@ -478,6 +480,7 @@ class change_log_named extends change_log
      * add the row id to an existing log entry
      * e.g. because the row id is known after the adding of the real record,
      * but the log entry has been created upfront to make sure that logging is complete
+     * TODO: accept also strings as row_id for values and results
      */
     function add_ref($row_id): bool
     {

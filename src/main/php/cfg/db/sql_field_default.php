@@ -37,12 +37,14 @@ enum sql_field_default: string
     //
     case NOT_NULL = 'not_null'; //
     case NULL = 'null'; //
+    case TIMESTAMP = 'timestamp'; //
 
     public function pg_type(): string
     {
         return match($this) {
             self::NOT_NULL => 'NOT NULL',
-            self::NULL => 'DEFAULT NULL'
+            self::NULL => 'DEFAULT NULL',
+            self::TIMESTAMP => 'DEFAULT CURRENT_TIMESTAMP'
         };
     }
 }
