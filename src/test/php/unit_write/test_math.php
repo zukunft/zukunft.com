@@ -30,7 +30,7 @@
 
 */
 
-use api\word\word_api;
+use api\word\word as word_api;
 use cfg\word_list;
 use test\test_cleanup;
 use const test\TIMEOUT_LIMIT_LONG;

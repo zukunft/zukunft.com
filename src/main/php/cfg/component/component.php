@@ -35,7 +35,7 @@ namespace cfg\component;
 
 include_once DB_PATH . 'sql_par_type.php';
 
-use api\component\component_api;
+use api\component\component as component_api;
 use cfg\export\component_exp;
 use cfg\log\change_log_action;
 use cfg\log\change_log_link;

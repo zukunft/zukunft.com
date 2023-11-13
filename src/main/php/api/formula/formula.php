@@ -36,10 +36,10 @@ include_once API_SANDBOX_PATH . 'sandbox_typed.php';
 include_once MODEL_FORMULA_PATH . 'formula.php';
 include_once WEB_FORMULA_PATH . 'formula.php';
 
-use api\phrase\term_api;
-use api\sandbox\sandbox_typed_api;
+use api\phrase\term as term_api;
+use api\sandbox\sandbox_typed as sandbox_typed_api;
 
-class formula_api extends sandbox_typed_api
+class formula extends sandbox_typed_api
 {
 
     /*

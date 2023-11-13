@@ -32,7 +32,7 @@
 
 namespace test;
 
-use api\user\user_api;
+use api\user\user as user_api;
 use cfg\user_profile_list;
 use cfg\user;
 use cfg\user_profile;

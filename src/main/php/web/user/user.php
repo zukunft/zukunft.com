@@ -32,7 +32,7 @@
 namespace html\user;
 
 use api\api;
-use api\user\user_api;
+use api\user\user as user_api;
 use html\html_base;
 use html\phrase\phrase_group as phrase_group_dsp;
 

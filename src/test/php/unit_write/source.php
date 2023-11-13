@@ -32,7 +32,7 @@
 
 namespace test\write;
 
-use api\ref\source_api;
+use api\ref\source as source_api;
 use cfg\log\change_log_field;
 use cfg\log\change;
 use cfg\log\change_log_table;

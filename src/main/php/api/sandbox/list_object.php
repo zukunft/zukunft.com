@@ -35,7 +35,7 @@ namespace api\sandbox;
 
 use JsonSerializable;
 
-class list_api implements JsonSerializable
+class list_object implements JsonSerializable
 {
     // the protected main var
     private array $lst;

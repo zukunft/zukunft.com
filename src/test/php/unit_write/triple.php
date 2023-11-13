@@ -32,9 +32,9 @@
 
 namespace test\write;
 
-use api\phrase\phrase_api;
-use api\word\triple_api;
-use api\word\word_api;
+use api\phrase\phrase as phrase_api;
+use api\word\triple as triple_api;
+use api\word\word as word_api;
 use cfg\log\change_log_link;
 use cfg\log\change_log_table;
 use cfg\formula;

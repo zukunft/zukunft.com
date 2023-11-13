@@ -34,8 +34,8 @@
 
 namespace html\phrase;
 
-use api\phrase\term_api;
-use api\sandbox\combine_object_api;
+use api\phrase\term as term_api;
+use api\sandbox\combine_object as combine_object_api;
 use html\list_dsp;
 use html\word\word as word_dsp;
 use html\word\triple as triple_dsp;

@@ -31,16 +31,17 @@
 
 namespace api\system;
 
-include_once API_PATH . 'message_header.php';
+include_once API_PATH . 'api_message.php';
 
+use api\system\type_list as type_list_api;
 use api\view\view_list as view_list_api;
-use api_message;
+use api\api_message;
 use controller\controller;
 use cfg\sql_db;
 use JsonSerializable;
 use cfg\user;
 
-class type_lists_api extends api_message implements JsonSerializable
+class type_lists extends api_message implements JsonSerializable
 {
 
     // parent object for all preloaded types

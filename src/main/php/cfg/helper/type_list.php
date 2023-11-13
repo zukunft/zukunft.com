@@ -39,7 +39,7 @@ include_once MODEL_VERB_PATH . 'verb.php';
 include_once API_SYSTEM_PATH . 'type_list.php';
 include_once WEB_USER_PATH . 'user_type_list.php';
 
-use api\system\type_list_api;
+use api\system\type_list as type_list_api;
 use cfg\db\sql;
 use html\user\user_type_list as type_list_dsp;
 use model\db_cl;

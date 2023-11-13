@@ -32,7 +32,7 @@
 
 namespace test\write;
 
-use api\word\word_api;
+use api\word\word as word_api;
 use cfg\ref_type;
 use cfg\ref_type_list;
 use cfg\ref;

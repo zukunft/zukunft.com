@@ -42,6 +42,7 @@
 namespace test;
 
 include_once API_REF_PATH . 'ref.php';
+include_once API_PHRASE_PATH . 'group.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_PHRASE_PATH . 'term.php';
 include_once MODEL_COMPONENT_PATH . 'component.php';
@@ -49,19 +50,19 @@ include_once MODEL_COMPONENT_PATH . 'component_list.php';
 include_once WEB_FORMULA_PATH . 'formula.php';
 
 use api\api;
-use api\component\component_api;
-use api\formula\formula_api;
-use api\phrase\phrase_group_api;
-use api\ref\ref_api;
-use api\result\result_api;
-use api\ref\source_api;
-use api\word\triple_api;
-use api\system\type_lists_api;
-use api\value\value_api;
-use api\verb\verb_api;
+use api\component\component as component_api;
+use api\formula\formula as formula_api;
+use api\phrase\group as group_api;
+use api\ref\ref as ref_api;
+use api\result\result as result_api;
+use api\ref\source as source_api;
+use api\word\triple as triple_api;
+use api\system\type_lists as type_lists_api;
+use api\value\value as value_api;
+use api\verb\verb as verb_api;
 use api\view\view as view_api;
-use api\word\word_api;
-use api_message;
+use api\word\word as word_api;
+use api\api_message;
 use cfg\batch_job;
 use cfg\batch_job_list;
 use cfg\batch_job_type_list;
@@ -130,7 +131,7 @@ use cfg\view_type_list;
 use cfg\word;
 use cfg\word_list;
 use controller\controller;
-use controller\log\system_log_api;
+use api\log\system_log as system_log_api;
 use DateTime;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\word\word as word_dsp;
@@ -735,7 +736,7 @@ class create_test_objects extends test_base
     {
         $lst = $this->dummy_phrase_list_pi();
         $grp = $lst->get_grp_id(false);
-        $grp->name = phrase_group_api::TN_READ;
+        $grp->name = group_api::TN_READ;
         return $grp;
     }
 
@@ -743,7 +744,7 @@ class create_test_objects extends test_base
     {
         $lst = $this->dummy_phrase_list_16();
         $grp = $lst->get_grp_id(false);
-        $grp->name = phrase_group_api::TN_READ;
+        $grp->name = group_api::TN_READ;
         return $grp;
     }
 
@@ -751,7 +752,7 @@ class create_test_objects extends test_base
     {
         $lst = $this->dummy_phrase_list_17_plus();
         $grp = $lst->get_grp_id(false);
-        $grp->name = phrase_group_api::TN_READ;
+        $grp->name = group_api::TN_READ;
         return $grp;
     }
 
@@ -759,7 +760,7 @@ class create_test_objects extends test_base
     {
         $lst = $this->dummy_phrase_list_zh();
         $grp = $lst->get_grp_id(false);
-        $grp->name = phrase_group_api::TN_ZH_2019;
+        $grp->name = group_api::TN_ZH_2019;
         return $grp;
     }
 

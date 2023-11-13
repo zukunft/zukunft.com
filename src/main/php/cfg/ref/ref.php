@@ -58,7 +58,7 @@ include_once MODEL_REF_PATH . 'source.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
 
-use api\ref\ref_api;
+use api\ref\ref as ref_api;
 use cfg\db\sql;
 use cfg\export\sandbox_exp;
 use cfg\export\ref_exp;

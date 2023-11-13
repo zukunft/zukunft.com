@@ -59,8 +59,8 @@ include_once MODEL_FORMULA_PATH . 'formula.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once WEB_PHRASE_PATH . 'term.php';
 
-use api\phrase\term_api;
-use api\word\word_api;
+use api\phrase\term as term_api;
+use api\word\word as word_api;
 use cfg\db\sql;
 use html\html_base;
 use html\phrase\term as term_dsp;

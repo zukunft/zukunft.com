@@ -32,14 +32,14 @@
 
 namespace test;
 
-use api\component\component_api;
-use api\formula\formula_api;
-use api\phrase\phrase_api;
-use api\ref\source_api;
-use api\word\triple_api;
-use api\verb\verb_api;
+use api\component\component as component_api;
+use api\formula\formula as formula_api;
+use api\phrase\phrase as phrase_api;
+use api\ref\source as source_api;
+use api\word\triple as triple_api;
+use api\verb\verb as verb_api;
 use api\view\view as view_api;
-use api\word\word_api;
+use api\word\word as word_api;
 use cfg\formula;
 use cfg\formula_type;
 use cfg\library;

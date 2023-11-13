@@ -53,7 +53,7 @@ include_once MODEL_SYSTEM_PATH . 'ip_range_list.php';
 include_once MODEL_USER_PATH . 'user_profile.php';
 include_once SERVICE_EXPORT_PATH . 'user_exp.php';
 
-use api\user\user_api;
+use api\user\user as user_api;
 use cfg\db\sql;
 use cfg\db\sql_par_type;
 use cfg\export\user_exp;

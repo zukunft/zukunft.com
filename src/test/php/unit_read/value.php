@@ -32,10 +32,10 @@
 
 namespace test;
 
-use api\phrase\phrase_group_api;
-use api\word\triple_api;
-use api\value\value_api;
-use api\word\word_api;
+use api\phrase\group as group_api;
+use api\word\triple as triple_api;
+use api\value\value as value_api;
+use api\word\word as word_api;
 use cfg\phrase_list;
 use cfg\value;
 
@@ -84,7 +84,7 @@ class value_unit_db_tests
         $t->assert($t->name . 'api->number', $api_val->number(), $val->number());
         $t->assert_api_json_msg($api_val);
 
-        $phr_grp = $t->add_phrase_group(array(triple_api::TN_PI_NAME), phrase_group_api::TN_READ);
+        $phr_grp = $t->add_phrase_group(array(triple_api::TN_PI_NAME), group_api::TN_READ);
         $val = $t->load_value_by_phr_grp($phr_grp);
         $t->assert_api_obj($val);
 

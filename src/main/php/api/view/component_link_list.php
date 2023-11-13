@@ -32,7 +32,7 @@
 
 namespace api\view;
 
-use api\sandbox\list_api;
+use api\sandbox\list_object as list_api;
 use api\view\component_link;
 
 class component_link_list extends list_api

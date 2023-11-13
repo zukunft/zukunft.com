@@ -32,10 +32,11 @@
 
 namespace api\log;
 
-use api\sandbox\list_api;
+use api\log\change_log_named as change_log_named_api;
+use api\sandbox\list_object as list_api;
 use JsonSerializable;
 
-class change_log_list_api extends list_api implements JsonSerializable
+class change_log_list extends list_api implements JsonSerializable
 {
 
     /*

@@ -70,7 +70,7 @@ include_once SERVICE_EXPORT_PATH . 'value_exp.php';
 include_once SERVICE_EXPORT_PATH . 'json.php';
 
 use api\api;
-use api\value\value_api;
+use api\value\value as value_api;
 use cfg\db\sql;
 use cfg\group\group;
 use cfg\log\change;

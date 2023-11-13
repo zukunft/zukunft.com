@@ -36,8 +36,8 @@ include_once API_RESULT_PATH . 'result.php';
 include_once API_VALUE_PATH . 'value.php';
 include_once WEB_FIGURE_PATH . 'figure.php';
 
-use api\result\result_api;
-use api\value\value_api;
+use api\result\result as result_api;
+use api\value\value as value_api;
 use html\figure\figure as figure_dsp;
 use html\value\value as value_dsp;
 use html\result\result as result_dsp;

@@ -32,13 +32,13 @@
 
 namespace api\word;
 
-use api\phrase\phrase_api;
-use api\phrase\term_api;
-use api\sandbox\sandbox_typed_api;
+use api\phrase\phrase as phrase_api;
+use api\phrase\term as term_api;
+use api\sandbox\sandbox_typed as sandbox_typed_api;
 use cfg\phrase_type;
-use cfg\word;
+use cfg\word as word_cfg;
 
-class word_api extends sandbox_typed_api
+class word extends sandbox_typed_api
 {
 
     /*
@@ -122,7 +122,7 @@ class word_api extends sandbox_typed_api
 
     // word groups for creating the test words and remove some after the test
     const RESERVED_WORDS = array(
-        word::SYSTEM_CONFIG,
+        word_cfg::SYSTEM_CONFIG,
         self::TN_READ,
         self::TN_CONST,
         self::TN_PI,

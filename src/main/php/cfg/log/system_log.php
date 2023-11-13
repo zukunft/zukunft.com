@@ -53,7 +53,7 @@ use cfg\sys_log_function;
 use cfg\type_list;
 use cfg\type_object;
 use cfg\user;
-use controller\log\system_log_api;
+use api\log\system_log as system_log_api;
 use DateTime;
 use DateTimeInterface;
 

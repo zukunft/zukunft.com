@@ -38,7 +38,7 @@ include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
 include_once WEB_WORD_PATH . 'word.php';
 
 use api\api;
-use api\component\component_api;
+use api\component\component as component_api;
 use cfg\component\component;
 use cfg\library;
 use cfg\view_list;

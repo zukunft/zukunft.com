@@ -32,7 +32,7 @@
 
 namespace test;
 
-use api\ref\source_api;
+use api\ref\source as source_api;
 use cfg\ref_type_list;
 use cfg\source_list;
 use cfg\source_type_list;

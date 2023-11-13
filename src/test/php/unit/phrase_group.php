@@ -32,12 +32,12 @@
 
 namespace test;
 
-include_once API_PHRASE_PATH . 'phrase_group.php';
+include_once API_PHRASE_PATH . 'group.php';
 include_once MODEL_GROUP_PATH . 'group_id.php';
 include_once MODEL_GROUP_PATH . 'group_link.php';
 include_once MODEL_GROUP_PATH . 'group_list.php';
 
-use api\phrase\phrase_group_api;
+use api\phrase\group as group_api;
 use cfg\group\group_id;
 use cfg\group\group;
 use cfg\group\group_link;

@@ -32,10 +32,10 @@
 
 namespace test;
 
-use api\word\word_api;
-use api\word\triple_api;
-use api\formula\formula_api;
-use api\verb\verb_api;
+use api\word\word as word_api;
+use api\word\triple as triple_api;
+use api\formula\formula as formula_api;
+use api\verb\verb as verb_api;
 use cfg\formula;
 use cfg\library;
 use cfg\term_list;

@@ -29,7 +29,11 @@
 
 */
 
+namespace api;
+
 use cfg\config;
+use DateTime;
+use DateTimeInterface;
 use html\html_base;
 use cfg\library;
 use cfg\sql_db;

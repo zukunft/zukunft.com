@@ -38,7 +38,7 @@ use cfg\db_object_seq_id;
 use cfg\user;
 use DateTime;
 
-class batch_job_api extends db_object_seq_id
+class batch_job extends db_object_seq_id
 {
 
     /*

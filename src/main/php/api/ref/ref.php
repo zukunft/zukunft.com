@@ -32,9 +32,9 @@
 
 namespace api\ref;
 
-use api\sandbox\sandbox_api;
+use api\sandbox\sandbox as sandbox_api;
 
-class ref_api extends sandbox_api
+class ref extends sandbox_api
 {
 
     /*

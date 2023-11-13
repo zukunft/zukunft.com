@@ -38,11 +38,11 @@ include_once API_PATH . 'controller.php';
 include_once WEB_VALUE_PATH . 'value.php';
 
 use api\api;
-use api\sandbox\sandbox_value_api;
+use api\sandbox\sandbox_value as sandbox_value_api;
 use html\value\value as value_dsp;
 use JsonSerializable;
 
-class value_api extends sandbox_value_api implements JsonSerializable
+class value extends sandbox_value_api implements JsonSerializable
 {
 
     /*

@@ -32,9 +32,9 @@
 
 namespace api\formula;
 
-use api\system\type_list_api;
+use api\system\type_list as type_list_api;
 
-class formula_type_list_api extends type_list_api
+class formula_type_list extends type_list_api
 {
 
 }

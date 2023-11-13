@@ -39,11 +39,11 @@ include_once API_PATH . 'api.php';
 include_once API_PATH . 'controller.php';
 include_once WEB_VALUE_PATH . 'value.php';
 
-use api\formula\figure_api;
-use api\phrase\phrase_list_api;
-use api\sandbox\combine_object_api;
+use api\formula\figure as figure_api;
+use api\phrase\phrase_list as phrase_list_api;
+use api\sandbox\combine_object as combine_object_api;
 use api\api;
-use api\sandbox\sandbox_value_api;
+use api\sandbox\sandbox_value as sandbox_value_api;
 use html\api as api_dsp;
 use html\combine_named_dsp;
 use html\html_base;

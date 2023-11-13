@@ -33,7 +33,7 @@ use controller\controller;
 use cfg\user;
 use cfg\log\change_log_list;
 use cfg\word;
-use api\phrase\term_list_api;
+use api\phrase\term_list as term_list_api;
 
 // standard zukunft header for callable php files to allow debugging and lib loading
 global $debug;
@@ -44,7 +44,7 @@ include_once PHP_PATH . 'zu_lib.php';
 
 include_once API_PATH . 'api.php';
 include_once API_PATH . 'controller.php';
-include_once API_PATH . 'message_header.php';
+include_once API_PATH . 'api_message.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_LOG_PATH . 'change_log_list.php';
 include_once MODEL_WORD_PATH . 'word.php';

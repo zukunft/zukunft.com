@@ -37,7 +37,7 @@
 
 // TODO combine with class type_object
 
-use api\sandbox\type_object_api;
+use api\sandbox\type_object as type_object_api;
 
 class user_type
 {

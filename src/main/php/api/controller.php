@@ -34,20 +34,20 @@
 
 namespace controller;
 
-include_once API_PATH . 'message_header.php';
+include_once API_PATH . 'api_message.php';
 include_once API_SYSTEM_PATH . 'type_lists.php';
 include_once API_SANDBOX_PATH . 'combine_object.php';
-include_once API_SANDBOX_PATH . 'list.php';
+include_once API_SANDBOX_PATH . 'list_object.php';
 include_once API_SANDBOX_PATH . 'sandbox.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_REF_PATH . 'source.php';
 include_once MODEL_WORD_PATH . 'word.php';
 
-use api_message;
-use api\sandbox\combine_object_api;
-use api\sandbox\list_api;
-use api\system\type_lists_api;
-use api\sandbox\sandbox_api;
+use api\api_message;
+use api\sandbox\combine_object as combine_object_api;
+use api\sandbox\list_object as list_api;
+use api\system\type_lists as type_lists_api;
+use api\sandbox\sandbox as sandbox_api;
 use cfg\combine_object;
 use cfg\sandbox;
 use cfg\source;
@@ -72,7 +72,7 @@ class controller
     const URL_VAR_CODE_ID = 'code_id';
     const URL_VAR_WORD = 'words';
     const URL_VAR_PHRASE = 'phrase'; // the id (or name?) of one phrase
-    const URL_VAR_DIRECTION = 'dir'; // 'up' to get the parents and 'down' for the children'
+    const URL_VAR_DIRECTION = 'dir'; // 'up' to get the parents and 'down' for the children
     const URL_VAR_LEVELS = 'levels'; // the number of search levels'
     const URL_VAR_MSG = 'message';
     const URL_VAR_RESULT = 'result';
@@ -177,7 +177,7 @@ class controller
     const DSP_COMPONENT_LINK = "component_link";
     const DSP_COMPONENT_UNLINK = "component_unlink";
 
-    // list of add system views which don't need a object
+    // list of add system views which don't need an object
     const DSP_SYS_ADD = array(
         self::DSP_WORD_ADD,
         self::DSP_TRIPLE_ADD,
@@ -299,7 +299,7 @@ class controller
                     $request_body = $this->check_api_msg($request_json);
 
                     // call to backend
-                    $result = $this->post($request_body, $obj::class);
+                    $result = $this->post($request_body);
 
                     // return the result
                     if (is_numeric($result)) {

@@ -39,7 +39,7 @@ include_once API_LOG_PATH . 'system_log.php';
 use cfg\config;
 use cfg\log\system_log_list;
 use cfg\log\system_log;
-use controller\log\system_log_api;
+use api\log\system_log as system_log_api;
 use DateTime;
 use cfg\ip_range;
 use cfg\ip_range_list;

@@ -35,20 +35,20 @@
 namespace api\sandbox;
 
 use api\api;
-use api\formula\formula_api;
-use api\value\value_api;
-use api\word\triple_api;
-use api\word\word_api;
+use api\formula\formula as formula_api;
+use api\value\value as value_api;
+use api\word\triple as triple_api;
+use api\word\word as word_api;
 use JsonSerializable;
 use cfg\formula;
-use cfg\sandbox;
+use cfg\sandbox as sandbox_cfg;
 use cfg\triple;
 use cfg\user;
 use cfg\value;
 use cfg\word;
 use function log_err;
 
-class sandbox_api implements JsonSerializable
+class sandbox implements JsonSerializable
 {
 
     // fields for the backend link
@@ -110,7 +110,7 @@ class sandbox_api implements JsonSerializable
      * should be part of the save_from_api_msg functions
      * TODO review
      */
-    function db_obj(user $usr, string $class): sandbox
+    function db_obj(user $usr, string $class): sandbox_cfg
     {
         $db_obj = null;
         if ($class == word_api::class) {

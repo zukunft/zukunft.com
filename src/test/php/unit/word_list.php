@@ -35,8 +35,8 @@ namespace test;
 include_once MODEL_WORD_PATH . 'word_list.php';
 include_once WEB_WORD_PATH . 'word_list.php';
 
-use api\verb\verb_api;
-use api\word\word_api;
+use api\verb\verb as verb_api;
+use api\word\word as word_api;
 use cfg\foaf_direction;
 use cfg\phrase_type;
 use cfg\library;

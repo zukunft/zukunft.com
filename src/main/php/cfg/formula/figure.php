@@ -42,7 +42,7 @@ include_once MODEL_FORMULA_PATH . 'formula.php';
 include_once MODEL_USER_PATH . 'user.php';
 
 use api\api;
-use api\formula\figure_api;
+use api\formula\figure as figure_api;
 use cfg\group\group;
 use DateTime;
 

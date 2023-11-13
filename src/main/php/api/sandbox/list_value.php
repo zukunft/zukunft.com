@@ -35,9 +35,11 @@
 
 namespace api\sandbox;
 
-include_once API_SANDBOX_PATH . 'list.php';
+include_once API_SANDBOX_PATH . 'list_object.php';
 
-class list_value_api extends list_api
+use api\sandbox\list_object as list_api;
+
+class list_value extends list_api
 {
 
     function __construct(array $lst = array())

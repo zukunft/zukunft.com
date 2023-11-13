@@ -34,8 +34,8 @@ namespace test;
 
 // TODO combine with triple_unit_test
 
-use api\phrase\phrase_api;
-use api\word\triple_api;
+use api\phrase\phrase as phrase_api;
+use api\word\triple as triple_api;
 use cfg\sql_db;
 use cfg\triple;
 use cfg\verb;

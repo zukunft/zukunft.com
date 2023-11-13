@@ -39,7 +39,7 @@ include_once MODEL_VERB_PATH . 'verb.php';
 include_once API_SYSTEM_PATH . 'type_list.php';
 include_once WEB_USER_PATH . 'user_type_list.php';
 
-use api\value\value_list_api;
+use api\value\value_list as value_list_api;
 
 class config_numbers extends value_list
 {

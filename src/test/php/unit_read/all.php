@@ -34,10 +34,10 @@
 
 namespace test;
 
-use api\phrase\phrase_group_api;
-use api\word\triple_api;
-use api\value\value_api;
-use api\word\word_api;
+use api\phrase\group as group_api;
+use api\word\triple as triple_api;
+use api\value\value as value_api;
+use api\word\word as word_api;
 use html\types\type_lists as type_list_dsp;
 use html\word\triple as triple_dsp;
 use cfg\triple;
@@ -102,7 +102,7 @@ class test_unit_read_db extends test_unit
             triple_api::TN_PI, verb::IS, word_api::TN_READ,
             triple_api::TN_PI_NAME, triple_api::TN_PI_NAME
         );
-        $phr_grp = $this->add_phrase_group(array(triple_api::TN_PI_NAME), phrase_group_api::TN_READ);
+        $phr_grp = $this->add_phrase_group(array(triple_api::TN_PI_NAME), group_api::TN_READ);
         $this->test_value_by_phr_grp($phr_grp, value_api::TV_READ);
 
     }
@@ -115,9 +115,9 @@ class test_unit_read_db extends test_unit
     function clean_up_unit_db_tests(): void
     {
         //$this->del_triple_by_name(triple_api::TN_READ_NAME);
-        //$phr_grp = $this->load_phrase_group_by_name(phrase_group_api::TN_READ);
+        //$phr_grp = $this->load_phrase_group_by_name(group_api::TN_READ);
         //$this->del_value_by_phr_grp($phr_grp);
-        //$this->del_phrase_group(phrase_group_api::TN_READ);
+        //$this->del_phrase_group(group_api::TN_READ);
     }
 
 }

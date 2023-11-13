@@ -61,7 +61,7 @@ include_once MODEL_WORD_PATH . 'triple.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 
 use api\api;
-use api\phrase\phrase_api;
+use api\phrase\phrase as phrase_api;
 use cfg\db\sql;
 use cfg\group\group_list;
 use html\phrase\phrase as phrase_dsp;

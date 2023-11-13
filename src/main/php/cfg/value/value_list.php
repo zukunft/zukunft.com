@@ -35,7 +35,7 @@ include_once DB_PATH . 'sql_par_type.php';
 include_once API_VALUE_PATH . 'value_list.php';
 include_once SERVICE_EXPORT_PATH . 'value_list_exp.php';
 
-use api\value\value_list_api;
+use api\value\value_list as value_list_api;
 use cfg\db\sql;
 use cfg\db\sql_par_type;
 use cfg\group\group;

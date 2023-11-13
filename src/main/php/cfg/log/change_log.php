@@ -59,7 +59,7 @@ include_once MODEL_VALUE_PATH . 'value.php';
 include_once MODEL_VALUE_PATH . 'value_phrase_link.php';
 include_once API_LOG_PATH . 'change_log.php';
 
-use api\log\change_log_api;
+use api\log\change_log as change_log_api;
 use cfg\component_link;
 use cfg\db_object_seq_id_user;
 use cfg\formula;

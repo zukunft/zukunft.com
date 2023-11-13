@@ -32,12 +32,13 @@
 
 namespace api\ref;
 
-include_once API_SANDBOX_PATH . 'list.php';
+include_once API_SANDBOX_PATH . 'list_object.php';
 include_once API_REF_PATH . 'source.php';
 include_once API_REF_PATH . 'source_list.php';
 include_once WEB_REF_PATH . 'source_list.php';
 
-use api\sandbox\list_api;
+use api\ref\source as source_api;
+use api\sandbox\list_object as list_api;
 use JsonSerializable;
 
 class source_list extends list_api implements JsonSerializable

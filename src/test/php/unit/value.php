@@ -34,8 +34,8 @@ namespace test;
 
 include_once MODEL_VALUE_PATH . 'value_time_series.php';
 
-use api\phrase\phrase_group_api;
-use api\value\value_api;
+use api\phrase\group as group_api;
+use api\value\value as value_api;
 use cfg\group\group;
 use cfg\sql_db;
 use cfg\value;
@@ -128,7 +128,7 @@ class value_unit_tests
         $t->subheader('Convert and API unit tests');
 
         // casting API
-        $grp = new group($usr, 1,  array(phrase_group_api::TN_READ));
+        $grp = new group($usr, 1,  array(group_api::TN_READ));
         $val = new value($usr, 1, round(value_api::TV_READ, 13), $grp);
         $t->assert_api($val);
 

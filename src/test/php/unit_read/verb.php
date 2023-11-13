@@ -35,9 +35,9 @@ namespace test;
 include_once API_WORD_PATH . 'word.php';
 include_once API_WORD_PATH . 'triple.php';
 
-use api\verb\verb_api;
-use api\word\word_api;
-use api\word\triple_api;
+use api\verb\verb as verb_api;
+use api\word\word as word_api;
+use api\word\triple as triple_api;
 use cfg\word;
 use cfg\verb;
 use cfg\verb_list;

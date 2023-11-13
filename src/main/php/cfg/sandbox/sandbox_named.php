@@ -43,12 +43,12 @@ include_once API_VIEW_PATH . 'view.php';
 include_once API_COMPONENT_PATH . 'component.php';
 include_once API_WORD_PATH . 'word.php';
 
-use api\component\component_api;
-use api\formula\formula_api;
-use api\phrase\phrase_api;
-use api\ref\source_api;
+use api\component\component as component_api;
+use api\formula\formula as formula_api;
+use api\phrase\phrase as phrase_api;
+use api\ref\source as source_api;
 use api\view\view as view_api;
-use api\word\word_api;
+use api\word\word as word_api;
 use cfg\db\sql;
 use cfg\db\sql_par_type;
 use cfg\log\change;

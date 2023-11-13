@@ -32,9 +32,9 @@
 
 namespace test\write;
 
-use api\formula\formula_api;
-use api\value\value_api;
-use api\word\word_api;
+use api\formula\formula as formula_api;
+use api\value\value as value_api;
+use api\word\word as word_api;
 use cfg\batch_job;
 use cfg\batch_job_list;
 use cfg\batch_job_type_list;

@@ -32,8 +32,8 @@
 
 namespace test;
 
-use api\word\triple_api;
-use api\word\word_api;
+use api\word\triple as triple_api;
+use api\word\word as word_api;
 use cfg\phrase;
 use cfg\phrase_type;
 use cfg\phrase_types;

@@ -33,7 +33,7 @@
 namespace cfg;
 
 use api\api;
-use api\sandbox\combine_object_api;
+use api\sandbox\combine_object as combine_object_api;
 use DateTime;
 use DOMDocument;
 use Exception;

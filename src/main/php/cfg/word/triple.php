@@ -39,7 +39,7 @@ include_once MODEL_SANDBOX_PATH . 'sandbox_link_typed.php';
 include_once SERVICE_EXPORT_PATH . 'triple_exp.php';
 
 use api\api;
-use api\word\triple_api;
+use api\word\triple as triple_api;
 use cfg\db\sql;
 use cfg\db\sql_par_type;
 use cfg\group\group_list;

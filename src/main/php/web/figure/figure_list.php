@@ -34,8 +34,8 @@
 
 namespace html\figure;
 
-use api\formula\figure_api;
-use api\sandbox\combine_object_api;
+use api\formula\figure as figure_api;
+use api\sandbox\combine_object as combine_object_api;
 use html\list_dsp;
 use html\figure\figure as figure_dsp;
 use html\value\value as value_dsp;

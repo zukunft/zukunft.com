@@ -34,9 +34,9 @@ namespace test\write;
 
 include_once MODEL_VALUE_PATH . 'value_dsp.php';
 
-use api\value\value_api;
-use api\word\word_api;
-use api\word\triple_api;
+use api\value\value as value_api;
+use api\word\word as word_api;
+use api\word\triple as triple_api;
 use html\figure\figure as figure_dsp;
 use cfg\log\change_log_field;
 use cfg\log\change;

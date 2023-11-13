@@ -32,13 +32,14 @@
 
 namespace api\word;
 
-use api\phrase\phrase_api;
-use api\phrase\term_api;
-use api\sandbox\sandbox_typed_api;
-use api\verb\verb_api;
+use api\word\word as word_api;
+use api\phrase\phrase as phrase_api;
+use api\phrase\term as term_api;
+use api\sandbox\sandbox_typed as sandbox_typed_api;
+use api\verb\verb as verb_api;
 use cfg\phrase_type;
 
-class triple_api extends sandbox_typed_api
+class triple extends sandbox_typed_api
 {
 
     /*
@@ -213,7 +214,7 @@ class triple_api extends sandbox_typed_api
     }
 
     /**
-     * @return bool true if the word has the type "scaling" (e.g. "million", "million" or "one"; "one" is a hidden scaling type)
+     * @return bool true if the word has the type "scaling" (e.g. "a million", "a million" or "one"; "one" is a hidden scaling type)
      */
     function is_scaling(): bool
     {

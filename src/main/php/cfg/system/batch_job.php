@@ -74,7 +74,7 @@ namespace cfg;
 include_once MODEL_HELPER_PATH . 'db_object_seq_id_user.php';
 include_once API_SYSTEM_PATH . 'batch_job.php';
 
-use api\system\batch_job_api;
+use api\system\batch_job as batch_job_api;
 use cfg\db\sql;
 use DateTime;
 use DateTimeInterface;

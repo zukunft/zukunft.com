@@ -29,7 +29,7 @@
   
 */
 
-use api\formula\figure_api;
+use api\formula\figure as figure_api;
 use controller\controller;
 use cfg\result;
 use cfg\user;
@@ -44,7 +44,7 @@ include_once PHP_PATH . 'zu_lib.php';
 
 include_once API_PATH . 'api.php';
 include_once API_PATH . 'controller.php';
-include_once API_PATH . 'message_header.php';
+include_once API_PATH . 'api_message.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_RESULT_PATH . 'result.php';
 include_once MODEL_VALUE_PATH . 'value.php';

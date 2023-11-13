@@ -43,12 +43,12 @@ include_once WEB_VERB_PATH . 'verb.php';
 include_once WEB_PHRASE_PATH . 'term.php';
 
 use api\api;
-use api\formula\formula_api;
-use api\sandbox\combine_named_api;
-use api\sandbox\combine_object_api;
-use api\verb\verb_api;
-use api\word\triple_api;
-use api\word\word_api;
+use api\formula\formula as formula_api;
+use api\sandbox\combine_named as combine_named_api;
+use api\sandbox\combine_object as combine_object_api;
+use api\verb\verb as verb_api;
+use api\word\triple as triple_api;
+use api\word\word as word_api;
 use html\phrase\phrase as phrase_dsp;
 use html\word\word as word_dsp;
 use html\word\triple as triple_dsp;
@@ -56,7 +56,7 @@ use html\formula\formula as formula_dsp;
 use html\verb\verb as verb_dsp;
 use JsonSerializable;
 
-class term_api extends combine_named_api implements JsonSerializable
+class term extends combine_named_api implements JsonSerializable
 {
 
     // the json field name in the api json message to identify if the term is a word, triple, verb or formula

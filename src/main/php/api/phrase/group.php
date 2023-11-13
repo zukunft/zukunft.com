@@ -33,12 +33,13 @@
 namespace api\phrase;
 
 use api\api;
-use api\sandbox\sandbox_named_api;
+use api\phrase\phrase_list as phrase_list_api;
+use api\sandbox\sandbox_named as sandbox_named_api;
 use html\phrase\phrase_group as phrase_group_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
 use JsonSerializable;
 
-class phrase_group_api extends sandbox_named_api implements JsonSerializable
+class group extends sandbox_named_api implements JsonSerializable
 {
 
     /*
@@ -61,7 +62,6 @@ class phrase_group_api extends sandbox_named_api implements JsonSerializable
     // memory vs speed optimize vars
     private array $id_lst;
     private bool $lst_dirty;
-    private string $name_linked;
     private bool $name_dirty;
 
     /*
@@ -75,7 +75,6 @@ class phrase_group_api extends sandbox_named_api implements JsonSerializable
 
         $this->id_lst = array();
         $this->lst_dirty = false;
-        $this->name_linked = '';
         $this->name_dirty = true;
 
 
@@ -83,7 +82,7 @@ class phrase_group_api extends sandbox_named_api implements JsonSerializable
         $phr_id = 1; // if now id is given, create a dummy id for testing
         if (count($phr_lst) > 0) {
             foreach ($phr_lst as $phr_str) {
-                $phr = new phrase_api($phr_id, $phr_str);
+                $phr = new phrase($phr_str);
                 $this->add($phr);
                 $phr_id++;
             }
@@ -153,7 +152,7 @@ class phrase_group_api extends sandbox_named_api implements JsonSerializable
      * add a phrase to the list
      * @returns bool true if the phrase has been added
      */
-    function add(phrase_api $phr): bool
+    function add(phrase $phr): bool
     {
         $result = false;
         if (!in_array($phr->id(), $this->id_lst())) {

@@ -55,7 +55,7 @@ use cfg\sys_log_function;
 use cfg\sys_log_status;
 use cfg\type_object;
 use cfg\user;
-use controller\log\system_log_list_api;
+use api\log\system_log_list as system_log_list_api;
 use html\log\system_log_list_dsp_old;
 
 class system_log_list extends base_list

@@ -39,7 +39,7 @@ include_once API_LOG_PATH . 'change_log_list.php';
 include_once WEB_LOG_PATH . 'change_log_list.php';
 include_once MODEL_SYSTEM_PATH . 'base_list.php';
 
-use api\log\change_log_list_api;
+use api\log\change_log_list as change_log_list_api;
 use cfg\base_list;
 use cfg\component\component;
 use cfg\db\sql;

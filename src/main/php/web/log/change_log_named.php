@@ -33,7 +33,7 @@ namespace html\log;
 
 include_once API_SANDBOX_PATH . 'user_config.php';
 
-use api\log\change_log_named_api;
+use api\log\change_log_named as change_log_named_api;
 use api\sandbox\user_config;
 use html\api;
 use html\button;

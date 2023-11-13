@@ -32,9 +32,9 @@
 
 namespace api\component;
 
-use api\sandbox\sandbox_typed_api;
+use api\sandbox\sandbox_typed as sandbox_typed_api;
 
-class component_api extends sandbox_typed_api
+class component extends sandbox_typed_api
 {
 
     /*

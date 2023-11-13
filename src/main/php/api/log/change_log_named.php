@@ -34,7 +34,7 @@ namespace api\log;
 
 include_once API_LOG_PATH . 'change_log.php';
 
-class change_log_named_api extends change_log_api
+class change_log_named extends change_log
 {
 
 

@@ -31,7 +31,7 @@
 
 namespace test\write;
 
-use api\word\word_api;
+use api\word\word as word_api;
 use cfg\foaf_direction;
 use cfg\phrase_list;
 use cfg\triple_list;

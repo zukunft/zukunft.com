@@ -49,7 +49,7 @@ include_once API_FORMULA_PATH . 'formula.php';
 include_once WEB_FORMULA_PATH . 'formula.php';
 include_once WEB_WORD_PATH . 'word.php';
 
-use api\formula\formula_api;
+use api\formula\formula as formula_api;
 use cfg\db\sql;
 use cfg\db\sql_par_type;
 use cfg\export\sandbox_exp;

@@ -31,9 +31,9 @@
 
 namespace api\phrase;
 
-use api\sandbox\type_object_api;
+use api\sandbox\type_object as type_object_api;
 
-class phrase_type_api extends type_object_api
+class phrase_type extends type_object_api
 {
     /*
      * const for the api

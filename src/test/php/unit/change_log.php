@@ -36,7 +36,7 @@ include_once WEB_LOG_PATH . 'user_log_display.php';
 include_once MODEL_LOG_PATH . 'change.php';
 include_once MODEL_LOG_PATH . 'change_log_link.php';
 
-use api\word\triple_api;
+use api\word\triple as triple_api;
 use cfg\library;
 use cfg\sql_db;
 use html\log\user_log_display;

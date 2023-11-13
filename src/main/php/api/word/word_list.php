@@ -32,10 +32,12 @@
 
 namespace api\word;
 
-use api\sandbox\list_api;
+use api\word\word as word_api;
+use api\sandbox\list_object as list_api;
+use cfg\phrase_type;
 use html\word\word_list as word_list_dsp;
 
-class word_list_api extends list_api
+class word_list extends list_api
 {
 
     /*
@@ -95,9 +97,9 @@ class word_list_api extends list_api
      * and delete list of "2016", "2017","2018"
      * the result is "2014", "2015"
      *
-     * @param word_list_api $del_lst is the list of phrases that should be removed from this list object
+     * @param word_list $del_lst is the list of phrases that should be removed from this list object
      */
-    private function diff(word_list_api $del_lst): void
+    private function diff(word_list $del_lst): void
     {
         if (!$this->is_empty()) {
             $result = array();
@@ -113,9 +115,9 @@ class word_list_api extends list_api
 
     /**
      * merge as a function, because the array_merge does not create an object
-     * @param word_list_api $new_wrd_lst with the words that should be added
+     * @param word_list $new_wrd_lst with the words that should be added
      */
-    function merge(word_list_api $new_wrd_lst)
+    function merge(word_list $new_wrd_lst): void
     {
         foreach ($new_wrd_lst->lst() as $new_wrd) {
             $this->add($new_wrd);
@@ -124,11 +126,11 @@ class word_list_api extends list_api
 
     /**
      * @param string $type the ENUM string of the fixed type
-     * @return word_list_api with the all words of the give type
+     * @return word_list with the all words of the give type
      */
-    private function filter(string $type): word_list_api
+    private function filter(string $type): word_list
     {
-        $result = new word_list_api();
+        $result = new word_list();
         foreach ($this->lst() as $wrd) {
             if ($wrd->is_type($type)) {
                 $result->add($wrd);
@@ -140,7 +142,7 @@ class word_list_api extends list_api
     /**
      * get all time words from this list of words
      */
-    function time_lst(): word_list_api
+    function time_lst(): word_list
     {
         return $this->filter(phrase_type::TIME);
     }
@@ -148,7 +150,7 @@ class word_list_api extends list_api
     /**
      * get all measure words from this list of words
      */
-    function measure_lst(): word_list_api
+    function measure_lst(): word_list
     {
         return $this->filter(phrase_type::MEASURE);
     }
@@ -156,9 +158,9 @@ class word_list_api extends list_api
     /**
      * get all scaling words from this list of words
      */
-    function scaling_lst(): word_list_api
+    function scaling_lst(): word_list
     {
-        $result = new word_list_api();
+        $result = new word_list();
         foreach ($this->lst() as $wrd) {
             if ($wrd->is_scaling()) {
                 $result->add($wrd);
@@ -169,9 +171,9 @@ class word_list_api extends list_api
 
     /**
      * get all measure and scaling words from this list of words
-     * @returns word_list_api words that are usually shown after a number
+     * @returns word_list words that are usually shown after a number
      */
-    function measure_scale_lst(): word_list_api
+    function measure_scale_lst(): word_list
     {
         $scale_lst = $this->scaling_lst();
         $measure_lst = $this->measure_lst();
@@ -182,7 +184,7 @@ class word_list_api extends list_api
     /**
      * get all measure words from this list of words
      */
-    function percent_lst(): word_list_api
+    function percent_lst(): word_list
     {
         return $this->filter(phrase_type::PERCENT);
     }
@@ -191,9 +193,9 @@ class word_list_api extends list_api
      * like names_linked, but without measure and time words
      * because measure words are usually shown after the number
      * TODO call this from the display object t o avoid casting again
-     * @returns word_list_api a word
+     * @returns word_list a word
      */
-    function ex_measure_and_time_lst(): word_list_api
+    function ex_measure_and_time_lst(): word_list
     {
         $wrd_lst_ex = clone $this;
         $wrd_lst_ex->ex_time();

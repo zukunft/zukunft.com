@@ -49,7 +49,7 @@ include_once MODEL_REF_PATH . 'ref.php';
 include_once SERVICE_EXPORT_PATH . 'word_exp.php';
 
 use api\api;
-use api\word\word_api;
+use api\word\word as word_api;
 use cfg\db\sql;
 use cfg\db\sql_par_type;
 use cfg\group\group_list;

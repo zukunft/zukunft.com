@@ -32,8 +32,8 @@
 
 namespace test;
 
-use api\formula\formula_api;
-use api\word\word_api;
+use api\formula\formula as formula_api;
+use api\word\word as word_api;
 use cfg\expression;
 use cfg\library;
 

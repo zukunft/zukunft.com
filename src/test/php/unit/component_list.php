@@ -32,7 +32,7 @@
 
 namespace unit;
 
-use api\component\component_api;
+use api\component\component as component_api;
 use cfg\component\component;
 use cfg\component\component_list;
 use cfg\sql_db;

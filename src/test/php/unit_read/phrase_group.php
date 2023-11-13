@@ -32,7 +32,7 @@
 
 namespace test;
 
-use api\word\word_api;
+use api\word\word as word_api;
 use cfg\group\group;
 use cfg\phrase_list;
 

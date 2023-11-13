@@ -32,9 +32,9 @@
 
 namespace test\write;
 
-use api\formula\formula_api;
-use api\result\result_api;
-use api\word\word_api;
+use api\formula\formula as formula_api;
+use api\result\result as result_api;
+use api\word\word as word_api;
 use cfg\formula_list;
 use cfg\formula_type;
 use cfg\word;

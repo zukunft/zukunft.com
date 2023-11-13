@@ -32,7 +32,7 @@
 
 namespace test;
 
-use api\component\component_api;
+use api\component\component as component_api;
 use api\view\view as view_api;
 use cfg\component\component;
 use cfg\component\component_type;

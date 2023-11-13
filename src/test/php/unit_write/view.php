@@ -33,7 +33,7 @@
 namespace test\write;
 
 use api\view\view as view_api;
-use api\word\word_api;
+use api\word\word as word_api;
 use cfg\view_type;
 use cfg\view;
 use html\view\view as view_dsp;

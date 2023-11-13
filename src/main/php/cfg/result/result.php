@@ -46,7 +46,7 @@ namespace cfg;
 include_once DB_PATH . 'sql_par_type.php';
 include_once SERVICE_EXPORT_PATH . 'result_exp.php';
 
-use api\result\result_api;
+use api\result\result as result_api;
 use cfg\db\sql;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;

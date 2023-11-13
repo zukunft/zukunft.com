@@ -37,7 +37,7 @@ namespace html\component;
 include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
 
 use api\api;
-use api\word\word_api;
+use api\word\word as word_api;
 use cfg\component\component_type;
 use cfg\component_link_list;
 use cfg\library;

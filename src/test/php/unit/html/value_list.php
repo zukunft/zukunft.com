@@ -32,10 +32,10 @@
 
 namespace unit\html;
 
-use api\phrase\phrase_group_api;
-use api\phrase\phrase_list_api;
-use api\value\value_api;
-use api\value\value_list_api;
+use api\phrase\group as group_api;
+use api\phrase\phrase_list as phrase_list_api;
+use api\value\value as value_api;
+use api\value\value_list as value_list_api;
 use html\html_base;
 use cfg\phrase_list;
 use html\phrase\phrase_list as phrase_list_dsp;
