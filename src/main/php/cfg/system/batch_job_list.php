@@ -42,6 +42,7 @@ include_once MODEL_SYSTEM_PATH . 'base_list.php';
 
 use api\system\batch_job_list as batch_job_list_api;
 use cfg\db\sql;
+use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use DateTime;
 

@@ -36,10 +36,10 @@ include_once MODEL_VALUE_PATH . 'value_phrase_link.php';
 include_once MODEL_VALUE_PATH . 'value_phrase_link_list.php';
 
 use cfg\phrase;
-use cfg\sql_db;
-use cfg\value;
-use cfg\value_phrase_link;
-use cfg\value_phrase_link_list;
+use cfg\db\sql_db;
+use cfg\value\value;
+use cfg\value\value_phrase_link;
+use cfg\value\value_phrase_link_list;
 
 class value_phrase_link_unit_tests
 {

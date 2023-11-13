@@ -38,7 +38,7 @@ use api\word\triple as triple_api;
 use cfg\batch_job_type_list;
 use cfg\batch_job;
 use cfg\batch_job_list;
-use cfg\sql_db;
+use cfg\db\sql_db;
 
 class batch_job_unit_tests
 {

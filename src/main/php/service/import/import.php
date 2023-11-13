@@ -54,20 +54,20 @@ include_once MODEL_VIEW_PATH . 'view.php';
 include_once MODEL_VIEW_PATH . 'view_list.php';
 
 use cfg\component\component;
+use cfg\result\result;
+use cfg\result\result_list;
+use cfg\value\value;
+use cfg\value\value_list;
 use im_export\export;
 use cfg\formula;
 use cfg\formula_list;
 use cfg\ip_range;
 use cfg\library;
 use cfg\ref;
-use cfg\result;
-use cfg\result_list;
 use cfg\source;
 use cfg\triple;
 use cfg\user;
 use cfg\user_message;
-use cfg\value;
-use cfg\value_list;
 use cfg\verb;
 use cfg\view;
 use cfg\view_list;
@@ -253,9 +253,9 @@ class file_import
                         $result->add($import_result);
                     }
                 } elseif ($key == export::PHRASE_VALUES) {
-                    foreach ($json_obj as $key => $number) {
+                    foreach ($json_obj as $val_key => $number) {
                         $val = new value($this->usr);
-                        $import_result = $val->import_phrase_value($key, $number);
+                        $import_result = $val->import_phrase_value($val_key, $number);
                         if ($import_result->is_ok()) {
                             $this->values_done++;
                         } else {

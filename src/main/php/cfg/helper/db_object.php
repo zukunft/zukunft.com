@@ -33,8 +33,10 @@
 namespace cfg;
 
 use cfg\db\sql;
+use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
+use cfg\db\sql_par;
 
 class db_object
 {

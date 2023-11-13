@@ -41,14 +41,14 @@ include_once MODEL_SANDBOX_PATH . 'sandbox.php';
 include_once API_SANDBOX_PATH . 'sandbox_value.php';
 include_once API_LOG_PATH . 'system_log.php';
 
+use cfg\db\sql_par;
 use cfg\log\change_log_action;
 use cfg\log\change;
 use cfg\db\sql;
 use cfg\db_object_seq_id;
 use cfg\library;
 use cfg\sandbox;
-use cfg\sql_db;
-use cfg\sql_par;
+use cfg\db\sql_db;
 use cfg\sys_log_function;
 use cfg\type_list;
 use cfg\type_object;

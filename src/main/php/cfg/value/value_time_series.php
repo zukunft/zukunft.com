@@ -34,10 +34,18 @@
   
 */
 
-namespace cfg;
+namespace cfg\value;
 
 use cfg\db\sql;
+use cfg\db\sql_db;
+use cfg\db\sql_par;
 use cfg\group\group;
+use cfg\library;
+use cfg\sandbox;
+use cfg\sandbox_value;
+use cfg\source;
+use cfg\user;
+use cfg\user_message;
 use DateTime;
 
 class value_time_series extends sandbox_value

@@ -32,6 +32,7 @@
 namespace cfg;
 
 use cfg\db\sql;
+use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 
 include_once DB_PATH . 'sql_par_type.php';

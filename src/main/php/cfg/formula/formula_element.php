@@ -38,6 +38,7 @@ namespace cfg;
 include_once MODEL_HELPER_PATH . 'db_object_seq_id_user.php';
 
 use cfg\db\sql;
+use cfg\db\sql_par;
 use html\word\word as word_dsp;
 use html\formula\formula as formula_dsp;
 

@@ -38,7 +38,7 @@ include_once API_WORD_PATH . 'word.php';
 include_once WEB_WORD_PATH . 'word.php';
 
 use api\formula\formula as formula_api;
-use cfg\sql_db;
+use cfg\db\sql_db;
 use cfg\phrase_type;
 use cfg\word;
 use api\word\word as word_api;

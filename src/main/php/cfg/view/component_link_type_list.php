@@ -2,8 +2,8 @@
 
 /*
 
-    model/view/component_link_types.php - to define the behaviour if a component is linked to a view
-    ----------------------------------------
+    model/view/component_link_type_list.php - to define the behaviour if a component is linked to a view
+    ---------------------------------------
 
     TODO check if really needed
 
@@ -32,6 +32,8 @@
 */
 
 namespace cfg;
+
+use cfg\db\sql_db;
 
 include_once DB_PATH . 'sql_db.php';
 

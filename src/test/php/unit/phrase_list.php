@@ -42,7 +42,7 @@ use cfg\library;
 use cfg\phr_ids;
 use cfg\phrase;
 use cfg\phrase_list;
-use cfg\sql_db;
+use cfg\db\sql_db;
 use cfg\sql_par;
 use cfg\verb;
 use cfg\word;

@@ -63,6 +63,8 @@ include_once MODEL_PHRASE_PATH . 'phrase.php';
 use api\api;
 use api\phrase\phrase as phrase_api;
 use cfg\db\sql;
+use cfg\db\sql_db;
+use cfg\db\sql_par;
 use cfg\group\group_list;
 use html\phrase\phrase as phrase_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;

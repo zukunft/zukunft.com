@@ -37,7 +37,7 @@ include_once MODEL_FORMULA_PATH . 'formula_link_list.php';
 use cfg\formula_link;
 use cfg\formula_link_list;
 use cfg\library;
-use cfg\sql_db;
+use cfg\db\sql_db;
 
 class formula_link_unit_tests
 {

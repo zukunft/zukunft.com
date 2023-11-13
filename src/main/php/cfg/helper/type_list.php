@@ -41,6 +41,8 @@ include_once WEB_USER_PATH . 'user_type_list.php';
 
 use api\system\type_list as type_list_api;
 use cfg\db\sql;
+use cfg\db\sql_db;
+use cfg\db\sql_par;
 use html\user\user_type_list as type_list_dsp;
 use model\db_cl;
 

@@ -31,7 +31,7 @@
 
 namespace cfg\log;
 
-use cfg\sql_db;
+use cfg\db\sql_db;
 use cfg\type_list;
 use cfg\type_object;
 

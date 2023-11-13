@@ -33,14 +33,23 @@
   
 */
 
-namespace cfg;
+namespace cfg\db;
 
 include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_DB_PATH . 'sql.php';
 include_once MODEL_SYSTEM_PATH . 'log.php';
 
+use cfg\config;
 use cfg\db\sql;
 use cfg\db\sql_par_type;
+use cfg\library;
+use cfg\log;
+use cfg\sys_log_level;
+use cfg\triple;
+use cfg\user;
+use cfg\user_message;
+use cfg\value\value;
+use cfg\word;
 use DateTime;
 use Exception;
 use mysqli;
@@ -222,7 +231,6 @@ class sql_db
     private ?string $id_link_field = '';            // only for link objects the id field of the link type object
     private ?string $name_field = '';               // unique text key field of the table used
     private ?string $query_name = '';               // unique name of the query to precompile and use the query
-    private ?array $par_fields = [];                // list of field names to create the sql where statement
     private ?array $par_values = [];                // list of the parameter value to make sure they are in the same order as the parameter
     private ?array $par_types = [];                 // list of the parameter types, which also defines a precompiled query
     private ?array $par_use_link = [];              // array of bool, true if the parameter should be used on the linked table
@@ -311,7 +319,6 @@ class sql_db
         $this->id_link_field = '';
         $this->name_field = '';
         $this->query_name = '';
-        $this->par_fields = [];
         $this->par_values = [];
         $this->par_types = [];
         $this->par_use_link = [];

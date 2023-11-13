@@ -35,7 +35,7 @@ namespace test;
 use api\view\view as view_api;
 use cfg\view;
 use cfg\view_sys_list;
-use cfg\sql_db;
+use cfg\db\sql_db;
 use cfg\view_list;
 
 class view_list_unit_tests

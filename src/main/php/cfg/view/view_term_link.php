@@ -33,6 +33,7 @@ namespace cfg;
 
 use api\view\view as view_api;
 use cfg\db\sql;
+use cfg\db\sql_par;
 use cfg\export\sandbox_exp;
 use cfg\export\view_exp;
 

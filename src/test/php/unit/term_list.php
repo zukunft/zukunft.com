@@ -37,7 +37,7 @@ use cfg\trm_ids;
 use html\html_base;
 use html\phrase\term_list as term_list_dsp;
 use cfg\formula;
-use cfg\sql_db;
+use cfg\db\sql_db;
 use cfg\term;
 use cfg\term_list;
 use cfg\triple;

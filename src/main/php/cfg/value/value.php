@@ -58,7 +58,7 @@
 
 */
 
-namespace cfg;
+namespace cfg\value;
 
 include_once MODEL_SANDBOX_PATH . 'sandbox_value.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
@@ -71,11 +71,35 @@ include_once SERVICE_EXPORT_PATH . 'json.php';
 
 use api\api;
 use api\value\value as value_api;
+use cfg\batch_job;
+use cfg\batch_job_type_list;
 use cfg\db\sql;
+use cfg\db\sql_db;
+use cfg\db\sql_par;
+use cfg\expression;
+use cfg\figure;
 use cfg\group\group;
+use cfg\library;
+use cfg\log;
 use cfg\log\change;
 use cfg\log\change_log_action;
+use cfg\log\change_log_field;
 use cfg\log\change_log_table;
+use cfg\phr_ids;
+use cfg\phrase;
+use cfg\phrase_list;
+use cfg\phrase_type;
+use cfg\protection_type;
+use cfg\result\result_list;
+use cfg\sandbox;
+use cfg\sandbox_non_seq_id;
+use cfg\sandbox_value;
+use cfg\share_type;
+use cfg\source;
+use cfg\triple_list;
+use cfg\user;
+use cfg\user_message;
+use cfg\word_list;
 use DateTime;
 use Exception;
 use html\value\value as value_dsp;

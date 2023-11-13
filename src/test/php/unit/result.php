@@ -40,8 +40,8 @@ use cfg\formula;
 use cfg\group\group;
 use cfg\group\group_list;
 use cfg\phrase_list;
-use cfg\result;
-use cfg\sql_db;
+use cfg\db\sql_db;
+use cfg\result\result;
 use html\result\result as result_dsp;
 
 class result_unit_tests

@@ -50,6 +50,8 @@ include_once MODEL_SANDBOX_PATH . 'protection_type.php';
 include_once MODEL_SANDBOX_PATH . 'share_type.php';
 
 use cfg\db\sql;
+use cfg\db\sql_db;
+use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\export\sandbox_exp;
 use cfg\log\change;

@@ -36,6 +36,7 @@ include_once MODEL_SANDBOX_PATH . 'sandbox_list_named.php';
 
 use api\ref\source_list as source_list_api;
 use cfg\db\sql;
+use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 
 class source_list extends sandbox_list_named

@@ -36,7 +36,7 @@ include_once MODEL_VIEW_PATH . 'component_link_list.php';
 
 use cfg\library;
 use cfg\phrase;
-use cfg\sql_db;
+use cfg\db\sql_db;
 use cfg\component_link_list;
 
 class component_link_list_unit_tests

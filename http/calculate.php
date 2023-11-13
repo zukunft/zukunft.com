@@ -35,7 +35,7 @@
 use cfg\formula_list;
 use cfg\library;
 use cfg\result_list;
-use cfg\sql_db;
+use cfg\db\sql_db;
 use cfg\user;
 
 $debug = $_GET['debug'] ?? 0;

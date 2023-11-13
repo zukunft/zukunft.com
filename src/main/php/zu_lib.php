@@ -451,9 +451,9 @@ use html\phrase\phrase_group as phrase_group_dsp;
 
 */
 
-use cfg\db_check;
+use cfg\db\db_check;
 use cfg\library;
-use cfg\sql_db;
+use cfg\db\sql_db;
 use cfg\sys_log_level;
 use cfg\sys_log_status;
 use cfg\sys_log_function;

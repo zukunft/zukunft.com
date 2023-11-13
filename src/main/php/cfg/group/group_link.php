@@ -35,12 +35,12 @@ namespace cfg\group;
 
 include_once DB_PATH . 'sql_par_type.php';
 
+use cfg\db\sql_par;
 use cfg\db_object_seq_id;
 use cfg\db\sql;
 use cfg\db\sql_par_type;
 use cfg\group\group;
-use cfg\sql_db;
-use cfg\sql_par;
+use cfg\db\sql_db;
 use cfg\triple;
 
 class group_link extends db_object_seq_id

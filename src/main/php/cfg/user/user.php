@@ -55,6 +55,8 @@ include_once SERVICE_EXPORT_PATH . 'user_exp.php';
 
 use api\user\user as user_api;
 use cfg\db\sql;
+use cfg\db\sql_db;
+use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\export\user_exp;
 use cfg\export\sandbox_exp;

@@ -36,7 +36,7 @@ use api\view\view as view_api;
 use cfg\view_term_link;
 use html\view\view as view_dsp;
 use cfg\library;
-use cfg\sql_db;
+use cfg\db\sql_db;
 use cfg\view;
 
 class view_unit_tests

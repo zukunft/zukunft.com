@@ -31,6 +31,7 @@
 
 namespace cfg;
 
+use cfg\db\sql_db;
 use cfg\export\sandbox_exp;
 
 include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';

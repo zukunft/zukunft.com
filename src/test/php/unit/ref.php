@@ -40,7 +40,7 @@ use html\ref\ref as ref_dsp;
 use html\ref\source as source_dsp;
 use cfg\ref;
 use cfg\source;
-use cfg\sql_db;
+use cfg\db\sql_db;
 
 class ref_unit_tests
 {

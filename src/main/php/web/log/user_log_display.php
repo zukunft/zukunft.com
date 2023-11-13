@@ -36,7 +36,7 @@ use cfg\log\change_log_table;
 use cfg\component\component;
 use cfg\formula;
 use cfg\library;
-use cfg\sql_db;
+use cfg\db\sql_db;
 use cfg\user;
 use cfg\value;
 use cfg\view;

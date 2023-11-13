@@ -46,6 +46,8 @@ include_once DB_PATH . 'sql_par_type.php';
 
 use api\word\triple_list as triple_list_api;
 use cfg\db\sql;
+use cfg\db\sql_db;
+use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use html\html_base;
 use html\word\triple as triple_dsp;

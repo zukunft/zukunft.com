@@ -44,7 +44,7 @@ use cfg\group\group_link;
 use cfg\group\group_list;
 use cfg\library;
 use cfg\phrase_list;
-use cfg\sql_db;
+use cfg\db\sql_db;
 use cfg\word;
 use cfg\word_list;
 

@@ -35,7 +35,7 @@ namespace test;
 include_once MODEL_GROUP_PATH . 'group_list.php';
 
 use cfg\group\group_list;
-use cfg\sql_db;
+use cfg\db\sql_db;
 
 class group_list_unit_tests
 {

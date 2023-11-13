@@ -32,7 +32,7 @@
 
 namespace test\write;
 
-include_once MODEL_VALUE_PATH . 'value_dsp.php';
+include_once MODEL_VALUE_PATH . 'value_dsp_old.php';
 
 use api\value\value as value_api;
 use api\word\word as word_api;

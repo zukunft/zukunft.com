@@ -42,6 +42,8 @@ use api\view\component_link_list as component_link_list_api;
 use cfg\component\component;
 use cfg\component\component_list;
 use cfg\db\sql;
+use cfg\db\sql_db;
+use cfg\db\sql_par;
 
 class component_link_list extends sandbox_list
 {

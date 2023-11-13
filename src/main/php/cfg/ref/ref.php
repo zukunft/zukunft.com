@@ -60,6 +60,8 @@ include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
 
 use api\ref\ref as ref_api;
 use cfg\db\sql;
+use cfg\db\sql_db;
+use cfg\db\sql_par;
 use cfg\export\sandbox_exp;
 use cfg\export\ref_exp;
 use cfg\log\change_log_action;

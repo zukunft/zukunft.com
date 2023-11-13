@@ -37,7 +37,11 @@ include_once DB_PATH . 'sql.php';
 include_once DB_PATH . 'sql_par_type.php';
 
 use cfg\db\sql;
+use cfg\db\sql_db;
+use cfg\db\sql_par;
 use cfg\db\sql_par_type;
+use cfg\log\change;
+use cfg\log\change_log_action;
 
 class ip_range extends db_object_seq_id
 {

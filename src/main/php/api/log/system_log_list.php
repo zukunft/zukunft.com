@@ -34,7 +34,7 @@ namespace api\log;
 include_once API_PATH . 'api_message.php';
 
 use api\api_message;
-use cfg\sql_db;
+use cfg\db\sql_db;
 use cfg\user;
 use controller\controller;
 use JsonSerializable;

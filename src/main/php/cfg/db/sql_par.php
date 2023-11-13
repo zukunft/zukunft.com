@@ -35,7 +35,9 @@
 // TODO check that for all update and insert statement the user id is set correctly (use word user config as an example)
 // TODO mainly for data from the internet use prepared statements to prevent SQL injections
 
-namespace cfg;
+namespace cfg\db;
+
+use cfg\library;
 
 /**
  * a query object to build and fill prepared queries

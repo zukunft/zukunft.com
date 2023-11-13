@@ -43,7 +43,7 @@ use cfg\verb_list;
 use html\word\triple_list as triple_list_dsp;
 use cfg\library;
 use cfg\phrase;
-use cfg\sql_db;
+use cfg\db\sql_db;
 use cfg\triple_list;
 use cfg\verb;
 use cfg\word;

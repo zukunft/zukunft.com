@@ -41,6 +41,7 @@ include_once API_PHRASE_PATH . 'term_list.php';
 
 use api\phrase\term_list as term_list_api;
 use cfg\db\sql;
+use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use html\phrase\term_list as term_list_dsp;
 

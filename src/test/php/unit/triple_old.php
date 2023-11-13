@@ -36,7 +36,7 @@ namespace test;
 
 use api\phrase\phrase as phrase_api;
 use api\word\triple as triple_api;
-use cfg\sql_db;
+use cfg\db\sql_db;
 use cfg\triple;
 use cfg\verb;
 use cfg\word;

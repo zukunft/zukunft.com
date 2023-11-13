@@ -43,6 +43,8 @@ include_once SERVICE_EXPORT_PATH . 'component_exp.php';
 use api\view\view as view_api;
 use cfg\component\component;
 use cfg\db\sql;
+use cfg\db\sql_db;
+use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\export\sandbox_exp;
 use cfg\export\view_exp;

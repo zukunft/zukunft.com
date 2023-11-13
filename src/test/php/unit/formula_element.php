@@ -36,7 +36,7 @@ include_once MODEL_FORMULA_PATH . 'formula_element_list.php';
 
 use cfg\formula_element;
 use cfg\formula_element_list;
-use cfg\sql_db;
+use cfg\db\sql_db;
 
 class formula_element_unit_tests
 {

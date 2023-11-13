@@ -40,7 +40,7 @@ use html\word\word as word_dsp;
 use html\word\triple as triple_dsp;
 use html\phrase\phrase as phrase_dsp;
 use cfg\phrase;
-use cfg\sql_db;
+use cfg\db\sql_db;
 use cfg\word;
 
 class phrase_unit_tests

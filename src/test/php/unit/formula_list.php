@@ -38,7 +38,7 @@ use cfg\triple;
 use cfg\verb;
 use html\formula\formula_list as formula_list_dsp;
 use cfg\formula_list;
-use cfg\sql_db;
+use cfg\db\sql_db;
 use cfg\word;
 
 class formula_list_unit_tests

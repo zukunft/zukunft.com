@@ -34,8 +34,8 @@ namespace test;
 
 use cfg\formula;
 use cfg\group\group;
-use cfg\result_list;
-use cfg\sql_db;
+use cfg\result\result_list;
+use cfg\db\sql_db;
 use cfg\triple;
 use cfg\word;
 use html\result\result_list as result_list_dsp;

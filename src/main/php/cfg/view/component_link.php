@@ -41,6 +41,8 @@ include_once API_VIEW_PATH . 'component_link.php';
 use cfg\component\component;
 use api\view\component_link as component_link_api;
 use cfg\db\sql;
+use cfg\db\sql_db;
+use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\export\sandbox_exp;
 

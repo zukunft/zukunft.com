@@ -36,12 +36,12 @@ namespace cfg\group;
 include_once DB_PATH . 'sql_par_type.php';
 
 use cfg\db\sql;
+use cfg\db\sql_par;
 use cfg\library;
 use cfg\phrase;
 use cfg\phrase_list;
 use cfg\sandbox_list;
-use cfg\sql_db;
-use cfg\sql_par;
+use cfg\db\sql_db;
 use cfg\triple;
 use cfg\user_message;
 use cfg\word;

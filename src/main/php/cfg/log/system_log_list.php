@@ -47,10 +47,10 @@ include_once WEB_LOG_PATH . 'system_log_list_old.php';
 
 use cfg\base_list;
 use cfg\db\sql;
+use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\sandbox;
-use cfg\sql_db;
-use cfg\sql_par;
+use cfg\db\sql_db;
 use cfg\sys_log_function;
 use cfg\sys_log_status;
 use cfg\type_object;

@@ -62,6 +62,8 @@ include_once WEB_PHRASE_PATH . 'term.php';
 use api\phrase\term as term_api;
 use api\word\word as word_api;
 use cfg\db\sql;
+use cfg\db\sql_db;
+use cfg\db\sql_par;
 use html\html_base;
 use html\phrase\term as term_dsp;
 use html\word\word as word_dsp;

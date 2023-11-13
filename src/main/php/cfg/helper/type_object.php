@@ -46,6 +46,8 @@ include_once API_SANDBOX_PATH . 'type_object.php';
 
 use api\sandbox\type_object as type_object_api;
 use cfg\db\sql;
+use cfg\db\sql_db;
+use cfg\db\sql_par;
 use JsonSerializable;
 use model\db_cl;
 

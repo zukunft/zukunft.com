@@ -36,6 +36,8 @@ include_once API_FORMULA_PATH . 'formula_list.php';
 
 use api\formula\formula_list as formula_list_api;
 use cfg\db\sql;
+use cfg\db\sql_db;
+use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use html\formula\formula as formula_dsp;
 use html\formula\formula_list as formula_list_dsp;

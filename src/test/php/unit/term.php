@@ -47,7 +47,7 @@ use html\word\word as word_dsp;
 use html\word\triple as triple_dsp;
 use html\verb\verb as verb_dsp;
 use cfg\formula;
-use cfg\sql_db;
+use cfg\db\sql_db;
 use cfg\term;
 use cfg\triple;
 use cfg\verb;

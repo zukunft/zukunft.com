@@ -43,13 +43,13 @@ use cfg\formula_link;
 use cfg\group\group;
 use cfg\library;
 use cfg\ref;
-use cfg\result;
-use cfg\sql_db;
+use cfg\db\sql_db;
+use cfg\result\result;
 use cfg\sys_log_level;
 use cfg\triple;
 use cfg\user;
-use cfg\value;
-use cfg\value_time_series;
+use cfg\value\value;
+use cfg\value\value_time_series;
 use cfg\view_term_link;
 use Exception;
 
@@ -2303,27 +2303,6 @@ class sql
             } elseif ($this->db_type == sql_db::MYSQL) {
                 $sql = $sql . ';';
                 //$sql_result = $this->exe($sql, 'insert_' . $this->name_sql_esc($this->table), array(), sys_log_level::FATAL);
-                try {
-                    $sql_result = $this->exe($sql, '', array(), sys_log_level::FATAL);
-                    if ($sql_result) {
-                        $result = mysqli_insert_id($db_con->mysql);
-                        // user database row have a double unique index, but relevant
-                        if ($result == 0) {
-                            if (is_array($values)) {
-                                $result = $values[0];
-                            } else {
-                                $result = $values;
-                            }
-                        }
-                        log_debug('done "' . $result . '"');
-                    } else {
-                        $result = -1;
-                        log_debug('failed (' . $sql . ')');
-                    }
-                } catch (Exception $e) {
-                    $trace_link = log_err('Cannot insert with "' . $sql . '" because: ' . $e->getMessage());
-                    $result = -1;
-                }
 
             } else {
                 log_err('Unknown database type "' . $this->db_type . '"', 'sql_db->fetch');

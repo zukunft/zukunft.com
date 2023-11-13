@@ -51,6 +51,8 @@ include_once WEB_WORD_PATH . 'word.php';
 
 use api\formula\formula as formula_api;
 use cfg\db\sql;
+use cfg\db\sql_db;
+use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\export\sandbox_exp;
 use cfg\export\formula_exp;

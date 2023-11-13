@@ -41,6 +41,8 @@ include_once SERVICE_EXPORT_PATH . 'triple_exp.php';
 use api\api;
 use api\word\triple as triple_api;
 use cfg\db\sql;
+use cfg\db\sql_db;
+use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\group\group_list;
 use cfg\log\change;

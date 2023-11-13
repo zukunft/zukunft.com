@@ -32,12 +32,18 @@
   
 */
 
-namespace cfg;
+namespace cfg\value;
 
 include_once DB_PATH . 'sql_par_type.php';
 
+use cfg\db\sql_db;
+use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\group\group;
+use cfg\phrase;
+use cfg\sandbox_list;
+use cfg\user;
+use cfg\user_message;
 
 class value_phrase_link_list extends sandbox_list
 {

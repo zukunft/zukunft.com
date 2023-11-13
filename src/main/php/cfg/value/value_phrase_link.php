@@ -37,8 +37,17 @@
 
 */
 
-namespace cfg;
+namespace cfg\value;
 
+use cfg\db\sql_db;
+use cfg\db\sql_par;
+use cfg\db_object_seq_id_user;
+use cfg\log\change_log_action;
+use cfg\log\change_log_link;
+use cfg\log\change_log_table;
+use cfg\phrase;
+use cfg\sys_log_level;
+use cfg\user;
 use Exception;
 
 include_once MODEL_HELPER_PATH . 'db_object_seq_id_user.php';

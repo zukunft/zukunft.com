@@ -30,7 +30,7 @@ include_once SERVICE_IMPORT_PATH . 'import.php';
 
 use cfg\verb_list;
 use html\html_base;
-use cfg\sql_db;
+use cfg\db\sql_db;
 use cfg\user;
 use cfg\user_profile;
 

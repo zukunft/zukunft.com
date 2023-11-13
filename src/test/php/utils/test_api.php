@@ -79,7 +79,7 @@ use cfg\phrase_list;
 use cfg\phrase_type;
 use cfg\ref;
 use cfg\source;
-use cfg\sql_db;
+use cfg\db\sql_db;
 use cfg\term_list;
 use cfg\triple;
 use cfg\trm_ids;

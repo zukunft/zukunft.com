@@ -36,7 +36,7 @@ use cfg\foaf_direction;
 use cfg\verb_list;
 use html\verb\verb as verb_dsp;
 use cfg\phrase;
-use cfg\sql_db;
+use cfg\db\sql_db;
 use cfg\verb;
 use cfg\word;
 use cfg\word_select_direction;

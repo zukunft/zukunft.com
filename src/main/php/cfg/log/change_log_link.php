@@ -47,9 +47,9 @@
 namespace cfg\log;
 
 use cfg\db\sql;
+use cfg\db\sql_par;
 use cfg\source;
-use cfg\sql_db;
-use cfg\sql_par;
+use cfg\db\sql_db;
 use cfg\user;
 use cfg\word;
 use Exception;

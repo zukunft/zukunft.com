@@ -38,7 +38,7 @@ include_once MODEL_LOG_PATH . 'change_log_link.php';
 
 use api\word\triple as triple_api;
 use cfg\library;
-use cfg\sql_db;
+use cfg\db\sql_db;
 use html\log\user_log_display;
 use cfg\log\change_log_link;
 use cfg\log\change_log_list;

@@ -37,9 +37,9 @@ include_once MODEL_VALUE_PATH . 'value_time_series.php';
 use api\phrase\group as group_api;
 use api\value\value as value_api;
 use cfg\group\group;
-use cfg\sql_db;
-use cfg\value;
-use cfg\value_time_series;
+use cfg\db\sql_db;
+use cfg\value\value;
+use cfg\value\value_time_series;
 use html\value\value as value_dsp;
 
 class value_unit_tests

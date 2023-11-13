@@ -60,6 +60,7 @@ include_once MODEL_GROUP_PATH . 'group_id.php';
 include_once API_PHRASE_PATH . 'group.php';
 
 use api\phrase\group as group_api;
+use cfg\db\sql_par;
 use cfg\db_object;
 use cfg\db\sql;
 use cfg\db\sql_field_default;
@@ -71,8 +72,7 @@ use cfg\phrase;
 use cfg\phrase_list;
 use cfg\result;
 use cfg\sandbox_value;
-use cfg\sql_db;
-use cfg\sql_par;
+use cfg\db\sql_db;
 use cfg\triple;
 use cfg\user;
 use cfg\user_message;
@@ -395,12 +395,12 @@ class group extends db_object
      * @return array the list of sql statements including the statements created by this function call
      */
     private function sql_one_tbl(
-        sql $sc,
-        bool $usr_table,
+        sql    $sc,
+        bool   $usr_table,
         string $tbl_ext,
-        array $key_fld,
+        array  $key_fld,
         string $tbl_comment,
-        array $sql_lst
+        array  $sql_lst
     ): array
     {
         $sc->set_class($this::class, $usr_table, $tbl_ext);
@@ -512,7 +512,7 @@ class group extends db_object
      * just set the class name for the user sandbox function
      * load a word object by database id
      * @param int $id the id of the word
-     * @param string $class the word class name
+     * @param string $class the group class name
      * @return int the id of the object found and zero if nothing is found
      */
     function load_by_id(int $id, string $class = self::class): int
@@ -633,6 +633,46 @@ class group extends db_object
     /*
      * get functions - to load or create with one call
      */
+
+    /**
+     * set the id of this group based on the given phrase list
+     * and save the given group name or description if needed
+     *
+     * @param phrase_list $phr_lst the list of phrase that should be used to set the group id
+     * @param string $name the given name as a replacement for the generated name
+     * @param string $description a user defined description of the group
+     * @param bool $do_save set it to false for unit testing
+     * @return user_message
+     */
+    function get_by_phrase_list(
+        phrase_list $phr_lst,
+        string      $name = '',
+        string      $description = '',
+        bool        $do_save = true): user_message
+    {
+        $result = new user_message();
+        $db_entry_needed = false;
+        $this->set_phrase_list($phr_lst);
+        if ($name != '' and $name != $this->generic_name()) {
+            $this->name = $name;
+            $db_entry_needed = true;
+        }
+        if ($description != '') {
+            $this->description = $description;
+            $db_entry_needed = true;
+        }
+        // only save the group in the database if the name or description is given by the user
+        if ($do_save and $db_entry_needed) {
+            // check if there is already a db entry
+            $db_rec = new group($this->user());
+            $db_rec->load_by_id($this->id());
+            if ($db_rec->name() != $this->name() or $db_rec->description != $this->description) {
+                // TODO call insert or update sql statement
+                //$result .= $this->save_id();
+            }
+        }
+        return $result;
+    }
 
     /**
      * get the word/triple group name (and create a new group if needed)
@@ -966,9 +1006,12 @@ class group extends db_object
                 // update the generic name in the database
                 $db_con->usr_id = $this->user()->id();
                 $db_con->set_class(sql_db::TBL_GROUP);
+                // TODO activate
+                /*
                 if ($db_con->update_old($this->id, self::FLD_DESCRIPTION, $group_name)) {
                     $result = $group_name;
                 }
+                */
                 log_debug('updated to ' . $group_name);
             }
             $this->description = $group_name;

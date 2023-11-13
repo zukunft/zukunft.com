@@ -105,8 +105,8 @@ use cfg\phrase_types;
 use cfg\protection_type_list;
 use cfg\ref;
 use cfg\ref_type_list;
-use cfg\result;
-use cfg\result_list;
+use cfg\result\result;
+use cfg\result\result_list;
 use cfg\share_type_list;
 use cfg\source;
 use cfg\source_type;
@@ -120,9 +120,9 @@ use cfg\type_list;
 use cfg\type_object;
 use cfg\user;
 use cfg\user_profile_list;
-use cfg\value;
-use cfg\value_list;
-use cfg\value_phrase_link;
+use cfg\value\value;
+use cfg\value\value_list;
+use cfg\value\value_phrase_link;
 use cfg\verb;
 use cfg\verb_list;
 use cfg\view;
@@ -1826,16 +1826,14 @@ class create_test_objects extends test_base
     /**
      * add a phrase group to the database
      * @param array $array_of_phrase_str the phrase names
-     * @param string $phrase_group_name the name that should be shown to the user
+     * @param string $name the name that should be shown to the user
      * @return group the phrase group object including the database is
      */
-    function add_phrase_group(array $array_of_phrase_str, string $phrase_group_name): group
+    function add_phrase_group(array $array_of_phrase_str, string $name): group
     {
-        $phr_grp = new group($this->usr1);
-        $phr_grp->set_phrase_list($this->load_phrase_list($array_of_phrase_str));
-        $phr_grp->name = $phrase_group_name;
-        $phr_grp->get();
-        return $phr_grp;
+        $grp = new group($this->usr1);
+        $grp->get_by_phrase_list($this->load_phrase_list($array_of_phrase_str), $name);
+        return $grp;
     }
 
     /**

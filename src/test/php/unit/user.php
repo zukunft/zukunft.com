@@ -32,7 +32,7 @@
 
 namespace test;
 
-use cfg\sql_db;
+use cfg\db\sql_db;
 use cfg\user;
 use cfg\user_list;
 

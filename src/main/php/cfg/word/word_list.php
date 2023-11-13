@@ -46,6 +46,8 @@ include_once API_WORD_PATH . 'word_list.php';
 
 use api\word\word_list as word_list_api;
 use cfg\db\sql;
+use cfg\db\sql_db;
+use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\group\group;
 use cfg\group\group_link;

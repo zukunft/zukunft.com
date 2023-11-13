@@ -76,6 +76,8 @@ include_once API_SYSTEM_PATH . 'batch_job.php';
 
 use api\system\batch_job as batch_job_api;
 use cfg\db\sql;
+use cfg\db\sql_db;
+use cfg\db\sql_par;
 use DateTime;
 use DateTimeInterface;
 

@@ -33,6 +33,8 @@
 
 namespace cfg;
 
+use cfg\db\sql_db;
+
 class base_list
 {
     // the protected main var

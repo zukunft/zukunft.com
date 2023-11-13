@@ -38,6 +38,8 @@ include_once MODEL_VIEW_PATH . 'view.php';
 include_once MODEL_VIEW_PATH . 'view_list.php';
 
 use api\view\view_list as view_list_api;
+use cfg\db\sql_db;
+use cfg\db\sql_par;
 use controller\controller;
 
 global $system_views;

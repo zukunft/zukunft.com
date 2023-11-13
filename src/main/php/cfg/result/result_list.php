@@ -29,17 +29,30 @@
 
 */
 
-namespace cfg;
+namespace cfg\result;
 
 include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
 include_once API_RESULT_PATH . 'result_list.php';
 
 use api\result\result_list as result_list_api;
+use cfg\batch_job;
+use cfg\batch_job_list;
 use cfg\db\sql;
+use cfg\db\sql_db;
+use cfg\db\sql_par;
 use cfg\db\sql_par_type;
+use cfg\formula;
 use cfg\group\group;
 use cfg\group\group_list;
+use cfg\library;
+use cfg\phrase_list;
+use cfg\sandbox_list;
+use cfg\triple;
+use cfg\user_list;
+use cfg\user_message;
+use cfg\value\value;
+use cfg\word;
 use Exception;
 use html\formula\formula as formula_dsp;
 use html\html_base;

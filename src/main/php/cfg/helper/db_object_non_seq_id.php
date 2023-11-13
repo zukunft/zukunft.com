@@ -38,6 +38,7 @@ include_once MODEL_HELPER_PATH . 'db_object.php';
 
 use api\system\db_object as db_object_api;
 use cfg\db\sql;
+use cfg\db\sql_par;
 
 class db_object_non_seq_id extends db_object
 {

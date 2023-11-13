@@ -11,7 +11,7 @@ include_once API_WORD_PATH . 'triple.php';
 use api\word\triple as triple_api;
 use api\word\word as word_api;
 use html\word\triple as triple_dsp;
-use cfg\sql_db;
+use cfg\db\sql_db;
 use cfg\triple;
 use cfg\verb;
 

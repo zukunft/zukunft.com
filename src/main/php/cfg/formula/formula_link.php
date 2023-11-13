@@ -32,6 +32,8 @@
 namespace cfg;
 
 use cfg\db\sql;
+use cfg\db\sql_db;
+use cfg\db\sql_par;
 use cfg\log\change;
 use cfg\log\change_log_action;
 use cfg\log\change_log_table;

@@ -40,7 +40,7 @@ use api\word\word as word_api;
 use cfg\expression;
 use cfg\formula;
 use cfg\phrase_list;
-use cfg\sql_db;
+use cfg\db\sql_db;
 use cfg\term_list;
 use cfg\word;
 use html\formula\formula as formula_dsp;

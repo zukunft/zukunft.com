@@ -38,7 +38,7 @@ use cfg\phrase;
 use cfg\sandbox;
 use cfg\sandbox_named;
 use cfg\source;
-use cfg\sql_db;
+use cfg\db\sql_db;
 use cfg\system_log_list;
 use cfg\triple;
 use cfg\user;

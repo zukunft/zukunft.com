@@ -44,6 +44,8 @@ include_once MODEL_USER_PATH . 'user.php';
 use api\api;
 use api\formula\figure as figure_api;
 use cfg\group\group;
+use cfg\result\result;
+use cfg\value\value;
 use DateTime;
 
 class figure extends combine_object

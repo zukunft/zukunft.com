@@ -37,6 +37,8 @@ include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
 use api\view\view_list as view_list_api;
 use cfg\component\component;
 use cfg\db\sql;
+use cfg\db\sql_db;
+use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 
 global $system_views;

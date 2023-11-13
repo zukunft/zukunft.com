@@ -29,7 +29,7 @@
 
 */
 
-namespace cfg;
+namespace cfg\value;
 
 include_once DB_PATH . 'sql_par_type.php';
 include_once API_VALUE_PATH . 'value_list.php';
@@ -37,9 +37,26 @@ include_once SERVICE_EXPORT_PATH . 'value_list_exp.php';
 
 use api\value\value_list as value_list_api;
 use cfg\db\sql;
+use cfg\db\sql_db;
+use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\group\group;
 use cfg\group\group_list;
+use cfg\library;
+use cfg\phr_ids;
+use cfg\phrase;
+use cfg\phrase_list;
+use cfg\protection_type;
+use cfg\result_list;
+use cfg\sandbox;
+use cfg\sandbox_list;
+use cfg\share_type;
+use cfg\source;
+use cfg\triple;
+use cfg\user;
+use cfg\user_message;
+use cfg\word;
+use cfg\word_list;
 use controller\controller;
 use html\button;
 use html\html_base;

@@ -55,6 +55,8 @@ include_once MODEL_GROUP_PATH . 'group.php';
 
 use api\phrase\phrase_list as phrase_list_api;
 use cfg\db\sql;
+use cfg\db\sql_db;
+use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\group\group;
 use cfg\group\group_id;

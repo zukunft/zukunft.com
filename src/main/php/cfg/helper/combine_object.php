@@ -40,6 +40,8 @@
 
 namespace cfg;
 
+use cfg\db\sql_db;
+
 class combine_object
 {
 

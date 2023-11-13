@@ -35,13 +35,13 @@ namespace test;
 include_once WEB_VALUE_PATH . 'value_list.php';
 include_once MODEL_VALUE_PATH . 'value_list.php';
 
+use cfg\db\sql_par;
+use cfg\value\value_list;
 use html\value\value_list as value_list_dsp;
 use cfg\library;
 use cfg\phrase;
 use cfg\phrase_list;
-use cfg\sql_db;
-use cfg\sql_par;
-use cfg\value_list;
+use cfg\db\sql_db;
 use cfg\word;
 
 class value_list_unit_tests
@@ -137,7 +137,6 @@ class value_list_unit_tests
      * @param test_cleanup $t the forwarded testing object
      * @param sql_db $db_con does not need to be connected to a real database
      * @param object $usr_obj the user sandbox object e.g. a word
-     * @return bool true if all tests are fine
      */
     private function assert_sql_by_phr_lst(test_cleanup $t, sql_db $db_con, object $usr_obj): void
     {

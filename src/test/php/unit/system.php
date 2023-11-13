@@ -44,7 +44,7 @@ use DateTime;
 use cfg\ip_range;
 use cfg\ip_range_list;
 use cfg\library;
-use cfg\sql_db;
+use cfg\db\sql_db;
 use cfg\sys_log_status;
 
 class system_unit_tests

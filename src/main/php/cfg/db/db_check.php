@@ -30,11 +30,23 @@
 
 */
 
-namespace cfg;
+namespace cfg\db;
 
 use cfg\component\component;
+use cfg\config;
+use cfg\formula_list;
 use cfg\group\group;
+use cfg\library;
+use cfg\phrase;
 use cfg\result\result_two;
+use cfg\sandbox;
+use cfg\sandbox_named;
+use cfg\sys_log_function;
+use cfg\user;
+use cfg\user_message;
+use cfg\user_profile;
+use cfg\user_profile_list;
+use cfg\value;
 
 class db_check
 {

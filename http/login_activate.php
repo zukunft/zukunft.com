@@ -32,7 +32,7 @@
 // standard zukunft header for callable php files to allow debugging and lib loading
 use controller\controller;
 use html\html_base;
-use cfg\sql_db;
+use cfg\db\sql_db;
 use cfg\user;
 
 $debug = $_GET['debug'] ?? 0;
