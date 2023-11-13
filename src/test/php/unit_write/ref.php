@@ -32,10 +32,10 @@
 
 namespace test\write;
 
-use api\system\word_api;
-use cfg\log\ref_type;
-use cfg\log\ref_type_list;
-use cfg\log\ref;
+use api\word\word_api;
+use cfg\ref_type;
+use cfg\ref_type_list;
+use cfg\ref;
 use test\test_cleanup;
 use const test\TIMEOUT_LIMIT_PAGE_LONG;
 

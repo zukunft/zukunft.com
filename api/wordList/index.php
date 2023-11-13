@@ -30,9 +30,9 @@
 */
 
 use controller\controller;
-use cfg\log\user;
-use cfg\log\word_list;
-use api\system\word_list_api;
+use cfg\user;
+use cfg\word_list;
+use api\word\word_list_api;
 
 // standard zukunft header for callable php files to allow debugging and lib loading
 global $debug;

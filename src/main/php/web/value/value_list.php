@@ -36,10 +36,10 @@ namespace html\value;
 
 include_once WEB_PHRASE_PATH . 'phrase_group_list.php';
 
-use cfg\log\group\group;
+use cfg\group\group;
 use cfg\library;
-use cfg\log\phr_ids;
-use cfg\log\phrase_list;
+use cfg\phr_ids;
+use cfg\phrase_list;
 use html\api;
 use html\html_base;
 use html\list_dsp;

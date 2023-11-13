@@ -29,11 +29,11 @@
   
 */
 
-use api\system\figure_api;
+use api\formula\figure_api;
 use controller\controller;
-use cfg\log\result;
-use cfg\log\user;
-use cfg\log\value;
+use cfg\result;
+use cfg\user;
+use cfg\value;
 
 // standard zukunft header for callable php files to allow debugging and lib loading
 global $debug;

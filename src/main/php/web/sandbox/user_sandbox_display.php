@@ -33,7 +33,7 @@
 namespace html\sandbox;
 
 use html\html_selector;
-use cfg\log\sandbox_value;
+use cfg\sandbox_value;
 
 class user_sandbox_display extends sandbox_value
 {

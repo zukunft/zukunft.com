@@ -31,9 +31,9 @@
 */
 
 use controller\controller;
-use cfg\log\library;
-use cfg\log\phrase_list;
-use cfg\log\user;
+use cfg\library;
+use cfg\phrase_list;
+use cfg\user;
 
 Header('Content-type: text/xml');
 

@@ -30,9 +30,9 @@
 
 */
 
-use api\system\word_api;
-use cfg\log\user;
-use cfg\log\user_list;
+use api\word\word_api;
+use cfg\user;
+use cfg\user_list;
 use test\test_cleanup;
 use const test\TEST_EMAIL;
 use const test\TEST_USER_DESCRIPTION;

@@ -36,9 +36,9 @@ use html\button;
 use html\html_base;
 use html\msg;
 use html\view\view as view_dsp;
-use cfg\log\user;
-use cfg\log\value;
-use cfg\log\view;
+use cfg\user;
+use cfg\value;
+use cfg\view;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . '/../';

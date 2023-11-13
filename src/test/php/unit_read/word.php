@@ -32,14 +32,14 @@
 
 namespace test;
 
-use api\system\triple_api;
-use api\system\word_api;
-use cfg\log\phrase;
-use cfg\log\phrase_type;
-use cfg\log\phrase_types;
-use cfg\log\verb;
-use cfg\log\word;
-use cfg\log\word_list;
+use api\word\triple_api;
+use api\word\word_api;
+use cfg\phrase;
+use cfg\phrase_type;
+use cfg\phrase_types;
+use cfg\verb;
+use cfg\word;
+use cfg\word_list;
 
 class word_unit_db_tests
 {

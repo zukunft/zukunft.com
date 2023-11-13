@@ -32,11 +32,11 @@
 
 namespace test;
 
-use api\system\verb_api;
-use api\system\word_api;
-use cfg\log\foaf_direction;
-use cfg\log\verb;
-use cfg\log\word_select_direction;
+use api\verb\verb_api;
+use api\word\word_api;
+use cfg\foaf_direction;
+use cfg\verb;
+use cfg\word_select_direction;
 
 class verb_test
 {

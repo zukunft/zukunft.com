@@ -32,15 +32,15 @@
 
 namespace test\write;
 
-use cfg\log\library;
-use cfg\log\word;
-use cfg\log\triple;
-use cfg\log\verb;
-use cfg\log\formula;
-use cfg\log\term;
-use api\system\word_api;
-use api\system\triple_api;
-use api\system\formula_api;
+use cfg\library;
+use cfg\word;
+use cfg\triple;
+use cfg\verb;
+use cfg\formula;
+use cfg\term;
+use api\word\word_api;
+use api\word\triple_api;
+use api\formula\formula_api;
 use test\test_cleanup;
 
 class term_test

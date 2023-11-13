@@ -30,14 +30,14 @@
 
 */
 
-use api\system\value_api;
-use api\system\word_api;
+use api\value\value_api;
+use api\word\word_api;
 use html\value\value_list as value_list_dsp;
-use cfg\log\phrase_list;
-use cfg\log\value;
-use cfg\log\value_list;
-use cfg\log\word;
-use cfg\log\word_list;
+use cfg\phrase_list;
+use cfg\value;
+use cfg\value_list;
+use cfg\word;
+use cfg\word_list;
 use test\test_cleanup;
 use const test\TIMEOUT_LIMIT_DB;
 use const test\TIMEOUT_LIMIT_PAGE;

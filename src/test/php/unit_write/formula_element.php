@@ -32,9 +32,9 @@
 
 namespace test\write;
 
-use api\system\formula_api;
-use api\system\word_api;
-use cfg\log\verb;
+use api\formula\formula_api;
+use api\word\word_api;
+use cfg\verb;
 use test\test_cleanup;
 
 class formula_element_test

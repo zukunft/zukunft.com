@@ -31,10 +31,10 @@
 */
 
 use api\view\view as view_api;
-use api\system\word_api;
-use cfg\log\component\component;
-use cfg\log\component\component_type;
-use cfg\log\view;
+use api\word\word_api;
+use cfg\component\component;
+use cfg\component\component_type;
+use cfg\view;
 use html\component\component as component_dsp;
 use controller\controller;
 use html\button;

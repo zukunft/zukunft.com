@@ -30,8 +30,8 @@
 */
 
 use controller\controller;
-use cfg\log\user;
-use cfg\log\source_list;
+use cfg\user;
+use cfg\source_list;
 use api\ref\source_list as source_list_api;
 
 // standard zukunft header for callable php files to allow debugging and lib loading

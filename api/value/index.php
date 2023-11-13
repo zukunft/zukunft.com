@@ -30,9 +30,9 @@
 */
 
 use controller\controller;
-use cfg\log\user;
-use cfg\log\value;
-use api\system\value_api;
+use cfg\user;
+use cfg\value;
+use api\value\value_api;
 
 // standard zukunft header for callable php files to allow debugging and lib loading
 global $debug;

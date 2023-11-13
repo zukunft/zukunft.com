@@ -32,10 +32,10 @@
 
 namespace test;
 
-use api\system\formula_api;
-use cfg\log\formula_type;
-use cfg\log\formula_type_list;
-use cfg\log\formula_list;
+use api\formula\formula_api;
+use cfg\formula_type;
+use cfg\formula_type_list;
+use cfg\formula_list;
 
 class formula_unit_db_tests
 {

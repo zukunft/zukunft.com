@@ -32,10 +32,10 @@
 
 namespace test;
 
-use api\system\formula_api;
-use api\system\word_api;
-use cfg\log\formula;
-use cfg\log\word_list;
+use api\formula\formula_api;
+use api\word\word_api;
+use cfg\formula;
+use cfg\word_list;
 
 class word_list_unit_db_tests
 {

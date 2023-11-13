@@ -31,8 +31,8 @@
 
 // standard zukunft header for callable php files to allow debugging and lib loading
 use html\html_base;
-use cfg\log\sql_db;
-use cfg\log\user;
+use cfg\sql_db;
+use cfg\user;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . '/../';

@@ -30,8 +30,8 @@
 */
 
 use controller\controller;
-use cfg\log\user;
-use cfg\log\type_lists;
+use cfg\user;
+use cfg\type_lists;
 
 // standard zukunft header for callable php files to allow debugging and lib loading
 global $debug;

@@ -30,9 +30,9 @@
 */
 
 use controller\controller;
-use cfg\log\user;
-use cfg\log\triple;
-use api\system\triple_api;
+use cfg\user;
+use cfg\triple;
+use api\word\triple_api;
 
 // standard zukunft header for callable php files to allow debugging and lib loading
 global $debug;

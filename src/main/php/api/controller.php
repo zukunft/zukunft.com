@@ -44,14 +44,14 @@ include_once MODEL_REF_PATH . 'source.php';
 include_once MODEL_WORD_PATH . 'word.php';
 
 use api_message;
-use api\system\combine_object_api;
-use api\system\list_api;
+use api\sandbox\combine_object_api;
+use api\sandbox\list_api;
 use api\system\type_lists_api;
-use api\system\sandbox_api;
-use cfg\log\combine_object;
-use cfg\log\sandbox;
-use cfg\log\source;
-use cfg\log\word;
+use api\sandbox\sandbox_api;
+use cfg\combine_object;
+use cfg\sandbox;
+use cfg\source;
+use cfg\word;
 
 class controller
 {

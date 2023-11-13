@@ -34,7 +34,7 @@
 // start testing the system functionality 
 // --------------------------------------
 
-use api\system\word_api;
+use api\word\word_api;
 use html\word\word as word_dsp;
 use const test\TIMEOUT_LIMIT_PAGE;
 use const test\TIMEOUT_LIMIT_PAGE_SEMI;

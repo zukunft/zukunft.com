@@ -33,11 +33,11 @@
 
 namespace test\write;
 
-use api\system\triple_api;
-use api\system\word_api;
-use cfg\log\group\group;
-use cfg\log\phrase_list;
-use cfg\log\word_list;
+use api\word\triple_api;
+use api\word\word_api;
+use cfg\group\group;
+use cfg\phrase_list;
+use cfg\word_list;
 use test\test_cleanup;
 use const test\TIMEOUT_LIMIT_PAGE;
 

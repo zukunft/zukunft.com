@@ -32,14 +32,14 @@
 
 namespace test\write;
 
-use api\system\formula_api;
-use api\system\value_api;
-use api\system\word_api;
-use cfg\log\batch_job;
-use cfg\log\batch_job_list;
-use cfg\log\batch_job_type_list;
-use cfg\log\phrase_list;
-use cfg\log\value;
+use api\formula\formula_api;
+use api\value\value_api;
+use api\word\word_api;
+use cfg\batch_job;
+use cfg\batch_job_list;
+use cfg\batch_job_type_list;
+use cfg\phrase_list;
+use cfg\value;
 use test\test_cleanup;
 use const test\TIMEOUT_LIMIT_DB_MULTI;
 
@@ -102,7 +102,7 @@ class batch_job_test
         $job_lst = new batch_job_list($usr);
         $calc_request = new batch_job($usr);
         $calc_request->frm = $frm;
-        $calc_request->usr = $usr;
+        $calc_request->set_user($usr);
         $calc_request->phr_lst = $phr_lst;
         $result = $job_lst->add($calc_request);
         // TODO review

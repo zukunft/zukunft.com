@@ -31,8 +31,8 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
-use cfg\log\db_check;
-use cfg\log\user;
+use cfg\db_check;
+use cfg\user;
 
 global $debug;
 $debug = $_GET['debug'] ?? 0;

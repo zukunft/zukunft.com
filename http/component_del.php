@@ -30,9 +30,9 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
-use cfg\log\component\component;
-use cfg\log\user;
-use cfg\log\view;
+use cfg\component\component;
+use cfg\user;
+use cfg\view;
 use controller\controller;
 use html\html_base;
 use html\view\view as view_dsp;

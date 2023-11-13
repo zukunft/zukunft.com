@@ -32,16 +32,16 @@
 
 namespace test;
 
-use api\system\formula_api;
-use api\system\triple_api;
-use api\system\verb_api;
-use api\system\word_api;
-use cfg\log\formula;
-use cfg\log\formula_list;
-use cfg\log\triple;
-use cfg\log\verb;
-use cfg\log\word;
-use cfg\log\word_list;
+use api\formula\formula_api;
+use api\word\triple_api;
+use api\verb\verb_api;
+use api\word\word_api;
+use cfg\formula;
+use cfg\formula_list;
+use cfg\triple;
+use cfg\verb;
+use cfg\word;
+use cfg\word_list;
 
 class formula_list_unit_db_tests
 {

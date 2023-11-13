@@ -31,13 +31,13 @@
 
 namespace test\write;
 
-use api\system\word_api;
-use cfg\log\foaf_direction;
-use cfg\log\phrase_list;
-use cfg\log\triple_list;
-use cfg\log\value_list;
-use cfg\log\verb;
-use cfg\log\word;
+use api\word\word_api;
+use cfg\foaf_direction;
+use cfg\phrase_list;
+use cfg\triple_list;
+use cfg\value_list;
+use cfg\verb;
+use cfg\word;
 use test\test_cleanup;
 use const test\TIMEOUT_LIMIT_PAGE;
 

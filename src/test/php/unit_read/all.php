@@ -34,14 +34,14 @@
 
 namespace test;
 
-use api\system\phrase_group_api;
-use api\system\triple_api;
-use api\system\value_api;
-use api\system\word_api;
+use api\phrase\phrase_group_api;
+use api\word\triple_api;
+use api\value\value_api;
+use api\word\word_api;
 use html\types\type_lists as type_list_dsp;
 use html\word\triple as triple_dsp;
-use cfg\log\triple;
-use cfg\log\verb;
+use cfg\triple;
+use cfg\verb;
 use unit_read\component_list_unit_db_tests;
 use unit_read\triple_list_unit_db_tests;
 use unit_read\triple_unit_db_tests;

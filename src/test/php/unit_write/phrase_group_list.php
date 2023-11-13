@@ -32,10 +32,10 @@
 
 namespace test\write;
 
-use api\system\word_api;
-use cfg\log\group\group_list;
-use cfg\log\phrase_list;
-use cfg\log\word_list;
+use api\word\word_api;
+use cfg\group\group_list;
+use cfg\phrase_list;
+use cfg\word_list;
 use test\test_cleanup;
 use const test\TIMEOUT_LIMIT_PAGE;
 

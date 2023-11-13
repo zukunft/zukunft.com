@@ -32,11 +32,11 @@
 
 namespace test;
 
-use api\system\word_api;
-use api\system\triple_api;
-use api\system\phrase_api;
-use cfg\log\phrase_type;
-use cfg\log\phrase;
+use api\word\word_api;
+use api\word\triple_api;
+use api\phrase\phrase_api;
+use cfg\phrase_type;
+use cfg\phrase;
 
 class phrase_unit_db_tests
 {

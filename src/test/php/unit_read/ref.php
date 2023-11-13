@@ -32,14 +32,14 @@
 
 namespace test;
 
-use api\system\source_api;
-use cfg\log\library;
-use cfg\log\phrase_type;
-use cfg\log\ref_type_list;
-use cfg\log\source_list;
-use cfg\log\source_type;
-use cfg\log\source_type_list;
-use cfg\log\ref;
+use api\ref\source_api;
+use cfg\library;
+use cfg\phrase_type;
+use cfg\ref_type_list;
+use cfg\source_list;
+use cfg\source_type;
+use cfg\source_type_list;
+use cfg\ref;
 
 class ref_unit_db_tests
 {

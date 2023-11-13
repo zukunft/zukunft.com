@@ -32,16 +32,16 @@
 
 namespace test;
 
-use api\system\formula_api;
-use api\system\word_api;
-use api\system\triple_api;
-use api\system\phrase_api;
-use cfg\log\config;
-use cfg\log\phr_ids;
-use cfg\log\phrase_list;
-use cfg\log\phrase_type;
-use cfg\log\phrase;
-use cfg\log\word;
+use api\formula\formula_api;
+use api\word\word_api;
+use api\word\triple_api;
+use api\phrase\phrase_api;
+use cfg\config;
+use cfg\phr_ids;
+use cfg\phrase_list;
+use cfg\phrase_type;
+use cfg\phrase;
+use cfg\word;
 
 class phrase_list_unit_db_tests
 {

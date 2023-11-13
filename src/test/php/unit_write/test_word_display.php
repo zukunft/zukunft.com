@@ -34,15 +34,15 @@
 // start testing the system functionality 
 // --------------------------------------
 
-use api\system\phrase_api;
-use api\system\triple_api;
-use api\system\word_api;
-use cfg\log\foaf_direction;
+use api\phrase\phrase_api;
+use api\word\triple_api;
+use api\word\word_api;
+use cfg\foaf_direction;
 use html\html_selector;
 use html\word\word as word_dsp;
-use cfg\log\library;
-use cfg\log\verb;
-use cfg\log\word;
+use cfg\library;
+use cfg\verb;
+use cfg\word;
 use test\test_cleanup;
 use const test\TIMEOUT_LIMIT_PAGE;
 

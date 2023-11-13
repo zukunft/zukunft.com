@@ -33,7 +33,7 @@ namespace cfg;
 
 global $refs;
 
-use api\system\ref_api;
+use api\ref\ref_api;
 
 class ref_list extends type_list
 {

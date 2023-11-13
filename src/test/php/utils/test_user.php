@@ -34,7 +34,7 @@
 // start testing the user permission functionality
 // -----------------------------------------------
 
-use cfg\log\user;
+use cfg\user;
 use html\user\user as user_dsp;
 use test\test_cleanup;
 

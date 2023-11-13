@@ -30,10 +30,10 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
-use cfg\log\view;
+use cfg\view;
 use controller\controller;
 use html\view\view as view_dsp;
-use cfg\log\user;
+use cfg\user;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . '/../';

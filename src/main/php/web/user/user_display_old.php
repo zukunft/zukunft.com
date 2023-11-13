@@ -39,7 +39,7 @@ use cfg\sandbox;
 use cfg\sandbox_named;
 use cfg\source;
 use cfg\sql_db;
-use cfg\log\system_log_list;
+use cfg\system_log_list;
 use cfg\triple;
 use cfg\user;
 use cfg\value;

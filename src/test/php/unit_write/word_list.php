@@ -32,15 +32,15 @@
 
 namespace test\write;
 
-use api\system\value_api;
-use api\system\word_api;
-use cfg\log\foaf_direction;
-use cfg\log\group\group;
-use cfg\log\library;
-use cfg\log\phr_ids;
-use cfg\log\verb;
-use cfg\log\word_list;
-use cfg\log\word_select_direction;
+use api\value\value_api;
+use api\word\word_api;
+use cfg\foaf_direction;
+use cfg\group\group;
+use cfg\library;
+use cfg\phr_ids;
+use cfg\verb;
+use cfg\word_list;
+use cfg\word_select_direction;
 use test\test_cleanup;
 use const test\TIMEOUT_LIMIT_DB;
 

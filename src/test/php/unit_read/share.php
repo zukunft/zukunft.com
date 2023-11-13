@@ -32,8 +32,8 @@
 
 namespace test;
 
-use cfg\log\share_type;
-use cfg\log\share_type_list;
+use cfg\share_type;
+use cfg\share_type_list;
 
 class share_unit_db_tests
 {

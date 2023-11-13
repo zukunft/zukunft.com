@@ -32,8 +32,8 @@
 
 namespace test;
 
-use cfg\log\language;
-use cfg\log\language_form;
+use cfg\language;
+use cfg\language_form;
 
 class language_unit_db_tests
 {

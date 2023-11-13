@@ -30,9 +30,9 @@
 */
 
 use controller\controller;
-use cfg\log\user;
-use cfg\log\formula_list;
-use api\system\formula_list_api;
+use cfg\user;
+use cfg\formula_list;
+use api\formula\formula_list_api;
 
 // standard zukunft header for callable php files to allow debugging and lib loading
 global $debug;

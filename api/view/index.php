@@ -30,8 +30,8 @@
 */
 
 use controller\controller;
-use cfg\log\user;
-use cfg\log\view;
+use cfg\user;
+use cfg\view;
 use api\view\view as view_api;
 
 // standard zukunft header for callable php files to allow debugging and lib loading

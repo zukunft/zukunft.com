@@ -33,9 +33,9 @@
 use controller\controller;
 use html\ref\source as source_dsp;
 use html\view\view as view_dsp;
-use cfg\log\source;
-use cfg\log\user;
-use cfg\log\view;
+use cfg\source;
+use cfg\user;
+use cfg\view;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . '/../';

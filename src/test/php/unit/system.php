@@ -37,6 +37,7 @@ include_once MODEL_LOG_PATH . 'system_log_list.php';
 include_once API_LOG_PATH . 'system_log.php';
 
 use cfg\config;
+use cfg\log\system_log_list;
 use cfg\log\system_log;
 use controller\log\system_log_api;
 use DateTime;
@@ -45,7 +46,6 @@ use cfg\ip_range_list;
 use cfg\library;
 use cfg\sql_db;
 use cfg\sys_log_status;
-use cfg\log\system_log_list;
 
 class system_unit_tests
 {

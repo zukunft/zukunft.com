@@ -33,10 +33,10 @@ use controller\controller;
 use html\html_base;
 use html\view\view as view_dsp;
 use html\formula\formula as formula_dsp;
-use cfg\log\formula;
-use cfg\log\phrase;
-use cfg\log\user;
-use cfg\log\view;
+use cfg\formula;
+use cfg\phrase;
+use cfg\user;
+use cfg\view;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . '/../';

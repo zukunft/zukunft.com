@@ -32,7 +32,7 @@
 
 namespace unit\html;
 
-use api\system\word_api;
+use api\word\word_api;
 use html\html_base;
 use html\phrase\term as term_dsp;
 use test\test_cleanup;

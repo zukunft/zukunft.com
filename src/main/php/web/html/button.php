@@ -35,7 +35,7 @@
 namespace html;
 
 use cfg\library;
-use cfg\log\phrase_list;
+use cfg\phrase_list;
 
 class button
 {
