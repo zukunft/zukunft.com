@@ -144,7 +144,7 @@ class group extends db_object
         $this->add_phrase_names($prh_names);
     }
 
-    private function reset(): void
+    function reset(): void
     {
         $this->set_id(0);
         $this->name = null;
@@ -1086,6 +1086,48 @@ class group extends db_object
      */
 
     /**
+     * get a list of database fields that have been updated
+     *
+     * @param group $grp the compare value to detect the changed fields
+     * @return array list of the database field names that have been updated
+     */
+    function changed_db_fields(group $grp): array
+    {
+        $is_updated = false;
+        $result = [];
+        if ($grp->name() <> $this->name()) {
+            $result[] = self::FLD_NAME;
+            $is_updated = true;
+        }
+        if ($grp->description <> $this->description) {
+            $result[] = self::FLD_DESCRIPTION;
+            $is_updated = true;
+        }
+        return $result;
+    }
+
+    /**
+     * get a list of database field values that have been updated
+     *
+     * @param group $grp the compare value to detect the changed fields
+     * @return array list of the database field values that have been updated
+     */
+    function changed_db_values(group $grp): array
+    {
+        $is_updated = false;
+        $result = [];
+        if ($grp->name() <> $this->name()) {
+            $result[] = $this->name();
+            $is_updated = true;
+        }
+        if ($grp->description <> $this->description) {
+            $result[] = $this->description;
+            $is_updated = true;
+        }
+        return $result;
+    }
+
+    /**
      * create a new phrase group
      */
     private function save_id(): ?int
@@ -1275,16 +1317,42 @@ class group extends db_object
         $sc->set_id_field($this->id_field());
         $qp->name .= '_insert';
         $sc->set_name($qp->name);
-        if ($usr_tbl) {
-            $fields = array(group::FLD_ID, user::FLD_ID);
-            $values = array($this->id(), $this->user()->id());
-        } else {
-            $fields = array(group::FLD_ID, user::FLD_ID, self::FLD_NAME, self::FLD_DESCRIPTION);
-            $values = array($this->id(), $this->user()->id(), $this->name, $this->description);
-        }
+        $fields = array(group::FLD_ID, user::FLD_ID, self::FLD_NAME, self::FLD_DESCRIPTION);
+        $values = array($this->id(), $this->user()->id(), $this->name, $this->description);
         $qp->sql = $sc->sql_insert($fields, $values);
         $qp->par = $values;
 
+        return $qp;
+    }
+
+    /**
+     * create the sql statement to update a group name in the database
+     *
+     * @param sql $sc with the target db_type set
+     * @param bool $usr_tbl true if the user table row should be updated
+     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     */
+    function sql_update(
+        sql   $sc,
+        array $fields = [],
+        array $values = [],
+        bool  $usr_tbl = false
+    ): sql_par
+    {
+        $lib = new library();
+        $qp = $this->sql_common($sc, $usr_tbl);
+        if (count($fields) == 0) {
+            $fields = array(self::FLD_NAME, self::FLD_DESCRIPTION);
+        }
+        if (count($values) == 0) {
+            $values = array($this->name, $this->description);
+        }
+        $fld_name = implode('_', $lib->sql_name_shorten($fields));
+        $qp->name .= '_upd_' . $fld_name;
+        $sc->set_name($qp->name);
+        $qp->sql = $sc->sql_update($this->id_field(), $this->id(), $fields, $values);
+        $values[] = $this->id();
+        $qp->par = $values;
         return $qp;
     }
 

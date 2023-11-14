@@ -130,11 +130,15 @@ class group_unit_tests
         $this->assert_sql_by_phrase_list($t, $db_con);
 
         $t->subheader('SQL statements - write');
-        // TODO activate
+        $grp->set_phrase_list($t->dummy_phrase_list_prime());
         $t->assert_sql_insert($db_con, $grp);
-        //$t->assert_sql_insert($db_con, $grp, true);
-        //$t->assert_sql_update($db_con, $grp);
-        //$t->assert_sql_update($db_con, $grp, true);
+        $t->assert_sql_insert($db_con, $grp, true);
+        $t->assert_sql_update($db_con, $grp);
+        $t->assert_sql_update($db_con, $grp, true);
+        $grp->set_phrase_list($t->dummy_phrase_list_16());
+        $t->assert_sql_insert($db_con, $grp);
+        $grp->set_phrase_list($t->dummy_phrase_list_17_plus());
+        $t->assert_sql_insert($db_con, $grp, true);
 
 
         $t->header('Unit tests of the phrase group link class (src/main/php/model/group/group_link.php)');
