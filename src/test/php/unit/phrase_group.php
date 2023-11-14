@@ -119,14 +119,22 @@ class group_unit_tests
 
         $t->subheader('SQL statements - setup');
         $grp = new group($usr);
-        $t->assert_sql_truncate($db_con, $grp);
         $t->assert_sql_table_create($db_con, $grp);
         $t->assert_sql_index_create($db_con, $grp);
         $t->assert_sql_foreign_key_create($db_con, $grp);
+        $t->assert_sql_truncate($db_con, $grp);
 
         $t->subheader('SQL statements - read');
-        $this->assert_sql_by_phrase_list($t, $db_con);
+        //$t->assert_sql_by_id($db_con, $grp);
         $t->assert_sql_by_name($db_con, $grp);
+        $this->assert_sql_by_phrase_list($t, $db_con);
+
+        $t->subheader('SQL statements - write');
+        // TODO activate
+        $t->assert_sql_insert($db_con, $grp);
+        //$t->assert_sql_insert($db_con, $grp, true);
+        //$t->assert_sql_update($db_con, $grp);
+        //$t->assert_sql_update($db_con, $grp, true);
 
 
         $t->header('Unit tests of the phrase group link class (src/main/php/model/group/group_link.php)');

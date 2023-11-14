@@ -1258,6 +1258,58 @@ class group extends db_object
     }
 
     /*
+     * cur(l)
+     */
+
+    /**
+     * create the sql statement to add a new group name to the database
+     *
+     * @param sql $sc with the target db_type set
+     * @param bool $usr_tbl true if a db row should be added to the user table
+     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     */
+    function sql_insert(sql $sc, bool $usr_tbl = false): sql_par
+    {
+        $qp = $this->sql_common($sc, $usr_tbl);
+        // overwrite the standard auto increase id field name
+        $sc->set_id_field($this->id_field());
+        $qp->name .= '_insert';
+        $sc->set_name($qp->name);
+        if ($usr_tbl) {
+            $fields = array(group::FLD_ID, user::FLD_ID);
+            $values = array($this->id(), $this->user()->id());
+        } else {
+            $fields = array(group::FLD_ID, user::FLD_ID, self::FLD_NAME, self::FLD_DESCRIPTION);
+            $values = array($this->id(), $this->user()->id(), $this->name, $this->description);
+        }
+        $qp->sql = $sc->sql_insert($fields, $values);
+        $qp->par = $values;
+
+        return $qp;
+    }
+
+    /**
+     * the common part of the sql statement creation for insert and update statements
+     * @param sql $sc with the target db_type set
+     * @param bool $usr_tbl true if a db row should be added to the user table
+     * @return sql_par the common part for insert and update sql statements
+     */
+    protected function sql_common(sql $sc, bool $usr_tbl = false): sql_par
+    {
+        $lib = new library();
+        $ext = $this->table_extension();
+        $sc->set_class($this::class, $usr_tbl, $ext);
+        $sql_name = $lib->class_to_name($this::class);
+        $qp = new sql_par($sql_name . $ext);
+        $qp->name = $sql_name . $ext;
+        if ($usr_tbl) {
+            $qp->name .= '_user';
+        }
+        return $qp;
+    }
+
+
+    /*
      * testing only
      */
 
