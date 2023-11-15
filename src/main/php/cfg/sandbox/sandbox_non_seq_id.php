@@ -1768,9 +1768,7 @@ class sandbox_non_seq_id extends db_object_non_seq_id_user
                     log_debug('change the existing ' . $this->obj_name . ' ' . $this->dsp_id() . ' (db ' . $db_rec->dsp_id() . ', standard ' . $std_rec->dsp_id() . ')');
                     // TODO check if next line is needed
                     //$this->load_objects();
-                    if ($this->obj_type == self::TYPE_LINK) {
-                        $result .= $this->save_id_fields_link($db_con, $db_rec, $std_rec);
-                    } elseif ($this->obj_type == self::TYPE_NAMED) {
+                    if ($this->obj_type == self::TYPE_NAMED) {
                         $result .= $this->save_id_fields($db_con, $db_rec, $std_rec);
                     } else {
                         log_info('Save of id field for ' . $this->obj_type . ' not expected');

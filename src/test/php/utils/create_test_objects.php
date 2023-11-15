@@ -1916,7 +1916,7 @@ class create_test_objects extends test_base
     function add_value_by_phr_grp(group $phr_grp, float $target): value
     {
         $val = $this->load_value_by_phr_grp($phr_grp);
-        if ($val->id() == 0) {
+        if (!$val->is_saved()) {
             $val->grp = $phr_grp;
             $val->set_number($target);
             $val->save();

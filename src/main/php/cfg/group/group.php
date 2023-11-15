@@ -70,17 +70,18 @@ use cfg\library;
 use cfg\phr_ids;
 use cfg\phrase;
 use cfg\phrase_list;
-use cfg\result;
+use cfg\result\result;
+use cfg\sandbox_non_seq_id;
 use cfg\sandbox_value;
 use cfg\db\sql_db;
 use cfg\triple;
 use cfg\user;
 use cfg\user_message;
-use cfg\value;
+use cfg\value\value;
 use cfg\word;
 use cfg\export\sandbox_exp;
 
-class group extends db_object
+class group extends sandbox_non_seq_id
 {
 
     /*
@@ -117,7 +118,6 @@ class group extends db_object
      */
 
     // database fields
-    private int|string $id;       // the id of the group as a backup for the order until the unit and integration test are complete
     private phrase_list $phr_lst; // the phrase list object
     private user $usr;            // the person for whom the object is loaded, so to say the viewer
     public ?string $name;         // maybe later the user should have the possibility to overwrite the generic name, but this is not user at the moment
@@ -134,6 +134,8 @@ class group extends db_object
      */
     function __construct(user $usr, int|string $id = 0, array $prh_names = [])
     {
+        parent::__construct($usr);
+
         $this->set_user($usr);
 
         $this->reset();
@@ -481,19 +483,20 @@ class group extends db_object
     /**
      * create an SQL statement to retrieve a phrase groups from the database
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql $sc with the target db_type set
+     * @param string $class the name of this class to overwrite the parent class
      * @return sql_par the SQL statement base on the parameters set in $this
      */
-    function load_sql_obj_vars(sql_db $db_con): sql_par
+    function load_sql_obj_vars(sql $sc, string $class = self::class): sql_par
     {
-        $db_con->set_class(self::class);
-        $qp = new sql_par(self::class);
+        $sc->set_class($class);
+        $qp = new sql_par($class);
         $qp->name .= $this->load_sql_name_ext();
-        $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id());
-        $db_con->set_fields(self::FLD_NAMES);
+        $sc->set_name($qp->name);
+        $sc->set_usr($this->user()->id());
+        $sc->set_fields(self::FLD_NAMES);
 
-        return $this->load_sql_select_qp($db_con, $qp);
+        return $this->load_sql_select_qp($sc, $qp);
     }
 
     /**
@@ -511,11 +514,11 @@ class group extends db_object
      * TODO move (and other functions) to db_object and rename the existing db_object to db_id_object
      * just set the class name for the user sandbox function
      * load a word object by database id
-     * @param int $id the id of the word
+     * @param int|string $id the id of the group
      * @param string $class the group class name
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_id(int $id, string $class = self::class): int
+    function load_by_id(int|string $id, string $class = self::class): int
     {
         global $db_con;
 
@@ -610,22 +613,22 @@ class group extends db_object
     /**
      * add the select parameters to the query parameters
      *
-     * @param sql_db $db_con the db connection object with the SQL name and others parameter already set
+     * @param sql $sc the db connection object with the SQL name and others parameter already set
      * @param sql_par $qp the query parameters with the name already set
      * @return sql_par the query parameters with the select parameters added
      */
-    private function load_sql_select_qp(sql_db $db_con, sql_par $qp): sql_par
+    private function load_sql_select_qp(sql $sc, sql_par $qp): sql_par
     {
         if ($this->id != 0) {
-            $db_con->add_par(sql_par_type::INT, $this->id);
-            $qp->sql = $db_con->select_by_set_id();
+            $sc->add_where(self::FLD_ID, $this->id);
         } elseif (!$this->phrase_list()->is_empty()) {
             $this->set_id_from_phrase_list($this->phrase_list());
+            $sc->add_where(self::FLD_ID, $this->id);
         } elseif ($this->name != '') {
-            $db_con->add_par(sql_par_type::TEXT, $this->name);
-            $qp->sql = $db_con->select_by_field_list(array(self::FLD_NAME));
+            $sc->add_where(self::FLD_NAME, $this->name, sql_par_type::TEXT);
         }
-        $qp->par = $db_con->get_par();
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
         return $qp;
     }
 
@@ -982,7 +985,9 @@ class group extends db_object
     }
 
     /**
-     * create the generic group name (and update the database record if needed and possible)
+     * create the generic group name
+     * TODO check if saving the generic name in the database is needed for faster search (most likely not)
+     *
      * @returns string the generic name if it has been saved to the database
      */
     private function generic_name(bool $do_save = true): string
@@ -1001,6 +1006,7 @@ class group extends db_object
         $group_name = $this->phrase_list()->dsp_name();
 
         // update the name if possible and needed
+        /*
         if ($this->description <> $group_name and $do_save) {
             if ($this->id > 0) {
                 // update the generic name in the database
@@ -1011,12 +1017,12 @@ class group extends db_object
                 if ($db_con->update_old($this->id, self::FLD_DESCRIPTION, $group_name)) {
                     $result = $group_name;
                 }
-                */
                 log_debug('updated to ' . $group_name);
             }
             $this->description = $group_name;
         }
         log_debug('group name ' . $group_name);
+        */
 
         return $result;
     }
@@ -1387,19 +1393,19 @@ class group extends db_object
     function load_link_ids_for_testing(): array
     {
 
-        global $db_con;
+        global $sc;
         $result = array();
 
-        $db_con->set_class(sql_db::VT_PHRASE_GROUP_LINK);
-        $db_con->usr_id = $this->user()->id();
+        $sc->set_class(sql_db::VT_PHRASE_GROUP_LINK);
+        $sc->usr_id = $this->user()->id();
         $qp = new sql_par(self::class);
         $qp->name .= 'test_link_ids';
-        $db_con->set_name($qp->name);
-        $db_con->set_fields(array(phrase::FLD_ID));
-        $db_con->add_par(sql_par_type::INT, $this->id);
-        $qp->sql = $db_con->select_by_field(group::FLD_ID);
-        $qp->par = $db_con->get_par();
-        $lnk_id_lst = $db_con->get($qp);
+        $sc->set_name($qp->name);
+        $sc->set_fields(array(phrase::FLD_ID));
+        $sc->add_par(sql_par_type::INT, $this->id);
+        $qp->sql = $sc->select_by_field(group::FLD_ID);
+        $qp->par = $sc->get_par();
+        $lnk_id_lst = $sc->get($qp);
         foreach ($lnk_id_lst as $db_row) {
             $result[] = $db_row[phrase::FLD_ID];
         }
