@@ -171,6 +171,8 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO load the config, that is not expected to be changed during a session once at startup
     TODO start the backend only once and react to REST calls from the frontend
     TODO make use of __DIR__ ?
+    TODO create a package size optimizer to detect the optimal number of db rows saved with one commit or the message size for the frontend by running a bigger and smaller size parallel and switch to the better if the result have a high confidence level
+    TODO display the Aggregated Mean World Usage (AMWU) with the range and the hist with and without adjustments and display the estimated personal distribution
     TODO check the install of needed packages e.g. to make sure curl_init() works
     TODO create a User Interface API
     TODO offer to use FreeOTP for two factor authentication

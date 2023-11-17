@@ -37,7 +37,7 @@ use api\word\triple as triple_api;
 use api\value\value as value_api;
 use api\word\word as word_api;
 use cfg\phrase_list;
-use cfg\value;
+use cfg\value\value;
 
 class value_unit_db_tests
 {

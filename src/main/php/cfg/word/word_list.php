@@ -50,6 +50,7 @@ use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\group\group;
+use cfg\group\group_id;
 use cfg\group\group_link;
 use html\word\word as word_dsp;
 use html\word\word_list as word_list_dsp;
@@ -426,14 +427,16 @@ class word_list extends sandbox_list
      * load a list of words by the phrase group id
      * TODO needs to be checked if really needed
      *
-     * @param int $grp_id the id of the phrase group
+     * @param int|string $grp_id the id of the phrase group
      * @return bool true if at least one word found
      */
-    function load_by_grp_id(int $grp_id): bool
+    function load_by_grp_id(int|string $grp_id): bool
     {
-        global $db_con;
-        $qp = $this->load_sql_by_grp_id($db_con->sql_creator(), $grp_id);
-        return $this->load($qp);
+        $grp_id_obj = new group_id();
+        $ids = $grp_id_obj->get_array($grp_id);
+        $phr_ids_obj = new phr_ids($ids);
+        $wrd_ids = $phr_ids_obj->wrd_ids();
+        return $this->load_by_ids($wrd_ids);
     }
 
     /**

@@ -1306,7 +1306,7 @@ class sandbox_non_seq_id extends db_object_non_seq_id_user
         $log->action = change_log_action::UPDATE;
         if ($this->can_change()) {
             // TODO add the table exceptions from sql_db
-            $log->set_table($this->obj_name . sql_db::TABLE_EXTENSION);
+            $log->set_table($this->obj_type . sql_db::TABLE_EXTENSION);
         } else {
             $log->set_table(sql_db::TBL_USER_PREFIX . $this->obj_name . sql_db::TABLE_EXTENSION);
         }

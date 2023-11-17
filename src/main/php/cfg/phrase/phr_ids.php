@@ -71,4 +71,33 @@ class phr_ids
     {
         return (count($this->lst));
     }
+
+    /**
+     * @return array with only the word ids
+     */
+    function wrd_ids(): array
+    {
+        $wrd_ids = array();
+        foreach ($this->lst as $phr_id) {
+            if ($phr_id > 0) {
+                $wrd_ids[] = $phr_id;
+            }
+        }
+        return $wrd_ids;
+    }
+
+    /**
+     * @return array with only the triple ids
+     */
+    function trp_ids(): array
+    {
+        $trp_ids = array();
+        foreach ($this->lst as $phr_id) {
+            if ($phr_id < 0) {
+                $trp_ids[] = $phr_id;
+            }
+        }
+        return $trp_ids;
+    }
+
 }

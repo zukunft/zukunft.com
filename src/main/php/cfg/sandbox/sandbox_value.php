@@ -455,7 +455,7 @@ class sandbox_value extends sandbox_non_seq_id
 
         $log = new change($this->user());
         $log->action = change_log_action::ADD;
-        $log->set_table($this->obj_name . sql_db::TABLE_EXTENSION);
+        $log->set_table($this->obj_type . sql_db::TABLE_EXTENSION);
         $log->set_field(change_log_field::FLD_NUMERIC_VALUE);
         $log->old_value = '';
         $log->new_value = $this->number;
@@ -596,7 +596,7 @@ class sandbox_value extends sandbox_non_seq_id
                 } else {
                     $msg = 'update of ' . $log->field() . ' to ' . $new_value;
                     log_debug($msg);
-                    $db_con->set_class($this->obj_name . $ext);
+                    $db_con->set_class($this->obj_type . $ext);
                     $db_con->set_usr($this->user()->id());
                     $qp = $this->sql_update($db_con->sql_creator(), array($log->field()), array($new_value));
                     $usr_msg = $db_con->update($qp, $msg);

@@ -1389,26 +1389,32 @@ class group extends sandbox_non_seq_id
 
     /**
      * internal function for testing the link for fast search
+     * load_link_ids_for_testing is not needed any more because the group id includes the
      */
     function load_link_ids_for_testing(): array
     {
 
-        global $sc;
+        /*
+        global $db_con;
         $result = array();
 
-        $sc->set_class(sql_db::VT_PHRASE_GROUP_LINK);
-        $sc->usr_id = $this->user()->id();
+        $db_con->set_class(sql_db::VT_PHRASE_GROUP_LINK);
+        $db_con->usr_id = $this->user()->id();
         $qp = new sql_par(self::class);
         $qp->name .= 'test_link_ids';
-        $sc->set_name($qp->name);
-        $sc->set_fields(array(phrase::FLD_ID));
-        $sc->add_par(sql_par_type::INT, $this->id);
-        $qp->sql = $sc->select_by_field(group::FLD_ID);
-        $qp->par = $sc->get_par();
-        $lnk_id_lst = $sc->get($qp);
+        $db_con->set_name($qp->name);
+        $db_con->set_fields(array(phrase::FLD_ID));
+        $db_con->add_par(sql_par_type::INT, $this->id);
+        $qp->sql = $db_con->select_by_field(group::FLD_ID);
+        $qp->par = $db_con->get_par();
+        $lnk_id_lst = $db_con->get($qp);
         foreach ($lnk_id_lst as $db_row) {
             $result[] = $db_row[phrase::FLD_ID];
         }
+        */
+
+        $grp_id_obj = new group_id();
+        $result = $grp_id_obj->get_array($this->id());
 
         asort($result);
         return $result;

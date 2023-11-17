@@ -37,6 +37,9 @@ use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
+use cfg\group\group;
+use cfg\result\result;
+use cfg\value\value;
 
 class db_object
 {
@@ -234,11 +237,23 @@ class db_object
      *
      * @param sql $sc with the target db_type set
      * @param int|string $id the id of the user sandbox object
+     * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id_str(sql $sc, int|string $id): sql_par
+    function load_sql_by_id_str(sql $sc, int|string $id, string $class = self::class): sql_par
     {
-        $qp = $this->load_sql($sc, sql_db::FLD_ID);
+        $ext = '';
+        if ($class == group::class
+            or $class == value::class
+            or $class == result::class) {
+            $grp = new group(new user());
+            $grp->set_id($id);
+            $ext = $grp->table_extension();
+            $qp = $this->load_sql_multi($sc, sql_db::FLD_ID, $class, $ext);
+        } else {
+            $qp = $this->load_sql($sc, sql_db::FLD_ID);
+        }
+
         $sc->add_where($this->id_field(), $id);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
