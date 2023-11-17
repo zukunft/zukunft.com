@@ -63,17 +63,22 @@ class result_unit_tests
         $t->header('Unit tests of the result class (src/main/php/model/formula/result.php)');
 
         $t->subheader('SQL creation tests');
-        $res = new result($usr);
+        $res = $t->dummy_result();
         $t->assert_sql_table_create($db_con, $res);
         $t->assert_sql_index_create($db_con, $res);
         $t->assert_sql_foreign_key_create($db_con, $res);
 
         // check the sql to load a result by the id
+        $res = $t->dummy_result_16();
         $t->assert_sql_by_id($db_con, $res);
         $this->assert_sql_by_group($t, $db_con, $res);
         $this->assert_sql_by_formula_and_group($t, $db_con, $res);
         $this->assert_sql_by_formula_and_group_list($t, $db_con, $res);
         $this->assert_sql_load_std_by_group_id($t, $db_con, $res);
+
+        $res = $t->dummy_result_prime();
+        $t->assert_sql_by_id($db_con, $res);
+        $this->assert_sql_by_group($t, $db_con, $res);
 
         $t->subheader('SQL load default statement tests');
 
@@ -126,8 +131,7 @@ class result_unit_tests
     private function assert_sql_by_group(test_cleanup $t, sql_db $db_con, result $res): void
     {
         // prepare
-        $grp = new group($t->usr1);
-        $grp->set_id(1);
+        $grp = $res->grp();
 
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;

@@ -73,14 +73,12 @@ class value_unit_tests
         $t->assert_sql_insert($db_con, $val, true);
         $t->assert_sql_update($db_con, $val);
         $t->assert_sql_update($db_con, $val, true);
-        $t->assert_sql_by_id($db_con, $val);
         $this->assert_sql_by_grp($t, $db_con, $val);
 
         // ... and the related default value
         $t->assert_sql_standard($db_con, $val);
 
         // ... and to check if any user has uses another than the default value
-        $val->set_id(1);
         $t->assert_sql_not_changed($db_con, $val);
         $t->assert_sql_user_changes($db_con, $val);
 
@@ -89,6 +87,7 @@ class value_unit_tests
         $t->assert_sql_insert($db_con, $val);
         $t->assert_sql_insert($db_con, $val, true);
         $t->assert_sql_update($db_con, $val);
+        $t->assert_sql_by_id($db_con, $val);
         // TODO activate
         //$this->assert_sql_by_grp($t, $db_con, $val);
 
@@ -129,7 +128,7 @@ class value_unit_tests
 
         // casting API
         $grp = new group($usr, 1,  array(group_api::TN_READ));
-        $val = new value($usr, 1, round(value_api::TV_READ, 13), $grp);
+        $val = new value($usr, round(value_api::TV_READ, 13), $grp);
         $t->assert_api($val);
 
         // casting figure

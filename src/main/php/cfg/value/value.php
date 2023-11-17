@@ -174,7 +174,7 @@ class value extends sandbox_value
      * set the user sandbox type for a value object and set the user, which is needed in all cases
      * @param user $usr the user who requested to see this value
      */
-    function __construct(user $usr, int $id = 0, ?float $num_val = null, ?group $phr_grp = null)
+    function __construct(user $usr, ?float $num_val = null, ?group $phr_grp = null)
     {
         parent::__construct($usr);
         $this->obj_type = sandbox::TYPE_VALUE;
@@ -184,9 +184,6 @@ class value extends sandbox_value
 
         $this->reset();
 
-        if ($id != null) {
-            $this->set_id($id);
-        }
         if ($num_val != null) {
             $this->set_number($num_val);
         }
@@ -474,7 +471,14 @@ class value extends sandbox_value
      */
     function load_sql_by_id(sql $sc, int|string $id, string $class = self::class): sql_par
     {
-        return parent::load_sql_by_id($sc, $id, $class);
+        $ext = $this->grp->table_extension();
+        $qp = $this->load_sql($sc, 'id', $class, $ext);
+        $sc->add_where(group::FLD_ID, $this->grp->id());
+
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
+        return $qp;
     }
 
     /**
@@ -488,17 +492,9 @@ class value extends sandbox_value
     function load_sql_by_grp(sql $sc, group $grp, string $class = self::class): sql_par
     {
         $ext = $grp->table_extension();
-        $qp = $this->load_sql($sc, 'group_id', $class, $ext);
-        $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id());
-        $sc->set_fields(self::FLD_NAMES);
-        $sc->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
-        $sc->set_usr_only_fields(self::FLD_NAMES_USR_ONLY);
-        if ($grp->is_prime()) {
-            $sc->add_where(group::FLD_ID, $grp->id());
-        } else {
-            $sc->add_where(group::FLD_ID, $grp->id());
-        }
+        $qp = $this->load_sql($sc, 'grp', $class, $ext);
+        $sc->add_where(group::FLD_ID, $grp->id());
+
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 

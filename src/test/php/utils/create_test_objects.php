@@ -826,25 +826,25 @@ class create_test_objects extends test_base
     function dummy_value(): value
     {
         $grp = $this->dummy_phrase_group();
-        return new value($this->usr1, 1, round(value_api::TV_READ, 13), $grp);
+        return new value($this->usr1, round(value_api::TV_READ, 13), $grp);
     }
 
     function dummy_value_16(): value
     {
         $grp = $this->dummy_phrase_group_16();
-        return new value($this->usr1, 1, round(value_api::TV_READ, 13), $grp);
+        return new value($this->usr1, round(value_api::TV_READ, 13), $grp);
     }
 
     function dummy_value_17_plus(): value
     {
         $grp = $this->dummy_phrase_group_17_plus();
-        return new value($this->usr1, 1, round(value_api::TV_READ, 13), $grp);
+        return new value($this->usr1, round(value_api::TV_READ, 13), $grp);
     }
 
     function dummy_value_zh(): value
     {
         $grp = $this->dummy_phrase_group_zh();
-        return new value($this->usr1, 2, value_api::TV_CITY_ZH_INHABITANTS_2019, $grp);
+        return new value($this->usr1, value_api::TV_CITY_ZH_INHABITANTS_2019, $grp);
     }
 
     function dummy_value_list(): value_list
@@ -920,6 +920,22 @@ class create_test_objects extends test_base
         $phr_lst->add($wrd->phrase());
         $res->set_id(1);
         $res->grp->set_phrase_list($phr_lst);
+        $res->value = result_api::TV_INT;
+        return $res;
+    }
+
+    function dummy_result_prime(): result
+    {
+        $res = new result($this->usr1);
+        $res->set_grp($this->dummy_phrase_group());
+        $res->value = result_api::TV_INT;
+        return $res;
+    }
+
+    function dummy_result_16(): result
+    {
+        $res = new result($this->usr1);
+        $res->set_grp($this->dummy_phrase_group_16());
         $res->value = result_api::TV_INT;
         return $res;
     }

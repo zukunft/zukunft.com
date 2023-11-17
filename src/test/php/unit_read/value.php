@@ -77,7 +77,7 @@ class value_unit_db_tests
         $t->subheader('Frontend API tests');
 
         $val = new value($t->usr1);
-        $val->load_by_id(1, value::class);
+        $val->load_by_id(1);
         $val->load_objects();
         $api_val = $val->api_obj();
         $t->assert($t->name . 'api->id', $api_val->id, $val->id());

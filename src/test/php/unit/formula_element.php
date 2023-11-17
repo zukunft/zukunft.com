@@ -55,7 +55,7 @@ class formula_element_unit_tests
 
         $t->subheader('SQLy creation tests');
 
-        $elm = new formula_element($usr);
+        $elm = $t->dummy_element();
         $t->assert_sql_by_id($db_con, $elm);
 
 

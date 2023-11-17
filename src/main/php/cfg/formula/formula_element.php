@@ -135,7 +135,7 @@ class formula_element extends db_object_seq_id_user
      */
     function id(): int
     {
-        return $this->obj?->id;
+        return $this->obj?->id();
     }
 
 

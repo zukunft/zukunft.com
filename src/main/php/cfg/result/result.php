@@ -207,6 +207,7 @@ class result extends sandbox_value
     function set_grp(group $grp): void
     {
         $this->grp = $grp;
+        $this->set_id($grp->id());
     }
 
     function grp(): group
@@ -313,13 +314,18 @@ class result extends sandbox_value
      * @param sql $sc with the target db_type set
      * @param string $query_name the unique name of the query e.g. id or name
      * @param string $class the name of the child class from where the call has been triggered
+     * @param string $ext the table name extension e.g. to switch between standard and prime values
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql $sc, string $query_name, string $class = self::class): sql_par
+    function load_sql(
+        sql $sc,
+        string $query_name,
+        string $class = self::class,
+        string $ext = ''
+    ): sql_par
     {
-        $qp = parent::load_sql($sc, $query_name, $class);
+        $qp = parent::load_sql_multi($sc, $query_name, $class, $ext);
 
-        $sc->set_class($class);
         // overwrite the standard id field name (result_id) with the main database id field for results "group_id"
         $sc->set_id_field($this->id_field());
         $sc->set_name($qp->name);
@@ -339,7 +345,14 @@ class result extends sandbox_value
      */
     function load_sql_by_id(sql $sc, int|string $id, string $class = self::class): sql_par
     {
-        return parent::load_sql_by_id($sc, $id, $class);
+        $ext = $this->grp->table_extension();
+        $qp = $this->load_sql($sc, 'id', $class, $ext);
+        $sc->add_where(group::FLD_ID, $this->grp->id());
+
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
+        return $qp;
     }
 
     /**
@@ -380,12 +393,13 @@ class result extends sandbox_value
      *
      * @param sql $sc with the target db_type set
      * @param group $grp the group used for the selection
+     * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_grp(sql $sc, group $grp): sql_par
+    function load_sql_by_grp(sql $sc, group $grp, string $class = self::class): sql_par
     {
-        $qp = $this->load_sql($sc, 'grp');
-        $sc->set_name($qp->name);
+        $ext = $grp->table_extension();
+        $qp = $this->load_sql($sc, 'grp', $class, $ext);
         $sc->add_where(self::FLD_GRP, $grp->id());
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();

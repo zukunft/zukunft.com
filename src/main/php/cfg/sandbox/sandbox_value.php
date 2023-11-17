@@ -175,6 +175,7 @@ class sandbox_value extends sandbox_non_seq_id
     function set_grp(group $grp): void
     {
         $this->grp = $grp;
+        $this->set_id($grp->id());
     }
 
     function grp(): group

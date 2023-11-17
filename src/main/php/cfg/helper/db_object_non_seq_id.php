@@ -142,11 +142,12 @@ class db_object_non_seq_id extends db_object
      *
      * @param sql $sc with the target db_type set
      * @param int|string $id the id of the user sandbox object
+     * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql $sc, int|string $id): sql_par
+    function load_sql_by_id(sql $sc, int|string $id, string $class = self::class): sql_par
     {
-        return parent::load_sql_by_id_str($sc, $id);
+        return parent::load_sql_by_id_str($sc, $id, $class);
     }
 
     /**
