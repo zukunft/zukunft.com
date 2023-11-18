@@ -29,9 +29,9 @@
   
 */
 
+use cfg\log\system_log_list;
 use controller\controller;
-use controller\log\system_log_list_api;
-use cfg\system_log_list;
+use api\log\system_log_list as system_log_list_api;
 use cfg\user;
 
 // standard zukunft header for callable php files to allow debugging and lib loading

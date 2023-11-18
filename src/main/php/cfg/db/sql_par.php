@@ -47,6 +47,7 @@ class sql_par
     public string $sql;   // the SQL statement to create a prepared query
     public string $name;  // the unique name of the SQL statement
     public array $par;    // the list of the parameters used for the execution
+    public string $ext;   // the table extension used e.g. to decide if the index is int or string
 
     /**
      * @param string $class the name of the calling class used for the unique query name
@@ -66,6 +67,7 @@ class sql_par
             $this->name = $class . '_by_';
         }
         $this->par = array();
+        $this->ext = '';
     }
 
     /**

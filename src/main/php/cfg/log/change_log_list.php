@@ -43,6 +43,15 @@ use api\log\change_log_list as change_log_list_api;
 use cfg\base_list;
 use cfg\component\component;
 use cfg\db\sql;
+use cfg\db\sql_par;
+use cfg\formula;
+use cfg\source;
+use cfg\triple;
+use cfg\user;
+use cfg\value\value;
+use cfg\verb;
+use cfg\view;
+use cfg\word;
 use html\log\change_log_list as change_log_list_dsp;
 
 class change_log_list extends base_list

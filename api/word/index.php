@@ -29,6 +29,7 @@
   
 */
 
+use api\api_message;
 use controller\controller;
 use cfg\user;
 use cfg\word;

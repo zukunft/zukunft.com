@@ -2,10 +2,10 @@
 
 /*
 
-    model/helper/db_object_non_seq_id.php - a base object for all model database objects which have a custom unique id
-    -------------------------------------
+    model/helper/db_object_multi.php - a base object for all db objects which use more than one table to store the data
+    --------------------------------
 
-    similar to db_object_seq_id
+    like db_object_seq_id but not using a auto sequence as db index
 
 
     This file is part of zukunft.com - calc with words
@@ -39,8 +39,10 @@ include_once MODEL_HELPER_PATH . 'db_object.php';
 use api\system\db_object as db_object_api;
 use cfg\db\sql;
 use cfg\db\sql_par;
+use cfg\group\group;
+use cfg\group\group_id;
 
-class db_object_non_seq_id extends db_object
+class db_object_multi extends db_object
 {
 
     /*
@@ -70,16 +72,21 @@ class db_object_non_seq_id extends db_object
      * to be extended by the child functions
      *
      * @param array|null $db_row with the data directly from the database
+     * @param string $ext the table type e.g. to indicate if the id is int
      * @param string $id_fld the name of the id field as set in the child class
      * @return bool true if the user sandbox object is loaded and valid
      */
-    function row_mapper(?array $db_row, string $id_fld = ''): bool
+    function row_mapper_multi(?array $db_row, string $ext, string $id_fld = ''): bool
     {
         $result = false;
         if ($db_row != null) {
             if (array_key_exists($id_fld, $db_row)) {
-                if ($db_row[$id_fld] != 0) {
-                    $this->set_id($db_row[$id_fld]);
+                if ($db_row[$id_fld] != 0 or $db_row[$id_fld] != '') {
+                    if ($ext == group_id::TBL_EXT_PRIME) {
+                        $this->set_id((int)$db_row[$id_fld]);
+                    } else {
+                        $this->set_id($db_row[$id_fld]);
+                    }
                     $result = true;
                 }
             }
@@ -171,7 +178,7 @@ class db_object_non_seq_id extends db_object
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_db_obj(db_object_non_seq_id $db_obj, object $test_obj = null): user_message
+    function import_db_obj(db_object_multi $db_obj, object $test_obj = null): user_message
     {
         $result = new user_message();
         // add a dummy id for unit testing

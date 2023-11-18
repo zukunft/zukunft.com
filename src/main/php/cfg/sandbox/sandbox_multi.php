@@ -2,7 +2,7 @@
 
 /*
 
-    model/sandbox/sandbox_non_seq_id.php - the superclass for handling user specific objects including the database saving
+    model/sandbox/sandbox_multi.php - the superclass for handling user specific objects including the database saving
     ------------------------------------
 
     This superclass should be used by the classes words, formula, ... to enable user specific values and links
@@ -44,7 +44,7 @@ namespace cfg;
 include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';
 include_once DB_PATH . 'sql_par_type.php';
-include_once MODEL_HELPER_PATH . 'db_object_non_seq_id_user.php';
+include_once MODEL_HELPER_PATH . 'db_object_multi_user.php';
 include_once MODEL_PHRASE_PATH . 'phrase_type.php';
 include_once MODEL_SANDBOX_PATH . 'protection_type.php';
 include_once MODEL_SANDBOX_PATH . 'share_type.php';
@@ -60,7 +60,7 @@ use cfg\log\change_log_action;
 use cfg\log\change_log_link;
 use Exception;
 
-class sandbox_non_seq_id extends db_object_non_seq_id_user
+class sandbox_multi extends db_object_multi_user
 {
 
     /*
@@ -311,13 +311,15 @@ class sandbox_non_seq_id extends db_object_non_seq_id_user
      * this row_mapper_sandbox function should be used for all user sandbox objects
      *
      * @param array|null $db_row with the data directly from the database
+     * @param string $ext the table type e.g. to indicate if the id is int
      * @param bool $load_std true if only the standard user sandbox object ist loaded
      * @param bool $allow_usr_protect false for using the standard protection settings for the default object used for all users
      * @param string $id_fld the name of the id field as set in the child class
      * @return bool true if the user sandbox object is loaded and valid
      */
-    function row_mapper_sandbox(
+    function row_mapper_sandbox_multi(
         ?array $db_row,
+        string $ext,
         bool   $load_std = false,
         bool   $allow_usr_protect = true,
         string $id_fld = ''
@@ -326,12 +328,12 @@ class sandbox_non_seq_id extends db_object_non_seq_id_user
         if ($id_fld == '') {
             $id_fld = $this->id_field();
         }
-        $result = parent::row_mapper($db_row, $id_fld);
+        $result = parent::row_mapper_multi($db_row, $ext, $id_fld);
         if ($result) {
             $this->owner_id = $db_row[user::FLD_ID];
             // e.g. the list of names does not include the field excluded
             // TODO instead the excluded rows are filtered out on SQL level
-            if (array_key_exists(sandbox_non_seq_id::FLD_EXCLUDED, $db_row)) {
+            if (array_key_exists(sandbox_multi::FLD_EXCLUDED, $db_row)) {
                 $this->set_excluded($db_row[self::FLD_EXCLUDED]);
             }
             if (!$load_std) {
@@ -432,7 +434,7 @@ class sandbox_non_seq_id extends db_object_non_seq_id_user
             log_err('The ' . $class . ' id must be set to load ' . $class, $class . '->load_standard');
         } else {
             $db_row = $db_con->get1($qp);
-            $result = $this->row_mapper_sandbox($db_row, true, false);
+            $result = $this->row_mapper_sandbox_multi($db_row, $qp->ext, true, false);
         }
         return $result;
     }
@@ -481,7 +483,7 @@ class sandbox_non_seq_id extends db_object_non_seq_id_user
      * @param string $query_name the name extension to make the query name unique
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_usr_num(sql $sc, sandbox_non_seq_id $sbx, string $query_name): sql_par
+    function load_sql_usr_num(sql $sc, sandbox_multi $sbx, string $query_name): sql_par
     {
         $lib = new library();
 
@@ -550,7 +552,7 @@ class sandbox_non_seq_id extends db_object_non_seq_id_user
         global $db_con;
 
         $db_row = $db_con->get1($qp);
-        $this->row_mapper_sandbox($db_row);
+        $this->row_mapper_sandbox_multi($db_row, $qp->ext);
         return $this->id();
     }
 
@@ -937,7 +939,7 @@ class sandbox_non_seq_id extends db_object_non_seq_id_user
             user::FLD_ID,
             user::FLD_ID);
         $sc->add_where($this->id_field(), $this->id());
-        $sc->add_where(sandbox_non_seq_id::FLD_EXCLUDED, 1, sql_par_type::INT_NOT_OR_NULL);
+        $sc->add_where(sandbox_multi::FLD_EXCLUDED, 1, sql_par_type::INT_NOT_OR_NULL);
 
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -1246,7 +1248,7 @@ class sandbox_non_seq_id extends db_object_non_seq_id_user
      * remove all user setting that are not needed any more based on the new standard object
      * TODO review
      */
-    function usr_cfg_cleanup(sandbox_non_seq_id $std): string
+    function usr_cfg_cleanup(sandbox_multi $std): string
     {
         $result = '';
         log_debug($this->dsp_id());
@@ -1388,7 +1390,7 @@ class sandbox_non_seq_id extends db_object_non_seq_id_user
     /**
      * dummy function to save all updated word fields, which is always overwritten by the child class
      */
-    function save_fields(sql_db $db_con, sandbox_non_seq_id $db_rec, sandbox_non_seq_id $std_rec): string
+    function save_fields(sql_db $db_con, sandbox_multi $db_rec, sandbox_multi $std_rec): string
     {
         return '';
     }
@@ -1525,7 +1527,7 @@ class sandbox_non_seq_id extends db_object_non_seq_id_user
      * @param sandbox $db_rec the object as saved in the database before the change
      * @return change_log the log object predefined for excluding
      */
-    function save_field_excluded_log(sandbox_non_seq_id $db_rec): change_log
+    function save_field_excluded_log(sandbox_multi $db_rec): change_log
     {
         $log = new change_log($this->user());
         if ($db_rec->is_excluded() <> $this->is_excluded()) {
@@ -1554,7 +1556,7 @@ class sandbox_non_seq_id extends db_object_non_seq_id_user
      * @param sandbox $std_rec the default object without user specific changes
      * returns false if something has gone wrong
      */
-    function save_field_excluded(sql_db $db_con, sandbox_non_seq_id $db_rec, sandbox_non_seq_id $std_rec): string
+    function save_field_excluded(sql_db $db_con, sandbox_multi $db_rec, sandbox_multi $std_rec): string
     {
         log_debug($this->dsp_id());
         $result = '';
@@ -1600,11 +1602,11 @@ class sandbox_non_seq_id extends db_object_non_seq_id_user
     /**
      * save the share level in the database if allowed
      * @param sql_db $db_con the active database connection that should be used
-     * @param sandbox_non_seq_id $db_rec the object as saved in the database before this field is updated
-     * @param sandbox_non_seq_id $std_rec the default object without user specific changes
+     * @param sandbox_multi $db_rec the object as saved in the database before this field is updated
+     * @param sandbox_multi $std_rec the default object without user specific changes
      * @return string the message that should be shown to the user
      */
-    function save_field_share(sql_db $db_con, sandbox_non_seq_id $db_rec, sandbox_non_seq_id $std_rec): string
+    function save_field_share(sql_db $db_con, sandbox_multi $db_rec, sandbox_multi $std_rec): string
     {
         log_debug($this->dsp_id());
         $result = '';
@@ -1653,7 +1655,7 @@ class sandbox_non_seq_id extends db_object_non_seq_id_user
      * save the protection level in the database if allowed
      * TODO is the setting of the standard needed?
      */
-    function save_field_protection(sql_db $db_con, sandbox_non_seq_id $db_rec, sandbox_non_seq_id $std_rec): string
+    function save_field_protection(sql_db $db_con, sandbox_multi $db_rec, sandbox_multi $std_rec): string
     {
         $result = '';
         log_debug($this->dsp_id());
@@ -1686,7 +1688,7 @@ class sandbox_non_seq_id extends db_object_non_seq_id_user
      * @param sandbox $db_rec the object data as it is now in the database
      * @return bool true if one of the object id fields have been changed
      */
-    function is_id_updated(sandbox_non_seq_id $db_rec): bool
+    function is_id_updated(sandbox_multi $db_rec): bool
     {
         return false;
     }
@@ -1697,7 +1699,7 @@ class sandbox_non_seq_id extends db_object_non_seq_id_user
      *
      * @return sandbox object with id zero if no object with the same id is found
      */
-    function get_obj_with_same_id_fields(): sandbox_non_seq_id
+    function get_obj_with_same_id_fields(): sandbox_multi
     {
         log_debug('check if target already exists ' . $this->dsp_id());
         $db_chk = clone $this;
@@ -1724,7 +1726,7 @@ class sandbox_non_seq_id extends db_object_non_seq_id_user
      * @param sandbox $std_rec the database record defined as standard because it is used by most users
      * @returns string an empty string if everything is fine or a messages for the user what should be changed
      */
-    function save_id_if_updated(sql_db $db_con, sandbox_non_seq_id $db_rec, sandbox_non_seq_id $std_rec): string
+    function save_id_if_updated(sql_db $db_con, sandbox_multi $db_rec, sandbox_multi $std_rec): string
     {
         log_debug($this->dsp_id());
         $result = '';
@@ -1802,11 +1804,11 @@ class sandbox_non_seq_id extends db_object_non_seq_id_user
      * updated the object id fields (e.g. for a word or formula the name, and for a link the linked ids)
      * should only be called if the user is the owner and nobody has used the display component link
      * @param sql_db $db_con the active database connection
-     * @param sandbox_non_seq_id $db_rec the database record before the saving
-     * @param sandbox_non_seq_id $std_rec the database record defined as standard because it is used by most users
+     * @param sandbox_multi $db_rec the database record before the saving
+     * @param sandbox_multi $std_rec the database record defined as standard because it is used by most users
      * @returns string either the id of the updated or created source or a message to the user with the reason, why it has failed
      */
-    function save_id_fields(sql_db $db_con, sandbox_non_seq_id $db_rec, sandbox_non_seq_id $std_rec): string
+    function save_id_fields(sql_db $db_con, sandbox_multi $db_rec, sandbox_multi $std_rec): string
     {
         log_warning($this->dsp_id());
         return '';
@@ -1927,10 +1929,10 @@ class sandbox_non_seq_id extends db_object_non_seq_id_user
      * @returns sandbox a filled object that has the same name or links the same objects
      *                  or a sandbox object with id() = 0 if nothing similar has been found
      */
-    function get_similar(): sandbox_non_seq_id
+    function get_similar(): sandbox_multi
     {
         log_err('The dummy parent method get_similar has been called, which should never happen');
-        return new sandbox_non_seq_id($this->user());
+        return new sandbox_multi($this->user());
     }
 
 
@@ -2356,7 +2358,7 @@ class sandbox_non_seq_id extends db_object_non_seq_id_user
     /**
      * @return string a message to use a different name
      */
-    function id_used_msg(sandbox_non_seq_id $obj_to_add): string
+    function id_used_msg(sandbox_multi $obj_to_add): string
     {
         return 'A ' . $this->obj_name . ' with the name ' . $obj_to_add->dsp_id() . ' already exists. '
             . 'Please use another ' . $obj_to_add->obj_name . ' name.';
@@ -2391,9 +2393,9 @@ class sandbox_non_seq_id extends db_object_non_seq_id_user
      * @return string if not empty the message that should be shown to the user
      */
     function save_field_type(
-        sql_db             $db_con,
-        sandbox_non_seq_id $db_rec,
-        sandbox_non_seq_id $std_rec
+        sql_db        $db_con,
+        sandbox_multi $db_rec,
+        sandbox_multi $std_rec
     ): string
     {
         $result = '';

@@ -34,7 +34,7 @@
 
 namespace cfg;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox_non_seq_id.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_multi.php';
 include_once MODEL_GROUP_PATH . 'group.php';
 
 use cfg\db\sql;
@@ -43,6 +43,7 @@ use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\group\group;
+use cfg\group\group_id;
 use cfg\log\change;
 use cfg\log\change_log_action;
 use cfg\log\change_log_field;
@@ -51,7 +52,7 @@ use cfg\value\value;
 use DateTime;
 use Exception;
 
-class sandbox_value extends sandbox_non_seq_id
+class sandbox_value extends sandbox_multi
 {
 
     // the table name extension for public unprotected values related up to four prime phrase
@@ -172,13 +173,14 @@ class sandbox_value extends sandbox_non_seq_id
      * to be extended by the child functions
      *
      * @param array|null $db_row with the data directly from the database
+     * @param string $ext the table type e.g. to indicate if the id is int
      * @param string $id_fld the name of the id field as set in the child class
      * @return bool true if the user sandbox object is loaded and valid
      */
-    function row_mapper(?array $db_row, string $id_fld = ''): bool
+    function row_mapper_multi(?array $db_row, string $ext, string $id_fld = ''): bool
     {
         $this->set_last_update(null);
-        return parent::row_mapper($db_row, $id_fld);
+        return parent::row_mapper_multi($db_row, $id_fld);
     }
 
 
@@ -339,7 +341,7 @@ class sandbox_value extends sandbox_non_seq_id
         $sql_index = $sc->sql_separator();
         $sql_foreign = $sc->sql_separator();
 
-        $sc->set_class($this::class, false, $ext_type . self::TBL_EXT_STD . group::TBL_EXT_PRIME);
+        $sc->set_class($this::class, false, $ext_type . self::TBL_EXT_STD . group_id::TBL_EXT_PRIME);
         $fields = array_merge(self::FLD_KEY_PRIME, $fld_par, $this::FLD_ALL_SOURCE);
         $sql .= $sc->table_create($fields, $type_name,
             $this::TBL_COMMENT_STD . $type_name . $this::TBL_COMMENT_STD_PRIME_CONT);
@@ -378,24 +380,24 @@ class sandbox_value extends sandbox_non_seq_id
 
         $sql .= $sc->sql_separator();
         $fields = array_merge(self::FLD_KEY_PRIME, $this::FLD_ALL_SOURCE_GROUP_PRIME, $std_fields);
-        $sc->set_class($this::class, false, $ext_type . group::TBL_EXT_PRIME);
+        $sc->set_class($this::class, false, $ext_type . group_id::TBL_EXT_PRIME);
         $sql .= $sc->table_create($fields, $type_name, $this::TBL_COMMENT_PRIME . $type_name . $this::TBL_COMMENT_PRIME_CONT);
         $sql_index .= $sc->index_create($fields);
         $sql_foreign .= $sc->foreign_key_create($fields);
         $fields = array_merge(self::FLD_KEY_PRIME_USER, $this::FLD_ALL_SOURCE_GROUP_PRIME, $std_usr_fields);
-        $sc->set_class($this::class, true, $ext_type . group::TBL_EXT_PRIME);
+        $sc->set_class($this::class, true, $ext_type . group_id::TBL_EXT_PRIME);
         $sql .= $sc->table_create($fields, $type_name, $this::TBL_COMMENT_PRIME_USER . $type_name . $this::TBL_COMMENT_PRIME_USER_CONT);
         $sql_index .= $sc->index_create($fields);
         $sql_foreign .= $sc->foreign_key_create($fields);
 
         $sql .= $sc->sql_separator();
         $fields = array_merge(self::FLD_KEY_BIG, $this::FLD_ALL_SOURCE_GROUP_BIG, $std_fields);
-        $sc->set_class($this::class, false, $ext_type . group::TBL_EXT_BIG);
+        $sc->set_class($this::class, false, $ext_type . group_id::TBL_EXT_BIG);
         $sql .= $sc->table_create($fields, $type_name, $this::TBL_COMMENT . $type_name . $this::TBL_COMMENT_BIG_CONT);
         $sql_index .= $sc->index_create($fields);
         $sql_foreign .= $sc->foreign_key_create($fields);
         $fields = array_merge(self::FLD_KEY_BIG_USER, $this::FLD_ALL_SOURCE_GROUP_BIG, $std_usr_fields);
-        $sc->set_class($this::class, true, $ext_type . group::TBL_EXT_BIG);
+        $sc->set_class($this::class, true, $ext_type . group_id::TBL_EXT_BIG);
         $sql .= $sc->table_create($fields, $type_name, $this::TBL_COMMENT_BIG_USER . $type_name . $this::TBL_COMMENT_BIG_USER_CONT);
         $sql_index .= $sc->index_create($fields);
         $sql_foreign .= $sc->foreign_key_create($fields);
@@ -452,6 +454,7 @@ class sandbox_value extends sandbox_non_seq_id
 
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
+        $qp->ext = $ext;
 
         return $qp;
     }
@@ -467,7 +470,7 @@ class sandbox_value extends sandbox_non_seq_id
         global $db_con;
 
         $db_row = $db_con->get1($qp);
-        return $this->row_mapper_sandbox($db_row, true, false);
+        return $this->row_mapper_sandbox_multi($db_row, $qp->ext, true, false);
     }
 
 
@@ -563,12 +566,12 @@ class sandbox_value extends sandbox_non_seq_id
      * updated the object id fields (e.g. for a word or formula the name, and for a link the linked ids)
      * should only be called if the user is the owner and nobody has used the display component link
      * @param sql_db $db_con the active database connection
-     * @param sandbox_non_seq_id $db_rec the database record before the saving
-     * @param sandbox_non_seq_id $std_rec the database record defined as standard because it is used by most users
+     * @param sandbox_multi $db_rec the database record before the saving
+     * @param sandbox_multi $std_rec the database record defined as standard because it is used by most users
      * @returns string either the id of the updated or created source or a message to the user with the reason, why it has failed
      * @throws Exception
      */
-    function save_id_fields(sql_db $db_con, sandbox_non_seq_id $db_rec, sandbox_non_seq_id $std_rec): string
+    function save_id_fields(sql_db $db_con, sandbox_multi $db_rec, sandbox_multi $std_rec): string
     {
 
         return 'The user sandbox save_id_fields does not support ' . $this->obj_type . ' for ' . $this->obj_name;

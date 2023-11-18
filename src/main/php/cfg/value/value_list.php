@@ -34,6 +34,7 @@ namespace cfg\value;
 include_once DB_PATH . 'sql_par_type.php';
 include_once API_VALUE_PATH . 'value_list.php';
 include_once SERVICE_EXPORT_PATH . 'value_list_exp.php';
+include_once MODEL_GROUP_PATH . 'group_id_list.php';
 
 use api\value\value_list as value_list_api;
 use cfg\db\sql;
@@ -41,13 +42,14 @@ use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\group\group;
+use cfg\group\group_id_list;
 use cfg\group\group_list;
 use cfg\library;
 use cfg\phr_ids;
 use cfg\phrase;
 use cfg\phrase_list;
 use cfg\protection_type;
-use cfg\result_list;
+use cfg\result\result_list;
 use cfg\sandbox;
 use cfg\sandbox_list;
 use cfg\share_type;
@@ -100,9 +102,24 @@ class value_list extends sandbox_list
      * @param bool $load_all force to include also the excluded values e.g. for admins
      * @return bool true if at least one value has been loaded
      */
-    protected function rows_mapper(array $db_rows, bool $load_all = false): bool
+    protected function rows_mapper_multi(array $db_rows, string $ext, bool $load_all = false): bool
     {
-        return parent::rows_mapper_obj(new value($this->user()), $db_rows, $load_all);
+        $result = false;
+        if ($db_rows != null) {
+            foreach ($db_rows as $db_row) {
+                $excluded = null;
+                if (array_key_exists(sandbox::FLD_EXCLUDED, $db_row)) {
+                    $excluded = $db_row[sandbox::FLD_EXCLUDED];
+                }
+                if (is_null($excluded) or $excluded == 0 or $load_all) {
+                    $obj_to_add = new value($this->user());
+                    $obj_to_add->row_mapper_sandbox_multi($db_row, $ext);
+                    $this->add_obj($obj_to_add);
+                    $result = true;
+                }
+            }
+        }
+        return $result;
     }
 
     /*
@@ -138,12 +155,13 @@ class value_list extends sandbox_list
      * @param string $query_name the name extension to make the query name unique
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql $sc, string $query_name): sql_par
+    function load_sql_multi(sql $sc, string $query_name, string $ext = ''): sql_par
     {
+        // TODO make the name unique for all combinations of the value list
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
 
-        $sc->set_class(value::class);
+        $sc->set_class(value::class, false, $ext);
         // overwrite the standard id field name (value_id) with the main database id field for values "group_id"
         $val = new value($this->user());
         $sc->set_id_field($val->id_field());
@@ -166,13 +184,54 @@ class value_list extends sandbox_list
      */
     function load_sql_by_ids(sql $sc, array $ids): sql_par
     {
-        $qp = $this->load_sql($sc, 'ids');
+        $grp_id_lst = new group_id_list();
+        $ext_lst = $grp_id_lst->table_ext_list($ids);
+        $qp = new sql_par(self::class);
+        if (count($ext_lst) == 1) {
+            $ext = $ext_lst[0];
+            $qp = $this->load_sql_multi($sc, 'ids', $ext);
+        } else {
+            log_warning('multi table type value lists not yet implemented');
+            foreach ($ext_lst as $ext) {
+                $qp = $this->load_sql_multi($sc, 'ids', $ext);
+            }
+        }
         $sc->add_where(value::FLD_ID, $ids, sql_par_type::INT_LIST);
         $sc->set_order(value::FLD_ID);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
         return $qp;
+    }
+
+    /**
+     * load a list of sandbox objects (e.g. phrases or values) based on the given query parameters
+     * @param sql_par $qp the SQL statement, the unique name of the SQL statement and the parameter list
+     * @param bool $load_all force to include also the excluded phrases e.g. for admins
+     * @param sql_db|null $db_con_given the database connection as a parameter for the initial load of the system views
+     * @return bool true if at least one object has been loaded
+     */
+    protected function load(sql_par $qp, bool $load_all = false, ?sql_db $db_con_given = null): bool
+    {
+
+        global $db_con;
+        $result = false;
+
+        $db_con_used = $db_con_given;
+        if ($db_con_used == null) {
+            $db_con_used = $db_con;
+        }
+
+        // check the all minimal input parameters are set
+        if ($this->user()->id() <= 0) {
+            log_err('The user must be set to load ' . self::class, self::class . '->load');
+        } elseif ($qp->name == '') {
+            log_err('The query name cannot be created to load a ' . self::class, self::class . '->load');
+        } else {
+            $db_lst = $db_con_used->get($qp);
+            $result = $this->rows_mapper_multi($db_lst, $qp->ext, $load_all);
+        }
+        return $result;
     }
 
     /**
@@ -184,7 +243,7 @@ class value_list extends sandbox_list
      */
     function load_sql_by_phr_lst(sql $sc, phrase_list $phr_lst): sql_par
     {
-        $qp = $this->load_sql($sc, 'phr_lst');
+        $qp = $this->load_sql_multi($sc, 'phr_lst');
         $sc->set_join_fields(
             array(value::FLD_ID), sql_db::TBL_VALUE_PHRASE_LINK,
             value::FLD_ID, value::FLD_ID);
@@ -310,7 +369,7 @@ class value_list extends sandbox_list
                 foreach ($db_val_lst as $db_val) {
                     if (is_null($db_val[sandbox::FLD_EXCLUDED]) or $db_val[sandbox::FLD_EXCLUDED] == 0) {
                         $val = new value($this->user());
-                        $val->row_mapper_sandbox($db_val);
+                        $val->row_mapper_sandbox_multi($db_val, '');
                         $this->add_obj($val);
                         $result = true;
                     }
@@ -376,7 +435,7 @@ class value_list extends sandbox_list
         foreach ($db_val_lst as $db_val) {
             if (is_null($db_val[sandbox::FLD_EXCLUDED]) or $db_val[sandbox::FLD_EXCLUDED] == 0) {
                 $val = new value($this->user());
-                $val->row_mapper_sandbox($db_val);
+                $val->row_mapper_sandbox_multi($db_val, '');
                 $this->add_obj($val);
                 log_debug($lib->dsp_count($this->lst()));
                 $result = true;
@@ -427,7 +486,7 @@ class value_list extends sandbox_list
                     foreach ($db_val_lst as $db_val) {
                         if (is_null($db_val[sandbox::FLD_EXCLUDED]) or $db_val[sandbox::FLD_EXCLUDED] == 0) {
                             $val = new value($this->user());
-                            $val->row_mapper_sandbox($db_val);
+                            $val->row_mapper_sandbox_multi($db_val, '');
                             $this->add_obj($val);
                         }
                     }

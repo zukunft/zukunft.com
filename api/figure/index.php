@@ -30,10 +30,10 @@
 */
 
 use api\formula\figure as figure_api;
+use cfg\value\value;
 use controller\controller;
-use cfg\result;
+use cfg\result\result;
 use cfg\user;
-use cfg\value;
 
 // standard zukunft header for callable php files to allow debugging and lib loading
 global $debug;

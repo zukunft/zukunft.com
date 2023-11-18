@@ -58,6 +58,7 @@ use cfg\figure;
 use cfg\formula;
 use cfg\formula_element_list;
 use cfg\group\group;
+use cfg\group\group_id;
 use cfg\group\group_list;
 use cfg\library;
 use cfg\parameter_type;
@@ -177,17 +178,21 @@ class result extends sandbox_value
      * map the database fields to the object fields
      *
      * @param array|null $db_row with the data directly from the database
+     * @param string $ext the table type e.g. to indicate if the id is int
      * @param string $id_fld the name of the id field as set in the child class
      * @return bool true if a result has been loaded and is valid
      */
-    function row_mapper(?array $db_row, string $id_fld = ''): bool
+    function row_mapper_multi(?array $db_row, string $ext, string $id_fld = ''): bool
     {
         $lib = new library();
-        $result = parent::row_mapper($db_row, self::FLD_ID);
+        $result = parent::row_mapper_multi($db_row, $ext, self::FLD_ID);
         if ($result) {
             $this->frm->set_id($db_row[formula::FLD_ID]);
-            $this->grp->set_id($db_row[group::FLD_ID]);
-            $this->src_grp->set_id($db_row[self::FLD_SOURCE_GRP]);
+            if ($ext == group_id::TBL_EXT_PRIME) {
+                $this->src_grp->set_id((int)$db_row[self::FLD_SOURCE_GRP]);
+            } else {
+                $this->src_grp->set_id($db_row[self::FLD_SOURCE_GRP]);
+            }
             $this->value = $db_row[self::FLD_VALUE];
             $this->owner_id = $db_row[user::FLD_ID];
             $this->last_update = $lib->get_datetime($db_row[self::FLD_LAST_UPDATE]);
@@ -483,7 +488,7 @@ class result extends sandbox_value
         $qp = $this->load_sql_by_id($db_con->sql_creator(), $id);
         if ($qp->name != '') {
             $db_row = $db_con->get1($qp);
-            $this->row_mapper($db_row);
+            $this->row_mapper_multi($db_row, $qp->ext);
             $result = $this->id();
         }
 
@@ -511,7 +516,7 @@ class result extends sandbox_value
             $qp = $this->load_sql_by_grp($db_con->sql_creator(), $grp);
             if ($qp->name != '') {
                 $db_row = $db_con->get1($qp);
-                $this->row_mapper($db_row);
+                $this->row_mapper_multi($db_row, $qp->ext);
                 $result = true;
             }
         }
@@ -540,7 +545,7 @@ class result extends sandbox_value
             $qp = $this->load_sql_std_by_grp($db_con->sql_creator(), $grp);
             if ($qp->name != '') {
                 $db_row = $db_con->get1($qp);
-                $this->row_mapper($db_row);
+                $this->row_mapper_multi($db_row, $qp->ext);
                 $result = true;
             }
         }
@@ -571,7 +576,7 @@ class result extends sandbox_value
             $qp = $this->load_sql_by_frm_grp($db_con->sql_creator(), $frm, $grp);
             if ($qp->name != '') {
                 $db_row = $db_con->get1($qp);
-                $this->row_mapper($db_row);
+                $this->row_mapper_multi($db_row, $qp->ext);
                 $result = true;
             }
         }
@@ -600,7 +605,7 @@ class result extends sandbox_value
             $qp = $this->load_sql_by_frm_grp_lst($db_con->sql_creator(), $frm, $lst);
             if ($qp->name != '') {
                 $db_row = $db_con->get1($qp);
-                $this->row_mapper($db_row);
+                $this->row_mapper_multi($db_row, $qp->ext);
                 $result = true;
             }
         }
@@ -666,7 +671,7 @@ class result extends sandbox_value
         if ($val_rows != null) {
             if (count($val_rows) > 0) {
                 $val_row = $val_rows[0];
-                $result = $this->row_mapper($val_row);
+                $result = $this->row_mapper_multi($val_row, $qp->ext);
             }
         }
         return $result;

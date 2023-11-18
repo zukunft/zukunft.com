@@ -8,7 +8,7 @@ PREPARE value_list_by_ids (bigint, bigint[]) AS
            CASE WHEN (u.excluded           IS NULL) THEN s.excluded           ELSE u.excluded           END AS excluded,
            CASE WHEN (u.protect_id         IS NULL) THEN s.protect_id         ELSE u.protect_id END AS protect_id,
            u.share_type_id
-      FROM values s
- LEFT JOIN user_values u         ON s.group_id = u.group_id AND u.user_id = $1
+      FROM values_prime s
+ LEFT JOIN user_values_prime u ON s.group_id = u.group_id AND u.user_id = $1
      WHERE s.group_id = ANY ($2)
   ORDER BY s.group_id;

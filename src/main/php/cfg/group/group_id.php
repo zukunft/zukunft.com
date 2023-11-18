@@ -58,6 +58,14 @@ use cfg\phrase_list;
 class group_id
 {
 
+    /*
+     * database link
+     */
+
+    // the database table name extensions
+    const TBL_EXT_PRIME = '_prime'; // the table name extension for up to four prime phrase ids
+    const TBL_EXT_BIG = '_big'; // the table name extension for more than 16 phrase ids
+
     /**
      * @return int|string the group id based on the given phrase list
      *                    as 64-bit integer, 512-bit key as 112 chars or list of more than 16 keys with 6 chars
@@ -100,6 +108,20 @@ class group_id
             }
         }
         return $result;
+    }
+
+    /**
+     * @return string the extension for the table name based on the id
+     */
+    function table_extension(int|string $grp_id): string
+    {
+        $ext = '';
+        if ($this->is_prime($grp_id)) {
+            $ext = self::TBL_EXT_PRIME;
+        } elseif ($this->is_big($grp_id)) {
+            $ext = self::TBL_EXT_BIG;
+        }
+        return $ext;
     }
 
     /**

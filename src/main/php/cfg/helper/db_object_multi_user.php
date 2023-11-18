@@ -35,9 +35,9 @@
 
 namespace cfg;
 
-include_once MODEL_HELPER_PATH . 'db_object_non_seq_id.php';
+include_once MODEL_HELPER_PATH . 'db_object_multi.php';
 
-class db_object_non_seq_id_user extends db_object_non_seq_id
+class db_object_multi_user extends db_object_multi
 {
 
     /*

@@ -71,7 +71,7 @@ use cfg\phr_ids;
 use cfg\phrase;
 use cfg\phrase_list;
 use cfg\result\result;
-use cfg\sandbox_non_seq_id;
+use cfg\sandbox_multi;
 use cfg\sandbox_value;
 use cfg\db\sql_db;
 use cfg\triple;
@@ -81,7 +81,7 @@ use cfg\value\value;
 use cfg\word;
 use cfg\export\sandbox_exp;
 
-class group extends sandbox_non_seq_id
+class group extends sandbox_multi
 {
 
     /*
@@ -97,8 +97,6 @@ class group extends sandbox_non_seq_id
     const TBL_COMMENT = 'to add a user given name using a 512-bit group id index for up to 16 32-bit phrase ids including the order';
     const TBL_COMMENT_PRIME = 'to add a user given name using a 64-bit group id index for up to four 16-bit phrase ids including the order';
     const TBL_COMMENT_BIG = 'to add a user given name using a group id index with a variable length for more than 16 32-bit phrase ids including the order';
-    const TBL_EXT_PRIME = '_prime'; // the table name extension for up to four prime phrase ids
-    const TBL_EXT_BIG = '_big'; // the table name extension for more than 16 phrase ids
 
     // list of fields with parameters used for the database creation
     // the fields that can be changed by the user
@@ -244,14 +242,8 @@ class group extends sandbox_non_seq_id
      */
     function table_extension(): string
     {
-        $ext = '';
         $grp_id = new group_id();
-        if ($grp_id->is_prime($this->id())) {
-            $ext = self::TBL_EXT_PRIME;
-        } elseif ($grp_id->is_big($this->id())) {
-            $ext = self::TBL_EXT_BIG;
-        }
-        return $ext;
+        return $grp_id->table_extension($this->id());
     }
 
     /**
@@ -380,10 +372,10 @@ class group extends sandbox_non_seq_id
         $sql_lst = [$sql, $sql_index, $sql_foreign, $sql_truncate];
         $sql_lst = $this->sql_one_tbl($sc, false, '', sandbox_value::FLD_KEY, $this::TBL_COMMENT, $sql_lst);
         $sql_lst = $this->sql_one_tbl($sc, true, '', sandbox_value::FLD_KEY_USER, $this::TBL_COMMENT, $sql_lst);
-        $sql_lst = $this->sql_one_tbl($sc, false, group::TBL_EXT_PRIME, sandbox_value::FLD_KEY_PRIME, $this::TBL_COMMENT_PRIME, $sql_lst);
-        $sql_lst = $this->sql_one_tbl($sc, true, group::TBL_EXT_PRIME, sandbox_value::FLD_KEY_PRIME_USER, $this::TBL_COMMENT_PRIME, $sql_lst);
-        $sql_lst = $this->sql_one_tbl($sc, false, group::TBL_EXT_BIG, sandbox_value::FLD_KEY_BIG, $this::TBL_COMMENT_BIG, $sql_lst);
-        return $this->sql_one_tbl($sc, true, group::TBL_EXT_BIG, sandbox_value::FLD_KEY_BIG_USER, $this::TBL_COMMENT_BIG, $sql_lst);
+        $sql_lst = $this->sql_one_tbl($sc, false, group_id::TBL_EXT_PRIME, sandbox_value::FLD_KEY_PRIME, $this::TBL_COMMENT_PRIME, $sql_lst);
+        $sql_lst = $this->sql_one_tbl($sc, true, group_id::TBL_EXT_PRIME, sandbox_value::FLD_KEY_PRIME_USER, $this::TBL_COMMENT_PRIME, $sql_lst);
+        $sql_lst = $this->sql_one_tbl($sc, false, group_id::TBL_EXT_BIG, sandbox_value::FLD_KEY_BIG, $this::TBL_COMMENT_BIG, $sql_lst);
+        return $this->sql_one_tbl($sc, true, group_id::TBL_EXT_BIG, sandbox_value::FLD_KEY_BIG_USER, $this::TBL_COMMENT_BIG, $sql_lst);
     }
 
     /**

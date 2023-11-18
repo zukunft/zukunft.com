@@ -92,7 +92,7 @@ use cfg\phrase_type;
 use cfg\protection_type;
 use cfg\result\result_list;
 use cfg\sandbox;
-use cfg\sandbox_non_seq_id;
+use cfg\sandbox_multi;
 use cfg\sandbox_value;
 use cfg\share_type;
 use cfg\source;
@@ -211,26 +211,28 @@ class value extends sandbox_value
 
     /**
      * map the database fields to the object fields
+     * for distributed tables where the data may be saved in more than one table
      *
      * @param array|null $db_row with the data directly from the database
+     * @param string $ext the table type e.g. to indicate if the id is int
      * @param bool $load_std true if only the standard user sandbox object ist loaded
      * @param bool $allow_usr_protect false for using the standard protection settings for the default object used for all users
      * @param string $id_fld the name of the id field as defined in this child and given to the parent
      * @return bool true if the value is loaded and valid
      */
-    function row_mapper_sandbox(
+    function row_mapper_sandbox_multi(
         ?array $db_row,
+        string $ext,
         bool   $load_std = false,
         bool   $allow_usr_protect = true,
         string $id_fld = self::FLD_ID
     ): bool
     {
         $lib = new library();
-        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, self::FLD_ID);
+        $result = parent::row_mapper_sandbox_multi($db_row, $ext, $load_std, $allow_usr_protect, self::FLD_ID);
         if ($result) {
             $this->number = $db_row[self::FLD_VALUE];
             // TODO check if phrase_group_id and time_word_id are user specific or time series specific
-            $this->grp->set_id($db_row[group::FLD_ID]);
             $this->set_source_id($db_row[source::FLD_ID]);
             $this->set_last_update($lib->get_datetime($db_row[self::FLD_LAST_UPDATE]));
         }
@@ -607,7 +609,7 @@ class value extends sandbox_value
         global $db_con;
 
         $db_row = $db_con->get1($qp);
-        $this->row_mapper_sandbox($db_row);
+        $this->row_mapper_sandbox_multi($db_row, $qp->ext);
         return $this->id();
     }
 
@@ -641,7 +643,7 @@ class value extends sandbox_value
 
             $qp = $this->load_sql_obj_vars($db_con->sql_creator());
             $db_val = $db_con->get1($qp);
-            $result = $this->row_mapper_sandbox($db_val);
+            $result = $this->row_mapper_sandbox_multi($db_val, $qp->ext);
 
             // if not direct value is found try to get a more specific value
             // similar to result
@@ -1844,11 +1846,11 @@ class value extends sandbox_value
      * TODO combine the log and update sql to one statement
      *
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param value|sandbox_non_seq_id $db_rec the database record before the saving
-     * @param value|sandbox_non_seq_id $std_rec the database record defined as standard because it is used by most users
+     * @param value|sandbox_multi $db_rec the database record before the saving
+     * @param value|sandbox_multi $std_rec the database record defined as standard because it is used by most users
      * @return string if not empty the message that should be shown to the user
      */
-    function save_fields(sql_db $db_con, value|sandbox_non_seq_id $db_rec, value|sandbox_non_seq_id $std_rec): string
+    function save_fields(sql_db $db_con, value|sandbox_multi $db_rec, value|sandbox_multi $std_rec): string
     {
         $result = $this->save_field_number($db_con, $db_rec, $std_rec);
         $result .= $this->save_field_source($db_con, $db_rec, $std_rec);
@@ -1927,7 +1929,7 @@ class value extends sandbox_value
      * updated the view component name (which is the id field)
      * should only be called if the user is the owner and nobody has used the display component link
      */
-    function save_id_fields(sql_db $db_con, value|sandbox_non_seq_id $db_rec, value|sandbox_non_seq_id $std_rec): string
+    function save_id_fields(sql_db $db_con, value|sandbox_multi $db_rec, value|sandbox_multi $std_rec): string
     {
         log_debug('value->save_id_fields');
         $result = '';
@@ -1988,7 +1990,7 @@ class value extends sandbox_value
     /**
      * check if the id parameters are supposed to be changed
      */
-    function save_id_if_updated($db_con, sandbox_non_seq_id $db_rec, sandbox_non_seq_id $std_rec): string
+    function save_id_if_updated($db_con, sandbox_multi $db_rec, sandbox_multi $std_rec): string
     {
         log_debug('value->save_id_if_updated has name changed from "' . $db_rec->dsp_id() . '" to "' . $this->dsp_id() . '"');
         $result = '';

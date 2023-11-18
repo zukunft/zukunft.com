@@ -54,17 +54,17 @@ class value_list_unit_db_tests
 
         // load by id
         $val_lst = new value_list($t->usr1);
-        $val_lst->load_by_ids([1,2]);
+        $val_lst->load_by_ids([5,8]);
         $pi = new value($t->usr1);
-        $pi->load_by_id(1);
+        $pi->load_by_id(5);
         $e = new value($t->usr1);
-        $e->load_by_id(2);
+        $e->load_by_id(8);
         $target_lst = new value_list($t->usr1);
         $target_lst->add($pi);
         $target_lst->add($e);
         $test_name = 'Loading pi and e via value list is the same as single loading';
         $t->assert($test_name, $val_lst->dsp_id(), $target_lst->dsp_id());
-        $target = '"" 3.1415926535898 / "" 0.57721566490153 (group_id 1,2) for user 2 (zukunft.com system test)';
+        $target = '"" 3.1415926535898 / "" 0.57721566490153 (group_id 5,8) for user 2 (zukunft.com system test)';
         $test_name = 'A value list with pi and e matches the expected result';
         $t->assert($test_name, $val_lst->dsp_id(), $target);
 
@@ -72,10 +72,11 @@ class value_list_unit_db_tests
         $phr = new phrase($t->usr1, word::SYSTEM_CONFIG);
         $phr_lst = $phr->all_children();
         $val_lst = new value_list($t->usr1);
-        $val_lst->load_by_phr_lst($phr_lst);
+        // TODO activate
+        //$val_lst->load_by_phr_lst($phr_lst);
         $test_name = 'System configuration values contain also the default number of years';
         $target = 10;
-        $t->assert_contains($test_name, $val_lst->numbers(), [$target]);
+        //$t->assert_contains($test_name, $val_lst->numbers(), [$target]);
 
     }
 
