@@ -35,8 +35,8 @@ namespace test;
 use api\word\word as word_api;
 use cfg\config;
 use cfg\phrase;
-use cfg\value;
-use cfg\value_list;
+use cfg\value\value;
+use cfg\value\value_list;
 use cfg\word;
 
 class value_list_unit_db_tests

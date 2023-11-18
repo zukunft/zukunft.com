@@ -167,6 +167,20 @@ class sandbox_value extends sandbox_non_seq_id
         $this->set_last_update(null);
     }
 
+    /**
+     * map the database fields to the object fields
+     * to be extended by the child functions
+     *
+     * @param array|null $db_row with the data directly from the database
+     * @param string $id_fld the name of the id field as set in the child class
+     * @return bool true if the user sandbox object is loaded and valid
+     */
+    function row_mapper(?array $db_row, string $id_fld = ''): bool
+    {
+        $this->set_last_update(null);
+        return parent::row_mapper($db_row, $id_fld);
+    }
+
 
     /*
      * set and get
@@ -395,6 +409,54 @@ class sandbox_value extends sandbox_non_seq_id
      */
 
     /**
+     * create an SQL statement to retrieve a value or result by id from the database
+     *
+     * @param sql $sc with the target db_type set
+     * @param int|string $id the id of the value
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_id(sql $sc, int|string $id, string $class = self::class): sql_par
+    {
+        $this->grp()->set_id($id);
+        return $this->load_sql_by_grp_id($sc, 'id', $class);
+    }
+
+    /**
+     * create an SQL statement to retrieve a value by phrase group from the database
+     *
+     * @param sql $sc with the target db_type set
+     * @param group $grp the id of the phrase group
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_grp(sql $sc, group $grp, string $class = self::class): sql_par
+    {
+        $this->set_grp($grp);
+        return $this->load_sql_by_grp_id($sc, 'grp', $class);
+    }
+
+    /**
+     * create an SQL statement to retrieve a value or result by already set phrase group
+     *
+     * @param sql $sc with the target db_type set
+     * @param string $query_name the unique name of the query e.g. id or name
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    protected function load_sql_by_grp_id(sql $sc, string $query_name, string $class = self::class): sql_par
+    {
+        $ext = $this->grp->table_extension();
+        $qp = $this->load_sql_multi($sc, $query_name, $class, $ext);
+        $sc->add_where(group::FLD_ID, $this->grp->id());
+
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
+
+    /**
      * load the value parameters for all users
      * @param sql_par|null $qp the query parameter created by the function of the child object e.g. word->load_standard
      * @param string $class the name of the child class from where the call has been triggered
@@ -567,7 +629,7 @@ class sandbox_value extends sandbox_non_seq_id
      * @return string an empty string if everything is fine or the message that should be shown to the user
      */
     function save_field_user(
-        sql_db                           $db_con,
+        sql_db                 $db_con,
         change|change_log_link $log
     ): string
     {

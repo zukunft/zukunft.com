@@ -39,12 +39,13 @@ use api\formula\formula as formula_api;
 use api\value\value as value_api;
 use api\word\triple as triple_api;
 use api\word\word as word_api;
+use cfg\value\value;
 use JsonSerializable;
 use cfg\formula;
 use cfg\sandbox as sandbox_cfg;
+use cfg\sandbox_value as sandbox_value_cfg;
 use cfg\triple;
 use cfg\user;
-use cfg\value;
 use cfg\word;
 use function log_err;
 
@@ -110,7 +111,7 @@ class sandbox implements JsonSerializable
      * should be part of the save_from_api_msg functions
      * TODO review
      */
-    function db_obj(user $usr, string $class): sandbox_cfg
+    function db_obj(user $usr, string $class): sandbox_cfg|sandbox_value_cfg
     {
         $db_obj = null;
         if ($class == word_api::class) {

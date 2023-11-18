@@ -440,7 +440,7 @@ class value extends sandbox_value
      * @param string $ext the table name extension e.g. to switch between standard and prime values
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(
+    function load_sql_multi(
         sql    $sc,
         string $query_name,
         string $class = self::class,
@@ -461,24 +461,16 @@ class value extends sandbox_value
     }
 
     /**
-     * create an SQL statement to retrieve a value by id from the database
-     * added to value just to assign the class for the user sandbox object
+     * create the SQL to load a results by the id
      *
      * @param sql $sc with the target db_type set
-     * @param int|string $id the id of the value
+     * @param int|string $id the id of the result
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_by_id(sql $sc, int|string $id, string $class = self::class): sql_par
     {
-        $ext = $this->grp->table_extension();
-        $qp = $this->load_sql($sc, 'id', $class, $ext);
-        $sc->add_where(group::FLD_ID, $this->grp->id());
-
-        $qp->sql = $sc->sql();
-        $qp->par = $sc->get_par();
-
-        return $qp;
+        return parent::load_sql_by_id($sc, $id, $class);
     }
 
     /**
@@ -491,14 +483,7 @@ class value extends sandbox_value
      */
     function load_sql_by_grp(sql $sc, group $grp, string $class = self::class): sql_par
     {
-        $ext = $grp->table_extension();
-        $qp = $this->load_sql($sc, 'grp', $class, $ext);
-        $sc->add_where(group::FLD_ID, $grp->id());
-
-        $qp->sql = $sc->sql();
-        $qp->par = $sc->get_par();
-
-        return $qp;
+        return parent::load_sql_by_grp($sc, $grp, $class);
     }
 
     /**
@@ -586,9 +571,9 @@ class value extends sandbox_value
      * load a value by the phrase group
      * @param group $grp the id of the phrase group
      * @param string $class the name of the child class from where the call has been triggered
-     * @return int the id of the object found and zero if nothing is found
+     * @return int|string the id of the object found and zero if nothing is found
      */
-    function load_by_grp(group $grp, string $class = self::class): int
+    function load_by_grp(group $grp, string $class = self::class): int|string
     {
         global $db_con;
 
@@ -598,7 +583,7 @@ class value extends sandbox_value
 
         // use the given phrase list
         if ($this->phr_lst()->is_empty() and !$grp->phrase_list()->is_empty()) {
-            $this->grp = $grp;
+            $this->set_grp($grp);
             /*
         } else {
             // ... or reload the phrase list
@@ -1074,7 +1059,7 @@ class value extends sandbox_value
                 $result->add($phr_lst->import_lst($value, $test_obj));
                 if ($result->is_ok()) {
                     $phr_grp = $phr_lst->get_grp_id($do_save);
-                    $this->grp = $phr_grp;
+                    $this->set_grp($phr_grp);
                 }
             }
 
@@ -2203,7 +2188,7 @@ class value extends sandbox_value
             log_debug('check if a value ' . $this->dsp_id() . ' is already in the database');
             // check if a value for these phrases is already in the database
             $db_chk = new value($this->user());
-            $db_chk->load_by_grp($this->grp);
+            $db_chk->load_by_id($this->grp()->id());
             if ($db_chk->is_saved()) {
                 $this->set_last_update($db_chk->last_update());
             }
@@ -2220,7 +2205,7 @@ class value extends sandbox_value
             // read the database value to be able to check if something has been changed
             // done first, because it needs to be done for user and general values
             $db_rec = new value($this->user());
-            $db_rec->load_by_grp($this->grp());
+            $db_rec->load_by_id($this->grp()->id());
             log_debug("old database value loaded (" . $db_rec->number . ") with group " . $db_rec->grp->id() . ".");
             $std_rec = new value($this->user()); // user must also be set to allow to take the ownership
             $std_rec->set_grp($this->grp());

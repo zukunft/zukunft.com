@@ -309,7 +309,8 @@ class result extends sandbox_value
     }
 
     /**
-     * create the SQL to load a results
+     * fill the sql creator with the parameter the SQL to load results
+     * from one of the tables with results
      *
      * @param sql $sc with the target db_type set
      * @param string $query_name the unique name of the query e.g. id or name
@@ -317,7 +318,7 @@ class result extends sandbox_value
      * @param string $ext the table name extension e.g. to switch between standard and prime values
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(
+    function load_sql_multi(
         sql $sc,
         string $query_name,
         string $class = self::class,
@@ -337,6 +338,7 @@ class result extends sandbox_value
 
     /**
      * create the SQL to load a results by the id
+     * added to value just to assign the class for the user sandbox object
      *
      * @param sql $sc with the target db_type set
      * @param int|string $id the id of the result
@@ -345,14 +347,20 @@ class result extends sandbox_value
      */
     function load_sql_by_id(sql $sc, int|string $id, string $class = self::class): sql_par
     {
-        $ext = $this->grp->table_extension();
-        $qp = $this->load_sql($sc, 'id', $class, $ext);
-        $sc->add_where(group::FLD_ID, $this->grp->id());
+        return parent::load_sql_by_id($sc, $id, $class);
+    }
 
-        $qp->sql = $sc->sql();
-        $qp->par = $sc->get_par();
-
-        return $qp;
+    /**
+     * create the SQL to load a results by phrase group id
+     *
+     * @param sql $sc with the target db_type set
+     * @param group $grp the group used for the selection
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_grp(sql $sc, group $grp, string $class = self::class): sql_par
+    {
+        return parent::load_sql_by_grp($sc, $grp, $class);
     }
 
     /**
@@ -386,24 +394,6 @@ class result extends sandbox_value
 
         $qp = $this->load_sql_by_grp_prepare($sc, $grp);
         return parent::load_standard_sql_by($sc, $qp);
-    }
-
-    /**
-     * create the SQL to load a results by phrase group id
-     *
-     * @param sql $sc with the target db_type set
-     * @param group $grp the group used for the selection
-     * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql_by_grp(sql $sc, group $grp, string $class = self::class): sql_par
-    {
-        $ext = $grp->table_extension();
-        $qp = $this->load_sql($sc, 'grp', $class, $ext);
-        $sc->add_where(self::FLD_GRP, $grp->id());
-        $qp->sql = $sc->sql();
-        $qp->par = $sc->get_par();
-        return $qp;
     }
 
     /**

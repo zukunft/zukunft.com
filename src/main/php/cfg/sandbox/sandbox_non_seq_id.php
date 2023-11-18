@@ -543,9 +543,9 @@ class sandbox_non_seq_id extends db_object_non_seq_id_user
      * so for values and results the load_non_int_db_key function is used instead of this load function
      *
      * @param sql_par $qp the query parameters created by the calling function
-     * @return int the id of the object found and zero if nothing is found
+     * @return int|string the id of the object found and zero if nothing is found
      */
-    protected function load(sql_par $qp): int
+    protected function load(sql_par $qp): int|string
     {
         global $db_con;
 

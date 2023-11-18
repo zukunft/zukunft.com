@@ -76,7 +76,6 @@ class db_object_non_seq_id extends db_object
     function row_mapper(?array $db_row, string $id_fld = ''): bool
     {
         $result = false;
-        $this->set_id(0);
         if ($db_row != null) {
             if (array_key_exists($id_fld, $db_row)) {
                 if ($db_row[$id_fld] != 0) {
@@ -195,10 +194,18 @@ class db_object_non_seq_id extends db_object
         if ($this->id == null) {
             return false;
         } else {
-            if ($this->id != 0) {
-                return true;
+            if (is_string($this->id)) {
+                if ($this->id != '') {
+                    return true;
+                } else {
+                    return false;
+                }
             } else {
-                return false;
+                if ($this->id != 0) {
+                    return true;
+                } else {
+                    return false;
+                }
             }
         }
     }
@@ -221,9 +228,9 @@ class db_object_non_seq_id extends db_object
     /**
      * load a row from the database selected by id
      * @param int|string $id the id of the word, triple, formula, verb, view or view component
-     * @return int the id of the object found and zero if nothing is found
+     * @return int|string the id of the object found and zero if nothing is found
      */
-    function load_by_id(int|string $id): int
+    function load_by_id(int|string $id): int|string
     {
         global $db_con;
 

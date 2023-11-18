@@ -196,13 +196,43 @@ class value_time_series extends sandbox_value
     }
 
     /**
+     * create the common part of an SQL statement to retrieve the parameters of a value time series
+     *
+     * @param sql $sc with the target db_type set
+     * @param string $query_name the name extension to make the query name unique
+     * @param string $class the name of the child class from where the call has been triggered
+     * @param string $ext the table name extension e.g. to switch between standard and prime values
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_multi(
+        sql    $sc,
+        string $query_name,
+        string $class = self::class,
+        string $ext = ''
+    ): sql_par
+    {
+        $qp = parent::load_sql_multi($sc, $query_name, $class, $ext);
+
+        // overwrite the standard id field name (value_id) with the main database id field for values "group_id"
+        $sc->set_id_field($this->id_field());
+        $sc->set_name($qp->name);
+        $sc->set_fields(self::FLD_NAMES);
+        $sc->set_usr($this->user()->id());
+        $sc->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
+        //$sc->set_usr_only_fields(self::FLD_NAMES_USR_ONLY);
+
+        return $qp;
+    }
+
+    /**
      * create an SQL statement to retrieve a time series by the phrase group from the database
      *
      * @param sql $sc with the target db_type set
      * @param group $grp the phrase group to which the time series should be loaded
+     * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_grp(sql $sc, group $grp): sql_par
+    function load_sql_by_grp(sql $sc, group $grp, string $class = self::class): sql_par
     {
         $qp = $this->load_sql($sc, group::FLD_ID);
         $sc->add_where(group::FLD_ID, $grp->id());

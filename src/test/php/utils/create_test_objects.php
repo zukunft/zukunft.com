@@ -1933,7 +1933,7 @@ class create_test_objects extends test_base
     {
         $val = $this->load_value_by_phr_grp($phr_grp);
         if (!$val->is_saved()) {
-            $val->grp = $phr_grp;
+            $val->set_grp($phr_grp);
             $val->set_number($target);
             $val->save();
         }

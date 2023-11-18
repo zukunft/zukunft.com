@@ -36,6 +36,7 @@ use api\phrase\group as group_api;
 use api\word\triple as triple_api;
 use api\value\value as value_api;
 use api\word\word as word_api;
+use cfg\group\group_id;
 use cfg\phrase_list;
 use cfg\value\value;
 
@@ -77,7 +78,10 @@ class value_unit_db_tests
         $t->subheader('Frontend API tests');
 
         $val = new value($t->usr1);
-        $val->load_by_id(1);
+        $phr_lst = new phrase_list($t->usr1);
+        $phr_lst->add_name(triple_api::TN_PI_NAME);
+        $grp = new group_id();
+        $val->load_by_id($grp->get_id($phr_lst));
         $val->load_objects();
         $api_val = $val->api_obj();
         $t->assert($t->name . 'api->id', $api_val->id, $val->id());

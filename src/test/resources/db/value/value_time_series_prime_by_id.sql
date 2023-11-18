@@ -1,4 +1,4 @@
-PREPARE value_time_series_by_id (bigint, text) AS
+PREPARE value_time_series_prime_by_id (bigint, bigint) AS
     SELECT s.value_time_series_id,
            u.value_time_series_id AS user_value_time_series_id,
            s.user_id,
@@ -9,4 +9,4 @@ PREPARE value_time_series_by_id (bigint, text) AS
       FROM value_time_series s
  LEFT JOIN user_value_time_series u ON s.value_time_series_id = u.value_time_series_id
                                    AND u.user_id = $1
-     WHERE s.group_id = $2;
+     WHERE s.value_time_series_id = $2;
