@@ -4,7 +4,11 @@
 -- indexes for table results_standard_prime
 --
 ALTER TABLE results_standard_prime
-    ADD PRIMARY KEY (group_id);
+    ADD PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4),
+    ADD KEY results_standard_prime_phrase_id_1_idx (phrase_id_1),
+    ADD KEY results_standard_prime_phrase_id_2_idx (phrase_id_2),
+    ADD KEY results_standard_prime_phrase_id_3_idx (phrase_id_3),
+    ADD KEY results_standard_prime_phrase_id_4_idx (phrase_id_4);
 
 --
 -- indexes for table results_standard
@@ -34,7 +38,11 @@ ALTER TABLE user_results
 -- indexes for table results_prime
 --
 ALTER TABLE results_prime
-    ADD PRIMARY KEY (group_id),
+    ADD PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4),
+    ADD KEY results_prime_phrase_id_1_idx (phrase_id_1),
+    ADD KEY results_prime_phrase_id_2_idx (phrase_id_2),
+    ADD KEY results_prime_phrase_id_3_idx (phrase_id_3),
+    ADD KEY results_prime_phrase_id_4_idx (phrase_id_4),
     ADD KEY results_prime_source_group_idx (source_group_id),
     ADD KEY results_prime_formula_idx (formula_id),
     ADD KEY results_prime_user_idx (user_id);
@@ -43,7 +51,11 @@ ALTER TABLE results_prime
 -- indexes for table user_results_prime
 --
 ALTER TABLE user_results_prime
-    ADD PRIMARY KEY (group_id, user_id),
+    ADD PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, user_id),
+    ADD KEY user_results_prime_phrase_id_1_idx (phrase_id_1),
+    ADD KEY user_results_prime_phrase_id_2_idx (phrase_id_2),
+    ADD KEY user_results_prime_phrase_id_3_idx (phrase_id_3),
+    ADD KEY user_results_prime_phrase_id_4_idx (phrase_id_4),
     ADD KEY user_results_prime_source_group_idx (source_group_id),
     ADD KEY user_results_prime_user_idx (user_id),
     ADD KEY user_results_prime_formula_idx (formula_id);
@@ -72,7 +84,11 @@ ALTER TABLE user_results_big
 -- indexes for table results_text_standard_prime
 --
 ALTER TABLE results_text_standard_prime
-    ADD PRIMARY KEY (group_id);
+    ADD PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4),
+    ADD KEY results_text_standard_prime_phrase_id_1_idx (phrase_id_1),
+    ADD KEY results_text_standard_prime_phrase_id_2_idx (phrase_id_2),
+    ADD KEY results_text_standard_prime_phrase_id_3_idx (phrase_id_3),
+    ADD KEY results_text_standard_prime_phrase_id_4_idx (phrase_id_4);
 
 --
 -- indexes for table results_text_standard
@@ -102,7 +118,11 @@ ALTER TABLE user_results_text
 -- indexes for table results_text_prime
 --
 ALTER TABLE results_text_prime
-    ADD PRIMARY KEY (group_id),
+    ADD PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4),
+    ADD KEY results_text_prime_phrase_id_1_idx (phrase_id_1),
+    ADD KEY results_text_prime_phrase_id_2_idx (phrase_id_2),
+    ADD KEY results_text_prime_phrase_id_3_idx (phrase_id_3),
+    ADD KEY results_text_prime_phrase_id_4_idx (phrase_id_4),
     ADD KEY results_text_prime_source_group_idx (source_group_id),
     ADD KEY results_text_prime_formula_idx (formula_id),
     ADD KEY results_text_prime_user_idx (user_id);
@@ -111,7 +131,11 @@ ALTER TABLE results_text_prime
 -- indexes for table user_results_text_prime
 --
 ALTER TABLE user_results_text_prime
-    ADD PRIMARY KEY (group_id, user_id),
+    ADD PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, user_id),
+    ADD KEY user_results_text_prime_phrase_id_1_idx (phrase_id_1),
+    ADD KEY user_results_text_prime_phrase_id_2_idx (phrase_id_2),
+    ADD KEY user_results_text_prime_phrase_id_3_idx (phrase_id_3),
+    ADD KEY user_results_text_prime_phrase_id_4_idx (phrase_id_4),
     ADD KEY user_results_text_prime_source_group_idx (source_group_id),
     ADD KEY user_results_text_prime_user_idx (user_id),
     ADD KEY user_results_text_prime_formula_idx (formula_id);
@@ -140,7 +164,11 @@ ALTER TABLE user_results_text_big
 -- indexes for table results_time_standard_prime
 --
 ALTER TABLE results_time_standard_prime
-    ADD PRIMARY KEY (group_id);
+    ADD PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4),
+    ADD KEY results_time_standard_prime_phrase_id_1_idx (phrase_id_1),
+    ADD KEY results_time_standard_prime_phrase_id_2_idx (phrase_id_2),
+    ADD KEY results_time_standard_prime_phrase_id_3_idx (phrase_id_3),
+    ADD KEY results_time_standard_prime_phrase_id_4_idx (phrase_id_4);
 
 --
 -- indexes for table results_time_standard
@@ -170,7 +198,11 @@ ALTER TABLE user_results_time
 -- indexes for table results_time_prime
 --
 ALTER TABLE results_time_prime
-    ADD PRIMARY KEY (group_id),
+    ADD PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4),
+    ADD KEY results_time_prime_phrase_id_1_idx (phrase_id_1),
+    ADD KEY results_time_prime_phrase_id_2_idx (phrase_id_2),
+    ADD KEY results_time_prime_phrase_id_3_idx (phrase_id_3),
+    ADD KEY results_time_prime_phrase_id_4_idx (phrase_id_4),
     ADD KEY results_time_prime_source_group_idx (source_group_id),
     ADD KEY results_time_prime_formula_idx (formula_id),
     ADD KEY results_time_prime_user_idx (user_id);
@@ -179,7 +211,11 @@ ALTER TABLE results_time_prime
 -- indexes for table user_results_time_prime
 --
 ALTER TABLE user_results_time_prime
-    ADD PRIMARY KEY (group_id, user_id),
+    ADD PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, user_id),
+    ADD KEY user_results_time_prime_phrase_id_1_idx (phrase_id_1),
+    ADD KEY user_results_time_prime_phrase_id_2_idx (phrase_id_2),
+    ADD KEY user_results_time_prime_phrase_id_3_idx (phrase_id_3),
+    ADD KEY user_results_time_prime_phrase_id_4_idx (phrase_id_4),
     ADD KEY user_results_time_prime_source_group_idx (source_group_id),
     ADD KEY user_results_time_prime_user_idx (user_id),
     ADD KEY user_results_time_prime_formula_idx (formula_id);
@@ -208,7 +244,11 @@ ALTER TABLE user_results_time_big
 -- indexes for table results_geo_standard_prime
 --
 ALTER TABLE results_geo_standard_prime
-    ADD PRIMARY KEY (group_id);
+    ADD PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4),
+    ADD KEY results_geo_standard_prime_phrase_id_1_idx (phrase_id_1),
+    ADD KEY results_geo_standard_prime_phrase_id_2_idx (phrase_id_2),
+    ADD KEY results_geo_standard_prime_phrase_id_3_idx (phrase_id_3),
+    ADD KEY results_geo_standard_prime_phrase_id_4_idx (phrase_id_4);
 
 --
 -- indexes for table results_geo_standard
@@ -238,7 +278,11 @@ ALTER TABLE user_results_geo
 -- indexes for table results_geo_prime
 --
 ALTER TABLE results_geo_prime
-    ADD PRIMARY KEY (group_id),
+    ADD PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4),
+    ADD KEY results_geo_prime_phrase_id_1_idx (phrase_id_1),
+    ADD KEY results_geo_prime_phrase_id_2_idx (phrase_id_2),
+    ADD KEY results_geo_prime_phrase_id_3_idx (phrase_id_3),
+    ADD KEY results_geo_prime_phrase_id_4_idx (phrase_id_4),
     ADD KEY results_geo_prime_source_group_idx (source_group_id),
     ADD KEY results_geo_prime_formula_idx (formula_id),
     ADD KEY results_geo_prime_user_idx (user_id);
@@ -247,7 +291,11 @@ ALTER TABLE results_geo_prime
 -- indexes for table user_results_geo_prime
 --
 ALTER TABLE user_results_geo_prime
-    ADD PRIMARY KEY (group_id, user_id),
+    ADD PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, user_id),
+    ADD KEY user_results_geo_prime_phrase_id_1_idx (phrase_id_1),
+    ADD KEY user_results_geo_prime_phrase_id_2_idx (phrase_id_2),
+    ADD KEY user_results_geo_prime_phrase_id_3_idx (phrase_id_3),
+    ADD KEY user_results_geo_prime_phrase_id_4_idx (phrase_id_4),
     ADD KEY user_results_geo_prime_source_group_idx (source_group_id),
     ADD KEY user_results_geo_prime_user_idx (user_id),
     ADD KEY user_results_geo_prime_formula_idx (formula_id);

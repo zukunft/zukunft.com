@@ -4,7 +4,11 @@
 -- indexes for table values_standard_prime
 --
 ALTER TABLE values_standard_prime
-    ADD PRIMARY KEY (group_id),
+    ADD PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4),
+    ADD KEY values_standard_prime_phrase_id_1_idx (phrase_id_1),
+    ADD KEY values_standard_prime_phrase_id_2_idx (phrase_id_2),
+    ADD KEY values_standard_prime_phrase_id_3_idx (phrase_id_3),
+    ADD KEY values_standard_prime_phrase_id_4_idx (phrase_id_4),
     ADD KEY values_standard_prime_source_idx (source_id);
 
 --
@@ -34,7 +38,11 @@ ALTER TABLE user_values
 -- indexes for table values_prime
 --
 ALTER TABLE values_prime
-    ADD PRIMARY KEY (group_id),
+    ADD PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4),
+    ADD KEY values_prime_phrase_id_1_idx (phrase_id_1),
+    ADD KEY values_prime_phrase_id_2_idx (phrase_id_2),
+    ADD KEY values_prime_phrase_id_3_idx (phrase_id_3),
+    ADD KEY values_prime_phrase_id_4_idx (phrase_id_4),
     ADD KEY values_prime_source_idx (source_id),
     ADD KEY values_prime_user_idx (user_id);
 
@@ -42,7 +50,11 @@ ALTER TABLE values_prime
 -- indexes for table user_values_prime
 --
 ALTER TABLE user_values_prime
-    ADD PRIMARY KEY (group_id, user_id),
+    ADD PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, user_id),
+    ADD KEY user_values_prime_phrase_id_1_idx (phrase_id_1),
+    ADD KEY user_values_prime_phrase_id_2_idx (phrase_id_2),
+    ADD KEY user_values_prime_phrase_id_3_idx (phrase_id_3),
+    ADD KEY user_values_prime_phrase_id_4_idx (phrase_id_4),
     ADD KEY user_values_prime_user_idx (user_id),
     ADD KEY user_values_prime_source_idx (source_id);
 
@@ -68,7 +80,11 @@ ALTER TABLE user_values_big
 -- indexes for table values_text_standard_prime
 --
 ALTER TABLE values_text_standard_prime
-    ADD PRIMARY KEY (group_id),
+    ADD PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4),
+    ADD KEY values_text_standard_prime_phrase_id_1_idx (phrase_id_1),
+    ADD KEY values_text_standard_prime_phrase_id_2_idx (phrase_id_2),
+    ADD KEY values_text_standard_prime_phrase_id_3_idx (phrase_id_3),
+    ADD KEY values_text_standard_prime_phrase_id_4_idx (phrase_id_4),
     ADD KEY values_text_standard_prime_source_idx (source_id);
 
 --
@@ -97,7 +113,11 @@ ALTER TABLE user_values_text
 -- indexes for table values_text_prime
 --
 ALTER TABLE values_text_prime
-    ADD PRIMARY KEY (group_id),
+    ADD PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4),
+    ADD KEY values_text_prime_phrase_id_1_idx (phrase_id_1),
+    ADD KEY values_text_prime_phrase_id_2_idx (phrase_id_2),
+    ADD KEY values_text_prime_phrase_id_3_idx (phrase_id_3),
+    ADD KEY values_text_prime_phrase_id_4_idx (phrase_id_4),
     ADD KEY values_text_prime_source_idx (source_id),
     ADD KEY values_text_prime_user_idx (user_id);
 
@@ -105,7 +125,11 @@ ALTER TABLE values_text_prime
 -- indexes for table user_values_text_prime
 --
 ALTER TABLE user_values_text_prime
-    ADD PRIMARY KEY (group_id, user_id),
+    ADD PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, user_id),
+    ADD KEY user_values_text_prime_phrase_id_1_idx (phrase_id_1),
+    ADD KEY user_values_text_prime_phrase_id_2_idx (phrase_id_2),
+    ADD KEY user_values_text_prime_phrase_id_3_idx (phrase_id_3),
+    ADD KEY user_values_text_prime_phrase_id_4_idx (phrase_id_4),
     ADD KEY user_values_text_prime_user_idx (user_id),
     ADD KEY user_values_text_prime_source_idx (source_id);
 
@@ -131,7 +155,11 @@ ALTER TABLE user_values_text_big
 -- indexes for table values_time_standard_prime
 --
 ALTER TABLE values_time_standard_prime
-    ADD PRIMARY KEY (group_id),
+    ADD PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4),
+    ADD KEY values_time_standard_prime_phrase_id_1_idx (phrase_id_1),
+    ADD KEY values_time_standard_prime_phrase_id_2_idx (phrase_id_2),
+    ADD KEY values_time_standard_prime_phrase_id_3_idx (phrase_id_3),
+    ADD KEY values_time_standard_prime_phrase_id_4_idx (phrase_id_4),
     ADD KEY values_time_standard_prime_source_idx (source_id);
 
 --
@@ -161,7 +189,11 @@ ALTER TABLE user_values_time
 -- indexes for table values_time_prime
 --
 ALTER TABLE values_time_prime
-    ADD PRIMARY KEY (group_id),
+    ADD PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4),
+    ADD KEY values_time_prime_phrase_id_1_idx (phrase_id_1),
+    ADD KEY values_time_prime_phrase_id_2_idx (phrase_id_2),
+    ADD KEY values_time_prime_phrase_id_3_idx (phrase_id_3),
+    ADD KEY values_time_prime_phrase_id_4_idx (phrase_id_4),
     ADD KEY values_time_prime_source_idx (source_id),
     ADD KEY values_time_prime_user_idx (user_id);
 
@@ -169,7 +201,11 @@ ALTER TABLE values_time_prime
 -- indexes for table user_values_time_prime
 --
 ALTER TABLE user_values_time_prime
-    ADD PRIMARY KEY (group_id, user_id),
+    ADD PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, user_id),
+    ADD KEY user_values_time_prime_phrase_id_1_idx (phrase_id_1),
+    ADD KEY user_values_time_prime_phrase_id_2_idx (phrase_id_2),
+    ADD KEY user_values_time_prime_phrase_id_3_idx (phrase_id_3),
+    ADD KEY user_values_time_prime_phrase_id_4_idx (phrase_id_4),
     ADD KEY user_values_time_prime_user_idx (user_id),
     ADD KEY user_values_time_prime_source_idx (source_id);
 
@@ -195,7 +231,11 @@ ALTER TABLE user_values_time_big
 -- indexes for table values_geo_standard_prime
 --
 ALTER TABLE values_geo_standard_prime
-    ADD PRIMARY KEY (group_id),
+    ADD PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4),
+    ADD KEY values_geo_standard_prime_phrase_id_1_idx (phrase_id_1),
+    ADD KEY values_geo_standard_prime_phrase_id_2_idx (phrase_id_2),
+    ADD KEY values_geo_standard_prime_phrase_id_3_idx (phrase_id_3),
+    ADD KEY values_geo_standard_prime_phrase_id_4_idx (phrase_id_4),
     ADD KEY values_geo_standard_prime_source_idx (source_id);
 
 --
@@ -225,7 +265,11 @@ ALTER TABLE user_values_geo
 -- indexes for table values_geo_prime
 --
 ALTER TABLE values_geo_prime
-    ADD PRIMARY KEY (group_id),
+    ADD PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4),
+    ADD KEY values_geo_prime_phrase_id_1_idx (phrase_id_1),
+    ADD KEY values_geo_prime_phrase_id_2_idx (phrase_id_2),
+    ADD KEY values_geo_prime_phrase_id_3_idx (phrase_id_3),
+    ADD KEY values_geo_prime_phrase_id_4_idx (phrase_id_4),
     ADD KEY values_geo_prime_source_idx (source_id),
     ADD KEY values_geo_prime_user_idx (user_id);
 
@@ -233,7 +277,11 @@ ALTER TABLE values_geo_prime
 -- indexes for table user_values_geo_prime
 --
 ALTER TABLE user_values_geo_prime
-    ADD PRIMARY KEY (group_id, user_id),
+    ADD PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, user_id),
+    ADD KEY user_values_geo_prime_phrase_id_1_idx (phrase_id_1),
+    ADD KEY user_values_geo_prime_phrase_id_2_idx (phrase_id_2),
+    ADD KEY user_values_geo_prime_phrase_id_3_idx (phrase_id_3),
+    ADD KEY user_values_geo_prime_phrase_id_4_idx (phrase_id_4),
     ADD KEY user_values_geo_prime_user_idx (user_id),
     ADD KEY user_values_geo_prime_source_idx (source_id);
 

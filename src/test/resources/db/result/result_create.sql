@@ -7,12 +7,18 @@
 
 CREATE TABLE IF NOT EXISTS results_standard_prime
 (
-    group_id      bigint           PRIMARY KEY,
+    phrase_id_1   smallint         NOT NULL,
+    phrase_id_2   smallint         DEFAULT NULL,
+    phrase_id_3   smallint         DEFAULT NULL,
+    phrase_id_4   smallint         DEFAULT NULL,
     numeric_value double precision NOT NULL
 );
 
 COMMENT ON TABLE results_standard_prime                IS 'to cache the formula public unprotected numeric results related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated';
-COMMENT ON COLUMN results_standard_prime.group_id      IS 'the 64-bit prime index to find the numeric result';
+COMMENT ON COLUMN results_standard_prime.phrase_id_1   IS 'phrase id that is part of the prime key for a numeric result';
+COMMENT ON COLUMN results_standard_prime.phrase_id_2   IS 'phrase id that is part of the prime key for a numeric result';
+COMMENT ON COLUMN results_standard_prime.phrase_id_3   IS 'phrase id that is part of the prime key for a numeric result';
+COMMENT ON COLUMN results_standard_prime.phrase_id_4   IS 'phrase id that is part of the prime key for a numeric result';
 COMMENT ON COLUMN results_standard_prime.numeric_value IS 'the numeric value given by the user';
 
 --
@@ -95,7 +101,10 @@ COMMENT ON COLUMN user_results.protect_id      IS 'to protect against unwanted c
 
 CREATE TABLE IF NOT EXISTS results_prime
 (
-    group_id        bigint           PRIMARY KEY,
+    phrase_id_1     smallint         NOT NULL,
+    phrase_id_2     smallint         DEFAULT NULL,
+    phrase_id_3     smallint         DEFAULT NULL,
+    phrase_id_4     smallint         DEFAULT NULL,
     source_group_id bigint           DEFAULT NULL,
     numeric_value   double precision     NOT NULL,
     last_update     timestamp        DEFAULT NULL,
@@ -107,7 +116,10 @@ CREATE TABLE IF NOT EXISTS results_prime
 );
 
 COMMENT ON TABLE results_prime                  IS 'to cache the formula most often requested numeric results related up to four prime phrase';
-COMMENT ON COLUMN results_prime.group_id        IS 'the 64-bit prime index to find the numeric result';
+COMMENT ON COLUMN results_prime.phrase_id_1     IS 'phrase id that is part of the prime key for a numeric result';
+COMMENT ON COLUMN results_prime.phrase_id_2     IS 'phrase id that is part of the prime key for a numeric result';
+COMMENT ON COLUMN results_prime.phrase_id_3     IS 'phrase id that is part of the prime key for a numeric result';
+COMMENT ON COLUMN results_prime.phrase_id_4     IS 'phrase id that is part of the prime key for a numeric result';
 COMMENT ON COLUMN results_prime.source_group_id IS '64-bit reference to the sorted phrase list used to calculate this result';
 COMMENT ON COLUMN results_prime.numeric_value   IS 'the numeric value given by the user';
 COMMENT ON COLUMN results_prime.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
@@ -123,7 +135,10 @@ COMMENT ON COLUMN results_prime.protect_id      IS 'to protect against unwanted 
 
 CREATE TABLE IF NOT EXISTS user_results_prime
 (
-    group_id        bigint               NOT NULL,
+    phrase_id_1     smallint         NOT NULL,
+    phrase_id_2     smallint         DEFAULT NULL,
+    phrase_id_3     smallint         DEFAULT NULL,
+    phrase_id_4     smallint         DEFAULT NULL,
     source_group_id bigint           DEFAULT NULL,
     user_id         bigint               NOT NULL,
     numeric_value   double precision DEFAULT NULL,
@@ -135,7 +150,10 @@ CREATE TABLE IF NOT EXISTS user_results_prime
 );
 
 COMMENT ON TABLE user_results_prime                  IS 'to store the user specific changes for the most often requested numeric results related up to four prime phrase';
-COMMENT ON COLUMN user_results_prime.group_id        IS 'the 64-bit prime index to find the user numeric result';
+COMMENT ON COLUMN user_results_prime.phrase_id_1     IS 'phrase id that is with the user id part of the prime key for a numeric result';
+COMMENT ON COLUMN user_results_prime.phrase_id_2     IS 'phrase id that is with the user id part of the prime key for a numeric result';
+COMMENT ON COLUMN user_results_prime.phrase_id_3     IS 'phrase id that is with the user id part of the prime key for a numeric result';
+COMMENT ON COLUMN user_results_prime.phrase_id_4     IS 'phrase id that is with the user id part of the prime key for a numeric result';
 COMMENT ON COLUMN user_results_prime.source_group_id IS '64-bit reference to the sorted phrase list used to calculate this result';
 COMMENT ON COLUMN user_results_prime.user_id         IS 'the id of the user who has requested the change of the numeric result';
 COMMENT ON COLUMN user_results_prime.numeric_value   IS 'the user specific numeric value change';
@@ -211,13 +229,19 @@ COMMENT ON COLUMN user_results_big.protect_id      IS 'to protect against unwant
 
 CREATE TABLE IF NOT EXISTS results_text_standard_prime
 (
-    group_id   bigint    PRIMARY KEY,
+    phrase_id_1 smallint NOT NULL,
+    phrase_id_2 smallint DEFAULT NULL,
+    phrase_id_3 smallint DEFAULT NULL,
+    phrase_id_4 smallint DEFAULT NULL,
     text_value text      NOT NULL
 );
 
-COMMENT ON TABLE results_text_standard_prime             IS 'to cache the formula public unprotected text results related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated';
-COMMENT ON COLUMN results_text_standard_prime.group_id   IS 'the 64-bit prime index to find the text result';
-COMMENT ON COLUMN results_text_standard_prime.text_value IS 'the text value given by the user';
+COMMENT ON TABLE results_text_standard_prime              IS 'to cache the formula public unprotected text results related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated';
+COMMENT ON COLUMN results_text_standard_prime.phrase_id_1 IS 'phrase id that is part of the prime key for a text result';
+COMMENT ON COLUMN results_text_standard_prime.phrase_id_2 IS 'phrase id that is part of the prime key for a text result';
+COMMENT ON COLUMN results_text_standard_prime.phrase_id_3 IS 'phrase id that is part of the prime key for a text result';
+COMMENT ON COLUMN results_text_standard_prime.phrase_id_4 IS 'phrase id that is part of the prime key for a text result';
+COMMENT ON COLUMN results_text_standard_prime.text_value  IS 'the text value given by the user';
 
 --
 -- table structure to cache the formula public unprotected text results that have never changed the owner, does not have a description and are rarely updated
@@ -299,7 +323,10 @@ COMMENT ON COLUMN user_results_text.protect_id      IS 'to protect against unwan
 
 CREATE TABLE IF NOT EXISTS results_text_prime
 (
-    group_id        bigint    PRIMARY KEY,
+    phrase_id_1   smallint  NOT NULL,
+    phrase_id_2   smallint  DEFAULT NULL,
+    phrase_id_3   smallint  DEFAULT NULL,
+    phrase_id_4   smallint  DEFAULT NULL,
     source_group_id bigint    DEFAULT NULL,
     text_value      text          NOT NULL,
     last_update     timestamp DEFAULT NULL,
@@ -311,7 +338,10 @@ CREATE TABLE IF NOT EXISTS results_text_prime
 );
 
 COMMENT ON TABLE results_text_prime                  IS 'to cache the formula most often requested text results related up to four prime phrase';
-COMMENT ON COLUMN results_text_prime.group_id        IS 'the 64-bit prime index to find the text result';
+COMMENT ON COLUMN results_text_prime.phrase_id_1     IS 'phrase id that is part of the prime key for a text result';
+COMMENT ON COLUMN results_text_prime.phrase_id_2     IS 'phrase id that is part of the prime key for a text result';
+COMMENT ON COLUMN results_text_prime.phrase_id_3     IS 'phrase id that is part of the prime key for a text result';
+COMMENT ON COLUMN results_text_prime.phrase_id_4     IS 'phrase id that is part of the prime key for a text result';
 COMMENT ON COLUMN results_text_prime.source_group_id IS '64-bit reference to the sorted phrase list used to calculate this result';
 COMMENT ON COLUMN results_text_prime.text_value      IS 'the text value given by the user';
 COMMENT ON COLUMN results_text_prime.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
@@ -327,7 +357,10 @@ COMMENT ON COLUMN results_text_prime.protect_id      IS 'to protect against unwa
 
 CREATE TABLE IF NOT EXISTS user_results_text_prime
 (
-    group_id        bigint        NOT NULL,
+    phrase_id_1   smallint  NOT NULL,
+    phrase_id_2   smallint  DEFAULT NULL,
+    phrase_id_3   smallint  DEFAULT NULL,
+    phrase_id_4   smallint  DEFAULT NULL,
     source_group_id bigint    DEFAULT NULL,
     user_id         bigint        NOT NULL,
     text_value      text      DEFAULT NULL,
@@ -339,7 +372,10 @@ CREATE TABLE IF NOT EXISTS user_results_text_prime
 );
 
 COMMENT ON TABLE user_results_text_prime                  IS 'to store the user specific changes for the most often requested text results related up to four prime phrase';
-COMMENT ON COLUMN user_results_text_prime.group_id        IS 'the 64-bit prime index to find the user text result';
+COMMENT ON COLUMN user_results_text_prime.phrase_id_1     IS 'phrase id that is with the user id part of the prime key for a text result';
+COMMENT ON COLUMN user_results_text_prime.phrase_id_2     IS 'phrase id that is with the user id part of the prime key for a text result';
+COMMENT ON COLUMN user_results_text_prime.phrase_id_3     IS 'phrase id that is with the user id part of the prime key for a text result';
+COMMENT ON COLUMN user_results_text_prime.phrase_id_4     IS 'phrase id that is with the user id part of the prime key for a text result';
 COMMENT ON COLUMN user_results_text_prime.source_group_id IS '64-bit reference to the sorted phrase list used to calculate this result';
 COMMENT ON COLUMN user_results_text_prime.user_id         IS 'the id of the user who has requested the change of the text result';
 COMMENT ON COLUMN user_results_text_prime.text_value      IS 'the user specific text value change';
@@ -415,13 +451,19 @@ COMMENT ON COLUMN user_results_text_big.protect_id      IS 'to protect against u
 
 CREATE TABLE IF NOT EXISTS results_time_standard_prime
 (
-    group_id   bigint    PRIMARY KEY,
+    phrase_id_1 smallint  NOT NULL,
+    phrase_id_2 smallint  DEFAULT NULL,
+    phrase_id_3 smallint  DEFAULT NULL,
+    phrase_id_4 smallint  DEFAULT NULL,
     time_value timestamp NOT NULL
 );
 
-COMMENT ON TABLE results_time_standard_prime             IS 'to cache the formula public unprotected time results related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated';
-COMMENT ON COLUMN results_time_standard_prime.group_id   IS 'the 64-bit prime index to find the time result';
-COMMENT ON COLUMN results_time_standard_prime.time_value IS 'the timestamp given by the user';
+COMMENT ON TABLE results_time_standard_prime              IS 'to cache the formula public unprotected time results related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated';
+COMMENT ON COLUMN results_time_standard_prime.phrase_id_1 IS 'phrase id that is part of the prime key for a time result';
+COMMENT ON COLUMN results_time_standard_prime.phrase_id_2 IS 'phrase id that is part of the prime key for a time result';
+COMMENT ON COLUMN results_time_standard_prime.phrase_id_3 IS 'phrase id that is part of the prime key for a time result';
+COMMENT ON COLUMN results_time_standard_prime.phrase_id_4 IS 'phrase id that is part of the prime key for a time result';
+COMMENT ON COLUMN results_time_standard_prime.time_value  IS 'the timestamp given by the user';
 
 --
 -- table structure to cache the formula public unprotected time results that have never changed the owner, does not have a description and are rarely updated
@@ -503,7 +545,10 @@ COMMENT ON COLUMN user_results_time.protect_id      IS 'to protect against unwan
 
 CREATE TABLE IF NOT EXISTS results_time_prime
 (
-    group_id        bigint    PRIMARY KEY,
+    phrase_id_1   smallint  NOT NULL,
+    phrase_id_2   smallint  DEFAULT NULL,
+    phrase_id_3   smallint  DEFAULT NULL,
+    phrase_id_4   smallint  DEFAULT NULL,
     source_group_id bigint    DEFAULT NULL,
     time_value      timestamp     NOT NULL,
     last_update     timestamp DEFAULT NULL,
@@ -515,7 +560,10 @@ CREATE TABLE IF NOT EXISTS results_time_prime
 );
 
 COMMENT ON TABLE results_time_prime                  IS 'to cache the formula most often requested time results related up to four prime phrase';
-COMMENT ON COLUMN results_time_prime.group_id        IS 'the 64-bit prime index to find the time result';
+COMMENT ON COLUMN results_time_prime.phrase_id_1     IS 'phrase id that is part of the prime key for a time result';
+COMMENT ON COLUMN results_time_prime.phrase_id_2     IS 'phrase id that is part of the prime key for a time result';
+COMMENT ON COLUMN results_time_prime.phrase_id_3     IS 'phrase id that is part of the prime key for a time result';
+COMMENT ON COLUMN results_time_prime.phrase_id_4     IS 'phrase id that is part of the prime key for a time result';
 COMMENT ON COLUMN results_time_prime.source_group_id IS '64-bit reference to the sorted phrase list used to calculate this result';
 COMMENT ON COLUMN results_time_prime.time_value      IS 'the timestamp given by the user';
 COMMENT ON COLUMN results_time_prime.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
@@ -531,7 +579,10 @@ COMMENT ON COLUMN results_time_prime.protect_id      IS 'to protect against unwa
 
 CREATE TABLE IF NOT EXISTS user_results_time_prime
 (
-    group_id        bigint        NOT NULL,
+    phrase_id_1   smallint  NOT NULL,
+    phrase_id_2   smallint  DEFAULT NULL,
+    phrase_id_3   smallint  DEFAULT NULL,
+    phrase_id_4   smallint  DEFAULT NULL,
     source_group_id bigint    DEFAULT NULL,
     user_id         bigint        NOT NULL,
     time_value      timestamp DEFAULT NULL,
@@ -543,7 +594,10 @@ CREATE TABLE IF NOT EXISTS user_results_time_prime
 );
 
 COMMENT ON TABLE user_results_time_prime                  IS 'to store the user specific changes for the most often requested time results related up to four prime phrase';
-COMMENT ON COLUMN user_results_time_prime.group_id        IS 'the 64-bit prime index to find the user time result';
+COMMENT ON COLUMN user_results_time_prime.phrase_id_1     IS 'phrase id that is with the user id part of the prime key for a time result';
+COMMENT ON COLUMN user_results_time_prime.phrase_id_2     IS 'phrase id that is with the user id part of the prime key for a time result';
+COMMENT ON COLUMN user_results_time_prime.phrase_id_3     IS 'phrase id that is with the user id part of the prime key for a time result';
+COMMENT ON COLUMN user_results_time_prime.phrase_id_4     IS 'phrase id that is with the user id part of the prime key for a time result';
 COMMENT ON COLUMN user_results_time_prime.source_group_id IS '64-bit reference to the sorted phrase list used to calculate this result';
 COMMENT ON COLUMN user_results_time_prime.user_id         IS 'the id of the user who has requested the change of the time result';
 COMMENT ON COLUMN user_results_time_prime.time_value      IS 'the user specific timestamp change';
@@ -619,13 +673,19 @@ COMMENT ON COLUMN user_results_time_big.protect_id      IS 'to protect against u
 
 CREATE TABLE IF NOT EXISTS results_geo_standard_prime
 (
-    group_id   bigint    PRIMARY KEY,
+    phrase_id_1 smallint  NOT NULL,
+    phrase_id_2 smallint  DEFAULT NULL,
+    phrase_id_3 smallint  DEFAULT NULL,
+    phrase_id_4 smallint  DEFAULT NULL,
     geo_value  point     NOT NULL
 );
 
-COMMENT ON TABLE results_geo_standard_prime             IS 'to cache the formula public unprotected geo results related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated';
-COMMENT ON COLUMN results_geo_standard_prime.group_id   IS 'the 64-bit prime index to find the geo result';
-COMMENT ON COLUMN results_geo_standard_prime.geo_value  IS 'the geolocation given by the user';
+COMMENT ON TABLE results_geo_standard_prime              IS 'to cache the formula public unprotected geo results related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated';
+COMMENT ON COLUMN results_geo_standard_prime.phrase_id_1 IS 'phrase id that is part of the prime key for a geo result';
+COMMENT ON COLUMN results_geo_standard_prime.phrase_id_2 IS 'phrase id that is part of the prime key for a geo result';
+COMMENT ON COLUMN results_geo_standard_prime.phrase_id_3 IS 'phrase id that is part of the prime key for a geo result';
+COMMENT ON COLUMN results_geo_standard_prime.phrase_id_4 IS 'phrase id that is part of the prime key for a geo result';
+COMMENT ON COLUMN results_geo_standard_prime.geo_value   IS 'the geolocation given by the user';
 
 --
 -- table structure to cache the formula public unprotected geo results that have never changed the owner, does not have a description and are rarely updated
@@ -707,7 +767,10 @@ COMMENT ON COLUMN user_results_geo.protect_id      IS 'to protect against unwant
 
 CREATE TABLE IF NOT EXISTS results_geo_prime
 (
-    group_id        bigint    PRIMARY KEY,
+    phrase_id_1   smallint  NOT NULL,
+    phrase_id_2   smallint  DEFAULT NULL,
+    phrase_id_3   smallint  DEFAULT NULL,
+    phrase_id_4   smallint  DEFAULT NULL,
     source_group_id bigint    DEFAULT NULL,
     geo_value       point         NOT NULL,
     last_update     timestamp DEFAULT NULL,
@@ -719,7 +782,10 @@ CREATE TABLE IF NOT EXISTS results_geo_prime
 );
 
 COMMENT ON TABLE results_geo_prime                  IS 'to cache the formula most often requested geo results related up to four prime phrase';
-COMMENT ON COLUMN results_geo_prime.group_id        IS 'the 64-bit prime index to find the geo result';
+COMMENT ON COLUMN results_geo_prime.phrase_id_1     IS 'phrase id that is part of the prime key for a geo result';
+COMMENT ON COLUMN results_geo_prime.phrase_id_2     IS 'phrase id that is part of the prime key for a geo result';
+COMMENT ON COLUMN results_geo_prime.phrase_id_3     IS 'phrase id that is part of the prime key for a geo result';
+COMMENT ON COLUMN results_geo_prime.phrase_id_4     IS 'phrase id that is part of the prime key for a geo result';
 COMMENT ON COLUMN results_geo_prime.source_group_id IS '64-bit reference to the sorted phrase list used to calculate this result';
 COMMENT ON COLUMN results_geo_prime.geo_value       IS 'the geolocation given by the user';
 COMMENT ON COLUMN results_geo_prime.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
@@ -735,7 +801,10 @@ COMMENT ON COLUMN results_geo_prime.protect_id      IS 'to protect against unwan
 
 CREATE TABLE IF NOT EXISTS user_results_geo_prime
 (
-    group_id        bigint        NOT NULL,
+    phrase_id_1   smallint  NOT NULL,
+    phrase_id_2   smallint  DEFAULT NULL,
+    phrase_id_3   smallint  DEFAULT NULL,
+    phrase_id_4   smallint  DEFAULT NULL,
     source_group_id bigint    DEFAULT NULL,
     user_id         bigint        NOT NULL,
     geo_value       point     DEFAULT NULL,
@@ -747,7 +816,10 @@ CREATE TABLE IF NOT EXISTS user_results_geo_prime
 );
 
 COMMENT ON TABLE user_results_geo_prime                  IS 'to store the user specific changes for the most often requested geo results related up to four prime phrase';
-COMMENT ON COLUMN user_results_geo_prime.group_id        IS 'the 64-bit prime index to find the user geo result';
+COMMENT ON COLUMN user_results_geo_prime.phrase_id_1     IS 'phrase id that is with the user id part of the prime key for a geo result';
+COMMENT ON COLUMN user_results_geo_prime.phrase_id_2     IS 'phrase id that is with the user id part of the prime key for a geo result';
+COMMENT ON COLUMN user_results_geo_prime.phrase_id_3     IS 'phrase id that is with the user id part of the prime key for a geo result';
+COMMENT ON COLUMN user_results_geo_prime.phrase_id_4     IS 'phrase id that is with the user id part of the prime key for a geo result';
 COMMENT ON COLUMN user_results_geo_prime.source_group_id IS '64-bit reference to the sorted phrase list used to calculate this result';
 COMMENT ON COLUMN user_results_geo_prime.user_id         IS 'the id of the user who has requested the change of the geo result';
 COMMENT ON COLUMN user_results_geo_prime.geo_value       IS 'the user specific geolocation change';

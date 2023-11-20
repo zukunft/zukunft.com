@@ -82,7 +82,7 @@ class db_object_multi extends db_object
         if ($db_row != null) {
             if (array_key_exists($id_fld, $db_row)) {
                 if ($db_row[$id_fld] != 0 or $db_row[$id_fld] != '') {
-                    if ($ext == group_id::TBL_EXT_PRIME) {
+                    if (substr($ext,0, 2) == group_id::TBL_EXT_PHRASE_ID) {
                         $this->set_id((int)$db_row[$id_fld]);
                     } else {
                         $this->set_id($db_row[$id_fld]);

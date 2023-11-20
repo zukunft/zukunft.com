@@ -100,6 +100,12 @@ class group extends sandbox_multi
 
     // list of fields with parameters used for the database creation
     // the fields that can be changed by the user
+    const FLD_KEY_PRIME = array(
+        [group::FLD_ID, sql_field_type::KEY_INT_NO_AUTO, sql_field_default::NOT_NULL, '', '', 'the 64-bit prime index to find the'],
+    );
+    const FLD_KEY_PRIME_USER = array(
+        [group::FLD_ID, sql_field_type::KEY_PART_INT, sql_field_default::NOT_NULL, '', '', 'the 64-bit prime index to find the user'],
+    );
     const FLD_LST_CREATE_CHANGEABLE = array(
         [self::FLD_NAME, sql_field_type::TEXT, sql_field_default::NULL, '', '', 'the user specific group name which can contain the phrase names in a different order to display the group (does not need to be unique)'],
         [self::FLD_DESCRIPTION, sql_field_type::TEXT, sql_field_default::NULL, '', '', 'the user specific description for mouse over helps'],
@@ -372,8 +378,8 @@ class group extends sandbox_multi
         $sql_lst = [$sql, $sql_index, $sql_foreign, $sql_truncate];
         $sql_lst = $this->sql_one_tbl($sc, false, '', sandbox_value::FLD_KEY, $this::TBL_COMMENT, $sql_lst);
         $sql_lst = $this->sql_one_tbl($sc, true, '', sandbox_value::FLD_KEY_USER, $this::TBL_COMMENT, $sql_lst);
-        $sql_lst = $this->sql_one_tbl($sc, false, group_id::TBL_EXT_PRIME, sandbox_value::FLD_KEY_PRIME, $this::TBL_COMMENT_PRIME, $sql_lst);
-        $sql_lst = $this->sql_one_tbl($sc, true, group_id::TBL_EXT_PRIME, sandbox_value::FLD_KEY_PRIME_USER, $this::TBL_COMMENT_PRIME, $sql_lst);
+        $sql_lst = $this->sql_one_tbl($sc, false, group_id::TBL_EXT_PRIME, group::FLD_KEY_PRIME, $this::TBL_COMMENT_PRIME, $sql_lst);
+        $sql_lst = $this->sql_one_tbl($sc, true, group_id::TBL_EXT_PRIME, group::FLD_KEY_PRIME_USER, $this::TBL_COMMENT_PRIME, $sql_lst);
         $sql_lst = $this->sql_one_tbl($sc, false, group_id::TBL_EXT_BIG, sandbox_value::FLD_KEY_BIG, $this::TBL_COMMENT_BIG, $sql_lst);
         return $this->sql_one_tbl($sc, true, group_id::TBL_EXT_BIG, sandbox_value::FLD_KEY_BIG_USER, $this::TBL_COMMENT_BIG, $sql_lst);
     }

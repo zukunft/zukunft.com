@@ -46,6 +46,7 @@ enum sql_field_type: string
     case TEXT = 'text'; // a text with variable length that can be used for a combined index without auto increase
     case KEY_PART_TEXT = 'textKeyPart'; // a text with variable length that is part of a combined index
     case KEY_PART_512 = '512bitKeyPart'; // a 512-bit text for a combined index without auto increase
+    case KEY_PART_INT_SMALL = 'smallIntKeyPart'; // a small integer that is part of a combined index
     case KEY_PART_INT = 'bigintKeyPart'; // an integer that is part of a combined index
     case REF_512 = '512bitRef'; // a 512-bit foreign key
     case INT = 'bigint'; // the standard integer type
@@ -64,7 +65,7 @@ enum sql_field_type: string
             self::CODE_ID => 'varchar(100)',
             self::TEXT, self::KEY_TEXT, self::KEY_PART_TEXT => 'text',
             self::INT, self::KEY_INT_NO_AUTO, self::KEY_PART_INT => 'bigint',
-            self::INT_SMALL, self::BOOL => 'smallint',
+            self::INT_SMALL, self::BOOL, self::KEY_PART_INT_SMALL => 'smallint',
             self::NUMERIC_FLOAT => 'double precision',
             self::TIME => 'timestamp',
             self::GEO => 'point',
@@ -81,7 +82,7 @@ enum sql_field_type: string
             self::NAME => 'varchar(255)',
             self::CODE_ID => 'varchar(100)',
             self::TEXT => 'text',
-            self::INT_SMALL, self::BOOL => 'smallint',
+            self::INT_SMALL, self::BOOL, self::KEY_PART_INT_SMALL => 'smallint',
             self::NUMERIC_FLOAT => 'double',
             self::TIME => 'timestamp',
             self::GEO => 'point',
@@ -100,7 +101,7 @@ enum sql_field_type: string
     public function is_key_part(): bool
     {
         return match($this) {
-            self::KEY_PART_512, self::KEY_PART_INT, self::KEY_PART_TEXT => true,
+            self::KEY_PART_512, self::KEY_PART_INT, self::KEY_PART_INT_SMALL, self::KEY_PART_TEXT => true,
             default => false,
         };
     }

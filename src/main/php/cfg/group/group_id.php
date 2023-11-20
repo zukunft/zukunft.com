@@ -64,6 +64,7 @@ class group_id
 
     // the database table name extensions
     const TBL_EXT_PRIME = '_prime'; // the table name extension for up to four prime phrase ids
+    const TBL_EXT_PHRASE_ID = '_p'; // the table name extension with the number of phrases for up to four prime phrase ids
     const TBL_EXT_BIG = '_big'; // the table name extension for more than 16 phrase ids
 
     /**
@@ -111,13 +112,22 @@ class group_id
     }
 
     /**
+     * TODO use directly the phrase list without converting to a group id and back
+     * @return int tze number of phrases of this group id
+     */
+    function count(int|string $grp_id): int
+    {
+        return count($this->get_array($grp_id));
+    }
+
+    /**
      * @return string the extension for the table name based on the id
      */
     function table_extension(int|string $grp_id): string
     {
         $ext = '';
         if ($this->is_prime($grp_id)) {
-            $ext = self::TBL_EXT_PRIME;
+            $ext = self::TBL_EXT_PHRASE_ID . $this->count($grp_id);
         } elseif ($this->is_big($grp_id)) {
             $ext = self::TBL_EXT_BIG;
         }

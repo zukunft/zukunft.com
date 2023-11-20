@@ -75,6 +75,9 @@ class sandbox_value extends sandbox_multi
     const TYPE_TIME = 'time';
     const TYPE_GEO = 'geo';
 
+    // the database field names used for all value tables e.g. also for results
+    const FLD_ID_PREFIX = 'phrase_id_';
+
 
     // field lists for the table creation
     // the group is not a foreign key, because if the name is not changed by the user an entry in the group table is not needed
@@ -84,11 +87,19 @@ class sandbox_value extends sandbox_multi
     const FLD_KEY_USER = array(
         [group::FLD_ID, sql_field_type::KEY_PART_512, sql_field_default::NOT_NULL, '', '', 'the 512-bit prime index to find the user'],
     );
+    // TODO use not null for all keys if a separate table for each number of phrase is implemented
+    // TODO FLD_KEY_PRIME and FLD_KEY_PRIME_USER are not the same only if just one phrase is the key
     const FLD_KEY_PRIME = array(
-        [group::FLD_ID, sql_field_type::KEY_INT_NO_AUTO, sql_field_default::NOT_NULL, '', '', 'the 64-bit prime index to find the'],
+        [sandbox_value::FLD_ID_PREFIX . '1', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::NOT_NULL, sql::INDEX, '', 'phrase id that is part of the prime key for a'],
+        [sandbox_value::FLD_ID_PREFIX . '2', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::NULL, sql::INDEX, '', 'phrase id that is part of the prime key for a'],
+        [sandbox_value::FLD_ID_PREFIX . '3', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::NULL, sql::INDEX, '', 'phrase id that is part of the prime key for a'],
+        [sandbox_value::FLD_ID_PREFIX . '4', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::NULL, sql::INDEX, '', 'phrase id that is part of the prime key for a'],
     );
     const FLD_KEY_PRIME_USER = array(
-        [group::FLD_ID, sql_field_type::KEY_PART_INT, sql_field_default::NOT_NULL, '', '', 'the 64-bit prime index to find the user'],
+        [sandbox_value::FLD_ID_PREFIX . '1', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::NOT_NULL, sql::INDEX, '', 'phrase id that is with the user id part of the prime key for a'],
+        [sandbox_value::FLD_ID_PREFIX . '2', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::NULL, sql::INDEX, '', 'phrase id that is with the user id part of the prime key for a'],
+        [sandbox_value::FLD_ID_PREFIX . '3', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::NULL, sql::INDEX, '', 'phrase id that is with the user id part of the prime key for a'],
+        [sandbox_value::FLD_ID_PREFIX . '4', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::NULL, sql::INDEX, '', 'phrase id that is with the user id part of the prime key for a'],
     );
     const FLD_KEY_BIG = array(
         [group::FLD_ID, sql_field_type::KEY_TEXT, sql_field_default::NOT_NULL, '', '', 'the variable text index to find'],

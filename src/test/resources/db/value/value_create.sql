@@ -7,13 +7,19 @@
 
 CREATE TABLE IF NOT EXISTS values_standard_prime
 (
-    group_id      bigint           PRIMARY KEY,
+    phrase_id_1   smallint         NOT NULL,
+    phrase_id_2   smallint         DEFAULT NULL,
+    phrase_id_3   smallint         DEFAULT NULL,
+    phrase_id_4   smallint         DEFAULT NULL,
     numeric_value double precision NOT NULL,
     source_id     bigint           DEFAULT NULL
 );
 
 COMMENT ON TABLE values_standard_prime                IS 'for public unprotected numeric values related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated';
-COMMENT ON COLUMN values_standard_prime.group_id      IS 'the 64-bit prime index to find the numeric value';
+COMMENT ON COLUMN values_standard_prime.phrase_id_1   IS 'phrase id that is part of the prime key for a numeric value';
+COMMENT ON COLUMN values_standard_prime.phrase_id_2   IS 'phrase id that is part of the prime key for a numeric value';
+COMMENT ON COLUMN values_standard_prime.phrase_id_3   IS 'phrase id that is part of the prime key for a numeric value';
+COMMENT ON COLUMN values_standard_prime.phrase_id_4   IS 'phrase id that is part of the prime key for a numeric value';
 COMMENT ON COLUMN values_standard_prime.numeric_value IS 'the numeric value given by the user';
 COMMENT ON COLUMN values_standard_prime.source_id     IS 'the source of the value as given by the user';
 
@@ -95,7 +101,10 @@ COMMENT ON COLUMN user_values.protect_id    IS 'to protect against unwanted chan
 
 CREATE TABLE IF NOT EXISTS values_prime
 (
-    group_id        bigint           PRIMARY KEY,
+    phrase_id_1     smallint         NOT NULL,
+    phrase_id_2     smallint         DEFAULT NULL,
+    phrase_id_3     smallint         DEFAULT NULL,
+    phrase_id_4     smallint         DEFAULT NULL,
     numeric_value   double precision NOT NULL,
     source_id       bigint           DEFAULT NULL,
     last_update     timestamp        DEFAULT NULL,
@@ -106,7 +115,10 @@ CREATE TABLE IF NOT EXISTS values_prime
 );
 
 COMMENT ON TABLE values_prime                IS 'for the most often requested numeric values related up to four prime phrase';
-COMMENT ON COLUMN values_prime.group_id      IS 'the 64-bit prime index to find the numeric value';
+COMMENT ON COLUMN values_prime.phrase_id_1   IS 'phrase id that is part of the prime key for a numeric value';
+COMMENT ON COLUMN values_prime.phrase_id_2   IS 'phrase id that is part of the prime key for a numeric value';
+COMMENT ON COLUMN values_prime.phrase_id_3   IS 'phrase id that is part of the prime key for a numeric value';
+COMMENT ON COLUMN values_prime.phrase_id_4   IS 'phrase id that is part of the prime key for a numeric value';
 COMMENT ON COLUMN values_prime.numeric_value IS 'the numeric value given by the user';
 COMMENT ON COLUMN values_prime.source_id     IS 'the source of the value as given by the user';
 COMMENT ON COLUMN values_prime.last_update   IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
@@ -121,7 +133,10 @@ COMMENT ON COLUMN values_prime.protect_id    IS 'to protect against unwanted cha
 
 CREATE TABLE IF NOT EXISTS user_values_prime
 (
-    group_id        bigint           NOT NULL,
+    phrase_id_1     smallint         NOT NULL,
+    phrase_id_2     smallint         DEFAULT NULL,
+    phrase_id_3     smallint         DEFAULT NULL,
+    phrase_id_4     smallint         DEFAULT NULL,
     user_id         bigint           NOT NULL,
     numeric_value   double precision DEFAULT NULL,
     source_id       bigint           DEFAULT NULL,
@@ -132,7 +147,10 @@ CREATE TABLE IF NOT EXISTS user_values_prime
 );
 
 COMMENT ON TABLE user_values_prime                IS 'to store the user specific changes for the most often requested numeric values related up to four prime phrase';
-COMMENT ON COLUMN user_values_prime.group_id      IS 'the 64-bit prime index to find the user numeric value';
+COMMENT ON COLUMN user_values_prime.phrase_id_1   IS 'phrase id that is with the user id part of the prime key for a numeric value';
+COMMENT ON COLUMN user_values_prime.phrase_id_2   IS 'phrase id that is with the user id part of the prime key for a numeric value';
+COMMENT ON COLUMN user_values_prime.phrase_id_3   IS 'phrase id that is with the user id part of the prime key for a numeric value';
+COMMENT ON COLUMN user_values_prime.phrase_id_4   IS 'phrase id that is with the user id part of the prime key for a numeric value';
 COMMENT ON COLUMN user_values_prime.user_id       IS 'the changer of the numeric value';
 COMMENT ON COLUMN user_values_prime.numeric_value IS 'the user specific numeric value change';
 COMMENT ON COLUMN user_values_prime.source_id     IS 'the source of the value as given by the user';
@@ -203,13 +221,19 @@ COMMENT ON COLUMN user_values_big.protect_id    IS 'to protect against unwanted 
 
 CREATE TABLE IF NOT EXISTS values_text_standard_prime
 (
-    group_id   bigint    PRIMARY KEY,
-    text_value text      NOT NULL,
-    source_id  bigint    DEFAULT NULL
+    phrase_id_1 smallint  NOT NULL,
+    phrase_id_2 smallint  DEFAULT NULL,
+    phrase_id_3 smallint  DEFAULT NULL,
+    phrase_id_4 smallint  DEFAULT NULL,
+    text_value  text      NOT NULL,
+    source_id   bigint    DEFAULT NULL
 );
 
 COMMENT ON TABLE values_text_standard_prime             IS 'for public unprotected text values related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated';
-COMMENT ON COLUMN values_text_standard_prime.group_id   IS 'the 64-bit prime index to find the text value';
+COMMENT ON COLUMN values_text_standard_prime.phrase_id_1   IS 'phrase id that is part of the prime key for a text value';
+COMMENT ON COLUMN values_text_standard_prime.phrase_id_2   IS 'phrase id that is part of the prime key for a text value';
+COMMENT ON COLUMN values_text_standard_prime.phrase_id_3   IS 'phrase id that is part of the prime key for a text value';
+COMMENT ON COLUMN values_text_standard_prime.phrase_id_4   IS 'phrase id that is part of the prime key for a text value';
 COMMENT ON COLUMN values_text_standard_prime.text_value IS 'the text value given by the user';
 COMMENT ON COLUMN values_text_standard_prime.source_id  IS 'the source of the value as given by the user';
 
@@ -291,7 +315,10 @@ COMMENT ON COLUMN user_values_text.protect_id    IS 'to protect against unwanted
 
 CREATE TABLE IF NOT EXISTS values_text_prime
 (
-    group_id      bigint    PRIMARY KEY,
+    phrase_id_1   smallint  NOT NULL,
+    phrase_id_2   smallint  DEFAULT NULL,
+    phrase_id_3   smallint  DEFAULT NULL,
+    phrase_id_4   smallint  DEFAULT NULL,
     text_value    text      NOT NULL,
     source_id     bigint    DEFAULT NULL,
     last_update   timestamp DEFAULT NULL,
@@ -302,7 +329,10 @@ CREATE TABLE IF NOT EXISTS values_text_prime
 );
 
 COMMENT ON TABLE values_text_prime                IS 'for the most often requested text values related up to four prime phrase';
-COMMENT ON COLUMN values_text_prime.group_id      IS 'the 64-bit prime index to find the text value';
+COMMENT ON COLUMN values_text_prime.phrase_id_1   IS 'phrase id that is part of the prime key for a text value';
+COMMENT ON COLUMN values_text_prime.phrase_id_2   IS 'phrase id that is part of the prime key for a text value';
+COMMENT ON COLUMN values_text_prime.phrase_id_3   IS 'phrase id that is part of the prime key for a text value';
+COMMENT ON COLUMN values_text_prime.phrase_id_4   IS 'phrase id that is part of the prime key for a text value';
 COMMENT ON COLUMN values_text_prime.text_value    IS 'the text value given by the user';
 COMMENT ON COLUMN values_text_prime.source_id     IS 'the source of the value as given by the user';
 COMMENT ON COLUMN values_text_prime.last_update   IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
@@ -317,7 +347,10 @@ COMMENT ON COLUMN values_text_prime.protect_id    IS 'to protect against unwante
 
 CREATE TABLE IF NOT EXISTS user_values_text_prime
 (
-    group_id      bigint    NOT NULL,
+    phrase_id_1   smallint  NOT NULL,
+    phrase_id_2   smallint  DEFAULT NULL,
+    phrase_id_3   smallint  DEFAULT NULL,
+    phrase_id_4   smallint  DEFAULT NULL,
     user_id       bigint    NOT NULL,
     text_value    text      DEFAULT NULL,
     source_id     bigint    DEFAULT NULL,
@@ -328,7 +361,10 @@ CREATE TABLE IF NOT EXISTS user_values_text_prime
 );
 
 COMMENT ON TABLE user_values_text_prime                IS 'to store the user specific changes for the most often requested text values related up to four prime phrase';
-COMMENT ON COLUMN user_values_text_prime.group_id      IS 'the 64-bit prime index to find the user text value';
+COMMENT ON COLUMN user_values_text_prime.phrase_id_1   IS 'phrase id that is with the user id part of the prime key for a text value';
+COMMENT ON COLUMN user_values_text_prime.phrase_id_2   IS 'phrase id that is with the user id part of the prime key for a text value';
+COMMENT ON COLUMN user_values_text_prime.phrase_id_3   IS 'phrase id that is with the user id part of the prime key for a text value';
+COMMENT ON COLUMN user_values_text_prime.phrase_id_4   IS 'phrase id that is with the user id part of the prime key for a text value';
 COMMENT ON COLUMN user_values_text_prime.user_id       IS 'the changer of the text value';
 COMMENT ON COLUMN user_values_text_prime.text_value    IS 'the user specific text value change';
 COMMENT ON COLUMN user_values_text_prime.source_id     IS 'the source of the value as given by the user';
@@ -399,13 +435,19 @@ COMMENT ON COLUMN user_values_text_big.protect_id    IS 'to protect against unwa
 
 CREATE TABLE IF NOT EXISTS values_time_standard_prime
 (
-    group_id   bigint    PRIMARY KEY,
-    time_value timestamp NOT NULL,
-    source_id  bigint    DEFAULT NULL
+    phrase_id_1 smallint  NOT NULL,
+    phrase_id_2 smallint  DEFAULT NULL,
+    phrase_id_3 smallint  DEFAULT NULL,
+    phrase_id_4 smallint  DEFAULT NULL,
+    time_value  timestamp NOT NULL,
+    source_id   bigint    DEFAULT NULL
 );
 
 COMMENT ON TABLE values_time_standard_prime             IS 'for public unprotected time values related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated';
-COMMENT ON COLUMN values_time_standard_prime.group_id   IS 'the 64-bit prime index to find the time value';
+COMMENT ON COLUMN values_time_standard_prime.phrase_id_1   IS 'phrase id that is part of the prime key for a time value';
+COMMENT ON COLUMN values_time_standard_prime.phrase_id_2   IS 'phrase id that is part of the prime key for a time value';
+COMMENT ON COLUMN values_time_standard_prime.phrase_id_3   IS 'phrase id that is part of the prime key for a time value';
+COMMENT ON COLUMN values_time_standard_prime.phrase_id_4   IS 'phrase id that is part of the prime key for a time value';
 COMMENT ON COLUMN values_time_standard_prime.time_value IS 'the timestamp given by the user';
 COMMENT ON COLUMN values_time_standard_prime.source_id  IS 'the source of the value as given by the user';
 
@@ -487,7 +529,10 @@ COMMENT ON COLUMN user_values_time.protect_id    IS 'to protect against unwanted
 
 CREATE TABLE IF NOT EXISTS values_time_prime
 (
-    group_id      bigint    PRIMARY KEY,
+    phrase_id_1   smallint  NOT NULL,
+    phrase_id_2   smallint  DEFAULT NULL,
+    phrase_id_3   smallint  DEFAULT NULL,
+    phrase_id_4   smallint  DEFAULT NULL,
     time_value    timestamp NOT NULL,
     source_id     bigint    DEFAULT NULL,
     last_update   timestamp DEFAULT NULL,
@@ -498,7 +543,10 @@ CREATE TABLE IF NOT EXISTS values_time_prime
 );
 
 COMMENT ON TABLE values_time_prime                IS 'for the most often requested time values related up to four prime phrase';
-COMMENT ON COLUMN values_time_prime.group_id      IS 'the 64-bit prime index to find the time value';
+COMMENT ON COLUMN values_time_prime.phrase_id_1   IS 'phrase id that is part of the prime key for a time value';
+COMMENT ON COLUMN values_time_prime.phrase_id_2   IS 'phrase id that is part of the prime key for a time value';
+COMMENT ON COLUMN values_time_prime.phrase_id_3   IS 'phrase id that is part of the prime key for a time value';
+COMMENT ON COLUMN values_time_prime.phrase_id_4   IS 'phrase id that is part of the prime key for a time value';
 COMMENT ON COLUMN values_time_prime.time_value    IS 'the timestamp given by the user';
 COMMENT ON COLUMN values_time_prime.source_id     IS 'the source of the value as given by the user';
 COMMENT ON COLUMN values_time_prime.last_update   IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
@@ -513,7 +561,10 @@ COMMENT ON COLUMN values_time_prime.protect_id    IS 'to protect against unwante
 
 CREATE TABLE IF NOT EXISTS user_values_time_prime
 (
-    group_id      bigint    NOT NULL,
+    phrase_id_1   smallint  NOT NULL,
+    phrase_id_2   smallint  DEFAULT NULL,
+    phrase_id_3   smallint  DEFAULT NULL,
+    phrase_id_4   smallint  DEFAULT NULL,
     user_id       bigint    NOT NULL,
     time_value    timestamp DEFAULT NULL,
     source_id     bigint    DEFAULT NULL,
@@ -524,7 +575,10 @@ CREATE TABLE IF NOT EXISTS user_values_time_prime
 );
 
 COMMENT ON TABLE user_values_time_prime                IS 'to store the user specific changes for the most often requested time values related up to four prime phrase';
-COMMENT ON COLUMN user_values_time_prime.group_id      IS 'the 64-bit prime index to find the user time value';
+COMMENT ON COLUMN user_values_time_prime.phrase_id_1   IS 'phrase id that is with the user id part of the prime key for a time value';
+COMMENT ON COLUMN user_values_time_prime.phrase_id_2   IS 'phrase id that is with the user id part of the prime key for a time value';
+COMMENT ON COLUMN user_values_time_prime.phrase_id_3   IS 'phrase id that is with the user id part of the prime key for a time value';
+COMMENT ON COLUMN user_values_time_prime.phrase_id_4   IS 'phrase id that is with the user id part of the prime key for a time value';
 COMMENT ON COLUMN user_values_time_prime.user_id       IS 'the changer of the time value';
 COMMENT ON COLUMN user_values_time_prime.time_value    IS 'the user specific timestamp change';
 COMMENT ON COLUMN user_values_time_prime.source_id     IS 'the source of the value as given by the user';
@@ -595,13 +649,19 @@ COMMENT ON COLUMN user_values_time_big.protect_id    IS 'to protect against unwa
 
 CREATE TABLE IF NOT EXISTS values_geo_standard_prime
 (
-    group_id   bigint    PRIMARY KEY,
-    geo_value  point     NOT NULL,
-    source_id  bigint    DEFAULT NULL
+    phrase_id_1 smallint  NOT NULL,
+    phrase_id_2 smallint  DEFAULT NULL,
+    phrase_id_3 smallint  DEFAULT NULL,
+    phrase_id_4 smallint  DEFAULT NULL,
+    geo_value   point     NOT NULL,
+    source_id   bigint    DEFAULT NULL
 );
 
 COMMENT ON TABLE values_geo_standard_prime             IS 'for public unprotected geo values related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated';
-COMMENT ON COLUMN values_geo_standard_prime.group_id   IS 'the 64-bit prime index to find the geo value';
+COMMENT ON COLUMN values_geo_standard_prime.phrase_id_1   IS 'phrase id that is part of the prime key for a geo value';
+COMMENT ON COLUMN values_geo_standard_prime.phrase_id_2   IS 'phrase id that is part of the prime key for a geo value';
+COMMENT ON COLUMN values_geo_standard_prime.phrase_id_3   IS 'phrase id that is part of the prime key for a geo value';
+COMMENT ON COLUMN values_geo_standard_prime.phrase_id_4   IS 'phrase id that is part of the prime key for a geo value';
 COMMENT ON COLUMN values_geo_standard_prime.geo_value  IS 'the geolocation given by the user';
 COMMENT ON COLUMN values_geo_standard_prime.source_id  IS 'the source of the value as given by the user';
 
@@ -683,7 +743,10 @@ COMMENT ON COLUMN user_values_geo.protect_id    IS 'to protect against unwanted 
 
 CREATE TABLE IF NOT EXISTS values_geo_prime
 (
-    group_id      bigint    PRIMARY KEY,
+    phrase_id_1   smallint  NOT NULL,
+    phrase_id_2   smallint  DEFAULT NULL,
+    phrase_id_3   smallint  DEFAULT NULL,
+    phrase_id_4   smallint  DEFAULT NULL,
     geo_value     point     NOT NULL,
     source_id     bigint    DEFAULT NULL,
     last_update   timestamp DEFAULT NULL,
@@ -694,7 +757,10 @@ CREATE TABLE IF NOT EXISTS values_geo_prime
 );
 
 COMMENT ON TABLE values_geo_prime                IS 'for the most often requested geo values related up to four prime phrase';
-COMMENT ON COLUMN values_geo_prime.group_id      IS 'the 64-bit prime index to find the geo value';
+COMMENT ON COLUMN values_geo_prime.phrase_id_1   IS 'phrase id that is part of the prime key for a geo value';
+COMMENT ON COLUMN values_geo_prime.phrase_id_2   IS 'phrase id that is part of the prime key for a geo value';
+COMMENT ON COLUMN values_geo_prime.phrase_id_3   IS 'phrase id that is part of the prime key for a geo value';
+COMMENT ON COLUMN values_geo_prime.phrase_id_4   IS 'phrase id that is part of the prime key for a geo value';
 COMMENT ON COLUMN values_geo_prime.geo_value     IS 'the geolocation given by the user';
 COMMENT ON COLUMN values_geo_prime.source_id     IS 'the source of the value as given by the user';
 COMMENT ON COLUMN values_geo_prime.last_update   IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
@@ -709,7 +775,10 @@ COMMENT ON COLUMN values_geo_prime.protect_id    IS 'to protect against unwanted
 
 CREATE TABLE IF NOT EXISTS user_values_geo_prime
 (
-    group_id      bigint    NOT NULL,
+    phrase_id_1   smallint  NOT NULL,
+    phrase_id_2   smallint  DEFAULT NULL,
+    phrase_id_3   smallint  DEFAULT NULL,
+    phrase_id_4   smallint  DEFAULT NULL,
     user_id       bigint    NOT NULL,
     geo_value     point     DEFAULT NULL,
     source_id     bigint    DEFAULT NULL,
@@ -720,7 +789,10 @@ CREATE TABLE IF NOT EXISTS user_values_geo_prime
 );
 
 COMMENT ON TABLE user_values_geo_prime                IS 'to store the user specific changes for the most often requested geo values related up to four prime phrase';
-COMMENT ON COLUMN user_values_geo_prime.group_id      IS 'the 64-bit prime index to find the user geo value';
+COMMENT ON COLUMN user_values_geo_prime.phrase_id_1   IS 'phrase id that is with the user id part of the prime key for a geo value';
+COMMENT ON COLUMN user_values_geo_prime.phrase_id_2   IS 'phrase id that is with the user id part of the prime key for a geo value';
+COMMENT ON COLUMN user_values_geo_prime.phrase_id_3   IS 'phrase id that is with the user id part of the prime key for a geo value';
+COMMENT ON COLUMN user_values_geo_prime.phrase_id_4   IS 'phrase id that is with the user id part of the prime key for a geo value';
 COMMENT ON COLUMN user_values_geo_prime.user_id       IS 'the changer of the geo value';
 COMMENT ON COLUMN user_values_geo_prime.geo_value     IS 'the user specific geolocation change';
 COMMENT ON COLUMN user_values_geo_prime.source_id     IS 'the source of the value as given by the user';

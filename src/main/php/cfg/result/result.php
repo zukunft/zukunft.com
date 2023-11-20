@@ -188,7 +188,7 @@ class result extends sandbox_value
         $result = parent::row_mapper_multi($db_row, $ext, self::FLD_ID);
         if ($result) {
             $this->frm->set_id($db_row[formula::FLD_ID]);
-            if ($ext == group_id::TBL_EXT_PRIME) {
+            if (substr($ext,0, 2) == group_id::TBL_EXT_PHRASE_ID) {
                 $this->src_grp->set_id((int)$db_row[self::FLD_SOURCE_GRP]);
             } else {
                 $this->src_grp->set_id($db_row[self::FLD_SOURCE_GRP]);
