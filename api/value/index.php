@@ -64,7 +64,10 @@ $msg .= $usr->get();
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id() > 0) {
 
-    if ($val_id > 0) {
+    if (is_numeric($val_id)) {
+        $val_id = (int)$val_id;
+    }
+    if ($val_id != 0 and $val_id != '') {
         $val = new value($usr);
         $val->load_by_id($val_id);
         $val->load_objects();

@@ -1194,7 +1194,7 @@ function prg_end_write_time($db_con): void
     $sys_time_end = time();
     if ($sys_time_end > $sys_time_limit) {
         $db_con->usr_id = SYSTEM_USER_ID;
-        $db_con->set_type(sql_db::TBL_SYS_SCRIPT);
+        $db_con->set_class(sql_db::TBL_SYS_SCRIPT);
         $sys_script_id = $db_con->get_id($sys_script);
         if ($sys_script_id <= 0) {
             $sys_script_id = $db_con->add_id($sys_script);
@@ -1217,7 +1217,7 @@ function prg_end_write_time($db_con): void
     unset($sys_time_start);
 }
 
-function prg_end($db_con)
+function prg_end($db_con): void
 {
     global $sys_time_start, $sys_time_limit, $sys_script, $sys_log_msg_lst;
 

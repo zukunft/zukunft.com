@@ -624,6 +624,19 @@ class group extends sandbox_multi
         return $qp;
     }
 
+    /**
+     * load the phrase names based on the group id
+     */
+    function load_phrase_list(): void
+    {
+        $grp_id = new group_id();
+        $ids = $grp_id->get_array($this->id());
+        $phr_ids = (new phr_ids($ids));
+        $phr_lst = new phrase_list($this->user());
+        $phr_lst->load_names_by_ids($phr_ids);
+        $this->set_phrase_list($phr_lst);
+    }
+
 
     /*
      * get functions - to load or create with one call

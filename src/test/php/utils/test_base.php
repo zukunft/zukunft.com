@@ -489,7 +489,7 @@ class test_base
      *
      * @param string $test_name (unique) description of the test
      * @param string|array|null $result the actual result
-     * @param string|array $target the expected result
+     * @param string|array|null $target the expected result
      * @param float $exe_max_time the expected max time to create the result
      * @param string $comment
      * @param string $test_type
@@ -498,7 +498,7 @@ class test_base
     function assert(
         string            $test_name,
         string|array|null $result,
-        string|array      $target = '',
+        string|array|null $target = '',
         float             $exe_max_time = TIMEOUT_LIMIT,
         string            $comment = '',
         string            $test_type = ''): bool
@@ -1907,18 +1907,18 @@ class test_base
      *
      * @param string $test_name the message that describes the test for the developer
      * @param bool $test_result true if the test is fine
-     * @param string|array $target the expected result (added here just for fast debugging)
-     * @param string|array $result the actual result (added here just for fast debugging)
+     * @param string|array|null $target the expected result (added here just for fast debugging)
+     * @param string|array|null $result the actual result (added here just for fast debugging)
      * @param float $exe_max_time the expected time to create the result to identify unexpected slow functions
      * @return bool true if the test result is fine
      */
     private function assert_dsp(
-        string       $test_name,
-        bool         $test_result,
-        string|array $target = '',
-        string|array $result = '',
-        string       $diff_msg = '',
-        float        $exe_max_time = TIMEOUT_LIMIT): bool
+        string            $test_name,
+        bool              $test_result,
+        string|array|null $target = '',
+        string|array|null $result = '',
+        string            $diff_msg = '',
+        float             $exe_max_time = TIMEOUT_LIMIT): bool
     {
         // calculate the execution time
         $final_msg = '';

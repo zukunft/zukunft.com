@@ -470,15 +470,15 @@ class library
      * explains the difference between two strings or arrays
      * in a useful human-readable format
      *
-     * @param string|array $result the actual value that should be checked
-     * @param string|array $target the expected value to compare
+     * @param string|array|null $result the actual value that should be checked
+     * @param string|array|null $target the expected value to compare
      * @param bool $ignore_order true if the array can be resorted to find the matches
      * @return string an empty string if the actual value matches the expected
      */
     function diff_msg(
-        string|array $result,
-        string|array $target,
-        bool         $ignore_order = true): string
+        string|array|null $result,
+        string|array|null $target,
+        bool $ignore_order = true): string
     {
         if (is_string($target) and is_string($result)) {
             $msg = $this->str_diff_msg($result, $target);
@@ -488,6 +488,8 @@ class library
             if ($msg == '') {
                 $msg = $this->array_diff_msg($result, $target, $ignore_order);
             }
+        } elseif ($target == null and $result == null) {
+            $msg = 'Both are null';
         } else {
             $msg = 'The type combination of ' . gettype($target) . ' and ' . gettype($target) . ' are not expected.';
         }

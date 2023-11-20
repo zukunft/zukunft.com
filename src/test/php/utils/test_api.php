@@ -133,7 +133,7 @@ class test_api extends create_test_objects
         $this->assert_api_get(triple::class);
         //$this->assert_api_get_by_text(triple::class, triple_api::TN_READ);
         //$this->assert_api_get(phrase::class);
-        $this->assert_api_get(value::class);
+        $this->assert_api_get(value::class, 5);
         $this->assert_api_get(formula::class);
         $this->assert_api_get_by_text(formula::class, formula_api::TN_READ);
         $this->assert_api_get(view::class);

@@ -743,7 +743,7 @@ class value extends sandbox_value
      * maybe rename to load_objects
      * NEVER call the dsp_id function from this function or any called function, because this would lead to an endless loop
      */
-    function load_phrases()
+    function load_phrases(): void
     {
         log_debug();
         // loading via word group is the most used case, because to save database space and reading time the value is saved with the word group id
@@ -793,30 +793,11 @@ class value extends sandbox_value
             }
         }
 
-        /*
         // if a list object is missing
-        if (!isset($this->wrd_lst) or !isset($this->lnk_lst)) {
-            if (isset($this->grp)) {
-                $this->set_lst_by_grp();
-
-                // these if's are only needed for debugging to avoid accessing an unset object, which would cause a crash
-                if (isset($this->grp->phr_lst)) {
-                    log_debug('got ' . $this->grp->phr_lst->dsp_name() . ' from group ' . $this->grp->id() . ' for "' . $this->user()->name . '"');
-                }
-                $wrd_lst = $this->wrd_lst();
-                $trp_lst = $this->trp_lst();
-                if (!$wrd_lst->is_empty()) {
-                    if (!$trp_lst->is_empty()) {
-                        log_debug('with words ' . $wrd_lst->name() . ' and triples ' . $trp_lst->dsp_id() . ' by group ' . $this->grp->id() . ' for "' . $this->user()->name . '"');
-                    } else {
-                        log_debug('with words ' . $wrd_lst->name() . ' by group ' . $this->grp->id() . ' for "' . $this->user()->name . '"');
-                    }
-                } else {
-                    log_debug($this->grp->id() . ' for "' . $this->user()->name . '"');
-                }
-            }
+        if (isset($this->grp)) {
+            $this->grp->load_phrase_list();
         }
-        */
+
         log_debug('done');
     }
 
