@@ -25,7 +25,7 @@ UNION SELECT user_id,
         FROM user_triples
     GROUP BY user_id
 UNION SELECT user_id,
-             COUNT (group_id) AS changes
+             COUNT (phrase_id1) AS changes
         FROM user_values
     GROUP BY user_id
 UNION SELECT user_id,

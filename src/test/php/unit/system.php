@@ -116,15 +116,15 @@ class system_unit_tests
         $t->assert($test_name, $trm_lst->dsp_id(), $target);
         $test_name = 'debug value id';
         $val = $t->dummy_value();
-        $target = '"Pi (math)" 3.1415926535898 (group_id 5) for user 1 (zukunft.com system test)';
+        $target = '"Pi (math)" 3.1415926535898 (phrase_id1 5) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $val->dsp_id(), $target);
         $test_name = 'debug value_list id';
         $val_lst = $t->dummy_value_list();
-        $target = '"Pi (math)" 3.1415926535898 / "inhabitant in the city of Zurich (2019)" 415367 (group_id 5,1640702804000) for user 1 (zukunft.com system test)';
+        $target = '"Pi (math)" 3.1415926535898 / "inhabitant in the city of Zurich (2019)" 415367 (phrase_id1 5,1640702804000) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $val_lst->dsp_id(), $target);
         $test_name = 'debug value_phrase_link id';
         $val_lnk = $t->dummy_value_phrase_link();
-        $target = 'link "Pi (math)" 3.1415926535898 (group_id 5) to "Mathematics" (word_id 1) as phrase for zukunft.com system test (1)';
+        $target = 'link "Pi (math)" 3.1415926535898 (phrase_id1 5) to "Mathematics" (word_id 1) as phrase for zukunft.com system test (1)';
         $t->assert($test_name, $val_lnk->dsp_id(), $target);
         $test_name = 'debug formula id';
         $frm = $t->dummy_formula();
@@ -160,7 +160,7 @@ class system_unit_tests
         $t->assert($test_name, $res_lst->dsp_id(), $target);
         $test_name = 'debug figure id';
         $fig = $t->dummy_figure_value();
-        $target = 'value figure "Pi (math)" 3.1415926535898 (group_id 5) for user 1 (zukunft.com system test) 2022-12-26 18:23:45';
+        $target = 'value figure "Pi (math)" 3.1415926535898 (phrase_id1 5) for user 1 (zukunft.com system test) 2022-12-26 18:23:45';
         $t->assert($test_name, $fig->dsp_id(), $target);
         $test_name = 'debug figure_list id';
         $fig_lst = $t->dummy_figure_list();

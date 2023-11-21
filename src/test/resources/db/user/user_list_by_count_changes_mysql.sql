@@ -17,7 +17,7 @@ PREPARE user_list_by_count_changes FROM
                          FROM user_words GROUP BY user_id
                  UNION SELECT user_id, COUNT (triple_id) AS changes
                          FROM user_triples GROUP BY user_id
-                 UNION SELECT user_id, COUNT (group_id) AS changes
+                 UNION SELECT user_id, COUNT (phrase_id1) AS changes
                          FROM user_values GROUP BY user_id
                  UNION SELECT user_id, COUNT (formula_id) AS changes
                          FROM user_formulas GROUP BY user_id

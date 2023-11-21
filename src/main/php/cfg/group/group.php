@@ -244,12 +244,38 @@ class group extends sandbox_multi
     }
 
     /**
-     * @return string the extension for the table name based on the id
+     * @return array with the ids of this group
      */
-    function table_extension(): string
+    function id_lst(): array
     {
         $grp_id = new group_id();
-        return $grp_id->table_extension($this->id());
+        return $grp_id->get_array($this->id());
+    }
+
+    /**
+     * @return array with the numbered names of this group
+     */
+    function id_names(string $name_prefix): array
+    {
+        $name_lst = array();
+        $grp_id = new group_id();
+        $pos = 1;
+        foreach ($grp_id->get_array($this->id()) as $id) {
+            $name_lst[] = $name_prefix . $pos;
+            $pos++;
+        }
+        return $name_lst;
+    }
+
+    /**
+     *
+     * @param bool $is_grp true to get
+     * @return string the extension for the table name based on the id
+     */
+    function table_extension(bool $is_grp = false): string
+    {
+        $grp_id = new group_id();
+        return $grp_id->table_extension($this->id(), $is_grp);
     }
 
     /**
@@ -431,7 +457,7 @@ class group extends sandbox_multi
     function load_sql_by_id(sql $sc, int|string $id, string $class = self::class): sql_par
     {
         $this->set_id($id);
-        $ext = $this->table_extension();
+        $ext = $this->table_extension(true);
         $qp = $this->load_sql_multi($sc, sql_db::FLD_ID, $class, $ext);
         $sc->add_where($this->id_field(), $id);
         $qp->sql = $sc->sql();
@@ -1382,7 +1408,7 @@ class group extends sandbox_multi
     protected function sql_common(sql $sc, bool $usr_tbl = false): sql_par
     {
         $lib = new library();
-        $ext = $this->table_extension();
+        $ext = $this->table_extension(true);
         $sc->set_class($this::class, $usr_tbl, $ext);
         $sql_name = $lib->class_to_name($this::class);
         $qp = new sql_par($sql_name . $ext);

@@ -598,8 +598,10 @@ class sandbox_value extends sandbox_multi
     protected function sql_common(sql $sc, bool $usr_tbl = false): sql_par
     {
         $lib = new library();
+        // the value table name is not yet using the number of phrase keys as extension
+        $tbl_ext = $this->grp->table_extension(true);
         $ext = $this->grp->table_extension();
-        $sc->set_class($this::class, $usr_tbl, $ext);
+        $sc->set_class($this::class, $usr_tbl, $tbl_ext);
         $sql_name = $lib->class_to_name($this::class);
         $qp = new sql_par($sql_name . $ext);
         $qp->name = $sql_name . $ext;

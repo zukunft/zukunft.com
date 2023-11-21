@@ -121,13 +121,23 @@ class group_id
     }
 
     /**
+     * get the table name extension for value, result and group tables
+     * depending on the number of phrases a different table for value and results is used
+     * for faster searching
+     *
+     * @param int|string $grp_id
+     * @param bool $is_grp true to get the table extension for groups
      * @return string the extension for the table name based on the id
      */
-    function table_extension(int|string $grp_id): string
+    function table_extension(int|string $grp_id, bool $is_grp = false): string
     {
         $ext = '';
         if ($this->is_prime($grp_id)) {
-            $ext = self::TBL_EXT_PHRASE_ID . $this->count($grp_id);
+            if ($is_grp) {
+                $ext = self::TBL_EXT_PRIME;
+            } else {
+                $ext = self::TBL_EXT_PHRASE_ID . $this->count($grp_id);
+            }
         } elseif ($this->is_big($grp_id)) {
             $ext = self::TBL_EXT_BIG;
         }

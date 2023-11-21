@@ -79,6 +79,7 @@ use cfg\db\sql_par;
 use cfg\expression;
 use cfg\figure;
 use cfg\group\group;
+use cfg\group\group_id;
 use cfg\library;
 use cfg\log;
 use cfg\log\change;
@@ -814,7 +815,11 @@ class value extends sandbox_value
     function id_field(): string
     {
         $lib = new library();
-        return $lib->class_to_name(group::class) . sql_db::FLD_EXT_ID;
+        if ($this->grp->is_prime()) {
+            return $lib->class_to_name(phrase::class) . sql_db::FLD_EXT_ID . '1';
+        } else {
+            return $lib->class_to_name(group::class) . sql_db::FLD_EXT_ID;
+        }
     }
 
 
@@ -2036,12 +2041,15 @@ class value extends sandbox_value
         $sc->set_id_field($this->id_field());
         $qp->name .= '_insert';
         $sc->set_name($qp->name);
-        if ($usr_tbl) {
-            $fields = array(group::FLD_ID, user::FLD_ID);
-            $values = array($this->grp->id(), $this->user()->id());
-        } else {
-            $fields = array(group::FLD_ID, user::FLD_ID, self::FLD_VALUE, self::FLD_LAST_UPDATE);
-            $values = array($this->grp->id(), $this->user()->id(), $this->number, sql::NOW);
+        $fields = $this->grp->id_names(phrase::FLD_ID . '_');
+        $fields[] = user::FLD_ID;
+        $values = $this->grp->id_lst();
+        $values[] = $this->user()->id();
+        if (!$usr_tbl) {
+            $fields[] = self::FLD_VALUE;
+            $fields[] = self::FLD_LAST_UPDATE;
+            $values[] = $this->number;
+            $values[] = sql::NOW;
         }
         $qp->sql = $sc->sql_insert($fields, $values);
         $par_values = [];
