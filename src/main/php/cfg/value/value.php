@@ -127,7 +127,6 @@ class value extends sandbox_value
 
     // all database field names excluding the id and excluding the user specific fields
     const FLD_NAMES = array(
-        group::FLD_ID
     );
     // list of the user specific numeric database field names
     const FLD_NAMES_NUM_USR = array(
@@ -440,17 +439,21 @@ class value extends sandbox_value
      * @param sql $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
-     * @param string $ext the table name extension e.g. to switch between standard and prime values
+     * @param string $ext the query name extension e.g. to differentiate queries based on 1,2, or more phrases
+     * @param string $tbl_ext the table name extension e.g. to switch between standard and prime values
+     * @param bool $usr_tbl true if a db row should be added to the user table
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_multi(
         sql    $sc,
         string $query_name,
         string $class = self::class,
-        string $ext = ''
+        string $ext = '',
+        string $tbl_ext = '',
+        bool   $usr_tbl = false
     ): sql_par
     {
-        $qp = parent::load_sql_multi($sc, $query_name, $class, $ext);
+        $qp = parent::load_sql_multi($sc, $query_name, $class, $ext, $tbl_ext, $usr_tbl);
 
         // overwrite the standard id field name (value_id) with the main database id field for values "group_id"
         $sc->set_id_field($this->id_field());
@@ -816,7 +819,7 @@ class value extends sandbox_value
     {
         $lib = new library();
         if ($this->grp->is_prime()) {
-            return $lib->class_to_name(phrase::class) . sql_db::FLD_EXT_ID . '1';
+            return $lib->class_to_name(phrase::class) . sql_db::FLD_EXT_ID . '_1';
         } else {
             return $lib->class_to_name(group::class) . sql_db::FLD_EXT_ID;
         }

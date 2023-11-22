@@ -459,9 +459,16 @@ class sandbox_value extends sandbox_multi
      */
     protected function load_sql_by_grp_id(sql $sc, string $query_name, string $class = self::class): sql_par
     {
+        $tbl_ext = $this->grp->table_extension(true);
         $ext = $this->grp->table_extension();
-        $qp = $this->load_sql_multi($sc, $query_name, $class, $ext);
-        $sc->add_where(group::FLD_ID, $this->grp->id());
+        $qp = $this->load_sql_multi($sc, $query_name, $class, $ext, $tbl_ext);
+        $fields = $this->grp->id_names(phrase::FLD_ID . '_');
+        $values = $this->grp->id_lst();
+        $pos = 0;
+        foreach ($fields as $field) {
+            $sc->add_where($field, $values[$pos]);
+            $pos++;
+        }
 
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();

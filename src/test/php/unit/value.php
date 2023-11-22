@@ -169,7 +169,7 @@ class value_unit_tests
         global $usr;
 
         $phr_grp = new group($usr);
-        $phr_grp->set_id(1);
+        $phr_grp->set_id(5);
 
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;

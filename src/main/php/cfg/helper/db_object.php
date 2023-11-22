@@ -199,20 +199,25 @@ class db_object
      * @param sql $sc with the target db_type set
      * @param string $query_name the name of the selection fields to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
-     * @param string $ext the table name extension e.g. to switch between standard and prime values
+     * @param string $ext the query name extension e.g. to differentiate queries based on 1,2, or more phrases
+     * @param string $tbl_ext the table name extension e.g. to switch between standard and prime values
+     * @param bool $usr_tbl true if a db row should be added to the user table
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     public function load_sql_multi(
         sql    $sc,
         string $query_name,
         string $class,
-        string $ext = ''): sql_par
+        string $ext = '',
+        string $tbl_ext = '',
+        bool   $usr_tbl = false
+    ): sql_par
     {
         $lib = new library();
         $tbl_name = $lib->class_to_name($class);
         $qp = new sql_par($tbl_name . $ext);
         $qp->name .= $query_name;
-        $sc->set_class($class, false, $ext);
+        $sc->set_class($class, $usr_tbl, $tbl_ext);
         $sc->set_name($qp->name);
         $sc->set_fields($this::FLD_NAMES);
 

@@ -1,6 +1,5 @@
-PREPARE value_prime_std_by_id FROM
-    'SELECT
-            group_id,
+PREPARE value_p1_std_by_id FROM
+    'SELECT phrase_id_1,
             numeric_value,
             source_id,
             last_update,
@@ -8,4 +7,4 @@ PREPARE value_prime_std_by_id FROM
             protect_id,
             user_id
        FROM values_prime
-      WHERE group_id = ?';
+      WHERE phrase_id_1 = ?';

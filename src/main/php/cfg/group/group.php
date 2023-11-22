@@ -458,7 +458,7 @@ class group extends sandbox_multi
     {
         $this->set_id($id);
         $ext = $this->table_extension(true);
-        $qp = $this->load_sql_multi($sc, sql_db::FLD_ID, $class, $ext);
+        $qp = $this->load_sql_multi($sc, sql_db::FLD_ID, $class, $ext, $ext);
         $sc->add_where($this->id_field(), $id);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
