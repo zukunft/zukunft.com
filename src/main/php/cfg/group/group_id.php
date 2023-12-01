@@ -64,8 +64,10 @@ class group_id
 
     // the database table name extensions
     const TBL_EXT_PRIME = '_prime'; // the table name extension for up to four prime phrase ids
-    const TBL_EXT_PHRASE_ID = '_p'; // the table name extension with the number of phrases for up to four prime phrase ids
     const TBL_EXT_BIG = '_big'; // the table name extension for more than 16 phrase ids
+    const TBL_EXT_PHRASE_ID = '_p'; // the table name extension with the number of phrases for up to four prime phrase ids
+    const PRIME_PHRASE = 4;
+    const STANDARD_PHRASES = 16;
 
     /**
      * @return int|string the group id based on the given phrase list
@@ -73,14 +75,26 @@ class group_id
      */
     function get_id(phrase_list $phr_lst): int|string
     {
-        if ($phr_lst->count() <= 4 and $phr_lst->prime_only()) {
+        if ($phr_lst->count() <= self::PRIME_PHRASE and $phr_lst->prime_only()) {
             $db_key = $this->int_group_id($phr_lst);
-        } elseif ($phr_lst->count() <= 16) {
+        } elseif ($phr_lst->count() <= self::STANDARD_PHRASES) {
             $db_key = $this->alpha_num($phr_lst);
         } else {
             $db_key = $this->alpha_num_big($phr_lst);
         }
         return $db_key;
+    }
+
+    function max_number_of_phrase(int|string $id): int
+    {
+        $ext = $this->table_extension($id, true);
+        if ($ext == self::TBL_EXT_PRIME) {
+            return self::PRIME_PHRASE;
+        } elseif ($ext == self::TBL_EXT_BIG) {
+            return $this->count($id);
+        } else {
+            return self::STANDARD_PHRASES;
+        }
     }
 
     /**
@@ -209,7 +223,7 @@ class group_id
             }
             $keys[] = $key;
         }
-        while (count($keys) < 4 ) {
+        while (count($keys) < self::PRIME_PHRASE ) {
             array_unshift($keys , str_repeat('0', 16));
         }
         $bin_key = implode('', $keys);

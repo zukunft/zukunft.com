@@ -405,19 +405,16 @@ class value extends sandbox_value
      */
     function load_standard_sql(sql $sc, string $class = self::class): sql_par
     {
+        $tbl_ext = $this->grp->table_extension(true);
         $ext = $this->grp->table_extension();
         $qp = new sql_par($class . $ext, true);
         $qp->name .= sql_db::FLD_ID;
-        $sc->set_class($class, false, $ext);
+        $sc->set_class($class, false, $tbl_ext);
         $sc->set_name($qp->name);
         $sc->set_id_field($this->id_field());
         $sc->set_fields(array_merge(self::FLD_NAMES, self::FLD_NAMES_NUM_USR, array(user::FLD_ID)));
 
-        $sc->add_where(group::FLD_ID, $this->grp->id());
-        $qp->sql = $sc->sql();
-        $qp->par = $sc->get_par();
-
-        return $qp;
+        return $this->load_sql_set_where($qp, $sc, $ext);
     }
 
     /**
@@ -457,7 +454,7 @@ class value extends sandbox_value
 
         // overwrite the standard id field name (value_id) with the main database id field for values "group_id"
         $sc->set_id_field($this->id_field());
-        $sc->set_name($qp->name);
+
         $sc->set_usr($this->user()->id());
         $sc->set_fields(self::FLD_NAMES);
         $sc->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
@@ -1407,9 +1404,10 @@ class value extends sandbox_value
      */
     function not_changed_sql(sql_db $db_con): sql_par
     {
+        $tbl_ext = $this->grp->table_extension(true);
         $ext = $this->grp->table_extension();
-        $db_con->set_class(self::class, false, $ext);
-        return $db_con->load_sql_not_changed($this->id, $this->owner_id, $this->id_field());
+        $db_con->set_class(self::class, false, $tbl_ext);
+        return $db_con->load_sql_not_changed_multi($this->id, $this->owner_id, $this->id_field(), $ext, $tbl_ext);
     }
 
     /**
@@ -1518,8 +1516,9 @@ class value extends sandbox_value
      */
     function load_sql_user_changes(sql $sc, string $class = self::class): sql_par
     {
+        $tbl_ext = $this->grp->table_extension(true);
         $ext = $this->grp->table_extension();
-        $sc->set_class($class, true, $ext);
+        $sc->set_class($class, true, $tbl_ext);
         // overwrite the standard id field name (value_id) with the main database id field for values "group_id"
         $sc->set_id_field($this->id_field());
         return parent::load_sql_user_changes($sc, $class);
@@ -2044,15 +2043,26 @@ class value extends sandbox_value
         $sc->set_id_field($this->id_field());
         $qp->name .= '_insert';
         $sc->set_name($qp->name);
-        $fields = $this->grp->id_names(phrase::FLD_ID . '_');
-        $fields[] = user::FLD_ID;
-        $values = $this->grp->id_lst();
-        $values[] = $this->user()->id();
-        if (!$usr_tbl) {
-            $fields[] = self::FLD_VALUE;
-            $fields[] = self::FLD_LAST_UPDATE;
-            $values[] = $this->number;
-            $values[] = sql::NOW;
+        if ($this->grp->is_prime()) {
+            $fields = $this->grp->id_names(phrase::FLD_ID . '_');
+            $fields[] = user::FLD_ID;
+            $values = $this->grp->id_lst();
+            $values[] = $this->user()->id();
+            if (!$usr_tbl) {
+                $fields[] = self::FLD_VALUE;
+                $fields[] = self::FLD_LAST_UPDATE;
+                $values[] = $this->number;
+                $values[] = sql::NOW;
+            }
+        } else {
+            if ($usr_tbl) {
+                $fields = array(group::FLD_ID, user::FLD_ID);
+                $values = array($this->grp->id(), $this->user()->id());
+            } else {
+                $fields = array(group::FLD_ID, user::FLD_ID, self::FLD_VALUE, self::FLD_LAST_UPDATE);
+                $values = array($this->grp->id(), $this->user()->id(), $this->number, sql::NOW);
+            }
+
         }
         $qp->sql = $sc->sql_insert($fields, $values);
         $par_values = [];

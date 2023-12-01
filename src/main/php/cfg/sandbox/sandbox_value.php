@@ -450,6 +450,65 @@ class sandbox_value extends sandbox_multi
     }
 
     /**
+     * set the where condition and the final query parameters
+     * for a value or result query
+     *
+     * @param sql_par $qp the query parameters fully set without the sql, par and ext
+     * @param sql $sc the sql creator with all parameters set
+     * @param string $ext the table extension
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    protected function load_sql_set_where(sql_par $qp, sql $sc, string $ext): sql_par
+    {
+        if ($this->grp->is_prime()) {
+            $fields = $this->grp->id_names(phrase::FLD_ID . '_');
+            $values = $this->grp->id_lst();
+            $pos = 0;
+            foreach ($fields as $field) {
+                $sc->add_where($field, $values[$pos]);
+                $pos++;
+            }
+        } else {
+            $sc->add_where(group::FLD_ID, $this->grp->id());
+        }
+
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+        $qp->ext = $ext;
+
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve the user changes of the current object
+     *
+     * @param sql $sc with the target db_type set
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_user_changes(sql $sc, string $class = self::class): sql_par
+    {
+        $qp = new sql_par($class);
+        $qp->name .= 'usr_cfg';
+        $sc->set_name($qp->name);
+        $sc->set_usr($this->user()->id());
+        $sc->set_fields($this->all_sandbox_fields());
+
+        $fields = $this->grp->id_names(phrase::FLD_ID . '_');
+        $values = $this->grp->id_lst();
+        $pos = 0;
+        foreach ($fields as $field) {
+            $sc->add_where($field, $values[$pos]);
+            $pos++;
+        }
+
+        $sc->add_where(user::FLD_ID, $this->user()->id());
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+        return $qp;
+    }
+
+    /**
      * create an SQL statement to retrieve a value or result by already set phrase group
      *
      * @param sql $sc with the target db_type set
@@ -462,19 +521,7 @@ class sandbox_value extends sandbox_multi
         $tbl_ext = $this->grp->table_extension(true);
         $ext = $this->grp->table_extension();
         $qp = $this->load_sql_multi($sc, $query_name, $class, $ext, $tbl_ext);
-        $fields = $this->grp->id_names(phrase::FLD_ID . '_');
-        $values = $this->grp->id_lst();
-        $pos = 0;
-        foreach ($fields as $field) {
-            $sc->add_where($field, $values[$pos]);
-            $pos++;
-        }
-
-        $qp->sql = $sc->sql();
-        $qp->par = $sc->get_par();
-        $qp->ext = $ext;
-
-        return $qp;
+        return $this->load_sql_set_where($qp, $sc, $ext);
     }
 
     /**

@@ -3077,7 +3077,7 @@ class sql_db
                 $par_types = $this->par_types_to_postgres();
                 $sql = 'PREPARE ' . $this->query_name . ' (' . implode(', ', $par_types) . ') AS SELECT';
             } elseif ($this->db_type == sql_db::MYSQL) {
-                $sql = "PREPARE " . $this->query_name . " FROM 'SELECT";
+                $sql = "PREPARE " . $this->query_name . " FROM '" . sql::SELECT;
                 $this->end = "';";
             } else {
                 log_err('Prepare SQL not yet defined for SQL dialect ' . $this->db_type);
@@ -3123,7 +3123,7 @@ class sql_db
         if ($this->query_name != '') {
             $sql = $this->prepare_sql();
         } else {
-            $sql = 'SELECT';
+            $sql = sql::SELECT;
             //log_info('SQL statement ' . $sql . $this->fields . $this->from . $this->join . $this->where . ' is not yet named, please consider using a prepared SQL statement');
         }
 
@@ -3137,6 +3137,7 @@ class sql_db
      * to detect if someone else has used the object
      * @param int $id the unique database id if the object to check
      * @param int|null $owner_id the user id of the owner of the object
+     * @param string $id_field the field name of the prime database key if not standard
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      *                 in the previous set dialect
      */
@@ -3150,6 +3151,55 @@ class sql_db
         $this->set_name($qp->name);
         $this->set_usr($this->usr_id);
         $this->set_table();
+        $this->set_id_field($id_field);
+        $this->set_fields(array(user::FLD_ID));
+        if ($id == 0) {
+            log_err('The id must be set to detect if the link has been changed');
+        } else {
+            $this->add_par(sql_par_type::INT, $id);
+            $sql_mid = " " . user::FLD_ID .
+                " FROM " . $this->name_sql_esc(sql_db::TBL_USER_PREFIX . $this->table) .
+                " WHERE " . $this->id_field . " = " . $this->par_name() . "
+                 AND (excluded <> 1 OR excluded is NULL)";
+            if ($owner_id > 0) {
+                $this->add_par(sql_par_type::INT, $owner_id);
+                $sql_mid .= " AND " . user::FLD_ID . " <> " . $this->par_name();
+            }
+            $qp->sql = $this->prepare_sql() . $sql_mid;
+            $qp->sql = $this->end_sql($qp->sql);
+        }
+        $qp->par = $this->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * create a SQL select statement for the connected database
+     * to detect if someone else has used the object
+     * if the value can be stored in different tables
+     *
+     * @param int $id the unique database id if the object to check
+     * @param int|null $owner_id the user id of the owner of the object
+     * @param string $id_field the field name of the prime database key if not standard
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     *                 in the previous set dialect
+     */
+    function load_sql_not_changed_multi(
+        int $id,
+        ?int $owner_id = 0,
+        string $id_field = '',
+        string $ext = '',
+        string $tbl_ext = ''
+    ): sql_par
+    {
+        $qp = new sql_par($this->class);
+        $qp->name .= 'not_changed';
+        if ($owner_id > 0) {
+            $qp->name .= '_not_owned';
+        }
+        $this->set_name($qp->name);
+        $this->set_usr($this->usr_id);
+        $this->set_table(false, $tbl_ext);
         $this->set_id_field($id_field);
         $this->set_fields(array(user::FLD_ID));
         if ($id == 0) {

@@ -1,0 +1,26 @@
+PREPARE value_list_by_ids_prime_r2 (bigint,bigint,text,text,text,text,bigint,text,text) AS
+    SELECT s.phrase_id_1,
+           u.phrase_id_1 AS user_phrase_id_1,
+           s.user_id,
+           CASE WHEN (u.numeric_value      IS NULL) THEN s.numeric_value      ELSE u.numeric_value      END AS numeric_value,
+           CASE WHEN (u.source_id          IS NULL) THEN s.source_id          ELSE u.source_id          END AS source_id,
+           CASE WHEN (u.last_update        IS NULL) THEN s.last_update        ELSE u.last_update        END AS last_update,
+           CASE WHEN (u.excluded           IS NULL) THEN s.excluded           ELSE u.excluded           END AS excluded,
+           CASE WHEN (u.protect_id         IS NULL) THEN s.protect_id         ELSE u.protect_id END AS protect_id,
+           u.share_type_id
+      FROM values_prime s
+ LEFT JOIN user_values_prime u ON s.phrase_id_1 = u.phrase_id_1 AND u.user_id = $1
+     WHERE s.phrase_id_1 = $2 AND s.phrase_id_2 = $3 AND s.phrase_id_3 = $4 AND s.phrase_id_4 = $5
+UNION
+    SELECT s.phrase_id_1,
+           u.phrase_id_1 AS user_phrase_id_1,
+           s.user_id,
+           CASE WHEN (u.numeric_value      IS NULL) THEN s.numeric_value      ELSE u.numeric_value      END AS numeric_value,
+           CASE WHEN (u.source_id          IS NULL) THEN s.source_id          ELSE u.source_id          END AS source_id,
+           CASE WHEN (u.last_update        IS NULL) THEN s.last_update        ELSE u.last_update        END AS last_update,
+           CASE WHEN (u.excluded           IS NULL) THEN s.excluded           ELSE u.excluded           END AS excluded,
+           CASE WHEN (u.protect_id         IS NULL) THEN s.protect_id         ELSE u.protect_id END AS protect_id,
+           u.share_type_id
+      FROM values_prime s
+ LEFT JOIN user_values_prime u ON s.phrase_id_1 = u.phrase_id_1 AND u.user_id = $1
+    WHERE s.phrase_id_1 = $6 AND s.phrase_id_2 = $7 AND s.phrase_id_3 = $8 AND s.phrase_id_4 = $9;

@@ -42,6 +42,7 @@ use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\group\group;
+use cfg\group\group_id;
 use cfg\group\group_id_list;
 use cfg\group\group_list;
 use cfg\library;
@@ -155,13 +156,18 @@ class value_list extends sandbox_list
      * @param string $query_name the name extension to make the query name unique
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_multi(sql $sc, string $query_name, string $ext = ''): sql_par
+    function load_sql_multi(
+        sql    $sc,
+        string $query_name,
+        string $ext = '',
+        string $tbl_ext = ''
+    ): sql_par
     {
         // TODO make the name unique for all combinations of the value list
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
 
-        $sc->set_class(value::class, false, $ext);
+        $sc->set_class(value::class, false, $tbl_ext);
         // overwrite the standard id field name (value_id) with the main database id field for values "group_id"
         $val = new value($this->user());
         $sc->set_id_field($val->id_field());
@@ -182,24 +188,103 @@ class value_list extends sandbox_list
      * @param array $ids value ids that should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_ids(sql $sc, array $ids): sql_par
+    function load_sql_by_ids(sql $sc, array $ids, bool $usr_tbl = false): sql_par
     {
-        $grp_id_lst = new group_id_list();
-        $ext_lst = $grp_id_lst->table_ext_list($ids);
-        $qp = new sql_par(self::class);
-        if (count($ext_lst) == 1) {
-            $ext = $ext_lst[0];
-            $qp = $this->load_sql_multi($sc, 'ids', $ext);
-        } else {
-            log_warning('multi table type value lists not yet implemented');
-            foreach ($ext_lst as $ext) {
-                $qp = $this->load_sql_multi($sc, 'ids', $ext);
+        /*
+         * 1. collect the potential source tables (maybe all
+         * 2. set the names based on the tables and
+         */
+        // define the objects needed
+        $grp_id = new group_id();
+        $val = new value($this->user());
+
+        // collect the potential source tables, means all tables where the selected values might be found
+        // to fix the rows of the matrix
+        $tbl_ext_lst = array();
+        // collect all phrase ids that are needed for the selection
+        // to fix the columns of the matrix
+        $phr_id_lst = array();
+        foreach ($ids as $id) {
+            $tbl_ext_lst[] = $grp_id->table_extension($id, true);
+            $phr_id_lst = array_merge($phr_id_lst, $grp_id->get_array($id));
+        }
+
+        $tbl_ext_uni = array_unique($tbl_ext_lst);
+        $phr_id_uni = array_unique($phr_id_lst);
+        $tbl_id_matrix = array();
+        // loop over the tables where the values might be
+        foreach ($tbl_ext_uni as $tbl_ext) {
+            // loop over the given ids to select each value
+            foreach ($ids as $id) {
+                // fill the matrix row with the ids of corresponding table type
+                $id_tbl_ext = $grp_id->table_extension($id, true);
+                if ($id_tbl_ext == $tbl_ext) {
+                    $matrix_row = array();
+                    $matrix_row[] = $tbl_ext;
+                    $matrix_row[] = $grp_id->max_number_of_phrase($id);
+                    $row_id_lst = $grp_id->get_array($id);
+                    foreach ($phr_id_uni as $phr_id) {
+                        if (in_array($phr_id, $row_id_lst)) {
+                            $matrix_row[] = $phr_id;
+                        } else {
+                            $matrix_row[] = '';
+                        }
+                    }
+                    $tbl_id_matrix[] = $matrix_row;
+                }
             }
         }
-        $sc->add_where(value::FLD_ID, $ids, sql_par_type::INT_LIST);
-        $sc->set_order(value::FLD_ID);
-        $qp->sql = $sc->sql();
-        $qp->par = $sc->get_par();
+        $qp = new sql_par(value::class);
+        $lib = new library();
+        $qp->name = $lib->class_to_name(value_list::class) . '_by_ids' . implode("", $tbl_ext_uni) . '_r' . count($phr_id_uni);
+
+        $par_offset = 0;
+        $par_types = array();
+        foreach ($tbl_id_matrix as $matrix_row) {
+            $tbl_ext = array_shift($matrix_row);
+            if ($tbl_ext == group_id::TBL_EXT_PRIME) {
+                $max_row_ids = array_shift($matrix_row);
+                $phr_id_lst = $matrix_row;
+                $class = value::class;
+                $lib = new library();
+                $tbl_name = $lib->class_to_name($class);
+                $qp_tbl = new sql_par($tbl_name . $tbl_ext);
+                $sc->set_class($class, $usr_tbl, $tbl_ext);
+                $sc->set_id_field($val->id_field());
+                $sc->set_name($qp->name);
+                $sc->set_usr($this->user()->id());
+                $sc->set_fields(value::FLD_NAMES);
+                if ($par_offset == 0) {
+                    $sc->set_usr_num_fields(value::FLD_NAMES_NUM_USR);
+                } else {
+                    $sc->set_usr_num_fields(value::FLD_NAMES_NUM_USR, false);
+                }
+                $sc->set_usr_only_fields(value::FLD_NAMES_USR_ONLY);
+                for ($pos = 1; $pos <= $max_row_ids; $pos++) {
+                    // the array of the phrase ids starts with o whereas the phrase id fields start with 1
+                    $id_pos = $pos - 1;
+                    if (array_key_exists($id_pos, $phr_id_lst)) {
+                        $sc->add_where(phrase::FLD_ID . '_' . $pos, $phr_id_lst[$id_pos]);
+                    } else {
+                        $sc->add_where(phrase::FLD_ID . '_' . $pos, '');
+                    }
+                }
+
+                $qp_tbl->sql = $sc->sql($par_offset, true, false);
+                $qp_tbl->par = $sc->get_par();
+                $par_offset = $par_offset + count($qp_tbl->par);
+                $par_types = array_merge($par_types, $sc->get_par_types());
+
+                $qp->merge($qp_tbl);
+            }
+        }
+
+        $qp->sql = $sc->prepare_sql($qp->sql, $qp->name, $par_types);
+        if ($sc->db_type == sql_db::POSTGRES) {
+            $qp->sql .= ';';
+        } else {
+            $qp->sql .= "';";
+        }
 
         return $qp;
     }

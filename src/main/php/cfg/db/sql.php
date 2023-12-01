@@ -38,12 +38,12 @@ include_once MODEL_DB_PATH . 'sql_field_default.php';
 include_once MODEL_DB_PATH . 'sql_pg.php';
 
 use cfg\component_link;
+use cfg\db\sql_db;
 use cfg\formula_element;
 use cfg\formula_link;
 use cfg\group\group;
 use cfg\library;
 use cfg\ref;
-use cfg\db\sql_db;
 use cfg\result\result;
 use cfg\sys_log_level;
 use cfg\triple;
@@ -116,7 +116,7 @@ class sql
     // parameters for the sql creation that are set step by step with the functions of the sql creator
     private ?int $usr_id;           // the user id of the person who request the database changes
     private ?int $usr_view_id;      // the user id of the person which values should be returned e.g. an admin might want to check the data of an user
-    private ?string $db_type;       // the database type which should be used for this connection e.g. Postgres or MYSQL
+    public ?string $db_type;       // the database type which should be used for this connection e.g. Postgres or MYSQL
     private ?string $class;         // the object class name used for the table name and the standard fields are defined e.g. for type "cfg\word" the table "words" and the field "word_name" is used
     private ?string $table;         // name of the table that is used for the next query including the extension if one class lead to many tables e.g. values_prime
     private ?string $query_name;    // unique name of the query to precompile and use the query
@@ -425,15 +425,16 @@ class sql
 
     /**
      * activate that in the SQL statement the user sandbox name field should be included
+     * @param bool $std_fld true if the standard field e.g. the user id should no be added again
      */
-    function set_usr_query(): void
+    function set_usr_query(bool $std_fld = true): void
     {
         if ($this->grp_query) {
             log_err('Group calculation cannot be combined with a user query');
         }
         $this->usr_query = true;
         $this->join_usr_query = true;
-        $this->set_user_join();
+        $this->set_user_join($std_fld);
     }
 
     /**
@@ -505,11 +506,12 @@ class sql
      * which can be user specific
      *
      * @param array $usr_field_lst list of the numeric user specific fields that should be loaded from the database
+     * @param bool $std_fld false if the standard fields e.g. the user id should no be added again
      */
-    function set_usr_num_fields(array $usr_field_lst): void
+    function set_usr_num_fields(array $usr_field_lst, bool $std_fld = true): void
     {
         $this->usr_num_field_lst = $usr_field_lst;
-        $this->set_usr_query();
+        $this->set_usr_query($std_fld);
     }
 
     function set_usr_only_fields($field_lst): void
@@ -781,7 +783,7 @@ class sql
      * @param bool $has_id to be able to create also SQL statements for tables that does not have a single unique key
      * @return string the created SQL statement in the previous set dialect
      */
-    function sql(int $par_offset = 0, bool $has_id = true): string
+    function sql(int $par_offset = 0, bool $has_id = true, bool $prepare = true): string
     {
         // check if the minimum parameters are set
         if ($this->query_name == '') {
@@ -797,11 +799,19 @@ class sql
         $where = $this->where($par_offset);
 
         // create a prepare SQL statement if possible
-        $sql = $this->prepare_sql();
+        if ($prepare) {
+            $sql = $this->prepare_this_sql();
+        } else {
+            $sql = sql::SELECT;
+        }
 
         $sql .= $fields . $from . $this->join . $where . $this->order . $this->get_page();
 
-        return $this->end_sql($sql);
+        if ($prepare) {
+            return $this->end_sql($sql);
+        } else {
+            return $sql;
+        }
     }
 
     /**
@@ -851,7 +861,7 @@ class sql
         }
 
         // create a prepare SQL statement if possible
-        $sql = $this->prepare_sql(self::INSERT);
+        $sql = $this->prepare_this_sql(self::INSERT);
         $sql .= ' INTO ' . $this->name_sql_esc($this->table);
         $sql .= $sql_fld;
         $sql .= ' VALUES ';
@@ -905,7 +915,7 @@ class sql
         }
 
         // create a prepare SQL statement if possible
-        $sql = $this->prepare_sql(self::UPDATE);
+        $sql = $this->prepare_this_sql(self::UPDATE);
         $sql .= ' ' . $this->name_sql_esc($this->table);
         $sql_set = '';
         $par_pos = 1;
@@ -955,10 +965,20 @@ class sql
         $this->par_fields[] = $fld;
     }
 
+    private function has_field(string $fld): bool
+    {
+        if (in_array($fld, $this->par_fields)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     /**
      * create the "JOIN" SQL statement based on the joined user fields
+     * @param bool $std_fld false if the standard fields e.g. the user id should no be added again
      */
-    private function set_user_join(): void
+    private function set_user_join(bool $std_fld): void
     {
         if ($this->usr_query) {
             if (!$this->join_usr_added) {
@@ -970,9 +990,14 @@ class sql
                     if ($this->query_name == '' and !$this->sub_query) {
                         $this->join .= $this->usr_view_id;
                     } else {
-                        $this->add_field(sql_db::USR_TBL . '.' . user::FLD_ID);
-                        $this->add_par(sql_par_type::INT, $this->usr_id);
-                        $this->join_usr_par_name = $this->par_name();
+                        if ($std_fld) {
+                            $this->add_field(sql_db::USR_TBL . '.' . user::FLD_ID);
+                            $this->add_par(sql_par_type::INT, $this->usr_id);
+                            $this->join_usr_par_name = $this->par_name();
+                        } else {
+                            // TODO make the field pos of the user field more dynamic to cover more cases
+                            $this->join_usr_par_name = $this->par_name(1, false);
+                        }
                         $this->join .= $this->join_usr_par_name;
                     }
                 }
@@ -1828,10 +1853,33 @@ class sql
     }
 
     /**
+     * warp the prepare clause around a given sql statement
+     * @param string $sql the sql statement that should be prepared
+     * @return string the prepare sql statement
+     */
+    function prepare_sql(string $sql, string $query_name, array $par_types): string
+    {
+        if ($this->db_type == sql_db::POSTGRES) {
+            $par_types = $this->par_types_to_postgres($par_types);
+            if ($this->used_par_types() > 0) {
+                $sql = 'PREPARE ' . $query_name . ' (' . implode(', ', $par_types) . ') AS ' . $sql;
+            } else {
+                $sql = 'PREPARE ' . $query_name . ' AS ' . $sql;
+            }
+        } elseif ($this->db_type == sql_db::MYSQL) {
+            $sql = "PREPARE " . $query_name . " FROM '" . $sql;
+            $this->end = "';";
+        } else {
+            log_err('Prepare SQL not yet defined for SQL dialect ' . $this->db_type);
+        }
+        return $sql;
+    }
+
+    /**
      * @param string $sql_statement_type either SELECT, INSERT, UPDATE or DELETE
      * @return string with the SQL prepare statement for the current query
      */
-    private function prepare_sql(string $sql_statement_type = 'SELECT'): string
+    private function prepare_this_sql(string $sql_statement_type = sql::SELECT): string
     {
         $sql = '';
         if (count($this->par_types) > 0
@@ -2121,7 +2169,7 @@ class sql
     /**
      * @return string with the SQL closing statement for the current query
      */
-    private function end_sql(string $sql, string $sql_statement_type = 'SELECT'): string
+    private function end_sql(string $sql, string $sql_statement_type = sql::SELECT): string
     {
         $lib = new library();
         if ($sql_statement_type == self::INSERT) {
@@ -2170,6 +2218,11 @@ class sql
             $i++;
         }
         return $used_par_values;
+    }
+
+    function get_par_types(): array
+    {
+        return $this->par_types;
     }
 
     /**
@@ -2652,9 +2705,10 @@ class sql
      * get the SQL parameter placeholder in the used SQL dialect
      *
      * @param int $pos to get the placeholder of another position than the last
+     * @param bool $remove_from_list false if the name should not be removed from the list e.g. because offset is used
      * @return string the SQL var name for the latest added query parameter
      */
-    function par_name(int $pos = 0): string
+    function par_name(int $pos = 0, bool $remove_from_list = true): string
     {
         // if the position is not given use the last parameter added
         if ($pos == 0) {
@@ -2662,7 +2716,9 @@ class sql
         }
 
         // remember that the parameter name has already been used
-        $this->par_named[$pos - 1] = true;
+        if ($remove_from_list) {
+            $this->par_named[$pos - 1] = true;
+        }
 
         // create the parameter placeholder for the SQL dialect
         if ($this->db_type == sql_db::MYSQL) {
@@ -2695,9 +2751,11 @@ class sql
      * TODO move postgres const to a separate class sql_pg
      * @return array with the postgres parameter types
      */
-    private function par_types_to_postgres(): array
+    private function par_types_to_postgres(array $in_types = []): array
     {
-        $in_types = $this->par_types;
+        if ($in_types == []) {
+            $in_types = $this->par_types;
+        }
         $result = array();
         foreach ($in_types as $type) {
             switch ($type) {

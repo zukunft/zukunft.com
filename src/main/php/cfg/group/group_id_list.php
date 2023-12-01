@@ -41,14 +41,15 @@ class group_id_list
      * list of the table extension / types where the value or result rows might be found
      *
      * @param array $ids with the group ids that should be searched for
+     * @param bool $is_grp true to get the table extension for groups
      * @return array with the table extensions where the values or results might be found
      */
-    function table_ext_list(array $ids): array
+    function table_ext_list(array $ids, bool $is_grp = false): array
     {
         $ext_lst = array();
         $grp_id = new group_id();
         foreach ($ids as $id) {
-            $ext = $grp_id->table_extension($id);
+            $ext = $grp_id->table_extension($id, $is_grp);
             if (!in_array($ext, $ext_lst)) {
                 $ext_lst[] = $ext;
             }

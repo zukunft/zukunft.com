@@ -1146,27 +1146,6 @@ class sandbox_multi extends db_object_multi_user
     }
 
     /**
-     * create an SQL statement to retrieve the user changes of the current object
-     *
-     * @param sql $sc with the target db_type set
-     * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql_user_changes(sql $sc, string $class = self::class): sql_par
-    {
-        $qp = new sql_par($class);
-        $qp->name .= 'usr_cfg';
-        $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id());
-        $sc->set_fields($this->all_sandbox_fields());
-        $sc->add_where($this->id_field(), $this->id());
-        $sc->add_where(user::FLD_ID, $this->user()->id());
-        $qp->sql = $sc->sql();
-        $qp->par = $sc->get_par();
-        return $qp;
-    }
-
-    /**
      * check again if there ist not yet a record
      * @return bool true if the user has done some personal changes on this object
      */

@@ -76,7 +76,7 @@ class value_list_unit_tests
 
         // sql to load a list of value by ids
         $val_lst = new value_list($usr);
-        $t->assert_sql_by_ids($db_con, $val_lst);
+        $t->assert_sql_by_ids($db_con, $val_lst, [5,6]);
         $this->assert_sql_by_phr_lst($t, $db_con, $val_lst);
 
         $db_con->db_type = sql_db::POSTGRES;

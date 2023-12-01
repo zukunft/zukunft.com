@@ -1,10 +1,10 @@
 PREPARE value_by_usr_cfg FROM
-   'SELECT group_id,
+   'SELECT phrase_id_1,
            numeric_value,
            source_id,
            last_update,
            excluded,
            protect_id
       FROM user_values_prime
-     WHERE group_id = ?
+     WHERE phrase_id_1 = ?
        AND user_id = ?';
