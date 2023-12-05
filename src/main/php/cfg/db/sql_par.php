@@ -54,11 +54,11 @@ class sql_par
      * @param bool $is_std true if the standard data for all users should be loaded
      * @param bool $all true if all rows should be loaded
      */
-    function __construct(string $class, bool $is_std = false, bool $all = false)
+    function __construct(string $class, bool $is_std = false, bool $all = false, string $ext = '')
     {
         $lib = new library();
         $this->sql = '';
-        $class = $lib->class_to_name($class);
+        $class = $lib->class_to_name($class) . $ext;
         if ($is_std) {
             $this->name = $class . '_std_by_';
         } elseif ($all) {

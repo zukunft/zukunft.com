@@ -5,6 +5,15 @@
     model/value/value_list.php - to show or modify a list of values
     --------------------------
 
+    For the value selection use a list of phrases with the
+    pods that can be in memory an all devices
+    to select the pod from where the values should be loaded
+
+    for the table selection use a list of phrases with the
+    table that can be in memory for the pod
+    to select the tables where the value might be stored
+
+
     This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it
@@ -160,6 +169,38 @@ class value_list extends sandbox_list
         sql    $sc,
         string $query_name,
         string $ext = '',
+        string $tbl_ext = '',
+        bool   $usr_tbl = false
+    ): sql_par
+    {
+        $qp = new sql_par(value::class, false, false, $ext);
+        $qp->name .= $query_name;
+
+        $sc->set_class(value::class, $usr_tbl, $tbl_ext);
+        // overwrite the standard id field name (value_id) with the main database id field for values "group_id"
+        $val = new value($this->user());
+        $sc->set_id_field($val->id_field());
+        $sc->set_name($qp->name);
+
+        $sc->set_usr($this->user()->id());
+        $sc->set_fields(value::FLD_NAMES);
+        //$sc->set_usr_only_fields(value::FLD_NAMES_USR_ONLY);
+        //$sc->set_usr_num_fields(value::FLD_NAMES_NUM_USR);
+        //$db_con->set_order_text(sql_db::STD_TBL . '.' . $db_con->name_sql_esc(word::FLD_VALUES) . ' DESC, ' . word::FLD_NAME);
+        return $qp;
+    }
+
+    /**
+     * TODO to deprecate
+     * set the SQL query parameters to load a list of values
+     * @param sql $sc with the target db_type set
+     * @param string $query_name the name extension to make the query name unique
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_init(
+        sql    $sc,
+        string $query_name,
+        string $ext = '',
         string $tbl_ext = ''
     ): sql_par
     {
@@ -182,35 +223,51 @@ class value_list extends sandbox_list
     }
 
     /**
-     * create an SQL statement to retrieve a list of value by the id from the database
+     * collect the potential source tables, means
+     * all tables where the selected values might be found
+     * to fix the rows of the matrix
      *
-     * @param sql $sc with the target db_type set
-     * @param array $ids value ids that should be loaded
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @param array $ids value ids that should be selected
+     * @return array with the unique table extension where the values of the given id list may be found of the group ids
      */
-    function load_sql_by_ids(sql $sc, array $ids, bool $usr_tbl = false): sql_par
+    private function table_extension_list_unique(array $ids): array
     {
-        /*
-         * 1. collect the potential source tables (maybe all
-         * 2. set the names based on the tables and
-         */
-        // define the objects needed
         $grp_id = new group_id();
-        $val = new value($this->user());
-
-        // collect the potential source tables, means all tables where the selected values might be found
-        // to fix the rows of the matrix
         $tbl_ext_lst = array();
-        // collect all phrase ids that are needed for the selection
-        // to fix the columns of the matrix
-        $phr_id_lst = array();
         foreach ($ids as $id) {
             $tbl_ext_lst[] = $grp_id->table_extension($id, true);
+        }
+
+        return array_unique($tbl_ext_lst);
+    }
+
+    /**
+     * collect all phrase ids that are needed for the selection
+     * to fix the columns of the matrix
+     *
+     * @param array $ids value ids that should be selected
+     * @return array with the unique phrase ids of the group ids
+     */
+    private function phrase_id_list_unique(array $ids): array
+    {
+        $grp_id = new group_id();
+        $phr_id_lst = array();
+        foreach ($ids as $id) {
             $phr_id_lst = array_merge($phr_id_lst, $grp_id->get_array($id));
         }
 
-        $tbl_ext_uni = array_unique($tbl_ext_lst);
-        $phr_id_uni = array_unique($phr_id_lst);
+        return array_unique($phr_id_lst);
+    }
+
+    /**
+     * @param array $ids
+     * @return array
+     */
+    private function extension_id_matrix(array $ids): array
+    {
+        $grp_id = new group_id();
+        $tbl_ext_uni = $this->table_extension_list_unique($ids);
+        $phr_id_uni = $this->phrase_id_list_unique($ids);
         $tbl_id_matrix = array();
         // loop over the tables where the values might be
         foreach ($tbl_ext_uni as $tbl_ext) {
@@ -234,26 +291,52 @@ class value_list extends sandbox_list
                 }
             }
         }
+        return $tbl_id_matrix;
+    }
+
+    private function load_sql_init_query_par(array $ids, string $query_name): sql_par
+    {
         $qp = new sql_par(value::class);
         $lib = new library();
-        $qp->name = $lib->class_to_name(value_list::class) . '_by_ids' . implode("", $tbl_ext_uni) . '_r' . count($phr_id_uni);
+        $tbl_ext_uni = $this->table_extension_list_unique($ids);
+        $phr_id_uni = $this->phrase_id_list_unique($ids);
+        $qp->name = $lib->class_to_name(
+                value_list::class) .
+            '_by_' . $query_name . implode("", $tbl_ext_uni) .
+            '_r' . count($phr_id_uni);
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve a list of value by the id from the database
+     *
+     * @param sql $sc with the target db_type set
+     * @param array $ids value ids that should be loaded
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_ids(sql $sc, array $ids, bool $usr_tbl = false): sql_par
+    {
+        /*
+         * 1. collect the potential source tables (maybe all
+         * 2. set the names based on the tables and
+         */
+
+        // get the matrix of the potential tables, the number of phrases of the table and the phrase id list
+        $tbl_id_matrix = $this->extension_id_matrix($ids);
+        $qp = $this->load_sql_init_query_par($ids, 'ids');
 
         $par_offset = 0;
         $par_types = array();
+        $val = new value($this->user());
         foreach ($tbl_id_matrix as $matrix_row) {
             $tbl_ext = array_shift($matrix_row);
+            // TODO add the union query creation for the other table types
+            // combine the select statements with and instead of union if possible
             if ($tbl_ext == group_id::TBL_EXT_PRIME) {
                 $max_row_ids = array_shift($matrix_row);
                 $phr_id_lst = $matrix_row;
-                $class = value::class;
-                $lib = new library();
-                $tbl_name = $lib->class_to_name($class);
-                $qp_tbl = new sql_par($tbl_name . $tbl_ext);
-                $sc->set_class($class, $usr_tbl, $tbl_ext);
-                $sc->set_id_field($val->id_field());
-                $sc->set_name($qp->name);
-                $sc->set_usr($this->user()->id());
-                $sc->set_fields(value::FLD_NAMES);
+
+                $qp_tbl = $this->load_sql_multi($sc, '', $tbl_ext, $tbl_ext, $usr_tbl);
                 if ($par_offset == 0) {
                     $sc->set_usr_num_fields(value::FLD_NAMES_NUM_USR);
                 } else {
@@ -320,15 +403,71 @@ class value_list extends sandbox_list
     }
 
     /**
-     * create an SQL statement to retrieve a list of value by the id from the database
+     * create an SQL statement to retrieve a list of values by a list of phrase ids from the database
+     * return all value that match at least on phrase of the list
      *
      * @param sql $sc with the target db_type set
      * @param phrase_list $phr_lst phrase list to which all related values should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_phr_lst(sql $sc, phrase_list $phr_lst): sql_par
+    function load_sql_by_phr_lst(sql $sc, phrase_list $phr_lst, bool $usr_tbl = false): sql_par
     {
-        $qp = $this->load_sql_multi($sc, 'phr_lst');
+        // get the matrix of the potential tables, the number of phrases of the table and the phrase id list
+        $tbl_id_matrix = $this->extension_id_matrix($phr_lst->ids());
+        $qp = $this->load_sql_init_query_par($phr_lst->ids(), 'phr_lst');
+
+        // loop over the tables where the value might be stored
+        foreach ($tbl_id_matrix as $matrix_row) {
+            $tbl_ext = array_shift($matrix_row);
+            if ($tbl_ext == group_id::TBL_EXT_PRIME) {
+                $max_row_ids = array_shift($matrix_row);
+                $phr_id_lst = $matrix_row;
+                $qp_tbl = $this->load_sql_multi($sc, 'phr_lst', $tbl_ext, $tbl_ext, $usr_tbl);
+                if ($par_offset == 0) {
+                    $sc->set_usr_num_fields(value::FLD_NAMES_NUM_USR);
+                } else {
+                    $sc->set_usr_num_fields(value::FLD_NAMES_NUM_USR, false);
+                }
+                $sc->set_usr_only_fields(value::FLD_NAMES_USR_ONLY);
+                for ($pos = 1; $pos <= $max_row_ids; $pos++) {
+                    // the array of the phrase ids starts with o whereas the phrase id fields start with 1
+                    $id_pos = $pos - 1;
+                    if (array_key_exists($id_pos, $phr_id_lst)) {
+                        $sc->add_where(phrase::FLD_ID . '_' . $pos, $phr_id_lst[$id_pos]);
+                    } else {
+                        $sc->add_where(phrase::FLD_ID . '_' . $pos, '');
+                    }
+                }
+
+                $qp_tbl->sql = $sc->sql($par_offset, true, false);
+                $qp_tbl->par = $sc->get_par();
+                $par_offset = $par_offset + count($qp_tbl->par);
+                $par_types = array_merge($par_types, $sc->get_par_types());
+
+                $qp->merge($qp_tbl);
+            }
+        }
+        $sc->set_join_fields(
+            array(value::FLD_ID), sql_db::TBL_VALUE_PHRASE_LINK,
+            value::FLD_ID, value::FLD_ID);
+        $sc->add_where(sql_db::LNK_TBL . '.' . phrase::FLD_ID, $phr_lst->ids());
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve a list of values by a list of phrase ids from the database
+     * return all value that match at least on phrase of the list
+     *
+     * @param sql $sc with the target db_type set
+     * @param phrase_list $phr_lst phrase list to which all related values should be loaded
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_phr_lst_single(sql $sc, phrase_list $phr_lst): sql_par
+    {
+        $qp = $this->load_sql_init($sc, 'phr_lst');
         $sc->set_join_fields(
             array(value::FLD_ID), sql_db::TBL_VALUE_PHRASE_LINK,
             value::FLD_ID, value::FLD_ID);
@@ -359,7 +498,7 @@ class value_list extends sandbox_list
     function load_by_phr_lst(phrase_list $phr_lst): bool
     {
         global $db_con;
-        $qp = $this->load_sql_by_phr_lst($db_con->sql_creator(), $phr_lst);
+        $qp = $this->load_sql_by_phr_lst_single($db_con->sql_creator(), $phr_lst);
         return $this->load($qp);
     }
 
