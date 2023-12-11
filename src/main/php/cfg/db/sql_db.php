@@ -225,7 +225,7 @@ class sql_db
 
     private ?string $class = '';                    // based of this database object type the table name and the standard fields are defined e.g. for type "word" the field "word_name" is used
     private ?string $table = '';                    // name of the table that is used for the next query
-    private ?string $id_field = '';                 // primary key field of the table used
+    private string|array|null $id_field = '';                 // primary key field of the table used
     private ?string $id_from_field = '';            // only for link objects the id field of the source object
     private ?string $id_to_field = '';              // only for link objects the id field of the destination object
     private ?string $id_link_field = '';            // only for link objects the id field of the link type object
@@ -1444,7 +1444,7 @@ class sql_db
         return $result;
     }
 
-    function set_id_field(string $given_name = ''): void
+    function set_id_field(string|array $given_name = ''): void
     {
         $lib = new library();
         $type = $lib->class_to_name($this->class);
@@ -3187,7 +3187,7 @@ class sql_db
     function load_sql_not_changed_multi(
         int $id,
         ?int $owner_id = 0,
-        string $id_field = '',
+        string|array $id_field = '',
         string $ext = '',
         string $tbl_ext = ''
     ): sql_par

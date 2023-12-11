@@ -347,15 +347,20 @@ class sandbox_list extends base_list
                 $first_obj = $this->lst()[array_key_first($this->lst())];
                 $id_field = $first_obj->id_field();
             }
-            if ($this::class == value_list::class
-            or $this::class == result_list::class) {
+            if ($this::class == value_list::class or $this::class == result_list::class) {
                 foreach ($this->lst() as $val) {
                     if ($result != '') {
                         $result .= ' / ';
                     }
                     $result .= $val->dsp_id_entry();
                 }
-                $result .= ' (' . $id_field . ' ' . $id . ')';
+                if (is_array($id_field)) {
+                    $fld_dsp = ' (' . implode(', ', $id_field);
+                    $fld_dsp .= ' = ' . $id . ')';
+                    $result .= $fld_dsp;
+                } else {
+                    $result .= ' (' . $id_field . ' ' . $id . ')';
+                }
             } else {
                 $name = $this->name($min_names);
                 if ($name <> '""') {
@@ -429,7 +434,18 @@ class sandbox_list extends base_list
     private function ids_txt(int $limit = null): string
     {
         $lib = new library();
-        return $lib->sql_array($this->ids($limit));
+        if ($this::class == value_list::class or $this::class == result_list::class) {
+            $result = '';
+            foreach ($this->lst() as $val) {
+                if ($result != '') {
+                    $result .= ' / ';
+                }
+                $result .= $val->grp()->dsp_id_short();
+            }
+            return $result;
+        } else {
+            return $lib->sql_array($this->ids($limit));
+        }
     }
 
 }

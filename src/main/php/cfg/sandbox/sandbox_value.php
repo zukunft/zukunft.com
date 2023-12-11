@@ -657,8 +657,8 @@ class sandbox_value extends sandbox_multi
         $ext = $this->grp->table_extension();
         $sc->set_class($this::class, $usr_tbl, $tbl_ext);
         $sql_name = $lib->class_to_name($this::class);
-        $qp = new sql_par($sql_name . $ext);
-        $qp->name = $sql_name . $ext;
+        $qp = new sql_par($sql_name);
+        $qp->name = $sql_name . $tbl_ext . $ext;
         if ($usr_tbl) {
             $qp->name .= '_user';
         }
@@ -785,7 +785,18 @@ class sandbox_value extends sandbox_multi
     function dsp_id_short(): string
     {
         $result = $this->dsp_id_entry();
-        $result .= parent::dsp_id();
+        if ($this->id() != 0) {
+            $id_fields = $this->id_field();
+            if (is_array($id_fields)) {
+                $fld_dsp = ' (' . implode(', ' ,$id_fields);
+                $fld_dsp .= ' = ' . $this->grp()->dsp_id_short() . ')';
+                $result .= $fld_dsp;
+            } else {
+                $result .= ' (' . $id_fields . ' ' . $this->id() . ')';
+            }
+        } else {
+            $result .= ' (' . $this->id_field() . ' no set)';
+        }
         return $result;
     }
 

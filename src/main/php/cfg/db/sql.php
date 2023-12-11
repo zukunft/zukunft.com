@@ -38,20 +38,18 @@ include_once MODEL_DB_PATH . 'sql_field_default.php';
 include_once MODEL_DB_PATH . 'sql_pg.php';
 
 use cfg\component_link;
-use cfg\db\sql_db;
 use cfg\formula_element;
 use cfg\formula_link;
 use cfg\group\group;
+use cfg\group\group_id;
 use cfg\library;
 use cfg\ref;
 use cfg\result\result;
-use cfg\sys_log_level;
 use cfg\triple;
 use cfg\user;
 use cfg\value\value;
 use cfg\value\value_time_series;
 use cfg\view_term_link;
-use Exception;
 
 class sql
 {
@@ -124,7 +122,7 @@ class sql
     private bool $grp_query;        // true, if the query should calculate the value for a group of database rows; cannot be combined with other query types
     private bool $sub_query;        // true, if the query is a sub query for another query
     private bool $all_query;        // true, if the query is expected to retrieve the standard and the user specific data
-    private ?string $id_field;      // primary key field of the table used
+    private string|array|null $id_field;  // primary key field or field list of the table used
     private ?string $id_from_field; // only for link objects the id field of the source object
     private ?string $id_to_field;   // only for link objects the id field of the destination object
     private ?string $id_link_field; // only for link objects the id field of the link type object
@@ -340,10 +338,10 @@ class sql
 
     /**
      * set the id field based on the table name of not overwritten
-     * @param string $given_name to overwrite the id field name
+     * @param string|array $given_name to overwrite the id field name
      * @return void
      */
-    function set_id_field(string $given_name = ''): void
+    function set_id_field(string|array $given_name = ''): void
     {
         if ($given_name != '') {
             $this->id_field = $given_name;
@@ -816,6 +814,8 @@ class sql
 
     /**
      * create the sql statement to add a row to the database
+     * TODO add fields types for inserting prime values to change the id to smallint
+     *
      * @param array $fields with the fields names to add
      * @param array $values with the field values to add
      * @param bool $log_err false if
@@ -871,11 +871,11 @@ class sql
     }
 
     function sql_update(
-        string     $id_field,
-        string|int $id,
-        array      $fields,
-        array      $values,
-        bool       $log_err = true): string
+        string|array $id_field,
+        string|int   $id,
+        array        $fields,
+        array        $values,
+        bool         $log_err = true): string
     {
         $lib = new library();
         $id_field_par = '';
@@ -933,9 +933,46 @@ class sql
             }
         }
         $sql .= $sql_set;
-        $sql .= ' WHERE ' . $id_field . ' = ' . $id_field_par;
+        if (is_array($id_field)) {
+            $grp_id = new group_id();
+            $id_lst = $grp_id->get_array($id);
+            if (count($id_field) != count($id_lst)) {
+                log_err('the number of id fields (' . implode($id_field) . ') does not match with the number of ids (' . implode($id_lst) . ') in sql update');
+            } else {
+                $sql_where = '';
+                $offset = 0;
+                foreach ($id_field as $id_fld) {
+                    if ($sql_where != '') {
+                        $sql_where .= ' AND ';
+                    } else {
+                        $sql_where .= ' WHERE ';
+                    }
+                    $used_id_par = $this->par_offset($id_field_par, $offset);
+                    $sql_where .= $id_fld . ' = ' . $used_id_par;
+                    $offset++;
+                }
+                $sql .= $sql_where;
+            }
+        } else {
+            $sql .= ' WHERE ' . $id_field . ' = ' . $id_field_par;
+        }
 
         return $this->end_sql($sql, self::UPDATE);
+    }
+
+    /**
+     * if nneded offset the parameter field placeholder
+     * e.g. $2 and offset 2 results to $4
+     * TODO finish
+     *
+     * @param string $id_par
+     * @param int $offset
+     * @return string
+     */
+    private function par_offset(string $id_par, int $offset): string
+    {
+        if ($this->db_type)
+        return $id_par;
     }
 
     /**
@@ -984,7 +1021,20 @@ class sql
             if (!$this->join_usr_added) {
                 $usr_table_name = $this->name_sql_esc(sql_db::USER_PREFIX . $this->table);
                 $this->join .= ' LEFT JOIN ' . $usr_table_name . ' ' . sql_db::USR_TBL;
-                $this->join .= ' ON ' . sql_db::STD_TBL . '.' . $this->id_field . ' = ' . sql_db::USR_TBL . '.' . $this->id_field;
+                if (is_array($this->id_field)) {
+                    $join_link = '';
+                    foreach ($this->id_field as $id_fld) {
+                        if ($join_link == '') {
+                            $join_link .= ' ON ';
+                        } else {
+                            $join_link .= ' AND ';
+                        }
+                        $join_link .= sql_db::STD_TBL . '.' . $id_fld . ' = ' . sql_db::USR_TBL . '.' . $id_fld;
+                    }
+                    $this->join .= $join_link;
+                } else {
+                    $this->join .= ' ON ' . sql_db::STD_TBL . '.' . $this->id_field . ' = ' . sql_db::USR_TBL . '.' . $this->id_field;
+                }
                 if (!$this->all_query) {
                     $this->join .= ' AND ' . sql_db::USR_TBL . '.' . user::FLD_ID . ' = ';
                     if ($this->query_name == '' and !$this->sub_query) {
@@ -1078,7 +1128,13 @@ class sql
 
         if ($has_id) {
             // add the fields that part of all standard tables so id and name on top of the field list
-            $field_lst[] = $this->id_field;
+            if (is_array($this->id_field)) {
+                foreach ($this->id_field as $id_fld) {
+                    $field_lst[] = $id_fld;
+                }
+            } else {
+                $field_lst[] = $this->id_field;
+            }
             if ($this->usr_query) {
                 // user can change the name of an object, that's why the target field list is either $usr_field_lst or $field_lst
                 if (!in_array($this->class, self::DB_TYPES_NOT_NAMED)) {
@@ -1123,7 +1179,15 @@ class sql
 
         // add normal fields
         foreach ($this->field_lst as $field) {
-            $field = $this->name_sql_esc($field);
+            if (is_array($field)) {
+                $fld_lst = array();
+                foreach ($field as $fld) {
+                    $fld_lst[] = $this->name_sql_esc($fld);
+                }
+                $field = $fld_lst;
+            } else {
+                $field = $this->name_sql_esc($field);
+            }
             $result = $this->sep($result);
             if ($this->usr_query or $this->join_type != '') {
                 $result .= ' ' . sql_db::STD_TBL . '.' . $field;
@@ -1866,9 +1930,10 @@ class sql
             } else {
                 $sql = 'PREPARE ' . $query_name . ' AS ' . $sql;
             }
+            $sql .= ";";
         } elseif ($this->db_type == sql_db::MYSQL) {
             $sql = "PREPARE " . $query_name . " FROM '" . $sql;
-            $this->end = "';";
+            $sql .= "';";
         } else {
             log_err('Prepare SQL not yet defined for SQL dialect ' . $this->db_type);
         }
@@ -2181,7 +2246,12 @@ class sql
                     and $this->class != sql_db::TBL_LANGUAGE_FORM
                     and $this->class != sql_db::TBL_USER_OFFICIAL_TYPE
                     and $this->class != sql_db::TBL_USER_TYPE) {
-                    $sql = $sql . ' RETURNING ' . $this->id_field;
+                    $sql .= ' RETURNING ';
+                    if (is_array($this->id_field)) {
+                        $sql .= implode(',', $this->id_field);
+                    } else {
+                        $sql .= $this->id_field;
+                    }
                     // TODO check if not the next line needs to be used
                     // $sql = $sql . " SELECT currval('" . $this->id_field . "_seq'); ";
                 }

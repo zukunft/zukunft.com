@@ -71,6 +71,13 @@ class value_unit_tests
         $val = $t->dummy_value();
         $t->assert_sql_insert($db_con, $val);
         $t->assert_sql_insert($db_con, $val, true);
+        $val_prime = $t->dummy_value_prime_3();
+        $t->assert_sql_insert($db_con, $val_prime);
+        $t->assert_sql_insert($db_con, $val_prime, true);
+        $val_prime_max = $t->dummy_value_prime_max();
+        $t->assert_sql_insert($db_con, $val_prime_max);
+        $t->assert_sql_insert($db_con, $val_prime_max, true);
+        // TODO add an sql insert test for a prime value with 2 and 4 phrases
         $t->assert_sql_update($db_con, $val);
         $t->assert_sql_update($db_con, $val, true);
         $this->assert_sql_by_grp($t, $db_con, $val);

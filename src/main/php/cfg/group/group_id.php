@@ -85,6 +85,11 @@ class group_id
         return $db_key;
     }
 
+    /**
+     * get the max number if phrases for type of the given id
+     * @param int|string $id either a 64-bit integer group id, a 512-bit alpha_num group id or a text of more than 16 +/- seperated 6 alpha_num char phrase ids
+     * @return int the
+     */
     function max_number_of_phrase(int|string $id): int
     {
         $ext = $this->table_extension($id, true);
@@ -101,9 +106,10 @@ class group_id
      * get the sorted array of phrase ids from the given group id
      *
      * @param int|string $grp_id either a 64-bit integer group id, a 512-bit alpha_num group id or a text of more than 16 +/- seperated 6 alpha_num char phrase ids
+     * @param bool $filled if true the missing ids are filled with a null value
      * @return array a sorted list of phrase ids
      */
-    function get_array(int|string $grp_id): array
+    function get_array(int|string $grp_id, bool $filled = false): array
     {
         if ($this->is_prime($grp_id)) {
             $result = $this->int_array($grp_id);
@@ -120,6 +126,13 @@ class group_id
                         $result[] = $id;
                     }
                 }
+            }
+        }
+        $is = count($result);
+        $max = $this->max_number_of_phrase($grp_id);
+        if ($filled and $is < $this->max_number_of_phrase($grp_id)) {
+            for ($i = $is; $i < $max; $i++) {
+                $result[] = null;
             }
         }
         return $result;

@@ -161,7 +161,12 @@ class user_list
         $lib = new library();
         $class = $lib->class_to_name($dbo::class);
         $sql = 'SELECT ' . user::FLD_ID . ',';
-        $sql .= ' COUNT (' . $dbo->id_field() . ') AS ' . self::FLD_CHANGES;
+        $id_fields = $dbo->id_field();
+        if (is_array($id_fields)) {
+            $sql .= ' COUNT (*) AS ' . self::FLD_CHANGES;
+        } else {
+            $sql .= ' COUNT (' . $dbo->id_field() . ') AS ' . self::FLD_CHANGES;
+        }
         $sql .= ' FROM ' . sql_db::TBL_USER_PREFIX . $class . sql_db::TABLE_EXTENSION;
         $sql .= ' GROUP BY ' . user::FLD_ID;
         return $sql;

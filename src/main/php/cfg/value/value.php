@@ -126,8 +126,7 @@ class value extends sandbox_value
     const FLD_LAST_UPDATE = 'last_update';
 
     // all database field names excluding the id and excluding the user specific fields
-    const FLD_NAMES = array(
-    );
+    const FLD_NAMES = array();
     // list of the user specific numeric database field names
     const FLD_NAMES_NUM_USR = array(
         self::FLD_VALUE,
@@ -810,13 +809,18 @@ class value extends sandbox_value
     /**
      * overwrites the standard db_object function because
      * the main id field of value is not value_id, but group_id
-     * @return string the field name of the prime database index of the object
+     * @return string|array the field name(s) of the prime database index of the object
      */
-    function id_field(): string
+    function id_field(): string|array
     {
         $lib = new library();
         if ($this->grp->is_prime()) {
-            return $lib->class_to_name(phrase::class) . sql_db::FLD_EXT_ID . '_1';
+            $id_fields = array();
+            $base_name = $lib->class_to_name(phrase::class) . sql_db::FLD_EXT_ID . '_';
+            for ($i = 1; $i <= group_id::PRIME_PHRASE; $i++) {
+                $id_fields[] = $base_name . $i;
+            }
+            return $id_fields;
         } else {
             return $lib->class_to_name(group::class) . sql_db::FLD_EXT_ID;
         }
@@ -2100,7 +2104,12 @@ class value extends sandbox_value
         $fld_name = implode('_', $lib->sql_name_shorten($fields));
         $qp->name .= '_update_' . $fld_name;
         $sc->set_name($qp->name);
-        $qp->sql = $sc->sql_update($this->id_field(), $this->id(), $fields, $values);
+        if ($this->grp->is_prime()) {
+            $id_fields = $this->grp->id_names(phrase::FLD_ID . '_');
+        } else {
+            $id_fields = $this->id_field();
+        }
+        $qp->sql = $sc->sql_update($id_fields, $this->id(), $fields, $values);
         $values[] = $this->id();
         $par_values = [];
         foreach (array_keys($values) as $i) {

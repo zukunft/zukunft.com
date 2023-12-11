@@ -287,9 +287,9 @@ class db_object
      * function that can be overwritten by the child object
      * e.g. if the object name does not match the generated id field name
      * e.g. to group_id for values and results
-     * @return string the field name of the prime database index of the object
+     * @return string|array the field name(s) of the prime database index of the object
      */
-    function id_field(): string
+    function id_field(): string|array
     {
         $lib = new library();
         return $lib->class_to_name($this::class) . sql_db::FLD_EXT_ID;

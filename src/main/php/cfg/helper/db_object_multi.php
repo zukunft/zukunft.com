@@ -82,7 +82,7 @@ class db_object_multi extends db_object
         if ($db_row != null) {
             if (array_key_exists($id_fld, $db_row)) {
                 if ($db_row[$id_fld] != 0 or $db_row[$id_fld] != '') {
-                    if (substr($ext,0, 2) == group_id::TBL_EXT_PHRASE_ID) {
+                    if (substr($ext, 0, 2) == group_id::TBL_EXT_PHRASE_ID) {
                         $this->set_id((int)$db_row[$id_fld]);
                     } else {
                         $this->set_id($db_row[$id_fld]);
@@ -257,7 +257,14 @@ class db_object_multi extends db_object
     function dsp_id(): string
     {
         if ($this->id() != 0) {
-            return ' (' . $this->id_field() . ' ' . $this->id() . ')';
+            $id_fields = $this->id_field();
+            if (is_array($id_fields)) {
+                $fld_dsp = ' (' . implode(', ' ,$id_fields);
+                $fld_dsp .= ' = ' . $this->id() . ')';
+                return $fld_dsp;
+            } else {
+                return ' (' . $id_fields . ' ' . $this->id() . ')';
+            }
         } else {
             return ' (' . $this->id_field() . ' no set)';
         }

@@ -309,6 +309,7 @@ class value_list extends sandbox_list
 
     /**
      * create an SQL statement to retrieve a list of value by the id from the database
+     * TODO links and select all phrase ids
      *
      * @param sql $sc with the target db_type set
      * @param array $ids value ids that should be loaded
@@ -327,7 +328,6 @@ class value_list extends sandbox_list
 
         $par_offset = 0;
         $par_types = array();
-        $val = new value($this->user());
         foreach ($tbl_id_matrix as $matrix_row) {
             $tbl_ext = array_shift($matrix_row);
             // TODO add the union query creation for the other table types
@@ -363,11 +363,6 @@ class value_list extends sandbox_list
         }
 
         $qp->sql = $sc->prepare_sql($qp->sql, $qp->name, $par_types);
-        if ($sc->db_type == sql_db::POSTGRES) {
-            $qp->sql .= ';';
-        } else {
-            $qp->sql .= "';";
-        }
 
         return $qp;
     }
@@ -405,6 +400,8 @@ class value_list extends sandbox_list
     /**
      * create an SQL statement to retrieve a list of values by a list of phrase ids from the database
      * return all value that match at least on phrase of the list
+     * TODO change where to ANY
+     * TODO links and select all phrase ids
      *
      * @param sql $sc with the target db_type set
      * @param phrase_list $phr_lst phrase list to which all related values should be loaded
@@ -417,6 +414,8 @@ class value_list extends sandbox_list
         $qp = $this->load_sql_init_query_par($phr_lst->ids(), 'phr_lst');
 
         // loop over the tables where the value might be stored
+        $par_offset = 0;
+        $par_types = array();
         foreach ($tbl_id_matrix as $matrix_row) {
             $tbl_ext = array_shift($matrix_row);
             if ($tbl_ext == group_id::TBL_EXT_PRIME) {
@@ -447,12 +446,8 @@ class value_list extends sandbox_list
                 $qp->merge($qp_tbl);
             }
         }
-        $sc->set_join_fields(
-            array(value::FLD_ID), sql_db::TBL_VALUE_PHRASE_LINK,
-            value::FLD_ID, value::FLD_ID);
-        $sc->add_where(sql_db::LNK_TBL . '.' . phrase::FLD_ID, $phr_lst->ids());
-        $qp->sql = $sc->sql();
-        $qp->par = $sc->get_par();
+
+        $qp->sql = $sc->prepare_sql($qp->sql, $qp->name, $par_types);
 
         return $qp;
     }

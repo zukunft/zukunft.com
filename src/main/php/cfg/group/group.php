@@ -1493,6 +1493,15 @@ class group extends sandbox_multi
     }
 
     /**
+     * @return string with the best possible id for this element mainly used for debugging
+     */
+    function dsp_id_short(): string
+    {
+        $grp_id_obj = new group_id();
+        return implode(',', $grp_id_obj->get_array($this->id(), true));
+    }
+
+    /**
      * @return string with the group name
      */
     function name(): string

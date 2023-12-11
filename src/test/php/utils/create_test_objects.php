@@ -712,6 +712,19 @@ class create_test_objects extends test_base
     }
 
     /**
+     * @return phrase_list the phrases relevant for testing the max number of prime phrases
+     */
+    function dummy_phrase_list_zh_mio(): phrase_list
+    {
+        $lst = new phrase_list($this->usr1);
+        $lst->add($this->dummy_word_zh()->phrase());
+        $lst->add($this->dummy_word_inhabitant()->phrase());
+        $lst->add($this->dummy_word_2019()->phrase());
+        $lst->add($this->dummy_word_mio()->phrase());
+        return $lst;
+    }
+
+    /**
      * @return phrase_list the phrases relevant for testing the increase formula
      */
     function dummy_phrase_list_increase(): phrase_list
@@ -732,9 +745,34 @@ class create_test_objects extends test_base
         return new phrase_list_dsp($this->dummy_phrase_list()->api_json());
     }
 
+    /**
+     * @return group with one prime phrases
+     */
     function dummy_phrase_group(): group
     {
         $lst = $this->dummy_phrase_list_pi();
+        $grp = $lst->get_grp_id(false);
+        $grp->name = group_api::TN_READ;
+        return $grp;
+    }
+
+    /**
+     * @return group with three prime phrases
+     */
+    function dummy_phrase_group_prime_3(): group
+    {
+        $lst = $this->dummy_phrase_list_zh();
+        $grp = $lst->get_grp_id(false);
+        $grp->name = group_api::TN_READ;
+        return $grp;
+    }
+
+    /**
+     * @return group with the max number of prime phrases
+     */
+    function dummy_phrase_group_prime_max(): group
+    {
+        $lst = $this->dummy_phrase_list_zh_mio();
         $grp = $lst->get_grp_id(false);
         $grp->name = group_api::TN_READ;
         return $grp;
@@ -826,6 +864,24 @@ class create_test_objects extends test_base
     function dummy_value(): value
     {
         $grp = $this->dummy_phrase_group();
+        return new value($this->usr1, round(value_api::TV_READ, 13), $grp);
+    }
+
+    /**
+     * @return value with more than one prime phrase
+     */
+    function dummy_value_prime_3(): value
+    {
+        $grp = $this->dummy_phrase_group_prime_3();
+        return new value($this->usr1, round(value_api::TV_READ, 13), $grp);
+    }
+
+    /**
+     * @return value with the maximal number of prime phrase
+     */
+    function dummy_value_prime_max(): value
+    {
+        $grp = $this->dummy_phrase_group_prime_max();
         return new value($this->usr1, round(value_api::TV_READ, 13), $grp);
     }
 
