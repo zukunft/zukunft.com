@@ -406,7 +406,7 @@ class value extends sandbox_value
     {
         $tbl_ext = $this->grp->table_extension(true);
         $ext = $this->grp->table_extension();
-        $qp = new sql_par($class . $ext, true);
+        $qp = new sql_par($class, true, false, $ext, $tbl_ext);
         $qp->name .= sql_db::FLD_ID;
         $sc->set_class($class, false, $tbl_ext);
         $sc->set_name($qp->name);

@@ -215,7 +215,7 @@ class db_object
     {
         $lib = new library();
         $tbl_name = $lib->class_to_name($class);
-        $qp = new sql_par($tbl_name . $ext);
+        $qp = new sql_par($tbl_name, false, false, $ext, $tbl_ext);
         $qp->name .= $query_name;
         $sc->set_class($class, $usr_tbl, $tbl_ext);
         $sc->set_name($qp->name);

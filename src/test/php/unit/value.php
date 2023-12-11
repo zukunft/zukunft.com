@@ -91,6 +91,7 @@ class value_unit_tests
 
         $t->subheader('for values related to up to 16 phrases');
         $val = $t->dummy_value_16();
+        // TODO insert value does not need to return the id because this is given by the group id
         $t->assert_sql_insert($db_con, $val);
         $t->assert_sql_insert($db_con, $val, true);
         $t->assert_sql_update($db_con, $val);

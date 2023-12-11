@@ -96,7 +96,8 @@ class group_id
         if ($ext == self::TBL_EXT_PRIME) {
             return self::PRIME_PHRASE;
         } elseif ($ext == self::TBL_EXT_BIG) {
-            return $this->count($id);
+            $id_keys = preg_split("/[+-]/", $id);
+            return count($id_keys);
         } else {
             return self::STANDARD_PHRASES;
         }
@@ -166,7 +167,15 @@ class group_id
                 $ext = self::TBL_EXT_PHRASE_ID . $this->count($grp_id);
             }
         } elseif ($this->is_big($grp_id)) {
-            $ext = self::TBL_EXT_BIG;
+            if ($is_grp) {
+                $ext = self::TBL_EXT_BIG;
+            } else {
+                $ext = self::TBL_EXT_PHRASE_ID . $this->count($grp_id);
+            }
+        } else {
+            if (!$is_grp) {
+                $ext = self::TBL_EXT_PHRASE_ID . $this->count($grp_id);
+            }
         }
         return $ext;
     }

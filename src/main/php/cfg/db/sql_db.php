@@ -40,8 +40,7 @@ include_once MODEL_DB_PATH . 'sql.php';
 include_once MODEL_SYSTEM_PATH . 'log.php';
 
 use cfg\config;
-use cfg\db\sql;
-use cfg\db\sql_par_type;
+use cfg\group\group_id;
 use cfg\library;
 use cfg\log;
 use cfg\sys_log_level;
@@ -3033,6 +3032,8 @@ class sql_db
 
     /**
      * convert the parameter type list to make valid for postgres
+     * TODO deprecate and use a function of the sql object instead
+     *
      * @return array with the postgres parameter types
      */
     private function par_types_to_postgres(): array
@@ -3049,6 +3050,9 @@ class sql_db
                 case sql_par_type::INT_OR:
                 case sql_par_type::INT_NOT:
                     $result[] = 'bigint';
+                    break;
+                case sql_par_type::INT_SMALL:
+                    $result[] = 'smallint';
                     break;
                 case sql_par_type::TEXT_LIST:
                     $result[] = 'text[]';
@@ -3180,7 +3184,7 @@ class sql_db
      *
      * @param int $id the unique database id if the object to check
      * @param int|null $owner_id the user id of the owner of the object
-     * @param string $id_field the field name of the prime database key if not standard
+     * @param string|array $id_field the field name or field list of the prime database key if not standard
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      *                 in the previous set dialect
      */
@@ -3205,11 +3209,50 @@ class sql_db
         if ($id == 0) {
             log_err('The id must be set to detect if the link has been changed');
         } else {
-            $this->add_par(sql_par_type::INT, $id);
-            $sql_mid = " " . user::FLD_ID .
-                " FROM " . $this->name_sql_esc(sql_db::TBL_USER_PREFIX . $this->table) .
-                " WHERE " . $this->id_field . " = " . $this->par_name() . "
-                 AND (excluded <> 1 OR excluded is NULL)";
+            // TODO review
+            $sql_mid_where = '';
+            if ($tbl_ext == group_id::TBL_EXT_PRIME) {
+                $grp_id = new group_id();
+                $id_lst = $grp_id->get_array($id, true);
+                if (is_array($this->id_field)) {
+                    if (count($id_lst) != count($this->id_field)) {
+                        log_err('the number of id and fields differ');
+                    } else {
+                        $pos = 0;
+                        foreach ($id_lst as $id_item) {
+                            if ($id_item == null) {
+                                // TODO move null to const
+                                $this->add_par(sql_par_type::INT_SMALL, 'null');
+                            } else {
+                                $this->add_par(sql_par_type::INT_SMALL, $id_item);
+                            }
+                            if ($sql_mid_where == '') {
+                                $sql_mid_where .= " WHERE ";
+                            } else {
+                                $sql_mid_where .= " AND ";
+                            }
+                            $sql_mid_where .= $this->id_field[$pos] . " = " . $this->par_name();
+                            $pos++;
+                        }
+                    }
+                } else {
+                    log_err('the id fields are expected to be an array');
+                }
+            } elseif ($tbl_ext == group_id::TBL_EXT_BIG) {
+                $grp_id = new group_id();
+                $id_lst = $grp_id->get_array($id, true);
+                foreach ($id_lst as $id_item) {
+                    $this->add_par(sql_par_type::INT, $id_item);
+                }
+            } else {
+                $this->add_par(sql_par_type::INT, $id);
+            }
+            $sql_mid = " " . user::FLD_ID;
+            $sql_mid .= " FROM " . $this->name_sql_esc(sql_db::TBL_USER_PREFIX . $this->table);
+            if (!is_array($this->id_field)) {
+                $sql_mid_where .= $this->id_field . " = " . $this->par_name();
+            }
+            $sql_mid .= $sql_mid_where . " AND (excluded <> 1 OR excluded is NULL)";
             if ($owner_id > 0) {
                 $this->add_par(sql_par_type::INT, $owner_id);
                 $sql_mid .= " AND " . user::FLD_ID . " <> " . $this->par_name();

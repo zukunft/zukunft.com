@@ -658,7 +658,11 @@ class sandbox_value extends sandbox_multi
         $sc->set_class($this::class, $usr_tbl, $tbl_ext);
         $sql_name = $lib->class_to_name($this::class);
         $qp = new sql_par($sql_name);
-        $qp->name = $sql_name . $tbl_ext . $ext;
+        if ($tbl_ext == group_id::TBL_EXT_BIG) {
+            $qp->name = $sql_name . $tbl_ext;
+        } else {
+            $qp->name = $sql_name . $tbl_ext . $ext;
+        }
         if ($usr_tbl) {
             $qp->name .= '_user';
         }

@@ -74,6 +74,7 @@ class sql
 
     // postgres parameter types for prepared queries
     const PG_PAR_INT = 'bigint';
+    const PG_PAR_INT_SMALL = 'smallint';
 
     // classes where the table that do not have a name
     // e.g. sql_db::TBL_TRIPLE is a link which hase a name, but the generated name can be overwritten, so the standard field naming is not used
@@ -733,6 +734,7 @@ class sql
         } elseif ($spt == sql_par_type::TEXT_LIST) {
             $this->add_par($spt, $this->str_array_to_sql_string($fld_val));
         } elseif ($spt == sql_par_type::INT
+            or $spt == sql_par_type::INT_SMALL
             or $spt == sql_par_type::INT_HIGHER
             or $spt == sql_par_type::INT_LOWER
             or $spt == sql_par_type::INT_OR
@@ -1776,7 +1778,7 @@ class sql
                                 $result .= $tbl_id . $this->par_fields[$i] . ' IS NULL ';
                             } elseif ($par_type == sql_par_type::NOT_NULL) {
                                 $par_offset--;
-                                // TODO review taböe prefix
+                                // TODO review table prefix
                                 $result .= sql_db::LNK_TBL . '.' . $this->par_fields[$i] . ' IS NOT NULL ';
                             } elseif ($par_type == sql_par_type::INT_NOT) {
                                 $result .= $tbl_id . $this->par_fields[$i] . ' <> ' . $this->par_name($par_pos);
@@ -2844,6 +2846,9 @@ class sql
                 case sql_par_type::LIMIT:
                 case sql_par_type::OFFSET:
                     $result[] = self::PG_PAR_INT;
+                    break;
+                case sql_par_type::INT_SMALL:
+                    $result[] = self::PG_PAR_INT_SMALL;
                     break;
                 case sql_par_type::TEXT_LIST:
                     $result[] = 'text[]';

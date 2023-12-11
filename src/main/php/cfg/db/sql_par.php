@@ -37,6 +37,7 @@
 
 namespace cfg\db;
 
+use cfg\group\group_id;
 use cfg\library;
 
 /**
@@ -47,27 +48,35 @@ class sql_par
     public string $sql;   // the SQL statement to create a prepared query
     public string $name;  // the unique name of the SQL statement
     public array $par;    // the list of the parameters used for the execution
-    public string $ext;   // the table extension used e.g. to decide if the index is int or string
+    public string $ext;   // the extension used e.g. to decide if the index is int or string
 
     /**
      * @param string $class the name of the calling class used for the unique query name
      * @param bool $is_std true if the standard data for all users should be loaded
      * @param bool $all true if all rows should be loaded
+     * @param string $ext the query name extension e.g. to separate the queries by the number of parameters
+     * @param string $tbl_ext the table extension e.g. to select the table where the data should be saved
      */
-    function __construct(string $class, bool $is_std = false, bool $all = false, string $ext = '')
+    function __construct(string $class, bool $is_std = false, bool $all = false, string $ext = '', string $tbl_ext = '')
     {
         $lib = new library();
         $this->sql = '';
-        $class = $lib->class_to_name($class) . $ext;
-        if ($is_std) {
-            $this->name = $class . '_std_by_';
-        } elseif ($all) {
-            $this->name = $class . '_';
+        $class = $lib->class_to_name($class);
+        // only for prime value and result tables the number of ids is relevant
+        if ($tbl_ext == group_id::TBL_EXT_PRIME and $ext != $tbl_ext) {
+            $name = $class . $tbl_ext . $ext;
         } else {
-            $this->name = $class . '_by_';
+            $name = $class . $tbl_ext;
+        }
+        if ($is_std) {
+            $this->name = $name . '_std_by_';
+        } elseif ($all) {
+            $this->name = $name . '_';
+        } else {
+            $this->name = $name . '_by_';
         }
         $this->par = array();
-        $this->ext = '';
+        $this->ext = $ext;
     }
 
     /**

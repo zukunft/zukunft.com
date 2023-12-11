@@ -1,4 +1,4 @@
-PREPARE value_p1_by_grp FROM
+PREPARE value_prime_p1_by_grp FROM
     'SELECT s.phrase_id_1,
             s.phrase_id_2,
             s.phrase_id_3,

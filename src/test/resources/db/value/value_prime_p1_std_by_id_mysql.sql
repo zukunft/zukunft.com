@@ -1,4 +1,4 @@
-PREPARE value_p1_std_by_id FROM
+PREPARE value_prime_p1_std_by_id FROM
     'SELECT phrase_id_1,
             phrase_id_2,
             phrase_id_3,
