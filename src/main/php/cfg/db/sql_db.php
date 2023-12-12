@@ -1134,23 +1134,54 @@ class sql_db
 
         // add normal fields
         foreach ($this->field_lst as $field) {
-            $field = $this->name_sql_esc($field);
+            if (is_array($field)) {
+                $fld_lst = array();
+                foreach ($field as $fld) {
+                    $fld_lst[] = $this->name_sql_esc($fld);
+                }
+                $field = $fld_lst;
+            } else {
+                $field = $this->name_sql_esc($field);
+            }
             $this->set_field_sep();
             if ($this->usr_query or $this->join_type != '') {
-                $this->fields .= ' ' . sql_db::STD_TBL . '.' . $field;
-                if ($field == $this->id_field) {
-                    // add the user sandbox id for user sandbox queries to find out if the user sandbox has already been created
-                    if ($this->all_query) {
-                        if ($this->fields != '') {
-                            $this->fields .= ', ';
+                // TODO extract the common part
+                if (is_array($field)) {
+                    foreach ($field as $fld) {
+                        $this->fields .= ' ' . sql_db::STD_TBL . '.' . $fld;
+                        if ($field == $this->id_field) {
+                            // add the user sandbox id for user sandbox queries to find out if the user sandbox has already been created
+                            if ($this->all_query) {
+                                if ($this->fields != '') {
+                                    $this->fields .= ', ';
+                                }
+                                $this->fields .= ' ' . sql_db::USR_TBL . '.' . user::FLD_ID;
+                            } else {
+                                if ($this->usr_query) {
+                                    if ($this->fields != '') {
+                                        $this->fields .= ', ';
+                                    }
+                                    $this->fields .= ' ' . sql_db::USR_TBL . '.' . $fld . ' AS ' . sql_db::USER_PREFIX . $this->id_field;
+                                }
+                            }
                         }
-                        $this->fields .= ' ' . sql_db::USR_TBL . '.' . user::FLD_ID;
-                    } else {
-                        if ($this->usr_query) {
+                    }
+                } else {
+                    $this->fields .= ' ' . sql_db::STD_TBL . '.' . $field;
+                    if ($field == $this->id_field) {
+                        // add the user sandbox id for user sandbox queries to find out if the user sandbox has already been created
+                        if ($this->all_query) {
                             if ($this->fields != '') {
                                 $this->fields .= ', ';
                             }
-                            $this->fields .= ' ' . sql_db::USR_TBL . '.' . $field . ' AS ' . sql_db::USER_PREFIX . $this->id_field;
+                            $this->fields .= ' ' . sql_db::USR_TBL . '.' . user::FLD_ID;
+                        } else {
+                            if ($this->usr_query) {
+                                if ($this->fields != '') {
+                                    $this->fields .= ', ';
+                                }
+                                $this->fields .= ' ' . sql_db::USR_TBL . '.' . $field . ' AS ' . sql_db::USER_PREFIX . $this->id_field;
+                            }
                         }
                     }
                 }
@@ -2620,13 +2651,26 @@ class sql_db
     /**
      * create the "JOIN" SQL statement based on the joined user fields
      */
-    private function set_user_join()
+    private function set_user_join(): void
     {
         if ($this->usr_query) {
             if (!$this->join_usr_added) {
                 $usr_table_name = $this->name_sql_esc(sql_db::USER_PREFIX . $this->table);
                 $this->join .= ' LEFT JOIN ' . $usr_table_name . ' ' . sql_db::USR_TBL;
-                $this->join .= ' ON ' . sql_db::STD_TBL . '.' . $this->id_field . ' = ' . sql_db::USR_TBL . '.' . $this->id_field;
+                if (is_array($this->id_field)) {
+                    $join_link = '';
+                    foreach ($this->id_field as $id_fld) {
+                        if ($join_link == '') {
+                            $join_link .= ' ON ';
+                        } else {
+                            $join_link .= ' AND ';
+                        }
+                        $join_link .= sql_db::STD_TBL . '.' . $id_fld . ' = ' . sql_db::USR_TBL . '.' . $id_fld;
+                    }
+                    $this->join .= $join_link;
+                } else {
+                    $this->join .= ' ON ' . sql_db::STD_TBL . '.' . $this->id_field . ' = ' . sql_db::USR_TBL . '.' . $this->id_field;
+                }
                 if (!$this->all_query) {
                     $this->join .= ' AND ' . sql_db::USR_TBL . '.' . user::FLD_ID . ' = ';
                     if ($this->query_name == '') {
@@ -3189,11 +3233,11 @@ class sql_db
      *                 in the previous set dialect
      */
     function load_sql_not_changed_multi(
-        int $id,
-        ?int $owner_id = 0,
+        int          $id,
+        ?int         $owner_id = 0,
         string|array $id_field = '',
-        string $ext = '',
-        string $tbl_ext = ''
+        string       $ext = '',
+        string       $tbl_ext = ''
     ): sql_par
     {
         $qp = new sql_par($this->class);
