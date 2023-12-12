@@ -305,12 +305,18 @@ class result extends sandbox_value
      */
     function load_standard_sql(sql $sc, string $class = self::class): sql_par
     {
-        $sc->set_class($class);
-        // overwrite the standard id field name (result_id) with the main database id field for results "group_id"
+        $tbl_ext = $this->grp->table_extension(true);
+        $ext = $this->grp->table_extension();
+        $qp = new sql_par($class, true, false, $ext, $tbl_ext);
+        $qp->name .= sql_db::FLD_ID;
+        $sc->set_class($class, false, $tbl_ext);
+        $sc->set_name($qp->name);
         $sc->set_id_field($this->id_field());
         $sc->set_fields(array_merge(self::FLD_NAMES, array(user::FLD_ID)));
 
-        return parent::load_standard_sql($sc, $class);
+        return $this->load_sql_set_where($qp, $sc, $ext);
+        // TODO check which parts can be move to a parent class
+        //return parent::load_standard_sql($sc, $class);
     }
 
     /**
