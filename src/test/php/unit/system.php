@@ -152,11 +152,11 @@ class system_unit_tests
         $t->assert($test_name, $exp->dsp_id(), $target);
         $test_name = 'debug result id';
         $res = $t->dummy_result();
-        $target = '"Mathematics" 123456 (group_id 1) for user 1 (zukunft.com system test)';
+        $target = '"Mathematics" 123456 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 1,,,) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $res->dsp_id(), $target);
         $test_name = 'debug result_list id';
         $res_lst = $t->dummy_result_list();
-        $target = '"Mathematics" 123456 (group_id 1,,,) for user 1 (zukunft.com system test)';
+        $target = '"Mathematics" 123456 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 1,,,) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $res_lst->dsp_id(), $target);
         $test_name = 'debug figure id';
         $fig = $t->dummy_figure_value();

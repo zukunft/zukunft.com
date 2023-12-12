@@ -63,6 +63,7 @@ use cfg\group\group_list;
 use cfg\library;
 use cfg\parameter_type;
 use cfg\phr_ids;
+use cfg\phrase;
 use cfg\phrase_list;
 use cfg\sandbox_value;
 use cfg\user;
@@ -98,7 +99,6 @@ class result extends sandbox_value
         formula::FLD_ID,
         user::FLD_ID,
         self::FLD_SOURCE_GRP,
-        self::FLD_GRP,
         self::FLD_VALUE,
         self::FLD_LAST_UPDATE
     );
@@ -999,12 +999,21 @@ class result extends sandbox_value
     /**
      * overwrites the standard db_object function because
      * the main id field of result is not result_id, but group_id
-     * @return string the field name of the prime database index of the object
+     * @return string|array the field name(s) of the prime database index of the object
      */
-    function id_field(): string
+    function id_field(): string|array
     {
         $lib = new library();
-        return $lib->class_to_name(group::class) . sql_db::FLD_EXT_ID;
+        if ($this->grp->is_prime()) {
+            $id_fields = array();
+            $base_name = $lib->class_to_name(phrase::class) . sql_db::FLD_EXT_ID . '_';
+            for ($i = 1; $i <= group_id::PRIME_PHRASE; $i++) {
+                $id_fields[] = $base_name . $i;
+            }
+            return $id_fields;
+        } else {
+            return $lib->class_to_name(group::class) . sql_db::FLD_EXT_ID;
+        }
     }
 
 
