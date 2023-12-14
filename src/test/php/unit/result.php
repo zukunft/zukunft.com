@@ -82,9 +82,7 @@ class result_unit_tests
 
         $t->subheader('SQL load default statement tests');
 
-        // sql to load the word by id
-        $res = new result($usr);
-        $res->set_id(2);
+        // sql to load the standard result by id
         $t->assert_sql_standard($db_con, $res);
         $t->assert_sql_user_changes($db_con, $res);
 
