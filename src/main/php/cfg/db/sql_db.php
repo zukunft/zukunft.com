@@ -1147,22 +1147,33 @@ class sql_db
             if ($this->usr_query or $this->join_type != '') {
                 // TODO extract the common part
                 if (is_array($field)) {
-                    foreach ($field as $fld) {
-                        $this->fields .= ' ' . sql_db::STD_TBL . '.' . $fld;
-                        if ($field == $this->id_field) {
-                            // add the user sandbox id for user sandbox queries to find out if the user sandbox has already been created
-                            if ($this->all_query) {
-                                if ($this->fields != '') {
-                                    $this->fields .= ', ';
-                                }
-                                $this->fields .= ' ' . sql_db::USR_TBL . '.' . user::FLD_ID;
-                            } else {
-                                if ($this->usr_query) {
-                                    if ($this->fields != '') {
-                                        $this->fields .= ', ';
+                    if (!is_array($this->id_field)) {
+                        log_warning('The id field ' . $this->id_field . ' is expected to be an array');
+
+                    } else {
+                        if (count($field) != count($this->id_field)) {
+                            log_warning('The number of id fields ' . $this->id_field . ' does not match the number of ids');
+                        } else {
+                            $pos = 0;
+                            foreach ($field as $fld) {
+                                $this->fields .= ' ' . sql_db::STD_TBL . '.' . $fld;
+                                if ($field == $this->id_field) {
+                                    // add the user sandbox id for user sandbox queries to find out if the user sandbox has already been created
+                                    if ($this->all_query) {
+                                        if ($this->fields != '') {
+                                            $this->fields .= ', ';
+                                        }
+                                        $this->fields .= ' ' . sql_db::USR_TBL . '.' . user::FLD_ID;
+                                    } else {
+                                        if ($this->usr_query) {
+                                            if ($this->fields != '') {
+                                                $this->fields .= ', ';
+                                            }
+                                            $this->fields .= ' ' . sql_db::USR_TBL . '.' . $fld . ' AS ' . sql_db::USER_PREFIX . $this->id_field[$pos];
+                                        }
                                     }
-                                    $this->fields .= ' ' . sql_db::USR_TBL . '.' . $fld . ' AS ' . sql_db::USER_PREFIX . $this->id_field;
                                 }
+                                $pos++;
                             }
                         }
                     }

@@ -1521,7 +1521,6 @@ class value extends sandbox_value
     function load_sql_user_changes(sql $sc, string $class = self::class): sql_par
     {
         $tbl_ext = $this->grp->table_extension(true);
-        $ext = $this->grp->table_extension();
         $sc->set_class($class, true, $tbl_ext);
         // overwrite the standard id field name (value_id) with the main database id field for values "group_id"
         $sc->set_id_field($this->id_field());
