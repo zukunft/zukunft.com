@@ -321,12 +321,15 @@ class sql
      */
 
     /**
+     * set the database type and reset the object
+     *
      * @param string $db_type the database type as string
      * @return void
      */
     function set_db_type(string $db_type): void
     {
         $this->db_type = $db_type;
+        $this->reset();
     }
 
     /**

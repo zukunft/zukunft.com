@@ -181,6 +181,18 @@ class group_id
     }
 
     /**
+     * @return array with the possible table extension
+     */
+    function table_extension_list(): array
+    {
+        $tbl_ext_lst = array();
+        $tbl_ext_lst[] = self::TBL_EXT_PRIME;
+        $tbl_ext_lst[] = '';
+        $tbl_ext_lst[] = self::TBL_EXT_BIG;
+        return $tbl_ext_lst;
+    }
+
+    /**
      * @param int|string $grp_id
      * @return bool true if the $grp_id represents up to four prime phrase ids
      */

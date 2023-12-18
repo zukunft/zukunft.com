@@ -240,7 +240,7 @@ class sandbox_unit_tests
         $t->assert('non id Postgres parameter', $lib->trim($created_par), $lib->trim($expected_par));
 
         // ... same for MySQL
-        $sc->set_db_type(sql_db::MYSQL);
+        $sc->db_type = sql_db::MYSQL;
         $created_sql = $sc->sql();
         $expected_sql = "PREPARE query_test FROM 'SELECT config_id,  config_name,  `value` FROM config';";
         $t->assert('non id MySQL select', $lib->trim($created_sql), $lib->trim($expected_sql));

@@ -223,7 +223,8 @@ class value_list extends sandbox_list
     }
 
     /**
-     * collect the potential source tables, means
+     * collect the potential source tables
+     * selected by the given group ids
      * all tables where the selected values might be found
      * to fix the rows of the matrix
      *

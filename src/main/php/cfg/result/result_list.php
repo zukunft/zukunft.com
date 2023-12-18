@@ -44,8 +44,10 @@ use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\formula;
 use cfg\group\group;
+use cfg\group\group_id;
 use cfg\group\group_list;
 use cfg\library;
+use cfg\phrase;
 use cfg\phrase_list;
 use cfg\sandbox_list;
 use cfg\triple;
@@ -97,12 +99,16 @@ class result_list extends sandbox_list
      * @param string $query_name the name extension to make the query name unique
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    private function load_sql(sql $sc, string $query_name): sql_par
+    private function load_sql(sql $sc, string $query_name, group $grp = Null): sql_par
     {
-        $qp = new sql_par(self::class);
+        $ext = '';
+        if ($grp != null) {
+            $ext = $grp->table_extension(true);
+        }
+        $qp = new sql_par(self::class, false, false, $ext);
         $qp->name .= $query_name;
 
-        $sc->set_class(result::class);
+        $sc->set_class(result::class, false, $ext);
         // overwrite the standard id field name (result_id) with the main database id field for values "group_id"
         $res = new result($this->user());
         $sc->set_id_field($res->id_field());
@@ -122,9 +128,15 @@ class result_list extends sandbox_list
      */
     function load_sql_by_grp(sql $sc, group $grp): sql_par
     {
-        $qp = $this->load_sql($sc, 'grp');
+        $qp = $this->load_sql($sc, 'grp', $grp);
         if ($grp->is_prime()) {
-            $sc->add_where(group::FLD_ID, $grp->id(), sql_par_type::TEXT);
+            $fields = $grp->id_names(phrase::FLD_ID . '_');
+            $values = $grp->id_lst();
+            $pos = 0;
+            foreach ($fields as $field) {
+                $sc->add_where($field, $values[$pos], sql_par_type::INT_SMALL);
+                $pos++;
+            }
         } elseif ($grp->is_big()) {
             $sc->add_where(group::FLD_ID, $grp->id(), sql_par_type::TEXT);
         } else {
@@ -152,6 +164,24 @@ class result_list extends sandbox_list
         } else {
             $sc->add_where(result::FLD_SOURCE_GRP, $grp->id());
         }
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+        return $qp;
+    }
+
+    /**
+     * create the SQL statement to load the results created by the given formula
+     *
+     * @param sql $sc the sql creator instance with the target db_type already set
+     * @param formula $frm the formula to select the results
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_frm(sql $sc, formula $frm): sql_par
+    {
+        // loop over the tables where the result may be saved
+        // union the sql statements
+        $qp = $this->load_sql($sc, 'formula_id');
+        $sc->add_where(formula::FLD_ID, $frm->id());
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
         return $qp;
@@ -259,6 +289,23 @@ class result_list extends sandbox_list
         }
 
         return $qp;
+    }
+
+    /**
+     * list of potential table extensions where a result may be saved
+     *
+     * @param array $ids value ids that should be selected
+     * @return array with the unique table extension where the values of the given id list may be found of the group ids
+     */
+    private function table_extension_list(array $ids): array
+    {
+        $grp_id = new group_id();
+        $tbl_ext_lst = array();
+        foreach ($ids as $id) {
+            $tbl_ext_lst[] = $grp_id->table_extension($id, true);
+        }
+
+        return array_unique($tbl_ext_lst);
     }
 
     /**

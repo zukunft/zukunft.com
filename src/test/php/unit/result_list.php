@@ -32,11 +32,13 @@
 
 namespace test;
 
+use cfg\db\sql;
 use cfg\formula;
 use cfg\group\group;
 use cfg\result\result_list;
 use cfg\db\sql_db;
 use cfg\triple;
+use cfg\user;
 use cfg\word;
 use html\result\result_list as result_list_dsp;
 
@@ -68,10 +70,7 @@ class result_list_unit_tests
         $t->assert_sql_by_group($db_con, $res_lst, $grp, true);
 
         // sql to load a list of results by the formula id
-        $res_lst = new result_list($usr);
-        $frm = new formula($usr);
-        $frm->set_id(1);
-        $t->assert_sql_list_by_ref($db_con, $res_lst, $frm);
+        $this->assert_sql_by_frm($t);
 
         // sql to load a list of results by the phrase group id
         $res_lst = new result_list($usr);
@@ -108,6 +107,35 @@ class result_list_unit_tests
         $trp_lst = $t->dummy_result_list();
         $t->assert_api_to_dsp($trp_lst, new result_list_dsp());
 
+    }
+
+    /**
+     * result list by formula
+     * SQL statement creation test
+     * TODO align the other assert sql function to this e.g. use sql
+     *
+     * not using assert_load_sql because unique for result list
+     *
+     * @param test_cleanup $t the forwarded testing object
+     */
+    private function assert_sql_by_frm(test_cleanup $t): void
+    {
+        // create objects
+        $sc = new sql();
+        $res_lst = new result_list(new user());
+        $frm = $t->dummy_formula();
+
+        // check the Postgres query syntax
+        $sc->set_db_type(sql_db::POSTGRES);
+        $qp = $res_lst->load_sql_by_frm($sc, $frm);
+        $result = $t->assert_qp($qp, $sc->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $sc->set_db_type(sql_db::MYSQL);
+            $qp = $res_lst->load_sql_by_frm($sc, $frm);
+            $t->assert_qp($qp, $sc->db_type);
+        }
     }
 
 }
