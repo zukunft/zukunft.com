@@ -55,18 +55,24 @@ class sql_par
      * @param bool $is_std true if the standard data for all users should be loaded
      * @param bool $all true if all rows should be loaded
      * @param string $ext the query name extension e.g. to separate the queries by the number of parameters
-     * @param string $tbl_ext the table extension e.g. to select the table where the data should be saved
+     * @param sql_group_type $tbl_typ the table extension e.g. to select the table where the data should be saved
      */
-    function __construct(string $class, bool $is_std = false, bool $all = false, string $ext = '', string $tbl_ext = '')
+    function __construct(
+        string $class,
+        bool $is_std = false,
+        bool $all = false,
+        string $ext = '',
+        sql_group_type $tbl_typ = sql_group_type::MOST
+    )
     {
         $lib = new library();
         $this->sql = '';
         $class = $lib->class_to_name($class);
         // only for prime value and result tables the number of ids is relevant
-        if ($tbl_ext == group_id::TBL_EXT_PRIME and $ext != $tbl_ext) {
-            $name = $class . $tbl_ext . $ext;
+        if ($tbl_typ == sql_group_type::PRIME and $ext != $tbl_typ->extension()) {
+            $name = $class . $tbl_typ->extension() . $ext;
         } else {
-            $name = $class . $tbl_ext;
+            $name = $class . $tbl_typ->extension();
         }
         if ($is_std) {
             $this->name = $name . '_std_by_';

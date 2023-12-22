@@ -48,6 +48,7 @@ include_once MODEL_GROUP_PATH . 'group_id_list.php';
 use api\value\value_list as value_list_api;
 use cfg\db\sql;
 use cfg\db\sql_db;
+use cfg\db\sql_group_type;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\group\group;
@@ -333,7 +334,7 @@ class value_list extends sandbox_list
             $tbl_ext = array_shift($matrix_row);
             // TODO add the union query creation for the other table types
             // combine the select statements with and instead of union if possible
-            if ($tbl_ext == group_id::TBL_EXT_PRIME) {
+            if ($tbl_ext == sql_group_type::PRIME) {
                 $max_row_ids = array_shift($matrix_row);
                 $phr_id_lst = $matrix_row;
 
@@ -419,7 +420,7 @@ class value_list extends sandbox_list
         $par_types = array();
         foreach ($tbl_id_matrix as $matrix_row) {
             $tbl_ext = array_shift($matrix_row);
-            if ($tbl_ext == group_id::TBL_EXT_PRIME) {
+            if ($tbl_ext == sql_group_type::PRIME) {
                 $max_row_ids = array_shift($matrix_row);
                 $phr_id_lst = $matrix_row;
                 $qp_tbl = $this->load_sql_multi($sc, 'phr_lst', $tbl_ext, $tbl_ext, $usr_tbl);

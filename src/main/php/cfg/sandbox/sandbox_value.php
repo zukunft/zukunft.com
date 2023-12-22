@@ -41,6 +41,7 @@ use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
+use cfg\db\sql_group_type;
 use cfg\db\sql_par;
 use cfg\group\group;
 use cfg\group\group_id;
@@ -330,6 +331,7 @@ class sandbox_value extends sandbox_multi
     /**
      * create the sql statements for a set (standard, prime and big) tables
      * for one field type e.g. numeric value, text values
+     * TODO move the table types to an const array
      *
      * @param sql $sc
      * @param array $fld_par the parameters for the value field e.g. for a numeric field, text, time or geo
@@ -352,7 +354,7 @@ class sandbox_value extends sandbox_multi
         $sql_index = $sc->sql_separator();
         $sql_foreign = $sc->sql_separator();
 
-        $sc->set_class($this::class, false, $ext_type . self::TBL_EXT_STD . group_id::TBL_EXT_PRIME);
+        $sc->set_class($this::class, false, $ext_type . self::TBL_EXT_STD . sql_group_type::PRIME->extension());
         $fields = array_merge(self::FLD_KEY_PRIME, $fld_par, $this::FLD_ALL_SOURCE);
         $sql .= $sc->table_create($fields, $type_name,
             $this::TBL_COMMENT_STD . $type_name . $this::TBL_COMMENT_STD_PRIME_CONT);
@@ -391,24 +393,24 @@ class sandbox_value extends sandbox_multi
 
         $sql .= $sc->sql_separator();
         $fields = array_merge(self::FLD_KEY_PRIME, $this::FLD_ALL_SOURCE_GROUP_PRIME, $std_fields);
-        $sc->set_class($this::class, false, $ext_type . group_id::TBL_EXT_PRIME);
+        $sc->set_class($this::class, false, $ext_type . sql_group_type::PRIME->extension());
         $sql .= $sc->table_create($fields, $type_name, $this::TBL_COMMENT_PRIME . $type_name . $this::TBL_COMMENT_PRIME_CONT);
         $sql_index .= $sc->index_create($fields);
         $sql_foreign .= $sc->foreign_key_create($fields);
         $fields = array_merge(self::FLD_KEY_PRIME_USER, $this::FLD_ALL_SOURCE_GROUP_PRIME, $std_usr_fields);
-        $sc->set_class($this::class, true, $ext_type . group_id::TBL_EXT_PRIME);
+        $sc->set_class($this::class, true, $ext_type . sql_group_type::PRIME->extension());
         $sql .= $sc->table_create($fields, $type_name, $this::TBL_COMMENT_PRIME_USER . $type_name . $this::TBL_COMMENT_PRIME_USER_CONT);
         $sql_index .= $sc->index_create($fields);
         $sql_foreign .= $sc->foreign_key_create($fields);
 
         $sql .= $sc->sql_separator();
         $fields = array_merge(self::FLD_KEY_BIG, $this::FLD_ALL_SOURCE_GROUP_BIG, $std_fields);
-        $sc->set_class($this::class, false, $ext_type . group_id::TBL_EXT_BIG);
+        $sc->set_class($this::class, false, $ext_type . sql_group_type::BIG->extension());
         $sql .= $sc->table_create($fields, $type_name, $this::TBL_COMMENT . $type_name . $this::TBL_COMMENT_BIG_CONT);
         $sql_index .= $sc->index_create($fields);
         $sql_foreign .= $sc->foreign_key_create($fields);
         $fields = array_merge(self::FLD_KEY_BIG_USER, $this::FLD_ALL_SOURCE_GROUP_BIG, $std_usr_fields);
-        $sc->set_class($this::class, true, $ext_type . group_id::TBL_EXT_BIG);
+        $sc->set_class($this::class, true, $ext_type . sql_group_type::BIG->extension());
         $sql .= $sc->table_create($fields, $type_name, $this::TBL_COMMENT_BIG_USER . $type_name . $this::TBL_COMMENT_BIG_USER_CONT);
         $sql_index .= $sc->index_create($fields);
         $sql_foreign .= $sc->foreign_key_create($fields);
@@ -518,9 +520,9 @@ class sandbox_value extends sandbox_multi
      */
     protected function load_sql_by_grp_id(sql $sc, string $query_name, string $class = self::class): sql_par
     {
-        $tbl_ext = $this->grp->table_extension(true);
+        $tbl_typ = $this->grp->table_type(true);
         $ext = $this->grp->table_extension();
-        $qp = $this->load_sql_multi($sc, $query_name, $class, $ext, $tbl_ext);
+        $qp = $this->load_sql_multi($sc, $query_name, $class, $ext, $tbl_typ);
         return $this->load_sql_set_where($qp, $sc, $ext);
     }
 
@@ -653,15 +655,14 @@ class sandbox_value extends sandbox_multi
     {
         $lib = new library();
         // the value table name is not yet using the number of phrase keys as extension
-        $tbl_ext = $this->grp->table_extension(true);
+        $tbl_typ = $this->grp->table_type(true);
         $ext = $this->grp->table_extension();
-        $sc->set_class($this::class, $usr_tbl, $tbl_ext);
+        $sc->set_class($this::class, $usr_tbl, $tbl_typ->extension());
         $sql_name = $lib->class_to_name($this::class);
         $qp = new sql_par($sql_name);
-        if ($tbl_ext == group_id::TBL_EXT_BIG) {
-            $qp->name = $sql_name . $tbl_ext;
-        } else {
-            $qp->name = $sql_name . $tbl_ext . $ext;
+        $qp->name = $sql_name . $tbl_typ->extension();
+        if ($tbl_typ == sql_group_type::PRIME) {
+            $qp->name .= $ext;
         }
         if ($usr_tbl) {
             $qp->name .= '_user';

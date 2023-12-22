@@ -3244,11 +3244,11 @@ class sql_db
      *                 in the previous set dialect
      */
     function load_sql_not_changed_multi(
-        int          $id,
-        ?int         $owner_id = 0,
-        string|array $id_field = '',
-        string       $ext = '',
-        string       $tbl_ext = ''
+        int            $id,
+        ?int           $owner_id = 0,
+        string|array   $id_field = '',
+        string         $ext = '',
+        sql_group_type $tbl_typ = sql_group_type::MOST
     ): sql_par
     {
         $qp = new sql_par($this->class);
@@ -3258,7 +3258,7 @@ class sql_db
         }
         $this->set_name($qp->name);
         $this->set_usr($this->usr_id);
-        $this->set_table(false, $tbl_ext);
+        $this->set_table(false, $tbl_typ->extension());
         $this->set_id_field($id_field);
         $this->set_fields(array(user::FLD_ID));
         if ($id == 0) {
@@ -3266,7 +3266,7 @@ class sql_db
         } else {
             // TODO review
             $sql_mid_where = '';
-            if ($tbl_ext == group_id::TBL_EXT_PRIME) {
+            if ($tbl_typ == sql_group_type::PRIME) {
                 $grp_id = new group_id();
                 $id_lst = $grp_id->get_array($id, true);
                 if (is_array($this->id_field)) {
@@ -3293,7 +3293,7 @@ class sql_db
                 } else {
                     log_err('the id fields are expected to be an array');
                 }
-            } elseif ($tbl_ext == group_id::TBL_EXT_BIG) {
+            } elseif ($tbl_typ == sql_group_type::BIG) {
                 $grp_id = new group_id();
                 $id_lst = $grp_id->get_array($id, true);
                 foreach ($id_lst as $id_item) {

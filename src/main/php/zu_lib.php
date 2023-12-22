@@ -238,6 +238,8 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO add a global_id to the word and triple table and reserve the prime ids
          or create a table for the pod prime, index and big_index phrases with the global phrase_id
     TODO save in the local pod setting the value and result tables actually used to speed up value searches
+    TODO offer syntactic sugar translation for PL SQL
+    TODO reduce the function parameters to 3 or less wherever possible
 
     TODO keep in the frontend the phrases that are relevant for the user at the moment
          calculate the the frontend real-time the value with the relevant precision

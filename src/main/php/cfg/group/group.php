@@ -421,34 +421,34 @@ class group extends sandbox_multi
         $sql_foreign = $sc->sql_separator();
         $sql_truncate = '';
         $sql_lst = [$sql, $sql_index, $sql_foreign, $sql_truncate];
-        $sql_lst = $this->sql_one_tbl($sc, false, '', sandbox_value::FLD_KEY, $this::TBL_COMMENT, $sql_lst);
-        $sql_lst = $this->sql_one_tbl($sc, true, '', sandbox_value::FLD_KEY_USER, $this::TBL_COMMENT, $sql_lst);
-        $sql_lst = $this->sql_one_tbl($sc, false, group_id::TBL_EXT_PRIME, group::FLD_KEY_PRIME, $this::TBL_COMMENT_PRIME, $sql_lst);
-        $sql_lst = $this->sql_one_tbl($sc, true, group_id::TBL_EXT_PRIME, group::FLD_KEY_PRIME_USER, $this::TBL_COMMENT_PRIME, $sql_lst);
-        $sql_lst = $this->sql_one_tbl($sc, false, group_id::TBL_EXT_BIG, sandbox_value::FLD_KEY_BIG, $this::TBL_COMMENT_BIG, $sql_lst);
-        return $this->sql_one_tbl($sc, true, group_id::TBL_EXT_BIG, sandbox_value::FLD_KEY_BIG_USER, $this::TBL_COMMENT_BIG, $sql_lst);
+        $sql_lst = $this->sql_one_tbl($sc, false, sql_group_type::MOST, sandbox_value::FLD_KEY, $this::TBL_COMMENT, $sql_lst);
+        $sql_lst = $this->sql_one_tbl($sc, true, sql_group_type::MOST, sandbox_value::FLD_KEY_USER, $this::TBL_COMMENT, $sql_lst);
+        $sql_lst = $this->sql_one_tbl($sc, false, sql_group_type::PRIME, group::FLD_KEY_PRIME, $this::TBL_COMMENT_PRIME, $sql_lst);
+        $sql_lst = $this->sql_one_tbl($sc, true, sql_group_type::PRIME, group::FLD_KEY_PRIME_USER, $this::TBL_COMMENT_PRIME, $sql_lst);
+        $sql_lst = $this->sql_one_tbl($sc, false, sql_group_type::BIG, sandbox_value::FLD_KEY_BIG, $this::TBL_COMMENT_BIG, $sql_lst);
+        return $this->sql_one_tbl($sc, true, sql_group_type::BIG, sandbox_value::FLD_KEY_BIG_USER, $this::TBL_COMMENT_BIG, $sql_lst);
     }
 
     /**
      * add the sql statements for one table to the given array of sql statements
      * @param sql $sc the sql creator object with the target db_type set
      * @param bool $usr_table true if the table should save the user specific changes
-     * @param string $tbl_ext the table extension e.g. prime for a short list of primarily used phrases
+     * @param sql_group_type $tbl_typ the table extension e.g. prime for a short list of primarily used phrases
      * @param array $key_fld with the parameter for the table primary key field
      * @param string $tbl_comment the comment for the table in the sql statement
      * @param array $sql_lst the list with the sql statements created until now
      * @return array the list of sql statements including the statements created by this function call
      */
     private function sql_one_tbl(
-        sql    $sc,
-        bool   $usr_table,
-        string $tbl_ext,
-        array  $key_fld,
-        string $tbl_comment,
-        array  $sql_lst
+        sql            $sc,
+        bool           $usr_table,
+        sql_group_type $tbl_typ,
+        array          $key_fld,
+        string         $tbl_comment,
+        array          $sql_lst
     ): array
     {
-        $sc->set_class($this::class, $usr_table, $tbl_ext);
+        $sc->set_class($this::class, $usr_table, $tbl_typ->extension());
         $fields = array_merge($key_fld, sandbox_value::FLD_ALL_OWNER, $this::FLD_LST_CREATE_CHANGEABLE);
         if ($usr_table) {
             $fields = array_merge($key_fld, sandbox_value::FLD_ALL_CHANGER, $this::FLD_LST_CREATE_CHANGEABLE);
@@ -477,7 +477,8 @@ class group extends sandbox_multi
     {
         $this->set_id($id);
         $ext = $this->table_extension(true);
-        $qp = $this->load_sql_multi($sc, sql_db::FLD_ID, $class, $ext, $ext);
+        $tbl_typ = $this->table_type(true);
+        $qp = $this->load_sql_multi($sc, sql_db::FLD_ID, $class, $ext, $tbl_typ);
         $sc->add_where($this->id_field(), $id);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -1427,8 +1428,9 @@ class group extends sandbox_multi
     protected function sql_common(sql $sc, bool $usr_tbl = false): sql_par
     {
         $lib = new library();
-        $ext = $this->table_extension(true);
-        $sc->set_class($this::class, $usr_tbl, $ext);
+        $tbl_typ = $this->table_type(true);
+        $ext = $tbl_typ->extension();
+        $sc->set_class($this::class, $usr_tbl, $tbl_typ->extension());
         $sql_name = $lib->class_to_name($this::class);
         $qp = new sql_par($sql_name . $ext);
         $qp->name = $sql_name . $ext;

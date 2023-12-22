@@ -38,6 +38,7 @@ namespace cfg\value;
 
 use cfg\db\sql;
 use cfg\db\sql_db;
+use cfg\db\sql_group_type;
 use cfg\db\sql_par;
 use cfg\group\group;
 use cfg\library;
@@ -202,20 +203,20 @@ class value_time_series extends sandbox_value
      * @param string $query_name the name extension to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
      * @param string $ext the query name extension e.g. to differentiate queries based on 1,2, or more phrases
-     * @param string $tbl_ext the table name extension e.g. to switch between standard and prime values
+     * @param sql_group_type $tbl_typ the table name extension e.g. to switch between standard and prime values
      * @param bool $usr_tbl true if a db row should be added to the user table
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_multi(
-        sql    $sc,
-        string $query_name,
-        string $class = self::class,
-        string $ext = '',
-        string $tbl_ext = '',
-        bool   $usr_tbl = false
+        sql            $sc,
+        string         $query_name,
+        string         $class = self::class,
+        string         $ext = '',
+        sql_group_type $tbl_typ = sql_group_type::MOST,
+        bool           $usr_tbl = false
     ): sql_par
     {
-        $qp = parent::load_sql_multi($sc, $query_name, $class, $ext, $tbl_ext, $usr_tbl);
+        $qp = parent::load_sql_multi($sc, $query_name, $class, $ext, $tbl_typ, $usr_tbl);
 
         // overwrite the standard id field name (value_id) with the main database id field for values "group_id"
         $sc->set_id_field($this->id_field());

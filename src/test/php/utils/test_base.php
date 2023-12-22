@@ -53,6 +53,7 @@
 namespace test;
 
 include_once MODEL_USER_PATH . 'user.php';
+include_once DB_PATH . 'sql_group_type.php';
 
 use cfg\db\sql_par;
 use cfg\log\change;
