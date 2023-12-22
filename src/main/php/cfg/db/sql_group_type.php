@@ -2,9 +2,8 @@
 
 /*
 
-    model/group/group_id_list.php - functions for a list of group ids
-    -----------------------------
-
+    /model/dp/sql_group_type.php - enum of the sql table extension type for value and result tables
+    ----------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -27,34 +26,29 @@
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
-  
+
 */
 
-namespace cfg\group;
+namespace cfg\db;
 
-use cfg\phrase_list;
-
-class group_id_list
+enum sql_group_type: string
 {
 
-    /**
-     * list of the table extension / types where the value or result rows might be found
-     *
-     * @param array $ids with the group ids that should be searched for
-     * @param bool $is_grp true to get the table extension for groups
-     * @return array with the table extensions where the values or results might be found
-     */
-    function table_ext_list(array $ids, bool $is_grp = false): array
-    {
-        $ext_lst = array();
-        $grp_id = new group_id();
-        foreach ($ids as $id) {
-            $ext = $grp_id->table_extension_old($id, $is_grp);
-            if (!in_array($ext, $ext_lst)) {
-                $ext_lst[] = $ext;
-            }
-        }
-        return $ext_lst;
-    }
+    // the group id type to select a value or result
+    case PRIME = 'prime'; // up to four 16-bit phrase ids
+    case MOST = 'most'; // up to 16 64-bit phrase ids
+    case BIG = 'big'; // more than 16 64-bit phrase ids
+    case INDEX = 'index'; // one 32-bit and two 16-bit phrase ids
+    case LARGE = 'large'; // one 48-bit and one 16-bit phrase ids
 
+    public function extension(): string
+    {
+        return match($this) {
+            self::PRIME => '_prime',
+            self::BIG => '_big',
+            self::INDEX => '_index',
+            self::LARGE => '_large',
+            default => '',
+        };
+    }
 }

@@ -53,6 +53,7 @@
 
 namespace cfg\group;
 
+use cfg\db\sql_group_type;
 use cfg\phrase_list;
 
 class group_id
@@ -92,7 +93,7 @@ class group_id
      */
     function max_number_of_phrase(int|string $id): int
     {
-        $ext = $this->table_extension($id, true);
+        $ext = $this->table_extension_old($id, true);
         if ($ext == self::TBL_EXT_PRIME) {
             return self::PRIME_PHRASE;
         } elseif ($ext == self::TBL_EXT_BIG) {
@@ -157,7 +158,7 @@ class group_id
      * @param bool $is_grp true to get the table extension for groups
      * @return string the extension for the table name based on the id
      */
-    function table_extension(int|string $grp_id, bool $is_grp = false): string
+    function table_extension_old(int|string $grp_id, bool $is_grp = false): string
     {
         $ext = '';
         if ($this->is_prime($grp_id)) {
@@ -176,6 +177,28 @@ class group_id
             if (!$is_grp) {
                 $ext = self::TBL_EXT_PHRASE_ID . $this->count($grp_id);
             }
+        }
+        return $ext;
+    }
+
+    /**
+     * get the table name extension for value, result and group tables
+     * depending on the number of phrases a different table for value and results is used
+     * for faster searching
+     *
+     * @param int|string $grp_id
+     * @param bool $is_grp true to get the table extension for groups
+     * @return string the extension for the table name based on the id
+     */
+    function sql_type(int|string $grp_id, bool $is_grp = false): sql_group_type
+    {
+        $ext = '';
+        if ($this->is_prime($grp_id)) {
+            $ext = sql_group_type::PRIME;
+        } elseif ($this->is_big($grp_id)) {
+            $ext = sql_group_type::BIG;
+        } else {
+            $ext = sql_group_type::MOST;
         }
         return $ext;
     }
@@ -257,8 +280,8 @@ class group_id
             }
             $keys[] = $key;
         }
-        while (count($keys) < self::PRIME_PHRASE ) {
-            array_unshift($keys , str_repeat('0', 16));
+        while (count($keys) < self::PRIME_PHRASE) {
+            array_unshift($keys, str_repeat('0', 16));
         }
         $bin_key = implode('', $keys);
         $bin_key = str_pad($bin_key, 64, '0', STR_PAD_LEFT);

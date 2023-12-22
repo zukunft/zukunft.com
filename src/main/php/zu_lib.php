@@ -233,6 +233,11 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO for prioritized change streams use transfer and process block size parameters e.g. 100 changes are send to another pod and removed from the out cache not before the destination pod has confirmed the writing to the in cache table
     TODO add a table with process steps with step_id, name, description, code_id
     TODO add a table with process_next_step with step_next_id, from_step_id, to_step_id, name, description, user_profile, user_id, batch_job_id
+    TODO some index words like can have many items and need to be only valid / unique within a phrase e.g. the ISIN is a phrase within the phrase security identifier (finance)
+         create an additional value_index table where the one big and two small int values are the key or
+    TODO add a global_id to the word and triple table and reserve the prime ids
+         or create a table for the pod prime, index and big_index phrases with the global phrase_id
+    TODO save in the local pod setting the value and result tables actually used to speed up value searches
 
     TODO keep in the frontend the phrases that are relevant for the user at the moment
          calculate the the frontend real-time the value with the relevant precision

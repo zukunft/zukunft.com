@@ -784,6 +784,7 @@ class sql
      *
      * @param int $par_offset in case of a sub query the number of parameter set until here of the main query
      * @param bool $has_id to be able to create also SQL statements for tables that does not have a single unique key
+     * @param bool $prepare can be set to false the create sql parts of a union query
      * @return string the created SQL statement in the previous set dialect
      */
     function sql(int $par_offset = 0, bool $has_id = true, bool $prepare = true): string

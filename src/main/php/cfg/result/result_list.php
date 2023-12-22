@@ -32,6 +32,7 @@
 namespace cfg\result;
 
 include_once DB_PATH . 'sql_par_type.php';
+include_once DB_PATH . 'sql_group_type.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
 include_once API_RESULT_PATH . 'result_list.php';
 
@@ -40,6 +41,7 @@ use cfg\batch_job;
 use cfg\batch_job_list;
 use cfg\db\sql;
 use cfg\db\sql_db;
+use cfg\db\sql_group_type;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\formula;
@@ -97,21 +99,18 @@ class result_list extends sandbox_list
      *
      * @param sql $sc the sql creator instance with the target db_type already set
      * @param string $query_name the name extension to make the query name unique
+     * @param sql_group_type $ext the table extension to force the sub table selection
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    private function load_sql(sql $sc, string $query_name, group $grp = Null): sql_par
+    private function load_sql(sql $sc, string $query_name, sql_group_type $ext = sql_group_type::MOST): sql_par
     {
-        $ext = '';
-        if ($grp != null) {
-            $ext = $grp->table_extension(true);
-        }
-        $qp = new sql_par(self::class, false, false, $ext);
+        $qp = new sql_par(self::class, false, false, $ext->extension());
         $qp->name .= $query_name;
 
-        $sc->set_class(result::class, false, $ext);
+        $sc->set_class(result::class, false, $ext->extension());
         // overwrite the standard id field name (result_id) with the main database id field for values "group_id"
         $res = new result($this->user());
-        $sc->set_id_field($res->id_field());
+        $sc->set_id_field($res->id_field($ext->extension()));
         $sc->set_name($qp->name);
 
         $sc->set_usr($this->user()->id());
@@ -128,7 +127,8 @@ class result_list extends sandbox_list
      */
     function load_sql_by_grp(sql $sc, group $grp): sql_par
     {
-        $qp = $this->load_sql($sc, 'grp', $grp);
+        $ext = $grp->table_type(true);
+        $qp = $this->load_sql($sc, 'grp', $ext);
         if ($grp->is_prime()) {
             $fields = $grp->id_names(phrase::FLD_ID . '_');
             $values = $grp->id_lst();
@@ -176,14 +176,43 @@ class result_list extends sandbox_list
      * @param formula $frm the formula to select the results
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
+
+    private function load_sql_init_query_par(string $query_name): sql_par
+    {
+        $qp = new sql_par(result::class);
+        $lib = new library();
+        // TODO shorten the code
+        $ext_lst = array();
+        foreach (result::TBL_EXT_LST as $ext) {
+            $ext_lst[] = $ext->extension();
+        }
+        $qp->name =
+            $lib->class_to_name(self::class) .
+            implode("", $ext_lst) .
+            '_by_' . $query_name;
+        return $qp;
+    }
+
+
     function load_sql_by_frm(sql $sc, formula $frm): sql_par
     {
+        $qp = $this->load_sql_init_query_par('frm');
+        $par_types = array();
+        foreach (result::TBL_EXT_LST as $ext) {
+            $qp_tbl = $this->load_sql($sc, 'frm', $ext);
+            $sc->add_where(formula::FLD_ID, $frm->id());
+            $qp_tbl->sql = $sc->sql(0, true, false);
+            $qp_tbl->par = $sc->get_par();
+
+            $qp->merge($qp_tbl);
+        }
+
+        $qp->sql = $sc->prepare_sql($qp->sql, $qp->name, $par_types);
+
         // loop over the tables where the result may be saved
         // union the sql statements
-        $qp = $this->load_sql($sc, 'formula_id');
-        $sc->add_where(formula::FLD_ID, $frm->id());
-        $qp->sql = $sc->sql();
-        $qp->par = $sc->get_par();
+        // TODO create an array with the tables where a result could be found
+
         return $qp;
     }
 
@@ -302,7 +331,7 @@ class result_list extends sandbox_list
         $grp_id = new group_id();
         $tbl_ext_lst = array();
         foreach ($ids as $id) {
-            $tbl_ext_lst[] = $grp_id->table_extension($id, true);
+            $tbl_ext_lst[] = $grp_id->table_extension_old($id, true);
         }
 
         return array_unique($tbl_ext_lst);
@@ -636,7 +665,7 @@ class result_list extends sandbox_list
      */
     function frm_upd_lst_usr(
         formula $frm,
-                       $phr_lst_frm_assigned, $phr_lst_frm_used, $phr_grp_lst_used, $usr, $last_msg_time, $collect_pos)
+                $phr_lst_frm_assigned, $phr_lst_frm_used, $phr_grp_lst_used, $usr, $last_msg_time, $collect_pos)
     {
         $lib = new library();
         log_debug('res_lst->frm_upd_lst_usr(' . $frm->name() . ',fat' . $phr_lst_frm_assigned->name() . ',ft' . $phr_lst_frm_used->name() . ',' . $usr->name . ')');

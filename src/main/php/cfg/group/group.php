@@ -5,6 +5,11 @@
     model/phrase/group.php - a combination of a word list and a triple_list
     -----------------------------
 
+    the prime group is designed to be useful for normal values e.g. the number of inhabitants in Zurich 2023
+    the index group is designed to be useful for structured values e.g.
+    the index big group is designed to be useful for highly structured values e.g. the ISIN as a 48-bit value with up to 65k fields (because each field can be a triple a multi dimensional tables can be store with index big)
+
+    TODO add index and index big tables
     TODO use a new table group_links to link the phrases to a group
     TODO add a order_nbr field to the group_links table
     TODO remove the fields word_ids, triple_ids and id_order
@@ -60,6 +65,7 @@ include_once MODEL_GROUP_PATH . 'group_id.php';
 include_once API_PHRASE_PATH . 'group.php';
 
 use api\phrase\group as group_api;
+use cfg\db\sql_group_type;
 use cfg\db\sql_par;
 use cfg\db_object;
 use cfg\db\sql;
@@ -84,7 +90,7 @@ use cfg\export\sandbox_exp;
 class group extends sandbox_multi
 {
 
-    /*
+    /*f
      * database link
      */
 
@@ -96,7 +102,9 @@ class group extends sandbox_multi
     // comments used for the database creation
     const TBL_COMMENT = 'to add a user given name using a 512-bit group id index for up to 16 32-bit phrase ids including the order';
     const TBL_COMMENT_PRIME = 'to add a user given name using a 64-bit group id index for up to four 16-bit phrase ids including the order';
+    const TBL_COMMENT_INDEX = 'to add a user given name using a 64-bit group id index for one 32-bit and two 16-bit phrase ids including the order';
     const TBL_COMMENT_BIG = 'to add a user given name using a group id index with a variable length for more than 16 32-bit phrase ids including the order';
+    const TBL_COMMENT_INDEX_BIG = 'to add a user given name using a 64-bit group id index for one 48-bit and one 16-bit phrase id including the order';
 
     // list of fields with parameters used for the database creation
     // the fields that can be changed by the user
@@ -275,7 +283,18 @@ class group extends sandbox_multi
     function table_extension(bool $is_grp = false): string
     {
         $grp_id = new group_id();
-        return $grp_id->table_extension($this->id(), $is_grp);
+        return $grp_id->table_extension_old($this->id(), $is_grp);
+    }
+
+    /**
+     *
+     * @param bool $is_grp true to get
+     * @return sql_group_type the extension for the table name based on the id
+     */
+    function table_type(bool $is_grp = false): sql_group_type
+    {
+        $grp_id = new group_id();
+        return $grp_id->sql_type($this->id(), $is_grp);
     }
 
     /**

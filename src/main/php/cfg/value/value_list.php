@@ -236,7 +236,7 @@ class value_list extends sandbox_list
         $grp_id = new group_id();
         $tbl_ext_lst = array();
         foreach ($ids as $id) {
-            $tbl_ext_lst[] = $grp_id->table_extension($id, true);
+            $tbl_ext_lst[] = $grp_id->table_extension_old($id, true);
         }
 
         return array_unique($tbl_ext_lst);
@@ -275,7 +275,7 @@ class value_list extends sandbox_list
             // loop over the given ids to select each value
             foreach ($ids as $id) {
                 // fill the matrix row with the ids of corresponding table type
-                $id_tbl_ext = $grp_id->table_extension($id, true);
+                $id_tbl_ext = $grp_id->table_extension_old($id, true);
                 if ($id_tbl_ext == $tbl_ext) {
                     $matrix_row = array();
                     $matrix_row[] = $tbl_ext;

@@ -44,6 +44,7 @@
 namespace cfg\result;
 
 include_once DB_PATH . 'sql_par_type.php';
+include_once DB_PATH . 'sql_group_type.php';
 include_once SERVICE_EXPORT_PATH . 'result_exp.php';
 
 use api\result\result as result_api;
@@ -51,6 +52,7 @@ use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
+use cfg\db\sql_group_type;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\expression;
@@ -93,6 +95,14 @@ class result extends sandbox_value
     const FLD_VALUE = 'numeric_value';
     const FLD_LAST_UPDATE = 'last_update';
     const FLD_DIRTY = 'dirty';
+
+    // database table extensions used
+    // TODO add a similar list to the value class
+    const TBL_EXT_LST = array(
+        sql_group_type::PRIME,
+        sql_group_type::MOST,
+        sql_group_type::BIG
+    );
 
     // all database field names used
     const FLD_NAMES = array(
@@ -1006,12 +1016,23 @@ class result extends sandbox_value
     /**
      * overwrites the standard db_object function because
      * the main id field of result is not result_id, but group_id
+     * @param string $ext the table extension to force the sub table selection
      * @return string|array the field name(s) of the prime database index of the object
      */
-    function id_field(): string|array
+    function id_field(string $ext = ''): string|array
     {
         $lib = new library();
-        if ($this->grp->is_prime()) {
+        $is_prime = false;
+        if ($ext == '') {
+            if ($this->grp->is_prime()) {
+                $is_prime = true;
+            }
+        } else {
+            if ($ext == group_id::TBL_EXT_PRIME) {
+                $is_prime = true;
+            }
+        }
+        if ($is_prime) {
             $id_fields = array();
             $base_name = $lib->class_to_name(phrase::class) . sql_db::FLD_EXT_ID . '_';
             for ($i = 1; $i <= group_id::PRIME_PHRASE; $i++) {
