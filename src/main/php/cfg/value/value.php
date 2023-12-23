@@ -405,7 +405,7 @@ class value extends sandbox_value
      */
     function load_standard_sql(sql $sc, string $class = self::class): sql_par
     {
-        $tbl_typ = $this->grp->table_type(true);
+        $tbl_typ = $this->grp->table_type();
         $ext = $this->grp->table_extension();
         $qp = new sql_par($class, true, false, $ext, $tbl_typ);
         $qp->name .= sql_db::FLD_ID;
@@ -1409,7 +1409,7 @@ class value extends sandbox_value
      */
     function not_changed_sql(sql_db $db_con): sql_par
     {
-        $tbl_typ = $this->grp->table_type(true);
+        $tbl_typ = $this->grp->table_type();
         $ext = $this->grp->table_extension();
         $db_con->set_class(self::class, false, $tbl_typ->extension());
         return $db_con->load_sql_not_changed_multi($this->id, $this->owner_id, $this->id_field(), $ext, $tbl_typ);
@@ -1521,8 +1521,8 @@ class value extends sandbox_value
      */
     function load_sql_user_changes(sql $sc, string $class = self::class): sql_par
     {
-        $tbl_ext = $this->grp->table_extension(true);
-        $sc->set_class($class, true, $tbl_ext);
+        $tbl_typ = $this->grp->table_type();
+        $sc->set_class($class, true, $tbl_typ->extension());
         // overwrite the standard id field name (value_id) with the main database id field for values "group_id"
         $sc->set_id_field($this->id_field());
         return parent::load_sql_user_changes($sc, $class);

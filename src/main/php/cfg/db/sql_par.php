@@ -68,12 +68,7 @@ class sql_par
         $lib = new library();
         $this->sql = '';
         $class = $lib->class_to_name($class);
-        // only for prime value and result tables the number of ids is relevant
-        if ($tbl_typ == sql_group_type::PRIME and $ext != $tbl_typ->extension()) {
-            $name = $class . $tbl_typ->extension() . $ext;
-        } else {
-            $name = $class . $tbl_typ->extension();
-        }
+        $name = $class . $ext;
         if ($is_std) {
             $this->name = $name . '_std_by_';
         } elseif ($all) {

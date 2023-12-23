@@ -1,4 +1,4 @@
-PREPARE result_list_by_grp (smallint) AS
+PREPARE result_list_prime_by_grp (smallint) AS
     SELECT phrase_id_1,
            phrase_id_2,
            phrase_id_3,

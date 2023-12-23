@@ -99,18 +99,18 @@ class result_list extends sandbox_list
      *
      * @param sql $sc the sql creator instance with the target db_type already set
      * @param string $query_name the name extension to make the query name unique
-     * @param sql_group_type $ext the table extension to force the sub table selection
+     * @param sql_group_type $tbl_typ the table extension to force the sub table selection
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    private function load_sql(sql $sc, string $query_name, sql_group_type $ext = sql_group_type::MOST): sql_par
+    private function load_sql(sql $sc, string $query_name, sql_group_type $tbl_typ = sql_group_type::MOST): sql_par
     {
-        $qp = new sql_par(self::class, false, false, $ext->extension());
+        $qp = new sql_par(self::class, false, false, $tbl_typ->extension());
         $qp->name .= $query_name;
 
-        $sc->set_class(result::class, false, $ext->extension());
+        $sc->set_class(result::class, false, $tbl_typ->extension());
         // overwrite the standard id field name (result_id) with the main database id field for values "group_id"
         $res = new result($this->user());
-        $sc->set_id_field($res->id_field($ext->extension()));
+        $sc->set_id_field($res->id_field($tbl_typ->extension()));
         $sc->set_name($qp->name);
 
         $sc->set_usr($this->user()->id());
@@ -127,7 +127,7 @@ class result_list extends sandbox_list
      */
     function load_sql_by_grp(sql $sc, group $grp): sql_par
     {
-        $ext = $grp->table_type(true);
+        $ext = $grp->table_type();
         $qp = $this->load_sql($sc, 'grp', $ext);
         if ($grp->is_prime()) {
             $fields = $grp->id_names(phrase::FLD_ID . '_');
@@ -331,7 +331,7 @@ class result_list extends sandbox_list
         $grp_id = new group_id();
         $tbl_ext_lst = array();
         foreach ($ids as $id) {
-            $tbl_ext_lst[] = $grp_id->table_extension_old($id, true);
+            $tbl_ext_lst[] = $grp_id->table_extension($id, true);
         }
 
         return array_unique($tbl_ext_lst);

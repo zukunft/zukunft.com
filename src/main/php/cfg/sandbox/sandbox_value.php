@@ -520,7 +520,7 @@ class sandbox_value extends sandbox_multi
      */
     protected function load_sql_by_grp_id(sql $sc, string $query_name, string $class = self::class): sql_par
     {
-        $tbl_typ = $this->grp->table_type(true);
+        $tbl_typ = $this->grp->table_type();
         $ext = $this->grp->table_extension();
         $qp = $this->load_sql_multi($sc, $query_name, $class, $ext, $tbl_typ);
         return $this->load_sql_set_where($qp, $sc, $ext);
@@ -655,15 +655,12 @@ class sandbox_value extends sandbox_multi
     {
         $lib = new library();
         // the value table name is not yet using the number of phrase keys as extension
-        $tbl_typ = $this->grp->table_type(true);
         $ext = $this->grp->table_extension();
+        $tbl_typ = $this->grp->table_type();
         $sc->set_class($this::class, $usr_tbl, $tbl_typ->extension());
         $sql_name = $lib->class_to_name($this::class);
         $qp = new sql_par($sql_name);
-        $qp->name = $sql_name . $tbl_typ->extension();
-        if ($tbl_typ == sql_group_type::PRIME) {
-            $qp->name .= $ext;
-        }
+        $qp->name = $sql_name . $ext;
         if ($usr_tbl) {
             $qp->name .= '_user';
         }

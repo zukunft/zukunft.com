@@ -167,17 +167,17 @@ class value_list extends sandbox_list
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_multi(
-        sql    $sc,
-        string $query_name,
-        string $ext = '',
-        string $tbl_ext = '',
-        bool   $usr_tbl = false
+        sql            $sc,
+        string         $query_name,
+        string         $ext = '',
+        sql_group_type $tbl_typ = sql_group_type::MOST,
+        bool           $usr_tbl = false
     ): sql_par
     {
         $qp = new sql_par(value::class, false, false, $ext);
         $qp->name .= $query_name;
 
-        $sc->set_class(value::class, $usr_tbl, $tbl_ext);
+        $sc->set_class(value::class, $usr_tbl, $ext);
         // overwrite the standard id field name (value_id) with the main database id field for values "group_id"
         $val = new value($this->user());
         $sc->set_id_field($val->id_field());
@@ -232,15 +232,28 @@ class value_list extends sandbox_list
      * @param array $ids value ids that should be selected
      * @return array with the unique table extension where the values of the given id list may be found of the group ids
      */
-    private function table_extension_list_unique(array $ids): array
+    private function table_type_list_unique(array $ids): array
     {
         $grp_id = new group_id();
-        $tbl_ext_lst = array();
+        $tbl_typ_lst = array();
         foreach ($ids as $id) {
-            $tbl_ext_lst[] = $grp_id->table_extension_old($id, true);
+            $tbl_typ_lst[] = $grp_id->table_type($id);
         }
 
-        return array_unique($tbl_ext_lst);
+        return $this->array_unique_type($tbl_typ_lst);
+    }
+
+    private function array_unique_type(array $typ_lst): array
+    {
+        $result = array();
+        $val_lst = array();
+        foreach ($typ_lst as $typ) {
+            if (!in_array($typ->value, $val_lst)) {
+                $result[] = $typ;
+                $val_lst[] = $typ->value;
+            }
+        }
+        return $result;
     }
 
     /**
@@ -268,18 +281,18 @@ class value_list extends sandbox_list
     private function extension_id_matrix(array $ids): array
     {
         $grp_id = new group_id();
-        $tbl_ext_uni = $this->table_extension_list_unique($ids);
+        $tbl_typ_uni = $this->table_type_list_unique($ids);
         $phr_id_uni = $this->phrase_id_list_unique($ids);
         $tbl_id_matrix = array();
         // loop over the tables where the values might be
-        foreach ($tbl_ext_uni as $tbl_ext) {
+        foreach ($tbl_typ_uni as $tbl_typ) {
             // loop over the given ids to select each value
             foreach ($ids as $id) {
                 // fill the matrix row with the ids of corresponding table type
-                $id_tbl_ext = $grp_id->table_extension_old($id, true);
-                if ($id_tbl_ext == $tbl_ext) {
+                $id_tbl_typ = $grp_id->table_type($id);
+                if ($id_tbl_typ == $tbl_typ) {
                     $matrix_row = array();
-                    $matrix_row[] = $tbl_ext;
+                    $matrix_row[] = $tbl_typ;
                     $matrix_row[] = $grp_id->max_number_of_phrase($id);
                     $row_id_lst = $grp_id->get_array($id);
                     foreach ($phr_id_uni as $phr_id) {
@@ -300,7 +313,11 @@ class value_list extends sandbox_list
     {
         $qp = new sql_par(value::class);
         $lib = new library();
-        $tbl_ext_uni = $this->table_extension_list_unique($ids);
+        $tbl_typ_uni = $this->table_type_list_unique($ids);
+        $tbl_ext_uni = array();
+        foreach ($tbl_typ_uni as $tbl_typ) {
+            $tbl_ext_uni[] = $tbl_typ->extension();
+        }
         $phr_id_uni = $this->phrase_id_list_unique($ids);
         $qp->name = $lib->class_to_name(
                 value_list::class) .
@@ -331,14 +348,14 @@ class value_list extends sandbox_list
         $par_offset = 0;
         $par_types = array();
         foreach ($tbl_id_matrix as $matrix_row) {
-            $tbl_ext = array_shift($matrix_row);
+            $tbl_typ = array_shift($matrix_row);
             // TODO add the union query creation for the other table types
             // combine the select statements with and instead of union if possible
-            if ($tbl_ext == sql_group_type::PRIME) {
+            if ($tbl_typ == sql_group_type::PRIME) {
                 $max_row_ids = array_shift($matrix_row);
                 $phr_id_lst = $matrix_row;
 
-                $qp_tbl = $this->load_sql_multi($sc, '', $tbl_ext, $tbl_ext, $usr_tbl);
+                $qp_tbl = $this->load_sql_multi($sc, '', $tbl_typ->extension(), $tbl_typ, $usr_tbl);
                 if ($par_offset == 0) {
                     $sc->set_usr_num_fields(value::FLD_NAMES_NUM_USR);
                 } else {
@@ -419,11 +436,11 @@ class value_list extends sandbox_list
         $par_offset = 0;
         $par_types = array();
         foreach ($tbl_id_matrix as $matrix_row) {
-            $tbl_ext = array_shift($matrix_row);
-            if ($tbl_ext == sql_group_type::PRIME) {
+            $tbl_typ = array_shift($matrix_row);
+            if ($tbl_typ == sql_group_type::PRIME) {
                 $max_row_ids = array_shift($matrix_row);
                 $phr_id_lst = $matrix_row;
-                $qp_tbl = $this->load_sql_multi($sc, 'phr_lst', $tbl_ext, $tbl_ext, $usr_tbl);
+                $qp_tbl = $this->load_sql_multi($sc, 'phr_lst', $tbl_typ->extension(), $tbl_typ, $usr_tbl);
                 if ($par_offset == 0) {
                     $sc->set_usr_num_fields(value::FLD_NAMES_NUM_USR);
                 } else {

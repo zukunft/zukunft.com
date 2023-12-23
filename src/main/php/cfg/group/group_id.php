@@ -93,13 +93,16 @@ class group_id
      */
     function max_number_of_phrase(int|string $id): int
     {
-        $ext = $this->table_extension_old($id, true);
-        if ($ext == self::TBL_EXT_PRIME) {
+        $tbl_typ = $this->table_type($id);
+        if ($tbl_typ == sql_group_type::PRIME) {
             return self::PRIME_PHRASE;
-        } elseif ($ext == self::TBL_EXT_BIG) {
+        } elseif ($tbl_typ == sql_group_type::BIG) {
             $id_keys = preg_split("/[+-]/", $id);
             return count($id_keys);
+        } elseif ($tbl_typ == sql_group_type::MOST) {
+            return self::STANDARD_PHRASES;
         } else {
+            log_err('Unexpected table type ' . $tbl_typ->value);
             return self::STANDARD_PHRASES;
         }
     }
@@ -155,27 +158,17 @@ class group_id
      * for faster searching
      *
      * @param int|string $grp_id
-     * @param bool $is_grp true to get the table extension for groups
+     * @param bool $with_phrase_count false if the number of phrases are not relevant e.g. even for prime tables
      * @return string the extension for the table name based on the id
      */
-    function table_extension_old(int|string $grp_id, bool $is_grp = false): string
+    function table_extension(int|string $grp_id, bool $with_phrase_count = true): string
     {
-        $ext = '';
-        if ($this->is_prime($grp_id)) {
-            if ($is_grp) {
-                $ext = self::TBL_EXT_PRIME;
-            } else {
-                $ext = self::TBL_EXT_PHRASE_ID . $this->count($grp_id);
-            }
-        } elseif ($this->is_big($grp_id)) {
-            if ($is_grp) {
-                $ext = self::TBL_EXT_BIG;
-            } else {
-                $ext = self::TBL_EXT_PHRASE_ID . $this->count($grp_id);
-            }
-        } else {
-            if (!$is_grp) {
-                $ext = self::TBL_EXT_PHRASE_ID . $this->count($grp_id);
+        $tbl_typ = $this->table_type($grp_id);
+        $ext = $tbl_typ->extension();
+        // only for prime value and result tables the number of ids is relevant
+        if ($tbl_typ == sql_group_type::PRIME) {
+            if ($with_phrase_count) {
+                $ext .= self::TBL_EXT_PHRASE_ID . $this->count($grp_id);
             }
         }
         return $ext;
@@ -187,10 +180,9 @@ class group_id
      * for faster searching
      *
      * @param int|string $grp_id
-     * @param bool $is_grp true to get the table extension for groups
-     * @return string the extension for the table name based on the id
+     * @return sql_group_type the extension for the table name based on the id
      */
-    function sql_type(int|string $grp_id, bool $is_grp = false): sql_group_type
+    function table_type(int|string $grp_id): sql_group_type
     {
         $ext = '';
         if ($this->is_prime($grp_id)) {

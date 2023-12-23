@@ -1,4 +1,4 @@
-PREPARE result_list_by_grp FROM
+PREPARE result_list_prime_by_grp FROM
    'SELECT phrase_id_1,
            phrase_id_2,
            phrase_id_3,

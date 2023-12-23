@@ -49,7 +49,7 @@ class group_id_list
         $ext_lst = array();
         $grp_id = new group_id();
         foreach ($ids as $id) {
-            $ext = $grp_id->table_extension_old($id, $is_grp);
+            $ext = $grp_id->table_extension($id, $is_grp);
             if (!in_array($ext, $ext_lst)) {
                 $ext_lst[] = $ext;
             }

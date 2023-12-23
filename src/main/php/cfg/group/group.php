@@ -276,25 +276,27 @@ class group extends sandbox_multi
     }
 
     /**
+     * get the table name extension for value, result and group tables
+     * depending on the number of phrases a different table for value and results is used
+     * for faster searching
      *
-     * @param bool $is_grp true to get
+     * @param bool $with_phrase_count false if the number of phrases are not relevant e.g. even for prime tables
      * @return string the extension for the table name based on the id
      */
-    function table_extension(bool $is_grp = false): string
+    function table_extension(bool $with_phrase_count = true): string
     {
         $grp_id = new group_id();
-        return $grp_id->table_extension_old($this->id(), $is_grp);
+        return $grp_id->table_extension($this->id(), $with_phrase_count);
     }
 
     /**
      *
-     * @param bool $is_grp true to get
-     * @return sql_group_type the extension for the table name based on the id
+     * @return sql_group_type the table type based on the id e.g. "MOST" for a group with 5 to 16 phrases
      */
-    function table_type(bool $is_grp = false): sql_group_type
+    function table_type(): sql_group_type
     {
         $grp_id = new group_id();
-        return $grp_id->sql_type($this->id(), $is_grp);
+        return $grp_id->table_type($this->id());
     }
 
     /**
@@ -476,8 +478,9 @@ class group extends sandbox_multi
     function load_sql_by_id(sql $sc, int|string $id, string $class = self::class): sql_par
     {
         $this->set_id($id);
-        $ext = $this->table_extension(true);
-        $tbl_typ = $this->table_type(true);
+        // for the group the number of phrases are not relevant for the queries
+        $ext = $this->table_extension(false);
+        $tbl_typ = $this->table_type();
         $qp = $this->load_sql_multi($sc, sql_db::FLD_ID, $class, $ext, $tbl_typ);
         $sc->add_where($this->id_field(), $id);
         $qp->sql = $sc->sql();
@@ -1428,11 +1431,11 @@ class group extends sandbox_multi
     protected function sql_common(sql $sc, bool $usr_tbl = false): sql_par
     {
         $lib = new library();
-        $tbl_typ = $this->table_type(true);
+        $tbl_typ = $this->table_type();
         $ext = $tbl_typ->extension();
         $sc->set_class($this::class, $usr_tbl, $tbl_typ->extension());
         $sql_name = $lib->class_to_name($this::class);
-        $qp = new sql_par($sql_name . $ext);
+        $qp = new sql_par($sql_name);
         $qp->name = $sql_name . $ext;
         if ($usr_tbl) {
             $qp->name .= '_user';

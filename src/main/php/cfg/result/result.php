@@ -198,7 +198,7 @@ class result extends sandbox_value
         $result = parent::row_mapper_multi($db_row, $ext, self::FLD_ID);
         if ($result) {
             $this->frm->set_id($db_row[formula::FLD_ID]);
-            if (substr($ext,0, 2) == group_id::TBL_EXT_PHRASE_ID) {
+            if (substr($ext, 0, 2) == group_id::TBL_EXT_PHRASE_ID) {
                 $this->src_grp->set_id((int)$db_row[self::FLD_SOURCE_GRP]);
             } else {
                 $this->src_grp->set_id($db_row[self::FLD_SOURCE_GRP]);
@@ -315,11 +315,11 @@ class result extends sandbox_value
      */
     function load_standard_sql(sql $sc, string $class = self::class): sql_par
     {
-        $tbl_ext = $this->grp->table_extension(true);
+        $tbl_typ = $this->grp->table_type();
         $ext = $this->grp->table_extension();
-        $qp = new sql_par($class, true, false, $ext, $tbl_ext);
+        $qp = new sql_par($class, true, false, $ext, $tbl_typ);
         $qp->name .= sql_db::FLD_ID;
-        $sc->set_class($class, false, $tbl_ext);
+        $sc->set_class($class, false, $tbl_typ->extension());
         $sc->set_name($qp->name);
         $sc->set_id_field($this->id_field());
         $sc->set_fields(array_merge(self::FLD_NAMES, array(user::FLD_ID)));
@@ -468,8 +468,8 @@ class result extends sandbox_value
      */
     function load_sql_user_changes(sql $sc, string $class = self::class): sql_par
     {
-        $tbl_ext = $this->grp->table_extension(true);
-        $sc->set_class($class, true, $tbl_ext);
+        $tbl_typ = $this->grp->table_type();
+        $sc->set_class($class, true, $tbl_typ->extension());
         // overwrite the standard id field name (result_id) with the main database id field for results "group_id"
         $sc->set_id_field($this->id_field());
         return parent::load_sql_user_changes($sc, $class);
@@ -1016,23 +1016,13 @@ class result extends sandbox_value
     /**
      * overwrites the standard db_object function because
      * the main id field of result is not result_id, but group_id
-     * @param string $ext the table extension to force the sub table selection
+     * @param sql_group_type $tbl_typ the table extension to force the sub table selection
      * @return string|array the field name(s) of the prime database index of the object
      */
-    function id_field(string $ext = ''): string|array
+    function id_field(sql_group_type $tbl_typ = sql_group_type::MOST): string|array
     {
         $lib = new library();
-        $is_prime = false;
-        if ($ext == '') {
-            if ($this->grp->is_prime()) {
-                $is_prime = true;
-            }
-        } else {
-            if ($ext == sql_group_type::PRIME) {
-                $is_prime = true;
-            }
-        }
-        if ($is_prime) {
+        if ($tbl_typ == sql_group_type::MOST) {
             $id_fields = array();
             $base_name = $lib->class_to_name(phrase::class) . sql_db::FLD_EXT_ID . '_';
             for ($i = 1; $i <= group_id::PRIME_PHRASE; $i++) {
