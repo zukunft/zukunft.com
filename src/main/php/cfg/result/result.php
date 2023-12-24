@@ -353,7 +353,7 @@ class result extends sandbox_value
         $qp = parent::load_sql_multi($sc, $query_name, $class, $ext, $tbl_typ, $usr_tbl);
 
         // overwrite the standard id field name (result_id) with the main database id field for results "group_id"
-        $sc->set_id_field($this->id_field());
+        $sc->set_id_field($this->id_field($tbl_typ));
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
         $sc->set_fields(self::FLD_NAMES);
@@ -1012,27 +1012,6 @@ class result extends sandbox_value
     /*
      * information
      */
-
-    /**
-     * overwrites the standard db_object function because
-     * the main id field of result is not result_id, but group_id
-     * @param sql_group_type $tbl_typ the table extension to force the sub table selection
-     * @return string|array the field name(s) of the prime database index of the object
-     */
-    function id_field(sql_group_type $tbl_typ = sql_group_type::MOST): string|array
-    {
-        $lib = new library();
-        if ($tbl_typ == sql_group_type::MOST) {
-            $id_fields = array();
-            $base_name = $lib->class_to_name(phrase::class) . sql_db::FLD_EXT_ID . '_';
-            for ($i = 1; $i <= group_id::PRIME_PHRASE; $i++) {
-                $id_fields[] = $base_name . $i;
-            }
-            return $id_fields;
-        } else {
-            return $lib->class_to_name(group::class) . sql_db::FLD_EXT_ID;
-        }
-    }
 
 
     /*

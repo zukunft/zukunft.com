@@ -557,6 +557,47 @@ class sandbox_value extends sandbox_multi
         }
     }
 
+    /**
+     * overwrites the standard db_object function because
+     * the main id field of value is not value_id, but group_id
+     * @return string|array the field name(s) of the prime database index of the object
+     */
+    function id_field(): string|array
+    {
+        $lib = new library();
+        if ($this->grp->is_prime()) {
+            $id_fields = array();
+            $base_name = $lib->class_to_name(phrase::class) . sql_db::FLD_EXT_ID . '_';
+            for ($i = 1; $i <= group_id::PRIME_PHRASE; $i++) {
+                $id_fields[] = $base_name . $i;
+            }
+            return $id_fields;
+        } else {
+            return $lib->class_to_name(group::class) . sql_db::FLD_EXT_ID;
+        }
+    }
+
+    /**
+     * set the id field based on the given table type
+     * used for list load queries where the id if not yet set
+     * @param sql_group_type $tbl_typ the table type that should be used for the id field selection
+     * @return string|array the field name(s) of the prime database index of the object
+     */
+    function id_field_list(sql_group_type $tbl_typ = sql_group_type::MOST): string|array
+    {
+        $lib = new library();
+        if ($tbl_typ == sql_group_type::PRIME) {
+            $id_fields = array();
+            $base_name = $lib->class_to_name(phrase::class) . sql_db::FLD_EXT_ID . '_';
+            for ($i = 1; $i <= group_id::PRIME_PHRASE; $i++) {
+                $id_fields[] = $base_name . $i;
+            }
+            return $id_fields;
+        } else {
+            return $lib->class_to_name(group::class) . sql_db::FLD_EXT_ID;
+        }
+    }
+
 
     /*
      * cast
@@ -788,7 +829,8 @@ class sandbox_value extends sandbox_multi
     {
         $result = $this->dsp_id_entry();
         if ($this->id() != 0) {
-            $id_fields = $this->id_field();
+            $tbl_typ = $this->grp->table_type();
+            $id_fields = $this->id_field($tbl_typ);
             if (is_array($id_fields)) {
                 $fld_dsp = ' (' . implode(', ' ,$id_fields);
                 $fld_dsp .= ' = ' . $this->grp()->dsp_id_short() . ')';

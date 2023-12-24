@@ -110,7 +110,7 @@ class result_list extends sandbox_list
         $sc->set_class(result::class, false, $tbl_typ->extension());
         // overwrite the standard id field name (result_id) with the main database id field for values "group_id"
         $res = new result($this->user());
-        $sc->set_id_field($res->id_field($tbl_typ->extension()));
+        $sc->set_id_field($res->id_field_list($tbl_typ));
         $sc->set_name($qp->name);
 
         $sc->set_usr($this->user()->id());

@@ -321,6 +321,25 @@ class value_time_series extends sandbox_value
         return $result;
     }
 
+    /*
+     * information
+     */
+
+    /**
+     * temp overwrite of the id_field function of sandbox_value class until this class is revied
+     * @return string|array the field name(s) of the prime database index of the object
+     */
+    function id_field(): string|array
+    {
+        $lib = new library();
+        return $lib->class_to_name($this::class) . sql_db::FLD_EXT_ID;
+    }
+
+
+    /*
+     * write
+     */
+
     /**
      * insert or update a time series in the database or save user specific time series numbers
      */

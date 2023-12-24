@@ -803,30 +803,6 @@ class value extends sandbox_value
     }
 
 
-    /*
-     * information
-     */
-
-    /**
-     * overwrites the standard db_object function because
-     * the main id field of value is not value_id, but group_id
-     * @return string|array the field name(s) of the prime database index of the object
-     */
-    function id_field(): string|array
-    {
-        $lib = new library();
-        if ($this->grp->is_prime()) {
-            $id_fields = array();
-            $base_name = $lib->class_to_name(phrase::class) . sql_db::FLD_EXT_ID . '_';
-            for ($i = 1; $i <= group_id::PRIME_PHRASE; $i++) {
-                $id_fields[] = $base_name . $i;
-            }
-            return $id_fields;
-        } else {
-            return $lib->class_to_name(group::class) . sql_db::FLD_EXT_ID;
-        }
-    }
-
 
     /*
      * Interface functions
