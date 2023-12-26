@@ -1,4 +1,4 @@
-PREPARE result_by_usr_cfg (bigint, bigint) AS
+PREPARE result_prime_p1_by_usr_cfg (bigint, bigint) AS
     SELECT phrase_id_1,
            phrase_id_2,
            phrase_id_3,

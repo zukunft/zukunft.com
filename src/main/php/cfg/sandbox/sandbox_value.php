@@ -490,7 +490,7 @@ class sandbox_value extends sandbox_multi
      */
     function load_sql_user_changes(sql $sc, string $class = self::class): sql_par
     {
-        $qp = new sql_par($class);
+        $qp = new sql_par($class, false, false, $this->grp->table_extension());
         $qp->name .= 'usr_cfg';
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
