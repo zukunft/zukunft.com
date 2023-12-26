@@ -2117,9 +2117,10 @@ class value extends sandbox_value
         if ($log->id() > 0) {
             // insert the value
             $ins_result = $db_con->insert($this->sql_insert($db_con->sql_creator()), 'add value');
-            if ($ins_result->has_row()) {
-                $this->set_id($ins_result->get_row_id());
-            }
+            // the id of value is the given group id not a sequence
+            //if ($ins_result->has_row()) {
+            //    $this->set_id($ins_result->get_row_id());
+            //}
             //$db_con->set_type(self::class);
             //$this->set_id($db_con->insert(array(group::FLD_ID, user::FLD_ID, self::FLD_VALUE, self::FLD_LAST_UPDATE), array($this->grp->id(), $this->user()->id, $this->number, sql_creator::NOW)));
             if ($this->id() != 0) {
