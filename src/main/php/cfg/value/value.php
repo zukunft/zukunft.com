@@ -21,6 +21,7 @@
     TODO: what happens if a user (not the value owner) is adding a word to the value
     TODO: split the object to a time term value and a time stamp value for memory saving
     TODO: create an extreme reduced base object for effective handling of mass data with just phrase group (incl. time if needed) and value with can be used for key value noSQL databases
+    TODO: remove PRIMARY KEY creation for prime tables aor allow null column in primary key
 
     Common object for the tables values, user_values,
     in the database the object is save in two tables
