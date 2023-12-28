@@ -978,7 +978,7 @@ class sql
     private function par_offset(string $id_par, int $offset): string
     {
         if ($this->db_type)
-        return $id_par;
+            return $id_par;
     }
 
     /**
@@ -2082,9 +2082,10 @@ class sql
      * generate a sql statement to create the indices for one database table
      *
      * @param array $fields with the field names, types and default value
+     * @param bool $null_in_key true if the primary key of the table with more than one field can have null fields
      * @return string the sql statement to create the indices for a table
      */
-    function index_create(array $fields): string
+    function index_create(array $fields, bool $null_in_key = false): string
     {
         $sql = '';
 
@@ -2112,8 +2113,13 @@ class sql
         if (count($prime_keys) > 0) {
             if ($this->db_type() == sql_db::POSTGRES) {
                 if (count($prime_keys) > 1) {
-                    $sql .= 'ALTER TABLE ' . $this->name_sql_esc($this->table);
-                    $sql .= ' ADD CONSTRAINT ' . $this->table . '_pkey PRIMARY KEY (';
+                    if ($null_in_key) {
+                        $sql .= 'CREATE UNIQUE INDEX ' . $this->table . '_pkey ON ';
+                        $sql .= ' ' . $this->name_sql_esc($this->table) . ' (';
+                    } else {
+                        $sql .= 'ALTER TABLE ' . $this->name_sql_esc($this->table);
+                        $sql .= ' ADD CONSTRAINT ' . $this->table . '_pkey PRIMARY KEY (';
+                    }
                     $sql .= implode(', ', $prime_keys);
                     $sql .= '); ';
                 }

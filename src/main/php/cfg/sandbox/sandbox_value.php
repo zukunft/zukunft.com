@@ -358,7 +358,7 @@ class sandbox_value extends sandbox_multi
         $fields = array_merge(self::FLD_KEY_PRIME, $fld_par, $this::FLD_ALL_SOURCE);
         $sql .= $sc->table_create($fields, $type_name,
             $this::TBL_COMMENT_STD . $type_name . $this::TBL_COMMENT_STD_PRIME_CONT);
-        $sql_index .= $sc->index_create($fields);
+        $sql_index .= $sc->index_create($fields, true);
         $sql_foreign .= $sc->foreign_key_create($fields);
         $sc->set_class($this::class, false, $ext_type . self::TBL_EXT_STD);
         $fields = array_merge(self::FLD_KEY, $fld_par, $this::FLD_ALL_SOURCE);
@@ -395,12 +395,12 @@ class sandbox_value extends sandbox_multi
         $fields = array_merge(self::FLD_KEY_PRIME, $this::FLD_ALL_SOURCE_GROUP_PRIME, $std_fields);
         $sc->set_class($this::class, false, $ext_type . sql_group_type::PRIME->extension());
         $sql .= $sc->table_create($fields, $type_name, $this::TBL_COMMENT_PRIME . $type_name . $this::TBL_COMMENT_PRIME_CONT);
-        $sql_index .= $sc->index_create($fields);
+        $sql_index .= $sc->index_create($fields, true);
         $sql_foreign .= $sc->foreign_key_create($fields);
         $fields = array_merge(self::FLD_KEY_PRIME_USER, $this::FLD_ALL_SOURCE_GROUP_PRIME, $std_usr_fields);
         $sc->set_class($this::class, true, $ext_type . sql_group_type::PRIME->extension());
         $sql .= $sc->table_create($fields, $type_name, $this::TBL_COMMENT_PRIME_USER . $type_name . $this::TBL_COMMENT_PRIME_USER_CONT);
-        $sql_index .= $sc->index_create($fields);
+        $sql_index .= $sc->index_create($fields, true);
         $sql_foreign .= $sc->foreign_key_create($fields);
 
         $sql .= $sc->sql_separator();
