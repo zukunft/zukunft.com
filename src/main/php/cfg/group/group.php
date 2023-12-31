@@ -962,6 +962,12 @@ class group extends sandbox_multi
     {
         $grp_id = new group_id();
         $id = $grp_id->get_id($this->phr_lst);
+        if (count($this->phr_lst->lst()) == 0 and is_string($this->id)){
+            if ($this->id() != '') {
+                $id = $this->id();
+                log_warning('fix wrong using of value id');
+            }
+        }
         return $grp_id->is_prime($id);
     }
 

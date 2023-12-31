@@ -565,7 +565,7 @@ class sandbox_value extends sandbox_multi
     function id_field(): string|array
     {
         $lib = new library();
-        if ($this->grp->is_prime()) {
+        if ($this->grp()->is_prime()) {
             $id_fields = array();
             $base_name = $lib->class_to_name(phrase::class) . sql_db::FLD_EXT_ID . '_';
             for ($i = 1; $i <= group_id::PRIME_PHRASE; $i++) {

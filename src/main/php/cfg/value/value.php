@@ -230,7 +230,13 @@ class value extends sandbox_value
     ): bool
     {
         $lib = new library();
-        $result = parent::row_mapper_sandbox_multi($db_row, $ext, $load_std, $allow_usr_protect, self::FLD_ID);
+        if ($id_fld == self::FLD_ID) {
+            $id_fld = $this->id_field();
+            if (is_array($id_fld)) {
+                $id_fld = $id_fld[0];
+            }
+        }
+        $result = parent::row_mapper_sandbox_multi($db_row, $ext, $load_std, $allow_usr_protect, $id_fld);
         if ($result) {
             $this->number = $db_row[self::FLD_VALUE];
             // TODO check if phrase_group_id and time_word_id are user specific or time series specific

@@ -337,7 +337,12 @@ class sandbox_multi extends db_object_multi_user
                 $this->set_excluded($db_row[self::FLD_EXCLUDED]);
             }
             if (!$load_std) {
-                $this->usr_cfg_id = $db_row[sql_db::TBL_USER_PREFIX . $id_fld];
+                if ($id_fld == 'phrase_id_1') {
+                    $this->usr_cfg_id = $db_row[$id_fld];
+                    log_warning('unexpected id field phrase_id_1');
+                } else {
+                    $this->usr_cfg_id = $db_row[sql_db::TBL_USER_PREFIX . $id_fld];
+                }
             }
             if ($allow_usr_protect) {
                 $this->row_mapper_usr($db_row, $id_fld);
