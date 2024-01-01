@@ -187,9 +187,10 @@ class sandbox_value extends sandbox_multi
      * @param array|null $db_row with the data directly from the database
      * @param string $ext the table type e.g. to indicate if the id is int
      * @param string $id_fld the name of the id field as set in the child class
+     * @param bool $one_id_fld false if the unique database id is based on more than one field and due to that the database id should not be used for the object id
      * @return bool true if the user sandbox object is loaded and valid
      */
-    function row_mapper_multi(?array $db_row, string $ext, string $id_fld = ''): bool
+    function row_mapper_multi(?array $db_row, string $ext, string $id_fld = '', bool $one_id_fld = true): bool
     {
         $this->set_last_update(null);
         return parent::row_mapper_multi($db_row, $id_fld);
@@ -520,8 +521,8 @@ class sandbox_value extends sandbox_multi
      */
     protected function load_sql_by_grp_id(sql $sc, string $query_name, string $class = self::class): sql_par
     {
-        $tbl_typ = $this->grp->table_type();
-        $ext = $this->grp->table_extension();
+        $tbl_typ = $this->grp()->table_type();
+        $ext = $this->grp()->table_extension();
         $qp = $this->load_sql_multi($sc, $query_name, $class, $ext, $tbl_typ);
         return $this->load_sql_set_where($qp, $sc, $ext);
     }
@@ -839,7 +840,13 @@ class sandbox_value extends sandbox_multi
                 $result .= ' (' . $id_fields . ' ' . $this->id() . ')';
             }
         } else {
-            $result .= ' (' . $this->id_field() . ' no set)';
+            $id_fld = $this->id_field();
+            if (is_array($id_fld)) {
+                $lib = new library();
+                $result .= ' (' . $lib->dsp_array($id_fld) . ' no set)';
+            } else {
+                $result .= ' (' . $id_fld . ' no set)';
+            }
         }
         return $result;
     }

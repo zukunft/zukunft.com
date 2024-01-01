@@ -190,9 +190,10 @@ class result extends sandbox_value
      * @param array|null $db_row with the data directly from the database
      * @param string $ext the table type e.g. to indicate if the id is int
      * @param string $id_fld the name of the id field as set in the child class
+     * @param bool $one_id_fld false if the unique database id is based on more than one field and due to that the database id should not be used for the object id
      * @return bool true if a result has been loaded and is valid
      */
-    function row_mapper_multi(?array $db_row, string $ext, string $id_fld = ''): bool
+    function row_mapper_multi(?array $db_row, string $ext, string $id_fld = '', bool $one_id_fld = true): bool
     {
         $lib = new library();
         $result = parent::row_mapper_multi($db_row, $ext, self::FLD_ID);

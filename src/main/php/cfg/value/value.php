@@ -219,6 +219,7 @@ class value extends sandbox_value
      * @param bool $load_std true if only the standard user sandbox object ist loaded
      * @param bool $allow_usr_protect false for using the standard protection settings for the default object used for all users
      * @param string $id_fld the name of the id field as defined in this child and given to the parent
+     * @param bool $one_id_fld false if the unique database id is based on more than one field
      * @return bool true if the value is loaded and valid
      */
     function row_mapper_sandbox_multi(
@@ -226,17 +227,20 @@ class value extends sandbox_value
         string $ext,
         bool   $load_std = false,
         bool   $allow_usr_protect = true,
-        string $id_fld = self::FLD_ID
+        string $id_fld = self::FLD_ID,
+        bool   $one_id_fld = true
     ): bool
     {
         $lib = new library();
+        $one_id_fld = true;
         if ($id_fld == self::FLD_ID) {
             $id_fld = $this->id_field();
             if (is_array($id_fld)) {
                 $id_fld = $id_fld[0];
+                $one_id_fld = false;
             }
         }
-        $result = parent::row_mapper_sandbox_multi($db_row, $ext, $load_std, $allow_usr_protect, $id_fld);
+        $result = parent::row_mapper_sandbox_multi($db_row, $ext, $load_std, $allow_usr_protect, $id_fld, $one_id_fld);
         if ($result) {
             $this->number = $db_row[self::FLD_VALUE];
             // TODO check if phrase_group_id and time_word_id are user specific or time series specific

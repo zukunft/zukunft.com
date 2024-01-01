@@ -95,10 +95,8 @@ class sandbox_multi extends db_object_multi_user
         self::FLD_SHARE // the standard value is per definition share to public
     );
     // dummy arrays that should be overwritten by the child object
-    const FLD_NAMES = array(
-    );
-    const FLD_NAMES_USR = array(
-    );
+    const FLD_NAMES = array();
+    const FLD_NAMES_USR = array();
     // combine FLD_NAMES_NUM_USR_SBX and FLD_NAMES_NUM_USR_ONLY_SBX just for shorter code
     const FLD_NAMES_NUM_USR = array(
         self::FLD_EXCLUDED,
@@ -315,6 +313,7 @@ class sandbox_multi extends db_object_multi_user
      * @param bool $load_std true if only the standard user sandbox object ist loaded
      * @param bool $allow_usr_protect false for using the standard protection settings for the default object used for all users
      * @param string $id_fld the name of the id field as set in the child class
+     * @param bool $one_id_fld false if the unique database id is based on more than one field and due to that the database id should not be used for the object id
      * @return bool true if the user sandbox object is loaded and valid
      */
     function row_mapper_sandbox_multi(
@@ -322,13 +321,14 @@ class sandbox_multi extends db_object_multi_user
         string $ext,
         bool   $load_std = false,
         bool   $allow_usr_protect = true,
-        string $id_fld = ''
+        string $id_fld = '',
+        bool   $one_id_fld = true
     ): bool
     {
         if ($id_fld == '') {
             $id_fld = $this->id_field();
         }
-        $result = parent::row_mapper_multi($db_row, $ext, $id_fld);
+        $result = parent::row_mapper_multi($db_row, $ext, $id_fld, $one_id_fld);
         if ($result) {
             $this->owner_id = $db_row[user::FLD_ID];
             // e.g. the list of names does not include the field excluded
@@ -337,11 +337,12 @@ class sandbox_multi extends db_object_multi_user
                 $this->set_excluded($db_row[self::FLD_EXCLUDED]);
             }
             if (!$load_std) {
-                if ($id_fld == 'phrase_id_1') {
+                if ($one_id_fld) {
+                    $this->usr_cfg_id = $db_row[sql_db::TBL_USER_PREFIX . $id_fld];
+                } else {
+                    // TODO make sure that this warning does not appear at least in the build in tests
                     $this->usr_cfg_id = $db_row[$id_fld];
                     log_warning('unexpected id field phrase_id_1');
-                } else {
-                    $this->usr_cfg_id = $db_row[sql_db::TBL_USER_PREFIX . $id_fld];
                 }
             }
             if ($allow_usr_protect) {
@@ -939,7 +940,7 @@ class sandbox_multi extends db_object_multi_user
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
         $sc->set_join_fields(
-            array_merge(array(user::FLD_ID, user::FLD_NAME),user::FLD_NAMES_LIST),
+            array_merge(array(user::FLD_ID, user::FLD_NAME), user::FLD_NAMES_LIST),
             sql_db::TBL_USER,
             user::FLD_ID,
             user::FLD_ID);

@@ -1,4 +1,4 @@
-PREPARE value_list_by_ids_prime_r2 (bigint,bigint,text,text,text,text,bigint,text,text) AS
+PREPARE value_list_by_ids_prime_r2 (bigint,bigint,bigint,bigint,bigint,bigint,bigint,bigint,bigint) AS
     SELECT s.phrase_id_1,
            s.phrase_id_2,
            s.phrase_id_3,

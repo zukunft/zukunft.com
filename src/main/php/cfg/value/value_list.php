@@ -363,12 +363,12 @@ class value_list extends sandbox_list
                 }
                 $sc->set_usr_only_fields(value::FLD_NAMES_USR_ONLY);
                 for ($pos = 1; $pos <= $max_row_ids; $pos++) {
-                    // the array of the phrase ids starts with o whereas the phrase id fields start with 1
+                    // the array of the phrase ids starts with 0 whereas the phrase id fields start with 1
                     $id_pos = $pos - 1;
                     if (array_key_exists($id_pos, $phr_id_lst)) {
-                        $sc->add_where(phrase::FLD_ID . '_' . $pos, $phr_id_lst[$id_pos]);
+                        $sc->add_where(phrase::FLD_ID . '_' . $pos, $phr_id_lst[$id_pos], sql_par_type::INT);
                     } else {
-                        $sc->add_where(phrase::FLD_ID . '_' . $pos, '');
+                        $sc->add_where(phrase::FLD_ID . '_' . $pos, '', sql_par_type::INT);
                     }
                 }
 
