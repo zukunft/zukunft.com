@@ -3277,7 +3277,7 @@ class sql_db
                         foreach ($id_lst as $id_item) {
                             if ($id_item == null) {
                                 // TODO move null to const
-                                $this->add_par(sql_par_type::INT_SMALL, 'null');
+                                $this->add_par(sql_par_type::INT_SMALL, '0');
                             } else {
                                 $this->add_par(sql_par_type::INT_SMALL, $id_item);
                             }

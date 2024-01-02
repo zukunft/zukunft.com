@@ -8,9 +8,9 @@
 CREATE TABLE IF NOT EXISTS values_standard_prime
 (
     phrase_id_1   smallint     NOT NULL COMMENT 'phrase id that is part of the prime key for a numeric value',
-    phrase_id_2   smallint DEFAULT NULL COMMENT 'phrase id that is part of the prime key for a numeric value',
-    phrase_id_3   smallint DEFAULT NULL COMMENT 'phrase id that is part of the prime key for a numeric value',
-    phrase_id_4   smallint DEFAULT NULL COMMENT 'phrase id that is part of the prime key for a numeric value',
+    phrase_id_2   smallint DEFAULT 0    COMMENT 'phrase id that is part of the prime key for a numeric value',
+    phrase_id_3   smallint DEFAULT 0    COMMENT 'phrase id that is part of the prime key for a numeric value',
+    phrase_id_4   smallint DEFAULT 0    COMMENT 'phrase id that is part of the prime key for a numeric value',
     numeric_value double       NOT NULL COMMENT 'the numeric value given by the user',
     source_id     bigint   DEFAULT NULL COMMENT 'the source of the value as given by the user'
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'for public unprotected numeric values related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated';
@@ -69,9 +69,9 @@ CREATE TABLE IF NOT EXISTS user_values
 CREATE TABLE IF NOT EXISTS values_prime
 (
     phrase_id_1   smallint      NOT NULL COMMENT 'phrase id that is part of the prime key for a numeric value',
-    phrase_id_2   smallint  DEFAULT NULL COMMENT 'phrase id that is part of the prime key for a numeric value',
-    phrase_id_3   smallint  DEFAULT NULL COMMENT 'phrase id that is part of the prime key for a numeric value',
-    phrase_id_4   smallint  DEFAULT NULL COMMENT 'phrase id that is part of the prime key for a numeric value',
+    phrase_id_2   smallint  DEFAULT 0    COMMENT 'phrase id that is part of the prime key for a numeric value',
+    phrase_id_3   smallint  DEFAULT 0    COMMENT 'phrase id that is part of the prime key for a numeric value',
+    phrase_id_4   smallint  DEFAULT 0    COMMENT 'phrase id that is part of the prime key for a numeric value',
     numeric_value double        NOT NULL COMMENT 'the numeric value given by the user',
     source_id     bigint    DEFAULT NULL COMMENT 'the source of the value as given by the user',
     last_update   timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
@@ -88,9 +88,9 @@ CREATE TABLE IF NOT EXISTS values_prime
 CREATE TABLE IF NOT EXISTS user_values_prime
 (
     phrase_id_1   smallint      NOT NULL COMMENT 'phrase id that is with the user id  part of the prime key for a numeric value',
-    phrase_id_2   smallint  DEFAULT NULL COMMENT 'phrase id that is with the user id  part of the prime key for a numeric value',
-    phrase_id_3   smallint  DEFAULT NULL COMMENT 'phrase id that is with the user id  part of the prime key for a numeric value',
-    phrase_id_4   smallint  DEFAULT NULL COMMENT 'phrase id that is with the user id  part of the prime key for a numeric value',
+    phrase_id_2   smallint  DEFAULT 0    COMMENT 'phrase id that is with the user id  part of the prime key for a numeric value',
+    phrase_id_3   smallint  DEFAULT 0    COMMENT 'phrase id that is with the user id  part of the prime key for a numeric value',
+    phrase_id_4   smallint  DEFAULT 0    COMMENT 'phrase id that is with the user id  part of the prime key for a numeric value',
     user_id       bigint        NOT NULL COMMENT 'the changer of the numeric value',
     numeric_value double    DEFAULT NULL COMMENT 'the user specific numeric value change',
     source_id     bigint    DEFAULT NULL COMMENT 'the source of the value as given by the user',
@@ -143,9 +143,9 @@ CREATE TABLE IF NOT EXISTS user_values_big
 CREATE TABLE IF NOT EXISTS values_text_standard_prime
 (
     phrase_id_1 smallint     NOT NULL COMMENT 'phrase id that is part of the prime key for a text value',
-    phrase_id_2 smallint DEFAULT NULL COMMENT 'phrase id that is part of the prime key for a text value',
-    phrase_id_3 smallint DEFAULT NULL COMMENT 'phrase id that is part of the prime key for a text value',
-    phrase_id_4 smallint DEFAULT NULL COMMENT 'phrase id that is part of the prime key for a text value',
+    phrase_id_2 smallint DEFAULT 0    COMMENT 'phrase id that is part of the prime key for a text value',
+    phrase_id_3 smallint DEFAULT 0    COMMENT 'phrase id that is part of the prime key for a text value',
+    phrase_id_4 smallint DEFAULT 0    COMMENT 'phrase id that is part of the prime key for a text value',
     text_value  text         NOT NULL COMMENT 'the text value given by the user',
     source_id   bigint   DEFAULT NULL COMMENT 'the source of the value as given by the user'
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'for public unprotected text values related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated';
@@ -204,9 +204,9 @@ CREATE TABLE IF NOT EXISTS user_values_text
 CREATE TABLE IF NOT EXISTS values_text_prime
 (
     phrase_id_1   smallint      NOT NULL COMMENT 'phrase id that is part of the prime key for a text value',
-    phrase_id_2   smallint  DEFAULT NULL COMMENT 'phrase id that is part of the prime key for a text value',
-    phrase_id_3   smallint  DEFAULT NULL COMMENT 'phrase id that is part of the prime key for a text value',
-    phrase_id_4   smallint  DEFAULT NULL COMMENT 'phrase id that is part of the prime key for a text value',
+    phrase_id_2   smallint  DEFAULT 0    COMMENT 'phrase id that is part of the prime key for a text value',
+    phrase_id_3   smallint  DEFAULT 0    COMMENT 'phrase id that is part of the prime key for a text value',
+    phrase_id_4   smallint  DEFAULT 0    COMMENT 'phrase id that is part of the prime key for a text value',
     text_value    text          NOT NULL COMMENT 'the text value given by the user',
     source_id     bigint    DEFAULT NULL COMMENT 'the source of the value as given by the user',
     last_update   timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
@@ -223,9 +223,9 @@ CREATE TABLE IF NOT EXISTS values_text_prime
 CREATE TABLE IF NOT EXISTS user_values_text_prime
 (
     phrase_id_1   smallint      NOT NULL COMMENT 'phrase id that is with the user id  part of the prime key for a text value',
-    phrase_id_2   smallint  DEFAULT NULL COMMENT 'phrase id that is with the user id  part of the prime key for a text value',
-    phrase_id_3   smallint  DEFAULT NULL COMMENT 'phrase id that is with the user id  part of the prime key for a text value',
-    phrase_id_4   smallint  DEFAULT NULL COMMENT 'phrase id that is with the user id  part of the prime key for a text value',
+    phrase_id_2   smallint  DEFAULT 0    COMMENT 'phrase id that is with the user id  part of the prime key for a text value',
+    phrase_id_3   smallint  DEFAULT 0    COMMENT 'phrase id that is with the user id  part of the prime key for a text value',
+    phrase_id_4   smallint  DEFAULT 0    COMMENT 'phrase id that is with the user id  part of the prime key for a text value',
     user_id       bigint        NOT NULL COMMENT 'the changer of the text value',
     text_value    text      DEFAULT NULL COMMENT 'the user specific text value change',
     source_id     bigint    DEFAULT NULL COMMENT 'the source of the value as given by the user',
@@ -278,9 +278,9 @@ CREATE TABLE IF NOT EXISTS user_values_text_big
 CREATE TABLE IF NOT EXISTS values_time_standard_prime
 (
     phrase_id_1 smallint     NOT NULL COMMENT 'phrase id that is part of the prime key for a time value',
-    phrase_id_2 smallint DEFAULT NULL COMMENT 'phrase id that is part of the prime key for a time value',
-    phrase_id_3 smallint DEFAULT NULL COMMENT 'phrase id that is part of the prime key for a time value',
-    phrase_id_4 smallint DEFAULT NULL COMMENT 'phrase id that is part of the prime key for a time value',
+    phrase_id_2 smallint DEFAULT 0    COMMENT 'phrase id that is part of the prime key for a time value',
+    phrase_id_3 smallint DEFAULT 0    COMMENT 'phrase id that is part of the prime key for a time value',
+    phrase_id_4 smallint DEFAULT 0    COMMENT 'phrase id that is part of the prime key for a time value',
     time_value  timestamp    NOT NULL COMMENT 'the timestamp given by the user',
     source_id   bigint   DEFAULT NULL COMMENT 'the source of the value as given by the user'
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'for public unprotected time values related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated';
@@ -339,9 +339,9 @@ CREATE TABLE IF NOT EXISTS user_values_time
 CREATE TABLE IF NOT EXISTS values_time_prime
 (
     phrase_id_1   smallint      NOT NULL COMMENT 'phrase id that is part of the prime key for a time value',
-    phrase_id_2   smallint  DEFAULT NULL COMMENT 'phrase id that is part of the prime key for a time value',
-    phrase_id_3   smallint  DEFAULT NULL COMMENT 'phrase id that is part of the prime key for a time value',
-    phrase_id_4   smallint  DEFAULT NULL COMMENT 'phrase id that is part of the prime key for a time value',
+    phrase_id_2   smallint  DEFAULT 0    COMMENT 'phrase id that is part of the prime key for a time value',
+    phrase_id_3   smallint  DEFAULT 0    COMMENT 'phrase id that is part of the prime key for a time value',
+    phrase_id_4   smallint  DEFAULT 0    COMMENT 'phrase id that is part of the prime key for a time value',
     time_value    timestamp     NOT NULL COMMENT 'the timestamp given by the user',
     source_id     bigint    DEFAULT NULL COMMENT 'the source of the value as given by the user',
     last_update   timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
@@ -358,9 +358,9 @@ CREATE TABLE IF NOT EXISTS values_time_prime
 CREATE TABLE IF NOT EXISTS user_values_time_prime
 (
     phrase_id_1   smallint      NOT NULL COMMENT 'phrase id that is with the user id  part of the prime key for a time value',
-    phrase_id_2   smallint  DEFAULT NULL COMMENT 'phrase id that is with the user id  part of the prime key for a time value',
-    phrase_id_3   smallint  DEFAULT NULL COMMENT 'phrase id that is with the user id  part of the prime key for a time value',
-    phrase_id_4   smallint  DEFAULT NULL COMMENT 'phrase id that is with the user id  part of the prime key for a time value',
+    phrase_id_2   smallint  DEFAULT 0    COMMENT 'phrase id that is with the user id  part of the prime key for a time value',
+    phrase_id_3   smallint  DEFAULT 0    COMMENT 'phrase id that is with the user id  part of the prime key for a time value',
+    phrase_id_4   smallint  DEFAULT 0    COMMENT 'phrase id that is with the user id  part of the prime key for a time value',
     user_id       bigint        NOT NULL COMMENT 'the changer of the time value',
     time_value    timestamp DEFAULT NULL COMMENT 'the user specific timestamp change',
     source_id     bigint    DEFAULT NULL COMMENT 'the source of the value as given by the user',
@@ -413,9 +413,9 @@ CREATE TABLE IF NOT EXISTS user_values_time_big
 CREATE TABLE IF NOT EXISTS values_geo_standard_prime
 (
     phrase_id_1 smallint     NOT NULL COMMENT 'phrase id that is part of the prime key for a geo value',
-    phrase_id_2 smallint DEFAULT NULL COMMENT 'phrase id that is part of the prime key for a geo value',
-    phrase_id_3 smallint DEFAULT NULL COMMENT 'phrase id that is part of the prime key for a geo value',
-    phrase_id_4 smallint DEFAULT NULL COMMENT 'phrase id that is part of the prime key for a geo value',
+    phrase_id_2 smallint DEFAULT 0    COMMENT 'phrase id that is part of the prime key for a geo value',
+    phrase_id_3 smallint DEFAULT 0    COMMENT 'phrase id that is part of the prime key for a geo value',
+    phrase_id_4 smallint DEFAULT 0    COMMENT 'phrase id that is part of the prime key for a geo value',
     geo_value   point        NOT NULL COMMENT 'the geolocation given by the user',
     source_id   bigint   DEFAULT NULL COMMENT 'the source of the value as given by the user'
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'for public unprotected geo values related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated';
@@ -474,9 +474,9 @@ CREATE TABLE IF NOT EXISTS user_values_geo
 CREATE TABLE IF NOT EXISTS values_geo_prime
 (
     phrase_id_1   smallint      NOT NULL COMMENT 'phrase id that is part of the prime key for a geo value',
-    phrase_id_2   smallint  DEFAULT NULL COMMENT 'phrase id that is part of the prime key for a geo value',
-    phrase_id_3   smallint  DEFAULT NULL COMMENT 'phrase id that is part of the prime key for a geo value',
-    phrase_id_4   smallint  DEFAULT NULL COMMENT 'phrase id that is part of the prime key for a geo value',
+    phrase_id_2   smallint  DEFAULT 0    COMMENT 'phrase id that is part of the prime key for a geo value',
+    phrase_id_3   smallint  DEFAULT 0    COMMENT 'phrase id that is part of the prime key for a geo value',
+    phrase_id_4   smallint  DEFAULT 0    COMMENT 'phrase id that is part of the prime key for a geo value',
     geo_value     point         NOT NULL COMMENT 'the geolocation given by the user',
     source_id     bigint    DEFAULT NULL COMMENT 'the source of the value as given by the user',
     last_update   timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
@@ -493,9 +493,9 @@ CREATE TABLE IF NOT EXISTS values_geo_prime
 CREATE TABLE IF NOT EXISTS user_values_geo_prime
 (
     phrase_id_1   smallint      NOT NULL COMMENT 'phrase id that is with the user id  part of the prime key for a geo value',
-    phrase_id_2   smallint  DEFAULT NULL COMMENT 'phrase id that is with the user id  part of the prime key for a geo value',
-    phrase_id_3   smallint  DEFAULT NULL COMMENT 'phrase id that is with the user id  part of the prime key for a geo value',
-    phrase_id_4   smallint  DEFAULT NULL COMMENT 'phrase id that is with the user id  part of the prime key for a geo value',
+    phrase_id_2   smallint  DEFAULT 0    COMMENT 'phrase id that is with the user id  part of the prime key for a geo value',
+    phrase_id_3   smallint  DEFAULT 0    COMMENT 'phrase id that is with the user id  part of the prime key for a geo value',
+    phrase_id_4   smallint  DEFAULT 0    COMMENT 'phrase id that is with the user id  part of the prime key for a geo value',
     user_id       bigint        NOT NULL COMMENT 'the changer of the geo value',
     geo_value     point     DEFAULT NULL COMMENT 'the user specific geolocation change',
     source_id     bigint    DEFAULT NULL COMMENT 'the source of the value as given by the user',

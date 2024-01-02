@@ -8,9 +8,9 @@
 CREATE TABLE IF NOT EXISTS values_standard_prime
 (
     phrase_id_1   smallint         NOT NULL,
-    phrase_id_2   smallint         DEFAULT NULL,
-    phrase_id_3   smallint         DEFAULT NULL,
-    phrase_id_4   smallint         DEFAULT NULL,
+    phrase_id_2   smallint         DEFAULT 0,
+    phrase_id_3   smallint         DEFAULT 0,
+    phrase_id_4   smallint         DEFAULT 0,
     numeric_value double precision NOT NULL,
     source_id     bigint           DEFAULT NULL
 );
@@ -102,9 +102,9 @@ COMMENT ON COLUMN user_values.protect_id    IS 'to protect against unwanted chan
 CREATE TABLE IF NOT EXISTS values_prime
 (
     phrase_id_1     smallint         NOT NULL,
-    phrase_id_2     smallint         DEFAULT NULL,
-    phrase_id_3     smallint         DEFAULT NULL,
-    phrase_id_4     smallint         DEFAULT NULL,
+    phrase_id_2     smallint         DEFAULT 0,
+    phrase_id_3     smallint         DEFAULT 0,
+    phrase_id_4     smallint         DEFAULT 0,
     numeric_value   double precision NOT NULL,
     source_id       bigint           DEFAULT NULL,
     last_update     timestamp        DEFAULT NULL,
@@ -134,9 +134,9 @@ COMMENT ON COLUMN values_prime.protect_id    IS 'to protect against unwanted cha
 CREATE TABLE IF NOT EXISTS user_values_prime
 (
     phrase_id_1     smallint         NOT NULL,
-    phrase_id_2     smallint         DEFAULT NULL,
-    phrase_id_3     smallint         DEFAULT NULL,
-    phrase_id_4     smallint         DEFAULT NULL,
+    phrase_id_2     smallint         DEFAULT 0,
+    phrase_id_3     smallint         DEFAULT 0,
+    phrase_id_4     smallint         DEFAULT 0,
     user_id         bigint           NOT NULL,
     numeric_value   double precision DEFAULT NULL,
     source_id       bigint           DEFAULT NULL,
@@ -222,9 +222,9 @@ COMMENT ON COLUMN user_values_big.protect_id    IS 'to protect against unwanted 
 CREATE TABLE IF NOT EXISTS values_text_standard_prime
 (
     phrase_id_1 smallint  NOT NULL,
-    phrase_id_2 smallint  DEFAULT NULL,
-    phrase_id_3 smallint  DEFAULT NULL,
-    phrase_id_4 smallint  DEFAULT NULL,
+    phrase_id_2 smallint  DEFAULT 0,
+    phrase_id_3 smallint  DEFAULT 0,
+    phrase_id_4 smallint  DEFAULT 0,
     text_value  text      NOT NULL,
     source_id   bigint    DEFAULT NULL
 );
@@ -316,9 +316,9 @@ COMMENT ON COLUMN user_values_text.protect_id    IS 'to protect against unwanted
 CREATE TABLE IF NOT EXISTS values_text_prime
 (
     phrase_id_1   smallint  NOT NULL,
-    phrase_id_2   smallint  DEFAULT NULL,
-    phrase_id_3   smallint  DEFAULT NULL,
-    phrase_id_4   smallint  DEFAULT NULL,
+    phrase_id_2   smallint  DEFAULT 0,
+    phrase_id_3   smallint  DEFAULT 0,
+    phrase_id_4   smallint  DEFAULT 0,
     text_value    text      NOT NULL,
     source_id     bigint    DEFAULT NULL,
     last_update   timestamp DEFAULT NULL,
@@ -348,9 +348,9 @@ COMMENT ON COLUMN values_text_prime.protect_id    IS 'to protect against unwante
 CREATE TABLE IF NOT EXISTS user_values_text_prime
 (
     phrase_id_1   smallint  NOT NULL,
-    phrase_id_2   smallint  DEFAULT NULL,
-    phrase_id_3   smallint  DEFAULT NULL,
-    phrase_id_4   smallint  DEFAULT NULL,
+    phrase_id_2   smallint  DEFAULT 0,
+    phrase_id_3   smallint  DEFAULT 0,
+    phrase_id_4   smallint  DEFAULT 0,
     user_id       bigint    NOT NULL,
     text_value    text      DEFAULT NULL,
     source_id     bigint    DEFAULT NULL,
@@ -436,9 +436,9 @@ COMMENT ON COLUMN user_values_text_big.protect_id    IS 'to protect against unwa
 CREATE TABLE IF NOT EXISTS values_time_standard_prime
 (
     phrase_id_1 smallint  NOT NULL,
-    phrase_id_2 smallint  DEFAULT NULL,
-    phrase_id_3 smallint  DEFAULT NULL,
-    phrase_id_4 smallint  DEFAULT NULL,
+    phrase_id_2 smallint  DEFAULT 0,
+    phrase_id_3 smallint  DEFAULT 0,
+    phrase_id_4 smallint  DEFAULT 0,
     time_value  timestamp NOT NULL,
     source_id   bigint    DEFAULT NULL
 );
@@ -530,9 +530,9 @@ COMMENT ON COLUMN user_values_time.protect_id    IS 'to protect against unwanted
 CREATE TABLE IF NOT EXISTS values_time_prime
 (
     phrase_id_1   smallint  NOT NULL,
-    phrase_id_2   smallint  DEFAULT NULL,
-    phrase_id_3   smallint  DEFAULT NULL,
-    phrase_id_4   smallint  DEFAULT NULL,
+    phrase_id_2   smallint  DEFAULT 0,
+    phrase_id_3   smallint  DEFAULT 0,
+    phrase_id_4   smallint  DEFAULT 0,
     time_value    timestamp NOT NULL,
     source_id     bigint    DEFAULT NULL,
     last_update   timestamp DEFAULT NULL,
@@ -562,9 +562,9 @@ COMMENT ON COLUMN values_time_prime.protect_id    IS 'to protect against unwante
 CREATE TABLE IF NOT EXISTS user_values_time_prime
 (
     phrase_id_1   smallint  NOT NULL,
-    phrase_id_2   smallint  DEFAULT NULL,
-    phrase_id_3   smallint  DEFAULT NULL,
-    phrase_id_4   smallint  DEFAULT NULL,
+    phrase_id_2   smallint  DEFAULT 0,
+    phrase_id_3   smallint  DEFAULT 0,
+    phrase_id_4   smallint  DEFAULT 0,
     user_id       bigint    NOT NULL,
     time_value    timestamp DEFAULT NULL,
     source_id     bigint    DEFAULT NULL,
@@ -650,9 +650,9 @@ COMMENT ON COLUMN user_values_time_big.protect_id    IS 'to protect against unwa
 CREATE TABLE IF NOT EXISTS values_geo_standard_prime
 (
     phrase_id_1 smallint  NOT NULL,
-    phrase_id_2 smallint  DEFAULT NULL,
-    phrase_id_3 smallint  DEFAULT NULL,
-    phrase_id_4 smallint  DEFAULT NULL,
+    phrase_id_2 smallint  DEFAULT 0,
+    phrase_id_3 smallint  DEFAULT 0,
+    phrase_id_4 smallint  DEFAULT 0,
     geo_value   point     NOT NULL,
     source_id   bigint    DEFAULT NULL
 );
@@ -744,9 +744,9 @@ COMMENT ON COLUMN user_values_geo.protect_id    IS 'to protect against unwanted 
 CREATE TABLE IF NOT EXISTS values_geo_prime
 (
     phrase_id_1   smallint  NOT NULL,
-    phrase_id_2   smallint  DEFAULT NULL,
-    phrase_id_3   smallint  DEFAULT NULL,
-    phrase_id_4   smallint  DEFAULT NULL,
+    phrase_id_2   smallint  DEFAULT 0,
+    phrase_id_3   smallint  DEFAULT 0,
+    phrase_id_4   smallint  DEFAULT 0,
     geo_value     point     NOT NULL,
     source_id     bigint    DEFAULT NULL,
     last_update   timestamp DEFAULT NULL,
@@ -776,9 +776,9 @@ COMMENT ON COLUMN values_geo_prime.protect_id    IS 'to protect against unwanted
 CREATE TABLE IF NOT EXISTS user_values_geo_prime
 (
     phrase_id_1   smallint  NOT NULL,
-    phrase_id_2   smallint  DEFAULT NULL,
-    phrase_id_3   smallint  DEFAULT NULL,
-    phrase_id_4   smallint  DEFAULT NULL,
+    phrase_id_2   smallint  DEFAULT 0,
+    phrase_id_3   smallint  DEFAULT 0,
+    phrase_id_4   smallint  DEFAULT 0,
     user_id       bigint    NOT NULL,
     geo_value     point     DEFAULT NULL,
     source_id     bigint    DEFAULT NULL,

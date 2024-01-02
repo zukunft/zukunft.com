@@ -236,6 +236,21 @@ class value extends sandbox_value
         if ($id_fld == self::FLD_ID) {
             $id_fld = $this->id_field();
             if (is_array($id_fld)) {
+                $grp_id = new group_id();
+                $phr_lst = new phrase_list($this->user());
+                foreach ($id_fld as $fld_name) {
+                    if (array_key_exists($fld_name, $db_row)) {
+                        $id = $db_row[$fld_name];
+                        if ($id != 0) {
+                            $phr = new phrase($this->user());
+                            $phr->set_obj_id($id);
+                            $phr_lst->add($phr);
+                        }
+                    }
+                }
+                $grp = new group($this->user());
+                $grp->set_id($grp_id->get_id($phr_lst));
+                $this->set_grp($grp);
                 $id_fld = $id_fld[0];
                 $one_id_fld = false;
             }

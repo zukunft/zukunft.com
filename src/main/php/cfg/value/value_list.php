@@ -275,6 +275,7 @@ class value_list extends sandbox_list
     }
 
     /**
+     * TODO the second row should be 4, 0 not 0,4
      * @param array $ids
      * @return array
      */
@@ -282,7 +283,6 @@ class value_list extends sandbox_list
     {
         $grp_id = new group_id();
         $tbl_typ_uni = $this->table_type_list_unique($ids);
-        $phr_id_uni = $this->phrase_id_list_unique($ids);
         $tbl_id_matrix = array();
         // loop over the tables where the values might be
         foreach ($tbl_typ_uni as $tbl_typ) {
@@ -295,12 +295,8 @@ class value_list extends sandbox_list
                     $matrix_row[] = $tbl_typ;
                     $matrix_row[] = $grp_id->max_number_of_phrase($id);
                     $row_id_lst = $grp_id->get_array($id);
-                    foreach ($phr_id_uni as $phr_id) {
-                        if (in_array($phr_id, $row_id_lst)) {
-                            $matrix_row[] = $phr_id;
-                        } else {
-                            $matrix_row[] = '';
-                        }
+                    foreach ($row_id_lst as $phr_id) {
+                        $matrix_row[] = $phr_id;
                     }
                     $tbl_id_matrix[] = $matrix_row;
                 }
@@ -366,9 +362,13 @@ class value_list extends sandbox_list
                     // the array of the phrase ids starts with 0 whereas the phrase id fields start with 1
                     $id_pos = $pos - 1;
                     if (array_key_exists($id_pos, $phr_id_lst)) {
-                        $sc->add_where(phrase::FLD_ID . '_' . $pos, $phr_id_lst[$id_pos], sql_par_type::INT);
+                        if ($phr_id_lst[$id_pos] == '') {
+                            $sc->add_where(phrase::FLD_ID . '_' . $pos, '0', sql_par_type::INT);
+                        } else {
+                            $sc->add_where(phrase::FLD_ID . '_' . $pos, $phr_id_lst[$id_pos], sql_par_type::INT);
+                        }
                     } else {
-                        $sc->add_where(phrase::FLD_ID . '_' . $pos, '', sql_par_type::INT);
+                        $sc->add_where(phrase::FLD_ID . '_' . $pos, '0', sql_par_type::INT);
                     }
                 }
 
