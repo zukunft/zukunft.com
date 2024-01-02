@@ -493,6 +493,22 @@ class value_list extends sandbox_list
     }
 
     /**
+     * create an SQL statement to retrieve a list of values linked to a phrase from the database
+     *
+     * @param sql $sc with the target db_type set
+     * @param phrase $phr if set to get all values for this phrase
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_phr(sql $sc, phrase $phr): sql_par
+    {
+        $qp = $this->load_sql_init_query_par($phr->id(), 'phr');
+        $qp->sql = $sc->select_by_set_id();
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
+
+    /**
      * load a list of values by the given value ids
      * @param array $val_ids an array of value ids which should be loaded
      * @return bool true if at least one value found

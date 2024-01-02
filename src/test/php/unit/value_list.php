@@ -112,12 +112,9 @@ class value_list_unit_tests
         // TODO add a test to select a list of values that contains all phrase of the phrase list
 
         // sql to load a list of value by the phrase id
-        $phr = new phrase($usr);
-        $phr->set_id(1);
+        $phr = $t->dummy_triple_pi()->phrase();
         // TODO activate, but with new sql creator
-        //$qp = $this->assert_sql_by_phr($phr, sql_db::POSTGRES);
-        //$this->assert_sql_by_phr($phr, sql_db::MYSQL);
-        //$this->test->assert_sql_name_unique($qp->name);
+        //$this->assert_sql_by_phr($t, $db_con, $val_lst, $phr);
 
 
         $t->subheader('Im- and Export tests');
@@ -164,31 +161,25 @@ class value_list_unit_tests
     /**
      * test the SQL statement creation for a value list
      *
+     * @param test_cleanup $t the forwarded testing object
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param value_list $val_lst the value list object that should ve filled
      * @param phrase $phr filled with an id to be able to load
-     * @param string $dialect if not Postgres the name of the SQL dialect
      * @return void
      */
-    private function assert_sql_by_phr(phrase $phr, string $dialect = ''): sql_par
+    private function assert_sql_by_phr(test_cleanup $t, sql_db $db_con, value_list $val_lst, phrase $phr): void
     {
-        global $usr;
+        // check the Postgres query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $val_lst->load_sql_by_phr($db_con->sql_creator(), $phr);
+        $result = $t->assert_qp($qp, $db_con->db_type);
 
-        $lib = new library();
-
-        $lst = new value_list($usr);
-        $db_con = new sql_db();
-        $db_con->db_type = $dialect;
-        $dialect_ext = '';
-        if ($dialect == sql_db::MYSQL) {
-            $dialect_ext = self::FILE_MYSQL;
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $val_lst->load_sql_by_phr($db_con->sql_creator(), $phr);
+            $t->assert_qp($qp, $db_con->db_type);
         }
-        $qp = $lst->load_by_phr_sql($db_con, $phr);
-        $expected_sql = $this->test->file(self::PATH . $qp->name . $dialect_ext . self::FILE_EXT);
-        $this->test->assert(
-            self::TEST_NAME . $qp->name . $dialect,
-            $lib->trim($qp->sql),
-            $lib->trim($expected_sql)
-        );
-        return $qp;
     }
 
 }
