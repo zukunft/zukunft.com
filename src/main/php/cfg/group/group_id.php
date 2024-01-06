@@ -53,7 +53,7 @@
 
 namespace cfg\group;
 
-use cfg\db\sql_group_type;
+use cfg\db\sql_table_type;
 use cfg\phrase_list;
 
 class group_id
@@ -94,12 +94,12 @@ class group_id
     function max_number_of_phrase(int|string $id): int
     {
         $tbl_typ = $this->table_type($id);
-        if ($tbl_typ == sql_group_type::PRIME) {
+        if ($tbl_typ == sql_table_type::PRIME) {
             return self::PRIME_PHRASE;
-        } elseif ($tbl_typ == sql_group_type::BIG) {
+        } elseif ($tbl_typ == sql_table_type::BIG) {
             $id_keys = preg_split("/[+-]/", $id);
             return count($id_keys);
-        } elseif ($tbl_typ == sql_group_type::MOST) {
+        } elseif ($tbl_typ == sql_table_type::MOST) {
             return self::STANDARD_PHRASES;
         } else {
             log_err('Unexpected table type ' . $tbl_typ->value);
@@ -166,7 +166,7 @@ class group_id
         $tbl_typ = $this->table_type($grp_id);
         $ext = $tbl_typ->extension();
         // only for prime value and result tables the number of ids is relevant
-        if ($tbl_typ == sql_group_type::PRIME) {
+        if ($tbl_typ == sql_table_type::PRIME) {
             if ($with_phrase_count) {
                 $ext .= self::TBL_EXT_PHRASE_ID . $this->count($grp_id);
             }
@@ -180,17 +180,17 @@ class group_id
      * for faster searching
      *
      * @param int|string $grp_id
-     * @return sql_group_type the extension for the table name based on the id
+     * @return sql_table_type the extension for the table name based on the id
      */
-    function table_type(int|string $grp_id): sql_group_type
+    function table_type(int|string $grp_id): sql_table_type
     {
         $ext = '';
         if ($this->is_prime($grp_id)) {
-            $ext = sql_group_type::PRIME;
+            $ext = sql_table_type::PRIME;
         } elseif ($this->is_big($grp_id)) {
-            $ext = sql_group_type::BIG;
+            $ext = sql_table_type::BIG;
         } else {
-            $ext = sql_group_type::MOST;
+            $ext = sql_table_type::MOST;
         }
         return $ext;
     }

@@ -55,14 +55,14 @@ class sql_par
      * @param bool $is_std true if the standard data for all users should be loaded
      * @param bool $all true if all rows should be loaded
      * @param string $ext the query name extension e.g. to separate the queries by the number of parameters
-     * @param sql_group_type $tbl_typ the table extension e.g. to select the table where the data should be saved
+     * @param sql_table_type $tbl_typ the table extension e.g. to select the table where the data should be saved
      */
     function __construct(
         string $class,
         bool $is_std = false,
         bool $all = false,
         string $ext = '',
-        sql_group_type $tbl_typ = sql_group_type::MOST
+        sql_table_type $tbl_typ = sql_table_type::MOST
     )
     {
         $lib = new library();

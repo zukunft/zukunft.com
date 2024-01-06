@@ -44,7 +44,7 @@
 namespace cfg\result;
 
 include_once DB_PATH . 'sql_par_type.php';
-include_once DB_PATH . 'sql_group_type.php';
+include_once DB_PATH . 'sql_table_type.php';
 include_once SERVICE_EXPORT_PATH . 'result_exp.php';
 
 use api\result\result as result_api;
@@ -52,7 +52,7 @@ use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
-use cfg\db\sql_group_type;
+use cfg\db\sql_table_type;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\expression;
@@ -99,9 +99,9 @@ class result extends sandbox_value
     // database table extensions used
     // TODO add a similar list to the value class
     const TBL_EXT_LST = array(
-        sql_group_type::PRIME,
-        sql_group_type::MOST,
-        sql_group_type::BIG
+        sql_table_type::PRIME,
+        sql_table_type::MOST,
+        sql_table_type::BIG
     );
 
     // all database field names used
@@ -338,7 +338,7 @@ class result extends sandbox_value
      * @param string $query_name the unique name of the query e.g. id or name
      * @param string $class the name of the child class from where the call has been triggered
      * @param string $ext the query name extension e.g. to differentiate queries based on 1,2, or more phrases
-     * @param sql_group_type $tbl_typ the table name extension e.g. to switch between standard and prime values
+     * @param sql_table_type $tbl_typ the table name extension e.g. to switch between standard and prime values
      * @param bool $usr_tbl true if a db row should be added to the user table
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
@@ -347,7 +347,7 @@ class result extends sandbox_value
         string         $query_name,
         string         $class = self::class,
         string         $ext = '',
-        sql_group_type $tbl_typ = sql_group_type::MOST,
+        sql_table_type $tbl_typ = sql_table_type::MOST,
         bool           $usr_tbl = false
     ): sql_par
     {

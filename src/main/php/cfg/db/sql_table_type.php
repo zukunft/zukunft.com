@@ -2,7 +2,7 @@
 
 /*
 
-    /model/dp/sql_group_type.php - enum of the sql table extension type for value and result tables
+    /model/dp/sql_table_type.php - enum of the sql table extension type for value and result tables
     ----------------------------
 
     This file is part of zukunft.com - calc with words
@@ -31,15 +31,19 @@
 
 namespace cfg\db;
 
-enum sql_group_type: string
+enum sql_table_type: string
 {
 
-    // the group id type to select a value or result
+    // the fixed table types for a value or result
     case PRIME = 'prime'; // up to four 16-bit phrase ids
     case MOST = 'most'; // up to 16 64-bit phrase ids
     case BIG = 'big'; // more than 16 64-bit phrase ids
     case INDEX = 'index'; // one 32-bit and two 16-bit phrase ids
     case LARGE = 'large'; // one 48-bit and one 16-bit phrase ids
+
+    // the fixed table subtypes
+    case STANDARD = 'standard'; // value or result that is public and unprotected
+    case USER = 'user'; // for user specific values and results
 
     public function extension(): string
     {

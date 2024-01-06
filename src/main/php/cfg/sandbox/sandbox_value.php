@@ -41,7 +41,7 @@ use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
-use cfg\db\sql_group_type;
+use cfg\db\sql_table_type;
 use cfg\db\sql_par;
 use cfg\group\group;
 use cfg\group\group_id;
@@ -355,7 +355,7 @@ class sandbox_value extends sandbox_multi
         $sql_index = $sc->sql_separator();
         $sql_foreign = $sc->sql_separator();
 
-        $sc->set_class($this::class, false, $ext_type . self::TBL_EXT_STD . sql_group_type::PRIME->extension());
+        $sc->set_class($this::class, false, $ext_type . self::TBL_EXT_STD . sql_table_type::PRIME->extension());
         $fields = array_merge(self::FLD_KEY_PRIME, $fld_par, $this::FLD_ALL_SOURCE);
         $sql .= $sc->table_create($fields, $type_name,
             $this::TBL_COMMENT_STD . $type_name . $this::TBL_COMMENT_STD_PRIME_CONT);
@@ -394,24 +394,24 @@ class sandbox_value extends sandbox_multi
 
         $sql .= $sc->sql_separator();
         $fields = array_merge(self::FLD_KEY_PRIME, $this::FLD_ALL_SOURCE_GROUP_PRIME, $std_fields);
-        $sc->set_class($this::class, false, $ext_type . sql_group_type::PRIME->extension());
+        $sc->set_class($this::class, false, $ext_type . sql_table_type::PRIME->extension());
         $sql .= $sc->table_create($fields, $type_name, $this::TBL_COMMENT_PRIME . $type_name . $this::TBL_COMMENT_PRIME_CONT);
         $sql_index .= $sc->index_create($fields, true);
         $sql_foreign .= $sc->foreign_key_create($fields);
         $fields = array_merge(self::FLD_KEY_PRIME_USER, $this::FLD_ALL_SOURCE_GROUP_PRIME, $std_usr_fields);
-        $sc->set_class($this::class, true, $ext_type . sql_group_type::PRIME->extension());
+        $sc->set_class($this::class, true, $ext_type . sql_table_type::PRIME->extension());
         $sql .= $sc->table_create($fields, $type_name, $this::TBL_COMMENT_PRIME_USER . $type_name . $this::TBL_COMMENT_PRIME_USER_CONT);
         $sql_index .= $sc->index_create($fields, true);
         $sql_foreign .= $sc->foreign_key_create($fields);
 
         $sql .= $sc->sql_separator();
         $fields = array_merge(self::FLD_KEY_BIG, $this::FLD_ALL_SOURCE_GROUP_BIG, $std_fields);
-        $sc->set_class($this::class, false, $ext_type . sql_group_type::BIG->extension());
+        $sc->set_class($this::class, false, $ext_type . sql_table_type::BIG->extension());
         $sql .= $sc->table_create($fields, $type_name, $this::TBL_COMMENT . $type_name . $this::TBL_COMMENT_BIG_CONT);
         $sql_index .= $sc->index_create($fields);
         $sql_foreign .= $sc->foreign_key_create($fields);
         $fields = array_merge(self::FLD_KEY_BIG_USER, $this::FLD_ALL_SOURCE_GROUP_BIG, $std_usr_fields);
-        $sc->set_class($this::class, true, $ext_type . sql_group_type::BIG->extension());
+        $sc->set_class($this::class, true, $ext_type . sql_table_type::BIG->extension());
         $sql .= $sc->table_create($fields, $type_name, $this::TBL_COMMENT_BIG_USER . $type_name . $this::TBL_COMMENT_BIG_USER_CONT);
         $sql_index .= $sc->index_create($fields);
         $sql_foreign .= $sc->foreign_key_create($fields);
@@ -581,13 +581,13 @@ class sandbox_value extends sandbox_multi
     /**
      * set the id field based on the given table type
      * used for list load queries where the id if not yet set
-     * @param sql_group_type $tbl_typ the table type that should be used for the id field selection
+     * @param sql_table_type $tbl_typ the table type that should be used for the id field selection
      * @return string|array the field name(s) of the prime database index of the object
      */
-    function id_field_list(sql_group_type $tbl_typ = sql_group_type::MOST): string|array
+    function id_field_list(sql_table_type $tbl_typ = sql_table_type::MOST): string|array
     {
         $lib = new library();
-        if ($tbl_typ == sql_group_type::PRIME) {
+        if ($tbl_typ == sql_table_type::PRIME) {
             $id_fields = array();
             $base_name = $lib->class_to_name(phrase::class) . sql_db::FLD_EXT_ID . '_';
             for ($i = 1; $i <= group_id::PRIME_PHRASE; $i++) {

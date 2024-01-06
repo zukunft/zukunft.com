@@ -48,7 +48,7 @@ include_once MODEL_GROUP_PATH . 'group_id_list.php';
 use api\value\value_list as value_list_api;
 use cfg\db\sql;
 use cfg\db\sql_db;
-use cfg\db\sql_group_type;
+use cfg\db\sql_table_type;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\group\group;
@@ -170,7 +170,7 @@ class value_list extends sandbox_list
         sql            $sc,
         string         $query_name,
         string         $ext = '',
-        sql_group_type $tbl_typ = sql_group_type::MOST,
+        sql_table_type $tbl_typ = sql_table_type::MOST,
         bool           $usr_tbl = false
     ): sql_par
     {
@@ -198,7 +198,7 @@ class value_list extends sandbox_list
      * @param string $query_name the name extension to make the query name unique
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_init(
+    function load_sql_init_old(
         sql    $sc,
         string $query_name,
         string $ext = '',
@@ -220,6 +220,44 @@ class value_list extends sandbox_list
         $sc->set_usr_num_fields(value::FLD_NAMES_NUM_USR);
         $sc->set_usr_only_fields(value::FLD_NAMES_USR_ONLY);
         //$db_con->set_order_text(sql_db::STD_TBL . '.' . $db_con->name_sql_esc(word::FLD_VALUES) . ' DESC, ' . word::FLD_NAME);
+        return $qp;
+    }
+
+    /**
+     * set the SQL query parameters to load a list of values
+     *
+     * @param sql $sc with the target db_type set
+     * @param string $query_name the name extension to make the query name unique
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_init(
+        sql    $sc,
+        string $query_name,
+        array $tbl_types = []
+    ): sql_par
+    {
+        $grp_id = new group_id();
+        $main_tbl_typ = $tbl_types[0];
+        $tbl_ext = $grp_id->table_extension($main_tbl_typ);
+        $is_std = false;
+        if (in_array(sql_table_type::STANDARD, $tbl_types)) {
+            $is_std = true;
+        }
+        $qp = new sql_par(self::class, $is_std, $tbl_ext, $main_tbl_typ);
+        $qp->name .= $query_name;
+
+        $sc->set_class(value::class, false, $tbl_ext);
+        // overwrite the standard id field name (value_id) with the main database id field for values "group_id"
+        $val = new value($this->user());
+        $sc->set_id_field($val->id_field());
+        $sc->set_name($qp->name);
+
+        $sc->set_usr($this->user()->id());
+        $sc->set_fields(value::FLD_NAMES);
+        if (!in_array(sql_table_type::STANDARD, $tbl_types)) {
+            $sc->set_usr_num_fields(value::FLD_NAMES_NUM_USR);
+            $sc->set_usr_only_fields(value::FLD_NAMES_USR_ONLY);
+        }
         return $qp;
     }
 
@@ -347,7 +385,7 @@ class value_list extends sandbox_list
             $tbl_typ = array_shift($matrix_row);
             // TODO add the union query creation for the other table types
             // combine the select statements with and instead of union if possible
-            if ($tbl_typ == sql_group_type::PRIME) {
+            if ($tbl_typ == sql_table_type::PRIME) {
                 $max_row_ids = array_shift($matrix_row);
                 $phr_id_lst = $matrix_row;
 
@@ -437,7 +475,7 @@ class value_list extends sandbox_list
         $par_types = array();
         foreach ($tbl_id_matrix as $matrix_row) {
             $tbl_typ = array_shift($matrix_row);
-            if ($tbl_typ == sql_group_type::PRIME) {
+            if ($tbl_typ == sql_table_type::PRIME) {
                 $max_row_ids = array_shift($matrix_row);
                 $phr_id_lst = $matrix_row;
                 $qp_tbl = $this->load_sql_multi($sc, 'phr_lst', $tbl_typ->extension(), $tbl_typ, $usr_tbl);
@@ -481,11 +519,30 @@ class value_list extends sandbox_list
      */
     function load_sql_by_phr_lst_single(sql $sc, phrase_list $phr_lst): sql_par
     {
-        $qp = $this->load_sql_init($sc, 'phr_lst');
+        $qp = $this->load_sql_init_old($sc, 'phr_lst');
         $sc->set_join_fields(
             array(value::FLD_ID), sql_db::TBL_VALUE_PHRASE_LINK,
             value::FLD_ID, value::FLD_ID);
         $sc->add_where(sql_db::LNK_TBL . '.' . phrase::FLD_ID, $phr_lst->ids());
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve a list of values linked to a phrase from the database
+     * from a single table
+     *     *
+     * @param sql $sc with the target db_type set
+     * @param phrase $phr if set to get all values for this phrase
+     * @param array $tbl_typ_lst the table types for this table
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_phr_single(sql $sc, phrase $phr, array $tbl_typ_lst): sql_par
+    {
+        $qp = $this->load_sql_init($sc, 'phr', $tbl_typ_lst);
+        $sc->add_where(sql_db::LNK_TBL . '.' . phrase::FLD_ID, $phr->id());
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -501,9 +558,17 @@ class value_list extends sandbox_list
      */
     function load_sql_by_phr(sql $sc, phrase $phr): sql_par
     {
-        $qp = $this->load_sql_init_query_par($phr->id(), 'phr');
-        $qp->sql = $sc->select_by_set_id();
-        $qp->par = $sc->get_par();
+        $qp = $this->load_sql_init_query_par('phr');
+        $par_types = array();
+        // loop over the possible tables where the value might be stored in this pod
+        foreach (value::TBL_LIST as $tbl_typ) {
+            $qp_tbl = $this->load_sql_by_phr_single($sc, $phr, $tbl_typ);
+            $qp_tbl->sql = $sc->sql(0, true, false);
+            $qp_tbl->par = $sc->get_par();
+
+            $qp->merge($qp_tbl);
+        }
+        $qp->sql = $sc->prepare_sql($qp->sql, $qp->name, $par_types);
 
         return $qp;
     }

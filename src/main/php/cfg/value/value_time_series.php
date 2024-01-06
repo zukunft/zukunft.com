@@ -38,7 +38,7 @@ namespace cfg\value;
 
 use cfg\db\sql;
 use cfg\db\sql_db;
-use cfg\db\sql_group_type;
+use cfg\db\sql_table_type;
 use cfg\db\sql_par;
 use cfg\group\group;
 use cfg\library;
@@ -203,7 +203,7 @@ class value_time_series extends sandbox_value
      * @param string $query_name the name extension to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
      * @param string $ext the query name extension e.g. to differentiate queries based on 1,2, or more phrases
-     * @param sql_group_type $tbl_typ the table name extension e.g. to switch between standard and prime values
+     * @param sql_table_type $tbl_typ the table name extension e.g. to switch between standard and prime values
      * @param bool $usr_tbl true if a db row should be added to the user table
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
@@ -212,7 +212,7 @@ class value_time_series extends sandbox_value
         string         $query_name,
         string         $class = self::class,
         string         $ext = '',
-        sql_group_type $tbl_typ = sql_group_type::MOST,
+        sql_table_type $tbl_typ = sql_table_type::MOST,
         bool           $usr_tbl = false
     ): sql_par
     {

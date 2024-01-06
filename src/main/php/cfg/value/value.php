@@ -76,7 +76,7 @@ use cfg\batch_job;
 use cfg\batch_job_type_list;
 use cfg\db\sql;
 use cfg\db\sql_db;
-use cfg\db\sql_group_type;
+use cfg\db\sql_table_type;
 use cfg\db\sql_par;
 use cfg\expression;
 use cfg\figure;
@@ -149,6 +149,17 @@ class value extends sandbox_value
     // e.g. the standard value does not need the share type, because it is by definition public (even if share types within a group of users needs to be defined, the value for the user group are also user sandbox table)
     const FLD_NAMES_USR_ONLY = array(
         sandbox::FLD_SHARE
+    );
+    // list of fixed tables where a value might be stored
+    const TBL_LIST = array(
+        [sql_table_type::PRIME, sql_table_type::STANDARD],
+        [sql_table_type::MOST, sql_table_type::STANDARD],
+        [sql_table_type::MOST],
+        [sql_table_type::MOST, sql_table_type::USER],
+        [sql_table_type::PRIME],
+        [sql_table_type::PRIME, sql_table_type::USER],
+        [sql_table_type::BIG],
+        [sql_table_type::BIG, sql_table_type::USER],
     );
 
 
@@ -463,7 +474,7 @@ class value extends sandbox_value
      * @param string $query_name the name extension to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
      * @param string $ext the query name extension e.g. to differentiate queries based on 1,2, or more phrases
-     * @param sql_group_type $tbl_typ the table name extension e.g. to switch between standard and prime values
+     * @param sql_table_type $tbl_typ the table name extension e.g. to switch between standard and prime values
      * @param bool $usr_tbl true if a db row should be added to the user table
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
@@ -472,7 +483,7 @@ class value extends sandbox_value
         string         $query_name,
         string         $class = self::class,
         string         $ext = '',
-        sql_group_type $tbl_typ = sql_group_type::MOST,
+        sql_table_type $tbl_typ = sql_table_type::MOST,
         bool           $usr_tbl = false
     ): sql_par
     {

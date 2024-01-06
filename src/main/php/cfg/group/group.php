@@ -65,7 +65,7 @@ include_once MODEL_GROUP_PATH . 'group_id.php';
 include_once API_PHRASE_PATH . 'group.php';
 
 use api\phrase\group as group_api;
-use cfg\db\sql_group_type;
+use cfg\db\sql_table_type;
 use cfg\db\sql_par;
 use cfg\db_object;
 use cfg\db\sql;
@@ -291,9 +291,9 @@ class group extends sandbox_multi
 
     /**
      *
-     * @return sql_group_type the table type based on the id e.g. "MOST" for a group with 5 to 16 phrases
+     * @return sql_table_type the table type based on the id e.g. "MOST" for a group with 5 to 16 phrases
      */
-    function table_type(): sql_group_type
+    function table_type(): sql_table_type
     {
         $grp_id = new group_id();
         return $grp_id->table_type($this->id());
@@ -423,19 +423,19 @@ class group extends sandbox_multi
         $sql_foreign = $sc->sql_separator();
         $sql_truncate = '';
         $sql_lst = [$sql, $sql_index, $sql_foreign, $sql_truncate];
-        $sql_lst = $this->sql_one_tbl($sc, false, sql_group_type::MOST, sandbox_value::FLD_KEY, $this::TBL_COMMENT, $sql_lst);
-        $sql_lst = $this->sql_one_tbl($sc, true, sql_group_type::MOST, sandbox_value::FLD_KEY_USER, $this::TBL_COMMENT, $sql_lst);
-        $sql_lst = $this->sql_one_tbl($sc, false, sql_group_type::PRIME, group::FLD_KEY_PRIME, $this::TBL_COMMENT_PRIME, $sql_lst);
-        $sql_lst = $this->sql_one_tbl($sc, true, sql_group_type::PRIME, group::FLD_KEY_PRIME_USER, $this::TBL_COMMENT_PRIME, $sql_lst);
-        $sql_lst = $this->sql_one_tbl($sc, false, sql_group_type::BIG, sandbox_value::FLD_KEY_BIG, $this::TBL_COMMENT_BIG, $sql_lst);
-        return $this->sql_one_tbl($sc, true, sql_group_type::BIG, sandbox_value::FLD_KEY_BIG_USER, $this::TBL_COMMENT_BIG, $sql_lst);
+        $sql_lst = $this->sql_one_tbl($sc, false, sql_table_type::MOST, sandbox_value::FLD_KEY, $this::TBL_COMMENT, $sql_lst);
+        $sql_lst = $this->sql_one_tbl($sc, true, sql_table_type::MOST, sandbox_value::FLD_KEY_USER, $this::TBL_COMMENT, $sql_lst);
+        $sql_lst = $this->sql_one_tbl($sc, false, sql_table_type::PRIME, group::FLD_KEY_PRIME, $this::TBL_COMMENT_PRIME, $sql_lst);
+        $sql_lst = $this->sql_one_tbl($sc, true, sql_table_type::PRIME, group::FLD_KEY_PRIME_USER, $this::TBL_COMMENT_PRIME, $sql_lst);
+        $sql_lst = $this->sql_one_tbl($sc, false, sql_table_type::BIG, sandbox_value::FLD_KEY_BIG, $this::TBL_COMMENT_BIG, $sql_lst);
+        return $this->sql_one_tbl($sc, true, sql_table_type::BIG, sandbox_value::FLD_KEY_BIG_USER, $this::TBL_COMMENT_BIG, $sql_lst);
     }
 
     /**
      * add the sql statements for one table to the given array of sql statements
      * @param sql $sc the sql creator object with the target db_type set
      * @param bool $usr_table true if the table should save the user specific changes
-     * @param sql_group_type $tbl_typ the table extension e.g. prime for a short list of primarily used phrases
+     * @param sql_table_type $tbl_typ the table extension e.g. prime for a short list of primarily used phrases
      * @param array $key_fld with the parameter for the table primary key field
      * @param string $tbl_comment the comment for the table in the sql statement
      * @param array $sql_lst the list with the sql statements created until now
@@ -444,7 +444,7 @@ class group extends sandbox_multi
     private function sql_one_tbl(
         sql            $sc,
         bool           $usr_table,
-        sql_group_type $tbl_typ,
+        sql_table_type $tbl_typ,
         array          $key_fld,
         string         $tbl_comment,
         array          $sql_lst
