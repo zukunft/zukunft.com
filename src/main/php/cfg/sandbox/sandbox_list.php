@@ -36,6 +36,7 @@ use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
+use cfg\db\sql_table_type;
 use cfg\result\result_list;
 use cfg\value\value_list;
 
@@ -445,6 +446,81 @@ class sandbox_list extends base_list
             return $result;
         } else {
             return $lib->sql_array($this->ids($limit));
+        }
+    }
+
+    /*
+     * sql_table_type_list
+     */
+
+    /**
+     * @param array $tbl_types list of sql table types that specifies the current case
+     * @return bool true if the list of types specifies that the value has e.g. no protection and is public
+     */
+    protected function is_std(array $tbl_types): bool
+    {
+        if (in_array(sql_table_type::STANDARD, $tbl_types)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @param array $tbl_types list of sql table types that specifies the current case
+     * @return bool true if the list of types specifies that the value has max 4 prime phrases
+     */
+    protected function is_prime(array $tbl_types): bool
+    {
+        if (in_array(sql_table_type::PRIME, $tbl_types)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @param array $tbl_types list of sql table types that specifies the current case
+     * @return bool true if the list of types specifies that the value has max 4 prime phrases
+     */
+    protected function is_big(array $tbl_types): bool
+    {
+        if (in_array(sql_table_type::BIG, $tbl_types)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @param array $tbl_types list of sql table types that specifies the current case
+     * @return string with the table extension in the defined order
+     */
+    function table_extension(array $tbl_types): string
+    {
+        $result = '';
+        if ($this->is_std($tbl_types)) {
+            $result .= sql_table_type::STANDARD->extension();
+        }
+        if ($this->is_prime($tbl_types)) {
+            $result .= sql_table_type::PRIME->extension();
+        }
+        if ($this->is_big($tbl_types)) {
+            $result .= sql_table_type::BIG->extension();
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $tbl_types list of sql table types that specifies the current case
+     * @return bool true if the list of types specifies that the value has no user overwrites
+     */
+    protected function is_user(array $tbl_types): bool
+    {
+        if (in_array(sql_table_type::STANDARD, $tbl_types)) {
+            return true;
+        } else {
+            return false;
         }
     }
 

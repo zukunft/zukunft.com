@@ -96,16 +96,21 @@ class sql_par
      * combine two sql and the related parameters to one sql statement
      *
      * @param sql_par $qp
+     * @param bool $unique true if the parameters should be unique
      * @return sql_par
      */
-    function merge(sql_par $qp): sql_par
+    function merge(sql_par $qp, bool $unique = false): sql_par
     {
         if ($this->sql == '') {
             $this->sql = $qp->sql;
         } else {
             $this->sql .= ' UNION ' . $qp->sql;
         }
-        $this->par = array_merge($this->par, $qp->par);
+        if ($unique) {
+            $this->par = array_unique(array_merge($this->par, $qp->par));
+        } else {
+            $this->par = array_merge($this->par, $qp->par);
+        }
         return $this;
     }
 

@@ -124,6 +124,9 @@ class sql
     private bool $sub_query;        // true, if the query is a sub query for another query
     private bool $all_query;        // true, if the query is expected to retrieve the standard and the user specific data
     private string|array|null $id_field;  // primary key field or field list of the table used
+    private string|array|null $id_field_dummy;  // an empty primary key field for a union query
+    private string|array|null $id_field_num_dummy;  // an empty numeric primary key field for a union query
+    private string|array|null $id_field_usr_dummy;  // an empty user primary key field for a union query
     private ?string $id_from_field; // only for link objects the id field of the source object
     private ?string $id_to_field;   // only for link objects the id field of the destination object
     private ?string $id_link_field; // only for link objects the id field of the link type object
@@ -145,6 +148,9 @@ class sql
 
     // temp for handling the user fields
     private ?array $field_lst;                 // list of fields that should be returned to the next select query
+    private ?array $field_lst_dummy;           // list of fields filled with dummy values for a union query
+    private ?array $field_lst_num_dummy;       // list of numeric fields filled with dummy values for a union query
+    private ?array $field_lst_date_dummy;      // list of datetime fields filled with dummy values for a union query
     private ?array $usr_field_lst;             // list of user specific fields that should be returned to the next select query
     private ?array $usr_num_field_lst;         // list of user specific numeric fields that should be returned to the next select query
     private ?array $usr_bool_field_lst;        // list of user specific boolean / tinyint fields that should be returned to the next select query
@@ -225,7 +231,7 @@ class sql
     /**
      * reset the previous settings
      */
-    private function reset(): void
+    public function reset(): void
     {
         $this->usr_id = null;
         $this->usr_view_id = null;
@@ -238,6 +244,9 @@ class sql
         $this->from_user = false;
         $this->all_query = false;
         $this->id_field = '';
+        $this->id_field_dummy = '';
+        $this->id_field_num_dummy = '';
+        $this->id_field_usr_dummy = '';
         $this->id_from_field = '';
         $this->id_to_field = '';
         $this->id_link_field = '';
@@ -256,6 +265,9 @@ class sql
         $this->use_page = false;
 
         $this->field_lst = [];
+        $this->field_lst_dummy = [];
+        $this->field_lst_num_dummy = [];
+        $this->field_lst_date_dummy = [];
         $this->usr_field_lst = [];
         $this->usr_num_field_lst = [];
         $this->usr_bool_field_lst = [];
@@ -354,6 +366,42 @@ class sql
         }
     }
 
+    /**
+     * set a dummy id field for a union query
+     * @param string|array $given_name with the field name or list of field names
+     * @return void
+     */
+    function set_id_field_dummy(string|array $given_name = ''): void
+    {
+        if ($given_name != '') {
+            $this->id_field_dummy = $given_name;
+        }
+    }
+
+    /**
+     * set a dummy id field for a union query
+     * @param string|array $given_name with the field name or list of field names
+     * @return void
+     */
+    function set_id_field_num_dummy(string|array $given_name = ''): void
+    {
+        if ($given_name != '') {
+            $this->id_field_num_dummy = $given_name;
+        }
+    }
+
+    /**
+     * set a dummy id field for a union query
+     * @param string|array $given_name with the field name or list of field names
+     * @return void
+     */
+    function set_id_field_usr_dummy(string|array $given_name = ''): void
+    {
+        if ($given_name != '') {
+            $this->id_field_usr_dummy = $given_name;
+        }
+    }
+
 
     /*
      * basic interface function for the private class parameter
@@ -423,6 +471,33 @@ class sql
     function set_fields(array $field_lst): void
     {
         $this->field_lst = $field_lst;
+    }
+
+    /**
+     * define the fields that should be returned in a select query with dummy values for a union query
+     * @param array $field_lst list of the non-user specific fields that should be loaded from the database
+     */
+    function set_fields_dummy(array $field_lst): void
+    {
+        $this->field_lst_dummy = $field_lst;
+    }
+
+    /**
+     * define the fields that should be returned in a select query with dummy values for a union query
+     * @param array $field_lst list of the non-user specific fields that should be loaded from the database
+     */
+    function set_fields_num_dummy(array $field_lst): void
+    {
+        $this->field_lst_num_dummy = $field_lst;
+    }
+
+    /**
+     * define the fields that should be returned in a select query with dummy values for a union query
+     * @param array $field_lst list of the non-user specific fields that should be loaded from the database
+     */
+    function set_fields_date_dummy(array $field_lst): void
+    {
+        $this->field_lst_date_dummy = $field_lst;
     }
 
     /**
@@ -716,16 +791,19 @@ class sql
      * @param string $fld the field name used in the sql where statement
      * @param int|string|array $fld_val with the database id that should be selected
      * @param sql_par_type|null $spt to force using a non-standard parameter type e.g. OR instead of AND
+     * @param string $name the unique name of the parameter to force to use the same parameter more than once
      * @return void
      */
     function add_where(
         string            $fld,
         int|string|array  $fld_val,
-        sql_par_type|null $spt = null): void
+        sql_par_type|null $spt = null,
+        string            $name = ''
+    ): void
     {
         $this->add_field($fld);
 
-        // set the default parameter type
+        // set the default parameter type for the sql parameter type (spt)
         if ($spt == null) {
             $spt = $this->get_sql_par_type($fld_val);
         }
@@ -745,6 +823,8 @@ class sql
             or $spt == sql_par_type::INT_NOT_OR_NULL
             or $spt == sql_par_type::LIMIT
             or $spt == sql_par_type::OFFSET) {
+            $this->add_par($spt, $fld_val);
+        } elseif ($spt == sql_par_type::INT_SAME) {
             $this->add_par($spt, $fld_val);
         } elseif ($spt == sql_par_type::TEXT
             or $spt == sql_par_type::TEXT_USR
@@ -1086,17 +1166,27 @@ class sql
      * @param string $value the int, float value or text value that is used for the concrete execution of the query
      * @param bool $named true if the parameter name is already used
      * @param bool $use_link true if the parameter should be applied on the linked table
+     * @param string $name if set to combine the same parameter
      */
     private function add_par(
         sql_par_type $par_type,
         string       $value,
         bool         $named = false,
-        bool         $use_link = false): void
+        bool         $use_link = false,
+        string       $name = ''
+    ): void
     {
-        $this->par_types[] = $par_type;
-        $this->par_values[] = $value;
-        $this->par_named[] = $named;
-        $this->par_use_link[] = $use_link;
+        if ($name == '') {
+            $this->par_types[] = $par_type;
+            $this->par_values[] = $value;
+            $this->par_named[] = $named;
+            $this->par_use_link[] = $use_link;
+        } else {
+            $this->par_types[$name] = $par_type;
+            $this->par_values[$name] = $value;
+            $this->par_named[$name] = $named;
+            $this->par_use_link[$name] = $use_link;
+        }
     }
 
     /**
@@ -1133,6 +1223,17 @@ class sql
         $usr_field_lst = [];
 
         if ($has_id) {
+            // start with the dummy id field
+            if ($this->id_field_dummy != '') {
+                if (is_array($this->id_field)) {
+                    foreach ($this->id_field_dummy as $id_fld) {
+                        $field_lst[] = $id_fld;
+                    }
+                } else {
+                    $field_lst[] = $this->id_field_dummy;
+                }
+            }
+
             // add the fields that part of all standard tables so id and name on top of the field list
             if (is_array($this->id_field)) {
                 foreach ($this->id_field as $id_fld) {
@@ -1141,6 +1242,25 @@ class sql
             } else {
                 $field_lst[] = $this->id_field;
             }
+
+            // add the dummy usr id fields
+            if ($this->id_field_usr_dummy != '') {
+                if (is_array($this->id_field_usr_dummy)) {
+                    foreach ($this->id_field_usr_dummy as $id_fld) {
+                        $field_lst[] = $id_fld;
+                    }
+                } else {
+                    $field_lst[] = $this->id_field_usr_dummy;
+                }
+            }
+
+            // add the dummy num id fields
+            if (is_array($this->id_field_num_dummy)) {
+                foreach ($this->id_field_num_dummy as $id_fld) {
+                    $field_lst[] = $id_fld;
+                }
+            }
+
             if ($this->usr_query) {
                 // user can change the name of an object, that's why the target field list is either $usr_field_lst or $field_lst
                 if (!in_array($this->class, self::DB_TYPES_NOT_NAMED)) {
@@ -1185,6 +1305,7 @@ class sql
 
         // add normal fields
         foreach ($this->field_lst as $field) {
+            // escape the field name
             if (is_array($field)) {
                 $fld_lst = array();
                 foreach ($field as $fld) {
@@ -1195,23 +1316,92 @@ class sql
                 $field = $this->name_sql_esc($field);
             }
             $result = $this->sep($result);
-            if ($this->usr_query or $this->join_type != '') {
-                $result .= ' ' . sql_db::STD_TBL . '.' . $field;
-                if ($field == $this->id_field) {
-                    // add the user sandbox id for user sandbox queries to find out if the user sandbox has already been created
-                    if ($this->all_query) {
-                        $result = $this->sep($result);
-                        $result .= ' ' . sql_db::USR_TBL . '.' . user::FLD_ID;
+
+            // dummy id fields
+            $fld_used = false;
+            if ($this->id_field_dummy != '') {
+                if (is_array($this->id_field_dummy)) {
+                    if (in_array($field, $this->id_field_dummy)) {
+                        $result .= " '' AS " . $field;
+                        $fld_used = true;
+                    }
+                } else {
+                    if ($field == $this->id_field_dummy) {
+                        $result .= " '' AS " . $field;
+                        $fld_used = true;
+                    }
+                }
+            }
+
+            if (!$fld_used) {
+                if ($this->id_field_num_dummy != '') {
+                    if (is_array($this->id_field_num_dummy)) {
+                        if (in_array($field, $this->id_field_num_dummy)) {
+                            $result .= ' 0 AS ' . $field;
+                            $fld_used = true;
+                        }
                     } else {
-                        if ($this->usr_query) {
-                            $result = $this->sep($result);
-                            $result .= ' ' . sql_db::USR_TBL . '.' . $field . ' AS ' . sql_db::USER_PREFIX . $this->id_field;
+                        if ($field == $this->id_field_num_dummy) {
+                            $result .= ' 0 AS ' . $field;
+                            $fld_used = true;
                         }
                     }
                 }
-            } else {
-                $result .= ' ' . $field;
             }
+
+            if (!$fld_used) {
+                if ($this->id_field_usr_dummy != '') {
+                    if (is_array($this->id_field_usr_dummy)) {
+                        if (in_array($field, $this->id_field_usr_dummy)) {
+                            $result .= " '' AS " . $field;
+                            $fld_used = true;
+                        }
+                    } else {
+                        if ($field == $this->id_field_usr_dummy) {
+                            $result .= " '' AS " . $field;
+                            $fld_used = true;
+                        }
+                    }
+                }
+            }
+
+            // add datetime num fields
+            if (!$fld_used) {
+                if ($this->field_lst_num_dummy != '') {
+                    if (is_array($this->field_lst_num_dummy)) {
+                        if (in_array($field, $this->field_lst_num_dummy)) {
+                            $result .= " 0 AS " . $field;
+                            $fld_used = true;
+                        }
+                    } else {
+                        if ($field == $this->field_lst_num_dummy) {
+                            $result .= " 0 AS " . $field;
+                            $fld_used = true;
+                        }
+                    }
+                }
+            }
+
+            if (!$fld_used) {
+                if ($this->usr_query or $this->join_type != '') {
+                    $result .= ' ' . sql_db::STD_TBL . '.' . $field;
+                    if ($field == $this->id_field) {
+                        // add the user sandbox id for user sandbox queries to find out if the user sandbox has already been created
+                        if ($this->all_query) {
+                            $result = $this->sep($result);
+                            $result .= ' ' . sql_db::USR_TBL . '.' . user::FLD_ID;
+                        } else {
+                            if ($this->usr_query) {
+                                $result = $this->sep($result);
+                                $result .= ' ' . sql_db::USR_TBL . '.' . $field . ' AS ' . sql_db::USER_PREFIX . $this->id_field;
+                            }
+                        }
+                    }
+                } else {
+                    $result .= ' ' . $field;
+                }
+            }
+
         }
 
         // select the owner of the standard values in case of an overview query
@@ -1390,6 +1580,20 @@ class sql
             $field = $this->name_sql_esc($field);
             $result = $this->sep($result);
             $result .= ' ' . sql_db::USR_TBL . '.' . $field;
+        }
+
+        // add datetime dummy fields
+        foreach ($this->field_lst_date_dummy as $field) {
+            $field_esc = $this->name_sql_esc($field);
+            $result = $this->sep($result);
+            $result .= $this->set_field_date_dummy($field_esc);
+        }
+
+        // add numeric dummy fields
+        foreach ($this->field_lst_dummy as $field) {
+            $field_esc = $this->name_sql_esc($field);
+            $result = $this->sep($result);
+            $result .= $this->set_field_num_dummy($field_esc);
         }
 
         return $result;
@@ -1679,7 +1883,8 @@ class sql
                             } else {
                                 if ($par_type == sql_par_type::TEXT_OR
                                     or $par_type == sql_par_type::INT_OR
-                                    or $par_type == sql_par_type::INT_LIST_OR) {
+                                    or $par_type == sql_par_type::INT_LIST_OR
+                                    or $par_type == sql_par_type::INT_SAME) {
                                     $result .= ' OR ';
                                 } else {
                                     $result .= ' AND ';
@@ -1793,6 +1998,9 @@ class sql
                                 $result .= $tbl_id . $this->par_fields[$i] . ' >= ' . $this->par_name($par_pos);
                             } elseif ($par_type == sql_par_type::INT_LOWER) {
                                 $result .= $tbl_id . $this->par_fields[$i] . ' =< ' . $this->par_name($par_pos);
+                            } elseif ($par_type == sql_par_type::INT_SAME) {
+                                $result .= $tbl_id . $this->par_fields[$i] . ' = ' . $this->par_name($par_pos);
+                                $par_offset--;
                             } else {
                                 $result .= $tbl_id . $this->par_fields[$i] . ' = ' . $this->par_name($par_pos);
                             }
@@ -2930,6 +3138,26 @@ class sql
         string $field, string $stb_tbl = sql_db::STD_TBL, string $usr_tbl = sql_db::USR_TBL, string $as = ''): string
     {
         return $this->sql_usr_field($field, sql_db::FLD_FORMAT_VAL, $stb_tbl, $usr_tbl, $as);
+    }
+
+    /**
+     * internal interface function for sql_usr_field using the class db type settings and number fields
+     * @param string $field the field name of the user specific field
+     * @return string the SQL statement for a field taken from the user sandbox table or from the table with the common values
+     */
+    private function set_field_num_dummy(string $field): string
+    {
+        return " 0 AS " . $field;
+    }
+
+    /**
+     * internal interface function for sql_usr_field using the class db type settings and datetime fields
+     * @param string $field the field name of the user specific field
+     * @return string the SQL statement for a field taken from the user sandbox table or from the table with the common values
+     */
+    private function set_field_date_dummy(string $field): string
+    {
+        return " now() AS " . $field;
     }
 
     /**

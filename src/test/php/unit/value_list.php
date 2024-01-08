@@ -46,10 +46,6 @@ use cfg\word;
 
 class value_list_unit_tests
 {
-    const TEST_NAME = 'value_list->';
-    const PATH = 'db/value/';
-    const FILE_EXT = '.sql';
-    const FILE_MYSQL = '_mysql';
 
     public test_cleanup $test;
     public value_list $lst;
@@ -114,7 +110,7 @@ class value_list_unit_tests
         // sql to load a list of value by the phrase id
         $phr = $t->dummy_triple_pi()->phrase();
         // TODO activate, but with new sql creator
-        // $this->assert_sql_by_phr($t, $db_con, $val_lst, $phr);
+        //$this->assert_sql_by_phr($t, $db_con, $val_lst, $phr);
 
 
         $t->subheader('Im- and Export tests');

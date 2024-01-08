@@ -225,6 +225,7 @@ class value_list extends sandbox_list
 
     /**
      * set the SQL query parameters to load a list of values
+     * set the fields for a union select of all possible tables
      *
      * @param sql $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
@@ -236,25 +237,34 @@ class value_list extends sandbox_list
         array $tbl_types = []
     ): sql_par
     {
-        $grp_id = new group_id();
-        $main_tbl_typ = $tbl_types[0];
-        $tbl_ext = $grp_id->table_extension($main_tbl_typ);
-        $is_std = false;
-        if (in_array(sql_table_type::STANDARD, $tbl_types)) {
-            $is_std = true;
-        }
-        $qp = new sql_par(self::class, $is_std, $tbl_ext, $main_tbl_typ);
+        $tbl_ext = $this->table_extension($tbl_types);
+        $is_std = $this->is_std($tbl_types);
+        $qp = new sql_par(self::class, $is_std, false, $tbl_ext);
         $qp->name .= $query_name;
 
         $sc->set_class(value::class, false, $tbl_ext);
         // overwrite the standard id field name (value_id) with the main database id field for values "group_id"
         $val = new value($this->user());
-        $sc->set_id_field($val->id_field());
+        if ($this->is_prime($tbl_types)) {
+            $sc->set_id_field_dummy($val->id_field_group(true));
+            $sc->set_id_field($val->id_fields_prime());
+        } else {
+            $sc->set_id_field($val->id_field_group());
+            $sc->set_id_field_usr_dummy($val->id_field_group(false, true));
+            $sc->set_id_field_num_dummy($val->id_fields_prime());
+        }
         $sc->set_name($qp->name);
 
         $sc->set_usr($this->user()->id());
         $sc->set_fields(value::FLD_NAMES);
-        if (!in_array(sql_table_type::STANDARD, $tbl_types)) {
+        if ($is_std) {
+            // TODO replace next line with union select field name synchronisation
+            $sc->set_fields_num_dummy(array(user::FLD_ID));
+            $sc->set_fields(value::FLD_NAMES_STD);
+            $sc->set_fields_date_dummy(value::FLD_NAMES_DATE_USR_EX_STD);
+            $sc->set_fields_dummy(array_merge(value::FLD_NAMES_NUM_USR_EX_STD, value::FLD_NAMES_USR_ONLY));
+        } else {
+            $sc->set_fields(value::FLD_NAMES);
             $sc->set_usr_num_fields(value::FLD_NAMES_NUM_USR);
             $sc->set_usr_only_fields(value::FLD_NAMES_USR_ONLY);
         }
@@ -343,6 +353,13 @@ class value_list extends sandbox_list
         return $tbl_id_matrix;
     }
 
+    /**
+     * create a query parameter object with a unique name
+     *
+     * @param array $ids array with the ids used to select the result
+     * @param string $query_name
+     * @return sql_par
+     */
     private function load_sql_init_query_par(array $ids, string $query_name): sql_par
     {
         $qp = new sql_par(value::class);
@@ -542,8 +559,15 @@ class value_list extends sandbox_list
     function load_sql_by_phr_single(sql $sc, phrase $phr, array $tbl_typ_lst): sql_par
     {
         $qp = $this->load_sql_init($sc, 'phr', $tbl_typ_lst);
-        $sc->add_where(sql_db::LNK_TBL . '.' . phrase::FLD_ID, $phr->id());
-        $qp->sql = $sc->sql();
+        if ($this->is_prime($tbl_typ_lst)) {
+            for ($i = 1; $i <= group_id::PRIME_PHRASE; $i++) {
+                $sc->add_where(phrase::FLD_ID . '_' . $i, $phr->id(), sql_par_type::INT_SAME);
+            }
+        } else {
+            $grp_id = new group_id();
+            $sc->add_where(group::FLD_ID, $grp_id->int2alpha_num($phr->id()), sql_par_type::LIKE);
+        }
+        $qp->sql = $sc->sql(0, true, false);
         $qp->par = $sc->get_par();
 
         return $qp;
@@ -558,14 +582,14 @@ class value_list extends sandbox_list
      */
     function load_sql_by_phr(sql $sc, phrase $phr): sql_par
     {
-        $qp = $this->load_sql_init_query_par('phr');
+        $lib = new library();
+        $qp = new sql_par(value::class);
+        $qp->name = $lib->class_to_name(value_list::class) . '_by_phr';
         $par_types = array();
         // loop over the possible tables where the value might be stored in this pod
         foreach (value::TBL_LIST as $tbl_typ) {
+            $sc->reset();
             $qp_tbl = $this->load_sql_by_phr_single($sc, $phr, $tbl_typ);
-            $qp_tbl->sql = $sc->sql(0, true, false);
-            $qp_tbl->par = $sc->get_par();
-
             $qp->merge($qp_tbl);
         }
         $qp->sql = $sc->prepare_sql($qp->sql, $qp->name, $par_types);

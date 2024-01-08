@@ -565,16 +565,57 @@ class sandbox_value extends sandbox_multi
      */
     function id_field(): string|array
     {
-        $lib = new library();
         if ($this->grp()->is_prime()) {
-            $id_fields = array();
-            $base_name = $lib->class_to_name(phrase::class) . sql_db::FLD_EXT_ID . '_';
-            for ($i = 1; $i <= group_id::PRIME_PHRASE; $i++) {
-                $id_fields[] = $base_name . $i;
-            }
-            return $id_fields;
+            return $this->id_fields_prime();
         } else {
-            return $lib->class_to_name(group::class) . sql_db::FLD_EXT_ID;
+            return $this->id_field_group();
+        }
+    }
+
+    /**
+     * @return array with the id fields for none prime and prime values
+     */
+    function id_fields_both(): array
+    {
+        $id_fields = array();
+        $id_fields[] = $this->id_field_group();
+        return array_merge($id_fields, $this->id_fields_prime());
+    }
+
+    /**
+     * @return array with the id fields for a prime value
+     */
+    function id_fields_prime(): array
+    {
+        $lib = new library();
+        $id_fields = array();
+        $base_name = $lib->class_to_name(phrase::class) . sql_db::FLD_EXT_ID . '_';
+        for ($i = 1; $i <= group_id::PRIME_PHRASE; $i++) {
+            $id_fields[] = $base_name . $i;
+        }
+        return $id_fields;
+    }
+
+    /**
+     * @param bool $usr_tbl true if also the user group id field should be returned
+     * @param bool $usr_only true if only the user table field should be returned
+     * @return string with the id field for a none prime value
+     */
+    function id_field_group(bool $usr_tbl = false, bool $usr_only = false): string|array
+    {
+        $lib = new library();
+        $fld_name = $lib->class_to_name(group::class) . sql_db::FLD_EXT_ID;
+        if (!$usr_tbl) {
+            if ($usr_only) {
+                return sql_db::TBL_USER_PREFIX . $fld_name;
+            } else {
+                return $fld_name;
+            }
+        } else {
+            $id_fields = array();
+            $id_fields[] = $fld_name;
+            $id_fields[] = sql_db::TBL_USER_PREFIX . $fld_name;
+            return $id_fields;
         }
     }
 
@@ -833,7 +874,7 @@ class sandbox_value extends sandbox_multi
             $tbl_typ = $this->grp->table_type();
             $id_fields = $this->id_field($tbl_typ);
             if (is_array($id_fields)) {
-                $fld_dsp = ' (' . implode(', ' ,$id_fields);
+                $fld_dsp = ' (' . implode(', ', $id_fields);
                 $fld_dsp .= ' = ' . $this->grp()->dsp_id_short() . ')';
                 $result .= $fld_dsp;
             } else {

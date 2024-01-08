@@ -129,6 +129,19 @@ class value extends sandbox_value
 
     // all database field names excluding the id and excluding the user specific fields
     const FLD_NAMES = array();
+    const FLD_NAMES_STD = array(
+        self::FLD_VALUE,
+        source::FLD_ID,
+    );
+    // list of the user specific numeric database field names
+    const FLD_NAMES_NUM_USR_EX_STD = array(
+        sandbox::FLD_EXCLUDED,
+        sandbox::FLD_PROTECT
+    );
+    // list of the user specific datetime database field names
+    const FLD_NAMES_DATE_USR_EX_STD = array(
+        self::FLD_LAST_UPDATE
+    );
     // list of the user specific numeric database field names
     const FLD_NAMES_NUM_USR = array(
         self::FLD_VALUE,
@@ -155,11 +168,8 @@ class value extends sandbox_value
         [sql_table_type::PRIME, sql_table_type::STANDARD],
         [sql_table_type::MOST, sql_table_type::STANDARD],
         [sql_table_type::MOST],
-        [sql_table_type::MOST, sql_table_type::USER],
         [sql_table_type::PRIME],
-        [sql_table_type::PRIME, sql_table_type::USER],
-        [sql_table_type::BIG],
-        [sql_table_type::BIG, sql_table_type::USER],
+        [sql_table_type::BIG]
     );
 
 

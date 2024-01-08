@@ -45,6 +45,9 @@ enum sql_table_type: string
     case STANDARD = 'standard'; // value or result that is public and unprotected
     case USER = 'user'; // for user specific values and results
 
+    /**
+     * @return string the name extension for the query name
+     */
     public function extension(): string
     {
         return match($this) {
@@ -52,7 +55,10 @@ enum sql_table_type: string
             self::BIG => '_big',
             self::INDEX => '_index',
             self::LARGE => '_large',
+            self::STANDARD => '_standard',
+            self::USER => '_user',
             default => '',
         };
     }
+
 }

@@ -323,7 +323,7 @@ class group_id
      * @param int $id a phrase id
      * @return string a 6 char db key of a 32 bit phrase id in alpha_num format e.g. "3'082'113" ist "..AkS/"
      */
-    private function int2alpha_num(int $id): string
+    function int2alpha_num(int $id): string
     {
         $i = 6;
         $chars = [];
