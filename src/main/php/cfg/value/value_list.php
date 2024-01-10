@@ -250,7 +250,9 @@ class value_list extends sandbox_list
             $sc->set_id_field($val->id_fields_prime());
         } else {
             $sc->set_id_field($val->id_field_group());
-            $sc->set_id_field_usr_dummy($val->id_field_group(false, true));
+            if ($is_std) {
+                $sc->set_id_field_usr_dummy($val->id_field_group(false, true));
+            }
             $sc->set_id_field_num_dummy($val->id_fields_prime());
         }
         $sc->set_name($qp->name);
@@ -561,11 +563,11 @@ class value_list extends sandbox_list
         $qp = $this->load_sql_init($sc, 'phr', $tbl_typ_lst);
         if ($this->is_prime($tbl_typ_lst)) {
             for ($i = 1; $i <= group_id::PRIME_PHRASE; $i++) {
-                $sc->add_where(phrase::FLD_ID . '_' . $i, $phr->id(), sql_par_type::INT_SAME);
+                $sc->add_where(phrase::FLD_ID . '_' . $i, $phr->id(), sql_par_type::INT_SAME, '$2');
             }
         } else {
             $grp_id = new group_id();
-            $sc->add_where(group::FLD_ID, $grp_id->int2alpha_num($phr->id()), sql_par_type::LIKE);
+            $sc->add_where(group::FLD_ID, $grp_id->int2alpha_num($phr->id()), sql_par_type::LIKE, '$3');
         }
         $qp->sql = $sc->sql(0, true, false);
         $qp->par = $sc->get_par();

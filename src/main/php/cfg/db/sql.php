@@ -136,6 +136,7 @@ class sql
 
     private ?array $par_use_link;   // array of bool, true if the parameter should be used on the linked table
     private array $par_named;       // array of bool, true if the parameter placeholder is already used in the SQL statement
+    private array $par_name;        // array of the par name
 
     // internal parameters that depend on more than one function
     private ?string $join;     // the JOIN                  SQL statement that is used for the next select query
@@ -255,6 +256,7 @@ class sql
         $this->par_types = [];
         $this->par_use_link = [];
         $this->par_named = [];
+        $this->par_name = [];
 
         $this->join = '';
         $this->where = '';
@@ -825,7 +827,7 @@ class sql
             or $spt == sql_par_type::OFFSET) {
             $this->add_par($spt, $fld_val);
         } elseif ($spt == sql_par_type::INT_SAME) {
-            $this->add_par($spt, $fld_val);
+            $this->add_par($spt, $fld_val, false, false, $name);
         } elseif ($spt == sql_par_type::TEXT
             or $spt == sql_par_type::TEXT_USR
             or $spt == sql_par_type::TEXT_OR
@@ -847,7 +849,7 @@ class sql
         } elseif ($spt == sql_par_type::NOT_NULL) {
             $this->add_par($spt, '');
         } elseif ($spt == sql_par_type::LIKE) {
-            $this->add_par($spt, $fld_val . '%');
+            $this->add_par($spt, $fld_val . '%', false, false, $name);
         } else {
             log_err('SQL parameter type ' . $spt->value . ' not expected');
         }
@@ -1176,17 +1178,11 @@ class sql
         string       $name = ''
     ): void
     {
-        if ($name == '') {
-            $this->par_types[] = $par_type;
-            $this->par_values[] = $value;
-            $this->par_named[] = $named;
-            $this->par_use_link[] = $use_link;
-        } else {
-            $this->par_types[$name] = $par_type;
-            $this->par_values[$name] = $value;
-            $this->par_named[$name] = $named;
-            $this->par_use_link[$name] = $use_link;
-        }
+        $this->par_types[] = $par_type;
+        $this->par_values[] = $value;
+        $this->par_named[] = $named;
+        $this->par_use_link[] = $use_link;
+        $this->par_name[] = $name;
     }
 
     /**
@@ -1289,11 +1285,18 @@ class sql
             }
 
             // add the given fields at the end
+            foreach ($this->field_lst_num_dummy as $field) {
+                if (!in_array($field, $field_lst)) {
+                    $field_lst[] = $field;
+                }
+            }
+            // add the given fields at the end
             foreach ($this->field_lst as $field) {
                 if (!in_array($field, $field_lst)) {
                     $field_lst[] = $field;
                 }
             }
+
             $this->field_lst = $field_lst;
 
             // add the given user fields at the end
@@ -1969,8 +1972,12 @@ class sql
                                 $par_offset--;
                                 $result .= ''; // because added with the page statement
                             } elseif ($par_type == sql_par_type::LIKE) {
-                                $result .= $tbl_id . $this->par_fields[$i]
-                                    . ' like ' . $this->par_name($par_pos);
+                                $result .= $tbl_id . $this->par_fields[$i] . ' like ';
+                                if ($this->par_name[$i] != '') {
+                                    $result .= $this->par_name[$i];
+                                } else {
+                                    $result .= $this->par_name($par_pos);
+                                }
                             } elseif ($par_type == sql_par_type::CONST) {
                                 $par_offset--;
                                 $result .= $tbl_id . $this->par_fields[$i] . ' = ' . $this->par_value($i + 1);
@@ -1999,7 +2006,12 @@ class sql
                             } elseif ($par_type == sql_par_type::INT_LOWER) {
                                 $result .= $tbl_id . $this->par_fields[$i] . ' =< ' . $this->par_name($par_pos);
                             } elseif ($par_type == sql_par_type::INT_SAME) {
-                                $result .= $tbl_id . $this->par_fields[$i] . ' = ' . $this->par_name($par_pos);
+                                $result .= $tbl_id . $this->par_fields[$i] . ' = ';
+                                if ($this->par_name[$i] != '') {
+                                    $result .= $this->par_name[$i];
+                                } else {
+                                    $result .= $this->par_name($par_pos);
+                                }
                                 $par_offset--;
                             } else {
                                 $result .= $tbl_id . $this->par_fields[$i] . ' = ' . $this->par_name($par_pos);
@@ -2503,7 +2515,11 @@ class sql
                 and $par_type != sql_par_type::MAX
                 and $par_type != sql_par_type::COUNT
                 and $par_type != sql_par_type::INT_SUB_IN) {
-                $used_par_values[] = $this->par_value($i + 1);;
+                if ($this->par_name[$i] != '') {
+                    $used_par_values[$this->par_name[$i]] = $this->par_value($i + 1);;
+                } else {
+                    $used_par_values[] = $this->par_value($i + 1);;
+                }
             }
             $i++;
         }
@@ -3033,7 +3049,9 @@ class sql
             $pos = count($this->par_types);
         }
 
-        return $this->par_values[$pos - 1];
+        $par_values = array_values($this->par_values);
+
+        return $par_values[$pos - 1];
     }
 
     /**

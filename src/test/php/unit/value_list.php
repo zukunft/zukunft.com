@@ -110,7 +110,7 @@ class value_list_unit_tests
         // sql to load a list of value by the phrase id
         $phr = $t->dummy_triple_pi()->phrase();
         // TODO activate, but with new sql creator
-        //$this->assert_sql_by_phr($t, $db_con, $val_lst, $phr);
+        $this->assert_sql_by_phr($t, $db_con, $val_lst, $phr);
 
 
         $t->subheader('Im- and Export tests');
