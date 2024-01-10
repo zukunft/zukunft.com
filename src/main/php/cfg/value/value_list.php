@@ -592,7 +592,14 @@ class value_list extends sandbox_list
         foreach (value::TBL_LIST as $tbl_typ) {
             $sc->reset();
             $qp_tbl = $this->load_sql_by_phr_single($sc, $phr, $tbl_typ);
-            $qp->merge($qp_tbl);
+            $qp->merge($qp_tbl, true);
+        }
+        foreach ($qp->par as $par) {
+            if (is_numeric($par)) {
+                $par_types[] = sql_par_type::INT;
+            } else {
+                $par_types[] = sql_par_type::TEXT;
+            }
         }
         $qp->sql = $sc->prepare_sql($qp->sql, $qp->name, $par_types);
 

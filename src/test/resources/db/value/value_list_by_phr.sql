@@ -1,4 +1,4 @@
-PREPARE value_list_by_phr (bigint, bigint, text) AS
+PREPARE value_list_by_phr (bigint, text, bigint) AS
     SELECT '' AS group_id,
            '' AS user_group_id,
            phrase_id_1,
