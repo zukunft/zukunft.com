@@ -174,7 +174,7 @@ class value_list_unit_tests
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
             $qp = $val_lst->load_sql_by_phr($db_con->sql_creator(), $phr);
-            //$t->assert_qp($qp, $db_con->db_type);
+            $t->assert_qp($qp, $db_con->db_type);
         }
     }
 

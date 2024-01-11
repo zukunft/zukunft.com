@@ -1325,12 +1325,20 @@ class sql
             if ($this->id_field_dummy != '') {
                 if (is_array($this->id_field_dummy)) {
                     if (in_array($field, $this->id_field_dummy)) {
-                        $result .= " '' AS " . $field;
+                        if ($this->db_type() == sql_db::POSTGRES) {
+                            $result .= " '' AS " . $field;
+                        } else {
+                            $result .= " NULL AS " . $field;
+                        }
                         $fld_used = true;
                     }
                 } else {
                     if ($field == $this->id_field_dummy) {
-                        $result .= " '' AS " . $field;
+                        if ($this->db_type() == sql_db::POSTGRES) {
+                            $result .= " '' AS " . $field;
+                        } else {
+                            $result .= " NULL AS " . $field;
+                        }
                         $fld_used = true;
                     }
                 }
@@ -1356,12 +1364,20 @@ class sql
                 if ($this->id_field_usr_dummy != '') {
                     if (is_array($this->id_field_usr_dummy)) {
                         if (in_array($field, $this->id_field_usr_dummy)) {
-                            $result .= " '' AS " . $field;
+                            if ($this->db_type() == sql_db::POSTGRES) {
+                                $result .= " '' AS " . $field;
+                            } else {
+                                $result .= " NULL AS " . $field;
+                            }
                             $fld_used = true;
                         }
                     } else {
                         if ($field == $this->id_field_usr_dummy) {
-                            $result .= " '' AS " . $field;
+                            if ($this->db_type() == sql_db::POSTGRES) {
+                                $result .= " '' AS " . $field;
+                            } else {
+                                $result .= " NULL AS " . $field;
+                            }
                             $fld_used = true;
                         }
                     }
@@ -1973,7 +1989,7 @@ class sql
                                 $result .= ''; // because added with the page statement
                             } elseif ($par_type == sql_par_type::LIKE) {
                                 $result .= $tbl_id . $this->par_fields[$i] . ' like ';
-                                if ($this->par_name[$i] != '') {
+                                if ($this->par_name[$i] != '' and $this->db_type() != sql_db::MYSQL) {
                                     $result .= $this->par_name[$i];
                                 } else {
                                     $result .= $this->par_name($par_pos);
@@ -2007,7 +2023,7 @@ class sql
                                 $result .= $tbl_id . $this->par_fields[$i] . ' =< ' . $this->par_name($par_pos);
                             } elseif ($par_type == sql_par_type::INT_SAME) {
                                 $result .= $tbl_id . $this->par_fields[$i] . ' = ';
-                                if ($this->par_name[$i] != '') {
+                                if ($this->par_name[$i] != '' and $this->db_type() != sql_db::MYSQL) {
                                     $result .= $this->par_name[$i];
                                 } else {
                                     $result .= $this->par_name($par_pos);
@@ -2515,7 +2531,7 @@ class sql
                 and $par_type != sql_par_type::MAX
                 and $par_type != sql_par_type::COUNT
                 and $par_type != sql_par_type::INT_SUB_IN) {
-                if ($this->par_name[$i] != '') {
+                if ($this->par_name[$i] != '' and $this->db_type() != sql_db::MYSQL) {
                     $used_par_values[$this->par_name[$i]] = $this->par_value($i + 1);;
                 } else {
                     $used_par_values[] = $this->par_value($i + 1);;
