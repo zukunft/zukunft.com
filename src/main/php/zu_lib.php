@@ -73,6 +73,13 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO add api unit test (assert_api_to_dsp) to all objects
     TODO add limit and offset to all list sql statements
     TODO align the namespace with PSR-0 as much as possible
+    TODO sort the phrases by usage, so that the values with the smallest group id are the most relevant
+    TODO so the phrase sort by usage separate for each pod
+    TODO for a list a phrase load more values than needed from the backend and filter the values in the frontend
+    TODO resort the classes functions so that each section start with the most often used function
+    TODO resort the classes by the sections
+         const, vars, construct and map, cast, set and get
+         load, im- and export, filter, modify, check, save, del
 
     after that this should be done while keeping step 1. to 4. for each commit:
     TODO use the json api message header for all api messages
@@ -240,6 +247,14 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO save in the local pod setting the value and result tables actually used to speed up value searches
     TODO offer syntactic sugar translation for PL SQL
     TODO reduce the function parameters to 3 or less wherever possible
+
+    TODO term names are expected to change not very often
+         that's why each frontend instance should subscribe to term name changes of standard term names
+         and user term names, because a user is allowed to have several clients open at the same time
+         and each user client should be live synchronised
+         this way the front end term cache is always up to date and can be used as a read database cache
+
+    TODO create software patents and allow everybody to use them to prevent other from making money with the patents
 
     TODO keep in the frontend the phrases that are relevant for the user at the moment
          calculate the the frontend real-time the value with the relevant precision
@@ -462,6 +477,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
 */
 
 use cfg\db\db_check;
+use cfg\db\sql;
 use cfg\library;
 use cfg\db\sql_db;
 use cfg\sys_log_level;
@@ -1125,9 +1141,13 @@ function prg_start(string $code_name, string $style = "", $echo_header = true): 
 function prg_restart(string $code_name): sql_db
 {
 
+    global $sc;
+
     // link to database
     $db_con = new sql_db;
     $db_con->db_type = SQL_DB_TYPE;
+    $sc = new sql();
+    $sc->set_db_type($db_con->db_type);
     $db_con->open();
     if ($db_con->postgres_link === false) {
         log_debug($code_name . ': start db setup');

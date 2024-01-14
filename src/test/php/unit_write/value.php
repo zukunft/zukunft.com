@@ -37,14 +37,14 @@ include_once MODEL_VALUE_PATH . 'value_dsp_old.php';
 use api\value\value as value_api;
 use api\word\word as word_api;
 use api\word\triple as triple_api;
+use cfg\value\value;
+use cfg\value\value_dsp_old;
 use html\figure\figure as figure_dsp;
 use cfg\log\change_log_field;
 use cfg\log\change;
 use cfg\log\change_log_table;
 use cfg\library;
 use cfg\phrase_list;
-use cfg\value;
-use cfg\value_dsp_old;
 use test\test_cleanup;
 use const test\TIMEOUT_LIMIT_DB_MULTI;
 

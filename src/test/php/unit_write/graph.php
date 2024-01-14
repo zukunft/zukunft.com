@@ -35,7 +35,7 @@ use api\word\word as word_api;
 use cfg\foaf_direction;
 use cfg\phrase_list;
 use cfg\triple_list;
-use cfg\value_list;
+use cfg\value\value_list;
 use cfg\verb;
 use cfg\word;
 use test\test_cleanup;
@@ -53,31 +53,44 @@ class graph_test
 
         $t->header('Test the graph class (classes/triple_list.php)');
 
-        // get all phrase links used for a phrase and its related values
-        // e.g. for the phrase "Company" the link "Company has a balance sheet" should be returned
+        // get values related to a phrase list
+        // e.g. to get top 10 cities by the number of inhabitants
+        // in SQL the statement would be: SELECT inhabitants FROM city ORDER BY inhabitants DESC LIMIT 10;
+        // in zukunft.com the statement should be: top 10 cities by inhabitants
+        // both statements should be possible in zukunft.com
 
+        // the (slow but first step) internal translation could be
+
+        // interpretation
+        // step 1: detect that "top 10" is a limit and order setting
+        // step 2: detect that the words to select the values are "city" and "inhabitants"
+
+        // request building
         // step 1: define the phrase list e.g. in this case only the test word for city
+
         $phr_lst = new phrase_list($usr);
         $phr_lst->load_by_names(array(word_api::TN_CITY));
 
         // step 2: get all values related to the phrases
         $val_lst = new value_list($usr);
-        $val_lst->phr_lst = $phr_lst;
-        $val_lst->load_all();
-        $wrd_lst_all = $val_lst->phr_lst->wrd_lst_all();
+        // TODO activate
+        //$val_lst->load_by_phr_lst($phr_lst);
+        //$wrd_lst_all = $val_lst->phr_lst->wrd_lst_all();
 
         // step 3: get all phrases used for the value descriptions
-        $phr_lst_used = new phrase_list($usr);
-        foreach ($wrd_lst_all->lst() as $wrd) {
-            if (!array_key_exists($wrd->id(), $phr_lst_used->id_lst())) {
-                $phr_lst_used->add($wrd->phrase());
-            }
-        }
+        // TODO activate
+        //$phr_lst_used = new phrase_list($usr);
+        //foreach ($wrd_lst_all->lst() as $wrd) {
+        //    if (!array_key_exists($wrd->id(), $phr_lst_used->id_lst())) {
+        //        $phr_lst_used->add($wrd->phrase());
+        //    }
+        //}
         // step 4: get the word links for the used phrases
         //         these are the word links that are needed for a complete export
-        $lnk_lst = new triple_list($usr);
-        $lnk_lst->load_by_phr_lst($phr_lst_used, null, foaf_direction::UP);
-        $result = $lnk_lst->name();
+        // TODO activate
+        //$lnk_lst = new triple_list($usr);
+        //$lnk_lst->load_by_phr_lst($phr_lst_used, null, foaf_direction::UP);
+        //$result = $lnk_lst->name();
         // check if at least the basic relations are in the database
         /*
         $target = '' . word_api::TN_CITY_AS_CATEGORY . ' has a balance sheet';

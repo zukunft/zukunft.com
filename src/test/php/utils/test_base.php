@@ -1104,6 +1104,31 @@ class test_base
     }
 
     /**
+     * check the SQL statements to get all users that have changed the object
+     * TODO add this test once to each user object type
+     *
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param sandbox|sandbox_value $usr_obj the user sandbox object e.g. a word
+     * @return bool true if all tests are fine
+     */
+    function assert_sql_changer(sql_db $db_con, sandbox|sandbox_value $usr_obj): bool
+    {
+        // check the Postgres query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $usr_obj->load_sql_changer($db_con->sql_creator());
+        $result = $this->assert_qp($qp, $db_con->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $usr_obj->load_sql_changer($db_con->sql_creator());
+            $result = $this->assert_qp($qp, $db_con->db_type);
+        }
+
+        return $result;
+    }
+
+    /**
      * check the SQL statements to get the users that have ever done a change
      * e.g. to clean up changes not needed any more
      *

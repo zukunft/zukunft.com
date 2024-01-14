@@ -52,6 +52,7 @@ use cfg\db\sql_par_type;
 use cfg\group\group;
 use cfg\group\group_id;
 use cfg\group\group_link;
+use cfg\value\value;
 use html\word\word as word_dsp;
 use html\word\word_list as word_list_dsp;
 
@@ -270,7 +271,7 @@ class word_list extends sandbox_list
     {
         $qp = $this->load_sql($sc, 'name_like');
         if ($pattern != '') {
-            $sc->add_where(word::FLD_NAME, $pattern, sql_par_type::LIKE);
+            $sc->add_where(word::FLD_NAME, $pattern, sql_par_type::LIKE_R);
             $qp->sql = $sc->sql();
         } else {
             $qp->name = '';
@@ -1299,7 +1300,7 @@ class word_list extends sandbox_list
         $val = new value($this->user());
         $phr_lst = $this->phrase_lst();
         $phr_grp = new group($this->user());
-        $phr_grp->load_by_lst($phr_lst);
+        $phr_grp->load_by_phr_lst($phr_lst);
         $val->load_by_grp($phr_grp);
 
         log_debug($val->name() . ' for "' . $this->user()->name . '" is ' . $val->number());

@@ -145,6 +145,8 @@ class group_unit_tests
 
         $t->subheader('SQL statement tests');
 
+        // load the group by the phrase ids
+
         // sql to load the phrase links related to a group
         $grp_lnk = new group_link();
         // TODO activate or use group id

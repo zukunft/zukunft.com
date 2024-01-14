@@ -77,8 +77,10 @@ class word extends sandbox_typed_api
     const TN_2020 = '2020';
     const TN_PCT = 'percent';
     // _PRE are the predefined words
-    const TN_THIS_PRE = 'this';
+    const TN_THIS_PRE = 'this'; // the test name for the predefined word 'this'
     const TN_PRIOR_PRE = 'prior';
+    const TN_PARTS = 'parts';
+    const TN_TOTAL_PRE = 'total';
     const TN_COMPANY = 'Company';
 
     // persevered word names for unit and integration tests based on the database

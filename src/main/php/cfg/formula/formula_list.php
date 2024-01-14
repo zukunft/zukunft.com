@@ -213,7 +213,7 @@ class formula_list extends sandbox_list
     function load_sql_like(sql $sc, string $pattern = ''): sql_par
     {
         $qp = $this->load_sql($sc, 'name_like');
-        $sc->add_where(formula::FLD_NAME, $pattern, sql_par_type::LIKE);
+        $sc->add_where(formula::FLD_NAME, $pattern, sql_par_type::LIKE_R);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
         return $qp;

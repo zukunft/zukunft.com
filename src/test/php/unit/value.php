@@ -67,7 +67,7 @@ class value_unit_tests
         $t->assert_sql_foreign_key_create($db_con, $val);
 
         // TODO add sql insert and update tests to all db objects
-        $t->subheader('SQL statements - read - for often used (prime) values');
+        $t->subheader('SQL statements - for often used (prime) values');
         $val = $t->dummy_value();
         $t->assert_sql_insert($db_con, $val);
         $t->assert_sql_insert($db_con, $val, true);
@@ -88,8 +88,10 @@ class value_unit_tests
         // ... and to check if any user has uses another than the default value
         $t->assert_sql_not_changed($db_con, $val);
         $t->assert_sql_user_changes($db_con, $val);
+        // TODO active and also for other value types
+        //$t->assert_sql_changer($db_con, $val);
 
-        $t->subheader('for values related to up to 16 phrases');
+        $t->subheader('SQL statements - for values related to up to 16 phrases');
         $val = $t->dummy_value_16();
         // TODO insert value does not need to return the id because this is given by the group id
         $t->assert_sql_insert($db_con, $val);
@@ -102,7 +104,7 @@ class value_unit_tests
         // ... and the related default value
         $t->assert_sql_standard($db_con, $val);
 
-        $t->subheader('for values related to more than 16 phrases');
+        $t->subheader('SQL statements - for values related to more than 16 phrases');
         $val = $t->dummy_value_17_plus();
         $t->assert_sql_insert($db_con, $val);
         $t->assert_sql_update($db_con, $val);

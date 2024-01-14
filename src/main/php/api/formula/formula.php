@@ -57,7 +57,7 @@ class formula extends sandbox_typed_api
     const TN_PERCENT = 'percent';
     const TF_INCREASE = '"percent" = ( "this" - "prior" ) / "prior"';
     const TF_INCREASE_ALTERNATIVE = '"percent" = 1 - ( "this" / "prior" )';
-    const TR_INCREASE = '{w1}=({f18}-{f20})/{f20}';
+    const TR_INCREASE = '{w166}=({w185}-{w187})/{w187}';
     const TN_LITRE_TO_M3 = 'scale litre to m3';
     const TN_BIGGEST_CITY = 'population in the city of Zurich in percent of Switzerland';
     const TN_READ_THIS = 'this';
@@ -65,14 +65,15 @@ class formula extends sandbox_typed_api
     const TN_CIRCUMFERENCE = 'circumference';
     const TN_PI = 'Pi';
     const TN_DIAMETER = 'diameter';
+    const TI_DIAMETER = 134; // TODO use the ID const to make order changes easier
     const TF_DIAMETER = '= "circumference" / "Pi"';
-    const TR_DIAMETER = '={w1}/{t2}';
+    const TR_DIAMETER = '={w134}/{w3}';
     const TN_READ_SCALE_MIO = 'scale millions to one';
     const TF_READ_SCALE_MIO = '"one" = "millions" * 1000000';
-    const TR_SCALE_MIO = '{w1} = {w2} * 1000000';
+    const TR_SCALE_MIO = '{w162} = {w164} * 1000000';
     const TN_PARTS_IN_PERCENT = 'parts in percent';
     const TF_PARTS_IN_PERCENT = '"percent" = "parts" "of" / "total"'; // TODO check if separate verb "of each" is needed
-    const TR_PARTS_IN_PERCENT = '{w1}={w2}{v3}/{w4}';
+    const TR_PARTS_IN_PERCENT = '{w166}={w231}{v4}/{w232}';
 
     // persevered formula names for unit and integration tests
     const TN_ADD = 'System Test Formula'; // to test adding a new formula to the database and using the increase formula

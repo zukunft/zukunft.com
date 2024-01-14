@@ -351,6 +351,26 @@ class create_test_objects extends test_base
     }
 
     /**
+     * @return word "circumference" to test the const behavior
+     */
+    function dummy_word_cf(): word
+    {
+        $wrd = new word($this->usr1);
+        $wrd->set(134, formula_api::TN_CIRCUMFERENCE);
+        return $wrd;
+    }
+
+    /**
+     * @return word "diameter" to test the const behavior
+     */
+    function dummy_word_dia(): word
+    {
+        $wrd = new word($this->usr1);
+        $wrd->set(135, formula_api::TN_DIAMETER);
+        return $wrd;
+    }
+
+    /**
      * @return word "Euler's constant" to test the handling of >'<
      */
     function dummy_word_e(): word
@@ -372,7 +392,7 @@ class create_test_objects extends test_base
     function dummy_word_2020(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(198, word_api::TN_2020);
+        $wrd->set(200, word_api::TN_2020);
         $wrd->set_type(phrase_type::TIME);
         return $wrd;
     }
@@ -380,7 +400,7 @@ class create_test_objects extends test_base
     function dummy_word_pct(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(164, word_api::TN_PCT);
+        $wrd->set(166, word_api::TN_PCT);
         $wrd->set_type(phrase_type::PERCENT);
         return $wrd;
     }
@@ -388,21 +408,23 @@ class create_test_objects extends test_base
     function dummy_word_this(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(183, word_api::TN_THIS_PRE);
+        $wrd->set(185, word_api::TN_THIS_PRE);
+        $wrd->set_type(formula_type::THIS);
         return $wrd;
     }
 
     function dummy_word_prior(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(185, word_api::TN_PRIOR_PRE);
+        $wrd->set(187, word_api::TN_PRIOR_PRE);
+        $wrd->set_type(formula_type::PREV);
         return $wrd;
     }
 
     function dummy_word_one(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(160, word_api::TN_ONE);
+        $wrd->set(162, word_api::TN_ONE);
         $wrd->set_type(phrase_type::SCALING_HIDDEN);
         return $wrd;
     }
@@ -410,7 +432,7 @@ class create_test_objects extends test_base
     function dummy_word_mio(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(162, word_api::TN_MIO_SHORT);
+        $wrd->set(164, word_api::TN_MIO_SHORT);
         $wrd->set_type(phrase_type::SCALING);
         return $wrd;
     }
@@ -432,35 +454,49 @@ class create_test_objects extends test_base
     function dummy_word_ch(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(188, word_api::TN_CH);
+        $wrd->set(190, word_api::TN_CH);
         return $wrd;
     }
 
     function dummy_word_canton(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(189, word_api::TN_CANTON);
+        $wrd->set(191, word_api::TN_CANTON);
         return $wrd;
     }
 
     function dummy_word_city(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(190, word_api::TN_CITY);
+        $wrd->set(192, word_api::TN_CITY);
         return $wrd;
     }
 
     function dummy_word_zh(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(191, word_api::TN_ZH);
+        $wrd->set(193, word_api::TN_ZH);
         return $wrd;
     }
 
     function dummy_word_inhabitant(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(193, word_api::TN_INHABITANT);
+        $wrd->set(194, word_api::TN_INHABITANT);
+        return $wrd;
+    }
+
+    function dummy_word_parts(): word
+    {
+        $wrd = new word($this->usr1);
+        $wrd->set(231, word_api::TN_PARTS);
+        return $wrd;
+    }
+
+    function dummy_word_total(): word
+    {
+        $wrd = new word($this->usr1);
+        $wrd->set(232, word_api::TN_TOTAL_PRE);
         return $wrd;
     }
 
@@ -528,6 +564,16 @@ class create_test_objects extends test_base
     function dummy_verb_part(): verb
     {
         return new verb(3, verb_api::TN_IS, verb::IS);
+    }
+
+    /**
+     * @return verb a standard verb with user null
+     */
+    function dummy_verb_of(): verb
+    {
+        $vrb = new verb(4, verb_api::TN_OF, verb::CAN_CONTAIN_NAME_REVERSE);
+        $vrb->set_user($this->usr1);
+        return $vrb;
     }
 
     /**
@@ -829,6 +875,9 @@ class create_test_objects extends test_base
         return $this->dummy_verb()->term();
     }
 
+    /**
+     * @return term_list with all terms used for the unit tests
+     */
     function dummy_term_list(): term_list
     {
         $lst = new term_list($this->usr1);
@@ -836,6 +885,30 @@ class create_test_objects extends test_base
         $lst->add($this->dummy_term_triple());
         $lst->add($this->dummy_term_formula());
         $lst->add($this->dummy_term_verb());
+        return $lst;
+    }
+
+    /**
+     * @return term_list with all terms used for the unit tests
+     */
+    function dummy_term_list_all(): term_list
+    {
+        $lst = new term_list($this->usr1);
+        $lst->add($this->dummy_term());
+        $lst->add($this->dummy_term_triple());
+        $lst->add($this->dummy_term_formula());
+        $lst->add($this->dummy_term_verb());
+        $lst->add($this->dummy_triple_pi()->term());
+        $lst->add($this->dummy_word_pi()->term());
+        $lst->add($this->dummy_word_cf()->term());
+        $lst->add($this->dummy_word_pct()->term());
+        $lst->add($this->dummy_word_prior()->term());
+        $lst->add($this->dummy_word_this()->term());
+        $lst->add($this->dummy_word_parts()->term());
+        $lst->add($this->dummy_word_total()->term());
+        $lst->add($this->dummy_verb_of()->term());
+        $lst->add($this->dummy_word_one()->term());
+        $lst->add($this->dummy_word_mio()->term());
         return $lst;
     }
 
@@ -952,7 +1025,8 @@ class create_test_objects extends test_base
 
     function dummy_expression(): expression
     {
-        return $this->dummy_formula()->expression();
+        $trm_lst = $this->dummy_term_list_time();
+        return $this->dummy_formula()->expression($trm_lst);
     }
 
     function dummy_element(): formula_element

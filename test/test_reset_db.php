@@ -62,7 +62,7 @@ use cfg\source_type_list;
 use cfg\db\sql_db;
 use cfg\sys_log_function;
 use cfg\user;
-use cfg\value;
+use cfg\value\value;
 use cfg\view_type_list;
 use html\html_base;
 use test\test_unit_read_db;
@@ -124,9 +124,24 @@ if ($usr->id() > 0) {
         $usr->load_by_id(SYSTEM_USER_ID);
         $sys_usr = $usr;
 
+        // create the test dataset to check the basic write functions
         $t = new test_unit_read_db();
         $t->set_users();
+        // TODO activate
         $t->create_test_db_entries($t);
+
+        // remove the test dataset for a clean database
+        // TODO use the user message object instead of a string
+        /*
+        $cleanup_result = $t->cleanup();
+        if ($cleanup_result != '') {
+            log_err('Cleanup not successful, because ' . $cleanup_result);
+        } else {
+            if (!$t->cleanup_check()) {
+                log_err('Cleanup check not successful.');
+            }
+        }
+        */
 
         // reload the session user parameters
         $usr = new user;

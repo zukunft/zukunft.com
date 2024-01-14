@@ -120,7 +120,7 @@ class system_unit_tests
         $t->assert($test_name, $val->dsp_id(), $target);
         $test_name = 'debug value_list id';
         $val_lst = $t->dummy_value_list();
-        $target = '"Pi (math)" 3.1415926535898 / "inhabitant in the city of Zurich (2019)" 415367 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -2,,, / 191,193,16,) for user 1 (zukunft.com system test)';
+        $target = '"Pi (math)" 3.1415926535898 / "inhabitant in the city of Zurich (2019)" 415367 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -2,,, / 193,194,16,) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $val_lst->dsp_id(), $target);
         $test_name = 'debug value_phrase_link id';
         $val_lnk = $t->dummy_value_phrase_link();
@@ -148,7 +148,7 @@ class system_unit_tests
         $t->assert($test_name, $elm->dsp_id(), $target);
         $test_name = 'debug expression id';
         $exp = $t->dummy_expression();
-        $target = '""second" = "minute" * 60" ()';
+        $target = '""second" = "minute" * 60" ({w17}={w98}*60)';
         $t->assert($test_name, $exp->dsp_id(), $target);
         $test_name = 'debug result id';
         $res = $t->dummy_result();

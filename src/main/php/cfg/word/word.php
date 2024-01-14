@@ -1691,10 +1691,8 @@ class word extends sandbox_typed
         $trp_lst->load_by_phr($this->phrase());
 
         // collect all values related to word triple
-        // TODO Prio 1 change to load_by_phrase
         $val_lst = new value_list($this->user());
-        $val_lst->phr = $this->phrase();
-        $val_lst->load_old();
+        $val_lst->load_by_phr($this->phrase());
 
         // if there are still values, ask if they really should be deleted
         if ($val_lst->has_values()) {

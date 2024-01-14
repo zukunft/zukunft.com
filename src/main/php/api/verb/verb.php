@@ -51,6 +51,7 @@ class verb extends sandbox_named_api
     const TC_READ = "not_set";
     const TN_IS = "is a";
     const TN_PART = "is part of";
+    const TN_OF = "of";
     const TN_TIME_STEP = "time jump";
     const TN_ADD = "System Test Verb";
 

@@ -848,8 +848,10 @@ class sql
             $this->add_par($spt, '');
         } elseif ($spt == sql_par_type::NOT_NULL) {
             $this->add_par($spt, '');
-        } elseif ($spt == sql_par_type::LIKE) {
+        } elseif ($spt == sql_par_type::LIKE_R) {
             $this->add_par($spt, $fld_val . '%', false, false, $name);
+        } elseif ($spt == sql_par_type::LIKE) {
+            $this->add_par($spt, '%' . $fld_val . '%', false, false, $name);
         } else {
             log_err('SQL parameter type ' . $spt->value . ' not expected');
         }
@@ -1987,7 +1989,8 @@ class sql
                                 or $par_type == sql_par_type::OFFSET) {
                                 $par_offset--;
                                 $result .= ''; // because added with the page statement
-                            } elseif ($par_type == sql_par_type::LIKE) {
+                            } elseif ($par_type == sql_par_type::LIKE_R
+                                or $par_type == sql_par_type::LIKE) {
                                 $result .= $tbl_id . $this->par_fields[$i] . ' like ';
                                 if ($this->par_name[$i] != '' and $this->db_type() != sql_db::MYSQL) {
                                     $result .= $this->par_name[$i];
@@ -2695,6 +2698,34 @@ class sql
         return $result;
     }
 
+    /**
+     * @return string the SQL statement to for the user specific data
+     */
+    function select_by_id_not_owner(int $id, ?int $owner_id = 0): string
+    {
+        $this->add_par(sql_par_type::INT, $id);
+        if ($owner_id > 0) {
+            $this->add_par(sql_par_type::INT_NOT, $owner_id);
+        }
+        $this->add_par(sql_par_type::CONST, '(excluded <> 1 OR excluded is NULL)');
+
+        $fields = $this->fields(true);
+        $from = $this->from($fields);
+        $id_fld = $this->id_field;
+        if ($owner_id > 0) {
+            $where = $this->where();
+        } else {
+            $where = $this->where();
+        }
+
+        // create a prepare SQL statement if possible
+        $sql = $this->sql();
+
+        $sql .= $fields . $from . $where . $this->order . $this->page;
+
+        return $this->end_sql($sql);
+    }
+
 
     /*
      * public sql helpers
@@ -3105,6 +3136,7 @@ class sql
                 case sql_par_type::TEXT_LIST:
                     $result[] = 'text[]';
                     break;
+                case sql_par_type::LIKE_R:
                 case sql_par_type::LIKE:
                 case sql_par_type::TEXT_OR:
                 case sql_par_type::TEXT_USR:

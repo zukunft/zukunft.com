@@ -586,7 +586,7 @@ class group extends sandbox_multi
         global $db_con;
         $result = false;
 
-        $qp = $this->load_sql_obj_vars($db_con);
+        $qp = $this->load_sql_obj_vars($db_con->sql_creator());
 
         if ($qp->sql == '') {
             log_err('Some ids for a ' . self::class . ' must be set to load a ' . self::class, self::class . '->load');
@@ -609,20 +609,31 @@ class group extends sandbox_multi
     {
         $phr_lst = new phrase_list($this->user());
         $phr_lst->load_names_by_ids($ids);
-        return $this->load_by_lst($phr_lst);
+        return $this->load_by_phr_lst($phr_lst);
     }
 
     /**
-     * shortcut function to create group based on a phrase list
+     * function to load group based on a phrase list
+     * if no user hase change the group name simply the generated name may be returned
+     * because not all groups have a database entry
+     *
      * @param phrase_list $phr_lst list of phrases
      * @return bool
      */
-    function load_by_lst(phrase_list $phr_lst): bool
+    function load_by_phr_lst(phrase_list $phr_lst): bool
     {
-        // TODO review
-        // $phr_lst->ex_time();
-        $this->set_phrase_list($phr_lst);
-        return $this->load_by_obj_vars();
+        global $db_con;
+        $qp = $this->load_sql_by_phrase_list($db_con->sql_creator(), $phr_lst);
+        if ($this->load($qp)) {
+            return true;
+        } else {
+            $this->set_phrase_list($phr_lst);
+            if ($this->id() != 0) {
+                return true;
+            } else {
+                return false;
+            }
+        }
     }
 
     /**
@@ -779,13 +790,15 @@ class group extends sandbox_multi
     }
 
     /**
-     * set the group id (and create a new group if needed)
-     * ex grp_id that returns the id
+     * @return int|null the group id generated from the previous set phrase list
      */
     function get_id(): ?int
     {
-        log_debug($this->dsp_id());
-        $this->get();
+        if ($this->id() == 0) {
+            // if the id has not yet been set, try to create it, but actually this should never happen
+            log_warning('Unexpected creation of the group id triggered for ' . $this->dsp_id());
+            $this->get();
+        }
         return $this->id;
     }
 
@@ -962,7 +975,7 @@ class group extends sandbox_multi
     {
         $grp_id = new group_id();
         $id = $grp_id->get_id($this->phr_lst);
-        if (count($this->phr_lst->lst()) == 0 and is_string($this->id)){
+        if (count($this->phr_lst->lst()) == 0 and is_string($this->id)) {
             if ($this->id() != '') {
                 $id = $this->id();
                 log_warning('fix wrong using of value id');

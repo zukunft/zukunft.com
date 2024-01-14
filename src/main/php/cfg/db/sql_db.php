@@ -2534,7 +2534,8 @@ class sql_db
                                 $this->where .= $id_fields[$used_fields] . ' IN (' . $this->par_name($i + 1) . ')';
                             }
                         } else {
-                            if ($par_type == sql_par_type::LIKE) {
+                            if ($par_type == sql_par_type::LIKE_R
+                                or $par_type == sql_par_type::LIKE) {
                                 $this->where .= $id_fields[$used_fields] . ' like ' . $this->par_name($i + 1);
                             } else {
                                 if ($par_type == sql_par_type::CONST) {
@@ -3005,6 +3006,37 @@ class sql_db
 
         $this->set_field_statement(true);
         $this->set_from();
+        $id_fld = $this->id_field;
+        if ($owner_id > 0) {
+            $this->set_where(array($this->id_field, user::FLD_ID));
+        } else {
+            $this->set_where(array($this->id_field));
+        }
+
+        // create a prepare SQL statement if possible
+        $sql = $this->prepare_sql();
+
+        $sql .= $this->fields . $this->from . $this->where . $this->order . $this->page;
+
+        return $this->end_sql($sql);
+    }
+
+    /**
+     * init the sql statement to get the users that has changed to value or result object
+     * replaces the standard sql db function
+     *
+     * @return string the SQL statement to for the user specific data
+     */
+    function select_value_by_id_not_owner(int $id, ?int $owner_id = 0): string
+    {
+        $this->add_par(sql_par_type::INT, $id);
+        if ($owner_id > 0) {
+            $this->add_par(sql_par_type::INT_NOT, $owner_id);
+        }
+        $this->add_par(sql_par_type::CONST, '(excluded <> 1 OR excluded is NULL)');
+
+        $this->set_field_statement(true);
+        $this->set_from();
         if ($owner_id > 0) {
             $this->set_where(array($this->id_field, user::FLD_ID));
         } else {
@@ -3112,6 +3144,7 @@ class sql_db
                 case sql_par_type::TEXT_LIST:
                     $result[] = 'text[]';
                     break;
+                case sql_par_type::LIKE_R:
                 case sql_par_type::LIKE:
                 case sql_par_type::TEXT_OR:
                     $result[] = 'text';

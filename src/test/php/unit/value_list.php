@@ -91,6 +91,7 @@ class value_list_unit_tests
         // sql to load a list of value by the phrase ids
         $val_lst = new value_list($usr);
         $val_lst->phr_lst = (new phrase_list_unit_tests)->get_phrase_list();
+        // TODO change to load_sql_by_phr_lst
         $created_sql = $val_lst->load_by_phr_lst_sql_old($db_con);
         $expected_sql = $t->file('db/value/value_list_by_triple_id_list.sql');
         $t->assert('value_list->load_by_phr_lst_sql by group and time', $lib->trim($created_sql), $lib->trim($expected_sql));
@@ -109,7 +110,6 @@ class value_list_unit_tests
 
         // sql to load a list of value by the phrase id
         $phr = $t->dummy_triple_pi()->phrase();
-        // TODO activate, but with new sql creator
         $this->assert_sql_by_phr($t, $db_con, $val_lst, $phr);
 
 

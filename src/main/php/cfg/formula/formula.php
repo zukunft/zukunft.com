@@ -56,6 +56,7 @@ use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\export\sandbox_exp;
 use cfg\export\formula_exp;
+use cfg\result\result_list;
 use DateTime;
 use Exception;
 use html\word\word as word_dsp;

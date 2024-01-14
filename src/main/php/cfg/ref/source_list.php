@@ -140,7 +140,7 @@ class source_list extends sandbox_list_named
     function load_sql_like(sql $sc, string $pattern = ''): sql_par
     {
         $qp = $this->load_sql($sc, 'name_like');
-        $sc->add_where(source::FLD_NAME, $pattern, sql_par_type::LIKE);
+        $sc->add_where(source::FLD_NAME, $pattern, sql_par_type::LIKE_R);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 

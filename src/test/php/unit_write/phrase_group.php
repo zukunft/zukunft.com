@@ -55,7 +55,7 @@ class phrase_group_test
         $wrd_lst = new word_list($usr);
         $wrd_lst->load_by_names(array(word_api::TN_ZH, word_api::TN_CANTON, word_api::TN_INHABITANTS, word_api::TN_MIO));
         $phr_grp = new group($usr);
-        $phr_grp->load_by_lst($wrd_lst->phrase_lst());
+        $phr_grp->load_by_phr_lst($wrd_lst->phrase_lst());
         $result = $phr_grp->id();
         $target = 0;
         if ($result > 0) {
@@ -68,12 +68,18 @@ class phrase_group_test
         $wrd_lst = new word_list($usr);
         $wrd_lst->load_by_names(array(word_api::TN_ZH, word_api::TN_CANTON, word_api::TN_INHABITANTS, word_api::TN_MIO, word_api::TN_2020));
         $phr_grp = new group($usr);
-        $phr_grp->load_by_lst($wrd_lst->phrase_lst());
+        $phr_grp->load_by_phr_lst($wrd_lst->phrase_lst());
         $result = $phr_grp->id();
         //if ($result > 0 and $result != $id_without_year) {
         // actually the group id with time word is supposed to be the same as the phrase group id without time word because the time word is not included in the phrase group
-        if ($result > 0) {
-            $target = $result;
+        if (is_numeric($result)) {
+            if ($result > 0) {
+                $target = $result;
+            }
+        } else {
+            if ($result != '') {
+                $target = $result;
+            }
         }
         $t->display('phrase_group->load by ids excluding time for ' . implode(",", $wrd_lst->names()), $target, $result);
 

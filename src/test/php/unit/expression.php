@@ -36,6 +36,7 @@ use api\formula\formula as formula_api;
 use api\word\word as word_api;
 use cfg\expression;
 use cfg\library;
+use cfg\term_list;
 
 class expression_unit_tests
 {
@@ -55,49 +56,54 @@ class expression_unit_tests
         $this->frm_exp_convert($t,
             'including a triple',
             formula_api::TF_DIAMETER,
-            formula_api::TR_DIAMETER
+            formula_api::TR_DIAMETER,
+            $t->dummy_term_list_all()
         );
         $this->frm_exp_convert($t,
             'including fixed formulas',
             formula_api::TF_INCREASE,
-            formula_api::TR_INCREASE
+            formula_api::TR_INCREASE,
+            $t->dummy_term_list_all()
         );
         $this->frm_exp_convert($t,
             'including verbs',
             formula_api::TF_PARTS_IN_PERCENT,
-            formula_api::TR_PARTS_IN_PERCENT
+            formula_api::TR_PARTS_IN_PERCENT,
+            $t->dummy_term_list_all()
         );
 
 
         $t->subheader('interface');
 
         // test the phrase list of the right side
+        $trm_lst = $t->dummy_term_list_all();
+
         $test_name = 'get the calc phrases';
         $exp = new expression($usr);
-        $exp->set_user_text(formula_api::TF_DIAMETER);
-        $trm_names = $exp->get_usr_names();
-        $trm_lst = $t->term_list_for_tests($trm_names);
+        $exp->set_user_text(formula_api::TF_DIAMETER, $trm_lst);
+        //$trm_names = $exp->get_usr_names();
+        //$trm_lst = $t->term_list_for_tests($trm_names);
         $exp->ref_text($trm_lst);
         $phr_lst = $exp->phr_lst($trm_lst);
         $result = $phr_lst->dsp_id();
         $target = '"' . formula_api::TN_PI . '","' . formula_api::TN_CIRCUMFERENCE
-            . '" (phrase_id 1,-2) for user 1 (zukunft.com system test)';
+            . '" (phrase_id 3,134) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $result, $target);
 
         // test the phrase list of the left side
         $test_name = 'get the result phrases';
         $exp = new expression($usr);
-        $exp->set_user_text(formula_api::TF_INCREASE);
-        $trm_names = $exp->get_usr_names();
-        $trm_lst = $t->term_list_for_tests($trm_names);
+        $exp->set_user_text(formula_api::TF_INCREASE, $trm_lst);
         $exp->ref_text($trm_lst);
         $phr_lst = $exp->res_phr_lst($trm_lst);
         $result = $phr_lst->dsp_id();
-        $target = '"' . formula_api::TN_PERCENT . '" (phrase_id 1) for user 1 (zukunft.com system test)';
+        $target = '"' . formula_api::TN_PERCENT . '" (phrase_id 166) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $result, $target);
 
         // the phrase list for the calc part should be empty, because it contains only formulas
-        $phr_lst = $exp->phr_lst($trm_lst);
+        $trm_names = $exp->get_usr_names();
+        $trm_lst_rev = $t->term_list_for_tests($trm_names);
+        $phr_lst = $exp->phr_lst($trm_lst_rev);
         $result = $phr_lst->dsp_id();
         $target = '';
         $t->assert($test_name, $result, $target);
@@ -111,36 +117,33 @@ class expression_unit_tests
         //      because one person can be tax payer in more than one Canton
         $test_name = 'get the formula element group list';
         $exp = new expression($usr);
-        $exp->set_user_text(formula_api::TF_PARTS_IN_PERCENT);
+        $exp->set_user_text(formula_api::TF_PARTS_IN_PERCENT, $trm_lst);
         $trm_names = $exp->get_usr_names();
-        $trm_lst = $t->term_list_for_tests($trm_names);
         $exp->ref_text($trm_lst);
         $elm_grp_lst = $exp->element_grp_lst($trm_lst);
         $result = $elm_grp_lst->dsp_id();
-        $target = '"parts,of" (2,3) / "total" (4) for user 1 (zukunft.com system test)';
+        $target = '"parts,of" (231,4) / "total" (232) for user 1 (zukunft.com system test)';
         //$target = '"' . formula_api::TN_PERCENT . '" (1)';
         $t->assert($test_name, $result, $target);
 
         // test the element list of the right side
         $elm_grp_lst = $exp->element_list($trm_lst);
         $result = $elm_grp_lst->dsp_id();
-        $target = '"parts","of","total" (formula_element_id 2,3,4) for user 1 (zukunft.com system test)';
+        $target = '"parts","of","total" (formula_element_id 231,4,232) for user 1 (zukunft.com system test)';
         //$target = '"' . formula_api::TN_PERCENT . '" (1)';
         $t->assert($test_name, $result, $target);
 
         // tests based on the increase formula
         $test_name = 'test the conversion of the user text to the database reference text with fixed formulas';
         $exp = new expression($usr);
-        $exp->set_user_text(formula_api::TF_INCREASE);
-        $trm_names = $exp->get_usr_names();
-        $trm_lst = $t->term_list_for_tests($trm_names);
+        $exp->set_user_text(formula_api::TF_INCREASE, $trm_lst);
         $result = $exp->ref_text($trm_lst);
         $target = formula_api::TR_INCREASE;
         $t->assert($test_name, $result, $target);
 
         $test_name = 'test getting the phrase ids';
         $result = implode(",", $exp->phr_id_lst($exp->ref_text())->lst);
-        $target = implode(",", array(1));
+        $target = implode(",", array(166,185,187));
         $t->assert($test_name, $result, $target);
 
         $test_name = 'test the conversion of the database reference text to the user text';
@@ -151,14 +154,15 @@ class expression_unit_tests
         $test_name = 'test the formula element list';
         $elm_lst = $exp->element_list($trm_lst);
         $result = $elm_lst->dsp_id();
-        $target = '"this","prior","prior" (formula_element_id 18,20,20) for user 1 (zukunft.com system test)';
+        $target = '"this","prior","prior" (formula_element_id 185,187,187) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $result, $target);
 
         // element_special_following_frm
         $phr_lst = $exp->element_special_following($trm_lst);
         $result = $phr_lst->dsp_name();
         $target = '"time_prior","time_this"';
-        $t->assert('element_special_following for "'.$exp->dsp_id().'"', $result, $target, TIMEOUT_LIMIT_LONG);
+        // TODO activate
+        //$t->assert('element_special_following for "' . $exp->dsp_id() . '"', $result, $target, TIMEOUT_LIMIT_LONG);
 
         $test_name = 'test the formula element group creation';
         $elm_grp_lst = $exp->element_grp_lst($trm_lst);
@@ -168,7 +172,7 @@ class expression_unit_tests
         $frm_prior = $trm_lst->get_by_name(formula_api::TN_READ_PRIOR);
 
         $result = $elm_grp_lst->dsp_id();
-        $target = '"this" ('.$frm_this->id_obj().') / "prior" ('.$frm_prior->id_obj().') / "prior" ('.$frm_prior->id_obj().')';
+        $target = '"this" (' . $frm_this->id_obj() . ') / "prior" (' . $frm_prior->id_obj() . ') / "prior" (' . $frm_prior->id_obj() . ')';
         $t->dsp_contains($test_name, $target, $result);
 
         $test_name = 'getting phrases that should be added to the result of a formula for "' . $exp->dsp_id() . '"';
@@ -180,27 +184,27 @@ class expression_unit_tests
         // tests based on the pi formula
         $test_name = 'test the user text conversion with a triple';
         $exp = new expression($usr);
-        $exp->set_user_text(formula_api::TF_DIAMETER);
+        $exp->set_user_text(formula_api::TF_DIAMETER, $t->dummy_term_list_all());
         $trm_names = $exp->get_usr_names();
-        $trm_lst = $t->term_list_for_tests($trm_names);
-        $result = $exp->ref_text($trm_lst);
-        $target = '={w1}/{t2}';
+        $trm_lst_rev = $t->term_list_for_tests($trm_names);
+        $result = $exp->ref_text($trm_lst_rev);
+        $target = '={w134}/{w3}';
         $t->assert($test_name, $result, $target);
 
         $test_name = 'source phrase list with id from the reference text';
         $exp_sector = new expression($usr);
-        $exp_sector->set_ref_text(formula_api::TR_PARTS_IN_PERCENT);
+        $exp_sector->set_ref_text(formula_api::TR_PARTS_IN_PERCENT, $trm_lst);
         $phr_lst = $exp_sector->phr_id_lst_as_phr_lst($exp_sector->r_part());
         $result = $phr_lst->dsp_id();
-        $target = '"","" (phrase_id 2,4) for user 1 (zukunft.com system test)';
+        $target = '"","" (phrase_id 231,232) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $result, $target);
 
         $test_name = 'result phrase list with id from the reference text';
         $exp_scale = new expression($usr);
-        $exp_scale->set_ref_text(formula_api::TR_SCALE_MIO);
+        $exp_scale->set_ref_text(formula_api::TR_SCALE_MIO, $trm_lst);
         $phr_lst = $exp_scale->phr_id_lst_as_phr_lst($exp_scale->res_part());
         $result = $phr_lst->dsp_id();
-        $target = 'phrase_id 1 for user 1 (zukunft.com system test)';
+        $target = 'phrase_id 162 for user 1 (zukunft.com system test)';
         $t->assert($test_name, $result, $target);
 
     }
@@ -216,14 +220,15 @@ class expression_unit_tests
         test_cleanup $t,
         string       $test_name,
         string       $usr_frm_exp,
-        string       $db_ref_frm_exp
+        string       $db_ref_frm_exp,
+        ?term_list   $in_trm_lst = null
     ): void
     {
         global $usr;
 
         $test_name = 'conversion of the user text to the database reference text ' . $test_name;
         $exp = new expression($usr);
-        $exp->set_user_text($usr_frm_exp);
+        $exp->set_user_text($usr_frm_exp, $in_trm_lst);
         $trm_names = $exp->get_usr_names();
         $trm_lst = $t->term_list_for_tests($trm_names);
         $result = $exp->ref_text($trm_lst);

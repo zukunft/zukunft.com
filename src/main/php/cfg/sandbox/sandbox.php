@@ -938,7 +938,35 @@ class sandbox extends db_object_seq_id_user
         return $result;
     }
 
-    function changer_sql(sql_db $db_con): sql_par
+    /**
+     * create an SQL statement to get all the users that have changed this value
+     * @param sql $sc
+     * @return sql_par
+     */
+    function load_sql_changer(sql $sc): sql_par
+    {
+        $qp = new sql_par($this->obj_name);
+        $qp->name .= 'changer';
+        if ($this->owner_id > 0) {
+            $qp->name .= '_ex_owner';
+        }
+        $sc->set_class($this->obj_name, true);
+        $sc->set_name($qp->name);
+        $sc->set_usr($this->user()->id());
+        $sc->set_fields(array(user::FLD_ID));
+        $qp->sql = $sc->select_by_id_not_owner($this->id, $this->owner_id);
+
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to get all the users that have changed this value
+     * @param sql_db $db_con
+     * @return sql_par
+     */
+    function load_sql_changer_old(sql_db $db_con): sql_par
     {
         $qp = new sql_par($this->obj_name);
         $qp->name .= 'changer';
@@ -970,7 +998,8 @@ class sandbox extends db_object_seq_id_user
         $user_id = 0;
         $db_con->set_class($this->obj_name);
         $db_con->set_usr($this->user()->id());
-        $qp = $this->changer_sql($db_con);
+        //$qp = $this->load_sql_changer($db_con->sql_creator());
+        $qp = $this->load_sql_changer_old($db_con);
         $db_row = $db_con->get1($qp);
         if ($db_row) {
             $user_id = $db_row[user::FLD_ID];

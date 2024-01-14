@@ -81,7 +81,7 @@ use cfg\export\value_list_exp;
 class value_list extends sandbox_list
 {
 
-    // to deprecate
+    // TODO deprecate
     // fields to select the values
     public ?phrase $phr = null;              // show the values related to this phrase
     public ?phrase_list $phr_lst = null;     // show the values related to these phrases
@@ -159,6 +159,34 @@ class value_list extends sandbox_list
     /*
      * load
      */
+
+    /**
+     * load a list of values that are linked to each phrase of the given list
+     * e.g. for "city" and "inhabitants" all yearly increases of city inhabitants are returned
+     *      to get the inhabitants of the cities itself first get a phrase list of all cities
+     *
+     * @param phrase_list $phr_lst phrase list to which all related values should be loaded
+     * @return bool true if at least one value found
+     */
+    function load_by_phr_lst(phrase_list $phr_lst): bool
+    {
+        global $db_con;
+        $qp = $this->load_sql_by_phr_lst_single($db_con->sql_creator(), $phr_lst);
+        return $this->load($qp);
+    }
+
+    /**
+     * load a list of values by the given value ids
+     *
+     * @param array $val_ids an array of value ids which should be loaded
+     * @return bool true if at least one value found
+     */
+    function load_by_ids(array $val_ids): bool
+    {
+        global $db_con;
+        $qp = $this->load_sql_by_ids($db_con->sql_creator(), $val_ids);
+        return $this->load($qp);
+    }
 
     /**
      * set the SQL query parameters to load a list of values
@@ -592,8 +620,18 @@ class value_list extends sandbox_list
         foreach (value::TBL_LIST as $tbl_typ) {
             $sc->reset();
             $qp_tbl = $this->load_sql_by_phr_single($sc, $phr, $tbl_typ);
-            $qp->merge($qp_tbl, true);
+            if ($sc->db_type() != sql_db::MYSQL) {
+                $qp->merge($qp_tbl,true);
+            } else {
+                $qp->merge($qp_tbl);
+            }
         }
+        // sort the parameters if the parameters are part of the union
+        if ($sc->db_type() != sql_db::MYSQL) {
+            $lib = new library();
+            $qp->par = $lib->key_num_sort($qp->par);
+        }
+
         foreach ($qp->par as $par) {
             if (is_numeric($par)) {
                 $par_types[] = sql_par_type::INT;
@@ -604,30 +642,6 @@ class value_list extends sandbox_list
         $qp->sql = $sc->prepare_sql($qp->sql, $qp->name, $par_types);
 
         return $qp;
-    }
-
-    /**
-     * load a list of values by the given value ids
-     * @param array $val_ids an array of value ids which should be loaded
-     * @return bool true if at least one value found
-     */
-    function load_by_ids(array $val_ids): bool
-    {
-        global $db_con;
-        $qp = $this->load_sql_by_ids($db_con->sql_creator(), $val_ids);
-        return $this->load($qp);
-    }
-
-    /**
-     * load a list of values by the given value ids
-     * @param phrase_list $phr_lst phrase list to which all related values should be loaded
-     * @return bool true if at least one value found
-     */
-    function load_by_phr_lst(phrase_list $phr_lst): bool
-    {
-        global $db_con;
-        $qp = $this->load_sql_by_phr_lst_single($db_con->sql_creator(), $phr_lst);
-        return $this->load($qp);
     }
 
     // TODO review the VAR and LIMIT definitions
@@ -777,10 +791,11 @@ class value_list extends sandbox_list
         $lib = new library();
 
         if ($limit <= 0) {
+            // TODO use limit in query
             $limit = SQL_ROW_LIMIT;
         }
 
-        $qp = $this->load_by_phr_sql($db_con, $phr);
+        $qp = $this->load_sql_by_phr($db_con->sql_creator(), $phr);
 
         $db_con->usr_id = $this->user()->id();
         $db_val_lst = $db_con->get($qp);
@@ -960,7 +975,7 @@ class value_list extends sandbox_list
 
 
     /*
-     * modification functions
+     * modification
      */
 
     /**
@@ -1302,7 +1317,7 @@ class value_list extends sandbox_list
 
 
     /*
-    filter and select functions
+     * filter and select functions
     */
 
     /**
@@ -1470,7 +1485,7 @@ class value_list extends sandbox_list
 
 
     /*
-     * convert functions
+     * convert
      */
 
     /**

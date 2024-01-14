@@ -178,7 +178,7 @@ class term_list extends sandbox_list_named
     function load_sql_like(sql $sc, string $pattern = ''): sql_par
     {
         $qp = $this->load_sql($sc, 'name_like');
-        $sc->add_where(term::FLD_NAME, $pattern, sql_par_type::LIKE);
+        $sc->add_where(term::FLD_NAME, $pattern, sql_par_type::LIKE_R);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -346,7 +346,7 @@ class term_list extends sandbox_list_named
     function word_by_id(int $id): ?word
     {
         $wrd = null;
-        $trm = new term($this->user());
+        $trm = new term(new word($this->user()));
         $trm->set_id_from_obj($id, word::class);
         $trm_id = $trm->id();
         if ($trm_id != 0) {
@@ -367,7 +367,7 @@ class term_list extends sandbox_list_named
     function triple_by_id(int $id): ?triple
     {
         $trp = null;
-        $trm = new term($this->user());
+        $trm = new term(new triple($this->user()));
         $trm->set_id_from_obj($id, triple::class);
         $trm_id = $trm->id();
         if ($trm_id != 0) {
@@ -388,7 +388,7 @@ class term_list extends sandbox_list_named
     function formula_by_id(int $id): ?formula
     {
         $frm = null;
-        $trm = new term($this->user());
+        $trm = new term(new formula($this->user()));
         $trm->set_id_from_obj($id, formula::class);
         $trm_id = $trm->id();
         if ($trm_id != 0) {
@@ -409,7 +409,7 @@ class term_list extends sandbox_list_named
     function verb_by_id(int $id): ?verb
     {
         $vrb = null;
-        $trm = new term($this->user());
+        $trm = new term(new verb());
         $trm->set_id_from_obj($id, verb::class);
         $trm_id = $trm->id();
         if ($trm_id != 0) {

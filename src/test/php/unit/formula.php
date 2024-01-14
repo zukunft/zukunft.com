@@ -109,7 +109,7 @@ class formula_unit_tests
         $target->add($wrd->phrase());
         $trm_lst->add($wrd->term());
         $exp = new expression($usr);
-        $exp->set_ref_text('{w160}={w162}*1000000', $t->dummy_term_list_scale());
+        $exp->set_ref_text('{w162}={w164}*1000000', $t->dummy_term_list_scale());
         $result = $exp->res_phr_lst($trm_lst);
         $t->assert('Expression->res_phr_lst for ' . formula_api::TF_READ_SCALE_MIO, $result->dsp_id(), $target->dsp_id());
 

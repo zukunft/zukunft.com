@@ -649,6 +649,25 @@ class library
         return $msg;
     }
 
+    /*
+     * array
+     */
+
+    function key_num_sort(array $in_array): array
+    {
+        ksort($in_array);
+        $num_array = [];
+        $str_array = [];
+        foreach ($in_array as $key => $item) {
+            if (is_numeric($key)) {
+                $num_array[$key] = $item;
+            } else {
+                $str_array[$key] = $item;
+            }
+        }
+        return array_merge($num_array, $str_array);
+    }
+
 
     /*
      * display

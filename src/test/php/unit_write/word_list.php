@@ -272,7 +272,7 @@ class word_list_test
         $wrd_lst = new word_list($usr);
         $wrd_lst->load_by_names(array(word_api::TN_ZH, word_api::TN_2021, word_api::TN_CHF, word_api::TN_MIO));
         $grp = new group($usr);
-        $grp->load_by_ids((new phr_ids($wrd_lst->ids())));
+        $grp->load_by_phr_lst($wrd_lst->phrase_lst());
         $result = $grp->get_id();
         $target = 1; // the creation should be tested, but how?
         if ($result > 0) {

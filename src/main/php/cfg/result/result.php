@@ -1137,7 +1137,7 @@ class result extends sandbox_value
             if (count($this->src_grp->phrase_list()->id_lst()) > 0) {
                 log_debug("source group for " . $this->src_grp->phrase_list()->dsp_id() . ".");
                 $grp = new group($this->user());
-                $grp->load_by_lst($this->src_grp->phrase_list());
+                $grp->load_by_phr_lst($this->src_grp->phrase_list());
                 $this->src_grp->set_id($grp->get_id());
             }
             log_debug("source group id " . $this->src_grp->dsp_id() . " for " . $this->src_grp->phrase_list()->dsp_name() . ".");
@@ -1151,7 +1151,7 @@ class result extends sandbox_value
             // get the word group id (and create the group if needed)
             // TODO include triples
             $grp = new group($this->user());
-            $grp->load_by_lst($this->grp->phrase_list());
+            $grp->load_by_phr_lst($this->grp->phrase_list());
             $this->grp->set_id($grp->get_id());
             log_debug("group id " . $this->grp->id() . " for " . $this->grp->phrase_list()->dsp_name() . ".");
         }

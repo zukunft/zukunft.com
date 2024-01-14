@@ -170,7 +170,7 @@ class sandbox_list extends base_list
         if ($pattern != '') {
             $qp->name .= '_like';
             $sc->set_name($qp->name);
-            $sc->add_where($sbx->name_field(), $pattern, sql_par_type::LIKE);
+            $sc->add_where($sbx->name_field(), $pattern, sql_par_type::LIKE_R);
         }
         $sc->set_page($limit, $offset);
         $sc->set_order($sbx->name_field());

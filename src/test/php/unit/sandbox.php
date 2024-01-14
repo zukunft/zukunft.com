@@ -1814,23 +1814,23 @@ class sandbox_unit_tests
         $wrd = new word($usr);
         $wrd->set_id( 1);
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $wrd->changer_sql($db_con);
+        $qp = $wrd->load_sql_changer_old($db_con);
         $t->assert_qp($qp, $db_con->db_type);
 
         // ... and for MySQL
         $db_con->db_type = sql_db::MYSQL;
-        $qp = $wrd->changer_sql($db_con);
+        $qp = $wrd->load_sql_changer_old($db_con);
         $t->assert_qp($qp, $db_con->db_type);
 
         // ... and the word changer ex owner query (used in _sandbox->changer_sql)
         $wrd->owner_id = 2;
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $wrd->changer_sql($db_con);
+        $qp = $wrd->load_sql_changer_old($db_con);
         $t->assert_qp($qp, $db_con->db_type);
 
         // ... and for MySQL
         $db_con->db_type = sql_db::MYSQL;
-        $qp = $wrd->changer_sql($db_con);
+        $qp = $wrd->load_sql_changer_old($db_con);
         $t->assert_qp($qp, $db_con->db_type);
     }
 

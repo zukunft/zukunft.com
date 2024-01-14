@@ -40,6 +40,7 @@ use api\word\triple as triple_api;
 use api\verb\verb as verb_api;
 use api\view\view as view_api;
 use api\word\word as word_api;
+use cfg\db\sql_par;
 use cfg\formula;
 use cfg\formula_type;
 use cfg\library;
@@ -48,11 +49,10 @@ use cfg\phrase_list;
 use cfg\phrase_type;
 use cfg\ref_type;
 use cfg\db\sql_db;
-use cfg\sql_par;
 use cfg\term;
 use cfg\term_list;
 use cfg\triple;
-use cfg\value;
+use cfg\value\value;
 use cfg\verb;
 use cfg\word;
 use html\html_base;
@@ -467,7 +467,7 @@ class test_cleanup extends test_api
         $pos = 1;
         foreach ($names as $name) {
             $class = match ($name) {
-                triple_api::TN_PI => triple::class,
+                triple_api::TN_PI_NAME => triple::class,
                 formula_api::TN_READ, formula_api::TN_READ_THIS, formula_api::TN_READ_PRIOR => formula::class,
                 verb_api::TN_READ, verb::CAN_CONTAIN_NAME, verb::CAN_CONTAIN_NAME_REVERSE => verb::class,
                 default => word::class,

@@ -881,6 +881,12 @@ class sandbox_multi extends db_object_multi_user
         return $result;
     }
 
+    /**
+     * create the sql statement to get the users that has changed to sandbox object
+     *
+     * @param sql_db $db_con the database connection with the active database type
+     * @return sql_par the sql statement and the parameters to get the users that have changed the sandbox object
+     */
     function changer_sql(sql_db $db_con): sql_par
     {
         $qp = new sql_par($this->obj_name);
