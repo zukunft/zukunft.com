@@ -424,7 +424,7 @@ class db_check
 
     function db_fill_code_link_sql(string $table_name, string $id_col_name, int $id): sql_par
     {
-        $qp = new sql_par('db_check');
+        $qp = new sql_par($this::class);
         $qp->name .= 'fill_' . $id_col_name;
         $qp->sql = "PREPARE " . $qp->name . " (int) AS select * from " . $table_name . " where " . $id_col_name . " = $1;";
         $qp->par = array($id);

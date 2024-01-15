@@ -130,7 +130,7 @@ class result_list extends sandbox_list
         $ext = $grp->table_type();
         $qp = $this->load_sql($sc, 'grp', $ext);
         if ($grp->is_prime()) {
-            $fields = $grp->id_names(phrase::FLD_ID . '_');
+            $fields = $grp->id_names();
             $values = $grp->id_lst();
             $pos = 0;
             foreach ($fields as $field) {

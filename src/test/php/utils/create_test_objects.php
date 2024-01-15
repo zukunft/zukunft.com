@@ -356,7 +356,7 @@ class create_test_objects extends test_base
     function dummy_word_cf(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(134, formula_api::TN_CIRCUMFERENCE);
+        $wrd->set(word_api::TI_CIRCUMFERENCE, word_api::TN_CIRCUMFERENCE);
         return $wrd;
     }
 
@@ -366,7 +366,7 @@ class create_test_objects extends test_base
     function dummy_word_dia(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(135, formula_api::TN_DIAMETER);
+        $wrd->set(word_api::TI_DIAMETER, word_api::TN_DIAMETER);
         return $wrd;
     }
 
@@ -408,7 +408,7 @@ class create_test_objects extends test_base
     function dummy_word_this(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(185, word_api::TN_THIS_PRE);
+        $wrd->set(word_api::TI_THIS, word_api::TN_THIS_PRE);
         $wrd->set_type(formula_type::THIS);
         return $wrd;
     }
@@ -416,7 +416,7 @@ class create_test_objects extends test_base
     function dummy_word_prior(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(187, word_api::TN_PRIOR_PRE);
+        $wrd->set(word_api::TI_PRIOR, word_api::TN_PRIOR_PRE);
         $wrd->set_type(formula_type::PREV);
         return $wrd;
     }
@@ -424,7 +424,7 @@ class create_test_objects extends test_base
     function dummy_word_one(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(162, word_api::TN_ONE);
+        $wrd->set(word_api::TI_ONE, word_api::TN_ONE);
         $wrd->set_type(phrase_type::SCALING_HIDDEN);
         return $wrd;
     }
@@ -432,7 +432,7 @@ class create_test_objects extends test_base
     function dummy_word_mio(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(164, word_api::TN_MIO_SHORT);
+        $wrd->set(word_api::TI_MIO, word_api::TN_MIO_SHORT);
         $wrd->set_type(phrase_type::SCALING);
         return $wrd;
     }
@@ -571,7 +571,7 @@ class create_test_objects extends test_base
      */
     function dummy_verb_of(): verb
     {
-        $vrb = new verb(4, verb_api::TN_OF, verb::CAN_CONTAIN_NAME_REVERSE);
+        $vrb = new verb(verb_api::TI_OF, verb_api::TN_OF, verb::CAN_CONTAIN_NAME_REVERSE);
         $vrb->set_user($this->usr1);
         return $vrb;
     }

@@ -2071,7 +2071,7 @@ class value extends sandbox_value
         $qp->name .= '_insert';
         $sc->set_name($qp->name);
         if ($this->grp->is_prime()) {
-            $fields = $this->grp->id_names(phrase::FLD_ID . '_');
+            $fields = $this->grp->id_names();
             $fields[] = user::FLD_ID;
             $values = $this->grp->id_lst();
             $values[] = $this->user()->id();
@@ -2128,7 +2128,7 @@ class value extends sandbox_value
         $qp->name .= '_update_' . $fld_name;
         $sc->set_name($qp->name);
         if ($this->grp->is_prime()) {
-            $id_fields = $this->grp->id_names(phrase::FLD_ID . '_');
+            $id_fields = $this->grp->id_names();
         } else {
             $id_fields = $this->id_field();
         }

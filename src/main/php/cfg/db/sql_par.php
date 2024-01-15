@@ -66,6 +66,11 @@ class sql_par
     )
     {
         $lib = new library();
+        if ($ext == '') {
+            if ($tbl_typ != sql_table_type::MOST) {
+                $ext = $tbl_typ->extension();
+            }
+        }
         $this->sql = '';
         $class = $lib->class_to_name($class);
         $name = $class . $ext;

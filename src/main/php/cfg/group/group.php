@@ -263,14 +263,20 @@ class group extends sandbox_multi
     /**
      * @return array with the numbered names of this group
      */
-    function id_names(string $name_prefix): array
+    function id_names(bool $all = false): array
     {
         $name_lst = array();
         $grp_id = new group_id();
-        $pos = 1;
-        foreach ($grp_id->get_array($this->id()) as $id) {
-            $name_lst[] = $name_prefix . $pos;
-            $pos++;
+        if ($all) {
+            for ($pos = 1; $pos <= group_id::PRIME_PHRASE; $pos++) {
+                $name_lst[] = phrase::FLD_ID . '_' . $pos;
+            }
+        } else {
+            $pos = 1;
+            foreach ($grp_id->get_array($this->id()) as $id) {
+                $name_lst[] = phrase::FLD_ID . '_' . $pos;
+                $pos++;
+            }
         }
         return $name_lst;
     }

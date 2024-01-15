@@ -179,6 +179,7 @@ class sql_db
     // open used name extension for the prepared sql statements
     const FLD_ID = 'id';                          // used also to name the sql statements
     const FLD_NAME = 'name';                      // used      to name the sql statements
+    const FLD_SEP = '_';                          // the separator for the SQL field name parts
     const FLD_EXT_ID = '_id';
     const FLD_EXT_NAME = '_name';
     const FLD_EXT_TYPE_ID = '_type_id';

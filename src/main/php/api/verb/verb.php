@@ -47,11 +47,14 @@ class verb extends sandbox_named_api
      */
 
     // already coded verb names or persevered verbs names for unit and integration tests
+    // TN_* is the name of the verb
+    // TI_* is the database id based on the initial load
     const TN_READ = "not set";
     const TC_READ = "not_set";
     const TN_IS = "is a";
     const TN_PART = "is part of";
     const TN_OF = "of";
+    const TI_OF = 4;
     const TN_TIME_STEP = "time jump";
     const TN_ADD = "System Test Verb";
 

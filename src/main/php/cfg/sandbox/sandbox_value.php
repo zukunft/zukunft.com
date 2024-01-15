@@ -41,6 +41,7 @@ use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
+use cfg\db\sql_par_type;
 use cfg\db\sql_table_type;
 use cfg\db\sql_par;
 use cfg\group\group;
@@ -49,6 +50,7 @@ use cfg\log\change;
 use cfg\log\change_log_action;
 use cfg\log\change_log_field;
 use cfg\log\change_log_link;
+use cfg\result\result;
 use cfg\value\value;
 use DateTime;
 use Exception;
@@ -248,6 +250,26 @@ class sandbox_value extends sandbox_multi
     function last_update(): ?DateTime
     {
         return $this->last_update;
+    }
+
+
+    /*
+     * forward group get
+     */
+
+    function is_prime(): bool
+    {
+        return $this->grp()->is_prime();
+    }
+
+    function id_names(bool $all = false): array
+    {
+        return $this->grp()->id_names($all);
+    }
+
+    function id_lst(): array
+    {
+        return $this->grp()->id_lst();
     }
 
 
@@ -463,22 +485,41 @@ class sandbox_value extends sandbox_multi
      */
     protected function load_sql_set_where(sql_par $qp, sql $sc, string $ext): sql_par
     {
-        if ($this->grp->is_prime()) {
-            $fields = $this->grp->id_names(phrase::FLD_ID . '_');
-            $values = $this->grp->id_lst();
-            $pos = 0;
-            foreach ($fields as $field) {
-                $sc->add_where($field, $values[$pos]);
-                $pos++;
-            }
-        } else {
-            $sc->add_where(group::FLD_ID, $this->grp->id());
-        }
+        $this->load_sql_where_id($qp, $sc);
 
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
         $qp->ext = $ext;
 
+        return $qp;
+    }
+
+    /**
+     * set the where condition and the final query parameters
+     * for a value or result query
+     *
+     * @param sql_par $qp the query parameters fully set without the sql, par and ext
+     * @param sql $sc the sql creator with all parameters set
+     * @param bool $all true if all id fields should be used independend from the number of ids
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    protected function load_sql_where_id(sql_par $qp, sql $sc, bool $all = false): sql_par
+    {
+        if ($this->is_prime()) {
+            $fields = $this->id_names($all);
+            $values = $this->id_lst();
+            $pos = 0;
+            foreach ($fields as $field) {
+                $val_used = 0;
+                if (array_key_exists($pos, $values)) {
+                    $val_used = $values[$pos];
+                }
+                $sc->add_where($field, $val_used);
+                $pos++;
+            }
+        } else {
+            $sc->add_where(group::FLD_ID, $this->grp->id());
+        }
         return $qp;
     }
 
@@ -497,8 +538,8 @@ class sandbox_value extends sandbox_multi
         $sc->set_usr($this->user()->id());
         $sc->set_fields($this->all_sandbox_fields());
 
-        $fields = $this->grp->id_names(phrase::FLD_ID . '_');
-        $values = $this->grp->id_lst();
+        $fields = $this->id_names();
+        $values = $this->id_lst();
         $pos = 0;
         foreach ($fields as $field) {
             $sc->add_where($field, $values[$pos]);
@@ -508,6 +549,36 @@ class sandbox_value extends sandbox_multi
         $sc->add_where(user::FLD_ID, $this->user()->id());
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to get all the users that have changed this value
+     * TODO overwrites the sandbox function
+     *
+     * @param sql $sc with the target db_type set
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_changer(sql $sc): sql_par
+    {
+        $tbl_typ = $this->grp->table_type();
+        $qp = new sql_par($this::class, false, false, '', $tbl_typ);
+        $qp->name .= 'changer';
+        if ($this->owner_id > 0) {
+            $qp->name .= '_ex_owner';
+        }
+        $sc->set_class($this::class, true, $tbl_typ->extension());
+        $sc->set_name($qp->name);
+        $sc->set_usr($this->user()->id());
+        // overwrite the standard id field because e.g. prime values have a combined id field
+        $sc->set_id_field($this->id_field());
+        $sc->set_fields(array(user::FLD_ID));
+        $this->load_sql_where_id($qp, $sc, true);
+        $sc->add_where(sandbox::FLD_EXCLUDED, 1, sql_par_type::INT_NOT_OR_NULL);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+        $qp->ext = $tbl_typ->extension();
+
         return $qp;
     }
 
@@ -565,7 +636,7 @@ class sandbox_value extends sandbox_multi
      */
     function id_field(): string|array
     {
-        if ($this->grp()->is_prime()) {
+        if ($this->is_prime()) {
             return $this->id_fields_prime();
         } else {
             return $this->id_field_group();
@@ -589,7 +660,7 @@ class sandbox_value extends sandbox_multi
     {
         $lib = new library();
         $id_fields = array();
-        $base_name = $lib->class_to_name(phrase::class) . sql_db::FLD_EXT_ID . '_';
+        $base_name = $lib->class_to_name(phrase::class) . sql_db::FLD_EXT_ID . sql_db::FLD_SEP;
         for ($i = 1; $i <= group_id::PRIME_PHRASE; $i++) {
             $id_fields[] = $base_name . $i;
         }
@@ -599,7 +670,7 @@ class sandbox_value extends sandbox_multi
     /**
      * @param bool $usr_tbl true if also the user group id field should be returned
      * @param bool $usr_only true if only the user table field should be returned
-     * @return string with the id field for a none prime value
+     * @return string|array with the id field for a none prime value
      */
     function id_field_group(bool $usr_tbl = false, bool $usr_only = false): string|array
     {

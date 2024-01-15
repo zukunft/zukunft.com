@@ -47,16 +47,24 @@ class word extends sandbox_typed_api
 
     // word names for stand-alone unit tests that are added with the system initial data load
     // TN_* is the name of the word used for testing
+    // TI_* is the database id based on the initial load
     // TD_* is the tooltip/description of the word
     const TN_READ = 'Mathematics';
     const TD_READ = 'Mathematics is an area of knowledge that includes the topics of numbers and formulas';
     const TN_CONST = 'constant';
     const TD_CONST = 'fixed and well-defined number';
     const TN_PI = 'Pi';
+    const TI_PI = 3;
     const TD_PI = 'ratio of the circumference of a circle to its diameter';
+    const TN_CIRCUMFERENCE = 'circumference';
+    const TI_CIRCUMFERENCE = 134;
+    const TN_DIAMETER = 'diameter';
+    const TI_DIAMETER = 135;
     const TN_E = "Euler's constant";
     const TN_ONE = 'one';
+    const TI_ONE = 162;
     const TN_MIO = 'million';
+    const TI_MIO = 164;
     const TN_MIO_SHORT = 'mio';
     const TN_MINUTE = 'minute';
     const TN_SECOND = 'second';
@@ -76,11 +84,16 @@ class word extends sandbox_typed_api
     const TN_2019 = '2019';
     const TN_2020 = '2020';
     const TN_PCT = 'percent';
+    const TI_PCT = 166;
     // _PRE are the predefined words
     const TN_THIS_PRE = 'this'; // the test name for the predefined word 'this'
+    const TI_THIS = 185;
     const TN_PRIOR_PRE = 'prior';
+    const TI_PRIOR = 187;
     const TN_PARTS = 'parts';
+    const TI_PARTS = 231;
     const TN_TOTAL_PRE = 'total';
+    const TI_TOTAL = 232;
     const TN_COMPANY = 'Company';
 
     // persevered word names for unit and integration tests based on the database

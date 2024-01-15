@@ -60,6 +60,8 @@ use cfg\log\change;
 use cfg\log\change_log;
 use cfg\log\change_log_action;
 use cfg\log\change_log_link;
+use cfg\result\result;
+use cfg\value\value;
 use Exception;
 
 class sandbox extends db_object_seq_id_user
@@ -936,29 +938,6 @@ class sandbox extends db_object_seq_id_user
 
         log_debug(zu_dsp_bool($result));
         return $result;
-    }
-
-    /**
-     * create an SQL statement to get all the users that have changed this value
-     * @param sql $sc
-     * @return sql_par
-     */
-    function load_sql_changer(sql $sc): sql_par
-    {
-        $qp = new sql_par($this->obj_name);
-        $qp->name .= 'changer';
-        if ($this->owner_id > 0) {
-            $qp->name .= '_ex_owner';
-        }
-        $sc->set_class($this->obj_name, true);
-        $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id());
-        $sc->set_fields(array(user::FLD_ID));
-        $qp->sql = $sc->select_by_id_not_owner($this->id, $this->owner_id);
-
-        $qp->par = $sc->get_par();
-
-        return $qp;
     }
 
     /**

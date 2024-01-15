@@ -89,7 +89,7 @@ class value_unit_tests
         $t->assert_sql_not_changed($db_con, $val);
         $t->assert_sql_user_changes($db_con, $val);
         // TODO active and also for other value types
-        //$t->assert_sql_changer($db_con, $val);
+        $t->assert_sql_changer($db_con, $val);
 
         $t->subheader('SQL statements - for values related to up to 16 phrases');
         $val = $t->dummy_value_16();
@@ -100,6 +100,7 @@ class value_unit_tests
         $t->assert_sql_by_id($db_con, $val);
         // TODO activate
         //$this->assert_sql_by_grp($t, $db_con, $val);
+        //$t->assert_sql_changer($db_con, $val);
 
         // ... and the related default value
         $t->assert_sql_standard($db_con, $val);
@@ -110,6 +111,7 @@ class value_unit_tests
         $t->assert_sql_update($db_con, $val);
         // TODO activate
         //$this->assert_sql_by_grp($t, $db_con, $val);
+        //$t->assert_sql_changer($db_con, $val);
 
         // ... and the related default value
         $t->assert_sql_standard($db_con, $val);
