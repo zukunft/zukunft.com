@@ -562,7 +562,7 @@ class sandbox_value extends sandbox_multi
     function load_sql_changer(sql $sc): sql_par
     {
         $tbl_typ = $this->grp->table_type();
-        $qp = new sql_par($this::class, false, false, '', $tbl_typ);
+        $qp = new sql_par($this::class, false, true, '', $tbl_typ);
         $qp->name .= 'changer';
         if ($this->owner_id > 0) {
             $qp->name .= '_ex_owner';

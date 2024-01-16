@@ -1,4 +1,4 @@
-PREPARE value_prime_by_changer_ex_owner FROM
+PREPARE value_prime_changer_ex_owner FROM
     'SELECT phrase_id_1,
             phrase_id_2,
             phrase_id_3,
