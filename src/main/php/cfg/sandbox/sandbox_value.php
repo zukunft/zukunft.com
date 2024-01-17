@@ -583,6 +583,30 @@ class sandbox_value extends sandbox_multi
     }
 
     /**
+     * if the object has been changed by someone else than the owner the user id is returned
+     * but only return the user id if the user has not also excluded it
+     * @returns int the user id of someone who has changed the object, but is not owner
+     */
+    function changer(): int
+    {
+        log_debug($this->dsp_id());
+
+        global $db_con;
+
+        $user_id = 0;
+        $db_con->set_class($this->obj_name);
+        $db_con->set_usr($this->user()->id());
+        $qp = $this->load_sql_changer($db_con->sql_creator());
+        $db_row = $db_con->get1($qp);
+        if ($db_row) {
+            $user_id = $db_row[user::FLD_ID];
+        }
+
+        log_debug('is ' . $user_id);
+        return $user_id;
+    }
+
+    /**
      * create an SQL statement to retrieve a value or result by already set phrase group
      *
      * @param sql $sc with the target db_type set
@@ -803,13 +827,14 @@ class sandbox_value extends sandbox_multi
      * the common part of the sql statement creation for insert and update statements
      * @param sql $sc with the target db_type set
      * @param bool $usr_tbl true if a db row should be added to the user table
+     * @param bool $phr_nbr true if the number of phrases should be included in the extension
      * @return sql_par the common part for insert and update sql statements
      */
-    protected function sql_common(sql $sc, bool $usr_tbl = false): sql_par
+    protected function sql_common(sql $sc, bool $usr_tbl = false, bool $phr_nbr = true): sql_par
     {
         $lib = new library();
         // the value table name is not yet using the number of phrase keys as extension
-        $ext = $this->grp->table_extension();
+        $ext = $this->grp->table_extension($phr_nbr);
         $tbl_typ = $this->grp->table_type();
         $sc->set_class($this::class, $usr_tbl, $tbl_typ->extension());
         $sql_name = $lib->class_to_name($this::class);
@@ -839,6 +864,25 @@ class sandbox_value extends sandbox_multi
         $sc->set_name($qp->name);
         $qp->sql = $sc->sql_update($this->id_field(), $this->id(), $fields, $values);
         $qp->par = $values;
+        return $qp;
+    }
+
+    /**
+     * create the sql statement to delete a value in the database
+     * @param sql $sc with the target db_type set
+     * @param bool $usr_tbl true if the user table row should be updated
+     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     */
+    function sql_delete(
+        sql   $sc,
+        bool  $usr_tbl = false
+    ): sql_par
+    {
+        $qp = $this->sql_common($sc, $usr_tbl, false);
+        $qp->name .= '_delete';
+        $sc->set_name($qp->name);
+        $qp->sql = $sc->sql_delete($this->id_field(), $this->id_or_lst());
+        //$qp->par = $values;
         return $qp;
     }
 
@@ -918,6 +962,25 @@ class sandbox_value extends sandbox_multi
             }
         }
         return $result;
+    }
+
+    /**
+     * @return array|string the database id as used for the unique selection of one value
+     *                      either the string with the id for the group id
+     *                      or an 0 filled array with the phrase ids
+     */
+    function id_or_lst(): array|string
+    {
+        if ($this->is_prime()) {
+            $grp_id = new group_id();
+            $id_lst = $grp_id->get_array($this->id());
+            for ($i = count($id_lst); $i < group_id::PRIME_PHRASE; $i++) {
+                $id_lst[] = 0;
+            }
+            return $id_lst;
+        } else {
+            return $this->id();
+        }
     }
 
 

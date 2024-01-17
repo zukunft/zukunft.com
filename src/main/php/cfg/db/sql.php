@@ -59,6 +59,7 @@ class sql
     const SELECT = 'SELECT';
     const INSERT = 'INSERT';
     const UPDATE = 'UPDATE';
+    const DELETE = 'DELETE FROM';
     const NOW = 'Now()';
     const ORDER_ASC = 'ASC';
     const ORDER_DESC = 'DESC';
@@ -1048,6 +1049,64 @@ class sql
         }
 
         return $this->end_sql($sql, self::UPDATE);
+    }
+
+    /**
+     * create a sql statement to delete a database row
+     * @param string|array $id_field the id field or id fields of the table from where the row should be deleted
+     * @param string|int $id
+     * @param bool $log_err
+     * @return string
+     */
+    function sql_delete(
+        string|array $id_field,
+        string|array $id,
+        bool         $log_err = true): string
+    {
+        $lib = new library();
+        $id_field_par = '';
+
+        // check if the minimum parameters are set
+        if ($this->query_name == '') {
+            log_err('SQL statement is not yet named');
+        }
+
+        // gat the value parameter types
+        if (is_array($id_field)) {
+            foreach ($id as $id_item) {
+                $this->par_types[] = $this->get_sql_par_type($id_item);
+                $this->par_values[] = $id_item;
+                $this->par_fields[] = $this->par_name();
+            }
+        } else {
+            $this->par_types[] = $this->get_sql_par_type($id);
+            $this->par_values[] = $id;
+            $id_field_par = $this->par_name();
+        }
+
+        // create a prepare SQL statement if possible
+        $sql = $this->prepare_this_sql(self::DELETE);
+        $sql .= ' ' . $this->name_sql_esc($this->table);
+        $sql_set = '';
+        $sql .= $sql_set;
+        if (is_array($id_field)) {
+            $sql_where = '';
+            $pos = 0;
+            foreach ($id_field as $id_fld) {
+                if ($sql_where != '') {
+                    $sql_where .= ' AND ';
+                } else {
+                    $sql_where .= ' WHERE ';
+                }
+                $sql_where .= $id_fld . ' = ' . $this->par_fields[$pos];
+                $pos++;
+            }
+            $sql .= $sql_where;
+        } else {
+            $sql .= ' WHERE ' . $id_field . ' = ' . $id_field_par;
+        }
+
+        return $this->end_sql($sql, self::DELETE);
     }
 
     /**

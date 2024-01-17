@@ -78,8 +78,10 @@ class value_unit_tests
         $t->assert_sql_insert($db_con, $val_prime_max);
         $t->assert_sql_insert($db_con, $val_prime_max, true);
         // TODO add an sql insert test for a prime value with 2 and 4 phrases
+        // TODO for 1 given phrase fill the others with 0 because usually only one value is expected to be changed
         $t->assert_sql_update($db_con, $val);
         $t->assert_sql_update($db_con, $val, true);
+        $t->assert_sql_delete($db_con, $val);
         $this->assert_sql_by_grp($t, $db_con, $val);
 
         // ... and the related default value

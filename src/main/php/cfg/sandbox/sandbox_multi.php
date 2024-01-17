@@ -2209,7 +2209,7 @@ class sandbox_multi extends db_object_multi_user
                 $msg = $db_con->delete(
                     array($this->obj_name . sql_db::FLD_EXT_ID, 'excluded'),
                     array($this->id, '1'));
-                $result->add_message($msg);
+                $result->add_message(  $msg);
             }
             if ($result->is_ok()) {
                 // finally, delete the object

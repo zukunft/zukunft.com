@@ -1031,6 +1031,31 @@ class test_base
     }
 
     /**
+     * check the SQL statement to delete a database row
+     * for all allowed SQL database dialects
+     *
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param object $usr_obj the user sandbox object e.g. a word
+     * @param bool $usr_tbl true if a db row should be added to the user table
+     * @return bool true if all tests are fine
+     */
+    function assert_sql_delete(sql_db $db_con, object $usr_obj, bool $usr_tbl = false): bool
+    {
+        // check the Postgres query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $usr_obj->sql_delete($db_con->sql_creator(), $usr_tbl);
+        $result = $this->assert_qp($qp, $db_con->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $usr_obj->sql_delete($db_con->sql_creator(), $usr_tbl);
+            $result = $this->assert_qp($qp, $db_con->db_type);
+        }
+        return $result;
+    }
+
+    /**
      * check the SQL statement to load a db object by id
      * for all allowed SQL database dialects
      *
