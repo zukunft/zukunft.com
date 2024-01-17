@@ -82,6 +82,7 @@ class value_unit_tests
         $t->assert_sql_update($db_con, $val);
         $t->assert_sql_update($db_con, $val, true);
         $t->assert_sql_delete($db_con, $val);
+        $t->assert_sql_delete($db_con, $val, true);
         $this->assert_sql_by_grp($t, $db_con, $val);
 
         // ... and the related default value
@@ -98,6 +99,8 @@ class value_unit_tests
         $t->assert_sql_insert($db_con, $val);
         $t->assert_sql_insert($db_con, $val, true);
         $t->assert_sql_update($db_con, $val);
+        $t->assert_sql_delete($db_con, $val);
+        $t->assert_sql_delete($db_con, $val, true);
         $t->assert_sql_by_id($db_con, $val);
         // TODO activate
         //$this->assert_sql_by_grp($t, $db_con, $val);
