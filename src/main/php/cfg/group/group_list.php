@@ -225,11 +225,11 @@ class group_list extends sandbox_list
     /**
      * combine the group id and the time id to a unique index
      */
-    private function grp_time_id($grp, $time)
+    private function grp_time_id(group $grp, $time)
     {
         $id = '';
         if (isset($grp)) {
-            $grp_id = $grp->id;
+            $grp_id = $grp->id();
             if ($grp_id > 0) {
                 $id = $grp_id;
             }
@@ -512,7 +512,11 @@ class group_list extends sandbox_list
      */
 
     /**
-     * @return phrase_list with all phrases that are part of each phrase group of the list
+     * get the common phrases of a groups
+     * assumes that each group is fully loaded
+     * TODO add a check if a group the phrase list of a group is incomplete
+     *
+     * @return phrase_list|null with all phrases that are part of each phrase group of the list
      */
     function common_phrases(): ?phrase_list
     {
@@ -521,15 +525,15 @@ class group_list extends sandbox_list
         $result = new phrase_list($this->user());
         $pos = 0;
         foreach ($this->lst() as $grp) {
-            $grp->load_by_obj_vars();
+            //$grp->load_by_obj_vars();
             if ($pos == 0) {
-                if (isset($grp->phr_lst)) {
-                    $result = clone $grp->phr_lst;
+                if ($grp->has_phrase_list()) {
+                    $result = clone $grp->phrase_list();
                 }
             } else {
-                if (isset($grp->phr_lst)) {
-                    //$result = $result->concat_unique($grp->phr_lst);
-                    $result->common($grp->phr_lst);
+                if ($grp->has_phrase_list()) {
+                    //$result = $result->concat_unique($grp->phrase_list());
+                    $result->common($grp->phrase_list());
                 }
             }
             log_debug($result->dsp_name());

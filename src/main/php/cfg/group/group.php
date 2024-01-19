@@ -263,6 +263,19 @@ class group extends sandbox_multi
     }
 
     /**
+     * @return bool true if the phrase list matches the id and updated
+     */
+    function has_phrase_list(): bool
+    {
+        if ($this->phr_lst->count() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+    /**
      * @return int|string either a 62-bit int, a 512-bit id with 16 phrase ids or a text with more than 16 +/- seperated 6 char alpha_num coded phrase ids
      * the internal null value is used to detect if database saving has been tried
      */
