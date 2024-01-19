@@ -331,6 +331,7 @@ class phrase_list extends sandbox_list_named
      * load the phrase names by the given id list from the database
      *
      * @param phr_ids $ids phrase ids that should be loaded
+     * @param phrase_list|null $phr_lst list of the phrases already loaded to reduce traffic
      * @return bool true if at least one phrase has been loaded
      */
     function load_names_by_ids(phr_ids $ids, ?phrase_list $phr_lst = null): bool

@@ -268,15 +268,17 @@ class db_object
     }
 
     /**
-     * load one database row e.g. group (where the id might be a string), word, triple, value, formula, result, view, component or log entry from the database
+     * load one database row e.g. group (where the id might be a string) from the database
      * @param sql_par $qp the query parameters created by the calling function
+     * @return bool false if no database row has been found
+     *                    which means that no user has changed the standard group settings
      */
-    protected function load_without_id_return(sql_par $qp): void
+    protected function load_without_id_return(sql_par $qp): bool
     {
         global $db_con;
 
         $db_row = $db_con->get1($qp);
-        $this->row_mapper($db_row);
+        return $this->row_mapper($db_row);
     }
 
 

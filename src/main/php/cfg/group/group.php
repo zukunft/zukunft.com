@@ -176,8 +176,8 @@ class group extends sandbox_multi
     function row_mapper(?array $db_row, string $id_fld = ''): bool
     {
         $result = false;
-        $this->set_id(0);
         if ($db_row != null) {
+            $this->set_id(0);
             if (array_key_exists(self::FLD_ID, $db_row)) {
                 $this->set_id($db_row[self::FLD_ID]);
                 $grp_id = new group_id();
@@ -208,6 +208,26 @@ class group extends sandbox_multi
     {
         $this->phr_lst = $phr_lst;
         return $this->set_id_from_phrase_list($phr_lst);
+    }
+
+    /**
+     * set the phrase list based in the group id
+     * @param int|string $id the group id that should be used to set the phrase list
+     * @param phrase_list|null $phr_lst_in list of the phrases already loaded to reduce traffic
+     * @return bool true if the list has be set successfully
+     */
+    function set_phrase_list_by_id(int|string $id, ?phrase_list $phr_lst_in = null): bool
+    {
+        $grp_id = new group_id();
+        $phr_ids = new phr_ids($grp_id->get_array($id));
+        $phr_lst = new phrase_list($this->user());
+        if ($phr_lst->load_names_by_ids($phr_ids, $phr_lst_in)) {
+            $this->set_phrase_list($phr_lst);
+            return true;
+        } else {
+            return false;
+        }
+
     }
 
     /**
@@ -568,11 +588,13 @@ class group extends sandbox_multi
     /**
      * load one database row e.g. word, triple, value, formula, result, view, component or log entry from the database
      * @param sql_par $qp the query parameters created by the calling function
-     * @return int the id of the object found and zero if nothing is found
+     * @return int|string the id of the object found and zero if nothing is found
      */
-    protected function load(sql_par $qp): int
+    protected function load(sql_par $qp): int|string
     {
-        parent::load_without_id_return($qp);
+        if (!parent::load_without_id_return($qp)) {
+            $this->set_phrase_list_by_id($this->id());
+        }
         return $this->id();
     }
 
@@ -582,9 +604,9 @@ class group extends sandbox_multi
      * load a word object by database id
      * @param int|string $id the id of the group
      * @param string $class the group class name
-     * @return int the id of the object found and zero if nothing is found
+     * @return int|string the id of the object found and zero if nothing is found
      */
-    function load_by_id(int|string $id, string $class = self::class): int
+    function load_by_id(int|string $id, string $class = self::class): int|string
     {
         global $db_con;
 
