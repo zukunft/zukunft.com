@@ -1192,7 +1192,7 @@ class verb extends type_object
                 if ($log->id() > 0) {
                     $db_con->usr_id = $this->user()->id();
                     $db_con->set_class(sql_db::TBL_VERB);
-                    $result = $db_con->delete(self::FLD_ID, $this->id);
+                    $result = $db_con->delete_old(self::FLD_ID, $this->id);
                 }
             } else {
                 // TODO: create a new verb and request to delete the old

@@ -54,10 +54,12 @@ use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\export\sandbox_exp;
+use cfg\group\group_id;
 use cfg\log\change;
 use cfg\log\change_log;
 use cfg\log\change_log_action;
 use cfg\log\change_log_link;
+use cfg\value\value;
 use Exception;
 
 class sandbox_multi extends db_object_multi_user
@@ -1488,6 +1490,35 @@ class sandbox_multi extends db_object_multi_user
     }
 
     /**
+     * create the sql statement to delete a value in the database
+     * @param sql $sc with the target db_type set
+     * @param bool $usr_tbl true if the user table row should be updated
+     * @param bool $excluded true if only the excluded user rows should be deleted
+     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     */
+    function sql_delete(
+        sql  $sc,
+        bool $usr_tbl = false,
+        bool $excluded = false
+    ): sql_par
+    {
+        $qp = $this->sql_common($sc, $usr_tbl, false);
+        $qp->name .= '_delete';
+        if ($excluded) {
+            $qp->name .= '_excluded';
+        }
+        $sc->set_name($qp->name);
+        $id_lst = $this->id_or_lst();
+        $qp->sql = $sc->sql_delete($this->id_field(), $id_lst, $excluded);
+        if (is_array($id_lst)) {
+            $qp->par = $id_lst;
+        } else {
+            $qp->par = [$id_lst];
+        }
+        return $qp;
+    }
+
+    /**
      * actually update a field in the main database record
      * without user the user sandbox
      * the usr id is taken into account in sql_db->update (maybe move outside)
@@ -2167,7 +2198,7 @@ class sandbox_multi extends db_object_multi_user
                 if ($result->is_ok()) {
                     $db_con->set_class(sql_db::TBL_FORMULA_ELEMENT);
                     $db_con->set_usr($this->user()->id());
-                    $msg = $db_con->delete(sql_db::TBL_FORMULA . sql_db::FLD_EXT_ID, $this->id);
+                    $msg = $db_con->delete_old(sql_db::TBL_FORMULA . sql_db::FLD_EXT_ID, $this->id);
                     $result->add_message($msg);
                 }
 
@@ -2175,7 +2206,7 @@ class sandbox_multi extends db_object_multi_user
                 if ($result->is_ok()) {
                     $db_con->set_class(sql_db::TBL_RESULT);
                     $db_con->set_usr($this->user()->id());
-                    $msg = $db_con->delete(sql_db::TBL_FORMULA . sql_db::FLD_EXT_ID, $this->id);
+                    $msg = $db_con->delete_old(sql_db::TBL_FORMULA . sql_db::FLD_EXT_ID, $this->id);
                     $result->add_message($msg);
                 }
 
@@ -2204,19 +2235,32 @@ class sandbox_multi extends db_object_multi_user
 
             // delete first all user configuration that have also been excluded
             if ($result->is_ok()) {
-                $db_con->set_class(sql_db::TBL_USER_PREFIX . $this->obj_name);
-                $db_con->set_usr($this->user()->id());
-                $msg = $db_con->delete(
-                    array($this->obj_name . sql_db::FLD_EXT_ID, 'excluded'),
-                    array($this->id, '1'));
-                $result->add_message(  $msg);
+                // TODO always use the qp based setup
+                if ($this::class == value::class) {
+                    $qp = $this->sql_delete($db_con->sql_creator(), true, true);
+                    $msg = $db_con->delete($qp, $this::class . ' user exclusions');
+                    $result->add($msg);
+                } else {
+                    $db_con->set_class(sql_db::TBL_USER_PREFIX . $this->obj_name);
+                    $db_con->set_usr($this->user()->id());
+                    // TODO use prepared query
+                    $msg = $db_con->delete_old(
+                        array($this->obj_name . sql_db::FLD_EXT_ID, 'excluded'),
+                        array($this->id, '1'));
+                    $result->add_message($msg);
+                }
             }
             if ($result->is_ok()) {
                 // finally, delete the object
-                $db_con->set_class($this->obj_name);
-                $db_con->set_usr($this->user()->id());
-                $msg = $db_con->delete($this->id_field(), $this->id);
-                $result->add_message($msg);
+                if ($this::class == value::class) {
+                    $qp = $this->sql_delete($db_con->sql_creator());
+                    $msg = $db_con->delete($qp, $this::class . ' user exclusions');
+                } else {
+                    $db_con->set_class($this->obj_name);
+                    $db_con->set_usr($this->user()->id());
+                    $msg = $db_con->delete_old($this->id_field(), $this->id);
+                    $result->add_message($msg);
+                }
                 log_debug('of ' . $this->dsp_id() . ' done');
             } else {
                 log_err('Delete failed for ' . $this->obj_name, $this->obj_name . '->del_exe', 'Delete failed, because removing the user settings for ' . $this->obj_name . ' ' . $this->dsp_id() . ' returns ' . $msg, (new Exception)->getTraceAsString(), $this->user());
@@ -2353,6 +2397,34 @@ class sandbox_multi extends db_object_multi_user
     {
         return 'A ' . $this->obj_name . ' with the name ' . $obj_to_add->dsp_id() . ' already exists. '
             . 'Please use another ' . $obj_to_add->obj_name . ' name.';
+    }
+
+    /**
+     * TODO to be overwritten by the sandbox value function
+     * @return bool
+     */
+    function is_prime(): bool
+    {
+        return true;
+    }
+
+    /**
+     * @return array|string the database id as used for the unique selection of one value
+     *                      either the string with the id for the group id
+     *                      or an 0 filled array with the phrase ids
+     */
+    function id_or_lst(): array|string
+    {
+        if ($this->is_prime()) {
+            $grp_id = new group_id();
+            $id_lst = $grp_id->get_array($this->id());
+            for ($i = count($id_lst); $i < group_id::PRIME_PHRASE; $i++) {
+                $id_lst[] = 0;
+            }
+            return $id_lst;
+        } else {
+            return $this->id();
+        }
     }
 
     /**

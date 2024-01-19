@@ -796,7 +796,9 @@ class sandbox_value extends sandbox_multi
 
         $log = new change($this->user());
         $log->action = change_log_action::DELETE;
-        $log->set_table($this->obj_name . sql_db::TABLE_EXTENSION);
+        $lib = new library();
+        $class = $lib->class_to_name($this::class);
+        $log->set_table($class . sql_db::TABLE_EXTENSION);
         $log->set_field(change_log_field::FLD_NUMERIC_VALUE);
         $log->old_value = $this->number;
         $log->new_value = '';
@@ -866,26 +868,6 @@ class sandbox_value extends sandbox_multi
         $qp->par = $values;
         return $qp;
     }
-
-    /**
-     * create the sql statement to delete a value in the database
-     * @param sql $sc with the target db_type set
-     * @param bool $usr_tbl true if the user table row should be updated
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
-     */
-    function sql_delete(
-        sql   $sc,
-        bool  $usr_tbl = false
-    ): sql_par
-    {
-        $qp = $this->sql_common($sc, $usr_tbl, false);
-        $qp->name .= '_delete';
-        $sc->set_name($qp->name);
-        $qp->sql = $sc->sql_delete($this->id_field(), $this->id_or_lst());
-        //$qp->par = $values;
-        return $qp;
-    }
-
 
     /**
      * actually update a field in the main database record or the user sandbox
@@ -962,25 +944,6 @@ class sandbox_value extends sandbox_multi
             }
         }
         return $result;
-    }
-
-    /**
-     * @return array|string the database id as used for the unique selection of one value
-     *                      either the string with the id for the group id
-     *                      or an 0 filled array with the phrase ids
-     */
-    function id_or_lst(): array|string
-    {
-        if ($this->is_prime()) {
-            $grp_id = new group_id();
-            $id_lst = $grp_id->get_array($this->id());
-            for ($i = count($id_lst); $i < group_id::PRIME_PHRASE; $i++) {
-                $id_lst[] = 0;
-            }
-            return $id_lst;
-        } else {
-            return $this->id();
-        }
     }
 
 

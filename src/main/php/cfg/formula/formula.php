@@ -790,7 +790,7 @@ class formula extends sandbox_typed
 
         $db_con->set_class(sql_db::TBL_RESULT);
         $db_con->set_usr($this->user()->id);
-        return $db_con->delete(self::FLD_ID, $this->id);
+        return $db_con->delete_old(self::FLD_ID, $this->id);
     }
 
     /**
@@ -1561,7 +1561,7 @@ class formula extends sandbox_typed
             $field_names[] = 'ref_id';
             $field_values[] = $elm_del_id;
             $db_con->set_class(sql_db::TBL_FORMULA_ELEMENT);
-            $del_result = $db_con->delete($field_names, $field_values);
+            $del_result = $db_con->delete_old($field_names, $field_values);
             if ($del_result != '') {
                 $result = false;
             }

@@ -392,7 +392,7 @@ class value_phrase_link extends db_object_seq_id_user
                 //$db_con = new mysql;
                 $db_con->usr_id = $this->user()->id();
                 $db_con->set_class(sql_db::TBL_VALUE_PHRASE_LINK);
-                $result .= $db_con->delete(array(value::FLD_ID, phrase::FLD_ID), array($this->val->id(), $this->phr->id()));
+                $result .= $db_con->delete_old(array(value::FLD_ID, phrase::FLD_ID), array($this->val->id(), $this->phr->id()));
             }
         } else {
             // check if removing a word link is matching another value

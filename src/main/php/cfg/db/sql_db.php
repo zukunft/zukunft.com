@@ -3499,6 +3499,39 @@ class sql_db
     }
 
     /**
+     * execute a delete sql statement
+     * and return a message to the user if something has gone wrong
+     * and a suggested solution to fix the issue
+     * and alternative solution if possible
+     * or the true if successful
+     *
+     * @param sql_par $qp the sql statement with the name of the prepare query and parameter for this execution
+     * @param string $description for the user to identify the statement
+     * @return user_message
+     */
+    function delete(sql_par $qp, string $description): user_message
+    {
+        $result = new user_message();
+        $err_msg = 'Delete of ' . $description . ' failed';
+        try {
+            $sql_result = $this->exe($qp->sql, $qp->name, $qp->par);
+            if ($this->db_type == sql_db::POSTGRES) {
+                $sql_error = pg_result_error($sql_result);
+                if ($sql_error != '') {
+                    $err_msg .= ' due to ' . $sql_error;
+                    log_err($err_msg);
+                    $result->add_message($err_msg);
+                }
+            }
+        } catch (Exception $e) {
+            $trace_link = log_err($err_msg . log::MSG_ERR_USING . $qp->sql . log::MSG_ERR_BECAUSE . $e->getMessage());
+            $result->add_message($trace_link);
+        }
+
+        return $result;
+    }
+
+    /**
      * insert a new record in the database
      * similar to exe, but returning the row id added to be able to update
      * e.g. the log entry with the row id of the real row added
@@ -3768,7 +3801,7 @@ class sql_db
      *                or the error message that should be shown to the user
      *                which may include a link for error tracing
      */
-    function delete($id_fields, $id_values): string
+    function delete_old($id_fields, $id_values): string
     {
         $lib = new library();
         if (is_array($id_fields)) {

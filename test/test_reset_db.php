@@ -132,16 +132,14 @@ if ($usr->id() > 0) {
 
         // remove the test dataset for a clean database
         // TODO use the user message object instead of a string
-        /*
         $cleanup_result = $t->cleanup();
-        if ($cleanup_result != '') {
-            log_err('Cleanup not successful, because ' . $cleanup_result);
+        if (!$cleanup_result) {
+            log_err('Cleanup not successful, because ...');
         } else {
             if (!$t->cleanup_check()) {
                 log_err('Cleanup check not successful.');
             }
         }
-        */
 
         // reload the session user parameters
         $usr = new user;

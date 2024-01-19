@@ -2211,7 +2211,7 @@ class sandbox extends db_object_seq_id_user
                 if ($result->is_ok()) {
                     $db_con->set_class(sql_db::TBL_FORMULA_ELEMENT);
                     $db_con->set_usr($this->user()->id());
-                    $msg = $db_con->delete(sql_db::TBL_FORMULA . sql_db::FLD_EXT_ID, $this->id);
+                    $msg = $db_con->delete_old(sql_db::TBL_FORMULA . sql_db::FLD_EXT_ID, $this->id);
                     $result->add_message($msg);
                 }
 
@@ -2219,7 +2219,7 @@ class sandbox extends db_object_seq_id_user
                 if ($result->is_ok()) {
                     $db_con->set_class(sql_db::TBL_RESULT);
                     $db_con->set_usr($this->user()->id());
-                    $msg = $db_con->delete(sql_db::TBL_FORMULA . sql_db::FLD_EXT_ID, $this->id);
+                    $msg = $db_con->delete_old(sql_db::TBL_FORMULA . sql_db::FLD_EXT_ID, $this->id);
                     $result->add_message($msg);
                 }
 
@@ -2250,7 +2250,7 @@ class sandbox extends db_object_seq_id_user
             if ($result->is_ok()) {
                 $db_con->set_class(sql_db::TBL_USER_PREFIX . $this->obj_name);
                 $db_con->set_usr($this->user()->id());
-                $msg = $db_con->delete(
+                $msg = $db_con->delete_old(
                     array($this->obj_name . sql_db::FLD_EXT_ID, 'excluded'),
                     array($this->id, '1'));
                 $result->add_message($msg);
@@ -2259,7 +2259,7 @@ class sandbox extends db_object_seq_id_user
                 // finally, delete the object
                 $db_con->set_class($this->obj_name);
                 $db_con->set_usr($this->user()->id());
-                $msg = $db_con->delete($this->id_field(), $this->id);
+                $msg = $db_con->delete_old($this->id_field(), $this->id);
                 $result->add_message($msg);
                 log_debug('of ' . $this->dsp_id() . ' done');
             } else {

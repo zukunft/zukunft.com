@@ -948,7 +948,7 @@ class ref extends sandbox_link_with_type
                 $log = $this->log_link_del();
                 if ($log->id() > 0) {
                     $db_con->set_class(sql_db::TBL_REF);
-                    $del_result = $db_con->delete(self::FLD_ID, $this->id);
+                    $del_result = $db_con->delete_old(self::FLD_ID, $this->id);
                     if ($del_result == '') {
                         log_debug('done.');
                     } else {

@@ -45,6 +45,7 @@ use cfg\group\group_id;
 use cfg\library;
 use cfg\ref;
 use cfg\result\result;
+use cfg\sandbox;
 use cfg\triple;
 use cfg\user;
 use cfg\value\value;
@@ -66,6 +67,8 @@ class sql
     const NULL_VALUE = 'NULL';
     const INDEX = 'INDEX';
     const UNIQUE = 'UNIQUE INDEX';
+    const TRUE = '1'; // representing true in the where part for a smallint field
+    const FALSE = '0'; // representing true in the where part for a smallint field
 
     // enum values used for the table creation
     const fld_type_ = '';
@@ -1054,14 +1057,14 @@ class sql
     /**
      * create a sql statement to delete a database row
      * @param string|array $id_field the id field or id fields of the table from where the row should be deleted
-     * @param string|int $id
-     * @param bool $log_err
+     * @param string|array $id
+     * @param bool $excluded true if only the excluded user rows should be deleted
      * @return string
      */
     function sql_delete(
         string|array $id_field,
         string|array $id,
-        bool         $log_err = true): string
+        bool         $excluded = false): string
     {
         $lib = new library();
         $id_field_par = '';
@@ -1104,6 +1107,9 @@ class sql
             $sql .= $sql_where;
         } else {
             $sql .= ' WHERE ' . $id_field . ' = ' . $id_field_par;
+        }
+        if ($excluded) {
+            $sql .= ' AND ' . sandbox::FLD_EXCLUDED . ' = ' . sql::TRUE;
         }
 
         return $this->end_sql($sql, self::DELETE);

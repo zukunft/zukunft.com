@@ -1351,12 +1351,12 @@ class group extends sandbox_multi
 
         $db_con->set_class(sql_db::TBL_GROUP_LINK);
         $db_con->usr_id = $this->user()->id();
-        $msg = $db_con->delete(self::FLD_ID, $this->id);
+        $msg = $db_con->delete_old(self::FLD_ID, $this->id);
         $result->add_message($msg);
 
         $db_con->set_class(sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK);
         $db_con->usr_id = $this->user()->id();
-        $msg = $db_con->delete(self::FLD_ID, $this->id);
+        $msg = $db_con->delete_old(self::FLD_ID, $this->id);
         $result->add_message($msg);
 
         // delete the related value
@@ -1384,7 +1384,7 @@ class group extends sandbox_multi
 
         $db_con->set_class(sql_db::TBL_GROUP);
         $db_con->usr_id = $this->user()->id();
-        $msg = $db_con->delete(self::FLD_ID, $this->id);
+        $msg = $db_con->delete_old(self::FLD_ID, $this->id);
         $result->add_message($msg);
 
         return $result;
