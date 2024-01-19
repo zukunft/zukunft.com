@@ -135,7 +135,7 @@ class word extends sandbox_typed_api
     const TD_UPD_API = 'System Test Word API Description Renamed';
 
 
-    // word groups for creating the test words and remove some after the test
+    // list of predefined words used for system testing that are expected to be never renamed
     const RESERVED_WORDS = array(
         word_cfg::SYSTEM_CONFIG,
         self::TN_READ,
@@ -195,9 +195,46 @@ class word extends sandbox_typed_api
         self::TN_ADD_API,
         self::TN_UPD_API
     );
+    // list of words that are used for system testing that should be removed are the system test has been completed
+    // and that are never expected to be used by a user
     const TEST_WORDS = array(
         self::TN_ADD,
         self::TN_RENAMED,
+        self::TN_PARENT,
+        self::TN_FIN_REPORT,
+        self::TN_CASH_FLOW,
+        self::TN_TAX_REPORT,
+        self::TN_ASSETS,
+        self::TN_ASSETS_CURRENT,
+        self::TN_SECTOR,
+        self::TN_ENERGY,
+        self::TN_WIND_ENERGY,
+        self::TN_CASH,
+        self::TN_2021,
+        self::TN_2022,
+        self::TN_CHF,
+        self::TN_SHARE,
+        self::TN_PRICE,
+        self::TN_EARNING,
+        self::TN_PE,
+        self::TN_IN_K,
+        self::TN_BIL,
+        self::TN_TOTAL,
+        self::TN_INCREASE,
+        self::TN_THIS,
+        self::TN_PRIOR,
+        self::TN_TIME_JUMP,
+        self::TN_LATEST,
+        self::TN_SCALING_PCT,
+        self::TN_SCALING_MEASURE,
+        self::TN_CALC,
+        self::TN_LAYER,
+        self::TN_ADD_API,
+        self::TN_UPD_API
+    );
+    // list of words that are used for system testing and that should be created before the system test starts
+    const TEST_WORDS_CREATE = array(
+        self::TN_ADD,
         self::TN_PARENT,
         self::TN_FIN_REPORT,
         self::TN_CASH_FLOW,

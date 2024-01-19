@@ -255,7 +255,7 @@ class group_list extends sandbox_list
     {
         log_debug($grp->id());
         $do_add = false;
-        if ($grp->id() > 0) {
+        if ($grp->is_id_set()) {
             if ($this->grp_ids == null) {
                 $do_add = true;
             } else {

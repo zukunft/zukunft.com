@@ -84,7 +84,7 @@ class phrase_group_test
         $t->display('phrase_group->load by ids excluding time for ' . implode(",", $wrd_lst->names()), $target, $result);
 
         // load based on id
-        if ($phr_grp->id() > 0) {
+        if ($phr_grp->is_id_set()) {
             $phr_grp_reload = new group($usr);
             $phr_grp_reload->load_by_id($phr_grp->id());
             $wrd_lst_reloaded = $phr_grp_reload->phrase_list()->wrd_lst();

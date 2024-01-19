@@ -188,7 +188,7 @@ class value_test
             word_api::TN_2020));
         //$phr_lst->ex_time();
         $grp = $phr_lst->get_grp();
-        if ($grp->id() == 0) {
+        if (!$grp->is_id_set()) {
             $result = 'No word list found.';
         } else {
             $val = new value($t->usr1);

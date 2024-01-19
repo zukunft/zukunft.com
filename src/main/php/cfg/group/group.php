@@ -336,6 +336,19 @@ class group extends sandbox_multi
         return $this->id();
     }
 
+    /**
+     * @return bool if the id of the group is valid
+     */
+    function is_id_set(): bool
+    {
+        if ($this->id() != 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
 
     /*
      * cast
@@ -634,11 +647,7 @@ class group extends sandbox_multi
             return true;
         } else {
             $this->set_phrase_list($phr_lst);
-            if ($this->id() != 0) {
-                return true;
-            } else {
-                return false;
-            }
+            return $this->is_id_set();
         }
     }
 
@@ -800,7 +809,7 @@ class group extends sandbox_multi
      */
     function get_id(): ?int
     {
-        if ($this->id() == 0) {
+        if (!$this->is_id_set()) {
             // if the id has not yet been set, try to create it, but actually this should never happen
             log_warning('Unexpected creation of the group id triggered for ' . $this->dsp_id());
             $this->get();

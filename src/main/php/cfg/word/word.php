@@ -1661,19 +1661,6 @@ class word extends sandbox_typed
         return $result;
     }
 
-    function get_obj_with_same_id_fields(): sandbox
-    {
-        $db_chk = parent::get_obj_with_same_id_fields();
-        if ($db_chk->id > 0) {
-            if ($this->obj_name == word::class or $this->obj_name == word_dsp::class) {
-                // TODO check if this is always correct
-                $db_chk->id = 0;
-            }
-        }
-
-        return $db_chk;
-    }
-
     /**
      * delete the references to this word which includes the phrase groups, the triples and values
      * @return user_message of the link removal and if needed the error messages that should be shown to the user

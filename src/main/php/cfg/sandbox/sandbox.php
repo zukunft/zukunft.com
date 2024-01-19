@@ -1729,6 +1729,7 @@ class sandbox extends db_object_seq_id_user
     /**
      * check if target key value already exists
      * overwritten in the word class for formula link words
+     * TODO load the user value not the standard value but also check the standard value
      *
      * @return sandbox object with id zero if no object with the same id is found
      */
@@ -1753,6 +1754,12 @@ class sandbox extends db_object_seq_id_user
     /**
      * check if the id parameters are supposed to be changed
      * and change the id (which can start a longer lasting confirmation process)
+     *
+     * The possible cases are
+     * 1. the new name is not used by the user and not used for the standard -> simply rename it
+     * 2. the new name is not used by the user but     used for the standard -> join with the standard word
+     * 3. the new name is     used by the user but not used for the standard -> send a warning to the user and offer join
+     * 4. the new name is     used by the user and     used for the standard -> send a warning to the user and offer join
      *
      * @param sql_db $db_con the active database connection
      * @param sandbox $db_rec the database record before the saving

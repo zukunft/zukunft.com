@@ -552,7 +552,7 @@ class value extends sandbox_value
         $sc->set_class($class, false, $ext);
         if ($this->id() > 0) {
             $qp->name .= sql_db::FLD_ID;
-        } elseif ($this->grp->id() > 0) {
+        } elseif ($this->grp->is_id_set()) {
             $qp->name .= 'group_id';
         } elseif ($this->grp->phrase_list() != null) {
             $phr_lst = clone $this->grp->phrase_list();
@@ -573,7 +573,7 @@ class value extends sandbox_value
 
         if ($this->id() > 0) {
             $sql_where = $sc->where_id(self::FLD_ID, $this->id, true);
-        } elseif ($this->grp->id() > 0) {
+        } elseif ($this->grp->is_id_set()) {
             $sql_where = $sc->where_par(array(group::FLD_ID), array($this->grp->id()), true);
         } elseif ($this->grp->phrase_list() != null) {
             // create the SQL to select a phrase group which needs to inside load_sql for correct parameter counting
@@ -795,7 +795,7 @@ class value extends sandbox_value
     {
         log_debug();
         // loading via word group is the most used case, because to save database space and reading time the value is saved with the word group id
-        if ($this->grp->id() > 0) {
+        if ($this->grp->is_id_set()) {
             $this->load_grp_by_id();
         }
         log_debug('done');
@@ -832,11 +832,11 @@ class value extends sandbox_value
     function load_grp_by_id(): void
     {
         // if the group object is missing
-        if ($this->grp->id() > 0) {
+        if ($this->grp->is_id_set()) {
             // ... load the group related objects means the word and triple list
             $grp = new group($this->user()); // in case the word names and word links can be user specific maybe the owner should be used here
             $grp->load_by_id($this->grp->id()); // to make sure that the word and triple object lists are loaded
-            if ($grp->id() > 0) {
+            if ($grp->is_id_set()) {
                 $this->grp = $grp;
             }
         }

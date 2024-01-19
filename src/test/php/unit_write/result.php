@@ -38,7 +38,7 @@ use api\formula\formula as formula_api;
 use api\result\result as result_api;
 use api\word\word as word_api;
 use cfg\phrase_list;
-use cfg\result;
+use cfg\result\result;
 use cfg\result_list;
 use cfg\value;
 use test\test_cleanup;
@@ -63,7 +63,7 @@ class result_test
         $phr_lst->add_name(word_api::TN_PCT);
         $phr_lst->add_name(word_api::TN_INHABITANTS);
         $ch_up_grp = $phr_lst->get_grp_id();
-        if ($ch_up_grp->id() > 0) {
+        if ($ch_up_grp->is_id_set()) {
             $ch_increase = new result($usr);
             $ch_increase->load_by_grp($ch_up_grp);
             $result = $ch_increase->value;
@@ -82,7 +82,7 @@ class result_test
         $time_phr = $phr_lst->time_useful();
         $phr_lst->ex_time();
         $ch_up_grp = $phr_lst->get_grp_id();
-        if ($ch_up_grp->id() > 0) {
+        if ($ch_up_grp->is_id_set()) {
             $ch_increase = new result($usr);
             $ch_increase->load_by_grp($ch_up_grp, $time_phr->id());
             $result = $ch_increase->value;

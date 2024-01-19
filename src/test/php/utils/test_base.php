@@ -2187,7 +2187,7 @@ class test_base
         if ($val->id() == 0) {
             $val->set_id($this->next_seq_nbr());
         }
-        if ($val->grp()->id() == 0) {
+        if (!$val->grp()->is_id_set()) {
             $val->grp()->set_id($this->next_seq_nbr());
         }
         foreach ($val->phr_lst()->lst() as $phr) {

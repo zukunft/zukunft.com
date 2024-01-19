@@ -515,10 +515,7 @@ class word_test
 
         $t->header('Check if all base words are correct');
 
-        foreach (word_api::RESERVED_WORDS as $word_name) {
-            $t->test_word($word_name);
-        }
-        foreach (word_api::TEST_WORDS as $word_name) {
+        foreach (word_api::TEST_WORDS_CREATE as $word_name) {
             $t->test_word($word_name);
         }
         foreach (word_api::TEST_WORDS_MEASURE as $word_name) {

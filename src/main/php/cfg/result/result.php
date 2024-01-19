@@ -528,7 +528,7 @@ class result extends sandbox_value
         global $db_con;
         $result = false;
 
-        if ($grp->id() <= 0) {
+        if ($grp->is_id_set()) {
             log_err('The result phrase group id and the user must be set ' .
                 'to load a ' . self::class, self::class . '->load_by_grp');
         } else {
@@ -557,7 +557,7 @@ class result extends sandbox_value
         global $db_con;
         $result = false;
 
-        if ($grp->id() <= 0) {
+        if ($grp->is_id_set()) {
             log_err('The result phrase group id and the user must be set ' .
                 'to load a ' . self::class, self::class . '->load_std_by_grp');
         } else {
@@ -589,7 +589,7 @@ class result extends sandbox_value
 
         if ($frm->id() <= 0) {
             log_err('The formula id must be set to load a ' . self::class);
-        } elseif ($grp->id() <= 0) {
+        } elseif (!$grp->is_id_set()) {
             log_err('The phrase group id must be set to load a ' . self::class);
         } else {
             $res_usr = $this->user();
@@ -715,7 +715,7 @@ class result extends sandbox_value
 
             // set the result group id if the result list is set, but not the group id
             $phr_grp = null;
-            if ($this->grp->id() <= 0) {
+            if (!$this->grp->is_id_set()) {
                 $phr_lst = null;
                 if ($this->grp->phrase_list() != null) {
                     if (!$this->grp->phrase_list()->is_empty()) {
@@ -734,13 +734,13 @@ class result extends sandbox_value
                     log_debug('get group for ' . $phr_lst->dsp_name() . ' (including formula name)');
                     $phr_grp = $phr_lst->get_grp_id();
                     if (isset($phr_grp)) {
-                        if ($phr_grp->id() > 0) {
+                        if ($phr_grp->is_id_set()) {
                             $this->grp = $phr_grp;
                         }
                     }
                 }
             }
-            if ($this->grp->id() <= 0) {
+            if (!$this->grp->is_id_set()) {
                 log_debug('group not found!');
             }
 
@@ -749,12 +749,12 @@ class result extends sandbox_value
             $qp->name = 'res_by_';
 
             // set the source group id if the source list is set, but not the group id
-            if ($this->src_grp->id() <= 0 and $this->src_grp->phrase_list() != null) {
+            if (!$this->src_grp->is_id_set() and $this->src_grp->phrase_list() != null) {
 
                 if (!$this->src_grp->phrase_list()->is_empty()) {
                     $phr_grp = $this->src_grp->phrase_list()->get_grp_id();
                     if (isset($phr_grp)) {
-                        if ($phr_grp->id() > 0) {
+                        if ($phr_grp->is_id_set()) {
                             $this->src_grp->set_id($phr_grp->id());
                         }
                     }
@@ -764,7 +764,7 @@ class result extends sandbox_value
 
             $sql_order = '';
             // include the source words in the search if requested
-            if ($this->src_grp->id() > 0 and $this->user()->id() > 0) {
+            if ($this->src_grp->is_id_set() and $this->user()->id() > 0) {
                 $qp->name .= '_usr_src_phr_grp';
                 $db_con->add_par(sql_par_type::INT, $this->src_grp->id());
                 $db_con->add_par(sql_par_type::INT, $this->user()->id());
@@ -776,7 +776,7 @@ class result extends sandbox_value
                 $sql_order = " ORDER BY user_id DESC";
             } else {
                 $qp->name .= '_src_phr_grp';
-                if ($this->src_grp->id() > 0) {
+                if ($this->src_grp->is_id_set()) {
                     $db_con->add_par(sql_par_type::INT, $this->src_grp->id());
                     if ($sql_where != '') {
                         $sql_where .= ' AND ';
@@ -789,7 +789,7 @@ class result extends sandbox_value
             // e.g. one time specific and one general
             // select the result based on words
             $sql_wrd = "";
-            if ($this->grp->id() > 0 and $this->user()->id() > 0) {
+            if ($this->grp->is_id_set() and $this->user()->id() > 0) {
                 $qp->name .= '_usr_phr_grp';
                 $db_con->add_par(sql_par_type::INT, $this->grp->id());
                 $db_con->add_par(sql_par_type::INT, $this->user()->id());
@@ -800,7 +800,7 @@ class result extends sandbox_value
                           AND (user_id = " . $db_con->par_name() . " OR user_id = 0 OR user_id IS NULL)";
                 $sql_order = " ORDER BY user_id DESC";
             } else {
-                if ($this->grp->id() > 0) {
+                if ($this->grp->is_id_set()) {
                     $qp->name .= '_phr_grp';
                     $db_con->add_par(sql_par_type::INT, $this->grp->id());
                     if ($sql_where != '') {
@@ -933,7 +933,7 @@ class result extends sandbox_value
      */
     private function load_phr_lst_src(bool $force_reload = false): void
     {
-        if ($this->src_grp->id() > 0) {
+        if ($this->src_grp->is_id_set()) {
             if ($this->src_grp->phrase_list() == null or $force_reload) {
                 log_debug('for source group "' . $this->src_grp->id() . '"');
                 $phr_grp = new group($this->user());
@@ -961,7 +961,7 @@ class result extends sandbox_value
      */
     private function load_phr_lst(bool $force_reload = false): void
     {
-        if ($this->grp->id() > 0) {
+        if ($this->grp->is_id_set()) {
             if ($this->grp->phrase_list() == null or $force_reload) {
                 log_debug('for group "' . $this->grp->id() . '"');
                 $phr_grp = new group($this->user());

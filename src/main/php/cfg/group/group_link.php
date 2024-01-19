@@ -118,7 +118,7 @@ class group_link extends db_object_seq_id
         $db_con->set_class(self::class);
         $qp = new sql_par(self::class);
 
-        if ($grp->id() > 0) {
+        if ($grp->is_id_set()) {
             $qp->name .= 'grp_id';
             $db_con->add_par(sql_par_type::INT, $grp->id());
         } else {
