@@ -69,6 +69,16 @@ class sandbox_value extends sandbox_api
      * set and get
      */
 
+    function set_id(int|string $id): void
+    {
+        $this->id = $id;
+    }
+
+    function id(): int|string
+    {
+        return $this->id;
+    }
+
     function set_grp(group_api $grp): void
     {
         $this->grp = $grp;

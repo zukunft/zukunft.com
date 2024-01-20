@@ -660,7 +660,7 @@ class value_dsp_old extends value
     private function reload(): user_message
     {
         $msg = new user_message();
-        if ($this->id() != 0) {
+        if ($this->is_id_set()) {
             $this->load_by_id($this->id());
         }
         return $msg;

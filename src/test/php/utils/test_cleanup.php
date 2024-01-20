@@ -95,7 +95,7 @@ class test_cleanup extends test_api
                     $val = new value($this->usr1);
                     $val->load_by_id($val_id);
                     // check again, because some id may be added twice
-                    if ($val->id() > 0) {
+                    if ($val->is_id_set()) {
                         $msg = $val->del();
                         $result .= $msg->get_last_message();
                         $target = '';

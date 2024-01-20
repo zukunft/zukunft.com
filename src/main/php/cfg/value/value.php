@@ -550,7 +550,7 @@ class value extends sandbox_value
         $sql_grp = '';
 
         $sc->set_class($class, false, $ext);
-        if ($this->id() > 0) {
+        if ($this->is_id_set()) {
             $qp->name .= sql_db::FLD_ID;
         } elseif ($this->grp->is_id_set()) {
             $qp->name .= 'group_id';
@@ -571,7 +571,7 @@ class value extends sandbox_value
         $sc->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
         $sc->set_usr_only_fields(self::FLD_NAMES_USR_ONLY);
 
-        if ($this->id() > 0) {
+        if ($this->is_id_set()) {
             $sql_where = $sc->where_id(self::FLD_ID, $this->id, true);
         } elseif ($this->grp->is_id_set()) {
             $sql_where = $sc->where_par(array(group::FLD_ID), array($this->grp->id()), true);
@@ -736,7 +736,7 @@ class value extends sandbox_value
         log_debug('value->load_best for ' . $this->dsp_id());
         $this->load_by_grp($this->grp);
         // if not found try without scaling
-        if ($this->id() <= 0) {
+        if (!$this->is_id_set()) {
             $this->load_phrases();
             if (!$this->grp->phrase_list()->is_empty()) {
                 log_err('No phrases found for ' . $this->dsp_id() . '.', 'value->load_best');
@@ -748,7 +748,7 @@ class value extends sandbox_value
                 $grp_unscale = $phr_lst_unscaled->get_grp_id();
                 $this->load_by_grp($grp_unscale);
                 // if not found try with converted measure
-                if ($this->id() <= 0) {
+                if (!$this->is_id_set()) {
                     // try to get a value with another measure
                     $phr_lst_converted = clone $phr_lst_unscaled;
                     $phr_lst_converted->ex_measure();
@@ -929,25 +929,64 @@ class value extends sandbox_value
 
     /**
      * check the data consistency of this user value
-     * e.g. update the value_phrase_links database table based on the group id
+     * TODO move to test?
+     * @return bool true if everything is fine
      */
     function check(): bool
     {
         $result = true;
 
-        // reload the value to include all changes
-        log_debug('value->check id ' . $this->id() . ', for user ' . $this->user()->name);
-        $this->load_by_grp($this->grp());
-        log_debug('value->check load phrases');
-        $this->load_phrases();
-        log_debug('value->check phrases loaded');
-
-        // remove duplicate entries in value phrase link table
-        if ($this->upd_phr_links() != '') {
+        // reload the value by id
+        $val_id = new value($this->user());
+        $val_id->load_by_id($this->id());
+        if (!$this->is_same_val($val_id)) {
             $result = false;
         }
 
+        // reload the value by group
+        log_debug('value->check id ' . $this->id() . ', for user ' . $this->user()->name);
+        $val_grp = new value($this->user());
+        $val_grp->load_by_grp($this->grp());
+        if (!$this->is_same_val($val_grp)) {
+            $result = false;
+        }
+
+        // reload the value by group
+        /*
+        log_debug('value->check load phrases');
+        $val_phr = new value($this->user());
+        $val_phr->load_by_phr_ids($this->phr_lst()->ids());
+        if (!$this->is_same_val($val_phr)) {
+            $result = false;
+        }
+        */
+
         log_debug('value->check done');
+        return $result;
+    }
+
+    /**
+     * check if the given value matches this value
+     * TODO join with sandbox is_same and review
+     *
+     * @param value $val the value that should be checked
+     * @return bool true if all parameters are the same
+     */
+    function is_same_val(value $val): bool
+    {
+        $result = true;
+        if ($this->id() != $val->id()) {
+            $result = false;
+        }
+        if ($this->user()->id() != $val->user()->id()) {
+            $result = false;
+        }
+        if ($this->number() != $val->number()) {
+            $result = false;
+        }
+        if ($this->phr_lst()->id() != $val->phr_lst()->id()) {
+            $result = false;
+        }
         return $result;
     }
 
@@ -1448,7 +1487,7 @@ class value extends sandbox_value
         global $db_con;
         $result = true;
 
-        if ($this->id() == 0) {
+        if (!$this->is_id_set()) {
             log_err('The id must be set to check if the formula has been changed');
         } else {
             $qp = $this->not_changed_sql($db_con);
@@ -1801,7 +1840,7 @@ class value extends sandbox_value
         // trigger the batch job
         // save the pending update to the database for the batch calculation
         log_debug('value->save_field_trigger_update group id "' . $this->grp->id() . '" for user ' . $this->user()->name . '');
-        if ($this->id() > 0) {
+        if ($this->is_id_set()) {
             $job = new batch_job($this->user());
             $job->set_type(batch_job_type_list::VALUE_UPDATE);
             $job->obj = $this;
@@ -2018,7 +2057,7 @@ class value extends sandbox_value
             //$chk_val->time_stamp = $this->time_stamp;
             $chk_val->load_by_grp($this->grp);
             log_debug('value->save_id_if_updated check value loaded');
-            if ($chk_val->id() > 0) {
+            if ($chk_val->is_id_set()) {
                 // TODO if the target value is already in the database combine the user changes with this values
                 // $this->id() = $chk_val->id();
                 // $result .= $this->save();
@@ -2170,7 +2209,7 @@ class value extends sandbox_value
             //}
             //$db_con->set_type(self::class);
             //$this->set_id($db_con->insert(array(group::FLD_ID, user::FLD_ID, self::FLD_VALUE, self::FLD_LAST_UPDATE), array($this->grp->id(), $this->user()->id, $this->number, sql_creator::NOW)));
-            if ($this->id() != 0) {
+            if ($this->is_id_set()) {
                 // update the reference in the log
                 if ($this->grp()->is_prime()) {
                     if (!$log->add_ref($this->id())) {
@@ -2190,7 +2229,7 @@ class value extends sandbox_value
                 }
                 */
 
-                if ($this->id() > 0) {
+                if ($this->is_id_set()) {
                     // create an empty db_rec element to force saving of all set fields
                     $db_val = new value($this->user());
                     $db_val->set_id($this->id());

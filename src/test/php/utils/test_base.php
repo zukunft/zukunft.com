@@ -2184,7 +2184,7 @@ class test_base
      */
     private function set_val_id_for_unit_tests(value|result $val): void
     {
-        if ($val->id() == 0) {
+        if (!$val->is_id_set()) {
             $val->set_id($this->next_seq_nbr());
         }
         if (!$val->grp()->is_id_set()) {

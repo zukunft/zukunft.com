@@ -214,6 +214,11 @@ class sandbox_value extends sandbox_multi
         return $this->grp;
     }
 
+    function is_id_set(): bool
+    {
+        return $this->grp()->is_id_set();
+    }
+
     /**
      * set the numeric value of the user sandbox object
      *

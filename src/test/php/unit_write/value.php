@@ -94,7 +94,7 @@ class value_test
         ),
             value_api::TV_CH_INHABITANTS_2019_IN_MIO);
 
-        if ($ch_inhabitants->id() <= 0) {
+        if (!$ch_inhabitants->is_id_set()) {
             log_err('Loading of test value ' . $ch_inhabitants->dsp_id() . ' failed');
         } else {
             // test load by value id
@@ -113,7 +113,7 @@ class value_test
 
             // test load by value id
             $val = new value($t->usr1);
-            if ($val_by_phr_lst->id() <> 0) {
+            if ($val_by_phr_lst->is_id_set()) {
                 $val->load_by_id($val_by_phr_lst->id(), value::class);
                 $result = $val->number();
                 $target = value_api::TV_CH_INHABITANTS_2020_IN_MIO;
@@ -138,7 +138,7 @@ class value_test
             $chk_val->load_by_grp($chk_phr_grp);
         }
         $target = true;
-        if ($chk_val->id() <= 0) {
+        if (!$chk_val->is_id_set()) {
             $chk_phr_grp = $t->load_word_list(array(
                 word_api::TN_CANTON,
                 word_api::TN_ZH,
@@ -149,7 +149,7 @@ class value_test
                 $chk_val->load_by_grp($chk_phr_grp);
             }
         }
-        if ($chk_val->id() <= 0) {
+        if (!$chk_val->is_id_set()) {
             $result = 'No value found for ' . $chk_phr_grp->dsp_id() . '.';
             $t->display(', value->check for value id "' . $chk_phr_grp->dsp_id() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
         } else {
@@ -194,7 +194,7 @@ class value_test
             $val = new value($t->usr1);
             $val->load_by_grp($grp);
             $result = '';
-            if ($val->id() <= 0) {
+            if (!$val->is_id_set()) {
                 $result = 'No value found for ' . $val->dsp_id() . '.';
             } else {
                 if ($val->grp != null) {
@@ -284,7 +284,7 @@ class value_test
 
 
         // ... check if the value adding has been logged
-        if ($add_val->id() > 0) {
+        if ($add_val->is_id_set()) {
             $log = new change($t->usr1);
             $log->set_table(change_log_table::VALUE);
             $log->set_field(change_log_field::FLD_NUMERIC_VALUE);
@@ -326,7 +326,7 @@ class value_test
         */
 
         // ... check if the value adding has been logged
-        if ($add_val->id() > 0) {
+        if ($add_val->is_id_set()) {
             $log = new change($t->usr1);
             $log->set_table(change_log_table::VALUE);
             $log->set_field(change_log_field::FLD_NUMERIC_VALUE);
@@ -354,7 +354,7 @@ class value_test
         $t->display(', word->save update value id "' . $added_val_id . '" from  "' . $add_val->number() . '" to "' . $added_val->number() . '".', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
         // ... check if the value change has been logged
-        if ($added_val->id() > 0) {
+        if ($added_val->is_id_set()) {
             $log = new change($t->usr1);
             $log->set_table(change_log_table::VALUE);
             $log->set_field(change_log_field::FLD_NUMERIC_VALUE);
@@ -392,7 +392,7 @@ class value_test
         // ... check if the value change for the other user has been logged
         $val_usr2 = new value($t->usr2);
         $val_usr2->load_by_id($added_val_id);
-        if ($val_usr2->id() > 0) {
+        if ($val_usr2->is_id_set()) {
             $log = new change($t->usr2);
             $log->set_table(change_log_table::VALUE_USR);
             $log->set_field(change_log_field::FLD_NUMERIC_VALUE);
@@ -427,7 +427,7 @@ class value_test
         // ... check if the value change for the other user has been logged
         $val_usr2 = new value($t->usr2);
         $val_usr2->load_by_grp($phr_grp);
-        if ($val_usr2->id() > 0) {
+        if ($val_usr2->is_id_set()) {
             $log = new change($t->usr2);
             $log->set_table(change_log_table::VALUE_USR);
             $log->set_field(change_log_field::FLD_NUMERIC_VALUE);

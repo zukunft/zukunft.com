@@ -174,7 +174,7 @@ class value_phrase_link extends db_object_seq_id_user
                 array(self::FLD_ID),
                 array($this->id)
             );
-        } elseif ($this->val->id() != 0 and $this->phr->id() > 0 and $this->user()->id() > 0) {
+        } elseif ($this->val->is_id_set() and $this->phr->id() > 0 and $this->user()->id() > 0) {
             $qp->name .= 'val_phr_usr_id';
             $sql_where .= $db_con->where_par(
                 array(value::FLD_ID, phrase::FLD_ID, user::FLD_ID),
@@ -218,7 +218,7 @@ class value_phrase_link extends db_object_seq_id_user
         $result = true;
 
         if (isset($this->val)) {
-            if ($this->val->id() > 0) {
+            if ($this->val->is_id_set()) {
                 $result = $this->val->used();
                 log_debug('val_lnk->used for id ' . $this->val->id() . ' is ' . zu_dsp_bool($result));
             }

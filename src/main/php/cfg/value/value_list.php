@@ -991,7 +991,7 @@ class value_list extends sandbox_list
             if (get_class($val_to_add) <> value::class) {
                 log_err("Object to add must be of type value, but it is " . get_class($val_to_add), "value_list->add");
             } else {
-                if ($val_to_add->id() <> 0 or $val_to_add->grp->name() != '') {
+                if ($val_to_add->is_id_set() or $val_to_add->grp->name() != '') {
                     if (count($this->id_lst()) > 0) {
                         if (!in_array($val_to_add->id(), $this->id_lst())) {
                             parent::add_obj($val_to_add);

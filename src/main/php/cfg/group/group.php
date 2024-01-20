@@ -1407,7 +1407,7 @@ class group extends sandbox_multi
         $val = new value($this->user());
         $val->load_by_grp($this);
 
-        if ($val->id() > 0) {
+        if ($val->is_id_set()) {
             $val->del();
         }
 

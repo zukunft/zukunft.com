@@ -75,12 +75,17 @@ class sandbox implements JsonSerializable
      * set and get
      */
 
-    function set_id(int $id): void
+    /**
+     * TODO move string option only to sandbox_value
+     * @param int|string $id
+     * @return void
+     */
+    function set_id(int|string $id): void
     {
         $this->id = $id;
     }
 
-    function id(): int
+    function id(): int|string
     {
         return $this->id;
     }

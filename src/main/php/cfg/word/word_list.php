@@ -1318,7 +1318,7 @@ class word_list extends sandbox_list
         $val = $this->value();
 
         // get all words related to the value id; in many cases this does not match with the value_words there are used to get the word: it may contain additional word ids
-        if ($val->id() > 0) {
+        if ($val->is_id_set()) {
             log_debug("get word " . $this->name());
             //$val->load_phrases();
             // switch on after value->scale is working fine

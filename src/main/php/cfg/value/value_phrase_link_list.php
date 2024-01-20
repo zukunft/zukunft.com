@@ -5,6 +5,8 @@
     model/value/value_phrase_link_list.php - a list of value phrase links
     --------------------------------------
 
+    TODO deprecate because due to group id not needed any more
+
     These links are mainly used for using the database for index based selections
     the links itself are a replication of the phrase group links per value
 
@@ -63,7 +65,7 @@ class value_phrase_link_list extends sandbox_list
         $sql_by = '';
 
         if ($val != null) {
-            if ($val->id() > 0) {
+            if ($val->is_id_set()) {
                 $sql_by = group::FLD_ID;
             }
         } elseif ($phr != null) {
@@ -86,7 +88,7 @@ class value_phrase_link_list extends sandbox_list
                 $db_con->set_join_fields(array(phrase::FLD_ID), sql_db::TBL_PHRASE);
             }
             if ($val != null) {
-                if ($val->id() > 0) {
+                if ($val->is_id_set()) {
                     $db_con->add_par(sql_par_type::INT, $val->id());
                     $qp->sql = $db_con->select_by_field_list(array(group::FLD_ID));
                 }
