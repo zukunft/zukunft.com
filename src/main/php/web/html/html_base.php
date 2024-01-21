@@ -250,7 +250,7 @@ class html_base
      * @return string the created url
      */
     function url(string       $obj_name,
-                 int          $id = 0,
+                 int|string   $id = 0,
                  ?string      $back = '',
                  string|array $par = '',
                  string       $id_ext = ''): string

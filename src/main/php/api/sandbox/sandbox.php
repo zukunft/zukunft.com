@@ -53,7 +53,7 @@ class sandbox implements JsonSerializable
 {
 
     // fields for the backend link
-    public int $id; // the database id of the object, which is the same as the related database object in the backend
+    public int|string $id; // the database id of the object, which is the same as the related database object in the backend
 
 
     /*

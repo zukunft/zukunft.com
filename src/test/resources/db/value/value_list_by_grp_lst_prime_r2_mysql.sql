@@ -1,4 +1,4 @@
-PREPARE value_list_by_phr_lst_prime_r2 FROM
+PREPARE value_list_by_grp_lst_prime_r2 FROM
    'SELECT s.phrase_id_1,
            s.phrase_id_2,
            s.phrase_id_3,

@@ -292,7 +292,7 @@ if ($start_usr->id() > 0) {
             // TODO activate
             //$t->run_api_test();
             //run_word_ui_test($t);
-            // TODO add a test to merge a separate opened phrase Kanton Zürich with Zurich (Canton)
+            // TODO add a test to merge a separate opened phrase Canton Zürich with Zurich (Canton)
             run_word_display_test($t);
 
             import_base_config($usr);

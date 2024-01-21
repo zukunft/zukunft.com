@@ -44,6 +44,8 @@ namespace cfg;
 
 include_once MODEL_FORMULA_PATH . 'figure_list.php';
 
+use cfg\result\result;
+use cfg\value\value;
 use html\figure\figure as figure_dsp;
 use html\result\result as result_dsp;
 use test\test_api;

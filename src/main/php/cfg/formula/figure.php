@@ -174,9 +174,9 @@ class figure extends combine_object
     }
 
     /**
-     * @return float with the value either from the formula result or the db value from a user or source
+     * @return float|null with the value either from the formula result or the db value from a user or source
      */
-    function number(): float
+    function number(): ?float
     {
         return $this->obj()->number();
     }
@@ -311,7 +311,9 @@ class figure extends combine_object
         if (isset($this->obj)) {
             $result .= $this->obj->dsp_id();
         }
-        $result .= ' ' . $this->last_update()->format('Y-m-d H:i:s');
+        if ($this->last_update() != null) {
+            $result .= ' ' . $this->last_update()->format('Y-m-d H:i:s');
+        }
 
         return $result;
     }

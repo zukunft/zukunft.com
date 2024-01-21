@@ -752,6 +752,9 @@ class sandbox_value extends sandbox_multi
     {
         parent::fill_api_obj($api_obj);
 
+        $phr_lst = $this->grp()->phrase_list();
+        $api_phr_lst = $phr_lst->api_obj();
+        $api_obj->phrases = $api_phr_lst;
         $api_obj->set_number($this->number);
     }
 

@@ -60,6 +60,8 @@ use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\group\group;
 use cfg\group\group_id;
+use cfg\value\value;
+use cfg\value\value_list;
 use html\word\word as word_dsp;
 
 class phrase_list extends sandbox_list_named

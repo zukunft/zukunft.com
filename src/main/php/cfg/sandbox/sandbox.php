@@ -1117,12 +1117,14 @@ class sandbox extends db_object_seq_id_user
         log_debug($this->dsp_id() . ' und user ' . $this->user()->name);
 
         $result = false;
-        $action = 'Deletion of user ' . $this->obj_name . ' ';
+        $lib = new library();
+        $class_name = $lib->class_to_name($this::class);
+        $action = 'Deletion of user ' . $class_name . ' ';
         $msg_failed = $this->id . ' failed for ' . $this->user()->name;
 
-        $db_con->set_type(sql_db::TBL_USER_PREFIX . $this->obj_name);
+        $db_con->set_class(sql_db::TBL_USER_PREFIX . $class_name);
         try {
-            $msg = $db_con->delete(
+            $msg = $db_con->delete_old(
                 array($this->id_field(), user::FLD_ID),
                 array($this->id, $this->user()->id()));
             if ($msg == '') {

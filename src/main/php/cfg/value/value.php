@@ -984,9 +984,12 @@ class value extends sandbox_value
         if ($this->number() != $val->number()) {
             $result = false;
         }
+        /*
+         * TODO activate
         if ($this->phr_lst()->id() != $val->phr_lst()->id()) {
             $result = false;
         }
+        */
         return $result;
     }
 

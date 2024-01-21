@@ -48,7 +48,7 @@ class db_object
 {
 
     // fields for the backend link
-    public int $id = 0; // the database id of the object, which is the same as the related database object in the backend
+    public int|string $id = 0; // the database id of the object, which is the same as the related database object in the backend
 
 
     /*
@@ -96,12 +96,12 @@ class db_object
         }
     }
 
-    function set_id(int $id): void
+    function set_id(int|string $id): void
     {
         $this->id = $id;
     }
 
-    function id(): int
+    function id(): int|string
     {
         return $this->id;
     }

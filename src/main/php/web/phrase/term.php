@@ -131,10 +131,10 @@ class term extends combine_named_dsp
     }
 
     /**
-     * @return int the id of the object
+     * @return int|string the id of the object
      * e.g 1 for a word 1, 1 for a triple 1, 1 for a formula 1 and 1 for a verb 1
      */
-    function obj_id(): int
+    function obj_id(): int|string
     {
         return $this->obj()->id();
     }

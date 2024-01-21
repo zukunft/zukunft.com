@@ -125,10 +125,10 @@ class phrase extends combine_named_dsp
     }
 
     /**
-     * @return int the id of the word or triple
+     * @return int|string the id of the word or triple
      * e.g 1 for a word with id 1, 1 for a triple with id 1
      */
-    function obj_id(): int
+    function obj_id(): int|string
     {
         return $this->obj()?->id();
     }

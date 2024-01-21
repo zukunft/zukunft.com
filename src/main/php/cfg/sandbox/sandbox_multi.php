@@ -1063,7 +1063,7 @@ class sandbox_multi extends db_object_multi_user
         $action = 'Deletion of user ' . $this->obj_name . ' ';
         $msg_failed = $this->id . ' failed for ' . $this->user()->name;
 
-        $db_con->set_type(sql_db::TBL_USER_PREFIX . $this->obj_name);
+        $db_con->set_class(sql_db::TBL_USER_PREFIX . $this->obj_name);
         try {
             $msg = $db_con->delete(
                 array($this->id_field(), user::FLD_ID),

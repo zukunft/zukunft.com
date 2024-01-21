@@ -53,6 +53,7 @@ use cfg\group\group;
 use cfg\group\group_id;
 use cfg\group\group_link;
 use cfg\value\value;
+use cfg\value\value_list;
 use html\word\word as word_dsp;
 use html\word\word_list as word_list_dsp;
 
@@ -1488,7 +1489,7 @@ class word_list extends sandbox_list
     }
 
     /**
-     * get the time of the last value related to a word and assigned to a word list
+     * get the time of the last value related to a word and assigned to a phrase list
      * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @return word|null a time word (or phrase?)
      */
@@ -1501,8 +1502,7 @@ class word_list extends sandbox_list
         if ($trm_lst == null) {
             // load the list of all value related to the word list
             $val_lst = new value_list($this->user());
-            $val_lst->phr_lst = $this->phrase_lst();
-            $val_lst->load_by_phr_lst_old();
+            $val_lst->load_by_phr_lst($this->phrase_lst());
             log_debug($lib->dsp_count($val_lst->lst()) . ' values for ' . $this->dsp_id());
 
             $time_ids = array();

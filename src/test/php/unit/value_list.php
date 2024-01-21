@@ -73,7 +73,9 @@ class value_list_unit_tests
         // sql to load a list of value by ids
         $val_lst = new value_list($usr);
         $t->assert_sql_by_ids($db_con, $val_lst, [5,6]);
-        $this->assert_sql_by_phr_lst($t, $db_con, $val_lst);
+        $this->assert_sql_by_grp_lst($t, $db_con, $val_lst, $t->dummy_phrase_list_small());
+        // sql to load all values related to a phrase list e.g. the inhabitants of Canton Zurich over time
+        //$this->assert_sql_by_phr_lst($t, $db_con, $val_lst, $t->dummy_phrase_list_zh());
 
         $db_con->db_type = sql_db::POSTGRES;
         $this->test = $t;
@@ -127,20 +129,15 @@ class value_list_unit_tests
 
     /**
      * test the SQL statement creation for a value list
-     * similar to assert_load_sql but for an phrase list
+     * similar to assert_load_sql but for a phrase list
      *
      * @param test_cleanup $t the forwarded testing object
      * @param sql_db $db_con does not need to be connected to a real database
      * @param object $usr_obj the user sandbox object e.g. a word
+     * @param phrase_list $phr_lst the phrase list that should be used for the sql creation
      */
-    private function assert_sql_by_phr_lst(test_cleanup $t, sql_db $db_con, object $usr_obj): void
+    private function assert_sql_by_phr_lst(test_cleanup $t, sql_db $db_con, object $usr_obj, phrase_list $phr_lst): void
     {
-        // TODO check why t->dummy_phrase_list() cannot be access here
-        //$phr_lst = new $t->dummy_phrase_list();
-        $phr_lst = new phrase_list($t->usr1);
-        $phr_lst->add($t->dummy_word_pi()->phrase());
-        $phr_lst->add($t->dummy_triple()->phrase());
-
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $usr_obj->load_sql_by_phr_lst($db_con->sql_creator(), $phr_lst);
@@ -150,6 +147,30 @@ class value_list_unit_tests
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
             $qp = $usr_obj->load_sql_by_phr_lst($db_con->sql_creator(), $phr_lst);
+            $t->assert_qp($qp, $db_con->db_type);
+        }
+    }
+
+    /**
+     * test the SQL statement creation for a value list
+     * similar to assert_load_sql but for a group list
+     *
+     * @param test_cleanup $t the forwarded testing object
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param object $usr_obj the user sandbox object e.g. a word
+     * @param phrase_list $phr_lst the phrase list that should be used for the sql creation
+     */
+    private function assert_sql_by_grp_lst(test_cleanup $t, sql_db $db_con, object $usr_obj, phrase_list $phr_lst): void
+    {
+        // check the Postgres query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $usr_obj->load_sql_by_grp_lst($db_con->sql_creator(), $phr_lst);
+        $result = $t->assert_qp($qp, $db_con->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $usr_obj->load_sql_by_grp_lst($db_con->sql_creator(), $phr_lst);
             $t->assert_qp($qp, $db_con->db_type);
         }
     }

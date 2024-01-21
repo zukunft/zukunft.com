@@ -639,6 +639,17 @@ class create_test_objects extends test_base
         return $lst;
     }
 
+    /**
+     * @return phrase_list with one word and one triple
+     */
+    function dummy_phrase_list_small(): phrase_list
+    {
+        $lst = new phrase_list($this->usr1);
+        $lst->add($this->dummy_word_pi()->phrase());
+        $lst->add($this->dummy_triple()->phrase());
+        return $lst;
+    }
+
     function dummy_phrase_list_pi(): phrase_list
     {
         $lst = new phrase_list($this->usr1);
@@ -746,9 +757,21 @@ class create_test_objects extends test_base
     }
 
     /**
-     * @return phrase_list the phrases relevant for having a second entry in the phrase group list
+     * @return phrase_list to get all numbers related to a list of phrases
      */
     function dummy_phrase_list_zh(): phrase_list
+    {
+        $lst = new phrase_list($this->usr1);
+        $lst->add($this->dummy_word_canton()->phrase());
+        $lst->add($this->dummy_word_zh()->phrase());
+        $lst->add($this->dummy_word_inhabitant()->phrase());
+        return $lst;
+    }
+
+    /**
+     * @return phrase_list the phrases relevant for having a second entry in the phrase group list
+     */
+    function dummy_phrase_list_zh_2019(): phrase_list
     {
         $lst = new phrase_list($this->usr1);
         $lst->add($this->dummy_word_zh()->phrase());
@@ -807,7 +830,7 @@ class create_test_objects extends test_base
      */
     function dummy_phrase_group_prime_3(): group
     {
-        $lst = $this->dummy_phrase_list_zh();
+        $lst = $this->dummy_phrase_list_zh_2019();
         $grp = $lst->get_grp_id(false);
         $grp->name = group_api::TN_READ;
         return $grp;
@@ -842,7 +865,7 @@ class create_test_objects extends test_base
 
     function dummy_phrase_group_zh(): group
     {
-        $lst = $this->dummy_phrase_list_zh();
+        $lst = $this->dummy_phrase_list_zh_2019();
         $grp = $lst->get_grp_id(false);
         $grp->name = group_api::TN_ZH_2019;
         return $grp;

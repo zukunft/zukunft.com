@@ -60,13 +60,13 @@ class combine_named_dsp extends combine_object_dsp
     }
 
     /**
-     * @return int the id of the object
+     * @return int|string the id of the object
      * e.g. 1 for the triple Pi (math)
      * whereas the phrase has the id -1
      * the id of the phrase or term is created
      * by the function id() of phrase or term
      */
-    function obj_id(): int
+    function obj_id(): int|string
     {
         return $this->obj()?->id();
     }

@@ -56,7 +56,9 @@ use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\export\sandbox_exp;
 use cfg\export\formula_exp;
+use cfg\result\result;
 use cfg\result\result_list;
+use cfg\value\value;
 use DateTime;
 use Exception;
 use html\word\word as word_dsp;
@@ -1022,7 +1024,7 @@ class formula extends sandbox_typed
                             $calc = new math;
                             $res->value = $calc->parse($res->num_text);
                             $res->is_updated = true;
-                            log_debug('the calculated ' . $this->dsp_id() . ' is ' . $res->value . ' for ' . $res->grp->phr_lst->dsp_id());
+                            log_debug('the calculated ' . $this->dsp_id() . ' is ' . $res->value . ' for ' . $res->grp()->phrase_list()->dsp_id());
                         }
                     }
                 }
@@ -1893,7 +1895,7 @@ class formula extends sandbox_typed
         $msg_failed = $this->id() . ' failed for ' . $this->user()->name;
         $msg = '';
 
-        $db_con->set_type(sql_db::TBL_FORMULA_ELEMENT);
+        $db_con->set_class(sql_db::TBL_FORMULA_ELEMENT);
         try {
             $msg = $db_con->delete(
                 array(self::FLD_ID, user::FLD_ID),
@@ -1904,7 +1906,7 @@ class formula extends sandbox_typed
         if ($msg != '') {
             log_err($action . ' elements ' . $msg_failed . ' because ' . $msg);
         } else {
-            $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_FORMULA);
+            $db_con->set_class(sql_db::TBL_USER_PREFIX . sql_db::TBL_FORMULA);
             try {
                 $msg = $db_con->delete(
                     array(self::FLD_ID, user::FLD_ID),

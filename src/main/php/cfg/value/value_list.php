@@ -408,7 +408,7 @@ class value_list extends sandbox_list
     }
 
     /**
-     * create an SQL statement to retrieve a list of value by the id from the database
+     * create an SQL statement to retrieve a list of values by the id from the database
      * TODO links and select all phrase ids
      *
      * @param sql $sc with the target db_type set
@@ -526,6 +526,58 @@ class value_list extends sandbox_list
                 $max_row_ids = array_shift($matrix_row);
                 $phr_id_lst = $matrix_row;
                 $qp_tbl = $this->load_sql_multi($sc, 'phr_lst', $tbl_typ->extension(), $tbl_typ, $usr_tbl);
+                if ($par_offset == 0) {
+                    $sc->set_usr_num_fields(value::FLD_NAMES_NUM_USR);
+                } else {
+                    $sc->set_usr_num_fields(value::FLD_NAMES_NUM_USR, false);
+                }
+                $sc->set_usr_only_fields(value::FLD_NAMES_USR_ONLY);
+                for ($pos = 1; $pos <= $max_row_ids; $pos++) {
+                    // the array of the phrase ids starts with o whereas the phrase id fields start with 1
+                    $id_pos = $pos - 1;
+                    if (array_key_exists($id_pos, $phr_id_lst)) {
+                        $sc->add_where(phrase::FLD_ID . '_' . $pos, $phr_id_lst[$id_pos]);
+                    } else {
+                        $sc->add_where(phrase::FLD_ID . '_' . $pos, '');
+                    }
+                }
+
+                $qp_tbl->sql = $sc->sql($par_offset, true, false);
+                $qp_tbl->par = $sc->get_par();
+                $par_offset = $par_offset + count($qp_tbl->par);
+                $par_types = array_merge($par_types, $sc->get_par_types());
+
+                $qp->merge($qp_tbl);
+            }
+        }
+
+        $qp->sql = $sc->prepare_sql($qp->sql, $qp->name, $par_types);
+
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve a list of values by a list of group ids from the database
+     *
+     * @param sql $sc with the target db_type set
+     * @param phrase_list $phr_lst phrase list to which all related values should be loaded
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_grp_lst(sql $sc, phrase_list $phr_lst, bool $usr_tbl = false): sql_par
+    {
+        // get the matrix of the potential tables, the number of phrases of the table and the phrase id list
+        $tbl_id_matrix = $this->extension_id_matrix($phr_lst->ids());
+        $qp = $this->load_sql_init_query_par($phr_lst->ids(), 'grp_lst');
+
+        // loop over the tables where the value might be stored
+        $par_offset = 0;
+        $par_types = array();
+        foreach ($tbl_id_matrix as $matrix_row) {
+            $tbl_typ = array_shift($matrix_row);
+            if ($tbl_typ == sql_table_type::PRIME) {
+                $max_row_ids = array_shift($matrix_row);
+                $phr_id_lst = $matrix_row;
+                $qp_tbl = $this->load_sql_multi($sc, 'grp_lst', $tbl_typ->extension(), $tbl_typ, $usr_tbl);
                 if ($par_offset == 0) {
                     $sc->set_usr_num_fields(value::FLD_NAMES_NUM_USR);
                 } else {
