@@ -11,6 +11,7 @@ PREPARE value_list_by_phr FROM
            now() AS last_update,
            0 AS excluded,
            0 AS protect_id,
+           0 AS change_user_id,
            0 AS share_type_id
       FROM values_standard_prime
      WHERE phrase_id_1 = ? OR phrase_id_2 = ? OR phrase_id_3 = ? OR phrase_id_4 = ?
@@ -27,6 +28,7 @@ UNION
            now() AS last_update,
            0 AS excluded,
            0 AS protect_id,
+           0 AS change_user_id,
            0 AS share_type_id
       FROM values_standard
      WHERE group_id like ?
@@ -43,6 +45,7 @@ UNION
            IF(u.last_update   IS NULL,  s.last_update,   u.last_update)   AS last_update,
            IF(u.excluded      IS NULL,  s.excluded,      u.excluded)      AS excluded,
            IF(u.protect_id    IS NULL,  s.protect_id,    u.protect_id)    AS protect_id,
+           u.user_id AS change_user_id,
            u.share_type_id
       FROM `values` s
  LEFT JOIN user_values u ON s.group_id = u.group_id AND u.user_id = ?
@@ -60,6 +63,7 @@ UNION
            IF(u.last_update   IS NULL,  s.last_update,   u.last_update)   AS last_update,
            IF(u.excluded      IS NULL,  s.excluded,      u.excluded)      AS excluded,
            IF(u.protect_id    IS NULL,  s.protect_id,    u.protect_id)    AS protect_id,
+           u.user_id AS change_user_id,
            u.share_type_id
       FROM values_prime s
  LEFT JOIN user_values_prime u ON s.phrase_id_1 = u.phrase_id_1
@@ -80,6 +84,7 @@ UNION
            IF(u.last_update   IS NULL,  s.last_update,   u.last_update)   AS last_update,
            IF(u.excluded      IS NULL,  s.excluded,      u.excluded)      AS excluded,
            IF(u.protect_id    IS NULL,  s.protect_id,    u.protect_id)    AS protect_id,
+           u.user_id AS change_user_id,
            u.share_type_id
       FROM values_big s
  LEFT JOIN user_values_big u ON s.group_id = u.group_id AND u.user_id = ?

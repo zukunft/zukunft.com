@@ -1666,7 +1666,11 @@ class sql
         foreach ($this->usr_only_field_lst as $field) {
             $field = $this->name_sql_esc($field);
             $result = $this->sep($result);
-            $result .= ' ' . sql_db::USR_TBL . '.' . $field;
+            if ($field == sandbox::FLD_CHANGE_USER) {
+                $result .= ' ' . sql_db::USR_TBL . '.' . user::FLD_ID . ' AS ' . $field;
+            } else {
+                $result .= ' ' . sql_db::USR_TBL . '.' . $field;
+            }
         }
 
         // add datetime dummy fields

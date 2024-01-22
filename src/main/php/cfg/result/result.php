@@ -1547,8 +1547,8 @@ class result extends sandbox_value
                 //$this->user()->id() = $frm_result->result_user;
                 log_debug('save "' . $this->value . '" for ' . $this->grp->phrase_list()->dsp_id());
 
-                // get the default time for the words e.g. if the increase for ABB sales is calculated the last reported sales increase is assumed
-                $lst_ex_time = $this->grp->phrase_list()->wrd_lst_all();
+                // get the default time for the phrases e.g. if the increase for ABB sales is calculated the last reported sales increase is assumed
+                $lst_ex_time = $this->grp->phrase_list();
                 $lst_ex_time->ex_time();
                 $res_default_time = $lst_ex_time->assume_time(); // must be the same function called used in 2num
                 if (isset($res_default_time)) {

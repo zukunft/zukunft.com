@@ -9,6 +9,7 @@ PREPARE value_prime_p1_by_grp FROM
             IF(u.last_update        IS NULL, s.last_update,        u.last_update)         AS last_update,
             IF(u.excluded           IS NULL, s.excluded,           u.excluded)            AS excluded,
             IF(u.protect_id         IS NULL, s.protect_id,         u.protect_id)          AS protect_id,
+            u.user_id AS change_user_id,
             u.share_type_id
        FROM values_prime s
   LEFT JOIN user_values_prime u

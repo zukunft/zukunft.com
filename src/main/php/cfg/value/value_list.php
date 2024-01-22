@@ -171,7 +171,7 @@ class value_list extends sandbox_list
     function load_by_phr_lst(phrase_list $phr_lst): bool
     {
         global $db_con;
-        $qp = $this->load_sql_by_phr_lst_single($db_con->sql_creator(), $phr_lst);
+        $qp = $this->load_sql_by_phr_lst($db_con->sql_creator(), $phr_lst);
         return $this->load($qp);
     }
 

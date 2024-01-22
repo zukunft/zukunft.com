@@ -161,6 +161,7 @@ class value extends sandbox_value
     // list of field names that are only on the user sandbox row
     // e.g. the standard value does not need the share type, because it is by definition public (even if share types within a group of users needs to be defined, the value for the user group are also user sandbox table)
     const FLD_NAMES_USR_ONLY = array(
+        sandbox::FLD_CHANGE_USER,
         sandbox::FLD_SHARE
     );
     // list of fixed tables where a value might be stored
@@ -1537,6 +1538,8 @@ class value extends sandbox_value
 
     /**
      * true if a record for a user specific configuration already exists in the database
+     * TODO for the user config it is relevant which user has the user config
+     *      so the target user id must be added (or not?)
      */
     function has_usr_cfg(): bool
     {

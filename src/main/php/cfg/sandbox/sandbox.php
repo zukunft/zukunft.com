@@ -85,6 +85,7 @@ class sandbox extends db_object_seq_id_user
     // the id field is not included here because it is used for the database relations and should be object specific
     // e.g. always "word_id" instead of simply "id"
     const FLD_EXCLUDED = 'excluded';    // field name used to delete the object only for one user
+    const FLD_CHANGE_USER = 'change_user_id'; // id of the user how wants something the object to be different from most other users
     const FLD_USER_NAME = 'user_name';
     const FLD_SHARE = "share_type_id";  // field name for the share permission
     const FLD_PROTECT = "protect_id";   // field name for the protection level
@@ -115,6 +116,9 @@ class sandbox extends db_object_seq_id_user
     const FLD_NAMES = array(
     );
     const FLD_NAMES_USR = array(
+    );
+    // database fields that should only be taken from the user sandbox table
+    const FLD_NAMES_USR_ONLY = array(
     );
     // combine FLD_NAMES_NUM_USR_SBX and FLD_NAMES_NUM_USR_ONLY_SBX just for shorter code
     const FLD_NAMES_NUM_USR = array(
@@ -561,6 +565,7 @@ class sandbox extends db_object_seq_id_user
         $sc->set_fields($sbx::FLD_NAMES);
         $sc->set_usr_fields($sbx::FLD_NAMES_USR);
         $sc->set_usr_num_fields($sbx::FLD_NAMES_NUM_USR);
+        $sc->set_usr_only_fields($sbx::FLD_NAMES_USR_ONLY);
 
         return $qp;
     }

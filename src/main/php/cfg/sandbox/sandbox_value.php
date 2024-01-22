@@ -149,6 +149,10 @@ class sandbox_value extends sandbox_multi
     const FLD_ALL_CHANGER = array(
         [user::FLD_ID, sql_field_type::KEY_PART_INT, sql_field_default::NOT_NULL, sql::INDEX, user::class, 'the changer of the '],
     );
+    // database fields that should only be taken from the user sandbox table
+    const FLD_NAMES_USR_ONLY = array(
+        sandbox::FLD_CHANGE_USER
+    );
 
 
     /*

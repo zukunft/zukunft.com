@@ -372,17 +372,7 @@ class value_test
         $t->display(', value->load the value previous updated for "' . word_api::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
         // check if a user specific value is created if another user changes the value
-        /*$wrd_lst = New word_list;
-        $wrd_lst->usr = $t->usr1;
-        $wrd_lst->add_name(word::TEST_NAME_CHANGED);
-        $wrd_lst->add_name(TW_SALES);
-        $wrd_lst->add_name(TW_CHF);
-        $wrd_lst->add_name(TW_MIO);
-        $wrd_lst->add_name(TW_2014);
-        $wrd_lst->load();
-        $phr_lst = $wrd_lst->phrase_lst(); */
         $val_usr2 = new value($t->usr2);
-        //$val_usr2->ids = $phr_lst->ids;
         $val_usr2->load_by_id($added_val_id);
         $val_usr2->set_number(23456);
         $result = $val_usr2->save();
