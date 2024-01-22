@@ -408,6 +408,11 @@ class sql
         }
     }
 
+    function par_values(): array
+    {
+        return $this->par_values;
+    }
+
 
     /*
      * basic interface function for the private class parameter
@@ -973,6 +978,7 @@ class sql
     {
         $lib = new library();
         $id_field_par = '';
+        $offset = 0;
 
         // check if the minimum parameters are set
         if ($this->query_name == '') {
@@ -994,7 +1000,7 @@ class sql
             }
 
             // gat the value parameter types
-            $par_pos = 1;
+            $par_pos = 0;
             foreach (array_keys($values) as $i) {
                 if ($values[$i] != sql::NOW) {
                     $this->par_types[] = $this->get_sql_par_type($values[$i]);
@@ -1003,16 +1009,28 @@ class sql
                     $par_pos++;
                 }
             }
-            $this->par_types[] = $this->get_sql_par_type($id);
-            $this->par_values[] = $id;
-            $id_field_par = $this->par_name($par_pos);
+            $offset = $par_pos;
+        }
+
+        // prepare the where class
+        if (is_array($id_field)) {
+            $grp_id = new group_id();
+            $id_lst = $grp_id->get_array($id, true);
+            foreach ($id_lst as $key => $value) {
+                if ($value == null) {
+                    $id_lst[$key] = 0;
+                }
+            }
+            $sql_where = $this->sql_where($id_field, $id_lst, $offset, $id_field_par);
+        } else {
+            $sql_where = $this->sql_where($id_field, $id, $offset, $id_field_par);
         }
 
         // create a prepare SQL statement if possible
         $sql = $this->prepare_this_sql(self::UPDATE);
         $sql .= ' ' . $this->name_sql_esc($this->table);
         $sql_set = '';
-        $par_pos = 1;
+        $par_pos = 0;
         foreach (array_keys($fields) as $i) {
             if ($sql_set == '') {
                 $sql_set .= ' SET ';
@@ -1027,29 +1045,8 @@ class sql
             }
         }
         $sql .= $sql_set;
-        if (is_array($id_field)) {
-            $grp_id = new group_id();
-            $id_lst = $grp_id->get_array($id);
-            if (count($id_field) != count($id_lst)) {
-                log_err('the number of id fields (' . implode($id_field) . ') does not match with the number of ids (' . implode($id_lst) . ') in sql update');
-            } else {
-                $sql_where = '';
-                $offset = 0;
-                foreach ($id_field as $id_fld) {
-                    if ($sql_where != '') {
-                        $sql_where .= ' AND ';
-                    } else {
-                        $sql_where .= ' WHERE ';
-                    }
-                    $used_id_par = $this->par_offset($id_field_par, $offset);
-                    $sql_where .= $id_fld . ' = ' . $used_id_par;
-                    $offset++;
-                }
-                $sql .= $sql_where;
-            }
-        } else {
-            $sql .= ' WHERE ' . $id_field . ' = ' . $id_field_par;
-        }
+
+        $sql .= $sql_where;
 
         return $this->end_sql($sql, self::UPDATE);
     }
@@ -1074,6 +1071,31 @@ class sql
             log_err('SQL statement is not yet named');
         }
 
+        $sql_where = $this->sql_where($id_field, $id);
+
+        $sql = $this->prepare_this_sql(self::DELETE);
+        $sql .= ' ' . $this->name_sql_esc($this->table);
+        $sql .= $sql_where;
+
+        if ($excluded) {
+            $sql .= ' AND ' . sandbox::FLD_EXCLUDED . ' = ' . sql::TRUE;
+        }
+
+        return $this->end_sql($sql, self::DELETE);
+    }
+
+    /**
+     * @param string|array $id_field the id field or id fields of the table from where the row should be deleted
+     * @param int|string|array $id
+     * @param string $id_field_par
+     * @return string with the where statement
+     */
+    private function sql_where(
+        string|array $id_field,
+        int|string|array $id,
+        int $offset = 0,
+        string $id_field_par = ''): string
+    {
         // gat the value parameter types
         if (is_array($id_field)) {
             foreach ($id as $id_item) {
@@ -1084,17 +1106,16 @@ class sql
         } else {
             $this->par_types[] = $this->get_sql_par_type($id);
             $this->par_values[] = $id;
-            $id_field_par = $this->par_name();
+            if ($id_field_par == '') {
+                $id_field_par = $this->par_name();
+            }
+            $this->par_fields[] = $id_field_par;
         }
 
         // create a prepare SQL statement if possible
-        $sql = $this->prepare_this_sql(self::DELETE);
-        $sql .= ' ' . $this->name_sql_esc($this->table);
-        $sql_set = '';
-        $sql .= $sql_set;
+        $sql_where = '';
         if (is_array($id_field)) {
-            $sql_where = '';
-            $pos = 0;
+            $pos = $offset;
             foreach ($id_field as $id_fld) {
                 if ($sql_where != '') {
                     $sql_where .= ' AND ';
@@ -1104,30 +1125,10 @@ class sql
                 $sql_where .= $id_fld . ' = ' . $this->par_fields[$pos];
                 $pos++;
             }
-            $sql .= $sql_where;
         } else {
-            $sql .= ' WHERE ' . $id_field . ' = ' . $id_field_par;
+            $sql_where = ' WHERE ' . $id_field . ' = ' . $id_field_par;
         }
-        if ($excluded) {
-            $sql .= ' AND ' . sandbox::FLD_EXCLUDED . ' = ' . sql::TRUE;
-        }
-
-        return $this->end_sql($sql, self::DELETE);
-    }
-
-    /**
-     * if nneded offset the parameter field placeholder
-     * e.g. $2 and offset 2 results to $4
-     * TODO finish
-     *
-     * @param string $id_par
-     * @param int $offset
-     * @return string
-     */
-    private function par_offset(string $id_par, int $offset): string
-    {
-        if ($this->db_type)
-            return $id_par;
+        return $sql_where;
     }
 
     /**

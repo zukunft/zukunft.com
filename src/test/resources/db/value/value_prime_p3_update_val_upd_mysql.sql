@@ -1,4 +1,4 @@
-PREPARE value_prime_p1_update_val_upd FROM
+PREPARE value_prime_p3_update_val_upd FROM
     'UPDATE values_prime
         SET numeric_value = ?,last_update = Now()
       WHERE phrase_id_1 = ?

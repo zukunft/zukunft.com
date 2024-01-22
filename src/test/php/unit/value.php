@@ -36,6 +36,7 @@ include_once MODEL_VALUE_PATH . 'value_time_series.php';
 
 use api\phrase\group as group_api;
 use api\value\value as value_api;
+use cfg\db\sql;
 use cfg\group\group;
 use cfg\db\sql_db;
 use cfg\value\value;
@@ -69,18 +70,21 @@ class value_unit_tests
         // TODO add sql insert and update tests to all db objects
         $t->subheader('SQL statements - for often used (prime) values');
         $val = $t->dummy_value();
+        $val_prime = $t->dummy_value_prime_3();
+        $val_prime_max = $t->dummy_value_prime_max();
         $t->assert_sql_insert($db_con, $val);
         $t->assert_sql_insert($db_con, $val, true);
-        $val_prime = $t->dummy_value_prime_3();
         $t->assert_sql_insert($db_con, $val_prime);
         $t->assert_sql_insert($db_con, $val_prime, true);
-        $val_prime_max = $t->dummy_value_prime_max();
         $t->assert_sql_insert($db_con, $val_prime_max);
         $t->assert_sql_insert($db_con, $val_prime_max, true);
-        // TODO add an sql insert test for a prime value with 2 and 4 phrases
         // TODO for 1 given phrase fill the others with 0 because usually only one value is expected to be changed
+        // TODO for update fill the missing phrase id with zeros because only one row should be updated
         $t->assert_sql_update($db_con, $val);
         $t->assert_sql_update($db_con, $val, true);
+        $t->assert_sql_update($db_con, $val_prime);
+        $t->assert_sql_update($db_con, $val_prime, true);
+        $this->assert_sql_update_trigger($t, $db_con, $val);
         $t->assert_sql_delete($db_con, $val);
         $t->assert_sql_delete($db_con, $val, true);
         $t->assert_sql_delete($db_con, $val, true, true);
@@ -144,7 +148,7 @@ class value_unit_tests
         $t->subheader('Convert and API unit tests');
 
         // casting API
-        $grp = new group($usr, 1,  array(group_api::TN_READ));
+        $grp = new group($usr, 1, array(group_api::TN_READ));
         $val = new value($usr, round(value_api::TV_READ, 13), $grp);
         $t->assert_api($val);
 
@@ -152,7 +156,7 @@ class value_unit_tests
         $val = new value($usr);
         $val->set_number(value_api::TV_PCT);
         $fig = $val->figure();
-        $t->assert($t->name . ' get figure',$fig->number(), $val->number());
+        $t->assert($t->name . ' get figure', $fig->number(), $val->number());
 
 
         $t->header('Unit tests of the value time series class (src/main/php/model/value/value_time_series.php)');
@@ -199,6 +203,34 @@ class value_unit_tests
             $qp = $usr_obj->load_sql_by_grp($db_con->sql_creator(), $phr_grp, $usr_obj::class);
             $t->assert_qp($qp, $db_con->db_type);
         }
+    }
+
+    /**
+     * check the SQL statement to set the update trigger for a value
+     * for all allowed SQL database dialects
+     *
+     * @param test_cleanup $t the testing object with the error counter
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param object $usr_obj the user sandbox object e.g. a word
+     * @param bool $usr_tbl true if a db row should be added to the user table
+     * @return bool true if all tests are fine
+     */
+    function assert_sql_update_trigger(test_cleanup $t, sql_db $db_con, object $usr_obj, bool $usr_tbl = false): bool
+    {
+        $fields = array(value::FLD_LAST_UPDATE);
+        $values = array(sql::NOW);
+        // check the Postgres query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $usr_obj->sql_update($db_con->sql_creator(), $fields, $values, $usr_tbl);
+        $result = $t->assert_qp($qp, $db_con->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $usr_obj->sql_update($db_con->sql_creator(), $fields, $values, $usr_tbl);
+            $result = $t->assert_qp($qp, $db_con->db_type);
+        }
+        return $result;
     }
 
 }

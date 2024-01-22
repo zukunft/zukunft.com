@@ -2170,20 +2170,13 @@ class value extends sandbox_value
         $qp->name .= '_update_' . $fld_name;
         $sc->set_name($qp->name);
         if ($this->grp->is_prime()) {
-            $id_fields = $this->grp->id_names();
+            $id_fields = $this->grp->id_names(true);
         } else {
             $id_fields = $this->id_field();
         }
         $qp->sql = $sc->sql_update($id_fields, $this->id(), $fields, $values);
-        $values[] = $this->id();
-        $par_values = [];
-        foreach (array_keys($values) as $i) {
-            if ($values[$i] != sql::NOW) {
-                $par_values[$i] = $values[$i];
-            }
-        }
 
-        $qp->par = $par_values;
+        $qp->par = $sc->par_values();
         return $qp;
     }
 

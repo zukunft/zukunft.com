@@ -317,6 +317,15 @@ use html\phrase\phrase_group as phrase_group_dsp;
          - vue: for the vue.js based frontend, which can cache api objects for read only. This implies that the backend has an api to reload single objects
          - db: for the persistence layer
 
+    TODO create a double side multicast stream layer for system config, name change, value and result streams
+         - each client subscribes the frontend cache at his client stream pod
+         - the client stream pod subscribes the combined cache of all connected clients at the backend stream pods
+         - the changes are wighted by impact for priority
+         e.g. if word is renamed the database backend pod sends the change to the backend stream pod
+              if the change is relevant for any client, the change is forwarded to the client stream pods
+              the client stream pod distributes the change to the clients on his list
+         maybe later use IP multicast for the distribution
+
     TODO for all objects (in progress: user)
         1. complete phpDOCS
         2. add type to all function parameter
