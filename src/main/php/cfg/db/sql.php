@@ -970,11 +970,11 @@ class sql
     }
 
     function sql_update(
-        string|array $id_field,
-        string|int   $id,
-        array        $fields,
-        array        $values,
-        bool         $log_err = true): string
+        string|array     $id_field,
+        string|array|int $id,
+        array            $fields,
+        array            $values,
+        bool             $log_err = true): string
     {
         $lib = new library();
         $id_field_par = '';
@@ -1013,13 +1013,18 @@ class sql
         }
 
         // prepare the where class
+        // TODO maybe can be removed because done already in the calling function
         if (is_array($id_field)) {
-            $grp_id = new group_id();
-            $id_lst = $grp_id->get_array($id, true);
-            foreach ($id_lst as $key => $value) {
-                if ($value == null) {
-                    $id_lst[$key] = 0;
+            if (!is_array($id)) {
+                $grp_id = new group_id();
+                $id_lst = $grp_id->get_array($id, true);
+                foreach ($id_lst as $key => $value) {
+                    if ($value == null) {
+                        $id_lst[$key] = 0;
+                    }
                 }
+            } else {
+                $id_lst = $id;
             }
             $sql_where = $this->sql_where($id_field, $id_lst, $offset, $id_field_par);
         } else {
@@ -1091,10 +1096,10 @@ class sql
      * @return string with the where statement
      */
     private function sql_where(
-        string|array $id_field,
+        string|array     $id_field,
         int|string|array $id,
-        int $offset = 0,
-        string $id_field_par = ''): string
+        int              $offset = 0,
+        string           $id_field_par = ''): string
     {
         // gat the value parameter types
         if (is_array($id_field)) {

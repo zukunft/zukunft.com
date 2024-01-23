@@ -2150,6 +2150,7 @@ class value extends sandbox_value
 
     /**
      * create the sql statement to update a value in the database
+     * TODO make code revo
      * @param sql $sc with the target db_type set
      * @param bool $usr_tbl true if the user table row should be updated
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
@@ -2177,7 +2178,31 @@ class value extends sandbox_value
         } else {
             $id_fields = $this->id_field();
         }
-        $qp->sql = $sc->sql_update($id_fields, $this->id(), $fields, $values);
+        $id = $this->id();
+        $id_lst = [];
+        if (is_array($id_fields)) {
+            if (!is_array($id)) {
+                $grp_id = new group_id();
+                $id_lst = $grp_id->get_array($id, true);
+                foreach ($id_lst as $key => $value) {
+                    if ($value == null) {
+                        $id_lst[$key] = 0;
+                    }
+                }
+            } else {
+                $id_lst = $id;
+            }
+        } else {
+            $id_lst = $id;
+        }
+        if ($usr_tbl) {
+            $id_fields[] = user::FLD_ID;
+            if (!is_array($id_lst)) {
+                $id_lst = [$id_lst];
+            }
+            $id_lst[] = $this->user()->id();
+        }
+        $qp->sql = $sc->sql_update($id_fields, $id_lst, $fields, $values);
 
         $qp->par = $sc->par_values();
         return $qp;

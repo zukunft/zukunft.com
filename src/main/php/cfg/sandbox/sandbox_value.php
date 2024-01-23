@@ -947,7 +947,7 @@ class sandbox_value extends sandbox_multi
                     } else {
                         $msg = 'update of ' . $log->field() . ' to ' . $new_value;
                         log_debug($msg);
-                        $qp = $this->sql_update($db_con->sql_creator(), array($log->field()), array($new_value));
+                        $qp = $this->sql_update($db_con->sql_creator(), array($log->field()), array($new_value), true);
                         $usr_msg = $db_con->update($qp, $msg);
                         $result = $usr_msg->get_message();
                     }

@@ -339,12 +339,8 @@ class sandbox_multi extends db_object_multi_user
                 $this->set_excluded($db_row[self::FLD_EXCLUDED]);
             }
             if (!$load_std) {
-                if ($one_id_fld) {
-                    $this->usr_cfg_id = $db_row[sql_db::TBL_USER_PREFIX . $id_fld];
-                } else {
-                    // TODO make sure that this warning does not appear at least in the build in tests
-                    $this->usr_cfg_id = $db_row[$id_fld];
-                    log_warning('unexpected id field phrase_id_1');
+                if (array_key_exists(sandbox::FLD_CHANGE_USER, $db_row)) {
+                    $this->usr_cfg_id = $db_row[sandbox::FLD_CHANGE_USER];
                 }
             }
             if ($allow_usr_protect) {
@@ -1065,9 +1061,9 @@ class sandbox_multi extends db_object_multi_user
 
         $db_con->set_class(sql_db::TBL_USER_PREFIX . $this->obj_name);
         try {
-            $msg = $db_con->delete(
-                array($this->id_field(), user::FLD_ID),
-                array($this->id, $this->user()->id()));
+            $qp = $this->sql_delete($db_con->sql_creator(), true);
+            $usr_msg = $db_con->delete($qp, $this::class . ' user exclusions');
+            $msg = $usr_msg->get_message();
             if ($msg == '') {
                 $this->usr_cfg_id = null;
                 $result = true;
@@ -1203,7 +1199,13 @@ class sandbox_multi extends db_object_multi_user
         $usr_cfg_row = $db_con->get1($qp);
         if ($usr_cfg_row) {
             log_debug('check for "' . $this->dsp_id() . ' und user ' . $this->user()->name . ' with (' . $qp->sql . ')');
-            if ($usr_cfg_row[$this->id_field()] > 0) {
+            $id = $this->id_field();
+            if (is_array($id)) {
+                $id_used = $id[0];
+            } else {
+                $id_used = $id;
+            }
+            if ($usr_cfg_row[$id_used] > 0) {
                 if ($this->no_usr_fld_used($this->all_sandbox_fields(), $usr_cfg_row)) {
                     $result = $this->del_usr_cfg_exe($db_con);
                 }
