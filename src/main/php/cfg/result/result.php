@@ -528,7 +528,7 @@ class result extends sandbox_value
         global $db_con;
         $result = false;
 
-        if ($grp->is_id_set()) {
+        if (!$grp->is_id_set()) {
             log_err('The result phrase group id and the user must be set ' .
                 'to load a ' . self::class, self::class . '->load_by_grp');
         } else {

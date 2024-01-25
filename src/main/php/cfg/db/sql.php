@@ -69,6 +69,7 @@ class sql
     const UNIQUE = 'UNIQUE INDEX';
     const TRUE = '1'; // representing true in the where part for a smallint field
     const FALSE = '0'; // representing true in the where part for a smallint field
+    const ID_NULL = 0; // the 'not set' value for an id; could have been null if postgres index would allow it
 
     // enum values used for the table creation
     const fld_type_ = '';

@@ -538,7 +538,7 @@ class value_list extends sandbox_list
                     if (array_key_exists($id_pos, $phr_id_lst)) {
                         $sc->add_where(phrase::FLD_ID . '_' . $pos, $phr_id_lst[$id_pos]);
                     } else {
-                        $sc->add_where(phrase::FLD_ID . '_' . $pos, '');
+                        $sc->add_where(phrase::FLD_ID . '_' . $pos, sql::ID_NULL);
                     }
                 }
 
