@@ -2047,6 +2047,23 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
+     * sort the phrase object list by id
+     * @return array list with the phrases (not a phrase list object!) sorted by name
+     */
+    function sort_by_id(): phrase_list
+    {
+        $result = clone $this;
+        $id_lst = $this->id_lst();
+        asort($id_lst);
+        $result->set_lst(array());
+        foreach (array_keys($id_lst) as $sorted_id) {
+            $phr_to_add = $this->get($sorted_id);
+            $result->add($phr_to_add);
+        }
+        return $result;
+    }
+
+    /**
      * get the last time phrase of the phrase list
      * @return phrase with the last phrase of the type time
      */

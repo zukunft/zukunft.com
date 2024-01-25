@@ -941,7 +941,7 @@ class sandbox_value extends sandbox_multi
                     if ($new_value == $std_value) {
                         $msg = 'remove user change of ' . $log->field();
                         log_debug($msg);
-                        $qp = $this->sql_update($db_con->sql_creator(), array($log->field()), array(Null));
+                        $qp = $this->sql_update($db_con->sql_creator(), array($log->field()), array(Null), true);
                         $usr_msg = $db_con->update($qp, $msg);
                         $result = $usr_msg->get_message();
                     } else {

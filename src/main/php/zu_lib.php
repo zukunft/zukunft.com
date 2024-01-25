@@ -85,6 +85,8 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO use the json api message header for all api messages
     TODO check if reading triples should use a view to generate the triple name and the generated name
     TODO use the sandbox list for all user lists
+    TODO always sort the phrase list by id before creating the group id
+    TODO to force sorting of the phrase for a group use triples
     TODO use in the frontend only the code id of types
     TODO use in the backend always the type object instead of the db type id
     TODO always use the frontend path CONST instead of 'http'
@@ -459,6 +461,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
     - one place (e.g. git / issue tracker / wiki)
     - not more than 6 information block per page
     - automatic log (who has changed what and when)
+    - write business logic and test cases one-to-one
 
 
     This file is part of zukunft.com - calc with words

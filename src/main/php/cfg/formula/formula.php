@@ -796,6 +796,9 @@ class formula extends sandbox_typed
     }
 
     /**
+     * create a result object for this formula
+     *
+     * @param phrase_list $phr_lst list of the phrases that describes the result
      * @return result with the value from this formula
      */
     private function create_result(phrase_list $phr_lst): result
@@ -817,8 +820,9 @@ class formula extends sandbox_typed
     /**
      * fill the formula in the reference format with numbers
      * @param phrase_list $phr_lst list of phrase used to select the value for the calculation
-     * @param phrase_list|null $pre_phr_lst
+     * @param phrase_list|null $pre_phr_lst list of preloaded / cached terms
      * TODO verbs
+     * @return result_list all results of the formula for the given phrase list
      */
     function to_num(phrase_list $phr_lst, ?phrase_list $pre_phr_lst = null): result_list
     {

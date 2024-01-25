@@ -76,6 +76,7 @@ class group_id
      */
     function get_id(phrase_list $phr_lst): int|string
     {
+        $phr_lst = $phr_lst->sort_by_id();
         if ($phr_lst->count() <= self::PRIME_PHRASE and $phr_lst->prime_only()) {
             $db_key = $this->int_group_id($phr_lst);
         } elseif ($phr_lst->count() <= self::STANDARD_PHRASES) {
