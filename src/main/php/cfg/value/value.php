@@ -2150,7 +2150,8 @@ class value extends sandbox_value
 
     /**
      * create the sql statement to update a value in the database
-     * TODO make code revo
+     * TODO make code review and move part to the parent sandbox value class
+     *
      * @param sql $sc with the target db_type set
      * @param bool $usr_tbl true if the user table row should be updated
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list

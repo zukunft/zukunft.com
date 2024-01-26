@@ -74,8 +74,8 @@ class figure_unit_tests
         $t->assert('figure value obj id', $fig->obj_id(), 5);
         $t->assert('figure value number', $fig->number(), value_api::TV_READ_SHORTEST);
         $fig = $t->dummy_figure_result();
-        $t->assert('figure result id', $fig->id(), -1);
-        $t->assert('figure result obj id', $fig->obj_id(), 1);
+        $t->assert('figure result id', $fig->id(), -2);
+        $t->assert('figure result obj id', $fig->obj_id(), 2);
         $t->assert('figure result number', $fig->number(), result_api::TV_INT);
 
         $fig = $t->dummy_figure_value();

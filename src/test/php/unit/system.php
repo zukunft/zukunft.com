@@ -156,7 +156,7 @@ class system_unit_tests
         $t->assert($test_name, $res->dsp_id(), $target);
         $test_name = 'debug result_list id';
         $res_lst = $t->dummy_result_list();
-        $target = '"Mathematics" 123456 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 1,,,) for user 1 (zukunft.com system test)';
+        $target = '"Mathematics" 123456 / "percent" 0.01234 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 1,,, / 2,,,) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $res_lst->dsp_id(), $target);
         $test_name = 'debug figure id';
         $fig = $t->dummy_figure_value();
@@ -164,7 +164,7 @@ class system_unit_tests
         $t->assert($test_name, $fig->dsp_id(), $target);
         $test_name = 'debug figure_list id';
         $fig_lst = $t->dummy_figure_list();
-        $target = ' 3.1415926535898 Pi (math)  123456 "Mathematics"  (5,-1)';
+        $target = ' 3.1415926535898 Pi (math)  123456 "Mathematics"  (5,-2)';
         $t->assert($test_name, $fig_lst->dsp_id(), $target);
         $test_name = 'debug view id';
         $msk = $t->dummy_view();

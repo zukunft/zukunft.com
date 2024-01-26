@@ -178,10 +178,10 @@ class result extends sandbox_value
 
     function reset(): void
     {
-        $this->set_id(0);
         $this->frm = new formula($this->user());
         $this->grp = new group($this->user());
         $this->src_grp = new group($this->user());
+        $this->set_id(0);
     }
 
     /**
@@ -219,6 +219,21 @@ class result extends sandbox_value
     /*
      * set and get
      */
+
+    /**
+     * set the unique database id of a database object
+     * @param int|string $id used in the row mapper and to set a dummy database id for unit tests
+     */
+    function set_id(int|string $id): void
+    {
+        $this->id = $id;
+        $this->grp()->set_id($id);
+    }
+
+    function id(): int|string
+    {
+        return $this->grp()->id();
+    }
 
     function set_grp(group $grp): void
     {
@@ -488,20 +503,20 @@ class result extends sandbox_value
         global $db_con;
         $result = 0;
 
-        if ($id > 0) {
+        if ($id != 0) {
             // if the id is given load the result from the database
             $res_usr = $this->user();
             $this->reset();
             $this->set_user($res_usr);
-            $this->id = $id;
+            $this->set_id($id);
         } else {
             // if the id is not given, refresh the object based pn the database
-            if ($this->id > 0) {
-                $id = $this->id;
+            if ($this->id != 0) {
+                $id = $this->id();
                 $res_usr = $this->user();
                 $this->reset();
                 $this->set_user($res_usr);
-                $this->id = $id;
+                $this->set_id($id);
             } else {
                 log_err('The result id and the user must be set ' .
                     'to load a ' . self::class, self::class . '->load_by_id');
@@ -831,6 +846,56 @@ class result extends sandbox_value
         }
         return $qp;
     }
+
+    /**
+     * create the sql statement to add a new result to the database
+     * TODO add source group
+     *
+     * @param sql $sc with the target db_type set
+     * @param bool $usr_tbl true if a db row should be added to the user table
+     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     */
+    function sql_insert(sql $sc, bool $usr_tbl = false): sql_par
+    {
+        $qp = $this->sql_common($sc, $usr_tbl);
+        // overwrite the standard auto increase id field name
+        $sc->set_id_field($this->id_field());
+        $qp->name .= '_insert';
+        $sc->set_name($qp->name);
+        if ($this->grp->is_prime()) {
+            $fields = $this->grp->id_names();
+            $fields[] = user::FLD_ID;
+            $values = $this->grp->id_lst();
+            $values[] = $this->user()->id();
+            if (!$usr_tbl) {
+                $fields[] = self::FLD_VALUE;
+                $fields[] = self::FLD_LAST_UPDATE;
+                $values[] = $this->number;
+                $values[] = sql::NOW;
+            }
+        } else {
+            if ($usr_tbl) {
+                $fields = array(group::FLD_ID, user::FLD_ID);
+                $values = array($this->grp->id(), $this->user()->id());
+            } else {
+                $fields = array(group::FLD_ID, user::FLD_ID, self::FLD_VALUE, self::FLD_LAST_UPDATE);
+                $values = array($this->grp->id(), $this->user()->id(), $this->number, sql::NOW);
+            }
+
+        }
+        $qp->sql = $sc->sql_insert($fields, $values);
+        $par_values = [];
+        foreach (array_keys($values) as $i) {
+            if ($values[$i] != sql::NOW) {
+                $par_values[$i] = $values[$i];
+            }
+        }
+
+        $qp->par = $par_values;
+        return $qp;
+    }
+
+
 
     // load the missing formula parameters from the database
     // TODO load user specific values
@@ -1596,6 +1661,7 @@ class result extends sandbox_value
 
     /**
      * save the formula result to the database
+     * TODO check if user specific result needs to be added
      * for the word selection the id list is the lead, not the object list and not the group
      * @return string the message that should be shown to the user in case something went wrong
      */
@@ -1636,28 +1702,35 @@ class result extends sandbox_value
 
             // check if a database update is needed
             // or if a second results object with the database values
-            $res_db = clone $this;
-            $res_db->load_obj_vars();
-            $row_id = $res_db->id;
+            $res_db = new result($this->user());
+            $res_db->load_by_id($this->id());
+            $row_id = $res_db->id();
             $db_val = $res_db->value;
 
             // if value exists, check it an update is needed
+            // updates of results are not logged because they could be reproduced
             if ($row_id > 0) {
                 if ($db_con->sf($db_val) <> $db_con->sf($this->value)) {
+                    $msg = 'update result ' . result::FLD_VALUE . ' to ' . $this->value
+                        . ' from ' . $db_val . ' for ' . $this->dsp_id();
+                    log_debug($msg);
                     $db_con->set_class(sql_db::TBL_RESULT);
-                    if ($db_con->update_old($row_id,
+                    $sc = $db_con->sql_creator();
+                    $qp = $this->sql_update($sc,
                         array(result::FLD_VALUE, result::FLD_LAST_UPDATE),
-                        array($this->value, sql::NOW))) {
-                        $this->id = $row_id;
+                        array($this->value, sql::NOW));
+                    $usr_msg = $db_con->update($qp, $msg);
+                    if ($usr_msg->is_ok()) {
                         $result = $row_id;
                     }
-                    log_debug("update (" . $db_val . " to " . $this->value . " for " . $row_id . ")");
                 } else {
+                    $msg = 'update of result ' . result::FLD_VALUE . ' ' . $this->dsp_id() . ' not needed';
+                    log_debug($msg);
                     $this->id = $row_id;
                     $result = $row_id;
-                    log_debug("not update (" . $db_val . " to " . $this->value . " for " . $row_id . ")");
                 }
             } else {
+                $msg = 'insert result ' . $this->value . ' for ' . $this->dsp_id();
                 $field_names = array();
                 $field_values = array();
                 $field_names[] = formula::FLD_ID;
@@ -1676,9 +1749,12 @@ class result extends sandbox_value
                 //$field_values[] = sql_creator::NOW; // replaced with time of last change that has been included in the calculation
                 $field_values[] = $this->last_val_update->format('Y-m-d H:i:s');
                 $db_con->set_class(sql_db::TBL_RESULT);
-                $id = $db_con->insert_old($field_names, $field_values);
-                $this->id = $id;
-                $result = $id;
+                $sc = $db_con->sql_creator();
+                $qp = $this->sql_insert($sc);
+                $usr_msg = $db_con->insert($qp, $msg);
+                if ($usr_msg->is_ok()) {
+                    $result = $row_id;
+                }
             }
         }
 
