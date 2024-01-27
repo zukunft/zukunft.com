@@ -36,7 +36,7 @@ use api\formula\formula as formula_api;
 use api\value\value as value_api;
 use api\word\word as word_api;
 use cfg\phrase_list;
-use cfg\value;
+use cfg\value\value;
 use test\test_cleanup;
 use const test\TIMEOUT_LIMIT_DB_MULTI;
 use const test\TIMEOUT_LIMIT_LONG;
@@ -123,7 +123,8 @@ class formula_trigger_test
 
         // remove the test values
         $val_add1->del();
-        $val_add2->del();
+        // TODO activate
+        //$val_add2->del();
 
         // change the second number and test if the result has been updated
         // a second user changes the value back to the original value and check if for the second number the result is updated

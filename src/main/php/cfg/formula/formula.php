@@ -1134,33 +1134,33 @@ class formula extends sandbox_typed
                             if (isset($res_add_phr_lst)) {
 
                                 // add the phrases left of the equal sign to the result e.g. percent for the increase formula
-                                log_debug('result words "' . $res_add_phr_lst->dsp_id() . '" defined for ' . $res->grp->phr_lst->dsp_id());
+                                log_debug('result words "' . $res_add_phr_lst->dsp_id() . '" defined for ' . $res->grp()->dsp_id());
                                 $res_add_wrd_lst = $res_add_phr_lst->wrd_lst_all();
 
                                 // if the result words contains "percent" remove any measure word from the list, because a relative value is expected without measure
                                 if ($res_add_wrd_lst->has_percent()) {
                                     log_debug('has percent');
-                                    $res->grp->phr_lst->ex_measure();
-                                    log_debug('measure words removed from ' . $res->grp->phr_lst->dsp_id());
+                                    $res->grp()->phrase_list()->ex_measure();
+                                    log_debug('measure words removed from ' . $res->grp()->phrase_list()->dsp_id());
                                 }
 
                                 // if in the formula is defined, that the result is in percent
                                 // and the values used are in millions, the result is only in percent, but not in millions
                                 // TODO check that all value have the same scaling and adjust the scaling if needed
                                 if ($res_add_wrd_lst->has_percent()) {
-                                    $res->grp->phr_lst->ex_scaling();
-                                    log_debug('scaling words removed from ' . $res->grp->phr_lst->dsp_id());
+                                    $res->grp()->phrase_list()->ex_scaling();
+                                    log_debug('scaling words removed from ' . $res->grp()->phrase_list()->dsp_id());
                                     // maybe add the scaling word to the result words to remember based on which words the result has been created,
                                     // but probably this is not needed, because the source words are also saved
                                     //$scale_wrd_lst = $res_add_wrd_lst->scaling_lst ();
-                                    //$res->grp->phr_lst->merge($scale_wrd_lst->lst);
-                                    //zu_debug(self::class . '->calc -> added the scaling word "'.implode(",",$scale_wrd_lst->names()).'" to the result words "'.implode(",",$res->grp->phr_lst->names()).'"');
+                                    //$res->grp()->phrase_list()->merge($scale_wrd_lst->lst);
+                                    //zu_debug(self::class . '->calc -> added the scaling word "'.implode(",",$scale_wrd_lst->names()).'" to the result words "'.implode(",",$res->grp()->phrase_list()->names()).'"');
                                 }
 
                                 // if the formula is a scaling formula, remove the obsolete scaling word from the source words
                                 if ($res_add_wrd_lst->has_scaling()) {
-                                    $res->grp->phr_lst->ex_scaling();
-                                    log_debug('scaling words removed from ' . $res->grp->phr_lst->dsp_id());
+                                    $res->grp()->phrase_list()->ex_scaling();
+                                    log_debug('scaling words removed from ' . $res->grp()->phrase_list()->dsp_id());
                                 }
 
                             }
@@ -1170,9 +1170,9 @@ class formula extends sandbox_typed
                             if (isset($res_add_phr_lst)) {
                                 log_debug('add words ' . $res_add_phr_lst->dsp_id() . ' to the result');
                                 foreach ($res_add_phr_lst->lst() as $frm_result_wrd) {
-                                    $res->grp->phr_lst->add($frm_result_wrd);
+                                    $res->grp()->phrase_list()->add($frm_result_wrd);
                                 }
-                                log_debug('added words ' . $res_add_phr_lst->dsp_id() . ' to the result ' . $res->grp->phr_lst->dsp_id());
+                                log_debug('added words ' . $res_add_phr_lst->dsp_id() . ' to the result ' . $res->grp()->phrase_list()->dsp_id());
                             }
 
                             // add the formula name also to the result phrase e.g. increase
@@ -1182,7 +1182,7 @@ class formula extends sandbox_typed
                             if (is_null($this->name_wrd)) {
                                 log_warning('Cannot load word for formula ' . $this->dsp_id());
                             } else {
-                                $res->grp->phr_lst->add($this->name_wrd->phrase());
+                                $res->grp()->phrase_list()->add($this->name_wrd->phrase());
                             }
 
                             $res = $res->save_if_updated($has_result_phrases);
@@ -1901,7 +1901,7 @@ class formula extends sandbox_typed
 
         $db_con->set_class(sql_db::TBL_FORMULA_ELEMENT);
         try {
-            $msg = $db_con->delete(
+            $msg = $db_con->delete_old(
                 array(self::FLD_ID, user::FLD_ID),
                 array($this->id(), $this->user()->id));
         } catch (Exception $e) {
@@ -1912,7 +1912,7 @@ class formula extends sandbox_typed
         } else {
             $db_con->set_class(sql_db::TBL_USER_PREFIX . sql_db::TBL_FORMULA);
             try {
-                $msg = $db_con->delete(
+                $msg = $db_con->delete_old(
                     array(self::FLD_ID, user::FLD_ID),
                     array($this->id(), $this->user()->id));
                 if ($msg == '') {

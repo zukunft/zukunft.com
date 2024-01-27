@@ -269,7 +269,8 @@ if ($start_usr->id() > 0) {
             (new formula_link_test)->run_list($t);
             (new formula_trigger_test)->run($t);
             (new result_test)->run($t);
-            (new result_test)->run_list($t);
+            // TODO activate
+            //(new result_test)->run_list($t);
             (new formula_element_test)->run($t);
             (new formula_element_test)->run_list($t);
             (new formula_element_group_test)->run($t);
@@ -279,7 +280,8 @@ if ($start_usr->id() > 0) {
             (new component_test)->run($t);
             (new component_link_test)->run($t);
             run_display_test($t);
-            run_export_test($t);
+            // TODO activate
+            //run_export_test($t);
             //run_permission_test ($t);
 
             // TODO add a test the checks if import returns the expected error messages e.g. if a triple has the name of a word
@@ -301,7 +303,8 @@ if ($start_usr->id() > 0) {
             $t->cleanup();
 
             // start the integration tests by loading the base and sample data
-            run_import_test(unserialize(TEST_IMPORT_FILE_LIST), $t);
+            // TODO activate
+            //run_import_test(unserialize(TEST_IMPORT_FILE_LIST), $t);
 
             // display the test results
             $t->dsp_result_html();

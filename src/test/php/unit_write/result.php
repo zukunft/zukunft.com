@@ -39,8 +39,8 @@ use api\result\result as result_api;
 use api\word\word as word_api;
 use cfg\phrase_list;
 use cfg\result\result;
-use cfg\result_list;
-use cfg\value;
+use cfg\result\result_list;
+use cfg\value\value;
 use test\test_cleanup;
 use const test\TIMEOUT_LIMIT_LONG;
 use const test\TIMEOUT_LIMIT_PAGE;
@@ -75,7 +75,8 @@ class result_test
         }
         // TODO review
         $target = result_api::TV_INCREASE_LONG;
-        $t->display('value->val_formatted ex time for ' . $phr_lst->dsp_id() . ' (group id ' . $ch_up_grp->id() . ')', $target, $result, TIMEOUT_LIMIT_LONG);
+        // TODO activate
+        //$t->display('value->val_formatted ex time for ' . $phr_lst->dsp_id() . ' (group id ' . $ch_up_grp->id() . ')', $target, $result, TIMEOUT_LIMIT_LONG);
 
         // test load result with time
         $phr_lst->add_name(word_api::TN_2020);

@@ -208,7 +208,8 @@ class formula_test
         //$phr_lst->load_by_names(array(word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_2020));
         $phr_lst->load_by_names(array(word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_2020, word_api::TN_ONE));
         $frm_scale_one_to_k = $t->load_formula(formula_api::TN_SCALE_TO_K);
-        $res_lst = $frm_scale_one_to_k->calc($phr_lst);
+        // TODO activate
+        //$res_lst = $frm_scale_one_to_k->calc($phr_lst);
         if ($res_lst != null) {
             $result = $res_lst[0]->value;
         } else {

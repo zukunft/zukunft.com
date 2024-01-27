@@ -39,7 +39,7 @@ use cfg\batch_job;
 use cfg\batch_job_list;
 use cfg\batch_job_type_list;
 use cfg\phrase_list;
-use cfg\value;
+use cfg\value\value;
 use test\test_cleanup;
 use const test\TIMEOUT_LIMIT_DB_MULTI;
 

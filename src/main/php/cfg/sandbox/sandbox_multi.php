@@ -2371,7 +2371,7 @@ class sandbox_multi extends db_object_multi_user
                         if ($msg == '') {
                             $std_rec = clone $this;
                             $std_rec->reset();
-                            $std_rec->id = $this->id;
+                            $std_rec->set_id($this->id());
                             $std_rec->set_user($this->user()); // must also be set to allow to take the ownership
                             if (!$std_rec->load_standard()) {
                                 $msg .= 'Reloading of standard ' . $this->obj_name . ' ' . $this->dsp_id() . ' failed.';

@@ -895,6 +895,67 @@ class result extends sandbox_value
         return $qp;
     }
 
+    /**
+     * create the sql statement to update a result in the database
+     * TODO make code review and move part to the parent sandbox value class
+     *
+     * @param sql $sc with the target db_type set
+     * @param bool $usr_tbl true if the user table row should be updated
+     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     */
+    function sql_update(
+        sql   $sc,
+        array $fields = [],
+        array $values = [],
+        bool  $usr_tbl = false
+    ): sql_par
+    {
+        $lib = new library();
+        $qp = $this->sql_common($sc, $usr_tbl);
+        if (count($fields) == 0) {
+            $fields = array(self::FLD_VALUE, self::FLD_LAST_UPDATE);
+        }
+        if (count($values) == 0) {
+            $values = array($this->number, sql::NOW);
+        }
+        $fld_name = implode('_', $lib->sql_name_shorten($fields));
+        $qp->name .= '_update_' . $fld_name;
+        $sc->set_name($qp->name);
+        if ($this->grp->is_prime()) {
+            $id_fields = $this->grp->id_names(true);
+        } else {
+            $id_fields = $this->id_field();
+        }
+        $id = $this->id();
+        $id_lst = [];
+        if (is_array($id_fields)) {
+            if (!is_array($id)) {
+                $grp_id = new group_id();
+                $id_lst = $grp_id->get_array($id, true);
+                foreach ($id_lst as $key => $value) {
+                    if ($value == null) {
+                        $id_lst[$key] = 0;
+                    }
+                }
+            } else {
+                $id_lst = $id;
+            }
+        } else {
+            $id_lst = $id;
+        }
+        if ($usr_tbl) {
+            $id_fields[] = user::FLD_ID;
+            if (!is_array($id_lst)) {
+                $id_lst = [$id_lst];
+            }
+            $id_lst[] = $this->user()->id();
+        }
+        $qp->sql = $sc->sql_update($id_fields, $id_lst, $fields, $values);
+
+        $qp->par = $sc->par_values();
+        return $qp;
+    }
+
 
 
     // load the missing formula parameters from the database
