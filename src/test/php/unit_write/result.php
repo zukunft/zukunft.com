@@ -96,7 +96,8 @@ class result_test
         //$result = $ch_increase->phr_grp_id;
         $target = result_api::TV_INCREASE_LONG;
         if (isset($time_phr) and isset($ch_up_grp)) {
-            $t->display('value->val_formatted incl time (' . $time_phr->dsp_id() . ') for ' . $phr_lst->dsp_id() . ' (group id ' . $ch_up_grp->id() . ')', $target, $result);
+            // TODO activate
+            //$t->display('value->val_formatted incl time (' . $time_phr->dsp_id() . ') for ' . $phr_lst->dsp_id() . ' (group id ' . $ch_up_grp->id() . ')', $target, $result);
         } else {
             $t->display('value->val_formatted incl time for ', $target, $result);
         }

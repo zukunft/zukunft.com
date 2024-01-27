@@ -15,6 +15,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
 
     but first this needs to be fixed:
     TODO remove the time phrase from result
+    TODO activate the tests and create a unit and read test if possible
     TODO test if a table with 1, 2, 4, 8, 16, 32 or 64 smallint key is faster and more efficient than a table with one bigger index
     TODO create an use the figure database view
     TODO combine phrase_group_word_links and phrase_group_triple_links to group_links (using phrase)

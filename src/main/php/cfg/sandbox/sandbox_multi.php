@@ -1112,6 +1112,9 @@ class sandbox_multi extends db_object_multi_user
 
 
         if (!$this->has_usr_cfg()) {
+            $lib = new library();
+            $class = $lib->class_to_name($class);
+
             if ($this->obj_type == self::TYPE_NAMED) {
                 log_debug('for "' . $this->dsp_id() . ' und user ' . $this->user()->name);
             } elseif ($this->obj_type == self::TYPE_LINK) {
@@ -1121,13 +1124,11 @@ class sandbox_multi extends db_object_multi_user
                     log_debug('for "' . $this->id . '" and user "' . $this->user()->name . '"');
                 }
             } else {
-                log_err('Unknown user sandbox type ' . $this->obj_type . ' in ' . $this->obj_name, $this->obj_name . '->log_add');
+                log_err('Unknown user sandbox type ' . $this->obj_type . ' in ' . $class, $class . '->log_add');
             }
-            $lib = new library();
-            $class = $lib->class_to_name($class);
 
             // check again if there ist not yet a record
-            $db_con->set_class($this->obj_name, true);
+            $db_con->set_class($class, true);
             $qp = new sql_par($class);
             $qp->name = $class . '_add_usr_cfg';
             $db_con->set_name($qp->name);
@@ -1141,11 +1142,11 @@ class sandbox_multi extends db_object_multi_user
             }
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
-                $db_con->set_class(sql_db::TBL_USER_PREFIX . $this->obj_name);
+                $db_con->set_class(sql_db::TBL_USER_PREFIX . $class);
                 $db_con->set_usr($this->user()->id());
                 $log_id = $db_con->insert_old(array($this->id_field(), user::FLD_ID), array($this->id, $this->user()->id()));
                 if ($log_id <= 0) {
-                    log_err('Insert of ' . sql_db::USER_PREFIX . $this->obj_name . ' failed.');
+                    log_err('Insert of ' . sql_db::USER_PREFIX . $class . ' failed.');
                     $result = false;
                 } else {
                     $this->usr_cfg_id = $log_id;
@@ -1277,7 +1278,9 @@ class sandbox_multi extends db_object_multi_user
 
         $log->action = change_log_action::ADD;
         // TODO add the table exceptions from sql_db
-        $log->set_table($this->obj_name . sql_db::TABLE_EXTENSION);
+        $lib = new library();
+        $class = $lib->class_to_name($this::class);
+        $log->set_table($class . sql_db::TABLE_EXTENSION);
         $log->row_id = 0;
         $log->add();
 
@@ -1305,7 +1308,9 @@ class sandbox_multi extends db_object_multi_user
             // TODO add the table exceptions from sql_db
             $log->set_table($this->obj_type . sql_db::TABLE_EXTENSION);
         } else {
-            $log->set_table(sql_db::TBL_USER_PREFIX . $this->obj_name . sql_db::TABLE_EXTENSION);
+            $lib = new library();
+            $class = $lib->class_to_name($this::class);
+            $log->set_table(sql_db::TBL_USER_PREFIX . $class . sql_db::TABLE_EXTENSION);
         }
 
         return $log;
