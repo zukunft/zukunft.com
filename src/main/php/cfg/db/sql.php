@@ -860,7 +860,8 @@ class sql
             $this->add_par($spt, '');
         } elseif ($spt == sql_par_type::LIKE_R) {
             $this->add_par($spt, $fld_val . '%', false, false, $name);
-        } elseif ($spt == sql_par_type::LIKE) {
+        } elseif ($spt == sql_par_type::LIKE
+            or $spt == sql_par_type::LIKE_OR) {
             $this->add_par($spt, '%' . $fld_val . '%', false, false, $name);
         } else {
             log_err('SQL parameter type ' . $spt->value . ' not expected');
@@ -1981,6 +1982,7 @@ class sql
                                 if ($par_type == sql_par_type::TEXT_OR
                                     or $par_type == sql_par_type::INT_OR
                                     or $par_type == sql_par_type::INT_LIST_OR
+                                    or $par_type == sql_par_type::LIKE_OR
                                     or $par_type == sql_par_type::INT_SAME) {
                                     $result .= ' OR ';
                                 } else {
@@ -2066,7 +2068,8 @@ class sql
                                 $par_offset--;
                                 $result .= ''; // because added with the page statement
                             } elseif ($par_type == sql_par_type::LIKE_R
-                                or $par_type == sql_par_type::LIKE) {
+                                or $par_type == sql_par_type::LIKE
+                                or $par_type == sql_par_type::LIKE_OR) {
                                 $result .= $tbl_id . $this->par_fields[$i] . ' like ';
                                 if ($this->par_name[$i] != '' and $this->db_type() != sql_db::MYSQL) {
                                     $result .= $this->par_name[$i];
@@ -3214,6 +3217,7 @@ class sql
                     break;
                 case sql_par_type::LIKE_R:
                 case sql_par_type::LIKE:
+                case sql_par_type::LIKE_OR:
                 case sql_par_type::TEXT_OR:
                 case sql_par_type::TEXT_USR:
                     $result[] = 'text';

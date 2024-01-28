@@ -70,14 +70,23 @@ class value_list_unit_tests
          * SQL creation tests (mainly to use the IDE check for the generated SQL statements)
          */
 
-        // sql to load a list of value by ids
+        // sql to load a list of value by ...
         $val_lst = new value_list($usr);
+        // ... a related to a phrase e.g. all value related to the City of Zurich
+        $phr = $t->phrase_zh();
+        $this->assert_sql_by_phr($t, $db_con, $val_lst, $phr);
+        // ... a list of ids
         $val_ids = $t->dummy_value_list()->id_lst();
         $t->assert_sql_by_ids($db_con, $val_lst, $val_ids);
-        $this->assert_sql_by_grp_lst($t, $db_con, $val_lst, $t->dummy_phrase_list_small());
-        // TODO activate
-        // sql to load all values related to a phrase list e.g. the inhabitants of Canton Zurich over time
-        //$this->assert_sql_by_phr_lst($t, $db_con, $val_lst, $t->dummy_phrase_list_zh());
+        // ... a list of groups
+        $grp_lst = $t->dummy_phrase_list_small();
+        $this->assert_sql_by_grp_lst($t, $db_con, $val_lst, $grp_lst);
+        // ... a related to a phrase list e.g. the match const pi and e
+        $phr_lst = $t->phrase_list_math_const();
+        $this->assert_sql_by_phr_lst($t, $db_con, $val_lst, $phr_lst);
+        // ... a related to a phrase list e.g. the inhabitants of Canton Zurich over time
+        // $phr_lst = $t->dummy_phrase_list_zh();
+        // $this->assert_sql_by_phr_lst($t, $db_con, $val_lst, $phr_lst);
 
         $db_con->db_type = sql_db::POSTGRES;
         $this->test = $t;
@@ -112,10 +121,6 @@ class value_list_unit_tests
         // TODO add a test to select a list of values that contains any phrase of the phrase list
         // TODO add a test to select a list of values that contains all phrase of the phrase list
 
-        // sql to load a list of value by the phrase id
-        $phr = $t->dummy_triple_pi()->phrase();
-        $this->assert_sql_by_phr($t, $db_con, $val_lst, $phr);
-
 
         $t->subheader('Im- and Export tests');
 
@@ -141,15 +146,16 @@ class value_list_unit_tests
     private function assert_sql_by_phr_lst(test_cleanup $t, sql_db $db_con, object $usr_obj, phrase_list $phr_lst): void
     {
         // check the Postgres query syntax
-        $db_con->db_type = sql_db::POSTGRES;
-        $qp = $usr_obj->load_sql_by_phr_lst($db_con->sql_creator(), $phr_lst);
-        $result = $t->assert_qp($qp, $db_con->db_type);
+        $sc = $db_con->sql_creator();
+        $sc->db_type = sql_db::POSTGRES;
+        $qp = $usr_obj->load_sql_by_phr_lst($sc, $phr_lst);
+        $result = $t->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $db_con->db_type = sql_db::MYSQL;
-            $qp = $usr_obj->load_sql_by_phr_lst($db_con->sql_creator(), $phr_lst);
-            $t->assert_qp($qp, $db_con->db_type);
+            $sc->db_type = sql_db::MYSQL;
+            $qp = $usr_obj->load_sql_by_phr_lst($sc, $phr_lst);
+            $t->assert_qp($qp, $sc->db_type);
         }
     }
 
@@ -165,15 +171,16 @@ class value_list_unit_tests
     private function assert_sql_by_grp_lst(test_cleanup $t, sql_db $db_con, object $usr_obj, phrase_list $phr_lst): void
     {
         // check the Postgres query syntax
-        $db_con->db_type = sql_db::POSTGRES;
-        $qp = $usr_obj->load_sql_by_grp_lst($db_con->sql_creator(), $phr_lst);
-        $result = $t->assert_qp($qp, $db_con->db_type);
+        $sc = $db_con->sql_creator();
+        $sc->db_type = sql_db::POSTGRES;
+        $qp = $usr_obj->load_sql_by_grp_lst($sc, $phr_lst);
+        $result = $t->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $db_con->db_type = sql_db::MYSQL;
-            $qp = $usr_obj->load_sql_by_grp_lst($db_con->sql_creator(), $phr_lst);
-            $t->assert_qp($qp, $db_con->db_type);
+            $sc->db_type = sql_db::MYSQL;
+            $qp = $usr_obj->load_sql_by_grp_lst($sc, $phr_lst);
+            $t->assert_qp($qp, $sc->db_type);
         }
     }
 
@@ -189,15 +196,16 @@ class value_list_unit_tests
     private function assert_sql_by_phr(test_cleanup $t, sql_db $db_con, value_list $val_lst, phrase $phr): void
     {
         // check the Postgres query syntax
-        $db_con->db_type = sql_db::POSTGRES;
-        $qp = $val_lst->load_sql_by_phr($db_con->sql_creator(), $phr);
-        $result = $t->assert_qp($qp, $db_con->db_type);
+        $sc = $db_con->sql_creator();
+        $sc->db_type = sql_db::POSTGRES;
+        $qp = $val_lst->load_sql_by_phr($sc, $phr);
+        $result = $t->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $db_con->db_type = sql_db::MYSQL;
-            $qp = $val_lst->load_sql_by_phr($db_con->sql_creator(), $phr);
-            $t->assert_qp($qp, $db_con->db_type);
+            $sc->db_type = sql_db::MYSQL;
+            $qp = $val_lst->load_sql_by_phr($sc, $phr);
+            $t->assert_qp($qp, $sc->db_type);
         }
     }
 

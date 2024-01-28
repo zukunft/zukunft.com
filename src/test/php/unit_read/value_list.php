@@ -52,7 +52,15 @@ class value_list_unit_db_tests
 
         $t->subheader('Get related');
 
-        // load by id
+        // load by phrase
+        $test_name = 'Load a value list by phrase pi';
+        $val_lst = new value_list($t->usr1);
+        $val_lst->load_by_phr($t->phrase_pi());
+        $result = $val_lst->dsp_id();
+        $target = '"" 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -2,,,) for user 2 (zukunft.com system test)';
+        $t->assert($test_name, $result, $target);
+
+        // load by ids
         $val_lst = new value_list($t->usr1);
         $val_lst->load_by_ids([5,8]);
         $pi = new value($t->usr1);
@@ -76,6 +84,15 @@ class value_list_unit_db_tests
         }
         $test_name = 'A value list with pi and e matches the expected result';
         $t->assert($test_name, $val_lst->dsp_id(), $target);
+
+        // load by phrase list
+        $test_name = 'Load the list of math const';
+        $val_lst = new value_list($t->usr1);
+        $phr_lst = $t->phrase_list_math_const();
+        $val_lst->load_by_phr_lst($phr_lst);
+        $result = $val_lst->dsp_id();
+        $target = '"" 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -2,,,) for user 2 (zukunft.com system test)';
+        //$t->assert($test_name, $result, $target);
 
         // load by phrase list
         $phr = new phrase($t->usr1, word::SYSTEM_CONFIG);

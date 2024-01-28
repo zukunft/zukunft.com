@@ -171,7 +171,58 @@ class value_list extends sandbox_list
     function load_by_phr_lst(phrase_list $phr_lst): bool
     {
         global $db_con;
-        $qp = $this->load_sql_by_phr_lst($db_con->sql_creator(), $phr_lst);
+        $sc = $db_con->sql_creator();
+        $qp = $this->load_sql_by_phr_lst($sc, $phr_lst);
+        return $this->load($qp);
+    }
+
+    /**
+     *  load a list of values that are related to the given phrase
+     *  e.g. for "city" all values directly related to the phrase city are returned
+     *
+     * @param phrase $phr phrase list to which all related values should be loaded
+     * @return bool true if at least one value has been loaded
+     */
+    function load_by_phr(phrase $phr, int $limit = 0): bool
+    {
+        global $db_con;
+        $result = false;
+        $lib = new library();
+
+        if ($limit <= 0) {
+            // TODO use limit in query
+            $limit = SQL_ROW_LIMIT;
+        }
+
+        $qp = $this->load_sql_by_phr($db_con->sql_creator(), $phr);
+
+        // TODO check if the standard load function can be used
+
+        $db_con->usr_id = $this->user()->id();
+        $db_val_lst = $db_con->get($qp);
+        foreach ($db_val_lst as $db_val) {
+            if (is_null($db_val[sandbox::FLD_EXCLUDED]) or $db_val[sandbox::FLD_EXCLUDED] == 0) {
+                $val = new value($this->user());
+                $val->row_mapper_sandbox_multi($db_val, '');
+                $this->add_obj($val);
+                log_debug($lib->dsp_count($this->lst()));
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * load a list of values that are related to at least one phrase of the given list
+     * e.g. for "Zurich (city)" and "Geneva (city)" all values related to the two cities are returned
+     *
+     * @param phrase_list $phr_lst phrase list to which all related values should be loaded
+     * @return bool true if at least one value found
+     */
+    function load_by_phr_lst_all(phrase_list $phr_lst): bool
+    {
+        global $db_con;
+        $qp = $this->load_sql_by_phr_lst_all($db_con->sql_creator(), $phr_lst);
         return $this->load($qp);
     }
 
@@ -186,6 +237,180 @@ class value_list extends sandbox_list
         global $db_con;
         $qp = $this->load_sql_by_ids($db_con->sql_creator(), $val_ids);
         return $this->load($qp);
+    }
+
+
+    /**
+     * load a list of sandbox objects (e.g. phrases or values) based on the given query parameters
+     * @param sql_par $qp the SQL statement, the unique name of the SQL statement and the parameter list
+     * @param bool $load_all force to include also the excluded phrases e.g. for admins
+     * @param sql_db|null $db_con_given the database connection as a parameter for the initial load of the system views
+     * @return bool true if at least one object has been loaded
+     */
+    protected function load(sql_par $qp, bool $load_all = false, ?sql_db $db_con_given = null): bool
+    {
+
+        global $db_con;
+        $result = false;
+
+        $db_con_used = $db_con_given;
+        if ($db_con_used == null) {
+            $db_con_used = $db_con;
+        }
+
+        // check the all minimal input parameters are set
+        if ($this->user()->id() <= 0) {
+            log_err('The user must be set to load ' . self::class, self::class . '->load');
+        } elseif ($qp->name == '') {
+            log_err('The query name cannot be created to load a ' . self::class, self::class . '->load');
+        } else {
+            $db_lst = $db_con_used->get($qp);
+            $result = $this->rows_mapper_multi($db_lst, $qp->ext, $load_all);
+        }
+        return $result;
+    }
+
+    /**
+     * create an SQL statement to retrieve a list of values by a list of phrases from the database
+     * return all values that match at least one phrase of the list
+     * TODO change where to ANY
+     * TODO links and select all phrase ids
+     *
+     * @param sql $sc with the target db_type set
+     * @param phrase_list $phr_lst phrase list to which all related values should be loaded
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_phr_lst(sql $sc, phrase_list $phr_lst, bool $usr_tbl = false): sql_par
+    {
+        $lib = new library();
+        $qp = new sql_par(value::class);
+        $qp->name = $lib->class_to_name(value_list::class) . '_by_phr_lst_p' . $phr_lst->count();
+        $par_types = array();
+        // loop over the possible tables where the value might be stored in this pod
+        $par_pos = 2;
+        foreach (value::TBL_LIST as $tbl_typ) {
+            $sc->reset();
+            $qp_tbl = $this->load_sql_by_phr_lst_single($sc, $phr_lst, $tbl_typ, $par_pos);
+            if ($sc->db_type() != sql_db::MYSQL) {
+                $qp->merge($qp_tbl, true);
+            } else {
+                $qp->merge($qp_tbl);
+            }
+            $phr_pos = $par_pos + 2;
+        }
+        // sort the parameters if the parameters are part of the union
+        if ($sc->db_type() != sql_db::MYSQL) {
+            $lib = new library();
+            $qp->par = $lib->key_num_sort($qp->par);
+        }
+
+        foreach ($qp->par as $par) {
+            if (is_numeric($par)) {
+                $par_types[] = sql_par_type::INT;
+            } else {
+                $par_types[] = sql_par_type::TEXT;
+            }
+        }
+        $qp->sql = $sc->prepare_sql($qp->sql, $qp->name, $par_types);
+
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve a list of values linked to a phrase from the database
+     * from a single table
+     *     *
+     * @param sql $sc with the target db_type set
+     * @param phrase_list $phr_lst if set to get all values for this phrase
+     * @param array $tbl_typ_lst the table types for this table
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_phr_lst_single(sql $sc, phrase_list $phr_lst, array $tbl_typ_lst, int $par_pos): sql_par
+    {
+        $qp = $this->load_sql_init($sc, 'phr', $tbl_typ_lst);
+        if ($this->is_prime($tbl_typ_lst)) {
+            foreach ($phr_lst->lst() as $phr) {
+                for ($i = 1; $i <= group_id::PRIME_PHRASE; $i++) {
+                    $sc->add_where(phrase::FLD_ID . '_' . $i,
+                        $phr->id(), sql_par_type::INT_SAME, '$' . $par_pos);
+                }
+                $par_pos = $par_pos + 2;
+            }
+        } else {
+            foreach ($phr_lst->lst() as $phr) {
+                $grp_id = new group_id();
+                $sc->add_where(group::FLD_ID,
+                    $grp_id->int2alpha_num($phr->id()), sql_par_type::LIKE_OR, '$' . $par_pos + 1);
+                $par_pos = $par_pos + 2;
+            }
+        }
+        $qp->sql = $sc->sql(0, true, false);
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve a list of values linked to the given phrase from the database
+     *
+     * @param sql $sc with the target db_type set
+     * @param phrase $phr if set to get all values for this phrase
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_phr(sql $sc, phrase $phr): sql_par
+    {
+        $lib = new library();
+        $qp = new sql_par(value::class);
+        $qp->name = $lib->class_to_name(value_list::class) . '_by_phr';
+        $par_types = array();
+        // loop over the possible tables where the value might be stored in this pod
+        foreach (value::TBL_LIST as $tbl_typ) {
+            $sc->reset();
+            $qp_tbl = $this->load_sql_by_phr_single($sc, $phr, $tbl_typ);
+            if ($sc->db_type() != sql_db::MYSQL) {
+                $qp->merge($qp_tbl, true);
+            } else {
+                $qp->merge($qp_tbl);
+            }
+        }
+        // sort the parameters if the parameters are part of the union
+        if ($sc->db_type() != sql_db::MYSQL) {
+            $lib = new library();
+            $qp->par = $lib->key_num_sort($qp->par);
+        }
+
+        foreach ($qp->par as $par) {
+            if (is_numeric($par)) {
+                $par_types[] = sql_par_type::INT;
+            } else {
+                $par_types[] = sql_par_type::TEXT;
+            }
+        }
+        $qp->sql = $sc->prepare_sql($qp->sql, $qp->name, $par_types);
+
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve a list of values by
+     * TODO fill
+     *
+     * @param sql $sc with the target db_type set
+     * @param phrase_list $phr_lst phrase list to which all related values should be loaded
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_phr_lst_all(sql $sc, phrase_list $phr_lst, bool $usr_tbl = false): sql_par
+    {
+        // get the matrix of the potential tables, the number of phrases of the table and the phrase id list
+        $qp = new sql_par(value::class);
+
+        // loop over the tables where the value might be stored
+        $par_offset = 0;
+        $par_types = array();
+
+        $qp->sql = $sc->prepare_sql($qp->sql, $qp->name, $par_types);
+
+        return $qp;
     }
 
     /**
@@ -262,7 +487,7 @@ class value_list extends sandbox_list
     function load_sql_init(
         sql    $sc,
         string $query_name,
-        array $tbl_types = []
+        array  $tbl_types = []
     ): sql_par
     {
         $tbl_ext = $this->table_extension($tbl_types);
@@ -476,38 +701,8 @@ class value_list extends sandbox_list
     }
 
     /**
-     * load a list of sandbox objects (e.g. phrases or values) based on the given query parameters
-     * @param sql_par $qp the SQL statement, the unique name of the SQL statement and the parameter list
-     * @param bool $load_all force to include also the excluded phrases e.g. for admins
-     * @param sql_db|null $db_con_given the database connection as a parameter for the initial load of the system views
-     * @return bool true if at least one object has been loaded
-     */
-    protected function load(sql_par $qp, bool $load_all = false, ?sql_db $db_con_given = null): bool
-    {
-
-        global $db_con;
-        $result = false;
-
-        $db_con_used = $db_con_given;
-        if ($db_con_used == null) {
-            $db_con_used = $db_con;
-        }
-
-        // check the all minimal input parameters are set
-        if ($this->user()->id() <= 0) {
-            log_err('The user must be set to load ' . self::class, self::class . '->load');
-        } elseif ($qp->name == '') {
-            log_err('The query name cannot be created to load a ' . self::class, self::class . '->load');
-        } else {
-            $db_lst = $db_con_used->get($qp);
-            $result = $this->rows_mapper_multi($db_lst, $qp->ext, $load_all);
-        }
-        return $result;
-    }
-
-    /**
-     * create an SQL statement to retrieve a list of values by a list of phrase ids from the database
-     * return all value that match at least one phrase of the list
+     * create an SQL statement to retrieve a list of values by a list of phrases from the database
+     * return all values that match at least one phrase of the list
      * TODO change where to ANY
      * TODO links and select all phrase ids
      *
@@ -515,11 +710,11 @@ class value_list extends sandbox_list
      * @param phrase_list $phr_lst phrase list to which all related values should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_phr_lst(sql $sc, phrase_list $phr_lst, bool $usr_tbl = false): sql_par
+    function load_sql_by_phr_lst_old(sql $sc, phrase_list $phr_lst, bool $usr_tbl = false): sql_par
     {
         // get the matrix of the potential tables, the number of phrases of the table and the phrase id list
         $tbl_id_matrix = $this->extension_id_matrix($phr_lst->ids());
-        $qp = $this->load_sql_init_query_par($phr_lst->ids(), 'phr_lst');
+        $qp = $this->load_sql_init_query_par($phr_lst->ids(), 'phr_lst_old');
 
         // loop over the tables where the value might be stored
         $par_offset = 0;
@@ -529,7 +724,7 @@ class value_list extends sandbox_list
             if ($tbl_typ == sql_table_type::PRIME) {
                 $max_row_ids = array_shift($matrix_row);
                 $phr_id_lst = $matrix_row;
-                $qp_tbl = $this->load_sql_multi($sc, 'phr_lst', $tbl_typ->extension(), $tbl_typ, $usr_tbl);
+                $qp_tbl = $this->load_sql_multi($sc, 'phr_lst_old', $tbl_typ->extension(), $tbl_typ, $usr_tbl);
                 if ($par_offset == 0) {
                     $sc->set_usr_num_fields(value::FLD_NAMES_NUM_USR);
                 } else {
@@ -562,6 +757,7 @@ class value_list extends sandbox_list
 
     /**
      * create an SQL statement to retrieve a list of values by a list of group ids from the database
+     * TODO check if this not the same as the load_sql_by_ids function
      *
      * @param sql $sc with the target db_type set
      * @param phrase_list $phr_lst phrase list to which all related values should be loaded
@@ -620,7 +816,7 @@ class value_list extends sandbox_list
      * @param phrase_list $phr_lst phrase list to which all related values should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_phr_lst_single(sql $sc, phrase_list $phr_lst): sql_par
+    function load_sql_by_phr_lst_single_old(sql $sc, phrase_list $phr_lst): sql_par
     {
         $qp = $this->load_sql_init_old($sc, 'phr_lst');
         $sc->set_join_fields(
@@ -655,47 +851,6 @@ class value_list extends sandbox_list
         }
         $qp->sql = $sc->sql(0, true, false);
         $qp->par = $sc->get_par();
-
-        return $qp;
-    }
-
-    /**
-     * create an SQL statement to retrieve a list of values linked to a phrase from the database
-     *
-     * @param sql $sc with the target db_type set
-     * @param phrase $phr if set to get all values for this phrase
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql_by_phr(sql $sc, phrase $phr): sql_par
-    {
-        $lib = new library();
-        $qp = new sql_par(value::class);
-        $qp->name = $lib->class_to_name(value_list::class) . '_by_phr';
-        $par_types = array();
-        // loop over the possible tables where the value might be stored in this pod
-        foreach (value::TBL_LIST as $tbl_typ) {
-            $sc->reset();
-            $qp_tbl = $this->load_sql_by_phr_single($sc, $phr, $tbl_typ);
-            if ($sc->db_type() != sql_db::MYSQL) {
-                $qp->merge($qp_tbl,true);
-            } else {
-                $qp->merge($qp_tbl);
-            }
-        }
-        // sort the parameters if the parameters are part of the union
-        if ($sc->db_type() != sql_db::MYSQL) {
-            $lib = new library();
-            $qp->par = $lib->key_num_sort($qp->par);
-        }
-
-        foreach ($qp->par as $par) {
-            if (is_numeric($par)) {
-                $par_types[] = sql_par_type::INT;
-            } else {
-                $par_types[] = sql_par_type::TEXT;
-            }
-        }
-        $qp->sql = $sc->prepare_sql($qp->sql, $qp->name, $par_types);
 
         return $qp;
     }
@@ -832,39 +987,6 @@ class value_list extends sandbox_list
         $qp->par = $db_con->get_par();
 
         return $qp;
-    }
-
-    /**
-     * load a list of values that are related to a phrase or a list of phrases
-     *
-     * @param phrase $phr if set to get all values for this phrase
-     * @return bool true if at least one value has been loaded
-     */
-    function load_by_phr(phrase $phr, int $limit = 0): bool
-    {
-        global $db_con;
-        $result = false;
-        $lib = new library();
-
-        if ($limit <= 0) {
-            // TODO use limit in query
-            $limit = SQL_ROW_LIMIT;
-        }
-
-        $qp = $this->load_sql_by_phr($db_con->sql_creator(), $phr);
-
-        $db_con->usr_id = $this->user()->id();
-        $db_val_lst = $db_con->get($qp);
-        foreach ($db_val_lst as $db_val) {
-            if (is_null($db_val[sandbox::FLD_EXCLUDED]) or $db_val[sandbox::FLD_EXCLUDED] == 0) {
-                $val = new value($this->user());
-                $val->row_mapper_sandbox_multi($db_val, '');
-                $this->add_obj($val);
-                log_debug($lib->dsp_count($this->lst()));
-                $result = true;
-            }
-        }
-        return $result;
     }
 
     function load_all_sql(): string

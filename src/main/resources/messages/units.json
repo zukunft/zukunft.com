@@ -1142,6 +1142,14 @@
       "type": "hidden_triple"
     },
     {
+      "name": "\uD835\uDC52 (math)",
+      "description": "Is the limit of (1 + 1/n)^n as n approaches infinity",
+      "from": "Euler's constant",
+      "verb": "is a",
+      "to": "Mathematical constant",
+      "type": "hidden_triple"
+    },
+    {
       "name": "π (unit symbol)",
       "from": "π",
       "verb": "is alias of",
@@ -1150,6 +1158,7 @@
     },
     {
       "name": "\uD835\uDC52 (unit symbol)",
+      "description": "Is the limit of (1 + 1/n)^n as n approaches infinity",
       "from": "\uD835\uDC52",
       "verb": "is alias of",
       "to": "Euler's constant",

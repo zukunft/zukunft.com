@@ -311,7 +311,7 @@ class create_test_objects extends test_base
     function dummy_word(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(1, word_api::TN_READ);
+        $wrd->set(word_api::TI_MATH, word_api::TN_READ);
         $wrd->description = word_api::TD_READ;
         $wrd->set_type(phrase_type::NORMAL);
         return $wrd;
@@ -332,7 +332,7 @@ class create_test_objects extends test_base
     function dummy_word_const(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(2, word_api::TN_CONST);
+        $wrd->set(word_api::TI_CONST, word_api::TN_CONST);
         $wrd->description = word_api::TD_CONST;
         $wrd->set_type(phrase_type::MATH_CONST);
         return $wrd;
@@ -344,7 +344,7 @@ class create_test_objects extends test_base
     function dummy_word_pi(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(3, word_api::TN_PI);
+        $wrd->set(word_api::TI_PI, word_api::TN_PI);
         $wrd->description = word_api::TD_PI;
         $wrd->set_type(phrase_type::MATH_CONST);
         return $wrd;
@@ -376,23 +376,29 @@ class create_test_objects extends test_base
     function dummy_word_e(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(4, word_api::TN_E);
+        $wrd->set(word_api::TI_E, word_api::TN_E);
         $wrd->set_type(phrase_type::MATH_CONST);
         return $wrd;
     }
 
+    /**
+     * @return word 2019 to test creating of a year
+     */
     function dummy_word_2019(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(16, word_api::TN_2019);
+        $wrd->set(word_api::TI_2019, word_api::TN_2019);
         $wrd->set_type(phrase_type::TIME);
         return $wrd;
     }
 
+    /**
+     * @return word 2020 to test create a year
+     */
     function dummy_word_2020(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(200, word_api::TN_2020);
+        $wrd->set(word_api::TI_2020, word_api::TN_2020);
         $wrd->set_type(phrase_type::TIME);
         return $wrd;
     }
@@ -400,7 +406,7 @@ class create_test_objects extends test_base
     function dummy_word_pct(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(166, word_api::TN_PCT);
+        $wrd->set(word_api::TI_PCT, word_api::TN_PCT);
         $wrd->set_type(phrase_type::PERCENT);
         return $wrd;
     }
@@ -440,63 +446,63 @@ class create_test_objects extends test_base
     function dummy_word_minute(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(98, word_api::TN_MINUTE);
+        $wrd->set(word_api::TI_MINUTE, word_api::TN_MINUTE);
         return $wrd;
     }
 
     function dummy_word_second(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(17, word_api::TN_SECOND);
+        $wrd->set(word_api::TI_SECOND, word_api::TN_SECOND);
         return $wrd;
     }
 
     function dummy_word_ch(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(190, word_api::TN_CH);
+        $wrd->set(word_api::TI_CH, word_api::TN_CH);
         return $wrd;
     }
 
     function dummy_word_canton(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(191, word_api::TN_CANTON);
+        $wrd->set(word_api::TI_CANTON, word_api::TN_CANTON);
         return $wrd;
     }
 
     function dummy_word_city(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(192, word_api::TN_CITY);
+        $wrd->set(word_api::TI_CITY, word_api::TN_CITY);
         return $wrd;
     }
 
     function dummy_word_zh(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(193, word_api::TN_ZH);
+        $wrd->set(word_api::TI_ZH, word_api::TN_ZH);
         return $wrd;
     }
 
     function dummy_word_inhabitant(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(194, word_api::TN_INHABITANT);
+        $wrd->set(word_api::TI_INHABITANT, word_api::TN_INHABITANT);
         return $wrd;
     }
 
     function dummy_word_parts(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(231, word_api::TN_PARTS);
+        $wrd->set(word_api::TI_PARTS, word_api::TN_PARTS);
         return $wrd;
     }
 
     function dummy_word_total(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(232, word_api::TN_TOTAL_PRE);
+        $wrd->set(word_api::TI_TOTAL, word_api::TN_TOTAL_PRE);
         return $wrd;
     }
 
@@ -541,11 +547,11 @@ class create_test_objects extends test_base
     }
 
     /**
-     * @return verb a user defined verb
+     * @return verb the default verb
      */
     function dummy_verb(): verb
     {
-        $vrb = new verb(1, verb_api::TN_READ, verb_api::TC_READ);
+        $vrb = new verb(verb_api::TI_READ, verb_api::TN_READ, verb::NOT_SET);
         $vrb->set_user($this->usr1);
         return $vrb;
     }
@@ -555,7 +561,7 @@ class create_test_objects extends test_base
      */
     function dummy_verb_is(): verb
     {
-        return new verb(2, verb_api::TN_IS, verb::IS);
+        return new verb(verb_api::TI_IS, verb_api::TN_IS, verb::IS);
     }
 
     /**
@@ -563,7 +569,7 @@ class create_test_objects extends test_base
      */
     function dummy_verb_part(): verb
     {
-        return new verb(3, verb_api::TN_IS, verb::IS);
+        return new verb(verb_api::TI_PART, verb_api::TN_PART, verb::IS_PART_OF);
     }
 
     /**
@@ -582,7 +588,7 @@ class create_test_objects extends test_base
     function dummy_triple(): triple
     {
         $trp = new triple($this->usr1);
-        $trp->set(1, triple_api::TN_READ);
+        $trp->set(triple_api::TI_READ, triple_api::TN_READ);
         $trp->description = triple_api::TD_READ;
         $trp->set_from($this->dummy_word_const()->phrase());
         $trp->set_verb($this->dummy_verb_part());
@@ -597,12 +603,40 @@ class create_test_objects extends test_base
     function dummy_triple_pi(): triple
     {
         $trp = new triple($this->usr1);
-        $trp->set(2, triple_api::TN_PI_NAME);
+        $trp->set(triple_api::TI_PI, triple_api::TN_PI_NAME);
         $trp->description = triple_api::TD_PI;
         $trp->set_from($this->dummy_word_pi()->phrase());
         $trp->set_verb($this->dummy_verb_is());
         $trp->set_to($this->dummy_triple()->phrase());
         $trp->set_type(phrase_type::TRIPLE_HIDDEN);
+        return $trp;
+    }
+
+    /**
+     * @return triple "e (math const)" used for unit testing
+     */
+    function dummy_triple_e(): triple
+    {
+        $trp = new triple($this->usr1);
+        $trp->set(triple_api::TI_E, triple_api::TN_E);
+        $trp->description = triple_api::TD_E;
+        $trp->set_from($this->dummy_word_e()->phrase());
+        $trp->set_verb($this->dummy_verb_is());
+        $trp->set_to($this->dummy_triple()->phrase());
+        $trp->set_type(phrase_type::TRIPLE_HIDDEN);
+        return $trp;
+    }
+
+    /**
+     * @return triple "Zurich (City)" used for unit testing
+     */
+    function dummy_triple_zh(): triple
+    {
+        $trp = new triple($this->usr1);
+        $trp->set(triple_api::TI_ZH_CITY, triple_api::TN_ZH_CITY);
+        $trp->set_from($this->dummy_word_zh()->phrase());
+        $trp->set_verb($this->dummy_verb_is());
+        $trp->set_to($this->dummy_word_city()->phrase());
         return $trp;
     }
 
@@ -616,6 +650,16 @@ class create_test_objects extends test_base
     function dummy_phrase(): phrase
     {
         return $this->dummy_word()->phrase();
+    }
+
+    function phrase_pi(): phrase
+    {
+        return $this->dummy_triple_pi()->phrase();
+    }
+
+    function phrase_zh(): phrase
+    {
+        return $this->dummy_triple_zh()->phrase();
     }
 
     function dummy_phrase_list(): phrase_list
@@ -654,6 +698,17 @@ class create_test_objects extends test_base
     {
         $lst = new phrase_list($this->usr1);
         $lst->add($this->dummy_triple_pi()->phrase());
+        return $lst;
+    }
+
+    /**
+     * @return phrase_list with some math const e.g. to test loading a list of values by phrase list
+     */
+    function phrase_list_math_const(): phrase_list
+    {
+        $lst = new phrase_list($this->usr1);
+        $lst->add($this->dummy_triple_pi()->phrase());
+        $lst->add($this->dummy_triple_e()->phrase());
         return $lst;
     }
 

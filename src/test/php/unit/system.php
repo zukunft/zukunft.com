@@ -84,7 +84,7 @@ class system_unit_tests
         $t->assert($test_name, $vrb->dsp_id(), $target);
         $test_name = 'debug triple id';
         $trp = $t->dummy_triple();
-        $target = '"constant" "is a" "Mathematics" (2,3,1 -> triple_id 1) for user 1 (zukunft.com system test)';
+        $target = '"constant" "is part of" "Mathematics" (2,3,1 -> triple_id 1) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $trp->dsp_id(), $target);
         $test_name = 'debug triple_list id';
         $trp_lst = $t->dummy_triple_list();
@@ -92,7 +92,7 @@ class system_unit_tests
         $t->assert($test_name, $trp_lst->dsp_id(), $target);
         $test_name = 'debug phrase id';
         $phr = $t->dummy_triple()->phrase();
-        $target = '"constant" "is a" "Mathematics" (2,3,1 -> triple_id 1) for user 1 (zukunft.com system test) as phrase';
+        $target = '"constant" "is part of" "Mathematics" (2,3,1 -> triple_id 1) for user 1 (zukunft.com system test) as phrase';
         $t->assert($test_name, $phr->dsp_id(), $target);
         $test_name = 'debug phrase_list id';
         $phr_lst = $t->dummy_phrase_list();

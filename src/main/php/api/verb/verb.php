@@ -50,9 +50,11 @@ class verb extends sandbox_named_api
     // TN_* is the name of the verb
     // TI_* is the database id based on the initial load
     const TN_READ = "not set";
-    const TC_READ = "not_set";
+    const TI_READ = 1;
     const TN_IS = "is a";
+    const TI_IS = 2;
     const TN_PART = "is part of";
+    const TI_PART = 3;
     const TN_OF = "of";
     const TI_OF = 4;
     const TN_TIME_STEP = "time jump";

@@ -50,16 +50,22 @@ class triple extends sandbox_typed_api
     // TN_* is the name of the triple used for testing
     // TD_* is the tooltip/description of the triple
     const TN_READ = 'Mathematical constant';
+    const TI_READ = 1;
     const TD_READ = 'A mathematical constant that never changes e.g. Pi';
     const TN_PI = 'Pi';
     const TN_CUBIC_METER = 'm3';
     const TN_PI_NAME = 'Pi (math)';
+    const TI_PI = 2;
     const TD_PI = 'ratio of the circumference of a circle to its diameter';
+    const TN_E = '𝑒 (math)';
+    const TI_E = 3;
+    const TD_E = 'Is the limit of (1 + 1/n)^n as n approaches infinity';
     const TN_ADD = 'System Test Triple';
     const TN_ADD_AUTO = 'System Test Triple';
     const TN_EXCLUDED = 'System Test Excluded Zurich Insurance is not part of the City of Zurich';
 
     const TN_ZH_CITY = 'Zurich (City)';
+    const TI_ZH_CITY = 37;
     const TN_ZH_CITY_NAME = 'City of Zurich';
     const TN_ZH_CANTON = 'Zurich (Canton)';
     const TN_ZH_CANTON_NAME = 'Canton Zurich';
