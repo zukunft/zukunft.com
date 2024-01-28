@@ -387,10 +387,11 @@ class value_list extends sandbox_list
      * create a query parameter object with a unique name
      *
      * @param array $ids array with the ids used to select the result
-     * @param string $query_name
+     * @param string $query_name the "by" name extension to make the query name unique e.g. phr_lst
+     * @param bool $count_phrases true if the number of phrases are relevant for the query name
      * @return sql_par
      */
-    private function load_sql_init_query_par(array $ids, string $query_name): sql_par
+    private function load_sql_init_query_par(array $ids, string $query_name, bool $count_phrases = true): sql_par
     {
         $qp = new sql_par(value::class);
         $lib = new library();
@@ -400,10 +401,13 @@ class value_list extends sandbox_list
             $tbl_ext_uni[] = $tbl_typ->extension();
         }
         $phr_id_uni = $this->phrase_id_list_unique($ids);
-        $qp->name = $lib->class_to_name(
-                value_list::class) .
-            '_by_' . $query_name . implode("", $tbl_ext_uni) .
-            '_r' . count($phr_id_uni);
+        if ($count_phrases) {
+            $count_ext = '_r' . count($phr_id_uni);
+        } else {
+            $count_ext = '_r' . count($ids);
+        }
+        $qp->name = $lib->class_to_name(value_list::class) .
+            '_by_' . $query_name . implode("", $tbl_ext_uni) . $count_ext;
         return $qp;
     }
 
@@ -424,7 +428,7 @@ class value_list extends sandbox_list
 
         // get the matrix of the potential tables, the number of phrases of the table and the phrase id list
         $tbl_id_matrix = $this->extension_id_matrix($ids);
-        $qp = $this->load_sql_init_query_par($ids, 'ids');
+        $qp = $this->load_sql_init_query_par($ids, 'ids', false);
 
         $par_offset = 0;
         $par_types = array();

@@ -73,8 +73,7 @@ class value_list_unit_tests
         // sql to load a list of value by ids
         $val_lst = new value_list($usr);
         $val_ids = $t->dummy_value_list()->id_lst();
-        // TODO use $val_ids
-        $t->assert_sql_by_ids($db_con, $val_lst, [5,6]);
+        $t->assert_sql_by_ids($db_con, $val_lst, $val_ids);
         $this->assert_sql_by_grp_lst($t, $db_con, $val_lst, $t->dummy_phrase_list_small());
         // TODO activate
         // sql to load all values related to a phrase list e.g. the inhabitants of Canton Zurich over time
