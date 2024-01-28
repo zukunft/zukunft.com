@@ -35,14 +35,13 @@
 namespace test;
 
 use api\phrase\group as group_api;
-use api\word\triple as triple_api;
 use api\value\value as value_api;
+use api\word\triple as triple_api;
 use api\word\word as word_api;
-use html\types\type_lists as type_list_dsp;
-use html\word\triple as triple_dsp;
-use cfg\triple;
 use cfg\verb;
+use html\types\type_lists as type_list_dsp;
 use unit_read\component_list_unit_db_tests;
+use unit_read\export;
 use unit_read\triple_list_unit_db_tests;
 use unit_read\triple_unit_db_tests;
 use unit_read\view_list_unit_db_tests;
@@ -91,6 +90,9 @@ class test_unit_read_db extends test_unit
 
         $this->run_api_test();
         $this->run_ui_test();
+        // TODO activate
+        // (new export())->run($this);
+
 
     }
 

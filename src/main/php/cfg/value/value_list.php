@@ -503,7 +503,7 @@ class value_list extends sandbox_list
 
     /**
      * create an SQL statement to retrieve a list of values by a list of phrase ids from the database
-     * return all value that match at least on phrase of the list
+     * return all value that match at least one phrase of the list
      * TODO change where to ANY
      * TODO links and select all phrase ids
      *

@@ -281,8 +281,8 @@ if ($start_usr->id() > 0) {
             (new component_link_test)->run($t);
             run_display_test($t);
             // TODO activate
-            //run_export_test($t);
-            //run_permission_test ($t);
+            // run_export_test($t);
+            // run_permission_test ($t);
 
             // TODO add a test the checks if import returns the expected error messages e.g. if a triple has the name of a word
 

@@ -4484,7 +4484,11 @@ class sql_db
     function sql_creator(): sql
     {
         $sc = new sql();
-        $sc->set_db_type($this->db_type);
+        if ($this->db_type == null) {
+            $sc->set_db_type(sql_db::POSTGRES);
+        } else {
+            $sc->set_db_type($this->db_type);
+        }
         return $sc;
     }
 
