@@ -1,4 +1,4 @@
-PREPARE value_list_by_phr_lst_p2 FROM
+PREPARE value_list_by_phr_lst_all_p2 FROM
    'SELECT NULL AS group_id,
            NULL AS user_group_id,
            phrase_id_1,

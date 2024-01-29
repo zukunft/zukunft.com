@@ -98,7 +98,6 @@ class test_unit_read_db extends test_unit
 
     function init_unit_db_tests(): void
     {
-
         // add functional test rows to the database for read testing e.g. exclude sandbox entries
         $this->test_triple(
             triple_api::TN_PI, verb::IS, word_api::TN_READ,
@@ -107,6 +106,12 @@ class test_unit_read_db extends test_unit
         $phr_grp = $this->add_phrase_group(array(triple_api::TN_PI_NAME), group_api::TN_READ);
         $this->test_value_by_phr_grp($phr_grp, value_api::TV_READ);
 
+        $this->test_triple(
+            triple_api::TN_E, verb::IS, word_api::TN_READ,
+            triple_api::TN_E, triple_api::TN_E
+        );
+        $phr_grp = $this->add_phrase_group(array(triple_api::TN_E), group_api::TN_READ);
+        $this->test_value_by_phr_grp($phr_grp, value_api::TV_E);
     }
 
     /**

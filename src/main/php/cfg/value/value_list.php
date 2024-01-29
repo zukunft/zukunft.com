@@ -165,14 +165,19 @@ class value_list extends sandbox_list
      * e.g. for "city" and "inhabitants" all yearly increases of city inhabitants are returned
      *      to get the inhabitants of the cities itself first get a phrase list of all cities
      *
+     * if $or is true
+     * load a list of values that are related to at least one phrase of the given list
+     *  e.g. for "Zurich (city)" and "Geneva (city)" all values related to the two cities are returned
+     *
      * @param phrase_list $phr_lst phrase list to which all related values should be loaded
+     * @param bool $or if true all values are returned that are linked to any phrase of the list
      * @return bool true if at least one value found
      */
-    function load_by_phr_lst(phrase_list $phr_lst): bool
+    function load_by_phr_lst(phrase_list $phr_lst, bool $or = false, int $limit = 0): bool
     {
         global $db_con;
         $sc = $db_con->sql_creator();
-        $qp = $this->load_sql_by_phr_lst($sc, $phr_lst);
+        $qp = $this->load_sql_by_phr_lst($sc, $phr_lst, false, $or, $limit);
         return $this->load($qp);
     }
 
@@ -210,20 +215,6 @@ class value_list extends sandbox_list
             }
         }
         return $result;
-    }
-
-    /**
-     * load a list of values that are related to at least one phrase of the given list
-     * e.g. for "Zurich (city)" and "Geneva (city)" all values related to the two cities are returned
-     *
-     * @param phrase_list $phr_lst phrase list to which all related values should be loaded
-     * @return bool true if at least one value found
-     */
-    function load_by_phr_lst_all(phrase_list $phr_lst): bool
-    {
-        global $db_con;
-        $qp = $this->load_sql_by_phr_lst_all($db_con->sql_creator(), $phr_lst);
-        return $this->load($qp);
     }
 
     /**
@@ -280,17 +271,31 @@ class value_list extends sandbox_list
      * @param phrase_list $phr_lst phrase list to which all related values should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_phr_lst(sql $sc, phrase_list $phr_lst, bool $usr_tbl = false): sql_par
+    function load_sql_by_phr_lst(
+        sql         $sc,
+        phrase_list $phr_lst,
+        bool        $usr_tbl = false,
+        bool        $or = false,
+        int         $limit = 0
+    ): sql_par
     {
         $lib = new library();
         $qp = new sql_par(value::class);
-        $qp->name = $lib->class_to_name(value_list::class) . '_by_phr_lst_p' . $phr_lst->count();
+        $name_ext = 'phr_lst';
+        if ($usr_tbl) {
+            $name_ext .= '_usr';
+        }
+        if ($or) {
+            $name_ext .= '_all';
+        }
+        $name_count = '_p' . $phr_lst->count();
+        $qp->name = $lib->class_to_name(value_list::class) . '_by_' . $name_ext . $name_count;
         $par_types = array();
         // loop over the possible tables where the value might be stored in this pod
         $par_pos = 2;
         foreach (value::TBL_LIST as $tbl_typ) {
             $sc->reset();
-            $qp_tbl = $this->load_sql_by_phr_lst_single($sc, $phr_lst, $tbl_typ, $par_pos);
+            $qp_tbl = $this->load_sql_by_phr_lst_single($sc, $phr_lst, $or, $tbl_typ, $par_pos);
             if ($sc->db_type() != sql_db::MYSQL) {
                 $qp->merge($qp_tbl, true);
             } else {
@@ -325,22 +330,37 @@ class value_list extends sandbox_list
      * @param array $tbl_typ_lst the table types for this table
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_phr_lst_single(sql $sc, phrase_list $phr_lst, array $tbl_typ_lst, int $par_pos): sql_par
+    function load_sql_by_phr_lst_single(
+        sql         $sc,
+        phrase_list $phr_lst,
+        bool        $or,
+        array       $tbl_typ_lst,
+        int         $par_pos
+    ): sql_par
     {
         $qp = $this->load_sql_init($sc, 'phr', $tbl_typ_lst);
         if ($this->is_prime($tbl_typ_lst)) {
             foreach ($phr_lst->lst() as $phr) {
+                $spt = sql_par_type::INT_SAME;
+                if ($or) {
+                    $spt = sql_par_type::INT_SAME_OR;
+                }
                 for ($i = 1; $i <= group_id::PRIME_PHRASE; $i++) {
                     $sc->add_where(phrase::FLD_ID . '_' . $i,
-                        $phr->id(), sql_par_type::INT_SAME, '$' . $par_pos);
+                        $phr->id(), $spt, '$' . $par_pos);
+                    $spt = sql_par_type::INT_SAME_OR;
                 }
                 $par_pos = $par_pos + 2;
             }
         } else {
             foreach ($phr_lst->lst() as $phr) {
                 $grp_id = new group_id();
+                $spt = sql_par_type::LIKE;
+                if ($or) {
+                    $spt = sql_par_type::LIKE_OR;
+                }
                 $sc->add_where(group::FLD_ID,
-                    $grp_id->int2alpha_num($phr->id()), sql_par_type::LIKE_OR, '$' . $par_pos + 1);
+                    $grp_id->int2alpha_num($phr->id()), $spt, '$' . $par_pos + 1);
                 $par_pos = $par_pos + 2;
             }
         }
@@ -843,7 +863,7 @@ class value_list extends sandbox_list
         $qp = $this->load_sql_init($sc, 'phr', $tbl_typ_lst);
         if ($this->is_prime($tbl_typ_lst)) {
             for ($i = 1; $i <= group_id::PRIME_PHRASE; $i++) {
-                $sc->add_where(phrase::FLD_ID . '_' . $i, $phr->id(), sql_par_type::INT_SAME, '$2');
+                $sc->add_where(phrase::FLD_ID . '_' . $i, $phr->id(), sql_par_type::INT_SAME_OR, '$2');
             }
         } else {
             $grp_id = new group_id();

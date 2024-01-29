@@ -836,7 +836,8 @@ class sql
             or $spt == sql_par_type::LIMIT
             or $spt == sql_par_type::OFFSET) {
             $this->add_par($spt, $fld_val);
-        } elseif ($spt == sql_par_type::INT_SAME) {
+        } elseif ($spt == sql_par_type::INT_SAME
+            or $spt == sql_par_type::INT_SAME_OR) {
             $this->add_par($spt, $fld_val, false, false, $name);
         } elseif ($spt == sql_par_type::TEXT
             or $spt == sql_par_type::TEXT_USR
@@ -1983,7 +1984,7 @@ class sql
                                     or $par_type == sql_par_type::INT_OR
                                     or $par_type == sql_par_type::INT_LIST_OR
                                     or $par_type == sql_par_type::LIKE_OR
-                                    or $par_type == sql_par_type::INT_SAME) {
+                                    or $par_type == sql_par_type::INT_SAME_OR) {
                                     $result .= ' OR ';
                                 } else {
                                     $result .= ' AND ';
@@ -2103,7 +2104,8 @@ class sql
                                 $result .= $tbl_id . $this->par_fields[$i] . ' >= ' . $this->par_name($par_pos);
                             } elseif ($par_type == sql_par_type::INT_LOWER) {
                                 $result .= $tbl_id . $this->par_fields[$i] . ' =< ' . $this->par_name($par_pos);
-                            } elseif ($par_type == sql_par_type::INT_SAME) {
+                            } elseif ($par_type == sql_par_type::INT_SAME
+                                or $par_type == sql_par_type::INT_SAME_OR) {
                                 $result .= $tbl_id . $this->par_fields[$i] . ' = ';
                                 if ($this->par_name[$i] != '' and $this->db_type() != sql_db::MYSQL) {
                                     $result .= $this->par_name[$i];

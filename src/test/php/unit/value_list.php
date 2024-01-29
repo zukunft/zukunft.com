@@ -81,12 +81,12 @@ class value_list_unit_tests
         // ... a list of groups
         $grp_lst = $t->dummy_phrase_list_small();
         $this->assert_sql_by_grp_lst($t, $db_con, $val_lst, $grp_lst);
-        // ... a related to a phrase list e.g. the match const pi and e
-        $phr_lst = $t->phrase_list_math_const();
+        // ... a related to all phrases of a list e.g. the inhabitants of Canton Zurich over time
+        $phr_lst = $t->dummy_phrase_list_zh();
         $this->assert_sql_by_phr_lst($t, $db_con, $val_lst, $phr_lst);
-        // ... a related to a phrase list e.g. the inhabitants of Canton Zurich over time
-        // $phr_lst = $t->dummy_phrase_list_zh();
-        // $this->assert_sql_by_phr_lst($t, $db_con, $val_lst, $phr_lst);
+        // ... a related to any phrase of a list e.g. the match const pi and e
+        $phr_lst = $t->phrase_list_math_const();
+        $this->assert_sql_by_phr_lst($t, $db_con, $val_lst, $phr_lst, true);
 
         $db_con->db_type = sql_db::POSTGRES;
         $this->test = $t;
@@ -142,19 +142,26 @@ class value_list_unit_tests
      * @param sql_db $db_con does not need to be connected to a real database
      * @param object $usr_obj the user sandbox object e.g. a word
      * @param phrase_list $phr_lst the phrase list that should be used for the sql creation
+     * @param bool $or if true all values are returned that are linked to any phrase of the list
      */
-    private function assert_sql_by_phr_lst(test_cleanup $t, sql_db $db_con, object $usr_obj, phrase_list $phr_lst): void
+    private function assert_sql_by_phr_lst(
+        test_cleanup $t,
+        sql_db       $db_con,
+        object       $usr_obj,
+        phrase_list  $phr_lst,
+        bool         $or = false
+    ): void
     {
         // check the Postgres query syntax
         $sc = $db_con->sql_creator();
         $sc->db_type = sql_db::POSTGRES;
-        $qp = $usr_obj->load_sql_by_phr_lst($sc, $phr_lst);
+        $qp = $usr_obj->load_sql_by_phr_lst($sc, $phr_lst, false, $or);
         $result = $t->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $sc->db_type = sql_db::MYSQL;
-            $qp = $usr_obj->load_sql_by_phr_lst($sc, $phr_lst);
+            $qp = $usr_obj->load_sql_by_phr_lst($sc, $phr_lst, false, $or);
             $t->assert_qp($qp, $sc->db_type);
         }
     }

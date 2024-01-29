@@ -1,4 +1,4 @@
-PREPARE value_list_by_phr_lst_p2 (bigint, bigint, text, bigint, text) AS
+PREPARE value_list_by_phr_lst_p3 (bigint, bigint, text, bigint, text, bigint, text) AS
     SELECT '' AS group_id,
            '' AS user_group_id,
            phrase_id_1,
@@ -15,7 +15,8 @@ PREPARE value_list_by_phr_lst_p2 (bigint, bigint, text, bigint, text) AS
            0 AS share_type_id
       FROM values_standard_prime
      WHERE phrase_id_1 = $2 OR phrase_id_2 = $2 OR phrase_id_3 = $2 OR phrase_id_4 = $2
-        OR phrase_id_1 = $4 OR phrase_id_2 = $4 OR phrase_id_3 = $4 OR phrase_id_4 = $4
+       AND phrase_id_1 = $4 OR phrase_id_2 = $4 OR phrase_id_3 = $4 OR phrase_id_4 = $4
+       AND phrase_id_1 = $6 OR phrase_id_2 = $6 OR phrase_id_3 = $6 OR phrase_id_4 = $6
 UNION
     SELECT group_id,
            '' AS user_group_id,
@@ -33,7 +34,8 @@ UNION
            0 AS share_type_id
       FROM values_standard
      WHERE group_id like $3
-        OR group_id like $5
+       AND group_id like $5
+       AND group_id like $7
 UNION
     SELECT s.group_id,
            u.group_id AS user_group_id,
@@ -52,7 +54,8 @@ UNION
       FROM values s
  LEFT JOIN user_values u ON s.group_id = u.group_id AND u.user_id = $1
      WHERE s.group_id like $3
-        OR s.group_id like $5
+       AND s.group_id like $5
+       AND s.group_id like $7
 UNION
     SELECT '' AS group_id,
            '' AS user_group_id,
@@ -74,7 +77,8 @@ UNION
        AND s.phrase_id_3 = u.phrase_id_3
        AND s.phrase_id_4 = u.phrase_id_4 AND u.user_id = $1
      WHERE s.phrase_id_1 = $2 OR s.phrase_id_2 = $2 OR s.phrase_id_3 = $2 OR s.phrase_id_4 = $2
-        OR s.phrase_id_1 = $4 OR s.phrase_id_2 = $4 OR s.phrase_id_3 = $4 OR s.phrase_id_4 = $4
+       AND s.phrase_id_1 = $4 OR s.phrase_id_2 = $4 OR s.phrase_id_3 = $4 OR s.phrase_id_4 = $4
+       AND s.phrase_id_1 = $6 OR s.phrase_id_2 = $6 OR s.phrase_id_3 = $6 OR s.phrase_id_4 = $6
 UNION
     SELECT s.group_id,
            u.group_id AS user_group_id,
@@ -93,4 +97,5 @@ UNION
       FROM values_big s
  LEFT JOIN user_values_big u ON s.group_id = u.group_id AND u.user_id = $1
      WHERE s.group_id like $3
-        OR s.group_id like $5;
+       AND s.group_id like $5
+       AND s.group_id like $7;
