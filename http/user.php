@@ -38,7 +38,7 @@ use cfg\formula_link;
 use cfg\triple;
 use cfg\user;
 use cfg\user_profile;
-use cfg\value;
+use cfg\value\value;
 use cfg\view;
 use cfg\word;
 use controller\controller;

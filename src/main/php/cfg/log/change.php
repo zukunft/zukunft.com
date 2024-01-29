@@ -44,7 +44,7 @@ use cfg\db\sql_par;
 use cfg\formula;
 use cfg\db\sql_db;
 use cfg\user;
-use cfg\value;
+use cfg\value\value;
 use cfg\view;
 use cfg\word;
 use Exception;

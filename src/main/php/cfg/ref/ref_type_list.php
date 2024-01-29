@@ -56,25 +56,25 @@ class ref_type_list extends type_list
      * overwrite the user_type_list function to create the SQL to load the ref types
      *
      * @param sql $sc with the target db_type set
-     * @param string $db_type the database name e.g. the table name without s
+     * @param string $class the database name e.g. the table name without s
      * @param string $query_name the name extension to make the query name unique
      * @param string $order_field set if the type list should e.g. be sorted by the name instead of the id
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql(
         sql    $sc,
-        string $db_type,
+        string $class,
         string $query_name = 'all',
         string $order_field = ''): sql_par
     {
-        $sc->set_class($db_type);
-        $qp = new sql_par($db_type);
-        $qp->name = $db_type;
+        $sc->set_class($class);
+        $qp = new sql_par($class);
+        $qp->name = $class;
         $sc->set_name($qp->name);
         //TODO check if $db_con->set_usr($this->user()->id()); is needed
         $sc->set_fields(array(sandbox_named::FLD_DESCRIPTION, sql_db::FLD_CODE_ID, self::FLD_URL));
         if ($order_field == '') {
-            $order_field = $sc->get_id_field_name($db_type);
+            $order_field = $sc->get_id_field_name($class);
         }
         $sc->set_order($order_field);
 

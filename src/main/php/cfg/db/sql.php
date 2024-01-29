@@ -247,7 +247,6 @@ class sql
         $this->usr_query = false;
         $this->grp_query = false;
         $this->sub_query = false;
-        $this->from_user = false;
         $this->all_query = false;
         $this->id_field = '';
         $this->id_field_dummy = '';

@@ -185,7 +185,7 @@ class change_log_unit_tests
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $log_lst->load_sql_obj_fld(
-            $db_con,
+            $db_con->sql_creator(),
             $table_name,
             $field_name,
             1,
@@ -196,7 +196,7 @@ class change_log_unit_tests
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
             $qp = $log_lst->load_sql_obj_fld(
-                $db_con,
+                $db_con->sql_creator(),
                 $table_name,
                 $field_name,
                 1,
