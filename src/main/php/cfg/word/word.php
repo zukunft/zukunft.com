@@ -611,7 +611,7 @@ class word extends sandbox_typed
     function value_list(int $page = 1, int $size = sql_db::ROW_LIMIT): value_list
     {
         $val_lst = new value_list($this->user());
-        $val_lst->load_old($page, $size);
+        $val_lst->load_by_phr($this->phrase(), $size, $page);
         return $val_lst;
     }
 
@@ -701,9 +701,7 @@ class word extends sandbox_typed
         $lib = new library();
         log_debug('for ' . $this->dsp_id() . ' and user "' . $this->user()->name . '"');
         $val_lst = new value_list($this->user());
-        $val_lst->phr = $this->phrase();
-        $val_lst->limit = sql_db::ROW_MAX;
-        $val_lst->load_old();
+        $val_lst->load_by_phr($this->phrase());
         log_debug('got ' . $lib->dsp_count($val_lst->lst()));
         return $val_lst;
     }

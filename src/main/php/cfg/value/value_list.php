@@ -173,7 +173,7 @@ class value_list extends sandbox_list
      * @param bool $or if true all values are returned that are linked to any phrase of the list
      * @return bool true if at least one value found
      */
-    function load_by_phr_lst(phrase_list $phr_lst, bool $or = false, int $limit = 0): bool
+    function load_by_phr_lst(phrase_list $phr_lst, bool $or = false, int $limit = sql_db::ROW_LIMIT): bool
     {
         global $db_con;
         $sc = $db_con->sql_creator();
@@ -182,39 +182,19 @@ class value_list extends sandbox_list
     }
 
     /**
-     *  load a list of values that are related to the given phrase
-     *  e.g. for "city" all values directly related to the phrase city are returned
+     * load a list of values that are related to the given phrase
+     * e.g. for "city" all values directly related to the phrase city are returned
+     * TODO use limit in query
      *
      * @param phrase $phr phrase list to which all related values should be loaded
      * @return bool true if at least one value has been loaded
      */
-    function load_by_phr(phrase $phr, int $limit = 0): bool
+    function load_by_phr(phrase $phr, int $limit = sql_db::ROW_LIMIT, int $page = 0): bool
     {
         global $db_con;
-        $result = false;
-        $lib = new library();
-
-        if ($limit <= 0) {
-            // TODO use limit in query
-            $limit = sql_db::ROW_LIMIT;
-        }
-
-        $qp = $this->load_sql_by_phr($db_con->sql_creator(), $phr);
-
-        // TODO check if the standard load function can be used
-
-        $db_con->usr_id = $this->user()->id();
-        $db_val_lst = $db_con->get($qp);
-        foreach ($db_val_lst as $db_val) {
-            if (is_null($db_val[sandbox::FLD_EXCLUDED]) or $db_val[sandbox::FLD_EXCLUDED] == 0) {
-                $val = new value($this->user());
-                $val->row_mapper_sandbox_multi($db_val, '');
-                $this->add_obj($val);
-                log_debug($lib->dsp_count($this->lst()));
-                $result = true;
-            }
-        }
-        return $result;
+        $sc = $db_con->sql_creator();
+        $qp = $this->load_sql_by_phr($sc, $phr, $limit, $page);
+        return $this->load($qp);
     }
 
     /**
@@ -266,9 +246,15 @@ class value_list extends sandbox_list
      * return all values that match at least one phrase of the list
      * TODO change where to ANY
      * TODO links and select all phrase ids
+     * TODO add ORDER BY (relevance of value)
+     * TODO use LIMIT and PAGE
      *
      * @param sql $sc with the target db_type set
      * @param phrase_list $phr_lst phrase list to which all related values should be loaded
+     * @param bool $usr_tbl true if only the user overwrites should be loaded
+     * @param bool $or true if all values related to any phrase of the list should be loaded
+     * @param int $limit the number of values that should be loaded at once
+     * @param int $page the offset for the limit
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_by_phr_lst(
@@ -276,7 +262,8 @@ class value_list extends sandbox_list
         phrase_list $phr_lst,
         bool        $usr_tbl = false,
         bool        $or = false,
-        int         $limit = 0
+        int         $limit = 0,
+        int         $page = 0
     ): sql_par
     {
         $lib = new library();
@@ -377,7 +364,12 @@ class value_list extends sandbox_list
      * @param phrase $phr if set to get all values for this phrase
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_phr(sql $sc, phrase $phr): sql_par
+    function load_sql_by_phr(
+        sql    $sc,
+        phrase $phr,
+        int    $limit = 0,
+        int    $page = 0
+    ): sql_par
     {
         $lib = new library();
         $qp = new sql_par(value::class);
@@ -406,28 +398,6 @@ class value_list extends sandbox_list
                 $par_types[] = sql_par_type::TEXT;
             }
         }
-        $qp->sql = $sc->prepare_sql($qp->sql, $qp->name, $par_types);
-
-        return $qp;
-    }
-
-    /**
-     * create an SQL statement to retrieve a list of values by
-     * TODO fill
-     *
-     * @param sql $sc with the target db_type set
-     * @param phrase_list $phr_lst phrase list to which all related values should be loaded
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql_by_phr_lst_all(sql $sc, phrase_list $phr_lst, bool $usr_tbl = false): sql_par
-    {
-        // get the matrix of the potential tables, the number of phrases of the table and the phrase id list
-        $qp = new sql_par(value::class);
-
-        // loop over the tables where the value might be stored
-        $par_offset = 0;
-        $par_types = array();
-
         $qp->sql = $sc->prepare_sql($qp->sql, $qp->name, $par_types);
 
         return $qp;
@@ -829,27 +799,6 @@ class value_list extends sandbox_list
     }
 
     /**
-     * create an SQL statement to retrieve a list of values by a list of phrase ids from the database
-     * return all value that match at least on phrase of the list
-     *
-     * @param sql $sc with the target db_type set
-     * @param phrase_list $phr_lst phrase list to which all related values should be loaded
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql_by_phr_lst_single_old(sql $sc, phrase_list $phr_lst): sql_par
-    {
-        $qp = $this->load_sql_init_old($sc, 'phr_lst');
-        $sc->set_join_fields(
-            array(value::FLD_ID), sql_db::TBL_VALUE_PHRASE_LINK,
-            value::FLD_ID, value::FLD_ID);
-        $sc->add_where(sql_db::LNK_TBL . '.' . phrase::FLD_ID, $phr_lst->ids());
-        $qp->sql = $sc->sql();
-        $qp->par = $sc->get_par();
-
-        return $qp;
-    }
-
-    /**
      * create an SQL statement to retrieve a list of values linked to a phrase from the database
      * from a single table
      *     *
@@ -871,140 +820,6 @@ class value_list extends sandbox_list
         }
         $qp->sql = $sc->sql(0, true, false);
         $qp->par = $sc->get_par();
-
-        return $qp;
-    }
-
-    // TODO review the VAR and LIMIT definitions
-    function load_old_sql(sql_db $db_con): sql_par
-    {
-        $lib = new library();
-        $class = $lib->class_to_name(self::class);
-        $db_con->set_class(value::class);
-        // overwrite the standard id field name (value_id) with the main database id field for values "group_id"
-        $val = new value($this->user());
-        $db_con->set_id_field($val->id_field());
-        $qp = new sql_par($class);
-        $sql_name = $class . '_by_';
-        $sql_name_ext = '';
-        $sql_where = '';
-
-
-        if ($this->phr != null) {
-            if ($this->phr->id() <> 0) {
-                if ($this->phr->is_word()) {
-                    $sql_name_ext .= word::FLD_ID;
-                } else {
-                    $sql_name_ext .= triple::FLD_ID;
-                }
-            }
-        } elseif ($this->phr_lst != '') {
-            $sql_name_ext .= 'phrase_list';
-        }
-        if ($sql_name_ext == '') {
-            log_err("Either a phrase or the phrase list and the user must be set to load a value list.", self::class . '->load_sql');
-        } else {
-            $sql_name .= $sql_name_ext;
-            $db_con->set_name($sql_name);
-            $db_con->set_usr($this->user()->id());
-            $db_con->set_fields(value::FLD_NAMES);
-            $db_con->set_usr_num_fields(value::FLD_NAMES_NUM_USR);
-            $db_con->set_usr_only_fields(value::FLD_NAMES_USR_ONLY);
-            $db_con->set_join_fields(array(group::FLD_ID), sql_db::TBL_GROUP);
-            if ($this->phr->is_word()) {
-                $db_con->set_join_fields(array(word::FLD_ID), sql_db::TBL_GROUP_LINK, group::FLD_ID, group::FLD_ID);
-            } else {
-                $db_con->set_join_fields(array(triple::FLD_ID), sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK, group::FLD_ID, group::FLD_ID);
-            }
-            if ($this->phr != null) {
-                if ($this->phr->id() <> 0) {
-                    if ($this->phr->is_word()) {
-                        $db_con->add_par(sql_par_type::INT, $this->phr->id());
-                        $sql_where = 'l2.' . word::FLD_ID . ' = ' . $db_con->par_name();
-                    } else {
-                        $db_con->add_par(sql_par_type::INT, $this->phr->id() * -1);
-                        $sql_where = 'l2.' . triple::FLD_ID . ' = ' . $db_con->par_name();
-                    }
-                }
-            }
-            $db_con->set_where_text($sql_where);
-            //$db_con->set_page_par();
-            $qp->name = $sql_name;
-            $qp->sql = $db_con->select_by_set_id();
-            $qp->par = $db_con->get_par();
-
-        }
-
-        return $qp;
-    }
-
-    /**
-     * the general load function (either by word, triple or phrase list)
-     *
-     * @param int $page
-     * @param int $size
-     * @return bool
-     */
-    function load_old(int $page = 1, int $size = sql_db::ROW_LIMIT): bool
-    {
-
-        global $db_con;
-        $result = false;
-        $lib = new library();
-
-        // check the all minimal input parameters
-        if ($this->user() == null) {
-            log_err('The user must be set to load ' . self::class, self::class . '->load');
-        } else {
-            $qp = $this->load_old_sql($db_con);
-
-            if ($db_con->get_where() == '') {
-                log_err('The phrase must be set to load ' . self::class, self::class . '->load');
-            } else {
-                $db_con->usr_id = $this->user()->id();
-                $db_val_lst = $db_con->get($qp);
-                foreach ($db_val_lst as $db_val) {
-                    if (is_null($db_val[sandbox::FLD_EXCLUDED]) or $db_val[sandbox::FLD_EXCLUDED] == 0) {
-                        $val = new value($this->user());
-                        $val->row_mapper_sandbox_multi($db_val, '');
-                        $this->add_obj($val);
-                        $result = true;
-                    }
-                }
-                log_debug($lib->dsp_count($this->lst()));
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * create an SQL statement to retrieve a list of values linked to a phrase from the database
-     *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param phrase $phr if set to get all values for this phrase
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_by_phr_sql(sql_db $db_con, phrase $phr): sql_par
-    {
-        $db_con->set_class(value::class);
-        // overwrite the standard id field name (value_id) with the main database id field for values "group_id"
-        $val = new value($this->user());
-        $db_con->set_id_field($val->id_field());
-        $qp = new sql_par(self::class);
-        $qp->name .= 'phrase_id';
-
-        $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id());
-        $db_con->set_fields(value::FLD_NAMES);
-        $db_con->set_usr_num_fields(value::FLD_NAMES_NUM_USR);
-        $db_con->set_usr_only_fields(value::FLD_NAMES_USR_ONLY);
-        $db_con->set_join_fields(
-            array(value::FLD_ID), sql_db::TBL_VALUE_PHRASE_LINK,
-            value::FLD_ID, value::FLD_ID,
-            phrase::FLD_ID, $phr->id());
-        $qp->sql = $db_con->select_by_set_id();
-        $qp->par = $db_con->get_par();
 
         return $qp;
     }
@@ -1121,42 +936,6 @@ class value_list extends sandbox_list
             $result = $sql;
         }
         return $result;
-    }
-
-    /**
-     * load a list of values that are related to all words of the list
-     */
-    function load_by_phr_lst_old(): void
-    {
-
-        global $db_con;
-        $lib = new library();
-
-        // the word list and the user must be set
-        if (count($this->phr_lst->id_lst()) > 0 and !is_null($this->user()->id())) {
-            $sql = $this->load_by_phr_lst_sql_old($db_con);
-
-            if ($sql <> '') {
-                $db_con->usr_id = $this->user()->id();
-                $db_val_lst = $db_con->get_old($sql);
-                if ($db_val_lst != false) {
-                    foreach ($db_val_lst as $db_val) {
-                        if (is_null($db_val[sandbox::FLD_EXCLUDED]) or $db_val[sandbox::FLD_EXCLUDED] == 0) {
-                            $val = new value($this->user());
-                            //$val->row_mapper($db_val);
-                            $val->set_id($db_val[value::FLD_ID]);
-                            $val->owner_id = $db_val[user::FLD_ID];
-                            $val->set_number($db_val[value::FLD_VALUE]);
-                            $val->set_source_id($db_val[source::FLD_ID]);
-                            $val->set_last_update($lib->get_datetime($db_val[value::FLD_LAST_UPDATE]));
-                            $val->grp->set_id($db_val[group::FLD_ID]);
-                            $this->add_obj($val);
-                        }
-                    }
-                }
-            }
-            log_debug($lib->dsp_count($this->lst()));
-        }
     }
 
     /**
@@ -1318,7 +1097,7 @@ class value_list extends sandbox_list
         // reload the value parameters
         if ($do_load) {
             log_debug();
-            $this->load_old();
+            $this->load_by_ids($this->id_lst());
         }
 
         if ($this->count() > 1) {

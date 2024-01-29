@@ -91,16 +91,6 @@ class value_list_unit_tests
         $db_con->db_type = sql_db::POSTGRES;
         $this->test = $t;
 
-        // sql to load a list of value by the word id
-        $wrd = new word($usr);
-        $wrd->set_id(1);
-        $val_lst = new value_list($usr);
-        $val_lst->phr = $wrd->phrase();
-        $created_sql = $val_lst->load_old_sql($db_con)->sql;
-        $expected_sql = $t->file('db/value/value_list_by_word_id.sql');
-        // TODO activate (but based on new sql creator
-        //$t->assert('value_list->load_sql by phrase id', $lib->trim($created_sql), $lib->trim($expected_sql));
-
         // sql to load a list of value by the phrase ids
         $val_lst = new value_list($usr);
         $val_lst->phr_lst = (new phrase_list_unit_tests)->get_phrase_list();

@@ -816,9 +816,7 @@ class phrase extends combine_named
         $lib = new library();
         log_debug('for ' . $this->dsp_id() . ' and user "' . $this->user()->name . '"');
         $val_lst = new value_list($this->user());
-        $val_lst->phr = $this;
-        $val_lst->limit = sql_db::ROW_MAX;
-        $val_lst->load_old();
+        $val_lst->load_by_phr($this);
         log_debug('got ' . $lib->dsp_count($val_lst->lst()));
         return $val_lst;
     }
