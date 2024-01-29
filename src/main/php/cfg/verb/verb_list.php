@@ -229,7 +229,7 @@ class verb_list extends type_list
     function load_sql_all(sql $sc, string $db_type): sql_par
     {
         $qp = $this->load_sql($sc, $db_type);
-        $sc->set_page(SQL_ROW_MAX, 0);
+        $sc->set_page(sql_db::ROW_MAX, 0);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 

@@ -40,6 +40,7 @@ include_once WEB_WORD_PATH . 'word.php';
 use api\api;
 use api\component\component as component_api;
 use cfg\component\component;
+use cfg\db\sql_db;
 use cfg\library;
 use cfg\view_list;
 use cfg\view_type;
@@ -653,13 +654,13 @@ class view extends sandbox_typed
             $comp_html = $this->linked_components($add_cmp, $wrd, $script, $back);
 
             // collect the history
-            $changes = $this->dsp_hist(0, SQL_ROW_LIMIT, '', $back);
+            $changes = $this->dsp_hist(0, sql_db::ROW_LIMIT, '', $back);
             if (trim($changes) <> "") {
                 $hist_html = $changes;
             } else {
                 $hist_html = 'Nothing changed yet.';
             }
-            $changes = $this->dsp_hist_links(0, SQL_ROW_LIMIT, '', $back);
+            $changes = $this->dsp_hist_links(0, sql_db::ROW_LIMIT, '', $back);
             if (trim($changes) <> "") {
                 $link_html = $changes;
             } else {

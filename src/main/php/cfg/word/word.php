@@ -608,7 +608,7 @@ class word extends sandbox_typed
      * @param int $size the number of values that should be returned
      * @return value_list a list object with the most relevant values related to this word
      */
-    function value_list(int $page = 1, int $size = SQL_ROW_LIMIT): value_list
+    function value_list(int $page = 1, int $size = sql_db::ROW_LIMIT): value_list
     {
         $val_lst = new value_list($this->user());
         $val_lst->load_old($page, $size);
@@ -702,7 +702,7 @@ class word extends sandbox_typed
         log_debug('for ' . $this->dsp_id() . ' and user "' . $this->user()->name . '"');
         $val_lst = new value_list($this->user());
         $val_lst->phr = $this->phrase();
-        $val_lst->limit = SQL_ROW_MAX;
+        $val_lst->limit = sql_db::ROW_MAX;
         $val_lst->load_old();
         log_debug('got ' . $lib->dsp_count($val_lst->lst()));
         return $val_lst;

@@ -706,9 +706,6 @@ const MYSQL = "MySQL";
 const SQL_DB_TYPE = POSTGRES;
 // const SQL_DB_TYPE = sql_db::MYSQL;
 
-const SQL_ROW_LIMIT = 20; // default number of rows per page/query if not defined
-const SQL_ROW_MAX = 2000; // the max number of rows per query to avoid long response times
-
 const MAX_LOOP = 10000; // maximal number of loops to avoid hanging while loops; used for example for the number of formula elements
 
 // max number of recursive call to avoid endless looping in case of a program error

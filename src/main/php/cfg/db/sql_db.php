@@ -63,8 +63,10 @@ class sql_db
 
     // data retrieval settings
     const SQL_QUERY_NAME_MAX_LEN = 62; // the query name cannot be longer than 62 chars at least for some databases
-    const PAGE_SIZE = 20; // default number of rows per page/query if not defined
-    const PAGE_SIZE_MAX = 2000; // the max number of rows per query to avoid long response times
+
+    // default settings for sql
+    const ROW_LIMIT = 20; // default number of rows per page/query if the user has not defined another limit
+    const ROW_MAX = 2000; // the max number of rows per query to avoid long response times
 
     // SQL table and model object names used
     // the used database objects (the table name is in most cases with an extra 's', because each table contains the data for many objects)
@@ -2647,10 +2649,10 @@ class sql_db
             $page = 0;
         }
         if ($limit == 0) {
-            $limit = SQL_ROW_LIMIT;
+            $limit = sql_db::ROW_LIMIT;
         } else {
             if ($limit <= 0) {
-                $limit = SQL_ROW_LIMIT;
+                $limit = sql_db::ROW_LIMIT;
             }
         }
 

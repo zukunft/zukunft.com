@@ -85,10 +85,10 @@ class user_log_display
 
         // set default values
         if (!isset($this->size)) {
-            $this->size = SQL_ROW_LIMIT;
+            $this->size = sql_db::ROW_LIMIT;
         } else {
             if ($this->size <= 0) {
-                $this->size = SQL_ROW_LIMIT;
+                $this->size = sql_db::ROW_LIMIT;
             }
         }
 

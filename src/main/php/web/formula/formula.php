@@ -36,6 +36,7 @@ namespace html\formula;
 
 include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
 
+use cfg\db\sql_db;
 use cfg\expression;
 use cfg\formula_link_list;
 use cfg\library;
@@ -379,13 +380,13 @@ class formula extends sandbox_typed
             // allow to test and refresh the formula and show some sample values
             $numbers_html = $this->dsp_test_and_samples($back);
             // display the user changes
-            $changes = $this->dsp_hist(0, SQL_ROW_LIMIT, '', $back);
+            $changes = $this->dsp_hist(0, sql_db::ROW_LIMIT, '', $back);
             if (trim($changes) <> "") {
                 $hist_html = $changes;
             } else {
                 $hist_html = 'Nothing changed yet.';
             }
-            $changes = $this->dsp_hist_links(0, SQL_ROW_LIMIT, '', $back);
+            $changes = $this->dsp_hist_links(0, sql_db::ROW_LIMIT, '', $back);
             if (trim($changes) <> "") {
                 $link_html = $changes;
             } else {

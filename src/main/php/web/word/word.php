@@ -36,6 +36,7 @@ include_once WEB_PHRASE_PATH . 'phrase.php';
 include_once WEB_HTML_PATH . 'html_base.php';
 include_once API_PHRASE_PATH . 'phrase.php';
 
+use cfg\db\sql_db;
 use cfg\foaf_direction;
 use cfg\phrase_type;
 use cfg\verb_list;
@@ -626,12 +627,12 @@ class word extends sandbox_typed
         $wrd_dsp = $this;
         // collect the display code for the user changes
         $dsp_log = '';
-        $changes = $this->dsp_hist(1, SQL_ROW_LIMIT, '', $back);
+        $changes = $this->dsp_hist(1, sql_db::ROW_LIMIT, '', $back);
         if (trim($changes) <> "") {
             $dsp_log .= $html->dsp_text_h3("Latest changes related to this word", "change_hist");
             $dsp_log .= $changes;
         }
-        $changes = $this->dsp_hist_links(0, SQL_ROW_LIMIT, '', $back);
+        $changes = $this->dsp_hist_links(0, sql_db::ROW_LIMIT, '', $back);
         if (trim($changes) <> "") {
             $dsp_log .= $html->dsp_text_h3("Latest link changes related to this word", "change_hist");
             $dsp_log .= $changes;

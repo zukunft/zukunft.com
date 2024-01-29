@@ -196,7 +196,7 @@ class value_list extends sandbox_list
 
         if ($limit <= 0) {
             // TODO use limit in query
-            $limit = SQL_ROW_LIMIT;
+            $limit = sql_db::ROW_LIMIT;
         }
 
         $qp = $this->load_sql_by_phr($db_con->sql_creator(), $phr);
@@ -945,7 +945,7 @@ class value_list extends sandbox_list
      * @param int $size
      * @return bool
      */
-    function load_old(int $page = 1, int $size = SQL_ROW_LIMIT): bool
+    function load_old(int $page = 1, int $size = sql_db::ROW_LIMIT): bool
     {
 
         global $db_con;

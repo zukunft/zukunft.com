@@ -1404,7 +1404,7 @@ class value extends sandbox_value
 
     /**
      * get a list of all formula results that are depending on this value
-     * TODO: add a loop over the calculation if the are more formula results needs to be updated than defined with SQL_ROW_MAX
+     * TODO: add a loop over the calculation if the are more formula results needs to be updated than defined with sql_db::ROW_MAX
      */
     function res_lst_depending(): result_list
     {

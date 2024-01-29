@@ -81,7 +81,7 @@ class change_log_unit_tests
         // sql to load the word by id
         $log_dsp = new user_log_display($usr);
         $log_dsp->type = $lib->class_to_name(user::class);
-        $log_dsp->size = SQL_ROW_LIMIT;
+        $log_dsp->size = sql_db::ROW_LIMIT;
         $db_con->db_type = sql_db::POSTGRES;
         $created_sql = $log_dsp->dsp_hist_links_sql($db_con);
         $expected_sql = $t->file('db/log/change_log.sql');

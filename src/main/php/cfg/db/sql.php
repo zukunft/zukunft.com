@@ -2194,10 +2194,10 @@ class sql
             $offset = 0;
         }
         if ($limit == 0) {
-            $limit = SQL_ROW_LIMIT;
+            $limit = sql_db::ROW_LIMIT;
         } else {
             if ($limit <= 0) {
-                $limit = SQL_ROW_LIMIT;
+                $limit = sql_db::ROW_LIMIT;
             }
         }
         $this->use_page = true;

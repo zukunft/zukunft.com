@@ -66,6 +66,7 @@ use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\group\group_list;
+use cfg\value\value_list;
 use html\phrase\phrase as phrase_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\word\triple as triple_dsp;
@@ -816,7 +817,7 @@ class phrase extends combine_named
         log_debug('for ' . $this->dsp_id() . ' and user "' . $this->user()->name . '"');
         $val_lst = new value_list($this->user());
         $val_lst->phr = $this;
-        $val_lst->limit = SQL_ROW_MAX;
+        $val_lst->limit = sql_db::ROW_MAX;
         $val_lst->load_old();
         log_debug('got ' . $lib->dsp_count($val_lst->lst()));
         return $val_lst;

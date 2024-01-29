@@ -58,7 +58,7 @@ class base_list
         $this->lst = array();
 
         $this->offset = 0;
-        $this->limit = sql_db::PAGE_SIZE;
+        $this->limit = sql_db::ROW_LIMIT;
 
         $this->id_pos_lst = array();
         $this->lst_dirty = false;

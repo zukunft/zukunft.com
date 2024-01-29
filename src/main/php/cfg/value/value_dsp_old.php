@@ -627,12 +627,12 @@ class value_dsp_old extends value
         // display the user changes
         log_debug('user changes');
         if ($this->id > 0) {
-            $changes = $this->dsp_hist(0, SQL_ROW_LIMIT, '', $back);
+            $changes = $this->dsp_hist(0, sql_db::ROW_LIMIT, '', $back);
             if (trim($changes) <> "") {
                 $result .= $html->dsp_text_h3("Latest changes related to this value", "change_hist");
                 $result .= $changes;
             }
-            $changes = $this->dsp_hist_links(0, SQL_ROW_LIMIT, '', $back);
+            $changes = $this->dsp_hist_links(0, sql_db::ROW_LIMIT, '', $back);
             if (trim($changes) <> "") {
                 $result .= $html->dsp_text_h3("Latest link changes related to this value", "change_hist");
                 $result .= $changes;
