@@ -39,8 +39,13 @@ include_once WEB_PHRASE_PATH . 'phrase_group_list.php';
 use cfg\group\group;
 use cfg\library;
 use cfg\phr_ids;
+use cfg\phrase;
 use cfg\phrase_list;
+use cfg\result\result_list;
+use cfg\word_list;
+use controller\controller;
 use html\api;
+use html\button;
 use html\html_base;
 use html\list_dsp;
 use html\phrase\phrase_group_list as phrase_group_list_dsp;
@@ -572,6 +577,167 @@ class value_list extends list_dsp
         return $result;
     }
 
+    /**
+     * return the html code to display all values related to a given word
+     * $phr->id is the related word that should not be included in the display
+     * $this->user()->id() is a parameter, because the viewer must not be the owner of the value
+     * TODO add back
+     */
+    function html($back): string
+    {
+        $lib = new library();
+        $html = new html_base();
+        log_debug($lib->dsp_count($this->lst()));
+        $result = '';
+
+        $html = new html_base();
+
+        // get common words
+        $common_phr_ids = array();
+        foreach ($this->lst() as $val) {
+            if ($val->check() > 0) {
+                log_warning('The group id for value ' . $val->id . ' has not been updated, but should now be correct.', "value_list->html");
+            }
+            $val->load_phrases();
+            log_debug('value_list->html loaded');
+            $val_phr_lst = $val->phr_lst;
+            if ($val_phr_lst->count() > 0) {
+                log_debug('get words ' . $val->phr_lst->dsp_id() . ' for "' . $val->number() . '" (' . $val->id . ')');
+                if (empty($common_phr_ids)) {
+                    $common_phr_ids = $val_phr_lst->id_lst();
+                } else {
+                    $common_phr_ids = array_intersect($common_phr_ids, $val_phr_lst->id_lst());
+                }
+            }
+        }
+
+        log_debug('common ');
+        $common_phr_ids = array_diff($common_phr_ids, array($this->phr->id()));  // exclude the list word
+        $common_phr_ids = array_values($common_phr_ids);            // cleanup the array
+
+        // display the common words
+        log_debug('common dsp');
+        if (!empty($common_phr_ids)) {
+            $common_phr_lst = new word_list($this->user());
+            $common_phr_lst->load_by_ids($common_phr_ids);
+            $common_phr_lst_dsp = $common_phr_lst->dsp_obj();
+            $result .= ' in (' . implode(",", $common_phr_lst_dsp->names_linked()) . ')<br>';
+        }
+
+        // instead of the saved result maybe display the calculated result based on formulas that matches the word pattern
+        log_debug('tbl_start');
+        $result .= $html->dsp_tbl_start();
+
+        // to avoid repeating the same words in each line and to offer a useful "add new value"
+        $last_phr_lst = array();
+
+        log_debug('add new button');
+        foreach ($this->lst() as $val) {
+            //$this->user()->id()  = $val->user()->id();
+
+            // get the words
+            $val->load_phrases();
+            if (isset($val->phr_lst)) {
+                $val_phr_lst = $val->phr_lst;
+
+                // remove the main word from the list, because it should not be shown on each line
+                log_debug('remove main ' . $val->id);
+                $dsp_phr_lst = $val_phr_lst->dsp_obj();
+                log_debug('cloned ' . $val->id);
+                if (isset($this->phr)) {
+                    if ($this->phr->id() != null) {
+                        $dsp_phr_lst->diff_by_ids(array($this->phr->id()));
+                    }
+                }
+                log_debug('removed ' . $this->phr->id());
+                $dsp_phr_lst->diff_by_ids($common_phr_ids);
+                // remove the words of the previous row, because it should not be shown on each line
+                if (isset($last_phr_lst->ids)) {
+                    $dsp_phr_lst->diff_by_ids($last_phr_lst->ids);
+                }
+
+                //if (isset($val->time_phr)) {
+                log_debug('add time ' . $val->id);
+                if ($val->time_phr != null) {
+                    if ($val->time_phr->id > 0) {
+                        $time_phr = new phrase($val->user());
+                        $time_phr->load_by_id($val->time_phr->id());
+                        $val->time_phr = $time_phr;
+                        $dsp_phr_lst->add($time_phr);
+                        log_debug('add time word ' . $val->time_phr->name());
+                    }
+                }
+
+                $result .= '  <tr>';
+                $result .= '    <td>';
+                log_debug('linked words ' . $val->id);
+                $ref_edit = $val->dsp_obj()->ref_edit();
+                $result .= '      ' . $dsp_phr_lst->name_linked() . $ref_edit;
+                log_debug('linked words ' . $val->id . ' done');
+                // to review
+                // list the related results
+                $res_lst = new result_list($this->user());
+                $res_lst->load_by_val($val);
+                $result .= $res_lst->frm_links_html();
+                $result .= '    </td>';
+                log_debug('formula results ' . $val->id . ' loaded');
+
+                // the reused button object
+
+                if ($last_phr_lst != $val_phr_lst) {
+                    $last_phr_lst = $val_phr_lst;
+                    $result .= '    <td>';
+                    $url = $html->url(controller::DSP_VALUE_ADD, $val->id(), $back);
+                    $btn = new button($url, $back);
+                    $result .= \html\btn_add_value($val_phr_lst, Null, $this->phr->id());
+
+                    $result .= '    </td>';
+                }
+                $result .= '    <td>';
+                $url = $html->url(controller::DSP_VALUE_EDIT, $val->id(), $back);
+                $btn = new button($url, $back);
+                $result .= '      ' . $btn->edit_value($val_phr_lst, $val->id, $this->phr->id());
+                $result .= '    </td>';
+                $result .= '    <td>';
+                $url = $html->url(controller::DSP_VALUE_DEL, $val->id(), $back);
+                $btn = new button($url, $back);
+                $result .= '      ' . $btn->del_value($val_phr_lst, $val->id, $this->phr->id());
+                $result .= '    </td>';
+                $result .= '  </tr>';
+            }
+        }
+        log_debug('add new button done');
+
+        $result .= $html->dsp_tbl_end();
+
+        // allow the user to add a completely new value
+        log_debug('new');
+        if (empty($common_phr_ids)) {
+            $common_phr_lst_new = new word_list($this->user());
+            $common_phr_ids[] = $this->phr->id();
+            $common_phr_lst_new->load_by_ids($common_phr_ids);
+        }
+
+        $common_phr_lst = $common_phr_lst->phrase_lst();
+
+        // TODO review probably wrong call from /var/www/default/src/main/php/model/view/view.php(267): component_dsp->all(Object(word_dsp), 291, 17
+        /*
+        if (get_class($this->phr) == word::class or get_class($this->phr) == word_dsp::class) {
+            $this->phr = $this->phr->phrase();
+        }
+        */
+        if ($common_phr_lst->is_valid()) {
+            if (!empty($common_phr_lst->lst())) {
+                $common_phr_lst->add($this->phr);
+                $phr_lst_dsp = new phrase_list_dsp($common_phr_lst->api_json());
+                $result .= $phr_lst_dsp->btn_add_value($back);
+            }
+        }
+
+        log_debug("value_list->html ... done");
+
+        return $result;
+    }
 
 
 }

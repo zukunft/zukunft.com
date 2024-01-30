@@ -2151,8 +2151,7 @@ class phrase_list extends sandbox_list_named
     function val_lst(): value_list
     {
         $val_lst = new value_list($this->user());
-        $val_lst->phr_lst = $this;
-        $val_lst->load_all();
+        $val_lst->load_by_phr_lst($this, true);
 
         return $val_lst;
     }
