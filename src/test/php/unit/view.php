@@ -112,7 +112,7 @@ class view_unit_tests
 
         $dsp = $t->dummy_view_with_components();
         $t->assert_api($dsp, 'view_with_components');
-        // TODO activate
+        // TODO activate Prio 1
         //$t->assert_api_to_dsp($dsp, new view_dsp());
 
 

@@ -64,7 +64,7 @@ if ($start_usr->id() > 0) {
         // prepare testing
         $usr = $start_usr;
         $t = new test_unit_read_db();
-        // TODO activate
+        // TODO activate Prio 2
         //$t->init_unit_db_tests();
 
         // run the unit tests without database connection (is so fast, that it can be tested always)

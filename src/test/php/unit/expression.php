@@ -168,7 +168,7 @@ class expression_unit_tests
         $phr_lst = $exp->element_special_following($trm_lst);
         $result = $phr_lst->dsp_name();
         $target = '"time_prior","time_this"';
-        // TODO activate
+        // TODO activate Prio 1
         //$t->assert('element_special_following for "' . $exp->dsp_id() . '"', $result, $target, TIMEOUT_LIMIT_LONG);
 
         $test_name = 'test the formula element group creation';

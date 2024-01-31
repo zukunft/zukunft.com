@@ -150,11 +150,11 @@ class group_unit_tests
 
         // sql to load the phrase links related to a group
         $grp_lnk = new group_link();
-        // TODO activate or use group id
+        // TODO activate Prio 3 or use group id
         //$t->assert_sql_by_id($db_con, $grp_lnk);
 
         $grp->set_id(14);
-        // TODO activate or use group id
+        // TODO activate Prio 3 or use group id
         //$this->assert_sql_load_by_group_id($t, $db_con, $grp_lnk, $grp);
 
     }

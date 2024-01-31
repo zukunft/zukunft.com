@@ -49,6 +49,7 @@ use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
+use cfg\value\value;
 use html\html_base;
 use html\word\triple as triple_dsp;
 use html\word\triple_list as triple_list_dsp;

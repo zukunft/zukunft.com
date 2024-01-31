@@ -135,7 +135,7 @@ class formula_unit_tests
         $phr_lst = $t->dummy_phrase_list_increase();
 
         $frm = $t->dummy_formula_increase();
-        // TODO activate
+        // TODO activate Prio 1
         // $res_lst = $frm->to_num($phr_lst);
         //$res = $res_lst->lst[0];
         //$result = $res->num_text;

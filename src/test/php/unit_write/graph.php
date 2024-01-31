@@ -73,22 +73,20 @@ class graph_test
 
         // step 2: get all values related to the phrases
         $val_lst = new value_list($usr);
-        // TODO activate
-        //$val_lst->load_by_phr_lst($phr_lst);
-        //$wrd_lst_all = $val_lst->phr_lst->wrd_lst_all();
+        $val_lst->load_by_phr_lst($phr_lst);
+        $wrd_lst_all = $val_lst->phr_lst()->wrd_lst_all();
 
         // step 3: get all phrases used for the value descriptions
-        // TODO activate
-        //$phr_lst_used = new phrase_list($usr);
-        //foreach ($wrd_lst_all->lst() as $wrd) {
-        //    if (!array_key_exists($wrd->id(), $phr_lst_used->id_lst())) {
-        //        $phr_lst_used->add($wrd->phrase());
-        //    }
-        //}
+        $phr_lst_used = new phrase_list($usr);
+        foreach ($wrd_lst_all->lst() as $wrd) {
+            if (!array_key_exists($wrd->id(), $phr_lst_used->id_lst())) {
+                $phr_lst_used->add($wrd->phrase());
+            }
+        }
         // step 4: get the word links for the used phrases
         //         these are the word links that are needed for a complete export
-        // TODO activate
-        //$lnk_lst = new triple_list($usr);
+        // TODO activate Prio 1
+        $lnk_lst = new triple_list($usr);
         //$lnk_lst->load_by_phr_lst($phr_lst_used, null, foaf_direction::UP);
         //$result = $lnk_lst->name();
         // check if at least the basic relations are in the database

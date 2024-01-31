@@ -1199,7 +1199,7 @@ class phrase extends combine_named
                 $label = "Word:";
             }
         }
-        // TODO activate
+        // TODO activate Prio 3
         // $sel->bs_class = $class;
         // $sel->dummy_text = '... please select';
         return $phr_lst->selector($field_name, $form_name, $label, '', $this->id());

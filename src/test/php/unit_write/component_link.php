@@ -213,7 +213,7 @@ class component_link_test
             $result = $cmp_lnk->move_up(); // TODO force to reload the entry list
             //$result = $cmp_lnk->move_up(); // TODO force to reload the entry list
             $target = true;
-            // TODO activate
+            // TODO activate Prio 2
             //$t->display('view component order changed for user 2', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
         }
 

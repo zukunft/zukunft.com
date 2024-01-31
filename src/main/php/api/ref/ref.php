@@ -61,7 +61,7 @@ class ref extends sandbox_api
     const TU_ADD_API = 'https://api.zukunft.com/';
 
     // reference group for testing
-    // TODO activate
+    // TODO activate Prio 3
     const RESERVED_REFERENCES = array(
         self::TN_READ
     );

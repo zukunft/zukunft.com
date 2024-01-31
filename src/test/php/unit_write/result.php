@@ -75,7 +75,7 @@ class result_test
         }
         // TODO review
         $target = result_api::TV_INCREASE_LONG;
-        // TODO activate
+        // TODO activate Prio 1
         //$t->display('value->val_formatted ex time for ' . $phr_lst->dsp_id() . ' (group id ' . $ch_up_grp->id() . ')', $target, $result, TIMEOUT_LIMIT_LONG);
 
         // test load result with time
@@ -96,7 +96,7 @@ class result_test
         //$result = $ch_increase->phr_grp_id;
         $target = result_api::TV_INCREASE_LONG;
         if (isset($time_phr) and isset($ch_up_grp)) {
-            // TODO activate
+            // TODO activate Prio 1
             //$t->display('value->val_formatted incl time (' . $time_phr->dsp_id() . ') for ' . $phr_lst->dsp_id() . ' (group id ' . $ch_up_grp->id() . ')', $target, $result);
         } else {
             $t->display('value->val_formatted incl time for ', $target, $result);
@@ -127,8 +127,8 @@ class result_test
             $result = '';
         }
         $target = 8505.251;
-        // TODO reactivate
-        //$t->display('value->val_scaling for a tern list ' . $phr_lst->dsp_id() . '', $target, $result, TIMEOUT_LIMIT_PAGE);
+        // TODO activate Prio 1
+        //$t->display('value->val_scaling for a tern list ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
 
         // test getting the "best guess" value
         // e.g. if ABB,Sales,2014 is requested, but there is only a value for ABB,Sales,2014,CHF,million get it

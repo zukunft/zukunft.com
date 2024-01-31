@@ -208,7 +208,7 @@ class formula_test
         //$phr_lst->load_by_names(array(word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_2020));
         $phr_lst->load_by_names(array(word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_2020, word_api::TN_ONE));
         $frm_scale_one_to_k = $t->load_formula(formula_api::TN_SCALE_TO_K);
-        // TODO activate
+        // TODO activate Prio 1
         //$res_lst = $frm_scale_one_to_k->calc($phr_lst);
         if ($res_lst != null) {
             $result = $res_lst[0]->value;
@@ -216,7 +216,7 @@ class formula_test
             $result = '';
         }
         $target = 8505.251;
-        // TODO reactivate
+        // TODO activate Prio 1
         //$t->display('formula->calc "' . $frm->name() . '" for a tern list ' . $phr_lst->dsp_id(), $target, $result);
 
         // load the test ids

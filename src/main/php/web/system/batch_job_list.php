@@ -55,7 +55,7 @@ class batch_job_list extends list_dsp
      */
     function set_from_json_array(array $json_array): void
     {
-        // TODO activate
+        // TODO activate Prio 3
         //$ctrl = new controller();
         //$json_array = $ctrl->check_api_msg($json_array, controller::API_BODY_SYS_LOG);
         foreach ($json_array as $value) {

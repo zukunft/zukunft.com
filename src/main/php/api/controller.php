@@ -444,7 +444,7 @@ class controller
             if (array_key_exists($body_key, $api_msg)) {
                 $body = $api_msg[$body_key];
             } else {
-                // TODO activate next line and avoid these cases
+                // TODO activate Prio 3 next line and avoid these cases
                 // $msg_ok = false;
                 $body = $api_msg;
                 log_warning('message header missing in api message');

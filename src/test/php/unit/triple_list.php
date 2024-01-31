@@ -100,7 +100,7 @@ class triple_list_unit_tests
         $vrb = new verb(1);
         $this->assert_sql_by_phr_lst($t, $db_con, $trp_lst, $phr_lst, $vrb, foaf_direction::UP);
         $this->assert_sql_by_phr_lst($t, $db_con, $trp_lst, $phr_lst, $vrb, foaf_direction::DOWN);
-        // TODO activate
+        // TODO activate Prio 1
         // $this->assert_sql_by_phr_lst($t, $db_con, $trp_lst, $phr_lst, $vrb);
 
 

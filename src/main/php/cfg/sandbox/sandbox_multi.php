@@ -796,9 +796,9 @@ class sandbox_multi extends db_object_multi_user
         log_debug($this->dsp_id());
 
         if ($this->user()->is_admin()) {
-            // TODO activate $result .= $this->usr_cfg_create_all();
+            // TODO activate Prio 3 $result .= $this->usr_cfg_create_all();
             $result = $this->set_owner($this->user()->id()); // TODO remove double getting of the user object
-            // TODO activate $result .= $this->usr_cfg_cleanup();
+            // TODO activate Prio 3 $result .= $this->usr_cfg_cleanup();
         }
 
         log_debug($this->dsp_id() . ' done');

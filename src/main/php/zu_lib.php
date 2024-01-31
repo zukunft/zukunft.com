@@ -900,7 +900,7 @@ function log_msg(string $msg_text,
         $used_db_con = new sql_db();
     }
     // try to reconnect to the database
-    // TODO activate
+    // TODO activate Prio 3
     /*
     if (!$used_db_con->connected()) {
         if (!$used_db_con->open_with_retry($msg_text, $msg_description, $function_name, $function_trace, $usr)) {

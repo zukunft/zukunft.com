@@ -241,7 +241,7 @@ if ($start_usr->id() > 0) {
             run_user_test($t);
 
             // test the api write functionality
-            // TODO activate
+            // TODO activate Prio 2
             //$t->test_api_write_no_rest_all();
             //$t->test_api_write_all();
 
@@ -269,7 +269,7 @@ if ($start_usr->id() > 0) {
             (new formula_link_test)->run_list($t);
             (new formula_trigger_test)->run($t);
             (new result_test)->run($t);
-            // TODO activate
+            // TODO activate Prio 1
             //(new result_test)->run_list($t);
             (new formula_element_test)->run($t);
             (new formula_element_test)->run_list($t);
@@ -280,7 +280,7 @@ if ($start_usr->id() > 0) {
             (new component_test)->run($t);
             (new component_link_test)->run($t);
             run_display_test($t);
-            // TODO activate
+            // TODO activate Prio 2
             // run_export_test($t);
             // run_permission_test ($t);
 
@@ -291,7 +291,7 @@ if ($start_usr->id() > 0) {
             //run_value_ui_test($t);
             //run_formula_ui_test($t);
 
-            // TODO activate
+            // TODO activate Prio 2
             //$t->run_api_test();
             //run_word_ui_test($t);
             // TODO add a test to merge a separate opened phrase Canton Zürich with Zurich (Canton)
@@ -303,7 +303,7 @@ if ($start_usr->id() > 0) {
             $t->cleanup();
 
             // start the integration tests by loading the base and sample data
-            // TODO activate
+            // TODO activate Prio 1
             //run_import_test(unserialize(TEST_IMPORT_FILE_LIST), $t);
 
             // display the test results

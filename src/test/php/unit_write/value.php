@@ -74,7 +74,7 @@ class value_test
         // check if loading value with a phrase returns a value created with the phrase parts
         // e.g. the value created with words canton and zurich
         // should be returned if requested with the phrase canton of zurich
-        // TODO activate
+        // TODO activate Prio 2
         $val = $t->load_value(array(
             word_api::TN_CANTON,
             word_api::TN_ZH,

@@ -127,7 +127,6 @@ if ($usr->id() > 0) {
         // create the test dataset to check the basic write functions
         $t = new test_unit_read_db();
         $t->set_users();
-        // TODO activate
         $t->create_test_db_entries($t);
 
         // remove the test dataset for a clean database

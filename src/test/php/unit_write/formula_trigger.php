@@ -123,7 +123,7 @@ class formula_trigger_test
 
         // remove the test values
         $val_add1->del();
-        // TODO activate
+        // TODO activate Prio 1
         //$val_add2->del();
 
         // change the second number and test if the result has been updated

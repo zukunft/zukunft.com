@@ -117,7 +117,7 @@ class phrase_list_test
         $phr_lst = $wrd_lst->phrase_lst();
         $lst_is = $phr_lst->is();
         $result = $lib->dsp_array($lst_is->names());
-        // TODO activate
+        // TODO activate Prio 1
         //$t->display('phrase_list->is for ' . $phr_lst->dsp_name() . ' up', $target, $result);
 
         // test the excluding function

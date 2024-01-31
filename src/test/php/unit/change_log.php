@@ -66,7 +66,7 @@ class change_log_unit_tests
 
         $t->subheader('SQL statement creation tests');
         $log = $t->dummy_change_log_named();
-        // TODO activate
+        // TODO activate Prio 2
         //$t->assert_sql_table_create($db_con, $log);
         //$t->assert_sql_index_create($db_con, $log);
         //$t->assert_sql_foreign_key_create($db_con, $log);
@@ -109,7 +109,7 @@ class change_log_unit_tests
         // sql to load a list of log entry by word
         $db_con->set_usr($usr->id());
         $log_lst = new change_log_list();
-        // TODO activate
+        // TODO activate Prio 2
         //$this->assert_sql_list_by_obj_field($t, $db_con, $log_lst,            change_log_table::WORD, change_log_field::FLD_WORD_VIEW);
         //$this->assert_sql_list_by_obj_field($t, $db_con, $log_lst,            change_log_table::TRIPLE, change_log_field::FLD_TRIPLE_VIEW);
 

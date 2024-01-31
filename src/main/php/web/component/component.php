@@ -324,7 +324,7 @@ class component extends sandbox_typed
         if ($test_mode) {
             $pattern = word_api::TN_READ;
         }
-        // TODO activate
+        // TODO activate Prio 3
         //if ($this->code_id == 'form_field_triple_phrase_from') {
         if ($this->name == 'system form triple phrase from') {
             return $dbo->phrase_selector('from', $form_name, 'from:', '', $dbo->id(), $pattern);

@@ -110,7 +110,7 @@ class value_list_unit_db_tests
         $phr = new phrase($t->usr1, word::SYSTEM_CONFIG);
         $phr_lst = $phr->all_children();
         $val_lst = new value_list($t->usr1);
-        // TODO activate
+        // TODO activate Prio 1
         //$val_lst->load_by_phr_lst($phr_lst);
         $test_name = 'System configuration values contain also the default number of years';
         $target = 10;

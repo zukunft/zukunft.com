@@ -107,7 +107,7 @@ class value_unit_tests
         $t->assert_sql_delete($db_con, $val);
         $t->assert_sql_delete($db_con, $val, true);
         $t->assert_sql_by_id($db_con, $val);
-        // TODO activate
+        // TODO activate Prio 2
         //$this->assert_sql_by_grp($t, $db_con, $val);
         $t->assert_sql_changer($db_con, $val);
 
@@ -118,7 +118,7 @@ class value_unit_tests
         $val = $t->dummy_value_17_plus();
         $t->assert_sql_insert($db_con, $val);
         $t->assert_sql_update($db_con, $val);
-        // TODO activate
+        // TODO activate Prio 2
         //$this->assert_sql_by_grp($t, $db_con, $val);
         $t->assert_sql_changer($db_con, $val);
 

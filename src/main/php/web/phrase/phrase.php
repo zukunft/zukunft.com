@@ -294,7 +294,7 @@ class phrase extends combine_named_dsp
                 $label = "Word:";
             }
         }
-        // TODO activate
+        // TODO activate Prio 3
         // $sel->bs_class = $class;
 
         return $phr_lst->selector($field_name, $form_name, $label, '', $this->id());
