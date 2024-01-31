@@ -254,8 +254,9 @@ class db_object
             or $class == result::class) {
             $grp = new group(new user());
             $grp->set_id($id);
+            $typ = $grp->table_type();
             $ext = $grp->table_extension();
-            $qp = $this->load_sql_multi($sc, sql_db::FLD_ID, $class, $ext);
+            $qp = $this->load_sql_multi($sc, sql_db::FLD_ID, $class, $ext, $typ);
         } else {
             $qp = $this->load_sql($sc, sql_db::FLD_ID);
         }

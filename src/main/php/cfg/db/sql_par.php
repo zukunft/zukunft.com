@@ -49,8 +49,10 @@ class sql_par
     public string $name;  // the unique name of the SQL statement
     public array $par;    // the list of the parameters used for the execution
     public string $ext;   // the extension used e.g. to decide if the index is int or string
+    public sql_table_type $typ; // to handle table that does not have a bigint prime index
 
     /**
+     * TODO replace $ext with $tbl_typ
      * @param string $class the name of the calling class used for the unique query name
      * @param bool $is_std true if the standard data for all users should be loaded
      * @param bool $all true if all rows should be loaded
@@ -58,10 +60,10 @@ class sql_par
      * @param sql_table_type $tbl_typ the table extension e.g. to select the table where the data should be saved
      */
     function __construct(
-        string $class,
-        bool $is_std = false,
-        bool $all = false,
-        string $ext = '',
+        string         $class,
+        bool           $is_std = false,
+        bool           $all = false,
+        string         $ext = '',
         sql_table_type $tbl_typ = sql_table_type::MOST
     )
     {
@@ -83,6 +85,7 @@ class sql_par
         }
         $this->par = array();
         $this->ext = $ext;
+        $this->typ = $tbl_typ;
     }
 
     /**

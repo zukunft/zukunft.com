@@ -81,10 +81,6 @@ use cfg\export\value_list_exp;
 class value_list extends sandbox_list
 {
 
-    // TODO deprecate
-    // fields to select the values
-    public ?phrase_list $phr_lst = null;     // show the values related to these phrases
-
     /*
      * im- and export link
      */
@@ -93,21 +89,15 @@ class value_list extends sandbox_list
     const FLD_EX_CONTEXT = 'context';
     const FLD_EX_VALUES = 'values';
 
+
     /*
      * construct and map
      */
 
     /**
-     * always set the user because a value list is always user specific
-     * @param user $usr the user who requested to see this value list
-     */
-    function __construct(user $usr)
-    {
-        parent::__construct($usr);
-    }
-
-    /**
      * fill the value list based on a database records
+     * TODO replace $ext with sql_tbl_typ
+     *
      * @param array $db_rows is an array of an array with the database values
      * @param bool $load_all force to include also the excluded values e.g. for admins
      * @return bool true if at least one value has been loaded
@@ -825,67 +815,6 @@ class value_list extends sandbox_list
         $qp->par = $sc->get_par();
 
         return $qp;
-    }
-
-    /**
-     * build the sql statement based in the number of words
-     * create an SQL statement to retrieve the parameters of a list of phrases from the database
-     *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param bool $get_name to create the SQL statement name for the predefined SQL within the same function to avoid duplicating if in case of more than on where type
-     * @return string the SQL statement base on the parameters set in $this
-     */
-    function load_by_phr_lst_sql_old(sql_db $db_con, bool $get_name = false): string
-    {
-
-        $sql_name = 'phr_lst_by_';
-        $phr_ids = $this->phr_lst->id_lst();
-        if (count($phr_ids) > 0) {
-            $sql_name .= count($phr_ids) . 'ids';
-        } else {
-            log_err("At lease on phrase ID must be set to load a value list.", "value_list->load_by_phr_lst_sql");
-        }
-
-        $sql = '';
-        $sql_where = '';
-        $sql_from = '';
-        $sql_pos = 0;
-        foreach ($phr_ids as $phr_id) {
-            if ($phr_id > 0) {
-                $sql_pos = $sql_pos + 1;
-                $sql_from = $sql_from . " value_phrase_links l" . $sql_pos . ", ";
-                if ($sql_pos == 1) {
-                    $sql_where = $sql_where . " WHERE l" . $sql_pos . ".phrase_id = " . $phr_id . " AND l" . $sql_pos . ".group_id = v.group_id ";
-                } else {
-                    $sql_where = $sql_where . "   AND l" . $sql_pos . ".phrase_id = " . $phr_id . " AND l" . $sql_pos . ".group_id = v.group_id ";
-                }
-            }
-        }
-
-        if ($sql_where <> '') {
-            $sql = "SELECT DISTINCT v.group_id,
-                    " . $db_con->get_usr_field(value::FLD_VALUE, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                    " . $db_con->get_usr_field(sandbox::FLD_EXCLUDED, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                    " . $db_con->get_usr_field(value::FLD_LAST_UPDATE, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                    " . $db_con->get_usr_field(source::FLD_ID, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                       v.user_id,
-                       v.group_id
-                  FROM " . $db_con->get_table_name_esc(value::class) . " v 
-             LEFT JOIN user_values u ON u.group_id = v.group_id 
-                                    AND u.user_id = " . $this->user()->id() . " 
-                 WHERE v.group_id IN ( SELECT DISTINCT v.group_id 
-                                         FROM " . $sql_from . "
-                                              " . $db_con->get_table_name_esc(value::class) . " v
-                                              " . $sql_where . " )
-              ORDER BY v.group_id;";
-        }
-
-        if ($get_name) {
-            $result = $sql_name;
-        } else {
-            $result = $sql;
-        }
-        return $result;
     }
 
     /**

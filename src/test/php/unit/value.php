@@ -191,17 +191,18 @@ class value_unit_tests
 
         $phr_grp = new group($usr);
         $phr_grp->set_id(5);
+        $sc = $db_con->sql_creator();
 
         // check the Postgres query syntax
-        $db_con->db_type = sql_db::POSTGRES;
-        $qp = $usr_obj->load_sql_by_grp($db_con->sql_creator(), $phr_grp, $usr_obj::class);
-        $result = $t->assert_qp($qp, $db_con->db_type);
+        $sc->db_type = sql_db::POSTGRES;
+        $qp = $usr_obj->load_sql_by_grp($sc, $phr_grp, $usr_obj::class);
+        $result = $t->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $db_con->db_type = sql_db::MYSQL;
-            $qp = $usr_obj->load_sql_by_grp($db_con->sql_creator(), $phr_grp, $usr_obj::class);
-            $t->assert_qp($qp, $db_con->db_type);
+            $sc->db_type = sql_db::MYSQL;
+            $qp = $usr_obj->load_sql_by_grp($sc, $phr_grp, $usr_obj::class);
+            $t->assert_qp($qp, $sc->db_type);
         }
     }
 
