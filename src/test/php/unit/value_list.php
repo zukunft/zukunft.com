@@ -88,29 +88,6 @@ class value_list_unit_tests
         $phr_lst = $t->phrase_list_math_const();
         $this->assert_sql_by_phr_lst($t, $db_con, $val_lst, $phr_lst, true);
 
-        $db_con->db_type = sql_db::POSTGRES;
-        $this->test = $t;
-
-        // sql to load a list of value by the phrase ids
-        $val_lst = new value_list($usr);
-        $val_lst->phr_lst = (new phrase_list_unit_tests)->get_phrase_list();
-        // TODO change to load_sql_by_phr_lst
-        $created_sql = $val_lst->load_by_phr_lst_sql_old($db_con);
-        $expected_sql = $t->file('db/value/value_list_by_triple_id_list.sql');
-        $t->assert('value_list->load_by_phr_lst_sql by group and time', $lib->trim($created_sql), $lib->trim($expected_sql));
-
-        // ... and check if the prepared sql name is unique
-        $t->assert_sql_name_unique($val_lst->load_by_phr_lst_sql_old($db_con, true));
-
-        // ... and the same for MySQL by replication the SQL builder statements
-        $db_con->db_type = sql_db::MYSQL;
-        $created_sql = $val_lst->load_by_phr_lst_sql_old($db_con);
-        $expected_sql = $t->file('db/value/value_list_by_triple_id_list_mysql.sql');
-        $t->assert('value_list->load_by_phr_lst_sql by group and time for MySQL', $lib->trim($created_sql), $lib->trim($expected_sql));
-
-        // TODO add a test to select a list of values that contains any phrase of the phrase list
-        // TODO add a test to select a list of values that contains all phrase of the phrase list
-
 
         $t->subheader('Im- and Export tests');
 

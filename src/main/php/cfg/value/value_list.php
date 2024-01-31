@@ -175,6 +175,10 @@ class value_list extends sandbox_list
     function load_by_phr_lst(phrase_list $phr_lst, bool $or = false, int $limit = sql_db::ROW_LIMIT): bool
     {
         global $db_con;
+
+        If ($phr_lst->is_empty()) {
+            log_warning("At lease one phrase should be given to load a value list");
+        }
         $sc = $db_con->sql_creator();
         $qp = $this->load_sql_by_phr_lst($sc, $phr_lst, false, $or, $limit);
         return $this->load($qp);
