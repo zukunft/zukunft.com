@@ -514,15 +514,16 @@ class sql
     /**
      * activate that in the SQL statement the user sandbox name field should be included
      * @param bool $std_fld true if the standard field e.g. the user id should no be added again
+     * @param string $usr_par the name of the user id parameter e.g. $1 for some postgres queries for correct merge in union queries
      */
-    function set_usr_query(bool $std_fld = true): void
+    function set_usr_query(bool $std_fld = true, string $usr_par = ''): void
     {
         if ($this->grp_query) {
             log_err('Group calculation cannot be combined with a user query');
         }
         $this->usr_query = true;
         $this->join_usr_query = true;
-        $this->set_user_join($std_fld);
+        $this->set_user_join($std_fld, $usr_par);
     }
 
     /**
@@ -595,11 +596,15 @@ class sql
      *
      * @param array $usr_field_lst list of the numeric user specific fields that should be loaded from the database
      * @param bool $std_fld false if the standard fields e.g. the user id should no be added again
+     * @param string $usr_par the name of the user id parameter e.g. $1 for some postgres queries for correct merge in union queries
      */
-    function set_usr_num_fields(array $usr_field_lst, bool $std_fld = true): void
+    function set_usr_num_fields(
+        array  $usr_field_lst,
+        bool   $std_fld = true,
+        string $usr_par = ''): void
     {
         $this->usr_num_field_lst = $usr_field_lst;
-        $this->set_usr_query($std_fld);
+        $this->set_usr_query($std_fld, $usr_par);
     }
 
     function set_usr_only_fields($field_lst): void
@@ -1176,9 +1181,10 @@ class sql
 
     /**
      * create the "JOIN" SQL statement based on the joined user fields
-     * @param bool $std_fld false if the standard fields e.g. the user id should no be added again
+     * @param bool $std_fld false if the standard fields e.g. the user id should not be added again
+     * @param string $usr_par the name of the user id parameter e.g. $1 for some postgres queries for correct merge in union queries
      */
-    private function set_user_join(bool $std_fld): void
+    private function set_user_join(bool $std_fld, string $usr_par = ''): void
     {
         if ($this->usr_query) {
             if (!$this->join_usr_added) {
@@ -1205,7 +1211,7 @@ class sql
                     } else {
                         if ($std_fld) {
                             $this->add_field(sql_db::USR_TBL . '.' . user::FLD_ID);
-                            $this->add_par(sql_par_type::INT, $this->usr_id);
+                            $this->add_par(sql_par_type::INT, $this->usr_id, false, false, $usr_par);
                             $this->join_usr_par_name = $this->par_name();
                         } else {
                             // TODO make the field pos of the user field more dynamic to cover more cases

@@ -274,11 +274,7 @@ class value_list extends sandbox_list
         foreach (value::TBL_LIST as $tbl_typ) {
             $sc->reset();
             $qp_tbl = $this->load_sql_by_phr_lst_single($sc, $phr_lst, $or, $tbl_typ, $par_pos);
-            if ($sc->db_type() != sql_db::MYSQL) {
-                $qp->merge($qp_tbl, true);
-            } else {
-                $qp->merge($qp_tbl);
-            }
+            $qp->merge($qp_tbl);
             $phr_pos = $par_pos + 2;
         }
         // sort the parameters if the parameters are part of the union
@@ -469,7 +465,7 @@ class value_list extends sandbox_list
             $sc->set_fields_dummy(array_merge(value::FLD_NAMES_NUM_USR_EX_STD, value::FLD_NAMES_USR_ONLY));
         } else {
             $sc->set_fields(value::FLD_NAMES);
-            $sc->set_usr_num_fields(value::FLD_NAMES_NUM_USR);
+            $sc->set_usr_num_fields(value::FLD_NAMES_NUM_USR, true, '$1');
             $sc->set_usr_only_fields(value::FLD_NAMES_USR_ONLY);
         }
         return $qp;
@@ -978,10 +974,9 @@ class value_list extends sandbox_list
 
         foreach ($this->lst() as $val) {
             if (!isset($val->phr_lst)) {
-                $val->load();
                 $val->load_phrases();
             }
-            $phr_lst->merge($val->phr_lst);
+            $phr_lst->merge($val->phr_lst());
         }
 
         log_debug($lib->dsp_count($phr_lst->lst()));

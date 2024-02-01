@@ -90,8 +90,7 @@ class test_unit_read_db extends test_unit
 
         $this->run_api_test();
         $this->run_ui_test();
-        // TODO activate Prio 1
-        // (new export())->run($this);
+        //(new export())->run($this);
 
 
     }

@@ -87,6 +87,9 @@ class value_list_unit_tests
         // ... a related to any phrase of a list e.g. the match const pi and e
         $phr_lst = $t->phrase_list_math_const();
         $this->assert_sql_by_phr_lst($t, $db_con, $val_lst, $phr_lst, true);
+        // ... a related to any phrase of a longer word and triple list e.g. all phrase related to the math number pi
+        $phr_lst = $t->dummy_phrase_list();
+        $this->assert_sql_by_phr_lst($t, $db_con, $val_lst, $phr_lst, true);
 
 
         $t->subheader('Im- and Export tests');

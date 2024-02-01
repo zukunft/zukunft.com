@@ -116,6 +116,16 @@ class value_list_unit_db_tests
         $target = 10;
         //$t->assert_contains($test_name, $val_lst->numbers(), [$target]);
 
+        // ... based on the phrase list
+        $phr_lst = $t->dummy_phrase_list();
+        $val_lst = $phr_lst->val_lst();
+        $result = $val_lst->dsp_id();
+        $target = '"" 3.1415926535898 / "" 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -2,,, / 3,,,) for user 2 (zukunft.com system test)';
+        if ($target != $result) {
+            $target = '"" 3.1415926535898 / "" 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 3,,, / -2,,,) for user 2 (zukunft.com system test)';
+        }
+        $t->assert($test_name, $result, $target);
+
     }
 
 }
