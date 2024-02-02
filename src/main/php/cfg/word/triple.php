@@ -465,6 +465,19 @@ class triple extends sandbox_link_typed implements JsonSerializable
         return $phrase_types->code_id($this->type_id);
     }
 
+    // TODO add a function for each type and streamline the call
+    /**
+     * @return bool
+     */
+    function is_time(): bool
+    {
+        if ($this->type_code_id() == phrase_type::TIME) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 
     /*
      * cast
@@ -1056,7 +1069,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
                 $wrd_lst->add($this->fob->obj());
             } elseif ($this->fob->id() < 0) {
                 $sub_wrd_lst = $this->fob->wrd_lst();
-                foreach ($sub_wrd_lst as $wrd) {
+                foreach ($sub_wrd_lst->lst() as $wrd) {
                     $wrd_lst->add($wrd);
                 }
             } else {
@@ -1070,7 +1083,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
                 $wrd_lst->add($this->tob->obj());
             } elseif ($this->tob->id() < 0) {
                 $sub_wrd_lst = $this->tob->wrd_lst();
-                foreach ($sub_wrd_lst as $wrd) {
+                foreach ($sub_wrd_lst->lst() as $wrd) {
                     $wrd_lst->add($wrd);
                 }
             } else {

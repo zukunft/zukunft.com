@@ -41,7 +41,7 @@
   
 */
 
-namespace im_export;
+namespace cfg\export;
 
 include_once MODEL_HELPER_PATH . 'library.php';
 
@@ -91,7 +91,7 @@ class export
         $lib = new library();
         $cfg = new config();
 
-        log_debug('export->get');
+        log_debug();
         $export_obj = (object)[];
 
         if ($phr_lst != null) {

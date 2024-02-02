@@ -512,14 +512,15 @@ const SYSTEM_USER_TEST_ID = 2; //
 const LIST_MIN_NAMES = 4; // number of object names that should al least be shown
 const DEBUG_SHOW_USER = 10; // starting from this debug level the user should be shown in the debug text
 
+const MODEL_PATH = PHP_PATH . 'cfg' . DIRECTORY_SEPARATOR; // path of the main model objects for db saving, api feed and processing
 const DB_LINK_PATH = ROOT_PATH . 'db_link' . DIRECTORY_SEPARATOR;
-const DB_PATH = PHP_PATH . 'cfg/db' . DIRECTORY_SEPARATOR;
+const DB_PATH = MODEL_PATH . 'db' . DIRECTORY_SEPARATOR;
 const UTIL_PATH = PHP_PATH . 'utils' . DIRECTORY_SEPARATOR;
 const SERVICE_PATH = PHP_PATH . 'service' . DIRECTORY_SEPARATOR;
 const SERVICE_IMPORT_PATH = SERVICE_PATH . 'import' . DIRECTORY_SEPARATOR;
 const SERVICE_EXPORT_PATH = SERVICE_PATH . 'export' . DIRECTORY_SEPARATOR;
+const EXPORT_PATH = MODEL_PATH . 'export' . DIRECTORY_SEPARATOR;
 const SERVICE_MATH_PATH = SERVICE_PATH . 'math' . DIRECTORY_SEPARATOR;
-const MODEL_PATH = PHP_PATH . 'cfg' . DIRECTORY_SEPARATOR; // path of the main model objects for db saving, api feed and processing
 const MODEL_HELPER_PATH = MODEL_PATH . 'helper' . DIRECTORY_SEPARATOR;
 const MODEL_SYSTEM_PATH = MODEL_PATH . 'system' . DIRECTORY_SEPARATOR;
 const MODEL_LOG_PATH = MODEL_PATH . 'log' . DIRECTORY_SEPARATOR;

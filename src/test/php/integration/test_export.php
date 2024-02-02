@@ -30,7 +30,7 @@
 
 */
 
-include_once SERVICE_EXPORT_PATH . 'xml.php';
+include_once EXPORT_PATH . 'xml.php';
 
 use api\word\word as word_api;
 use im_export\json_io;

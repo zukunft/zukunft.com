@@ -537,7 +537,7 @@ class value_dsp_old extends value
 
             // show the time phrase
             log_debug('show time');
-            $time_lst = $this->grp->phrase_list()->time_lst();
+            $time_lst = $this->grp->phrase_list()->time_word_list();
             $has_time = false;
             foreach ($time_lst->lst() as $time_phr) {
                 $result .= '  <tr>';

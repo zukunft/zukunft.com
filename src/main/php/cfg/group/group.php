@@ -1066,7 +1066,7 @@ class group extends sandbox_multi
     function time(): phrase
     {
         $phr = new phrase($this->user());
-        $phr_lst = $this->phrase_list()->time_lst();
+        $phr_lst = $this->phrase_list()->time_word_list();
         if (!$phr_lst->is_empty()) {
             // TODO use a new "most relevant" function
             $phr = $phr_lst->lst()[0];

@@ -125,7 +125,7 @@ function run_value_ui_test(test_cleanup $t): void
     $t->display('value_list->get_by_grp for ' . $wrd_lst->dsp_id() . '', $target, $result, TIMEOUT_LIMIT_DB);
 
     // ... get all times of the Switzerland values
-    $time_lst = $val_lst->time_lst();
+    $time_lst = $val_lst->time_list();
     $wrd_2014 = new word($usr);
     $wrd_2014->load_by_name(TW_2014);
     if ($time_lst->does_contain($wrd_2014)) {
@@ -140,7 +140,7 @@ function run_value_ui_test(test_cleanup $t): void
     $time_lst = new word_list($usr);
     $wrd_lst->load_by_names(array(word_api::TN_2019, word_api::TN_2021));
     $used_value_lst = $val_lst->filter_by_time($time_lst);
-    $used_time_lst = $used_value_lst->time_lst();
+    $used_time_lst = $used_value_lst->time_list();
     if ($time_lst->does_contain($wrd_2014)) {
         $result = true;
     } else {

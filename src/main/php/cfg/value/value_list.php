@@ -166,7 +166,7 @@ class value_list extends sandbox_list
     {
         global $db_con;
 
-        If ($phr_lst->is_empty()) {
+        if ($phr_lst->is_empty()) {
             log_warning("At lease one phrase should be given to load a value list");
         }
         $sc = $db_con->sql_creator();
@@ -947,20 +947,16 @@ class value_list extends sandbox_list
 
     /**
      * get a list with all time phrase used in the complete value list
+     * @return phrase_list with the time phrases of this value list
      */
-    function time_lst(): phrase_list
+    function time_list(): phrase_list
     {
-        $lib = new library();
-        $all_ids = array();
+        log_debug();
+        $lst = new phrase_list($this->user());
         foreach ($this->lst() as $val) {
-            $all_ids = array_unique(array_merge($all_ids, array($val->time_id)));
+            $lst->merge($val->phrase_list()->time_list());
         }
-        $phr_lst = new phrase_list($this->user());
-        if (count($all_ids) > 0) {
-            $phr_lst->load_names_by_ids(new phr_ids($all_ids));
-        }
-        log_debug($lib->dsp_count($phr_lst->lst()));
-        return $phr_lst;
+        return $lst;
     }
 
     /**
@@ -991,7 +987,7 @@ class value_list extends sandbox_list
         log_debug();
 
         $phr_lst = $this->phr_lst();
-        $phr_lst->merge($this->time_lst());
+        $phr_lst->merge($this->time_list());
 
         log_debug('done');
         return $phr_lst;
@@ -1021,24 +1017,26 @@ class value_list extends sandbox_list
         $src_ids = array();
 
         foreach ($this->lst() as $val) {
-            if ($val->source_id > 0) {
-                log_debug('test id ' . $val->source_id);
-                if (!in_array($val->source_id, $src_ids)) {
-                    log_debug('add id ' . $val->source_id);
-                    if (!isset($val->source)) {
-                        log_debug('load id ' . $val->source_id);
-                        $val->load_source();
-                        log_debug('loaded ' . $val->source->name);
-                    } else {
-                        if ($val->source_id <> $val->source->id) {
-                            log_debug('load id ' . $val->source_id);
+            if ($val->source != null) {
+                if ($val->source->id() > 0) {
+                    log_debug('test id ' . $val->source->id());
+                    if (!in_array($val->source->id(), $src_ids)) {
+                        log_debug('add id ' . $val->source->id());
+                        if (!isset($val->source)) {
+                            log_debug('load id ' . $val->source->id());
                             $val->load_source();
-                            log_debug('loaded ' . $val->source->name);
+                            log_debug('loaded ' . $val->source->name());
+                        } else {
+                            if ($val->source->id() <> $val->source->id()) {
+                                log_debug('load id ' . $val->source->id());
+                                $val->load_source();
+                                log_debug('loaded ' . $val->source->name());
+                            }
                         }
+                        $result[] = $val->source;
+                        $src_ids[] = $val->source->id();
+                        log_debug('added ' . $val->source->name());
                     }
-                    $result[] = $val->source;
-                    $src_ids[] = $val->source_id;
-                    log_debug('added ' . $val->source->name);
                 }
             }
         }

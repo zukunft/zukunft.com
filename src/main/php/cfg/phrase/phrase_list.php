@@ -1565,15 +1565,10 @@ class phrase_list extends sandbox_list_named
     {
         log_debug($new_phr_lst->dsp_id() . ' to ' . $this->dsp_id());
         if (!$new_phr_lst->is_empty()) {
-            log_debug('do');
             foreach ($new_phr_lst->lst() as $new_phr) {
-                log_debug('add');
-                log_debug('add ' . $new_phr->dsp_id());
                 $this->add($new_phr);
-                log_debug('added');
             }
         }
-        log_debug('to ' . $this->dsp_id());
         return $this;
     }
 
@@ -1853,12 +1848,23 @@ class phrase_list extends sandbox_list_named
      * TODO use a phrase list instead of a word list because the same word can be of type time and id
      * @return word_list the list object of the time words (not the time phrases!)
      */
-    function time_lst(): word_list
+    function time_word_list(): word_list
     {
         $wrd_lst = $this->wrd_lst_all();
         $result = $wrd_lst->time_lst();
         $result->set_user($this->user());
         return $result;
+    }
+
+    function time_list(): phrase_list
+    {
+        $lst = new phrase_list($this->user());
+        foreach ($this->lst() as $phr) {
+            if ($phr->is_time()) {
+                $lst->add($phr);
+            }
+        }
+        return $lst;
     }
 
     /**
@@ -1986,7 +1992,7 @@ class phrase_list extends sandbox_list_named
     function ex_time(): void
     {
         log_debug($this->dsp_id());
-        $del_wrd_lst = $this->time_lst();
+        $del_wrd_lst = $this->time_word_list();
         $del_phr_lst = $del_wrd_lst->phrase_lst();
         $this->diff($del_phr_lst);
     }

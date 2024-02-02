@@ -418,6 +418,18 @@ class phrase extends combine_named
         return $dsp_obj;
     }
 
+    /**
+     * @return object|null
+     */
+    function word(): object|null
+    {
+        if ($this->is_word()) {
+            return $this->obj();
+        } else {
+            return null;
+        }
+    }
+
     function term(): term
     {
         $trm = new term($this->user());
@@ -611,7 +623,7 @@ class phrase extends combine_named
         if ($this->id() < 0) {
             $lnk = $this->obj;
             $lnk->load_objects(); // try to be on the save side, and it is anyway checked if loading is really needed
-            $result = $lnk->from;
+            $result = $lnk->fob;
         } elseif ($this->id() > 0) {
             $result = $this->obj;
         } else {
@@ -623,13 +635,15 @@ class phrase extends combine_named
 
     /**
      * to enable the recursive function in work_link
+     * TODO add a list of triple already splitted to detect endless loops
      */
     function wrd_lst(): word_list
     {
         $wrd_lst = new word_list($this->user());
-        if ($this->id() < 0) {
-            $sub_wrd_lst = $this->wrd_lst();
-            foreach ($sub_wrd_lst as $wrd) {
+        if ($this->is_triple()) {
+            $trp = $this->obj();
+            $sub_wrd_lst = $trp->wrd_lst();
+            foreach ($sub_wrd_lst->lst() as $wrd) {
                 $wrd_lst->add($wrd);
             }
         } else {
@@ -1230,8 +1244,7 @@ class phrase extends combine_named
 
     function is_time()
     {
-        $wrd = $this->main_word();
-        return $wrd->is_time();
+        return $this->obj()->is_time();
     }
 
 // return true if the word has the type "measure" (e.g. "meter" or "CHF")
