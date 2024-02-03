@@ -92,6 +92,7 @@ class value_list_unit_db_tests
         $val_lst->load_by_phr_lst($phr_lst);
         $result = $val_lst->dsp_id();
         $target = '"" 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -2,,,) for user 2 (zukunft.com system test)';
+        // TODO activate Prio 1
         //$t->assert($test_name, $result, $target);
 
         // load values related to any phrase of a list

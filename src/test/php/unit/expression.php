@@ -164,12 +164,14 @@ class expression_unit_tests
             . ') for user 1 (zukunft.com system test)';
         $t->assert($test_name, $result, $target);
 
-        // element_special_following_frm
+        // element_special_following
         $phr_lst = $exp->element_special_following($trm_lst);
         $result = $phr_lst->dsp_name();
-        $target = '"time_prior","time_this"';
-        // TODO activate Prio 1
-        //$t->assert('element_special_following for "' . $exp->dsp_id() . '"', $result, $target, TIMEOUT_LIMIT_LONG);
+        $target = '"prior","this"';
+        $t->assert('element_special_following for "' . $exp->dsp_id() . '"', $result, $target, TIMEOUT_LIMIT_LONG);
+
+        // TODO element_special_following_frm
+        //$target = '"time_prior","time_this"';
 
         $test_name = 'test the formula element group creation';
         $elm_grp_lst = $exp->element_grp_lst($trm_lst);

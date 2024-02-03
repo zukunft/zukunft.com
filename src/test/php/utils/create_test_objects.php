@@ -415,7 +415,7 @@ class create_test_objects extends test_base
     {
         $wrd = new word($this->usr1);
         $wrd->set(word_api::TI_THIS, word_api::TN_THIS_PRE);
-        $wrd->set_type(formula_type::THIS);
+        $wrd->set_type(phrase_type::THIS);
         return $wrd;
     }
 
@@ -423,7 +423,7 @@ class create_test_objects extends test_base
     {
         $wrd = new word($this->usr1);
         $wrd->set(word_api::TI_PRIOR, word_api::TN_PRIOR_PRE);
-        $wrd->set_type(formula_type::PREV);
+        $wrd->set_type(phrase_type::PRIOR);
         return $wrd;
     }
 
