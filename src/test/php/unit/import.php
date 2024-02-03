@@ -48,12 +48,10 @@ class import
         $t->subheader('Import unit tests');
 
         $test_name = 'JSON import warning creation';
-        $json_str = file_get_contents(PATH_BASE_CONFIG_MESSAGE_FILES . 'warning_and_error_test.json');
+        $json_str = file_get_contents(PATH_TEST_IMPORT_FILES . 'warning_and_error_test.json');
         $file_import = new file_import;
-        $file_import->usr = $usr;
-        $file_import->json_str = $json_str;
-        $result = $file_import->put();
-        $target = 'JSON string is empty';
+        $result = $file_import->put($json_str, $usr);
+        $target = 'Unknown element test';
         $t->assert($test_name, $result->get_last_message(), $target);
     }
 

@@ -59,6 +59,7 @@ class export
     const POD = 'pod';
     const TIME = 'time';
     const SELECTION = 'selection';
+    const DESCRIPTION = 'description';
     const USER = 'user';
     const USER_ID = 'user_id';
     const USERS = 'users';

@@ -54,9 +54,7 @@ function import_json_file(string $filename, user $usr): string
             $msg .= ' failed because message file is empty of not found.';
         } else {
             $import = new file_import;
-            $import->usr = $usr;
-            $import->json_str = $json_str;
-            $import_result = $import->put();
+            $import_result = $import->put($json_str, $usr);
             if ($import_result->is_ok()) {
                 $msg .= ' done ('
                     . $import->words_done . ' words, '
