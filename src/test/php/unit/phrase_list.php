@@ -49,11 +49,6 @@ use cfg\word;
 
 class phrase_list_unit_tests
 {
-    const TEST_NAME = 'phrase_list->';
-    const PATH = 'db/phrase/';
-    const FILE_EXT = '.sql';
-    const FILE_MYSQL = '_mysql';
-
     public test_cleanup $test;
     public phrase_list $lst;
     public sql_db $db_con;
@@ -87,10 +82,9 @@ class phrase_list_unit_tests
 
         $t->subheader('SQL statement creation tests');
 
-        // load only the names
+        // load by name pattern (expected to be most often used)
         $phr_lst = new phrase_list($usr);
-        $t->assert_sql_names($db_con, $phr_lst, new phrase($usr));
-        $t->assert_sql_names($db_con, $phr_lst, new phrase($usr), triple_api::TN_READ);
+        $t->assert_sql_like($db_con, $phr_lst, 'S');
 
         // load by phrase ids
         $phr_lst = new phrase_list($usr);
@@ -99,7 +93,10 @@ class phrase_list_unit_tests
         $this->assert_sql_names_by_ids($t, $db_con, $phr_lst, $phr_ids);
         $phr_names = array(word_api::TN_READ, triple_api::TN_READ);
         $t->assert_sql_by_names($db_con, $phr_lst, $phr_names);
-        $t->assert_sql_like($db_con, $phr_lst, 'S');
+
+        // to review
+        $t->assert_sql_names($db_con, $phr_lst, new phrase($usr));
+        $t->assert_sql_names($db_con, $phr_lst, new phrase($usr), triple_api::TN_READ);
 
         $this->test = $t;
 
@@ -131,6 +128,11 @@ class phrase_list_unit_tests
         $t->assert($test_name, $wrd_lst->count(), 3);
 
         // TODO add assume time sql statement test
+
+
+        $t->subheader('FOAF unit tests');
+
+        $test_name = 'test the verb "are" by getting the phrases that are a city';
 
 
         $t->subheader('API unit tests');

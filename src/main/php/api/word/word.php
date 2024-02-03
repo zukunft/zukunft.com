@@ -83,8 +83,12 @@ class word extends sandbox_typed_api
     const TI_CITY = 192;
     const TN_ZH = 'Zurich';
     const TI_ZH = 193;
+    const TN_BE = 'Bern';
+    const TI_BE = 194;
+    const TN_GE = 'Geneva';
+    const TI_GE = 195;
     const TN_INHABITANT = 'inhabitant';
-    const TI_INHABITANT = 194;
+    const TI_INHABITANT = 197;
     const TN_INHABITANTS = 'inhabitants';
     const TN_YEAR = 'Year';
     const TN_2015 = '2015';
@@ -94,7 +98,7 @@ class word extends sandbox_typed_api
     const TN_2019 = '2019';
     const TI_2019 = 16;
     const TN_2020 = '2020';
-    const TI_2020 = 200;
+    const TI_2020 = 202;
     const TN_PCT = 'percent';
     const TI_PCT = 166;
     // _PRE are the predefined words
@@ -103,9 +107,9 @@ class word extends sandbox_typed_api
     const TN_PRIOR_PRE = 'prior';
     const TI_PRIOR = 187;
     const TN_PARTS = 'parts';
-    const TI_PARTS = 231;
+    const TI_PARTS = 210;
     const TN_TOTAL_PRE = 'total';
-    const TI_TOTAL = 232;
+    const TI_TOTAL = 211;
     const TN_COMPANY = 'Company';
 
     // persevered word names for unit and integration tests based on the database
@@ -162,6 +166,8 @@ class word extends sandbox_typed_api
         self::TN_CANTON,
         self::TN_CITY,
         self::TN_ZH,
+        self::TN_BE,
+        self::TN_GE,
         self::TN_INHABITANT,
         self::TN_INHABITANTS,
         self::TN_YEAR,

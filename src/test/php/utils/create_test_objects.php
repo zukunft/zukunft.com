@@ -702,6 +702,20 @@ class create_test_objects extends test_base
     }
 
     /**
+     * @return phrase_list with the cities for unit testing
+     */
+    function city_phrase_list(): phrase_list
+    {
+        $lst = new phrase_list($this->usr1);
+        $lst->add($this->dummy_word()->phrase());
+        $lst->add($this->dummy_word_const()->phrase());
+        $lst->add($this->dummy_word_pi()->phrase());
+        $lst->add($this->dummy_triple()->phrase());
+        $lst->add($this->dummy_triple_pi()->phrase());
+        return $lst;
+    }
+
+    /**
      * @return phrase_list with some math const e.g. to test loading a list of values by phrase list
      */
     function phrase_list_math_const(): phrase_list

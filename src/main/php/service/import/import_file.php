@@ -36,6 +36,7 @@ use cfg\user_profile;
 
 /**
  * import a single json file
+ * TODO return a user message instead of a string
  *
  * @param string $filename
  * @param user $usr

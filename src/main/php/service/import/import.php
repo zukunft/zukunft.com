@@ -135,7 +135,13 @@ class file_import
         $this->last_display_time = microtime(true);
 
         $json_array = json_decode($this->json_str, true);
-        if ($json_array != null) {
+        if ($json_array == null) {
+            if ($this->json_str != '') {
+                $result->add_message('JSON decode failed of ' . $this->json_str);
+            } else {
+                $result->add_warning('JSON string is empty');
+            }
+        } else {
             $total = $lib->count_recursive($json_array, 1);
 
             // get the user first to allow user specific validation

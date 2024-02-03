@@ -96,6 +96,7 @@ use cfg\verb_list;
 use cfg\view_sys_list;
 use cfg\view_type_list;
 use unit\component_list_unit_tests;
+use unit\import as import_unit_tests;
 use unit\html\batch_job as batch_job_html_tests;
 use unit\html\change_log as change_log_html_tests;
 use unit\html\component as component_html_tests;
@@ -244,6 +245,9 @@ class test_unit extends test_cleanup
         (new component_list_unit_tests)->run($this); // TODO add assert_api_to_dsp
         (new component_link_unit_tests)->run($this); // TODO add assert_api_to_dsp
         (new component_link_list_unit_tests)->run($this);
+
+        // do the im- and export unit tests
+        (new import_unit_tests)->run($this);
 
         // do the UI unit tests
         (new test_api)->run_openapi_test($this);

@@ -173,6 +173,7 @@ include_once $path_unit . 'language.php';
 include_once $path_unit . 'batch_job.php';
 include_once $path_unit . 'change_log.php';
 include_once $path_unit . 'system_log.php';
+include_once $path_unit . 'import.php';
 
 // load the testing functions for creating HTML code
 include_once $path_unit . 'html.php';

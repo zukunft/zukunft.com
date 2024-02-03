@@ -40,6 +40,7 @@ use cfg\config;
 use cfg\log\system_log_list;
 use cfg\log\system_log;
 use api\log\system_log as system_log_api;
+use api\word\word as word_api;
 use DateTime;
 use cfg\ip_range;
 use cfg\ip_range_list;
@@ -120,7 +121,7 @@ class system_unit_tests
         $t->assert($test_name, $val->dsp_id(), $target);
         $test_name = 'debug value_list id';
         $val_lst = $t->dummy_value_list();
-        $target = '"Pi (math)" 3.1415926535898 / "inhabitant in the city of Zurich (2019)" 415367 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -2,,, / 16,193,194,) for user 1 (zukunft.com system test)';
+        $target = '"Pi (math)" 3.1415926535898 / "inhabitant in the city of Zurich (2019)" 415367 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -2,,, / ' . word_api::TI_2019 . ',' . word_api::TI_ZH . ',' . word_api::TI_INHABITANT . ',) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $val_lst->dsp_id(), $target);
         $test_name = 'debug value_phrase_link id';
         $val_lnk = $t->dummy_value_phrase_link();

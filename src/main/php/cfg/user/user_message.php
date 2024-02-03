@@ -46,8 +46,9 @@ class user_message
     // the message types that defines what needs to be done next
     const OK = 1;
     const NOK = 2;
-    //const YES_NO = 3;
-    //const CONFIRM_CANCEL = 4;
+    const WARNING = 3;
+    //const YES_NO = 4;
+    //const CONFIRM_CANCEL = 5;
 
     private int $msg_status;
 
@@ -92,6 +93,16 @@ class user_message
     }
 
     /**
+     * set the status to warning
+     * @return void
+     */
+    function set_warning(): void
+    {
+        $this->msg_status = self::WARNING;
+
+    }
+
+    /**
      * set the main database row to which this user message is related
      * @param int|string $id the prime database index value
      * @return void
@@ -123,6 +134,26 @@ class user_message
             // if a message text is added it is expected that the result was not ok, but other stati are not changed
             if ($this->is_ok()) {
                 $this->set_not_ok();
+            }
+        }
+    }
+
+    /**
+     * show the warning message to the user without interrupting the process
+     *
+     * @param string $msg_text the warning text to add
+     * @return void is never expected to fail
+     */
+    function add_warning(string $msg_text): void
+    {
+        if ($msg_text != '') {
+            // do not repeat the same text more than once
+            if (!in_array($msg_text, $this->msg_text)) {
+                $this->msg_text[] = $msg_text;
+            }
+            // set to warning only if everything has been fine until now
+            if ($this->is_ok()) {
+                $this->set_warning();
             }
         }
     }
