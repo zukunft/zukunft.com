@@ -35,7 +35,7 @@ namespace test;
 include_once MODEL_WORD_PATH . 'triple_list.php';
 include_once WEB_WORD_PATH . 'triple_list.php';
 
-use api\triple_api;
+use api\word\triple as triple_api;
 use cfg\foaf_direction;
 use cfg\phrase_list;
 use cfg\triple;
@@ -43,7 +43,7 @@ use cfg\verb_list;
 use html\word\triple_list as triple_list_dsp;
 use cfg\library;
 use cfg\phrase;
-use cfg\sql_db;
+use cfg\db\sql_db;
 use cfg\triple_list;
 use cfg\verb;
 use cfg\word;
@@ -100,7 +100,7 @@ class triple_list_unit_tests
         $vrb = new verb(1);
         $this->assert_sql_by_phr_lst($t, $db_con, $trp_lst, $phr_lst, $vrb, foaf_direction::UP);
         $this->assert_sql_by_phr_lst($t, $db_con, $trp_lst, $phr_lst, $vrb, foaf_direction::DOWN);
-        // TODO activate
+        // TODO activate Prio 1
         // $this->assert_sql_by_phr_lst($t, $db_con, $trp_lst, $phr_lst, $vrb);
 
 

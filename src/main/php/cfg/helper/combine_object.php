@@ -40,6 +40,8 @@
 
 namespace cfg;
 
+use cfg\db\sql_db;
+
 class combine_object
 {
 
@@ -82,6 +84,20 @@ class combine_object
     function isset(): bool
     {
         return $this->obj->isset();
+    }
+
+
+    /*
+     * information
+     */
+
+    /**
+     * @return string the field name of the unique id of the combine database view
+     */
+    function id_field(): string
+    {
+        $lib = new library();
+        return $lib->class_to_name($this::class) . sql_db::FLD_EXT_ID;
     }
 
 }

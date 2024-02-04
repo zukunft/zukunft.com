@@ -263,6 +263,7 @@ class expression
     }
 
     /**
+     * get and set the reference text based on the user formula expression
      * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @return string|null the recreated expression in the database reference format or null if an error has occurred
      */
@@ -368,6 +369,7 @@ class expression
      */
     function element_special_following(?term_list $trm_lst = null): phrase_list
     {
+        global $phrase_types;
         $lib = new library();
 
         $phr_lst = new phrase_list($this->usr);
@@ -383,6 +385,13 @@ class expression
                                 $phr_lst->add($elm->obj->name_wrd->phrase());
                             }
                         }
+                    }
+                }
+                if ($elm->type == word::class or $elm->type == triple::class) {
+                    if ($elm->obj->type_id == $phrase_types->id(phrase_type::THIS)
+                        or $elm->obj->type_id == $phrase_types->id(phrase_type::NEXT)
+                        or $elm->obj->type_id == $phrase_types->id(phrase_type::PRIOR)) {
+                        $phr_lst->add($elm->obj->phrase());
                     }
                 }
             }

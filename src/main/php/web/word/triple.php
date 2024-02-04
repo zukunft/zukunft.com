@@ -33,7 +33,6 @@ namespace html\word;
 
 include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
 
-use api\phrase_api;
 use cfg\phrase_type;
 use html\api;
 use html\button;
@@ -46,8 +45,6 @@ use html\phrase\phrase as phrase_dsp;
 use html\sandbox\sandbox_typed;
 use html\phrase\term as term_dsp;
 use html\verb\verb as verb_dsp;
-use cfg\phrase;
-use cfg\phrase_list;
 
 class triple extends sandbox_typed
 {

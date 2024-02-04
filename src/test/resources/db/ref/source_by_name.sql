@@ -1,4 +1,4 @@
-PREPARE source_by_name (int, text) AS
+PREPARE source_by_name (bigint, text) AS
     SELECT s.source_id,
            u.source_id                                                                                 AS user_source_id,
            s.user_id,

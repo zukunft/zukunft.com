@@ -1,4 +1,4 @@
-PREPARE word_by_not_changed (int) AS
+PREPARE word_by_not_changed (bigint) AS
      SELECT user_id
        FROM user_words
       WHERE word_id = $1

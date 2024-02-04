@@ -38,7 +38,7 @@ include_once WEB_SANDBOX_PATH . 'db_object.php';
 include_once WEB_SANDBOX_PATH . 'sandbox.php';
 
 use api\api;
-use api\sandbox_value_api;
+use api\sandbox\sandbox_value as sandbox_value_api;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\phrase\phrase_group as phrase_group_dsp;
 

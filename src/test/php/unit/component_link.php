@@ -35,7 +35,7 @@ namespace test;
 include_once MODEL_VIEW_PATH . 'component_link_list.php';
 
 use cfg\component_link;
-use cfg\sql_db;
+use cfg\db\sql_db;
 
 class component_link_unit_tests
 {

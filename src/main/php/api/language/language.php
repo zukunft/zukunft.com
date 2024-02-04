@@ -30,9 +30,11 @@
 */
 
 
-namespace api;
+namespace api\language;
 
-class language_api extends type_object_api
+use api\sandbox\type_object as type_object_api;
+
+class language extends type_object_api
 {
 
     /*

@@ -29,7 +29,7 @@
   
 */
 
-namespace model\export;
+namespace cfg\export;
 
 class view_exp extends sandbox_exp_named
 {

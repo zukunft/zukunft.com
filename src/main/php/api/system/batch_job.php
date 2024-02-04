@@ -29,16 +29,16 @@
 
 */
 
-namespace api;
+namespace api\system;
 
 include_once MODEL_HELPER_PATH . 'db_object.php';
 include_once MODEL_USER_PATH . 'user.php';
 
-use cfg\db_object;
+use cfg\db_object_seq_id;
 use cfg\user;
 use DateTime;
 
-class batch_job_api extends db_object
+class batch_job extends db_object_seq_id
 {
 
     /*

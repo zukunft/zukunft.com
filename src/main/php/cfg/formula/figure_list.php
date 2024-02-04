@@ -35,9 +35,9 @@ include_once MODEL_FORMULA_PATH . 'fig_ids.php';
 include_once API_FORMULA_PATH . 'figure_list.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
 
-use api\figure_list_api;
-use cfg\db\sql_creator;
-use cfg\db\sql_par_type;
+use api\formula\figure_list as figure_list_api;
+use cfg\db\sql;
+use cfg\db\sql_par;
 use html\figure\figure as figure_dsp;
 use html\value\value as value_dsp;
 use test\test_api;
@@ -104,16 +104,16 @@ class figure_list extends sandbox_list
 
     /**
      * set the SQL query parameters to load a list of figure objects
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_creator $sc, string $query_name): sql_par
+    function load_sql(sql $sc, string $query_name): sql_par
     {
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
 
-        $sc->set_type(figure::class);
+        $sc->set_class(figure::class);
         $sc->set_name($qp->name);
 
         $sc->set_usr($this->user()->id());
@@ -127,11 +127,11 @@ class figure_list extends sandbox_list
     /**
      * create an SQL statement to retrieve a list of phrase objects by the id from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param fig_ids $ids figure ids that should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_ids(sql_creator $sc, fig_ids $ids): sql_par
+    function load_sql_by_ids(sql $sc, fig_ids $ids): sql_par
     {
         $qp = $this->load_sql($sc, 'ids');
         $sc->add_where(figure::FLD_ID, $ids->lst);
@@ -255,9 +255,12 @@ class figure_list extends sandbox_list
      */
 
     /**
+     * create a text that describes the figures for unique identification
+     *
+     * @param term_list|null $trm_lst a cached list of terms
      * @return string to display the unique id fields
      */
-    function dsp_id(): string
+    function dsp_id(?term_list $trm_lst = null): string
     {
         $id = $this->ids_txt();
         $name = $this->name();

@@ -1,4 +1,4 @@
-PREPARE triple_by_usr_cfg (int, int) AS
+PREPARE triple_by_usr_cfg (bigint, bigint) AS
     SELECT triple_id,
            triple_name,
            name_given,

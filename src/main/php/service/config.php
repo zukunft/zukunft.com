@@ -34,6 +34,8 @@
 
 namespace cfg;
 
+use cfg\db\sql_db;
+use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 
 include_once DB_PATH . 'sql_db.php';
@@ -67,7 +69,7 @@ class config
             log_err("The code id must be set", "config->get_sql");
         }
 
-        $db_con->set_type(sql_db::TBL_CONFIG);
+        $db_con->set_class(sql_db::TBL_CONFIG);
         $qp = new sql_par(self::class);
         $qp->name .= 'get';
         $db_con->set_name($qp->name);
@@ -191,7 +193,7 @@ class config
 
         $db_value = $this->default_value($code_id);
         $db_description = $this->default_description($code_id);
-        $db_id = $db_con->insert(
+        $db_id = $db_con->insert_old(
             array(
                 sql_db::FLD_CODE_ID,
                 sql_db::FLD_VALUE,
@@ -217,7 +219,7 @@ class config
     private function add(string $code_id, string $value, string $description, sql_db $db_con): bool
     {
         $result = false;
-        $db_id = $db_con->insert(
+        $db_id = $db_con->insert_old(
             array(
                 sql_db::FLD_CODE_ID,
                 sql_db::FLD_VALUE,
@@ -243,7 +245,7 @@ class config
     private function update(string $code_id, string $value, string $description, sql_db $db_con): bool
     {
         $result = false;
-        $db_id = $db_con->update(
+        $db_id = $db_con->update_old(
             $code_id,
             array(
                 sql_db::FLD_VALUE,

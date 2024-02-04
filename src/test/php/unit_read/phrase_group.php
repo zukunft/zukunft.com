@@ -32,9 +32,8 @@
 
 namespace test;
 
-use api\formula_api;
-use api\word_api;
-use cfg\phrase_group;
+use api\word\word as word_api;
+use cfg\group\group;
 use cfg\phrase_list;
 
 class phrase_group_unit_db_tests
@@ -50,21 +49,21 @@ class phrase_group_unit_db_tests
         // test if the phrase group links are correctly recreated when a group is updated
         $phr_lst = new phrase_list($t->usr1);
         $phr_lst->load_by_names(array(word_api::TN_ZH, word_api::TN_CANTON, word_api::TN_INHABITANTS));
-        $grp = $phr_lst->get_grp();
-        $grp_check = new phrase_group($t->usr1);
-        $grp_check->load_by_id($grp->id());
+        $grp = $phr_lst->get_grp_id();
+        $grp_check = new group($t->usr1);
+        $grp_check->set_id($grp->id());
         $result = $grp_check->load_link_ids_for_testing();
-        $target = $grp->phr_lst->id_lst();
+        $target = $grp->phrase_list()->id_lst();
         $t->display('phrase_group->load_link_ids for ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
 
         // second test if the phrase group links are correctly recreated when a group is updated
         $phr_lst = new phrase_list($t->usr1);
         $phr_lst->load_by_names(array(word_api::TN_ZH, word_api::TN_CANTON, word_api::TN_INHABITANTS, word_api::TN_MIO, word_api::TN_2020));
-        $grp = $phr_lst->get_grp();
-        $grp_check = new phrase_group($t->usr1);
-        $grp_check->load_by_id($grp->id());
+        $grp = $phr_lst->get_grp_id();
+        $grp_check = new group($t->usr1);
+        $grp_check->set_id($grp->id());
         $result = $grp_check->load_link_ids_for_testing();
-        $target = $grp->phr_lst->id_lst();
+        $target = $grp->phrase_list()->id_lst();
         $t->display('phrase_group->load_link_ids for ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
 
     }

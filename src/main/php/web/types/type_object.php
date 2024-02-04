@@ -43,11 +43,7 @@ namespace html\types;
 
 include_once API_SANDBOX_PATH . 'type_object.php';
 
-use api\type_object_api;
-use cfg\type_list;
-use cfg\db_cl;
-use cfg\sql_db;
-use cfg\sql_par;
+use api\sandbox\type_object as type_object_api;
 
 class type_object
 {

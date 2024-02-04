@@ -1,4 +1,4 @@
-PREPARE component_names_like (int, text, int, int) AS
+PREPARE component_names_like (bigint, text, bigint, bigint) AS
          SELECT s.component_id,
                 u.component_id AS user_component_id,
                 s.user_id,

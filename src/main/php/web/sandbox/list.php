@@ -136,7 +136,7 @@ class list_dsp
     /**
      * @returns true if the list has been replaced
      */
-    public function set_lst_dirty(): bool
+    function set_lst_dirty(): bool
     {
         $this->lst_dirty = true;
         return true;

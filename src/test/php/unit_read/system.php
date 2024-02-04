@@ -36,9 +36,9 @@ include_once MODEL_LOG_PATH . 'system_log.php';
 include_once DB_PATH . 'db_check.php';
 
 use cfg\batch_job_type_list;
-use cfg\db_check;
+use cfg\db\db_check;
 use cfg\type_lists;
-use cfg\sql_db;
+use cfg\db\sql_db;
 use cfg\sys_log_status;
 
 class system_unit_db_tests

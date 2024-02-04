@@ -32,8 +32,8 @@
 
 namespace unit\html;
 
-use api\term_api;
-use api\word_api;
+use api\phrase\term as term_api;
+use api\word\word as word_api;
 use html\html_base;
 use html\phrase\term_list as term_list_dsp;
 use cfg\verb;

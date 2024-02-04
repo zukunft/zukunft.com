@@ -1093,6 +1093,28 @@
           "type": "wikipedia"
         }
       ]
+    },
+    {
+      "name": "circumference",
+      "description": "In geometry, the circumference meaning is the perimeter of a circle or ellipse",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Circumference",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "diameter",
+      "description": "In geometry, a diameter of a circle is any straight line segment that passes through the centre of the circle and whose endpoints lie on the circle",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Diameter",
+          "type": "wikipedia"
+        }
+      ]
     }
   ],
   "triples": [
@@ -1120,6 +1142,14 @@
       "type": "hidden_triple"
     },
     {
+      "name": "\uD835\uDC52 (math)",
+      "description": "Is the limit of (1 + 1/n)^n as n approaches infinity",
+      "from": "Euler's constant",
+      "verb": "is a",
+      "to": "Mathematical constant",
+      "type": "hidden_triple"
+    },
+    {
       "name": "π (unit symbol)",
       "from": "π",
       "verb": "is alias of",
@@ -1128,6 +1158,7 @@
     },
     {
       "name": "\uD835\uDC52 (unit symbol)",
+      "description": "Is the limit of (1 + 1/n)^n as n approaches infinity",
       "from": "\uD835\uDC52",
       "verb": "is alias of",
       "to": "Euler's constant",

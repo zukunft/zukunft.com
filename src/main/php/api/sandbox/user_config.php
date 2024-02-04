@@ -30,7 +30,7 @@
 
 */
 
-namespace api;
+namespace api\sandbox;
 
 class user_config
 {

@@ -31,7 +31,7 @@
   
 */
 
-namespace cfg;
+namespace cfg\log;
 
 include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_SYSTEM_PATH . 'base_list.php';
@@ -39,9 +39,19 @@ include_once API_LOG_PATH . 'change_log_list.php';
 include_once WEB_LOG_PATH . 'change_log_list.php';
 include_once MODEL_SYSTEM_PATH . 'base_list.php';
 
-use api\change_log_list_api;
+use api\log\change_log_list as change_log_list_api;
+use cfg\base_list;
 use cfg\component\component;
-use cfg\db\sql_creator;
+use cfg\db\sql;
+use cfg\db\sql_par;
+use cfg\formula;
+use cfg\source;
+use cfg\triple;
+use cfg\user;
+use cfg\value\value;
+use cfg\verb;
+use cfg\view;
+use cfg\word;
 use html\log\change_log_list as change_log_list_dsp;
 
 class change_log_list extends base_list
@@ -301,7 +311,7 @@ class change_log_list extends base_list
      * e.g. the when and how a user has changed the way a word should be shown in the user interface
      * only public for SQL unit testing
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $table_name the table name of the user sandbox object e.g. 'word'
      * @param string $field_name the field that has been change e.g. 'view'
      * @param int $id the database id of the user sandbox object that has been changed
@@ -309,7 +319,7 @@ class change_log_list extends base_list
      * @return sql_par
      */
     function load_sql_obj_fld(
-        sql_creator $sc,
+        sql    $sc,
         string $table_name,
         string $field_name,
         int    $id,
@@ -322,11 +332,11 @@ class change_log_list extends base_list
         $table_id = $change_log_tables->id($table_name);
         $table_field_name = $table_id . $field_name;
         $field_id = $change_log_fields->id($table_field_name);
-        $log_named = new change_log_named($usr);
+        $log_named = new change($usr);
         $query_ext = $this->table_field_to_query_name($table_name, $field_name);
         $qp = $log_named->load_sql($sc, $query_ext, self::class);
-        $sc->add_where(change_log_named::FLD_FIELD_ID, $field_id);
-        $sc->add_where(change_log_named::FLD_ROW_ID, $id);
+        $sc->add_where(change::FLD_FIELD_ID, $field_id);
+        $sc->add_where(change::FLD_ROW_ID, $id);
         $sc->set_page($this->limit, $this->offset());
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -349,7 +359,7 @@ class change_log_list extends base_list
             $db_rows = $db_con->get($qp);
             if ($db_rows != null) {
                 foreach ($db_rows as $db_row) {
-                    $chg = new change_log_named($usr);
+                    $chg = new change($usr);
                     $chg->row_mapper($db_row);
                     $this->add_obj($chg);
                     $result = true;
@@ -367,10 +377,10 @@ class change_log_list extends base_list
 
     /**
      * add one change log entry to the change list
-     * @param change_log_named|null $chg_to_add the change that should be added to the list
+     * @param change|null $chg_to_add the change that should be added to the list
      * @returns bool true the log entry has been added
      */
-    function add(?change_log_named $chg_to_add): bool
+    function add(?change $chg_to_add): bool
     {
         $result = false;
         if ($chg_to_add != null) {

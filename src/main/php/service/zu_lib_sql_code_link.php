@@ -54,6 +54,9 @@
 */
 
 // TODO check automatically that the code links are unique
+use cfg\db\sql_db;
+use cfg\user;
+
 /**
  * returns the pk / row_id for a given code_id
  * if the code_id does not exist the missing record is created
@@ -95,14 +98,14 @@ function sql_code_link($code_id, $description, $db_con)
         log_debug('table name for code_id ' . $code_id . ' (' . $db_type . ') not found <br>');
     } else {
         // get the preloaded types directly from the hash
-        if ($db_type == sql_db::TBL_WORD_TYPE) {
+        if ($db_type == sql_db::TBL_WORD) {
             $row_id = $phrase_types_hash[$code_id];
         } else {
             //$db_con = new mysql;
             // remember the db_type
             $db_value_type = $db_con->get_type();
             $db_con->usr_id = SYSTEM_USER_ID;
-            $db_con->set_type($db_type);
+            $db_con->set_class($db_type);
 
             // get the row_id
             $row_id = $db_con->get_id_from_code($code_id);
@@ -132,7 +135,7 @@ function sql_code_link($code_id, $description, $db_con)
                 }
             }
             // restore the db_type
-            $db_con->set_type($db_value_type);
+            $db_con->set_class($db_value_type);
         }
     }
 

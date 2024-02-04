@@ -49,13 +49,20 @@ include_once MODEL_REF_PATH . 'ref.php';
 include_once SERVICE_EXPORT_PATH . 'word_exp.php';
 
 use api\api;
-use api\word_api;
-use cfg\db\sql_creator;
+use api\word\word as word_api;
+use cfg\db\sql;
+use cfg\db\sql_db;
+use cfg\db\sql_par;
 use cfg\db\sql_par_type;
-use model\export\exp_obj;
-use model\export\sandbox_exp_named;
-use model\export\word_exp;
+use cfg\group\group_list;
+use cfg\log\change;
+use cfg\log\change_log_action;
+use cfg\log\change_log_table;
+use cfg\value\value_list;
 use html\word\word as word_dsp;
+use cfg\export\sandbox_exp;
+use cfg\export\sandbox_exp_named;
+use cfg\export\word_exp;
 
 class word extends sandbox_typed
 {
@@ -412,19 +419,35 @@ class word extends sandbox_typed
 
 
     /*
+     * sql create
+     */
+
+    /**
+     * the sql statement to create the table
+     *
+     * @param sql $sc with the target db_type set
+     * @return string the sql statement to create the table
+     */
+    function sql_table(sql $sc): string
+    {
+        $sc->set_class(word::class);
+        return parent::sql_table($sc);
+    }
+
+    /*
      * loading / database access object (DAO) functions
      */
 
     /**
      * create the SQL to load the default word always by the id
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql_creator $sc, string $class = self::class): sql_par
+    function load_standard_sql(sql $sc, string $class = self::class): sql_par
     {
-        $sc->set_type(word::class);
+        $sc->set_class(word::class);
         $sc->set_fields(array_merge(
             self::FLD_NAMES,
             self::FLD_NAMES_USR,
@@ -456,12 +479,12 @@ class word extends sandbox_typed
     /**
      * create the common part of an SQL statement to retrieve the parameters of a word from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    protected function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
+    function load_sql(sql $sc, string $query_name, string $class = self::class): sql_par
     {
         // TODO check if and where it is needed to exclude the formula words
         // global $phrase_types;
@@ -475,12 +498,12 @@ class word extends sandbox_typed
      * create an SQL statement to retrieve a word by id from the database
      * added to word just to assign the class for the user sandbox object
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param int $id the id of the user sandbox object
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql_creator $sc, int $id, string $class = self::class): sql_par
+    function load_sql_by_id(sql $sc, int $id, string $class = self::class): sql_par
     {
         return parent::load_sql_by_id($sc, $id, $class);
     }
@@ -488,11 +511,11 @@ class word extends sandbox_typed
     /**
      * create an SQL statement to retrieve a word representing a formula by name
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $name the name of the formula
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_formula_name(sql_creator $sc, string $name): sql_par
+    function load_sql_by_formula_name(sql $sc, string $name): sql_par
     {
         global $phrase_types;
         $qp = parent::load_sql_usr_num($sc, $this, formula::FLD_NAME);
@@ -545,14 +568,6 @@ class word extends sandbox_typed
         return $this->id();
     }
 
-    /**
-     * @return string with the id field name of the word (not the related formula)
-     */
-    function id_field(): string
-    {
-        return self::FLD_ID;
-    }
-
     function name_field(): string
     {
         return self::FLD_NAME;
@@ -593,10 +608,10 @@ class word extends sandbox_typed
      * @param int $size the number of values that should be returned
      * @return value_list a list object with the most relevant values related to this word
      */
-    function value_list(int $page = 1, int $size = SQL_ROW_LIMIT): value_list
+    function value_list(int $page = 1, int $size = sql_db::ROW_LIMIT): value_list
     {
         $val_lst = new value_list($this->user());
-        $val_lst->load_old($page, $size);
+        $val_lst->load_by_phr($this->phrase(), $size, $page);
         return $val_lst;
     }
 
@@ -633,7 +648,7 @@ class word extends sandbox_typed
      */
     function view_sql(sql_db $db_con): sql_par
     {
-        $db_con->set_type(word::class);
+        $db_con->set_class(word::class);
         $db_con->set_usr($this->user()->id());
         $db_con->set_fields(array(self::FLD_VIEW));
         $db_con->set_join_usr_count_fields(array(user::FLD_ID), word::class);
@@ -686,9 +701,7 @@ class word extends sandbox_typed
         $lib = new library();
         log_debug('for ' . $this->dsp_id() . ' and user "' . $this->user()->name . '"');
         $val_lst = new value_list($this->user());
-        $val_lst->phr = $this->phrase();
-        $val_lst->limit = SQL_ROW_MAX;
-        $val_lst->load_old();
+        $val_lst->load_by_phr($this->phrase());
         log_debug('got ' . $lib->dsp_count($val_lst->lst()));
         return $val_lst;
     }
@@ -705,7 +718,7 @@ class word extends sandbox_typed
 
         global $db_con;
 
-        $db_con->set_type(sql_db::TBL_FORMULA_LINK);
+        $db_con->set_class(sql_db::TBL_FORMULA_LINK);
         $qp = new sql_par(self::class);
         $qp->name = 'word_formula_by_id';
         $db_con->set_name($qp->name);
@@ -750,7 +763,7 @@ class word extends sandbox_typed
         $this->set_user($usr);
         $result = parent::import_obj($in_ex_json, $test_obj);
         foreach ($in_ex_json as $key => $value) {
-            if ($key == exp_obj::FLD_TYPE) {
+            if ($key == sandbox_exp::FLD_TYPE) {
                 $this->type_id = $phrase_types->id($value);
             }
             if ($key == self::FLD_PLURAL) {
@@ -759,7 +772,7 @@ class word extends sandbox_typed
                 }
             }
             // TODO change to view object like in triple
-            if ($key == exp_obj::FLD_VIEW) {
+            if ($key == sandbox_exp::FLD_VIEW) {
                 $wrd_view = new view($this->user());
                 if (!$test_obj) {
                     $wrd_view->load_by_name($value, view::class);
@@ -882,13 +895,13 @@ class word extends sandbox_typed
 
         foreach ($api_json as $key => $value) {
 
-            if ($key == exp_obj::FLD_NAME) {
+            if ($key == sandbox_exp::FLD_NAME) {
                 $this->name = $value;
             }
-            if ($key == exp_obj::FLD_DESCRIPTION) {
+            if ($key == sandbox_exp::FLD_DESCRIPTION) {
                 $this->description = $value;
             }
-            if ($key == exp_obj::FLD_TYPE_ID) {
+            if ($key == sandbox_exp::FLD_TYPE_ID) {
                 $this->type_id = $value;
             }
         }
@@ -1141,8 +1154,10 @@ class word extends sandbox_typed
     }
 
     /**
-     * @return phrase_list a list of words that are related to this word
+     * get all phrases that are linked to this word with the "is a" verb
      * e.g. for "Canton" it will return "Zurich (Canton)" and others, but not "Canton" itself
+     *
+     * @return phrase_list a list of words that are related to this word
      */
     function children(): phrase_list
     {
@@ -1155,15 +1170,17 @@ class word extends sandbox_typed
     }
 
     /**
-     * @return phrase_list a list of words that are related to the given word
+     * get all phrases that are linked to this word with the "is a" verb including the parent word
      * e.g. for "Canton" it will return "Zurich (Canton)" and "Canton", but not "Zurich (City)"
      * used to collect e.g. all formulas used for Canton
+     *
+     * @return phrase_list a list of words that are related to the given word
      */
     function are(): phrase_list
     {
-        $wrd_lst = $this->children();
-        $wrd_lst->add($this->phrase());
-        return $wrd_lst;
+        $phr_lst = $this->children();
+        $phr_lst->add($this->phrase());
+        return $phr_lst;
     }
 
     /**
@@ -1236,7 +1253,7 @@ class word extends sandbox_typed
 
         $link_id = $verbs->id(verb::FOLLOW);
         $db_con->usr_id = $this->user()->id();
-        $db_con->set_type(sql_db::TBL_TRIPLE);
+        $db_con->set_class(sql_db::TBL_TRIPLE);
         $key_result = $db_con->get_value_2key('from_phrase_id', 'to_phrase_id', $this->id, verb::FLD_ID, $link_id);
         if (is_numeric($key_result)) {
             $id = intval($key_result);
@@ -1262,7 +1279,7 @@ class word extends sandbox_typed
 
         $link_id = $verbs->id(verb::FOLLOW);
         $db_con->usr_id = $this->user()->id();
-        $db_con->set_type(sql_db::TBL_TRIPLE);
+        $db_con->set_class(sql_db::TBL_TRIPLE);
         $key_result = $db_con->get_value_2key('to_phrase_id', 'from_phrase_id', $this->id, verb::FLD_ID, $link_id);
         if (is_numeric($key_result)) {
             $id = intval($key_result);
@@ -1282,7 +1299,7 @@ class word extends sandbox_typed
 
         $sql = 'UPDATE words t
              SET ' . $db_con->sf("values") . ' = ( 
-          SELECT COUNT(value_id) 
+          SELECT COUNT(group_id) 
             FROM value_phrase_links l
            WHERE l.phrase_id = t.word_id);';
         $db_con->exe_try('Calculate word usage', $sql);
@@ -1451,7 +1468,7 @@ class word extends sandbox_typed
      */
     function not_changed_sql(sql_db $db_con): sql_par
     {
-        $db_con->set_type(word::class);
+        $db_con->set_class(word::class);
         return $db_con->load_sql_not_changed($this->id, $this->owner_id);
     }
 
@@ -1513,13 +1530,13 @@ class word extends sandbox_typed
     /**
      * create an SQL statement to retrieve the user changes of the current word
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_user_changes(sql_creator $sc, string $class = self::class): sql_par
+    function load_sql_user_changes(sql $sc, string $class = self::class): sql_par
     {
-        $sc->set_type(word::class, true);
+        $sc->set_class(word::class, true);
         return parent::load_sql_user_changes($sc, $class);
     }
 
@@ -1527,13 +1544,13 @@ class word extends sandbox_typed
      * set the log entry parameters for a value update
      */
     private
-    function log_upd_view($view_id): change_log_named
+    function log_upd_view($view_id): change
     {
         log_debug($this->dsp_id() . ' for user ' . $this->user()->name);
         $msk_new = new view($this->user());
         $msk_new->load_by_id($view_id);
 
-        $log = new change_log_named($this->user());
+        $log = new change($this->user());
         $log->action = change_log_action::UPDATE;
         $log->set_table(change_log_table::WORD);
         $log->set_field(self::FLD_VIEW);
@@ -1570,8 +1587,8 @@ class word extends sandbox_typed
                 //$db_con = new mysql;
                 $db_con->usr_id = $this->user()->id();
                 if ($this->can_change()) {
-                    $db_con->set_type(word::class);
-                    if (!$db_con->update($this->id, "view_id", $view_id)) {
+                    $db_con->set_class(word::class);
+                    if (!$db_con->update_old($this->id, "view_id", $view_id)) {
                         $result = 'setting of view failed';
                     }
                 } else {
@@ -1581,8 +1598,8 @@ class word extends sandbox_typed
                         }
                     }
                     if ($result == '') {
-                        $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_WORD);
-                        if (!$db_con->update($this->id, "view_id", $view_id)) {
+                        $db_con->set_class(sql_db::TBL_USER_PREFIX . sql_db::TBL_WORD);
+                        if (!$db_con->update_old($this->id, "view_id", $view_id)) {
                             $result = 'setting of view for user failed';
                         }
                     }
@@ -1646,19 +1663,6 @@ class word extends sandbox_typed
         return $result;
     }
 
-    function get_obj_with_same_id_fields(): sandbox
-    {
-        $db_chk = parent::get_obj_with_same_id_fields();
-        if ($db_chk->id > 0) {
-            if ($this->obj_name == word::class or $this->obj_name == word_dsp::class) {
-                // TODO check if this is always correct
-                $db_chk->id = 0;
-            }
-        }
-
-        return $db_chk;
-    }
-
     /**
      * delete the references to this word which includes the phrase groups, the triples and values
      * @return user_message of the link removal and if needed the error messages that should be shown to the user
@@ -1668,7 +1672,7 @@ class word extends sandbox_typed
         $result = new user_message();
 
         // collect all phrase groups where this word is used
-        $grp_lst = new phrase_group_list($this->user());
+        $grp_lst = new group_list($this->user());
         $grp_lst->load_by_phr($this->phrase());
 
         // collect all triples where this word is used
@@ -1677,8 +1681,7 @@ class word extends sandbox_typed
 
         // collect all values related to word triple
         $val_lst = new value_list($this->user());
-        $val_lst->phr = $this->phrase();
-        $val_lst->load_old();
+        $val_lst->load_by_phr($this->phrase());
 
         // if there are still values, ask if they really should be deleted
         if ($val_lst->has_values()) {

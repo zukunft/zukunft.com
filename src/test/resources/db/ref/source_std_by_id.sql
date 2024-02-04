@@ -1,4 +1,4 @@
-PREPARE source_std_by_id (int) AS
+PREPARE source_std_by_id (bigint) AS
     SELECT source_id,
            source_name,
            code_id,

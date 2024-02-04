@@ -1,4 +1,4 @@
-PREPARE word_list_by_children_verb_select (int, int[], int) AS
+PREPARE word_list_by_children_verb_select (bigint, bigint[], bigint) AS
     SELECT
            s.word_id,
            u.word_id AS user_word_id,

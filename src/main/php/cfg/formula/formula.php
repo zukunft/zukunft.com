@@ -49,11 +49,16 @@ include_once API_FORMULA_PATH . 'formula.php';
 include_once WEB_FORMULA_PATH . 'formula.php';
 include_once WEB_WORD_PATH . 'word.php';
 
-use api\formula_api;
-use cfg\db\sql_creator;
+use api\formula\formula as formula_api;
+use cfg\db\sql;
+use cfg\db\sql_db;
+use cfg\db\sql_par;
 use cfg\db\sql_par_type;
-use model\export\exp_obj;
-use model\export\formula_exp;
+use cfg\export\sandbox_exp;
+use cfg\export\formula_exp;
+use cfg\result\result;
+use cfg\result\result_list;
+use cfg\value\value;
 use DateTime;
 use Exception;
 use html\word\word as word_dsp;
@@ -383,13 +388,13 @@ class formula extends sandbox_typed
     /**
      * create the SQL to load the default formula always by the id
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql_creator $sc, string $class = self::class): sql_par
+    function load_standard_sql(sql $sc, string $class = self::class): sql_par
     {
-        $sc->set_type($class);
+        $sc->set_class($class);
         $sc->set_fields(array_merge(
             self::FLD_NAMES,
             self::FLD_NAMES_USR,
@@ -422,12 +427,12 @@ class formula extends sandbox_typed
      * create the common part of an SQL statement to retrieve
      * the parameters of a formula from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $query_name the name of the selection fields to make the query name unique
      * @param string $class the name of this class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    protected function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
+    function load_sql(sql $sc, string $query_name, string $class = self::class): sql_par
     {
         // maybe the formula name should be excluded from the user sandbox to avoid confusion
         return parent::load_sql_usr_num($sc, $this, $query_name);
@@ -494,14 +499,6 @@ class formula extends sandbox_typed
     function load_by_name(string $name, string $class = self::class): int
     {
         return parent::load_by_name($name, $class);
-    }
-
-    /**
-     * @return string with the id field name of the formula (not the formula word)
-     */
-    public function id_field(): string
-    {
-        return self::FLD_ID;
     }
 
     function name_field(): string
@@ -793,23 +790,26 @@ class formula extends sandbox_typed
 
         global $db_con;
 
-        $db_con->set_type(sql_db::TBL_RESULT);
+        $db_con->set_class(sql_db::TBL_RESULT);
         $db_con->set_usr($this->user()->id);
-        return $db_con->delete(self::FLD_ID, $this->id);
+        return $db_con->delete_old(self::FLD_ID, $this->id);
     }
 
     /**
+     * create a result object for this formula
+     *
+     * @param phrase_list $phr_lst list of the phrases that describes the result
      * @return result with the value from this formula
      */
     private function create_result(phrase_list $phr_lst): result
     {
         $rst = new result($this->user());
         $rst->frm = $this;
-        $rst->src_grp = $phr_lst->get_grp();
+        $rst->src_grp = $phr_lst->get_grp_id();
         $rst->ref_text = $this->ref_text_r;
         $rst->num_text = $this->ref_text_r;
-        $rst->src_grp->phr_lst = clone $phr_lst;
-        $rst->grp->phr_lst = clone $phr_lst;
+        $rst->src_grp->set_phrase_list(clone $phr_lst);
+        $rst->grp->set_phrase_list(clone $phr_lst);
         if ($rst->last_val_update < $this->last_update) {
             $rst->last_val_update = $this->last_update;
         }
@@ -820,8 +820,9 @@ class formula extends sandbox_typed
     /**
      * fill the formula in the reference format with numbers
      * @param phrase_list $phr_lst list of phrase used to select the value for the calculation
-     * @param phrase_list|null $pre_phr_lst
+     * @param phrase_list|null $pre_phr_lst list of preloaded / cached terms
      * TODO verbs
+     * @return result_list all results of the formula for the given phrase list
      */
     function to_num(phrase_list $phr_lst, ?phrase_list $pre_phr_lst = null): result_list
     {
@@ -1027,7 +1028,7 @@ class formula extends sandbox_typed
                             $calc = new math;
                             $res->value = $calc->parse($res->num_text);
                             $res->is_updated = true;
-                            log_debug('the calculated ' . $this->dsp_id() . ' is ' . $res->value . ' for ' . $res->grp->phr_lst->dsp_id());
+                            log_debug('the calculated ' . $this->dsp_id() . ' is ' . $res->value . ' for ' . $res->grp()->phrase_list()->dsp_id());
                         }
                     }
                 }
@@ -1133,33 +1134,33 @@ class formula extends sandbox_typed
                             if (isset($res_add_phr_lst)) {
 
                                 // add the phrases left of the equal sign to the result e.g. percent for the increase formula
-                                log_debug('result words "' . $res_add_phr_lst->dsp_id() . '" defined for ' . $res->grp->phr_lst->dsp_id());
+                                log_debug('result words "' . $res_add_phr_lst->dsp_id() . '" defined for ' . $res->grp()->dsp_id());
                                 $res_add_wrd_lst = $res_add_phr_lst->wrd_lst_all();
 
                                 // if the result words contains "percent" remove any measure word from the list, because a relative value is expected without measure
                                 if ($res_add_wrd_lst->has_percent()) {
                                     log_debug('has percent');
-                                    $res->grp->phr_lst->ex_measure();
-                                    log_debug('measure words removed from ' . $res->grp->phr_lst->dsp_id());
+                                    $res->grp()->phrase_list()->ex_measure();
+                                    log_debug('measure words removed from ' . $res->grp()->phrase_list()->dsp_id());
                                 }
 
                                 // if in the formula is defined, that the result is in percent
                                 // and the values used are in millions, the result is only in percent, but not in millions
                                 // TODO check that all value have the same scaling and adjust the scaling if needed
                                 if ($res_add_wrd_lst->has_percent()) {
-                                    $res->grp->phr_lst->ex_scaling();
-                                    log_debug('scaling words removed from ' . $res->grp->phr_lst->dsp_id());
+                                    $res->grp()->phrase_list()->ex_scaling();
+                                    log_debug('scaling words removed from ' . $res->grp()->phrase_list()->dsp_id());
                                     // maybe add the scaling word to the result words to remember based on which words the result has been created,
                                     // but probably this is not needed, because the source words are also saved
                                     //$scale_wrd_lst = $res_add_wrd_lst->scaling_lst ();
-                                    //$res->grp->phr_lst->merge($scale_wrd_lst->lst);
-                                    //zu_debug(self::class . '->calc -> added the scaling word "'.implode(",",$scale_wrd_lst->names()).'" to the result words "'.implode(",",$res->grp->phr_lst->names()).'"');
+                                    //$res->grp()->phrase_list()->merge($scale_wrd_lst->lst);
+                                    //zu_debug(self::class . '->calc -> added the scaling word "'.implode(",",$scale_wrd_lst->names()).'" to the result words "'.implode(",",$res->grp()->phrase_list()->names()).'"');
                                 }
 
                                 // if the formula is a scaling formula, remove the obsolete scaling word from the source words
                                 if ($res_add_wrd_lst->has_scaling()) {
-                                    $res->grp->phr_lst->ex_scaling();
-                                    log_debug('scaling words removed from ' . $res->grp->phr_lst->dsp_id());
+                                    $res->grp()->phrase_list()->ex_scaling();
+                                    log_debug('scaling words removed from ' . $res->grp()->phrase_list()->dsp_id());
                                 }
 
                             }
@@ -1169,9 +1170,9 @@ class formula extends sandbox_typed
                             if (isset($res_add_phr_lst)) {
                                 log_debug('add words ' . $res_add_phr_lst->dsp_id() . ' to the result');
                                 foreach ($res_add_phr_lst->lst() as $frm_result_wrd) {
-                                    $res->grp->phr_lst->add($frm_result_wrd);
+                                    $res->grp()->phrase_list()->add($frm_result_wrd);
                                 }
-                                log_debug('added words ' . $res_add_phr_lst->dsp_id() . ' to the result ' . $res->grp->phr_lst->dsp_id());
+                                log_debug('added words ' . $res_add_phr_lst->dsp_id() . ' to the result ' . $res->grp()->phrase_list()->dsp_id());
                             }
 
                             // add the formula name also to the result phrase e.g. increase
@@ -1181,7 +1182,7 @@ class formula extends sandbox_typed
                             if (is_null($this->name_wrd)) {
                                 log_warning('Cannot load word for formula ' . $this->dsp_id());
                             } else {
-                                $res->grp->phr_lst->add($this->name_wrd->phrase());
+                                $res->grp()->phrase_list()->add($this->name_wrd->phrase());
                             }
 
                             $res = $res->save_if_updated($has_result_phrases);
@@ -1259,7 +1260,7 @@ class formula extends sandbox_typed
         $this->set_user($usr);
         $result = parent::import_obj($in_ex_json, $test_obj);
         foreach ($in_ex_json as $key => $value) {
-            if ($key == exp_obj::FLD_TYPE) {
+            if ($key == sandbox_exp::FLD_TYPE) {
                 $this->type_id = $formula_types->id($value);
             }
             if ($key == self::FLD_EXPRESSION) {
@@ -1331,9 +1332,9 @@ class formula extends sandbox_typed
      * @param bool $do_load true if the result should be validated again before export
      *                      use false for a faster export and unit tests
      * TODO check where if the exp_obj can be replaced with a simple array or the other way round
-     * @return exp_obj with the reduced formula object that can be used to create a JSON message
+     * @return sandbox_exp with the reduced formula object that can be used to create a JSON message
      */
-    function export_obj(bool $do_load = true): exp_obj
+    function export_obj(bool $do_load = true): sandbox_exp
     {
         global $formula_types;
         global $share_types;
@@ -1537,10 +1538,10 @@ class formula extends sandbox_typed
             $field_values[] = $elm_type_id;
             $field_names[] = 'ref_id';
             $field_values[] = $elm_add_id;
-            $db_con->set_type(sql_db::TBL_FORMULA_ELEMENT);
+            $db_con->set_class(sql_db::TBL_FORMULA_ELEMENT);
             $field_names[] = 'order_nbr';
             $field_values[] = $elm_order_nbr;
-            $add_result = $db_con->insert($field_names, $field_values);
+            $add_result = $db_con->insert_old($field_names, $field_values);
             // in this case the row id is not needed, but for testing the number of action should be indicated by adding a '1' to the result string
             //if ($add_result > 0) {
             //    $result .= '1';
@@ -1565,8 +1566,8 @@ class formula extends sandbox_typed
             $field_values[] = $elm_type_id;
             $field_names[] = 'ref_id';
             $field_values[] = $elm_del_id;
-            $db_con->set_type(sql_db::TBL_FORMULA_ELEMENT);
-            $del_result = $db_con->delete($field_names, $field_values);
+            $db_con->set_class(sql_db::TBL_FORMULA_ELEMENT);
+            $del_result = $db_con->delete_old($field_names, $field_values);
             if ($del_result != '') {
                 $result = false;
             }
@@ -1769,7 +1770,7 @@ class formula extends sandbox_typed
     function not_changed_sql(sql_db $db_con): sql_par
     {
         $lib = new library();
-        $db_con->set_type($lib->class_to_name(self::class));
+        $db_con->set_class($lib->class_to_name(self::class));
         return $db_con->load_sql_not_changed($this->id(), $this->owner_id);
     }
 
@@ -1826,8 +1827,8 @@ class formula extends sandbox_typed
             // check again if there ist not yet a record
             if (!$this->check_usr_cfg()) {
                 // create an entry in the user sandbox
-                $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_FORMULA);
-                $log_id = $db_con->insert(array(self::FLD_ID, user::FLD_ID), array($this->id(), $this->user()->id));
+                $db_con->set_class(sql_db::TBL_USER_PREFIX . sql_db::TBL_FORMULA);
+                $log_id = $db_con->insert_old(array(self::FLD_ID, user::FLD_ID), array($this->id(), $this->user()->id));
                 if ($log_id <= 0) {
                     log_err('Insert of user_formula failed.');
                     $result = false;
@@ -1851,7 +1852,7 @@ class formula extends sandbox_typed
     {
         $lib = new library();
         $class = $lib->class_to_name($class);
-        $db_con->set_type(sql_db::TBL_FORMULA, true);
+        $db_con->set_class(sql_db::TBL_FORMULA, true);
         $qp = new sql_par($class);
         $qp->name = $class . '_user_sandbox';
         $db_con->set_name($qp->name);
@@ -1867,13 +1868,13 @@ class formula extends sandbox_typed
     /**
      * create an SQL statement to retrieve the user changes of the current formula
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_user_changes(sql_creator $sc, string $class = self::class): sql_par
+    function load_sql_user_changes(sql $sc, string $class = self::class): sql_par
     {
-        $sc->set_type($class, true);
+        $sc->set_class($class, true);
         $sc->set_fields(array_merge(
             self::FLD_NAMES_USR,
             self::FLD_NAMES_NUM_USR
@@ -1898,9 +1899,9 @@ class formula extends sandbox_typed
         $msg_failed = $this->id() . ' failed for ' . $this->user()->name;
         $msg = '';
 
-        $db_con->set_type(sql_db::TBL_FORMULA_ELEMENT);
+        $db_con->set_class(sql_db::TBL_FORMULA_ELEMENT);
         try {
-            $msg = $db_con->delete(
+            $msg = $db_con->delete_old(
                 array(self::FLD_ID, user::FLD_ID),
                 array($this->id(), $this->user()->id));
         } catch (Exception $e) {
@@ -1909,9 +1910,9 @@ class formula extends sandbox_typed
         if ($msg != '') {
             log_err($action . ' elements ' . $msg_failed . ' because ' . $msg);
         } else {
-            $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_FORMULA);
+            $db_con->set_class(sql_db::TBL_USER_PREFIX . sql_db::TBL_FORMULA);
             try {
-                $msg = $db_con->delete(
+                $msg = $db_con->delete_old(
                     array(self::FLD_ID, user::FLD_ID),
                     array($this->id(), $this->user()->id));
                 if ($msg == '') {
@@ -1960,8 +1961,8 @@ class formula extends sandbox_typed
     {
         $result = '';
         $this->last_update = new DateTime();
-        $db_con->set_type(sql_db::TBL_FORMULA);
-        if (!$db_con->update($this->id(), self::FLD_LAST_UPDATE, 'Now()')) {
+        $db_con->set_class(sql_db::TBL_FORMULA);
+        if (!$db_con->update_old($this->id(), self::FLD_LAST_UPDATE, sql::NOW)) {
             $result = 'saving the update trigger for formula ' . $this->dsp_id() . ' failed';
         }
 
@@ -2130,8 +2131,8 @@ class formula extends sandbox_typed
             $log->row_id = $this->id;
             $log->set_field(self::FLD_NAME);
             if ($log->add()) {
-                $db_con->set_type(sql_db::TBL_FORMULA);
-                if (!$db_con->update($this->id(),
+                $db_con->set_class(sql_db::TBL_FORMULA);
+                if (!$db_con->update_old($this->id(),
                     array(self::FLD_NAME),
                     array($this->name()))) {
                     $result .= 'formula ' . $db_rec->name() . ' cannot be renamed to ' . $this->name();
@@ -2255,11 +2256,11 @@ class formula extends sandbox_typed
         $log = $this->log_add();
         if ($log->id() > 0) {
             // insert the new formula
-            $db_con->set_type(sql_db::TBL_FORMULA);
+            $db_con->set_class(sql_db::TBL_FORMULA);
             // include the formula_text and the resolved_text, because they should never be empty which is also forced by the db structure
-            $this->set_id($db_con->insert(
+            $this->set_id($db_con->insert_old(
                 array(self::FLD_NAME, user::FLD_ID, self::FLD_LAST_UPDATE, self::FLD_FORMULA_TEXT, self::FLD_FORMULA_USER_TEXT),
-                array($this->name(), $this->user()->id, "Now()", $this->ref_text, $this->usr_text)));
+                array($this->name(), $this->user()->id, sql::NOW, $this->ref_text, $this->usr_text)));
             if ($this->id() > 0) {
                 log_debug('->add formula ' . $this->dsp_id() . ' has been added as ' . $this->id);
                 // update the id in the log for the correct reference
@@ -2309,7 +2310,7 @@ class formula extends sandbox_typed
 
             // build the database object because the is anyway needed
             $db_con->set_usr($this->user()->id);
-            $db_con->set_type(sql_db::TBL_FORMULA);
+            $db_con->set_class(sql_db::TBL_FORMULA);
 
             // check if a new formula is supposed to be added
             if ($this->id() <= 0) {

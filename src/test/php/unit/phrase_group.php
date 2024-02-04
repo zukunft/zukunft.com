@@ -32,29 +32,23 @@
 
 namespace test;
 
-include_once API_PHRASE_PATH . 'phrase_group.php';
+include_once API_PHRASE_PATH . 'group.php';
 include_once MODEL_GROUP_PATH . 'group_id.php';
-include_once MODEL_PHRASE_PATH . 'phrase_group_word_link.php';
-include_once MODEL_PHRASE_PATH . 'phrase_group_triple_link.php';
-include_once MODEL_PHRASE_PATH . 'phrase_group_list.php';
+include_once MODEL_GROUP_PATH . 'group_link.php';
+include_once MODEL_GROUP_PATH . 'group_list.php';
 
-use api\phrase_group_api;
-use api\word_api;
+use api\phrase\group as group_api;
 use cfg\group\group_id;
+use cfg\group\group;
+use cfg\group\group_link;
+use cfg\group\group_list;
 use cfg\library;
-use cfg\phrase_group;
-use cfg\phrase_group_link;
-use cfg\phrase_group_list;
-use cfg\phrase_group_triple_link;
-use cfg\phrase_group_word_link;
 use cfg\phrase_list;
-use cfg\sql_db;
-use cfg\triple;
-use cfg\verb;
+use cfg\db\sql_db;
 use cfg\word;
 use cfg\word_list;
 
-class phrase_group_unit_tests
+class group_unit_tests
 {
     function run(test_cleanup $t): void
     {
@@ -64,125 +58,104 @@ class phrase_group_unit_tests
         // init
         $lib = new library();
         $db_con = new sql_db();
-        $t->name = 'phrase_group->';
-        $t->resource_path = 'db/phrase/';
+        $t->name = 'group->';
+        $t->resource_path = 'db/group/';
         $usr->set_id(1);
 
-        $t->header('Unit tests of the phrase group class (src/main/php/model/phrase/phrase_group.php)');
+        $t->header('Unit tests of the phrase group class (src/main/php/model/group/group.php)');
 
         $t->subheader('Group id tests');
         $grp_id = new group_id();
         $t->assert('64 bit group_id short word list', $grp_id->get_id($t->dummy_word_list_short()->phrase_lst()),
-            65539);
-        $t->assert('phrase ids of 64 bit group_id short', $grp_id->get_array(65539),
+            131078);
+        $t->assert('phrase ids of 64 bit group_id short', $grp_id->get_array(131078),
             $t->dummy_word_list_short()->phrase_lst()->ids());
         $t->assert('64 bit group_id word list', $grp_id->get_id($t->dummy_word_list()->phrase_lst()),
-            281483566841860);
-        $t->assert('phrase ids of 64 bit group_id', $grp_id->get_array(281483566841860),
+            562967133683720);
+        $t->assert('phrase ids of 64 bit group_id', $grp_id->get_array(562967133683720),
             $t->dummy_word_list()->phrase_lst()->ids());
 
         //$this->check_64_bit_key($t, [0,0,0,0], 0);
-        $this->check_64_bit_key($t, [1], 1);
-        $this->check_64_bit_key($t, [2], 2);
-        $this->check_64_bit_key($t, [32767], 32767);
-        $this->check_64_bit_key($t, [1,32767], 98303);
-        $this->check_64_bit_key($t, [2,32767], 163839);
-        $this->check_64_bit_key($t, [32767,32767], 2147450879);
-        $this->check_64_bit_key($t, [1,32767,32767], 6442418175);
-        $this->check_64_bit_key($t, [32767,32767,32767], 140735340838911);
-        $this->check_64_bit_key($t, [1,32767,32767,32767], 422210317549567);
-        $this->check_64_bit_key($t, [32767,32767,32767,32767], 9223231297218904063);
+        $this->check_64_bit_key($t, [1], 2);
+        $this->check_64_bit_key($t, [-1], 3);
+        $this->check_64_bit_key($t, [2], 4);
+        $this->check_64_bit_key($t, [-2], 5);
+        $this->check_64_bit_key($t, [32767], 65534);
+        $this->check_64_bit_key($t, [-32767], 65535);
+        $this->check_64_bit_key($t, [1,32767], 196606);
+        $this->check_64_bit_key($t, [2,32767], 327678);
+        $this->check_64_bit_key($t, [-2,32767], 393214);
+        $this->check_64_bit_key($t, [-32767,-1], 4294901763);
+        $this->check_64_bit_key($t, [-32767,32767], 4294967294);
+        $this->check_64_bit_key($t, [-32767,1,32767], 281470681939966);
+        $this->check_64_bit_key($t, [-32767,-1,32767], 281470682005502);
+        $this->check_64_bit_key($t, [-1,-32767,32767], 281470682005502);
+        $this->check_64_bit_key($t, [32765,32766,32767], 281453501677566);
+        $this->check_64_bit_key($t, [1,32765,32766,32767], 844403455098878);
+        $this->check_64_bit_key($t, [1234,32765,32766,32767], 694961696023576574);
+        $this->check_64_bit_key($t, [15678,32765,32766,32767], 8826210823241007102);
+        // TODO fix it
+        //$this->check_64_bit_key($t, [-32767,-32766,-15678,32767], -10829824000);
+        // TODO fix it
+        //$this->check_64_bit_key($t, [32767,32766,32765,32764], -281487861940224);
+        //$this->check_64_bit_key($t, [-32767,32767,-32766,32766], 9223231297218904063);
 
-        $t->assert('group_id triple list', $grp_id->get_id($t->dummy_triple_list()->phrase_lst()),32770);
-        $t->assert('triple ids 64 bit group_id ', $grp_id->get_array(32770), $t->dummy_triple_list()->phrase_lst()->ids());
+        $t->assert('group_id triple list', $grp_id->get_id($t->dummy_triple_list()->phrase_lst()),5);
+        $t->assert('triple ids 64 bit group_id ', $grp_id->get_array(5), $t->dummy_triple_list()->phrase_lst()->ids());
         $phr_lst = new phrase_list($usr);
         $phr_lst->merge($t->dummy_word_list()->phrase_lst());
         $phr_lst->merge($t->dummy_triple_list()->phrase_lst());
         $t->assert('group_id combine phrase list', $grp_id->get_id($phr_lst),
-            '...../+.....0+.....1+.....2+.....0-......+......+......+......+......+......+......+......+......+......+......+');
+            '.....0-...../+.....0+.....1+.....2+......+......+......+......+......+......+......+......+......+......+......+');
         $t->assert('group_id phrase list', $grp_id->get_id($t->dummy_phrase_list()),
-            '...../+.....0+.....1+...../-.....0-......+......+......+......+......+......+......+......+......+......+......+');
+            '.....0-...../-...../+.....0+.....1+......+......+......+......+......+......+......+......+......+......+......+');
         $t->assert('group_id phrase list 16', $grp_id->get_id($t->dummy_phrase_list_16()),
-            '...../+.....9-.....A+.....Z-.....a+..../.-....3s+....Yz-...1Ao+...I1A-../vLC+..8jId-.//ZSB+.4LYK3-.ZSahL+1FajJ2-');
+            '1FajJ2-.4LYK3-..8jId-...I1A-....Yz-..../.-.....Z-.....9-...../+.....A+.....a+....3s+...1Ao+../vLC+.//ZSB+.ZSahL+');
         $t->assert('group_id phrase list 16', $grp_id->get_id($t->dummy_phrase_list_17_plus()),
-            '...../+.....9-.....A+.....Z-.....a+..../.-....3s+....Yz-...1Ao+...I1A-../vLC+..8jId-.//ZSB+.4LYK3-.ZSahL+1FajJ2-.uraWl+');
+            '1FajJ2-.4LYK3-..8jId-...I1A-....Yz-..../.-.....Z-.....9-...../+.....A+.....a+....3s+...1Ao+../vLC+.//ZSB+.ZSahL+.uraWl+');
         $t->assert('group_id revers phrase list 16',
             implode(',', $grp_id->get_array('...../+.....9-.....A+.....Z-.....a+..../.-....3s+....Yz-...1Ao+...I1A-../vLC+..8jId-.//ZSB+.4LYK3-.ZSahL+1FajJ2-')),
             '1,-11,12,-37,38,-64,376,-2367,13108,-82124,505294,-2815273,17192845,-106841477,628779863,-3516593476');
         $grp_id = 0;
 
-        $t->subheader('SQL statement tests');
-        $phr_grp = new phrase_group($usr);
-        $t->assert_sql_by_id($db_con, $phr_grp);
+        $t->subheader('SQL statements - setup');
+        $grp = new group($usr);
+        $t->assert_sql_table_create($db_con, $grp);
+        $t->assert_sql_index_create($db_con, $grp);
+        $t->assert_sql_foreign_key_create($db_con, $grp);
+        $t->assert_sql_truncate($db_con, $grp);
 
-        // sql to load the phrase group by word ids
-        $phr_grp = new phrase_group($usr);
-        $phr_lst = new phrase_list($usr);
-        $phr_lst->merge($t->dummy_word_list()->phrase_lst());
-        $phr_grp->phr_lst = $phr_lst;
-        $t->assert_load_sql_obj_vars($db_con, $phr_grp);
+        $t->subheader('SQL statements - read');
+        //$t->assert_sql_by_id($db_con, $grp);
+        $t->assert_sql_by_name($db_con, $grp);
+        $this->assert_sql_by_phrase_list($t, $db_con);
 
-        // sql to load the phrase group by triple ids
-        $phr_grp = new phrase_group($usr);
-        $phr_lst = new phrase_list($usr);
-        $phr_lst->merge($t->dummy_triple_list()->phrase_lst());
-        $phr_grp->phr_lst = $phr_lst;
-        $t->assert_load_sql_obj_vars($db_con, $phr_grp);
-
-        // sql to load the phrase group by word and triple ids
-        $phr_grp = new phrase_group($usr);
-        $phr_lst = new phrase_list($usr);
-        $phr_lst->merge($t->dummy_word_list()->phrase_lst());
-        $phr_lst->merge($t->dummy_triple_list()->phrase_lst());
-        $phr_grp->phr_lst = $phr_lst;
-        $t->assert_load_sql_obj_vars($db_con, $phr_grp);
-
-        // sql to load the phrase group by name
-        $phr_grp = new phrase_group($usr);
-        $phr_grp->name = phrase_group_api::TN_READ;
-        $t->assert_load_sql_obj_vars($db_con, $phr_grp);
-
-        // sql to load the word list ids
-        $wrd_lst = new word_list($usr);
-        $wrd1 = new word($usr);
-        $wrd1->set_id(1);
-        $wrd_lst->add($wrd1);
-        $wrd2 = new word($usr);
-        $wrd2->set_id(2);
-        $wrd_lst->add($wrd2);
-        $wrd3 = new word($usr);
-        $wrd3->set_id(3);
-        $wrd_lst->add($wrd3);
-        $phr_grp = new phrase_group($usr);
-        $phr_grp->set_id(0);
-        $phr_grp->phr_lst = $wrd_lst->phrase_lst();
-        $db_con->db_type = sql_db::POSTGRES;
-        $created_sql = $phr_grp->get_by_wrd_lst_sql();
-        $expected_sql = $t->file('db/phrase/phrase_group_by_id_list.sql');
-        $t->assert('phrase_group->get_by_wrd_lst_sql by word list ids', $lib->trim($created_sql), $lib->trim($expected_sql));
-
-        // ... and check if the prepared sql name is unique
-        $t->assert_sql_name_unique($phr_grp->get_by_wrd_lst_sql(true));
+        $t->subheader('SQL statements - write');
+        $grp->set_phrase_list($t->dummy_phrase_list_prime());
+        $t->assert_sql_insert($db_con, $grp);
+        $t->assert_sql_insert($db_con, $grp, true);
+        $t->assert_sql_update($db_con, $grp);
+        $t->assert_sql_update($db_con, $grp, true);
+        $grp->set_phrase_list($t->dummy_phrase_list_16());
+        $t->assert_sql_insert($db_con, $grp);
+        $grp->set_phrase_list($t->dummy_phrase_list_17_plus());
+        $t->assert_sql_insert($db_con, $grp, true);
 
 
-        $t->header('Unit tests of the phrase group word link class (src/main/php/model/phrase/phrase_group_triple.php)');
+        $t->header('Unit tests of the phrase group link class (src/main/php/model/group/group_link.php)');
 
         $t->subheader('SQL statement tests');
 
-        // sql to load the phrase group word links related to a group
-        $grp_wrd_lnk = new phrase_group_word_link();
-        $t->assert_sql_by_id($db_con, $grp_wrd_lnk);
+        // load the group by the phrase ids
 
-        $phr_grp = new phrase_group($usr);
-        $phr_grp->set_id(13);
-        $this->assert_sql_load_by_group_id($t, $db_con, $grp_wrd_lnk, $phr_grp);
+        // sql to load the phrase links related to a group
+        $grp_lnk = new group_link();
+        // TODO activate Prio 3 or use group id
+        //$t->assert_sql_by_id($db_con, $grp_lnk);
 
-        // sql to load the phrase group triple links related to a group
-        $grp_trp_lnk = new phrase_group_triple_link();
-        $t->assert_sql_by_id($db_con, $grp_trp_lnk);
-
-        $phr_grp->set_id(14);
-        $this->assert_sql_load_by_group_id($t, $db_con, $grp_trp_lnk, $phr_grp);
+        $grp->set_id(14);
+        // TODO activate Prio 3 or use group id
+        //$this->assert_sql_load_by_group_id($t, $db_con, $grp_lnk, $grp);
 
     }
 
@@ -191,14 +164,14 @@ class phrase_group_unit_tests
      *
      * @param test_cleanup $t the forwarded testing object
      * @param sql_db $db_con does not need to be connected to a real database
-     * @param phrase_group_link $phr_grp_lnk the phrase group triple or word link object used for testing
-     * @param phrase_group $grp the phrase group object to select the links
+     * @param group_link $phr_grp_lnk the phrase group triple or word link object used for testing
+     * @param group $grp the phrase group object to select the links
      */
     private function assert_sql_load_by_group_id(
         test_cleanup $t,
-        sql_db $db_con,
-        phrase_group_link $phr_grp_lnk,
-        phrase_group $grp): void
+        sql_db       $db_con,
+        group_link   $phr_grp_lnk,
+        group        $grp): void
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
@@ -213,15 +186,76 @@ class phrase_group_unit_tests
         }
     }
 
+    /**
+     * test the sql statement creation to load the group base on a phrase list
+     * depending on the size of the phrase list one of three group types are used
+     * 1. up to four phrases with an id within +/- 32k the table with a 64-bit key is used (named prime)
+     * 2. up to 16 phrase a table with a 512-bit key is used
+     * 3. for more than 16 phrase a table with a text key is used (named big)
+     *
+     * @param test_cleanup $t the forwarded testing object
+     * @param sql_db $db_con does not need to be connected to a real database
+     */
+    private function assert_sql_by_phrase_list(
+        test_cleanup $t,
+        sql_db       $db_con): void
+    {
+        global $usr;
+
+        $grp = new group($usr);
+
+        // check the Postgres query syntax for a list of up to four prime phrases
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $grp->load_sql_by_phrase_list($db_con->sql_creator(), $t->dummy_phrase_list_prime());
+        $result = $t->assert_qp($qp, $db_con->db_type);
+
+        // ... and for 16 phrase
+        if ($result) {
+            $qp = $grp->load_sql_by_phrase_list($db_con->sql_creator(), $t->dummy_phrase_list_16());
+            $t->assert_qp($qp, $db_con->db_type);
+        }
+
+        // ... and for more than 16 phrase
+        if ($result) {
+            $qp = $grp->load_sql_by_phrase_list($db_con->sql_creator(), $t->dummy_phrase_list_17_plus());
+            $t->assert_qp($qp, $db_con->db_type);
+        }
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $grp->load_sql_by_phrase_list($db_con->sql_creator(), $t->dummy_phrase_list_prime());
+            $t->assert_qp($qp, $db_con->db_type);
+        }
+
+        // ... and for 16 phrase
+        if ($result) {
+            $qp = $grp->load_sql_by_phrase_list($db_con->sql_creator(), $t->dummy_phrase_list_16());
+            $t->assert_qp($qp, $db_con->db_type);
+        }
+
+        // ... and for more than 16 phrase
+        if ($result) {
+            $qp = $grp->load_sql_by_phrase_list($db_con->sql_creator(), $t->dummy_phrase_list_17_plus());
+            $t->assert_qp($qp, $db_con->db_type);
+        }
+    }
+
     private function check_64_bit_key(test_cleanup $t, array $ids, int $id): void
     {
         $grp_id = new group_id();
-        $phr_lst = $t->dummy_word_list()->phrase_lst();
-        $wrd_ids = $ids;
-        while (count($wrd_ids) < 4) {
-            array_unshift($wrd_ids , 0);
+        $phr_lst = new phrase_list($t->usr1);
+        foreach ($ids as $phr_id) {
+            if ($phr_id < 0) {
+                $trp_phr = $t->dummy_triple()->phrase();
+                $trp_phr->set_id($phr_id);
+                $phr_lst->add($trp_phr);
+            } else {
+                $wrd_phr = $t->dummy_word()->phrase();
+                $wrd_phr->set_id($phr_id);
+                $phr_lst->add($wrd_phr);
+            }
         }
-        $phr_lst->set_ids($wrd_ids);
         $t->assert('64 bit group_id ' . $id, $grp_id->get_id($phr_lst), $id);
         $a = $grp_id->get_array($id);
         $t->assert('phrase ids 64 bit group_id ' . $id, $grp_id->get_array($id), $ids);

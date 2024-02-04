@@ -32,11 +32,11 @@
 
 namespace test\write;
 
-use api\formula_api;
-use api\value_api;
-use api\word_api;
+use api\formula\formula as formula_api;
+use api\value\value as value_api;
+use api\word\word as word_api;
 use cfg\phrase_list;
-use cfg\value;
+use cfg\value\value;
 use test\test_cleanup;
 use const test\TIMEOUT_LIMIT_DB_MULTI;
 use const test\TIMEOUT_LIMIT_LONG;
@@ -64,38 +64,38 @@ class formula_trigger_test
 
         // add a number to the test word
         $val_add1 = new value($usr);
-        $val_add1->grp = $phr_lst1->get_grp();
+        $val_add1->grp = $phr_lst1->get_grp_id();
         $val_add1->set_number(value_api::TV_CH_INHABITANTS_2019_IN_MIO);
         $result = $val_add1->save();
         // add a second number to the test word
         $val_add2 = new value($usr);
-        $val_add2->grp = $phr_lst2->get_grp();
+        $val_add2->grp = $phr_lst2->get_grp_id();
         $val_add2->set_number(value_api::TV_CH_INHABITANTS_2020_IN_MIO);
         $result = $val_add2->save();
 
         // check if the first number have been saved correctly
         $added_val = new value($usr);
-        $added_val->load_by_grp($phr_lst1->get_grp());
+        $added_val->load_by_grp($phr_lst1->get_grp_id());
         $result = $added_val->number();
         $target = value_api::TV_CH_INHABITANTS_2019_IN_MIO;
         $t->display('value->check added test value for "' . $phr_lst1->dsp_id() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
         // check if the second number have been saved correctly
         $added_val2 = new value($usr);
-        $added_val2->load_by_grp($phr_lst2->get_grp());
+        $added_val2->load_by_grp($phr_lst2->get_grp_id());
         $result = $added_val2->number();
         $target = value_api::TV_CH_INHABITANTS_2020_IN_MIO;
         $t->display('value->check added test value for "' . $phr_lst2->dsp_id() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
         // check if requesting the best number for the first number returns a useful value
         $best_val = new value($usr);
-        $best_val->grp = $phr_lst1->get_grp();
+        $best_val->grp = $phr_lst1->get_grp_id();
         $best_val->load_best();
         $result = $best_val->number();
         $target = value_api::TV_CH_INHABITANTS_2019_IN_MIO;
         $t->display('value->check best value for "' . $phr_lst1->dsp_id() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
         // check if requesting the best number for the second number returns a useful value
         $best_val2 = new value($usr);
-        $best_val2->grp = $phr_lst2->get_grp();
+        $best_val2->grp = $phr_lst2->get_grp_id();
         $best_val2->load_best();
         $result = $best_val2->number();
         $target = value_api::TV_CH_INHABITANTS_2020_IN_MIO;
@@ -123,7 +123,8 @@ class formula_trigger_test
 
         // remove the test values
         $val_add1->del();
-        $val_add2->del();
+        // TODO activate Prio 1
+        //$val_add2->del();
 
         // change the second number and test if the result has been updated
         // a second user changes the value back to the original value and check if for the second number the result is updated

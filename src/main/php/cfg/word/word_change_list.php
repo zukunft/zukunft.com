@@ -73,7 +73,7 @@ class word_change_list
      */
     function load_sql(sql_db $db_con): sql_par
     {
-        $db_con->set_type(word::class);
+        $db_con->set_class(word::class);
         $qp = new sql_par(self::class);
         $db_con->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
         $db_con->set_usr($this->user()->id());

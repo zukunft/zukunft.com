@@ -32,8 +32,8 @@
 
 namespace unit_read;
 
-use api\formula_api;
-use api\triple_api;
+use api\formula\formula as formula_api;
+use api\word\triple as triple_api;
 use cfg\formula;
 use cfg\triple_list;
 use test\test_cleanup;

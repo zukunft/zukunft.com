@@ -53,15 +53,17 @@ include_once MODEL_SYSTEM_PATH . 'ip_range_list.php';
 include_once MODEL_USER_PATH . 'user_profile.php';
 include_once SERVICE_EXPORT_PATH . 'user_exp.php';
 
-use api\user_api;
-use cfg\db\sql_creator;
+use api\user\user as user_api;
+use cfg\db\sql;
+use cfg\db\sql_db;
+use cfg\db\sql_par;
 use cfg\db\sql_par_type;
-use model\export\user_exp;
-use model\export\exp_obj;
+use cfg\export\user_exp;
+use cfg\export\sandbox_exp;
 use Exception;
 use html\user\user as user_dsp;
 
-class user extends db_object
+class user extends db_object_seq_id
 {
 
     /*
@@ -370,16 +372,16 @@ class user extends db_object
     /**
      * create the common part of an SQL statement to retrieve the parameters of a user from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $query_name the name of the query use to prepare and call the query
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    protected function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
+    function load_sql(sql $sc, string $query_name, string $class = self::class): sql_par
     {
         $qp = parent::load_sql($sc, $query_name, $class);
 
-        $sc->set_type(self::class);
+        $sc->set_class($class);
         $sc->set_name($qp->name);
 
         if ($this->viewer == null) {
@@ -398,12 +400,12 @@ class user extends db_object
     /**
      * create an SQL statement to retrieve a user by id from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param int $id the id of the user
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql_creator $sc, int $id, string $class = self::class): sql_par
+    function load_sql_by_id(sql $sc, int $id, string $class = self::class): sql_par
     {
         $qp = $this->load_sql($sc, sql_db::FLD_ID, $class);
         $sc->add_where(self::FLD_ID, $id);
@@ -416,12 +418,12 @@ class user extends db_object
     /**
      * create an SQL statement to retrieve a user by name from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $name the name of the user
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_name(sql_creator $sc, string $name, string $class = self::class): sql_par
+    function load_sql_by_name(sql $sc, string $name, string $class = self::class): sql_par
     {
         $qp = $this->load_sql($sc, sql_db::FLD_NAME, $class);
         $sc->add_where(self::FLD_NAME, $name);
@@ -434,12 +436,12 @@ class user extends db_object
     /**
      * create an SQL statement to retrieve a user by email from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $email the email of the user
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_email(sql_creator $sc, string $email, string $class = self::class): sql_par
+    function load_sql_by_email(sql $sc, string $email, string $class = self::class): sql_par
     {
         $qp = $this->load_sql($sc, 'email', $class);
         $sc->add_where(self::FLD_EMAIL, $email);
@@ -452,13 +454,13 @@ class user extends db_object
     /**
      * create an SQL statement to retrieve a user by name or email from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $name the name of the user
      * @param string $email the email of the user
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_name_or_email(sql_creator $sc, string $name, string $email, string $class = self::class): sql_par
+    function load_sql_by_name_or_email(sql $sc, string $name, string $email, string $class = self::class): sql_par
     {
         $qp = $this->load_sql($sc, 'name_or_email', $class);
         $sc->add_where(self::FLD_NAME, $name, sql_par_type::TEXT_OR);
@@ -472,12 +474,12 @@ class user extends db_object
     /**
      * create an SQL statement to retrieve a user with the ip from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $ip_addr the ip address with which the user has logged in
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_ip(sql_creator $sc, string $ip_addr, string $class = self::class): sql_par
+    function load_sql_by_ip(sql $sc, string $ip_addr, string $class = self::class): sql_par
     {
         $qp = $this->load_sql($sc, 'ip', $class);
         $sc->add_where(self::FLD_IP_ADDRESS, $ip_addr);
@@ -490,12 +492,12 @@ class user extends db_object
     /**
      * create an SQL statement to retrieve a user with the profile from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param int $profile_id the id of the profile of which the first matching user should be loaded
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_profile(sql_creator $sc, int $profile_id, string $class = self::class): sql_par
+    function load_sql_by_profile(sql $sc, int $profile_id, string $class = self::class): sql_par
     {
         $qp = $this->load_sql($sc, 'profile', $class);
         $sc->add_where(self::FLD_USER_PROFILE, $profile_id);
@@ -798,10 +800,10 @@ class user extends db_object
         // reset all parameters of this user object
         $this->reset();
         foreach ($json_obj as $key => $value) {
-            if ($key == exp_obj::FLD_NAME) {
+            if ($key == sandbox_exp::FLD_NAME) {
                 $this->name = $value;
             }
-            if ($key == exp_obj::FLD_DESCRIPTION) {
+            if ($key == sandbox_exp::FLD_DESCRIPTION) {
                 $this->description = $value;
             }
             if ($key == self::FLD_EMAIL) {
@@ -819,7 +821,7 @@ class user extends db_object
             if ($key == self::FLD_EX_PROFILE) {
                 $this->profile_id = $user_profiles->id($value);
             }
-            if ($key == exp_obj::FLD_CODE_ID) {
+            if ($key == sandbox_exp::FLD_CODE_ID) {
                 if ($profile_id == $user_profiles->id(user_profile::ADMIN)
                     or $profile_id == $user_profiles->id(user_profile::SYSTEM)) {
                     $this->code_id = $value;
@@ -847,9 +849,9 @@ class user extends db_object
     /**
      * create a user object for the export
      * @param bool $do_load to switch off the database load for unit tests
-     * @return exp_obj the filled object used to create the json
+     * @return sandbox_exp the filled object used to create the json
      */
-    function export_obj(bool $do_load = true): exp_obj
+    function export_obj(bool $do_load = true): sandbox_exp
     {
         log_debug();
         $result = new user_exp();
@@ -989,8 +991,8 @@ class user extends db_object
         global $db_con;
         //$db_con = new mysql;
         $db_con->usr_id = $this->id;
-        $db_con->set_type(sql_db::TBL_USER);
-        return $db_con->update($this->id, 'source_id', $source_id);
+        $db_con->set_class(sql_db::TBL_USER);
+        return $db_con->update_old($this->id, 'source_id', $source_id);
     }
 
     // remember the last source that the user has used
@@ -1001,7 +1003,7 @@ class user extends db_object
         global $db_con;
         //$db_con = new mysql;
         $db_con->usr_id = $this->id;
-        $result = $db_con->set_type(sql_db::TBL_USER);
+        $result = $db_con->set_class(sql_db::TBL_USER);
         //$result = $db_con->update($this->id, verb::FLD_ID, $vrb_id);
         return $result;
     }
@@ -1014,10 +1016,10 @@ class user extends db_object
     }
 
     // set the main log entry parameters for updating one word field
-    private function log_upd(): change_log_named
+    private function log_upd(): change
     {
         log_debug(' user ' . $this->name);
-        $log = new change_log_named($this);
+        $log = new change($this);
         $log->action = change_log_action::UPDATE;
         $log->set_table(change_log_table::USER);
 
@@ -1040,8 +1042,8 @@ class user extends db_object
             $log->row_id = $this->id;
             $log->set_field($fld_name);
             if ($log->add()) {
-                $db_con->set_type(sql_db::TBL_USER);
-                $result = $db_con->update($this->id, $log->field(), $log->new_value);
+                $db_con->set_class(sql_db::TBL_USER);
+                $result = $db_con->update_old($this->id, $log->field(), $log->new_value);
             }
         }
     }
@@ -1061,7 +1063,7 @@ class user extends db_object
 
         // build the database object because the is anyway needed
         $db_con->usr_id = $this->id;
-        $db_con->set_type(sql_db::TBL_USER);
+        $db_con->set_class(sql_db::TBL_USER);
 
         $db_usr = new user;
         $db_id = $db_usr->load_by_id($this->id);
@@ -1098,44 +1100,44 @@ class user extends db_object
         // build the database object because the is anyway needed
         //$db_con = new mysql;
         $db_con->usr_id = $this->id;
-        $db_con->set_type(sql_db::TBL_USER);
+        $db_con->set_class(sql_db::TBL_USER);
 
         if ($this->id <= 0) {
             log_debug(" add (" . $this->name . ")");
 
-            $this->id = $db_con->insert("user_name", $this->name);
+            $this->id = $db_con->insert_old("user_name", $this->name);
             // log the changes???
             if ($this->id > 0) {
                 // add the description of the user
-                if (!$db_con->update($this->id, sandbox_named::FLD_DESCRIPTION, $this->description)) {
+                if (!$db_con->update_old($this->id, sandbox_named::FLD_DESCRIPTION, $this->description)) {
                     $result = 'Saving of user description ' . $this->id . ' failed.';
                 }
                 // add the email of the user
-                if (!$db_con->update($this->id, self::FLD_EMAIL, $this->email)) {
+                if (!$db_con->update_old($this->id, self::FLD_EMAIL, $this->email)) {
                     $result = 'Saving of user email ' . $this->id . ' failed.';
                 }
                 // add the first name of the user
-                if (!$db_con->update($this->id, self::FLD_FIRST_NAME, $this->first_name)) {
+                if (!$db_con->update_old($this->id, self::FLD_FIRST_NAME, $this->first_name)) {
                     $result = 'Saving of user first name ' . $this->id . ' failed.';
                 }
                 // add the last name of the user
-                if (!$db_con->update($this->id, self::FLD_LAST_NAME, $this->last_name)) {
+                if (!$db_con->update_old($this->id, self::FLD_LAST_NAME, $this->last_name)) {
                     $result = 'Saving of user last name ' . $this->id . ' failed.';
                 }
                 // add the code of the user
                 if ($this->code_id != '') {
-                    if (!$db_con->update($this->id, self::FLD_CODE_ID, $this->code_id)) {
+                    if (!$db_con->update_old($this->id, self::FLD_CODE_ID, $this->code_id)) {
                         $result = 'Saving of user code id ' . $this->id . ' failed.';
                     }
                 }
                 // add the profile of the user
-                if (!$db_con->update($this->id, self::FLD_USER_PROFILE, $this->profile_id)) {
+                if (!$db_con->update_old($this->id, self::FLD_USER_PROFILE, $this->profile_id)) {
                     $result = 'Saving of user profile ' . $this->id . ' failed.';
                 }
                 // add the ip address to the user, but never for system users
                 if ($this->profile_id != $user_profiles->id(user_profile::SYSTEM)
                     and $this->profile_id != $user_profiles->id(user_profile::TEST)) {
-                    if (!$db_con->update($this->id, self::FLD_IP_ADDRESS, $this->get_ip())) {
+                    if (!$db_con->update_old($this->id, self::FLD_IP_ADDRESS, $this->get_ip())) {
                         $result = 'Saving of user ' . $this->id . ' failed.';
                     }
                 }

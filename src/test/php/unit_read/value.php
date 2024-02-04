@@ -32,12 +32,13 @@
 
 namespace test;
 
-use api\phrase_group_api;
-use api\triple_api;
-use api\value_api;
-use api\word_api;
+use api\phrase\group as group_api;
+use api\word\triple as triple_api;
+use api\value\value as value_api;
+use api\word\word as word_api;
+use cfg\group\group_id;
 use cfg\phrase_list;
-use cfg\value;
+use cfg\value\value;
 
 class value_unit_db_tests
 {
@@ -58,7 +59,7 @@ class value_unit_db_tests
             array(word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_MIO, word_api::TN_2020)
         );
         $val = new value($t->usr1);
-        $val->load_by_grp($phr_lst->get_grp());
+        $val->load_by_grp($phr_lst->get_grp_id());
         $result = $val->number();
         $target = value_api::TV_CH_INHABITANTS_2020_IN_MIO;
         $t->assert($test_name, $result, $target);
@@ -77,14 +78,17 @@ class value_unit_db_tests
         $t->subheader('Frontend API tests');
 
         $val = new value($t->usr1);
-        $val->load_by_id(1, value::class);
+        $phr_lst = new phrase_list($t->usr1);
+        $phr_lst->add_name(triple_api::TN_PI_NAME);
+        $grp = new group_id();
+        $val->load_by_id($grp->get_id($phr_lst));
         $val->load_objects();
         $api_val = $val->api_obj();
         $t->assert($t->name . 'api->id', $api_val->id, $val->id());
         $t->assert($t->name . 'api->number', $api_val->number(), $val->number());
         $t->assert_api_json_msg($api_val);
 
-        $phr_grp = $t->add_phrase_group(array(triple_api::TN_PI_NAME), phrase_group_api::TN_READ);
+        $phr_grp = $t->add_phrase_group(array(triple_api::TN_PI_NAME), group_api::TN_READ);
         $val = $t->load_value_by_phr_grp($phr_grp);
         $t->assert_api_obj($val);
 

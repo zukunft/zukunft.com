@@ -32,15 +32,10 @@
 
 namespace test;
 
-use api\formula_api;
 use api\view\view as view_api;
-use api\word_api;
-use cfg\formula;
-use cfg\formula_list;
-use cfg\phrase_type;
 use cfg\view;
 use cfg\view_sys_list;
-use cfg\sql_db;
+use cfg\db\sql_db;
 use cfg\view_list;
 
 class view_list_unit_tests

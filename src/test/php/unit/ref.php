@@ -32,7 +32,7 @@
 
 namespace test;
 
-use api\source_api;
+use api\ref\source as source_api;
 use cfg\ref_type_list;
 use cfg\source_list;
 use cfg\source_type_list;
@@ -40,7 +40,7 @@ use html\ref\ref as ref_dsp;
 use html\ref\source as source_dsp;
 use cfg\ref;
 use cfg\source;
-use cfg\sql_db;
+use cfg\db\sql_db;
 
 class ref_unit_tests
 {
@@ -62,6 +62,11 @@ class ref_unit_tests
         $ref = new ref($usr);
         $t->assert_sql_by_id($db_con, $ref);
         $this->assert_sql_link_ids($t, $db_con, $ref);
+
+        // sql to load a ref by id
+        $ref = new ref($usr);
+        $ref->set_id(3);
+        $t->assert_sql_standard($db_con, $ref);
 
         // sql to load the ref types
         $ref_type_list = new ref_type_list();
@@ -85,6 +90,9 @@ class ref_unit_tests
 
         $t->subheader('SQL statement tests');
         $src = new source($usr);
+        $t->assert_sql_table_create($db_con, $src);
+        $t->assert_sql_index_create($db_con, $src);
+        $t->assert_sql_foreign_key_create($db_con, $src);
         $t->assert_sql_by_id($db_con, $src);
         $t->assert_sql_by_name($db_con, $src);
         $t->assert_sql_by_code_id($db_con, $src);

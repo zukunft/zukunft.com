@@ -30,14 +30,15 @@
 
 */
 
-namespace api;
+namespace api\formula;
 
-include_once API_SANDBOX_PATH . 'list.php';
+include_once API_SANDBOX_PATH . 'list_object.php';
 include_once API_FORMULA_PATH . 'figure.php';
 
+use api\sandbox\list_object as list_api;
 use JsonSerializable;
 
-class figure_list_api extends list_api implements JsonSerializable
+class figure_list extends list_api implements JsonSerializable
 {
 
     /*
@@ -53,7 +54,7 @@ class figure_list_api extends list_api implements JsonSerializable
      * add a figure to the list
      * @returns bool true if the figure has been added
      */
-    function add(figure_api $phr): bool
+    function add(figure $phr): bool
     {
         return parent::add_obj($phr);
     }

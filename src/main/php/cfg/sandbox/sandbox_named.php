@@ -43,16 +43,21 @@ include_once API_VIEW_PATH . 'view.php';
 include_once API_COMPONENT_PATH . 'component.php';
 include_once API_WORD_PATH . 'word.php';
 
-use api\component\component_api;
-use api\formula_api;
-use api\phrase_api;
-use api\source_api;
+use api\component\component as component_api;
+use api\formula\formula as formula_api;
+use api\phrase\phrase as phrase_api;
+use api\ref\source as source_api;
 use api\view\view as view_api;
-use api\word_api;
-use cfg\db\sql_creator;
+use api\word\word as word_api;
+use cfg\db\sql;
+use cfg\db\sql_db;
+use cfg\db\sql_par;
 use cfg\db\sql_par_type;
+use cfg\log\change;
+use cfg\log\change_log_action;
+use cfg\log\change_log_link;
 use Exception;
-use model\export\exp_obj;
+use cfg\export\sandbox_exp;
 
 class sandbox_named extends sandbox
 {
@@ -247,11 +252,11 @@ class sandbox_named extends sandbox
 
     /**
      * create the SQL to load the single default value always by the id or name
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql_creator $sc, string $class = self::class): sql_par
+    function load_standard_sql(sql $sc, string $class = self::class): sql_par
     {
         $qp = new sql_par($class, true);
         if ($this->id() != 0) {
@@ -298,12 +303,12 @@ class sandbox_named extends sandbox
     /**
      * create an SQL statement to retrieve a term by name from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $name the name of the term and the related word, triple, formula or verb
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_name(sql_creator $sc, string $name, string $class): sql_par
+    function load_sql_by_name(sql $sc, string $name, string $class): sql_par
     {
         $qp = $this->load_sql($sc, sql_db::FLD_NAME, $class);
         $sc->add_where($this->name_field(), $name, sql_par_type::TEXT_USR);
@@ -365,10 +370,10 @@ class sandbox_named extends sandbox
     {
         $result = parent::import_obj($in_ex_json, $test_obj);
         foreach ($in_ex_json as $key => $value) {
-            if ($key == exp_obj::FLD_NAME) {
+            if ($key == sandbox_exp::FLD_NAME) {
                 $this->set_name($value);
             }
-            if ($key == exp_obj::FLD_DESCRIPTION) {
+            if ($key == sandbox_exp::FLD_DESCRIPTION) {
                 if ($value <> '') {
                     $this->description = $value;
                 }
@@ -387,11 +392,11 @@ class sandbox_named extends sandbox
      * for all not named objects like links, this function is overwritten
      * e.g. that the user can see "added formula 'scale millions' to word 'mio'"
      */
-    function log_add(): change_log_named
+    function log_add(): change
     {
         log_debug($this->dsp_id());
 
-        $log = new change_log_named($this->user());
+        $log = new change($this->user());
         // TODO add the table exceptions from sql_db
         $log->action = change_log_action::ADD;
         $log->set_table($this->obj_name . sql_db::TABLE_EXTENSION);
@@ -409,11 +414,11 @@ class sandbox_named extends sandbox
      * set the log entry parameter to delete a object
      * @returns change_log_link with the object presets e.g. th object name
      */
-    function log_del(): change_log_named
+    function log_del(): change
     {
         log_debug($this->dsp_id());
 
-        $log = new change_log_named($this->user());
+        $log = new change($this->user());
         $log->action = change_log_action::DELETE;
         $log->set_table($this->obj_name . sql_db::TABLE_EXTENSION);
         $log->set_field($this->obj_name . '_name');
@@ -502,9 +507,9 @@ class sandbox_named extends sandbox
 
             // insert the new object and save the object key
             // TODO check that always before a db action is called the db type is set correctly
-            $db_con->set_type($this->obj_name);
+            $db_con->set_class($this->obj_name);
             $db_con->set_usr($this->user()->id);
-            $this->id = $db_con->insert(array($this->obj_name . '_name', "user_id"), array($this->name, $this->user()->id));
+            $this->id = $db_con->insert_old(array($this->obj_name . '_name', "user_id"), array($this->name, $this->user()->id));
 
             // save the object fields if saving the key was successful
             if ($this->id > 0) {
@@ -629,9 +634,9 @@ class sandbox_named extends sandbox
 
             $log->row_id = $this->id;
             if ($log->add()) {
-                $db_con->set_type($this->obj_name);
+                $db_con->set_class($this->obj_name);
                 $db_con->set_usr($this->user()->id);
-                if (!$db_con->update($this->id,
+                if (!$db_con->update_old($this->id,
                     array($this->obj_name . '_name'),
                     array($this->name))) {
                     $result .= 'update of name to ' . $this->name() . 'failed';

@@ -29,9 +29,9 @@
 
 */
 
-namespace api;
+namespace api\user;
 
-class user_api
+class user
 {
 
     // field names used for JSON creation

@@ -32,10 +32,10 @@
 
 namespace test;
 
-use api\formula_api;
-use api\word_api;
-use api\triple_api;
-use api\phrase_api;
+use api\formula\formula as formula_api;
+use api\word\word as word_api;
+use api\word\triple as triple_api;
+use api\phrase\phrase as phrase_api;
 use cfg\config;
 use cfg\phr_ids;
 use cfg\phrase_list;
@@ -71,7 +71,7 @@ class phrase_list_unit_db_tests
         $test_name = 'formula names are not included in the normal phrase list';
         $lst = new phrase_list($t->usr1);
         $lst->load_names(formula_api::TN_READ);
-        // TODO activate
+        // TODO activate Prio 1
         //$t->assert_contains_not($test_name, $lst->names(), formula_api::TN_READ);
         $test_name = 'api message of phrases list';
         $lst = new phrase_list($t->usr1);

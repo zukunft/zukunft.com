@@ -30,18 +30,19 @@
 
 */
 
-namespace api;
+namespace api\value;
 
 include_once API_SANDBOX_PATH . 'sandbox_value.php';
 include_once API_PATH . 'api.php';
 include_once API_PATH . 'controller.php';
 include_once WEB_VALUE_PATH . 'value.php';
 
-use controller\controller;
+use api\api;
+use api\sandbox\sandbox_value as sandbox_value_api;
 use html\value\value as value_dsp;
 use JsonSerializable;
 
-class value_api extends sandbox_value_api implements JsonSerializable
+class value extends sandbox_value_api implements JsonSerializable
 {
 
     /*
@@ -52,6 +53,7 @@ class value_api extends sandbox_value_api implements JsonSerializable
     CONST TV_READ = 3.14159265358979323846264338327950288419716939937510; // pi
     CONST TV_READ_SHORT = 3.1415926535898; // pi
     CONST TV_READ_SHORTEST = 3.1415927; // pi
+    CONST TV_E = 0.57721566490153; // Euler const
     CONST TV_INT = 123456;
     CONST TV_FLOAT = 123.456;
     CONST TV_BIG = 123456789;

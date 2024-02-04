@@ -31,7 +31,8 @@
 
 namespace cfg;
 
-use cfg\db\sql_creator;
+use cfg\db\sql;
+use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 
 include_once DB_PATH . 'sql_par_type.php';
@@ -50,16 +51,16 @@ class formula_element_list extends sandbox_list
     /**
      * set the SQL query parameters to load a list of formula elements
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $query_name the name of the selection fields to make the query name unique
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    private function load_sql(sql_creator $sc, string $query_name): sql_par
+    private function load_sql(sql $sc, string $query_name): sql_par
     {
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
 
-        $sc->set_type(formula_element::class);
+        $sc->set_class(formula_element::class);
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
         $sc->set_fields(formula_element::FLD_NAMES);
@@ -68,11 +69,11 @@ class formula_element_list extends sandbox_list
 
     /**
      * set the SQL query parameters to load a list of formula elements by the formula id
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param int $frm_id the id of the formula which elements should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_frm_id(sql_creator $sc, int $frm_id): sql_par
+    function load_sql_by_frm_id(sql $sc, int $frm_id): sql_par
     {
         $qp = $this->load_sql($sc, 'frm_id');
         if ($frm_id > 0) {
@@ -88,12 +89,12 @@ class formula_element_list extends sandbox_list
 
     /**
      * set the SQL query parameters to load a list of formula elements by the formula id and filter by the element type
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param int $frm_id the id of the formula which elements should be loaded
      * @param int $elm_type_id the id of the formula element type used to filter the elements
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_frm_and_type_id(sql_creator $sc, int $frm_id, int $elm_type_id): sql_par
+    function load_sql_by_frm_and_type_id(sql $sc, int $frm_id, int $elm_type_id): sql_par
     {
         $qp = $this->load_sql($sc, 'frm_and_type_id');
         if ($frm_id > 0 and $elm_type_id != 0) {

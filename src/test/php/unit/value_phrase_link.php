@@ -36,10 +36,10 @@ include_once MODEL_VALUE_PATH . 'value_phrase_link.php';
 include_once MODEL_VALUE_PATH . 'value_phrase_link_list.php';
 
 use cfg\phrase;
-use cfg\sql_db;
-use cfg\value;
-use cfg\value_phrase_link;
-use cfg\value_phrase_link_list;
+use cfg\db\sql_db;
+use cfg\value\value;
+use cfg\value\value_phrase_link;
+use cfg\value\value_phrase_link_list;
 
 class value_phrase_link_unit_tests
 {
@@ -63,14 +63,14 @@ class value_phrase_link_unit_tests
         // sql to load a value phrase link by id
         $val_phr_lnk = new value_phrase_link($usr);
         $val_phr_lnk->set_id(1);
-        $t->assert_load_sql_obj_vars($db_con, $val_phr_lnk);
+        $t->assert_sql_by_obj_vars($db_con, $val_phr_lnk);
 
         // sql to load a value phrase link by value, phrase and user id
         $val_phr_lnk = new value_phrase_link($usr);
         $val_phr_lnk->set_id(0);
         $val_phr_lnk->val->set_id(1);
         $val_phr_lnk->phr->set_id(2);
-        $t->assert_load_sql_obj_vars($db_con, $val_phr_lnk);
+        $t->assert_sql_by_obj_vars($db_con, $val_phr_lnk);
 
 
         $t->subheader('Database list query creation tests');

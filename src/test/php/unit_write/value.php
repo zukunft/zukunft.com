@@ -32,20 +32,19 @@
 
 namespace test\write;
 
-include_once MODEL_VALUE_PATH . 'value_dsp.php';
+include_once MODEL_VALUE_PATH . 'value_dsp_old.php';
 
-use api\triple_api;
-use api\value_api;
-use api\word_api;
+use api\value\value as value_api;
+use api\word\word as word_api;
+use api\word\triple as triple_api;
+use cfg\value\value;
+use cfg\value\value_dsp_old;
 use html\figure\figure as figure_dsp;
-use html\value\value as value_dsp;
-use cfg\change_log_field;
-use cfg\change_log_named;
-use cfg\change_log_table;
+use cfg\log\change_log_field;
+use cfg\log\change;
+use cfg\log\change_log_table;
 use cfg\library;
 use cfg\phrase_list;
-use cfg\value;
-use cfg\value_dsp_old;
 use test\test_cleanup;
 use const test\TIMEOUT_LIMIT_DB_MULTI;
 
@@ -75,7 +74,7 @@ class value_test
         // check if loading value with a phrase returns a value created with the phrase parts
         // e.g. the value created with words canton and zurich
         // should be returned if requested with the phrase canton of zurich
-        // TODO activate
+        // TODO activate Prio 2
         $val = $t->load_value(array(
             word_api::TN_CANTON,
             word_api::TN_ZH,
@@ -95,7 +94,7 @@ class value_test
         ),
             value_api::TV_CH_INHABITANTS_2019_IN_MIO);
 
-        if ($ch_inhabitants->id() <= 0) {
+        if (!$ch_inhabitants->is_id_set()) {
             log_err('Loading of test value ' . $ch_inhabitants->dsp_id() . ' failed');
         } else {
             // test load by value id
@@ -107,14 +106,14 @@ class value_test
             // test load by phrase list first to get the value id
             $phr_lst = $t->load_phrase_list(array(word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_MIO, word_api::TN_2020));
             $val_by_phr_lst = new value($t->usr1);
-            $val_by_phr_lst->load_by_grp($phr_lst->get_grp());
+            $val_by_phr_lst->load_by_grp($phr_lst->get_grp_id());
             $result = $val_by_phr_lst->number();
             $target = value_api::TV_CH_INHABITANTS_2020_IN_MIO;
             $t->display(', value->load for another word list ' . $phr_lst->dsp_name(), $target, $result);
 
             // test load by value id
             $val = new value($t->usr1);
-            if ($val_by_phr_lst->id() <> 0) {
+            if ($val_by_phr_lst->is_id_set()) {
                 $val->load_by_id($val_by_phr_lst->id(), value::class);
                 $result = $val->number();
                 $target = value_api::TV_CH_INHABITANTS_2020_IN_MIO;
@@ -139,7 +138,7 @@ class value_test
             $chk_val->load_by_grp($chk_phr_grp);
         }
         $target = true;
-        if ($chk_val->id() <= 0) {
+        if (!$chk_val->is_id_set()) {
             $chk_phr_grp = $t->load_word_list(array(
                 word_api::TN_CANTON,
                 word_api::TN_ZH,
@@ -150,7 +149,7 @@ class value_test
                 $chk_val->load_by_grp($chk_phr_grp);
             }
         }
-        if ($chk_val->id() <= 0) {
+        if (!$chk_val->is_id_set()) {
             $result = 'No value found for ' . $chk_phr_grp->dsp_id() . '.';
             $t->display(', value->check for value id "' . $chk_phr_grp->dsp_id() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
         } else {
@@ -189,13 +188,13 @@ class value_test
             word_api::TN_2020));
         //$phr_lst->ex_time();
         $grp = $phr_lst->get_grp();
-        if ($grp->id() == 0) {
+        if (!$grp->is_id_set()) {
             $result = 'No word list found.';
         } else {
             $val = new value($t->usr1);
             $val->load_by_grp($grp);
             $result = '';
-            if ($val->id() <= 0) {
+            if (!$val->is_id_set()) {
                 $result = 'No value found for ' . $val->dsp_id() . '.';
             } else {
                 if ($val->grp != null) {
@@ -226,7 +225,7 @@ class value_test
         $dest_phr_lst = new phrase_list($t->usr1);
         $dest_phr_lst->load_by_names(array(word_api::TN_INHABITANTS, word_api::TN_ONE));
         $mio_val = new value($t->usr1);
-        $mio_val->load_by_grp($phr_lst->get_grp());
+        $mio_val->load_by_grp($phr_lst->get_grp_id());
         $result = $mio_val->scale($dest_phr_lst);
         $target = value_api::TV_CH_INHABITANTS_2020_IN_MIO * 1000000;
         $t->display(', value->val_scaling for a word list ' . $phr_lst->dsp_id() . '', $target, $result);
@@ -234,7 +233,7 @@ class value_test
         // test the figure object creation
         $phr_lst = $t->load_phrase_list(array(word_api::TN_CANTON, word_api::TN_ZH, word_api::TN_INHABITANTS, word_api::TN_MIO, word_api::TN_2020));
         $mio_val = new value_dsp_old($t->usr1);
-        $mio_val->load_by_grp($phr_lst->get_grp());
+        $mio_val->load_by_grp($phr_lst->get_grp_id());
         $fig = $mio_val->figure();
         $fig_dsp = $t->dsp_obj($fig, new figure_dsp());
         $result = $fig_dsp->display_linked('1');
@@ -285,8 +284,8 @@ class value_test
 
 
         // ... check if the value adding has been logged
-        if ($add_val->id() > 0) {
-            $log = new change_log_named($t->usr1);
+        if ($add_val->is_id_set()) {
+            $log = new change($t->usr1);
             $log->set_table(change_log_table::VALUE);
             $log->set_field(change_log_field::FLD_NUMERIC_VALUE);
             $log->row_id = $add_val->id();
@@ -327,8 +326,8 @@ class value_test
         */
 
         // ... check if the value adding has been logged
-        if ($add_val->id() > 0) {
-            $log = new change_log_named($t->usr1);
+        if ($add_val->is_id_set()) {
+            $log = new change($t->usr1);
             $log->set_table(change_log_table::VALUE);
             $log->set_field(change_log_field::FLD_NUMERIC_VALUE);
             $log->row_id = $add_val2->id();
@@ -355,8 +354,8 @@ class value_test
         $t->display(', word->save update value id "' . $added_val_id . '" from  "' . $add_val->number() . '" to "' . $added_val->number() . '".', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
         // ... check if the value change has been logged
-        if ($added_val->id() > 0) {
-            $log = new change_log_named($t->usr1);
+        if ($added_val->is_id_set()) {
+            $log = new change($t->usr1);
             $log->set_table(change_log_table::VALUE);
             $log->set_field(change_log_field::FLD_NUMERIC_VALUE);
             $log->row_id = $added_val->id();
@@ -373,17 +372,7 @@ class value_test
         $t->display(', value->load the value previous updated for "' . word_api::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
         // check if a user specific value is created if another user changes the value
-        /*$wrd_lst = New word_list;
-        $wrd_lst->usr = $t->usr1;
-        $wrd_lst->add_name(word::TEST_NAME_CHANGED);
-        $wrd_lst->add_name(TW_SALES);
-        $wrd_lst->add_name(TW_CHF);
-        $wrd_lst->add_name(TW_MIO);
-        $wrd_lst->add_name(TW_2014);
-        $wrd_lst->load();
-        $phr_lst = $wrd_lst->phrase_lst(); */
         $val_usr2 = new value($t->usr2);
-        //$val_usr2->ids = $phr_lst->ids;
         $val_usr2->load_by_id($added_val_id);
         $val_usr2->set_number(23456);
         $result = $val_usr2->save();
@@ -393,8 +382,8 @@ class value_test
         // ... check if the value change for the other user has been logged
         $val_usr2 = new value($t->usr2);
         $val_usr2->load_by_id($added_val_id);
-        if ($val_usr2->id() > 0) {
-            $log = new change_log_named($t->usr2);
+        if ($val_usr2->is_id_set()) {
+            $log = new change($t->usr2);
             $log->set_table(change_log_table::VALUE_USR);
             $log->set_field(change_log_field::FLD_NUMERIC_VALUE);
             $log->row_id = $val_usr2->id();
@@ -428,8 +417,8 @@ class value_test
         // ... check if the value change for the other user has been logged
         $val_usr2 = new value($t->usr2);
         $val_usr2->load_by_grp($phr_grp);
-        if ($val_usr2->id() > 0) {
-            $log = new change_log_named($t->usr2);
+        if ($val_usr2->is_id_set()) {
+            $log = new change($t->usr2);
             $log->set_table(change_log_table::VALUE_USR);
             $log->set_field(change_log_field::FLD_NUMERIC_VALUE);
             $log->row_id = $val_usr2->id();

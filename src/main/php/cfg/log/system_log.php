@@ -29,23 +29,35 @@
   
 */
 
-namespace cfg;
+namespace cfg\log;
 
 include_once MODEL_HELPER_PATH . 'db_object.php';
 include_once MODEL_HELPER_PATH . 'type_list.php';
 include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once MODEL_LOG_PATH . 'change_log_named.php';
+include_once MODEL_SYSTEM_PATH . 'sys_log_function.php';
+include_once MODEL_LOG_PATH . 'change.php';
 include_once MODEL_LOG_PATH . 'change_log_action.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
 include_once API_SANDBOX_PATH . 'sandbox_value.php';
 include_once API_LOG_PATH . 'system_log.php';
 
-use cfg\db\sql_creator;
-use controller\log\system_log_api;
+use cfg\db\sql_par;
+use cfg\log\change_log_action;
+use cfg\log\change;
+use cfg\db\sql;
+use cfg\db_object_seq_id;
+use cfg\library;
+use cfg\sandbox;
+use cfg\db\sql_db;
+use cfg\sys_log_function;
+use cfg\type_list;
+use cfg\type_object;
+use cfg\user;
+use api\log\system_log as system_log_api;
 use DateTime;
 use DateTimeInterface;
 
-class system_log extends db_object
+class system_log extends db_object_seq_id
 {
 
     /*
@@ -193,20 +205,20 @@ class system_log extends db_object
     /**
      * create the SQL statement to load one system log entry
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @param string $class the name of this class from where the call has been triggered
      * @return sql_par the database depending on sql statement to load a system error from the log table
      *                 and the unique name for the query
      */
-    function load_sql(sql_creator $sc, string $query_name = sql_db::FLD_ID, string $class = self::class): sql_par
+    function load_sql(sql $sc, string $query_name = sql_db::FLD_ID, string $class = self::class): sql_par
     {
         $qp = parent::load_sql($sc, $query_name, $class);
-        $sc->set_type(sql_db::TBL_SYS_LOG);
+        $sc->set_class(sql_db::TBL_SYS_LOG);
 
         $sc->set_name($qp->name);
         $sc->set_fields(self::FLD_NAMES);
-        $sc->set_join_fields(array(self::FLD_FUNCTION_NAME), sql_db::TBL_SYS_LOG_FUNCTION);
+        $sc->set_join_fields(array(self::FLD_FUNCTION_NAME), sys_log_function::class);
         $sc->set_join_fields(array(type_object::FLD_NAME), sql_db::TBL_SYS_LOG_STATUS);
         $sc->set_join_fields(array(sandbox::FLD_USER_NAME), sql_db::TBL_USER);
         $sc->set_join_fields(array(sandbox::FLD_USER_NAME . ' AS ' . self::FLD_SOLVER_NAME), sql_db::TBL_USER, self::FLD_SOLVER);
@@ -217,12 +229,12 @@ class system_log extends db_object
     /**
      * create an SQL statement to retrieve a system log entry by id from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param int $id the id of the user sandbox object
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql_creator $sc, int $id, string $class = self::class): sql_par
+    function load_sql_by_id(sql $sc, int $id, string $class = self::class): sql_par
     {
 
         $qp = $this->load_sql($sc, sql_db::FLD_ID, $class);
@@ -251,12 +263,12 @@ class system_log extends db_object
 
     /**
      * set the main log entry parameters for updating one error field
-     * @return change_log_named the log object with the update presets
+     * @return change the log object with the update presets
      */
-    private function log_upd(): change_log_named
+    private function log_upd(): change
     {
         log_debug();
-        $log = new change_log_named($this->user());
+        $log = new change($this->user());
         $log->action = change_log_action::UPDATE;
         $log->set_table(sql_db::TBL_SYS_LOG);
 
@@ -266,7 +278,7 @@ class system_log extends db_object
     /**
      * @return string sys_log_id instead of system_log_id
      */
-    public function id_field(): string
+    function id_field(): string
     {
         return self::FLD_ID;
     }
@@ -274,16 +286,16 @@ class system_log extends db_object
     /**
      * actually update an error field in the main database record or the user sandbox
      * @param sql_db $db_con the active database connection
-     * @param change_log_named $log the log object with the update presets
+     * @param change $log the log object with the update presets
      * @return bool true if the field has been updated
      */
-    private function save_field_do(sql_db $db_con, change_log_named $log): bool
+    private function save_field_do(sql_db $db_con, change $log): bool
     {
         log_debug();
         $result = true;
         if ($log->add()) {
-            $db_con->set_type(sql_db::TBL_SYS_LOG);
-            $result = $db_con->update($this->id(), $log->field(), $log->new_id);
+            $db_con->set_class(sql_db::TBL_SYS_LOG);
+            $result = $db_con->update_old($this->id(), $log->field(), $log->new_id);
         }
         return $result;
     }
@@ -323,7 +335,7 @@ class system_log extends db_object
 
         // build the database object because the is anyway needed
         $db_con->set_usr($this->user()->id());
-        $db_con->set_type(sql_db::TBL_SYS_LOG);
+        $db_con->set_class(sql_db::TBL_SYS_LOG);
 
         if ($this->id() > 0) {
             $db_rec = new system_log;

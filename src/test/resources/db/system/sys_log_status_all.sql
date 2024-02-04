@@ -1,4 +1,4 @@
-PREPARE sys_log_status_all (int, int) AS
+PREPARE sys_log_status_all (bigint, bigint) AS
     SELECT
            sys_log_status_id,
            type_name,

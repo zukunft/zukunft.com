@@ -31,7 +31,7 @@
 
 namespace html\log;
 
-use api\change_log_list_api;
+use api\log\change_log_list as change_log_list_api;
 use html\html_base;
 use html\system\back_trace;
 

@@ -1,4 +1,4 @@
-PREPARE view_std_by_id (int) AS
+PREPARE view_std_by_id (bigint) AS
     SELECT view_id,
            view_name,
            code_id,

@@ -39,28 +39,35 @@ include_once SERVICE_IMPORT_PATH . 'import_file.php';
 
 use cfg\batch_job;
 use cfg\batch_job_type_list;
-use cfg\change_log_action;
-use cfg\change_log_field;
-use cfg\change_log_table;
+use cfg\db\db_check;
+use cfg\log\change_log_action;
+use cfg\log\change_log_field;
+use cfg\log\change_log_table;
 use cfg\component\component_pos_type_list;
 use cfg\component\component_type_list;
 use cfg\config;
-use cfg\db_check;
+use cfg\db\sql;
 use cfg\formula_element_type_list;
 use cfg\formula_link_type_list;
 use cfg\formula_type_list;
+use cfg\group\group;
 use cfg\language_form_list;
 use cfg\language_list;
+use cfg\library;
 use cfg\phrase_types;
 use cfg\protection_type_list;
 use cfg\ref_type_list;
 use cfg\share_type_list;
 use cfg\source_type_list;
-use cfg\sql_db;
+use cfg\db\sql_db;
+use cfg\sys_log_function;
 use cfg\user;
+use cfg\value\value;
 use cfg\view_type_list;
 use html\html_base;
 use test\test_unit_read_db;
+
+global $errors;
 
 // open database and display header
 $db_con = prg_start("test_reset_db");
@@ -83,7 +90,7 @@ if ($usr->id() > 0) {
         $sys_usr = $usr;
 
         // run reset the main database tables
-        run_db_truncate();
+        run_db_truncate($sys_usr);
         run_db_seq_reset();
         run_db_config_reset();
 
@@ -117,9 +124,21 @@ if ($usr->id() > 0) {
         $usr->load_by_id(SYSTEM_USER_ID);
         $sys_usr = $usr;
 
+        // create the test dataset to check the basic write functions
         $t = new test_unit_read_db();
         $t->set_users();
         $t->create_test_db_entries($t);
+
+        // remove the test dataset for a clean database
+        // TODO use the user message object instead of a string
+        $cleanup_result = $t->cleanup();
+        if (!$cleanup_result) {
+            log_err('Cleanup not successful, because ...');
+        } else {
+            if (!$t->cleanup_check()) {
+                log_err('Cleanup check not successful.');
+            }
+        }
 
         // reload the session user parameters
         $usr = new user;
@@ -134,6 +153,10 @@ if ($usr->id() > 0) {
         // create the database from the sql structure file
 
         // reload the system database rows (all db rows, that have a code id)
+
+        echo "\n";
+        echo $errors . ' internal errors';
+
     }
 }
 
@@ -142,13 +165,14 @@ if ($usr->id() > 0) {
 /**
  * truncate all tables (use only for system testing)
  */
-function run_db_truncate(): void
+function run_db_truncate(user $sys_usr): void
 {
+    $lib = new library();
+
     // the tables in order to avoid the usage of CASCADE
     $table_names = array(
-        sql_db::TBL_VALUE_PHRASE_LINK,
-        sql_db::TBL_USER_PREFIX . sql_db::TBL_VALUE,
-        sql_db::TBL_VALUE,
+        sql_db::TBL_USER_PREFIX . value::class,
+        value::class,
         sql_db::TBL_RESULT,
         sql_db::TBL_FORMULA_ELEMENT,
         sql_db::TBL_FORMULA_ELEMENT_TYPE,
@@ -166,10 +190,10 @@ function run_db_truncate(): void
         sql_db::TBL_USER_PREFIX . sql_db::TBL_VIEW,
         sql_db::TBL_VIEW,
         sql_db::TBL_VIEW_TYPE,
-        sql_db::TBL_USER_PREFIX . sql_db::TBL_PHRASE_GROUP,
-        sql_db::TBL_PHRASE_GROUP,
-        sql_db::TBL_USER_PREFIX . sql_db::TBL_PHRASE_GROUP_WORD_LINK,
-        sql_db::TBL_PHRASE_GROUP_WORD_LINK,
+        sql_db::TBL_USER_PREFIX . sql_db::TBL_GROUP,
+        sql_db::TBL_GROUP,
+        sql_db::TBL_USER_PREFIX . sql_db::TBL_GROUP_LINK,
+        sql_db::TBL_GROUP_LINK,
         sql_db::TBL_USER_PREFIX . sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK,
         sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK,
         sql_db::TBL_VERB,
@@ -195,7 +219,7 @@ function run_db_truncate(): void
         sql_db::TBL_TASK,
         sql_db::TBL_SYS_LOG,
         sql_db::TBL_SYS_LOG_STATUS,
-        sql_db::TBL_SYS_LOG_FUNCTION,
+        sys_log_function::class,
         sql_db::TBL_SHARE,
         sql_db::TBL_PROTECTION,
         sql_db::TBL_USER,
@@ -206,7 +230,23 @@ function run_db_truncate(): void
     $html->echo('truncate ');
     $html->echo("\n");
 
-    foreach ($table_names as $table_name) {
+    // truncate tables that have already a build in truncate statement creation
+    $sql = '';
+    $sc = new sql();
+    $grp = new group($sys_usr);
+    $sql .= $grp->sql_truncate($sc);
+
+    global $db_con;
+
+    try {
+        $db_con->exe($sql);
+    } catch (Exception $e) {
+        log_err('Cannot truncate based on sql ' . $sql . '" because: ' . $e->getMessage());
+    }
+
+    // truncate the other tables
+    foreach ($table_names as $class) {
+        $table_name = $lib->class_to_name($class);
         run_table_truncate($table_name);
     }
 
@@ -278,10 +318,10 @@ function run_table_truncate(string $table_name): void
 function run_db_seq_reset(): void
 {
     // the sequence names of the tables to reset
+    // TODO base the list on the class list const and a sequence name function
     $seq_names = array(
-        'value_phrase_links_value_phrase_link_id_seq',
-        'values_value_id_seq',
-        'results_result_id_seq',
+        'sys_log_status_sys_log_status_id_seq',
+        'sys_log_sys_log_id_seq',
         'formula_elements_formula_element_id_seq',
         'formula_element_types_formula_element_type_id_seq',
         'formula_links_formula_link_id_seq',
@@ -293,9 +333,6 @@ function run_db_seq_reset(): void
         'component_types_component_type_id_seq',
         'views_view_id_seq',
         'view_types_view_type_id_seq',
-        'phrase_groups_phrase_group_id_seq',
-        'phrase_group_word_links_phrase_group_word_link_id_seq',
-        'phrase_group_triple_links_phrase_group_triple_link_id_seq',
         'verbs_verb_id_seq',
         'triples_triple_id_seq',
         'words_word_id_seq',
@@ -313,7 +350,6 @@ function run_db_seq_reset(): void
         'calc_and_cleanup_task_types_calc_and_cleanup_task_type_id_seq',
         'calc_and_cleanup_tasks_calc_and_cleanup_task_id_seq',
         'sys_scripts_sys_script_id_seq',
-        'sys_log_sys_log_id_seq',
         'sys_log_status_sys_log_status_id_seq',
         'sys_log_functions_sys_log_function_id_seq',
         'share_types_share_type_id_seq',

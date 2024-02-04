@@ -31,7 +31,7 @@
 */
 
 use api\view\view as view_api;
-use api\word_api;
+use api\word\word as word_api;
 use cfg\component\component;
 use cfg\component\component_type;
 use cfg\view;
@@ -138,7 +138,7 @@ function run_display_test(test_cleanup $t): void
     $t->header('Test general frontend scripts (e.g. /about.php)');
 
     // check if the about page contains at least some basic keywords
-    // TODO reactivate: $result = file_get_contents('https://www.zukunft.com/http/about.php?id=1');
+    // TODO activate Prio 3: $result = file_get_contents('https://www.zukunft.com/http/about.php?id=1');
     $target = 'zukunft.com AG';
     if (strpos($result, $target) > 0) {
         $result = $target;

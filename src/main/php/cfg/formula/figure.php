@@ -42,10 +42,11 @@ include_once MODEL_FORMULA_PATH . 'formula.php';
 include_once MODEL_USER_PATH . 'user.php';
 
 use api\api;
-use api\figure_api;
-use controller\controller;
+use api\formula\figure as figure_api;
+use cfg\group\group;
+use cfg\result\result;
+use cfg\value\value;
 use DateTime;
-use html\figure\figure as figure_dsp;
 
 class figure extends combine_object
 {
@@ -59,7 +60,7 @@ class figure extends combine_object
 
     // the common figure database field names excluding the id and excluding the user specific fields
     const FLD_NAMES = array(
-        phrase_group::FLD_ID
+        group::FLD_ID
     );
 
 
@@ -173,9 +174,9 @@ class figure extends combine_object
     }
 
     /**
-     * @return float with the value either from the formula result or the db value from a user or source
+     * @return float|null with the value either from the formula result or the db value from a user or source
      */
-    function number(): float
+    function number(): ?float
     {
         return $this->obj()->number();
     }
@@ -310,7 +311,9 @@ class figure extends combine_object
         if (isset($this->obj)) {
             $result .= $this->obj->dsp_id();
         }
-        $result .= ' ' . $this->last_update()->format('Y-m-d H:i:s');
+        if ($this->last_update() != null) {
+            $result .= ' ' . $this->last_update()->format('Y-m-d H:i:s');
+        }
 
         return $result;
     }

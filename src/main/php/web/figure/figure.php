@@ -39,19 +39,17 @@ include_once API_PATH . 'api.php';
 include_once API_PATH . 'controller.php';
 include_once WEB_VALUE_PATH . 'value.php';
 
-use api\combine_object_api;
-use api\figure_api;
-use api\phrase_list_api;
-use api\sandbox_value_api;
-use controller\controller;
+use api\formula\figure as figure_api;
+use api\phrase\phrase_list as phrase_list_api;
+use api\sandbox\combine_object as combine_object_api;
 use api\api;
+use api\sandbox\sandbox_value as sandbox_value_api;
 use html\api as api_dsp;
 use html\combine_named_dsp;
 use html\html_base;
 use html\phrase\phrase_group as phrase_group_dsp;
 use html\result\result as result_dsp;
 use html\value\value as value_dsp;
-use cfg\result;
 
 class figure extends combine_named_dsp
 {
@@ -103,10 +101,10 @@ class figure extends combine_named_dsp
     }
 
     /**
-     * @return int the id of the value or result id (not unique!)
+     * @return int|string the id of the value or result id (not unique!)
      * must have the same logic as the database view and the frontend
      */
-    function obj_id(): int
+    function obj_id(): int|string
     {
         if ($this->obj() == null) {
             return 0;

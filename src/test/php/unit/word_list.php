@@ -35,12 +35,12 @@ namespace test;
 include_once MODEL_WORD_PATH . 'word_list.php';
 include_once WEB_WORD_PATH . 'word_list.php';
 
-use api\verb_api;
-use api\word_api;
+use api\verb\verb as verb_api;
+use api\word\word as word_api;
 use cfg\foaf_direction;
 use cfg\phrase_type;
 use cfg\library;
-use cfg\sql_db;
+use cfg\db\sql_db;
 use cfg\verb;
 use cfg\word;
 use cfg\word_list;

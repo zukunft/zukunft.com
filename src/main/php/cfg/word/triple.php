@@ -39,15 +39,21 @@ include_once MODEL_SANDBOX_PATH . 'sandbox_link_typed.php';
 include_once SERVICE_EXPORT_PATH . 'triple_exp.php';
 
 use api\api;
-use cfg\db\sql_creator;
+use api\word\triple as triple_api;
+use cfg\db\sql;
+use cfg\db\sql_db;
+use cfg\db\sql_par;
 use cfg\db\sql_par_type;
-use model\export\exp_obj;
-use model\export\triple_exp;
-use controller\controller;
-use api\triple_api;
+use cfg\group\group_list;
+use cfg\log\change;
+use cfg\log\change_log_action;
+use cfg\log\change_log_link;
+use cfg\log\change_log_table;
+use cfg\value\value_list;
 use html\html_base;
-use html\word\triple as triple_dsp;
 use JsonSerializable;
+use cfg\export\sandbox_exp;
+use cfg\export\triple_exp;
 
 global $phrase_types;
 
@@ -459,6 +465,19 @@ class triple extends sandbox_link_typed implements JsonSerializable
         return $phrase_types->code_id($this->type_id);
     }
 
+    // TODO add a function for each type and streamline the call
+    /**
+     * @return bool
+     */
+    function is_time(): bool
+    {
+        if ($this->type_code_id() == phrase_type::TIME) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 
     /*
      * cast
@@ -585,13 +604,13 @@ class triple extends sandbox_link_typed implements JsonSerializable
     /**
      * create the SQL to load the default triple always by the id
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql_creator $sc, string $class = self::class): sql_par
+    function load_standard_sql(sql $sc, string $class = self::class): sql_par
     {
-        $sc->set_type($class);
+        $sc->set_class($class);
         $qp = new sql_par($class, true);
         $qp->name .= $this->load_sql_name_ext();
         $sc->set_name($qp->name);
@@ -634,8 +653,8 @@ class triple extends sandbox_link_typed implements JsonSerializable
                 $new_name = $this->name();
                 log_debug('triple->load_standard check if name ' . $this->dsp_id() . ' needs to be updated to "' . $new_name . '"');
                 if ($new_name <> $this->name) {
-                    $db_con->set_type(sql_db::TBL_TRIPLE);
-                    $result = $db_con->update($this->id(), self::FLD_NAME_GIVEN, $new_name);
+                    $db_con->set_class(sql_db::TBL_TRIPLE);
+                    $result = $db_con->update_old($this->id(), self::FLD_NAME_GIVEN, $new_name);
                     $this->name = $new_name;
                 }
             }
@@ -648,17 +667,17 @@ class triple extends sandbox_link_typed implements JsonSerializable
     /**
      * create the common part of an SQL statement to retrieve the parameters of a triple from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    protected function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
+    function load_sql(sql $sc, string $query_name, string $class = self::class): sql_par
     {
         $qp = parent::load_sql_obj_vars($sc, $class);
         $qp->name .= $query_name;
 
-        $sc->set_type($class);
+        $sc->set_class($class);
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
         $sc->set_fields(array_merge(self::FLD_NAMES_LINK, self::FLD_NAMES));
@@ -671,12 +690,12 @@ class triple extends sandbox_link_typed implements JsonSerializable
     /**
      * create an SQL statement to retrieve a formula by id from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param int $id the id of the user sandbox object
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql_creator $sc, int $id, string $class = self::class): sql_par
+    function load_sql_by_id(sql $sc, int $id, string $class = self::class): sql_par
     {
         return parent::load_sql_by_id($sc, $id, $class);
     }
@@ -684,12 +703,12 @@ class triple extends sandbox_link_typed implements JsonSerializable
     /**
      * create an SQL statement to retrieve a triple by name from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $name the name of the triple and the related word, triple, formula or verb
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_name(sql_creator $sc, string $name, string $class): sql_par
+    function load_sql_by_name(sql $sc, string $name, string $class): sql_par
     {
         $qp = $this->load_sql($sc, sql_db::FLD_NAME, $class);
         $sc->add_where($this->name_field(), $name, sql_par_type::TEXT_USR);
@@ -702,12 +721,12 @@ class triple extends sandbox_link_typed implements JsonSerializable
     /**
      * create an SQL statement to retrieve a triple by the generated name from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $name the generated name of the triple and the related word, triple, formula or verb
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_name_generated(sql_creator $sc, string $name, string $class): sql_par
+    function load_sql_by_name_generated(sql $sc, string $name, string $class): sql_par
     {
         $qp = $this->load_sql($sc, 'name_generated', $class);
         $sc->add_where(self::FLD_NAME_AUTO, $name, sql_par_type::TEXT_USR);
@@ -720,14 +739,14 @@ class triple extends sandbox_link_typed implements JsonSerializable
     /**
      * create an SQL statement to retrieve a triple by name from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param int $from the id of the phrase that is linked
      * @param int $type the type id of the link
      * @param int $to the id of the phrase to which is the link directed
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_link(sql_creator $sc, int $from, int $type, int $to, string $class): sql_par
+    function load_sql_by_link(sql $sc, int $from, int $type, int $to, string $class): sql_par
     {
         $qp = $this->load_sql($sc, 'link_ids', $class);
         $sc->add_where(self::FLD_FROM, $from);
@@ -752,8 +771,8 @@ class triple extends sandbox_link_typed implements JsonSerializable
             $new_name = $this->name_generated();
             log_debug('triple->load check if name ' . $this->dsp_id() . ' needs to be updated to "' . $new_name . '"');
             if ($new_name <> $this->name_generated) {
-                $db_con->set_type(sql_db::TBL_TRIPLE);
-                $db_con->update($this->id(), self::FLD_NAME_AUTO, $new_name);
+                $db_con->set_class(sql_db::TBL_TRIPLE);
+                $db_con->update_old($this->id(), self::FLD_NAME_AUTO, $new_name);
                 $this->set_name_generated($new_name);
             }
         }
@@ -992,11 +1011,11 @@ class triple extends sandbox_link_typed implements JsonSerializable
     /**
      * add the select parameters to the query parameters
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param sql_par $qp the query parameters with the name already set
      * @return sql_par the query parameters with the select parameters added
      */
-    private function load_sql_select_qp(sql_creator $sc, sql_par $qp): sql_par
+    private function load_sql_select_qp(sql $sc, sql_par $qp): sql_par
     {
         if ($this->id() != 0) {
             $sc->add_where($this->id_field(), $this->id());
@@ -1050,7 +1069,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
                 $wrd_lst->add($this->fob->obj());
             } elseif ($this->fob->id() < 0) {
                 $sub_wrd_lst = $this->fob->wrd_lst();
-                foreach ($sub_wrd_lst as $wrd) {
+                foreach ($sub_wrd_lst->lst() as $wrd) {
                     $wrd_lst->add($wrd);
                 }
             } else {
@@ -1064,7 +1083,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
                 $wrd_lst->add($this->tob->obj());
             } elseif ($this->tob->id() < 0) {
                 $sub_wrd_lst = $this->tob->wrd_lst();
-                foreach ($sub_wrd_lst as $wrd) {
+                foreach ($sub_wrd_lst->lst() as $wrd) {
                     $wrd_lst->add($wrd);
                 }
             } else {
@@ -1148,7 +1167,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
         $result = parent::import_obj($in_ex_json, $test_obj);
 
         foreach ($in_ex_json as $key => $value) {
-            if ($key == exp_obj::FLD_TYPE) {
+            if ($key == sandbox_exp::FLD_TYPE) {
                 $this->type_id = $phrase_types->id($value);
             }
             if ($key == self::FLD_EX_FROM) {
@@ -1185,7 +1204,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
                 }
                 $this->verb = $vrb;
             }
-            if ($key == exp_obj::FLD_VIEW) {
+            if ($key == sandbox_exp::FLD_VIEW) {
                 $trp_view = new view($this->user());
                 if (!$test_obj) {
                     $trp_view->load_by_name($value, view::class);
@@ -1239,7 +1258,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
      * create a triple object for the export
      * @return triple_exp a reduced triple object that can be used to create a JSON message
      */
-    function export_obj(bool $do_load = true): exp_obj
+    function export_obj(bool $do_load = true): sandbox_exp
     {
         global $phrase_types;
         global $share_types;
@@ -1507,7 +1526,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
      */
     function not_changed_sql(sql_db $db_con): sql_par
     {
-        $db_con->set_type(sql_db::TBL_TRIPLE);
+        $db_con->set_class(sql_db::TBL_TRIPLE);
         return $db_con->load_sql_not_changed($this->id(), $this->owner_id);
     }
 
@@ -1562,7 +1581,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
             }
 
             // check again if there ist not yet a record
-            $db_con->set_type(sql_db::TBL_TRIPLE, true);
+            $db_con->set_class(sql_db::TBL_TRIPLE, true);
             $qp = new sql_par(self::class);
             $qp->name = 'triple_add_usr_cfg';
             $db_con->set_name($qp->name);
@@ -1576,8 +1595,8 @@ class triple extends sandbox_link_typed implements JsonSerializable
             }
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
-                $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_TRIPLE);
-                $log_id = $db_con->insert(array(self::FLD_ID, user::FLD_ID), array($this->id(), $this->user()->id()));
+                $db_con->set_class(sql_db::TBL_USER_PREFIX . sql_db::TBL_TRIPLE);
+                $log_id = $db_con->insert_old(array(self::FLD_ID, user::FLD_ID), array($this->id(), $this->user()->id()));
                 if ($log_id <= 0) {
                     log_err('Insert of user_triple failed.');
                     $result = false;
@@ -1592,13 +1611,13 @@ class triple extends sandbox_link_typed implements JsonSerializable
     /**
      * create an SQL statement to retrieve the user changes of the current triple
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_user_changes(sql_creator $sc, string $class = self::class): sql_par
+    function load_sql_user_changes(sql $sc, string $class = self::class): sql_par
     {
-        $sc->set_type($class, true);
+        $sc->set_class($class, true);
         $sc->set_fields(array_merge(
             self::FLD_NAMES_USR,
             self::FLD_NAMES_NUM_USR
@@ -1663,9 +1682,9 @@ class triple extends sandbox_link_typed implements JsonSerializable
     /**
      * set the main log entry parameters for updating one display triple field
      */
-    function log_upd_field(): change_log_named
+    function log_upd_field(): change
     {
-        $log = new change_log_named($this->user());
+        $log = new change($this->user());
         $log->action = change_log_action::UPDATE;
         if ($this->can_change()) {
             $log->set_table(change_log_table::TRIPLE);
@@ -1865,8 +1884,8 @@ class triple extends sandbox_link_typed implements JsonSerializable
             $log->row_id = $this->id;
             //$log->set_field(self::FLD_FROM);
             if ($log->add()) {
-                $db_con->set_type(sql_db::TBL_TRIPLE);
-                if (!$db_con->update($this->id(),
+                $db_con->set_class(sql_db::TBL_TRIPLE);
+                if (!$db_con->update_old($this->id(),
                     array("from_phrase_id", "verb_id", "to_phrase_id"),
                     array($this->fob->id(), $this->verb->id(), $this->tob->id()))) {
                     $result = 'Update of work link name failed';
@@ -1962,8 +1981,8 @@ class triple extends sandbox_link_typed implements JsonSerializable
         $log = $this->log_link_add();
         if ($log->id() > 0) {
             // insert the new triple
-            $db_con->set_type(sql_db::TBL_TRIPLE);
-            $this->set_id($db_con->insert(array("from_phrase_id", "verb_id", "to_phrase_id", "user_id"),
+            $db_con->set_class(sql_db::TBL_TRIPLE);
+            $this->set_id($db_con->insert_old(array("from_phrase_id", "verb_id", "to_phrase_id", "user_id"),
                 array($this->fob->id(), $this->verb->id(), $this->tob->id(), $this->user()->id())));
             // TODO make sure on all add functions that the database object is always set
             //array($this->fob->id(), $this->verb->id() , $this->tob->id(), $this->user()->id()));
@@ -2014,7 +2033,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
 
             // build the database object because the is anyway needed
             $db_con->set_usr($this->user()->id());
-            $db_con->set_type(sql_db::TBL_TRIPLE);
+            $db_con->set_class(sql_db::TBL_TRIPLE);
 
             // check if the opposite triple already exists and if yes, ask for confirmation
             if ($this->id() <= 0) {
@@ -2119,7 +2138,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
         $result = new user_message();
 
         // collect all phrase groups where this triple is used
-        $grp_lst = new phrase_group_list($this->user());
+        $grp_lst = new group_list($this->user());
         $grp_lst->load_by_phr($this->phrase());
 
         // collect all values related to this triple

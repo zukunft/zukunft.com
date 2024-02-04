@@ -46,7 +46,95 @@ CREATE TABLE IF NOT EXISTS `sys_log_types`
   AUTO_INCREMENT = 1
   DEFAULT CHARSET = utf8;
 
+--
+-- Table structure for table`sys_log_status`
+--
+
+CREATE TABLE IF NOT EXISTS `sys_log_status`
+(
+    `sys_log_status_id` int(11)      NOT NULL,
+    `type_name`         varchar(200) NOT NULL,
+    `code_id`           varchar(50)  NOT NULL,
+    `description`       text         NOT NULL,
+    `action`            varchar(200) DEFAULT NULL COMMENT 'description of the action to get to this status'
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 1
+  DEFAULT CHARSET = utf8 COMMENT ='Status of internal errors';
+
+--
+-- Table structure for table`sys_log_functions`
+--
+
+CREATE TABLE IF NOT EXISTS `sys_log_functions`
+(
+    `sys_log_function_id`   int(11)      NOT NULL,
+    `sys_log_function_name` varchar(200) NOT NULL
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 1
+  DEFAULT CHARSET = utf8;
+
+--
+-- Table structure for table`sys_log`
+--
+
+CREATE TABLE IF NOT EXISTS `sys_log`
+(
+    `sys_log_id`          int(11)   NOT NULL,
+    `sys_log_time`        timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `sys_log_type_id`     int(11)   NOT NULL,
+    `sys_log_function_id` int(11)   NOT NULL,
+    `sys_log_text`        text,
+    `sys_log_description` text,
+    `sys_log_trace`       text,
+    `user_id`             int(11)            DEFAULT NULL,
+    `solver_id`           int(11)            DEFAULT NULL COMMENT 'user id of the user that is trying to solve the problem',
+    `sys_log_status_id`   int(11)            DEFAULT '1'
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 1
+  DEFAULT CHARSET = utf8;
+
 -- --------------------------------------------------------
+
+--
+-- Table structure for table`sys_scripts`
+--
+
+CREATE TABLE IF NOT EXISTS `sys_scripts`
+(
+    `sys_script_id`   int(11)      NOT NULL,
+    `sys_script_name` varchar(200) NOT NULL
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 1
+  DEFAULT CHARSET = utf8;
+
+--
+-- Table structure for table`sys_script_times`
+--
+
+CREATE TABLE IF NOT EXISTS `sys_script_times`
+(
+    `sys_script_time`  timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `sys_script_start` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+    `sys_script_id`    int(11) NOT NULL,
+    `url` varchar(250) DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table`calc_and_cleanup_task_types`
+--
+
+CREATE TABLE IF NOT EXISTS `calc_and_cleanup_task_types`
+(
+    `calc_and_cleanup_task_type_id` int(11)      NOT NULL,
+    `type_name`                     varchar(200) NOT NULL,
+    `description`                   text,
+    `code_id`                       varchar(50)  NOT NULL
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 1
+  DEFAULT CHARSET = utf8;
 
 --
 -- Table structure for table`calc_and_cleanup_tasks`
@@ -69,15 +157,188 @@ CREATE TABLE IF NOT EXISTS `calc_and_cleanup_tasks`
 -- --------------------------------------------------------
 
 --
--- Table structure for table`calc_and_cleanup_task_types`
+-- Table structure for table`user_types`
 --
 
-CREATE TABLE IF NOT EXISTS `calc_and_cleanup_task_types`
+CREATE TABLE IF NOT EXISTS `user_types`
 (
-    `calc_and_cleanup_task_type_id` int(11)      NOT NULL,
-    `type_name`                     varchar(200) NOT NULL,
-    `description`                   text,
-    `code_id`                       varchar(50)  NOT NULL
+    `user_type_id` int(11)      NOT NULL,
+    `user_type`    varchar(200) NOT NULL,
+    `code_id`      varchar(100) DEFAULT NULL,
+    `comment`      varchar(200) NOT NULL
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 1
+  DEFAULT CHARSET = utf8;
+
+--
+-- Table structure for table`user_profiles`
+--
+
+CREATE TABLE IF NOT EXISTS `user_profiles`
+(
+    `profile_id`  int(11)      NOT NULL,
+    `type_name`   varchar(200) NOT NULL,
+    `code_id`     varchar(50)  NOT NULL,
+    `description` text
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 4
+  DEFAULT CHARSET = utf8;
+
+--
+-- Table structure for table`users`
+--
+
+CREATE TABLE IF NOT EXISTS `users`
+(
+    `user_id`                  int(11)      NOT NULL,
+    `user_name`                varchar(100) NOT NULL,
+    `description`              text         DEFAULT NULL,
+    `code_id`                  varchar(50)           DEFAULT NULL COMMENT 'to select e.g. the system batch user',
+    `right_level`              int(11)               DEFAULT NULL,
+    `password`                 varchar(200)          DEFAULT NULL,
+    `email`                    varchar(200)          DEFAULT NULL,
+    `email_verified`           tinyint(4)            DEFAULT NULL,
+    `email_alternative`        varchar(200)          DEFAULT NULL,
+    `ip_address`               varchar(50)           DEFAULT NULL,
+    `mobile_number`            varchar(50)           DEFAULT NULL,
+    `mobile_verified`          tinyint(4)            DEFAULT NULL,
+    `first_name`               varchar(200)          DEFAULT NULL,
+    `last_name`                varchar(200)          DEFAULT NULL,
+    `street`                   varchar(300)          DEFAULT NULL,
+    `place`                    varchar(200)          DEFAULT NULL,
+    `country_id`               int(11)               DEFAULT NULL,
+    `post_verified`            tinyint(4)            DEFAULT NULL,
+    `official_id`              varchar(200)          DEFAULT NULL COMMENT 'such as the passport id',
+    `user_official_id_type_id` int(11)               DEFAULT NULL,
+    `official_verified`        int(11)               DEFAULT NULL,
+    `user_type_id`             int(11)               DEFAULT NULL,
+    `last_word_id`             int(11)               DEFAULT NULL COMMENT 'the last term that the user had used',
+    `last_mask_id`             int(11)               DEFAULT NULL COMMENT 'the last mask that the user has used',
+    `is_active`                tinyint(4)   NOT NULL DEFAULT '0',
+    `dt`                       timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `last_logoff`              timestamp    NULL     DEFAULT NULL,
+    `user_profile_id`          int(11)               DEFAULT NULL,
+    `source_id`                int(11)               DEFAULT NULL COMMENT 'the last source used by this user to have a default for the next value',
+    `activation_key`           varchar(200)          DEFAULT NULL,
+    `activation_key_timeout`   timestamp    NULL     DEFAULT NULL
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 1
+  DEFAULT CHARSET = utf8 COMMENT ='only users can add data';
+
+--
+-- Table structure for table`user_official_types`
+--
+
+CREATE TABLE IF NOT EXISTS `user_official_types`
+(
+    `user_official_type_id` int(11)      NOT NULL,
+    `type_name`             varchar(200) NOT NULL,
+    `code_id`               varchar(100) DEFAULT NULL,
+    `comment`               text         DEFAULT NULL
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 1
+  DEFAULT CHARSET = utf8;
+
+--
+-- Table structure for table`user_requests`
+--
+
+CREATE TABLE IF NOT EXISTS `user_requests`
+(
+    `id`          int(11)     NOT NULL,
+    `uid`         int(11)     NOT NULL,
+    `request_key` varchar(20) NOT NULL,
+    `expire`      datetime    NOT NULL,
+    `type`        varchar(20) NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8;
+
+--
+-- Table structure for table`user_attempts`
+--
+
+CREATE TABLE IF NOT EXISTS `user_attempts`
+(
+    `id`          int(11)     NOT NULL,
+    `ip`          varchar(39) NOT NULL,
+    `expire_date` datetime    NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8;
+
+--
+-- Table structure for table`user_blocked_ips`
+--
+
+CREATE TABLE IF NOT EXISTS `user_blocked_ips`
+(
+    `user_blocked_id` int(11)     NOT NULL,
+    `ip_from`         varchar(45) NOT NULL,
+    `ip_to`           varchar(45) NOT NULL,
+    `reason`          text        NOT NULL,
+    `is_active`       tinyint(4) DEFAULT '1'
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 1
+  DEFAULT CHARSET = utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table`sessions`
+--
+
+CREATE TABLE IF NOT EXISTS `sessions`
+(
+    `id`          int(11)      NOT NULL,
+    `uid`         int(11)      NOT NULL,
+    `hash`        varchar(40)  NOT NULL,
+    `expire_date` datetime     NOT NULL,
+    `ip`          varchar(39)  NOT NULL,
+    `agent`       varchar(200) NOT NULL,
+    `cookie_crc`  varchar(40)  NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table`change_actions`
+--
+
+CREATE TABLE IF NOT EXISTS `change_actions`
+(
+    `change_action_id`   int(11)      NOT NULL,
+    `change_action_name` varchar(200) NOT NULL,
+    `description`        text,
+    `code_id`            varchar(50)  NOT NULL
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 1
+  DEFAULT CHARSET = utf8;
+
+--
+-- Table structure for table`change_tables`
+--
+
+CREATE TABLE IF NOT EXISTS `change_tables`
+(
+    `change_table_id`   int(11)      NOT NULL,
+    `change_table_name` varchar(100) NOT NULL COMMENT 'the real name',
+    `description`       varchar(1000) DEFAULT NULL COMMENT 'the user readable name',
+    `code_id`           varchar(50)   DEFAULT NULL COMMENT 'with this field tables can be combined in case of renaming'
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 1
+  DEFAULT CHARSET = utf8 COMMENT ='to avoid log changes in case a table is renamed';
+
+--
+-- Table structure for table`change_fields`
+--
+
+CREATE TABLE IF NOT EXISTS `change_fields`
+(
+    `change_field_id`   int(11)      NOT NULL,
+    `change_field_name` varchar(255) NOT NULL,
+    `table_id`          int(11)      NOT NULL COMMENT 'because every field must only be unique within a table',
+    `description`       text,
+    `code_id`           varchar(100) DEFAULT NULL COMMENT 'to display the change with some linked information'
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
   DEFAULT CHARSET = utf8;
@@ -105,40 +366,62 @@ CREATE TABLE IF NOT EXISTS `changes`
   AUTO_INCREMENT = 1
   DEFAULT CHARSET = utf8 COMMENT ='to log all changes';
 
--- --------------------------------------------------------
-
 --
--- Table structure for table`change_actions`
+-- Table structure to log the value changes done by the users
 --
 
-CREATE TABLE IF NOT EXISTS `change_actions`
+CREATE TABLE IF NOT EXISTS `changes_values`
 (
-    `change_action_id`   int(11)      NOT NULL,
-    `change_action_name` varchar(200) NOT NULL,
-    `description`        text,
-    `code_id`            varchar(50)  NOT NULL
+    `change_id`        int(11)   NOT NULL,
+    `change_time`      timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP COMMENT 'time when the value has been changed',
+    `user_id`          int(11)   NOT NULL,
+    `change_action_id` int(11)   NOT NULL,
+    `change_field_id`  int(11)   NOT NULL,
+    `group_id`         char(112) NOT NULL,
+    `old_value`        varchar(300)       DEFAULT NULL,
+    `new_value`        varchar(300)       DEFAULT NULL
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8;
-
--- --------------------------------------------------------
+  DEFAULT CHARSET = utf8 COMMENT ='to log all number changes';
 
 --
--- Table structure for table`change_fields`
+-- Table structure to log changes of numbers related to not more than four prime phrases
 --
 
-CREATE TABLE IF NOT EXISTS `change_fields`
+CREATE TABLE IF NOT EXISTS `changes_values_prime`
 (
-    `change_field_id`   int(11)      NOT NULL,
-    `change_field_name` varchar(255) NOT NULL,
-    `table_id`          int(11)      NOT NULL COMMENT 'because every field must only be unique within a table',
-    `description`       text,
-    `code_id`           varchar(100) DEFAULT NULL COMMENT 'to display the change with some linked information'
+    `change_id`        int(11)   NOT NULL,
+    `change_time`      timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP COMMENT 'time when the value has been changed',
+    `user_id`          int(11)   NOT NULL,
+    `change_action_id` int(11)   NOT NULL,
+    `change_field_id`  int(11)   NOT NULL,
+    `group_id`         int(11)   NOT NULL,
+    `old_value`        varchar(300)       DEFAULT NULL,
+    `new_value`        varchar(300)       DEFAULT NULL
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8;
+  DEFAULT CHARSET = utf8 COMMENT = 'to log changes of numbers related to not more than four prime phrases';
 
--- --------------------------------------------------------
+--
+-- Table structure to log changes of numbers related to more than 16 phrases
+--
+
+CREATE TABLE IF NOT EXISTS `changes_values_big`
+(
+    `change_id`        int(11)   NOT NULL,
+    `change_time`      timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP COMMENT 'time when the value has been changed',
+    `user_id`          int(11)   NOT NULL,
+    `change_action_id` int(11)   NOT NULL,
+    `change_field_id`  int(11)   NOT NULL,
+    `group_id`         varchar   NOT NULL,
+    `old_value`        varchar(300)       DEFAULT NULL,
+    `new_value`        varchar(300)       DEFAULT NULL
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 1
+  DEFAULT CHARSET = utf8 COMMENT = 'to log changes of numbers related to more than 16 phrases';
 
 --
 -- Table structure for table`change_links`
@@ -171,22 +454,6 @@ CREATE TABLE IF NOT EXISTS `change_links`
 -- --------------------------------------------------------
 
 --
--- Table structure for table`change_tables`
---
-
-CREATE TABLE IF NOT EXISTS `change_tables`
-(
-    `change_table_id`   int(11)      NOT NULL,
-    `change_table_name` varchar(100) NOT NULL COMMENT 'the real name',
-    `description`       varchar(1000) DEFAULT NULL COMMENT 'the user readable name',
-    `code_id`           varchar(50)   DEFAULT NULL COMMENT 'with this field tables can be combined in case of renaming'
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8 COMMENT ='to avoid log changes in case a table is renamed';
-
--- --------------------------------------------------------
-
---
 -- Table structure for table`comments`
 --
 
@@ -198,6 +465,275 @@ CREATE TABLE IF NOT EXISTS `comments`
     `comment`    text     NOT NULL
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8 COMMENT ='separate table because it is expected that only a few record';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table`protection_types`
+--
+
+CREATE TABLE IF NOT EXISTS `protection_types`
+(
+    `protect_id`  int(11)      NOT NULL,
+    `type_name`   varchar(200) NOT NULL,
+    `code_id`     varchar(100) NOT NULL,
+    `description` text         NOT NULL
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 5
+  DEFAULT CHARSET = utf8;
+
+--
+-- Table structure for table`share_types`
+--
+
+CREATE TABLE IF NOT EXISTS `share_types`
+(
+    `share_type_id` int(11)      NOT NULL,
+    `type_name`     varchar(200) NOT NULL COMMENT 'the name of the share type as displayed for the user',
+    `code_id`       varchar(100) NOT NULL COMMENT 'the code link',
+    `description`   text COMMENT 'to explain the code action of the share type'
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 5
+  DEFAULT CHARSET = utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table`phrase_types`
+--
+
+CREATE TABLE IF NOT EXISTS `phrase_types`
+(
+    `phrase_type_id` int(11)      NOT NULL,
+    `type_name`      varchar(200) NOT NULL,
+    `description`    text,
+    `code_id`        varchar(100) DEFAULT NULL,
+    `scaling_factor` int(11)      DEFAULT NULL COMMENT 'e.g. for percent the scaling factor is 100',
+    `word_symbol`    varchar(5)   DEFAULT NULL COMMENT 'e.g. for percent the symbol is %'
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 1
+  DEFAULT CHARSET = utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table`languages`
+--
+
+CREATE TABLE IF NOT EXISTS `languages`
+(
+    `language_id`    int(11)      NOT NULL,
+    `language_name`  varchar(200) NOT NULL,
+    `code_id`        varchar(50)  NOT NULL,
+    `wikimedia_code` varchar(50)  NOT NULL,
+    `description`    text
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 1
+  DEFAULT CHARSET = utf8;
+
+--
+-- Table structure for table`language_forms`
+--
+
+CREATE TABLE IF NOT EXISTS `language_forms`
+(
+    `language_form_id`   int(11) NOT NULL,
+    `language_form_name` varchar(200) DEFAULT NULL COMMENT 'type of adjustment of a term in a language e.g. plural',
+    `code_id`            varchar(50)  DEFAULT NULL,
+    `language_id`        int(11) NOT NULL
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 1
+  DEFAULT CHARSET = utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table`words`
+--
+
+CREATE TABLE IF NOT EXISTS `words`
+(
+    `word_id`        int(11)      NOT NULL,
+    `user_id`        int(11)      DEFAULT NULL COMMENT 'user_id of the user that has created the term',
+    `word_name`      varchar(200) NOT NULL,
+    `plural`         varchar(200) DEFAULT NULL COMMENT 'to be replaced by a language form entry',
+    `description`    text         DEFAULT NULL COMMENT 'to be replaced by a language form entry',
+    `phrase_type_id` int(11)      DEFAULT NULL,
+    `view_id`        int(11)      DEFAULT NULL COMMENT 'the default mask for this term',
+    `values`         int(11)      DEFAULT NULL COMMENT 'number of values linked to the term, which gives an indication of the importance',
+    `excluded`       tinyint(4)   DEFAULT NULL,
+    `share_type_id`  smallint     DEFAULT NULL,
+    `protect_id`     smallint     DEFAULT NULL
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 1
+  DEFAULT CHARSET = utf8 COMMENT ='probably all text of th db';
+
+--
+-- Table structure for table`user_words`
+--
+
+CREATE TABLE IF NOT EXISTS `user_words`
+(
+    `word_id`        int(11) NOT NULL,
+    `user_id`        int(11) NOT NULL,
+    `language_id`    int(11)      DEFAULT NULL,
+    `word_name`      varchar(200) DEFAULT NULL,
+    `plural`         varchar(200) DEFAULT NULL,
+    `description`    text,
+    `phrase_type_id` int(11)      DEFAULT NULL,
+    `view_id`        int(11)      DEFAULT NULL,
+    `values`         int(11)      DEFAULT NULL,
+    `excluded`       tinyint(4)   DEFAULT NULL,
+    `share_type_id`  smallint     DEFAULT NULL,
+    `protect_id`     smallint     DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table`word_del_confirms`
+--
+
+CREATE TABLE IF NOT EXISTS `word_del_confirms`
+(
+    `word_del_request_id` int(11)   NOT NULL,
+    `user_id`             int(11)   NOT NULL,
+    `confirm`             timestamp NULL DEFAULT NULL,
+    `reject`              timestamp NULL DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8;
+
+--
+-- Table structure for table`word_del_requests`
+--
+
+CREATE TABLE IF NOT EXISTS `word_del_requests`
+(
+    `word_del_request_id` int(11)      NOT NULL,
+    `word_id`             int(11)      NOT NULL,
+    `word_name`           varchar(200) NOT NULL,
+    `started`             timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `canceled`            timestamp    NULL     DEFAULT NULL,
+    `confirmed`           timestamp    NULL     DEFAULT NULL,
+    `finished`            timestamp    NULL     DEFAULT NULL,
+    `user_id`             int(11)      NOT NULL COMMENT 'the user who has requested the term deletion'
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table`word_periods`
+--
+
+CREATE TABLE IF NOT EXISTS `word_periods`
+(
+    `word_id` int(11)  NOT NULL,
+    `from`    datetime NOT NULL,
+    `to`      datetime NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8 COMMENT ='to define the time period for time terms';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table`verbs`
+--
+
+CREATE TABLE IF NOT EXISTS `verbs`
+(
+    `verb_id`             int(11)      NOT NULL,
+    `verb_name`           varchar(100) NOT NULL,
+    `code_id`             varchar(255) DEFAULT NULL,
+    `description`         text,
+    `condition_type`      int(11)      DEFAULT NULL,
+    `formula_name`        varchar(200) DEFAULT NULL COMMENT 'naming used in formulas',
+    `name_plural_reverse` varchar(200) DEFAULT NULL COMMENT 'english description for the reverse list, e.g. Companies are ...',
+    `name_plural`         varchar(200) DEFAULT NULL,
+    `name_reverse`        varchar(200) DEFAULT NULL,
+    `words`               int(11)      DEFAULT NULL COMMENT 'used for how many terms'
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 1
+  DEFAULT CHARSET = utf8 COMMENT ='it is fixed coded how to behavior for each type is';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table`verb_usages`
+--
+
+CREATE TABLE IF NOT EXISTS `verb_usages`
+(
+    `verb_usage_id` int(11) NOT NULL,
+    `verb_id`       int(11) NOT NULL,
+    `table_id`      int(11) NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table`triples`
+--
+
+CREATE TABLE IF NOT EXISTS `triples`
+(
+    `triple_id`                int(11) NOT NULL,
+    `user_id`                     int(11)      DEFAULT NULL,
+    `from_phrase_id`              int(11) NOT NULL,
+    `verb_id`                     int(11) NOT NULL,
+    `to_phrase_id`                int(11) NOT NULL,
+    `triple_name`                 varchar(200) DEFAULT NULL COMMENT 'the unique name used',
+    `name_given`                  varchar(200) DEFAULT NULL COMMENT 'the unique name manually set by the user, which can be empty',
+    `name_generated`              varchar(200) DEFAULT NULL COMMENT 'the generic unique name based on the phrases and verb, which can be overwritten by the given name',
+    `description`                 text,
+    `triple_condition_id`      int(11)      DEFAULT NULL COMMENT 'formula_id of a formula with a boolean result; the term is only added if formula result is true',
+    `triple_condition_type_id` int(11)      DEFAULT NULL COMMENT 'maybe not needed',
+    `phrase_type_id`              int(11)      DEFAULT NULL,
+    `values`                      int(11)      DEFAULT NULL,
+    `excluded`                    tinyint(4)   DEFAULT NULL,
+    `share_type_id`               smallint     DEFAULT NULL,
+    `protect_id`                  smallint     DEFAULT NULL
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 1
+  DEFAULT CHARSET = utf8;
+
+--
+-- Table structure for table`user_triples`
+--
+
+CREATE TABLE IF NOT EXISTS `user_triples`
+(
+    `triple_id`   int(11) NOT NULL,
+    `user_id`        int(11)      DEFAULT NULL,
+    `triple_name`    varchar(200) DEFAULT NULL COMMENT 'the unique name used',
+    `name_given`     varchar(200) DEFAULT NULL COMMENT 'the unique name manually set by the user, which can be empty',
+    `name_generated` varchar(200) DEFAULT NULL COMMENT 'the generic unique name based on the phrases and verb, which can be overwritten by the given name',
+    `description`    text,
+    `phrase_type_id` int(11)      DEFAULT NULL,
+    `values`         int(11)      DEFAULT NULL,
+    `excluded`       tinyint(4)   DEFAULT NULL,
+    `share_type_id`  smallint     DEFAULT NULL,
+    `protect_id`     smallint     DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure to remember which phrases are stored in which table and pod
+--
+
+CREATE TABLE IF NOT EXISTS `phrase_tables`
+(
+    `table_id`  int(11) NOT NULL,
+    `phrase_id` int(11) NOT NULL,
+    `pod_url`   text,
+    `active`    smallint DEFAULT NULL
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 1
+  DEFAULT CHARSET = utf8 COMMENT ='to remember which phrases are stored in which table and pod';
 
 -- --------------------------------------------------------
 
@@ -223,6 +759,483 @@ CREATE TABLE IF NOT EXISTS `formulas`
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
   DEFAULT CHARSET = utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for phrase group names
+--
+
+CREATE TABLE IF NOT EXISTS `groups`
+(
+    `group_id`    char(112) NOT NULL,
+    `group_name`  varchar(1000) DEFAULT NULL COMMENT 'if this is set a manual group for fast selection',
+    `description` varchar(4000) DEFAULT NULL COMMENT 'the automatic created user readable description'
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8 COMMENT = 'to add a user given name using a 512 bit group id index for up to 16 16 bit phrase ids including the order';
+
+--
+-- Table structure for saving a user specific group name
+--
+
+CREATE TABLE IF NOT EXISTS `user_groups`
+(
+    `group_id`    char(112) NOT NULL,
+    `user_id`     int(11) NOT NULL,
+    `group_name`  varchar(1000) DEFAULT NULL COMMENT 'if this is set a manual group for fast selection',
+    `description` varchar(4000) DEFAULT NULL COMMENT 'the automatic created user readable description'
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8 COMMENT ='to reduce the number of value to term links';
+
+--
+-- Table structure for phrase group names of up to four prime phrases
+--
+
+CREATE TABLE IF NOT EXISTS `groups_prime`
+(
+    `group_id`    int(11) NOT NULL,
+    `group_name`  varchar(1000) DEFAULT NULL COMMENT 'if this is set a manual group for fast selection',
+    `description` varchar(4000) DEFAULT NULL COMMENT 'the automatic created user readable description'
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8 COMMENT = 'to add a user given name using a 64 bit bigint group id index for up to four 16 bit phrase ids including the order';
+
+--
+-- Table structure for saving a user specific group name
+--
+
+CREATE TABLE IF NOT EXISTS `user_groups_prime`
+(
+    `group_id`    int(11) NOT NULL,
+    `user_id`     int(11) NOT NULL,
+    `group_name`  varchar(1000) DEFAULT NULL COMMENT 'if this is set a manual group for fast selection',
+    `description` varchar(4000) DEFAULT NULL COMMENT 'the automatic created user readable description'
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8 COMMENT = 'to link the user specific name to the group';
+
+--
+-- Table structure for phrase group names of more than 16 phrases
+--
+
+CREATE TABLE IF NOT EXISTS `groups_big`
+(
+    `group_id`    text NOT NULL,
+    `group_name`  varchar(1000) DEFAULT NULL COMMENT 'if this is set a manual group for fast selection',
+    `description` varchar(4000) DEFAULT NULL COMMENT 'the automatic created user readable description'
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8 COMMENT = 'to add a user given name using text group id index for an almost unlimited number of phrase ids including the order';
+
+--
+-- Table structure for saving a user specific group name for more than 16 phrases
+--
+
+CREATE TABLE IF NOT EXISTS `user_groups_big`
+(
+    `group_id`    text NOT NULL,
+    `user_id`     int(11) NOT NULL,
+    `group_name`  varchar(1000) DEFAULT NULL COMMENT 'if this is set a manual group for fast selection',
+    `description` varchar(4000) DEFAULT NULL COMMENT 'the automatic created user readable description'
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8 COMMENT = 'for saving a user specific group name for more than 16 phrases';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure to link phrases to a group
+-- TODO deprecate and use like on group_id instead
+--
+
+CREATE TABLE IF NOT EXISTS `group_links`
+(
+    `group_id`  char(112) NOT NULL,
+    `phrase_id` int(11) NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8 COMMENT = 'link phrases to a phrase group for database based selections';
+
+--
+-- Table structure to store user specific ex- or includes of single link of phrases to groups
+--
+
+CREATE TABLE IF NOT EXISTS `user_group_links`
+(
+    `group_id`  char(112) NOT NULL,
+    `phrase_id` int(11) NOT NULL,
+    `user_id`   int(11) DEFAULT NULL,
+    `excluded`  smallint DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8 COMMENT = 'to store user specific ex- or includes of single link of phrases to groups';
+
+--
+-- Table structure to link phrases to a group
+-- TODO deprecate and use like on binary format of group_id instead
+--
+
+CREATE TABLE IF NOT EXISTS `group_prime_links`
+(
+    `group_id`  int(11) NOT NULL,
+    `phrase_id` int(11) NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8 COMMENT = 'link phrases to a short phrase group for database based selections';
+
+--
+-- Table structure to store user specific ex- or includes of single link of phrases to groups
+--
+
+CREATE TABLE IF NOT EXISTS `user_group_prime_links`
+(
+    `group_id`  int(11) NOT NULL,
+    `phrase_id` int(11) NOT NULL,
+    `user_id`   int(11) DEFAULT NULL,
+    `excluded`  smallint DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8 COMMENT = 'user specific link to groups with up to four prime phrase';
+
+--
+-- Table structure to link up more than 16 phrases to a group
+-- TODO deprecate and use like on group_id instead
+--
+
+CREATE TABLE IF NOT EXISTS `group_big_links`
+(
+    `group_id`  text NOT NULL,
+    `phrase_id` int(11) NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8 COMMENT = 'link phrases to a short phrase group for database based selections';
+
+--
+-- Table structure to store user specific ex- or includes of single link of phrases to groups
+--
+
+CREATE TABLE IF NOT EXISTS `user_group_big_links`
+(
+    `group_id`  text NOT NULL,
+    `phrase_id` int(11) NOT NULL,
+    `user_id`   int(11) DEFAULT NULL,
+    `excluded`  smallint DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8 COMMENT = 'user specific link to groups with up to four prime phrase';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table`source_types`
+--
+
+CREATE TABLE IF NOT EXISTS `source_types`
+(
+    `source_type_id` int(11)      NOT NULL,
+    `type_name`      varchar(200) NOT NULL,
+    `code_id`        varchar(100) NOT NULL,
+    `description`    text     DEFAULT NULL
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 5
+  DEFAULT CHARSET = utf8;
+
+--
+-- table structure for the original sources for the numeric,time and geo values
+--
+
+CREATE TABLE IF NOT EXISTS sources (
+                                       source_id      bigint           NOT NULL COMMENT 'the internal unique primary index ',
+                                       user_id        bigint       DEFAULT NULL COMMENT 'the owner / creator of the value',
+                                       source_name    varchar(255)     NOT NULL COMMENT 'the unique name of the source used e.g. as the primary search key',
+                                       description    text DEFAULT         NULL COMMENT 'the user specific description of the source for mouse over helps',
+                                       source_type_id bigint DEFAULT       NULL COMMENT 'link to the source type',
+                                       `url`          text DEFAULT         NULL COMMENT 'the url of the source',
+                                       code_id        varchar(100) DEFAULT NULL COMMENT 'to select sources used by this program',
+                                       excluded       smallint     DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
+                                       share_type_id  smallint     DEFAULT NULL COMMENT 'to restrict the access',
+                                       protect_id     smallint     DEFAULT NULL COMMENT 'to protect against unwanted changes'
+) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'for the original sources for the numeric,time and geo values';
+
+--
+-- table structure for the original sources for the numeric,time and geo values
+--
+
+CREATE TABLE IF NOT EXISTS user_sources (
+                                            source_id      bigint           NOT NULL COMMENT 'with the user_id the internal unique primary index ',
+                                            user_id        bigint           NOT NULL COMMENT 'the changer of the ',
+                                            source_name    varchar(255)     NOT NULL COMMENT 'the unique name of the source used e.g. as the primary search key',
+                                            description    text         DEFAULT NULL COMMENT 'the user specific description of the source for mouse over helps',
+                                            source_type_id bigint       DEFAULT NULL COMMENT 'link to the source type',
+                                            `url`          text         DEFAULT NULL COMMENT 'the url of the source',
+                                            code_id        varchar(100) DEFAULT NULL COMMENT 'to select sources used by this program',
+                                            excluded       smallint     DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
+                                            share_type_id  smallint     DEFAULT NULL COMMENT 'to restrict the access',
+                                            protect_id     smallint     DEFAULT NULL COMMENT 'to protect against unwanted changes'
+) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'for the original sources for the numeric,time and geo values';
+
+
+--
+-- Table structure for table`source_values`
+--
+
+CREATE TABLE IF NOT EXISTS `source_values`
+(
+    `group_id`     int(11) NOT NULL,
+    `source_id`    int(11) NOT NULL,
+    `user_id`      int(11) NOT NULL,
+    `source_value` double  NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8 COMMENT ='one user can add different value, which should be the same, but are different  ';
+
+--
+-- Table structure for table`import_source`
+--
+
+CREATE TABLE IF NOT EXISTS `import_source`
+(
+    `import_source_id` int(11)      NOT NULL,
+    `name`             varchar(100) NOT NULL,
+    `import_type`      int(11)      NOT NULL,
+    `word_id`          int(11)      NOT NULL COMMENT 'the name as a term'
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8 COMMENT ='many replace by a term';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table`ref_types`
+--
+
+CREATE TABLE IF NOT EXISTS `ref_types`
+(
+    `ref_type_id` int(11)      NOT NULL,
+    `type_name`   varchar(200) NOT NULL,
+    `code_id`     varchar(100) NOT NULL,
+    `description` text         NOT NULL,
+    `base_url`    text         NOT NULL
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 5
+  DEFAULT CHARSET = utf8;
+
+--
+-- Table structure for table`refs`
+--
+
+CREATE TABLE IF NOT EXISTS `refs`
+(
+    `ref_id`       int(11)      NOT NULL,
+    `user_id`      bigint       NOT NULL,
+    `phrase_id`    int(11)      NOT NULL,
+    `external_key` varchar(250) NOT NULL,
+    `ref_type_id`  int(11)      NOT NULL,
+    `source_id`    int(11)      DEFAULT NULL,
+    `url`          text         DEFAULT NULL,
+    `description`  text         DEFAULT NULL,
+    `excluded`     tinyint(4)   DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8;
+
+--
+-- Table structure for table`user_refs`
+--
+
+CREATE TABLE IF NOT EXISTS `user_refs`
+(
+    `ref_id`        int(11) NOT NULL,
+    `user_id`       int(11) NOT NULL,
+    `url`           text         DEFAULT NULL,
+    `description`   text         DEFAULT NULL,
+    `excluded`      tinyint(4)   DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8;
+
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for public values related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated
+--
+
+CREATE TABLE IF NOT EXISTS `values_standard_prime`
+(
+    `group_id`        int(11)   NOT NULL COMMENT 'the prime index to find the value',
+    `numeric_value`   double    NOT NULL,
+    `source_id`       int(11)   DEFAULT NULL COMMENT 'the prime source'
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8 COMMENT = 'for public unprotected values related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated';
+
+
+--
+-- Table structure for public values that have never changed the owner, does not have a description and are rarely updated
+--
+
+CREATE TABLE IF NOT EXISTS `values_standard`
+(
+    `group_id`        char(112) NOT NULL COMMENT 'the prime index to find the value',
+    `numeric_value`   double    NOT NULL,
+    `source_id`       int(11)   DEFAULT NULL COMMENT 'the prime source'
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8 COMMENT = 'for public unprotected values that have never changed the owner, does not have a description and are rarely updated';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for numeric values related to up to 16 phrases
+--
+
+CREATE TABLE IF NOT EXISTS `values`
+(
+    `group_id`        char(112) NOT NULL COMMENT 'the prime index to find the value',
+    `numeric_value`   double    NOT NULL,
+    `user_id`         int(11)            DEFAULT NULL COMMENT 'the owner / creator of the value',
+    `source_id`       int(11)            DEFAULT NULL,
+    `description`     text COMMENT 'temp field used during dev phase for easy value to trm assigns',
+    `excluded`        tinyint(4)         DEFAULT NULL COMMENT 'the default exclude setting for most users',
+    `share_type_id`   smallint           DEFAULT NULL,
+    `protect_id`      int(11)   NOT NULL DEFAULT '1',
+    `last_update`     timestamp NULL     DEFAULT NULL COMMENT 'for fast recalculation'
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 1
+  DEFAULT CHARSET = utf8 COMMENT ='long list';
+
+--
+-- Table structure for table `user_values`
+--
+
+CREATE TABLE IF NOT EXISTS `user_values`
+(
+    `group_id`      char(112) NOT NULL COMMENT 'the prime index to find the value',
+    `user_id`       int(11)   NOT NULL,
+    `numeric_value` double         DEFAULT NULL,
+    `source_id`     int(11)        DEFAULT NULL,
+    `excluded`      tinyint(4)     DEFAULT NULL,
+    `share_type_id` int(11)        DEFAULT NULL,
+    `protect_id`    int(11)        DEFAULT NULL,
+    `last_update`   timestamp NULL DEFAULT NULL COMMENT 'for fast calculation of the updates'
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8 COMMENT ='for quick access to the user specific values';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for numeric values related to up to 16 phrases
+--
+
+CREATE TABLE IF NOT EXISTS `values_prime`
+(
+    `group_id`        char(112) NOT NULL COMMENT 'the prime index to find the value',
+    `numeric_value`   double    NOT NULL,
+    `user_id`         int(11)            DEFAULT NULL COMMENT 'the owner / creator of the value',
+    `source_id`       int(11)            DEFAULT NULL,
+    `description`     text COMMENT 'temp field used during dev phase for easy value to trm assigns',
+    `excluded`        tinyint(4)         DEFAULT NULL COMMENT 'the default exclude setting for most users',
+    `last_update`     timestamp NULL     DEFAULT NULL COMMENT 'for fast recalculation',
+    `share_type_id`   smallint           DEFAULT NULL,
+    `protect_id`      int(11)   NOT NULL DEFAULT '1'
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 1
+  DEFAULT CHARSET = utf8 COMMENT ='long list';
+
+--
+-- Table structure for table `user_values`
+--
+
+CREATE TABLE IF NOT EXISTS `user_values_prime`
+(
+    `group_id`      int(11)   NOT NULL,
+    `user_id`       int(11)   NOT NULL,
+    `numeric_value` double         DEFAULT NULL,
+    `source_id`     int(11)        DEFAULT NULL,
+    `excluded`      tinyint(4)     DEFAULT NULL,
+    `share_type_id` int(11)        DEFAULT NULL,
+    `protect_id`    int(11)        DEFAULT NULL,
+    `last_update`   timestamp NULL DEFAULT NULL COMMENT 'for fast calculation of the updates'
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8 COMMENT ='for quick access to the user specific values';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for numeric values related to more than 16 phrases
+--
+
+CREATE TABLE IF NOT EXISTS `values_big`
+(
+    `group_id`        text NOT NULL COMMENT 'the big index to find the value',
+    `numeric_value`   double    NOT NULL,
+    `user_id`         int(11)            DEFAULT NULL COMMENT 'the owner / creator of the value',
+    `source_id`       int(11)            DEFAULT NULL,
+    `description`     text COMMENT 'temp field used during dev phase for easy value to trm assigns',
+    `excluded`        tinyint(4)         DEFAULT NULL COMMENT 'the default exclude setting for most users',
+    `last_update`     timestamp NULL     DEFAULT NULL COMMENT 'for fast recalculation',
+    `share_type_id`   smallint           DEFAULT NULL,
+    `protect_id`      int(11)   NOT NULL DEFAULT '1'
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 1
+  DEFAULT CHARSET = utf8 COMMENT ='long list';
+
+--
+-- Table structure to store the user specific changes of values related to more than 16 phrases
+--
+
+CREATE TABLE IF NOT EXISTS `user_values_big`
+(
+    `group_id`      text   NOT NULL,
+    `user_id`       int(11)   NOT NULL,
+    `numeric_value` double         DEFAULT NULL,
+    `source_id`     int(11)        DEFAULT NULL,
+    `excluded`      tinyint(4)     DEFAULT NULL,
+    `share_type_id` int(11)        DEFAULT NULL,
+    `protect_id`    int(11)        DEFAULT NULL,
+    `last_update`   timestamp NULL DEFAULT NULL COMMENT 'for fast calculation of the updates'
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8 COMMENT ='for quick access to the user specific values';
+
+-- --------------------------------------------------------
+
+-- .....
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table`value_time_series`
+--
+
+CREATE TABLE IF NOT EXISTS `value_time_series`
+(
+    `value_time_series_id` int(11)   NOT NULL,
+    `user_id`              int(11)   NOT NULL,
+    `source_id`            int(11)        DEFAULT NULL,
+    `phrase_group_id`      int(11)   NOT NULL,
+    `excluded`             tinyint(4)     DEFAULT NULL,
+    `share_type_id`        int(11)        DEFAULT NULL,
+    `protect_id`           int(11)   NOT NULL,
+    `last_update`          timestamp NULL DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8 COMMENT ='common parameters for a list of intraday values';
+
+--
+-- Table structure for table`user_value_time_series`
+--
+
+CREATE TABLE IF NOT EXISTS `user_value_time_series`
+(
+    `value_time_series_id` int(11)   NOT NULL,
+    `user_id`              int(11)   NOT NULL,
+    `source_id`            int(11)        DEFAULT NULL,
+    `excluded`             tinyint(4)     DEFAULT NULL,
+    `share_type_id`        int(11)        DEFAULT NULL,
+    `protect_id`           int(11)   NOT NULL,
+    `last_update`          timestamp NULL DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8 COMMENT ='common parameters for a user specific list of intraday values';
+
+--
+-- Table structure for table`value_ts_data`
+--
+
+CREATE TABLE IF NOT EXISTS `value_ts_data`
+(
+    `value_time_series_id` int(11)  NOT NULL,
+    `val_time`             datetime NOT NULL,
+    `number`               float    NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8 COMMENT ='for efficient saving of daily or intraday values';
+
+-- --------------------------------------------------------
+
+-- .....
 
 -- --------------------------------------------------------
 
@@ -305,65 +1318,17 @@ CREATE TABLE IF NOT EXISTS `formula_types`
 
 CREATE TABLE IF NOT EXISTS `results`
 (
-    `result_id`              int(11)   NOT NULL,
-    `formula_id`             int(11)   NOT NULL,
-    `user_id`                int(11)        DEFAULT NULL,
-    `source_phrase_group_id` int(11)        DEFAULT NULL,
-    `phrase_group_id`        int(11)        DEFAULT '0' COMMENT 'temp field for fast data collection; no single links to terms because this is just a cache table and can be recreated by the underlying tables',
-    `result`                 double    NOT NULL,
-    `last_update`            timestamp NULL DEFAULT NULL COMMENT 'time of last value update mainly used for recovery in case of inconsistencies, empty in case this value is dirty',
-    `dirty`                  tinyint(4)     DEFAULT NULL
+    `group_id`        int(11)   NOT NULL,
+    `formula_id`      int(11)   NOT NULL,
+    `user_id`         int(11)   DEFAULT NULL,
+    `source_group_id` int(11)   DEFAULT NULL,
+    `result`          double    NOT NULL,
+    `last_update`     timestamp NULL DEFAULT NULL COMMENT 'time of last value update mainly used for recovery in case of inconsistencies, empty in case this value is dirty'
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8 COMMENT ='temp table to cache the formula results';
+  DEFAULT CHARSET = utf8 COMMENT ='table to cache the formula results';
 
 -- --------------------------------------------------------
-
---
--- Table structure for table`import_source`
---
-
-CREATE TABLE IF NOT EXISTS `import_source`
-(
-    `import_source_id` int(11)      NOT NULL,
-    `name`             varchar(100) NOT NULL,
-    `import_type`      int(11)      NOT NULL,
-    `word_id`          int(11)      NOT NULL COMMENT 'the name as a term'
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8 COMMENT ='many replace by a term';
-
--- --------------------------------------------------------
-
---
--- Table structure for table`languages`
---
-
-CREATE TABLE IF NOT EXISTS `languages`
-(
-    `language_id`    int(11)      NOT NULL,
-    `language_name`  varchar(200) NOT NULL,
-    `code_id`        varchar(50)  NOT NULL,
-    `wikimedia_code` varchar(50)  NOT NULL,
-    `description`    text
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8;
-
--- --------------------------------------------------------
-
---
--- Table structure for table`language_forms`
---
-
-CREATE TABLE IF NOT EXISTS `language_forms`
-(
-    `language_form_id`   int(11) NOT NULL,
-    `language_form_name` varchar(200) DEFAULT NULL COMMENT 'type of adjustment of a term in a language e.g. plural',
-    `code_id`            varchar(50)  DEFAULT NULL,
-    `language_id`        int(11) NOT NULL
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8;
 
 -- --------------------------------------------------------
 
@@ -404,11 +1369,11 @@ CREATE TABLE IF NOT EXISTS `phrase_groups`
 -- --------------------------------------------------------
 
 --
--- Stand-in structure for view`phrase_group_phrase_links`
+-- Stand-in structure for view`phrase_groups_phrase_links`
 --
-CREATE TABLE IF NOT EXISTS `phrase_group_phrase_links`
+CREATE TABLE IF NOT EXISTS `phrase_groups_phrase_links`
 (
-    `phrase_group_phrase_link_id` int(11),
+    `phrase_groups_phrase_link_id` int(11),
     `phrase_group_id`             int(11),
     `phrase_id`                   bigint(20)
 );
@@ -442,298 +1407,6 @@ CREATE TABLE IF NOT EXISTS `phrase_group_triple_links`
   DEFAULT CHARSET = utf8 COMMENT ='link phrases to a phrase_group for database based selections';
 
 -- --------------------------------------------------------
-
---
--- Table structure for table`protection_types`
---
-
-CREATE TABLE IF NOT EXISTS `protection_types`
-(
-    `protect_id`  int(11)      NOT NULL,
-    `type_name`   varchar(200) NOT NULL,
-    `code_id`     varchar(100) NOT NULL,
-    `description` text         NOT NULL
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 5
-  DEFAULT CHARSET = utf8;
-
--- --------------------------------------------------------
-
---
--- Table structure for table`refs`
---
-
-CREATE TABLE IF NOT EXISTS `refs`
-(
-    `ref_id`       int(11)      NOT NULL,
-    `user_id`      bigint       NOT NULL,
-    `phrase_id`    int(11)      NOT NULL,
-    `external_key` varchar(250) NOT NULL,
-    `ref_type_id`  int(11)      NOT NULL,
-    `source_id`    int(11)      DEFAULT NULL,
-    `url`          text         DEFAULT NULL,
-    `description`  text         DEFAULT NULL,
-    `excluded`     tinyint(4)   DEFAULT NULL
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8;
-
--- --------------------------------------------------------
-
---
--- Table structure for table`ref_types`
---
-
-CREATE TABLE IF NOT EXISTS `ref_types`
-(
-    `ref_type_id` int(11)      NOT NULL,
-    `type_name`   varchar(200) NOT NULL,
-    `code_id`     varchar(100) NOT NULL,
-    `description` text         NOT NULL,
-    `base_url`    text         NOT NULL
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 5
-  DEFAULT CHARSET = utf8;
-
--- --------------------------------------------------------
-
---
--- Table structure for table`sessions`
---
-
-CREATE TABLE IF NOT EXISTS `sessions`
-(
-    `id`          int(11)      NOT NULL,
-    `uid`         int(11)      NOT NULL,
-    `hash`        varchar(40)  NOT NULL,
-    `expire_date` datetime     NOT NULL,
-    `ip`          varchar(39)  NOT NULL,
-    `agent`       varchar(200) NOT NULL,
-    `cookie_crc`  varchar(40)  NOT NULL
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8;
-
--- --------------------------------------------------------
-
---
--- Table structure for table`share_types`
---
-
-CREATE TABLE IF NOT EXISTS `share_types`
-(
-    `share_type_id` int(11)      NOT NULL,
-    `type_name`     varchar(200) NOT NULL COMMENT 'the name of the share type as displayed for the user',
-    `code_id`       varchar(100) NOT NULL COMMENT 'the code link',
-    `description`   text COMMENT 'to explain the code action of the share type'
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 5
-  DEFAULT CHARSET = utf8;
-
--- --------------------------------------------------------
-
---
--- Table structure for table`sources`
---
-
-CREATE TABLE IF NOT EXISTS `sources`
-(
-    `source_id`      int(11)      NOT NULL,
-    `user_id`        int(11)      DEFAULT NULL,
-    `source_name`    varchar(200) NOT NULL,
-    `url`            text,
-    `description`    text,
-    `source_type_id` int(11)      DEFAULT NULL,
-    `code_id`        varchar(100) DEFAULT NULL,
-    `excluded`       tinyint(4)   DEFAULT NULL
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8;
-
--- --------------------------------------------------------
-
---
--- Table structure for table`source_types`
---
-
-CREATE TABLE IF NOT EXISTS `source_types`
-(
-    `source_type_id` int(11)      NOT NULL,
-    `type_name`      varchar(200) NOT NULL,
-    `code_id`        varchar(100) NOT NULL,
-    `description`    text     DEFAULT NULL
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 5
-  DEFAULT CHARSET = utf8;
-
--- --------------------------------------------------------
-
---
--- Table structure for table`source_values`
---
-
-CREATE TABLE IF NOT EXISTS `source_values`
-(
-    `value_id`     int(11) NOT NULL,
-    `source_id`    int(11) NOT NULL,
-    `user_id`      int(11) NOT NULL,
-    `source_value` double  NOT NULL
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8 COMMENT ='one user can add different value, which should be the same, but are different  ';
-
--- --------------------------------------------------------
-
---
--- Table structure for table`sys_log`
---
-
-CREATE TABLE IF NOT EXISTS `sys_log`
-(
-    `sys_log_id`          int(11)   NOT NULL,
-    `sys_log_time`        timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    `sys_log_type_id`     int(11)   NOT NULL,
-    `sys_log_function_id` int(11)   NOT NULL,
-    `sys_log_text`        text,
-    `sys_log_description` text,
-    `sys_log_trace`       text,
-    `user_id`             int(11)            DEFAULT NULL,
-    `solver_id`           int(11)            DEFAULT NULL COMMENT 'user id of the user that is trying to solve the problem',
-    `sys_log_status_id`   int(11)            DEFAULT '1'
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8;
-
--- --------------------------------------------------------
-
---
--- Table structure for table`sys_log_functions`
---
-
-CREATE TABLE IF NOT EXISTS `sys_log_functions`
-(
-    `sys_log_function_id`   int(11)      NOT NULL,
-    `sys_log_function_name` varchar(200) NOT NULL
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8;
-
--- --------------------------------------------------------
-
---
--- Table structure for table`sys_log_status`
---
-
-CREATE TABLE IF NOT EXISTS `sys_log_status`
-(
-    `sys_log_status_id` int(11)      NOT NULL,
-    `type_name`         varchar(200) NOT NULL,
-    `code_id`           varchar(50)  NOT NULL,
-    `description`       text         NOT NULL,
-    `action`            varchar(200) DEFAULT NULL COMMENT 'description of the action to get to this status'
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8 COMMENT ='Status of internal errors';
-
--- --------------------------------------------------------
-
---
--- Table structure for table`sys_scripts`
---
-
-CREATE TABLE IF NOT EXISTS `sys_scripts`
-(
-    `sys_script_id`   int(11)      NOT NULL,
-    `sys_script_name` varchar(200) NOT NULL
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8;
-
--- --------------------------------------------------------
-
---
--- Table structure for table`sys_script_times`
---
-
-CREATE TABLE IF NOT EXISTS `sys_script_times`
-(
-    `sys_script_time`  timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    `sys_script_start` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-    `sys_script_id`    int(11) NOT NULL,
-    `url` varchar(250) DEFAULT NULL
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8;
-
--- --------------------------------------------------------
-
---
--- Table structure for table`users`
---
-
-CREATE TABLE IF NOT EXISTS `users`
-(
-    `user_id`                  int(11)      NOT NULL,
-    `user_name`                varchar(100) NOT NULL,
-    `description`              text         DEFAULT NULL,
-    `code_id`                  varchar(50)           DEFAULT NULL COMMENT 'to select e.g. the system batch user',
-    `right_level`              int(11)               DEFAULT NULL,
-    `password`                 varchar(200)          DEFAULT NULL,
-    `email`                    varchar(200)          DEFAULT NULL,
-    `email_verified`           tinyint(4)            DEFAULT NULL,
-    `email_alternative`        varchar(200)          DEFAULT NULL,
-    `ip_address`               varchar(50)           DEFAULT NULL,
-    `mobile_number`            varchar(50)           DEFAULT NULL,
-    `mobile_verified`          tinyint(4)            DEFAULT NULL,
-    `first_name`               varchar(200)          DEFAULT NULL,
-    `last_name`                varchar(200)          DEFAULT NULL,
-    `street`                   varchar(300)          DEFAULT NULL,
-    `place`                    varchar(200)          DEFAULT NULL,
-    `country_id`               int(11)               DEFAULT NULL,
-    `post_verified`            tinyint(4)            DEFAULT NULL,
-    `official_id`              varchar(200)          DEFAULT NULL COMMENT 'such as the passport id',
-    `user_official_id_type_id` int(11)               DEFAULT NULL,
-    `official_verified`        int(11)               DEFAULT NULL,
-    `user_type_id`             int(11)               DEFAULT NULL,
-    `last_word_id`             int(11)               DEFAULT NULL COMMENT 'the last term that the user had used',
-    `last_mask_id`             int(11)               DEFAULT NULL COMMENT 'the last mask that the user has used',
-    `is_active`                tinyint(4)   NOT NULL DEFAULT '0',
-    `dt`                       timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    `last_logoff`              timestamp    NULL     DEFAULT NULL,
-    `user_profile_id`          int(11)               DEFAULT NULL,
-    `source_id`                int(11)               DEFAULT NULL COMMENT 'the last source used by this user to have a default for the next value',
-    `activation_key`           varchar(200)          DEFAULT NULL,
-    `activation_key_timeout`   timestamp    NULL     DEFAULT NULL
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8 COMMENT ='only users can add data';
-
--- --------------------------------------------------------
-
---
--- Table structure for table`user_attempts`
---
-
-CREATE TABLE IF NOT EXISTS `user_attempts`
-(
-    `id`          int(11)     NOT NULL,
-    `ip`          varchar(39) NOT NULL,
-    `expire_date` datetime    NOT NULL
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8;
-
--- --------------------------------------------------------
-
---
--- Table structure for table`user_blocked_ips`
---
-
-CREATE TABLE IF NOT EXISTS `user_blocked_ips`
-(
-    `user_blocked_id` int(11)     NOT NULL,
-    `ip_from`         varchar(45) NOT NULL,
-    `ip_to`           varchar(45) NOT NULL,
-    `reason`          text        NOT NULL,
-    `is_active`       tinyint(4) DEFAULT '1'
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8;
 
 -- --------------------------------------------------------
 
@@ -776,20 +1449,6 @@ CREATE TABLE IF NOT EXISTS `user_formula_links`
 
 -- --------------------------------------------------------
 
---
--- Table structure for table`user_official_types`
---
-
-CREATE TABLE IF NOT EXISTS `user_official_types`
-(
-    `user_official_type_id` int(11)      NOT NULL,
-    `type_name`             varchar(200) NOT NULL,
-    `code_id`               varchar(100) DEFAULT NULL,
-    `comment`               text         DEFAULT NULL
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8;
-
 -- --------------------------------------------------------
 
 --
@@ -809,11 +1468,11 @@ CREATE TABLE IF NOT EXISTS `user_phrase_groups`
 -- --------------------------------------------------------
 
 --
--- Stand-in structure for view`user_phrase_group_phrase_links`
+-- Stand-in structure for view`user_phrase_groups_phrase_links`
 --
-CREATE TABLE IF NOT EXISTS `user_phrase_group_phrase_links`
+CREATE TABLE IF NOT EXISTS `user_phrase_groups_phrase_links`
 (
-    `phrase_group_phrase_link_id` int(11),
+    `phrase_groups_phrase_link_id` int(11),
     `user_id`                     int(11),
     `excluded`                    tinyint(4)
 );
@@ -846,123 +1505,6 @@ CREATE TABLE IF NOT EXISTS `user_phrase_group_triple_links`
   DEFAULT CHARSET = utf8 COMMENT ='view for fast group selection based on a triple';
 
 -- --------------------------------------------------------
-
---
--- Table structure for table`user_profiles`
---
-
-CREATE TABLE IF NOT EXISTS `user_profiles`
-(
-    `profile_id`  int(11)      NOT NULL,
-    `type_name`   varchar(200) NOT NULL,
-    `code_id`     varchar(50)  NOT NULL,
-    `description` text
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 4
-  DEFAULT CHARSET = utf8;
-
--- --------------------------------------------------------
-
---
--- Table structure for table`user_requests`
---
-
-CREATE TABLE IF NOT EXISTS `user_requests`
-(
-    `id`          int(11)     NOT NULL,
-    `uid`         int(11)     NOT NULL,
-    `request_key` varchar(20) NOT NULL,
-    `expire`      datetime    NOT NULL,
-    `type`        varchar(20) NOT NULL
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8;
-
--- --------------------------------------------------------
-
---
--- Table structure for table`user_sources`
---
-
-CREATE TABLE IF NOT EXISTS `user_sources`
-(
-    `source_id`      int(11) NOT NULL,
-    `user_id`        int(11) NOT NULL,
-    `source_name`    varchar(200) DEFAULT NULL,
-    `url`            text         DEFAULT NULL,
-    `description`        text,
-    `source_type_id` int(11)      DEFAULT NULL,
-    `excluded`       tinyint(4)   DEFAULT NULL
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8;
-
--- --------------------------------------------------------
-
---
--- Table structure for table`user_refs`
---
-
-CREATE TABLE IF NOT EXISTS `user_refs`
-(
-    `ref_id`        int(11) NOT NULL,
-    `user_id`       int(11) NOT NULL,
-    `url`           text         DEFAULT NULL,
-    `description`   text         DEFAULT NULL,
-    `excluded`      tinyint(4)   DEFAULT NULL
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8;
-
--- --------------------------------------------------------
-
---
--- Table structure for table`user_types`
---
-
-CREATE TABLE IF NOT EXISTS `user_types`
-(
-    `user_type_id` int(11)      NOT NULL,
-    `user_type`    varchar(200) NOT NULL,
-    `code_id`      varchar(100) DEFAULT NULL,
-    `comment`      varchar(200) NOT NULL
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8;
-
--- --------------------------------------------------------
-
---
--- Table structure for table`user_values`
---
-
-CREATE TABLE IF NOT EXISTS `user_values`
-(
-    `value_id`      int(11)   NOT NULL,
-    `user_id`       int(11)   NOT NULL,
-    `numeric_value` double         DEFAULT NULL,
-    `source_id`     int(11)        DEFAULT NULL,
-    `excluded`      tinyint(4)     DEFAULT NULL,
-    `share_type_id` int(11)        DEFAULT NULL,
-    `protect_id`    int(11)        DEFAULT NULL,
-    `last_update`   timestamp NULL DEFAULT NULL COMMENT 'for fast calculation of the updates'
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8 COMMENT ='for quick access to the user specific values';
-
--- --------------------------------------------------------
-
---
--- Table structure for table`user_value_time_series`
---
-
-CREATE TABLE IF NOT EXISTS `user_value_time_series`
-(
-    `value_time_series_id` int(11)   NOT NULL,
-    `user_id`              int(11)   NOT NULL,
-    `source_id`            int(11)        DEFAULT NULL,
-    `excluded`             tinyint(4)     DEFAULT NULL,
-    `share_type_id`        int(11)        DEFAULT NULL,
-    `protect_id`           int(11)   NOT NULL,
-    `last_update`          timestamp NULL DEFAULT NULL
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8 COMMENT ='common parameters for a user specific list of intraday values';
 
 -- --------------------------------------------------------
 
@@ -1024,74 +1566,6 @@ CREATE TABLE IF NOT EXISTS `user_component_links`
     `protect_id`             smallint   DEFAULT NULL
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8;
-
--- --------------------------------------------------------
-
---
--- Table structure for table`user_words`
---
-
-CREATE TABLE IF NOT EXISTS `user_words`
-(
-    `word_id`        int(11) NOT NULL,
-    `user_id`        int(11) NOT NULL,
-    `language_id`    int(11)      DEFAULT NULL,
-    `word_name`      varchar(200) DEFAULT NULL,
-    `plural`         varchar(200) DEFAULT NULL,
-    `description`    text,
-    `phrase_type_id` int(11)      DEFAULT NULL,
-    `view_id`        int(11)      DEFAULT NULL,
-    `values`         int(11)      DEFAULT NULL,
-    `excluded`       tinyint(4)   DEFAULT NULL,
-    `share_type_id`  smallint     DEFAULT NULL,
-    `protect_id`     smallint     DEFAULT NULL
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8;
-
--- --------------------------------------------------------
-
---
--- Table structure for table`user_triples`
---
-
-CREATE TABLE IF NOT EXISTS `user_triples`
-(
-    `triple_id`   int(11) NOT NULL,
-    `user_id`        int(11)      DEFAULT NULL,
-    `triple_name`    varchar(200) DEFAULT NULL COMMENT 'the unique name used',
-    `name_given`     varchar(200) DEFAULT NULL COMMENT 'the unique name manually set by the user, which can be empty',
-    `name_generated` varchar(200) DEFAULT NULL COMMENT 'the generic unique name based on the phrases and verb, which can be overwritten by the given name',
-    `description`    text,
-    `phrase_type_id` int(11)      DEFAULT NULL,
-    `values`         int(11)      DEFAULT NULL,
-    `excluded`       tinyint(4)   DEFAULT NULL,
-    `share_type_id`  smallint     DEFAULT NULL,
-    `protect_id`     smallint     DEFAULT NULL
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8;
-
--- --------------------------------------------------------
-
---
--- Table structure for table`values`
---
-
-CREATE TABLE IF NOT EXISTS `values`
-(
-    `value_id`        int(11)   NOT NULL,
-    `user_id`         int(11)            DEFAULT NULL COMMENT 'the owner / creator of the value',
-    `numeric_value`   double    NOT NULL,
-    `source_id`       int(11)            DEFAULT NULL,
-    `phrase_group_id` int(11)            DEFAULT NULL COMMENT 'temp field to increase speed created by the value term links',
-    `last_update`     timestamp NULL     DEFAULT NULL COMMENT 'for fast recalculation',
-    `description`     text COMMENT 'temp field used during dev phase for easy value to trm assigns',
-    `excluded`        tinyint(4)         DEFAULT NULL COMMENT 'the default exclude setting for most users',
-    `share_type_id`   smallint           DEFAULT NULL,
-    `protect_id`      int(11)   NOT NULL DEFAULT '1'
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8 COMMENT ='long list';
-
 -- --------------------------------------------------------
 
 --
@@ -1101,7 +1575,7 @@ CREATE TABLE IF NOT EXISTS `values`
 CREATE TABLE IF NOT EXISTS `value_formula_links`
 (
     `value_formula_link_id` int(11) NOT NULL,
-    `value_id`              int(11) DEFAULT NULL,
+    `group_id`              int(11) DEFAULT NULL,
     `formula_id`            int(11) DEFAULT NULL,
     `user_id`               int(11) DEFAULT NULL,
     `condition_formula_id`  int(11) DEFAULT NULL COMMENT 'if true or 1  to formula is preferred',
@@ -1120,7 +1594,7 @@ CREATE TABLE IF NOT EXISTS `value_phrase_links`
 (
     `value_phrase_link_id` int(11) NOT NULL,
     `user_id`              int(11) DEFAULT NULL,
-    `value_id`             int(11) NOT NULL,
+    `group_id`             int(11) NOT NULL,
     `phrase_id`            int(11) NOT NULL,
     `weight`               double  DEFAULT NULL,
     `link_type_id`         int(11) DEFAULT NULL,
@@ -1143,75 +1617,6 @@ CREATE TABLE IF NOT EXISTS `value_relations`
     `link_type_id`  int(11) NOT NULL
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8 COMMENT ='to link two values directly; maybe not used';
-
--- --------------------------------------------------------
-
---
--- Table structure for table`value_time_series`
---
-
-CREATE TABLE IF NOT EXISTS `value_time_series`
-(
-    `value_time_series_id` int(11)   NOT NULL,
-    `user_id`              int(11)   NOT NULL,
-    `source_id`            int(11)        DEFAULT NULL,
-    `phrase_group_id`      int(11)   NOT NULL,
-    `excluded`             tinyint(4)     DEFAULT NULL,
-    `share_type_id`        int(11)        DEFAULT NULL,
-    `protect_id`           int(11)   NOT NULL,
-    `last_update`          timestamp NULL DEFAULT NULL
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8 COMMENT ='common parameters for a list of intraday values';
-
--- --------------------------------------------------------
-
---
--- Table structure for table`value_ts_data`
---
-
-CREATE TABLE IF NOT EXISTS `value_ts_data`
-(
-    `value_time_series_id` int(11)  NOT NULL,
-    `val_time`             datetime NOT NULL,
-    `number`               float    NOT NULL
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8 COMMENT ='for efficient saving of daily or intraday values';
-
--- --------------------------------------------------------
-
---
--- Table structure for table`verbs`
---
-
-CREATE TABLE IF NOT EXISTS `verbs`
-(
-    `verb_id`             int(11)      NOT NULL,
-    `verb_name`           varchar(100) NOT NULL,
-    `code_id`             varchar(255) DEFAULT NULL,
-    `description`         text,
-    `condition_type`      int(11)      DEFAULT NULL,
-    `formula_name`        varchar(200) DEFAULT NULL COMMENT 'naming used in formulas',
-    `name_plural_reverse` varchar(200) DEFAULT NULL COMMENT 'english description for the reverse list, e.g. Companies are ...',
-    `name_plural`         varchar(200) DEFAULT NULL,
-    `name_reverse`        varchar(200) DEFAULT NULL,
-    `words`               int(11)      DEFAULT NULL COMMENT 'used for how many terms'
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8 COMMENT ='it is fixed coded how to behavior for each type is';
-
--- --------------------------------------------------------
-
---
--- Table structure for table`verb_usages`
---
-
-CREATE TABLE IF NOT EXISTS `verb_usages`
-(
-    `verb_usage_id` int(11) NOT NULL,
-    `verb_id`       int(11) NOT NULL,
-    `table_id`      int(11) NOT NULL
-) ENGINE = InnoDB
-  DEFAULT CHARSET = latin1;
 
 -- --------------------------------------------------------
 
@@ -1402,121 +1807,6 @@ CREATE TABLE IF NOT EXISTS `user_view_term_links`
   DEFAULT CHARSET = utf8 COMMENT ='used to define the default mask for a term or a term group';
 
 -- --------------------------------------------------------
-
---
--- Table structure for table`words`
---
-
-CREATE TABLE IF NOT EXISTS `words`
-(
-    `word_id`        int(11)      NOT NULL,
-    `user_id`        int(11)      DEFAULT NULL COMMENT 'user_id of the user that has created the term',
-    `word_name`      varchar(200) NOT NULL,
-    `plural`         varchar(200) DEFAULT NULL COMMENT 'to be replaced by a language form entry',
-    `description`    text         DEFAULT NULL COMMENT 'to be replaced by a language form entry',
-    `phrase_type_id` int(11)      DEFAULT NULL,
-    `view_id`        int(11)      DEFAULT NULL COMMENT 'the default mask for this term',
-    `values`         int(11)      DEFAULT NULL COMMENT 'number of values linked to the term, which gives an indication of the importance',
-    `excluded`       tinyint(4)   DEFAULT NULL,
-    `share_type_id`  smallint     DEFAULT NULL,
-    `protect_id`     smallint     DEFAULT NULL
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8 COMMENT ='probably all text of th db';
-
--- --------------------------------------------------------
-
---
--- Table structure for table`word_del_confirms`
---
-
-CREATE TABLE IF NOT EXISTS `word_del_confirms`
-(
-    `word_del_request_id` int(11)   NOT NULL,
-    `user_id`             int(11)   NOT NULL,
-    `confirm`             timestamp NULL DEFAULT NULL,
-    `reject`              timestamp NULL DEFAULT NULL
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8;
-
--- --------------------------------------------------------
-
---
--- Table structure for table`word_del_requests`
---
-
-CREATE TABLE IF NOT EXISTS `word_del_requests`
-(
-    `word_del_request_id` int(11)      NOT NULL,
-    `word_id`             int(11)      NOT NULL,
-    `word_name`           varchar(200) NOT NULL,
-    `started`             timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    `canceled`            timestamp    NULL     DEFAULT NULL,
-    `confirmed`           timestamp    NULL     DEFAULT NULL,
-    `finished`            timestamp    NULL     DEFAULT NULL,
-    `user_id`             int(11)      NOT NULL COMMENT 'the user who has requested the term deletion'
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8;
-
--- --------------------------------------------------------
-
---
--- Table structure for table`triples`
---
-
-CREATE TABLE IF NOT EXISTS `triples`
-(
-    `triple_id`                int(11) NOT NULL,
-    `user_id`                     int(11)      DEFAULT NULL,
-    `from_phrase_id`              int(11) NOT NULL,
-    `verb_id`                     int(11) NOT NULL,
-    `to_phrase_id`                int(11) NOT NULL,
-    `triple_name`                 varchar(200) DEFAULT NULL COMMENT 'the unique name used',
-    `name_given`                  varchar(200) DEFAULT NULL COMMENT 'the unique name manually set by the user, which can be empty',
-    `name_generated`              varchar(200) DEFAULT NULL COMMENT 'the generic unique name based on the phrases and verb, which can be overwritten by the given name',
-    `description`                 text,
-    `triple_condition_id`      int(11)      DEFAULT NULL COMMENT 'formula_id of a formula with a boolean result; the term is only added if formula result is true',
-    `triple_condition_type_id` int(11)      DEFAULT NULL COMMENT 'maybe not needed',
-    `phrase_type_id`              int(11)      DEFAULT NULL,
-    `values`                      int(11)      DEFAULT NULL,
-    `excluded`                    tinyint(4)   DEFAULT NULL,
-    `share_type_id`               smallint     DEFAULT NULL,
-    `protect_id`                  smallint     DEFAULT NULL
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8;
-
--- --------------------------------------------------------
-
---
--- Table structure for table`word_periods`
---
-
-CREATE TABLE IF NOT EXISTS `word_periods`
-(
-    `word_id` int(11)  NOT NULL,
-    `from`    datetime NOT NULL,
-    `to`      datetime NOT NULL
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8 COMMENT ='to define the time period for time terms';
-
--- --------------------------------------------------------
-
---
--- Table structure for table`phrase_types`
---
-
-CREATE TABLE IF NOT EXISTS `phrase_types`
-(
-    `phrase_type_id` int(11)      NOT NULL,
-    `type_name`      varchar(200) NOT NULL,
-    `description`    text,
-    `code_id`        varchar(100) DEFAULT NULL,
-    `scaling_factor` int(11)      DEFAULT NULL COMMENT 'e.g. for percent the scaling factor is 100',
-    `word_symbol`    varchar(5)   DEFAULT NULL COMMENT 'e.g. for percent the symbol is %'
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8;
 
 -- --------------------------------------------------------
 
@@ -1712,18 +2002,18 @@ from `verbs`
 -- --------------------------------------------------------
 
 --
--- Structure for view`phrase_group_phrase_links`
+-- Structure for view`phrase_groups_phrase_links`
 --
-DROP TABLE IF EXISTS `phrase_group_phrase_links`;
+DROP TABLE IF EXISTS `phrase_groups_phrase_links`;
 
 CREATE ALGORITHM = UNDEFINED DEFINER =`root`@`localhost`SQL
-    SECURITY DEFINER VIEW `phrase_group_phrase_links` AS
-select `phrase_group_word_links`.`phrase_group_word_link_id` AS `phrase_group_phrase_link_id`,
+    SECURITY DEFINER VIEW `phrase_groups_phrase_links` AS
+select `phrase_group_word_links`.`phrase_group_word_link_id` AS `phrase_groups_phrase_link_id`,
        `phrase_group_word_links`.`phrase_group_id`           AS `phrase_group_id`,
        `phrase_group_word_links`.`word_id`                   AS `phrase_id`
-from `phrase_group_word_links`
+from group_links
 union
-select `phrase_group_triple_links`.`phrase_group_triple_link_id` AS `phrase_group_phrase_link_id`,
+select `phrase_group_triple_links`.`phrase_group_triple_link_id` AS `phrase_groups_phrase_link_id`,
        `phrase_group_triple_links`.`phrase_group_id`             AS `phrase_group_id`,
        (`phrase_group_triple_links`.`triple_id` * -(1))          AS `phrase_id`
 from `phrase_group_triple_links`;
@@ -1731,18 +2021,18 @@ from `phrase_group_triple_links`;
 -- --------------------------------------------------------
 
 --
--- Structure for view`user_phrase_group_phrase_links`
+-- Structure for view`user_phrase_groups_phrase_links`
 --
-DROP TABLE IF EXISTS `user_phrase_group_phrase_links`;
+DROP TABLE IF EXISTS `user_phrase_groups_phrase_links`;
 
 CREATE ALGORITHM = UNDEFINED DEFINER =`root`@`localhost`SQL
-    SECURITY DEFINER VIEW `user_phrase_group_phrase_links` AS
-select `user_phrase_group_word_links`.`phrase_group_word_link_id` AS `phrase_group_phrase_link_id`,
+    SECURITY DEFINER VIEW `user_phrase_groups_phrase_links` AS
+select `user_phrase_group_word_links`.`phrase_group_word_link_id` AS `phrase_groups_phrase_link_id`,
        `user_phrase_group_word_links`.`user_id`                   AS `user_id`,
        `user_phrase_group_word_links`.`excluded`                  AS `excluded`
-from `user_phrase_group_word_links`
+from user_group_links
 union
-select `user_phrase_group_triple_links`.`phrase_group_triple_link_id` AS `phrase_group_phrase_link_id`,
+select `user_phrase_group_triple_links`.`phrase_group_triple_link_id` AS `phrase_groups_phrase_link_id`,
        `user_phrase_group_triple_links`.`user_id`                     AS `user_id`,
        `user_phrase_group_triple_links`.`excluded`                    AS `excluded`
 from `user_phrase_group_triple_links`;
@@ -1873,7 +2163,7 @@ ALTER TABLE `formula_types`
 -- Indexes for table`results`
 --
 ALTER TABLE `results`
-    ADD PRIMARY KEY (`result_id`),
+    ADD PRIMARY KEY (`group_id`),
     ADD UNIQUE KEY `formula_id_2` (`formula_id`, `user_id`, `phrase_group_id`,
                                    `source_phrase_group_id`),
     ADD KEY `user_id` (`user_id`);
@@ -1899,14 +2189,14 @@ ALTER TABLE `language_forms`
 --
 -- Indexes for table`phrase_groups`
 --
-ALTER TABLE `phrase_groups`
-    ADD PRIMARY KEY (`phrase_group_id`),
+ALTER TABLE `groups`
+    ADD PRIMARY KEY (group_id),
     ADD UNIQUE KEY `term_ids` (`word_ids`, `triple_ids`);
 
 --
 -- Indexes for table`phrase_group_word_links`
 --
-ALTER TABLE `phrase_group_word_links`
+ALTER TABLE group_links
     ADD PRIMARY KEY (`phrase_group_word_link_id`),
     ADD KEY `phrase_group_id` (`phrase_group_id`),
     ADD KEY `word_id` (`word_id`);
@@ -1955,10 +2245,18 @@ ALTER TABLE `share_types`
     ADD PRIMARY KEY (`share_type_id`);
 
 --
--- Indexes for table`sources`
+-- indexes for table sources
 --
-ALTER TABLE `sources`
-    ADD PRIMARY KEY (`source_id`);
+ALTER TABLE sources
+    ADD PRIMARY KEY (source_id),
+    ADD KEY sources_user_idx (user_id);
+
+--
+-- indexes for table user_sources
+--
+ALTER TABLE user_sources
+    ADD PRIMARY KEY (source_id, user_id),
+    ADD KEY user_sources_user_idx (user_id);
 
 --
 -- Indexes for table`source_types`
@@ -1970,8 +2268,8 @@ ALTER TABLE `source_types`
 -- Indexes for table`source_values`
 --
 ALTER TABLE `source_values`
-    ADD PRIMARY KEY (`value_id`, `source_id`, `user_id`),
-    ADD KEY `value_id` (`value_id`),
+    ADD PRIMARY KEY (`group_id`, `source_id`, `user_id`),
+    ADD KEY `group_id` (`group_id`),
     ADD KEY `source_id` (`source_id`),
     ADD KEY `user_id` (`user_id`);
 
@@ -2063,15 +2361,15 @@ ALTER TABLE `user_official_types`
 --
 -- Indexes for table`user_phrase_groups`
 --
-ALTER TABLE `user_phrase_groups`
-    ADD UNIQUE KEY `phrase_group_id` (`phrase_group_id`, `user_id`),
-    ADD KEY `phrase_group_id_2` (`phrase_group_id`),
+ALTER TABLE user_groups
+    ADD UNIQUE KEY `phrase_group_id` (group_id, `user_id`),
+    ADD KEY `phrase_group_id_2` (group_id),
     ADD KEY `user_id` (`user_id`);
 
 --
 -- Indexes for table`user_phrase_group_word_links`
 --
-ALTER TABLE `user_phrase_group_word_links`
+ALTER TABLE user_group_links
     ADD UNIQUE KEY `phrase_group_word_link_id` (`phrase_group_word_link_id`, `user_id`),
     ADD KEY `phrase_group_word_link_id_2` (`phrase_group_word_link_id`),
     ADD KEY `user_id` (`user_id`);
@@ -2123,10 +2421,10 @@ ALTER TABLE `user_types`
 -- Indexes for table`user_values`
 --
 ALTER TABLE `user_values`
-    ADD PRIMARY KEY (`value_id`, `user_id`),
+    ADD PRIMARY KEY (`group_id`, `user_id`),
     ADD KEY `user_id` (`user_id`),
     ADD KEY `source_id` (`source_id`),
-    ADD KEY `value_id` (`value_id`),
+    ADD KEY `group_id` (`group_id`),
     ADD KEY `share_type` (`share_type_id`),
     ADD KEY `protect_id` (`protect_id`);
 
@@ -2137,7 +2435,7 @@ ALTER TABLE `user_value_time_series`
     ADD PRIMARY KEY (`value_time_series_id`, `user_id`),
     ADD KEY `user_id` (`user_id`),
     ADD KEY `source_id` (`source_id`),
-    ADD KEY `value_id` (`value_time_series_id`),
+    ADD KEY `group_id` (`value_time_series_id`),
     ADD KEY `share_type` (`share_type_id`),
     ADD KEY `protect_id` (`protect_id`);
 
@@ -2191,7 +2489,7 @@ ALTER TABLE `user_triples`
 -- Indexes for table`values`
 --
 ALTER TABLE `values`
-    ADD PRIMARY KEY (`value_id`),
+    ADD PRIMARY KEY (`group_id`),
     ADD KEY `user_id` (`user_id`),
     ADD KEY `source_id` (`source_id`),
     ADD KEY `phrase_group_id` (`phrase_group_id`),
@@ -2208,8 +2506,8 @@ ALTER TABLE `value_formula_links`
 --
 ALTER TABLE `value_phrase_links`
     ADD PRIMARY KEY (`value_phrase_link_id`),
-    ADD UNIQUE KEY `user_id` (`user_id`, `value_id`, `phrase_id`),
-    ADD KEY `value_id` (`value_id`),
+    ADD UNIQUE KEY `user_id` (`user_id`, `group_id`, `phrase_id`),
+    ADD KEY `group_id` (`group_id`),
     ADD KEY `phrase_id` (`phrase_id`);
 
 --
@@ -2411,7 +2709,7 @@ ALTER TABLE `formula_types`
 -- AUTO_INCREMENT for table`results`
 --
 ALTER TABLE `results`
-    MODIFY `result_id` int(11) NOT NULL AUTO_INCREMENT;
+    MODIFY `group_id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table`import_source`
 --
@@ -2430,12 +2728,12 @@ ALTER TABLE `language_forms`
 --
 -- AUTO_INCREMENT for table`phrase_groups`
 --
-ALTER TABLE `phrase_groups`
-    MODIFY `phrase_group_id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `groups`
+    MODIFY group_id int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table`phrase_group_word_links`
 --
-ALTER TABLE `phrase_group_word_links`
+ALTER TABLE group_links
     MODIFY `phrase_group_word_link_id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table`phrase_group_triple_links`
@@ -2541,7 +2839,7 @@ ALTER TABLE `user_types`
 -- AUTO_INCREMENT for table`values`
 --
 ALTER TABLE `values`
-    MODIFY `value_id` int(11) NOT NULL AUTO_INCREMENT;
+    MODIFY `group_id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table`value_formula_links`
 --
@@ -2690,15 +2988,15 @@ ALTER TABLE `results`
 --
 -- Constraints for table`phrase_group_word_links`
 --
-ALTER TABLE `phrase_group_word_links`
-    ADD CONSTRAINT `phrase_group_word_links_fk_1` FOREIGN KEY (`phrase_group_id`) REFERENCES `phrase_groups` (`phrase_group_id`),
+ALTER TABLE group_links
+    ADD CONSTRAINT `phrase_group_word_links_fk_1` FOREIGN KEY (`phrase_group_id`) REFERENCES `groups` (group_id),
     ADD CONSTRAINT `phrase_group_word_links_fk_2` FOREIGN KEY (`word_id`) REFERENCES `words` (`word_id`);
 
 --
 -- Constraints for table`phrase_group_triple_links`
 --
 ALTER TABLE `phrase_group_triple_links`
-    ADD CONSTRAINT `phrase_group_triple_links_fk_1` FOREIGN KEY (`phrase_group_id`) REFERENCES `phrase_groups` (`phrase_group_id`),
+    ADD CONSTRAINT `phrase_group_triple_links_fk_1` FOREIGN KEY (`phrase_group_id`) REFERENCES `groups` (group_id),
     ADD CONSTRAINT `phrase_group_triple_links_fk_2` FOREIGN KEY (`triple_id`) REFERENCES `triples` (`triple_id`);
 
 --
@@ -2712,7 +3010,7 @@ ALTER TABLE `refs`
 --
 ALTER TABLE `source_values`
     ADD CONSTRAINT `source_values_fk_3` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
-    ADD CONSTRAINT `source_values_fk_1` FOREIGN KEY (`value_id`) REFERENCES `values` (`value_id`),
+    ADD CONSTRAINT `source_values_fk_1` FOREIGN KEY (`group_id`) REFERENCES `values` (`group_id`),
     ADD CONSTRAINT `source_values_fk_2` FOREIGN KEY (`source_id`) REFERENCES `sources` (`source_id`);
 
 --
@@ -2756,15 +3054,15 @@ ALTER TABLE `user_formula_links`
 --
 -- Constraints for table`user_phrase_groups`
 --
-ALTER TABLE `user_phrase_groups`
-    ADD CONSTRAINT `user_phrase_groups_fk_1` FOREIGN KEY (`phrase_group_id`) REFERENCES `phrase_groups` (`phrase_group_id`),
+ALTER TABLE user_groups
+    ADD CONSTRAINT `user_phrase_groups_fk_1` FOREIGN KEY (group_id) REFERENCES `groups` (group_id),
     ADD CONSTRAINT `user_phrase_groups_fk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
 
 --
 -- Constraints for table`user_phrase_group_word_links`
 --
-ALTER TABLE `user_phrase_group_word_links`
-    ADD CONSTRAINT `user_phrase_group_word_links_fk_1` FOREIGN KEY (`phrase_group_word_link_id`) REFERENCES `user_phrase_group_word_links` (`phrase_group_word_link_id`),
+ALTER TABLE user_group_links
+    ADD CONSTRAINT `user_phrase_group_word_links_fk_1` FOREIGN KEY (`phrase_group_word_link_id`) REFERENCES user_group_links (`phrase_group_word_link_id`),
     ADD CONSTRAINT `user_phrase_group_word_links_fk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
 
 --
@@ -2775,11 +3073,17 @@ ALTER TABLE `user_phrase_group_triple_links`
     ADD CONSTRAINT `user_phrase_group_triple_links_fk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
 
 --
--- Constraints for table`user_sources`
+-- constraints for table sources
 --
-ALTER TABLE `user_sources`
-    ADD CONSTRAINT `user_sources_fk_1` FOREIGN KEY (`source_id`) REFERENCES `sources` (`source_id`),
-    ADD CONSTRAINT `user_sources_fk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
+ALTER TABLE sources
+    ADD CONSTRAINT sources_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_sources
+--
+ALTER TABLE user_sources
+    ADD CONSTRAINT user_sources_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
+    ADD CONSTRAINT user_sources_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
 
 --
 -- Constraints for table`user_refs`
@@ -2852,7 +3156,7 @@ ALTER TABLE `user_triples`
 ALTER TABLE `values`
     ADD CONSTRAINT `values_fk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
     ADD CONSTRAINT `values_fk_2` FOREIGN KEY (`source_id`) REFERENCES `sources` (`source_id`),
-    ADD CONSTRAINT `values_fk_3` FOREIGN KEY (`phrase_group_id`) REFERENCES `phrase_groups` (`phrase_group_id`),
+    ADD CONSTRAINT `values_fk_3` FOREIGN KEY (`phrase_group_id`) REFERENCES `groups` (group_id),
     ADD CONSTRAINT `values_fk_4` FOREIGN KEY (`protect_id`) REFERENCES `protection_types` (`protect_id`);
 
 --

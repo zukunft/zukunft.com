@@ -44,6 +44,8 @@ namespace cfg;
 
 include_once MODEL_FORMULA_PATH . 'figure_list.php';
 
+use cfg\result\result;
+use cfg\value\value;
 use html\figure\figure as figure_dsp;
 use html\result\result as result_dsp;
 use test\test_api;
@@ -248,7 +250,7 @@ class formula_element_group
             $val_phr_lst->set_lst($val_phr_lst_sort);
 
             //asort($val_phr_lst);
-            $val_phr_grp = $val_phr_lst->get_grp();
+            $val_phr_grp = $val_phr_lst->get_grp_id();
             log_debug('words group for "' . $val_phr_lst->dsp_name() . '" = ' . $val_phr_grp->id());
 
             // try to get a normal value set by the user directly for the phrase list

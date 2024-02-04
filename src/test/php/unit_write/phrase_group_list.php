@@ -32,8 +32,8 @@
 
 namespace test\write;
 
-use api\word_api;
-use cfg\phrase_group_list;
+use api\word\word as word_api;
+use cfg\group\group_list;
 use cfg\phrase_list;
 use cfg\word_list;
 use test\test_cleanup;
@@ -54,20 +54,20 @@ class phrase_group_list_test
         // Switzerland inhabitants
         $phr_lst = new phrase_list($usr);
         $phr_lst->load_by_names(array(word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_MIO));
-        $country_grp = $phr_lst->get_grp();
+        $country_grp = $phr_lst->get_grp_id();
 
         // Canton of Zurich inhabitants
         $phr_lst = new phrase_list($usr);
         $phr_lst->load_by_names(array(word_api::TN_ZH, word_api::TN_CANTON, word_api::TN_INHABITANTS, word_api::TN_MIO));
-        $canton_grp = $phr_lst->get_grp();
+        $canton_grp = $phr_lst->get_grp_id();
 
         // City of Zurich inhabitants
         $phr_lst = new phrase_list($usr);
         $phr_lst->load_by_names(array(word_api::TN_ZH, word_api::TN_CITY, word_api::TN_INHABITANTS, word_api::TN_MIO));
-        $city_grp = $phr_lst->get_grp();
+        $city_grp = $phr_lst->get_grp_id();
 
         // test add a phrase group to a phrase group list
-        $grp_lst = new phrase_group_list($usr);
+        $grp_lst = new group_list($usr);
         $grp_lst->add($country_grp);
         $grp_lst->add($canton_grp);
         $grp_lst->add($city_grp);
@@ -79,7 +79,7 @@ class phrase_group_list_test
 
 
         // test getting the common phrases of several group
-        $grp_lst = new phrase_group_list($usr);
+        $grp_lst = new group_list($usr);
 
         $wrd_lst = new word_list($usr);
         $wrd_lst->load_by_names(array(word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_MIO));

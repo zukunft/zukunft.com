@@ -30,14 +30,15 @@
 
 */
 
-namespace api;
+namespace api\result;
 
 include_once API_SANDBOX_PATH . 'list_value.php';
 
-use api\list_value_api;
+use api\result\result as result_api;
+use api\sandbox\list_value as list_value_api;
 use html\result\result_list as result_list_dsp;
 
-class result_list_api extends list_value_api
+class result_list extends list_value_api
 {
 
     /*
@@ -75,14 +76,14 @@ class result_list_api extends list_value_api
     function dsp_obj(): result_list_dsp
     {
         // cast the single list objects
-        $lst_dsp = array();
-        foreach ($this->lst as $res) {
+        $lst_dsp = new result_list_dsp();
+        foreach ($this->lst() as $res) {
             if ($res != null) {
                 $res_dsp = $res->dsp_obj();
-                $lst_dsp[] = $res_dsp;
+                $lst_dsp->add($res_dsp);
             }
         }
-        return new result_list_dsp($lst_dsp);
+        return $lst_dsp;
     }
 
 }

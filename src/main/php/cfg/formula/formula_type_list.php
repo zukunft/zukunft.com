@@ -31,6 +31,8 @@
 
 namespace cfg;
 
+use cfg\db\sql_db;
+
 include_once DB_PATH . 'sql_db.php';
 
 global $formula_types;

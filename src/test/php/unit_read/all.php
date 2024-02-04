@@ -34,15 +34,14 @@
 
 namespace test;
 
-use api\phrase_group_api;
-use api\triple_api;
-use api\value_api;
-use api\word_api;
-use html\types\type_lists as type_list_dsp;
-use html\word\triple as triple_dsp;
-use cfg\triple;
+use api\phrase\group as group_api;
+use api\value\value as value_api;
+use api\word\triple as triple_api;
+use api\word\word as word_api;
 use cfg\verb;
+use html\types\type_lists as type_list_dsp;
 use unit_read\component_list_unit_db_tests;
+use unit_read\export;
 use unit_read\triple_list_unit_db_tests;
 use unit_read\triple_unit_db_tests;
 use unit_read\view_list_unit_db_tests;
@@ -91,20 +90,27 @@ class test_unit_read_db extends test_unit
 
         $this->run_api_test();
         $this->run_ui_test();
+        (new export())->run($this);
+
 
     }
 
     function init_unit_db_tests(): void
     {
-
         // add functional test rows to the database for read testing e.g. exclude sandbox entries
         $this->test_triple(
             triple_api::TN_PI, verb::IS, word_api::TN_READ,
             triple_api::TN_PI_NAME, triple_api::TN_PI_NAME
         );
-        $phr_grp = $this->add_phrase_group(array(triple_api::TN_PI_NAME), phrase_group_api::TN_READ);
+        $phr_grp = $this->add_phrase_group(array(triple_api::TN_PI_NAME), group_api::TN_READ);
         $this->test_value_by_phr_grp($phr_grp, value_api::TV_READ);
 
+        $this->test_triple(
+            triple_api::TN_E, verb::IS, word_api::TN_READ,
+            triple_api::TN_E, triple_api::TN_E
+        );
+        $phr_grp = $this->add_phrase_group(array(triple_api::TN_E), group_api::TN_READ);
+        $this->test_value_by_phr_grp($phr_grp, value_api::TV_E);
     }
 
     /**
@@ -115,9 +121,9 @@ class test_unit_read_db extends test_unit
     function clean_up_unit_db_tests(): void
     {
         //$this->del_triple_by_name(triple_api::TN_READ_NAME);
-        //$phr_grp = $this->load_phrase_group_by_name(phrase_group_api::TN_READ);
+        //$phr_grp = $this->load_phrase_group_by_name(group_api::TN_READ);
         //$this->del_value_by_phr_grp($phr_grp);
-        //$this->del_phrase_group(phrase_group_api::TN_READ);
+        //$this->del_phrase_group(group_api::TN_READ);
     }
 
 }

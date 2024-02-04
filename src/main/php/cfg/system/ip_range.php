@@ -32,12 +32,18 @@
 
 namespace cfg;
 
+include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
+include_once DB_PATH . 'sql.php';
 include_once DB_PATH . 'sql_par_type.php';
 
-use cfg\db\sql_creator;
+use cfg\db\sql;
+use cfg\db\sql_db;
+use cfg\db\sql_par;
 use cfg\db\sql_par_type;
+use cfg\log\change;
+use cfg\log\change_log_action;
 
-class ip_range extends db_object
+class ip_range extends db_object_seq_id
 {
 
     const OBJ_NAME = 'ip range';
@@ -150,15 +156,15 @@ class ip_range extends db_object
     /**
      * create the common part of an SQL statement to retrieve an ip range from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $query_name the name of the selection fields to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
+    function load_sql(sql $sc, string $query_name, string $class = self::class): sql_par
     {
         $qp = parent::load_sql($sc, $query_name, $class);
-        $sc->set_type(sql_db::TBL_IP);
+        $sc->set_class(sql_db::TBL_IP);
 
         $sc->set_name($qp->name);
         $sc->set_fields(self::FLD_NAMES);
@@ -174,7 +180,7 @@ class ip_range extends db_object
      */
     function load_sql_by_vars(sql_db $db_con): sql_par
     {
-        $db_con->set_type(sql_db::TBL_IP);
+        $db_con->set_class(sql_db::TBL_IP);
         $lib = new library();
         $class = $lib->class_to_name(self::class);
         $qp = new sql_par($class);
@@ -315,15 +321,15 @@ class ip_range extends db_object
     /**
      * actually update a formula field in the main database record
      * @param sql_db $db_con the active database connection
-     * @param change_log_named $log with the action and table already set
+     * @param change $log with the action and table already set
      * @return string string any message that should be shown to the user or an empty string if everything is fine
      */
-    private function save_field_do(sql_db $db_con, change_log_named $log): string
+    private function save_field_do(sql_db $db_con, change $log): string
     {
         $result = '';
         if ($log->add()) {
-            $db_con->set_type(sql_db::TBL_IP);
-            if (!$db_con->update($this->id, $log->field(), $log->new_value)) {
+            $db_con->set_class(sql_db::TBL_IP);
+            if (!$db_con->update_old($this->id, $log->field(), $log->new_value)) {
                 $result .= 'updating ' . $log->field() . ' to ' . $log->new_value . ' for ' . self::OBJ_NAME . ' ' . $this->dsp_id() . ' failed';
             }
 
@@ -375,13 +381,13 @@ class ip_range extends db_object
 
     /**
      * set the log entry parameter for a new ip range
-     * @return change_log_named with the action set to add
+     * @return change with the action set to add
      */
-    function log_add(): change_log_named
+    function log_add(): change
     {
         log_debug('->log_add ' . $this->dsp_id());
 
-        $log = new change_log_named($this->user());
+        $log = new change($this->user());
         $log->action = change_log_action::ADD;
         $log->set_table(sql_db::TBL_IP);
         $log->set_field(self::FLD_FROM . '_' . self::FLD_TO);
@@ -393,12 +399,12 @@ class ip_range extends db_object
 
     /**
      * set the main log entry parameters for updating one verb field
-     * @return change_log_named with the action set to update
+     * @return change with the action set to update
      */
-    private function log_upd(): change_log_named
+    private function log_upd(): change
     {
         log_debug('->log_upd ' . $this->dsp_id());
-        $log = new change_log_named($this->user());
+        $log = new change($this->user());
         $log->action = change_log_action::UPDATE;
         $log->set_table(sql_db::TBL_IP);
 
@@ -432,10 +438,10 @@ class ip_range extends db_object
         $log = $this->log_add();
         if ($log->id() > 0) {
             // insert the new ip range
-            $db_con->set_type(sql_db::TBL_IP);
+            $db_con->set_class(sql_db::TBL_IP);
             $db_con->set_usr($this->user()->id());
 
-            $this->id = $db_con->insert(
+            $this->id = $db_con->insert_old(
                 array(self::FLD_FROM, self::FLD_TO, self::FLD_REASON, self::FLD_ACTIVE),
                 array($this->from, $this->to, $this->reason, $this->active));
             if ($this->id > 0) {
@@ -492,7 +498,7 @@ class ip_range extends db_object
 
         // build the database object because this is needed anyway
         $db_con->set_usr($this->user()->id());
-        $db_con->set_type(sql_db::TBL_IP);
+        $db_con->set_class(sql_db::TBL_IP);
 
         // check if the external reference is supposed to be added
         if ($this->id <= 0) {
@@ -530,7 +536,7 @@ class ip_range extends db_object
      * helper because the db id field differs from the class name
      * @return string the field name of the prime database index of the object
      */
-    public function id_field(): string
+    function id_field(): string
     {
         return self::FLD_ID;
     }

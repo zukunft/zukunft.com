@@ -32,7 +32,7 @@
 
 namespace unit\html;
 
-use api\component\component_api;
+use api\component\component as component_api;
 use html\component\component as component_dsp;
 use html\html_base;
 use test\test_cleanup;

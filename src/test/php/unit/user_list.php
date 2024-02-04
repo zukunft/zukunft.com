@@ -33,10 +33,9 @@
 namespace test;
 
 use cfg\library;
-use cfg\sql_db;
+use cfg\db\sql_db;
 use cfg\user;
 use cfg\user_list;
-use test\test_cleanup;
 
 class user_list_unit_tests
 {

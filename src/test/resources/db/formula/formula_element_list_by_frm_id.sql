@@ -1,4 +1,4 @@
-PREPARE formula_element_list_by_frm_id (int, int) AS
+PREPARE formula_element_list_by_frm_id (bigint, bigint) AS
     SELECT formula_element_id,
            formula_id,
            user_id,

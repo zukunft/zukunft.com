@@ -37,7 +37,9 @@
 
 // TODO combine with class type_object
 
-use api\type_object_api;
+namespace cfg\user;
+
+use api\sandbox\type_object as type_object_api;
 
 class user_type
 {

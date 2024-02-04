@@ -1,4 +1,4 @@
-PREPARE phrase_list_by_3ids_word_part (int, int, int, int) AS
+PREPARE phrase_list_by_3ids_word_part (bigint, bigint, bigint, bigint) AS
     SELECT s.word_id,
            u.word_id AS user_word_id,
            s.user_id,

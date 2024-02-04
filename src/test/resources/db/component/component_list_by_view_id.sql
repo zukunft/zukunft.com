@@ -1,4 +1,4 @@
-PREPARE component_list_by_view_id (int, int) AS
+PREPARE component_list_by_view_id (bigint, bigint) AS
     SELECT     s.component_id,
                u.component_id AS user_component_id,
                s.user_id,

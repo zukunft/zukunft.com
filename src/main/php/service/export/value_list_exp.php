@@ -29,9 +29,9 @@
   
 */
 
-namespace model\export;
+namespace cfg\export;
 
-class value_list_exp extends exp_obj
+class value_list_exp extends sandbox_exp
 {
 
     // field names used for JSON creation
@@ -42,7 +42,7 @@ class value_list_exp extends exp_obj
     public ?string $source = '';
     public ?array $values = null;
 
-    function reset()
+    function reset(): void
     {
         $this->context = [];
         $this->time = '';

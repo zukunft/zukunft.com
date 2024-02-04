@@ -30,15 +30,18 @@
 
 */
 
-namespace api;
+namespace api\formula;
 
 include_once API_SANDBOX_PATH . 'sandbox_typed.php';
 include_once MODEL_FORMULA_PATH . 'formula.php';
 include_once WEB_FORMULA_PATH . 'formula.php';
 
-use html\formula\formula as formula_dsp;
+use api\phrase\term as term_api;
+use api\sandbox\sandbox_typed as sandbox_typed_api;
+use api\word\word as word_api;
+use api\verb\verb as verb_api;
 
-class formula_api extends sandbox_typed_api
+class formula extends sandbox_typed_api
 {
 
     /*
@@ -47,31 +50,29 @@ class formula_api extends sandbox_typed_api
 
     // formulas for stand-alone unit tests that are added with the system initial data load
     // TN_* is the name of the formula used for testing
+    // TI_* is the database id based on the initial load
     // TF_* is the formula expression in the human-readable format
     // TR_* is the formula expression in the database reference format
     const TN_READ = 'scale minute to sec';
     const TF_READ = '"second" = "minute" * 60';
     const TN_READ_ANOTHER = 'scale hour to sec';
-    const TN_INCREASE = 'increase';
-    const TN_PERCENT = 'percent';
-    const TF_INCREASE = '"percent" = ( "this" - "prior" ) / "prior"';
-    const TF_INCREASE_ALTERNATIVE = '"percent" = 1 - ( "this" / "prior" )';
-    const TR_INCREASE = '{w1}=({f18}-{f20})/{f20}';
-    const TN_LITRE_TO_M3 = 'scale litre to m3';
-    const TN_BIGGEST_CITY = 'population in the city of Zurich in percent of Switzerland';
+    const TF_DIAMETER = '= "circumference" / "Pi"';
+    const TR_DIAMETER = '={w' . word_api::TI_CIRCUMFERENCE . '}/{w' . word_api::TI_PI . '}';
     const TN_READ_THIS = 'this';
     const TN_READ_PRIOR = 'prior';
-    const TN_CIRCUMFERENCE = 'circumference';
-    const TN_PI = 'Pi';
-    const TN_DIAMETER = 'diameter';
-    const TF_DIAMETER = '= "circumference" / "Pi"';
-    const TR_DIAMETER = '={w1}/{t2}';
+    const TN_PERCENT = 'percent';
+    const TN_INCREASE = 'increase';
+    const TF_INCREASE = '"percent" = ( "this" - "prior" ) / "prior"';
+    const TF_INCREASE_ALTERNATIVE = '"percent" = 1 - ( "this" / "prior" )';
+    const TR_INCREASE = '{w' . word_api::TI_PCT . '}=({w' . word_api::TI_THIS . '}-{w' . word_api::TI_PRIOR . '})/{w' . word_api::TI_PRIOR . '}';
+    const TN_LITRE_TO_M3 = 'scale litre to m3';
+    const TN_BIGGEST_CITY = 'population in the city of Zurich in percent of Switzerland';
     const TN_READ_SCALE_MIO = 'scale millions to one';
     const TF_READ_SCALE_MIO = '"one" = "millions" * 1000000';
-    const TR_SCALE_MIO = '{w1} = {w2} * 1000000';
+    const TR_SCALE_MIO = '{w' . word_api::TI_ONE . '} = {w' . word_api::TI_MIO . '} * 1000000';
     const TN_PARTS_IN_PERCENT = 'parts in percent';
     const TF_PARTS_IN_PERCENT = '"percent" = "parts" "of" / "total"'; // TODO check if separate verb "of each" is needed
-    const TR_PARTS_IN_PERCENT = '{w1}={w2}{v3}/{w4}';
+    const TR_PARTS_IN_PERCENT = '{w' . word_api::TI_PCT . '}={w' . word_api::TI_PARTS . '}{v' . verb_api::TI_OF . '}/{w' . word_api::TI_TOTAL . '}';
 
     // persevered formula names for unit and integration tests
     const TN_ADD = 'System Test Formula'; // to test adding a new formula to the database and using the increase formula

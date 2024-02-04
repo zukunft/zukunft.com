@@ -30,19 +30,22 @@
 
 */
 
-namespace api;
+namespace api\system;
 
 include_once API_VERB_PATH . 'verb.php';
 include_once API_VIEW_PATH . 'view.php';
-include_once API_SANDBOX_PATH . 'list.php';
+include_once API_SANDBOX_PATH . 'list_object.php';
 include_once WEB_SANDBOX_PATH . 'list.php';
 
+use api\api;
+use api\sandbox\type_object as type_api;
+use api\sandbox\list_object as list_api;
 use JsonSerializable;
 use html\user\user_type_list as type_list_dsp;
 use cfg\verb;
 use cfg\view;
 
-class type_list_api extends list_api implements JsonSerializable
+class type_list extends list_api implements JsonSerializable
 {
 
     // memory vs speed optimize vars
@@ -192,15 +195,15 @@ class type_list_api extends list_api implements JsonSerializable
     function add(type_api $type): bool
     {
         $result = false;
-        if ($type->id() == 0) {
-            if (!in_array($type->code_id(), $this->code_id_lst())) {
+        if ($type->id == 0) {
+            if (!in_array($type->code_id, $this->code_id_lst())) {
                 $this->add_obj($type);
                 $this->set_lst_dirty();
                 $result = true;
             }
         } else {
-            if (!in_array($type->id(), $this->id_lst())) {
-                $this->lst()[$type->id()] = $type;
+            if (!in_array($type->id, $this->id_lst())) {
+                $this->lst()[$type->id] = $type;
                 $this->set_lst_dirty();
                 $result = true;
             }

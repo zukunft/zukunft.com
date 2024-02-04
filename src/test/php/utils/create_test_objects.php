@@ -42,6 +42,7 @@
 namespace test;
 
 include_once API_REF_PATH . 'ref.php';
+include_once API_PHRASE_PATH . 'group.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_PHRASE_PATH . 'term.php';
 include_once MODEL_COMPONENT_PATH . 'component.php';
@@ -49,27 +50,27 @@ include_once MODEL_COMPONENT_PATH . 'component_list.php';
 include_once WEB_FORMULA_PATH . 'formula.php';
 
 use api\api;
-use api\component\component_api;
-use api\formula_api;
-use api\phrase_group_api;
-use api\ref_api;
-use api\result_api;
-use api\source_api;
-use api\triple_api;
-use api\type_lists_api;
-use api\value_api;
-use api\verb_api;
+use api\component\component as component_api;
+use api\formula\formula as formula_api;
+use api\phrase\group as group_api;
+use api\ref\ref as ref_api;
+use api\result\result as result_api;
+use api\ref\source as source_api;
+use api\word\triple as triple_api;
+use api\system\type_lists as type_lists_api;
+use api\value\value as value_api;
+use api\verb\verb as verb_api;
 use api\view\view as view_api;
-use api\word_api;
-use api_message;
+use api\word\word as word_api;
+use api\api_message;
 use cfg\batch_job;
 use cfg\batch_job_list;
 use cfg\batch_job_type_list;
-use cfg\change_log_action;
-use cfg\change_log_field;
-use cfg\change_log_list;
-use cfg\change_log_named;
-use cfg\change_log_table;
+use cfg\log\change_log_action;
+use cfg\log\change_log_field;
+use cfg\log\change_log_list;
+use cfg\log\change;
+use cfg\log\change_log_table;
 use cfg\component\component;
 use cfg\component\component_list;
 use cfg\component\component_pos_type_list;
@@ -89,28 +90,28 @@ use cfg\formula_link_type_list;
 use cfg\formula_list;
 use cfg\formula_type;
 use cfg\formula_type_list;
+use cfg\group\group;
+use cfg\group\group_list;
 use cfg\language;
 use cfg\language_form_list;
 use cfg\language_list;
 use cfg\library;
+use cfg\log\system_log;
+use cfg\log\system_log_list;
 use cfg\phrase;
-use cfg\phrase_group;
-use cfg\phrase_group_list;
 use cfg\phrase_list;
 use cfg\phrase_type;
 use cfg\phrase_types;
 use cfg\protection_type_list;
 use cfg\ref;
 use cfg\ref_type_list;
-use cfg\result;
-use cfg\result_list;
+use cfg\result\result;
+use cfg\result\result_list;
 use cfg\share_type_list;
 use cfg\source;
 use cfg\source_type;
 use cfg\source_type_list;
 use cfg\sys_log_status;
-use cfg\system_log;
-use cfg\system_log_list;
 use cfg\term;
 use cfg\term_list;
 use cfg\triple;
@@ -119,9 +120,9 @@ use cfg\type_list;
 use cfg\type_object;
 use cfg\user;
 use cfg\user_profile_list;
-use cfg\value;
-use cfg\value_list;
-use cfg\value_phrase_link;
+use cfg\value\value;
+use cfg\value\value_list;
+use cfg\value\value_phrase_link;
 use cfg\verb;
 use cfg\verb_list;
 use cfg\view;
@@ -130,7 +131,7 @@ use cfg\view_type_list;
 use cfg\word;
 use cfg\word_list;
 use controller\controller;
-use controller\log\system_log_api;
+use api\log\system_log as system_log_api;
 use DateTime;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\word\word as word_dsp;
@@ -147,6 +148,7 @@ use test\write\word_test;
 class create_test_objects extends test_base
 {
 
+    // the timestamp used for unit testing
     const DUMMY_DATETIME = '2022-12-26T18:23:45+01:00';
 
     /*
@@ -310,7 +312,7 @@ class create_test_objects extends test_base
     function dummy_word(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(1, word_api::TN_READ);
+        $wrd->set(word_api::TI_MATH, word_api::TN_READ);
         $wrd->description = word_api::TD_READ;
         $wrd->set_type(phrase_type::NORMAL);
         return $wrd;
@@ -331,7 +333,7 @@ class create_test_objects extends test_base
     function dummy_word_const(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(2, word_api::TN_CONST);
+        $wrd->set(word_api::TI_CONST, word_api::TN_CONST);
         $wrd->description = word_api::TD_CONST;
         $wrd->set_type(phrase_type::MATH_CONST);
         return $wrd;
@@ -343,9 +345,29 @@ class create_test_objects extends test_base
     function dummy_word_pi(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(3, word_api::TN_PI);
+        $wrd->set(word_api::TI_PI, word_api::TN_PI);
         $wrd->description = word_api::TD_PI;
         $wrd->set_type(phrase_type::MATH_CONST);
+        return $wrd;
+    }
+
+    /**
+     * @return word "circumference" to test the const behavior
+     */
+    function dummy_word_cf(): word
+    {
+        $wrd = new word($this->usr1);
+        $wrd->set(word_api::TI_CIRCUMFERENCE, word_api::TN_CIRCUMFERENCE);
+        return $wrd;
+    }
+
+    /**
+     * @return word "diameter" to test the const behavior
+     */
+    function dummy_word_dia(): word
+    {
+        $wrd = new word($this->usr1);
+        $wrd->set(word_api::TI_DIAMETER, word_api::TN_DIAMETER);
         return $wrd;
     }
 
@@ -355,53 +377,66 @@ class create_test_objects extends test_base
     function dummy_word_e(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(4, word_api::TN_E);
+        $wrd->set(word_api::TI_E, word_api::TN_E);
         $wrd->set_type(phrase_type::MATH_CONST);
         return $wrd;
     }
 
+    /**
+     * @return word 2019 to test creating of a year
+     */
     function dummy_word_2019(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(16, word_api::TN_2019);
+        $wrd->set(word_api::TI_2019, word_api::TN_2019);
         $wrd->set_type(phrase_type::TIME);
         return $wrd;
     }
 
+    /**
+     * @return word 2020 to test create a year
+     */
     function dummy_word_2020(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(198, word_api::TN_2020);
+        $wrd->set(word_api::TI_2020, word_api::TN_2020);
         $wrd->set_type(phrase_type::TIME);
         return $wrd;
     }
 
+    /**
+     * @return word percent to test percent related rules e.g. to remove measure at division
+     */
     function dummy_word_pct(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(164, word_api::TN_PCT);
+        $wrd->set(word_api::TI_PCT, word_api::TN_PCT);
         $wrd->set_type(phrase_type::PERCENT);
         return $wrd;
     }
 
+    // TODO explain for each test object for which test it is used
+    // TODO rename because in the test object "$t->" the prefix dummy is not needed
     function dummy_word_this(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(183, word_api::TN_THIS_PRE);
+        $wrd->set(word_api::TI_THIS, word_api::TN_THIS_PRE);
+        $wrd->set_type(phrase_type::THIS);
         return $wrd;
     }
 
     function dummy_word_prior(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(185, word_api::TN_PRIOR_PRE);
+        $wrd->set(word_api::TI_PRIOR, word_api::TN_PRIOR_PRE);
+        $wrd->set_type(phrase_type::PRIOR);
         return $wrd;
     }
 
     function dummy_word_one(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(160, word_api::TN_ONE);
+        $wrd->set(word_api::TI_ONE, word_api::TN_ONE);
         $wrd->set_type(phrase_type::SCALING_HIDDEN);
         return $wrd;
     }
@@ -409,7 +444,7 @@ class create_test_objects extends test_base
     function dummy_word_mio(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(162, word_api::TN_MIO_SHORT);
+        $wrd->set(word_api::TI_MIO, word_api::TN_MIO_SHORT);
         $wrd->set_type(phrase_type::SCALING);
         return $wrd;
     }
@@ -417,49 +452,89 @@ class create_test_objects extends test_base
     function dummy_word_minute(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(98, word_api::TN_MINUTE);
+        $wrd->set(word_api::TI_MINUTE, word_api::TN_MINUTE);
         return $wrd;
     }
 
     function dummy_word_second(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(17, word_api::TN_SECOND);
+        $wrd->set(word_api::TI_SECOND, word_api::TN_SECOND);
         return $wrd;
     }
 
     function dummy_word_ch(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(188, word_api::TN_CH);
+        $wrd->set(word_api::TI_CH, word_api::TN_CH);
         return $wrd;
     }
 
     function dummy_word_canton(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(189, word_api::TN_CANTON);
+        $wrd->set(word_api::TI_CANTON, word_api::TN_CANTON);
         return $wrd;
     }
 
-    function dummy_word_city(): word
+    /**
+     * @return word city to test the verb "is a" / "are" to get the list of cities
+     */
+    function city_word(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(190, word_api::TN_CITY);
+        $wrd->set(word_api::TI_CITY, word_api::TN_CITY);
         return $wrd;
     }
 
+    /**
+     * @return word with id and name of Zurich
+     */
     function dummy_word_zh(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(191, word_api::TN_ZH);
+        $wrd->set(word_api::TI_ZH, word_api::TN_ZH);
+        return $wrd;
+    }
+
+    /**
+     * @return word with id and name of Bern
+     */
+    function dummy_word_be(): word
+    {
+        $wrd = new word($this->usr1);
+        $wrd->set(word_api::TI_BE, word_api::TN_BE);
+        return $wrd;
+    }
+
+    /**
+     * @return word with id and name of Geneva
+     */
+    function dummy_word_ge(): word
+    {
+        $wrd = new word($this->usr1);
+        $wrd->set(word_api::TI_GE, word_api::TN_GE);
         return $wrd;
     }
 
     function dummy_word_inhabitant(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(193, word_api::TN_INHABITANT);
+        $wrd->set(word_api::TI_INHABITANT, word_api::TN_INHABITANT);
+        return $wrd;
+    }
+
+    function dummy_word_parts(): word
+    {
+        $wrd = new word($this->usr1);
+        $wrd->set(word_api::TI_PARTS, word_api::TN_PARTS);
+        return $wrd;
+    }
+
+    function dummy_word_total(): word
+    {
+        $wrd = new word($this->usr1);
+        $wrd->set(word_api::TI_TOTAL, word_api::TN_TOTAL_PRE);
         return $wrd;
     }
 
@@ -504,11 +579,11 @@ class create_test_objects extends test_base
     }
 
     /**
-     * @return verb a user defined verb
+     * @return verb the default verb
      */
     function dummy_verb(): verb
     {
-        $vrb = new verb(1, verb_api::TN_READ, verb_api::TC_READ);
+        $vrb = new verb(verb_api::TI_READ, verb_api::TN_READ, verb::NOT_SET);
         $vrb->set_user($this->usr1);
         return $vrb;
     }
@@ -518,7 +593,7 @@ class create_test_objects extends test_base
      */
     function dummy_verb_is(): verb
     {
-        return new verb(2, verb_api::TN_IS, verb::IS);
+        return new verb(verb_api::TI_IS, verb_api::TN_IS, verb::IS);
     }
 
     /**
@@ -526,7 +601,17 @@ class create_test_objects extends test_base
      */
     function dummy_verb_part(): verb
     {
-        return new verb(3, verb_api::TN_IS, verb::IS);
+        return new verb(verb_api::TI_PART, verb_api::TN_PART, verb::IS_PART_OF);
+    }
+
+    /**
+     * @return verb a standard verb with user null
+     */
+    function dummy_verb_of(): verb
+    {
+        $vrb = new verb(verb_api::TI_OF, verb_api::TN_OF, verb::CAN_CONTAIN_NAME_REVERSE);
+        $vrb->set_user($this->usr1);
+        return $vrb;
     }
 
     /**
@@ -535,7 +620,7 @@ class create_test_objects extends test_base
     function dummy_triple(): triple
     {
         $trp = new triple($this->usr1);
-        $trp->set(1, triple_api::TN_READ);
+        $trp->set(triple_api::TI_READ, triple_api::TN_READ);
         $trp->description = triple_api::TD_READ;
         $trp->set_from($this->dummy_word_const()->phrase());
         $trp->set_verb($this->dummy_verb_part());
@@ -550,12 +635,66 @@ class create_test_objects extends test_base
     function dummy_triple_pi(): triple
     {
         $trp = new triple($this->usr1);
-        $trp->set(2, triple_api::TN_PI_NAME);
+        $trp->set(triple_api::TI_PI, triple_api::TN_PI_NAME);
         $trp->description = triple_api::TD_PI;
         $trp->set_from($this->dummy_word_pi()->phrase());
         $trp->set_verb($this->dummy_verb_is());
         $trp->set_to($this->dummy_triple()->phrase());
         $trp->set_type(phrase_type::TRIPLE_HIDDEN);
+        return $trp;
+    }
+
+    /**
+     * @return triple "e (math const)" used for unit testing
+     */
+    function dummy_triple_e(): triple
+    {
+        $trp = new triple($this->usr1);
+        $trp->set(triple_api::TI_E, triple_api::TN_E);
+        $trp->description = triple_api::TD_E;
+        $trp->set_from($this->dummy_word_e()->phrase());
+        $trp->set_verb($this->dummy_verb_is());
+        $trp->set_to($this->dummy_triple()->phrase());
+        $trp->set_type(phrase_type::TRIPLE_HIDDEN);
+        return $trp;
+    }
+
+    /**
+     * @return triple "Zurich (City)" used for unit testing
+     */
+    function dummy_triple_zh(): triple
+    {
+        $trp = new triple($this->usr1);
+        $trp->set(triple_api::TI_ZH_CITY, triple_api::TN_ZH_CITY);
+        $trp->set_from($this->dummy_word_zh()->phrase());
+        $trp->set_verb($this->dummy_verb_is());
+        $trp->set_to($this->city_word()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "Bern (City)" used for unit testing
+     */
+    function dummy_triple_be(): triple
+    {
+        $trp = new triple($this->usr1);
+        $trp->set(triple_api::TI_BE_CITY, triple_api::TN_BE_CITY);
+        $trp->set_from($this->dummy_word_be()->phrase());
+        $trp->set_verb($this->dummy_verb_is());
+        $trp->set_to($this->city_word()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "Geneva (City)" used for unit testing
+     */
+    function dummy_triple_ge(): triple
+    {
+        $trp = new triple($this->usr1);
+        $trp->set(triple_api::TI_GE_CITY, triple_api::TN_GE_CITY);
+        $trp->set_from($this->dummy_word_ge()->phrase());
+        $trp->set_verb($this->dummy_verb_is());
+        $trp->set_to($this->city_word()->phrase());
         return $trp;
     }
 
@@ -571,7 +710,17 @@ class create_test_objects extends test_base
         return $this->dummy_word()->phrase();
     }
 
-    public function dummy_phrase_list(): phrase_list
+    function phrase_pi(): phrase
+    {
+        return $this->dummy_triple_pi()->phrase();
+    }
+
+    function phrase_zh(): phrase
+    {
+        return $this->dummy_triple_zh()->phrase();
+    }
+
+    function dummy_phrase_list(): phrase_list
     {
         $lst = new phrase_list($this->usr1);
         $lst->add($this->dummy_word()->phrase());
@@ -582,10 +731,66 @@ class create_test_objects extends test_base
         return $lst;
     }
 
-    public function dummy_phrase_list_pi(): phrase_list
+    function dummy_phrase_list_prime(): phrase_list
+    {
+        $lst = new phrase_list($this->usr1);
+        $lst->add($this->dummy_word()->phrase());
+        $lst->add($this->dummy_word_const()->phrase());
+        $lst->add($this->dummy_triple()->phrase());
+        $lst->add($this->dummy_triple_pi()->phrase());
+        return $lst;
+    }
+
+    /**
+     * @return phrase_list with one word and one triple
+     */
+    function dummy_phrase_list_small(): phrase_list
+    {
+        $lst = new phrase_list($this->usr1);
+        $lst->add($this->dummy_word_pi()->phrase());
+        $lst->add($this->dummy_triple()->phrase());
+        return $lst;
+    }
+
+    function dummy_phrase_list_pi(): phrase_list
     {
         $lst = new phrase_list($this->usr1);
         $lst->add($this->dummy_triple_pi()->phrase());
+        return $lst;
+    }
+
+    /**
+     * @return phrase_list with some math const e.g. to test loading a list of values by phrase list
+     */
+    function phrase_list_math_const(): phrase_list
+    {
+        $lst = new phrase_list($this->usr1);
+        $lst->add($this->dummy_triple_pi()->phrase());
+        $lst->add($this->dummy_triple_e()->phrase());
+        return $lst;
+    }
+
+    /**
+     * @return phrase_list with the cities for unit testing
+     */
+    function phrase_list_cities(): phrase_list
+    {
+        $lst = new phrase_list($this->usr1);
+        $lst->add($this->dummy_triple_zh()->phrase());
+        $lst->add($this->dummy_triple_be()->phrase());
+        $lst->add($this->dummy_triple_ge()->phrase());
+        return $lst;
+    }
+
+    /**
+     * @return phrase_list with all phrases used for unit testing
+     */
+    function phrase_list_all(): phrase_list
+    {
+        $lst = new phrase_list($this->usr1);
+        $lst->merge($this->dummy_phrase_list());
+        $lst->merge($this->phrase_list_math_const());
+        $lst->merge($this->phrase_list_cities());
         return $lst;
     }
 
@@ -608,7 +813,7 @@ class create_test_objects extends test_base
      * 628779863    .ZSahL+
      * 3516593476    1FajJ2-
      */
-    public function dummy_phrase_list_16(): phrase_list
+    function dummy_phrase_list_16(): phrase_list
     {
         $lst = new phrase_list($this->usr1);
         $wrd = $this->dummy_word();
@@ -678,7 +883,7 @@ class create_test_objects extends test_base
         return $lst;
     }
 
-    public function dummy_phrase_list_17_plus(): phrase_list
+    function dummy_phrase_list_17_plus(): phrase_list
     {
         $lst = $this->dummy_phrase_list_16();
         $wrd = $this->dummy_word();
@@ -689,9 +894,21 @@ class create_test_objects extends test_base
     }
 
     /**
+     * @return phrase_list to get all numbers related to a list of phrases
+     */
+    function dummy_phrase_list_zh(): phrase_list
+    {
+        $lst = new phrase_list($this->usr1);
+        $lst->add($this->dummy_word_canton()->phrase());
+        $lst->add($this->dummy_word_zh()->phrase());
+        $lst->add($this->dummy_word_inhabitant()->phrase());
+        return $lst;
+    }
+
+    /**
      * @return phrase_list the phrases relevant for having a second entry in the phrase group list
      */
-    public function dummy_phrase_list_zh(): phrase_list
+    function dummy_phrase_list_zh_2019(): phrase_list
     {
         $lst = new phrase_list($this->usr1);
         $lst->add($this->dummy_word_zh()->phrase());
@@ -701,9 +918,22 @@ class create_test_objects extends test_base
     }
 
     /**
+     * @return phrase_list the phrases relevant for testing the max number of prime phrases
+     */
+    function dummy_phrase_list_zh_mio(): phrase_list
+    {
+        $lst = new phrase_list($this->usr1);
+        $lst->add($this->dummy_word_zh()->phrase());
+        $lst->add($this->dummy_word_inhabitant()->phrase());
+        $lst->add($this->dummy_word_2019()->phrase());
+        $lst->add($this->dummy_word_mio()->phrase());
+        return $lst;
+    }
+
+    /**
      * @return phrase_list the phrases relevant for testing the increase formula
      */
-    public function dummy_phrase_list_increase(): phrase_list
+    function dummy_phrase_list_increase(): phrase_list
     {
         $lst = new phrase_list($this->usr1);
         $lst->add($this->dummy_word_pct()->phrase());
@@ -721,25 +951,66 @@ class create_test_objects extends test_base
         return new phrase_list_dsp($this->dummy_phrase_list()->api_json());
     }
 
-    function dummy_phrase_group(): phrase_group
+    /**
+     * @return group with one prime phrases
+     */
+    function dummy_phrase_group(): group
     {
         $lst = $this->dummy_phrase_list_pi();
-        $grp = $lst->get_grp(false);
-        $grp->name = phrase_group_api::TN_READ;
+        $grp = $lst->get_grp_id(false);
+        $grp->name = group_api::TN_READ;
         return $grp;
     }
 
-    function dummy_phrase_group_zh(): phrase_group
+    /**
+     * @return group with three prime phrases
+     */
+    function dummy_phrase_group_prime_3(): group
     {
-        $lst = $this->dummy_phrase_list_zh();
-        $grp = $lst->get_grp(false);
-        $grp->name = phrase_group_api::TN_ZH_2019;
+        $lst = $this->dummy_phrase_list_zh_2019();
+        $grp = $lst->get_grp_id(false);
+        $grp->name = group_api::TN_READ;
         return $grp;
     }
 
-    function dummy_phrase_group_list(): phrase_group_list
+    /**
+     * @return group with the max number of prime phrases
+     */
+    function dummy_phrase_group_prime_max(): group
     {
-        $lst = new phrase_group_list($this->usr1);
+        $lst = $this->dummy_phrase_list_zh_mio();
+        $grp = $lst->get_grp_id(false);
+        $grp->name = group_api::TN_READ;
+        return $grp;
+    }
+
+    function dummy_phrase_group_16(): group
+    {
+        $lst = $this->dummy_phrase_list_16();
+        $grp = $lst->get_grp_id(false);
+        $grp->name = group_api::TN_READ;
+        return $grp;
+    }
+
+    function dummy_phrase_group_17_plus(): group
+    {
+        $lst = $this->dummy_phrase_list_17_plus();
+        $grp = $lst->get_grp_id(false);
+        $grp->name = group_api::TN_READ;
+        return $grp;
+    }
+
+    function dummy_phrase_group_zh(): group
+    {
+        $lst = $this->dummy_phrase_list_zh_2019();
+        $grp = $lst->get_grp_id(false);
+        $grp->name = group_api::TN_ZH_2019;
+        return $grp;
+    }
+
+    function dummy_phrase_group_list(): group_list
+    {
+        $lst = new group_list($this->usr1);
         $lst->add($this->dummy_phrase_group());
         return $lst;
     }
@@ -764,6 +1035,9 @@ class create_test_objects extends test_base
         return $this->dummy_verb()->term();
     }
 
+    /**
+     * @return term_list with all terms used for the unit tests
+     */
     function dummy_term_list(): term_list
     {
         $lst = new term_list($this->usr1);
@@ -771,6 +1045,30 @@ class create_test_objects extends test_base
         $lst->add($this->dummy_term_triple());
         $lst->add($this->dummy_term_formula());
         $lst->add($this->dummy_term_verb());
+        return $lst;
+    }
+
+    /**
+     * @return term_list with all terms used for the unit tests
+     */
+    function dummy_term_list_all(): term_list
+    {
+        $lst = new term_list($this->usr1);
+        $lst->add($this->dummy_term());
+        $lst->add($this->dummy_term_triple());
+        $lst->add($this->dummy_term_formula());
+        $lst->add($this->dummy_term_verb());
+        $lst->add($this->dummy_triple_pi()->term());
+        $lst->add($this->dummy_word_pi()->term());
+        $lst->add($this->dummy_word_cf()->term());
+        $lst->add($this->dummy_word_pct()->term());
+        $lst->add($this->dummy_word_prior()->term());
+        $lst->add($this->dummy_word_this()->term());
+        $lst->add($this->dummy_word_parts()->term());
+        $lst->add($this->dummy_word_total()->term());
+        $lst->add($this->dummy_verb_of()->term());
+        $lst->add($this->dummy_word_one()->term());
+        $lst->add($this->dummy_word_mio()->term());
         return $lst;
     }
 
@@ -799,13 +1097,43 @@ class create_test_objects extends test_base
     function dummy_value(): value
     {
         $grp = $this->dummy_phrase_group();
-        return new value($this->usr1, 1, round(value_api::TV_READ, 13), $grp);
+        return new value($this->usr1, round(value_api::TV_READ, 13), $grp);
+    }
+
+    /**
+     * @return value with more than one prime phrase
+     */
+    function dummy_value_prime_3(): value
+    {
+        $grp = $this->dummy_phrase_group_prime_3();
+        return new value($this->usr1, round(value_api::TV_READ, 13), $grp);
+    }
+
+    /**
+     * @return value with the maximal number of prime phrase
+     */
+    function dummy_value_prime_max(): value
+    {
+        $grp = $this->dummy_phrase_group_prime_max();
+        return new value($this->usr1, round(value_api::TV_READ, 13), $grp);
+    }
+
+    function dummy_value_16(): value
+    {
+        $grp = $this->dummy_phrase_group_16();
+        return new value($this->usr1, round(value_api::TV_READ, 13), $grp);
+    }
+
+    function dummy_value_17_plus(): value
+    {
+        $grp = $this->dummy_phrase_group_17_plus();
+        return new value($this->usr1, round(value_api::TV_READ, 13), $grp);
     }
 
     function dummy_value_zh(): value
     {
         $grp = $this->dummy_phrase_group_zh();
-        return new value($this->usr1, 2, value_api::TV_CITY_ZH_INHABITANTS_2019, $grp);
+        return new value($this->usr1, value_api::TV_CITY_ZH_INHABITANTS_2019, $grp);
     }
 
     function dummy_value_list(): value_list
@@ -857,7 +1185,8 @@ class create_test_objects extends test_base
 
     function dummy_expression(): expression
     {
-        return $this->dummy_formula()->expression();
+        $trm_lst = $this->dummy_term_list_time();
+        return $this->dummy_formula()->expression($trm_lst);
     }
 
     function dummy_element(): formula_element
@@ -880,7 +1209,23 @@ class create_test_objects extends test_base
         $phr_lst = new phrase_list($this->usr1);
         $phr_lst->add($wrd->phrase());
         $res->set_id(1);
-        $res->grp->phr_lst = $phr_lst;
+        $res->grp->set_phrase_list($phr_lst);
+        $res->value = result_api::TV_INT;
+        return $res;
+    }
+
+    function dummy_result_prime(): result
+    {
+        $res = new result($this->usr1);
+        $res->set_grp($this->dummy_phrase_group());
+        $res->value = result_api::TV_INT;
+        return $res;
+    }
+
+    function dummy_result_16(): result
+    {
+        $res = new result($this->usr1);
+        $res->set_grp($this->dummy_phrase_group_16());
         $res->value = result_api::TV_INT;
         return $res;
     }
@@ -891,7 +1236,7 @@ class create_test_objects extends test_base
         $wrd_pct = $this->new_word(word_api::TN_PCT, 2, phrase_type::PERCENT);
         $phr_lst = new phrase_list($this->usr1);
         $phr_lst->add($wrd_pct->phrase());
-        $res->grp->phr_lst = $phr_lst;
+        $res->grp->set_phrase_list($phr_lst);
         $res->value = 0.01234;
         return $res;
     }
@@ -910,7 +1255,7 @@ class create_test_objects extends test_base
     function dummy_figure_value(): figure
     {
         $val = $this->dummy_value();
-        $val->last_update = new DateTime(self::DUMMY_DATETIME);
+        $val->set_last_update(new DateTime(self::DUMMY_DATETIME));
         return $val->figure();
     }
 
@@ -1147,13 +1492,13 @@ class create_test_objects extends test_base
     }
 
     /**
-     * @return change_log_named a change log entry of a named user sandbox object with some dummy values
+     * @return change a change log entry of a named user sandbox object with some dummy values
      */
-    function dummy_log_named(): change_log_named
+    function dummy_change_log_named(): change
     {
         global $usr_sys;
 
-        $chg = new change_log_named($usr_sys);
+        $chg = new change($usr_sys);
         $chg->set_time_str(self::DUMMY_DATETIME);
         $chg->set_action(change_log_action::ADD);
         $chg->set_table(change_log_table::WORD);
@@ -1222,7 +1567,7 @@ class create_test_objects extends test_base
     function dummy_change_log_list_named(): change_log_list
     {
         $log_lst = new change_log_list();
-        $log_lst->add($this->dummy_log_named());
+        $log_lst->add($this->dummy_change_log_named());
         return $log_lst;
     }
 
@@ -1762,11 +2107,11 @@ class create_test_objects extends test_base
     /**
      * load a phrase group by the list of phrase names
      * @param array $array_of_phrase_str with the names of the words or triples
-     * @return phrase_group
+     * @return group
      */
-    function load_phrase_group(array $array_of_phrase_str): phrase_group
+    function load_phrase_group(array $array_of_phrase_str): group
     {
-        return $this->load_phrase_list($array_of_phrase_str)->get_grp();
+        return $this->load_phrase_list($array_of_phrase_str)->get_grp_id();
     }
 
     /**
@@ -1774,11 +2119,11 @@ class create_test_objects extends test_base
      * which can be either the name set by the users
      * or the automatically created name based on the phrases
      * @param string $phrase_group_name
-     * @return phrase_group
+     * @return group
      */
-    function load_phrase_group_by_name(string $phrase_group_name): phrase_group
+    function load_phrase_group_by_name(string $phrase_group_name): group
     {
-        $phr_grp = new phrase_group($this->usr1);
+        $phr_grp = new group($this->usr1);
         $phr_grp->name = $phrase_group_name;
         $phr_grp->load_by_obj_vars();
         return $phr_grp;
@@ -1787,16 +2132,14 @@ class create_test_objects extends test_base
     /**
      * add a phrase group to the database
      * @param array $array_of_phrase_str the phrase names
-     * @param string $phrase_group_name the name that should be shown to the user
-     * @return phrase_group the phrase group object including the database is
+     * @param string $name the name that should be shown to the user
+     * @return group the phrase group object including the database is
      */
-    function add_phrase_group(array $array_of_phrase_str, string $phrase_group_name): phrase_group
+    function add_phrase_group(array $array_of_phrase_str, string $name): group
     {
-        $phr_grp = new phrase_group($this->usr1);
-        $phr_grp->phr_lst = $this->load_phrase_list($array_of_phrase_str);
-        $phr_grp->name = $phrase_group_name;
-        $phr_grp->get();
-        return $phr_grp;
+        $grp = new group($this->usr1);
+        $grp->get_by_phrase_list($this->load_phrase_list($array_of_phrase_str), $name);
+        return $grp;
     }
 
     /**
@@ -1826,7 +2169,7 @@ class create_test_objects extends test_base
 
         // the time separation is done here until there is a phrase series value table that can be used also to time phrases
         $phr_lst = $this->load_phrase_list($array_of_word_str);
-        $phr_grp = $phr_lst->get_grp();
+        $phr_grp = $phr_lst->get_grp_id();
 
         $val = new value($this->usr1);
         if ($phr_grp == null) {
@@ -1840,9 +2183,9 @@ class create_test_objects extends test_base
     function add_value(array $array_of_word_str, float $target): value
     {
         $val = $this->load_value($array_of_word_str);
-        if ($val->id() == 0) {
+        if (!$val->is_saved()) {
             $phr_lst = $this->load_phrase_list($array_of_word_str);
-            $phr_grp = $phr_lst->get_grp();
+            $phr_grp = $phr_lst->get_grp_id();
 
             // getting the latest value if selected without time phrase should be done when reading the value
             //$time_phr = $phr_lst->time_useful();
@@ -1869,18 +2212,18 @@ class create_test_objects extends test_base
         return $val;
     }
 
-    function load_value_by_phr_grp(phrase_group $phr_grp): value
+    function load_value_by_phr_grp(group $phr_grp): value
     {
         $val = new value($this->usr1);
         $val->load_by_grp($phr_grp);
         return $val;
     }
 
-    function add_value_by_phr_grp(phrase_group $phr_grp, float $target): value
+    function add_value_by_phr_grp(group $phr_grp, float $target): value
     {
         $val = $this->load_value_by_phr_grp($phr_grp);
-        if ($val->id() == 0) {
-            $val->grp = $phr_grp;
+        if (!$val->is_saved()) {
+            $val->set_grp($phr_grp);
             $val->set_number($target);
             $val->save();
         }
@@ -1888,7 +2231,7 @@ class create_test_objects extends test_base
         return $val;
     }
 
-    function test_value_by_phr_grp(phrase_group $phr_grp, float $target): value
+    function test_value_by_phr_grp(group $phr_grp, float $target): value
     {
         $val = $this->add_value_by_phr_grp($phr_grp, $target);
         $result = $val->number();
@@ -1896,7 +2239,7 @@ class create_test_objects extends test_base
         return $val;
     }
 
-    function del_value_by_phr_grp(phrase_group $phr_grp): bool
+    function del_value_by_phr_grp(group $phr_grp): bool
     {
         $val = $this->load_value_by_phr_grp($phr_grp);
         if ($val->del()) {

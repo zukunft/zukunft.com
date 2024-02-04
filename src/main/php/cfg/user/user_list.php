@@ -31,8 +31,11 @@
 
 namespace cfg;
 
-use cfg\db\sql_creator;
+use cfg\db\sql;
+use cfg\db\sql_db;
+use cfg\db\sql_par;
 use cfg\db\sql_par_type;
+use cfg\value\value;
 
 include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';
@@ -78,16 +81,16 @@ class user_list
 
     /**
      * set the SQL query parameters to load a list of figure objects
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    private function load_sql(sql_creator $sc, string $query_name): sql_par
+    private function load_sql(sql $sc, string $query_name): sql_par
     {
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
 
-        $sc->set_type(user::class);
+        $sc->set_class(user::class);
         $sc->set_name($qp->name);
 
         $sc->set_usr($this->user()->id());
@@ -98,11 +101,11 @@ class user_list
     /**
      * create an SQL statement to retrieve a user list by the id from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param array $ids list of user ids that should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_ids(sql_creator $sc, array $ids): sql_par
+    function load_sql_by_ids(sql $sc, array $ids): sql_par
     {
         $qp = $this->load_sql($sc, 'ids');
         $sc->add_where(user::FLD_ID, $ids);
@@ -115,11 +118,11 @@ class user_list
     /**
      * create an SQL statement to retrieve a user the code id from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $code_id all users with this code id should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_code_id(sql_creator $sc, string $code_id): sql_par
+    function load_sql_by_code_id(sql $sc, string $code_id): sql_par
     {
         $qp = $this->load_sql($sc, 'code_id');
         $sc->add_where(sql_db::FLD_CODE_ID, $code_id);
@@ -134,11 +137,11 @@ class user_list
      * have the given profile level or higher
      * e.g. loading the admin includes the system user
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param int $profile_id list of user that have at least this profile level
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_profile_and_higher(sql_creator $sc, int $profile_id): sql_par
+    function load_sql_by_profile_and_higher(sql $sc, int $profile_id): sql_par
     {
         $qp = $this->load_sql($sc, 'profiles');
         $sc->set_join_fields(
@@ -158,7 +161,12 @@ class user_list
         $lib = new library();
         $class = $lib->class_to_name($dbo::class);
         $sql = 'SELECT ' . user::FLD_ID . ',';
-        $sql .= ' COUNT (' . $dbo->id_field() . ') AS ' . self::FLD_CHANGES;
+        $id_fields = $dbo->id_field();
+        if (is_array($id_fields)) {
+            $sql .= ' COUNT (*) AS ' . self::FLD_CHANGES;
+        } else {
+            $sql .= ' COUNT (' . $dbo->id_field() . ') AS ' . self::FLD_CHANGES;
+        }
         $sql .= ' FROM ' . sql_db::TBL_USER_PREFIX . $class . sql_db::TABLE_EXTENSION;
         $sql .= ' GROUP BY ' . user::FLD_ID;
         return $sql;
@@ -194,16 +202,16 @@ class user_list
     /**
      * create an SQL statement to retrieve users that have changed something
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_count_changes(sql_creator $sc): sql_par
+    function load_sql_count_changes(sql $sc): sql_par
     {
         $sub_sql = '(' . $this->load_sql_count_sum_changes() . ')';
         $qp = $this->load_sql($sc, 'count_changes');
         $sc->set_join_sql($sub_sql, array(self::FLD_CHANGES), user::FLD_ID);
         $sc->add_where(self::FLD_CHANGES, '', sql_par_type::NOT_NULL);
-        $sc->set_order( self::FLD_CHANGES, sql_db::ORDER_DESC, sql_db::LNK_TBL);
+        $sc->set_order( self::FLD_CHANGES, sql::ORDER_DESC, sql_db::LNK_TBL);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 

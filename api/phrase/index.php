@@ -29,6 +29,7 @@
   
 */
 
+use api\api_message;
 use controller\controller;
 use cfg\user;
 use cfg\phrase;
@@ -42,7 +43,7 @@ include_once PHP_PATH . 'zu_lib.php';
 
 include_once API_PATH . 'api.php';
 include_once API_PATH . 'controller.php';
-include_once API_PATH . 'message_header.php';
+include_once API_PATH . 'api_message.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_WORD_PATH . 'phrase.php';
 

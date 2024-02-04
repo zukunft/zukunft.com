@@ -30,11 +30,11 @@
 
 */
 
-namespace api;
+namespace api\sandbox;
 
 include_once API_SANDBOX_PATH . 'sandbox_named.php';
 
-class sandbox_typed_api extends sandbox_named_api
+class sandbox_typed extends sandbox_named
 {
 
     // all named objects can have a type that links predefined functionality to it

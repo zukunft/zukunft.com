@@ -1,4 +1,4 @@
-PREPARE ip_range_list_by_active (int) AS
+PREPARE ip_range_list_by_active (bigint) AS
     SELECT user_blocked_id,
            ip_from,
            ip_to,

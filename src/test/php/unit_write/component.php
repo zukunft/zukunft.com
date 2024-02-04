@@ -32,11 +32,11 @@
 
 namespace test\write;
 
-use api\component\component_api;
-use cfg\change_log_field;
-use cfg\change_log_named;
-use cfg\change_log_table;
+use api\component\component as component_api;
 use cfg\component\component;
+use cfg\log\change_log_field;
+use cfg\log\change;
+use cfg\log\change_log_table;
 use cfg\component\component_type;
 use cfg\sandbox_named;
 use test\test_cleanup;
@@ -98,7 +98,7 @@ class component_test
         $t->display('component->load the added "' . $cmp_added->name() . '"', $target, $result);
 
         // check if the component adding has been logged
-        $log = new change_log_named($t->usr1);
+        $log = new change($t->usr1);
         $log->set_table(change_log_table::VIEW_COMPONENT);
         $log->set_field(component::FLD_NAME);
         $log->row_id = $cmp->id();
@@ -136,7 +136,7 @@ class component_test
         $t->display('component->load renamed component "' . component_api::TN_RENAMED . '"', $target, $result);
 
         // check if the component renaming has been logged
-        $log = new change_log_named($t->usr1);
+        $log = new change($t->usr1);
         $log->set_table(change_log_table::VIEW_COMPONENT);
         $log->set_field(component::FLD_NAME);
         $log->row_id = $cmp_renamed->id();
@@ -164,7 +164,7 @@ class component_test
         $t->display('component->load type_id for "' . component_api::TN_RENAMED . '"', $target, $result);
 
         // check if the component parameter adding have been logged
-        $log = new change_log_named($t->usr1);
+        $log = new change($t->usr1);
         $log->set_table(change_log_table::VIEW_COMPONENT);
         $log->set_field(sandbox_named::FLD_DESCRIPTION);
         $log->row_id = $cmp_reloaded->id();

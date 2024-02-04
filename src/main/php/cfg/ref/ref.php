@@ -58,11 +58,15 @@ include_once MODEL_REF_PATH . 'source.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
 
-use cfg\db\sql_creator;
-use model\export\exp_obj;
-use model\export\ref_exp;
-use api\ref_api;
-use html\ref\ref as ref_dsp;
+use api\ref\ref as ref_api;
+use cfg\db\sql;
+use cfg\db\sql_db;
+use cfg\db\sql_par;
+use cfg\export\sandbox_exp;
+use cfg\export\ref_exp;
+use cfg\log\change_log_action;
+use cfg\log\change_log_link;
+use cfg\log\change_log_table;
 
 class ref extends sandbox_link_with_type
 {
@@ -288,13 +292,13 @@ class ref extends sandbox_link_with_type
     /**
      * create the SQL to load the default ref always by the id
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql_creator $sc, string $class = self::class): sql_par
+    function load_standard_sql(sql $sc, string $class = self::class): sql_par
     {
-        $sc->set_type($class);
+        $sc->set_class($class);
         $sc->set_fields(array_merge(
             self::FLD_NAMES,
             self::FLD_NAMES_USR,
@@ -326,12 +330,12 @@ class ref extends sandbox_link_with_type
     /**
      * create the common part of an SQL statement to retrieve the parameters of a ref from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    protected function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
+    function load_sql(sql $sc, string $query_name, string $class = self::class): sql_par
     {
         return parent::load_sql_usr_num($sc, $this, $query_name);
     }
@@ -339,12 +343,12 @@ class ref extends sandbox_link_with_type
     /**
      * create an SQL statement to retrieve a ref by id from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param int $phr_id the id of the phrase that is referenced
      * @param int $type_id the id of the reference type
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_link_ids(sql_creator $sc, int $phr_id, int $type_id): sql_par
+    function load_sql_by_link_ids(sql $sc, int $phr_id, int $type_id): sql_par
     {
         $qp = $this->load_sql($sc, 'link_ids');
         $sc->add_where(phrase::FLD_ID, $phr_id);
@@ -500,7 +504,7 @@ class ref extends sandbox_link_with_type
         $ref_lst = new ref_type_list();
         // reset of object not needed, because the calling function has just created the object
         foreach ($in_ex_json as $key => $value) {
-            if ($key == exp_obj::FLD_SOURCE) {
+            if ($key == sandbox_exp::FLD_SOURCE) {
                 $src = new source($this->user());
                 if (!$test_obj) {
                     $src->load_by_name($value, source::class);
@@ -512,7 +516,7 @@ class ref extends sandbox_link_with_type
                 }
                 $this->source = $src;
             }
-            if ($key == exp_obj::FLD_TYPE) {
+            if ($key == sandbox_exp::FLD_TYPE) {
                 $this->ref_type = $ref_lst->get_ref_type($value);
 
                 if ($this->ref_type == null) {
@@ -522,10 +526,10 @@ class ref extends sandbox_link_with_type
                     log_debug('ref_type set based on ' . $value . ' (' . $this->ref_type->name . ')');
                 }
             }
-            if ($key == exp_obj::FLD_NAME) {
+            if ($key == sandbox_exp::FLD_NAME) {
                 $this->external_key = $value;
             }
-            if ($key == exp_obj::FLD_DESCRIPTION) {
+            if ($key == sandbox_exp::FLD_DESCRIPTION) {
                 $this->description = $value;
             }
             if ($key == self::FLD_URL) {
@@ -548,7 +552,7 @@ class ref extends sandbox_link_with_type
      * create a reference object for export (so excluding e.g. the database id)
      * @return ref_exp a reduced reference object for the JSON message creation
      */
-    function export_obj(bool $do_load = true): exp_obj
+    function export_obj(bool $do_load = true): sandbox_exp
     {
         $result = new ref_exp();
 
@@ -804,10 +808,10 @@ class ref extends sandbox_link_with_type
         $log = $this->log_link_add();
         if ($log->id() > 0) {
             // insert the new reference
-            $db_con->set_type(sql_db::TBL_REF);
+            $db_con->set_class(sql_db::TBL_REF);
             $db_con->set_usr($this->user()->id());
 
-            $this->id = $db_con->insert(
+            $this->id = $db_con->insert_old(
                 array(phrase::FLD_ID, self::FLD_EX_KEY, self::FLD_TYPE),
                 array($this->phr->id(), $this->external_key, $this->ref_type->id));
             if ($this->id > 0) {
@@ -869,7 +873,7 @@ class ref extends sandbox_link_with_type
         if ($this->user() != null) {
             $db_con->set_usr($this->user()->id());
         }
-        $db_con->set_type(sql_db::TBL_REF);
+        $db_con->set_class(sql_db::TBL_REF);
 
         // check if the external reference is supposed to be added
         if ($this->id <= 0) {
@@ -905,8 +909,8 @@ class ref extends sandbox_link_with_type
             if ($this->external_key <> $db_rec->external_key) {
                 $log = $this->log_link_upd($db_rec);
                 if ($log->id() > 0) {
-                    $db_con->set_type(sql_db::TBL_REF);
-                    if ($db_con->update($this->id, self::FLD_EX_KEY, $this->external_key)) {
+                    $db_con->set_class(sql_db::TBL_REF);
+                    if ($db_con->update_old($this->id, self::FLD_EX_KEY, $this->external_key)) {
                         log_debug('ref->save update ... done.');
                     }
                 }
@@ -943,8 +947,8 @@ class ref extends sandbox_link_with_type
             } else {
                 $log = $this->log_link_del();
                 if ($log->id() > 0) {
-                    $db_con->set_type(sql_db::TBL_REF);
-                    $del_result = $db_con->delete(self::FLD_ID, $this->id);
+                    $db_con->set_class(sql_db::TBL_REF);
+                    $del_result = $db_con->delete_old(self::FLD_ID, $this->id);
                     if ($del_result == '') {
                         log_debug('done.');
                     } else {

@@ -1,4 +1,4 @@
-PREPARE term_by_id (int,int) AS
+PREPARE term_by_id (bigint,bigint) AS
     SELECT s.term_id,
            u.term_id AS user_term_id,
            s.user_id,

@@ -32,8 +32,8 @@
 
 namespace test;
 
-use api\triple_api;
-use api\word_api;
+use api\word\triple as triple_api;
+use api\word\word as word_api;
 use cfg\phrase;
 use cfg\phrase_type;
 use cfg\phrase_types;
@@ -150,6 +150,14 @@ class word_unit_db_tests
         $wrd_lst->load_by_ids(array($wrd->id()));
         $wrd_lst->add_name(word_api::TN_MIO);
         $t->assert('add_id', $wrd_lst->name(), '"' . word_api::TN_READ . '","' . word_api::TN_MIO . '"');
+
+
+        $t->subheader('FOAF read tests');
+
+        // TODO review all tests base on this one
+        $test_name = 'The list von cities must contain at least Zurich, Bern ans Geneva';
+        $city_lst = $t->city_word()->are();
+        $t->assert_contains($test_name, $city_lst->names(), $t->phrase_list_cities()->wrd_lst_all()->names());
 
 
         $t->header('Unit database tests of the triple class (src/main/php/model/word/triple.php)');

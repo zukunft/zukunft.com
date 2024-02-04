@@ -1,4 +1,4 @@
-PREPARE source_by_usr_cfg (int, int) AS
+PREPARE source_by_usr_cfg (bigint, bigint) AS
     SELECT source_id,
            source_name,
            description,

@@ -30,15 +30,15 @@
 
 */
 
-namespace api;
+namespace api\word;
 
+use api\phrase\phrase as phrase_api;
+use api\phrase\term as term_api;
+use api\sandbox\sandbox_typed as sandbox_typed_api;
 use cfg\phrase_type;
-use html\phrase\term as term_dsp;
-use html\word\word as word_dsp;
-use JsonSerializable;
-use cfg\word;
+use cfg\word as word_cfg;
 
-class word_api extends sandbox_typed_api
+class word extends sandbox_typed_api
 {
 
     /*
@@ -47,26 +47,48 @@ class word_api extends sandbox_typed_api
 
     // word names for stand-alone unit tests that are added with the system initial data load
     // TN_* is the name of the word used for testing
+    // TI_* is the database id based on the initial load
     // TD_* is the tooltip/description of the word
     const TN_READ = 'Mathematics';
     const TD_READ = 'Mathematics is an area of knowledge that includes the topics of numbers and formulas';
+    const TI_MATH = 1;
     const TN_CONST = 'constant';
     const TD_CONST = 'fixed and well-defined number';
+    const TI_CONST = 2;
     const TN_PI = 'Pi';
+    const TI_PI = 3;
     const TD_PI = 'ratio of the circumference of a circle to its diameter';
     const TN_E = "Euler's constant";
+    const TI_E = 4;
+    const TN_CIRCUMFERENCE = 'circumference';
+    const TI_CIRCUMFERENCE = 134;
+    const TN_DIAMETER = 'diameter';
+    const TI_DIAMETER = 135;
     const TN_ONE = 'one';
+    const TI_ONE = 162;
     const TN_MIO = 'million';
+    const TI_MIO = 164;
     const TN_MIO_SHORT = 'mio';
     const TN_MINUTE = 'minute';
+    const TI_MINUTE = 98;
     const TN_SECOND = 'second';
+    const TI_SECOND = 17;
     const TN_COUNTRY = 'Country';
     const TN_CH = 'Switzerland';
+    const TI_CH = 190;
     const TN_DE = 'Germany';
     const TN_CANTON = 'Canton';
+    const TI_CANTON = 191;
     const TN_CITY = 'City';
+    const TI_CITY = 192;
     const TN_ZH = 'Zurich';
+    const TI_ZH = 193;
+    const TN_BE = 'Bern';
+    const TI_BE = 194;
+    const TN_GE = 'Geneva';
+    const TI_GE = 195;
     const TN_INHABITANT = 'inhabitant';
+    const TI_INHABITANT = 197;
     const TN_INHABITANTS = 'inhabitants';
     const TN_YEAR = 'Year';
     const TN_2015 = '2015';
@@ -74,11 +96,20 @@ class word_api extends sandbox_typed_api
     const TN_2017 = '2017';
     const TN_2018 = '2018';
     const TN_2019 = '2019';
+    const TI_2019 = 16;
     const TN_2020 = '2020';
+    const TI_2020 = 202;
     const TN_PCT = 'percent';
+    const TI_PCT = 166;
     // _PRE are the predefined words
-    const TN_THIS_PRE = 'this';
+    const TN_THIS_PRE = 'this'; // the test name for the predefined word 'this'
+    const TI_THIS = 185;
     const TN_PRIOR_PRE = 'prior';
+    const TI_PRIOR = 187;
+    const TN_PARTS = 'parts';
+    const TI_PARTS = 210;
+    const TN_TOTAL_PRE = 'total';
+    const TI_TOTAL = 211;
     const TN_COMPANY = 'Company';
 
     // persevered word names for unit and integration tests based on the database
@@ -120,9 +151,9 @@ class word_api extends sandbox_typed_api
     const TD_UPD_API = 'System Test Word API Description Renamed';
 
 
-    // word groups for creating the test words and remove them after the test
+    // list of predefined words used for system testing that are expected to be never renamed
     const RESERVED_WORDS = array(
-        word::SYSTEM_CONFIG,
+        word_cfg::SYSTEM_CONFIG,
         self::TN_READ,
         self::TN_CONST,
         self::TN_PI,
@@ -135,7 +166,10 @@ class word_api extends sandbox_typed_api
         self::TN_CANTON,
         self::TN_CITY,
         self::TN_ZH,
+        self::TN_BE,
+        self::TN_GE,
         self::TN_INHABITANT,
+        self::TN_INHABITANTS,
         self::TN_YEAR,
         self::TN_2015,
         self::TN_2016,
@@ -179,9 +213,46 @@ class word_api extends sandbox_typed_api
         self::TN_ADD_API,
         self::TN_UPD_API
     );
+    // list of words that are used for system testing that should be removed are the system test has been completed
+    // and that are never expected to be used by a user
     const TEST_WORDS = array(
         self::TN_ADD,
         self::TN_RENAMED,
+        self::TN_PARENT,
+        self::TN_FIN_REPORT,
+        self::TN_CASH_FLOW,
+        self::TN_TAX_REPORT,
+        self::TN_ASSETS,
+        self::TN_ASSETS_CURRENT,
+        self::TN_SECTOR,
+        self::TN_ENERGY,
+        self::TN_WIND_ENERGY,
+        self::TN_CASH,
+        self::TN_2021,
+        self::TN_2022,
+        self::TN_CHF,
+        self::TN_SHARE,
+        self::TN_PRICE,
+        self::TN_EARNING,
+        self::TN_PE,
+        self::TN_IN_K,
+        self::TN_BIL,
+        self::TN_TOTAL,
+        self::TN_INCREASE,
+        self::TN_THIS,
+        self::TN_PRIOR,
+        self::TN_TIME_JUMP,
+        self::TN_LATEST,
+        self::TN_SCALING_PCT,
+        self::TN_SCALING_MEASURE,
+        self::TN_CALC,
+        self::TN_LAYER,
+        self::TN_ADD_API,
+        self::TN_UPD_API
+    );
+    // list of words that are used for system testing and that should be created before the system test starts
+    const TEST_WORDS_CREATE = array(
+        self::TN_ADD,
         self::TN_PARENT,
         self::TN_FIN_REPORT,
         self::TN_CASH_FLOW,

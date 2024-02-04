@@ -32,7 +32,7 @@
 
 namespace test;
 
-use api\component\component_api;
+use api\component\component as component_api;
 use api\view\view as view_api;
 use cfg\component\component;
 use cfg\component\component_type;
@@ -109,7 +109,7 @@ class view_unit_db_tests
         $t->assert('check' . controller::DSP_WORD, $result, $target);
 
         // check all system views
-        // TODO activate
+        // TODO activate Prio 2
         //$t->assert_view(controller::DSP_COMPONENT_ADD, $t->usr1);
         //$t->assert_view(controller::DSP_COMPONENT_EDIT, $t->usr1);
         //$t->assert_view(controller::DSP_COMPONENT_DEL, $t->usr1);

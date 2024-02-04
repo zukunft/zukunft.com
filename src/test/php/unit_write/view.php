@@ -33,13 +33,13 @@
 namespace test\write;
 
 use api\view\view as view_api;
-use api\word_api;
+use api\word\word as word_api;
 use cfg\view_type;
-use html\view\view as view_dsp;
-use cfg\change_log_named;
-use cfg\change_log_table;
-use cfg\sandbox_named;
 use cfg\view;
+use html\view\view as view_dsp;
+use cfg\log\change;
+use cfg\log\change_log_table;
+use cfg\sandbox_named;
 use cfg\word;
 use test\test_cleanup;
 use const test\TIMEOUT_LIMIT_DB;
@@ -109,7 +109,7 @@ class view_test
         $t->display('view->load the added "' . $dsp->name() . '"', $target, $result);
 
         // check if the view adding has been logged
-        $log = new change_log_named($t->usr1);
+        $log = new change($t->usr1);
         $log->set_table(change_log_table::VIEW);
         $log->set_field(view::FLD_NAME);
         $log->row_id = $dsp->id();
@@ -145,7 +145,7 @@ class view_test
         $t->display('view->load renamed view "' . view_api::TN_RENAMED . '"', $target, $result);
 
         // check if the view renaming has been logged
-        $log = new change_log_named($t->usr1);
+        $log = new change($t->usr1);
         $log->set_table(change_log_table::VIEW);
         $log->set_field(view::FLD_NAME);
         $log->row_id = $dsp_renamed->id();
@@ -171,7 +171,7 @@ class view_test
         $t->display('view->load type_id for "' . view_api::TN_RENAMED . '"', $target, $result);
 
         // check if the view parameter adding have been logged
-        $log = new change_log_named($t->usr1);
+        $log = new change($t->usr1);
         $log->set_table(change_log_table::VIEW);
         $log->set_field(sandbox_named::FLD_DESCRIPTION);
         $log->row_id = $dsp_reloaded->id();

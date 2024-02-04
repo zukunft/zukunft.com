@@ -6,6 +6,8 @@
     -------------------------
 
     This superclass should be used by the classes words, formula, ... to enable user specific values and links
+    similar to sandbox.php but for database objects that have an auto sequence prime id
+    TODO should be merged once php allows aggregating extends e.g. sandbox extends db_object, db_user_object
 
 
     This file is part of zukunft.com - calc with words
@@ -42,17 +44,27 @@ namespace cfg;
 include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';
 include_once DB_PATH . 'sql_par_type.php';
-include_once MODEL_HELPER_PATH . 'db_object_user.php';
+include_once MODEL_HELPER_PATH . 'db_object_seq_id_user.php';
 include_once MODEL_PHRASE_PATH . 'phrase_type.php';
 include_once MODEL_SANDBOX_PATH . 'protection_type.php';
 include_once MODEL_SANDBOX_PATH . 'share_type.php';
 
-use cfg\db\sql_creator;
+use cfg\db\sql;
+use cfg\db\sql_db;
+use cfg\db\sql_field_default;
+use cfg\db\sql_field_type;
+use cfg\db\sql_par;
 use cfg\db\sql_par_type;
-use model\export\exp_obj;
+use cfg\export\sandbox_exp;
+use cfg\log\change;
+use cfg\log\change_log;
+use cfg\log\change_log_action;
+use cfg\log\change_log_link;
+use cfg\result\result;
+use cfg\value\value;
 use Exception;
 
-class sandbox extends db_object_user
+class sandbox extends db_object_seq_id_user
 {
 
     /*
@@ -73,9 +85,23 @@ class sandbox extends db_object_user
     // the id field is not included here because it is used for the database relations and should be object specific
     // e.g. always "word_id" instead of simply "id"
     const FLD_EXCLUDED = 'excluded';    // field name used to delete the object only for one user
+    const FLD_CHANGE_USER = 'change_user_id'; // id of the user how wants something the object to be different from most other users
     const FLD_USER_NAME = 'user_name';
     const FLD_SHARE = "share_type_id";  // field name for the share permission
     const FLD_PROTECT = "protect_id";   // field name for the protection level
+
+    // field lists for the table creation
+    const FLD_ALL_OWNER = array(
+        [user::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, user::class, 'the owner / creator of the value'],
+    );
+    const FLD_ALL_CHANGER = array(
+        [user::FLD_ID, sql_field_type::KEY_PART_INT, sql_field_default::NOT_NULL, sql::INDEX, user::class, 'the changer of the '],
+    );
+    const FLD_ALL = array(
+        [self::FLD_EXCLUDED, sql_field_type::BOOL, sql_field_default::NULL, '', '', 'true if a user, but not all, have removed it'],
+        [self::FLD_SHARE, sql_field_type::INT_SMALL, sql_field_default::NULL, '', '', 'to restrict the access'],
+        [self::FLD_PROTECT, sql_field_type::INT_SMALL, sql_field_default::NULL, '', '', 'to protect against unwanted changes'],
+    );
 
     // numeric and user specific database field names that are user for most user sandbox objects
     const FLD_NAMES_NUM_USR_SBX = array(
@@ -91,17 +117,20 @@ class sandbox extends db_object_user
     );
     const FLD_NAMES_USR = array(
     );
+    // database fields that should only be taken from the user sandbox table
+    const FLD_NAMES_USR_ONLY = array(
+    );
     // combine FLD_NAMES_NUM_USR_SBX and FLD_NAMES_NUM_USR_ONLY_SBX just for shorter code
     const FLD_NAMES_NUM_USR = array(
         self::FLD_EXCLUDED,
         self::FLD_SHARE,
         self::FLD_PROTECT
     );
-    // list of all user sandbox database types
+    // list of all user sandbox database types with a standard ID
+    // so exclude values and result TODO check missing owner for values and results
     const DB_TYPES = array(
         sql_db::TBL_WORD,
         sql_db::TBL_TRIPLE,
-        sql_db::TBL_VALUE,
         sql_db::TBL_FORMULA,
         sql_db::TBL_FORMULA_LINK,
         sql_db::TBL_VIEW,
@@ -369,22 +398,72 @@ class sandbox extends db_object_user
 
 
     /*
+     * sql create
+     */
+
+    /**
+     * the sql statement to create the tables of a sandbox object
+     *
+     * @param sql $sc with the target db_type set
+     * @return string the sql statement to create the table
+     */
+    function sql_table(sql $sc): string
+    {
+        $sql = $sc->sql_separator();
+        $sql .= $this->sql_table_create($sc);
+        $sc->set_class($this::class, true);
+        $sql .= $this->sql_table_create($sc, true);
+        return $sql;
+    }
+
+    /**
+     * the sql statement to create the database indices of a sandbox object
+     *
+     * @param sql $sc with the target db_type set
+     * @return string the sql statement to create the indices
+     */
+    function sql_index(sql $sc): string
+    {
+        $sql = $sc->sql_separator();
+        $sql .= $this->sql_index_create($sc);
+        $sc->set_class($this::class, true);
+        $sql .= $this->sql_index_create($sc, true);
+        return $sql;
+    }
+
+    /**
+     * the sql statement to create the foreign keys of a sandbox object
+     *
+     * @param sql $sc with the target db_type set
+     * @return string the sql statement to create the foreign keys
+     */
+    function sql_foreign_key(sql $sc): string
+    {
+        $sql = $sc->sql_separator();
+        $sql .= $this->sql_foreign_key_create($sc);
+        $sc->set_class($this::class, true);
+        $sql .= $this->sql_foreign_key_create($sc, true);
+        return $sql;
+    }
+
+
+    /*
      * load
      */
 
     /**
      * create the SQL to load the single default value always by the id
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql_creator $sc, string $class = self::class): sql_par
+    function load_standard_sql(sql $sc, string $class = self::class): sql_par
     {
         $qp = new sql_par($class, true);
         $qp->name .= sql_db::FLD_ID;
 
         $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id);
+        $sc->set_usr($this->user()->id());
         $sc->add_where($this->id_field(), $this->id());
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -394,15 +473,15 @@ class sandbox extends db_object_user
 
     /**
      * create the SQL to load the single default value always by something else than the main id
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param sql_par $qp the query parameters with the class and name already set
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql_by(sql_creator $sc, sql_par $qp): sql_par
+    function load_standard_sql_by(sql $sc, sql_par $qp): sql_par
     {
         $qp->name .= '_std';
         $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id);
+        $sc->set_usr($this->user()->id());
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -441,24 +520,23 @@ class sandbox extends db_object_user
     /**
      * prepare the SQL parameter to load a single user specific value
      *
-     * @param sql_creator $sc with the target db_type set
-     * @param string $class the name of the child class from where the call has been triggered
+     * @param sql $sc with the target db_type set
+     * @param string $query_name the name of the selection fields to make the query name unique
+     * @param array $fields list of the fields from the child object
+     * @param array $usr_fields list of the user specified fields from the child object
+     * @param array $usr_num_fields list of the fields from the child object
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_fields(
-        sql_creator $sc,
-        string      $query_name,
-        string      $class,
-        array       $fields,
-        array       $usr_fields,
-        array       $usr_num_fields,
+        sql    $sc,
+        string $query_name,
+        array  $fields,
+        array  $usr_fields,
+        array  $usr_num_fields,
     ): sql_par
     {
-        $qp = new sql_par($class);
-        $qp->name .= $query_name;
-
-        $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id);
+        $qp = parent::load_sql($sc, $query_name);
+        $sc->set_usr($this->user()->id());
         $sc->set_fields($fields);
         $sc->set_usr_fields($usr_fields);
         $sc->set_usr_num_fields($usr_num_fields);
@@ -469,24 +547,25 @@ class sandbox extends db_object_user
     /**
      * create the SQL to load a sandbox object with numeric user specific fields
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param sandbox $sbx the name of the child class from where the call has been triggered
      * @param string $query_name the name extension to make the query name unique
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_usr_num(sql_creator $sc, sandbox $sbx, string $query_name): sql_par
+    function load_sql_usr_num(sql $sc, sandbox $sbx, string $query_name): sql_par
     {
         $lib = new library();
 
         $qp = new sql_par($sbx::class);
         $qp->name .= $query_name;
 
-        $sc->set_type($lib->class_to_name($sbx::class));
+        $sc->set_class($sbx::class);
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
         $sc->set_fields($sbx::FLD_NAMES);
         $sc->set_usr_fields($sbx::FLD_NAMES_USR);
         $sc->set_usr_num_fields($sbx::FLD_NAMES_NUM_USR);
+        $sc->set_usr_only_fields($sbx::FLD_NAMES_USR_ONLY);
 
         return $qp;
     }
@@ -495,11 +574,11 @@ class sandbox extends db_object_user
      * create the SQL to load a single user specific value
      * TODO replace by load_sql_usr or load_sql_usr_num
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_obj_vars(sql_creator $sc, string $class): sql_par
+    function load_sql_obj_vars(sql $sc, string $class): sql_par
     {
         return new sql_par($class);
     }
@@ -520,9 +599,9 @@ class sandbox extends db_object_user
                 }
             } else {
                 // take the ownership if it is not yet done. The ownership is probably missing due to an error in an older program version.
-                $db_con->set_type($this->obj_name);
-                $db_con->set_usr($this->user()->id);
-                if ($db_con->update($this->id, user::FLD_ID, $this->user()->id)) {
+                $db_con->set_class($this->obj_name);
+                $db_con->set_usr($this->user()->id());
+                if ($db_con->update_old($this->id, user::FLD_ID, $this->user()->id())) {
                     $result = true;
                 }
             }
@@ -531,7 +610,10 @@ class sandbox extends db_object_user
     }
 
     /**
-     * load one database row e.g. word, triple, value, formula, result, view or component from the database
+     * load one database row e.g. word, triple, formula, view or component from the database
+     * for values and result the db key might be an 512-bit id or even a string
+     * so for values and results the load_non_int_db_key function is used instead of this load function
+     *
      * @param sql_par $qp the query parameters created by the calling function
      * @return int the id of the object found and zero if nothing is found
      */
@@ -586,7 +668,7 @@ class sandbox extends db_object_user
 
       //$db_con = New mysql;
       $db_con->set_type($this->obj_name);
-      $db_con->set_usr($this->user()->id);
+      $db_con->set_usr($this->user()->id());
 
       if ($correct === True) {
         // set the default owner for all records with a missing owner
@@ -702,12 +784,12 @@ class sandbox extends db_object_user
      * create an object for the export which does not include the internal references
      * to be overwritten by the child object
      *
-     * @return exp_obj a reduced export object that can be used to create a JSON message
+     * @return sandbox_exp a reduced export object that can be used to create a JSON message
      */
-    function export_obj(): exp_obj
+    function export_obj(): sandbox_exp
     {
         log_warning($this::class . ' does not have an expected instance of the export_obj function');
-        return (new exp_obj());
+        return (new sandbox_exp());
     }
 
 
@@ -726,9 +808,9 @@ class sandbox extends db_object_user
         if ($this->owner_id > 0) {
             $qp->name .= '_ex_owner';
         }
-        $db_con->set_type($this->obj_name, true);
+        $db_con->set_class($this->obj_name, true);
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id);
+        $db_con->set_usr($this->user()->id());
         $db_con->set_fields(array(user::FLD_ID));
         $qp->sql = $db_con->select_by_id_not_owner($this->id);
 
@@ -780,9 +862,9 @@ class sandbox extends db_object_user
         log_debug($this->dsp_id());
 
         if ($this->user()->is_admin()) {
-            // TODO activate $result .= $this->usr_cfg_create_all();
-            $result = $this->set_owner($this->user()->id); // TODO remove double getting of the user object
-            // TODO activate $result .= $this->usr_cfg_cleanup();
+            // TODO activate Prio 3 $result .= $this->usr_cfg_create_all();
+            $result = $this->set_owner($this->user()->id()); // TODO remove double getting of the user object
+            // TODO activate Prio 3 $result .= $this->usr_cfg_cleanup();
         }
 
         log_debug($this->dsp_id() . ' done');
@@ -810,9 +892,9 @@ class sandbox extends db_object_user
             $std->set_user($this->user());
             $std->load_standard();
 
-            $db_con->set_type($this->obj_name);
-            $db_con->set_usr($this->user()->id);
-            if (!$db_con->update($this->id, user::FLD_ID, $new_owner_id)) {
+            $db_con->set_class($this->obj_name);
+            $db_con->set_usr($this->user()->id());
+            if (!$db_con->update_old($this->id, user::FLD_ID, $new_owner_id)) {
                 $result = false;
             }
 
@@ -863,16 +945,21 @@ class sandbox extends db_object_user
         return $result;
     }
 
-    function changer_sql(sql_db $db_con): sql_par
+    /**
+     * create an SQL statement to get all the users that have changed this value
+     * @param sql_db $db_con
+     * @return sql_par
+     */
+    function load_sql_changer_old(sql_db $db_con): sql_par
     {
         $qp = new sql_par($this->obj_name);
         $qp->name .= 'changer';
         if ($this->owner_id > 0) {
             $qp->name .= '_ex_owner';
         }
-        $db_con->set_type($this->obj_name, true);
+        $db_con->set_class($this->obj_name, true);
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id);
+        $db_con->set_usr($this->user()->id());
         $db_con->set_fields(array(user::FLD_ID));
         $qp->sql = $db_con->select_by_id_not_owner($this->id, $this->owner_id);
 
@@ -893,9 +980,10 @@ class sandbox extends db_object_user
         global $db_con;
 
         $user_id = 0;
-        $db_con->set_type($this->obj_name);
-        $db_con->set_usr($this->user()->id);
-        $qp = $this->changer_sql($db_con);
+        $db_con->set_class($this->obj_name);
+        $db_con->set_usr($this->user()->id());
+        //$qp = $this->load_sql_changer($db_con->sql_creator());
+        $qp = $this->load_sql_changer_old($db_con);
         $db_row = $db_con->get1($qp);
         if ($db_row) {
             $user_id = $db_row[user::FLD_ID];
@@ -907,10 +995,10 @@ class sandbox extends db_object_user
 
     /**
      * create an SQL statement to get a list of all user that have ever changed the object
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_of_users_that_changed(sql_creator $sc): sql_par
+    function load_sql_of_users_that_changed(sql $sc): sql_par
     {
         $lib = new library();
 
@@ -918,7 +1006,7 @@ class sandbox extends db_object_user
         $qp->name .= 'user_list';
 
         $class = $lib->class_to_name($this::class);
-        $sc->set_type($class, true);
+        $sc->set_class($class, true);
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
         $sc->set_join_fields(
@@ -970,11 +1058,11 @@ class sandbox extends db_object_user
         $result = true;
         log_debug($this->id);
 
-        log_debug('owner is ' . $this->owner_id . ' and the change is requested by ' . $this->user()->id);
+        log_debug('owner is ' . $this->owner_id . ' and the change is requested by ' . $this->user()->id());
         if ($this->owner_id == $this->user()->id() or $this->owner_id <= 0) {
             $changer_id = $this->changer();
             // removed "OR $changer_id <= 0" because if no one has changed the object jet does not mean that it can be changed
-            log_debug('changer is ' . $changer_id . ' and the change is requested by ' . $this->user()->id);
+            log_debug('changer is ' . $changer_id . ' and the change is requested by ' . $this->user()->id());
             if ($changer_id == $this->user()->id() or $changer_id <= 0) {
                 $result = false;
             }
@@ -995,7 +1083,7 @@ class sandbox extends db_object_user
 
         // if the user who wants to change it, is the owner, he can do it
         // or if the owner is not set, he can do it (and the owner should be set, because every object should have an owner)
-        log_debug('owner is ' . $this->owner_id . ' and the change is requested by ' . $this->user()->id);
+        log_debug('owner is ' . $this->owner_id . ' and the change is requested by ' . $this->user()->id());
         if ($this->owner_id == $this->user()->id() or $this->owner_id <= 0) {
             $result = true;
         }
@@ -1034,14 +1122,16 @@ class sandbox extends db_object_user
         log_debug($this->dsp_id() . ' und user ' . $this->user()->name);
 
         $result = false;
-        $action = 'Deletion of user ' . $this->obj_name . ' ';
+        $lib = new library();
+        $class_name = $lib->class_to_name($this::class);
+        $action = 'Deletion of user ' . $class_name . ' ';
         $msg_failed = $this->id . ' failed for ' . $this->user()->name;
 
-        $db_con->set_type(sql_db::TBL_USER_PREFIX . $this->obj_name);
+        $db_con->set_class(sql_db::TBL_USER_PREFIX . $class_name);
         try {
-            $msg = $db_con->delete(
+            $msg = $db_con->delete_old(
                 array($this->id_field(), user::FLD_ID),
-                array($this->id, $this->user()->id));
+                array($this->id, $this->user()->id()));
             if ($msg == '') {
                 $this->usr_cfg_id = null;
                 $result = true;
@@ -1105,11 +1195,11 @@ class sandbox extends db_object_user
             $class = $lib->class_to_name($class);
 
             // check again if there ist not yet a record
-            $db_con->set_type($this->obj_name, true);
+            $db_con->set_class($this->obj_name, true);
             $qp = new sql_par($class);
             $qp->name = $class . '_add_usr_cfg';
             $db_con->set_name($qp->name);
-            $db_con->set_usr($this->user()->id);
+            $db_con->set_usr($this->user()->id());
             $db_con->set_where_std($this->id);
             $qp->sql = $db_con->select_by_set_id();
             $qp->par = $db_con->get_par();
@@ -1119,9 +1209,9 @@ class sandbox extends db_object_user
             }
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
-                $db_con->set_type(sql_db::TBL_USER_PREFIX . $this->obj_name);
-                $db_con->set_usr($this->user()->id);
-                $log_id = $db_con->insert(array($this->id_field(), user::FLD_ID), array($this->id, $this->user()->id));
+                $db_con->set_class(sql_db::TBL_USER_PREFIX . $this->obj_name);
+                $db_con->set_usr($this->user()->id());
+                $log_id = $db_con->insert_old(array($this->id_field(), user::FLD_ID), array($this->id, $this->user()->id()));
                 if ($log_id <= 0) {
                     log_err('Insert of ' . sql_db::USER_PREFIX . $this->obj_name . ' failed.');
                     $result = false;
@@ -1136,16 +1226,16 @@ class sandbox extends db_object_user
     /**
      * create an SQL statement to retrieve the user changes of the current object
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_user_changes(sql_creator $sc, string $class = self::class): sql_par
+    function load_sql_user_changes(sql $sc, string $class = self::class): sql_par
     {
         $qp = new sql_par($class);
         $qp->name .= 'usr_cfg';
         $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id);
+        $sc->set_usr($this->user()->id());
         $sc->set_fields($this->all_sandbox_fields());
         $sc->add_where($this->id_field(), $this->id());
         $sc->add_where(user::FLD_ID, $this->user()->id());
@@ -1262,11 +1352,11 @@ class sandbox extends db_object_user
      * for all not named objects like links, this function is overwritten
      * e.g. that the user can see "added formula 'scale millions' to word 'mio'"
      */
-    function log_add(): change_log_named
+    function log_add(): change
     {
         log_debug($this->dsp_id());
 
-        $log = new change_log_named($this->user());
+        $log = new change($this->user());
 
         $log->action = change_log_action::ADD;
         // TODO add the table exceptions from sql_db
@@ -1307,10 +1397,10 @@ class sandbox extends db_object_user
     /**
      * create a log object for an update of an object field
      */
-    function log_upd_field(): change_log_named
+    function log_upd_field(): change
     {
         log_debug($this->dsp_id());
-        $log = new change_log_named($this->user());
+        $log = new change($this->user());
         return $this->log_upd_common($log);
     }
 
@@ -1351,12 +1441,12 @@ class sandbox extends db_object_user
 
     /**
      * dummy function definition that will be overwritten by the child object
-     * @return change_log_named
+     * @return change
      */
-    function log_del(): change_log_named
+    function log_del(): change
     {
         log_err('The dummy parent method get_similar has been called, which should never happen');
-        return new change_log_named($this->user());
+        return new change($this->user());
     }
 
     /**
@@ -1387,10 +1477,10 @@ class sandbox extends db_object_user
      * actually update a field in the main database record or the user sandbox
      * the usr id is taken into account in sql_db->update (maybe move outside)
      * @param sql_db $db_con the active database connection that should be used
-     * @param change_log_named|change_log_link $log the log object to track the change and allow a rollback
+     * @param change|change_log_link $log the log object to track the change and allow a rollback
      * @return string an empty string if everything is fine or the message that should be shown to the user
      */
-    function save_field_user(sql_db $db_con, change_log_named|change_log_link $log): string
+    function save_field_user(sql_db $db_con, change|change_log_link $log): string
     {
         $result = '';
 
@@ -1406,17 +1496,17 @@ class sandbox extends db_object_user
                 if ($new_value == $std_value) {
                     if ($this->has_usr_cfg()) {
                         log_debug('remove user change');
-                        $db_con->set_type(sql_db::TBL_USER_PREFIX . $this->obj_name);
-                        $db_con->set_usr($this->user()->id);
-                        if (!$db_con->update($this->id, $log->field(), Null)) {
+                        $db_con->set_class(sql_db::TBL_USER_PREFIX . $this->obj_name);
+                        $db_con->set_usr($this->user()->id());
+                        if (!$db_con->update_old($this->id, $log->field(), Null)) {
                             $result = 'remove of ' . $log->field() . ' failed';
                         }
                     }
                     $this->del_usr_cfg_if_not_needed(); // don't care what the result is, because in most cases it is fine to keep the user sandbox row
                 } else {
-                    $db_con->set_type($this->obj_name);
-                    $db_con->set_usr($this->user()->id);
-                    if (!$db_con->update($this->id, $log->field(), $new_value)) {
+                    $db_con->set_class($this->obj_name);
+                    $db_con->set_usr($this->user()->id());
+                    if (!$db_con->update_old($this->id, $log->field(), $new_value)) {
                         $result = 'update of ' . $log->field() . ' to ' . $new_value . ' failed';
                     }
                 }
@@ -1427,15 +1517,15 @@ class sandbox extends db_object_user
                     }
                 }
                 if ($result == '') {
-                    $db_con->set_type(sql_db::TBL_USER_PREFIX . $this->obj_name);
-                    $db_con->set_usr($this->user()->id);
+                    $db_con->set_class(sql_db::TBL_USER_PREFIX . $this->obj_name);
+                    $db_con->set_usr($this->user()->id());
                     if ($new_value == $std_value) {
                         log_debug('remove user change');
-                        if (!$db_con->update($this->id, $log->field(), Null)) {
+                        if (!$db_con->update_old($this->id, $log->field(), Null)) {
                             $result = 'remove of user value for ' . $log->field() . ' failed';
                         }
                     } else {
-                        if (!$db_con->update($this->id, $log->field(), $new_value)) {
+                        if (!$db_con->update_old($this->id, $log->field(), $new_value)) {
                             $result = 'update of user value for ' . $log->field() . ' to ' . $new_value . ' failed';
                         }
                     }
@@ -1451,10 +1541,10 @@ class sandbox extends db_object_user
      * without user the user sandbox
      * the usr id is taken into account in sql_db->update (maybe move outside)
      * @param sql_db $db_con the active database connection that should be used
-     * @param change_log_named|change_log_link $log the log object to track the change and allow a rollback
+     * @param change|change_log_link $log the log object to track the change and allow a rollback
      * @return string an empty string if everything is fine or the message that should be shown to the user
      */
-    function save_field(sql_db $db_con, change_log_named|change_log_link $log): string
+    function save_field(sql_db $db_con, change|change_log_link $log): string
     {
         $result = '';
 
@@ -1464,9 +1554,9 @@ class sandbox extends db_object_user
             $new_value = $log->new_value;
         }
         if ($log->add()) {
-            $db_con->set_type($this->obj_name);
-            $db_con->set_usr($this->user()->id);
-            if (!$db_con->update($this->id, $log->field(), $new_value)) {
+            $db_con->set_class($this->obj_name);
+            $db_con->set_usr($this->user()->id());
+            if (!$db_con->update_old($this->id, $log->field(), $new_value)) {
                 $result = 'update of value for ' . $log->field() . ' to ' . $new_value . ' failed';
             }
         }
@@ -1517,9 +1607,9 @@ class sandbox extends db_object_user
             $std_value = $std_rec->is_excluded();
             // similar to $this->save_field_do
             if ($this->can_change()) {
-                $db_con->set_type($this->obj_name);
-                $db_con->set_usr($this->user()->id);
-                if (!$db_con->update($this->id, $log->field(), $new_value)) {
+                $db_con->set_class($this->obj_name);
+                $db_con->set_usr($this->user()->id());
+                if (!$db_con->update_old($this->id, $log->field(), $new_value)) {
                     $result .= 'excluding of ' . $this->obj_name . ' failed';
                 }
             } else {
@@ -1529,14 +1619,14 @@ class sandbox extends db_object_user
                     }
                 }
                 if ($result == '') {
-                    $db_con->set_type(sql_db::TBL_USER_PREFIX . $this->obj_name);
-                    $db_con->set_usr($this->user()->id);
+                    $db_con->set_class(sql_db::TBL_USER_PREFIX . $this->obj_name);
+                    $db_con->set_usr($this->user()->id());
                     if ($new_value == $std_value) {
-                        if (!$db_con->update($this->id, $log->field(), Null)) {
+                        if (!$db_con->update_old($this->id, $log->field(), Null)) {
                             $result .= 'include of ' . $this->obj_name . ' for user failed';
                         }
                     } else {
-                        if (!$db_con->update($this->id, $log->field(), $new_value)) {
+                        if (!$db_con->update_old($this->id, $log->field(), $new_value)) {
                             $result .= 'excluding of ' . $this->obj_name . ' for user failed';
                         }
                     }
@@ -1588,9 +1678,9 @@ class sandbox extends db_object_user
                     }
                 }
                 if ($result == '') {
-                    $db_con->set_type(sql_db::TBL_USER_PREFIX . $this->obj_name);
-                    $db_con->set_usr($this->user()->id);
-                    if (!$db_con->update($this->id, $log->field(), $new_value)) {
+                    $db_con->set_class(sql_db::TBL_USER_PREFIX . $this->obj_name);
+                    $db_con->set_usr($this->user()->id());
+                    if (!$db_con->update_old($this->id, $log->field(), $new_value)) {
                         $result = 'setting of share type failed';
                     }
                 }
@@ -1646,6 +1736,7 @@ class sandbox extends db_object_user
     /**
      * check if target key value already exists
      * overwritten in the word class for formula link words
+     * TODO load the user value not the standard value but also check the standard value
      *
      * @return sandbox object with id zero if no object with the same id is found
      */
@@ -1670,6 +1761,12 @@ class sandbox extends db_object_user
     /**
      * check if the id parameters are supposed to be changed
      * and change the id (which can start a longer lasting confirmation process)
+     *
+     * The possible cases are
+     * 1. the new name is not used by the user and not used for the standard -> simply rename it
+     * 2. the new name is not used by the user but     used for the standard -> join with the standard word
+     * 3. the new name is     used by the user but not used for the standard -> send a warning to the user and offer join
+     * 4. the new name is     used by the user and     used for the standard -> send a warning to the user and offer join
      *
      * @param sql_db $db_con the active database connection
      * @param sandbox $db_rec the database record before the saving
@@ -1961,8 +2058,8 @@ class sandbox extends db_object_user
             }
 
             // configure the global database connection object for the select, insert, update and delete queries
-            $db_con->set_type($this->obj_name);
-            $db_con->set_usr($this->user()->id);
+            $db_con->set_class($this->obj_name);
+            $db_con->set_usr($this->user()->id());
 
             // create an object to check possible duplicates
             $similar = null;
@@ -2029,8 +2126,8 @@ class sandbox extends db_object_user
                                 $result .= 'Reloading of the object for ' . $this->obj_name . ' failed';
                             }
                             // configure the global database connection object again to overwrite any changes from load_objects
-                            $db_con->set_type($this->obj_name);
-                            $db_con->set_usr($this->user()->id);
+                            $db_con->set_class($this->obj_name);
+                            $db_con->set_usr($this->user()->id());
                         }
                         // relevant is if there is a user config in the database
                         // so use this information to prevent
@@ -2126,17 +2223,17 @@ class sandbox extends db_object_user
 
                 // and the corresponding formula elements
                 if ($result->is_ok()) {
-                    $db_con->set_type(sql_db::TBL_FORMULA_ELEMENT);
-                    $db_con->set_usr($this->user()->id);
-                    $msg = $db_con->delete(sql_db::TBL_FORMULA . sql_db::FLD_EXT_ID, $this->id);
+                    $db_con->set_class(sql_db::TBL_FORMULA_ELEMENT);
+                    $db_con->set_usr($this->user()->id());
+                    $msg = $db_con->delete_old(sql_db::TBL_FORMULA . sql_db::FLD_EXT_ID, $this->id);
                     $result->add_message($msg);
                 }
 
                 // and the corresponding results
                 if ($result->is_ok()) {
-                    $db_con->set_type(sql_db::TBL_RESULT);
-                    $db_con->set_usr($this->user()->id);
-                    $msg = $db_con->delete(sql_db::TBL_FORMULA . sql_db::FLD_EXT_ID, $this->id);
+                    $db_con->set_class(sql_db::TBL_RESULT);
+                    $db_con->set_usr($this->user()->id());
+                    $msg = $db_con->delete_old(sql_db::TBL_FORMULA . sql_db::FLD_EXT_ID, $this->id);
                     $result->add_message($msg);
                 }
 
@@ -2165,18 +2262,18 @@ class sandbox extends db_object_user
 
             // delete first all user configuration that have also been excluded
             if ($result->is_ok()) {
-                $db_con->set_type(sql_db::TBL_USER_PREFIX . $this->obj_name);
-                $db_con->set_usr($this->user()->id);
-                $msg = $db_con->delete(
+                $db_con->set_class(sql_db::TBL_USER_PREFIX . $this->obj_name);
+                $db_con->set_usr($this->user()->id());
+                $msg = $db_con->delete_old(
                     array($this->obj_name . sql_db::FLD_EXT_ID, 'excluded'),
                     array($this->id, '1'));
                 $result->add_message($msg);
             }
             if ($result->is_ok()) {
                 // finally, delete the object
-                $db_con->set_type($this->obj_name);
-                $db_con->set_usr($this->user()->id);
-                $msg = $db_con->delete($this->id_field(), $this->id);
+                $db_con->set_class($this->obj_name);
+                $db_con->set_usr($this->user()->id());
+                $msg = $db_con->delete_old($this->id_field(), $this->id);
                 $result->add_message($msg);
                 log_debug('of ' . $this->dsp_id() . ' done');
             } else {
@@ -2233,7 +2330,7 @@ class sandbox extends db_object_user
                     $msg .= $this->del_exe();
                 } else {
                     // if the owner deletes the object find a new owner or delete the object completely
-                    if ($this->owner_id == $this->user()->id) {
+                    if ($this->owner_id == $this->user()->id()) {
                         log_debug('owner has requested the deletion');
                         // get median user
                         $new_owner_id = $this->median_user();

@@ -30,15 +30,16 @@
 
 */
 
-namespace api;
+namespace api\phrase;
 
-include_once API_SANDBOX_PATH . 'list.php';
+include_once API_SANDBOX_PATH . 'list_object.php';
 include_once WEB_PHRASE_PATH . 'phrase_list.php';
 
+use api\sandbox\list_object as list_api;
 use html\phrase\phrase_list as phrase_list_dsp;
 use JsonSerializable;
 
-class phrase_list_api extends list_api implements JsonSerializable
+class phrase_list extends list_api implements JsonSerializable
 {
 
     /*
@@ -54,7 +55,7 @@ class phrase_list_api extends list_api implements JsonSerializable
      * add a phrase to the list
      * @returns bool true if the phrase has been added
      */
-    function add(phrase_api $phr): bool
+    function add(phrase $phr): bool
     {
         return parent::add_obj($phr);
     }
@@ -135,12 +136,12 @@ class phrase_list_api extends list_api implements JsonSerializable
      * modification functions
      */
 
-    function remove(phrase_list_api $del_lst): phrase_list_api
+    function remove(phrase_list $del_lst): phrase_list
     {
         if (!$del_lst->is_empty()) {
             // next line would work if array_intersect could handle objects
             // $this->lst() = array_intersect($this->lst(), $new_lst->lst());
-            $remain_lst = new phrase_list_api();
+            $remain_lst = new phrase_list();
             foreach ($this->lst() as $phr) {
                 if (!in_array($phr->id(), $del_lst->id_lst())) {
                     $remain_lst->add($phr);

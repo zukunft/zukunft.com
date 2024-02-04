@@ -40,9 +40,11 @@ include_once API_VIEW_PATH . 'component_link.php';
 
 use cfg\component\component;
 use api\view\component_link as component_link_api;
-use cfg\db\sql_creator;
+use cfg\db\sql;
+use cfg\db\sql_db;
+use cfg\db\sql_par;
 use cfg\db\sql_par_type;
-use model\export\exp_obj;
+use cfg\export\sandbox_exp;
 
 class component_link extends sandbox_link_with_type
 {
@@ -290,18 +292,18 @@ class component_link extends sandbox_link_with_type
     /**
      * create an SQL statement to retrieve the parameters of the standard view component link from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql_creator $sc, string $class = self::class): sql_par
+    function load_standard_sql(sql $sc, string $class = self::class): sql_par
     {
         // try to get the search values from the objects
         if ($this->id <= 0) {
             $this->id = 0;
         }
 
-        $sc->set_type(self::class);
+        $sc->set_class(self::class);
         $qp = new sql_par(self::class);
         if ($this->id != 0) {
             $qp->name .= 'std_id';
@@ -356,17 +358,17 @@ class component_link extends sandbox_link_with_type
     /**
      * create the common part of an SQL statement to retrieve the parameters of a view component link from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    protected function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
+    function load_sql(sql $sc, string $query_name, string $class = self::class): sql_par
     {
         $qp = parent::load_sql_obj_vars($sc, $class);
         $qp->name .= $query_name;
 
-        $sc->set_type($class);
+        $sc->set_class($class);
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
         $sc->set_fields(self::FLD_NAMES_LINK);
@@ -378,13 +380,13 @@ class component_link extends sandbox_link_with_type
     /**
      * create an SQL statement to load the component_link by the link id
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param int $dsp_id the view id
      * @param int $type_id the link type id
      * @param int $cmp_id the component id
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_link_and_type(sql_creator $sc, int $dsp_id, int $type_id, int $cmp_id, string $class = self::class): sql_par
+    function load_sql_by_link_and_type(sql $sc, int $dsp_id, int $type_id, int $cmp_id, string $class = self::class): sql_par
     {
         return parent::load_sql_by_link($sc, $dsp_id, $type_id, $cmp_id, $class);
     }
@@ -392,13 +394,13 @@ class component_link extends sandbox_link_with_type
     /**
      * create an SQL statement to retrieve a user sandbox link by the ids of the linked objects from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param int $msk_id the id of the view
      * @param int $cmp_id the id of the lin type
      * @param int $pos the position of the component
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_link_and_pos(sql_creator $sc, int $msk_id, int $cmp_id, int $pos): sql_par
+    function load_sql_by_link_and_pos(sql $sc, int $msk_id, int $cmp_id, int $pos): sql_par
     {
         $qp = $this->load_sql($sc, 'link_and_pos');
         $sc->add_where($this->from_field(), $msk_id);
@@ -413,16 +415,16 @@ class component_link extends sandbox_link_with_type
     /**
      * create a simple SQL statement to retrieve the max order number of one view
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param int $id the id of the view
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_max_pos(sql_creator $sc, int $id): sql_par
+    function load_sql_max_pos(sql $sc, int $id): sql_par
     {
         $qp = parent::load_sql_obj_vars($sc, self::class);
         $qp->name .= 'max_pos';
 
-        $sc->set_type(self::class);
+        $sc->set_class(self::class);
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
         $sc->add_usr_grp_field(self::FLD_ORDER_NBR, sql_par_type::MAX);
@@ -445,9 +447,9 @@ class component_link extends sandbox_link_with_type
         $qp = $this->load_sql_max_pos($db_con->sql_creator(), $view_id);
         $db_row = $db_con->get1($qp);
         if ($db_row != null) {
-            if (array_key_exists(sql_creator::MAX_PREFIX . self::FLD_ORDER_NBR, $db_row)) {
-                if ($db_row[sql_creator::MAX_PREFIX . self::FLD_ORDER_NBR] != null) {
-                    return $db_row[sql_creator::MAX_PREFIX . self::FLD_ORDER_NBR];
+            if (array_key_exists(sql::MAX_PREFIX . self::FLD_ORDER_NBR, $db_row)) {
+                if ($db_row[sql::MAX_PREFIX . self::FLD_ORDER_NBR] != null) {
+                    return $db_row[sql::MAX_PREFIX . self::FLD_ORDER_NBR];
                 } else {
                     return 0;
                 }
@@ -736,7 +738,7 @@ class component_link extends sandbox_link_with_type
             }
 
             // check again if there is not yet a record
-            $db_con->set_type(sql_db::TBL_COMPONENT_LINK, true);
+            $db_con->set_class(sql_db::TBL_COMPONENT_LINK, true);
             $qp = new sql_par(self::class);
             $qp->name = 'component_link_add_usr_cfg';
             $db_con->set_name($qp->name);
@@ -750,8 +752,8 @@ class component_link extends sandbox_link_with_type
             }
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
-                $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_COMPONENT_LINK);
-                $log_id = $db_con->insert(array(self::FLD_ID, user::FLD_ID), array($this->id, $this->user()->id()));
+                $db_con->set_class(sql_db::TBL_USER_PREFIX . sql_db::TBL_COMPONENT_LINK);
+                $log_id = $db_con->insert_old(array(self::FLD_ID, user::FLD_ID), array($this->id, $this->user()->id()));
                 if ($log_id <= 0) {
                     log_err('Insert of user_component_link failed.');
                     $result = false;
@@ -772,7 +774,7 @@ class component_link extends sandbox_link_with_type
      * fill the component export object to create a json
      * which does not include the internal database id
      */
-    function export_obj(bool $do_load = true): exp_obj
+    function export_obj(bool $do_load = true): sandbox_exp
     {
         $result = $this->tob->export_obj($do_load);
         if ($this->order_nbr >= 0) {
@@ -787,13 +789,13 @@ class component_link extends sandbox_link_with_type
     /**
      * create an SQL statement to retrieve the user changes of the current view component link
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_user_changes(sql_creator $sc, string $class = self::class): sql_par
+    function load_sql_user_changes(sql $sc, string $class = self::class): sql_par
     {
-        $sc->set_type($class, true);
+        $sc->set_class($class, true);
         return parent::load_sql_user_changes($sc, $class);
     }
 
@@ -863,7 +865,7 @@ class component_link extends sandbox_link_with_type
     function add_insert(): int
     {
         global $db_con;
-        return $db_con->insert(
+        return $db_con->insert_old(
             array($this->from_name . sql_db::FLD_EXT_ID, $this->to_name . sql_db::FLD_EXT_ID, "user_id", 'order_nbr'),
             array($this->view()->id(), $this->component()->id(), $this->user()->id(), $this->order_nbr));
     }

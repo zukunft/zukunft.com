@@ -39,8 +39,10 @@ include_once MODEL_VERB_PATH . 'verb.php';
 include_once API_SYSTEM_PATH . 'type_list.php';
 include_once WEB_USER_PATH . 'user_type_list.php';
 
-use api\type_list_api;
-use cfg\db\sql_creator;
+use api\system\type_list as type_list_api;
+use cfg\db\sql;
+use cfg\db\sql_db;
+use cfg\db\sql_par;
 use html\user\user_type_list as type_list_dsp;
 use model\db_cl;
 
@@ -164,21 +166,21 @@ class type_list
      * a 'database type' is a group of type used for the same objects
      * e.g. a db_type is phrase_type or view type
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $class the class of the related object e.g. phrase_type or formula_type
      * @param string $query_name the name extension to make the query name unique
      * @param string $order_field set if the type list should e.g. be sorted by the name instead of the id
      * @return sql_par the sql statement with the parameters and the name
      */
     function load_sql(
-        sql_creator $sc,
-        string      $class,
-        string      $query_name = 'all',
-        string      $order_field = ''): sql_par
+        sql    $sc,
+        string $class,
+        string $query_name = 'all',
+        string $order_field = ''): sql_par
     {
         $lib = new library();
         $db_type = $lib->class_to_name($class);
-        $sc->set_type($db_type);
+        $sc->set_class($db_type);
         $qp = new sql_par($db_type);
         $qp->name = $db_type . '_' . $query_name;
         $sc->set_name($qp->name);
@@ -202,14 +204,14 @@ class type_list
      * a 'database type' is a group of type used for the same objects
      * e.g. a db_type is phrase_type or view type
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $db_type the class of the related object e.g. phrase_type or formula_type
      * @return sql_par the sql statement with the parameters and the name
      */
-    function load_sql_all(sql_creator $sc, string $db_type): sql_par
+    function load_sql_all(sql $sc, string $db_type): sql_par
     {
         $qp = $this->load_sql($sc, $db_type);
-        $sc->set_page(SQL_ROW_MAX, 0);
+        $sc->set_page(sql_db::ROW_MAX, 0);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 

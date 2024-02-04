@@ -29,7 +29,7 @@
 
 */
 
-namespace api;
+namespace api\phrase;
 
 include_once API_SANDBOX_PATH . 'combine_named.php';
 include_once API_WORD_PATH . 'word.php';
@@ -38,14 +38,17 @@ include_once WEB_WORD_PATH . 'word.php';
 include_once WEB_WORD_PATH . 'triple.php';
 include_once WEB_PHRASE_PATH . 'phrase.php';
 
-use controller\controller;
+use api\api;
+use api\sandbox\combine_named as combine_named_api;
+use api\sandbox\combine_object as combine_object_api;
+use api\word\triple as triple_api;
+use api\word\word as word_api;
 use html\word\word as word_dsp;
 use html\word\triple as triple_dsp;
 use html\phrase\phrase as phrase_dsp;
 use JsonSerializable;
-use cfg\word;
 
-class phrase_api extends combine_named_api implements JsonSerializable
+class phrase extends combine_named_api implements JsonSerializable
 {
 
     // the json field name in the api json message to identify if the figure is a value or result

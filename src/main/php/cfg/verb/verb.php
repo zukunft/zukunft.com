@@ -35,20 +35,25 @@ namespace cfg;
 
 include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_HELPER_PATH . 'db_object.php';
-include_once MODEL_LOG_PATH . 'change_log_named.php';
+include_once MODEL_LOG_PATH . 'change.php';
 include_once API_VERB_PATH . 'verb.php';
 include_once SERVICE_EXPORT_PATH . 'verb_exp.php';
 include_once SERVICE_EXPORT_PATH . 'sandbox_exp_named.php';
 
-use api\verb_api;
-use cfg\db\sql_creator;
+use api\verb\verb as verb_api;
+use cfg\db\sql;
+use cfg\db\sql_db;
+use cfg\db\sql_par;
 use cfg\db\sql_par_type;
-use model\export\exp_obj;
-use model\export\sandbox_exp_named;
+use cfg\export\sandbox_exp;
+use cfg\export\sandbox_exp_named;
+use cfg\export\verb_exp;
+use cfg\log\change;
+use cfg\log\change_log_action;
+use cfg\log\change_log_table;
 use html\html_base;
 use html\html_selector;
 use html\verb\verb as verb_dsp;
-use verb_exp;
 
 class verb extends type_object
 {
@@ -342,16 +347,16 @@ class verb extends type_object
     /**
      * create the common part of an SQL statement to retrieve the parameters of a verb from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $query_name the name of the query use to prepare and call the query
      * @param string $class the name of this class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    protected function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
+    function load_sql(sql $sc, string $query_name, string $class = self::class): sql_par
     {
         $qp = parent::load_sql($sc, $query_name, $class);
 
-        $sc->set_type(self::class);
+        $sc->set_class(self::class);
         $sc->set_name($qp->name);
         $sc->set_fields(self::FLD_NAMES);
 
@@ -361,12 +366,12 @@ class verb extends type_object
     /**
      * create an SQL statement to retrieve a verb by id from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param int $id the id of the user sandbox object
      * @param string $class the name of this class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql_creator $sc, int $id, string $class = self::class): sql_par
+    function load_sql_by_id(sql $sc, int $id, string $class = self::class): sql_par
     {
         $lib = new library();
         $class = $lib->class_to_name($class);
@@ -376,11 +381,11 @@ class verb extends type_object
     /**
      * create an SQL statement to retrieve a verb by name from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $name the name of the verb
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_name(sql_creator $sc, string $name, string $class = self::class): sql_par
+    function load_sql_by_name(sql $sc, string $name, string $class = self::class): sql_par
     {
         $qp = $this->load_sql($sc, sql_db::FLD_NAME, $class);
         $sc->add_where(self::FLD_NAME, $name, sql_par_type::TEXT_OR);
@@ -394,11 +399,11 @@ class verb extends type_object
     /**
      * create an SQL statement to retrieve a verb by code id from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $code_id the code id of the verb
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_code_id(sql_creator $sc, string $code_id, string $class = self::class): sql_par
+    function load_sql_by_code_id(sql $sc, string $code_id, string $class = self::class): sql_par
     {
         $qp = $this->load_sql($sc, 'code_id', $class);
         $sc->add_where(sql_db::FLD_CODE_ID, $code_id);
@@ -488,17 +493,17 @@ class verb extends type_object
         $this->reset();
         $this->set_user($usr);
         foreach ($json_obj as $key => $value) {
-            if ($key == exp_obj::FLD_NAME) {
+            if ($key == sandbox_exp::FLD_NAME) {
                 $this->name = $value;
             }
-            if ($key == exp_obj::FLD_CODE_ID) {
+            if ($key == sandbox_exp::FLD_CODE_ID) {
                 if ($value != '') {
                     if ($this->user()->is_admin() or $this->user()->is_system()) {
                         $this->code_id = $value;
                     }
                 }
             }
-            if ($key == exp_obj::FLD_DESCRIPTION) {
+            if ($key == sandbox_exp::FLD_DESCRIPTION) {
                 $this->description = $value;
             }
             if ($key == self::FLD_REVERSE) {
@@ -698,7 +703,7 @@ class verb extends type_object
         $qp = new sql_par(verb::class);
 
         $qp->name .= 'usage';
-        $db_con->set_type(word::class);
+        $db_con->set_class(word::class);
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->user()->id());
         $db_con->set_fields(self::FLD_NAMES);
@@ -771,10 +776,10 @@ class verb extends type_object
     }
 
     // set the log entry parameter for a new verb
-    private function log_add(): change_log_named
+    private function log_add(): change
     {
         log_debug('verb->log_add ' . $this->dsp_id());
-        $log = new change_log_named($this->usr);
+        $log = new change($this->usr);
         $log->action = change_log_action::ADD;
         $log->set_table(change_log_table::VERB);
         $log->set_field(self::FLD_NAME);
@@ -787,10 +792,10 @@ class verb extends type_object
     }
 
     // set the main log entry parameters for updating one verb field
-    private function log_upd(): change_log_named
+    private function log_upd(): change
     {
         log_debug('verb->log_upd ' . $this->dsp_id() . ' for user ' . $this->user()->name);
-        $log = new change_log_named($this->usr);
+        $log = new change($this->usr);
         $log->action = change_log_action::UPDATE;
         $log->set_table(change_log_table::VERB);
 
@@ -798,10 +803,10 @@ class verb extends type_object
     }
 
     // set the log entry parameter to delete a verb
-    private function log_del(): change_log_named
+    private function log_del(): change
     {
         log_debug('verb->log_del ' . $this->dsp_id() . ' for user ' . $this->user()->name);
-        $log = new change_log_named($this->usr);
+        $log = new change($this->usr);
         $log->action = change_log_action::DELETE;
         $log->set_table(change_log_table::VERB);
         $log->set_field(self::FLD_NAME);
@@ -826,8 +831,8 @@ class verb extends type_object
         }
         if ($log->add()) {
             if ($this->can_change()) {
-                $db_con->set_type(sql_db::TBL_VERB);
-                if (!$db_con->update($this->id, $log->field(), $new_value)) {
+                $db_con->set_class(sql_db::TBL_VERB);
+                if (!$db_con->update_old($this->id, $log->field(), $new_value)) {
                     $result .= 'updating ' . $log->field() . ' to ' . $new_value . ' for verb ' . $this->dsp_id() . ' failed';
                 }
 
@@ -1030,8 +1035,8 @@ class verb extends type_object
         $log = $this->log_add();
         if ($log->id() > 0) {
             // insert the new verb
-            $db_con->set_type(sql_db::TBL_VERB);
-            $this->id = $db_con->insert(self::FLD_NAME, $this->name);
+            $db_con->set_class(sql_db::TBL_VERB);
+            $this->id = $db_con->insert_old(self::FLD_NAME, $this->name);
             if ($this->id > 0) {
                 // update the id in the log
                 if (!$log->add_ref($this->id)) {
@@ -1093,7 +1098,7 @@ class verb extends type_object
 
         // build the database object because the is anyway needed
         $db_con->set_usr($this->user()->id());
-        $db_con->set_type(sql_db::TBL_VERB);
+        $db_con->set_class(sql_db::TBL_VERB);
 
         // check if a new verb is supposed to be added
         if ($this->id <= 0) {
@@ -1186,8 +1191,8 @@ class verb extends type_object
                 $log = $this->log_del();
                 if ($log->id() > 0) {
                     $db_con->usr_id = $this->user()->id();
-                    $db_con->set_type(sql_db::TBL_VERB);
-                    $result = $db_con->delete(self::FLD_ID, $this->id);
+                    $db_con->set_class(sql_db::TBL_VERB);
+                    $result = $db_con->delete_old(self::FLD_ID, $this->id);
                 }
             } else {
                 // TODO: create a new verb and request to delete the old

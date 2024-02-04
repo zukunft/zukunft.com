@@ -33,8 +33,8 @@
 namespace test;
 
 use cfg\library;
-use cfg\sql_db;
-use cfg\system_log;
+use cfg\db\sql_db;
+use cfg\log\system_log;
 
 class system_log_unit_tests
 {

@@ -29,9 +29,9 @@
   
 */
 
-namespace model\export;
+namespace cfg\export;
 
-class result_exp extends exp_obj
+class result_exp extends sandbox_exp
 {
 
     // field names used for JSON creation
@@ -39,7 +39,7 @@ class result_exp extends exp_obj
     public ?array $triples = null;
     public ?string $number = '';
 
-    function reset()
+    function reset(): void
     {
         $this->words = [];
         $this->triples = [];

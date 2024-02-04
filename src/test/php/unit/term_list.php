@@ -28,16 +28,16 @@
 
 namespace test;
 
-use api\formula_api;
-use api\triple_api;
-use api\verb_api;
-use api\word_api;
+use api\formula\formula as formula_api;
+use api\word\triple as triple_api;
+use api\verb\verb as verb_api;
+use api\word\word as word_api;
 use cfg\phrase_list;
 use cfg\trm_ids;
 use html\html_base;
 use html\phrase\term_list as term_list_dsp;
 use cfg\formula;
-use cfg\sql_db;
+use cfg\db\sql_db;
 use cfg\term;
 use cfg\term_list;
 use cfg\triple;

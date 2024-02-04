@@ -1,4 +1,4 @@
-PREPARE formula_by_usr_cfg (int, int) AS
+PREPARE formula_by_usr_cfg (bigint, bigint) AS
     SELECT formula_id,
            formula_name,
            formula_text,

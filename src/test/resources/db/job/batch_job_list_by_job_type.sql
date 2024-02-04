@@ -1,4 +1,4 @@
-PREPARE batch_job_list_by_job_type (int, int, int) AS
+PREPARE batch_job_list_by_job_type (bigint, bigint, bigint) AS
     SELECT calc_and_cleanup_task_id,
            request_time,
            start_time,

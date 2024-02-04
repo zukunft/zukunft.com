@@ -32,7 +32,7 @@
 
 namespace test;
 
-use cfg\system_log_list;
+use cfg\log\system_log_list;
 use cfg\user;
 
 class system_log_unit_db_tests

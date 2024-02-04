@@ -34,15 +34,15 @@ namespace test;
 
 include_once API_RESULT_PATH . 'result.php';
 
-use api\result_api;
-use api\word_api;
+use api\result\result as result_api;
+use api\word\word as word_api;
 use cfg\formula;
-use cfg\phrase_group;
-use cfg\phrase_group_list;
-use html\result\result as result_dsp;
+use cfg\group\group;
+use cfg\group\group_list;
 use cfg\phrase_list;
-use cfg\result;
-use cfg\sql_db;
+use cfg\db\sql_db;
+use cfg\result\result;
+use html\result\result as result_dsp;
 
 class result_unit_tests
 {
@@ -63,20 +63,26 @@ class result_unit_tests
         $t->header('Unit tests of the result class (src/main/php/model/formula/result.php)');
 
         $t->subheader('SQL creation tests');
+        $res = $t->dummy_result();
+        $t->assert_sql_table_create($db_con, $res);
+        $t->assert_sql_index_create($db_con, $res);
+        $t->assert_sql_foreign_key_create($db_con, $res);
 
         // check the sql to load a result by the id
-        $res = new result($usr);
+        $res = $t->dummy_result_16();
         $t->assert_sql_by_id($db_con, $res);
         $this->assert_sql_by_group($t, $db_con, $res);
         $this->assert_sql_by_formula_and_group($t, $db_con, $res);
         $this->assert_sql_by_formula_and_group_list($t, $db_con, $res);
         $this->assert_sql_load_std_by_group_id($t, $db_con, $res);
 
+        $res = $t->dummy_result_prime();
+        $t->assert_sql_by_id($db_con, $res);
+        $this->assert_sql_by_group($t, $db_con, $res);
+
         $t->subheader('SQL load default statement tests');
 
-        // sql to load the word by id
-        $res = new result($usr);
-        $res->set_id(2);
+        // sql to load the standard result by id
         $t->assert_sql_standard($db_con, $res);
         $t->assert_sql_user_changes($db_con, $res);
 
@@ -87,7 +93,7 @@ class result_unit_tests
         $wrd_const = $t->new_word(word_api::TN_READ);
         $phr_lst = new phrase_list($usr);
         $phr_lst->add($wrd_const->phrase());
-        $res->grp->phr_lst = $phr_lst;
+        $res->grp->set_phrase_list($phr_lst);
         $res->value = result_api::TV_INT;
         $t->assert('result->val_formatted test big numbers', $res->val_formatted(), "123'456");
 
@@ -123,8 +129,7 @@ class result_unit_tests
     private function assert_sql_by_group(test_cleanup $t, sql_db $db_con, result $res): void
     {
         // prepare
-        $grp = new phrase_group($t->usr1);
-        $grp->set_id(1);
+        $grp = $res->grp();
 
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
@@ -153,7 +158,7 @@ class result_unit_tests
         // prepare
         $frm = new formula($t->usr1);
         $frm->set_id(2);
-        $grp = new phrase_group($t->usr1);
+        $grp = new group($t->usr1);
         $grp->set_id(3);
 
         // check the Postgres query syntax
@@ -183,11 +188,11 @@ class result_unit_tests
         // prepare
         $frm = new formula($t->usr1);
         $frm->set_id(2);
-        $grp1 = new phrase_group($t->usr1);
+        $grp1 = new group($t->usr1);
         $grp1->set_id(3);
-        $grp2 = new phrase_group($t->usr1);
+        $grp2 = new group($t->usr1);
         $grp2->set_id(4);
-        $lst = new phrase_group_list($t->usr1);
+        $lst = new group_list($t->usr1);
         $lst->add($grp1);
         $lst->add($grp2);
 
@@ -216,7 +221,7 @@ class result_unit_tests
         sql_db $db_con,
         result $res): void
     {
-        $grp = new phrase_group($t->usr1);
+        $grp = new group($t->usr1);
         $grp->set_id(7);
 
         // check the Postgres query syntax

@@ -37,9 +37,10 @@ namespace html\component;
 include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
 
 use api\api;
-use api\word_api;
+use api\word\word as word_api;
 use cfg\component\component_type;
 use cfg\component_link_list;
+use cfg\db\sql_db;
 use cfg\library;
 use cfg\word;
 use controller\controller;
@@ -323,7 +324,7 @@ class component extends sandbox_typed
         if ($test_mode) {
             $pattern = word_api::TN_READ;
         }
-        // TODO activate
+        // TODO activate Prio 3
         //if ($this->code_id == 'form_field_triple_phrase_from') {
         if ($this->name == 'system form triple phrase from') {
             return $dbo->phrase_selector('from', $form_name, 'from:', '', $dbo->id(), $pattern);
@@ -623,13 +624,13 @@ class component extends sandbox_typed
             $result .= '</div>';
 
             $view_html = $this->linked_views($add_link, $wrd, $back);
-            $changes = $this->dsp_hist(0, SQL_ROW_LIMIT, '', $back);
+            $changes = $this->dsp_hist(0, sql_db::ROW_LIMIT, '', $back);
             if (trim($changes) <> "") {
                 $hist_html = $changes;
             } else {
                 $hist_html = 'Nothing changed yet.';
             }
-            $changes = $this->dsp_hist_links(0, SQL_ROW_LIMIT, '', $back);
+            $changes = $this->dsp_hist_links(0, sql_db::ROW_LIMIT, '', $back);
             if (trim($changes) <> "") {
                 $link_html = $changes;
             } else {
@@ -866,7 +867,7 @@ class component extends sandbox_typed
         $log_dsp = new user_log_display($this->user());
         $log_dsp->id = $this->id;
         $log_dsp->usr = $this->user();
-        $log_dsp->type = \cfg\component\component::class;
+        $log_dsp->type = component::class;
         $log_dsp->page = $page;
         $log_dsp->size = $size;
         $log_dsp->call = $call;

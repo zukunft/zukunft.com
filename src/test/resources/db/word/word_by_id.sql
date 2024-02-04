@@ -1,4 +1,4 @@
-PREPARE word_by_id (int,int) AS
+PREPARE word_by_id (bigint, bigint) AS
     SELECT     s.word_id,
                u.word_id AS user_word_id,
                s.user_id,

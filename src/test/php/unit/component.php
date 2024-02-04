@@ -36,7 +36,7 @@ include_once MODEL_COMPONENT_PATH . 'component.php';
 
 use api\view\view as view_api;
 use cfg\component\component;
-use cfg\sql_db;
+use cfg\db\sql_db;
 use html\component\component as component_dsp;
 
 class component_unit_tests

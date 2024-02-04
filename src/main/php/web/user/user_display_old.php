@@ -33,12 +33,12 @@ use cfg\component\component;
 use cfg\component_link;
 use cfg\formula;
 use cfg\formula_link;
+use cfg\group\group;
 use cfg\phrase;
-use cfg\phrase_group;
 use cfg\sandbox;
 use cfg\sandbox_named;
 use cfg\source;
-use cfg\sql_db;
+use cfg\db\sql_db;
 use cfg\system_log_list;
 use cfg\triple;
 use cfg\user;
@@ -539,7 +539,7 @@ class user_dsp_old extends user
         // get all values changed by the user to a non standard value
         if (SQL_DB_TYPE == sql_db::POSTGRES) {
             $sql = "SELECT 
-                    u.value_id                                                                         AS id, 
+                    u.group_id                                                                         AS id, 
                     v.user_id                                                                          AS owner_id, 
                     CASE WHEN (u.user_value <> '' IS NOT TRUE) THEN v.numeric_value ELSE u.user_value END AS usr_value, 
                     v.numeric_value                                                                       AS std_value, 
@@ -547,14 +547,14 @@ class user_dsp_old extends user
                     v.source_id                                                                        AS std_source, 
                     CASE WHEN (u.excluded   <> '' IS NOT TRUE) THEN v.excluded   ELSE u.excluded   END AS usr_excluded,
                     v.excluded                                                                         AS std_excluded, 
-                    v.phrase_group_id
+                    v.group_id
                FROM user_values u,
                     values v
               WHERE u.user_id = " . $this->id . "
-                AND u.value_id = v.value_id;";
+                AND u.group_id = v.group_id;";
         } else {
             $sql = "SELECT 
-                    u.value_id                                           AS id, 
+                    u.group_id                                           AS id, 
                     v.user_id                                            AS owner_id, 
                     IF(u.numeric_value IS NULL, v.numeric_value, u.numeric_value) AS usr_value, 
                     v.numeric_value                                         AS std_value, 
@@ -566,7 +566,7 @@ class user_dsp_old extends user
                FROM user_values u,
                     `values` v
               WHERE u.user_id = " . $this->id . "
-                AND u.value_id = v.value_id;";
+                AND u.group_id = v.group_id;";
         }
         $val_lst = $db_con->get_old($sql);
 
@@ -583,7 +583,7 @@ class user_dsp_old extends user
                 $val_usr->set_number($val_row['usr_value']);
                 $val_usr->set_source_id($val_row['usr_source']);
                 $val_usr->set_excluded($val_row['usr_excluded']);
-                $val_usr->grp->set_id($val_row[phrase_group::FLD_ID]);
+                $val_usr->grp->set_id($val_row[group::FLD_ID]);
                 $val_usr->load_phrases();
 
                 // to review: try to avoid using load_test_user
@@ -605,8 +605,8 @@ class user_dsp_old extends user
 
                     // prepare the row values
                     $sandbox_item_name = '';
-                    if (!$val_usr->grp->phr_lst->is_empty()) {
-                        $phr_lst_dsp = new phrase_list_dsp($val_usr->grp->phr_lst->api_json());
+                    if (!$val_usr->grp->phrase_list()->is_empty()) {
+                        $phr_lst_dsp = new phrase_list_dsp($val_usr->grp->phrase_list()->api_json());
                         $sandbox_item_name = $phr_lst_dsp->display_linked();
                     }
 
@@ -627,7 +627,7 @@ class user_dsp_old extends user
 
                     // format the value of other users
                     $sandbox_other = '';
-                    $sql_other = "SELECT v.value_id, 
+                    $sql_other = "SELECT v.group_id, 
                                u.user_id, 
                                u.user_value, 
                                u.source_id, 
@@ -635,8 +635,8 @@ class user_dsp_old extends user
                           FROM user_values u,
                                `values` v
                          WHERE u.user_id <> " . $this->id . "
-                           AND u.value_id = v.value_id
-                           AND u.value_id = " . $val_row['id'] . "
+                           AND u.group_id = v.group_id
+                           AND u.group_id = " . $val_row['id'] . "
                            AND (u.excluded <> 1 OR u.excluded is NULL);";
                     log_debug('user_dsp->dsp_sandbox_val other sql (' . $sql_other . ')');
                     $val_lst_other = $db_con->get_old($sql_other);

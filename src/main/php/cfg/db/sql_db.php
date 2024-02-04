@@ -33,13 +33,22 @@
   
 */
 
-namespace cfg;
+namespace cfg\db;
 
 include_once DB_PATH . 'sql_par_type.php';
+include_once MODEL_DB_PATH . 'sql.php';
 include_once MODEL_SYSTEM_PATH . 'log.php';
 
-use cfg\db\sql_creator;
-use cfg\db\sql_par_type;
+use cfg\config;
+use cfg\group\group_id;
+use cfg\library;
+use cfg\log;
+use cfg\sys_log_level;
+use cfg\triple;
+use cfg\user;
+use cfg\user_message;
+use cfg\value\value;
+use cfg\word;
 use DateTime;
 use Exception;
 use mysqli;
@@ -54,8 +63,10 @@ class sql_db
 
     // data retrieval settings
     const SQL_QUERY_NAME_MAX_LEN = 62; // the query name cannot be longer than 62 chars at least for some databases
-    const PAGE_SIZE = 20; // default number of rows per page/query if not defined
-    const PAGE_SIZE_MAX = 2000; // the max number of rows per query to avoid long response times
+
+    // default settings for sql
+    const ROW_LIMIT = 20; // default number of rows per page/query if the user has not defined another limit
+    const ROW_MAX = 2000; // the max number of rows per query to avoid long response times
 
     // SQL table and model object names used
     // the used database objects (the table name is in most cases with an extra 's', because each table contains the data for many objects)
@@ -70,10 +81,9 @@ class sql_db
     const TBL_TRIPLE = 'triple';
     const TBL_VERB = 'verb';
     const TBL_PHRASE = 'phrase';
-    const TBL_PHRASE_GROUP = 'phrase_group';
-    const TBL_PHRASE_GROUP_WORD_LINK = 'phrase_group_word_link';
-    const TBL_PHRASE_GROUP_TRIPLE_LINK = 'phrase_group_triple_link';
-    const TBL_VALUE = 'value';
+    const TBL_GROUP = 'group';
+    const TBL_GROUP_LINK = 'group_link';
+    const TBL_PHRASE_GROUP_TRIPLE_LINK = 'group_link';
     const TBL_VALUE_TIME_SERIES = 'value_time_series';
     const TBL_VALUE_TIME_SERIES_DATA = 'value_ts_data';
     const TBL_VALUE_PHRASE_LINK = 'value_phrase_link';
@@ -88,8 +98,6 @@ class sql_db
     const TBL_FORMULA_ELEMENT = 'formula_element';
     const TBL_FORMULA_ELEMENT_TYPE = 'formula_element_type';
     const TBL_RESULT = 'result';
-    const TBL_RESULT_TWO = 'result_two';
-    const TBL_RESULT_BIG = 'result_big';
     const TBL_VIEW = 'view';
     const TBL_VIEW_TYPE = 'view_type';
     const TBL_COMPONENT = 'component';
@@ -108,7 +116,6 @@ class sql_db
     const TBL_IP = 'user_blocked_ip';
     const TBL_SYS_LOG = 'sys_log';
     const TBL_SYS_LOG_STATUS = 'sys_log_status';
-    const TBL_SYS_LOG_FUNCTION = 'sys_log_function';
     const TBL_SYS_SCRIPT = 'sys_script'; // to log the execution times for code optimising
     const TBL_TASK = 'calc_and_cleanup_task';
     const TBL_TASK_TYPE = 'calc_and_cleanup_task_type';
@@ -122,7 +129,7 @@ class sql_db
     const TBL_USER_PREFIX = 'user_';
 
     // the synthetic view tables (VT) for union query creation
-    const VT_PHRASE_GROUP_LINK = 'phrase_group_phrase_link';
+    const VT_PHRASE_GROUP_LINK = 'group_link'; // TODO deprecate
     const VT_TABLE_FIELD = 'change_table_field';
 
     // difference between the object name and the table name
@@ -144,15 +151,14 @@ class sql_db
     // e.g. sql_db::TBL_TRIPLE is a link which hase a name, but the generated name can be overwritten, so the standard field naming is not used
     const DB_TYPES_NOT_NAMED = [
         sql_db::TBL_TRIPLE,
-        sql_db::TBL_VALUE,
+        value::class,
         sql_db::TBL_VALUE_TIME_SERIES,
         sql_db::TBL_FORMULA_LINK,
         sql_db::TBL_RESULT,
         sql_db::TBL_FORMULA_ELEMENT,
         sql_db::TBL_COMPONENT_LINK,
         sql_db::TBL_VALUE_PHRASE_LINK,
-        sql_db::TBL_PHRASE_GROUP_WORD_LINK,
-        sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK,
+        sql_db::TBL_GROUP_LINK,
         sql_db::TBL_VIEW_TERM_LINK,
         sql_db::TBL_REF,
         sql_db::TBL_IP,
@@ -171,14 +177,11 @@ class sql_db
     // TODO set automatically by set_link_fields???
     const DB_TYPES_LINK = [sql_db::TBL_TRIPLE, sql_db::TBL_FORMULA_LINK, sql_db::TBL_COMPONENT_LINK, sql_db::TBL_REF];
 
-    const ORDER_ASC = 'ASC';
-    const ORDER_DESC = 'DESC';
-
-    const NULL_VALUE = 'NULL';
 
     // open used name extension for the prepared sql statements
     const FLD_ID = 'id';                          // used also to name the sql statements
     const FLD_NAME = 'name';                      // used      to name the sql statements
+    const FLD_SEP = '_';                          // the separator for the SQL field name parts
     const FLD_EXT_ID = '_id';
     const FLD_EXT_NAME = '_name';
     const FLD_EXT_TYPE_ID = '_type_id';
@@ -222,15 +225,14 @@ class sql_db
     public ?int $usr_id = null;                     // the user id of the person who request the database changes
     private ?int $usr_view_id = null;               // the user id of the person which values should be returned e.g. an admin might want to check the data of an user
 
-    private ?string $type = '';                     // based of this database object type the table name and the standard fields are defined e.g. for type "word" the field "word_name" is used
+    private ?string $class = '';                    // based of this database object type the table name and the standard fields are defined e.g. for type "word" the field "word_name" is used
     private ?string $table = '';                    // name of the table that is used for the next query
-    private ?string $id_field = '';                 // primary key field of the table used
+    private string|array|null $id_field = '';                 // primary key field of the table used
     private ?string $id_from_field = '';            // only for link objects the id field of the source object
     private ?string $id_to_field = '';              // only for link objects the id field of the destination object
     private ?string $id_link_field = '';            // only for link objects the id field of the link type object
     private ?string $name_field = '';               // unique text key field of the table used
     private ?string $query_name = '';               // unique name of the query to precompile and use the query
-    private ?array $par_fields = [];                // list of field names to create the sql where statement
     private ?array $par_values = [];                // list of the parameter value to make sure they are in the same order as the parameter
     private ?array $par_types = [];                 // list of the parameter types, which also defines a precompiled query
     private ?array $par_use_link = [];              // array of bool, true if the parameter should be used on the linked table
@@ -319,7 +321,6 @@ class sql_db
         $this->id_link_field = '';
         $this->name_field = '';
         $this->query_name = '';
-        $this->par_fields = [];
         $this->par_values = [];
         $this->par_types = [];
         $this->par_use_link = [];
@@ -405,6 +406,7 @@ class sql_db
         }
         return $this->reconnect_delay;
     }
+
 
     /*
      * open/close the connection to MySQL
@@ -590,20 +592,18 @@ class sql_db
      * define the table that should be used for the next select, insert, update or delete statement
      * resets all previous db query settings such as fields, user_fields, so this should be the first statement when defining a database query
      * TODO check that this is always called directly before the query is created, so that
+     * TODO should be deprecated and the sql creator should be used instead
      *
      * @param string $class is a string that is used to select the table name, the id field and the name field
      * @param bool $usr_table if it is true the user table instead of the standard table is used
      * @return bool true if setting the type was successful
      */
-    function set_type(string $class, bool $usr_table = false): bool
+    function set_class(string $class, bool $usr_table = false, string $ext = ''): bool
     {
         global $usr;
 
-        $lib = new library();
-        $class = $lib->class_to_name($class);
-
         $this->reset();
-        $this->type = $class;
+        $this->class = $class;
         if ($usr == null) {
             $this->set_usr(SYSTEM_USER_ID); // if the session user is not yet set, use the system user id to test the database compatibility
         } else {
@@ -613,15 +613,15 @@ class sql_db
                 $this->set_usr($usr->id()); // by default use the session user id
             }
         }
-        $this->set_table($usr_table);
+        $this->set_table($usr_table, $ext);
         $this->set_id_field();
         $this->set_name_field();
         return true;
     }
 
-    function get_type(): string
+    function get_class(): string
     {
-        return $this->type;
+        return $this->class;
     }
 
     /**
@@ -643,9 +643,9 @@ class sql_db
      */
     function add_par(
         sql_par_type $par_type,
-        string $value,
-        bool   $named = false,
-        bool   $use_link = false): void
+        string       $value,
+        bool         $named = false,
+        bool         $use_link = false): void
     {
         $this->par_types[] = $par_type;
         $this->par_values[] = $value;
@@ -1087,6 +1087,7 @@ class sql_db
 
     private function set_field_statement($has_id): void
     {
+        $lib = new library();
         if ($has_id) {
             // add the fields that part of all standard tables so id and name on top of the field list
             $field_lst = [];
@@ -1094,19 +1095,19 @@ class sql_db
             $field_lst[] = $this->id_field;
             if ($this->usr_query) {
                 // user can change the name of an object, that's why the target field list is either $usr_field_lst or $field_lst
-                if (!in_array($this->type, sql_db::DB_TYPES_NOT_NAMED)) {
+                if (!in_array($this->class, sql_db::DB_TYPES_NOT_NAMED)) {
                     $usr_field_lst[] = $this->name_field;
                 }
                 if (!$this->all_query) {
                     $field_lst[] = user::FLD_ID;
                 }
             } else {
-                if (!in_array($this->type, sql_db::DB_TYPES_NOT_NAMED)) {
+                if (!in_array($this->class, sql_db::DB_TYPES_NOT_NAMED)) {
                     $field_lst[] = $this->name_field;
                 }
             }
             // user cannot change the links like they can change the name, instead a link is removed and another link is created
-            if (in_array($this->type, sql_db::DB_TYPES_LINK)) {
+            if (in_array($this->class, sql_db::DB_TYPES_LINK)) {
                 // allow also using the set_fields method for link fields e.g. for more complex where cases
                 if ($this->id_from_field <> '') {
                     $field_lst[] = $this->id_from_field;
@@ -1136,23 +1137,65 @@ class sql_db
 
         // add normal fields
         foreach ($this->field_lst as $field) {
-            $field = $this->name_sql_esc($field);
+            if (is_array($field)) {
+                $fld_lst = array();
+                foreach ($field as $fld) {
+                    $fld_lst[] = $this->name_sql_esc($fld);
+                }
+                $field = $fld_lst;
+            } else {
+                $field = $this->name_sql_esc($field);
+            }
             $this->set_field_sep();
             if ($this->usr_query or $this->join_type != '') {
-                $this->fields .= ' ' . sql_db::STD_TBL . '.' . $field;
-                if ($field == $this->id_field) {
-                    // add the user sandbox id for user sandbox queries to find out if the user sandbox has already been created
-                    if ($this->all_query) {
-                        if ($this->fields != '') {
-                            $this->fields .= ', ';
-                        }
-                        $this->fields .= ' ' . sql_db::USR_TBL . '.' . user::FLD_ID;
+                // TODO extract the common part
+                if (is_array($field)) {
+                    if (!is_array($this->id_field)) {
+                        log_warning('The id field ' . $this->id_field . ' is expected to be an array');
+
                     } else {
-                        if ($this->usr_query) {
+                        if (count($field) != count($this->id_field)) {
+                            log_warning('The number of id fields ' . $this->id_field . ' does not match the number of ids');
+                        } else {
+                            $pos = 0;
+                            foreach ($field as $fld) {
+                                $this->fields .= ' ' . sql_db::STD_TBL . '.' . $fld;
+                                if ($field == $this->id_field) {
+                                    // add the user sandbox id for user sandbox queries to find out if the user sandbox has already been created
+                                    if ($this->all_query) {
+                                        if ($this->fields != '') {
+                                            $this->fields .= ', ';
+                                        }
+                                        $this->fields .= ' ' . sql_db::USR_TBL . '.' . user::FLD_ID;
+                                    } else {
+                                        if ($this->usr_query) {
+                                            if ($this->fields != '') {
+                                                $this->fields .= ', ';
+                                            }
+                                            $this->fields .= ' ' . sql_db::USR_TBL . '.' . $fld . ' AS ' . sql_db::USER_PREFIX . $this->id_field[$pos];
+                                        }
+                                    }
+                                }
+                                $pos++;
+                            }
+                        }
+                    }
+                } else {
+                    $this->fields .= ' ' . sql_db::STD_TBL . '.' . $field;
+                    if ($field == $this->id_field) {
+                        // add the user sandbox id for user sandbox queries to find out if the user sandbox has already been created
+                        if ($this->all_query) {
                             if ($this->fields != '') {
                                 $this->fields .= ', ';
                             }
-                            $this->fields .= ' ' . sql_db::USR_TBL . '.' . $field . ' AS ' . sql_db::USER_PREFIX . $this->id_field;
+                            $this->fields .= ' ' . sql_db::USR_TBL . '.' . user::FLD_ID;
+                        } else {
+                            if ($this->usr_query) {
+                                if ($this->fields != '') {
+                                    $this->fields .= ', ';
+                                }
+                                $this->fields .= ' ' . sql_db::USR_TBL . '.' . $field . ' AS ' . sql_db::USER_PREFIX . $this->id_field;
+                            }
                         }
                     }
                 }
@@ -1338,8 +1381,11 @@ class sql_db
     /**
      * functions for the standard naming of tables
      */
-    function get_table_name($type): string
+    function get_table_name(string $class): string
     {
+        $lib = new library();
+        $type = $lib->class_to_name($class);
+
         // set the standard table name based on the type
         $result = $type . "s";
         // exceptions from the standard table for 'nicer' names
@@ -1392,25 +1438,36 @@ class sql_db
     /**
      * similar to get_table_name, but for direct use in sql statements
      */
-    function get_table_name_esc($type): string
+    function get_table_name_esc(string $class): string
     {
-        return $this->name_sql_esc($this->get_table_name($type));
+        return $this->name_sql_esc($this->get_table_name($class));
     }
 
-    //
-    private function set_table($usr_table = false): void
+    /**
+     * set the table name based on the already set type / class
+     * TODO use always the user table flag
+     * @param $usr_table
+     * @param string $ext the table name extension e.g. to switch between standard and prime values
+     * @return void
+     */
+    private function set_table($usr_table = false, string $ext = ''): void
     {
         global $debug;
+
+        $lib = new library();
+        $type = $lib->class_to_name($this->class);
+
         if ($usr_table) {
-            $this->table = sql_db::USER_PREFIX . $this->get_table_name($this->type);
+            $this->table = sql_db::USER_PREFIX . $this->get_table_name($type);
             $this->usr_only_query = true;
         } else {
-            $this->table = $this->get_table_name($this->type);
+            $this->table = $this->get_table_name($type);
+            $this->table .= $ext;
         }
         log_debug('to "' . $this->table . '"', $debug - 20);
     }
 
-    function get_id_field_name($type): string
+    function get_id_field_name(string $type): string
     {
         $lib = new library();
 
@@ -1431,12 +1488,19 @@ class sql_db
         return $result;
     }
 
-    private function set_id_field(string $given_name = ''): void
+    function set_id_field(string|array $given_name = ''): void
     {
+        $lib = new library();
+        $type = $lib->class_to_name($this->class);
+
         if ($given_name != '') {
             $this->id_field = $given_name;
         } else {
-            $this->id_field = $this->get_id_field_name($this->type);
+            $this->id_field = $this->get_id_field_name($type);
+        }
+        // exceptions to be adjusted
+        if ($this->id_field == 'blocked_ips_id') {
+            $this->id_field = 'user_blocked_id';
         }
     }
 
@@ -1512,7 +1576,10 @@ class sql_db
     {
         global $debug;
 
-        $result = $this->get_name_field($this->type);
+        $lib = new library();
+        $type = $lib->class_to_name($this->class);
+
+        $result = $this->get_name_field($type);
         log_debug('to "' . $result . '"', $debug - 20);
         $this->name_field = $result;
     }
@@ -1549,6 +1616,14 @@ class sql_db
     }
 
     /**
+     * @throws Exception the message that should be shown to the system admin for debugging
+     */
+    function exe_par(sql_par $qp): string
+    {
+        return $this->exe_try('', $qp->sql, $qp->name, $qp->par);
+    }
+
+    /**
      * execute an change SQL statement on the active database (either Postgres or MySQL)
      * similar to exe_try, but without exception handling
      *
@@ -1556,14 +1631,19 @@ class sql_db
      * @param string $sql_name the unique name of the sql statement
      * @param array $sql_array the values that should be used for executing the precompiled SQL statement
      * @param int $log_level the log level is given by the calling function because after some errors the program may nevertheless continue
-     * @return object the message that should be shown to the user if something went wrong or an empty string
+     * @return \PgSql\Result|mysqli_result the result of the sql statement
      * @throws Exception the message that should be shown to the system admin for debugging
      *
      * TODO add the writing of potential sql errors to the sys log table to the sql execution
      * TODO includes the user to be able to ask the user for details how the error has been created
      * TODO with php 8 switch to the union return type resource|false
      */
-    function exe(string $sql, string $sql_name = '', array $sql_array = array(), int $log_level = sys_log_level::ERROR)
+    function exe(
+        string $sql,
+        string $sql_name = '',
+        array  $sql_array = array(),
+        int    $log_level = sys_log_level::ERROR
+    ): \PgSql\Result|mysqli_result
     {
         global $debug;
         $lib = new library();
@@ -1589,7 +1669,7 @@ class sql_db
      * @param string $sql_name the unique name of the sql statement
      * @param array $sql_array the values that should be used for executing the precompiled SQL statement
      * @param int $log_level the log level is given by the calling function because after some errors the program may nevertheless continue
-     * @return resource the message that should be shown to the user if something went wrong or an empty string
+     * @return \PgSql\Result the message that should be shown to the user if something went wrong or an empty string
      * @throws Exception the message that should be shown to the system admin for debugging
      *
      * TODO switch return type to bool|resource with PHP 8.0
@@ -1597,7 +1677,12 @@ class sql_db
      * TODO includes the user to be able to ask the user for details how the error has been created
      * TODO with php 8 switch to the union return type resource|false
      */
-    private function exe_postgres(string $sql, string $sql_name = '', array $sql_array = array(), int $log_level = sys_log_level::ERROR)
+    private function exe_postgres(
+        string $sql,
+        string $sql_name = '',
+        array  $sql_array = array(),
+        int    $log_level = sys_log_level::ERROR
+    ): \PgSql\Result
     {
         global $debug;
 
@@ -1950,9 +2035,9 @@ class sql_db
     function get_value($field_name, $id_name, $id)
     {
         $result = '';
-        log_debug($field_name . ' from ' . $this->type . ' where ' . $id_name . ' = ' . $this->sf($id));
+        log_debug($field_name . ' from ' . $this->class . ' where ' . $id_name . ' = ' . $this->sf($id));
 
-        if ($this->type <> '') {
+        if ($this->class <> '') {
             $this->set_table();
 
             // set fallback values
@@ -1991,7 +2076,7 @@ class sql_db
     function get_value_2key($field_name, $id1_name, $id1, $id2_name, $id2)
     {
         $result = '';
-        log_debug($field_name . ' from ' . $this->type . ' where ' . $id1_name . ' = ' . $id1 . ' and ' . $id2_name . ' = ' . $id2);
+        log_debug($field_name . ' from ' . $this->class . ' where ' . $id1_name . ' = ' . $id1 . ' and ' . $id2_name . ' = ' . $id2);
 
         $this->set_table();
         $sql = "SELECT " . $this->name_sql_esc($field_name) .
@@ -2025,7 +2110,7 @@ class sql_db
     function get_id($name): string
     {
         $result = '';
-        log_debug('for "' . $name . '" of the db object "' . $this->type . '"');
+        log_debug('for "' . $name . '" of the db object "' . $this->class . '"');
 
         $this->set_table();
         $this->set_id_field();
@@ -2042,7 +2127,7 @@ class sql_db
     function get_name($id)
     {
         $result = '';
-        log_debug('for "' . $id . '" of the db object "' . $this->type . '"');
+        log_debug('for "' . $id . '" of the db object "' . $this->class . '"');
 
         $this->set_table();
         $this->set_id_field();
@@ -2059,7 +2144,7 @@ class sql_db
     function get_id_2key($name, $field2_name, $field2_value)
     {
         $result = '';
-        log_debug('for "' . $name . ',' . $field2_name . ',' . $field2_value . '" of the db object "' . $this->type . '"');
+        log_debug('for "' . $name . ',' . $field2_name . ',' . $field2_value . '" of the db object "' . $this->class . '"');
 
         $this->set_table();
         $this->set_id_field();
@@ -2075,7 +2160,7 @@ class sql_db
      */
     function sql_std_lst_usr(): string
     {
-        log_debug($this->type);
+        log_debug($this->class);
 
         $this->set_table();
         $this->set_id_field();
@@ -2090,7 +2175,7 @@ class sql_db
               ORDER BY t.".$this->name_field.";";
         */
         $sql_where = '';
-        if ($this->type == 'view') {
+        if ($this->class == 'view') {
             $sql_where = ' WHERE t.code_id IS NULL ';
         }
         if ($this->db_type == sql_db::POSTGRES) {
@@ -2124,7 +2209,7 @@ class sql_db
      */
     function sql_std_lst(): string
     {
-        log_debug("sql_db->sql_std_lst (" . $this->type . ")");
+        log_debug("sql_db->sql_std_lst (" . $this->class . ")");
 
         $this->set_table();
         $this->set_id_field();
@@ -2243,7 +2328,7 @@ class sql_db
         }
 
         if ($result == '') {
-            log_err('Internal error: to find a ' . $this->type . ' either the id, name or code_id must be set', 'sql->set_where');
+            log_err('Internal error: to find a ' . $this->class . ' either the id, name or code_id must be set', 'sql->set_where');
         } else {
             $this->where = ' WHERE ' . $result;
         }
@@ -2273,7 +2358,7 @@ class sql_db
             // select one link by the from and to id
         } elseif ($id_from <> 0 and $id_to <> 0) {
             if ($this->id_from_field == '' or $this->id_to_field == '') {
-                log_err('Internal error: to find a ' . $this->type . ' the link fields must be defined', 'sql->set_where_link_no_fld');
+                log_err('Internal error: to find a ' . $this->class . ' the link fields must be defined', 'sql->set_where_link_no_fld');
             } else {
                 if ($this->usr_query or $this->join <> '') {
                     $result .= sql_db::STD_TBL . '.';
@@ -2287,7 +2372,7 @@ class sql_db
                 $result .= $this->id_to_field . " = " . $this->par_name();
                 if ($id_type <> 0) {
                     if ($this->id_link_field == '') {
-                        log_err('Internal error: to find a ' . $this->type . ' the link type field must be defined', 'sql->set_where_link_no_fld');
+                        log_err('Internal error: to find a ' . $this->class . ' the link type field must be defined', 'sql->set_where_link_no_fld');
                     } else {
                         $result .= ' AND ';
                         if ($this->usr_query or $this->join <> '') {
@@ -2301,7 +2386,7 @@ class sql_db
             }
         } elseif ($id_from <> 0) {
             if ($this->id_from_field == '') {
-                log_err('Internal error: to find a ' . $this->type . ' the from field must be defined', 'sql->set_where_link_no_fld');
+                log_err('Internal error: to find a ' . $this->class . ' the from field must be defined', 'sql->set_where_link_no_fld');
             } else {
                 if ($this->usr_query or $this->join <> '') {
                     $result .= sql_db::STD_TBL . '.';
@@ -2311,7 +2396,7 @@ class sql_db
             }
         } elseif ($id_to <> 0) {
             if ($this->id_to_field == '') {
-                log_err('Internal error: to find a ' . $this->type . ' the to field must be defined', 'sql->set_where_link_no_fld');
+                log_err('Internal error: to find a ' . $this->class . ' the to field must be defined', 'sql->set_where_link_no_fld');
             } else {
                 if ($this->usr_query or $this->join <> '') {
                     $result .= sql_db::STD_TBL . '.';
@@ -2320,11 +2405,11 @@ class sql_db
                 $result .= $this->id_to_field . ' = ' . $this->par_name();
             }
         } else {
-            log_err('Internal error: to find a ' . $this->type . ' the a field must be defined', 'sql->set_where_link_no_fld');
+            log_err('Internal error: to find a ' . $this->class . ' the a field must be defined', 'sql->set_where_link_no_fld');
         }
 
         if ($result == '') {
-            log_err('Internal error: to find a ' . $this->type . ' either the id or the from and to id must be set', 'sql->set_where_link_no_fld');
+            log_err('Internal error: to find a ' . $this->class . ' either the id or the from and to id must be set', 'sql->set_where_link_no_fld');
         } else {
             $this->where = ' WHERE ' . $result;
         }
@@ -2375,7 +2460,7 @@ class sql_db
         }
 
         if ($result == '') {
-            log_err('Internal error: to find a ' . $this->type . ' either the id, name or code_id must be set', 'sql->set_where');
+            log_err('Internal error: to find a ' . $this->class . ' either the id, name or code_id must be set', 'sql->set_where');
         } else {
             $this->where = ' WHERE ' . $result;
         }
@@ -2452,7 +2537,9 @@ class sql_db
                                 $this->where .= $id_fields[$used_fields] . ' IN (' . $this->par_name($i + 1) . ')';
                             }
                         } else {
-                            if ($par_type == sql_par_type::LIKE) {
+                            if ($par_type == sql_par_type::LIKE_R
+                                or $par_type == sql_par_type::LIKE
+                                or $par_type == sql_par_type::LIKE_OR) {
                                 $this->where .= $id_fields[$used_fields] . ' like ' . $this->par_name($i + 1);
                             } else {
                                 if ($par_type == sql_par_type::CONST) {
@@ -2521,7 +2608,7 @@ class sql_db
      */
     function set_order(string $order_field, string $direction = '', string $table_prefix = ''): void
     {
-        if ($direction <> self::ORDER_DESC) {
+        if ($direction <> sql::ORDER_DESC) {
             $direction = '';
         }
         if ($table_prefix == '') {
@@ -2562,10 +2649,10 @@ class sql_db
             $page = 0;
         }
         if ($limit == 0) {
-            $limit = SQL_ROW_LIMIT;
+            $limit = sql_db::ROW_LIMIT;
         } else {
             if ($limit <= 0) {
-                $limit = SQL_ROW_LIMIT;
+                $limit = sql_db::ROW_LIMIT;
             }
         }
 
@@ -2580,13 +2667,26 @@ class sql_db
     /**
      * create the "JOIN" SQL statement based on the joined user fields
      */
-    private function set_user_join()
+    private function set_user_join(): void
     {
         if ($this->usr_query) {
             if (!$this->join_usr_added) {
                 $usr_table_name = $this->name_sql_esc(sql_db::USER_PREFIX . $this->table);
                 $this->join .= ' LEFT JOIN ' . $usr_table_name . ' ' . sql_db::USR_TBL;
-                $this->join .= ' ON ' . sql_db::STD_TBL . '.' . $this->id_field . ' = ' . sql_db::USR_TBL . '.' . $this->id_field;
+                if (is_array($this->id_field)) {
+                    $join_link = '';
+                    foreach ($this->id_field as $id_fld) {
+                        if ($join_link == '') {
+                            $join_link .= ' ON ';
+                        } else {
+                            $join_link .= ' AND ';
+                        }
+                        $join_link .= sql_db::STD_TBL . '.' . $id_fld . ' = ' . sql_db::USR_TBL . '.' . $id_fld;
+                    }
+                    $this->join .= $join_link;
+                } else {
+                    $this->join .= ' ON ' . sql_db::STD_TBL . '.' . $this->id_field . ' = ' . sql_db::USR_TBL . '.' . $this->id_field;
+                }
                 if (!$this->all_query) {
                     $this->join .= ' AND ' . sql_db::USR_TBL . '.' . user::FLD_ID . ' = ';
                     if ($this->query_name == '') {
@@ -2910,6 +3010,37 @@ class sql_db
 
         $this->set_field_statement(true);
         $this->set_from();
+        $id_fld = $this->id_field;
+        if ($owner_id > 0) {
+            $this->set_where(array($this->id_field, user::FLD_ID));
+        } else {
+            $this->set_where(array($this->id_field));
+        }
+
+        // create a prepare SQL statement if possible
+        $sql = $this->prepare_sql();
+
+        $sql .= $this->fields . $this->from . $this->where . $this->order . $this->page;
+
+        return $this->end_sql($sql);
+    }
+
+    /**
+     * init the sql statement to get the users that has changed to value or result object
+     * replaces the standard sql db function
+     *
+     * @return string the SQL statement to for the user specific data
+     */
+    function select_value_by_id_not_owner(int $id, ?int $owner_id = 0): string
+    {
+        $this->add_par(sql_par_type::INT, $id);
+        if ($owner_id > 0) {
+            $this->add_par(sql_par_type::INT_NOT, $owner_id);
+        }
+        $this->add_par(sql_par_type::CONST, '(excluded <> 1 OR excluded is NULL)');
+
+        $this->set_field_statement(true);
+        $this->set_from();
         if ($owner_id > 0) {
             $this->set_where(array($this->id_field, user::FLD_ID));
         } else {
@@ -2950,7 +3081,7 @@ class sql_db
     function count(string $type_name = '', string $id_fld = ''): ?int
     {
         if ($type_name != '') {
-            $this->set_type($type_name);
+            $this->set_class($type_name);
         }
         return $this->get1_int($this->count_qp());
     }
@@ -2962,10 +3093,10 @@ class sql_db
     function count_qp(string $class_name = '', string $id_fld = ''): sql_par
     {
         if ($class_name == '') {
-            $class_name = $this->type;
+            $class_name = $this->class;
         }
         $qp = new sql_par($class_name);
-        $qp->name = $this->type . '_count';
+        $qp->name = $this->class . '_count';
         $qp->sql = $this->count_sql($qp->name, $id_fld);
         return $qp;
     }
@@ -2978,10 +3109,10 @@ class sql_db
     function count_sql(string $sql_name = '', string $id_fld = ''): string
     {
         if ($id_fld == '') {
-            $id_fld = $this->type . self::FLD_EXT_ID;
+            $id_fld = $this->class . self::FLD_EXT_ID;
         }
         if ($sql_name == '') {
-            $sql_name = $this->type . '_count';
+            $sql_name = $this->class . '_count';
         }
         $sql = 'PREPARE ' . $sql_name . ' AS
                     SELECT count(' . self::STD_TBL . '.' . $id_fld . ') + count(' . self::USR_TBL . '.' . $id_fld . ') AS count
@@ -2992,6 +3123,8 @@ class sql_db
 
     /**
      * convert the parameter type list to make valid for postgres
+     * TODO deprecate and use a function of the sql object instead
+     *
      * @return array with the postgres parameter types
      */
     private function par_types_to_postgres(): array
@@ -3002,16 +3135,22 @@ class sql_db
             switch ($type) {
                 case sql_par_type::INT_LIST:
                 case sql_par_type::INT_LIST_OR:
-                $result[] = 'int[]';
+                    $result[] = 'bigint[]';
                     break;
+                case sql_par_type::INT:
                 case sql_par_type::INT_OR:
                 case sql_par_type::INT_NOT:
-                    $result[] = 'int';
+                    $result[] = 'bigint';
+                    break;
+                case sql_par_type::INT_SMALL:
+                    $result[] = 'smallint';
                     break;
                 case sql_par_type::TEXT_LIST:
                     $result[] = 'text[]';
                     break;
+                case sql_par_type::LIKE_R:
                 case sql_par_type::LIKE:
+                case sql_par_type::LIKE_OR:
                 case sql_par_type::TEXT_OR:
                     $result[] = 'text';
                     break;
@@ -3035,7 +3174,7 @@ class sql_db
                 $par_types = $this->par_types_to_postgres();
                 $sql = 'PREPARE ' . $this->query_name . ' (' . implode(', ', $par_types) . ') AS SELECT';
             } elseif ($this->db_type == sql_db::MYSQL) {
-                $sql = "PREPARE " . $this->query_name . " FROM 'SELECT";
+                $sql = "PREPARE " . $this->query_name . " FROM '" . sql::SELECT;
                 $this->end = "';";
             } else {
                 log_err('Prepare SQL not yet defined for SQL dialect ' . $this->db_type);
@@ -3081,7 +3220,7 @@ class sql_db
         if ($this->query_name != '') {
             $sql = $this->prepare_sql();
         } else {
-            $sql = 'SELECT';
+            $sql = sql::SELECT;
             //log_info('SQL statement ' . $sql . $this->fields . $this->from . $this->join . $this->where . ' is not yet named, please consider using a prepared SQL statement');
         }
 
@@ -3095,12 +3234,13 @@ class sql_db
      * to detect if someone else has used the object
      * @param int $id the unique database id if the object to check
      * @param int|null $owner_id the user id of the owner of the object
+     * @param string $id_field the field name of the prime database key if not standard
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      *                 in the previous set dialect
      */
-    function load_sql_not_changed(int $id, ?int $owner_id = 0): sql_par
+    function load_sql_not_changed(int $id, ?int $owner_id = 0, string $id_field = ''): sql_par
     {
-        $qp = new sql_par($this->type);
+        $qp = new sql_par($this->class);
         $qp->name .= 'not_changed';
         if ($owner_id > 0) {
             $qp->name .= '_not_owned';
@@ -3108,7 +3248,7 @@ class sql_db
         $this->set_name($qp->name);
         $this->set_usr($this->usr_id);
         $this->set_table();
-        $this->set_id_field();
+        $this->set_id_field($id_field);
         $this->set_fields(array(user::FLD_ID));
         if ($id == 0) {
             log_err('The id must be set to detect if the link has been changed');
@@ -3131,13 +3271,101 @@ class sql_db
     }
 
     /**
+     * create a SQL select statement for the connected database
+     * to detect if someone else has used the object
+     * if the value can be stored in different tables
+     *
+     * @param int $id the unique database id if the object to check
+     * @param int|null $owner_id the user id of the owner of the object
+     * @param string|array $id_field the field name or field list of the prime database key if not standard
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     *                 in the previous set dialect
+     */
+    function load_sql_not_changed_multi(
+        int            $id,
+        ?int           $owner_id = 0,
+        string|array   $id_field = '',
+        string         $ext = '',
+        sql_table_type $tbl_typ = sql_table_type::MOST
+    ): sql_par
+    {
+        $qp = new sql_par($this->class);
+        $qp->name .= 'not_changed';
+        if ($owner_id > 0) {
+            $qp->name .= '_not_owned';
+        }
+        $this->set_name($qp->name);
+        $this->set_usr($this->usr_id);
+        $this->set_table(false, $tbl_typ->extension());
+        $this->set_id_field($id_field);
+        $this->set_fields(array(user::FLD_ID));
+        if ($id == 0) {
+            log_err('The id must be set to detect if the link has been changed');
+        } else {
+            // TODO review
+            $sql_mid_where = '';
+            if ($tbl_typ == sql_table_type::PRIME) {
+                $grp_id = new group_id();
+                $id_lst = $grp_id->get_array($id, true);
+                if (is_array($this->id_field)) {
+                    if (count($id_lst) != count($this->id_field)) {
+                        log_err('the number of id and fields differ');
+                    } else {
+                        $pos = 0;
+                        foreach ($id_lst as $id_item) {
+                            if ($id_item == null) {
+                                // TODO move null to const
+                                $this->add_par(sql_par_type::INT_SMALL, '0');
+                            } else {
+                                $this->add_par(sql_par_type::INT_SMALL, $id_item);
+                            }
+                            if ($sql_mid_where == '') {
+                                $sql_mid_where .= " WHERE ";
+                            } else {
+                                $sql_mid_where .= " AND ";
+                            }
+                            $sql_mid_where .= $this->id_field[$pos] . " = " . $this->par_name();
+                            $pos++;
+                        }
+                    }
+                } else {
+                    log_err('the id fields are expected to be an array');
+                }
+            } elseif ($tbl_typ == sql_table_type::BIG) {
+                $grp_id = new group_id();
+                $id_lst = $grp_id->get_array($id, true);
+                foreach ($id_lst as $id_item) {
+                    $this->add_par(sql_par_type::INT, $id_item);
+                }
+            } else {
+                $this->add_par(sql_par_type::INT, $id);
+            }
+            $sql_mid = " " . user::FLD_ID;
+            $sql_mid .= " FROM " . $this->name_sql_esc(sql_db::TBL_USER_PREFIX . $this->table);
+            if (!is_array($this->id_field)) {
+                $sql_mid_where .= $this->id_field . " = " . $this->par_name();
+            }
+            $sql_mid .= $sql_mid_where . " AND (excluded <> 1 OR excluded is NULL)";
+            if ($owner_id > 0) {
+                $this->add_par(sql_par_type::INT, $owner_id);
+                $sql_mid .= " AND " . user::FLD_ID . " <> " . $this->par_name();
+            }
+            $qp->sql = $this->prepare_sql() . $sql_mid;
+            $qp->sql = $this->end_sql($qp->sql);
+        }
+        $qp->par = $this->get_par();
+
+        return $qp;
+    }
+
+    /**
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @return sql_par the SQL statement to find user sandbox objects where the owner is not set
      */
     function missing_owner_sql(): sql_par
     {
         $qp = new sql_par('missing_owner');
-        $qp->name .= $this->type;
+        $qp->name .= $this->class;
         $this->set_name($qp->name);
         $this->set_usr($this->usr_id);
         $this->set_table();
@@ -3155,7 +3383,7 @@ class sql_db
     function missing_owner(): array
     {
         global $debug;
-        log_debug("sql_db->missing_owner (" . $this->type . ")", $debug - 4);
+        log_debug("sql_db->missing_owner (" . $this->class . ")", $debug - 4);
         $qp = $this->missing_owner_sql();
         return $this->get($qp);
     }
@@ -3165,7 +3393,7 @@ class sql_db
      */
     function set_default_owner(): bool
     {
-        log_debug("sql_db->set_default_owner (" . $this->type . ")");
+        log_debug("sql_db->set_default_owner (" . $this->class . ")");
         $result = true;
 
         // get the system user id
@@ -3199,6 +3427,115 @@ class sql_db
     */
 
     /**
+     * execute an insert sql statement
+     * and return a message to the user if something has gone wrong
+     * and a suggested solution to fix the issue
+     * and alternative solution if possible
+     * or the id of the created database row if successful
+     *
+     * @param sql_par $qp the sql statement with the name of the prepare query and parameter for this execution
+     * @param string $description for the user to identify the statement
+     * @return user_message
+     */
+    function insert(sql_par $qp, string $description): user_message
+    {
+        $result = new user_message();
+        $err_msg = 'Insert of ' . $description . ' failed.';
+        try {
+            $sql_result = $this->exe($qp->sql, $qp->name, $qp->par);
+            $db_id = 0;
+            if ($this->db_type == sql_db::POSTGRES) {
+                $sql_error = pg_result_error($sql_result);
+                if ($sql_error != '') {
+                    log_err($sql_error . ' while executing ' . $qp->sql);
+                } else {
+                    $db_id = pg_fetch_array($sql_result)[0];
+                    //$result = $db_con->lastInsertId('yourIdColumn');
+                }
+            } else {
+                $db_id = mysqli_fetch_array($sql_result, MYSQLI_BOTH);
+            }
+            if ($db_id == 0 or $db_id == '') {
+                log_err($err_msg);
+                $result->add_message($err_msg);
+            } else {
+                $result->set_db_row_id($db_id);
+            }
+        } catch (Exception $e) {
+            $trace_link = log_err($err_msg . log::MSG_ERR_USING . $qp->sql . log::MSG_ERR_BECAUSE . $e->getMessage());
+            $result->add_message($trace_link);
+        }
+
+        return $result;
+    }
+
+    /**
+     * execute an update sql statement
+     * and return a message to the user if something has gone wrong
+     * and a suggested solution to fix the issue
+     * and alternative solution if possible
+     * or the true if successful
+     *
+     * @param sql_par $qp the sql statement with the name of the prepare query and parameter for this execution
+     * @param string $description for the user to identify the statement
+     * @return user_message
+     */
+    function update(sql_par $qp, string $description): user_message
+    {
+        $result = new user_message();
+        $err_msg = 'Update of ' . $description . ' failed';
+        try {
+            $sql_result = $this->exe($qp->sql, $qp->name, $qp->par);
+            if ($this->db_type == sql_db::POSTGRES) {
+                $sql_error = pg_result_error($sql_result);
+                if ($sql_error != '') {
+                    $err_msg .= ' due to ' . $sql_error;
+                    log_err($err_msg);
+                    $result->add_message($err_msg);
+                }
+            }
+        } catch (Exception $e) {
+            $trace_link = log_err($err_msg . log::MSG_ERR_USING . $qp->sql . log::MSG_ERR_BECAUSE . $e->getMessage());
+            $result->add_message($trace_link);
+        }
+
+        return $result;
+    }
+
+    /**
+     * execute a delete sql statement
+     * and return a message to the user if something has gone wrong
+     * and a suggested solution to fix the issue
+     * and alternative solution if possible
+     * or the true if successful
+     *
+     * @param sql_par $qp the sql statement with the name of the prepare query and parameter for this execution
+     * @param string $description for the user to identify the statement
+     * @return user_message
+     */
+    function delete(sql_par $qp, string $description): user_message
+    {
+        $result = new user_message();
+        $err_msg = 'Delete of ' . $description . ' failed';
+        try {
+            $sql_result = $this->exe($qp->sql, $qp->name, $qp->par);
+            if ($this->db_type == sql_db::POSTGRES) {
+                $sql_error = pg_result_error($sql_result);
+                if ($sql_error != '') {
+                    $err_msg .= ' due to ' . $sql_error;
+                    log_err($err_msg);
+                    $result->add_message($err_msg);
+                }
+            }
+        } catch (Exception $e) {
+            $trace_link = log_err($err_msg . log::MSG_ERR_USING . $qp->sql . log::MSG_ERR_BECAUSE . $e->getMessage());
+            $result->add_message($trace_link);
+        }
+
+        return $result;
+    }
+
+    /**
      * insert a new record in the database
      * similar to exe, but returning the row id added to be able to update
      * e.g. the log entry with the row id of the real row added
@@ -3208,7 +3545,7 @@ class sql_db
      *      add the return type (allowed since php version 7.0, but array|string is allowed with 8.0 or higher
      *      if $log_err is false, no further errors will reported to prevent endless looping from the error logging itself
      */
-    function insert($fields, $values, bool $log_err = true): int
+    function insert_old($fields, $values, bool $log_err = true): int
     {
         $result = 0;
         $is_valid = false;
@@ -3253,10 +3590,12 @@ class sql_db
                     }
                 } else {
                     // return the database row id if the value is not a time series number
-                    if ($this->type != sql_db::TBL_VALUE_TIME_SERIES_DATA
-                        and $this->type != sql_db::TBL_LANGUAGE_FORM
-                        and $this->type != sql_db::TBL_USER_OFFICIAL_TYPE
-                        and $this->type != sql_db::TBL_USER_TYPE) {
+                    if ($this->class != sql_db::TBL_VALUE_TIME_SERIES_DATA
+                        and $this->class != value::class
+                        and $this->class != sql_db::TBL_RESULT
+                        and $this->class != sql_db::TBL_LANGUAGE_FORM
+                        and $this->class != sql_db::TBL_USER_OFFICIAL_TYPE
+                        and $this->class != sql_db::TBL_USER_TYPE) {
                         $sql = $sql . ' RETURNING ' . $this->id_field . ';';
                     }
 
@@ -3284,7 +3623,7 @@ class sql_db
                                 log_err('Execution of ' . $sql . ' failed due to ' . $sql_error);
                             }
                         } else {
-                            if ($this->type != sql_db::TBL_VALUE_TIME_SERIES_DATA) {
+                            if ($this->class != sql_db::TBL_VALUE_TIME_SERIES_DATA) {
                                 if (is_resource($sql_result) or $sql_result::class == 'PgSql\Result') {
                                     $result = pg_fetch_array($sql_result)[0];
                                 } else {
@@ -3351,11 +3690,11 @@ class sql_db
      */
     function add_id($name): int
     {
-        log_debug($name . ' to ' . $this->type);
+        log_debug($name . ' to ' . $this->class);
 
         $this->set_table();
         $this->set_name_field();
-        $result = $this->insert($this->name_field, $name);
+        $result = $this->insert_old($this->name_field, $name);
 
         log_debug('is "' . $result . '"');
         return $result;
@@ -3366,12 +3705,12 @@ class sql_db
      */
     function add_id_2key($name, $field2_name, $field2_value): int
     {
-        log_debug($name . ',' . $field2_name . ',' . $field2_value . ' to ' . $this->type);
+        log_debug($name . ',' . $field2_name . ',' . $field2_value . ' to ' . $this->class);
 
         $this->set_table();
         $this->set_name_field();
         //zu_debug('sql_db->add_id_2key add "'.$this->name_field.','.$field2_name.'" "'.$name.','.$field2_value.'"');
-        $result = $this->insert(array($this->name_field, $field2_name), array($name, $field2_value));
+        $result = $this->insert_old(array($this->name_field, $field2_name), array($name, $field2_value));
 
         log_debug('is "' . $result . '"');
         return $result;
@@ -3379,15 +3718,17 @@ class sql_db
 
     /**
      * update some values in a table
+     * TODO separate the sql statement creation from the update statement execution
+     *      e.g. to use the IDE check functionality for the created sql statements
      * $id is the primary id of the db table or an array with the ids of the primary keys
      * @return bool false if the update has failed (and the error messages are logged)
      */
-    function update($id, $fields, $values, string $id_field = ''): bool
+    function update_old($id, $fields, $values, string $id_field = ''): bool
     {
         global $debug;
         $lib = new library();
 
-        log_debug('of ' . $this->type . ' row ' . $lib->dsp_var($id) . ' ' . $lib->dsp_var($fields) . ' with "' . $lib->dsp_var($values) . '" for user ' . $this->usr_id, $debug - 7);
+        log_debug('of ' . $this->class . ' row ' . $lib->dsp_var($id) . ' ' . $lib->dsp_var($fields) . ' with "' . $lib->dsp_var($values) . '" for user ' . $this->usr_id, $debug - 7);
 
         $result = true;
 
@@ -3408,9 +3749,9 @@ class sql_db
 
         // set the where clause user sandbox? ('.substr($this->type,0,4).')');
         $sql_where = ' WHERE ' . $this->id_field . ' = ' . $this->sf($id);
-        if (substr($this->type, 0, 4) == 'user') {
+        if (substr($this->class, 0, 4) == 'user') {
             // ... but not for the user table itself
-            if ($this->type <> sql_db::TBL_USER and $this->type <> sql_db::TBL_USER_PROFILE and $this->type <> sql_db::TBL_USER_TYPE) {
+            if ($this->class <> sql_db::TBL_USER and $this->class <> sql_db::TBL_USER_PROFILE and $this->class <> sql_db::TBL_USER_TYPE) {
                 $sql_where .= ' AND user_id = ' . $this->usr_id;
             }
         }
@@ -3455,7 +3796,7 @@ class sql_db
     function update_name($id, $name): bool
     {
         $this->set_name_field();
-        return $this->update($id, $this->name_field, $name);
+        return $this->update_old($id, $this->name_field, $name);
     }
 
     /**
@@ -3464,13 +3805,13 @@ class sql_db
      *                or the error message that should be shown to the user
      *                which may include a link for error tracing
      */
-    function delete($id_fields, $id_values): string
+    function delete_old($id_fields, $id_values): string
     {
         $lib = new library();
         if (is_array($id_fields)) {
-            log_debug('in "' . $this->type . '" WHERE "' . $lib->dsp_array($id_fields) . '" IS "' . $lib->dsp_array($id_values) . '" for user ' . $this->usr_id);
+            log_debug('in "' . $this->class . '" WHERE "' . $lib->dsp_array($id_fields) . '" IS "' . $lib->dsp_array($id_values) . '" for user ' . $this->usr_id);
         } else {
-            log_debug('in "' . $this->type . '" WHERE "' . $id_fields . '" IS "' . $id_values . '" for user ' . $this->usr_id);
+            log_debug('in "' . $this->class . '" WHERE "' . $id_fields . '" IS "' . $id_values . '" for user ' . $this->usr_id);
 
         }
 
@@ -3498,7 +3839,7 @@ class sql_db
         }
 
         log_debug('sql "' . $sql . '"');
-        return $this->exe_try('Deleting of ' . $this->type, $sql, '', array(), sys_log_level::FATAL);
+        return $this->exe_try('Deleting of ' . $this->class, $sql, '', array(), sys_log_level::FATAL);
     }
 
     /*
@@ -3565,8 +3906,8 @@ class sql_db
         $result = $field_value;
 
         // add the formatting for the sql statement
-        if (trim($result) == "" or trim($result) == self::NULL_VALUE) {
-            $result = self::NULL_VALUE;
+        if (trim($result) == "" or trim($result) == sql::NULL_VALUE) {
+            $result = sql::NULL_VALUE;
         } else {
             if ($forced_format == sql_db::FLD_FORMAT_VAL) {
                 if (str_starts_with($result, "'") and str_ends_with($result, "'")) {
@@ -3598,8 +3939,8 @@ class sql_db
         $result = $field_value;
 
         // add the formatting for the sql statement
-        if (trim($result) == "" or trim($result) == self::NULL_VALUE) {
-            $result = self::NULL_VALUE;
+        if (trim($result) == "" or trim($result) == sql::NULL_VALUE) {
+            $result = sql::NULL_VALUE;
         } else {
             if ($forced_format == sql_db::FLD_FORMAT_VAL) {
                 if (str_starts_with($result, "'") and str_ends_with($result, "'")) {
@@ -3650,15 +3991,15 @@ class sql_db
 
     /**
      * reset the seq number
-     * @param string $type the class name to which the related table should be resetted
+     * @param string $type the class name to which the related table should be reset
      * @return string any warning message to be shown to the admin user
      */
     function seq_reset(string $type): string
     {
         $msg = '';
-        $this->set_type($type);
+        $this->set_class($type);
         $sql_max = 'SELECT MAX(' . $this->name_sql_esc($this->id_field) . ') AS max_id FROM ' . $this->name_sql_esc($this->table) . ';';
-        // $db_con->set_fields(array('MAX(value_id) AS max_id'));
+        // $db_con->set_fields(array('MAX(group_id) AS max_id'));
         // $sql_max = $db_con->select();
         $max_row = $this->get1_internal($sql_max);
         if ($max_row == null) {
@@ -4142,12 +4483,16 @@ class sql_db
     }
 
     /**
-     * @return sql_creator with the same db_type
+     * @return sql with the same db_type
      */
-    function sql_creator(): sql_creator
+    function sql_creator(): sql
     {
-        $sc = new sql_creator();
-        $sc->set_db_type($this->db_type);
+        $sc = new sql();
+        if ($this->db_type == null) {
+            $sc->set_db_type(sql_db::POSTGRES);
+        } else {
+            $sc->set_db_type($this->db_type);
+        }
         return $sc;
     }
 

@@ -30,13 +30,16 @@
 
 */
 
-namespace api;
+namespace api\word;
 
+use api\word\word as word_api;
+use api\phrase\phrase as phrase_api;
+use api\phrase\term as term_api;
+use api\sandbox\sandbox_typed as sandbox_typed_api;
+use api\verb\verb as verb_api;
 use cfg\phrase_type;
-use html\phrase\term as term_dsp;
-use cfg\triple;
 
-class triple_api extends sandbox_typed_api
+class triple extends sandbox_typed_api
 {
 
     /*
@@ -47,17 +50,27 @@ class triple_api extends sandbox_typed_api
     // TN_* is the name of the triple used for testing
     // TD_* is the tooltip/description of the triple
     const TN_READ = 'Mathematical constant';
+    const TI_READ = 1;
     const TD_READ = 'A mathematical constant that never changes e.g. Pi';
     const TN_PI = 'Pi';
     const TN_CUBIC_METER = 'm3';
     const TN_PI_NAME = 'Pi (math)';
+    const TI_PI = 2;
     const TD_PI = 'ratio of the circumference of a circle to its diameter';
+    const TN_E = '𝑒 (math)';
+    const TI_E = 3;
+    const TD_E = 'Is the limit of (1 + 1/n)^n as n approaches infinity';
     const TN_ADD = 'System Test Triple';
     const TN_ADD_AUTO = 'System Test Triple';
     const TN_EXCLUDED = 'System Test Excluded Zurich Insurance is not part of the City of Zurich';
 
     const TN_ZH_CITY = 'Zurich (City)';
+    const TI_ZH_CITY = 38;
     const TN_ZH_CITY_NAME = 'City of Zurich';
+    const TN_BE_CITY = 'Bern (City)';
+    const TI_BE_CITY = 39;
+    const TN_GE_CITY = 'Geneva (City)';
+    const TI_GE_CITY = 40;
     const TN_ZH_CANTON = 'Zurich (Canton)';
     const TN_ZH_CANTON_NAME = 'Canton Zurich';
     const TN_ZH_COMPANY = "Zurich Insurance";
@@ -211,7 +224,7 @@ class triple_api extends sandbox_typed_api
     }
 
     /**
-     * @return bool true if the word has the type "scaling" (e.g. "million", "million" or "one"; "one" is a hidden scaling type)
+     * @return bool true if the word has the type "scaling" (e.g. "a million", "a million" or "one"; "one" is a hidden scaling type)
      */
     function is_scaling(): bool
     {

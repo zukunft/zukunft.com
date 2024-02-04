@@ -32,8 +32,8 @@
 
 namespace test\write;
 
-use api\formula_api;
-use api\word_api;
+use api\formula\formula as formula_api;
+use api\word\word as word_api;
 use cfg\verb;
 use test\test_cleanup;
 

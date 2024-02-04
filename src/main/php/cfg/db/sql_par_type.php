@@ -35,7 +35,9 @@ enum sql_par_type: string
 {
 
     // the parameter types for prepared queries independent of the SQL dialect
+    case FLOAT = 'numeric'; // a normal format for numbers
     case INT = 'int'; // a normal integer e.g. the unique database row id / prime index
+    case INT_SMALL = 'int_small'; // a small integer e.g. the unique database row id of the most often used phrases
     case INT_HIGHER = 'int_higher'; // the result includes the given int value an all rows with a higher value
     case INT_LOWER = 'int_lower'; //
     case INT_OR = 'int_or'; //
@@ -45,18 +47,23 @@ enum sql_par_type: string
     case INT_LIST_OR = 'int_list_or';
     case INT_SUB = 'int_sub'; // a sub query is using an int parameter
     case INT_SUB_IN = 'int_sub_in'; // a sub query is using an int parameter and the IN SQL condition
+    case INT_SAME = 'int_same'; // repeat the previous integer with and
+    case INT_SAME_OR = 'int_same_or'; // repeat the previous integer with or
     case LIMIT = 'limit'; // the query limit as an integer that is not used in the where statement
     case OFFSET = 'offset'; // the query offset as an integer that is not used in the where statement
     case TEXT = 'text';
     case TEXT_LIST = 'text_list';
     case TEXT_OR = 'text_or';
     case TEXT_USR = 'text_usr'; // a name that can be user specific e.g. the word or triple name
+    case LIKE_R = 'like_start_with'; // add a wildcard to the right to fine the values that start with the given text
     case LIKE = 'like';
+    case LIKE_OR = 'like_or';
     case CONST = 'const';
     case CONST_NOT = 'const_not';
     case CONST_NOT_IN = 'const_not_in';
     case IS_NULL = 'is_null';
     case NOT_NULL = 'not_null';
+    case TIME = 'timestamp'; // e.g. for now()
 
     // parameter types to calculate the result for a group
     case MIN = 'min';

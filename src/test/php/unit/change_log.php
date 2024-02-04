@@ -33,18 +33,16 @@
 namespace test;
 
 include_once WEB_LOG_PATH . 'user_log_display.php';
-include_once MODEL_LOG_PATH . 'change_log_named.php';
+include_once MODEL_LOG_PATH . 'change.php';
 include_once MODEL_LOG_PATH . 'change_log_link.php';
 
-use api\triple_api;
-use html\log\user_log_display;
-use cfg\change_log_field;
-use cfg\change_log_link;
-use cfg\change_log_list;
-use cfg\change_log_named;
-use cfg\change_log_table;
+use api\word\triple as triple_api;
 use cfg\library;
-use cfg\sql_db;
+use cfg\db\sql_db;
+use html\log\user_log_display;
+use cfg\log\change_log_link;
+use cfg\log\change_log_list;
+use cfg\log\change;
 use cfg\triple;
 use cfg\user;
 use cfg\word;
@@ -63,11 +61,18 @@ class change_log_unit_tests
         $t->resource_path = 'db/log/';
         $usr->set_id(1);
 
+
         $t->header('Unit tests of the user log display class (src/main/php/log/change_log_*.php)');
 
-        $t->subheader('SQL statement tests');
+        $t->subheader('SQL statement creation tests');
+        $log = $t->dummy_change_log_named();
+        // TODO activate Prio 2
+        //$t->assert_sql_table_create($db_con, $log);
+        //$t->assert_sql_index_create($db_con, $log);
+        //$t->assert_sql_foreign_key_create($db_con, $log);
 
-        $log = new change_log_named($usr);
+        $t->subheader('SQL statement tests');
+        $log = new change($usr);
         $t->assert_sql_by_user($db_con, $log);
 
         $log = new change_log_link($usr);
@@ -76,7 +81,7 @@ class change_log_unit_tests
         // sql to load the word by id
         $log_dsp = new user_log_display($usr);
         $log_dsp->type = $lib->class_to_name(user::class);
-        $log_dsp->size = SQL_ROW_LIMIT;
+        $log_dsp->size = sql_db::ROW_LIMIT;
         $db_con->db_type = sql_db::POSTGRES;
         $created_sql = $log_dsp->dsp_hist_links_sql($db_con);
         $expected_sql = $t->file('db/log/change_log.sql');
@@ -87,7 +92,7 @@ class change_log_unit_tests
 
         // sql to load a log entry by field and row id
         // TODO check that user specific changes are included in the list of changes
-        $log = new change_log_named($usr);
+        $log = new change($usr);
         $this->assert_sql_named_by_field_row($t, $db_con, $log);
 
         // sql to load a log entry by field and row id
@@ -104,7 +109,7 @@ class change_log_unit_tests
         // sql to load a list of log entry by word
         $db_con->set_usr($usr->id());
         $log_lst = new change_log_list();
-        // TODO activate
+        // TODO activate Prio 2
         //$this->assert_sql_list_by_obj_field($t, $db_con, $log_lst,            change_log_table::WORD, change_log_field::FLD_WORD_VIEW);
         //$this->assert_sql_list_by_obj_field($t, $db_con, $log_lst,            change_log_table::TRIPLE, change_log_field::FLD_TRIPLE_VIEW);
 
@@ -122,9 +127,9 @@ class change_log_unit_tests
      *
      * @param test_cleanup $t the test environment
      * @param sql_db $db_con does not need to be connected to a real database
-     * @param change_log_named $log the user sandbox object e.g. a word
+     * @param change $log the user sandbox object e.g. a word
      */
-    private function assert_sql_named_by_field_row(test_cleanup $t, sql_db $db_con, change_log_named $log): void
+    private function assert_sql_named_by_field_row(test_cleanup $t, sql_db $db_con, change $log): void
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
@@ -180,7 +185,7 @@ class change_log_unit_tests
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $log_lst->load_sql_obj_fld(
-            $db_con,
+            $db_con->sql_creator(),
             $table_name,
             $field_name,
             1,
@@ -191,7 +196,7 @@ class change_log_unit_tests
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
             $qp = $log_lst->load_sql_obj_fld(
-                $db_con,
+                $db_con->sql_creator(),
                 $table_name,
                 $field_name,
                 1,

@@ -8,10 +8,10 @@ namespace test;
 include_once API_WORD_PATH . 'triple.php';
 
 //class triple_unit_tests extends TestCase
-use api\triple_api;
-use api\word_api;
+use api\word\triple as triple_api;
+use api\word\word as word_api;
 use html\word\triple as triple_dsp;
-use cfg\sql_db;
+use cfg\db\sql_db;
 use cfg\triple;
 use cfg\verb;
 

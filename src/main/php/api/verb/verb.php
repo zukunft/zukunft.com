@@ -30,16 +30,16 @@
 
 */
 
-namespace api;
+namespace api\verb;
 
 include_once API_SANDBOX_PATH . 'sandbox_named.php';
 include_once MODEL_VERB_PATH . 'verb.php';
 include_once WEB_PHRASE_PATH . 'term.php';
 
-use cfg\verb;
-use html\phrase\term as term_dsp;
+use api\phrase\term as term_api;
+use api\sandbox\sandbox_named as sandbox_named_api;
 
-class verb_api extends sandbox_named_api
+class verb extends sandbox_named_api
 {
 
     /*
@@ -47,10 +47,16 @@ class verb_api extends sandbox_named_api
      */
 
     // already coded verb names or persevered verbs names for unit and integration tests
+    // TN_* is the name of the verb
+    // TI_* is the database id based on the initial load
     const TN_READ = "not set";
-    const TC_READ = "not_set";
+    const TI_READ = 1;
     const TN_IS = "is a";
+    const TI_IS = 2;
     const TN_PART = "is part of";
+    const TI_PART = 3;
+    const TN_OF = "of";
+    const TI_OF = 4;
     const TN_TIME_STEP = "time jump";
     const TN_ADD = "System Test Verb";
 

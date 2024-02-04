@@ -37,7 +37,7 @@ namespace html\phrase;
 include_once WEB_SANDBOX_PATH . 'sandbox_named.php';
 
 use api\api;
-use api\phrase_api;
+use api\phrase\phrase as phrase_api;
 use html\sandbox\sandbox_named as sandbox_named_dsp;
 use html\word\word as word_dsp;
 use html\word\triple as triple_dsp;

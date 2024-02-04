@@ -1,4 +1,4 @@
-PREPARE formula_user_sandbox (int) AS
+PREPARE formula_user_sandbox (bigint) AS
     SELECT formula_id,
            formula_name,
            user_id,

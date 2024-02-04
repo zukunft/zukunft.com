@@ -32,11 +32,11 @@
 
 */
 
-namespace api;
+namespace api\sandbox;
 
 include_once API_SANDBOX_PATH . 'combine_object.php';
 
-class combine_named_api extends combine_object_api
+class combine_named extends combine_object
 {
 
     /*

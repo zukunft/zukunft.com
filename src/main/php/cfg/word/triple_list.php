@@ -44,9 +44,12 @@ namespace cfg;
 include_once API_WORD_PATH . 'triple_list.php';
 include_once DB_PATH . 'sql_par_type.php';
 
-use api\triple_list_api;
-use cfg\db\sql_creator;
+use api\word\triple_list as triple_list_api;
+use cfg\db\sql;
+use cfg\db\sql_db;
+use cfg\db\sql_par;
 use cfg\db\sql_par_type;
+use cfg\value\value;
 use html\html_base;
 use html\word\triple as triple_dsp;
 use html\word\triple_list as triple_list_dsp;
@@ -118,7 +121,7 @@ class triple_list extends sandbox_list
      * add the triple name field to
      * the SQL statement to load only the triple id and name
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param sandbox_named|sandbox_link_named|combine_named $sbx the single child object
      * @param string $pattern the pattern to filter the triples
      * @param int $limit the number of rows to return
@@ -126,7 +129,7 @@ class triple_list extends sandbox_list
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_names(
-        sql_creator                                    $sc,
+        sql                                            $sc,
         sandbox_named|sandbox_link_named|combine_named $sbx,
         string                                         $pattern = '',
         int                                            $limit = 0,
@@ -145,12 +148,12 @@ class triple_list extends sandbox_list
 
     /**
      * set the SQL query parameters to load a list of triples
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_creator $sc): sql_par
+    function load_sql(sql $sc): sql_par
     {
-        $sc->set_type(triple::class);
+        $sc->set_class(triple::class);
         $qp = new sql_par(self::class);
         $sc->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
         $sc->set_usr($this->user()->id());
@@ -202,11 +205,11 @@ class triple_list extends sandbox_list
 
     /**
      * set the SQL query parameters to load a list of triples by the ids
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param array $trp_ids a list of int values with the triple ids
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_ids(sql_creator $sc, array $trp_ids): sql_par
+    function load_sql_by_ids(sql $sc, array $trp_ids): sql_par
     {
         $qp = $this->load_sql($sc);
         if (count($trp_ids) > 0) {
@@ -223,16 +226,16 @@ class triple_list extends sandbox_list
 
     /**
      * set the SQL query parameters to load a list of triples by a phrase, verb and direction
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param phrase $phr the phrase which should be used for selecting the words or triples
      * @param verb|null $vrb if set to filter the selection
      * @param foaf_direction $direction to select either the parents, children or all related words ana triples
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_by_phr(
-        sql_creator $sc,
-        phrase $phr,
-        ?verb $vrb = null,
+        sql            $sc,
+        phrase         $phr,
+        ?verb          $vrb = null,
         foaf_direction $direction = foaf_direction::BOTH): sql_par
     {
         $qp = $this->load_sql($sc);
@@ -269,16 +272,16 @@ class triple_list extends sandbox_list
 
     /**
      * set the SQL query parameters to load a list of triples by a phrase, verb and direction
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param phrase_list $phr_lst a list of phrase which should be used for selecting the words or triples
      * @param verb|null $vrb if set to filter the selection
      * @param foaf_direction $direction to select either the parents, children or all related words ana triples
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_by_phr_lst(
-        sql_creator $sc,
-        phrase_list $phr_lst,
-        ?verb $vrb = null,
+        sql            $sc,
+        phrase_list    $phr_lst,
+        ?verb          $vrb = null,
         foaf_direction $direction = foaf_direction::BOTH): sql_par
     {
         $qp = $this->load_sql($sc);
@@ -420,7 +423,7 @@ class triple_list extends sandbox_list
                 ' . $db_con->get_usr_field(phrase::FLD_TYPE, 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_VAL, phrase::FLD_TYPE . $pos) . ',
                 ' . $db_con->get_usr_field(view::FLD_ID, 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_VAL, view::FLD_ID . $pos) . ',
                 ' . $db_con->get_usr_field(sandbox::FLD_EXCLUDED, 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_VAL, sandbox::FLD_EXCLUDED . $pos) . ',
-                  t' . $pos . '.' . $db_con->get_table_name_esc(sql_db::TBL_VALUE) . ' AS values' . $pos;
+                  t' . $pos . '.' . $db_con->get_table_name_esc(value::class) . ' AS values' . $pos;
     }
 
     private function load_wrd_from($pos): string

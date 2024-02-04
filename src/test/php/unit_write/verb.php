@@ -32,8 +32,8 @@
 
 namespace test;
 
-use api\verb_api;
-use api\word_api;
+use api\verb\verb as verb_api;
+use api\word\word as word_api;
 use cfg\foaf_direction;
 use cfg\verb;
 use cfg\word_select_direction;

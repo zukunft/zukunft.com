@@ -32,7 +32,7 @@
 
 namespace unit_read;
 
-use api\triple_api;
+use api\word\triple as triple_api;
 use cfg\phrase;
 use cfg\phrase_type;
 use cfg\phrase_types;

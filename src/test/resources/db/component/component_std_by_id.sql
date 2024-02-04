@@ -1,4 +1,4 @@
-PREPARE component_std_by_id (int) AS
+PREPARE component_std_by_id (bigint) AS
     SELECT component_id,
            component_name,
            code_id,

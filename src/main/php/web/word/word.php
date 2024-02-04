@@ -36,20 +36,18 @@ include_once WEB_PHRASE_PATH . 'phrase.php';
 include_once WEB_HTML_PATH . 'html_base.php';
 include_once API_PHRASE_PATH . 'phrase.php';
 
+use cfg\db\sql_db;
 use cfg\foaf_direction;
 use cfg\phrase_type;
-use cfg\sql_db;
 use cfg\verb_list;
 use html\api;
 use html\button;
 use html\formula\formula as formula_dsp;
 use html\log\change_log_named as change_log_named_dsp;
 use html\html_base;
-use html\html_selector;
 use html\log\user_log_display;
 use html\msg;
 use html\phrase\phrase as phrase_dsp;
-use html\phrase\phrase_list;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\phrase\term as term_dsp;
 use html\sandbox\sandbox_typed;
@@ -629,12 +627,12 @@ class word extends sandbox_typed
         $wrd_dsp = $this;
         // collect the display code for the user changes
         $dsp_log = '';
-        $changes = $this->dsp_hist(1, SQL_ROW_LIMIT, '', $back);
+        $changes = $this->dsp_hist(1, sql_db::ROW_LIMIT, '', $back);
         if (trim($changes) <> "") {
             $dsp_log .= $html->dsp_text_h3("Latest changes related to this word", "change_hist");
             $dsp_log .= $changes;
         }
-        $changes = $this->dsp_hist_links(0, SQL_ROW_LIMIT, '', $back);
+        $changes = $this->dsp_hist_links(0, sql_db::ROW_LIMIT, '', $back);
         if (trim($changes) <> "") {
             $dsp_log .= $html->dsp_text_h3("Latest link changes related to this word", "change_hist");
             $dsp_log .= $changes;
@@ -754,7 +752,7 @@ class word extends sandbox_typed
 
         $log_dsp = new user_log_display($this->user());
         $log_dsp->id = $this->id;
-        $log_dsp->type = \cfg\word::class;
+        $log_dsp->type = \cfg\log\word::class;
         $log_dsp->page = $page;
         $log_dsp->size = $size;
         $log_dsp->call = $call;

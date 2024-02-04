@@ -35,26 +35,25 @@ namespace cfg\component;
 
 include_once DB_PATH . 'sql_par_type.php';
 
-use api\component\component_api;
-use cfg\change_log_action;
-use cfg\change_log_link;
-use cfg\change_log_table;
+use api\component\component as component_api;
+use cfg\export\component_exp;
+use cfg\log\change_log_action;
+use cfg\log\change_log_link;
+use cfg\log\change_log_table;
 use cfg\component_link;
 use cfg\component_link_list;
-use cfg\db\sql_creator;
 use cfg\formula;
 use cfg\phrase;
 use cfg\sandbox;
 use cfg\sandbox_named;
 use cfg\sandbox_typed;
-use cfg\sql_db;
-use cfg\sql_par;
+use cfg\db\sql;
+use cfg\db\sql_par;
+use cfg\db\sql_db;
 use cfg\user;
 use cfg\user_message;
 use cfg\word;
-use html\component\component as component_dsp;
-use model\export\exp_obj;
-use model\export\component_exp;
+use cfg\export\sandbox_exp;
 
 class component extends sandbox_typed
 {
@@ -343,13 +342,13 @@ class component extends sandbox_typed
     /**
      * create the SQL to load the default view always by the id
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql_creator $sc, string $class = self::class): sql_par
+    function load_standard_sql(sql $sc, string $class = self::class): sql_par
     {
-        $sc->set_type(self::class);
+        $sc->set_class(self::class);
         $sc->set_fields(array_merge(
             self::FLD_NAMES,
             self::FLD_NAMES_USR,
@@ -384,12 +383,12 @@ class component extends sandbox_typed
     /**
      * create the common part of an SQL statement to retrieve the parameters of a view component from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    protected function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
+    function load_sql(sql $sc, string $query_name, string $class = self::class): sql_par
     {
         return parent::load_sql_usr_num($sc, $this, $query_name);
     }
@@ -542,10 +541,10 @@ class component extends sandbox_typed
 
     /**
      * TODO use a set_join function for all not simple sql joins
-     * @param sql_creator $sc the sql creator without component joins
-     * @return sql_creator the sql creator with the components join set
+     * @param sql $sc the sql creator without component joins
+     * @return sql the sql creator with the components join set
      */
-    function set_join(sql_creator $sc): sql_creator
+    function set_join(sql $sc): sql
     {
         $sc->set_join_fields(component::FLD_NAMES, sql_db::TBL_COMPONENT);
         $sc->set_join_usr_fields(component::FLD_NAMES_USR, sql_db::TBL_COMPONENT);
@@ -604,21 +603,21 @@ class component extends sandbox_typed
             if ($key == self::FLD_POSITION) {
                 $this->order_nbr = $value;
             }
-            if ($key == exp_obj::FLD_TYPE) {
+            if ($key == sandbox_exp::FLD_TYPE) {
                 if ($value != '') {
                     if ($this->user()->is_admin() or $this->user()->is_system()) {
                         $this->type_id = $this->type_id_by_code_id($value);
                     }
                 }
             }
-            if ($key == exp_obj::FLD_CODE_ID) {
+            if ($key == sandbox_exp::FLD_CODE_ID) {
                 if ($value != '') {
                     if ($this->user()->is_admin() or $this->user()->is_system()) {
                         $this->code_id = $value;
                     }
                 }
             }
-            if ($key == exp_obj::FLD_UI_MSG_ID) {
+            if ($key == sandbox_exp::FLD_UI_MSG_ID) {
                 if ($value != '') {
                     if ($this->user()->is_admin() or $this->user()->is_system()) {
                         $this->ui_msg_code_id = $value;
@@ -642,7 +641,7 @@ class component extends sandbox_typed
      * fill the component export object to create a json
      * which does not include the internal database id
      */
-    function export_obj(bool $do_load = true): exp_obj
+    function export_obj(bool $do_load = true): sandbox_exp
     {
         log_debug('component->export_obj ' . $this->dsp_id());
         $result = new component_exp();
@@ -807,7 +806,7 @@ class component extends sandbox_typed
             log_debug('for "' . $this->dsp_id() . ' und user ' . $this->user()->name);
 
             // check again if there ist not yet a record
-            $db_con->set_type(sql_db::TBL_COMPONENT, true);
+            $db_con->set_class(sql_db::TBL_COMPONENT, true);
             $qp = new sql_par(self::class);
             $qp->name = 'component_del_usr_cfg_if';
             $db_con->set_name($qp->name);
@@ -822,8 +821,8 @@ class component extends sandbox_typed
             }
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
-                $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_COMPONENT);
-                $log_id = $db_con->insert(array(component::FLD_ID, user::FLD_ID), array($this->id, $this->user()->id()));
+                $db_con->set_class(sql_db::TBL_USER_PREFIX . sql_db::TBL_COMPONENT);
+                $log_id = $db_con->insert_old(array(component::FLD_ID, user::FLD_ID), array($this->id, $this->user()->id()));
                 if ($log_id <= 0) {
                     log_err('Insert of user_component failed.');
                     $result = false;
@@ -840,13 +839,13 @@ class component extends sandbox_typed
     /**
      * create an SQL statement to retrieve the user changes of the current view component
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_user_changes(sql_creator $sc, string $class = self::class): sql_par
+    function load_sql_user_changes(sql $sc, string $class = self::class): sql_par
     {
-        $sc->set_type(self::class, true);
+        $sc->set_class(self::class, true);
         $sc->set_fields(array_merge(
             self::FLD_NAMES_USR,
             self::FLD_NAMES_NUM_USR

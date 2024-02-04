@@ -30,7 +30,7 @@
 
 */
 
-use api\word_api;
+use api\word\word as word_api;
 use cfg\user;
 use cfg\user_list;
 use test\test_cleanup;

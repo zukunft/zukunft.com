@@ -36,13 +36,14 @@ namespace html\formula;
 
 include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
 
+use cfg\db\sql_db;
 use cfg\expression;
 use cfg\formula_link_list;
 use cfg\library;
 use cfg\phrase;
 use cfg\phrase_list;
-use cfg\result;
-use cfg\result_list;
+use cfg\result\result;
+use cfg\result\result_list;
 use cfg\term_list;
 use controller\controller;
 use api\api;
@@ -299,7 +300,7 @@ class formula extends sandbox_typed
         global $usr;
         $log_dsp = new user_log_display($usr);
         $log_dsp->id = $this->id;
-        $log_dsp->type = \cfg\formula::class;
+        $log_dsp->type = formula::class;
         $log_dsp->page = $page;
         $log_dsp->size = $size;
         $log_dsp->call = $call;
@@ -379,13 +380,13 @@ class formula extends sandbox_typed
             // allow to test and refresh the formula and show some sample values
             $numbers_html = $this->dsp_test_and_samples($back);
             // display the user changes
-            $changes = $this->dsp_hist(0, SQL_ROW_LIMIT, '', $back);
+            $changes = $this->dsp_hist(0, sql_db::ROW_LIMIT, '', $back);
             if (trim($changes) <> "") {
                 $hist_html = $changes;
             } else {
                 $hist_html = 'Nothing changed yet.';
             }
-            $changes = $this->dsp_hist_links(0, SQL_ROW_LIMIT, '', $back);
+            $changes = $this->dsp_hist_links(0, sql_db::ROW_LIMIT, '', $back);
             if (trim($changes) <> "") {
                 $link_html = $changes;
             } else {

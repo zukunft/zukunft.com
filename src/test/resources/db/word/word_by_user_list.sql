@@ -1,4 +1,4 @@
-PREPARE word_by_user_list (int,int) AS
+PREPARE word_by_user_list (bigint, bigint) AS
     SELECT
             s.word_id,
             s.word_name,

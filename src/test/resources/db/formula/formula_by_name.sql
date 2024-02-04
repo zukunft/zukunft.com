@@ -1,4 +1,4 @@
-PREPARE formula_by_name (int, text) AS
+PREPARE formula_by_name (bigint, text) AS
     SELECT s.formula_id,
            u.formula_id AS user_formula_id,
            s.user_id,

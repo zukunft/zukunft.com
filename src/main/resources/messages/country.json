@@ -12,6 +12,8 @@
     { "name": "Canton"},
     { "name": "City"},
     { "name": "Zurich"},
+    { "name": "Bern"},
+    { "name": "Geneva"},
     { "name": "Germany", "refs": [ { "name": "Germany", "type": "wikipedia" } ] },
     { "name": "inhabitants"},
     { "name": "2015", "type": "time"},
@@ -42,7 +44,9 @@
       "refs": [ { "name": "Canton of Zürich", "type": "wikipedia" },
                 { "name": "Q11943", "type": "wikidata" } ]
     },
-    {"name": "Zurich (City)", "from": "Zurich", "verb": "is a", "to": "City",
+    {"name": "Zurich (City)", "from": "Zurich", "verb": "is a", "to": "City"},
+    {"name": "Bern (City)", "from": "Bern", "verb": "is a", "to": "City"},
+    {"name": "Geneva (City)", "from": "Geneva", "verb": "is a", "to": "City",
       "refs": [ { "name": "Zürich", "type": "wikipedia" },
                 { "name": "Q72", "type": "wikidata" },
                 { "name": "zurich", "type": "conceptnet" } ]

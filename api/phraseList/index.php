@@ -34,7 +34,7 @@ use controller\controller;
 use cfg\user;
 use cfg\phr_ids;
 use cfg\phrase_list;
-use api\phrase_list_api;
+use api\phrase\phrase_list as phrase_list_api;
 
 // standard zukunft header for callable php files to allow debugging and lib loading
 global $debug;
@@ -45,7 +45,7 @@ include_once PHP_PATH . 'zu_lib.php';
 
 include_once API_PATH . 'api.php';
 include_once API_PATH . 'controller.php';
-include_once API_PATH . 'message_header.php';
+include_once API_PATH . 'api_message.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_PHRASE_PATH . 'phr_ids.php';
 include_once MODEL_PHRASE_PATH . 'phrase_list.php';

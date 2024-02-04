@@ -34,7 +34,7 @@ namespace html\verb;
 include_once WEB_SANDBOX_PATH . 'sandbox_named.php';
 
 use api\api;
-use api\verb_api;
+use api\verb\verb as verb_api;
 use html\api as api_dsp;
 use html\html_base;
 use html\phrase\term as term_dsp;

@@ -53,38 +53,41 @@
 namespace test;
 
 include_once MODEL_USER_PATH . 'user.php';
+include_once DB_PATH . 'sql_table_type.php';
 
-use cfg\change_log_named;
+use cfg\db\sql_par;
+use cfg\log\change;
 use cfg\combine_named;
 use cfg\combine_object;
 use cfg\component\component;
 use cfg\component\component_list;
 use cfg\config;
-use cfg\db_object;
+use cfg\db_object_seq_id;
 use cfg\fig_ids;
 use cfg\formula;
 use cfg\formula_list;
+use cfg\group\group;
 use cfg\library;
 use cfg\phr_ids;
 use cfg\phrase;
 use cfg\phrase_list;
 use cfg\ref;
-use cfg\result;
-use cfg\result_list;
+use cfg\result\result;
+use cfg\result\result_list;
 use cfg\sandbox;
 use cfg\sandbox_link_named;
 use cfg\sandbox_named;
+use cfg\sandbox_value;
 use cfg\source;
-use cfg\sql_db;
-use cfg\sql_par;
+use cfg\db\sql_db;
 use cfg\term;
 use cfg\triple;
 use cfg\triple_list;
 use cfg\trm_ids;
 use cfg\user;
 use cfg\user_profile;
-use cfg\value;
-use cfg\value_list;
+use cfg\value\value;
+use cfg\value\value_list;
 use cfg\verb;
 use cfg\view;
 use cfg\view_list;
@@ -153,7 +156,7 @@ include_once $path_unit . 'formula.php';
 include_once $path_unit . 'formula_list.php';
 include_once $path_unit . 'formula_link.php';
 include_once $path_unit . 'result.php';
-include_once $path_unit . 'result_list.php';
+include_once $path_unit . 'result_list_tests.php';
 include_once $path_unit . 'formula_element.php';
 include_once $path_unit . 'figure.php';
 include_once $path_unit . 'figure_list.php';
@@ -170,6 +173,7 @@ include_once $path_unit . 'language.php';
 include_once $path_unit . 'batch_job.php';
 include_once $path_unit . 'change_log.php';
 include_once $path_unit . 'system_log.php';
+include_once $path_unit . 'import.php';
 
 // load the testing functions for creating HTML code
 include_once $path_unit . 'html.php';
@@ -238,6 +242,7 @@ include_once $path_unit_read . 'ref.php';
 include_once $path_unit_read . 'share.php';
 include_once $path_unit_read . 'protection.php';
 include_once $path_unit_read . 'language.php';
+include_once $path_unit_read . 'export.php';
 
 
 // load the testing functions for creating JSON messages for the frontend code
@@ -487,7 +492,7 @@ class test_base
      *
      * @param string $test_name (unique) description of the test
      * @param string|array|null $result the actual result
-     * @param string|array $target the expected result
+     * @param string|array|null $target the expected result
      * @param float $exe_max_time the expected max time to create the result
      * @param string $comment
      * @param string $test_type
@@ -496,7 +501,7 @@ class test_base
     function assert(
         string            $test_name,
         string|array|null $result,
-        string|array      $target = '',
+        string|array|null $target = '',
         float             $exe_max_time = TIMEOUT_LIMIT,
         string            $comment = '',
         string            $test_type = ''): bool
@@ -735,15 +740,15 @@ class test_base
      *
      * @param string $dsp_code_id the code id of the view that should be tested
      * @param user $usr to define for which user the view should be created
-     * @param db_object|null $dbo the database object that should be shown
+     * @param db_object_seq_id|null $dbo the database object that should be shown
      * @param int $id the id of the database object that should be loaded and send to the frontend
      * @return bool true if the generated view matches the expected
      */
     function assert_view(
-        string     $dsp_code_id,
-        user       $usr,
-        ?db_object $dbo = null,
-        int        $id = 0): bool
+        string            $dsp_code_id,
+        user              $usr,
+        ?db_object_seq_id $dbo = null,
+        int               $id = 0): bool
     {
         $lib = new library();
 
@@ -857,6 +862,203 @@ class test_base
      */
 
     /**
+     * check if the object can return the sql table names
+     * for all allowed SQL database dialects
+     *
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param object $usr_obj the user sandbox object e.g. a word
+     * @return bool true if all tests are fine
+     */
+    function assert_sql_truncate(sql_db $db_con, object $usr_obj): bool
+    {
+        $lib = new library();
+        $class = $lib->class_to_name($usr_obj::class);
+        // check the Postgres query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $name = $class . '_truncate';
+        $expected_sql = $this->assert_sql_expected($name, $db_con->db_type);
+        $actual_sql = $usr_obj->sql_truncate($db_con->sql_creator(), $class);
+        $result = $this->assert_sql($name, $actual_sql, $expected_sql);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $expected_sql = $this->assert_sql_expected($name, $db_con->db_type);
+            $actual_sql = $usr_obj->sql_truncate($db_con->sql_creator(), $class);
+            $result = $this->assert_sql($name, $actual_sql, $expected_sql);
+        }
+        return $result;
+    }
+
+    /**
+     * check the SQL statement to create the sql table
+     * for all allowed SQL database dialects
+     *
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param object $usr_obj the user sandbox object e.g. a word
+     * @return bool true if all tests are fine
+     */
+    function assert_sql_table_create(sql_db $db_con, object $usr_obj): bool
+    {
+        $lib = new library();
+        $class = $lib->class_to_name($usr_obj::class);
+        // check the Postgres query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $name = $class . '_create';
+        $expected_sql = $this->assert_sql_expected($name, $db_con->db_type);
+        $actual_sql = $usr_obj->sql_table($db_con->sql_creator(), $class);
+        $result = $this->assert_sql($name, $actual_sql, $expected_sql);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $expected_sql = $this->assert_sql_expected($name, $db_con->db_type);
+            $actual_sql = $usr_obj->sql_table($db_con->sql_creator(), $class);
+            $result = $this->assert_sql($name, $actual_sql, $expected_sql);
+        }
+        return $result;
+    }
+
+    /**
+     * check the SQL statement to create the indices related to a table
+     * for all allowed SQL database dialects
+     *
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param object $usr_obj the user sandbox object e.g. a word
+     * @return bool true if all tests are fine
+     */
+    function assert_sql_index_create(sql_db $db_con, object $usr_obj): bool
+    {
+        $lib = new library();
+        $class = $lib->class_to_name($usr_obj::class);
+        // check the Postgres query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $name = $class . '_index';
+        $expected_sql = $this->assert_sql_expected($name, $db_con->db_type);
+        $actual_sql = $usr_obj->sql_index($db_con->sql_creator(), $class);
+        $result = $this->assert_sql($name, $actual_sql, $expected_sql);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $expected_sql = $this->assert_sql_expected($name, $db_con->db_type);
+            $actual_sql = $usr_obj->sql_index($db_con->sql_creator(), $class);
+            $result = $this->assert_sql($name, $actual_sql, $expected_sql);
+        }
+        return $result;
+    }
+
+    /**
+     * check the SQL statement to create the foreign keys related to a table
+     * for all allowed SQL database dialects
+     *
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param object $usr_obj the user sandbox object e.g. a word
+     * @return bool true if all tests are fine
+     */
+    function assert_sql_foreign_key_create(sql_db $db_con, object $usr_obj): bool
+    {
+        $lib = new library();
+        $class = $lib->class_to_name($usr_obj::class);
+        // check the Postgres query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $name = $class . '_foreign_key';
+        $expected_sql = $this->assert_sql_expected($name, $db_con->db_type);
+        $actual_sql = $usr_obj->sql_foreign_key($db_con->sql_creator(), $class);
+        $result = $this->assert_sql($name, $actual_sql, $expected_sql);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $expected_sql = $this->assert_sql_expected($name, $db_con->db_type);
+            $actual_sql = $usr_obj->sql_foreign_key($db_con->sql_creator(), $class);
+            $result = $this->assert_sql($name, $actual_sql, $expected_sql);
+        }
+        return $result;
+    }
+
+    /**
+     * check the SQL statement to add a database row
+     * for all allowed SQL database dialects
+     *
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param object $usr_obj the user sandbox object e.g. a word
+     * @param bool $usr_tbl true if a db row should be added to the user table
+     * @return bool true if all tests are fine
+     */
+    function assert_sql_insert(sql_db $db_con, object $usr_obj, bool $usr_tbl = false): bool
+    {
+        $lib = new library();
+        // check the Postgres query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $usr_obj->sql_insert($db_con->sql_creator(), $usr_tbl);
+        $result = $this->assert_qp($qp, $db_con->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $usr_obj->sql_insert($db_con->sql_creator(), $usr_tbl);
+            $result = $this->assert_qp($qp, $db_con->db_type);
+        }
+        return $result;
+    }
+
+    /**
+     * check the SQL statement to update a database row
+     * for all allowed SQL database dialects
+     *
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param object $usr_obj the user sandbox object e.g. a word
+     * @param bool $usr_tbl true if a db row should be added to the user table
+     * @return bool true if all tests are fine
+     */
+    function assert_sql_update(sql_db $db_con, object $usr_obj, bool $usr_tbl = false): bool
+    {
+        $empty_usr_obj = clone $usr_obj;
+        $empty_usr_obj->reset();
+        $fields = $usr_obj->changed_db_fields($empty_usr_obj);
+        $values = $usr_obj->changed_db_values($empty_usr_obj);
+        // check the Postgres query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $usr_obj->sql_update($db_con->sql_creator(), $fields, $values, $usr_tbl);
+        $result = $this->assert_qp($qp, $db_con->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $usr_obj->sql_update($db_con->sql_creator(), $fields, $values, $usr_tbl);
+            $result = $this->assert_qp($qp, $db_con->db_type);
+        }
+        return $result;
+    }
+
+    /**
+     * check the SQL statement to delete a database row
+     * for all allowed SQL database dialects
+     *
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param object $usr_obj the user sandbox object e.g. a word
+     * @param bool $usr_tbl true if a db row should be added to the user table
+     * @param bool $excluded true if only the excluded user rows should be deleted
+     * @return bool true if all tests are fine
+     */
+    function assert_sql_delete(sql_db $db_con, object $usr_obj, bool $usr_tbl = false, bool $excluded = false): bool
+    {
+        // check the Postgres query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $usr_obj->sql_delete($db_con->sql_creator(), $usr_tbl, $excluded);
+        $result = $this->assert_qp($qp, $db_con->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $usr_obj->sql_delete($db_con->sql_creator(), $usr_tbl, $excluded);
+            $result = $this->assert_qp($qp, $db_con->db_type);
+        }
+        return $result;
+    }
+
+    /**
      * check the SQL statement to load a db object by id
      * for all allowed SQL database dialects
      *
@@ -866,17 +1068,15 @@ class test_base
      */
     function assert_sql_by_id(sql_db $db_con, object $usr_obj): bool
     {
-        $lib = new library();
-        $class = $lib->class_to_name($usr_obj::class);
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $usr_obj->load_sql_by_id($db_con->sql_creator(), 1, $class);
+        $qp = $usr_obj->load_sql_by_id($db_con->sql_creator(), $usr_obj->id(), $usr_obj::class);
         $result = $this->assert_qp($qp, $db_con->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
-            $qp = $usr_obj->load_sql_by_id($db_con->sql_creator(), 1, $class);
+            $qp = $usr_obj->load_sql_by_id($db_con->sql_creator(), $usr_obj->id(), $usr_obj::class);
             $result = $this->assert_qp($qp, $db_con->db_type);
         }
         return $result;
@@ -887,10 +1087,10 @@ class test_base
      * for all allowed SQL database dialects
      *
      * @param sql_db $db_con does not need to be connected to a real database
-     * @param sandbox $usr_obj the user sandbox object e.g. a word
+     * @param sandbox|sandbox_value $usr_obj the user sandbox object e.g. a word
      * @return bool true if all tests are fine
      */
-    function assert_sql_standard(sql_db $db_con, sandbox $usr_obj): bool
+    function assert_sql_standard(sql_db $db_con, sandbox|sandbox_value $usr_obj): bool
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
@@ -911,10 +1111,10 @@ class test_base
      * e.g. the value a user has changed of word, triple, value or formulas
      *
      * @param sql_db $db_con does not need to be connected to a real database
-     * @param sandbox $usr_obj the user sandbox object e.g. a word
+     * @param sandbox|sandbox_value $usr_obj the user sandbox object e.g. a word
      * @return bool true if all tests are fine
      */
-    function assert_sql_user_changes(sql_db $db_con, sandbox $usr_obj): bool
+    function assert_sql_user_changes(sql_db $db_con, sandbox|sandbox_value $usr_obj): bool
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
@@ -925,6 +1125,31 @@ class test_base
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
             $qp = $usr_obj->load_sql_user_changes($db_con->sql_creator());
+            $result = $this->assert_qp($qp, $db_con->db_type);
+        }
+
+        return $result;
+    }
+
+    /**
+     * check the SQL statements to get all users that have changed the object
+     * TODO add this test once to each user object type
+     *
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param sandbox|sandbox_value $usr_obj the user sandbox object e.g. a word
+     * @return bool true if all tests are fine
+     */
+    function assert_sql_changer(sql_db $db_con, sandbox|sandbox_value $usr_obj): bool
+    {
+        // check the Postgres query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $usr_obj->load_sql_changer($db_con->sql_creator());
+        $result = $this->assert_qp($qp, $db_con->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $usr_obj->load_sql_changer($db_con->sql_creator());
             $result = $this->assert_qp($qp, $db_con->db_type);
         }
 
@@ -1200,15 +1425,16 @@ class test_base
         array|phr_ids|trm_ids|fig_ids|null $ids = array(1, 2)): bool
     {
         // check the Postgres query syntax
-        $db_con->db_type = sql_db::POSTGRES;
-        $qp = $usr_obj->load_sql_by_ids($db_con->sql_creator(), $ids);
-        $result = $this->assert_qp($qp, $db_con->db_type);
+        $sc = $db_con->sql_creator();
+        $sc->db_type = sql_db::POSTGRES;
+        $qp = $usr_obj->load_sql_by_ids($sc, $ids);
+        $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $db_con->db_type = sql_db::MYSQL;
-            $qp = $usr_obj->load_sql_by_ids($db_con->sql_creator(), $ids);
-            $result = $this->assert_qp($qp, $db_con->db_type);
+            $sc->db_type = sql_db::MYSQL;
+            $qp = $usr_obj->load_sql_by_ids($sc, $ids);
+            $result = $this->assert_qp($qp, $sc->db_type);
         }
         return $result;
     }
@@ -1224,15 +1450,16 @@ class test_base
     function assert_sql_names_by_ids(sql_db $db_con, object $usr_obj, ?array $ids = array(1, 2)): bool
     {
         // check the Postgres query syntax
-        $db_con->db_type = sql_db::POSTGRES;
-        $qp = $usr_obj->load_names_sql_by_ids($db_con->sql_creator(), $ids);
-        $result = $this->assert_qp($qp, $db_con->db_type);
+        $sc = $db_con->sql_creator();
+        $sc->db_type = sql_db::POSTGRES;
+        $qp = $usr_obj->load_names_sql_by_ids($sc, $ids);
+        $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $db_con->db_type = sql_db::MYSQL;
-            $qp = $usr_obj->load_names_sql_by_ids($db_con->sql_creator(), $ids);
-            $result = $this->assert_qp($qp, $db_con->db_type);
+            $sc->db_type = sql_db::MYSQL;
+            $qp = $usr_obj->load_names_sql_by_ids($sc, $ids);
+            $result = $this->assert_qp($qp, $sc->db_type);
         }
         return $result;
     }
@@ -1254,15 +1481,16 @@ class test_base
     ): bool
     {
         // check the Postgres query syntax
-        $db_con->db_type = sql_db::POSTGRES;
-        $qp = $lst_obj->load_sql_names($db_con->sql_creator(), $sbx, $pattern);
-        $result = $this->assert_qp($qp, $db_con->db_type);
+        $sc = $db_con->sql_creator();
+        $sc->db_type = sql_db::POSTGRES;
+        $qp = $lst_obj->load_sql_names($sc, $sbx, $pattern);
+        $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $db_con->db_type = sql_db::MYSQL;
-            $qp = $lst_obj->load_sql_names($db_con->sql_creator(), $sbx, $pattern);
-            $result = $this->assert_qp($qp, $db_con->db_type);
+            $sc->db_type = sql_db::MYSQL;
+            $qp = $lst_obj->load_sql_names($sc, $sbx, $pattern);
+            $result = $this->assert_qp($qp, $sc->db_type);
         }
         return $result;
     }
@@ -1279,22 +1507,112 @@ class test_base
     function assert_sql_by_names(sql_db $db_con, object $usr_obj, array $names): bool
     {
         // check the Postgres query syntax
-        $db_con->db_type = sql_db::POSTGRES;
-        $qp = $usr_obj->load_sql_by_names($db_con->sql_creator(), $names);
-        $result = $this->assert_qp($qp, $db_con->db_type);
+        $sc = $db_con->sql_creator();
+        $sc->db_type = sql_db::POSTGRES;
+        $qp = $usr_obj->load_sql_by_names($sc, $names);
+        $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $db_con->db_type = sql_db::MYSQL;
-            $qp = $usr_obj->load_sql_by_names($db_con->sql_creator(), $names);
-            $result = $this->assert_qp($qp, $db_con->db_type);
+            $sc->db_type = sql_db::MYSQL;
+            $qp = $usr_obj->load_sql_by_names($sc, $names);
+            $result = $this->assert_qp($qp, $sc->db_type);
+        }
+        return $result;
+    }
+
+    /**
+     * check the SQL statements to load a group by phrase list for all allowed SQL database dialects
+     *
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param object $usr_obj the user sandbox object e.g. a word
+     * @param phrase $phr with the names of the objects that should be loaded
+     * @return bool true if all tests are fine
+     */
+    function assert_sql_by_phrase(sql_db $db_con, object $usr_obj, phrase $phr): bool
+    {
+        // check the Postgres query syntax
+        $sc = $db_con->sql_creator();
+        $sc->db_type = sql_db::POSTGRES;
+        $qp = $usr_obj->load_sql_by_phr($sc, $phr);
+        $result = $this->assert_qp($qp, $sc->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $sc->db_type = sql_db::MYSQL;
+            $qp = $usr_obj->load_sql_by_phr($sc, $phr);
+            $result = $this->assert_qp($qp, $sc->db_type);
+        }
+        return $result;
+    }
+
+    /**
+     * test the SQL statement creation for a value or result list
+     * similar to assert_load_sql but for a phrase list
+     *
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param object $usr_obj the user sandbox object e.g. a word
+     * @param phrase_list $phr_lst the phrase list that should be used for the sql creation
+     * @param bool $or if true all values are returned that are linked to any phrase of the list
+     */
+    function assert_sql_by_phr_lst(
+        sql_db       $db_con,
+        object       $usr_obj,
+        phrase_list  $phr_lst,
+        bool         $or = false
+    ): void
+    {
+        // check the Postgres query syntax
+        $sc = $db_con->sql_creator();
+        $sc->db_type = sql_db::POSTGRES;
+        $qp = $usr_obj->load_sql_by_phr_lst($sc, $phr_lst, false, $or);
+        $result = $this->assert_qp($qp, $sc->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $sc->db_type = sql_db::MYSQL;
+            $qp = $usr_obj->load_sql_by_phr_lst($sc, $phr_lst, false, $or);
+            $this->assert_qp($qp, $sc->db_type);
+        }
+    }
+
+    /**
+     * check the SQL statements to load a list of result by group
+     *
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param object $usr_obj the user sandbox object e.g. a word
+     * @param group $grp with the phrase to select the results
+     * @param bool $by_source set to true to force the selection e.g. by source phrase group id
+     * @return bool true if all tests are fine
+     */
+    function assert_sql_by_group(sql_db $db_con, object $usr_obj, group $grp, bool $by_source = false): bool
+    {
+        // check the Postgres query syntax
+        $sc = $db_con->sql_creator();
+        $sc->db_type = sql_db::POSTGRES;
+        if ($by_source) {
+            $qp = $usr_obj->load_sql_by_src_grp($sc, $grp);
+        } else {
+            $qp = $usr_obj->load_sql_by_grp($sc, $grp);
+        }
+        $result = $this->assert_qp($qp, $sc->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $sc->db_type = sql_db::MYSQL;
+            if ($by_source) {
+                $qp = $usr_obj->load_sql_by_src_grp($sc, $grp);
+            } else {
+                $qp = $usr_obj->load_sql_by_grp($sc, $grp);
+            }
+            $result = $this->assert_qp($qp, $sc->db_type);
         }
         return $result;
     }
 
 
     /*
-     * SQL for list by ..
+     * SQL for list by ...
      */
 
     /**
@@ -1310,13 +1628,13 @@ class test_base
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $lst_obj->load_sql($db_con, $select_obj, $by_source);
+        $qp = $lst_obj->load_sql_by_obj($db_con, $select_obj, $by_source);
         $result = $this->assert_qp($qp, $db_con->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
-            $qp = $lst_obj->load_sql($db_con, $select_obj, $by_source);
+            $qp = $lst_obj->load_sql_by_obj($db_con, $select_obj, $by_source);
             $result = $this->assert_qp($qp, $db_con->db_type);
         }
         return $result;
@@ -1333,15 +1651,16 @@ class test_base
     function assert_sql_list_by_type(sql_db $db_con, object $lst_obj, string $type_code_id): bool
     {
         // check the Postgres query syntax
-        $db_con->db_type = sql_db::POSTGRES;
-        $qp = $lst_obj->load_sql_by_type($db_con->sql_creator(), $type_code_id, $lst_obj::class);
-        $result = $this->assert_qp($qp, $db_con->db_type);
+        $sc = $db_con->sql_creator();
+        $sc->db_type = sql_db::POSTGRES;
+        $qp = $lst_obj->load_sql_by_type($sc, $type_code_id, $lst_obj::class);
+        $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $db_con->db_type = sql_db::MYSQL;
-            $qp = $lst_obj->load_sql_by_type($db_con->sql_creator(), $type_code_id, $lst_obj::class);
-            $result = $this->assert_qp($qp, $db_con->db_type);
+            $sc->db_type = sql_db::MYSQL;
+            $qp = $lst_obj->load_sql_by_type($sc, $type_code_id, $lst_obj::class);
+            $result = $this->assert_qp($qp, $sc->db_type);
         }
         return $result;
     }
@@ -1360,18 +1679,7 @@ class test_base
      */
     function assert_qp(sql_par $qp, string $dialect = ''): bool
     {
-        if ($dialect == sql_db::POSTGRES) {
-            $file_name_ext = '';
-        } elseif ($dialect == sql_db::MYSQL) {
-            $file_name_ext = self::FILE_MYSQL;
-        } else {
-            $file_name_ext = $dialect;
-        }
-        $file_name = $this->resource_path . $qp->name . $file_name_ext . self::FILE_EXT;
-        $expected_sql = $this->file($file_name);
-        if ($expected_sql == '') {
-            $expected_sql = 'File ' . $file_name . ' with the expected SQL statement is missing.';
-        }
+        $expected_sql = $this->assert_sql_expected($qp->name, $dialect);
         $result = $this->assert_sql(
             $this->name . $qp->name . '_' . $dialect,
             $qp->sql,
@@ -1384,6 +1692,32 @@ class test_base
         }
 
         return $result;
+    }
+
+    /**
+     * build the filename where the expected sql statement is saved
+     *
+     * @param string $name the unique name of the query
+     * @param string $dialect the db dialect
+     * @return string the filename including the resource path
+     */
+    function assert_sql_expected(string $name, string $dialect = ''): string
+    {
+        if ($dialect == sql_db::POSTGRES) {
+            $file_name_ext = '';
+        } elseif ($dialect == sql_db::MYSQL) {
+            $file_name_ext = self::FILE_MYSQL;
+        } else {
+            $file_name_ext = $dialect;
+        }
+        $file_name =  $this->resource_path . $name . $file_name_ext . self::FILE_EXT;
+        $expected_sql = $this->file($file_name);
+        if ($expected_sql == '') {
+            $msg = 'File ' . $file_name . ' with the expected SQL statement is missing.';
+            log_err($msg);
+            $expected_sql = $msg;
+        }
+        return $expected_sql;
     }
 
     /**
@@ -1433,24 +1767,24 @@ class test_base
      *
      * @param sql_db $db_con does not need to be connected to a real database
      * @param object $usr_obj the user sandbox object e.g. a word
-     * @param string $db_type to define the database type if it does not match the class
+     * @param string $class to define the database type if it does not match the class
      * @return bool true if all tests are fine
      */
-    function assert_load_sql_obj_vars(sql_db $db_con, object $usr_obj, string $db_type = ''): bool
+    function assert_sql_by_obj_vars(sql_db $db_con, object $usr_obj, string $class = ''): bool
     {
-        if ($db_type == '') {
-            $db_type = get_class($usr_obj);
+        if ($class == '') {
+            $class = get_class($usr_obj);
         }
 
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $usr_obj->load_sql_obj_vars($db_con, $db_type);
+        $qp = $usr_obj->load_sql_obj_vars($db_con, $class);
         $result = $this->assert_qp($qp, $db_con->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
-            $qp = $usr_obj->load_sql_obj_vars($db_con, $db_type);
+            $qp = $usr_obj->load_sql_obj_vars($db_con, $class);
             $result = $this->assert_qp($qp, $db_con->db_type);
         }
         return $result;
@@ -1463,7 +1797,7 @@ class test_base
      * @param string $name the name
      * @return bool true if all tests are fine
      */
-    function assert_load(db_object $usr_obj, string $name): bool
+    function assert_load(db_object_seq_id $usr_obj, string $name): bool
     {
         // check the loading via id and check the name
         $usr_obj->load_by_id(1, $usr_obj::class);
@@ -1505,10 +1839,10 @@ class test_base
      * e.g. word, triple, value or formulas
      *
      * @param sql_db $db_con does not need to be connected to a real database
-     * @param sandbox $usr_obj the user sandbox object e.g. a word
+     * @param sandbox|sandbox_value $usr_obj the user sandbox object e.g. a word
      * @return bool true if all tests are fine
      */
-    function assert_sql_not_changed(sql_db $db_con, sandbox $usr_obj): bool
+    function assert_sql_not_changed(sql_db $db_con, sandbox|sandbox_value $usr_obj): bool
     {
         // check the Postgres query syntax
         $usr_obj->owner_id = 0;
@@ -1664,18 +1998,18 @@ class test_base
      *
      * @param string $test_name the message that describes the test for the developer
      * @param bool $test_result true if the test is fine
-     * @param string|array $target the expected result (added here just for fast debugging)
-     * @param string|array $result the actual result (added here just for fast debugging)
+     * @param string|array|null $target the expected result (added here just for fast debugging)
+     * @param string|array|null $result the actual result (added here just for fast debugging)
      * @param float $exe_max_time the expected time to create the result to identify unexpected slow functions
      * @return bool true if the test result is fine
      */
     private function assert_dsp(
-        string       $test_name,
-        bool         $test_result,
-        string|array $target = '',
-        string|array $result = '',
-        string       $diff_msg = '',
-        float        $exe_max_time = TIMEOUT_LIMIT): bool
+        string            $test_name,
+        bool              $test_result,
+        string|array|null $target = '',
+        string|array|null $result = '',
+        string            $diff_msg = '',
+        float             $exe_max_time = TIMEOUT_LIMIT): bool
     {
         // calculate the execution time
         $final_msg = '';
@@ -1810,6 +2144,7 @@ class test_base
      */
     function dsp_result(): void
     {
+        global $errors;
 
         echo "\n";
         $since_start = microtime(true) - $this->start_time;
@@ -1819,7 +2154,9 @@ class test_base
         echo "\n";
         echo $this->timeout_counter . ' timeouts';
         echo "\n";
-        echo $this->error_counter . ' errors';
+        echo $this->error_counter . ' test errors';
+        echo "\n";
+        echo $errors . ' internal errors';
     }
 
     /**
@@ -1886,10 +2223,10 @@ class test_base
      */
     private function set_val_id_for_unit_tests(value|result $val): void
     {
-        if ($val->id() == 0) {
+        if (!$val->is_id_set()) {
             $val->set_id($this->next_seq_nbr());
         }
-        if ($val->grp()->id() == 0) {
+        if (!$val->grp()->is_id_set()) {
             $val->grp()->set_id($this->next_seq_nbr());
         }
         foreach ($val->phr_lst()->lst() as $phr) {
@@ -1978,7 +2315,7 @@ class test_base
         if ($usr == null) {
             $usr = $this->usr1;
         }
-        $log = new change_log_named($this->usr1);
+        $log = new change($this->usr1);
         return $log->dsp_last_user(true, $usr);
     }
 

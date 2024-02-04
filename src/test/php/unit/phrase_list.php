@@ -31,10 +31,10 @@ namespace test;
 include_once MODEL_PHRASE_PATH . 'phr_ids.php';
 include_once MODEL_PHRASE_PATH . 'phrase_list.php';
 
-use api\phrase_api;
-use api\triple_api;
-use api\word_api;
-use cfg\db\sql_creator;
+use api\phrase\phrase as phrase_api;
+use api\word\triple as triple_api;
+use api\word\word as word_api;
+use cfg\db\sql;
 use cfg\foaf_direction;
 use cfg\phrase_type;
 use html\phrase\phrase_list as phrase_list_dsp;
@@ -42,18 +42,13 @@ use cfg\library;
 use cfg\phr_ids;
 use cfg\phrase;
 use cfg\phrase_list;
-use cfg\sql_db;
+use cfg\db\sql_db;
 use cfg\sql_par;
 use cfg\verb;
 use cfg\word;
 
 class phrase_list_unit_tests
 {
-    const TEST_NAME = 'phrase_list->';
-    const PATH = 'db/phrase/';
-    const FILE_EXT = '.sql';
-    const FILE_MYSQL = '_mysql';
-
     public test_cleanup $test;
     public phrase_list $lst;
     public sql_db $db_con;
@@ -87,10 +82,9 @@ class phrase_list_unit_tests
 
         $t->subheader('SQL statement creation tests');
 
-        // load only the names
+        // load by name pattern (expected to be most often used)
         $phr_lst = new phrase_list($usr);
-        $t->assert_sql_names($db_con, $phr_lst, new phrase($usr));
-        $t->assert_sql_names($db_con, $phr_lst, new phrase($usr), triple_api::TN_READ);
+        $t->assert_sql_like($db_con, $phr_lst, 'S');
 
         // load by phrase ids
         $phr_lst = new phrase_list($usr);
@@ -99,7 +93,10 @@ class phrase_list_unit_tests
         $this->assert_sql_names_by_ids($t, $db_con, $phr_lst, $phr_ids);
         $phr_names = array(word_api::TN_READ, triple_api::TN_READ);
         $t->assert_sql_by_names($db_con, $phr_lst, $phr_names);
-        $t->assert_sql_like($db_con, $phr_lst, 'S');
+
+        // to review
+        $t->assert_sql_names($db_con, $phr_lst, new phrase($usr));
+        $t->assert_sql_names($db_con, $phr_lst, new phrase($usr), triple_api::TN_READ);
 
         $this->test = $t;
 
@@ -110,7 +107,7 @@ class phrase_list_unit_tests
         $phr_lst->add($wrd->phrase());
         $vrb = $verbs->get_verb(verb::IS_PART_OF);
         $this->assert_sql_linked_phrases($db_con->sql_creator(), $t, $phr_lst, $vrb, foaf_direction::UP);
-        // TODO activate
+        // TODO activate Prio 1
         //$this->assert_sql_by_phr_lst($db_con, $t, $phr_lst, $vrb, foaf_direction::UP);
 
 
@@ -124,6 +121,23 @@ class phrase_list_unit_tests
         $result = $phr_lst_ex_time->dsp_id();
         $target = $this->get_phrase_list_ex_time()->dsp_id();
         $t->display('phrase_list->ex_time names', $target, $result);
+
+        $test_name = 'get all words related to a phrase list: Mathematics, constant, Mathematical constant, Pi and Pi (Math) results in Mathematics, constant and Pi';
+        $phr_lst = $t->dummy_phrase_list();
+        $wrd_lst = $phr_lst->wrd_lst_all();
+        $t->assert($test_name, $wrd_lst->count(), 3);
+
+        // TODO add assume time sql statement test
+
+
+        $t->subheader('FOAF unit tests');
+
+        $test_name = 'test the verb "are" by getting the phrases that are a city';
+        $wrd_city = $t->city_word();
+        $city_lst = $wrd_city->are($t->phrase_list_all());
+        $target = $t->phrase_list_cities();
+        // TODO activate Prio 2
+        //$t->assert_contains($test_name, $city_lst->names(), $target->names());
 
 
         $t->subheader('API unit tests');
@@ -248,7 +262,7 @@ class phrase_list_unit_tests
      * @param foaf_direction $direction to define the link direction
      */
     private function assert_sql_linked_phrases(
-        sql_creator    $sc,
+        sql            $sc,
         test_cleanup   $t,
         object         $usr_obj,
         ?verb          $vrb,

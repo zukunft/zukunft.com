@@ -32,14 +32,15 @@
 
 namespace test;
 
-use api\component\component_api;
-use api\formula_api;
-use api\phrase_api;
-use api\source_api;
-use api\triple_api;
-use api\verb_api;
+use api\component\component as component_api;
+use api\formula\formula as formula_api;
+use api\phrase\phrase as phrase_api;
+use api\ref\source as source_api;
+use api\word\triple as triple_api;
+use api\verb\verb as verb_api;
 use api\view\view as view_api;
-use api\word_api;
+use api\word\word as word_api;
+use cfg\db\sql_par;
 use cfg\formula;
 use cfg\formula_type;
 use cfg\library;
@@ -47,12 +48,11 @@ use cfg\phrase;
 use cfg\phrase_list;
 use cfg\phrase_type;
 use cfg\ref_type;
-use cfg\sql_db;
-use cfg\sql_par;
+use cfg\db\sql_db;
 use cfg\term;
 use cfg\term_list;
 use cfg\triple;
-use cfg\value;
+use cfg\value\value;
 use cfg\verb;
 use cfg\word;
 use html\html_base;
@@ -95,7 +95,7 @@ class test_cleanup extends test_api
                     $val = new value($this->usr1);
                     $val->load_by_id($val_id);
                     // check again, because some id may be added twice
-                    if ($val->id() > 0) {
+                    if ($val->is_id_set()) {
                         $msg = $val->del();
                         $result .= $msg->get_last_message();
                         $target = '';
@@ -387,10 +387,9 @@ class test_cleanup extends test_api
 
         // TODO better use a info system log message
         $html = new html_base();
-        $html->echo_html($db_con->seq_reset(sql_db::TBL_VALUE));
         $html->echo_html($db_con->seq_reset(sql_db::TBL_WORD));
-        $html->echo_html($db_con->seq_reset(sql_db::TBL_PHRASE_GROUP_WORD_LINK));
-        $html->echo_html($db_con->seq_reset(sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK));
+        //$html->echo_html($db_con->seq_reset(sql_db::TBL_GROUP_LINK));
+        //$html->echo_html($db_con->seq_reset(sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK));
         $html->echo_html($db_con->seq_reset(sql_db::TBL_FORMULA));
         $html->echo_html($db_con->seq_reset(sql_db::TBL_FORMULA_LINK));
         $html->echo_html($db_con->seq_reset(sql_db::TBL_VIEW));
@@ -468,7 +467,7 @@ class test_cleanup extends test_api
         $pos = 1;
         foreach ($names as $name) {
             $class = match ($name) {
-                triple_api::TN_PI => triple::class,
+                triple_api::TN_PI_NAME => triple::class,
                 formula_api::TN_READ, formula_api::TN_READ_THIS, formula_api::TN_READ_PRIOR => formula::class,
                 verb_api::TN_READ, verb::CAN_CONTAIN_NAME, verb::CAN_CONTAIN_NAME_REVERSE => verb::class,
                 default => word::class,

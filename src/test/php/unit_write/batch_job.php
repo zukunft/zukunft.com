@@ -32,14 +32,14 @@
 
 namespace test\write;
 
-use api\formula_api;
-use api\value_api;
-use api\word_api;
+use api\formula\formula as formula_api;
+use api\value\value as value_api;
+use api\word\word as word_api;
 use cfg\batch_job;
 use cfg\batch_job_list;
 use cfg\batch_job_type_list;
 use cfg\phrase_list;
-use cfg\value;
+use cfg\value\value;
 use test\test_cleanup;
 use const test\TIMEOUT_LIMIT_DB_MULTI;
 
@@ -69,7 +69,7 @@ class batch_job_test
         $phr_lst->load_by_names(array(word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_MIO, word_api::TN_2020));
         $phr_lst->ex_time();
         $val = new value($usr);
-        $val->load_by_grp($phr_lst->get_grp());
+        $val->load_by_grp($phr_lst->get_grp_id());
         $result = $val->number();
         $target = value_api::TV_CH_INHABITANTS_2020_IN_MIO;
         $t->display('batch_job->value to link', $target, $result);
@@ -102,7 +102,7 @@ class batch_job_test
         $job_lst = new batch_job_list($usr);
         $calc_request = new batch_job($usr);
         $calc_request->frm = $frm;
-        $calc_request->usr = $usr;
+        $calc_request->set_user($usr);
         $calc_request->phr_lst = $phr_lst;
         $result = $job_lst->add($calc_request);
         // TODO review

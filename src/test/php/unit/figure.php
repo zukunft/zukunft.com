@@ -36,8 +36,8 @@ include_once API_RESULT_PATH . 'result.php';
 include_once API_VALUE_PATH . 'value.php';
 include_once WEB_FIGURE_PATH . 'figure.php';
 
-use api\result_api;
-use api\value_api;
+use api\result\result as result_api;
+use api\value\value as value_api;
 use html\figure\figure as figure_dsp;
 use html\value\value as value_dsp;
 use html\result\result as result_dsp;
@@ -70,12 +70,12 @@ class figure_unit_tests
         $t->subheader('set and get unit tests');
 
         $fig = $t->dummy_figure_value();
-        $t->assert('figure value id', $fig->id(), 1);
-        $t->assert('figure value obj id', $fig->obj_id(), 1);
+        $t->assert('figure value id', $fig->id(), 5);
+        $t->assert('figure value obj id', $fig->obj_id(), 5);
         $t->assert('figure value number', $fig->number(), value_api::TV_READ_SHORTEST);
         $fig = $t->dummy_figure_result();
-        $t->assert('figure result id', $fig->id(), -1);
-        $t->assert('figure result obj id', $fig->obj_id(), 1);
+        $t->assert('figure result id', $fig->id(), -2);
+        $t->assert('figure result obj id', $fig->obj_id(), 2);
         $t->assert('figure result number', $fig->number(), result_api::TV_INT);
 
         $fig = $t->dummy_figure_value();

@@ -40,8 +40,9 @@ include_once DB_PATH . 'sql_par_type.php';
 include_once API_SYSTEM_PATH . 'batch_job_list.php';
 include_once MODEL_SYSTEM_PATH . 'base_list.php';
 
-use api\batch_job_list_api;
-use cfg\db\sql_creator;
+use api\system\batch_job_list as batch_job_list_api;
+use cfg\db\sql;
+use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use DateTime;
 
@@ -122,11 +123,11 @@ class batch_job_list extends base_list
     /**
      * prepare sql to get all open job of one type
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $type_code_id the code id of the job type that should be loaded
      * @return sql_par
      */
-    function load_sql_by_type(sql_creator $sc, string $type_code_id = ''): sql_par
+    function load_sql_by_type(sql $sc, string $type_code_id = ''): sql_par
     {
         global $job_types;
         $type_id = $job_types->id($type_code_id);

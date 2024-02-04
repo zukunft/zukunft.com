@@ -32,9 +32,7 @@
 
 namespace test;
 
-use api\user_api;
-use cfg\phrase_type;
-use cfg\sql_db;
+use cfg\db\sql_db;
 use cfg\user;
 use cfg\user_list;
 
@@ -67,6 +65,7 @@ class user_unit_tests
         $this->assert_sql_by_profile($t, $db_con, $test_usr);
 
         $test_usr_list = new user_list($test_usr);
+        // TODO include all value tables
         $this->assert_sql_count_changes($t, $db_con, $test_usr_list);
 
 

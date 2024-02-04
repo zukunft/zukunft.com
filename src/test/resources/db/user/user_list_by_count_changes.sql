@@ -25,7 +25,7 @@ UNION SELECT user_id,
         FROM user_triples
     GROUP BY user_id
 UNION SELECT user_id,
-             COUNT (value_id) AS changes
+             COUNT (*) AS changes
         FROM user_values
     GROUP BY user_id
 UNION SELECT user_id,

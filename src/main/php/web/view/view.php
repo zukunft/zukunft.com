@@ -38,19 +38,20 @@ include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
 include_once WEB_WORD_PATH . 'word.php';
 
 use api\api;
-use api\component\component_api;
+use api\component\component as component_api;
+use cfg\component\component;
+use cfg\db\sql_db;
 use cfg\library;
 use cfg\view_list;
 use cfg\view_type;
 use cfg\word;
 use dsp_list;
-use html\component\component;
+use html\component\component as component_dsp;
 use html\component\component_list as component_list_dsp;
 use controller\controller;
 use html\api as api_dsp;
 use html\button;
 use html\html_base;
-use html\html_selector;
 use html\log\user_log_display;
 use html\msg;
 use html\sandbox\db_object as db_object_dsp;
@@ -256,7 +257,7 @@ class view extends sandbox_typed
      * without javascript this is the top right corner
      * with    javascript this is a bar on the top
      */
-    public function dsp_navbar(string $back = ''): string
+    function dsp_navbar(string $back = ''): string
     {
         log_debug();
         $result = '';
@@ -495,12 +496,12 @@ class view extends sandbox_typed
         $result = '';
         switch ($this->code_id) {
             case controller::DSP_COMPONENT_ADD:
-                $cmp = new component();
+                $cmp = new component_dsp();
                 $cmp->set_id(0);
                 $result = $cmp->form_edit_new('', '', '', '', '');
                 break;
             case controller::DSP_COMPONENT_EDIT:
-                $cmp = new component();
+                $cmp = new component_dsp();
                 $cmp->set_id(1);
                 $cmp->set_name(component_api::TN_READ);
                 $result = $cmp->form_edit_new('', '', '', '', '');
@@ -653,13 +654,13 @@ class view extends sandbox_typed
             $comp_html = $this->linked_components($add_cmp, $wrd, $script, $back);
 
             // collect the history
-            $changes = $this->dsp_hist(0, SQL_ROW_LIMIT, '', $back);
+            $changes = $this->dsp_hist(0, sql_db::ROW_LIMIT, '', $back);
             if (trim($changes) <> "") {
                 $hist_html = $changes;
             } else {
                 $hist_html = 'Nothing changed yet.';
             }
-            $changes = $this->dsp_hist_links(0, SQL_ROW_LIMIT, '', $back);
+            $changes = $this->dsp_hist_links(0, sql_db::ROW_LIMIT, '', $back);
             if (trim($changes) <> "") {
                 $link_html = $changes;
             } else {
@@ -714,7 +715,7 @@ class view extends sandbox_typed
             log_debug('loaded');
             $dsp_list = new dsp_list;
             $dsp_list->lst = $this->cmp_lst->lst();
-            $dsp_list->id_field = \cfg\component\component::FLD_ID;
+            $dsp_list->id_field = component::FLD_ID;
             $dsp_list->script_name = "view_edit.php";
             $dsp_list->class_edit = view::class;
             $dsp_list->script_parameter = $this->id . "&back=" . $back . "&word=" . $wrd->id;
@@ -813,10 +814,10 @@ class view extends sandbox_typed
     {
         log_debug($this->id . ',' . $wrd_id);
 
-        global $db_con;
+        global $usr;
         $result = '';
 
-        $dsp_lst = new view_list();
+        $dsp_lst = new view_list($usr);
 
         $call = '/http/view.php?words=' . $wrd_id;
         $field = 'new_id';

@@ -1,4 +1,4 @@
-PREPARE word_by_not_changed_not_owned (int, int) AS
+PREPARE word_by_not_changed_not_owned (bigint, bigint) AS
     SELECT user_id
       FROM user_words
      WHERE word_id = $1

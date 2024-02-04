@@ -32,8 +32,13 @@
 
 namespace cfg;
 
-use cfg\db\sql_creator;
+use cfg\db\sql;
+use cfg\db\sql_db;
+use cfg\db\sql_par;
 use cfg\db\sql_par_type;
+use cfg\db\sql_table_type;
+use cfg\result\result_list;
+use cfg\value\value_list;
 
 include_once MODEL_SYSTEM_PATH . 'base_list.php';
 
@@ -136,7 +141,7 @@ class sandbox_list extends base_list
      * e.g. for words to exclude formula words
      *   or for view to exclude system views
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param sandbox_named|sandbox_link_named|combine_named $sbx the single child object
      * @param string $pattern the pattern to filter the words
      * @param int $limit the number of rows to return
@@ -144,7 +149,7 @@ class sandbox_list extends base_list
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     protected function load_sql_names_pre(
-        sql_creator                                    $sc,
+        sql                                            $sc,
         sandbox_named|sandbox_link_named|combine_named $sbx,
         string                                         $pattern = '',
         int                                            $limit = 0,
@@ -156,7 +161,8 @@ class sandbox_list extends base_list
         $qp = new sql_par($sbx::class, false, true);
         $qp->name .= 'names';
 
-        $sc->set_type($lib->class_to_name($sbx::class));
+        //$sc->set_class($lib->class_to_name($sbx::class));
+        $sc->set_class($sbx::class);
         $sc->set_name($qp->name);  // assign incomplete name to force the usage of the user as a parameter
         $sc->set_usr($this->user()->id());
         $sc->set_fields(array($sbx->id_field()));
@@ -164,7 +170,7 @@ class sandbox_list extends base_list
         if ($pattern != '') {
             $qp->name .= '_like';
             $sc->set_name($qp->name);
-            $sc->add_where($sbx->name_field(), $pattern, sql_par_type::LIKE);
+            $sc->add_where($sbx->name_field(), $pattern, sql_par_type::LIKE_R);
         }
         $sc->set_page($limit, $offset);
         $sc->set_order($sbx->name_field());
@@ -176,7 +182,7 @@ class sandbox_list extends base_list
      * build the SQL statement to load only the id and name to save time and memory
      * without further filter
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param sandbox_named|sandbox_link_named|combine_named $sbx the single child object
      * @param string $pattern the pattern to filter the words
      * @param int $limit the number of rows to return
@@ -184,7 +190,7 @@ class sandbox_list extends base_list
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_names(
-        sql_creator                                    $sc,
+        sql                                            $sc,
         sandbox_named|sandbox_link_named|combine_named $sbx,
         string                                         $pattern = '',
         int                                            $limit = 0,
@@ -321,9 +327,12 @@ class sandbox_list extends base_list
      */
 
     /**
+     * create a text that describes the list for unique identification
+     *
+     * @param term_list|null $trm_lst a cached list of terms
      * @return string with a unique description of at least some entries of this list for debugging
      */
-    function dsp_id(): string
+    function dsp_id(?term_list $trm_lst = null): string
     {
         global $debug;
 
@@ -342,15 +351,20 @@ class sandbox_list extends base_list
                 $first_obj = $this->lst()[array_key_first($this->lst())];
                 $id_field = $first_obj->id_field();
             }
-            if ($this::class == value_list::class
-            or $this::class == result_list::class) {
+            if ($this::class == value_list::class or $this::class == result_list::class) {
                 foreach ($this->lst() as $val) {
                     if ($result != '') {
                         $result .= ' / ';
                     }
                     $result .= $val->dsp_id_entry();
                 }
-                $result .= ' (' . $id_field . ' ' . $id . ')';
+                if (is_array($id_field)) {
+                    $fld_dsp = ' (' . implode(', ', $id_field);
+                    $fld_dsp .= ' = ' . $id . ')';
+                    $result .= $fld_dsp;
+                } else {
+                    $result .= ' (' . $id_field . ' ' . $id . ')';
+                }
             } else {
                 $name = $this->name($min_names);
                 if ($name <> '""') {
@@ -424,7 +438,93 @@ class sandbox_list extends base_list
     private function ids_txt(int $limit = null): string
     {
         $lib = new library();
-        return $lib->sql_array($this->ids($limit));
+        if ($this::class == value_list::class or $this::class == result_list::class) {
+            $result = '';
+            foreach ($this->lst() as $val) {
+                if ($result != '') {
+                    $result .= ' / ';
+                }
+                $result .= $val->grp()->dsp_id_short();
+            }
+            return $result;
+        } else {
+            return $lib->sql_array($this->ids($limit));
+        }
+    }
+
+    /*
+     * sql_table_type_list
+     */
+
+    /**
+     * @param array $tbl_types list of sql table types that specifies the current case
+     * @return bool true if the list of types specifies that the value has e.g. no protection and is public
+     */
+    protected function is_std(array $tbl_types): bool
+    {
+        if (in_array(sql_table_type::STANDARD, $tbl_types)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @param array $tbl_types list of sql table types that specifies the current case
+     * @return bool true if the list of types specifies that the value has max 4 prime phrases
+     */
+    protected function is_prime(array $tbl_types): bool
+    {
+        if (in_array(sql_table_type::PRIME, $tbl_types)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @param array $tbl_types list of sql table types that specifies the current case
+     * @return bool true if the list of types specifies that the value has max 4 prime phrases
+     */
+    protected function is_big(array $tbl_types): bool
+    {
+        if (in_array(sql_table_type::BIG, $tbl_types)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @param array $tbl_types list of sql table types that specifies the current case
+     * @return string with the table extension in the defined order
+     */
+    function table_extension(array $tbl_types): string
+    {
+        $result = '';
+        if ($this->is_std($tbl_types)) {
+            $result .= sql_table_type::STANDARD->extension();
+        }
+        if ($this->is_prime($tbl_types)) {
+            $result .= sql_table_type::PRIME->extension();
+        }
+        if ($this->is_big($tbl_types)) {
+            $result .= sql_table_type::BIG->extension();
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $tbl_types list of sql table types that specifies the current case
+     * @return bool true if the list of types specifies that the value has no user overwrites
+     */
+    protected function is_user(array $tbl_types): bool
+    {
+        if (in_array(sql_table_type::STANDARD, $tbl_types)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }

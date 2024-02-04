@@ -32,22 +32,25 @@
 
 */
 
-namespace api;
+namespace api\sandbox;
 
 include_once API_SANDBOX_PATH . 'sandbox.php';
 include_once API_PHRASE_PATH . 'phrase_list.php';
-include_once API_PHRASE_PATH . 'phrase_group.php';
+include_once API_PHRASE_PATH . 'group.php';
 include_once WEB_PHRASE_PATH . 'phrase_group.php';
 
+use api\sandbox\sandbox as sandbox_api;
+use api\phrase\group as group_api;
+use api\phrase\phrase_list as phrase_list_api;
 use html\phrase\phrase_group as phrase_group_dsp;
 
-class sandbox_value_api extends sandbox_api
+class sandbox_value extends sandbox_api
 {
 
     // the json field name in the api json message which is supposed to be the same as the var $number
     const FLD_NUMBER = 'number';
 
-    private phrase_group_api $grp; // the phrase group with the list of words and triples (not the source words and triples)
+    private group_api $grp; // the phrase group with the list of words and triples (not the source words and triples)
     private ?float $number; // the number calculated by the system
 
     /*
@@ -58,7 +61,7 @@ class sandbox_value_api extends sandbox_api
     {
         parent::__construct($id);
 
-        $this->grp = new phrase_group_api();
+        $this->grp = new group_api();
         $this->number = null;
     }
 
@@ -66,17 +69,22 @@ class sandbox_value_api extends sandbox_api
      * set and get
      */
 
-    function set_grp(phrase_group_api $grp)
+    function id(): int|string
+    {
+        return $this->id;
+    }
+
+    function set_grp(group_api $grp): void
     {
         $this->grp = $grp;
     }
 
-    function set_number(?float $number)
+    function set_number(?float $number): void
     {
         $this->number = $number;
     }
 
-    function grp(): phrase_group_api
+    function grp(): group_api
     {
         return $this->grp;
     }

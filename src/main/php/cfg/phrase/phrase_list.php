@@ -2,10 +2,10 @@
 
 /*
 
-    model/phrase/phrase_list.php - a list of phrase (word or triple) objects
-    ----------------------------
+    cfg/phrase/phrase_list.php - a list of phrase (word or triple) objects
+    --------------------------
 
-    Compared to phrase_groups a phrase list is a memory only object that cannot be saved to the database
+    Compared to groups a phrase list is a memory only object that cannot be saved to the database
 
     TODO
         add function to
@@ -44,17 +44,24 @@
 
 namespace cfg;
 
-include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql.php';
 include_once MODEL_HELPER_PATH . 'foaf_direction.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_list_named.php';
 include_once MODEL_WORD_PATH . 'word_list.php';
 include_once MODEL_WORD_PATH . 'triple_list.php';
 include_once MODEL_PHRASE_PATH . 'trm_ids.php';
 include_once MODEL_PHRASE_PATH . 'term_list.php';
+include_once MODEL_GROUP_PATH . 'group.php';
 
-use api\phrase_list_api;
-use cfg\db\sql_creator;
+use api\phrase\phrase_list as phrase_list_api;
+use cfg\db\sql;
+use cfg\db\sql_db;
+use cfg\db\sql_par;
 use cfg\db\sql_par_type;
+use cfg\group\group;
+use cfg\group\group_id;
+use cfg\value\value;
+use cfg\value\value_list;
 use html\word\word as word_dsp;
 
 class phrase_list extends sandbox_list_named
@@ -168,38 +175,129 @@ class phrase_list extends sandbox_list_named
      */
 
     /**
-     * set the SQL query parameters to load a list of phrase names
-     * without the related phrase to save time and memory
+     * load a list of phrase names based on the given pattern
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param string $pattern to select the phrases
+     * @return bool true if at least one phrase has been loaded
+     */
+    function load_like(string $pattern): bool
+    {
+        global $db_con;
+
+        $sc = $db_con->sql_creator();
+        $qp = $this->load_sql_like($sc, $pattern);
+        return $this->load($qp);
+    }
+
+    /**
+     * load the phrases including the related word or triple object
+     * by the given name list from the database
+     *
+     * @param array $names of phrase names that should be loaded
+     * @param phrase_list|null $phr_lst a list of preloaded phrase that should not be loaded again
+     * @return bool true if at least one phrase has been loaded
+     */
+    function load_by_names(array $names, ?phrase_list $phr_lst = null): bool
+    {
+        global $db_con;
+
+        // exclude the names that have been in the cache
+        if ($phr_lst != null) {
+            $names_to_load = array_diff($names, $phr_lst->names());
+        } else {
+            $names_to_load = $names;
+        }
+
+        // create the sql and load
+        $sc = $db_con->sql_creator();
+        $qp = $this->load_sql_by_names($sc, $names_to_load);
+        return $this->load($qp);
+    }
+
+    /**
+     * load the phrases including the related word or triple object
+     * by the given id list from the database
+     * TODO make it optional to include excluded phrases
+     *
+     * @param phr_ids $ids phrase ids that should be loaded
+     * @param phrase_list|null $phr_lst a list of preloaded phrase that should not be loaded again
+     * @return bool true if at least one phrase has been loaded
+     */
+    function load_by_ids(phr_ids $ids, ?phrase_list $phr_lst = null): bool
+    {
+        global $db_con;
+
+        // exclude the id that have been in the cache
+        if ($phr_lst != null) {
+            $ids_lst_to_load = array_diff($ids->lst, $phr_lst->ids());
+            $ids_to_load = new phr_ids($ids_lst_to_load);
+        } else {
+            $ids_to_load = $ids;
+        }
+
+        // create the sql and load
+        $sc = $db_con->sql_creator();
+        $qp = $this->load_sql_by_ids($sc, $ids_to_load);
+        $result = $this->load($qp);
+        if ($phr_lst != null) {
+            $phr_lst_to_add = $phr_lst->filter_by_ids($ids);
+            if (!$phr_lst_to_add->is_empty()) {
+                $this->merge($phr_lst_to_add);
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    // load SQL
+
+    /**
+     * create an SQL statement to retrieve a list of phrase objects
+     * by the name pattern from the database
+     * TODO add limit and page
+     * TODO add read test that formula link words are excluded
+     *
+     * @param sql $sc with the target db_type set
+     * @param string $pattern phrase names that should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_names_sql(sql_creator $sc, string $query_name): sql_par
+    function load_sql_like(sql $sc, string $pattern): sql_par
     {
-        $sc->set_type(phrase::class);
-        $qp = new sql_par(self::class);
-        $qp->name .= $query_name;
+        $qp = $this->load_sql($sc, 'name_like');
+        $sc->add_where(phrase::FLD_NAME, $pattern, sql_par_type::LIKE_R);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
 
-        $sc->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
-        $sc->set_usr($this->user()->id());
-        $sc->set_fields(phrase::FLD_NAMES);
-        $sc->set_usr_fields(phrase::FLD_NAMES_USR_NO_NAME);
-        $sc->set_usr_num_fields(phrase::FLD_NAMES_NUM_USR);
-        $sc->set_order_text(sql_db::STD_TBL . '.' . $sc->name_sql_esc(phrase::FLD_VALUES) . ' DESC, ' . phrase::FLD_NAME);
         return $qp;
     }
 
     /**
-     * create an SQL statement to retrieve a list of phrase names by the id from the database
-     * compared to load_sql_by_ids this reads only the phrase names and not the related phrase to save time and memory
+     * create an SQL statement to retrieve a list of phrase objects by the name from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
+     * @param array $names phrase names that should be loaded
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_names(sql $sc, array $names): sql_par
+    {
+        $qp = $this->load_sql($sc, 'names');
+        $sc->add_where(phrase::FLD_NAME, $names, sql_par_type::TEXT_LIST);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve a list of phrase objects by the id from the database
+     *
+     * @param sql $sc with the target db_type set
      * @param phr_ids $ids phrase ids that should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_names_sql_by_ids(sql_creator $sc, phr_ids $ids): sql_par
+    function load_sql_by_ids(sql $sc, phr_ids $ids): sql_par
     {
-        $qp = $this->load_names_sql($sc, 'ids_fast');
+        $qp = $this->load_sql($sc, 'ids');
         $sc->add_where(phrase::FLD_ID, $ids->lst, sql_par_type::INT_LIST);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -211,13 +309,13 @@ class phrase_list extends sandbox_list_named
      * set the SQL query parameters to load a list of phrase objects
      * with all parameters and the related phrase
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_creator $sc, string $query_name): sql_par
+    function load_sql(sql $sc, string $query_name): sql_par
     {
-        $sc->set_type(phrase::class);
+        $sc->set_class(phrase::class);
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
 
@@ -230,16 +328,19 @@ class phrase_list extends sandbox_list_named
         return $qp;
     }
 
+    // to review
+
     /**
-     * create an SQL statement to retrieve a list of phrase objects by the id from the database
+     * create an SQL statement to retrieve a list of phrase names by the id from the database
+     * compared to load_sql_by_ids this reads only the phrase names and not the related phrase to save time and memory
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param phr_ids $ids phrase ids that should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_ids(sql_creator $sc, phr_ids $ids): sql_par
+    function load_names_sql_by_ids(sql $sc, phr_ids $ids): sql_par
     {
-        $qp = $this->load_sql($sc, 'ids');
+        $qp = $this->load_sql($sc, 'ids_fast');
         $sc->add_where(phrase::FLD_ID, $ids->lst, sql_par_type::INT_LIST);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -248,51 +349,14 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
-     * create an SQL statement to retrieve a list of phrase objects by the name from the database
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @param array $names phrase names that should be loaded
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql_by_names(sql_creator $sc, array $names): sql_par
-    {
-        $qp = $this->load_sql($sc, 'names');
-        $sc->add_where(phrase::FLD_NAME, $names, sql_par_type::TEXT_LIST);
-        $qp->sql = $sc->sql();
-        $qp->par = $sc->get_par();
-
-        return $qp;
-    }
-
-    /**
-     * create an SQL statement to retrieve a list of phrase objects
-     * by the name pattern from the database
-     * TODO add limit and page
-     * TODO add read test that formula link words are excluded
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @param string $pattern phrase names that should be loaded
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql_like(sql_creator $sc, string $pattern): sql_par
-    {
-        $qp = $this->load_sql($sc, 'name_like');
-        $sc->add_where(phrase::FLD_NAME, $pattern, sql_par_type::LIKE);
-        $qp->sql = $sc->sql();
-        $qp->par = $sc->get_par();
-
-        return $qp;
-    }
-
-    /**
      * set the SQL query parameters to load a list of phrase by a phrase list, verb and direction
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param verb|null $vrb if set to filter the selection
      * @param foaf_direction $direction to select either the parents, children or all related words ana triples
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_by_phr_lst(
-        sql_creator $sc, ?verb $vrb = null, foaf_direction $direction = foaf_direction::BOTH): sql_par
+        sql $sc, ?verb $vrb = null, foaf_direction $direction = foaf_direction::BOTH): sql_par
     {
         $qp = $this->load_sql($sc, 'sc_phr_lst');
         if (!$this->empty()) {
@@ -326,6 +390,7 @@ class phrase_list extends sandbox_list_named
      * load the phrase names by the given id list from the database
      *
      * @param phr_ids $ids phrase ids that should be loaded
+     * @param phrase_list|null $phr_lst list of the phrases already loaded to reduce traffic
      * @return bool true if at least one phrase has been loaded
      */
     function load_names_by_ids(phr_ids $ids, ?phrase_list $phr_lst = null): bool
@@ -350,56 +415,6 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
-     * load the phrases including the related word or triple object
-     * by the given id list from the database
-     * TODO make it optional to include excluded phrases
-     *
-     * @param phr_ids $ids phrase ids that should be loaded
-     * @param phrase_list|null $phr_lst a list of preloaded phrase that should not be loaded again
-     * @return bool true if at least one phrase has been loaded
-     */
-    function load_by_ids(phr_ids $ids, ?phrase_list $phr_lst = null): bool
-    {
-        global $db_con;
-        if ($phr_lst != null) {
-            $ids_lst_to_load = array_diff($ids->lst, $phr_lst->ids());
-            $ids_to_load = new phr_ids($ids_lst_to_load);
-        } else {
-            $ids_to_load = $ids;
-        }
-        $qp = $this->load_sql_by_ids($db_con->sql_creator(), $ids_to_load);
-        $result = $this->load($qp);
-        if ($phr_lst != null) {
-            $phr_lst_to_add = $phr_lst->filter_by_ids($ids);
-            if (!$phr_lst_to_add->is_empty()) {
-                $this->merge($phr_lst_to_add);
-                $result = true;
-            }
-        }
-        return $result;
-    }
-
-    /**
-     * load the phrases including the related word or triple object
-     * by the given name list from the database
-     *
-     * @param array $names of phrase names that should be loaded
-     * @param phrase_list|null $phr_lst a list of preloaded phrase that should not be loaded again
-     * @return bool true if at least one phrase has been loaded
-     */
-    function load_by_names(array $names, ?phrase_list $phr_lst = null): bool
-    {
-        global $db_con;
-        if ($phr_lst != null) {
-            $names_to_load = array_diff($names, $phr_lst->names());
-        } else {
-            $names_to_load = $names;
-        }
-        $qp = $this->load_sql_by_names($db_con->sql_creator(), $names_to_load);
-        return $this->load($qp);
-    }
-
-    /**
      * load a list of phrase names
      * @param string $pattern the pattern to filter the phrases
      * @param int $limit the number of rows to return
@@ -409,19 +424,6 @@ class phrase_list extends sandbox_list_named
     function load_names(string $pattern = '', int $limit = 0, int $offset = 0): bool
     {
         return parent::load_sbx_names(new phrase($this->user()), $pattern, $limit, $offset);
-    }
-
-    /**
-     * load the phrases with the given pattern
-     *
-     * @param string $pattern to select the phrases
-     * @return bool true if at least one phrase has been loaded
-     */
-    function load_like(string $pattern): bool
-    {
-        global $db_con;
-        $qp = $this->load_sql_like($db_con->sql_creator(), $pattern);
-        return $this->load($qp);
     }
 
 
@@ -519,14 +521,14 @@ class phrase_list extends sandbox_list_named
      * create the sql statement to select the related phrases
      * the relation can be narrowed with a verb id
      *
-     * @param sql_creator $sc the db connection object as a function parameter for unit testing
+     * @param sql $sc the db connection object as a function parameter for unit testing
      * @param verb|null $vrb if set to select only phrases linked with this verb
      * @param foaf_direction $direction to define the link direction
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_linked_phrases(sql_creator $sc, ?verb $vrb, foaf_direction $direction): sql_par
+    function load_sql_linked_phrases(sql $sc, ?verb $vrb, foaf_direction $direction): sql_par
     {
-        $qp = $this->load_names_sql($sc, '');
+        $qp = $this->load_sql($sc, '');
         $join_field = '';
         if (count($this->lst()) <= 0) {
             log_warning('The phrase list is empty, so nothing could be found', self::class . "->load_sql_by_linked_type");
@@ -991,8 +993,12 @@ class phrase_list extends sandbox_list_named
         return $phr_lst;
     }
 
-    // returns a list of phrases that are related to this phrase list e.g. for "Company" it will return "ABB" and "Daimler" and "Company"
-    // e.g. to get all related values
+    /**
+     * get the related phrase
+     * e.g. for "City" it will return "Zurich", "Bern" and "Geneva"
+     *
+     * @return phrase_list a list of phrases that are related to this phrase list
+     */
     function are(): phrase_list
     {
         global $verbs;
@@ -1090,8 +1096,10 @@ class phrase_list extends sandbox_list_named
         return $phr_lst;
     }
 
-    // add all potential differentiator phrases of the phrase lst e.g. get "energy" for "sector"
-    function differentiators()
+    /**
+     * add all potential differentiator phrases of the phrase lst e.g. get "energy" for "sector"
+     */
+    function differentiators(): phrase_list
     {
         global $verbs;
         log_debug('for ' . $this->dsp_id());
@@ -1102,8 +1110,10 @@ class phrase_list extends sandbox_list_named
         return $phr_lst;
     }
 
-    // same as differentiators, but including the subtypes e.g. get "energy" and "wind energy" for "sector" if "wind energy" is part of "energy"
-    function differentiators_all()
+    /**
+     * same as differentiators, but including the subtypes e.g. get "energy" and "wind energy" for "sector" if "wind energy" is part of "energy"
+     */
+    function differentiators_all(): phrase_list
     {
         global $verbs;
         log_debug('for ' . $this->dsp_id());
@@ -1132,8 +1142,10 @@ class phrase_list extends sandbox_list_named
         return $phr_lst;
     }
 
-    // similar to differentiators, but only a filtered list of differentiators is viewed to increase speed
-    function differentiators_filtered($filter_lst)
+    /**
+     * similar to differentiators, but only a filtered list of differentiators is viewed to increase speed
+     */
+    function differentiators_filtered($filter_lst): phrase_list
     {
         log_debug('for ' . $this->dsp_id());
         $result = $this->differentiators_all();
@@ -1298,8 +1310,10 @@ class phrase_list extends sandbox_list_named
         return $result;
     }
 
-    // return an url with the phrase ids
-    // the order of the ids is used to sort the phrases for the user
+    /**
+     * return an url with the phrase ids
+     * the order of the ids is used to sort the phrases for the user
+     */
     function id_url(): string
     {
         $result = '';
@@ -1309,7 +1323,9 @@ class phrase_list extends sandbox_list_named
         return $result;
     }
 
-    // the old long form to encode
+    /**
+     * the old long form to encode
+     */
     function id_url_long(): string
     {
         $lib = new library();
@@ -1388,7 +1404,9 @@ class phrase_list extends sandbox_list_named
         return $name_lst;
     }
 
-    // true if the phrase is part of the phrase list
+    /**
+     * @return bool true if the phrase is part of the phrase list
+     */
     function does_contain($phr_to_check): bool
     {
         $result = false;
@@ -1542,7 +1560,7 @@ class phrase_list extends sandbox_list_named
             if (in_array($phr_to_del->id(), $phr_ids)) {
                 $del_pos = array_search($phr_to_del->id(), $phr_ids);
                 if ($this->get($del_pos)->id() == $phr_to_del->id()) {
-                    $this->unset($del_pos);
+                    unset($this->lst()[$del_pos]);
                 } else {
                     log_err('Remove of ' . $phr_to_del->dsp_id() . ' failed');
                 }
@@ -1557,15 +1575,10 @@ class phrase_list extends sandbox_list_named
     {
         log_debug($new_phr_lst->dsp_id() . ' to ' . $this->dsp_id());
         if (!$new_phr_lst->is_empty()) {
-            log_debug('do');
             foreach ($new_phr_lst->lst() as $new_phr) {
-                log_debug('add');
-                log_debug('add ' . $new_phr->dsp_id());
                 $this->add($new_phr);
-                log_debug('added');
             }
         }
-        log_debug('to ' . $this->dsp_id());
         return $this;
     }
 
@@ -1703,7 +1716,7 @@ class phrase_list extends sandbox_list_named
                 log_debug('phrase_list->diff_by_ids ' . $del_phr_id);
                 if ($del_phr_id > 0 and in_array($del_phr_id, $this->id_lst())) {
                     $del_pos = array_search($del_phr_id, $this->id_lst());
-                    $this->unset($del_pos);
+                    unset($this->lst()[$del_pos]);
                 }
             }
         }
@@ -1714,7 +1727,7 @@ class phrase_list extends sandbox_list_named
     /**
      * look at a phrase list and remove the general phrase, if there is a more specific phrase also part of the list e.g. remove "Country", but keep "Switzerland"
      */
-    function keep_only_specific()
+    function keep_only_specific(): array
     {
         log_debug('phrase_list->keep_only_specific (' . $this->dsp_id());
         $lib = new library();
@@ -1845,12 +1858,23 @@ class phrase_list extends sandbox_list_named
      * TODO use a phrase list instead of a word list because the same word can be of type time and id
      * @return word_list the list object of the time words (not the time phrases!)
      */
-    function time_lst(): word_list
+    function time_word_list(): word_list
     {
         $wrd_lst = $this->wrd_lst_all();
         $result = $wrd_lst->time_lst();
         $result->set_user($this->user());
         return $result;
+    }
+
+    function time_list(): phrase_list
+    {
+        $lst = new phrase_list($this->user());
+        foreach ($this->lst() as $phr) {
+            if ($phr->is_time()) {
+                $lst->add($phr);
+            }
+        }
+        return $lst;
     }
 
     /**
@@ -1978,7 +2002,7 @@ class phrase_list extends sandbox_list_named
     function ex_time(): void
     {
         log_debug($this->dsp_id());
-        $del_wrd_lst = $this->time_lst();
+        $del_wrd_lst = $this->time_word_list();
         $del_phr_lst = $del_wrd_lst->phrase_lst();
         $this->diff($del_phr_lst);
     }
@@ -2039,6 +2063,23 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
+     * sort the phrase object list by id
+     * @return array list with the phrases (not a phrase list object!) sorted by name
+     */
+    function sort_by_id(): phrase_list
+    {
+        $result = clone $this;
+        $id_lst = $this->id_lst();
+        asort($id_lst);
+        $result->set_lst(array());
+        foreach (array_keys($id_lst) as $sorted_id) {
+            $phr_to_add = $this->get($sorted_id);
+            $result->add($phr_to_add);
+        }
+        return $result;
+    }
+
+    /**
      * get the last time phrase of the phrase list
      * @return phrase with the last phrase of the type time
      */
@@ -2059,25 +2100,19 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
-     * get the best matching phrase group (but don't create a new group)
-     * @param bool $do_save can be set to false for unit testing
-     * @return phrase_group|null the best matching phrase group or null if no group matches
+     * @return group|null the group with only the id set based to this list or null if no group matches
      */
-    function get_grp(bool $do_save = true): ?phrase_group
+    function get_grp_id(bool $do_save = true): ?group
     {
-        log_debug($this->dsp_id());
         $grp = null;
-
-        // get or create the group
         if ($this->is_empty()) {
             log_err('Cannot create phrase group for an empty list.', 'phrase_list->get_grp');
         } else {
-            $grp = new phrase_group($this->user());
-            $grp->phr_lst = clone $this;
-            $grp->get($do_save);
+            $grp = new group($this->user());
+            $grp_id = new group_id();
+            $grp->set_id($grp_id->get_id($this));
+            $grp->set_phrase_list(clone $this);
         }
-
-        log_debug($this->dsp_id());
         return $grp;
     }
 
@@ -2132,8 +2167,7 @@ class phrase_list extends sandbox_list_named
     function val_lst(): value_list
     {
         $val_lst = new value_list($this->user());
-        $val_lst->phr_lst = $this;
-        $val_lst->load_all();
+        $val_lst->load_by_phr_lst($this, true);
 
         return $val_lst;
     }
@@ -2166,7 +2200,7 @@ class phrase_list extends sandbox_list_named
     function value(): value
     {
         $val = new value($this->user());
-        $val->load_by_grp($this->get_grp());
+        $val->load_by_grp($this->get_grp_id());
 
         return $val;
     }
@@ -2202,6 +2236,7 @@ class phrase_list extends sandbox_list_named
         }
         return $result;
     }
+
 }
 
 

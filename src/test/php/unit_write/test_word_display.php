@@ -34,9 +34,9 @@
 // start testing the system functionality 
 // --------------------------------------
 
-use api\phrase_api;
-use api\triple_api;
-use api\word_api;
+use api\phrase\phrase as phrase_api;
+use api\word\triple as triple_api;
+use api\word\word as word_api;
 use cfg\foaf_direction;
 use html\html_selector;
 use html\word\word as word_dsp;
@@ -66,7 +66,7 @@ function run_word_display_test(test_cleanup $t): void
     $link_types = $wrd_ZH->link_types($direction);
     $wrd_ZH_dsp = new word_dsp($wrd_ZH->api_json());
     $result = $wrd_ZH_dsp->dsp_graph($direction, $link_types, 0);
-    // TODO activate
+    // TODO activate Prio 1
     //$t->dsp_contains('word_dsp->dsp_graph ' . $direction->value . ' for ' . $wrd_ZH->name(), $target, $result);
 
     // ... and the other side

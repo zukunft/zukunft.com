@@ -30,12 +30,14 @@
 
 */
 
-namespace api;
+namespace api\word;
 
+use api\word\triple as triple_api;
+use api\sandbox\list_object as list_api;
 use cfg\phrase_type;
-use html\word\triple_list;
+use html\word\triple_list as triple_list_dsp;
 
-class triple_list_api extends list_api
+class triple_list extends list_api
 {
 
     /*
@@ -62,11 +64,11 @@ class triple_list_api extends list_api
      */
 
     /**
-     * @returns triple_list the cast object with the HTML code generating functions
+     * @returns triple_list_dsp the cast object with the HTML code generating functions
      */
-    function dsp_obj(): triple_list
+    function dsp_obj(): triple_list_dsp
     {
-        $dsp_obj = new triple_list();
+        $dsp_obj = new triple_list_dsp();
 
         // cast the single list objects
         $lst_dsp = array();
@@ -95,9 +97,9 @@ class triple_list_api extends list_api
      * and delete list of "2016", "2017","2018"
      * the result is "2014", "2015"
      *
-     * @param triple_list_api $del_lst is the list of phrases that should be removed from this list object
+     * @param triple_list $del_lst is the list of phrases that should be removed from this list object
      */
-    private function diff(triple_list_api $del_lst): void
+    private function diff(triple_list $del_lst): void
     {
         if (!$this->is_empty()) {
             $result = array();
@@ -113,9 +115,9 @@ class triple_list_api extends list_api
 
     /**
      * merge as a function, because the array_merge does not create an object
-     * @param triple_list_api $new_wrd_lst with the triples that should be added
+     * @param triple_list $new_wrd_lst with the triples that should be added
      */
-    function merge(triple_list_api $new_wrd_lst)
+    function merge(triple_list $new_wrd_lst): void
     {
         foreach ($new_wrd_lst->lst() as $new_wrd) {
             $this->add($new_wrd);
@@ -124,11 +126,11 @@ class triple_list_api extends list_api
 
     /**
      * @param string $type the ENUM string of the fixed type
-     * @return triple_list_api with the all triples of the give type
+     * @return triple_list with the all triples of the give type
      */
-    private function filter(string $type): triple_list_api
+    private function filter(string $type): triple_list
     {
-        $result = new triple_list_api();
+        $result = new triple_list();
         foreach ($this->lst() as $wrd) {
             if ($wrd->is_type($type)) {
                 $result->add($wrd);
@@ -140,7 +142,7 @@ class triple_list_api extends list_api
     /**
      * get all time triples from this list of triples
      */
-    function time_lst(): triple_list_api
+    function time_lst(): triple_list
     {
         return $this->filter(phrase_type::TIME);
     }
@@ -148,7 +150,7 @@ class triple_list_api extends list_api
     /**
      * get all measure triples from this list of triples
      */
-    function measure_lst(): triple_list_api
+    function measure_lst(): triple_list
     {
         return $this->filter(phrase_type::MEASURE);
     }
@@ -156,9 +158,9 @@ class triple_list_api extends list_api
     /**
      * get all scaling triples from this list of triples
      */
-    function scaling_lst(): triple_list_api
+    function scaling_lst(): triple_list
     {
-        $result = new triple_list_api();
+        $result = new triple_list();
         foreach ($this->lst() as $wrd) {
             if ($wrd->is_scaling()) {
                 $result->add($wrd);
@@ -169,9 +171,9 @@ class triple_list_api extends list_api
 
     /**
      * get all measure and scaling triples from this list of triples
-     * @returns triple_list_api triples that are usually shown after a number
+     * @returns triple_list triples that are usually shown after a number
      */
-    function measure_scale_lst(): triple_list_api
+    function measure_scale_lst(): triple_list
     {
         $scale_lst = $this->scaling_lst();
         $measure_lst = $this->measure_lst();
@@ -182,7 +184,7 @@ class triple_list_api extends list_api
     /**
      * get all measure triples from this list of triples
      */
-    function percent_lst(): triple_list_api
+    function percent_lst(): triple_list
     {
         return $this->filter(phrase_type::PERCENT);
     }
@@ -191,9 +193,9 @@ class triple_list_api extends list_api
      * like names_linked, but without measure and time triples
      * because measure triples are usually shown after the number
      * TODO call this from the display object t o avoid casting again
-     * @returns triple_list_api a triple
+     * @returns triple_list a triple
      */
-    function ex_measure_and_time_lst(): triple_list_api
+    function ex_measure_and_time_lst(): triple_list
     {
         $wrd_lst_ex = clone $this;
         $wrd_lst_ex->ex_time();

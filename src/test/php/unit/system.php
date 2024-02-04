@@ -37,15 +37,16 @@ include_once MODEL_LOG_PATH . 'system_log_list.php';
 include_once API_LOG_PATH . 'system_log.php';
 
 use cfg\config;
-use controller\log\system_log_api;
+use cfg\log\system_log_list;
+use cfg\log\system_log;
+use api\log\system_log as system_log_api;
+use api\word\word as word_api;
 use DateTime;
 use cfg\ip_range;
 use cfg\ip_range_list;
 use cfg\library;
-use cfg\sql_db;
+use cfg\db\sql_db;
 use cfg\sys_log_status;
-use cfg\system_log;
-use cfg\system_log_list;
 
 class system_unit_tests
 {
@@ -84,7 +85,7 @@ class system_unit_tests
         $t->assert($test_name, $vrb->dsp_id(), $target);
         $test_name = 'debug triple id';
         $trp = $t->dummy_triple();
-        $target = '"constant" "is a" "Mathematics" (2,3,1 -> triple_id 1) for user 1 (zukunft.com system test)';
+        $target = '"constant" "is part of" "Mathematics" (2,3,1 -> triple_id 1) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $trp->dsp_id(), $target);
         $test_name = 'debug triple_list id';
         $trp_lst = $t->dummy_triple_list();
@@ -92,7 +93,7 @@ class system_unit_tests
         $t->assert($test_name, $trp_lst->dsp_id(), $target);
         $test_name = 'debug phrase id';
         $phr = $t->dummy_triple()->phrase();
-        $target = '"constant" "is a" "Mathematics" (2,3,1 -> triple_id 1) for user 1 (zukunft.com system test) as phrase';
+        $target = '"constant" "is part of" "Mathematics" (2,3,1 -> triple_id 1) for user 1 (zukunft.com system test) as phrase';
         $t->assert($test_name, $phr->dsp_id(), $target);
         $test_name = 'debug phrase_list id';
         $phr_lst = $t->dummy_phrase_list();
@@ -100,7 +101,7 @@ class system_unit_tests
         $t->assert($test_name, $phr_lst->dsp_id(), $target);
         $test_name = 'debug phrase_group id';
         $grp = $t->dummy_phrase_group();
-        $target = '"Pi (math)" (phrase_group_id 1) as "Pi (math)" for user 1 (zukunft.com system test)';
+        $target = '"Pi (math)" (group_id 5) as "Pi (math)" for user 1 (zukunft.com system test)';
         $t->assert($test_name, $grp->dsp_id(), $target);
         $test_name = 'debug group_list id';
         $grp_lst = $t->dummy_phrase_group_list();
@@ -116,15 +117,15 @@ class system_unit_tests
         $t->assert($test_name, $trm_lst->dsp_id(), $target);
         $test_name = 'debug value id';
         $val = $t->dummy_value();
-        $target = '"Pi (math)" 3.1415926535898 (value_id 1) for user 1 (zukunft.com system test)';
+        $target = '"Pi (math)" 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -2,,,) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $val->dsp_id(), $target);
         $test_name = 'debug value_list id';
         $val_lst = $t->dummy_value_list();
-        $target = '"Pi (math)" 3.1415926535898 / "inhabitant in the city of Zurich (2019)" 415367 (value_id 1,2) for user 1 (zukunft.com system test)';
+        $target = '"Pi (math)" 3.1415926535898 / "inhabitant in the city of Zurich (2019)" 415367 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -2,,, / ' . word_api::TI_2019 . ',' . word_api::TI_ZH . ',' . word_api::TI_INHABITANT . ',) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $val_lst->dsp_id(), $target);
         $test_name = 'debug value_phrase_link id';
         $val_lnk = $t->dummy_value_phrase_link();
-        $target = 'link "Pi (math)" 3.1415926535898 (value_id 1) to "Mathematics" (word_id 1) as phrase for zukunft.com system test (1)';
+        $target = 'link "Pi (math)" 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -2,,,) to "Mathematics" (word_id 1) as phrase for zukunft.com system test (1)';
         $t->assert($test_name, $val_lnk->dsp_id(), $target);
         $test_name = 'debug formula id';
         $frm = $t->dummy_formula();
@@ -148,23 +149,23 @@ class system_unit_tests
         $t->assert($test_name, $elm->dsp_id(), $target);
         $test_name = 'debug expression id';
         $exp = $t->dummy_expression();
-        $target = '""second" = "minute" * 60" ()';
+        $target = '""second" = "minute" * 60" ({w17}={w98}*60)';
         $t->assert($test_name, $exp->dsp_id(), $target);
         $test_name = 'debug result id';
         $res = $t->dummy_result();
-        $target = '"Mathematics" 123456 (result_id 1) for user 1 (zukunft.com system test)';
+        $target = '"Mathematics" 123456 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 1,,,) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $res->dsp_id(), $target);
         $test_name = 'debug result_list id';
         $res_lst = $t->dummy_result_list();
-        $target = '"Mathematics" 123456 (result_id 1) for user 1 (zukunft.com system test)';
+        $target = '"Mathematics" 123456 / "percent" 0.01234 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 1,,, / 2,,,) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $res_lst->dsp_id(), $target);
         $test_name = 'debug figure id';
         $fig = $t->dummy_figure_value();
-        $target = 'value figure "Pi (math)" 3.1415926535898 (value_id 1) for user 1 (zukunft.com system test) 2022-12-26 18:23:45';
+        $target = 'value figure "Pi (math)" 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -2,,,) for user 1 (zukunft.com system test) 2022-12-26 18:23:45';
         $t->assert($test_name, $fig->dsp_id(), $target);
         $test_name = 'debug figure_list id';
         $fig_lst = $t->dummy_figure_list();
-        $target = ' 3.1415926535898 Pi (math)  123456 "Mathematics"  (1,-1)';
+        $target = ' 3.1415926535898 Pi (math)  123456 "Mathematics"  (5,-2)';
         $t->assert($test_name, $fig_lst->dsp_id(), $target);
         $test_name = 'debug view id';
         $msk = $t->dummy_view();
@@ -261,7 +262,7 @@ class system_unit_tests
         $t->subheader('ip list sql tests');
 
         $ip_lst = new ip_range_list();
-        $t->assert_load_sql_obj_vars($db_con, $ip_lst);
+        $t->assert_sql_by_obj_vars($db_con, $ip_lst);
 
 
         $t->subheader('user list loading sql tests');
@@ -364,7 +365,7 @@ class system_unit_tests
         $t->subheader('System consistency tests');
 
         // sql to check the system consistency
-        $db_con->set_type(sql_db::TBL_FORMULA);
+        $db_con->set_class(sql_db::TBL_FORMULA);
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $db_con->missing_owner_sql();
         $expected_sql = $t->file('db/system/missing_owner_by_formula.sql');
@@ -508,7 +509,7 @@ class system_unit_tests
         $t->subheader('SQL database link tests');
 
         $db_con = new sql_db();
-        $db_con->set_type(sql_db::TBL_FORMULA);
+        $db_con->set_class(sql_db::TBL_FORMULA);
         $created = $db_con->count_sql();
         $expected = file_get_contents(PATH_TEST_FILES . 'db/formula/formula_count.sql');
         $t->assert_sql('sql_db->count', $created, $expected);

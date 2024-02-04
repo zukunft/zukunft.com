@@ -32,7 +32,7 @@
 
 namespace api\component;
 
-use api\list_api;
+use api\sandbox\list_object as list_api;
 use html\word\word_list as word_list_dsp;
 
 class component_list extends list_api
@@ -51,7 +51,7 @@ class component_list extends list_api
      * add a view component to the list
      * @returns bool true if at least one component has been added
      */
-    function add(component_api $phr): bool
+    function add(component $phr): bool
     {
         return parent::add_obj($phr);
     }

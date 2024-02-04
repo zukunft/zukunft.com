@@ -1,4 +1,4 @@
-PREPARE formula_link_by_usr_cfg (int, int) AS
+PREPARE formula_link_by_usr_cfg (bigint, bigint) AS
     SELECT formula_link_id,
            link_type_id,
            excluded,

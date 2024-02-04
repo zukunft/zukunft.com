@@ -1,13 +1,11 @@
 PREPARE result_list_by_word_id FROM
-   'SELECT s.result_id,
+   'SELECT s.group_id,
            s.formula_id,
            s.user_id,
-           s.source_phrase_group_id,
-           s.phrase_group_id,
-           s.result,
+           s.source_group_id,
+           s.numeric_value,
            s.last_update,
-           s.dirty,
-           l.phrase_group_id
+           l.group_id
       FROM results s
- LEFT JOIN phrase_group_word_links l ON s.phrase_group_id = l.phrase_group_id
+ LEFT JOIN group_links l ON s.group_id = l.group_id
      WHERE l.word_id = ?';

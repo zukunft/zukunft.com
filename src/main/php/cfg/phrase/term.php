@@ -59,9 +59,11 @@ include_once MODEL_FORMULA_PATH . 'formula.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once WEB_PHRASE_PATH . 'term.php';
 
-use api\term_api;
-use api\word_api;
-use cfg\db\sql_creator;
+use api\phrase\term as term_api;
+use api\word\word as word_api;
+use cfg\db\sql;
+use cfg\db\sql_db;
+use cfg\db\sql_par;
 use html\html_base;
 use html\phrase\term as term_dsp;
 use html\word\word as word_dsp;
@@ -492,16 +494,16 @@ class term extends combine_named
      * create the common part of an SQL statement to retrieve a term from the database
      * uses the term view which includes only the most relevant fields of words, triples, formulas and verbs
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $query_name the name of the query use to prepare and call the query
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    private function load_sql(sql_creator $sc, string $query_name): sql_par
+    private function load_sql(sql $sc, string $query_name): sql_par
     {
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
 
-        $sc->set_type(self::class);
+        $sc->set_class(self::class);
         $sc->set_name($qp->name);
 
         $sc->set_usr_fields(self::FLD_NAMES_USR);
@@ -513,11 +515,11 @@ class term extends combine_named
     /**
      * create an SQL statement to retrieve a term by term id (not the object id) from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param int $id the id of the term as defined in the database term view
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql_creator $sc, int $id): sql_par
+    function load_sql_by_id(sql $sc, int $id): sql_par
     {
         $qp = $this->load_sql($sc, sql_db::FLD_ID);
         $sc->add_where(term::FLD_ID, $id);
@@ -530,11 +532,11 @@ class term extends combine_named
     /**
      * create an SQL statement to retrieve a term by name from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $name the name of the term and the related word, triple, formula or verb
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_name(sql_creator $sc, string $name): sql_par
+    function load_sql_by_name(sql $sc, string $name): sql_par
     {
         $qp = $this->load_sql($sc, sql_db::FLD_NAME);
         $sc->add_where(term::FLD_NAME, $name);
@@ -802,14 +804,6 @@ class term extends combine_named
         return $result;
     }
 
-    /**
-     * @return string with the id field name of the term
-     */
-    function id_field(): string
-    {
-        return self::FLD_ID;
-    }
-
     function name_field(): string
     {
         return self::FLD_NAME;
@@ -939,7 +933,7 @@ class term extends combine_named
     /**
      * create a message text that the name is already used
      */
-    function id_used_msg(db_object $obj_to_add): string
+    function id_used_msg(db_object_seq_id $obj_to_add): string
     {
         $lib = new library();
         $html = new html_base();

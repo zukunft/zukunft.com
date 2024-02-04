@@ -1,4 +1,4 @@
-PREPARE user_list_by_ids (int[]) AS
+PREPARE user_list_by_ids (bigint[]) AS
     SELECT
          user_id,
          user_name,

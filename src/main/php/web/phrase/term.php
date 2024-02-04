@@ -41,9 +41,8 @@ include_once WEB_FORMULA_PATH . 'formula.php';
 include_once WEB_VERB_PATH . 'verb.php';
 
 use api\api;
-use api\combine_object_api;
-use api\term_api;
-use controller\controller;
+use api\phrase\term as term_api;
+use api\sandbox\combine_object as combine_object_api;
 use html\combine_named_dsp;
 use html\formula\formula as formula_dsp;
 use html\verb\verb as verb_dsp;
@@ -132,10 +131,10 @@ class term extends combine_named_dsp
     }
 
     /**
-     * @return int the id of the object
+     * @return int|string the id of the object
      * e.g 1 for a word 1, 1 for a triple 1, 1 for a formula 1 and 1 for a verb 1
      */
-    function obj_id(): int
+    function obj_id(): int|string
     {
         return $this->obj()->id();
     }
@@ -332,7 +331,7 @@ class term extends combine_named_dsp
                 $label = "Word:";
             }
         }
-        // TODO activate
+        // TODO activate Prio 3
         // $sel->bs_class = $class;
 
         return $trm_lst->selector($field_name, $form_name, $label, '', $this->id());

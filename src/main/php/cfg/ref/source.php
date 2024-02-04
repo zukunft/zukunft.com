@@ -48,10 +48,14 @@ include_once SERVICE_EXPORT_PATH . 'sandbox_exp.php';
 include_once SERVICE_EXPORT_PATH . 'source_exp.php';
 include_once WEB_REF_PATH . 'source.php';
 
-use api\source_api;
-use cfg\db\sql_creator;
-use model\export\exp_obj;
-use model\export\source_exp;
+use api\ref\source as source_api;
+use cfg\db\sql;
+use cfg\db\sql_db;
+use cfg\db\sql_field_default;
+use cfg\db\sql_field_type;
+use cfg\db\sql_par;
+use cfg\export\sandbox_exp;
+use cfg\export\source_exp;
 
 class source extends sandbox_typed
 {
@@ -65,6 +69,18 @@ class source extends sandbox_typed
     const FLD_NAME = 'source_name';
     const FLD_TYPE = 'source_type_id';
     const FLD_URL = 'url';
+
+    // comments used for the database creation
+    const TBL_COMMENT = 'for the original sources for the numeric, time and geo values';
+
+    // list of fields that can be changed by the user
+    const FLD_LST_CREATE_CHANGEABLE = array(
+        [self::FLD_NAME, sql_field_type::NAME, sql_field_default::NOT_NULL, sql::INDEX, '', 'the unique name of the source used e.g. as the primary search key'],
+        [self::FLD_DESCRIPTION, sql_field_type::TEXT, sql_field_default::NULL, '', '', 'the user specific description of the source for mouse over helps'],
+        [self::FLD_TYPE, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', 'link to the source type'],
+        [self::FLD_URL, sql_field_type::TEXT, sql_field_default::NULL, '', '', 'the url of the source'],
+        [sql_db::FLD_CODE_ID, sql_field_type::CODE_ID, sql_field_default::NULL, '', '', 'to select sources used by this program'],
+    );
 
     // all database field names excluding the id used to identify if there are some user specific changes
     const FLD_NAMES = array(
@@ -213,13 +229,13 @@ class source extends sandbox_typed
     /**
      * create the SQL to load the default source always by the id
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql_creator $sc, string $class = self::class): sql_par
+    function load_standard_sql(sql $sc, string $class = self::class): sql_par
     {
-        $sc->set_type(source::class);
+        $sc->set_class(source::class);
         $sc->set_fields(array_merge(
             self::FLD_NAMES,
             self::FLD_NAMES_USR,
@@ -251,16 +267,15 @@ class source extends sandbox_typed
     /**
      * create the common part of an SQL statement to retrieve the parameters of a source from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
-     * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    protected function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
+    function load_sql(sql $sc, string $query_name): sql_par
     {
-        $sc->set_type(source::class);
+        $sc->set_class($this::class);
         return parent::load_sql_fields(
-            $sc, $query_name, $class,
+            $sc, $query_name,
             self::FLD_NAMES,
             self::FLD_NAMES_USR,
             self::FLD_NAMES_NUM_USR
@@ -270,12 +285,12 @@ class source extends sandbox_typed
     /**
      * create an SQL statement to retrieve a source by code id from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $code_id the code id of the source
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_code_id(sql_creator $sc, string $code_id, string $class): sql_par
+    function load_sql_by_code_id(sql $sc, string $code_id, string $class): sql_par
     {
         $qp = $this->load_sql($sc, 'code_id', $class);
         $sc->add_where(sql_db::FLD_CODE_ID, $code_id);
@@ -372,7 +387,7 @@ class source extends sandbox_typed
             if ($key == self::FLD_URL) {
                 $this->url = $value;
             }
-            if ($key == exp_obj::FLD_TYPE) {
+            if ($key == sandbox_exp::FLD_TYPE) {
                 $this->type_id = $source_types->id($value);
             }
         }
@@ -390,9 +405,9 @@ class source extends sandbox_typed
     /**
      * create an object for the export
      * @param bool $do_load to switch off the database load for unit tests
-     * @return exp_obj the filled object used to create the json
+     * @return sandbox_exp the filled object used to create the json
      */
-    function export_obj(bool $do_load = true): exp_obj
+    function export_obj(bool $do_load = true): sandbox_exp
     {
         log_debug();
         $result = new source_exp();
@@ -429,16 +444,16 @@ class source extends sandbox_typed
 
         foreach ($api_json as $key => $value) {
 
-            if ($key == exp_obj::FLD_NAME) {
+            if ($key == sandbox_exp::FLD_NAME) {
                 $this->name = $value;
             }
             if ($key == self::FLD_URL) {
                 $this->url = $value;
             }
-            if ($key == exp_obj::FLD_DESCRIPTION) {
+            if ($key == sandbox_exp::FLD_DESCRIPTION) {
                 $this->description = $value;
             }
-            if ($key == exp_obj::FLD_TYPE_ID) {
+            if ($key == sandbox_exp::FLD_TYPE_ID) {
                 $this->type_id = $value;
             }
         }
@@ -472,7 +487,7 @@ class source extends sandbox_typed
      */
     function not_changed_sql(sql_db $db_con): sql_par
     {
-        $db_con->set_type(source::class);
+        $db_con->set_class(source::class);
         return $db_con->load_sql_not_changed($this->id, $this->owner_id);
     }
 
@@ -503,13 +518,13 @@ class source extends sandbox_typed
     /**
      * create an SQL statement to retrieve the user changes of the current source
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_user_changes(sql_creator $sc, string $class = self::class): sql_par
+    function load_sql_user_changes(sql $sc, string $class = self::class): sql_par
     {
-        $sc->set_type(source::class, true);
+        $sc->set_class(source::class, true);
         return parent::load_sql_user_changes($sc, $class);
     }
 

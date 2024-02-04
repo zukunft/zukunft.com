@@ -33,6 +33,8 @@
 
 namespace cfg;
 
+use cfg\db\sql_db;
+
 include_once DB_PATH . 'sql_db.php';
 include_once MODEL_HELPER_PATH . 'type_list.php';
 include_once MODEL_PHRASE_PATH . 'phrase_type.php';

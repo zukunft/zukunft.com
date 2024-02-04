@@ -1,4 +1,4 @@
-PREPARE triple_names_like (int, text, int, int) AS
+PREPARE triple_names_like (bigint, text, bigint, bigint) AS
          SELECT s.triple_id,
                 u.triple_id AS user_triple_id,
                 s.user_id,

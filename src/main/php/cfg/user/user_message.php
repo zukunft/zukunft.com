@@ -46,14 +46,18 @@ class user_message
     // the message types that defines what needs to be done next
     const OK = 1;
     const NOK = 2;
-    //const YES_NO = 3;
-    //const CONFIRM_CANCEL = 4;
+    const WARNING = 3;
+    //const YES_NO = 4;
+    //const CONFIRM_CANCEL = 5;
 
     private int $msg_status;
 
     // array of the messages that should be shown to the user to explain the result of a process
     private array $msg_text;
+    // the prime database row that has caused the user message
+    private int|string $db_row_id;
 
+    // a list of solutions suggested by the program
     //private user_actions $actions;
 
     /**
@@ -70,10 +74,107 @@ class user_message
             $this->msg_text[] = $msg_text;
             $this->msg_status = self::NOK;
         }
+        $this->db_row_id = 0;
     }
 
+
     /*
-     * get interface functions
+     * set
+     */
+
+    /**
+     * set the status to not ok
+     * @return void
+     */
+    function set_not_ok(): void
+    {
+        $this->msg_status = self::NOK;
+
+    }
+
+    /**
+     * set the status to warning
+     * @return void
+     */
+    function set_warning(): void
+    {
+        $this->msg_status = self::WARNING;
+
+    }
+
+    /**
+     * set the main database row to which this user message is related
+     * @param int|string $id the prime database index value
+     * @return void
+     */
+    function set_db_row_id(int|string $id): void
+    {
+        $this->db_row_id = $id;
+    }
+
+
+    /*
+     * add
+     */
+
+    /**
+     * to offer the user to see more details without retry
+     * more than one message text can be added to a user message result
+     *
+     * @param string $msg_text the message text to add
+     * @return void is never expected to fail
+     */
+    function add_message(string $msg_text): void
+    {
+        if ($msg_text != '') {
+            // do not repeat the same text more than once
+            if (!in_array($msg_text, $this->msg_text)) {
+                $this->msg_text[] = $msg_text;
+            }
+            // if a message text is added it is expected that the result was not ok, but other stati are not changed
+            if ($this->is_ok()) {
+                $this->set_not_ok();
+            }
+        }
+    }
+
+    /**
+     * show the warning message to the user without interrupting the process
+     *
+     * @param string $msg_text the warning text to add
+     * @return void is never expected to fail
+     */
+    function add_warning(string $msg_text): void
+    {
+        if ($msg_text != '') {
+            // do not repeat the same text more than once
+            if (!in_array($msg_text, $this->msg_text)) {
+                $this->msg_text[] = $msg_text;
+            }
+            // set to warning only if everything has been fine until now
+            if ($this->is_ok()) {
+                $this->set_warning();
+            }
+        }
+    }
+
+    /**
+     * combine the given message with this message
+     *
+     * @param user_message $msg_to_add a message of which all parameter should be added to this message
+     * @return void is never expected to fail
+     */
+    function add(user_message $msg_to_add): void
+    {
+        foreach ($msg_to_add->get_all_messages() as $msg_text) {
+            $this->add_message($msg_text);
+        }
+        $this->combine_status($msg_to_add);
+    }
+
+
+    /*
+     * get
      */
 
     /**
@@ -121,61 +222,30 @@ class user_message
         return $this->get_message(count($this->msg_text));
     }
 
-    /*
-     * set interface functions
-     */
-
     /**
-     * set the status to not ok
-     * @return void
+     * @return int|string the main database row to which this user message is related
      */
-    function set_not_ok(): void
+    function get_row_id(): int|string
     {
-        $this->msg_status = self::NOK;
-
+        return $this->db_row_id;
     }
 
-    /*
-     * other interface functions
-     */
-
     /**
-     * to offer the user to see more details without retry
-     * more than one message text can be added to a user message result
-     *
-     * @param string $msg_text the message text to add
-     * @return void is never expected to fail
+     * @return bool true if the message is linked to a valid database row of just a database row has been created
      */
-    function add_message(string $msg_text): void
+    function has_row():bool
     {
-        if ($msg_text != '') {
-            // do not repeat the same text more than once
-            if (!in_array($msg_text, $this->msg_text)) {
-                $this->msg_text[] = $msg_text;
-            }
-            // if a message text is added it is expected that the result was not ok, but other stati are not changed
-            if ($this->is_ok()) {
-                $this->set_not_ok();
-            }
+        if ($this->db_row_id == 0 or $this->db_row_id == '') {
+            return false;
+        } else {
+            return true;
         }
     }
 
-    /**
-     * combine the given message with this message
-     *
-     * @param user_message $msg_to_add a message of which all parameter should be added to this message
-     * @return void is never expected to fail
-     */
-    function add(user_message $msg_to_add): void
-    {
-        foreach ($msg_to_add->get_all_messages() as $msg_text) {
-            $this->add_message($msg_text);
-        }
-        $this->combine_status($msg_to_add);
-    }
+
 
     /*
-     * internal functions
+     * internal
      */
 
     /**
@@ -197,4 +267,5 @@ class user_message
             $this->msg_status = self::NOK;
         }
     }
+
 }

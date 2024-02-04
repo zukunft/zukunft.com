@@ -29,10 +29,10 @@
   
 */
 
+use cfg\value\value;
 use controller\controller;
 use cfg\user;
-use cfg\value;
-use api\value_api;
+use api\value\value as value_api;
 
 // standard zukunft header for callable php files to allow debugging and lib loading
 global $debug;
@@ -43,7 +43,7 @@ include_once PHP_PATH . 'zu_lib.php';
 
 include_once API_PATH . 'api.php';
 include_once API_PATH . 'controller.php';
-include_once API_PATH . 'message_header.php';
+include_once API_PATH . 'api_message.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_VALUE_PATH . 'value.php';
 include_once API_VALUE_PATH . 'value.php';
@@ -64,7 +64,10 @@ $msg .= $usr->get();
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id() > 0) {
 
-    if ($val_id > 0) {
+    if (is_numeric($val_id)) {
+        $val_id = (int)$val_id;
+    }
+    if ($val_id != 0 and $val_id != '') {
         $val = new value($usr);
         $val->load_by_id($val_id);
         $val->load_objects();

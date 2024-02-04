@@ -30,12 +30,13 @@ include_once SERVICE_IMPORT_PATH . 'import.php';
 
 use cfg\verb_list;
 use html\html_base;
-use cfg\sql_db;
+use cfg\db\sql_db;
 use cfg\user;
 use cfg\user_profile;
 
 /**
  * import a single json file
+ * TODO return a user message instead of a string
  *
  * @param string $filename
  * @param user $usr
@@ -53,9 +54,7 @@ function import_json_file(string $filename, user $usr): string
             $msg .= ' failed because message file is empty of not found.';
         } else {
             $import = new file_import;
-            $import->usr = $usr;
-            $import->json_str = $json_str;
-            $import_result = $import->put();
+            $import_result = $import->put($json_str, $usr);
             if ($import_result->is_ok()) {
                 $msg .= ' done ('
                     . $import->words_done . ' words, '

@@ -38,8 +38,8 @@ include_once WEB_SANDBOX_PATH . 'list.php';
 include_once WEB_PHRASE_PATH . 'phrase.php';
 include_once WEB_PHRASE_PATH . 'phrase_list.php';
 
-use api\combine_object_api;
-use api\term_api;
+use api\phrase\term as term_api;
+use api\sandbox\combine_object as combine_object_api;
 use cfg\config;
 use cfg\foaf_direction;
 use cfg\phrase;

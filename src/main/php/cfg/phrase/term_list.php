@@ -39,8 +39,9 @@ include_once MODEL_PHRASE_PATH . 'term.php';
 include_once WEB_PHRASE_PATH . 'term_list.php';
 include_once API_PHRASE_PATH . 'term_list.php';
 
-use api\term_list_api;
-use cfg\db\sql_creator;
+use api\phrase\term_list as term_list_api;
+use cfg\db\sql;
+use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use html\phrase\term_list as term_list_dsp;
 
@@ -131,16 +132,16 @@ class term_list extends sandbox_list_named
      * create the common part of an SQL statement to retrieve a list of terms from the database
      * uses the term view which includes only the main fields
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $query_name the name of the query use to prepare and call the query
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    private function load_sql(sql_creator $sc, string $query_name): sql_par
+    private function load_sql(sql $sc, string $query_name): sql_par
     {
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
 
-        $sc->set_type(term::class);
+        $sc->set_class(term::class);
         $sc->set_name($qp->name);
 
         $sc->set_fields(term::FLD_NAMES);
@@ -153,14 +154,14 @@ class term_list extends sandbox_list_named
     /**
      * create an SQL statement to retrieve a list of terms from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_ids(sql_creator $sc, trm_ids $ids): sql_par
+    function load_sql_by_ids(sql $sc, trm_ids $ids): sql_par
     {
         $qp = $this->load_sql($sc, 'ids');
         $sc->add_where(term::FLD_ID, $ids->lst);
-        $sc->set_order(term::FLD_ID, sql_db::ORDER_ASC);
+        $sc->set_order(term::FLD_ID, sql::ORDER_ASC);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -171,13 +172,13 @@ class term_list extends sandbox_list_named
      * create an SQL statement to retrieve a list of terms from the database
      * uses the erm view which includes only the main fields
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_like(sql_creator $sc, string $pattern = ''): sql_par
+    function load_sql_like(sql $sc, string $pattern = ''): sql_par
     {
         $qp = $this->load_sql($sc, 'name_like');
-        $sc->add_where(term::FLD_NAME, $pattern, sql_par_type::LIKE);
+        $sc->add_where(term::FLD_NAME, $pattern, sql_par_type::LIKE_R);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -345,7 +346,7 @@ class term_list extends sandbox_list_named
     function word_by_id(int $id): ?word
     {
         $wrd = null;
-        $trm = new term($this->user());
+        $trm = new term(new word($this->user()));
         $trm->set_id_from_obj($id, word::class);
         $trm_id = $trm->id();
         if ($trm_id != 0) {
@@ -366,7 +367,7 @@ class term_list extends sandbox_list_named
     function triple_by_id(int $id): ?triple
     {
         $trp = null;
-        $trm = new term($this->user());
+        $trm = new term(new triple($this->user()));
         $trm->set_id_from_obj($id, triple::class);
         $trm_id = $trm->id();
         if ($trm_id != 0) {
@@ -387,7 +388,7 @@ class term_list extends sandbox_list_named
     function formula_by_id(int $id): ?formula
     {
         $frm = null;
-        $trm = new term($this->user());
+        $trm = new term(new formula($this->user()));
         $trm->set_id_from_obj($id, formula::class);
         $trm_id = $trm->id();
         if ($trm_id != 0) {
@@ -408,7 +409,7 @@ class term_list extends sandbox_list_named
     function verb_by_id(int $id): ?verb
     {
         $vrb = null;
-        $trm = new term($this->user());
+        $trm = new term(new verb());
         $trm->set_id_from_obj($id, verb::class);
         $trm_id = $trm->id();
         if ($trm_id != 0) {
@@ -426,9 +427,10 @@ class term_list extends sandbox_list_named
      */
 
     /**
+     * @param term_list|null $trm_lst a cached list of terms
      * @return string with the best possible id for this element mainly used for debugging
      */
-    function dsp_id(): string
+    function dsp_id(?term_list $trm_lst = null): string
     {
         $id = $this->ids_txt();
         if ($this->name() <> '""') {

@@ -30,8 +30,8 @@
 
 */
 
-use api\value_api;
-use api\word_api;
+use api\value\value as value_api;
+use api\word\word as word_api;
 use html\value\value_list as value_list_dsp;
 use cfg\phrase_list;
 use cfg\value;
@@ -63,9 +63,9 @@ function run_value_ui_test(test_cleanup $t): void
     $phr_lst_ch->add_name(word_api::TN_CH);
     $phr_lst_added->add_name(word_api::TN_RENAMED);
     $val_added = new value($usr);
-    $val_added->load_by_grp($phr_lst_added->get_grp());
+    $val_added->load_by_grp($phr_lst_added->get_grp_id());
     $val_ch = new value($usr);
-    $val_ch->load_by_grp($phr_lst_ch->get_grp());
+    $val_ch->load_by_grp($phr_lst_ch->get_grp_id());
 
     // call the add value page and check if at least some basic keywords are returned
     $back = 0;
@@ -125,7 +125,7 @@ function run_value_ui_test(test_cleanup $t): void
     $t->display('value_list->get_by_grp for ' . $wrd_lst->dsp_id() . '', $target, $result, TIMEOUT_LIMIT_DB);
 
     // ... get all times of the Switzerland values
-    $time_lst = $val_lst->time_lst();
+    $time_lst = $val_lst->time_list();
     $wrd_2014 = new word($usr);
     $wrd_2014->load_by_name(TW_2014);
     if ($time_lst->does_contain($wrd_2014)) {
@@ -140,7 +140,7 @@ function run_value_ui_test(test_cleanup $t): void
     $time_lst = new word_list($usr);
     $wrd_lst->load_by_names(array(word_api::TN_2019, word_api::TN_2021));
     $used_value_lst = $val_lst->filter_by_time($time_lst);
-    $used_time_lst = $used_value_lst->time_lst();
+    $used_time_lst = $used_value_lst->time_list();
     if ($time_lst->does_contain($wrd_2014)) {
         $result = true;
     } else {

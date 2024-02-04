@@ -1,4 +1,4 @@
-PREPARE phrase_list_by_name_like (int, text) AS
+PREPARE phrase_list_by_name_like (bigint, text) AS
     SELECT s.phrase_id,
            u.phrase_id AS user_phrase_id,
            s.user_id,

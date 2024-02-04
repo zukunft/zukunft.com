@@ -32,13 +32,14 @@
 
 namespace html\log;
 
-use cfg\change_log_table;
-use cfg\component\component;
 use cfg\formula;
+use html\formula\formula AS formula_dsp;
+use cfg\log\change_log_table;
+use cfg\component\component;
 use cfg\library;
-use cfg\sql_db;
+use cfg\db\sql_db;
 use cfg\user;
-use cfg\value;
+use cfg\value\value;
 use cfg\view;
 use cfg\word;
 use html\api;
@@ -84,10 +85,10 @@ class user_log_display
 
         // set default values
         if (!isset($this->size)) {
-            $this->size = SQL_ROW_LIMIT;
+            $this->size = sql_db::ROW_LIMIT;
         } else {
             if ($this->size <= 0) {
-                $this->size = SQL_ROW_LIMIT;
+                $this->size = sql_db::ROW_LIMIT;
             }
         }
 
@@ -111,7 +112,7 @@ class user_log_display
         } elseif ($this->type == value::class) {
             $sql_where = " (f.table_id = " . $change_log_tables->id(change_log_table::VALUE) . " 
                      OR f.table_id = " . $change_log_tables->id(change_log_table::VALUE_USR) . ") AND ";
-        } elseif ($this->type == formula::class) {
+        } elseif ($this->type == formula_dsp::class) {
             $sql_where = " (f.table_id = " . $change_log_tables->id(change_log_table::FORMULA) . " 
                      OR f.table_id = " . $change_log_tables->id(change_log_table::FORMULA_USR) . ") AND ";
         } elseif ($this->type == view::class) {

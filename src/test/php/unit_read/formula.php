@@ -32,7 +32,7 @@
 
 namespace test;
 
-use api\formula_api;
+use api\formula\formula as formula_api;
 use cfg\formula_type;
 use cfg\formula_type_list;
 use cfg\formula_list;

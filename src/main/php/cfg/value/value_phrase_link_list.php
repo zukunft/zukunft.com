@@ -5,6 +5,8 @@
     model/value/value_phrase_link_list.php - a list of value phrase links
     --------------------------------------
 
+    TODO deprecate because due to group id not needed any more
+
     These links are mainly used for using the database for index based selections
     the links itself are a replication of the phrase group links per value
 
@@ -32,11 +34,18 @@
   
 */
 
-namespace cfg;
+namespace cfg\value;
 
 include_once DB_PATH . 'sql_par_type.php';
 
+use cfg\db\sql_db;
+use cfg\db\sql_par;
 use cfg\db\sql_par_type;
+use cfg\group\group;
+use cfg\phrase;
+use cfg\sandbox_list;
+use cfg\user;
+use cfg\user_message;
 
 class value_phrase_link_list extends sandbox_list
 {
@@ -51,13 +60,13 @@ class value_phrase_link_list extends sandbox_list
      */
     function load_sql(sql_db $db_con, ?phrase $phr = null, ?value $val = null): sql_par
     {
-        $db_con->set_type(sql_db::TBL_VALUE_PHRASE_LINK);
+        $db_con->set_class(sql_db::TBL_VALUE_PHRASE_LINK);
         $qp = new sql_par(self::class);
         $sql_by = '';
 
         if ($val != null) {
-            if ($val->id() > 0) {
-                $sql_by = value::FLD_ID;
+            if ($val->is_id_set()) {
+                $sql_by = group::FLD_ID;
             }
         } elseif ($phr != null) {
             if ($phr->id() <> 0) {
@@ -74,14 +83,14 @@ class value_phrase_link_list extends sandbox_list
             $db_con->set_usr($this->user()->id());
             $db_con->set_fields(value_phrase_link::FLD_NAMES);
             if ($val != null) {
-                $db_con->set_join_fields(array(value::FLD_ID), sql_db::TBL_VALUE);
+                $db_con->set_join_fields(array(group::FLD_ID), value::class, group::FLD_ID, group::FLD_ID);
             } else {
                 $db_con->set_join_fields(array(phrase::FLD_ID), sql_db::TBL_PHRASE);
             }
             if ($val != null) {
-                if ($val->id() > 0) {
+                if ($val->is_id_set()) {
                     $db_con->add_par(sql_par_type::INT, $val->id());
-                    $qp->sql = $db_con->select_by_field_list(array(value::FLD_ID));
+                    $qp->sql = $db_con->select_by_field_list(array(group::FLD_ID));
                 }
             } elseif ($phr != null) {
                 if ($phr->id() <> 0) {

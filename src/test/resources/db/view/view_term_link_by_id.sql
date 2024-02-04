@@ -1,4 +1,4 @@
-PREPARE view_term_link_by_id (int,int) AS
+PREPARE view_term_link_by_id (bigint,bigint) AS
     SELECT
         s.view_term_link_id,
         u.view_term_link_id AS user_view_term_link_id,

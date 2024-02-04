@@ -1,4 +1,4 @@
-PREPARE source_list_by_ids (int,int[]) AS
+PREPARE source_list_by_ids (bigint, bigint[]) AS
     SELECT s.source_id,
            u.source_id                                                                                 AS user_source_id,
            s.user_id,

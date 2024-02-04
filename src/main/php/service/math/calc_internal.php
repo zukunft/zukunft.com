@@ -82,7 +82,7 @@ class math
     /**
      * actually calculate the numeric result; this should be replaced by R
      */
-    function parse(string $formula): string
+    function parse(string $formula): ?float
     {
         $result = $formula;
 
@@ -106,7 +106,12 @@ class math
         }
 
         log_debug('calculated result: "' . $result . '"');
-        return $result;
+        if (is_numeric($result)) {
+            return (float)$result;
+        } else {
+            log_err('cannot parse "' . $formula . '" to number');
+            return null;
+        }
     }
 
     /*

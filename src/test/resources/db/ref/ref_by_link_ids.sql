@@ -1,4 +1,4 @@
-PREPARE ref_by_link_ids (int,int,int) AS
+PREPARE ref_by_link_ids (bigint,bigint,bigint) AS
     SELECT s.ref_id,
            u.ref_id AS user_ref_id,
            s.user_id,

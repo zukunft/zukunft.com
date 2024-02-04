@@ -29,17 +29,17 @@
 
 */
 
-namespace controller\log;
+namespace api\log;
 
-include_once API_PATH . 'message_header.php';
+include_once API_PATH . 'api_message.php';
 
-use api_message;
-use controller\controller;
-use cfg\sql_db;
+use api\api_message;
+use cfg\db\sql_db;
 use cfg\user;
+use controller\controller;
 use JsonSerializable;
 
-class system_log_list_api extends api_message implements JsonSerializable
+class system_log_list extends api_message implements JsonSerializable
 {
 
     // field names used for JSON creation

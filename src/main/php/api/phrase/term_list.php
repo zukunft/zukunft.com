@@ -30,17 +30,18 @@
 
 */
 
-namespace api;
+namespace api\phrase;
 
-include_once API_SANDBOX_PATH . 'list.php';
+include_once API_SANDBOX_PATH . 'list_object.php';
 include_once API_PHRASE_PATH . 'term.php';
 include_once API_PHRASE_PATH . 'term_list.php';
 include_once WEB_PHRASE_PATH . 'term_list.php';
 
+use api\sandbox\list_object as list_api;
 use html\phrase\term_list as term_list_dsp;;
 use JsonSerializable;
 
-class term_list_api extends list_api implements JsonSerializable
+class term_list extends list_api implements JsonSerializable
 {
 
     /*
@@ -56,7 +57,7 @@ class term_list_api extends list_api implements JsonSerializable
      * add a term to the list
      * @returns bool true if the term has been added
      */
-    function add(term_api $trm): bool
+    function add(term $trm): bool
     {
         return parent::add_obj($trm);
     }
@@ -119,10 +120,10 @@ class term_list_api extends list_api implements JsonSerializable
 
     /**
      * removes all terms from this list that are not in the given list
-     * @param term_list_api $new_lst the terms that should remain in this list
-     * @returns term_list_api with the terms of this list and the new list
+     * @param term_list $new_lst the terms that should remain in this list
+     * @returns term_list with the terms of this list and the new list
      */
-    function intersect(term_list_api $new_lst): term_list_api
+    function intersect(term_list $new_lst): term_list
     {
         if (!$new_lst->is_empty()) {
             if ($this->is_empty()) {
@@ -130,7 +131,7 @@ class term_list_api extends list_api implements JsonSerializable
             } else {
                 // next line would work if array_intersect could handle objects
                 // $this->lst() = array_intersect($this->lst(), $new_lst->lst());
-                $found_lst = new term_list_api();
+                $found_lst = new term_list();
                 foreach ($new_lst->lst() as $trm) {
                     if (in_array($trm->id(), $this->id_lst())) {
                         $found_lst->add($trm);
@@ -144,15 +145,15 @@ class term_list_api extends list_api implements JsonSerializable
 
     /**
      * remove all terms from the given list from this list
-     * @param term_list_api $del_lst the terms that should be removed
-     * @return term_list_api this
+     * @param term_list $del_lst the terms that should be removed
+     * @return term_list this
      */
-    function remove(term_list_api $del_lst): term_list_api
+    function remove(term_list $del_lst): term_list
     {
         if (!$del_lst->is_empty()) {
             // next line would work if array_intersect could handle objects
             // $this->lst() = array_intersect($this->lst(), $new_lst->lst());
-            $remain_lst = new term_list_api();
+            $remain_lst = new term_list();
             foreach ($this->lst() as $trm) {
                 if (!in_array($trm->id(), $del_lst->id_lst())) {
                     $remain_lst->add($trm);

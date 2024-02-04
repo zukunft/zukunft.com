@@ -42,10 +42,12 @@ include_once SERVICE_EXPORT_PATH . 'component_exp.php';
 
 use api\view\view as view_api;
 use cfg\component\component;
-use cfg\db\sql_creator;
+use cfg\db\sql;
+use cfg\db\sql_db;
+use cfg\db\sql_par;
 use cfg\db\sql_par_type;
-use model\export\exp_obj;
-use model\export\view_exp;
+use cfg\export\sandbox_exp;
+use cfg\export\view_exp;
 
 class view extends sandbox_typed
 {
@@ -223,7 +225,7 @@ class view extends sandbox_typed
     /**
      * @return int the number of linked components of this view
      */
-    public function component_links(): int
+    function component_links(): int
     {
         return $this->component_link_list()->count();
     }
@@ -303,13 +305,13 @@ class view extends sandbox_typed
     /**
      * create the SQL to load the default view always by the id
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql_creator $sc, string $class = self::class): sql_par
+    function load_standard_sql(sql $sc, string $class = self::class): sql_par
     {
-        $sc->set_type($class);
+        $sc->set_class($class);
         $sc->set_fields(array_merge(
             self::FLD_NAMES,
             self::FLD_NAMES_USR,
@@ -342,16 +344,16 @@ class view extends sandbox_typed
     /**
      * create the common part of an SQL statement to retrieve the parameters of a view from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    protected function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
+    function load_sql(sql $sc, string $query_name, string $class = self::class): sql_par
     {
-        $sc->set_type($class);
+        $sc->set_class($class);
         return parent::load_sql_fields(
-            $sc, $query_name, $class,
+            $sc, $query_name,
             self::FLD_NAMES,
             self::FLD_NAMES_USR,
             self::FLD_NAMES_NUM_USR
@@ -361,12 +363,12 @@ class view extends sandbox_typed
     /**
      * create an SQL statement to retrieve a view by code id from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $code_id the code id of the view
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_code_id(sql_creator $sc, string $code_id, string $class): sql_par
+    function load_sql_by_code_id(sql $sc, string $code_id, string $class): sql_par
     {
         $qp = $this->load_sql($sc, 'code_id', $class);
         $sc->add_where(sql_db::FLD_CODE_ID, $code_id);
@@ -381,12 +383,12 @@ class view extends sandbox_typed
      * TODO include user_view_term_links into the selection
      * TODO take the usage into account for the selection of the view
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param term $trm the code id of the view
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_term(sql_creator $sc, term $trm, string $class = self::class): sql_par
+    function load_sql_by_term(sql $sc, term $trm, string $class = self::class): sql_par
     {
         $qp = $this->load_sql($sc, 'term', $class);
         $sc->set_join_fields(
@@ -464,7 +466,7 @@ class view extends sandbox_typed
             log_err("Either the database ID (" . $this->id . "), the view name (" . $this->name . ") or the code_id (" . $this->code_id . ")  must be set to load the components of a view.", "view->load_components_sql");
         }
 
-        $db_con->set_type(sql_db::TBL_COMPONENT_LINK);
+        $db_con->set_class(sql_db::TBL_COMPONENT_LINK);
         $db_con->set_usr($this->user()->id());
         $db_con->set_name($qp->name);
         $db_con->set_fields(component_link::FLD_NAMES);
@@ -546,10 +548,10 @@ class view extends sandbox_typed
     }
 
     /**
-     * @param sql_creator $sc the sql creator without view joins
-     * @return sql_creator the sql creator with the view join set
+     * @param sql $sc the sql creator without view joins
+     * @return sql the sql creator with the view join set
      */
-    function set_join(sql_creator $sc): sql_creator
+    function set_join(sql $sc): sql
     {
         $sc->set_join_fields(view::FLD_NAMES, sql_db::TBL_VIEW);
         $sc->set_join_usr_fields(view::FLD_NAMES_USR, sql_db::TBL_VIEW);
@@ -694,7 +696,7 @@ class view extends sandbox_typed
         // first save the parameters of the view itself
         foreach ($in_ex_json as $key => $value) {
 
-            if ($key == exp_obj::FLD_TYPE) {
+            if ($key == sandbox_exp::FLD_TYPE) {
                 if ($value != '') {
                     $type_id = $this->type_id_by_code_id($value);
                     if ($type_id == type_list::CODE_ID_NOT_FOUND) {
@@ -704,7 +706,7 @@ class view extends sandbox_typed
                     }
                 }
             }
-            if ($key == exp_obj::FLD_CODE_ID) {
+            if ($key == sandbox_exp::FLD_CODE_ID) {
                 if ($value != '') {
                     if ($this->user()->is_admin() or $this->user()->is_system()) {
                         $this->code_id = $value;
@@ -738,16 +740,16 @@ class view extends sandbox_typed
                     // do not overwrite an existing component
                     // instead just add the existing component
                     if (count($json_cmp) == 2
-                        and array_key_exists(exp_obj::FLD_POSITION, $json_cmp)
-                        and array_key_exists(exp_obj::FLD_NAME, $json_cmp)) {
-                        $cmp->load_by_name($json_cmp[exp_obj::FLD_NAME]);
+                        and array_key_exists(sandbox_exp::FLD_POSITION, $json_cmp)
+                        and array_key_exists(sandbox_exp::FLD_NAME, $json_cmp)) {
+                        $cmp->load_by_name($json_cmp[sandbox_exp::FLD_NAME]);
                         // if the component does not jet exist
                         // nevertheless create the component
                         // but send a warning message
                         if ($cmp->id() <= 0) {
-                            log_warning('Component ' . $json_cmp[exp_obj::FLD_NAME]
+                            log_warning('Component ' . $json_cmp[sandbox_exp::FLD_NAME]
                                 . ' has not yet been created, but is supposed to be at position '
-                                . $json_cmp[exp_obj::FLD_POSITION] . ' of a view ');
+                                . $json_cmp[sandbox_exp::FLD_POSITION] . ' of a view ');
                             $cmp->import_obj($json_cmp, $test_obj);
                         }
                     } else {
@@ -771,7 +773,7 @@ class view extends sandbox_typed
     /**
      * export mapper: create an object for the export
      */
-    function export_obj(bool $do_load = true): exp_obj
+    function export_obj(bool $do_load = true): sandbox_exp
     {
         log_debug($this->dsp_id());
         $result = new view_exp();
@@ -825,13 +827,13 @@ class view extends sandbox_typed
     /**
      * create an SQL statement to retrieve the user changes of the current view
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_user_changes(sql_creator $sc, string $class = self::class): sql_par
+    function load_sql_user_changes(sql $sc, string $class = self::class): sql_par
     {
-        $sc->set_type($class, true);
+        $sc->set_class($class, true);
         $sc->set_fields(array_merge(
             self::FLD_NAMES_USR,
             self::FLD_NAMES_NUM_USR

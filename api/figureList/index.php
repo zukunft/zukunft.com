@@ -36,7 +36,7 @@ use cfg\fig_ids;
 use controller\controller;
 use cfg\user;
 use cfg\figure_list;
-use api\figure_list_api;
+use api\formula\figure_list as figure_list_api;
 
 // standard zukunft header for callable php files to allow debugging and lib loading
 global $debug;
@@ -47,7 +47,7 @@ include_once PHP_PATH . 'zu_lib.php';
 
 include_once API_PATH . 'api.php';
 include_once API_PATH . 'controller.php';
-include_once API_PATH . 'message_header.php';
+include_once API_PATH . 'api_message.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_FORMULA_PATH . 'figure_list.php';
 include_once API_FORMULA_PATH . 'figure_list.php';

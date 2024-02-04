@@ -30,9 +30,9 @@
 
 */
 
-namespace model\export;
+namespace cfg\export;
 
-class sandbox_exp_link extends exp_obj
+class sandbox_exp_link extends sandbox_exp
 {
     // field names used for JSON creation
     public ?string $name = '';   // the target (to) object name, which cannot be empty; the source (from) object is defined by the placement in the JSON
@@ -40,7 +40,7 @@ class sandbox_exp_link extends exp_obj
     public ?string $protection= null; // the protection of the given object; TODO check that empty string over writes the setting
 
     // reset the search values of this object
-    function reset()
+    function reset(): void
     {
         $this->name = '';
         $this->share = null;

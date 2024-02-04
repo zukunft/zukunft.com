@@ -32,23 +32,28 @@
 
 */
 
-namespace api;
+namespace api\sandbox;
 
-use controller\controller;
+use api\api;
+use api\formula\formula as formula_api;
+use api\value\value as value_api;
+use api\word\triple as triple_api;
+use api\word\word as word_api;
+use cfg\value\value;
 use JsonSerializable;
 use cfg\formula;
-use cfg\sandbox;
+use cfg\sandbox as sandbox_cfg;
+use cfg\sandbox_value as sandbox_value_cfg;
 use cfg\triple;
 use cfg\user;
-use cfg\value;
 use cfg\word;
 use function log_err;
 
-class sandbox_api implements JsonSerializable
+class sandbox implements JsonSerializable
 {
 
     // fields for the backend link
-    public int $id; // the database id of the object, which is the same as the related database object in the backend
+    public int|string $id; // the database id of the object, which is the same as the related database object in the backend
 
 
     /*
@@ -70,12 +75,17 @@ class sandbox_api implements JsonSerializable
      * set and get
      */
 
-    function set_id(int $id): void
+    /**
+     * TODO move string option only to sandbox_value
+     * @param int|string $id
+     * @return void
+     */
+    function set_id(int|string $id): void
     {
         $this->id = $id;
     }
 
-    function id(): int
+    function id(): int|string
     {
         return $this->id;
     }
@@ -106,7 +116,7 @@ class sandbox_api implements JsonSerializable
      * should be part of the save_from_api_msg functions
      * TODO review
      */
-    function db_obj(user $usr, string $class): sandbox
+    function db_obj(user $usr, string $class): sandbox_cfg|sandbox_value_cfg
     {
         $db_obj = null;
         if ($class == word_api::class) {

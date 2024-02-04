@@ -29,7 +29,7 @@
   
 */
 
-namespace cfg;
+namespace cfg\log;
 
 include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';
@@ -45,8 +45,17 @@ include_once API_LOG_PATH . 'system_log_list.php';
 include_once WEB_LOG_PATH . 'system_log_list.php';
 include_once WEB_LOG_PATH . 'system_log_list_old.php';
 
+use cfg\base_list;
+use cfg\db\sql;
+use cfg\db\sql_par;
 use cfg\db\sql_par_type;
-use controller\log\system_log_list_api;
+use cfg\sandbox;
+use cfg\db\sql_db;
+use cfg\sys_log_function;
+use cfg\sys_log_status;
+use cfg\type_object;
+use cfg\user;
+use api\log\system_log_list as system_log_list_api;
 use html\log\system_log_list_dsp_old;
 
 class system_log_list extends base_list
@@ -167,18 +176,18 @@ class system_log_list extends base_list
         }
 
         if ($sql_where <> '') {
-            $db_con->set_type(sql_db::TBL_SYS_LOG);
+            $db_con->set_class(sql_db::TBL_SYS_LOG);
             $db_con->set_name($qp->name);
             $db_con->set_usr($this->user()->id());
             $db_con->set_fields(system_log::FLD_NAMES);
-            $db_con->set_join_fields(array(system_log::FLD_FUNCTION_NAME), sql_db::TBL_SYS_LOG_FUNCTION);
+            $db_con->set_join_fields(array(system_log::FLD_FUNCTION_NAME), sys_log_function::class);
             $db_con->set_join_fields(array(type_object::FLD_NAME), sql_db::TBL_SYS_LOG_STATUS);
             $db_con->set_join_fields(array(sandbox::FLD_USER_NAME), sql_db::TBL_USER);
             $db_con->set_join_fields(array(
                 sandbox::FLD_USER_NAME . ' AS ' . system_log::FLD_SOLVER_NAME),
                 sql_db::TBL_USER, system_log::FLD_SOLVER);
             $db_con->set_where_text($sql_where);
-            $db_con->set_order(system_log::FLD_TIME, sql_db::ORDER_DESC);
+            $db_con->set_order(system_log::FLD_TIME, sql::ORDER_DESC);
             $db_con->set_page_par($this->size, $this->page);
             $sql = $db_con->select_by_set_id();
             $qp->sql = $sql;

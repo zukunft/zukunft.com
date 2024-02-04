@@ -32,10 +32,10 @@
 
 namespace test\write;
 
-use api\component\component_api;
+use api\component\component as component_api;
 use api\view\view as view_api;
-use cfg\change_log_link;
-use cfg\change_log_table;
+use cfg\log\change_log_link;
+use cfg\log\change_log_table;
 use cfg\component\component;
 use cfg\component_link;
 use cfg\view;
@@ -213,7 +213,7 @@ class component_link_test
             $result = $cmp_lnk->move_up(); // TODO force to reload the entry list
             //$result = $cmp_lnk->move_up(); // TODO force to reload the entry list
             $target = true;
-            // TODO activate
+            // TODO activate Prio 2
             //$t->display('view component order changed for user 2', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
         }
 

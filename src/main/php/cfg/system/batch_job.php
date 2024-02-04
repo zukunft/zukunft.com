@@ -57,7 +57,7 @@ One Sample
 
 A user updates a formula
  -> update the formula results for this user and this formula
-    -> get all values and create a calculation request (phrase_group_list->get_by_val_with_one_phr_each)
+    -> get all values and create a calculation request (group_list->get_by_val_with_one_phr_each)
       -> get based on the assigned words and used words
     -> get all formula results and create a calculation request
       -> get all depending formulas
@@ -71,15 +71,17 @@ A user updates a formula
 
 namespace cfg;
 
-include_once MODEL_HELPER_PATH . 'db_object_user.php';
+include_once MODEL_HELPER_PATH . 'db_object_seq_id_user.php';
 include_once API_SYSTEM_PATH . 'batch_job.php';
 
-use api\batch_job_api;
-use cfg\db\sql_creator;
+use api\system\batch_job as batch_job_api;
+use cfg\db\sql;
+use cfg\db\sql_db;
+use cfg\db\sql_par;
 use DateTime;
 use DateTimeInterface;
 
-class batch_job extends db_object_user
+class batch_job extends db_object_seq_id_user
 {
 
     const STATUS_NEW = 'new'; // the job is not yet assigned to any calc engine
@@ -128,7 +130,7 @@ class batch_job extends db_object_user
     public ?DateTime $start_time = null;    // start time of the job execution
     public ?DateTime $end_time = null;      // end time of the job execution
     private ?int $type_id;                  // id of the batch type e.g. "update value", "add formula", ... because getting the type is fast from the preloaded type list
-    public ?int $row_id = null;             // the id of the related object e.g. if a value has been updated the value_id
+    public ?int $row_id = null;             // the id of the related object e.g. if a value has been updated the group_id
     public string $status;
     public string $priority;
 
@@ -255,15 +257,15 @@ class batch_job extends db_object_user
     /**
      * create the common part of an SQL statement to retrieve the parameters of a batch job from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $query_name the name of the selection fields to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
+    function load_sql(sql $sc, string $query_name, string $class = self::class): sql_par
     {
-        $qp = parent::load_sql($sc, $query_name, $class);
-        $sc->set_type(sql_db::TBL_TASK);
+        $qp = parent::load_sql_multi($sc, $query_name, $class);
+        $sc->set_class(sql_db::TBL_TASK);
 
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
@@ -275,12 +277,12 @@ class batch_job extends db_object_user
     /**
      * create an SQL statement to retrieve a batch job by id from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param int $id the id of the user sandbox object
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql_creator $sc, int $id, string $class = self::class): sql_par
+    function load_sql_by_id(sql $sc, int $id, string $class = self::class): sql_par
     {
         return parent::load_sql_by_id($sc, $id, $class);
     }
@@ -318,7 +320,7 @@ class batch_job extends db_object_user
      * TODO align the field name with the object
      * @return string calc_and_cleanup_task_id instead of batch_job
      */
-    public function id_field(): string
+    function id_field(): string
     {
         return self::FLD_ID;
     }
@@ -366,11 +368,11 @@ class batch_job extends db_object_user
                     }
                     log_debug('connect');
                     //$db_con = New mysql;
-                    $db_type = $db_con->get_type();
-                    $db_con->set_type(sql_db::TBL_TASK);
+                    $db_type = $db_con->get_class();
+                    $db_con->set_class(sql_db::TBL_TASK);
                     $db_con->set_usr($this->user()->id());
-                    $job_id = $db_con->insert(array(user::FLD_ID, self::FLD_TIME_REQUEST, self::FLD_TYPE, self::FLD_ROW),
-                        array($this->user()->id(), 'Now()', $this->type_id(), $this->row_id));
+                    $job_id = $db_con->insert_old(array(user::FLD_ID, self::FLD_TIME_REQUEST, self::FLD_TYPE, self::FLD_ROW),
+                        array($this->user()->id(), sql::NOW, $this->type_id(), $this->row_id));
                     $this->request_time = new DateTime();
 
                     // execute the job if possible
@@ -379,7 +381,7 @@ class batch_job extends db_object_user
                         $this->exe();
                         $result = $job_id;
                     }
-                    $db_con->set_type($db_type);
+                    $db_con->set_class($db_type);
                 }
             }
         }
@@ -412,11 +414,11 @@ class batch_job extends db_object_user
         }
 
         //$db_con = New mysql;
-        $db_type = $db_con->get_type();
-        $db_con->set_type(sql_db::TBL_TASK);
+        $db_type = $db_con->get_class();
+        $db_con->set_class(sql_db::TBL_TASK);
         $db_con->usr_id = $this->user()->id();
-        $result = $db_con->update($this->id, 'end_time', 'Now()');
-        $db_con->set_type($db_type);
+        $result = $db_con->update_old($this->id, 'end_time', sql::NOW);
+        $db_con->set_class($db_type);
 
         log_debug('done with ' . $result);
     }
@@ -428,10 +430,10 @@ class batch_job extends db_object_user
     {
         global $db_con;
         //$db_con = New mysql;
-        $db_type = $db_con->get_type();
+        $db_type = $db_con->get_class();
         $db_con->usr_id = $this->user()->id();
-        $db_con->set_type(sql_db::TBL_TASK);
-        $result = $db_con->update($this->id, 'start_time', 'Now()');
+        $db_con->set_class(sql_db::TBL_TASK);
+        $result = $db_con->update_old($this->id, 'start_time', sql::NOW);
 
         log_debug($this->type_code_id() . ' with ' . $result);
         if ($this->type_code_id() == batch_job_type_list::VALUE_UPDATE) {
@@ -439,7 +441,7 @@ class batch_job extends db_object_user
         } else {
             log_err('Job type "' . $this->type_code_id() . '" not defined.', 'batch_job->exe');
         }
-        $db_con->set_type($db_type);
+        $db_con->set_class($db_type);
     }
 
     // remove the old requests from the database if they are closed since a while

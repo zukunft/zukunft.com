@@ -37,13 +37,22 @@
 
 */
 
-namespace cfg;
+namespace cfg\value;
 
+use cfg\db\sql_db;
+use cfg\db\sql_par;
+use cfg\db_object_seq_id_user;
+use cfg\log\change_log_action;
+use cfg\log\change_log_link;
+use cfg\log\change_log_table;
+use cfg\phrase;
+use cfg\sys_log_level;
+use cfg\user;
 use Exception;
 
-include_once MODEL_HELPER_PATH . 'db_object_user.php';
+include_once MODEL_HELPER_PATH . 'db_object_seq_id_user.php';
 
-class value_phrase_link extends db_object_user
+class value_phrase_link extends db_object_seq_id_user
 {
     // object specific database and JSON object field names
     const FLD_ID = 'value_phrase_link_id';
@@ -154,7 +163,7 @@ class value_phrase_link extends db_object_user
      */
     function load_sql_obj_vars(sql_db $db_con): sql_par
     {
-        $db_con->set_type(sql_db::TBL_VALUE_PHRASE_LINK);
+        $db_con->set_class(sql_db::TBL_VALUE_PHRASE_LINK);
         $qp = new sql_par(self::class);
         $sql_where = '';
 
@@ -165,7 +174,7 @@ class value_phrase_link extends db_object_user
                 array(self::FLD_ID),
                 array($this->id)
             );
-        } elseif ($this->val->id() > 0 and $this->phr->id() > 0 and $this->user()->id() > 0) {
+        } elseif ($this->val->is_id_set() and $this->phr->id() > 0 and $this->user()->id() > 0) {
             $qp->name .= 'val_phr_usr_id';
             $sql_where .= $db_con->where_par(
                 array(value::FLD_ID, phrase::FLD_ID, user::FLD_ID),
@@ -209,7 +218,7 @@ class value_phrase_link extends db_object_user
         $result = true;
 
         if (isset($this->val)) {
-            if ($this->val->id() > 0) {
+            if ($this->val->is_id_set()) {
                 $result = $this->val->used();
                 log_debug('val_lnk->used for id ' . $this->val->id() . ' is ' . zu_dsp_bool($result));
             }
@@ -265,8 +274,8 @@ class value_phrase_link extends db_object_user
         if ($db_rec->wrd->id <> $this->phr->id()) {
             $log = $this->log_upd($db_con);
             if ($log->add()) {
-                $db_con->set_type(sql_db::TBL_VALUE_PHRASE_LINK);
-                $result .= $db_con->update($this->id, phrase::FLD_ID, $this->phr->id());
+                $db_con->set_class(sql_db::TBL_VALUE_PHRASE_LINK);
+                $result .= $db_con->update_old($this->id, phrase::FLD_ID, $this->phr->id());
             }
         }
         return $result;
@@ -279,7 +288,7 @@ class value_phrase_link extends db_object_user
         // check duplicates
         $sql = "SELECT value_phrase_link_id 
               FROM value_phrase_links 
-             WHERE value_id = " . $this->val->id() . " 
+             WHERE group_id = " . $this->val->id() . " 
                AND phrase_id  = " . $this->phr->id() . " 
                AND value_phrase_link_id <> " . $this->id . ";";
         $db_row = $db_con->get1($sql);
@@ -287,7 +296,7 @@ class value_phrase_link extends db_object_user
         if ($this->id > 0) {
             //$result = $db_con->delete(array(value::FLD_ID,phrase::FLD_ID,'value_phrase_link_id'), array($this->val->id,$this->phr->id,$this->id));
             $sql_del = "DELETE FROM value_phrase_links 
-                    WHERE value_id = " . $this->val->id() . " 
+                    WHERE group_id = " . $this->val->id() . " 
                       AND phrase_id  = " . $this->phr->id() . " 
                       AND value_phrase_link_id <> " . $this->id . ";";
             $sql_result = $db_con->exe($sql_del, $this->user()->id(), sys_log_level::ERROR, "val_lnk->update", (new Exception)->getTraceAsString());
@@ -310,7 +319,7 @@ class value_phrase_link extends db_object_user
 
         global $db_con;
         $db_con->set_usr($this->user()->id());
-        $db_con->set_type(sql_db::TBL_VALUE_PHRASE_LINK);
+        $db_con->set_class(sql_db::TBL_VALUE_PHRASE_LINK);
 
         if (!$this->used()) {
             // check if a new value is supposed to be added
@@ -332,8 +341,8 @@ class value_phrase_link extends db_object_user
                 $log = $this->log_add();
                 if ($log->id() > 0) {
                     // insert the new value_phrase_link
-                    $db_con->set_type(sql_db::TBL_VALUE_PHRASE_LINK);
-                    $this->id = $db_con->insert(array("value_id", "word_id"), array($this->val->id(), $this->phr->id()));
+                    $db_con->set_class(sql_db::TBL_VALUE_PHRASE_LINK);
+                    $this->id = $db_con->insert_old(array("group_id", "word_id"), array($this->val->id(), $this->phr->id()));
                     if ($this->id > 0) {
                         // update the id in the log
                         $result = $log->add_ref($this->id);
@@ -382,8 +391,8 @@ class value_phrase_link extends db_object_user
             if ($log->id() > 0) {
                 //$db_con = new mysql;
                 $db_con->usr_id = $this->user()->id();
-                $db_con->set_type(sql_db::TBL_VALUE_PHRASE_LINK);
-                $result .= $db_con->delete(array(value::FLD_ID, phrase::FLD_ID), array($this->val->id(), $this->phr->id()));
+                $db_con->set_class(sql_db::TBL_VALUE_PHRASE_LINK);
+                $result .= $db_con->delete_old(array(value::FLD_ID, phrase::FLD_ID), array($this->val->id(), $this->phr->id()));
             }
         } else {
             // check if removing a word link is matching another value

@@ -31,7 +31,12 @@
 
 namespace cfg;
 
-use cfg\db\sql_creator;
+use cfg\db\sql;
+use cfg\db\sql_db;
+use cfg\db\sql_par;
+use cfg\log\change;
+use cfg\log\change_log_action;
+use cfg\log\change_log_table;
 
 include_once MODEL_SANDBOX_PATH . 'sandbox_link_with_type.php';
 
@@ -248,29 +253,29 @@ class formula_link extends sandbox_link_with_type
     /**
      * create an SQL statement to retrieve the user specific formula link from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement base on the parameters set in $this
      */
-    function load_sql_user_changes(sql_creator $sc, string $class = self::class): sql_par
+    function load_sql_user_changes(sql $sc, string $class = self::class): sql_par
     {
-        $sc->set_type($class, true);
+        $sc->set_class($class, true);
         return parent::load_sql_user_changes($sc, $class);
     }
 
     /**
      * create the common part of an SQL statement to retrieve the parameters of a formula link from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    protected function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
+    function load_sql(sql $sc, string $query_name, string $class = self::class): sql_par
     {
         $qp = parent::load_sql_obj_vars($sc, $class);
         $qp->name .= $query_name;
 
-        $sc->set_type($class);
+        $sc->set_class($class);
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
         $sc->set_fields(self::FLD_NAMES_LINK);
@@ -298,13 +303,13 @@ class formula_link extends sandbox_link_with_type
     /**
      * create an SQL statement to retrieve the parameters of the standard formula link from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql_creator $sc, string $class = self::class): sql_par
+    function load_standard_sql(sql $sc, string $class = self::class): sql_par
     {
-        $sc->set_type($class);
+        $sc->set_class($class);
         $qp = new sql_par($class, true);
         $qp->name .= $this->load_sql_name_extension();
         $sc->set_name($qp->name);
@@ -468,7 +473,7 @@ class formula_link extends sandbox_link_with_type
      */
     function not_changed_sql(sql_db $db_con): sql_par
     {
-        $db_con->set_type(sql_db::TBL_FORMULA_LINK);
+        $db_con->set_class(sql_db::TBL_FORMULA_LINK);
         return $db_con->load_sql_not_changed($this->id, $this->owner_id);
     }
 
@@ -522,8 +527,8 @@ class formula_link extends sandbox_link_with_type
                 $this->usr_cfg_id = $db_row[formula_link::FLD_ID];
             }
             // create an entry in the user sandbox
-            $db_con->set_type(sql_db::TBL_USER_PREFIX . sql_db::TBL_FORMULA_LINK);
-            $log_id = $db_con->insert(array(formula_link::FLD_ID, user::FLD_ID), array($this->id, $this->user()->id()));
+            $db_con->set_class(sql_db::TBL_USER_PREFIX . sql_db::TBL_FORMULA_LINK);
+            $log_id = $db_con->insert_old(array(formula_link::FLD_ID, user::FLD_ID), array($this->id, $this->user()->id()));
             if ($log_id <= 0) {
                 log_err('Insert of user_formula_link failed.');
                 $result = false;
@@ -536,11 +541,11 @@ class formula_link extends sandbox_link_with_type
     /**
      * set the main log entry parameters for updating one display word link field
      * e.g. that the user can see "moved formula list to position 3 in word view"
-     * @return change_log_named the change log object with the presets for formula links
+     * @return change the change log object with the presets for formula links
      */
-    function log_upd_field(): change_log_named
+    function log_upd_field(): change
     {
-        $log = new change_log_named($this->user());
+        $log = new change($this->user());
         $log->action = change_log_action::UPDATE;
         if ($this->can_change()) {
             $log->set_table(change_log_table::FORMULA_LINK);
@@ -574,7 +579,7 @@ class formula_link extends sandbox_link_with_type
     function add_insert(): int
     {
         global $db_con;
-        return $db_con->insert(
+        return $db_con->insert_old(
             array($this->from_name . sql_db::FLD_EXT_ID, $this->to_name . sql_db::FLD_EXT_ID, "user_id", 'order_nbr'),
             array($this->fob->id(), $this->tob->id(), $this->user()->id, $this->order_nbr));
     }
@@ -603,7 +608,7 @@ class formula_link extends sandbox_link_with_type
 
         // build the database object because the is anyway needed
         $db_con->set_usr($this->user()->id());
-        $db_con->set_type(sql_db::TBL_FORMULA_LINK);
+        $db_con->set_class(sql_db::TBL_FORMULA_LINK);
 
         // check if a new value is supposed to be added
         if ($this->id <= 0) {
@@ -630,7 +635,7 @@ class formula_link extends sandbox_link_with_type
             $db_rec = new formula_link($this->user());
             $db_rec->load_by_id($this->id());
             $db_rec->load_objects();
-            $db_con->set_type(sql_db::TBL_FORMULA_LINK);
+            $db_con->set_class(sql_db::TBL_FORMULA_LINK);
             log_debug("database formula loaded (" . $db_rec->id . ")");
             $std_rec = new formula_link($this->user()); // must also be set to allow to take the ownership
             $std_rec->id = $this->id;

@@ -34,13 +34,13 @@ namespace test;
 
 include_once MODEL_FORMULA_PATH . 'expression.php';
 
-use api\formula_api;
-use api\value_api;
-use api\word_api;
+use api\formula\formula as formula_api;
+use api\value\value as value_api;
+use api\word\word as word_api;
 use cfg\expression;
 use cfg\formula;
 use cfg\phrase_list;
-use cfg\sql_db;
+use cfg\db\sql_db;
 use cfg\term_list;
 use cfg\word;
 use html\formula\formula as formula_dsp;
@@ -109,7 +109,7 @@ class formula_unit_tests
         $target->add($wrd->phrase());
         $trm_lst->add($wrd->term());
         $exp = new expression($usr);
-        $exp->set_ref_text('{w160}={w162}*1000000', $t->dummy_term_list_scale());
+        $exp->set_ref_text('{w' . word_api::TI_ONE . '}={w' . word_api::TI_MIO . '}*1000000', $t->dummy_term_list_scale());
         $result = $exp->res_phr_lst($trm_lst);
         $t->assert('Expression->res_phr_lst for ' . formula_api::TF_READ_SCALE_MIO, $result->dsp_id(), $target->dsp_id());
 
@@ -135,7 +135,7 @@ class formula_unit_tests
         $phr_lst = $t->dummy_phrase_list_increase();
 
         $frm = $t->dummy_formula_increase();
-        // TODO activate
+        // TODO activate Prio 1
         // $res_lst = $frm->to_num($phr_lst);
         //$res = $res_lst->lst[0];
         //$result = $res->num_text;

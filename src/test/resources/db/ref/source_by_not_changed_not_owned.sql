@@ -1,4 +1,4 @@
-PREPARE source_by_not_changed_not_owned (int, int) AS
+PREPARE source_by_not_changed_not_owned (bigint, bigint) AS
     SELECT user_id
       FROM user_sources
      WHERE source_id = $1

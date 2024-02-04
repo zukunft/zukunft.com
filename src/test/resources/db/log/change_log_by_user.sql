@@ -1,4 +1,4 @@
-PREPARE change_log_by_user (int, int) AS
+PREPARE change_log_by_user (bigint, bigint) AS
     SELECT c.change_id,
            c.change_time AS time,
            u.user_name,

@@ -32,9 +32,9 @@
 
 namespace api\view;
 
-use api\sandbox_api;
+use api\sandbox\sandbox as sandbox_api;
 use api\view\view as view_api;
-use api\component\component_api;
+use api\component\component as component_api;
 use JsonSerializable;
 
 class component_link extends sandbox_api implements JsonSerializable

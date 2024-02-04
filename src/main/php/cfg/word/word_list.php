@@ -44,12 +44,18 @@ include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_HELPER_PATH . 'foaf_direction.php';
 include_once API_WORD_PATH . 'word_list.php';
 
-use api\word_list_api;
-use cfg\db\sql_creator;
+use api\word\word_list as word_list_api;
+use cfg\db\sql;
+use cfg\db\sql_db;
+use cfg\db\sql_par;
 use cfg\db\sql_par_type;
+use cfg\group\group;
+use cfg\group\group_id;
+use cfg\group\group_link;
+use cfg\value\value;
+use cfg\value\value_list;
 use html\word\word as word_dsp;
 use html\word\word_list as word_list_dsp;
-use im_export\export;
 
 class word_list extends sandbox_list
 {
@@ -124,7 +130,7 @@ class word_list extends sandbox_list
      * add formula word filter to
      * the SQL statement to load only the word id and name
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param sandbox_named|sandbox_link_named|combine_named $sbx the single child object
      * @param string $pattern the pattern to filter the words
      * @param int $limit the number of rows to return
@@ -132,7 +138,7 @@ class word_list extends sandbox_list
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_names(
-        sql_creator                                    $sc,
+        sql                                            $sc,
         sandbox_named|sandbox_link_named|combine_named $sbx,
         string                                         $pattern = '',
         int                                            $limit = 0,
@@ -153,13 +159,13 @@ class word_list extends sandbox_list
 
     /**
      * set the SQL query parameters to load a list of words
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_creator $sc, string $query_name = ''): sql_par
+    function load_sql(sql $sc, string $query_name = ''): sql_par
     {
-        $sc->set_type(word::class);
+        $sc->set_class(word::class);
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
         $sc->set_name($qp->name);
@@ -174,11 +180,11 @@ class word_list extends sandbox_list
 
     /**
      * set the SQL query parameters to load a list of words by the ids
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param array $wrd_ids a list of int values with the word ids
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_ids(sql_creator $sc, array $wrd_ids): sql_par
+    function load_sql_by_ids(sql $sc, array $wrd_ids): sql_par
     {
         $qp = $this->load_sql($sc, 'ids');
         if (count($wrd_ids) > 0) {
@@ -193,11 +199,11 @@ class word_list extends sandbox_list
 
     /**
      * set the SQL query parameters to load a list of words by the names
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param array $wrd_names a list of strings with the word names
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_names(sql_creator $sc, array $wrd_names): sql_par
+    function load_sql_by_names(sql $sc, array $wrd_names): sql_par
     {
         $qp = $this->load_sql($sc, 'names');
         if (count($wrd_names) > 0) {
@@ -212,20 +218,20 @@ class word_list extends sandbox_list
 
     /**
      * set the SQL query parameters to load a list of words by the phrase group id
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param int $grp_id the id of the phrase group
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_grp_id(sql_creator $sc, int $grp_id): sql_par
+    function load_sql_by_grp_id(sql $sc, int $grp_id): sql_par
     {
         $qp = $this->load_sql($sc, 'group');
         if ($grp_id > 0) {
 
             // create the sub query
             $sub_sc = clone $sc;
-            $sub_sc->set_type(phrase_group_word_link::class);
-            $sub_sc->set_fields(array(word::FLD_ID));
-            $sub_sc->add_where(phrase_group::FLD_ID, $grp_id);
+            $sub_sc->set_class(group_link::class);
+            $sub_sc->set_fields(array(phrase::FLD_ID));
+            $sub_sc->add_where(group::FLD_ID, $grp_id);
 
             // use the sub query
             $sc->add_where(word::FLD_ID, $sub_sc->sql(1, false), sql_par_type::INT_SUB_IN);
@@ -239,11 +245,11 @@ class word_list extends sandbox_list
 
     /**
      * set the SQL query parameters to load a list of words by the type
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param int $type_id the id of the word type
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_type(sql_creator $sc, int $type_id): sql_par
+    function load_sql_by_type(sql $sc, int $type_id): sql_par
     {
         $qp = $this->load_sql($sc, 'type');
         if ($type_id > 0) {
@@ -258,15 +264,15 @@ class word_list extends sandbox_list
 
     /**
      * set the SQL query parameters to load a list of words by a word pattern
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $pattern the text part that should be used to select the words
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_like(sql_creator $sc, string $pattern = ''): sql_par
+    function load_sql_like(sql $sc, string $pattern = ''): sql_par
     {
         $qp = $this->load_sql($sc, 'name_like');
         if ($pattern != '') {
-            $sc->add_where(word::FLD_NAME, $pattern, sql_par_type::LIKE);
+            $sc->add_where(word::FLD_NAME, $pattern, sql_par_type::LIKE_R);
             $qp->sql = $sc->sql();
         } else {
             $qp->name = '';
@@ -279,12 +285,12 @@ class word_list extends sandbox_list
      * create the sql statement to select the related words
      * the relation can be narrowed with a verb id
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param verb|null $vrb if set to select only words linked with this verb
      * @param foaf_direction $direction to define the link direction
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_linked_words(sql_creator $sc, ?verb $vrb, foaf_direction $direction): sql_par
+    function load_sql_linked_words(sql $sc, ?verb $vrb, foaf_direction $direction): sql_par
     {
         $qp = $this->load_sql($sc);
         $join_field = '';
@@ -423,14 +429,16 @@ class word_list extends sandbox_list
      * load a list of words by the phrase group id
      * TODO needs to be checked if really needed
      *
-     * @param int $grp_id the id of the phrase group
+     * @param int|string $grp_id the id of the phrase group
      * @return bool true if at least one word found
      */
-    function load_by_grp_id(int $grp_id): bool
+    function load_by_grp_id(int|string $grp_id): bool
     {
-        global $db_con;
-        $qp = $this->load_sql_by_grp_id($db_con->sql_creator(), $grp_id);
-        return $this->load($qp);
+        $grp_id_obj = new group_id();
+        $ids = $grp_id_obj->get_array($grp_id);
+        $phr_ids_obj = new phr_ids($ids);
+        $wrd_ids = $phr_ids_obj->wrd_ids();
+        return $this->load_by_ids($wrd_ids);
     }
 
     /**
@@ -1230,17 +1238,17 @@ class word_list extends sandbox_list
     /**
      * get the best matching phrase group
      */
-    function get_grp(): ?phrase_group
+    function get_grp(): ?group
     {
         log_debug('->get_grp');
 
-        $grp = new phrase_group($this->user());
+        $grp = new group($this->user());
 
         // get or create the group
         if (count($this->ids()) <= 0) {
             log_err('Cannot create phrase group for an empty list.', 'word_list->get_grp');
         } else {
-            $grp = new phrase_group($this->user());
+            $grp = new group($this->user());
             $grp->load_by_ids((new phr_ids($this->ids())));
         }
 
@@ -1292,8 +1300,8 @@ class word_list extends sandbox_list
     {
         $val = new value($this->user());
         $phr_lst = $this->phrase_lst();
-        $phr_grp = new phrase_group($this->user());
-        $phr_grp->load_by_lst($phr_lst);
+        $phr_grp = new group($this->user());
+        $phr_grp->load_by_phr_lst($phr_lst);
         $val->load_by_grp($phr_grp);
 
         log_debug($val->name() . ' for "' . $this->user()->name . '" is ' . $val->number());
@@ -1311,7 +1319,7 @@ class word_list extends sandbox_list
         $val = $this->value();
 
         // get all words related to the value id; in many cases this does not match with the value_words there are used to get the word: it may contain additional word ids
-        if ($val->id() > 0) {
+        if ($val->is_id_set()) {
             log_debug("get word " . $this->name());
             //$val->load_phrases();
             // switch on after value->scale is working fine
@@ -1481,7 +1489,7 @@ class word_list extends sandbox_list
     }
 
     /**
-     * get the time of the last value related to a word and assigned to a word list
+     * get the time of the last value related to a word and assigned to a phrase list
      * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @return word|null a time word (or phrase?)
      */
@@ -1494,8 +1502,7 @@ class word_list extends sandbox_list
         if ($trm_lst == null) {
             // load the list of all value related to the word list
             $val_lst = new value_list($this->user());
-            $val_lst->phr_lst = $this->phrase_lst();
-            $val_lst->load_by_phr_lst_old();
+            $val_lst->load_by_phr_lst($this->phrase_lst());
             log_debug($lib->dsp_count($val_lst->lst()) . ' values for ' . $this->dsp_id());
 
             $time_ids = array();

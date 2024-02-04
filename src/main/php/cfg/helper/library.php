@@ -33,8 +33,9 @@
 namespace cfg;
 
 use api\api;
-use api\combine_object_api;
-use controller\controller;
+use api\sandbox\combine_object as combine_object_api;
+use cfg\db\sql_db;
+use cfg\value\value;
 use DateTime;
 use DOMDocument;
 use Exception;
@@ -192,6 +193,8 @@ class library
     function trim_html(string $html_string): string
     {
         $result = $this->trim_lines($html_string);
+        // special case: replace system test winter time with daylight saving time
+        $result = str_replace('2023-01-03T20:59:59+00:00', '2023-01-03T20:59:59+01:00', $result);
         $result = preg_replace('/ <td>/', '<td>', $result);
         $result = preg_replace('/ <\/td>/', '</td>', $result);
         $result = preg_replace('/ <th>/', '<th>', $result);
@@ -467,15 +470,15 @@ class library
      * explains the difference between two strings or arrays
      * in a useful human-readable format
      *
-     * @param string|array $result the actual value that should be checked
-     * @param string|array $target the expected value to compare
+     * @param string|array|null $result the actual value that should be checked
+     * @param string|array|null $target the expected value to compare
      * @param bool $ignore_order true if the array can be resorted to find the matches
      * @return string an empty string if the actual value matches the expected
      */
     function diff_msg(
-        string|array $result,
-        string|array $target,
-        bool         $ignore_order = true): string
+        string|array|null $result,
+        string|array|null $target,
+        bool $ignore_order = true): string
     {
         if (is_string($target) and is_string($result)) {
             $msg = $this->str_diff_msg($result, $target);
@@ -485,6 +488,8 @@ class library
             if ($msg == '') {
                 $msg = $this->array_diff_msg($result, $target, $ignore_order);
             }
+        } elseif ($target == null and $result == null) {
+            $msg = 'Both are null';
         } else {
             $msg = 'The type combination of ' . gettype($target) . ' and ' . gettype($target) . ' are not expected.';
         }
@@ -642,6 +647,25 @@ class library
             $msg .= ' ... and ' . $more . ' more';
         }
         return $msg;
+    }
+
+    /*
+     * array
+     */
+
+    function key_num_sort(array $in_array): array
+    {
+        ksort($in_array);
+        $num_array = [];
+        $str_array = [];
+        foreach ($in_array as $key => $item) {
+            if (is_numeric($key)) {
+                $num_array[$key] = $item;
+            } else {
+                $str_array[$key] = $item;
+            }
+        }
+        return array_merge($num_array, $str_array);
     }
 
 
@@ -1105,16 +1129,18 @@ class library
         $to_keys = array_keys($to);
         $from_pos = 0;
         $to_pos = 0;
+        $to_last_match_pos = 0;
 
         // check if the from parts are also part of to
         while ($from_pos < count($from)) {
             if (!array_key_exists($to_pos, $to_keys)) {
-                log_err('To pos ' . $to_pos . ' not found in ' . implode(",", $to) . ' when comparing to ' . implode(",", $from));
+                $to_pos = $to_last_match_pos;
             }
             if ($from[$from_keys[$from_pos]] == $to[$to_keys[$to_pos]]) {
                 $diff_part[] = $to_sep[$to_keys[$to_pos]];
                 $diff_type[] = self::STR_DIFF_UNCHANGED;
                 if ($to_pos < count($to)) {
+                    $to_last_match_pos = $to_pos;
                     $to_pos++;
                 }
                 $from_pos++;
@@ -1515,6 +1541,31 @@ class library
     function class_to_name(string $class): string
     {
         return $this->str_right_of_or_all($class, '\\');
+    }
+
+    /*
+     * shorten a list of fields for sql query naming
+     */
+
+    /**
+     * shorten the sql names e.g. because the name length of queries is limited
+     * @param array $sql_names with long sql names
+     * @return array with short sql names
+     */
+    function sql_name_shorten(array $sql_names): array
+    {
+        $result = [];
+        foreach ($sql_names as $name) {
+            $result[] = match ($name) {
+                value::FLD_ID => 'grp',
+                user::FLD_ID => 'usr',
+                source::FLD_ID => 'src',
+                value::FLD_VALUE => 'val',
+                value::FLD_LAST_UPDATE => 'upd',
+                default => $name
+            };
+        }
+        return $result;
     }
 
 }

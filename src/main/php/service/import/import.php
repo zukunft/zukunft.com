@@ -36,7 +36,7 @@
   
 */
 
-include_once SERVICE_EXPORT_PATH . 'export.php';
+include_once EXPORT_PATH . 'export.php';
 include_once MODEL_FORMULA_PATH . 'formula.php';
 include_once MODEL_FORMULA_PATH . 'formula_list.php';
 include_once MODEL_RESULT_PATH . 'result.php';
@@ -54,20 +54,20 @@ include_once MODEL_VIEW_PATH . 'view.php';
 include_once MODEL_VIEW_PATH . 'view_list.php';
 
 use cfg\component\component;
-use im_export\export;
+use cfg\export\export;
 use cfg\formula;
 use cfg\formula_list;
 use cfg\ip_range;
 use cfg\library;
 use cfg\ref;
-use cfg\result;
-use cfg\result_list;
+use cfg\result\result;
+use cfg\result\result_list;
 use cfg\source;
 use cfg\triple;
 use cfg\user;
 use cfg\user_message;
-use cfg\value;
-use cfg\value_list;
+use cfg\value\value;
+use cfg\value\value_list;
 use cfg\verb;
 use cfg\view;
 use cfg\view_list;
@@ -124,8 +124,12 @@ class file_import
 
     /**
      * drop a zukunft.com json object to the database
+     *
+     * @param string $json_str the zukunft.com JSON message to import as a string
+     * @param user $usr_trigger the user who has triggered the import
+     * @return user_message the result of the import
      */
-    function put(): user_message
+    function put(string $json_str, user $usr_trigger): user_message
     {
         global $usr;
         $lib = new library();
@@ -134,8 +138,14 @@ class file_import
         $result = new user_message();
         $this->last_display_time = microtime(true);
 
-        $json_array = json_decode($this->json_str, true);
-        if ($json_array != null) {
+        $json_array = json_decode($json_str, true);
+        if ($json_array == null) {
+            if ($json_str != '') {
+                $result->add_message('JSON decode failed of ' . $json_str);
+            } else {
+                $result->add_warning('JSON string is empty');
+            }
+        } else {
             $total = $lib->count_recursive($json_array, 1);
 
             // get the user first to allow user specific validation
@@ -147,7 +157,7 @@ class file_import
                         foreach ($json_obj as $user) {
                             // TODO check if the constructor is always used
                             $usr_import = new user;
-                            $import_result = $usr_import->import_obj($user, $this->usr->profile_id);
+                            $import_result = $usr_import->import_obj($user, $usr_trigger->profile_id);
                             if ($import_result->is_ok()) {
                                 $this->users_done++;
                             } else {
@@ -181,13 +191,17 @@ class file_import
                     // TODO set the time of the export
                 } elseif ($key == export::SELECTION) {
                     // TODO set the selection as context
+                } elseif ($key == export::DESCRIPTION) {
+                    // TODO remember the description for the log
                 } elseif ($key == export::USER) {
                     // TODO set the user that has created the export
+                } elseif ($key == export::USERS) {
+                    // TODO import the users (but only by a user with the privileges)
                 } elseif ($key == export::VERBS) {
                     $import_result = new user_message();
                     foreach ($json_obj as $verb) {
                         $vrb = new verb;
-                        $vrb->set_user($this->usr);
+                        $vrb->set_user($usr_trigger);
                         $import_result = $vrb->import_obj($verb);
                         if ($import_result->is_ok()) {
                             $this->verbs_done++;
@@ -198,7 +212,7 @@ class file_import
                     $result->add($import_result);
                 } elseif ($key == export::WORDS) {
                     foreach ($json_obj as $word) {
-                        $wrd = new word($this->usr);
+                        $wrd = new word($usr_trigger);
                         $import_result = $wrd->import_obj($word);
                         if ($import_result->is_ok()) {
                             $this->words_done++;
@@ -209,7 +223,7 @@ class file_import
                     }
                 } elseif ($key == export::TRIPLES) {
                     foreach ($json_obj as $triple) {
-                        $wrd_lnk = new triple($this->usr);
+                        $wrd_lnk = new triple($usr_trigger);
                         $import_result = $wrd_lnk->import_obj($triple);
                         if ($import_result->is_ok()) {
                             $this->triples_done++;
@@ -220,7 +234,7 @@ class file_import
                     }
                 } elseif ($key == export::FORMULAS) {
                     foreach ($json_obj as $formula) {
-                        $frm = new formula($this->usr);
+                        $frm = new formula($usr_trigger);
                         $import_result = $frm->import_obj($formula);
                         if ($import_result->is_ok()) {
                             $this->formulas_done++;
@@ -232,7 +246,7 @@ class file_import
                     }
                 } elseif ($key == export::SOURCES) {
                     foreach ($json_obj as $value) {
-                        $src = new source($this->usr);
+                        $src = new source($usr_trigger);
                         $import_result = $src->import_obj($value);
                         if ($import_result->is_ok()) {
                             $this->sources_done++;
@@ -243,7 +257,7 @@ class file_import
                     }
                 } elseif ($key == export::REFS) {
                     foreach ($json_obj as $value) {
-                        $ref = new ref($this->usr);
+                        $ref = new ref($usr_trigger);
                         $import_result = $ref->import_obj($value);
                         if ($import_result->is_ok()) {
                             $this->refs_done++;
@@ -253,9 +267,9 @@ class file_import
                         $result->add($import_result);
                     }
                 } elseif ($key == export::PHRASE_VALUES) {
-                    foreach ($json_obj as $key => $number) {
-                        $val = new value($this->usr);
-                        $import_result = $val->import_phrase_value($key, $number);
+                    foreach ($json_obj as $val_key => $number) {
+                        $val = new value($usr_trigger);
+                        $import_result = $val->import_phrase_value($val_key, $number);
                         if ($import_result->is_ok()) {
                             $this->values_done++;
                         } else {
@@ -265,7 +279,7 @@ class file_import
                     }
                 } elseif ($key == export::VALUES) {
                     foreach ($json_obj as $value) {
-                        $val = new value($this->usr);
+                        $val = new value($usr_trigger);
                         $import_result = $val->import_obj($value);
                         if ($import_result->is_ok()) {
                             $this->values_done++;
@@ -277,7 +291,7 @@ class file_import
                 } elseif ($key == export::VALUE_LIST) {
                     // TODO add a unit test
                     foreach ($json_obj as $value) {
-                        $val = new value_list($this->usr);
+                        $val = new value_list($usr_trigger);
                         $import_result = $val->import_obj($value);
                         if ($import_result->is_ok()) {
                             $this->list_values_done++;
@@ -288,7 +302,7 @@ class file_import
                     }
                 } elseif ($key == export::VIEWS) {
                     foreach ($json_obj as $view) {
-                        $view_obj = new view($this->usr);
+                        $view_obj = new view($usr_trigger);
                         $import_result = $view_obj->import_obj($view);
                         if ($import_result->is_ok()) {
                             $this->views_done++;
@@ -299,7 +313,7 @@ class file_import
                     }
                 } elseif ($key == export::COMPONENTS) {
                     foreach ($json_obj as $cmp) {
-                        $cmp_obj = new component($this->usr);
+                        $cmp_obj = new component($usr_trigger);
                         $import_result = $cmp_obj->import_obj($cmp);
                         if ($import_result->is_ok()) {
                             $this->components_done++;
@@ -311,7 +325,7 @@ class file_import
                 } elseif ($key == export::CALC_VALIDATION) {
                     // TODO add a unit test
                     foreach ($json_obj as $value) {
-                        $res = new result($this->usr);
+                        $res = new result($usr_trigger);
                         $import_result = $res->import_obj($value);
                         if ($import_result->is_ok()) {
                             $this->calc_validations_done++;
@@ -325,7 +339,7 @@ class file_import
                     // TODO switch to view result
                     // TODO add a unit test
                     foreach ($json_obj as $value) {
-                        $dsp = new view($this->usr);
+                        $dsp = new view($usr_trigger);
                         $import_result = $dsp->import_obj($value);
                         if ($import_result->is_ok()) {
                             $this->view_validations_done++;
@@ -338,7 +352,7 @@ class file_import
                 } elseif ($key == export::IP_BLACKLIST) {
                     foreach ($json_obj as $ip_range) {
                         $ip_obj = new ip_range;
-                        $ip_obj->set_user($this->usr);
+                        $ip_obj->set_user($usr_trigger);
                         $import_result = $ip_obj->import_obj($ip_range);
                         if ($import_result->is_ok()) {
                             $this->system_done++;

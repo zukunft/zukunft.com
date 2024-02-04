@@ -39,7 +39,7 @@
 */
 
 use controller\controller;
-use cfg\system_log;
+use cfg\log\system_log;
 use html\log\system_log as system_log_dsp;
 use html\html_base;
 use html\view\view as view_dsp;

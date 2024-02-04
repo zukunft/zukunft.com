@@ -1,4 +1,4 @@
-PREPARE word_names_like (int, text, int, int) AS
+PREPARE word_names_like (bigint, text, bigint, bigint) AS
          SELECT s.word_id,
                 u.word_id AS user_word_id,
                 s.user_id,

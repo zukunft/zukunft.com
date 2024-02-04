@@ -32,19 +32,26 @@
 
 namespace cfg;
 
-use api\system\db_object as db_object_api;
-use cfg\db\sql_creator;
+use cfg\db\sql;
+use cfg\db\sql_db;
+use cfg\db\sql_field_default;
+use cfg\db\sql_field_type;
+use cfg\db\sql_table_type;
+use cfg\db\sql_par;
+use cfg\group\group;
+use cfg\result\result;
+use cfg\value\value;
 
 class db_object
 {
 
-    /*
-     * object vars
-     */
-
-    // database fields that are used in all model objects
-    // the database id is the unique prime key
-    protected int $id;
+    // dummy const to be overwritten by the child objects
+    // description of the table for the sql table creation
+    const TBL_COMMENT = '';
+    // list of the table fields for the standard read query
+    const FLD_NAMES = array();
+    // fields that can be changed by the user with the parameters for the table creation
+    const FLD_LST_CREATE_CHANGEABLE = array();
 
 
     /*
@@ -52,16 +59,7 @@ class db_object
      */
 
     /**
-     * reset the id to null to indicate that the database object has not been loaded
-     */
-    function __construct()
-    {
-        $this->set_id(0);
-    }
-
-    /**
-     * map the database fields to the object fields
-     * to be extended by the child functions
+     * dummy map function to be overwritten by the child object
      *
      * @param array|null $db_row with the data directly from the database
      * @param string $id_fld the name of the id field as set in the child class
@@ -69,61 +67,125 @@ class db_object
      */
     function row_mapper(?array $db_row, string $id_fld = ''): bool
     {
-        $result = false;
-        $this->set_id(0);
-        if ($db_row != null) {
-            if (array_key_exists($id_fld, $db_row)) {
-                if ($db_row[$id_fld] != 0) {
-                    $this->set_id($db_row[$id_fld]);
-                    $result = true;
-                }
-            }
+        return false;
+    }
+
+
+    /*
+     * sql create
+     */
+
+    /**
+     * the sql statement to create the table for this (or a child) object
+     *
+     * @param sql $sc with the target db_type set
+     * @param bool $usr_table true if the table should save the user specific changes
+     * @param array $fields array with all fields and all parameter for the table creation in a two-dimensional array
+     * @param string $tbl_comment if given the comment that should be added to the sql create table statement
+     * @return string the sql statement to create the table
+     */
+    function sql_table_create(sql $sc, bool $usr_table = false, array $fields = [], string $tbl_comment = ''): string
+    {
+        if ($sc->get_table() == '') {
+            $sc->set_class($this::class, $usr_table);
         }
-        return $result;
-    }
-
-
-    /*
-     * set and get
-     */
-
-    /**
-     * set the unique database id of a database object
-     * @param int $id used in the row mapper and to set a dummy database id for unit tests
-     */
-    function set_id(int $id): void
-    {
-        $this->id = $id;
+        if ($fields == []) {
+            $fields = $this->sql_all_field_par($usr_table);
+        }
+        if ($tbl_comment == '') {
+            $tbl_comment = $this::TBL_COMMENT;
+        }
+        return $sc->table_create($fields, '', $tbl_comment);
     }
 
     /**
-     * @return int the database id which is not 0 if the object has been saved
-     * the internal null value is used to detect if database saving has been tried
+     * the name of the sql table for this (or a child) object
+     *
+     * @param sql $sc with the target db_type set
+     * @param bool $usr_table true if the table should save the user specific changes
+     * @return string the sql statement to create the table
      */
-    function id(): int
+    function sql_truncate_create(sql $sc, bool $usr_table = false): string
     {
-        return $this->id;
-    }
-
-
-    /*
-     * cast
-     */
-
-    /**
-     * @return db_object_api the source frontend api object
-     */
-    function api_db_obj(): db_object_api
-    {
-        return new db_object_api($this->id());
+        if ($sc->get_table() == '') {
+            $sc->set_class($this::class, $usr_table);
+        }
+        return 'TRUNCATE ' . $sc->get_table() . ' CASCADE; ';
     }
 
     /**
-     * @returns string the api json message for the object as a string
+     * the sql statement to create the indices for this (or a child) object
+     *
+     * @param sql $sc with the target db_type set
+     * @param bool $usr_table true if the table should save the user specific changes
+     * @param array $fields array with all fields and all parameter for the table creation in a two-dimensional array
+     * @return string the sql statement to create the table
      */
-    function api_json(): string
+    function sql_index_create(sql $sc, bool $usr_table = false, array $fields = []): string
     {
-        return $this->api_db_obj()->get_json();
+        if ($sc->get_table() == '') {
+            $sc->set_class($this::class, $usr_table);
+        }
+        if ($fields == []) {
+            $fields = $this->sql_all_field_par($usr_table);
+        }
+        return $sc->index_create($fields);
+    }
+
+    /**
+     * the sql statement to create the foreign keys for this (or a child) object
+     *
+     * @param sql $sc with the target db_type set
+     * @param bool $usr_table true if the table should save the user specific changes
+     * @param array $fields array with all fields and all parameter for the table creation in a two-dimensional array
+     * @return string the sql statement to create the table
+     */
+    function sql_foreign_key_create(sql $sc, bool $usr_table = false, array $fields = []): string
+    {
+        if ($sc->get_table() == '') {
+            $sc->set_class($this::class, $usr_table);
+        }
+        if ($fields == []) {
+            $fields = $this->sql_all_field_par($usr_table);
+        }
+        return $sc->foreign_key_create($fields);
+    }
+
+    /**
+     * @return array[] with the parameters of the table fields
+     */
+    private function sql_all_field_par(bool $usr_table = false): array
+    {
+        $fields = [];
+        if (!$usr_table) {
+            $fields = array_merge($this->sql_id_field_par($usr_table), sandbox::FLD_ALL_OWNER);
+        } else {
+            $fields = array_merge($this->sql_id_field_par($usr_table), sandbox::FLD_ALL_CHANGER);
+        }
+        $fields = array_merge($fields, $this::FLD_LST_CREATE_CHANGEABLE);
+        return array_merge($fields, sandbox::FLD_ALL);
+    }
+
+    /**
+     * @return array[] with the parameters of the table key field
+     */
+    private function sql_id_field_par(bool $usr_table = false): array
+    {
+        if (!$usr_table) {
+            return array([
+                $this->id_field(),
+                sql_field_type::KEY_INT,
+                sql_field_default::NOT_NULL,
+                '', '',
+                'the internal unique primary index']);
+        } else {
+            return array([
+                $this->id_field(),
+                sql_field_type::KEY_PART_INT,
+                sql_field_default::NOT_NULL,
+                sql::INDEX, $this::class,
+                'with the user_id the internal unique primary index']);
+        }
     }
 
 
@@ -132,32 +194,73 @@ class db_object
      */
 
     /**
+     * parent function to create the common part of an SQL statement for group, value and result tables
+     * child object sets the table and fields in the db sql builder
+     *
+     * @param sql $sc with the target db_type set
+     * @param string $query_name the name of the selection fields to make the query name unique
+     * @param string $class the name of the child class from where the call has been triggered
+     * @param string $ext the query name extension e.g. to differentiate queries based on 1,2, or more phrases
+     * @param sql_table_type $tbl_typ the table name extension e.g. to switch between standard and prime values
+     * @param bool $usr_tbl true if a db row should be added to the user table
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    public function load_sql_multi(
+        sql            $sc,
+        string         $query_name,
+        string         $class,
+        string         $ext = '',
+        sql_table_type $tbl_typ = sql_table_type::MOST,
+        bool           $usr_tbl = false
+    ): sql_par
+    {
+        $lib = new library();
+        $tbl_name = $lib->class_to_name($class);
+        $qp = new sql_par($tbl_name, false, false, $ext, $tbl_typ);
+        $qp->name .= $query_name;
+        $sc->set_class($class, $usr_tbl, $tbl_typ->extension());
+        $sc->set_name($qp->name);
+        $sc->set_fields($this::FLD_NAMES);
+
+        return $qp;
+    }
+
+    /**
      * parent function to create the common part of an SQL statement
      * child object sets the table and fields in the db sql builder
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $query_name the name of the selection fields to make the query name unique
-     * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    protected function load_sql(sql_creator $sc, string $query_name, string $class): sql_par
+    function load_sql(sql $sc, string $query_name): sql_par
     {
-        $qp = new sql_par($class);
-        $qp->name .= $query_name;
-        return $qp;
+        return $this->load_sql_multi($sc, $query_name, $this::class);
     }
 
     /**
      * create an SQL statement to retrieve a user sandbox object by id from the database
      *
-     * @param sql_creator $sc with the target db_type set
-     * @param int $id the id of the user sandbox object
+     * @param sql $sc with the target db_type set
+     * @param int|string $id the id of the user sandbox object
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql_creator $sc, int $id, string $class = self::class): sql_par
+    function load_sql_by_id_str(sql $sc, int|string $id, string $class = self::class): sql_par
     {
-        $qp = $this->load_sql($sc, sql_db::FLD_ID, $class);
+        $ext = '';
+        if ($class == group::class
+            or $class == value::class
+            or $class == result::class) {
+            $grp = new group(new user());
+            $grp->set_id($id);
+            $typ = $grp->table_type();
+            $ext = $grp->table_extension();
+            $qp = $this->load_sql_multi($sc, sql_db::FLD_ID, $class, $ext, $typ);
+        } else {
+            $qp = $this->load_sql($sc, sql_db::FLD_ID);
+        }
+
         $sc->add_where($this->id_field(), $id);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -166,38 +269,17 @@ class db_object
     }
 
     /**
-     * load one database row e.g. word, triple, value, formula, result, view, component or log entry from the database
+     * load one database row e.g. group (where the id might be a string) from the database
      * @param sql_par $qp the query parameters created by the calling function
-     * @return int the id of the object found and zero if nothing is found
+     * @return bool false if no database row has been found
+     *                    which means that no user has changed the standard group settings
      */
-    protected function load(sql_par $qp): int
+    protected function load_without_id_return(sql_par $qp): bool
     {
         global $db_con;
 
         $db_row = $db_con->get1($qp);
-        $this->row_mapper($db_row);
-        return $this->id();
-    }
-
-
-    /*
-     * im- and export
-     */
-
-    /**
-     * general part to import a database object from a JSON array object
-     *
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
-     */
-    function import_db_obj(db_object $db_obj, object $test_obj = null): user_message
-    {
-        $result = new user_message();
-        // add a dummy id for unit testing
-        if ($test_obj) {
-            $db_obj->set_id($test_obj->seq_id());
-        }
-        return $result;
+        return $this->row_mapper($db_row);
     }
 
 
@@ -206,91 +288,15 @@ class db_object
      */
 
     /**
-     * @return bool true if the object has a valid database id
-     */
-    function isset(): bool
-    {
-        if ($this->id == null) {
-            return false;
-        } else {
-            if ($this->id != 0) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-    }
-
-    /**
      * function that can be overwritten by the child object
      * e.g. if the object name does not match the generated id field name
-     * @return string the field name of the prime database index of the object
+     * e.g. to group_id for values and results
+     * @return string|array the field name(s) of the prime database index of the object
      */
-    public function id_field(): string
+    function id_field(): string|array
     {
         $lib = new library();
         return $lib->class_to_name($this::class) . sql_db::FLD_EXT_ID;
-    }
-
-
-    /*
-     * dummy functions that should always be overwritten by the child
-     */
-
-    /**
-     * get the name of the database object (only used by named objects)
-     *
-     * @return string the name from the object e.g. word using the same function as the phrase and term
-     */
-    function name(): string
-    {
-        return 'ERROR: name function not overwritten by child';
-    }
-
-    /**
-     * load a row from the database selected by id
-     * @param int $id the id of the word, triple, formula, verb, view or view component
-     * @param string $class the name of the child class from where the call has been triggered
-     * @return int the id of the object found and zero if nothing is found
-     */
-    function load_by_id(int $id, string $class = ''): int
-    {
-        global $db_con;
-
-        log_debug($id);
-        if ($class == '') {
-            $class = $this::class;
-        }
-        $qp = $this->load_sql_by_id($db_con->sql_creator(), $id, $class);
-        return $this->load($qp);
-    }
-
-    /**
-     * load a row from the database selected by name (only used by named objects)
-     * @param string $name the name of the word, triple, formula, verb, view or view component
-     * @param string $class the name of the child class from where the call has been triggered
-     * @return int the id of the object found and zero if nothing is found
-     */
-    function load_by_name(string $name, string $class = ''): int
-    {
-        return 0;
-    }
-
-
-    /*
-     * debug
-     */
-
-    /**
-     * @return string with the unique database id mainly for child dsp_id() functions
-     */
-    function dsp_id(): string
-    {
-        if ($this->id() != 0) {
-            return ' (' . $this->id_field() . ' ' . $this->id() . ')';
-        } else {
-            return ' (' . $this->id_field() . ' no set)';
-        }
     }
 
 }

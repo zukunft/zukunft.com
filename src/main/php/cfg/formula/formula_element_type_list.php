@@ -35,6 +35,8 @@ namespace cfg;
 
 global $formula_element_types;
 
+use cfg\db\sql_db;
+
 class formula_element_type_list extends type_list
 {
     // list of the formula element types that have a coded functionality

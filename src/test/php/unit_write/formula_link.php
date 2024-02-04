@@ -32,11 +32,11 @@
 
 namespace test\write;
 
-use api\formula_api;
-use api\word_api;
+use api\formula\formula as formula_api;
+use api\word\word as word_api;
 use html\formula\formula as formula_dsp;
-use cfg\change_log_link;
-use cfg\change_log_table;
+use cfg\log\change_log_link;
+use cfg\log\change_log_table;
 use cfg\formula;
 use cfg\formula_link;
 use cfg\formula_link_list;

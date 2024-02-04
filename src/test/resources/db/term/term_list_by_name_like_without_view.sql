@@ -1,4 +1,4 @@
-PREPARE term_list_by_name_like (int,text) AS
+PREPARE term_list_by_name_like (bigint,text) AS
     SELECT s.term_id,
            s.term_name,
            s.description,

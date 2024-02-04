@@ -30,9 +30,11 @@
 
 */
 
-namespace api;
+namespace api\ref;
 
-class ref_api extends sandbox_api
+use api\sandbox\sandbox as sandbox_api;
+
+class ref extends sandbox_api
 {
 
     /*
@@ -59,7 +61,7 @@ class ref_api extends sandbox_api
     const TU_ADD_API = 'https://api.zukunft.com/';
 
     // reference group for testing
-    // TODO activate
+    // TODO activate Prio 3
     const RESERVED_REFERENCES = array(
         self::TN_READ
     );

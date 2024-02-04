@@ -38,7 +38,11 @@
 
 namespace cfg;
 
-use cfg\db\sql_creator;
+use cfg\db\sql;
+use cfg\db\sql_db;
+use cfg\db\sql_par;
+use cfg\log\change_log_action;
+use cfg\log\change_log_link;
 use Exception;
 
 include_once MODEL_LOG_PATH . 'change_log_link.php';
@@ -108,14 +112,14 @@ class sandbox_link extends sandbox
     /**
      * create an SQL statement to retrieve a user sandbox link by the ids of the linked objects from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param int $from the subject object id
      * @param int $type the predicate object id
      * @param int $to the object (grammar) object id
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_link(sql_creator $sc, int $from, int $type, int $to, string $class): sql_par
+    function load_sql_by_link(sql $sc, int $from, int $type, int $to, string $class): sql_par
     {
         if ($type > 0) {
             $qp = $this->load_sql($sc, 'link_type_ids', $class);
@@ -321,7 +325,7 @@ class sandbox_link extends sandbox
     function add_insert(): int
     {
         global $db_con;
-        return $db_con->insert(
+        return $db_con->insert_old(
             array($this->from_name . sql_db::FLD_EXT_ID, $this->to_name . sql_db::FLD_EXT_ID, "user_id"),
             array($this->fob->id, $this->tob->id, $this->user()->id));
     }
@@ -347,7 +351,7 @@ class sandbox_link extends sandbox
 
             // insert the new object and save the object key
             // TODO check that always before a db action is called the db type is set correctly
-            $db_con->set_type($this->obj_name);
+            $db_con->set_class($this->obj_name);
             $db_con->set_usr($this->user()->id);
             $this->id = $this->add_insert();
 
@@ -436,9 +440,9 @@ class sandbox_link extends sandbox
 
             $log->row_id = $this->id;
             if ($log->add()) {
-                $db_con->set_type($this->obj_name);
+                $db_con->set_class($this->obj_name);
                 $db_con->set_usr($this->user()->id);
-                if (!$db_con->update($this->id,
+                if (!$db_con->update_old($this->id,
                     array($this->from_name . sql_db::FLD_EXT_ID, $this->from_name . sql_db::FLD_EXT_ID),
                     array($this->fob->id, $this->tob->id))) {
                     $result .= 'update from link to ' . $this->from_name . 'failed';

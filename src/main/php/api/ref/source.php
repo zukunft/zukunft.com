@@ -30,11 +30,13 @@
 
 */
 
-namespace api;
+namespace api\ref;
+
+use api\sandbox\sandbox_typed as sandbox_typed_api;
 
 include_once API_SANDBOX_PATH . 'sandbox_typed.php';
 
-class source_api extends sandbox_typed_api
+class source extends sandbox_typed_api
 {
 
     /*

@@ -53,10 +53,22 @@
 
 namespace cfg\group;
 
+use cfg\db\sql_table_type;
 use cfg\phrase_list;
 
 class group_id
 {
+
+    /*
+     * database link
+     */
+
+    // the database table name extensions
+    const TBL_EXT_PRIME = '_prime'; // the table name extension for up to four prime phrase ids
+    const TBL_EXT_BIG = '_big'; // the table name extension for more than 16 phrase ids
+    const TBL_EXT_PHRASE_ID = '_p'; // the table name extension with the number of phrases for up to four prime phrase ids
+    const PRIME_PHRASE = 4;
+    const STANDARD_PHRASES = 16;
 
     /**
      * @return int|string the group id based on the given phrase list
@@ -64,9 +76,10 @@ class group_id
      */
     function get_id(phrase_list $phr_lst): int|string
     {
-        if ($phr_lst->count() <= 4 and $phr_lst->prime_only()) {
+        $phr_lst = $phr_lst->sort_by_id();
+        if ($phr_lst->count() <= self::PRIME_PHRASE and $phr_lst->prime_only()) {
             $db_key = $this->int_group_id($phr_lst);
-        } elseif ($phr_lst->count() <= 16) {
+        } elseif ($phr_lst->count() <= self::STANDARD_PHRASES) {
             $db_key = $this->alpha_num($phr_lst);
         } else {
             $db_key = $this->alpha_num_big($phr_lst);
@@ -75,12 +88,36 @@ class group_id
     }
 
     /**
-     * @param int|string $grp_id
-     * @return array
+     * get the max number if phrases for type of the given id
+     * @param int|string $id either a 64-bit integer group id, a 512-bit alpha_num group id or a text of more than 16 +/- seperated 6 alpha_num char phrase ids
+     * @return int the
      */
-    function get_array(int|string $grp_id): array
+    function max_number_of_phrase(int|string $id): int
     {
-        if (is_int($grp_id)) {
+        $tbl_typ = $this->table_type($id);
+        if ($tbl_typ == sql_table_type::PRIME) {
+            return self::PRIME_PHRASE;
+        } elseif ($tbl_typ == sql_table_type::BIG) {
+            $id_keys = preg_split("/[+-]/", $id);
+            return count($id_keys);
+        } elseif ($tbl_typ == sql_table_type::MOST) {
+            return self::STANDARD_PHRASES;
+        } else {
+            log_err('Unexpected table type ' . $tbl_typ->value);
+            return self::STANDARD_PHRASES;
+        }
+    }
+
+    /**
+     * get the sorted array of phrase ids from the given group id
+     *
+     * @param int|string $grp_id either a 64-bit integer group id, a 512-bit alpha_num group id or a text of more than 16 +/- seperated 6 alpha_num char phrase ids
+     * @param bool $filled if true the missing ids are filled with a null value
+     * @return array a sorted list of phrase ids
+     */
+    function get_array(int|string $grp_id, bool $filled = false): array
+    {
+        if ($this->is_prime($grp_id)) {
             $result = $this->int_array($grp_id);
         } else {
             $result = [];
@@ -97,7 +134,104 @@ class group_id
                 }
             }
         }
+        $is = count($result);
+        $max = $this->max_number_of_phrase($grp_id);
+        if ($filled and $is < $this->max_number_of_phrase($grp_id)) {
+            for ($i = $is; $i < $max; $i++) {
+                $result[] = null;
+            }
+        }
         return $result;
+    }
+
+    /**
+     * TODO use directly the phrase list without converting to a group id and back
+     * @return int tze number of phrases of this group id
+     */
+    function count(int|string $grp_id): int
+    {
+        return count($this->get_array($grp_id));
+    }
+
+    /**
+     * get the table name extension for value, result and group tables
+     * depending on the number of phrases a different table for value and results is used
+     * for faster searching
+     *
+     * @param int|string $grp_id
+     * @param bool $with_phrase_count false if the number of phrases are not relevant e.g. even for prime tables
+     * @return string the extension for the table name based on the id
+     */
+    function table_extension(int|string $grp_id, bool $with_phrase_count = true): string
+    {
+        $tbl_typ = $this->table_type($grp_id);
+        $ext = $tbl_typ->extension();
+        // only for prime value and result tables the number of ids is relevant
+        if ($tbl_typ == sql_table_type::PRIME) {
+            if ($with_phrase_count) {
+                $ext .= self::TBL_EXT_PHRASE_ID . $this->count($grp_id);
+            }
+        }
+        return $ext;
+    }
+
+    /**
+     * get the table name extension for value, result and group tables
+     * depending on the number of phrases a different table for value and results is used
+     * for faster searching
+     *
+     * @param int|string $grp_id
+     * @return sql_table_type the extension for the table name based on the id
+     */
+    function table_type(int|string $grp_id): sql_table_type
+    {
+        $ext = '';
+        if ($this->is_prime($grp_id)) {
+            $ext = sql_table_type::PRIME;
+        } elseif ($this->is_big($grp_id)) {
+            $ext = sql_table_type::BIG;
+        } else {
+            $ext = sql_table_type::MOST;
+        }
+        return $ext;
+    }
+
+    /**
+     * @return array with the possible table extension
+     */
+    function table_extension_list(): array
+    {
+        $tbl_ext_lst = array();
+        $tbl_ext_lst[] = self::TBL_EXT_PRIME;
+        $tbl_ext_lst[] = '';
+        $tbl_ext_lst[] = self::TBL_EXT_BIG;
+        return $tbl_ext_lst;
+    }
+
+    /**
+     * @param int|string $grp_id
+     * @return bool true if the $grp_id represents up to four prime phrase ids
+     */
+    function is_prime(int|string $grp_id): bool
+    {
+        if (is_int($grp_id)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @param int|string $grp_id
+     * @return bool true if the $grp_id represents more then 16 phrase ids
+     */
+    function is_big(int|string $grp_id): bool
+    {
+        if (strlen($grp_id) > 112) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     function int_array(int $grp_id): array
@@ -106,8 +240,8 @@ class group_id
         $bin_key = decbin($grp_id);
         $bin_key = str_pad($bin_key, 64, "0", STR_PAD_LEFT);
         while ($bin_key != '') {
-            $sign = substr($bin_key, 0, 1);
-            $id = bindec(substr($bin_key, 1, 15));
+            $id = bindec(substr($bin_key, 0, 15));
+            $sign = substr($bin_key, 15, 1);
             if ($id != 0) {
                 if ($sign == 1) {
                     $result[] = $id * -1;
@@ -131,17 +265,24 @@ class group_id
         $keys = [];
         foreach ($phr_lst->lst() as $phr) {
             $id = $phr->id();
-            $key = str_pad(decbin(abs($id)), 15, "0", STR_PAD_LEFT);
+            $key = str_pad(decbin(abs($id)), 15, '0', STR_PAD_LEFT);
             if ($id < 0) {
-                $key = '1' . $key;
+                $key = $key . '1';
             } else {
-                $key = '0' . $key;
+                $key = $key . '0';
             }
             $keys[] = $key;
         }
-        $bin_key = implode("", $keys);
-        $bin_key = str_pad($bin_key, 64, "0", STR_PAD_LEFT);
-        return bindec($bin_key);
+        while (count($keys) < self::PRIME_PHRASE) {
+            array_unshift($keys, str_repeat('0', 16));
+        }
+        $bin_key = implode('', $keys);
+        $bin_key = str_pad($bin_key, 64, '0', STR_PAD_LEFT);
+        $result = (int)bindec($bin_key);
+        if ($result > PHP_INT_MAX or $result < PHP_INT_MIN) {
+            log_err('Integer size on this system is not the expected 64 bit');
+        }
+        return $result;
     }
 
     /**
@@ -183,7 +324,7 @@ class group_id
      * @param int $id a phrase id
      * @return string a 6 char db key of a 32 bit phrase id in alpha_num format e.g. "3'082'113" ist "..AkS/"
      */
-    private function int2alpha_num(int $id): string
+    function int2alpha_num(int $id): string
     {
         $i = 6;
         $chars = [];

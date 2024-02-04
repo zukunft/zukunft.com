@@ -51,7 +51,7 @@ include_once MODEL_VIEW_PATH . 'view_sys_list.php';
 include_once MODEL_VIEW_PATH . 'view_sys_list.php';
 include_once MODEL_VIEW_PATH . 'view_type.php';
 include_once MODEL_VIEW_PATH . 'view_type_list.php';
-include_once MODEL_VIEW_PATH . 'component_link_types.php';
+include_once MODEL_VIEW_PATH . 'component_link_type_list.php';
 include_once MODEL_COMPONENT_PATH . 'component_type_list.php';
 include_once MODEL_COMPONENT_PATH . 'component_pos_type_list.php';
 include_once MODEL_VIEW_PATH . 'view_term_link.php';
@@ -70,9 +70,9 @@ include_once MODEL_LOG_PATH . 'system_log_list.php';
 include_once API_SANDBOX_PATH . 'sandbox_value.php';
 
 use cfg\batch_job_type_list;
-use cfg\change_log_action;
-use cfg\change_log_field;
-use cfg\change_log_table;
+use cfg\log\change_log_action;
+use cfg\log\change_log_field;
+use cfg\log\change_log_table;
 use cfg\component\component_pos_type_list;
 use cfg\component\component_type_list;
 use cfg\component_link_type_list;
@@ -86,7 +86,7 @@ use cfg\protection_type_list;
 use cfg\ref_type_list;
 use cfg\share_type_list;
 use cfg\source_type_list;
-use cfg\sql_db;
+use cfg\db\sql_db;
 use cfg\sys_log_status;
 use cfg\user;
 use cfg\user_list;
@@ -96,6 +96,7 @@ use cfg\verb_list;
 use cfg\view_sys_list;
 use cfg\view_type_list;
 use unit\component_list_unit_tests;
+use unit\import as import_unit_tests;
 use unit\html\batch_job as batch_job_html_tests;
 use unit\html\change_log as change_log_html_tests;
 use unit\html\component as component_html_tests;
@@ -127,6 +128,7 @@ use unit\html\view as view_html_tests;
 use unit\html\view_list as view_list_html_tests;
 use unit\html\word as word_html_tests;
 use unit\html\word_list as word_list_html_tests;
+use unit\result_list_tests;
 
 class test_unit extends test_cleanup
 {
@@ -146,6 +148,8 @@ class test_unit extends test_cleanup
         global $usr;
         global $usr_sys;
         global $user_profiles;
+        global $errors;
+        $errors = 0;
         $global_db_con = $db_con;
         $global_sql_names = $sql_names;
         $global_usr = $usr;
@@ -219,7 +223,7 @@ class test_unit extends test_cleanup
         (new triple_list_unit_tests)->run($this);
         (new phrase_unit_tests)->run($this);
         (new phrase_list_unit_tests)->run($this);
-        (new phrase_group_unit_tests)->run($this); // TODO add assert_api_to_dsp
+        (new group_unit_tests)->run($this); // TODO add assert_api_to_dsp
         (new group_list_unit_tests)->run($this); // TODO add assert_api_to_dsp
         (new term_unit_tests)->run($this);
         (new term_list_unit_tests)->run($this);
@@ -233,7 +237,7 @@ class test_unit extends test_cleanup
         (new formula_element_unit_tests)->run($this);
         (new expression_unit_tests)->run($this);
         (new result_unit_tests)->run($this);
-        (new result_list_unit_tests)->run($this);
+        (new result_list_tests)->run($this);
         (new figure_unit_tests)->run($this);
         (new figure_list_unit_tests)->run($this);
         (new view_unit_tests)->run($this);
@@ -242,6 +246,9 @@ class test_unit extends test_cleanup
         (new component_list_unit_tests)->run($this); // TODO add assert_api_to_dsp
         (new component_link_unit_tests)->run($this); // TODO add assert_api_to_dsp
         (new component_link_list_unit_tests)->run($this);
+
+        // do the im- and export unit tests
+        (new import_unit_tests)->run($this);
 
         // do the UI unit tests
         (new test_api)->run_openapi_test($this);

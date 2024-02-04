@@ -15,6 +15,8 @@ use html\phrase\phrase_group as phrase_group_dsp;
 
     but first this needs to be fixed:
     TODO remove the time phrase from result
+    TODO activate the tests and create a unit and read test if possible
+    TODO test if a table with 1, 2, 4, 8, 16, 32 or 64 smallint key is faster and more efficient than a table with one bigger index
     TODO create an use the figure database view
     TODO combine phrase_group_word_links and phrase_group_triple_links to group_links (using phrase)
     TODO clean up the phrase_list (and triple_list and word_list) cfg/class and add unit and db read tests for all
@@ -72,11 +74,20 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO add api unit test (assert_api_to_dsp) to all objects
     TODO add limit and offset to all list sql statements
     TODO align the namespace with PSR-0 as much as possible
+    TODO sort the phrases by usage, so that the values with the smallest group id are the most relevant
+    TODO so the phrase sort by usage separate for each pod
+    TODO for a list a phrase load more values than needed from the backend and filter the values in the frontend
+    TODO resort the classes functions so that each section start with the most often used function
+    TODO resort the classes by the sections
+         const, vars, construct and map, cast, set and get
+         load, im- and export, filter, modify, check, save, del
 
     after that this should be done while keeping step 1. to 4. for each commit:
     TODO use the json api message header for all api messages
     TODO check if reading triples should use a view to generate the triple name and the generated name
     TODO use the sandbox list for all user lists
+    TODO always sort the phrase list by id before creating the group id
+    TODO to force sorting of the phrase for a group use triples
     TODO use in the frontend only the code id of types
     TODO use in the backend always the type object instead of the db type id
     TODO always use the frontend path CONST instead of 'http'
@@ -170,6 +181,8 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO load the config, that is not expected to be changed during a session once at startup
     TODO start the backend only once and react to REST calls from the frontend
     TODO make use of __DIR__ ?
+    TODO create a package size optimizer to detect the optimal number of db rows saved with one commit or the message size for the frontend by running a bigger and smaller size parallel and switch to the better if the result have a high confidence level
+    TODO display the Aggregated Mean World Usage (AMWU) with the range and the hist with and without adjustments and display the estimated personal distribution
     TODO check the install of needed packages e.g. to make sure curl_init() works
     TODO create a User Interface API
     TODO offer to use FreeOTP for two factor authentication
@@ -225,8 +238,26 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO use zeroMQ or Kafka to sync the insert and update statements between the pod
     TODO use separate kafka topics for values and results of each pod e.g. switzerland_values for all updates related to Switzerland
     TODO allow to assign users to an admin and offer each admin to use different settings for "his" users so that different behavior due to setting changes can be tested to the same pod
+    TODO use prioritized change streams in the frontend e.g. updates of values have a higher priority than updates of results
+    TODO use prioritized change streams to synchronize the databases with out and in cache tables to avoid loss of data due to communication issues
+    TODO for prioritized change streams use transfer and process block size parameters e.g. 100 changes are send to another pod and removed from the out cache not before the destination pod has confirmed the writing to the in cache table
     TODO add a table with process steps with step_id, name, description, code_id
     TODO add a table with process_next_step with step_next_id, from_step_id, to_step_id, name, description, user_profile, user_id, batch_job_id
+    TODO some index words like can have many items and need to be only valid / unique within a phrase e.g. the ISIN is a phrase within the phrase security identifier (finance)
+         create an additional value_index table where the one big and two small int values are the key or
+    TODO add a global_id to the word and triple table and reserve the prime ids
+         or create a table for the pod prime, index and big_index phrases with the global phrase_id
+    TODO save in the local pod setting the value and result tables actually used to speed up value searches
+    TODO offer syntactic sugar translation for PL SQL
+    TODO reduce the function parameters to 3 or less wherever possible
+
+    TODO term names are expected to change not very often
+         that's why each frontend instance should subscribe to term name changes of standard term names
+         and user term names, because a user is allowed to have several clients open at the same time
+         and each user client should be live synchronised
+         this way the front end term cache is always up to date and can be used as a read database cache
+
+    TODO create software patents and allow everybody to use them to prevent other from making money with the patents
 
     TODO keep in the frontend the phrases that are relevant for the user at the moment
          calculate the the frontend real-time the value with the relevant precision
@@ -288,6 +319,15 @@ use html\phrase\phrase_group as phrase_group_dsp;
          - html: for the pure html frontend
          - vue: for the vue.js based frontend, which can cache api objects for read only. This implies that the backend has an api to reload single objects
          - db: for the persistence layer
+
+    TODO create a double side multicast stream layer for system config, name change, value and result streams
+         - each client subscribes the frontend cache at his client stream pod
+         - the client stream pod subscribes the combined cache of all connected clients at the backend stream pods
+         - the changes are wighted by impact for priority
+         e.g. if word is renamed the database backend pod sends the change to the backend stream pod
+              if the change is relevant for any client, the change is forwarded to the client stream pods
+              the client stream pod distributes the change to the clients on his list
+         maybe later use IP multicast for the distribution
 
     TODO for all objects (in progress: user)
         1. complete phpDOCS
@@ -422,6 +462,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
     - one place (e.g. git / issue tracker / wiki)
     - not more than 6 information block per page
     - automatic log (who has changed what and when)
+    - write business logic and test cases one-to-one
 
 
     This file is part of zukunft.com - calc with words
@@ -448,18 +489,19 @@ use html\phrase\phrase_group as phrase_group_dsp;
 
 */
 
-use cfg\db_check;
+use cfg\db\db_check;
+use cfg\db\sql;
+use cfg\library;
+use cfg\db\sql_db;
+use cfg\sys_log_level;
+use cfg\sys_log_status;
+use cfg\sys_log_function;
 use cfg\type_lists;
-use cfg\verb_list;
+use cfg\user;
 use cfg\view;
-use cfg\view_sys_list;
 use html\html_base;
 use html\view\view as view_dsp;
-use cfg\change_log;
-use cfg\library;
-use cfg\sql_db;
-use cfg\sys_log_level;
-use cfg\user;
+use cfg\log\change_log;
 use test\test_cleanup;
 
 // the fixed system user
@@ -470,17 +512,19 @@ const SYSTEM_USER_TEST_ID = 2; //
 const LIST_MIN_NAMES = 4; // number of object names that should al least be shown
 const DEBUG_SHOW_USER = 10; // starting from this debug level the user should be shown in the debug text
 
+const MODEL_PATH = PHP_PATH . 'cfg' . DIRECTORY_SEPARATOR; // path of the main model objects for db saving, api feed and processing
 const DB_LINK_PATH = ROOT_PATH . 'db_link' . DIRECTORY_SEPARATOR;
-const DB_PATH = PHP_PATH . 'cfg/db' . DIRECTORY_SEPARATOR;
+const DB_PATH = MODEL_PATH . 'db' . DIRECTORY_SEPARATOR;
 const UTIL_PATH = PHP_PATH . 'utils' . DIRECTORY_SEPARATOR;
 const SERVICE_PATH = PHP_PATH . 'service' . DIRECTORY_SEPARATOR;
 const SERVICE_IMPORT_PATH = SERVICE_PATH . 'import' . DIRECTORY_SEPARATOR;
 const SERVICE_EXPORT_PATH = SERVICE_PATH . 'export' . DIRECTORY_SEPARATOR;
+const EXPORT_PATH = MODEL_PATH . 'export' . DIRECTORY_SEPARATOR;
 const SERVICE_MATH_PATH = SERVICE_PATH . 'math' . DIRECTORY_SEPARATOR;
-const MODEL_PATH = PHP_PATH . 'cfg' . DIRECTORY_SEPARATOR; // path of the main model objects for db saving, api feed and processing
 const MODEL_HELPER_PATH = MODEL_PATH . 'helper' . DIRECTORY_SEPARATOR;
 const MODEL_SYSTEM_PATH = MODEL_PATH . 'system' . DIRECTORY_SEPARATOR;
 const MODEL_LOG_PATH = MODEL_PATH . 'log' . DIRECTORY_SEPARATOR;
+const MODEL_DB_PATH = MODEL_PATH . 'db' . DIRECTORY_SEPARATOR;
 const MODEL_LANGUAGE_PATH = MODEL_PATH . 'language' . DIRECTORY_SEPARATOR;
 const MODEL_USER_PATH = MODEL_PATH . 'user' . DIRECTORY_SEPARATOR;
 const MODEL_SANDBOX_PATH = MODEL_PATH . 'sandbox' . DIRECTORY_SEPARATOR;
@@ -663,9 +707,6 @@ const MYSQL = "MySQL";
 const SQL_DB_TYPE = POSTGRES;
 // const SQL_DB_TYPE = sql_db::MYSQL;
 
-const SQL_ROW_LIMIT = 20; // default number of rows per page/query if not defined
-const SQL_ROW_MAX = 2000; // the max number of rows per query to avoid long response times
-
 const MAX_LOOP = 10000; // maximal number of loops to avoid hanging while loops; used for example for the number of formula elements
 
 // max number of recursive call to avoid endless looping in case of a program error
@@ -688,6 +729,12 @@ const ZUH_IMG_ADD = "/src/main/resources/images/button_add.svg";
 const ZUH_IMG_EDIT = "/src/main/resources/images/button_edit.svg";
 const ZUH_IMG_DEL = "/src/main/resources/images/button_del.svg";
 const ZUH_IMG_UNDO = "/src/main/resources/images/button_undo.svg";
+
+// classes that use a standard sql sequence for the database id
+const SQL_STD_CLASSES = [
+    sys_log_status::class,
+    sys_log_function::class
+];
 
 # list of JSON files that define the base configuration of zukunft.com that is supposed never to be changed
 define("PATH_BASE_CONFIG_FILES", ROOT_PATH . 'src/main/resources/');
@@ -854,7 +901,7 @@ function log_msg(string $msg_text,
         $used_db_con = new sql_db();
     }
     // try to reconnect to the database
-    // TODO activate
+    // TODO activate Prio 3
     /*
     if (!$used_db_con->connected()) {
         if (!$used_db_con->open_with_retry($msg_text, $msg_description, $function_name, $function_trace, $usr)) {
@@ -895,7 +942,7 @@ function log_msg(string $msg_text,
 
             $sys_log_msg_lst[] = $msg_type_text;
             if ($msg_log_level > LOG_LEVEL or $force_log) {
-                $used_db_con->set_type(sql_db::TBL_SYS_LOG_FUNCTION);
+                $used_db_con->set_class(sys_log_function::class);
                 $function_id = $used_db_con->get_id($function_name);
                 if ($function_id <= 0) {
                     $function_id = $used_db_con->add_id($function_name);
@@ -922,9 +969,9 @@ function log_msg(string $msg_text,
                     $fields[] = "user_id";
                     $values[] = $user_id;
                 }
-                $used_db_con->set_type(sql_db::TBL_SYS_LOG);
+                $used_db_con->set_class(sql_db::TBL_SYS_LOG);
 
-                $sys_log_id = $used_db_con->insert($fields, $values, false);
+                $sys_log_id = $used_db_con->insert_old($fields, $values, false);
                 //$sql_result = mysqli_query($sql) or die('zukunft.com system log failed by query '.$sql.': '.mysqli_error().'. If this happens again, please send this message to errors@zukunft.com.');
                 //$sys_log_id = mysqli_insert_id();
             }
@@ -1001,6 +1048,8 @@ function log_err(string $msg_text,
                  string $function_trace = '',
                  ?user  $calling_usr = null): string
 {
+    global $errors;
+    $errors++;
     return log_msg($msg_text,
         $msg_description,
         sys_log_level::ERROR,
@@ -1075,13 +1124,14 @@ function log_fatal(string $msg_text,
  */
 function prg_start(string $code_name, string $style = "", $echo_header = true): sql_db
 {
-    global $sys_time_start, $sys_script;
+    global $sys_time_start, $sys_script, $errors;
 
     // resume session (based on cookies)
     session_start();
 
     $sys_time_start = time();
     $sys_script = $code_name;
+    $errors = 0;
 
     log_debug($code_name . ': session_start');
 
@@ -1102,9 +1152,13 @@ function prg_start(string $code_name, string $style = "", $echo_header = true): 
 function prg_restart(string $code_name): sql_db
 {
 
+    global $sc;
+
     // link to database
     $db_con = new sql_db;
     $db_con->db_type = SQL_DB_TYPE;
+    $sc = new sql();
+    $sc->set_db_type($db_con->db_type);
     $db_con->open();
     if ($db_con->postgres_link === false) {
         log_debug($code_name . ': start db setup');
@@ -1178,7 +1232,7 @@ function prg_end_write_time($db_con): void
     $sys_time_end = time();
     if ($sys_time_end > $sys_time_limit) {
         $db_con->usr_id = SYSTEM_USER_ID;
-        $db_con->set_type(sql_db::TBL_SYS_SCRIPT);
+        $db_con->set_class(sql_db::TBL_SYS_SCRIPT);
         $sys_script_id = $db_con->get_id($sys_script);
         if ($sys_script_id <= 0) {
             $sys_script_id = $db_con->add_id($sys_script);
@@ -1201,7 +1255,7 @@ function prg_end_write_time($db_con): void
     unset($sys_time_start);
 }
 
-function prg_end($db_con)
+function prg_end($db_con): void
 {
     global $sys_time_start, $sys_time_limit, $sys_script, $sys_log_msg_lst;
 
@@ -1356,7 +1410,7 @@ function zu_trim($text): string
 function sql_lst($type): string
 {
     global $db_con;
-    $db_con->set_type($type);
+    $db_con->set_class($type);
     return $db_con->sql_std_lst();
 }
 
@@ -1364,7 +1418,7 @@ function sql_lst($type): string
 function sql_lst_usr($type, $usr): string
 {
     global $db_con;
-    $db_con->set_type($type);
+    $db_con->set_class($type);
     $db_con->usr_id = $usr->id();
     return $db_con->sql_std_lst_usr();
 }

@@ -9,7 +9,7 @@ ALTER DATABASE zukunft SET search_path TO public;
 -- --------------------------------------------------------
 
 --
--- Table structure for the core configuration of this pod e.g. the program version or pod url
+-- table structure for the core configuration of this pod e.g. the program version or pod url
 --
 
 CREATE TABLE IF NOT EXISTS config
@@ -21,13 +21,14 @@ CREATE TABLE IF NOT EXISTS config
     description text
 );
 
-COMMENT ON TABLE config is 'core configuration of this pod e.g. the program version or pod url';
-COMMENT ON COLUMN config.config_name is 'short name of the configuration entry to be shown to the admin';
+COMMENT ON TABLE config IS 'core configuration of this pod e.g. the program version or pod url';
+COMMENT ON COLUMN config.config_name IS 'short name of the configuration entry to be shown to the admin';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for system log types e.g. info, warning and error
+-- table structure for system log types e.g. info, warning and error
+-- TODO change to an enum because this will probably never change
 --
 
 CREATE TABLE IF NOT EXISTS sys_log_types
@@ -37,10 +38,10 @@ CREATE TABLE IF NOT EXISTS sys_log_types
     code_id         varchar(50)  NOT NULL
 );
 
-COMMENT ON TABLE sys_log_types is 'system log types e.g. info, warning and error';
+COMMENT ON TABLE sys_log_types IS 'system log types e.g. info, warning and error';
 
 --
--- Table structure for table sys_log_status
+-- table structure for table sys_log_status
 --
 
 CREATE TABLE IF NOT EXISTS sys_log_status
@@ -52,11 +53,11 @@ CREATE TABLE IF NOT EXISTS sys_log_status
     action            varchar(200) DEFAULT NULL
 );
 
-COMMENT ON TABLE sys_log_status is 'Status of internal errors';
-COMMENT ON COLUMN sys_log_status.action is 'description of the action to get to this status';
+COMMENT ON TABLE sys_log_status IS 'Status of internal errors';
+COMMENT ON COLUMN sys_log_status.action IS 'description of the action to get to this status';
 
 --
--- Table structure for table sys_log_functions
+-- table structure for table sys_log_functions
 --
 
 CREATE TABLE IF NOT EXISTS sys_log_functions
@@ -66,7 +67,7 @@ CREATE TABLE IF NOT EXISTS sys_log_functions
 );
 
 --
--- Table structure for table sys_log
+-- table structure for table sys_log
 --
 
 CREATE TABLE IF NOT EXISTS sys_log
@@ -83,12 +84,12 @@ CREATE TABLE IF NOT EXISTS sys_log
     sys_log_status_id   bigint             DEFAULT '1'
 );
 
-COMMENT ON COLUMN sys_log.solver_id is 'user id of the user that is trying to solve the problem';
+COMMENT ON COLUMN sys_log.solver_id IS 'user id of the user that is trying to solve the problem';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table sys_scripts
+-- table structure for batch jobs that are scheduled
 --
 
 CREATE TABLE IF NOT EXISTS sys_scripts
@@ -98,7 +99,7 @@ CREATE TABLE IF NOT EXISTS sys_scripts
 );
 
 --
--- Table structure for table sys_script_times
+-- table structure for the schedule of system batch jobs
 --
 
 CREATE TABLE IF NOT EXISTS sys_script_times
@@ -112,7 +113,7 @@ CREATE TABLE IF NOT EXISTS sys_script_times
 -- --------------------------------------------------------
 
 --
--- Table structure for batch job types
+-- table structure for batch job types
 --
 
 CREATE TABLE IF NOT EXISTS calc_and_cleanup_task_types
@@ -123,10 +124,10 @@ CREATE TABLE IF NOT EXISTS calc_and_cleanup_task_types
     code_id                       varchar(50)  NOT NULL
 );
 
-COMMENT ON TABLE calc_and_cleanup_task_types is 'batch job types e.g. data synchronisation';
+COMMENT ON TABLE calc_and_cleanup_task_types IS 'batch job types e.g. data synchronisation';
 
 --
--- Table structure for batch jobs
+-- table structure for batch jobs
 --
 
 CREATE TABLE IF NOT EXISTS calc_and_cleanup_tasks
@@ -141,12 +142,12 @@ CREATE TABLE IF NOT EXISTS calc_and_cleanup_tasks
     change_field_id               bigint    DEFAULT NULL
 );
 
-COMMENT ON TABLE calc_and_cleanup_task_types is 'concrete batch jobs with start and end';
+COMMENT ON TABLE calc_and_cleanup_tasks IS 'concrete batch jobs with start and end';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table user_types
+-- table structure for table user_types
 --
 
 CREATE TABLE IF NOT EXISTS user_types
@@ -158,7 +159,7 @@ CREATE TABLE IF NOT EXISTS user_types
 );
 
 --
--- Table structure for table user_profiles
+-- table structure for table user_profiles
 --
 
 CREATE TABLE IF NOT EXISTS user_profiles
@@ -166,11 +167,12 @@ CREATE TABLE IF NOT EXISTS user_profiles
     profile_id  BIGSERIAL PRIMARY KEY,
     type_name   varchar(200) NOT NULL,
     code_id     varchar(50)  NOT NULL,
-    description text
+    description text,
+    right_level smallint DEFAULT NULL
 );
 
 --
--- Table structure for users including system users
+-- table structure for users including system users
 --
 
 CREATE TABLE IF NOT EXISTS users
@@ -208,15 +210,15 @@ CREATE TABLE IF NOT EXISTS users
     activation_key_timeout   timestamp    NULL     DEFAULT NULL
 );
 
-COMMENT ON TABLE users is 'only users can add data';
-COMMENT ON COLUMN users.code_id is 'to select e.g. the system batch user';
-COMMENT ON COLUMN users.official_id is 'such as the passport id';
-COMMENT ON COLUMN users.last_word_id is 'the last term that the user had used'; -- TODO rename to last_phrase_id
-COMMENT ON COLUMN users.last_mask_id is 'the last mask that the user has used';
-COMMENT ON COLUMN users.source_id is 'the last source used by this user to have a default for the next value';
+COMMENT ON TABLE users IS 'only users can add data';
+COMMENT ON COLUMN users.code_id IS 'to select e.g. the system batch user';
+COMMENT ON COLUMN users.official_id IS 'such as the passport id';
+COMMENT ON COLUMN users.last_word_id IS 'the last term that the user had used'; -- TODO rename to last_phrase_id
+COMMENT ON COLUMN users.last_mask_id IS 'the last mask that the user has used';
+COMMENT ON COLUMN users.source_id IS 'the last source used by this user to have a default for the next value';
 
 --
--- Table structure for table user_official_types
+-- table structure for table user_official_types
 --
 
 CREATE TABLE IF NOT EXISTS user_official_types
@@ -228,7 +230,7 @@ CREATE TABLE IF NOT EXISTS user_official_types
 );
 
 --
--- Table structure for table user_requests
+-- table structure for table user_requests
 --
 
 CREATE TABLE IF NOT EXISTS user_requests
@@ -241,7 +243,7 @@ CREATE TABLE IF NOT EXISTS user_requests
 );
 
 --
--- Table structure to log the user access attempts
+-- table structure to log the user access attempts
 --
 
 CREATE TABLE IF NOT EXISTS user_attempts
@@ -252,7 +254,7 @@ CREATE TABLE IF NOT EXISTS user_attempts
 );
 
 --
--- Table structure of ip addresses that should be blocked
+-- table structure of ip addresses that should be blocked
 --
 
 CREATE TABLE IF NOT EXISTS user_blocked_ips
@@ -267,7 +269,7 @@ CREATE TABLE IF NOT EXISTS user_blocked_ips
 -- --------------------------------------------------------
 
 --
--- Table structure for table sessions
+-- table structure for table sessions
 --
 
 CREATE TABLE IF NOT EXISTS sessions
@@ -284,7 +286,7 @@ CREATE TABLE IF NOT EXISTS sessions
 -- --------------------------------------------------------
 
 --
--- Table structure for add, change or delete actions
+-- table structure for add, change or delete actions
 --
 
 CREATE TABLE IF NOT EXISTS change_actions
@@ -296,7 +298,7 @@ CREATE TABLE IF NOT EXISTS change_actions
 );
 
 --
--- Table structure to keep the original table name even if a table name has changed
+-- table structure to keep the original table name even if a table name has changed
 --
 
 CREATE TABLE IF NOT EXISTS change_tables
@@ -307,13 +309,13 @@ CREATE TABLE IF NOT EXISTS change_tables
     code_id           varchar(50)   DEFAULT NULL
 );
 
-COMMENT ON TABLE change_tables is 'to avoid log changes in case a table is renamed';
-COMMENT ON COLUMN change_tables.change_table_name is 'the real name';
-COMMENT ON COLUMN change_tables.description is 'the user readable name';
-COMMENT ON COLUMN change_tables.code_id is 'with this field tables can be combined in case of renaming';
+COMMENT ON TABLE change_tables IS 'to avoid log changes in case a table is renamed';
+COMMENT ON COLUMN change_tables.change_table_name IS 'the real name';
+COMMENT ON COLUMN change_tables.description IS 'the user readable name';
+COMMENT ON COLUMN change_tables.code_id IS 'with this field tables can be combined in case of renaming';
 
 --
--- Table structure to keep the original field name even if a table name has changed
+-- table structure to keep the original field name even if a table name has changed
 --
 
 CREATE TABLE IF NOT EXISTS change_fields
@@ -325,11 +327,14 @@ CREATE TABLE IF NOT EXISTS change_fields
     code_id           varchar(100) DEFAULT NULL
 );
 
-COMMENT ON COLUMN change_fields.table_id is 'because every field must only be unique within a table';
-COMMENT ON COLUMN change_fields.code_id is 'to display the change with some linked information';
+COMMENT ON COLUMN change_fields.table_id IS 'because every field must only be unique within a table';
+COMMENT ON COLUMN change_fields.code_id IS 'to display the change with some linked information';
 
 --
--- Table structure to log the changes done by the users
+-- table structure to log the changes done by the users
+--
+-- TODO if change table gets too big, rename the table to "_up_to_YYYY_MM_DD_HH:MM:SS.000"
+--      after that create a new table and start numbering from zero
 --
 
 CREATE TABLE IF NOT EXISTS changes
@@ -346,13 +351,70 @@ CREATE TABLE IF NOT EXISTS changes
     new_id           bigint             DEFAULT NULL
 );
 
-COMMENT ON TABLE changes is 'to log all changes';
-COMMENT ON COLUMN changes.change_time is 'time when the value has been changed';
-COMMENT ON COLUMN changes.old_id is 'old value id';
-COMMENT ON COLUMN changes.new_id is 'new value id';
+COMMENT ON TABLE changes IS 'to log all changes';
+COMMENT ON COLUMN changes.change_time IS 'time when the value has been changed';
+COMMENT ON COLUMN changes.old_id IS 'old value id';
+COMMENT ON COLUMN changes.new_id IS 'new value id';
 
 --
--- Table structure to log the link changes done by the users
+-- table structure to log the value changes done by the users
+--
+
+CREATE TABLE IF NOT EXISTS changes_values
+(
+    change_id        BIGSERIAL PRIMARY KEY,
+    change_time      timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    user_id          bigint    NOT NULL,
+    change_action_id bigint    NOT NULL,
+    change_field_id  bigint    NOT NULL,
+    group_id         char(112) NOT NULL,
+    old_value        double precision DEFAULT NULL,
+    new_value        double precision DEFAULT NULL
+);
+
+COMMENT ON TABLE changes_values IS 'to log all number changes';
+COMMENT ON COLUMN changes_values.change_time IS 'time when the value has been changed';
+
+--
+-- table structure to log changes of numbers related to not more than four prime phrases
+--
+
+CREATE TABLE IF NOT EXISTS changes_values_prime
+(
+    change_id        BIGSERIAL PRIMARY KEY,
+    change_time      timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    user_id          bigint    NOT NULL,
+    change_action_id bigint    NOT NULL,
+    change_field_id  bigint    NOT NULL,
+    group_id         bigint    NOT NULL,
+    old_value        double precision DEFAULT NULL,
+    new_value        double precision DEFAULT NULL
+);
+
+COMMENT ON TABLE changes_values_prime IS 'to log changes of numbers related to not more than four prime phrases';
+COMMENT ON COLUMN changes_values_prime.change_time IS 'time when the value has been changed';
+
+--
+-- table structure to log changes of numbers related to more than 16 phrases
+--
+
+CREATE TABLE IF NOT EXISTS changes_values_big
+(
+    change_id        BIGSERIAL PRIMARY KEY,
+    change_time      timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    user_id          bigint    NOT NULL,
+    change_action_id bigint    NOT NULL,
+    change_field_id  bigint    NOT NULL,
+    group_id         TEXT      NOT NULL,
+    old_value        double precision DEFAULT NULL,
+    new_value        double precision DEFAULT NULL
+);
+
+COMMENT ON TABLE changes_values_big IS 'to log changes of numbers related to more than 16 phrases';
+COMMENT ON COLUMN changes_values_big.change_time IS 'time when the value has been changed';
+
+--
+-- table structure to log the link changes done by the users
 --
 
 CREATE TABLE IF NOT EXISTS change_links
@@ -377,13 +439,13 @@ CREATE TABLE IF NOT EXISTS change_links
     row_id           bigint             DEFAULT NULL
 );
 
-COMMENT ON COLUMN change_links.new_to_id is 'either internal row id or the ref type id of the external system e.g. 2 for wikidata';
-COMMENT ON COLUMN change_links.new_text_to is 'the fixed text to display to the user or the external reference id e.g. Q1 (for universe) in case of wikidata';
+COMMENT ON COLUMN change_links.new_to_id IS 'either internal row id or the ref type id of the external system e.g. 2 for wikidata';
+COMMENT ON COLUMN change_links.new_text_to IS 'the fixed text to display to the user or the external reference id e.g. Q1 (for universe) in case of wikidata';
 
 -- --------------------------------------------------------
 
 --
--- Table structure to add user comments related to any database entry
+-- table structure to add user comments related to any database entry
 --
 
 CREATE TABLE IF NOT EXISTS comments
@@ -394,12 +456,12 @@ CREATE TABLE IF NOT EXISTS comments
     comment    text   NOT NULL
 );
 
-COMMENT ON TABLE comments is 'separate table because it is expected that only a few record';
+COMMENT ON TABLE comments IS 'separate table because it is expected that only a few record';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table protection_types
+-- table structure for table protection_types
 --
 
 CREATE TABLE IF NOT EXISTS protection_types
@@ -411,7 +473,7 @@ CREATE TABLE IF NOT EXISTS protection_types
 );
 
 --
--- Table structure for table share_types
+-- table structure for table share_types
 --
 
 CREATE TABLE IF NOT EXISTS share_types
@@ -422,14 +484,14 @@ CREATE TABLE IF NOT EXISTS share_types
     description   text
 );
 
-COMMENT ON COLUMN share_types.type_name is 'the name of the share type as displayed for the user';
-COMMENT ON COLUMN share_types.code_id is 'the code link';
-COMMENT ON COLUMN share_types.description is 'to explain the code action of the share type';
+COMMENT ON COLUMN share_types.type_name IS 'the name of the share type as displayed for the user';
+COMMENT ON COLUMN share_types.code_id IS 'the code link';
+COMMENT ON COLUMN share_types.description IS 'to explain the code action of the share type';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table phrase_types
+-- table structure for table phrase_types
 --
 
 CREATE TABLE IF NOT EXISTS phrase_types
@@ -442,13 +504,13 @@ CREATE TABLE IF NOT EXISTS phrase_types
     word_symbol    varchar(5)   DEFAULT NULL
 );
 
-COMMENT ON COLUMN phrase_types.scaling_factor is 'e.g. for percent the scaling factor is 100';
-COMMENT ON COLUMN phrase_types.word_symbol is 'e.g. for percent the symbol is %';
+COMMENT ON COLUMN phrase_types.scaling_factor IS 'e.g. for percent the scaling factor is 100';
+COMMENT ON COLUMN phrase_types.word_symbol IS 'e.g. for percent the symbol is %';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table languages
+-- table structure for table languages
 --
 
 CREATE TABLE IF NOT EXISTS languages
@@ -461,7 +523,7 @@ CREATE TABLE IF NOT EXISTS languages
 );
 
 --
--- Table structure for table language_forms
+-- table structure for table language_forms
 --
 
 CREATE TABLE IF NOT EXISTS language_forms
@@ -472,12 +534,12 @@ CREATE TABLE IF NOT EXISTS language_forms
     language_id        bigint NOT NULL
 );
 
-COMMENT ON COLUMN language_forms.language_form_name is 'type of adjustment of a term in a language e.g. plural';
+COMMENT ON COLUMN language_forms.language_form_name IS 'type of adjustment of a term in a language e.g. plural';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for words
+-- table structure for words
 --
 
 CREATE TABLE IF NOT EXISTS words
@@ -496,18 +558,18 @@ CREATE TABLE IF NOT EXISTS words
     protect_id     smallint     NOT NULL DEFAULT '1'
 );
 
-COMMENT ON TABLE words is 'for all text data that might be used to search for values, so basically all test';
-COMMENT ON COLUMN words.word_id is 'a 64 bit database key because humans will never be able to use more than a few million words';
-COMMENT ON COLUMN words.user_id is 'user_id of the user that has created the word';
-COMMENT ON COLUMN words.plural is 'to be replaced by a language form entry; TODO to be move to language forms';
-COMMENT ON COLUMN words.description is 'to be replaced by a language form entry';
-COMMENT ON COLUMN words.view_id is 'the default mask for this word';
-COMMENT ON COLUMN words.values is 'number of values linked to the word, which gives an indication of the importance';
-COMMENT ON COLUMN words.excluded is 'to deactivate to word and remove it from selection lists without losing related values';
-COMMENT ON COLUMN words.inactive is 'true if the word is not yet active e.g. because it is moved to the prime words with a 16 bit id';
+COMMENT ON TABLE words IS 'for all text data that might be used to search for values, so basically all test';
+COMMENT ON COLUMN words.word_id IS 'a 64 bit database key because humans will never be able to use more than a few million words';
+COMMENT ON COLUMN words.user_id IS 'user_id of the user that has created the word';
+COMMENT ON COLUMN words.plural IS 'to be replaced by a language form entry; TODO to be move to language forms';
+COMMENT ON COLUMN words.description IS 'to be replaced by a language form entry';
+COMMENT ON COLUMN words.view_id IS 'the default mask for this word';
+COMMENT ON COLUMN words.values IS 'number of values linked to the word, which gives an indication of the importance';
+COMMENT ON COLUMN words.excluded IS 'to deactivate to word and remove it from selection lists without losing related values';
+COMMENT ON COLUMN words.inactive IS 'true if the word is not yet active e.g. because it is moved to the prime words with a 16 bit id';
 
 --
--- Table structure for user specific word changes
+-- table structure for user specific word changes
 --
 
 CREATE TABLE IF NOT EXISTS user_words
@@ -526,12 +588,15 @@ CREATE TABLE IF NOT EXISTS user_words
     protect_id     smallint NOT NULL DEFAULT '1'
 );
 
-COMMENT ON TABLE user_words is 'user specific overwrites of words';
+COMMENT ON TABLE user_words IS 'user specific overwrites of words';
+COMMENT ON COLUMN user_words.user_id IS 'the user who has changed the standard word';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table word_del_confirms
+-- table structure for table word_del_confirms
+--
+-- TODO move to batch_jobs ?
 --
 
 CREATE TABLE IF NOT EXISTS word_del_confirms
@@ -545,7 +610,7 @@ CREATE TABLE IF NOT EXISTS word_del_confirms
 -- --------------------------------------------------------
 
 --
--- Table structure for table word_del_requests
+-- table structure for table word_del_requests
 --
 
 CREATE TABLE IF NOT EXISTS word_del_requests
@@ -560,12 +625,12 @@ CREATE TABLE IF NOT EXISTS word_del_requests
     user_id             bigint       NOT NULL
 );
 
-COMMENT ON COLUMN word_del_requests.user_id is 'the user who has requested the term deletion';
+COMMENT ON COLUMN word_del_requests.user_id IS 'the user who has requested the term deletion';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table word_periods
+-- table structure for table word_periods
 --
 
 CREATE TABLE IF NOT EXISTS word_periods
@@ -575,12 +640,12 @@ CREATE TABLE IF NOT EXISTS word_periods
     "to"    timestamp NOT NULL
 );
 
-COMMENT ON TABLE word_periods is 'to define the time period for time terms';
+COMMENT ON TABLE word_periods IS 'to define the time period for time terms';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for triple predicates
+-- table structure for triple predicates
 --
 
 CREATE TABLE IF NOT EXISTS verbs
@@ -597,15 +662,15 @@ CREATE TABLE IF NOT EXISTS verbs
     words               bigint       DEFAULT NULL
 );
 
-COMMENT ON TABLE verbs is 'it is fixed coded how to behavior for each type is';
-COMMENT ON COLUMN verbs.formula_name is 'naming used in formulas';
-COMMENT ON COLUMN verbs.name_plural_reverse is 'english description for the reverse list, e.g. Companies are ...'; -- TODO move to language forms
-COMMENT ON COLUMN verbs.words is 'used for how many terms'; -- TODO rename to phrases
+COMMENT ON TABLE verbs IS 'it is fixed coded how to behavior for each type is';
+COMMENT ON COLUMN verbs.formula_name IS 'naming used in formulas';
+COMMENT ON COLUMN verbs.name_plural_reverse IS 'english description for the reverse list, e.g. Companies are ...'; -- TODO move to language forms
+COMMENT ON COLUMN verbs.words IS 'used for how many terms'; -- TODO rename to phrases
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table verb_usages
+-- table structure for table verb_usages
 -- TODO check if still needed
 --
 
@@ -619,7 +684,7 @@ CREATE TABLE IF NOT EXISTS verb_usages
 -- --------------------------------------------------------
 
 --
--- Table structure for triples
+-- table structure for triples
 --
 
 CREATE TABLE IF NOT EXISTS triples
@@ -643,16 +708,14 @@ CREATE TABLE IF NOT EXISTS triples
     protect_id               smallint NOT NULL DEFAULT '1'
 );
 
-COMMENT ON COLUMN triples.triple_condition_id is 'formula_id of a formula with a boolean result; the term is only added if formula result is true';
-COMMENT ON COLUMN triples.triple_condition_type_id is 'maybe not needed';
-COMMENT ON COLUMN triples.name_given is 'the unique name manually set by the user, which can be empty';
-COMMENT ON COLUMN triples.name_generated is 'the generic unique name based on the phrases and verb, which can be overwritten by the given name';
-COMMENT ON COLUMN triples.description is 'as for all other named objects an explaining text that is shown to the user in case of mouseover';
-
--- --------------------------------------------------------
+COMMENT ON COLUMN triples.triple_condition_id IS 'formula_id of a formula with a boolean result; the term is only added if formula result is true';
+COMMENT ON COLUMN triples.triple_condition_type_id IS 'maybe not needed';
+COMMENT ON COLUMN triples.name_given IS 'the unique name manually set by the user, which can be empty';
+COMMENT ON COLUMN triples.name_generated IS 'the generic unique name based on the phrases and verb, which can be overwritten by the given name';
+COMMENT ON COLUMN triples.description IS 'as for all other named objects an explaining text that is shown to the user in case of mouseover';
 
 --
--- Table structure for table user_triples
+-- table structure for table user_triples
 --
 
 CREATE TABLE IF NOT EXISTS user_triples
@@ -672,13 +735,13 @@ CREATE TABLE IF NOT EXISTS user_triples
     protect_id      smallint NOT NULL DEFAULT '1'
 );
 
-COMMENT ON COLUMN user_triples.name_given is 'the unique name manually set by the user, which can be empty';
-COMMENT ON COLUMN user_triples.name_generated is 'the generic unique name based on the phrases and verb, which can be overwritten by the given name';
+COMMENT ON COLUMN user_triples.name_given IS 'the unique name manually set by the user, which can be empty';
+COMMENT ON COLUMN user_triples.name_generated IS 'the generic unique name based on the phrases and verb, which can be overwritten by the given name';
 
 -- --------------------------------------------------------
 
 --
--- Table structure to remember which phrases are store in which table and pod
+-- table structure to remember which phrases are stored in which table and pod
 --
 
 CREATE TABLE IF NOT EXISTS phrase_tables
@@ -689,10 +752,12 @@ CREATE TABLE IF NOT EXISTS phrase_tables
     active     smallint DEFAULT NULL
 );
 
+COMMENT ON TABLE phrase_tables IS 'to remember which phrases are stored in which table and pod';
+
 -- --------------------------------------------------------
 
 --
--- Table structure for phrase group names
+-- table structure to add a user given name using a 512 bit group id index for up to 16 16 bit phrase ids including the order
 --
 
 CREATE TABLE IF NOT EXISTS groups
@@ -702,12 +767,12 @@ CREATE TABLE IF NOT EXISTS groups
     description varchar(4000) DEFAULT NULL
 );
 
-COMMENT ON TABLE groups is 'to add a user given name using a 512 bit group id index for up to 16 16 bit phrase ids including the order';
-COMMENT ON COLUMN groups.group_name is 'the name given by a user to display the group (does not need to be unique))';
-COMMENT ON COLUMN groups.description is 'the description of the group given by a user';
+COMMENT ON TABLE groups IS 'to add a user given name using a 512 bit group id index for up to 16 16 bit phrase ids including the order';
+COMMENT ON COLUMN groups.group_name IS 'the name given by a user to display the group (does not need to be unique))';
+COMMENT ON COLUMN groups.description IS 'the description of the group given by a user';
 
 --
--- Table structure for saving a user specific group name
+-- table structure for saving a user specific group name
 --
 
 CREATE TABLE IF NOT EXISTS user_groups
@@ -718,30 +783,30 @@ CREATE TABLE IF NOT EXISTS user_groups
     description varchar(4000) DEFAULT NULL
 );
 
-COMMENT ON TABLE user_groups is 'to link the user specific name to the standard group';
-COMMENT ON COLUMN user_groups.group_name is 'the user specific group name which can contain the phrase names in a different order';
-COMMENT ON COLUMN user_groups.description is 'the user specific description for mouse over helps';
+COMMENT ON TABLE user_groups IS 'to link the user specific name to the standard group';
+COMMENT ON COLUMN user_groups.group_name IS 'the user specific group name which can contain the phrase names in a different order';
+COMMENT ON COLUMN user_groups.description IS 'the user specific description for mouse over helps';
 
 --
--- Table structure for phrase group names of up to four prime phrases
+-- table structure for phrase group names of up to four prime phrases
 --
 
-CREATE TABLE IF NOT EXISTS group_prime
+CREATE TABLE IF NOT EXISTS groups_prime
 (
     group_id    BIGSERIAL PRIMARY KEY,
     group_name  varchar(1000) DEFAULT NULL,
     description varchar(4000) DEFAULT NULL
 );
 
-COMMENT ON TABLE group_prime is 'to add a user given name using a 64 bit bigint group id index for up to four 16 bit phrase ids including the order';
-COMMENT ON COLUMN group_prime.group_name is 'the name given by a user to display the group (does not need to be unique))';
-COMMENT ON COLUMN group_prime.description is 'the description of the group given by a user';
+COMMENT ON TABLE groups_prime IS 'to add a user given name using a 64 bit bigint group id index for up to four 16 bit phrase ids including the order';
+COMMENT ON COLUMN groups_prime.group_name IS 'the name given by a user to display the group (does not need to be unique))';
+COMMENT ON COLUMN groups_prime.description IS 'the description of the group given by a user';
 
 --
--- Table structure for saving a user specific group name for up to four prime phrases
+-- table structure for saving a user specific group name for up to four prime phrases
 --
 
-CREATE TABLE IF NOT EXISTS user_group_prime
+CREATE TABLE IF NOT EXISTS user_groups_prime
 (
     group_id    BIGSERIAL PRIMARY KEY,
     user_id     bigint NOT NULL,
@@ -749,30 +814,30 @@ CREATE TABLE IF NOT EXISTS user_group_prime
     description varchar(4000) DEFAULT NULL
 );
 
-COMMENT ON TABLE user_group_prime is 'to link the user specific name to the group';
-COMMENT ON COLUMN user_group_prime.group_name is 'the user specific group name which can contain the phrase names in a different order';
-COMMENT ON COLUMN user_group_prime.description is 'the user specific description for mouse over helps';
+COMMENT ON TABLE user_groups_prime IS 'to link the user specific name to the group';
+COMMENT ON COLUMN user_groups_prime.group_name IS 'the user specific group name which can contain the phrase names in a different order';
+COMMENT ON COLUMN user_groups_prime.description IS 'the user specific description for mouse over helps';
 
 --
--- Table structure for phrase group names of more than 16 phrases
+-- table structure for phrase group names of more than 16 phrases
 --
 
-CREATE TABLE IF NOT EXISTS group_big
+CREATE TABLE IF NOT EXISTS groups_big
 (
     group_id    text PRIMARY KEY,
     group_name  varchar(1000) DEFAULT NULL,
     description varchar(4000) DEFAULT NULL
 );
 
-COMMENT ON TABLE group_big is 'to add a user given name using text group id index for an almost unlimited number of phrase ids including the order';
-COMMENT ON COLUMN group_big.group_name is 'the name given by a user to display the group (does not need to be unique))';
-COMMENT ON COLUMN group_big.description is 'the description of the group given by a user';
+COMMENT ON TABLE groups_big IS 'to add a user given name using text group id index for an almost unlimited number of phrase ids including the order';
+COMMENT ON COLUMN groups_big.group_name IS 'the name given by a user to display the group (does not need to be unique))';
+COMMENT ON COLUMN groups_big.description IS 'the description of the group given by a user';
 
 --
--- Table structure for saving a user specific group name for more than 16 phrases
+-- table structure for saving a user specific group name for more than 16 phrases
 --
 
-CREATE TABLE IF NOT EXISTS user_group_big
+CREATE TABLE IF NOT EXISTS user_groups_big
 (
     group_id    text PRIMARY KEY,
     user_id     bigint NOT NULL,
@@ -780,28 +845,30 @@ CREATE TABLE IF NOT EXISTS user_group_big
     description varchar(4000) DEFAULT NULL
 );
 
-COMMENT ON TABLE user_group_big is 'to link the user specific name to the group';
-COMMENT ON COLUMN user_group_big.group_name is 'the user specific group name which can contain the phrase names in a different order';
-COMMENT ON COLUMN user_group_big.description is 'the user specific description for mouse over helps';
+COMMENT ON TABLE user_groups_big IS 'to link the user specific name to the group';
+COMMENT ON COLUMN user_groups_big.group_name IS 'the user specific group name which can contain the phrase names in a different order';
+COMMENT ON COLUMN user_groups_big.description IS 'the user specific description for mouse over helps';
+
+-- --------------------------------------------------------
 
 --
--- Table structure to link phrases to a group
--- TODO add prime index
+-- table structure to link phrases to a group
+-- TODO deprecate and use like on group_id instead
 --
 
-CREATE TABLE IF NOT EXISTS group_link
+CREATE TABLE IF NOT EXISTS group_links
 (
     group_id  char(112) NOT NULL,
     phrase_id bigint NOT NULL
 );
 
-COMMENT ON TABLE group_link is 'link phrases to a phrase group for database based selections';
+COMMENT ON TABLE group_links IS 'link phrases to a phrase group for database based selections';
 
 --
--- Table structure to store user specific ex- or includes of single link of phrases to groups
+-- table structure to store user specific ex- or includes of single link of phrases to groups
 --
 
-CREATE TABLE IF NOT EXISTS user_group_link
+CREATE TABLE IF NOT EXISTS user_group_links
 (
     group_id  char(112) NOT NULL,
     phrase_id bigint    NOT NULL,
@@ -809,25 +876,26 @@ CREATE TABLE IF NOT EXISTS user_group_link
     excluded  smallint  DEFAULT NULL
 );
 
-COMMENT ON TABLE user_group_link is 'to ex- or include user specific link to the standard group';
+COMMENT ON TABLE user_group_links IS 'to ex- or include user specific link to the standard group';
 
 --
--- Table structure to link up to four prime phrases to a group
+-- table structure to link up to four prime phrases to a group
+-- TODO deprecate and use like on binary format of group_id instead
 --
 
-CREATE TABLE IF NOT EXISTS group_prime_link
+CREATE TABLE IF NOT EXISTS group_prime_links
 (
     group_id  BIGSERIAL,
     phrase_id bigint NOT NULL
 );
 
-COMMENT ON TABLE group_prime_link is 'link phrases to a short phrase group for database based selections';
+COMMENT ON TABLE group_prime_links IS 'link phrases to a short phrase group for database based selections';
 
 --
--- Table structure for user specific links of up to four prime phrases per group
+-- table structure for user specific links of up to four prime phrases per group
 --
 
-CREATE TABLE IF NOT EXISTS user_group_prime_link
+CREATE TABLE IF NOT EXISTS user_group_prime_links
 (
     group_id  BIGSERIAL,
     phrase_id bigint    NOT NULL,
@@ -835,25 +903,25 @@ CREATE TABLE IF NOT EXISTS user_group_prime_link
     excluded  smallint  DEFAULT NULL
 );
 
-COMMENT ON TABLE user_group_prime_link is 'user specific link to groups with up to four prime phrase';
+COMMENT ON TABLE user_group_prime_links IS 'user specific link to groups with up to four prime phrase';
 
 --
--- Table structure to link up more than 16 phrases to a group
+-- table structure to link up more than 16 phrases to a group
 --
 
-CREATE TABLE IF NOT EXISTS group_big_link
+CREATE TABLE IF NOT EXISTS group_big_links
 (
     group_id  text,
     phrase_id bigint NOT NULL
 );
 
-COMMENT ON TABLE group_big_link is 'link phrases to a long phrase group for database based selections';
+COMMENT ON TABLE group_big_links IS 'link phrases to a long phrase group for database based selections';
 
 --
--- Table structure for user specific links for more than 16 phrases per group
+-- table structure for user specific links for more than 16 phrases per group
 --
 
-CREATE TABLE IF NOT EXISTS user_group_big_link
+CREATE TABLE IF NOT EXISTS user_group_big_links
 (
     group_id  text,
     phrase_id bigint   NOT NULL,
@@ -861,12 +929,12 @@ CREATE TABLE IF NOT EXISTS user_group_big_link
     excluded  smallint DEFAULT NULL
 );
 
-COMMENT ON TABLE user_group_big_link is 'to ex- or include user specific link to the standard group';
+COMMENT ON TABLE user_group_big_links IS 'to ex- or include user specific link to the standard group';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table source_types
+-- table structure for table source_types
 --
 
 CREATE TABLE IF NOT EXISTS source_types
@@ -878,75 +946,84 @@ CREATE TABLE IF NOT EXISTS source_types
 );
 
 --
--- Table structure for table source_api
---
-
-CREATE TABLE IF NOT EXISTS source_api
-(
-    source_api_id       BIGSERIAL PRIMARY KEY,
-    source_api_name     varchar(200) NOT NULL,
-    open_api_definition text DEFAULT NULL
-);
-
---
--- Table structure for table source_api_user
---
-
-CREATE TABLE IF NOT EXISTS source_api_user
-(
-    source_api_id BIGSERIAL,
-    user_id       BIGSERIAL,
-    source_api_     varchar(200) NOT NULL,
-    open_api_definition text DEFAULT NULL
-);
-
---
--- Table structure for table sources
+-- table structure for the original sources for the numeric, time and geo values
 --
 
 CREATE TABLE IF NOT EXISTS sources
 (
-    source_id      BIGSERIAL PRIMARY KEY,
+    source_id      BIGSERIAL    PRIMARY KEY,
     user_id        bigint       DEFAULT NULL,
-    source_name    varchar(200) NOT NULL,
-    url            text         DEFAULT NULL,
-    description    text,
+    source_name    varchar(255)     NOT NULL,
+    description    text         DEFAULT NULL,
     source_type_id bigint       DEFAULT NULL,
+    url            text         DEFAULT NULL,
     code_id        varchar(100) DEFAULT NULL,
-    excluded       smallint     DEFAULT NULL
+    excluded       smallint     DEFAULT NULL,
+    share_type_id  smallint     DEFAULT NULL,
+    protect_id     smallint     DEFAULT NULL
 );
 
+COMMENT ON TABLE sources                 IS 'for the original sources for the numeric, time and geo values';
+COMMENT ON COLUMN sources.source_id      IS 'the internal unique primary index ';
+COMMENT ON COLUMN sources.user_id        IS 'the owner / creator of the value';
+COMMENT ON COLUMN sources.source_name    IS 'the unique name of the source used e.g. as the primary search key';
+COMMENT ON COLUMN sources.description    IS 'the user specific description of the source for mouse over helps';
+COMMENT ON COLUMN sources.source_type_id IS 'link to the source type';
+COMMENT ON COLUMN sources.url            IS 'the url of the source';
+COMMENT ON COLUMN sources.code_id        IS 'to select sources used by this program';
+COMMENT ON COLUMN sources.excluded       IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN sources.share_type_id  IS 'to restrict the access';
+COMMENT ON COLUMN sources.protect_id     IS 'to protect against unwanted changes';
+
 --
--- Table structure for table user_sources
+-- table structure for the original sources for the numeric, time and geo values
 --
 
 CREATE TABLE IF NOT EXISTS user_sources
 (
-    source_id      bigint NOT NULL,
-    user_id        bigint NOT NULL,
-    source_name    varchar(200) DEFAULT NULL,
-    url            text         DEFAULT NULL,
-    description    text,
+    source_id      bigint           NOT NULL,
+    user_id        bigint           NOT NULL,
+    source_name    varchar(255)     NOT NULL,
+    description    text         DEFAULT NULL,
     source_type_id bigint       DEFAULT NULL,
-    excluded       smallint     DEFAULT NULL
+    url            text         DEFAULT NULL,
+    code_id        varchar(100) DEFAULT NULL,
+    excluded       smallint     DEFAULT NULL,
+    share_type_id  smallint     DEFAULT NULL,
+    protect_id     smallint     DEFAULT NULL
 );
 
+COMMENT ON TABLE user_sources                 IS 'for the original sources for the numeric, time and geo values';
+COMMENT ON COLUMN user_sources.source_id      IS 'with the user_id the internal unique primary index ';
+COMMENT ON COLUMN user_sources.user_id        IS 'the changer of the ';
+COMMENT ON COLUMN user_sources.source_name    IS 'the unique name of the source used e.g. as the primary search key';
+COMMENT ON COLUMN user_sources.description    IS 'the user specific description of the source for mouse over helps';
+COMMENT ON COLUMN user_sources.source_type_id IS 'link to the source type';
+COMMENT ON COLUMN user_sources.url            IS 'the url of the source';
+COMMENT ON COLUMN user_sources.code_id        IS 'to select sources used by this program';
+COMMENT ON COLUMN user_sources.excluded       IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN user_sources.share_type_id  IS 'to restrict the access';
+COMMENT ON COLUMN user_sources.protect_id     IS 'to protect against unwanted changes';
+
+
 --
--- Table structure for table source_values
+-- table structure for table source_values
 --
 
 CREATE TABLE IF NOT EXISTS source_values
 (
-    value_id     BIGSERIAL PRIMARY KEY,
+    group_id     BIGSERIAL PRIMARY KEY,
     source_id    bigint           NOT NULL,
     user_id      bigint           NOT NULL,
     source_value double precision NOT NULL
 );
 
-COMMENT ON TABLE source_values is 'one user can add different value, which should be the same, but are different';
+COMMENT ON TABLE source_values IS 'one user can add different value, which should be the same, but are different';
 
 --
--- Table structure for table import_source
+-- table structure for table import_source
+--
+-- TODO review
 --
 
 CREATE TABLE IF NOT EXISTS import_source
@@ -957,11 +1034,38 @@ CREATE TABLE IF NOT EXISTS import_source
     word_id          bigint       NOT NULL
 );
 
-COMMENT ON TABLE import_source is 'many replace by a term';
-COMMENT ON COLUMN import_source.word_id is 'the name as a term';
+COMMENT ON TABLE import_source IS 'many replace by a term';
+COMMENT ON COLUMN import_source.word_id IS 'the name as a term';
 
 --
--- Table structure for table ref_types
+-- table structure for table source_api
+-- TODO check if used and needed
+--
+
+CREATE TABLE IF NOT EXISTS source_api
+(
+    source_api_id       BIGSERIAL PRIMARY KEY,
+    source_api_name     varchar(200) NOT NULL,
+    open_api_definition text DEFAULT NULL
+);
+
+--
+-- table structure for table source_api_user
+-- TODO check if used and needed
+--
+
+CREATE TABLE IF NOT EXISTS source_api_user
+(
+    source_api_id BIGSERIAL,
+    user_id       BIGSERIAL,
+    source_api_     varchar(200) NOT NULL,
+    open_api_definition text DEFAULT NULL
+);
+
+-- --------------------------------------------------------
+
+--
+-- table structure for table ref_types
 --
 
 CREATE TABLE IF NOT EXISTS ref_types
@@ -974,7 +1078,7 @@ CREATE TABLE IF NOT EXISTS ref_types
 );
 
 --
--- Table structure for table refs
+-- table structure for table refs
 --
 
 CREATE TABLE IF NOT EXISTS refs
@@ -991,7 +1095,7 @@ CREATE TABLE IF NOT EXISTS refs
 );
 
 --
--- Table structure for table user_refs
+-- table structure for table user_refs
 --
 
 CREATE TABLE IF NOT EXISTS user_refs
@@ -1006,168 +1110,231 @@ CREATE TABLE IF NOT EXISTS user_refs
 -- --------------------------------------------------------
 
 --
--- Table structure for public values that have never changed the owner, does not have a description and are rarely updated
+-- table structure for public unprotected values related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated
 --
 
-CREATE TABLE IF NOT EXISTS value_standard
+CREATE TABLE IF NOT EXISTS values_standard_prime
 (
-    group_id      char(112) PRIMARY KEY,
+    group_id      BIGSERIAL        PRIMARY KEY,
     numeric_value double precision NOT NULL,
-    source_id     bigint DEFAULT NULL
+    source_id     bigint           DEFAULT NULL
 );
 
-COMMENT ON TABLE value_standard is 'for public unprotected values that have never changed the owner, does not have a description and are rarely updated';
-COMMENT ON COLUMN value_standard.group_id is 'the prime index to find the value';
+COMMENT ON TABLE values_standard_prime                IS 'for public unprotected values related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated';
+COMMENT ON COLUMN values_standard_prime.group_id      IS 'the 64-bit prime index to find the value';
+COMMENT ON COLUMN values_standard_prime.numeric_value IS 'the numeric value given by the user';
+COMMENT ON COLUMN values_standard_prime.source_id     IS 'the source of the value as given by the user';
+
+--
+-- table structure for public unprotected values that have never changed the owner, does not have a description and are rarely updated
+--
+
+CREATE TABLE IF NOT EXISTS values_standard
+(
+    group_id      char(112)        PRIMARY KEY,
+    numeric_value double precision NOT NULL,
+    source_id     bigint           DEFAULT NULL
+);
+
+COMMENT ON TABLE values_standard                IS 'for public unprotected values that have never changed the owner, does not have a description and are rarely updated';
+COMMENT ON COLUMN values_standard.group_id      IS 'the 512-bit prime index to find the value';
+COMMENT ON COLUMN values_standard.numeric_value IS 'the numeric value given by the user';
+COMMENT ON COLUMN values_standard.source_id     IS 'the source of the value as given by the user';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for values
+-- table structure for numeric values related to up to 16 phrases
 --
 
 CREATE TABLE IF NOT EXISTS values
 (
-    group_id        char(112) PRIMARY KEY,
+    group_id        char(112)        PRIMARY KEY,
     numeric_value   double precision NOT NULL,
-    user_id         bigint                    DEFAULT NULL,
-    source_id       bigint                    DEFAULT NULL,
-    description     text,
-    excluded        smallint                  DEFAULT NULL,
-    last_update     timestamp        NULL     DEFAULT NULL,
-    share_type_id   smallint                  DEFAULT NULL,
-    protect_id      bigint           NOT NULL DEFAULT '1'
+    source_id       bigint           DEFAULT NULL,
+    last_update     timestamp        DEFAULT NULL,
+    user_id         bigint           DEFAULT NULL,
+    excluded        smallint         DEFAULT NULL,
+    share_type_id   smallint         DEFAULT NULL,
+    protect_id      smallint         DEFAULT NULL
 );
 
-COMMENT ON TABLE values is 'for numeric values related to up to 16 phrases';
-COMMENT ON COLUMN values.group_id is 'the prime index to find the values';
-COMMENT ON COLUMN values.user_id is 'the owner / creator of the value';
-COMMENT ON COLUMN values.last_update is 'for fast recalculation';
-COMMENT ON COLUMN values.description is 'temp field used during dev phase for easy value to trm assigns';
-COMMENT ON COLUMN values.excluded is 'the default exclude setting for most users';
+COMMENT ON TABLE values                IS 'for numeric values related to up to 16 phrases';
+COMMENT ON COLUMN values.group_id      IS 'the 512-bit prime index to find the value';
+COMMENT ON COLUMN values.numeric_value IS 'the numeric value given by the user';
+COMMENT ON COLUMN values.source_id     IS 'the source of the value as given by the user';
+COMMENT ON COLUMN values.last_update   IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN values.user_id       IS 'the owner / creator of the value';
+COMMENT ON COLUMN values.excluded      IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN values.share_type_id IS 'to restrict the access';
+COMMENT ON COLUMN values.protect_id    IS 'to protect against unwanted changes';
 
 --
--- Table structure for table user_values
+-- table structure for user specific changes of values related to up to 16 phrases
 --
 
 CREATE TABLE IF NOT EXISTS user_values
 (
-    group_id      char(112) NOT NULL,
-    user_id       bigint    NOT NULL,
+    group_id      char(112)        NOT NULL,
+    user_id       bigint           NOT NULL,
     numeric_value double precision DEFAULT NULL,
     source_id     bigint           DEFAULT NULL,
+    last_update   timestamp        DEFAULT NULL,
     excluded      smallint         DEFAULT NULL,
-    last_update   timestamp NULL   DEFAULT NULL,
-    share_type_id bigint           DEFAULT NULL,
-    protect_id    bigint           DEFAULT NULL
+    share_type_id smallint         DEFAULT NULL,
+    protect_id    smallint         DEFAULT NULL
 );
 
-COMMENT ON TABLE user_values is 'for quick access to the user specific values';
-COMMENT ON COLUMN user_values.last_update is 'for fast calculation of the updates';
+COMMENT ON TABLE user_values                IS 'for user specific changes of values related to up to 16 phrases';
+COMMENT ON COLUMN user_values.group_id      IS 'the 512-bit prime index to find the user numeric value';
+COMMENT ON COLUMN user_values.user_id       IS 'the changer of the value';
+COMMENT ON COLUMN user_values.numeric_value IS 'the user specific numeric value change';
+COMMENT ON COLUMN user_values.source_id     IS 'the source of the value as given by the user';
+COMMENT ON COLUMN user_values.last_update   IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN user_values.excluded      IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN user_values.share_type_id IS 'to restrict the access';
+COMMENT ON COLUMN user_values.protect_id    IS 'to protect against unwanted changes';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for the most often requested values related up to four prime phrase
+-- table structure for the most often requested values related up to four prime phrase
 --
 
-CREATE TABLE IF NOT EXISTS value_prime
+CREATE TABLE IF NOT EXISTS values_prime
 (
-    group_id        BIGSERIAL PRIMARY KEY,
-    user_id         bigint                    DEFAULT NULL,
+    group_id        BIGSERIAL        PRIMARY KEY,
     numeric_value   double precision NOT NULL,
-    source_id       bigint                    DEFAULT NULL,
-    last_update     timestamp        NULL     DEFAULT NULL,
-    description     text,
-    excluded        smallint                  DEFAULT NULL,
-    share_type_id   smallint                  DEFAULT NULL,
-    protect_id      bigint           NOT NULL DEFAULT '1'
+    source_id       bigint           DEFAULT NULL,
+    last_update     timestamp        DEFAULT NULL,
+    user_id         bigint           DEFAULT NULL,
+    excluded        smallint         DEFAULT NULL,
+    share_type_id   smallint         DEFAULT NULL,
+    protect_id      smallint         DEFAULT NULL
 );
 
-COMMENT ON TABLE value_prime is 'for the most often used values';
-COMMENT ON COLUMN value_prime.group_id is 'temp field to increase speed created by the value term links';
-COMMENT ON COLUMN value_prime.user_id is 'the owner / creator of the value';
-COMMENT ON COLUMN value_prime.last_update is 'for fast recalculation';
-COMMENT ON COLUMN value_prime.description is 'temp field used during dev phase for easy value to trm assigns';
-COMMENT ON COLUMN value_prime.excluded is 'the default exclude setting for most users';
+COMMENT ON TABLE values_prime                IS 'for the most often requested values related up to four prime phrase';
+COMMENT ON COLUMN values_prime.group_id      IS 'the 64-bit prime index to find the value';
+COMMENT ON COLUMN values_prime.numeric_value IS 'the numeric value given by the user';
+COMMENT ON COLUMN values_prime.source_id     IS 'the source of the value as given by the user';
+COMMENT ON COLUMN values_prime.last_update   IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN values_prime.user_id       IS 'the owner / creator of the value';
+COMMENT ON COLUMN values_prime.excluded      IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN values_prime.share_type_id IS 'to restrict the access';
+COMMENT ON COLUMN values_prime.protect_id    IS 'to protect against unwanted changes';
 
 --
--- Table structure to store the user specific changes for the most often requested values related up to four prime phrase
+-- table structure to store the user specific changes for the most often requested values related up to four prime phrase
 --
 
-CREATE TABLE IF NOT EXISTS user_value_prime
+CREATE TABLE IF NOT EXISTS user_values_prime
 (
-    group_id        BIGSERIAL NOT NULL,
-    user_id         bigint                    DEFAULT NULL,
-    numeric_value   double precision NOT NULL,
-    source_id       bigint                    DEFAULT NULL,
-    last_update     timestamp        NULL     DEFAULT NULL,
-    description     text,
-    excluded        smallint                  DEFAULT NULL,
-    share_type_id   smallint                  DEFAULT NULL,
-    protect_id      bigint           NOT NULL DEFAULT '1'
+    group_id        bigint           NOT NULL,
+    user_id         bigint           NOT NULL,
+    numeric_value   double precision DEFAULT NULL,
+    source_id       bigint           DEFAULT NULL,
+    last_update     timestamp        DEFAULT NULL,
+    excluded        smallint         DEFAULT NULL,
+    share_type_id   smallint         DEFAULT NULL,
+    protect_id      smallint         DEFAULT NULL
 );
 
-COMMENT ON TABLE user_value_prime is 'the user specific changes of the most often used values';
-COMMENT ON COLUMN user_value_prime.group_id is 'temp field to increase speed created by the value term links';
-COMMENT ON COLUMN user_value_prime.user_id is 'the owner / creator of the value';
-COMMENT ON COLUMN user_value_prime.last_update is 'for fast recalculation';
-COMMENT ON COLUMN user_value_prime.description is 'temp field used during dev phase for easy value to trm assigns';
-COMMENT ON COLUMN user_value_prime.excluded is 'the default exclude setting for most users';
+COMMENT ON TABLE user_values_prime                IS 'to store the user specific changes for the most often requested values related up to four prime phrase';
+COMMENT ON COLUMN user_values_prime.group_id      IS 'the 64-bit prime index to find the user numeric value';
+COMMENT ON COLUMN user_values_prime.user_id       IS 'the changer of the value';
+COMMENT ON COLUMN user_values_prime.numeric_value IS 'the user specific numeric value change';
+COMMENT ON COLUMN user_values_prime.source_id     IS 'the source of the value as given by the user';
+COMMENT ON COLUMN user_values_prime.last_update   IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN user_values_prime.excluded      IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN user_values_prime.share_type_id IS 'to restrict the access';
+COMMENT ON COLUMN user_values_prime.protect_id    IS 'to protect against unwanted changes';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for values related to more than 16 phrases
+-- table structure for values related to more than 16 phrases
 --
 
-CREATE TABLE IF NOT EXISTS value_big
+CREATE TABLE IF NOT EXISTS values_big
 (
-    group_id        TEXT NOT NULL,
-    user_id         bigint                    DEFAULT NULL,
+    group_id        text             PRIMARY KEY,
     numeric_value   double precision NOT NULL,
-    source_id       bigint                    DEFAULT NULL,
-    last_update     timestamp        NULL     DEFAULT NULL,
-    description     text,
-    excluded        smallint                  DEFAULT NULL,
-    share_type_id   smallint                  DEFAULT NULL,
-    protect_id      bigint           NOT NULL DEFAULT '1'
+    source_id       bigint           DEFAULT NULL,
+    last_update     timestamp        DEFAULT NULL,
+    user_id         bigint           DEFAULT NULL,
+    excluded        smallint         DEFAULT NULL,
+    share_type_id   smallint         DEFAULT NULL,
+    protect_id      smallint         DEFAULT NULL
 );
 
-COMMENT ON TABLE value_big is 'for numeric values related to more than 16 phrases';
-COMMENT ON COLUMN value_big.group_id is 'temp field to increase speed created by the value term links';
-COMMENT ON COLUMN value_big.user_id is 'the owner / creator of the value';
-COMMENT ON COLUMN value_big.last_update is 'for fast recalculation';
-COMMENT ON COLUMN value_big.description is 'temp field used during dev phase for easy value to trm assigns';
-COMMENT ON COLUMN value_big.excluded is 'the default exclude setting for most users';
+COMMENT ON TABLE values_big                IS 'for values related to more than 16 phrases';
+COMMENT ON COLUMN values_big.group_id      IS 'the text index to find value related to more than 16 phrases';
+COMMENT ON COLUMN values_big.numeric_value IS 'the numeric value given by the user';
+COMMENT ON COLUMN values_big.source_id     IS 'the source of the value as given by the user';
+COMMENT ON COLUMN values_big.last_update   IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN values_big.user_id       IS 'the owner / creator of the value';
+COMMENT ON COLUMN values_big.excluded      IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN values_big.share_type_id IS 'to restrict the access';
+COMMENT ON COLUMN values_big.protect_id    IS 'to protect against unwanted changes';
 
 --
--- Table structure to store the user specific changes of values related to more than 16 phrases
+-- table structure to store the user specific changes of numeric values related to more than 16 phrases
 --
 
-CREATE TABLE IF NOT EXISTS user_value_big
+CREATE TABLE IF NOT EXISTS user_values_big
 (
-    group_id        TEXT NOT NULL,
-    user_id         bigint                    DEFAULT NULL,
-    numeric_value   double precision NOT NULL,
-    source_id       bigint                    DEFAULT NULL,
-    last_update     timestamp        NULL     DEFAULT NULL,
-    description     text,
-    excluded        smallint                  DEFAULT NULL,
-    share_type_id   smallint                  DEFAULT NULL,
-    protect_id      bigint           NOT NULL DEFAULT '1'
+    group_id        text             NOT NULL,
+    user_id         bigint           NOT NULL,
+    numeric_value   double precision DEFAULT NULL,
+    source_id       bigint           DEFAULT NULL,
+    last_update     timestamp        DEFAULT NULL,
+    excluded        smallint         DEFAULT NULL,
+    share_type_id   smallint         DEFAULT NULL,
+    protect_id      smallint         DEFAULT NULL
 );
 
-COMMENT ON TABLE user_value_big is 'the user specific changes of numeric values related to more than 16 phrases';
-COMMENT ON COLUMN user_value_big.group_id is 'temp field to increase speed created by the value term links';
-COMMENT ON COLUMN user_value_big.user_id is 'the owner / creator of the value';
-COMMENT ON COLUMN user_value_big.last_update is 'for fast recalculation';
-COMMENT ON COLUMN user_value_big.description is 'temp field used during dev phase for easy value to trm assigns';
-COMMENT ON COLUMN user_value_big.excluded is 'the default exclude setting for most users';
+COMMENT ON TABLE user_values_big                IS 'to store the user specific changes of numeric values related to more than 16 phrases';
+COMMENT ON COLUMN user_values_big.group_id      IS 'the text index to find the user values related to more than 16 phrases';
+COMMENT ON COLUMN user_values_big.user_id       IS 'the changer of the value';
+COMMENT ON COLUMN user_values_big.numeric_value IS 'the user specific numeric value change';
+COMMENT ON COLUMN user_values_big.source_id     IS 'the source of the value as given by the user';
+COMMENT ON COLUMN user_values_big.last_update   IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN user_values_big.excluded      IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN user_values_big.share_type_id IS 'to restrict the access';
+COMMENT ON COLUMN user_values_big.protect_id    IS 'to protect against unwanted changes';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for text values where the text might be long and where the text is expected to be never user in a search
+-- table structure for public text values related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated
+--
+
+CREATE TABLE IF NOT EXISTS values_text_standard_prime
+(
+    group_id   BIGSERIAL PRIMARY KEY,
+    text_value text NOT NULL,
+    source_id  int DEFAULT NULL
+);
+
+COMMENT ON TABLE values_text_standard_prime IS 'for public unprotected text values related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated';
+COMMENT ON COLUMN values_text_standard_prime.group_id IS 'the prime index to find the value';
+
+--
+-- table structure for public text values that have never changed the owner, does not have a description and are rarely updated
+--
+
+CREATE TABLE IF NOT EXISTS value_text_standard
+(
+    group_id   char(112) PRIMARY KEY,
+    text_value text NOT NULL,
+    source_id  bigint DEFAULT NULL
+);
+
+COMMENT ON TABLE value_text_standard IS 'for public unprotected text values that have never changed the owner, does not have a description and are rarely updated';
+COMMENT ON COLUMN value_text_standard.group_id IS 'the prime index to find the value';
+
+--
+-- table structure for text values where the text might be long and where the text is expected to be never user in a search
 --
 
 CREATE TABLE IF NOT EXISTS value_text
@@ -1180,18 +1347,18 @@ CREATE TABLE IF NOT EXISTS value_text
     excluded        smallint                  DEFAULT NULL,
     last_update     timestamp        NULL     DEFAULT NULL,
     share_type_id   smallint                  DEFAULT NULL,
-    protect_id      bigint           NOT NULL DEFAULT '1'
+    protect_id      smallint           NOT NULL DEFAULT '1'
 );
 
-COMMENT ON TABLE value_text is 'for the most often used text values';
-COMMENT ON COLUMN value_text.group_id is 'the prime index to find the values';
-COMMENT ON COLUMN value_text.user_id is 'the owner / creator of the value';
-COMMENT ON COLUMN value_text.last_update is 'for fast recalculation';
-COMMENT ON COLUMN value_text.description is 'temp field used during dev phase for easy value to trm assigns';
-COMMENT ON COLUMN value_text.excluded is 'the default exclude setting for most users';
+COMMENT ON TABLE value_text IS 'for the most often used text values';
+COMMENT ON COLUMN value_text.group_id IS 'the prime index to find the values';
+COMMENT ON COLUMN value_text.user_id IS 'the owner / creator of the value';
+COMMENT ON COLUMN value_text.last_update IS 'for fast recalculation';
+COMMENT ON COLUMN value_text.description IS 'temp field used during dev phase for easy value to trm assigns';
+COMMENT ON COLUMN value_text.excluded IS 'the default exclude setting for most users';
 
 --
--- Table structure to store the user specific changes of text values where the text might be long and where the text is expected to be never user in a search
+-- table structure to store the user specific changes of text values where the text might be long and where the text is expected to be never user in a search
 --
 
 CREATE TABLE IF NOT EXISTS user_value_text
@@ -1204,20 +1371,136 @@ CREATE TABLE IF NOT EXISTS user_value_text
     excluded        smallint                  DEFAULT NULL,
     last_update     timestamp        NULL     DEFAULT NULL,
     share_type_id   smallint                  DEFAULT NULL,
-    protect_id      bigint           NOT NULL DEFAULT '1'
+    protect_id      smallint           NOT NULL DEFAULT '1'
 );
 
-COMMENT ON TABLE user_value_text is 'to store the user specific changes of the most often used text values';
-COMMENT ON COLUMN user_value_text.group_id is 'the prime index to find the values';
-COMMENT ON COLUMN user_value_text.user_id is 'the owner / creator of the value';
-COMMENT ON COLUMN user_value_text.last_update is 'for fast recalculation';
-COMMENT ON COLUMN user_value_text.description is 'temp field used during dev phase for easy value to trm assigns';
-COMMENT ON COLUMN user_value_text.excluded is 'the default exclude setting for most users';
+COMMENT ON TABLE user_value_text IS 'to store the user specific changes of the most often used text values';
+COMMENT ON COLUMN user_value_text.group_id IS 'the prime index to find the values';
+COMMENT ON COLUMN user_value_text.user_id IS 'the owner / creator of the value';
+COMMENT ON COLUMN user_value_text.last_update IS 'for fast recalculation';
+COMMENT ON COLUMN user_value_text.description IS 'temp field used during dev phase for easy value to trm assigns';
+COMMENT ON COLUMN user_value_text.excluded IS 'the default exclude setting for most users';
+
+--
+-- table structure for the most often requested text values related up to four prime phrase
+--
+
+CREATE TABLE IF NOT EXISTS value_text_prime
+(
+    group_id        BIGSERIAL PRIMARY KEY,
+    user_id         bigint                    DEFAULT NULL,
+    text_value      text NOT NULL,
+    source_id       bigint                    DEFAULT NULL,
+    description     text,
+    excluded        smallint                  DEFAULT NULL,
+    share_type_id   smallint                  DEFAULT NULL,
+    protect_id      smallint           NOT NULL DEFAULT '1'
+);
+
+COMMENT ON TABLE value_text_prime IS 'for the most often used values';
+COMMENT ON COLUMN value_text_prime.group_id IS 'temp field to increase speed created by the value term links';
+COMMENT ON COLUMN value_text_prime.user_id IS 'the owner / creator of the value';
+COMMENT ON COLUMN value_text_prime.description IS 'temp field used during dev phase for easy value to trm assigns';
+COMMENT ON COLUMN value_text_prime.excluded IS 'the default exclude setting for most users';
+
+--
+-- table structure to store the user specific changes for the most often requested values related up to four prime phrase
+--
+
+CREATE TABLE IF NOT EXISTS user_value_text_prime
+(
+    group_id        BIGSERIAL NOT NULL,
+    user_id         bigint                    DEFAULT NULL,
+    text_value      text NOT NULL,
+    source_id       bigint                    DEFAULT NULL,
+    description     text,
+    excluded        smallint                  DEFAULT NULL,
+    share_type_id   smallint                  DEFAULT NULL,
+    protect_id      smallint           NOT NULL DEFAULT '1'
+);
+
+COMMENT ON TABLE user_value_text_prime IS 'the user specific changes of the most often used values';
+COMMENT ON COLUMN user_value_text_prime.group_id IS 'temp field to increase speed created by the value term links';
+COMMENT ON COLUMN user_value_text_prime.user_id IS 'the owner / creator of the value';
+COMMENT ON COLUMN user_value_text_prime.description IS 'temp field used during dev phase for easy value to trm assigns';
+COMMENT ON COLUMN user_value_text_prime.excluded IS 'the default exclude setting for most users';
+
+--
+-- table structure for the most often requested text values related up to more than 16 phrases
+--
+
+CREATE TABLE IF NOT EXISTS value_text_big
+(
+    group_id        TEXT NOT NULL,
+    user_id         bigint                    DEFAULT NULL,
+    text_value      text NOT NULL,
+    source_id       bigint                    DEFAULT NULL,
+    description     text,
+    excluded        smallint                  DEFAULT NULL,
+    share_type_id   smallint                  DEFAULT NULL,
+    protect_id      smallint           NOT NULL DEFAULT '1'
+);
+
+COMMENT ON TABLE value_text_big IS 'for the most often used values';
+COMMENT ON COLUMN value_text_big.group_id IS 'the prime index to find the values';
+COMMENT ON COLUMN value_text_big.user_id IS 'the owner / creator of the value';
+COMMENT ON COLUMN value_text_big.description IS 'temp field used during dev phase for easy value to trm assigns';
+COMMENT ON COLUMN value_text_big.excluded IS 'the default exclude setting for most users';
+
+--
+-- table structure to store the user specific changes for the most often requested values related up to more than 16 phrases
+--
+
+CREATE TABLE IF NOT EXISTS user_value_text_big
+(
+    group_id        TEXT NOT NULL,
+    user_id         bigint                    DEFAULT NULL,
+    text_value      text NOT NULL,
+    source_id       bigint                    DEFAULT NULL,
+    description     text,
+    excluded        smallint                  DEFAULT NULL,
+    share_type_id   smallint                  DEFAULT NULL,
+    protect_id      smallint           NOT NULL DEFAULT '1'
+);
+
+COMMENT ON TABLE user_value_text_big IS 'the user specific changes of the most often used values';
+COMMENT ON COLUMN user_value_text_big.group_id IS 'the prime index to find the values';
+COMMENT ON COLUMN user_value_text_big.user_id IS 'the owner / creator of the value';
+COMMENT ON COLUMN user_value_text_big.description IS 'temp field used during dev phase for easy value to trm assigns';
+COMMENT ON COLUMN user_value_text_big.excluded IS 'the default exclude setting for most users';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for time values where the time is expected to be never user in a search
+-- table structure for public time values related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated
+--
+
+CREATE TABLE IF NOT EXISTS value_time_standard_prime
+(
+    group_id   BIGSERIAL PRIMARY KEY,
+    time_value timestamp NOT NULL,
+    source_id  int DEFAULT NULL
+);
+
+COMMENT ON TABLE value_time_standard_prime IS 'for public unprotected time values related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated';
+COMMENT ON COLUMN value_time_standard_prime.group_id IS 'the prime index to find the value';
+
+--
+-- table structure for public time values that have never changed the owner, does not have a description and are rarely updated
+--
+
+CREATE TABLE IF NOT EXISTS value_time_standard
+(
+    group_id   char(112) PRIMARY KEY,
+    time_value timestamp NOT NULL,
+    source_id  bigint DEFAULT NULL
+);
+
+COMMENT ON TABLE value_time_standard IS 'for public unprotected time values that have never changed the owner, does not have a description and are rarely updated';
+COMMENT ON COLUMN value_time_standard.group_id IS 'the prime index to find the value';
+
+--
+-- table structure for time values where the time is expected to be never user in a search
 --
 
 CREATE TABLE IF NOT EXISTS value_time
@@ -1230,18 +1513,18 @@ CREATE TABLE IF NOT EXISTS value_time
     excluded        smallint                  DEFAULT NULL,
     last_update     timestamp        NULL     DEFAULT NULL,
     share_type_id   smallint                  DEFAULT NULL,
-    protect_id      bigint           NOT NULL DEFAULT '1'
+    protect_id      smallint            NOT NULL DEFAULT '1'
 );
 
-COMMENT ON TABLE value_time is 'for the most often used time values';
-COMMENT ON COLUMN value_time.group_id is 'the prime index to find the values';
-COMMENT ON COLUMN value_time.user_id is 'the owner / creator of the value';
-COMMENT ON COLUMN value_time.last_update is 'for fast recalculation';
-COMMENT ON COLUMN value_time.description is 'temp field used during dev phase for easy value to trm assigns';
-COMMENT ON COLUMN value_time.excluded is 'the default exclude setting for most users';
+COMMENT ON TABLE value_time IS 'for the most often used time values';
+COMMENT ON COLUMN value_time.group_id IS 'the prime index to find the values';
+COMMENT ON COLUMN value_time.user_id IS 'the owner / creator of the value';
+COMMENT ON COLUMN value_time.last_update IS 'for fast recalculation';
+COMMENT ON COLUMN value_time.description IS 'temp field used during dev phase for easy value to trm assigns';
+COMMENT ON COLUMN value_time.excluded IS 'the default exclude setting for most users';
 
 --
--- Table structure to store the user specific changes of time values where the time is expected to be never user in a search
+-- table structure to store the user specific changes of time values where the time is expected to be never user in a search
 --
 
 CREATE TABLE IF NOT EXISTS user_value_time
@@ -1254,20 +1537,116 @@ CREATE TABLE IF NOT EXISTS user_value_time
     excluded        smallint                  DEFAULT NULL,
     last_update     timestamp        NULL     DEFAULT NULL,
     share_type_id   smallint                  DEFAULT NULL,
-    protect_id      bigint           NOT NULL DEFAULT '1'
+    protect_id      smallint            NOT NULL DEFAULT '1'
 );
 
-COMMENT ON TABLE user_value_time is 'to store the user specific changes of the most often used time values';
-COMMENT ON COLUMN user_value_time.group_id is 'the prime index to find the values';
-COMMENT ON COLUMN user_value_time.user_id is 'the owner / creator of the value';
-COMMENT ON COLUMN user_value_time.last_update is 'for fast recalculation';
-COMMENT ON COLUMN user_value_time.description is 'temp field used during dev phase for easy value to trm assigns';
-COMMENT ON COLUMN user_value_time.excluded is 'the default exclude setting for most users';
+COMMENT ON TABLE user_value_time IS 'to store the user specific changes of the most often used time values';
+COMMENT ON COLUMN user_value_time.group_id IS 'the prime index to find the values';
+COMMENT ON COLUMN user_value_time.user_id IS 'the owner / creator of the value';
+COMMENT ON COLUMN user_value_time.last_update IS 'for fast recalculation';
+COMMENT ON COLUMN user_value_time.description IS 'temp field used during dev phase for easy value to trm assigns';
+COMMENT ON COLUMN user_value_time.excluded IS 'the default exclude setting for most users';
+
+--
+-- table structure for time values where the time is expected to be never user in a search related up to four prime phrase
+--
+
+CREATE TABLE IF NOT EXISTS value_time_prime
+(
+    group_id        BIGSERIAL PRIMARY KEY,
+    time_value      timestamp NOT NULL,
+    user_id         bigint                    DEFAULT NULL,
+    source_id       bigint                    DEFAULT NULL,
+    description     text,
+    excluded        smallint                  DEFAULT NULL,
+    last_update     timestamp        NULL     DEFAULT NULL,
+    share_type_id   smallint                  DEFAULT NULL,
+    protect_id      smallint           NOT NULL DEFAULT '1'
+);
+
+COMMENT ON TABLE value_time_prime IS 'for the most often used time values';
+COMMENT ON COLUMN value_time_prime.group_id IS 'the prime index to find the values';
+COMMENT ON COLUMN value_time_prime.user_id IS 'the owner / creator of the value';
+COMMENT ON COLUMN value_time_prime.last_update IS 'for fast recalculation';
+COMMENT ON COLUMN value_time_prime.description IS 'temp field used during dev phase for easy value to trm assigns';
+COMMENT ON COLUMN value_time_prime.excluded IS 'the default exclude setting for most users';
+
+--
+-- table structure to store the user specific changes of time values where the time is expected to be never user in a search related up to four prime phrase
+--
+
+CREATE TABLE IF NOT EXISTS user_value_time_prime
+(
+    group_id        BIGSERIAL PRIMARY KEY,
+    user_id         bigint                    DEFAULT NULL,
+    time_value      timestamp NOT NULL,
+    source_id       bigint                    DEFAULT NULL,
+    description     text,
+    excluded        smallint                  DEFAULT NULL,
+    last_update     timestamp        NULL     DEFAULT NULL,
+    share_type_id   smallint                  DEFAULT NULL,
+    protect_id      smallint           NOT NULL DEFAULT '1'
+);
+
+COMMENT ON TABLE user_value_time_prime IS 'to store the user specific changes of the most often used time values';
+COMMENT ON COLUMN user_value_time_prime.group_id IS 'the prime index to find the values';
+COMMENT ON COLUMN user_value_time_prime.user_id IS 'the owner / creator of the value';
+COMMENT ON COLUMN user_value_time_prime.last_update IS 'for fast recalculation';
+COMMENT ON COLUMN user_value_time_prime.description IS 'temp field used during dev phase for easy value to trm assigns';
+COMMENT ON COLUMN user_value_time_prime.excluded IS 'the default exclude setting for most users';
+
+--
+-- table structure for time values where the time is expected to be never user in a search related to more than 16 phrases
+--
+
+CREATE TABLE IF NOT EXISTS value_time_big
+(
+    group_id        TEXT NOT NULL,
+    time_value      timestamp NOT NULL,
+    user_id         bigint                    DEFAULT NULL,
+    source_id       bigint                    DEFAULT NULL,
+    description     text,
+    excluded        smallint                  DEFAULT NULL,
+    last_update     timestamp        NULL     DEFAULT NULL,
+    share_type_id   smallint                  DEFAULT NULL,
+    protect_id      smallint           NOT NULL DEFAULT '1'
+);
+
+COMMENT ON TABLE value_time_big IS 'for the most often used time values';
+COMMENT ON COLUMN value_time_big.group_id IS 'the prime index to find the values';
+COMMENT ON COLUMN value_time_big.user_id IS 'the owner / creator of the value';
+COMMENT ON COLUMN value_time_big.last_update IS 'for fast recalculation';
+COMMENT ON COLUMN value_time_big.description IS 'temp field used during dev phase for easy value to trm assigns';
+COMMENT ON COLUMN value_time_big.excluded IS 'the default exclude setting for most users';
+
+--
+-- table structure to store the user specific changes of time values where the time is expected to be never user in a search related to more than 16 phrases
+--
+
+CREATE TABLE IF NOT EXISTS user_value_time_big
+(
+    group_id        TEXT NOT NULL,
+    user_id         bigint                    DEFAULT NULL,
+    time_value      timestamp NOT NULL,
+    source_id       bigint                    DEFAULT NULL,
+    description     text,
+    excluded        smallint                  DEFAULT NULL,
+    last_update     timestamp        NULL     DEFAULT NULL,
+    share_type_id   smallint                  DEFAULT NULL,
+    protect_id      smallint           NOT NULL DEFAULT '1'
+);
+
+COMMENT ON TABLE user_value_time_big IS 'to store the user specific changes of the most often used time values';
+COMMENT ON COLUMN user_value_time_big.group_id IS 'the prime index to find the values';
+COMMENT ON COLUMN user_value_time_big.user_id IS 'the owner / creator of the value';
+COMMENT ON COLUMN user_value_time_big.last_update IS 'for fast recalculation';
+COMMENT ON COLUMN user_value_time_big.description IS 'temp field used during dev phase for easy value to trm assigns';
+COMMENT ON COLUMN user_value_time_big.excluded IS 'the default exclude setting for most users';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for geo location values
+-- table structure for geo location values
 --
 
 CREATE TABLE IF NOT EXISTS value_geo
@@ -1280,18 +1659,18 @@ CREATE TABLE IF NOT EXISTS value_geo
     excluded        smallint                  DEFAULT NULL,
     last_update     timestamp        NULL     DEFAULT NULL,
     share_type_id   smallint                  DEFAULT NULL,
-    protect_id      bigint           NOT NULL DEFAULT '1'
+    protect_id      smallint           NOT NULL DEFAULT '1'
 );
 
-COMMENT ON TABLE value_geo is 'for the most often used geo location values';
-COMMENT ON COLUMN value_geo.group_id is 'the prime index to find the values';
-COMMENT ON COLUMN value_geo.user_id is 'the owner / creator of the value';
-COMMENT ON COLUMN value_geo.last_update is 'for fast recalculation';
-COMMENT ON COLUMN value_geo.description is 'temp field used during dev phase for easy value to trm assigns';
-COMMENT ON COLUMN value_geo.excluded is 'the default exclude setting for most users';
+COMMENT ON TABLE value_geo IS 'for the most often used geo location values';
+COMMENT ON COLUMN value_geo.group_id IS 'the prime index to find the values';
+COMMENT ON COLUMN value_geo.user_id IS 'the owner / creator of the value';
+COMMENT ON COLUMN value_geo.last_update IS 'for fast recalculation';
+COMMENT ON COLUMN value_geo.description IS 'temp field used during dev phase for easy value to trm assigns';
+COMMENT ON COLUMN value_geo.excluded IS 'the default exclude setting for most users';
 
 --
--- Table structure to store the user specific changes of geo location values
+-- table structure to store the user specific changes of geo locations
 --
 
 CREATE TABLE IF NOT EXISTS user_value_geo
@@ -1304,59 +1683,221 @@ CREATE TABLE IF NOT EXISTS user_value_geo
     excluded        smallint                  DEFAULT NULL,
     last_update     timestamp        NULL     DEFAULT NULL,
     share_type_id   smallint                  DEFAULT NULL,
-    protect_id      bigint           NOT NULL DEFAULT '1'
+    protect_id      smallint           NOT NULL DEFAULT '1'
 );
 
-COMMENT ON TABLE user_value_geo is 'to store the user specific changes of the most often used geo location values';
-COMMENT ON COLUMN user_value_geo.group_id is 'the prime index to find the values';
-COMMENT ON COLUMN user_value_geo.user_id is 'the owner / creator of the value';
-COMMENT ON COLUMN user_value_geo.last_update is 'for fast recalculation';
-COMMENT ON COLUMN user_value_geo.description is 'temp field used during dev phase for easy value to trm assigns';
-COMMENT ON COLUMN user_value_geo.excluded is 'the default exclude setting for most users';
+COMMENT ON TABLE user_value_geo IS 'to store the user specific changes of the most often used geo location values';
+COMMENT ON COLUMN user_value_geo.group_id IS 'the prime index to find the values';
+COMMENT ON COLUMN user_value_geo.user_id IS 'the owner / creator of the value';
+COMMENT ON COLUMN user_value_geo.last_update IS 'for fast recalculation';
+COMMENT ON COLUMN user_value_geo.description IS 'temp field used during dev phase for easy value to trm assigns';
+COMMENT ON COLUMN user_value_geo.excluded IS 'the default exclude setting for most users';
+
+--
+-- table structure for public geo location values related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated
+--
+
+CREATE TABLE IF NOT EXISTS value_geo_standard_prime
+(
+    group_id  BIGSERIAL PRIMARY KEY,
+    geo_value point NOT NULL,
+    source_id  int DEFAULT NULL
+);
+
+COMMENT ON TABLE value_geo_standard_prime IS 'for public unprotected geo locations related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated';
+COMMENT ON COLUMN value_geo_standard_prime.group_id IS 'the prime index to find the geo location';
+
+--
+-- table structure for public geo location values that have never changed the owner, does not have a description and are rarely updated
+--
+
+CREATE TABLE IF NOT EXISTS value_geo_standard
+(
+    group_id  char(112) PRIMARY KEY,
+    geo_value point NOT NULL,
+    source_id  bigint DEFAULT NULL
+);
+
+COMMENT ON TABLE value_geo_standard IS 'for public unprotected geo locations that have never changed the owner, does not have a description and are rarely updated';
+COMMENT ON COLUMN value_geo_standard.group_id IS 'the prime index to find the geo location';
+
+--
+-- table structure for geo location values related up to four prime phrase
+--
+
+CREATE TABLE IF NOT EXISTS value_geo_prime
+(
+    group_id        BIGSERIAL NOT NULL,
+    geo_value       point NOT NULL,
+    user_id         bigint                    DEFAULT NULL,
+    source_id       bigint                    DEFAULT NULL,
+    description     text,
+    excluded        smallint                  DEFAULT NULL,
+    last_update     timestamp        NULL     DEFAULT NULL,
+    share_type_id   smallint                  DEFAULT NULL,
+    protect_id      smallint           NOT NULL DEFAULT '1'
+);
+
+COMMENT ON TABLE value_geo_prime IS 'for the most often used geo location values';
+COMMENT ON COLUMN value_geo_prime.group_id IS 'the prime index to find the geo locations';
+COMMENT ON COLUMN value_geo_prime.user_id IS 'the owner / creator of the value';
+COMMENT ON COLUMN value_geo_prime.last_update IS 'for fast recalculation';
+COMMENT ON COLUMN value_geo_prime.description IS 'temp field used during dev phase for easy value to trm assigns';
+COMMENT ON COLUMN value_geo_prime.excluded IS 'the default exclude setting for most users';
+
+--
+-- table structure to store the user specific changes of geo locations related up to four prime phrase
+--
+
+CREATE TABLE IF NOT EXISTS user_value_geo_prime
+(
+    group_id        BIGSERIAL NOT NULL,
+    user_id         bigint                    DEFAULT NULL,
+    geo_value       point NOT NULL,
+    source_id       bigint                    DEFAULT NULL,
+    description     text,
+    excluded        smallint                  DEFAULT NULL,
+    last_update     timestamp        NULL     DEFAULT NULL,
+    share_type_id   smallint                  DEFAULT NULL,
+    protect_id      smallint           NOT NULL DEFAULT '1'
+);
+
+COMMENT ON TABLE user_value_geo_prime IS 'to store the user specific changes of the most often used geo location values';
+COMMENT ON COLUMN user_value_geo_prime.group_id IS 'the prime index to find the geo locations';
+COMMENT ON COLUMN user_value_geo_prime.user_id IS 'the owner / creator of the value';
+COMMENT ON COLUMN user_value_geo_prime.last_update IS 'for fast recalculation';
+COMMENT ON COLUMN user_value_geo_prime.description IS 'temp field used during dev phase for easy value to trm assigns';
+COMMENT ON COLUMN user_value_geo_prime.excluded IS 'the default exclude setting for most users';
+
+--
+-- table structure for geo location values related to more than 16 phrases
+--
+
+CREATE TABLE IF NOT EXISTS value_geo_big
+(
+    group_id        BIGSERIAL NOT NULL,
+    geo_value       point NOT NULL,
+    user_id         bigint                    DEFAULT NULL,
+    source_id       bigint                    DEFAULT NULL,
+    description     text,
+    excluded        smallint                  DEFAULT NULL,
+    last_update     timestamp        NULL     DEFAULT NULL,
+    share_type_id   smallint                  DEFAULT NULL,
+    protect_id      smallint           NOT NULL DEFAULT '1'
+);
+
+COMMENT ON TABLE value_geo_big IS 'for the most often used geo location values';
+COMMENT ON COLUMN value_geo_big.group_id IS 'the prime index to find the geo locations';
+COMMENT ON COLUMN value_geo_big.user_id IS 'the owner / creator of the value';
+COMMENT ON COLUMN value_geo_big.last_update IS 'for fast recalculation';
+COMMENT ON COLUMN value_geo_big.description IS 'temp field used during dev phase for easy value to trm assigns';
+COMMENT ON COLUMN value_geo_big.excluded IS 'the default exclude setting for most users';
+
+--
+-- table structure to store the user specific changes of geo locations related to more than 16 phrases
+--
+
+CREATE TABLE IF NOT EXISTS user_value_geo_big
+(
+    group_id        BIGSERIAL NOT NULL,
+    user_id         bigint                    DEFAULT NULL,
+    geo_value       point NOT NULL,
+    source_id       bigint                    DEFAULT NULL,
+    description     text,
+    excluded        smallint                  DEFAULT NULL,
+    last_update     timestamp        NULL     DEFAULT NULL,
+    share_type_id   smallint                  DEFAULT NULL,
+    protect_id      smallint           NOT NULL DEFAULT '1'
+);
+
+COMMENT ON TABLE user_value_geo_big IS 'to store the user specific changes of the most often used geo location values';
+COMMENT ON COLUMN user_value_geo_big.group_id IS 'the prime index to find the geo locations';
+COMMENT ON COLUMN user_value_geo_big.user_id IS 'the owner / creator of the value';
+COMMENT ON COLUMN user_value_geo_big.last_update IS 'for fast recalculation';
+COMMENT ON COLUMN user_value_geo_big.description IS 'temp field used during dev phase for easy value to trm assigns';
+COMMENT ON COLUMN user_value_geo_big.excluded IS 'the default exclude setting for most users';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table value_time_series
+-- table structure for the header of a list of numbers that differ only by the timestamp
 --
 
 CREATE TABLE IF NOT EXISTS value_time_series
 (
-    value_time_series_id BIGSERIAL PRIMARY KEY,
-    user_id              bigint    NOT NULL,
+    value_time_series_id BIGSERIAL      PRIMARY KEY,
+    user_id              bigint         NOT     NULL,
     source_id            bigint         DEFAULT NULL,
-    phrase_group_id      bigint    NOT NULL,
+    group_id             char(112)      NOT NULL,
     excluded             smallint       DEFAULT NULL,
-    share_type_id        bigint         DEFAULT NULL,
-    protect_id           bigint    NOT NULL,
+    share_type_id        smallint         DEFAULT NULL,
+    protect_id           smallint         NOT     NULL,
     last_update          timestamp NULL DEFAULT NULL
 );
 
-COMMENT ON TABLE value_time_series is 'common parameters for a list of intra-day values';
+COMMENT ON TABLE user_value_time_series IS 'common parameters for a list of numbers that differ only by the timestamp';
+COMMENT ON COLUMN user_value_time_series.user_id IS 'the owner / creator of the number list';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table value_time_series
+-- table structure for specific user changes in a of numbers that differ only by the timestamp
 --
 
 CREATE TABLE IF NOT EXISTS user_value_time_series
 (
-    value_time_series_id BIGSERIAL NOT NULL,
-    user_id              bigint    NOT NULL,
+    value_time_series_id BIGSERIAL          NOT NULL,
+    user_id              bigint             NOT NULL,
     source_id            bigint         DEFAULT NULL,
     excluded             smallint       DEFAULT NULL,
-    share_type_id        bigint         DEFAULT NULL,
-    protect_id           bigint    NOT NULL,
+    share_type_id        smallint         DEFAULT NULL,
+    protect_id           smallint             NOT NULL,
     last_update          timestamp NULL DEFAULT NULL
 );
 
-COMMENT ON TABLE user_value_time_series is 'common parameters for a user specific list of intra-day values';
+COMMENT ON TABLE user_value_time_series IS 'common parameters for a list of numbers that differ only by the timestamp';
+
+--
+-- table structure for table value_time_series_prime
+--
+
+CREATE TABLE IF NOT EXISTS value_time_series_prime
+(
+    value_time_series_id BIGSERIAL      PRIMARY KEY,
+    user_id              bigint         NOT     NULL,
+    source_id            bigint         DEFAULT NULL,
+    group_id             bigint         NOT NULL,
+    excluded             smallint       DEFAULT NULL,
+    share_type_id        smallint         DEFAULT NULL,
+    protect_id           smallint         NOT     NULL,
+    last_update          timestamp NULL DEFAULT NULL
+);
+
+COMMENT ON TABLE value_time_series IS 'common parameters for a list of intra-day values';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table value_ts_data
+-- table structure for table value_time_series
+--
+
+CREATE TABLE IF NOT EXISTS user_value_time_series_prime
+(
+    value_time_series_id BIGSERIAL          NOT NULL,
+    user_id              bigint             NOT NULL,
+    source_id            bigint         DEFAULT NULL,
+    excluded             smallint       DEFAULT NULL,
+    share_type_id        smallint         DEFAULT NULL,
+    protect_id           smallint             NOT NULL,
+    last_update          timestamp NULL DEFAULT NULL
+);
+
+COMMENT ON TABLE user_value_time_series IS 'common parameters for a user specific list of intra-day values';
+
+-- --------------------------------------------------------
+
+--
+-- table structure for table value_ts_data
 --
 
 CREATE TABLE IF NOT EXISTS value_ts_data
@@ -1366,12 +1907,12 @@ CREATE TABLE IF NOT EXISTS value_ts_data
     number               float     NOT NULL
 );
 
-COMMENT ON TABLE value_ts_data is 'for efficient saving of daily or intra-day values';
+COMMENT ON TABLE value_ts_data IS 'for efficient saving of daily or intra-day values';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table formula_element_types
+-- table structure for table formula_element_types
 --
 
 CREATE TABLE IF NOT EXISTS formula_element_types
@@ -1383,7 +1924,7 @@ CREATE TABLE IF NOT EXISTS formula_element_types
 );
 
 --
--- Table structure for table formula_elements
+-- table structure for table formula_elements
 --
 
 CREATE TABLE IF NOT EXISTS formula_elements
@@ -1397,11 +1938,11 @@ CREATE TABLE IF NOT EXISTS formula_elements
     resolved_text           varchar(200) DEFAULT NULL
 );
 
-COMMENT ON TABLE formula_elements is 'cache for fast update of formula resolved text';
-COMMENT ON COLUMN formula_elements.ref_id is 'either a term, verb or formula id';
+COMMENT ON TABLE formula_elements IS 'cache for fast update of formula resolved text';
+COMMENT ON COLUMN formula_elements.ref_id IS 'either a term, verb or formula id';
 
 --
--- Table structure for table formula_types
+-- table structure for table formula_types
 --
 
 CREATE TABLE IF NOT EXISTS formula_types
@@ -1413,7 +1954,7 @@ CREATE TABLE IF NOT EXISTS formula_types
 );
 
 --
--- Table structure for table formulas
+-- table structure for table formulas
 --
 
 CREATE TABLE IF NOT EXISTS formulas
@@ -1429,19 +1970,19 @@ CREATE TABLE IF NOT EXISTS formulas
     last_update       timestamp    NULL     DEFAULT NULL,
     usage             bigint       NULL     DEFAULT NULL,
     excluded          smallint              DEFAULT NULL,
-    share_type_id     bigint                DEFAULT NULL,
-    protect_id        bigint       NOT NULL DEFAULT '1'
+    share_type_id     smallint                DEFAULT NULL,
+    protect_id        smallint       NOT NULL DEFAULT '1'
 );
 
-COMMENT ON COLUMN formulas.formula_name is 'short name of the formula';
-COMMENT ON COLUMN formulas.formula_text is 'the coded formula; e.g. \\f1 for formula with ID1';
-COMMENT ON COLUMN formulas.resolved_text is 'the formula in user readable format';
-COMMENT ON COLUMN formulas.description is 'additional to comments because many formulas have this';
-COMMENT ON COLUMN formulas.all_values_needed is 'calculate the result only if all values used in the formula are not null';
-COMMENT ON COLUMN formulas.last_update is 'time of the last calculation relevant update';
+COMMENT ON COLUMN formulas.formula_name IS 'short name of the formula';
+COMMENT ON COLUMN formulas.formula_text IS 'the coded formula; e.g. \\f1 for formula with ID1';
+COMMENT ON COLUMN formulas.resolved_text IS 'the formula in user readable format';
+COMMENT ON COLUMN formulas.description IS 'additional to comments because many formulas have this';
+COMMENT ON COLUMN formulas.all_values_needed IS 'calculate the result only if all values used in the formula are not null';
+COMMENT ON COLUMN formulas.last_update IS 'time of the last calculation relevant update';
 
 --
--- Table structure for table user_formulas
+-- table structure for table user_formulas
 --
 
 CREATE TABLE IF NOT EXISTS user_formulas
@@ -1454,15 +1995,15 @@ CREATE TABLE IF NOT EXISTS user_formulas
     description       text,
     formula_type_id   bigint         DEFAULT NULL,
     all_values_needed smallint       DEFAULT NULL,
-    share_type_id     bigint         DEFAULT NULL,
-    protect_id        bigint    DEFAULT NULL,
+    share_type_id     smallint         DEFAULT NULL,
+    protect_id        smallint    DEFAULT NULL,
     last_update       timestamp NULL DEFAULT NULL,
     usage             bigint    NULL DEFAULT NULL,
     excluded          smallint       DEFAULT NULL
 );
 
 --
--- Table structure for table formula_link_types
+-- table structure for table formula_link_types
 --
 
 CREATE TABLE IF NOT EXISTS formula_link_types
@@ -1477,7 +2018,7 @@ CREATE TABLE IF NOT EXISTS formula_link_types
 );
 
 --
--- Table structure for table formula_links
+-- table structure for table formula_links
 --
 
 CREATE TABLE IF NOT EXISTS formula_links
@@ -1491,10 +2032,10 @@ CREATE TABLE IF NOT EXISTS formula_links
     excluded        smallint DEFAULT NULL
 );
 
-COMMENT ON TABLE formula_links is 'if the term pattern of a value matches this term pattern';
+COMMENT ON TABLE formula_links IS 'if the term pattern of a value matches this term pattern';
 
 --
--- Table structure for table user_formula_links
+-- table structure for table user_formula_links
 --
 
 CREATE TABLE IF NOT EXISTS user_formula_links
@@ -1505,12 +2046,25 @@ CREATE TABLE IF NOT EXISTS user_formula_links
     excluded        smallint  DEFAULT NULL
 );
 
-COMMENT ON TABLE user_formula_links is 'if the term pattern of a value matches this term pattern ';
+COMMENT ON TABLE user_formula_links IS 'if the term pattern of a value matches this term pattern ';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for standard results
+-- table structure for standard results
+--
+
+CREATE TABLE IF NOT EXISTS result_standard_prime
+(
+    group_id BIGSERIAL PRIMARY KEY,
+    result   double precision
+);
+
+COMMENT ON TABLE result_standard IS 'table to cache the pure formula results related up to four prime phrase without any related information';
+COMMENT ON COLUMN result_standard_prime.group_id IS 'the prime index to find the results';
+
+--
+-- table structure for standard results
 --
 
 CREATE TABLE IF NOT EXISTS result_standard
@@ -1519,32 +2073,39 @@ CREATE TABLE IF NOT EXISTS result_standard
     result   double precision
 );
 
-COMMENT ON TABLE result_standard is 'table to cache the pure formula results without any related information';
-COMMENT ON COLUMN result_standard.group_id is 'the prime index to find the results';
+COMMENT ON TABLE result_standard IS 'table to cache the pure formula results without any related information';
+COMMENT ON COLUMN result_standard.group_id IS 'the prime index to find the results';
 
 --
--- Table structure for results with more information to trace the calculation
+-- table structure for results with more information to trace the calculation
 --
 
 CREATE TABLE IF NOT EXISTS results
 (
-    group_id        char(112) PRIMARY KEY,
-    result          double precision,
-    formula_id      bigint         NOT NULL,
-    source_group_id char(112)      DEFAULT NULL,
-    user_id         bigint         DEFAULT NULL,
-    last_update     timestamp NULL DEFAULT NULL
+    group_id        char(112)        PRIMARY KEY,
+    numeric_value   double precision NOT NULL,
+    last_update     timestamp        DEFAULT NULL,
+    formula_id      bigint           NOT NULL,
+    source_group_id char(112)        DEFAULT NULL,
+    user_id         bigint           DEFAULT NULL,
+    excluded        smallint         DEFAULT NULL,
+    share_type_id   smallint         DEFAULT NULL,
+    protect_id      smallint         DEFAULT NULL
 );
 
-COMMENT ON TABLE results is 'table to cache the formula results with the information to trace the result';
-COMMENT ON COLUMN results.group_id is 'the prime index to find the results';
-COMMENT ON COLUMN results.formula_id is 'the id of the formula which has been used to calculate the result number';
-COMMENT ON COLUMN results.source_group_id is 'the sorted phrase list used to calculate the result number';
-COMMENT ON COLUMN results.user_id is 'the id of the user who has requested the calculation';
-COMMENT ON COLUMN results.last_update is 'time of last value update mainly used for recovery in case of inconsistencies, empty in case this value is dirty and needs to be updated';
+COMMENT ON TABLE results                  IS 'table to cache the formula numeric results related to up to 16 phrases';
+COMMENT ON COLUMN results.group_id        IS 'the 512-bit prime index to find the numeric result';
+COMMENT ON COLUMN results.numeric_value   IS 'the numeric value given by the user';
+COMMENT ON COLUMN results.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN results.formula_id      IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN results.source_group_id IS 'the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN results.user_id         IS 'the id of the user who has requested the calculation';
+COMMENT ON COLUMN results.excluded        IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN results.share_type_id   IS 'to restrict the access';
+COMMENT ON COLUMN results.protect_id      IS 'to protect against unwanted changes';
 
 --
--- Table structure for the most often requested results related up to four prime phrase
+-- table structure for the most often requested results related up to four prime phrase
 --
 
 CREATE TABLE IF NOT EXISTS result_prime
@@ -1557,15 +2118,15 @@ CREATE TABLE IF NOT EXISTS result_prime
     last_update     timestamp NULL DEFAULT NULL
 );
 
-COMMENT ON TABLE result_prime is 'table to cache the formula results related up to four prime phrases';
-COMMENT ON COLUMN result_prime.group_id is 'the prime index to find the results';
-COMMENT ON COLUMN result_prime.formula_id is 'the id of the formula which has been used to calculate the result number';
-COMMENT ON COLUMN result_prime.source_group_id is 'the sorted phrase list used to calculate the result number';
-COMMENT ON COLUMN result_prime.user_id is 'the id of the user who has requested the calculation';
-COMMENT ON COLUMN result_prime.last_update is 'time of last value update mainly used for recovery in case of inconsistencies, empty in case this value is dirty and needs to be updated';
+COMMENT ON TABLE result_prime IS 'table to cache the formula results related up to four prime phrases';
+COMMENT ON COLUMN result_prime.group_id IS 'the prime index to find the results';
+COMMENT ON COLUMN result_prime.formula_id IS 'the id of the formula which has been used to calculate the result number';
+COMMENT ON COLUMN result_prime.source_group_id IS 'the sorted phrase list used to calculate the result number';
+COMMENT ON COLUMN result_prime.user_id IS 'the id of the user who has requested the calculation';
+COMMENT ON COLUMN result_prime.last_update IS 'time of last value update mainly used for recovery in case of inconsistencies, empty in case this value is dirty and needs to be updated';
 
 --
--- Table structure for results related more than 16 phrases
+-- table structure for results related more than 16 phrases
 --
 
 CREATE TABLE IF NOT EXISTS result_big
@@ -1578,17 +2139,17 @@ CREATE TABLE IF NOT EXISTS result_big
     last_update     timestamp NULL DEFAULT NULL
 );
 
-COMMENT ON TABLE result_big is 'table to cache the formula results related up to four prime phrases';
-COMMENT ON COLUMN result_big.group_id is 'the prime index to find the results';
-COMMENT ON COLUMN result_big.formula_id is 'the id of the formula which has been used to calculate the result number';
-COMMENT ON COLUMN result_big.source_group_id is 'the sorted phrase list used to calculate the result number';
-COMMENT ON COLUMN result_big.user_id is 'the id of the user who has requested the calculation';
-COMMENT ON COLUMN result_big.last_update is 'time of last value update mainly used for recovery in case of inconsistencies, empty in case this value is dirty and needs to be updated';
+COMMENT ON TABLE result_big IS 'table to cache the formula results related up to four prime phrases';
+COMMENT ON COLUMN result_big.group_id IS 'the prime index to find the results';
+COMMENT ON COLUMN result_big.formula_id IS 'the id of the formula which has been used to calculate the result number';
+COMMENT ON COLUMN result_big.source_group_id IS 'the sorted phrase list used to calculate the result number';
+COMMENT ON COLUMN result_big.user_id IS 'the id of the user who has requested the calculation';
+COMMENT ON COLUMN result_big.last_update IS 'time of last value update mainly used for recovery in case of inconsistencies, empty in case this value is dirty and needs to be updated';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table view_type_list
+-- table structure for table view_type_list
 --
 
 CREATE TABLE IF NOT EXISTS view_types
@@ -1599,10 +2160,10 @@ CREATE TABLE IF NOT EXISTS view_types
     code_id      varchar(100) DEFAULT NULL
 );
 
-COMMENT ON TABLE view_types is 'to group the masks a link a basic format';
+COMMENT ON TABLE view_types IS 'to group the masks a link a basic format';
 
 --
--- Table structure for table views
+-- table structure for table views
 --
 
 CREATE TABLE IF NOT EXISTS views
@@ -1618,11 +2179,11 @@ CREATE TABLE IF NOT EXISTS views
     protect_id    smallint     NOT NULL DEFAULT '1'
 );
 
-COMMENT ON TABLE views is 'all user interfaces should be listed here';
-COMMENT ON COLUMN views.view_name is 'for easy selection';
+COMMENT ON TABLE views IS 'all user interfaces should be listed here';
+COMMENT ON COLUMN views.view_name IS 'for easy selection';
 
 --
--- Table structure for table user_views
+-- table structure for table user_views
 --
 
 CREATE TABLE IF NOT EXISTS user_views
@@ -1637,12 +2198,12 @@ CREATE TABLE IF NOT EXISTS user_views
     protect_id    smallint NOT NULL DEFAULT '1'
 );
 
-COMMENT ON TABLE user_views is 'user specific mask settings';
+COMMENT ON TABLE user_views IS 'user specific mask settings';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table component_link_types
+-- table structure for table component_link_types
 --
 
 CREATE TABLE IF NOT EXISTS component_link_types
@@ -1653,7 +2214,7 @@ CREATE TABLE IF NOT EXISTS component_link_types
 );
 
 --
--- Table structure for table component_position_types
+-- table structure for table component_position_types
 --
 
 CREATE TABLE IF NOT EXISTS component_position_types
@@ -1664,10 +2225,10 @@ CREATE TABLE IF NOT EXISTS component_position_types
     code_id                         varchar(50)  NOT NULL
 );
 
-COMMENT ON TABLE component_position_types is 'sideways or down';
+COMMENT ON TABLE component_position_types IS 'sideways or down';
 
 --
--- Table structure for table component_types
+-- table structure for table component_types
 --
 
 CREATE TABLE IF NOT EXISTS component_types
@@ -1678,10 +2239,10 @@ CREATE TABLE IF NOT EXISTS component_types
     code_id                varchar(100) NOT NULL
 );
 
-COMMENT ON TABLE component_types is 'fixed text, term or formula result';
+COMMENT ON TABLE component_types IS 'fixed text, term or formula result';
 
 --
--- Table structure for table components
+-- table structure for table components
 --
 
 CREATE TABLE IF NOT EXISTS components
@@ -1705,21 +2266,21 @@ CREATE TABLE IF NOT EXISTS components
     link_type_id                bigint                DEFAULT NULL
 );
 
-COMMENT ON TABLE components is 'the single components of a view';
-COMMENT ON COLUMN components.component_name is 'the unique name used to select a component by the user';
-COMMENT ON COLUMN components.component_type_id is 'to select the predefined functionality';
-COMMENT ON COLUMN components.code_id is 'used for system components to select the component by the program code';
-COMMENT ON COLUMN components.ui_msg_code_id is 'used for system components the id to select the language specific user interface message e.g. "add word"';
-COMMENT ON COLUMN components.word_id_row is 'for a tree the related value the start node';
-COMMENT ON COLUMN components.formula_id is 'used for type 6';
-COMMENT ON COLUMN components.word_id_col is 'to define the type for the table columns';
-COMMENT ON COLUMN components.word_id_col2 is 'e.g. "quarter" to show the quarters between the year columns or the second axis of a chart';
-COMMENT ON COLUMN components.linked_component_id is 'to link this component to another component';
-COMMENT ON COLUMN components.component_link_type_id is 'to define how this entry links to the other entry';
-COMMENT ON COLUMN components.link_type_id is 'e.g. for type 4 to select possible terms';
+COMMENT ON TABLE components IS 'the single components of a view';
+COMMENT ON COLUMN components.component_name IS 'the unique name used to select a component by the user';
+COMMENT ON COLUMN components.component_type_id IS 'to select the predefined functionality';
+COMMENT ON COLUMN components.code_id IS 'used for system components to select the component by the program code';
+COMMENT ON COLUMN components.ui_msg_code_id IS 'used for system components the id to select the language specific user interface message e.g. "add word"';
+COMMENT ON COLUMN components.word_id_row IS 'for a tree the related value the start node';
+COMMENT ON COLUMN components.formula_id IS 'used for type 6';
+COMMENT ON COLUMN components.word_id_col IS 'to define the type for the table columns';
+COMMENT ON COLUMN components.word_id_col2 IS 'e.g. "quarter" to show the quarters between the year columns or the second axis of a chart';
+COMMENT ON COLUMN components.linked_component_id IS 'to link this component to another component';
+COMMENT ON COLUMN components.component_link_type_id IS 'to define how this entry links to the other entry';
+COMMENT ON COLUMN components.link_type_id IS 'e.g. for type 4 to select possible terms';
 
 --
--- Table structure for table user_components
+-- table structure for table user_components
 --
 
 CREATE TABLE IF NOT EXISTS user_components
@@ -1742,7 +2303,7 @@ CREATE TABLE IF NOT EXISTS user_components
 -- --------------------------------------------------------
 
 --
--- Table structure for table component_links
+-- table structure for table component_links
 --
 
 CREATE TABLE IF NOT EXISTS component_links
@@ -1758,11 +2319,11 @@ CREATE TABLE IF NOT EXISTS component_links
     protect_id             smallint NOT NULL DEFAULT '1'
 );
 
-COMMENT ON TABLE component_links is 'A named mask entry can be used in several masks e.g. the company name';
-COMMENT ON COLUMN component_links.position_type is '1=side, 2 =below';
+COMMENT ON TABLE component_links IS 'A named mask entry can be used in several masks e.g. the company name';
+COMMENT ON COLUMN component_links.position_type IS '1=side, 2 =below';
 
 --
--- Table structure for table user_component_links
+-- table structure for table user_component_links
 --
 
 CREATE TABLE IF NOT EXISTS user_component_links
@@ -1779,7 +2340,7 @@ CREATE TABLE IF NOT EXISTS user_component_links
 -- --------------------------------------------------------
 
 --
--- Table structure for table view_link_types
+-- table structure for table view_link_types
 --
 
 CREATE TABLE IF NOT EXISTS view_link_types
@@ -1790,7 +2351,7 @@ CREATE TABLE IF NOT EXISTS view_link_types
 );
 
 --
--- Table structure for table view_term_links
+-- table structure for table view_term_links
 --
 
 CREATE TABLE IF NOT EXISTS view_term_links
@@ -1807,11 +2368,11 @@ CREATE TABLE IF NOT EXISTS view_term_links
     protect_id        smallint NOT NULL DEFAULT NULL
 );
 
-COMMENT ON TABLE view_term_links is 'used to define the default mask for a term or a term group';
-COMMENT ON COLUMN view_term_links.type_id is '1 = from_term_id is link the terms table; 2=link to the term_links table;3=to term_groups';
+COMMENT ON TABLE view_term_links IS 'used to define the default mask for a term or a term group';
+COMMENT ON COLUMN view_term_links.type_id IS '1 = from_term_id is link the terms table; 2=link to the term_links table;3=to term_groups';
 
 --
--- Table structure for table user_view_term_links
+-- table structure for table user_view_term_links
 --
 
 CREATE TABLE IF NOT EXISTS user_view_term_links
@@ -1829,27 +2390,27 @@ CREATE TABLE IF NOT EXISTS user_view_term_links
 -- --------------------------------------------------------
 
 --
--- Table structure for future use
+-- table structure for future use
 --
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table value_formula_links
+-- table structure for table value_formula_links
 --
 
 CREATE TABLE IF NOT EXISTS value_formula_links
 (
     value_formula_link_id BIGSERIAL PRIMARY KEY,
-    value_id              bigint DEFAULT NULL,
+    group_id              bigint DEFAULT NULL,
     formula_id            bigint DEFAULT NULL,
     user_id               bigint DEFAULT NULL,
     condition_formula_id  bigint DEFAULT NULL,
     comment               text
 );
 
-COMMENT ON TABLE value_formula_links is 'used to select if a saved value should be used or a calculated value';
-COMMENT ON COLUMN value_formula_links.condition_formula_id is 'if true or 1  to formula is preferred';
+COMMENT ON TABLE value_formula_links IS 'used to select if a saved value should be used or a calculated value';
+COMMENT ON COLUMN value_formula_links.condition_formula_id IS 'if true or 1  to formula is preferred';
 
 -- --------------------------------------------------------
 
@@ -2227,83 +2788,84 @@ CREATE INDEX user_group_user_idx ON user_groups (user_id);
 --
 -- Indexes for table prime groups
 --
-CREATE UNIQUE INDEX group_prime_name_idx ON group_prime (group_name);
+CREATE UNIQUE INDEX groups_prime_name_idx ON groups_prime (group_name);
 
 --
--- Indexes for table user_groups
+-- Indexes for table user_groups_prime
 --
-CREATE UNIQUE INDEX user_group_prime_name_idx ON user_group_prime (group_name, user_id);
-CREATE INDEX user_group_prime_idx ON user_groups (group_id);
-CREATE INDEX user_group_prime_user_idx ON user_groups (user_id);
+CREATE UNIQUE INDEX user_groups_prime_name_idx ON user_groups_prime (group_name, user_id);
+CREATE INDEX user_groups_prime_idx ON user_groups (group_id);
+CREATE INDEX user_groups_prime_user_idx ON user_groups (user_id);
 
 --
--- Indexes for table big groups
+-- Indexes for table groups_big
 --
-CREATE UNIQUE INDEX group_big_name_idx ON group_big (group_name);
+CREATE UNIQUE INDEX groups_big_name_idx ON groups_big (group_name);
 
 --
--- Indexes for table user_groups
+-- Indexes for table user_groups_big
 --
-CREATE UNIQUE INDEX user_group_big_name_idx ON user_group_big (group_name, user_id);
-CREATE INDEX user_group_big_idx ON user_groups (group_id);
-CREATE INDEX user_group_big_user_idx ON user_groups (user_id);
+CREATE UNIQUE INDEX user_groups_big_name_idx ON user_groups_big (group_name, user_id);
+CREATE INDEX user_groups_big_idx ON user_groups (group_id);
+CREATE INDEX user_groups_big_user_idx ON user_groups (user_id);
 
 --
 -- Indexes for table group_links
 --
-CREATE UNIQUE INDEX group_link_idx ON group_link (group_id, phrase_id);
-CREATE INDEX group_link_phrase_idx ON group_link (phrase_id);
+CREATE UNIQUE INDEX group_link_idx ON group_links (group_id, phrase_id);
+CREATE INDEX group_link_phrase_idx ON group_links (phrase_id);
 
 --
--- Indexes for table user_group_links
+-- Indexes for table user_group_link
 --
-CREATE UNIQUE INDEX user_group_link_idx ON user_group_link (group_id, phrase_id, user_id);
-CREATE INDEX user_group_link_phrase_idx ON user_group_link (phrase_id, user_id);
+CREATE UNIQUE INDEX user_group_link_idx ON user_group_links (group_id, phrase_id, user_id);
+CREATE INDEX user_group_link_phrase_idx ON user_group_links (phrase_id, user_id);
 
 --
--- Indexes for table prime group links
+-- Indexes for table groups_prime_link
 --
-CREATE UNIQUE INDEX group_prime_link_idx ON group_prime_link (group_id, phrase_id);
-CREATE INDEX group_prime_link_phrase_idx ON group_prime_link (phrase_id);
+CREATE UNIQUE INDEX groups_prime_link_idx ON group_prime_links (group_id, phrase_id);
+CREATE INDEX groups_prime_link_phrase_idx ON group_prime_links (phrase_id);
 
 --
--- Indexes for table prime user group links
+-- Indexes for prime user group links
 --
-CREATE UNIQUE INDEX user_group_prime_link_idx ON user_group_prime_link (group_id, phrase_id, user_id);
-CREATE INDEX user_group_prime_link_phrase_idx ON user_group_prime_link (phrase_id, user_id);
+CREATE UNIQUE INDEX user_groups_prime_link_idx ON user_group_prime_links (group_id, phrase_id, user_id);
+CREATE INDEX user_groups_prime_link_phrase_idx ON user_group_prime_links (phrase_id, user_id);
 
 --
--- Indexes for table big group links
+-- Indexes for big group links
 --
-CREATE UNIQUE INDEX group_big_link_idx ON group_big_link (group_id, phrase_id);
-CREATE INDEX group_big_link_phrase_idx ON group_big_link (phrase_id);
+CREATE UNIQUE INDEX groups_big_link_idx ON group_big_links (group_id, phrase_id);
+CREATE INDEX groups_big_link_phrase_idx ON group_big_links (phrase_id);
 
 --
--- Indexes for table big user group links
+-- Indexes for big user group links
 --
-CREATE UNIQUE INDEX user_group_big_link_idx ON user_group_big_link (group_id, phrase_id, user_id);
-CREATE INDEX user_group_big_link_phrase_idx ON user_group_big_link (phrase_id, user_id);
+CREATE UNIQUE INDEX user_groups_big_link_idx ON user_group_big_links (group_id, phrase_id, user_id);
+CREATE INDEX user_groups_big_link_phrase_idx ON user_group_big_links (phrase_id, user_id);
 
 -- --------------------------------------------------------
 
 --
--- Indexes for table sources
+-- indexes for table sources
 --
-CREATE INDEX source_name_idx ON sources (source_name);
-CREATE INDEX source_type_idx ON sources (source_type_id);
-
+CREATE INDEX sources_user_idx        ON sources (user_id);
+CREATE INDEX sources_source_name_idx ON sources (source_name);
+CREATE INDEX sources_source_type_idx ON sources (source_type_id);
 --
--- Indexes for table user_sources
+-- indexes for table user_sources
 --
-ALTER TABLE user_sources ADD CONSTRAINT user_source_pkey PRIMARY KEY (source_id, user_id);
-CREATE INDEX user_source_user_idx ON user_sources (user_id);
-CREATE INDEX user_source_idx ON user_sources (source_id);
-CREATE INDEX user_source_type_idx ON user_sources (source_type_id);
+ALTER TABLE user_sources ADD CONSTRAINT user_sources_pkey PRIMARY KEY (source_id,user_id);
+CREATE INDEX user_sources_source_idx      ON user_sources (source_id);
+CREATE INDEX user_sources_user_idx        ON user_sources (user_id);
+CREATE INDEX user_sources_source_name_idx ON user_sources (source_name);
+CREATE INDEX user_sources_source_type_idx ON user_sources (source_type_id);
 
 --
 -- Indexes for table source_values
 --
-CREATE INDEX source_value_value_idx ON source_values (value_id);
+CREATE INDEX source_value_group_idx ON source_values (group_id);
 CREATE INDEX source_value_source_idx ON source_values (source_id);
 CREATE INDEX source_value_user_idx ON source_values (user_id);
 
@@ -2323,14 +2885,18 @@ CREATE INDEX user_ref_idx ON user_refs (ref_id);
 -- --------------------------------------------------------
 
 --
--- Indexes for table value_standard
+-- Indexes for table values_standard_prime
 --
-CREATE INDEX value_standard_idx ON value_standard (group_id);
+CREATE INDEX values_standard_prime_source_idx ON values_standard_prime (source_id);
+
+--
+-- Indexes for table values_standard
+--
+CREATE INDEX values_standard_source_idx ON values_standard (source_id);
 
 --
 -- Indexes for table values
 --
-CREATE INDEX value_group_idx ON "values" (group_id);
 CREATE INDEX value_user_idx ON "values" (user_id);
 CREATE INDEX value_source_idx ON "values" (source_id);
 
@@ -2342,37 +2908,44 @@ CREATE INDEX user_value_user_idx ON user_values (user_id);
 CREATE INDEX user_value_source_idx ON user_values (source_id);
 
 --
--- Indexes for table value_prime
+-- Indexes for table values_prime
 --
-CREATE INDEX value_prime_group_idx ON value_prime (group_id);
-CREATE INDEX value_prime_user_idx ON value_prime (user_id);
-CREATE INDEX value_prime_source_idx ON value_prime (source_id);
+CREATE INDEX values_prime_user_idx ON values_prime (user_id);
+CREATE INDEX values_prime_source_idx ON values_prime (source_id);
 
 --
--- Indexes for table user_value_prime
+-- Indexes for table user_values_prime
 --
-ALTER TABLE user_value_prime ADD CONSTRAINT user_value_prime_pkey PRIMARY KEY (group_id, user_id);
-CREATE INDEX user_value_prime_user_idx ON user_value_prime (user_id);
-CREATE INDEX user_value_prime_source_idx ON user_value_prime (source_id);
+ALTER TABLE user_values_prime ADD CONSTRAINT user_values_prime_pkey PRIMARY KEY (group_id, user_id);
+CREATE INDEX user_values_prime_user_idx ON user_values_prime (user_id);
+CREATE INDEX user_values_prime_source_idx ON user_values_prime (source_id);
 
 --
--- Indexes for table value_big
+-- Indexes for table values_big
 --
-CREATE INDEX value_big_group_idx ON value_big (group_id);
-CREATE INDEX value_big_user_idx ON value_big (user_id);
-CREATE INDEX value_big_source_idx ON value_big (source_id);
+CREATE INDEX values_big_user_idx ON values_big (user_id);
+CREATE INDEX values_big_source_idx ON values_big (source_id);
 
 --
--- Indexes for table user_value_big
+-- Indexes for table user_values_big
 --
-ALTER TABLE user_value_big ADD CONSTRAINT user_value_big_pkey PRIMARY KEY (group_id, user_id);
-CREATE INDEX user_value_big_user_idx ON user_value_big (user_id);
-CREATE INDEX user_value_big_source_idx ON user_value_big (source_id);
+ALTER TABLE user_values_big ADD CONSTRAINT user_values_big_pkey PRIMARY KEY (group_id, user_id);
+CREATE INDEX user_values_big_user_idx ON user_values_big (user_id);
+CREATE INDEX user_values_big_source_idx ON user_values_big (source_id);
+
+--
+-- Indexes for table value_text_standard_prime
+--
+CREATE INDEX value_text_standard_prime_source_idx ON values_text_standard_prime (source_id);
+
+--
+-- Indexes for table value_text_standard
+--
+CREATE INDEX value_text_standard_source_idx ON value_text_standard (source_id);
 
 --
 -- Indexes for table value_text
 --
-CREATE INDEX value_text_group_idx ON value_text (group_id);
 CREATE INDEX value_text_user_idx ON value_text (user_id);
 CREATE INDEX value_text_source_idx ON value_text (source_id);
 
@@ -2384,9 +2957,44 @@ CREATE INDEX user_value_text_user_idx ON user_value_text (user_id);
 CREATE INDEX user_value_text_source_idx ON user_value_text (source_id);
 
 --
+-- Indexes for table value_text_prime
+--
+CREATE INDEX value_text_prime_user_idx ON value_text_prime (user_id);
+CREATE INDEX value_text_prime_source_idx ON value_text_prime (source_id);
+
+--
+-- Indexes for table user_value_text_prime
+--
+ALTER TABLE user_value_text_prime ADD CONSTRAINT user_value_text_prime_pkey PRIMARY KEY (group_id, user_id);
+CREATE INDEX user_value_text_prime_user_idx ON user_value_text_prime (user_id);
+CREATE INDEX user_value_text_prime_source_idx ON user_value_text_prime (source_id);
+
+--
+-- Indexes for table value_text_big
+--
+CREATE INDEX value_text_big_user_idx ON value_text_big (user_id);
+CREATE INDEX value_text_big_source_idx ON value_text_big (source_id);
+
+--
+-- Indexes for table user_value_text_big
+--
+ALTER TABLE user_value_text_big ADD CONSTRAINT user_value_text_big_pkey PRIMARY KEY (group_id, user_id);
+CREATE INDEX user_value_text_big_user_idx ON user_value_text_big (user_id);
+CREATE INDEX user_value_text_big_source_idx ON user_value_text_big (source_id);
+
+--
+-- Indexes for table value_time_standard_prime
+--
+CREATE INDEX value_time_standard_prime_source_idx ON value_time_standard_prime (source_id);
+
+--
+-- Indexes for table value_time_standard
+--
+CREATE INDEX value_time_standard_source_idx ON value_time_standard (source_id);
+
+--
 -- Indexes for table value_time
 --
-CREATE INDEX value_time_group_idx ON value_time (group_id);
 CREATE INDEX value_time_user_idx ON value_time (user_id);
 CREATE INDEX value_time_source_idx ON value_time (source_id);
 
@@ -2398,9 +3006,44 @@ CREATE INDEX user_value_time_user_idx ON user_value_time (user_id);
 CREATE INDEX user_value_time_source_idx ON user_value_time (source_id);
 
 --
+-- Indexes for table value_time_prime
+--
+CREATE INDEX value_time_prime_user_idx ON value_time_prime (user_id);
+CREATE INDEX value_time_prime_source_idx ON value_time_prime (source_id);
+
+--
+-- Indexes for table user_value_time_prime
+--
+ALTER TABLE user_value_time_prime ADD CONSTRAINT user_value_time_prime_pkey PRIMARY KEY (group_id, user_id);
+CREATE INDEX user_value_time_prime_user_idx ON user_value_time_prime (user_id);
+CREATE INDEX user_value_time_prime_source_idx ON user_value_time_prime (source_id);
+
+--
+-- Indexes for table value_time_big
+--
+CREATE INDEX value_time_big_user_idx ON value_time_big (user_id);
+CREATE INDEX value_time_big_source_idx ON value_time_big (source_id);
+
+--
+-- Indexes for table user_value_time_big
+--
+ALTER TABLE user_value_time_big ADD CONSTRAINT user_value_time_big_pkey PRIMARY KEY (group_id, user_id);
+CREATE INDEX user_value_time_big_user_idx ON user_value_time_big (user_id);
+CREATE INDEX user_value_time_big_source_idx ON user_value_time_big (source_id);
+
+--
+-- Indexes for table value_geo_standard_prime
+--
+CREATE INDEX value_geo_standard_prime_source_idx ON value_geo_standard_prime (source_id);
+
+--
+-- Indexes for table value_geo_standard
+--
+CREATE INDEX value_geo_standard_source_idx ON value_geo_standard (source_id);
+
+--
 -- Indexes for table value_geo
 --
-CREATE INDEX value_geo_group_idx ON value_geo (group_id);
 CREATE INDEX value_geo_user_idx ON value_geo (user_id);
 CREATE INDEX value_geo_source_idx ON value_geo (source_id);
 
@@ -2411,12 +3054,38 @@ ALTER TABLE user_value_geo ADD CONSTRAINT user_value_geo_pkey PRIMARY KEY (group
 CREATE INDEX user_value_geo_user_idx ON user_value_geo (user_id);
 CREATE INDEX user_value_geo_source_idx ON user_value_geo (source_id);
 
+--
+-- Indexes for table value_geo_prime
+--
+CREATE INDEX value_geo_prime_user_idx ON value_geo_prime (user_id);
+CREATE INDEX value_geo_prime_source_idx ON value_geo_prime (source_id);
+
+--
+-- Indexes for table user_value_geo_prime
+--
+ALTER TABLE user_value_geo_prime ADD CONSTRAINT user_value_geo_prime_pkey PRIMARY KEY (group_id, user_id);
+CREATE INDEX user_value_geo_prime_user_idx ON user_value_geo_prime (user_id);
+CREATE INDEX user_value_geo_prime_source_idx ON user_value_geo_prime (source_id);
+
+--
+-- Indexes for table value_geo_big
+--
+CREATE INDEX value_geo_big_user_idx ON value_geo_big (user_id);
+CREATE INDEX value_geo_big_source_idx ON value_geo_big (source_id);
+
+--
+-- Indexes for table user_value_geo_big
+--
+ALTER TABLE user_value_geo_big ADD CONSTRAINT user_value_geo_big_pkey PRIMARY KEY (group_id, user_id);
+CREATE INDEX user_value_geo_big_user_idx ON user_value_geo_big (user_id);
+CREATE INDEX user_value_geo_big_source_idx ON user_value_geo_big (source_id);
+
 -- --------------------------------------------------------
 
 --
 -- Indexes for table value_ts_data
 --
-CREATE INDEX value_time_series_idx ON value_ts_data (value_time_series_id, val_time);
+CREATE UNIQUE INDEX value_time_series_idx ON value_ts_data (value_time_series_id, val_time);
 
 -- --------------------------------------------------------
 
@@ -2461,7 +3130,7 @@ CREATE INDEX user_formula_link_type_idx ON user_formula_links (link_type_id);
 --
 -- Indexes for results
 --
-CREATE UNIQUE INDEX result_idx ON results (group_id, formula_id, source_group_id, user_id);
+CREATE UNIQUE INDEX group_idx ON results (group_id, formula_id, source_group_id, user_id);
 CREATE INDEX result_formula_idx ON results (formula_id);
 CREATE INDEX result_source_idx ON results (source_group_id);
 CREATE INDEX result_user_idx ON results (user_id);
@@ -2528,7 +3197,7 @@ CREATE INDEX user_component_link_view_idx ON user_component_links (component_lin
 -- --------------------------------------------------------
 
 --
--- Constraints for table sys_log
+-- constraints for table sys_log
 --
 ALTER TABLE sys_log
     ADD CONSTRAINT sys_log_fk_1 FOREIGN KEY (sys_log_type_id) REFERENCES sys_log_types (sys_log_type_id),
@@ -2536,39 +3205,39 @@ ALTER TABLE sys_log
     ADD CONSTRAINT sys_log_fk_3 FOREIGN KEY (sys_log_function_id) REFERENCES sys_log_functions (sys_log_function_id);
 
 --
--- Constraints for table sys_script_times
+-- constraints for table sys_script_times
 --
 ALTER TABLE sys_script_times
     ADD CONSTRAINT sys_script_times_fk_1 FOREIGN KEY (sys_script_id) REFERENCES sys_scripts (sys_script_id);
 
 --
--- Constraints for table calc_and_cleanup_tasks
+-- constraints for table calc_and_cleanup_tasks
 --
 ALTER TABLE calc_and_cleanup_tasks
     ADD CONSTRAINT calc_and_cleanup_tasks_fk_1 FOREIGN KEY (calc_and_cleanup_task_type_id) REFERENCES calc_and_cleanup_task_types (calc_and_cleanup_task_type_id);
 
 --
--- Constraints for table users
+-- constraints for table users
 --
 ALTER TABLE users
     ADD CONSTRAINT users_fk_1 FOREIGN KEY (user_type_id) REFERENCES user_types (user_type_id),
     ADD CONSTRAINT users_fk_2 FOREIGN KEY (user_profile_id) REFERENCES user_profiles (profile_id);
 
 --
--- Constraints for table change_fields
+-- constraints for table change_fields
 --
 ALTER TABLE change_fields
     ADD CONSTRAINT change_fields_fk_1 FOREIGN KEY (table_id) REFERENCES change_tables (change_table_id);
 
 --
--- Constraints for table changes
+-- constraints for table changes
 --
 ALTER TABLE changes
     ADD CONSTRAINT changes_fk_1 FOREIGN KEY (change_action_id) REFERENCES change_actions (change_action_id),
     ADD CONSTRAINT changes_fk_2 FOREIGN KEY (change_field_id) REFERENCES change_fields (change_field_id);
 
 --
--- Constraints for table change_links
+-- constraints for table change_links
 --
 ALTER TABLE change_links
     ADD CONSTRAINT change_links_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE NO ACTION,
@@ -2576,13 +3245,13 @@ ALTER TABLE change_links
     ADD CONSTRAINT change_links_fk_3 FOREIGN KEY (change_action_id) REFERENCES change_actions (change_action_id);
 
 --
--- Constraints for table change_fields
+-- constraints for table change_fields
 --
 ALTER TABLE language_forms
     ADD CONSTRAINT language_forms_fk_1 FOREIGN KEY (language_id) REFERENCES languages (language_id);
 
 --
--- Constraints for table words
+-- constraints for table words
 --
 ALTER TABLE words
     ADD CONSTRAINT word_name UNIQUE (word_name);
@@ -2591,7 +3260,7 @@ ALTER TABLE words
     ADD CONSTRAINT words_fk_2 FOREIGN KEY (phrase_type_id) REFERENCES phrase_types (phrase_type_id);
 
 --
--- Constraints for table user_words
+-- constraints for table user_words
 --
 ALTER TABLE user_words
     ADD CONSTRAINT user_words_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id),
@@ -2600,13 +3269,13 @@ ALTER TABLE user_words
     ADD CONSTRAINT user_words_fk_4 FOREIGN KEY (word_id) REFERENCES words (word_id);
 
 --
--- Constraints for table word_periods
+-- constraints for table word_periods
 --
 ALTER TABLE word_periods
     ADD CONSTRAINT word_periods_fk_1 FOREIGN KEY (word_id) REFERENCES words (word_id);
 
 --
--- Constraints for table triples
+-- constraints for table triples
 --
 ALTER TABLE triples
     ADD CONSTRAINT triple_name UNIQUE (triple_name);
@@ -2619,113 +3288,119 @@ ALTER TABLE triples
 -- ADD CONSTRAINT triples_fk_3 FOREIGN KEY (to_phrase_id) REFERENCES phrases (phrase_id),
 
 --
--- Constraints for table user_triples
+-- constraints for table user_triples
 --
 ALTER TABLE user_triples
     ADD CONSTRAINT user_triples_fk_1 FOREIGN KEY (triple_id) REFERENCES triples (triple_id),
     ADD CONSTRAINT user_triples_fk_2 FOREIGN KEY (user_id) REFERENCES users (user_id);
 
 --
--- Constraints for table user_groups
+-- constraints for table user_groups
 --
 ALTER TABLE user_groups
     ADD CONSTRAINT user_groups_fk_1 FOREIGN KEY (group_id) REFERENCES groups (group_id),
     ADD CONSTRAINT user_groups_fk_2 FOREIGN KEY (user_id) REFERENCES users (user_id);
 
 --
--- Constraints for table user_group_prime
+-- constraints for table user_groups_prime
 --
-ALTER TABLE user_group_prime
-    ADD CONSTRAINT user_group_prime_fk_1 FOREIGN KEY (group_id) REFERENCES group_prime (group_id),
-    ADD CONSTRAINT user_group_prime_fk_2 FOREIGN KEY (user_id) REFERENCES users (user_id);
+ALTER TABLE user_groups_prime
+    ADD CONSTRAINT user_groups_prime_fk_1 FOREIGN KEY (group_id) REFERENCES groups_prime (group_id),
+    ADD CONSTRAINT user_groups_prime_fk_2 FOREIGN KEY (user_id) REFERENCES users (user_id);
 
 --
--- Constraints for table user_group_big
+-- constraints for table user_groups_big
 --
-ALTER TABLE user_group_big
-    ADD CONSTRAINT user_group_big_fk_1 FOREIGN KEY (group_id) REFERENCES group_big (group_id),
-    ADD CONSTRAINT user_group_big_fk_2 FOREIGN KEY (user_id) REFERENCES users (user_id);
+ALTER TABLE user_groups_big
+    ADD CONSTRAINT user_groups_big_fk_1 FOREIGN KEY (group_id) REFERENCES groups_big (group_id),
+    ADD CONSTRAINT user_groups_big_fk_2 FOREIGN KEY (user_id) REFERENCES users (user_id);
 
 --
--- Constraints for table group_links
+-- constraints for table group_links
 --
 -- ALTER TABLE group_link
 --     ADD CONSTRAINT group_link_fk_1 FOREIGN KEY (phrase_id) REFERENCES phrases (phrase_id);
 
 --
--- Constraints for table group_links
+-- constraints for table group_links
 --
-ALTER TABLE user_group_link
+ALTER TABLE user_group_links
     ADD CONSTRAINT user_group_link_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id);
 --    ADD CONSTRAINT user_group_link_fk_2 FOREIGN KEY (phrase_id) REFERENCES phrases (phrase_id);
 
 --
--- Constraints for table group_prime_link
+-- constraints for table groups_prime_link
 --
--- ALTER TABLE group_prime_link
---    ADD CONSTRAINT group_prime_link_fk_1 FOREIGN KEY (phrase_id) REFERENCES phrases (phrase_id);
+-- ALTER TABLE groups_prime_link
+--    ADD CONSTRAINT groups_prime_link_fk_1 FOREIGN KEY (phrase_id) REFERENCES phrases (phrase_id);
 
 --
--- Constraints for table user_group_prime_link
+-- constraints for table user_groups_prime_link
 --
-ALTER TABLE user_group_prime_link
+ALTER TABLE user_group_prime_links
     ADD CONSTRAINT user_group_prime_links_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id);
 --  ADD CONSTRAINT user_group_prime_links_fk_2 FOREIGN KEY (phrase_id) REFERENCES phrases (phrase_id);
 
 --
--- Constraints for table group_big_link
+-- constraints for table groups_big_link
 --
--- ALTER TABLE group_big_link
---    ADD CONSTRAINT group_big_link_fk_1 FOREIGN KEY (phrase_id) REFERENCES phrases (phrase_id);
+-- ALTER TABLE groups_big_link
+--    ADD CONSTRAINT groups_big_link_fk_1 FOREIGN KEY (phrase_id) REFERENCES phrases (phrase_id);
 
 --
--- Constraints for table user_group_big_link
+-- constraints for table user_groups_big_link
 --
-ALTER TABLE user_group_big_link
+ALTER TABLE user_group_big_links
     ADD CONSTRAINT user_group_big_links_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id);
 --    ADD CONSTRAINT user_group_big_links_fk_2 FOREIGN KEY (phrase_id) REFERENCES phrases (phrase_id);
 
 --
--- Constraints for table sources
+-- constraints for table sources
 --
 ALTER TABLE sources
     ADD CONSTRAINT sources_fk_1 FOREIGN KEY (source_type_id) REFERENCES source_types (source_type_id);
 
 --
--- Constraints for table user_sources
+-- constraints for table user_sources
 --
 ALTER TABLE user_sources
     ADD CONSTRAINT user_sources_fk_1 FOREIGN KEY (source_id) REFERENCES sources (source_id),
     ADD CONSTRAINT user_sources_fk_2 FOREIGN KEY (user_id) REFERENCES users (user_id);
 
 --
--- Constraints for table refs
+-- constraints for table refs
 --
 ALTER TABLE refs
     ADD CONSTRAINT refs_fk_1 FOREIGN KEY (ref_type_id) REFERENCES ref_types (ref_type_id);
 
 --
--- Constraints for table user_refs
+-- constraints for table user_refs
 --
 ALTER TABLE user_refs
     ADD CONSTRAINT user_refs_fk_1 FOREIGN KEY (ref_id) REFERENCES refs (ref_id),
     ADD CONSTRAINT user_refs_fk_2 FOREIGN KEY (user_id) REFERENCES users (user_id);
 
 --
--- Constraints for table source_values
+-- constraints for table source_values
 --
 ALTER TABLE source_values
     ADD CONSTRAINT source_values_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id),
     ADD CONSTRAINT source_values_fk_2 FOREIGN KEY (source_id) REFERENCES sources (source_id);
 
 --
--- Constraints for table value_standard
+-- constraints for table values_standard_prime
 --
-ALTER TABLE value_standard
-    ADD CONSTRAINT value_standard_fk_1 FOREIGN KEY (source_id) REFERENCES sources (source_id);
+ALTER TABLE values_standard_prime
+    ADD CONSTRAINT values_standard_prime_fk_1 FOREIGN KEY (source_id) REFERENCES sources (source_id);
 
 --
--- Constraints for table values
+-- constraints for table values_standard
+--
+ALTER TABLE values_standard
+    ADD CONSTRAINT values_standard_fk_1 FOREIGN KEY (source_id) REFERENCES sources (source_id);
+
+--
+-- constraints for table values
 --
 ALTER TABLE values
     ADD CONSTRAINT values_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id),
@@ -2734,7 +3409,7 @@ ALTER TABLE values
     ADD CONSTRAINT values_fk_4 FOREIGN KEY (protect_id) REFERENCES protection_types (protection_type_id);
 
 --
--- Constraints for table user_values
+-- constraints for table user_values
 --
 ALTER TABLE user_values
     ADD CONSTRAINT user_values_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id),
@@ -2743,7 +3418,7 @@ ALTER TABLE user_values
     ADD CONSTRAINT user_values_fk_4 FOREIGN KEY (protect_id) REFERENCES protection_types (protection_type_id);
 
 --
--- Constraints for table user_value_time_series
+-- constraints for table user_value_time_series
 --
 ALTER TABLE user_value_time_series
     ADD CONSTRAINT user_value_time_series_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id),
@@ -2752,7 +3427,7 @@ ALTER TABLE user_value_time_series
     ADD CONSTRAINT user_value_time_series_fk_4 FOREIGN KEY (protect_id) REFERENCES protection_types (protection_type_id);
 
 --
--- Constraints for table formulas
+-- constraints for table formulas
 --
 ALTER TABLE formulas
     ADD CONSTRAINT formulas_fk_1 FOREIGN KEY (formula_type_id) REFERENCES formula_types (formula_type_id),
@@ -2760,7 +3435,7 @@ ALTER TABLE formulas
     ADD CONSTRAINT formulas_fk_3 FOREIGN KEY (protect_id) REFERENCES protection_types (protection_type_id);
 
 --
--- Constraints for table user_formulas
+-- constraints for table user_formulas
 --
 ALTER TABLE user_formulas
     ADD CONSTRAINT user_formulas_fk_4 FOREIGN KEY (share_type_id) REFERENCES share_types (share_type_id),
@@ -2769,20 +3444,20 @@ ALTER TABLE user_formulas
     ADD CONSTRAINT user_formulas_fk_3 FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
 
 --
--- Constraints for table formula_elements
+-- constraints for table formula_elements
 --
 ALTER TABLE formula_elements
     ADD CONSTRAINT formula_elements_fk_1 FOREIGN KEY (formula_element_type_id) REFERENCES formula_element_types (formula_element_type_id),
     ADD CONSTRAINT formula_elements_fk_2 FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
 
 --
--- Constraints for table formula_links
+-- constraints for table formula_links
 --
 ALTER TABLE formula_links
     ADD CONSTRAINT formula_links_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id);
 
 --
--- Constraints for table user_formula_links
+-- constraints for table user_formula_links
 --
 ALTER TABLE user_formula_links
     ADD CONSTRAINT user_formula_links_fk_1 FOREIGN KEY (formula_link_id) REFERENCES formula_links (formula_link_id),
@@ -2790,14 +3465,14 @@ ALTER TABLE user_formula_links
     ADD CONSTRAINT user_formula_links_fk_3 FOREIGN KEY (link_type_id) REFERENCES formula_link_types (formula_link_type_id);
 
 --
--- Constraints for table results
+-- constraints for table results
 --
 ALTER TABLE results
     ADD CONSTRAINT results_fk_1 FOREIGN KEY (formula_id) REFERENCES formulas (formula_id),
     ADD CONSTRAINT results_fk_2 FOREIGN KEY (user_id) REFERENCES users (user_id);
 
 --
--- Constraints for table user_views
+-- constraints for table user_views
 --
 ALTER TABLE user_views
     ADD CONSTRAINT user_views_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id),
@@ -2805,13 +3480,13 @@ ALTER TABLE user_views
     ADD CONSTRAINT user_views_fk_3 FOREIGN KEY (view_id) REFERENCES views (view_id);
 
 --
--- Constraints for table components
+-- constraints for table components
 --
 ALTER TABLE components
     ADD CONSTRAINT components_fk_2 FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
 
 --
--- Constraints for table user_components
+-- constraints for table user_components
 --
 ALTER TABLE user_components
     ADD CONSTRAINT user_components_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id),
@@ -2819,7 +3494,7 @@ ALTER TABLE user_components
     ADD CONSTRAINT user_components_fk_3 FOREIGN KEY (component_type_id) REFERENCES component_types (component_type_id);
 
 --
--- Constraints for table component_links
+-- constraints for table component_links
 --
 ALTER TABLE component_links
     ADD CONSTRAINT component_links_fk_1 FOREIGN KEY (view_id) REFERENCES views (view_id),
@@ -2827,7 +3502,7 @@ ALTER TABLE component_links
     ADD CONSTRAINT component_links_fk_3 FOREIGN KEY (component_id) REFERENCES components (component_id);
 
 --
--- Constraints for table user_component_links
+-- constraints for table user_component_links
 --
 ALTER TABLE user_component_links
     ADD CONSTRAINT user_component_links_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id),

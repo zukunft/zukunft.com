@@ -37,11 +37,11 @@ include_once MODEL_WORD_PATH . 'word.php';
 include_once API_WORD_PATH . 'word.php';
 include_once WEB_WORD_PATH . 'word.php';
 
-use api\formula_api;
-use cfg\sql_db;
+use api\formula\formula as formula_api;
+use cfg\db\sql_db;
 use cfg\phrase_type;
 use cfg\word;
-use api\word_api;
+use api\word\word as word_api;
 use html\word\word as word_dsp;
 
 class word_unit_tests

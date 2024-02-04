@@ -32,10 +32,10 @@
 
 namespace unit\html;
 
-use api\phrase_group_api;
-use api\phrase_list_api;
-use api\value_api;
-use api\value_list_api;
+use api\phrase\group as group_api;
+use api\phrase\phrase_list as phrase_list_api;
+use api\value\value as value_api;
+use api\value\value_list as value_list_api;
 use html\html_base;
 use cfg\phrase_list;
 use html\phrase\phrase_list as phrase_list_dsp;
@@ -53,9 +53,9 @@ class value_list
 
         // create a test set of phrase
         $phr_zh = $t->dummy_word_zh()->phrase();
-        $phr_city = $t->dummy_word_city()->phrase();
+        $phr_city = $t->city_word()->phrase();
         $phr_canton = $t->dummy_word_canton()->phrase();
-        $phr_ch = $t->dummy_word_city()->phrase();
+        $phr_ch = $t->city_word()->phrase();
         $phr_inhabitant = $t->dummy_word_inhabitant()->phrase();
         $phr_2019 = $t->dummy_word_2019()->phrase();
         $phr_mio = $t->dummy_word_mio()->phrase();
@@ -67,7 +67,7 @@ class value_list
         $phr_lst_city->add($phr_city);
         $phr_lst_city->add($phr_inhabitant);
         $phr_lst_city->add($phr_2019);
-        $phr_grp_city = $phr_lst_city->get_grp(false);
+        $phr_grp_city = $phr_lst_city->get_grp_id(false);
         $phr_grp_city->set_id($grp_id);
         $grp_id++;
         $phr_lst_canton = new phrase_list($usr);
@@ -76,7 +76,7 @@ class value_list
         $phr_lst_canton->add($phr_inhabitant);
         $phr_lst_canton->add($phr_mio);
         $phr_lst_canton->add($phr_2019);
-        $phr_grp_canton = $phr_lst_canton->get_grp(false);
+        $phr_grp_canton = $phr_lst_canton->get_grp_id(false);
         $phr_grp_canton->set_id($grp_id);
         $grp_id++;
         $phr_lst_ch = new phrase_list($usr);
@@ -84,7 +84,7 @@ class value_list
         $phr_lst_ch->add($phr_mio);
         $phr_lst_ch->add($phr_inhabitant);
         $phr_lst_ch->add($phr_2019);
-        $phr_grp_ch = $phr_lst_ch->get_grp(false);
+        $phr_grp_ch = $phr_lst_ch->get_grp_id(false);
         $phr_grp_ch->set_id($grp_id);
         $phr_lst_context = new phrase_list($usr);
         $phr_lst_context->add($phr_inhabitant);

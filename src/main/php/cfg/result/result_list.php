@@ -29,14 +29,33 @@
 
 */
 
-namespace cfg;
+namespace cfg\result;
 
 include_once DB_PATH . 'sql_par_type.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
+include_once DB_PATH . 'sql_table_type.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_value_list.php';
 include_once API_RESULT_PATH . 'result_list.php';
 
-use api\result_list_api;
+use api\result\result_list as result_list_api;
+use cfg\batch_job;
+use cfg\batch_job_list;
+use cfg\db\sql;
+use cfg\db\sql_db;
+use cfg\db\sql_table_type;
+use cfg\db\sql_par;
 use cfg\db\sql_par_type;
+use cfg\formula;
+use cfg\group\group;
+use cfg\group\group_id;
+use cfg\group\group_list;
+use cfg\library;
+use cfg\phrase_list;
+use cfg\sandbox_value_list;
+use cfg\triple;
+use cfg\user_list;
+use cfg\user_message;
+use cfg\value\value;
+use cfg\word;
 use Exception;
 use html\formula\formula as formula_dsp;
 use html\html_base;
@@ -44,7 +63,7 @@ use html\phrase\phrase_list as phrase_list_dsp;
 use html\system\back_trace;
 use html\word\word as word_dsp;
 
-class result_list extends sandbox_list
+class result_list extends sandbox_value_list
 {
 
     /*
@@ -71,22 +90,205 @@ class result_list extends sandbox_list
 
 
     /*
-     *  load functions
+     * load
      */
 
-    function load_by_phr_lst_sql(sql_db $db_con, phrase_list $phr_lst): sql_par
+    /**
+     * if $or is false or null
+     * load a list of result that are linked to each phrase of the given list
+     * e.g. for "city", "inhabitants" and "increase" the yearly increase of the city inhabitants are returned
+     *      to get the inhabitants of the cities itself first get a phrase list of all cities
+     *
+     * if $or is true
+     * load a list of result that are related to at least one phrase of the given list
+     *  e.g. for "Zurich (city)" and "Geneva (city)" all calculated values related to the two cities are returned
+     *
+     *  TODO use order by in query
+     *  TODO use limit and page in query
+     *
+     * @param phrase_list $phr_lst phrase list to which all related values should be loaded
+     * @param bool $or if true all values are returned that are linked to any phrase of the list
+     * @param int $limit the number of values that should be loaded at once
+     * @param int $page the offset for the limit
+     * @return bool true if at least one value found
+     */
+    function load_by_phr_lst(
+        phrase_list $phr_lst,
+        bool        $or = false,
+        int         $limit = sql_db::ROW_LIMIT,
+        int         $page = 0
+    ): bool
     {
-        $qp = new sql_par(self::class);
+        return parent::load_by_phr_lst_multi($phr_lst, result::class, $or, $limit, $page);
+    }
 
-        $qp->par = $db_con->get_par();
+    /**
+     * load a list of results linked to a formula
+     *
+     * @param formula $frm a named object used for selection e.g. a formula
+     * @return bool true if loading has been successful
+     */
+    function load_by_frm(formula $frm): bool
+    {
+        global $db_con;
+
+        $qp = $this->load_by_frm_sql($db_con, $frm);
+        return $this->load($qp);
+    }
+
+    // internal load
+
+    /**
+     * load a list of results that are linked to each phrase of the given list
+     * e.g. for "city", "inhabitants" and "increase" all yearly increases of city inhabitants are returned
+     *      to get the inhabitants of the cities itself first get a phrase list of all cities
+     *
+     * if $or is true
+     * load a list of values that are related to at least one phrase of the given list
+     *  e.g. for "Zurich (city)" and "Geneva (city)" all values related to the two cities are returned
+     *
+     *  TODO use order by in query
+     *  TODO use limit and page in query
+     *
+     * @param sql $sc with the target db_type set
+     * @param phrase_list $phr_lst phrase list to which all related values should be loaded
+     * @param bool $usr_tbl true if only the user overwrites should be loaded
+     * @param bool $or if true all values are returned that are linked to any phrase of the list
+     * @param int $limit the number of values that should be loaded at once
+     * @param int $page the offset for the limit
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_phr_lst(
+        sql         $sc,
+        phrase_list $phr_lst,
+        bool        $usr_tbl = false,
+        bool        $or = false,
+        int         $limit = sql_db::ROW_LIMIT,
+        int         $page = 0
+    ): sql_par
+    {
+        return parent::load_sql_by_phr_lst_multi($sc, $phr_lst, result::class, $usr_tbl, $or, $limit, $page);
+    }
+
+    /**
+     * the common query parameter to get a list of results
+     *
+     * @param sql $sc the sql creator instance with the target db_type already set
+     * @param string $query_name the name extension to make the query name unique
+     * @param sql_table_type $tbl_typ the table extension to force the sub table selection
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    private function load_sql(sql $sc, string $query_name, sql_table_type $tbl_typ = sql_table_type::MOST): sql_par
+    {
+        $qp = new sql_par(self::class, false, false, $tbl_typ->extension());
+        $qp->name .= $query_name;
+
+        $sc->set_class(result::class, false, $tbl_typ->extension());
+        // overwrite the standard id field name (result_id) with the main database id field for values "group_id"
+        $res = new result($this->user());
+        $sc->set_id_field($res->id_field_list($tbl_typ));
+        $sc->set_name($qp->name);
+
+        $sc->set_usr($this->user()->id());
+        $sc->set_fields(result::FLD_NAMES);
         return $qp;
     }
 
-    function load_by_phr_lst(sql_db $db_con, phrase_list $phr_lst): sql_par
+    /**
+     * load a list of results by the phrase group e.g. the results of other users
+     *
+     * @param sql $sc the sql creator instance with the target db_type already set
+     * @param group $grp the group of phrases to select the results
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_grp(sql $sc, group $grp): sql_par
     {
-        $qp = $this->load_by_phr_lst_sql($db_con, $phr_lst);
+        $ext = $grp->table_type();
+        $qp = $this->load_sql($sc, 'grp', $ext);
+        if ($grp->is_prime()) {
+            $fields = $grp->id_names();
+            $values = $grp->id_lst();
+            $pos = 0;
+            foreach ($fields as $field) {
+                $sc->add_where($field, $values[$pos], sql_par_type::INT_SMALL);
+                $pos++;
+            }
+        } elseif ($grp->is_big()) {
+            $sc->add_where(group::FLD_ID, $grp->id(), sql_par_type::TEXT);
+        } else {
+            $sc->add_where(group::FLD_ID, $grp->id());
+        }
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+        return $qp;
+    }
 
-        $qp->par = $db_con->get_par();
+    /**
+     * load a list of results by the source group e.g. to get the depending results
+     *
+     * @param sql $sc the sql creator instance with the target db_type already set
+     * @param group $grp the group of phrases to select the results
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_src_grp(sql $sc, group $grp): sql_par
+    {
+        $qp = $this->load_sql($sc, 'src_grp');
+        if ($grp->is_prime()) {
+            $sc->add_where(result::FLD_SOURCE_GRP, $grp->id(), sql_par_type::TEXT);
+        } elseif ($grp->is_big()) {
+            $sc->add_where(result::FLD_SOURCE_GRP, $grp->id(), sql_par_type::TEXT);
+        } else {
+            $sc->add_where(result::FLD_SOURCE_GRP, $grp->id());
+        }
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+        return $qp;
+    }
+
+    /**
+     * create the SQL statement to load the results created by the given formula
+     *
+     * @param sql $sc the sql creator instance with the target db_type already set
+     * @param formula $frm the formula to select the results
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+
+    private function load_sql_init_query_par(string $query_name): sql_par
+    {
+        $qp = new sql_par(result::class);
+        $lib = new library();
+        // TODO shorten the code
+        $ext_lst = array();
+        foreach (result::TBL_EXT_LST as $ext) {
+            $ext_lst[] = $ext->extension();
+        }
+        $qp->name =
+            $lib->class_to_name(self::class) .
+            implode("", $ext_lst) .
+            '_by_' . $query_name;
+        return $qp;
+    }
+
+
+    function load_sql_by_frm(sql $sc, formula $frm): sql_par
+    {
+        $qp = $this->load_sql_init_query_par('frm');
+        $par_types = array();
+        foreach (result::TBL_EXT_LST as $ext) {
+            $qp_tbl = $this->load_sql($sc, 'frm', $ext);
+            $sc->add_where(formula::FLD_ID, $frm->id());
+            $qp_tbl->sql = $sc->sql(0, true, false);
+            $qp_tbl->par = $sc->get_par();
+
+            $qp->merge($qp_tbl);
+        }
+
+        $qp->sql = $sc->prepare_sql($qp->sql, $qp->name, $par_types);
+
+        // loop over the tables where the result may be saved
+        // union the sql statements
+        // TODO create an array with the tables where a result could be found
+
         return $qp;
     }
 
@@ -99,12 +301,14 @@ class result_list extends sandbox_list
      *   and with or without time selection
      * a word or a triple
      *
+     * TODO: split to single functions and deprecate
+     *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param object $obj a named object used for selection e.g. a formula
      * @param bool $by_source set to true to force the selection e.g. by source phrase group id
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con, object $obj, bool $by_source = false): sql_par
+    function load_sql_by_obj(sql_db $db_con, object $obj, bool $by_source = false): sql_par
     {
         $qp = new sql_par(self::class);
         $sql_by = '';
@@ -112,11 +316,11 @@ class result_list extends sandbox_list
             if (get_class($obj) == formula::class
                 or get_class($obj) == formula_dsp::class) {
                 $sql_by .= formula::FLD_ID;
-            } elseif (get_class($obj) == phrase_group::class) {
+            } elseif (get_class($obj) == group::class) {
                 if ($by_source) {
                     $sql_by .= result::FLD_SOURCE_GRP;
                 } else {
-                    $sql_by .= phrase_group::FLD_ID;
+                    $sql_by .= group::FLD_ID;
                 }
             } elseif (get_class($obj) == word::class or get_class($obj) == word_dsp::class) {
                 $sql_by .= word::FLD_ID;
@@ -129,22 +333,25 @@ class result_list extends sandbox_list
                 ') must be set to load a ' . self::class, self::class . '->load_sql');
             $qp->name = '';
         } else {
-            $db_con->set_type(sql_db::TBL_RESULT);
+            $db_con->set_class(sql_db::TBL_RESULT);
+            // overwrite the standard id field name (result_id) with the main database id field for results "group_id"
+            $res = new result($this->user());
+            $db_con->set_id_field($res->id_field());
             $qp->name .= $sql_by;
-            $db_con->set_name(substr($qp->name, 0, 62));
+            $db_con->set_name($qp->name);
             $db_con->set_fields(result::FLD_NAMES);
             $db_con->set_usr($this->user()->id());
             if ($obj->id() > 0) {
                 if (get_class($obj) == formula::class) {
                     $db_con->add_par(sql_par_type::INT, $obj->id());
                     $qp->sql = $db_con->select_by_field_list(array(formula::FLD_ID));
-                } elseif (get_class($obj) == phrase_group::class) {
+                } elseif (get_class($obj) == group::class) {
                     $db_con->add_par(sql_par_type::INT, $obj->id());
                     $link_fields = array();
                     if ($by_source) {
                         $link_fields[] = result::FLD_SOURCE_GRP;
                     } else {
-                        $link_fields[] = phrase_group::FLD_ID;
+                        $link_fields[] = group::FLD_ID;
                     }
                     $qp->sql = $db_con->select_by_field_list($link_fields);
                 } elseif (get_class($obj) == word::class or get_class($obj) == word_dsp::class) {
@@ -152,7 +359,7 @@ class result_list extends sandbox_list
                     $db_con->add_par(sql_par_type::INT, $obj->id(), false, true);
                     $db_con->set_join_fields(
                         array(result::FLD_GRP),
-                        sql_db::TBL_PHRASE_GROUP_WORD_LINK,
+                        sql_db::TBL_GROUP_LINK,
                         result::FLD_GRP,
                         result::FLD_GRP);
                     $qp->sql = $db_con->select_by_field_list(array(word::FLD_ID));
@@ -174,6 +381,23 @@ class result_list extends sandbox_list
     }
 
     /**
+     * list of potential table extensions where a result may be saved
+     *
+     * @param array $ids value ids that should be selected
+     * @return array with the unique table extension where the values of the given id list may be found of the group ids
+     */
+    private function table_extension_list(array $ids): array
+    {
+        $grp_id = new group_id();
+        $tbl_ext_lst = array();
+        foreach ($ids as $id) {
+            $tbl_ext_lst[] = $grp_id->table_extension($id, true);
+        }
+
+        return array_unique($tbl_ext_lst);
+    }
+
+    /**
      * create the SQL to load a list of results link to a formula
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
@@ -182,22 +406,20 @@ class result_list extends sandbox_list
      */
     function load_by_frm_sql(sql_db $db_con, formula $frm): sql_par
     {
-        return $this->load_sql($db_con, $frm);
+        return $this->load_sql_by_obj($db_con, $frm);
     }
 
     /**
-     * load a list of results linked to a formula
+     * load a result list base on the given query parameters
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param formula $frm a named object used for selection e.g. a formula
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @param sql_par $qp the query parameters that should be used to get the data from the database
+     * @param bool $load_all
+     * @return bool
      */
-    function load_by_frm(formula $frm): bool
+    function load(sql_par $qp, bool $load_all = false): bool
     {
         global $db_con;
         $result = false;
-
-        $qp = $this->load_by_frm_sql($db_con, $frm);
         if ($qp->name != '') {
             $db_rows = $db_con->get($qp);
             if ($db_rows != null) {
@@ -209,8 +431,28 @@ class result_list extends sandbox_list
                 }
             }
         }
-
         return $result;
+    }
+
+    /**
+     * load a list of results linked to a phrase group
+     *   either of the source or the result
+     *   and with or without time selection
+     *
+     * @param group $grp the phrase group to select the results
+     * @param bool $by_source set to true to force the selection e.g. by source phrase group id
+     * @return bool true if value or phrases are found
+     */
+    function load_by_grp(group $grp, bool $by_source = false): bool
+    {
+        global $db_con;
+
+        if (!$by_source) {
+            $qp = $this->load_sql_by_grp($db_con->sql_creator(), $grp);
+        } else {
+            $qp = $this->load_sql_by_src_grp($db_con->sql_creator(), $grp);
+        }
+        return $this->load($qp);
     }
 
     /**
@@ -228,22 +470,9 @@ class result_list extends sandbox_list
     function load_by_obj(object $obj, bool $by_source = false): bool
     {
         global $db_con;
-        $result = false;
 
-        $qp = $this->load_sql($db_con, $obj, $by_source);
-        if ($qp->name != '') {
-            $db_rows = $db_con->get($qp);
-            if ($db_rows != null) {
-                foreach ($db_rows as $db_row) {
-                    $res = new result($this->user());
-                    $res->row_mapper($db_row);
-                    $this->add_obj($res);
-                    $result = true;
-                }
-            }
-        }
-
-        return $result;
+        $qp = $this->load_sql_by_obj($db_con, $obj, $by_source);
+        return $this->load($qp);
     }
 
 
@@ -482,7 +711,7 @@ class result_list extends sandbox_list
      */
     function frm_upd_lst_usr(
         formula $frm,
-                       $phr_lst_frm_assigned, $phr_lst_frm_used, $phr_grp_lst_used, $usr, $last_msg_time, $collect_pos)
+                $phr_lst_frm_assigned, $phr_lst_frm_used, $phr_grp_lst_used, $usr, $last_msg_time, $collect_pos)
     {
         $lib = new library();
         log_debug('res_lst->frm_upd_lst_usr(' . $frm->name() . ',fat' . $phr_lst_frm_assigned->name() . ',ft' . $phr_lst_frm_used->name() . ',' . $usr->name . ')');
@@ -707,7 +936,7 @@ class result_list extends sandbox_list
         // this is a kind of word group list, where for each word group list several results are possible,
         // because there may be one value and several results for the same word group
         log_debug('get all values used in the formula ' . $frm->usr_text . ' that are related to one of the phrases assigned ' . $phr_lst_frm_assigned->dsp_name());
-        $phr_grp_lst_val = new phrase_group_list($this->user()); // by default the calling user is used, but if needed the value for other users also needs to be updated
+        $phr_grp_lst_val = new group_list($this->user()); // by default the calling user is used, but if needed the value for other users also needs to be updated
         $phr_grp_lst_val->get_by_val_with_one_phr_each($phr_lst_frm_assigned, $phr_lst_frm_used, $phr_frm, $phr_lst_res);
         $phr_grp_lst_val->get_by_res_with_one_phr_each($phr_lst_frm_assigned, $phr_lst_frm_used, $phr_frm, $phr_lst_res);
         $phr_grp_lst_val->get_by_val_special($phr_lst_frm_assigned, $phr_lst_preset, $phr_frm, $phr_lst_res); // for predefined formulas ...
@@ -775,7 +1004,7 @@ class result_list extends sandbox_list
 
         // list all related formula results
         $formula_links = '';
-        $sql = "SELECT l.formula_id, f.formula_text FROM value_formula_links l, formulas f WHERE l.value_id = " . $val->id() . " AND l.formula_id = f.formula_id;";
+        $sql = "SELECT l.formula_id, f.formula_text FROM value_formula_links l, formulas f WHERE l.group_id = " . $val->id() . " AND l.formula_id = f.formula_id;";
         //$db_con = New mysql;
         $db_con->usr_id = $this->user()->id();
         $db_lst = $db_con->get_old($sql);

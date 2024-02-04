@@ -31,6 +31,8 @@
 
 namespace cfg;
 
+use cfg\db\sql_db;
+
 include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
 
 class sandbox_typed extends sandbox_named

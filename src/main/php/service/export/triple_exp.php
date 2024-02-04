@@ -29,7 +29,9 @@
   
 */
 
-namespace model\export;
+namespace cfg\export;
+
+include_once SERVICE_EXPORT_PATH . 'sandbox_exp_link.php';
 
 use JsonSerializable;
 
@@ -45,7 +47,7 @@ class triple_exp extends sandbox_exp_link implements JsonSerializable
     public ?string $view = '';
     public ?array $refs = null;
 
-    function reset()
+    function reset(): void
     {
         parent::reset();
 

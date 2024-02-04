@@ -30,12 +30,13 @@
 
 */
 
-namespace api;
+namespace api\system;
 
-use cfg\phrase_type;
+use api\sandbox\list_object as list_api;
+use api\system\batch_job as batch_job_api;
 use JsonSerializable;
 
-class batch_job_list_api extends list_api implements JsonSerializable
+class batch_job_list extends list_api implements JsonSerializable
 {
 
     /*
@@ -85,9 +86,9 @@ class batch_job_list_api extends list_api implements JsonSerializable
      * and delete list of "2016", "2017","2018"
      * the result is "2014", "2015"
      *
-     * @param batch_job_list_api $del_lst is the list of phrases that should be removed from this list object
+     * @param batch_job_list $del_lst is the list of phrases that should be removed from this list object
      */
-    private function diff(batch_job_list_api $del_lst): void
+    private function diff(batch_job_list $del_lst): void
     {
         if (!$this->is_empty()) {
             $result = array();
@@ -103,9 +104,9 @@ class batch_job_list_api extends list_api implements JsonSerializable
 
     /**
      * merge as a function, because the array_merge does not create an object
-     * @param batch_job_list_api $new_wrd_lst with the batch_jobs that should be added
+     * @param batch_job_list $new_wrd_lst with the batch_jobs that should be added
      */
-    function merge(batch_job_list_api $new_wrd_lst)
+    function merge(batch_job_list $new_wrd_lst): void
     {
         foreach ($new_wrd_lst->lst() as $new_wrd) {
             $this->add($new_wrd);

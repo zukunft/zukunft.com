@@ -30,12 +30,13 @@
 
 */
 
-namespace api;
+namespace api\formula;
 
+use api\sandbox\list_object as list_api;
 use html\formula\formula_list as formula_list_dsp;
 use JsonSerializable;
 
-class formula_list_api extends list_api implements JsonSerializable
+class formula_list extends list_api implements JsonSerializable
 {
 
     /*
@@ -51,7 +52,7 @@ class formula_list_api extends list_api implements JsonSerializable
      * add a formula to the list
      * @returns bool true if the formula has been added
      */
-    function add(formula_api $frm): bool
+    function add(formula $frm): bool
     {
         return parent::add_obj($frm);
     }
@@ -112,9 +113,9 @@ class formula_list_api extends list_api implements JsonSerializable
      * and delete list of "2016", "2017","2018"
      * the result is "2014", "2015"
      *
-     * @param formula_list_api $del_lst is the list of phrases that should be removed from this list object
+     * @param formula_list $del_lst is the list of phrases that should be removed from this list object
      */
-    private function diff(formula_list_api $del_lst): void
+    private function diff(formula_list $del_lst): void
     {
         if (!$this->is_empty()) {
             $result = array();
@@ -130,9 +131,9 @@ class formula_list_api extends list_api implements JsonSerializable
 
     /**
      * merge as a function, because the array_merge does not create an object
-     * @param formula_list_api $new_wrd_lst with the formulas that should be added
+     * @param formula_list $new_wrd_lst with the formulas that should be added
      */
-    function merge(formula_list_api $new_wrd_lst): void
+    function merge(formula_list $new_wrd_lst): void
     {
         foreach ($new_wrd_lst->lst() as $new_wrd) {
             $this->add($new_wrd);
@@ -141,11 +142,11 @@ class formula_list_api extends list_api implements JsonSerializable
 
     /**
      * @param string $type the ENUM string of the fixed type
-     * @return formula_list_api with the all formulas of the give type
+     * @return formula_list with the all formulas of the give type
      */
-    private function filter(string $type): formula_list_api
+    private function filter(string $type): formula_list
     {
-        $result = new formula_list_api();
+        $result = new formula_list();
         foreach ($this->lst() as $frm) {
             if ($frm->is_type($type)) {
                 $result->add($frm);

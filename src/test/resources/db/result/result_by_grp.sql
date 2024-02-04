@@ -1,11 +1,9 @@
-PREPARE result_by_grp (int) AS
-    SELECT result_id,
+PREPARE result_by_grp (text) AS
+    SELECT group_id,
            formula_id,
            user_id,
-           source_phrase_group_id,
-           phrase_group_id,
-           result,
-           last_update,
-           dirty
+           source_group_id,
+           numeric_value,
+           last_update
       FROM results
-     WHERE phrase_group_id = $1;
+     WHERE group_id = $1;

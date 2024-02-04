@@ -37,7 +37,7 @@ include_once WEB_FIGURE_PATH . 'figure_list.php';
 use cfg\fig_ids;
 use cfg\figure;
 use cfg\figure_list;
-use cfg\sql_db;
+use cfg\db\sql_db;
 use html\figure\figure_list as figure_list_dsp;
 
 class figure_list_unit_tests

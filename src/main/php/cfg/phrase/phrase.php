@@ -61,9 +61,12 @@ include_once MODEL_WORD_PATH . 'triple.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 
 use api\api;
-use api\phrase_api;
-use cfg\db\sql_creator;
-use html\html_selector;
+use api\phrase\phrase as phrase_api;
+use cfg\db\sql;
+use cfg\db\sql_db;
+use cfg\db\sql_par;
+use cfg\group\group_list;
+use cfg\value\value_list;
 use html\phrase\phrase as phrase_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\word\triple as triple_dsp;
@@ -415,6 +418,18 @@ class phrase extends combine_named
         return $dsp_obj;
     }
 
+    /**
+     * @return object|null
+     */
+    function word(): object|null
+    {
+        if ($this->is_word()) {
+            return $this->obj();
+        } else {
+            return null;
+        }
+    }
+
     function term(): term
     {
         $trm = new term($this->user());
@@ -459,17 +474,17 @@ class phrase extends combine_named
      * create the common part of an SQL statement to retrieve a phrase from the database view
      * uses the phrase view which includes only the most relevant fields of words or triples
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $query_name the name of the query use to prepare and call the query
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     private
-    function load_sql(sql_creator $sc, string $query_name): sql_par
+    function load_sql(sql $sc, string $query_name): sql_par
     {
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
 
-        $sc->set_type(self::class);
+        $sc->set_class(self::class);
         $sc->set_name($qp->name);
 
         $sc->set_fields(self::FLD_NAMES);
@@ -482,12 +497,12 @@ class phrase extends combine_named
     /**
      * create an SQL statement to retrieve a phrase by phrase id (not the object id) from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param int $id the id of the phrase as defined in the database phrase view
      * @param string $class the name of this class
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql_creator $sc, int $id, string $class = self::class): sql_par
+    function load_sql_by_id(sql $sc, int $id, string $class = self::class): sql_par
     {
         $qp = $this->load_sql($sc, sql_db::FLD_ID);
         $sc->add_where(phrase::FLD_ID, $id);
@@ -500,12 +515,12 @@ class phrase extends combine_named
     /**
      * create an SQL statement to retrieve a phrase by name from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $name the name of the phrase and the related word, triple, formula or verb
      * @param string $class the name of this class
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_name(sql_creator $sc, string $name, string $class = self::class): sql_par
+    function load_sql_by_name(sql $sc, string $name, string $class = self::class): sql_par
     {
         $qp = $this->load_sql($sc, sql_db::FLD_NAME);
         $sc->add_where(phrase::FLD_NAME, $name);
@@ -582,14 +597,6 @@ class phrase extends combine_named
         return $this->load($qp);
     }
 
-    /**
-     * @return string with the id field name of the phrase
-     */
-    function id_field(): string
-    {
-        return self::FLD_ID;
-    }
-
     function name_field(): string
     {
         return self::FLD_NAME;
@@ -616,7 +623,7 @@ class phrase extends combine_named
         if ($this->id() < 0) {
             $lnk = $this->obj;
             $lnk->load_objects(); // try to be on the save side, and it is anyway checked if loading is really needed
-            $result = $lnk->from;
+            $result = $lnk->fob;
         } elseif ($this->id() > 0) {
             $result = $this->obj;
         } else {
@@ -628,13 +635,15 @@ class phrase extends combine_named
 
     /**
      * to enable the recursive function in work_link
+     * TODO add a list of triple already splitted to detect endless loops
      */
     function wrd_lst(): word_list
     {
         $wrd_lst = new word_list($this->user());
-        if ($this->id() < 0) {
-            $sub_wrd_lst = $this->wrd_lst();
-            foreach ($sub_wrd_lst as $wrd) {
+        if ($this->is_triple()) {
+            $trp = $this->obj();
+            $sub_wrd_lst = $trp->wrd_lst();
+            foreach ($sub_wrd_lst->lst() as $wrd) {
                 $wrd_lst->add($wrd);
             }
         } else {
@@ -673,7 +682,7 @@ class phrase extends combine_named
     {
         global $db_con;
 
-        $db_con->set_type(sql_db::TBL_FORMULA_LINK);
+        $db_con->set_class(sql_db::TBL_FORMULA_LINK);
         $qp = new sql_par(self::class);
         $qp->name = 'phrase_formula_by_id';
         $db_con->set_name($qp->name);
@@ -821,9 +830,7 @@ class phrase extends combine_named
         $lib = new library();
         log_debug('for ' . $this->dsp_id() . ' and user "' . $this->user()->name . '"');
         $val_lst = new value_list($this->user());
-        $val_lst->phr = $this;
-        $val_lst->limit = SQL_ROW_MAX;
-        $val_lst->load_old();
+        $val_lst->load_by_phr($this);
         log_debug('got ' . $lib->dsp_count($val_lst->lst()));
         return $val_lst;
     }
@@ -877,9 +884,9 @@ class phrase extends combine_named
         return $phr_lst->foaf_related();
     }
 
-    function groups(): phrase_group_list
+    function groups(): group_list
     {
-        $lst = new phrase_group_list($this->user());
+        $lst = new group_list($this->user());
         $lst->load_by_phr($this);
         return $lst;
     }
@@ -1206,7 +1213,7 @@ class phrase extends combine_named
                 $label = "Word:";
             }
         }
-        // TODO activate
+        // TODO activate Prio 3
         // $sel->bs_class = $class;
         // $sel->dummy_text = '... please select';
         return $phr_lst->selector($field_name, $form_name, $label, '', $this->id());
@@ -1237,8 +1244,7 @@ class phrase extends combine_named
 
     function is_time()
     {
-        $wrd = $this->main_word();
-        return $wrd->is_time();
+        return $this->obj()->is_time();
     }
 
 // return true if the word has the type "measure" (e.g. "meter" or "CHF")
@@ -1306,7 +1312,7 @@ class phrase extends combine_named
         //$link_id = cl(db_cl::VERB, verb::FOLLOW);
         //$db_con = new mysql;
         $db_con->usr_id = $this->user()->id();
-        $db_con->set_type(sql_db::TBL_TRIPLE);
+        $db_con->set_class(sql_db::TBL_TRIPLE);
         $key_result = $db_con->get_value_2key('from_phrase_id', 'to_phrase_id', $this->id(), verb::FLD_ID, $link_id);
         if (is_numeric($key_result)) {
             $id = intval($key_result);
@@ -1335,7 +1341,7 @@ class phrase extends combine_named
         //$link_id = cl(db_cl::VERB, verb::FOLLOW);
         //$db_con = new mysql;
         $db_con->usr_id = $this->user()->id();
-        $db_con->set_type(sql_db::TBL_TRIPLE);
+        $db_con->set_class(sql_db::TBL_TRIPLE);
         $key_result = $db_con->get_value_2key('to_phrase_id', 'from_phrase_id', $this->id(), verb::FLD_ID, $link_id);
         if (is_numeric($key_result)) {
             $id = intval($key_result);

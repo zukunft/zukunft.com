@@ -32,7 +32,7 @@
 
 namespace cfg;
 
-use cfg\db\sql_creator;
+use cfg\db\sql;
 use cfg\db\sql_par_type;
 
 include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';

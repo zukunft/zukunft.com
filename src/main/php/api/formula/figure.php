@@ -30,13 +30,16 @@
 
 */
 
-namespace api;
+namespace api\formula;
 
 include_once API_SANDBOX_PATH . 'combine_object.php';
 
+use api\result\result as result_api;
+use api\sandbox\combine_object as combine_object_api;
+use api\value\value as value_api;
 use JsonSerializable;
 
-class figure_api extends combine_object_api implements JsonSerializable
+class figure extends combine_object_api implements JsonSerializable
 {
 
     // the json field name in the api json message to identify if the figure is a value or result
@@ -69,7 +72,7 @@ class figure_api extends combine_object_api implements JsonSerializable
 
     /**
      * @return int the id of the containing object
-     * e.g if the figure id is  1 and the object is a value  with id 1 simply 1 is returned
+     * e.g. if the figure id is  1 and the object is a value  with id 1 simply 1 is returned
      * but if the figure id is -1 and the object is a result with id 1   also 1 is returned
      */
     function id_obj(): int

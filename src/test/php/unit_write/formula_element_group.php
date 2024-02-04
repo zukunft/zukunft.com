@@ -39,8 +39,8 @@
 
 namespace test\write;
 
-use api\formula_api;
-use api\word_api;
+use api\formula\formula as formula_api;
+use api\word\word as word_api;
 use html\figure\figure as figure_dsp;
 use html\value\value as value_dsp;
 use cfg\library;

@@ -35,13 +35,14 @@
 
 namespace cfg;
 
-include_once MODEL_HELPER_PATH . 'db_object_user.php';
+include_once MODEL_HELPER_PATH . 'db_object_seq_id_user.php';
 
-use cfg\db\sql_creator;
+use cfg\db\sql;
+use cfg\db\sql_par;
 use html\word\word as word_dsp;
 use html\formula\formula as formula_dsp;
 
-class formula_element extends db_object_user
+class formula_element extends db_object_seq_id_user
 {
 
     // the allowed objects types for a formula element
@@ -134,7 +135,7 @@ class formula_element extends db_object_user
      */
     function id(): int
     {
-        return $this->obj?->id;
+        return $this->obj?->id();
     }
 
 
@@ -145,16 +146,16 @@ class formula_element extends db_object_user
     /**
      * create the common part of an SQL statement to get the formula element from the database
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param string $query_name the name of the query use to prepare and call the query
      * @param string $class the name of this class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    protected function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
+    function load_sql(sql $sc, string $query_name, string $class = self::class): sql_par
     {
         $qp = parent::load_sql($sc, $query_name, $class);
 
-        $sc->set_type($class);
+        $sc->set_class($class);
         $sc->set_name($qp->name);
         $sc->set_fields(self::FLD_NAMES);
 
@@ -212,14 +213,13 @@ class formula_element extends db_object_user
      * create an SQL statement to retrieve a formula element by id from the database
      * just set the class formula element for the parent function
      *
-     * @param sql_creator $sc with the target db_type set
+     * @param sql $sc with the target db_type set
      * @param int $id the id of the user sandbox object
-     * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql_creator $sc, int $id, string $class = self::class): sql_par
+    function load_sql_by_id(sql $sc, int $id): sql_par
     {
-        return parent::load_sql_by_id($sc, $id, self::class);
+        return parent::load_sql_by_id($sc, $id);
     }
 
     /*
