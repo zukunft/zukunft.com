@@ -3,7 +3,7 @@
 /*
 
     test/unit/result_list.php - unit testing of the FORMULA VALUE functions
-    --------------------------------
+    -------------------------
   
 
     This file is part of zukunft.com - calc with words
@@ -30,10 +30,9 @@
 
 */
 
-namespace test;
+namespace unit;
 
 use cfg\db\sql;
-use cfg\formula;
 use cfg\group\group;
 use cfg\result\result_list;
 use cfg\db\sql_db;
@@ -41,8 +40,9 @@ use cfg\triple;
 use cfg\user;
 use cfg\word;
 use html\result\result_list as result_list_dsp;
+use test\test_cleanup;
 
-class result_list_unit_tests
+class result_list_tests
 {
 
     function run(test_cleanup $t): void
@@ -52,10 +52,8 @@ class result_list_unit_tests
 
         // init
         $db_con = new sql_db();
-        $t->name = 'result->';
+        $t->name = 'result_list->';
         $t->resource_path = 'db/result/';
-        $json_file = 'unit/result/result_list_import_part.json';
-        $usr->set_id(1);
 
 
         $t->header('Unit tests of the result list class (src/main/php/model/formula/result_list.php)');
@@ -103,6 +101,7 @@ class result_list_unit_tests
 
         $t->subheader('Im- and Export tests');
 
+        $json_file = 'unit/result/result_list_import_part.json';
         $t->assert_json_file(new result_list($usr), $json_file);
 
 

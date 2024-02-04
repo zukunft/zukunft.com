@@ -33,7 +33,7 @@ namespace cfg\result;
 
 include_once DB_PATH . 'sql_par_type.php';
 include_once DB_PATH . 'sql_table_type.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_value_list.php';
 include_once API_RESULT_PATH . 'result_list.php';
 
 use api\result\result_list as result_list_api;
@@ -49,9 +49,8 @@ use cfg\group\group;
 use cfg\group\group_id;
 use cfg\group\group_list;
 use cfg\library;
-use cfg\phrase;
 use cfg\phrase_list;
-use cfg\sandbox_list;
+use cfg\sandbox_value_list;
 use cfg\triple;
 use cfg\user_list;
 use cfg\user_message;
@@ -64,7 +63,7 @@ use html\phrase\phrase_list as phrase_list_dsp;
 use html\system\back_trace;
 use html\word\word as word_dsp;
 
-class result_list extends sandbox_list
+class result_list extends sandbox_value_list
 {
 
     /*
@@ -95,6 +94,49 @@ class result_list extends sandbox_list
      */
 
     /**
+     * if $or is false or null
+     * load a list of result that are linked to each phrase of the given list
+     * e.g. for "city", "inhabitants" and "increase" the yearly increase of the city inhabitants are returned
+     *      to get the inhabitants of the cities itself first get a phrase list of all cities
+     *
+     * if $or is true
+     * load a list of result that are related to at least one phrase of the given list
+     *  e.g. for "Zurich (city)" and "Geneva (city)" all calculated values related to the two cities are returned
+     *
+     *  TODO use order by in query
+     *  TODO use limit and page in query
+     *
+     * @param phrase_list $phr_lst phrase list to which all related values should be loaded
+     * @param bool $or if true all values are returned that are linked to any phrase of the list
+     * @param int $limit the number of values that should be loaded at once
+     * @param int $page the offset for the limit
+     * @return bool true if at least one value found
+     */
+    function load_by_phr_lst(
+        phrase_list $phr_lst,
+        bool        $or = false,
+        int         $limit = sql_db::ROW_LIMIT,
+        int         $page = 0
+    ): bool
+    {
+        return parent::load_by_phr_lst_multi($phr_lst, result::class, $or, $limit, $page);
+    }
+
+    /**
+     * load a list of results linked to a formula
+     *
+     * @param formula $frm a named object used for selection e.g. a formula
+     * @return bool true if loading has been successful
+     */
+    function load_by_frm(formula $frm): bool
+    {
+        global $db_con;
+
+        $qp = $this->load_by_frm_sql($db_con, $frm);
+        return $this->load($qp);
+    }
+
+    /**
      * load a list of results that are linked to each phrase of the given list
      * e.g. for "city", "inhabitants" and "increase" all yearly increases of city inhabitants are returned
      *      to get the inhabitants of the cities itself first get a phrase list of all cities
@@ -108,13 +150,17 @@ class result_list extends sandbox_list
      *
      * @param phrase_list $phr_lst phrase list to which all related values should be loaded
      * @param bool $or if true all values are returned that are linked to any phrase of the list
-     * @return bool true if at least one value found
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_by_phr_lst(phrase_list $phr_lst, bool $or = false, int $limit = sql_db::ROW_LIMIT): sql_par
+    function load_sql_by_phr_lst(
+        sql         $sc,
+        phrase_list $phr_lst,
+        bool        $or = false,
+        int         $limit = sql_db::ROW_LIMIT
+    ): sql_par
     {
         global $db_con;
-
-        $qp = $this->load_sql_by_phr_lst($db_con, $phr_lst);
+        $qp = $this->load_sql($sc, 'phr_lst');
 
         $qp->par = $db_con->get_par();
         return $qp;
@@ -239,14 +285,6 @@ class result_list extends sandbox_list
         // union the sql statements
         // TODO create an array with the tables where a result could be found
 
-        return $qp;
-    }
-
-    function load_sql_by_phr_lst(sql_db $db_con, phrase_list $phr_lst): sql_par
-    {
-        $qp = $this->load_sql($db_con->sql_creator(), 'phr_lst');
-
-        $qp->par = $db_con->get_par();
         return $qp;
     }
 
@@ -410,20 +448,6 @@ class result_list extends sandbox_list
         } else {
             $qp = $this->load_sql_by_src_grp($db_con->sql_creator(), $grp);
         }
-        return $this->load($qp);
-    }
-
-    /**
-     * load a list of results linked to a formula
-     *
-     * @param formula $frm a named object used for selection e.g. a formula
-     * @return bool true if loading has been successful
-     */
-    function load_by_frm(formula $frm): bool
-    {
-        global $db_con;
-
-        $qp = $this->load_by_frm_sql($db_con, $frm);
         return $this->load($qp);
     }
 

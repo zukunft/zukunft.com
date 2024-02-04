@@ -128,6 +128,7 @@ use unit\html\view as view_html_tests;
 use unit\html\view_list as view_list_html_tests;
 use unit\html\word as word_html_tests;
 use unit\html\word_list as word_list_html_tests;
+use unit\result_list_tests;
 
 class test_unit extends test_cleanup
 {
@@ -236,7 +237,7 @@ class test_unit extends test_cleanup
         (new formula_element_unit_tests)->run($this);
         (new expression_unit_tests)->run($this);
         (new result_unit_tests)->run($this);
-        (new result_list_unit_tests)->run($this);
+        (new result_list_tests)->run($this);
         (new figure_unit_tests)->run($this);
         (new figure_list_unit_tests)->run($this);
         (new view_unit_tests)->run($this);

@@ -69,7 +69,9 @@ use cfg\library;
 use cfg\parameter_type;
 use cfg\phr_ids;
 use cfg\phrase_list;
+use cfg\sandbox;
 use cfg\sandbox_value;
+use cfg\source;
 use cfg\user;
 use cfg\user_message;
 use cfg\value\value;
@@ -94,6 +96,35 @@ class result extends sandbox_value
     const FLD_VALUE = 'numeric_value';
     const FLD_LAST_UPDATE = 'last_update';
     const FLD_DIRTY = 'dirty';
+    const FLD_NAMES_STD = array(
+        self::FLD_VALUE,
+        source::FLD_ID,
+    );
+    // list of the user specific numeric database field names
+    const FLD_NAMES_NUM_USR_EX_STD = array(
+        sandbox::FLD_EXCLUDED,
+        sandbox::FLD_PROTECT
+    );
+    // list of the user specific datetime database field names
+    const FLD_NAMES_DATE_USR_EX_STD = array(
+        self::FLD_LAST_UPDATE
+    );
+    // list of the user specific numeric database field names
+    const FLD_NAMES_NUM_USR = array(
+        self::FLD_VALUE,
+        source::FLD_ID,
+        self::FLD_LAST_UPDATE,
+        sandbox::FLD_EXCLUDED,
+        sandbox::FLD_PROTECT
+    );
+    // list of field names that are only on the user sandbox row
+    // e.g. the standard result does not need the share type, because it is by definition public
+    // (even if share types within a group of users needs to be defined,
+    // the value for the user group are also user sandbox table)
+    const FLD_NAMES_USR_ONLY = array(
+        sandbox::FLD_CHANGE_USER,
+        sandbox::FLD_SHARE
+    );
 
     // database table extensions used
     // TODO add a similar list to the value class
