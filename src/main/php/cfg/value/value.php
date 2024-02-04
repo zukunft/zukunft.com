@@ -133,6 +133,10 @@ class value extends sandbox_value
         self::FLD_VALUE,
         source::FLD_ID,
     );
+    // fields that are not part of the standard result table, but that needs to be included for a correct union field match
+    const FLD_NAMES_STD_DUMMY = array(
+        user::FLD_ID,
+    );
     // list of the user specific numeric database field names
     const FLD_NAMES_NUM_USR_EX_STD = array(
         sandbox::FLD_EXCLUDED,

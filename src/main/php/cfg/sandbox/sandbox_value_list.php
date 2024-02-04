@@ -115,8 +115,14 @@ class sandbox_value_list extends sandbox_list
         int         $page = 0
     ): sql_par
     {
+        // differences between value and result list
+        $list_class = value_list::class;
+        if ($class != value::class) {
+            $list_class = result_list::class;
+        }
+
         $lib = new library();
-        $qp = new sql_par(value::class);
+        $qp = new sql_par($class);
         $name_ext = 'phr_lst';
         if ($usr_tbl) {
             $name_ext .= '_usr';
@@ -125,7 +131,7 @@ class sandbox_value_list extends sandbox_list
             $name_ext .= '_all';
         }
         $name_count = '_p' . $phr_lst->count();
-        $qp->name = $lib->class_to_name(value_list::class) . '_by_' . $name_ext . $name_count;
+        $qp->name = $lib->class_to_name($list_class) . '_by_' . $name_ext . $name_count;
         $par_types = array();
         // loop over the possible tables where the value might be stored in this pod
         $par_pos = 2;
@@ -224,14 +230,16 @@ class sandbox_value_list extends sandbox_list
         $list_class = value_list::class;
         $fld_lst = value::FLD_NAMES;
         $fld_lst_std = value::FLD_NAMES_STD;
+        $fld_lst_std_dummy = value::FLD_NAMES_STD_DUMMY;
         $fld_lst_usr_ex_std = value::FLD_NAMES_DATE_USR_EX_STD;
         $fld_lst_usr_num_ex_std = value::FLD_NAMES_NUM_USR_EX_STD;
         $fld_lst_usr_num = value::FLD_NAMES_NUM_USR;
         $fld_lst_usr_only = value::FLD_NAMES_USR_ONLY;
         if ($class != value::class) {
             $list_class = result_list::class;
-            $fld_lst = result::FLD_NAMES;
+            $fld_lst = result::FLD_NAMES_ALL;
             $fld_lst_std = result::FLD_NAMES_STD;
+            $fld_lst_std_dummy = result::FLD_NAMES_STD_DUMMY;
             $fld_lst_usr_ex_std = result::FLD_NAMES_DATE_USR_EX_STD;
             $fld_lst_usr_num_ex_std = result::FLD_NAMES_NUM_USR_EX_STD;
             $fld_lst_usr_num = result::FLD_NAMES_NUM_USR;
@@ -262,7 +270,7 @@ class sandbox_value_list extends sandbox_list
         $sc->set_fields($fld_lst);
         if ($is_std) {
             // TODO replace next line with union select field name synchronisation
-            $sc->set_fields_num_dummy(array(user::FLD_ID));
+            $sc->set_fields_num_dummy($fld_lst_std_dummy);
             $sc->set_fields($fld_lst_std);
             $sc->set_fields_date_dummy($fld_lst_usr_ex_std);
             $sc->set_fields_dummy(array_merge($fld_lst_usr_num_ex_std, $fld_lst_usr_only));

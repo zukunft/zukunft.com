@@ -136,6 +136,8 @@ class result_list extends sandbox_value_list
         return $this->load($qp);
     }
 
+    // internal load
+
     /**
      * load a list of results that are linked to each phrase of the given list
      * e.g. for "city", "inhabitants" and "increase" all yearly increases of city inhabitants are returned
@@ -148,22 +150,24 @@ class result_list extends sandbox_value_list
      *  TODO use order by in query
      *  TODO use limit and page in query
      *
+     * @param sql $sc with the target db_type set
      * @param phrase_list $phr_lst phrase list to which all related values should be loaded
+     * @param bool $usr_tbl true if only the user overwrites should be loaded
      * @param bool $or if true all values are returned that are linked to any phrase of the list
+     * @param int $limit the number of values that should be loaded at once
+     * @param int $page the offset for the limit
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_by_phr_lst(
         sql         $sc,
         phrase_list $phr_lst,
+        bool        $usr_tbl = false,
         bool        $or = false,
-        int         $limit = sql_db::ROW_LIMIT
+        int         $limit = sql_db::ROW_LIMIT,
+        int         $page = 0
     ): sql_par
     {
-        global $db_con;
-        $qp = $this->load_sql($sc, 'phr_lst');
-
-        $qp->par = $db_con->get_par();
-        return $qp;
+        return parent::load_sql_by_phr_lst_multi($sc, $phr_lst, result::class, $usr_tbl, $or, $limit, $page);
     }
 
     /**

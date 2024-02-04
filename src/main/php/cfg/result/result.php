@@ -96,9 +96,30 @@ class result extends sandbox_value
     const FLD_VALUE = 'numeric_value';
     const FLD_LAST_UPDATE = 'last_update';
     const FLD_DIRTY = 'dirty';
-    const FLD_NAMES_STD = array(
+
+    // all database field names excluding the id and excluding the user specific fields
+    const FLD_NAMES = array(
+        formula::FLD_ID,
+        user::FLD_ID,
+        self::FLD_SOURCE_GRP,
         self::FLD_VALUE,
-        source::FLD_ID,
+        self::FLD_LAST_UPDATE
+    );
+    const FLD_NAMES_ALL = array(
+        formula::FLD_ID,
+        user::FLD_ID,
+        self::FLD_SOURCE_GRP,
+    );
+    const FLD_NAMES_STD = array(
+        formula::FLD_ID,
+        self::FLD_SOURCE_GRP,
+        self::FLD_VALUE,
+    );
+    // fields that are not part of the standard result table, but that needs to be included for a correct union field match
+    const FLD_NAMES_STD_DUMMY = array(
+        user::FLD_ID,
+        formula::FLD_ID,
+        self::FLD_SOURCE_GRP,
     );
     // list of the user specific numeric database field names
     const FLD_NAMES_NUM_USR_EX_STD = array(
@@ -112,7 +133,6 @@ class result extends sandbox_value
     // list of the user specific numeric database field names
     const FLD_NAMES_NUM_USR = array(
         self::FLD_VALUE,
-        source::FLD_ID,
         self::FLD_LAST_UPDATE,
         sandbox::FLD_EXCLUDED,
         sandbox::FLD_PROTECT
@@ -134,14 +154,6 @@ class result extends sandbox_value
         sql_table_type::BIG
     );
 
-    // all database field names used
-    const FLD_NAMES = array(
-        formula::FLD_ID,
-        user::FLD_ID,
-        self::FLD_SOURCE_GRP,
-        self::FLD_VALUE,
-        self::FLD_LAST_UPDATE
-    );
     const FLD_ALL_CHANGED = array(
         [value::FLD_LAST_UPDATE, sql_field_type::TIME, sql_field_default::NULL, '', '', 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation'],
         [formula::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, formula::class, 'the id of the formula which has been used to calculate this result'],

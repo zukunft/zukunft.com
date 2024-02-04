@@ -60,8 +60,11 @@ class result_list_tests
 
         $t->subheader('SQL creation tests');
 
-        // sql to load a list of results by the phrase group id
+        // sql to load a list of results by ...
         $res_lst = new result_list($usr);
+        // ... a related to all phrases of a list e.g. the inhabitants of Canton Zurich over time
+        $phr_lst = $t->dummy_phrase_list_zh();
+        $t->assert_sql_by_phr_lst($db_con, $res_lst, $phr_lst);
         $grp = new group($usr);
         $grp->set_id(2);
         $t->assert_sql_by_group($db_con, $res_lst, $grp);
