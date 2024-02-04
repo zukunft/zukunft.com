@@ -133,6 +133,11 @@ class phrase_list_unit_tests
         $t->subheader('FOAF unit tests');
 
         $test_name = 'test the verb "are" by getting the phrases that are a city';
+        $wrd_city = $t->city_word();
+        $city_lst = $wrd_city->are($t->phrase_list_all());
+        $target = $t->phrase_list_cities();
+        // TODO activate Prio 2
+        //$t->assert_contains($test_name, $city_lst->names(), $target->names());
 
 
         $t->subheader('API unit tests');

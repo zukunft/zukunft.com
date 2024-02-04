@@ -152,6 +152,14 @@ class word_unit_db_tests
         $t->assert('add_id', $wrd_lst->name(), '"' . word_api::TN_READ . '","' . word_api::TN_MIO . '"');
 
 
+        $t->subheader('FOAF read tests');
+
+        // TODO review all tests base on this one
+        $test_name = 'The list von cities must contain at least Zurich, Bern ans Geneva';
+        $city_lst = $t->city_word()->are();
+        $t->assert_contains($test_name, $city_lst->names(), $t->phrase_list_cities()->wrd_lst_all()->names());
+
+
         $t->header('Unit database tests of the triple class (src/main/php/model/word/triple.php)');
         $t->name = 'triple read db->';
 

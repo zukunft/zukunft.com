@@ -37,6 +37,7 @@ use cfg\config;
 use cfg\phrase;
 use cfg\value\value;
 use cfg\value\value_list;
+use api\value\value as value_api;
 use cfg\word;
 
 class value_list_unit_db_tests
@@ -91,9 +92,7 @@ class value_list_unit_db_tests
         $phr_lst = $t->dummy_phrase_list_zh();
         $val_lst->load_by_phr_lst($phr_lst);
         $result = $val_lst->dsp_id();
-        $target = '"" 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -2,,,) for user 2 (zukunft.com system test)';
-        // TODO activate Prio 1
-        //$t->assert($test_name, $result, $target);
+        $t->assert_text_contains($test_name, $result, value_api::TV_CITY_ZH_INHABITANTS_2019);
 
         // load values related to any phrase of a list
         $test_name = 'Load the list of math const';

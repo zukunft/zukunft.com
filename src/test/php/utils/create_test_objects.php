@@ -148,6 +148,7 @@ use test\write\word_test;
 class create_test_objects extends test_base
 {
 
+    // the timestamp used for unit testing
     const DUMMY_DATETIME = '2022-12-26T18:23:45+01:00';
 
     /*
@@ -403,6 +404,9 @@ class create_test_objects extends test_base
         return $wrd;
     }
 
+    /**
+     * @return word percent to test percent related rules e.g. to remove measure at division
+     */
     function dummy_word_pct(): word
     {
         $wrd = new word($this->usr1);
@@ -411,6 +415,8 @@ class create_test_objects extends test_base
         return $wrd;
     }
 
+    // TODO explain for each test object for which test it is used
+    // TODO rename because in the test object "$t->" the prefix dummy is not needed
     function dummy_word_this(): word
     {
         $wrd = new word($this->usr1);
@@ -471,17 +477,43 @@ class create_test_objects extends test_base
         return $wrd;
     }
 
-    function dummy_word_city(): word
+    /**
+     * @return word city to test the verb "is a" / "are" to get the list of cities
+     */
+    function city_word(): word
     {
         $wrd = new word($this->usr1);
         $wrd->set(word_api::TI_CITY, word_api::TN_CITY);
         return $wrd;
     }
 
+    /**
+     * @return word with id and name of Zurich
+     */
     function dummy_word_zh(): word
     {
         $wrd = new word($this->usr1);
         $wrd->set(word_api::TI_ZH, word_api::TN_ZH);
+        return $wrd;
+    }
+
+    /**
+     * @return word with id and name of Bern
+     */
+    function dummy_word_be(): word
+    {
+        $wrd = new word($this->usr1);
+        $wrd->set(word_api::TI_BE, word_api::TN_BE);
+        return $wrd;
+    }
+
+    /**
+     * @return word with id and name of Geneva
+     */
+    function dummy_word_ge(): word
+    {
+        $wrd = new word($this->usr1);
+        $wrd->set(word_api::TI_GE, word_api::TN_GE);
         return $wrd;
     }
 
@@ -636,7 +668,33 @@ class create_test_objects extends test_base
         $trp->set(triple_api::TI_ZH_CITY, triple_api::TN_ZH_CITY);
         $trp->set_from($this->dummy_word_zh()->phrase());
         $trp->set_verb($this->dummy_verb_is());
-        $trp->set_to($this->dummy_word_city()->phrase());
+        $trp->set_to($this->city_word()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "Bern (City)" used for unit testing
+     */
+    function dummy_triple_be(): triple
+    {
+        $trp = new triple($this->usr1);
+        $trp->set(triple_api::TI_BE_CITY, triple_api::TN_BE_CITY);
+        $trp->set_from($this->dummy_word_be()->phrase());
+        $trp->set_verb($this->dummy_verb_is());
+        $trp->set_to($this->city_word()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "Geneva (City)" used for unit testing
+     */
+    function dummy_triple_ge(): triple
+    {
+        $trp = new triple($this->usr1);
+        $trp->set(triple_api::TI_GE_CITY, triple_api::TN_GE_CITY);
+        $trp->set_from($this->dummy_word_ge()->phrase());
+        $trp->set_verb($this->dummy_verb_is());
+        $trp->set_to($this->city_word()->phrase());
         return $trp;
     }
 
@@ -702,20 +760,6 @@ class create_test_objects extends test_base
     }
 
     /**
-     * @return phrase_list with the cities for unit testing
-     */
-    function city_phrase_list(): phrase_list
-    {
-        $lst = new phrase_list($this->usr1);
-        $lst->add($this->dummy_word()->phrase());
-        $lst->add($this->dummy_word_const()->phrase());
-        $lst->add($this->dummy_word_pi()->phrase());
-        $lst->add($this->dummy_triple()->phrase());
-        $lst->add($this->dummy_triple_pi()->phrase());
-        return $lst;
-    }
-
-    /**
      * @return phrase_list with some math const e.g. to test loading a list of values by phrase list
      */
     function phrase_list_math_const(): phrase_list
@@ -723,6 +767,30 @@ class create_test_objects extends test_base
         $lst = new phrase_list($this->usr1);
         $lst->add($this->dummy_triple_pi()->phrase());
         $lst->add($this->dummy_triple_e()->phrase());
+        return $lst;
+    }
+
+    /**
+     * @return phrase_list with the cities for unit testing
+     */
+    function phrase_list_cities(): phrase_list
+    {
+        $lst = new phrase_list($this->usr1);
+        $lst->add($this->dummy_triple_zh()->phrase());
+        $lst->add($this->dummy_triple_be()->phrase());
+        $lst->add($this->dummy_triple_ge()->phrase());
+        return $lst;
+    }
+
+    /**
+     * @return phrase_list with all phrases used for unit testing
+     */
+    function phrase_list_all(): phrase_list
+    {
+        $lst = new phrase_list($this->usr1);
+        $lst->merge($this->dummy_phrase_list());
+        $lst->merge($this->phrase_list_math_const());
+        $lst->merge($this->phrase_list_cities());
         return $lst;
     }
 

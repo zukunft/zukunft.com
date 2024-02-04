@@ -327,9 +327,12 @@ class sandbox_list extends base_list
      */
 
     /**
+     * create a text that describes the list for unique identification
+     *
+     * @param term_list|null $trm_lst a cached list of terms
      * @return string with a unique description of at least some entries of this list for debugging
      */
-    function dsp_id(): string
+    function dsp_id(?term_list $trm_lst = null): string
     {
         global $debug;
 

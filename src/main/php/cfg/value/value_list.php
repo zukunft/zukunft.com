@@ -151,12 +151,15 @@ class value_list extends sandbox_list
 
     /**
      * load a list of values that are linked to each phrase of the given list
-     * e.g. for "city" and "inhabitants" all yearly increases of city inhabitants are returned
+     * e.g. for "city" and "inhabitants" the city inhabitants for all years are returned
      *      to get the inhabitants of the cities itself first get a phrase list of all cities
      *
      * if $or is true
      * load a list of values that are related to at least one phrase of the given list
      *  e.g. for "Zurich (city)" and "Geneva (city)" all values related to the two cities are returned
+     *
+     *  TODO use order by in query
+     *  TODO use limit and page in query
      *
      * @param phrase_list $phr_lst phrase list to which all related values should be loaded
      * @param bool $or if true all values are returned that are linked to any phrase of the list
@@ -177,7 +180,9 @@ class value_list extends sandbox_list
     /**
      * load a list of values that are related to the given phrase
      * e.g. for "city" all values directly related to the phrase city are returned
-     * TODO use limit in query
+     *
+     * TODO use order by in query
+     * TODO use limit and page in query
      *
      * @param phrase $phr phrase list to which all related values should be loaded
      * @return bool true if at least one value has been loaded
@@ -203,6 +208,20 @@ class value_list extends sandbox_list
         return $this->load($qp);
     }
 
+    // interface load
+
+    /**
+     * load a list of values by the given value ids
+     *
+     * @param string|int $id the value / group id
+     * @return bool true if at least one value found
+     */
+    function load_by_id(string|int $id): bool
+    {
+        return $this->load_by_ids([$id]);
+    }
+
+    // internal load
 
     /**
      * load a list of sandbox objects (e.g. phrases or values) based on the given query parameters

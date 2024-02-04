@@ -65,8 +65,12 @@ class triple extends sandbox_typed_api
     const TN_EXCLUDED = 'System Test Excluded Zurich Insurance is not part of the City of Zurich';
 
     const TN_ZH_CITY = 'Zurich (City)';
-    const TI_ZH_CITY = 37;
+    const TI_ZH_CITY = 38;
     const TN_ZH_CITY_NAME = 'City of Zurich';
+    const TN_BE_CITY = 'Bern (City)';
+    const TI_BE_CITY = 39;
+    const TN_GE_CITY = 'Geneva (City)';
+    const TI_GE_CITY = 40;
     const TN_ZH_CANTON = 'Zurich (Canton)';
     const TN_ZH_CANTON_NAME = 'Canton Zurich';
     const TN_ZH_COMPANY = "Zurich Insurance";

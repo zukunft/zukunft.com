@@ -43,7 +43,7 @@ class formula_element_group_list extends sandbox_list
     /**
      * @return string to display the unique id fields
      */
-    function dsp_id(): string
+    function dsp_id(?term_list $trm_lst = null): string
     {
         global $debug;
         $lib = new library();

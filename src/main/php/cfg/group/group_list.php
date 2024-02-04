@@ -42,6 +42,7 @@ use cfg\phrase;
 use cfg\phrase_list;
 use cfg\sandbox_list;
 use cfg\db\sql_db;
+use cfg\term_list;
 use cfg\triple;
 use cfg\user_message;
 use cfg\word;
@@ -564,9 +565,10 @@ class group_list extends sandbox_list
      */
 
     /**
+     * @param term_list|null $trm_lst a cached list of terms
      * @return string with the unique id fields
      */
-    function dsp_id(): string
+    function dsp_id(?term_list $trm_lst = null): string
     {
         global $debug;
         $lib = new library();

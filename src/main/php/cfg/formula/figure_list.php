@@ -255,9 +255,12 @@ class figure_list extends sandbox_list
      */
 
     /**
+     * create a text that describes the figures for unique identification
+     *
+     * @param term_list|null $trm_lst a cached list of terms
      * @return string to display the unique id fields
      */
-    function dsp_id(): string
+    function dsp_id(?term_list $trm_lst = null): string
     {
         $id = $this->ids_txt();
         $name = $this->name();

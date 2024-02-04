@@ -1154,8 +1154,10 @@ class word extends sandbox_typed
     }
 
     /**
-     * @return phrase_list a list of words that are related to this word
+     * get all phrases that are linked to this word with the "is a" verb
      * e.g. for "Canton" it will return "Zurich (Canton)" and others, but not "Canton" itself
+     *
+     * @return phrase_list a list of words that are related to this word
      */
     function children(): phrase_list
     {
@@ -1168,15 +1170,17 @@ class word extends sandbox_typed
     }
 
     /**
-     * @return phrase_list a list of words that are related to the given word
+     * get all phrases that are linked to this word with the "is a" verb including the parent word
      * e.g. for "Canton" it will return "Zurich (Canton)" and "Canton", but not "Zurich (City)"
      * used to collect e.g. all formulas used for Canton
+     *
+     * @return phrase_list a list of words that are related to the given word
      */
     function are(): phrase_list
     {
-        $wrd_lst = $this->children();
-        $wrd_lst->add($this->phrase());
-        return $wrd_lst;
+        $phr_lst = $this->children();
+        $phr_lst->add($this->phrase());
+        return $phr_lst;
     }
 
     /**

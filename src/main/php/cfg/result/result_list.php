@@ -95,6 +95,32 @@ class result_list extends sandbox_list
      */
 
     /**
+     * load a list of results that are linked to each phrase of the given list
+     * e.g. for "city", "inhabitants" and "increase" all yearly increases of city inhabitants are returned
+     *      to get the inhabitants of the cities itself first get a phrase list of all cities
+     *
+     * if $or is true
+     * load a list of values that are related to at least one phrase of the given list
+     *  e.g. for "Zurich (city)" and "Geneva (city)" all values related to the two cities are returned
+     *
+     *  TODO use order by in query
+     *  TODO use limit and page in query
+     *
+     * @param phrase_list $phr_lst phrase list to which all related values should be loaded
+     * @param bool $or if true all values are returned that are linked to any phrase of the list
+     * @return bool true if at least one value found
+     */
+    function load_by_phr_lst(phrase_list $phr_lst, bool $or = false, int $limit = sql_db::ROW_LIMIT): sql_par
+    {
+        global $db_con;
+
+        $qp = $this->load_sql_by_phr_lst($db_con, $phr_lst);
+
+        $qp->par = $db_con->get_par();
+        return $qp;
+    }
+
+    /**
      * the common query parameter to get a list of results
      *
      * @param sql $sc the sql creator instance with the target db_type already set
@@ -219,14 +245,6 @@ class result_list extends sandbox_list
     function load_sql_by_phr_lst(sql_db $db_con, phrase_list $phr_lst): sql_par
     {
         $qp = $this->load_sql($db_con->sql_creator(), 'phr_lst');
-
-        $qp->par = $db_con->get_par();
-        return $qp;
-    }
-
-    function load_by_phr_lst(sql_db $db_con, phrase_list $phr_lst): sql_par
-    {
-        $qp = $this->load_sql_by_phr_lst($db_con, $phr_lst);
 
         $qp->par = $db_con->get_par();
         return $qp;

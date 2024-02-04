@@ -427,9 +427,10 @@ class term_list extends sandbox_list_named
      */
 
     /**
+     * @param term_list|null $trm_lst a cached list of terms
      * @return string with the best possible id for this element mainly used for debugging
      */
-    function dsp_id(): string
+    function dsp_id(?term_list $trm_lst = null): string
     {
         $id = $this->ids_txt();
         if ($this->name() <> '""') {

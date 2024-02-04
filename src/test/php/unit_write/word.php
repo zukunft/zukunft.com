@@ -150,6 +150,7 @@ class word_test
         $t->assert('word->children for "' . word_api::TN_PARENT . '" excluding the start word', $result, $target,
             TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
 
+        // TODO move read only tests like this to the db read or unit tests
         // word are, which includes all words related to the parent
         // e.g. which is for parent Canton the phrase "Zurich (Canton)", but not, as tested later, the phrase "Zurich (City)"
         //      "Cantons are Zurich, Bern, ... and valid is also everything related to the Word Canton itself"

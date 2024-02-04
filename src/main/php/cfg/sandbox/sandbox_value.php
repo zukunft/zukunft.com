@@ -1008,7 +1008,7 @@ class sandbox_value extends sandbox_multi
     {
         $result = '';
         if (isset($this->grp)) {
-            $result .= '"' . $this->grp->name() . '" ';
+            $result .= '"' . $this->grp()->name() . '" ';
         }
         if ($this->number() != null) {
             $result .= $this->number();
