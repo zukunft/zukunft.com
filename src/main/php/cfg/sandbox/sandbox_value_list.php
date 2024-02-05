@@ -117,8 +117,10 @@ class sandbox_value_list extends sandbox_list
     {
         // differences between value and result list
         $list_class = value_list::class;
+        $tbl_lst = value::TBL_LIST;
         if ($class != value::class) {
             $list_class = result_list::class;
+            $tbl_lst = result::TBL_LIST;
         }
 
         $lib = new library();
@@ -135,7 +137,7 @@ class sandbox_value_list extends sandbox_list
         $par_types = array();
         // loop over the possible tables where the value might be stored in this pod
         $par_pos = 2;
-        foreach (value::TBL_LIST as $tbl_typ) {
+        foreach ($tbl_lst as $tbl_typ) {
             $sc->reset();
             $qp_tbl = $this->load_sql_by_phr_lst_single($sc, $class, $phr_lst, $or, $tbl_typ, $par_pos);
             $qp->merge($qp_tbl);

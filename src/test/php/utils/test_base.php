@@ -55,6 +55,7 @@ namespace test;
 include_once MODEL_USER_PATH . 'user.php';
 include_once DB_PATH . 'sql_table_type.php';
 
+use cfg\db\sql as sql_creator;
 use cfg\db\sql_par;
 use cfg\log\change;
 use cfg\combine_named;
@@ -1550,29 +1551,29 @@ class test_base
      * test the SQL statement creation for a value or result list
      * similar to assert_load_sql but for a phrase list
      *
-     * @param sql_db $db_con does not need to be connected to a real database
+     * @param string $test_name does not need to be connected to a real database
      * @param object $usr_obj the user sandbox object e.g. a word
      * @param phrase_list $phr_lst the phrase list that should be used for the sql creation
      * @param bool $or if true all values are returned that are linked to any phrase of the list
      */
     function assert_sql_by_phr_lst(
-        sql_db       $db_con,
+        string       $test_name,
         object       $usr_obj,
         phrase_list  $phr_lst,
         bool         $or = false
     ): void
     {
         // check the Postgres query syntax
-        $sc = $db_con->sql_creator();
+        $sc = new sql_creator();
         $sc->db_type = sql_db::POSTGRES;
         $qp = $usr_obj->load_sql_by_phr_lst($sc, $phr_lst, false, $or);
-        $result = $this->assert_qp($qp, $sc->db_type);
+        $result = $this->assert_qp($qp, $sc->db_type, $test_name);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $sc->db_type = sql_db::MYSQL;
             $qp = $usr_obj->load_sql_by_phr_lst($sc, $phr_lst, false, $or);
-            $this->assert_qp($qp, $sc->db_type);
+            $this->assert_qp($qp, $sc->db_type, $test_name);
         }
     }
 
@@ -1675,13 +1676,14 @@ class test_base
      *
      * @param sql_par $qp the query parameters that should be tested
      * @param string $dialect if not Postgres the name of the SQL dialect
+     * @param string $test_name description of the test without the sql name
      * @return bool true if the test is fine
      */
-    function assert_qp(sql_par $qp, string $dialect = ''): bool
+    function assert_qp(sql_par $qp, string $dialect = '', string $test_name = ''): bool
     {
         $expected_sql = $this->assert_sql_expected($qp->name, $dialect);
         $result = $this->assert_sql(
-            $this->name . $qp->name . '_' . $dialect,
+            $this->name . 'sql creation of ' . $qp->name . '_' . $dialect . ' to ' . $test_name,
             $qp->sql,
             $expected_sql
         );

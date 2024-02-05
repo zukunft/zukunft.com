@@ -89,7 +89,7 @@ class value_list_unit_db_tests
         // load values related to all phrases of a list
         $test_name = 'Load the the inhabitants of Canton Zurich over time';
         $val_lst = new value_list($t->usr1);
-        $phr_lst = $t->dummy_phrase_list_zh();
+        $phr_lst = $t->canton_zh_phrase_list();
         $val_lst->load_by_phr_lst($phr_lst);
         $result = $val_lst->dsp_id();
         $t->assert_text_contains($test_name, $result, value_api::TV_CITY_ZH_INHABITANTS_2019);

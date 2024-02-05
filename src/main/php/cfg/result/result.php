@@ -153,6 +153,14 @@ class result extends sandbox_value
         sql_table_type::MOST,
         sql_table_type::BIG
     );
+    // list of fixed tables where a value might be stored
+    const TBL_LIST = array(
+        [sql_table_type::PRIME, sql_table_type::STANDARD],
+        [sql_table_type::MOST, sql_table_type::STANDARD],
+        [sql_table_type::MOST],
+        [sql_table_type::PRIME],
+        [sql_table_type::BIG]
+    );
 
     const FLD_ALL_CHANGED = array(
         [value::FLD_LAST_UPDATE, sql_field_type::TIME, sql_field_default::NULL, '', '', 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation'],

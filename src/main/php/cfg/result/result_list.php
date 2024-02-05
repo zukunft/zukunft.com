@@ -49,6 +49,7 @@ use cfg\group\group;
 use cfg\group\group_id;
 use cfg\group\group_list;
 use cfg\library;
+use cfg\phrase;
 use cfg\phrase_list;
 use cfg\sandbox_value_list;
 use cfg\triple;
@@ -170,6 +171,44 @@ class result_list extends sandbox_value_list
         return parent::load_sql_by_phr_lst_multi($sc, $phr_lst, result::class, $usr_tbl, $or, $limit, $page);
     }
 
+    function load_sql_by_frm(sql $sc, formula $frm): sql_par
+    {
+        $qp = $this->load_sql_init_query_par('frm');
+        $par_types = array();
+        foreach (value::TBL_LIST as $tbl_typ) {
+            $qp_tbl = $this->load_sql_by_frm_single($sc, $frm,  $tbl_typ);
+
+            $qp->merge($qp_tbl);
+        }
+
+        $qp->sql = $sc->prepare_sql($qp->sql, $qp->name, $par_types);
+
+        // loop over the tables where the result may be saved
+        // union the sql statements
+        // TODO create an array with the tables where a result could be found
+
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve a list of values linked to a phrase from the database
+     * from a single table
+     *     *
+     * @param sql $sc with the target db_type set
+     * @param formula $frm if set to get all values for this phrase
+     * @param array $tbl_typ_lst the table types for this table
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_frm_single(sql $sc, formula $frm, array $tbl_typ_lst): sql_par
+    {
+        $qp = $this->load_sql_init($sc, result::class,  'frm', $tbl_typ_lst);
+        $sc->add_where(formula::FLD_ID, $frm->id());
+        $qp->sql = $sc->sql(0, true, false);
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
+
     /**
      * the common query parameter to get a list of results
      *
@@ -270,29 +309,6 @@ class result_list extends sandbox_value_list
     }
 
 
-    function load_sql_by_frm(sql $sc, formula $frm): sql_par
-    {
-        $qp = $this->load_sql_init_query_par('frm');
-        $par_types = array();
-        foreach (result::TBL_EXT_LST as $ext) {
-            $qp_tbl = $this->load_sql($sc, 'frm', $ext);
-            $sc->add_where(formula::FLD_ID, $frm->id());
-            $qp_tbl->sql = $sc->sql(0, true, false);
-            $qp_tbl->par = $sc->get_par();
-
-            $qp->merge($qp_tbl);
-        }
-
-        $qp->sql = $sc->prepare_sql($qp->sql, $qp->name, $par_types);
-
-        // loop over the tables where the result may be saved
-        // union the sql statements
-        // TODO create an array with the tables where a result could be found
-
-        return $qp;
-    }
-
-
     /**
      * create the SQL to load a list of results link to
      * a formula
@@ -308,7 +324,7 @@ class result_list extends sandbox_value_list
      * @param bool $by_source set to true to force the selection e.g. by source phrase group id
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_obj(sql_db $db_con, object $obj, bool $by_source = false): sql_par
+    function load_sql_by_obj_old(sql_db $db_con, object $obj, bool $by_source = false): sql_par
     {
         $qp = new sql_par(self::class);
         $sql_by = '';
@@ -406,7 +422,7 @@ class result_list extends sandbox_value_list
      */
     function load_by_frm_sql(sql_db $db_con, formula $frm): sql_par
     {
-        return $this->load_sql_by_obj($db_con, $frm);
+        return $this->load_sql_by_obj_old($db_con, $frm);
     }
 
     /**
@@ -471,7 +487,7 @@ class result_list extends sandbox_value_list
     {
         global $db_con;
 
-        $qp = $this->load_sql_by_obj($db_con, $obj, $by_source);
+        $qp = $this->load_sql_by_obj_old($db_con, $obj, $by_source);
         return $this->load($qp);
     }
 

@@ -54,17 +54,17 @@ class result_list_tests
         $db_con = new sql_db();
         $t->name = 'result_list->';
         $t->resource_path = 'db/result/';
+        $res_lst = new result_list($usr);
 
 
         $t->header('Unit tests of the result list class (src/main/php/model/formula/result_list.php)');
 
         $t->subheader('SQL creation tests');
 
-        // sql to load a list of results by ...
-        $res_lst = new result_list($usr);
-        // ... a related to all phrases of a list e.g. the inhabitants of Canton Zurich over time
-        $phr_lst = $t->dummy_phrase_list_zh();
-        $t->assert_sql_by_phr_lst($db_con, $res_lst, $phr_lst);
+        $test_name = 'load a list of results that are a related to all phrases of a list '
+            . 'e.g. the yearly increase of inhabitants of Canton Zurich over time';
+        $t->assert_sql_by_phr_lst($test_name, $res_lst, $t->canton_zh_phrase_list());
+
         $grp = new group($usr);
         $grp->set_id(2);
         $t->assert_sql_by_group($db_con, $res_lst, $grp);

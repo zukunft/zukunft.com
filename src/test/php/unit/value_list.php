@@ -81,15 +81,15 @@ class value_list_unit_tests
         // ... a list of groups
         $grp_lst = $t->dummy_phrase_list_small();
         $this->assert_sql_by_grp_lst($t, $db_con, $val_lst, $grp_lst);
-        // ... a related to all phrases of a list e.g. the inhabitants of Canton Zurich over time
-        $phr_lst = $t->dummy_phrase_list_zh();
-        $t->assert_sql_by_phr_lst($db_con, $val_lst, $phr_lst);
-        // ... a related to any phrase of a list e.g. the match const pi and e
-        $phr_lst = $t->phrase_list_math_const();
-        $t->assert_sql_by_phr_lst($db_con, $val_lst, $phr_lst, true);
-        // ... a related to any phrase of a longer word and triple list e.g. all phrase related to the math number pi
-        $phr_lst = $t->dummy_phrase_list();
-        $t->assert_sql_by_phr_lst($db_con, $val_lst, $phr_lst, true);
+        $test_name = 'load values related to all phrases of a list '
+            . 'e.g. the inhabitants of Canton Zurich over time';
+        $t->assert_sql_by_phr_lst($test_name, $val_lst, $t->canton_zh_phrase_list());
+        $test_name = 'load values related to any phrase of a list '
+            . 'e.g. the match const pi and e';
+        $t->assert_sql_by_phr_lst($test_name, $val_lst, $t->phrase_list_math_const(), true);
+        $test_name = 'load values related to any phrase of a longer word and triple list '
+            . 'e.g. all phrase related to the math number pi';
+        $t->assert_sql_by_phr_lst($test_name, $val_lst, $t->dummy_phrase_list(), true);
 
 
         $t->subheader('Im- and Export tests');

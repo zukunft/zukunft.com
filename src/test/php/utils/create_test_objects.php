@@ -894,9 +894,9 @@ class create_test_objects extends test_base
     }
 
     /**
-     * @return phrase_list to get all numbers related to a list of phrases
+     * @return phrase_list to get all inhabitant related to the Canton Zurich
      */
-    function dummy_phrase_list_zh(): phrase_list
+    function canton_zh_phrase_list(): phrase_list
     {
         $lst = new phrase_list($this->usr1);
         $lst->add($this->dummy_word_canton()->phrase());
