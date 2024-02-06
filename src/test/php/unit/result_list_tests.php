@@ -64,14 +64,14 @@ class result_list_tests
         $test_name = 'load a list of results that are a related to all phrases of a list '
             . 'e.g. the yearly increase of inhabitants of Canton Zurich over time';
         $t->assert_sql_by_phr_lst($test_name, $res_lst, $t->canton_zh_phrase_list());
+        $test_name = 'load a list of results that are a related a formula '
+            . 'e.g. to update the results if the formula has been updated';
+        $this->assert_sql_by_frm($test_name, $t);
 
         $grp = new group($usr);
         $grp->set_id(2);
         $t->assert_sql_by_group($db_con, $res_lst, $grp);
         $t->assert_sql_by_group($db_con, $res_lst, $grp, true);
-
-        // sql to load a list of results by the formula id
-        $this->assert_sql_by_frm($t);
 
         // sql to load a list of results by the phrase group id
         $res_lst = new result_list($usr);
@@ -122,9 +122,10 @@ class result_list_tests
      *
      * not using assert_load_sql because unique for result list
      *
+     * @param string $test_name the description of the test
      * @param test_cleanup $t the forwarded testing object
      */
-    private function assert_sql_by_frm(test_cleanup $t): void
+    private function assert_sql_by_frm(string $test_name, test_cleanup $t): void
     {
         // create objects
         $sc = new sql();
@@ -134,13 +135,13 @@ class result_list_tests
         // check the Postgres query syntax
         $sc->set_db_type(sql_db::POSTGRES);
         $qp = $res_lst->load_sql_by_frm($sc, $frm);
-        $result = $t->assert_qp($qp, $sc->db_type);
+        $result = $t->assert_qp($qp, $sc->db_type, $test_name);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $sc->set_db_type(sql_db::MYSQL);
             $qp = $res_lst->load_sql_by_frm($sc, $frm);
-            $t->assert_qp($qp, $sc->db_type);
+            $t->assert_qp($qp, $sc->db_type, $test_name);
         }
     }
 

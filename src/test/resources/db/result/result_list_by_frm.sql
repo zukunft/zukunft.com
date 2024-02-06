@@ -1,40 +1,4 @@
-PREPARE result_list_prime_big_by_frm (bigint, bigint) AS
-    SELECT '' AS group_id,
-           '' AS user_group_id,
-           phrase_id_1,
-           phrase_id_2,
-           phrase_id_3,
-           phrase_id_4,
-           0 AS user_id,
-           0 AS formula_id,
-           0 AS source_group_id,
-           numeric_value,
-           now() AS last_update,
-           0 AS excluded,
-           0 AS protect_id,
-           0 AS change_user_id,
-           0 AS share_type_id
-      FROM results_standard_prime
-     WHERE formula_id = $1
-UNION
-    SELECT group_id,
-           '' AS user_group_id,
-           0 AS phrase_id_1,
-           0 AS phrase_id_2,
-           0 AS phrase_id_3,
-           0 AS phrase_id_4,
-           0 AS user_id,
-           0 AS formula_id,
-           0 AS source_group_id,
-           numeric_value,
-           now() AS last_update,
-           0 AS excluded,
-           0 AS protect_id,
-           0 AS change_user_id,
-           0 AS share_type_id
-      FROM results_standard
-     WHERE formula_id = $1
-UNION
+PREPARE result_list_by_frm (bigint, bigint) AS
     SELECT s.group_id,
            u.group_id AS user_group_id,
            0 AS phrase_id_1,

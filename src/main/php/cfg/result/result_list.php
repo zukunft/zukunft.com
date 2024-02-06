@@ -125,6 +125,12 @@ class result_list extends sandbox_value_list
 
     /**
      * load a list of results linked to a formula
+     * used to detect which results needs to be updated in case of a formula change
+     * TODO check if needed that the standard results can also be searched by formula
+     *      advantage is the higher speed in case of a formula update
+     *      disadvantage is that it is not possible to use a pure key value table
+     *      -> measure it based on real life data
+     *      -> a solution could be to include the source group and the formula in the result group id
      *
      * @param formula $frm a named object used for selection e.g. a formula
      * @return bool true if loading has been successful
@@ -133,11 +139,36 @@ class result_list extends sandbox_value_list
     {
         global $db_con;
 
-        $qp = $this->load_by_frm_sql($db_con, $frm);
+        $qp = $this->load_sql_by_frm($db_con, $frm);
         return $this->load($qp);
     }
 
     // internal load
+
+    /**
+     * load a result list base on the given query parameters
+     *
+     * @param sql_par $qp the query parameters that should be used to get the data from the database
+     * @param bool $load_all
+     * @return bool
+     */
+    function load(sql_par $qp, bool $load_all = false): bool
+    {
+        global $db_con;
+        $result = false;
+        if ($qp->name != '') {
+            $db_rows = $db_con->get($qp);
+            if ($db_rows != null) {
+                foreach ($db_rows as $db_row) {
+                    $res = new result($this->user());
+                    $res->row_mapper($db_row);
+                    $this->add_obj($res);
+                    $result = true;
+                }
+            }
+        }
+        return $result;
+    }
 
     /**
      * load a list of results that are linked to each phrase of the given list
@@ -171,22 +202,23 @@ class result_list extends sandbox_value_list
         return parent::load_sql_by_phr_lst_multi($sc, $phr_lst, result::class, $usr_tbl, $or, $limit, $page);
     }
 
+    /**
+     * create an SQL statement to retrieve a list of results linked to a formula from the database
+     * @param sql $sc
+     * @param formula $frm
+     * @return sql_par
+     */
     function load_sql_by_frm(sql $sc, formula $frm): sql_par
     {
-        $qp = $this->load_sql_init_query_par('frm');
+        $qp = new sql_par(result_list::class);
+        $qp->name .= 'frm';
         $par_types = array();
-        foreach (value::TBL_LIST as $tbl_typ) {
-            $qp_tbl = $this->load_sql_by_frm_single($sc, $frm,  $tbl_typ);
+        foreach (result::TBL_LIST_EX_STD as $tbl_typ) {
+            $qp_tbl = $this->load_sql_by_frm_single($sc, $frm, $tbl_typ);
 
             $qp->merge($qp_tbl);
         }
-
         $qp->sql = $sc->prepare_sql($qp->sql, $qp->name, $par_types);
-
-        // loop over the tables where the result may be saved
-        // union the sql statements
-        // TODO create an array with the tables where a result could be found
-
         return $qp;
     }
 
@@ -201,13 +233,15 @@ class result_list extends sandbox_value_list
      */
     function load_sql_by_frm_single(sql $sc, formula $frm, array $tbl_typ_lst): sql_par
     {
-        $qp = $this->load_sql_init($sc, result::class,  'frm', $tbl_typ_lst);
+        $qp = $this->load_sql_init($sc, result::class, 'frm', $tbl_typ_lst);
         $sc->add_where(formula::FLD_ID, $frm->id());
         $qp->sql = $sc->sql(0, true, false);
         $qp->par = $sc->get_par();
 
         return $qp;
     }
+
+    // to review
 
     /**
      * the common query parameter to get a list of results
@@ -287,8 +321,7 @@ class result_list extends sandbox_value_list
     /**
      * create the SQL statement to load the results created by the given formula
      *
-     * @param sql $sc the sql creator instance with the target db_type already set
-     * @param formula $frm the formula to select the results
+     * @param string $query_name symbol by what the results are selected e.g. frm
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
 
@@ -307,7 +340,6 @@ class result_list extends sandbox_value_list
             '_by_' . $query_name;
         return $qp;
     }
-
 
     /**
      * create the SQL to load a list of results link to
@@ -411,43 +443,6 @@ class result_list extends sandbox_value_list
         }
 
         return array_unique($tbl_ext_lst);
-    }
-
-    /**
-     * create the SQL to load a list of results link to a formula
-     *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param formula $frm a named object used for selection e.g. a formula
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_by_frm_sql(sql_db $db_con, formula $frm): sql_par
-    {
-        return $this->load_sql_by_obj_old($db_con, $frm);
-    }
-
-    /**
-     * load a result list base on the given query parameters
-     *
-     * @param sql_par $qp the query parameters that should be used to get the data from the database
-     * @param bool $load_all
-     * @return bool
-     */
-    function load(sql_par $qp, bool $load_all = false): bool
-    {
-        global $db_con;
-        $result = false;
-        if ($qp->name != '') {
-            $db_rows = $db_con->get($qp);
-            if ($db_rows != null) {
-                foreach ($db_rows as $db_row) {
-                    $res = new result($this->user());
-                    $res->row_mapper($db_row);
-                    $this->add_obj($res);
-                    $result = true;
-                }
-            }
-        }
-        return $result;
     }
 
     /**
