@@ -107,9 +107,9 @@ class result_list extends sandbox_value_list
      *  TODO use order by in query
      *  TODO use limit and page in query
      *
-     * @param phrase_list $phr_lst phrase list to which all related values should be loaded
-     * @param bool $or if true all values are returned that are linked to any phrase of the list
-     * @param int $limit the number of values that should be loaded at once
+     * @param phrase_list $phr_lst phrase list to which all related results should be loaded
+     * @param bool $or if true all results are returned that are linked to any phrase of the list
+     * @param int $limit the number of results that should be loaded at once
      * @param int $page the offset for the limit
      * @return bool true if at least one value found
      */
@@ -139,7 +139,34 @@ class result_list extends sandbox_value_list
     {
         global $db_con;
 
-        $qp = $this->load_sql_by_frm($db_con, $frm);
+        $sc = $db_con->sql_creator();
+        $qp = $this->load_sql_by_frm($sc, $frm);
+        return $this->load($qp);
+    }
+
+    /**
+     * load a list of results based on the given phrases
+     *
+     * @param phrase_list $phr_lst to select the results that are based on any or all of these phase values
+     * @param bool $or if true all results are returned that are based on any phrase of the list
+     * @param int $limit the number of results that should be loaded at once
+     * @param int $page the offset for the limit
+     * @return bool true if loading has been successful
+     */
+    function load_by_src(
+        phrase_list $phr_lst,
+        bool        $or = false,
+        int         $limit = sql_db::ROW_LIMIT,
+        int         $page = 0
+    ): bool
+    {
+        global $db_con;
+
+        if ($phr_lst->is_empty()) {
+            log_warning("At lease one phrase should be given to load a value list");
+        }
+        $sc = $db_con->sql_creator();
+        $qp = $this->load_sql_by_src($sc, $phr_lst, $or, $limit, $page);
         return $this->load($qp);
     }
 
@@ -176,17 +203,17 @@ class result_list extends sandbox_value_list
      *      to get the inhabitants of the cities itself first get a phrase list of all cities
      *
      * if $or is true
-     * load a list of values that are related to at least one phrase of the given list
-     *  e.g. for "Zurich (city)" and "Geneva (city)" all values related to the two cities are returned
+     * load a list of results that are related to at least one phrase of the given list
+     *  e.g. for "Zurich (city)" and "Geneva (city)" all results related to the two cities are returned
      *
      *  TODO use order by in query
      *  TODO use limit and page in query
      *
      * @param sql $sc with the target db_type set
-     * @param phrase_list $phr_lst phrase list to which all related values should be loaded
+     * @param phrase_list $phr_lst phrase list to which all related results should be loaded
      * @param bool $usr_tbl true if only the user overwrites should be loaded
-     * @param bool $or if true all values are returned that are linked to any phrase of the list
-     * @param int $limit the number of values that should be loaded at once
+     * @param bool $or if true all results are returned that are linked to any phrase of the list
+     * @param int $limit the number of results that should be loaded at once
      * @param int $page the offset for the limit
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
@@ -223,11 +250,73 @@ class result_list extends sandbox_value_list
     }
 
     /**
-     * create an SQL statement to retrieve a list of values linked to a phrase from the database
+     * create an SQL statement to retrieve a list of results based one of the given phrases from the database
+     * similar to load_sql_by_phr_lst_multi of sandbox_value_list
+     * TODO use a mixed id with a formula id, 2 or 6 phrase ids for the source and result value and 2 for the result only
+     * TODO add ORDER BY (relevance of value)
+     * TODO use LIMIT and PAGE
+     *
+     * @param sql $sc with the target db_type set
+     * @param phrase_list $phr_lst phrase list to which all related results should be loaded
+     * @param bool $usr_tbl true if only the user overwrites should be loaded
+     * @param bool $or true if all results related to any phrase of the list should be loaded
+     * @param int $limit the number of results that should be loaded at once
+     * @param int $page the offset for the limit
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_src(
+        sql         $sc,
+        phrase_list $phr_lst,
+        bool        $usr_tbl = false,
+        bool        $or = false,
+        int         $limit = sql_db::ROW_LIMIT,
+        int         $page = 0
+    ): sql_par
+    {
+        $lib = new library();
+        $qp = new sql_par(result::class);
+        $name_ext = 'src_phr_lst';
+        if ($usr_tbl) {
+            $name_ext .= '_usr';
+        }
+        if ($or) {
+            $name_ext .= '_all';
+        }
+        $name_count = '_p' . $phr_lst->count();
+        $qp->name = $lib->class_to_name(result_list::class) . '_by_' . $name_ext . $name_count;
+        $par_types = array();
+        // loop over the possible tables where the value might be stored in this pod
+        $par_pos = 2;
+        foreach (result::TBL_LIST as $tbl_typ) {
+            $sc->reset();
+            $qp_tbl = $this->load_sql_by_phr_lst_single($sc, result::class, $phr_lst, $or, $tbl_typ, $par_pos);
+            $qp->merge($qp_tbl);
+            $phr_pos = $par_pos + 2;
+        }
+        // sort the parameters if the parameters are part of the union
+        if ($sc->db_type() != sql_db::MYSQL) {
+            $lib = new library();
+            $qp->par = $lib->key_num_sort($qp->par);
+        }
+
+        foreach ($qp->par as $par) {
+            if (is_numeric($par)) {
+                $par_types[] = sql_par_type::INT;
+            } else {
+                $par_types[] = sql_par_type::TEXT;
+            }
+        }
+        $qp->sql = $sc->prepare_sql($qp->sql, $qp->name, $par_types);
+
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve a list of results linked to a phrase from the database
      * from a single table
      *     *
      * @param sql $sc with the target db_type set
-     * @param formula $frm if set to get all values for this phrase
+     * @param formula $frm if set to get all results for this phrase
      * @param array $tbl_typ_lst the table types for this table
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
@@ -257,7 +346,7 @@ class result_list extends sandbox_value_list
         $qp->name .= $query_name;
 
         $sc->set_class(result::class, false, $tbl_typ->extension());
-        // overwrite the standard id field name (result_id) with the main database id field for values "group_id"
+        // overwrite the standard id field name (result_id) with the main database id field for results "group_id"
         $res = new result($this->user());
         $sc->set_id_field($res->id_field_list($tbl_typ));
         $sc->set_name($qp->name);
@@ -432,7 +521,7 @@ class result_list extends sandbox_value_list
      * list of potential table extensions where a result may be saved
      *
      * @param array $ids value ids that should be selected
-     * @return array with the unique table extension where the values of the given id list may be found of the group ids
+     * @return array with the unique table extension where the results of the given id list may be found of the group ids
      */
     private function table_extension_list(array $ids): array
     {
@@ -711,7 +800,7 @@ class result_list extends sandbox_value_list
             $result[] = $calc_row;
         }
 
-        log_debug('number of values added (' . $lib->dsp_count($result) . ')');
+        log_debug('number of results added (' . $lib->dsp_count($result) . ')');
         return $result;
     }
 */
@@ -940,13 +1029,13 @@ class result_list extends sandbox_value_list
 
         // depending on the formula setting (all words or at least one word)
         // create a result list with all needed word combinations
-        // TODO this get all values that
+        // TODO this get all results that
         // 1. have at least one assigned word and one formula word (one of each)
         // 2. remove all assigned words and formula words from the value word list
-        // 3. aggregate the word list for all values
+        // 3. aggregate the word list for all results
         // this is a kind of word group list, where for each word group list several results are possible,
         // because there may be one value and several results for the same word group
-        log_debug('get all values used in the formula ' . $frm->usr_text . ' that are related to one of the phrases assigned ' . $phr_lst_frm_assigned->dsp_name());
+        log_debug('get all results used in the formula ' . $frm->usr_text . ' that are related to one of the phrases assigned ' . $phr_lst_frm_assigned->dsp_name());
         $phr_grp_lst_val = new group_list($this->user()); // by default the calling user is used, but if needed the value for other users also needs to be updated
         $phr_grp_lst_val->get_by_val_with_one_phr_each($phr_lst_frm_assigned, $phr_lst_frm_used, $phr_frm, $phr_lst_res);
         $phr_grp_lst_val->get_by_res_with_one_phr_each($phr_lst_frm_assigned, $phr_lst_frm_used, $phr_frm, $phr_lst_res);
@@ -954,7 +1043,7 @@ class result_list extends sandbox_value_list
         $phr_grp_lst_val->get_by_res_special($phr_lst_frm_assigned, $phr_lst_preset, $phr_frm, $phr_lst_res); // ... such as "this"
         $phr_grp_lst_used = clone $phr_grp_lst_val;
 
-        // first calculate the standard values for all user and then the user specific values
+        // first calculate the standard results for all user and then the user specific results
         // than loop over the users and check if the user has changed any value, formula or formula assignment
         $usr_lst = new user_list($this->user());
         $usr_lst->load_active();
@@ -968,7 +1057,7 @@ class result_list extends sandbox_value_list
                 $usr_calc_needed = true;
             }
             if ($this->user()->id() == 0 or $usr_calc_needed) {
-                log_debug('update values for user: ' . $usr->name . ' and formula ' . $frm->name());
+                log_debug('update results for user: ' . $usr->name . ' and formula ' . $frm->name());
 
                 $result = $this->frm_upd_lst_usr($frm, $phr_lst_frm_assigned, $phr_lst_frm_used, $phr_grp_lst_used, $usr, $last_msg_time, $collect_pos);
             }

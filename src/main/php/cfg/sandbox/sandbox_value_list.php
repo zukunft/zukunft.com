@@ -64,6 +64,9 @@ class sandbox_value_list extends sandbox_list
      *
      *  TODO use order by in query
      *  TODO use limit and page in query
+     *  TODO replace return bool with user message e.g. to be able to return to the user
+     *       "no values found, click here to search for values linked to any word of the list"
+     *       or "... click here for related words"
      *
      * @param phrase_list $phr_lst phrase list to which all related values should be loaded
      * @param string $class the value or result class name

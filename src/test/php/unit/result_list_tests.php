@@ -33,7 +33,9 @@
 namespace unit;
 
 use cfg\db\sql;
+use cfg\formula;
 use cfg\group\group;
+use cfg\phrase_list;
 use cfg\result\result_list;
 use cfg\db\sql_db;
 use cfg\triple;
@@ -66,7 +68,10 @@ class result_list_tests
         $t->assert_sql_by_phr_lst($test_name, $res_lst, $t->canton_zh_phrase_list());
         $test_name = 'load a list of results that are a related a formula '
             . 'e.g. to update the results if the formula has been updated';
-        $this->assert_sql_by_frm($test_name, $t);
+        $this->assert_sql_by_frm($test_name, $t->dummy_formula(), $t);
+        $test_name = 'load a list of results that are a based on all phrases of a list '
+            . 'e.g. to update the results if the value has been updated';
+        $this->assert_sql_by_src($test_name, $t->canton_zh_phrase_list(), $t);
 
         $grp = new group($usr);
         $grp->set_id(2);
@@ -125,12 +130,14 @@ class result_list_tests
      * @param string $test_name the description of the test
      * @param test_cleanup $t the forwarded testing object
      */
-    private function assert_sql_by_frm(string $test_name, test_cleanup $t): void
+    private function assert_sql_by_frm(
+        string $test_name,
+        formula $frm,
+        test_cleanup $t): void
     {
         // create objects
         $sc = new sql();
         $res_lst = new result_list(new user());
-        $frm = $t->dummy_formula();
 
         // check the Postgres query syntax
         $sc->set_db_type(sql_db::POSTGRES);
@@ -141,6 +148,39 @@ class result_list_tests
         if ($result) {
             $sc->set_db_type(sql_db::MYSQL);
             $qp = $res_lst->load_sql_by_frm($sc, $frm);
+            $t->assert_qp($qp, $sc->db_type, $test_name);
+        }
+    }
+
+    /**
+     * result list by source
+     * SQL statement creation test
+     * TODO align the other assert sql function to this e.g. use sql
+     *
+     * not using assert_load_sql because unique for result list
+     *
+     * @param string $test_name the description of the test
+     * @param phrase_list $phr_lst the list of source phrases
+     * @param test_cleanup $t the forwarded testing object
+     */
+    private function assert_sql_by_src(
+        string $test_name,
+        phrase_list $phr_lst,
+        test_cleanup $t): void
+    {
+        // create objects
+        $sc = new sql();
+        $res_lst = new result_list(new user());
+
+        // check the Postgres query syntax
+        $sc->set_db_type(sql_db::POSTGRES);
+        $qp = $res_lst->load_sql_by_src($sc, $phr_lst);
+        $result = $t->assert_qp($qp, $sc->db_type, $test_name);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $sc->set_db_type(sql_db::MYSQL);
+            $qp = $res_lst->load_sql_by_src($sc, $phr_lst);
             $t->assert_qp($qp, $sc->db_type, $test_name);
         }
     }

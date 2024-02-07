@@ -3,6 +3,7 @@ zukunft.com
 Calculating with RDF data.
 
 This program should
+- be a GGG browser
 - make the Giant Global Graph usable for the real-time delphi-method
 - allow each user have her/his own OLAP cube
 - make efficient community learning easy by connecting all user OLAP cubes point to point
@@ -54,20 +55,25 @@ The minimal requirements are a LAMP server (https://wiki.debian.org/LaMp) and an
 If you see anything that does not look simple to you, please request a change on https://github.com/zukunft/zukunft.com or write an email to timon@zukunft.com
 
 
-General coding principles:
-- one point of change (https://en.wikipedia.org/wiki/Don%27t_repeat_yourself)
-- capsule: each method should check the consistency of the input parameters at the beginning
-- least possible dependencies because a chain is only as strong as its weakest link (https://archive.fosdem.org/2021/schedule/event/dep_as_strong_as_the_weakest_link/)
-- best guess: in case of incomplete data best guess assumptions should be used
-- automatic error detection and tracking: in case something unexpected happens the code should try to create an internal error message to enable later debugging
-- init:        each function first collect the global vars, initiate the result variable and create a debug message if requested
-- full unit and integration testing: each function should be tested in test_units.php, test_unit_db.php and test.php
-- debug messages are display immediately using echo (always via the function zu_debug)
-- top down: the most important functions should be on top of each code file
-- all others function usually return html code that is displayed only by one of the 8 main interface scripts
+Target user experience:
+- one-to-one: business logic as you would explain it to a human
+- user sandbox: the look and feel should never change without confirmation by the user
+- don't disturb: suggested changes should never prevent the user from continuing
+- always sorted: the messages to the user should be sorted by criticality but taking the reaktion time into account
 
-Naming conventions:
--------------------
+General coding principles:
+- DRY: one point of change (https://en.wikipedia.org/wiki/Don%27t_repeat_yourself)
+- test: each function should have a unit test called from test_units.php or test_unit_db.php
+  with zukunft.com/test a complete unit and integration test
+- dependencies: use the least external code possible because https://archive.fosdem.org/2021/schedule/event/dep_as_strong_as_the_weakest_link/
+- best guess: in case of incomplete data best guess assumptions should be used and the assumption is shown to the user
+- log: all user changes and data im- and export are logged with an undo and redo option
+- top down: the most important functions should be on top of each class
+- error detection and tracking: in case something unexpected happens the code should try to create an internal error message to enable later debugging
+-- capsule: each class and method should check the consistency of the input parameters at the beginning
+
+Naming conventions for vars:
+---------------------------
 - wrd (WoRD)               - a word that is used as a subject or object in a resource description framework (RDF / "triple") graph
 and used to retrieve the numeric values
 - val (VALue)              - a numeric value that can be used for calculations
