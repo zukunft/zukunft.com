@@ -52,9 +52,9 @@ class value_list
         $t->subheader('Value list tests');
 
         // create a test set of phrase
-        $phr_zh = $t->dummy_word_zh()->phrase();
+        $phr_zh = $t->zh_word()->phrase();
         $phr_city = $t->city_word()->phrase();
-        $phr_canton = $t->dummy_word_canton()->phrase();
+        $phr_canton = $t->canton()->phrase();
         $phr_ch = $t->city_word()->phrase();
         $phr_inhabitant = $t->dummy_word_inhabitant()->phrase();
         $phr_2019 = $t->dummy_word_2019()->phrase();

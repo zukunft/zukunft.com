@@ -70,11 +70,13 @@
 
 namespace cfg\group;
 
+include_once MODEL_GROUP_PATH . 'id.php';
+
 use cfg\db\sql_table_type;
 use cfg\formula;
 use cfg\phrase_list;
 
-class result_id
+class result_id extends id
 {
 
     /*
@@ -86,6 +88,7 @@ class result_id
     const TBL_EXT_MAIN = '_main'; // the table name extension for up to four prime phrase ids
     const TBL_EXT_BIG = '_big'; // the table name extension for more than 16 phrase ids
     const TBL_EXT_PHRASE_ID = '_p'; // the table name extension with the number of phrases for up to four prime phrase ids
+    const FORMULA_IDS = 1;
     const PRIME_PHRASES = 3;
     const PRIME_SOURCE_PHRASES = 0;
     const PRIME_RESULT_PHRASES = 0;
@@ -93,6 +96,7 @@ class result_id
     const MAIN_SOURCE_PHRASES = 1;
     const MAIN_RESULT_PHRASES = 1;
     const STANDARD_PHRASES = 15;
+    const PHRASES = 15;
 
     /**
      * @param phrase_list $phr_lst the list of phrases that define the result
@@ -119,14 +123,15 @@ class result_id
             and $src_only->count() <= self::PRIME_SOURCE_PHRASES
             and $res_only->count() <= self::PRIME_RESULT_PHRASES
             and $all_lst->prime_only()) {
-            $db_key = $this->int_group_id($both_lst, $res_only, $frm);
+            $db_key = $this->int_group_id($both_lst, $frm);
         } elseif ($both_lst->count() <= self::MAIN_PHRASES
             and $src_only->count() <= self::MAIN_SOURCE_PHRASES
             and $res_only->count() <= self::MAIN_RESULT_PHRASES
             and $all_lst->prime_only()) {
-            $db_key = $this->num_text_group_id($both_lst, $res_only, $src_only, $frm);
+            $key_lst = $this->two_int_group_id($both_lst, $src_only, $res_only, $frm);
+            $db_key = implode($key_lst);
         } elseif ($phr_lst->count() <= self::STANDARD_PHRASES) {
-            $db_key = $this->alpha_num($phr_lst);
+            $db_key = $this->alpha_num_result($both_lst, $src_only, $res_only, $frm);
         } else {
             $db_key = $this->alpha_num_big($phr_lst);
         }
@@ -134,56 +139,36 @@ class result_id
     }
 
     /**
-     * TODO check that system is running on 64 bit hardware
-     * @param phrase_list $both_lst list of words or triples that are used to select the source and result
-     * @param phrase_list $res_lst list of words or triples that are specific for the result
-     * @return int the group id based on the given phrase list as 64-bit integer
+     * create a 64-bit integer id based on a prime formula id and three prime phrase ids
+     *
+     * @param phrase_list $both_lst list of phrases or a formula that are used to select the result
+     * @return int the result id based on the given id list as 64-bit integer
      */
-    private function int_group_id(phrase_list $both_lst, phrase_list $res_lst, formula $frm): int
+    private function int_group_id(phrase_list $both_lst, formula $frm): int
     {
-        $keys = [];
         $id_lst = [];
         $id_lst[] = $frm->id();
         foreach ($both_lst->lst() as $phr) {
             $id_lst[] = $phr->id();
         }
-        // fill the missing phrase id with zero to have the result phrases always staring at the same place
-        // plus one for the formula phrase
-        while (count($id_lst) < self::PRIME_PHRASES + 1) {
-            $id_lst[] = 0;
-        }
-        foreach ($res_lst->lst() as $phr) {
-            $id_lst[] = $phr->id();
-        }
-        foreach ($id_lst as $id) {
-            $key = str_pad(decbin(abs($id)), 15, '0', STR_PAD_LEFT);
-            if ($id < 0) {
-                $key = $key . '1';
-            } else {
-                $key = $key . '0';
-            }
-            $keys[] = $key;
-        }
-        while (count($keys) < self::PRIME_PHRASES) {
-            array_unshift($keys, str_repeat('0', 16));
-        }
-        $bin_key = implode('', $keys);
-        $bin_key = str_pad($bin_key, 64, '0', STR_PAD_LEFT);
-        $result = (int)bindec($bin_key);
-        if ($result > PHP_INT_MAX or $result < PHP_INT_MIN) {
-            log_err('Integer size on this system is not the expected 64 bit');
-        }
-        return $result;
+        return $this->id_lst_to_int($id_lst);
     }
 
     /**
+     * create two 64-bit integer ids based on a prime formula id and five prime phrase ids
      * TODO check that system is running on 64 bit hardware
+     *
      * @param phrase_list $both_lst list of words or triples that are used to select the source and result
-     * @param phrase_list $res_lst list of words or triples that are specific for the result
      * @param phrase_list $src_lst list of words or triples that are specific for the source value
-     * @return string the group id based on the given phrase list as 128-bit integer
+     * @param phrase_list $res_lst list of words or triples that are specific for the result
+     * @return array the group id based on the given phrase list as 128-bit integer
      */
-    private function num_text_group_id(phrase_list $both_lst, phrase_list $res_lst, phrase_list $src_lst, formula $frm): string
+    private function two_int_group_id(
+        phrase_list $both_lst,
+        phrase_list $src_lst,
+        phrase_list $res_lst,
+        formula     $frm
+    ): array
     {
         $keys = [];
         $id_lst = [];
@@ -191,52 +176,37 @@ class result_id
         foreach ($both_lst->lst() as $phr) {
             $id_lst[] = $phr->id();
         }
-        while (count($id_lst) < 3) {
+        // fill the unused phrase id places with zero
+        // to have the result only and source only phrases always staring at the same place
+        $total_length = self::FORMULA_IDS + self::PRIME_PHRASES;
+        while (count($id_lst) < $total_length) {
+            $id_lst[] = 0;
+        }
+        foreach ($src_lst->lst() as $phr) {
+            $id_lst[] = $phr->id();
+        }
+        // fill the unused source phrase id places with zero
+        // to have always the same array length
+        $total_length += self::MAIN_SOURCE_PHRASES;
+        while (count($id_lst) < $total_length) {
             $id_lst[] = 0;
         }
         foreach ($res_lst->lst() as $phr) {
             $id_lst[] = $phr->id();
         }
-        foreach ($id_lst as $id) {
-            $key = str_pad(decbin(abs($id)), 15, '0', STR_PAD_LEFT);
-            if ($id < 0) {
-                $key = $key . '1';
-            } else {
-                $key = $key . '0';
-            }
-            $keys[] = $key;
+        // fill the unused result phrase id places with zero
+        // to have the source only phrases always staring at the same place
+        $total_length += self::MAIN_RESULT_PHRASES;
+        while (count($id_lst) < $total_length) {
+            $id_lst[] = 0;
         }
-        while (count($keys) < self::PRIME_PHRASES) {
-            array_unshift($keys, str_repeat('0', 16));
+        if (count($id_lst) != $total_length) {
+            log_err('Wrong id array size in two_int_group_id based on ' . implode(",", $both_lst));
+        } else {
+            $keys[] = $this->id_lst_to_int(array_slice($id_lst, 0, 3));
+            $keys[] = $this->id_lst_to_int(array_slice($id_lst, 4, 7));
         }
-        $bin_key = implode('', $keys);
-        $bin_key = str_pad($bin_key, 64, '0', STR_PAD_LEFT);
-        $result = (int)bindec($bin_key);
-        if ($result > PHP_INT_MAX or $result < PHP_INT_MIN) {
-            log_err('Integer size on this system is not the expected 64 bit');
-        }
-        return $result;
-    }
-
-    /**
-     * create the database key for a phrase group
-     * @param phrase_list $phr_lst list of words or triples
-     * @return string the 512 bit db key of up to 16 32 bit phrase ids in alpha_num format
-     */
-    private function alpha_num(phrase_list $phr_lst): string
-    {
-        $db_key = '';
-        $i = 16;
-        foreach ($phr_lst->lst() as $phr) {
-            $db_key .= $this->int2alpha_num($phr->id());
-            $i--;
-        }
-        // fill the remaining key entries with zero keys to always have the same key size
-        while ($i > 0) {
-            $db_key .= $this->int2alpha_num(0);
-            $i--;
-        }
-        return $db_key;
+        return $keys;
     }
 
     /**
@@ -254,55 +224,39 @@ class result_id
     }
 
     /**
-     * @param int $id a phrase id
-     * @return string a 6 char db key of a 32 bit phrase id in alpha_num format e.g. "3'082'113" ist "..AkS/"
+     * create the database key for a phrase group
+     * @param phrase_list $both_lst list of words or triples that are used to select the source and result
+     * @param phrase_list $src_lst list of words or triples that are specific for the source value
+     * @param phrase_list $res_lst list of words or triples that are specific for the result
+     * @return string the 512 bit db key of up to 16 32 bit phrase ids in alpha_num format
      */
-    function int2alpha_num(int $id): string
+    protected function alpha_num_result(
+        phrase_list $both_lst,
+        phrase_list $src_lst,
+        phrase_list $res_lst,
+        formula     $frm
+    ): string
     {
-        $i = 6;
-        $chars = [];
-        if ($id < 0) {
-            $chars[] = '-';
-            $id = abs($id);
-        } else {
-            $chars[] = '+';
-        }
-        while ($i > 0 and $id > 0) {
-            if ($id < 64) {
-                $chars[] = $this->int2char($id);
-                $id = 0;
-            } else {
-                $chars[] = $this->int2char($id % 64);
-                $id = $id / 64;
-            }
+        $db_key = $this->int2alpha_num($frm->id(), false, false, true);
+        $i = self::PHRASES;
+        foreach ($both_lst->lst() as $phr) {
+            $db_key .= $this->int2alpha_num($phr->id());
             $i--;
         }
-        // fill the remaining key chars with zero keys to always have the same key size
+        foreach ($src_lst->lst() as $phr) {
+            $db_key .= $this->int2alpha_num($phr->id(), true);
+            $i--;
+        }
+        foreach ($res_lst->lst() as $phr) {
+            $db_key .= $this->int2alpha_num($phr->id(), false, true);
+            $i--;
+        }
+        // fill the remaining key entries with zero keys to always have the same key size
         while ($i > 0) {
-            $chars[] = $this->int2char(0);
+            $db_key .= $this->int2alpha_num(0);
             $i--;
         }
-        return implode('', array_reverse($chars));
-    }
-
-    /**
-     * converts an integer to an alpha_num char
-     * @param int $id the integer value to convert
-     * @return string the alpha_num change e.g. "." for 0, "A" for 12, "a" for 38 and "z" for 63
-     */
-    private function int2char(int $id): string
-    {
-        $char = '';
-        if ($id < 12) {
-            $char = chr($id + 46);
-        } else {
-            if ($id < 38) {
-                $char = chr($id + 53);
-            } else {
-                $char = chr($id + 59);
-            }
-        }
-        return $char;
+        return $db_key;
     }
 
 }

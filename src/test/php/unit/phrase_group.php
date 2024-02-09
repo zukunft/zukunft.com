@@ -102,6 +102,29 @@ class group_unit_tests
         //$this->check_64_bit_key($t, [32767,32766,32765,32764], -281487861940224);
         //$this->check_64_bit_key($t, [-32767,32767,-32766,32766], 9223231297218904063);
 
+        $this->check_int2alpha($t, 0, '......+');
+        $this->check_int2alpha($t, 1, '...../+');
+        $this->check_int2alpha($t, 2, '.....0+');
+        $this->check_int2alpha($t, 11, '.....9+');
+        $this->check_int2alpha($t, 12, '.....A+');
+        $this->check_int2alpha($t, 37, '.....Z+');
+        $this->check_int2alpha($t, 38, '.....a+');
+        $this->check_int2alpha($t, 63, '.....z+');
+        $this->check_int2alpha($t, 64, '..../.+');
+        $this->check_int2alpha($t, -1, '...../-');
+        $this->check_int2alpha($t, -2, '.....0-');
+        $this->check_int2alpha($t, -11, '.....9-');
+        $this->check_int2alpha($t, -12, '.....A-');
+        $this->check_int2alpha($t, -37, '.....Z-');
+        $this->check_int2alpha($t, -38, '.....a-');
+        $this->check_int2alpha($t, -63, '.....z-');
+        $this->check_int2alpha($t, -64, '..../.-');
+        $this->check_int2alpha($t, 12, '.....A<', true, );
+        $this->check_int2alpha($t, 12, '.....A>', false, true);
+        $this->check_int2alpha($t, 12, '.....A=', false, false, true);
+        $this->check_int2alpha($t, -12, '.....A(', true, );
+        $this->check_int2alpha($t, -12, '.....A)', false, true);
+
         $t->assert('group_id triple list', $grp_id->get_id($t->dummy_triple_list()->phrase_lst()),5);
         $t->assert('triple ids 64 bit group_id ', $grp_id->get_array(5), $t->dummy_triple_list()->phrase_lst()->ids());
         $phr_lst = new phrase_list($usr);
@@ -131,6 +154,16 @@ class group_unit_tests
             . 'the phrases Zurich (City) and inhabitants and the result only phrase 2023 (year)',
             $res_id->get_id($t->zh_inhabitants_2020(), $t->zh_inhabitants_2020(), $t->increase_formula()),
             11822279760150932);
+        $t->assert('128 bit result_id for the formula increase, '
+            . 'the phrases Zurich (City), Geneva (City) and inhabitants and the result only phrase 2023 (year)',
+            $res_id->get_id($t->zh_ge_inhabitants_2020(), $t->zh_ge_inhabitants_2020(), $t->increase_formula()),
+            '18039393492526476544');
+        $t->assert('512 bit result_id ',
+            $res_id->get_id($t->dummy_phrase_list_14(), $t->dummy_phrase_list_14b(), $t->increase_formula()),
+            '.....J=..8jId-...I1A-....Yz-..../.-.....Z-.....9-...../+.....A+.....a+....3s+...1Ao+../vLC+.//ZSB+1FajJ2(.4LYK3)1FajJ2)');
+        $t->assert('512 bit result_id ',
+            $res_id->get_id($t->dummy_phrase_list_17_plus(), $t->dummy_phrase_list_17_plus(), $t->increase_formula()),
+            '...../+.....9-.....A+.....Z-.....a+..../.-....3s+....Yz-...1Ao+...I1A-../vLC+..8jId-.//ZSB+.4LYK3-.ZSahL+1FajJ2-.uraWl+');
 
         $t->subheader('SQL statements - setup');
         $grp = new group($usr);
@@ -274,4 +307,19 @@ class group_unit_tests
         $a = $grp_id->get_array($id);
         $t->assert('phrase ids 64 bit group_id ' . $id, $grp_id->get_array($id), $ids);
     }
+
+    private function check_int2alpha(
+        test_cleanup $t,
+        int $id,
+        string $alpha,
+        bool $is_src = false,
+        bool $is_res = false,
+        bool $is_frm = false
+    ): void
+    {
+        $grp_id = new group_id();
+        $result = $grp_id->int2alpha_num($id, $is_src, $is_res, $is_frm);
+        $t->assert('int to alpha of ' . $id, $result, $alpha);
+    }
+
 }

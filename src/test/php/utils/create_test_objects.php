@@ -470,13 +470,6 @@ class create_test_objects extends test_base
         return $wrd;
     }
 
-    function dummy_word_canton(): word
-    {
-        $wrd = new word($this->usr1);
-        $wrd->set(word_api::TI_CANTON, word_api::TN_CANTON);
-        return $wrd;
-    }
-
     /**
      * @return word city to test the verb "is a" / "are" to get the list of cities
      */
@@ -488,9 +481,19 @@ class create_test_objects extends test_base
     }
 
     /**
+     * @return word canton to test the separation of the cantons from the cities based on the same word
+     */
+    function canton(): word
+    {
+        $wrd = new word($this->usr1);
+        $wrd->set(word_api::TI_CANTON, word_api::TN_CANTON);
+        return $wrd;
+    }
+
+    /**
      * @return word with id and name of Zurich
      */
-    function dummy_word_zh(): word
+    function zh_word(): word
     {
         $wrd = new word($this->usr1);
         $wrd->set(word_api::TI_ZH, word_api::TN_ZH);
@@ -662,13 +665,26 @@ class create_test_objects extends test_base
     /**
      * @return triple "Zurich (City)" used for unit testing
      */
-    function dummy_triple_zh(): triple
+    function zh(): triple
     {
         $trp = new triple($this->usr1);
         $trp->set(triple_api::TI_ZH_CITY, triple_api::TN_ZH_CITY);
-        $trp->set_from($this->dummy_word_zh()->phrase());
+        $trp->set_from($this->zh_word()->phrase());
         $trp->set_verb($this->dummy_verb_is());
         $trp->set_to($this->city_word()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "Zurich (City)" used for unit testing
+     */
+    function zh_canton(): triple
+    {
+        $trp = new triple($this->usr1);
+        $trp->set(triple_api::TI_ZH_CITY, triple_api::TN_ZH_CITY);
+        $trp->set_from($this->zh_word()->phrase());
+        $trp->set_verb($this->dummy_verb_is());
+        $trp->set_to($this->ca_word()->phrase());
         return $trp;
     }
 
@@ -717,7 +733,7 @@ class create_test_objects extends test_base
 
     function phrase_zh(): phrase
     {
-        return $this->dummy_triple_zh()->phrase();
+        return $this->zh()->phrase();
     }
 
     function dummy_phrase_list(): phrase_list
@@ -776,7 +792,7 @@ class create_test_objects extends test_base
     function phrase_list_cities(): phrase_list
     {
         $lst = new phrase_list($this->usr1);
-        $lst->add($this->dummy_triple_zh()->phrase());
+        $lst->add($this->zh()->phrase());
         $lst->add($this->dummy_triple_be()->phrase());
         $lst->add($this->dummy_triple_ge()->phrase());
         return $lst;
@@ -788,7 +804,20 @@ class create_test_objects extends test_base
     function zh_inhabitants_2020(): phrase_list
     {
         $lst = new phrase_list($this->usr1);
-        $lst->add($this->dummy_triple_zh()->phrase());
+        $lst->add($this->zh()->phrase());
+        $lst->add($this->dummy_word_inhabitant()->phrase());
+        $lst->add($this->dummy_word_2020()->phrase());
+        return $lst;
+    }
+
+    /**
+     * @return phrase_list with the Zurich inhabitants and 2020 for unit testing the result id
+     */
+    function zh_ge_inhabitants_2020(): phrase_list
+    {
+        $lst = new phrase_list($this->usr1);
+        $lst->add($this->zh()->phrase());
+        $lst->add($this->dummy_triple_ge()->phrase());
         $lst->add($this->dummy_word_inhabitant()->phrase());
         $lst->add($this->dummy_word_2020()->phrase());
         return $lst;
@@ -821,11 +850,8 @@ class create_test_objects extends test_base
      * 505294    ../vLC+
      * 2815273    ..8jId-
      * 17192845    .//ZSB+
-     * 106841477    .4LYK3-
-     * 628779863    .ZSahL+
-     * 3516593476    1FajJ2-
      */
-    function dummy_phrase_list_16(): phrase_list
+    function dummy_phrase_list_13(): phrase_list
     {
         $lst = new phrase_list($this->usr1);
         $wrd = $this->dummy_word();
@@ -880,6 +906,85 @@ class create_test_objects extends test_base
         $wrd->set_id(17192845);
         $wrd->set_name('word7');
         $lst->add($wrd->phrase());
+        return $lst;
+    }
+
+    /**
+     * @return phrase_list with 16 entries to test the normal group id creation
+     * 1    ...../+
+     * 11    .....9-
+     * 12    .....A+
+     * 37    .....Z-
+     * 38    .....a+
+     * 64    ..../.-
+     * 376    ....3s+
+     * 2367    ....Yz-
+     * 13108    ...1Ao+
+     * 82124    ...I1A-
+     * 505294    ../vLC+
+     * 2815273    ..8jId-
+     * 17192845    .//ZSB+
+     * 106841477    .4LYK3-
+     */
+    function dummy_phrase_list_14(): phrase_list
+    {
+        $lst = $this->dummy_phrase_list_13();
+        $trp = $this->dummy_triple();
+        $trp->set_id(106841477);
+        $trp->set_name('triple7');
+        $lst->add($trp->phrase());
+        return $lst;
+    }
+
+    /**
+     * @return phrase_list with 16 entries to test the normal group id creation
+     * 1    ...../+
+     * 11    .....9-
+     * 12    .....A+
+     * 37    .....Z-
+     * 38    .....a+
+     * 64    ..../.-
+     * 376    ....3s+
+     * 2367    ....Yz-
+     * 13108    ...1Ao+
+     * 82124    ...I1A-
+     * 505294    ../vLC+
+     * 2815273    ..8jId-
+     * 17192845    .//ZSB+
+     * 106841477    .4LYK3-
+     */
+    function dummy_phrase_list_14b(): phrase_list
+    {
+        $lst = $this->dummy_phrase_list_13();
+        $trp = $this->dummy_triple();
+        $trp->set_id(3516593476);
+        $trp->set_name('triple8');
+        $lst->add($trp->phrase());
+        return $lst;
+    }
+
+    /**
+     * @return phrase_list with 16 entries to test the normal group id creation
+     * 1    ...../+
+     * 11    .....9-
+     * 12    .....A+
+     * 37    .....Z-
+     * 38    .....a+
+     * 64    ..../.-
+     * 376    ....3s+
+     * 2367    ....Yz-
+     * 13108    ...1Ao+
+     * 82124    ...I1A-
+     * 505294    ../vLC+
+     * 2815273    ..8jId-
+     * 17192845    .//ZSB+
+     * 106841477    .4LYK3-
+     * 628779863    .ZSahL+
+     * 3516593476    1FajJ2-
+     */
+    function dummy_phrase_list_16(): phrase_list
+    {
+        $lst = $this->dummy_phrase_list_13();
         $trp = $this->dummy_triple();
         $trp->set_id(106841477);
         $trp->set_name('triple7');
@@ -911,8 +1016,8 @@ class create_test_objects extends test_base
     function canton_zh_phrase_list(): phrase_list
     {
         $lst = new phrase_list($this->usr1);
-        $lst->add($this->dummy_word_canton()->phrase());
-        $lst->add($this->dummy_word_zh()->phrase());
+        $lst->add($this->canton()->phrase());
+        $lst->add($this->zh_word()->phrase());
         $lst->add($this->dummy_word_inhabitant()->phrase());
         return $lst;
     }
@@ -923,7 +1028,7 @@ class create_test_objects extends test_base
     function dummy_phrase_list_zh_2019(): phrase_list
     {
         $lst = new phrase_list($this->usr1);
-        $lst->add($this->dummy_word_zh()->phrase());
+        $lst->add($this->zh_word()->phrase());
         $lst->add($this->dummy_word_inhabitant()->phrase());
         $lst->add($this->dummy_word_2019()->phrase());
         return $lst;
@@ -935,7 +1040,7 @@ class create_test_objects extends test_base
     function dummy_phrase_list_zh_mio(): phrase_list
     {
         $lst = new phrase_list($this->usr1);
-        $lst->add($this->dummy_word_zh()->phrase());
+        $lst->add($this->zh_word()->phrase());
         $lst->add($this->dummy_word_inhabitant()->phrase());
         $lst->add($this->dummy_word_2019()->phrase());
         $lst->add($this->dummy_word_mio()->phrase());

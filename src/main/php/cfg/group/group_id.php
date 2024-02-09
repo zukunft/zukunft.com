@@ -54,10 +54,12 @@
 
 namespace cfg\group;
 
+include_once MODEL_GROUP_PATH . 'id.php';
+
 use cfg\db\sql_table_type;
 use cfg\phrase_list;
 
-class group_id
+class group_id extends id
 {
 
     /*
@@ -258,54 +260,18 @@ class group_id
     }
 
     /**
-     * TODO check that system is running on 64 bit hardware
-     * @param phrase_list $phr_lst list of words or triples
+     * create a 64-bit integer id based on four prime phrase ids
+     *
+     * @param phrase_list $phr_lst list of words or triples that are used to select the value
      * @return int the group id based on the given phrase list as 64-bit integer
      */
     private function int_group_id(phrase_list $phr_lst): int
     {
-        $keys = [];
+        $id_lst = [];
         foreach ($phr_lst->lst() as $phr) {
-            $id = $phr->id();
-            $key = str_pad(decbin(abs($id)), 15, '0', STR_PAD_LEFT);
-            if ($id < 0) {
-                $key = $key . '1';
-            } else {
-                $key = $key . '0';
-            }
-            $keys[] = $key;
+            $id_lst[] = $phr->id();
         }
-        while (count($keys) < self::PRIME_PHRASES) {
-            array_unshift($keys, str_repeat('0', 16));
-        }
-        $bin_key = implode('', $keys);
-        $bin_key = str_pad($bin_key, 64, '0', STR_PAD_LEFT);
-        $result = (int)bindec($bin_key);
-        if ($result > PHP_INT_MAX or $result < PHP_INT_MIN) {
-            log_err('Integer size on this system is not the expected 64 bit');
-        }
-        return $result;
-    }
-
-    /**
-     * create the database key for a phrase group
-     * @param phrase_list $phr_lst list of words or triples
-     * @return string the 512 bit db key of up to 16 32 bit phrase ids in alpha_num format
-     */
-    private function alpha_num(phrase_list $phr_lst): string
-    {
-        $db_key = '';
-        $i = 16;
-        foreach ($phr_lst->lst() as $phr) {
-            $db_key .= $this->int2alpha_num($phr->id());
-            $i--;
-        }
-        // fill the remaining key entries with zero keys to always have the same key size
-        while ($i > 0) {
-            $db_key .= $this->int2alpha_num(0);
-            $i--;
-        }
-        return $db_key;
+        return $this->id_lst_to_int($id_lst);
     }
 
     /**
@@ -320,58 +286,6 @@ class group_id
             $db_key .= $this->int2alpha_num($phr->id());
         }
         return $db_key;
-    }
-
-    /**
-     * @param int $id a phrase id
-     * @return string a 6 char db key of a 32 bit phrase id in alpha_num format e.g. "3'082'113" ist "..AkS/"
-     */
-    function int2alpha_num(int $id): string
-    {
-        $i = 6;
-        $chars = [];
-        if ($id < 0) {
-            $chars[] = '-';
-            $id = abs($id);
-        } else {
-            $chars[] = '+';
-        }
-        while ($i > 0 and $id > 0) {
-            if ($id < 64) {
-                $chars[] = $this->int2char($id);
-                $id = 0;
-            } else {
-                $chars[] = $this->int2char($id % 64);
-                $id = $id / 64;
-            }
-            $i--;
-        }
-        // fill the remaining key chars with zero keys to always have the same key size
-        while ($i > 0) {
-            $chars[] = $this->int2char(0);
-            $i--;
-        }
-        return implode('', array_reverse($chars));
-    }
-
-    /**
-     * converts an integer to an alpha_num char
-     * @param int $id the integer value to convert
-     * @return string the alpha_num change e.g. "." for 0, "A" for 12, "a" for 38 and "z" for 63
-     */
-    private function int2char(int $id): string
-    {
-        $char = '';
-        if ($id < 12) {
-            $char = chr($id + 46);
-        } else {
-            if ($id < 38) {
-                $char = chr($id + 53);
-            } else {
-                $char = chr($id + 59);
-            }
-        }
-        return $char;
     }
 
     private function alpha_num2int(string $key): int
