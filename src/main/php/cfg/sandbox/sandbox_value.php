@@ -694,7 +694,7 @@ class sandbox_value extends sandbox_multi
         $lib = new library();
         $id_fields = array();
         $base_name = $lib->class_to_name(phrase::class) . sql_db::FLD_EXT_ID . sql_db::FLD_SEP;
-        for ($i = 1; $i <= group_id::PRIME_PHRASE; $i++) {
+        for ($i = 1; $i <= group_id::PRIME_PHRASES; $i++) {
             $id_fields[] = $base_name . $i;
         }
         return $id_fields;
@@ -735,7 +735,7 @@ class sandbox_value extends sandbox_multi
         if ($tbl_typ == sql_table_type::PRIME) {
             $id_fields = array();
             $base_name = $lib->class_to_name(phrase::class) . sql_db::FLD_EXT_ID . '_';
-            for ($i = 1; $i <= group_id::PRIME_PHRASE; $i++) {
+            for ($i = 1; $i <= group_id::PRIME_PHRASES; $i++) {
                 $id_fields[] = $base_name . $i;
             }
             return $id_fields;

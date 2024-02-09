@@ -1660,6 +1660,31 @@ class phrase_list extends sandbox_list_named
      *
      * @param phrase_list $del_lst is the list of phrases that should be removed from this list object
      */
+    function get_diff(phrase_list $del_lst): phrase_list
+    {
+        log_debug('phrase_list->diff of ' . $del_lst->dsp_id() . ' and ' . $this->dsp_id());
+
+        $result = clone new phrase_list($this->user());
+        if (!$this->is_empty()) {
+            $lst_ids = $del_lst->id_lst();
+            foreach ($this->lst() as $phr) {
+                if (!in_array($phr->id(), $lst_ids)) {
+                    $result->add($phr);
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * diff as a function, because the array_diff does not seem to work for an object list
+     *
+     * e.g. for "2014", "2015", "2016", "2017"
+     * and delete list of "2016", "2017","2018"
+     * the result is "2014", "2015"
+     *
+     * @param phrase_list $del_lst is the list of phrases that should be removed from this list object
+     */
     function diff(phrase_list $del_lst): void
     {
         log_debug('phrase_list->diff of ' . $del_lst->dsp_id() . ' and ' . $this->dsp_id());

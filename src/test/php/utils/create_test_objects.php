@@ -783,6 +783,18 @@ class create_test_objects extends test_base
     }
 
     /**
+     * @return phrase_list with the Zurich inhabitants and 2020 for unit testing the result id
+     */
+    function zh_inhabitants_2020(): phrase_list
+    {
+        $lst = new phrase_list($this->usr1);
+        $lst->add($this->dummy_triple_zh()->phrase());
+        $lst->add($this->dummy_word_inhabitant()->phrase());
+        $lst->add($this->dummy_word_2020()->phrase());
+        return $lst;
+    }
+
+    /**
      * @return phrase_list with all phrases used for unit testing
      */
     function phrase_list_all(): phrase_list
@@ -1160,10 +1172,13 @@ class create_test_objects extends test_base
         return $frm;
     }
 
-    function dummy_formula_increase(): formula
+    /**
+     * @return formula to test the "increase" calculations
+     */
+    function increase_formula(): formula
     {
         $frm = new formula($this->usr1);
-        $frm->set(21, formula_api::TN_INCREASE);
+        $frm->set(formula_api::TI_INCREASE, formula_api::TN_INCREASE);
         $frm->set_user_text(formula_api::TF_INCREASE, $this->dummy_phrase_list_increase()->term_list());
         $frm->set_type(formula_type::CALC);
         return $frm;

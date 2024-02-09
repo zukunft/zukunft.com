@@ -2425,7 +2425,7 @@ class sandbox_multi extends db_object_multi_user
         if ($this->is_prime()) {
             $grp_id = new group_id();
             $id_lst = $grp_id->get_array($this->id());
-            for ($i = count($id_lst); $i < group_id::PRIME_PHRASE; $i++) {
+            for ($i = count($id_lst); $i < group_id::PRIME_PHRASES; $i++) {
                 $id_lst[] = 0;
             }
             return $id_lst;

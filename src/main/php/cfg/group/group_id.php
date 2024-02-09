@@ -5,18 +5,19 @@
     model/group/group_id.php - e.g. to create a group_id based on a phrase list
     ------------------------
 
-    there are there group id formats for speed- and space-saving:
+    there are three group id formats for speed- and space-saving:
 
-    1. for up to two phrases a 64 bit bigint key is used
+    1. for up to four prime phrases with a 16 bit integer id a 64 bit bigint key is used
        this allows fast and efficient saving for many number
-    2. for up the 16 phrases a 512 bit db key is used,
+    2. for up the 16 phrases with a 32 bit integer id a 512 bit db key is used,
        which is shown using the chars . for 0, / for 1 and 0 to 9, A to Z and a to z
-    3. if the phrase id is 64 bit or more than 16 phrases are used a alpha_num text is used for the db key
+    3. if the phrase list contains an id with 64 bit or more than 16 phrases are used
+       a alpha_num text is used for the db key
 
     base on the three db key types three value tables are used:
-    1. value_quick with the 64 bit bigint key
-    2. value with the 512 bit db key
-    1. value_slow with the text key for many phrases
+    1. values_prime with the 64 bit bigint key
+    2. values with the 512 bit db key
+    1. values_big with the text key for many phrases
 
     the group id can include the order of the phrases
     and an alpha_num db key can be converted into a sorted array of phrase ids
@@ -67,17 +68,18 @@ class group_id
     const TBL_EXT_PRIME = '_prime'; // the table name extension for up to four prime phrase ids
     const TBL_EXT_BIG = '_big'; // the table name extension for more than 16 phrase ids
     const TBL_EXT_PHRASE_ID = '_p'; // the table name extension with the number of phrases for up to four prime phrase ids
-    const PRIME_PHRASE = 4;
+    const PRIME_PHRASES = 4;
     const STANDARD_PHRASES = 16;
 
     /**
+     * @param phrase_list $phr_lst the list of phrases that define the value
      * @return int|string the group id based on the given phrase list
      *                    as 64-bit integer, 512-bit key as 112 chars or list of more than 16 keys with 6 chars
      */
     function get_id(phrase_list $phr_lst): int|string
     {
         $phr_lst = $phr_lst->sort_by_id();
-        if ($phr_lst->count() <= self::PRIME_PHRASE and $phr_lst->prime_only()) {
+        if ($phr_lst->count() <= self::PRIME_PHRASES and $phr_lst->prime_only()) {
             $db_key = $this->int_group_id($phr_lst);
         } elseif ($phr_lst->count() <= self::STANDARD_PHRASES) {
             $db_key = $this->alpha_num($phr_lst);
@@ -96,7 +98,7 @@ class group_id
     {
         $tbl_typ = $this->table_type($id);
         if ($tbl_typ == sql_table_type::PRIME) {
-            return self::PRIME_PHRASE;
+            return self::PRIME_PHRASES;
         } elseif ($tbl_typ == sql_table_type::BIG) {
             $id_keys = preg_split("/[+-]/", $id);
             return count($id_keys);
@@ -273,7 +275,7 @@ class group_id
             }
             $keys[] = $key;
         }
-        while (count($keys) < self::PRIME_PHRASE) {
+        while (count($keys) < self::PRIME_PHRASES) {
             array_unshift($keys, str_repeat('0', 16));
         }
         $bin_key = implode('', $keys);

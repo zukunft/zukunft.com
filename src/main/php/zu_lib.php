@@ -251,6 +251,8 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO offer syntactic sugar translation for PL SQL
     TODO reduce the function parameters to 3 or less wherever possible
 
+    TODO because some changes e.g. a formula change might cause costly calculations estimate the cost upfront and ask the user to pay for it
+
     TODO term names are expected to change not very often
          that's why each frontend instance should subscribe to term name changes of standard term names
          and user term names, because a user is allowed to have several clients open at the same time

@@ -62,6 +62,7 @@ class formula extends sandbox_typed_api
     const TN_READ_PRIOR = 'prior';
     const TN_PERCENT = 'percent';
     const TN_INCREASE = 'increase';
+    const TI_INCREASE = 21;
     const TF_INCREASE = '"percent" = ( "this" - "prior" ) / "prior"';
     const TF_INCREASE_ALTERNATIVE = '"percent" = 1 - ( "this" / "prior" )';
     const TR_INCREASE = '{w' . word_api::TI_PCT . '}=({w' . word_api::TI_THIS . '}-{w' . word_api::TI_PRIOR . '})/{w' . word_api::TI_PRIOR . '}';

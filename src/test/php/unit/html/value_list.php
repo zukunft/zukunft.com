@@ -132,6 +132,18 @@ class value_list
         $test_page .= 'with context: ' . $header_html . $table_html . '<br>';
         $t->html_test($test_page, 'value_list', $t);
 
+        // TODO add a test that if a view contains beside the "2023 (year)"
+        //      no other phrase that contains the word "2023"
+        //      the "(year)" is not shown to the user, because the user will assume i
+
+        // TODO add s test that if a view contains the word "city"
+        //      or many cities and never a "Canton"
+        //      and the phrase "Zurich (city)" is shown
+        //      only "Zurich" without "(city)" is used
+        //      because the user will assume "City of Zurich"
+        //      on mouseover show the complete phrase name with the description
+
+
     }
 
 }

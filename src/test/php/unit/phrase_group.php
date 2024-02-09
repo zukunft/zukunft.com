@@ -36,12 +36,14 @@ include_once API_PHRASE_PATH . 'group.php';
 include_once MODEL_GROUP_PATH . 'group_id.php';
 include_once MODEL_GROUP_PATH . 'group_link.php';
 include_once MODEL_GROUP_PATH . 'group_list.php';
+include_once MODEL_GROUP_PATH . 'result_id.php';
 
 use api\phrase\group as group_api;
 use cfg\group\group_id;
 use cfg\group\group;
 use cfg\group\group_link;
 use cfg\group\group_list;
+use cfg\group\result_id;
 use cfg\library;
 use cfg\phrase_list;
 use cfg\db\sql_db;
@@ -117,6 +119,18 @@ class group_unit_tests
             implode(',', $grp_id->get_array('...../+.....9-.....A+.....Z-.....a+..../.-....3s+....Yz-...1Ao+...I1A-../vLC+..8jId-.//ZSB+.4LYK3-.ZSahL+1FajJ2-')),
             '1,-11,12,-37,38,-64,376,-2367,13108,-82124,505294,-2815273,17192845,-106841477,628779863,-3516593476');
         $grp_id = 0;
+
+        $t->subheader('Result id tests');
+        // TODO assign the formula "increase" to the word inhabitants
+        // TODO based on the formula the name of the formula and the phrases on the left side
+        //      are always added to the result, so they do not need to be included in the phrase lists
+        // TODO add test to show that the result is always based on a concrete value
+        //      and not on the value selection phrase list for the formula
+        $res_id = new result_id();
+        $t->assert('64 bit result_id for the formula increase, '
+            . 'the phrases Zurich (City) and inhabitants and the result only phrase 2023 (year)',
+            $res_id->get_id($t->zh_inhabitants_2020(), $t->zh_inhabitants_2020(), $t->increase_formula()),
+            11822279760150932);
 
         $t->subheader('SQL statements - setup');
         $grp = new group($usr);

@@ -190,7 +190,7 @@ class sandbox_value_list extends sandbox_list
                 if ($or) {
                     $spt = sql_par_type::INT_SAME_OR;
                 }
-                for ($i = 1; $i <= group_id::PRIME_PHRASE; $i++) {
+                for ($i = 1; $i <= group_id::PRIME_PHRASES; $i++) {
                     $sc->add_where(phrase::FLD_ID . '_' . $i,
                         $phr->id(), $spt, '$' . $par_pos);
                     $spt = sql_par_type::INT_SAME_OR;
