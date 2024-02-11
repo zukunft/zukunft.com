@@ -90,7 +90,7 @@ class ref_unit_tests
 
         $t->subheader('SQL statement tests');
         $src = new source($usr);
-        $t->assert_sql_table_create($db_con, $src);
+        $t->assert_sql_table_create($src);
         $t->assert_sql_index_create($db_con, $src);
         $t->assert_sql_foreign_key_create($db_con, $src);
         $t->assert_sql_by_id($db_con, $src);

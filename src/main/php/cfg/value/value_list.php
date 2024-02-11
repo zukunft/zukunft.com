@@ -588,7 +588,7 @@ class value_list extends sandbox_value_list
     {
         $qp = $this->load_sql_init($sc, value::class,  'phr', $tbl_typ_lst);
         if ($this->is_prime($tbl_typ_lst)) {
-            for ($i = 1; $i <= group_id::PRIME_PHRASES; $i++) {
+            for ($i = 1; $i <= group_id::PRIME_PHRASES_STD; $i++) {
                 $sc->add_where(phrase::FLD_ID . '_' . $i, $phr->id(), sql_par_type::INT_SAME_OR, '$2');
             }
         } else {

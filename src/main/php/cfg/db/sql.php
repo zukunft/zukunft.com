@@ -227,9 +227,13 @@ class sql
     /**
      * set the default sql_creator configuration
      */
-    function __construct()
+    function __construct(string $db_type = '')
     {
-        $this->db_type = sql_db::POSTGRES;
+        if ($db_type != '') {
+            $this->db_type = $db_type;
+        } else {
+            $this->db_type = sql_db::POSTGRES;
+        }
         $this->reset();
     }
 
@@ -237,8 +241,11 @@ class sql
     /**
      * reset the previous settings
      */
-    public function reset(): void
+    public function reset(string $db_type = ''): void
     {
+        if ($db_type != '') {
+            $this->db_type = $db_type;
+        }
         $this->usr_id = null;
         $this->usr_view_id = null;
         $this->class = '';

@@ -3,11 +3,24 @@
 --
 -- indexes for table results_standard_prime
 --
-CREATE UNIQUE INDEX results_standard_prime_pkey ON results_standard_prime (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4);
+CREATE UNIQUE INDEX results_standard_prime_pkey ON results_standard_prime (formula_id, phrase_id_1, phrase_id_2, phrase_id_3);
+CREATE INDEX results_standard_prime_formula_idx ON results_standard_prime (formula_id);
 CREATE INDEX results_standard_prime_phrase_id_1_idx ON results_standard_prime (phrase_id_1);
 CREATE INDEX results_standard_prime_phrase_id_2_idx ON results_standard_prime (phrase_id_2);
 CREATE INDEX results_standard_prime_phrase_id_3_idx ON results_standard_prime (phrase_id_3);
-CREATE INDEX results_standard_prime_phrase_id_4_idx ON results_standard_prime (phrase_id_4);
+
+--
+-- indexes for table results_standard_main
+--
+CREATE UNIQUE INDEX results_standard_main_pkey ON results_standard_main (formula_id, phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, phrase_id_5, phrase_id_6, phrase_id_7);
+CREATE INDEX results_standard_main_formula_idx ON results_standard_main (formula_id);
+CREATE INDEX results_standard_main_phrase_id_1_idx ON results_standard_main (phrase_id_1);
+CREATE INDEX results_standard_main_phrase_id_2_idx ON results_standard_main (phrase_id_2);
+CREATE INDEX results_standard_main_phrase_id_3_idx ON results_standard_main (phrase_id_3);
+CREATE INDEX results_standard_main_phrase_id_4_idx ON results_standard_main (phrase_id_4);
+CREATE INDEX results_standard_main_phrase_id_5_idx ON results_standard_main (phrase_id_5);
+CREATE INDEX results_standard_main_phrase_id_6_idx ON results_standard_main (phrase_id_6);
+CREATE INDEX results_standard_main_phrase_id_7_idx ON results_standard_main (phrase_id_7);
 
 --
 -- indexes for table results_standard
@@ -53,6 +66,38 @@ CREATE INDEX user_results_prime_user_idx ON user_results_prime (user_id);
 CREATE INDEX user_results_prime_formula_idx ON user_results_prime (formula_id);
 
 --
+-- indexes for table results_main
+--
+CREATE UNIQUE INDEX results_main_pkey ON results_main (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, phrase_id_5, phrase_id_6, phrase_id_7, phrase_id_8);
+CREATE INDEX results_main_phrase_id_1_idx ON results_main (phrase_id_1);
+CREATE INDEX results_main_phrase_id_2_idx ON results_main (phrase_id_2);
+CREATE INDEX results_main_phrase_id_3_idx ON results_main (phrase_id_3);
+CREATE INDEX results_main_phrase_id_4_idx ON results_main (phrase_id_4);
+CREATE INDEX results_main_phrase_id_5_idx ON results_main (phrase_id_5);
+CREATE INDEX results_main_phrase_id_6_idx ON results_main (phrase_id_6);
+CREATE INDEX results_main_phrase_id_7_idx ON results_main (phrase_id_7);
+CREATE INDEX results_main_phrase_id_8_idx ON results_main (phrase_id_8);
+CREATE INDEX results_main_source_group_idx ON results_main (source_group_id);
+CREATE INDEX results_main_formula_idx ON results_main (formula_id);
+CREATE INDEX results_main_user_idx ON results_main (user_id);
+
+--
+-- indexes for table user_results_main
+--
+CREATE UNIQUE INDEX user_results_main_pkey ON user_results_main (phrase_id_1,phrase_id_2,phrase_id_3,phrase_id_4, phrase_id_5, phrase_id_6, phrase_id_7, phrase_id_8, user_id);
+CREATE INDEX user_results_main_phrase_id_1_idx ON user_results_main (phrase_id_1);
+CREATE INDEX user_results_main_phrase_id_2_idx ON user_results_main (phrase_id_2);
+CREATE INDEX user_results_main_phrase_id_3_idx ON user_results_main (phrase_id_3);
+CREATE INDEX user_results_main_phrase_id_4_idx ON user_results_main (phrase_id_4);
+CREATE INDEX user_results_main_phrase_id_5_idx ON user_results_main (phrase_id_5);
+CREATE INDEX user_results_main_phrase_id_6_idx ON user_results_main (phrase_id_6);
+CREATE INDEX user_results_main_phrase_id_7_idx ON user_results_main (phrase_id_7);
+CREATE INDEX user_results_main_phrase_id_8_idx ON user_results_main (phrase_id_8);
+CREATE INDEX user_results_main_source_group_idx ON user_results_main (source_group_id);
+CREATE INDEX user_results_main_user_idx ON user_results_main (user_id);
+CREATE INDEX user_results_main_formula_idx ON user_results_main (formula_id);
+
+--
 -- indexes for table results_big
 --
 CREATE INDEX results_big_source_group_idx ON results_big (source_group_id);
@@ -72,11 +117,24 @@ CREATE INDEX user_results_big_formula_idx ON user_results_big (formula_id);
 --
 -- indexes for table results_text_standard_prime
 --
-CREATE UNIQUE INDEX results_text_standard_prime_pkey ON results_text_standard_prime (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4);
+CREATE UNIQUE INDEX results_text_standard_prime_pkey ON results_text_standard_prime (formula_id, phrase_id_1, phrase_id_2, phrase_id_3);
+CREATE INDEX results_text_standard_prime_formula_idx ON results_text_standard_prime (formula_id);
 CREATE INDEX results_text_standard_prime_phrase_id_1_idx ON results_text_standard_prime (phrase_id_1);
 CREATE INDEX results_text_standard_prime_phrase_id_2_idx ON results_text_standard_prime (phrase_id_2);
 CREATE INDEX results_text_standard_prime_phrase_id_3_idx ON results_text_standard_prime (phrase_id_3);
-CREATE INDEX results_text_standard_prime_phrase_id_4_idx ON results_text_standard_prime (phrase_id_4);
+
+--
+-- indexes for table results_text_standard_main
+--
+CREATE UNIQUE INDEX results_text_standard_main_pkey ON results_text_standard_main (formula_id, phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, phrase_id_5, phrase_id_6, phrase_id_7);
+CREATE INDEX results_text_standard_main_formula_idx ON results_text_standard_main (formula_id);
+CREATE INDEX results_text_standard_main_phrase_id_1_idx ON results_text_standard_main (phrase_id_1);
+CREATE INDEX results_text_standard_main_phrase_id_2_idx ON results_text_standard_main (phrase_id_2);
+CREATE INDEX results_text_standard_main_phrase_id_3_idx ON results_text_standard_main (phrase_id_3);
+CREATE INDEX results_text_standard_main_phrase_id_4_idx ON results_text_standard_main (phrase_id_4);
+CREATE INDEX results_text_standard_main_phrase_id_5_idx ON results_text_standard_main (phrase_id_5);
+CREATE INDEX results_text_standard_main_phrase_id_6_idx ON results_text_standard_main (phrase_id_6);
+CREATE INDEX results_text_standard_main_phrase_id_7_idx ON results_text_standard_main (phrase_id_7);
 
 --
 -- indexes for table results_text_standard
@@ -122,6 +180,38 @@ CREATE INDEX user_results_text_prime_user_idx ON user_results_text_prime (user_i
 CREATE INDEX user_results_text_prime_formula_idx ON user_results_text_prime (formula_id);
 
 --
+-- indexes for table results_text_main
+--
+CREATE UNIQUE INDEX results_text_main_pkey ON results_text_main (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, phrase_id_5, phrase_id_6, phrase_id_7, phrase_id_8);
+CREATE INDEX results_text_main_phrase_id_1_idx ON results_text_main (phrase_id_1);
+CREATE INDEX results_text_main_phrase_id_2_idx ON results_text_main (phrase_id_2);
+CREATE INDEX results_text_main_phrase_id_3_idx ON results_text_main (phrase_id_3);
+CREATE INDEX results_text_main_phrase_id_4_idx ON results_text_main (phrase_id_4);
+CREATE INDEX results_text_main_phrase_id_5_idx ON results_text_main (phrase_id_5);
+CREATE INDEX results_text_main_phrase_id_6_idx ON results_text_main (phrase_id_6);
+CREATE INDEX results_text_main_phrase_id_7_idx ON results_text_main (phrase_id_7);
+CREATE INDEX results_text_main_phrase_id_8_idx ON results_text_main (phrase_id_8);
+CREATE INDEX results_text_main_source_group_idx ON results_text_main (source_group_id);
+CREATE INDEX results_text_main_formula_idx ON results_text_main (formula_id);
+CREATE INDEX results_text_main_user_idx ON results_text_main (user_id);
+
+--
+-- indexes for table user_results_text_main
+--
+CREATE UNIQUE INDEX user_results_text_main_pkey ON user_results_text_main (phrase_id_1,phrase_id_2,phrase_id_3,phrase_id_4, phrase_id_5, phrase_id_6, phrase_id_7, phrase_id_8, user_id);
+CREATE INDEX user_results_text_main_phrase_id_1_idx ON user_results_text_main (phrase_id_1);
+CREATE INDEX user_results_text_main_phrase_id_2_idx ON user_results_text_main (phrase_id_2);
+CREATE INDEX user_results_text_main_phrase_id_3_idx ON user_results_text_main (phrase_id_3);
+CREATE INDEX user_results_text_main_phrase_id_4_idx ON user_results_text_main (phrase_id_4);
+CREATE INDEX user_results_text_main_phrase_id_5_idx ON user_results_text_main (phrase_id_5);
+CREATE INDEX user_results_text_main_phrase_id_6_idx ON user_results_text_main (phrase_id_6);
+CREATE INDEX user_results_text_main_phrase_id_7_idx ON user_results_text_main (phrase_id_7);
+CREATE INDEX user_results_text_main_phrase_id_8_idx ON user_results_text_main (phrase_id_8);
+CREATE INDEX user_results_text_main_source_group_idx ON user_results_text_main (source_group_id);
+CREATE INDEX user_results_text_main_user_idx ON user_results_text_main (user_id);
+CREATE INDEX user_results_text_main_formula_idx ON user_results_text_main (formula_id);
+
+--
 -- indexes for table results_text_big
 --
 CREATE INDEX results_text_big_source_group_idx ON results_text_big (source_group_id);
@@ -141,11 +231,24 @@ CREATE INDEX user_results_text_big_formula_idx ON user_results_text_big (formula
 --
 -- indexes for table results_time_standard_prime
 --
-CREATE UNIQUE INDEX results_time_standard_prime_pkey ON results_time_standard_prime (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4);
+CREATE UNIQUE INDEX results_time_standard_prime_pkey ON results_time_standard_prime (formula_id, phrase_id_1, phrase_id_2, phrase_id_3);
+CREATE INDEX results_time_standard_prime_formula_idx ON results_time_standard_prime (formula_id);
 CREATE INDEX results_time_standard_prime_phrase_id_1_idx ON results_time_standard_prime (phrase_id_1);
 CREATE INDEX results_time_standard_prime_phrase_id_2_idx ON results_time_standard_prime (phrase_id_2);
 CREATE INDEX results_time_standard_prime_phrase_id_3_idx ON results_time_standard_prime (phrase_id_3);
-CREATE INDEX results_time_standard_prime_phrase_id_4_idx ON results_time_standard_prime (phrase_id_4);
+
+--
+-- indexes for table results_time_standard_main
+--
+CREATE UNIQUE INDEX results_time_standard_main_pkey ON results_time_standard_main (formula_id, phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, phrase_id_5, phrase_id_6, phrase_id_7);
+CREATE INDEX results_time_standard_main_formula_idx ON results_time_standard_main (formula_id);
+CREATE INDEX results_time_standard_main_phrase_id_1_idx ON results_time_standard_main (phrase_id_1);
+CREATE INDEX results_time_standard_main_phrase_id_2_idx ON results_time_standard_main (phrase_id_2);
+CREATE INDEX results_time_standard_main_phrase_id_3_idx ON results_time_standard_main (phrase_id_3);
+CREATE INDEX results_time_standard_main_phrase_id_4_idx ON results_time_standard_main (phrase_id_4);
+CREATE INDEX results_time_standard_main_phrase_id_5_idx ON results_time_standard_main (phrase_id_5);
+CREATE INDEX results_time_standard_main_phrase_id_6_idx ON results_time_standard_main (phrase_id_6);
+CREATE INDEX results_time_standard_main_phrase_id_7_idx ON results_time_standard_main (phrase_id_7);
 
 --
 -- indexes for table results_time_standard
@@ -191,6 +294,38 @@ CREATE INDEX user_results_time_prime_user_idx ON user_results_time_prime (user_i
 CREATE INDEX user_results_time_prime_formula_idx ON user_results_time_prime (formula_id);
 
 --
+-- indexes for table results_time_main
+--
+CREATE UNIQUE INDEX results_time_main_pkey ON results_time_main (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, phrase_id_5, phrase_id_6, phrase_id_7, phrase_id_8);
+CREATE INDEX results_time_main_phrase_id_1_idx ON results_time_main (phrase_id_1);
+CREATE INDEX results_time_main_phrase_id_2_idx ON results_time_main (phrase_id_2);
+CREATE INDEX results_time_main_phrase_id_3_idx ON results_time_main (phrase_id_3);
+CREATE INDEX results_time_main_phrase_id_4_idx ON results_time_main (phrase_id_4);
+CREATE INDEX results_time_main_phrase_id_5_idx ON results_time_main (phrase_id_5);
+CREATE INDEX results_time_main_phrase_id_6_idx ON results_time_main (phrase_id_6);
+CREATE INDEX results_time_main_phrase_id_7_idx ON results_time_main (phrase_id_7);
+CREATE INDEX results_time_main_phrase_id_8_idx ON results_time_main (phrase_id_8);
+CREATE INDEX results_time_main_source_group_idx ON results_time_main (source_group_id);
+CREATE INDEX results_time_main_formula_idx ON results_time_main (formula_id);
+CREATE INDEX results_time_main_user_idx ON results_time_main (user_id);
+
+--
+-- indexes for table user_results_time_main
+--
+CREATE UNIQUE INDEX user_results_time_main_pkey ON user_results_time_main (phrase_id_1,phrase_id_2,phrase_id_3,phrase_id_4, phrase_id_5, phrase_id_6, phrase_id_7, phrase_id_8, user_id);
+CREATE INDEX user_results_time_main_phrase_id_1_idx ON user_results_time_main (phrase_id_1);
+CREATE INDEX user_results_time_main_phrase_id_2_idx ON user_results_time_main (phrase_id_2);
+CREATE INDEX user_results_time_main_phrase_id_3_idx ON user_results_time_main (phrase_id_3);
+CREATE INDEX user_results_time_main_phrase_id_4_idx ON user_results_time_main (phrase_id_4);
+CREATE INDEX user_results_time_main_phrase_id_5_idx ON user_results_time_main (phrase_id_5);
+CREATE INDEX user_results_time_main_phrase_id_6_idx ON user_results_time_main (phrase_id_6);
+CREATE INDEX user_results_time_main_phrase_id_7_idx ON user_results_time_main (phrase_id_7);
+CREATE INDEX user_results_time_main_phrase_id_8_idx ON user_results_time_main (phrase_id_8);
+CREATE INDEX user_results_time_main_source_group_idx ON user_results_time_main (source_group_id);
+CREATE INDEX user_results_time_main_user_idx ON user_results_time_main (user_id);
+CREATE INDEX user_results_time_main_formula_idx ON user_results_time_main (formula_id);
+
+--
 -- indexes for table results_time_big
 --
 CREATE INDEX results_time_big_source_group_idx ON results_time_big (source_group_id);
@@ -210,11 +345,24 @@ CREATE INDEX user_results_time_big_formula_idx ON user_results_time_big (formula
 --
 -- indexes for table results_geo_standard_prime
 --
-CREATE UNIQUE INDEX results_geo_standard_prime_pkey ON results_geo_standard_prime (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4);
+CREATE UNIQUE INDEX results_geo_standard_prime_pkey ON results_geo_standard_prime (formula_id, phrase_id_1, phrase_id_2, phrase_id_3);
+CREATE INDEX results_geo_standard_prime_formula_idx ON results_geo_standard_prime (formula_id);
 CREATE INDEX results_geo_standard_prime_phrase_id_1_idx ON results_geo_standard_prime (phrase_id_1);
 CREATE INDEX results_geo_standard_prime_phrase_id_2_idx ON results_geo_standard_prime (phrase_id_2);
 CREATE INDEX results_geo_standard_prime_phrase_id_3_idx ON results_geo_standard_prime (phrase_id_3);
-CREATE INDEX results_geo_standard_prime_phrase_id_4_idx ON results_geo_standard_prime (phrase_id_4);
+
+--
+-- indexes for table results_geo_standard_main
+--
+CREATE UNIQUE INDEX results_geo_standard_main_pkey ON results_geo_standard_main (formula_id, phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, phrase_id_5, phrase_id_6, phrase_id_7);
+CREATE INDEX results_geo_standard_main_formula_idx ON results_geo_standard_main (formula_id);
+CREATE INDEX results_geo_standard_main_phrase_id_1_idx ON results_geo_standard_main (phrase_id_1);
+CREATE INDEX results_geo_standard_main_phrase_id_2_idx ON results_geo_standard_main (phrase_id_2);
+CREATE INDEX results_geo_standard_main_phrase_id_3_idx ON results_geo_standard_main (phrase_id_3);
+CREATE INDEX results_geo_standard_main_phrase_id_4_idx ON results_geo_standard_main (phrase_id_4);
+CREATE INDEX results_geo_standard_main_phrase_id_5_idx ON results_geo_standard_main (phrase_id_5);
+CREATE INDEX results_geo_standard_main_phrase_id_6_idx ON results_geo_standard_main (phrase_id_6);
+CREATE INDEX results_geo_standard_main_phrase_id_7_idx ON results_geo_standard_main (phrase_id_7);
 
 --
 -- indexes for table results_geo_standard
@@ -258,6 +406,38 @@ CREATE INDEX user_results_geo_prime_phrase_id_4_idx ON user_results_geo_prime (p
 CREATE INDEX user_results_geo_prime_source_group_idx ON user_results_geo_prime (source_group_id);
 CREATE INDEX user_results_geo_prime_user_idx ON user_results_geo_prime (user_id);
 CREATE INDEX user_results_geo_prime_formula_idx ON user_results_geo_prime (formula_id);
+
+--
+-- indexes for table results_geo_main
+--
+CREATE UNIQUE INDEX results_geo_main_pkey ON results_geo_main (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, phrase_id_5, phrase_id_6, phrase_id_7, phrase_id_8);
+CREATE INDEX results_geo_main_phrase_id_1_idx ON results_geo_main (phrase_id_1);
+CREATE INDEX results_geo_main_phrase_id_2_idx ON results_geo_main (phrase_id_2);
+CREATE INDEX results_geo_main_phrase_id_3_idx ON results_geo_main (phrase_id_3);
+CREATE INDEX results_geo_main_phrase_id_4_idx ON results_geo_main (phrase_id_4);
+CREATE INDEX results_geo_main_phrase_id_5_idx ON results_geo_main (phrase_id_5);
+CREATE INDEX results_geo_main_phrase_id_6_idx ON results_geo_main (phrase_id_6);
+CREATE INDEX results_geo_main_phrase_id_7_idx ON results_geo_main (phrase_id_7);
+CREATE INDEX results_geo_main_phrase_id_8_idx ON results_geo_main (phrase_id_8);
+CREATE INDEX results_geo_main_source_group_idx ON results_geo_main (source_group_id);
+CREATE INDEX results_geo_main_formula_idx ON results_geo_main (formula_id);
+CREATE INDEX results_geo_main_user_idx ON results_geo_main (user_id);
+
+--
+-- indexes for table user_results_geo_main
+--
+CREATE UNIQUE INDEX user_results_geo_main_pkey ON user_results_geo_main (phrase_id_1,phrase_id_2,phrase_id_3,phrase_id_4, phrase_id_5, phrase_id_6, phrase_id_7, phrase_id_8, user_id);
+CREATE INDEX user_results_geo_main_phrase_id_1_idx ON user_results_geo_main (phrase_id_1);
+CREATE INDEX user_results_geo_main_phrase_id_2_idx ON user_results_geo_main (phrase_id_2);
+CREATE INDEX user_results_geo_main_phrase_id_3_idx ON user_results_geo_main (phrase_id_3);
+CREATE INDEX user_results_geo_main_phrase_id_4_idx ON user_results_geo_main (phrase_id_4);
+CREATE INDEX user_results_geo_main_phrase_id_5_idx ON user_results_geo_main (phrase_id_5);
+CREATE INDEX user_results_geo_main_phrase_id_6_idx ON user_results_geo_main (phrase_id_6);
+CREATE INDEX user_results_geo_main_phrase_id_7_idx ON user_results_geo_main (phrase_id_7);
+CREATE INDEX user_results_geo_main_phrase_id_8_idx ON user_results_geo_main (phrase_id_8);
+CREATE INDEX user_results_geo_main_source_group_idx ON user_results_geo_main (source_group_id);
+CREATE INDEX user_results_geo_main_user_idx ON user_results_geo_main (user_id);
+CREATE INDEX user_results_geo_main_formula_idx ON user_results_geo_main (formula_id);
 
 --
 -- indexes for table results_geo_big

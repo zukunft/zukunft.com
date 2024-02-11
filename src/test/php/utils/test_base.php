@@ -55,6 +55,7 @@ namespace test;
 include_once MODEL_USER_PATH . 'user.php';
 include_once DB_PATH . 'sql_table_type.php';
 
+use cfg\db\sql;
 use cfg\db\sql as sql_creator;
 use cfg\db\sql_par;
 use cfg\log\change;
@@ -895,26 +896,25 @@ class test_base
      * check the SQL statement to create the sql table
      * for all allowed SQL database dialects
      *
-     * @param sql_db $db_con does not need to be connected to a real database
      * @param object $usr_obj the user sandbox object e.g. a word
      * @return bool true if all tests are fine
      */
-    function assert_sql_table_create(sql_db $db_con, object $usr_obj): bool
+    function assert_sql_table_create(object $usr_obj): bool
     {
         $lib = new library();
         $class = $lib->class_to_name($usr_obj::class);
         // check the Postgres query syntax
-        $db_con->db_type = sql_db::POSTGRES;
+        $sc = new sql(sql_db::POSTGRES);
         $name = $class . '_create';
-        $expected_sql = $this->assert_sql_expected($name, $db_con->db_type);
-        $actual_sql = $usr_obj->sql_table($db_con->sql_creator(), $class);
+        $expected_sql = $this->assert_sql_expected($name, $sc->db_type);
+        $actual_sql = $usr_obj->sql_table($sc, $class);
         $result = $this->assert_sql($name, $actual_sql, $expected_sql);
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $db_con->db_type = sql_db::MYSQL;
-            $expected_sql = $this->assert_sql_expected($name, $db_con->db_type);
-            $actual_sql = $usr_obj->sql_table($db_con->sql_creator(), $class);
+            $sc->reset(sql_db::MYSQL);
+            $expected_sql = $this->assert_sql_expected($name, $sc->db_type);
+            $actual_sql = $usr_obj->sql_table($sc, $class);
             $result = $this->assert_sql($name, $actual_sql, $expected_sql);
         }
         return $result;

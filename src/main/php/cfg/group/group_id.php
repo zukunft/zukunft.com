@@ -70,7 +70,7 @@ class group_id extends id
     const TBL_EXT_PRIME = '_prime'; // the table name extension for up to four prime phrase ids
     const TBL_EXT_BIG = '_big'; // the table name extension for more than 16 phrase ids
     const TBL_EXT_PHRASE_ID = '_p'; // the table name extension with the number of phrases for up to four prime phrase ids
-    const PRIME_PHRASES = 4;
+    const PRIME_PHRASES_STD = 4;
     const STANDARD_PHRASES = 16;
 
     /**
@@ -81,7 +81,7 @@ class group_id extends id
     function get_id(phrase_list $phr_lst): int|string
     {
         $phr_lst = $phr_lst->sort_by_id();
-        if ($phr_lst->count() <= self::PRIME_PHRASES and $phr_lst->prime_only()) {
+        if ($phr_lst->count() <= self::PRIME_PHRASES_STD and $phr_lst->prime_only()) {
             $db_key = $this->int_group_id($phr_lst);
         } elseif ($phr_lst->count() <= self::STANDARD_PHRASES) {
             $db_key = $this->alpha_num($phr_lst);
@@ -100,7 +100,7 @@ class group_id extends id
     {
         $tbl_typ = $this->table_type($id);
         if ($tbl_typ == sql_table_type::PRIME) {
-            return self::PRIME_PHRASES;
+            return self::PRIME_PHRASES_STD;
         } elseif ($tbl_typ == sql_table_type::BIG) {
             $id_keys = preg_split("/[+-]/", $id);
             return count($id_keys);

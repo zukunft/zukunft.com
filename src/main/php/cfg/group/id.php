@@ -40,7 +40,7 @@ class id
 {
 
     // the max number of int
-    const PRIME_PHRASES = 4;
+    const PRIME_PHRASES_STD = 4;
 
     const CHAR_FORMULA = '=';
     const CHAR_TRIPLE = '-';
@@ -86,7 +86,7 @@ class id
             }
             $keys[] = $key;
         }
-        while (count($keys) < self::PRIME_PHRASES) {
+        while (count($keys) < self::PRIME_PHRASES_STD) {
             array_unshift($keys, str_repeat('0', 16));
         }
         return implode('', $keys);

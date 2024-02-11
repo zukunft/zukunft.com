@@ -301,7 +301,7 @@ class group extends sandbox_multi
         $name_lst = array();
         $grp_id = new group_id();
         if ($all) {
-            for ($pos = 1; $pos <= group_id::PRIME_PHRASES; $pos++) {
+            for ($pos = 1; $pos <= group_id::PRIME_PHRASES_STD; $pos++) {
                 $name_lst[] = phrase::FLD_ID . '_' . $pos;
             }
         } else {

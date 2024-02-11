@@ -89,10 +89,13 @@ class result_id extends id
     const TBL_EXT_BIG = '_big'; // the table name extension for more than 16 phrase ids
     const TBL_EXT_PHRASE_ID = '_p'; // the table name extension with the number of phrases for up to four prime phrase ids
     const FORMULA_IDS = 1;
-    const PRIME_PHRASES = 3;
+    const PRIME_PHRASES = 4;
+    const PRIME_PHRASES_STD = 3;
     const PRIME_SOURCE_PHRASES = 0;
     const PRIME_RESULT_PHRASES = 0;
-    const MAIN_PHRASES = 5;
+    const MAIN_PHRASES_ALL = 8;
+    const MAIN_PHRASES = 6;
+    const MAIN_PHRASES_STD = 5;
     const MAIN_SOURCE_PHRASES = 1;
     const MAIN_RESULT_PHRASES = 1;
     const STANDARD_PHRASES = 15;
@@ -119,12 +122,12 @@ class result_id extends id
         $both_lst = $all_lst->get_diff($only_lst);
         $both_lst = $both_lst->sort_by_id();
 
-        if ($both_lst->count() <= self::PRIME_PHRASES
+        if ($both_lst->count() <= self::PRIME_PHRASES_STD
             and $src_only->count() <= self::PRIME_SOURCE_PHRASES
             and $res_only->count() <= self::PRIME_RESULT_PHRASES
             and $all_lst->prime_only()) {
             $db_key = $this->int_group_id($both_lst, $frm);
-        } elseif ($both_lst->count() <= self::MAIN_PHRASES
+        } elseif ($both_lst->count() <= self::MAIN_PHRASES_STD
             and $src_only->count() <= self::MAIN_SOURCE_PHRASES
             and $res_only->count() <= self::MAIN_RESULT_PHRASES
             and $all_lst->prime_only()) {
@@ -178,7 +181,7 @@ class result_id extends id
         }
         // fill the unused phrase id places with zero
         // to have the result only and source only phrases always staring at the same place
-        $total_length = self::FORMULA_IDS + self::PRIME_PHRASES;
+        $total_length = self::FORMULA_IDS + self::PRIME_PHRASES_STD;
         while (count($id_lst) < $total_length) {
             $id_lst[] = 0;
         }
