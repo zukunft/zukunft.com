@@ -687,64 +687,13 @@ class value extends sandbox_value
     }
 
     /**
-     * load the missing value parameters from the database
-     */
-    function load_obj_vars(): bool
-    {
-
-        global $db_con;
-        global $debug;
-        $result = true;
-
-        // check the all minimal input parameters
-        if ($this->user() == null) {
-            log_err('The user id must be set to load a result.', 'value->load');
-        } else {
-            log_debug($this->dsp_id(), $debug - 9);
-
-            $qp = $this->load_sql_obj_vars($db_con->sql_creator());
-            $db_val = $db_con->get1($qp);
-            $result = $this->row_mapper_sandbox_multi($db_val, $qp->ext);
-
-            // if not direct value is found try to get a more specific value
-            // similar to result
-            /* TODO review with a concrete test
-            if ($this->id() <= 0 and isset($this->phr_lst)) {
-                if (count($this->phr_lst->lst) > 0) {
-
-                    $qp_val = $this->load_sql($db_con);
-                    log_debug('value->load sql val "' . $qp_val->name . '"');
-                    $db_con->usr_id = $this->user()->id();
-                    $val_ids_rows = $db_con->get($qp_val);
-                    if ($val_ids_rows != null) {
-                        if (count($val_ids_rows) > 0) {
-                            $val_id_row = $val_ids_rows[0];
-                            $this->id() = $val_id_row[self::FLD_ID];
-                            if ($this->id() > 0) {
-                                $sql_where = "s.group_id = " . $this->id();
-                                $qp = $this->load_sql($db_con);
-                                $db_val = $db_con->get1($qp);
-                                $this->row_mapper($db_val, true);
-                                log_debug('value->loaded best guess id (' . $this->id() . ')');
-                            }
-                        }
-                    }
-                }
-            }
-            */
-        }
-        log_debug('got ' . $this->number() . ' with id ' . $this->id, $debug - 1);
-        return $result;
-    }
-
-    /**
      * get the best matching value
      * 1. try to find a value with simply a different scaling e.g. if the number of share are requested, but this is in millions in the database use and scale it
      * 2. check if another measure type can be converted      e.g. if the share price in USD is requested, but only in EUR is in the database convert it
      *    e.g. for "ABB","Sales","2014" the value for "ABB","Sales","2014","million","CHF" will be loaded,
      *    because most values for "ABB", "Sales" are in ,"million","CHF"
      */
-    function load_best()
+    function load_best(): void
     {
         log_debug('value->load_best for ' . $this->dsp_id());
         $this->load_by_grp($this->grp);

@@ -279,12 +279,8 @@ class formula_element_group
                 // get the word group result, which means a formula result
                 log_debug('load result for ' . $val_phr_lst->dsp_name());
                 $grp_res = new result($this->usr);
-                /*
-                $grp_res->phr_grp_id = $val_phr_grp->id;
-                if ($val_time_phr != null) {
-                    $grp_res->time_phr = $val_time_phr;
-                }
-                $grp_res->load_obj_vars();
+                /* TODO review
+                $grp_res->load_by_grp($val_phr_grp);
                 */
                 if ($val_time_phr == null) {
                     $time_id = null;

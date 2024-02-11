@@ -144,7 +144,7 @@ class sandbox_link extends sandbox
      * @param string $class the name of the child class from where the call has been triggered
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_link_id(int $from, int $type, int $to, string $class): int
+    function load_by_link_id(int $from, int $type = 0, int $to = 0, string $class = ''): int
     {
         global $db_con;
 
@@ -519,7 +519,7 @@ class sandbox_link extends sandbox
             }
             // check with the user link space
             $db_chk->set_user($this->user());
-            if ($db_chk->load_obj_vars()) {
+            if ($db_chk->load_by_link_id($this->fob->id(), 0, $this->tob->id(), $this::class)) {
                 if ($db_chk->id() > 0) {
                     log_debug('the ' . $this->fob->name() . ' "' . $this->fob->name() . '" is already linked to "' . $this->tob->name() . '" of the user linkspace');
                     $result = $db_chk;

@@ -622,8 +622,6 @@ class word extends sandbox_typed
     {
         $result = null;
 
-        //$this->load_obj_vars();
-
         if ($this->view != null) {
             $result = $this->view;
         } else {

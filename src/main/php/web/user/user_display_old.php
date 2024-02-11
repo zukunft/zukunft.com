@@ -207,13 +207,17 @@ class user_dsp_old extends user
                 // create the triple objects with the minimal parameter needed
                 // TODO maybe use row mapper
                 $trp_usr = new triple($this);
-                $trp_usr->set_id($sbx_row['id']);
-                $trp_usr->fob->set_id($sbx_row['from_phrase_id']);
-                $trp_usr->verb->set_id($sbx_row[verb::FLD_ID]);
-                $trp_usr->tob->set_id($sbx_row['to_phrase_id']);
+                $id = $sbx_row['id'];
+                if ($id != 0) {
+                    $trp_usr->load_by_id($id);
+                } else {
+                    $from_id = $sbx_row['from_phrase_id'];
+                    $vrb_id = $sbx_row[verb::FLD_ID];
+                    $to_id = $sbx_row['to_phrase_id'];
+                    $trp_usr->load_by_link_id($from_id, $vrb_id, $to_id);
+                }
                 $trp_usr->set_name($sbx_row['usr_name']);
                 $trp_usr->set_excluded($sbx_row['usr_excluded']);
-                //$trp_usr->load_obj_vars();
 
                 // to review: try to avoid using load_test_user
                 $usr_std = new user;

@@ -60,7 +60,6 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO rename phrase_group to group
     TODO move the time field of phrase groups to the group
     TODO check that all times include the time zone
-    TODO load_obj_vars: replace the load_obj_vars with more specific load_by_ functions
     TODO unit test: create a unit test for all possible class functions next to review: formula expression
     TODO api load: expose all load functions to the api (with security check!)
     TODO use always prepared queries based on the value_phrase_link_list_by_phrase_id.sql sample

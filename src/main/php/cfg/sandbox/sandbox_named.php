@@ -741,8 +741,8 @@ class sandbox_named extends sandbox
             // check with the user namespace
             $db_chk->set_user($this->user());
             if ($this->obj_name == sql_db::TBL_CHANGE) {
-                // for some objects still use the deprecated load_obj_vars method
-                if ($db_chk->load_obj_vars()) {
+                // TODO check if it is working with build in tests
+                if ($db_chk->load_by_id($this->id())) {
                     if ($db_chk->id() > 0) {
                         log_debug($this->dsp_id() . ' has the same name is the already existing "' . $db_chk->dsp_id() . '" of the user namespace');
                         $result = $db_chk;

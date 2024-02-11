@@ -846,7 +846,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
      * @param string $class the name of the child class from where the call has been triggered
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_link_id(int $from, int $type, int $to, string $class = self::class): int
+    function load_by_link_id(int $from, int $type = 0, int $to = 0, string $class = self::class): int
     {
         global $db_con;
 

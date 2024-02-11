@@ -68,8 +68,7 @@ class value_unit_db_tests
         $test_name = 'load the latest value by phrase group';
         $phr_lst->ex_time();
         $val = new value($t->usr1);
-        $val->grp = $phr_lst->get_grp();
-        $val->load_obj_vars();
+        $val->load_by_grp($phr_lst->get_grp());
         $result = $val->number();
         $target = value_api::TV_CH_INHABITANTS_2020_IN_MIO;
         $t->assert($test_name, $result, $target);

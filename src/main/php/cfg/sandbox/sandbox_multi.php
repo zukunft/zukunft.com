@@ -570,16 +570,6 @@ class sandbox_multi extends db_object_multi_user
         return true;
     }
 
-    /**
-     * dummy function to get the missing object values from the database that is always overwritten by the child class
-     * @returns bool  false if the loading has failed
-     */
-    function load_obj_vars(): bool
-    {
-        log_err('The dummy parent method get_similar has been called, which should never happen');
-        return true;
-    }
-
 
     /*
      *  check functions
