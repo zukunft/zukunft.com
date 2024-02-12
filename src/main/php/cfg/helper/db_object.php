@@ -101,7 +101,7 @@ class db_object
         if ($tbl_comment == '') {
             $tbl_comment = $this::TBL_COMMENT;
         }
-        return $sc->table_create($fields, '', $tbl_comment, $usr_table);
+        return $sc->table_create($fields, '', $tbl_comment, $this::class, $usr_table);
     }
 
     /**

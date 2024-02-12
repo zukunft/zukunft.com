@@ -5,8 +5,8 @@
 --
 
 CREATE TABLE IF NOT EXISTS sources (
-    source_id      bigint           NOT NULL COMMENT 'the internal unique primary index ',
-    user_id        bigint       DEFAULT NULL COMMENT 'the owner / creator of the value',
+    source_id      bigint           NOT NULL COMMENT 'the internal unique primary index',
+    user_id        bigint       DEFAULT NULL COMMENT 'the owner / creator of the source',
     source_name    varchar(255)     NOT NULL COMMENT 'the unique name of the source used e.g. as the primary search key',
     description    text DEFAULT         NULL COMMENT 'the user specific description of the source for mouse over helps',
     source_type_id bigint DEFAULT       NULL COMMENT 'link to the source type',
@@ -25,8 +25,8 @@ CREATE TABLE IF NOT EXISTS sources (
 --
 
 CREATE TABLE IF NOT EXISTS user_sources (
-    source_id      bigint           NOT NULL COMMENT 'with the user_id the internal unique primary index ',
-    user_id        bigint           NOT NULL COMMENT 'the changer of the ',
+    source_id      bigint           NOT NULL COMMENT 'with the user_id the internal unique primary index',
+    user_id        bigint           NOT NULL COMMENT 'the changer of the source',
     source_name    varchar(255) DEFAULT NULL COMMENT 'the unique name of the source used e.g. as the primary search key',
     description    text         DEFAULT NULL COMMENT 'the user specific description of the source for mouse over helps',
     source_type_id bigint       DEFAULT NULL COMMENT 'link to the source type',

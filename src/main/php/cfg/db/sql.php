@@ -81,6 +81,9 @@ class sql
     const PG_PAR_INT = 'bigint';
     const PG_PAR_INT_SMALL = 'smallint';
 
+    // placeholder for the class name in table or field comments
+    const COMMENT_CLASS_NAME = '-=class=-';
+
     // classes where the table that do not have a name
     // e.g. sql_db::TBL_TRIPLE is a link which hase a name, but the generated name can be overwritten, so the standard field naming is not used
     const DB_TYPES_NOT_NAMED = [
@@ -2324,12 +2327,15 @@ class sql
      * @param array $fields with the field names, types and default value
      * @param string $type_name the name of the value type
      * @param string $tbl_comment describe the purpose of the table for the developer only
+     * @param string $class the class name including the namespace
+     * @param bool $usr_tbl true if the sql for the user overwrite table should be returned
      * @return string the sql statement to create a table
      */
     function table_create(
         array $fields,
         string $type_name = '',
         string $tbl_comment = '',
+        string $class = '',
         bool $usr_tbl = false
     ): string
     {
@@ -2381,6 +2387,11 @@ class sql
             $default = $field[sql::FLD_POS_DEFAULT_VALUE];
             $default_used = $default->pg_type();
             $comment = $field[sql::FLD_POS_COMMENT];
+            if (($type->is_key() or $type->is_key_part()) and $type_name != '') {
+                $comment = $this->comment_set_class($comment, '');
+            } else {
+                $comment = $this->comment_set_class($comment, $class);
+            }
             if ($this->db_type() == sql_db::POSTGRES) {
                 if ($type->is_key()) {
                     $default_used = sql_pg::FLD_KEY;
@@ -2389,7 +2400,7 @@ class sql
             $comment_used = '';
             if ($this->db_type() == sql_db::MYSQL) {
                 $comment_used = " COMMENT '" . $comment;
-                if ($type->is_key() or $type->is_key_part()) {
+                if (($type->is_key() or $type->is_key_part()) and $type_name != '') {
                     $comment_used .= ' ' . $type_name;
                 }
                 $comment_used .= "'";
@@ -2412,8 +2423,13 @@ class sql
                 $name = $field[sql::FLD_POS_NAME];
                 $type = $field[sql::FLD_POS_TYPE];
                 $comment = $field[sql::FLD_POS_COMMENT];
+                if (($type->is_key() or $type->is_key_part()) and $type_name != '') {
+                    $comment = $this->comment_set_class($comment, '');
+                } else {
+                    $comment = $this->comment_set_class($comment, $class);
+                }
                 $sql .= "COMMENT ON COLUMN " . $table_used . "." . $name . " IS '" . $comment;
-                if ($type->is_key() or $type->is_key_part()) {
+                if (($type->is_key() or $type->is_key_part()) and $type_name != '') {
                     $sql .= ' ' . $type_name;
                 }
                 $sql .= "'; ";
@@ -2421,6 +2437,21 @@ class sql
         }
 
         return $sql;
+    }
+
+
+    /**
+     * replace the class placeholder in table of field comments with the class name
+     *
+     * @param string $comment_text the table of field comment
+     * @param string $class the class including the namespace
+     * @return string the comment string with the class name
+     */
+    private function comment_set_class(string $comment_text, string $class): string
+    {
+        $lib = new library();
+        $name = $lib->class_to_name($class);
+        return str_replace(sql::COMMENT_CLASS_NAME, $name, $comment_text);
     }
 
     /**

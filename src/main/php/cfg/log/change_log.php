@@ -410,8 +410,7 @@ class change_log extends db_object_seq_id_user
 
         $sc->set_class($this::class, false, $ext_type);
         $fields = array_merge(self::FLD_LST_KEY, $fld_row_id, $this::FLD_LST_CHANGE);
-        $sql .= $sc->table_create($fields, $type_name,
-            $this::TBL_COMMENT);
+        $sql .= $sc->table_create($fields, $type_name, $this::TBL_COMMENT, $this::class);
         $sql_index .= $sc->index_create($fields);
         $sql_foreign .= $sc->foreign_key_create($fields);
 

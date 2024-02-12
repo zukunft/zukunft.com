@@ -6,8 +6,8 @@
 
 CREATE TABLE IF NOT EXISTS words
 (
-    word_id        bigint       NOT     NULL COMMENT 'the internal unique primary index ',
-    user_id        bigint       DEFAULT NULL COMMENT 'the owner / creator of the value',
+    word_id        bigint       NOT     NULL COMMENT 'the internal unique primary index',
+    user_id        bigint       DEFAULT NULL COMMENT 'the owner / creator of the word',
     word_name      varchar(255) NOT     NULL COMMENT 'the text used for searching',
     plural         varchar(255) DEFAULT NULL COMMENT 'to be replaced by a language form entry; TODO to be move to language forms',
     description    text         DEFAULT NULL COMMENT 'to be replaced by a language form entry',
@@ -29,8 +29,8 @@ CREATE TABLE IF NOT EXISTS words
 
 CREATE TABLE IF NOT EXISTS user_words
 (
-    word_id        bigint       NOT NULL              COMMENT 'with the user_id the internal unique primary index ',
-    user_id        bigint       NOT NULL              COMMENT 'the changer of the ',
+    word_id        bigint       NOT NULL              COMMENT 'with the user_id the internal unique primary index',
+    user_id        bigint       NOT NULL              COMMENT 'the changer of the word',
     language_id    bigint       NOT NULL DEFAULT 1    COMMENT 'the text used for searching',
     word_name      varchar(255)          DEFAULT NULL COMMENT 'the text used for searching',
     plural         varchar(255)          DEFAULT NULL COMMENT 'to be replaced by a language form entry; TODO to be move to language forms',
