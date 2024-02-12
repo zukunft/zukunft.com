@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS `groups` (
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'to add a user given name using a 512-bit group id index for up to 16 32-bit phrase ids including the order';
 
 --
--- table structure to add a user given name using a 512-bit group id index for up to 16 32-bit phrase ids including the order
+-- table structure to save user specific changes to add a user given name using a 512-bit group id index for up to 16 32-bit phrase ids including the order
 --
 
 CREATE TABLE IF NOT EXISTS user_groups (
@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS groups_prime (
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'to add a user given name using a 64-bit group id index for up to four 16-bit phrase ids including the order';
 
 --
--- table structure to add a user given name using a 64-bit group id index for up to four 16-bit phrase ids including the order
+-- table structure to save user specific changes to add a user given name using a 64-bit group id index for up to four 16-bit phrase ids including the order
 --
 
 CREATE TABLE IF NOT EXISTS user_groups_prime (
@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS groups_big (
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'to add a user given name using a group id index with a variable length for more than 16 32-bit phrase ids including the order';
 
 --
--- table structure to add a user given name using a group id index with a variable length for more than 16 32-bit phrase ids including the order
+-- table structure to save user specific changes to add a user given name using a group id index with a variable length for more than 16 32-bit phrase ids including the order
 --
 
 CREATE TABLE IF NOT EXISTS user_groups_big (

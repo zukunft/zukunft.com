@@ -52,6 +52,8 @@ use api\api;
 use api\word\word as word_api;
 use cfg\db\sql;
 use cfg\db\sql_db;
+use cfg\db\sql_field_default;
+use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\group\group_list;
@@ -71,15 +73,50 @@ class word extends sandbox_typed
      * database link
      */
 
+    // comments used for the database creation
+    const TBL_COMMENT = 'for a short text, that can be used to search for values or results with a 64 bit database key because humans will never be able to use more than a few million words';
+
     // object specific database and JSON object field names
     // means: database fields only used for words
-    const FLD_ID = 'word_id';
+    // *_COM: the description of the field
+    const FLD_ID = 'word_id'; // TODO change the user_id field comment to 'the user who has changed the standard word'
+    const FLD_NAME_COM = 'the text used for searching';
     const FLD_NAME = 'word_name';
+    const FLD_DESCRIPTION_COM = 'to be replaced by a language form entry';
+    const FLD_TYPE_COM = 'to link coded functionality to a word e.g. to exclude measure words from a percent result';
+    const FLD_PLURAL_COM = 'to be replaced by a language form entry; TODO to be move to language forms';
     const FLD_PLURAL = 'plural'; // TODO move to language types
+    const FLD_VIEW_COM = 'the default mask for this word';
     const FLD_VIEW = 'view_id';
-    const FLD_VALUES = 'values';
+    const FLD_VALUES_COM = 'number of values linked to the word, which gives an indication of the importance';
+    const FLD_VALUES = 'values'; // TODO convert to a percent value of relative importance e.g. is 100% if all values, results, triples, formulas and views use this word; should be possible to adjust the weight of e.g. values and views with the user specific system settings
+    const FLD_INACTIVE_COM = 'true if the word is not yet active e.g. because it is moved to the prime words with a 16 bit id';
+    const FLD_INACTIVE = 'inactive';
     // the field names used for the im- and export in the json or yaml format
     const FLD_REFS = 'refs';
+
+    // list of fields that MUST be set by one user
+    const FLD_LST_CREATE_MUST_STD = array(
+        [self::FLD_NAME, sql_field_type::NAME, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_NAME_COM],
+    );
+    // list of must fields that CAN be changed by the user
+    const FLD_LST_CREATE_CAN_USER = array(
+        [language::FLD_ID, sql_field_type::INT, sql_field_default::ONE, sql::INDEX, '', self::FLD_NAME_COM],
+        [self::FLD_NAME, sql_field_type::NAME, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_COM],
+    );
+    // list of fields that CAN be changed by the user
+    const FLD_LST_CREATE_CHANGEABLE = array(
+        [self::FLD_PLURAL, sql_field_type::NAME, sql_field_default::NULL, sql::INDEX, '', self::FLD_PLURAL_COM],
+        [self::FLD_DESCRIPTION, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
+        [phrase::FLD_TYPE, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_TYPE_COM],
+        [self::FLD_VIEW, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_VIEW_COM],
+        [self::FLD_VALUES, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_VALUES_COM],
+    );
+    // list of fields that CANNOT be changed by the user
+    const FLD_LST_CREATE_NON_CHANGEABLE = array(
+        [self::FLD_INACTIVE, sql_field_type::INT_SMALL, sql_field_default::NULL, '', '', self::FLD_INACTIVE_COM],
+    );
+
 
     // all database field names excluding the id, standard name and user specific fields
     const FLD_NAMES = array(

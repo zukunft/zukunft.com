@@ -50,8 +50,14 @@ class db_object
     const TBL_COMMENT = '';
     // list of the table fields for the standard read query
     const FLD_NAMES = array();
-    // fields that can be changed by the user with the parameters for the table creation
+    // list of fields that MUST be set by one user
+    const FLD_LST_CREATE_MUST_STD = array();
+    // list of must fields that CAN be changed by the user
+    const FLD_LST_CREATE_CAN_USER = array();
+    // fields that CAN be changed by the user with the parameters for the table creation
     const FLD_LST_CREATE_CHANGEABLE = array();
+    // fields that CANNOT be changed by the user with the parameters for the table creation
+    const FLD_LST_CREATE_NON_CHANGEABLE = array();
 
 
     /*
@@ -95,7 +101,7 @@ class db_object
         if ($tbl_comment == '') {
             $tbl_comment = $this::TBL_COMMENT;
         }
-        return $sc->table_create($fields, '', $tbl_comment);
+        return $sc->table_create($fields, '', $tbl_comment, $usr_table);
     }
 
     /**
@@ -159,10 +165,15 @@ class db_object
         $fields = [];
         if (!$usr_table) {
             $fields = array_merge($this->sql_id_field_par($usr_table), sandbox::FLD_ALL_OWNER);
+            $fields = array_merge($fields, $this::FLD_LST_CREATE_MUST_STD);
         } else {
             $fields = array_merge($this->sql_id_field_par($usr_table), sandbox::FLD_ALL_CHANGER);
+            $fields = array_merge($fields, $this::FLD_LST_CREATE_CAN_USER);
         }
         $fields = array_merge($fields, $this::FLD_LST_CREATE_CHANGEABLE);
+        if (!$usr_table) {
+            $fields = array_merge($fields, $this::FLD_LST_CREATE_NON_CHANGEABLE);
+        }
         return array_merge($fields, sandbox::FLD_ALL);
     }
 

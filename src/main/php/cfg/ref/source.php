@@ -64,22 +64,35 @@ class source extends sandbox_typed
      * database link
      */
 
-    // object specific database and JSON object field names
-    const FLD_ID = 'source_id';
-    const FLD_NAME = 'source_name';
-    const FLD_TYPE = 'source_type_id';
-    const FLD_URL = 'url';
-
     // comments used for the database creation
     const TBL_COMMENT = 'for the original sources for the numeric, time and geo values';
 
+    // object specific database and JSON object field names
+    // *_COM: the description of the field
+    const FLD_ID = 'source_id';
+    const FLD_NAME_COM = 'the unique name of the source used e.g. as the primary search key';
+    const FLD_NAME = 'source_name';
+    const FLD_DESCRIPTION_COM = 'the user specific description of the source for mouse over helps';
+    const FLD_TYPE_COM = 'link to the source type';
+    const FLD_TYPE = 'source_type_id';
+    const FLD_URL_COM = 'the url of the source';
+    const FLD_URL = 'url';
+    const FLD_CODE_ID_COM = 'to select sources used by this program';
+
+    // list of fields that MUST be set by one user
+    const FLD_LST_CREATE_MUST_STD = array(
+        [self::FLD_NAME, sql_field_type::NAME, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_NAME_COM],
+    );
+    // list of must fields that CAN be changed by the user
+    const FLD_LST_CREATE_CAN_USER = array(
+        [self::FLD_NAME, sql_field_type::NAME, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_COM],
+    );
     // list of fields that can be changed by the user
     const FLD_LST_CREATE_CHANGEABLE = array(
-        [self::FLD_NAME, sql_field_type::NAME, sql_field_default::NOT_NULL, sql::INDEX, '', 'the unique name of the source used e.g. as the primary search key'],
-        [self::FLD_DESCRIPTION, sql_field_type::TEXT, sql_field_default::NULL, '', '', 'the user specific description of the source for mouse over helps'],
-        [self::FLD_TYPE, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', 'link to the source type'],
-        [self::FLD_URL, sql_field_type::TEXT, sql_field_default::NULL, '', '', 'the url of the source'],
-        [sql_db::FLD_CODE_ID, sql_field_type::CODE_ID, sql_field_default::NULL, '', '', 'to select sources used by this program'],
+        [self::FLD_DESCRIPTION, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
+        [self::FLD_TYPE, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_TYPE_COM],
+        [self::FLD_URL, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_URL_COM],
+        [sql_db::FLD_CODE_ID, sql_field_type::CODE_ID, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
     );
 
     // all database field names excluding the id used to identify if there are some user specific changes

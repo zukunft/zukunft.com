@@ -19,7 +19,7 @@ COMMENT ON COLUMN groups.group_name IS 'the user specific group name which can c
 COMMENT ON COLUMN groups.description IS 'the user specific description for mouse over helps';
 
 --
--- table structure to add a user given name using a 512-bit group id index for up to 16 32-bit phrase ids including the order
+-- table structure to save user specific changes to add a user given name using a 512-bit group id index for up to 16 32-bit phrase ids including the order
 --
 
 CREATE TABLE IF NOT EXISTS user_groups
@@ -55,7 +55,7 @@ COMMENT ON COLUMN groups_prime.group_name IS 'the user specific group name which
 COMMENT ON COLUMN groups_prime.description IS 'the user specific description for mouse over helps';
 
 --
--- table structure to add a user given name using a 64-bit group id index for up to four 16-bit phrase ids including the order
+-- table structure to save user specific changes to add a user given name using a 64-bit group id index for up to four 16-bit phrase ids including the order
 --
 
 CREATE TABLE IF NOT EXISTS user_groups_prime
@@ -91,7 +91,7 @@ COMMENT ON COLUMN groups_big.group_name IS 'the user specific group name which c
 COMMENT ON COLUMN groups_big.description IS 'the user specific description for mouse over helps';
 
 --
--- table structure to add a user given name using a group id index with a variable length for more than 16 32-bit phrase ids including the order
+-- table structure to save user specific changes to add a user given name using a group id index with a variable length for more than 16 32-bit phrase ids including the order
 --
 
 CREATE TABLE IF NOT EXISTS user_groups_big

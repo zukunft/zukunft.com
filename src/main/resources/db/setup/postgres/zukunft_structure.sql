@@ -539,30 +539,31 @@ COMMENT ON COLUMN language_forms.language_form_name IS 'type of adjustment of a 
 -- --------------------------------------------------------
 
 --
--- table structure for words
+-- table structure for a short text, that can be used to search for values or results
 --
 
 CREATE TABLE IF NOT EXISTS words
 (
     word_id        BIGSERIAL PRIMARY KEY,
     user_id        bigint                DEFAULT NULL,
-    word_name      varchar(200) NOT NULL,
-    plural         varchar(200)          DEFAULT NULL,
+    word_name      varchar(255) NOT NULL,
+    plural         varchar(255)          DEFAULT NULL,
     description    text                  DEFAULT NULL,
     phrase_type_id bigint                DEFAULT NULL,
     view_id        bigint                DEFAULT NULL,
     values         bigint                DEFAULT NULL,
-    excluded       smallint              DEFAULT NULL,
     inactive       smallint              DEFAULT NULL,
+    excluded       smallint              DEFAULT NULL,
     share_type_id  smallint              DEFAULT NULL,
     protect_id     smallint     NOT NULL DEFAULT '1'
 );
 
-COMMENT ON TABLE words IS 'for all text data that might be used to search for values, so basically all test';
+COMMENT ON TABLE words IS 'for all text that might be used to search for values';
 COMMENT ON COLUMN words.word_id IS 'a 64 bit database key because humans will never be able to use more than a few million words';
 COMMENT ON COLUMN words.user_id IS 'user_id of the user that has created the word';
 COMMENT ON COLUMN words.plural IS 'to be replaced by a language form entry; TODO to be move to language forms';
 COMMENT ON COLUMN words.description IS 'to be replaced by a language form entry';
+COMMENT ON COLUMN words.phrase_type_id IS 'to link coded functionality to a word e.g. to exclude measure words from a percent result';
 COMMENT ON COLUMN words.view_id IS 'the default mask for this word';
 COMMENT ON COLUMN words.values IS 'number of values linked to the word, which gives an indication of the importance';
 COMMENT ON COLUMN words.excluded IS 'to deactivate to word and remove it from selection lists without losing related values';
@@ -983,7 +984,7 @@ CREATE TABLE IF NOT EXISTS user_sources
 (
     source_id      bigint           NOT NULL,
     user_id        bigint           NOT NULL,
-    source_name    varchar(255)     NOT NULL,
+    source_name    varchar(255) DEFAULT NULL,
     description    text         DEFAULT NULL,
     source_type_id bigint       DEFAULT NULL,
     url            text         DEFAULT NULL,

@@ -548,15 +548,15 @@ CREATE TABLE IF NOT EXISTS `language_forms`
 -- --------------------------------------------------------
 
 --
--- Table structure for table`words`
+-- table structure for a short text, that can be used to search for values or results
 --
 
 CREATE TABLE IF NOT EXISTS `words`
 (
     `word_id`        int(11)      NOT NULL,
     `user_id`        int(11)      DEFAULT NULL COMMENT 'user_id of the user that has created the term',
-    `word_name`      varchar(200) NOT NULL,
-    `plural`         varchar(200) DEFAULT NULL COMMENT 'to be replaced by a language form entry',
+    `word_name`      varchar(255) NOT NULL,
+    `plural`         varchar(255) DEFAULT NULL COMMENT 'to be replaced by a language form entry',
     `description`    text         DEFAULT NULL COMMENT 'to be replaced by a language form entry',
     `phrase_type_id` int(11)      DEFAULT NULL,
     `view_id`        int(11)      DEFAULT NULL COMMENT 'the default mask for this term',
@@ -566,7 +566,7 @@ CREATE TABLE IF NOT EXISTS `words`
     `protect_id`     smallint     DEFAULT NULL
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8 COMMENT ='probably all text of th db';
+  DEFAULT CHARSET = utf8 COMMENT ='for all text that might be used to search for values';
 
 --
 -- Table structure for table`user_words`
@@ -577,8 +577,8 @@ CREATE TABLE IF NOT EXISTS `user_words`
     `word_id`        int(11) NOT NULL,
     `user_id`        int(11) NOT NULL,
     `language_id`    int(11)      DEFAULT NULL,
-    `word_name`      varchar(200) DEFAULT NULL,
-    `plural`         varchar(200) DEFAULT NULL,
+    `word_name`      varchar(255) DEFAULT NULL,
+    `plural`         varchar(255) DEFAULT NULL,
     `description`    text,
     `phrase_type_id` int(11)      DEFAULT NULL,
     `view_id`        int(11)      DEFAULT NULL,
@@ -954,7 +954,7 @@ CREATE TABLE IF NOT EXISTS sources (
 CREATE TABLE IF NOT EXISTS user_sources (
                                             source_id      bigint           NOT NULL COMMENT 'with the user_id the internal unique primary index ',
                                             user_id        bigint           NOT NULL COMMENT 'the changer of the ',
-                                            source_name    varchar(255)     NOT NULL COMMENT 'the unique name of the source used e.g. as the primary search key',
+                                            source_name    varchar(255) DEFAULT NULL COMMENT 'the unique name of the source used e.g. as the primary search key',
                                             description    text         DEFAULT NULL COMMENT 'the user specific description of the source for mouse over helps',
                                             source_type_id bigint       DEFAULT NULL COMMENT 'link to the source type',
                                             `url`          text         DEFAULT NULL COMMENT 'the url of the source',

@@ -2326,7 +2326,12 @@ class sql
      * @param string $tbl_comment describe the purpose of the table for the developer only
      * @return string the sql statement to create a table
      */
-    function table_create(array $fields, string $type_name = '', string $tbl_comment = ''): string
+    function table_create(
+        array $fields,
+        string $type_name = '',
+        string $tbl_comment = '',
+        bool $usr_tbl = false
+    ): string
     {
         $sql = '';
 
@@ -2337,9 +2342,17 @@ class sql
         $sql .= '-- ';
         $sql .= '-- table structure ';
         if ($tbl_comment != '') {
-            $sql .= $tbl_comment;
+            if ($usr_tbl) {
+                $sql .= 'to save user specific changes ' . $tbl_comment;
+            } else {
+                $sql .= $tbl_comment;
+            }
         } else {
-            $sql .= $table_used;
+            if ($usr_tbl) {
+                $sql .= 'for user specific changes of ' . $table_used;
+            } else {
+                $sql .= 'for ' . $table_used;
+            }
         }
         $sql .= ' ';
         $sql .= '-- ';

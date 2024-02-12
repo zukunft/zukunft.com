@@ -42,6 +42,7 @@ class language extends type_object implements JsonSerializable
      */
 
     // database and JSON object field names
+    const FLD_ID = 'language_id';
     const FLD_NAME = 'language_name';
 
 

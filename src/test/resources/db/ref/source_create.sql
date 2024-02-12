@@ -31,14 +31,14 @@ COMMENT ON COLUMN sources.share_type_id  IS 'to restrict the access';
 COMMENT ON COLUMN sources.protect_id     IS 'to protect against unwanted changes';
 
 --
--- table structure for the original sources for the numeric, time and geo values
+-- table structure to save user specific changes for the original sources for the numeric, time and geo values
 --
 
 CREATE TABLE IF NOT EXISTS user_sources
 (
     source_id      bigint           NOT NULL,
     user_id        bigint           NOT NULL,
-    source_name    varchar(255)     NOT NULL,
+    source_name    varchar(255) DEFAULT NULL,
     description    text         DEFAULT NULL,
     source_type_id bigint       DEFAULT NULL,
     url            text         DEFAULT NULL,
