@@ -4,6 +4,7 @@
 -- constraints for table sources
 --
 ALTER TABLE sources
+    ADD CONSTRAINT source_name_uk UNIQUE (source_name),
     ADD CONSTRAINT sources_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
 
 --

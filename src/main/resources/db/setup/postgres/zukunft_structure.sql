@@ -3255,7 +3255,7 @@ ALTER TABLE language_forms
 -- constraints for table words
 --
 ALTER TABLE words
-    ADD CONSTRAINT word_name UNIQUE (word_name);
+    ADD CONSTRAINT word_name_uk UNIQUE (word_name);
 ALTER TABLE words
     ADD CONSTRAINT words_fk_1 FOREIGN KEY (view_id) REFERENCES views (view_id),
     ADD CONSTRAINT words_fk_2 FOREIGN KEY (phrase_type_id) REFERENCES phrase_types (phrase_type_id);

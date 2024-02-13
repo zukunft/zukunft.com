@@ -41,7 +41,8 @@ enum sql_field_type: string
     case KEY_TEXT = 'textKey'; // a long string prime index without auto increase
 
     // data field types used
-    case NAME = 'name'; // a unique text up to 255 char long to identify a database row
+    case NAME_UNIQUE = 'unique'; // a unique text up to 255 char long to identify a database row
+    case NAME = 'name'; // a text up to 255 char long to identify a database row
     case CODE_ID = 'code_id'; // a unique text to select single database rows by the program
     case TEXT = 'text'; // a text with variable length that can be used for a combined index without auto increase
     case KEY_PART_TEXT = 'textKeyPart'; // a text with variable length that is part of a combined index
@@ -61,7 +62,7 @@ enum sql_field_type: string
         return match($this) {
             self::KEY_INT => 'BIGSERIAL',
             self::KEY_512, self::KEY_PART_512, self::REF_512 => 'char(112)',
-            self::NAME => 'varchar(255)',
+            self::NAME_UNIQUE, self::NAME => 'varchar(255)',
             self::CODE_ID => 'varchar(100)',
             self::TEXT, self::KEY_TEXT, self::KEY_PART_TEXT => 'text',
             self::INT, self::KEY_INT_NO_AUTO, self::KEY_PART_INT => 'bigint',
@@ -79,7 +80,7 @@ enum sql_field_type: string
             self::KEY_INT, self::INT, self::KEY_INT_NO_AUTO, self::KEY_PART_INT => 'bigint',
             self::KEY_512, self::KEY_PART_512, self::REF_512 => 'char(112)',
             self::KEY_TEXT, self::KEY_PART_TEXT => 'char(255)',
-            self::NAME => 'varchar(255)',
+            self::NAME_UNIQUE, self::NAME => 'varchar(255)',
             self::CODE_ID => 'varchar(100)',
             self::TEXT => 'text',
             self::INT_SMALL, self::BOOL, self::KEY_PART_INT_SMALL => 'smallint',
@@ -102,6 +103,14 @@ enum sql_field_type: string
     {
         return match($this) {
             self::KEY_PART_512, self::KEY_PART_INT, self::KEY_PART_INT_SMALL, self::KEY_PART_TEXT => true,
+            default => false,
+        };
+    }
+
+    public function is_unique(): bool
+    {
+        return match($this) {
+            self::NAME_UNIQUE => true,
             default => false,
         };
     }

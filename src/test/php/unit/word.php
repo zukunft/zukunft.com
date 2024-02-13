@@ -65,8 +65,8 @@ class word_unit_tests
         $t->subheader('SQL statements - setup');
         $wrd = $t->dummy_word();
         $t->assert_sql_table_create($wrd);
-        // $t->assert_sql_index_create($db_con, $wrd);
-        // $t->assert_sql_foreign_key_create($db_con, $wrd);
+        $t->assert_sql_index_create($db_con, $wrd);
+        $t->assert_sql_foreign_key_create($db_con, $wrd);
 
 
         $t->subheader('SQL user sandbox statement tests');

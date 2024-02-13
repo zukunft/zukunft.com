@@ -2560,10 +2560,29 @@ class sql
         $sql = '';
         $lib = new library();
 
-        // create the foreign key sql statements
         $sql_table = '';
         $sql_fields = '';
         $field_lst = [];
+
+        // create the unique constraints
+        foreach ($fields as $field) {
+            $name = $field[sql::FLD_POS_NAME];
+            $type = $field[sql::FLD_POS_TYPE];
+            if ($type->is_unique()) {
+                // set the header comments
+                if ($sql == '') {
+                    $sql .= '-- ';
+                    $sql .= '-- constraints for table ' . $this->table . ' ';
+                    $sql .= '-- ';
+                    $sql_table .= 'ALTER TABLE ' . $this->name_sql_esc($this->table);
+                }
+                $sql_field = ' ADD CONSTRAINT ' . $name . '_uk';
+                $sql_field .= ' UNIQUE (' . $name . ')';
+                $field_lst[] = $sql_field;
+            }
+        }
+
+        // create the foreign key sql statements
         foreach ($fields as $field) {
             $name = $field[sql::FLD_POS_NAME];
             $link = $field[sql::FLD_POS_FOREIGN_LINK];

@@ -81,7 +81,7 @@ class source extends sandbox_typed
 
     // list of fields that MUST be set by one user
     const FLD_LST_CREATE_MUST_STD = array(
-        [self::FLD_NAME, sql_field_type::NAME, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_NAME_COM],
+        [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_NAME_COM],
     );
     // list of must fields that CAN be changed by the user
     const FLD_LST_CREATE_CAN_USER = array(
