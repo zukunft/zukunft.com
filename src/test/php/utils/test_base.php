@@ -176,6 +176,7 @@ include_once $path_unit . 'batch_job.php';
 include_once $path_unit . 'change_log.php';
 include_once $path_unit . 'system_log.php';
 include_once $path_unit . 'import.php';
+include_once $path_unit . 'db_setup.php';
 
 // load the testing functions for creating HTML code
 include_once $path_unit . 'html.php';
@@ -1723,7 +1724,7 @@ class test_base
     }
 
     /**
-     * test am SQL statement
+     * test a SQL statement
      *
      * @param string $created the created SQL statement that should be checked
      * @param string $expected the fixed SQL statement that is supposed to be correct
@@ -1733,6 +1734,19 @@ class test_base
     {
         $lib = new library();
         return $this->assert($name, $lib->trim_sql($created), $lib->trim_sql($expected));
+    }
+
+    /**
+     * test a SQL statement
+     *
+     * @param string $needle the fixed SQL statement that is supposed to be correct
+     * @param string $haystack the created SQL statement that should be checked
+     * @return bool true if the created SQL statement matches the expected SQL statement if the formatting is removed
+     */
+    function assert_sql_contains(string $name, string $needle, string $haystack): bool
+    {
+        $lib = new library();
+        return $this->assert_text_contains($name, $lib->trim_sql($needle), $lib->trim_sql($haystack));
     }
 
     /**

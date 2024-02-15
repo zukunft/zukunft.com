@@ -40,9 +40,11 @@ include_once MODEL_DB_PATH . 'sql.php';
 include_once MODEL_SYSTEM_PATH . 'log.php';
 
 use cfg\config;
+use cfg\group\group;
 use cfg\group\group_id;
 use cfg\library;
 use cfg\log;
+use cfg\source;
 use cfg\sys_log_level;
 use cfg\triple;
 use cfg\user;
@@ -60,6 +62,13 @@ class sql_db
     // these databases can be used at the moment (must be the same as in zu_lib)
     const POSTGRES = "Postgres";
     const MYSQL = "MySQL";
+    const DB_LIST = [POSTGRES, MYSQL];
+
+    const POSTGRES_PATH = "postgres";
+    const MYSQL_PATH = "mysql";
+
+    const POSTGRES_EXT = "";
+    const MYSQL_EXT = "_mysql";
 
     // data retrieval settings
     const SQL_QUERY_NAME_MAX_LEN = 62; // the query name cannot be longer than 62 chars at least for some databases
@@ -146,6 +155,13 @@ class sql_db
     const MYSQL_RESERVED_NAMES = ['ACCESSIBLE', 'ADD', 'ALL', 'ALTER', 'ANALYZE', 'AND', 'AS', 'ASC', 'ASENSITIVE', 'BEFORE', 'BETWEEN', 'BIGINT', 'BINARY', 'BLOB', 'BOTH', 'BY', 'CALL', 'CASCADE', 'CASE', 'CHANGE', 'CHAR', 'CHARACTER', 'CHECK', 'COLLATE', 'COLUMN', 'CONDITION', 'CONSTRAINT', 'CONTINUE', 'CONVERT', 'CREATE', 'CROSS', 'CUME_DIST', 'CURRENT_DATE', 'CURRENT_TIME', 'CURRENT_TIMESTAMP', 'CURRENT_USER', 'CURSOR', 'DATABASE', 'DATABASES', 'DAY_HOUR', 'DAY_MICROSECOND', 'DAY_MINUTE', 'DAY_SECOND', 'DEC', 'DECIMAL', 'DECLARE', 'DEFAULT', 'DELAYED', 'DELETE', 'DENSE_RANK', 'DESC', 'DESCRIBE', 'DETERMINISTIC', 'DISTINCT', 'DISTINCTROW', 'DIV', 'DOUBLE', 'DROP', 'DUAL', 'EACH', 'ELSE', 'ELSEIF', 'EMPTY', 'ENCLOSED', 'ESCAPED', 'EXCEPT', 'EXCEPT', 'EXISTS', 'EXIT', 'EXPLAIN', 'FALSE', 'FETCH', 'FIRST_VALUE', 'FLOAT', 'FLOAT4', 'FLOAT8', 'FOR', 'FORCE', 'FOREIGN', 'FROM', 'FULLTEXT', 'GENERATED', 'GET', 'GRANT', 'GROUP', 'GROUPING', 'GROUPS', 'HAVING', 'HIGH_PRIORITY', 'HOUR_MICROSECOND', 'HOUR_MINUTE', 'HOUR_SECOND', 'IF', 'IGNORE', 'IN', 'INDEX', 'INFILE', 'INNER', 'INOUT', 'INSENSITIVE', 'INSERT', 'INT', 'INT1', 'INT2', 'INT3', 'INT4', 'INT8', 'INTEGER', 'INTERVAL', 'INTO', 'IO_AFTER_GTIDS', 'IO_BEFORE_GTIDS', 'IS', 'ITERATE', 'JOIN', 'JSON_TABLE', 'KEY', 'KEYS', 'KILL', 'LAG', 'LAST_VALUE', 'LATERAL', 'LEAD', 'LEADING', 'LEAVE', 'LEFT', 'LIKE', 'LIMIT', 'LINEAR', 'LINES', 'LOAD', 'LOCALTIME', 'LOCALTIMESTAMP', 'LOCK', 'LONG', 'LONGBLOB', 'LONGTEXT', 'LOOP', 'LOW_PRIORITY', 'MASTER_BIND', 'MASTER_SSL_VERIFY_SERVER_CERT', 'MATCH', 'MAXVALUE', 'MEDIUMBLOB', 'MEDIUMINT', 'MEDIUMTEXT', 'MIDDLEINT', 'MINUTE_MICROSECOND', 'MINUTE_SECOND', 'MOD', 'MODIFIES', 'NATURAL', 'NO_WRITE_TO_BINLOG', 'NOT', 'NTH_VALUE', 'NTILE', 'NULL', 'NUMERIC', 'OF', 'ON', 'OPTIMIZE', 'OPTIMIZER_COSTS', 'OPTION', 'OPTIONALLY', 'OR', 'ORDER', 'OUT', 'OUTER', 'OUTFILE', 'OVER', 'PARTITION', 'PERCENT_RANK', 'PRECISION', 'PRIMARY', 'PROCEDURE', 'PURGE', 'RANGE', 'RANK', 'READ', 'READ_WRITE', 'READS', 'REAL', 'RECURSIVE', 'REFERENCES', 'REGEXP', 'RELEASE', 'RENAME', 'REPEAT', 'REPLACE', 'REQUIRE', 'RESIGNAL', 'RESTRICT', 'RETURN', 'REVOKE', 'RIGHT', 'RLIKE', 'ROW_NUMBER', 'SCHEMA', 'SCHEMAS', 'SECOND_MICROSECOND', 'SELECT', 'SENSITIVE', 'SEPARATOR', 'SET', 'SHOW', 'SIGNAL', 'SMALLINT', 'SPATIAL', 'SPECIFIC', 'SQL', 'SQL_BIG_RESULT', 'SQL_CALC_FOUND_ROWS', 'SQL_SMALL_RESULT', 'SQLEXCEPTION', 'SQLSTATE', 'SQLWARNING', 'SSL', 'STARTING', 'STORED', 'STRAIGHT_JOIN', 'SYSTEM', 'TABLE', 'TERMINATED', 'THEN', 'TINYBLOB', 'TINYINT', 'TINYTEXT', 'TO', 'TRAILING', 'TRIGGER', 'TRUE', 'UNDO', 'UNION', 'UNIQUE', 'UNLOCK', 'UNSIGNED', 'UPDATE', 'USAGE', 'USE', 'USING', 'UTC_DATE', 'UTC_TIME', 'UTC_TIMESTAMP', 'VALUES', 'VARBINARY', 'VARCHAR', 'VARCHARACTER', 'VARYING', 'VIRTUAL', 'WHEN', 'WHERE', 'WHILE', 'WINDOW', 'WITH', 'WRITE', 'XOR', 'YEAR_MONTH', 'ZEROFILL'];
     // extra names for backward compatibility
     const MYSQL_RESERVED_NAMES_EXTRA = ['VALUE', 'VALUES', 'URL'];
+
+    // classes that have a database table
+    const DB_TABLE_CLASSES = [
+        word::class,
+        source::class,
+        group::class
+    ];
 
     // tables that do not have a name
     // e.g. sql_db::TBL_TRIPLE is a link which hase a name, but the generated name can be overwritten, so the standard field naming is not used
@@ -540,8 +556,9 @@ class sql_db
         // connect with zukunft user
         $conn_str = 'host=' . $db_server . ' dbname=zukunft user=' . SQL_DB_USER . ' password=' . SQL_DB_PASSWD;
         $this->postgres_link = pg_connect($conn_str);
+        $db_tmp = new sql_db();
         if ($this->postgres_link !== false) {
-            $sql = resource_file('db/setup/postgres/zukunft_structure.sql');
+            $sql = resource_file(DB_RES_PATH . DB_SETUP_PATH . $db_tmp->path(sql_db::POSTGRES) . DB_SETUP_SQL_FILE);
             try {
                 $sql_result = $this->exe($sql);
                 if (!$sql_result) {
@@ -4494,6 +4511,34 @@ class sql_db
             $sc->set_db_type($this->db_type);
         }
         return $sc;
+    }
+
+    /**
+     * get the folder for db type specific files
+     * @param string $db_type the sql db type name
+     * @return string the folder name including the separator
+     */
+    function path(string $db_type): string
+    {
+        $path = self::POSTGRES_PATH . DIRECTORY_SEPARATOR;
+        if ($db_type == self::MYSQL) {
+            $path = self::MYSQL_PATH . DIRECTORY_SEPARATOR;
+        }
+        return $path;
+    }
+
+    /**
+     * get the file extension
+     * @param string $db_type the sql db type name
+     * @return string the folder name including the separator
+     */
+    function ext(string $db_type): string
+    {
+        $path = self::POSTGRES_EXT;
+        if ($db_type == self::MYSQL) {
+            $path = self::MYSQL_EXT;
+        }
+        return $path;
     }
 
 }

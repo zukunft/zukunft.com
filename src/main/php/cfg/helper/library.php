@@ -478,7 +478,7 @@ class library
     function diff_msg(
         string|array|null $result,
         string|array|null $target,
-        bool $ignore_order = true): string
+        bool              $ignore_order = true): string
     {
         if (is_string($target) and is_string($result)) {
             $msg = $this->str_diff_msg($result, $target);
@@ -1153,8 +1153,12 @@ class library
                         $to_sep[$to_keys[$to_pos]],
                         $str_type
                     );
-                    array_walk_recursive($sub_diff[self::STR_DIFF_VAL], function ($diff, $key) use (&$diff_part){$diff_part[$key] = $diff;});
-                    array_walk_recursive($sub_diff[self::STR_DIFF_TYP], function ($type, $key) use (&$diff_type){$diff_type[$key] = $type;});
+                    array_walk_recursive($sub_diff[self::STR_DIFF_VAL], function ($diff, $key) use (&$diff_part) {
+                        $diff_part[$key] = $diff;
+                    });
+                    array_walk_recursive($sub_diff[self::STR_DIFF_TYP], function ($type, $key) use (&$diff_type) {
+                        $diff_type[$key] = $type;
+                    });
                     if ($to_pos < count($to)) {
                         $to_pos++;
                     }
@@ -1468,7 +1472,7 @@ class library
         if ($result) {
             if ($json == '') {
                 $result = false;
-            // avoid handling a simple string with high-quotes as a json
+                // avoid handling a simple string with high-quotes as a json
             } elseif (!(str_contains($text, '[')
                 or str_contains($text, '{'))) {
                 $result = false;
@@ -1541,6 +1545,25 @@ class library
     function class_to_name(string $class): string
     {
         return $this->str_right_of_or_all($class, '\\');
+    }
+
+    /**
+     * the folder where a class can be found
+     * @param string $class including the namespace
+     * @return string class name without the namespace
+     */
+    function class_to_path(string $class): string
+    {
+        $result = $this->class_to_name($class);
+        switch ($result) {
+            case $this->class_to_name(source::class):
+                $result = $this->class_to_name(ref::class);
+                break;
+            case $this->class_to_name(triple::class):
+                $result = $this->class_to_name(word::class);
+                break;
+        }
+        return $result;
     }
 
     /*

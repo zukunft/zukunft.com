@@ -97,6 +97,7 @@ use cfg\view_sys_list;
 use cfg\view_type_list;
 use unit\component_list_unit_tests;
 use unit\import as import_unit_tests;
+use unit\db_setup as db_setup_tests;
 use unit\html\batch_job as batch_job_html_tests;
 use unit\html\change_log as change_log_html_tests;
 use unit\html\component as component_html_tests;
@@ -249,6 +250,9 @@ class test_unit extends test_cleanup
 
         // do the im- and export unit tests
         (new import_unit_tests)->run($this);
+
+        // db setup
+        (new db_setup_tests)->run($this);
 
         // do the UI unit tests
         (new test_api)->run_openapi_test($this);

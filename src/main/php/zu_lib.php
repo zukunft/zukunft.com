@@ -513,6 +513,8 @@ const SYSTEM_USER_TEST_ID = 2; //
 const LIST_MIN_NAMES = 4; // number of object names that should al least be shown
 const DEBUG_SHOW_USER = 10; // starting from this debug level the user should be shown in the debug text
 
+const SRC_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR;
+const MAIN_PATH = SRC_PATH . 'main' . DIRECTORY_SEPARATOR;
 const MODEL_PATH = PHP_PATH . 'cfg' . DIRECTORY_SEPARATOR; // path of the main model objects for db saving, api feed and processing
 const DB_LINK_PATH = ROOT_PATH . 'db_link' . DIRECTORY_SEPARATOR;
 const DB_PATH = MODEL_PATH . 'db' . DIRECTORY_SEPARATOR;
@@ -572,6 +574,12 @@ const WEB_FIGURE_PATH = WEB_PATH . 'figure' . DIRECTORY_SEPARATOR;
 const WEB_VIEW_PATH = WEB_PATH . 'view' . DIRECTORY_SEPARATOR;
 const WEB_COMPONENT_PATH = WEB_PATH . 'component' . DIRECTORY_SEPARATOR;
 const WEB_REF_PATH = WEB_PATH . 'ref' . DIRECTORY_SEPARATOR;
+
+// resource paths
+const DB_RES_PATH = 'db' . DIRECTORY_SEPARATOR;
+const DB_SETUP_PATH = 'setup' . DIRECTORY_SEPARATOR;
+
+const DB_SETUP_SQL_FILE =  'zukunft_structure.sql';
 
 // the main global vars to shorten the code by avoiding them in many function calls as parameter
 global $db_com; // the database connection
@@ -1314,6 +1322,18 @@ function resource_file(string $resource_path): string
     $result = file_get_contents(PATH_RESOURCE_FILES . $resource_path);
     if ($result === false) {
         $result = 'Cannot get file from ' . PATH_RESOURCE_FILES . $resource_path;
+    }
+    return $result;
+}
+
+/**
+ * @return string the content of a test resource file
+ */
+function test_resource_file(string $resource_path): string
+{
+    $result = file_get_contents(PATH_TEST_FILES . $resource_path);
+    if ($result === false) {
+        $result = 'Cannot get file from ' . PATH_TEST_FILES . $resource_path;
     }
     return $result;
 }
