@@ -321,18 +321,14 @@ class sandbox_named extends sandbox
     /**
      * load a named user sandbox object by name
      * @param string $name the name of the word, triple, formula, verb, view or view component
-     * @param string $class the name of the child class from where the call has been triggered
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_name(string $name, string $class = ''): int
+    function load_by_name(string $name): int
     {
         global $db_con;
 
         log_debug($name);
-        if ($class == '') {
-            $class = $this::class;
-        }
-        $qp = $this->load_sql_by_name($db_con->sql_creator(), $name, $class);
+        $qp = $this->load_sql_by_name($db_con->sql_creator(), $name, $this::class);
         return parent::load($qp);
     }
 

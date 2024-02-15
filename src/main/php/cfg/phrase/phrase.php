@@ -588,12 +588,12 @@ class phrase extends combine_named
      * @param string $name the name of the phrase and the related word, triple, formula or verb
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_name(string $name, string $class = self::class): int
+    function load_by_name(string $name): int
     {
         global $db_con;
 
         log_debug($name);
-        $qp = $this->load_sql_by_name($db_con->sql_creator(), $name, $class);
+        $qp = $this->load_sql_by_name($db_con->sql_creator(), $name, $this::class);
         return $this->load($qp);
     }
 
@@ -1374,13 +1374,13 @@ class phrase extends combine_named
 
         // try if the word exists
         $wrd = new word($this->user());
-        $wrd->load_by_name($this->name(), word::class);
+        $wrd->load_by_name($this->name());
         if ($wrd->id() > 0) {
             $this->set_obj_id($wrd->id());
         } else {
             // try if the triple exists
             $trp = new triple($this->user());
-            $trp->load_by_name($this->name(), triple::class);
+            $trp->load_by_name($this->name());
             if ($trp->id() > 0) {
                 $this->set_obj_id($trp->id());
             } else {

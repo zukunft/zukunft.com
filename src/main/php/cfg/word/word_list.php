@@ -835,7 +835,7 @@ class word_list extends sandbox_list
             log_err("The user must be set.", "word_list->add_name");
         } else {
             $wrd_to_add = new word($this->user());
-            $wrd_to_add->load_by_name($wrd_name_to_add, word::class);
+            $wrd_to_add->load_by_name($wrd_name_to_add);
 
             $this->add($wrd_to_add);
             $result = true;

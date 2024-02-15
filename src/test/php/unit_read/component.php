@@ -53,7 +53,7 @@ class component_unit_db_tests
 
         $test_name = 'load component ' . component_api::TN_READ . ' by name and id';
         $cmp = new component($t->usr1);
-        $cmp->load_by_name(component_api::TN_READ, component::class);
+        $cmp->load_by_name(component_api::TN_READ);
         $dsp_by_id = new component($t->usr1);
         $dsp_by_id->load_by_id($cmp->id(), component::class);
         $t->assert($test_name, $dsp_by_id->name(), component_api::TN_READ);
@@ -65,7 +65,7 @@ class component_unit_db_tests
         $dsp = new view($t->usr1);
         $dsp->load_by_name(view_api::TN_READ, view::class);
         $cmp = new component($t->usr1);
-        $cmp->load_by_name(component_api::TN_READ, component::class);
+        $cmp->load_by_name(component_api::TN_READ);
         $cmp_lnk = new component_link($t->usr1);
         $cmp_lnk->load_by_link_and_type(1, 2, 1);
         $test_name .= ' view id';

@@ -2104,7 +2104,7 @@ class create_test_objects extends test_base
     function load_formula(string $frm_name): formula
     {
         $frm = new formula($this->usr1);
-        $frm->load_by_name($frm_name, formula::class);
+        $frm->load_by_name($frm_name);
         return $frm;
     }
 
@@ -2512,7 +2512,7 @@ class create_test_objects extends test_base
         }
 
         $dsp = new view($test_usr);
-        $dsp->load_by_name($dsp_name, view::class);
+        $dsp->load_by_name($dsp_name);
         return $dsp;
     }
 
@@ -2550,7 +2550,7 @@ class create_test_objects extends test_base
         }
 
         $cmp = new component($test_usr);
-        $cmp->load_by_name($cmp_name, component::class);
+        $cmp->load_by_name($cmp_name);
         return $cmp;
     }
 
@@ -2611,9 +2611,9 @@ class create_test_objects extends test_base
         $result = '';
 
         $frm = new formula($this->usr1);
-        $frm->load_by_name($formula_name, formula::class);
+        $frm->load_by_name($formula_name);
         $wrd = new word($this->usr1);
-        $wrd->load_by_name($word_name, word::class);
+        $wrd->load_by_name($word_name);
         if ($frm->id() > 0 and $wrd->id() <> 0) {
             $frm_lnk = new formula_link($this->usr1);
             $frm_lnk->load_by_link($frm, $wrd->phrase());

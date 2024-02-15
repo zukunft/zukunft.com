@@ -341,7 +341,7 @@ class word_test
 
         // check if the word renaming was successful
         $wrd_renamed = new word($t->usr1);
-        if ($wrd_renamed->load_by_name(word_api::TN_RENAMED, word::class)) {
+        if ($wrd_renamed->load_by_name(word_api::TN_RENAMED)) {
             if ($wrd_renamed->id() > 0) {
                 $result = $wrd_renamed->name();
             }
@@ -399,7 +399,7 @@ class word_test
 
         // check if a user specific word is created if another user changes the word
         $wrd_usr2 = new word($t->usr2);
-        $wrd_usr2->load_by_name(word_api::TN_RENAMED, word::class);
+        $wrd_usr2->load_by_name(word_api::TN_RENAMED);
         $wrd_usr2->plural = word_api::TN_RENAMED . 's2';
         $wrd_usr2->description = word_api::TN_RENAMED . ' description2';
         $wrd_usr2->type_id = $phrase_types->id(phrase_type::TIME);
@@ -409,7 +409,7 @@ class word_test
 
         // check if a user specific word changes have been saved
         $wrd_usr2_reloaded = new word($t->usr2);
-        $wrd_usr2_reloaded->load_by_name(word_api::TN_RENAMED, word::class);
+        $wrd_usr2_reloaded->load_by_name(word_api::TN_RENAMED);
         $result = $wrd_usr2_reloaded->plural;
         $target = word_api::TN_RENAMED . 's2';
         $t->display('word->load plural for "' . word_api::TN_RENAMED . '"', $target, $result);
@@ -436,7 +436,7 @@ class word_test
 
         // check if undo all specific changes removes the user word
         $wrd_usr2 = new word($t->usr2);
-        $wrd_usr2->load_by_name(word_api::TN_RENAMED, word::class);
+        $wrd_usr2->load_by_name(word_api::TN_RENAMED);
         $wrd_usr2->plural = word_api::TN_RENAMED . 's';
         $wrd_usr2->description = word_api::TN_RENAMED . ' description';
         $wrd_usr2->type_id = $phrase_types->id(phrase_type::OTHER);
@@ -446,7 +446,7 @@ class word_test
 
         // check if a user specific word changes have been saved
         $wrd_usr2_reloaded = new word($t->usr2);
-        $wrd_usr2_reloaded->load_by_name(word_api::TN_RENAMED, word::class);
+        $wrd_usr2_reloaded->load_by_name(word_api::TN_RENAMED);
         $result = $wrd_usr2_reloaded->plural;
         $target = word_api::TN_RENAMED . 's';
         $t->display('word->load plural for "' . word_api::TN_RENAMED . '" unchanged now also for user 2', $target, $result);

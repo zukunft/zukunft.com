@@ -1822,7 +1822,7 @@ class test_base
         // ... and check the loading via name and check the id
         if ($result) {
             $usr_obj->reset();
-            $usr_obj->load_by_name($name, $usr_obj::class);
+            $usr_obj->load_by_name($name);
             $result = $this->assert($usr_obj::class . '->load', $usr_obj->id(), 1);
         }
         return $result;
@@ -1844,7 +1844,7 @@ class test_base
         // ... and check the loading via name and check the id
         if ($result) {
             $usr_obj->reset();
-            $usr_obj->load_by_name($name, $usr_obj::class);
+            $usr_obj->load_by_name($name);
             $result = $this->assert($usr_obj::class . '->load', $usr_obj->id(), 1);
         }
         return $result;

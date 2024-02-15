@@ -446,7 +446,7 @@ class verb extends type_object
      * @param string $name the name of the verb
      * @return int the id of the verb found and zero if nothing is found
      */
-    function load_by_name(string $name, string $class = self::class): int
+    function load_by_name(string $name): int
     {
         global $db_con;
 

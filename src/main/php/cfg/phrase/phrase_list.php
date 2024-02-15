@@ -1180,7 +1180,7 @@ class phrase_list extends sandbox_list_named
                         if ($phr->id() == 0) {
                             // for new phrase use the word object
                             $wrd = new word($this->user());
-                            $wrd->load_by_name($value, word::class);
+                            $wrd->load_by_name($value);
                             if ($wrd->id() == 0) {
                                 $wrd->set_name($value);
                                 $wrd->type_id = $phrase_types->default_id();

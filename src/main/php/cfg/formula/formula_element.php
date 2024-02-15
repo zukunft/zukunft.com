@@ -196,7 +196,7 @@ class formula_element extends db_object_seq_id_user
                 /*
                 // in case of a formula load also the corresponding word
                 $wrd = new word($this->user());
-                $wrd->load_by_name($frm->name, word::class);
+                $wrd->load_by_name($frm->name);
                 $this->wrd_obj = $wrd;
                 */
                 //

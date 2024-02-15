@@ -561,7 +561,7 @@ class test_api extends create_test_objects
                 break;
             case source::class:
                 $src = new source($usr);
-                $src->load_by_id($id, source::class);
+                $src->load_by_id($id);
                 $result = $src->save_from_api_msg($request_body)->get_last_message();
                 // if no message should be shown to the user the adding is expected to be fine
                 // so get the row id to be able to remove the test row later

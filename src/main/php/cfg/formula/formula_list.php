@@ -81,7 +81,7 @@ class formula_list extends sandbox_list
                         // TODO check if this is really needed
                         if ($frm->name() <> '') {
                             $name_wrd = new word($this->user());
-                            $name_wrd->load_by_name($frm->name(), word::class);
+                            $name_wrd->load_by_name($frm->name());
                             $frm->name_wrd = $name_wrd;
                         }
                         $this->add_obj($frm);
@@ -97,7 +97,7 @@ class formula_list extends sandbox_list
             foreach ($this->lst() as $frm) {
                 if ($frm->name() <> '') {
                     $name_wrd = new word($this->user());
-                    $name_wrd->load_by_name($frm->name(), word::class);
+                    $name_wrd->load_by_name($frm->name());
                     $frm->name_wrd = $name_wrd;
                 }
             }

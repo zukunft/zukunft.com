@@ -116,16 +116,15 @@ class language extends type_object implements JsonSerializable
      * mainly set the class name for the type object function
      *
      * @param string $name the name of the language
-     * @param string $class the language class name
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_name(string $name, string $class = self::class): int
+    function load_by_name(string $name): int
     {
         global $db_con;
 
         log_debug($name);
         $lib = new library();
-        $dp_type = $lib->class_to_name($class);
+        $dp_type = $lib->class_to_name($this::class);
         $qp = $this->load_sql_by_name($db_con->sql_creator(), $name, $dp_type);
         return $this->load_typ_obj($qp, $dp_type);
     }

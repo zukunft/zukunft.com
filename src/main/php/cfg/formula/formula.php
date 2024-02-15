@@ -456,7 +456,7 @@ class formula extends sandbox_typed
         if ($do_load) {
             log_debug('->load_wrd load ' . $this->dsp_id());
             $name_wrd = new word($this->user());
-            $name_wrd->load_by_name($this->name(), word::class);
+            $name_wrd->load_by_name($this->name());
             if ($name_wrd->id() > 0) {
                 $this->name_wrd = $name_wrd;
             } else {
@@ -493,12 +493,11 @@ class formula extends sandbox_typed
      * just set the class name for the user sandbox function
      * load a formula object by name
      * @param string $name the name formula
-     * @param string $class the formula class name
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_name(string $name, string $class = self::class): int
+    function load_by_name(string $name): int
     {
-        return parent::load_by_name($name, $class);
+        return parent::load_by_name($name);
     }
 
     function name_field(): string

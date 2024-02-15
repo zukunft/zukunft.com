@@ -705,12 +705,11 @@ class triple extends sandbox_link_typed implements JsonSerializable
      *
      * @param sql $sc with the target db_type set
      * @param string $name the name of the triple and the related word, triple, formula or verb
-     * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_name(sql $sc, string $name, string $class): sql_par
+    function load_sql_by_name(sql $sc, string $name): sql_par
     {
-        $qp = $this->load_sql($sc, sql_db::FLD_NAME, $class);
+        $qp = $this->load_sql($sc, sql_db::FLD_NAME, $this::class);
         $sc->add_where($this->name_field(), $name, sql_par_type::TEXT_USR);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -811,30 +810,28 @@ class triple extends sandbox_link_typed implements JsonSerializable
     /**
      * load a triple by name
      * @param string $name the name of the word, triple, formula, verb, view or view component
-     * @param string $class the name of the child class from where the call has been triggered
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_name(string $name, string $class = self::class): int
+    function load_by_name(string $name): int
     {
         global $db_con;
 
         log_debug($name);
-        $qp = $this->load_sql_by_name($db_con->sql_creator(), $name, $class);
+        $qp = $this->load_sql_by_name($db_con->sql_creator(), $name);
         return $this->load($qp);
     }
 
     /**
      * load a triple by the generated name (the name that the triple would have if the user has done not overwrite)
      * @param string $name the generated name of the triple
-     * @param string $class the name of the child class from where the call has been triggered
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_name_generated(string $name, string $class = self::class): int
+    function load_by_name_generated(string $name): int
     {
         global $db_con;
 
         log_debug($name);
-        $qp = $this->load_sql_by_name_generated($db_con->sql_creator(), $name, $class);
+        $qp = $this->load_sql_by_name_generated($db_con->sql_creator(), $name, $this::class);
         return $this->load($qp);
     }
 
@@ -1207,7 +1204,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
             if ($key == sandbox_exp::FLD_VIEW) {
                 $trp_view = new view($this->user());
                 if (!$test_obj) {
-                    $trp_view->load_by_name($value, view::class);
+                    $trp_view->load_by_name($value);
                     if ($trp_view->id == 0) {
                         $result->add_message('Cannot find view "' . $value . '" when importing ' . $this->dsp_id());
                     }

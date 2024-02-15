@@ -928,7 +928,7 @@ class expression
                 // similar to a part in get_usr_part, maybe combine
                 if ($db_sym == '') {
                     $frm = new formula($this->usr);
-                    $frm->load_by_name($name, formula::class);
+                    $frm->load_by_name($name);
                     if ($frm->id() > 0) {
                         $db_sym = self::FORMULA_START . $frm->id() . self::FORMULA_END;
                         log_debug('found formula "' . $db_sym . '" for "' . $name . '"');

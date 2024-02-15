@@ -544,10 +544,9 @@ class user extends db_object_seq_id
     /**
      * load one user by name
      * @param string $name the username of the user
-     * @param string $class the name of the user
      * @return int the id of the found user and zero if nothing is found
      */
-    function load_by_name(string $name, string $class = self::class): int
+    function load_by_name(string $name): int
     {
         global $db_con;
 

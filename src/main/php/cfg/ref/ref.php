@@ -185,7 +185,7 @@ class ref extends sandbox_link_with_type
             if ($db_row[source::FLD_ID] != null) {
                 if ($db_row[source::FLD_ID] > 0) {
                     $this->source = new source($this->user());
-                    $this->source->load_by_id($db_row[source::FLD_ID], source::class);
+                    $this->source->load_by_id($db_row[source::FLD_ID]);
                 }
             }
             if ($this->load_objects()) {
@@ -406,12 +406,11 @@ class ref extends sandbox_link_with_type
      * just set the class name for the user sandbox function
      * load a reference object by name
      * @param string $name the name reference
-     * @param string $class the reference class name
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_name(string $name, string $class = self::class): int
+    function load_by_name(string $name): int
     {
-        return parent::load_by_name($name, $class);
+        return parent::load_by_name($name, $this::class);
     }
 
     function all_sandbox_fields(): array
@@ -507,7 +506,7 @@ class ref extends sandbox_link_with_type
             if ($key == sandbox_exp::FLD_SOURCE) {
                 $src = new source($this->user());
                 if (!$test_obj) {
-                    $src->load_by_name($value, source::class);
+                    $src->load_by_name($value);
                     if ($src->id == 0) {
                         $result->add_message('Cannot find source "' . $value . '" when importing ' . $this->dsp_id());
                     }

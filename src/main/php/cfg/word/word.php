@@ -580,12 +580,11 @@ class word extends sandbox_typed
      * just set the class name for the user sandbox function
      * load a word object by name
      * @param string $name the name word
-     * @param string $class the word class name
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_name(string $name, string $class = self::class): int
+    function load_by_name(string $name): int
     {
-        return parent::load_by_name($name, $class);
+        return parent::load_by_name($name);
     }
 
     /**
@@ -810,7 +809,7 @@ class word extends sandbox_typed
             if ($key == sandbox_exp::FLD_VIEW) {
                 $wrd_view = new view($this->user());
                 if (!$test_obj) {
-                    $wrd_view->load_by_name($value, view::class);
+                    $wrd_view->load_by_name($value);
                     if ($wrd_view->id == 0) {
                         $result->add_message('Cannot find view "' . $value . '" when importing ' . $this->dsp_id());
                     } else {

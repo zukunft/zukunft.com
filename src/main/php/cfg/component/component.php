@@ -512,12 +512,11 @@ class component extends sandbox_typed
      * just set the class name for the user sandbox function
      * load a view component object by name
      * @param string $name the name view component
-     * @param string $class the view component class name
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_name(string $name, string $class = self::class): int
+    function load_by_name(string $name): int
     {
-        $id = parent::load_by_name($name, $class);
+        $id = parent::load_by_name($name);
         if ($this->id > 0) {
             $this->load_phrases();
         }

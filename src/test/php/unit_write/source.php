@@ -56,7 +56,7 @@ class source_test
         $src_by_name = new source($t->usr1);
         $src_by_name->load_by_name(source_api::TN_READ, source::class);
         $src_by_id = new source($t->usr1);
-        $src_by_id->load_by_id($src_by_name->id(), source::class);
+        $src_by_id->load_by_id($src_by_name->id());
         $target = source_api::TN_READ;
         $result = $src_by_id->name();
         $t->display('source->load of ' . $src_read->id() . ' by id ' . $src_by_name->id(), $target, $result);

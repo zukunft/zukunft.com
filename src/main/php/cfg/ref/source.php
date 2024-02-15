@@ -240,23 +240,40 @@ class source extends sandbox_typed
      */
 
     /**
-     * create the SQL to load the default source always by the id
-     *
-     * @param sql $sc with the target db_type set
-     * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * just set the class name for the user sandbox function
+     * load a source object by name
+     * @param string $name the name source
+     * @return int the id of the object found and zero if nothing is found
      */
-    function load_standard_sql(sql $sc, string $class = self::class): sql_par
+    function load_by_name(string $name): int
     {
-        $sc->set_class(source::class);
-        $sc->set_fields(array_merge(
-            self::FLD_NAMES,
-            self::FLD_NAMES_USR,
-            self::FLD_NAMES_NUM_USR,
-            array(user::FLD_ID)
-        ));
+        return parent::load_by_name($name);
+    }
 
-        return parent::load_standard_sql($sc, $class);
+    /**
+     * just set the class name for the user sandbox function
+     * load a source object by database id
+     * @param int $id the id of the source
+     * @return int the id of the object found and zero if nothing is found
+     */
+    function load_by_id(int $id): int
+    {
+        return parent::load_by_id($id);
+    }
+
+    /**
+     * load a source by code id
+     * @param string $code_id the code id of the source
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return int the id of the object found and zero if nothing is found
+     */
+    function load_by_code_id(string $code_id, string $class = self::class): int
+    {
+        global $db_con;
+
+        log_debug($code_id);
+        $qp = $this->load_sql_by_code_id($db_con->sql_creator(), $code_id, $class);
+        return parent::load($qp);
     }
 
     /**
@@ -278,24 +295,6 @@ class source extends sandbox_typed
     }
 
     /**
-     * create the common part of an SQL statement to retrieve the parameters of a source from the database
-     *
-     * @param sql $sc with the target db_type set
-     * @param string $query_name the name extension to make the query name unique
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql(sql $sc, string $query_name): sql_par
-    {
-        $sc->set_class($this::class);
-        return parent::load_sql_fields(
-            $sc, $query_name,
-            self::FLD_NAMES,
-            self::FLD_NAMES_USR,
-            self::FLD_NAMES_NUM_USR
-        );
-    }
-
-    /**
      * create an SQL statement to retrieve a source by code id from the database
      *
      * @param sql $sc with the target db_type set
@@ -314,42 +313,41 @@ class source extends sandbox_typed
     }
 
     /**
-     * load a source by code id
-     * @param string $code_id the code id of the source
+     * create the SQL to load the default source always by the id
+     *
+     * @param sql $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
-     * @return int the id of the object found and zero if nothing is found
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_by_code_id(string $code_id, string $class = self::class): int
+    function load_standard_sql(sql $sc, string $class = self::class): sql_par
     {
-        global $db_con;
+        $sc->set_class(source::class);
+        $sc->set_fields(array_merge(
+            self::FLD_NAMES,
+            self::FLD_NAMES_USR,
+            self::FLD_NAMES_NUM_USR,
+            array(user::FLD_ID)
+        ));
 
-        log_debug($code_id);
-        $qp = $this->load_sql_by_code_id($db_con->sql_creator(), $code_id, $class);
-        return parent::load($qp);
+        return parent::load_standard_sql($sc, $class);
     }
 
     /**
-     * just set the class name for the user sandbox function
-     * load a source object by database id
-     * @param int $id the id of the source
-     * @param string $class the source class name
-     * @return int the id of the object found and zero if nothing is found
+     * create the common part of an SQL statement to retrieve the parameters of a source from the database
+     *
+     * @param sql $sc with the target db_type set
+     * @param string $query_name the name extension to make the query name unique
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_by_id(int $id, string $class = self::class): int
+    function load_sql(sql $sc, string $query_name): sql_par
     {
-        return parent::load_by_id($id, $class);
-    }
-
-    /**
-     * just set the class name for the user sandbox function
-     * load a source object by name
-     * @param string $name the name source
-     * @param string $class the source class name
-     * @return int the id of the object found and zero if nothing is found
-     */
-    function load_by_name(string $name, string $class = self::class): int
-    {
-        return parent::load_by_name($name, $class);
+        $sc->set_class($this::class);
+        return parent::load_sql_fields(
+            $sc, $query_name,
+            self::FLD_NAMES,
+            self::FLD_NAMES_USR,
+            self::FLD_NAMES_NUM_USR
+        );
     }
 
     function name_field(): string
