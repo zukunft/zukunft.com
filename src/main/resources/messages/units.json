@@ -170,6 +170,18 @@
       "protection": "admin_protection"
     },
     {
+      "name": "millisecond",
+      "plural": "milliseconds",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Millisecond",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
       "name": "metre",
       "type": "measure",
       "protection": "admin_protection",

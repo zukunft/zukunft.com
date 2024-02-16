@@ -80,25 +80,25 @@ class source extends sandbox_typed
     const FLD_CODE_ID_COM = 'to select sources used by this program';
 
     // list of fields that MUST be set by one user
-    const FLD_LST_CREATE_MUST_STD = array(
+    const FLD_LST_MUST_BE_IN_STD = array(
         [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_NAME_COM],
     );
     // list of must fields that CAN be changed by the user
-    const FLD_LST_CREATE_CAN_USER = array(
+    const FLD_LST_MUST_BUT_USER_CAN_CHANGE = array(
         [self::FLD_NAME, sql_field_type::NAME, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_COM],
     );
     // list of fields that can be changed by the user
-    const FLD_LST_CREATE_CHANGEABLE = array(
+    const FLD_LST_USER_CAN_CHANGE = array(
         [self::FLD_DESCRIPTION, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
         [self::FLD_TYPE, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_TYPE_COM],
         [self::FLD_URL, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_URL_COM],
-        [sql_db::FLD_CODE_ID, sql_field_type::CODE_ID, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
+        [sql::FLD_CODE_ID, sql_field_type::CODE_ID, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
     );
 
     // all database field names excluding the id used to identify if there are some user specific changes
     const FLD_NAMES = array(
         self::FLD_NAME,
-        sql_db::FLD_CODE_ID
+        sql::FLD_CODE_ID
     );
     // list of the user specific database field names
     const FLD_NAMES_USR = array(
@@ -171,7 +171,7 @@ class source extends sandbox_typed
         if ($result) {
             $this->url = $db_row[self::FLD_URL];
             $this->type_id = $db_row[self::FLD_TYPE];
-            $this->code_id = $db_row[sql_db::FLD_CODE_ID];
+            $this->code_id = $db_row[sql::FLD_CODE_ID];
         }
         return $result;
     }
@@ -305,7 +305,7 @@ class source extends sandbox_typed
     function load_sql_by_code_id(sql $sc, string $code_id, string $class): sql_par
     {
         $qp = $this->load_sql($sc, 'code_id', $class);
-        $sc->add_where(sql_db::FLD_CODE_ID, $code_id);
+        $sc->add_where(sql::FLD_CODE_ID, $code_id);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 

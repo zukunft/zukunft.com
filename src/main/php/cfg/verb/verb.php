@@ -78,6 +78,7 @@ class verb extends type_object
 
     // directional forms of verbs (maybe move to verb_api or test if only used for testing)
     const FOLLOWED_BY = "is followed by";
+    const FOLLOWER_OF = "is follower of";
 
     // search directions to get related words (phrases)
     const DIRECTION_NO = '';
@@ -100,7 +101,7 @@ class verb extends type_object
 
     // all database field names excluding the id used to identify if there are some user specific changes
     const FLD_NAMES = array(
-        sql_db::FLD_CODE_ID,
+        sql::FLD_CODE_ID,
         sandbox_named::FLD_DESCRIPTION,
         self::FLD_PLURAL,
         self::FLD_REVERSE,
@@ -181,9 +182,9 @@ class verb extends type_object
     {
         $result = parent::row_mapper($db_row, $id_fld);
         if ($result) {
-            if (array_key_exists(sql_db::FLD_CODE_ID, $db_row)) {
-                if ($db_row[sql_db::FLD_CODE_ID] != null) {
-                    $this->set_code_id($db_row[sql_db::FLD_CODE_ID]);
+            if (array_key_exists(sql::FLD_CODE_ID, $db_row)) {
+                if ($db_row[sql::FLD_CODE_ID] != null) {
+                    $this->set_code_id($db_row[sql::FLD_CODE_ID]);
                 }
             }
             $this->set_name($db_row[$name_fld]);
@@ -406,7 +407,7 @@ class verb extends type_object
     function load_sql_by_code_id(sql $sc, string $code_id, string $class = self::class): sql_par
     {
         $qp = $this->load_sql($sc, 'code_id', $class);
-        $sc->add_where(sql_db::FLD_CODE_ID, $code_id);
+        $sc->add_where(sql::FLD_CODE_ID, $code_id);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -853,7 +854,7 @@ class verb extends type_object
             $log->new_value = $this->code_id;
             $log->std_value = $db_rec->code_id;
             $log->row_id = $this->id;
-            $log->set_field(sql_db::FLD_CODE_ID);
+            $log->set_field(sql::FLD_CODE_ID);
             $result .= $this->save_field_do($db_con, $log);
         }
         return $result;

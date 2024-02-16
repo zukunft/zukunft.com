@@ -5,6 +5,9 @@
     service/config.php - functions to handle the database based system configuration
     ------------------
 
+    TODO use single words with code_id for the system configuration
+    TODO check on system start that the system configuration is complete
+
     the values in the config table can only be changed by the system admin
     expose the config class functions as simple functions for simple coding
 
@@ -34,6 +37,7 @@
 
 namespace cfg;
 
+use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
@@ -73,7 +77,7 @@ class config
         $qp = new sql_par(self::class);
         $qp->name .= 'get';
         $db_con->set_name($qp->name);
-        $db_con->set_fields(array(sql_db::FLD_CODE_ID, sql_db::FLD_VALUE, sandbox_named::FLD_DESCRIPTION));
+        $db_con->set_fields(array(sql::FLD_CODE_ID, sql::FLD_VALUE, sandbox_named::FLD_DESCRIPTION));
         $db_con->add_par(sql_par_type::TEXT, $code_id);
         $qp->sql = $db_con->select_by_code_id();
         $qp->par = $db_con->get_par();
@@ -121,8 +125,8 @@ class config
                 $db_value = $this->default_value($code_id);
             }
         } else {
-            $db_code_id = $db_row[sql_db::FLD_CODE_ID];
-            $db_value = $db_row[sql_db::FLD_VALUE];
+            $db_code_id = $db_row[sql::FLD_CODE_ID];
+            $db_value = $db_row[sql::FLD_VALUE];
             // if no value exists create it with the default value (a configuration value should never be empty)
             if ($db_code_id == '') {
                 if ($this->create($code_id, $db_con)) {
@@ -155,7 +159,7 @@ class config
             // automatically add the config entry
             $result = $this->add($code_id, $value, $description, $db_con);
         } else {
-            if ($value != $db_row[sql_db::FLD_VALUE] or $description != $db_row[sandbox_named::FLD_DESCRIPTION]) {
+            if ($value != $db_row[sql::FLD_VALUE] or $description != $db_row[sandbox_named::FLD_DESCRIPTION]) {
                 $result = $this->update($code_id, $value, $description, $db_con);
             }
         }
@@ -195,8 +199,8 @@ class config
         $db_description = $this->default_description($code_id);
         $db_id = $db_con->insert_old(
             array(
-                sql_db::FLD_CODE_ID,
-                sql_db::FLD_VALUE,
+                sql::FLD_CODE_ID,
+                sql::FLD_VALUE,
                 sandbox_named::FLD_DESCRIPTION),
             array(
                 $code_id,
@@ -221,8 +225,8 @@ class config
         $result = false;
         $db_id = $db_con->insert_old(
             array(
-                sql_db::FLD_CODE_ID,
-                sql_db::FLD_VALUE,
+                sql::FLD_CODE_ID,
+                sql::FLD_VALUE,
                 sandbox_named::FLD_DESCRIPTION),
             array(
                 $code_id,
@@ -248,12 +252,12 @@ class config
         $db_id = $db_con->update_old(
             $code_id,
             array(
-                sql_db::FLD_VALUE,
+                sql::FLD_VALUE,
                 sandbox_named::FLD_DESCRIPTION),
             array(
                 $value,
                 $description),
-            sql_db::FLD_CODE_ID);
+            sql::FLD_CODE_ID);
         if ($db_id > 0) {
             $result = true;
         }

@@ -114,7 +114,7 @@ class group extends sandbox_multi
     const FLD_KEY_PRIME_USER = array(
         [group::FLD_ID, sql_field_type::KEY_PART_INT, sql_field_default::NOT_NULL, '', '', 'the 64-bit prime index to find the user -=class=-'],
     );
-    const FLD_LST_CREATE_CHANGEABLE = array(
+    const FLD_LST_USER_CAN_CHANGE = array(
         [self::FLD_NAME, sql_field_type::TEXT, sql_field_default::NULL, '', '', 'the user specific group name which can contain the phrase names in a different order to display the group (does not need to be unique)'],
         [self::FLD_DESCRIPTION, sql_field_type::TEXT, sql_field_default::NULL, '', '', 'the user specific description for mouse over helps'],
     );
@@ -503,9 +503,9 @@ class group extends sandbox_multi
     ): array
     {
         $sc->set_class($this::class, $usr_table, $tbl_typ->extension());
-        $fields = array_merge($key_fld, sandbox_value::FLD_ALL_OWNER, $this::FLD_LST_CREATE_CHANGEABLE);
+        $fields = array_merge($key_fld, sandbox_value::FLD_ALL_OWNER, $this::FLD_LST_USER_CAN_CHANGE);
         if ($usr_table) {
-            $fields = array_merge($key_fld, sandbox_value::FLD_ALL_CHANGER, $this::FLD_LST_CREATE_CHANGEABLE);
+            $fields = array_merge($key_fld, sandbox_value::FLD_ALL_CHANGER, $this::FLD_LST_USER_CAN_CHANGE);
         }
         $sql_lst[0] .= parent::sql_table_create($sc, $usr_table, $fields, $tbl_comment);
         $sql_lst[1] .= parent::sql_index_create($sc, $usr_table, $fields);

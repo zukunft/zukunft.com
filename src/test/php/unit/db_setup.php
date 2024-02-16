@@ -53,11 +53,11 @@ class db_setup
             $sql_fixed = resource_file(DB_RES_PATH . DB_SETUP_PATH . $db->path($db_type) . DB_SETUP_SQL_FILE);
             foreach (sql_db::DB_TABLE_CLASSES as $class) {
                 $name = $lib->class_to_name($class);
-                $test_name = 'Check if the generated sql create statement for ' . $name . ' is part of the main sql setup script for ' . $db_type;
+                $test_name = $name . ' sql create is part of setup sql for ' . $db_type;
                 $sql_create = test_resource_file(
                     DB_RES_PATH . $lib->class_to_path($name) . DIRECTORY_SEPARATOR .
                     $name . '_create' . $db->ext($db_type) . '.sql');
-                $t->assert_sql_contains($test_name, $sql_create, $sql_fixed);
+                $t->assert_sql_contains($test_name, $sql_fixed, $sql_create);
             }
         }
         // TODO check that nothing is remaining in the sql setup statement

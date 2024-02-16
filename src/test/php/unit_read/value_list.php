@@ -92,7 +92,7 @@ class value_list_unit_db_tests
         $phr_lst = $t->canton_zh_phrase_list();
         $val_lst->load_by_phr_lst($phr_lst);
         $result = $val_lst->dsp_id();
-        $t->assert_text_contains($test_name, $result, value_api::TV_CITY_ZH_INHABITANTS_2019);
+        $t->assert_text_contains($test_name, $result, value_api::TV_CH_INHABITANTS_2019_IN_MIO);
 
         // load values related to any phrase of a list
         $test_name = 'Load the list of math const';

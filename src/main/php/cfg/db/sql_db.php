@@ -216,10 +216,6 @@ class sql_db
     const ULK4_TBL = 'ul4';                       // prefix used for the fourth user table which should be joined in the result
     const GRP_TBL = 'g';                          // prefix used for the standard table where data for all users are stored
 
-    const FLD_CODE_ID = 'code_id';                // field name for the code link
-    const FLD_VALUE = 'value';                    // field name e.g. for the configuration value
-    const FLD_TYPE_NAME = 'type_name';            // field name for the user specific name of a type; types are used to assign code to a db row
-
     // formats to force the formatting of a value for an SQL statement e.g. convert true to 1 when using tinyint to save boolean values
     const FLD_FORMAT_TEXT = 'text';               // to force the text formatting of a value for the SQL statement formatting
     const FLD_FORMAT_VAL = 'number';              // to force the numeric formatting of a value for the SQL statement formatting
@@ -1534,52 +1530,52 @@ class sql_db
         $result = $type . '_name';
         // exceptions to be adjusted
         if ($result == 'link_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'phrase_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'view_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'component_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'component_position_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'formula_element_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'sys_log_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'formula_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'formula_link_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'ref_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'source_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'share_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'protection_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'profile_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'sys_log_status_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'calc_and_cleanup_task_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sql::FLD_TYPE_NAME;
         }
         // temp solution until the standard field name for the name field is actually "name" (or something else not object specific)
         if ($result == 'triple_name') {
@@ -2458,13 +2454,13 @@ class sql_db
                 $result .= sql_db::STD_TBL . '.';
             }
             $this->add_par(sql_par_type::TEXT, $code_id);
-            $result .= sql_db::FLD_CODE_ID . " = " . $this->par_name();
+            $result .= sql::FLD_CODE_ID . " = " . $this->par_name();
             if ($this->db_type == sql_db::POSTGRES) {
                 $result .= ' AND ';
                 if ($this->usr_query or $this->join <> '') {
                     $result .= sql_db::STD_TBL . '.';
                 }
-                $result .= sql_db::FLD_CODE_ID . ' IS NOT NULL';
+                $result .= sql::FLD_CODE_ID . ' IS NOT NULL';
             }
         } elseif ($name <> '' and !is_null($this->usr_id)) {
             $result .= $this->set_where_name($name, $this->name_field);
@@ -2572,13 +2568,13 @@ class sql_db
                         }
 
                         if ($par_type == sql_par_type::TEXT) {
-                            if ($id_fields[$used_fields] == sql_db::FLD_CODE_ID) {
+                            if ($id_fields[$used_fields] == sql::FLD_CODE_ID) {
                                 if ($this->db_type == sql_db::POSTGRES) {
                                     $this->where .= ' AND ';
                                     if ($this->usr_query or $this->join <> '') {
                                         $this->where .= sql_db::STD_TBL . '.';
                                     }
-                                    $this->where .= sql_db::FLD_CODE_ID . ' IS NOT NULL';
+                                    $this->where .= sql::FLD_CODE_ID . ' IS NOT NULL';
                                 }
                             }
                         }
@@ -2975,7 +2971,7 @@ class sql_db
      */
     function select_by_code_id(bool $has_id = true): string
     {
-        return $this->select_by(array(sql_db::FLD_CODE_ID), $has_id);
+        return $this->select_by(array(sql::FLD_CODE_ID), $has_id);
     }
 
     /**

@@ -96,7 +96,7 @@ class type_object extends db_object_seq_id implements JsonSerializable
     {
         $result = parent::row_mapper($db_row, $this->id_field_typ($db_type));
         if ($this->id > 0) {
-            $this->code_id = strval($db_row[sql_db::FLD_CODE_ID]);
+            $this->code_id = strval($db_row[sql::FLD_CODE_ID]);
             $type_name = '';
             if ($db_type == db_cl::LOG_ACTION) {
                 $type_name = strval($db_row[self::FLD_ACTION]);
@@ -109,7 +109,7 @@ class type_object extends db_object_seq_id implements JsonSerializable
             } elseif ($db_type == sql_db::TBL_LANGUAGE_FORM) {
                 $type_name = strval($db_row[language_form::FLD_NAME]);
             } else {
-                $type_name = strval($db_row[sql_db::FLD_TYPE_NAME]);
+                $type_name = strval($db_row[sql::FLD_TYPE_NAME]);
             }
             $this->name = $type_name;
             $this->comment = strval($db_row[sandbox_named::FLD_DESCRIPTION]);
@@ -251,7 +251,7 @@ class type_object extends db_object_seq_id implements JsonSerializable
     {
         $typ_lst = new type_list();
         $qp = $typ_lst->load_sql($sc, $class, 'code_id');
-        $sc->add_where(sql_db::FLD_CODE_ID, $code_id);
+        $sc->add_where(sql::FLD_CODE_ID, $code_id);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 

@@ -71,6 +71,11 @@ class sql
     const FALSE = '0'; // representing true in the where part for a smallint field
     const ID_NULL = 0; // the 'not set' value for an id; could have been null if postgres index would allow it
 
+    // sql field names used for several classes
+    const FLD_CODE_ID = 'code_id';     // field name for the code link e.g. for words used for the system configuration
+    const FLD_VALUE = 'value';         // field name e.g. for the configuration value
+    const FLD_TYPE_NAME = 'type_name'; // field name for the user specific name of a type; types are used to assign code to a db row
+
     // enum values used for the table creation
     const fld_type_ = '';
 
@@ -2135,13 +2140,13 @@ class sql
 
                             // include rows where code_id is null
                             if ($par_type == sql_par_type::TEXT) {
-                                if ($this->par_fields[$i] == sql_db::FLD_CODE_ID) {
+                                if ($this->par_fields[$i] == sql::FLD_CODE_ID) {
                                     if ($this->db_type == sql_db::POSTGRES) {
                                         $result .= ' AND ';
                                         if ($this->usr_query or $this->join <> '') {
                                             $result .= sql_db::STD_TBL . '.';
                                         }
-                                        $result .= sql_db::FLD_CODE_ID . ' IS NOT NULL';
+                                        $result .= sql::FLD_CODE_ID . ' IS NOT NULL';
                                     }
                                 }
                             }
@@ -2332,11 +2337,11 @@ class sql
      * @return string the sql statement to create a table
      */
     function table_create(
-        array $fields,
+        array  $fields,
         string $type_name = '',
         string $tbl_comment = '',
         string $class = '',
-        bool $usr_tbl = false
+        bool   $usr_tbl = false
     ): string
     {
         $sql = '';
@@ -3155,52 +3160,52 @@ class sql
         $result = $type . '_name';
         // exceptions to be adjusted
         if ($result == 'link_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'phrase_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'view_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'component_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'component_position_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'formula_element_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'sys_log_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'formula_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'formula_link_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'ref_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'source_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'share_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'protection_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'profile_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'sys_log_status_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'calc_and_cleanup_task_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sql::FLD_TYPE_NAME;
         }
         // temp solution until the standard field name for the name field is actually "name" (or something else not object specific)
         if ($result == 'triple_name') {

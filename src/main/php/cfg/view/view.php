@@ -65,7 +65,7 @@ class view extends sandbox_typed
 
     // all database field names excluding the id
     const FLD_NAMES = array(
-        sql_db::FLD_CODE_ID
+        sql::FLD_CODE_ID
     );
     // list of the user specific database field names
     const FLD_NAMES_USR = array(
@@ -151,8 +151,8 @@ class view extends sandbox_typed
             if (array_key_exists(self::FLD_TYPE, $db_row)) {
                 $this->type_id = $db_row[self::FLD_TYPE];
             }
-            if (array_key_exists(sql_db::FLD_CODE_ID, $db_row)) {
-                $this->code_id = $db_row[sql_db::FLD_CODE_ID];
+            if (array_key_exists(sql::FLD_CODE_ID, $db_row)) {
+                $this->code_id = $db_row[sql::FLD_CODE_ID];
             }
         }
         return $result;
@@ -371,7 +371,7 @@ class view extends sandbox_typed
     function load_sql_by_code_id(sql $sc, string $code_id, string $class): sql_par
     {
         $qp = $this->load_sql($sc, 'code_id', $class);
-        $sc->add_where(sql_db::FLD_CODE_ID, $code_id);
+        $sc->add_where(sql::FLD_CODE_ID, $code_id);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -858,7 +858,7 @@ class view extends sandbox_typed
                 $log->new_value = $this->code_id;
                 $log->std_value = $std_rec->code_id;
                 $log->row_id = $this->id;
-                $log->set_field(sql_db::FLD_CODE_ID);
+                $log->set_field(sql::FLD_CODE_ID);
                 $result = $this->save_field_user($db_con, $log);
             }
         }

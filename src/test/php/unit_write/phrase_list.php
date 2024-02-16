@@ -125,29 +125,29 @@ class phrase_list_test
         $phr_lst->load_by_names(array(TW_ABB, TW_SALES, TW_CHF, TW_MIO, TW_2017));
         $phr_lst_ex = clone $phr_lst;
         $phr_lst_ex->ex_time();
+        $result = $phr_lst_ex->names();
         $target = [TW_ABB, TW_SALES, TW_CHF, TW_MIO];
-        $result = $phr_lst_ex->names();
         $t->assert_contains('phrase_list->ex_time of ' . $phr_lst->dsp_name(), $result, $target);
-        $target = [TW_2017];
         $result = $phr_lst_ex->names();
+        $target = [TW_2017];
         $t->assert_contains_not('phrase_list->ex_time ex ' . $phr_lst->dsp_name(), $result, $target);
 
         $phr_lst_ex = clone $phr_lst;
         $phr_lst_ex->ex_measure();
+        $result = $phr_lst_ex->names();
         $target = [TW_ABB, TW_SALES, TW_MIO, TW_2017];
-        $result = $phr_lst_ex->names();
         $t->assert_contains('phrase_list->ex_measure of ' . $phr_lst->dsp_name(), $target, $result);
-        $target = [TW_CHF];
         $result = $phr_lst_ex->names();
+        $target = [TW_CHF];
         $t->assert_contains_not('phrase_list->ex_measure ex ' . $phr_lst->dsp_name(), $target, $result);
 
         $phr_lst_ex = clone $phr_lst;
         $phr_lst_ex->ex_scaling();
+        $result = $phr_lst_ex->names();
         $target = [TW_ABB, TW_SALES, TW_CHF, TW_2017];
-        $result = $phr_lst_ex->names();
         $t->assert_contains('phrase_list->ex_scaling of ' . $phr_lst->dsp_name(), $result, $target);
-        $target = [TW_MIO];
         $result = $phr_lst_ex->names();
+        $target = [TW_MIO];
         $t->assert_contains_not('phrase_list->ex_scaling ex ' . $phr_lst->dsp_name(), $result, $target);
 
     }

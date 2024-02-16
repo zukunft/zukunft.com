@@ -75,7 +75,7 @@ class component extends sandbox_typed
 
     // all database field names excluding the id
     const FLD_NAMES = array(
-        sql_db::FLD_CODE_ID,
+        sql::FLD_CODE_ID,
         self::FLD_UI_MSG_ID
     );
     // list of the user specific database field names
@@ -224,8 +224,8 @@ class component extends sandbox_typed
     {
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld);
         if ($result) {
-            if (array_key_exists(sql_db::FLD_CODE_ID, $db_row)) {
-                $this->code_id = $db_row[sql_db::FLD_CODE_ID];
+            if (array_key_exists(sql::FLD_CODE_ID, $db_row)) {
+                $this->code_id = $db_row[sql::FLD_CODE_ID];
             }
             if (array_key_exists(self::FLD_UI_MSG_ID, $db_row)) {
                 $this->ui_msg_code_id = $db_row[self::FLD_UI_MSG_ID];
@@ -692,7 +692,7 @@ class component extends sandbox_typed
           $db_con = new mysql;
           $db_con->usr_id = $this->user()->id();
           $db_type = $db_con->get1($sql);
-          $this->type_name = $db_type[sql_db::FLD_TYPE_NAME];
+          $this->type_name = $db_type[sql::FLD_TYPE_NAME];
         }
         return $this->type_name;
       } */
@@ -867,7 +867,7 @@ class component extends sandbox_typed
             $log->old_value = $db_rec->code_id;
             $log->new_value = $this->code_id;
             $log->row_id = $this->id;
-            $log->set_field(sql_db::FLD_CODE_ID);
+            $log->set_field(sql::FLD_CODE_ID);
             $result = $this->save_field($db_con, $log);
         }
         return $result;

@@ -1055,6 +1055,7 @@ class value extends sandbox_value
 
     /**
      * import a value from an external object
+     * TODO import the description and save it in the group description
      *
      * @param array $in_ex_json an array with the data of the json object
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id

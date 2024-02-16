@@ -548,47 +548,51 @@ CREATE TABLE IF NOT EXISTS `language_forms`
 -- --------------------------------------------------------
 
 --
--- table structure for a short text, that can be used to search for values or results
+-- table structure for a short text, that can be used to search for values or results with a 64 bit database key because humans will never be able to use more than a few million words
 --
 
-CREATE TABLE IF NOT EXISTS `words`
+CREATE TABLE IF NOT EXISTS words
 (
-    `word_id`        int(11)      NOT NULL,
-    `user_id`        int(11)      DEFAULT NULL COMMENT 'user_id of the user that has created the term',
-    `word_name`      varchar(255) NOT NULL,
-    `plural`         varchar(255) DEFAULT NULL COMMENT 'to be replaced by a language form entry',
-    `description`    text         DEFAULT NULL COMMENT 'to be replaced by a language form entry',
-    `phrase_type_id` int(11)      DEFAULT NULL,
-    `view_id`        int(11)      DEFAULT NULL COMMENT 'the default mask for this term',
-    `values`         int(11)      DEFAULT NULL COMMENT 'number of values linked to the term, which gives an indication of the importance',
-    `excluded`       tinyint(4)   DEFAULT NULL,
-    `share_type_id`  smallint     DEFAULT NULL,
-    `protect_id`     smallint     DEFAULT NULL
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8 COMMENT ='for all text that might be used to search for values';
+    word_id        bigint       NOT     NULL COMMENT 'the internal unique primary index',
+    user_id        bigint       DEFAULT NULL COMMENT 'the owner / creator of the word',
+    word_name      varchar(255) NOT     NULL COMMENT 'the text used for searching',
+    plural         varchar(255) DEFAULT NULL COMMENT 'to be replaced by a language form entry; TODO to be move to language forms',
+    description    text         DEFAULT NULL COMMENT 'to be replaced by a language form entry',
+    phrase_type_id bigint       DEFAULT NULL COMMENT 'to link coded functionality to words e.g. to exclude measure words from a percent result',
+    view_id        bigint       DEFAULT NULL COMMENT 'the default mask for this word',
+    `values`       bigint       DEFAULT NULL COMMENT 'number of values linked to the word, which gives an indication of the importance',
+    inactive       smallint     DEFAULT NULL COMMENT 'true if the word is not yet active e.g. because it is moved to the prime words with a 16 bit id',
+    code_id        varchar(255) DEFAULT NULL COMMENT 'to link coded functionality to a specific word e.g. to get the values of the system configuration',
+    excluded       smallint     DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
+    share_type_id  smallint     DEFAULT NULL COMMENT 'to restrict the access',
+    protect_id     smallint     DEFAULT NULL COMMENT 'to protect against unwanted changes'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'for a short text, that can be used to search for values or results with a 64 bit database key because humans will never be able to use more than a few million words';
 
 --
--- Table structure for table`user_words`
+-- table structure to save user specific changes for a short text, that can be used to search for values or results with a 64 bit database key because humans will never be able to use more than a few million words
 --
 
-CREATE TABLE IF NOT EXISTS `user_words`
+CREATE TABLE IF NOT EXISTS user_words
 (
-    `word_id`        int(11) NOT NULL,
-    `user_id`        int(11) NOT NULL,
-    `language_id`    int(11)      DEFAULT NULL,
-    `word_name`      varchar(255) DEFAULT NULL,
-    `plural`         varchar(255) DEFAULT NULL,
-    `description`    text,
-    `phrase_type_id` int(11)      DEFAULT NULL,
-    `view_id`        int(11)      DEFAULT NULL,
-    `values`         int(11)      DEFAULT NULL,
-    `excluded`       tinyint(4)   DEFAULT NULL,
-    `share_type_id`  smallint     DEFAULT NULL,
-    `protect_id`     smallint     DEFAULT NULL
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8;
-
+    word_id        bigint       NOT NULL              COMMENT 'with the user_id the internal unique primary index',
+    user_id        bigint       NOT NULL              COMMENT 'the changer of the word',
+    language_id    bigint       NOT NULL DEFAULT 1    COMMENT 'the text used for searching',
+    word_name      varchar(255)          DEFAULT NULL COMMENT 'the text used for searching',
+    plural         varchar(255)          DEFAULT NULL COMMENT 'to be replaced by a language form entry; TODO to be move to language forms',
+    description    text                  DEFAULT NULL COMMENT 'to be replaced by a language form entry',
+    phrase_type_id bigint                DEFAULT NULL COMMENT 'to link coded functionality to words e.g. to exclude measure words from a percent result',
+    view_id        bigint                DEFAULT NULL COMMENT 'the default mask for this word',
+    `values`       bigint                DEFAULT NULL COMMENT 'number of values linked to the word, which gives an indication of the importance',
+    excluded       smallint              DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
+    share_type_id  smallint              DEFAULT NULL COMMENT 'to restrict the access',
+    protect_id     smallint              DEFAULT NULL COMMENT 'to protect against unwanted changes'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'for a short text, that can be used to search for values or results with a 64 bit database key because humans will never be able to use more than a few million words';
 -- --------------------------------------------------------
 
 --
@@ -930,40 +934,47 @@ CREATE TABLE IF NOT EXISTS `source_types`
   AUTO_INCREMENT = 5
   DEFAULT CHARSET = utf8;
 
+-- --------------------------------------------------------
+
 --
--- table structure for the original sources for the numeric,time and geo values
+-- table structure for the original sources for the numeric, time and geo values
 --
 
 CREATE TABLE IF NOT EXISTS sources (
-                                       source_id      bigint           NOT NULL COMMENT 'the internal unique primary index ',
-                                       user_id        bigint       DEFAULT NULL COMMENT 'the owner / creator of the value',
-                                       source_name    varchar(255)     NOT NULL COMMENT 'the unique name of the source used e.g. as the primary search key',
-                                       description    text DEFAULT         NULL COMMENT 'the user specific description of the source for mouse over helps',
-                                       source_type_id bigint DEFAULT       NULL COMMENT 'link to the source type',
-                                       `url`          text DEFAULT         NULL COMMENT 'the url of the source',
-                                       code_id        varchar(100) DEFAULT NULL COMMENT 'to select sources used by this program',
-                                       excluded       smallint     DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
-                                       share_type_id  smallint     DEFAULT NULL COMMENT 'to restrict the access',
-                                       protect_id     smallint     DEFAULT NULL COMMENT 'to protect against unwanted changes'
-) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'for the original sources for the numeric,time and geo values';
+    source_id      bigint           NOT NULL COMMENT 'the internal unique primary index',
+    user_id        bigint       DEFAULT NULL COMMENT 'the owner / creator of the source',
+    source_name    varchar(255)     NOT NULL COMMENT 'the unique name of the source used e.g. as the primary search key',
+    description    text DEFAULT         NULL COMMENT 'the user specific description of the source for mouse over helps',
+    source_type_id bigint DEFAULT       NULL COMMENT 'link to the source type',
+    `url`          text DEFAULT         NULL COMMENT 'the url of the source',
+    code_id        varchar(100) DEFAULT NULL COMMENT 'to select sources used by this program',
+    excluded       smallint     DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
+    share_type_id  smallint     DEFAULT NULL COMMENT 'to restrict the access',
+    protect_id     smallint     DEFAULT NULL COMMENT 'to protect against unwanted changes'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'for the original sources for the numeric,time and geo values';
 
 --
--- table structure for the original sources for the numeric,time and geo values
+-- table structure to save user specific changes for the original sources for the numeric, time and geo values
 --
 
 CREATE TABLE IF NOT EXISTS user_sources (
-                                            source_id      bigint           NOT NULL COMMENT 'with the user_id the internal unique primary index ',
-                                            user_id        bigint           NOT NULL COMMENT 'the changer of the ',
-                                            source_name    varchar(255) DEFAULT NULL COMMENT 'the unique name of the source used e.g. as the primary search key',
-                                            description    text         DEFAULT NULL COMMENT 'the user specific description of the source for mouse over helps',
-                                            source_type_id bigint       DEFAULT NULL COMMENT 'link to the source type',
-                                            `url`          text         DEFAULT NULL COMMENT 'the url of the source',
-                                            code_id        varchar(100) DEFAULT NULL COMMENT 'to select sources used by this program',
-                                            excluded       smallint     DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
-                                            share_type_id  smallint     DEFAULT NULL COMMENT 'to restrict the access',
-                                            protect_id     smallint     DEFAULT NULL COMMENT 'to protect against unwanted changes'
-) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'for the original sources for the numeric,time and geo values';
-
+    source_id      bigint           NOT NULL COMMENT 'with the user_id the internal unique primary index',
+    user_id        bigint           NOT NULL COMMENT 'the changer of the source',
+    source_name    varchar(255) DEFAULT NULL COMMENT 'the unique name of the source used e.g. as the primary search key',
+    description    text         DEFAULT NULL COMMENT 'the user specific description of the source for mouse over helps',
+    source_type_id bigint       DEFAULT NULL COMMENT 'link to the source type',
+    `url`          text         DEFAULT NULL COMMENT 'the url of the source',
+    code_id        varchar(100) DEFAULT NULL COMMENT 'to select sources used by this program',
+    excluded       smallint     DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
+    share_type_id  smallint     DEFAULT NULL COMMENT 'to restrict the access',
+    protect_id     smallint     DEFAULT NULL COMMENT 'to protect against unwanted changes'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'for the original sources for the numeric,time and geo values';
 
 --
 -- Table structure for table`source_values`
@@ -1329,24 +1340,71 @@ CREATE TABLE IF NOT EXISTS `results`
   DEFAULT CHARSET = utf8 COMMENT ='table to cache the formula results';
 
 -- --------------------------------------------------------
-
--- --------------------------------------------------------
-
 --
--- Table structure for table`groups`
+-- table structure to add a user given name using a 512-bit group id index for up to 16 32-bit phrase ids including the order
 --
 
-CREATE TABLE IF NOT EXISTS `groups`
-(
-    `group_id`    int(11) NOT NULL,
-    `group_name`  varchar(1000) DEFAULT NULL COMMENT 'if this is set a manual group for fast selection',
-    `description` varchar(4000) DEFAULT NULL COMMENT 'the automatic created user readable description',
-    `word_ids`    varchar(255)  DEFAULT NULL,
-    `triple_ids`  varchar(255)  DEFAULT NULL COMMENT 'one field link to the table term_links',
-    `id_order`    varchar(512)  DEFAULT NULL COMMENT 'the phrase ids in the order that the user wants to see them'
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8 COMMENT ='to reduce the number of value to term links';
+CREATE TABLE IF NOT EXISTS `groups` (
+    group_id    char(112)     NOT NULL COMMENT 'the 512-bit prime index to find the group',
+    user_id     bigint    DEFAULT NULL COMMENT 'the owner / creator of the group',
+    group_name  text      DEFAULT NULL COMMENT 'the user specific group name which can contain the phrase names in a different order to display the group (does not need to be unique)',
+    description text      DEFAULT NULL COMMENT 'the user specific description for mouse over helps'
+) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'to add a user given name using a 512-bit group id index for up to 16 32-bit phrase ids including the order';
+
+--
+-- table structure to save user specific changes to add a user given name using a 512-bit group id index for up to 16 32-bit phrase ids including the order
+--
+
+CREATE TABLE IF NOT EXISTS user_groups (
+    group_id    char(112)     NOT NULL COMMENT 'the 512-bit prime index to find the user group',
+    user_id     bigint        NOT NULL COMMENT 'the changer of the group',
+    group_name  text      DEFAULT NULL COMMENT 'the user specific group name which can contain the phrase names in a different order to display the group (does not need to be unique)',
+    description text      DEFAULT NULL COMMENT 'the user specific description for mouse over helps'
+) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'to add a user given name using a 512-bit group id index for up to 16 32-bit phrase ids including the order';
+
+--
+-- table structure to add a user given name using a 64-bit group id index for up to four 16-bit phrase ids including the order
+--
+
+CREATE TABLE IF NOT EXISTS groups_prime (
+    group_id    bigint     NOT NULL COMMENT 'the 64-bit prime index to find the group',
+    user_id     bigint DEFAULT NULL COMMENT 'the owner / creator of the group',
+    group_name  text   DEFAULT NULL COMMENT 'the user specific group name which can contain the phrase names in a different order to display the group (does not need to be unique)',
+    description text   DEFAULT NULL COMMENT 'the user specific description for mouse over helps'
+) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'to add a user given name using a 64-bit group id index for up to four 16-bit phrase ids including the order';
+
+--
+-- table structure to save user specific changes to add a user given name using a 64-bit group id index for up to four 16-bit phrase ids including the order
+--
+
+CREATE TABLE IF NOT EXISTS user_groups_prime (
+    group_id    bigint     NOT NULL COMMENT 'the 64-bit prime index to find the user group',
+    user_id     bigint     NOT NULL COMMENT 'the changer of the group',
+    group_name  text   DEFAULT NULL COMMENT 'the user specific group name which can contain the phrase names in a different order to display the group (does not need to be unique)',
+    description text   DEFAULT NULL COMMENT 'the user specific description for mouse over helps'
+) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'to add a user given name using a 64-bit group id index for up to four 16-bit phrase ids including the order';
+
+--
+-- table structure to add a user given name using a group id index with a variable length for more than 16 32-bit phrase ids including the order
+--
+
+CREATE TABLE IF NOT EXISTS groups_big (
+    group_id    char(255)     NOT NULL COMMENT 'the variable text index to find group',
+    user_id     bigint    DEFAULT NULL COMMENT 'the owner / creator of the group',
+    group_name  text      DEFAULT NULL COMMENT 'the user specific group name which can contain the phrase names in a different order to display the group (does not need to be unique)',
+    description text      DEFAULT NULL COMMENT 'the user specific description for mouse over helps'
+) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'to add a user given name using a group id index with a variable length for more than 16 32-bit phrase ids including the order';
+
+--
+-- table structure to save user specific changes to add a user given name using a group id index with a variable length for more than 16 32-bit phrase ids including the order
+--
+
+CREATE TABLE IF NOT EXISTS user_groups_big (
+    group_id    char(255)     NOT NULL COMMENT 'the text index for more than 16 phrases to find the group',
+    user_id     bigint        NOT NULL COMMENT 'the changer of the group',
+    group_name  text      DEFAULT NULL COMMENT 'the user specific group name which can contain the phrase names in a different order to display the group (does not need to be unique)',
+    description text      DEFAULT NULL COMMENT 'the user specific description for mouse over helps'
+) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'to add a user given name using a group id index with a variable length for more than 16 32-bit phrase ids including the order';
 
 -- --------------------------------------------------------
 

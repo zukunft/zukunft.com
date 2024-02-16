@@ -32,6 +32,7 @@
 
 namespace html\log;
 
+use cfg\db\sql;
 use cfg\formula;
 use html\formula\formula AS formula_dsp;
 use cfg\log\change_log_table;
@@ -181,7 +182,7 @@ class user_log_display
 
                 // pick the useful field name
                 $txt_fld = '';
-                if ($db_row[sql_db::FLD_CODE_ID] == "value") {
+                if ($db_row[sql::FLD_CODE_ID] == "value") {
                     $txt_fld .= $db_row['type'] . ' value';
                     /* because changing the words creates a new value there is no need to display the words here
                     if ($db_row['row_id'] > 0) {

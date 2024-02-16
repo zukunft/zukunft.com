@@ -539,7 +539,7 @@ COMMENT ON COLUMN language_forms.language_form_name IS 'type of adjustment of a 
 -- --------------------------------------------------------
 
 --
--- table structure for a short text, that can be used to search for values or results
+-- table structure for a short text, that can be used to search for values or results with a 64 bit database key because humans will never be able to use more than a few million words
 --
 
 CREATE TABLE IF NOT EXISTS words
@@ -553,24 +553,29 @@ CREATE TABLE IF NOT EXISTS words
     view_id        bigint                DEFAULT NULL,
     values         bigint                DEFAULT NULL,
     inactive       smallint              DEFAULT NULL,
+    code_id        varchar(255)          DEFAULT NULL,
     excluded       smallint              DEFAULT NULL,
     share_type_id  smallint              DEFAULT NULL,
-    protect_id     smallint     NOT NULL DEFAULT '1'
+    protect_id     smallint              DEFAULT NULL
 );
 
-COMMENT ON TABLE words IS 'for all text that might be used to search for values';
-COMMENT ON COLUMN words.word_id IS 'a 64 bit database key because humans will never be able to use more than a few million words';
-COMMENT ON COLUMN words.user_id IS 'user_id of the user that has created the word';
+COMMENT ON TABLE words IS 'for a short text, that can be used to search for values or results with a 64 bit database key because humans will never be able to use more than a few million words';
+COMMENT ON COLUMN words.word_id IS 'the internal unique primary index';
+COMMENT ON COLUMN words.user_id IS 'the owner / creator of the word';
+COMMENT ON COLUMN words.word_name IS 'the text used for searching';
 COMMENT ON COLUMN words.plural IS 'to be replaced by a language form entry; TODO to be move to language forms';
 COMMENT ON COLUMN words.description IS 'to be replaced by a language form entry';
-COMMENT ON COLUMN words.phrase_type_id IS 'to link coded functionality to a word e.g. to exclude measure words from a percent result';
+COMMENT ON COLUMN words.phrase_type_id IS 'to link coded functionality to words e.g. to exclude measure words from a percent result';
 COMMENT ON COLUMN words.view_id IS 'the default mask for this word';
 COMMENT ON COLUMN words.values IS 'number of values linked to the word, which gives an indication of the importance';
-COMMENT ON COLUMN words.excluded IS 'to deactivate to word and remove it from selection lists without losing related values';
 COMMENT ON COLUMN words.inactive IS 'true if the word is not yet active e.g. because it is moved to the prime words with a 16 bit id';
+COMMENT ON COLUMN words.code_id IS 'to link coded functionality to a specific word e.g. to get the values of the system configuration';
+COMMENT ON COLUMN words.excluded IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN words.share_type_id IS 'to restrict the access';
+COMMENT ON COLUMN words.protect_id IS 'to protect against unwanted changes';
 
 --
--- table structure for user specific word changes
+-- table structure to save user specific changes for a short text, that can be used to search for values or results with a 64 bit database key because humans will never be able to use more than a few million words
 --
 
 CREATE TABLE IF NOT EXISTS user_words
@@ -578,19 +583,30 @@ CREATE TABLE IF NOT EXISTS user_words
     word_id        bigint   NOT NULL,
     user_id        bigint   NOT NULL,
     language_id    bigint   NOT NULL DEFAULT 1,
-    word_name      varchar(200)      DEFAULT NULL,
-    plural         varchar(200)      DEFAULT NULL,
-    description    text,
+    word_name      varchar(255)      DEFAULT NULL,
+    plural         varchar(255)      DEFAULT NULL,
+    description    text              DEFAULT NULL,
     phrase_type_id bigint            DEFAULT NULL,
     view_id        bigint            DEFAULT NULL,
     values         bigint            DEFAULT NULL,
     excluded       smallint          DEFAULT NULL,
     share_type_id  smallint          DEFAULT NULL,
-    protect_id     smallint NOT NULL DEFAULT '1'
+    protect_id     smallint          DEFAULT NULL
 );
 
-COMMENT ON TABLE user_words IS 'user specific overwrites of words';
-COMMENT ON COLUMN user_words.user_id IS 'the user who has changed the standard word';
+COMMENT ON TABLE user_words IS 'for a short text, that can be used to search for values or results with a 64 bit database key because humans will never be able to use more than a few million words';
+COMMENT ON COLUMN user_words.word_id IS 'with the user_id the internal unique primary index';
+COMMENT ON COLUMN user_words.user_id IS 'the changer of the word';
+COMMENT ON COLUMN user_words.language_id IS 'the text used for searching';
+COMMENT ON COLUMN user_words.word_name IS 'the text used for searching';
+COMMENT ON COLUMN user_words.plural IS 'to be replaced by a language form entry; TODO to be move to language forms';
+COMMENT ON COLUMN user_words.description IS 'to be replaced by a language form entry';
+COMMENT ON COLUMN user_words.phrase_type_id IS 'to link coded functionality to words e.g. to exclude measure words from a percent result';
+COMMENT ON COLUMN user_words.view_id IS 'the default mask for this word';
+COMMENT ON COLUMN user_words.values IS 'number of values linked to the word,which gives an indication of the importance';
+COMMENT ON COLUMN user_words.excluded IS 'true if a user,but not all, have removed it';
+COMMENT ON COLUMN user_words.share_type_id IS 'to restrict the access';
+COMMENT ON COLUMN user_words.protect_id IS 'to protect against unwanted changes';
 
 -- --------------------------------------------------------
 
@@ -758,96 +774,111 @@ COMMENT ON TABLE phrase_tables IS 'to remember which phrases are stored in which
 -- --------------------------------------------------------
 
 --
--- table structure to add a user given name using a 512 bit group id index for up to 16 16 bit phrase ids including the order
+-- table structure to add a user given name using a 512-bit group id index for up to 16 32-bit phrase ids including the order
 --
 
 CREATE TABLE IF NOT EXISTS groups
 (
     group_id    char(112) PRIMARY KEY,
-    group_name  varchar(1000) DEFAULT NULL,
-    description varchar(4000) DEFAULT NULL
+    user_id     bigint    DEFAULT NULL,
+    group_name  text      DEFAULT NULL,
+    description text      DEFAULT NULL
 );
 
-COMMENT ON TABLE groups IS 'to add a user given name using a 512 bit group id index for up to 16 16 bit phrase ids including the order';
-COMMENT ON COLUMN groups.group_name IS 'the name given by a user to display the group (does not need to be unique))';
-COMMENT ON COLUMN groups.description IS 'the description of the group given by a user';
+COMMENT ON TABLE groups IS 'to add a user given name using a 512-bit group id index for up to 16 32-bit phrase ids including the order';
+COMMENT ON COLUMN groups.group_id IS 'the 512-bit prime index to find the group';
+COMMENT ON COLUMN groups.user_id IS 'the owner / creator of the group';
+COMMENT ON COLUMN groups.group_name IS 'the user specific group name which can contain the phrase names in a different order to display the group (does not need to be unique)';
+COMMENT ON COLUMN groups.description IS 'the user specific description for mouse over helps';
 
 --
--- table structure for saving a user specific group name
+-- table structure to save user specific changes to add a user given name using a 512-bit group id index for up to 16 32-bit phrase ids including the order
 --
 
 CREATE TABLE IF NOT EXISTS user_groups
 (
-    group_id    char(112) PRIMARY KEY,
-    user_id     bigint NOT NULL,
-    group_name  varchar(1000) DEFAULT NULL,
-    description varchar(4000) DEFAULT NULL
+    group_id    char(112)     NOT NULL,
+    user_id     bigint        NOT NULL,
+    group_name  text      DEFAULT NULL,
+    description text      DEFAULT NULL
 );
 
-COMMENT ON TABLE user_groups IS 'to link the user specific name to the standard group';
-COMMENT ON COLUMN user_groups.group_name IS 'the user specific group name which can contain the phrase names in a different order';
+COMMENT ON TABLE user_groups IS 'to add a user given name using a 512-bit group id index for up to 16 32-bit phrase ids including the order';
+COMMENT ON COLUMN user_groups.group_id IS 'the 512-bit prime index to find the user group';
+COMMENT ON COLUMN user_groups.user_id IS 'the changer of the group';
+COMMENT ON COLUMN user_groups.group_name IS 'the user specific group name which can contain the phrase names in a different order to display the group (does not need to be unique)';
 COMMENT ON COLUMN user_groups.description IS 'the user specific description for mouse over helps';
 
 --
--- table structure for phrase group names of up to four prime phrases
+-- table structure to add a user given name using a 64-bit group id index for up to four 16-bit phrase ids including the order
 --
 
 CREATE TABLE IF NOT EXISTS groups_prime
 (
-    group_id    BIGSERIAL PRIMARY KEY,
-    group_name  varchar(1000) DEFAULT NULL,
-    description varchar(4000) DEFAULT NULL
+    group_id    bigint    PRIMARY KEY,
+    user_id     bigint    DEFAULT NULL,
+    group_name  text      DEFAULT NULL,
+    description text      DEFAULT NULL
 );
 
-COMMENT ON TABLE groups_prime IS 'to add a user given name using a 64 bit bigint group id index for up to four 16 bit phrase ids including the order';
-COMMENT ON COLUMN groups_prime.group_name IS 'the name given by a user to display the group (does not need to be unique))';
-COMMENT ON COLUMN groups_prime.description IS 'the description of the group given by a user';
+COMMENT ON TABLE groups_prime IS 'to add a user given name using a 64-bit group id index for up to four 16-bit phrase ids including the order';
+COMMENT ON COLUMN groups_prime.group_id IS 'the 64-bit prime index to find the group';
+COMMENT ON COLUMN groups_prime.user_id IS 'the owner / creator of the group';
+COMMENT ON COLUMN groups_prime.group_name IS 'the user specific group name which can contain the phrase names in a different order to display the group (does not need to be unique)';
+COMMENT ON COLUMN groups_prime.description IS 'the user specific description for mouse over helps';
 
 --
--- table structure for saving a user specific group name for up to four prime phrases
+-- table structure to save user specific changes to add a user given name using a 64-bit group id index for up to four 16-bit phrase ids including the order
 --
 
 CREATE TABLE IF NOT EXISTS user_groups_prime
 (
-    group_id    BIGSERIAL PRIMARY KEY,
-    user_id     bigint NOT NULL,
-    group_name  varchar(1000) DEFAULT NULL,
-    description varchar(4000) DEFAULT NULL
+    group_id    bigint        NOT NULL,
+    user_id     bigint        NOT NULL,
+    group_name  text      DEFAULT NULL,
+    description text      DEFAULT NULL
 );
 
-COMMENT ON TABLE user_groups_prime IS 'to link the user specific name to the group';
-COMMENT ON COLUMN user_groups_prime.group_name IS 'the user specific group name which can contain the phrase names in a different order';
+COMMENT ON TABLE user_groups_prime IS 'to add a user given name using a 64-bit group id index for up to four 16-bit phrase ids including the order';
+COMMENT ON COLUMN user_groups_prime.group_id IS 'the 64-bit prime index to find the user group';
+COMMENT ON COLUMN user_groups_prime.user_id IS 'the changer of the group';
+COMMENT ON COLUMN user_groups_prime.group_name IS 'the user specific group name which can contain the phrase names in a different order to display the group (does not need to be unique)';
 COMMENT ON COLUMN user_groups_prime.description IS 'the user specific description for mouse over helps';
 
 --
--- table structure for phrase group names of more than 16 phrases
+-- table structure to add a user given name using a group id index with a variable length for more than 16 32-bit phrase ids including the order
 --
 
 CREATE TABLE IF NOT EXISTS groups_big
 (
-    group_id    text PRIMARY KEY,
-    group_name  varchar(1000) DEFAULT NULL,
-    description varchar(4000) DEFAULT NULL
+    group_id    text      PRIMARY KEY,
+    user_id     bigint    DEFAULT NULL,
+    group_name  text      DEFAULT NULL,
+    description text      DEFAULT NULL
 );
 
-COMMENT ON TABLE groups_big IS 'to add a user given name using text group id index for an almost unlimited number of phrase ids including the order';
-COMMENT ON COLUMN groups_big.group_name IS 'the name given by a user to display the group (does not need to be unique))';
-COMMENT ON COLUMN groups_big.description IS 'the description of the group given by a user';
+COMMENT ON TABLE groups_big IS 'to add a user given name using a group id index with a variable length for more than 16 32-bit phrase ids including the order';
+COMMENT ON COLUMN groups_big.group_id IS 'the variable text index to find group';
+COMMENT ON COLUMN groups_big.user_id IS 'the owner / creator of the group';
+COMMENT ON COLUMN groups_big.group_name IS 'the user specific group name which can contain the phrase names in a different order to display the group (does not need to be unique)';
+COMMENT ON COLUMN groups_big.description IS 'the user specific description for mouse over helps';
 
 --
--- table structure for saving a user specific group name for more than 16 phrases
+-- table structure to save user specific changes to add a user given name using a group id index with a variable length for more than 16 32-bit phrase ids including the order
 --
 
 CREATE TABLE IF NOT EXISTS user_groups_big
 (
-    group_id    text PRIMARY KEY,
-    user_id     bigint NOT NULL,
-    group_name  varchar(1000) DEFAULT NULL,
-    description varchar(4000) DEFAULT NULL
+    group_id    text          NOT NULL,
+    user_id     bigint        NOT NULL,
+    group_name  text      DEFAULT NULL,
+    description text      DEFAULT NULL
 );
 
-COMMENT ON TABLE user_groups_big IS 'to link the user specific name to the group';
-COMMENT ON COLUMN user_groups_big.group_name IS 'the user specific group name which can contain the phrase names in a different order';
+COMMENT ON TABLE user_groups_big IS 'to add a user given name using a group id index with a variable length for more than 16 32-bit phrase ids including the order';
+COMMENT ON COLUMN user_groups_big.group_id IS 'the text index for more than 16 phrases to find the group';
+COMMENT ON COLUMN user_groups_big.user_id IS 'the changer of the group';
+COMMENT ON COLUMN user_groups_big.group_name IS 'the user specific group name which can contain the phrase names in a different order to display the group (does not need to be unique)';
 COMMENT ON COLUMN user_groups_big.description IS 'the user specific description for mouse over helps';
 
 -- --------------------------------------------------------
@@ -946,6 +977,8 @@ CREATE TABLE IF NOT EXISTS source_types
     description    text     DEFAULT NULL
 );
 
+-- --------------------------------------------------------
+
 --
 -- table structure for the original sources for the numeric, time and geo values
 --
@@ -965,8 +998,8 @@ CREATE TABLE IF NOT EXISTS sources
 );
 
 COMMENT ON TABLE sources                 IS 'for the original sources for the numeric, time and geo values';
-COMMENT ON COLUMN sources.source_id      IS 'the internal unique primary index ';
-COMMENT ON COLUMN sources.user_id        IS 'the owner / creator of the value';
+COMMENT ON COLUMN sources.source_id      IS 'the internal unique primary index';
+COMMENT ON COLUMN sources.user_id        IS 'the owner / creator of the source';
 COMMENT ON COLUMN sources.source_name    IS 'the unique name of the source used e.g. as the primary search key';
 COMMENT ON COLUMN sources.description    IS 'the user specific description of the source for mouse over helps';
 COMMENT ON COLUMN sources.source_type_id IS 'link to the source type';
@@ -977,7 +1010,7 @@ COMMENT ON COLUMN sources.share_type_id  IS 'to restrict the access';
 COMMENT ON COLUMN sources.protect_id     IS 'to protect against unwanted changes';
 
 --
--- table structure for the original sources for the numeric, time and geo values
+-- table structure to save user specific changes for the original sources for the numeric, time and geo values
 --
 
 CREATE TABLE IF NOT EXISTS user_sources
@@ -995,8 +1028,8 @@ CREATE TABLE IF NOT EXISTS user_sources
 );
 
 COMMENT ON TABLE user_sources                 IS 'for the original sources for the numeric, time and geo values';
-COMMENT ON COLUMN user_sources.source_id      IS 'with the user_id the internal unique primary index ';
-COMMENT ON COLUMN user_sources.user_id        IS 'the changer of the ';
+COMMENT ON COLUMN user_sources.source_id      IS 'with the user_id the internal unique primary index';
+COMMENT ON COLUMN user_sources.user_id        IS 'the changer of the source';
 COMMENT ON COLUMN user_sources.source_name    IS 'the unique name of the source used e.g. as the primary search key';
 COMMENT ON COLUMN user_sources.description    IS 'the user specific description of the source for mouse over helps';
 COMMENT ON COLUMN user_sources.source_type_id IS 'link to the source type';

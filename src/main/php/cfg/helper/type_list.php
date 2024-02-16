@@ -185,7 +185,7 @@ class type_list
         $qp->name = $db_type . '_' . $query_name;
         $sc->set_name($qp->name);
         //TODO check if $db_con->set_usr($this->user()->id()); is needed
-        $sc->set_fields(array(sandbox_named::FLD_DESCRIPTION, sql_db::FLD_CODE_ID));
+        $sc->set_fields(array(sandbox_named::FLD_DESCRIPTION, sql::FLD_CODE_ID));
         if ($order_field == '') {
             $order_field = $sc->get_id_field_name($db_type);
         }
@@ -232,7 +232,7 @@ class type_list
         if ($db_lst != null) {
             foreach ($db_lst as $db_row) {
                 $type_id = $db_row[$db_con->get_id_field_name($db_type)];
-                $type_code_id = strval($db_row[sql_db::FLD_CODE_ID]);
+                $type_code_id = strval($db_row[sql::FLD_CODE_ID]);
                 // database field name exceptions
                 $type_name = '';
                 if ($db_type == db_cl::LOG_ACTION) {
@@ -246,7 +246,7 @@ class type_list
                 } elseif ($db_type == sql_db::TBL_LANGUAGE_FORM) {
                     $type_name = strval($db_row[language_form::FLD_NAME]);
                 } else {
-                    $type_name = strval($db_row[sql_db::FLD_TYPE_NAME]);
+                    $type_name = strval($db_row[sql::FLD_TYPE_NAME]);
                 }
                 $type_comment = strval($db_row[sandbox_named::FLD_DESCRIPTION]);
                 $type_obj = new type_object($type_code_id, $type_name, $type_comment, $type_id);

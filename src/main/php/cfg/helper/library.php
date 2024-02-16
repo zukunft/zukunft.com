@@ -839,12 +839,12 @@ class library
     /**
      * get the diff of a multidimensional array where the sub item can ba matched by a key
      *
-     * @param array $needle the smaller array that is expected to be part of the haystack array
      * @param array $haystack the bigger array that is expected to contain all items from the needle
+     * @param array $needle the smaller array that is expected to be part of the haystack array
      * @param string $key_name the key name to find the matching item in the haystack
      * @return array an empty array if all item and sub items from the needle are in the haystack
      */
-    function array_recursive_diff(array $needle, array $haystack, string $key_name = sql_db::FLD_ID): array
+    function array_recursive_diff(array $haystack, array $needle, string $key_name = sql_db::FLD_ID): array
     {
         $result = array();
 
@@ -875,14 +875,14 @@ class library
                             }
                         }
                         if ($haystack_key >= 0) {
-                            $inner_haystack = $this->array_recursive_diff($inner_value, $haystack[$key][$haystack_key]);
+                            $inner_haystack = $this->array_recursive_diff($haystack[$key][$haystack_key], $inner_value);
                             if (count($inner_haystack)) {
                                 $result[$key] = $inner_haystack;
                             }
                         }
                     }
                     if ($haystack_key < 0) {
-                        $inner_haystack = $this->array_recursive_diff($value, $haystack[$key]);
+                        $inner_haystack = $this->array_recursive_diff($haystack[$key], $value);
                         if (count($inner_haystack)) {
                             $result[$key] = $inner_haystack;
                         }
@@ -918,7 +918,7 @@ class library
         $json_needle_clean = $this->json_clean($json_needle);
         $json_haystack_clean = $this->json_clean($json_haystack);
         // compare the JSON object not the array to ignore the order
-        $diff = $this->array_recursive_diff($json_needle_clean, $json_haystack_clean);
+        $diff = $this->array_recursive_diff($json_haystack_clean, $json_needle_clean);
         if (count($diff) == 0) {
             return true;
         } else {

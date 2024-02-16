@@ -89,7 +89,7 @@ class user extends db_object_seq_id
 
     // all database field names excluding the id
     const FLD_NAMES = array(
-        sql_db::FLD_CODE_ID,
+        sql::FLD_CODE_ID,
         self::FLD_IP_ADDRESS,
         self::FLD_EMAIL,
         self::FLD_FIRST_NAME,
@@ -103,7 +103,7 @@ class user extends db_object_seq_id
     );
     // the database field names excluding the id and the fields for logon
     const FLD_NAMES_LIST = array(
-        sql_db::FLD_CODE_ID,
+        sql::FLD_CODE_ID,
         self::FLD_IP_ADDRESS,
         self::FLD_EMAIL,
         self::FLD_FIRST_NAME,
@@ -246,7 +246,7 @@ class user extends db_object_seq_id
 
         $result = parent::row_mapper($db_row, self::FLD_ID);
         if ($result) {
-            $this->code_id = $db_row[sql_db::FLD_CODE_ID];
+            $this->code_id = $db_row[sql::FLD_CODE_ID];
             $this->name = $db_row[self::FLD_NAME];
             $this->ip_addr = $db_row[self::FLD_IP_ADDRESS];
             $this->email = $db_row[self::FLD_EMAIL];

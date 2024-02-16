@@ -548,8 +548,8 @@ class test_base
      * check if the result text contains at least the target text
      *
      * @param string $msg (unique) description of the test
-     * @param string $result the actual result
-     * @param string $target the expected result
+     * @param string $haystack the expected result
+     * @param string $needle the actual result
      * @param float $exe_max_time the expected max time to create the result
      * @param string $comment
      * @param string $test_type
@@ -557,16 +557,17 @@ class test_base
      */
     function assert_text_contains(
         string $msg,
-        string $result,
-        string $target,
+        string $haystack,
+        string $needle,
         float  $exe_max_time = TIMEOUT_LIMIT,
         string $comment = '',
         string $test_type = ''): bool
     {
-        if (strpos($result, $target) !== null) {
-            $result = $target;
+        $pos = strpos($haystack, $needle);
+        if ($pos !== false) {
+            $needle = $haystack;
         }
-        return $this->display(', ' . $msg, $target, $result, $exe_max_time, $comment, $test_type);
+        return $this->display(', ' . $msg, $haystack, $needle, $exe_max_time, $comment, $test_type);
     }
 
     /**
@@ -1739,14 +1740,14 @@ class test_base
     /**
      * test a SQL statement
      *
-     * @param string $needle the fixed SQL statement that is supposed to be correct
-     * @param string $haystack the created SQL statement that should be checked
+     * @param string $haystack the fixed SQL statement that is edit by hand
+     * @param string $needle the created SQL statement that should be part of the hand combined sql setup script
      * @return bool true if the created SQL statement matches the expected SQL statement if the formatting is removed
      */
-    function assert_sql_contains(string $name, string $needle, string $haystack): bool
+    function assert_sql_contains(string $name, string $haystack, string $needle): bool
     {
         $lib = new library();
-        return $this->assert_text_contains($name, $lib->trim_sql($needle), $lib->trim_sql($haystack));
+        return $this->assert_text_contains($name, $lib->trim_sql($haystack), $lib->trim_sql($needle));
     }
 
     /**

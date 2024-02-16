@@ -540,26 +540,26 @@ class string_unit_tests
 
         // recursive diff
         $result = json_encode($lib->array_recursive_diff(
-            json_decode($json_needle, true),
-            json_decode($json_haystack, true)));
+            json_decode($json_haystack, true),
+            json_decode($json_needle, true)));
         $t->assert("array_recursive_diff - contains", $result, '[]');
         $result = json_encode($lib->array_recursive_diff(
-            json_decode($json_needle_without_array, true),
-            json_decode($json_haystack, true)));
+            json_decode($json_haystack, true),
+            json_decode($json_needle_without_array, true)));
         $t->assert("array_recursive_diff - contains without array", $result, '[]');
         $result = json_encode($lib->array_recursive_diff(
-            json_decode($json_needle, true),
-            json_decode($json_haystack_with_diff, true)));
+            json_decode($json_haystack_with_diff, true),
+            json_decode($json_needle, true)));
         $expected = '{"array":{"text field":"text value"}}';
         $t->assert("array_recursive_diff - diff expected", $result, $expected);
         $result = json_encode($lib->array_recursive_diff(
-            json_decode($json_needle, true),
-            json_decode($json_haystack_without_match, true)));
+            json_decode($json_haystack_without_match, true),
+            json_decode($json_needle, true)));
         $expected = '{"array":{"id":1,"text field":"text value","0":{"id":1,"text field":"text value"}}}';
         $t->assert("array_recursive_diff - without match", $result, $expected);
         $result = json_encode($lib->array_recursive_diff(
-            json_decode($json_needle, true),
-            json_decode($json_haystack_without_array, true)));
+            json_decode($json_haystack_without_array, true),
+            json_decode($json_needle, true)));
         $expected = '{"array":[{"id":1,"text field":"text value"}]}';
         $t->assert("array_recursive_diff - without array", $result, $expected);
 

@@ -54,6 +54,7 @@
 */
 
 // TODO check automatically that the code links are unique
+use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\user;
 
@@ -113,10 +114,10 @@ function sql_code_link($code_id, $description, $db_con)
             // insert the missing row if needed
             if ($row_id <= 0) {
                 if ($db_type == 'view') {
-                    $db_con->insert(array(sql_db::FLD_CODE_ID, user::FLD_ID), array($code_id, SYSTEM_USER_ID));
+                    $db_con->insert(array(sql::FLD_CODE_ID, user::FLD_ID), array($code_id, SYSTEM_USER_ID));
                 } else {
                     // TODO for sys_log_type include the name db field
-                    $db_con->insert(sql_db::FLD_CODE_ID, $code_id);
+                    $db_con->insert(sql::FLD_CODE_ID, $code_id);
                 }
                 log_debug('inserted ' . $code_id . '<br>');
                 // get the id of the inserted row

@@ -83,7 +83,8 @@ class word extends sandbox_typed
     const FLD_NAME_COM = 'the text used for searching';
     const FLD_NAME = 'word_name';
     const FLD_DESCRIPTION_COM = 'to be replaced by a language form entry';
-    const FLD_TYPE_COM = 'to link coded functionality to a word e.g. to exclude measure words from a percent result';
+    const FLD_TYPE_COM = 'to link coded functionality to words e.g. to exclude measure words from a percent result';
+    const FLD_CODE_ID_COM = 'to link coded functionality to a specific word e.g. to get the values of the system configuration';
     const FLD_PLURAL_COM = 'to be replaced by a language form entry; TODO to be move to language forms';
     const FLD_PLURAL = 'plural'; // TODO move to language types
     const FLD_VIEW_COM = 'the default mask for this word';
@@ -96,16 +97,16 @@ class word extends sandbox_typed
     const FLD_REFS = 'refs';
 
     // list of fields that MUST be set by one user
-    const FLD_LST_CREATE_MUST_STD = array(
+    const FLD_LST_MUST_BE_IN_STD = array(
         [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_NAME_COM],
     );
     // list of must fields that CAN be changed by the user
-    const FLD_LST_CREATE_CAN_USER = array(
+    const FLD_LST_MUST_BUT_USER_CAN_CHANGE = array(
         [language::FLD_ID, sql_field_type::KEY_PART_INT, sql_field_default::ONE, sql::INDEX, language::class, self::FLD_NAME_COM],
         [self::FLD_NAME, sql_field_type::NAME, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_COM],
     );
     // list of fields that CAN be changed by the user
-    const FLD_LST_CREATE_CHANGEABLE = array(
+    const FLD_LST_USER_CAN_CHANGE = array(
         [self::FLD_PLURAL, sql_field_type::NAME, sql_field_default::NULL, sql::INDEX, '', self::FLD_PLURAL_COM],
         [self::FLD_DESCRIPTION, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
         [phrase::FLD_TYPE, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, phrase::class, self::FLD_TYPE_COM],
@@ -113,8 +114,9 @@ class word extends sandbox_typed
         [self::FLD_VALUES, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_VALUES_COM],
     );
     // list of fields that CANNOT be changed by the user
-    const FLD_LST_CREATE_NON_CHANGEABLE = array(
+    const FLD_LST_NON_CHANGEABLE = array(
         [self::FLD_INACTIVE, sql_field_type::INT_SMALL, sql_field_default::NULL, '', '', self::FLD_INACTIVE_COM],
+        [sql::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
     );
 
 
