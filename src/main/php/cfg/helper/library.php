@@ -1559,9 +1559,6 @@ class library
             case $this->class_to_name(source::class):
                 $result = $this->class_to_name(ref::class);
                 break;
-            case $this->class_to_name(triple::class):
-                $result = $this->class_to_name(word::class);
-                break;
         }
         return $result;
     }

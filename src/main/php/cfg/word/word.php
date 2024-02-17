@@ -458,22 +458,6 @@ class word extends sandbox_typed
 
 
     /*
-     * sql create
-     */
-
-    /**
-     * the sql statement to create the table
-     *
-     * @param sql $sc with the target db_type set
-     * @return string the sql statement to create the table
-     */
-    function sql_table(sql $sc): string
-    {
-        $sc->set_class(word::class);
-        return parent::sql_table($sc);
-    }
-
-    /*
      * loading / database access object (DAO) functions
      */
 

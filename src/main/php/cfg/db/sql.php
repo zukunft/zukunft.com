@@ -2520,6 +2520,31 @@ class sql
             }
         }
 
+        // create the unique index sql of combined fields
+        $unique_fields = [];
+        foreach ($fields as $field) {
+            $type = $field[sql::FLD_POS_TYPE];
+            if ($type->is_unique_part()) {
+                $unique_fields[] = $field[sql::FLD_POS_NAME];
+            }
+        }
+        if (count($unique_fields) > 0) {
+            if ($this->db_type() == sql_db::POSTGRES) {
+            $sql .= 'CREATE UNIQUE INDEX ' . $this->table . '_unique_idx ON ';
+            $sql .= ' ' . $this->name_sql_esc($this->table) . ' (';
+            $sql .= implode(', ', $unique_fields);
+            $sql .= '); ';
+            } elseif ($this->db_type() == sql_db::MYSQL) {
+                $sql .= 'ADD UNIQUE KEY ' . $this->table . '_unique_idx (';
+                $sql .= implode(', ', $unique_fields);
+                if (count($index_fields) > 0) {
+                    $sql .= '), ';
+                } else {
+                    $sql .= '); ';
+                }
+            }
+        }
+
         // create the index create sql
         $sql_field = '';
         $field_lst = [];

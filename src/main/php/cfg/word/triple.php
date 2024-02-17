@@ -42,6 +42,8 @@ use api\api;
 use api\word\triple as triple_api;
 use cfg\db\sql;
 use cfg\db\sql_db;
+use cfg\db\sql_field_default;
+use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\group\group_list;
@@ -64,17 +66,61 @@ class triple extends sandbox_link_typed implements JsonSerializable
      * database link
      */
 
+    // comment used for the database creation
+    const TBL_COMMENT = 'to link one word or triple with a verb to another word or triple';
+
     // object specific database and JSON object field names
     const FLD_ID = 'triple_id';
+    const FLD_FROM_COM = 'the phrase_id that is linked';
     const FLD_FROM = 'from_phrase_id';
+    const FLD_VERB_COM = 'the verb_id that defines how the phrases are linked';
+    const FLD_TO_COM = 'the phrase_id to which the first phrase is linked';
     const FLD_TO = 'to_phrase_id';
-    const FLD_NAME = 'triple_name';  // the name used which must be unique within the terms of the user
-    const FLD_NAME_GIVEN = 'name_given'; // the name set by the user, which can be null if the generated name should be used
-    const FLD_NAME_AUTO = 'name_generated'; // the generated name is saved in the database for database base unique check
+    const FLD_NAME_COM = 'the name used which must be unique within the terms of the user';
+    const FLD_NAME = 'triple_name';
+    const FLD_NAME_GIVEN_COM = 'the unique name manually set by the user, which can be null if the generated name should be used';
+    const FLD_NAME_GIVEN = 'name_given';
+    const FLD_NAME_AUTO_COM = 'the generated name is saved in the database for database base unique check based on the phrases and verb, which can be overwritten by the given name';
+    const FLD_NAME_AUTO = 'name_generated';
+    const FLD_DESCRIPTION_COM = 'text that should be shown to the user in case of mouseover on the triple name';
+    const FLD_VIEW_COM = 'the default mask for this triple';
+    const FLD_VIEW = 'view_id';
+    const FLD_VALUES_COM = 'number of values linked to the word, which gives an indication of the importance';
     const FLD_VALUES = 'values';
+    const FLD_INACTIVE_COM = 'true if the word is not yet active e.g. because it is moved to the prime words with a 16 bit id';
+    const FLD_INACTIVE = 'inactive';
+    const FLD_CODE_ID_COM = 'to link coded functionality to a specific triple e.g. to get the values of the system configuration';
+    const FLD_COND_ID_COM = 'formula_id of a formula with a boolean result; the term is only added if formula result is true';
     const FLD_COND_ID = 'triple_condition_id';
     const FLD_COND_TYPE = 'triple_condition_type_id';
     const FLD_REFS = 'refs';
+
+    // list of fields that MUST be set by one user
+    const FLD_LST_MUST_BE_IN_STD = array(
+        [self::FLD_FROM, sql_field_type::INT_UNIQUE_PART, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_FROM_COM],
+        [verb::FLD_ID, sql_field_type::INT_UNIQUE_PART, sql_field_default::NOT_NULL, sql::INDEX, verb::class, self::FLD_VERB_COM],
+        [self::FLD_TO, sql_field_type::INT_UNIQUE_PART, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_TO_COM],
+    );
+    // list of must fields that CAN be changed by the user
+    const FLD_LST_MUST_BUT_USER_CAN_CHANGE = array(
+        [language::FLD_ID, sql_field_type::KEY_PART_INT, sql_field_default::ONE, sql::INDEX, language::class, self::FLD_NAME_COM],
+    );
+    // list of fields that CAN be changed by the user
+    const FLD_LST_USER_CAN_CHANGE = array(
+        [self::FLD_NAME, sql_field_type::NAME, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_COM],
+        [self::FLD_NAME_GIVEN, sql_field_type::NAME, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_GIVEN_COM],
+        [self::FLD_NAME_AUTO, sql_field_type::NAME, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_AUTO_COM],
+        [sandbox_named::FLD_DESCRIPTION, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
+        [self::FLD_COND_ID, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_COND_ID_COM],
+        [phrase::FLD_TYPE, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, phrase::class, word::FLD_TYPE_COM],
+        [self::FLD_VIEW, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, view::class, self::FLD_VIEW_COM],
+        [self::FLD_VALUES, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_VALUES_COM],
+    );
+    // list of fields that CANNOT be changed by the user
+    const FLD_LST_NON_CHANGEABLE = array(
+        [self::FLD_INACTIVE, sql_field_type::INT_SMALL, sql_field_default::NULL, '', '', self::FLD_INACTIVE_COM],
+        [sql::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
+    );
 
     // all database field names excluding the id and excluding the user specific fields
     const FLD_NAMES = array(

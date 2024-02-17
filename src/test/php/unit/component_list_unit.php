@@ -2,8 +2,8 @@
 
 /*
 
-    test/unit/component_list.php - TESTing of the COMPONENT LIST functions
-    ----------------------------
+    test/unit/component_list_unit.php - TESTing of the COMPONENT LIST functions
+    ---------------------------------
   
 
     This file is part of zukunft.com - calc with words
@@ -38,7 +38,7 @@ use cfg\component\component_list;
 use cfg\db\sql_db;
 use test\test_cleanup;
 
-class component_list_unit_tests
+class component_list_unit
 {
     function run(test_cleanup $t): void
     {
@@ -49,7 +49,6 @@ class component_list_unit_tests
         $db_con = new sql_db();
         $t->name = 'component_list->';
         $t->resource_path = 'db/component/';
-        $json_file = 'unit/component/component_list.json';
         $usr->set_id(1);
 
         $t->header('Unit tests of the component list class (src/main/php/model/component/component_list.php)');

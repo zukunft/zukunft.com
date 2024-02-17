@@ -30,7 +30,7 @@
 
 */
 
-namespace test;
+namespace unit;
 
 include_once DB_PATH . 'sql_db.php';
 include_once MODEL_WORD_PATH . 'word.php';
@@ -43,8 +43,9 @@ use cfg\phrase_type;
 use cfg\word;
 use api\word\word as word_api;
 use html\word\word as word_dsp;
+use test\test_cleanup;
 
-class word_unit_tests
+class word_unit
 {
 
     function run(test_cleanup $t): void
@@ -62,7 +63,7 @@ class word_unit_tests
         $t->header('Unit tests of the word class (src/main/php/model/word/word.php)');
 
 
-        $t->subheader('SQL statements - setup');
+        $t->subheader('SQL setup statements');
         $wrd = $t->dummy_word();
         $t->assert_sql_table_create($wrd);
         $t->assert_sql_index_create($db_con, $wrd);

@@ -1,21 +1,18 @@
 <?php
 
-namespace test;
-
-// TODO sync with triple
-//use PHPUnit\Framework\TestCase;
+namespace unit;
 
 include_once API_WORD_PATH . 'triple.php';
 
-//class triple_unit_tests extends TestCase
 use api\word\triple as triple_api;
 use api\word\word as word_api;
 use html\word\triple as triple_dsp;
 use cfg\db\sql_db;
 use cfg\triple;
 use cfg\verb;
+use test\test_cleanup;
 
-class triple_unit_tests
+class triple_unit
 {
     function run(test_cleanup $t): void
     {
@@ -30,6 +27,13 @@ class triple_unit_tests
         $usr->set_id(1);
 
         $t->header('Unit tests of the triple class (src/main/php/model/word/triple.php)');
+
+
+        $t->subheader('SQL setup statements');
+        $trp = $t->dummy_triple();
+        $t->assert_sql_table_create($trp);
+        $t->assert_sql_index_create($db_con, $trp);
+        $t->assert_sql_foreign_key_create($db_con, $trp);
 
 
         $t->subheader('SQL statement tests');

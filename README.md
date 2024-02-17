@@ -57,6 +57,7 @@ If you see anything that does not look simple to you, please request a change on
 
 Target user experience:
 - one-to-one: business logic as you would explain it to a human
+  each formula should have 3 to 5, max 8 elements due to the limitation of the human work memory
 - user sandbox: the look and feel should never change without confirmation by the user
 - don't disturb: suggested changes should never prevent the user from continuing
 - always sorted: the messages to the user should be sorted by criticality but taking the reaktion time into account
@@ -65,12 +66,27 @@ General coding principles:
 - DRY: one point of change (https://en.wikipedia.org/wiki/Don%27t_repeat_yourself)
 - test: each function should have a unit test called from test_units.php or test_unit_db.php
   with zukunft.com/test a complete unit and integration test
+  best: first write the test and then the code
 - dependencies: use the least external code possible because https://archive.fosdem.org/2021/schedule/event/dep_as_strong_as_the_weakest_link/
 - best guess: in case of incomplete data best guess assumptions should be used and the assumption is shown to the user
 - log: all user changes and data im- and export are logged with an undo and redo option
 - top down: the most important functions should be on top of each class
 - error detection and tracking: in case something unexpected happens the code should try to create an internal error message to enable later debugging
+- self speaking error messages
+- shared api with in code auto check
 -- capsule: each class and method should check the consistency of the input parameters at the beginning
+
+Coding team suggestions
+- daily max 15 min physical standup where all member confirm the daily target
+- improve the definition of done of a story (ticket) until all team members understand it
+- all team members vote simultaneously for 1, 2, 3, 5, 8 or max 13 story-points
+- if a story has more points it is split
+- when all agree on the story-points the story is assigned to one member
+- critical: if there is a delay other team member offer to help (no blaming)  
+- at the sprint retro one selects a perspective that the other done not know for spontaneous answers
+
+Decisions
+- use this program for a mind map with all arguments where each has a weight and value and all changes are logged
 
 Naming conventions for vars:
 ---------------------------

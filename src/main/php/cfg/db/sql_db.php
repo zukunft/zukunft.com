@@ -159,6 +159,7 @@ class sql_db
     // classes that have a database table
     const DB_TABLE_CLASSES = [
         word::class,
+        triple::class,
         source::class,
         group::class
     ];

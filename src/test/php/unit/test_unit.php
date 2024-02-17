@@ -95,7 +95,9 @@ use cfg\user_profile_list;
 use cfg\verb_list;
 use cfg\view_sys_list;
 use cfg\view_type_list;
-use unit\component_list_unit_tests;
+use unit\word_unit as word_unit_tests;
+use unit\triple_unit as triple_unit_tests;
+use unit\component_list_unit as component_list_unit_tests;
 use unit\import as import_unit_tests;
 use unit\db_setup as db_setup_tests;
 use unit\html\batch_job as batch_job_html_tests;
@@ -244,7 +246,7 @@ class test_unit extends test_cleanup
         (new view_unit_tests)->run($this);
         (new view_list_unit_tests)->run($this); // TODO add assert_api_to_dsp
         (new component_unit_tests())->run($this);
-        (new component_list_unit_tests)->run($this); // TODO add assert_api_to_dsp
+        (new component_list_unit_tests())->run($this); // TODO add assert_api_to_dsp
         (new component_link_unit_tests)->run($this); // TODO add assert_api_to_dsp
         (new component_link_list_unit_tests)->run($this);
 
