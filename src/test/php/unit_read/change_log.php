@@ -104,11 +104,8 @@ class change_log_unit_db_tests
 
         // ... and if the first entry is the setting the given name of a triple
         $first_change = $lst->lst()[0];
-        // TODO check again
-        //$t->assert('first triple change is setting', $first_change->old_value, '');
-        //$t->assert('... the given name', $first_change->new_value, triple_api::TN_READ_NAME);
-        $t->assert('last triple change is remove of', $first_change->old_value, triple_api::TN_PI_NAME);
-        $t->assert('... the not needed given name', $first_change->new_value, '');
+        $t->assert('first triple change is setting', $first_change->old_value, '');
+        $t->assert('... the given name', $first_change->new_value, triple_api::TN_PI_NAME);
 
         // check loading of user value changes
         $lst = new change_log_list();

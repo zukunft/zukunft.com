@@ -53,10 +53,17 @@ class db_setup
             $sql_fixed = resource_file(DB_RES_PATH . DB_SETUP_PATH . $db->path($db_type) . DB_SETUP_SQL_FILE);
             foreach (sql_db::DB_TABLE_CLASSES as $class) {
                 $name = $lib->class_to_name($class);
+
                 $test_name = $name . ' sql create is part of setup sql for ' . $db_type;
                 $sql_create = test_resource_file(
                     DB_RES_PATH . $lib->class_to_path($name) . DIRECTORY_SEPARATOR .
                     $name . '_create' . $db->ext($db_type) . '.sql');
+                $t->assert_sql_contains($test_name, $sql_fixed, $sql_create);
+
+                $test_name = $name . ' sql index is part of setup sql for ' . $db_type;
+                $sql_create = test_resource_file(
+                    DB_RES_PATH . $lib->class_to_path($name) . DIRECTORY_SEPARATOR .
+                    $name . '_index' . $db->ext($db_type) . '.sql');
                 $t->assert_sql_contains($test_name, $sql_fixed, $sql_create);
             }
         }

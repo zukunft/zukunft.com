@@ -2802,75 +2802,91 @@ CREATE INDEX change_link_action_idx ON change_links (change_action_id);
 -- --------------------------------------------------------
 
 --
--- Indexes for table words
+-- indexes for table words
 --
-CREATE UNIQUE INDEX word_name_idx ON words (word_name);
-CREATE INDEX word_type_idx ON words (phrase_type_id);
-CREATE INDEX word_view_idx ON words (view_id);
+CREATE INDEX words_user_idx        ON words (user_id);
+CREATE INDEX words_word_name_idx   ON words (word_name);
+CREATE INDEX words_plural_idx      ON words (plural);
+CREATE INDEX words_phrase_type_idx ON words (phrase_type_id);
+CREATE INDEX words_view_idx        ON words (view_id);
 
 --
--- Indexes for table user_words
+-- indexes for table user_words
 --
 ALTER TABLE user_words ADD CONSTRAINT user_words_pkey PRIMARY KEY (word_id, user_id, language_id);
-CREATE INDEX user_word_user_idx ON user_words (user_id);
-CREATE INDEX user_word_language_idx ON user_words (language_id);
-CREATE INDEX user_word_type_idx ON user_words (phrase_type_id);
-CREATE INDEX user_word_view_idx ON user_words (view_id);
-
---
--- Indexes for table triples
---
-CREATE UNIQUE INDEX triple_name_idx ON triples (triple_name);
-CREATE INDEX triple_type_idx ON triples (phrase_type_id);
-CREATE INDEX triple_view_idx ON triples (view_id);
-
---
--- Indexes for table user_triples
---
-CREATE UNIQUE INDEX user_triple_unique_idx ON user_triples (triple_id, user_id, language_id);
-CREATE INDEX user_triple_user_idx ON user_triples (user_id);
-CREATE INDEX user_triple_idx ON user_triples (triple_id);
-CREATE INDEX user_triple_language_idx ON user_words (language_id);
-CREATE INDEX user_triple_type_idx ON user_words (phrase_type_id);
-CREATE INDEX user_triple_view_idx ON user_words (view_id);
+CREATE INDEX user_words_word_idx        ON user_words (word_id);
+CREATE INDEX user_words_user_idx        ON user_words (user_id);
+CREATE INDEX user_words_language_idx    ON user_words (language_id);
+CREATE INDEX user_words_word_name_idx   ON user_words (word_name);
+CREATE INDEX user_words_plural_idx      ON user_words (plural);
+CREATE INDEX user_words_phrase_type_idx ON user_words (phrase_type_id);
+CREATE INDEX user_words_view_idx        ON user_words (view_id);
 
 -- --------------------------------------------------------
 
 --
--- Indexes for table groups
+-- indexes for table triples
 --
-CREATE UNIQUE INDEX group_name_idx ON groups (group_name);
+
+CREATE UNIQUE INDEX triples_unique_idx  ON triples (from_phrase_id, verb_id, to_phrase_id);
+CREATE INDEX triples_user_idx           ON triples (user_id);
+CREATE INDEX triples_from_phrase_idx    ON triples (from_phrase_id);
+CREATE INDEX triples_verb_idx           ON triples (verb_id);
+CREATE INDEX triples_to_phrase_idx      ON triples (to_phrase_id);
+CREATE INDEX triples_triple_name_idx    ON triples (triple_name);
+CREATE INDEX triples_name_given_idx     ON triples (name_given);
+CREATE INDEX triples_name_generated_idx ON triples (name_generated);
+CREATE INDEX triples_phrase_type_idx    ON triples (phrase_type_id);
+CREATE INDEX triples_view_idx           ON triples (view_id);
 
 --
--- Indexes for table user_groups
+-- indexes for table user_triples
 --
-CREATE UNIQUE INDEX user_group_name_idx ON user_groups (group_name, user_id);
-CREATE INDEX user_group_idx ON user_groups (group_id);
-CREATE INDEX user_group_user_idx ON user_groups (user_id);
+
+ALTER TABLE user_triples ADD CONSTRAINT user_triples_pkey PRIMARY KEY (triple_id, user_id, language_id);
+CREATE INDEX user_triples_triple_idx         ON user_triples (triple_id);
+CREATE INDEX user_triples_user_idx           ON user_triples (user_id);
+CREATE INDEX user_triples_language_idx       ON user_triples (language_id);
+CREATE INDEX user_triples_triple_name_idx    ON user_triples (triple_name);
+CREATE INDEX user_triples_name_given_idx     ON user_triples (name_given);
+CREATE INDEX user_triples_name_generated_idx ON user_triples (name_generated);
+CREATE INDEX user_triples_phrase_type_idx    ON user_triples (phrase_type_id);
+CREATE INDEX user_triples_view_idx           ON user_triples (view_id);
+
+-- --------------------------------------------------------
 
 --
--- Indexes for table prime groups
+-- indexes for table groups
 --
-CREATE UNIQUE INDEX groups_prime_name_idx ON groups_prime (group_name);
+CREATE INDEX groups_user_idx ON groups (user_id);
 
 --
--- Indexes for table user_groups_prime
+-- indexes for table user_groups
 --
-CREATE UNIQUE INDEX user_groups_prime_name_idx ON user_groups_prime (group_name, user_id);
-CREATE INDEX user_groups_prime_idx ON user_groups (group_id);
-CREATE INDEX user_groups_prime_user_idx ON user_groups (user_id);
+ALTER TABLE user_groups ADD CONSTRAINT user_groups_pkey PRIMARY KEY (group_id, user_id);
+CREATE INDEX user_groups_user_idx ON user_groups (user_id);
 
 --
--- Indexes for table groups_big
+-- indexes for table groups_prime
 --
-CREATE UNIQUE INDEX groups_big_name_idx ON groups_big (group_name);
+CREATE INDEX groups_prime_user_idx ON groups_prime (user_id);
 
 --
--- Indexes for table user_groups_big
+-- indexes for table user_groups_prime
 --
-CREATE UNIQUE INDEX user_groups_big_name_idx ON user_groups_big (group_name, user_id);
-CREATE INDEX user_groups_big_idx ON user_groups (group_id);
-CREATE INDEX user_groups_big_user_idx ON user_groups (user_id);
+ALTER TABLE user_groups_prime ADD CONSTRAINT user_groups_prime_pkey PRIMARY KEY (group_id, user_id);
+CREATE INDEX user_groups_prime_user_idx ON user_groups_prime (user_id);
+
+--
+-- indexes for table groups_big
+--
+CREATE INDEX groups_big_user_idx ON groups_big (user_id);
+
+--
+-- indexes for table user_groups_big
+--
+ALTER TABLE user_groups_big ADD CONSTRAINT user_groups_big_pkey PRIMARY KEY (group_id, user_id);
+CREATE INDEX user_groups_big_user_idx ON user_groups_big (user_id);
 
 --
 -- Indexes for table group_links

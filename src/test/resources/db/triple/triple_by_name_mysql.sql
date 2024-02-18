@@ -8,7 +8,6 @@ PREPARE triple_by_name FROM
                 s.to_phrase_id,
                 s.phrase_type_id,
                 s.triple_condition_id,
-                s.triple_condition_type_id,
                 IF(u.triple_name    IS NULL, s.triple_name,    u.triple_name)    AS triple_name,
                 IF(u.name_given     IS NULL, s.name_given,     u.name_given)     AS name_given,
                 IF(u.name_generated IS NULL, s.name_generated, u.name_generated) AS name_generated,
