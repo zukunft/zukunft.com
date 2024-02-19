@@ -68,7 +68,7 @@ class result_list_tests
         $t->assert_sql_by_phr_lst($test_name, $res_lst, $t->canton_zh_phrase_list());
         $test_name = 'load a list of results that are a related a formula '
             . 'e.g. to update the results if the formula has been updated';
-        $this->assert_sql_by_frm($test_name, $t->dummy_formula(), $t);
+        $this->assert_sql_by_frm($test_name, $t->formula(), $t);
         $test_name = 'load a list of results that are a based on all phrases of a list '
             . 'e.g. to update the results if the value has been updated';
         $this->assert_sql_by_src($test_name, $t->canton_zh_phrase_list(), $t);

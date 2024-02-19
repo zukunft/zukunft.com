@@ -65,7 +65,7 @@ class change_log_unit_db_tests
         $vrb = $t->dummy_verb();
         $trp = $t->dummy_triple_pi();
         $val = $t->dummy_value();
-        $frm = $t->dummy_formula();
+        $frm = $t->formula();
         $src = $t->dummy_source();
         $ref = $t->dummy_reference();
         $dsp = $t->dummy_view();

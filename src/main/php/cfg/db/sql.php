@@ -66,7 +66,7 @@ class sql
     const ORDER_DESC = 'DESC';
     const NULL_VALUE = 'NULL';
     const INDEX = 'INDEX';
-    const UNIQUE = 'UNIQUE INDEX';
+    const UNIQUE = 'UNIQUE INDEX';  // TODO check if UNIQUE needs to be used for word and triple names
     const TRUE = '1'; // representing true in the where part for a smallint field
     const FALSE = '0'; // representing true in the where part for a smallint field
     const ID_NULL = 0; // the 'not set' value for an id; could have been null if postgres index would allow it

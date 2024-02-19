@@ -2509,15 +2509,29 @@ ALTER TABLE `user_attempts`
 ALTER TABLE `user_blocked_ips`
     ADD PRIMARY KEY (`user_blocked_id`);
 
+-- --------------------------------------------------------
 --
--- Indexes for table`user_formulas`
+-- indexes for table formulas
 --
-ALTER TABLE `user_formulas`
-    ADD UNIQUE KEY `formula_id` (`formula_id`, `user_id`),
-    ADD KEY `formula_id_2` (`formula_id`),
-    ADD KEY `user_id` (`user_id`),
-    ADD KEY `formula_type_id` (`formula_type_id`),
-    ADD KEY `share_type` (`share_type_id`);
+
+ALTER TABLE formulas
+    ADD PRIMARY KEY (formula_id),
+    ADD KEY formulas_user_idx (user_id),
+    ADD KEY formulas_formula_name_idx (formula_name),
+    ADD KEY formulas_formula_type_idx (formula_type_id),
+    ADD KEY formulas_view_idx (view_id);
+
+--
+-- indexes for table user_formulas
+--
+
+ALTER TABLE user_formulas
+    ADD PRIMARY KEY (formula_id,user_id),
+    ADD KEY user_formulas_formula_idx (formula_id),
+    ADD KEY user_formulas_user_idx (user_id),
+    ADD KEY user_formulas_formula_name_idx (formula_name),
+    ADD KEY user_formulas_formula_type_idx (formula_type_id),
+    ADD KEY user_formulas_view_idx (view_id);
 
 --
 -- Indexes for table`user_formula_links`

@@ -128,7 +128,7 @@ class system_unit_tests
         $target = 'link "Pi (math)" 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -2,,,) to "Mathematics" (word_id 1) as phrase for zukunft.com system test (1)';
         $t->assert($test_name, $val_lnk->dsp_id(), $target);
         $test_name = 'debug formula id';
-        $frm = $t->dummy_formula();
+        $frm = $t->formula();
         $target = '"scale minute to sec" (formula_id 1) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $frm->dsp_id(), $target);
         $test_name = 'debug formula_list id';

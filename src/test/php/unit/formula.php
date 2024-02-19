@@ -63,6 +63,13 @@ class formula_unit_tests
         $t->header('Unit tests of the formula class (src/main/php/model/formula/formula.php)');
 
 
+        $t->subheader('SQL setup statements');
+        $frm = $t->formula();
+        $t->assert_sql_table_create($frm);
+        $t->assert_sql_index_create($db_con, $frm);
+        $t->assert_sql_foreign_key_create($db_con, $frm);
+
+
         $t->subheader('SQL user sandbox statement tests');
 
         $frm = new formula($usr);
@@ -95,7 +102,7 @@ class formula_unit_tests
 
         $t->subheader('API and HTML frontend unit tests');
 
-        $frm = $t->dummy_formula();
+        $frm = $t->formula();
         $t->assert_api($frm);
         $t->assert_api_to_dsp($frm, new formula_dsp());
 
@@ -105,9 +112,9 @@ class formula_unit_tests
         // get the id of the phrases that should be added to the result based on the formula reference text
         $target = new phrase_list($usr);
         $trm_lst = new term_list($usr);
-        $wrd = $t->dummy_word_one();
-        $target->add($wrd->phrase());
-        $trm_lst->add($wrd->term());
+        $frm = $t->dummy_word_one();
+        $target->add($frm->phrase());
+        $trm_lst->add($frm->term());
         $exp = new expression($usr);
         $exp->set_ref_text('{w' . word_api::TI_ONE . '}={w' . word_api::TI_MIO . '}*1000000', $t->dummy_term_list_scale());
         $result = $exp->res_phr_lst($trm_lst);

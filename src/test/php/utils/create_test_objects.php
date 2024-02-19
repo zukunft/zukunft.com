@@ -1144,7 +1144,7 @@ class create_test_objects extends test_base
 
     function dummy_term_formula(): term
     {
-        return $this->dummy_formula()->term();
+        return $this->formula()->term();
     }
 
     function dummy_term_verb(): term
@@ -1268,7 +1268,10 @@ class create_test_objects extends test_base
         return $lnk;
     }
 
-    function dummy_formula(): formula
+    /**
+     * @return formula for testing e.g. the expression calculation
+     */
+    function formula(): formula
     {
         $frm = new formula($this->usr1);
         $frm->set(1, formula_api::TN_READ);
@@ -1292,21 +1295,21 @@ class create_test_objects extends test_base
     function dummy_formula_list(): formula_list
     {
         $lst = new formula_list($this->usr1);
-        $lst->add($this->dummy_formula());
+        $lst->add($this->formula());
         return $lst;
     }
 
     function dummy_formula_link(): formula_link
     {
         $lnk = new formula_link($this->usr1);
-        $lnk->set(1, $this->dummy_formula(), $this->dummy_word()->phrase());
+        $lnk->set(1, $this->formula(), $this->dummy_word()->phrase());
         return $lnk;
     }
 
     function dummy_expression(): expression
     {
         $trm_lst = $this->dummy_term_list_time();
-        return $this->dummy_formula()->expression($trm_lst);
+        return $this->formula()->expression($trm_lst);
     }
 
     function dummy_element(): formula_element
@@ -1318,7 +1321,7 @@ class create_test_objects extends test_base
     function dummy_element_list(): formula_element_list
     {
         $trm_lst = $this->dummy_term_list_time();
-        $exp = $this->dummy_formula()->expression($trm_lst);
+        $exp = $this->formula()->expression($trm_lst);
         return $exp->element_list($trm_lst);
     }
 

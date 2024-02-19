@@ -79,7 +79,7 @@ class term_unit_tests
         $t->assert($t->name . 'triple id', $trm->id_obj(), $trp->id());
         $t->assert($t->name . 'triple name', $trm->name(), $trp->name());
 
-        $frm = $t->dummy_formula();
+        $frm = $t->formula();
         $trm = $frm->term();
         $t->assert($t->name . 'formula id', $trm->id_obj(), $frm->id());
         $t->assert($t->name . 'formula name', $trm->name(), $frm->name());

@@ -45,7 +45,7 @@ class formula
 
         $t->subheader('formula tests');
 
-        $frm = new formula_dsp($t->dummy_formula()->api_json());
+        $frm = new formula_dsp($t->formula()->api_json());
         $test_page = $html->text_h2('formula display test');
         $test_page .= 'with tooltip: ' . $frm->display() . '<br>';
         $test_page .= 'with link: ' . $frm->display_linked() . '<br>';
