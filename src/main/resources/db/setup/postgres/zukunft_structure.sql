@@ -3329,23 +3329,27 @@ ALTER TABLE change_links
 ALTER TABLE language_forms
     ADD CONSTRAINT language_forms_fk_1 FOREIGN KEY (language_id) REFERENCES languages (language_id);
 
+-- --------------------------------------------------------
+
 --
 -- constraints for table words
 --
 ALTER TABLE words
-    ADD CONSTRAINT word_name_uk UNIQUE (word_name);
-ALTER TABLE words
-    ADD CONSTRAINT words_fk_1 FOREIGN KEY (view_id) REFERENCES views (view_id),
-    ADD CONSTRAINT words_fk_2 FOREIGN KEY (phrase_type_id) REFERENCES phrase_types (phrase_type_id);
+    ADD CONSTRAINT word_name_uk UNIQUE (word_name),
+    ADD CONSTRAINT code_id_uk UNIQUE (code_id),
+    ADD CONSTRAINT words_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT words_phrase_type_fk FOREIGN KEY (phrase_type_id) REFERENCES phrase_types (phrase_type_id),
+    ADD CONSTRAINT words_view_fk FOREIGN KEY (view_id) REFERENCES views (view_id);
 
 --
 -- constraints for table user_words
 --
 ALTER TABLE user_words
-    ADD CONSTRAINT user_words_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT user_words_fk_2 FOREIGN KEY (phrase_type_id) REFERENCES phrase_types (phrase_type_id),
-    ADD CONSTRAINT user_words_fk_3 FOREIGN KEY (view_id) REFERENCES views (view_id),
-    ADD CONSTRAINT user_words_fk_4 FOREIGN KEY (word_id) REFERENCES words (word_id);
+    ADD CONSTRAINT user_words_word_fk FOREIGN KEY (word_id) REFERENCES words (word_id),
+    ADD CONSTRAINT user_words_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_words_language_fk FOREIGN KEY (language_id) REFERENCES languages (language_id),
+    ADD CONSTRAINT user_words_phrase_type_fk FOREIGN KEY (phrase_type_id) REFERENCES phrase_types (phrase_type_id),
+    ADD CONSTRAINT user_words_view_fk FOREIGN KEY (view_id) REFERENCES views (view_id);
 
 --
 -- constraints for table word_periods
@@ -3353,98 +3357,84 @@ ALTER TABLE user_words
 ALTER TABLE word_periods
     ADD CONSTRAINT word_periods_fk_1 FOREIGN KEY (word_id) REFERENCES words (word_id);
 
+-- --------------------------------------------------------
+
 --
 -- constraints for table triples
 --
 ALTER TABLE triples
-    ADD CONSTRAINT triple_name UNIQUE (triple_name);
-ALTER TABLE triples
-    ADD CONSTRAINT triples_fk_2 FOREIGN KEY (verb_id) REFERENCES verbs (verb_id),
-    ADD CONSTRAINT triples_fk_4 FOREIGN KEY (view_id) REFERENCES views (view_id),
-    ADD CONSTRAINT triples_fk_5 FOREIGN KEY (phrase_type_id) REFERENCES phrase_types (phrase_type_id);
-
--- ADD CONSTRAINT triples_fk_1 FOREIGN KEY (from_phrase_id) REFERENCES phrases (phrase_id),
--- ADD CONSTRAINT triples_fk_3 FOREIGN KEY (to_phrase_id) REFERENCES phrases (phrase_id),
+    ADD CONSTRAINT code_id_uk UNIQUE (code_id),
+    ADD CONSTRAINT triples_user_fk        FOREIGN KEY (user_id)        REFERENCES users (user_id),
+    ADD CONSTRAINT triples_verb_fk        FOREIGN KEY (verb_id)        REFERENCES verbs (verb_id),
+    ADD CONSTRAINT triples_phrase_type_fk FOREIGN KEY (phrase_type_id) REFERENCES phrase_types (phrase_type_id),
+    ADD CONSTRAINT triples_view_fk        FOREIGN KEY (view_id)        REFERENCES views (view_id);
 
 --
 -- constraints for table user_triples
 --
 ALTER TABLE user_triples
-    ADD CONSTRAINT user_triples_fk_1 FOREIGN KEY (triple_id) REFERENCES triples (triple_id),
-    ADD CONSTRAINT user_triples_fk_2 FOREIGN KEY (user_id) REFERENCES users (user_id);
+    ADD CONSTRAINT user_triples_triple_fk      FOREIGN KEY (triple_id)      REFERENCES triples (triple_id),
+    ADD CONSTRAINT user_triples_user_fk        FOREIGN KEY (user_id)        REFERENCES users (user_id),
+    ADD CONSTRAINT user_triples_language_fk    FOREIGN KEY (language_id)    REFERENCES languages (language_id),
+    ADD CONSTRAINT user_triples_phrase_type_fk FOREIGN KEY (phrase_type_id) REFERENCES phrase_types (phrase_type_id),
+    ADD CONSTRAINT user_triples_view_fk        FOREIGN KEY (view_id)        REFERENCES views (view_id);
+
+-- --------------------------------------------------------
+
+--
+-- constraints for table groups
+--
+ALTER TABLE groups
+    ADD CONSTRAINT groups_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
 
 --
 -- constraints for table user_groups
 --
 ALTER TABLE user_groups
-    ADD CONSTRAINT user_groups_fk_1 FOREIGN KEY (group_id) REFERENCES groups (group_id),
-    ADD CONSTRAINT user_groups_fk_2 FOREIGN KEY (user_id) REFERENCES users (user_id);
+    ADD CONSTRAINT user_groups_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table groups_prime
+--
+ALTER TABLE groups_prime
+    ADD CONSTRAINT groups_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
 
 --
 -- constraints for table user_groups_prime
 --
 ALTER TABLE user_groups_prime
-    ADD CONSTRAINT user_groups_prime_fk_1 FOREIGN KEY (group_id) REFERENCES groups_prime (group_id),
-    ADD CONSTRAINT user_groups_prime_fk_2 FOREIGN KEY (user_id) REFERENCES users (user_id);
+    ADD CONSTRAINT user_groups_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table groups_big
+--
+ALTER TABLE groups_big
+    ADD CONSTRAINT groups_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
 
 --
 -- constraints for table user_groups_big
 --
 ALTER TABLE user_groups_big
-    ADD CONSTRAINT user_groups_big_fk_1 FOREIGN KEY (group_id) REFERENCES groups_big (group_id),
-    ADD CONSTRAINT user_groups_big_fk_2 FOREIGN KEY (user_id) REFERENCES users (user_id);
+    ADD CONSTRAINT user_groups_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
 
---
--- constraints for table group_links
---
--- ALTER TABLE group_link
---     ADD CONSTRAINT group_link_fk_1 FOREIGN KEY (phrase_id) REFERENCES phrases (phrase_id);
-
---
--- constraints for table group_links
---
-ALTER TABLE user_group_links
-    ADD CONSTRAINT user_group_link_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id);
---    ADD CONSTRAINT user_group_link_fk_2 FOREIGN KEY (phrase_id) REFERENCES phrases (phrase_id);
-
---
--- constraints for table groups_prime_link
---
--- ALTER TABLE groups_prime_link
---    ADD CONSTRAINT groups_prime_link_fk_1 FOREIGN KEY (phrase_id) REFERENCES phrases (phrase_id);
-
---
--- constraints for table user_groups_prime_link
---
-ALTER TABLE user_group_prime_links
-    ADD CONSTRAINT user_group_prime_links_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id);
---  ADD CONSTRAINT user_group_prime_links_fk_2 FOREIGN KEY (phrase_id) REFERENCES phrases (phrase_id);
-
---
--- constraints for table groups_big_link
---
--- ALTER TABLE groups_big_link
---    ADD CONSTRAINT groups_big_link_fk_1 FOREIGN KEY (phrase_id) REFERENCES phrases (phrase_id);
-
---
--- constraints for table user_groups_big_link
---
-ALTER TABLE user_group_big_links
-    ADD CONSTRAINT user_group_big_links_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id);
---    ADD CONSTRAINT user_group_big_links_fk_2 FOREIGN KEY (phrase_id) REFERENCES phrases (phrase_id);
+-- --------------------------------------------------------
 
 --
 -- constraints for table sources
 --
 ALTER TABLE sources
-    ADD CONSTRAINT sources_fk_1 FOREIGN KEY (source_type_id) REFERENCES source_types (source_type_id);
+    ADD CONSTRAINT source_name_uk UNIQUE (source_name),
+    ADD CONSTRAINT sources_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT sources_source_type_fk FOREIGN KEY (source_type_id) REFERENCES source_types (source_type_id);
 
 --
 -- constraints for table user_sources
 --
 ALTER TABLE user_sources
-    ADD CONSTRAINT user_sources_fk_1 FOREIGN KEY (source_id) REFERENCES sources (source_id),
-    ADD CONSTRAINT user_sources_fk_2 FOREIGN KEY (user_id) REFERENCES users (user_id);
+    ADD CONSTRAINT user_sources_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
+    ADD CONSTRAINT user_sources_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_sources_source_type_fk FOREIGN KEY (source_type_id) REFERENCES source_types (source_type_id);
+
 
 --
 -- constraints for table refs

@@ -3134,6 +3134,50 @@ ALTER TABLE `change_links`
     ADD CONSTRAINT `change_links_fk_2` FOREIGN KEY (`change_table_id`) REFERENCES `change_tables` (`change_table_id`),
     ADD CONSTRAINT `change_links_fk_3` FOREIGN KEY (`change_action_id`) REFERENCES `change_actions` (`change_action_id`);
 
+-- --------------------------------------------------------
+
+--
+-- constraints for table words
+--
+ALTER TABLE words
+    ADD CONSTRAINT word_name_uk UNIQUE (word_name),
+    ADD CONSTRAINT code_id_uk UNIQUE (code_id),
+    ADD CONSTRAINT words_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT words_phrase_type_fk FOREIGN KEY (phrase_type_id) REFERENCES phrase_types (phrase_type_id),
+    ADD CONSTRAINT words_view_fk FOREIGN KEY (view_id) REFERENCES views (view_id);
+
+--
+-- constraints for table user_words
+--
+ALTER TABLE user_words
+    ADD CONSTRAINT user_words_word_fk FOREIGN KEY (word_id) REFERENCES words (word_id),
+    ADD CONSTRAINT user_words_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_words_language_fk FOREIGN KEY (language_id) REFERENCES languages (language_id),
+    ADD CONSTRAINT user_words_phrase_type_fk FOREIGN KEY (phrase_type_id) REFERENCES phrase_types (phrase_type_id),
+    ADD CONSTRAINT user_words_view_fk FOREIGN KEY (view_id) REFERENCES views (view_id);
+
+-- --------------------------------------------------------
+
+--
+-- constraints for table triples
+--
+ALTER TABLE triples
+    ADD CONSTRAINT code_id_uk UNIQUE (code_id),
+    ADD CONSTRAINT triples_user_fk        FOREIGN KEY (user_id)        REFERENCES users (user_id),
+    ADD CONSTRAINT triples_verb_fk        FOREIGN KEY (verb_id)        REFERENCES verbs (verb_id),
+    ADD CONSTRAINT triples_phrase_type_fk FOREIGN KEY (phrase_type_id) REFERENCES phrase_types (phrase_type_id),
+    ADD CONSTRAINT triples_view_fk        FOREIGN KEY (view_id)        REFERENCES views (view_id);
+
+--
+-- constraints for table user_triples
+--
+ALTER TABLE user_triples
+    ADD CONSTRAINT user_triples_triple_fk      FOREIGN KEY (triple_id)      REFERENCES triples (triple_id),
+    ADD CONSTRAINT user_triples_user_fk        FOREIGN KEY (user_id)        REFERENCES users (user_id),
+    ADD CONSTRAINT user_triples_language_fk    FOREIGN KEY (language_id)    REFERENCES languages (language_id),
+    ADD CONSTRAINT user_triples_phrase_type_fk FOREIGN KEY (phrase_type_id) REFERENCES phrase_types (phrase_type_id),
+    ADD CONSTRAINT user_triples_view_fk        FOREIGN KEY (view_id)        REFERENCES views (view_id);
+
 --
 -- Constraints for table`formulas`
 --
@@ -3161,25 +3205,68 @@ ALTER TABLE `results`
     ADD CONSTRAINT `results_fk_1` FOREIGN KEY (`formula_id`) REFERENCES `formulas` (`formula_id`),
     ADD CONSTRAINT `results_fk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
 
---
--- Constraints for table`phrase_group_word_links`
---
-ALTER TABLE group_links
-    ADD CONSTRAINT `phrase_group_word_links_fk_1` FOREIGN KEY (`phrase_group_id`) REFERENCES `groups` (group_id),
-    ADD CONSTRAINT `phrase_group_word_links_fk_2` FOREIGN KEY (`word_id`) REFERENCES `words` (`word_id`);
+-- --------------------------------------------------------
 
 --
--- Constraints for table`phrase_group_triple_links`
+-- constraints for table groups
 --
-ALTER TABLE `phrase_group_triple_links`
-    ADD CONSTRAINT `phrase_group_triple_links_fk_1` FOREIGN KEY (`phrase_group_id`) REFERENCES `groups` (group_id),
-    ADD CONSTRAINT `phrase_group_triple_links_fk_2` FOREIGN KEY (`triple_id`) REFERENCES `triples` (`triple_id`);
+ALTER TABLE `groups`
+    ADD CONSTRAINT groups_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_groups
+--
+ALTER TABLE user_groups
+    ADD CONSTRAINT user_groups_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table groups_prime
+--
+ALTER TABLE groups_prime
+    ADD CONSTRAINT groups_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_groups_prime
+--
+ALTER TABLE user_groups_prime
+    ADD CONSTRAINT user_groups_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table groups_big
+--
+ALTER TABLE groups_big
+    ADD CONSTRAINT groups_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_groups_big
+--
+ALTER TABLE user_groups_big
+    ADD CONSTRAINT user_groups_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
 
 --
 -- Constraints for table`refs`
 --
 ALTER TABLE `refs`
     ADD CONSTRAINT `refs_fk_1` FOREIGN KEY (`ref_type_id`) REFERENCES `ref_types` (`ref_type_id`);
+
+-- --------------------------------------------------------
+
+--
+-- constraints for table sources
+--
+ALTER TABLE sources
+    ADD CONSTRAINT source_name_uk UNIQUE (source_name),
+    ADD CONSTRAINT sources_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT sources_source_type_fk FOREIGN KEY (source_type_id) REFERENCES source_types (source_type_id);
+
+--
+-- constraints for table user_sources
+--
+ALTER TABLE user_sources
+    ADD CONSTRAINT user_sources_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
+    ADD CONSTRAINT user_sources_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_sources_source_type_fk FOREIGN KEY (source_type_id) REFERENCES source_types (source_type_id);
+
 
 --
 -- Constraints for table`source_values`
