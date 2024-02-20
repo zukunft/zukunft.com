@@ -2024,20 +2024,20 @@ CREATE TABLE IF NOT EXISTS formula_types
 
 CREATE TABLE IF NOT EXISTS formulas
 (
-    formula_id        BIGSERIAL PRIMARY KEY,
-    user_id           bigint    DEFAULT NULL,
-    formula_name      varchar(255)  NOT NULL,
-    formula_text      text          NOT NULL,
-    resolved_text     text          NOT NULL,
-    description       text      DEFAULT NULL,
-    formula_type_id   bigint    DEFAULT NULL,
-    all_values_needed smallint  DEFAULT NULL,
+    formula_id BIGSERIAL PRIMARY KEY,
+    user_id           bigint   DEFAULT NULL,
+    formula_name      varchar(255) NOT NULL,
+    formula_text      text         NOT NULL,
+    resolved_text     text         NOT NULL,
+    description       text     DEFAULT NULL,
+    formula_type_id   bigint   DEFAULT NULL,
+    all_values_needed smallint DEFAULT NULL,
     last_update       timestamp DEFAULT NULL,
-    view_id           bigint    DEFAULT NULL,
-    usage             bigint    DEFAULT NULL,
-    excluded          smallint  DEFAULT NULL,
-    share_type_id     smallint  DEFAULT NULL,
-    protect_id        smallint  DEFAULT NULL
+    view_id           bigint   DEFAULT NULL,
+    usage             bigint   DEFAULT NULL,
+    excluded          smallint DEFAULT NULL,
+    share_type_id     smallint DEFAULT NULL,
+    protect_id        smallint DEFAULT NULL
 );
 
 COMMENT ON TABLE formulas IS 'the mathematical expression to calculate results based on values and results';
@@ -2062,20 +2062,20 @@ COMMENT ON COLUMN formulas.protect_id IS 'to protect against unwanted changes';
 
 CREATE TABLE IF NOT EXISTS user_formulas
 (
-    formula_id        BIGSERIAL PRIMARY KEY,
-    user_id           bigint             NOT NULL,
-    formula_name      varchar(255)   DEFAULT NULL,
-    formula_text      text,
-    resolved_text     text,
-    description       text,
-    formula_type_id   bigint         DEFAULT NULL,
-    all_values_needed smallint       DEFAULT NULL,
-    last_update       timestamp      DEFAULT NULL,
-    view_id           bigint         DEFAULT NULL,
-    usage             bigint         DEFAULT NULL,
-    excluded          smallint       DEFAULT NULL,
-    share_type_id     smallint       DEFAULT NULL,
-    protect_id        smallint       DEFAULT NULL
+    formula_id        bigint           NOT NULL,
+    user_id           bigint           NOT NULL,
+    formula_name      varchar(255) DEFAULT NULL,
+    formula_text      text         DEFAULT NULL,
+    resolved_text     text         DEFAULT NULL,
+    description       text         DEFAULT NULL,
+    formula_type_id   bigint       DEFAULT NULL,
+    all_values_needed smallint     DEFAULT NULL,
+    last_update       timestamp    DEFAULT NULL,
+    view_id           bigint       DEFAULT NULL,
+    usage             bigint       DEFAULT NULL,
+    excluded          smallint     DEFAULT NULL,
+    share_type_id     smallint     DEFAULT NULL,
+    protect_id        smallint     DEFAULT NULL
 );
 
 COMMENT ON TABLE user_formulas IS 'the mathematical expression to calculate results based on values and results';
@@ -2093,7 +2093,6 @@ COMMENT ON COLUMN user_formulas.usage IS 'number of results linked to this formu
 COMMENT ON COLUMN user_formulas.excluded IS 'true if a user,but not all,have removed it';
 COMMENT ON COLUMN user_formulas.share_type_id IS 'to restrict the access';
 COMMENT ON COLUMN user_formulas.protect_id IS 'to protect against unwanted changes';
-
 --
 -- table structure for table formula_link_types
 --
@@ -3529,22 +3528,25 @@ ALTER TABLE user_value_time_series
     ADD CONSTRAINT user_value_time_series_fk_3 FOREIGN KEY (share_type_id) REFERENCES share_types (share_type_id),
     ADD CONSTRAINT user_value_time_series_fk_4 FOREIGN KEY (protect_id) REFERENCES protection_types (protection_type_id);
 
+-- --------------------------------------------------------
+
 --
 -- constraints for table formulas
 --
 ALTER TABLE formulas
-    ADD CONSTRAINT formulas_fk_1 FOREIGN KEY (formula_type_id) REFERENCES formula_types (formula_type_id),
-    ADD CONSTRAINT formulas_fk_2 FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT formulas_fk_3 FOREIGN KEY (protect_id) REFERENCES protection_types (protection_type_id);
+    ADD CONSTRAINT formula_name_uk UNIQUE (formula_name),
+    ADD CONSTRAINT formulas_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT formulas_formula_type_fk FOREIGN KEY (formula_type_id) REFERENCES formula_types (formula_type_id),
+    ADD CONSTRAINT formulas_view_fk FOREIGN KEY (view_id) REFERENCES views (view_id);
 
 --
 -- constraints for table user_formulas
 --
 ALTER TABLE user_formulas
-    ADD CONSTRAINT user_formulas_fk_4 FOREIGN KEY (share_type_id) REFERENCES share_types (share_type_id),
-    ADD CONSTRAINT user_formulas_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT user_formulas_fk_2 FOREIGN KEY (formula_type_id) REFERENCES formula_types (formula_type_id),
-    ADD CONSTRAINT user_formulas_fk_3 FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
+    ADD CONSTRAINT user_formulas_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id),
+    ADD CONSTRAINT user_formulas_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_formulas_formula_type_fk FOREIGN KEY (formula_type_id) REFERENCES formula_types (formula_type_id),
+    ADD CONSTRAINT user_formulas_view_fk FOREIGN KEY (view_id) REFERENCES views (view_id);
 
 --
 -- constraints for table formula_elements

@@ -748,30 +748,55 @@ CREATE TABLE IF NOT EXISTS `phrase_tables`
   DEFAULT CHARSET = utf8 COMMENT ='to remember which phrases are stored in which table and pod';
 
 -- --------------------------------------------------------
-
 --
--- Table structure for table`formulas`
+-- table structure the mathematical expression to calculate results based on values and results
 --
 
-CREATE TABLE IF NOT EXISTS `formulas`
+CREATE TABLE IF NOT EXISTS formulas
 (
-    `formula_id`        int(11)      NOT NULL,
-    `formula_name`      varchar(100) NOT NULL COMMENT 'short name of the formula',
-    `user_id`           int(11)               DEFAULT NULL,
-    `formula_text`      text         NOT NULL COMMENT 'the coded formula; e.g. \\f1 for formula with ID1',
-    `resolved_text`     text         NOT NULL COMMENT 'the formula in user readable format',
-    `description`       text COMMENT 'additional to comments because many formulas have this',
-    `formula_type_id`   int(11)               DEFAULT NULL,
-    `all_values_needed` tinyint(4)            DEFAULT NULL COMMENT 'calculate the result only if all values used in the formula are not null',
-    `last_update`       timestamp    NULL     DEFAULT NULL COMMENT 'time of the last calculation relevant update',
-    `usage`             int(11)               DEFAULT NULL,
-    `excluded`          tinyint(4)            DEFAULT NULL,
-    `share_type_id`     smallint              DEFAULT NULL,
-    `protect_id`        int(11)      NOT NULL DEFAULT '1'
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8;
+    formula_id        bigint        NOT NULL COMMENT 'the internal unique primary index',
+    user_id           bigint    DEFAULT NULL COMMENT 'the owner / creator of the formula',
+    formula_name      varchar(255)  NOT NULL COMMENT 'the text used to search for formulas that must also be unique for all terms (words, triples, verbs and formulas)',
+    formula_text      text          NOT NULL COMMENT 'the internal formula expression with the database references e.g. {f1} for formula with id 1',
+    resolved_text     text          NOT NULL COMMENT 'the formula expression in user readable format as shown to the user which can include formatting for better readability',
+    description       text      DEFAULT NULL COMMENT 'text to be shown to the user for mouse over; to be replaced by a language form entry',
+    formula_type_id   bigint    DEFAULT NULL COMMENT 'the id of the formula type',
+    all_values_needed smallint  DEFAULT NULL COMMENT 'the "calculate only if all values used in the formula exist" flag should be converted to "all needed for calculation" instead of just displaying "1"',
+    last_update       timestamp DEFAULT NULL COMMENT 'time of the last calculation relevant update',
+    view_id           bigint    DEFAULT NULL COMMENT 'the default mask for this formula',
+    `usage`           bigint    DEFAULT NULL COMMENT 'number of results linked to this formula',
+    excluded          smallint  DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
+    share_type_id     smallint  DEFAULT NULL COMMENT 'to restrict the access',
+    protect_id        smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'the mathematical expression to calculate results based on values and results';
 
+--
+-- table structure to save user specific changes the mathematical expression to calculate results based on values and results
+--
+
+CREATE TABLE IF NOT EXISTS user_formulas
+(
+    formula_id        bigint           NOT NULL COMMENT 'with the user_id the internal unique primary index',
+    user_id           bigint           NOT NULL COMMENT 'the changer of the formula',
+    formula_name      varchar(255) DEFAULT NULL COMMENT 'the text used to search for formulas that must also be unique for all terms (words, triples, verbs and formulas)',
+    formula_text      text         DEFAULT NULL COMMENT 'the internal formula expression with the database references e.g. {f1} for formula with id 1',
+    resolved_text     text         DEFAULT NULL COMMENT 'the formula expression in user readable format as shown to the user which can include formatting for better readability',
+    description       text         DEFAULT NULL COMMENT 'text to be shown to the user for mouse over; to be replaced by a language form entry',
+    formula_type_id   bigint       DEFAULT NULL COMMENT 'the id of the formula type',
+    all_values_needed smallint     DEFAULT NULL COMMENT 'the "calculate only if all values used in the formula exist" flag should be converted to "all needed for calculation" instead of just displaying "1"',
+    last_update       timestamp    DEFAULT NULL COMMENT 'time of the last calculation relevant update',
+    view_id           bigint       DEFAULT NULL COMMENT 'the default mask for this formula',
+    `usage`           bigint       DEFAULT NULL COMMENT 'number of results linked to this formula',
+    excluded          smallint     DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
+    share_type_id     smallint     DEFAULT NULL COMMENT 'to restrict the access',
+    protect_id        smallint     DEFAULT NULL COMMENT 'to protect against unwanted changes'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'the mathematical expression to calculate results based on values and results';
 -- --------------------------------------------------------
 
 --
@@ -3192,19 +3217,25 @@ ALTER TABLE user_triples
     ADD CONSTRAINT user_triples_phrase_type_fk FOREIGN KEY (phrase_type_id) REFERENCES phrase_types (phrase_type_id),
     ADD CONSTRAINT user_triples_view_fk        FOREIGN KEY (view_id)        REFERENCES views (view_id);
 
---
--- Constraints for table`formulas`
---
-ALTER TABLE `formulas`
-    ADD CONSTRAINT `formulas_fk_1` FOREIGN KEY (`formula_type_id`) REFERENCES `formula_types` (`formula_type_id`),
-    ADD CONSTRAINT `formulas_fk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
-    ADD CONSTRAINT `formulas_fk_3` FOREIGN KEY (`protect_id`) REFERENCES `protection_types` (`protect_id`);
+-- --------------------------------------------------------
 
 --
--- Constraints for table`formula_elements`
+-- constraints for table formulas
 --
-ALTER TABLE `formula_elements`
-    ADD CONSTRAINT `formula_elements_fk_1` FOREIGN KEY (`formula_id`) REFERENCES `formulas` (`formula_id`);
+ALTER TABLE formulas
+    ADD CONSTRAINT formula_name_uk UNIQUE (formula_name),
+    ADD CONSTRAINT formulas_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT formulas_formula_type_fk FOREIGN KEY (formula_type_id) REFERENCES formula_types (formula_type_id),
+    ADD CONSTRAINT formulas_view_fk FOREIGN KEY (view_id) REFERENCES views (view_id);
+
+--
+-- constraints for table user_formulas
+--
+ALTER TABLE user_formulas
+    ADD CONSTRAINT user_formulas_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id),
+    ADD CONSTRAINT user_formulas_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_formulas_formula_type_fk FOREIGN KEY (formula_type_id) REFERENCES formula_types (formula_type_id),
+    ADD CONSTRAINT user_formulas_view_fk FOREIGN KEY (view_id) REFERENCES views (view_id);
 
 --
 -- Constraints for table`formula_links`

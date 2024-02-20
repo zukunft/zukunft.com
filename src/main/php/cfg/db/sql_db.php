@@ -40,6 +40,7 @@ include_once MODEL_DB_PATH . 'sql.php';
 include_once MODEL_SYSTEM_PATH . 'log.php';
 
 use cfg\config;
+use cfg\formula;
 use cfg\group\group;
 use cfg\group\group_id;
 use cfg\library;
@@ -160,8 +161,9 @@ class sql_db
     const DB_TABLE_CLASSES = [
         word::class,
         triple::class,
+        group::class,
         source::class,
-        group::class
+        formula::class
     ];
 
     // tables that do not have a name
