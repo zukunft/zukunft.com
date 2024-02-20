@@ -2253,43 +2253,59 @@ CREATE TABLE IF NOT EXISTS view_types
 
 COMMENT ON TABLE view_types IS 'to group the masks a link a basic format';
 
+-- --------------------------------------------------------
+
 --
--- table structure for table views
+-- table structure to store all user interfaces entry points
 --
 
 CREATE TABLE IF NOT EXISTS views
 (
     view_id       BIGSERIAL PRIMARY KEY,
-    user_id       bigint                DEFAULT NULL,
-    view_name     varchar(100) NOT NULL,
-    description   text                  DEFAULT NULL,
-    view_type_id  bigint                DEFAULT NULL,
-    code_id       varchar(100)          DEFAULT NULL,
-    excluded      smallint              DEFAULT NULL,
-    share_type_id smallint              DEFAULT NULL,
-    protect_id    smallint     NOT NULL DEFAULT '1'
+    user_id       bigint       DEFAULT NULL,
+    view_name     varchar(255)     NOT NULL,
+    description   text         DEFAULT NULL,
+    view_type_id  bigint       DEFAULT NULL,
+    code_id       varchar(255) DEFAULT NULL,
+    excluded      smallint     DEFAULT NULL,
+    share_type_id smallint     DEFAULT NULL,
+    protect_id    smallint     DEFAULT NULL
 );
 
-COMMENT ON TABLE views IS 'all user interfaces should be listed here';
-COMMENT ON COLUMN views.view_name IS 'for easy selection';
+COMMENT ON TABLE views IS 'to store all user interfaces entry points';
+COMMENT ON COLUMN views.view_id IS 'the internal unique primary index';
+COMMENT ON COLUMN views.user_id IS 'the owner / creator of the view';
+COMMENT ON COLUMN views.view_name IS 'the name of the view used for searching';
+COMMENT ON COLUMN views.description IS 'to explain the view to the user with a mouse over text; to be replaced by a language form entry';
+COMMENT ON COLUMN views.view_type_id IS 'to link coded functionality to views e.g. to use a view for the startup page'; COMMENT ON COLUMN views.code_id IS 'to link coded functionality to a specific view e.g. define the internal system views'; COMMENT ON COLUMN views.excluded IS 'true if a user,but not all,have removed it'; COMMENT ON COLUMN views.share_type_id IS 'to restrict the access'; COMMENT ON COLUMN views.protect_id IS 'to protect against unwanted changes';
 
 --
--- table structure for table user_views
+-- table structure to save user specific changes to store all user interfaces entry points
 --
 
 CREATE TABLE IF NOT EXISTS user_views
 (
     view_id       bigint   NOT NULL,
     user_id       bigint   NOT NULL,
-    view_name     varchar(200)      DEFAULT NULL,
-    description   text,
+    language_id   bigint   NOT NULL DEFAULT 1,
+    view_name     varchar(255)      DEFAULT NULL,
+    description   text              DEFAULT NULL,
     view_type_id  bigint            DEFAULT NULL,
     excluded      smallint          DEFAULT NULL,
     share_type_id smallint          DEFAULT NULL,
-    protect_id    smallint NOT NULL DEFAULT '1'
+    protect_id    smallint          DEFAULT NULL
 );
 
-COMMENT ON TABLE user_views IS 'user specific mask settings';
+COMMENT ON TABLE user_views IS 'to store all user interfaces entry points';
+COMMENT ON COLUMN user_views.view_id IS 'with the user_id the internal unique primary index';
+COMMENT ON COLUMN user_views.user_id IS 'the changer of the view';
+COMMENT ON COLUMN user_views.language_id IS 'the name of the view used for searching';
+COMMENT ON COLUMN user_views.view_name IS 'the name of the view used for searching';
+COMMENT ON COLUMN user_views.description IS 'to explain the view to the user with a mouse over text; to be replaced by a language form entry';
+COMMENT ON COLUMN user_views.view_type_id IS 'to link coded functionality to views e.g. to use a view for the startup page';
+COMMENT ON COLUMN user_views.excluded IS 'true if a user,but not all,have removed it';
+COMMENT ON COLUMN user_views.share_type_id IS 'to restrict the access';
+COMMENT ON COLUMN user_views.protect_id IS 'to protect against unwanted changes';
 
 -- --------------------------------------------------------
 
@@ -3260,17 +3276,24 @@ CREATE INDEX result_big_user_idx ON result_big (user_id);
 -- --------------------------------------------------------
 
 --
--- Indexes for table views
+-- indexes for table views
 --
-CREATE INDEX view_type_idx ON views (view_type_id);
+
+CREATE INDEX views_user_idx ON views (user_id);
+CREATE INDEX views_view_name_idx ON views (view_name);
+CREATE INDEX views_view_type_idx ON views (view_type_id);
 
 --
--- Indexes for table user_views
+-- indexes for table user_views
 --
-ALTER TABLE user_views ADD CONSTRAINT user_view_pkey PRIMARY KEY (view_id, user_id);
-CREATE INDEX user_view_user_idx ON user_views (user_id);
-CREATE INDEX user_view_type_idx ON user_views (view_type_id);
-CREATE INDEX user_view_idx ON user_views (view_id);
+
+ALTER TABLE user_views
+    ADD CONSTRAINT user_views_pkey PRIMARY KEY (view_id,user_id,language_id);
+CREATE INDEX user_views_view_idx ON user_views (view_id);
+CREATE INDEX user_views_user_idx ON user_views (user_id);
+CREATE INDEX user_views_language_idx ON user_views (language_id);
+CREATE INDEX user_views_view_name_idx ON user_views (view_name);
+CREATE INDEX user_views_view_type_idx ON user_views (view_type_id);
 
 --
 -- Indexes for table components
@@ -3576,13 +3599,26 @@ ALTER TABLE results
     ADD CONSTRAINT results_fk_1 FOREIGN KEY (formula_id) REFERENCES formulas (formula_id),
     ADD CONSTRAINT results_fk_2 FOREIGN KEY (user_id) REFERENCES users (user_id);
 
+-- --------------------------------------------------------
+--
+-- constraints for table views
+--
+
+ALTER TABLE views
+    ADD CONSTRAINT view_name_uk UNIQUE (view_name),
+    ADD CONSTRAINT code_id_uk UNIQUE (code_id),
+    ADD CONSTRAINT views_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT views_view_type_fk FOREIGN KEY (view_type_id) REFERENCES view_types (view_type_id);
+
 --
 -- constraints for table user_views
 --
+
 ALTER TABLE user_views
-    ADD CONSTRAINT user_views_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT user_views_fk_2 FOREIGN KEY (view_type_id) REFERENCES view_types (view_type_id),
-    ADD CONSTRAINT user_views_fk_3 FOREIGN KEY (view_id) REFERENCES views (view_id);
+    ADD CONSTRAINT user_views_view_fk FOREIGN KEY (view_id) REFERENCES views (view_id),
+    ADD CONSTRAINT user_views_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_views_language_fk FOREIGN KEY (language_id) REFERENCES languages (language_id),
+    ADD CONSTRAINT user_views_view_type_fk FOREIGN KEY (view_type_id) REFERENCES view_types (view_type_id);
 
 --
 -- constraints for table components

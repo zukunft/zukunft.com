@@ -51,6 +51,7 @@ use cfg\triple;
 use cfg\user;
 use cfg\user_message;
 use cfg\value\value;
+use cfg\view;
 use cfg\word;
 use DateTime;
 use Exception;
@@ -163,7 +164,8 @@ class sql_db
         triple::class,
         group::class,
         source::class,
-        formula::class
+        formula::class,
+        view::class
     ];
 
     // tables that do not have a name

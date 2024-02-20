@@ -1597,24 +1597,45 @@ CREATE TABLE IF NOT EXISTS `user_phrase_group_triple_links`
 
 -- --------------------------------------------------------
 
--- --------------------------------------------------------
-
 --
--- Table structure for table`user_views`
+-- table structure to store all user interfaces entry points
 --
 
-CREATE TABLE IF NOT EXISTS `user_views`
+CREATE TABLE IF NOT EXISTS views
 (
-    `view_id`       int(11) NOT NULL,
-    `user_id`       int(11) NOT NULL,
-    `view_name`     varchar(200) DEFAULT NULL,
-    `description`   text,
-    `view_type_id`  int(11)      DEFAULT NULL,
-    `excluded`      tinyint(4)   DEFAULT NULL,
-    `share_type_id` smallint     DEFAULT NULL,
-    `protect_id`    smallint     DEFAULT NULL
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8 COMMENT ='user specific mask settings';
+    view_id       bigint           NOT NULL COMMENT 'the internal unique primary index',
+    user_id       bigint       DEFAULT NULL COMMENT 'the owner / creator of the view',
+    view_name     varchar(255)     NOT NULL COMMENT 'the name of the view used for searching',
+    description   text         DEFAULT NULL COMMENT 'to explain the view to the user with a mouse over text; to be replaced by a language form entry',
+    view_type_id  bigint       DEFAULT NULL COMMENT 'to link coded functionality to views e.g. to use a view for the startup page',
+    code_id       varchar(255) DEFAULT NULL COMMENT 'to link coded functionality to a specific view e.g. define the internal system views',
+    excluded      smallint     DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
+    share_type_id smallint     DEFAULT NULL COMMENT 'to restrict the access',
+    protect_id    smallint     DEFAULT NULL COMMENT 'to protect against unwanted changes'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'to store all user interfaces entry points';
+
+--
+-- table structure to save user specific changes to store all user interfaces entry points
+--
+
+CREATE TABLE IF NOT EXISTS user_views
+(
+    view_id       bigint NOT NULL              COMMENT 'with the user_id the internal unique primary index',
+    user_id       bigint NOT NULL              COMMENT 'the changer of the view',
+    language_id   bigint NOT NULL DEFAULT 1    COMMENT 'the name of the view used for searching',
+    view_name     varchar(255)    DEFAULT NULL COMMENT 'the name of the view used for searching',
+    description   text            DEFAULT NULL COMMENT 'to explain the view to the user with a mouse over text; to be replaced by a language form entry',
+    view_type_id  bigint          DEFAULT NULL COMMENT 'to link coded functionality to views e.g. to use a view for the startup page',
+    excluded      smallint        DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
+    share_type_id smallint        DEFAULT NULL COMMENT 'to restrict the access',
+    protect_id    smallint        DEFAULT NULL COMMENT 'to protect against unwanted changes'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'to store all user interfaces entry points';
 
 -- --------------------------------------------------------
 
@@ -1708,27 +1729,6 @@ CREATE TABLE IF NOT EXISTS `value_relations`
     `link_type_id`  int(11) NOT NULL
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8 COMMENT ='to link two values directly; maybe not used';
-
--- --------------------------------------------------------
-
---
--- Table structure for table`views`
---
-
-CREATE TABLE IF NOT EXISTS `views`
-(
-    `view_id`       int(11)      NOT NULL,
-    `user_id`       int(11)      DEFAULT NULL,
-    `view_name`     varchar(100) NOT NULL COMMENT 'for easy selection',
-    `description`   text         DEFAULT NULL,
-    `view_type_id`  int(11)      DEFAULT NULL,
-    `code_id`       varchar(100) DEFAULT NULL,
-    `excluded`      tinyint(4)   DEFAULT NULL,
-    `share_type_id` smallint     DEFAULT NULL,
-    `protect_id`    smallint     DEFAULT NULL
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8 COMMENT ='all user interfaces should be listed here';
 
 -- --------------------------------------------------------
 
@@ -2654,14 +2654,29 @@ ALTER TABLE `user_value_time_series`
     ADD KEY `share_type` (`share_type_id`),
     ADD KEY `protect_id` (`protect_id`);
 
+-- --------------------------------------------------------
+
 --
--- Indexes for table`user_views`
+-- indexes for table views
 --
-ALTER TABLE `user_views`
-    ADD PRIMARY KEY (`view_id`, `user_id`),
-    ADD KEY `user_id` (`user_id`),
-    ADD KEY `view_type_id` (`view_type_id`),
-    ADD KEY `view_id` (`view_id`);
+
+ALTER TABLE views
+    ADD PRIMARY KEY (view_id),
+    ADD KEY views_user_idx (user_id),
+    ADD KEY views_view_name_idx (view_name),
+    ADD KEY views_view_type_idx (view_type_id);
+
+--
+-- indexes for table user_views
+--
+
+ALTER TABLE user_views
+    ADD PRIMARY KEY (view_id,user_id,language_id),
+    ADD KEY user_views_view_idx (view_id),
+    ADD KEY user_views_user_idx (user_id),
+    ADD KEY user_views_language_idx (language_id),
+    ADD KEY user_views_view_name_idx (view_name),
+    ADD KEY user_views_view_type_idx (view_type_id);
 
 --
 -- Indexes for table`user_components`
@@ -3294,25 +3309,6 @@ ALTER TABLE user_groups_big
 ALTER TABLE `refs`
     ADD CONSTRAINT `refs_fk_1` FOREIGN KEY (`ref_type_id`) REFERENCES `ref_types` (`ref_type_id`);
 
--- --------------------------------------------------------
-
---
--- constraints for table sources
---
-ALTER TABLE sources
-    ADD CONSTRAINT source_name_uk UNIQUE (source_name),
-    ADD CONSTRAINT sources_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT sources_source_type_fk FOREIGN KEY (source_type_id) REFERENCES source_types (source_type_id);
-
---
--- constraints for table user_sources
---
-ALTER TABLE user_sources
-    ADD CONSTRAINT user_sources_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
-    ADD CONSTRAINT user_sources_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT user_sources_source_type_fk FOREIGN KEY (source_type_id) REFERENCES source_types (source_type_id);
-
-
 --
 -- Constraints for table`source_values`
 --
@@ -3380,18 +3376,23 @@ ALTER TABLE `user_phrase_group_triple_links`
     ADD CONSTRAINT `user_phrase_group_triple_links_fk_1` FOREIGN KEY (`phrase_group_triple_link_id`) REFERENCES `phrase_group_triple_links` (`phrase_group_triple_link_id`),
     ADD CONSTRAINT `user_phrase_group_triple_links_fk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
 
+-- --------------------------------------------------------
+
 --
 -- constraints for table sources
 --
 ALTER TABLE sources
-    ADD CONSTRAINT sources_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+    ADD CONSTRAINT source_name_uk UNIQUE (source_name),
+    ADD CONSTRAINT sources_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT sources_source_type_fk FOREIGN KEY (source_type_id) REFERENCES source_types (source_type_id);
 
 --
 -- constraints for table user_sources
 --
 ALTER TABLE user_sources
     ADD CONSTRAINT user_sources_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
-    ADD CONSTRAINT user_sources_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+    ADD CONSTRAINT user_sources_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_sources_source_type_fk FOREIGN KEY (source_type_id) REFERENCES source_types (source_type_id);
 
 --
 -- Constraints for table`user_refs`
@@ -3418,13 +3419,27 @@ ALTER TABLE `user_value_time_series`
     ADD CONSTRAINT `user_value_time_series_fk_3` FOREIGN KEY (`share_type_id`) REFERENCES `share_types` (`share_type_id`),
     ADD CONSTRAINT `user_value_time_series_fk_4` FOREIGN KEY (`protect_id`) REFERENCES `protection_types` (`protect_id`);
 
+-- --------------------------------------------------------
+
 --
--- Constraints for table`user_views`
+-- constraints for table views
 --
-ALTER TABLE `user_views`
-    ADD CONSTRAINT `user_views_fk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
-    ADD CONSTRAINT `user_views_fk_2` FOREIGN KEY (`view_type_id`) REFERENCES `view_types` (`view_type_id`),
-    ADD CONSTRAINT `user_views_fk_3` FOREIGN KEY (`view_id`) REFERENCES `views` (`view_id`);
+
+ALTER TABLE views
+    ADD CONSTRAINT view_name_uk UNIQUE (view_name),
+    ADD CONSTRAINT code_id_uk UNIQUE (code_id),
+    ADD CONSTRAINT views_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT views_view_type_fk FOREIGN KEY (view_type_id) REFERENCES view_types (view_type_id);
+
+--
+-- constraints for table user_views
+--
+
+ALTER TABLE user_views
+    ADD CONSTRAINT user_views_view_fk FOREIGN KEY (view_id) REFERENCES views (view_id),
+    ADD CONSTRAINT user_views_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_views_language_fk FOREIGN KEY (language_id) REFERENCES languages (language_id),
+    ADD CONSTRAINT user_views_view_type_fk FOREIGN KEY (view_type_id) REFERENCES view_types (view_type_id);
 
 --
 -- Constraints for table`user_components`
