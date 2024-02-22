@@ -2277,7 +2277,11 @@ COMMENT ON COLUMN views.view_id IS 'the internal unique primary index';
 COMMENT ON COLUMN views.user_id IS 'the owner / creator of the view';
 COMMENT ON COLUMN views.view_name IS 'the name of the view used for searching';
 COMMENT ON COLUMN views.description IS 'to explain the view to the user with a mouse over text; to be replaced by a language form entry';
-COMMENT ON COLUMN views.view_type_id IS 'to link coded functionality to views e.g. to use a view for the startup page'; COMMENT ON COLUMN views.code_id IS 'to link coded functionality to a specific view e.g. define the internal system views'; COMMENT ON COLUMN views.excluded IS 'true if a user,but not all,have removed it'; COMMENT ON COLUMN views.share_type_id IS 'to restrict the access'; COMMENT ON COLUMN views.protect_id IS 'to protect against unwanted changes';
+COMMENT ON COLUMN views.view_type_id IS 'to link coded functionality to views e.g. to use a view for the startup page';
+COMMENT ON COLUMN views.code_id IS 'to link coded functionality to a specific view e.g. define the internal system views';
+COMMENT ON COLUMN views.excluded IS 'true if a user,but not all,have removed it';
+COMMENT ON COLUMN views.share_type_id IS 'to restrict the access';
+COMMENT ON COLUMN views.protect_id IS 'to protect against unwanted changes';
 
 --
 -- table structure to save user specific changes to store all user interfaces entry points
@@ -2348,36 +2352,39 @@ CREATE TABLE IF NOT EXISTS component_types
 
 COMMENT ON TABLE component_types IS 'fixed text, term or formula result';
 
+-- --------------------------------------------------------
+
 --
--- table structure for table components
+-- table structure for the single components of a view
 --
 
 CREATE TABLE IF NOT EXISTS components
 (
     component_id                BIGSERIAL PRIMARY KEY,
-    user_id                     bigint       NOT NULL,
-    component_name              varchar(100) NOT NULL,
-    description                 text,
-    component_type_id           bigint                DEFAULT NULL,
-    code_id                     varchar(100)          DEFAULT NULL,
-    ui_msg_code_id              varchar(100)          DEFAULT NULL,
-    word_id_row                 bigint                DEFAULT NULL,
-    formula_id                  bigint                DEFAULT NULL,
-    word_id_col                 bigint                DEFAULT NULL,
-    word_id_col2                bigint                DEFAULT NULL,
-    excluded                    smallint              DEFAULT NULL,
-    share_type_id               smallint              DEFAULT NULL,
-    protect_id                  smallint     NOT NULL DEFAULT '1',
-    linked_component_id         bigint                DEFAULT NULL,
-    component_link_type_id      bigint                DEFAULT NULL,
-    link_type_id                bigint                DEFAULT NULL
+    user_id                     bigint       DEFAULT NULL,
+    component_name              varchar(255)     NOT NULL,
+    description                 text         DEFAULT NULL,
+    component_type_id           bigint       DEFAULT NULL,
+    word_id_row                 bigint       DEFAULT NULL,
+    formula_id                  bigint       DEFAULT NULL,
+    word_id_col                 bigint       DEFAULT NULL,
+    word_id_col2                bigint       DEFAULT NULL,
+    linked_component_id         bigint       DEFAULT NULL,
+    component_link_type_id      bigint       DEFAULT NULL,
+    link_type_id                bigint       DEFAULT NULL,
+    code_id                     varchar(255) DEFAULT NULL,
+    ui_msg_code_id              varchar(255) DEFAULT NULL,
+    excluded                    smallint     DEFAULT NULL,
+    share_type_id               smallint     DEFAULT NULL,
+    protect_id                  smallint     DEFAULT NULL
 );
 
-COMMENT ON TABLE components IS 'the single components of a view';
+COMMENT ON TABLE components IS 'for the single components of a view';
+COMMENT ON COLUMN components.component_id IS 'the internal unique primary index';
+COMMENT ON COLUMN components.user_id IS 'the owner / creator of the component';
 COMMENT ON COLUMN components.component_name IS 'the unique name used to select a component by the user';
+COMMENT ON COLUMN components.description IS 'to explain the view component to the user with a mouse over text; to be replaced by a language form entry';
 COMMENT ON COLUMN components.component_type_id IS 'to select the predefined functionality';
-COMMENT ON COLUMN components.code_id IS 'used for system components to select the component by the program code';
-COMMENT ON COLUMN components.ui_msg_code_id IS 'used for system components the id to select the language specific user interface message e.g. "add word"';
 COMMENT ON COLUMN components.word_id_row IS 'for a tree the related value the start node';
 COMMENT ON COLUMN components.formula_id IS 'used for type 6';
 COMMENT ON COLUMN components.word_id_col IS 'to define the type for the table columns';
@@ -2385,27 +2392,51 @@ COMMENT ON COLUMN components.word_id_col2 IS 'e.g. "quarter" to show the quarter
 COMMENT ON COLUMN components.linked_component_id IS 'to link this component to another component';
 COMMENT ON COLUMN components.component_link_type_id IS 'to define how this entry links to the other entry';
 COMMENT ON COLUMN components.link_type_id IS 'e.g. for type 4 to select possible terms';
+COMMENT ON COLUMN components.code_id IS 'used for system components to select the component by the program code';
+COMMENT ON COLUMN components.ui_msg_code_id IS 'used for system components the id to select the language specific user interface message e.g. "add word"';
+COMMENT ON COLUMN components.excluded IS 'true if a user,but not all,have removed it';
+COMMENT ON COLUMN components.share_type_id IS 'to restrict the access';
+COMMENT ON COLUMN components.protect_id IS 'to protect against unwanted changes';
 
 --
--- table structure for table user_components
+-- table structure to save user specific changes for the single components of a view
 --
 
 CREATE TABLE IF NOT EXISTS user_components
 (
-    component_id      bigint   NOT NULL,
-    user_id                bigint   NOT NULL,
-    component_name    varchar(200)      DEFAULT NULL,
-    description            text,
-    component_type_id bigint            DEFAULT NULL,
-    word_id_row            bigint            DEFAULT NULL,
-    word_id_col            bigint            DEFAULT NULL,
-    word_id_col2           bigint            DEFAULT NULL,
-    formula_id             bigint            DEFAULT NULL,
-    excluded               bigint            DEFAULT NULL,
-    share_type_id          smallint          DEFAULT NULL,
-    protect_id             smallint NOT NULL DEFAULT '1',
-    link_type_id           bigint            DEFAULT NULL
+    component_id           bigint           NOT NULL,
+    user_id                bigint           NOT NULL,
+    component_name         varchar(255) DEFAULT NULL,
+    description            text         DEFAULT NULL,
+    component_type_id      bigint       DEFAULT NULL,
+    word_id_row            bigint       DEFAULT NULL,
+    formula_id             bigint       DEFAULT NULL,
+    word_id_col            bigint       DEFAULT NULL,
+    word_id_col2           bigint       DEFAULT NULL,
+    linked_component_id    bigint       DEFAULT NULL,
+    component_link_type_id bigint       DEFAULT NULL,
+    link_type_id           bigint       DEFAULT NULL,
+    excluded               smallint     DEFAULT NULL,
+    share_type_id          smallint     DEFAULT NULL,
+    protect_id             smallint     DEFAULT NULL
 );
+
+COMMENT ON TABLE user_components IS 'for the single components of a view';
+COMMENT ON COLUMN user_components.component_id IS 'with the user_id the internal unique primary index';
+COMMENT ON COLUMN user_components.user_id IS 'the changer of the component';
+COMMENT ON COLUMN user_components.component_name IS 'the unique name used to select a component by the user';
+COMMENT ON COLUMN user_components.description IS 'to explain the view component to the user with a mouse over text; to be replaced by a language form entry';
+COMMENT ON COLUMN user_components.component_type_id IS 'to select the predefined functionality';
+COMMENT ON COLUMN user_components.word_id_row IS 'for a tree the related value the start node';
+COMMENT ON COLUMN user_components.formula_id IS 'used for type 6';
+COMMENT ON COLUMN user_components.word_id_col IS 'to define the type for the table columns';
+COMMENT ON COLUMN user_components.word_id_col2 IS 'e.g. "quarter" to show the quarters between the year columns or the second axis of a chart';
+COMMENT ON COLUMN user_components.linked_component_id IS 'to link this component to another component';
+COMMENT ON COLUMN user_components.component_link_type_id IS 'to define how this entry links to the other entry';
+COMMENT ON COLUMN user_components.link_type_id IS 'e.g. for type 4 to select possible terms';
+COMMENT ON COLUMN user_components.excluded IS 'true if a user,but not all,have removed it';
+COMMENT ON COLUMN user_components.share_type_id IS 'to restrict the access';
+COMMENT ON COLUMN user_components.protect_id IS 'to protect against unwanted changes';
 
 -- --------------------------------------------------------
 
@@ -3295,18 +3326,39 @@ CREATE INDEX user_views_language_idx ON user_views (language_id);
 CREATE INDEX user_views_view_name_idx ON user_views (view_name);
 CREATE INDEX user_views_view_type_idx ON user_views (view_type_id);
 
---
--- Indexes for table components
---
-CREATE INDEX component_formula_idx ON components (formula_id);
+-- --------------------------------------------------------
 
 --
--- Indexes for table user_components
+-- indexes for table components
 --
-ALTER TABLE user_components ADD CONSTRAINT user_component_pkey PRIMARY KEY (component_id, user_id);
-CREATE INDEX user_component_user_idx ON user_components (user_id);
-CREATE INDEX user_component_idx ON user_components (component_id);
-CREATE INDEX user_component_type_idx ON user_components (component_type_id);
+
+CREATE INDEX components_user_idx ON components (user_id);
+CREATE INDEX components_component_name_idx ON components (component_name);
+CREATE INDEX components_component_type_idx ON components (component_type_id);
+CREATE INDEX components_word_id_row_idx ON components (word_id_row);
+CREATE INDEX components_formula_idx ON components (formula_id);
+CREATE INDEX components_word_id_col_idx ON components (word_id_col);
+CREATE INDEX components_word_id_col2_idx ON components (word_id_col2);
+CREATE INDEX components_linked_component_idx ON components (linked_component_id);
+CREATE INDEX components_component_link_type_idx ON components (component_link_type_id);
+CREATE INDEX components_link_type_idx ON components (link_type_id);
+
+--
+-- indexes for table user_components
+--
+
+ALTER TABLE user_components ADD CONSTRAINT user_components_pkey PRIMARY KEY (component_id,user_id);
+CREATE INDEX user_components_component_idx ON user_components (component_id);
+CREATE INDEX user_components_user_idx ON user_components (user_id);
+CREATE INDEX user_components_component_name_idx ON user_components (component_name);
+CREATE INDEX user_components_component_type_idx ON user_components (component_type_id);
+CREATE INDEX user_components_word_id_row_idx ON user_components (word_id_row);
+CREATE INDEX user_components_formula_idx ON user_components (formula_id);
+CREATE INDEX user_components_word_id_col_idx ON user_components (word_id_col);
+CREATE INDEX user_components_word_id_col2_idx ON user_components (word_id_col2);
+CREATE INDEX user_components_linked_component_idx ON user_components (linked_component_id);
+CREATE INDEX user_components_component_link_type_idx ON user_components (component_link_type_id);
+CREATE INDEX user_components_link_type_idx ON user_components (link_type_id);
 
 --
 -- Indexes for table component_links
@@ -3620,19 +3672,29 @@ ALTER TABLE user_views
     ADD CONSTRAINT user_views_language_fk FOREIGN KEY (language_id) REFERENCES languages (language_id),
     ADD CONSTRAINT user_views_view_type_fk FOREIGN KEY (view_type_id) REFERENCES view_types (view_type_id);
 
+-- --------------------------------------------------------
+
 --
 -- constraints for table components
 --
+
 ALTER TABLE components
-    ADD CONSTRAINT components_fk_2 FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
+    ADD CONSTRAINT component_name_uk UNIQUE (component_name),
+    ADD CONSTRAINT code_id_uk UNIQUE (code_id),
+    ADD CONSTRAINT ui_msg_code_id_uk UNIQUE (ui_msg_code_id),
+    ADD CONSTRAINT components_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT components_component_type_fk FOREIGN KEY (component_type_id) REFERENCES component_types (component_type_id),
+    ADD CONSTRAINT components_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
 
 --
 -- constraints for table user_components
 --
+
 ALTER TABLE user_components
-    ADD CONSTRAINT user_components_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT user_components_fk_2 FOREIGN KEY (component_id) REFERENCES components (component_id),
-    ADD CONSTRAINT user_components_fk_3 FOREIGN KEY (component_type_id) REFERENCES component_types (component_type_id);
+    ADD CONSTRAINT user_components_component_fk FOREIGN KEY (component_id) REFERENCES components (component_id),
+    ADD CONSTRAINT user_components_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_components_component_type_fk FOREIGN KEY (component_type_id) REFERENCES component_types (component_type_id),
+    ADD CONSTRAINT user_components_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
 
 --
 -- constraints for table component_links

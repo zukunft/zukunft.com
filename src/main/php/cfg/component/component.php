@@ -36,6 +36,8 @@ namespace cfg\component;
 include_once DB_PATH . 'sql_par_type.php';
 
 use api\component\component as component_api;
+use cfg\db\sql_field_default;
+use cfg\db\sql_field_type;
 use cfg\export\component_exp;
 use cfg\log\change_log_action;
 use cfg\log\change_log_link;
@@ -62,16 +64,62 @@ class component extends sandbox_typed
      * database link
      */
 
+    // comments used for the database creation
+    const TBL_COMMENT = 'for the single components of a view';
+
     // the database and JSON object field names used only for view components links
+    // *_COM: the description of the field
     const FLD_ID = 'component_id';
+    const FLD_NAME_COM = 'the unique name used to select a component by the user';
     const FLD_NAME = 'component_name';
+    const FLD_DESCRIPTION_COM = 'to explain the view component to the user with a mouse over text; to be replaced by a language form entry';
+    const FLD_TYPE_COM = 'to select the predefined functionality';
     const FLD_TYPE = 'component_type_id';
-    const FLD_POSITION = 'position';
+    const FLD_CODE_ID_COM = 'used for system components to select the component by the program code';
+    const FLD_POSITION = 'position'; // TODO move to component_link
+    const FLD_UI_MSG_ID_COM = 'used for system components the id to select the language specific user interface message e.g. "add word"';
     const FLD_UI_MSG_ID = 'ui_msg_code_id';
+    // TODO move the lined phrases to a component phrase link table for n:m relation with a type for each link
+    const FLD_ROW_PHRASE_COM = 'for a tree the related value the start node';
     const FLD_ROW_PHRASE = 'word_id_row';
+    const FLD_COL_PHRASE_COM = 'to define the type for the table columns';
     const FLD_COL_PHRASE = 'word_id_col';
+    const FLD_COL2_PHRASE_COM = 'e.g. "quarter" to show the quarters between the year columns or the second axis of a chart';
     const FLD_COL2_PHRASE = 'word_id_col2';
+    const FLD_FORMULA_COM = 'used for type 6';
+    const FLD_LINK_COMP_COM = 'to link this component to another component';
+    const FLD_LINK_COMP = 'linked_component_id';
+    const FLD_LINK_COMP_TYPE_COM = 'to define how this entry links to the other entry';
+    const FLD_LINK_COMP_TYPE = 'component_link_type_id';
+    const FLD_LINK_TYPE_COM = 'e.g. for type 4 to select possible terms';
     const FLD_LINK_TYPE = 'link_type_id';
+
+    // list of fields that MUST be set by one user
+    const FLD_LST_MUST_BE_IN_STD = array(
+        [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_NAME_COM],
+    );
+    // list of must fields that CAN be changed by the user
+    const FLD_LST_MUST_BUT_USER_CAN_CHANGE = array(
+        [self::FLD_NAME, sql_field_type::NAME, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_COM],
+    );
+    // list of fields that CAN be changed by the user
+    const FLD_LST_USER_CAN_CHANGE = array(
+        [self::FLD_DESCRIPTION, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
+        [self::FLD_TYPE, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, component_type::class, self::FLD_TYPE_COM],
+        // TODO link with a foreign key to phrases (or terms?) if link to a view is allowed
+        [self::FLD_ROW_PHRASE, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_ROW_PHRASE_COM],
+        [formula::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, formula::class, self::FLD_FORMULA_COM],
+        [self::FLD_COL_PHRASE, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_COL_PHRASE_COM],
+        [self::FLD_COL2_PHRASE, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_COL2_PHRASE_COM],
+        [self::FLD_LINK_COMP, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_LINK_COMP_COM],
+        [self::FLD_LINK_COMP_TYPE, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_LINK_COMP_TYPE_COM],
+        [self::FLD_LINK_TYPE, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_LINK_TYPE_COM],
+    );
+    // list of fields that CANNOT be changed by the user
+    const FLD_LST_NON_CHANGEABLE = array(
+        [sql::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
+        [self::FLD_UI_MSG_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_UI_MSG_ID_COM],
+    );
 
     // all database field names excluding the id
     const FLD_NAMES = array(

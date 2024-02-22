@@ -39,6 +39,7 @@ include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_DB_PATH . 'sql.php';
 include_once MODEL_SYSTEM_PATH . 'log.php';
 
+use cfg\component\component;
 use cfg\config;
 use cfg\formula;
 use cfg\group\group;
@@ -165,7 +166,8 @@ class sql_db
         group::class,
         source::class,
         formula::class,
-        view::class
+        view::class,
+        component::class
     ];
 
     // tables that do not have a name

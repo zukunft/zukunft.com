@@ -1640,26 +1640,127 @@ CREATE TABLE IF NOT EXISTS user_views
 -- --------------------------------------------------------
 
 --
--- Table structure for table`user_components`
+-- table structure for the single components of a view
 --
 
-CREATE TABLE IF NOT EXISTS `user_components`
+CREATE TABLE IF NOT EXISTS components
 (
-    `component_id`      int(11) NOT NULL,
+    component_id           bigint           NOT NULL COMMENT 'the internal unique primary index',
+    user_id                bigint       DEFAULT NULL COMMENT 'the owner / creator of the component',
+    component_name         varchar(255)     NOT NULL COMMENT 'the unique name used to select a component by the user',
+    description            text         DEFAULT NULL COMMENT 'to explain the view component to the user with a mouse over text; to be replaced by a language form entry',
+    component_type_id      bigint       DEFAULT NULL COMMENT 'to select the predefined functionality',
+    word_id_row            bigint       DEFAULT NULL COMMENT 'for a tree the related value the start node',
+    formula_id             bigint       DEFAULT NULL COMMENT 'used for type 6',
+    word_id_col            bigint       DEFAULT NULL COMMENT 'to define the type for the table columns',
+    word_id_col2           bigint       DEFAULT NULL COMMENT 'e.g. "quarter" to show the quarters between the year columns or the second axis of a chart',
+    linked_component_id    bigint       DEFAULT NULL COMMENT 'to link this component to another component',
+    component_link_type_id bigint       DEFAULT NULL COMMENT 'to define how this entry links to the other entry',
+    link_type_id           bigint       DEFAULT NULL COMMENT 'e.g. for type 4 to select possible terms',
+    code_id                varchar(255) DEFAULT NULL COMMENT 'used for system components to select the component by the program code',
+    ui_msg_code_id         varchar(255) DEFAULT NULL COMMENT 'used for system components the id to select the language specific user interface message e.g. "add word"',
+    excluded               smallint     DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
+    share_type_id          smallint     DEFAULT NULL COMMENT 'to restrict the access',
+    protect_id             smallint     DEFAULT NULL COMMENT 'to protect against unwanted changes'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'for the single components of a view';
+
+--
+-- table structure to save user specific changes for the single components of a view
+--
+
+CREATE TABLE IF NOT EXISTS user_components
+(
+    component_id           bigint       NOT     NULL COMMENT 'with the user_id the internal unique primary index',
+    user_id                bigint       NOT     NULL COMMENT 'the changer of the component',
+    component_name         varchar(255) DEFAULT NULL COMMENT 'the unique name used to select a component by the user',
+    description            text         DEFAULT NULL COMMENT 'to explain the view component to the user with a mouse over text; to be replaced by a language form entry',
+    component_type_id      bigint       DEFAULT NULL COMMENT 'to select the predefined functionality',
+    word_id_row            bigint       DEFAULT NULL COMMENT 'for a tree the related value the start node',
+    formula_id             bigint       DEFAULT NULL COMMENT 'used for type 6',
+    word_id_col            bigint       DEFAULT NULL COMMENT 'to define the type for the table columns',
+    word_id_col2           bigint       DEFAULT NULL COMMENT 'e.g. "quarter" to show the quarters between the year columns or the second axis of a chart',
+    linked_component_id    bigint       DEFAULT NULL COMMENT 'to link this component to another component',
+    component_link_type_id bigint       DEFAULT NULL COMMENT 'to define how this entry links to the other entry',
+    link_type_id           bigint       DEFAULT NULL COMMENT 'e.g. for type 4 to select possible terms',
+    excluded               smallint     DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
+    share_type_id          smallint     DEFAULT NULL COMMENT 'to restrict the access',
+    protect_id             smallint     DEFAULT NULL COMMENT 'to protect against unwanted changes'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'for the single components of a view';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table`component_links`
+--
+
+CREATE TABLE IF NOT EXISTS `component_links`
+(
+    `component_link_id` int(11) NOT NULL,
     `user_id`                int(11) NOT NULL,
-    `component_name`    varchar(200) DEFAULT NULL,
-    `description`            text,
-    `component_type_id` int(11)      DEFAULT NULL,
-    `word_id_row`            int(11)      DEFAULT NULL,
-    `word_id_col`            int(11)      DEFAULT NULL,
-    `word_id_col2`           int(11)      DEFAULT NULL,
-    `formula_id`             int(11)      DEFAULT NULL,
-    `excluded`               int(11)      DEFAULT NULL,
-    `share_type_id`          smallint     DEFAULT NULL,
-    `protect_id`             smallint     DEFAULT NULL,
-    `link_type_id`           int(11)      DEFAULT NULL
+    `view_id`                int(11) NOT NULL,
+    `component_id`      int(11) NOT NULL,
+    `order_nbr`              int(11) NOT NULL,
+    `position_type`          int(11) NOT NULL DEFAULT '2' COMMENT '1=side, 2 =below',
+    `excluded`               tinyint(4)       DEFAULT NULL,
+    `share_type_id`          smallint         DEFAULT NULL,
+    `protect_id`             smallint         DEFAULT NULL
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 25
+  DEFAULT CHARSET = utf8 COMMENT ='A named mask entry can be used in several masks e.g. the company name';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table`component_link_types`
+--
+
+CREATE TABLE IF NOT EXISTS `component_link_types`
+(
+    `component_link_type_id` int(11)      NOT NULL,
+    `type_name`                   varchar(200) NOT NULL,
+    `code_id`                     varchar(50)  NOT NULL
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table`component_position_types`
+--
+
+CREATE TABLE IF NOT EXISTS `component_position_types`
+(
+    `component_position_type_id` int(11)      NOT NULL,
+    `type_name`                       varchar(100) NOT NULL,
+    `description`                     text         NOT NULL,
+    `code_id`                         varchar(50)  NOT NULL
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 3
+  DEFAULT CHARSET = utf8 COMMENT ='sideways or down';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table`component_types`
+--
+
+CREATE TABLE IF NOT EXISTS `component_types`
+(
+    `component_type_id` int(11)      NOT NULL,
+    `type_name`              varchar(100) NOT NULL,
+    `description`            text DEFAULT NULL,
+    `code_id`                varchar(100) NOT NULL
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 17
+  DEFAULT CHARSET = utf8 COMMENT ='fixed text, term or formula result';
+
+-- --------------------------------------------------------
 
 -- --------------------------------------------------------
 
@@ -1729,102 +1830,6 @@ CREATE TABLE IF NOT EXISTS `value_relations`
     `link_type_id`  int(11) NOT NULL
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8 COMMENT ='to link two values directly; maybe not used';
-
--- --------------------------------------------------------
-
---
--- Table structure for table`components`
---
-
-CREATE TABLE IF NOT EXISTS `components`
-(
-    `component_id`           int(11)      NOT NULL,
-    `user_id`                int(11)      NOT NULL,
-    `component_name`         varchar(100) NOT NULL     COMMENT 'the unique name used to select a component by the user',
-    `description`            text,
-    `component_type_id`      int(11)      DEFAULT NULL COMMENT 'to select the predefined functionality',
-    `code_id`                varchar(100)              COMMENT 'used for system components to select the component by the program code',
-    `ui_msg_code_id`         varchar(100)              COMMENT 'used for system components the id to select the language specific user interface message e.g. "add word"',
-    `word_id_row`            int(11)      DEFAULT NULL COMMENT 'for a tree the related value the start node',
-    `formula_id`             int(11)      DEFAULT NULL COMMENT 'used for type 6',
-    `word_id_col`            int(11)      DEFAULT NULL COMMENT 'to define the type for the table columns',
-    `word_id_col2`           int(11)      DEFAULT NULL COMMENT 'e.g. "quarter" to show the quarters between the year columns or the second axis of a chart',
-    `excluded`               tinyint(4)   DEFAULT NULL,
-    `share_type_id`          smallint     DEFAULT NULL,
-    `protect_id`             smallint     DEFAULT NULL,
-    `linked_component_id`    int(11)      DEFAULT NULL COMMENT 'to link this component to another component',
-    `component_link_type_id` int(11)      DEFAULT NULL COMMENT 'to define how this entry links to the other entry',
-    `link_type_id`           int(11)      DEFAULT NULL COMMENT 'e.g. for type 4 to select possible terms'
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 11
-  DEFAULT CHARSET = utf8 COMMENT ='the single components of a view';
-
--- --------------------------------------------------------
-
---
--- Table structure for table`component_links`
---
-
-CREATE TABLE IF NOT EXISTS `component_links`
-(
-    `component_link_id` int(11) NOT NULL,
-    `user_id`                int(11) NOT NULL,
-    `view_id`                int(11) NOT NULL,
-    `component_id`      int(11) NOT NULL,
-    `order_nbr`              int(11) NOT NULL,
-    `position_type`          int(11) NOT NULL DEFAULT '2' COMMENT '1=side, 2 =below',
-    `excluded`               tinyint(4)       DEFAULT NULL,
-    `share_type_id`          smallint         DEFAULT NULL,
-    `protect_id`             smallint         DEFAULT NULL
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 25
-  DEFAULT CHARSET = utf8 COMMENT ='A named mask entry can be used in several masks e.g. the company name';
-
--- --------------------------------------------------------
-
---
--- Table structure for table`component_link_types`
---
-
-CREATE TABLE IF NOT EXISTS `component_link_types`
-(
-    `component_link_type_id` int(11)      NOT NULL,
-    `type_name`                   varchar(200) NOT NULL,
-    `code_id`                     varchar(50)  NOT NULL
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8;
-
--- --------------------------------------------------------
-
---
--- Table structure for table`component_position_types`
---
-
-CREATE TABLE IF NOT EXISTS `component_position_types`
-(
-    `component_position_type_id` int(11)      NOT NULL,
-    `type_name`                       varchar(100) NOT NULL,
-    `description`                     text         NOT NULL,
-    `code_id`                         varchar(50)  NOT NULL
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 3
-  DEFAULT CHARSET = utf8 COMMENT ='sideways or down';
-
--- --------------------------------------------------------
-
---
--- Table structure for table`component_types`
---
-
-CREATE TABLE IF NOT EXISTS `component_types`
-(
-    `component_type_id` int(11)      NOT NULL,
-    `type_name`              varchar(100) NOT NULL,
-    `description`            text DEFAULT NULL,
-    `code_id`                varchar(100) NOT NULL
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 17
-  DEFAULT CHARSET = utf8 COMMENT ='fixed text, term or formula result';
 
 -- --------------------------------------------------------
 
@@ -2678,15 +2683,42 @@ ALTER TABLE user_views
     ADD KEY user_views_view_name_idx (view_name),
     ADD KEY user_views_view_type_idx (view_type_id);
 
---
--- Indexes for table`user_components`
---
-ALTER TABLE `user_components`
-    ADD PRIMARY KEY (`component_id`, `user_id`),
-    ADD KEY `user_id` (`user_id`),
-    ADD KEY `component_id` (`component_id`),
-    ADD KEY `component_type_id` (`component_type_id`);
+-- --------------------------------------------------------
 
+--
+-- indexes for table components
+--
+
+ALTER TABLE components
+    ADD PRIMARY KEY (component_id),
+    ADD KEY components_user_idx (user_id),
+    ADD KEY components_component_name_idx (component_name),
+    ADD KEY components_component_type_idx (component_type_id),
+    ADD KEY components_word_id_row_idx (word_id_row),
+    ADD KEY components_formula_idx (formula_id),
+    ADD KEY components_word_id_col_idx (word_id_col),
+    ADD KEY components_word_id_col2_idx (word_id_col2),
+    ADD KEY components_linked_component_idx (linked_component_id),
+    ADD KEY components_component_link_type_idx (component_link_type_id),
+    ADD KEY components_link_type_idx (link_type_id);
+
+--
+-- indexes for table user_components
+--
+
+ALTER TABLE user_components
+    ADD PRIMARY KEY (component_id,user_id),
+    ADD KEY user_components_component_idx (component_id),
+    ADD KEY user_components_user_idx (user_id),
+    ADD KEY user_components_component_name_idx (component_name),
+    ADD KEY user_components_component_type_idx (component_type_id),
+    ADD KEY user_components_word_id_row_idx (word_id_row),
+    ADD KEY user_components_formula_idx (formula_id),
+    ADD KEY user_components_word_id_col_idx (word_id_col),
+    ADD KEY user_components_word_id_col2_idx (word_id_col2),
+    ADD KEY user_components_linked_component_idx (linked_component_id),
+    ADD KEY user_components_component_link_type_idx (component_link_type_id),
+    ADD KEY user_components_link_type_idx (link_type_id);
 --
 -- Indexes for table`user_component_links`
 --
@@ -3441,13 +3473,29 @@ ALTER TABLE user_views
     ADD CONSTRAINT user_views_language_fk FOREIGN KEY (language_id) REFERENCES languages (language_id),
     ADD CONSTRAINT user_views_view_type_fk FOREIGN KEY (view_type_id) REFERENCES view_types (view_type_id);
 
+-- --------------------------------------------------------
+
 --
--- Constraints for table`user_components`
+-- constraints for table components
 --
-ALTER TABLE `user_components`
-    ADD CONSTRAINT `user_components_fk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
-    ADD CONSTRAINT `user_components_fk_2` FOREIGN KEY (`component_id`) REFERENCES `components` (`component_id`),
-    ADD CONSTRAINT `user_components_fk_3` FOREIGN KEY (`component_type_id`) REFERENCES `component_types` (`component_type_id`);
+
+ALTER TABLE components
+    ADD CONSTRAINT component_name_uk UNIQUE (component_name),
+    ADD CONSTRAINT code_id_uk UNIQUE (code_id),
+    ADD CONSTRAINT ui_msg_code_id_uk UNIQUE (ui_msg_code_id),
+    ADD CONSTRAINT components_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT components_component_type_fk FOREIGN KEY (component_type_id) REFERENCES component_types (component_type_id),
+    ADD CONSTRAINT components_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
+
+--
+-- constraints for table user_components
+--
+
+ALTER TABLE user_components
+    ADD CONSTRAINT user_components_component_fk FOREIGN KEY (component_id) REFERENCES components (component_id),
+    ADD CONSTRAINT user_components_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_components_component_type_fk FOREIGN KEY (component_type_id) REFERENCES component_types (component_type_id),
+    ADD CONSTRAINT user_components_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
 
 --
 -- Constraints for table`user_component_links`

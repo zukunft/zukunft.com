@@ -22,7 +22,11 @@ COMMENT ON COLUMN views.view_id IS 'the internal unique primary index';
 COMMENT ON COLUMN views.user_id IS 'the owner / creator of the view';
 COMMENT ON COLUMN views.view_name IS 'the name of the view used for searching';
 COMMENT ON COLUMN views.description IS 'to explain the view to the user with a mouse over text; to be replaced by a language form entry';
-COMMENT ON COLUMN views.view_type_id IS 'to link coded functionality to views e.g. to use a view for the startup page'; COMMENT ON COLUMN views.code_id IS 'to link coded functionality to a specific view e.g. define the internal system views'; COMMENT ON COLUMN views.excluded IS 'true if a user,but not all,have removed it'; COMMENT ON COLUMN views.share_type_id IS 'to restrict the access'; COMMENT ON COLUMN views.protect_id IS 'to protect against unwanted changes';
+COMMENT ON COLUMN views.view_type_id IS 'to link coded functionality to views e.g. to use a view for the startup page';
+COMMENT ON COLUMN views.code_id IS 'to link coded functionality to a specific view e.g. define the internal system views';
+COMMENT ON COLUMN views.excluded IS 'true if a user,but not all,have removed it';
+COMMENT ON COLUMN views.share_type_id IS 'to restrict the access';
+COMMENT ON COLUMN views.protect_id IS 'to protect against unwanted changes';
 
 --
 -- table structure to save user specific changes to store all user interfaces entry points

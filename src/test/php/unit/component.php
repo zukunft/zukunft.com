@@ -56,6 +56,13 @@ class component_unit_tests
         $t->header('Unit tests of the view component class (src/main/php/model/view/component.php)');
 
 
+        $t->subheader('SQL setup statements');
+        $cmp = $t->dummy_component();
+        $t->assert_sql_table_create($cmp);
+        $t->assert_sql_index_create($db_con, $cmp);
+        $t->assert_sql_foreign_key_create($db_con, $cmp);
+
+
         $t->subheader('SQL user sandbox statement tests');
 
         $cmp = new component($usr);
