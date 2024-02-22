@@ -66,8 +66,8 @@ class formula_unit_tests
         $t->subheader('SQL setup statements');
         $frm = $t->formula();
         $t->assert_sql_table_create($frm);
-        $t->assert_sql_index_create($db_con, $frm);
-        $t->assert_sql_foreign_key_create($db_con, $frm);
+        $t->assert_sql_index_create($frm);
+        $t->assert_sql_foreign_key_create($frm);
 
 
         $t->subheader('SQL user sandbox statement tests');

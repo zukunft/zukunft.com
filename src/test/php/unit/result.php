@@ -65,8 +65,8 @@ class result_unit_tests
         $t->subheader('SQL creation tests');
         $res = $t->dummy_result();
         $t->assert_sql_table_create($res);
-        $t->assert_sql_index_create($db_con, $res);
-        $t->assert_sql_foreign_key_create($db_con, $res);
+        $t->assert_sql_index_create($res);
+        $t->assert_sql_foreign_key_create($res);
 
         // check the sql to load a result by the id
         $res = $t->dummy_result_16();

@@ -95,7 +95,8 @@ use cfg\user_profile_list;
 use cfg\verb_list;
 use cfg\view_sys_list;
 use cfg\view_type_list;
-use unit\word_unit as word_unit_tests;
+use unit\type_tests as type_unit_tests;
+use unit\word_tests as word_unit_tests;
 use unit\triple_unit as triple_unit_tests;
 use unit\component_list_unit as component_list_unit_tests;
 use unit\import as import_unit_tests;
@@ -217,6 +218,7 @@ class test_unit extends test_cleanup
         (new user_list_unit_tests)->run($this);
         (new sandbox_unit_tests)->run($this);
         (new language_unit_tests)->run($this); // TODO add assert_api_to_dsp
+        (new type_unit_tests)->run($this); // TODO add assert_api_to_dsp
 
         // do the user object unit tests
         (new word_unit_tests)->run($this);

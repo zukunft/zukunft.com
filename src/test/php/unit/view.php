@@ -60,8 +60,8 @@ class view_unit_tests
         $t->subheader('SQL setup statements');
         $dsp = $t->dummy_view();
         $t->assert_sql_table_create($dsp);
-        $t->assert_sql_index_create($db_con, $dsp);
-        $t->assert_sql_foreign_key_create($db_con, $dsp);
+        $t->assert_sql_index_create($dsp);
+        $t->assert_sql_foreign_key_create($dsp);
 
 
         $t->subheader('SQL user sandbox statement tests');

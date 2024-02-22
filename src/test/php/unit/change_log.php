@@ -67,9 +67,9 @@ class change_log_unit_tests
         $t->subheader('SQL statement creation tests');
         $log = $t->dummy_change_log_named();
         // TODO activate Prio 2
-        //$t->assert_sql_table_create($db_con, $log);
-        //$t->assert_sql_index_create($db_con, $log);
-        //$t->assert_sql_foreign_key_create($db_con, $log);
+        //$t->assert_sql_table_create($log);
+        //$t->assert_sql_index_create($log);
+        //$t->assert_sql_foreign_key_create($log);
 
         $t->subheader('SQL statement tests');
         $log = new change($usr);

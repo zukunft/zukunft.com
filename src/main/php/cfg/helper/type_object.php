@@ -58,6 +58,9 @@ class type_object extends db_object_seq_id implements JsonSerializable
      * database link
      */
 
+    // comments used for the database creation
+    const TBL_COMMENT = 'for the predefined behaviour of e.g. a word, triple, ...';
+
     // database and JSON object field names
     const FLD_NAME = 'type_name';
 

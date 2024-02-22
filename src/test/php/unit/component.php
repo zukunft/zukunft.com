@@ -59,8 +59,8 @@ class component_unit_tests
         $t->subheader('SQL setup statements');
         $cmp = $t->dummy_component();
         $t->assert_sql_table_create($cmp);
-        $t->assert_sql_index_create($db_con, $cmp);
-        $t->assert_sql_foreign_key_create($db_con, $cmp);
+        $t->assert_sql_index_create($cmp);
+        $t->assert_sql_foreign_key_create($cmp);
 
 
         $t->subheader('SQL user sandbox statement tests');

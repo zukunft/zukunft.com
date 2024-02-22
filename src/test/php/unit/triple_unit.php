@@ -32,8 +32,8 @@ class triple_unit
         $t->subheader('SQL setup statements');
         $trp = $t->dummy_triple();
         $t->assert_sql_table_create($trp);
-        $t->assert_sql_index_create($db_con, $trp);
-        $t->assert_sql_foreign_key_create($db_con, $trp);
+        $t->assert_sql_index_create($trp);
+        $t->assert_sql_foreign_key_create($trp);
 
 
         $t->subheader('SQL statement tests');

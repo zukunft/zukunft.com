@@ -64,8 +64,8 @@ class value_unit_tests
         $t->subheader('SQL statements - setup');
         $val = $t->dummy_value();
         $t->assert_sql_table_create($val);
-        $t->assert_sql_index_create($db_con, $val);
-        $t->assert_sql_foreign_key_create($db_con, $val);
+        $t->assert_sql_index_create($val);
+        $t->assert_sql_foreign_key_create($val);
 
         // TODO add sql insert and update tests to all db objects
         $t->subheader('SQL statements - for often used (prime) values');

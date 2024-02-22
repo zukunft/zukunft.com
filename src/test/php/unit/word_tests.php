@@ -45,7 +45,7 @@ use api\word\word as word_api;
 use html\word\word as word_dsp;
 use test\test_cleanup;
 
-class word_unit
+class word_tests
 {
 
     function run(test_cleanup $t): void
@@ -66,8 +66,8 @@ class word_unit
         $t->subheader('SQL setup statements');
         $wrd = $t->dummy_word();
         $t->assert_sql_table_create($wrd);
-        $t->assert_sql_index_create($db_con, $wrd);
-        $t->assert_sql_foreign_key_create($db_con, $wrd);
+        $t->assert_sql_index_create($wrd);
+        $t->assert_sql_foreign_key_create($wrd);
 
 
         $t->subheader('SQL user sandbox statement tests');

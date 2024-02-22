@@ -61,6 +61,7 @@ Target user experience:
 - user sandbox: the look and feel should never change without confirmation by the user
 - don't disturb: suggested changes should never prevent the user from continuing
 - always sorted: the messages to the user should be sorted by criticality but taking the reaktion time into account
+- prevent duplicates in the values or formulas to force user to social interaction
 
 General coding principles:
 - DRY: one point of change (https://en.wikipedia.org/wiki/Don%27t_repeat_yourself)
@@ -69,6 +70,8 @@ General coding principles:
   best: first write the test and then the code
 - dependencies: use the least external code possible because https://archive.fosdem.org/2021/schedule/event/dep_as_strong_as_the_weakest_link/
 - best guess: in case of incomplete data best guess assumptions should be used and the assumption is shown to the user
+- never change a running system (until you have a very, very good reason)
+- one click update: allow to update a pod with one click on the fly 
 - log: all user changes and data im- and export are logged with an undo and redo option
 - top down: the most important functions should be on top of each class
 - error detection and tracking: in case something unexpected happens the code should try to create an internal error message to enable later debugging
@@ -84,12 +87,15 @@ Coding team suggestions
 - when all agree on the story-points the story is assigned to one member
 - critical: if there is a delay other team member offer to help (no blaming)  
 - at the sprint retro one selects a perspective that the other done not know for spontaneous answers
+- one tool (not two or more) per purpose: git, tickets, wiki, message e.g. element.io 
 
 Decisions
 - use this program for a mind map with all arguments where each has a weight and value and all changes are logged
 
 Naming conventions for vars:
 ---------------------------
+
+backend
 - wrd (WoRD)               - a word that is used as a subject or object in a resource description framework (RDF / "triple") graph
 and used to retrieve the numeric values
 - val (VALue)              - a numeric value that can be used for calculations
@@ -123,23 +129,9 @@ verbs are also named as triples
 - id (IDentifier)          - internal prime key of a database row
 - ids (IDentifierS)        - an simple array of database table IDs (ids_txt is the text / imploded version of the ids array)
 - lst (LiST)               - an array of objects
-- glst (Get LiST)          - is used to name the private internal functions that can also create the user list
-- ulst (User LiST)         - an array of objects that should be shown to the user, so like lst, but without the objects exclude by the user 
-the user list should only be used to display something and never for checking if an item exists
-this is the short for for sbx_lst
-
 - dsp (DiSPlay)            - a view/mask that is shown to the user
-- ui (UserInterface)       - the definition of the user interface, mainly used to display either the JavaScript based single page design, the bootstrap based HTML design, the design based on pure HTML code or a pure text output for testing
-- djs (DiSPlay JavaScript) - functions for the vue.js JavaScript user interface implementation
-- dbs (DiSPlay BootStrap)  - functions for the bootstrap user interface implementation
-- dsp (DiSPlay html)       - functions for the pure html user interface implementation
-a view object or a function that return HTML code that can be displayed
-- dtx (DiSPlay TeXt)       - functions for the text interface implementation mainly for debugging
 - cmp (CoMPonent)          - one part of a view so a kind of view component (ex view entry)
 - dsl (DSp cmp Link)       - link of a view component to a view
-- btn (BuTtoN)             - button
-- tbl (TaBLe)              - HTML code for a table
-
 - cl (Code Link)           - a text used to identify one predefined database entry that triggers to use of some program code
 - sf (Sql Format)          - to convert a text for the database
 
@@ -148,6 +140,23 @@ object extensions
 - _exp (EXPort)            - the export object that does not have any internal database references
 - _dsp (DiSPlay)           - to create the HTML code to display the object
 - _min_dsp                 - the display object based on the API object instead of the backend object
+
+frontend:
+- ui (UserInterface)       - the definition of the user interface, mainly used to display either the JavaScript based single page design, the bootstrap based HTML design, the design based on pure HTML code or a pure text output for testing
+- djs (DiSPlay JavaScript) - functions for the vue.js JavaScript user interface implementation
+- dbs (DiSPlay BootStrap)  - functions for the bootstrap user interface implementation
+- dsp (DiSPlay html)       - functions for the pure html user interface implementation
+a view object or a function that return HTML code that can be displayed
+- dtx (DiSPlay TeXt)       - functions for the text interface implementation mainly for debugging
+- btn (BuTtoN)             - button
+- tbl (TaBLe)              - HTML code for a table
+
+to be deprecated:
+- glst (Get LiST)          - is used to name the private internal functions that can also create the user list
+- ulst (User LiST)         - an array of objects that should be shown to the user, so like lst, but without the objects exclude by the user
+  the user list should only be used to display something and never for checking if an item exists
+  this is the short for for sbx_lst
+
 
 database change setup
 ---------------------
