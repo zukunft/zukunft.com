@@ -164,7 +164,7 @@ include_once $path_unit . 'formula_element.php';
 include_once $path_unit . 'figure.php';
 include_once $path_unit . 'figure_list.php';
 include_once $path_unit . 'expression.php';
-include_once $path_unit . 'view.php';
+include_once $path_unit . 'view_tests.php';
 include_once $path_unit . 'view_list.php';
 include_once $path_unit . 'component.php';
 include_once $path_unit . 'component_link.php';

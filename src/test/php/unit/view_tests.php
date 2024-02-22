@@ -30,7 +30,7 @@
 
 */
 
-namespace test;
+namespace unit;
 
 use api\view\view as view_api;
 use cfg\view_term_link;
@@ -38,8 +38,9 @@ use html\view\view as view_dsp;
 use cfg\library;
 use cfg\db\sql_db;
 use cfg\view;
+use test\test_cleanup;
 
-class view_unit_tests
+class view_tests
 {
     function run(test_cleanup $t): void
     {

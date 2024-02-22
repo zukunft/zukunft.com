@@ -98,6 +98,7 @@ use cfg\view_type_list;
 use unit\type_tests as type_unit_tests;
 use unit\word_tests as word_unit_tests;
 use unit\triple_unit as triple_unit_tests;
+use unit\view_tests as view_unit_tests;
 use unit\component_list_unit as component_list_unit_tests;
 use unit\import as import_unit_tests;
 use unit\db_setup as db_setup_tests;
