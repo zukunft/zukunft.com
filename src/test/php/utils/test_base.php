@@ -127,60 +127,61 @@ include_once $root_path . 'src/main/php/service/config.php';
 // load the other test utility modules (beside this base configuration module)
 include_once $path_utils . 'create_test_objects.php';
 include_once $path_utils . 'test_system.php';
-include_once $path_utils . 'test_api.php';
 include_once $path_utils . 'test_db_link.php';
 include_once $path_utils . 'test_user.php';
 include_once $path_utils . 'test_user_sandbox.php';
+include_once $path_utils . 'test_api.php';
 include_once $path_utils . 'test_cleanup.php';
 
 // load the unit testing modules
-include_once $path_unit . 'test_unit.php';
-include_once $path_unit . 'test_lib.php';
-include_once $path_unit . 'math.php';
-include_once $path_unit . 'system.php';
-include_once $path_unit . 'user.php';
-include_once $path_unit . 'user_list.php';
-include_once $path_unit . 'sandbox.php';
+include_once $path_unit . 'all_unit_tests.php';
+include_once $path_unit . 'lib_tests.php';
+include_once $path_unit . 'math_tests.php';
+include_once $path_unit . 'system_tests.php';
+include_once $path_unit . 'user_tests.php';
+include_once $path_unit . 'user_list_tests.php';
+include_once $path_unit . 'sandbox_tests.php';
 include_once $path_unit . 'type_tests.php';
 include_once $path_unit . 'word_tests.php';
-include_once $path_unit . 'word_list.php';
-include_once $path_unit . 'triple_unit.php';
-include_once $path_unit . 'triple_list.php';
-include_once $path_unit . 'phrase.php';
-include_once $path_unit . 'phrase_list.php';
-include_once $path_unit . 'phrase_group.php';
-include_once $path_unit . 'group_list.php';
-include_once $path_unit . 'term.php';
-include_once $path_unit . 'term_list.php';
-include_once $path_unit . 'value.php';
-include_once $path_unit . 'value_phrase_link.php';
-include_once $path_unit . 'value_list.php';
-include_once $path_unit . 'formula.php';
-include_once $path_unit . 'formula_list.php';
-include_once $path_unit . 'formula_link.php';
-include_once $path_unit . 'result.php';
+include_once $path_unit . 'word_list_tests.php';
+include_once $path_unit . 'triple_tests.php';
+include_once $path_unit . 'triple_list_tests.php';
+include_once $path_unit . 'phrase_tests.php';
+include_once $path_unit . 'phrase_list_tests.php';
+include_once $path_unit . 'group_tests.php';
+include_once $path_unit . 'group_list_tests.php';
+include_once $path_unit . 'term_tests.php';
+include_once $path_unit . 'term_list_tests.php';
+include_once $path_unit . 'value_tests.php';
+include_once $path_unit . 'value_phrase_link_tests.php';
+include_once $path_unit . 'value_list_tests.php';
+include_once $path_unit . 'formula_tests.php';
+include_once $path_unit . 'formula_list_tests.php';
+include_once $path_unit . 'formula_link_tests.php';
+include_once $path_unit . 'result_tests.php';
 include_once $path_unit . 'result_list_tests.php';
-include_once $path_unit . 'formula_element.php';
-include_once $path_unit . 'figure.php';
-include_once $path_unit . 'figure_list.php';
-include_once $path_unit . 'expression.php';
+include_once $path_unit . 'formula_element_tests.php';
+include_once $path_unit . 'figure_tests.php';
+include_once $path_unit . 'figure_list_tests.php';
+include_once $path_unit . 'expression_tests.php';
 include_once $path_unit . 'view_tests.php';
-include_once $path_unit . 'view_list.php';
-include_once $path_unit . 'component.php';
-include_once $path_unit . 'component_link.php';
-include_once $path_unit . 'component_list_unit.php';
-include_once $path_unit . 'component_link_list.php';
-include_once $path_unit . 'verb.php';
-include_once $path_unit . 'ref.php';
-include_once $path_unit . 'language.php';
-include_once $path_unit . 'batch_job.php';
-include_once $path_unit . 'change_log.php';
-include_once $path_unit . 'system_log.php';
-include_once $path_unit . 'import.php';
-include_once $path_unit . 'db_setup.php';
+include_once $path_unit . 'view_list_tests.php';
+include_once $path_unit . 'component_tests.php';
+include_once $path_unit . 'component_link_tests.php';
+include_once $path_unit . 'component_list_tests.php';
+include_once $path_unit . 'component_link_list_tests.php';
+include_once $path_unit . 'verb_tests.php';
+include_once $path_unit . 'ref_tests.php';
+include_once $path_unit . 'language_tests.php';
+include_once $path_unit . 'batch_job_tests.php';
+include_once $path_unit . 'change_log_tests.php';
+include_once $path_unit . 'system_log_tests.php';
+include_once $path_unit . 'import_tests.php';
+include_once $path_unit . 'db_setup_tests.php';
+include_once $path_unit . 'api_tests.php';
 
 // load the testing functions for creating HTML code
-include_once $path_unit . 'html.php';
+include_once $path_unit . 'html_tests.php';
 include_once $path_unit_dsp . 'test_display.php';
 include_once $path_unit_dsp . 'type_lists.php';
 include_once $path_unit_dsp . 'user.php';
@@ -216,37 +217,37 @@ include_once $path_unit_dsp . 'system_views.php';
 
 
 // load the unit testing modules with database read only
-include_once $path_unit_read . 'all.php';
-include_once $path_unit_read . 'system.php';
-include_once $path_unit_read . 'sql_db.php';
-include_once $path_unit_read . 'user.php';
-include_once $path_unit_read . 'batch_job.php';
-include_once $path_unit_read . 'change_log.php';
-include_once $path_unit_read . 'system_log.php';
-include_once $path_unit_read . 'word.php';
-include_once $path_unit_read . 'word_list.php';
-include_once $path_unit_read . 'triple.php';
-include_once $path_unit_read . 'triple_list.php';
-include_once $path_unit_read . 'verb.php';
-include_once $path_unit_read . 'phrase.php';
-include_once $path_unit_read . 'phrase_list.php';
-include_once $path_unit_read . 'phrase_group.php';
-include_once $path_unit_read . 'term.php';
-include_once $path_unit_read . 'term_list.php';
-include_once $path_unit_read . 'value.php';
-include_once $path_unit_read . 'value_list.php';
-include_once $path_unit_read . 'formula.php';
-include_once $path_unit_read . 'formula_list.php';
-include_once $path_unit_read . 'expression.php';
-include_once $path_unit_read . 'view.php';
-include_once $path_unit_read . 'view_list.php';
-include_once $path_unit_read . 'component.php';
-include_once $path_unit_read . 'component_list.php';
-include_once $path_unit_read . 'ref.php';
-include_once $path_unit_read . 'share.php';
-include_once $path_unit_read . 'protection.php';
-include_once $path_unit_read . 'language.php';
-include_once $path_unit_read . 'export.php';
+include_once $path_unit_read . 'all_unit_read_tests.php';
+include_once $path_unit_read . 'system_tests.php';
+include_once $path_unit_read . 'sql_db_tests.php';
+include_once $path_unit_read . 'user_tests.php';
+include_once $path_unit_read . 'batch_job_tests.php';
+include_once $path_unit_read . 'change_log_tests.php';
+include_once $path_unit_read . 'system_log_tests.php';
+include_once $path_unit_read . 'word_tests.php';
+include_once $path_unit_read . 'word_list_tests.php';
+include_once $path_unit_read . 'triple_tests.php';
+include_once $path_unit_read . 'triple_list_tests.php';
+include_once $path_unit_read . 'verb_tests.php';
+include_once $path_unit_read . 'phrase_tests.php';
+include_once $path_unit_read . 'phrase_list_tests.php';
+include_once $path_unit_read . 'phrase_group_tests.php';
+include_once $path_unit_read . 'term_tests.php';
+include_once $path_unit_read . 'term_list_tests.php';
+include_once $path_unit_read . 'value_tests.php';
+include_once $path_unit_read . 'value_list_tests.php';
+include_once $path_unit_read . 'formula_tests.php';
+include_once $path_unit_read . 'formula_list_tests.php';
+include_once $path_unit_read . 'expression_tests.php';
+include_once $path_unit_read . 'view_tests.php';
+include_once $path_unit_read . 'view_list_tests.php';
+include_once $path_unit_read . 'component_tests.php';
+include_once $path_unit_read . 'component_list_tests.php';
+include_once $path_unit_read . 'ref_tests.php';
+include_once $path_unit_read . 'share_tests.php';
+include_once $path_unit_read . 'protection_tests.php';
+include_once $path_unit_read . 'language_tests.php';
+include_once $path_unit_read . 'export_tests.php';
 
 
 // load the testing functions for creating JSON messages for the frontend code
@@ -255,30 +256,31 @@ include_once $path_unit_ui . 'test_word_ui.php';
 include_once $path_unit_ui . 'value_test_ui.php';
 
 // load the testing functions that save data to the database
-include_once $path_unit_write . 'word.php';
-include_once $path_unit_write . 'word_list.php';
-include_once $path_unit_write . 'verb.php';
-include_once $path_unit_write . 'triple.php';
-include_once $path_unit_write . 'phrase.php';
-include_once $path_unit_write . 'phrase_list.php';
-include_once $path_unit_write . 'phrase_group.php';
-include_once $path_unit_write . 'phrase_group_list.php';
-include_once $path_unit_write . 'graph.php';
-include_once $path_unit_write . 'term.php';
-include_once $path_unit_write . 'value.php';
-include_once $path_unit_write . 'source.php';
-include_once $path_unit_write . 'ref.php';
-include_once $path_unit_write . 'expression.php';
-include_once $path_unit_write . 'formula.php';
-include_once $path_unit_write . 'formula_link.php';
-include_once $path_unit_write . 'formula_trigger.php';
-include_once $path_unit_write . 'result.php';
-include_once $path_unit_write . 'formula_element.php';
-include_once $path_unit_write . 'formula_element_group.php';
-include_once $path_unit_write . 'batch_job.php';
-include_once $path_unit_write . 'view.php';
-include_once $path_unit_write . 'component.php';
-include_once $path_unit_write . 'component_link.php';
+include_once $path_unit_write . 'word_tests.php';
+include_once $path_unit_write . 'word_list_tests.php';
+include_once $path_unit_write . 'verb_tests.php';
+include_once $path_unit_write . 'triple_tests.php';
+include_once $path_unit_write . 'phrase_tests.php';
+include_once $path_unit_write . 'phrase_list_tests.php';
+include_once $path_unit_write . 'phrase_group_tests.php';
+include_once $path_unit_write . 'phrase_group_list_tests.php';
+include_once $path_unit_write . 'graph_tests.php';
+include_once $path_unit_write . 'term_tests.php';
+include_once $path_unit_write . 'value_tests.php';
+include_once $path_unit_write . 'source_tests.php';
+include_once $path_unit_write . 'ref_tests.php';
+include_once $path_unit_write . 'expression_tests.php';
+include_once $path_unit_write . 'formula_tests.php';
+include_once $path_unit_write . 'formula_link_tests.php';
+include_once $path_unit_write . 'formula_trigger_tests.php';
+include_once $path_unit_write . 'result_tests.php';
+include_once $path_unit_write . 'formula_element_tests.php';
+include_once $path_unit_write . 'formula_element_group_tests.php';
+include_once $path_unit_write . 'batch_job_tests.php';
+include_once $path_unit_write . 'view_tests.php';
+include_once $path_unit_write . 'component_tests.php';
+include_once $path_unit_write . 'component_link_tests.php';
+
 include_once $path_unit_write . 'test_word_display.php';
 include_once $path_unit_write . 'test_math.php';
 
@@ -307,7 +309,6 @@ const TEST_EMAIL = FALSE; // if set to true an email will be sent in case of err
 
 // TODO move the test names to the single objects and check for reserved names to avoid conflicts
 // some test words used for testing
-const TW_ABB = "ABB";
 const TW_VESTAS = "Vestas";
 const TW_SALES = "Sales";
 const TW_CHF = "CHF";
@@ -407,6 +408,62 @@ class test_base
     const TEST_TYPE_CONTAINS = 'contains';
     const FILE_EXT = '.sql';
     const FILE_MYSQL = '_mysql';
+
+    // the fixed system user used for testing
+    const TEST_USER_ID = "2";
+    const TEST_USER_DESCRIPTION = "standard user view for all users";
+    const TEST_USER_IP = "66.249.64.95"; // used to check the blocking of an IP address
+
+    /*
+    Setting that should be moved to the system config table
+    */
+
+    // switch for the email testing
+    const TEST_EMAIL = FALSE; // if set to true an email will be sent in case of errors and once a day an "everything fine" email is send
+
+
+    // TODO move the test names to the single objects and check for reserved names to avoid conflicts
+    // some test words used for testing
+    const TW_VESTAS = "Vestas";
+    const TW_SALES = "Sales";
+    const TW_CHF = "CHF";
+    const TW_YEAR = "Year";
+    const TW_2013 = "2013";
+    const TW_2014 = "2014";
+    const TW_2017 = "2017";
+    const TW_MIO = "million";
+    const TW_CF = "cash flow statement";
+    const TW_TAX = "Income taxes";
+
+    // some test phrases used for testing
+    const TP_ABB = "ABB (Company)";
+    const TP_FOLLOW = "2014 is follower of 2013";
+    const TP_TAXES = "Income taxes is part of cash flow statement";
+
+    // some formula parameter used for testing
+    const TF_SECTOR = "sectorweight";
+
+    // some numbers used to test the program
+    const TV_TEST_SALES_INCREASE_2017_FORMATTED = '90.03 %';
+    const TV_NESN_SALES_2016_FORMATTED = '89\'469';
+
+    // some source used to test the program
+    const TS_IPCC_AR6_SYNTHESIS = 'IPCC AR6 Synthesis Report: Climate Change 2022';
+    const TS_IPCC_AR6_SYNTHESIS_URL = 'https://www.ipcc.ch/report/sixth-assessment-report-cycle/';
+    const TS_NESN_2016_NAME = 'Nestlé Financial Statement 2016';
+
+
+    // max time expected for each function execution
+    const TIMEOUT_LIMIT = 0.03; // time limit for normal functions
+    const TIMEOUT_LIMIT_PAGE = 0.1;  // time limit for complete webpage
+    const TIMEOUT_LIMIT_PAGE_SEMI = 0.6;  // time limit for complete webpage
+    const TIMEOUT_LIMIT_PAGE_LONG = 1.2;  // time limit for complete webpage
+    const TIMEOUT_LIMIT_DB = 0.2;  // time limit for database modification functions
+    const TIMEOUT_LIMIT_DB_MULTI = 0.9;  // time limit for many database modifications
+    const TIMEOUT_LIMIT_LONG = 3;    // time limit for complex functions
+    const TIMEOUT_LIMIT_IMPORT = 12;    // time limit for complex import tests in seconds
+
+
 
     public user $usr1; // the main user for testing
     public user $usr2; // a second testing user e.g. to test the user sandbox

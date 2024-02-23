@@ -135,15 +135,16 @@ use api\log\system_log as system_log_api;
 use DateTime;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\word\word as word_dsp;
-use test\write\component_link_test;
-use test\write\component_test;
-use test\write\formula_link_test;
-use test\write\formula_test;
-use test\write\source_test;
-use test\write\triple_test;
-use test\write\value_test;
-use test\write\view_test;
-use test\write\word_test;
+use unit_write\component_link_tests;
+use unit_write\component_tests;
+use unit_write\formula_link_tests;
+use unit_write\formula_tests;
+use unit_write\source_tests;
+use unit_write\triple_tests;
+use unit_write\value_tests;
+use unit_write\view_tests;
+use unit_write\word_tests;
+use unit_read\all_unit_read_tests;
 
 class create_test_objects extends test_base
 {
@@ -684,7 +685,7 @@ class create_test_objects extends test_base
         $trp->set(triple_api::TI_ZH_CITY, triple_api::TN_ZH_CITY);
         $trp->set_from($this->zh_word()->phrase());
         $trp->set_verb($this->dummy_verb_is());
-        $trp->set_to($this->ca_word()->phrase());
+        $trp->set_to($this->canton()->phrase());
         return $trp;
     }
 
@@ -2639,18 +2640,18 @@ class create_test_objects extends test_base
      * create all database entries used for the read db unit tests
      * @return void
      */
-    function create_test_db_entries(test_unit_read_db $t): void
+    function create_test_db_entries(all_unit_read_tests $t): void
     {
-        (new word_test())->create_test_words($t);
-        (new triple_test())->create_test_triples($t);
-        (new triple_test())->create_base_times($t);
-        (new source_test())->create_test_sources($t);
-        (new formula_test())->create_test_formulas($t);
-        (new formula_link_test())->create_test_formula_links($t);
-        (new view_test())->create_test_views($t);
-        (new component_test())->create_test_components($t);
-        (new component_link_test())->create_test_component_links($t);
-        (new value_test())->create_test_values($t);
+        (new word_tests())->create_test_words($t);
+        (new triple_tests())->create_test_triples($t);
+        (new triple_tests())->create_base_times($t);
+        (new source_tests())->create_test_sources($t);
+        (new formula_tests())->create_test_formulas($t);
+        (new formula_link_tests())->create_test_formula_links($t);
+        (new view_tests())->create_test_views($t);
+        (new component_tests())->create_test_components($t);
+        (new component_link_tests())->create_test_component_links($t);
+        (new value_tests())->create_test_values($t);
     }
 
 }

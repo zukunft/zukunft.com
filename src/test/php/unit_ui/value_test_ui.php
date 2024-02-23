@@ -32,10 +32,10 @@
 
 use api\value\value as value_api;
 use api\word\word as word_api;
+use cfg\value\value;
+use cfg\value\value_list;
 use html\value\value_list as value_list_dsp;
 use cfg\phrase_list;
-use cfg\value;
-use cfg\value_list;
 use cfg\word;
 use cfg\word_list;
 use test\test_cleanup;
@@ -196,7 +196,8 @@ function run_value_ui_test(test_cleanup $t): void
     $wrd_col = new word($usr);
     $wrd_col->load_by_name(TW_CF);
     $val_lst = new value_list_dsp();
-    $val_lst->phr = $wrd->phrase();
+    // TODO review
+    //$val_lst->set_phr($wrd->phrase());
     $result = $val_lst->dsp_table($wrd_col, $wrd->id());
     $target = TV_NESN_SALES_2016_FORMATTED;
     $t->dsp_contains(', value_list_dsp->dsp_table for "' . $wrd->name() . '" (' . $result . ') contains ' . $target . '', $target, $result, TIMEOUT_LIMIT_PAGE_LONG);

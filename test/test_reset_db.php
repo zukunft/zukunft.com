@@ -65,7 +65,7 @@ use cfg\user;
 use cfg\value\value;
 use cfg\view_type_list;
 use html\html_base;
-use test\test_unit_read_db;
+use unit_read\all_unit_read_tests;
 
 global $errors;
 
@@ -125,7 +125,7 @@ if ($usr->id() > 0) {
         $sys_usr = $usr;
 
         // create the test dataset to check the basic write functions
-        $t = new test_unit_read_db();
+        $t = new all_unit_read_tests();
         $t->set_users();
         $t->create_test_db_entries($t);
 

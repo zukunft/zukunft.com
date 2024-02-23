@@ -35,11 +35,14 @@
 // --------------------------------------
 
 use api\word\word as word_api;
-use html\word\word as word_dsp;
+use api\verb\verb as verb_api;
+use cfg\verb;
+use cfg\word;
+use test\test_cleanup;
 use const test\TIMEOUT_LIMIT_PAGE;
 use const test\TIMEOUT_LIMIT_PAGE_SEMI;
 
-function run_word_ui_test(testing $t): void
+function run_word_ui_test(test_cleanup $t): void
 {
 
     global $usr;
@@ -51,7 +54,7 @@ function run_word_ui_test(testing $t): void
     // call the add word page and check if at least some keywords are returned
     $wrd = new word($usr);
     $wrd->load_by_name(word_api::TN_READ);
-    $vrb_is = $verbs->id(verb::IS_A);
+    $vrb_is = $verbs->id(verb::IS);
     $wrd_type = $phrase_types->default_id();
     $result = file_get_contents('https://zukunft.com/http/word_add.php?verb=' . $vrb_is . '&word=' . $wrd->id() . '&type=1&back=' . $wrd->id());
     $target = word_api::TN_READ;
@@ -72,7 +75,7 @@ function run_word_ui_test(testing $t): void
     // not yet used
     /*
     $phr_corp = $t->load_phrase(word::TEST_NAME_READ);
-    $phr_ABB  = $t->load_phrase(TW_ABB,    );
+    $phr_ABB  = $t->load_phrase(word_api::TN_ABB,    );
     $sel = New selector;
     $sel->usr        = $usr;
     $sel->form       = 'test_form';
@@ -81,7 +84,7 @@ function run_word_ui_test(testing $t): void
     $sel->selected   = $phr_ABB->id;
     $sel->dummy_text = '... please select';
     $result .= $sel->display ();
-    $target = TW_ABB;
+    $target = word_api::TN_ABB;
     $t->dsp_contains(', display_selector->display of all '.$phr_corp->name.' with '.$wrd->name.' selected', $target, $result);
     */
 

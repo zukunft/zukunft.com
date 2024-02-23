@@ -111,6 +111,8 @@ class word extends sandbox_typed_api
     const TN_TOTAL_PRE = 'total';
     const TI_TOTAL = 211;
     const TN_COMPANY = 'Company';
+    const TN_ABB = 'ABB';
+    const TI_ABB = 269;
 
     // persevered word names for unit and integration tests based on the database
     const TN_ADD = 'System Test Word';
