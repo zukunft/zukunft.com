@@ -39,7 +39,6 @@ use cfg\value\value_list;
 use cfg\verb;
 use cfg\word;
 use test\test_cleanup;
-use const test\TIMEOUT_LIMIT_PAGE;
 
 class graph_tests
 {
@@ -92,11 +91,11 @@ class graph_tests
         // check if at least the basic relations are in the database
         /*
         $target = '' . word_api::TN_CITY_AS_CATEGORY . ' has a balance sheet';
-        $t->dsp_contains(', triple_list->load for ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
+        $t->dsp_contains(', triple_list->load for ' . $phr_lst->dsp_id(), $target, $result, $t::TIMEOUT_LIMIT_PAGE);
         $target = 'Company has a forecast';
-        $t->dsp_contains(', triple_list->load for ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
+        $t->dsp_contains(', triple_list->load for ' . $phr_lst->dsp_id(), $target, $result, $t::TIMEOUT_LIMIT_PAGE);
         $target = 'Company uses employee';
-        $t->dsp_contains(', word ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
+        $t->dsp_contains(', word ' . $phr_lst->dsp_id(), $target, $result, $t::TIMEOUT_LIMIT_PAGE);
         */
 
         // similar to above, but just for the zurich
@@ -108,7 +107,7 @@ class graph_tests
         $result = $lnk_lst->name();
         // TODO to be reviewed
         $target = word_api::TN_ZH;
-        $t->dsp_contains(', triple_list->load for ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
+        $t->dsp_contains(', triple_list->load for ' . $phr_lst->dsp_id(), $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
 
         // the other side

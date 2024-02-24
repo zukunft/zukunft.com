@@ -44,17 +44,6 @@ use cfg\verb;
 use cfg\word;
 use test\test_cleanup;
 use function test\zu_test_time_setup;
-use const test\TIMEOUT_LIMIT_DB;
-use const test\TIMEOUT_LIMIT_DB_MULTI;
-use const test\TIMEOUT_LIMIT_PAGE_SEMI;
-use const test\TP_ABB;
-use const test\TP_FOLLOW;
-use const test\TP_TAXES;
-use const test\TW_2013;
-use const test\TW_2014;
-use const test\TW_CF;
-use const test\TW_TAX;
-use const test\TW_VESTAS;
 
 class triple_tests
 {
@@ -83,7 +72,7 @@ class triple_tests
         $lnk_canton->load_by_link_id($wrd_zh->id(), $is_id, $wrd_canton->id());
         $target = word_api::TN_ZH . ' (' . word_api::TN_CANTON . ')';
         $result = $lnk_canton->name();
-        $t->display('triple->load for Canton Zurich', $target, $result, TIMEOUT_LIMIT_DB);
+        $t->display('triple->load for Canton Zurich', $target, $result, $t::TIMEOUT_LIMIT_DB);
 
         // ... now test the Canton Zurich using the name function
         $target = word_api::TN_ZH . ' (' . word_api::TN_CANTON . ')';
@@ -115,7 +104,7 @@ class triple_tests
             $result = 'id missing';
         }
         $target = '';
-        $t->display('triple->save "' . $wrd_from->name() . '" ' . verb::IS . ' "' . $wrd->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('triple->save "' . $wrd_from->name() . '" ' . verb::IS . ' "' . $wrd->name() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         $t->subheader("... and also testing the user log link class (classes/user_log_link.php)");
 
@@ -151,7 +140,7 @@ class triple_tests
         $msg = $trp->del();
         $result = $msg->get_last_message();
         $target = '';
-        $t->display('triple->del "' . $wrd_from->name() . '" ' . verb::IS . ' "' . $wrd->name() . '" by user "' . $t->usr2->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('triple->del "' . $wrd_from->name() . '" ' . verb::IS . ' "' . $wrd->name() . '" by user "' . $t->usr2->name . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // ... check if the removal of the link for the second user has been logged
         $log = new change_log_link($t->usr2);
@@ -169,7 +158,7 @@ class triple_tests
         $lnk2->load_by_link_id($wrd_from->id(), $is_id, $wrd->id());
         $result = $lnk2->name();
         $target = '';
-        $t->display('triple->load "' . $wrd_from->name() . '" ' . verb::IS . ' "' . $wrd->name() . '" for user "' . $t->usr2->name . '" not any more', $target, $result, TIMEOUT_LIMIT_PAGE_SEMI);
+        $t->display('triple->load "' . $wrd_from->name() . '" ' . verb::IS . ' "' . $wrd->name() . '" for user "' . $t->usr2->name . '" not any more', $target, $result, $t::TIMEOUT_LIMIT_PAGE_SEMI);
 
         // ... check if the value update for the second user has been triggered
 
@@ -180,7 +169,7 @@ class triple_tests
         $trp->load_by_link_id($wrd_from->id(), $is_id, $wrd->id());
         $result = $trp->name();
         $target = '' . word_api::TN_RENAMED . ' (' . word_api::TN_PARENT . ')';
-        $t->display('triple->load of "' . $wrd_from->name() . '" ' . verb::IS . ' "' . $wrd->name() . '" is still used for user "' . $t->usr1->name . '"', $target, $result, TIMEOUT_LIMIT_PAGE_SEMI);
+        $t->display('triple->load of "' . $wrd_from->name() . '" ' . verb::IS . ' "' . $wrd->name() . '" is still used for user "' . $t->usr1->name . '"', $target, $result, $t::TIMEOUT_LIMIT_PAGE_SEMI);
 
         // ... check if the values for the first user are still the same
 
@@ -190,7 +179,7 @@ class triple_tests
         $msg = $trp->del();
         $result = $msg->get_last_message();
         $target = '';
-        $t->display('triple->del "' . $wrd_from->name() . '" ' . verb::IS . ' "' . $wrd->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('triple->del "' . $wrd_from->name() . '" ' . verb::IS . ' "' . $wrd->name() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check the correct logging
         $log = new change_log_link($t->usr1);
@@ -264,7 +253,7 @@ class triple_tests
         $phr->load_by_name(word::TEST_NAME_CHANGED);
         $result = $frm->link_phr($phr);
         $target = '1';
-        $t->display('triple->link_phr "'.$phr->name().'" to "'.$frm->name.'"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('triple->link_phr "'.$phr->name().'" to "'.$frm->name.'"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
         */
         // ... if the second user changes the link
 
@@ -300,13 +289,13 @@ class triple_tests
         $t->test_triple(triple_api::TN_ZH_CITY, verb::IS_PART_OF, triple_api::TN_ZH_CANTON);
         $t->test_triple(triple_api::TN_ZH_COMPANY, verb::IS_PART_OF, triple_api::TN_ZH_CITY, triple_api::TN_EXCLUDED, triple_api::TN_EXCLUDED);
 
-        $t->test_triple(word_api::TN_ABB, verb::IS, word_api::TN_COMPANY, TP_ABB);
+        $t->test_triple(word_api::TN_ABB, verb::IS, word_api::TN_COMPANY, triple_api::TN_ABB_COMPANY);
         // TODO check why it is possible to create a triple with the same name as a word
-        //$t->test_triple(TW_VESTAS, verb::IS_A, TEST_WORD, TW_VESTAS, TW_VESTAS);
-        $t->test_triple(TW_VESTAS, verb::IS, word_api::TN_COMPANY, triple_api::TN_VESTAS_COMPANY, triple_api::TN_VESTAS_COMPANY);
-        $t->test_triple(TW_2014, verb::FOLLOW, TW_2013, TP_FOLLOW);
+        //$t->test_triple(word_api::TN_VESTAS, verb::IS_A, TEST_WORD, word_api::TN_VESTAS, word_api::TN_VESTAS);
+        $t->test_triple(word_api::TN_VESTAS, verb::IS, word_api::TN_COMPANY, triple_api::TN_VESTAS_COMPANY, triple_api::TN_VESTAS_COMPANY);
+        $t->test_triple(word_api::TN_2014, verb::FOLLOW, word_api::TN_2013, triple_api::TN_2014_FOLLOW);
         // TODO check direction
-        $t->test_triple(TW_TAX, verb::IS_PART_OF, TW_CF, TP_TAXES);
+        $t->test_triple(word_api::TN_TAX, verb::IS_PART_OF, word_api::TN_CASH_FLOW, triple_api::TN_TAXES_OF_CF);
 
         $t->header('Check if all base phrases are correct');
         $t->test_phrase(triple_api::TN_ZH_COMPANY);

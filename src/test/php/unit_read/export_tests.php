@@ -35,7 +35,6 @@ namespace unit_read;
 use cfg\export\xml;
 use im_export\json_io;
 use test\test_cleanup;
-use const test\TIMEOUT_LIMIT_PAGE;
 
 class export_tests
 {
@@ -55,14 +54,14 @@ class export_tests
         $xml_exp = new xml($t->usr1);
         $result = $xml_exp->export_by_phrase_list($phr_lst);
         $target = 'Mathematics';
-        $t->dsp_contains(', xml->export for ' . $phr_lst->dsp_id() . ' contains at least ' . $target, $target, $result, TIMEOUT_LIMIT_PAGE);
+        $t->dsp_contains(', xml->export for ' . $phr_lst->dsp_id() . ' contains at least ' . $target, $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
         $t->header('Test the json export class (classes/json.php)');
 
         $json_export = new json_io($usr, $phr_lst);
         $result = $json_export->export();
         $target = 'Mathematics';
-        //$t->dsp_contains(', json->export for ' . $phr_lst->dsp_id() . ' contains at least ' . $target, $target, $result, TIMEOUT_LIMIT_PAGE);
+        //$t->dsp_contains(', json->export for ' . $phr_lst->dsp_id() . ' contains at least ' . $target, $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
     }
 

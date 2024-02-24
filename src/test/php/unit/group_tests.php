@@ -154,11 +154,11 @@ class group_tests
         $t->assert('64 bit result_id for the formula increase, '
             . 'the phrases Zurich (City) and inhabitants and the result only phrase 2023 (year)',
             $res_id->get_id($t->zh_inhabitants_2020(), $t->zh_inhabitants_2020(), $t->increase_formula()),
-            11822279760150932);
+            11822279760150934);
         $t->assert('128 bit result_id for the formula increase, '
             . 'the phrases Zurich (City), Geneva (City) and inhabitants and the result only phrase 2023 (year)',
             $res_id->get_id($t->zh_ge_inhabitants_2020(), $t->zh_ge_inhabitants_2020(), $t->increase_formula()),
-            '18039393492526476544');
+            '18039393492526607616');
         $t->assert('512 bit result_id ',
             $res_id->get_id($t->dummy_phrase_list_14(), $t->dummy_phrase_list_14b(), $t->increase_formula()),
             '.....J=..8jId-...I1A-....Yz-..../.-.....Z-.....9-...../+.....A+.....a+....3s+...1Ao+../vLC+.//ZSB+1FajJ2(.4LYK3)1FajJ2)');

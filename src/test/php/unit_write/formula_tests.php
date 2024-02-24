@@ -46,8 +46,6 @@ use cfg\formula;
 use cfg\phrase_list;
 use cfg\sandbox_named;
 use test\test_cleanup;
-use const test\TIMEOUT_LIMIT_DB_MULTI;
-use const test\TIMEOUT_LIMIT_PAGE;
 
 class formula_tests
 {
@@ -138,12 +136,12 @@ class formula_tests
         $frm_pe = $t->load_formula(formula_api::TN_RATIO);
 
         $wrd_share = $t->test_word(word_api::TN_SHARE);
-        $wrd_chf = $t->test_word(word_api::TN_CHF);
+        $wrd_chf = $t->test_word(word_api::TWN_CHF);
 
         $frm_pe->assign_phrase($wrd_share->phrase());
 
         $phr_lst = new phrase_list($t->usr1);
-        $phr_lst->load_by_names(array(word_api::TN_SHARE, word_api::TN_CHF));
+        $phr_lst->load_by_names(array(word_api::TN_SHARE, word_api::TWN_CHF));
 
         $phr_lst_all = $frm_pe->assign_phr_lst();
         $phr_lst = $phr_lst_all->del_list($phr_lst);
@@ -283,7 +281,7 @@ class formula_tests
         $result = $frm_html->dsp_edit($add, $wrd, $back);
         $target = 'Formula "System Test Formula"';
         //$result = $edit_page;
-        $t->dsp_contains(', formula->dsp_edit for ' . $frm->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
+        $t->dsp_contains(', formula->dsp_edit for ' . $frm->dsp_id(), $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
         // test formula refresh functions
 
@@ -303,13 +301,13 @@ class formula_tests
             $result = $frm->usr_text;
         }
         $target = formula_api::TF_INCREASE;
-        $t->display('formula->save for adding "' . $frm->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('formula->save for adding "' . $frm->name() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if the formula name has been saved
         $frm = $t->load_formula(formula_api::TN_ADD);
         $result = $frm->usr_text;
         $target = formula_api::TF_INCREASE;
-        $t->display('formula->load the added "' . $frm->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI); // time limit???
+        $t->display('formula->load the added "' . $frm->name() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI); // time limit???
 
         // ... check the correct logging
         $log = new change($t->usr1);
@@ -328,14 +326,14 @@ class formula_tests
         // use the next line if system config is non-standard
         //$target = 'A formula with the name "'.formula_api::TN_ADD.'" already exists. Please use another name.';
         $target = '';
-        $t->display('formula->save adding "' . $frm->name() . '" again', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('formula->save adding "' . $frm->name() . '" again', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if the formula can be renamed
         $frm = $t->load_formula(formula_api::TN_ADD);
         $frm->set_name(formula_api::TN_RENAMED);
         $result = $frm->save();
         $target = '';
-        $t->display('formula->save rename "' . formula_api::TN_ADD . '" to "' . formula_api::TN_RENAMED . '".', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('formula->save rename "' . formula_api::TN_ADD . '" to "' . formula_api::TN_RENAMED . '".', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // ... and if the formula renaming was successful
         $frm_renamed = new formula($t->usr1);
@@ -362,7 +360,7 @@ class formula_tests
         $frm_renamed->need_all_val = True;
         $result = $frm_renamed->save();
         $target = '';
-        $t->display('formula->save all formula fields beside the name for "' . formula_api::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('formula->save all formula fields beside the name for "' . formula_api::TN_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // ... and if the formula parameters have been added
         $frm_reloaded = $t->load_formula(formula_api::TN_RENAMED);
@@ -422,7 +420,7 @@ class formula_tests
         $frm_usr2->need_all_val = False;
         $result = $frm_usr2->save();
         $target = '';
-        $t->display('formula->save all formula fields for user 2 beside the name for "' . formula_api::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('formula->save all formula fields for user 2 beside the name for "' . formula_api::TN_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // ... and if a user specific formula changes have been saved
         $frm_usr2_reloaded = new formula($t->usr2);
@@ -470,7 +468,7 @@ class formula_tests
         $frm_usr2->need_all_val = True;
         $result = $frm_usr2->save();
         $target = '';
-        $t->display('formula->save undo the user formula fields beside the name for "' . formula_api::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('formula->save undo the user formula fields beside the name for "' . formula_api::TN_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // ... and if a user specific formula changes have been saved
         $frm_usr2_reloaded = new formula($t->usr2);
@@ -516,7 +514,7 @@ class formula_tests
         // TODO fix it
         //$result = $frm_lst->display();
         //$target = formula_api::TN_RATIO;
-        // $t->dsp_contains(', formula_list->load formula for word "' . $wrd->dsp_id() . '" should contain', $target, $result, TIMEOUT_LIMIT_PAGE);
+        // $t->dsp_contains(', formula_list->load formula for word "' . $wrd->dsp_id() . '" should contain', $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
     }
 

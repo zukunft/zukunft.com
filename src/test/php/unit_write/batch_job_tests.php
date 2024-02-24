@@ -41,7 +41,6 @@ use cfg\batch_job_type_list;
 use cfg\phrase_list;
 use cfg\value\value;
 use test\test_cleanup;
-use const test\TIMEOUT_LIMIT_DB_MULTI;
 
 class batch_job_tests
 {
@@ -82,7 +81,7 @@ class batch_job_tests
         if ($result > 0) {
             $target = $result;
         }
-        $t->display('batch_job->add has number "' . $result . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('batch_job->add has number "' . $result . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
     }
 
@@ -110,7 +109,7 @@ class batch_job_tests
         if ($result->is_ok()) {
             $target = $result->get_last_message();
         }
-        $t->display('batch_job->add has number "' . $result->get_last_message() . '"', $target, $result->get_last_message(), TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('batch_job->add has number "' . $result->get_last_message() . '"', $target, $result->get_last_message(), $t::TIMEOUT_LIMIT_DB_MULTI);
 
     }
 

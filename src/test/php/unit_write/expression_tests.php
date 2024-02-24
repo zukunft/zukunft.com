@@ -36,8 +36,6 @@ use api\formula\formula as formula_api;
 use api\word\word as word_api;
 use cfg\expression;
 use test\test_cleanup;
-use const test\TIMEOUT_LIMIT_LONG;
-use const test\TIMEOUT_LIMIT_PAGE_LONG;
 
 class expression_tests
 {
@@ -62,7 +60,7 @@ class expression_tests
 
         $result = $frm_sector->usr_text;
         $target = '= "' . word_api::TN_COUNTRY . '" "differentiator" "' . word_api::TN_CANTON . '" / "' . word_api::TN_TOTAL . '"';
-        $t->assert('user text', $result, $target, TIMEOUT_LIMIT_PAGE_LONG);
+        $t->assert('user text', $result, $target, $t::TIMEOUT_LIMIT_PAGE_LONG);
 
         // create expressions for testing
         $exp = new expression($usr);
@@ -82,7 +80,7 @@ class expression_tests
         // test the expression processing of the user readable part
         $target = '"' . word_api::TN_PCT . '"';
         $result = $exp->res_part_usr();
-        $t->assert('res_part_usr for "' . $frm->usr_text . '"', $result, $target, TIMEOUT_LIMIT_LONG); // ??? why???
+        $t->assert('res_part_usr for "' . $frm->usr_text . '"', $result, $target, $t::TIMEOUT_LIMIT_LONG); // ??? why???
         $target = '( "' . formula_api::TN_READ_THIS . '" - "' . formula_api::TN_READ_PRIOR . '" ) / "' . formula_api::TN_READ_PRIOR . '"';
         $result = $exp->r_part_usr();
         $t->assert('r_part_usr for "' . $frm->usr_text . '"', $result, $target);
@@ -106,7 +104,7 @@ class expression_tests
             $result = $phr_lst_res->dsp_name();
         }
         $target = '"' . word_api::TN_PCT . '"';
-        $t->assert('res_phr_lst for "' . $exp->dsp_id() . '"', $result, $target, TIMEOUT_LIMIT_LONG); // ??? why???
+        $t->assert('res_phr_lst for "' . $exp->dsp_id() . '"', $result, $target, $t::TIMEOUT_LIMIT_LONG); // ??? why???
 
         // ... and the phrases used in the formula
         $phr_lst_res = $exp_pe->phr_lst();
@@ -139,13 +137,13 @@ class expression_tests
         $phr_lst = $exp->element_special_following();
         $result = $phr_lst->dsp_name();
         $target = '"' . formula_api::TN_READ_THIS . '","' . formula_api::TN_READ_PRIOR . '"';
-        // TODO $t->assert('element_special_following for "'.$exp->dsp_id().'"', $result, $target, TIMEOUT_LIMIT_LONG);
+        // TODO $t->assert('element_special_following for "'.$exp->dsp_id().'"', $result, $target, $t::TIMEOUT_LIMIT_LONG);
 
         // test getting for special phrases the related formula
         $frm_lst = $exp->element_special_following_frm();
         $result = $frm_lst->name();
         $target = '' . formula_api::TN_READ_THIS . ',' . formula_api::TN_READ_PRIOR . '';
-        // TODO $t->assert('element_special_following_frm for "'.$exp->dsp_id().'"', $result, $target, TIMEOUT_LIMIT_LONG);
+        // TODO $t->assert('element_special_following_frm for "'.$exp->dsp_id().'"', $result, $target, $t::TIMEOUT_LIMIT_LONG);
 
     }
 

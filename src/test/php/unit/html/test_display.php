@@ -145,7 +145,7 @@ function run_display_test(test_cleanup $t): void
         $result = '';
     }
     // about does not return a page for unknown reasons at the moment
-    // $t->dsp_contains(', frontend about.php '.$result.' contains at least ' . $target, $target, $result, TIMEOUT_LIMIT_PAGE);
+    // $t->dsp_contains(', frontend about.php '.$result.' contains at least ' . $target, $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
     $is_connected = $t->dsp_web_test(
         'http/privacy_policy.html',

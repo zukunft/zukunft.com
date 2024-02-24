@@ -68,6 +68,8 @@ class value extends sandbox_value_api implements JsonSerializable
     CONST TV_CH_INHABITANTS_2020_IN_MIO = 8.505251;
     CONST TV_SHARE_PRICE = 17.08;
     CONST TV_EARNINGS_PER_SHARE = 1.22;
+    CONST TV_SALES_INCREASE_2017_FORMATTED = '90.03 %';
+    const TV_NESN_SALES_2016_FORMATTED = '89\'469';
 
     // true if the user has done no personal overwrites which is the default case
     public bool $is_std;

@@ -12,7 +12,7 @@ use cfg\triple;
 use cfg\verb;
 use test\test_cleanup;
 
-class triple_unit
+class triple_tests
 {
     function run(test_cleanup $t): void
     {

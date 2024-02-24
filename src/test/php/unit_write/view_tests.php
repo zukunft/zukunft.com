@@ -42,9 +42,6 @@ use cfg\log\change_log_table;
 use cfg\sandbox_named;
 use cfg\word;
 use test\test_cleanup;
-use const test\TIMEOUT_LIMIT_DB;
-use const test\TIMEOUT_LIMIT_DB_MULTI;
-use const test\TIMEOUT_LIMIT_LONG;
 
 class view_tests
 {
@@ -76,7 +73,7 @@ class view_tests
         // check if the view contains the word name
         $target = word_api::TN_CH;
         // TODO review and activate
-        //$t->dsp_contains(', view->display "' . $dsp->name() . '" for "' . $wrd->name() . '" contains', $target, $result, TIMEOUT_LIMIT_LONG);
+        //$t->dsp_contains(', view->display "' . $dsp->name() . '" for "' . $wrd->name() . '" contains', $target, $result, $t::TIMEOUT_LIMIT_LONG);
         // check if the view contains at least one value
         $target = 'back=' . $wrd->id() . '">8.51</a>';
         /* TODO fix the result display
@@ -99,7 +96,7 @@ class view_tests
             $result = $dsp->description;
         }
         $target = 'Just added for testing';
-        $t->display('view->save for adding "' . $dsp->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('view->save for adding "' . $dsp->name() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if the view name has been saved
         $dsp = new view($t->usr1);
@@ -123,7 +120,7 @@ class view_tests
         $result = $dsp->save();
         $target = 'A view with the name "' . view_api::TN_ADD . '" already exists. Please use another name.'; // is this error message really needed???
         $target = '';
-        $t->display('view->save adding "' . $dsp->name() . '" again', $target, $result, TIMEOUT_LIMIT_DB);
+        $t->display('view->save adding "' . $dsp->name() . '" again', $target, $result, $t::TIMEOUT_LIMIT_DB);
 
         // check if the view can be renamed
         $dsp = new view($t->usr1);
@@ -131,7 +128,7 @@ class view_tests
         $dsp->set_name(view_api::TN_RENAMED);
         $result = $dsp->save();
         $target = '';
-        $t->display('view->save rename "' . view_api::TN_ADD . '" to "' . view_api::TN_RENAMED . '".', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('view->save rename "' . view_api::TN_ADD . '" to "' . view_api::TN_RENAMED . '".', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if the view renaming was successful
         $dsp_renamed = new view($t->usr1);
@@ -158,7 +155,7 @@ class view_tests
         $dsp_renamed->type_id = $view_types->id(view_type::WORD_DEFAULT);
         $result = $dsp_renamed->save();
         $target = '';
-        $t->display('view->save all view fields beside the name for "' . view_api::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('view->save all view fields beside the name for "' . view_api::TN_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if the view parameters have been added
         $dsp_reloaded = new view($t->usr1);
@@ -192,7 +189,7 @@ class view_tests
         $dsp_usr2->type_id = $view_types->id(view_type::ENTRY);
         $result = $dsp_usr2->save();
         $target = '';
-        $t->display('view->save all view fields for user 2 beside the name for "' . view_api::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('view->save all view fields for user 2 beside the name for "' . view_api::TN_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if a user specific view changes have been saved
         $dsp_usr2_reloaded = new view($t->usr2);
@@ -221,7 +218,7 @@ class view_tests
         $dsp_usr2->type_id = $view_types->id(view_type::WORD_DEFAULT);
         $result = $dsp_usr2->save();
         $target = '';
-        $t->display('view->save undo the user view fields beside the name for "' . view_api::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('view->save undo the user view fields beside the name for "' . view_api::TN_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if a user specific view changes have been saved
         $dsp_usr2_reloaded = new view($t->usr2);

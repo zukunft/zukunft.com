@@ -39,7 +39,6 @@ use cfg\expression;
 use cfg\library;
 use cfg\term_list;
 use test\test_cleanup;
-use const test\TIMEOUT_LIMIT_LONG;
 
 class expression_tests
 {
@@ -170,7 +169,7 @@ class expression_tests
         $phr_lst = $exp->element_special_following($trm_lst);
         $result = $phr_lst->dsp_name();
         $target = '"prior","this"';
-        $t->assert('element_special_following for "' . $exp->dsp_id() . '"', $result, $target, TIMEOUT_LIMIT_LONG);
+        $t->assert('element_special_following for "' . $exp->dsp_id() . '"', $result, $target, $t::TIMEOUT_LIMIT_LONG);
 
         // TODO element_special_following_frm
         //$target = '"time_prior","time_this"';

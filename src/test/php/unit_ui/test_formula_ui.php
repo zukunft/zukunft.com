@@ -33,9 +33,6 @@
 use api\formula\formula as formula_api;
 use api\word\word as word_api;
 use test\test_cleanup;
-use const test\TIMEOUT_LIMIT_PAGE;
-use const test\TIMEOUT_LIMIT_PAGE_LONG;
-use const test\TIMEOUT_LIMIT_PAGE_SEMI;
 
 function run_formula_ui_test(test_cleanup $t)
 {
@@ -49,18 +46,18 @@ function run_formula_ui_test(test_cleanup $t)
     $frm = $t->load_formula(formula_api::TN_ADD);
     $result = file_get_contents('https://zukunft.com/http/formula_add.php?word=' . $wrd_company->id() . '&back=' . $wrd_company->id() . '');
     $target = 'Add new formula for';
-    $t->dsp_contains(', frontend formula_add.php ' . $result . ' contains at least the headline', $target, $result, TIMEOUT_LIMIT_PAGE_LONG);
+    $t->dsp_contains(', frontend formula_add.php ' . $result . ' contains at least the headline', $target, $result, $t::TIMEOUT_LIMIT_PAGE_LONG);
     $target = word_api::TN_COMPANY;
-    $t->dsp_contains(', frontend formula_add.php ' . $result . ' contains at least the linked word ' . word_api::TN_COMPANY, $target, $result, TIMEOUT_LIMIT_PAGE);
+    $t->dsp_contains(', frontend formula_add.php ' . $result . ' contains at least the linked word ' . word_api::TN_COMPANY, $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
     // test the edit formula frontend
     $result = file_get_contents('https://zukunft.com/http/formula_edit.php?id=' . $frm->id() . '&back=' . $wrd_company->id());
     $target = formula_api::TN_ADD;
-    $t->dsp_contains(', frontend formula_edit.php ' . $result . ' contains at least ' . $frm->name(), $target, $result, TIMEOUT_LIMIT_PAGE_SEMI);
+    $t->dsp_contains(', frontend formula_edit.php ' . $result . ' contains at least ' . $frm->name(), $target, $result, $t::TIMEOUT_LIMIT_PAGE_SEMI);
 
     // test the del formula frontend
     $result = file_get_contents('https://zukunft.com/http/formula_del.php?id=' . $frm->id() . '&back=' . $wrd_company->id());
     $target = formula_api::TN_ADD;
-    $t->dsp_contains(', frontend formula_del.php ' . $result . ' contains at least ' . $frm->name(), $target, $result, TIMEOUT_LIMIT_PAGE);
+    $t->dsp_contains(', frontend formula_del.php ' . $result . ' contains at least ' . $frm->name(), $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
 }

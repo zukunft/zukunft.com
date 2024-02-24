@@ -42,8 +42,6 @@ use cfg\result\result;
 use cfg\result\result_list;
 use cfg\value\value;
 use test\test_cleanup;
-use const test\TIMEOUT_LIMIT_LONG;
-use const test\TIMEOUT_LIMIT_PAGE;
 
 class result_tests
 {
@@ -76,7 +74,7 @@ class result_tests
         // TODO review
         $target = result_api::TV_INCREASE_LONG;
         // TODO activate Prio 1
-        //$t->display('value->val_formatted ex time for ' . $phr_lst->dsp_id() . ' (group id ' . $ch_up_grp->id() . ')', $target, $result, TIMEOUT_LIMIT_LONG);
+        //$t->display('value->val_formatted ex time for ' . $phr_lst->dsp_id() . ' (group id ' . $ch_up_grp->id() . ')', $target, $result, $t::TIMEOUT_LIMIT_LONG);
 
         // test load result with time
         $phr_lst->add_name(word_api::TN_2020);
@@ -127,7 +125,7 @@ class result_tests
         }
         $target = 8505.251;
         // TODO activate Prio 1
-        //$t->display('value->val_scaling for a tern list ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
+        //$t->display('value->val_scaling for a tern list ' . $phr_lst->dsp_id(), $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
         // test getting the "best guess" value
         // e.g. if ABB,Sales,2014 is requested, but there is only a value for ABB,Sales,2014,CHF,million get it
@@ -144,7 +142,7 @@ class result_tests
         if ($result != $target) {
             $target = 0.007871833296164;
         }
-        $t->display('value->load the best guess for ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
+        $t->display('value->load the best guess for ' . $phr_lst->dsp_id(), $target, $result, $t::TIMEOUT_LIMIT_PAGE);
         */
 
         /*
@@ -174,7 +172,7 @@ class result_tests
         $res_lst->load_by_obj($frm);
         $result = $res_lst->dsp_id();
         $target = '0.0078';
-        $t->dsp_contains(', result_list->load of the formula results for ' . $frm->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, TIMEOUT_LIMIT_PAGE);
+        $t->dsp_contains(', result_list->load of the formula results for ' . $frm->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
         // load results by phrase group
         $grp = $t->load_phrase_group(array(word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_IN_K));
@@ -182,14 +180,14 @@ class result_tests
         $res_lst->load_by_obj($grp);
         $result = $res_lst->dsp_id();
         $target = '8505.251';
-        $t->dsp_contains(', result_list->load of the formula results for ' . $grp->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, TIMEOUT_LIMIT_PAGE);
+        $t->dsp_contains(', result_list->load of the formula results for ' . $grp->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
         // ... and also with time selection
         $grp = $t->load_phrase_group(array(word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_IN_K, word_api::TN_2020));
         $res_lst = new result_list($usr);
         $res_lst->load_by_obj($grp);
         $result = $res_lst->dsp_id();
-        $t->dsp_contains(', result_list->load of the formula results for ' . $grp->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, TIMEOUT_LIMIT_PAGE);
+        $t->dsp_contains(', result_list->load of the formula results for ' . $grp->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
         // load results by source phrase group
         $grp = $t->load_phrase_group(array(word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_MIO));
@@ -197,14 +195,14 @@ class result_tests
         $res_lst->load_by_obj($grp, true);
         $result = $res_lst->dsp_id();
         $target = '0.0078';
-        $t->dsp_contains(', result_list->load of the formula results for source ' . $grp->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, TIMEOUT_LIMIT_PAGE);
+        $t->dsp_contains(', result_list->load of the formula results for source ' . $grp->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
         // ... and also with time selection
         $time_phr = $t->load_phrase(word_api::TN_2020);
         $res_lst = new result_list($usr);
         $res_lst->load_by_obj($grp, true);
         $result = $res_lst->dsp_id();
-        $t->dsp_contains(', result_list->load of the formula results for ' . $grp->dsp_id() . ' and ' . $time_phr->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, TIMEOUT_LIMIT_PAGE);
+        $t->dsp_contains(', result_list->load of the formula results for ' . $grp->dsp_id() . ' and ' . $time_phr->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
         // load results by word id
         $wrd = $t->load_word(word_api::TN_INHABITANTS);
@@ -212,7 +210,7 @@ class result_tests
         $res_lst->load_by_obj($wrd);
         $result = $res_lst->dsp_id();
         $target = '0.0078';
-        $t->dsp_contains(', result_list->load of the formula results for ' . $grp->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, TIMEOUT_LIMIT_PAGE);
+        $t->dsp_contains(', result_list->load of the formula results for ' . $grp->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
         // TODO add PE frm test
         //$frm = $t->load_formula(TF_PE);
@@ -222,7 +220,7 @@ class result_tests
         $result = $res_lst->dsp_id();
         $target = '"Sales","' . word_api::TN_PCT . '","increase","' . word_api::TN_RENAMED . '","2017"';
         $target = word_api::TN_INHABITANTS;
-        $t->dsp_contains(', result_list->load of the formula results for ' . $frm->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, TIMEOUT_LIMIT_PAGE);
+        $t->dsp_contains(', result_list->load of the formula results for ' . $frm->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
     }
 

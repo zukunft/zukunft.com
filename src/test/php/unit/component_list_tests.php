@@ -38,7 +38,7 @@ use cfg\component\component_list;
 use cfg\db\sql_db;
 use test\test_cleanup;
 
-class component_list_unit
+class component_list_tests
 {
     function run(test_cleanup $t): void
     {

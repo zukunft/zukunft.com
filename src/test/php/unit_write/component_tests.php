@@ -40,8 +40,6 @@ use cfg\log\change_log_table;
 use cfg\component\component_type;
 use cfg\sandbox_named;
 use test\test_cleanup;
-use const test\TIMEOUT_LIMIT_DB_MULTI;
-use const test\TIMEOUT_LIMIT_LONG;
 
 class component_tests
 {
@@ -69,7 +67,7 @@ class component_tests
         $result = $cmp->display($wrd);
         // check if the component contains the word name
         $target = word_api::TN_ABB;
-        test_show_contains(', component->display "'.$cmp->name.'" for "'.$wrd->name.'" contains', $target, $result, TIMEOUT_LIMIT_LONG);
+        test_show_contains(', component->display "'.$cmp->name.'" for "'.$wrd->name.'" contains', $target, $result, $t::TIMEOUT_LIMIT_LONG);
         // check if the component contains at least one value
         $target = '45548';
         test_show_contains(', component->display "'.$cmp->name.'" for "'.$wrd->name.'" contains', $target, $result);
@@ -88,7 +86,7 @@ class component_tests
             $result = $cmp->description;
         }
         $target = 'Just added for testing';
-        $t->display('component->save for adding "' . $cmp->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('component->save for adding "' . $cmp->name() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if the component name has been saved
         $cmp_added = new component($t->usr1);
@@ -114,7 +112,7 @@ class component_tests
         $target = 'A view component with the name "' . component_api::TN_ADD . '" already exists. Please use another name.';
         // for the standard settings
         $target = '';
-        $t->display('component->save adding "' . $cmp->name() . '" again', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('component->save adding "' . $cmp->name() . '" again', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if the component can be renamed
         $cmp = new component($t->usr1);
@@ -122,7 +120,7 @@ class component_tests
         $cmp->set_name(component_api::TN_RENAMED);
         $result = $cmp->save();
         $target = '';
-        $t->display('component->save rename "' . component_api::TN_ADD . '" to "' . component_api::TN_RENAMED . '".', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('component->save rename "' . component_api::TN_ADD . '" to "' . component_api::TN_RENAMED . '".', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if the component renaming was successful
         $cmp_renamed = new component($t->usr1);
@@ -151,7 +149,7 @@ class component_tests
         $cmp_renamed->type_id = $component_types->id(component_type::PHRASE_NAME);
         $result = $cmp_renamed->save();
         $target = '';
-        $t->display('component->save all component fields beside the name for "' . component_api::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_LONG);
+        $t->display('component->save all component fields beside the name for "' . component_api::TN_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_LONG);
 
         // check if the component parameters have been added
         $cmp_reloaded = new component($t->usr1);
@@ -184,7 +182,7 @@ class component_tests
         $cmp_usr2->type_id = $component_types->id(component_type::FORMULAS);
         $result = $cmp_usr2->save();
         $target = '';
-        $t->display('component->save all component fields for user 2 beside the name for "' . component_api::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('component->save all component fields for user 2 beside the name for "' . component_api::TN_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if a user specific component changes have been saved
         $cmp_usr2_reloaded = new component($t->usr2);
@@ -213,7 +211,7 @@ class component_tests
         $cmp_usr2->type_id = $component_types->id(component_type::PHRASE_NAME);
         $result = $cmp_usr2->save();
         $target = '';
-        $t->display('component->save undo the user component fields beside the name for "' . component_api::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('component->save undo the user component fields beside the name for "' . component_api::TN_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if a user specific component changes have been saved
         $cmp_usr2_reloaded = new component($t->usr2);

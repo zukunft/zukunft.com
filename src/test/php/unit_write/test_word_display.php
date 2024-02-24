@@ -38,13 +38,11 @@ use api\phrase\phrase as phrase_api;
 use api\word\triple as triple_api;
 use api\word\word as word_api;
 use cfg\foaf_direction;
-use html\html_selector;
 use html\word\word as word_dsp;
 use cfg\library;
 use cfg\verb;
 use cfg\word;
 use test\test_cleanup;
-use const test\TIMEOUT_LIMIT_PAGE;
 
 function run_word_display_test(test_cleanup $t): void
 {
@@ -133,8 +131,8 @@ function run_word_display_test(test_cleanup $t): void
     $target = word_api::TN_ZH;
     // TODO add a sample
     //$result = $wrd_ZH->dsp_val_list($wrd_year, $wrd_year->is_mainly(), 0);
-    //$t->display('word_dsp->dsp_val_list compare to old for '.$wrd_ZH->name, $target, $result, TIMEOUT_LIMIT_PAGE);
-    //$t->dsp_contains(', word_dsp->dsp_val_list compare to old for ' . $wrd_ZH->name(), $target, $result, TIMEOUT_LIMIT_PAGE);
+    //$t->display('word_dsp->dsp_val_list compare to old for '.$wrd_ZH->name, $target, $result, $t::TIMEOUT_LIMIT_PAGE);
+    //$t->dsp_contains(', word_dsp->dsp_val_list compare to old for ' . $wrd_ZH->name(), $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
     // the value table for Company
     /*

@@ -40,7 +40,6 @@ use cfg\component\component;
 use cfg\component_link;
 use cfg\view;
 use test\test_cleanup;
-use const test\TIMEOUT_LIMIT_DB_MULTI;
 
 class component_link_tests
 {
@@ -58,7 +57,7 @@ class component_link_tests
         $order_nbr = $cmp->next_nbr($dsp->id());
         $result = $cmp->link($dsp, $order_nbr);
         $target = '';
-        $t->display('view component_link->link "' . $dsp->name() . '" to "' . $cmp->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('view component_link->link "' . $dsp->name() . '" to "' . $cmp->name() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // ... check the correct logging
         $log = new change_log_link($t->usr1);
@@ -91,7 +90,7 @@ class component_link_tests
         $dsp->load_by_name(view_api::TN_RENAMED, view::class);
         $result = $cmp->unlink($dsp);
         $target = '';
-        $t->display('view component_link->unlink "' . $dsp->name() . '" from "' . $cmp->name() . '" by user "' . $t->usr2->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('view component_link->unlink "' . $dsp->name() . '" from "' . $cmp->name() . '" by user "' . $t->usr2->name . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // ... check if the removal of the link for the second user has been logged
         $log = new change_log_link($t->usr2);
@@ -125,7 +124,7 @@ class component_link_tests
         // if the first user also removes the link, both records should be deleted
         $result = $cmp->unlink($dsp);
         $target = '';
-        $t->display('view component_link->unlink "' . $dsp->name() . '" from "' . $cmp->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('view component_link->unlink "' . $dsp->name() . '" from "' . $cmp->name() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check the correct logging
         $log = new change_log_link($t->usr1);
@@ -160,19 +159,19 @@ class component_link_tests
             $result = $cmp2->description;
         }
         $target = 'Just added a second view component for testing';
-        $t->display('component->save for adding a second one "' . $cmp2->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('component->save for adding a second one "' . $cmp2->name() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // insert the link again for the first user
         $order_nbr = $cmp->next_nbr($dsp->id());
         $result = $cmp->link($dsp, $order_nbr);
         $target = '';
-        $t->display('view component_link->link_dsp again for user 1 "' . $dsp->name() . '" to "' . $cmp->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('view component_link->link_dsp again for user 1 "' . $dsp->name() . '" to "' . $cmp->name() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // add a second element for the first user to test the order change
         $order_nbr2 = $cmp2->next_nbr($dsp->id());
         $result = $cmp2->link($dsp, $order_nbr2);
         $target = '';
-        $t->display('view component_link->link_dsp the second for user 1 "' . $dsp->name() . '" to "' . $cmp2->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('view component_link->link_dsp the second for user 1 "' . $dsp->name() . '" to "' . $cmp2->name() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if the order of the view components are correct for the first user
         if (isset($dsp)) {
@@ -185,7 +184,7 @@ class component_link_tests
                     $target = component_api::TN_ADD2;
                 }
                 $result = $entry->component()->name();
-                $t->display('view component order for user 1', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+                $t->display('view component order for user 1', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
                 $pos = $pos + 1;
             }
         }
@@ -201,7 +200,7 @@ class component_link_tests
                     $target = component_api::TN_ADD2;
                 }
                 $result = $entry->component()->name();
-                $t->display('view component order for user 2', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+                $t->display('view component order for user 2', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
                 $pos = $pos + 1;
             }
         }
@@ -214,7 +213,7 @@ class component_link_tests
             //$result = $cmp_lnk->move_up(); // TODO force to reload the entry list
             $target = true;
             // TODO activate Prio 2
-            //$t->display('view component order changed for user 2', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+            //$t->display('view component order changed for user 2', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
         }
 
         // check if the order of the view components is changed for the second user
@@ -234,7 +233,7 @@ class component_link_tests
                     $target = component_api::TN_ADD2;
                 }
                 $result = $entry->component()->name();
-                $t->display('view component order for user 2', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+                $t->display('view component order for user 2', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
                 $pos = $pos + 1;
             }
         }
@@ -250,7 +249,7 @@ class component_link_tests
                     $target = component_api::TN_ADD2;
                 }
                 $result = $entry->component()->name();
-                $t->display('view component order for user 1', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+                $t->display('view component order for user 1', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
                 $pos = $pos + 1;
             }
         }
@@ -273,12 +272,12 @@ class component_link_tests
         // unlink the first component
         $result = $cmp->unlink($dsp);
         $target = '';
-        $t->display('view component_link->unlink again first component "' . $dsp->name() . '" from "' . $cmp->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('view component_link->unlink again first component "' . $dsp->name() . '" from "' . $cmp->name() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // unlink the second component
         $result = $cmp2->unlink($dsp);
         $target = '';
-        $t->display('view component_link->unlink again second component "' . $dsp->name() . '" from "' . $cmp2->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('view component_link->unlink again second component "' . $dsp->name() . '" from "' . $cmp2->name() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
 
         // the code changes and tests for view component link should be moved the component_link

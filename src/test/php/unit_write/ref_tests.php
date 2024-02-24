@@ -37,7 +37,6 @@ use cfg\ref_type;
 use cfg\ref_type_list;
 use cfg\ref;
 use test\test_cleanup;
-use const test\TIMEOUT_LIMIT_PAGE_LONG;
 
 class ref_tests
 {
@@ -62,7 +61,7 @@ class ref_tests
         $ref->load_by_link_ids($wrd->phrase()->id(), $ref_type->id());
         $result = $ref->external_key;
         $target = ref::TEST_REF_NAME;
-        $t->display('ref->load "' . word_api::TN_ADD . '" in ' . ref_type::WIKIDATA, $target, $result, TIMEOUT_LIMIT_PAGE_LONG);
+        $t->display('ref->load "' . word_api::TN_ADD . '" in ' . ref_type::WIKIDATA, $target, $result, $t::TIMEOUT_LIMIT_PAGE_LONG);
 
         if ($ref->id() > 0) {
             // load by id and test the loading of the objects
@@ -70,10 +69,10 @@ class ref_tests
             $ref2->load_by_id($ref->id());
             $result = $ref2->phr->name();
             $target = word_api::TN_ADD;
-            $t->display('ref->load_object word', $target, $result, TIMEOUT_LIMIT_PAGE_LONG);
+            $t->display('ref->load_object word', $target, $result, $t::TIMEOUT_LIMIT_PAGE_LONG);
             $result = $ref2->ref_type->name;
             $target = ref_type::WIKIDATA;
-            $t->display('ref->load_object type', $target, $result, TIMEOUT_LIMIT_PAGE_LONG);
+            $t->display('ref->load_object type', $target, $result, $t::TIMEOUT_LIMIT_PAGE_LONG);
         }
 
     }

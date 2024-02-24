@@ -99,7 +99,7 @@ class test_cleanup extends test_api
                         $msg = $val->del();
                         $result .= $msg->get_last_message();
                         $target = '';
-                        $this->display('value->del test value for "' . word_api::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+                        $this->display('value->del test value for "' . word_api::TN_RENAMED . '"', $target, $result, self::TIMEOUT_LIMIT_DB_MULTI);
                     }
                 }
             }
@@ -149,14 +149,14 @@ class test_cleanup extends test_api
         if ($dsp_usr2->id() > 0 and $cmp_usr2->id() > 0) {
             $result .= $cmp_usr2->unlink($dsp_usr2);
             $target = '';
-            $this->display('cleanup: unlink first component "' . $cmp_usr2->name() . '" from "' . $dsp_usr2->name() . '" for user 2', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+            $this->display('cleanup: unlink first component "' . $cmp_usr2->name() . '" from "' . $dsp_usr2->name() . '" for user 2', $target, $result, self::TIMEOUT_LIMIT_DB_MULTI);
         }
 
         // check if the test components have been unlinked
         if ($dsp->id() > 0 and $cmp->id() > 0) {
             $result .= $cmp->unlink($dsp);
             $target = '';
-            $this->display('cleanup: unlink first component "' . $cmp->name() . '" from "' . $dsp->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+            $this->display('cleanup: unlink first component "' . $cmp->name() . '" from "' . $dsp->name() . '"', $target, $result, self::TIMEOUT_LIMIT_DB_MULTI);
         }
 
         // unlink the second component
@@ -166,14 +166,14 @@ class test_cleanup extends test_api
         if ($dsp->id() > 0 and $cmp2->id() > 0) {
             $result .= $cmp2->unlink($dsp);
             $target = '';
-            $this->display('cleanup: unlink second component "' . $cmp2->name() . '" from "' . $dsp->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+            $this->display('cleanup: unlink second component "' . $cmp2->name() . '" from "' . $dsp->name() . '"', $target, $result, self::TIMEOUT_LIMIT_DB_MULTI);
         }
 
         // unlink the second component for user 2
         if ($dsp_usr2->id() > 0 and $cmp2_usr2->id() > 0) {
             $result .= $cmp2_usr2->unlink($dsp_usr2);
             $target = '';
-            $this->display('cleanup: unlink second component "' . $cmp2_usr2->name() . '" from "' . $dsp_usr2->name() . '" for user 2', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+            $this->display('cleanup: unlink second component "' . $cmp2_usr2->name() . '" from "' . $dsp_usr2->name() . '" for user 2', $target, $result, self::TIMEOUT_LIMIT_DB_MULTI);
         }
 
         // request to delete the added test views
@@ -209,7 +209,7 @@ class test_cleanup extends test_api
             $msg = $cmp_usr2->del();
             $result .= $msg->get_last_message();
             $target = '';
-            $this->display('cleanup: del of first component "' . component_api::TN_ADD . '" for user 2', $target, $result, TIMEOUT_LIMIT_DB);
+            $this->display('cleanup: del of first component "' . component_api::TN_ADD . '" for user 2', $target, $result, self::TIMEOUT_LIMIT_DB);
         }
 
         // reload the first test view component
@@ -223,7 +223,7 @@ class test_cleanup extends test_api
             $msg = $cmp->del();
             $result .= $msg->get_last_message();
             $target = '';
-            $this->display('cleanup: del of first component "' . component_api::TN_ADD . '"', $target, $result, TIMEOUT_LIMIT_DB);
+            $this->display('cleanup: del of first component "' . component_api::TN_ADD . '"', $target, $result, self::TIMEOUT_LIMIT_DB);
         }
 
         // reload the second test view component
@@ -234,7 +234,7 @@ class test_cleanup extends test_api
             $msg = $cmp2->del();
             $result .= $msg->get_last_message();
             $target = '';
-            $this->display('cleanup: del of second component "' . component_api::TN_ADD2 . '"', $target, $result, TIMEOUT_LIMIT_DB);
+            $this->display('cleanup: del of second component "' . component_api::TN_ADD2 . '"', $target, $result, self::TIMEOUT_LIMIT_DB);
         }
 
         // request to delete the second added test view component for user 2
@@ -242,7 +242,7 @@ class test_cleanup extends test_api
             $msg = $cmp2_usr2->del();
             $result .= $msg->get_last_message();
             $target = '';
-            $this->display('cleanup: del of second component "' . component_api::TN_ADD2 . '" for user 2', $target, $result, TIMEOUT_LIMIT_DB);
+            $this->display('cleanup: del of second component "' . component_api::TN_ADD2 . '" for user 2', $target, $result, self::TIMEOUT_LIMIT_DB);
         }
 
         // reload the test view for user 2
@@ -256,7 +256,7 @@ class test_cleanup extends test_api
             $msg = $dsp_usr2->del();
             $result .= $msg->get_last_message();
             $target = '';
-            $this->display('cleanup: del of view "' . view_api::TN_ADD . '" for user 2', $target, $result, TIMEOUT_LIMIT_DB);
+            $this->display('cleanup: del of view "' . view_api::TN_ADD . '" for user 2', $target, $result, self::TIMEOUT_LIMIT_DB);
         }
 
         // reload the test view
@@ -270,7 +270,7 @@ class test_cleanup extends test_api
             $msg = $dsp->del();
             $result .= $msg->get_last_message();
             $target = '';
-            $this->display('cleanup: del of view "' . view_api::TN_ADD . '"', $target, $result, TIMEOUT_LIMIT_DB);
+            $this->display('cleanup: del of view "' . view_api::TN_ADD . '"', $target, $result, self::TIMEOUT_LIMIT_DB);
         }
 
         // request to delete the added test views
@@ -290,7 +290,7 @@ class test_cleanup extends test_api
             $msg = $src->del();
             $result .= $msg->get_last_message();
             $target = '';
-            $this->display('source->del of "' . source_api::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB);
+            $this->display('source->del of "' . source_api::TN_RENAMED . '"', $target, $result, self::TIMEOUT_LIMIT_DB);
         }
 
         // request to delete the added test sources
@@ -345,8 +345,8 @@ class test_cleanup extends test_api
         $this->del_triple(word_api::TN_2020, verb::FOLLOW, word_api::TN_2019);
         $this->del_triple(word_api::TN_2021, verb::FOLLOW, word_api::TN_2020);
         $this->del_triple(word_api::TN_2022, verb::FOLLOW, word_api::TN_2021);
-        $this->del_triple(word_api::TN_CASH_FLOW, verb::IS, word_api::TN_FIN_REPORT);
-        $this->del_triple(word_api::TN_TAX_REPORT, verb::IS_PART_OF, word_api::TN_CASH_FLOW);
+        $this->del_triple(word_api::TWN_CASH_FLOW, verb::IS, word_api::TN_FIN_REPORT);
+        $this->del_triple(word_api::TN_TAX_REPORT, verb::IS_PART_OF, word_api::TWN_CASH_FLOW);
         $this->del_triple(word_api::TN_CASH, verb::IS_PART_OF, word_api::TN_ASSETS_CURRENT);
         $this->del_triple(word_api::TN_ASSETS_CURRENT, verb::IS_PART_OF, word_api::TN_ASSETS);
         $this->del_triple(word_api::TN_SECTOR, verb::CAN_CONTAIN, word_api::TN_ENERGY);
@@ -368,7 +368,7 @@ class test_cleanup extends test_api
             $msg = $wrd->del();
             $result .= $msg->get_last_message();
             $target = '';
-            $this->display('word->del of "' . word_api::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB);
+            $this->display('word->del of "' . word_api::TN_RENAMED . '"', $target, $result, self::TIMEOUT_LIMIT_DB);
         }
 
         // request to delete the added test words

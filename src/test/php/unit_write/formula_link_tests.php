@@ -43,8 +43,6 @@ use cfg\formula_link_list;
 use cfg\phrase;
 use cfg\phrase_list;
 use test\test_cleanup;
-use const test\TIMEOUT_LIMIT_DB_MULTI;
-use const test\TIMEOUT_LIMIT_PAGE_LONG;
 
 class formula_link_tests
 {
@@ -62,7 +60,7 @@ class formula_link_tests
         $phr->load_by_name(word_api::TN_RENAMED);
         $result = $frm->link_phr($phr);
         $target = '';
-        $t->display('formula_link->link_phr "' . $phr->name() . '" to "' . $frm->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('formula_link->link_phr "' . $phr->name() . '" to "' . $frm->name() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // ... check the correct logging
         $log = new change_log_link($t->usr1);
@@ -130,7 +128,7 @@ class formula_link_tests
         $phr->load_by_name(word_api::TN_RENAMED);
         $result = $frm->unlink_phr($phr);
         $target = '';
-        $t->display('formula_link->unlink_phr "' . $phr->name() . '" from "' . $frm->name() . '" by user "' . $t->usr2->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('formula_link->unlink_phr "' . $phr->name() . '" from "' . $frm->name() . '" by user "' . $t->usr2->name . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // ... check if the removal of the link for the second user has been logged
         $log = new change_log_link($t->usr2);
@@ -166,7 +164,7 @@ class formula_link_tests
         // if the first user also removes the link, both records should be deleted
         $result = $frm->unlink_phr($phr);
         $target = '';
-        $t->display('formula_link->unlink_phr "' . $phr->name() . '" from "' . $frm->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('formula_link->unlink_phr "' . $phr->name() . '" from "' . $frm->name() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check the correct logging
         $log = new change_log_link($t->usr1);
@@ -194,7 +192,7 @@ class formula_link_tests
         $phr->load_by_name(word::TEST_NAME_CHANGED);
         $result = $frm->link_phr($phr);
         $target = '1';
-        $t->display('formula_link->link_phr "'.$phr->name().'" to "'.$frm->name.'"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('formula_link->link_phr "'.$phr->name().'" to "'.$frm->name.'"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
         */
 
         // ... if the second user changes the link
@@ -229,7 +227,7 @@ class formula_link_tests
         $phr_lst->load_names_by_ids($phr_ids);
         $result = $phr_lst->dsp_id();
         $target = word_api::TN_YEAR;
-        $t->dsp_contains(', formula_link_list->load phrase linked to ' . $frm->dsp_id() . '', $target, $result, TIMEOUT_LIMIT_PAGE_LONG);
+        $t->dsp_contains(', formula_link_list->load phrase linked to ' . $frm->dsp_id() . '', $target, $result, $t::TIMEOUT_LIMIT_PAGE_LONG);
 
     }
 

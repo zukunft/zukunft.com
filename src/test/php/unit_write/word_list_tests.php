@@ -40,7 +40,6 @@ use cfg\library;
 use cfg\verb;
 use cfg\word_list;
 use test\test_cleanup;
-use const test\TIMEOUT_LIMIT_DB;
 
 class word_list_tests
 {
@@ -69,7 +68,7 @@ class word_list_tests
         $wrd_lst->load();
         $result = $lib->dsp_array($wrd_lst->names());
         $target = "million,Sales,wrd"; // order adjusted based on the number of usage
-        $t->assert('word_list->load by word group id for "'.$wrd_grp_id.'"', $result, $target, TIMEOUT_LIMIT_DB_MULTI); */
+        $t->assert('word_list->load by word group id for "'.$wrd_grp_id.'"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI); */
 
         // test add by verb e.g. "Zurich" "is a" "Canton", "City" or "Company"
         $wrd_lst = new word_list($usr);
@@ -137,7 +136,7 @@ class word_list_tests
 
         // test "contains" e.g. "Cash Flow Statement contains Taxes and ..."
         $wrd_lst = new word_list($usr);
-        $wrd_lst->load_by_names(array(word_api::TN_CASH_FLOW));
+        $wrd_lst->load_by_names(array(word_api::TWN_CASH_FLOW));
         $lst_contains = $wrd_lst->contains();
         $wrd = $t->load_word(word_api::TN_TAX_REPORT);
         $result = $lst_contains->does_contain($wrd);
@@ -149,9 +148,9 @@ class word_list_tests
         $wrd_lst = new word_list($usr);
         $wrd_lst->load_by_names(array(word_api::TN_FIN_REPORT));
         $lst_related = $wrd_lst->are_and_contains();
-        $wrd_cf = $t->load_word(word_api::TN_CASH_FLOW);
+        $wrd_cf = $t->load_word(word_api::TWN_CASH_FLOW);
         $result = $lst_related->does_contain($wrd_cf);
-        $t->assert('word_list->contains "' . implode('","', $wrd_lst->names()) . '", which contains ' . word_api::TN_CASH_FLOW, $result, true);
+        $t->assert('word_list->contains "' . implode('","', $wrd_lst->names()) . '", which contains ' . word_api::TWN_CASH_FLOW, $result, true);
         $wrd_tax = $t->load_word(word_api::TN_TAX_REPORT);
         $result = $lst_related->does_contain($wrd_tax);
         $t->assert('word_list->contains "' . implode('","', $wrd_lst->names()) . '", which contains ' . word_api::TN_TAX_REPORT, $result, true);
@@ -217,7 +216,7 @@ class word_list_tests
 
         // test "has_measure" for CHF is supposed to be true
         $wrd_lst = new word_list($usr);
-        $wrd_lst->load_by_names(array(word_api::TN_CHF));
+        $wrd_lst->load_by_names(array(word_api::TWN_CHF));
         $result = $wrd_lst->has_measure();
         $t->assert('word_list->has_measure ' . $wrd_lst->dsp_id(), $result, true);
 
@@ -255,20 +254,20 @@ class word_list_tests
 
         // exclude types
         $wrd_lst = new word_list($usr);
-        $wrd_lst->load_by_names(array(word_api::TN_ZH, word_api::TN_2021, word_api::TN_CHF, word_api::TN_MIO));
+        $wrd_lst->load_by_names(array(word_api::TN_ZH, word_api::TN_2021, word_api::TWN_CHF, word_api::TN_MIO));
         $wrd_lst_ex = clone $wrd_lst;
         $wrd_lst_ex->ex_time();
         $result = $wrd_lst_ex->name();
-        $target = '"' . word_api::TN_MIO . '","' . word_api::TN_CHF . '","' . word_api::TN_ZH . '"'; // the creation should be tested, but how?
+        $target = '"' . word_api::TN_MIO . '","' . word_api::TWN_CHF . '","' . word_api::TN_ZH . '"'; // the creation should be tested, but how?
         $t->display('word_list->ex_time for ' . $wrd_lst->name(), $target, $result);
 
         // add a test value
-        $t->test_value(array(word_api::TN_ZH, word_api::TN_2021, word_api::TN_CHF, word_api::TN_MIO), value_api::TV_INT);
-        $t->test_value(array(word_api::TN_CANTON, word_api::TN_2021, word_api::TN_CHF, word_api::TN_MIO), value_api::TV_FLOAT);
+        $t->test_value(array(word_api::TN_ZH, word_api::TN_2021, word_api::TWN_CHF, word_api::TN_MIO), value_api::TV_INT);
+        $t->test_value(array(word_api::TN_CANTON, word_api::TN_2021, word_api::TWN_CHF, word_api::TN_MIO), value_api::TV_FLOAT);
 
         // test group id
         $wrd_lst = new word_list($usr);
-        $wrd_lst->load_by_names(array(word_api::TN_ZH, word_api::TN_2021, word_api::TN_CHF, word_api::TN_MIO));
+        $wrd_lst->load_by_names(array(word_api::TN_ZH, word_api::TN_2021, word_api::TWN_CHF, word_api::TN_MIO));
         $grp = new group($usr);
         $grp->load_by_phr_lst($wrd_lst->phrase_lst());
         $result = $grp->get_id();
@@ -291,7 +290,7 @@ class word_list_tests
 
         // test another group value
         $wrd_lst = new word_list($usr);
-        $wrd_lst->load_by_names(array(word_api::TN_CANTON, word_api::TN_2021, word_api::TN_CHF, word_api::TN_MIO));
+        $wrd_lst->load_by_names(array(word_api::TN_CANTON, word_api::TN_2021, word_api::TWN_CHF, word_api::TN_MIO));
         $val = $wrd_lst->value();
         $result = $val->number();
         $target = value_api::TV_FLOAT;
@@ -303,7 +302,7 @@ class word_list_tests
         $abb_last_year = $wrd_lst->assume_time();
         $result = $abb_last_year->name();
         $target = word_api::TN_2021;
-        $t->display('word_list->assume_time for ' . $wrd_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_DB);
+        $t->display('word_list->assume_time for ' . $wrd_lst->dsp_id(), $target, $result, $t::TIMEOUT_LIMIT_DB);
 
 
         // word sort
@@ -343,7 +342,7 @@ class word_list_tests
         $wrd_lst->diff($del_wrd_lst);
         $result = $wrd_lst->names();
         $target = array("April", "December", "February", "January", "March", "November", "October", "September");
-        $t->display('word_list->diff of ' . $wrd_lst->dsp_id() . ' with ' . $del_wrd_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_DB);
+        $t->display('word_list->diff of ' . $wrd_lst->dsp_id() . ' with ' . $del_wrd_lst->dsp_id(), $target, $result, $t::TIMEOUT_LIMIT_DB);
 
     }
 

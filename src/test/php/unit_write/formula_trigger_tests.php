@@ -38,9 +38,6 @@ use api\word\word as word_api;
 use cfg\phrase_list;
 use cfg\value\value;
 use test\test_cleanup;
-use const test\TIMEOUT_LIMIT_DB_MULTI;
-use const test\TIMEOUT_LIMIT_LONG;
-use const test\TV_TEST_SALES_INCREASE_2017_FORMATTED;
 
 class formula_trigger_tests
 {
@@ -78,13 +75,13 @@ class formula_trigger_tests
         $added_val->load_by_grp($phr_lst1->get_grp_id());
         $result = $added_val->number();
         $target = value_api::TV_CH_INHABITANTS_2019_IN_MIO;
-        $t->display('value->check added test value for "' . $phr_lst1->dsp_id() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('value->check added test value for "' . $phr_lst1->dsp_id() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
         // check if the second number have been saved correctly
         $added_val2 = new value($usr);
         $added_val2->load_by_grp($phr_lst2->get_grp_id());
         $result = $added_val2->number();
         $target = value_api::TV_CH_INHABITANTS_2020_IN_MIO;
-        $t->display('value->check added test value for "' . $phr_lst2->dsp_id() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('value->check added test value for "' . $phr_lst2->dsp_id() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if requesting the best number for the first number returns a useful value
         $best_val = new value($usr);
@@ -92,14 +89,14 @@ class formula_trigger_tests
         $best_val->load_best();
         $result = $best_val->number();
         $target = value_api::TV_CH_INHABITANTS_2019_IN_MIO;
-        $t->display('value->check best value for "' . $phr_lst1->dsp_id() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('value->check best value for "' . $phr_lst1->dsp_id() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
         // check if requesting the best number for the second number returns a useful value
         $best_val2 = new value($usr);
         $best_val2->grp = $phr_lst2->get_grp_id();
         $best_val2->load_best();
         $result = $best_val2->number();
         $target = value_api::TV_CH_INHABITANTS_2020_IN_MIO;
-        $t->display('value->check best value for "' . $phr_lst2->dsp_id() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('value->check best value for "' . $phr_lst2->dsp_id() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // calculate the increase and check the result
         $res_lst = $frm->calc($phr_lst2);
@@ -114,12 +111,12 @@ class formula_trigger_tests
             $result = '';
         }
         // TODO check why the data in PROD is strange
-        if ($result == TV_TEST_SALES_INCREASE_2017_FORMATTED) {
-            $target = TV_TEST_SALES_INCREASE_2017_FORMATTED;
+        if ($result == value_api::TV_SALES_INCREASE_2017_FORMATTED) {
+            $target = value_api::TV_SALES_INCREASE_2017_FORMATTED;
         } else {
             $target = "0.79 %";
         }
-        $t->display('formula result for ' . $frm->dsp_id() . ' from ' . $phr_lst1->dsp_id() . ' to ' . $phr_lst2->dsp_id() . '', $target, $result, TIMEOUT_LIMIT_LONG);
+        $t->display('formula result for ' . $frm->dsp_id() . ' from ' . $phr_lst1->dsp_id() . ' to ' . $phr_lst2->dsp_id() . '', $target, $result, $t::TIMEOUT_LIMIT_LONG);
 
         // remove the test values
         $val_add1->del();

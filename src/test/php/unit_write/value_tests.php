@@ -46,7 +46,6 @@ use cfg\log\change_log_table;
 use cfg\library;
 use cfg\phrase_list;
 use test\test_cleanup;
-use const test\TIMEOUT_LIMIT_DB_MULTI;
 
 class value_tests
 {
@@ -123,7 +122,7 @@ class value_tests
                 $result = $val->check();
                 $target = true;
             }
-            $t->display(', value->check for value id "' . $ch_inhabitants->id() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+            $t->display(', value->check for value id "' . $ch_inhabitants->id() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
         }
 
         // test another rebuild_grp_id by value id
@@ -151,10 +150,10 @@ class value_tests
         }
         if (!$chk_val->is_id_set()) {
             $result = 'No value found for ' . $chk_phr_grp->dsp_id() . '.';
-            $t->display(', value->check for value id "' . $chk_phr_grp->dsp_id() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+            $t->display(', value->check for value id "' . $chk_phr_grp->dsp_id() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
         } else {
             $result = $chk_val->check();
-            $t->display(', value->check for value id "' . $chk_phr_grp->dsp_id() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+            $t->display(', value->check for value id "' . $chk_phr_grp->dsp_id() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
             // ... and check the number
             $result = $chk_val->number();
@@ -279,7 +278,7 @@ class value_tests
         $add_val->set_number(value_api::TV_BIG);
         $result = $add_val->save();
         $target = '';
-        $t->display(', value->save ' . $add_val->number() . ' for ' . $phr_grp->dsp_id() . ' by user "' . $t->usr1->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display(', value->save ' . $add_val->number() . ' for ' . $phr_grp->dsp_id() . ' by user "' . $t->usr1->name . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
         $test_val_lst[] = $add_val->id();
 
 
@@ -299,7 +298,7 @@ class value_tests
         $added_val->load_by_grp($phr_grp);
         $result = $added_val->number();
         $target = '123456789';
-        $t->display(', value->load the value previous saved for "' . $phr_grp->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display(', value->load the value previous saved for "' . $phr_grp->name() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
         // remember the added value id to be able to remove the test
         $added_val_id = $added_val->id();
         $test_val_lst[] = $added_val->id();
@@ -311,7 +310,7 @@ class value_tests
         $add_val2->set_number(value_api::TV_BIGGER);
         $result = $add_val2->save();
         $target = '';
-        $t->display(', value->save ' . $add_val2->number() . ' for ' . $phr_grp2->name() . ' by user "' . $t->usr1->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display(', value->save ' . $add_val2->number() . ' for ' . $phr_grp2->name() . ' by user "' . $t->usr1->name . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // test if a value with time stamp can be saved
         /*
@@ -322,7 +321,7 @@ class value_tests
         $add_val_ts->time_stamp = new DateTime('2020-05-15');
         $result = $add_val_ts->save();
         $target = '';
-        $t->display(', value->save ' . $add_val_ts->number() . ' for ' . $phr_lst_ts->name() . ' and ' . $add_val_ts->time_stamp->format(DateTimeInterface::ATOM) . ' by user "' . $t->usr1->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display(', value->save ' . $add_val_ts->number() . ' for ' . $phr_lst_ts->name() . ' and ' . $add_val_ts->time_stamp->format(DateTimeInterface::ATOM) . ' by user "' . $t->usr1->name . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
         */
 
         // ... check if the value adding has been logged
@@ -341,7 +340,7 @@ class value_tests
         $added_val2->load_by_grp($phr_grp2);
         $result = $added_val2->number();
         $target = '234567890';
-        $t->display(', value->load the value previous saved for "' . $phr_grp2->name() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display(', value->load the value previous saved for "' . $phr_grp2->name() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
         // remember the added value id to be able to remove the test
         $test_val_lst[] = $added_val2->id();
 
@@ -351,7 +350,7 @@ class value_tests
         $added_val->set_number(987654321);
         $result = $added_val->save();
         $target = '';
-        $t->display(', word->save update value id "' . $added_val_id . '" from  "' . $add_val->number() . '" to "' . $added_val->number() . '".', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display(', word->save update value id "' . $added_val_id . '" from  "' . $add_val->number() . '" to "' . $added_val->number() . '".', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // ... check if the value change has been logged
         if ($added_val->is_id_set()) {
@@ -369,7 +368,7 @@ class value_tests
         $added_val->load_by_id($added_val_id);
         $result = $added_val->number();
         $target = '987654321';
-        $t->display(', value->load the value previous updated for "' . word_api::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display(', value->load the value previous updated for "' . word_api::TN_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if a user specific value is created if another user changes the value
         $val_usr2 = new value($t->usr2);
@@ -377,7 +376,7 @@ class value_tests
         $val_usr2->set_number(23456);
         $result = $val_usr2->save();
         $target = '';
-        $t->display(', value->save ' . $val_usr2->number() . ' for ' . $phr_lst->name() . ' and user "' . $t->usr2->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display(', value->save ' . $val_usr2->number() . ' for ' . $phr_lst->name() . ' and user "' . $t->usr2->name . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // ... check if the value change for the other user has been logged
         $val_usr2 = new value($t->usr2);
@@ -397,14 +396,14 @@ class value_tests
         $added_val_usr2->load_by_grp($phr_grp);
         $result = $added_val_usr2->number();
         $target = '23456';
-        $t->display(', value->load the value previous updated for "' . $phr_grp->name() . '" by user "' . $t->usr2->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display(', value->load the value previous updated for "' . $phr_grp->name() . '" by user "' . $t->usr2->name . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // ... check if the value for the original user remains unchanged
         $added_val = new value($t->usr1);
         $added_val->load_by_grp($phr_grp);
         $result = $added_val->number();
         $target = '987654321';
-        $t->display(', value->load for user "' . $t->usr1->name . '" is still', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display(', value->load for user "' . $t->usr1->name . '" is still', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if undo all specific changes removes the user value
         $added_val_usr2 = new value($t->usr2);
@@ -412,7 +411,7 @@ class value_tests
         $added_val_usr2->set_number(987654321);
         $result = $added_val_usr2->save();
         $target = '';
-        $t->display(', value->save change to ' . $val_usr2->number() . ' for ' . $phr_grp->name() . ' and user "' . $t->usr2->name . '" should undo the user change', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display(', value->save change to ' . $val_usr2->number() . ' for ' . $phr_grp->name() . ' and user "' . $t->usr2->name . '" should undo the user change', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // ... check if the value change for the other user has been logged
         $val_usr2 = new value($t->usr2);
@@ -432,7 +431,7 @@ class value_tests
         $added_val_usr2->load_by_grp($phr_grp);
         $result = $added_val_usr2->number();
         $target = '987654321';
-        $t->display(', value->load the value previous updated for "' . $phr_grp->name() . '" by user "' . $t->usr2->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display(', value->load the value previous updated for "' . $phr_grp->name() . '" by user "' . $t->usr2->name . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // test adding a value
         // if the word is not used, the user can add or remove words
@@ -444,12 +443,12 @@ class value_tests
         $added_val->id = $added_val_id;
         $added_val->usr = $t->usr1;
         $added_val->load();
-        $wrd_to_del = load_word(TW_CHF);
+        $wrd_to_del = load_word(word_api::TN_CHF);
         $result = $added_val->del_wrd($wrd_to_del->id);
         $wrd_lst = $added_val->wrd_lst;
-        $result = $wrd_lst->does_contain(TW_CHF);
+        $result = $wrd_lst->does_contain(word_api::TN_CHF);
         $target = false;
-        $t->display(', value->add_wrd has "'.TW_CHF.'" been removed from the word list of the value', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display(', value->add_wrd has "'.word_api::TN_CHF.'" been removed from the word list of the value', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // test to link an additional word to a value
         $added_val = New value;
@@ -463,7 +462,7 @@ class value_tests
         // does the word list contain TW_EUR
         $result = $wrd_lst->does_contain(TW_EUR);
         $target = true;
-        $t->display(', value->add_wrd has "'.TW_EUR.'" been added to the word list of the value', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display(', value->add_wrd has "'.TW_EUR.'" been added to the word list of the value', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
         */
 
 
@@ -553,13 +552,13 @@ class value_tests
         // add some simple number for formula testing
         $t->test_value(array(
             word_api::TN_SHARE,
-            word_api::TN_CHF
+            word_api::TWN_CHF
         ),
             value_api::TV_SHARE_PRICE);
 
         $t->test_value(array(
             word_api::TN_EARNING,
-            word_api::TN_CHF
+            word_api::TWN_CHF
         ),
             value_api::TV_EARNINGS_PER_SHARE);
 

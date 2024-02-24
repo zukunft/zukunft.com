@@ -2041,7 +2041,7 @@ class create_test_objects extends test_base
             }
         }
 
-        $this->display('test_triple', $target, $result_text, TIMEOUT_LIMIT_DB);
+        $this->display('test_triple', $target, $result_text, self::TIMEOUT_LIMIT_DB);
         return $result;
     }
 

@@ -47,11 +47,6 @@ use cfg\triple;
 use cfg\verb;
 use cfg\word;
 use test\test_cleanup;
-use const test\TIMEOUT_LIMIT;
-use const test\TIMEOUT_LIMIT_DB;
-use const test\TIMEOUT_LIMIT_DB_MULTI;
-use const test\TW_2017;
-use const test\TW_CHF;
 
 class word_tests
 {
@@ -88,13 +83,13 @@ class word_tests
         $t->assert('word->is_measure for ' . word_api::TN_2021, $result, false);
 
         // is measure
-        $wrd_measure = $t->test_word(word_api::TN_CHF, phrase_type::MEASURE);
+        $wrd_measure = $t->test_word(word_api::TWN_CHF, phrase_type::MEASURE);
         $result = $wrd_measure->is_measure();
-        $t->assert('word->is_measure for ' . word_api::TN_CHF, $result, true);
+        $t->assert('word->is_measure for ' . word_api::TWN_CHF, $result, true);
 
         // is not scaling
         $result = $wrd_measure->is_scaling();
-        $t->assert('word->is_scaling for ' . word_api::TN_CHF, $result, false);
+        $t->assert('word->is_scaling for ' . word_api::TWN_CHF, $result, false);
 
         // is scaling
         $wrd_scaling = $t->test_word(word_api::TN_MIO, phrase_type::SCALING);
@@ -137,7 +132,7 @@ class word_tests
             $result = '';
         }
         $t->assert('word->children for "' . word_api::TN_PARENT . '"', $result, $target,
-            TIMEOUT_LIMIT_DB, 'out of ' . $phr_lst->dsp_id());
+            $t::TIMEOUT_LIMIT_DB, 'out of ' . $phr_lst->dsp_id());
 
         // ... word children excluding the start word, so the list of children should not include the parent
         // e.g. the list of Cantons does not include the word Canton itself
@@ -148,7 +143,7 @@ class word_tests
             $result = '';
         }
         $t->assert('word->children for "' . word_api::TN_PARENT . '" excluding the start word', $result, $target,
-            TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
+            $t::TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
 
         // TODO move read only tests like this to the db read or unit tests
         // word are, which includes all words related to the parent
@@ -161,7 +156,7 @@ class word_tests
         } else {
             $result = '';
         }
-        $t->display('word->are for "' . word_api::TN_PARENT . '"', $target, $result, TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
+        $t->display('word->are for "' . word_api::TN_PARENT . '"', $target, $result, $t::TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
 
         // ... word are including the start word
         // e.g. to get also formulas related to Cantons all formulas related to "Zurich (Canton)" and the word "Canton" itself must be selected
@@ -171,7 +166,7 @@ class word_tests
         } else {
             $result = '';
         }
-        $t->display('word->are for "' . word_api::TN_PARENT . '" including the start word', $target, $result, TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
+        $t->display('word->are for "' . word_api::TN_PARENT . '" including the start word', $target, $result, $t::TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
 
         // word parents
         $phr_lst = $wrd_read->parents();
@@ -181,7 +176,7 @@ class word_tests
         } else {
             $result = '';
         }
-        $t->display('word->parents for "' . word_api::TN_READ . '"', $target, $result, TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
+        $t->display('word->parents for "' . word_api::TN_READ . '"', $target, $result, $t::TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
 
         // ... word parents excluding the start word
         $target = '';
@@ -190,7 +185,7 @@ class word_tests
         } else {
             $result = '';
         }
-        $t->display('word->parents for "' . word_api::TN_READ . '" excluding the start word', $target, $result, TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
+        $t->display('word->parents for "' . word_api::TN_READ . '" excluding the start word', $target, $result, $t::TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
 
         // create category test words for "Zurich is a Canton" and "Zurich is a City"
         // which implies that Canton contains Zurich and City contains Zurich
@@ -210,7 +205,7 @@ class word_tests
         } else {
             $result = '';
         }
-        $t->display('word->is "' . word_api::TN_ZH . '"', $target, $result, TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
+        $t->display('word->is "' . word_api::TN_ZH . '"', $target, $result, $t::TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
 
         // ... and Zurich is a City
         $target = $wrd_city->name();
@@ -220,7 +215,7 @@ class word_tests
         } else {
             $result = '';
         }
-        $t->display('word->and is "' . word_api::TN_ZH . '"', $target, $result, TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
+        $t->display('word->and is "' . word_api::TN_ZH . '"', $target, $result, $t::TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
 
         // ... word is including the start word
         $target = $wrd_ZH->name();
@@ -229,18 +224,18 @@ class word_tests
         } else {
             $result = '';
         }
-        $t->display('word->is for "' . word_api::TN_ZH . '" including the start word', $target, $result, TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
+        $t->display('word->is for "' . word_api::TN_ZH . '" including the start word', $target, $result, $t::TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
 
         // create the test words and relations for a parent child relation without inheritance
         // e.g. ...
-        $wrd_cf = $t->test_word(word_api::TN_CASH_FLOW);
+        $wrd_cf = $t->test_word(word_api::TWN_CASH_FLOW);
         $wrd_tax = $t->test_word(word_api::TN_TAX_REPORT);
-        $t->test_triple(word_api::TN_TAX_REPORT, verb::IS_PART_OF, word_api::TN_CASH_FLOW);
+        $t->test_triple(word_api::TN_TAX_REPORT, verb::IS_PART_OF, word_api::TWN_CASH_FLOW);
 
         // create the test words and relations many mixed relations
         // e.g. a financial report
         $t->test_word(word_api::TN_FIN_REPORT);
-        $t->test_triple(word_api::TN_CASH_FLOW, verb::IS, word_api::TN_FIN_REPORT);
+        $t->test_triple(word_api::TWN_CASH_FLOW, verb::IS, word_api::TN_FIN_REPORT);
 
         // create the test words and relations for multi level contains
         // e.g. assets contain current assets which contains cash
@@ -266,7 +261,7 @@ class word_tests
         } else {
             $result = '';
         }
-        $t->display('word->is_part for "' . word_api::TN_TAX_REPORT . '"', $target, $result, TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
+        $t->display('word->is_part for "' . word_api::TN_TAX_REPORT . '"', $target, $result, $t::TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
 
         // save a new word
         $wrd_new = new word($t->usr1);
@@ -274,14 +269,14 @@ class word_tests
         $result = $wrd_new->save();
         //$target = 'A word with the name "'.word::TEST_NAME_READ.'" already exists. Please use another name.';
         $target = '';
-        $t->display('word->save for "' . word_api::TN_READ . '"', $target, $result, TIMEOUT_LIMIT_DB);
+        $t->display('word->save for "' . word_api::TN_READ . '"', $target, $result, $t::TIMEOUT_LIMIT_DB);
 
         // test the creation of a new word
         $wrd_add = new word($t->usr1);
         $wrd_add->set_name(word_api::TN_ADD);
         $result = $wrd_add->save();
         $target = '';
-        $t->display('word->save for "' . word_api::TN_ADD . '"', $target, $result, TIMEOUT_LIMIT_DB);
+        $t->display('word->save for "' . word_api::TN_ADD . '"', $target, $result, $t::TIMEOUT_LIMIT_DB);
 
         // check that the word name cannot be used for a verb, triple or formula anymore
         $vrb = new verb();
@@ -337,7 +332,7 @@ class word_tests
         $wrd_added->set_name(word_api::TN_RENAMED);
         $result = $wrd_added->save();
         $target = '';
-        $t->display('word->save rename "' . word_api::TN_ADD . '" to "' . word_api::TN_RENAMED . '".', $target, $result, TIMEOUT_LIMIT_DB);
+        $t->display('word->save rename "' . word_api::TN_ADD . '" to "' . word_api::TN_RENAMED . '".', $target, $result, $t::TIMEOUT_LIMIT_DB);
 
         // check if the word renaming was successful
         $wrd_renamed = new word($t->usr1);
@@ -365,7 +360,7 @@ class word_tests
         $result = $wrd_renamed->save();
         $target = '';
         $t->display('word->save all word fields beside the name for "' . word_api::TN_RENAMED . '"',
-            $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+            $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if the word parameters have been added
         $wrd_reloaded = $t->load_word(word_api::TN_RENAMED);
@@ -405,7 +400,7 @@ class word_tests
         $wrd_usr2->type_id = $phrase_types->id(phrase_type::TIME);
         $result = $wrd_usr2->save();
         $target = '';
-        $t->display('word->save all word fields for user 2 beside the name for "' . word_api::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('word->save all word fields for user 2 beside the name for "' . word_api::TN_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if a user specific word changes have been saved
         $wrd_usr2_reloaded = new word($t->usr2);
@@ -442,7 +437,7 @@ class word_tests
         $wrd_usr2->type_id = $phrase_types->id(phrase_type::OTHER);
         $result = $wrd_usr2->save();
         $target = '';
-        $t->display('word->save undo the user word fields beside the name for "' . word_api::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('word->save undo the user word fields beside the name for "' . word_api::TN_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if a user specific word changes have been saved
         $wrd_usr2_reloaded = new word($t->usr2);

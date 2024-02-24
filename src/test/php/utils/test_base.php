@@ -55,6 +55,7 @@ namespace test;
 include_once MODEL_USER_PATH . 'user.php';
 include_once DB_PATH . 'sql_table_type.php';
 
+use api\word\word as word_api;
 use cfg\db\sql;
 use cfg\db\sql as sql_creator;
 use cfg\db\sql_par;
@@ -307,48 +308,6 @@ Setting that should be moved to the system config table
 const TEST_EMAIL = FALSE; // if set to true an email will be sent in case of errors and once a day an "everything fine" email is send
 
 
-// TODO move the test names to the single objects and check for reserved names to avoid conflicts
-// some test words used for testing
-const TW_VESTAS = "Vestas";
-const TW_SALES = "Sales";
-const TW_CHF = "CHF";
-const TW_YEAR = "Year";
-const TW_2013 = "2013";
-const TW_2014 = "2014";
-const TW_2017 = "2017";
-const TW_MIO = "million";
-const TW_CF = "cash flow statement";
-const TW_TAX = "Income taxes";
-
-// some test phrases used for testing
-const TP_ABB = "ABB (Company)";
-const TP_FOLLOW = "2014 is follower of 2013";
-const TP_TAXES = "Income taxes is part of cash flow statement";
-
-// some formula parameter used for testing
-const TF_SECTOR = "sectorweight";
-
-// some numbers used to test the program
-const TV_TEST_SALES_INCREASE_2017_FORMATTED = '90.03 %';
-const TV_NESN_SALES_2016_FORMATTED = '89\'469';
-
-// some source used to test the program
-const TS_IPCC_AR6_SYNTHESIS = 'IPCC AR6 Synthesis Report: Climate Change 2022';
-const TS_IPCC_AR6_SYNTHESIS_URL = 'https://www.ipcc.ch/report/sixth-assessment-report-cycle/';
-const TS_NESN_2016_NAME = 'Nestlé Financial Statement 2016';
-
-
-// max time expected for each function execution
-const TIMEOUT_LIMIT = 0.03; // time limit for normal functions
-const TIMEOUT_LIMIT_PAGE = 0.1;  // time limit for complete webpage
-const TIMEOUT_LIMIT_PAGE_SEMI = 0.6;  // time limit for complete webpage
-const TIMEOUT_LIMIT_PAGE_LONG = 1.2;  // time limit for complete webpage
-const TIMEOUT_LIMIT_DB = 0.2;  // time limit for database modification functions
-const TIMEOUT_LIMIT_DB_MULTI = 0.9;  // time limit for many database modifications
-const TIMEOUT_LIMIT_LONG = 3;    // time limit for complex functions
-const TIMEOUT_LIMIT_IMPORT = 12;    // time limit for complex import tests in seconds
-
-
 // ---------------------------
 // function to support testing
 // ---------------------------
@@ -420,38 +379,6 @@ class test_base
 
     // switch for the email testing
     const TEST_EMAIL = FALSE; // if set to true an email will be sent in case of errors and once a day an "everything fine" email is send
-
-
-    // TODO move the test names to the single objects and check for reserved names to avoid conflicts
-    // some test words used for testing
-    const TW_VESTAS = "Vestas";
-    const TW_SALES = "Sales";
-    const TW_CHF = "CHF";
-    const TW_YEAR = "Year";
-    const TW_2013 = "2013";
-    const TW_2014 = "2014";
-    const TW_2017 = "2017";
-    const TW_MIO = "million";
-    const TW_CF = "cash flow statement";
-    const TW_TAX = "Income taxes";
-
-    // some test phrases used for testing
-    const TP_ABB = "ABB (Company)";
-    const TP_FOLLOW = "2014 is follower of 2013";
-    const TP_TAXES = "Income taxes is part of cash flow statement";
-
-    // some formula parameter used for testing
-    const TF_SECTOR = "sectorweight";
-
-    // some numbers used to test the program
-    const TV_TEST_SALES_INCREASE_2017_FORMATTED = '90.03 %';
-    const TV_NESN_SALES_2016_FORMATTED = '89\'469';
-
-    // some source used to test the program
-    const TS_IPCC_AR6_SYNTHESIS = 'IPCC AR6 Synthesis Report: Climate Change 2022';
-    const TS_IPCC_AR6_SYNTHESIS_URL = 'https://www.ipcc.ch/report/sixth-assessment-report-cycle/';
-    const TS_NESN_2016_NAME = 'Nestlé Financial Statement 2016';
-
 
     // max time expected for each function execution
     const TIMEOUT_LIMIT = 0.03; // time limit for normal functions
@@ -563,7 +490,7 @@ class test_base
         string            $test_name,
         string|array|null $result,
         string|array|null $target = '',
-        float             $exe_max_time = TIMEOUT_LIMIT,
+        float             $exe_max_time = self::TIMEOUT_LIMIT,
         string            $comment = '',
         string            $test_type = ''): bool
     {
@@ -617,7 +544,7 @@ class test_base
         string $msg,
         string $haystack,
         string $needle,
-        float  $exe_max_time = TIMEOUT_LIMIT,
+        float  $exe_max_time = self::TIMEOUT_LIMIT,
         string $comment = '',
         string $test_type = ''): bool
     {
@@ -644,7 +571,7 @@ class test_base
         string $msg,
         int    $min,
         int    $actual,
-        float  $exe_max_time = TIMEOUT_LIMIT,
+        float  $exe_max_time = self::TIMEOUT_LIMIT,
         string $comment = '',
         string $test_type = ''): bool
     {
@@ -673,7 +600,7 @@ class test_base
         string       $msg,
         array        $haystack,
         array|string $needle,
-        float        $exe_max_time = TIMEOUT_LIMIT,
+        float        $exe_max_time = self::TIMEOUT_LIMIT,
         string       $comment = '',
         string       $test_type = ''): bool
     {
@@ -702,7 +629,7 @@ class test_base
         string       $msg,
         array        $haystack,
         array|string $needle,
-        float        $exe_max_time = TIMEOUT_LIMIT,
+        float        $exe_max_time = self::TIMEOUT_LIMIT,
         string       $comment = '',
         string       $test_type = ''): bool
     {
@@ -1990,7 +1917,7 @@ class test_base
         string       $test_name,
         string|array $target,
         string|array $result,
-        float        $exe_max_time = TIMEOUT_LIMIT,
+        float        $exe_max_time = self::TIMEOUT_LIMIT,
         string       $comment = '',
         string       $test_type = ''): bool
     {
@@ -2082,7 +2009,7 @@ class test_base
         string|array|null $target = '',
         string|array|null $result = '',
         string            $diff_msg = '',
-        float             $exe_max_time = TIMEOUT_LIMIT): bool
+        float             $exe_max_time = self::TIMEOUT_LIMIT): bool
     {
         // calculate the execution time
         $final_msg = '';
@@ -2144,7 +2071,7 @@ class test_base
         string $test_text,
         string $target,
         string $result,
-        float  $exe_max_time = TIMEOUT_LIMIT,
+        float  $exe_max_time = self::TIMEOUT_LIMIT,
         string $comment = ''): bool
     {
         if (!str_contains($result, $target) and $result != '' and $target != '') {
@@ -2165,7 +2092,7 @@ class test_base
                 $this->dsp_warning($msg_net_off);
                 $is_connected = false;
             } else {
-                $this->dsp_contains($msg, $must_contain, $result, TIMEOUT_LIMIT_PAGE_SEMI);
+                $this->dsp_contains($msg, $must_contain, $result, self::TIMEOUT_LIMIT_PAGE_SEMI);
             }
         }
         return $is_connected;
@@ -2416,7 +2343,7 @@ function zu_test_time_setup(test_cleanup $t): string
         for ($year = $start_year; $year <= $end_year; $year++) {
             $this_year = $year;
             $t->test_word(strval($this_year));
-            $wrd_lnk = $t->test_triple(TW_YEAR, verb::IS, $this_year);
+            $wrd_lnk = $t->test_triple(word_api::TN_YEAR, verb::IS, $this_year);
             $result = $wrd_lnk->name();
             if ($prev_year <> '') {
                 $t->test_triple($prev_year, verb::FOLLOW, $this_year);

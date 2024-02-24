@@ -39,7 +39,6 @@ use cfg\group\group;
 use cfg\phrase_list;
 use cfg\word_list;
 use test\test_cleanup;
-use const test\TIMEOUT_LIMIT_PAGE;
 
 class phrase_group_tests
 {
@@ -104,7 +103,7 @@ class phrase_group_tests
         if ($result > 0) {
             $target = $result;
         }
-        $t->display('phrase_group->load by ids for ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
+        $t->display('phrase_group->load by ids for ' . $phr_lst->dsp_id(), $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
         // test names
         $result = implode(",", $zh_city_grp->names());
@@ -119,7 +118,7 @@ class phrase_group_tests
         $grp_check->set_id($grp->id());
         $result = $grp_check->load_link_ids_for_testing();
         $target = $grp->phrase_list()->id_lst();
-        $t->display('phrase_group->load_link_ids for ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
+        $t->display('phrase_group->load_link_ids for ' . $phr_lst->dsp_id(), $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
         // second test if the phrase group links are correctly recreated when a group is updated
         $phr_lst = new phrase_list($usr);
@@ -129,7 +128,7 @@ class phrase_group_tests
         $grp_check->set_id($grp->id());
         $result = $grp_check->load_link_ids_for_testing();
         $target = $grp->phrase_list()->id_lst();
-        $t->display('phrase_group->load_link_ids for ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
+        $t->display('phrase_group->load_link_ids for ' . $phr_lst->dsp_id(), $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
         // test value
         // test value_scaled

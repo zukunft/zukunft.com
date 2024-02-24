@@ -37,7 +37,6 @@ use cfg\group\group_list;
 use cfg\phrase_list;
 use cfg\word_list;
 use test\test_cleanup;
-use const test\TIMEOUT_LIMIT_PAGE;
 
 class phrase_group_list_tests
 {
@@ -75,7 +74,7 @@ class phrase_group_list_tests
         $target = word_api::TN_CH . ',' . word_api::TN_INHABITANTS . ',' . word_api::TN_MIO .
             ' and ' . word_api::TN_CANTON . ',' . word_api::TN_ZH . ',' . word_api::TN_INHABITANTS . ',' . word_api::TN_MIO .
             ' and ' . word_api::TN_CITY . ',' . word_api::TN_ZH . ',' . word_api::TN_INHABITANTS . ',' . word_api::TN_MIO;
-        $t->display('phrase_group_list->add of ' . $country_grp->dsp_id() . ', ' . $country_grp->dsp_id() . ', ' . $city_grp->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
+        $t->display('phrase_group_list->add of ' . $country_grp->dsp_id() . ', ' . $country_grp->dsp_id() . ', ' . $city_grp->dsp_id(), $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
 
         // test getting the common phrases of several group

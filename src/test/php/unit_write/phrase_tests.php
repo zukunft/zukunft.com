@@ -42,9 +42,6 @@ use cfg\verb;
 use cfg\word;
 use test\test_cleanup;
 use html\phrase\phrase as phrase_dsp;
-use const test\TIMEOUT_LIMIT_PAGE;
-use const test\TIMEOUT_LIMIT_PAGE_SEMI;
-use const test\TW_VESTAS;
 
 class phrase_tests
 {
@@ -108,7 +105,7 @@ class phrase_tests
         $target = triple_api::TN_ZH_COMPANY;
         $t->dsp_contains(', phrase->dsp_selector ' . $result . ' with ' .
             triple_api::TN_ZH_COMPANY . ' selected contains ' .
-            triple_api::TN_ZH_COMPANY, $target, $result, TIMEOUT_LIMIT_PAGE);
+            triple_api::TN_ZH_COMPANY, $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
         // test the phrase selector for the word company
         $wrd = new word($usr);
@@ -121,10 +118,10 @@ class phrase_tests
         $target = $trp_ins->name();
         $t->dsp_contains(', phrase->dsp_selector of type ' . word_api::TN_COMPANY . ' is : ' .
             $result . ' which contains ' . triple_api::TN_ZH_COMPANY,
-            $target, $result, TIMEOUT_LIMIT_PAGE_SEMI);
+            $target, $result, $t::TIMEOUT_LIMIT_PAGE_SEMI);
 
         // test getting the parent for phrase Vestas
-        $phr = $t->load_phrase(TW_VESTAS);
+        $phr = $t->load_phrase(word_api::TN_VESTAS);
         $is_phr = $phr->is_mainly();
         if ($is_phr != null) {
             $result = $is_phr->name();

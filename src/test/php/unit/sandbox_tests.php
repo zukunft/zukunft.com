@@ -32,10 +32,13 @@
 
 namespace unit;
 
+include_once API_WORD_PATH . 'word.php';
 include_once MODEL_REF_PATH . 'source.php';
 include_once MODEL_GROUP_PATH . 'group.php';
 include_once MODEL_VALUE_PATH . 'value.php';
 
+use api\word\word as word_api;
+use api\ref\source as source_api;
 use cfg\component\component;
 use cfg\config;
 use cfg\db\sql;
@@ -55,8 +58,6 @@ use cfg\verb;
 use cfg\view;
 use cfg\word;
 use test\test_cleanup;
-use const test\TS_IPCC_AR6_SYNTHESIS;
-use const test\TW_MIO;
 
 global $db_con;
 
@@ -76,9 +77,9 @@ class sandbox_tests
 
         // test if two sources are supposed to be the same
         $src1 = new source($usr);
-        $src1->set(1, TS_IPCC_AR6_SYNTHESIS);
+        $src1->set(1, source_api::TN_IPCC_AR6_SYNTHESIS);
         $src2 = new source($usr);
-        $src2->set(2, TS_IPCC_AR6_SYNTHESIS);
+        $src2->set(2, source_api::TN_IPCC_AR6_SYNTHESIS);
         $result = $src1->is_same($src2);
         $t->assert("are two sources supposed to be the same", $result, true);
 
@@ -89,18 +90,18 @@ class sandbox_tests
         // a source can have the same name as a word
         $wrd1 = new word($usr);
         $wrd1->set_id( 1);
-        $wrd1->set_name(TS_IPCC_AR6_SYNTHESIS);
+        $wrd1->set_name(source_api::TN_IPCC_AR6_SYNTHESIS);
         $src2 = new source($usr);
         $src2->set_id( 2);
-        $src2->set_name(TS_IPCC_AR6_SYNTHESIS);
+        $src2->set_name(source_api::TN_IPCC_AR6_SYNTHESIS);
         $result = $wrd1->is_same($src2);
         $t->assert("a source is not the same as a word even if they have the same name", $result, false);
 
         // but a formula should not have the same name as a word
         $wrd = new word($usr);
-        $wrd->set_name(TW_MIO);
+        $wrd->set_name(word_api::TN_MIO);
         $frm = new formula($usr);
-        $frm->set_name(TW_MIO);
+        $frm->set_name(word_api::TN_MIO);
         $result = $wrd->is_similar($frm);
         $t->assert("a formula should not have the same name as a word", $result, true);
 

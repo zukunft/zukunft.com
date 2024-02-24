@@ -39,8 +39,6 @@ use cfg\log\change_log_table;
 use cfg\sandbox_named;
 use cfg\source;
 use test\test_cleanup;
-use const test\TIMEOUT_LIMIT_DB;
-use const test\TIMEOUT_LIMIT_DB_MULTI;
 
 class source_tests
 {
@@ -66,7 +64,7 @@ class source_tests
         $src_add->set_name(source_api::TN_ADD);
         $result = $src_add->save();
         $target = '';
-        $t->display('source->save for "' . source_api::TN_ADD . '"', $target, $result, TIMEOUT_LIMIT_DB);
+        $t->display('source->save for "' . source_api::TN_ADD . '"', $target, $result, $t::TIMEOUT_LIMIT_DB);
 
         // ... check if the source creation has been logged
         if ($src_add->id() > 0) {
@@ -92,7 +90,7 @@ class source_tests
         $src_added->set_name(source_api::TN_RENAMED);
         $result = $src_added->save();
         $target = '';
-        $t->display('source->save rename "' . source_api::TN_ADD . '" to "' . source_api::TN_RENAMED . '".', $target, $result, TIMEOUT_LIMIT_DB);
+        $t->display('source->save rename "' . source_api::TN_ADD . '" to "' . source_api::TN_RENAMED . '".', $target, $result, $t::TIMEOUT_LIMIT_DB);
 
         // check if the source renaming was successful
         $src_renamed = new source($t->usr1);
@@ -118,7 +116,7 @@ class source_tests
         $src_renamed->description = source_api::TD_ADD;
         $result = $src_renamed->save();
         $target = '';
-        $t->display('source->save all source fields beside the name for "' . source_api::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('source->save all source fields beside the name for "' . source_api::TN_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if the source parameters have been added
         $src_reloaded = $t->load_source(source_api::TN_RENAMED);
@@ -151,7 +149,7 @@ class source_tests
         $src_usr2->description = source_api::TEST_DESCRIPTION_CHANGED;
         $result = $src_usr2->save();
         $target = '';
-        $t->display('source->save all source fields for user 2 beside the name for "' . source_api::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('source->save all source fields for user 2 beside the name for "' . source_api::TN_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if a user specific source changes have been saved
         $src_usr2_reloaded = new source($t->usr2);
@@ -179,7 +177,7 @@ class source_tests
         $src_usr2->description = source_api::TD_ADD;
         $result = $src_usr2->save();
         $target = '';
-        $t->display('source->save undo the user source fields beside the name for "' . source_api::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('source->save undo the user source fields beside the name for "' . source_api::TN_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if a user specific source changes have been saved
         $src_usr2_reloaded = new source($t->usr2);
