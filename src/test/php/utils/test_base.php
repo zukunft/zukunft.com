@@ -46,7 +46,6 @@
 
 */
 
-// TODO move the names and values for testing to the single objects and check that they cannot be used by an user
 // TODO add checks that all id (name or link) changing return the correct error message if the new id already exists
 // TODO build a cascading test classes and split the classes to sections less than 1000 lines of code
 
@@ -295,64 +294,6 @@ include_once $path_dev . 'test_legacy.php';
 // TODO to be dismissed
 include_once WEB_USER_PATH . 'user_display_old.php';
 
-// the fixed system user used for testing
-const TEST_USER_ID = "2";
-const TEST_USER_DESCRIPTION = "standard user view for all users";
-const TEST_USER_IP = "66.249.64.95"; // used to check the blocking of an IP address
-
-/*
-Setting that should be moved to the system config table
-*/
-
-// switch for the email testing
-const TEST_EMAIL = FALSE; // if set to true an email will be sent in case of errors and once a day an "everything fine" email is send
-
-
-// ---------------------------
-// function to support testing
-// ---------------------------
-
-
-/**
- * highlight the first difference between two string
- * @param string|null $from the expected text
- * @param string|null $to the text to compare
- * @return string the first char that differs or an empty string
- */
-function str_diff(?string $from, ?string $to): string
-{
-    $result = '';
-
-    if ($from != null and $to != null) {
-        if ($from != $to) {
-            $f = str_split($from);
-            $t = str_split($to);
-
-            // add message if just one string is shorter
-            if (count($f) < count($t)) {
-                $result = 'pos ' . count($t) . ' less: ' . substr($to, count($f), count($t) - count($f));
-            } elseif (count($t) < count($f)) {
-                $result = 'pos ' . count($f) . ' additional: ' . substr($from, count($t), count($f) - count($t));
-            }
-
-            $i = 0;
-            while ($i < count($f) and $i < count($t) and $result == '') {
-                if ($f[$i] != $t[$i]) {
-                    $result = 'pos ' . $i . ': ' . $f[$i] . ' (' . ord($f[$i]) . ') != ' . $t[$i] . ' (' . ord($t[$i]) . ')';
-                    $result .= ', near ' . substr($from, $i - 10, 20);
-                }
-                $i++;
-            }
-        }
-    } elseif ($from == null and $to != null) {
-        $result = 'less: ' . $to;
-    } elseif ($from != null and $to == null) {
-        $result = 'additional: ' . $from;
-    }
-
-
-    return $result;
-}
 
 /*
  *   testing class - to check the words, values and formulas that should always be in the system
@@ -368,14 +309,10 @@ class test_base
     const FILE_EXT = '.sql';
     const FILE_MYSQL = '_mysql';
 
-    // the fixed system user used for testing
-    const TEST_USER_ID = "2";
-    const TEST_USER_DESCRIPTION = "standard user view for all users";
-    const TEST_USER_IP = "66.249.64.95"; // used to check the blocking of an IP address
 
     /*
-    Setting that should be moved to the system config table
-    */
+     * Setting that should be moved to the system config table
+     */
 
     // switch for the email testing
     const TEST_EMAIL = FALSE; // if set to true an email will be sent in case of errors and once a day an "everything fine" email is send
