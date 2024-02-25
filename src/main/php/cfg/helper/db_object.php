@@ -88,9 +88,16 @@ class db_object
      * @param bool $usr_table true if the table should save the user specific changes
      * @param array $fields array with all fields and all parameter for the table creation in a two-dimensional array
      * @param string $tbl_comment if given the comment that should be added to the sql create table statement
+     * @param bool $is_sandbox true if the standard sandbox fields should be included
      * @return string the sql statement to create the table
      */
-    function sql_table_create(sql $sc, bool $usr_table = false, array $fields = [], string $tbl_comment = ''): string
+    function sql_table_create(
+        sql    $sc,
+        bool   $usr_table = false,
+        array  $fields = [],
+        string $tbl_comment = '',
+        bool   $is_sandbox = true
+    ): string
     {
         if ($sc->get_table() == '') {
             $sc->set_class($this::class, $usr_table);
@@ -109,9 +116,10 @@ class db_object
      *
      * @param sql $sc with the target db_type set
      * @param bool $usr_table true if the table should save the user specific changes
+     * @param bool $is_sandbox true if the standard sandbox fields should be included
      * @return string the sql statement to create the table
      */
-    function sql_truncate_create(sql $sc, bool $usr_table = false): string
+    function sql_truncate_create(sql $sc, bool $usr_table = false, bool $is_sandbox = true): string
     {
         if ($sc->get_table() == '') {
             $sc->set_class($this::class, $usr_table);
@@ -125,9 +133,10 @@ class db_object
      * @param sql $sc with the target db_type set
      * @param bool $usr_table true if the table should save the user specific changes
      * @param array $fields array with all fields and all parameter for the table creation in a two-dimensional array
+     * @param bool $is_sandbox true if the standard sandbox fields should be included
      * @return string the sql statement to create the table
      */
-    function sql_index_create(sql $sc, bool $usr_table = false, array $fields = []): string
+    function sql_index_create(sql $sc, bool $usr_table = false, array $fields = [], bool $is_sandbox = true): string
     {
         if ($sc->get_table() == '') {
             $sc->set_class($this::class, $usr_table);
@@ -144,9 +153,10 @@ class db_object
      * @param sql $sc with the target db_type set
      * @param bool $usr_table true if the table should save the user specific changes
      * @param array $fields array with all fields and all parameter for the table creation in a two-dimensional array
+     * @param bool $is_sandbox true if the standard sandbox fields should be included
      * @return string the sql statement to create the table
      */
-    function sql_foreign_key_create(sql $sc, bool $usr_table = false, array $fields = []): string
+    function sql_foreign_key_create(sql $sc, bool $usr_table = false, array $fields = [], bool $is_sandbox = true): string
     {
         if ($sc->get_table() == '') {
             $sc->set_class($this::class, $usr_table);
@@ -158,9 +168,11 @@ class db_object
     }
 
     /**
+     * @param bool $usr_table create a second table for the user overwrites
+     * @param bool $is_sandbox true if the standard sandbox fields should be included
      * @return array[] with the parameters of the table fields
      */
-    private function sql_all_field_par(bool $usr_table = false): array
+    private function sql_all_field_par(bool $usr_table = false, bool $is_sandbox = true): array
     {
         $fields = [];
         if (!$usr_table) {
@@ -174,7 +186,10 @@ class db_object
         if (!$usr_table) {
             $fields = array_merge($fields, $this::FLD_LST_NON_CHANGEABLE);
         }
-        return array_merge($fields, sandbox::FLD_ALL);
+        if ($is_sandbox) {
+            $fields = array_merge($fields, sandbox::FLD_ALL);
+        }
+        return $fields;
     }
 
     /**

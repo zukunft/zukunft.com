@@ -204,59 +204,59 @@ class all_unit_tests extends test_cleanup
         $this->init_log_fields();
 
         // do the general unit tests
-        (new lib_tests )->run($this); // test functions not yet split into single unit tests
+        (new lib_tests)->run($this); // test functions not yet split into single unit tests
         (new math_tests)->run($this);
-        (new system_tests )->run($this);
-        (new system_log_tests )->run($this); // TODO add assert_api_to_dsp
-        (new change_log_tests )->run($this); // TODO add assert_api_to_dsp  // TODO for version 0.0.6 add import test
-        (new batch_job_tests )->run($this); // TODO add assert_api_to_dsp
-        (new user_tests )->run($this);
-        (new user_list_tests )->run($this);
-        (new sandbox_tests )->run($this);
-        (new language_tests )->run($this); // TODO add assert_api_to_dsp
-        (new type_tests )->run($this); // TODO add assert_api_to_dsp
+        (new system_tests)->run($this);
+        (new system_log_tests)->run($this); // TODO add assert_api_to_dsp
+        (new change_log_tests)->run($this); // TODO add assert_api_to_dsp  // TODO for version 0.0.6 add import test
+        (new batch_job_tests)->run($this); // TODO add assert_api_to_dsp
+        (new user_tests)->run($this);
+        (new user_list_tests)->run($this);
+        (new sandbox_tests)->run($this);
+        (new language_tests)->run($this); // TODO add assert_api_to_dsp
+        (new type_tests)->run($this); // TODO add assert_api_to_dsp
 
         // do the user object unit tests
-        (new word_tests )->run($this);
-        (new word_list_tests )->run($this);
-        (new verb_tests )->run($this);
-        (new triple_tests )->run($this);
-        (new triple_list_tests )->run($this);
-        (new phrase_tests )->run($this);
-        (new phrase_list_tests )->run($this);
+        (new word_tests)->run($this);
+        (new word_list_tests)->run($this);
+        (new verb_tests)->run($this);
+        (new triple_tests)->run($this);
+        (new triple_list_tests)->run($this);
+        (new phrase_tests)->run($this);
+        (new phrase_list_tests)->run($this);
         (new group_tests)->run($this); // TODO add assert_api_to_dsp
-        (new group_list_tests )->run($this); // TODO add assert_api_to_dsp
-        (new term_tests )->run($this);
-        (new term_list_tests )->run($this);
-        (new ref_tests )->run($this);
-        (new value_tests )->run($this);
-        (new value_list_tests )->run($this);
-        (new value_phrase_link_tests )->run($this);
-        (new formula_tests )->run($this);
-        (new formula_list_tests )->run($this);
-        (new formula_link_tests )->run($this); // TODO add assert_api_to_dsp
-        (new formula_element_tests )->run($this);
-        (new expression_tests )->run($this);
-        (new result_tests )->run($this);
+        (new group_list_tests)->run($this); // TODO add assert_api_to_dsp
+        (new term_tests)->run($this);
+        (new term_list_tests)->run($this);
+        (new ref_tests)->run($this);
+        (new value_tests)->run($this);
+        (new value_list_tests)->run($this);
+        (new value_phrase_link_tests)->run($this);
+        (new formula_tests)->run($this);
+        (new formula_list_tests)->run($this);
+        (new formula_link_tests)->run($this); // TODO add assert_api_to_dsp
+        (new formula_element_tests)->run($this);
+        (new expression_tests)->run($this);
+        (new result_tests)->run($this);
         (new result_list_tests)->run($this);
-        (new figure_tests )->run($this);
-        (new figure_list_tests )->run($this);
-        (new view_tests )->run($this);
-        (new view_list_tests )->run($this); // TODO add assert_api_to_dsp
+        (new figure_tests)->run($this);
+        (new figure_list_tests)->run($this);
+        (new view_tests)->run($this);
+        (new view_list_tests)->run($this); // TODO add assert_api_to_dsp
         (new component_tests ())->run($this);
         (new component_list_tests ())->run($this); // TODO add assert_api_to_dsp
-        (new component_link_tests )->run($this); // TODO add assert_api_to_dsp
-        (new component_link_list_tests )->run($this);
+        (new component_link_tests)->run($this); // TODO add assert_api_to_dsp
+        (new component_link_list_tests)->run($this);
 
         // do the im- and export unit tests
-        (new import_tests )->run($this);
+        (new import_tests)->run($this);
 
         // db setup
-        (new db_setup_tests )->run($this);
+        (new db_setup_tests)->run($this);
 
         // do the UI unit tests
-        (new api_tests )->run_openapi_test($this);
-        (new html_tests )->run($this);
+        (new api_tests)->run_openapi_test($this);
+        (new html_tests)->run($this);
         (new type_list_html_tests)->run($this);
         (new user_html_tests)->run($this);
         (new word_html_tests)->run($this);

@@ -497,9 +497,9 @@ COMMENT ON COLUMN share_types.description IS 'to explain the code action of the 
 CREATE TABLE IF NOT EXISTS phrase_types
 (
     phrase_type_id BIGSERIAL PRIMARY KEY,
-    type_name      varchar(200) NOT NULL,
+    type_name      varchar(255) NOT NULL,
     description    text,
-    code_id        varchar(100) DEFAULT NULL,
+    code_id        varchar(255) DEFAULT NULL,
     scaling_factor bigint       DEFAULT NULL,
     word_symbol    varchar(5)   DEFAULT NULL
 );

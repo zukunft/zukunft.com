@@ -50,9 +50,9 @@ class type_tests
 
         $t->subheader('SQL setup statements');
         $phr_typ = new phrase_type('');
-        //$t->assert_sql_table_create($phr_typ);
-        //$t->assert_sql_index_create($phr_typ);
-        //$t->assert_sql_foreign_key_create($phr_typ);
+        // $t->assert_sql_table_create($phr_typ);
+        // $t->assert_sql_index_create($phr_typ);
+        // $t->assert_sql_foreign_key_create($phr_typ);
 
     }
 

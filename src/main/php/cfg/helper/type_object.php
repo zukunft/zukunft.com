@@ -47,6 +47,8 @@ include_once API_SANDBOX_PATH . 'type_object.php';
 use api\sandbox\type_object as type_object_api;
 use cfg\db\sql;
 use cfg\db\sql_db;
+use cfg\db\sql_field_default;
+use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use JsonSerializable;
 use model\db_cl;
@@ -63,11 +65,20 @@ class type_object extends db_object_seq_id implements JsonSerializable
 
     // database and JSON object field names
     const FLD_NAME = 'type_name';
+    const FLD_DESCRIPTION_COM = 'text that should be shown to the user on mouse over; to be replaced by a language form entry ';
+    const FLD_DESCRIPTION = 'description';
+    const FLD_CODE_ID_COM = 'to link coded functionality to a specific word e.g. to get the values of the system configuration';
 
     // type name exceptions
     const FLD_ACTION = 'change_action_name';
     const FLD_TABLE = 'change_table_name';
     const FLD_FIELD = 'change_table_field_name';
+
+    // field lists for the table creation
+    const FLD_ALL_OWNER = array(
+        [self::FLD_DESCRIPTION, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
+        [sql::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
+    );
 
 
     /*
@@ -185,6 +196,50 @@ class type_object extends db_object_seq_id implements JsonSerializable
         } else {
             return false;
         }
+    }
+
+
+    /*
+     * sql create
+     */
+
+    /**
+     * the sql statement to create the tables of a type object
+     *
+     * @param sql $sc with the target db_type set
+     * @return string the sql statement to create the table
+     */
+    function sql_table(sql $sc): string
+    {
+        $sql = $sc->sql_separator();
+        $sql .= $this->sql_table_create($sc, false, [], '', false);
+        return $sql;
+    }
+
+    /**
+     * the sql statement to create the database indices of a type object
+     *
+     * @param sql $sc with the target db_type set
+     * @return string the sql statement to create the indices
+     */
+    function sql_index(sql $sc): string
+    {
+        $sql = $sc->sql_separator();
+        $sql .= $this->sql_index_create($sc);
+        return $sql;
+    }
+
+    /**
+     * the sql statement to create the foreign keys of a type object
+     *
+     * @param sql $sc with the target db_type set
+     * @return string the sql statement to create the foreign keys
+     */
+    function sql_foreign_key(sql $sc): string
+    {
+        $sql = $sc->sql_separator();
+        $sql .= $this->sql_foreign_key_create($sc);
+        return $sql;
     }
 
 
