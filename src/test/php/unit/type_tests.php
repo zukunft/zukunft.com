@@ -52,11 +52,9 @@ class type_tests
         // TODO add config, sys_log_types, sys_log_status, calc_and_cleanup_task_types
 
         $t->subheader('User type SQL setup statements');
-        /*
         $usr_typ = new user_type('');
         $t->assert_sql_table_create($usr_typ);
         $t->assert_sql_index_create($usr_typ);
-        */
 
         $t->subheader('Phrase type SQL setup statements');
         $phr_typ = new phrase_type('');

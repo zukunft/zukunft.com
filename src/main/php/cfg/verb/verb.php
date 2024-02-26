@@ -291,7 +291,7 @@ class verb extends type_object
     /**
      * @return string the description of the verb
      */
-    function comment(): string
+    function description(): string
     {
         if ($this->description == null) {
             return '';

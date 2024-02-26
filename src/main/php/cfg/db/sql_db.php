@@ -51,6 +51,7 @@ use cfg\source;
 use cfg\sys_log_level;
 use cfg\triple;
 use cfg\user;
+use cfg\user\user_type;
 use cfg\user_message;
 use cfg\value\value;
 use cfg\view;
@@ -162,6 +163,7 @@ class sql_db
 
     // classes that have a database table
     const DB_TABLE_CLASSES = [
+        user_type::class,
         word::class,
         triple::class,
         phrase_type::class,

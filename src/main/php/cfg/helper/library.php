@@ -35,6 +35,7 @@ namespace cfg;
 use api\api;
 use api\sandbox\combine_object as combine_object_api;
 use cfg\db\sql_db;
+use cfg\user\user_type;
 use cfg\value\value;
 use DateTime;
 use DOMDocument;
@@ -1557,6 +1558,7 @@ class library
             case $this->class_to_name(source::class):
                 $result = $this->class_to_name(ref::class);
                 break;
+            case $this->class_to_name(user_type::class):
             case $this->class_to_name(phrase_type::class):
                 $result = 'type';
                 break;

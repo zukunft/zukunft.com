@@ -61,14 +61,15 @@ class type_object extends db_object_seq_id implements JsonSerializable
      */
 
     // comments used for the database creation
-    const TBL_COMMENT = 'for the predefined behaviour of e.g. a word, triple, ...';
+    const TBL_COMMENT = 'for a type to set the predefined behaviour of an object';
 
     // database and JSON object field names
-    const FLD_NAME_COM = 'the unique name to select the type by the user';
+    const FLD_ID_COM = 'the database id is also used as the array pointer';
+    const FLD_NAME_COM = 'the unique type name as shown to the user and used for the selection';
     const FLD_NAME = 'type_name';
-    const FLD_DESCRIPTION_COM = 'text that should be shown to the user on mouse over; to be replaced by a language form entry ';
+    const FLD_CODE_ID_COM = 'this id text is unique for all code links, is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
+    const FLD_DESCRIPTION_COM = 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
     const FLD_DESCRIPTION = 'description';
-    const FLD_CODE_ID_COM = 'to link coded functionality to a specific word e.g. to get the values of the system configuration';
 
     // type name exceptions
     const FLD_ACTION = 'change_action_name';
@@ -78,8 +79,8 @@ class type_object extends db_object_seq_id implements JsonSerializable
     // field lists for the table creation
     const FLD_LST_ALL = array(
         [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_NAME_COM],
-        [self::FLD_DESCRIPTION, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
         [sql::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
+        [self::FLD_DESCRIPTION, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
     );
 
 
@@ -88,7 +89,7 @@ class type_object extends db_object_seq_id implements JsonSerializable
      */
 
     // the standard fields of a type
-    public string $name; // simply the type name as shown to the user
+    public string $name; // the unique type name as shown to the user
     public ?string $code_id; // this id text is unique for all code links and is used for system im- and export
     public ?string $description = '';  // to explain the type to the user as a tooltip
 
@@ -106,6 +107,14 @@ class type_object extends db_object_seq_id implements JsonSerializable
         if ($description != '') {
             $this->set_description($description);
         }
+    }
+
+    function reset(): void
+    {
+        $this->id = 0;
+        $this->code_id = '';
+        $this->name = '';
+        $this->description = null;
     }
 
     function row_mapper_typ_obj(array $db_row, string $db_type): bool
@@ -164,7 +173,7 @@ class type_object extends db_object_seq_id implements JsonSerializable
         return $this->code_id;
     }
 
-    function comment(): string
+    function description(): string
     {
         return $this->description;
     }
