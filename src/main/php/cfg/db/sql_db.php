@@ -297,9 +297,6 @@ class sql_db
     private ?array $join3_usr_num_field_lst = [];   // same as $join_usr_num_field_lst but for the third join
     private ?array $join4_usr_num_field_lst = [];   // same as $join_usr_num_field_lst but for the fourth join
     private ?array $join_usr_count_field_lst = [];  // list of fields that should be returned to the next select query where the count are taken from a joined table
-    //private ?array $join2_usr_count_field_lst = []; // same as $join_usr_count_field_lst but for the second join
-    //private ?array $join3_usr_count_field_lst = []; // same as $join_usr_count_field_lst but for the third join
-    //private ?array $join4_usr_count_field_lst = []; // same as $join_usr_count_field_lst but for the fourth join
     private ?string $join_type = '';                // the type name of the table to join
     private ?string $join2_type = '';               // the type name of the second table to join (maybe later switch to join n tables)
     private ?string $join3_type = '';               // the type name of the third table to join (maybe later switch to join n tables)
@@ -385,9 +382,6 @@ class sql_db
         $this->join3_usr_num_field_lst = [];
         $this->join4_usr_num_field_lst = [];
         $this->join_usr_count_field_lst = [];
-        $this->join2_usr_count_field_lst = [];
-        $this->join3_usr_count_field_lst = [];
-        $this->join4_usr_count_field_lst = [];
         $this->join_type = '';
         $this->join2_type = '';
         $this->join3_type = '';
@@ -915,20 +909,8 @@ class sql_db
             $this->join_type = $join_type;
             $this->join_usr_count_field_lst = $join_field_lst;
             $this->join_usr_query = true;
-        } elseif ($this->join2_type == '') {
-            $this->join2_type = $join_type;
-            $this->join2_usr_count_field_lst = $join_field_lst;
-            $this->join2_usr_query = true;
-        } elseif ($this->join3_type == '') {
-            $this->join3_type = $join_type;
-            $this->join3_usr_count_field_lst = $join_field_lst;
-            $this->join3_usr_query = true;
-        } elseif ($this->join4_type == '') {
-            $this->join4_type = $join_type;
-            $this->join4_usr_count_field_lst = $join_field_lst;
-            $this->join4_usr_query = true;
         } else {
-            log_err('Max four table count joins expected in version ' . PRG_VERSION);
+            log_err('Max one table count joins expected in version ' . PRG_VERSION);
         }
     }
 

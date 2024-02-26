@@ -79,11 +79,11 @@ class change_log_named extends change_log_named_api
             }
         */
         } elseif (!$user_changes) {
-            $txt_fld .= $this->field_name();
+            $txt_fld .= $this->field_description();
             // probably not needed to display the action, because this can be seen by the change itself
             // $result .= $db_row['type'].' '.$db_row['type_field'];
         } else {
-            $txt_fld .= $this->table_name() . ' ' . $this->field_name();
+            $txt_fld .= $this->table_name() . ' ' . $this->field_description();
         }
 
         // create the description for the old and new field value for the user
@@ -209,12 +209,12 @@ class change_log_named extends change_log_named_api
     /**
      * @return string the name of the change field name to show it to the user
      */
-    private function field_name(): string
+    private function field_description(): string
     {
         global $change_log_fields;
 
         $field = $change_log_fields->get($this->field_id);
-        return $field->comment;
+        return $field->description;
     }
 
     /**

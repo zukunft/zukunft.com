@@ -282,7 +282,7 @@ class create_test_objects extends test_base
                             if ($typ_obj != null) {
                                 $typ_obj->set_name($data[$name_col]);
                                 if ($desc_col > 0) {
-                                    $typ_obj->set_comment($data[$desc_col]);
+                                    $typ_obj->set_description($data[$desc_col]);
                                 }
                             }
                         }

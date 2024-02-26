@@ -88,23 +88,23 @@ class type_object extends db_object_seq_id implements JsonSerializable
      */
 
     // the standard fields of a type
-    public string $name;           // simply the type name as shown to the user
-    public ?string $code_id;       // this id text is unique for all code links and is used for system im- and export
-    public ?string $comment = '';  // to explain the type to the user as a tooltip
+    public string $name; // simply the type name as shown to the user
+    public ?string $code_id; // this id text is unique for all code links and is used for system im- and export
+    public ?string $description = '';  // to explain the type to the user as a tooltip
 
 
     /*
      * construct and map
      */
 
-    function __construct(?string $code_id, string $name = '', string $comment = '', int $id = 0)
+    function __construct(?string $code_id, string $name = '', string $description = '', int $id = 0)
     {
         parent::__construct();
         $this->set_id($id);
         $this->set_name($name);
         $this->set_code_id($code_id);
-        if ($comment != '') {
-            $this->set_comment($comment);
+        if ($description != '') {
+            $this->set_description($description);
         }
     }
 
@@ -128,7 +128,7 @@ class type_object extends db_object_seq_id implements JsonSerializable
                 $type_name = strval($db_row[sql::FLD_TYPE_NAME]);
             }
             $this->name = $type_name;
-            $this->comment = strval($db_row[sandbox_named::FLD_DESCRIPTION]);
+            $this->description = strval($db_row[sandbox_named::FLD_DESCRIPTION]);
             $result = true;
         }
         return $result;
@@ -149,9 +149,9 @@ class type_object extends db_object_seq_id implements JsonSerializable
         $this->code_id = $code_id;
     }
 
-    function set_comment(string $comment): void
+    function set_description(string $description): void
     {
-        $this->comment = $comment;
+        $this->description = $description;
     }
 
     function name(): string
@@ -166,7 +166,7 @@ class type_object extends db_object_seq_id implements JsonSerializable
 
     function comment(): string
     {
-        return $this->comment;
+        return $this->description;
     }
 
 

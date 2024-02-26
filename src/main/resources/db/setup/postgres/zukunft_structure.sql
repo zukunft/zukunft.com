@@ -153,9 +153,9 @@ COMMENT ON TABLE calc_and_cleanup_tasks IS 'concrete batch jobs with start and e
 CREATE TABLE IF NOT EXISTS user_types
 (
     user_type_id BIGSERIAL PRIMARY KEY,
-    user_type    varchar(200) NOT NULL,
-    code_id      varchar(100) DEFAULT NULL,
-    comment      varchar(200) NOT NULL
+    user_type    varchar(255) NOT NULL,
+    code_id      varchar(255) DEFAULT NULL,
+    comment      text         DEFAULT NULL
 );
 
 --

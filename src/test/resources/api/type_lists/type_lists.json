@@ -9,31 +9,31 @@
       {
         "name": "normal user",
         "code_id": "normal",
-        "comment": "",
+        "description": "",
         "id": 1
       },
       {
         "name": "admin",
         "code_id": "admin",
-        "comment": "Administrator that can add and change verbs and sees the code_id",
+        "description": "Administrator that can add and change verbs and sees the code_id",
         "id": 2
       },
       {
         "name": "developer",
         "code_id": "dev",
-        "comment": "Can see all errors and change the status of the errors, but cannot access the production system",
+        "description": "Can see all errors and change the status of the errors, but cannot access the production system",
         "id": 3
       },
       {
         "name": "system test",
         "code_id": "test",
-        "comment": "for integration tests that should never be shown to the user but is used to check if integration test data is completely removed after the tests",
+        "description": "for integration tests that should never be shown to the user but is used to check if integration test data is completely removed after the tests",
         "id": 4
       },
       {
         "name": "system",
         "code_id": "system",
-        "comment": "User to log internal tasks not directly initiated by an user like system testing and cleanup",
+        "description": "User to log internal tasks not directly initiated by an user like system testing and cleanup",
         "id": 5
       }
     ],
@@ -41,145 +41,145 @@
       {
         "name": "standard",
         "code_id": "default",
-        "comment": "for words that have need no special behaviour",
+        "description": "for words that have need no special behaviour",
         "id": 1
       },
       {
         "name": "time",
         "code_id": "time",
-        "comment": "A time word defines the time period for which a value is valid and values with a time can be used to display time series.",
+        "description": "A time word defines the time period for which a value is valid and values with a time can be used to display time series.",
         "id": 2
       },
       {
         "name": "measure type",
         "code_id": "measure",
-        "comment": "a measure word such as meter, kilogram, ...",
+        "description": "a measure word such as meter, kilogram, ...",
         "id": 3
       },
       {
         "name": "time jump",
         "code_id": "time_jump",
-        "comment": "these terms describes a change of a timestamp term",
+        "description": "these terms describes a change of a timestamp term",
         "id": 4
       },
       {
         "name": "calc",
         "code_id": "",
-        "comment": "a calculated word in R; e.g. this year returns always a different term",
+        "description": "a calculated word in R; e.g. this year returns always a different term",
         "id": 5
       },
       {
         "name": "format percent",
         "code_id": "percent",
-        "comment": "terms that forces the result to be formatted in percent",
+        "description": "terms that forces the result to be formatted in percent",
         "id": 6
       },
       {
         "name": "scaling",
         "code_id": "scaling",
-        "comment": "a scaling word such as millions, one, ...",
+        "description": "a scaling word such as millions, one, ...",
         "id": 7
       },
       {
         "name": "hidden scaling",
         "code_id": "scaling_hidden",
-        "comment": "\"one\" is needed as a scaling word for correct calculations, but it is not useful to display it",
+        "description": "\"one\" is needed as a scaling word for correct calculations, but it is not useful to display it",
         "id": 8
       },
       {
         "name": "view \/ layer",
         "code_id": "view",
-        "comment": "word to separate the number layers and to change the view.\\r\\nE.g. -as reported- are exactly the numbers as they come from the external source\\r\\n-detailed- are the most granular splitting of the -as reported- numbers\\r\\n-projection- show the changes and includes the estimates to make a forecast\\r\\n",
+        "description": "word to separate the number layers and to change the view.\\r\\nE.g. -as reported- are exactly the numbers as they come from the external source\\r\\n-detailed- are the most granular splitting of the -as reported- numbers\\r\\n-projection- show the changes and includes the estimates to make a forecast\\r\\n",
         "id": 9
       },
       {
         "name": "formula link",
         "code_id": "formula_link",
-        "comment": "A term with the same name as a formula, because some values can be calculated and can nevertheless be overwritten",
+        "description": "A term with the same name as a formula, because some values can be calculated and can nevertheless be overwritten",
         "id": 10
       },
       {
         "name": "differentiator filler",
         "code_id": "type_other",
-        "comment": "these terms are used to fill up a differentiator list, so most likely the term linked will be named \"other\"",
+        "description": "these terms are used to fill up a differentiator list, so most likely the term linked will be named \"other\"",
         "id": 11
       },
       {
         "name": "this",
         "code_id": "this",
-        "comment": "not sure, why this is needed",
+        "description": "not sure, why this is needed",
         "id": 12
       },
       {
         "name": "next",
         "code_id": "next",
-        "comment": "not sure, why this is needed",
+        "description": "not sure, why this is needed",
         "id": 13
       },
       {
         "name": "prior",
         "code_id": "previous",
-        "comment": "not sure, why this is needed",
+        "description": "not sure, why this is needed",
         "id": 14
       },
       {
         "name": "scaling word percent",
         "code_id": "scaling_percent",
-        "comment": "all words that represent percent",
+        "description": "all words that represent percent",
         "id": 15
       },
       {
         "name": "scaled measure",
         "code_id": "scaled_measure",
-        "comment": "a combination of scaling and measure e.g. 100ml",
+        "description": "a combination of scaling and measure e.g. 100ml",
         "id": 16
       },
       {
         "name": "math constant",
         "code_id": "constant",
-        "comment": "A mathematical constant is a key number whose value is fixed by an unambiguous definition",
+        "description": "A mathematical constant is a key number whose value is fixed by an unambiguous definition",
         "id": 17
       },
       {
         "name": "measure divisor",
         "code_id": "measure_divisor",
-        "comment": "a measure divisor like per year, per kg, ...",
+        "description": "a measure divisor like per year, per kg, ...",
         "id": 18
       },
       {
         "name": "latest",
         "code_id": "latest",
-        "comment": "to select the latest value by a time jump type e.g. latest year",
+        "description": "to select the latest value by a time jump type e.g. latest year",
         "id": 19
       },
       {
         "name": "key",
         "code_id": "key",
-        "comment": "force faster search and if two keys are connected with the verb is all child values are expected to be equal",
+        "description": "force faster search and if two keys are connected with the verb is all child values are expected to be equal",
         "id": 20
       },
       {
         "name": "information",
         "code_id": "information",
-        "comment": "this phrase is used mainly for information purpose and for the selection the program tries to another search without this phrase",
+        "description": "this phrase is used mainly for information purpose and for the selection the program tries to another search without this phrase",
         "id": 21
       },
       {
         "name": "hidden triple",
         "code_id": "hidden_triple",
-        "comment": "this triple should not be included in selection list because the triple is identical with the from word and is only added to assign behavior to the word",
+        "description": "this triple should not be included in selection list because the triple is identical with the from word and is only added to assign behavior to the word",
         "id": 22
       },
       {
         "name": "hidden system",
         "code_id": "hidden_system",
-        "comment": "these words and triple are used e.g. for the system configuration and should not be included in standard selection list because the values are only internal and are shown in separate predefined views",
+        "description": "these words and triple are used e.g. for the system configuration and should not be included in standard selection list because the values are only internal and are shown in separate predefined views",
         "id": 23
       },
       {
         "name": "group and select",
         "code_id": "group",
-        "comment": "words used to group and select other words to shorten the selection",
+        "description": "words used to group and select other words to shorten the selection",
         "id": 24
       }
     ],
@@ -187,31 +187,31 @@
       {
         "name": "calc",
         "code_id": "default",
-        "comment": "a normal calculation formula",
+        "description": "a normal calculation formula",
         "id": 1
       },
       {
         "name": "next",
         "code_id": "time_next",
-        "comment": "time jump forward: replaces a time term with the next time term based on the verb follower. E.g. \"2017\" \"next\" would lead to use \"2018\"",
+        "description": "time jump forward: replaces a time term with the next time term based on the verb follower. E.g. \"2017\" \"next\" would lead to use \"2018\"",
         "id": 2
       },
       {
         "name": "prior",
         "code_id": "time_prior",
-        "comment": "time jump backward: replaces a time term with the previous time term based on the verb follower. E.g. \"2017\" \"next\" would lead to use \"2016\"",
+        "description": "time jump backward: replaces a time term with the previous time term based on the verb follower. E.g. \"2017\" \"next\" would lead to use \"2016\"",
         "id": 3
       },
       {
         "name": "this",
         "code_id": "time_this",
-        "comment": "selects the assumed time term",
+        "description": "selects the assumed time term",
         "id": 4
       },
       {
         "name": "reversible",
         "code_id": "reversible",
-        "comment": "a formula that can ba included also in the reversed version e.g. \"minute = second \/ 60\" and \"second = minute * 60\"",
+        "description": "a formula that can ba included also in the reversed version e.g. \"minute = second \/ 60\" and \"second = minute * 60\"",
         "id": 5
       }
     ],
@@ -219,13 +219,13 @@
       {
         "name": "default",
         "code_id": "default",
-        "comment": "default",
+        "description": "default",
         "id": 1
       },
       {
         "name": "time period based",
         "code_id": "time_period_based",
-        "comment": "increase needs to know for which time period the increase should be calculated",
+        "description": "increase needs to know for which time period the increase should be calculated",
         "id": 2
       }
     ],
@@ -233,25 +233,25 @@
       {
         "name": "word",
         "code_id": "word",
-        "comment": "a reference to a word used to select values using \"and\"",
+        "description": "a reference to a word used to select values using \"and\"",
         "id": 1
       },
       {
         "name": "verb",
         "code_id": "verb",
-        "comment": "a reference to a predicate",
+        "description": "a reference to a predicate",
         "id": 2
       },
       {
         "name": "formula",
         "code_id": "formula",
-        "comment": "to select the results of another formula using the given context",
+        "description": "to select the results of another formula using the given context",
         "id": 3
       },
       {
         "name": "triple",
         "code_id": "triple",
-        "comment": "a reference to two predicate linked words used to select values using \"and\"",
+        "description": "a reference to two predicate linked words used to select values using \"and\"",
         "id": 4
       }
     ],
@@ -259,43 +259,43 @@
       {
         "name": "standard",
         "code_id": "default",
-        "comment": "the base display mask without additional functionalities",
+        "description": "the base display mask without additional functionalities",
         "id": 1
       },
       {
         "name": "entry view",
         "code_id": "entry",
-        "comment": "these masks are used for the zukunft.com entry page. If a totally new user opens zukunft.com the first time, he will see a random mask of this type.",
+        "description": "these masks are used for the zukunft.com entry page. If a totally new user opens zukunft.com the first time, he will see a random mask of this type.",
         "id": 2
       },
       {
         "name": "edit",
         "code_id": "mask_default",
-        "comment": "a edit mask that is used to change data",
+        "description": "a edit mask that is used to change data",
         "id": 3
       },
       {
         "name": "presentation",
         "code_id": "presentation",
-        "comment": "with auto forward",
+        "description": "with auto forward",
         "id": 4
       },
       {
         "name": "word default",
         "code_id": "word_default",
-        "comment": "a default mask for new words",
+        "description": "a default mask for new words",
         "id": 5
       },
       {
         "name": "details",
         "code_id": "detail_view",
-        "comment": "to show the more details than the standard view",
+        "description": "to show the more details than the standard view",
         "id": 6
       },
       {
         "name": "system",
         "code_id": "system",
-        "comment": "views used by the system that should only be adjusted by an admin",
+        "description": "views used by the system that should only be adjusted by an admin",
         "id": 7
       }
     ],
@@ -303,193 +303,193 @@
       {
         "name": "word selector",
         "code_id": "word_select",
-        "comment": "",
+        "description": "",
         "id": 1
       },
       {
         "name": "view selector",
         "code_id": "view_select",
-        "comment": "to select an existing mask e.g. to set the default view",
+        "description": "to select an existing mask e.g. to set the default view",
         "id": 2
       },
       {
         "name": "text",
         "code_id": "text",
-        "comment": "simply to display a variable text",
+        "description": "simply to display a variable text",
         "id": 3
       },
       {
         "name": "fixed word",
         "code_id": "fixed",
-        "comment": "just display a word as a text",
+        "description": "just display a word as a text",
         "id": 4
       },
       {
         "name": "linked word",
         "code_id": "link",
-        "comment": "display a word and offer a link",
+        "description": "display a word and offer a link",
         "id": 5
       },
       {
         "name": "formula results",
         "code_id": "formula_results",
-        "comment": "show the results of a formula",
+        "description": "show the results of a formula",
         "id": 6
       },
       {
         "name": "word list up",
         "code_id": "word_list_up",
-        "comment": "Show a list of words related with a specified verb e.g. for the triple <Canton of Zurich> show the word <canton>, because they are linked with verb <is a>",
+        "description": "Show a list of words related with a specified verb e.g. for the triple <Canton of Zurich> show the word <canton>, because they are linked with verb <is a>",
         "id": 7
       },
       {
         "name": "word name",
         "code_id": "word_name",
-        "comment": "show the word name and give the user the possibility to change the word name",
+        "description": "show the word name and give the user the possibility to change the word name",
         "id": 8
       },
       {
         "name": "word list down",
         "code_id": "word_list_down",
-        "comment": "Show a list of words related with a specified verb e.g. for word <canton> list <Canton of Zurich> and others, because they are linked with verb <is a>",
+        "description": "Show a list of words related with a specified verb e.g. for word <canton> list <Canton of Zurich> and others, because they are linked with verb <is a>",
         "id": 9
       },
       {
         "name": "all relations",
         "code_id": "values_all",
-        "comment": "show the complete list of all relations",
+        "description": "show the complete list of all relations",
         "id": 10
       },
       {
         "name": "values related to",
         "code_id": "values_related",
-        "comment": "display all values that are related to a defined term",
+        "description": "display all values that are related to a defined term",
         "id": 11
       },
       {
         "name": "formulas",
         "code_id": "formula_list",
-        "comment": "show all related formulas",
+        "description": "show all related formulas",
         "id": 12
       },
       {
         "name": "word value list",
         "code_id": "word_value_list",
-        "comment": "A list of words with some key values e.g. a company list with the PE ratio",
+        "description": "A list of words with some key values e.g. a company list with the PE ratio",
         "id": 13
       },
       {
         "name": "XML export",
         "code_id": "xml_export",
-        "comment": "offer to configure and start the XML export of a phrase and all related words, numbers and formulas",
+        "description": "offer to configure and start the XML export of a phrase and all related words, numbers and formulas",
         "id": 14
       },
       {
         "name": "CSV export",
         "code_id": "csv_export",
-        "comment": "to define the main phrase, the column and row for the CSV export",
+        "description": "to define the main phrase, the column and row for the CSV export",
         "id": 15
       },
       {
         "name": "JSON Export",
         "code_id": "json_export",
-        "comment": "To start or configure the JSON export",
+        "description": "To start or configure the JSON export",
         "id": 16
       },
       {
         "name": "system form title",
         "code_id": "system_form_title",
-        "comment": "a form title only allowed for system views where the user can only change the order",
+        "description": "a form title only allowed for system views where the user can only change the order",
         "id": 17
       },
       {
         "name": "system form hidden back stack",
         "code_id": "system_form_back_stack",
-        "comment": "the hidden form field with the back stack only allowed for system views where the user can only change the order",
+        "description": "the hidden form field with the back stack only allowed for system views where the user can only change the order",
         "id": 18
       },
       {
         "name": "system form confirm status",
         "code_id": "system_form_confirm_status",
-        "comment": "the hidden form field for the user confirm status only allowed for system views where the user can only change the order",
+        "description": "the hidden form field for the user confirm status only allowed for system views where the user can only change the order",
         "id": 19
       },
       {
         "name": "form field name",
         "code_id": "system_form_field_name",
-        "comment": "the form field for the name of a word or formula",
+        "description": "the form field for the name of a word or formula",
         "id": 20
       },
       {
         "name": "form field description",
         "code_id": "system_form_field_description",
-        "comment": "the form field for the description of a word or formula",
+        "description": "the form field for the description of a word or formula",
         "id": 21
       },
       {
         "name": "form select phrase",
         "code_id": "system_form_select_phrase",
-        "comment": "the form field to select a phrase",
+        "description": "the form field to select a phrase",
         "id": 22
       },
       {
         "name": "form select verb",
         "code_id": "system_form_select_verb",
-        "comment": "the form field to select a verb",
+        "description": "the form field to select a verb",
         "id": 23
       },
       {
         "name": "form field share type",
         "code_id": "system_form_select_share",
-        "comment": "the share type field in a form",
+        "description": "the share type field in a form",
         "id": 24
       },
       {
         "name": "form field protection type",
         "code_id": "system_form_select_protection",
-        "comment": "the protection type field in a form",
+        "description": "the protection type field in a form",
         "id": 25
       },
       {
         "name": "button cancel",
         "code_id": "system_button_cancel",
-        "comment": "a button of a form to cancel the form action",
+        "description": "a button of a form to cancel the form action",
         "id": 26
       },
       {
         "name": "button save",
         "code_id": "system_button_save",
-        "comment": "a button of a form to save the changes to the database",
+        "description": "a button of a form to save the changes to the database",
         "id": 27
       },
       {
         "name": "button delete",
         "code_id": "system_button_del",
-        "comment": "a button of a form to delete or exclude a word, triple, verb, value, formula view or component",
+        "description": "a button of a form to delete or exclude a word, triple, verb, value, formula view or component",
         "id": 28
       },
       {
         "name": "form end",
         "code_id": "form_end",
-        "comment": "just to indicate that a form ends",
+        "description": "just to indicate that a form ends",
         "id": 29
       },
       {
         "name": "row start",
         "code_id": "row_start",
-        "comment": "combine the next elements to one row",
+        "description": "combine the next elements to one row",
         "id": 30
       },
       {
         "name": "row right",
         "code_id": "row_right",
-        "comment": "combine the next elements to one row and align to the right",
+        "description": "combine the next elements to one row and align to the right",
         "id": 31
       },
       {
         "name": "row end",
         "code_id": "row_end",
-        "comment": "just to indicate that a row ends",
+        "description": "just to indicate that a row ends",
         "id": 32
       }
     ],
@@ -497,13 +497,13 @@
       {
         "name": "below",
         "code_id": "below",
-        "comment": "below the previous entry",
+        "description": "below the previous entry",
         "id": 1
       },
       {
         "name": "side",
         "code_id": "side",
-        "comment": "is right of the previous entry (or left for right to left languages)",
+        "description": "is right of the previous entry (or left for right to left languages)",
         "id": 2
       }
     ],
@@ -511,21 +511,21 @@
       {
         "name": "wikipedia",
         "code_id": "wikipedia",
-        "comment": "wikipedia",
+        "description": "wikipedia",
         "url": "https:\/\/en.wikipedia.org\/wiki\/",
         "id": 1
       },
       {
         "name": "wikidata",
         "code_id": "wikidata",
-        "comment": "wikidata",
+        "description": "wikidata",
         "url": "https:\/\/www.wikidata.org\/wiki\/",
         "id": 2
       },
       {
         "name": "conceptnet",
         "code_id": "conceptnet",
-        "comment": "conceptnet",
+        "description": "conceptnet",
         "url": "http:\/\/api.conceptnet.io\/",
         "id": 3
       }
@@ -534,31 +534,31 @@
       {
         "name": "XML",
         "code_id": "xml",
-        "comment": "",
+        "description": "",
         "id": 1
       },
       {
         "name": "XBRL",
         "code_id": "xbrl",
-        "comment": "",
+        "description": "",
         "id": 2
       },
       {
         "name": "CSV",
         "code_id": "csv",
-        "comment": "",
+        "description": "",
         "id": 3
       },
       {
         "name": "PDF",
         "code_id": "pdf",
-        "comment": "",
+        "description": "",
         "id": 4
       },
       {
         "name": "API",
         "code_id": "api",
-        "comment": "",
+        "description": "",
         "id": 5
       }
     ],
@@ -566,25 +566,25 @@
       {
         "name": "public",
         "code_id": "public",
-        "comment": "value can be seen and used by everyone (default)",
+        "description": "value can be seen and used by everyone (default)",
         "id": 1
       },
       {
         "name": "personal",
         "code_id": "personal",
-        "comment": "value can be seen by everyone, but is linked to the user",
+        "description": "value can be seen by everyone, but is linked to the user",
         "id": 2
       },
       {
         "name": "group",
         "code_id": "group",
-        "comment": "only a closed group of users can seen and use the values",
+        "description": "only a closed group of users can seen and use the values",
         "id": 3
       },
       {
         "name": "private",
         "code_id": "private",
-        "comment": "only the user itself can see und use the value",
+        "description": "only the user itself can see und use the value",
         "id": 4
       }
     ],
@@ -592,25 +592,25 @@
       {
         "name": "no protection",
         "code_id": "no_protection",
-        "comment": "anyone can take the ownership",
+        "description": "anyone can take the ownership",
         "id": 1
       },
       {
         "name": "user",
         "code_id": "user_protection",
-        "comment": "only users with a login and a confirmed email can take over the ownership",
+        "description": "only users with a login and a confirmed email can take over the ownership",
         "id": 2
       },
       {
         "name": "admin",
         "code_id": "admin_protection",
-        "comment": "only user with admin permission can take the ownership",
+        "description": "only user with admin permission can take the ownership",
         "id": 3
       },
       {
         "name": "no change",
         "code_id": "no_change",
-        "comment": "no change of the ownership is allowed",
+        "description": "no change of the ownership is allowed",
         "id": 4
       }
     ],
@@ -618,19 +618,19 @@
       {
         "name": "English",
         "code_id": "en",
-        "comment": "the system language, so each word must be unique for all users in this language",
+        "description": "the system language, so each word must be unique for all users in this language",
         "id": 1
       },
       {
         "name": "UK English",
         "code_id": "en_uk",
-        "comment": "the users can use this (and the other) languages to create its own namespace. So one user may use \"Zurich\" in UK English for \"Kanton Zurich\" and another user may use \"Zurich\" in UK English for \"Zurich AG\".",
+        "description": "the users can use this (and the other) languages to create its own namespace. So one user may use \"Zurich\" in UK English for \"Kanton Zurich\" and another user may use \"Zurich\" in UK English for \"Zurich AG\".",
         "id": 2
       },
       {
         "name": "German",
         "code_id": "de",
-        "comment": "a normal translation to German",
+        "description": "a normal translation to German",
         "id": 3
       }
     ],
@@ -638,7 +638,7 @@
       {
         "name": "plural",
         "code_id": "plural",
-        "comment": "",
+        "description": "",
         "id": 1
       }
     ],
@@ -646,25 +646,25 @@
       {
         "name": "new",
         "code_id": "new",
-        "comment": "the error has just being logged and no one has yet looked at it",
+        "description": "the error has just being logged and no one has yet looked at it",
         "id": 1
       },
       {
         "name": "assigned",
         "code_id": "assigned",
-        "comment": "A developer is looking at the error.",
+        "description": "A developer is looking at the error.",
         "id": 2
       },
       {
         "name": "resolved",
         "code_id": "resolved",
-        "comment": "the error is supposed to be corrected",
+        "description": "the error is supposed to be corrected",
         "id": 3
       },
       {
         "name": "closed",
         "code_id": "closed",
-        "comment": "a second person (other than the developer) has confirmed that the problem is solved.",
+        "description": "a second person (other than the developer) has confirmed that the problem is solved.",
         "id": 4
       }
     ],
@@ -672,115 +672,115 @@
       {
         "name": "update value",
         "code_id": "value_update",
-        "comment": "if a value is updated all the depending results should be calculated again",
+        "description": "if a value is updated all the depending results should be calculated again",
         "id": 1
       },
       {
         "name": "add value",
         "code_id": "value_add",
-        "comment": "1. check if used in formulas and if yes, create new formula results\\r\\n2. calculate the new formula results",
+        "description": "1. check if used in formulas and if yes, create new formula results\\r\\n2. calculate the new formula results",
         "id": 2
       },
       {
         "name": "exclude a value",
         "code_id": "value_del",
-        "comment": "check if used for a formula result and if yes either remove the formula result or update it",
+        "description": "check if used for a formula result and if yes either remove the formula result or update it",
         "id": 3
       },
       {
         "name": "update formula",
         "code_id": "formula_update",
-        "comment": "",
+        "description": "",
         "id": 4
       },
       {
         "name": "add formula",
         "code_id": "formula_add",
-        "comment": "",
+        "description": "",
         "id": 5
       },
       {
         "name": "exclude formula",
         "code_id": "formula_del",
-        "comment": "",
+        "description": "",
         "id": 6
       },
       {
         "name": "link formula",
         "code_id": "formula_link",
-        "comment": "",
+        "description": "",
         "id": 7
       },
       {
         "name": "unlink a formula",
         "code_id": "formula_unlink",
-        "comment": "",
+        "description": "",
         "id": 8
       },
       {
         "name": "link a word",
         "code_id": "triple",
-        "comment": "",
+        "description": "",
         "id": 9
       },
       {
         "name": "unlink word",
         "code_id": "word_unlink",
-        "comment": "",
+        "description": "",
         "id": 10
       },
       {
         "name": "initial import",
         "code_id": "base_import",
-        "comment": "import the base configuration by a system user on initial setup",
+        "description": "import the base configuration by a system user on initial setup",
         "id": 11
       },
       {
         "name": "move to prime",
         "code_id": "phrase_to_prime",
-        "comment": "move an often used phrase to the prime phrases by creating a clone with a low id and create new links and switch over and remove the old",
+        "description": "move an often used phrase to the prime phrases by creating a clone with a low id and create new links and switch over and remove the old",
         "id": 12
       },
       {
         "name": "move from prime",
         "code_id": "phrase_from_prime",
-        "comment": "move a less often used phrase to the non prime phrases by creating a clone with a higher id and create new links and switch over and remove the old",
+        "description": "move a less often used phrase to the non prime phrases by creating a clone with a higher id and create new links and switch over and remove the old",
         "id": 13
       },
       {
         "name": "create table",
         "code_id": "table_create",
-        "comment": "create a new table for values and results related to one phrase",
+        "description": "create a new table for values and results related to one phrase",
         "id": 14
       },
       {
         "name": "clone table",
         "code_id": "table_clone",
-        "comment": "copy the values and results related to one phrase to another pod",
+        "description": "copy the values and results related to one phrase to another pod",
         "id": 15
       },
       {
         "name": "switch table",
         "code_id": "table_switch",
-        "comment": "copy the values and results related to one phrase to another pod",
+        "description": "copy the values and results related to one phrase to another pod",
         "id": 16
       },
       {
         "name": "sync table",
         "code_id": "table_sync",
-        "comment": "force to sync a cloned phrase table with the original pod",
+        "description": "force to sync a cloned phrase table with the original pod",
         "id": 17
       },
       {
         "name": "remove clone",
         "code_id": "table_remove",
-        "comment": "remove a cloned phrase table that is not used very often",
+        "description": "remove a cloned phrase table that is not used very often",
         "id": 18
       },
       {
         "name": "delete table",
         "code_id": "table_delete",
-        "comment": "remove a phrase table to replace it with a better fitting table",
+        "description": "remove a phrase table to replace it with a better fitting table",
         "id": 19
       }
     ],
@@ -788,19 +788,19 @@
       {
         "name": "add",
         "code_id": "add",
-        "comment": "",
+        "description": "",
         "id": 1
       },
       {
         "name": "del",
         "code_id": "del",
-        "comment": "",
+        "description": "",
         "id": 2
       },
       {
         "name": "update",
         "code_id": "update",
-        "comment": "",
+        "description": "",
         "id": 3
       }
     ],
@@ -808,139 +808,139 @@
       {
         "name": "users",
         "code_id": "users",
-        "comment": "",
+        "description": "",
         "id": 1
       },
       {
         "name": "values",
         "code_id": "values",
-        "comment": "",
+        "description": "",
         "id": 2
       },
       {
         "name": "user_values",
         "code_id": "user_values",
-        "comment": "",
+        "description": "",
         "id": 3
       },
       {
         "name": "value_links",
         "code_id": "value_links",
-        "comment": "",
+        "description": "",
         "id": 4
       },
       {
         "name": "words",
         "code_id": "words",
-        "comment": "",
+        "description": "",
         "id": 5
       },
       {
         "name": "user_words",
         "code_id": "user_words",
-        "comment": "",
+        "description": "",
         "id": 6
       },
       {
         "name": "triples",
         "code_id": "triples",
-        "comment": "",
+        "description": "",
         "id": 7
       },
       {
         "name": "user_triples",
         "code_id": "user_triples",
-        "comment": "",
+        "description": "",
         "id": 8
       },
       {
         "name": "verbs",
         "code_id": "verbs",
-        "comment": "",
+        "description": "",
         "id": 9
       },
       {
         "name": "formulas",
         "code_id": "formulas",
-        "comment": "",
+        "description": "",
         "id": 10
       },
       {
         "name": "user_formulas",
         "code_id": "user_formulas",
-        "comment": "",
+        "description": "",
         "id": 11
       },
       {
         "name": "formula_links",
         "code_id": "formula_links",
-        "comment": "",
+        "description": "",
         "id": 12
       },
       {
         "name": "user_formula_links",
         "code_id": "user_formula_links",
-        "comment": "",
+        "description": "",
         "id": 13
       },
       {
         "name": "views",
         "code_id": "views",
-        "comment": "",
+        "description": "",
         "id": 14
       },
       {
         "name": "user_views",
         "code_id": "user_views",
-        "comment": "",
+        "description": "",
         "id": 15
       },
       {
         "name": "component_links",
         "code_id": "component_links",
-        "comment": "",
+        "description": "",
         "id": 16
       },
       {
         "name": "user_component_links",
         "code_id": "user_component_links",
-        "comment": "",
+        "description": "",
         "id": 17
       },
       {
         "name": "components",
         "code_id": "components",
-        "comment": "",
+        "description": "",
         "id": 18
       },
       {
         "name": "user_components",
         "code_id": "user_components",
-        "comment": "",
+        "description": "",
         "id": 19
       },
       {
         "name": "sources",
         "code_id": "sources",
-        "comment": "",
+        "description": "",
         "id": 20
       },
       {
         "name": "user_sources",
         "code_id": "user_sources",
-        "comment": "",
+        "description": "",
         "id": 21
       },
       {
         "name": "refs",
         "code_id": "refs",
-        "comment": "",
+        "description": "",
         "id": 22
       },
       {
         "name": "user_refs",
         "code_id": "user_refs",
-        "comment": "",
+        "description": "",
         "id": 23
       }
     ],
@@ -948,1021 +948,1021 @@
       {
         "name": "2numeric_value",
         "code_id": "2numeric_value",
-        "comment": "",
+        "description": "",
         "id": 1
       },
       {
         "name": "2source_id",
         "code_id": "2source_id",
-        "comment": "",
+        "description": "",
         "id": 2
       },
       {
         "name": "2share_type_id",
         "code_id": "2share_type_id",
-        "comment": "",
+        "description": "",
         "id": 3
       },
       {
         "name": "2protect_id",
         "code_id": "2protect_id",
-        "comment": "",
+        "description": "",
         "id": 4
       },
       {
         "name": "2excluded",
         "code_id": "2excluded",
-        "comment": "",
+        "description": "",
         "id": 5
       },
       {
         "name": "3numeric_value",
         "code_id": "3numeric_value",
-        "comment": "",
+        "description": "",
         "id": 6
       },
       {
         "name": "3protect_id",
         "code_id": "3protect_id",
-        "comment": "",
+        "description": "",
         "id": 7
       },
       {
         "name": "3share_type_id",
         "code_id": "3share_type_id",
-        "comment": "",
+        "description": "",
         "id": 8
       },
       {
         "name": "5word_name",
         "code_id": "5word_name",
-        "comment": "",
+        "description": "",
         "id": 9
       },
       {
         "name": "5description",
         "code_id": "5description",
-        "comment": "",
+        "description": "",
         "id": 10
       },
       {
         "name": "5phrase_type_id",
         "code_id": "5phrase_type_id",
-        "comment": "",
+        "description": "",
         "id": 11
       },
       {
         "name": "5plural",
         "code_id": "5plural",
-        "comment": "",
+        "description": "",
         "id": 12
       },
       {
         "name": "5excluded",
         "code_id": "5excluded",
-        "comment": "",
+        "description": "",
         "id": 13
       },
       {
         "name": "6phrase_type_id",
         "code_id": "6phrase_type_id",
-        "comment": "",
+        "description": "",
         "id": 14
       },
       {
         "name": "6plural",
         "code_id": "6plural",
-        "comment": "",
+        "description": "",
         "id": 15
       },
       {
         "name": "6description",
         "code_id": "6description",
-        "comment": "",
+        "description": "",
         "id": 16
       },
       {
         "name": "7triple_name",
         "code_id": "7triple_name",
-        "comment": "",
+        "description": "",
         "id": 17
       },
       {
         "name": "7name_given",
         "code_id": "7name_given",
-        "comment": "",
+        "description": "",
         "id": 18
       },
       {
         "name": "7name_generated",
         "code_id": "7name_generated",
-        "comment": "",
+        "description": "",
         "id": 19
       },
       {
         "name": "7excluded",
         "code_id": "7excluded",
-        "comment": "",
+        "description": "",
         "id": 20
       },
       {
         "name": "8triple_name",
         "code_id": "8triple_name",
-        "comment": "",
+        "description": "",
         "id": 21
       },
       {
         "name": "9verb_name",
         "code_id": "9verb_name",
-        "comment": "",
+        "description": "",
         "id": 22
       },
       {
         "name": "9code_id",
         "code_id": "9code_id",
-        "comment": "",
+        "description": "",
         "id": 23
       },
       {
         "name": "9description",
         "code_id": "9description",
-        "comment": "",
+        "description": "",
         "id": 24
       },
       {
         "name": "9name_plural",
         "code_id": "9name_plural",
-        "comment": "",
+        "description": "",
         "id": 25
       },
       {
         "name": "9name_reverse",
         "code_id": "9name_reverse",
-        "comment": "",
+        "description": "",
         "id": 26
       },
       {
         "name": "9name_plural_reverse",
         "code_id": "9name_plural_reverse",
-        "comment": "",
+        "description": "",
         "id": 27
       },
       {
         "name": "9formula_name",
         "code_id": "9formula_name",
-        "comment": "",
+        "description": "",
         "id": 28
       },
       {
         "name": "10formula_name",
         "code_id": "10formula_name",
-        "comment": "",
+        "description": "",
         "id": 29
       },
       {
         "name": "10formula_type_id",
         "code_id": "10formula_type_id",
-        "comment": "",
+        "description": "",
         "id": 30
       },
       {
         "name": "10resolved_text",
         "code_id": "10resolved_text",
-        "comment": "",
+        "description": "",
         "id": 31
       },
       {
         "name": "10formula_text",
         "code_id": "10formula_text",
-        "comment": "",
+        "description": "",
         "id": 32
       },
       {
         "name": "10description",
         "code_id": "10description",
-        "comment": "",
+        "description": "",
         "id": 33
       },
       {
         "name": "10all_values_needed",
         "code_id": "10all_values_needed",
-        "comment": "",
+        "description": "",
         "id": 34
       },
       {
         "name": "11description",
         "code_id": "11description",
-        "comment": "",
+        "description": "",
         "id": 35
       },
       {
         "name": "11formula_type_id",
         "code_id": "11formula_type_id",
-        "comment": "",
+        "description": "",
         "id": 36
       },
       {
         "name": "11resolved_text",
         "code_id": "11resolved_text",
-        "comment": "",
+        "description": "",
         "id": 37
       },
       {
         "name": "11formula_text",
         "code_id": "11formula_text",
-        "comment": "",
+        "description": "",
         "id": 38
       },
       {
         "name": "11all_values_needed",
         "code_id": "11all_values_needed",
-        "comment": "",
+        "description": "",
         "id": 39
       },
       {
         "name": "12excluded",
         "code_id": "12excluded",
-        "comment": "",
+        "description": "",
         "id": 40
       },
       {
         "name": "14view_name",
         "code_id": "14view_name",
-        "comment": "",
+        "description": "",
         "id": 41
       },
       {
         "name": "14description",
         "code_id": "14description",
-        "comment": "",
+        "description": "",
         "id": 42
       },
       {
         "name": "14code_id",
         "code_id": "14code_id",
-        "comment": "",
+        "description": "",
         "id": 43
       },
       {
         "name": "14view_type_id",
         "code_id": "14view_type_id",
-        "comment": "",
+        "description": "",
         "id": 44
       },
       {
         "name": "15description",
         "code_id": "15description",
-        "comment": "",
+        "description": "",
         "id": 45
       },
       {
         "name": "15view_type_id",
         "code_id": "15view_type_id",
-        "comment": "",
+        "description": "",
         "id": 46
       },
       {
         "name": "16order_nbr",
         "code_id": "16order_nbr",
-        "comment": "",
+        "description": "",
         "id": 47
       },
       {
         "name": "16excluded",
         "code_id": "16excluded",
-        "comment": "",
+        "description": "",
         "id": 48
       },
       {
         "name": "17order_nbr",
         "code_id": "17order_nbr",
-        "comment": "",
+        "description": "",
         "id": 49
       },
       {
         "name": "18component_name",
         "code_id": "18component_name",
-        "comment": "",
+        "description": "",
         "id": 50
       },
       {
         "name": "18description",
         "code_id": "18description",
-        "comment": "",
+        "description": "",
         "id": 51
       },
       {
         "name": "18component_type_id",
         "code_id": "18component_type_id",
-        "comment": "",
+        "description": "",
         "id": 52
       },
       {
         "name": "19description",
         "code_id": "19description",
-        "comment": "",
+        "description": "",
         "id": 53
       },
       {
         "name": "19component_type_id",
         "code_id": "19component_type_id",
-        "comment": "",
+        "description": "",
         "id": 54
       },
       {
         "name": "20source_name",
         "code_id": "20source_name",
-        "comment": "",
+        "description": "",
         "id": 55
       },
       {
         "name": "20description",
         "code_id": "20description",
-        "comment": "",
+        "description": "",
         "id": 56
       },
       {
         "name": "20source_type_id",
         "code_id": "20source_type_id",
-        "comment": "",
+        "description": "",
         "id": 57
       },
       {
         "name": "20url",
         "code_id": "20url",
-        "comment": "",
+        "description": "",
         "id": 58
       },
       {
         "name": "21description",
         "code_id": "21description",
-        "comment": "",
+        "description": "",
         "id": 59
       },
       {
         "name": "21url",
         "code_id": "21url",
-        "comment": "",
+        "description": "",
         "id": 60
       },
       {
         "name": "1code_id",
         "code_id": "1code_id",
-        "comment": "",
+        "description": "",
         "id": 61
       },
       {
         "name": "1ip_address",
         "code_id": "1ip_address",
-        "comment": "",
+        "description": "",
         "id": 62
       },
       {
         "name": "1email",
         "code_id": "1email",
-        "comment": "",
+        "description": "",
         "id": 63
       },
       {
         "name": "1first_name",
         "code_id": "1first_name",
-        "comment": "",
+        "description": "",
         "id": 64
       },
       {
         "name": "1last_name",
         "code_id": "1last_name",
-        "comment": "",
+        "description": "",
         "id": 65
       },
       {
         "name": "1last_word_id",
         "code_id": "1last_word_id",
-        "comment": "",
+        "description": "",
         "id": 66
       },
       {
         "name": "1source_id",
         "code_id": "1source_id",
-        "comment": "",
+        "description": "",
         "id": 67
       },
       {
         "name": "1user_profile_id",
         "code_id": "1user_profile_id",
-        "comment": "",
+        "description": "",
         "id": 68
       },
       {
         "name": "1activation_key",
         "code_id": "1activation_key",
-        "comment": "",
+        "description": "",
         "id": 69
       },
       {
         "name": "1activation_key_timeout",
         "code_id": "1activation_key_timeout",
-        "comment": "",
+        "description": "",
         "id": 70
       },
       {
         "name": "1NOW() AS db_now",
         "code_id": "1NOW() AS db_now",
-        "comment": "",
+        "description": "",
         "id": 71
       },
       {
         "name": "5values",
         "code_id": "5values",
-        "comment": "",
+        "description": "",
         "id": 72
       },
       {
         "name": "5view_id",
         "code_id": "5view_id",
-        "comment": "",
+        "description": "",
         "id": 73
       },
       {
         "name": "5share_type_id",
         "code_id": "5share_type_id",
-        "comment": "",
+        "description": "",
         "id": 74
       },
       {
         "name": "5protect_id",
         "code_id": "5protect_id",
-        "comment": "",
+        "description": "",
         "id": 75
       },
       {
         "name": "6word_name",
         "code_id": "6word_name",
-        "comment": "",
+        "description": "",
         "id": 76
       },
       {
         "name": "6values",
         "code_id": "6values",
-        "comment": "",
+        "description": "",
         "id": 77
       },
       {
         "name": "6view_id",
         "code_id": "6view_id",
-        "comment": "",
+        "description": "",
         "id": 78
       },
       {
         "name": "6excluded",
         "code_id": "6excluded",
-        "comment": "",
+        "description": "",
         "id": 79
       },
       {
         "name": "6share_type_id",
         "code_id": "6share_type_id",
-        "comment": "",
+        "description": "",
         "id": 80
       },
       {
         "name": "6protect_id",
         "code_id": "6protect_id",
-        "comment": "",
+        "description": "",
         "id": 81
       },
       {
         "name": "9words",
         "code_id": "9words",
-        "comment": "",
+        "description": "",
         "id": 82
       },
       {
         "name": "7description",
         "code_id": "7description",
-        "comment": "",
+        "description": "",
         "id": 83
       },
       {
         "name": "7phrase_type_id",
         "code_id": "7phrase_type_id",
-        "comment": "",
+        "description": "",
         "id": 84
       },
       {
         "name": "7values",
         "code_id": "7values",
-        "comment": "",
+        "description": "",
         "id": 85
       },
       {
         "name": "7share_type_id",
         "code_id": "7share_type_id",
-        "comment": "",
+        "description": "",
         "id": 86
       },
       {
         "name": "7protect_id",
         "code_id": "7protect_id",
-        "comment": "",
+        "description": "",
         "id": 87
       },
       {
         "name": "8name_given",
         "code_id": "8name_given",
-        "comment": "",
+        "description": "",
         "id": 88
       },
       {
         "name": "8name_generated",
         "code_id": "8name_generated",
-        "comment": "",
+        "description": "",
         "id": 89
       },
       {
         "name": "8description",
         "code_id": "8description",
-        "comment": "",
+        "description": "",
         "id": 90
       },
       {
         "name": "8phrase_type_id",
         "code_id": "8phrase_type_id",
-        "comment": "",
+        "description": "",
         "id": 91
       },
       {
         "name": "8values",
         "code_id": "8values",
-        "comment": "",
+        "description": "",
         "id": 92
       },
       {
         "name": "8excluded",
         "code_id": "8excluded",
-        "comment": "",
+        "description": "",
         "id": 93
       },
       {
         "name": "8share_type_id",
         "code_id": "8share_type_id",
-        "comment": "",
+        "description": "",
         "id": 94
       },
       {
         "name": "8protect_id",
         "code_id": "8protect_id",
-        "comment": "",
+        "description": "",
         "id": 95
       },
       {
         "name": "2last_update",
         "code_id": "2last_update",
-        "comment": "",
+        "description": "",
         "id": 96
       },
       {
         "name": "3source_id",
         "code_id": "3source_id",
-        "comment": "",
+        "description": "",
         "id": 97
       },
       {
         "name": "3last_update",
         "code_id": "3last_update",
-        "comment": "",
+        "description": "",
         "id": 98
       },
       {
         "name": "3excluded",
         "code_id": "3excluded",
-        "comment": "",
+        "description": "",
         "id": 99
       },
       {
         "name": "4user_id",
         "code_id": "4user_id",
-        "comment": "",
+        "description": "",
         "id": 100
       },
       {
         "name": "4group_id",
         "code_id": "4group_id",
-        "comment": "",
+        "description": "",
         "id": 101
       },
       {
         "name": "4phrase_id",
         "code_id": "4phrase_id",
-        "comment": "",
+        "description": "",
         "id": 102
       },
       {
         "name": "4weight",
         "code_id": "4weight",
-        "comment": "",
+        "description": "",
         "id": 103
       },
       {
         "name": "4link_type_id",
         "code_id": "4link_type_id",
-        "comment": "",
+        "description": "",
         "id": 104
       },
       {
         "name": "4condition_formula_id",
         "code_id": "4condition_formula_id",
-        "comment": "",
+        "description": "",
         "id": 105
       },
       {
         "name": "10last_update",
         "code_id": "10last_update",
-        "comment": "",
+        "description": "",
         "id": 106
       },
       {
         "name": "10excluded",
         "code_id": "10excluded",
-        "comment": "",
+        "description": "",
         "id": 107
       },
       {
         "name": "10share_type_id",
         "code_id": "10share_type_id",
-        "comment": "",
+        "description": "",
         "id": 108
       },
       {
         "name": "10protect_id",
         "code_id": "10protect_id",
-        "comment": "",
+        "description": "",
         "id": 109
       },
       {
         "name": "11formula_name",
         "code_id": "11formula_name",
-        "comment": "",
+        "description": "",
         "id": 110
       },
       {
         "name": "11last_update",
         "code_id": "11last_update",
-        "comment": "",
+        "description": "",
         "id": 111
       },
       {
         "name": "11excluded",
         "code_id": "11excluded",
-        "comment": "",
+        "description": "",
         "id": 112
       },
       {
         "name": "11share_type_id",
         "code_id": "11share_type_id",
-        "comment": "",
+        "description": "",
         "id": 113
       },
       {
         "name": "11protect_id",
         "code_id": "11protect_id",
-        "comment": "",
+        "description": "",
         "id": 114
       },
       {
         "name": "12link_type_id",
         "code_id": "12link_type_id",
-        "comment": "",
+        "description": "",
         "id": 115
       },
       {
         "name": "12share_type_id",
         "code_id": "12share_type_id",
-        "comment": "",
+        "description": "",
         "id": 116
       },
       {
         "name": "12protect_id",
         "code_id": "12protect_id",
-        "comment": "",
+        "description": "",
         "id": 117
       },
       {
         "name": "13link_type_id",
         "code_id": "13link_type_id",
-        "comment": "",
+        "description": "",
         "id": 118
       },
       {
         "name": "13excluded",
         "code_id": "13excluded",
-        "comment": "",
+        "description": "",
         "id": 119
       },
       {
         "name": "13share_type_id",
         "code_id": "13share_type_id",
-        "comment": "",
+        "description": "",
         "id": 120
       },
       {
         "name": "13protect_id",
         "code_id": "13protect_id",
-        "comment": "",
+        "description": "",
         "id": 121
       },
       {
         "name": "14excluded",
         "code_id": "14excluded",
-        "comment": "",
+        "description": "",
         "id": 122
       },
       {
         "name": "14share_type_id",
         "code_id": "14share_type_id",
-        "comment": "",
+        "description": "",
         "id": 123
       },
       {
         "name": "14protect_id",
         "code_id": "14protect_id",
-        "comment": "",
+        "description": "",
         "id": 124
       },
       {
         "name": "15excluded",
         "code_id": "15excluded",
-        "comment": "",
+        "description": "",
         "id": 125
       },
       {
         "name": "15share_type_id",
         "code_id": "15share_type_id",
-        "comment": "",
+        "description": "",
         "id": 126
       },
       {
         "name": "15protect_id",
         "code_id": "15protect_id",
-        "comment": "",
+        "description": "",
         "id": 127
       },
       {
         "name": "16position_type",
         "code_id": "16position_type",
-        "comment": "",
+        "description": "",
         "id": 128
       },
       {
         "name": "16share_type_id",
         "code_id": "16share_type_id",
-        "comment": "",
+        "description": "",
         "id": 129
       },
       {
         "name": "16protect_id",
         "code_id": "16protect_id",
-        "comment": "",
+        "description": "",
         "id": 130
       },
       {
         "name": "17position_type",
         "code_id": "17position_type",
-        "comment": "",
+        "description": "",
         "id": 131
       },
       {
         "name": "17excluded",
         "code_id": "17excluded",
-        "comment": "",
+        "description": "",
         "id": 132
       },
       {
         "name": "17share_type_id",
         "code_id": "17share_type_id",
-        "comment": "",
+        "description": "",
         "id": 133
       },
       {
         "name": "17protect_id",
         "code_id": "17protect_id",
-        "comment": "",
+        "description": "",
         "id": 134
       },
       {
         "name": "18word_id_row",
         "code_id": "18word_id_row",
-        "comment": "",
+        "description": "",
         "id": 135
       },
       {
         "name": "18link_type_id",
         "code_id": "18link_type_id",
-        "comment": "",
+        "description": "",
         "id": 136
       },
       {
         "name": "18formula_id",
         "code_id": "18formula_id",
-        "comment": "",
+        "description": "",
         "id": 137
       },
       {
         "name": "18word_id_col",
         "code_id": "18word_id_col",
-        "comment": "",
+        "description": "",
         "id": 138
       },
       {
         "name": "18word_id_col2",
         "code_id": "18word_id_col2",
-        "comment": "",
+        "description": "",
         "id": 139
       },
       {
         "name": "18excluded",
         "code_id": "18excluded",
-        "comment": "",
+        "description": "",
         "id": 140
       },
       {
         "name": "18share_type_id",
         "code_id": "18share_type_id",
-        "comment": "",
+        "description": "",
         "id": 141
       },
       {
         "name": "18protect_id",
         "code_id": "18protect_id",
-        "comment": "",
+        "description": "",
         "id": 142
       },
       {
         "name": "19component_name",
         "code_id": "19component_name",
-        "comment": "",
+        "description": "",
         "id": 143
       },
       {
         "name": "19word_id_row",
         "code_id": "19word_id_row",
-        "comment": "",
+        "description": "",
         "id": 144
       },
       {
         "name": "19link_type_id",
         "code_id": "19link_type_id",
-        "comment": "",
+        "description": "",
         "id": 145
       },
       {
         "name": "19formula_id",
         "code_id": "19formula_id",
-        "comment": "",
+        "description": "",
         "id": 146
       },
       {
         "name": "19word_id_col",
         "code_id": "19word_id_col",
-        "comment": "",
+        "description": "",
         "id": 147
       },
       {
         "name": "19word_id_col2",
         "code_id": "19word_id_col2",
-        "comment": "",
+        "description": "",
         "id": 148
       },
       {
         "name": "19excluded",
         "code_id": "19excluded",
-        "comment": "",
+        "description": "",
         "id": 149
       },
       {
         "name": "19share_type_id",
         "code_id": "19share_type_id",
-        "comment": "",
+        "description": "",
         "id": 150
       },
       {
         "name": "19protect_id",
         "code_id": "19protect_id",
-        "comment": "",
+        "description": "",
         "id": 151
       },
       {
         "name": "22phrase_id",
         "code_id": "22phrase_id",
-        "comment": "",
+        "description": "",
         "id": 152
       },
       {
         "name": "22external_key",
         "code_id": "22external_key",
-        "comment": "",
+        "description": "",
         "id": 153
       },
       {
         "name": "22ref_type_id",
         "code_id": "22ref_type_id",
-        "comment": "",
+        "description": "",
         "id": 154
       },
       {
         "name": "22url",
         "code_id": "22url",
-        "comment": "",
+        "description": "",
         "id": 155
       },
       {
         "name": "22description",
         "code_id": "22description",
-        "comment": "",
+        "description": "",
         "id": 156
       },
       {
         "name": "22excluded",
         "code_id": "22excluded",
-        "comment": "",
+        "description": "",
         "id": 157
       },
       {
         "name": "23phrase_id",
         "code_id": "23phrase_id",
-        "comment": "",
+        "description": "",
         "id": 158
       },
       {
         "name": "23external_key",
         "code_id": "23external_key",
-        "comment": "",
+        "description": "",
         "id": 159
       },
       {
         "name": "23ref_type_id",
         "code_id": "23ref_type_id",
-        "comment": "",
+        "description": "",
         "id": 160
       },
       {
         "name": "23url",
         "code_id": "23url",
-        "comment": "",
+        "description": "",
         "id": 161
       },
       {
         "name": "23description",
         "code_id": "23description",
-        "comment": "",
+        "description": "",
         "id": 162
       },
       {
         "name": "23excluded",
         "code_id": "23excluded",
-        "comment": "",
+        "description": "",
         "id": 163
       },
       {
         "name": "20excluded",
         "code_id": "20excluded",
-        "comment": "",
+        "description": "",
         "id": 164
       },
       {
         "name": "21source_name",
         "code_id": "21source_name",
-        "comment": "",
+        "description": "",
         "id": 165
       },
       {
         "name": "21source_type_id",
         "code_id": "21source_type_id",
-        "comment": "",
+        "description": "",
         "id": 166
       },
       {
         "name": "21excluded",
         "code_id": "21excluded",
-        "comment": "",
+        "description": "",
         "id": 167
       },
       {
         "name": "18code_id",
         "code_id": "18code_id",
-        "comment": "",
+        "description": "",
         "id": 168
       },
       {
         "name": "18ui_msg_code_id",
         "code_id": "18ui_msg_code_id",
-        "comment": "",
+        "description": "",
         "id": 169
       },
       {
         "name": "22source_id",
         "code_id": "22source_id",
-        "comment": "",
+        "description": "",
         "id": 170
       }
     ],
@@ -1970,7 +1970,6 @@
       {
         "name": "not set",
         "code_id": "not_set",
-        "comment": "",
         "plural": null,
         "reverse": null,
         "rev_plural": null,
@@ -1982,7 +1981,6 @@
       {
         "name": "is a",
         "code_id": "is",
-        "comment": "",
         "plural": "are",
         "reverse": "are",
         "rev_plural": "are",
@@ -1994,7 +1992,6 @@
       {
         "name": "is part of",
         "code_id": "contains",
-        "comment": "",
         "plural": "is part of",
         "reverse": "contains",
         "rev_plural": "contains",
@@ -2006,7 +2003,6 @@
       {
         "name": "with",
         "code_id": "",
-        "comment": "",
         "plural": "with",
         "reverse": null,
         "rev_plural": null,
@@ -2018,7 +2014,6 @@
       {
         "name": "has a",
         "code_id": "",
-        "comment": "",
         "plural": "has",
         "reverse": "is used for",
         "rev_plural": "is used for",
@@ -2030,7 +2025,6 @@
       {
         "name": "is time jump for",
         "code_id": "",
-        "comment": "",
         "plural": "are the time jump for",
         "reverse": "has the default time jump",
         "rev_plural": "have the default time jump",
@@ -2042,7 +2036,6 @@
       {
         "name": "is term jump for",
         "code_id": "",
-        "comment": "",
         "plural": null,
         "reverse": null,
         "rev_plural": null,
@@ -2054,7 +2047,6 @@
       {
         "name": "term type needed",
         "code_id": "",
-        "comment": "",
         "plural": null,
         "reverse": null,
         "rev_plural": null,
@@ -2066,7 +2058,6 @@
       {
         "name": "is follower of",
         "code_id": "follow",
-        "comment": "",
         "plural": "is follower of",
         "reverse": "is followed by",
         "rev_plural": "is followed by",
@@ -2078,7 +2069,6 @@
       {
         "name": "uses",
         "code_id": "",
-        "comment": "",
         "plural": "uses",
         "reverse": "is used by",
         "rev_plural": "are used by",
@@ -2090,7 +2080,6 @@
       {
         "name": "issue",
         "code_id": "",
-        "comment": "",
         "plural": "issues",
         "reverse": "is issued by",
         "rev_plural": "are issued by",
@@ -2102,7 +2091,6 @@
       {
         "name": "is measure type for",
         "code_id": "",
-        "comment": "",
         "plural": "are measure type for",
         "reverse": "has the measure type",
         "rev_plural": "have the measure type",
@@ -2114,7 +2102,6 @@
       {
         "name": "is an acronym for",
         "code_id": "",
-        "comment": "",
         "plural": "are an acronyms for",
         "reverse": "is an acronym of",
         "rev_plural": "are an acronyms of",
@@ -2126,7 +2113,6 @@
       {
         "name": "can be used as a differentiator for",
         "code_id": "can_contain",
-        "comment": "",
         "plural": "can be used as a differentiator for",
         "reverse": "can be differentiated by",
         "rev_plural": "can be differentiated by",
@@ -2138,7 +2124,6 @@
       {
         "name": "influences",
         "code_id": "",
-        "comment": "",
         "plural": "influences",
         "reverse": "is influenced by",
         "rev_plural": "is influenced by",
@@ -2150,7 +2135,6 @@
       {
         "name": "is alias of",
         "code_id": "",
-        "comment": "",
         "plural": "is alias of",
         "reverse": "is alias of",
         "rev_plural": "is alias of",
@@ -2162,7 +2146,6 @@
       {
         "name": "can be",
         "code_id": "can_be",
-        "comment": "",
         "plural": "can be",
         "reverse": "can be",
         "rev_plural": "can be",
@@ -2174,7 +2157,6 @@
       {
         "name": "can use",
         "code_id": "can_use",
-        "comment": "",
         "plural": "can use",
         "reverse": "can be used by",
         "rev_plural": "can be used by",
@@ -2186,7 +2168,6 @@
       {
         "name": "scaled by",
         "code_id": "scaled",
-        "comment": "",
         "plural": "scaled by",
         "reverse": "is scaling for",
         "rev_plural": "are scaling for",
@@ -2198,7 +2179,6 @@
       {
         "name": "per",
         "code_id": "",
-        "comment": "",
         "plural": "per",
         "reverse": null,
         "rev_plural": null,
@@ -2210,7 +2190,6 @@
       {
         "name": "is selector for",
         "code_id": "selector",
-        "comment": "",
         "plural": "are selectors for",
         "reverse": "is grouped by",
         "rev_plural": "are grouped by",
