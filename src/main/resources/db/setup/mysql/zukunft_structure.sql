@@ -18,18 +18,20 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Table structure for the core configuration of this pod e.g. the program version or pod url
+-- table structure for the core configuration of this pod e.g. the program version or pod url
 --
 
-CREATE TABLE IF NOT EXISTS `config`
+CREATE TABLE IF NOT EXISTS config
 (
-    `config_id`   int(11)                         NOT NULL,
-    `config_name` varchar(200)                    DEFAULT NULL COMMENT 'short name of the configuration entry to be shown to the admin',
-    `code_id`     varchar(100) CHARACTER SET utf8 NOT NULL,
-    `value`       varchar(100) CHARACTER SET utf8 DEFAULT NULL,
-    `description` text
-) ENGINE = InnoDB
-  DEFAULT CHARSET = latin1;
+    config_id   bigint           NOT NULL COMMENT 'the internal unique primary index',
+    config_name varchar(255) DEFAULT NULL COMMENT 'short name of the configuration entry to be shown to the admin',
+    code_id     varchar(255)     NOT NULL COMMENT 'unique id text to select a configuration value from the code',
+    `value`     varchar(255) DEFAULT NULL COMMENT 'the configuration value as a string',
+    description text         DEFAULT NULL COMMENT 'text to explain the config value to an admin user'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'for the core configuration of this pod e.g. the program version or pod url';
 
 -- --------------------------------------------------------
 
@@ -2183,6 +2185,17 @@ ALTER TABLE `config`
     ADD PRIMARY KEY (`config_id`),
     ADD UNIQUE KEY `config_name` (`config_name`),
     ADD UNIQUE KEY `setting` (`code_id`);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table config
+--
+
+ALTER TABLE config
+    ADD PRIMARY KEY (config_id),
+    ADD KEY config_config_name_idx (config_name),
+    ADD KEY config_code_idx (code_id);
 
 -- --------------------------------------------------------
 

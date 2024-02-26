@@ -7,6 +7,7 @@
 
     TODO use single words with code_id for the system configuration
     TODO check on system start that the system configuration is complete
+    TODO move all possible values to the phrase based configuration
 
     the values in the config table can only be changed by the system admin
     expose the config class functions as simple functions for simple coding
@@ -39,6 +40,8 @@ namespace cfg;
 
 use cfg\db\sql;
 use cfg\db\sql_db;
+use cfg\db\sql_field_default;
+use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 
@@ -48,7 +51,7 @@ include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_FORMULA_PATH . 'formula.php';
 
-class config
+class config extends db_object_seq_id
 {
 
     // reserved word and triple names used for the system configuration
@@ -65,6 +68,64 @@ class config
     const AVG_CALC_TIME = 'average_calculation_time';        // the average time to calculate and update all results of one formula in milliseconds
     const TEST_YEARS = 'test_years';                         // the number of years around the current year created automatically
     const MIN_PCT_OF_PHRASES_TO_PRESELECT = 0.3;             // if 30% or more of the phrases of a list are the same to probability is high that the next phrase is the same
+
+    /*
+     * database link
+     */
+
+    // comment used for the database creation
+    const TBL_COMMENT = 'for the core configuration of this pod e.g. the program version or pod url';
+    const FLD_NAME_COM = 'short name of the configuration entry to be shown to the admin';
+    const FLD_NAME = 'config_name';
+    const FLD_CODE_ID_COM = 'unique id text to select a configuration value from the code';
+    const FLD_VALUE_COM = 'the configuration value as a string';
+    const FLD_VALUE = 'value';
+    const FLD_DESCRIPTION_COM = 'text to explain the config value to an admin user';
+    const FLD_DESCRIPTION = 'description';
+
+    // field lists for the table creation
+    const FLD_LST_ALL = array(
+        [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_COM],
+        [sql::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_CODE_ID_COM],
+        [sql::FLD_VALUE, sql_field_type::NAME, sql_field_default::NULL, '', '', self::FLD_VALUE_COM],
+        [self::FLD_DESCRIPTION, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
+    );
+
+
+    /*
+     * sql create
+     */
+
+    /**
+     * the sql statement to create the tables of a config table
+     *
+     * @param sql $sc with the target db_type set
+     * @return string the sql statement to create the table
+     */
+    function sql_table(sql $sc): string
+    {
+        $sql = $sc->sql_separator();
+        $sql .= $this->sql_table_create($sc, false, [], '', false);
+        return $sql;
+    }
+
+    /**
+     * the sql statement to create the database indices of a config table
+     *
+     * @param sql $sc with the target db_type set
+     * @return string the sql statement to create the indices
+     */
+    function sql_index(sql $sc): string
+    {
+        $sql = $sc->sql_separator();
+        $sql .= $this->sql_index_create($sc, false, [],false);
+        return $sql;
+    }
+
+
+    /*
+     * load
+     */
 
     function get_sql(sql_db $db_con, string $code_id): sql_par
     {

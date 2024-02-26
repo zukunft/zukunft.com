@@ -240,19 +240,6 @@ class type_object extends db_object_seq_id implements JsonSerializable
         return $sql;
     }
 
-    /**
-     * the sql statement to create the foreign keys of a type object
-     *
-     * @param sql $sc with the target db_type set
-     * @return string the sql statement to create the foreign keys
-     */
-    function sql_foreign_key(sql $sc): string
-    {
-        $sql = $sc->sql_separator();
-        $sql .= $this->sql_foreign_key_create($sc, false, [],false);
-        return $sql;
-    }
-
 
     /*
      * load (used if the user can request a new type via the GUI)

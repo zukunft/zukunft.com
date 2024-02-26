@@ -165,6 +165,7 @@ class sql_db
 
     // classes that have a database table
     const DB_TABLE_CLASSES = [
+        config::class,
         user_type::class,
         protection_type::class,
         share_type::class,

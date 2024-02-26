@@ -41,6 +41,7 @@ use cfg\log\system_log_list;
 use cfg\log\system_log;
 use api\log\system_log as system_log_api;
 use api\word\word as word_api;
+use cfg\user\user_type;
 use DateTime;
 use cfg\ip_range;
 use cfg\ip_range_list;
@@ -68,6 +69,13 @@ class system_tests
 
 
         $t->header('Unit tests of objects');
+
+
+        $t->subheader('Config SQL setup statements');
+        $cfg = new config();
+        $t->assert_sql_table_create($cfg);
+        $t->assert_sql_index_create($cfg);
+
 
         $t->subheader('Debug function tests');
 

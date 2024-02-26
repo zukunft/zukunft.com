@@ -1555,6 +1555,9 @@ class library
     {
         $result = $this->class_to_name($class);
         switch ($result) {
+            case $this->class_to_name(config::class):
+                $result = 'system';
+                break;
             case $this->class_to_name(source::class):
                 $result = $this->class_to_name(ref::class);
                 break;
