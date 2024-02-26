@@ -31,6 +31,10 @@
 
 namespace cfg;
 
+use cfg\db\sql;
+use cfg\db\sql_field_default;
+use cfg\db\sql_field_type;
+
 include_once MODEL_HELPER_PATH . 'library.php';
 include_once MODEL_HELPER_PATH . 'type_object.php';
 
@@ -65,6 +69,23 @@ class phrase_type extends type_object
     const PRIOR = "previous";
 
     const DEFAULT = self::NORMAL;
+
+
+    /*
+     * database link
+     */
+
+    // database and JSON object field names additional to the type field only for phrase types
+    const FLD_SCALE_COM = 'e.g. for percent the scaling factor is 100';
+    const FLD_SCALE = 'scaling_factor';
+    const FLD_SYMBOL_COM = 'e.g. for percent the symbol is %';
+    const FLD_SYMBOL = 'word_symbol';
+
+    // field lists for the table creation of phrase type
+    const FLD_LST_EXTRA = array(
+        [self::FLD_SCALE, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_SCALE_COM],
+        [self::FLD_SYMBOL, sql_field_type::NAME, sql_field_default::NULL, '', '', self::FLD_SYMBOL_COM],
+    );
 
 
     /*

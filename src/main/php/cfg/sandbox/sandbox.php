@@ -97,7 +97,7 @@ class sandbox extends db_object_seq_id_user
     const FLD_ALL_CHANGER = array(
         [user::FLD_ID, sql_field_type::KEY_PART_INT, sql_field_default::NOT_NULL, sql::INDEX, user::class, 'the changer of the -=class=-'],
     );
-    const FLD_ALL = array(
+    const FLD_LST_ALL = array(
         [self::FLD_EXCLUDED, sql_field_type::BOOL, sql_field_default::NULL, '', '', 'true if a user, but not all, have removed it'],
         [self::FLD_SHARE, sql_field_type::INT_SMALL, sql_field_default::NULL, '', '', 'to restrict the access'],
         [self::FLD_PROTECT, sql_field_type::INT_SMALL, sql_field_default::NULL, '', '', 'to protect against unwanted changes'],

@@ -46,6 +46,7 @@ use cfg\group\group;
 use cfg\group\group_id;
 use cfg\library;
 use cfg\log;
+use cfg\phrase_type;
 use cfg\source;
 use cfg\sys_log_level;
 use cfg\triple;
@@ -163,6 +164,7 @@ class sql_db
     const DB_TABLE_CLASSES = [
         word::class,
         triple::class,
+        phrase_type::class,
         group::class,
         source::class,
         formula::class,

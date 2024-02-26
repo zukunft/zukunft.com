@@ -423,13 +423,13 @@ class sandbox_value extends sandbox_multi
             $this::FLD_ALL_SOURCE,
             $this::FLD_ALL_CHANGED,
             $this::FLD_ALL_OWNER,
-            sandbox::FLD_ALL);
+            sandbox::FLD_LST_ALL);
         $std_usr_fields = array_merge(
             $this::FLD_ALL_CHANGER,
             $fld_par_usr,
             $this::FLD_ALL_SOURCE,
             $this::FLD_ALL_CHANGED,
-            sandbox::FLD_ALL);
+            sandbox::FLD_LST_ALL);
         $fields = array_merge(self::FLD_KEY, $this::FLD_ALL_SOURCE_GROUP, $std_fields);
 
         // most: for values or results based on up to 16 phrases

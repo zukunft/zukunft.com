@@ -1200,7 +1200,7 @@ class library
     }
 
     /**
-     * @param string $from the part of the target string that should be found in the $to string array
+     * @param array $from the part of the target string that should be found in the $to string array
      * @param array $to the result string converted to an array
      * @param int $start_pos the staring position in the to string array
      * @return int the position of the next match in the to array or -1 if nothing found
@@ -1214,11 +1214,9 @@ class library
             $compare_pos = 0;
             $found = true;
             while ($compare_pos < count($from) and $found) {
-                if ($check_pos + $compare_pos > count($to)) {
+                if ($check_pos + $compare_pos >= count($to)) {
                     $found = false;
                 } else {
-                    $from_char = $from[$compare_pos];
-                    $to_char = $to[$check_pos + $compare_pos];
                     if ($from[$compare_pos] != $to[$check_pos + $compare_pos]) {
                         $found = false;
                     }
@@ -1558,6 +1556,9 @@ class library
         switch ($result) {
             case $this->class_to_name(source::class):
                 $result = $this->class_to_name(ref::class);
+                break;
+            case $this->class_to_name(phrase_type::class):
+                $result = 'type';
                 break;
         }
         return $result;

@@ -66,11 +66,13 @@ class db_setup_tests
                     $name . '_index' . $db->ext($db_type) . '.sql');
                 $t->assert_sql_contains($test_name, $sql_fixed, $sql_create);
 
-                $test_name = $name . ' foreign key sql is part of setup sql for ' . $db_type;
-                $sql_create = test_resource_file(
-                    DB_RES_PATH . $lib->class_to_path($name) . DIRECTORY_SEPARATOR .
-                    $name . '_foreign_key' . $db->ext($db_type) . '.sql');
-                $t->assert_sql_contains($test_name, $sql_fixed, $sql_create);
+                $filename = DB_RES_PATH . $lib->class_to_path($name) . DIRECTORY_SEPARATOR .
+                    $name . '_foreign_key' . $db->ext($db_type) . '.sql';
+                if (has_resource_file($filename)) {
+                    $test_name = $name . ' foreign key sql is part of setup sql for ' . $db_type;
+                    $sql_create = test_resource_file($filename);
+                    $t->assert_sql_contains($test_name, $sql_fixed, $sql_create);
+                }
             }
         }
         // TODO check that nothing is remaining in the sql setup statement

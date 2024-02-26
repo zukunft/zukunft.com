@@ -64,6 +64,7 @@ class type_object extends db_object_seq_id implements JsonSerializable
     const TBL_COMMENT = 'for the predefined behaviour of e.g. a word, triple, ...';
 
     // database and JSON object field names
+    const FLD_NAME_COM = 'the unique name to select the type by the user';
     const FLD_NAME = 'type_name';
     const FLD_DESCRIPTION_COM = 'text that should be shown to the user on mouse over; to be replaced by a language form entry ';
     const FLD_DESCRIPTION = 'description';
@@ -75,7 +76,8 @@ class type_object extends db_object_seq_id implements JsonSerializable
     const FLD_FIELD = 'change_table_field_name';
 
     // field lists for the table creation
-    const FLD_ALL_OWNER = array(
+    const FLD_LST_ALL = array(
+        [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_NAME_COM],
         [self::FLD_DESCRIPTION, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
         [sql::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
     );
@@ -225,7 +227,7 @@ class type_object extends db_object_seq_id implements JsonSerializable
     function sql_index(sql $sc): string
     {
         $sql = $sc->sql_separator();
-        $sql .= $this->sql_index_create($sc);
+        $sql .= $this->sql_index_create($sc, false, [],false);
         return $sql;
     }
 
@@ -238,7 +240,7 @@ class type_object extends db_object_seq_id implements JsonSerializable
     function sql_foreign_key(sql $sc): string
     {
         $sql = $sc->sql_separator();
-        $sql .= $this->sql_foreign_key_create($sc);
+        $sql .= $this->sql_foreign_key_create($sc, false, [],false);
         return $sql;
     }
 

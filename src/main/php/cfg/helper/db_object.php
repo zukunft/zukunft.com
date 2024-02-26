@@ -50,6 +50,10 @@ class db_object
     const TBL_COMMENT = '';
     // list of the table fields for the standard read query
     const FLD_NAMES = array();
+
+    // field lists for the table creation overwritten by the child object or grand child for extra fields
+    const FLD_LST_ALL = array();
+    const FLD_LST_EXTRA= array();
     // list of fields that MUST be set by one user
     const FLD_LST_MUST_BE_IN_STD = array();
     // list of must fields that CAN be changed by the user
@@ -103,7 +107,7 @@ class db_object
             $sc->set_class($this::class, $usr_table);
         }
         if ($fields == []) {
-            $fields = $this->sql_all_field_par($usr_table);
+            $fields = $this->sql_all_field_par($usr_table, $is_sandbox);
         }
         if ($tbl_comment == '') {
             $tbl_comment = $this::TBL_COMMENT;
@@ -142,7 +146,7 @@ class db_object
             $sc->set_class($this::class, $usr_table);
         }
         if ($fields == []) {
-            $fields = $this->sql_all_field_par($usr_table);
+            $fields = $this->sql_all_field_par($usr_table, $is_sandbox);
         }
         return $sc->index_create($fields);
     }
@@ -162,7 +166,7 @@ class db_object
             $sc->set_class($this::class, $usr_table);
         }
         if ($fields == []) {
-            $fields = $this->sql_all_field_par($usr_table);
+            $fields = $this->sql_all_field_par($usr_table, $is_sandbox);
         }
         return $sc->foreign_key_create($fields);
     }
@@ -176,8 +180,13 @@ class db_object
     {
         $fields = [];
         if (!$usr_table) {
-            $fields = array_merge($this->sql_id_field_par($usr_table), sandbox::FLD_ALL_OWNER);
-            $fields = array_merge($fields, $this::FLD_LST_MUST_BE_IN_STD);
+            if ($is_sandbox) {
+                $fields = array_merge($this->sql_id_field_par($usr_table), sandbox::FLD_ALL_OWNER);
+                $fields = array_merge($fields, $this::FLD_LST_MUST_BE_IN_STD);
+            } else {
+                $fields = array_merge($this->sql_id_field_par(false), $this::FLD_LST_ALL);
+                $fields = array_merge($fields, $this::FLD_LST_EXTRA);
+            }
         } else {
             $fields = array_merge($this->sql_id_field_par($usr_table), sandbox::FLD_ALL_CHANGER);
             $fields = array_merge($fields, $this::FLD_LST_MUST_BUT_USER_CAN_CHANGE);
@@ -187,7 +196,7 @@ class db_object
             $fields = array_merge($fields, $this::FLD_LST_NON_CHANGEABLE);
         }
         if ($is_sandbox) {
-            $fields = array_merge($fields, sandbox::FLD_ALL);
+            $fields = array_merge($fields, sandbox::FLD_LST_ALL);
         }
         return $fields;
     }

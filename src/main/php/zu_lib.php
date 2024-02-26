@@ -1338,6 +1338,17 @@ function test_resource_file(string $resource_path): string
     return $result;
 }
 
+/**
+ * @return bool true if the test resource file exists
+ */
+function has_resource_file(string $resource_path): bool
+{
+    $result = true;
+    if (file_get_contents(PATH_TEST_FILES . $resource_path) === false) {
+        $result = false;
+    }
+    return $result;
+}
 
 
 /*
