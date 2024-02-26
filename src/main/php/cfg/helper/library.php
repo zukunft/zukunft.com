@@ -1565,6 +1565,7 @@ class library
             case $this->class_to_name(protection_type::class):
             case $this->class_to_name(share_type::class):
             case $this->class_to_name(phrase_type::class):
+            case $this->class_to_name(formula_type::class):
                 $result = 'type';
                 break;
         }

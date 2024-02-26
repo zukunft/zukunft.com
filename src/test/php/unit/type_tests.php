@@ -32,6 +32,7 @@
 
 namespace unit;
 
+use cfg\formula_type;
 use cfg\phrase_type;
 use cfg\protection_type;
 use cfg\share_type;
@@ -72,6 +73,11 @@ class type_tests
         $phr_typ = new phrase_type('');
         $t->assert_sql_table_create($phr_typ);
         $t->assert_sql_index_create($phr_typ);
+
+        $t->subheader('Formula type SQL setup statements');
+        $frm_typ = new formula_type('');
+        $t->assert_sql_table_create($frm_typ);
+        $t->assert_sql_index_create($frm_typ);
 
     }
 

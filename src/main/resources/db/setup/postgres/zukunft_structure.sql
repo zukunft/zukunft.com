@@ -46,6 +46,7 @@ COMMENT ON TABLE sys_log_types IS 'system log types e.g. info, warning and error
 
 --
 -- table structure for table sys_log_status
+-- TODO generate type
 --
 
 CREATE TABLE IF NOT EXISTS sys_log_status
@@ -62,6 +63,7 @@ COMMENT ON COLUMN sys_log_status.action IS 'description of the action to get to 
 
 --
 -- table structure for table sys_log_functions
+-- TODO generate
 --
 
 CREATE TABLE IF NOT EXISTS sys_log_functions
@@ -72,6 +74,7 @@ CREATE TABLE IF NOT EXISTS sys_log_functions
 
 --
 -- table structure for table sys_log
+-- TODO generate
 --
 
 CREATE TABLE IF NOT EXISTS sys_log
@@ -94,6 +97,7 @@ COMMENT ON COLUMN sys_log.solver_id IS 'user id of the user that is trying to so
 
 --
 -- table structure for batch jobs that are scheduled
+-- TODO generate
 --
 
 CREATE TABLE IF NOT EXISTS sys_scripts
@@ -104,6 +108,7 @@ CREATE TABLE IF NOT EXISTS sys_scripts
 
 --
 -- table structure for the schedule of system batch jobs
+-- TODO generate
 --
 
 CREATE TABLE IF NOT EXISTS sys_script_times
@@ -118,6 +123,7 @@ CREATE TABLE IF NOT EXISTS sys_script_times
 
 --
 -- table structure for batch job types
+-- TODO generate type
 --
 
 CREATE TABLE IF NOT EXISTS calc_and_cleanup_task_types
@@ -132,6 +138,7 @@ COMMENT ON TABLE calc_and_cleanup_task_types IS 'batch job types e.g. data synch
 
 --
 -- table structure for batch jobs
+-- TODO generate
 --
 
 CREATE TABLE IF NOT EXISTS calc_and_cleanup_tasks
@@ -170,6 +177,7 @@ COMMENT ON COLUMN user_types.description IS 'text to explain the type to the use
 
 --
 -- table structure for table user_profiles
+-- TODO generate type
 --
 
 CREATE TABLE IF NOT EXISTS user_profiles
@@ -183,6 +191,7 @@ CREATE TABLE IF NOT EXISTS user_profiles
 
 --
 -- table structure for users including system users
+-- TODO generate
 --
 
 CREATE TABLE IF NOT EXISTS users
@@ -229,6 +238,7 @@ COMMENT ON COLUMN users.source_id IS 'the last source used by this user to have 
 
 --
 -- table structure for table user_official_types
+-- TODO generate type
 --
 
 CREATE TABLE IF NOT EXISTS user_official_types
@@ -241,6 +251,7 @@ CREATE TABLE IF NOT EXISTS user_official_types
 
 --
 -- table structure for table user_requests
+-- TODO generate
 --
 
 CREATE TABLE IF NOT EXISTS user_requests
@@ -254,6 +265,7 @@ CREATE TABLE IF NOT EXISTS user_requests
 
 --
 -- table structure to log the user access attempts
+-- TODO generate
 --
 
 CREATE TABLE IF NOT EXISTS user_attempts
@@ -265,6 +277,7 @@ CREATE TABLE IF NOT EXISTS user_attempts
 
 --
 -- table structure of ip addresses that should be blocked
+-- TODO generate
 --
 
 CREATE TABLE IF NOT EXISTS user_blocked_ips
@@ -280,6 +293,7 @@ CREATE TABLE IF NOT EXISTS user_blocked_ips
 
 --
 -- table structure for table sessions
+-- TODO generate
 --
 
 CREATE TABLE IF NOT EXISTS sessions
@@ -297,6 +311,7 @@ CREATE TABLE IF NOT EXISTS sessions
 
 --
 -- table structure for add, change or delete actions
+-- TODO generate type sim
 --
 
 CREATE TABLE IF NOT EXISTS change_actions
@@ -309,6 +324,7 @@ CREATE TABLE IF NOT EXISTS change_actions
 
 --
 -- table structure to keep the original table name even if a table name has changed
+-- TODO generate type sim
 --
 
 CREATE TABLE IF NOT EXISTS change_tables
@@ -326,6 +342,7 @@ COMMENT ON COLUMN change_tables.code_id IS 'with this field tables can be combin
 
 --
 -- table structure to keep the original field name even if a table name has changed
+-- TODO generate type sim
 --
 
 CREATE TABLE IF NOT EXISTS change_fields
@@ -342,6 +359,7 @@ COMMENT ON COLUMN change_fields.code_id IS 'to display the change with some link
 
 --
 -- table structure to log the changes done by the users
+-- TODO generate
 --
 -- TODO if change table gets too big, rename the table to "_up_to_YYYY_MM_DD_HH:MM:SS.000"
 --      after that create a new table and start numbering from zero
@@ -368,6 +386,7 @@ COMMENT ON COLUMN changes.new_id IS 'new value id';
 
 --
 -- table structure to log the value changes done by the users
+-- TODO generate
 --
 
 CREATE TABLE IF NOT EXISTS changes_values
@@ -387,6 +406,7 @@ COMMENT ON COLUMN changes_values.change_time IS 'time when the value has been ch
 
 --
 -- table structure to log changes of numbers related to not more than four prime phrases
+-- TODO generate
 --
 
 CREATE TABLE IF NOT EXISTS changes_values_prime
@@ -406,6 +426,7 @@ COMMENT ON COLUMN changes_values_prime.change_time IS 'time when the value has b
 
 --
 -- table structure to log changes of numbers related to more than 16 phrases
+-- TODO generate
 --
 
 CREATE TABLE IF NOT EXISTS changes_values_big
@@ -425,6 +446,7 @@ COMMENT ON COLUMN changes_values_big.change_time IS 'time when the value has bee
 
 --
 -- table structure to log the link changes done by the users
+-- TODO generate
 --
 
 CREATE TABLE IF NOT EXISTS change_links
@@ -456,6 +478,7 @@ COMMENT ON COLUMN change_links.new_text_to IS 'the fixed text to display to the 
 
 --
 -- table structure to add user comments related to any database entry
+-- TODO deprecate?
 --
 
 CREATE TABLE IF NOT EXISTS comments
@@ -536,6 +559,7 @@ COMMENT ON COLUMN phrase_types.word_symbol IS 'e.g. for percent the symbol is %'
 
 --
 -- table structure for table languages
+-- TODO generate
 --
 
 CREATE TABLE IF NOT EXISTS languages
@@ -549,6 +573,7 @@ CREATE TABLE IF NOT EXISTS languages
 
 --
 -- table structure for table language_forms
+-- TODO generate
 --
 
 CREATE TABLE IF NOT EXISTS language_forms
@@ -653,6 +678,7 @@ CREATE TABLE IF NOT EXISTS word_del_confirms
 
 --
 -- table structure for table word_del_requests
+-- TODO move to batch_jobs status ?
 --
 
 CREATE TABLE IF NOT EXISTS word_del_requests
@@ -673,6 +699,7 @@ COMMENT ON COLUMN word_del_requests.user_id IS 'the user who has requested the t
 
 --
 -- table structure for table word_periods
+-- TODO replace by verb / triple
 --
 
 CREATE TABLE IF NOT EXISTS word_periods
@@ -688,6 +715,7 @@ COMMENT ON TABLE word_periods IS 'to define the time period for time terms';
 
 --
 -- table structure for triple predicates
+-- TODO generate
 --
 
 CREATE TABLE IF NOT EXISTS verbs
@@ -813,6 +841,7 @@ COMMENT ON COLUMN user_triples.protect_id IS 'to protect against unwanted change
 
 --
 -- table structure to remember which phrases are stored in which table and pod
+-- TODO generate
 --
 
 CREATE TABLE IF NOT EXISTS phrase_tables
@@ -952,6 +981,7 @@ COMMENT ON TABLE group_links IS 'link phrases to a phrase group for database bas
 
 --
 -- table structure to store user specific ex- or includes of single link of phrases to groups
+-- TODO deprecate and use like on group_id instead
 --
 
 CREATE TABLE IF NOT EXISTS user_group_links
@@ -979,6 +1009,7 @@ COMMENT ON TABLE group_prime_links IS 'link phrases to a short phrase group for 
 
 --
 -- table structure for user specific links of up to four prime phrases per group
+-- TODO deprecate and use like on group_id instead
 --
 
 CREATE TABLE IF NOT EXISTS user_group_prime_links
@@ -993,6 +1024,7 @@ COMMENT ON TABLE user_group_prime_links IS 'user specific link to groups with up
 
 --
 -- table structure to link up more than 16 phrases to a group
+-- TODO deprecate and use like on group_id instead
 --
 
 CREATE TABLE IF NOT EXISTS group_big_links
@@ -1005,6 +1037,7 @@ COMMENT ON TABLE group_big_links IS 'link phrases to a long phrase group for dat
 
 --
 -- table structure for user specific links for more than 16 phrases per group
+-- TODO deprecate and use like on group_id instead
 --
 
 CREATE TABLE IF NOT EXISTS user_group_big_links
@@ -1021,6 +1054,7 @@ COMMENT ON TABLE user_group_big_links IS 'to ex- or include user specific link t
 
 --
 -- table structure for table source_types
+-- TODO generate
 --
 
 CREATE TABLE IF NOT EXISTS source_types
@@ -1096,6 +1130,7 @@ COMMENT ON COLUMN user_sources.protect_id     IS 'to protect against unwanted ch
 
 --
 -- table structure for table source_values
+-- TODO review
 --
 
 CREATE TABLE IF NOT EXISTS source_values
@@ -1154,6 +1189,7 @@ CREATE TABLE IF NOT EXISTS source_api_user
 
 --
 -- table structure for table ref_types
+-- TODO generate
 --
 
 CREATE TABLE IF NOT EXISTS ref_types
@@ -1167,6 +1203,7 @@ CREATE TABLE IF NOT EXISTS ref_types
 
 --
 -- table structure for table refs
+-- TODO generate
 --
 
 CREATE TABLE IF NOT EXISTS refs
@@ -1184,6 +1221,7 @@ CREATE TABLE IF NOT EXISTS refs
 
 --
 -- table structure for table user_refs
+-- TODO generate
 --
 
 CREATE TABLE IF NOT EXISTS user_refs
@@ -1986,6 +2024,7 @@ COMMENT ON TABLE user_value_time_series IS 'common parameters for a user specifi
 
 --
 -- table structure for table value_ts_data
+-- TODO generate
 --
 
 CREATE TABLE IF NOT EXISTS value_ts_data
@@ -2001,6 +2040,7 @@ COMMENT ON TABLE value_ts_data IS 'for efficient saving of daily or intra-day va
 
 --
 -- table structure for table formula_element_types
+-- TODO generate type
 --
 
 CREATE TABLE IF NOT EXISTS formula_element_types
@@ -2013,6 +2053,7 @@ CREATE TABLE IF NOT EXISTS formula_element_types
 
 --
 -- table structure for table formula_elements
+-- TODO generate
 --
 
 CREATE TABLE IF NOT EXISTS formula_elements
@@ -2029,17 +2070,26 @@ CREATE TABLE IF NOT EXISTS formula_elements
 COMMENT ON TABLE formula_elements IS 'cache for fast update of formula resolved text';
 COMMENT ON COLUMN formula_elements.ref_id IS 'either a term, verb or formula id';
 
+-- --------------------------------------------------------
+
 --
--- table structure for table formula_types
+-- table structure to assign predefined behaviour to formulas
 --
 
 CREATE TABLE IF NOT EXISTS formula_types
 (
     formula_type_id BIGSERIAL PRIMARY KEY,
-    name            varchar(100) NOT NULL,
-    description     text         NOT NULL,
-    code_id         varchar(255) NOT NULL
+    type_name       varchar(255) NOT NULL,
+    code_id         varchar(255) DEFAULT NULL,
+    description     text         DEFAULT NULL
 );
+
+COMMENT ON TABLE formula_types IS 'to assign predefined behaviour to formulas';
+COMMENT ON COLUMN formula_types.formula_type_id IS 'the internal unique primary index';
+COMMENT ON COLUMN formula_types.type_name IS 'the unique type name as shown to the user and used for the selection';
+COMMENT ON COLUMN formula_types.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
+COMMENT ON COLUMN formula_types.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
+
 
 -- --------------------------------------------------------
 
@@ -2118,8 +2168,10 @@ COMMENT ON COLUMN user_formulas.usage IS 'number of results linked to this formu
 COMMENT ON COLUMN user_formulas.excluded IS 'true if a user,but not all,have removed it';
 COMMENT ON COLUMN user_formulas.share_type_id IS 'to restrict the access';
 COMMENT ON COLUMN user_formulas.protect_id IS 'to protect against unwanted changes';
+
 --
 -- table structure for table formula_link_types
+-- TODO generate type
 --
 
 CREATE TABLE IF NOT EXISTS formula_link_types
@@ -2135,6 +2187,7 @@ CREATE TABLE IF NOT EXISTS formula_link_types
 
 --
 -- table structure for table formula_links
+-- TODO generate link
 --
 
 CREATE TABLE IF NOT EXISTS formula_links
@@ -2152,6 +2205,7 @@ COMMENT ON TABLE formula_links IS 'if the term pattern of a value matches this t
 
 --
 -- table structure for table user_formula_links
+-- TODO generate link
 --
 
 CREATE TABLE IF NOT EXISTS user_formula_links
@@ -2266,6 +2320,7 @@ COMMENT ON COLUMN result_big.last_update IS 'time of last value update mainly us
 
 --
 -- table structure for table view_type_list
+-- TODO generate type
 --
 
 CREATE TABLE IF NOT EXISTS view_types
@@ -2340,6 +2395,7 @@ COMMENT ON COLUMN user_views.protect_id IS 'to protect against unwanted changes'
 
 --
 -- table structure for table component_link_types
+-- TODO generate type
 --
 
 CREATE TABLE IF NOT EXISTS component_link_types
@@ -2351,6 +2407,7 @@ CREATE TABLE IF NOT EXISTS component_link_types
 
 --
 -- table structure for table component_position_types
+-- TODO generate type
 --
 
 CREATE TABLE IF NOT EXISTS component_position_types
@@ -2365,6 +2422,7 @@ COMMENT ON TABLE component_position_types IS 'sideways or down';
 
 --
 -- table structure for table component_types
+-- TODO generate type
 --
 
 CREATE TABLE IF NOT EXISTS component_types
@@ -2467,6 +2525,7 @@ COMMENT ON COLUMN user_components.protect_id IS 'to protect against unwanted cha
 
 --
 -- table structure for table component_links
+-- TODO generate link
 --
 
 CREATE TABLE IF NOT EXISTS component_links
@@ -2487,6 +2546,7 @@ COMMENT ON COLUMN component_links.position_type IS '1=side, 2 =below';
 
 --
 -- table structure for table user_component_links
+-- TODO generate link
 --
 
 CREATE TABLE IF NOT EXISTS user_component_links
@@ -2504,6 +2564,7 @@ CREATE TABLE IF NOT EXISTS user_component_links
 
 --
 -- table structure for table view_link_types
+-- TODO generate type
 --
 
 CREATE TABLE IF NOT EXISTS view_link_types
@@ -2515,6 +2576,7 @@ CREATE TABLE IF NOT EXISTS view_link_types
 
 --
 -- table structure for table view_term_links
+-- TODO generate link
 --
 
 CREATE TABLE IF NOT EXISTS view_term_links
@@ -2536,6 +2598,7 @@ COMMENT ON COLUMN view_term_links.type_id IS '1 = from_term_id is link the terms
 
 --
 -- table structure for table user_view_term_links
+-- TODO generate link
 --
 
 CREATE TABLE IF NOT EXISTS user_view_term_links
@@ -2560,6 +2623,7 @@ CREATE TABLE IF NOT EXISTS user_view_term_links
 
 --
 -- table structure for table value_formula_links
+-- TODO deprecate becasue already included in the group
 --
 
 CREATE TABLE IF NOT EXISTS value_formula_links
@@ -2579,6 +2643,7 @@ COMMENT ON COLUMN value_formula_links.condition_formula_id IS 'if true or 1  to 
 
 --
 -- Structure for view phrase_prime (phrases with an id less than 2^16 so that 4 phrase id fit in a 64 bit db key)
+-- TODO generate view
 --
 
 CREATE OR REPLACE VIEW prime_phrases AS
@@ -2612,6 +2677,7 @@ WHERE t.triple_id < 32767; -- 2^16 / 2 - 1
 
 --
 -- Structure for view phrases
+-- TODO generate view
 --
 
 CREATE OR REPLACE VIEW phrases AS
@@ -2643,6 +2709,7 @@ FROM triples AS t;
 
 --
 -- Structure for the user_phrases view
+-- TODO generate view
 --
 
 CREATE OR REPLACE VIEW user_prime_phrases AS
@@ -2674,6 +2741,7 @@ WHERE t.triple_id < 32767; -- 2^16 / 2 - 1
 
 --
 -- Structure for the user_phrases view
+-- TODO generate view
 --
 
 CREATE OR REPLACE VIEW user_phrases AS
@@ -2703,6 +2771,7 @@ SELECT (t.triple_id * -(1)) AS phrase_id,
 
 --
 -- Structure for view terms
+-- TODO generate view
 --
 
 CREATE OR REPLACE VIEW terms AS
@@ -2766,6 +2835,7 @@ FROM verbs AS v
 
 --
 -- Structure for view user_terms
+-- TODO generate view
 --
 
 CREATE OR REPLACE VIEW user_terms AS
@@ -2825,6 +2895,7 @@ FROM verbs AS v
 
 --
 -- Structure for view change_table_fields
+-- TODO generate view
 --
 
 CREATE OR REPLACE VIEW change_table_fields AS
@@ -3307,6 +3378,14 @@ CREATE UNIQUE INDEX value_time_series_idx ON value_ts_data (value_time_series_id
 --
 CREATE INDEX formula_element_idx ON formula_elements (formula_id);
 CREATE INDEX formula_element_type_idx ON formula_elements (formula_element_type_id);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table formula_types
+--
+
+CREATE INDEX formula_types_type_name_idx ON formula_types (type_name);
 
 -- --------------------------------------------------------
 
