@@ -33,6 +33,8 @@
 namespace unit;
 
 use cfg\phrase_type;
+use cfg\protection_type;
+use cfg\share_type;
 use cfg\user\user_type;
 use test\test_cleanup;
 
@@ -55,6 +57,16 @@ class type_tests
         $usr_typ = new user_type('');
         $t->assert_sql_table_create($usr_typ);
         $t->assert_sql_index_create($usr_typ);
+
+        $t->subheader('Protection type SQL setup statements');
+        $prt_typ = new protection_type('');
+        $t->assert_sql_table_create($prt_typ);
+        $t->assert_sql_index_create($prt_typ);
+
+        $t->subheader('Share type SQL setup statements');
+        $shr_typ = new share_type('');
+        $t->assert_sql_table_create($shr_typ);
+        $t->assert_sql_index_create($shr_typ);
 
         $t->subheader('Phrase type SQL setup statements');
         $phr_typ = new phrase_type('');

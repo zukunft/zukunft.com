@@ -44,6 +44,12 @@ use cfg\type_object;
 class user_type extends type_object
 {
 
+    // list of the user types that have a coded functionality
+    const GUEST = "Guest"; // a read only access
+    const IP_ADDR = "IP address"; // identified only by IP address
+    const VERIFIED = "Verified"; // verified by email or mobile
+    const SECURED = "Secured"; // verified with a high security e.g. via passport of a trusted country
+
     /*
      * database link
      */

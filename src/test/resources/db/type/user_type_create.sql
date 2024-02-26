@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS user_types
     user_type_id BIGSERIAL PRIMARY KEY,
     type_name    varchar(255) NOT NULL,
     code_id      varchar(255) DEFAULT NULL,
-    description  text DEFAULT NULL
+    description  text         DEFAULT NULL
 );
 
 COMMENT ON TABLE user_types IS 'for the user types e.g. to set the confirmation level of a user';

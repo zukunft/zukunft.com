@@ -470,32 +470,36 @@ CREATE TABLE IF NOT EXISTS `comments`
 -- --------------------------------------------------------
 
 --
--- Table structure for table`protection_types`
+-- table structure for the write access control
 --
 
-CREATE TABLE IF NOT EXISTS `protection_types`
+CREATE TABLE IF NOT EXISTS protection_types
 (
-    `protect_id`  int(11)      NOT NULL,
-    `type_name`   varchar(200) NOT NULL,
-    `code_id`     varchar(100) NOT NULL,
-    `description` text         NOT NULL
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 5
-  DEFAULT CHARSET = utf8;
+    protection_type_id bigint           NOT NULL COMMENT 'the internal unique primary index',
+    type_name          varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
+    code_id            varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
+    description        text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'for the write access control';
+
+-- --------------------------------------------------------
 
 --
--- Table structure for table`share_types`
+-- table structure for the read access control
 --
 
-CREATE TABLE IF NOT EXISTS `share_types`
+CREATE TABLE IF NOT EXISTS share_types
 (
-    `share_type_id` int(11)      NOT NULL,
-    `type_name`     varchar(200) NOT NULL COMMENT 'the name of the share type as displayed for the user',
-    `code_id`       varchar(100) NOT NULL COMMENT 'the code link',
-    `description`   text COMMENT 'to explain the code action of the share type'
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 5
-  DEFAULT CHARSET = utf8;
+    share_type_id bigint           NOT NULL COMMENT 'the internal unique primary index',
+    type_name     varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
+    code_id       varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
+    description   text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'for the read access control';
 
 -- --------------------------------------------------------
 
@@ -2097,44 +2101,6 @@ select (`verbs`.`verb_id` * -2) AS `term_id`,
 from `verbs`
 ;
 
--- --------------------------------------------------------
-
---
--- Structure for view`phrase_groups_phrase_links`
---
-DROP TABLE IF EXISTS `phrase_groups_phrase_links`;
-
-CREATE ALGORITHM = UNDEFINED DEFINER =`root`@`localhost`SQL
-    SECURITY DEFINER VIEW `phrase_groups_phrase_links` AS
-select `phrase_group_word_links`.`phrase_group_word_link_id` AS `phrase_groups_phrase_link_id`,
-       `phrase_group_word_links`.`phrase_group_id`           AS `phrase_group_id`,
-       `phrase_group_word_links`.`word_id`                   AS `phrase_id`
-from group_links
-union
-select `phrase_group_triple_links`.`phrase_group_triple_link_id` AS `phrase_groups_phrase_link_id`,
-       `phrase_group_triple_links`.`phrase_group_id`             AS `phrase_group_id`,
-       (`phrase_group_triple_links`.`triple_id` * -(1))          AS `phrase_id`
-from `phrase_group_triple_links`;
-
--- --------------------------------------------------------
-
---
--- Structure for view`user_phrase_groups_phrase_links`
---
-DROP TABLE IF EXISTS `user_phrase_groups_phrase_links`;
-
-CREATE ALGORITHM = UNDEFINED DEFINER =`root`@`localhost`SQL
-    SECURITY DEFINER VIEW `user_phrase_groups_phrase_links` AS
-select `user_phrase_group_word_links`.`phrase_group_word_link_id` AS `phrase_groups_phrase_link_id`,
-       `user_phrase_group_word_links`.`user_id`                   AS `user_id`,
-       `user_phrase_group_word_links`.`excluded`                  AS `excluded`
-from user_group_links
-union
-select `user_phrase_group_triple_links`.`phrase_group_triple_link_id` AS `phrase_groups_phrase_link_id`,
-       `user_phrase_group_triple_links`.`user_id`                     AS `user_id`,
-       `user_phrase_group_triple_links`.`excluded`                    AS `excluded`
-from `user_phrase_group_triple_links`;
-
 --
 -- Structure for view`change_table_fields`
 --
@@ -2899,6 +2865,26 @@ ALTER TABLE `word_periods`
 ALTER TABLE user_types
     ADD PRIMARY KEY (user_type_id),
     ADD KEY user_types_type_name_idx (type_name);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table protection_types
+--
+
+ALTER TABLE protection_types
+    ADD PRIMARY KEY (protection_type_id),
+    ADD KEY protection_types_type_name_idx (type_name);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table share_types
+--
+
+ALTER TABLE share_types
+    ADD PRIMARY KEY (share_type_id),
+    ADD KEY share_types_type_name_idx (type_name);
 
 -- --------------------------------------------------------
 

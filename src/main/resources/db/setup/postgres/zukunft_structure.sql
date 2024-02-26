@@ -467,32 +467,42 @@ COMMENT ON TABLE comments IS 'separate table because it is expected that only a 
 -- --------------------------------------------------------
 
 --
--- table structure for table protection_types
+-- table structure for the write access control
 --
 
 CREATE TABLE IF NOT EXISTS protection_types
 (
     protection_type_id BIGSERIAL PRIMARY KEY,
-    type_name          varchar(200) NOT NULL,
-    code_id            varchar(100) NOT NULL,
-    description        text         NOT NULL
+    type_name          varchar(255) NOT NULL,
+    code_id            varchar(255) DEFAULT NULL,
+    description        text         DEFAULT NULL
 );
 
+COMMENT ON TABLE protection_types IS 'for the write access control';
+COMMENT ON COLUMN protection_types.protection_type_id IS 'the internal unique primary index';
+COMMENT ON COLUMN protection_types.type_name IS 'the unique type name as shown to the user and used for the selection';
+COMMENT ON COLUMN protection_types.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
+COMMENT ON COLUMN protection_types.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
+
+-- --------------------------------------------------------
+
 --
--- table structure for table share_types
+-- table structure for the read access control
 --
 
 CREATE TABLE IF NOT EXISTS share_types
 (
     share_type_id BIGSERIAL PRIMARY KEY,
-    type_name     varchar(200) NOT NULL,
-    code_id       varchar(100) NOT NULL,
-    description   text
+    type_name     varchar(255) NOT NULL,
+    code_id       varchar(255) DEFAULT NULL,
+    description   text         DEFAULT NULL
 );
 
-COMMENT ON COLUMN share_types.type_name IS 'the name of the share type as displayed for the user';
-COMMENT ON COLUMN share_types.code_id IS 'the code link';
-COMMENT ON COLUMN share_types.description IS 'to explain the code action of the share type';
+COMMENT ON TABLE share_types IS 'for the read access control';
+COMMENT ON COLUMN share_types.share_type_id IS 'the internal unique primary index';
+COMMENT ON COLUMN share_types.type_name IS 'the unique type name as shown to the user and used for the selection';
+COMMENT ON COLUMN share_types.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
+COMMENT ON COLUMN share_types.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
 
 -- --------------------------------------------------------
 
@@ -2946,6 +2956,22 @@ CREATE INDEX user_triples_view_idx           ON user_triples (view_id);
 --
 
 CREATE INDEX user_types_type_name_idx ON user_types (type_name);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table protection_types
+--
+
+CREATE INDEX protection_types_type_name_idx ON protection_types (type_name);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table share_types
+--
+
+CREATE INDEX share_types_type_name_idx ON share_types (type_name);
 
 -- --------------------------------------------------------
 

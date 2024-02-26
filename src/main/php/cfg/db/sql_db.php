@@ -47,6 +47,8 @@ use cfg\group\group_id;
 use cfg\library;
 use cfg\log;
 use cfg\phrase_type;
+use cfg\protection_type;
+use cfg\share_type;
 use cfg\source;
 use cfg\sys_log_level;
 use cfg\triple;
@@ -164,6 +166,8 @@ class sql_db
     // classes that have a database table
     const DB_TABLE_CLASSES = [
         user_type::class,
+        protection_type::class,
+        share_type::class,
         word::class,
         triple::class,
         phrase_type::class,

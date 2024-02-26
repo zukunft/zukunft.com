@@ -1559,6 +1559,8 @@ class library
                 $result = $this->class_to_name(ref::class);
                 break;
             case $this->class_to_name(user_type::class):
+            case $this->class_to_name(protection_type::class):
+            case $this->class_to_name(share_type::class):
             case $this->class_to_name(phrase_type::class):
                 $result = 'type';
                 break;
