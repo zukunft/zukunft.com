@@ -61,6 +61,7 @@ use cfg\share_type_list;
 use cfg\source_type_list;
 use cfg\db\sql_db;
 use cfg\sys_log_function;
+use cfg\sys_log_function_list;
 use cfg\user;
 use cfg\value\value;
 use cfg\view_type_list;

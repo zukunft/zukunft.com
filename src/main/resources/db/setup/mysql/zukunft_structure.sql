@@ -67,17 +67,22 @@ CREATE TABLE IF NOT EXISTS sys_log_status
     COMMENT 'to define the status of internal errors';
 
 
+-- --------------------------------------------------------
+
 --
--- Table structure for table`sys_log_functions`
+-- table structure to group the system log entries by function
 --
 
-CREATE TABLE IF NOT EXISTS `sys_log_functions`
+CREATE TABLE IF NOT EXISTS sys_log_functions
 (
-    `sys_log_function_id`   int(11)      NOT NULL,
-    `sys_log_function_name` varchar(200) NOT NULL
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8;
+    sys_log_function_id   bigint           NOT NULL COMMENT 'the internal unique primary index',
+    sys_log_function_name varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
+    code_id               varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
+    description           text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'to group the system log entries by function';
 
 --
 -- Table structure for table`sys_log`
@@ -2149,6 +2154,16 @@ ALTER TABLE config
 ALTER TABLE sys_log_status
     ADD PRIMARY KEY (sys_log_status_id),
     ADD KEY sys_log_status_type_name_idx (type_name);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table sys_log_functions
+--
+
+ALTER TABLE sys_log_functions
+    ADD PRIMARY KEY (sys_log_function_id),
+    ADD KEY sys_log_functions_sys_log_function_name_idx (sys_log_function_name);
 
 --
 -- Indexes for table`calc_and_cleanup_tasks`

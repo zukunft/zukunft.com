@@ -51,6 +51,7 @@ use cfg\phrase_type;
 use cfg\protection_type;
 use cfg\share_type;
 use cfg\source;
+use cfg\sys_log_function;
 use cfg\sys_log_level;
 use cfg\sys_log_status;
 use cfg\triple;
@@ -169,6 +170,7 @@ class sql_db
     const DB_TABLE_CLASSES = [
         config::class,
         sys_log_status::class,
+        sys_log_function::class,
         user_type::class,
         protection_type::class,
         share_type::class,

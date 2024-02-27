@@ -52,6 +52,7 @@ use cfg\db\sql_par_type;
 use cfg\sandbox;
 use cfg\db\sql_db;
 use cfg\sys_log_function;
+use cfg\sys_log_function_list;
 use cfg\sys_log_status;
 use cfg\sys_log_status_list;
 use cfg\type_object;

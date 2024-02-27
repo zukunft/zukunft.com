@@ -1569,6 +1569,7 @@ class library
                 $result = $this->class_to_name(ref::class);
                 break;
             case $this->class_to_name(sys_log_status::class):
+            case $this->class_to_name(sys_log_function::class):
             case $this->class_to_name(user_type::class):
             case $this->class_to_name(protection_type::class):
             case $this->class_to_name(share_type::class):

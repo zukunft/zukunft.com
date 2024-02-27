@@ -68,16 +68,25 @@ COMMENT ON COLUMN sys_log_status.description IS 'text to explain the type to the
 COMMENT ON COLUMN sys_log_status.action IS 'description of the action to get to this status';
 
 
+-- --------------------------------------------------------
+
 --
--- table structure for table sys_log_functions
--- TODO generate
+-- table structure to group the system log entries by function
 --
 
 CREATE TABLE IF NOT EXISTS sys_log_functions
 (
     sys_log_function_id   BIGSERIAL PRIMARY KEY,
-    sys_log_function_name varchar(200) NOT NULL
+    sys_log_function_name varchar(255)     NOT NULL,
+    code_id               varchar(255) DEFAULT NULL,
+    description           text         DEFAULT NULL
 );
+
+COMMENT ON TABLE sys_log_functions IS 'to group the system log entries by function';
+COMMENT ON COLUMN sys_log_functions.sys_log_function_id IS 'the internal unique primary index';
+COMMENT ON COLUMN sys_log_functions.sys_log_function_name IS 'the unique type name as shown to the user and used for the selection';
+COMMENT ON COLUMN sys_log_functions.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
+COMMENT ON COLUMN sys_log_functions.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
 
 --
 -- table structure for table sys_log
@@ -136,9 +145,9 @@ CREATE TABLE IF NOT EXISTS sys_script_times
 CREATE TABLE IF NOT EXISTS calc_and_cleanup_task_types
 (
     calc_and_cleanup_task_type_id BIGSERIAL PRIMARY KEY,
-    type_name                     varchar(200) NOT NULL,
+    type_name                     varchar(255) NOT NULL,
     description                   text,
-    code_id                       varchar(50)  NOT NULL
+    code_id                       varchar(255)  NOT NULL
 );
 
 COMMENT ON TABLE calc_and_cleanup_task_types IS 'batch job types e.g. data synchronisation';
@@ -2937,6 +2946,14 @@ CREATE INDEX config_code_idx ON config (code_id);
 --
 
 CREATE INDEX sys_log_status_type_name_idx ON sys_log_status (type_name);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table sys_log_functions
+--
+
+CREATE INDEX sys_log_functions_sys_log_function_name_idx ON sys_log_functions (sys_log_function_name);
 
 --
 -- Indexes for table sys_log
