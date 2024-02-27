@@ -48,20 +48,24 @@ CREATE TABLE IF NOT EXISTS `sys_log_types`
   AUTO_INCREMENT = 1
   DEFAULT CHARSET = utf8;
 
+-- --------------------------------------------------------
+
 --
--- Table structure for table`sys_log_status`
+-- table structure to define the status of internal errors
 --
 
-CREATE TABLE IF NOT EXISTS `sys_log_status`
+CREATE TABLE IF NOT EXISTS sys_log_status
 (
-    `sys_log_status_id` int(11)      NOT NULL,
-    `type_name`         varchar(200) NOT NULL,
-    `code_id`           varchar(50)  NOT NULL,
-    `description`       text         NOT NULL,
-    `action`            varchar(200) DEFAULT NULL COMMENT 'description of the action to get to this status'
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8 COMMENT ='Status of internal errors';
+    sys_log_status_id bigint           NOT NULL COMMENT 'the internal unique primary index',
+    type_name         varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
+    code_id           varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
+    description       text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry',
+    action            varchar(255) DEFAULT NULL COMMENT 'description of the action to get to this status'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'to define the status of internal errors';
+
 
 --
 -- Table structure for table`sys_log_functions`
@@ -2125,6 +2129,27 @@ WHERE `change_fields`.table_id = `change_tables`.change_table_id;
 -- Indexes for dumped tables
 --
 
+-- --------------------------------------------------------
+
+--
+-- indexes for table config
+--
+
+ALTER TABLE config
+    ADD PRIMARY KEY (config_id),
+    ADD KEY config_config_name_idx (config_name),
+    ADD KEY config_code_idx (code_id);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table sys_log_status
+--
+
+ALTER TABLE sys_log_status
+    ADD PRIMARY KEY (sys_log_status_id),
+    ADD KEY sys_log_status_type_name_idx (type_name);
+
 --
 -- Indexes for table`calc_and_cleanup_tasks`
 --
@@ -2178,25 +2203,6 @@ ALTER TABLE `change_tables`
 --
 ALTER TABLE `comments`
     ADD PRIMARY KEY (`comment_id`);
-
---
--- Indexes for table`config`
---
-ALTER TABLE `config`
-    ADD PRIMARY KEY (`config_id`),
-    ADD UNIQUE KEY `config_name` (`config_name`),
-    ADD UNIQUE KEY `setting` (`code_id`);
-
--- --------------------------------------------------------
-
---
--- indexes for table config
---
-
-ALTER TABLE config
-    ADD PRIMARY KEY (config_id),
-    ADD KEY config_config_name_idx (config_name),
-    ADD KEY config_code_idx (code_id);
 
 -- --------------------------------------------------------
 

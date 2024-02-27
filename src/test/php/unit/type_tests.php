@@ -36,6 +36,7 @@ use cfg\formula_type;
 use cfg\phrase_type;
 use cfg\protection_type;
 use cfg\share_type;
+use cfg\sys_log_status;
 use cfg\user\user_type;
 use test\test_cleanup;
 
@@ -52,7 +53,12 @@ class type_tests
 
         $t->header('Unit tests of the type classes');
 
-        // TODO add config, sys_log_types, sys_log_status, calc_and_cleanup_task_types
+        // TODO add sys_log_types, calc_and_cleanup_task_types
+
+        $t->subheader('System log status SQL setup statements');
+        $log_sta = new sys_log_status('');
+        $t->assert_sql_table_create($log_sta);
+        $t->assert_sql_index_create($log_sta);
 
         $t->subheader('User type SQL setup statements');
         $usr_typ = new user_type('');

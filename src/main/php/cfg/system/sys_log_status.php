@@ -31,6 +31,9 @@
 
 namespace cfg;
 
+use cfg\db\sql_field_default;
+use cfg\db\sql_field_type;
+
 class sys_log_status extends type_object
 {
 
@@ -50,6 +53,13 @@ class sys_log_status extends type_object
      */
 
     // comments used for the database creation
-    const TBL_COMMENT = 'to define the status of a system log entry';
+    const TBL_COMMENT = 'to define the status of internal errors';
+    const FLD_ACTION_COM = 'description of the action to get to this status';
+    const FLD_ACTION = 'action';
+
+    // list of fields that are additional to the standard type fields used for the system log status
+    const FLD_LST_EXTRA = array(
+        [self::FLD_ACTION, sql_field_type::NAME, sql_field_default::NULL, '', '', self::FLD_ACTION_COM],
+    );
 
 }
