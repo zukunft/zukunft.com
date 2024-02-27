@@ -1543,7 +1543,14 @@ class library
      */
     function class_to_name(string $class): string
     {
-        return $this->str_right_of_or_all($class, '\\');
+        $result = $this->str_right_of_or_all($class, '\\');
+        // for some lists
+        switch ($class) {
+            case sys_log_status_list::class;
+                $result = str_replace('_list', '', $result);
+                break;
+        }
+        return $result;
     }
 
     /**

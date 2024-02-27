@@ -34,13 +34,13 @@ namespace cfg;
 
 include_once API_SYSTEM_PATH . 'type_object.php';
 include_once API_SYSTEM_PATH . 'type_lists.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_status.php';
+include_once MODEL_SYSTEM_PATH . 'sys_log_status_list.php';
 include_once MODEL_USER_PATH . 'user_list.php';
 include_once MODEL_USER_PATH . 'user_profile.php';
 include_once MODEL_PHRASE_PATH . 'phrase_type.php';
 include_once MODEL_PHRASE_PATH . 'phrase_types.php';
 include_once MODEL_SYSTEM_PATH . 'batch_job_type_list.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_status.php';
+include_once MODEL_SYSTEM_PATH . 'sys_log_status_list.php';
 include_once MODEL_VERB_PATH . 'verb_list.php';
 include_once MODEL_FORMULA_PATH . 'formula_type.php';
 include_once MODEL_FORMULA_PATH . 'formula_type_list.php';
@@ -169,7 +169,7 @@ class type_lists
         $result = true;
 
         // load backend only default records
-        $sys_log_stati = new sys_log_status();
+        $sys_log_stati = new sys_log_status_list();
         $sys_log_stati->load($db_con);
         $system_users = new user_list($usr);
         $system_users->load_system($db_con);

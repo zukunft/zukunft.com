@@ -495,7 +495,7 @@ use cfg\db\sql;
 use cfg\library;
 use cfg\db\sql_db;
 use cfg\sys_log_level;
-use cfg\sys_log_status;
+use cfg\sys_log_status_list;
 use cfg\sys_log_function;
 use cfg\type_lists;
 use cfg\user;
@@ -626,7 +626,7 @@ include_once MODEL_HELPER_PATH . 'type_list.php';
 include_once MODEL_HELPER_PATH . 'type_lists.php';
 include_once MODEL_SYSTEM_PATH . 'BasicEnum.php';
 include_once MODEL_SYSTEM_PATH . 'sys_log_level.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_status.php';
+include_once MODEL_SYSTEM_PATH . 'sys_log_status_list.php';
 include_once MODEL_USER_PATH . 'user_list.php';
 include_once MODEL_USER_PATH . 'user_profile_list.php';
 include_once MODEL_PHRASE_PATH . 'phrase_types.php';
@@ -741,7 +741,7 @@ const ZUH_IMG_UNDO = "/src/main/resources/images/button_undo.svg";
 
 // classes that use a standard sql sequence for the database id
 const SQL_STD_CLASSES = [
-    sys_log_status::class,
+    sys_log_status_list::class,
     sys_log_function::class
 ];
 

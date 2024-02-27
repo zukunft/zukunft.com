@@ -37,9 +37,10 @@ include_once DB_PATH . 'db_check.php';
 
 use cfg\batch_job_type_list;
 use cfg\db\db_check;
+use cfg\sys_log_status;
 use cfg\type_lists;
 use cfg\db\sql_db;
-use cfg\sys_log_status;
+use cfg\sys_log_status_list;
 use test\test_cleanup;
 
 class system_tests
@@ -59,7 +60,7 @@ class system_tests
         $t->subheader('System error log tests');
 
         // load the log status list
-        $lst = new sys_log_status();
+        $lst = new sys_log_status_list();
         $result = $lst->load($db_con);
         $t->assert('load status', $result, true);
 

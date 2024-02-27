@@ -112,6 +112,7 @@ use cfg\source;
 use cfg\source_type;
 use cfg\source_type_list;
 use cfg\sys_log_status;
+use cfg\sys_log_status_list;
 use cfg\term;
 use cfg\term_list;
 use cfg\triple;
@@ -175,7 +176,7 @@ class create_test_objects extends test_base
         $protection_types = new protection_type_list();
         $languages = new language_list();
         $language_forms = new language_form_list();
-        $sys_log_stati = new sys_log_status();
+        $sys_log_stati = new sys_log_status_list();
         $job_types = new batch_job_type_list();
         $change_log_actions = new change_log_action();
         $change_log_tables = new change_log_table();

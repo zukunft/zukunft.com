@@ -41,13 +41,14 @@ use cfg\log\system_log_list;
 use cfg\log\system_log;
 use api\log\system_log as system_log_api;
 use api\word\word as word_api;
+use cfg\sys_log_status;
 use cfg\user\user_type;
 use DateTime;
 use cfg\ip_range;
 use cfg\ip_range_list;
 use cfg\library;
 use cfg\db\sql_db;
-use cfg\sys_log_status;
+use cfg\sys_log_status_list;
 use test\test_cleanup;
 
 class system_tests
@@ -277,7 +278,7 @@ class system_tests
         $t->subheader('user list loading sql tests');
 
         // check if the sql to load the complete list of all ... types is created as expected
-        $sys_log_status = new sys_log_status();
+        $sys_log_status = new sys_log_status_list();
         $t->assert_sql_all($db_con, $sys_log_status);
 
 

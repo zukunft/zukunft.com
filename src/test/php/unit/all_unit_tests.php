@@ -41,7 +41,7 @@ include_once MODEL_USER_PATH . 'user_list.php';
 include_once MODEL_USER_PATH . 'user_profile.php';
 include_once MODEL_USER_PATH . 'user_type.php';
 include_once MODEL_SYSTEM_PATH . 'batch_job_type_list.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_status.php';
+include_once MODEL_SYSTEM_PATH . 'sys_log_status_list.php';
 include_once MODEL_PHRASE_PATH . 'phrase_types.php';
 include_once MODEL_GROUP_PATH . 'group_id.php';
 include_once MODEL_VERB_PATH . 'verb_list.php';
@@ -88,7 +88,7 @@ use cfg\protection_type_list;
 use cfg\ref_type_list;
 use cfg\share_type_list;
 use cfg\source_type_list;
-use cfg\sys_log_status;
+use cfg\sys_log_status_list;
 use cfg\user;
 use cfg\user_list;
 use cfg\user_profile;
@@ -303,7 +303,7 @@ class all_unit_tests extends test_cleanup
     {
         global $sys_log_stati;
 
-        $sys_log_stati = new sys_log_status();
+        $sys_log_stati = new sys_log_status_list();
         $sys_log_stati->load_dummy();
 
     }
