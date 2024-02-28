@@ -1087,17 +1087,22 @@ COMMENT ON TABLE user_group_big_links IS 'to ex- or include user specific link t
 -- --------------------------------------------------------
 
 --
--- table structure for table source_types
--- TODO generate
+-- table structure to link predefined behaviour to a source
 --
 
 CREATE TABLE IF NOT EXISTS source_types
 (
     source_type_id BIGSERIAL PRIMARY KEY,
-    type_name      varchar(200) NOT NULL,
-    code_id        varchar(100) NOT NULL,
-    description    text     DEFAULT NULL
+    type_name      varchar(255) NOT NULL,
+    code_id        varchar(255) DEFAULT NULL,
+    description    text         DEFAULT NULL
 );
+
+COMMENT ON TABLE source_types IS 'to link predefined behaviour to a source';
+COMMENT ON COLUMN source_types.source_type_id IS 'the internal unique primary index';
+COMMENT ON COLUMN source_types.type_name IS 'the unique type name as shown to the user and used for the selection';
+COMMENT ON COLUMN source_types.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
+COMMENT ON COLUMN source_types.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
 
 -- --------------------------------------------------------
 
@@ -3066,6 +3071,14 @@ CREATE INDEX share_types_type_name_idx ON share_types (type_name);
 --
 
 CREATE INDEX phrase_types_type_name_idx ON phrase_types (type_name);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table source_types
+--
+
+CREATE INDEX source_types_type_name_idx ON source_types (type_name);
 
 -- --------------------------------------------------------
 

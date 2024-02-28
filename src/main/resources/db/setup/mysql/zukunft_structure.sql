@@ -978,18 +978,20 @@ CREATE TABLE IF NOT EXISTS `user_group_big_links`
 -- --------------------------------------------------------
 
 --
--- Table structure for table`source_types`
+-- table structure to link predefined behaviour to a source
 --
 
-CREATE TABLE IF NOT EXISTS `source_types`
+CREATE TABLE IF NOT EXISTS source_types
 (
-    `source_type_id` int(11)      NOT NULL,
-    `type_name`      varchar(200) NOT NULL,
-    `code_id`        varchar(100) NOT NULL,
-    `description`    text     DEFAULT NULL
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 5
-  DEFAULT CHARSET = utf8;
+    source_type_id bigint          NOT NULL COMMENT 'the internal unique primary index',
+    type_name     varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
+    code_id       varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
+    description   text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'to link predefined behaviour to a source';
+
 
 -- --------------------------------------------------------
 
@@ -2493,11 +2495,16 @@ ALTER TABLE user_sources
     ADD KEY user_sources_source_name_idx (source_name),
     ADD KEY user_sources_source_type_idx (source_type_id);
 
+-- --------------------------------------------------------
+
 --
--- Indexes for table`source_types`
+-- indexes for table source_types
 --
-ALTER TABLE `source_types`
-    ADD PRIMARY KEY (`source_type_id`);
+
+ALTER TABLE source_types
+    ADD PRIMARY KEY (source_type_id),
+    ADD KEY source_types_type_name_idx (type_name);
+
 
 --
 -- Indexes for table`source_values`

@@ -52,6 +52,7 @@ use cfg\phrase_type;
 use cfg\protection_type;
 use cfg\share_type;
 use cfg\source;
+use cfg\source_type;
 use cfg\sys_log_function;
 use cfg\sys_log_level;
 use cfg\sys_log_status;
@@ -183,6 +184,7 @@ class sql_db
         phrase_type::class,
         group::class,
         source::class,
+        source_type::class,
         formula_type::class,
         formula::class,
         view::class,

@@ -36,6 +36,7 @@ use cfg\formula_type;
 use cfg\phrase_type;
 use cfg\protection_type;
 use cfg\share_type;
+use cfg\source_type;
 use cfg\sys_log_function;
 use cfg\sys_log_status;
 use cfg\user\user_profile;
@@ -91,6 +92,11 @@ class type_tests
         $phr_typ = new phrase_type('');
         $t->assert_sql_table_create($phr_typ);
         $t->assert_sql_index_create($phr_typ);
+
+        $t->subheader('Source type SQL setup statements');
+        $src_typ = new source_type('');
+        $t->assert_sql_table_create($src_typ);
+        $t->assert_sql_index_create($src_typ);
 
         $t->subheader('Formula type SQL setup statements');
         $frm_typ = new formula_type('');
