@@ -185,19 +185,23 @@ CREATE TABLE IF NOT EXISTS user_types
     DEFAULT CHARSET = utf8
     COMMENT 'for the user types e.g. to set the confirmation level of a user';
 
+-- --------------------------------------------------------
+
 --
--- Table structure for table`user_profiles`
+-- table structure to define the user roles and read and write rights
 --
 
-CREATE TABLE IF NOT EXISTS `user_profiles`
+CREATE TABLE IF NOT EXISTS user_profiles
 (
-    `profile_id`  int(11)      NOT NULL,
-    `type_name`   varchar(200) NOT NULL,
-    `code_id`     varchar(50)  NOT NULL,
-    `description` text
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 4
-  DEFAULT CHARSET = utf8;
+    user_profile_id bigint        NOT NULL COMMENT 'the internal unique primary index',
+    type_name    varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
+    code_id      varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
+    description  text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry',
+    right_level  smallint     DEFAULT NULL COMMENT 'the access right level to prevent unpermitted right gaining'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'to define the user roles and read and write rights';
 
 --
 -- Table structure for table`users`
@@ -2627,11 +2631,15 @@ ALTER TABLE `user_phrase_group_triple_links`
     ADD KEY `phrase_group_triple_link_id_2` (`phrase_group_triple_link_id`),
     ADD KEY `user_id` (`user_id`);
 
+-- --------------------------------------------------------
+
 --
--- Indexes for table`user_profiles`
+-- indexes for table user_profiles
 --
-ALTER TABLE `user_profiles`
-    ADD PRIMARY KEY (`profile_id`);
+
+ALTER TABLE user_profiles
+    ADD PRIMARY KEY (user_profile_id),
+    ADD KEY user_profiles_type_name_idx (type_name);
 
 --
 -- Indexes for table`user_requests`

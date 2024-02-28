@@ -87,7 +87,7 @@ use cfg\triple;
 use cfg\triple_list;
 use cfg\trm_ids;
 use cfg\user;
-use cfg\user_profile;
+use cfg\user\user_profile;
 use cfg\value\value;
 use cfg\value\value_list;
 use cfg\verb;

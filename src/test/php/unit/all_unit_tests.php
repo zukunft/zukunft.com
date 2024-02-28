@@ -92,7 +92,7 @@ use cfg\source_type_list;
 use cfg\sys_log_status_list;
 use cfg\user;
 use cfg\user_list;
-use cfg\user_profile;
+use cfg\user\user_profile;
 use cfg\user_profile_list;
 use cfg\verb_list;
 use cfg\view_sys_list;

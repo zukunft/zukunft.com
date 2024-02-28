@@ -38,6 +38,7 @@ use cfg\protection_type;
 use cfg\share_type;
 use cfg\sys_log_function;
 use cfg\sys_log_status;
+use cfg\user\user_profile;
 use cfg\user\user_type;
 use test\test_cleanup;
 
@@ -70,6 +71,11 @@ class type_tests
         $usr_typ = new user_type('');
         $t->assert_sql_table_create($usr_typ);
         $t->assert_sql_index_create($usr_typ);
+
+        $t->subheader('User profile SQL setup statements');
+        $usr_prf = new user_profile('');
+        $t->assert_sql_table_create($usr_prf);
+        $t->assert_sql_index_create($usr_prf);
 
         $t->subheader('Protection type SQL setup statements');
         $prt_typ = new protection_type('');

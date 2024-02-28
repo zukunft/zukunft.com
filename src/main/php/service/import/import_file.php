@@ -28,11 +28,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 include_once SERVICE_IMPORT_PATH . 'import.php';
 
+use cfg\user\user_profile;
 use cfg\verb_list;
 use html\html_base;
 use cfg\db\sql_db;
 use cfg\user;
-use cfg\user_profile;
 
 /**
  * import a single json file

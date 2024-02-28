@@ -57,6 +57,7 @@ use cfg\sys_log_level;
 use cfg\sys_log_status;
 use cfg\triple;
 use cfg\user;
+use cfg\user\user_profile;
 use cfg\user\user_type;
 use cfg\user_message;
 use cfg\value\value;
@@ -174,6 +175,7 @@ class sql_db
         sys_log_function::class,
         system_log::class,
         user_type::class,
+        user_profile::class,
         protection_type::class,
         share_type::class,
         word::class,

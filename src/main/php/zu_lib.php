@@ -1344,11 +1344,7 @@ function test_resource_file(string $resource_path): string
  */
 function has_resource_file(string $resource_path): bool
 {
-    $result = true;
-    if (file_get_contents(PATH_TEST_FILES . $resource_path) === false) {
-        $result = false;
-    }
-    return $result;
+    return file_exists(PATH_TEST_FILES . $resource_path);
 }
 
 

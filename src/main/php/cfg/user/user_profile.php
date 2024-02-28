@@ -30,9 +30,15 @@
   
 */
 
-namespace cfg;
+namespace cfg\user;
 
-class user_profile
+include_once MODEL_HELPER_PATH . 'type_object.php';
+
+use cfg\type_object;
+use cfg\db\sql_field_default;
+use cfg\db\sql_field_type;
+
+class user_profile extends type_object
 {
     // list of the user profiles that have a coded functionality
     const NORMAL = "normal";
@@ -41,7 +47,22 @@ class user_profile
     const TEST = "test";     // reserved for the system test user e.g. for internal unit and integration tests
     const SYSTEM = "system"; // reserved for the system user which is executing cleanup tasks
 
+
+    /*
+     * database link
+     */
+
+    // comments used for the database creation
+    const TBL_COMMENT = 'to define the user roles and read and write rights';
+
     // database fields additional to the standard field names
     const FLD_ID = 'profile_id';
+    const FLD_LEVEL_COM = 'the access right level to prevent unpermitted right gaining';
     const FLD_LEVEL = 'right_level';
+
+    // additional fieldss for the table creation of user profiles
+    const FLD_LST_EXTRA = array(
+        [self::FLD_LEVEL, sql_field_type::INT_SMALL, sql_field_default::NULL, '', '', self::FLD_LEVEL_COM],
+    );
+
 }

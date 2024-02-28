@@ -60,6 +60,7 @@ use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\export\user_exp;
 use cfg\export\sandbox_exp;
+use cfg\user\user_profile;
 use Exception;
 use html\user\user as user_dsp;
 

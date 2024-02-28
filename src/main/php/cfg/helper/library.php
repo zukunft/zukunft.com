@@ -35,6 +35,7 @@ namespace cfg;
 use api\api;
 use api\sandbox\combine_object as combine_object_api;
 use cfg\db\sql_db;
+use cfg\user\user_profile;
 use cfg\user\user_type;
 use cfg\value\value;
 use DateTime;
@@ -1571,6 +1572,7 @@ class library
             case $this->class_to_name(sys_log_status::class):
             case $this->class_to_name(sys_log_function::class):
             case $this->class_to_name(user_type::class):
+            case $this->class_to_name(user_profile::class):
             case $this->class_to_name(protection_type::class):
             case $this->class_to_name(share_type::class):
             case $this->class_to_name(phrase_type::class):

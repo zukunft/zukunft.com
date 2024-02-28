@@ -201,19 +201,27 @@ COMMENT ON COLUMN user_types.type_name IS 'the unique type name as shown to the 
 COMMENT ON COLUMN user_types.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
 COMMENT ON COLUMN user_types.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
 
+-- --------------------------------------------------------
+
 --
--- table structure for table user_profiles
--- TODO generate type
+-- table structure to define the user roles and read and write rights
 --
 
 CREATE TABLE IF NOT EXISTS user_profiles
 (
-    profile_id  BIGSERIAL PRIMARY KEY,
-    type_name   varchar(200) NOT NULL,
-    code_id     varchar(50)  NOT NULL,
-    description text,
-    right_level smallint DEFAULT NULL
+    user_profile_id BIGSERIAL PRIMARY KEY,
+    type_name    varchar(255) NOT NULL,
+    code_id      varchar(255) DEFAULT NULL,
+    description  text         DEFAULT NULL,
+    right_level  smallint     DEFAULT NULL
 );
+
+COMMENT ON TABLE user_profiles IS 'to define the user roles and read and write rights';
+COMMENT ON COLUMN user_profiles.user_profile_id IS 'the internal unique primary index';
+COMMENT ON COLUMN user_profiles.type_name IS 'the unique type name as shown to the user and used for the selection';
+COMMENT ON COLUMN user_profiles.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
+COMMENT ON COLUMN user_profiles.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
+COMMENT ON COLUMN user_profiles.right_level IS 'the access right level to prevent unpermitted right gaining';
 
 --
 -- table structure for users including system users
@@ -2994,6 +3002,22 @@ CREATE INDEX calc_and_cleanup_tasks_type_idx ON calc_and_cleanup_tasks (calc_and
 -- --------------------------------------------------------
 
 --
+-- indexes for table user_types
+--
+
+CREATE INDEX user_types_type_name_idx ON user_types (type_name);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table user_profiles
+--
+
+CREATE INDEX user_profiles_type_name_idx ON user_profiles (type_name);
+
+-- --------------------------------------------------------
+
+--
 -- Indexes for table users
 --
 CREATE UNIQUE INDEX user_name_idx ON users (user_name);
@@ -3018,6 +3042,30 @@ CREATE INDEX change_action_idx ON changes (change_action_id);
 CREATE INDEX change_link_user_idx ON change_links (user_id);
 CREATE INDEX change_link_table_idx ON change_links (change_table_id);
 CREATE INDEX change_link_action_idx ON change_links (change_action_id);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table protection_types
+--
+
+CREATE INDEX protection_types_type_name_idx ON protection_types (type_name);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table share_types
+--
+
+CREATE INDEX share_types_type_name_idx ON share_types (type_name);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table phrase_types
+--
+
+CREATE INDEX phrase_types_type_name_idx ON phrase_types (type_name);
 
 -- --------------------------------------------------------
 
@@ -3072,38 +3120,6 @@ CREATE INDEX user_triples_name_given_idx     ON user_triples (name_given);
 CREATE INDEX user_triples_name_generated_idx ON user_triples (name_generated);
 CREATE INDEX user_triples_phrase_type_idx    ON user_triples (phrase_type_id);
 CREATE INDEX user_triples_view_idx           ON user_triples (view_id);
-
--- --------------------------------------------------------
-
---
--- indexes for table user_types
---
-
-CREATE INDEX user_types_type_name_idx ON user_types (type_name);
-
--- --------------------------------------------------------
-
---
--- indexes for table protection_types
---
-
-CREATE INDEX protection_types_type_name_idx ON protection_types (type_name);
-
--- --------------------------------------------------------
-
---
--- indexes for table share_types
---
-
-CREATE INDEX share_types_type_name_idx ON share_types (type_name);
-
--- --------------------------------------------------------
-
---
--- indexes for table phrase_types
---
-
-CREATE INDEX phrase_types_type_name_idx ON phrase_types (type_name);
 
 -- --------------------------------------------------------
 
