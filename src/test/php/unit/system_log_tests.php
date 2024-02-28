@@ -32,6 +32,7 @@
 
 namespace unit;
 
+use cfg\config;
 use cfg\library;
 use cfg\db\sql_db;
 use cfg\log\system_log;
@@ -54,6 +55,14 @@ class system_log_tests
         $t->name = 'system_log->';
         $t->resource_path = 'db/system_log/';
         $usr->set_id(1);
+
+
+        $t->subheader('System log SQL setup statements');
+        $log = new system_log();
+        $t->assert_sql_table_create($log);
+        $t->assert_sql_index_create($log);
+        $t->assert_sql_foreign_key_create($log);
+
 
         // sql to load one error by id
         $err = new system_log();

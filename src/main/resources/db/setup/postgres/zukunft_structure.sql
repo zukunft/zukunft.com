@@ -88,25 +88,35 @@ COMMENT ON COLUMN sys_log_functions.sys_log_function_name IS 'the unique type na
 COMMENT ON COLUMN sys_log_functions.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
 COMMENT ON COLUMN sys_log_functions.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
 
+-- --------------------------------------------------------
+
 --
--- table structure for table sys_log
--- TODO generate
+-- table structure for system error traking and to measure execution times
 --
 
 CREATE TABLE IF NOT EXISTS sys_log
 (
     sys_log_id          BIGSERIAL PRIMARY KEY,
-    sys_log_time        timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    sys_log_type_id     bigint    NOT NULL,
-    sys_log_function_id bigint    NOT NULL,
-    sys_log_text        text,
-    sys_log_description text,
-    sys_log_trace       text,
-    user_id             bigint             DEFAULT NULL,
-    solver_id           bigint             DEFAULT NULL,
-    sys_log_status_id   bigint             DEFAULT '1'
+    sys_log_time        timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    sys_log_type_id     bigint     NOT NULL,
+    sys_log_function_id bigint     NOT NULL,
+    sys_log_text        text   DEFAULT NULL,
+    sys_log_description text   DEFAULT NULL,
+    sys_log_trace       text   DEFAULT NULL,
+    user_id             bigint DEFAULT NULL,
+    solver_id           bigint DEFAULT NULL,
+    sys_log_status_id   bigint     NOT NULL DEFAULT 1
 );
 
+COMMENT ON TABLE sys_log IS 'for system error traking and to measure execution times';
+COMMENT ON COLUMN sys_log.sys_log_id IS 'the internal unique primary index';
+COMMENT ON COLUMN sys_log.sys_log_time IS 'timestamp of the creation';
+COMMENT ON COLUMN sys_log.sys_log_type_id IS 'the level e.g. debug,info,warning,error or fatal';
+COMMENT ON COLUMN sys_log.sys_log_function_id IS 'the function or function group for the entry e.g. db_write to measure the db write times';
+COMMENT ON COLUMN sys_log.sys_log_text IS 'the short text of the log entry to indentify the error and to reduce the number of double entries';
+COMMENT ON COLUMN sys_log.sys_log_description IS 'the lond description with all details of the log entry to solve ti issue';
+COMMENT ON COLUMN sys_log.sys_log_trace IS 'the generated code trace to local the path to the error cause';
+COMMENT ON COLUMN sys_log.user_id IS 'the id of the user who has caused the log entry';
 COMMENT ON COLUMN sys_log.solver_id IS 'user id of the user that is trying to solve the problem';
 
 -- --------------------------------------------------------
@@ -2955,13 +2965,18 @@ CREATE INDEX sys_log_status_type_name_idx ON sys_log_status (type_name);
 
 CREATE INDEX sys_log_functions_sys_log_function_name_idx ON sys_log_functions (sys_log_function_name);
 
+-- --------------------------------------------------------
+
 --
--- Indexes for table sys_log
+-- indexes for table sys_log
 --
-CREATE INDEX sys_log_time ON sys_log (sys_log_time);
-CREATE INDEX sys_log_type_idx ON sys_log (sys_log_type_id);
-CREATE INDEX sys_log_function_idx ON sys_log (sys_log_function_id);
-CREATE INDEX sys_log_status_idx ON sys_log (sys_log_status_id);
+
+CREATE INDEX sys_log_sys_log_time_idx ON sys_log (sys_log_time);
+CREATE INDEX sys_log_sys_log_type_idx ON sys_log (sys_log_type_id);
+CREATE INDEX sys_log_sys_log_function_idx ON sys_log (sys_log_function_id);
+CREATE INDEX sys_log_user_idx ON sys_log (user_id);
+CREATE INDEX sys_log_solver_idx ON sys_log (solver_id);
+CREATE INDEX sys_log_sys_log_status_idx ON sys_log (sys_log_status_id);
 
 --
 -- Indexes for table sys_script_times
@@ -3551,15 +3566,15 @@ CREATE INDEX user_component_link_view_idx ON user_component_links (component_lin
 -- foreign key constraints and auto_increment for tables
 --
 
--- --------------------------------------------------------
-
 --
 -- constraints for table sys_log
 --
+
 ALTER TABLE sys_log
-    ADD CONSTRAINT sys_log_fk_1 FOREIGN KEY (sys_log_type_id) REFERENCES sys_log_types (sys_log_type_id),
-    ADD CONSTRAINT sys_log_fk_2 FOREIGN KEY (sys_log_status_id) REFERENCES sys_log_status (sys_log_status_id),
-    ADD CONSTRAINT sys_log_fk_3 FOREIGN KEY (sys_log_function_id) REFERENCES sys_log_functions (sys_log_function_id);
+    ADD CONSTRAINT sys_log_sys_log_function_fk FOREIGN KEY (sys_log_function_id) REFERENCES sys_log_functions (sys_log_function_id),
+    ADD CONSTRAINT sys_log_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT sys_log_user2_fk FOREIGN KEY (solver_id) REFERENCES users (user_id),
+    ADD CONSTRAINT sys_log_sys_log_status_fk FOREIGN KEY (sys_log_status_id) REFERENCES sys_log_status (sys_log_status_id);
 
 --
 -- constraints for table sys_script_times

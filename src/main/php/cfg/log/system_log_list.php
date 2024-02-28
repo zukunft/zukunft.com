@@ -156,8 +156,8 @@ class system_log_list extends base_list
         $qp = new sql_par(self::class);
 
         $sql_where = '';
-        $sql_status = '(' . sql_db::STD_TBL . '.' . system_log::FLD_STATUS . ' <> ' . $sys_log_stati->id(sys_log_status::CLOSED);
-        $sql_status .= ' OR ' . sql_db::STD_TBL . '.' . system_log::FLD_STATUS . ' IS NULL)';
+        $sql_status = '(' . sql_db::STD_TBL . '.' . sys_log_status::FLD_ID . ' <> ' . $sys_log_stati->id(sys_log_status::CLOSED);
+        $sql_status .= ' OR ' . sql_db::STD_TBL . '.' . sys_log_status::FLD_ID . ' IS NULL)';
         if ($this->dsp_type == self::DSP_ALL) {
             $sql_where = $sql_status;
             $qp->name .= self::DSP_ALL;
@@ -182,7 +182,7 @@ class system_log_list extends base_list
             $db_con->set_name($qp->name);
             $db_con->set_usr($this->user()->id());
             $db_con->set_fields(system_log::FLD_NAMES);
-            $db_con->set_join_fields(array(system_log::FLD_FUNCTION_NAME), sys_log_function::class);
+            $db_con->set_join_fields(array(sys_log_function::FLD_NAME), sys_log_function::class);
             $db_con->set_join_fields(array(type_object::FLD_NAME), sql_db::TBL_SYS_LOG_STATUS);
             $db_con->set_join_fields(array(sandbox::FLD_USER_NAME), sql_db::TBL_USER);
             $db_con->set_join_fields(array(

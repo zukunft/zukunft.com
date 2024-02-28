@@ -41,6 +41,8 @@ include_once MODEL_SANDBOX_PATH . 'sandbox.php';
 include_once API_SANDBOX_PATH . 'sandbox_value.php';
 include_once API_LOG_PATH . 'system_log.php';
 
+use cfg\db\sql_field_default;
+use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\log\change_log_action;
 use cfg\log\change;
@@ -51,6 +53,7 @@ use cfg\sandbox;
 use cfg\db\sql_db;
 use cfg\sys_log_function;
 use cfg\sys_log_function_list;
+use cfg\sys_log_status;
 use cfg\type_list;
 use cfg\type_object;
 use cfg\user;
@@ -66,20 +69,28 @@ class system_log extends db_object_seq_id
      */
 
     // database and export JSON object field names
+    // and comments used for the database creation
+    const TBL_COMMENT = 'for system error traking and to measure execution times';
     const FLD_ID = 'sys_log_id';
-    const FLD_SOLVER = 'solver_id';
+    const FLD_TIME_COM = 'timestamp of the creation';
     const FLD_TIME = 'sys_log_time';
-    const FLD_TIME_JSON = 'time';
-    const FLD_TIMESTAMP_JSON = 'timestamp';
+    const FLD_TYPE_COM = 'the level e.g. debug, info, warning, error or fatal';
     const FLD_TYPE = 'sys_log_type_id';
+    const FLD_FUNCTION_COM = 'the function or function group for the entry e.g. db_write to measure the db write times';
     const FLD_FUNCTION = 'sys_log_function_id';
-    const FLD_FUNCTION_NAME = 'sys_log_function_name';
+    const FLD_TEXT_COM = 'the short text of the log entry to indentify the error and to reduce the number of double entries';
     const FLD_TEXT = 'sys_log_text';
+    const FLD_DESCRIPTION_COM = 'the lond description with all details of the log entry to solve ti issue';
     const FLD_DESCRIPTION = 'sys_log_description';
+    const FLD_TRACE_COM = 'the generated code trace to local the path to the error cause';
     const FLD_TRACE = 'sys_log_trace';
-    const FLD_STATUS = 'sys_log_status_id';
+    const FLD_USER_COM = 'the id of the user who has caused the log entry';
+    const FLD_SOLVER_COM = 'user id of the user that is trying to solve the problem';
+    const FLD_SOLVER = 'solver_id';
 
     // join database and export JSON object field names
+    const FLD_TIME_JSON = 'time';
+    const FLD_TIMESTAMP_JSON = 'timestamp';
     const FLD_SOLVER_NAME = 'solver_name';
 
     // all database field names excluding the id
@@ -93,7 +104,20 @@ class system_log extends db_object_seq_id
         self::FLD_TEXT,
         self::FLD_DESCRIPTION,
         self::FLD_TRACE,
-        self::FLD_STATUS
+        sys_log_status::FLD_ID
+    );
+
+    // field lists for the table creation
+    const FLD_LST_ALL = array(
+        [self::FLD_TIME, sql_field_type::TIME, sql_field_default::TIME_NOT_NULL, sql::INDEX, '', self::FLD_TIME_COM],
+        [self::FLD_TYPE, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_TYPE_COM],
+        [self::FLD_FUNCTION, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, sys_log_function::class, self::FLD_FUNCTION_COM],
+        [self::FLD_TEXT, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_TEXT_COM],
+        [self::FLD_DESCRIPTION, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
+        [self::FLD_TRACE, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_TRACE_COM],
+        [user::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, user::class, self::FLD_USER_COM],
+        [self::FLD_SOLVER, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, user::class, self::FLD_SOLVER_COM, user::FLD_ID],
+        [sys_log_status::FLD_ID, sql_field_type::INT, sql_field_default::ONE, sql::INDEX, sys_log_status::class, ''],
     );
 
 
@@ -146,7 +170,7 @@ class system_log extends db_object_seq_id
             $this->log_text = $db_row[self::FLD_TEXT];
             $this->log_description = $db_row[self::FLD_DESCRIPTION];
             $this->log_trace = $db_row[self::FLD_TRACE];
-            $this->status_id = $db_row[self::FLD_STATUS];
+            $this->status_id = $db_row[sys_log_status::FLD_ID];
             $this->status_name = $db_row[type_object::FLD_NAME];
         }
         return $result;
@@ -200,6 +224,48 @@ class system_log extends db_object_seq_id
 
 
     /*
+     * sql create
+     */
+
+    /**
+     * the sql statement to create the tables of a system log table
+     *
+     * @param sql $sc with the target db_type set
+     * @return string the sql statement to create the table
+     */
+    function sql_table(sql $sc): string
+    {
+        $sql = $sc->sql_separator();
+        $sql .= $this->sql_table_create($sc, false, [], '', false);
+        return $sql;
+    }
+
+    /**
+     * the sql statement to create the database indices of a system log table
+     *
+     * @param sql $sc with the target db_type set
+     * @return string the sql statement to create the indices
+     */
+    function sql_index(sql $sc): string
+    {
+        $sql = $sc->sql_separator();
+        $sql .= $this->sql_index_create($sc, false, [],false);
+        return $sql;
+    }
+
+    /**
+     * the sql statements to create all foreign keysof a system log table
+     *
+     * @param sql $sc with the target db_type set
+     * @return string the sql statement to create the foreign keys
+     */
+    function sql_foreign_key(sql $sc): string
+    {
+        return $this->sql_foreign_key_create($sc, false, [],false);
+    }
+
+
+    /*
      * load
      */
 
@@ -219,7 +285,7 @@ class system_log extends db_object_seq_id
 
         $sc->set_name($qp->name);
         $sc->set_fields(self::FLD_NAMES);
-        $sc->set_join_fields(array(self::FLD_FUNCTION_NAME), sys_log_function::class);
+        $sc->set_join_fields(array(sys_log_function::FLD_NAME), sys_log_function::class);
         $sc->set_join_fields(array(type_object::FLD_NAME), sql_db::TBL_SYS_LOG_STATUS);
         $sc->set_join_fields(array(sandbox::FLD_USER_NAME), sql_db::TBL_USER);
         $sc->set_join_fields(array(sandbox::FLD_USER_NAME . ' AS ' . self::FLD_SOLVER_NAME), sql_db::TBL_USER, self::FLD_SOLVER);
@@ -318,7 +384,7 @@ class system_log extends db_object_seq_id
             $log->new_value = $this->status_name;
             $log->new_id = $this->status_id;
             $log->row_id = $this->id();
-            $log->set_field(self::FLD_STATUS);
+            $log->set_field(sys_log_status::FLD_ID);
             $result = $this->save_field_do($db_con, $log);
         }
         return $result;

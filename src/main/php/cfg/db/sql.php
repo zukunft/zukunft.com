@@ -124,6 +124,7 @@ class sql
     private const FLD_POS_INDEX = 3;
     private const FLD_POS_FOREIGN_LINK = 4;
     private const FLD_POS_COMMENT = 5;
+    private const FLD_POS_NAME_LINK = 6;
 
     // parameters for the sql creation that are set step by step with the functions of the sql creator
     private ?int $usr_id;           // the user id of the person who request the database changes
@@ -2404,11 +2405,13 @@ class sql
             }
             $comment_used = '';
             if ($this->db_type() == sql_db::MYSQL) {
-                $comment_used = " COMMENT '" . $comment;
-                if (($type->is_key() or $type->is_key_part()) and $type_name != '') {
-                    $comment_used .= ' ' . $type_name;
+                if ($comment != '') {
+                    $comment_used = " COMMENT '" . $comment;
+                    if (($type->is_key() or $type->is_key_part()) and $type_name != '') {
+                        $comment_used .= ' ' . $type_name;
+                    }
+                    $comment_used .= "'";
                 }
-                $comment_used .= "'";
             }
             $sql_fields .= '    ' . $name . ' ' . $type_used . ' ' . $default_used . $comment_used;
         }
@@ -2428,16 +2431,18 @@ class sql
                 $name = $field[sql::FLD_POS_NAME];
                 $type = $field[sql::FLD_POS_TYPE];
                 $comment = $field[sql::FLD_POS_COMMENT];
-                if (($type->is_key() or $type->is_key_part()) and $type_name != '') {
-                    $comment = $this->comment_set_class($comment, '');
-                } else {
-                    $comment = $this->comment_set_class($comment, $class);
+                if ($comment != '') {
+                    if (($type->is_key() or $type->is_key_part()) and $type_name != '') {
+                        $comment = $this->comment_set_class($comment, '');
+                    } else {
+                        $comment = $this->comment_set_class($comment, $class);
+                    }
+                    $sql .= "COMMENT ON COLUMN " . $table_used . "." . $name . " IS '" . $comment;
+                    if (($type->is_key() or $type->is_key_part()) and $type_name != '') {
+                        $sql .= ' ' . $type_name;
+                    }
+                    $sql .= "'; ";
                 }
-                $sql .= "COMMENT ON COLUMN " . $table_used . "." . $name . " IS '" . $comment;
-                if (($type->is_key() or $type->is_key_part()) and $type_name != '') {
-                    $sql .= ' ' . $type_name;
-                }
-                $sql .= "'; ";
             }
         }
 
@@ -2530,10 +2535,10 @@ class sql
         }
         if (count($unique_fields) > 0) {
             if ($this->db_type() == sql_db::POSTGRES) {
-            $sql .= 'CREATE UNIQUE INDEX ' . $this->table . '_unique_idx ON ';
-            $sql .= ' ' . $this->name_sql_esc($this->table) . ' (';
-            $sql .= implode(', ', $unique_fields);
-            $sql .= '); ';
+                $sql .= 'CREATE UNIQUE INDEX ' . $this->table . '_unique_idx ON ';
+                $sql .= ' ' . $this->name_sql_esc($this->table) . ' (';
+                $sql .= implode(', ', $unique_fields);
+                $sql .= '); ';
             } elseif ($this->db_type() == sql_db::MYSQL) {
                 $sql .= 'ADD UNIQUE KEY ' . $this->table . '_unique_idx (';
                 $sql .= implode(', ', $unique_fields);
@@ -2593,6 +2598,7 @@ class sql
         $sql_table = '';
         $sql_fields = '';
         $field_lst = [];
+        $key_lst = [];
 
         // create the unique constraints
         foreach ($fields as $field) {
@@ -2615,6 +2621,13 @@ class sql
         // create the foreign key sql statements
         foreach ($fields as $field) {
             $name = $field[sql::FLD_POS_NAME];
+            $name_foreign = $name;
+            if (count($field) > sql::FLD_POS_NAME_LINK) {
+                $name_link = $field[sql::FLD_POS_NAME_LINK];
+                if ($name_link != '') {
+                    $name_foreign = $name_link;
+                }
+            }
             $link = $field[sql::FLD_POS_FOREIGN_LINK];
             $link_used = $lib->class_to_name($link);
             if ($link_used != '') {
@@ -2625,13 +2638,25 @@ class sql
                     $sql .= '-- ';
                     $sql_table .= 'ALTER TABLE ' . $this->name_sql_esc($this->table);
                 }
+                $key = $this->table . '_' . $link_used . '_fk';
+                $key_pos = 1;
+                if (in_array($key, $key_lst)) {
+                    $key_pos++;
+                    $key = $this->table . '_' . $link_used . $key_pos . '_fk';
+                    while (in_array($key, $key_lst)) {
+                        $key_pos++;
+                        $key = $this->table . '_' . $link_used . $key_pos . '_fk';
+                    }
+                }
+                $key_lst[] = $key;
+                $link_used = $this->get_table_name($link_used);
                 if ($this->db_type() == sql_db::POSTGRES) {
-                    $sql_field = ' ADD CONSTRAINT ' . $this->table . '_' . $link_used . '_fk';
-                    $sql_field .= ' FOREIGN KEY (' . $name . ') REFERENCES ' . $link_used . 's (' . $name . ')';
+                    $sql_field = ' ADD CONSTRAINT ' . $key;
+                    $sql_field .= ' FOREIGN KEY (' . $name . ') REFERENCES ' . $link_used . ' (' . $name_foreign . ')';
                     $field_lst[] = $sql_field;
                 } elseif ($this->db_type() == sql_db::MYSQL) {
-                    $sql_field = ' ADD CONSTRAINT ' . $this->table . '_' . $link_used . '_fk';
-                    $sql_field .= ' FOREIGN KEY (' . $name . ') REFERENCES ' . $link_used . 's (' . $name . ')';
+                    $sql_field = ' ADD CONSTRAINT ' . $key;
+                    $sql_field .= ' FOREIGN KEY (' . $name . ') REFERENCES ' . $link_used . ' (' . $name_foreign . ')';
                     $field_lst[] = $sql_field;
                 }
             }
@@ -3121,6 +3146,21 @@ class sql
         // set the standard table name based on the type
         $result = $tbl_name . "s";
         // exceptions from the standard table for 'nicer' names
+        if ($result == 'configs') {
+            $result = 'config';
+        }
+        if ($result == 'sys_log_statuss') {
+            $result = 'sys_log_status';
+        }
+        if ($result == 'system_logs') {
+            $result = 'sys_log';
+        }
+        if ($result == 'sys_logs') {
+            $result = 'sys_log';
+        }
+        if ($result == 'userss') {
+            $result = 'users';
+        }
         if ($result == 'value_time_seriess') {
             $result = 'value_time_series';
         }
@@ -3129,15 +3169,6 @@ class sql
         }
         if ($result == 'value_ts_datas') {
             $result = 'value_ts_data';
-        }
-        if ($result == 'sys_logs') {
-            $result = 'sys_log';
-        }
-        if ($result == 'sys_log_statuss') {
-            $result = 'sys_log_status';
-        }
-        if ($result == 'configs') {
-            $result = 'config';
         }
         if ($result == 'user_valuess') {
             $result = 'user_values';

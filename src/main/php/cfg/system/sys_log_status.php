@@ -54,6 +54,7 @@ class sys_log_status extends type_object
 
     // comments used for the database creation
     const TBL_COMMENT = 'to define the status of internal errors';
+    const FLD_ID = 'sys_log_status_id'; // name of the id field as const for other const
     const FLD_ACTION_COM = 'description of the action to get to this status';
     const FLD_ACTION = 'action';
 

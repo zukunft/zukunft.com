@@ -84,25 +84,28 @@ CREATE TABLE IF NOT EXISTS sys_log_functions
     DEFAULT CHARSET = utf8
     COMMENT 'to group the system log entries by function';
 
+-- --------------------------------------------------------
+
 --
--- Table structure for table`sys_log`
+-- table structure for system error traking and to measure execution times
 --
 
-CREATE TABLE IF NOT EXISTS `sys_log`
+CREATE TABLE IF NOT EXISTS sys_log
 (
-    `sys_log_id`          int(11)   NOT NULL,
-    `sys_log_time`        timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    `sys_log_type_id`     int(11)   NOT NULL,
-    `sys_log_function_id` int(11)   NOT NULL,
-    `sys_log_text`        text,
-    `sys_log_description` text,
-    `sys_log_trace`       text,
-    `user_id`             int(11)            DEFAULT NULL,
-    `solver_id`           int(11)            DEFAULT NULL COMMENT 'user id of the user that is trying to solve the problem',
-    `sys_log_status_id`   int(11)            DEFAULT '1'
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8;
+    sys_log_id          bigint     NOT NULL COMMENT 'the internal unique primary index',
+    sys_log_time        timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'timestamp of the creation',
+    sys_log_type_id     bigint     NOT NULL COMMENT 'the level e.g. debug,info,warning,error or fatal',
+    sys_log_function_id bigint     NOT NULL COMMENT 'the function or function group for the entry e.g. db_write to measure the db write times',
+    sys_log_text        text   DEFAULT NULL COMMENT 'the short text of the log entry to indentify the error and to reduce the number of double entries',
+    sys_log_description text   DEFAULT NULL COMMENT 'the lond description with all details of the log entry to solve ti issue',
+    sys_log_trace       text   DEFAULT NULL COMMENT 'the generated code trace to local the path to the error cause',
+    user_id             bigint DEFAULT NULL COMMENT 'the id of the user who has caused the log entry',
+    solver_id           bigint DEFAULT NULL COMMENT 'user id of the user that is trying to solve the problem',
+    sys_log_status_id   bigint     NOT NULL DEFAULT 1
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'for system error traking and to measure execution times';
 
 -- --------------------------------------------------------
 
@@ -2165,6 +2168,21 @@ ALTER TABLE sys_log_functions
     ADD PRIMARY KEY (sys_log_function_id),
     ADD KEY sys_log_functions_sys_log_function_name_idx (sys_log_function_name);
 
+-- --------------------------------------------------------
+
+--
+-- indexes for table sys_log
+--
+
+ALTER TABLE sys_log
+    ADD PRIMARY KEY (sys_log_id),
+    ADD KEY sys_log_sys_log_time_idx (sys_log_time),
+    ADD KEY sys_log_sys_log_type_idx (sys_log_type_id),
+    ADD KEY sys_log_sys_log_function_idx (sys_log_function_id),
+    ADD KEY sys_log_user_idx (user_id),
+    ADD KEY sys_log_solver_idx (solver_id),
+    ADD KEY sys_log_sys_log_status_idx (sys_log_status_id);
+
 --
 -- Indexes for table`calc_and_cleanup_tasks`
 --
@@ -3238,6 +3256,16 @@ ALTER TABLE `triples`
 --
 ALTER TABLE `phrase_types`
     MODIFY `phrase_type_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- constraints for table sys_log
+--
+
+ALTER TABLE sys_log
+    ADD CONSTRAINT sys_log_sys_log_function_fk FOREIGN KEY (sys_log_function_id) REFERENCES sys_log_functions (sys_log_function_id),
+    ADD CONSTRAINT sys_log_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT sys_log_user2_fk FOREIGN KEY (solver_id) REFERENCES users (user_id),
+    ADD CONSTRAINT sys_log_sys_log_status_fk FOREIGN KEY (sys_log_status_id) REFERENCES sys_log_status (sys_log_status_id);
 
 --
 -- Constraints for table`changes`

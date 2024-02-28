@@ -47,6 +47,7 @@ use cfg\group\group;
 use cfg\group\group_id;
 use cfg\library;
 use cfg\log;
+use cfg\log\system_log;
 use cfg\phrase_type;
 use cfg\protection_type;
 use cfg\share_type;
@@ -171,6 +172,7 @@ class sql_db
         config::class,
         sys_log_status::class,
         sys_log_function::class,
+        system_log::class,
         user_type::class,
         protection_type::class,
         share_type::class,
