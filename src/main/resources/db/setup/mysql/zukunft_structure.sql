@@ -107,20 +107,6 @@ CREATE TABLE IF NOT EXISTS sys_log
     DEFAULT CHARSET = utf8
     COMMENT 'for system error traking and to measure execution times';
 
--- --------------------------------------------------------
-
---
--- Table structure for table`sys_scripts`
---
-
-CREATE TABLE IF NOT EXISTS `sys_scripts`
-(
-    `sys_script_id`   int(11)      NOT NULL,
-    `sys_script_name` varchar(200) NOT NULL
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8;
-
 --
 -- Table structure for table`sys_script_times`
 --
@@ -137,18 +123,19 @@ CREATE TABLE IF NOT EXISTS `sys_script_times`
 -- --------------------------------------------------------
 
 --
--- Table structure for table`calc_and_cleanup_task_types`
+-- table structure for predefined batch jobs that can be triggered by a user action or scheduled e.g. data synchronisation
 --
 
-CREATE TABLE IF NOT EXISTS `calc_and_cleanup_task_types`
+CREATE TABLE IF NOT EXISTS task_types
 (
-    `calc_and_cleanup_task_type_id` int(11)      NOT NULL,
-    `type_name`                     varchar(200) NOT NULL,
-    `description`                   text,
-    `code_id`                       varchar(50)  NOT NULL
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8;
+    task_type_id bigint           NOT NULL COMMENT 'the internal unique primary index',
+    type_name     varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
+    code_id       varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
+    description   text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'for predefined batch jobs that can be triggered by a user action or scheduled e.g. data synchronisation';
 
 --
 -- Table structure for table`calc_and_cleanup_tasks`
@@ -161,7 +148,7 @@ CREATE TABLE IF NOT EXISTS `calc_and_cleanup_tasks`
     `request_time`                  timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     `start_time`                    timestamp          DEFAULT NULL,
     `end_time`                      timestamp          DEFAULT NULL,
-    `calc_and_cleanup_task_type_id` int(11)   NOT NULL,
+    `task_type_id` int(11)   NOT NULL,
     `row_id`                        int(11)   DEFAULT NULL,
     `change_field_id`               int(11)            DEFAULT NULL
 ) ENGINE = InnoDB
@@ -2189,17 +2176,21 @@ ALTER TABLE sys_log
     ADD KEY sys_log_solver_idx (solver_id),
     ADD KEY sys_log_sys_log_status_idx (sys_log_status_id);
 
+-- --------------------------------------------------------
+
+--
+-- indexes for table task_types
+--
+
+ALTER TABLE task_types
+    ADD PRIMARY KEY (task_type_id),
+    ADD KEY task_types_type_name_idx (type_name);
+
 --
 -- Indexes for table`calc_and_cleanup_tasks`
 --
 ALTER TABLE `calc_and_cleanup_tasks`
     ADD PRIMARY KEY (`calc_and_cleanup_task_id`);
-
---
--- Indexes for table`calc_and_cleanup_task_types`
---
-ALTER TABLE `calc_and_cleanup_task_types`
-    ADD PRIMARY KEY (`calc_and_cleanup_task_type_id`);
 
 --
 -- Indexes for table`changes`

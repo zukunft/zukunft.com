@@ -39,6 +39,7 @@ use cfg\share_type;
 use cfg\source_type;
 use cfg\sys_log_function;
 use cfg\sys_log_status;
+use cfg\task_type;
 use cfg\user\user_profile;
 use cfg\user\user_type;
 use test\test_cleanup;
@@ -67,6 +68,11 @@ class type_tests
         $log_fuc = new sys_log_function('');
         $t->assert_sql_table_create($log_fuc);
         $t->assert_sql_index_create($log_fuc);
+
+        $t->subheader('Task type SQL setup statements');
+        $job_typ = new task_type('');
+        $t->assert_sql_table_create($job_typ);
+        $t->assert_sql_index_create($job_typ);
 
         $t->subheader('User type SQL setup statements');
         $usr_typ = new user_type('');

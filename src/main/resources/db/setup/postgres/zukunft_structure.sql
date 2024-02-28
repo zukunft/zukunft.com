@@ -119,18 +119,6 @@ COMMENT ON COLUMN sys_log.sys_log_trace IS 'the generated code trace to local th
 COMMENT ON COLUMN sys_log.user_id IS 'the id of the user who has caused the log entry';
 COMMENT ON COLUMN sys_log.solver_id IS 'user id of the user that is trying to solve the problem';
 
--- --------------------------------------------------------
-
---
--- table structure for batch jobs that are scheduled
--- TODO generate
---
-
-CREATE TABLE IF NOT EXISTS sys_scripts
-(
-    sys_script_id   BIGSERIAL PRIMARY KEY,
-    sys_script_name varchar(200) NOT NULL
-);
 
 --
 -- table structure for the schedule of system batch jobs
@@ -148,19 +136,23 @@ CREATE TABLE IF NOT EXISTS sys_script_times
 -- --------------------------------------------------------
 
 --
--- table structure for batch job types
--- TODO generate type
+-- table structure for predefined batch jobs that can be triggered by a user action or scheduled e.g. data synchronisation
 --
 
-CREATE TABLE IF NOT EXISTS calc_and_cleanup_task_types
+CREATE TABLE IF NOT EXISTS task_types
 (
-    calc_and_cleanup_task_type_id BIGSERIAL PRIMARY KEY,
-    type_name                     varchar(255) NOT NULL,
-    description                   text,
-    code_id                       varchar(255)  NOT NULL
+    task_type_id BIGSERIAL PRIMARY KEY,
+    type_name     varchar(255) NOT NULL,
+    code_id       varchar(255) DEFAULT NULL,
+    description   text         DEFAULT NULL
 );
 
-COMMENT ON TABLE calc_and_cleanup_task_types IS 'batch job types e.g. data synchronisation';
+COMMENT ON TABLE task_types IS 'for predefined batch jobs that can be triggered by a user action or scheduled e.g. data synchronisation';
+COMMENT ON COLUMN task_types.task_type_id IS 'the internal unique primary index';
+COMMENT ON COLUMN task_types.type_name IS 'the unique type name as shown to the user and used for the selection';
+COMMENT ON COLUMN task_types.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
+COMMENT ON COLUMN task_types.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
+
 
 --
 -- table structure for batch jobs
@@ -169,14 +161,14 @@ COMMENT ON TABLE calc_and_cleanup_task_types IS 'batch job types e.g. data synch
 
 CREATE TABLE IF NOT EXISTS calc_and_cleanup_tasks
 (
-    calc_and_cleanup_task_id      BIGSERIAL PRIMARY KEY,
-    user_id                       bigint    NOT NULL,
-    request_time                  timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    start_time                    timestamp,
-    end_time                      timestamp,
-    calc_and_cleanup_task_type_id bigint    NOT NULL,
-    row_id                        bigint    DEFAULT NULL,
-    change_field_id               bigint    DEFAULT NULL
+    calc_and_cleanup_task_id BIGSERIAL PRIMARY KEY,
+    user_id                  bigint    NOT NULL,
+    request_time             timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    start_time               timestamp,
+    end_time                 timestamp,
+    task_type_id             bigint    NOT NULL,
+    row_id                   bigint    DEFAULT NULL,
+    change_field_id          bigint    DEFAULT NULL
 );
 
 COMMENT ON TABLE calc_and_cleanup_tasks IS 'concrete batch jobs with start and end';
@@ -2990,6 +2982,14 @@ CREATE INDEX sys_log_sys_log_function_idx ON sys_log (sys_log_function_id);
 CREATE INDEX sys_log_user_idx ON sys_log (user_id);
 CREATE INDEX sys_log_solver_idx ON sys_log (solver_id);
 CREATE INDEX sys_log_sys_log_status_idx ON sys_log (sys_log_status_id);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table task_types
+--
+
+CREATE INDEX task_types_type_name_idx ON task_types (type_name);
 
 --
 -- Indexes for table sys_script_times

@@ -56,6 +56,7 @@ use cfg\source_type;
 use cfg\sys_log_function;
 use cfg\sys_log_level;
 use cfg\sys_log_status;
+use cfg\task_type;
 use cfg\triple;
 use cfg\user;
 use cfg\user\user_profile;
@@ -175,6 +176,7 @@ class sql_db
         sys_log_status::class,
         sys_log_function::class,
         system_log::class,
+        task_type::class,
         user_type::class,
         user_profile::class,
         protection_type::class,
