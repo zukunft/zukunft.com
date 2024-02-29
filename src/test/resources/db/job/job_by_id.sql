@@ -1,4 +1,4 @@
-PREPARE batch_job_list_by_job_type (bigint, bigint, bigint) AS
+PREPARE job_by_id (bigint) AS
     SELECT calc_and_cleanup_task_id,
            request_time,
            start_time,
@@ -7,6 +7,4 @@ PREPARE batch_job_list_by_job_type (bigint, bigint, bigint) AS
            row_id,
            change_field_id
       FROM calc_and_cleanup_tasks
-     WHERE calc_and_cleanup_task_type_id = $1
-     LIMIT $2
-    OFFSET $3;
+     WHERE calc_and_cleanup_task_id = $1;

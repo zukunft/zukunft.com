@@ -42,7 +42,7 @@ namespace test;
 include_once MODEL_LOG_PATH . 'change_log.php';
 include_once MODEL_LOG_PATH . 'change_log_field.php';
 include_once MODEL_LOG_PATH . 'change_log_list.php';
-include_once MODEL_SYSTEM_PATH . 'batch_job.php';
+include_once MODEL_SYSTEM_PATH . 'job.php';
 include_once EXPORT_PATH . 'export.php';
 include_once API_SYSTEM_PATH . 'type_object.php';
 include_once API_PHRASE_PATH . 'phrase_type.php';
@@ -56,9 +56,9 @@ use api\language\language_form as language_form_api;
 use api\log\system_log as system_log_api;
 use api\phrase\phrase_type as phrase_type_api;
 use api\ref\ref as ref_api;
-use api\system\batch_job as batch_job_api;
+use api\system\job as job_api;
 use api\system\type_object as type_api;
-use cfg\batch_job;
+use cfg\job;
 use cfg\component\component;
 use cfg\db\sql_db;
 use cfg\export\export;
@@ -580,8 +580,8 @@ class test_api extends create_test_objects
         if ($class == ref::class) {
             $result = ref_api::API_NAME;
         }
-        if ($class == batch_job::class) {
-            $result = batch_job_api::API_NAME;
+        if ($class == job::class) {
+            $result = job_api::API_NAME;
         }
         if ($class == type_object::class) {
             $result = type_api::API_NAME;
@@ -714,9 +714,9 @@ class test_api extends create_test_objects
         $json = $this->json_remove_volatile_time_field($json, system_log::FLD_TIME_JSON);
         $json = $this->json_remove_volatile_time_field($json, system_log::FLD_TIMESTAMP_JSON);
         $json = $this->json_remove_volatile_time_field($json, change_log::FLD_CHANGE_TIME);
-        $json = $this->json_remove_volatile_time_field($json, batch_job::FLD_TIME_REQUEST);
-        $json = $this->json_remove_volatile_time_field($json, batch_job::FLD_TIME_START);
-        $json = $this->json_remove_volatile_time_field($json, batch_job::FLD_TIME_END);
+        $json = $this->json_remove_volatile_time_field($json, job::FLD_TIME_REQUEST);
+        $json = $this->json_remove_volatile_time_field($json, job::FLD_TIME_START);
+        $json = $this->json_remove_volatile_time_field($json, job::FLD_TIME_END);
 
         // remove the id fields if requested
         // for tests with base load dataset the id fields should not be ignored

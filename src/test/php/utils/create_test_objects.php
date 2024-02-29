@@ -63,9 +63,9 @@ use api\verb\verb as verb_api;
 use api\view\view as view_api;
 use api\word\word as word_api;
 use api\api_message;
-use cfg\batch_job;
-use cfg\batch_job_list;
-use cfg\batch_job_type_list;
+use cfg\job;
+use cfg\job_list;
+use cfg\job_type_list;
 use cfg\log\change_log_action;
 use cfg\log\change_log_field;
 use cfg\log\change_log_list;
@@ -177,7 +177,7 @@ class create_test_objects extends test_base
         $languages = new language_list();
         $language_forms = new language_form_list();
         $sys_log_stati = new sys_log_status_list();
-        $job_types = new batch_job_type_list();
+        $job_types = new job_type_list();
         $change_log_actions = new change_log_action();
         $change_log_tables = new change_log_table();
         $change_log_fields = new change_log_field();
@@ -1670,15 +1670,15 @@ class create_test_objects extends test_base
     }
 
     /**
-     * @return batch_job a batch job entry with some dummy values
+     * @return job a batch job entry with some dummy values
      */
-    function dummy_job(): batch_job
+    function dummy_job(): job
     {
         $sys_usr = $this->system_user();
-        $job = new batch_job($sys_usr, new DateTime(system_log_api::TV_TIME));
+        $job = new job($sys_usr, new DateTime(system_log_api::TV_TIME));
         $job->set_id(1);
         $job->start_time = new DateTime(system_log_api::TV_TIME);
-        $job->set_type(batch_job_type_list::BASE_IMPORT);
+        $job->set_type(job_type_list::BASE_IMPORT);
         $job->row_id = 1;
         return $job;
     }
@@ -1708,12 +1708,12 @@ class create_test_objects extends test_base
     }
 
     /**
-     * @return batch_job_list a list of batch job entries with some dummy values
+     * @return job_list a list of batch job entries with some dummy values
      */
-    function dummy_job_list(): batch_job_list
+    function dummy_job_list(): job_list
     {
         $sys_usr = $this->system_user();
-        $job_lst = new batch_job_list($sys_usr);
+        $job_lst = new job_list($sys_usr);
         $job_lst->add($this->dummy_job());
         return $job_lst;
     }

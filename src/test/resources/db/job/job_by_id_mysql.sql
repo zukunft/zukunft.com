@@ -1,4 +1,4 @@
-PREPARE batch_job_by_id FROM
+PREPARE job_by_id FROM
    'SELECT calc_and_cleanup_task_id,
            request_time,
            start_time,

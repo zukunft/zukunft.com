@@ -221,7 +221,7 @@ class system_tests
         $log = $t->dummy_sys_log();
         $target = 'system log id 1 at 2023-01-03T20:59:59+01:00 row the log text that describes the problem for the user or system admin';
         $t->assert($test_name, $log->dsp_id(), $target);
-        $test_name = 'debug batch_job id';
+        $test_name = 'debug job id';
         $job = $t->dummy_job();
         $target = 'base_import for id 1 (1) for user 1 (zukunft.com system)';
         $t->assert($test_name, $job->dsp_id(), $target);

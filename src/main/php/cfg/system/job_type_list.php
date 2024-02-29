@@ -2,7 +2,7 @@
 
 /*
 
-    model/system/batch_job_type_list.php - list of predefined system batch jobs
+    model/system/job_type_list.php - list of predefined system batch jobs
     ------------------------------------
 
     This file is part of zukunft.com - calc with words
@@ -38,9 +38,9 @@ include_once MODEL_HELPER_PATH . 'type_list.php';
 
 global $job_types;
 
-class batch_job_type_list extends type_list
+class job_type_list extends type_list
 {
-    // list of the predefined system batch jobs
+    // list of the predefined system job jobs
     const VALUE_UPDATE = "value_update";
     const VALUE_ADD = "value_add";
     const VALUE_DEL = "value_del";
@@ -69,9 +69,9 @@ class batch_job_type_list extends type_list
     function load_dummy(): void
     {
         parent::load_dummy();
-        $type = new type_object(batch_job_type_list::VALUE_UPDATE, batch_job_type_list::VALUE_UPDATE, '', 2);
+        $type = new type_object(job_type_list::VALUE_UPDATE, job_type_list::VALUE_UPDATE, '', 2);
         $this->add($type);
-        $type = new type_object(batch_job_type_list::BASE_IMPORT, batch_job_type_list::BASE_IMPORT, '', 11);
+        $type = new type_object(job_type_list::BASE_IMPORT, job_type_list::BASE_IMPORT, '', 11);
         $this->add($type);
     }
 
@@ -80,7 +80,7 @@ class batch_job_type_list extends type_list
      */
     function default_id(): int
     {
-        return parent::id(batch_job_type_list::VALUE_UPDATE);
+        return parent::id(job_type_list::VALUE_UPDATE);
     }
 
 }

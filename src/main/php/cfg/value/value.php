@@ -72,8 +72,8 @@ include_once SERVICE_EXPORT_PATH . 'json.php';
 
 use api\api;
 use api\value\value as value_api;
-use cfg\batch_job;
-use cfg\batch_job_type_list;
+use cfg\job;
+use cfg\job_type_list;
 use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
@@ -1805,12 +1805,12 @@ class value extends sandbox_value
         }
         log_debug('value->save_field_trigger_update timestamp of ' . $this->id() . ' updated to "' . $this->last_update()->format('Y-m-d H:i:s') . '"');
 
-        // trigger the batch job
+        // trigger the job job
         // save the pending update to the database for the batch calculation
         log_debug('value->save_field_trigger_update group id "' . $this->grp->id() . '" for user ' . $this->user()->name . '');
         if ($this->is_id_set()) {
-            $job = new batch_job($this->user());
-            $job->set_type(batch_job_type_list::VALUE_UPDATE);
+            $job = new job($this->user());
+            $job->set_type(job_type_list::VALUE_UPDATE);
             $job->obj = $this;
             $job->add();
         } else {

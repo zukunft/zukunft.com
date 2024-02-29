@@ -14,7 +14,13 @@ use html\phrase\phrase_group as phrase_group_dsp;
     4. commit
 
     but first this needs to be fixed:
-    TODO remove the time phrase from result
+    TODO Substeps: create the sql setup scripts based on the objects
+    TODO Step 27: deprecate the get_old group_list
+    TODO Substeps: create insert, update and delete sql create tests for the main objects
+    TODO Step 26: deprecate the get_old in result
+    TODO Substeps: create insert, update and delete sql create tests for the remaining objects
+    TODO Step 25: deprecate the get_old in result_list
+    TODO Substeps: move all display functions from the backend objects to the frontend
     TODO activate the tests and create a unit and read test if possible
     TODO test if a table with 1, 2, 4, 8, 16, 32 or 64 smallint key is faster and more efficient than a table with one bigger index
     TODO create an use the figure database view
@@ -82,6 +88,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
          load, im- and export, filter, modify, check, save, del
 
     after that this should be done while keeping step 1. to 4. for each commit:
+    TODO remove the time phrase from result
     TODO use the json api message header for all api messages
     TODO check if reading triples should use a view to generate the triple name and the generated name
     TODO use the sandbox list for all user lists
@@ -241,7 +248,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO use prioritized change streams to synchronize the databases with out and in cache tables to avoid loss of data due to communication issues
     TODO for prioritized change streams use transfer and process block size parameters e.g. 100 changes are send to another pod and removed from the out cache not before the destination pod has confirmed the writing to the in cache table
     TODO add a table with process steps with step_id, name, description, code_id
-    TODO add a table with process_next_step with step_next_id, from_step_id, to_step_id, name, description, user_profile, user_id, batch_job_id
+    TODO add a table with process_next_step with step_next_id, from_step_id, to_step_id, name, description, user_profile, user_id, job_id
     TODO some index words like can have many items and need to be only valid / unique within a phrase e.g. the ISIN is a phrase within the phrase security identifier (finance)
          create an additional value_index table where the one big and two small int values are the key or
     TODO add a global_id to the word and triple table and reserve the prime ids
@@ -249,6 +256,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO save in the local pod setting the value and result tables actually used to speed up value searches
     TODO offer syntactic sugar translation for PL SQL
     TODO reduce the function parameters to 3 or less wherever possible
+    TODO use popular Open Source LLM systems to fill the word and triple (and value) tables
 
     TODO because some changes e.g. a formula change might cause costly calculations estimate the cost upfront and ask the user to pay for it
 
@@ -360,7 +368,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
             change_log - to log a change done by a user
                 change_log_named - log of user changes in named objects e.g. word, triple, ...
                 change_log_link - log of the link changes by a user
-            batch_job - to handle processes that takes longer than the user is expected to wait
+            job - to handle processes that takes longer than the user is expected to wait
             sandbox - a user sandbox object
                 sandbox_named - user sandbox objects that have a given name
                     sandbox_typed - named sandbox object that have a type and a predefined behavior
@@ -385,7 +393,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
     base_list - a list with pages
         change_log_list - to forward changes to the UI
         system_log_list - to forward the system log entries to the UI
-        batch_job_list - to forward the batch jobs to the UI
+        job_list - to forward the batch jobs to the UI
         ip_range_list - list of the ip ranges
         sandbox_list - a user specific paged list
             word_list - a list of words (TODO move to sandbox_list_named?)
@@ -644,7 +652,7 @@ include_once MODEL_SANDBOX_PATH . 'share_type_list.php';
 include_once MODEL_SANDBOX_PATH . 'protection_type_list.php';
 include_once MODEL_LANGUAGE_PATH . 'language_list.php';
 include_once MODEL_LANGUAGE_PATH . 'language_form_list.php';
-include_once MODEL_SYSTEM_PATH . 'batch_job_type_list.php';
+include_once MODEL_SYSTEM_PATH . 'job_type_list.php';
 include_once MODEL_LOG_PATH . 'change_log_action.php';
 include_once MODEL_LOG_PATH . 'change_log_table.php';
 include_once MODEL_LOG_PATH . 'change_log_field.php';

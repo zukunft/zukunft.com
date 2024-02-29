@@ -2,8 +2,8 @@
 
 /*
 
-    api/system/batch_job_list.php - a list object of minimal/api batch_job objects
-    -----------------------------
+    api/system/job_list.php - a list object of minimal/api batch task objects
+    -----------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -33,10 +33,10 @@
 namespace api\system;
 
 use api\sandbox\list_object as list_api;
-use api\system\batch_job as batch_job_api;
+use api\system\job as job_api;
 use JsonSerializable;
 
-class batch_job_list extends list_api implements JsonSerializable
+class job_list extends list_api implements JsonSerializable
 {
 
     /*
@@ -49,10 +49,10 @@ class batch_job_list extends list_api implements JsonSerializable
     }
 
     /**
-     * add a batch job to the list
+     * add a job job to the list
      * @returns bool true if the batch job has been added
      */
-    function add(batch_job_api $job): bool
+    function add(job_api $job): bool
     {
         return parent::add_obj($job);
     }
@@ -86,9 +86,9 @@ class batch_job_list extends list_api implements JsonSerializable
      * and delete list of "2016", "2017","2018"
      * the result is "2014", "2015"
      *
-     * @param batch_job_list $del_lst is the list of phrases that should be removed from this list object
+     * @param job_list $del_lst is the list of phrases that should be removed from this list object
      */
-    private function diff(batch_job_list $del_lst): void
+    private function diff(job_list $del_lst): void
     {
         if (!$this->is_empty()) {
             $result = array();
@@ -104,9 +104,9 @@ class batch_job_list extends list_api implements JsonSerializable
 
     /**
      * merge as a function, because the array_merge does not create an object
-     * @param batch_job_list $new_wrd_lst with the batch_jobs that should be added
+     * @param job_list $new_wrd_lst with the jobs that should be added
      */
-    function merge(batch_job_list $new_wrd_lst): void
+    function merge(job_list $new_wrd_lst): void
     {
         foreach ($new_wrd_lst->lst() as $new_wrd) {
             $this->add($new_wrd);

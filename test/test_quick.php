@@ -166,8 +166,8 @@ if ($start_usr->id() > 0) {
             run_formula_element_test($t);
             run_formula_element_list_test($t);
             run_formula_element_group_test($t);
-            run_batch_job_test($t);
-            run_batch_job_list_test($t);
+            run_job_test($t);
+            run_job_list_test($t);
             run_view_test($t);
             run_component_test($t);
             run_component_link_test($t);

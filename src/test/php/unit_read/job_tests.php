@@ -2,8 +2,8 @@
 
 /*
 
-    test/php/unit_read/batch_job.php - database unit testing of the batch job functions
-    --------------------------------
+    test/php/unit_read/job.php - database unit testing of the batch job functions
+    --------------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -32,12 +32,12 @@
 
 namespace unit_read;
 
-use cfg\batch_job_list;
-use cfg\batch_job_type_list;
+use cfg\job_list;
+use cfg\job_type_list;
 use cfg\user;
 use test\test_cleanup;
 
-class batch_job_tests
+class job_tests
 {
 
     function run(test_cleanup $t): void
@@ -46,21 +46,21 @@ class batch_job_tests
         global $db_con;
 
         // init
-        $t->name = 'batch job read db->';
+        $t->name = 'job job read db->';
 
         $t->header('Unit database tests of the batch job classes (src/main/php/model/log/* and src/main/php/model/user/log_*)');
 
-        $t->subheader('Load batch job tests');
+        $t->subheader('Load job job tests');
 
         // use the system user for the database updates
         $sys_usr = new user;
         $sys_usr->load_by_id(SYSTEM_USER_ID);
 
         // check if loading of the first entry is the adding of the word name
-        $job_lst = new batch_job_list($sys_usr);
-        $job_lst->load_by_type(batch_job_type_list::BASE_IMPORT);
+        $job_lst = new job_list($sys_usr);
+        $job_lst->load_by_type(job_type_list::BASE_IMPORT);
         $first_job = $job_lst->lst()[0];
-        $t->assert('first batch job change is adding', $first_job->type_id(), '11');
+        $t->assert('first job job change is adding', $first_job->type_id(), '11');
 
 
         $t->subheader('API unit db tests');

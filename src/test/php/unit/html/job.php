@@ -2,9 +2,9 @@
 
 /*
 
-    model/system/task_type.php - a predefined batch job that can be triggered by a user action or a scheduler
-    --------------------------
-
+    test/unit/html/job.php - testing of the batch task display functions
+    ----------------------
+  
 
     This file is part of zukunft.com - calc with words
 
@@ -27,21 +27,32 @@
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
-   
+
 */
 
-namespace cfg;
+namespace unit\html;
 
-class task_type extends type_object
+include_once WEB_SYSTEM_PATH . 'job_list.php';
+
+use html\html_base;
+use html\system\job_list as job_list_dsp;
+use test\test_cleanup;
+
+class job
 {
-    // list of the task types that have a coded functionality
+    function run(test_cleanup $t): void
+    {
+        $html = new html_base();
 
+        $t->subheader('job job display unit tests');
 
-    /*
-     * database link
-     */
+        // test the batch job html display functions
+        $test_page = $html->text_h2('batch job display test');
+        $log_lst = new job_list_dsp($t->dummy_job_list()->api_json());
+        $test_page .= 'user view of a table with batch job entries<br>';
+        $test_page .= $log_lst->display() . '<br>';
 
-    // comments used for the database creation
-    const TBL_COMMENT = 'for predefined batch jobs that can be triggered by a user action or scheduled e.g. data synchronisation';
+        $t->html_test($test_page, 'job', $t);
+    }
 
 }

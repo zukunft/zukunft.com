@@ -79,7 +79,7 @@ class all_unit_read_tests extends all_unit_tests
         (new language_tests)->run($this);
         (new change_log_tests)->run($this);
         (new system_log_tests)->run($this);
-        (new batch_job_tests)->run($this);
+        (new job_tests)->run($this);
 
         // load the types from the api message
         $api_msg = $this->dummy_type_lists_api($this->usr1)->get_json();

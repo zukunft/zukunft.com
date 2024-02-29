@@ -61,8 +61,8 @@ tags:
     description: to import data using json or yaml
   - name: export
     description: to export data
-  - name: batch
-    description: to trigger and monitor batch jobs e.g. calculations, setup or test tasks
+  - name: job
+    description: to trigger and monitor job jobs e.g. calculations, setup or test tasks
   - name: user
     description: maintain the user setup 
   - name: log
@@ -1431,12 +1431,12 @@ paths:
               schema:
                 type: string
                 description: Error message
-  /batch:
+  /job:
     post:
       tags:
-        - batch
-      description: request to start a batch process
-      operationId: batchJobAdd
+        - job
+      description: request to start a job process
+      operationId: JobAdd
       responses:
         "200":
           description: Ok
@@ -1458,13 +1458,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BatchJob'
-  /batch/{id}:
+              $ref: '#/components/schemas/Job'
+  /job/{id}:
     get:
       tags:
-        - batch
+        - job
       description: get the status of a batch job
-      operationId: batchJobGet
+      operationId: JobGet
       parameters:
         - name: id
           in: path
@@ -1479,7 +1479,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BatchJob'
+                $ref: '#/components/schemas/Job'
         "500":
           description: internal server error
           content:
@@ -2557,7 +2557,7 @@ components:
           $ref: '#/components/schemas/ResultList'
         share:
           $ref: '#/components/schemas/Share'
-    BatchJob:
+    Job:
       type: object
       required:
         - id

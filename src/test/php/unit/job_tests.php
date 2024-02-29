@@ -2,7 +2,7 @@
 
 /*
 
-    test/unit/batch_log.php - unit testing of the user log functions
+    test/unit/job_tests.php - unit testing of the batch task functions
     -----------------------
   
 
@@ -32,38 +32,38 @@
 
 namespace unit;
 
-include_once MODEL_SYSTEM_PATH . 'batch_job_list.php';
+include_once MODEL_SYSTEM_PATH . 'job_list.php';
 
-use cfg\batch_job_type_list;
-use cfg\batch_job;
-use cfg\batch_job_list;
+use cfg\job_type_list;
+use cfg\job;
+use cfg\job_list;
 use cfg\db\sql_db;
 use test\test_cleanup;
 
-class batch_job_tests
+class job_tests
 {
     function run(test_cleanup $t): void
     {
 
         global $usr;
 
-        $t->header('Unit tests of the batch job class (src/main/php/log/batch_job.php)');
+        $t->header('Unit tests of the batch job class (src/main/php/log/job.php)');
 
         $t->subheader('SQL statement tests');
 
         // init
         $db_con = new sql_db();
-        $t->name = 'batch_job->';
+        $t->name = 'job->';
         $t->resource_path = 'db/job/';
 
         // sql to load one batch job
-        $job = new batch_job($usr);
+        $job = new job($usr);
         $t->assert_sql_by_id($db_con, $job);
 
         // sql to load a list of open batch jobs
         $sys_usr = $t->system_user();
-        $job_lst = new batch_job_list($sys_usr);
-        $t->assert_sql_list_by_type($db_con, $job_lst, batch_job_type_list::BASE_IMPORT);
+        $job_lst = new job_list($sys_usr);
+        $t->assert_sql_list_by_type($db_con, $job_lst, job_type_list::BASE_IMPORT);
 
 
         $t->subheader('API unit tests');

@@ -2,8 +2,8 @@
 
 /*
 
-    test/php/unit_write/batch_job_tests.php - write test BATCH JOBS to the database and check the results
-    ---------------------------------------
+    test/php/unit_write/job_tests.php - write test BATCH JOBS to the database and check the results
+    ---------------------------------
   
 
     This file is part of zukunft.com - calc with words
@@ -35,14 +35,14 @@ namespace unit_write;
 use api\formula\formula as formula_api;
 use api\value\value as value_api;
 use api\word\word as word_api;
-use cfg\batch_job;
-use cfg\batch_job_list;
-use cfg\batch_job_type_list;
+use cfg\job;
+use cfg\job_list;
+use cfg\job_type_list;
 use cfg\phrase_list;
 use cfg\value\value;
 use test\test_cleanup;
 
-class batch_job_tests
+class job_tests
 {
 
     function run(test_cleanup $t): void
@@ -51,7 +51,7 @@ class batch_job_tests
         global $usr;
         global $job_types;
 
-        $t->header('Test the batch job class (classes/batch_job.php)');
+        $t->header('Test the batch job class (classes/job.php)');
 
         // make sure that the test value is set independent of any previous database tests
         $t->test_value(array(
@@ -71,17 +71,17 @@ class batch_job_tests
         $val->load_by_grp($phr_lst->get_grp_id());
         $result = $val->number();
         $target = value_api::TV_CH_INHABITANTS_2020_IN_MIO;
-        $t->display('batch_job->value to link', $target, $result);
+        $t->display('job->value to link', $target, $result);
 
         // test adding a batch job
-        $job = new batch_job($usr);
+        $job = new job($usr);
         $job->obj = $val;
-        $job->set_type(batch_job_type_list::VALUE_UPDATE);
+        $job->set_type(job_type_list::VALUE_UPDATE);
         $result = $job->add();
         if ($result > 0) {
             $target = $result;
         }
-        $t->display('batch_job->add has number "' . $result . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('job->add has number "' . $result . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
     }
 
@@ -90,7 +90,7 @@ class batch_job_tests
 
         global $usr;
 
-        $t->header('Test the batch job list class (classes/batch_job_list.php)');
+        $t->header('Test the batch job list class (classes/job_list.php)');
 
         // prepare test adding a batch job via a list
         $frm = $t->load_formula(formula_api::TN_ADD);
@@ -98,8 +98,8 @@ class batch_job_tests
         $phr_lst->load_by_names(array(word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_MIO, word_api::TN_2020));
 
         // test adding a batch job via a list
-        $job_lst = new batch_job_list($usr);
-        $calc_request = new batch_job($usr);
+        $job_lst = new job_list($usr);
+        $calc_request = new job($usr);
         $calc_request->frm = $frm;
         $calc_request->set_user($usr);
         $calc_request->phr_lst = $phr_lst;
@@ -109,7 +109,7 @@ class batch_job_tests
         if ($result->is_ok()) {
             $target = $result->get_last_message();
         }
-        $t->display('batch_job->add has number "' . $result->get_last_message() . '"', $target, $result->get_last_message(), $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('job->add has number "' . $result->get_last_message() . '"', $target, $result->get_last_message(), $t::TIMEOUT_LIMIT_DB_MULTI);
 
     }
 

@@ -37,8 +37,8 @@ const PHP_TEST_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'test' . DIRECTO
 include_once PHP_PATH . 'zu_lib.php';
 include_once SERVICE_IMPORT_PATH . 'import_file.php';
 
-use cfg\batch_job;
-use cfg\batch_job_type_list;
+use cfg\job;
+use cfg\job_type_list;
 use cfg\db\db_check;
 use cfg\log\change_log_action;
 use cfg\log\change_log_field;
@@ -113,8 +113,8 @@ if ($usr->id() > 0) {
         $db_con = prg_restart("test_reset_db");
 
         // reload the base configuration
-        $job = new batch_job($sys_usr);
-        $job_id = $job->add(batch_job_type_list::BASE_IMPORT);
+        $job = new job($sys_usr);
+        $job_id = $job->add(job_type_list::BASE_IMPORT);
 
         import_base_config($sys_usr);
         import_config($usr);
@@ -298,7 +298,7 @@ function run_preloaded_truncate(): void
     $protection_types = new protection_type_list();
     $languages = new language_list();
     $language_forms = new language_form_list();
-    $job_types = new batch_job_type_list();
+    $job_types = new job_type_list();
     $change_log_actions = new change_log_action();
     $change_log_tables = new change_log_table();
     $change_log_fields = new change_log_field();

@@ -139,19 +139,19 @@ CREATE TABLE IF NOT EXISTS sys_script_times
 -- table structure for predefined batch jobs that can be triggered by a user action or scheduled e.g. data synchronisation
 --
 
-CREATE TABLE IF NOT EXISTS task_types
+CREATE TABLE IF NOT EXISTS job_types
 (
-    task_type_id BIGSERIAL PRIMARY KEY,
+    job_type_id BIGSERIAL PRIMARY KEY,
     type_name     varchar(255) NOT NULL,
     code_id       varchar(255) DEFAULT NULL,
     description   text         DEFAULT NULL
 );
 
-COMMENT ON TABLE task_types IS 'for predefined batch jobs that can be triggered by a user action or scheduled e.g. data synchronisation';
-COMMENT ON COLUMN task_types.task_type_id IS 'the internal unique primary index';
-COMMENT ON COLUMN task_types.type_name IS 'the unique type name as shown to the user and used for the selection';
-COMMENT ON COLUMN task_types.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
-COMMENT ON COLUMN task_types.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
+COMMENT ON TABLE job_types IS 'for predefined batch jobs that can be triggered by a user action or scheduled e.g. data synchronisation';
+COMMENT ON COLUMN job_types.job_type_id IS 'the internal unique primary index';
+COMMENT ON COLUMN job_types.type_name IS 'the unique type name as shown to the user and used for the selection';
+COMMENT ON COLUMN job_types.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
+COMMENT ON COLUMN job_types.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
 
 
 --
@@ -166,12 +166,12 @@ CREATE TABLE IF NOT EXISTS calc_and_cleanup_tasks
     request_time             timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     start_time               timestamp,
     end_time                 timestamp,
-    task_type_id             bigint    NOT NULL,
+    job_type_id              bigint    NOT NULL,
     row_id                   bigint    DEFAULT NULL,
     change_field_id          bigint    DEFAULT NULL
 );
 
-COMMENT ON TABLE calc_and_cleanup_tasks IS 'concrete batch jobs with start and end';
+COMMENT ON TABLE calc_and_cleanup_tasks IS 'concrete job jobs with start and end';
 
 -- --------------------------------------------------------
 
@@ -689,7 +689,7 @@ COMMENT ON COLUMN user_words.protect_id IS 'to protect against unwanted changes'
 --
 -- table structure for table word_del_confirms
 --
--- TODO move to batch_jobs ?
+-- TODO move to jobs ?
 --
 
 CREATE TABLE IF NOT EXISTS word_del_confirms
@@ -704,7 +704,7 @@ CREATE TABLE IF NOT EXISTS word_del_confirms
 
 --
 -- table structure for table word_del_requests
--- TODO move to batch_jobs status ?
+-- TODO move to jobs status ?
 --
 
 CREATE TABLE IF NOT EXISTS word_del_requests
@@ -2986,10 +2986,10 @@ CREATE INDEX sys_log_sys_log_status_idx ON sys_log (sys_log_status_id);
 -- --------------------------------------------------------
 
 --
--- indexes for table task_types
+-- indexes for table job_types
 --
 
-CREATE INDEX task_types_type_name_idx ON task_types (type_name);
+CREATE INDEX job_types_type_name_idx ON job_types (type_name);
 
 --
 -- Indexes for table sys_script_times

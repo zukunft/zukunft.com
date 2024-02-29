@@ -2,8 +2,8 @@
 
 /*
 
-    /web/system/batch_job_list.php - the display extension of the system error log api object
-    -------------------------------
+    /web/system/job_list.php - the display extension of the system error log api object
+    ------------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -33,14 +33,14 @@
 namespace html\system;
 
 include_once WEB_SANDBOX_PATH . 'list.php';
-include_once WEB_SYSTEM_PATH . 'batch_job.php';
+include_once WEB_SYSTEM_PATH . 'job.php';
 
 use controller\controller;
 use html\html_base;
 use html\list_dsp;
-use html\system\batch_job as batch_job_dsp;
+use html\system\job as job_dsp;
 
-class batch_job_list extends list_dsp
+class job_list extends list_dsp
 {
 
     /*
@@ -70,7 +70,7 @@ class batch_job_list extends list_dsp
      */
     function set_obj_from_json_array(array $json_array): object
     {
-        $job = new batch_job_dsp();
+        $job = new job_dsp();
         $job->set_from_json_array($json_array);
         return $job;
     }
@@ -84,7 +84,7 @@ class batch_job_list extends list_dsp
      * add a batch_job to the list
      * @returns bool true if the batch_job has been added
      */
-    function add(batch_job_dsp $job): bool
+    function add(job_dsp $job): bool
     {
         return parent::add_obj($job);
     }

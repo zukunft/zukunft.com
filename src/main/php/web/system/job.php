@@ -2,8 +2,8 @@
 
 /*
 
-    /web/system/batch_job.php - the extension of the batch_job API objects to create batch_job base html code
-    -------------------------
+    /web/system/job.php - the extension of the batch task API objects to create job base html code
+    -------------------
 
     This file is part of the frontend of zukunft.com - calc with words
 
@@ -44,7 +44,7 @@ use html\api as api_dsp;
 use html\sandbox\db_object as db_object_dsp;
 use html\html_base;
 
-class batch_job extends db_object_dsp
+class job extends db_object_dsp
 {
 
     /*
@@ -278,7 +278,7 @@ class batch_job extends db_object_dsp
      */
 
     /**
-     * display a batch_job with a link to the main page for the batch_job
+     * display a job with a link to the main page for the job
      * @param string|null $back the back trace url for the undo functionality
      * @param string $style the CSS style that should be used
      * @returns string the html code
@@ -293,7 +293,7 @@ class batch_job extends db_object_dsp
     /**
      * @param string $back the back trace url for the undo functionality
      * @param string $style the CSS style that should be used
-     * @returns string the batch_job as a table cell
+     * @returns string the job as a table cell
      */
     function td(string $back = '', string $style = '', int $intent = 0): string
     {

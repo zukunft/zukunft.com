@@ -37,8 +37,8 @@ include_once MODEL_SANDBOX_PATH . 'sandbox_value_list.php';
 include_once API_RESULT_PATH . 'result_list.php';
 
 use api\result\result_list as result_list_api;
-use cfg\batch_job;
-use cfg\batch_job_list;
+use cfg\job;
+use cfg\job_list;
 use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_table_type;
@@ -815,7 +815,7 @@ class result_list extends sandbox_value_list
     {
         $lib = new library();
         log_debug('res_lst->frm_upd_lst_usr(' . $frm->name() . ',fat' . $phr_lst_frm_assigned->name() . ',ft' . $phr_lst_frm_used->name() . ',' . $usr->name . ')');
-        $result = new batch_job_list($usr);
+        $result = new job_list($usr);
         $added = 0;
 
         // TODO: check if the assigned words are different for the user
@@ -844,7 +844,7 @@ class result_list extends sandbox_value_list
             // remove double requests
 
             if (!$phr_lst->is_empty()) {
-                $calc_request = new batch_job($usr);
+                $calc_request = new job($usr);
                 $calc_request->frm = $frm;
                 $calc_request->phr_lst = $phr_lst;
                 $result->add($calc_request);
@@ -949,7 +949,7 @@ class result_list extends sandbox_value_list
 
     /**
      * get the result that needs to be recalculated if one formula has been updated
-     * TODO should returns a batch_job_list with all formula results that may need to be updated if a formula is updated
+     * TODO should returns a job_list with all formula results that may need to be updated if a formula is updated
      * @param formula $frm - the formula that has been updated
      * $usr - to define which user view should be updated
      */

@@ -1083,7 +1083,7 @@ class formula extends sandbox_typed
     function calc_requests($phr_lst) {
     $result = array();
 
-    $calc_request = New batch_job;
+    $calc_request = New job;
     $calc_request->frm     = $this;
     $calc_request->usr     = $this->user();
     $calc_request->phr_lst = $phr_lst;

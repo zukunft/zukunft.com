@@ -152,13 +152,15 @@ class word extends sandbox_typed
 
 
     /*
-     * const to use the system also for the own system configuration
+     * const names of a words used by the system for its own configuration
      * e.g. the number of decimal places related to the user specific words
      * system configuration that is not related to user sandbox data is using the flat cfg methods
      * included in the preserved word names
      */
 
     const SYSTEM_CONFIG = 'system configuration';
+    // for the configuration of a single job
+    const JOB_CONFIG = 'job configuration';
 
 
     /*

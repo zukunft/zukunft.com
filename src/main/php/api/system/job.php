@@ -2,7 +2,7 @@
 
 /*
 
-    api/system/batch_job.php - the simple object to create a batch job json for the frontend API
+    api/system/job.php - the simple object to create a batch job json for the frontend API
     ------------------------
 
     This file is part of zukunft.com - calc with words
@@ -38,14 +38,14 @@ use cfg\db_object_seq_id;
 use cfg\user;
 use DateTime;
 
-class batch_job extends db_object_seq_id
+class job extends db_object_seq_id
 {
 
     /*
      * const for the api
      */
 
-    const API_NAME = 'batch';
+    const API_NAME = 'job';
 
 
     // field names used for JSON creation

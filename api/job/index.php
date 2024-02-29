@@ -2,7 +2,7 @@
 
 /*
 
-    api/batch/index.php - the batch API controller: send a batch to the frontend
+    api/job/index.php - the job API controller: send a job to the frontend
     ------------------
 
     This file is part of zukunft.com - calc with words
@@ -31,7 +31,7 @@
 
 use controller\controller;
 use cfg\user;
-use cfg\batch_job;
+use cfg\job;
 
 // standard zukunft header for callable php files to allow debugging and lib loading
 global $debug;
@@ -44,10 +44,10 @@ include_once API_PATH . 'api.php';
 include_once API_PATH . 'controller.php';
 include_once API_PATH . 'api_message.php';
 include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_SYSTEM_PATH . 'batch_job.php';
+include_once MODEL_SYSTEM_PATH . 'job.php';
 
 // open database
-$db_con = prg_start("api/batch", "", false);
+$db_con = prg_start("api/job", "", false);
 
 // get the parameters
 $job_id = $_GET[controller::URL_VAR_ID] ?? 0;
@@ -63,11 +63,11 @@ $msg .= $usr->get();
 if ($usr->id() > 0) {
 
     if ($job_id > 0) {
-        $job = new batch_job($usr);
+        $job = new job($usr);
         $job->load_by_id($job_id);
         $result = json_decode(json_encode($job->api_obj()));
     } else {
-        $msg = 'batch id is missing';
+        $msg = 'job id is missing';
     }
 }
 

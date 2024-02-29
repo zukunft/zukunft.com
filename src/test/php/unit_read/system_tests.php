@@ -35,7 +35,7 @@ namespace unit_read;
 include_once MODEL_LOG_PATH . 'system_log.php';
 include_once DB_PATH . 'db_check.php';
 
-use cfg\batch_job_type_list;
+use cfg\job_type_list;
 use cfg\db\db_check;
 use cfg\sys_log_status;
 use cfg\type_lists;
@@ -71,14 +71,14 @@ class system_tests
         $t->subheader('System batch job type tests');
 
         // load the batch job type list
-        $lst = new batch_job_type_list();
+        $lst = new job_type_list();
         $result = $lst->load($db_con);
         $t->assert('load batch job', $result, true);
 
         // ... and check if at least the most critical is loaded
         global $job_types;
-        $result = $job_types->id(batch_job_type_list::VALUE_UPDATE);
-        $t->assert('check batch job ' . batch_job_type_list::VALUE_UPDATE, $result, 1);
+        $result = $job_types->id(job_type_list::VALUE_UPDATE);
+        $t->assert('check batch job ' . job_type_list::VALUE_UPDATE, $result, 1);
 
         /*
          * SQL database read unit tests

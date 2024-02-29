@@ -2,8 +2,8 @@
 
 /*
 
-    model/system/batch_job.php - object to combine all parameters for one calculation or cleanup request
-    --------------------------
+    model/system/job.php - object to combine all parameters for one calculation or cleanup request
+    --------------------
 
     This may lead to several results,
 
@@ -72,16 +72,16 @@ A user updates a formula
 namespace cfg;
 
 include_once MODEL_HELPER_PATH . 'db_object_seq_id_user.php';
-include_once API_SYSTEM_PATH . 'batch_job.php';
+include_once API_SYSTEM_PATH . 'job.php';
 
-use api\system\batch_job as batch_job_api;
+use api\system\job as job_api;
 use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use DateTime;
 use DateTimeInterface;
 
-class batch_job extends db_object_seq_id_user
+class job extends db_object_seq_id_user
 {
 
     const STATUS_NEW = 'new'; // the job is not yet assigned to any calc engine
@@ -129,7 +129,7 @@ class batch_job extends db_object_seq_id_user
     public ?DateTime $request_time = null;  // time when the job has been requested
     public ?DateTime $start_time = null;    // start time of the job execution
     public ?DateTime $end_time = null;      // end time of the job execution
-    private ?int $type_id;                  // id of the batch type e.g. "update value", "add formula", ... because getting the type is fast from the preloaded type list
+    private ?int $type_id;                  // id of the job type e.g. "update value", "add formula", ... because getting the type is fast from the preloaded type list
     public ?int $row_id = null;             // the id of the related object e.g. if a value has been updated the group_id
     public string $status;
     public string $priority;
@@ -221,11 +221,11 @@ class batch_job extends db_object_seq_id_user
      */
 
     /**
-     * @return batch_job_api the batch job frontend api object
+     * @return job_api the job job frontend api object
      */
-    function api_obj(): batch_job_api
+    function api_obj(): job_api
     {
-        $api_obj = new batch_job_api($this->user());
+        $api_obj = new job_api($this->user());
         $api_obj->id = $this->id;
         // TODO use time zone?
         $api_obj->request_time = $this->request_time->format(DateTimeInterface::ATOM);
@@ -318,7 +318,7 @@ class batch_job extends db_object_seq_id_user
 
     /**
      * TODO align the field name with the object
-     * @return string calc_and_cleanup_task_id instead of batch_job
+     * @return string calc_and_cleanup_task_id instead of job
      */
     function id_field(): string
     {
@@ -358,11 +358,11 @@ class batch_job extends db_object_seq_id_user
                     $this->row_id = $this->obj->id();
                 }
             }
-            if ($this->row_id <= 0 and $code_id != batch_job_type_list::BASE_IMPORT) {
+            if ($this->row_id <= 0 and $code_id != job_type_list::BASE_IMPORT) {
                 log_debug('row id missing?');
             } else {
                 log_debug('row_id ok');
-                if (isset($this->obj) or $code_id == batch_job_type_list::BASE_IMPORT) {
+                if (isset($this->obj) or $code_id == job_type_list::BASE_IMPORT) {
                     if (isset($this->obj)) {
                         $this->row_id = $this->obj->id();
                     }
@@ -376,7 +376,7 @@ class batch_job extends db_object_seq_id_user
                     $this->request_time = new DateTime();
 
                     // execute the job if possible
-                    if ($job_id > 0 and $code_id != batch_job_type_list::BASE_IMPORT) {
+                    if ($job_id > 0 and $code_id != job_type_list::BASE_IMPORT) {
                         $this->id = $job_id;
                         $this->exe();
                         $result = $job_id;
@@ -436,10 +436,10 @@ class batch_job extends db_object_seq_id_user
         $result = $db_con->update_old($this->id, 'start_time', sql::NOW);
 
         log_debug($this->type_code_id() . ' with ' . $result);
-        if ($this->type_code_id() == batch_job_type_list::VALUE_UPDATE) {
+        if ($this->type_code_id() == job_type_list::VALUE_UPDATE) {
             $this->exe_val_upd();
         } else {
-            log_err('Job type "' . $this->type_code_id() . '" not defined.', 'batch_job->exe');
+            log_err('Job type "' . $this->type_code_id() . '" not defined.', 'job->exe');
         }
         $db_con->set_class($db_type);
     }

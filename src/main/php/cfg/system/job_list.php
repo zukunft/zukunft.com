@@ -2,12 +2,12 @@
 
 /*
 
-    model/system/batch_job_list.php - a list of calculation request
-    -------------------------------
+    model/system/job_list.php - a list of calculation request
+    -------------------------
 
     This list in "in memory only" to wrap the communication between the classes
     E.g. if a formula is updated it may lead to many single formula result calculations,
-       which may lead to other batch jobs
+       which may lead to other job jobs
        to have consistent results no updates after the cut-off time are included
 
     This file is part of zukunft.com - calc with words
@@ -37,16 +37,16 @@
 namespace cfg;
 
 include_once DB_PATH . 'sql_par_type.php';
-include_once API_SYSTEM_PATH . 'batch_job_list.php';
+include_once API_SYSTEM_PATH . 'job_list.php';
 include_once MODEL_SYSTEM_PATH . 'base_list.php';
 
-use api\system\batch_job_list as batch_job_list_api;
+use api\system\job_list as job_list_api;
 use cfg\db\sql;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use DateTime;
 
-class batch_job_list extends base_list
+class job_list extends base_list
 {
 
     /*
@@ -63,7 +63,7 @@ class batch_job_list extends base_list
      */
 
     /**
-     * always set the user because a batch list either user specific or linked to the system user
+     * always set the user because a job list either user specific or linked to the system user
      * @param user $usr the user who requested to see the formulas
      */
     function __construct(user $usr)
@@ -79,11 +79,11 @@ class batch_job_list extends base_list
      */
 
     /**
-     * @return batch_job_list_api the job list object with the display interface functions
+     * @return job_list_api the job list object with the display interface functions
      */
-    function api_obj(): batch_job_list_api
+    function api_obj(): job_list_api
     {
-        $api_obj = new batch_job_list_api();
+        $api_obj = new job_list_api();
         foreach ($this->lst() as $job) {
             $api_obj->add($job->api_obj());
         }
@@ -131,9 +131,9 @@ class batch_job_list extends base_list
     {
         global $job_types;
         $type_id = $job_types->id($type_code_id);
-        $job = new batch_job($this->usr);
+        $job = new job($this->usr);
         $qp = $job->load_sql($sc, 'job_type', self::class);
-        $sc->add_where(batch_job::FLD_TYPE, $type_id);
+        $sc->add_where(job::FLD_TYPE, $type_id);
         $sc->set_page($this->limit, $this->offset());
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -156,7 +156,7 @@ class batch_job_list extends base_list
             $db_rows = $db_con->get($qp);
             if ($db_rows != null) {
                 foreach ($db_rows as $db_row) {
-                    $job = new batch_job($this->usr);
+                    $job = new job($this->usr);
                     $job->row_mapper($db_row);
                     $this->add_obj($job);
                     $result = true;
@@ -174,16 +174,16 @@ class batch_job_list extends base_list
 
     /**
      * add another job to the list, but only if needed
-     * @param batch_job $job the batch job, that should be added to the list
+     * @param job $job the batch job, that should be added to the list
      * @return user_message either the status ok or the error message that should be shown to the user
      */
-    function add(batch_job $job): user_message
+    function add(job $job): user_message
     {
         $result = new user_message();
-        log_debug('batch_job_list->add');
+        log_debug('job_list->add');
 
         // check if the job to add has all needed parameters
-        if ($job->type_code_id() != batch_job_type_list::BASE_IMPORT) {
+        if ($job->type_code_id() != job_type_list::BASE_IMPORT) {
             if (!isset($job->frm)) {
                 $msg = 'Job ' . $job->dsp_id() . ' cannot be added, because formula is missing.';
                 $result->add_message($msg);
@@ -209,11 +209,11 @@ class batch_job_list extends base_list
 
     /**
      * check if a similar job is already in the list
-     * @param batch_job $job the batch job, that should be checked
+     * @param job $job the batch job, that should be checked
      * @return user_message ok if no similar job has been in the list
      *                      or the message for the user
      */
-    private function has_similar(batch_job $job): user_message
+    private function has_similar(job $job): user_message
     {
         $result = new user_message();
 
@@ -239,7 +239,7 @@ class batch_job_list extends base_list
     /**
      * merge all jobs of the given batch job list to this list
      */
-    function merge(batch_job_list $job_lst): void
+    function merge(job_list $job_lst): void
     {
         foreach ($job_lst->lst() as $job) {
             $this->add($job);

@@ -75,8 +75,8 @@
     formula_link.php
     result.php
     result_list.php
-    batch_job.php
-    batch_job_list.php
+    job.php
+    job_list.php
     view.php
     view_display.php
     component.php
@@ -133,7 +133,7 @@
 
 use cfg\user;
 use unit_write\verb_tests;
-use unit_write\batch_job_tests;
+use unit_write\job_tests;
 use unit_write\component_link_tests;
 use unit_write\component_tests;
 use unit_write\expression_tests;
@@ -273,8 +273,8 @@ if ($start_usr->id() > 0) {
             (new formula_element_tests)->run($t);
             (new formula_element_tests)->run_list($t);
             (new formula_element_group_tests)->run($t);
-            (new batch_job_tests)->run($t);
-            (new batch_job_tests)->run_list($t);
+            (new job_tests)->run($t);
+            (new job_tests)->run_list($t);
             (new view_tests)->run($t);
             (new component_tests)->run($t);
             (new component_link_tests)->run($t);

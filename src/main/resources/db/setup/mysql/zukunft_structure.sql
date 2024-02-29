@@ -126,9 +126,9 @@ CREATE TABLE IF NOT EXISTS `sys_script_times`
 -- table structure for predefined batch jobs that can be triggered by a user action or scheduled e.g. data synchronisation
 --
 
-CREATE TABLE IF NOT EXISTS task_types
+CREATE TABLE IF NOT EXISTS job_types
 (
-    task_type_id bigint           NOT NULL COMMENT 'the internal unique primary index',
+    job_type_id bigint           NOT NULL COMMENT 'the internal unique primary index',
     type_name     varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
     code_id       varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
     description   text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry'
@@ -148,7 +148,7 @@ CREATE TABLE IF NOT EXISTS `calc_and_cleanup_tasks`
     `request_time`                  timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     `start_time`                    timestamp          DEFAULT NULL,
     `end_time`                      timestamp          DEFAULT NULL,
-    `task_type_id` int(11)   NOT NULL,
+    `job_type_id` int(11)   NOT NULL,
     `row_id`                        int(11)   DEFAULT NULL,
     `change_field_id`               int(11)            DEFAULT NULL
 ) ENGINE = InnoDB
@@ -199,7 +199,7 @@ CREATE TABLE IF NOT EXISTS `users`
     `user_id`                  int(11)      NOT NULL,
     `user_name`                varchar(100) NOT NULL,
     `description`              text         DEFAULT NULL,
-    `code_id`                  varchar(50)           DEFAULT NULL COMMENT 'to select e.g. the system batch user',
+    `code_id`                  varchar(50)           DEFAULT NULL COMMENT 'to select e.g. the system job user',
     `right_level`              int(11)               DEFAULT NULL,
     `password`                 varchar(200)          DEFAULT NULL,
     `email`                    varchar(200)          DEFAULT NULL,
@@ -2179,12 +2179,12 @@ ALTER TABLE sys_log
 -- --------------------------------------------------------
 
 --
--- indexes for table task_types
+-- indexes for table job_types
 --
 
-ALTER TABLE task_types
-    ADD PRIMARY KEY (task_type_id),
-    ADD KEY task_types_type_name_idx (type_name);
+ALTER TABLE job_types
+    ADD PRIMARY KEY (job_type_id),
+    ADD KEY job_types_type_name_idx (type_name);
 
 --
 -- Indexes for table`calc_and_cleanup_tasks`
