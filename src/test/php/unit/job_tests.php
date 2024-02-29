@@ -34,6 +34,7 @@ namespace unit;
 
 include_once MODEL_SYSTEM_PATH . 'job_list.php';
 
+use cfg\job_time;
 use cfg\job_type_list;
 use cfg\job;
 use cfg\job_list;
@@ -47,14 +48,27 @@ class job_tests
 
         global $usr;
 
-        $t->header('Unit tests of the batch job class (src/main/php/log/job.php)');
-
-        $t->subheader('SQL statement tests');
-
         // init
         $db_con = new sql_db();
         $t->name = 'job->';
         $t->resource_path = 'db/job/';
+
+        $t->header('Unit tests of the batch job class (src/main/php/log/job.php)');
+
+        $t->subheader('Job time SQL setup statements');
+        $job_tim = new job_time('');
+        $t->assert_sql_table_create($job_tim);
+        $t->assert_sql_index_create($job_tim);
+        $t->assert_sql_foreign_key_create($job_tim);
+
+        $t->subheader('Job SQL setup statements');
+        $job = new job($usr);
+        $t->assert_sql_table_create($job);
+        $t->assert_sql_index_create($job);
+        $t->assert_sql_foreign_key_create($job);
+
+
+        $t->subheader('SQL statement tests');
 
         // sql to load one batch job
         $job = new job($usr);

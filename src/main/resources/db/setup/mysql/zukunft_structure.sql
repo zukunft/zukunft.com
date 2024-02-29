@@ -107,19 +107,6 @@ CREATE TABLE IF NOT EXISTS sys_log
     DEFAULT CHARSET = utf8
     COMMENT 'for system error traking and to measure execution times';
 
---
--- Table structure for table`sys_script_times`
---
-
-CREATE TABLE IF NOT EXISTS `sys_script_times`
-(
-    `sys_script_time`  timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    `sys_script_start` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-    `sys_script_id`    int(11) NOT NULL,
-    `url` varchar(250) DEFAULT NULL
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8;
-
 -- --------------------------------------------------------
 
 --
@@ -128,7 +115,7 @@ CREATE TABLE IF NOT EXISTS `sys_script_times`
 
 CREATE TABLE IF NOT EXISTS job_types
 (
-    job_type_id bigint           NOT NULL COMMENT 'the internal unique primary index',
+    job_type_id bigint             NOT NULL COMMENT 'the internal unique primary index',
     type_name     varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
     code_id       varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
     description   text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry'
@@ -137,23 +124,46 @@ CREATE TABLE IF NOT EXISTS job_types
     DEFAULT CHARSET = utf8
     COMMENT 'for predefined batch jobs that can be triggered by a user action or scheduled e.g. data synchronisation';
 
+-- --------------------------------------------------------
+
 --
--- Table structure for table`calc_and_cleanup_tasks`
+-- table structure to schedule jobs with predefined parameters
 --
 
-CREATE TABLE IF NOT EXISTS `calc_and_cleanup_tasks`
+CREATE TABLE IF NOT EXISTS job_times
 (
-    `calc_and_cleanup_task_id`      int(11)   NOT NULL,
-    `user_id`                       int(11)   NOT NULL,
-    `request_time`                  timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    `start_time`                    timestamp          DEFAULT NULL,
-    `end_time`                      timestamp          DEFAULT NULL,
-    `job_type_id` int(11)   NOT NULL,
-    `row_id`                        int(11)   DEFAULT NULL,
-    `change_field_id`               int(11)            DEFAULT NULL
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8;
+    job_time_id bigint          NOT NULL COMMENT 'the internal unique primary index',
+    schedule    varchar(20) DEFAULT NULL COMMENT 'the crontab for the job schedule',
+    job_type_id bigint          NOT NULL COMMENT 'the id of the job type that should be started',
+    user_id     bigint          NOT NULL COMMENT 'the id of the user who edit the scheduler the last time',
+    start       timestamp   DEFAULT NULL COMMENT 'the last start of the job',
+    parameter   bigint      DEFAULT NULL COMMENT 'the phrase id that contains all parameters for the next job start'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'to schedule jobs with predefined parameters';
+
+-- --------------------------------------------------------
+
+--
+-- table structure for each concrete job run
+--
+
+CREATE TABLE IF NOT EXISTS jobs
+(
+    job_id          bigint        NOT NULL COMMENT 'the internal unique primary index',
+    user_id         bigint        NOT NULL COMMENT 'the id of the user who has requested the job by editing the scheduler the last time',
+    job_type_id     bigint        NOT NULL COMMENT 'the id of the job type that should be started',
+    request_time    timestamp     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'timestamp of the request for the job execution',
+    start_time      timestamp DEFAULT NULL COMMENT 'timestamp when the system has started the execution',
+    end_time        timestamp DEFAULT NULL COMMENT 'timestamp when the job has been completed or canceled',
+    parameter       bigint    DEFAULT NULL COMMENT 'id of the phrase with the snaped parameter set for this job start',
+    change_field_id bigint    DEFAULT NULL COMMENT 'e.g. for undo jobs the id of the field that should be changed',
+    row_id          bigint    DEFAULT NULL COMMENT 'e.g. for undo jobs the id of the row that should be changed'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'for each concrete job run';
 
 -- --------------------------------------------------------
 
@@ -2186,11 +2196,35 @@ ALTER TABLE job_types
     ADD PRIMARY KEY (job_type_id),
     ADD KEY job_types_type_name_idx (type_name);
 
+-- --------------------------------------------------------
+
 --
--- Indexes for table`calc_and_cleanup_tasks`
+-- indexes for table job_times
 --
-ALTER TABLE `calc_and_cleanup_tasks`
-    ADD PRIMARY KEY (`calc_and_cleanup_task_id`);
+
+ALTER TABLE job_times
+    ADD PRIMARY KEY (job_time_id),
+    ADD KEY job_times_schedule_idx (schedule),
+    ADD KEY job_times_job_type_idx (job_type_id),
+    ADD KEY job_times_user_idx (user_id),
+    ADD KEY job_times_parameter_idx (parameter);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table jobs
+--
+
+ALTER TABLE jobs
+    ADD PRIMARY KEY (job_id),
+    ADD KEY jobs_user_idx (user_id),
+    ADD KEY jobs_job_type_idx (job_type_id),
+    ADD KEY jobs_request_time_idx (request_time),
+    ADD KEY jobs_start_time_idx (start_time),
+    ADD KEY jobs_end_time_idx (end_time),
+    ADD KEY jobs_parameter_idx (parameter),
+    ADD KEY jobs_change_field_idx (change_field_id),
+    ADD KEY jobs_row_idx (row_id);
 
 --
 -- Indexes for table`changes`
@@ -2968,15 +3002,15 @@ ALTER TABLE phrase_types
 --
 
 --
--- AUTO_INCREMENT for table`calc_and_cleanup_tasks`
+-- AUTO_INCREMENT for table`jobs`
 --
-ALTER TABLE `calc_and_cleanup_tasks`
-    MODIFY `calc_and_cleanup_task_id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `jobs`
+    MODIFY `job_id` int(11) NOT NULL AUTO_INCREMENT;
 --
--- AUTO_INCREMENT for table`calc_and_cleanup_task_types`
+-- AUTO_INCREMENT for table`job_types`
 --
-ALTER TABLE `calc_and_cleanup_task_types`
-    MODIFY `calc_and_cleanup_task_type_id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `job_types`
+    MODIFY `job_type_id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table`changes`
 --
@@ -3272,6 +3306,22 @@ ALTER TABLE sys_log
     ADD CONSTRAINT sys_log_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
     ADD CONSTRAINT sys_log_user2_fk FOREIGN KEY (solver_id) REFERENCES users (user_id),
     ADD CONSTRAINT sys_log_sys_log_status_fk FOREIGN KEY (sys_log_status_id) REFERENCES sys_log_status (sys_log_status_id);
+
+--
+-- constraints for table job_times
+--
+
+ALTER TABLE job_times
+    ADD CONSTRAINT job_times_job_type_fk FOREIGN KEY (job_type_id) REFERENCES job_types (job_type_id),
+    ADD CONSTRAINT job_times_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table jobs
+--
+
+ALTER TABLE jobs
+    ADD CONSTRAINT jobs_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT jobs_job_type_fk FOREIGN KEY (job_type_id) REFERENCES job_types (job_type_id);
 
 --
 -- Constraints for table`changes`

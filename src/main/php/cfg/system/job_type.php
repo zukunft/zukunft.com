@@ -43,5 +43,6 @@ class job_type extends type_object
 
     // comments used for the database creation
     const TBL_COMMENT = 'for predefined batch jobs that can be triggered by a user action or scheduled e.g. data synchronisation';
+    const FLD_ID = 'job_type_id'; // repeated to enable use in other const (TODO try to use something like "final" in java)
 
 }

@@ -29,10 +29,6 @@
 
 */
 
-use controller\controller;
-use cfg\user;
-use cfg\job;
-
 // standard zukunft header for callable php files to allow debugging and lib loading
 global $debug;
 $debug = $_GET['debug'] ?? 0;
@@ -44,7 +40,13 @@ include_once API_PATH . 'api.php';
 include_once API_PATH . 'controller.php';
 include_once API_PATH . 'api_message.php';
 include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_SYSTEM_PATH . 'job_type.php';
+include_once MODEL_SYSTEM_PATH . 'job_time.php';
 include_once MODEL_SYSTEM_PATH . 'job.php';
+
+use controller\controller;
+use cfg\user;
+use cfg\job;
 
 // open database
 $db_con = prg_start("api/job", "", false);

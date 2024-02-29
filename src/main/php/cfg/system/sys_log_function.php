@@ -5,6 +5,8 @@
     model/system/sys_log_function.php - to group the system log entries by function
     ---------------------------------
 
+    TODO move to the log folder
+
     This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it

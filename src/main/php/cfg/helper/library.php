@@ -1566,6 +1566,9 @@ class library
             case $this->class_to_name(config::class):
                 $result = 'system';
                 break;
+            case $this->class_to_name(job_time::class):
+                $result = 'job';
+                break;
             case $this->class_to_name(source::class):
                 $result = $this->class_to_name(ref::class);
                 break;

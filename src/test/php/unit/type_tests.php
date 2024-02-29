@@ -57,7 +57,7 @@ class type_tests
 
         $t->header('Unit tests of the type classes');
 
-        // TODO add sys_log_types, calc_and_cleanup_task_types
+        // TODO add sys_log_types, job_types
 
         $t->subheader('System log status SQL setup statements');
         $log_sta = new sys_log_status('');
@@ -69,7 +69,7 @@ class type_tests
         $t->assert_sql_table_create($log_fuc);
         $t->assert_sql_index_create($log_fuc);
 
-        $t->subheader('Task type SQL setup statements');
+        $t->subheader('Job type SQL setup statements');
         $job_typ = new job_type('');
         $t->assert_sql_table_create($job_typ);
         $t->assert_sql_index_create($job_typ);

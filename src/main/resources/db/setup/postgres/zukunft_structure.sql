@@ -119,20 +119,6 @@ COMMENT ON COLUMN sys_log.sys_log_trace IS 'the generated code trace to local th
 COMMENT ON COLUMN sys_log.user_id IS 'the id of the user who has caused the log entry';
 COMMENT ON COLUMN sys_log.solver_id IS 'user id of the user that is trying to solve the problem';
 
-
---
--- table structure for the schedule of system batch jobs
--- TODO generate
---
-
-CREATE TABLE IF NOT EXISTS sys_script_times
-(
-    sys_script_time  timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    sys_script_start timestamp,
-    sys_script_id    bigint    NOT NULL,
-    url              varchar(250)       DEFAULT NULL
-);
-
 -- --------------------------------------------------------
 
 --
@@ -142,9 +128,9 @@ CREATE TABLE IF NOT EXISTS sys_script_times
 CREATE TABLE IF NOT EXISTS job_types
 (
     job_type_id BIGSERIAL PRIMARY KEY,
-    type_name     varchar(255) NOT NULL,
-    code_id       varchar(255) DEFAULT NULL,
-    description   text         DEFAULT NULL
+    type_name   varchar(255) NOT NULL,
+    code_id     varchar(255) DEFAULT NULL,
+    description text         DEFAULT NULL
 );
 
 COMMENT ON TABLE job_types IS 'for predefined batch jobs that can be triggered by a user action or scheduled e.g. data synchronisation';
@@ -153,25 +139,59 @@ COMMENT ON COLUMN job_types.type_name IS 'the unique type name as shown to the u
 COMMENT ON COLUMN job_types.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
 COMMENT ON COLUMN job_types.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
 
+-- --------------------------------------------------------
 
 --
--- table structure for batch jobs
--- TODO generate
+-- table structure to schedule jobs with predefined parameters
 --
 
-CREATE TABLE IF NOT EXISTS calc_and_cleanup_tasks
+CREATE TABLE IF NOT EXISTS job_times
 (
-    calc_and_cleanup_task_id BIGSERIAL PRIMARY KEY,
-    user_id                  bigint    NOT NULL,
-    request_time             timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    start_time               timestamp,
-    end_time                 timestamp,
-    job_type_id              bigint    NOT NULL,
-    row_id                   bigint    DEFAULT NULL,
-    change_field_id          bigint    DEFAULT NULL
+    job_time_id BIGSERIAL PRIMARY KEY,
+    schedule    varchar(20) DEFAULT NULL,
+    job_type_id bigint          NOT NULL,
+    user_id     bigint          NOT NULL,
+    start       timestamp   DEFAULT NULL,
+    parameter   bigint      DEFAULT NULL
 );
 
-COMMENT ON TABLE calc_and_cleanup_tasks IS 'concrete job jobs with start and end';
+COMMENT ON TABLE job_times IS 'to schedule jobs with predefined parameters';
+COMMENT ON COLUMN job_times.job_time_id IS 'the internal unique primary index';
+COMMENT ON COLUMN job_times.schedule IS 'the crontab for the job schedule';
+COMMENT ON COLUMN job_times.job_type_id IS 'the id of the job type that should be started';
+COMMENT ON COLUMN job_times.user_id IS 'the id of the user who edit the scheduler the last time';
+COMMENT ON COLUMN job_times.start IS 'the last start of the job';
+COMMENT ON COLUMN job_times.parameter IS 'the phrase id that contains all parameters for the next job start';
+
+-- --------------------------------------------------------
+
+--
+-- table structure for each concrete job run
+--
+
+CREATE TABLE IF NOT EXISTS jobs
+(
+    job_id BIGSERIAL PRIMARY KEY,
+    user_id         bigint NOT NULL,
+    job_type_id     bigint NOT NULL,
+    request_time    timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    start_time      timestamp DEFAULT NULL,
+    end_time        timestamp DEFAULT NULL,
+    parameter       bigint DEFAULT NULL,
+    change_field_id bigint DEFAULT NULL,
+    row_id          bigint DEFAULT NULL
+);
+
+COMMENT ON TABLE jobs IS 'for each concrete job run';
+COMMENT ON COLUMN jobs.job_id IS 'the internal unique primary index';
+COMMENT ON COLUMN jobs.user_id IS 'the id of the user who has requested the job by editing the scheduler the last time';
+COMMENT ON COLUMN jobs.job_type_id IS 'the id of the job type that should be started';
+COMMENT ON COLUMN jobs.request_time IS 'timestamp of the request for the job execution';
+COMMENT ON COLUMN jobs.start_time IS 'timestamp when the system has started the execution';
+COMMENT ON COLUMN jobs.end_time IS 'timestamp when the job has been completed or canceled';
+COMMENT ON COLUMN jobs.parameter IS 'id of the phrase with the snaped parameter set for this job start';
+COMMENT ON COLUMN jobs.change_field_id IS 'e.g. for undo jobs the id of the field that should be changed';
+COMMENT ON COLUMN jobs.row_id IS 'e.g. for undo jobs the id of the row that should be changed';
 
 -- --------------------------------------------------------
 
@@ -2991,18 +3011,31 @@ CREATE INDEX sys_log_sys_log_status_idx ON sys_log (sys_log_status_id);
 
 CREATE INDEX job_types_type_name_idx ON job_types (type_name);
 
---
--- Indexes for table sys_script_times
---
-CREATE INDEX sys_script_time_idx ON sys_script_times (sys_script_id);
+-- --------------------------------------------------------
 
 --
--- Indexes for table calc_and_cleanup_tasks
+-- indexes for table job_times
 --
-CREATE INDEX calc_and_cleanup_tasks_user_idx ON calc_and_cleanup_tasks (user_id);
-CREATE INDEX calc_and_cleanup_tasks_request_idx ON calc_and_cleanup_tasks (request_time);
-CREATE INDEX calc_and_cleanup_tasks_start_idx ON calc_and_cleanup_tasks (start_time);
-CREATE INDEX calc_and_cleanup_tasks_type_idx ON calc_and_cleanup_tasks (calc_and_cleanup_task_type_id);
+
+CREATE INDEX job_times_schedule_idx ON job_times (schedule);
+CREATE INDEX job_times_job_type_idx ON job_times (job_type_id);
+CREATE INDEX job_times_user_idx ON job_times (user_id);
+CREATE INDEX job_times_parameter_idx ON job_times (parameter);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table jobs
+--
+
+CREATE INDEX jobs_user_idx ON jobs (user_id);
+CREATE INDEX jobs_job_type_idx ON jobs (job_type_id);
+CREATE INDEX jobs_request_time_idx ON jobs (request_time);
+CREATE INDEX jobs_start_time_idx ON jobs (start_time);
+CREATE INDEX jobs_end_time_idx ON jobs (end_time);
+CREATE INDEX jobs_parameter_idx ON jobs (parameter);
+CREATE INDEX jobs_change_field_idx ON jobs (change_field_id);
+CREATE INDEX jobs_row_idx ON jobs (row_id);
 
 -- --------------------------------------------------------
 
@@ -3612,10 +3645,20 @@ ALTER TABLE sys_script_times
     ADD CONSTRAINT sys_script_times_fk_1 FOREIGN KEY (sys_script_id) REFERENCES sys_scripts (sys_script_id);
 
 --
--- constraints for table calc_and_cleanup_tasks
+-- constraints for table job_times
 --
-ALTER TABLE calc_and_cleanup_tasks
-    ADD CONSTRAINT calc_and_cleanup_tasks_fk_1 FOREIGN KEY (calc_and_cleanup_task_type_id) REFERENCES calc_and_cleanup_task_types (calc_and_cleanup_task_type_id);
+
+ALTER TABLE job_times
+    ADD CONSTRAINT job_times_job_type_fk FOREIGN KEY (job_type_id) REFERENCES job_types (job_type_id),
+    ADD CONSTRAINT job_times_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table jobs
+--
+
+ALTER TABLE jobs
+    ADD CONSTRAINT jobs_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT jobs_job_type_fk FOREIGN KEY (job_type_id) REFERENCES job_types (job_type_id);
 
 --
 -- constraints for table users

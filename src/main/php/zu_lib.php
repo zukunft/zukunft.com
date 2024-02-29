@@ -758,7 +758,7 @@ const SQL_STD_CLASSES = [
 define("PATH_BASE_CONFIG_FILES", ROOT_PATH . 'src/main/resources/');
 const PATH_BASE_CODE_LINK_FILES = PATH_BASE_CONFIG_FILES . 'db_code_links/';
 define("BASE_CODE_LINK_FILES", serialize(array(
-    'calc_and_cleanup_task_types',
+    'job_types',
     'change_actions',
     'change_tables',
     'change_fields',

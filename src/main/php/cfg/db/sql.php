@@ -3174,8 +3174,8 @@ class sql
             $result = 'user_values';
         }
         // for the database upgrade process only
-        if ($result == 'calc_and_cleanup_task_typess') {
-            $result = 'calc_and_cleanup_task_types';
+        if ($result == 'job_typess') {
+            $result = 'job_types';
         }
         if ($result == 'component_typess') {
             $result = 'component_types';
@@ -3260,7 +3260,7 @@ class sql
         if ($result == 'sys_log_status_name') {
             $result = sql::FLD_TYPE_NAME;
         }
-        if ($result == 'calc_and_cleanup_task_type_name') {
+        if ($result == 'job_type_name') {
             $result = sql::FLD_TYPE_NAME;
         }
         // temp solution until the standard field name for the name field is actually "name" (or something else not object specific)

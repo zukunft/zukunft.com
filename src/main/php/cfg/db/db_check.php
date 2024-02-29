@@ -43,10 +43,10 @@ use cfg\sandbox;
 use cfg\sandbox_named;
 use cfg\sys_log_function;
 use cfg\user;
+use cfg\user\user_profile;
 use cfg\user_message;
-use cfg\user_profile;
 use cfg\user_profile_list;
-use cfg\value;
+use cfg\value\value;
 
 class db_check
 {

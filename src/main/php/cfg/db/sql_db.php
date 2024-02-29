@@ -45,6 +45,8 @@ use cfg\formula;
 use cfg\formula_type;
 use cfg\group\group;
 use cfg\group\group_id;
+use cfg\job;
+use cfg\job_time;
 use cfg\library;
 use cfg\log;
 use cfg\log\system_log;
@@ -140,8 +142,8 @@ class sql_db
     const TBL_SYS_LOG = 'sys_log';
     const TBL_SYS_LOG_STATUS = 'sys_log_status';
     const TBL_SYS_SCRIPT = 'sys_script'; // to log the execution times for code optimising
-    const TBL_TASK = 'calc_and_cleanup_task';
-    const TBL_TASK_TYPE = 'calc_and_cleanup_task_type';
+    const TBL_TASK = 'job';
+    const TBL_TASK_TYPE = 'job_type';
 
     const TBL_LANGUAGE = 'language';
     const TBL_LANGUAGE_FORM = 'language_form';
@@ -177,6 +179,8 @@ class sql_db
         sys_log_function::class,
         system_log::class,
         job_type::class,
+        job_time::class,
+        job::class,
         user_type::class,
         user_profile::class,
         protection_type::class,
@@ -1436,8 +1440,8 @@ class sql_db
             $result = 'user_values';
         }
         // for the database upgrade process only
-        if ($result == 'calc_and_cleanup_task_typess') {
-            $result = 'calc_and_cleanup_task_types';
+        if ($result == 'job_typess') {
+            $result = 'job_types';
         }
         if ($result == 'component_typess') {
             $result = 'component_types';
@@ -1586,7 +1590,7 @@ class sql_db
         if ($result == 'sys_log_status_name') {
             $result = sql::FLD_TYPE_NAME;
         }
-        if ($result == 'calc_and_cleanup_task_type_name') {
+        if ($result == 'job_type_name') {
             $result = sql::FLD_TYPE_NAME;
         }
         // temp solution until the standard field name for the name field is actually "name" (or something else not object specific)

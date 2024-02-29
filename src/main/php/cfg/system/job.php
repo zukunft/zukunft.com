@@ -77,6 +77,8 @@ include_once API_SYSTEM_PATH . 'job.php';
 use api\system\job as job_api;
 use cfg\db\sql;
 use cfg\db\sql_db;
+use cfg\db\sql_field_default;
+use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use DateTime;
 use DateTimeInterface;
@@ -100,14 +102,25 @@ class job extends db_object_seq_id_user
      * database link
      */
 
-    // object specific database object field names
-    const FLD_ID = 'calc_and_cleanup_task_id';
+    // object specific database object field names and comments
+    const TBL_COMMENT = 'for each concrete job run';
+    const FLD_ID_COM = 'the unique internal id of the job';
+    const FLD_ID = 'job_id';
+    const FLD_USER_COM = 'the id of the user who has requested the job by editing the scheduler the last time';
+    const FLD_TIME_REQUEST_COM = 'timestamp of the request for the job execution';
     const FLD_TIME_REQUEST = 'request_time';
+    const FLD_TIME_START_COM = 'timestamp when the system has started the execution';
     const FLD_TIME_START = 'start_time';
+    const FLD_TIME_END_COM = 'timestamp when the job has been completed or canceled';
     const FLD_TIME_END = 'end_time';
-    const FLD_TYPE = 'calc_and_cleanup_task_type_id';
-    const FLD_ROW = 'row_id';
+    const FLD_TYPE_COM = 'the id of the job type that should be started';
+    const FLD_TYPE = 'job_type_id';
+    const FLD_PARAMETER_COM = 'id of the phrase with the snaped parameter set for this job start';
+    const FLD_PARAMETER = 'parameter';
+    const FLD_CHANGE_FIELD_COM = 'e.g. for undo jobs the id of the field that should be changed';
     const FLD_CHANGE_FIELD = 'change_field_id';
+    const FLD_ROW_COM = 'e.g. for undo jobs the id of the row that should be changed';
+    const FLD_ROW = 'row_id';
 
     // all database field names excluding the id used to identify if there are some user specific changes
     const FLD_NAMES = array(
@@ -118,6 +131,18 @@ class job extends db_object_seq_id_user
         self::FLD_TYPE,
         self::FLD_ROW,
         self::FLD_CHANGE_FIELD
+    );
+
+    // field lists for the table creation
+    const FLD_LST_ALL = array(
+        [user::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, user::class, self::FLD_USER_COM],
+        [job_type::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, job_type::class, self::FLD_TYPE_COM],
+        [self::FLD_TIME_REQUEST, sql_field_type::TIME, sql_field_default::TIME_NOT_NULL, sql::INDEX, '', self::FLD_TIME_REQUEST_COM],
+        [self::FLD_TIME_START, sql_field_type::TIME, sql_field_default::NULL, sql::INDEX, '', self::FLD_TIME_START_COM],
+        [self::FLD_TIME_END, sql_field_type::TIME, sql_field_default::NULL, sql::INDEX, '', self::FLD_TIME_END_COM],
+        [self::FLD_PARAMETER, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_PARAMETER_COM, phrase::FLD_ID],
+        [self::FLD_CHANGE_FIELD, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_CHANGE_FIELD_COM],
+        [self::FLD_ROW, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_ROW_COM],
     );
 
 
@@ -318,7 +343,7 @@ class job extends db_object_seq_id_user
 
     /**
      * TODO align the field name with the object
-     * @return string calc_and_cleanup_task_id instead of job
+     * @return string job_id instead of job object
      */
     function id_field(): string
     {
