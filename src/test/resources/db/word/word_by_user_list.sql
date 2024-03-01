@@ -9,7 +9,7 @@ PREPARE word_by_user_list (bigint, bigint) AS
             l.email,
             l.first_name,
             l.last_name,
-            l.last_word_id,
+            l.term_id,
             l.source_id,
             l.user_profile_id
        FROM user_words s

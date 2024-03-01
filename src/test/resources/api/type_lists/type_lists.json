@@ -1336,8 +1336,8 @@
         "id": 65
       },
       {
-        "name": "1last_word_id",
-        "code_id": "1last_word_id",
+        "name": "1term_id",
+        "code_id": "1term_id",
         "description": "",
         "id": 66
       },
@@ -1360,8 +1360,8 @@
         "id": 69
       },
       {
-        "name": "1activation_key_timeout",
-        "code_id": "1activation_key_timeout",
+        "name": "1activation_timeout",
+        "code_id": "1activation_timeout",
         "description": "",
         "id": 70
       },

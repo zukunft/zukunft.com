@@ -62,7 +62,7 @@ tags:
   - name: export
     description: to export data
   - name: job
-    description: to trigger and monitor job jobs e.g. calculations, setup or test tasks
+    description: to trigger and monitor batch jobs e.g. calculations, setup or test tasks
   - name: user
     description: maintain the user setup 
   - name: log

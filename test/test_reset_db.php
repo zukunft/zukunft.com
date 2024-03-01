@@ -356,7 +356,7 @@ function run_db_seq_reset(): void
         'share_types_share_type_id_seq',
         'protection_types_protection_type_id_seq',
         'users_user_id_seq',
-        'user_profiles_profile_id_seq'
+        'user_profiles_user_profile_id_seq'
     );
     $html = new html_base();
     $html->echo('seq reset ');

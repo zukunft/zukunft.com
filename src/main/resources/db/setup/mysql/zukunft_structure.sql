@@ -200,46 +200,49 @@ CREATE TABLE IF NOT EXISTS user_profiles
     DEFAULT CHARSET = utf8
     COMMENT 'to define the user roles and read and write rights';
 
+-- --------------------------------------------------------
+
 --
--- Table structure for table`users`
+-- table structure for users including system users; only users can add data
 --
 
-CREATE TABLE IF NOT EXISTS `users`
+CREATE TABLE IF NOT EXISTS users
 (
-    `user_id`                  int(11)      NOT NULL,
-    `user_name`                varchar(100) NOT NULL,
-    `description`              text         DEFAULT NULL,
-    `code_id`                  varchar(50)           DEFAULT NULL COMMENT 'to select e.g. the system job user',
-    `right_level`              int(11)               DEFAULT NULL,
-    `password`                 varchar(200)          DEFAULT NULL,
-    `email`                    varchar(200)          DEFAULT NULL,
-    `email_verified`           tinyint(4)            DEFAULT NULL,
-    `email_alternative`        varchar(200)          DEFAULT NULL,
-    `ip_address`               varchar(50)           DEFAULT NULL,
-    `mobile_number`            varchar(50)           DEFAULT NULL,
-    `mobile_verified`          tinyint(4)            DEFAULT NULL,
-    `first_name`               varchar(200)          DEFAULT NULL,
-    `last_name`                varchar(200)          DEFAULT NULL,
-    `street`                   varchar(300)          DEFAULT NULL,
-    `place`                    varchar(200)          DEFAULT NULL,
-    `country_id`               int(11)               DEFAULT NULL,
-    `post_verified`            tinyint(4)            DEFAULT NULL,
-    `official_id`              varchar(200)          DEFAULT NULL COMMENT 'such as the passport id',
-    `user_official_id_type_id` int(11)               DEFAULT NULL,
-    `official_verified`        int(11)               DEFAULT NULL,
-    `user_type_id`             int(11)               DEFAULT NULL,
-    `last_word_id`             int(11)               DEFAULT NULL COMMENT 'the last term that the user had used',
-    `last_mask_id`             int(11)               DEFAULT NULL COMMENT 'the last mask that the user has used',
-    `is_active`                tinyint(4)   NOT NULL DEFAULT '0',
-    `dt`                       timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    `last_logoff`              timestamp    NULL     DEFAULT NULL,
-    `user_profile_id`          int(11)               DEFAULT NULL,
-    `source_id`                int(11)               DEFAULT NULL COMMENT 'the last source used by this user to have a default for the next value',
-    `activation_key`           varchar(200)          DEFAULT NULL,
-    `activation_key_timeout`   timestamp    NULL     DEFAULT NULL
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8 COMMENT ='only users can add data';
+    user_id            bigint           NOT NULL COMMENT 'the internal unique primary index',
+    user_name          varchar(255)     NOT NULL COMMENT 'the user name unique for this pod',
+    ip_address         varchar(100) DEFAULT NULL COMMENT 'all users a first identified with the ip address',
+    password           varchar(255) DEFAULT NULL COMMENT 'the hash value of the password',
+    description        text         DEFAULT NULL COMMENT 'for system users the description to expain the profile to human users',
+    code_id            varchar(100) DEFAULT NULL COMMENT 'to select e.g. the system batch user',
+    user_profile_id    bigint       DEFAULT NULL COMMENT 'to define the user roles and read and write rights',
+    user_type_id       bigint       DEFAULT NULL COMMENT 'to set the confirmation level of a user',
+    right_level        smallint     DEFAULT NULL COMMENT 'the access right level to prevent unpermitted right gaining',
+    email              varchar(255) DEFAULT NULL COMMENT 'the primary email for verification',
+    email_status       smallint     DEFAULT NULL COMMENT 'if the email has been verified or if a password reset has been send',
+    email_alternative  varchar(255) DEFAULT NULL COMMENT 'an alternative email for account recovery',
+    mobile_number      varchar(100) DEFAULT NULL,
+    mobile_status      smallint     DEFAULT NULL,
+    activation_key     varchar(255) DEFAULT NULL,
+    activation_timeout timestamp    DEFAULT NULL,
+    first_name         varchar(255) DEFAULT NULL,
+    last_name          varchar(255) DEFAULT NULL,
+    name_triple_id     bigint       DEFAULT NULL COMMENT 'triple that contains e.g. the given name,family name,selected name or title of the person',
+    geo_triple_id      bigint       DEFAULT NULL COMMENT 'the post address with street,city or any other form of geo location for physical transport',
+    geo_status_id      smallint     DEFAULT NULL,
+    official_id        varchar(255) DEFAULT NULL COMMENT 'e.g. the number of the passport',
+    official_id_type   smallint     DEFAULT NULL,
+    official_id_status smallint     DEFAULT NULL,
+    term_id            bigint       DEFAULT NULL COMMENT 'the last term that the user had used',
+    view_id            bigint       DEFAULT NULL COMMENT 'the last mask that the user has used',
+    source_id          bigint       DEFAULT NULL COMMENT 'the last source used by this user to have a default for the next value',
+    user_status_id     smallint     DEFAULT NULL COMMENT 'e.g. to exclude inactive users',
+    created            timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    last_login         timestamp    DEFAULT NULL,
+    last_logoff        timestamp    DEFAULT NULL
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'for users including system users; only users can add data';
 
 --
 -- Table structure for table`user_official_types`
@@ -2226,6 +2229,40 @@ ALTER TABLE jobs
     ADD KEY jobs_change_field_idx (change_field_id),
     ADD KEY jobs_row_idx (row_id);
 
+-- --------------------------------------------------------
+
+--
+-- indexes for table user_types
+--
+
+ALTER TABLE user_types
+    ADD PRIMARY KEY (user_type_id),
+    ADD KEY user_types_type_name_idx (type_name);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table user_profiles
+--
+
+ALTER TABLE user_profiles
+    ADD PRIMARY KEY (user_profile_id),
+    ADD KEY user_profiles_type_name_idx (type_name);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table users
+--
+
+ALTER TABLE users
+    ADD PRIMARY KEY (user_id),
+    ADD KEY users_user_name_idx (user_name),
+    ADD KEY users_ip_address_idx (ip_address),
+    ADD KEY users_code_idx (code_id),
+    ADD KEY users_user_profile_idx (user_profile_id),
+    ADD KEY users_user_type_idx (user_type_id);
+
 --
 -- Indexes for table`changes`
 --
@@ -2663,16 +2700,6 @@ ALTER TABLE `user_phrase_group_triple_links`
     ADD KEY `phrase_group_triple_link_id_2` (`phrase_group_triple_link_id`),
     ADD KEY `user_id` (`user_id`);
 
--- --------------------------------------------------------
-
---
--- indexes for table user_profiles
---
-
-ALTER TABLE user_profiles
-    ADD PRIMARY KEY (user_profile_id),
-    ADD KEY user_profiles_type_name_idx (type_name);
-
 --
 -- Indexes for table`user_requests`
 --
@@ -2952,16 +2979,6 @@ ALTER TABLE `triples`
 --
 ALTER TABLE `word_periods`
     ADD PRIMARY KEY (`word_id`);
-
--- --------------------------------------------------------
-
---
--- indexes for table user_types
---
-
-ALTER TABLE user_types
-    ADD PRIMARY KEY (user_type_id),
-    ADD KEY user_types_type_name_idx (type_name);
 
 -- --------------------------------------------------------
 
@@ -3322,6 +3339,18 @@ ALTER TABLE job_times
 ALTER TABLE jobs
     ADD CONSTRAINT jobs_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
     ADD CONSTRAINT jobs_job_type_fk FOREIGN KEY (job_type_id) REFERENCES job_types (job_type_id);
+
+--
+-- constraints for table users
+--
+
+ALTER TABLE users
+    ADD CONSTRAINT users_user_profile_fk FOREIGN KEY (user_profile_id) REFERENCES user_profiles (user_profile_id),
+    ADD CONSTRAINT users_user_type_fk FOREIGN KEY (user_type_id) REFERENCES user_types (user_type_id),
+    ADD CONSTRAINT users_triple_fk FOREIGN KEY (name_triple_id) REFERENCES triples (triple_id),
+    ADD CONSTRAINT users_triple2_fk FOREIGN KEY (geo_triple_id) REFERENCES triples (triple_id),
+    ADD CONSTRAINT users_view_fk FOREIGN KEY (view_id) REFERENCES views (view_id),
+    ADD CONSTRAINT users_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
 
 --
 -- Constraints for table`changes`

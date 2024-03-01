@@ -86,12 +86,12 @@ if (isset($_POST['submit'])) {
             //$pw_hash = password_hash($_POST['password'], password_DEFAULT);
             $db_con->set_class(sql_db::TBL_USER);
             $db_con->set_usr(SYSTEM_USER_ID);
-            $db_con->update_old($usr_id, array('password', 'activation_key', 'activation_key_timeout'), array($pw_hash, '', 'NOW()'));
+            $db_con->update_old($usr_id, array('password', 'activation_key', 'activation_timeout'), array($pw_hash, '', 'NOW()'));
             /*
             $sql = sprintf("UPDATE users
                           SET password       = '%s',
                               activation_key = '', 
-                              activation_key_timeout = NOW()
+                              activation_timeout = NOW()
                         WHERE user_id =" . $usr_id . ";",
                 $pw_hash) or die(mysqli_error());
             $sql_result = mysql_query($sql);

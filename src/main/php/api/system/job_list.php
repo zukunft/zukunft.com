@@ -49,7 +49,7 @@ class job_list extends list_api implements JsonSerializable
     }
 
     /**
-     * add a job job to the list
+     * add a batch job to the list
      * @returns bool true if the batch job has been added
      */
     function add(job_api $job): bool

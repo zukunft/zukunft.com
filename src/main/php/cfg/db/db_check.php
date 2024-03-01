@@ -329,7 +329,7 @@ class db_check
             $result .= $db_con->exe_try('Filling missing timestamps for users', $sql);
             $sql = 'UPDATE' . ' `users` SET `last_logoff` = CURRENT_TIMESTAMP WHERE `users`.`last_logoff` = 0';
             $result .= $db_con->exe_try('Filling missing logoff timestamps for users', $sql);
-            $sql = 'UPDATE' . ' `users` SET `activation_key_timeout` = CURRENT_TIMESTAMP WHERE `users`.`activation_key_timeout` = 0';
+            $sql = 'UPDATE' . ' `users` SET `activation_timeout` = CURRENT_TIMESTAMP WHERE `users`.`activation_timeout` = 0';
             $result .= $db_con->exe_try('Filling missing activation timestamps for users', $sql);
 
             $sql = file_get_contents(PATH_BASE_CONFIG_FILES . 'db/upgrade/v0.0.3/upgrade_mysql.sql');
@@ -340,7 +340,7 @@ class db_check
             //src/main/resources/db/upgrade/v0.0.3/upgrade_postgres.sql
             //$result .= $db_con->exe_try('Finally add the new views', $sql);
         }
-        $result .= $db_con->add_foreign_key('users_fk_2', sql_db::TBL_USER, 'user_profile_id', sql_db::TBL_USER_PROFILE, 'profile_id');
+        $result .= $db_con->add_foreign_key('users_fk_2', sql_db::TBL_USER, 'user_profile_id', sql_db::TBL_USER_PROFILE, 'user_profile_id');
         // TODO change prime key for postgres user_sources, user_values, user_view, user_components and user_component_links
 
         if ($db_con->db_type == sql_db::MYSQL) {

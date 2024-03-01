@@ -7,7 +7,7 @@
 
     This list in "in memory only" to wrap the communication between the classes
     E.g. if a formula is updated it may lead to many single formula result calculations,
-       which may lead to other job jobs
+       which may lead to other batch jobs
        to have consistent results no updates after the cut-off time are included
 
     This file is part of zukunft.com - calc with words

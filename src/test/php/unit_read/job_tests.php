@@ -46,11 +46,11 @@ class job_tests
         global $db_con;
 
         // init
-        $t->name = 'job job read db->';
+        $t->name = 'batch job read db->';
 
         $t->header('Unit database tests of the batch job classes (src/main/php/model/log/* and src/main/php/model/user/log_*)');
 
-        $t->subheader('Load job job tests');
+        $t->subheader('Load batch job tests');
 
         // use the system user for the database updates
         $sys_usr = new user;
@@ -60,7 +60,7 @@ class job_tests
         $job_lst = new job_list($sys_usr);
         $job_lst->load_by_type(job_type_list::BASE_IMPORT);
         $first_job = $job_lst->lst()[0];
-        $t->assert('first job job change is adding', $first_job->type_id(), '11');
+        $t->assert('first batch job change is adding', $first_job->type_id(), '11');
 
 
         $t->subheader('API unit db tests');

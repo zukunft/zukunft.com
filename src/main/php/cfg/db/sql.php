@@ -2707,7 +2707,8 @@ class sql
                     and $this->class != sql_db::TBL_RESULT
                     and $this->class != sql_db::TBL_LANGUAGE_FORM
                     and $this->class != sql_db::TBL_USER_OFFICIAL_TYPE
-                    and $this->class != sql_db::TBL_USER_TYPE) {
+                    and $this->class != sql_db::TBL_USER_TYPE
+                    and $this->class != sql_db::TBL_USER_PROFILE) {
                     $sql .= ' RETURNING ';
                     if (is_array($this->id_field)) {
                         $sql .= implode(',', $this->id_field);
@@ -2841,7 +2842,8 @@ class sql
                     if ($this->class != sql_db::TBL_VALUE_TIME_SERIES_DATA
                         and $this->class != sql_db::TBL_LANGUAGE_FORM
                         and $this->class != sql_db::TBL_USER_OFFICIAL_TYPE
-                        and $this->class != sql_db::TBL_USER_TYPE) {
+                        and $this->class != sql_db::TBL_USER_TYPE
+                        and $this->class != sql_db::TBL_USER_PROFILE) {
                         $sql = $sql . ' RETURNING ' . $this->id_field . ';';
                     }
 
@@ -2983,7 +2985,8 @@ class sql
         // exceptions for user overwrite tables
         // but not for the user type table, because this is not part of the sandbox tables
         if (str_starts_with($type, sql_db::TBL_USER_PREFIX)
-            and $type != sql_db::TBL_USER_TYPE) {
+            and $type != sql_db::TBL_USER_TYPE
+            and $type != sql_db::TBL_USER_PROFILE) {
             $type = $lib->str_right_of($type, sql_db::TBL_USER_PREFIX);
         }
         $result = $type . sql_db::FLD_EXT_ID;

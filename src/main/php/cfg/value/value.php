@@ -1805,7 +1805,7 @@ class value extends sandbox_value
         }
         log_debug('value->save_field_trigger_update timestamp of ' . $this->id() . ' updated to "' . $this->last_update()->format('Y-m-d H:i:s') . '"');
 
-        // trigger the job job
+        // trigger the batch job
         // save the pending update to the database for the batch calculation
         log_debug('value->save_field_trigger_update group id "' . $this->grp->id() . '" for user ' . $this->user()->name . '');
         if ($this->is_id_set()) {

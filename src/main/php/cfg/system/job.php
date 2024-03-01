@@ -246,7 +246,7 @@ class job extends db_object_seq_id_user
      */
 
     /**
-     * @return job_api the job job frontend api object
+     * @return job_api the batch job frontend api object
      */
     function api_obj(): job_api
     {

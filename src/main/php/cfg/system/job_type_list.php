@@ -40,7 +40,7 @@ global $job_types;
 
 class job_type_list extends type_list
 {
-    // list of the predefined system job jobs
+    // list of the predefined system batch jobs
     const VALUE_UPDATE = "value_update";
     const VALUE_ADD = "value_add";
     const VALUE_DEL = "value_del";

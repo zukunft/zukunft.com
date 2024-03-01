@@ -183,6 +183,7 @@ class sql_db
         job::class,
         user_type::class,
         user_profile::class,
+        user::class,
         protection_type::class,
         share_type::class,
         word::class,
@@ -1503,7 +1504,8 @@ class sql_db
         // exceptions for user overwrite tables
         // but not for the user type table, because this is not part of the sandbox tables
         if (str_starts_with($type, sql_db::TBL_USER_PREFIX)
-            and $type != sql_db::TBL_USER_TYPE) {
+            and $type != sql_db::TBL_USER_TYPE
+            and $type != sql_db::TBL_USER_PROFILE) {
             $type = $lib->str_right_of($type, sql_db::TBL_USER_PREFIX);
         }
         $result = $type . sql_db::FLD_EXT_ID;
@@ -3780,7 +3782,9 @@ class sql_db
         $sql_where = ' WHERE ' . $this->id_field . ' = ' . $this->sf($id);
         if (substr($this->class, 0, 4) == 'user') {
             // ... but not for the user table itself
-            if ($this->class <> sql_db::TBL_USER and $this->class <> sql_db::TBL_USER_PROFILE and $this->class <> sql_db::TBL_USER_TYPE) {
+            if ($this->class <> sql_db::TBL_USER
+                and $this->class <> sql_db::TBL_USER_TYPE
+                and $this->class <> sql_db::TBL_USER_PROFILE) {
                 $sql_where .= ' AND user_id = ' . $this->usr_id;
             }
         }

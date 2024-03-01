@@ -76,9 +76,9 @@ class api
     const FLD_PHRASE_ROW = 'word_row'; // the phrase to select the row name of a view component
     const FLD_PHRASE_COL = 'word_col'; // the phrase to select the column name of a view component
 
-    // job job fields
-    const FLD_TIME_REQUEST = 'request_time'; // e.g. the timestamp when a job job has been requested
-    const FLD_PRIORITY = 'priority'; // of the job job
+    // batch job fields
+    const FLD_TIME_REQUEST = 'request_time'; // e.g. the timestamp when a batch job has been requested
+    const FLD_PRIORITY = 'priority'; // of the batch job
     const FLD_TIME_START = 'start_time'; // e.g. the timestamp of a log entry
     const FLD_TIME_END = 'end_time'; // e.g. the timestamp of a log entry
     const FLD_STATUS = 'status'; // of the job and also used for the sys log

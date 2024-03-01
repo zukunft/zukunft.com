@@ -56,7 +56,7 @@ class user_profile extends type_object
     const TBL_COMMENT = 'to define the user roles and read and write rights';
 
     // database fields additional to the standard field names
-    const FLD_ID = 'profile_id';
+    const FLD_ID = 'user_profile_id';
     const FLD_LEVEL_COM = 'the access right level to prevent unpermitted right gaining';
     const FLD_LEVEL = 'right_level';
 

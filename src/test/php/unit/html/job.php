@@ -44,7 +44,7 @@ class job
     {
         $html = new html_base();
 
-        $t->subheader('job job display unit tests');
+        $t->subheader('batch job display unit tests');
 
         // test the batch job html display functions
         $test_page = $html->text_h2('batch job display test');

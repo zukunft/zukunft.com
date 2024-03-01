@@ -33,6 +33,7 @@
 namespace unit;
 
 use cfg\db\sql_db;
+use cfg\job_time;
 use cfg\user;
 use cfg\user_list;
 use test\test_cleanup;
@@ -53,6 +54,13 @@ class user_tests
         $usr->set_id(1);
 
         $t->header('Unit tests of the user class (src/main/php/model/user/user.php)');
+
+
+        $t->subheader('Job time SQL setup statements');
+        $test_usr = new user();
+        $t->assert_sql_table_create($test_usr);
+        $t->assert_sql_index_create($test_usr);
+        $t->assert_sql_foreign_key_create($test_usr);
 
 
         $t->subheader('SQL statement tests');
