@@ -36,7 +36,7 @@ use api\formula\formula as formula_api;
 use api\word\word as word_api;
 use html\formula\formula as formula_dsp;
 use cfg\log\change_log_link;
-use cfg\log\change_log_table;
+use cfg\log\change_table_list;
 use cfg\formula;
 use cfg\formula_link;
 use cfg\formula_link_list;
@@ -64,7 +64,7 @@ class formula_link_tests
 
         // ... check the correct logging
         $log = new change_log_link($t->usr1);
-        $log->set_table(change_log_table::FORMULA_LINK);
+        $log->set_table(change_table_list::FORMULA_LINK);
         $log->new_from_id = $frm->id();
         $log->new_to_id = $phr->id();
         $result = $log->dsp_last(true);
@@ -132,7 +132,7 @@ class formula_link_tests
 
         // ... check if the removal of the link for the second user has been logged
         $log = new change_log_link($t->usr2);
-        $log->set_table(change_log_table::FORMULA_LINK);
+        $log->set_table(change_table_list::FORMULA_LINK);
         $log->old_from_id = $frm->id();
         $log->old_to_id = $phr->id();
         $result = $log->dsp_last(true);
@@ -168,7 +168,7 @@ class formula_link_tests
 
         // check the correct logging
         $log = new change_log_link($t->usr1);
-        $log->set_table(change_log_table::FORMULA_LINK);
+        $log->set_table(change_table_list::FORMULA_LINK);
         $log->old_from_id = $frm->id();
         $log->old_to_id = $phr->id();
         $result = $log->dsp_last(true);

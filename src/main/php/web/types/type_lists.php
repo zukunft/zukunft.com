@@ -35,7 +35,7 @@ namespace html\types;
 include_once WEB_TYPES_PATH . 'type_object.php';
 include_once WEB_TYPES_PATH . 'type_list.php';
 include_once WEB_TYPES_PATH . 'change_action_list.php';
-include_once WEB_TYPES_PATH . 'change_log_table_list.php';
+include_once WEB_TYPES_PATH . 'change_table_list.php';
 include_once WEB_TYPES_PATH . 'change_log_field_list.php';
 include_once WEB_TYPES_PATH . 'system_log_status_list.php';
 include_once WEB_TYPES_PATH . 'user_profiles.php';
@@ -221,10 +221,10 @@ class type_lists
             $this->set_change_action_list();
         }
         if (array_key_exists(controller::API_LIST_CHANGE_LOG_TABLES, $json_array)) {
-            $this->set_change_log_tables($json_array[controller::API_LIST_CHANGE_LOG_TABLES]);
+            $this->set_change_table_list($json_array[controller::API_LIST_CHANGE_LOG_TABLES]);
         } else {
-            log_err('Mandatory change_log_tables missing in API JSON ' . json_encode($json_array));
-            $this->set_change_log_tables();
+            log_err('Mandatory change_table_list missing in API JSON ' . json_encode($json_array));
+            $this->set_change_table_list();
         }
         if (array_key_exists(controller::API_LIST_CHANGE_LOG_FIELDS, $json_array)) {
             $this->set_change_log_fields($json_array[controller::API_LIST_CHANGE_LOG_FIELDS]);
@@ -360,11 +360,11 @@ class type_lists
         $html_change_action_list->set_obj_from_json_array($json_array);
     }
 
-    function set_change_log_tables(array $json_array = null): void
+    function set_change_table_list(array $json_array = null): void
     {
-        global $html_change_log_tables;
-        $html_change_log_tables = new change_log_table_list();
-        $html_change_log_tables->set_obj_from_json_array($json_array);
+        global $html_change_table_list;
+        $html_change_table_list = new change_table_list();
+        $html_change_table_list->set_obj_from_json_array($json_array);
     }
 
     function set_change_log_fields(array $json_array = null): void

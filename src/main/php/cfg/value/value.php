@@ -92,7 +92,7 @@ use cfg\log\change;
 use cfg\log\change_action;
 use cfg\log\change_action_list;
 use cfg\log\change_log_field;
-use cfg\log\change_log_table;
+use cfg\log\change_table_list;
 use cfg\phr_ids;
 use cfg\phrase;
 use cfg\phrase_list;
@@ -1568,9 +1568,9 @@ class value extends sandbox_value
         $log = new change($this->user());
         $log->action = change_action::UPDATE;
         if ($this->can_change()) {
-            $log->set_table(change_log_table::VALUE);
+            $log->set_table(change_table_list::VALUE);
         } else {
-            $log->set_table(change_log_table::VALUE_USR);
+            $log->set_table(change_table_list::VALUE_USR);
         }
 
         return $log;

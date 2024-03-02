@@ -38,7 +38,7 @@ use cfg\view_type;
 use cfg\view;
 use html\view\view as view_dsp;
 use cfg\log\change;
-use cfg\log\change_log_table;
+use cfg\log\change_table_list;
 use cfg\sandbox_named;
 use cfg\word;
 use test\test_cleanup;
@@ -107,7 +107,7 @@ class view_tests
 
         // check if the view adding has been logged
         $log = new change($t->usr1);
-        $log->set_table(change_log_table::VIEW);
+        $log->set_table(change_table_list::VIEW);
         $log->set_field(view::FLD_NAME);
         $log->row_id = $dsp->id();
         $result = $log->dsp_last(true);
@@ -143,7 +143,7 @@ class view_tests
 
         // check if the view renaming has been logged
         $log = new change($t->usr1);
-        $log->set_table(change_log_table::VIEW);
+        $log->set_table(change_table_list::VIEW);
         $log->set_field(view::FLD_NAME);
         $log->row_id = $dsp_renamed->id();
         $result = $log->dsp_last(true);
@@ -169,7 +169,7 @@ class view_tests
 
         // check if the view parameter adding have been logged
         $log = new change($t->usr1);
-        $log->set_table(change_log_table::VIEW);
+        $log->set_table(change_table_list::VIEW);
         $log->set_field(sandbox_named::FLD_DESCRIPTION);
         $log->row_id = $dsp_reloaded->id();
         $result = $log->dsp_last(true);

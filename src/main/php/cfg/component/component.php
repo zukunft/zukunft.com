@@ -42,7 +42,7 @@ use cfg\export\component_exp;
 use cfg\log\change_action;
 use cfg\log\change_action_list;
 use cfg\log\change_log_link;
-use cfg\log\change_log_table;
+use cfg\log\change_table_list;
 use cfg\component_link;
 use cfg\component_link_list;
 use cfg\formula;
@@ -784,7 +784,7 @@ class component extends sandbox_typed
         log_debug('component->log_link ' . $this->dsp_id() . ' to "' . $dsp->name . '"  for user ' . $this->user()->id());
         $log = new change_log_link($this->user());
         $log->action = change_action::ADD;
-        $log->set_table(change_log_table::VIEW_LINK);
+        $log->set_table(change_table_list::VIEW_LINK);
         $log->new_from = clone $this;
         $log->new_to = clone $dsp;
         $log->row_id = $this->id;
@@ -800,7 +800,7 @@ class component extends sandbox_typed
         log_debug($this->dsp_id() . ' from "' . $dsp->name . '" for user ' . $this->user()->id());
         $log = new change_log_link($this->user());
         $log->action = change_action::DELETE;
-        $log->set_table(change_log_table::VIEW_LINK);
+        $log->set_table(change_table_list::VIEW_LINK);
         $log->old_from = clone $this;
         $log->old_to = clone $dsp;
         $log->row_id = $this->id;

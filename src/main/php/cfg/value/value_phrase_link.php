@@ -45,7 +45,7 @@ use cfg\db_object_seq_id_user;
 use cfg\log\change_action;
 use cfg\log\change_action_list;
 use cfg\log\change_log_link;
-use cfg\log\change_log_table;
+use cfg\log\change_table_list;
 use cfg\phrase;
 use cfg\sys_log_level;
 use cfg\user;
@@ -241,7 +241,7 @@ class value_phrase_link extends db_object_seq_id_user
         log_debug('val_lnk->log_add for "' . $this->phr->id() . ' to ' . $this->val->id());
         $log = new change_log_link($this->user());
         $log->action = change_action::ADD;
-        $log->set_table(change_log_table::VALUE_PHRASE_LINK);
+        $log->set_table(change_table_list::VALUE_PHRASE_LINK);
         $log->new_from = $this->val;
         $log->new_to = $this->phr;
         $log->row_id = 0;
@@ -257,7 +257,7 @@ class value_phrase_link extends db_object_seq_id_user
         log_debug('val_lnk->log_upd for "' . $this->phr->id() . ' to ' . $this->val->id());
         $log = new change_log_link($this->user());
         $log->action = change_action::UPDATE;
-        $log->set_table(change_log_table::VALUE_PHRASE_LINK); // no user sandbox for links, only the values itself can differ from user to user
+        $log->set_table(change_table_list::VALUE_PHRASE_LINK); // no user sandbox for links, only the values itself can differ from user to user
         //$log->set_field(phrase::FLD_ID);
         $log->old_from = $db_rec->val;
         $log->old_to = $db_rec->wrd;

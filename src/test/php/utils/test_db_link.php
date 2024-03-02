@@ -30,19 +30,19 @@
 
 */
 
-use cfg\log\change_log_table;
+use cfg\log\change_table_list;
 use test\test_cleanup;
 
 function run_db_link_test(test_cleanup $t): void
 {
-    global $change_log_tables;
+    global $change_table_list;
 
     $t->header('Test database link functions (zu_lib_sql_code_link.php)');
 
     // test code link
-    $id = change_log_table::WORD;
+    $id = change_table_list::WORD;
     $target = 5;
-    $result = $change_log_tables->id($id);
+    $result = $change_table_list->id($id);
     $t->display(", sql_code_link " . $id, $target, $result);
 
 }

@@ -334,8 +334,8 @@ class system_tests
         $t->assert_sql_all($db_con, $protection_types);
         $job_types = new job_type_list();
         $t->assert_sql_all($db_con, $job_types);
-        $change_log_tables = new change_log_table();
-        $t->assert_sql_all($db_con, $change_log_tables);
+        $change_table_list = new change_table_list();
+        $t->assert_sql_all($db_con, $change_table_list);
         $change_log_fields = new change_log_field();
         $t->assert_sql_all($db_con, $change_log_fields);
          */

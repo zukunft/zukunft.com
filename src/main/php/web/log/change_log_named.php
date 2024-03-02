@@ -42,7 +42,7 @@ use html\html_base;
 use html\msg;
 use html\system\back_trace;
 use cfg\log\change_action_list;
-use cfg\log\change_log_table;
+use cfg\log\change_table_list;
 use cfg\formula;
 
 class change_log_named extends change_log_named_api
@@ -60,7 +60,7 @@ class change_log_named extends change_log_named_api
 
         // pick the useful field name
         $txt_fld = '';
-        if ($this->table_name() == change_log_table::VALUE) {
+        if ($this->table_name() == change_table_list::VALUE) {
             $txt_fld .= $this->action_name() . ' value';
             // because changing the words creates a new value there is no need to display the words here
         /*
@@ -133,17 +133,17 @@ class change_log_named extends change_log_named_api
         $undo_text = '';
         $undo_call = '';
         $undo_btn = '';
-        if ($this->table_name() == change_log_table::WORD) {
+        if ($this->table_name() == change_table_list::WORD) {
             if ($this->action_code_id() == change_action::ADD) {
                 $undo_call = $html->url('value' . api::REMOVE, $this->id, $back->url_encode());
                 $undo_btn = (new button($undo_call))->undo(msg::UNDO_ADD);
             }
-        } elseif ($this->table_name() == change_log_table::VIEW) {
+        } elseif ($this->table_name() == change_table_list::VIEW) {
             if ($this->action_code_id() == change_action::ADD) {
                 $undo_call = $html->url('value' . api::REMOVE, $this->id, $back->url_encode());
                 $undo_btn = (new button($undo_call))->undo(msg::UNDO_EDIT);
             }
-        } elseif ($this->table_name() == change_log_table::FORMULA) {
+        } elseif ($this->table_name() == change_table_list::FORMULA) {
             if ($this->action_code_id() == change_action::UPDATE) {
                 $undo_call = $html->url(
                     formula::class . api::UPDATE, $this->row_id,
@@ -223,9 +223,9 @@ class change_log_named extends change_log_named_api
      */
     private function table_name(): string
     {
-        global $change_log_tables;
+        global $change_table_list;
 
-        $table = $change_log_tables->get($this->table_id);
+        $table = $change_table_list->get($this->table_id);
         return $table->name;
     }
 

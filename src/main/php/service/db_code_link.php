@@ -190,8 +190,8 @@ class db_cl
 
     function log_table_id(string $code_id): int
     {
-        global $change_log_tables;
-        return $change_log_tables->id($code_id);
+        global $change_table_list;
+        return $change_table_list->id($code_id);
     }
 
     function log_field_id(string $code_id): int
@@ -298,8 +298,8 @@ class db_cl
 
     function log_table(int $id)
     {
-        global $change_log_tables;
-        return $change_log_tables->get($id);
+        global $change_table_list;
+        return $change_table_list->get($id);
     }
 
     function log_field(int $id)
@@ -436,8 +436,8 @@ class db_cl
 
     function log_table_name(int $id): string
     {
-        global $change_log_tables;
-        return $change_log_tables->name($id);
+        global $change_table_list;
+        return $change_table_list->name($id);
     }
 
     function log_field_name(int $id): string

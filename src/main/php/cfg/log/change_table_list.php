@@ -2,7 +2,7 @@
 
 /*
 
-  model/log/change_log_table.php - to link coded functionality to a log log table
+  model/log/change_table_list.php - to link coded functionality to a log log table
   ------------------------------
   
   This file is part of zukunft.com - calc with words
@@ -38,11 +38,12 @@ use cfg\type_object;
 include_once DB_PATH . 'sql_db.php';
 include_once MODEL_HELPER_PATH . 'type_list.php';
 include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once MODEL_LOG_PATH . 'change_log_table.php';
+include_once MODEL_LOG_PATH . 'change_table.php';
+include_once MODEL_LOG_PATH . 'change_table_list.php';
 
-global $change_log_tables;
+global $change_table_list;
 
-class change_log_table extends type_list
+class change_table_list extends type_list
 {
     // list of the log table with linked functionalities
     // unlike the table const in sql_db this contains also table names of previous versions
@@ -119,11 +120,11 @@ class change_log_table extends type_list
     function load_dummy(): void
     {
         parent::load_dummy();
-        $type = new type_object(change_log_table::VALUE, change_log_table::VALUE, '', 2);
+        $type = new type_object(change_table_list::VALUE, change_table_list::VALUE, '', 2);
         $this->add($type);
-        $type = new type_object(change_log_table::USER, change_log_table::USER, '', 3);
+        $type = new type_object(change_table_list::USER, change_table_list::USER, '', 3);
         $this->add($type);
-        $type = new type_object(change_log_table::WORD, change_log_table::WORD, '', 5);
+        $type = new type_object(change_table_list::WORD, change_table_list::WORD, '', 5);
         $this->add($type);
     }
 
@@ -132,7 +133,7 @@ class change_log_table extends type_list
      */
     function default_id(): int
     {
-        return parent::id(change_log_table::VALUE);
+        return parent::id(change_table_list::VALUE);
     }
 
 }

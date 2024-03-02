@@ -373,23 +373,25 @@ CREATE TABLE IF NOT EXISTS change_actions
 COMMENT ON TABLE change_actions IS 'for add,change,delete,undo and redo actions';
 COMMENT ON COLUMN change_actions.change_action_id IS 'the internal unique primary index';
 
+-- --------------------------------------------------------
+
 --
--- table structure to keep the original table name even if a table name has changed
--- TODO generate type sim
+-- table structure to keep the original table name even if a table name has changed and to avoid log changes in case a table is renamed
 --
 
 CREATE TABLE IF NOT EXISTS change_tables
 (
     change_table_id   BIGSERIAL PRIMARY KEY,
-    change_table_name varchar(100) NOT NULL,
-    description       varchar(1000) DEFAULT NULL,
-    code_id           varchar(50)   DEFAULT NULL
+    change_table_name varchar(255)     NOT NULL,
+    code_id           varchar(255) DEFAULT NULL,
+    description       text         DEFAULT NULL
 );
 
-COMMENT ON TABLE change_tables IS 'to avoid log changes in case a table is renamed';
+COMMENT ON TABLE change_tables IS 'to keep the original table name even if a table name has changed and to avoid log changes in case a table is renamed';
+COMMENT ON COLUMN change_tables.change_table_id IS 'the internal unique primary index';
 COMMENT ON COLUMN change_tables.change_table_name IS 'the real name';
-COMMENT ON COLUMN change_tables.description IS 'the user readable name';
 COMMENT ON COLUMN change_tables.code_id IS 'with this field tables can be combined in case of renaming';
+COMMENT ON COLUMN change_tables.description IS 'the user readable name';
 
 --
 -- table structure to keep the original field name even if a table name has changed
@@ -3102,6 +3104,14 @@ CREATE INDEX sessions_uid_idx ON sessions (uid);
 --
 
 CREATE INDEX change_actions_change_action_name_idx ON change_actions (change_action_name);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table change_tables
+--
+
+CREATE INDEX change_tables_change_table_name_idx ON change_tables (change_table_name);
 
 -- --------------------------------------------------------
 

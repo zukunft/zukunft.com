@@ -41,7 +41,7 @@ use cfg\word;
 use html\formula\formula as formula_dsp;
 use cfg\log\change_log_field;
 use cfg\log\change;
-use cfg\log\change_log_table;
+use cfg\log\change_table_list;
 use cfg\formula;
 use cfg\phrase_list;
 use cfg\sandbox_named;
@@ -311,7 +311,7 @@ class formula_tests
 
         // ... check the correct logging
         $log = new change($t->usr1);
-        $log->set_table(change_log_table::FORMULA);
+        $log->set_table(change_table_list::FORMULA);
         $log->set_field(change_log_field::FLD_FORMULA_NAME);
         $log->row_id = $frm->id();
         $result = $log->dsp_last(true);
@@ -346,7 +346,7 @@ class formula_tests
 
         // ... and if the formula renaming has been logged
         $log = new change($t->usr1);
-        $log->set_table(change_log_table::FORMULA);
+        $log->set_table(change_table_list::FORMULA);
         $log->set_field(change_log_field::FLD_FORMULA_NAME);
         $log->row_id = $frm_renamed->id();
         $result = $log->dsp_last(true);
@@ -382,7 +382,7 @@ class formula_tests
 
         // ... and if the formula parameter adding have been logged
         $log = new change($t->usr1);
-        $log->set_table(change_log_table::FORMULA);
+        $log->set_table(change_table_list::FORMULA);
         $log->set_field(change_log_field::FLD_FORMULA_USR_TEXT);
         $log->row_id = $frm_reloaded->id();
         $result = $log->dsp_last(true);

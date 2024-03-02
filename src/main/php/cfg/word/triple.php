@@ -51,7 +51,7 @@ use cfg\log\change;
 use cfg\log\change_action;
 use cfg\log\change_action_list;
 use cfg\log\change_log_link;
-use cfg\log\change_log_table;
+use cfg\log\change_table_list;
 use cfg\value\value_list;
 use html\html_base;
 use JsonSerializable;
@@ -1686,7 +1686,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
         log_debug('triple->log_link_add for ' . $this->dsp_id() . ' by user "' . $this->user()->name . '"');
         $log = new change_log_link($this->user());
         $log->action = change_action::ADD;
-        $log->set_table(change_log_table::TRIPLE);
+        $log->set_table(change_table_list::TRIPLE);
         $log->new_from = $this->fob;
         $log->new_link = $this->verb;
         $log->new_to = $this->tob;
@@ -1704,9 +1704,9 @@ class triple extends sandbox_link_typed implements JsonSerializable
         $log = new change_log_link($this->user());
         $log->action = change_action::UPDATE;
         if ($this->can_change()) {
-            $log->set_table(change_log_table::TRIPLE);
+            $log->set_table(change_table_list::TRIPLE);
         } else {
-            $log->set_table(change_log_table::TRIPLE_USR);
+            $log->set_table(change_table_list::TRIPLE_USR);
         }
 
         return $log;
@@ -1721,7 +1721,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
         log_debug('triple->log_link_del for ' . $this->dsp_id() . ' by user "' . $this->user()->name . '"');
         $log = new change_log_link($this->user());
         $log->action = change_action::DELETE;
-        $log->set_table(change_log_table::TRIPLE);
+        $log->set_table(change_table_list::TRIPLE);
         $log->old_from = $this->fob;
         $log->old_link = $this->verb;
         $log->old_to = $this->tob;
@@ -1739,9 +1739,9 @@ class triple extends sandbox_link_typed implements JsonSerializable
         $log = new change($this->user());
         $log->action = change_action::UPDATE;
         if ($this->can_change()) {
-            $log->set_table(change_log_table::TRIPLE);
+            $log->set_table(change_table_list::TRIPLE);
         } else {
-            $log->set_table(change_log_table::TRIPLE_USR);
+            $log->set_table(change_table_list::TRIPLE_USR);
         }
 
         return $log;

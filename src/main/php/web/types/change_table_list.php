@@ -2,7 +2,7 @@
 
 /*
 
-    web/types/change_log_table.php - the preloaded change log tables used for the html frontend
+    web/types/change_table_list.php - the preloaded change log tables used for the html frontend
     ------------------------------
 
 
@@ -34,7 +34,7 @@ namespace html\types;
 
 use html\html_selector;
 
-class change_log_table_list extends type_list
+class change_table_list extends type_list
 {
 
 }

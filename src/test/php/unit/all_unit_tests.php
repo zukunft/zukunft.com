@@ -72,7 +72,8 @@ include_once MODEL_LANGUAGE_PATH . 'language_list.php';
 include_once MODEL_LANGUAGE_PATH . 'language_form_list.php';
 include_once MODEL_LOG_PATH . 'change_action.php';
 include_once MODEL_LOG_PATH . 'change_action_list.php';
-include_once MODEL_LOG_PATH . 'change_log_table.php';
+include_once MODEL_LOG_PATH . 'change_table.php';
+include_once MODEL_LOG_PATH . 'change_table_list.php';
 include_once MODEL_LOG_PATH . 'change_log_field.php';
 include_once MODEL_LOG_PATH . 'system_log.php';
 include_once MODEL_LOG_PATH . 'system_log_list.php';
@@ -90,7 +91,7 @@ use cfg\language_form_list;
 use cfg\language_list;
 use cfg\log\change_action_list;
 use cfg\log\change_log_field;
-use cfg\log\change_log_table;
+use cfg\log\change_table_list;
 use cfg\phrase_types;
 use cfg\protection_type_list;
 use cfg\ref_type_list;
@@ -562,10 +563,10 @@ class all_unit_tests extends test_cleanup
      */
     function init_log_tables(): void
     {
-        global $change_log_tables;
+        global $change_table_list;
 
-        $change_log_tables = new change_log_table();
-        $change_log_tables->load_dummy();
+        $change_table_list = new change_table_list();
+        $change_table_list->load_dummy();
 
     }
 

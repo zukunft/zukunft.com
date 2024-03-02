@@ -39,7 +39,7 @@ use cfg\phrase_type;
 use html\word\word as word_dsp;
 use cfg\log\change_log_field;
 use cfg\log\change;
-use cfg\log\change_log_table;
+use cfg\log\change_table_list;
 use cfg\formula;
 use cfg\library;
 use cfg\sandbox_named;
@@ -311,7 +311,7 @@ class word_tests
         // ... check if the word creation has been logged
         if ($wrd_add->id() > 0) {
             $log = new change($t->usr1);
-            $log->set_table(change_log_table::WORD);
+            $log->set_table(change_table_list::WORD);
             $log->set_field(change_log_field::FLD_WORD_NAME);
             $log->row_id = $wrd_add->id();
             $result = $log->dsp_last(true);
@@ -346,7 +346,7 @@ class word_tests
 
         // check if the word renaming has been logged
         $log = new change($t->usr1);
-        $log->set_table(change_log_table::WORD);
+        $log->set_table(change_table_list::WORD);
         $log->set_field(change_log_field::FLD_WORD_NAME);
         $log->row_id = $wrd_renamed->id();
         $result = $log->dsp_last(true);
@@ -376,7 +376,7 @@ class word_tests
 
         // check if the word parameter adding have been logged
         $log = new change($t->usr1);
-        $log->set_table(change_log_table::WORD);
+        $log->set_table(change_table_list::WORD);
         $log->set_field(change_log_field::FLD_WORD_PLURAL);
         $log->row_id = $wrd_reloaded->id();
         $result = $log->dsp_last(true);

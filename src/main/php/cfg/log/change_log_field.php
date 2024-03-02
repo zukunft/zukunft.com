@@ -36,7 +36,8 @@ use cfg\type_list;
 use cfg\type_object;
 
 include_once DB_PATH . 'sql_db.php';
-include_once MODEL_LOG_PATH . 'change_log_table.php';
+include_once MODEL_LOG_PATH . 'change_table.php';
+include_once MODEL_LOG_PATH . 'change_table_list.php';
 include_once MODEL_LOG_PATH . 'change_log_field.php';
 
 class change_log_field extends type_list
@@ -92,10 +93,10 @@ class change_log_field extends type_list
      */
     function load_dummy(): void
     {
-        global $change_log_tables;
+        global $change_table_list;
 
         parent::load_dummy();
-        $table_id = $change_log_tables->id(change_log_table::WORD);
+        $table_id = $change_table_list->id(change_table_list::WORD);
         $table_field_name = $table_id . change_log_field::FLD_WORD_NAME;
         $type = new type_object(
             $table_field_name,
@@ -110,8 +111,8 @@ class change_log_field extends type_list
      */
     function default_id(): int
     {
-        global $change_log_tables;
-        $table_id = $change_log_tables->id(change_log_table::WORD);
+        global $change_table_list;
+        $table_id = $change_table_list->id(change_table_list::WORD);
         $table_field_name = $table_id . change_log_field::FLD_WORD_NAME;
         return parent::id($table_field_name);
     }

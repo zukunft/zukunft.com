@@ -316,19 +316,22 @@ CREATE TABLE IF NOT EXISTS change_actions
     DEFAULT CHARSET = utf8
     COMMENT 'for add,change,delete,undo and redo actions';
 
+-- --------------------------------------------------------
+
 --
--- Table structure for table`change_tables`
+-- table structure to keep the original table name even if a table name has changed and to avoid log changes in case a table is renamed
 --
 
-CREATE TABLE IF NOT EXISTS `change_tables`
+CREATE TABLE IF NOT EXISTS change_tables
 (
-    `change_table_id`   int(11)      NOT NULL,
-    `change_table_name` varchar(100) NOT NULL COMMENT 'the real name',
-    `description`       varchar(1000) DEFAULT NULL COMMENT 'the user readable name',
-    `code_id`           varchar(50)   DEFAULT NULL COMMENT 'with this field tables can be combined in case of renaming'
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8 COMMENT ='to avoid log changes in case a table is renamed';
+    change_table_id   bigint           NOT NULL COMMENT 'the internal unique primary index',
+    change_table_name varchar(255)     NOT NULL COMMENT 'the real name',
+    code_id           varchar(255) DEFAULT NULL COMMENT 'with this field tables can be combined in case of renaming',
+    description       text         DEFAULT NULL COMMENT 'the user readable name'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'to keep the original table name even if a table name has changed and to avoid log changes in case a table is renamed';
 
 --
 -- Table structure for table`change_fields`
@@ -2286,6 +2289,16 @@ ALTER TABLE change_actions
     ADD PRIMARY KEY (change_action_id),
     ADD KEY change_actions_change_action_name_idx (change_action_name);
 
+-- --------------------------------------------------------
+
+--
+-- indexes for table change_tables
+--
+
+ALTER TABLE change_tables
+    ADD PRIMARY KEY (change_table_id),
+    ADD KEY change_tables_change_table_name_idx (change_table_name);
+
 --
 -- Indexes for table`changes`
 -- TODO next
@@ -2295,11 +2308,6 @@ ALTER TABLE `changes`
     ADD KEY `table_id` (`change_field_id`, `row_id`),
     ADD KEY `change_action_id` (`change_action_id`);
 
---
--- Indexes for table`change_actions`
---
-ALTER TABLE `change_actions`
-    ADD PRIMARY KEY (`change_action_id`);
 
 --
 -- Indexes for table`change_fields`

@@ -42,7 +42,7 @@ use cfg\value\value_dsp_old;
 use html\figure\figure as figure_dsp;
 use cfg\log\change_log_field;
 use cfg\log\change;
-use cfg\log\change_log_table;
+use cfg\log\change_table_list;
 use cfg\library;
 use cfg\phrase_list;
 use test\test_cleanup;
@@ -285,7 +285,7 @@ class value_tests
         // ... check if the value adding has been logged
         if ($add_val->is_id_set()) {
             $log = new change($t->usr1);
-            $log->set_table(change_log_table::VALUE);
+            $log->set_table(change_table_list::VALUE);
             $log->set_field(change_log_field::FLD_NUMERIC_VALUE);
             $log->row_id = $add_val->id();
             $result = $log->dsp_last(true);
@@ -327,7 +327,7 @@ class value_tests
         // ... check if the value adding has been logged
         if ($add_val->is_id_set()) {
             $log = new change($t->usr1);
-            $log->set_table(change_log_table::VALUE);
+            $log->set_table(change_table_list::VALUE);
             $log->set_field(change_log_field::FLD_NUMERIC_VALUE);
             $log->row_id = $add_val2->id();
             $result = $log->dsp_last(true);
@@ -355,7 +355,7 @@ class value_tests
         // ... check if the value change has been logged
         if ($added_val->is_id_set()) {
             $log = new change($t->usr1);
-            $log->set_table(change_log_table::VALUE);
+            $log->set_table(change_table_list::VALUE);
             $log->set_field(change_log_field::FLD_NUMERIC_VALUE);
             $log->row_id = $added_val->id();
             $result = $log->dsp_last(true);
@@ -383,7 +383,7 @@ class value_tests
         $val_usr2->load_by_id($added_val_id);
         if ($val_usr2->is_id_set()) {
             $log = new change($t->usr2);
-            $log->set_table(change_log_table::VALUE_USR);
+            $log->set_table(change_table_list::VALUE_USR);
             $log->set_field(change_log_field::FLD_NUMERIC_VALUE);
             $log->row_id = $val_usr2->id();
             $result = $log->dsp_last(true);
@@ -418,7 +418,7 @@ class value_tests
         $val_usr2->load_by_grp($phr_grp);
         if ($val_usr2->is_id_set()) {
             $log = new change($t->usr2);
-            $log->set_table(change_log_table::VALUE_USR);
+            $log->set_table(change_table_list::VALUE_USR);
             $log->set_field(change_log_field::FLD_NUMERIC_VALUE);
             $log->row_id = $val_usr2->id();
             $result = $log->dsp_last(true);

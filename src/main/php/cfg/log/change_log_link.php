@@ -459,8 +459,8 @@ class change_log_link extends change_log
 
         // set the table specific references
         log_debug('set fields');
-        if ($this->table() == change_log_table::WORD
-            or $this->table() == change_log_table::TRIPLE) {
+        if ($this->table() == change_table_list::WORD
+            or $this->table() == change_table_list::TRIPLE) {
             if ($this->action == change_action::ADD or $this->action == change_action::UPDATE) {
                 if ($this->new_from != null and $this->new_link != null and $this->new_to != null) {
                     $this->new_text_from = $this->new_from->name();
@@ -486,7 +486,7 @@ class change_log_link extends change_log
                 }
             }
         }
-        if ($this->table() == change_log_table::REF) {
+        if ($this->table() == change_table_list::REF) {
             if ($this->action == change_action::ADD or $this->action == change_action::UPDATE) {
                 if ($this->new_from != null and $this->new_link != null and $this->new_to != null) {
                     $this->new_text_from = $this->new_from->name();
@@ -512,9 +512,9 @@ class change_log_link extends change_log
                 }
             }
         }
-        if ($this->table() == change_log_table::VIEW_LINK
-            or $this->table() == change_log_table::VALUE_PHRASE_LINK
-            or $this->table() == change_log_table::FORMULA_LINK) {
+        if ($this->table() == change_table_list::VIEW_LINK
+            or $this->table() == change_table_list::VALUE_PHRASE_LINK
+            or $this->table() == change_table_list::FORMULA_LINK) {
             if ($this->action == change_action::ADD or $this->action == change_action::UPDATE) {
                 if ($this->new_from != null and $this->new_to != null) {
                     $this->new_text_from = $this->new_from->name();
@@ -536,7 +536,7 @@ class change_log_link extends change_log
                 }
             }
         }
-        if ($this->table() == change_log_table::VALUE and $this->link_text == 'source') {
+        if ($this->table() == change_table_list::VALUE and $this->link_text == 'source') {
             if ($this->old_to > 0) {
                 $this->old_text_to = $this->source_name($this->old_to);
             }

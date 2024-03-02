@@ -60,7 +60,7 @@ use cfg\group\group_list;
 use cfg\log\change;
 use cfg\log\change_action;
 use cfg\log\change_action_list;
-use cfg\log\change_log_table;
+use cfg\log\change_table_list;
 use cfg\value\value_list;
 use html\word\word as word_dsp;
 use cfg\export\sandbox_exp;
@@ -1575,7 +1575,7 @@ class word extends sandbox_typed
 
         $log = new change($this->user());
         $log->action = change_action::UPDATE;
-        $log->set_table(change_log_table::WORD);
+        $log->set_table(change_table_list::WORD);
         $log->set_field(self::FLD_VIEW);
         if ($this->view_id() > 0) {
             $msk_old = new view($this->user());

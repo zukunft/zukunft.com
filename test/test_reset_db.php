@@ -42,7 +42,7 @@ use cfg\job_type_list;
 use cfg\db\db_check;
 use cfg\log\change_action_list;
 use cfg\log\change_log_field;
-use cfg\log\change_log_table;
+use cfg\log\change_table_list;
 use cfg\component\component_pos_type_list;
 use cfg\component\component_type_list;
 use cfg\config;
@@ -278,7 +278,7 @@ function run_preloaded_truncate(): void
     global $sys_log_stati;
     global $job_types;
     global $change_action_list;
-    global $change_log_tables;
+    global $change_table_list;
     global $change_log_fields;
 
     //$system_users =[];
@@ -300,7 +300,7 @@ function run_preloaded_truncate(): void
     $language_forms = new language_form_list();
     $job_types = new job_type_list();
     $change_action_list = new change_action_list();
-    $change_log_tables = new change_log_table();
+    $change_table_list = new change_table_list();
     $change_log_fields = new change_log_field();
 }
 

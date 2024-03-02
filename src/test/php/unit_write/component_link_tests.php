@@ -35,7 +35,7 @@ namespace unit_write;
 use api\component\component as component_api;
 use api\view\view as view_api;
 use cfg\log\change_log_link;
-use cfg\log\change_log_table;
+use cfg\log\change_table_list;
 use cfg\component\component;
 use cfg\component_link;
 use cfg\view;
@@ -61,7 +61,7 @@ class component_link_tests
 
         // ... check the correct logging
         $log = new change_log_link($t->usr1);
-        $log->set_table(change_log_table::VIEW_LINK);
+        $log->set_table(change_table_list::VIEW_LINK);
         $log->new_from_id = $dsp->id();
         $log->new_to_id = $cmp->id();
         $result = $log->dsp_last(true);
@@ -94,7 +94,7 @@ class component_link_tests
 
         // ... check if the removal of the link for the second user has been logged
         $log = new change_log_link($t->usr2);
-        $log->set_table(change_log_table::VIEW_LINK);
+        $log->set_table(change_table_list::VIEW_LINK);
         $log->old_from_id = $dsp->id();
         $log->old_to_id = $cmp->id();
         $result = $log->dsp_last(true);
@@ -128,7 +128,7 @@ class component_link_tests
 
         // check the correct logging
         $log = new change_log_link($t->usr1);
-        $log->set_table(change_log_table::VIEW_LINK);
+        $log->set_table(change_table_list::VIEW_LINK);
         $log->old_from_id = $dsp->id();
         $log->old_to_id = $cmp->id();
         $result = $log->dsp_last(true);

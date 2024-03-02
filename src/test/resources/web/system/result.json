@@ -681,7 +681,7 @@
         "comment": ""
       }
     ],
-    "change_log_tables": [
+    "change_table_list": [
       {
         "id": 1,
         "code_id": "users",

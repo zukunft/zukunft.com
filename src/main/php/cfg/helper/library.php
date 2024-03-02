@@ -35,6 +35,8 @@ namespace cfg;
 use api\api;
 use api\sandbox\combine_object as combine_object_api;
 use cfg\db\sql_db;
+use cfg\log\change_action;
+use cfg\log\change_table;
 use cfg\user\user_profile;
 use cfg\user\user_type;
 use cfg\value\value;
@@ -1570,6 +1572,10 @@ class library
                 break;
             case $this->class_to_name(job_time::class):
                 $result = 'job';
+                break;
+            case $this->class_to_name(change_action::class):
+            case $this->class_to_name(change_table::class):
+                $result = 'log';
                 break;
             case $this->class_to_name(source::class):
                 $result = $this->class_to_name(ref::class);

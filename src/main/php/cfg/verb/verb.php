@@ -51,7 +51,7 @@ use cfg\export\verb_exp;
 use cfg\log\change;
 use cfg\log\change_action;
 use cfg\log\change_action_list;
-use cfg\log\change_log_table;
+use cfg\log\change_table_list;
 use html\html_base;
 use html\html_selector;
 use html\verb\verb as verb_dsp;
@@ -783,7 +783,7 @@ class verb extends type_object
         log_debug('verb->log_add ' . $this->dsp_id());
         $log = new change($this->usr);
         $log->action = change_action::ADD;
-        $log->set_table(change_log_table::VERB);
+        $log->set_table(change_table_list::VERB);
         $log->set_field(self::FLD_NAME);
         $log->old_value = '';
         $log->new_value = $this->name;
@@ -799,7 +799,7 @@ class verb extends type_object
         log_debug('verb->log_upd ' . $this->dsp_id() . ' for user ' . $this->user()->name);
         $log = new change($this->usr);
         $log->action = change_action::UPDATE;
-        $log->set_table(change_log_table::VERB);
+        $log->set_table(change_table_list::VERB);
 
         return $log;
     }
@@ -810,7 +810,7 @@ class verb extends type_object
         log_debug('verb->log_del ' . $this->dsp_id() . ' for user ' . $this->user()->name);
         $log = new change($this->usr);
         $log->action = change_action::DELETE;
-        $log->set_table(change_log_table::VERB);
+        $log->set_table(change_table_list::VERB);
         $log->set_field(self::FLD_NAME);
         $log->old_value = $this->name;
         $log->new_value = '';

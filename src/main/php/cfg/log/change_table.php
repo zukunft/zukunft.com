@@ -2,8 +2,8 @@
 
 /*
 
-    cfg/log/change_action.php - the change type done by a user
-    -------------------------
+    cfg/log/change_table.php - the table where a user has done a change including deprecated table names
+    ------------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -39,20 +39,8 @@ use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\type_object;
 
-class change_action extends type_object
+class change_table extends type_object
 {
-
-    // the basic change types that are logged
-    const ADD = 'add';
-    const UPDATE = 'update';
-    const DELETE = 'del';
-
-    // list of all log actions allowed in this program version
-    const ACTION_LIST = array(
-        self::ADD,
-        self::UPDATE,
-        self::DELETE
-    );
 
 
     /*
@@ -60,14 +48,17 @@ class change_action extends type_object
      */
 
     // comments used for the database creation
-    const TBL_COMMENT = 'for add, change, delete, undo and redo actions';
-    const FLD_NAME = 'change_action_name';
+    const TBL_COMMENT = 'to keep the original table name even if a table name has changed and to avoid log changes in case a table is renamed';
+    const FLD_NAME_COM = 'the real name';
+    const FLD_NAME = 'change_table_name';
+    const FLD_CODE_ID_COM = 'with this field tables can be combined in case of renaming';
+    const FLD_DESCRIPTION_COM = 'the user readable name';
 
     // field lists for the table creation
     const FLD_LST_ALL = array(
-        [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', ''],
-        [sql::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, '', '', ''],
-        [self::FLD_DESCRIPTION, sql_field_type::TEXT, sql_field_default::NULL, '', '', ''],
+        [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_NAME_COM],
+        [sql::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
+        [self::FLD_DESCRIPTION, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
     );
 
 }

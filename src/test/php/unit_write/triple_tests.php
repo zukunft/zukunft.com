@@ -36,7 +36,7 @@ use api\phrase\phrase as phrase_api;
 use api\word\triple as triple_api;
 use api\word\word as word_api;
 use cfg\log\change_log_link;
-use cfg\log\change_log_table;
+use cfg\log\change_table_list;
 use cfg\formula;
 use cfg\library;
 use cfg\triple;
@@ -110,7 +110,7 @@ class triple_tests
 
         // ... check the correct logging
         $log = new change_log_link($t->usr1);
-        $log->set_table(change_log_table::TRIPLE);
+        $log->set_table(change_table_list::TRIPLE);
         $log->new_from_id = $wrd_from->id();
         $log->new_link_id = $is_id;
         $log->new_to_id = $wrd->id();
@@ -144,7 +144,7 @@ class triple_tests
 
         // ... check if the removal of the link for the second user has been logged
         $log = new change_log_link($t->usr2);
-        $log->set_table(change_log_table::TRIPLE);
+        $log->set_table(change_table_list::TRIPLE);
         $log->old_from_id = $wrd_from->id();
         $log->old_link_id = $is_id;
         $log->old_to_id = $wrd->id();
@@ -183,7 +183,7 @@ class triple_tests
 
         // check the correct logging
         $log = new change_log_link($t->usr1);
-        $log->set_table(change_log_table::TRIPLE);
+        $log->set_table(change_table_list::TRIPLE);
         $log->old_from_id = $wrd_from->id();
         $log->old_link_id = $is_id;
         $log->old_to_id = $wrd->id();
@@ -211,7 +211,7 @@ class triple_tests
 
         // check the correct logging
         $log = new change_log_link($t->usr1);
-        $log->set_table(change_log_table::TRIPLE);
+        $log->set_table(change_table_list::TRIPLE);
         $log->old_from_id = $wrd_from->id();
         $log->old_link_id = $is_id;
         $log->old_to_id = $wrd->id();
