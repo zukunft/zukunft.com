@@ -620,17 +620,19 @@ COMMENT ON COLUMN phrase_types.word_symbol IS 'e.g. for percent the symbol is %'
 
 --
 -- table structure for table languages
--- TODO generate
 --
 
 CREATE TABLE IF NOT EXISTS languages
 (
     language_id    BIGSERIAL PRIMARY KEY,
-    language_name  varchar(200) NOT NULL,
-    code_id        varchar(50)  NOT NULL,
-    wikimedia_code varchar(50)  NOT NULL,
-    description    text
+    language_name  varchar(255)     NOT NULL,
+    code_id        varchar(100) DEFAULT NULL,
+    description    text         DEFAULT NULL,
+    wikimedia_code varchar(100) DEFAULT NULL
 );
+
+COMMENT ON TABLE languages IS 'for table languages';
+COMMENT ON COLUMN languages.language_id IS 'the internal unique primary index';
 
 --
 -- table structure for table language_forms
@@ -3213,6 +3215,14 @@ CREATE INDEX phrase_types_type_name_idx ON phrase_types (type_name);
 --
 
 CREATE INDEX source_types_type_name_idx ON source_types (type_name);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table languages
+--
+
+CREATE INDEX languages_language_name_idx ON languages (language_name);
 
 -- --------------------------------------------------------
 

@@ -524,19 +524,20 @@ CREATE TABLE IF NOT EXISTS phrase_types
 -- --------------------------------------------------------
 
 --
--- Table structure for table`languages`
+-- table structure for table languages
 --
 
-CREATE TABLE IF NOT EXISTS `languages`
+CREATE TABLE IF NOT EXISTS languages
 (
-    `language_id`    int(11)      NOT NULL,
-    `language_name`  varchar(200) NOT NULL,
-    `code_id`        varchar(50)  NOT NULL,
-    `wikimedia_code` varchar(50)  NOT NULL,
-    `description`    text
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8;
+    language_id    bigint           NOT NULL COMMENT 'the internal unique primary index',
+    language_name  varchar(255)     NOT NULL,
+    code_id        varchar(100) DEFAULT NULL,
+    description    text         DEFAULT NULL,
+    wikimedia_code varchar(100) DEFAULT NULL
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'for table languages';
 
 --
 -- Table structure for table`language_forms`
@@ -2366,6 +2367,16 @@ ALTER TABLE change_links
     ADD KEY change_links_change_idx (change_id),
     ADD KEY change_links_change_time_idx (change_time),
     ADD KEY change_links_user_idx (user_id);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table languages
+--
+
+ALTER TABLE languages
+    ADD PRIMARY KEY (language_id),
+    ADD KEY languages_language_name_idx (language_name);
 
 -- --------------------------------------------------------
 

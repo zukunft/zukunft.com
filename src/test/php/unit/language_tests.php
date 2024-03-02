@@ -49,6 +49,12 @@ class language_tests
 
         $t->header('Unit tests of the language class (src/main/php/model/language/language.php)');
 
+        $t->subheader('Language SQL setup statements');
+        $lan = new language('');
+        $t->assert_sql_table_create($lan);
+        $t->assert_sql_index_create($lan);
+
+
         $t->subheader('API unit tests');
 
         global $languages;

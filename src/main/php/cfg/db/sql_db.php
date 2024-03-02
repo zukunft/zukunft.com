@@ -48,12 +48,14 @@ use cfg\group\group_id;
 use cfg\ip_range;
 use cfg\job;
 use cfg\job_time;
+use cfg\language;
 use cfg\library;
 use cfg\log;
 use cfg\log\change;
 use cfg\log\change_action;
 use cfg\log\change_big_value;
 use cfg\log\change_field;
+use cfg\log\change_link;
 use cfg\log\change_prime_value;
 use cfg\log\change_standard_value;
 use cfg\log\change_table;
@@ -205,6 +207,7 @@ class sql_db
         change_standard_value::class,
         change_big_value::class,
         change_link::class,
+        language::class,
         protection_type::class,
         share_type::class,
         word::class,
