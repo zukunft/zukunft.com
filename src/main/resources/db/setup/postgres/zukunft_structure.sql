@@ -238,6 +238,26 @@ COMMENT ON COLUMN user_profiles.right_level IS 'the access right level to preven
 -- --------------------------------------------------------
 
 --
+-- table structure for person identification types e.g. passports
+--
+
+CREATE TABLE IF NOT EXISTS user_official_types
+(
+    user_official_type_id BIGSERIAL PRIMARY KEY,
+    type_name             varchar(255) NOT NULL,
+    code_id               varchar(255) DEFAULT NULL,
+    description           text         DEFAULT NULL
+);
+
+COMMENT ON TABLE user_official_types IS 'for person identification types e.g. passports';
+COMMENT ON COLUMN user_official_types.user_official_type_id IS 'the internal unique primary index';
+COMMENT ON COLUMN user_official_types.type_name IS 'the unique type name as shown to the user and used for the selection';
+COMMENT ON COLUMN user_official_types.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
+COMMENT ON COLUMN user_official_types.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
+
+-- --------------------------------------------------------
+
+--
 -- table structure for users including system users; only users can add data
 --
 
@@ -296,45 +316,6 @@ COMMENT ON COLUMN users.term_id IS 'the last term that the user had used';
 COMMENT ON COLUMN users.view_id IS 'the last mask that the user has used';
 COMMENT ON COLUMN users.source_id IS 'the last source used by this user to have a default for the next value';
 COMMENT ON COLUMN users.user_status_id IS 'e.g. to exclude inactive users';
-
---
--- table structure for table user_official_types
--- TODO generate type
---
-
-CREATE TABLE IF NOT EXISTS user_official_types
-(
-    user_official_type_id BIGSERIAL PRIMARY KEY,
-    type_name             varchar(200) NOT NULL,
-    code_id               varchar(100) DEFAULT NULL,
-    comment               text         DEFAULT NULL
-);
-
---
--- table structure for table user_requests
--- TODO generate
---
-
-CREATE TABLE IF NOT EXISTS user_requests
-(
-    id          bigint      NOT NULL,
-    uid         bigint      NOT NULL,
-    request_key varchar(20) NOT NULL,
-    expire      timestamp   NOT NULL,
-    type        varchar(20) NOT NULL
-);
-
---
--- table structure to log the user access attempts
--- TODO generate
---
-
-CREATE TABLE IF NOT EXISTS user_attempts
-(
-    id          bigint      NOT NULL,
-    ip          varchar(39) NOT NULL,
-    expire_date timestamp   NOT NULL
-);
 
 --
 -- table structure of ip addresses that should be blocked
@@ -3067,6 +3048,14 @@ CREATE INDEX user_types_type_name_idx ON user_types (type_name);
 --
 
 CREATE INDEX user_profiles_type_name_idx ON user_profiles (type_name);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table user_official_types
+--
+
+CREATE INDEX user_official_types_type_name_idx ON user_official_types (type_name);
 
 -- --------------------------------------------------------
 

@@ -42,6 +42,7 @@ use cfg\sys_log_status;
 use cfg\job_type;
 use cfg\user\user_profile;
 use cfg\user\user_type;
+use cfg\user_official_type;
 use test\test_cleanup;
 
 class type_tests
@@ -83,6 +84,11 @@ class type_tests
         $usr_prf = new user_profile('');
         $t->assert_sql_table_create($usr_prf);
         $t->assert_sql_index_create($usr_prf);
+
+        $t->subheader('User identification SQL setup statements');
+        $usr_idt = new user_official_type('');
+        $t->assert_sql_table_create($usr_idt);
+        $t->assert_sql_index_create($usr_idt);
 
         $t->subheader('Protection type SQL setup statements');
         $prt_typ = new protection_type('');

@@ -7,6 +7,8 @@
 
     TODO make sure that no right gain is possible
     TODO move the non functional user parameters to hidden words to be able to reuse the standard view functionality
+    TODO log the access attempts to objects with a restriked access
+    TODO build a process so that a user can request access to an object with restrikted access
 
     if a user has done 3 value edits he can add new values (adding a word to a value also creates a new value)
     if a user has added 3 values and at least one is accepted by another user, he can add words and formula and he must have a valid email

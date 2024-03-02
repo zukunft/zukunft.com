@@ -1577,6 +1577,7 @@ class library
             case $this->class_to_name(job_type::class):
             case $this->class_to_name(user_type::class):
             case $this->class_to_name(user_profile::class):
+            case $this->class_to_name(user_official_type::class):
             case $this->class_to_name(protection_type::class):
             case $this->class_to_name(share_type::class):
             case $this->class_to_name(phrase_type::class):

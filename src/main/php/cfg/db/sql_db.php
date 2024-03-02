@@ -64,6 +64,7 @@ use cfg\user;
 use cfg\user\user_profile;
 use cfg\user\user_type;
 use cfg\user_message;
+use cfg\user_official_type;
 use cfg\value\value;
 use cfg\view;
 use cfg\word;
@@ -183,6 +184,7 @@ class sql_db
         job::class,
         user_type::class,
         user_profile::class,
+        user_official_type::class,
         user::class,
         protection_type::class,
         share_type::class,
