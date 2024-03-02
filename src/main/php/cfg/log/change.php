@@ -40,6 +40,8 @@ use api\log\change_log_named as change_log_named_api;
 use api\sandbox\user_config;
 use cfg\component\component;
 use cfg\db\sql;
+use cfg\db\sql_field_default;
+use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\formula;
 use cfg\db\sql_db;
@@ -61,14 +63,16 @@ class change extends change_log
     const FLD_FIELD_ID = 'change_field_id';
     const FLD_ROW_ID = 'row_id';
     const FLD_OLD_VALUE = 'old_value';
+    const FLD_OLD_ID_COM = 'old value id';
     const FLD_OLD_ID = 'old_id';
     const FLD_NEW_VALUE = 'new_value';
+    const FLD_NEW_ID_COM = 'new value id';
     const FLD_NEW_ID = 'new_id';
 
     // all database field names
     const FLD_NAMES = array(
         user::FLD_ID,
-        self::FLD_CHANGE_TIME,
+        self::FLD_TIME,
         self::FLD_ACTION,
         self::FLD_FIELD_ID,
         self::FLD_ROW_ID,
@@ -76,6 +80,15 @@ class change extends change_log
         self::FLD_OLD_ID,
         self::FLD_NEW_VALUE,
         self::FLD_NEW_ID
+    );
+
+    // field list to log the actual change of the named user sandbox object
+    const FLD_LST_CHANGE = array(
+        [self::FLD_FIELD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, '', change_field::class, ''],
+        [self::FLD_OLD_VALUE, sql_field_type::TEXT, sql_field_default::NULL, '', '', ''],
+        [self::FLD_NEW_VALUE, sql_field_type::TEXT, sql_field_default::NULL, '', '', ''],
+        [self::FLD_OLD_ID, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_OLD_ID_COM],
+        [self::FLD_NEW_ID, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_NEW_ID_COM],
     );
 
 
@@ -112,7 +125,7 @@ class change extends change_log
             $this->action_id = $db_row[self::FLD_ACTION];
             $this->field_id = $db_row[self::FLD_FIELD_ID];
             $this->row_id = $db_row[self::FLD_ROW_ID];
-            $this->set_time_str($db_row[self::FLD_CHANGE_TIME]);
+            $this->set_time_str($db_row[self::FLD_TIME]);
             $this->old_value = $db_row[self::FLD_OLD_VALUE];
             $this->old_id = $db_row[self::FLD_OLD_ID];
             $this->new_value = $db_row[self::FLD_NEW_VALUE];
@@ -193,7 +206,7 @@ class change extends change_log
         $sc->set_fields(self::FLD_NAMES);
         $sc->set_join_fields(array(user::FLD_NAME), sql_db::TBL_USER);
         $sc->set_join_fields(array(change_field_list::FLD_TABLE), sql_db::TBL_CHANGE_FIELD);
-        $sc->set_order(self::FLD_CHANGE_TIME, sql::ORDER_DESC);
+        $sc->set_order(self::FLD_TIME, sql::ORDER_DESC);
 
         return $qp;
     }

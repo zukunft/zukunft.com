@@ -354,25 +354,25 @@ CREATE TABLE IF NOT EXISTS change_fields
 -- --------------------------------------------------------
 
 --
--- Table structure for table`changes`
+-- table structure to log all changes done by any user on all tables except value and link changes
 --
 
-CREATE TABLE IF NOT EXISTS `changes`
+CREATE TABLE IF NOT EXISTS changes
 (
-    `change_id`        int(11)   NOT NULL,
-    `change_time`      timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-        ON UPDATE CURRENT_TIMESTAMP COMMENT 'time when the value has been changed',
-    `user_id`          int(11)   NOT NULL,
-    `change_action_id` int(11)   NOT NULL,
-    `change_field_id`  int(11)   NOT NULL,
-    `row_id`           int(11)            DEFAULT NULL,
-    `old_value`        varchar(300)       DEFAULT NULL,
-    `new_value`        varchar(300)       DEFAULT NULL,
-    `old_id`           int(11)            DEFAULT NULL COMMENT 'old value id',
-    `new_id`           int(11)            DEFAULT NULL COMMENT 'new value id'
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8 COMMENT ='to log all changes';
+    change_id        bigint     NOT NULL COMMENT 'the prime key to identify the change change',
+    change_time      timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'time when the user has confirmed the change',
+    user_id          bigint     NOT NULL COMMENT 'reference to the user who has done the change',
+    change_action_id smallint   NOT NULL COMMENT 'the curl action',
+    row_id           bigint DEFAULT NULL COMMENT 'the prime id in the table with the change',
+    change_field_id  bigint     NOT NULL,
+    old_value        text   DEFAULT NULL,
+    new_value        text   DEFAULT NULL,
+    old_id           bigint DEFAULT NULL COMMENT 'old value id',
+    new_id           bigint DEFAULT NULL COMMENT 'new value id'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'to log all changes done by any user on all tables except value and link changes';
 
 --
 -- Table structure to log the value changes done by the users
@@ -2313,26 +2313,23 @@ ALTER TABLE change_fields
     ADD KEY change_fields_change_field_name_idx (change_field_name),
     ADD KEY change_fields_table_idx (table_id);
 
---
--- Indexes for table`changes`
--- TODO next
---
-ALTER TABLE `changes`
-    ADD PRIMARY KEY (`change_id`),
-    ADD KEY `table_id` (`change_field_id`, `row_id`),
-    ADD KEY `change_action_id` (`change_action_id`);
-
+-- --------------------------------------------------------
 
 --
--- Indexes for table`change_fields`
+-- indexes for table changes
 --
-ALTER TABLE `change_fields`
-    ADD PRIMARY KEY (`change_field_id`),
-    ADD KEY `table_id` (`table_id`);
+
+ALTER TABLE changes
+    ADD PRIMARY KEY (change_id),
+    ADD KEY changes_change_idx (change_id),
+    ADD KEY changes_change_time_idx (change_time),
+    ADD KEY changes_user_idx (user_id);
 
 --
 -- Indexes for table`change_links`
+-- TODO next
 --
+
 ALTER TABLE `change_links`
     ADD PRIMARY KEY (`change_link_id`),
     ADD KEY `user` (`user_id`),
@@ -3401,16 +3398,20 @@ ALTER TABLE change_fields
     ADD CONSTRAINT code_id_uk UNIQUE (code_id),
     ADD CONSTRAINT change_fields_change_table_fk FOREIGN KEY (table_id) REFERENCES change_tables (change_table_id);
 
+-- --------------------------------------------------------
+
 --
--- Constraints for table`changes`
--- TODO foreign
+-- constraints for table changes
 --
-ALTER TABLE `changes`
-    ADD CONSTRAINT `changes_fk_1` FOREIGN KEY (`change_field_id`) REFERENCES `change_fields` (`change_field_id`),
-    ADD CONSTRAINT `changes_fk_2` FOREIGN KEY (`change_action_id`) REFERENCES `change_actions` (`change_action_id`);
+
+ALTER TABLE changes
+    ADD CONSTRAINT changes_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT changes_change_action_fk FOREIGN KEY (change_action_id) REFERENCES change_actions (change_action_id),
+    ADD CONSTRAINT changes_change_field_fk FOREIGN KEY (change_field_id) REFERENCES change_fields (change_field_id);
 
 --
 -- Constraints for table`change_links`
+-- TODO foreign
 --
 ALTER TABLE `change_links`
     ADD CONSTRAINT `change_links_fk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON

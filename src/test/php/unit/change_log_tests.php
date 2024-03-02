@@ -84,12 +84,12 @@ class change_log_tests
         $t->assert_sql_index_create($fld);
         $t->assert_sql_foreign_key_create($fld);
 
-        $t->subheader('SQL statement creation tests');
+        $t->subheader('SQL statement creation tests for logging named objects e.g. formula');
         $log = $t->dummy_change_log_named();
-        // TODO activate Prio 2
-        //$t->assert_sql_table_create($log);
-        //$t->assert_sql_index_create($log);
-        //$t->assert_sql_foreign_key_create($log);
+        $t->assert_sql_table_create($log);
+        $t->assert_sql_index_create($log);
+        $t->assert_sql_foreign_key_create($log);
+        // TODO add auto increment test for all mysql tables
 
 
         $t->subheader('SQL statement tests');

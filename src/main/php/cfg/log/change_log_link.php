@@ -2,45 +2,47 @@
 
 /*
 
-  model/log/change_log_link.php - object to save updates of references (links) by the user in the database in a format, so that it can fast be displayed to the user
-  -----------------------------
+    model/log/change_log_link.php - object to save updates of references (links) by the user in the database in a format, so that it can fast be displayed to the user
+    -----------------------------
 
-  A requirement for the expected behaviour of this setup is the strict adherence of these rules in all classes:
+    TODO    rename to change_link
 
-  1. never change a database ID
-  2. never delete a word
+    A requirement for the expected behaviour of this setup is the strict adherence of these rules in all classes:
 
-
-  Other assumptions are:
-
-  Every user has its sandbox, means a list of all his changes
-
-  The normal word table contain the value, word, formula, verb or links that is used by most users
-  for each normal table there is an overwrite table with the user changes/overwrites
-  maybe for each huge table is also a log table with the hist of the user changes
+    1. never change a database ID
+    2. never delete a word
 
 
-  This file is part of zukunft.com - calc with words
+    Other assumptions are:
 
-  zukunft.com is free software: you can redistribute it and/or modify it
-  under the terms of the GNU General Public License as
-  published by the Free Software Foundation, either version 3 of
-  the License, or (at your option) any later version.
-  zukunft.com is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU General Public License for more details.
-  
-  You should have received a copy of the GNU General Public License
-  along with zukunft.com. If not, see <http://www.gnu.org/licenses/agpl.html>.
-  
-  To contact the authors write to:
-  Timon Zielonka <timon@zukunft.com>
-  
-  Copyright (c) 1995-2022 zukunft.com AG, Zurich
-  Heang Lor <heang@zukunft.com>
-  
-  http://zukunft.com
+    Every user has its sandbox, means a list of all his changes
+
+    The normal word table contain the value, word, formula, verb or links that is used by most users
+    for each normal table there is an overwrite table with the user changes/overwrites
+    maybe for each huge table is also a log table with the hist of the user changes
+
+
+    This file is part of zukunft.com - calc with words
+
+    zukunft.com is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as
+    published by the Free Software Foundation, either version 3 of
+    the License, or (at your option) any later version.
+    zukunft.com is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with zukunft.com. If not, see <http://www.gnu.org/licenses/agpl.html>.
+
+    To contact the authors write to:
+    Timon Zielonka <timon@zukunft.com>
+
+    Copyright (c) 1995-2024 zukunft.com AG, Zurich
+    Heang Lor <heang@zukunft.com>
+
+    http://zukunft.com
   
 */
 
@@ -82,7 +84,7 @@ class change_log_link extends change_log
     const FLD_NAMES = array(
         user::FLD_ID,
         self::FLD_TABLE_ID,
-        self::FLD_CHANGE_TIME,
+        self::FLD_TIME,
         self::FLD_OLD_FROM_TEXT,
         self::FLD_OLD_FROM_ID,
         self::FLD_OLD_LINK_TEXT,
@@ -136,7 +138,7 @@ class change_log_link extends change_log
         $result = parent::row_mapper($db_row, self::FLD_ID);
         if ($result) {
             $this->table_id = $db_row[self::FLD_TABLE_ID];
-            $this->set_time_str($db_row[self::FLD_CHANGE_TIME]);
+            $this->set_time_str($db_row[self::FLD_TIME]);
             $this->old_text_from = $db_row[self::FLD_OLD_FROM_TEXT];
             $this->old_from_id = $db_row[self::FLD_OLD_FROM_ID];
             $this->old_text_link = $db_row[self::FLD_OLD_LINK_TEXT];

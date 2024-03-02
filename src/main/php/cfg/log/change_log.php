@@ -50,6 +50,11 @@ TODO:
         auto archive the log if the number of changes gets too big
         only log the changes of this pod and used the pod distribution table to get changes from other pods
 
+TODO    if change table gets too big, rename the table to "_up_to_YYYY_MM_DD_HH:MM:SS.000"
+        after that create a new table and start numbering from zero
+
+TODO    rename to change_base
+
 */
 
 namespace cfg\log;
@@ -94,27 +99,32 @@ class change_log extends db_object_seq_id_user
      */
 
     // change log database and JSON object field names
+    const FLD_ID_COM = 'the prime key to identify the change';
     const FLD_ID = 'change_id';
-    const FLD_CHANGE_TIME = 'change_time';
+    const FLD_TIME_COM = 'time when the user has confirmed the change';
+    const FLD_TIME = 'change_time';
+    const FLD_USER_COM = 'reference to the user who has done the change';
+    const FLD_ACTION_COM = 'the curl action';
     const FLD_ACTION = 'change_action_id';
+    const FLD_ROW_ID_COM = 'the prime id in the table with the change';
     const FLD_ROW_ID = 'row_id';
 
     // sql table comments
-    const TBL_COMMENT = 'to log all changes done by any user';
+    const TBL_COMMENT = 'to log all changes done by any user on all tables except value and link changes';
 
     // field lists for the sql table creation that are used for all change logs (incl. value and link changes)
     const FLD_LST_KEY = array(
-        [self::FLD_ID, sql_field_type::KEY_INT, sql_field_default::NOT_NULL, '', '', 'the prime key to identify the change'],
-        [self::FLD_CHANGE_TIME, sql_field_type::TIME, sql_field_default::TIMESTAMP, '', '', 'time when the user has confirmed the change'],
-        [user::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, user::class, 'reference to the user who has done the change'],
-        [self::FLD_ACTION, sql_field_type::INT_SMALL, sql_field_default::NOT_NULL, '', '', 'the curl action'],
+        [self::FLD_ID, sql_field_type::KEY_INT, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_ID_COM],
+        [self::FLD_TIME, sql_field_type::TIME, sql_field_default::TIME_NOT_NULL, sql::INDEX, '', self::FLD_TIME_COM],
+        [user::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, user::class, self::FLD_USER_COM],
+        [self::FLD_ACTION, sql_field_type::INT_SMALL, sql_field_default::NOT_NULL, '', change_action::class, self::FLD_ACTION_COM],
     );
     // field list to log the actual change that is overwritten by the child object e.g. for named, value and link tables
     const FLD_LST_CHANGE = array(
     );
     // field list to identify the database row in the table that has been changed
     const FLD_LST_ROW_ID = array(
-        [self::FLD_ROW_ID, sql_field_type::INT, sql_field_default::NULL, '', '', 'the prime id in the table with the change'],
+        [self::FLD_ROW_ID, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_ROW_ID_COM],
     );
 
 

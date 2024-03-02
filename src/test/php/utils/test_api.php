@@ -714,7 +714,7 @@ class test_api extends create_test_objects
         // remove or replace the volatile time fields
         $json = $this->json_remove_volatile_time_field($json, system_log::FLD_TIME_JSON);
         $json = $this->json_remove_volatile_time_field($json, system_log::FLD_TIMESTAMP_JSON);
-        $json = $this->json_remove_volatile_time_field($json, change_log::FLD_CHANGE_TIME);
+        $json = $this->json_remove_volatile_time_field($json, change_log::FLD_TIME);
         $json = $this->json_remove_volatile_time_field($json, job::FLD_TIME_REQUEST);
         $json = $this->json_remove_volatile_time_field($json, job::FLD_TIME_START);
         $json = $this->json_remove_volatile_time_field($json, job::FLD_TIME_END);

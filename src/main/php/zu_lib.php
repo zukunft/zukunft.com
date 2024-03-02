@@ -89,8 +89,8 @@ use html\phrase\phrase_group as phrase_group_dsp;
 
     after that this should be done while keeping step 1. to 4. for each commit:
     TODO remove the time phrase from result
-    TODO rename change and change_log to log
-    TODO rename system_log to trace
+    TODO rename change and change_log to change
+    TODO rename system_log to log
     TODO use the json api message header for all api messages
     TODO check if reading triples should use a view to generate the triple name and the generated name
     TODO use the sandbox list for all user lists
