@@ -50,7 +50,7 @@ class language extends type_object implements JsonSerializable
     const FLD_NAME = 'language_name';
     const FLD_WIKI_CODE = 'wikimedia_code';
 
-    // field lists for the field creation
+    // field lists for the table creation
     const FLD_LST_ALL = array(
         [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', ''],
         [sql::FLD_CODE_ID, sql_field_type::CODE_ID, sql_field_default::NULL, '', '', ''],

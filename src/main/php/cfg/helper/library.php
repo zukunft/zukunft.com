@@ -1589,6 +1589,9 @@ class library
             case $this->class_to_name(change_link::class):
                 $result = 'log';
                 break;
+            case $this->class_to_name(language_form::class):
+                $result = $this->class_to_name(language::class);
+                break;
             case $this->class_to_name(source::class):
                 $result = $this->class_to_name(ref::class);
                 break;

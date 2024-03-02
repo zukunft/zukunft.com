@@ -49,6 +49,7 @@ use cfg\ip_range;
 use cfg\job;
 use cfg\job_time;
 use cfg\language;
+use cfg\language_form;
 use cfg\library;
 use cfg\log;
 use cfg\log\change;
@@ -208,6 +209,7 @@ class sql_db
         change_big_value::class,
         change_link::class,
         language::class,
+        language_form::class,
         protection_type::class,
         share_type::class,
         word::class,

@@ -54,6 +54,12 @@ class language_tests
         $t->assert_sql_table_create($lan);
         $t->assert_sql_index_create($lan);
 
+        $t->subheader('Language form SQL setup statements');
+        $lan_for = new language_form('');
+        $t->assert_sql_table_create($lan_for);
+        $t->assert_sql_index_create($lan_for);
+        $t->assert_sql_foreign_key_create($lan_for);
+
 
         $t->subheader('API unit tests');
 

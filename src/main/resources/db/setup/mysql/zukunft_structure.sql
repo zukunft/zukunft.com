@@ -539,19 +539,23 @@ CREATE TABLE IF NOT EXISTS languages
     DEFAULT CHARSET = utf8
     COMMENT 'for table languages';
 
+-- --------------------------------------------------------
+
 --
--- Table structure for table`language_forms`
+-- table structure for language forms like plural
 --
 
-CREATE TABLE IF NOT EXISTS `language_forms`
+CREATE TABLE IF NOT EXISTS language_forms
 (
-    `language_form_id`   int(11) NOT NULL,
-    `language_form_name` varchar(200) DEFAULT NULL COMMENT 'type of adjustment of a term in a language e.g. plural',
-    `code_id`            varchar(50)  DEFAULT NULL,
-    `language_id`        int(11) NOT NULL
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8;
+    language_form_id   bigint           NOT NULL COMMENT 'the internal unique primary index',
+    language_form_name varchar(255) DEFAULT NULL COMMENT 'type of adjustment of a term in a language e.g. plural',
+    code_id            varchar(100) DEFAULT NULL,
+    description        text         DEFAULT NULL,
+    language_id        bigint       DEFAULT NULL
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'for language forms like plural';
 
 -- --------------------------------------------------------
 
@@ -2381,6 +2385,17 @@ ALTER TABLE languages
 -- --------------------------------------------------------
 
 --
+-- indexes for table language_forms
+--
+
+ALTER TABLE language_forms
+    ADD PRIMARY KEY (language_form_id),
+    ADD KEY language_forms_language_form_name_idx (language_form_name),
+    ADD KEY language_forms_language_idx (language_id);
+
+-- --------------------------------------------------------
+
+--
 -- indexes for table words
 --
 ALTER TABLE words
@@ -3478,6 +3493,14 @@ ALTER TABLE change_links
     ADD CONSTRAINT change_links_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
     ADD CONSTRAINT change_links_change_action_fk FOREIGN KEY (change_action_id) REFERENCES change_actions (change_action_id),
     ADD CONSTRAINT change_links_change_table_fk FOREIGN KEY (change_table_id) REFERENCES change_tables (change_table_id);
+
+--
+-- constraints for table language_forms
+--
+
+ALTER TABLE language_forms
+    ADD CONSTRAINT language_form_name_uk UNIQUE (language_form_name),
+    ADD CONSTRAINT language_forms_language_fk FOREIGN KEY (language_id) REFERENCES languages (language_id);
 
 -- --------------------------------------------------------
 
