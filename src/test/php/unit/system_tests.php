@@ -33,6 +33,7 @@ namespace unit;
 
 include_once MODEL_SYSTEM_PATH . 'ip_range.php';
 include_once MODEL_SYSTEM_PATH . 'ip_range_list.php';
+include_once MODEL_SYSTEM_PATH . 'session.php';
 include_once MODEL_LOG_PATH . 'system_log_list.php';
 include_once API_LOG_PATH . 'system_log.php';
 
@@ -41,6 +42,7 @@ use cfg\log\system_log_list;
 use cfg\log\system_log;
 use api\log\system_log as system_log_api;
 use api\word\word as word_api;
+use cfg\session;
 use cfg\sys_log_status;
 use cfg\user\user_type;
 use DateTime;
@@ -81,6 +83,11 @@ class system_tests
         $ipr = new ip_range();
         $t->assert_sql_table_create($ipr);
         $t->assert_sql_index_create($ipr);
+
+        $t->subheader('Session SQL setup statements');
+        $ses = new session();
+        $t->assert_sql_table_create($ses);
+        $t->assert_sql_index_create($ses);
 
 
         $t->subheader('Debug function tests');

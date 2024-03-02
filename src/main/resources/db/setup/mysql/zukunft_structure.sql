@@ -269,11 +269,11 @@ CREATE TABLE IF NOT EXISTS users
 
 CREATE TABLE IF NOT EXISTS ip_ranges
 (
-    ip_range_id bigint NOT NULL COMMENT 'the internal unique primary index',
-    ip_from varchar(46) NOT NULL,
-    ip_to varchar(46) NOT NULL,
-    reason text NOT NULL,
-    is_active smallint NOT NULL DEFAULT 1
+    ip_range_id bigint      NOT NULL COMMENT 'the internal unique primary index',
+    ip_from     varchar(46) NOT NULL,
+    ip_to       varchar(46) NOT NULL,
+    reason      text        NOT NULL,
+    is_active   smallint    NOT NULL DEFAULT 1
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
@@ -282,20 +282,22 @@ CREATE TABLE IF NOT EXISTS ip_ranges
 -- --------------------------------------------------------
 
 --
--- Table structure for table`sessions`
+-- table structure to control the user frontend sessions
 --
 
-CREATE TABLE IF NOT EXISTS `sessions`
+CREATE TABLE IF NOT EXISTS sessions
 (
-    `id`          int(11)      NOT NULL,
-    `uid`         int(11)      NOT NULL,
-    `hash`        varchar(40)  NOT NULL,
-    `expire_date` datetime     NOT NULL,
-    `ip`          varchar(39)  NOT NULL,
-    `agent`       varchar(200) NOT NULL,
-    `cookie_crc`  varchar(40)  NOT NULL
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8;
+    session_id  bigint           NOT NULL COMMENT 'the internal unique primary index',
+    uid         bigint           NOT NULL COMMENT 'the user session id as get by the frontend',
+    hash        varchar(255)     NOT NULL,
+    expire_date timestamp        NOT NULL,
+    ip          varchar(46)      NOT NULL,
+    agent       varchar(255) DEFAULT NULL,
+    cookie_crc  text         DEFAULT NULL
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'to control the user frontend sessions';
 
 -- --------------------------------------------------------
 
@@ -2263,6 +2265,15 @@ ALTER TABLE ip_ranges
     ADD PRIMARY KEY (ip_range_id),
     ADD KEY ip_ranges_ip_from_idx (ip_from),
     ADD KEY ip_ranges_ip_to_idx (ip_to);
+
+-- --------------------------------------------------------
+--
+-- indexes for table sessions
+--
+
+ALTER TABLE sessions
+    ADD PRIMARY KEY (session_id),
+    ADD KEY sessions_uid_idx (uid);
 
 --
 -- Indexes for table`changes`

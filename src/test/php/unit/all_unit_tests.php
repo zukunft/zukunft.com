@@ -42,6 +42,7 @@ include_once MODEL_USER_PATH . 'user_profile.php';
 include_once MODEL_USER_PATH . 'user_type.php';
 include_once MODEL_USER_PATH . 'user_official_type.php';
 include_once MODEL_SYSTEM_PATH . 'ip_range.php';
+include_once MODEL_SYSTEM_PATH . 'session.php';
 include_once MODEL_SYSTEM_PATH . 'job_type.php';
 include_once MODEL_SYSTEM_PATH . 'job_type_list.php';
 include_once MODEL_SYSTEM_PATH . 'job_time.php';

@@ -1565,6 +1565,7 @@ class library
         switch ($result) {
             case $this->class_to_name(config::class):
             case $this->class_to_name(ip_range::class):
+            case $this->class_to_name(session::class):
                 $result = 'system';
                 break;
             case $this->class_to_name(job_time::class):

@@ -53,6 +53,7 @@ use cfg\log;
 use cfg\log\system_log;
 use cfg\phrase_type;
 use cfg\protection_type;
+use cfg\session;
 use cfg\share_type;
 use cfg\source;
 use cfg\source_type;
@@ -188,6 +189,7 @@ class sql_db
         user_official_type::class,
         user::class,
         ip_range::class,
+        session::class,
         protection_type::class,
         share_type::class,
         word::class,

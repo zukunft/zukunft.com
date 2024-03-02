@@ -338,21 +338,23 @@ COMMENT ON COLUMN ip_ranges.ip_range_id IS 'the internal unique primary index';
 -- --------------------------------------------------------
 
 --
--- table structure for table sessions
--- TODO next
--- TODO generate
+-- table structure to control the user frontend sessions
 --
 
 CREATE TABLE IF NOT EXISTS sessions
 (
-    id          bigint       NOT NULL,
-    uid         bigint       NOT NULL,
-    hash        varchar(40)  NOT NULL,
-    expire_date timestamp    NOT NULL,
-    ip          varchar(39)  NOT NULL,
-    agent       varchar(200) NOT NULL,
-    cookie_crc  varchar(40)  NOT NULL
+    session_id  BIGSERIAL PRIMARY KEY,
+    uid         bigint           NOT NULL,
+    hash        varchar(255)     NOT NULL,
+    expire_date timestamp        NOT NULL,
+    ip          varchar(46)      NOT NULL,
+    agent       varchar(255) DEFAULT NULL,
+    cookie_crc  text         DEFAULT NULL
 );
+
+COMMENT ON TABLE sessions IS 'to control the user frontend sessions';
+COMMENT ON COLUMN sessions.session_id IS 'the internal unique primary index';
+COMMENT ON COLUMN sessions.uid IS 'the user session id as get by the frontend';
 
 -- --------------------------------------------------------
 
@@ -3082,6 +3084,14 @@ CREATE INDEX users_user_type_idx ON users (user_type_id);
 
 CREATE INDEX ip_ranges_ip_from_idx ON ip_ranges (ip_from);
 CREATE INDEX ip_ranges_ip_to_idx ON ip_ranges (ip_to);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table sessions
+--
+
+CREATE INDEX sessions_uid_idx ON sessions (uid);
 
 -- --------------------------------------------------------
 
