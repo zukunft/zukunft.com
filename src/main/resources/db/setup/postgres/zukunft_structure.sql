@@ -443,65 +443,77 @@ COMMENT ON COLUMN changes.row_id IS 'the prime id in the table with the change';
 COMMENT ON COLUMN changes.old_id IS 'old value id';
 COMMENT ON COLUMN changes.new_id IS 'new value id';
 
+-- --------------------------------------------------------
+
 --
--- table structure to log the value changes done by the users
--- TODO generate
+-- table structure to log all changes done by any user on values with a standard group id
 --
 
-CREATE TABLE IF NOT EXISTS changes_values
+CREATE TABLE IF NOT EXISTS change_standard_values
 (
     change_id        BIGSERIAL PRIMARY KEY,
     change_time      timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     user_id          bigint    NOT NULL,
-    change_action_id bigint    NOT NULL,
-    change_field_id  bigint    NOT NULL,
+    change_action_id smallint  NOT NULL,
     group_id         char(112) NOT NULL,
+    change_field_id  bigint    NOT NULL,
     old_value        double precision DEFAULT NULL,
     new_value        double precision DEFAULT NULL
 );
 
-COMMENT ON TABLE changes_values IS 'to log all number changes';
-COMMENT ON COLUMN changes_values.change_time IS 'time when the value has been changed';
+COMMENT ON TABLE change_standard_values IS 'to log all changes done by any user on values with a standard group id';
+COMMENT ON COLUMN change_standard_values.change_id IS 'the prime key to identify the change change_standard_value';
+COMMENT ON COLUMN change_standard_values.change_time IS 'time when the user has confirmed the change';
+COMMENT ON COLUMN change_standard_values.user_id IS 'reference to the user who has done the change';
+COMMENT ON COLUMN change_standard_values.change_action_id IS 'the curl action';
+
+-- --------------------------------------------------------
 
 --
--- table structure to log changes of numbers related to not more than four prime phrases
--- TODO generate
+-- table structure to log all changes done by any user on values with a prime group id
 --
 
-CREATE TABLE IF NOT EXISTS changes_values_prime
+CREATE TABLE IF NOT EXISTS change_prime_values
 (
     change_id        BIGSERIAL PRIMARY KEY,
     change_time      timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     user_id          bigint    NOT NULL,
-    change_action_id bigint    NOT NULL,
-    change_field_id  bigint    NOT NULL,
+    change_action_id smallint  NOT NULL,
     group_id         bigint    NOT NULL,
+    change_field_id  bigint    NOT NULL,
     old_value        double precision DEFAULT NULL,
     new_value        double precision DEFAULT NULL
 );
 
-COMMENT ON TABLE changes_values_prime IS 'to log changes of numbers related to not more than four prime phrases';
-COMMENT ON COLUMN changes_values_prime.change_time IS 'time when the value has been changed';
+COMMENT ON TABLE change_prime_values IS 'to log all changes done by any user on values with a prime group id';
+COMMENT ON COLUMN change_prime_values.change_id IS 'the prime key to identify the change change_prime_value';
+COMMENT ON COLUMN change_prime_values.change_time IS 'time when the user has confirmed the change';
+COMMENT ON COLUMN change_prime_values.user_id IS 'reference to the user who has done the change';
+COMMENT ON COLUMN change_prime_values.change_action_id IS 'the curl action';
+
+-- --------------------------------------------------------
 
 --
--- table structure to log changes of numbers related to more than 16 phrases
--- TODO generate
+-- table structure to log all changes done by any user on values with a big group id
 --
 
-CREATE TABLE IF NOT EXISTS changes_values_big
+CREATE TABLE IF NOT EXISTS change_big_values
 (
     change_id        BIGSERIAL PRIMARY KEY,
     change_time      timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     user_id          bigint    NOT NULL,
-    change_action_id bigint    NOT NULL,
+    change_action_id smallint  NOT NULL,
+    group_id         text      NOT NULL,
     change_field_id  bigint    NOT NULL,
-    group_id         TEXT      NOT NULL,
     old_value        double precision DEFAULT NULL,
     new_value        double precision DEFAULT NULL
 );
 
-COMMENT ON TABLE changes_values_big IS 'to log changes of numbers related to more than 16 phrases';
-COMMENT ON COLUMN changes_values_big.change_time IS 'time when the value has been changed';
+COMMENT ON TABLE change_big_values IS 'to log all changes done by any user on values with a big group id';
+COMMENT ON COLUMN change_big_values.change_id IS 'the prime key to identify the change change_big_value';
+COMMENT ON COLUMN change_big_values.change_time IS 'time when the user has confirmed the change';
+COMMENT ON COLUMN change_big_values.user_id IS 'reference to the user who has done the change';
+COMMENT ON COLUMN change_big_values.change_action_id IS 'the curl action';
 
 --
 -- table structure to log the link changes done by the users
@@ -3138,6 +3150,35 @@ CREATE INDEX changes_change_idx ON changes (change_id);
 CREATE INDEX changes_change_time_idx ON changes (change_time);
 CREATE INDEX changes_user_idx ON changes (user_id);
 
+-- --------------------------------------------------------
+
+--
+-- indexes for table change_standard_values
+--
+
+CREATE INDEX change_standard_values_change_idx ON change_standard_values (change_id);
+CREATE INDEX change_standard_values_change_time_idx ON change_standard_values (change_time);
+CREATE INDEX change_standard_values_user_idx ON change_standard_values (user_id);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table change_prime_values
+--
+
+CREATE INDEX change_prime_values_change_idx ON change_prime_values (change_id);
+CREATE INDEX change_prime_values_change_time_idx ON change_prime_values (change_time);
+CREATE INDEX change_prime_values_user_idx ON change_prime_values (user_id);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table change_big_values
+--
+
+CREATE INDEX change_big_values_change_idx ON change_big_values (change_id);
+CREATE INDEX change_big_values_change_time_idx ON change_big_values (change_time);
+CREATE INDEX change_big_values_user_idx ON change_big_values (user_id);
 
 --
 -- Indexes for table change_links
@@ -3757,6 +3798,39 @@ ALTER TABLE changes
     ADD CONSTRAINT changes_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
     ADD CONSTRAINT changes_change_action_fk FOREIGN KEY (change_action_id) REFERENCES change_actions (change_action_id),
     ADD CONSTRAINT changes_change_field_fk FOREIGN KEY (change_field_id) REFERENCES change_fields (change_field_id);
+
+-- --------------------------------------------------------
+
+--
+-- constraints for table change_standard_values
+--
+
+ALTER TABLE change_standard_values
+    ADD CONSTRAINT change_standard_values_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT change_standard_values_change_action_fk FOREIGN KEY (change_action_id) REFERENCES change_actions (change_action_id),
+    ADD CONSTRAINT change_standard_values_change_field_fk FOREIGN KEY (change_field_id) REFERENCES change_fields (change_field_id);
+
+-- --------------------------------------------------------
+
+--
+-- constraints for table change_prime_values
+--
+
+ALTER TABLE change_prime_values
+    ADD CONSTRAINT change_prime_values_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT change_prime_values_change_action_fk FOREIGN KEY (change_action_id) REFERENCES change_actions (change_action_id),
+    ADD CONSTRAINT change_prime_values_change_field_fk FOREIGN KEY (change_field_id) REFERENCES change_fields (change_field_id);
+
+-- --------------------------------------------------------
+
+--
+-- constraints for table change_big_values
+--
+
+ALTER TABLE change_big_values
+    ADD CONSTRAINT change_big_values_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT change_big_values_change_action_fk FOREIGN KEY (change_action_id) REFERENCES change_actions (change_action_id),
+    ADD CONSTRAINT change_big_values_change_field_fk FOREIGN KEY (change_field_id) REFERENCES change_fields (change_field_id);
 
 --
 -- constraints for table change_links

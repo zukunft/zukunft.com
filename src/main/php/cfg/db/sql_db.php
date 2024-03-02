@@ -52,7 +52,10 @@ use cfg\library;
 use cfg\log;
 use cfg\log\change;
 use cfg\log\change_action;
+use cfg\log\change_big_value;
 use cfg\log\change_field;
+use cfg\log\change_prime_value;
+use cfg\log\change_standard_value;
 use cfg\log\change_table;
 use cfg\log\system_log;
 use cfg\phrase_type;
@@ -198,6 +201,9 @@ class sql_db
         change_table::class,
         change_field::class,
         change::class,
+        change_prime_value::class,
+        change_standard_value::class,
+        change_big_value::class,
         protection_type::class,
         share_type::class,
         word::class,

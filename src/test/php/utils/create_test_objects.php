@@ -68,9 +68,12 @@ use cfg\job_list;
 use cfg\job_type_list;
 use cfg\log\change_action;
 use cfg\log\change_action_list;
+use cfg\log\change_big_value;
 use cfg\log\change_field_list;
 use cfg\log\change_log_list;
 use cfg\log\change;
+use cfg\log\change_prime_value;
+use cfg\log\change_standard_value;
 use cfg\log\change_table_list;
 use cfg\component\component;
 use cfg\component\component_list;
@@ -1630,6 +1633,57 @@ class create_test_objects extends test_base
         $chg->set_table(change_table_list::WORD);
         $chg->set_field(change_field_list::FLD_WORD_NAME);
         $chg->new_value = word_api::TN_READ;
+        $chg->row_id = 1;
+        return $chg;
+    }
+
+    /**
+     * @return change_standard_value a change log entry of a value with some dummy values and a standard group id
+     */
+    function dummy_change_log_value(): change_standard_value
+    {
+        global $usr_sys;
+
+        $chg = new change_standard_value($usr_sys);
+        $chg->set_time_str(self::DUMMY_DATETIME);
+        $chg->set_action(change_action::ADD);
+        $chg->set_table(change_table_list::WORD);
+        $chg->set_field(change_field_list::FLD_WORD_NAME);
+        $chg->new_value = value_api::TV_READ_SHORTEST;
+        $chg->row_id = 1;
+        return $chg;
+    }
+
+    /**
+     * @return change_prime_value a change log entry of a value with some dummy values and a prime group id
+     */
+    function dummy_change_log_value_prime(): change_prime_value
+    {
+        global $usr_sys;
+
+        $chg = new change_prime_value($usr_sys);
+        $chg->set_time_str(self::DUMMY_DATETIME);
+        $chg->set_action(change_action::ADD);
+        $chg->set_table(change_table_list::WORD);
+        $chg->set_field(change_field_list::FLD_WORD_NAME);
+        $chg->new_value = value_api::TV_READ_SHORTEST;
+        $chg->row_id = 1;
+        return $chg;
+    }
+
+    /**
+     * @return change_big_value a change log entry of a value with some dummy values and a big group id
+     */
+    function dummy_change_log_value_big(): change_big_value
+    {
+        global $usr_sys;
+
+        $chg = new change_big_value($usr_sys);
+        $chg->set_time_str(self::DUMMY_DATETIME);
+        $chg->set_action(change_action::ADD);
+        $chg->set_table(change_table_list::WORD);
+        $chg->set_field(change_field_list::FLD_WORD_NAME);
+        $chg->new_value = value_api::TV_READ_SHORTEST;
         $chg->row_id = 1;
         return $chg;
     }

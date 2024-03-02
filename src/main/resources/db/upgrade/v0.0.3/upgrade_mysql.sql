@@ -315,7 +315,7 @@ ALTER TABLE `user_values`
 -- Table structure to log the value changes done by the users
 --
 
-CREATE TABLE IF NOT EXISTS `changes_values`
+CREATE TABLE IF NOT EXISTS `change_values`
 (
     `change_id`        int(11)   NOT NULL,
     `change_time`      timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -334,7 +334,7 @@ CREATE TABLE IF NOT EXISTS `changes_values`
 -- Table structure to log changes of numbers related to not more than four prime phrases
 --
 
-CREATE TABLE IF NOT EXISTS `changes_values_prime`
+CREATE TABLE IF NOT EXISTS `change_values_prime`
 (
     `change_id`        int(11)   NOT NULL,
     `change_time`      timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -353,7 +353,7 @@ CREATE TABLE IF NOT EXISTS `changes_values_prime`
 -- Table structure to log changes of numbers related to more than 16 phrases
 --
 
-CREATE TABLE IF NOT EXISTS `changes_values_big`
+CREATE TABLE IF NOT EXISTS `change_values_big`
 (
     `change_id`        int(11)   NOT NULL,
     `change_time`      timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP

@@ -91,6 +91,24 @@ class change_log_tests
         $t->assert_sql_foreign_key_create($log);
         // TODO add auto increment test for all mysql tables
 
+        $t->subheader('SQL statement creation tests for logging standard value');
+        $log_val_std = $t->dummy_change_log_value();
+        $t->assert_sql_table_create($log_val_std);
+        $t->assert_sql_index_create($log_val_std);
+        $t->assert_sql_foreign_key_create($log_val_std);
+
+        $t->subheader('SQL statement creation tests for logging prime value');
+        $log_val_prm = $t->dummy_change_log_value_prime();
+        $t->assert_sql_table_create($log_val_prm);
+        $t->assert_sql_index_create($log_val_prm);
+        $t->assert_sql_foreign_key_create($log_val_prm);
+
+        $t->subheader('SQL statement creation tests for logging big value');
+        $log_val_big = $t->dummy_change_log_value_big();
+        $t->assert_sql_table_create($log_val_big);
+        $t->assert_sql_index_create($log_val_big);
+        $t->assert_sql_foreign_key_create($log_val_big);
+
 
         $t->subheader('SQL statement tests');
         $log = new change($usr);

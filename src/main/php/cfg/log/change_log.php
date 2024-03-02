@@ -389,7 +389,7 @@ class change_log extends db_object_seq_id_user
 
         $sql_array = $this->sql_one_type(
             $sc,
-            self::FLD_LST_ROW_ID,
+            $this::FLD_LST_ROW_ID,
             '', ''
         );
         return $sql_array[$pos];

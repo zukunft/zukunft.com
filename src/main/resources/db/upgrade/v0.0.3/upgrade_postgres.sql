@@ -302,7 +302,7 @@ ALTER TABLE user_values
 -- Table structure to log the value changes done by the users
 --
 
-CREATE TABLE IF NOT EXISTS changes_values
+CREATE TABLE IF NOT EXISTS change_values
 (
     change_id        BIGSERIAL PRIMARY KEY,
     change_time      timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -314,14 +314,14 @@ CREATE TABLE IF NOT EXISTS changes_values
     new_value        double precision DEFAULT NULL
 );
 
-COMMENT ON TABLE changes_values is 'to log all changes';
-COMMENT ON COLUMN changes_values.change_time is 'time when the value has been changed';
+COMMENT ON TABLE change_values is 'to log all changes';
+COMMENT ON COLUMN change_values.change_time is 'time when the value has been changed';
 
 --
 -- Table structure to log the value changes done by the users
 --
 
-CREATE TABLE IF NOT EXISTS changes_values_prime
+CREATE TABLE IF NOT EXISTS change_values_prime
 (
     change_id        BIGSERIAL PRIMARY KEY,
     change_time      timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -333,14 +333,14 @@ CREATE TABLE IF NOT EXISTS changes_values_prime
     new_value        double precision DEFAULT NULL
 );
 
-COMMENT ON TABLE changes_values_prime is 'to log changes of prime value';
-COMMENT ON COLUMN changes_values_prime.change_time is 'time when the value has been changed';
+COMMENT ON TABLE change_values_prime is 'to log changes of prime value';
+COMMENT ON COLUMN change_values_prime.change_time is 'time when the value has been changed';
 
 --
 -- Table structure to log the value changes done by the users
 --
 
-CREATE TABLE IF NOT EXISTS changes_values_big
+CREATE TABLE IF NOT EXISTS change_values_big
 (
     change_id        BIGSERIAL PRIMARY KEY,
     change_time      timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -352,8 +352,8 @@ CREATE TABLE IF NOT EXISTS changes_values_big
     new_value        double precision DEFAULT NULL
 );
 
-COMMENT ON TABLE changes_values_big is 'to log all changes';
-COMMENT ON COLUMN changes_values_big.change_time is 'time when the value has been changed';
+COMMENT ON TABLE change_values_big is 'to log all changes';
+COMMENT ON COLUMN change_values_big.change_time is 'time when the value has been changed';
 
 -- --------------------------------------------------------
 
