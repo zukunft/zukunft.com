@@ -944,7 +944,7 @@
         "id": 23
       }
     ],
-    "change_log_fields": [
+    "change_field_list": [
       {
         "name": "2numeric_value",
         "code_id": "2numeric_value",

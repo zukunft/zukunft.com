@@ -36,6 +36,7 @@ use api\api;
 use api\sandbox\combine_object as combine_object_api;
 use cfg\db\sql_db;
 use cfg\log\change_action;
+use cfg\log\change_field;
 use cfg\log\change_table;
 use cfg\user\user_profile;
 use cfg\user\user_type;
@@ -1575,6 +1576,7 @@ class library
                 break;
             case $this->class_to_name(change_action::class):
             case $this->class_to_name(change_table::class):
+            case $this->class_to_name(change_field::class):
                 $result = 'log';
                 break;
             case $this->class_to_name(source::class):

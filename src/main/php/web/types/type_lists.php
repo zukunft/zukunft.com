@@ -36,7 +36,7 @@ include_once WEB_TYPES_PATH . 'type_object.php';
 include_once WEB_TYPES_PATH . 'type_list.php';
 include_once WEB_TYPES_PATH . 'change_action_list.php';
 include_once WEB_TYPES_PATH . 'change_table_list.php';
-include_once WEB_TYPES_PATH . 'change_log_field_list.php';
+include_once WEB_TYPES_PATH . 'change_field_list.php';
 include_once WEB_TYPES_PATH . 'system_log_status_list.php';
 include_once WEB_TYPES_PATH . 'user_profiles.php';
 include_once WEB_TYPES_PATH . 'job_type_list.php';
@@ -227,10 +227,10 @@ class type_lists
             $this->set_change_table_list();
         }
         if (array_key_exists(controller::API_LIST_CHANGE_LOG_FIELDS, $json_array)) {
-            $this->set_change_log_fields($json_array[controller::API_LIST_CHANGE_LOG_FIELDS]);
+            $this->set_change_field_list($json_array[controller::API_LIST_CHANGE_LOG_FIELDS]);
         } else {
-            log_err('Mandatory change_log_fields missing in API JSON ' . json_encode($json_array));
-            $this->set_change_log_fields();
+            log_err('Mandatory change_field_list missing in API JSON ' . json_encode($json_array));
+            $this->set_change_field_list();
         }
     }
 
@@ -367,11 +367,11 @@ class type_lists
         $html_change_table_list->set_obj_from_json_array($json_array);
     }
 
-    function set_change_log_fields(array $json_array = null): void
+    function set_change_field_list(array $json_array = null): void
     {
-        global $html_change_log_fields;
-        $html_change_log_fields = new change_log_field_list();
-        $html_change_log_fields->set_obj_from_json_array($json_array);
+        global $html_change_field_list;
+        $html_change_field_list = new change_field_list();
+        $html_change_field_list->set_obj_from_json_array($json_array);
     }
 
     function set_system_views(array $json_array = null): void

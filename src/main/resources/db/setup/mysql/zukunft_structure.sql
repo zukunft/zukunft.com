@@ -333,20 +333,23 @@ CREATE TABLE IF NOT EXISTS change_tables
     DEFAULT CHARSET = utf8
     COMMENT 'to keep the original table name even if a table name has changed and to avoid log changes in case a table is renamed';
 
+-- --------------------------------------------------------
+
 --
--- Table structure for table`change_fields`
+-- table structure to keep the original field name even if a table name has changed
 --
 
-CREATE TABLE IF NOT EXISTS `change_fields`
+CREATE TABLE IF NOT EXISTS change_fields
 (
-    `change_field_id`   int(11)      NOT NULL,
-    `change_field_name` varchar(255) NOT NULL,
-    `table_id`          int(11)      NOT NULL COMMENT 'because every field must only be unique within a table',
-    `description`       text,
-    `code_id`           varchar(100) DEFAULT NULL COMMENT 'to display the change with some linked information'
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8;
+    change_field_id   bigint           NOT NULL COMMENT 'the internal unique primary index',
+    change_field_name varchar(255)     NOT NULL COMMENT 'the real name',
+    table_id          bigint           NOT NULL COMMENT 'because every field must only be unique within a table',
+    code_id           varchar(255) DEFAULT NULL COMMENT 'to display the change with some linked information',
+    description       text         DEFAULT NULL
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'to keep the original field name even if a table name has changed';
 
 -- --------------------------------------------------------
 
@@ -2299,6 +2302,17 @@ ALTER TABLE change_tables
     ADD PRIMARY KEY (change_table_id),
     ADD KEY change_tables_change_table_name_idx (change_table_name);
 
+-- --------------------------------------------------------
+
+--
+-- indexes for table change_fields
+--
+
+ALTER TABLE change_fields
+    ADD PRIMARY KEY (change_field_id),
+    ADD KEY change_fields_change_field_name_idx (change_field_name),
+    ADD KEY change_fields_table_idx (table_id);
+
 --
 -- Indexes for table`changes`
 -- TODO next
@@ -3379,17 +3393,21 @@ ALTER TABLE users
     ADD CONSTRAINT users_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
 
 --
+-- constraints for table change_fields
+--
+
+ALTER TABLE change_fields
+    ADD CONSTRAINT change_field_name_uk UNIQUE (change_field_name),
+    ADD CONSTRAINT code_id_uk UNIQUE (code_id),
+    ADD CONSTRAINT change_fields_change_table_fk FOREIGN KEY (table_id) REFERENCES change_tables (change_table_id);
+
+--
 -- Constraints for table`changes`
+-- TODO foreign
 --
 ALTER TABLE `changes`
     ADD CONSTRAINT `changes_fk_1` FOREIGN KEY (`change_field_id`) REFERENCES `change_fields` (`change_field_id`),
     ADD CONSTRAINT `changes_fk_2` FOREIGN KEY (`change_action_id`) REFERENCES `change_actions` (`change_action_id`);
-
---
--- Constraints for table`change_fields`
---
-ALTER TABLE `change_fields`
-    ADD CONSTRAINT `change_fields_fk_1` FOREIGN KEY (`table_id`) REFERENCES `change_tables` (`change_table_id`);
 
 --
 -- Constraints for table`change_links`

@@ -441,7 +441,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
         language_form_list - list of all language forms
         change_action_list - list of all change types
         change_table_list - list of all db tables that can be changed by the user (including table of past versions)
-        change_log_field - list of all fields in table that a user can change (including fields of past versions)
+        change_field_list - list of all fields in table that a user can change (including fields of past versions)
         job_type_list - list of all batch job types
     combine_object - a object that combines two objects
         combine_named - a combine object with a unique name
@@ -659,7 +659,8 @@ include_once MODEL_LOG_PATH . 'change_action.php';
 include_once MODEL_LOG_PATH . 'change_action_list.php';
 include_once MODEL_LOG_PATH . 'change_table.php';
 include_once MODEL_LOG_PATH . 'change_table_list.php';
-include_once MODEL_LOG_PATH . 'change_log_field.php';
+include_once MODEL_LOG_PATH . 'change_field.php';
+include_once MODEL_LOG_PATH . 'change_field_list.php';
 include_once MODEL_VERB_PATH . 'verb_list.php';
 include_once MODEL_VIEW_PATH . 'view_sys_list.php';
 

@@ -33,7 +33,7 @@
 namespace unit_write;
 
 use api\ref\source as source_api;
-use cfg\log\change_log_field;
+use cfg\log\change_field_list;
 use cfg\log\change;
 use cfg\log\change_table_list;
 use cfg\sandbox_named;
@@ -70,7 +70,7 @@ class source_tests
         if ($src_add->id() > 0) {
             $log = new change($t->usr1);
             $log->set_table(change_table_list::SOURCE);
-            $log->set_field(change_log_field::FLD_SOURCE_NAME);
+            $log->set_field(change_field_list::FLD_SOURCE_NAME);
             $log->row_id = $src_add->id();
             $result = $log->dsp_last(true);
         }
@@ -105,7 +105,7 @@ class source_tests
         // check if the source renaming has been logged
         $log = new change($t->usr1);
         $log->set_table(change_table_list::SOURCE);
-        $log->set_field(change_log_field::FLD_SOURCE_NAME);
+        $log->set_field(change_field_list::FLD_SOURCE_NAME);
         $log->row_id = $src_renamed->id();
         $result = $log->dsp_last(true);
         $target = 'zukunft.com system test changed ' . source_api::TN_ADD . ' to ' . source_api::TN_RENAMED;
@@ -130,7 +130,7 @@ class source_tests
         // check if the source parameter adding have been logged
         $log = new change($t->usr1);
         $log->set_table(change_table_list::SOURCE);
-        $log->set_field(change_log_field::FLD_SOURCE_URL);
+        $log->set_field(change_field_list::FLD_SOURCE_URL);
         $log->row_id = $src_reloaded->id();
         $result = $log->dsp_last(true);
         $target = 'zukunft.com system test added ' . source_api::TU_ADD;

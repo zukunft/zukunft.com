@@ -258,7 +258,7 @@ class change_log extends db_object_seq_id_user
      */
     function set_field(string $field_name, ?sql_db $given_db_con = null): bool
     {
-        global $change_log_fields;
+        global $change_field_list;
         global $db_con;
 
         $used_db_con = $db_con;
@@ -268,7 +268,7 @@ class change_log extends db_object_seq_id_user
 
         $db_changed = false;
         if ($this->table_id > 0) {
-            $this->field_id = $change_log_fields->id($this->table_id . $field_name);
+            $this->field_id = $change_field_list->id($this->table_id . $field_name);
             if ($this->field_id <= 0) {
                 $this->add_field($used_db_con, $field_name);
                 if ($this->field_id <= 0) {
@@ -279,7 +279,7 @@ class change_log extends db_object_seq_id_user
                         $this->table_id . $field_name,
                         '',
                         $this->field_id);
-                    $change_log_fields->add($tbl);
+                    $change_field_list->add($tbl);
                     $db_changed = true;
                 }
             }
@@ -295,11 +295,11 @@ class change_log extends db_object_seq_id_user
      */
     function field(): string
     {
-        global $change_log_fields;
+        global $change_field_list;
 
         $lib = new library();
 
-        $field_key = $change_log_fields->name($this->field_id);
+        $field_key = $change_field_list->name($this->field_id);
         return $lib->str_right_of($field_key, $this->table_id);
     }
 

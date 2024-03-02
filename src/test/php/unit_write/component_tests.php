@@ -34,7 +34,7 @@ namespace unit_write;
 
 use api\component\component as component_api;
 use cfg\component\component;
-use cfg\log\change_log_field;
+use cfg\log\change_field_list;
 use cfg\log\change;
 use cfg\log\change_table_list;
 use cfg\component\component_type;
@@ -170,7 +170,7 @@ class component_tests
         //$target = 'zukunft.com system test added Just added for testing the user sandbox';
         $target = 'zukunft.com system test changed Just added for testing to Just added for testing the user sandbox';
         $t->display('component->load comment for "' . component_api::TN_RENAMED . '" logged', $target, $result);
-        $log->set_field(change_log_field::FLD_COMPONENT_TYPE);
+        $log->set_field(change_field_list::FLD_COMPONENT_TYPE);
         $result = $log->dsp_last(true);
         $target = 'zukunft.com system test added word name';
         $t->display('component->load component_type_id for "' . component_api::TN_RENAMED . '" logged', $target, $result);

@@ -122,7 +122,7 @@ class controller
     const API_LIST_JOB_TYPES = 'job_types';
     const API_LIST_CHANGE_LOG_ACTIONS = 'change_action_list';
     const API_LIST_CHANGE_LOG_TABLES = 'change_table_list';
-    const API_LIST_CHANGE_LOG_FIELDS = 'change_log_fields';
+    const API_LIST_CHANGE_LOG_FIELDS = 'change_field_list';
     const API_LIST_VERBS = 'verbs';
     const API_LIST_SYSTEM_VIEWS = 'system_views';
     const API_BACK = 'back'; // to include the url that should be call after an action has been finished into the url

@@ -201,9 +201,9 @@ class change_log_named extends change_log_named_api
      */
     private function field_code_id(): string
     {
-        global $change_log_fields;
+        global $change_field_list;
 
-        $field = $change_log_fields->get($this->field_id);
+        $field = $change_field_list->get($this->field_id);
         return $field->code_id;
     }
 
@@ -212,9 +212,9 @@ class change_log_named extends change_log_named_api
      */
     private function field_description(): string
     {
-        global $change_log_fields;
+        global $change_field_list;
 
-        $field = $change_log_fields->get($this->field_id);
+        $field = $change_field_list->get($this->field_id);
         return $field->description;
     }
 

@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/log/change_table.php - the table where a user has done a change including deprecated table names
+    cfg/log/change_field.php - the field where a user has done a change including deprecated field names
     ------------------------
 
 
@@ -39,7 +39,7 @@ use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\type_object;
 
-class change_table extends type_object
+class change_field extends type_object
 {
 
 
@@ -48,18 +48,19 @@ class change_table extends type_object
      */
 
     // comments used for the database creation
-    const TBL_COMMENT = 'to keep the original table name even if a table name has changed and to avoid log changes in case a table is renamed';
-    const FLD_ID = 'change_table_id';
+    const TBL_COMMENT = 'to keep the original field name even if a table name has changed';
     const FLD_NAME_COM = 'the real name';
-    const FLD_NAME = 'change_table_name';
-    const FLD_CODE_ID_COM = 'with this field tables can be combined in case of renaming';
-    const FLD_DESCRIPTION_COM = 'the user readable name';
+    const FLD_NAME = 'change_field_name';
+    const FLD_TABLE_COM = 'because every field must only be unique within a table';
+    const FLD_TABLE = 'table_id';
+    const FLD_CODE_ID_COM = 'to display the change with some linked information';
 
-    // field lists for the table creation
+    // field lists for the field creation
     const FLD_LST_ALL = array(
         [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_NAME_COM],
+        [self::FLD_TABLE, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, change_table::class, self::FLD_TABLE_COM, change_table::FLD_ID],
         [sql::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
-        [self::FLD_DESCRIPTION, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
+        [self::FLD_DESCRIPTION, sql_field_type::TEXT, sql_field_default::NULL, '', '', ''],
     );
 
 }

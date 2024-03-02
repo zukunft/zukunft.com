@@ -815,7 +815,7 @@
         "comment": ""
       }
     ],
-    "change_log_fields": [
+    "change_field_list": [
       {
         "id": 1,
         "code_id": "2numeric_value",

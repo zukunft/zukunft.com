@@ -269,14 +269,14 @@ class change_log_list extends base_list
     {
         $result = '';
         if ($table_name == change_table_list::WORD) {
-            if ($field_name == change_log_field::FLD_WORD_VIEW) {
+            if ($field_name == change_field_list::FLD_WORD_VIEW) {
                 $result = 'dsp_of_wrd';
             } else {
                 $result = $field_name . '_of_wrd';
                 log_info('field name ' . $field_name . ' not expected for table ' . $table_name);
             }
         } elseif ($table_name == change_table_list::TRIPLE) {
-            if ($field_name == change_log_field::FLD_TRIPLE_VIEW) {
+            if ($field_name == change_field_list::FLD_TRIPLE_VIEW) {
                 $result = 'dsp_of_trp';
             } else {
                 $result = $field_name . '_of_trp';
@@ -326,12 +326,12 @@ class change_log_list extends base_list
         user   $usr): sql_par
     {
         global $change_table_list;
-        global $change_log_fields;
+        global $change_field_list;
 
         // prepare sql to get the view changes of a user sandbox object e.g. word
         $table_id = $change_table_list->id($table_name);
         $table_field_name = $table_id . $field_name;
-        $field_id = $change_log_fields->id($table_field_name);
+        $field_id = $change_field_list->id($table_field_name);
         $log_named = new change($usr);
         $query_ext = $this->table_field_to_query_name($table_name, $field_name);
         $qp = $log_named->load_sql($sc, $query_ext, self::class);

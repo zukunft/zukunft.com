@@ -393,20 +393,24 @@ COMMENT ON COLUMN change_tables.change_table_name IS 'the real name';
 COMMENT ON COLUMN change_tables.code_id IS 'with this field tables can be combined in case of renaming';
 COMMENT ON COLUMN change_tables.description IS 'the user readable name';
 
+-- --------------------------------------------------------
+
 --
 -- table structure to keep the original field name even if a table name has changed
--- TODO generate type sim
 --
 
 CREATE TABLE IF NOT EXISTS change_fields
 (
     change_field_id   BIGSERIAL PRIMARY KEY,
-    change_field_name varchar(255) NOT NULL,
-    table_id          bigint       NOT NULL,
-    description       text,
-    code_id           varchar(100) DEFAULT NULL
+    change_field_name varchar(255)     NOT NULL,
+    table_id          bigint           NOT NULL,
+    code_id           varchar(255) DEFAULT NULL,
+    description       text         DEFAULT NULL
 );
 
+COMMENT ON TABLE change_fields IS 'to keep the original field name even if a table name has changed';
+COMMENT ON COLUMN change_fields.change_field_id IS 'the internal unique primary index';
+COMMENT ON COLUMN change_fields.change_field_name IS 'the real name';
 COMMENT ON COLUMN change_fields.table_id IS 'because every field must only be unique within a table';
 COMMENT ON COLUMN change_fields.code_id IS 'to display the change with some linked information';
 
@@ -3116,13 +3120,15 @@ CREATE INDEX change_tables_change_table_name_idx ON change_tables (change_table_
 -- --------------------------------------------------------
 
 --
--- Indexes for table change_fields
--- TODO next
+-- indexes for table change_fields
 --
-CREATE INDEX change_field_table_idx ON change_fields (table_id);
+
+CREATE INDEX change_fields_change_field_name_idx ON change_fields (change_field_name);
+CREATE INDEX change_fields_table_idx ON change_fields (table_id);
 
 --
 -- Indexes for table changes
+-- TODO next
 --
 CREATE INDEX change_table_idx ON changes (change_field_id, row_id);
 CREATE INDEX change_action_idx ON changes (change_action_id);
@@ -3725,15 +3731,18 @@ ALTER TABLE users
     ADD CONSTRAINT users_view_fk FOREIGN KEY (view_id) REFERENCES views (view_id),
     ADD CONSTRAINT users_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
 
-
 --
 -- constraints for table change_fields
 --
+
 ALTER TABLE change_fields
-    ADD CONSTRAINT change_fields_fk_1 FOREIGN KEY (table_id) REFERENCES change_tables (change_table_id);
+    ADD CONSTRAINT change_field_name_uk UNIQUE (change_field_name),
+    ADD CONSTRAINT code_id_uk UNIQUE (code_id),
+    ADD CONSTRAINT change_fields_change_table_fk FOREIGN KEY (table_id) REFERENCES change_tables (change_table_id);
 
 --
 -- constraints for table changes
+-- TODO foreign
 --
 ALTER TABLE changes
     ADD CONSTRAINT changes_fk_1 FOREIGN KEY (change_action_id) REFERENCES change_actions (change_action_id),

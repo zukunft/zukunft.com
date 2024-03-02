@@ -41,6 +41,7 @@ use cfg\config;
 use cfg\library;
 use cfg\db\sql_db;
 use cfg\log\change_action;
+use cfg\log\change_field;
 use cfg\log\change_table;
 use html\log\user_log_display;
 use cfg\log\change_log_link;
@@ -76,6 +77,12 @@ class change_log_tests
         $tbl = new change_table('');
         $t->assert_sql_table_create($tbl);
         $t->assert_sql_index_create($tbl);
+
+        $t->subheader('Log field SQL setup statements');
+        $fld = new change_field('');
+        $t->assert_sql_table_create($fld);
+        $t->assert_sql_index_create($fld);
+        $t->assert_sql_foreign_key_create($fld);
 
         $t->subheader('SQL statement creation tests');
         $log = $t->dummy_change_log_named();
@@ -124,8 +131,8 @@ class change_log_tests
         $db_con->set_usr($usr->id());
         $log_lst = new change_log_list();
         // TODO activate Prio 2
-        //$this->assert_sql_list_by_obj_field($t, $db_con, $log_lst,            change_table_list::WORD, change_log_field::FLD_WORD_VIEW);
-        //$this->assert_sql_list_by_obj_field($t, $db_con, $log_lst,            change_table_list::TRIPLE, change_log_field::FLD_TRIPLE_VIEW);
+        //$this->assert_sql_list_by_obj_field($t, $db_con, $log_lst,            change_table_list::WORD, change_field_list::FLD_WORD_VIEW);
+        //$this->assert_sql_list_by_obj_field($t, $db_con, $log_lst,            change_table_list::TRIPLE, change_field_list::FLD_TRIPLE_VIEW);
 
 
         $t->subheader('API unit tests');

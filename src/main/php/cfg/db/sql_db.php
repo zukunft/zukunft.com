@@ -51,6 +51,7 @@ use cfg\job_time;
 use cfg\library;
 use cfg\log;
 use cfg\log\change_action;
+use cfg\log\change_field;
 use cfg\log\change_table;
 use cfg\log\system_log;
 use cfg\phrase_type;
@@ -194,6 +195,7 @@ class sql_db
         session::class,
         change_action::class,
         change_table::class,
+        change_field::class,
         protection_type::class,
         share_type::class,
         word::class,

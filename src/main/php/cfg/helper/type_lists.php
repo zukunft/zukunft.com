@@ -63,14 +63,15 @@ include_once MODEL_LOG_PATH . 'change_action.php';
 include_once MODEL_LOG_PATH . 'change_action_list.php';
 include_once MODEL_LOG_PATH . 'change_table.php';
 include_once MODEL_LOG_PATH . 'change_table_list.php';
-include_once MODEL_LOG_PATH . 'change_log_field.php';
+include_once MODEL_LOG_PATH . 'change_field.php';
+include_once MODEL_LOG_PATH . 'change_field_list.php';
 
 use api\system\type_lists as type_lists_api;
 use cfg\component\component_pos_type_list;
 use cfg\component\component_type_list;
 use cfg\db\sql_db;
 use cfg\log\change_action_list;
-use cfg\log\change_log_field;
+use cfg\log\change_field_list;
 use cfg\log\change_table_list;
 use controller\controller;
 
@@ -105,7 +106,7 @@ class type_lists
         global $job_types;
         global $change_action_list;
         global $change_table_list;
-        global $change_log_fields;
+        global $change_field_list;
 
         log_debug();
         $lst = new type_lists_api($db_con, $usr);
@@ -128,7 +129,7 @@ class type_lists
         $lst->add($job_types->api_obj(), controller::API_LIST_JOB_TYPES);
         $lst->add($change_action_list->api_obj(), controller::API_LIST_CHANGE_LOG_ACTIONS);
         $lst->add($change_table_list->api_obj(), controller::API_LIST_CHANGE_LOG_TABLES);
-        $lst->add($change_log_fields->api_obj(), controller::API_LIST_CHANGE_LOG_FIELDS);
+        $lst->add($change_field_list->api_obj(), controller::API_LIST_CHANGE_LOG_FIELDS);
         $lst->add($verbs->api_obj(), controller::API_LIST_VERBS);
         if ($system_views != null) {
             $lst->add($system_views->api_obj(), controller::API_LIST_SYSTEM_VIEWS);
@@ -164,7 +165,7 @@ class type_lists
         global $job_types;
         global $change_action_list;
         global $change_table_list;
-        global $change_log_fields;
+        global $change_field_list;
         global $verbs;
         global $system_views;
 
@@ -215,8 +216,8 @@ class type_lists
         $change_action_list->load($db_con);
         $change_table_list = new change_table_list();
         $change_table_list->load($db_con);
-        $change_log_fields = new change_log_field();
-        $change_log_fields->load($db_con);
+        $change_field_list = new change_field_list();
+        $change_field_list->load($db_con);
 
         // preload the little more complex objects
         $verbs = new verb_list();

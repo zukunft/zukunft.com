@@ -40,7 +40,7 @@ use api\word\triple as triple_api;
 use cfg\value\value;
 use cfg\value\value_dsp_old;
 use html\figure\figure as figure_dsp;
-use cfg\log\change_log_field;
+use cfg\log\change_field_list;
 use cfg\log\change;
 use cfg\log\change_table_list;
 use cfg\library;
@@ -286,7 +286,7 @@ class value_tests
         if ($add_val->is_id_set()) {
             $log = new change($t->usr1);
             $log->set_table(change_table_list::VALUE);
-            $log->set_field(change_log_field::FLD_NUMERIC_VALUE);
+            $log->set_field(change_field_list::FLD_NUMERIC_VALUE);
             $log->row_id = $add_val->id();
             $result = $log->dsp_last(true);
         }
@@ -328,7 +328,7 @@ class value_tests
         if ($add_val->is_id_set()) {
             $log = new change($t->usr1);
             $log->set_table(change_table_list::VALUE);
-            $log->set_field(change_log_field::FLD_NUMERIC_VALUE);
+            $log->set_field(change_field_list::FLD_NUMERIC_VALUE);
             $log->row_id = $add_val2->id();
             $result = $log->dsp_last(true);
         }
@@ -356,7 +356,7 @@ class value_tests
         if ($added_val->is_id_set()) {
             $log = new change($t->usr1);
             $log->set_table(change_table_list::VALUE);
-            $log->set_field(change_log_field::FLD_NUMERIC_VALUE);
+            $log->set_field(change_field_list::FLD_NUMERIC_VALUE);
             $log->row_id = $added_val->id();
             $result = $log->dsp_last(true);
         }
@@ -384,7 +384,7 @@ class value_tests
         if ($val_usr2->is_id_set()) {
             $log = new change($t->usr2);
             $log->set_table(change_table_list::VALUE_USR);
-            $log->set_field(change_log_field::FLD_NUMERIC_VALUE);
+            $log->set_field(change_field_list::FLD_NUMERIC_VALUE);
             $log->row_id = $val_usr2->id();
             $result = $log->dsp_last(true);
         }
@@ -419,7 +419,7 @@ class value_tests
         if ($val_usr2->is_id_set()) {
             $log = new change($t->usr2);
             $log->set_table(change_table_list::VALUE_USR);
-            $log->set_field(change_log_field::FLD_NUMERIC_VALUE);
+            $log->set_field(change_field_list::FLD_NUMERIC_VALUE);
             $log->row_id = $val_usr2->id();
             $result = $log->dsp_last(true);
         }

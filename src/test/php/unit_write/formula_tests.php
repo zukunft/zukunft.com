@@ -39,7 +39,7 @@ use cfg\formula_list;
 use cfg\formula_type;
 use cfg\word;
 use html\formula\formula as formula_dsp;
-use cfg\log\change_log_field;
+use cfg\log\change_field_list;
 use cfg\log\change;
 use cfg\log\change_table_list;
 use cfg\formula;
@@ -312,7 +312,7 @@ class formula_tests
         // ... check the correct logging
         $log = new change($t->usr1);
         $log->set_table(change_table_list::FORMULA);
-        $log->set_field(change_log_field::FLD_FORMULA_NAME);
+        $log->set_field(change_field_list::FLD_FORMULA_NAME);
         $log->row_id = $frm->id();
         $result = $log->dsp_last(true);
         $target = 'zukunft.com system test added System Test Formula';
@@ -347,7 +347,7 @@ class formula_tests
         // ... and if the formula renaming has been logged
         $log = new change($t->usr1);
         $log->set_table(change_table_list::FORMULA);
-        $log->set_field(change_log_field::FLD_FORMULA_NAME);
+        $log->set_field(change_field_list::FLD_FORMULA_NAME);
         $log->row_id = $frm_renamed->id();
         $result = $log->dsp_last(true);
         $target = 'zukunft.com system test changed System Test Formula to System Test Formula Renamed';
@@ -383,14 +383,14 @@ class formula_tests
         // ... and if the formula parameter adding have been logged
         $log = new change($t->usr1);
         $log->set_table(change_table_list::FORMULA);
-        $log->set_field(change_log_field::FLD_FORMULA_USR_TEXT);
+        $log->set_field(change_field_list::FLD_FORMULA_USR_TEXT);
         $log->row_id = $frm_reloaded->id();
         $result = $log->dsp_last(true);
         // use the next line if system config is non-standard
         $target = 'zukunft.com system test changed "percent" = ( "this" - "prior" ) / "prior" to = "this"';
         $target = 'zukunft.com system test changed "percent" = 1 - ( "this" / "prior" ) to = "this"';
         $t->display('formula->load resolved_text for "' . formula_api::TN_RENAMED . '" logged', $target, $result);
-        $log->set_field(change_log_field::FLD_FORMULA_REF_TEXT);
+        $log->set_field(change_field_list::FLD_FORMULA_REF_TEXT);
         $result = $log->dsp_last(true);
         // use the next line if system config is non-standard
         $target = 'zukunft.com system test changed {w' . $wrd_percent->id() . '}=( {f' . $frm_this->id() . '} - {f5} ) / {f5} to ={f3}';
@@ -400,13 +400,13 @@ class formula_tests
         $result = $log->dsp_last(true);
         $target = 'zukunft.com system test added System Test Formula Renamed description';
         $t->display('formula->load description for "' . formula_api::TN_RENAMED . '" logged', $target, $result);
-        $log->set_field(change_log_field::FLD_FORMULA_TYPE);
+        $log->set_field(change_field_list::FLD_FORMULA_TYPE);
         $result = $log->dsp_last(true);
         // to review what is correct
         $target = 'zukunft.com system test changed calc to this';
         $target = 'zukunft.com system test added this';
         $t->display('formula->load formula_type_id for "' . formula_api::TN_RENAMED . '" logged', $target, $result);
-        $log->set_field(change_log_field::FLD_FORMULA_ALL);
+        $log->set_field(change_field_list::FLD_FORMULA_ALL);
         $result = $log->dsp_last(true);
         $target = 'zukunft.com system test changed 0 to 1';
         $t->display('formula->load all_values_needed for "' . formula_api::TN_RENAMED . '" logged', $target, $result);

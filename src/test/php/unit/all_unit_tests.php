@@ -74,7 +74,8 @@ include_once MODEL_LOG_PATH . 'change_action.php';
 include_once MODEL_LOG_PATH . 'change_action_list.php';
 include_once MODEL_LOG_PATH . 'change_table.php';
 include_once MODEL_LOG_PATH . 'change_table_list.php';
-include_once MODEL_LOG_PATH . 'change_log_field.php';
+include_once MODEL_LOG_PATH . 'change_field.php';
+include_once MODEL_LOG_PATH . 'change_field_list.php';
 include_once MODEL_LOG_PATH . 'system_log.php';
 include_once MODEL_LOG_PATH . 'system_log_list.php';
 include_once API_SANDBOX_PATH . 'sandbox_value.php';
@@ -90,7 +91,7 @@ use cfg\formula_type_list;
 use cfg\language_form_list;
 use cfg\language_list;
 use cfg\log\change_action_list;
-use cfg\log\change_log_field;
+use cfg\log\change_field_list;
 use cfg\log\change_table_list;
 use cfg\phrase_types;
 use cfg\protection_type_list;
@@ -575,10 +576,10 @@ class all_unit_tests extends test_cleanup
      */
     function init_log_fields(): void
     {
-        global $change_log_fields;
+        global $change_field_list;
 
-        $change_log_fields = new change_log_field();
-        $change_log_fields->load_dummy();
+        $change_field_list = new change_field_list();
+        $change_field_list->load_dummy();
 
     }
 

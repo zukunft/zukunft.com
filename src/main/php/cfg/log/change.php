@@ -106,7 +106,7 @@ class change extends change_log
     function row_mapper(?array $db_row, string $id_fld = ''): bool
     {
         global $debug;
-        global $change_log_fields;
+        global $change_field_list;
         $result = parent::row_mapper($db_row, self::FLD_ID);
         if ($result) {
             $this->action_id = $db_row[self::FLD_ACTION];
@@ -118,7 +118,7 @@ class change extends change_log
             $this->new_value = $db_row[self::FLD_NEW_VALUE];
             $this->new_id = $db_row[self::FLD_NEW_ID];
 
-            $fld_tbl = $change_log_fields->get($this->field_id);
+            $fld_tbl = $change_field_list->get($this->field_id);
             $this->table_id = preg_replace("/[^0-9]/", '', $fld_tbl->name);
             // TODO check if not the complete user should be loaded
             $usr = new user();
@@ -192,7 +192,7 @@ class change extends change_log
         $sc->set_usr($this->user()->id());
         $sc->set_fields(self::FLD_NAMES);
         $sc->set_join_fields(array(user::FLD_NAME), sql_db::TBL_USER);
-        $sc->set_join_fields(array(change_log_field::FLD_TABLE), sql_db::TBL_CHANGE_FIELD);
+        $sc->set_join_fields(array(change_field_list::FLD_TABLE), sql_db::TBL_CHANGE_FIELD);
         $sc->set_order(self::FLD_CHANGE_TIME, sql::ORDER_DESC);
 
         return $qp;

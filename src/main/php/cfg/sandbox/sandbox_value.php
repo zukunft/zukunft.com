@@ -49,7 +49,7 @@ use cfg\group\group_id;
 use cfg\log\change;
 use cfg\log\change_action;
 use cfg\log\change_action_list;
-use cfg\log\change_log_field;
+use cfg\log\change_field_list;
 use cfg\log\change_log_link;
 use cfg\result\result;
 use cfg\value\value;
@@ -829,7 +829,7 @@ class sandbox_value extends sandbox_multi
         $log = new change($this->user());
         $log->action = change_action::ADD;
         $log->set_table($this->obj_type . sql_db::TABLE_EXTENSION);
-        $log->set_field(change_log_field::FLD_NUMERIC_VALUE);
+        $log->set_field(change_field_list::FLD_NUMERIC_VALUE);
         $log->old_value = '';
         $log->new_value = $this->number;
 
@@ -861,7 +861,7 @@ class sandbox_value extends sandbox_multi
         $lib = new library();
         $class = $lib->class_to_name($this::class);
         $log->set_table($class . sql_db::TABLE_EXTENSION);
-        $log->set_field(change_log_field::FLD_NUMERIC_VALUE);
+        $log->set_field(change_field_list::FLD_NUMERIC_VALUE);
         $log->old_value = $this->number;
         $log->new_value = '';
 

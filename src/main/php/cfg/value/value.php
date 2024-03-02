@@ -91,7 +91,7 @@ use cfg\log;
 use cfg\log\change;
 use cfg\log\change_action;
 use cfg\log\change_action_list;
-use cfg\log\change_log_field;
+use cfg\log\change_field_list;
 use cfg\log\change_table_list;
 use cfg\phr_ids;
 use cfg\phrase;
@@ -1979,7 +1979,7 @@ class value extends sandbox_value
             $log->new_id = $this->grp()->id();
             $log->std_id = $std_rec->grp()->id();
             $log->row_id = $this->id();
-            $log->set_field(change_log_field::FLD_VALUE_GROUP);
+            $log->set_field(change_field_list::FLD_VALUE_GROUP);
             if ($log->add()) {
                 $ext = $this->grp->table_extension();
                 $db_con->set_class(self::class, false, $ext);

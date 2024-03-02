@@ -2,7 +2,7 @@
 
 /*
 
-    model/log/change_log_field.php - the const for the change log field table
+    model/log/change_field_list.php - the const for the change log field table
     ------------------------------
 
     This file is part of zukunft.com - calc with words
@@ -38,9 +38,10 @@ use cfg\type_object;
 include_once DB_PATH . 'sql_db.php';
 include_once MODEL_LOG_PATH . 'change_table.php';
 include_once MODEL_LOG_PATH . 'change_table_list.php';
-include_once MODEL_LOG_PATH . 'change_log_field.php';
+include_once MODEL_LOG_PATH . 'change_field.php';
+include_once MODEL_LOG_PATH . 'change_field_list.php';
 
-class change_log_field extends type_list
+class change_field_list extends type_list
 {
 
     const TN_WORD_VIEW = "values";
@@ -97,11 +98,11 @@ class change_log_field extends type_list
 
         parent::load_dummy();
         $table_id = $change_table_list->id(change_table_list::WORD);
-        $table_field_name = $table_id . change_log_field::FLD_WORD_NAME;
+        $table_field_name = $table_id . change_field_list::FLD_WORD_NAME;
         $type = new type_object(
             $table_field_name,
-            change_log_field::FLD_WORD_NAME,
-            change_log_field::FLD_WORD_NAME_DSP,
+            change_field_list::FLD_WORD_NAME,
+            change_field_list::FLD_WORD_NAME_DSP,
             9);
         $this->add($type);
     }
@@ -113,7 +114,7 @@ class change_log_field extends type_list
     {
         global $change_table_list;
         $table_id = $change_table_list->id(change_table_list::WORD);
-        $table_field_name = $table_id . change_log_field::FLD_WORD_NAME;
+        $table_field_name = $table_id . change_field_list::FLD_WORD_NAME;
         return parent::id($table_field_name);
     }
 

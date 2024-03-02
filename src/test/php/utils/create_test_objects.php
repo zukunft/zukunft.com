@@ -68,7 +68,7 @@ use cfg\job_list;
 use cfg\job_type_list;
 use cfg\log\change_action;
 use cfg\log\change_action_list;
-use cfg\log\change_log_field;
+use cfg\log\change_field_list;
 use cfg\log\change_log_list;
 use cfg\log\change;
 use cfg\log\change_table_list;
@@ -181,7 +181,7 @@ class create_test_objects extends test_base
         $job_types = new job_type_list();
         $change_action_list = new change_action_list();
         $change_table_list = new change_table_list();
-        $change_log_fields = new change_log_field();
+        $change_field_list = new change_field_list();
         $verbs = new verb_list();
 
         $user_profiles->load_dummy();
@@ -203,7 +203,7 @@ class create_test_objects extends test_base
         $job_types->load_dummy();
         $change_action_list->load_dummy();
         $change_table_list->load_dummy();
-        $change_log_fields->load_dummy();
+        $change_field_list->load_dummy();
         $verbs->load_dummy();
 
         // read the corresponding names and description from the internal config csv files
@@ -229,7 +229,7 @@ class create_test_objects extends test_base
         $lst->add($job_types->api_obj(), controller::API_LIST_JOB_TYPES);
         $lst->add($change_action_list->api_obj(), controller::API_LIST_CHANGE_LOG_ACTIONS);
         $lst->add($change_table_list->api_obj(), controller::API_LIST_CHANGE_LOG_TABLES);
-        $lst->add($change_log_fields->api_obj(), controller::API_LIST_CHANGE_LOG_FIELDS);
+        $lst->add($change_field_list->api_obj(), controller::API_LIST_CHANGE_LOG_FIELDS);
         $lst->add($verbs->api_obj(), controller::API_LIST_VERBS);
 
         $system_views = $this->dummy_view_list();
@@ -1628,7 +1628,7 @@ class create_test_objects extends test_base
         $chg->set_time_str(self::DUMMY_DATETIME);
         $chg->set_action(change_action::ADD);
         $chg->set_table(change_table_list::WORD);
-        $chg->set_field(change_log_field::FLD_WORD_NAME);
+        $chg->set_field(change_field_list::FLD_WORD_NAME);
         $chg->new_value = word_api::TN_READ;
         $chg->row_id = 1;
         return $chg;

@@ -40,7 +40,8 @@
 namespace unit;
 
 include_once MODEL_LOG_PATH . 'change_log.php';
-include_once MODEL_LOG_PATH . 'change_log_field.php';
+include_once MODEL_LOG_PATH . 'change_field.php';
+include_once MODEL_LOG_PATH . 'change_field_list.php';
 include_once MODEL_LOG_PATH . 'change_log_list.php';
 include_once MODEL_SYSTEM_PATH . 'job.php';
 include_once EXPORT_PATH . 'export.php';
@@ -74,7 +75,7 @@ use cfg\language;
 use cfg\language_form;
 use cfg\library;
 use cfg\log\change_log;
-use cfg\log\change_log_field;
+use cfg\log\change_field_list;
 use cfg\log\change_log_list;
 use cfg\log\system_log;
 use cfg\log\system_log_list;
@@ -162,7 +163,7 @@ class api_tests
         $t->assert_api_chg_list(
             change_log_list::class,
             controller::URL_VAR_WORD_ID, 1,
-            controller::URL_VAR_WORD_FLD, change_log_field::FLD_WORD_NAME);
+            controller::URL_VAR_WORD_FLD, change_field_list::FLD_WORD_NAME);
         $t->assert_api_get_list(
             system_log_list::class,
             [1, 2], 'ids',

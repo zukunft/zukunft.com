@@ -196,8 +196,8 @@ class db_cl
 
     function log_field_id(string $code_id): int
     {
-        global $change_log_fields;
-        return $change_log_fields->id($code_id);
+        global $change_field_list;
+        return $change_field_list->id($code_id);
     }
 
     /**
@@ -304,8 +304,8 @@ class db_cl
 
     function log_field(int $id)
     {
-        global $change_log_fields;
-        return $change_log_fields->get($id);
+        global $change_field_list;
+        return $change_field_list->get($id);
     }
 
     /**
@@ -442,8 +442,8 @@ class db_cl
 
     function log_field_name(int $id): string
     {
-        global $change_log_fields;
-        return $change_log_fields->name($id);
+        global $change_field_list;
+        return $change_field_list->name($id);
     }
 
 }
