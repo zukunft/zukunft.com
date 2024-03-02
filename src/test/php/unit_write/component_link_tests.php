@@ -34,7 +34,7 @@ namespace unit_write;
 
 use api\component\component as component_api;
 use api\view\view as view_api;
-use cfg\log\change_log_link;
+use cfg\log\change_link;
 use cfg\log\change_table_list;
 use cfg\component\component;
 use cfg\component_link;
@@ -60,7 +60,7 @@ class component_link_tests
         $t->display('view component_link->link "' . $dsp->name() . '" to "' . $cmp->name() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // ... check the correct logging
-        $log = new change_log_link($t->usr1);
+        $log = new change_link($t->usr1);
         $log->set_table(change_table_list::VIEW_LINK);
         $log->new_from_id = $dsp->id();
         $log->new_to_id = $cmp->id();
@@ -93,7 +93,7 @@ class component_link_tests
         $t->display('view component_link->unlink "' . $dsp->name() . '" from "' . $cmp->name() . '" by user "' . $t->usr2->name . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // ... check if the removal of the link for the second user has been logged
-        $log = new change_log_link($t->usr2);
+        $log = new change_link($t->usr2);
         $log->set_table(change_table_list::VIEW_LINK);
         $log->old_from_id = $dsp->id();
         $log->old_to_id = $cmp->id();
@@ -127,7 +127,7 @@ class component_link_tests
         $t->display('view component_link->unlink "' . $dsp->name() . '" from "' . $cmp->name() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check the correct logging
-        $log = new change_log_link($t->usr1);
+        $log = new change_link($t->usr1);
         $log->set_table(change_table_list::VIEW_LINK);
         $log->old_from_id = $dsp->id();
         $log->old_to_id = $cmp->id();

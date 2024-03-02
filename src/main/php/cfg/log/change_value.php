@@ -44,8 +44,8 @@ class change_value extends change_log
 {
 
     /*
-      * database link
-      */
+     * database link
+     */
 
     // user log database and JSON object field names for named user sandbox objects
     const TBL_COMMENT = 'to log all changes done by any user on all kind of values (table, prime, big and standard';
@@ -71,6 +71,7 @@ class change_value extends change_log
         [self::FLD_OLD_VALUE, sql_field_type::NUMERIC_FLOAT, sql_field_default::NULL, '', '', ''],
         [self::FLD_NEW_VALUE, sql_field_type::NUMERIC_FLOAT, sql_field_default::NULL, '', '', ''],
     );
+
 
     /*
      * object vars

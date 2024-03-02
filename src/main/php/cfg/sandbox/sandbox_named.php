@@ -56,7 +56,7 @@ use cfg\db\sql_par_type;
 use cfg\log\change;
 use cfg\log\change_action;
 use cfg\log\change_action_list;
-use cfg\log\change_log_link;
+use cfg\log\change_link;
 use Exception;
 use cfg\export\sandbox_exp;
 
@@ -409,7 +409,7 @@ class sandbox_named extends sandbox
 
     /**
      * set the log entry parameter to delete a object
-     * @returns change_log_link with the object presets e.g. th object name
+     * @returns change_link with the object presets e.g. th object name
      */
     function log_del(): change
     {

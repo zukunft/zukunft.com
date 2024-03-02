@@ -34,7 +34,7 @@ namespace unit;
 
 include_once WEB_LOG_PATH . 'user_log_display.php';
 include_once MODEL_LOG_PATH . 'change.php';
-include_once MODEL_LOG_PATH . 'change_log_link.php';
+include_once MODEL_LOG_PATH . 'change_link.php';
 
 use api\word\triple as triple_api;
 use cfg\config;
@@ -44,7 +44,7 @@ use cfg\log\change_action;
 use cfg\log\change_field;
 use cfg\log\change_table;
 use html\log\user_log_display;
-use cfg\log\change_log_link;
+use cfg\log\change_link;
 use cfg\log\change_log_list;
 use cfg\log\change;
 use cfg\triple;
@@ -109,12 +109,18 @@ class change_log_tests
         $t->assert_sql_index_create($log_val_big);
         $t->assert_sql_foreign_key_create($log_val_big);
 
+        $t->subheader('SQL statement creation tests for logging link changes');
+        $log_lnk = $t->dummy_change_log_link();
+        $t->assert_sql_table_create($log_lnk);
+        $t->assert_sql_index_create($log_lnk);
+        $t->assert_sql_foreign_key_create($log_lnk);
+
 
         $t->subheader('SQL statement tests');
         $log = new change($usr);
         $t->assert_sql_by_user($db_con, $log);
 
-        $log = new change_log_link($usr);
+        $log = new change_link($usr);
         $t->assert_sql_by_user($db_con, $log);
 
         // sql to load the word by id
@@ -135,7 +141,7 @@ class change_log_tests
         $this->assert_sql_named_by_field_row($t, $db_con, $log);
 
         // sql to load a log entry by field and row id
-        $log = new change_log_link($usr);
+        $log = new change_link($usr);
         $this->assert_sql_link_by_table($t, $db_con, $log);
 
         $t->subheader('SQL list statement tests');
@@ -189,9 +195,9 @@ class change_log_tests
      *
      * @param test_cleanup $t the test environment
      * @param sql_db $db_con does not need to be connected to a real database
-     * @param change_log_link $log the user sandbox object e.g. a word
+     * @param change_link $log the user sandbox object e.g. a word
      */
-    private function assert_sql_link_by_table(test_cleanup $t, sql_db $db_con, change_log_link $log): void
+    private function assert_sql_link_by_table(test_cleanup $t, sql_db $db_con, change_link $log): void
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;

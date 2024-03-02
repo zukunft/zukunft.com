@@ -2,8 +2,8 @@
 
 /*
 
-    model/log/user_log_named.php - user_log object for logging changes in named objects such as words and formulas
-    ----------------------------
+    cfg/log/change.php - for logging changes in named objects such as words and formulas
+    ------------------
 
     This file is part of zukunft.com - calc with words
 

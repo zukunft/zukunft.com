@@ -50,7 +50,7 @@ use cfg\group\group_list;
 use cfg\log\change;
 use cfg\log\change_action;
 use cfg\log\change_action_list;
-use cfg\log\change_log_link;
+use cfg\log\change_link;
 use cfg\log\change_table_list;
 use cfg\value\value_list;
 use html\html_base;
@@ -1681,10 +1681,10 @@ class triple extends sandbox_link_typed implements JsonSerializable
      * set the log entry parameter for a new value
      * e.g. that the user can see "added ABB is a Company"
      */
-    function log_link_add(): change_log_link
+    function log_link_add(): change_link
     {
         log_debug('triple->log_link_add for ' . $this->dsp_id() . ' by user "' . $this->user()->name . '"');
-        $log = new change_log_link($this->user());
+        $log = new change_link($this->user());
         $log->action = change_action::ADD;
         $log->set_table(change_table_list::TRIPLE);
         $log->new_from = $this->fob;
@@ -1699,9 +1699,9 @@ class triple extends sandbox_link_typed implements JsonSerializable
     /**
      * set the main log entry parameters for updating the triple itself
      */
-    function log_upd(): change_log_link
+    function log_upd(): change_link
     {
-        $log = new change_log_link($this->user());
+        $log = new change_link($this->user());
         $log->action = change_action::UPDATE;
         if ($this->can_change()) {
             $log->set_table(change_table_list::TRIPLE);
@@ -1716,10 +1716,10 @@ class triple extends sandbox_link_typed implements JsonSerializable
      * set the log entry parameter to delete a triple
      * e.g. that the user can see "ABB is a Company not anymore"
      */
-    function log_del_link(): change_log_link
+    function log_del_link(): change_link
     {
         log_debug('triple->log_link_del for ' . $this->dsp_id() . ' by user "' . $this->user()->name . '"');
-        $log = new change_log_link($this->user());
+        $log = new change_link($this->user());
         $log->action = change_action::DELETE;
         $log->set_table(change_table_list::TRIPLE);
         $log->old_from = $this->fob;

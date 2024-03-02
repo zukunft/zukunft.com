@@ -204,6 +204,7 @@ class sql_db
         change_prime_value::class,
         change_standard_value::class,
         change_big_value::class,
+        change_link::class,
         protection_type::class,
         share_type::class,
         word::class,

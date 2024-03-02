@@ -368,8 +368,8 @@ use html\phrase\phrase_group as phrase_group_dsp;
             phrase_group - a sorted list of phrases
             formula_element - the parameters / parts of a formula expression for fast finding of dependencies (not the db normal form to speed up)
             change_log - to log a change done by a user
-                change_log_named - log of user changes in named objects e.g. word, triple, ...
-                change_log_link - log of the link changes by a user
+                change_named - log of user changes in named objects e.g. word, triple, ...
+                change_link - log of the link changes by a user
             job - to handle processes that takes longer than the user is expected to wait
             sandbox - a user sandbox object
                 sandbox_named - user sandbox objects that have a given name

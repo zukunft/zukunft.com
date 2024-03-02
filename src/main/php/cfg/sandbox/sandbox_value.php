@@ -50,7 +50,7 @@ use cfg\log\change;
 use cfg\log\change_action;
 use cfg\log\change_action_list;
 use cfg\log\change_field_list;
-use cfg\log\change_log_link;
+use cfg\log\change_link;
 use cfg\result\result;
 use cfg\value\value;
 use DateTime;
@@ -850,7 +850,7 @@ class sandbox_value extends sandbox_multi
 
     /**
      * set the log entry parameter to delete a object
-     * @returns change_log_link with the object presets e.g. th object name
+     * @returns change_link with the object presets e.g. th object name
      */
     function log_del(): change
     {
@@ -939,12 +939,12 @@ class sandbox_value extends sandbox_multi
      * but the technical log needs to remember in which actual table the change has been saved
      *
      * @param sql_db $db_con the active database connection that should be used
-     * @param change|change_log_link $log the log object to track the change and allow a rollback
+     * @param change|change_link $log the log object to track the change and allow a rollback
      * @return string an empty string if everything is fine or the message that should be shown to the user
      */
     function save_field_user(
         sql_db                 $db_con,
-        change|change_log_link $log
+        change|change_link $log
     ): string
     {
         $result = '';

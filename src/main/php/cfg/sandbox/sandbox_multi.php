@@ -59,7 +59,7 @@ use cfg\log\change;
 use cfg\log\change_action;
 use cfg\log\change_log;
 use cfg\log\change_action_list;
-use cfg\log\change_log_link;
+use cfg\log\change_link;
 use cfg\value\value;
 use Exception;
 
@@ -1281,10 +1281,10 @@ class sandbox_multi extends db_object_multi_user
     /**
      * set the log entry parameter for a new link object
      */
-    function log_link_add(): change_log_link
+    function log_link_add(): change_link
     {
         log_err('The dummy parent method get_similar has been called, which should never happen');
-        return new change_log_link($this->user());
+        return new change_link($this->user());
     }
 
     /**
@@ -1320,10 +1320,10 @@ class sandbox_multi extends db_object_multi_user
     /**
      * create a log object for an update of link
      */
-    function log_upd_link(): change_log_link
+    function log_upd_link(): change_link
     {
         log_debug($this->dsp_id());
-        $log = new change_log_link($this->user());
+        $log = new change_link($this->user());
         return $this->log_upd_common($log);
     }
 
@@ -1344,12 +1344,12 @@ class sandbox_multi extends db_object_multi_user
 
     /**
      * dummy function definition that will be overwritten by the child object
-     * @return change_log_link
+     * @return change_link
      */
-    function log_del_link(): change_log_link
+    function log_del_link(): change_link
     {
         log_err('The dummy parent method get_similar has been called, which should never happen');
-        return new change_log_link($this->user());
+        return new change_link($this->user());
     }
 
     /**
@@ -1390,10 +1390,10 @@ class sandbox_multi extends db_object_multi_user
      * actually update a field in the main database record or the user sandbox
      * the usr id is taken into account in sql_db->update (maybe move outside)
      * @param sql_db $db_con the active database connection that should be used
-     * @param change|change_log_link $log the log object to track the change and allow a rollback
+     * @param change|change_link $log the log object to track the change and allow a rollback
      * @return string an empty string if everything is fine or the message that should be shown to the user
      */
-    function save_field_user(sql_db $db_con, change|change_log_link $log): string
+    function save_field_user(sql_db $db_con, change|change_link $log): string
     {
         $result = '';
 
@@ -1521,10 +1521,10 @@ class sandbox_multi extends db_object_multi_user
      * without user the user sandbox
      * the usr id is taken into account in sql_db->update (maybe move outside)
      * @param sql_db $db_con the active database connection that should be used
-     * @param change|change_log_link $log the log object to track the change and allow a rollback
+     * @param change|change_link $log the log object to track the change and allow a rollback
      * @return string an empty string if everything is fine or the message that should be shown to the user
      */
-    function save_field(sql_db $db_con, change|change_log_link $log): string
+    function save_field(sql_db $db_con, change|change_link $log): string
     {
         $result = '';
 

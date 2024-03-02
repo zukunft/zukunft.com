@@ -515,52 +515,42 @@ COMMENT ON COLUMN change_big_values.change_time IS 'time when the user has confi
 COMMENT ON COLUMN change_big_values.user_id IS 'reference to the user who has done the change';
 COMMENT ON COLUMN change_big_values.change_action_id IS 'the curl action';
 
+-- --------------------------------------------------------
+
 --
 -- table structure to log the link changes done by the users
--- TODO generate
 --
 
 CREATE TABLE IF NOT EXISTS change_links
 (
-    change_link_id   BIGSERIAL PRIMARY KEY,
-    change_time      timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    user_id          bigint    NOT NULL,
-    change_action_id bigint    NOT NULL,
-    change_table_id  bigint    NOT NULL,
-    old_from_id      bigint             DEFAULT NULL,
-    old_link_id      bigint             DEFAULT NULL,
-    old_to_id        bigint             DEFAULT NULL,
-    old_text_from    text,
-    old_text_link    text,
-    old_text_to      text,
-    new_from_id      bigint             DEFAULT NULL,
-    new_link_id      bigint             DEFAULT NULL,
-    new_to_id        bigint             DEFAULT NULL,
-    new_text_from    text,
-    new_text_link    text,
-    new_text_to      text,
-    row_id           bigint             DEFAULT NULL
+    change_id BIGSERIAL PRIMARY KEY,
+    change_time      timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    user_id          bigint     NOT NULL,
+    change_action_id smallint   NOT NULL,
+    row_id           bigint DEFAULT NULL,
+    change_table_id  bigint     NOT NULL,
+    old_from_id      bigint DEFAULT NULL,
+    old_link_id      bigint DEFAULT NULL,
+    old_to_id        bigint DEFAULT NULL,
+    old_text_from    text   DEFAULT NULL,
+    old_text_link    text   DEFAULT NULL,
+    old_text_to      text   DEFAULT NULL,
+    new_from_id      bigint DEFAULT NULL,
+    new_link_id      bigint DEFAULT NULL,
+    new_to_id        bigint DEFAULT NULL,
+    new_text_from    text   DEFAULT NULL,
+    new_text_link    text   DEFAULT NULL,
+    new_text_to      text   DEFAULT NULL
 );
 
+COMMENT ON TABLE change_links IS 'to log the link changes done by the users';
+COMMENT ON COLUMN change_links.change_id IS 'the prime key to identify the change change_link';
+COMMENT ON COLUMN change_links.change_time IS 'time when the user has confirmed the change';
+COMMENT ON COLUMN change_links.user_id IS 'reference to the user who has done the change';
+COMMENT ON COLUMN change_links.change_action_id IS 'the curl action';
+COMMENT ON COLUMN change_links.row_id IS 'the prime id in the table with the change';
 COMMENT ON COLUMN change_links.new_to_id IS 'either internal row id or the ref type id of the external system e.g. 2 for wikidata';
 COMMENT ON COLUMN change_links.new_text_to IS 'the fixed text to display to the user or the external reference id e.g. Q1 (for universe) in case of wikidata';
-
--- --------------------------------------------------------
-
---
--- table structure to add user comments related to any database entry
--- TODO deprecate?
---
-
-CREATE TABLE IF NOT EXISTS comments
-(
-    comment_id BIGSERIAL PRIMARY KEY,
-    table_id   bigint NOT NULL,
-    row_id     bigint NOT NULL,
-    comment    text   NOT NULL
-);
-
-COMMENT ON TABLE comments IS 'separate table because it is expected that only a few record';
 
 -- --------------------------------------------------------
 
@@ -2694,6 +2684,8 @@ CREATE TABLE IF NOT EXISTS user_view_term_links
 --
 -- table structure for future use
 --
+-- TODO generate check remaining
+-- TODO generate test create all
 
 -- --------------------------------------------------------
 
@@ -3180,13 +3172,15 @@ CREATE INDEX change_big_values_change_idx ON change_big_values (change_id);
 CREATE INDEX change_big_values_change_time_idx ON change_big_values (change_time);
 CREATE INDEX change_big_values_user_idx ON change_big_values (user_id);
 
+-- --------------------------------------------------------
+
 --
--- Indexes for table change_links
--- TODO next
+-- indexes for table change_links
 --
-CREATE INDEX change_link_user_idx ON change_links (user_id);
-CREATE INDEX change_link_table_idx ON change_links (change_table_id);
-CREATE INDEX change_link_action_idx ON change_links (change_action_id);
+
+CREATE INDEX change_links_change_idx ON change_links (change_id);
+CREATE INDEX change_links_change_time_idx ON change_links (change_time);
+CREATE INDEX change_links_user_idx ON change_links (user_id);
 
 -- --------------------------------------------------------
 
@@ -3371,6 +3365,7 @@ CREATE INDEX source_value_user_idx ON source_values (user_id);
 
 --
 -- Indexes for table refs
+-- TODO next
 --
 CREATE UNIQUE INDEX ref_phrase_type_idx ON refs (phrase_id, ref_type_id);
 CREATE INDEX ref_type_idx ON refs (ref_type_id);
@@ -3832,20 +3827,16 @@ ALTER TABLE change_big_values
     ADD CONSTRAINT change_big_values_change_action_fk FOREIGN KEY (change_action_id) REFERENCES change_actions (change_action_id),
     ADD CONSTRAINT change_big_values_change_field_fk FOREIGN KEY (change_field_id) REFERENCES change_fields (change_field_id);
 
---
--- constraints for table change_links
--- TODO foreign
---
-ALTER TABLE change_links
-    ADD CONSTRAINT change_links_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE NO ACTION,
-    ADD CONSTRAINT change_links_fk_2 FOREIGN KEY (change_table_id) REFERENCES change_tables (change_table_id),
-    ADD CONSTRAINT change_links_fk_3 FOREIGN KEY (change_action_id) REFERENCES change_actions (change_action_id);
+-- --------------------------------------------------------
 
 --
--- constraints for table change_fields
+-- constraints for table change_links
 --
-ALTER TABLE language_forms
-    ADD CONSTRAINT language_forms_fk_1 FOREIGN KEY (language_id) REFERENCES languages (language_id);
+
+ALTER TABLE change_links
+    ADD CONSTRAINT change_links_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT change_links_change_action_fk FOREIGN KEY (change_action_id) REFERENCES change_actions (change_action_id),
+    ADD CONSTRAINT change_links_change_table_fk FOREIGN KEY (change_table_id) REFERENCES change_tables (change_table_id);
 
 -- --------------------------------------------------------
 
@@ -3956,6 +3947,7 @@ ALTER TABLE user_sources
 
 --
 -- constraints for table refs
+-- TODO foreign
 --
 ALTER TABLE refs
     ADD CONSTRAINT refs_fk_1 FOREIGN KEY (ref_type_id) REFERENCES ref_types (ref_type_id);

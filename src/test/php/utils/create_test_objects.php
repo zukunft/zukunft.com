@@ -70,6 +70,7 @@ use cfg\log\change_action;
 use cfg\log\change_action_list;
 use cfg\log\change_big_value;
 use cfg\log\change_field_list;
+use cfg\log\change_link;
 use cfg\log\change_log_list;
 use cfg\log\change;
 use cfg\log\change_prime_value;
@@ -1684,6 +1685,24 @@ class create_test_objects extends test_base
         $chg->set_table(change_table_list::WORD);
         $chg->set_field(change_field_list::FLD_WORD_NAME);
         $chg->new_value = value_api::TV_READ_SHORTEST;
+        $chg->row_id = 1;
+        return $chg;
+    }
+
+    /**
+     * @return change_link a change log entry of a link change
+     */
+    function dummy_change_log_link(): change_link
+    {
+        global $usr_sys;
+
+        $chg = new change_link($usr_sys);
+        $chg->set_time_str(self::DUMMY_DATETIME);
+        $chg->set_action(change_action::ADD);
+        $chg->set_table(change_table_list::WORD);
+        $chg->set_field(change_field_list::FLD_WORD_NAME);
+        $chg->new_text_from = value_api::TV_READ_SHORTEST;
+        $chg->new_text_to = value_api::TV_READ_SHORTEST;
         $chg->row_id = 1;
         return $chg;
     }

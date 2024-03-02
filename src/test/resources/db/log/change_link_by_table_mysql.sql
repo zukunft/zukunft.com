@@ -1,5 +1,5 @@
-PREPARE change_log_link_by_user_last (bigint) AS
-    SELECT s.change_link_id,
+PREPARE change_link_by_table FROM
+   'SELECT s.change_link_id,
            s.user_id,
            s.change_table_id,
            s.change_time,
@@ -16,7 +16,7 @@ PREPARE change_log_link_by_user_last (bigint) AS
            s.new_text_to,
            s.new_to_id,
            l.user_name
-      FROM change_links s
- LEFT JOIN users l ON s.user_id = l.user_id
-     WHERE s.user_id = $1
-  ORDER BY s.change_link_id DESC;
+    FROM change_links s
+             LEFT JOIN users l ON s.user_id = l.user_id
+    WHERE s.change_table_id = ?
+    ORDER BY s.change_link_id DESC';

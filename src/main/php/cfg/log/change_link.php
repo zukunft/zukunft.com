@@ -2,10 +2,8 @@
 
 /*
 
-    model/log/change_log_link.php - object to save updates of references (links) by the user in the database in a format, so that it can fast be displayed to the user
-    -----------------------------
-
-    TODO    rename to change_link
+    cfg/log/change_link.php - object to save updates of references (links) by the user in the database in a format, so that it can fast be displayed to the user
+    -----------------------
 
     A requirement for the expected behaviour of this setup is the strict adherence of these rules in all classes:
 
@@ -49,6 +47,8 @@
 namespace cfg\log;
 
 use cfg\db\sql;
+use cfg\db\sql_field_default;
+use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\source;
 use cfg\db\sql_db;
@@ -61,10 +61,15 @@ include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';
 include_once MODEL_USER_PATH . 'user.php';
 
-class change_log_link extends change_log
+class change_link extends change_log
 {
 
+    /*
+     * database link
+     */
+
     // user log database and JSON object field names for link user sandbox objects
+    const TBL_COMMENT = 'to log the link changes done by the users';
     const FLD_ID = 'change_link_id';
     const FLD_TABLE_ID = 'change_table_id';
     const FLD_OLD_FROM_TEXT = 'old_text_from';
@@ -77,7 +82,9 @@ class change_log_link extends change_log
     const FLD_NEW_FROM_ID = 'new_from_id';
     const FLD_NEW_LINK_TEXT = 'new_text_link';
     const FLD_NEW_LINK_ID = 'new_link_id';
+    const FLD_NEW_TO_TEXT_COM = 'the fixed text to display to the user or the external reference id e.g. Q1 (for universe) in case of wikidata';
     const FLD_NEW_TO_TEXT = 'new_text_to';
+    const FLD_NEW_TO_ID_COM = 'either internal row id or the ref type id of the external system e.g. 2 for wikidata';
     const FLD_NEW_TO_ID = 'new_to_id';
 
     // all database field names
@@ -98,6 +105,24 @@ class change_log_link extends change_log
         self::FLD_NEW_TO_TEXT,
         self::FLD_NEW_TO_ID
     );
+
+    // field list to log the actual change of the value with a standard group id
+    const FLD_LST_CHANGE = array(
+        [self::FLD_TABLE_ID, sql_field_type::INT, sql_field_default::NOT_NULL, '', change_table::class, ''],
+        [self::FLD_OLD_FROM_ID, sql_field_type::INT, sql_field_default::NULL, '', '', ''],
+        [self::FLD_OLD_LINK_ID, sql_field_type::INT, sql_field_default::NULL, '', '', ''],
+        [self::FLD_OLD_TO_ID, sql_field_type::INT, sql_field_default::NULL, '', '', ''],
+        [self::FLD_OLD_FROM_TEXT, sql_field_type::TEXT, sql_field_default::NULL, '', '', ''],
+        [self::FLD_OLD_LINK_TEXT, sql_field_type::TEXT, sql_field_default::NULL, '', '', ''],
+        [self::FLD_OLD_TO_TEXT, sql_field_type::TEXT, sql_field_default::NULL, '', '', ''],
+        [self::FLD_NEW_FROM_ID, sql_field_type::INT, sql_field_default::NULL, '', '', ''],
+        [self::FLD_NEW_LINK_ID, sql_field_type::INT, sql_field_default::NULL, '', '', ''],
+        [self::FLD_NEW_TO_ID, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_NEW_TO_ID_COM],
+        [self::FLD_NEW_FROM_TEXT, sql_field_type::TEXT, sql_field_default::NULL, '', '', ''],
+        [self::FLD_NEW_LINK_TEXT, sql_field_type::TEXT, sql_field_default::NULL, '', '', ''],
+        [self::FLD_NEW_TO_TEXT, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_NEW_TO_TEXT_COM],
+    );
+
 
     // object set by the calling function
     public ?object $old_from = null;       // the from reference before the user change; should be the object, but is sometimes still the id

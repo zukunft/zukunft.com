@@ -66,7 +66,7 @@ use cfg\export\sandbox_exp;
 use cfg\export\ref_exp;
 use cfg\log\change_action;
 use cfg\log\change_action_list;
-use cfg\log\change_log_link;
+use cfg\log\change_link;
 use cfg\log\change_table_list;
 
 class ref extends sandbox_link_with_type
@@ -627,7 +627,7 @@ class ref extends sandbox_link_with_type
     /**
      * set the log entry parameter for a new reference
      */
-    function log_link_add(): change_log_link
+    function log_link_add(): change_link
     {
         log_debug('ref->log_add ' . $this->dsp_id());
 
@@ -639,7 +639,7 @@ class ref extends sandbox_link_with_type
             log_err('The reference type object must be set to log adding an external reference.', 'ref->log_add');
         }
 
-        $log = new change_log_link($this->user());
+        $log = new change_link($this->user());
         $log->action = change_action::ADD;
         $log->set_table(change_table_list::REF);
         // TODO review in log_link
@@ -656,10 +656,10 @@ class ref extends sandbox_link_with_type
     /**
      * set the main log entry parameters for updating one reference field
      */
-    function log_link_upd($db_rec): change_log_link
+    function log_link_upd($db_rec): change_link
     {
         log_debug('ref->log_upd ' . $this->dsp_id());
-        $log = new change_log_link($this->user());
+        $log = new change_link($this->user());
         $log->action = change_action::UPDATE;
         $log->set_table(change_table_list::REF);
         $log->old_from = $db_rec->phr;
@@ -677,7 +677,7 @@ class ref extends sandbox_link_with_type
     /**
      * set the log entry parameter to delete a reference
      */
-    function log_link_del(): change_log_link
+    function log_link_del(): change_link
     {
         log_debug('ref->log_del ' . $this->dsp_id());
 
@@ -689,7 +689,7 @@ class ref extends sandbox_link_with_type
             log_err('The reference type object must be set to log deletion of an external reference.', 'ref->log_del');
         }
 
-        $log = new change_log_link($this->user());
+        $log = new change_link($this->user());
         $log->action = change_action::DELETE;
         $log->set_table(change_table_list::REF);
         $log->old_from = $this->phr;

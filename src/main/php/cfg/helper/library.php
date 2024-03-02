@@ -39,6 +39,7 @@ use cfg\log\change;
 use cfg\log\change_action;
 use cfg\log\change_big_value;
 use cfg\log\change_field;
+use cfg\log\change_link;
 use cfg\log\change_prime_value;
 use cfg\log\change_standard_value;
 use cfg\log\change_table;
@@ -1585,6 +1586,7 @@ class library
             case $this->class_to_name(change_prime_value::class):
             case $this->class_to_name(change_standard_value::class):
             case $this->class_to_name(change_big_value::class):
+            case $this->class_to_name(change_link::class):
                 $result = 'log';
                 break;
             case $this->class_to_name(source::class):

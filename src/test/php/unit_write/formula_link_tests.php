@@ -35,7 +35,7 @@ namespace unit_write;
 use api\formula\formula as formula_api;
 use api\word\word as word_api;
 use html\formula\formula as formula_dsp;
-use cfg\log\change_log_link;
+use cfg\log\change_link;
 use cfg\log\change_table_list;
 use cfg\formula;
 use cfg\formula_link;
@@ -63,7 +63,7 @@ class formula_link_tests
         $t->display('formula_link->link_phr "' . $phr->name() . '" to "' . $frm->name() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // ... check the correct logging
-        $log = new change_log_link($t->usr1);
+        $log = new change_link($t->usr1);
         $log->set_table(change_table_list::FORMULA_LINK);
         $log->new_from_id = $frm->id();
         $log->new_to_id = $phr->id();
@@ -131,7 +131,7 @@ class formula_link_tests
         $t->display('formula_link->unlink_phr "' . $phr->name() . '" from "' . $frm->name() . '" by user "' . $t->usr2->name . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // ... check if the removal of the link for the second user has been logged
-        $log = new change_log_link($t->usr2);
+        $log = new change_link($t->usr2);
         $log->set_table(change_table_list::FORMULA_LINK);
         $log->old_from_id = $frm->id();
         $log->old_to_id = $phr->id();
@@ -167,7 +167,7 @@ class formula_link_tests
         $t->display('formula_link->unlink_phr "' . $phr->name() . '" from "' . $frm->name() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check the correct logging
-        $log = new change_log_link($t->usr1);
+        $log = new change_link($t->usr1);
         $log->set_table(change_table_list::FORMULA_LINK);
         $log->old_from_id = $frm->id();
         $log->old_to_id = $phr->id();

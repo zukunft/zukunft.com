@@ -43,10 +43,10 @@ use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\log\change_action;
 use cfg\log\change_action_list;
-use cfg\log\change_log_link;
+use cfg\log\change_link;
 use Exception;
 
-include_once MODEL_LOG_PATH . 'change_log_link.php';
+include_once MODEL_LOG_PATH . 'change_link.php';
 
 class sandbox_link extends sandbox
 {
@@ -275,13 +275,13 @@ class sandbox_link extends sandbox
      * set the log entry parameter for a new link object
      * for all not named objects like links, this function is overwritten
      * e.g. that the user can see "added formula 'scale millions' to word 'mio'"
-     * @returns change_log_link with the object presets e.g. th object name
+     * @returns change_link with the object presets e.g. th object name
      */
-    function log_link_add(): change_log_link
+    function log_link_add(): change_link
     {
         log_debug($this->dsp_id());
 
-        $log = new change_log_link($this->user());
+        $log = new change_link($this->user());
         $log->new_from = $this->fob;
         $log->new_to = $this->tob;
 
@@ -296,13 +296,13 @@ class sandbox_link extends sandbox
 
     /**
      * set the log entry parameter to delete a object
-     * @returns change_log_link with the object presets e.g. th object name
+     * @returns change_link with the object presets e.g. th object name
      */
-    function log_del_link(): change_log_link
+    function log_del_link(): change_link
     {
         log_debug($this->dsp_id());
 
-        $log = new change_log_link($this->user());
+        $log = new change_link($this->user());
         $log->action = change_action::DELETE;
         $log->set_table($this->obj_name . sql_db::TABLE_EXTENSION);
         $log->old_from = $this->fob();

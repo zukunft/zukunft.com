@@ -35,7 +35,7 @@ namespace unit_write;
 use api\phrase\phrase as phrase_api;
 use api\word\triple as triple_api;
 use api\word\word as word_api;
-use cfg\log\change_log_link;
+use cfg\log\change_link;
 use cfg\log\change_table_list;
 use cfg\formula;
 use cfg\library;
@@ -109,7 +109,7 @@ class triple_tests
         $t->subheader("... and also testing the user log link class (classes/user_log_link.php)");
 
         // ... check the correct logging
-        $log = new change_log_link($t->usr1);
+        $log = new change_link($t->usr1);
         $log->set_table(change_table_list::TRIPLE);
         $log->new_from_id = $wrd_from->id();
         $log->new_link_id = $is_id;
@@ -143,7 +143,7 @@ class triple_tests
         $t->display('triple->del "' . $wrd_from->name() . '" ' . verb::IS . ' "' . $wrd->name() . '" by user "' . $t->usr2->name . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // ... check if the removal of the link for the second user has been logged
-        $log = new change_log_link($t->usr2);
+        $log = new change_link($t->usr2);
         $log->set_table(change_table_list::TRIPLE);
         $log->old_from_id = $wrd_from->id();
         $log->old_link_id = $is_id;
@@ -182,7 +182,7 @@ class triple_tests
         $t->display('triple->del "' . $wrd_from->name() . '" ' . verb::IS . ' "' . $wrd->name() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check the correct logging
-        $log = new change_log_link($t->usr1);
+        $log = new change_link($t->usr1);
         $log->set_table(change_table_list::TRIPLE);
         $log->old_from_id = $wrd_from->id();
         $log->old_link_id = $is_id;
@@ -210,7 +210,7 @@ class triple_tests
         $t->assert('triple load changed name of ' . triple_api::TN_ADD, $trp->name(), triple_api::TN_ADD);
 
         // check the correct logging
-        $log = new change_log_link($t->usr1);
+        $log = new change_link($t->usr1);
         $log->set_table(change_table_list::TRIPLE);
         $log->old_from_id = $wrd_from->id();
         $log->old_link_id = $is_id;
