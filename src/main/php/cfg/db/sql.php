@@ -2995,7 +2995,7 @@ class sql
             $result = 'sys_log_status_id';
         }
         if ($result == 'blocked_ip_id') {
-            $result = 'user_blocked_id';
+            $result = 'ip_range_id';
         }
         return $result;
     }

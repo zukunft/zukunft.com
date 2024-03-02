@@ -178,8 +178,7 @@ function import_base_config(user $usr): string
     );
 
     $html = new html_base();
-    $file_list = unserialize(BASE_CONFIG_FILES);
-    foreach ($file_list as $filename) {
+    foreach (BASE_CONFIG_FILES as $filename) {
         $html->echo('load ' . $filename);
         echo "\n";
         $result .= import_json_file(PATH_BASE_CONFIG_MESSAGE_FILES . $filename, $usr);

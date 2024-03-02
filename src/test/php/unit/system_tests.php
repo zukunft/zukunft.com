@@ -77,6 +77,11 @@ class system_tests
         $t->assert_sql_table_create($cfg);
         $t->assert_sql_index_create($cfg);
 
+        $t->subheader('IP range SQL setup statements');
+        $ipr = new ip_range();
+        $t->assert_sql_table_create($ipr);
+        $t->assert_sql_index_create($ipr);
+
 
         $t->subheader('Debug function tests');
 

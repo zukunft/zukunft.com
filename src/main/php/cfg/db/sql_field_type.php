@@ -44,6 +44,7 @@ enum sql_field_type: string
     case NAME_UNIQUE = 'unique'; // a unique text up to 255 char long to identify a database row
     case NAME = 'name'; // a text up to 255 char long to identify a database row
     case CRONTAB = 'crontab'; // a crontab scheduling without the command
+    case IP_ADDR = 'ip_addr'; // an ipv4 or ipv6 address
     case CODE_ID = 'code_id'; // a unique text to select single database rows by the program
     case TEXT = 'text'; // a text with variable length that can be used for a combined index without auto increase
     case KEY_PART_TEXT = 'textKeyPart'; // a text with variable length that is part of a combined index
@@ -66,6 +67,7 @@ enum sql_field_type: string
             self::KEY_512, self::KEY_PART_512, self::REF_512 => 'char(112)',
             self::NAME_UNIQUE, self::NAME => 'varchar(255)',
             self::CRONTAB => 'varchar(20)',
+            self::IP_ADDR => 'varchar(46)',
             self::CODE_ID => 'varchar(100)',
             self::TEXT, self::KEY_TEXT, self::KEY_PART_TEXT => 'text',
             self::INT, self::KEY_INT_NO_AUTO, self::KEY_PART_INT, self::INT_UNIQUE_PART => 'bigint',
@@ -85,6 +87,7 @@ enum sql_field_type: string
             self::KEY_TEXT, self::KEY_PART_TEXT => 'char(255)',
             self::NAME_UNIQUE, self::NAME => 'varchar(255)',
             self::CRONTAB => 'varchar(20)',
+            self::IP_ADDR => 'varchar(46)',
             self::CODE_ID => 'varchar(100)',
             self::TEXT => 'text',
             self::INT_SMALL, self::BOOL, self::KEY_PART_INT_SMALL => 'smallint',

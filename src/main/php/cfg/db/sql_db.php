@@ -45,6 +45,7 @@ use cfg\formula;
 use cfg\formula_type;
 use cfg\group\group;
 use cfg\group\group_id;
+use cfg\ip_range;
 use cfg\job;
 use cfg\job_time;
 use cfg\library;
@@ -139,7 +140,7 @@ class sql_db
     const TBL_CHANGE_ACTION = 'change_action';
     const TBL_CHANGE_LINK = 'change_link';
     const TBL_CONFIG = 'config';
-    const TBL_IP = 'user_blocked_ip';
+    const TBL_IP = 'ip_range';
     const TBL_SYS_LOG = 'sys_log';
     const TBL_SYS_LOG_STATUS = 'sys_log_status';
     const TBL_SYS_SCRIPT = 'sys_script'; // to log the execution times for code optimising
@@ -186,6 +187,7 @@ class sql_db
         user_profile::class,
         user_official_type::class,
         user::class,
+        ip_range::class,
         protection_type::class,
         share_type::class,
         word::class,
@@ -1516,7 +1518,7 @@ class sql_db
             $result = 'sys_log_status_id';
         }
         if ($result == 'blocked_ip_id') {
-            $result = 'user_blocked_id';
+            $result = 'ip_range_id';
         }
         return $result;
     }
@@ -1533,7 +1535,7 @@ class sql_db
         }
         // exceptions to be adjusted
         if ($this->id_field == 'blocked_ips_id') {
-            $this->id_field = 'user_blocked_id';
+            $this->id_field = 'ip_range_id';
         }
     }
 

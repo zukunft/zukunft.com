@@ -261,21 +261,23 @@ CREATE TABLE IF NOT EXISTS users
     DEFAULT CHARSET = utf8
     COMMENT 'for users including system users; only users can add data';
 
+-- --------------------------------------------------------
 
 --
--- Table structure for table`user_blocked_ips`
+-- table structure of ip addresses that should be blocked
 --
 
-CREATE TABLE IF NOT EXISTS `user_blocked_ips`
+CREATE TABLE IF NOT EXISTS ip_ranges
 (
-    `user_blocked_id` int(11)     NOT NULL,
-    `ip_from`         varchar(45) NOT NULL,
-    `ip_to`           varchar(45) NOT NULL,
-    `reason`          text        NOT NULL,
-    `is_active`       tinyint(4) DEFAULT '1'
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8;
+    ip_range_id bigint NOT NULL COMMENT 'the internal unique primary index',
+    ip_from varchar(46) NOT NULL,
+    ip_to varchar(46) NOT NULL,
+    reason text NOT NULL,
+    is_active smallint NOT NULL DEFAULT 1
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'of ip addresses that should be blocked';
 
 -- --------------------------------------------------------
 
@@ -2251,8 +2253,20 @@ ALTER TABLE users
     ADD KEY users_user_profile_idx (user_profile_id),
     ADD KEY users_user_type_idx (user_type_id);
 
+-- --------------------------------------------------------
+
+--
+-- indexes for table ip_ranges
+--
+
+ALTER TABLE ip_ranges
+    ADD PRIMARY KEY (ip_range_id),
+    ADD KEY ip_ranges_ip_from_idx (ip_from),
+    ADD KEY ip_ranges_ip_to_idx (ip_to);
+
 --
 -- Indexes for table`changes`
+-- TODO next
 --
 ALTER TABLE `changes`
     ADD PRIMARY KEY (`change_id`),
@@ -2618,12 +2632,6 @@ ALTER TABLE `users`
 --
 ALTER TABLE `user_attempts`
     ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table`user_blocked_ips`
---
-ALTER TABLE `user_blocked_ips`
-    ADD PRIMARY KEY (`user_blocked_id`);
 
 -- --------------------------------------------------------
 --
@@ -3177,10 +3185,10 @@ ALTER TABLE `users`
 ALTER TABLE `user_attempts`
     MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
--- AUTO_INCREMENT for table`user_blocked_ips`
+-- AUTO_INCREMENT for table`ip_ranges`
 --
-ALTER TABLE `user_blocked_ips`
-    MODIFY `user_blocked_id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `ip_ranges`
+    MODIFY `ip_range_id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table`user_official_types`
 --

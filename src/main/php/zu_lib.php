@@ -787,7 +787,7 @@ const SYSTEM_USER_CONFIG_FILE = PATH_BASE_CONFIG_FILES . 'users.json';
 const SYSTEM_VERB_CONFIG_FILE = PATH_BASE_CONFIG_FILES . 'verbs.json';
 const SYSTEM_CONFIG_FILE = PATH_BASE_CONFIG_FILES . 'config.json';
 const PATH_BASE_CONFIG_MESSAGE_FILES = PATH_BASE_CONFIG_FILES . 'messages/';
-define("BASE_CONFIG_FILES", serialize(array(
+const BASE_CONFIG_FILES = [
     'system_views.json',
     'sources.json',
     'units.json',
@@ -796,13 +796,13 @@ define("BASE_CONFIG_FILES", serialize(array(
     'ip_blacklist.json',
     'country.json',
     'company.json'
-)));
+];
 
 # list of all static import files for testing the system consistency
 const PATH_RESOURCE_FILES = ROOT_PATH . 'src/main/resources/';
 const PATH_TEST_FILES = ROOT_PATH . 'src/test/resources/';
 const PATH_TEST_IMPORT_FILES = ROOT_PATH . 'src/test/resources/import/';
-define("TEST_IMPORT_FILE_LIST", serialize(array(
+const TEST_IMPORT_FILE_LIST = [
     'wind_investment.json',
     'companies.json',
     'ABB_2013.json',
@@ -814,8 +814,9 @@ define("TEST_IMPORT_FILE_LIST", serialize(array(
     'Ultimatum_game.json',
     'COVID-19.json',
     'personal_climate_gas_emissions_timon.json',
-    'THOMY_test.json')));
-define("TEST_IMPORT_FILE_LIST_ALL", serialize(array(
+    'THOMY_test.json'
+];
+const TEST_IMPORT_FILE_LIST_ALL = [
     'wind_investment.json',
     'companies.json',
     'ABB_2013.json',
@@ -829,7 +830,8 @@ define("TEST_IMPORT_FILE_LIST_ALL", serialize(array(
     'Ultimatum_game.json',
     'COVID-19.json',
     'personal_climate_gas_emissions_timon.json',
-    'THOMY_test.json')));
+    'THOMY_test.json'
+];
 
 # list of import files for quick win testing
 /*

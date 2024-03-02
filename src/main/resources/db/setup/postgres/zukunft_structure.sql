@@ -317,24 +317,29 @@ COMMENT ON COLUMN users.view_id IS 'the last mask that the user has used';
 COMMENT ON COLUMN users.source_id IS 'the last source used by this user to have a default for the next value';
 COMMENT ON COLUMN users.user_status_id IS 'e.g. to exclude inactive users';
 
+-- --------------------------------------------------------
+
 --
 -- table structure of ip addresses that should be blocked
--- TODO generate
 --
 
-CREATE TABLE IF NOT EXISTS user_blocked_ips
+CREATE TABLE IF NOT EXISTS ip_ranges
 (
-    user_blocked_id BIGSERIAL PRIMARY KEY,
-    ip_from         varchar(45) NOT NULL,
-    ip_to           varchar(45) NOT NULL,
-    reason          text        NOT NULL,
-    is_active       smallint DEFAULT '1'
+    ip_range_id BIGSERIAL PRIMARY KEY,
+    ip_from     varchar(46) NOT NULL,
+    ip_to       varchar(46) NOT NULL,
+    reason      text        NOT NULL,
+    is_active   smallint    NOT NULL DEFAULT 1
 );
+
+COMMENT ON TABLE ip_ranges IS 'of ip addresses that should be blocked';
+COMMENT ON COLUMN ip_ranges.ip_range_id IS 'the internal unique primary index';
 
 -- --------------------------------------------------------
 
 --
 -- table structure for table sessions
+-- TODO next
 -- TODO generate
 --
 
@@ -3069,11 +3074,20 @@ CREATE INDEX users_code_idx ON users (code_id);
 CREATE INDEX users_user_profile_idx ON users (user_profile_id);
 CREATE INDEX users_user_type_idx ON users (user_type_id);
 
+-- --------------------------------------------------------
+
+--
+-- indexes for table ip_ranges
+--
+
+CREATE INDEX ip_ranges_ip_from_idx ON ip_ranges (ip_from);
+CREATE INDEX ip_ranges_ip_to_idx ON ip_ranges (ip_to);
 
 -- --------------------------------------------------------
 
 --
 -- Indexes for table change_fields
+-- TODO next
 --
 CREATE INDEX change_field_table_idx ON change_fields (table_id);
 
