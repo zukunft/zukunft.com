@@ -605,51 +605,6 @@ CREATE TABLE IF NOT EXISTS user_words
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'for a short text, that can be used to search for values or results with a 64 bit database key because humans will never be able to use more than a few million words';
--- --------------------------------------------------------
-
---
--- Table structure for table`word_del_confirms`
---
-
-CREATE TABLE IF NOT EXISTS `word_del_confirms`
-(
-    `word_del_request_id` int(11)   NOT NULL,
-    `user_id`             int(11)   NOT NULL,
-    `confirm`             timestamp NULL DEFAULT NULL,
-    `reject`              timestamp NULL DEFAULT NULL
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8;
-
---
--- Table structure for table`word_del_requests`
---
-
-CREATE TABLE IF NOT EXISTS `word_del_requests`
-(
-    `word_del_request_id` int(11)      NOT NULL,
-    `word_id`             int(11)      NOT NULL,
-    `word_name`           varchar(200) NOT NULL,
-    `started`             timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    `canceled`            timestamp    NULL     DEFAULT NULL,
-    `confirmed`           timestamp    NULL     DEFAULT NULL,
-    `finished`            timestamp    NULL     DEFAULT NULL,
-    `user_id`             int(11)      NOT NULL COMMENT 'the user who has requested the term deletion'
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8;
-
--- --------------------------------------------------------
-
---
--- Table structure for table`word_periods`
---
-
-CREATE TABLE IF NOT EXISTS `word_periods`
-(
-    `word_id` int(11)  NOT NULL,
-    `from`    datetime NOT NULL,
-    `to`      datetime NOT NULL
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8 COMMENT ='to define the time period for time terms';
 
 -- --------------------------------------------------------
 
@@ -3057,12 +3012,6 @@ ALTER TABLE `word_del_requests`
 ALTER TABLE `triples`
     ADD PRIMARY KEY (`triple_id`);
 
---
--- Indexes for table`word_periods`
---
-ALTER TABLE `word_periods`
-    ADD PRIMARY KEY (`word_id`);
-
 -- --------------------------------------------------------
 
 --
@@ -3833,12 +3782,6 @@ ALTER TABLE `component_links`
 ALTER TABLE `words`
     ADD CONSTRAINT `words_fk_1` FOREIGN KEY (`view_id`) REFERENCES `views` (`view_id`),
     ADD CONSTRAINT `words_fk_2` FOREIGN KEY (`phrase_type_id`) REFERENCES `phrase_types` (`phrase_type_id`);
-
---
--- Constraints for table`word_periods`
---
-ALTER TABLE `word_periods`
-    ADD CONSTRAINT `word_periods_fk_1` FOREIGN KEY (`word_id`) REFERENCES `words` (`word_id`);
 
 /*!40101 SET CHARACTER_SET_CLIENT = @OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS = @OLD_CHARACTER_SET_RESULTS */;

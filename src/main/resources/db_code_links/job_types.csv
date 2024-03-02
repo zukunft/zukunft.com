@@ -18,3 +18,5 @@ job_type_id, type_name, description, code_id
 17, 'sync table', 'force to sync a cloned phrase table with the original pod', 'table_sync'
 18, 'remove clone', 'remove a cloned phrase table that is not used very often', 'table_remove'
 19, 'delete table', 'remove a phrase table to replace it with a better fitting table', 'table_delete'
+20, 'delete word', 'request to completely delete a word which can be done if there are no dependencies any more; may create requests to other users', 'word_delete'
+21, 'delete triple', 'request to completely delete a triple which can be done if there are no dependencies any more; may create requests to other users', 'triple_delete'

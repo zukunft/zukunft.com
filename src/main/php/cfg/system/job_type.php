@@ -5,6 +5,12 @@
     model/system/job_type.php - a predefined batch task that can be triggered by a user action or a scheduler
     -------------------------
 
+    TODO allow to create workflows
+         e.g. to request at other users to remove the user overwrites of a word
+         that is requested to be deleted, which the users can confirm or reject
+         the process is completed if all user have confirmed the word removal
+         add the timestamp to each job step (compare with tream)
+
 
     This file is part of zukunft.com - calc with words
 
@@ -34,7 +40,10 @@ namespace cfg;
 
 class job_type extends type_object
 {
+
     // list of the job types that have a coded functionality
+    const WORD_DELETE = "word_delete";
+    const TRIPLE_DELETE = "triple_delete";
 
 
     /*

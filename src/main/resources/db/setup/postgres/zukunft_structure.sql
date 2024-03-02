@@ -728,59 +728,6 @@ COMMENT ON COLUMN user_words.protect_id IS 'to protect against unwanted changes'
 -- --------------------------------------------------------
 
 --
--- table structure for table word_del_confirms
---
--- TODO move to jobs ?
---
-
-CREATE TABLE IF NOT EXISTS word_del_confirms
-(
-    word_del_request_id BIGSERIAL PRIMARY KEY,
-    user_id             bigint    NOT NULL,
-    confirm             timestamp NULL DEFAULT NULL,
-    reject              timestamp NULL DEFAULT NULL
-);
-
--- --------------------------------------------------------
-
---
--- table structure for table word_del_requests
--- TODO move to jobs status ?
---
-
-CREATE TABLE IF NOT EXISTS word_del_requests
-(
-    word_del_request_id BIGSERIAL PRIMARY KEY,
-    word_id             bigint       NOT NULL,
-    word_name           varchar(200) NOT NULL,
-    started             timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    canceled            timestamp    NULL     DEFAULT NULL,
-    confirmed           timestamp    NULL     DEFAULT NULL,
-    finished            timestamp    NULL     DEFAULT NULL,
-    user_id             bigint       NOT NULL
-);
-
-COMMENT ON COLUMN word_del_requests.user_id IS 'the user who has requested the term deletion';
-
--- --------------------------------------------------------
-
---
--- table structure for table word_periods
--- TODO replace by verb / triple
---
-
-CREATE TABLE IF NOT EXISTS word_periods
-(
-    word_id BIGSERIAL PRIMARY KEY,
-    "from"  timestamp NOT NULL,
-    "to"    timestamp NOT NULL
-);
-
-COMMENT ON TABLE word_periods IS 'to define the time period for time terms';
-
--- --------------------------------------------------------
-
---
 -- table structure for triple predicates
 -- TODO generate
 --
@@ -3890,12 +3837,6 @@ ALTER TABLE user_words
     ADD CONSTRAINT user_words_language_fk FOREIGN KEY (language_id) REFERENCES languages (language_id),
     ADD CONSTRAINT user_words_phrase_type_fk FOREIGN KEY (phrase_type_id) REFERENCES phrase_types (phrase_type_id),
     ADD CONSTRAINT user_words_view_fk FOREIGN KEY (view_id) REFERENCES views (view_id);
-
---
--- constraints for table word_periods
---
-ALTER TABLE word_periods
-    ADD CONSTRAINT word_periods_fk_1 FOREIGN KEY (word_id) REFERENCES words (word_id);
 
 -- --------------------------------------------------------
 

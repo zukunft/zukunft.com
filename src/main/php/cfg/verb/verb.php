@@ -76,6 +76,7 @@ class verb extends type_object
     const CAN_BE = "can_be";
     const CAN_USE = "can_use";
     const SELECTOR = "selector"; // the from_phrase of a selector can be used more than once so the description of the to_phrase should be shown to the user
+    const TO = 'to'; // to define a time period e.g. "12:00 to 13:00" or "1. March 2024 to 3. March 2024"
 
     // directional forms of verbs (maybe move to verb_api or test if only used for testing)
     const FOLLOWED_BY = "is followed by";
