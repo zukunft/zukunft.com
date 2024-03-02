@@ -89,7 +89,8 @@ use cfg\group\group_id;
 use cfg\library;
 use cfg\log;
 use cfg\log\change;
-use cfg\log\change_log_action;
+use cfg\log\change_action;
+use cfg\log\change_action_list;
 use cfg\log\change_log_field;
 use cfg\log\change_log_table;
 use cfg\phr_ids;
@@ -1565,7 +1566,7 @@ class value extends sandbox_value
     {
         log_debug('value->log_upd "' . $this->number . '" for user ' . $this->user()->id());
         $log = new change($this->user());
-        $log->action = change_log_action::UPDATE;
+        $log->action = change_action::UPDATE;
         if ($this->can_change()) {
             $log->set_table(change_log_table::VALUE);
         } else {

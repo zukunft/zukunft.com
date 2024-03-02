@@ -66,7 +66,8 @@ use api\api_message;
 use cfg\job;
 use cfg\job_list;
 use cfg\job_type_list;
-use cfg\log\change_log_action;
+use cfg\log\change_action;
+use cfg\log\change_action_list;
 use cfg\log\change_log_field;
 use cfg\log\change_log_list;
 use cfg\log\change;
@@ -178,7 +179,7 @@ class create_test_objects extends test_base
         $language_forms = new language_form_list();
         $sys_log_stati = new sys_log_status_list();
         $job_types = new job_type_list();
-        $change_log_actions = new change_log_action();
+        $change_action_list = new change_action_list();
         $change_log_tables = new change_log_table();
         $change_log_fields = new change_log_field();
         $verbs = new verb_list();
@@ -200,7 +201,7 @@ class create_test_objects extends test_base
         $language_forms->load_dummy();
         $sys_log_stati->load_dummy();
         $job_types->load_dummy();
-        $change_log_actions->load_dummy();
+        $change_action_list->load_dummy();
         $change_log_tables->load_dummy();
         $change_log_fields->load_dummy();
         $verbs->load_dummy();
@@ -226,7 +227,7 @@ class create_test_objects extends test_base
         $lst->add($language_forms->api_obj(), controller::API_LIST_LANGUAGE_FORMS);
         $lst->add($sys_log_stati->api_obj(), controller::API_LIST_SYS_LOG_STATI);
         $lst->add($job_types->api_obj(), controller::API_LIST_JOB_TYPES);
-        $lst->add($change_log_actions->api_obj(), controller::API_LIST_CHANGE_LOG_ACTIONS);
+        $lst->add($change_action_list->api_obj(), controller::API_LIST_CHANGE_LOG_ACTIONS);
         $lst->add($change_log_tables->api_obj(), controller::API_LIST_CHANGE_LOG_TABLES);
         $lst->add($change_log_fields->api_obj(), controller::API_LIST_CHANGE_LOG_FIELDS);
         $lst->add($verbs->api_obj(), controller::API_LIST_VERBS);
@@ -1625,7 +1626,7 @@ class create_test_objects extends test_base
 
         $chg = new change($usr_sys);
         $chg->set_time_str(self::DUMMY_DATETIME);
-        $chg->set_action(change_log_action::ADD);
+        $chg->set_action(change_action::ADD);
         $chg->set_table(change_log_table::WORD);
         $chg->set_field(change_log_field::FLD_WORD_NAME);
         $chg->new_value = word_api::TN_READ;

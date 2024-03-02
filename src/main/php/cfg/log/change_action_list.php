@@ -2,8 +2,8 @@
 
 /*
 
-    model/log/change_log_action.php - the const for the change log action table
-    -------------------------------
+    cfg/log/change_action_list.php - the const for the change log action table
+    -----------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -31,28 +31,14 @@
 
 namespace cfg\log;
 
-global $change_log_actions;
+global $change_action_list;
 
 use cfg\db\sql_db;
 use cfg\type_list;
 use cfg\type_object;
 
-class change_log_action extends type_list
+class change_action_list extends type_list
 {
-
-    // the basic change types that are logged
-    const ADD = 'add';
-    const UPDATE = 'update';
-    const DELETE = 'del';
-
-    // list of all log actions allowed in this program version
-    const ACTION_LIST = array(
-        self::ADD,
-        self::UPDATE,
-        self::DELETE
-    );
-
-
 
     /*
      * load
@@ -74,11 +60,11 @@ class change_log_action extends type_list
     function load_dummy(): void
     {
         parent::load_dummy();
-        $type = new type_object(self::ADD, self::ADD, '', 1);
+        $type = new type_object(change_action::ADD, change_action::ADD, '', 1);
         $this->add($type);
-        $type = new type_object(self::DELETE, self::DELETE, '',2);
+        $type = new type_object(change_action::DELETE, change_action::DELETE, '',2);
         $this->add($type);
-        $type = new type_object(self::UPDATE, self::UPDATE, '', 3);
+        $type = new type_object(change_action::UPDATE, change_action::UPDATE, '', 3);
         $this->add($type);
     }
 
@@ -87,7 +73,7 @@ class change_log_action extends type_list
      */
     function default_id(): int
     {
-        return parent::id(self::ADD);
+        return parent::id(change_action::ADD);
     }
 
 }

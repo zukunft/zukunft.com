@@ -36,7 +36,8 @@ include_once MODEL_HELPER_PATH . 'type_list.php';
 include_once MODEL_HELPER_PATH . 'type_object.php';
 include_once MODEL_SYSTEM_PATH . 'sys_log_function_list.php';
 include_once MODEL_LOG_PATH . 'change.php';
-include_once MODEL_LOG_PATH . 'change_log_action.php';
+include_once MODEL_LOG_PATH . 'change_action.php';
+include_once MODEL_LOG_PATH . 'change_action_list.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
 include_once API_SANDBOX_PATH . 'sandbox_value.php';
 include_once API_LOG_PATH . 'system_log.php';
@@ -44,7 +45,7 @@ include_once API_LOG_PATH . 'system_log.php';
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
-use cfg\log\change_log_action;
+use cfg\log\change_action_list;
 use cfg\log\change;
 use cfg\db\sql;
 use cfg\db_object_seq_id;
@@ -336,7 +337,7 @@ class system_log extends db_object_seq_id
     {
         log_debug();
         $log = new change($this->user());
-        $log->action = change_log_action::UPDATE;
+        $log->action = change_action::UPDATE;
         $log->set_table(sql_db::TBL_SYS_LOG);
 
         return $log;

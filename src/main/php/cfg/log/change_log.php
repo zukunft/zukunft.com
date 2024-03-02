@@ -176,7 +176,7 @@ class change_log extends db_object_seq_id_user
      */
     function set_action(string $action_name, ?sql_db $given_db_con = null): bool
     {
-        global $change_log_actions;
+        global $change_action_list;
         global $db_con;
 
         $used_db_con = $db_con;
@@ -185,14 +185,14 @@ class change_log extends db_object_seq_id_user
         }
 
         $db_changed = false;
-        $this->action_id = $change_log_actions->id($action_name);
+        $this->action_id = $change_action_list->id($action_name);
         if ($this->action_id <= 0) {
             $this->add_action($used_db_con);
             if ($this->action_id <= 0) {
                 log_err("Cannot add action name " . $action_name);
             } else {
                 $act = new type_object($action_name, $action_name, '', $this->action_id);
-                $change_log_actions->add($act);
+                $change_action_list->add($act);
                 $db_changed = true;
             }
         }
@@ -205,8 +205,8 @@ class change_log extends db_object_seq_id_user
      */
     function action(): string
     {
-        global $change_log_actions;
-        return $change_log_actions->name($this->action_id);
+        global $change_action_list;
+        return $change_action_list->name($this->action_id);
     }
 
     /**
@@ -430,7 +430,7 @@ class change_log extends db_object_seq_id_user
     function create_log_references(sql_db $db_con): bool
     {
         $db_changed = false;
-        foreach (change_log_action::ACTION_LIST as $action_name) {
+        foreach (change_action::ACTION_LIST as $action_name) {
             $db_changed = $this->set_action($action_name, $db_con);
         }
         foreach (change_log_table::TABLE_LIST as $table_name) {

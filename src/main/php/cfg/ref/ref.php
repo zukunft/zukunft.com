@@ -64,7 +64,8 @@ use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\export\sandbox_exp;
 use cfg\export\ref_exp;
-use cfg\log\change_log_action;
+use cfg\log\change_action;
+use cfg\log\change_action_list;
 use cfg\log\change_log_link;
 use cfg\log\change_log_table;
 
@@ -639,7 +640,7 @@ class ref extends sandbox_link_with_type
         }
 
         $log = new change_log_link($this->user());
-        $log->action = change_log_action::ADD;
+        $log->action = change_action::ADD;
         $log->set_table(change_log_table::REF);
         // TODO review in log_link
         // TODO object must be loaded before it can be logged
@@ -659,7 +660,7 @@ class ref extends sandbox_link_with_type
     {
         log_debug('ref->log_upd ' . $this->dsp_id());
         $log = new change_log_link($this->user());
-        $log->action = change_log_action::UPDATE;
+        $log->action = change_action::UPDATE;
         $log->set_table(change_log_table::REF);
         $log->old_from = $db_rec->phr;
         $log->old_link = $db_rec->ref_type;
@@ -689,7 +690,7 @@ class ref extends sandbox_link_with_type
         }
 
         $log = new change_log_link($this->user());
-        $log->action = change_log_action::DELETE;
+        $log->action = change_action::DELETE;
         $log->set_table(change_log_table::REF);
         $log->old_from = $this->phr;
         $log->old_link = $this->ref_type;

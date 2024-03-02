@@ -65,6 +65,9 @@ use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\export\user_exp;
 use cfg\export\sandbox_exp;
+use cfg\log\change;
+use cfg\log\change_action;
+use cfg\log\change_log_table;
 use cfg\user\user_profile;
 use cfg\user\user_type;
 use Exception;
@@ -1110,7 +1113,7 @@ class user extends db_object_seq_id
     {
         log_debug(' user ' . $this->name);
         $log = new change($this);
-        $log->action = change_log_action::UPDATE;
+        $log->action = change_action::UPDATE;
         $log->set_table(change_log_table::USER);
 
         return $log;

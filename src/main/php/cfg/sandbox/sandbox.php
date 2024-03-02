@@ -57,8 +57,9 @@ use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\export\sandbox_exp;
 use cfg\log\change;
+use cfg\log\change_action;
 use cfg\log\change_log;
-use cfg\log\change_log_action;
+use cfg\log\change_action_list;
 use cfg\log\change_log_link;
 use cfg\result\result;
 use cfg\value\value;
@@ -1348,7 +1349,7 @@ class sandbox extends db_object_seq_id_user
 
         $log = new change($this->user());
 
-        $log->action = change_log_action::ADD;
+        $log->action = change_action::ADD;
         // TODO add the table exceptions from sql_db
         $log->set_table($this->obj_name . sql_db::TABLE_EXTENSION);
         $log->row_id = 0;
@@ -1373,7 +1374,7 @@ class sandbox extends db_object_seq_id_user
     {
         log_debug($this->dsp_id());
         $log->set_user($this->user());
-        $log->action = change_log_action::UPDATE;
+        $log->action = change_action::UPDATE;
         if ($this->can_change()) {
             // TODO add the table exceptions from sql_db
             $log->set_table($this->obj_name . sql_db::TABLE_EXTENSION);

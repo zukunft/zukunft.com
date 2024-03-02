@@ -43,7 +43,8 @@ use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\log\change;
-use cfg\log\change_log_action;
+use cfg\log\change_action;
+use cfg\log\change_action_list;
 
 class ip_range extends db_object_seq_id
 {
@@ -399,7 +400,7 @@ class ip_range extends db_object_seq_id
         log_debug('->log_add ' . $this->dsp_id());
 
         $log = new change($this->user());
-        $log->action = change_log_action::ADD;
+        $log->action = change_action::ADD;
         $log->set_table(sql_db::TBL_IP);
         $log->set_field(self::FLD_FROM . '_' . self::FLD_TO);
         $log->row_id = 0;
@@ -416,7 +417,7 @@ class ip_range extends db_object_seq_id
     {
         log_debug('->log_upd ' . $this->dsp_id());
         $log = new change($this->user());
-        $log->action = change_log_action::UPDATE;
+        $log->action = change_action::UPDATE;
         $log->set_table(sql_db::TBL_IP);
 
         return $log;

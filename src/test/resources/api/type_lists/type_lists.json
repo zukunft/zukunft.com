@@ -784,7 +784,7 @@
         "id": 19
       }
     ],
-    "change_log_actions": [
+    "change_action_list": [
       {
         "name": "add",
         "code_id": "add",

@@ -54,7 +54,8 @@ use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\log\change;
-use cfg\log\change_log_action;
+use cfg\log\change_action;
+use cfg\log\change_action_list;
 use cfg\log\change_log_link;
 use Exception;
 use cfg\export\sandbox_exp;
@@ -394,7 +395,7 @@ class sandbox_named extends sandbox
 
         $log = new change($this->user());
         // TODO add the table exceptions from sql_db
-        $log->action = change_log_action::ADD;
+        $log->action = change_action::ADD;
         $log->set_table($this->obj_name . sql_db::TABLE_EXTENSION);
         $log->set_field($this->obj_name . '_name');
         $log->set_user($this->user());
@@ -415,7 +416,7 @@ class sandbox_named extends sandbox
         log_debug($this->dsp_id());
 
         $log = new change($this->user());
-        $log->action = change_log_action::DELETE;
+        $log->action = change_action::DELETE;
         $log->set_table($this->obj_name . sql_db::TABLE_EXTENSION);
         $log->set_field($this->obj_name . '_name');
         $log->old_value = $this->name();

@@ -2,7 +2,7 @@
 
 /*
 
-    web/types/change_log_action.php - the preloaded change log actions used for the html frontend
+    web/types/change_action_list.php - the preloaded change log actions used for the html frontend
     -------------------------------
 
 
@@ -34,7 +34,7 @@ namespace html\types;
 
 use html\html_selector;
 
-class change_log_action_list extends type_list
+class change_action_list extends type_list
 {
 
 }

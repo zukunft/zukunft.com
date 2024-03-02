@@ -48,7 +48,8 @@ use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\group\group_list;
 use cfg\log\change;
-use cfg\log\change_log_action;
+use cfg\log\change_action;
+use cfg\log\change_action_list;
 use cfg\log\change_log_link;
 use cfg\log\change_log_table;
 use cfg\value\value_list;
@@ -1684,7 +1685,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
     {
         log_debug('triple->log_link_add for ' . $this->dsp_id() . ' by user "' . $this->user()->name . '"');
         $log = new change_log_link($this->user());
-        $log->action = change_log_action::ADD;
+        $log->action = change_action::ADD;
         $log->set_table(change_log_table::TRIPLE);
         $log->new_from = $this->fob;
         $log->new_link = $this->verb;
@@ -1701,7 +1702,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
     function log_upd(): change_log_link
     {
         $log = new change_log_link($this->user());
-        $log->action = change_log_action::UPDATE;
+        $log->action = change_action::UPDATE;
         if ($this->can_change()) {
             $log->set_table(change_log_table::TRIPLE);
         } else {
@@ -1719,7 +1720,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
     {
         log_debug('triple->log_link_del for ' . $this->dsp_id() . ' by user "' . $this->user()->name . '"');
         $log = new change_log_link($this->user());
-        $log->action = change_log_action::DELETE;
+        $log->action = change_action::DELETE;
         $log->set_table(change_log_table::TRIPLE);
         $log->old_from = $this->fob;
         $log->old_link = $this->verb;
@@ -1736,7 +1737,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
     function log_upd_field(): change
     {
         $log = new change($this->user());
-        $log->action = change_log_action::UPDATE;
+        $log->action = change_action::UPDATE;
         if ($this->can_change()) {
             $log->set_table(change_log_table::TRIPLE);
         } else {

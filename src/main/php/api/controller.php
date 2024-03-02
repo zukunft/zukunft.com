@@ -120,7 +120,7 @@ class controller
     const API_LIST_LANGUAGE_FORMS = 'language_forms';
     const API_LIST_SYS_LOG_STATI = 'sys_log_stati';
     const API_LIST_JOB_TYPES = 'job_types';
-    const API_LIST_CHANGE_LOG_ACTIONS = 'change_log_actions';
+    const API_LIST_CHANGE_LOG_ACTIONS = 'change_action_list';
     const API_LIST_CHANGE_LOG_TABLES = 'change_log_tables';
     const API_LIST_CHANGE_LOG_FIELDS = 'change_log_fields';
     const API_LIST_VERBS = 'verbs';

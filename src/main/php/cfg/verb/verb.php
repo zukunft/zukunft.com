@@ -49,7 +49,8 @@ use cfg\export\sandbox_exp;
 use cfg\export\sandbox_exp_named;
 use cfg\export\verb_exp;
 use cfg\log\change;
-use cfg\log\change_log_action;
+use cfg\log\change_action;
+use cfg\log\change_action_list;
 use cfg\log\change_log_table;
 use html\html_base;
 use html\html_selector;
@@ -781,7 +782,7 @@ class verb extends type_object
     {
         log_debug('verb->log_add ' . $this->dsp_id());
         $log = new change($this->usr);
-        $log->action = change_log_action::ADD;
+        $log->action = change_action::ADD;
         $log->set_table(change_log_table::VERB);
         $log->set_field(self::FLD_NAME);
         $log->old_value = '';
@@ -797,7 +798,7 @@ class verb extends type_object
     {
         log_debug('verb->log_upd ' . $this->dsp_id() . ' for user ' . $this->user()->name);
         $log = new change($this->usr);
-        $log->action = change_log_action::UPDATE;
+        $log->action = change_action::UPDATE;
         $log->set_table(change_log_table::VERB);
 
         return $log;
@@ -808,7 +809,7 @@ class verb extends type_object
     {
         log_debug('verb->log_del ' . $this->dsp_id() . ' for user ' . $this->user()->name);
         $log = new change($this->usr);
-        $log->action = change_log_action::DELETE;
+        $log->action = change_action::DELETE;
         $log->set_table(change_log_table::VERB);
         $log->set_field(self::FLD_NAME);
         $log->old_value = $this->name;

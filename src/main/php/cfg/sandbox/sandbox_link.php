@@ -41,7 +41,8 @@ namespace cfg;
 use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
-use cfg\log\change_log_action;
+use cfg\log\change_action;
+use cfg\log\change_action_list;
 use cfg\log\change_log_link;
 use Exception;
 
@@ -284,7 +285,7 @@ class sandbox_link extends sandbox
         $log->new_from = $this->fob;
         $log->new_to = $this->tob;
 
-        $log->action = change_log_action::ADD;
+        $log->action = change_action::ADD;
         // TODO add the table exceptions from sql_db
         $log->set_table($this->obj_name . sql_db::TABLE_EXTENSION);
         $log->row_id = 0;
@@ -302,7 +303,7 @@ class sandbox_link extends sandbox
         log_debug($this->dsp_id());
 
         $log = new change_log_link($this->user());
-        $log->action = change_log_action::DELETE;
+        $log->action = change_action::DELETE;
         $log->set_table($this->obj_name . sql_db::TABLE_EXTENSION);
         $log->old_from = $this->fob();
         $log->old_to = $this->tob();

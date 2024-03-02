@@ -302,18 +302,19 @@ CREATE TABLE IF NOT EXISTS sessions
 -- --------------------------------------------------------
 
 --
--- Table structure for table`change_actions`
+-- table structure for add,change,delete,undo and redo actions
 --
 
-CREATE TABLE IF NOT EXISTS `change_actions`
+CREATE TABLE IF NOT EXISTS change_actions
 (
-    `change_action_id`   int(11)      NOT NULL,
-    `change_action_name` varchar(200) NOT NULL,
-    `description`        text,
-    `code_id`            varchar(50)  NOT NULL
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8;
+    change_action_id   bigint       NOT NULL COMMENT 'the internal unique primary index',
+    change_action_name varchar(255) NOT NULL,
+    code_id            varchar(255) NOT NULL,
+    description        text     DEFAULT NULL
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'for add,change,delete,undo and redo actions';
 
 --
 -- Table structure for table`change_tables`
@@ -2274,6 +2275,16 @@ ALTER TABLE ip_ranges
 ALTER TABLE sessions
     ADD PRIMARY KEY (session_id),
     ADD KEY sessions_uid_idx (uid);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table change_actions
+--
+
+ALTER TABLE change_actions
+    ADD PRIMARY KEY (change_action_id),
+    ADD KEY change_actions_change_action_name_idx (change_action_name);
 
 --
 -- Indexes for table`changes`

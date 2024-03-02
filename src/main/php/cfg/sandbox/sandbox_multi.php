@@ -56,8 +56,9 @@ use cfg\db\sql_par_type;
 use cfg\export\sandbox_exp;
 use cfg\group\group_id;
 use cfg\log\change;
+use cfg\log\change_action;
 use cfg\log\change_log;
-use cfg\log\change_log_action;
+use cfg\log\change_action_list;
 use cfg\log\change_log_link;
 use cfg\value\value;
 use Exception;
@@ -1266,7 +1267,7 @@ class sandbox_multi extends db_object_multi_user
 
         $log = new change($this->user());
 
-        $log->action = change_log_action::ADD;
+        $log->action = change_action::ADD;
         // TODO add the table exceptions from sql_db
         $lib = new library();
         $class = $lib->class_to_name($this::class);
@@ -1293,7 +1294,7 @@ class sandbox_multi extends db_object_multi_user
     {
         log_debug($this->dsp_id());
         $log->set_user($this->user());
-        $log->action = change_log_action::UPDATE;
+        $log->action = change_action::UPDATE;
         if ($this->can_change()) {
             // TODO add the table exceptions from sql_db
             $log->set_table($this->obj_type . sql_db::TABLE_EXTENSION);

@@ -359,17 +359,19 @@ COMMENT ON COLUMN sessions.uid IS 'the user session id as get by the frontend';
 -- --------------------------------------------------------
 
 --
--- table structure for add, change or delete actions
--- TODO generate type sim
+-- table structure for add,change,delete,undo and redo actions
 --
 
 CREATE TABLE IF NOT EXISTS change_actions
 (
-    change_action_id   BIGSERIAL PRIMARY KEY,
-    change_action_name varchar(200) NOT NULL,
-    description        text,
-    code_id            varchar(50)  NOT NULL
+    change_action_id BIGSERIAL PRIMARY KEY,
+    change_action_name varchar(255) NOT NULL,
+    code_id            varchar(255) NOT NULL,
+    description        text     DEFAULT NULL
 );
+
+COMMENT ON TABLE change_actions IS 'for add,change,delete,undo and redo actions';
+COMMENT ON COLUMN change_actions.change_action_id IS 'the internal unique primary index';
 
 --
 -- table structure to keep the original table name even if a table name has changed
@@ -3092,6 +3094,14 @@ CREATE INDEX ip_ranges_ip_to_idx ON ip_ranges (ip_to);
 --
 
 CREATE INDEX sessions_uid_idx ON sessions (uid);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table change_actions
+--
+
+CREATE INDEX change_actions_change_action_name_idx ON change_actions (change_action_name);
 
 -- --------------------------------------------------------
 

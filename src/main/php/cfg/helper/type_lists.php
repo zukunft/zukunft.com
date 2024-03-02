@@ -59,7 +59,8 @@ include_once MODEL_SANDBOX_PATH . 'share_type_list.php';
 include_once MODEL_SANDBOX_PATH . 'protection_type_list.php';
 include_once MODEL_LANGUAGE_PATH . 'language_list.php';
 include_once MODEL_LANGUAGE_PATH . 'language_form_list.php';
-include_once MODEL_LOG_PATH . 'change_log_action.php';
+include_once MODEL_LOG_PATH . 'change_action.php';
+include_once MODEL_LOG_PATH . 'change_action_list.php';
 include_once MODEL_LOG_PATH . 'change_log_table.php';
 include_once MODEL_LOG_PATH . 'change_log_field.php';
 
@@ -67,7 +68,7 @@ use api\system\type_lists as type_lists_api;
 use cfg\component\component_pos_type_list;
 use cfg\component\component_type_list;
 use cfg\db\sql_db;
-use cfg\log\change_log_action;
+use cfg\log\change_action_list;
 use cfg\log\change_log_field;
 use cfg\log\change_log_table;
 use controller\controller;
@@ -101,7 +102,7 @@ class type_lists
         global $system_views;
         global $sys_log_stati;
         global $job_types;
-        global $change_log_actions;
+        global $change_action_list;
         global $change_log_tables;
         global $change_log_fields;
 
@@ -124,7 +125,7 @@ class type_lists
         $lst->add($language_forms->api_obj(), controller::API_LIST_LANGUAGE_FORMS);
         $lst->add($sys_log_stati->api_obj(), controller::API_LIST_SYS_LOG_STATI);
         $lst->add($job_types->api_obj(), controller::API_LIST_JOB_TYPES);
-        $lst->add($change_log_actions->api_obj(), controller::API_LIST_CHANGE_LOG_ACTIONS);
+        $lst->add($change_action_list->api_obj(), controller::API_LIST_CHANGE_LOG_ACTIONS);
         $lst->add($change_log_tables->api_obj(), controller::API_LIST_CHANGE_LOG_TABLES);
         $lst->add($change_log_fields->api_obj(), controller::API_LIST_CHANGE_LOG_FIELDS);
         $lst->add($verbs->api_obj(), controller::API_LIST_VERBS);
@@ -160,7 +161,7 @@ class type_lists
         global $language_forms;
         global $sys_log_stati;
         global $job_types;
-        global $change_log_actions;
+        global $change_action_list;
         global $change_log_tables;
         global $change_log_fields;
         global $verbs;
@@ -209,8 +210,8 @@ class type_lists
         $language_forms->load($db_con);
         $job_types = new job_type_list();
         $job_types->load($db_con);
-        $change_log_actions = new change_log_action();
-        $change_log_actions->load($db_con);
+        $change_action_list = new change_action_list();
+        $change_action_list->load($db_con);
         $change_log_tables = new change_log_table();
         $change_log_tables->load($db_con);
         $change_log_fields = new change_log_field();

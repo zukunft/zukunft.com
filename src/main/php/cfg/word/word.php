@@ -58,7 +58,8 @@ use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\group\group_list;
 use cfg\log\change;
-use cfg\log\change_log_action;
+use cfg\log\change_action;
+use cfg\log\change_action_list;
 use cfg\log\change_log_table;
 use cfg\value\value_list;
 use html\word\word as word_dsp;
@@ -1573,7 +1574,7 @@ class word extends sandbox_typed
         $msk_new->load_by_id($view_id);
 
         $log = new change($this->user());
-        $log->action = change_log_action::UPDATE;
+        $log->action = change_action::UPDATE;
         $log->set_table(change_log_table::WORD);
         $log->set_field(self::FLD_VIEW);
         if ($this->view_id() > 0) {

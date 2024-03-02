@@ -34,7 +34,7 @@ namespace html\types;
 
 include_once WEB_TYPES_PATH . 'type_object.php';
 include_once WEB_TYPES_PATH . 'type_list.php';
-include_once WEB_TYPES_PATH . 'change_log_action_list.php';
+include_once WEB_TYPES_PATH . 'change_action_list.php';
 include_once WEB_TYPES_PATH . 'change_log_table_list.php';
 include_once WEB_TYPES_PATH . 'change_log_field_list.php';
 include_once WEB_TYPES_PATH . 'system_log_status_list.php';
@@ -215,10 +215,10 @@ class type_lists
             $this->set_job_types();
         }
         if (array_key_exists(controller::API_LIST_CHANGE_LOG_ACTIONS, $json_array)) {
-            $this->set_change_log_actions($json_array[controller::API_LIST_CHANGE_LOG_ACTIONS]);
+            $this->set_change_action_list($json_array[controller::API_LIST_CHANGE_LOG_ACTIONS]);
         } else {
-            log_err('Mandatory change_log_actions missing in API JSON ' . json_encode($json_array));
-            $this->set_change_log_actions();
+            log_err('Mandatory change_action_list missing in API JSON ' . json_encode($json_array));
+            $this->set_change_action_list();
         }
         if (array_key_exists(controller::API_LIST_CHANGE_LOG_TABLES, $json_array)) {
             $this->set_change_log_tables($json_array[controller::API_LIST_CHANGE_LOG_TABLES]);
@@ -353,11 +353,11 @@ class type_lists
         $html_job_types->set_obj_from_json_array($json_array);
     }
 
-    function set_change_log_actions(array $json_array = null): void
+    function set_change_action_list(array $json_array = null): void
     {
-        global $html_change_log_actions;
-        $html_change_log_actions = new change_log_action_list();
-        $html_change_log_actions->set_obj_from_json_array($json_array);
+        global $html_change_action_list;
+        $html_change_action_list = new change_action_list();
+        $html_change_action_list->set_obj_from_json_array($json_array);
     }
 
     function set_change_log_tables(array $json_array = null): void

@@ -184,8 +184,8 @@ class db_cl
 
     function log_action_id(string $code_id): int
     {
-        global $change_log_actions;
-        return $change_log_actions->id($code_id);
+        global $change_action_list;
+        return $change_action_list->id($code_id);
     }
 
     function log_table_id(string $code_id): int
@@ -292,8 +292,8 @@ class db_cl
 
     function log_action(int $id)
     {
-        global $change_log_actions;
-        return $change_log_actions->get($id);
+        global $change_action_list;
+        return $change_action_list->get($id);
     }
 
     function log_table(int $id)
@@ -430,8 +430,8 @@ class db_cl
 
     function log_action_name(int $id): string
     {
-        global $change_log_actions;
-        return $change_log_actions->name($id);
+        global $change_action_list;
+        return $change_action_list->name($id);
     }
 
     function log_table_name(int $id): string

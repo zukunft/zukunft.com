@@ -35,7 +35,8 @@ use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\log\change;
-use cfg\log\change_log_action;
+use cfg\log\change_action;
+use cfg\log\change_action_list;
 use cfg\log\change_log_table;
 
 include_once MODEL_SANDBOX_PATH . 'sandbox_link_with_type.php';
@@ -546,7 +547,7 @@ class formula_link extends sandbox_link_with_type
     function log_upd_field(): change
     {
         $log = new change($this->user());
-        $log->action = change_log_action::UPDATE;
+        $log->action = change_action::UPDATE;
         if ($this->can_change()) {
             $log->set_table(change_log_table::FORMULA_LINK);
         } else {

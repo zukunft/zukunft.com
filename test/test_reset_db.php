@@ -40,7 +40,7 @@ include_once SERVICE_IMPORT_PATH . 'import_file.php';
 use cfg\job;
 use cfg\job_type_list;
 use cfg\db\db_check;
-use cfg\log\change_log_action;
+use cfg\log\change_action_list;
 use cfg\log\change_log_field;
 use cfg\log\change_log_table;
 use cfg\component\component_pos_type_list;
@@ -277,7 +277,7 @@ function run_preloaded_truncate(): void
     global $system_views;
     global $sys_log_stati;
     global $job_types;
-    global $change_log_actions;
+    global $change_action_list;
     global $change_log_tables;
     global $change_log_fields;
 
@@ -299,7 +299,7 @@ function run_preloaded_truncate(): void
     $languages = new language_list();
     $language_forms = new language_form_list();
     $job_types = new job_type_list();
-    $change_log_actions = new change_log_action();
+    $change_action_list = new change_action_list();
     $change_log_tables = new change_log_table();
     $change_log_fields = new change_log_field();
 }

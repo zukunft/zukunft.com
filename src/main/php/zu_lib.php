@@ -89,6 +89,8 @@ use html\phrase\phrase_group as phrase_group_dsp;
 
     after that this should be done while keeping step 1. to 4. for each commit:
     TODO remove the time phrase from result
+    TODO rename change and change_log to log
+    TODO rename system_log to trace
     TODO use the json api message header for all api messages
     TODO check if reading triples should use a view to generate the triple name and the generated name
     TODO use the sandbox list for all user lists
@@ -437,7 +439,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
         source_type_list - list of all source types
         language_list - list of all UI languages
         language_form_list - list of all language forms
-        change_log_action - list of all change types
+        change_action_list - list of all change types
         change_log_table - list of all db tables that can be changed by the user (including table of past versions)
         change_log_field - list of all fields in table that a user can change (including fields of past versions)
         job_type_list - list of all batch job types
@@ -653,7 +655,8 @@ include_once MODEL_SANDBOX_PATH . 'protection_type_list.php';
 include_once MODEL_LANGUAGE_PATH . 'language_list.php';
 include_once MODEL_LANGUAGE_PATH . 'language_form_list.php';
 include_once MODEL_SYSTEM_PATH . 'job_type_list.php';
-include_once MODEL_LOG_PATH . 'change_log_action.php';
+include_once MODEL_LOG_PATH . 'change_action.php';
+include_once MODEL_LOG_PATH . 'change_action_list.php';
 include_once MODEL_LOG_PATH . 'change_log_table.php';
 include_once MODEL_LOG_PATH . 'change_log_field.php';
 include_once MODEL_VERB_PATH . 'verb_list.php';

@@ -37,8 +37,10 @@ include_once MODEL_LOG_PATH . 'change.php';
 include_once MODEL_LOG_PATH . 'change_log_link.php';
 
 use api\word\triple as triple_api;
+use cfg\config;
 use cfg\library;
 use cfg\db\sql_db;
+use cfg\log\change_action;
 use html\log\user_log_display;
 use cfg\log\change_log_link;
 use cfg\log\change_log_list;
@@ -64,12 +66,18 @@ class change_log_tests
 
         $t->header('Unit tests of the user log display class (src/main/php/log/change_log_*.php)');
 
+        $t->subheader('Log action SQL setup statements');
+        $act = new change_action('');
+        $t->assert_sql_table_create($act);
+        $t->assert_sql_index_create($act);
+
         $t->subheader('SQL statement creation tests');
         $log = $t->dummy_change_log_named();
         // TODO activate Prio 2
         //$t->assert_sql_table_create($log);
         //$t->assert_sql_index_create($log);
         //$t->assert_sql_foreign_key_create($log);
+
 
         $t->subheader('SQL statement tests');
         $log = new change($usr);
