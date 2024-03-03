@@ -609,24 +609,25 @@ CREATE TABLE IF NOT EXISTS user_words
 -- --------------------------------------------------------
 
 --
--- Table structure for table`verbs`
+-- table structure for verbs / triple predicates to use predefined behavior
 --
 
-CREATE TABLE IF NOT EXISTS `verbs`
+CREATE TABLE IF NOT EXISTS verbs
 (
-    `verb_id`             int(11)      NOT NULL,
-    `verb_name`           varchar(100) NOT NULL,
-    `code_id`             varchar(255) DEFAULT NULL,
-    `description`         text,
-    `condition_type`      int(11)      DEFAULT NULL,
-    `formula_name`        varchar(200) DEFAULT NULL COMMENT 'naming used in formulas',
-    `name_plural_reverse` varchar(200) DEFAULT NULL COMMENT 'english description for the reverse list, e.g. Companies are ...',
-    `name_plural`         varchar(200) DEFAULT NULL,
-    `name_reverse`        varchar(200) DEFAULT NULL,
-    `words`               int(11)      DEFAULT NULL COMMENT 'used for how many terms'
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8 COMMENT ='it is fixed coded how to behavior for each type is';
+    verb_id             bigint           NOT NULL COMMENT 'the internal unique primary index',
+    verb_name           varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
+    code_id             varchar(255) DEFAULT NULL COMMENT 'id text to link coded functionality to a specific verb',
+    description         text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry',
+    condition_type      bigint       DEFAULT NULL,
+    formula_name        varchar(255) DEFAULT NULL COMMENT 'naming used in formulas',
+    name_plural_reverse varchar(255) DEFAULT NULL COMMENT 'english description for the reverse list, e.g. Companies are ... TODO move to language forms',
+    name_plural         varchar(255) DEFAULT NULL,
+    name_reverse        varchar(255) DEFAULT NULL,
+    words               bigint       DEFAULT NULL COMMENT 'used for how many phrases or formulas'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'for verbs / triple predicates to use predefined behavior';
 
 -- --------------------------------------------------------
 
@@ -2377,6 +2378,16 @@ ALTER TABLE user_words
 -- --------------------------------------------------------
 
 --
+-- indexes for table verbs
+--
+
+ALTER TABLE verbs
+    ADD PRIMARY KEY (verb_id),
+    ADD KEY verbs_verb_name_idx (verb_name);
+
+-- --------------------------------------------------------
+
+--
 -- indexes for table triples
 --
 
@@ -2509,18 +2520,6 @@ ALTER TABLE `results`
 --
 ALTER TABLE `import_source`
     ADD PRIMARY KEY (`import_source_id`);
-
---
--- Indexes for table`languages`
---
-ALTER TABLE `languages`
-    ADD PRIMARY KEY (`language_id`);
-
---
--- Indexes for table`language_forms`
---
-ALTER TABLE `language_forms`
-    ADD PRIMARY KEY (`language_form_id`);
 
 --
 -- Indexes for table`phrase_groups`
@@ -2920,17 +2919,6 @@ ALTER TABLE `value_time_series`
 ALTER TABLE `value_ts_data`
     ADD KEY `value_time_series_id` (`value_time_series_id`, `val_time`);
 
---
--- Indexes for table`verbs`
---
-ALTER TABLE `verbs`
-    ADD PRIMARY KEY (`verb_id`);
-
---
--- Indexes for table`verb_usages`
---
-ALTER TABLE `verb_usages`
-    ADD PRIMARY KEY (`verb_usage_id`);
 
 --
 -- Indexes for table`views`

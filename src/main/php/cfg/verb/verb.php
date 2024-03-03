@@ -43,6 +43,8 @@ include_once SERVICE_EXPORT_PATH . 'sandbox_exp_named.php';
 use api\verb\verb as verb_api;
 use cfg\db\sql;
 use cfg\db\sql_db;
+use cfg\db\sql_field_default;
+use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\export\sandbox_exp;
@@ -92,13 +94,19 @@ class verb extends type_object
      * database link
      */
 
-    // object specific database and JSON object field names
+    // object specific database and JSON object field names and comments
+    const TBL_COMMENT = 'for verbs / triple predicates to use predefined behavior';
     const FLD_ID = 'verb_id';
     const FLD_NAME = 'verb_name';
+    const FLD_CODE_ID_COM = 'id text to link coded functionality to a specific verb';
+    const FLD_CONDITION = 'condition_type';
+    const FLD_FORMULA_COM = 'naming used in formulas';
+    const FLD_FORMULA = 'formula_name';
     const FLD_PLURAL = 'name_plural';
     const FLD_REVERSE = 'name_reverse';
+    const FLD_PLURAL_REVERSE_COM = 'english description for the reverse list, e.g. Companies are ... TODO move to language forms';
     const FLD_PLURAL_REVERSE = 'name_plural_reverse';
-    const FLD_FORMULA = 'formula_name';
+    const FLD_WORDS_COM = 'used for how many phrases or formulas';
     const FLD_WORDS = 'words';
 
     // all database field names excluding the id used to identify if there are some user specific changes
@@ -110,6 +118,19 @@ class verb extends type_object
         self::FLD_PLURAL_REVERSE,
         self::FLD_FORMULA,
         self::FLD_WORDS
+    );
+
+    // field lists for the table creation
+    const FLD_LST_ALL = array(
+        [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_NAME_COM],
+        [sql::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
+        [self::FLD_DESCRIPTION, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
+        [self::FLD_CONDITION, sql_field_type::INT, sql_field_default::NULL, '', '', ''],
+        [self::FLD_FORMULA, sql_field_type::NAME, sql_field_default::NULL, '', '', self::FLD_FORMULA_COM],
+        [self::FLD_PLURAL_REVERSE, sql_field_type::NAME, sql_field_default::NULL, '', '', self::FLD_PLURAL_REVERSE_COM],
+        [self::FLD_PLURAL, sql_field_type::NAME, sql_field_default::NULL, '', '', ''],
+        [self::FLD_REVERSE, sql_field_type::NAME, sql_field_default::NULL, '', '', ''],
+        [self::FLD_WORDS, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_WORDS_COM],
     );
 
 

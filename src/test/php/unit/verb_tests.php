@@ -58,6 +58,11 @@ class verb_tests
 
         $t->header('Unit tests of the verb class (src/main/php/model/verb/verb.php)');
 
+        $t->subheader('Verb SQL setup statements');
+        $vrb = new verb();
+        $t->assert_sql_table_create($vrb);
+        $t->assert_sql_index_create($vrb);
+
         $t->subheader('SQL statement tests');
 
         $vrb = new verb();

@@ -78,6 +78,7 @@ use cfg\user\user_type;
 use cfg\user_message;
 use cfg\user_official_type;
 use cfg\value\value;
+use cfg\verb;
 use cfg\view;
 use cfg\word;
 use DateTime;
@@ -213,6 +214,7 @@ class sql_db
         protection_type::class,
         share_type::class,
         word::class,
+        verb::class,
         triple::class,
         phrase_type::class,
         group::class,

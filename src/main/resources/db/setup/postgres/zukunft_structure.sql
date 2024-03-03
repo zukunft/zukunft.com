@@ -728,28 +728,31 @@ COMMENT ON COLUMN user_words.protect_id IS 'to protect against unwanted changes'
 -- --------------------------------------------------------
 
 --
--- table structure for triple predicates
--- TODO generate
+-- table structure for verbs / triple predicates to use predefined behavior
 --
 
 CREATE TABLE IF NOT EXISTS verbs
 (
     verb_id             BIGSERIAL PRIMARY KEY,
-    verb_name           varchar(100) NOT NULL,
+    verb_name           varchar(255)     NOT NULL,
     code_id             varchar(255) DEFAULT NULL,
-    description         text,
+    description         text         DEFAULT NULL,
     condition_type      bigint       DEFAULT NULL,
-    formula_name        varchar(200) DEFAULT NULL,
-    name_plural_reverse varchar(200) DEFAULT NULL,
-    name_plural         varchar(200) DEFAULT NULL,
-    name_reverse        varchar(200) DEFAULT NULL,
+    formula_name        varchar(255) DEFAULT NULL,
+    name_plural_reverse varchar(255) DEFAULT NULL,
+    name_plural         varchar(255) DEFAULT NULL,
+    name_reverse        varchar(255) DEFAULT NULL,
     words               bigint       DEFAULT NULL
 );
 
-COMMENT ON TABLE verbs IS 'it is fixed coded how to behavior for each type is';
+COMMENT ON TABLE verbs IS 'for verbs / triple predicates to use predefined behavior';
+COMMENT ON COLUMN verbs.verb_id IS 'the internal unique primary index';
+COMMENT ON COLUMN verbs.verb_name IS 'the unique type name as shown to the user and used for the selection';
+COMMENT ON COLUMN verbs.code_id IS 'id text to link coded functionality to a specific verb';
+COMMENT ON COLUMN verbs.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
 COMMENT ON COLUMN verbs.formula_name IS 'naming used in formulas';
-COMMENT ON COLUMN verbs.name_plural_reverse IS 'english description for the reverse list, e.g. Companies are ...'; -- TODO move to language forms
-COMMENT ON COLUMN verbs.words IS 'used for how many terms'; -- TODO rename to phrases
+COMMENT ON COLUMN verbs.name_plural_reverse IS 'english description for the reverse list, e.g. Companies are ... TODO move to language forms';
+COMMENT ON COLUMN verbs.words IS 'used for how many phrases or formulas';
 
 -- --------------------------------------------------------
 
@@ -3206,6 +3209,14 @@ CREATE INDEX user_words_word_name_idx   ON user_words (word_name);
 CREATE INDEX user_words_plural_idx      ON user_words (plural);
 CREATE INDEX user_words_phrase_type_idx ON user_words (phrase_type_id);
 CREATE INDEX user_words_view_idx        ON user_words (view_id);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table verbs
+--
+
+CREATE INDEX verbs_verb_name_idx ON verbs (verb_name);
 
 -- --------------------------------------------------------
 
