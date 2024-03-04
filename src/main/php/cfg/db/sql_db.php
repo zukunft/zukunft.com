@@ -62,6 +62,9 @@ use cfg\log\change_standard_value;
 use cfg\log\change_table;
 use cfg\log\system_log;
 use cfg\phrase_type;
+use cfg\pod;
+use cfg\pod_status;
+use cfg\pod_type;
 use cfg\protection_type;
 use cfg\session;
 use cfg\share_type;
@@ -209,6 +212,9 @@ class sql_db
         change_standard_value::class,
         change_big_value::class,
         change_link::class,
+        pod_type::class,
+        pod_status::class,
+        pod::class,
         language::class,
         language_form::class,
         protection_type::class,

@@ -138,6 +138,7 @@ include_once $path_unit . 'all_unit_tests.php';
 include_once $path_unit . 'lib_tests.php';
 include_once $path_unit . 'math_tests.php';
 include_once $path_unit . 'system_tests.php';
+include_once $path_unit . 'pod_tests.php';
 include_once $path_unit . 'user_tests.php';
 include_once $path_unit . 'user_list_tests.php';
 include_once $path_unit . 'sandbox_tests.php';

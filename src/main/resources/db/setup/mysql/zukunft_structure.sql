@@ -471,6 +471,61 @@ CREATE TABLE IF NOT EXISTS change_links
 -- --------------------------------------------------------
 
 --
+-- table structure for predefined code to a some pods
+--
+
+CREATE TABLE IF NOT EXISTS pod_types
+(
+    pod_type_id bigint           NOT NULL COMMENT 'the internal unique primary index',
+    type_name   varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
+    code_id     varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
+    description text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'for predefined code to a some pods';
+
+-- --------------------------------------------------------
+
+--
+-- table structure for the actual status of a pod
+--
+
+CREATE TABLE IF NOT EXISTS pod_status
+(
+    pod_status_id bigint           NOT NULL COMMENT 'the internal unique primary index',
+    type_name     varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
+    code_id       varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
+    description   text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'for the actual status of a pod';
+
+-- --------------------------------------------------------
+
+--
+-- table structure for the technical details of the mash network pods
+--
+
+CREATE TABLE IF NOT EXISTS pods
+(
+    pod_id          bigint           NOT NULL COMMENT 'the internal unique primary index',
+    type_name       varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
+    code_id         varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
+    description     text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry',
+    pod_type_id     bigint       DEFAULT NULL,
+    pod_url         varchar(255)     NOT NULL,
+    pod_status_id   bigint       DEFAULT NULL,
+    param_triple_id bigint       DEFAULT NULL
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'for the technical details of the mash network pods';
+
+-- --------------------------------------------------------
+
+--
 -- table structure for the write access control
 --
 
@@ -628,20 +683,6 @@ CREATE TABLE IF NOT EXISTS verbs
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'for verbs / triple predicates to use predefined behavior';
-
--- --------------------------------------------------------
-
---
--- Table structure for table`verb_usages`
---
-
-CREATE TABLE IF NOT EXISTS `verb_usages`
-(
-    `verb_usage_id` int(11) NOT NULL,
-    `verb_id`       int(11) NOT NULL,
-    `table_id`      int(11) NOT NULL
-) ENGINE = InnoDB
-  DEFAULT CHARSET = latin1;
 
 -- --------------------------------------------------------
 
@@ -2331,6 +2372,37 @@ ALTER TABLE change_links
 -- --------------------------------------------------------
 
 --
+-- indexes for table pod_types
+--
+
+ALTER TABLE pod_types
+    ADD PRIMARY KEY (pod_type_id),
+    ADD KEY pod_types_type_name_idx (type_name);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table pod_status
+--
+
+ALTER TABLE pod_status
+    ADD PRIMARY KEY (pod_status_id),
+    ADD KEY pod_status_type_name_idx (type_name);
+
+-- --------------------------------------------------------
+--
+-- indexes for table pods
+--
+
+ALTER TABLE pods
+    ADD PRIMARY KEY (pod_id),
+    ADD KEY pods_type_name_idx (type_name),
+    ADD KEY pods_pod_type_idx (pod_type_id),
+    ADD KEY pods_pod_status_idx (pod_status_id);
+
+-- --------------------------------------------------------
+
+--
 -- indexes for table languages
 --
 
@@ -3258,11 +3330,7 @@ ALTER TABLE `value_time_series`
 --
 ALTER TABLE `verbs`
     MODIFY `verb_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table`verb_usages`
---
-ALTER TABLE `verb_usages`
-    MODIFY `verb_usage_id` int(11) NOT NULL AUTO_INCREMENT;
+
 --
 -- AUTO_INCREMENT for table`views`
 --
@@ -3430,6 +3498,17 @@ ALTER TABLE change_links
     ADD CONSTRAINT change_links_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
     ADD CONSTRAINT change_links_change_action_fk FOREIGN KEY (change_action_id) REFERENCES change_actions (change_action_id),
     ADD CONSTRAINT change_links_change_table_fk FOREIGN KEY (change_table_id) REFERENCES change_tables (change_table_id);
+
+--
+-- constraints for table pods
+--
+
+ALTER TABLE pods
+    ADD CONSTRAINT type_name_uk UNIQUE (type_name),
+    ADD CONSTRAINT code_id_uk UNIQUE (code_id),
+    ADD CONSTRAINT pods_pod_type_fk FOREIGN KEY (pod_type_id) REFERENCES pod_types (pod_type_id),
+    ADD CONSTRAINT pods_pod_status_fk FOREIGN KEY (pod_status_id) REFERENCES pod_status (pod_status_id),
+    ADD CONSTRAINT pods_triple_fk FOREIGN KEY (param_triple_id) REFERENCES triples (triple_id);
 
 --
 -- constraints for table language_forms

@@ -3161,6 +3161,9 @@ class sql
         if ($result == 'sys_logs') {
             $result = 'sys_log';
         }
+        if ($result == 'pod_statuss') {
+            $result = 'pod_status';
+        }
         if ($result == 'userss') {
             $result = 'users';
         }

@@ -555,6 +555,70 @@ COMMENT ON COLUMN change_links.new_text_to IS 'the fixed text to display to the 
 -- --------------------------------------------------------
 
 --
+-- table structure for predefined code to a some pods
+--
+
+CREATE TABLE IF NOT EXISTS pod_types
+(
+    pod_type_id BIGSERIAL PRIMARY KEY,
+    type_name   varchar(255)     NOT NULL,
+    code_id     varchar(255) DEFAULT NULL,
+    description text         DEFAULT NULL
+);
+
+COMMENT ON TABLE pod_types IS 'for predefined code to a some pods';
+COMMENT ON COLUMN pod_types.pod_type_id IS 'the internal unique primary index';
+COMMENT ON COLUMN pod_types.type_name IS 'the unique type name as shown to the user and used for the selection';
+COMMENT ON COLUMN pod_types.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
+COMMENT ON COLUMN pod_types.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
+
+-- --------------------------------------------------------
+
+--
+-- table structure for the actual status of a pod
+--
+
+CREATE TABLE IF NOT EXISTS pod_status
+(
+    pod_status_id BIGSERIAL PRIMARY KEY,
+    type_name     varchar(255)     NOT NULL,
+    code_id       varchar(255) DEFAULT NULL,
+    description   text         DEFAULT NULL
+);
+
+COMMENT ON TABLE pod_status IS 'for the actual status of a pod';
+COMMENT ON COLUMN pod_status.pod_status_id IS 'the internal unique primary index';
+COMMENT ON COLUMN pod_status.type_name IS 'the unique type name as shown to the user and used for the selection';
+COMMENT ON COLUMN pod_status.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
+COMMENT ON COLUMN pod_status.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
+
+-- --------------------------------------------------------
+
+--
+-- table structure for the technical details of the mash network pods
+--
+
+CREATE TABLE IF NOT EXISTS pods
+(
+    pod_id          BIGSERIAL PRIMARY KEY,
+    type_name       varchar(255)     NOT NULL,
+    code_id         varchar(255) DEFAULT NULL,
+    description     text         DEFAULT NULL,
+    pod_type_id     bigint       DEFAULT NULL,
+    pod_url         varchar(255)     NOT NULL,
+    pod_status_id   bigint       DEFAULT NULL,
+    param_triple_id bigint       DEFAULT NULL
+);
+
+COMMENT ON TABLE pods IS 'for the technical details of the mash network pods';
+COMMENT ON COLUMN pods.pod_id IS 'the internal unique primary index';
+COMMENT ON COLUMN pods.type_name IS 'the unique type name as shown to the user and used for the selection';
+COMMENT ON COLUMN pods.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
+COMMENT ON COLUMN pods.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
+
+-- --------------------------------------------------------
+
+--
 -- table structure for the write access control
 --
 
@@ -753,20 +817,6 @@ COMMENT ON COLUMN verbs.description IS 'text to explain the type to the user as 
 COMMENT ON COLUMN verbs.formula_name IS 'naming used in formulas';
 COMMENT ON COLUMN verbs.name_plural_reverse IS 'english description for the reverse list, e.g. Companies are ... TODO move to language forms';
 COMMENT ON COLUMN verbs.words IS 'used for how many phrases or formulas';
-
--- --------------------------------------------------------
-
---
--- table structure for table verb_usages
--- TODO check if still needed
---
-
-CREATE TABLE IF NOT EXISTS verb_usages
-(
-    verb_usage_id BIGSERIAL PRIMARY KEY,
-    verb_id       bigint NOT NULL,
-    table_id      bigint NOT NULL
-);
 
 -- --------------------------------------------------------
 
@@ -3141,6 +3191,32 @@ CREATE INDEX change_links_user_idx ON change_links (user_id);
 -- --------------------------------------------------------
 
 --
+-- indexes for table pod_types
+--
+
+CREATE INDEX pod_types_type_name_idx ON pod_types (type_name);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table pod_status
+--
+
+CREATE INDEX pod_status_type_name_idx ON pod_status (type_name);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table pods
+--
+
+CREATE INDEX pods_type_name_idx ON pods (type_name);
+CREATE INDEX pods_pod_type_idx ON pods (pod_type_id);
+CREATE INDEX pods_pod_status_idx ON pods (pod_status_id);
+
+-- --------------------------------------------------------
+
+--
 -- indexes for table protection_types
 --
 
@@ -3818,6 +3894,17 @@ ALTER TABLE change_links
     ADD CONSTRAINT change_links_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
     ADD CONSTRAINT change_links_change_action_fk FOREIGN KEY (change_action_id) REFERENCES change_actions (change_action_id),
     ADD CONSTRAINT change_links_change_table_fk FOREIGN KEY (change_table_id) REFERENCES change_tables (change_table_id);
+
+--
+-- constraints for table pods
+--
+
+ALTER TABLE pods
+    ADD CONSTRAINT type_name_uk UNIQUE (type_name),
+    ADD CONSTRAINT code_id_uk UNIQUE (code_id),
+    ADD CONSTRAINT pods_pod_type_fk FOREIGN KEY (pod_type_id) REFERENCES pod_types (pod_type_id),
+    ADD CONSTRAINT pods_pod_status_fk FOREIGN KEY (pod_status_id) REFERENCES pod_status (pod_status_id),
+    ADD CONSTRAINT pods_triple_fk FOREIGN KEY (param_triple_id) REFERENCES triples (triple_id);
 
 --
 -- constraints for table language_forms

@@ -1589,6 +1589,10 @@ class library
             case $this->class_to_name(change_link::class):
                 $result = 'log';
                 break;
+            case $this->class_to_name(pod_type::class):
+            case $this->class_to_name(pod_status::class):
+                $result = $this->class_to_name(pod::class);
+                break;
             case $this->class_to_name(language_form::class):
                 $result = $this->class_to_name(language::class);
                 break;

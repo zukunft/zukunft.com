@@ -222,6 +222,7 @@ class all_unit_tests extends test_cleanup
         (new system_log_tests)->run($this); // TODO add assert_api_to_dsp
         (new change_log_tests)->run($this); // TODO add assert_api_to_dsp  // TODO for version 0.0.6 add import test
         (new job_tests)->run($this); // TODO add assert_api_to_dsp
+        (new pod_tests)->run($this);
         (new user_tests)->run($this);
         (new user_list_tests)->run($this);
         (new sandbox_tests)->run($this);
