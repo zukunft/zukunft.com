@@ -743,20 +743,39 @@ CREATE TABLE IF NOT EXISTS user_triples
 -- --------------------------------------------------------
 
 --
--- Table structure to remember which phrases are stored in which table and pod
+-- table structure for the actual status of tables for a phrase
 --
 
-CREATE TABLE IF NOT EXISTS `phrase_tables`
+CREATE TABLE IF NOT EXISTS phrase_table_status
 (
-    `table_id`  int(11) NOT NULL,
-    `phrase_id` int(11) NOT NULL,
-    `pod_url`   text,
-    `active`    smallint DEFAULT NULL
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8 COMMENT ='to remember which phrases are stored in which table and pod';
+    phrase_table_status_id bigint           NOT NULL COMMENT 'the internal unique primary index',
+    type_name     varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
+    code_id       varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
+    description   text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'for the actual status of tables for a phrase';
 
 -- --------------------------------------------------------
+
+--
+-- table structure remember which phrases are stored in which table and pod
+--
+
+CREATE TABLE IF NOT EXISTS phrase_tables
+(
+    phrase_table_id        bigint NOT NULL COMMENT 'the internal unique primary index',
+    phrase_id              bigint NOT NULL COMMENT 'the values and results of this phrase are primary stored in dynamic tables on the given pod',
+    pod_id                 bigint NOT NULL COMMENT 'the primary pod where the values and results related to this phrase saved',
+    phrase_table_status_id bigint NOT NULL
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'remember which phrases are stored in which table and pod';
+
+-- --------------------------------------------------------
+
 --
 -- table structure the mathematical expression to calculate results based on values and results
 --
@@ -2493,6 +2512,28 @@ ALTER TABLE user_triples ADD PRIMARY KEY (triple_id, user_id, language_id),
 -- --------------------------------------------------------
 
 --
+-- indexes for table phrase_table_status
+--
+
+ALTER TABLE phrase_table_status
+    ADD PRIMARY KEY (phrase_table_status_id),
+    ADD KEY phrase_table_status_type_name_idx (type_name);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table phrase_tables
+--
+
+ALTER TABLE phrase_tables
+    ADD PRIMARY KEY (phrase_table_id),
+    ADD KEY phrase_tables_phrase_idx (phrase_id),
+    ADD KEY phrase_tables_pod_idx (pod_id),
+    ADD KEY phrase_tables_phrase_table_status_idx (phrase_table_status_id);
+
+-- --------------------------------------------------------
+
+--
 -- indexes for table groups
 --
 ALTER TABLE `groups`
@@ -3561,6 +3602,15 @@ ALTER TABLE user_triples
     ADD CONSTRAINT user_triples_language_fk    FOREIGN KEY (language_id)    REFERENCES languages (language_id),
     ADD CONSTRAINT user_triples_phrase_type_fk FOREIGN KEY (phrase_type_id) REFERENCES phrase_types (phrase_type_id),
     ADD CONSTRAINT user_triples_view_fk        FOREIGN KEY (view_id)        REFERENCES views (view_id);
+
+--
+-- constraints for table phrase_tables
+--
+
+ALTER TABLE phrase_tables
+    ADD CONSTRAINT phrase_tables_phrase_fk FOREIGN KEY (phrase_id) REFERENCES phrases (phrase_id),
+    ADD CONSTRAINT phrase_tables_pod_fk FOREIGN KEY (pod_id) REFERENCES pods (pod_id),
+    ADD CONSTRAINT phrase_tables_phrase_table_status_fk FOREIGN KEY (phrase_table_status_id) REFERENCES phrase_table_status (phrase_table_status_id);
 
 -- --------------------------------------------------------
 

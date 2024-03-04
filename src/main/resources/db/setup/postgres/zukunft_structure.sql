@@ -907,19 +907,41 @@ COMMENT ON COLUMN user_triples.protect_id IS 'to protect against unwanted change
 -- --------------------------------------------------------
 
 --
--- table structure to remember which phrases are stored in which table and pod
--- TODO generate
+-- table structure for the actual status of tables for a phrase
+--
+
+CREATE TABLE IF NOT EXISTS phrase_table_status
+(
+    phrase_table_status_id BIGSERIAL PRIMARY KEY,
+    type_name     varchar(255)     NOT NULL,
+    code_id       varchar(255) DEFAULT NULL,
+    description   text         DEFAULT NULL
+);
+
+COMMENT ON TABLE phrase_table_status IS 'for the actual status of tables for a phrase';
+COMMENT ON COLUMN phrase_table_status.phrase_table_status_id IS 'the internal unique primary index';
+COMMENT ON COLUMN phrase_table_status.type_name IS 'the unique type name as shown to the user and used for the selection';
+COMMENT ON COLUMN phrase_table_status.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
+COMMENT ON COLUMN phrase_table_status.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
+
+-- --------------------------------------------------------
+
+--
+-- table structure remember which phrases are stored in which table and pod
 --
 
 CREATE TABLE IF NOT EXISTS phrase_tables
 (
-    table_id   BIGSERIAL PRIMARY KEY,
-    phrase_id  bigint   NOT NULL,
-    pod_url    text     NOT NULL,
-    active     smallint DEFAULT NULL
+    phrase_table_id BIGSERIAL PRIMARY KEY,
+    phrase_id              bigint NOT NULL,
+    pod_id                 bigint NOT NULL,
+    phrase_table_status_id bigint NOT NULL
 );
 
-COMMENT ON TABLE phrase_tables IS 'to remember which phrases are stored in which table and pod';
+COMMENT ON TABLE phrase_tables IS 'remember which phrases are stored in which table and pod';
+COMMENT ON COLUMN phrase_tables.phrase_table_id IS 'the internal unique primary index';
+COMMENT ON COLUMN phrase_tables.phrase_id IS 'the values and results of this phrase are primary stored in dynamic tables on the given pod';
+COMMENT ON COLUMN phrase_tables.pod_id IS 'the primary pod where the values and results related to this phrase saved';
 
 -- --------------------------------------------------------
 
@@ -3328,6 +3350,24 @@ CREATE INDEX user_triples_view_idx           ON user_triples (view_id);
 -- --------------------------------------------------------
 
 --
+-- indexes for table phrase_table_status
+--
+
+CREATE INDEX phrase_table_status_type_name_idx ON phrase_table_status (type_name);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table phrase_tables
+--
+
+CREATE INDEX phrase_tables_phrase_idx ON phrase_tables (phrase_id);
+CREATE INDEX phrase_tables_pod_idx ON phrase_tables (pod_id);
+CREATE INDEX phrase_tables_phrase_table_status_idx ON phrase_tables (phrase_table_status_id);
+
+-- --------------------------------------------------------
+
+--
 -- indexes for table groups
 --
 CREATE INDEX groups_user_idx ON groups (user_id);
@@ -3957,6 +3997,15 @@ ALTER TABLE user_triples
     ADD CONSTRAINT user_triples_language_fk    FOREIGN KEY (language_id)    REFERENCES languages (language_id),
     ADD CONSTRAINT user_triples_phrase_type_fk FOREIGN KEY (phrase_type_id) REFERENCES phrase_types (phrase_type_id),
     ADD CONSTRAINT user_triples_view_fk        FOREIGN KEY (view_id)        REFERENCES views (view_id);
+
+--
+-- constraints for table phrase_tables
+--
+
+ALTER TABLE phrase_tables
+    ADD CONSTRAINT phrase_tables_phrase_fk FOREIGN KEY (phrase_id) REFERENCES phrases (phrase_id),
+    ADD CONSTRAINT phrase_tables_pod_fk FOREIGN KEY (pod_id) REFERENCES pods (pod_id),
+    ADD CONSTRAINT phrase_tables_phrase_table_status_fk FOREIGN KEY (phrase_table_status_id) REFERENCES phrase_table_status (phrase_table_status_id);
 
 -- --------------------------------------------------------
 

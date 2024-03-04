@@ -1593,6 +1593,10 @@ class library
             case $this->class_to_name(pod_status::class):
                 $result = $this->class_to_name(pod::class);
                 break;
+            case $this->class_to_name(phrase_table_status::class):
+            case $this->class_to_name(phrase_table::class):
+                $result = $this->class_to_name(phrase::class);
+                break;
             case $this->class_to_name(language_form::class):
                 $result = $this->class_to_name(language::class);
                 break;

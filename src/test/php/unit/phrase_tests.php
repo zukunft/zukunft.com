@@ -35,6 +35,8 @@ namespace unit;
 include_once WEB_PHRASE_PATH . 'phrase.php';
 
 use api\word\word as word_api;
+use cfg\phrase_table;
+use cfg\phrase_table_status;
 use cfg\phrase_type;
 use html\word\word as word_dsp;
 use html\word\triple as triple_dsp;
@@ -102,6 +104,20 @@ class phrase_tests
 
 
         $t->subheader('Combined objects like phrases should not be used for im- or export, so not tests is needed. Instead the single objects like word or triple should be im- and exported');
+
+
+        $t->header('Unit tests of the dynamic table creation');
+
+        $t->subheader('Phrase table status SQL setup statements');
+        $phr_tbl_sta = new phrase_table_status('');
+        $t->assert_sql_table_create($phr_tbl_sta);
+        $t->assert_sql_index_create($phr_tbl_sta);
+
+        $t->subheader('Phrase table SQL setup statements');
+        $phr_tbl = new phrase_table('');
+        $t->assert_sql_table_create($phr_tbl);
+        $t->assert_sql_index_create($phr_tbl);
+        $t->assert_sql_foreign_key_create($phr_tbl);
 
     }
 

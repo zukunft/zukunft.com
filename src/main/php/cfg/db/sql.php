@@ -3164,6 +3164,9 @@ class sql
         if ($result == 'pod_statuss') {
             $result = 'pod_status';
         }
+        if ($result == 'phrase_table_statuss') {
+            $result = 'phrase_table_status';
+        }
         if ($result == 'userss') {
             $result = 'users';
         }

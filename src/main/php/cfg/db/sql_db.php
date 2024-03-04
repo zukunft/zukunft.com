@@ -61,6 +61,8 @@ use cfg\log\change_prime_value;
 use cfg\log\change_standard_value;
 use cfg\log\change_table;
 use cfg\log\system_log;
+use cfg\phrase_table;
+use cfg\phrase_table_status;
 use cfg\phrase_type;
 use cfg\pod;
 use cfg\pod_status;
@@ -222,6 +224,8 @@ class sql_db
         word::class,
         verb::class,
         triple::class,
+        phrase_table_status::class,
+        phrase_table::class,
         phrase_type::class,
         group::class,
         source::class,
