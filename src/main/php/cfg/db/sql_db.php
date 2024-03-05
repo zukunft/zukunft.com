@@ -68,6 +68,7 @@ use cfg\pod;
 use cfg\pod_status;
 use cfg\pod_type;
 use cfg\protection_type;
+use cfg\result\result;
 use cfg\session;
 use cfg\share_type;
 use cfg\source;
@@ -160,7 +161,7 @@ class sql_db
     const TBL_IP = 'ip_range';
     const TBL_SYS_LOG = 'sys_log';
     const TBL_SYS_LOG_STATUS = 'sys_log_status';
-    //const TBL_SYS_SCRIPT = 'sys_script'; // to log the execution times for code optimising
+    const TBL_SYS_SCRIPT = 'sys_script'; // to log the execution times for code optimising
     const TBL_TASK = 'job';
     const TBL_TASK_TYPE = 'job_type';
 
@@ -230,8 +231,10 @@ class sql_db
         group::class,
         source::class,
         source_type::class,
+        value::class,
         formula_type::class,
         formula::class,
+        result::class,
         view::class,
         component::class
     ];

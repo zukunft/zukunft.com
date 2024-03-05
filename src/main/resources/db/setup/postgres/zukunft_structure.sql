@@ -1327,26 +1327,33 @@ CREATE TABLE IF NOT EXISTS user_refs
     excluded       smallint     DEFAULT NULL
 );
 
+
 -- --------------------------------------------------------
 
 --
--- table structure for public unprotected values related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated
+-- table structure for public unprotected numeric values related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated
 --
 
 CREATE TABLE IF NOT EXISTS values_standard_prime
 (
-    group_id      BIGSERIAL        PRIMARY KEY,
+    phrase_id_1   smallint         NOT NULL,
+    phrase_id_2   smallint         DEFAULT 0,
+    phrase_id_3   smallint         DEFAULT 0,
+    phrase_id_4   smallint         DEFAULT 0,
     numeric_value double precision NOT NULL,
     source_id     bigint           DEFAULT NULL
 );
 
-COMMENT ON TABLE values_standard_prime                IS 'for public unprotected values related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated';
-COMMENT ON COLUMN values_standard_prime.group_id      IS 'the 64-bit prime index to find the value';
+COMMENT ON TABLE values_standard_prime                IS 'for public unprotected numeric values related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated';
+COMMENT ON COLUMN values_standard_prime.phrase_id_1   IS 'phrase id that is part of the prime key for a numeric value';
+COMMENT ON COLUMN values_standard_prime.phrase_id_2   IS 'phrase id that is part of the prime key for a numeric value';
+COMMENT ON COLUMN values_standard_prime.phrase_id_3   IS 'phrase id that is part of the prime key for a numeric value';
+COMMENT ON COLUMN values_standard_prime.phrase_id_4   IS 'phrase id that is part of the prime key for a numeric value';
 COMMENT ON COLUMN values_standard_prime.numeric_value IS 'the numeric value given by the user';
 COMMENT ON COLUMN values_standard_prime.source_id     IS 'the source of the value as given by the user';
 
 --
--- table structure for public unprotected values that have never changed the owner, does not have a description and are rarely updated
+-- table structure for public unprotected numeric values that have never changed the owner, does not have a description and are rarely updated
 --
 
 CREATE TABLE IF NOT EXISTS values_standard
@@ -1356,8 +1363,8 @@ CREATE TABLE IF NOT EXISTS values_standard
     source_id     bigint           DEFAULT NULL
 );
 
-COMMENT ON TABLE values_standard                IS 'for public unprotected values that have never changed the owner, does not have a description and are rarely updated';
-COMMENT ON COLUMN values_standard.group_id      IS 'the 512-bit prime index to find the value';
+COMMENT ON TABLE values_standard                IS 'for public unprotected numeric values that have never changed the owner, does not have a description and are rarely updated';
+COMMENT ON COLUMN values_standard.group_id      IS 'the 512-bit prime index to find the numeric value';
 COMMENT ON COLUMN values_standard.numeric_value IS 'the numeric value given by the user';
 COMMENT ON COLUMN values_standard.source_id     IS 'the source of the value as given by the user';
 
@@ -1380,7 +1387,7 @@ CREATE TABLE IF NOT EXISTS values
 );
 
 COMMENT ON TABLE values                IS 'for numeric values related to up to 16 phrases';
-COMMENT ON COLUMN values.group_id      IS 'the 512-bit prime index to find the value';
+COMMENT ON COLUMN values.group_id      IS 'the 512-bit prime index to find the numeric value';
 COMMENT ON COLUMN values.numeric_value IS 'the numeric value given by the user';
 COMMENT ON COLUMN values.source_id     IS 'the source of the value as given by the user';
 COMMENT ON COLUMN values.last_update   IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
@@ -1390,7 +1397,7 @@ COMMENT ON COLUMN values.share_type_id IS 'to restrict the access';
 COMMENT ON COLUMN values.protect_id    IS 'to protect against unwanted changes';
 
 --
--- table structure for user specific changes of values related to up to 16 phrases
+-- table structure for user specific changes of numeric values related to up to 16 phrases
 --
 
 CREATE TABLE IF NOT EXISTS user_values
@@ -1405,9 +1412,9 @@ CREATE TABLE IF NOT EXISTS user_values
     protect_id    smallint         DEFAULT NULL
 );
 
-COMMENT ON TABLE user_values                IS 'for user specific changes of values related to up to 16 phrases';
+COMMENT ON TABLE user_values                IS 'for user specific changes of numeric values related to up to 16 phrases';
 COMMENT ON COLUMN user_values.group_id      IS 'the 512-bit prime index to find the user numeric value';
-COMMENT ON COLUMN user_values.user_id       IS 'the changer of the value';
+COMMENT ON COLUMN user_values.user_id       IS 'the changer of the numeric value';
 COMMENT ON COLUMN user_values.numeric_value IS 'the user specific numeric value change';
 COMMENT ON COLUMN user_values.source_id     IS 'the source of the value as given by the user';
 COMMENT ON COLUMN user_values.last_update   IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
@@ -1418,12 +1425,15 @@ COMMENT ON COLUMN user_values.protect_id    IS 'to protect against unwanted chan
 -- --------------------------------------------------------
 
 --
--- table structure for the most often requested values related up to four prime phrase
+-- table structure for the most often requested numeric values related up to four prime phrase
 --
 
 CREATE TABLE IF NOT EXISTS values_prime
 (
-    group_id        BIGSERIAL        PRIMARY KEY,
+    phrase_id_1     smallint         NOT NULL,
+    phrase_id_2     smallint         DEFAULT 0,
+    phrase_id_3     smallint         DEFAULT 0,
+    phrase_id_4     smallint         DEFAULT 0,
     numeric_value   double precision NOT NULL,
     source_id       bigint           DEFAULT NULL,
     last_update     timestamp        DEFAULT NULL,
@@ -1433,8 +1443,11 @@ CREATE TABLE IF NOT EXISTS values_prime
     protect_id      smallint         DEFAULT NULL
 );
 
-COMMENT ON TABLE values_prime                IS 'for the most often requested values related up to four prime phrase';
-COMMENT ON COLUMN values_prime.group_id      IS 'the 64-bit prime index to find the value';
+COMMENT ON TABLE values_prime                IS 'for the most often requested numeric values related up to four prime phrase';
+COMMENT ON COLUMN values_prime.phrase_id_1   IS 'phrase id that is part of the prime key for a numeric value';
+COMMENT ON COLUMN values_prime.phrase_id_2   IS 'phrase id that is part of the prime key for a numeric value';
+COMMENT ON COLUMN values_prime.phrase_id_3   IS 'phrase id that is part of the prime key for a numeric value';
+COMMENT ON COLUMN values_prime.phrase_id_4   IS 'phrase id that is part of the prime key for a numeric value';
 COMMENT ON COLUMN values_prime.numeric_value IS 'the numeric value given by the user';
 COMMENT ON COLUMN values_prime.source_id     IS 'the source of the value as given by the user';
 COMMENT ON COLUMN values_prime.last_update   IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
@@ -1444,12 +1457,15 @@ COMMENT ON COLUMN values_prime.share_type_id IS 'to restrict the access';
 COMMENT ON COLUMN values_prime.protect_id    IS 'to protect against unwanted changes';
 
 --
--- table structure to store the user specific changes for the most often requested values related up to four prime phrase
+-- table structure to store the user specific changes for the most often requested numeric values related up to four prime phrase
 --
 
 CREATE TABLE IF NOT EXISTS user_values_prime
 (
-    group_id        bigint           NOT NULL,
+    phrase_id_1     smallint         NOT NULL,
+    phrase_id_2     smallint         DEFAULT 0,
+    phrase_id_3     smallint         DEFAULT 0,
+    phrase_id_4     smallint         DEFAULT 0,
     user_id         bigint           NOT NULL,
     numeric_value   double precision DEFAULT NULL,
     source_id       bigint           DEFAULT NULL,
@@ -1459,9 +1475,12 @@ CREATE TABLE IF NOT EXISTS user_values_prime
     protect_id      smallint         DEFAULT NULL
 );
 
-COMMENT ON TABLE user_values_prime                IS 'to store the user specific changes for the most often requested values related up to four prime phrase';
-COMMENT ON COLUMN user_values_prime.group_id      IS 'the 64-bit prime index to find the user numeric value';
-COMMENT ON COLUMN user_values_prime.user_id       IS 'the changer of the value';
+COMMENT ON TABLE user_values_prime                IS 'to store the user specific changes for the most often requested numeric values related up to four prime phrase';
+COMMENT ON COLUMN user_values_prime.phrase_id_1   IS 'phrase id that is with the user id part of the prime key for a numeric value';
+COMMENT ON COLUMN user_values_prime.phrase_id_2   IS 'phrase id that is with the user id part of the prime key for a numeric value';
+COMMENT ON COLUMN user_values_prime.phrase_id_3   IS 'phrase id that is with the user id part of the prime key for a numeric value';
+COMMENT ON COLUMN user_values_prime.phrase_id_4   IS 'phrase id that is with the user id part of the prime key for a numeric value';
+COMMENT ON COLUMN user_values_prime.user_id       IS 'the changer of the numeric value';
 COMMENT ON COLUMN user_values_prime.numeric_value IS 'the user specific numeric value change';
 COMMENT ON COLUMN user_values_prime.source_id     IS 'the source of the value as given by the user';
 COMMENT ON COLUMN user_values_prime.last_update   IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
@@ -1472,7 +1491,7 @@ COMMENT ON COLUMN user_values_prime.protect_id    IS 'to protect against unwante
 -- --------------------------------------------------------
 
 --
--- table structure for values related to more than 16 phrases
+-- table structure for numeric values related to more than 16 phrases
 --
 
 CREATE TABLE IF NOT EXISTS values_big
@@ -1487,8 +1506,8 @@ CREATE TABLE IF NOT EXISTS values_big
     protect_id      smallint         DEFAULT NULL
 );
 
-COMMENT ON TABLE values_big                IS 'for values related to more than 16 phrases';
-COMMENT ON COLUMN values_big.group_id      IS 'the text index to find value related to more than 16 phrases';
+COMMENT ON TABLE values_big                IS 'for numeric values related to more than 16 phrases';
+COMMENT ON COLUMN values_big.group_id      IS 'the variable text index to find numeric value';
 COMMENT ON COLUMN values_big.numeric_value IS 'the numeric value given by the user';
 COMMENT ON COLUMN values_big.source_id     IS 'the source of the value as given by the user';
 COMMENT ON COLUMN values_big.last_update   IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
@@ -1514,8 +1533,8 @@ CREATE TABLE IF NOT EXISTS user_values_big
 );
 
 COMMENT ON TABLE user_values_big                IS 'to store the user specific changes of numeric values related to more than 16 phrases';
-COMMENT ON COLUMN user_values_big.group_id      IS 'the text index to find the user values related to more than 16 phrases';
-COMMENT ON COLUMN user_values_big.user_id       IS 'the changer of the value';
+COMMENT ON COLUMN user_values_big.group_id      IS 'the text index for more than 16 phrases to find the numeric value';
+COMMENT ON COLUMN user_values_big.user_id       IS 'the changer of the numeric value';
 COMMENT ON COLUMN user_values_big.numeric_value IS 'the user specific numeric value change';
 COMMENT ON COLUMN user_values_big.source_id     IS 'the source of the value as given by the user';
 COMMENT ON COLUMN user_values_big.last_update   IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
@@ -1526,516 +1545,644 @@ COMMENT ON COLUMN user_values_big.protect_id    IS 'to protect against unwanted 
 -- --------------------------------------------------------
 
 --
--- table structure for public text values related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated
+-- table structure for public unprotected text values related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated
 --
 
 CREATE TABLE IF NOT EXISTS values_text_standard_prime
 (
-    group_id   BIGSERIAL PRIMARY KEY,
-    text_value text NOT NULL,
-    source_id  int DEFAULT NULL
+    phrase_id_1 smallint  NOT NULL,
+    phrase_id_2 smallint  DEFAULT 0,
+    phrase_id_3 smallint  DEFAULT 0,
+    phrase_id_4 smallint  DEFAULT 0,
+    text_value  text      NOT NULL,
+    source_id   bigint    DEFAULT NULL
 );
 
-COMMENT ON TABLE values_text_standard_prime IS 'for public unprotected text values related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated';
-COMMENT ON COLUMN values_text_standard_prime.group_id IS 'the prime index to find the value';
+COMMENT ON TABLE values_text_standard_prime             IS 'for public unprotected text values related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated';
+COMMENT ON COLUMN values_text_standard_prime.phrase_id_1   IS 'phrase id that is part of the prime key for a text value';
+COMMENT ON COLUMN values_text_standard_prime.phrase_id_2   IS 'phrase id that is part of the prime key for a text value';
+COMMENT ON COLUMN values_text_standard_prime.phrase_id_3   IS 'phrase id that is part of the prime key for a text value';
+COMMENT ON COLUMN values_text_standard_prime.phrase_id_4   IS 'phrase id that is part of the prime key for a text value';
+COMMENT ON COLUMN values_text_standard_prime.text_value IS 'the text value given by the user';
+COMMENT ON COLUMN values_text_standard_prime.source_id  IS 'the source of the value as given by the user';
 
 --
--- table structure for public text values that have never changed the owner, does not have a description and are rarely updated
+-- table structure for public unprotected text values that have never changed the owner, does not have a description and are rarely updated
 --
 
-CREATE TABLE IF NOT EXISTS value_text_standard
+CREATE TABLE IF NOT EXISTS values_text_standard
 (
     group_id   char(112) PRIMARY KEY,
-    text_value text NOT NULL,
-    source_id  bigint DEFAULT NULL
+    text_value text      NOT NULL,
+    source_id  bigint    DEFAULT NULL
 );
 
-COMMENT ON TABLE value_text_standard IS 'for public unprotected text values that have never changed the owner, does not have a description and are rarely updated';
-COMMENT ON COLUMN value_text_standard.group_id IS 'the prime index to find the value';
+COMMENT ON TABLE values_text_standard             IS 'for public unprotected text values that have never changed the owner, does not have a description and are rarely updated';
+COMMENT ON COLUMN values_text_standard.group_id   IS 'the 512-bit prime index to find the text value';
+COMMENT ON COLUMN values_text_standard.text_value IS 'the text value given by the user';
+COMMENT ON COLUMN values_text_standard.source_id  IS 'the source of the value as given by the user';
+
+-- --------------------------------------------------------
 
 --
--- table structure for text values where the text might be long and where the text is expected to be never user in a search
+-- table structure for text values related to up to 16 phrases
 --
 
-CREATE TABLE IF NOT EXISTS value_text
+CREATE TABLE IF NOT EXISTS values_text
 (
-    group_id        char(112) PRIMARY KEY,
-    text_value      text NOT NULL,
-    user_id         bigint                    DEFAULT NULL,
-    source_id       bigint                    DEFAULT NULL,
-    description     text,
-    excluded        smallint                  DEFAULT NULL,
-    last_update     timestamp        NULL     DEFAULT NULL,
-    share_type_id   smallint                  DEFAULT NULL,
-    protect_id      smallint           NOT NULL DEFAULT '1'
+    group_id      char(112) PRIMARY KEY,
+    text_value    text      NOT NULL,
+    source_id     bigint    DEFAULT NULL,
+    last_update   timestamp DEFAULT NULL,
+    user_id       bigint    DEFAULT NULL,
+    excluded      smallint  DEFAULT NULL,
+    share_type_id smallint  DEFAULT NULL,
+    protect_id    smallint  DEFAULT NULL
 );
 
-COMMENT ON TABLE value_text IS 'for the most often used text values';
-COMMENT ON COLUMN value_text.group_id IS 'the prime index to find the values';
-COMMENT ON COLUMN value_text.user_id IS 'the owner / creator of the value';
-COMMENT ON COLUMN value_text.last_update IS 'for fast recalculation';
-COMMENT ON COLUMN value_text.description IS 'temp field used during dev phase for easy value to trm assigns';
-COMMENT ON COLUMN value_text.excluded IS 'the default exclude setting for most users';
+COMMENT ON TABLE values_text                IS 'for text values related to up to 16 phrases';
+COMMENT ON COLUMN values_text.group_id      IS 'the 512-bit prime index to find the text value';
+COMMENT ON COLUMN values_text.text_value    IS 'the text value given by the user';
+COMMENT ON COLUMN values_text.source_id     IS 'the source of the value as given by the user';
+COMMENT ON COLUMN values_text.last_update   IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN values_text.user_id       IS 'the owner / creator of the value';
+COMMENT ON COLUMN values_text.excluded      IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN values_text.share_type_id IS 'to restrict the access';
+COMMENT ON COLUMN values_text.protect_id    IS 'to protect against unwanted changes';
 
 --
--- table structure to store the user specific changes of text values where the text might be long and where the text is expected to be never user in a search
+-- table structure for user specific changes of text values related to up to 16 phrases
 --
 
-CREATE TABLE IF NOT EXISTS user_value_text
+CREATE TABLE IF NOT EXISTS user_values_text
 (
-    group_id        char(112) NOT NULL,
-    user_id         bigint                    DEFAULT NULL,
-    text_value      text NOT NULL,
-    source_id       bigint                    DEFAULT NULL,
-    description     text,
-    excluded        smallint                  DEFAULT NULL,
-    last_update     timestamp        NULL     DEFAULT NULL,
-    share_type_id   smallint                  DEFAULT NULL,
-    protect_id      smallint           NOT NULL DEFAULT '1'
+    group_id      char(112) NOT NULL,
+    user_id       bigint    NOT NULL,
+    text_value    text      DEFAULT NULL,
+    source_id     bigint    DEFAULT NULL,
+    last_update   timestamp DEFAULT NULL,
+    excluded      smallint  DEFAULT NULL,
+    share_type_id smallint  DEFAULT NULL,
+    protect_id    smallint  DEFAULT NULL
 );
 
-COMMENT ON TABLE user_value_text IS 'to store the user specific changes of the most often used text values';
-COMMENT ON COLUMN user_value_text.group_id IS 'the prime index to find the values';
-COMMENT ON COLUMN user_value_text.user_id IS 'the owner / creator of the value';
-COMMENT ON COLUMN user_value_text.last_update IS 'for fast recalculation';
-COMMENT ON COLUMN user_value_text.description IS 'temp field used during dev phase for easy value to trm assigns';
-COMMENT ON COLUMN user_value_text.excluded IS 'the default exclude setting for most users';
+COMMENT ON TABLE user_values_text                IS 'for user specific changes of text values related to up to 16 phrases';
+COMMENT ON COLUMN user_values_text.group_id      IS 'the 512-bit prime index to find the user text value';
+COMMENT ON COLUMN user_values_text.user_id       IS 'the changer of the text value';
+COMMENT ON COLUMN user_values_text.text_value    IS 'the user specific text value change';
+COMMENT ON COLUMN user_values_text.source_id     IS 'the source of the value as given by the user';
+COMMENT ON COLUMN user_values_text.last_update   IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN user_values_text.excluded      IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN user_values_text.share_type_id IS 'to restrict the access';
+COMMENT ON COLUMN user_values_text.protect_id    IS 'to protect against unwanted changes';
+
+-- --------------------------------------------------------
 
 --
 -- table structure for the most often requested text values related up to four prime phrase
 --
 
-CREATE TABLE IF NOT EXISTS value_text_prime
+CREATE TABLE IF NOT EXISTS values_text_prime
 (
-    group_id        BIGSERIAL PRIMARY KEY,
-    user_id         bigint                    DEFAULT NULL,
-    text_value      text NOT NULL,
-    source_id       bigint                    DEFAULT NULL,
-    description     text,
-    excluded        smallint                  DEFAULT NULL,
-    share_type_id   smallint                  DEFAULT NULL,
-    protect_id      smallint           NOT NULL DEFAULT '1'
+    phrase_id_1   smallint  NOT NULL,
+    phrase_id_2   smallint  DEFAULT 0,
+    phrase_id_3   smallint  DEFAULT 0,
+    phrase_id_4   smallint  DEFAULT 0,
+    text_value    text      NOT NULL,
+    source_id     bigint    DEFAULT NULL,
+    last_update   timestamp DEFAULT NULL,
+    user_id       bigint    DEFAULT NULL,
+    excluded      smallint  DEFAULT NULL,
+    share_type_id smallint  DEFAULT NULL,
+    protect_id    smallint  DEFAULT NULL
 );
 
-COMMENT ON TABLE value_text_prime IS 'for the most often used values';
-COMMENT ON COLUMN value_text_prime.group_id IS 'temp field to increase speed created by the value term links';
-COMMENT ON COLUMN value_text_prime.user_id IS 'the owner / creator of the value';
-COMMENT ON COLUMN value_text_prime.description IS 'temp field used during dev phase for easy value to trm assigns';
-COMMENT ON COLUMN value_text_prime.excluded IS 'the default exclude setting for most users';
+COMMENT ON TABLE values_text_prime                IS 'for the most often requested text values related up to four prime phrase';
+COMMENT ON COLUMN values_text_prime.phrase_id_1   IS 'phrase id that is part of the prime key for a text value';
+COMMENT ON COLUMN values_text_prime.phrase_id_2   IS 'phrase id that is part of the prime key for a text value';
+COMMENT ON COLUMN values_text_prime.phrase_id_3   IS 'phrase id that is part of the prime key for a text value';
+COMMENT ON COLUMN values_text_prime.phrase_id_4   IS 'phrase id that is part of the prime key for a text value';
+COMMENT ON COLUMN values_text_prime.text_value    IS 'the text value given by the user';
+COMMENT ON COLUMN values_text_prime.source_id     IS 'the source of the value as given by the user';
+COMMENT ON COLUMN values_text_prime.last_update   IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN values_text_prime.user_id       IS 'the owner / creator of the value';
+COMMENT ON COLUMN values_text_prime.excluded      IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN values_text_prime.share_type_id IS 'to restrict the access';
+COMMENT ON COLUMN values_text_prime.protect_id    IS 'to protect against unwanted changes';
 
 --
--- table structure to store the user specific changes for the most often requested values related up to four prime phrase
+-- table structure to store the user specific changes for the most often requested text values related up to four prime phrase
 --
 
-CREATE TABLE IF NOT EXISTS user_value_text_prime
+CREATE TABLE IF NOT EXISTS user_values_text_prime
 (
-    group_id        BIGSERIAL NOT NULL,
-    user_id         bigint                    DEFAULT NULL,
-    text_value      text NOT NULL,
-    source_id       bigint                    DEFAULT NULL,
-    description     text,
-    excluded        smallint                  DEFAULT NULL,
-    share_type_id   smallint                  DEFAULT NULL,
-    protect_id      smallint           NOT NULL DEFAULT '1'
+    phrase_id_1   smallint  NOT NULL,
+    phrase_id_2   smallint  DEFAULT 0,
+    phrase_id_3   smallint  DEFAULT 0,
+    phrase_id_4   smallint  DEFAULT 0,
+    user_id       bigint    NOT NULL,
+    text_value    text      DEFAULT NULL,
+    source_id     bigint    DEFAULT NULL,
+    last_update   timestamp DEFAULT NULL,
+    excluded      smallint  DEFAULT NULL,
+    share_type_id smallint  DEFAULT NULL,
+    protect_id    smallint  DEFAULT NULL
 );
 
-COMMENT ON TABLE user_value_text_prime IS 'the user specific changes of the most often used values';
-COMMENT ON COLUMN user_value_text_prime.group_id IS 'temp field to increase speed created by the value term links';
-COMMENT ON COLUMN user_value_text_prime.user_id IS 'the owner / creator of the value';
-COMMENT ON COLUMN user_value_text_prime.description IS 'temp field used during dev phase for easy value to trm assigns';
-COMMENT ON COLUMN user_value_text_prime.excluded IS 'the default exclude setting for most users';
-
---
--- table structure for the most often requested text values related up to more than 16 phrases
---
-
-CREATE TABLE IF NOT EXISTS value_text_big
-(
-    group_id        TEXT NOT NULL,
-    user_id         bigint                    DEFAULT NULL,
-    text_value      text NOT NULL,
-    source_id       bigint                    DEFAULT NULL,
-    description     text,
-    excluded        smallint                  DEFAULT NULL,
-    share_type_id   smallint                  DEFAULT NULL,
-    protect_id      smallint           NOT NULL DEFAULT '1'
-);
-
-COMMENT ON TABLE value_text_big IS 'for the most often used values';
-COMMENT ON COLUMN value_text_big.group_id IS 'the prime index to find the values';
-COMMENT ON COLUMN value_text_big.user_id IS 'the owner / creator of the value';
-COMMENT ON COLUMN value_text_big.description IS 'temp field used during dev phase for easy value to trm assigns';
-COMMENT ON COLUMN value_text_big.excluded IS 'the default exclude setting for most users';
-
---
--- table structure to store the user specific changes for the most often requested values related up to more than 16 phrases
---
-
-CREATE TABLE IF NOT EXISTS user_value_text_big
-(
-    group_id        TEXT NOT NULL,
-    user_id         bigint                    DEFAULT NULL,
-    text_value      text NOT NULL,
-    source_id       bigint                    DEFAULT NULL,
-    description     text,
-    excluded        smallint                  DEFAULT NULL,
-    share_type_id   smallint                  DEFAULT NULL,
-    protect_id      smallint           NOT NULL DEFAULT '1'
-);
-
-COMMENT ON TABLE user_value_text_big IS 'the user specific changes of the most often used values';
-COMMENT ON COLUMN user_value_text_big.group_id IS 'the prime index to find the values';
-COMMENT ON COLUMN user_value_text_big.user_id IS 'the owner / creator of the value';
-COMMENT ON COLUMN user_value_text_big.description IS 'temp field used during dev phase for easy value to trm assigns';
-COMMENT ON COLUMN user_value_text_big.excluded IS 'the default exclude setting for most users';
+COMMENT ON TABLE user_values_text_prime                IS 'to store the user specific changes for the most often requested text values related up to four prime phrase';
+COMMENT ON COLUMN user_values_text_prime.phrase_id_1   IS 'phrase id that is with the user id part of the prime key for a text value';
+COMMENT ON COLUMN user_values_text_prime.phrase_id_2   IS 'phrase id that is with the user id part of the prime key for a text value';
+COMMENT ON COLUMN user_values_text_prime.phrase_id_3   IS 'phrase id that is with the user id part of the prime key for a text value';
+COMMENT ON COLUMN user_values_text_prime.phrase_id_4   IS 'phrase id that is with the user id part of the prime key for a text value';
+COMMENT ON COLUMN user_values_text_prime.user_id       IS 'the changer of the text value';
+COMMENT ON COLUMN user_values_text_prime.text_value    IS 'the user specific text value change';
+COMMENT ON COLUMN user_values_text_prime.source_id     IS 'the source of the value as given by the user';
+COMMENT ON COLUMN user_values_text_prime.last_update   IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN user_values_text_prime.excluded      IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN user_values_text_prime.share_type_id IS 'to restrict the access';
+COMMENT ON COLUMN user_values_text_prime.protect_id    IS 'to protect against unwanted changes';
 
 -- --------------------------------------------------------
 
 --
--- table structure for public time values related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated
+-- table structure for text values related to more than 16 phrases
 --
 
-CREATE TABLE IF NOT EXISTS value_time_standard_prime
+CREATE TABLE IF NOT EXISTS values_text_big
 (
-    group_id   BIGSERIAL PRIMARY KEY,
-    time_value timestamp NOT NULL,
-    source_id  int DEFAULT NULL
+    group_id      text      PRIMARY KEY,
+    text_value    text      NOT NULL,
+    source_id     bigint    DEFAULT NULL,
+    last_update   timestamp DEFAULT NULL,
+    user_id       bigint    DEFAULT NULL,
+    excluded      smallint  DEFAULT NULL,
+    share_type_id smallint  DEFAULT NULL,
+    protect_id    smallint  DEFAULT NULL
 );
 
-COMMENT ON TABLE value_time_standard_prime IS 'for public unprotected time values related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated';
-COMMENT ON COLUMN value_time_standard_prime.group_id IS 'the prime index to find the value';
+COMMENT ON TABLE values_text_big                IS 'for text values related to more than 16 phrases';
+COMMENT ON COLUMN values_text_big.group_id      IS 'the variable text index to find text value';
+COMMENT ON COLUMN values_text_big.text_value    IS 'the text value given by the user';
+COMMENT ON COLUMN values_text_big.source_id     IS 'the source of the value as given by the user';
+COMMENT ON COLUMN values_text_big.last_update   IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN values_text_big.user_id       IS 'the owner / creator of the value';
+COMMENT ON COLUMN values_text_big.excluded      IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN values_text_big.share_type_id IS 'to restrict the access';
+COMMENT ON COLUMN values_text_big.protect_id    IS 'to protect against unwanted changes';
 
 --
--- table structure for public time values that have never changed the owner, does not have a description and are rarely updated
+-- table structure to store the user specific changes of text values related to more than 16 phrases
 --
 
-CREATE TABLE IF NOT EXISTS value_time_standard
+CREATE TABLE IF NOT EXISTS user_values_text_big
+(
+    group_id      text      NOT NULL,
+    user_id       bigint    NOT NULL,
+    text_value    text      DEFAULT NULL,
+    source_id     bigint    DEFAULT NULL,
+    last_update   timestamp DEFAULT NULL,
+    excluded      smallint  DEFAULT NULL,
+    share_type_id smallint  DEFAULT NULL,
+    protect_id    smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE user_values_text_big                IS 'to store the user specific changes of text values related to more than 16 phrases';
+COMMENT ON COLUMN user_values_text_big.group_id      IS 'the text index for more than 16 phrases to find the text value';
+COMMENT ON COLUMN user_values_text_big.user_id       IS 'the changer of the text value';
+COMMENT ON COLUMN user_values_text_big.text_value    IS 'the user specific text value change';
+COMMENT ON COLUMN user_values_text_big.source_id     IS 'the source of the value as given by the user';
+COMMENT ON COLUMN user_values_text_big.last_update   IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN user_values_text_big.excluded      IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN user_values_text_big.share_type_id IS 'to restrict the access';
+COMMENT ON COLUMN user_values_text_big.protect_id    IS 'to protect against unwanted changes';
+
+-- --------------------------------------------------------
+
+--
+-- table structure for public unprotected time values related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated
+--
+
+CREATE TABLE IF NOT EXISTS values_time_standard_prime
+(
+    phrase_id_1 smallint  NOT NULL,
+    phrase_id_2 smallint  DEFAULT 0,
+    phrase_id_3 smallint  DEFAULT 0,
+    phrase_id_4 smallint  DEFAULT 0,
+    time_value  timestamp NOT NULL,
+    source_id   bigint    DEFAULT NULL
+);
+
+COMMENT ON TABLE values_time_standard_prime             IS 'for public unprotected time values related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated';
+COMMENT ON COLUMN values_time_standard_prime.phrase_id_1   IS 'phrase id that is part of the prime key for a time value';
+COMMENT ON COLUMN values_time_standard_prime.phrase_id_2   IS 'phrase id that is part of the prime key for a time value';
+COMMENT ON COLUMN values_time_standard_prime.phrase_id_3   IS 'phrase id that is part of the prime key for a time value';
+COMMENT ON COLUMN values_time_standard_prime.phrase_id_4   IS 'phrase id that is part of the prime key for a time value';
+COMMENT ON COLUMN values_time_standard_prime.time_value IS 'the timestamp given by the user';
+COMMENT ON COLUMN values_time_standard_prime.source_id  IS 'the source of the value as given by the user';
+
+--
+-- table structure for public unprotected time values that have never changed the owner, does not have a description and are rarely updated
+--
+
+CREATE TABLE IF NOT EXISTS values_time_standard
 (
     group_id   char(112) PRIMARY KEY,
     time_value timestamp NOT NULL,
-    source_id  bigint DEFAULT NULL
+    source_id  bigint    DEFAULT NULL
 );
 
-COMMENT ON TABLE value_time_standard IS 'for public unprotected time values that have never changed the owner, does not have a description and are rarely updated';
-COMMENT ON COLUMN value_time_standard.group_id IS 'the prime index to find the value';
-
---
--- table structure for time values where the time is expected to be never user in a search
---
-
-CREATE TABLE IF NOT EXISTS value_time
-(
-    group_id        char(112) PRIMARY KEY,
-    time_value      timestamp NOT NULL,
-    user_id         bigint                    DEFAULT NULL,
-    source_id       bigint                    DEFAULT NULL,
-    description     text,
-    excluded        smallint                  DEFAULT NULL,
-    last_update     timestamp        NULL     DEFAULT NULL,
-    share_type_id   smallint                  DEFAULT NULL,
-    protect_id      smallint            NOT NULL DEFAULT '1'
-);
-
-COMMENT ON TABLE value_time IS 'for the most often used time values';
-COMMENT ON COLUMN value_time.group_id IS 'the prime index to find the values';
-COMMENT ON COLUMN value_time.user_id IS 'the owner / creator of the value';
-COMMENT ON COLUMN value_time.last_update IS 'for fast recalculation';
-COMMENT ON COLUMN value_time.description IS 'temp field used during dev phase for easy value to trm assigns';
-COMMENT ON COLUMN value_time.excluded IS 'the default exclude setting for most users';
-
---
--- table structure to store the user specific changes of time values where the time is expected to be never user in a search
---
-
-CREATE TABLE IF NOT EXISTS user_value_time
-(
-    group_id        char(112) NOT NULL,
-    user_id         bigint                    DEFAULT NULL,
-    time_value      timestamp NOT NULL,
-    source_id       bigint                    DEFAULT NULL,
-    description     text,
-    excluded        smallint                  DEFAULT NULL,
-    last_update     timestamp        NULL     DEFAULT NULL,
-    share_type_id   smallint                  DEFAULT NULL,
-    protect_id      smallint            NOT NULL DEFAULT '1'
-);
-
-COMMENT ON TABLE user_value_time IS 'to store the user specific changes of the most often used time values';
-COMMENT ON COLUMN user_value_time.group_id IS 'the prime index to find the values';
-COMMENT ON COLUMN user_value_time.user_id IS 'the owner / creator of the value';
-COMMENT ON COLUMN user_value_time.last_update IS 'for fast recalculation';
-COMMENT ON COLUMN user_value_time.description IS 'temp field used during dev phase for easy value to trm assigns';
-COMMENT ON COLUMN user_value_time.excluded IS 'the default exclude setting for most users';
-
---
--- table structure for time values where the time is expected to be never user in a search related up to four prime phrase
---
-
-CREATE TABLE IF NOT EXISTS value_time_prime
-(
-    group_id        BIGSERIAL PRIMARY KEY,
-    time_value      timestamp NOT NULL,
-    user_id         bigint                    DEFAULT NULL,
-    source_id       bigint                    DEFAULT NULL,
-    description     text,
-    excluded        smallint                  DEFAULT NULL,
-    last_update     timestamp        NULL     DEFAULT NULL,
-    share_type_id   smallint                  DEFAULT NULL,
-    protect_id      smallint           NOT NULL DEFAULT '1'
-);
-
-COMMENT ON TABLE value_time_prime IS 'for the most often used time values';
-COMMENT ON COLUMN value_time_prime.group_id IS 'the prime index to find the values';
-COMMENT ON COLUMN value_time_prime.user_id IS 'the owner / creator of the value';
-COMMENT ON COLUMN value_time_prime.last_update IS 'for fast recalculation';
-COMMENT ON COLUMN value_time_prime.description IS 'temp field used during dev phase for easy value to trm assigns';
-COMMENT ON COLUMN value_time_prime.excluded IS 'the default exclude setting for most users';
-
---
--- table structure to store the user specific changes of time values where the time is expected to be never user in a search related up to four prime phrase
---
-
-CREATE TABLE IF NOT EXISTS user_value_time_prime
-(
-    group_id        BIGSERIAL PRIMARY KEY,
-    user_id         bigint                    DEFAULT NULL,
-    time_value      timestamp NOT NULL,
-    source_id       bigint                    DEFAULT NULL,
-    description     text,
-    excluded        smallint                  DEFAULT NULL,
-    last_update     timestamp        NULL     DEFAULT NULL,
-    share_type_id   smallint                  DEFAULT NULL,
-    protect_id      smallint           NOT NULL DEFAULT '1'
-);
-
-COMMENT ON TABLE user_value_time_prime IS 'to store the user specific changes of the most often used time values';
-COMMENT ON COLUMN user_value_time_prime.group_id IS 'the prime index to find the values';
-COMMENT ON COLUMN user_value_time_prime.user_id IS 'the owner / creator of the value';
-COMMENT ON COLUMN user_value_time_prime.last_update IS 'for fast recalculation';
-COMMENT ON COLUMN user_value_time_prime.description IS 'temp field used during dev phase for easy value to trm assigns';
-COMMENT ON COLUMN user_value_time_prime.excluded IS 'the default exclude setting for most users';
-
---
--- table structure for time values where the time is expected to be never user in a search related to more than 16 phrases
---
-
-CREATE TABLE IF NOT EXISTS value_time_big
-(
-    group_id        TEXT NOT NULL,
-    time_value      timestamp NOT NULL,
-    user_id         bigint                    DEFAULT NULL,
-    source_id       bigint                    DEFAULT NULL,
-    description     text,
-    excluded        smallint                  DEFAULT NULL,
-    last_update     timestamp        NULL     DEFAULT NULL,
-    share_type_id   smallint                  DEFAULT NULL,
-    protect_id      smallint           NOT NULL DEFAULT '1'
-);
-
-COMMENT ON TABLE value_time_big IS 'for the most often used time values';
-COMMENT ON COLUMN value_time_big.group_id IS 'the prime index to find the values';
-COMMENT ON COLUMN value_time_big.user_id IS 'the owner / creator of the value';
-COMMENT ON COLUMN value_time_big.last_update IS 'for fast recalculation';
-COMMENT ON COLUMN value_time_big.description IS 'temp field used during dev phase for easy value to trm assigns';
-COMMENT ON COLUMN value_time_big.excluded IS 'the default exclude setting for most users';
-
---
--- table structure to store the user specific changes of time values where the time is expected to be never user in a search related to more than 16 phrases
---
-
-CREATE TABLE IF NOT EXISTS user_value_time_big
-(
-    group_id        TEXT NOT NULL,
-    user_id         bigint                    DEFAULT NULL,
-    time_value      timestamp NOT NULL,
-    source_id       bigint                    DEFAULT NULL,
-    description     text,
-    excluded        smallint                  DEFAULT NULL,
-    last_update     timestamp        NULL     DEFAULT NULL,
-    share_type_id   smallint                  DEFAULT NULL,
-    protect_id      smallint           NOT NULL DEFAULT '1'
-);
-
-COMMENT ON TABLE user_value_time_big IS 'to store the user specific changes of the most often used time values';
-COMMENT ON COLUMN user_value_time_big.group_id IS 'the prime index to find the values';
-COMMENT ON COLUMN user_value_time_big.user_id IS 'the owner / creator of the value';
-COMMENT ON COLUMN user_value_time_big.last_update IS 'for fast recalculation';
-COMMENT ON COLUMN user_value_time_big.description IS 'temp field used during dev phase for easy value to trm assigns';
-COMMENT ON COLUMN user_value_time_big.excluded IS 'the default exclude setting for most users';
+COMMENT ON TABLE values_time_standard             IS 'for public unprotected time values that have never changed the owner, does not have a description and are rarely updated';
+COMMENT ON COLUMN values_time_standard.group_id   IS 'the 512-bit prime index to find the time value';
+COMMENT ON COLUMN values_time_standard.time_value IS 'the timestamp given by the user';
+COMMENT ON COLUMN values_time_standard.source_id  IS 'the source of the value as given by the user';
 
 -- --------------------------------------------------------
 
 --
--- table structure for geo location values
+-- table structure for time values related to up to 16 phrases
 --
 
-CREATE TABLE IF NOT EXISTS value_geo
+CREATE TABLE IF NOT EXISTS values_time
 (
-    group_id        char(112) PRIMARY KEY,
-    geo_value       point NOT NULL,
-    user_id         bigint                    DEFAULT NULL,
-    source_id       bigint                    DEFAULT NULL,
-    description     text,
-    excluded        smallint                  DEFAULT NULL,
-    last_update     timestamp        NULL     DEFAULT NULL,
-    share_type_id   smallint                  DEFAULT NULL,
-    protect_id      smallint           NOT NULL DEFAULT '1'
+    group_id      char(112) PRIMARY KEY,
+    time_value    timestamp NOT NULL,
+    source_id     bigint    DEFAULT NULL,
+    last_update   timestamp DEFAULT NULL,
+    user_id       bigint    DEFAULT NULL,
+    excluded      smallint  DEFAULT NULL,
+    share_type_id smallint  DEFAULT NULL,
+    protect_id    smallint  DEFAULT NULL
 );
 
-COMMENT ON TABLE value_geo IS 'for the most often used geo location values';
-COMMENT ON COLUMN value_geo.group_id IS 'the prime index to find the values';
-COMMENT ON COLUMN value_geo.user_id IS 'the owner / creator of the value';
-COMMENT ON COLUMN value_geo.last_update IS 'for fast recalculation';
-COMMENT ON COLUMN value_geo.description IS 'temp field used during dev phase for easy value to trm assigns';
-COMMENT ON COLUMN value_geo.excluded IS 'the default exclude setting for most users';
+COMMENT ON TABLE values_time                IS 'for time values related to up to 16 phrases';
+COMMENT ON COLUMN values_time.group_id      IS 'the 512-bit prime index to find the time value';
+COMMENT ON COLUMN values_time.time_value    IS 'the timestamp given by the user';
+COMMENT ON COLUMN values_time.source_id     IS 'the source of the value as given by the user';
+COMMENT ON COLUMN values_time.last_update   IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN values_time.user_id       IS 'the owner / creator of the value';
+COMMENT ON COLUMN values_time.excluded      IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN values_time.share_type_id IS 'to restrict the access';
+COMMENT ON COLUMN values_time.protect_id    IS 'to protect against unwanted changes';
 
 --
--- table structure to store the user specific changes of geo locations
+-- table structure for user specific changes of time values related to up to 16 phrases
 --
 
-CREATE TABLE IF NOT EXISTS user_value_geo
+CREATE TABLE IF NOT EXISTS user_values_time
 (
-    group_id        char(112) NOT NULL,
-    user_id         bigint                    DEFAULT NULL,
-    geo_value       point NOT NULL,
-    source_id       bigint                    DEFAULT NULL,
-    description     text,
-    excluded        smallint                  DEFAULT NULL,
-    last_update     timestamp        NULL     DEFAULT NULL,
-    share_type_id   smallint                  DEFAULT NULL,
-    protect_id      smallint           NOT NULL DEFAULT '1'
+    group_id      char(112) NOT NULL,
+    user_id       bigint    NOT NULL,
+    time_value    timestamp DEFAULT NULL,
+    source_id     bigint    DEFAULT NULL,
+    last_update   timestamp DEFAULT NULL,
+    excluded      smallint  DEFAULT NULL,
+    share_type_id smallint  DEFAULT NULL,
+    protect_id    smallint  DEFAULT NULL
 );
 
-COMMENT ON TABLE user_value_geo IS 'to store the user specific changes of the most often used geo location values';
-COMMENT ON COLUMN user_value_geo.group_id IS 'the prime index to find the values';
-COMMENT ON COLUMN user_value_geo.user_id IS 'the owner / creator of the value';
-COMMENT ON COLUMN user_value_geo.last_update IS 'for fast recalculation';
-COMMENT ON COLUMN user_value_geo.description IS 'temp field used during dev phase for easy value to trm assigns';
-COMMENT ON COLUMN user_value_geo.excluded IS 'the default exclude setting for most users';
+COMMENT ON TABLE user_values_time                IS 'for user specific changes of time values related to up to 16 phrases';
+COMMENT ON COLUMN user_values_time.group_id      IS 'the 512-bit prime index to find the user time value';
+COMMENT ON COLUMN user_values_time.user_id       IS 'the changer of the time value';
+COMMENT ON COLUMN user_values_time.time_value    IS 'the user specific timestamp change';
+COMMENT ON COLUMN user_values_time.source_id     IS 'the source of the value as given by the user';
+COMMENT ON COLUMN user_values_time.last_update   IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN user_values_time.excluded      IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN user_values_time.share_type_id IS 'to restrict the access';
+COMMENT ON COLUMN user_values_time.protect_id    IS 'to protect against unwanted changes';
+
+-- --------------------------------------------------------
 
 --
--- table structure for public geo location values related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated
+-- table structure for the most often requested time values related up to four prime phrase
 --
 
-CREATE TABLE IF NOT EXISTS value_geo_standard_prime
+CREATE TABLE IF NOT EXISTS values_time_prime
 (
-    group_id  BIGSERIAL PRIMARY KEY,
-    geo_value point NOT NULL,
-    source_id  int DEFAULT NULL
+    phrase_id_1   smallint  NOT NULL,
+    phrase_id_2   smallint  DEFAULT 0,
+    phrase_id_3   smallint  DEFAULT 0,
+    phrase_id_4   smallint  DEFAULT 0,
+    time_value    timestamp NOT NULL,
+    source_id     bigint    DEFAULT NULL,
+    last_update   timestamp DEFAULT NULL,
+    user_id       bigint    DEFAULT NULL,
+    excluded      smallint  DEFAULT NULL,
+    share_type_id smallint  DEFAULT NULL,
+    protect_id    smallint  DEFAULT NULL
 );
 
-COMMENT ON TABLE value_geo_standard_prime IS 'for public unprotected geo locations related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated';
-COMMENT ON COLUMN value_geo_standard_prime.group_id IS 'the prime index to find the geo location';
+COMMENT ON TABLE values_time_prime                IS 'for the most often requested time values related up to four prime phrase';
+COMMENT ON COLUMN values_time_prime.phrase_id_1   IS 'phrase id that is part of the prime key for a time value';
+COMMENT ON COLUMN values_time_prime.phrase_id_2   IS 'phrase id that is part of the prime key for a time value';
+COMMENT ON COLUMN values_time_prime.phrase_id_3   IS 'phrase id that is part of the prime key for a time value';
+COMMENT ON COLUMN values_time_prime.phrase_id_4   IS 'phrase id that is part of the prime key for a time value';
+COMMENT ON COLUMN values_time_prime.time_value    IS 'the timestamp given by the user';
+COMMENT ON COLUMN values_time_prime.source_id     IS 'the source of the value as given by the user';
+COMMENT ON COLUMN values_time_prime.last_update   IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN values_time_prime.user_id       IS 'the owner / creator of the value';
+COMMENT ON COLUMN values_time_prime.excluded      IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN values_time_prime.share_type_id IS 'to restrict the access';
+COMMENT ON COLUMN values_time_prime.protect_id    IS 'to protect against unwanted changes';
 
 --
--- table structure for public geo location values that have never changed the owner, does not have a description and are rarely updated
+-- table structure to store the user specific changes for the most often requested time values related up to four prime phrase
 --
 
-CREATE TABLE IF NOT EXISTS value_geo_standard
+CREATE TABLE IF NOT EXISTS user_values_time_prime
 (
-    group_id  char(112) PRIMARY KEY,
-    geo_value point NOT NULL,
-    source_id  bigint DEFAULT NULL
+    phrase_id_1   smallint  NOT NULL,
+    phrase_id_2   smallint  DEFAULT 0,
+    phrase_id_3   smallint  DEFAULT 0,
+    phrase_id_4   smallint  DEFAULT 0,
+    user_id       bigint    NOT NULL,
+    time_value    timestamp DEFAULT NULL,
+    source_id     bigint    DEFAULT NULL,
+    last_update   timestamp DEFAULT NULL,
+    excluded      smallint  DEFAULT NULL,
+    share_type_id smallint  DEFAULT NULL,
+    protect_id    smallint  DEFAULT NULL
 );
 
-COMMENT ON TABLE value_geo_standard IS 'for public unprotected geo locations that have never changed the owner, does not have a description and are rarely updated';
-COMMENT ON COLUMN value_geo_standard.group_id IS 'the prime index to find the geo location';
+COMMENT ON TABLE user_values_time_prime                IS 'to store the user specific changes for the most often requested time values related up to four prime phrase';
+COMMENT ON COLUMN user_values_time_prime.phrase_id_1   IS 'phrase id that is with the user id part of the prime key for a time value';
+COMMENT ON COLUMN user_values_time_prime.phrase_id_2   IS 'phrase id that is with the user id part of the prime key for a time value';
+COMMENT ON COLUMN user_values_time_prime.phrase_id_3   IS 'phrase id that is with the user id part of the prime key for a time value';
+COMMENT ON COLUMN user_values_time_prime.phrase_id_4   IS 'phrase id that is with the user id part of the prime key for a time value';
+COMMENT ON COLUMN user_values_time_prime.user_id       IS 'the changer of the time value';
+COMMENT ON COLUMN user_values_time_prime.time_value    IS 'the user specific timestamp change';
+COMMENT ON COLUMN user_values_time_prime.source_id     IS 'the source of the value as given by the user';
+COMMENT ON COLUMN user_values_time_prime.last_update   IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN user_values_time_prime.excluded      IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN user_values_time_prime.share_type_id IS 'to restrict the access';
+COMMENT ON COLUMN user_values_time_prime.protect_id    IS 'to protect against unwanted changes';
+
+-- --------------------------------------------------------
 
 --
--- table structure for geo location values related up to four prime phrase
+-- table structure for time values related to more than 16 phrases
 --
 
-CREATE TABLE IF NOT EXISTS value_geo_prime
+CREATE TABLE IF NOT EXISTS values_time_big
 (
-    group_id        BIGSERIAL NOT NULL,
-    geo_value       point NOT NULL,
-    user_id         bigint                    DEFAULT NULL,
-    source_id       bigint                    DEFAULT NULL,
-    description     text,
-    excluded        smallint                  DEFAULT NULL,
-    last_update     timestamp        NULL     DEFAULT NULL,
-    share_type_id   smallint                  DEFAULT NULL,
-    protect_id      smallint           NOT NULL DEFAULT '1'
+    group_id      text      PRIMARY KEY,
+    time_value    timestamp NOT NULL,
+    source_id     bigint    DEFAULT NULL,
+    last_update   timestamp DEFAULT NULL,
+    user_id       bigint    DEFAULT NULL,
+    excluded      smallint  DEFAULT NULL,
+    share_type_id smallint  DEFAULT NULL,
+    protect_id    smallint  DEFAULT NULL
 );
 
-COMMENT ON TABLE value_geo_prime IS 'for the most often used geo location values';
-COMMENT ON COLUMN value_geo_prime.group_id IS 'the prime index to find the geo locations';
-COMMENT ON COLUMN value_geo_prime.user_id IS 'the owner / creator of the value';
-COMMENT ON COLUMN value_geo_prime.last_update IS 'for fast recalculation';
-COMMENT ON COLUMN value_geo_prime.description IS 'temp field used during dev phase for easy value to trm assigns';
-COMMENT ON COLUMN value_geo_prime.excluded IS 'the default exclude setting for most users';
+COMMENT ON TABLE values_time_big                IS 'for time values related to more than 16 phrases';
+COMMENT ON COLUMN values_time_big.group_id      IS 'the variable text index to find time value';
+COMMENT ON COLUMN values_time_big.time_value    IS 'the timestamp given by the user';
+COMMENT ON COLUMN values_time_big.source_id     IS 'the source of the value as given by the user';
+COMMENT ON COLUMN values_time_big.last_update   IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN values_time_big.user_id       IS 'the owner / creator of the value';
+COMMENT ON COLUMN values_time_big.excluded      IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN values_time_big.share_type_id IS 'to restrict the access';
+COMMENT ON COLUMN values_time_big.protect_id    IS 'to protect against unwanted changes';
 
 --
--- table structure to store the user specific changes of geo locations related up to four prime phrase
+-- table structure to store the user specific changes of time values related to more than 16 phrases
 --
 
-CREATE TABLE IF NOT EXISTS user_value_geo_prime
+CREATE TABLE IF NOT EXISTS user_values_time_big
 (
-    group_id        BIGSERIAL NOT NULL,
-    user_id         bigint                    DEFAULT NULL,
-    geo_value       point NOT NULL,
-    source_id       bigint                    DEFAULT NULL,
-    description     text,
-    excluded        smallint                  DEFAULT NULL,
-    last_update     timestamp        NULL     DEFAULT NULL,
-    share_type_id   smallint                  DEFAULT NULL,
-    protect_id      smallint           NOT NULL DEFAULT '1'
+    group_id      text      NOT NULL,
+    user_id       bigint    NOT NULL,
+    time_value    timestamp DEFAULT NULL,
+    source_id     bigint    DEFAULT NULL,
+    last_update   timestamp DEFAULT NULL,
+    excluded      smallint  DEFAULT NULL,
+    share_type_id smallint  DEFAULT NULL,
+    protect_id    smallint  DEFAULT NULL
 );
 
-COMMENT ON TABLE user_value_geo_prime IS 'to store the user specific changes of the most often used geo location values';
-COMMENT ON COLUMN user_value_geo_prime.group_id IS 'the prime index to find the geo locations';
-COMMENT ON COLUMN user_value_geo_prime.user_id IS 'the owner / creator of the value';
-COMMENT ON COLUMN user_value_geo_prime.last_update IS 'for fast recalculation';
-COMMENT ON COLUMN user_value_geo_prime.description IS 'temp field used during dev phase for easy value to trm assigns';
-COMMENT ON COLUMN user_value_geo_prime.excluded IS 'the default exclude setting for most users';
+COMMENT ON TABLE user_values_time_big                IS 'to store the user specific changes of time values related to more than 16 phrases';
+COMMENT ON COLUMN user_values_time_big.group_id      IS 'the text index for more than 16 phrases to find the time value';
+COMMENT ON COLUMN user_values_time_big.user_id       IS 'the changer of the time value';
+COMMENT ON COLUMN user_values_time_big.time_value    IS 'the user specific timestamp change';
+COMMENT ON COLUMN user_values_time_big.source_id     IS 'the source of the value as given by the user';
+COMMENT ON COLUMN user_values_time_big.last_update   IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN user_values_time_big.excluded      IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN user_values_time_big.share_type_id IS 'to restrict the access';
+COMMENT ON COLUMN user_values_time_big.protect_id    IS 'to protect against unwanted changes';
+
+-- --------------------------------------------------------
 
 --
--- table structure for geo location values related to more than 16 phrases
+-- table structure for public unprotected geo values related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated
 --
 
-CREATE TABLE IF NOT EXISTS value_geo_big
+CREATE TABLE IF NOT EXISTS values_geo_standard_prime
 (
-    group_id        BIGSERIAL NOT NULL,
-    geo_value       point NOT NULL,
-    user_id         bigint                    DEFAULT NULL,
-    source_id       bigint                    DEFAULT NULL,
-    description     text,
-    excluded        smallint                  DEFAULT NULL,
-    last_update     timestamp        NULL     DEFAULT NULL,
-    share_type_id   smallint                  DEFAULT NULL,
-    protect_id      smallint           NOT NULL DEFAULT '1'
+    phrase_id_1 smallint  NOT NULL,
+    phrase_id_2 smallint  DEFAULT 0,
+    phrase_id_3 smallint  DEFAULT 0,
+    phrase_id_4 smallint  DEFAULT 0,
+    geo_value   point     NOT NULL,
+    source_id   bigint    DEFAULT NULL
 );
 
-COMMENT ON TABLE value_geo_big IS 'for the most often used geo location values';
-COMMENT ON COLUMN value_geo_big.group_id IS 'the prime index to find the geo locations';
-COMMENT ON COLUMN value_geo_big.user_id IS 'the owner / creator of the value';
-COMMENT ON COLUMN value_geo_big.last_update IS 'for fast recalculation';
-COMMENT ON COLUMN value_geo_big.description IS 'temp field used during dev phase for easy value to trm assigns';
-COMMENT ON COLUMN value_geo_big.excluded IS 'the default exclude setting for most users';
+COMMENT ON TABLE values_geo_standard_prime             IS 'for public unprotected geo values related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated';
+COMMENT ON COLUMN values_geo_standard_prime.phrase_id_1   IS 'phrase id that is part of the prime key for a geo value';
+COMMENT ON COLUMN values_geo_standard_prime.phrase_id_2   IS 'phrase id that is part of the prime key for a geo value';
+COMMENT ON COLUMN values_geo_standard_prime.phrase_id_3   IS 'phrase id that is part of the prime key for a geo value';
+COMMENT ON COLUMN values_geo_standard_prime.phrase_id_4   IS 'phrase id that is part of the prime key for a geo value';
+COMMENT ON COLUMN values_geo_standard_prime.geo_value  IS 'the geolocation given by the user';
+COMMENT ON COLUMN values_geo_standard_prime.source_id  IS 'the source of the value as given by the user';
 
 --
--- table structure to store the user specific changes of geo locations related to more than 16 phrases
+-- table structure for public unprotected geo values that have never changed the owner, does not have a description and are rarely updated
 --
 
-CREATE TABLE IF NOT EXISTS user_value_geo_big
+CREATE TABLE IF NOT EXISTS values_geo_standard
 (
-    group_id        BIGSERIAL NOT NULL,
-    user_id         bigint                    DEFAULT NULL,
-    geo_value       point NOT NULL,
-    source_id       bigint                    DEFAULT NULL,
-    description     text,
-    excluded        smallint                  DEFAULT NULL,
-    last_update     timestamp        NULL     DEFAULT NULL,
-    share_type_id   smallint                  DEFAULT NULL,
-    protect_id      smallint           NOT NULL DEFAULT '1'
+    group_id   char(112) PRIMARY KEY,
+    geo_value  point     NOT NULL,
+    source_id  bigint    DEFAULT NULL
 );
 
-COMMENT ON TABLE user_value_geo_big IS 'to store the user specific changes of the most often used geo location values';
-COMMENT ON COLUMN user_value_geo_big.group_id IS 'the prime index to find the geo locations';
-COMMENT ON COLUMN user_value_geo_big.user_id IS 'the owner / creator of the value';
-COMMENT ON COLUMN user_value_geo_big.last_update IS 'for fast recalculation';
-COMMENT ON COLUMN user_value_geo_big.description IS 'temp field used during dev phase for easy value to trm assigns';
-COMMENT ON COLUMN user_value_geo_big.excluded IS 'the default exclude setting for most users';
+COMMENT ON TABLE values_geo_standard             IS 'for public unprotected geo values that have never changed the owner, does not have a description and are rarely updated';
+COMMENT ON COLUMN values_geo_standard.group_id   IS 'the 512-bit prime index to find the geo value';
+COMMENT ON COLUMN values_geo_standard.geo_value  IS 'the geolocation given by the user';
+COMMENT ON COLUMN values_geo_standard.source_id  IS 'the source of the value as given by the user';
+
+-- --------------------------------------------------------
+
+--
+-- table structure for geo values related to up to 16 phrases
+--
+
+CREATE TABLE IF NOT EXISTS values_geo
+(
+    group_id      char(112) PRIMARY KEY,
+    geo_value     point     NOT NULL,
+    source_id     bigint    DEFAULT NULL,
+    last_update   timestamp DEFAULT NULL,
+    user_id       bigint    DEFAULT NULL,
+    excluded      smallint  DEFAULT NULL,
+    share_type_id smallint  DEFAULT NULL,
+    protect_id    smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE values_geo                IS 'for geo values related to up to 16 phrases';
+COMMENT ON COLUMN values_geo.group_id      IS 'the 512-bit prime index to find the geo value';
+COMMENT ON COLUMN values_geo.geo_value     IS 'the geolocation given by the user';
+COMMENT ON COLUMN values_geo.source_id     IS 'the source of the value as given by the user';
+COMMENT ON COLUMN values_geo.last_update   IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN values_geo.user_id       IS 'the owner / creator of the value';
+COMMENT ON COLUMN values_geo.excluded      IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN values_geo.share_type_id IS 'to restrict the access';
+COMMENT ON COLUMN values_geo.protect_id    IS 'to protect against unwanted changes';
+
+--
+-- table structure for user specific changes of geo values related to up to 16 phrases
+--
+
+CREATE TABLE IF NOT EXISTS user_values_geo
+(
+    group_id      char(112) NOT NULL,
+    user_id       bigint    NOT NULL,
+    geo_value     point     DEFAULT NULL,
+    source_id     bigint    DEFAULT NULL,
+    last_update   timestamp DEFAULT NULL,
+    excluded      smallint  DEFAULT NULL,
+    share_type_id smallint  DEFAULT NULL,
+    protect_id    smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE user_values_geo                IS 'for user specific changes of geo values related to up to 16 phrases';
+COMMENT ON COLUMN user_values_geo.group_id      IS 'the 512-bit prime index to find the user geo value';
+COMMENT ON COLUMN user_values_geo.user_id       IS 'the changer of the geo value';
+COMMENT ON COLUMN user_values_geo.geo_value     IS 'the user specific geolocation change';
+COMMENT ON COLUMN user_values_geo.source_id     IS 'the source of the value as given by the user';
+COMMENT ON COLUMN user_values_geo.last_update   IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN user_values_geo.excluded      IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN user_values_geo.share_type_id IS 'to restrict the access';
+COMMENT ON COLUMN user_values_geo.protect_id    IS 'to protect against unwanted changes';
+
+-- --------------------------------------------------------
+
+--
+-- table structure for the most often requested geo values related up to four prime phrase
+--
+
+CREATE TABLE IF NOT EXISTS values_geo_prime
+(
+    phrase_id_1   smallint  NOT NULL,
+    phrase_id_2   smallint  DEFAULT 0,
+    phrase_id_3   smallint  DEFAULT 0,
+    phrase_id_4   smallint  DEFAULT 0,
+    geo_value     point     NOT NULL,
+    source_id     bigint    DEFAULT NULL,
+    last_update   timestamp DEFAULT NULL,
+    user_id       bigint    DEFAULT NULL,
+    excluded      smallint  DEFAULT NULL,
+    share_type_id smallint  DEFAULT NULL,
+    protect_id    smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE values_geo_prime                IS 'for the most often requested geo values related up to four prime phrase';
+COMMENT ON COLUMN values_geo_prime.phrase_id_1   IS 'phrase id that is part of the prime key for a geo value';
+COMMENT ON COLUMN values_geo_prime.phrase_id_2   IS 'phrase id that is part of the prime key for a geo value';
+COMMENT ON COLUMN values_geo_prime.phrase_id_3   IS 'phrase id that is part of the prime key for a geo value';
+COMMENT ON COLUMN values_geo_prime.phrase_id_4   IS 'phrase id that is part of the prime key for a geo value';
+COMMENT ON COLUMN values_geo_prime.geo_value     IS 'the geolocation given by the user';
+COMMENT ON COLUMN values_geo_prime.source_id     IS 'the source of the value as given by the user';
+COMMENT ON COLUMN values_geo_prime.last_update   IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN values_geo_prime.user_id       IS 'the owner / creator of the value';
+COMMENT ON COLUMN values_geo_prime.excluded      IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN values_geo_prime.share_type_id IS 'to restrict the access';
+COMMENT ON COLUMN values_geo_prime.protect_id    IS 'to protect against unwanted changes';
+
+--
+-- table structure to store the user specific changes for the most often requested geo values related up to four prime phrase
+--
+
+CREATE TABLE IF NOT EXISTS user_values_geo_prime
+(
+    phrase_id_1   smallint  NOT NULL,
+    phrase_id_2   smallint  DEFAULT 0,
+    phrase_id_3   smallint  DEFAULT 0,
+    phrase_id_4   smallint  DEFAULT 0,
+    user_id       bigint    NOT NULL,
+    geo_value     point     DEFAULT NULL,
+    source_id     bigint    DEFAULT NULL,
+    last_update   timestamp DEFAULT NULL,
+    excluded      smallint  DEFAULT NULL,
+    share_type_id smallint  DEFAULT NULL,
+    protect_id    smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE user_values_geo_prime                IS 'to store the user specific changes for the most often requested geo values related up to four prime phrase';
+COMMENT ON COLUMN user_values_geo_prime.phrase_id_1   IS 'phrase id that is with the user id part of the prime key for a geo value';
+COMMENT ON COLUMN user_values_geo_prime.phrase_id_2   IS 'phrase id that is with the user id part of the prime key for a geo value';
+COMMENT ON COLUMN user_values_geo_prime.phrase_id_3   IS 'phrase id that is with the user id part of the prime key for a geo value';
+COMMENT ON COLUMN user_values_geo_prime.phrase_id_4   IS 'phrase id that is with the user id part of the prime key for a geo value';
+COMMENT ON COLUMN user_values_geo_prime.user_id       IS 'the changer of the geo value';
+COMMENT ON COLUMN user_values_geo_prime.geo_value     IS 'the user specific geolocation change';
+COMMENT ON COLUMN user_values_geo_prime.source_id     IS 'the source of the value as given by the user';
+COMMENT ON COLUMN user_values_geo_prime.last_update   IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN user_values_geo_prime.excluded      IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN user_values_geo_prime.share_type_id IS 'to restrict the access';
+COMMENT ON COLUMN user_values_geo_prime.protect_id    IS 'to protect against unwanted changes';
+
+-- --------------------------------------------------------
+
+--
+-- table structure for geo values related to more than 16 phrases
+--
+
+CREATE TABLE IF NOT EXISTS values_geo_big
+(
+    group_id      text      PRIMARY KEY,
+    geo_value     point     NOT NULL,
+    source_id     bigint    DEFAULT NULL,
+    last_update   timestamp DEFAULT NULL,
+    user_id       bigint    DEFAULT NULL,
+    excluded      smallint  DEFAULT NULL,
+    share_type_id smallint  DEFAULT NULL,
+    protect_id    smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE values_geo_big                IS 'for geo values related to more than 16 phrases';
+COMMENT ON COLUMN values_geo_big.group_id      IS 'the variable text index to find geo value';
+COMMENT ON COLUMN values_geo_big.geo_value     IS 'the geolocation given by the user';
+COMMENT ON COLUMN values_geo_big.source_id     IS 'the source of the value as given by the user';
+COMMENT ON COLUMN values_geo_big.last_update   IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN values_geo_big.user_id       IS 'the owner / creator of the value';
+COMMENT ON COLUMN values_geo_big.excluded      IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN values_geo_big.share_type_id IS 'to restrict the access';
+COMMENT ON COLUMN values_geo_big.protect_id    IS 'to protect against unwanted changes';
+
+--
+-- table structure to store the user specific changes of geo values related to more than 16 phrases
+--
+
+CREATE TABLE IF NOT EXISTS user_values_geo_big
+(
+    group_id      text      NOT NULL,
+    user_id       bigint    NOT NULL,
+    geo_value     point     DEFAULT NULL,
+    source_id     bigint    DEFAULT NULL,
+    last_update   timestamp DEFAULT NULL,
+    excluded      smallint  DEFAULT NULL,
+    share_type_id smallint  DEFAULT NULL,
+    protect_id    smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE user_values_geo_big                IS 'to store the user specific changes of geo values related to more than 16 phrases';
+COMMENT ON COLUMN user_values_geo_big.group_id      IS 'the text index for more than 16 phrases to find the geo value';
+COMMENT ON COLUMN user_values_geo_big.user_id       IS 'the changer of the geo value';
+COMMENT ON COLUMN user_values_geo_big.geo_value     IS 'the user specific geolocation change';
+COMMENT ON COLUMN user_values_geo_big.source_id     IS 'the source of the value as given by the user';
+COMMENT ON COLUMN user_values_geo_big.last_update   IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN user_values_geo_big.excluded      IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN user_values_geo_big.share_type_id IS 'to restrict the access';
+COMMENT ON COLUMN user_values_geo_big.protect_id    IS 'to protect against unwanted changes';
 
 -- --------------------------------------------------------
 
@@ -2312,103 +2459,1350 @@ CREATE TABLE IF NOT EXISTS user_formula_links
 
 COMMENT ON TABLE user_formula_links IS 'if the term pattern of a value matches this term pattern ';
 
+
 -- --------------------------------------------------------
 
 --
--- table structure for standard results
+-- table structure to cache the formula public unprotected numeric results related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated
 --
 
-CREATE TABLE IF NOT EXISTS result_standard_prime
+CREATE TABLE IF NOT EXISTS results_standard_prime
 (
-    group_id BIGSERIAL PRIMARY KEY,
-    result   double precision
+    formula_id    smallint         NOT NULL,
+    phrase_id_1   smallint         NOT NULL,
+    phrase_id_2   smallint         DEFAULT 0,
+    phrase_id_3   smallint         DEFAULT 0,
+    numeric_value double precision NOT NULL
 );
 
-COMMENT ON TABLE result_standard_prime IS 'table to cache the pure formula results related up to four prime phrase without any related information';
-COMMENT ON COLUMN result_standard_prime.group_id IS 'the prime index to find the results';
+COMMENT ON TABLE results_standard_prime                IS 'to cache the formula public unprotected numeric results related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated';
+COMMENT ON COLUMN results_standard_prime.formula_id    IS 'formula id that is part of the prime key for a numeric result';
+COMMENT ON COLUMN results_standard_prime.phrase_id_1   IS 'phrase id that is part of the prime key for a numeric result';
+COMMENT ON COLUMN results_standard_prime.phrase_id_2   IS 'phrase id that is part of the prime key for a numeric result';
+COMMENT ON COLUMN results_standard_prime.phrase_id_3   IS 'phrase id that is part of the prime key for a numeric result';
+COMMENT ON COLUMN results_standard_prime.numeric_value IS 'the numeric value given by the user';
 
 --
--- table structure for standard results
+-- table structure to cache the formula public unprotected numeric results related up to eight prime phrase that have never changed the owner, does not have a description and are rarely updated
 --
 
-CREATE TABLE IF NOT EXISTS result_standard
+CREATE TABLE IF NOT EXISTS results_standard_main
 (
-    group_id char(112) PRIMARY KEY,
-    result   double precision
+    formula_id    smallint         NOT NULL,
+    phrase_id_1   smallint         NOT NULL,
+    phrase_id_2   smallint         DEFAULT 0,
+    phrase_id_3   smallint         DEFAULT 0,
+    phrase_id_4   smallint         DEFAULT 0,
+    phrase_id_5   smallint         DEFAULT 0,
+    phrase_id_6   smallint         DEFAULT 0,
+    phrase_id_7   smallint         DEFAULT 0,
+    numeric_value double precision NOT NULL
 );
 
-COMMENT ON TABLE result_standard IS 'table to cache the pure formula results without any related information';
-COMMENT ON COLUMN result_standard.group_id IS 'the prime index to find the results';
+COMMENT ON TABLE results_standard_main                IS 'to cache the formula public unprotected numeric results related up to eight prime phrase that have never changed the owner, does not have a description and are rarely updated';
+COMMENT ON COLUMN results_standard_main.formula_id    IS 'formula id that is part of the prime key for a numeric result';
+COMMENT ON COLUMN results_standard_main.phrase_id_1   IS 'phrase id that is part of the prime key for a numeric result';
+COMMENT ON COLUMN results_standard_main.phrase_id_2   IS 'phrase id that is part of the prime key for a numeric result';
+COMMENT ON COLUMN results_standard_main.phrase_id_3   IS 'phrase id that is part of the prime key for a numeric result';
+COMMENT ON COLUMN results_standard_main.phrase_id_4   IS 'phrase id that is part of the prime key for a numeric result';
+COMMENT ON COLUMN results_standard_main.phrase_id_5   IS 'phrase id that is part of the prime key for a numeric result';
+COMMENT ON COLUMN results_standard_main.phrase_id_6   IS 'phrase id that is part of the prime key for a numeric result';
+COMMENT ON COLUMN results_standard_main.phrase_id_7   IS 'phrase id that is part of the prime key for a numeric result';
+COMMENT ON COLUMN results_standard_main.numeric_value IS 'the numeric value given by the user';
 
 --
--- table structure for results with more information to trace the calculation
+-- table structure to cache the formula public unprotected numeric results that have never changed the owner, does not have a description and are rarely updated
+--
+
+CREATE TABLE IF NOT EXISTS results_standard
+(
+    group_id      char(112)        PRIMARY KEY,
+    numeric_value double precision NOT NULL
+);
+
+COMMENT ON TABLE results_standard                IS 'to cache the formula public unprotected numeric results that have never changed the owner, does not have a description and are rarely updated';
+COMMENT ON COLUMN results_standard.group_id      IS 'the 512-bit prime index to find the numeric result';
+COMMENT ON COLUMN results_standard.numeric_value IS 'the numeric value given by the user';
+
+-- --------------------------------------------------------
+
+--
+-- table structure to cache the formula numeric results related to up to 16 phrases
 --
 
 CREATE TABLE IF NOT EXISTS results
 (
     group_id        char(112)        PRIMARY KEY,
-    numeric_value   double precision NOT NULL,
-    last_update     timestamp        DEFAULT NULL,
-    formula_id      bigint           NOT NULL,
     source_group_id char(112)        DEFAULT NULL,
+    numeric_value   double precision     NOT NULL,
+    last_update     timestamp        DEFAULT NULL,
+    formula_id      bigint               NOT NULL,
     user_id         bigint           DEFAULT NULL,
     excluded        smallint         DEFAULT NULL,
     share_type_id   smallint         DEFAULT NULL,
     protect_id      smallint         DEFAULT NULL
 );
 
-COMMENT ON TABLE results                  IS 'table to cache the formula numeric results related to up to 16 phrases';
+COMMENT ON TABLE results                  IS 'to cache the formula numeric results related to up to 16 phrases';
 COMMENT ON COLUMN results.group_id        IS 'the 512-bit prime index to find the numeric result';
+COMMENT ON COLUMN results.source_group_id IS '512-bit reference to the sorted phrase list used to calculate this result';
 COMMENT ON COLUMN results.numeric_value   IS 'the numeric value given by the user';
 COMMENT ON COLUMN results.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
 COMMENT ON COLUMN results.formula_id      IS 'the id of the formula which has been used to calculate this result';
-COMMENT ON COLUMN results.source_group_id IS 'the sorted phrase list used to calculate this result';
 COMMENT ON COLUMN results.user_id         IS 'the id of the user who has requested the calculation';
 COMMENT ON COLUMN results.excluded        IS 'true if a user, but not all, have removed it';
 COMMENT ON COLUMN results.share_type_id   IS 'to restrict the access';
 COMMENT ON COLUMN results.protect_id      IS 'to protect against unwanted changes';
 
 --
--- table structure for the most often requested results related up to four prime phrase
+-- table structure to cache the user specific changes of numeric results related to up to 16 phrases
 --
 
-CREATE TABLE IF NOT EXISTS result_prime
+CREATE TABLE IF NOT EXISTS user_results
 (
-    group_id        BIGSERIAL PRIMARY KEY,
-    result          double precision,
-    formula_id      bigint         NOT NULL,
-    source_group_id bigint         DEFAULT NULL,
-    user_id         bigint         DEFAULT NULL,
-    last_update     timestamp NULL DEFAULT NULL
+    group_id        char(112)            NOT NULL,
+    source_group_id char(112)        DEFAULT NULL,
+    user_id         bigint               NOT NULL,
+    numeric_value   double precision DEFAULT NULL,
+    last_update     timestamp        DEFAULT NULL,
+    formula_id      bigint               NOT NULL,
+    excluded        smallint         DEFAULT NULL,
+    share_type_id   smallint         DEFAULT NULL,
+    protect_id      smallint         DEFAULT NULL
 );
 
-COMMENT ON TABLE result_prime IS 'table to cache the formula results related up to four prime phrases';
-COMMENT ON COLUMN result_prime.group_id IS 'the prime index to find the results';
-COMMENT ON COLUMN result_prime.formula_id IS 'the id of the formula which has been used to calculate the result number';
-COMMENT ON COLUMN result_prime.source_group_id IS 'the sorted phrase list used to calculate the result number';
-COMMENT ON COLUMN result_prime.user_id IS 'the id of the user who has requested the calculation';
-COMMENT ON COLUMN result_prime.last_update IS 'time of last value update mainly used for recovery in case of inconsistencies, empty in case this value is dirty and needs to be updated';
+COMMENT ON TABLE user_results                  IS 'to cache the user specific changes of numeric results related to up to 16 phrases';
+COMMENT ON COLUMN user_results.group_id        IS 'the 512-bit prime index to find the user numeric result';
+COMMENT ON COLUMN user_results.source_group_id IS '512-bit reference to the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN user_results.user_id         IS 'the id of the user who has requested the change of the numeric result';
+COMMENT ON COLUMN user_results.numeric_value   IS 'the user specific numeric value change';
+COMMENT ON COLUMN user_results.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN user_results.formula_id      IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN user_results.excluded        IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN user_results.share_type_id   IS 'to restrict the access';
+COMMENT ON COLUMN user_results.protect_id      IS 'to protect against unwanted changes';
+
+-- --------------------------------------------------------
 
 --
--- table structure for results related more than 16 phrases
+-- table structure to cache the formula most often requested numeric results related up to four prime phrase
 --
 
-CREATE TABLE IF NOT EXISTS result_big
+CREATE TABLE IF NOT EXISTS results_prime
 (
-    group_id        TEXT PRIMARY KEY,
-    result          double precision,
-    formula_id      bigint         NOT NULL,
-    source_group_id TEXT           DEFAULT NULL,
-    user_id         bigint         DEFAULT NULL,
-    last_update     timestamp NULL DEFAULT NULL
+    phrase_id_1     smallint         NOT NULL,
+    phrase_id_2     smallint         DEFAULT 0,
+    phrase_id_3     smallint         DEFAULT 0,
+    phrase_id_4     smallint         DEFAULT 0,
+    source_group_id bigint           DEFAULT NULL,
+    numeric_value   double precision     NOT NULL,
+    last_update     timestamp        DEFAULT NULL,
+    formula_id      bigint               NOT NULL,
+    user_id         bigint           DEFAULT NULL,
+    excluded        smallint         DEFAULT NULL,
+    share_type_id   smallint         DEFAULT NULL,
+    protect_id      smallint         DEFAULT NULL
 );
 
-COMMENT ON TABLE result_big IS 'table to cache the formula results related up to four prime phrases';
-COMMENT ON COLUMN result_big.group_id IS 'the prime index to find the results';
-COMMENT ON COLUMN result_big.formula_id IS 'the id of the formula which has been used to calculate the result number';
-COMMENT ON COLUMN result_big.source_group_id IS 'the sorted phrase list used to calculate the result number';
-COMMENT ON COLUMN result_big.user_id IS 'the id of the user who has requested the calculation';
-COMMENT ON COLUMN result_big.last_update IS 'time of last value update mainly used for recovery in case of inconsistencies, empty in case this value is dirty and needs to be updated';
+COMMENT ON TABLE results_prime                  IS 'to cache the formula most often requested numeric results related up to four prime phrase';
+COMMENT ON COLUMN results_prime.phrase_id_1     IS 'phrase id that is part of the prime key for a numeric result';
+COMMENT ON COLUMN results_prime.phrase_id_2     IS 'phrase id that is part of the prime key for a numeric result';
+COMMENT ON COLUMN results_prime.phrase_id_3     IS 'phrase id that is part of the prime key for a numeric result';
+COMMENT ON COLUMN results_prime.phrase_id_4     IS 'phrase id that is part of the prime key for a numeric result';
+COMMENT ON COLUMN results_prime.source_group_id IS '64-bit reference to the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN results_prime.numeric_value   IS 'the numeric value given by the user';
+COMMENT ON COLUMN results_prime.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN results_prime.formula_id      IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN results_prime.user_id         IS 'the id of the user who has requested the calculation';
+COMMENT ON COLUMN results_prime.excluded        IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN results_prime.share_type_id   IS 'to restrict the access';
+COMMENT ON COLUMN results_prime.protect_id      IS 'to protect against unwanted changes';
+
+--
+-- table structure to store the user specific changes for the most often requested numeric results related up to four prime phrase
+--
+
+CREATE TABLE IF NOT EXISTS user_results_prime
+(
+    phrase_id_1     smallint         NOT NULL,
+    phrase_id_2     smallint         DEFAULT 0,
+    phrase_id_3     smallint         DEFAULT 0,
+    phrase_id_4     smallint         DEFAULT 0,
+    source_group_id bigint           DEFAULT NULL,
+    user_id         bigint               NOT NULL,
+    numeric_value   double precision DEFAULT NULL,
+    last_update     timestamp        DEFAULT NULL,
+    formula_id      bigint               NOT NULL,
+    excluded        smallint         DEFAULT NULL,
+    share_type_id   smallint         DEFAULT NULL,
+    protect_id      smallint         DEFAULT NULL
+);
+
+COMMENT ON TABLE user_results_prime                  IS 'to store the user specific changes for the most often requested numeric results related up to four prime phrase';
+COMMENT ON COLUMN user_results_prime.phrase_id_1     IS 'phrase id that is with the user id part of the prime key for a numeric result';
+COMMENT ON COLUMN user_results_prime.phrase_id_2     IS 'phrase id that is with the user id part of the prime key for a numeric result';
+COMMENT ON COLUMN user_results_prime.phrase_id_3     IS 'phrase id that is with the user id part of the prime key for a numeric result';
+COMMENT ON COLUMN user_results_prime.phrase_id_4     IS 'phrase id that is with the user id part of the prime key for a numeric result';
+COMMENT ON COLUMN user_results_prime.source_group_id IS '64-bit reference to the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN user_results_prime.user_id         IS 'the id of the user who has requested the change of the numeric result';
+COMMENT ON COLUMN user_results_prime.numeric_value   IS 'the user specific numeric value change';
+COMMENT ON COLUMN user_results_prime.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN user_results_prime.formula_id      IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN user_results_prime.excluded        IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN user_results_prime.share_type_id   IS 'to restrict the access';
+COMMENT ON COLUMN user_results_prime.protect_id      IS 'to protect against unwanted changes';
+
+-- --------------------------------------------------------
+
+--
+-- table structure to cache the formula second most often requested numeric results related up to eight prime phrase
+--
+
+CREATE TABLE IF NOT EXISTS results_main
+(
+    phrase_id_1     smallint         NOT NULL,
+    phrase_id_2     smallint         DEFAULT 0,
+    phrase_id_3     smallint         DEFAULT 0,
+    phrase_id_4     smallint         DEFAULT 0,
+    phrase_id_5     smallint         DEFAULT 0,
+    phrase_id_6     smallint         DEFAULT 0,
+    phrase_id_7     smallint         DEFAULT 0,
+    phrase_id_8     smallint         DEFAULT 0,
+    source_group_id bigint           DEFAULT NULL,
+    numeric_value   double precision     NOT NULL,
+    last_update     timestamp        DEFAULT NULL,
+    formula_id      bigint               NOT NULL,
+    user_id         bigint           DEFAULT NULL,
+    excluded        smallint         DEFAULT NULL,
+    share_type_id   smallint         DEFAULT NULL,
+    protect_id      smallint         DEFAULT NULL
+);
+
+COMMENT ON TABLE results_main                  IS 'to cache the formula second most often requested numeric results related up to eight prime phrase';
+COMMENT ON COLUMN results_main.phrase_id_1     IS 'phrase id that is part of the prime key for a numeric result';
+COMMENT ON COLUMN results_main.phrase_id_2     IS 'phrase id that is part of the prime key for a numeric result';
+COMMENT ON COLUMN results_main.phrase_id_3     IS 'phrase id that is part of the prime key for a numeric result';
+COMMENT ON COLUMN results_main.phrase_id_4     IS 'phrase id that is part of the prime key for a numeric result';
+COMMENT ON COLUMN results_main.phrase_id_5     IS 'phrase id that is part of the prime key for a numeric result';
+COMMENT ON COLUMN results_main.phrase_id_6     IS 'phrase id that is part of the prime key for a numeric result';
+COMMENT ON COLUMN results_main.phrase_id_7     IS 'phrase id that is part of the prime key for a numeric result';
+COMMENT ON COLUMN results_main.phrase_id_8     IS 'phrase id that is part of the prime key for a numeric result';
+COMMENT ON COLUMN results_main.source_group_id IS '64-bit reference to the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN results_main.numeric_value   IS 'the numeric value given by the user';
+COMMENT ON COLUMN results_main.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN results_main.formula_id      IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN results_main.user_id         IS 'the id of the user who has requested the calculation';
+COMMENT ON COLUMN results_main.excluded        IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN results_main.share_type_id   IS 'to restrict the access';
+COMMENT ON COLUMN results_main.protect_id      IS 'to protect against unwanted changes';
+
+--
+-- table structure to store the user specific changes to cache the formula second most often requested numeric results related up to eight prime phrase
+--
+
+CREATE TABLE IF NOT EXISTS user_results_main
+(
+    phrase_id_1     smallint         NOT NULL,
+    phrase_id_2     smallint         DEFAULT 0,
+    phrase_id_3     smallint         DEFAULT 0,
+    phrase_id_4     smallint         DEFAULT 0,
+    phrase_id_5     smallint         DEFAULT 0,
+    phrase_id_6     smallint         DEFAULT 0,
+    phrase_id_7     smallint         DEFAULT 0,
+    phrase_id_8     smallint         DEFAULT 0,
+    source_group_id bigint           DEFAULT NULL,
+    user_id         bigint               NOT NULL,
+    numeric_value   double precision DEFAULT NULL,
+    last_update     timestamp        DEFAULT NULL,
+    formula_id      bigint               NOT NULL,
+    excluded        smallint         DEFAULT NULL,
+    share_type_id   smallint         DEFAULT NULL,
+    protect_id      smallint         DEFAULT NULL
+);
+
+COMMENT ON TABLE user_results_main                  IS 'to store the user specific changes to cache the formula second most often requested numeric results related up to eight prime phrase';
+COMMENT ON COLUMN user_results_main.phrase_id_1     IS 'phrase id that is with the user id part of the prime key for a numeric result';
+COMMENT ON COLUMN user_results_main.phrase_id_2     IS 'phrase id that is with the user id part of the prime key for a numeric result';
+COMMENT ON COLUMN user_results_main.phrase_id_3     IS 'phrase id that is with the user id part of the prime key for a numeric result';
+COMMENT ON COLUMN user_results_main.phrase_id_4     IS 'phrase id that is with the user id part of the prime key for a numeric result';
+COMMENT ON COLUMN user_results_main.phrase_id_5     IS 'phrase id that is with the user id part of the prime key for a numeric result';
+COMMENT ON COLUMN user_results_main.phrase_id_6     IS 'phrase id that is with the user id part of the prime key for a numeric result';
+COMMENT ON COLUMN user_results_main.phrase_id_7     IS 'phrase id that is with the user id part of the prime key for a numeric result';
+COMMENT ON COLUMN user_results_main.phrase_id_8     IS 'phrase id that is with the user id part of the prime key for a numeric result';
+COMMENT ON COLUMN user_results_main.source_group_id IS '64-bit reference to the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN user_results_main.user_id         IS 'the id of the user who has requested the change of the numeric result';
+COMMENT ON COLUMN user_results_main.numeric_value   IS 'the user specific numeric value change';
+COMMENT ON COLUMN user_results_main.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN user_results_main.formula_id      IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN user_results_main.excluded        IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN user_results_main.share_type_id   IS 'to restrict the access';
+COMMENT ON COLUMN user_results_main.protect_id      IS 'to protect against unwanted changes';
+
+-- --------------------------------------------------------
+
+--
+-- table structure to cache the formula numeric results related to more than 16 phrases
+--
+
+CREATE TABLE IF NOT EXISTS results_big
+(
+    group_id        text             PRIMARY KEY,
+    source_group_id text             DEFAULT NULL,
+    numeric_value   double precision     NOT NULL,
+    last_update     timestamp        DEFAULT NULL,
+    formula_id      bigint               NOT NULL,
+    user_id         bigint           DEFAULT NULL,
+    excluded        smallint         DEFAULT NULL,
+    share_type_id   smallint         DEFAULT NULL,
+    protect_id      smallint         DEFAULT NULL
+);
+
+COMMENT ON TABLE results_big                  IS 'to cache the formula numeric results related to more than 16 phrases';
+COMMENT ON COLUMN results_big.group_id        IS 'the variable text index to find numeric result';
+COMMENT ON COLUMN results_big.source_group_id IS 'text reference to the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN results_big.numeric_value   IS 'the numeric value given by the user';
+COMMENT ON COLUMN results_big.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN results_big.formula_id      IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN results_big.user_id         IS 'the id of the user who has requested the calculation';
+COMMENT ON COLUMN results_big.excluded        IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN results_big.share_type_id   IS 'to restrict the access';
+COMMENT ON COLUMN results_big.protect_id      IS 'to protect against unwanted changes';
+
+--
+-- table structure to store the user specific changes of numeric results related to more than 16 phrases
+--
+
+CREATE TABLE IF NOT EXISTS user_results_big
+(
+    group_id        text                 NOT NULL,
+    source_group_id text             DEFAULT NULL,
+    user_id         bigint               NOT NULL,
+    numeric_value   double precision DEFAULT NULL,
+    last_update     timestamp        DEFAULT NULL,
+    formula_id      bigint               NOT NULL,
+    excluded        smallint         DEFAULT NULL,
+    share_type_id   smallint         DEFAULT NULL,
+    protect_id      smallint         DEFAULT NULL
+);
+
+COMMENT ON TABLE user_results_big                  IS 'to store the user specific changes of numeric results related to more than 16 phrases';
+COMMENT ON COLUMN user_results_big.group_id        IS 'the text index for more than 16 phrases to find the numeric result';
+COMMENT ON COLUMN user_results_big.source_group_id IS 'text reference to the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN user_results_big.user_id         IS 'the id of the user who has requested the change of the numeric result';
+COMMENT ON COLUMN user_results_big.numeric_value   IS 'the user specific numeric value change';
+COMMENT ON COLUMN user_results_big.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN user_results_big.formula_id      IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN user_results_big.excluded        IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN user_results_big.share_type_id   IS 'to restrict the access';
+COMMENT ON COLUMN user_results_big.protect_id      IS 'to protect against unwanted changes';
+
+-- --------------------------------------------------------
+
+--
+-- table structure to cache the formula public unprotected text results related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated
+--
+
+CREATE TABLE IF NOT EXISTS results_text_standard_prime
+(
+    formula_id  smallint NOT NULL,
+    phrase_id_1 smallint NOT NULL,
+    phrase_id_2 smallint DEFAULT 0,
+    phrase_id_3 smallint DEFAULT 0,
+    text_value  text     NOT NULL
+);
+
+COMMENT ON TABLE results_text_standard_prime              IS 'to cache the formula public unprotected text results related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated';
+COMMENT ON COLUMN results_text_standard_prime.formula_id  IS 'formula id that is part of the prime key for a text result';
+COMMENT ON COLUMN results_text_standard_prime.phrase_id_1 IS 'phrase id that is part of the prime key for a text result';
+COMMENT ON COLUMN results_text_standard_prime.phrase_id_2 IS 'phrase id that is part of the prime key for a text result';
+COMMENT ON COLUMN results_text_standard_prime.phrase_id_3 IS 'phrase id that is part of the prime key for a text result';
+COMMENT ON COLUMN results_text_standard_prime.text_value  IS 'the text value given by the user';
+
+--
+-- table structure to cache the formula public unprotected text results related up to eight prime phrase that have never changed the owner, does not have a description and are rarely updated
+--
+
+CREATE TABLE IF NOT EXISTS results_text_standard_main
+(
+    formula_id  smallint NOT NULL,
+    phrase_id_1 smallint NOT NULL,
+    phrase_id_2 smallint DEFAULT 0,
+    phrase_id_3 smallint DEFAULT 0,
+    phrase_id_4 smallint DEFAULT 0,
+    phrase_id_5 smallint DEFAULT 0,
+    phrase_id_6 smallint DEFAULT 0,
+    phrase_id_7 smallint DEFAULT 0,
+    text_value  text     NOT NULL
+);
+
+COMMENT ON TABLE results_text_standard_main              IS 'to cache the formula public unprotected text results related up to eight prime phrase that have never changed the owner, does not have a description and are rarely updated';
+COMMENT ON COLUMN results_text_standard_main.formula_id  IS 'formula id that is part of the prime key for a text result';
+COMMENT ON COLUMN results_text_standard_main.phrase_id_1 IS 'phrase id that is part of the prime key for a text result';
+COMMENT ON COLUMN results_text_standard_main.phrase_id_2 IS 'phrase id that is part of the prime key for a text result';
+COMMENT ON COLUMN results_text_standard_main.phrase_id_3 IS 'phrase id that is part of the prime key for a text result';
+COMMENT ON COLUMN results_text_standard_main.phrase_id_4 IS 'phrase id that is part of the prime key for a text result';
+COMMENT ON COLUMN results_text_standard_main.phrase_id_5 IS 'phrase id that is part of the prime key for a text result';
+COMMENT ON COLUMN results_text_standard_main.phrase_id_6 IS 'phrase id that is part of the prime key for a text result';
+COMMENT ON COLUMN results_text_standard_main.phrase_id_7 IS 'phrase id that is part of the prime key for a text result';
+COMMENT ON COLUMN results_text_standard_main.text_value  IS 'the text value given by the user';
+
+--
+-- table structure to cache the formula public unprotected text results that have never changed the owner, does not have a description and are rarely updated
+--
+
+CREATE TABLE IF NOT EXISTS results_text_standard
+(
+    group_id   char(112) PRIMARY KEY,
+    text_value text      NOT NULL
+);
+
+COMMENT ON TABLE results_text_standard             IS 'to cache the formula public unprotected text results that have never changed the owner, does not have a description and are rarely updated';
+COMMENT ON COLUMN results_text_standard.group_id   IS 'the 512-bit prime index to find the text result';
+COMMENT ON COLUMN results_text_standard.text_value IS 'the text value given by the user';
+
+-- --------------------------------------------------------
+
+--
+-- table structure to cache the formula text results related to up to 16 phrases
+--
+
+CREATE TABLE IF NOT EXISTS results_text
+(
+    group_id        char(112) PRIMARY KEY,
+    source_group_id char(112) DEFAULT NULL,
+    text_value      text          NOT NULL,
+    last_update     timestamp DEFAULT NULL,
+    formula_id      bigint        NOT NULL,
+    user_id         bigint    DEFAULT NULL,
+    excluded        smallint  DEFAULT NULL,
+    share_type_id   smallint  DEFAULT NULL,
+    protect_id      smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE results_text                  IS 'to cache the formula text results related to up to 16 phrases';
+COMMENT ON COLUMN results_text.group_id        IS 'the 512-bit prime index to find the text result';
+COMMENT ON COLUMN results_text.source_group_id IS '512-bit reference to the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN results_text.text_value      IS 'the text value given by the user';
+COMMENT ON COLUMN results_text.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN results_text.formula_id      IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN results_text.user_id         IS 'the id of the user who has requested the calculation';
+COMMENT ON COLUMN results_text.excluded        IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN results_text.share_type_id   IS 'to restrict the access';
+COMMENT ON COLUMN results_text.protect_id      IS 'to protect against unwanted changes';
+
+--
+-- table structure to cache the user specific changes of text results related to up to 16 phrases
+--
+
+CREATE TABLE IF NOT EXISTS user_results_text
+(
+    group_id        char(112)     NOT NULL,
+    source_group_id char(112) DEFAULT NULL,
+    user_id         bigint        NOT NULL,
+    text_value      text      DEFAULT NULL,
+    last_update     timestamp DEFAULT NULL,
+    formula_id      bigint        NOT NULL,
+    excluded        smallint  DEFAULT NULL,
+    share_type_id   smallint  DEFAULT NULL,
+    protect_id      smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE user_results_text                  IS 'to cache the user specific changes of text results related to up to 16 phrases';
+COMMENT ON COLUMN user_results_text.group_id        IS 'the 512-bit prime index to find the user text result';
+COMMENT ON COLUMN user_results_text.source_group_id IS '512-bit reference to the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN user_results_text.user_id         IS 'the id of the user who has requested the change of the text result';
+COMMENT ON COLUMN user_results_text.text_value      IS 'the user specific text value change';
+COMMENT ON COLUMN user_results_text.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN user_results_text.formula_id      IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN user_results_text.excluded        IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN user_results_text.share_type_id   IS 'to restrict the access';
+COMMENT ON COLUMN user_results_text.protect_id      IS 'to protect against unwanted changes';
+
+-- --------------------------------------------------------
+
+--
+-- table structure to cache the formula most often requested text results related up to four prime phrase
+--
+
+CREATE TABLE IF NOT EXISTS results_text_prime
+(
+    phrase_id_1     smallint  NOT NULL,
+    phrase_id_2     smallint  DEFAULT 0,
+    phrase_id_3     smallint  DEFAULT 0,
+    phrase_id_4     smallint  DEFAULT 0,
+    source_group_id bigint    DEFAULT NULL,
+    text_value      text          NOT NULL,
+    last_update     timestamp DEFAULT NULL,
+    formula_id      bigint        NOT NULL,
+    user_id         bigint    DEFAULT NULL,
+    excluded        smallint  DEFAULT NULL,
+    share_type_id   smallint  DEFAULT NULL,
+    protect_id      smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE results_text_prime                  IS 'to cache the formula most often requested text results related up to four prime phrase';
+COMMENT ON COLUMN results_text_prime.phrase_id_1     IS 'phrase id that is part of the prime key for a text result';
+COMMENT ON COLUMN results_text_prime.phrase_id_2     IS 'phrase id that is part of the prime key for a text result';
+COMMENT ON COLUMN results_text_prime.phrase_id_3     IS 'phrase id that is part of the prime key for a text result';
+COMMENT ON COLUMN results_text_prime.phrase_id_4     IS 'phrase id that is part of the prime key for a text result';
+COMMENT ON COLUMN results_text_prime.source_group_id IS '64-bit reference to the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN results_text_prime.text_value      IS 'the text value given by the user';
+COMMENT ON COLUMN results_text_prime.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN results_text_prime.formula_id      IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN results_text_prime.user_id         IS 'the id of the user who has requested the calculation';
+COMMENT ON COLUMN results_text_prime.excluded        IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN results_text_prime.share_type_id   IS 'to restrict the access';
+COMMENT ON COLUMN results_text_prime.protect_id      IS 'to protect against unwanted changes';
+
+--
+-- table structure to store the user specific changes for the most often requested text results related up to four prime phrase
+--
+
+CREATE TABLE IF NOT EXISTS user_results_text_prime
+(
+    phrase_id_1     smallint  NOT NULL,
+    phrase_id_2     smallint  DEFAULT 0,
+    phrase_id_3     smallint  DEFAULT 0,
+    phrase_id_4     smallint  DEFAULT 0,
+    source_group_id bigint    DEFAULT NULL,
+    user_id         bigint        NOT NULL,
+    text_value      text      DEFAULT NULL,
+    last_update     timestamp DEFAULT NULL,
+    formula_id      bigint        NOT NULL,
+    excluded        smallint  DEFAULT NULL,
+    share_type_id   smallint  DEFAULT NULL,
+    protect_id      smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE user_results_text_prime                  IS 'to store the user specific changes for the most often requested text results related up to four prime phrase';
+COMMENT ON COLUMN user_results_text_prime.phrase_id_1     IS 'phrase id that is with the user id part of the prime key for a text result';
+COMMENT ON COLUMN user_results_text_prime.phrase_id_2     IS 'phrase id that is with the user id part of the prime key for a text result';
+COMMENT ON COLUMN user_results_text_prime.phrase_id_3     IS 'phrase id that is with the user id part of the prime key for a text result';
+COMMENT ON COLUMN user_results_text_prime.phrase_id_4     IS 'phrase id that is with the user id part of the prime key for a text result';
+COMMENT ON COLUMN user_results_text_prime.source_group_id IS '64-bit reference to the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN user_results_text_prime.user_id         IS 'the id of the user who has requested the change of the text result';
+COMMENT ON COLUMN user_results_text_prime.text_value      IS 'the user specific text value change';
+COMMENT ON COLUMN user_results_text_prime.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN user_results_text_prime.formula_id      IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN user_results_text_prime.excluded        IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN user_results_text_prime.share_type_id   IS 'to restrict the access';
+COMMENT ON COLUMN user_results_text_prime.protect_id      IS 'to protect against unwanted changes';
+
+-- --------------------------------------------------------
+
+--
+-- table structure to cache the formula second most often requested text results related up to eight prime phrase
+--
+
+CREATE TABLE IF NOT EXISTS results_text_main
+(
+    phrase_id_1     smallint  NOT NULL,
+    phrase_id_2     smallint  DEFAULT 0,
+    phrase_id_3     smallint  DEFAULT 0,
+    phrase_id_4     smallint  DEFAULT 0,
+    phrase_id_5     smallint  DEFAULT 0,
+    phrase_id_6     smallint  DEFAULT 0,
+    phrase_id_7     smallint  DEFAULT 0,
+    phrase_id_8     smallint  DEFAULT 0,
+    source_group_id bigint    DEFAULT NULL,
+    text_value      text      NOT NULL,
+    last_update     timestamp DEFAULT NULL,
+    formula_id      bigint        NOT NULL,
+    user_id         bigint    DEFAULT NULL,
+    excluded        smallint  DEFAULT NULL,
+    share_type_id   smallint  DEFAULT NULL,
+    protect_id      smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE results_text_main                  IS 'to cache the formula second most often requested text results related up to eight prime phrase';
+COMMENT ON COLUMN results_text_main.phrase_id_1     IS 'phrase id that is part of the prime key for a text result';
+COMMENT ON COLUMN results_text_main.phrase_id_2     IS 'phrase id that is part of the prime key for a text result';
+COMMENT ON COLUMN results_text_main.phrase_id_3     IS 'phrase id that is part of the prime key for a text result';
+COMMENT ON COLUMN results_text_main.phrase_id_4     IS 'phrase id that is part of the prime key for a text result';
+COMMENT ON COLUMN results_text_main.phrase_id_5     IS 'phrase id that is part of the prime key for a text result';
+COMMENT ON COLUMN results_text_main.phrase_id_6     IS 'phrase id that is part of the prime key for a text result';
+COMMENT ON COLUMN results_text_main.phrase_id_7     IS 'phrase id that is part of the prime key for a text result';
+COMMENT ON COLUMN results_text_main.phrase_id_8     IS 'phrase id that is part of the prime key for a text result';
+COMMENT ON COLUMN results_text_main.source_group_id IS '64-bit reference to the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN results_text_main.text_value      IS 'the text value given by the user';
+COMMENT ON COLUMN results_text_main.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN results_text_main.formula_id      IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN results_text_main.user_id         IS 'the id of the user who has requested the calculation';
+COMMENT ON COLUMN results_text_main.excluded        IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN results_text_main.share_type_id   IS 'to restrict the access';
+COMMENT ON COLUMN results_text_main.protect_id      IS 'to protect against unwanted changes';
+
+--
+-- table structure to store the user specific changes to cache the formula second most often requested text results related up to eight prime phrase
+--
+
+CREATE TABLE IF NOT EXISTS user_results_text_main
+(
+    phrase_id_1     smallint  NOT NULL,
+    phrase_id_2     smallint  DEFAULT 0,
+    phrase_id_3     smallint  DEFAULT 0,
+    phrase_id_4     smallint  DEFAULT 0,
+    phrase_id_5     smallint  DEFAULT 0,
+    phrase_id_6     smallint  DEFAULT 0,
+    phrase_id_7     smallint  DEFAULT 0,
+    phrase_id_8     smallint  DEFAULT 0,
+    source_group_id bigint    DEFAULT NULL,
+    user_id         bigint        NOT NULL,
+    text_value      text      DEFAULT NULL,
+    last_update     timestamp DEFAULT NULL,
+    formula_id      bigint        NOT NULL,
+    excluded        smallint  DEFAULT NULL,
+    share_type_id   smallint  DEFAULT NULL,
+    protect_id      smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE user_results_text_main                  IS 'to store the user specific changes to cache the formula second most often requested text results related up to eight prime phrase';
+COMMENT ON COLUMN user_results_text_main.phrase_id_1     IS 'phrase id that is with the user id part of the prime key for a text result';
+COMMENT ON COLUMN user_results_text_main.phrase_id_2     IS 'phrase id that is with the user id part of the prime key for a text result';
+COMMENT ON COLUMN user_results_text_main.phrase_id_3     IS 'phrase id that is with the user id part of the prime key for a text result';
+COMMENT ON COLUMN user_results_text_main.phrase_id_4     IS 'phrase id that is with the user id part of the prime key for a text result';
+COMMENT ON COLUMN user_results_text_main.phrase_id_5     IS 'phrase id that is with the user id part of the prime key for a text result';
+COMMENT ON COLUMN user_results_text_main.phrase_id_6     IS 'phrase id that is with the user id part of the prime key for a text result';
+COMMENT ON COLUMN user_results_text_main.phrase_id_7     IS 'phrase id that is with the user id part of the prime key for a text result';
+COMMENT ON COLUMN user_results_text_main.phrase_id_8     IS 'phrase id that is with the user id part of the prime key for a text result';
+COMMENT ON COLUMN user_results_text_main.source_group_id IS '64-bit reference to the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN user_results_text_main.user_id         IS 'the id of the user who has requested the change of the text result';
+COMMENT ON COLUMN user_results_text_main.text_value      IS 'the user specific text value change';
+COMMENT ON COLUMN user_results_text_main.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN user_results_text_main.formula_id      IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN user_results_text_main.excluded        IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN user_results_text_main.share_type_id   IS 'to restrict the access';
+COMMENT ON COLUMN user_results_text_main.protect_id      IS 'to protect against unwanted changes';
+
+-- --------------------------------------------------------
+
+--
+-- table structure to cache the formula text results related to more than 16 phrases
+--
+
+CREATE TABLE IF NOT EXISTS results_text_big
+(
+    group_id        text      PRIMARY KEY,
+    source_group_id text      DEFAULT NULL,
+    text_value      text          NOT NULL,
+    last_update     timestamp DEFAULT NULL,
+    formula_id      bigint        NOT NULL,
+    user_id         bigint    DEFAULT NULL,
+    excluded        smallint  DEFAULT NULL,
+    share_type_id   smallint  DEFAULT NULL,
+    protect_id      smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE results_text_big                  IS 'to cache the formula text results related to more than 16 phrases';
+COMMENT ON COLUMN results_text_big.group_id        IS 'the variable text index to find text result';
+COMMENT ON COLUMN results_text_big.source_group_id IS 'text reference to the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN results_text_big.text_value      IS 'the text value given by the user';
+COMMENT ON COLUMN results_text_big.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN results_text_big.formula_id      IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN results_text_big.user_id         IS 'the id of the user who has requested the calculation';
+COMMENT ON COLUMN results_text_big.excluded        IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN results_text_big.share_type_id   IS 'to restrict the access';
+COMMENT ON COLUMN results_text_big.protect_id      IS 'to protect against unwanted changes';
+
+--
+-- table structure to store the user specific changes of text results related to more than 16 phrases
+--
+
+CREATE TABLE IF NOT EXISTS user_results_text_big
+(
+    group_id        text          NOT NULL,
+    source_group_id text      DEFAULT NULL,
+    user_id         bigint        NOT NULL,
+    text_value      text      DEFAULT NULL,
+    last_update     timestamp DEFAULT NULL,
+    formula_id      bigint        NOT NULL,
+    excluded        smallint  DEFAULT NULL,
+    share_type_id   smallint  DEFAULT NULL,
+    protect_id      smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE user_results_text_big                  IS 'to store the user specific changes of text results related to more than 16 phrases';
+COMMENT ON COLUMN user_results_text_big.group_id        IS 'the text index for more than 16 phrases to find the text result';
+COMMENT ON COLUMN user_results_text_big.source_group_id IS 'text reference to the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN user_results_text_big.user_id         IS 'the id of the user who has requested the change of the text result';
+COMMENT ON COLUMN user_results_text_big.text_value      IS 'the user specific text value change';
+COMMENT ON COLUMN user_results_text_big.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN user_results_text_big.formula_id      IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN user_results_text_big.excluded        IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN user_results_text_big.share_type_id   IS 'to restrict the access';
+COMMENT ON COLUMN user_results_text_big.protect_id      IS 'to protect against unwanted changes';
+
+-- --------------------------------------------------------
+
+--
+-- table structure to cache the formula public unprotected time results related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated
+--
+
+CREATE TABLE IF NOT EXISTS results_time_standard_prime
+(
+    formula_id  smallint  NOT NULL,
+    phrase_id_1 smallint  NOT NULL,
+    phrase_id_2 smallint  DEFAULT 0,
+    phrase_id_3 smallint  DEFAULT 0,
+    time_value  timestamp NOT NULL
+);
+
+COMMENT ON TABLE results_time_standard_prime              IS 'to cache the formula public unprotected time results related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated';
+COMMENT ON COLUMN results_time_standard_prime.formula_id  IS 'formula id that is part of the prime key for a time result';
+COMMENT ON COLUMN results_time_standard_prime.phrase_id_1 IS 'phrase id that is part of the prime key for a time result';
+COMMENT ON COLUMN results_time_standard_prime.phrase_id_2 IS 'phrase id that is part of the prime key for a time result';
+COMMENT ON COLUMN results_time_standard_prime.phrase_id_3 IS 'phrase id that is part of the prime key for a time result';
+COMMENT ON COLUMN results_time_standard_prime.time_value  IS 'the timestamp given by the user';
+
+--
+-- table structure to cache the formula public unprotected time results related up to eight prime phrase that have never changed the owner, does not have a description and are rarely updated
+--
+
+CREATE TABLE IF NOT EXISTS results_time_standard_main
+(
+    formula_id  smallint  NOT NULL,
+    phrase_id_1 smallint  NOT NULL,
+    phrase_id_2 smallint  DEFAULT 0,
+    phrase_id_3 smallint  DEFAULT 0,
+    phrase_id_4 smallint  DEFAULT 0,
+    phrase_id_5 smallint  DEFAULT 0,
+    phrase_id_6 smallint  DEFAULT 0,
+    phrase_id_7 smallint  DEFAULT 0,
+    time_value  timestamp NOT NULL
+);
+
+COMMENT ON TABLE results_time_standard_main              IS 'to cache the formula public unprotected time results related up to eight prime phrase that have never changed the owner, does not have a description and are rarely updated';
+COMMENT ON COLUMN results_time_standard_main.formula_id  IS 'formula id that is part of the prime key for a time result';
+COMMENT ON COLUMN results_time_standard_main.phrase_id_1 IS 'phrase id that is part of the prime key for a time result';
+COMMENT ON COLUMN results_time_standard_main.phrase_id_2 IS 'phrase id that is part of the prime key for a time result';
+COMMENT ON COLUMN results_time_standard_main.phrase_id_3 IS 'phrase id that is part of the prime key for a time result';
+COMMENT ON COLUMN results_time_standard_main.phrase_id_4 IS 'phrase id that is part of the prime key for a time result';
+COMMENT ON COLUMN results_time_standard_main.phrase_id_5 IS 'phrase id that is part of the prime key for a time result';
+COMMENT ON COLUMN results_time_standard_main.phrase_id_6 IS 'phrase id that is part of the prime key for a time result';
+COMMENT ON COLUMN results_time_standard_main.phrase_id_7 IS 'phrase id that is part of the prime key for a time result';
+COMMENT ON COLUMN results_time_standard_main.time_value  IS 'the timestamp given by the user';
+
+--
+-- table structure to cache the formula public unprotected time results that have never changed the owner, does not have a description and are rarely updated
+--
+
+CREATE TABLE IF NOT EXISTS results_time_standard
+(
+    group_id   char(112) PRIMARY KEY,
+    time_value timestamp NOT NULL
+);
+
+COMMENT ON TABLE results_time_standard             IS 'to cache the formula public unprotected time results that have never changed the owner, does not have a description and are rarely updated';
+COMMENT ON COLUMN results_time_standard.group_id   IS 'the 512-bit prime index to find the time result';
+COMMENT ON COLUMN results_time_standard.time_value IS 'the timestamp given by the user';
+
+-- --------------------------------------------------------
+
+--
+-- table structure to cache the formula time results related to up to 16 phrases
+--
+
+CREATE TABLE IF NOT EXISTS results_time
+(
+    group_id        char(112) PRIMARY KEY,
+    source_group_id char(112) DEFAULT NULL,
+    time_value      timestamp     NOT NULL,
+    last_update     timestamp DEFAULT NULL,
+    formula_id      bigint        NOT NULL,
+    user_id         bigint    DEFAULT NULL,
+    excluded        smallint  DEFAULT NULL,
+    share_type_id   smallint  DEFAULT NULL,
+    protect_id      smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE results_time                  IS 'to cache the formula time results related to up to 16 phrases';
+COMMENT ON COLUMN results_time.group_id        IS 'the 512-bit prime index to find the time result';
+COMMENT ON COLUMN results_time.source_group_id IS '512-bit reference to the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN results_time.time_value      IS 'the timestamp given by the user';
+COMMENT ON COLUMN results_time.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN results_time.formula_id      IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN results_time.user_id         IS 'the id of the user who has requested the calculation';
+COMMENT ON COLUMN results_time.excluded        IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN results_time.share_type_id   IS 'to restrict the access';
+COMMENT ON COLUMN results_time.protect_id      IS 'to protect against unwanted changes';
+
+--
+-- table structure to cache the user specific changes of time results related to up to 16 phrases
+--
+
+CREATE TABLE IF NOT EXISTS user_results_time
+(
+    group_id        char(112)     NOT NULL,
+    source_group_id char(112) DEFAULT NULL,
+    user_id         bigint        NOT NULL,
+    time_value      timestamp DEFAULT NULL,
+    last_update     timestamp DEFAULT NULL,
+    formula_id      bigint        NOT NULL,
+    excluded        smallint  DEFAULT NULL,
+    share_type_id   smallint  DEFAULT NULL,
+    protect_id      smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE user_results_time                  IS 'to cache the user specific changes of time results related to up to 16 phrases';
+COMMENT ON COLUMN user_results_time.group_id        IS 'the 512-bit prime index to find the user time result';
+COMMENT ON COLUMN user_results_time.source_group_id IS '512-bit reference to the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN user_results_time.user_id         IS 'the id of the user who has requested the change of the time result';
+COMMENT ON COLUMN user_results_time.time_value      IS 'the user specific timestamp change';
+COMMENT ON COLUMN user_results_time.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN user_results_time.formula_id      IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN user_results_time.excluded        IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN user_results_time.share_type_id   IS 'to restrict the access';
+COMMENT ON COLUMN user_results_time.protect_id      IS 'to protect against unwanted changes';
+
+-- --------------------------------------------------------
+
+--
+-- table structure to cache the formula most often requested time results related up to four prime phrase
+--
+
+CREATE TABLE IF NOT EXISTS results_time_prime
+(
+    phrase_id_1     smallint  NOT NULL,
+    phrase_id_2     smallint  DEFAULT 0,
+    phrase_id_3     smallint  DEFAULT 0,
+    phrase_id_4     smallint  DEFAULT 0,
+    source_group_id bigint    DEFAULT NULL,
+    time_value      timestamp     NOT NULL,
+    last_update     timestamp DEFAULT NULL,
+    formula_id      bigint        NOT NULL,
+    user_id         bigint    DEFAULT NULL,
+    excluded        smallint  DEFAULT NULL,
+    share_type_id   smallint  DEFAULT NULL,
+    protect_id      smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE results_time_prime                  IS 'to cache the formula most often requested time results related up to four prime phrase';
+COMMENT ON COLUMN results_time_prime.phrase_id_1     IS 'phrase id that is part of the prime key for a time result';
+COMMENT ON COLUMN results_time_prime.phrase_id_2     IS 'phrase id that is part of the prime key for a time result';
+COMMENT ON COLUMN results_time_prime.phrase_id_3     IS 'phrase id that is part of the prime key for a time result';
+COMMENT ON COLUMN results_time_prime.phrase_id_4     IS 'phrase id that is part of the prime key for a time result';
+COMMENT ON COLUMN results_time_prime.source_group_id IS '64-bit reference to the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN results_time_prime.time_value      IS 'the timestamp given by the user';
+COMMENT ON COLUMN results_time_prime.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN results_time_prime.formula_id      IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN results_time_prime.user_id         IS 'the id of the user who has requested the calculation';
+COMMENT ON COLUMN results_time_prime.excluded        IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN results_time_prime.share_type_id   IS 'to restrict the access';
+COMMENT ON COLUMN results_time_prime.protect_id      IS 'to protect against unwanted changes';
+
+--
+-- table structure to store the user specific changes for the most often requested time results related up to four prime phrase
+--
+
+CREATE TABLE IF NOT EXISTS user_results_time_prime
+(
+    phrase_id_1     smallint  NOT NULL,
+    phrase_id_2     smallint  DEFAULT 0,
+    phrase_id_3     smallint  DEFAULT 0,
+    phrase_id_4     smallint  DEFAULT 0,
+    source_group_id bigint    DEFAULT NULL,
+    user_id         bigint        NOT NULL,
+    time_value      timestamp DEFAULT NULL,
+    last_update     timestamp DEFAULT NULL,
+    formula_id      bigint        NOT NULL,
+    excluded        smallint  DEFAULT NULL,
+    share_type_id   smallint  DEFAULT NULL,
+    protect_id      smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE user_results_time_prime                  IS 'to store the user specific changes for the most often requested time results related up to four prime phrase';
+COMMENT ON COLUMN user_results_time_prime.phrase_id_1     IS 'phrase id that is with the user id part of the prime key for a time result';
+COMMENT ON COLUMN user_results_time_prime.phrase_id_2     IS 'phrase id that is with the user id part of the prime key for a time result';
+COMMENT ON COLUMN user_results_time_prime.phrase_id_3     IS 'phrase id that is with the user id part of the prime key for a time result';
+COMMENT ON COLUMN user_results_time_prime.phrase_id_4     IS 'phrase id that is with the user id part of the prime key for a time result';
+COMMENT ON COLUMN user_results_time_prime.source_group_id IS '64-bit reference to the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN user_results_time_prime.user_id         IS 'the id of the user who has requested the change of the time result';
+COMMENT ON COLUMN user_results_time_prime.time_value      IS 'the user specific timestamp change';
+COMMENT ON COLUMN user_results_time_prime.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN user_results_time_prime.formula_id      IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN user_results_time_prime.excluded        IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN user_results_time_prime.share_type_id   IS 'to restrict the access';
+COMMENT ON COLUMN user_results_time_prime.protect_id      IS 'to protect against unwanted changes';
+
+-- --------------------------------------------------------
+
+--
+-- table structure to cache the formula second most often requested time results related up to eight prime phrase
+--
+
+CREATE TABLE IF NOT EXISTS results_time_main
+(
+    phrase_id_1     smallint  NOT NULL,
+    phrase_id_2     smallint  DEFAULT 0,
+    phrase_id_3     smallint  DEFAULT 0,
+    phrase_id_4     smallint  DEFAULT 0,
+    phrase_id_5     smallint  DEFAULT 0,
+    phrase_id_6     smallint  DEFAULT 0,
+    phrase_id_7     smallint  DEFAULT 0,
+    phrase_id_8     smallint  DEFAULT 0,
+    source_group_id bigint    DEFAULT NULL,
+    time_value      timestamp NOT NULL,
+    last_update     timestamp DEFAULT NULL,
+    formula_id      bigint        NOT NULL,
+    user_id         bigint    DEFAULT NULL,
+    excluded        smallint  DEFAULT NULL,
+    share_type_id   smallint  DEFAULT NULL,
+    protect_id      smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE results_time_main                  IS 'to cache the formula second most often requested time results related up to eight prime phrase';
+COMMENT ON COLUMN results_time_main.phrase_id_1     IS 'phrase id that is part of the prime key for a time result';
+COMMENT ON COLUMN results_time_main.phrase_id_2     IS 'phrase id that is part of the prime key for a time result';
+COMMENT ON COLUMN results_time_main.phrase_id_3     IS 'phrase id that is part of the prime key for a time result';
+COMMENT ON COLUMN results_time_main.phrase_id_4     IS 'phrase id that is part of the prime key for a time result';
+COMMENT ON COLUMN results_time_main.phrase_id_5     IS 'phrase id that is part of the prime key for a time result';
+COMMENT ON COLUMN results_time_main.phrase_id_6     IS 'phrase id that is part of the prime key for a time result';
+COMMENT ON COLUMN results_time_main.phrase_id_7     IS 'phrase id that is part of the prime key for a time result';
+COMMENT ON COLUMN results_time_main.phrase_id_8     IS 'phrase id that is part of the prime key for a time result';
+COMMENT ON COLUMN results_time_main.source_group_id IS '64-bit reference to the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN results_time_main.time_value      IS 'the timestamp given by the user';
+COMMENT ON COLUMN results_time_main.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN results_time_main.formula_id      IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN results_time_main.user_id         IS 'the id of the user who has requested the calculation';
+COMMENT ON COLUMN results_time_main.excluded        IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN results_time_main.share_type_id   IS 'to restrict the access';
+COMMENT ON COLUMN results_time_main.protect_id      IS 'to protect against unwanted changes';
+
+--
+-- table structure to store the user specific changes to cache the formula second most often requested time results related up to eight prime phrase
+--
+
+CREATE TABLE IF NOT EXISTS user_results_time_main
+(
+    phrase_id_1     smallint  NOT NULL,
+    phrase_id_2     smallint  DEFAULT 0,
+    phrase_id_3     smallint  DEFAULT 0,
+    phrase_id_4     smallint  DEFAULT 0,
+    phrase_id_5     smallint  DEFAULT 0,
+    phrase_id_6     smallint  DEFAULT 0,
+    phrase_id_7     smallint  DEFAULT 0,
+    phrase_id_8     smallint  DEFAULT 0,
+    source_group_id bigint    DEFAULT NULL,
+    user_id         bigint        NOT NULL,
+    time_value      timestamp DEFAULT NULL,
+    last_update     timestamp DEFAULT NULL,
+    formula_id      bigint        NOT NULL,
+    excluded        smallint  DEFAULT NULL,
+    share_type_id   smallint  DEFAULT NULL,
+    protect_id      smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE user_results_time_main                  IS 'to store the user specific changes to cache the formula second most often requested time results related up to eight prime phrase';
+COMMENT ON COLUMN user_results_time_main.phrase_id_1     IS 'phrase id that is with the user id part of the prime key for a time result';
+COMMENT ON COLUMN user_results_time_main.phrase_id_2     IS 'phrase id that is with the user id part of the prime key for a time result';
+COMMENT ON COLUMN user_results_time_main.phrase_id_3     IS 'phrase id that is with the user id part of the prime key for a time result';
+COMMENT ON COLUMN user_results_time_main.phrase_id_4     IS 'phrase id that is with the user id part of the prime key for a time result';
+COMMENT ON COLUMN user_results_time_main.phrase_id_5     IS 'phrase id that is with the user id part of the prime key for a time result';
+COMMENT ON COLUMN user_results_time_main.phrase_id_6     IS 'phrase id that is with the user id part of the prime key for a time result';
+COMMENT ON COLUMN user_results_time_main.phrase_id_7     IS 'phrase id that is with the user id part of the prime key for a time result';
+COMMENT ON COLUMN user_results_time_main.phrase_id_8     IS 'phrase id that is with the user id part of the prime key for a time result';
+COMMENT ON COLUMN user_results_time_main.source_group_id IS '64-bit reference to the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN user_results_time_main.user_id         IS 'the id of the user who has requested the change of the time result';
+COMMENT ON COLUMN user_results_time_main.time_value      IS 'the user specific timestamp change';
+COMMENT ON COLUMN user_results_time_main.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN user_results_time_main.formula_id      IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN user_results_time_main.excluded        IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN user_results_time_main.share_type_id   IS 'to restrict the access';
+COMMENT ON COLUMN user_results_time_main.protect_id      IS 'to protect against unwanted changes';
+
+-- --------------------------------------------------------
+
+--
+-- table structure to cache the formula time results related to more than 16 phrases
+--
+
+CREATE TABLE IF NOT EXISTS results_time_big
+(
+    group_id        text      PRIMARY KEY,
+    source_group_id text      DEFAULT NULL,
+    time_value      timestamp     NOT NULL,
+    last_update     timestamp DEFAULT NULL,
+    formula_id      bigint        NOT NULL,
+    user_id         bigint    DEFAULT NULL,
+    excluded        smallint  DEFAULT NULL,
+    share_type_id   smallint  DEFAULT NULL,
+    protect_id      smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE results_time_big                  IS 'to cache the formula time results related to more than 16 phrases';
+COMMENT ON COLUMN results_time_big.group_id        IS 'the variable text index to find time result';
+COMMENT ON COLUMN results_time_big.source_group_id IS 'text reference to the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN results_time_big.time_value      IS 'the timestamp given by the user';
+COMMENT ON COLUMN results_time_big.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN results_time_big.formula_id      IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN results_time_big.user_id         IS 'the id of the user who has requested the calculation';
+COMMENT ON COLUMN results_time_big.excluded        IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN results_time_big.share_type_id   IS 'to restrict the access';
+COMMENT ON COLUMN results_time_big.protect_id      IS 'to protect against unwanted changes';
+
+--
+-- table structure to store the user specific changes of time results related to more than 16 phrases
+--
+
+CREATE TABLE IF NOT EXISTS user_results_time_big
+(
+    group_id        text          NOT NULL,
+    source_group_id text      DEFAULT NULL,
+    user_id         bigint        NOT NULL,
+    time_value      timestamp DEFAULT NULL,
+    last_update     timestamp DEFAULT NULL,
+    formula_id      bigint        NOT NULL,
+    excluded        smallint  DEFAULT NULL,
+    share_type_id   smallint  DEFAULT NULL,
+    protect_id      smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE user_results_time_big                  IS 'to store the user specific changes of time results related to more than 16 phrases';
+COMMENT ON COLUMN user_results_time_big.group_id        IS 'the text index for more than 16 phrases to find the time result';
+COMMENT ON COLUMN user_results_time_big.source_group_id IS 'text reference to the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN user_results_time_big.user_id         IS 'the id of the user who has requested the change of the time result';
+COMMENT ON COLUMN user_results_time_big.time_value      IS 'the user specific timestamp change';
+COMMENT ON COLUMN user_results_time_big.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN user_results_time_big.formula_id      IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN user_results_time_big.excluded        IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN user_results_time_big.share_type_id   IS 'to restrict the access';
+COMMENT ON COLUMN user_results_time_big.protect_id      IS 'to protect against unwanted changes';
+
+-- --------------------------------------------------------
+
+--
+-- table structure to cache the formula public unprotected geo results related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated
+--
+
+CREATE TABLE IF NOT EXISTS results_geo_standard_prime
+(
+    formula_id  smallint  NOT NULL,
+    phrase_id_1 smallint  NOT NULL,
+    phrase_id_2 smallint  DEFAULT 0,
+    phrase_id_3 smallint  DEFAULT 0,
+    geo_value   point     NOT NULL
+);
+
+COMMENT ON TABLE results_geo_standard_prime              IS 'to cache the formula public unprotected geo results related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated';
+COMMENT ON COLUMN results_geo_standard_prime.formula_id  IS 'formula id that is part of the prime key for a geo result';
+COMMENT ON COLUMN results_geo_standard_prime.phrase_id_1 IS 'phrase id that is part of the prime key for a geo result';
+COMMENT ON COLUMN results_geo_standard_prime.phrase_id_2 IS 'phrase id that is part of the prime key for a geo result';
+COMMENT ON COLUMN results_geo_standard_prime.phrase_id_3 IS 'phrase id that is part of the prime key for a geo result';
+COMMENT ON COLUMN results_geo_standard_prime.geo_value   IS 'the geolocation given by the user';
+
+--
+-- table structure to cache the formula public unprotected geo results related up to eight prime phrase that have never changed the owner, does not have a description and are rarely updated
+--
+
+CREATE TABLE IF NOT EXISTS results_geo_standard_main
+(
+    formula_id  smallint  NOT NULL,
+    phrase_id_1 smallint  NOT NULL,
+    phrase_id_2 smallint  DEFAULT 0,
+    phrase_id_3 smallint  DEFAULT 0,
+    phrase_id_4 smallint  DEFAULT 0,
+    phrase_id_5 smallint  DEFAULT 0,
+    phrase_id_6 smallint  DEFAULT 0,
+    phrase_id_7 smallint  DEFAULT 0,
+    geo_value   point     NOT NULL
+);
+
+COMMENT ON TABLE results_geo_standard_main              IS 'to cache the formula public unprotected geo results related up to eight prime phrase that have never changed the owner, does not have a description and are rarely updated';
+COMMENT ON COLUMN results_geo_standard_main.formula_id  IS 'formula id that is part of the prime key for a geo result';
+COMMENT ON COLUMN results_geo_standard_main.phrase_id_1 IS 'phrase id that is part of the prime key for a geo result';
+COMMENT ON COLUMN results_geo_standard_main.phrase_id_2 IS 'phrase id that is part of the prime key for a geo result';
+COMMENT ON COLUMN results_geo_standard_main.phrase_id_3 IS 'phrase id that is part of the prime key for a geo result';
+COMMENT ON COLUMN results_geo_standard_main.phrase_id_4 IS 'phrase id that is part of the prime key for a geo result';
+COMMENT ON COLUMN results_geo_standard_main.phrase_id_5 IS 'phrase id that is part of the prime key for a geo result';
+COMMENT ON COLUMN results_geo_standard_main.phrase_id_6 IS 'phrase id that is part of the prime key for a geo result';
+COMMENT ON COLUMN results_geo_standard_main.phrase_id_7 IS 'phrase id that is part of the prime key for a geo result';
+COMMENT ON COLUMN results_geo_standard_main.geo_value   IS 'the geolocation given by the user';
+
+--
+-- table structure to cache the formula public unprotected geo results that have never changed the owner, does not have a description and are rarely updated
+--
+
+CREATE TABLE IF NOT EXISTS results_geo_standard
+(
+    group_id   char(112) PRIMARY KEY,
+    geo_value  point     NOT NULL
+);
+
+COMMENT ON TABLE results_geo_standard             IS 'to cache the formula public unprotected geo results that have never changed the owner, does not have a description and are rarely updated';
+COMMENT ON COLUMN results_geo_standard.group_id   IS 'the 512-bit prime index to find the geo result';
+COMMENT ON COLUMN results_geo_standard.geo_value  IS 'the geolocation given by the user';
+
+-- --------------------------------------------------------
+
+--
+-- table structure to cache the formula geo results related to up to 16 phrases
+--
+
+CREATE TABLE IF NOT EXISTS results_geo
+(
+    group_id        char(112) PRIMARY KEY,
+    source_group_id char(112) DEFAULT NULL,
+    geo_value       point         NOT NULL,
+    last_update     timestamp DEFAULT NULL,
+    formula_id      bigint        NOT NULL,
+    user_id         bigint    DEFAULT NULL,
+    excluded        smallint  DEFAULT NULL,
+    share_type_id   smallint  DEFAULT NULL,
+    protect_id      smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE results_geo                  IS 'to cache the formula geo results related to up to 16 phrases';
+COMMENT ON COLUMN results_geo.group_id        IS 'the 512-bit prime index to find the geo result';
+COMMENT ON COLUMN results_geo.source_group_id IS '512-bit reference to the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN results_geo.geo_value       IS 'the geolocation given by the user';
+COMMENT ON COLUMN results_geo.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN results_geo.formula_id      IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN results_geo.user_id         IS 'the id of the user who has requested the calculation';
+COMMENT ON COLUMN results_geo.excluded        IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN results_geo.share_type_id   IS 'to restrict the access';
+COMMENT ON COLUMN results_geo.protect_id      IS 'to protect against unwanted changes';
+
+--
+-- table structure to cache the user specific changes of geo results related to up to 16 phrases
+--
+
+CREATE TABLE IF NOT EXISTS user_results_geo
+(
+    group_id        char(112)     NOT NULL,
+    source_group_id char(112) DEFAULT NULL,
+    user_id         bigint        NOT NULL,
+    geo_value       point     DEFAULT NULL,
+    last_update     timestamp DEFAULT NULL,
+    formula_id      bigint        NOT NULL,
+    excluded        smallint  DEFAULT NULL,
+    share_type_id   smallint  DEFAULT NULL,
+    protect_id      smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE user_results_geo                  IS 'to cache the user specific changes of geo results related to up to 16 phrases';
+COMMENT ON COLUMN user_results_geo.group_id        IS 'the 512-bit prime index to find the user geo result';
+COMMENT ON COLUMN user_results_geo.source_group_id IS '512-bit reference to the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN user_results_geo.user_id         IS 'the id of the user who has requested the change of the geo result';
+COMMENT ON COLUMN user_results_geo.geo_value       IS 'the user specific geolocation change';
+COMMENT ON COLUMN user_results_geo.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN user_results_geo.formula_id      IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN user_results_geo.excluded        IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN user_results_geo.share_type_id   IS 'to restrict the access';
+COMMENT ON COLUMN user_results_geo.protect_id      IS 'to protect against unwanted changes';
+
+-- --------------------------------------------------------
+
+--
+-- table structure to cache the formula most often requested geo results related up to four prime phrase
+--
+
+CREATE TABLE IF NOT EXISTS results_geo_prime
+(
+    phrase_id_1     smallint  NOT NULL,
+    phrase_id_2     smallint  DEFAULT 0,
+    phrase_id_3     smallint  DEFAULT 0,
+    phrase_id_4     smallint  DEFAULT 0,
+    source_group_id bigint    DEFAULT NULL,
+    geo_value       point         NOT NULL,
+    last_update     timestamp DEFAULT NULL,
+    formula_id      bigint        NOT NULL,
+    user_id         bigint    DEFAULT NULL,
+    excluded        smallint  DEFAULT NULL,
+    share_type_id   smallint  DEFAULT NULL,
+    protect_id      smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE results_geo_prime                  IS 'to cache the formula most often requested geo results related up to four prime phrase';
+COMMENT ON COLUMN results_geo_prime.phrase_id_1     IS 'phrase id that is part of the prime key for a geo result';
+COMMENT ON COLUMN results_geo_prime.phrase_id_2     IS 'phrase id that is part of the prime key for a geo result';
+COMMENT ON COLUMN results_geo_prime.phrase_id_3     IS 'phrase id that is part of the prime key for a geo result';
+COMMENT ON COLUMN results_geo_prime.phrase_id_4     IS 'phrase id that is part of the prime key for a geo result';
+COMMENT ON COLUMN results_geo_prime.source_group_id IS '64-bit reference to the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN results_geo_prime.geo_value       IS 'the geolocation given by the user';
+COMMENT ON COLUMN results_geo_prime.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN results_geo_prime.formula_id      IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN results_geo_prime.user_id         IS 'the id of the user who has requested the calculation';
+COMMENT ON COLUMN results_geo_prime.excluded        IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN results_geo_prime.share_type_id   IS 'to restrict the access';
+COMMENT ON COLUMN results_geo_prime.protect_id      IS 'to protect against unwanted changes';
+
+--
+-- table structure to store the user specific changes for the most often requested geo results related up to four prime phrase
+--
+
+CREATE TABLE IF NOT EXISTS user_results_geo_prime
+(
+    phrase_id_1     smallint  NOT NULL,
+    phrase_id_2     smallint  DEFAULT 0,
+    phrase_id_3     smallint  DEFAULT 0,
+    phrase_id_4     smallint  DEFAULT 0,
+    source_group_id bigint    DEFAULT NULL,
+    user_id         bigint        NOT NULL,
+    geo_value       point     DEFAULT NULL,
+    last_update     timestamp DEFAULT NULL,
+    formula_id      bigint        NOT NULL,
+    excluded        smallint  DEFAULT NULL,
+    share_type_id   smallint  DEFAULT NULL,
+    protect_id      smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE user_results_geo_prime                  IS 'to store the user specific changes for the most often requested geo results related up to four prime phrase';
+COMMENT ON COLUMN user_results_geo_prime.phrase_id_1     IS 'phrase id that is with the user id part of the prime key for a geo result';
+COMMENT ON COLUMN user_results_geo_prime.phrase_id_2     IS 'phrase id that is with the user id part of the prime key for a geo result';
+COMMENT ON COLUMN user_results_geo_prime.phrase_id_3     IS 'phrase id that is with the user id part of the prime key for a geo result';
+COMMENT ON COLUMN user_results_geo_prime.phrase_id_4     IS 'phrase id that is with the user id part of the prime key for a geo result';
+COMMENT ON COLUMN user_results_geo_prime.source_group_id IS '64-bit reference to the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN user_results_geo_prime.user_id         IS 'the id of the user who has requested the change of the geo result';
+COMMENT ON COLUMN user_results_geo_prime.geo_value       IS 'the user specific geolocation change';
+COMMENT ON COLUMN user_results_geo_prime.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN user_results_geo_prime.formula_id      IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN user_results_geo_prime.excluded        IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN user_results_geo_prime.share_type_id   IS 'to restrict the access';
+COMMENT ON COLUMN user_results_geo_prime.protect_id      IS 'to protect against unwanted changes';
+
+-- --------------------------------------------------------
+
+--
+-- table structure to cache the formula second most often requested geo results related up to eight prime phrase
+--
+
+CREATE TABLE IF NOT EXISTS results_geo_main
+(
+    phrase_id_1     smallint  NOT NULL,
+    phrase_id_2     smallint  DEFAULT 0,
+    phrase_id_3     smallint  DEFAULT 0,
+    phrase_id_4     smallint  DEFAULT 0,
+    phrase_id_5     smallint  DEFAULT 0,
+    phrase_id_6     smallint  DEFAULT 0,
+    phrase_id_7     smallint  DEFAULT 0,
+    phrase_id_8     smallint  DEFAULT 0,
+    source_group_id bigint    DEFAULT NULL,
+    geo_value       point NOT NULL,
+    last_update     timestamp DEFAULT NULL,
+    formula_id      bigint        NOT NULL,
+    user_id         bigint    DEFAULT NULL,
+    excluded        smallint  DEFAULT NULL,
+    share_type_id   smallint  DEFAULT NULL,
+    protect_id      smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE results_geo_main                  IS 'to cache the formula second most often requested geo results related up to eight prime phrase';
+COMMENT ON COLUMN results_geo_main.phrase_id_1     IS 'phrase id that is part of the prime key for a geo result';
+COMMENT ON COLUMN results_geo_main.phrase_id_2     IS 'phrase id that is part of the prime key for a geo result';
+COMMENT ON COLUMN results_geo_main.phrase_id_3     IS 'phrase id that is part of the prime key for a geo result';
+COMMENT ON COLUMN results_geo_main.phrase_id_4     IS 'phrase id that is part of the prime key for a geo result';
+COMMENT ON COLUMN results_geo_main.phrase_id_5     IS 'phrase id that is part of the prime key for a geo result';
+COMMENT ON COLUMN results_geo_main.phrase_id_6     IS 'phrase id that is part of the prime key for a geo result';
+COMMENT ON COLUMN results_geo_main.phrase_id_7     IS 'phrase id that is part of the prime key for a geo result';
+COMMENT ON COLUMN results_geo_main.phrase_id_8     IS 'phrase id that is part of the prime key for a geo result';
+COMMENT ON COLUMN results_geo_main.source_group_id IS '64-bit reference to the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN results_geo_main.geo_value       IS 'the geolocation given by the user';
+COMMENT ON COLUMN results_geo_main.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN results_geo_main.formula_id      IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN results_geo_main.user_id         IS 'the id of the user who has requested the calculation';
+COMMENT ON COLUMN results_geo_main.excluded        IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN results_geo_main.share_type_id   IS 'to restrict the access';
+COMMENT ON COLUMN results_geo_main.protect_id      IS 'to protect against unwanted changes';
+
+--
+-- table structure to store the user specific changes to cache the formula second most often requested geo results related up to eight prime phrase
+--
+
+CREATE TABLE IF NOT EXISTS user_results_geo_main
+(
+    phrase_id_1     smallint  NOT NULL,
+    phrase_id_2     smallint  DEFAULT 0,
+    phrase_id_3     smallint  DEFAULT 0,
+    phrase_id_4     smallint  DEFAULT 0,
+    phrase_id_5     smallint  DEFAULT 0,
+    phrase_id_6     smallint  DEFAULT 0,
+    phrase_id_7     smallint  DEFAULT 0,
+    phrase_id_8     smallint  DEFAULT 0,
+    source_group_id bigint    DEFAULT NULL,
+    user_id         bigint        NOT NULL,
+    geo_value       point DEFAULT NULL,
+    last_update     timestamp DEFAULT NULL,
+    formula_id      bigint        NOT NULL,
+    excluded        smallint  DEFAULT NULL,
+    share_type_id   smallint  DEFAULT NULL,
+    protect_id      smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE user_results_geo_main                  IS 'to store the user specific changes to cache the formula second most often requested geo results related up to eight prime phrase';
+COMMENT ON COLUMN user_results_geo_main.phrase_id_1     IS 'phrase id that is with the user id part of the prime key for a geo result';
+COMMENT ON COLUMN user_results_geo_main.phrase_id_2     IS 'phrase id that is with the user id part of the prime key for a geo result';
+COMMENT ON COLUMN user_results_geo_main.phrase_id_3     IS 'phrase id that is with the user id part of the prime key for a geo result';
+COMMENT ON COLUMN user_results_geo_main.phrase_id_4     IS 'phrase id that is with the user id part of the prime key for a geo result';
+COMMENT ON COLUMN user_results_geo_main.phrase_id_5     IS 'phrase id that is with the user id part of the prime key for a geo result';
+COMMENT ON COLUMN user_results_geo_main.phrase_id_6     IS 'phrase id that is with the user id part of the prime key for a geo result';
+COMMENT ON COLUMN user_results_geo_main.phrase_id_7     IS 'phrase id that is with the user id part of the prime key for a geo result';
+COMMENT ON COLUMN user_results_geo_main.phrase_id_8     IS 'phrase id that is with the user id part of the prime key for a geo result';
+COMMENT ON COLUMN user_results_geo_main.source_group_id IS '64-bit reference to the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN user_results_geo_main.user_id         IS 'the id of the user who has requested the change of the geo result';
+COMMENT ON COLUMN user_results_geo_main.geo_value       IS 'the user specific geolocation change';
+COMMENT ON COLUMN user_results_geo_main.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN user_results_geo_main.formula_id      IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN user_results_geo_main.excluded        IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN user_results_geo_main.share_type_id   IS 'to restrict the access';
+COMMENT ON COLUMN user_results_geo_main.protect_id      IS 'to protect against unwanted changes';
+
+-- --------------------------------------------------------
+
+--
+-- table structure to cache the formula geo results related to more than 16 phrases
+--
+
+CREATE TABLE IF NOT EXISTS results_geo_big
+(
+    group_id        text      PRIMARY KEY,
+    source_group_id text      DEFAULT NULL,
+    geo_value       point         NOT NULL,
+    last_update     timestamp DEFAULT NULL,
+    formula_id      bigint        NOT NULL,
+    user_id         bigint    DEFAULT NULL,
+    excluded        smallint  DEFAULT NULL,
+    share_type_id   smallint  DEFAULT NULL,
+    protect_id      smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE results_geo_big                  IS 'to cache the formula geo results related to more than 16 phrases';
+COMMENT ON COLUMN results_geo_big.group_id        IS 'the variable text index to find geo result';
+COMMENT ON COLUMN results_geo_big.source_group_id IS 'text reference to the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN results_geo_big.geo_value       IS 'the geolocation given by the user';
+COMMENT ON COLUMN results_geo_big.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN results_geo_big.formula_id      IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN results_geo_big.user_id         IS 'the id of the user who has requested the calculation';
+COMMENT ON COLUMN results_geo_big.excluded        IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN results_geo_big.share_type_id   IS 'to restrict the access';
+COMMENT ON COLUMN results_geo_big.protect_id      IS 'to protect against unwanted changes';
+
+--
+-- table structure to store the user specific changes of geo results related to more than 16 phrases
+--
+
+CREATE TABLE IF NOT EXISTS user_results_geo_big
+(
+    group_id        text          NOT NULL,
+    source_group_id text      DEFAULT NULL,
+    user_id         bigint        NOT NULL,
+    geo_value       point     DEFAULT NULL,
+    last_update     timestamp DEFAULT NULL,
+    formula_id      bigint        NOT NULL,
+    excluded        smallint  DEFAULT NULL,
+    share_type_id   smallint  DEFAULT NULL,
+    protect_id      smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE user_results_geo_big                  IS 'to store the user specific changes of geo results related to more than 16 phrases';
+COMMENT ON COLUMN user_results_geo_big.group_id        IS 'the text index for more than 16 phrases to find the geo result';
+COMMENT ON COLUMN user_results_geo_big.source_group_id IS 'text reference to the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN user_results_geo_big.user_id         IS 'the id of the user who has requested the change of the geo result';
+COMMENT ON COLUMN user_results_geo_big.geo_value       IS 'the user specific geolocation change';
+COMMENT ON COLUMN user_results_geo_big.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN user_results_geo_big.formula_id      IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN user_results_geo_big.excluded        IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN user_results_geo_big.share_type_id   IS 'to restrict the access';
+COMMENT ON COLUMN user_results_geo_big.protect_id      IS 'to protect against unwanted changes';
 
 -- --------------------------------------------------------
 
@@ -3478,199 +4872,262 @@ CREATE INDEX user_ref_idx ON user_refs (ref_id);
 -- --------------------------------------------------------
 
 --
--- Indexes for table values_standard_prime
+-- indexes for table values_standard_prime
 --
+CREATE UNIQUE INDEX values_standard_prime_pkey ON values_standard_prime (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4);
+CREATE INDEX values_standard_prime_phrase_id_1_idx ON values_standard_prime (phrase_id_1);
+CREATE INDEX values_standard_prime_phrase_id_2_idx ON values_standard_prime (phrase_id_2);
+CREATE INDEX values_standard_prime_phrase_id_3_idx ON values_standard_prime (phrase_id_3);
+CREATE INDEX values_standard_prime_phrase_id_4_idx ON values_standard_prime (phrase_id_4);
 CREATE INDEX values_standard_prime_source_idx ON values_standard_prime (source_id);
 
 --
--- Indexes for table values_standard
+-- indexes for table values_standard
 --
 CREATE INDEX values_standard_source_idx ON values_standard (source_id);
 
 --
--- Indexes for table values
+-- indexes for table values
 --
-CREATE INDEX value_user_idx ON "values" (user_id);
-CREATE INDEX value_source_idx ON "values" (source_id);
+CREATE INDEX values_source_idx ON values (source_id);
+CREATE INDEX values_user_idx ON values (user_id);
 
 --
--- Indexes for table user_values
+-- indexes for table user_values
 --
-ALTER TABLE user_values ADD CONSTRAINT user_value_pkey PRIMARY KEY (group_id, user_id);
-CREATE INDEX user_value_user_idx ON user_values (user_id);
-CREATE INDEX user_value_source_idx ON user_values (source_id);
+ALTER TABLE user_values ADD CONSTRAINT user_values_pkey PRIMARY KEY (group_id, user_id);
+CREATE INDEX user_values_user_idx ON user_values (user_id);
+CREATE INDEX user_values_source_idx ON user_values (source_id);
 
 --
--- Indexes for table values_prime
+-- indexes for table values_prime
 --
-CREATE INDEX values_prime_user_idx ON values_prime (user_id);
+CREATE UNIQUE INDEX values_prime_pkey ON values_prime (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4);
+CREATE INDEX values_prime_phrase_id_1_idx ON values_prime (phrase_id_1);
+CREATE INDEX values_prime_phrase_id_2_idx ON values_prime (phrase_id_2);
+CREATE INDEX values_prime_phrase_id_3_idx ON values_prime (phrase_id_3);
+CREATE INDEX values_prime_phrase_id_4_idx ON values_prime (phrase_id_4);
 CREATE INDEX values_prime_source_idx ON values_prime (source_id);
+CREATE INDEX values_prime_user_idx ON values_prime (user_id);
 
 --
--- Indexes for table user_values_prime
+-- indexes for table user_values_prime
 --
-ALTER TABLE user_values_prime ADD CONSTRAINT user_values_prime_pkey PRIMARY KEY (group_id, user_id);
+CREATE UNIQUE INDEX user_values_prime_pkey ON user_values_prime (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, user_id);
+CREATE INDEX user_values_prime_phrase_id_1_idx ON user_values_prime (phrase_id_1);
+CREATE INDEX user_values_prime_phrase_id_2_idx ON user_values_prime (phrase_id_2);
+CREATE INDEX user_values_prime_phrase_id_3_idx ON user_values_prime (phrase_id_3);
+CREATE INDEX user_values_prime_phrase_id_4_idx ON user_values_prime (phrase_id_4);
 CREATE INDEX user_values_prime_user_idx ON user_values_prime (user_id);
 CREATE INDEX user_values_prime_source_idx ON user_values_prime (source_id);
 
 --
--- Indexes for table values_big
+-- indexes for table values_big
 --
-CREATE INDEX values_big_user_idx ON values_big (user_id);
 CREATE INDEX values_big_source_idx ON values_big (source_id);
+CREATE INDEX values_big_user_idx ON values_big (user_id);
 
 --
--- Indexes for table user_values_big
+-- indexes for table user_values_big
 --
 ALTER TABLE user_values_big ADD CONSTRAINT user_values_big_pkey PRIMARY KEY (group_id, user_id);
 CREATE INDEX user_values_big_user_idx ON user_values_big (user_id);
 CREATE INDEX user_values_big_source_idx ON user_values_big (source_id);
 
---
--- Indexes for table value_text_standard_prime
---
-CREATE INDEX value_text_standard_prime_source_idx ON values_text_standard_prime (source_id);
+-- --------------------------------------------------------
 
 --
--- Indexes for table value_text_standard
+-- indexes for table values_text_standard_prime
 --
-CREATE INDEX value_text_standard_source_idx ON value_text_standard (source_id);
+CREATE UNIQUE INDEX values_text_standard_prime_pkey ON values_text_standard_prime (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4);
+CREATE INDEX values_text_standard_prime_phrase_id_1_idx ON values_text_standard_prime (phrase_id_1);
+CREATE INDEX values_text_standard_prime_phrase_id_2_idx ON values_text_standard_prime (phrase_id_2);
+CREATE INDEX values_text_standard_prime_phrase_id_3_idx ON values_text_standard_prime (phrase_id_3);
+CREATE INDEX values_text_standard_prime_phrase_id_4_idx ON values_text_standard_prime (phrase_id_4);
+CREATE INDEX values_text_standard_prime_source_idx ON values_text_standard_prime (source_id);
 
 --
--- Indexes for table value_text
+-- indexes for table values_text_standard
 --
-CREATE INDEX value_text_user_idx ON value_text (user_id);
-CREATE INDEX value_text_source_idx ON value_text (source_id);
+CREATE INDEX values_text_standard_source_idx ON values_text_standard (source_id);
 
 --
--- Indexes for table user_value_text
+-- indexes for table values_text
 --
-ALTER TABLE user_value_text ADD CONSTRAINT user_value_text_pkey PRIMARY KEY (group_id, user_id);
-CREATE INDEX user_value_text_user_idx ON user_value_text (user_id);
-CREATE INDEX user_value_text_source_idx ON user_value_text (source_id);
+CREATE INDEX values_text_source_idx ON values_text (source_id);
+CREATE INDEX values_text_user_idx ON values_text (user_id);
 
 --
--- Indexes for table value_text_prime
+-- indexes for table user_values_text
 --
-CREATE INDEX value_text_prime_user_idx ON value_text_prime (user_id);
-CREATE INDEX value_text_prime_source_idx ON value_text_prime (source_id);
+ALTER TABLE user_values_text ADD CONSTRAINT user_values_text_pkey PRIMARY KEY (group_id, user_id);
+CREATE INDEX user_values_text_user_idx ON user_values_text (user_id);
+CREATE INDEX user_values_text_source_idx ON user_values_text (source_id);
 
 --
--- Indexes for table user_value_text_prime
+-- indexes for table values_text_prime
 --
-ALTER TABLE user_value_text_prime ADD CONSTRAINT user_value_text_prime_pkey PRIMARY KEY (group_id, user_id);
-CREATE INDEX user_value_text_prime_user_idx ON user_value_text_prime (user_id);
-CREATE INDEX user_value_text_prime_source_idx ON user_value_text_prime (source_id);
+CREATE UNIQUE INDEX values_text_prime_pkey ON values_text_prime (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4);
+CREATE INDEX values_text_prime_phrase_id_1_idx ON values_text_prime (phrase_id_1);
+CREATE INDEX values_text_prime_phrase_id_2_idx ON values_text_prime (phrase_id_2);
+CREATE INDEX values_text_prime_phrase_id_3_idx ON values_text_prime (phrase_id_3);
+CREATE INDEX values_text_prime_phrase_id_4_idx ON values_text_prime (phrase_id_4);
+CREATE INDEX values_text_prime_source_idx ON values_text_prime (source_id);
+CREATE INDEX values_text_prime_user_idx ON values_text_prime (user_id);
 
 --
--- Indexes for table value_text_big
+-- indexes for table user_values_text_prime
 --
-CREATE INDEX value_text_big_user_idx ON value_text_big (user_id);
-CREATE INDEX value_text_big_source_idx ON value_text_big (source_id);
+CREATE UNIQUE INDEX user_values_text_prime_pkey ON user_values_text_prime (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, user_id);
+CREATE INDEX user_values_text_prime_phrase_id_1_idx ON user_values_text_prime (phrase_id_1);
+CREATE INDEX user_values_text_prime_phrase_id_2_idx ON user_values_text_prime (phrase_id_2);
+CREATE INDEX user_values_text_prime_phrase_id_3_idx ON user_values_text_prime (phrase_id_3);
+CREATE INDEX user_values_text_prime_phrase_id_4_idx ON user_values_text_prime (phrase_id_4);
+CREATE INDEX user_values_text_prime_user_idx ON user_values_text_prime (user_id);
+CREATE INDEX user_values_text_prime_source_idx ON user_values_text_prime (source_id);
 
 --
--- Indexes for table user_value_text_big
+-- indexes for table values_text_big
 --
-ALTER TABLE user_value_text_big ADD CONSTRAINT user_value_text_big_pkey PRIMARY KEY (group_id, user_id);
-CREATE INDEX user_value_text_big_user_idx ON user_value_text_big (user_id);
-CREATE INDEX user_value_text_big_source_idx ON user_value_text_big (source_id);
+CREATE INDEX values_text_big_source_idx ON values_text_big (source_id);
+CREATE INDEX values_text_big_user_idx ON values_text_big (user_id);
 
 --
--- Indexes for table value_time_standard_prime
+-- indexes for table user_values_text_big
 --
-CREATE INDEX value_time_standard_prime_source_idx ON value_time_standard_prime (source_id);
+ALTER TABLE user_values_text_big ADD CONSTRAINT user_values_text_big_pkey PRIMARY KEY (group_id, user_id);
+CREATE INDEX user_values_text_big_user_idx ON user_values_text_big (user_id);
+CREATE INDEX user_values_text_big_source_idx ON user_values_text_big (source_id);
+
+-- --------------------------------------------------------
 
 --
--- Indexes for table value_time_standard
+-- indexes for table values_time_standard_prime
 --
-CREATE INDEX value_time_standard_source_idx ON value_time_standard (source_id);
+CREATE UNIQUE INDEX values_time_standard_prime_pkey ON values_time_standard_prime (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4);
+CREATE INDEX values_time_standard_prime_phrase_id_1_idx ON values_time_standard_prime (phrase_id_1);
+CREATE INDEX values_time_standard_prime_phrase_id_2_idx ON values_time_standard_prime (phrase_id_2);
+CREATE INDEX values_time_standard_prime_phrase_id_3_idx ON values_time_standard_prime (phrase_id_3);
+CREATE INDEX values_time_standard_prime_phrase_id_4_idx ON values_time_standard_prime (phrase_id_4);
+CREATE INDEX values_time_standard_prime_source_idx ON values_time_standard_prime (source_id);
 
 --
--- Indexes for table value_time
+-- indexes for table values_time_standard
 --
-CREATE INDEX value_time_user_idx ON value_time (user_id);
-CREATE INDEX value_time_source_idx ON value_time (source_id);
+CREATE INDEX values_time_standard_source_idx ON values_time_standard (source_id);
 
 --
--- Indexes for table user_value_time
+-- indexes for table values_time
 --
-ALTER TABLE user_value_time ADD CONSTRAINT user_value_time_pkey PRIMARY KEY (group_id, user_id);
-CREATE INDEX user_value_time_user_idx ON user_value_time (user_id);
-CREATE INDEX user_value_time_source_idx ON user_value_time (source_id);
+CREATE INDEX values_time_source_idx ON values_time (source_id);
+CREATE INDEX values_time_user_idx ON values_time (user_id);
 
 --
--- Indexes for table value_time_prime
+-- indexes for table user_values_time
 --
-CREATE INDEX value_time_prime_user_idx ON value_time_prime (user_id);
-CREATE INDEX value_time_prime_source_idx ON value_time_prime (source_id);
+ALTER TABLE user_values_time ADD CONSTRAINT user_values_time_pkey PRIMARY KEY (group_id, user_id);
+CREATE INDEX user_values_time_user_idx ON user_values_time (user_id);
+CREATE INDEX user_values_time_source_idx ON user_values_time (source_id);
 
 --
--- Indexes for table user_value_time_prime
+-- indexes for table values_time_prime
 --
-CREATE INDEX user_value_time_prime_user_idx ON user_value_time_prime (user_id);
-CREATE INDEX user_value_time_prime_source_idx ON user_value_time_prime (source_id);
+CREATE UNIQUE INDEX values_time_prime_pkey ON values_time_prime (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4);
+CREATE INDEX values_time_prime_phrase_id_1_idx ON values_time_prime (phrase_id_1);
+CREATE INDEX values_time_prime_phrase_id_2_idx ON values_time_prime (phrase_id_2);
+CREATE INDEX values_time_prime_phrase_id_3_idx ON values_time_prime (phrase_id_3);
+CREATE INDEX values_time_prime_phrase_id_4_idx ON values_time_prime (phrase_id_4);
+CREATE INDEX values_time_prime_source_idx ON values_time_prime (source_id);
+CREATE INDEX values_time_prime_user_idx ON values_time_prime (user_id);
 
 --
--- Indexes for table value_time_big
+-- indexes for table user_values_time_prime
 --
-CREATE INDEX value_time_big_user_idx ON value_time_big (user_id);
-CREATE INDEX value_time_big_source_idx ON value_time_big (source_id);
+CREATE UNIQUE INDEX user_values_time_prime_pkey ON user_values_time_prime (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, user_id);
+CREATE INDEX user_values_time_prime_phrase_id_1_idx ON user_values_time_prime (phrase_id_1);
+CREATE INDEX user_values_time_prime_phrase_id_2_idx ON user_values_time_prime (phrase_id_2);
+CREATE INDEX user_values_time_prime_phrase_id_3_idx ON user_values_time_prime (phrase_id_3);
+CREATE INDEX user_values_time_prime_phrase_id_4_idx ON user_values_time_prime (phrase_id_4);
+CREATE INDEX user_values_time_prime_user_idx ON user_values_time_prime (user_id);
+CREATE INDEX user_values_time_prime_source_idx ON user_values_time_prime (source_id);
 
 --
--- Indexes for table user_value_time_big
+-- indexes for table values_time_big
 --
-ALTER TABLE user_value_time_big ADD CONSTRAINT user_value_time_big_pkey PRIMARY KEY (group_id, user_id);
-CREATE INDEX user_value_time_big_user_idx ON user_value_time_big (user_id);
-CREATE INDEX user_value_time_big_source_idx ON user_value_time_big (source_id);
+CREATE INDEX values_time_big_source_idx ON values_time_big (source_id);
+CREATE INDEX values_time_big_user_idx ON values_time_big (user_id);
 
 --
--- Indexes for table value_geo_standard_prime
+-- indexes for table user_values_time_big
 --
-CREATE INDEX value_geo_standard_prime_source_idx ON value_geo_standard_prime (source_id);
+ALTER TABLE user_values_time_big ADD CONSTRAINT user_values_time_big_pkey PRIMARY KEY (group_id, user_id);
+CREATE INDEX user_values_time_big_user_idx ON user_values_time_big (user_id);
+CREATE INDEX user_values_time_big_source_idx ON user_values_time_big (source_id);
+
+-- --------------------------------------------------------
 
 --
--- Indexes for table value_geo_standard
+-- indexes for table values_geo_standard_prime
 --
-CREATE INDEX value_geo_standard_source_idx ON value_geo_standard (source_id);
+CREATE UNIQUE INDEX values_geo_standard_prime_pkey ON values_geo_standard_prime (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4);
+CREATE INDEX values_geo_standard_prime_phrase_id_1_idx ON values_geo_standard_prime (phrase_id_1);
+CREATE INDEX values_geo_standard_prime_phrase_id_2_idx ON values_geo_standard_prime (phrase_id_2);
+CREATE INDEX values_geo_standard_prime_phrase_id_3_idx ON values_geo_standard_prime (phrase_id_3);
+CREATE INDEX values_geo_standard_prime_phrase_id_4_idx ON values_geo_standard_prime (phrase_id_4);
+CREATE INDEX values_geo_standard_prime_source_idx ON values_geo_standard_prime (source_id);
 
 --
--- Indexes for table value_geo
+-- indexes for table values_geo_standard
 --
-CREATE INDEX value_geo_user_idx ON value_geo (user_id);
-CREATE INDEX value_geo_source_idx ON value_geo (source_id);
+CREATE INDEX values_geo_standard_source_idx ON values_geo_standard (source_id);
 
 --
--- Indexes for table user_value_geo
+-- indexes for table values_geo
 --
-ALTER TABLE user_value_geo ADD CONSTRAINT user_value_geo_pkey PRIMARY KEY (group_id, user_id);
-CREATE INDEX user_value_geo_user_idx ON user_value_geo (user_id);
-CREATE INDEX user_value_geo_source_idx ON user_value_geo (source_id);
+CREATE INDEX values_geo_source_idx ON values_geo (source_id);
+CREATE INDEX values_geo_user_idx ON values_geo (user_id);
 
 --
--- Indexes for table value_geo_prime
+-- indexes for table user_values_geo
 --
-CREATE INDEX value_geo_prime_user_idx ON value_geo_prime (user_id);
-CREATE INDEX value_geo_prime_source_idx ON value_geo_prime (source_id);
+ALTER TABLE user_values_geo ADD CONSTRAINT user_values_geo_pkey PRIMARY KEY (group_id, user_id);
+CREATE INDEX user_values_geo_user_idx ON user_values_geo (user_id);
+CREATE INDEX user_values_geo_source_idx ON user_values_geo (source_id);
 
 --
--- Indexes for table user_value_geo_prime
+-- indexes for table values_geo_prime
 --
-ALTER TABLE user_value_geo_prime ADD CONSTRAINT user_value_geo_prime_pkey PRIMARY KEY (group_id, user_id);
-CREATE INDEX user_value_geo_prime_user_idx ON user_value_geo_prime (user_id);
-CREATE INDEX user_value_geo_prime_source_idx ON user_value_geo_prime (source_id);
+CREATE UNIQUE INDEX values_geo_prime_pkey ON values_geo_prime (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4);
+CREATE INDEX values_geo_prime_phrase_id_1_idx ON values_geo_prime (phrase_id_1);
+CREATE INDEX values_geo_prime_phrase_id_2_idx ON values_geo_prime (phrase_id_2);
+CREATE INDEX values_geo_prime_phrase_id_3_idx ON values_geo_prime (phrase_id_3);
+CREATE INDEX values_geo_prime_phrase_id_4_idx ON values_geo_prime (phrase_id_4);
+CREATE INDEX values_geo_prime_source_idx ON values_geo_prime (source_id);
+CREATE INDEX values_geo_prime_user_idx ON values_geo_prime (user_id);
 
 --
--- Indexes for table value_geo_big
+-- indexes for table user_values_geo_prime
 --
-CREATE INDEX value_geo_big_user_idx ON value_geo_big (user_id);
-CREATE INDEX value_geo_big_source_idx ON value_geo_big (source_id);
+CREATE UNIQUE INDEX user_values_geo_prime_pkey ON user_values_geo_prime (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, user_id);
+CREATE INDEX user_values_geo_prime_phrase_id_1_idx ON user_values_geo_prime (phrase_id_1);
+CREATE INDEX user_values_geo_prime_phrase_id_2_idx ON user_values_geo_prime (phrase_id_2);
+CREATE INDEX user_values_geo_prime_phrase_id_3_idx ON user_values_geo_prime (phrase_id_3);
+CREATE INDEX user_values_geo_prime_phrase_id_4_idx ON user_values_geo_prime (phrase_id_4);
+CREATE INDEX user_values_geo_prime_user_idx ON user_values_geo_prime (user_id);
+CREATE INDEX user_values_geo_prime_source_idx ON user_values_geo_prime (source_id);
 
 --
--- Indexes for table user_value_geo_big
+-- indexes for table values_geo_big
 --
-ALTER TABLE user_value_geo_big ADD CONSTRAINT user_value_geo_big_pkey PRIMARY KEY (group_id, user_id);
-CREATE INDEX user_value_geo_big_user_idx ON user_value_geo_big (user_id);
-CREATE INDEX user_value_geo_big_source_idx ON user_value_geo_big (source_id);
+CREATE INDEX values_geo_big_source_idx ON values_geo_big (source_id);
+CREATE INDEX values_geo_big_user_idx ON values_geo_big (user_id);
+
+--
+-- indexes for table user_values_geo_big
+--
+ALTER TABLE user_values_geo_big ADD CONSTRAINT user_values_geo_big_pkey PRIMARY KEY (group_id, user_id);
+CREATE INDEX user_values_geo_big_user_idx ON user_values_geo_big (user_id);
+CREATE INDEX user_values_geo_big_source_idx ON user_values_geo_big (source_id);
 
 -- --------------------------------------------------------
 
@@ -3733,22 +5190,458 @@ CREATE INDEX user_formula_link_type_idx ON user_formula_links (link_type_id);
 -- --------------------------------------------------------
 
 --
--- Indexes for results
+-- indexes for table results_standard_prime
 --
-CREATE UNIQUE INDEX group_idx ON results (group_id, formula_id, source_group_id, user_id);
-CREATE INDEX result_formula_idx ON results (formula_id);
-CREATE INDEX result_source_idx ON results (source_group_id);
-CREATE INDEX result_user_idx ON results (user_id);
+CREATE UNIQUE INDEX results_standard_prime_pkey ON results_standard_prime (formula_id, phrase_id_1, phrase_id_2, phrase_id_3);
+CREATE INDEX results_standard_prime_formula_idx ON results_standard_prime (formula_id);
+CREATE INDEX results_standard_prime_phrase_id_1_idx ON results_standard_prime (phrase_id_1);
+CREATE INDEX results_standard_prime_phrase_id_2_idx ON results_standard_prime (phrase_id_2);
+CREATE INDEX results_standard_prime_phrase_id_3_idx ON results_standard_prime (phrase_id_3);
 
-CREATE UNIQUE INDEX result_prime_idx ON result_prime (group_id, formula_id, source_group_id, user_id);
-CREATE INDEX result_prime_formula_idx ON result_prime (formula_id);
-CREATE INDEX result_prime_source_idx ON result_prime (source_group_id);
-CREATE INDEX result_prime_user_idx ON result_prime (user_id);
+--
+-- indexes for table results_standard_main
+--
+CREATE UNIQUE INDEX results_standard_main_pkey ON results_standard_main (formula_id, phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, phrase_id_5, phrase_id_6, phrase_id_7);
+CREATE INDEX results_standard_main_formula_idx ON results_standard_main (formula_id);
+CREATE INDEX results_standard_main_phrase_id_1_idx ON results_standard_main (phrase_id_1);
+CREATE INDEX results_standard_main_phrase_id_2_idx ON results_standard_main (phrase_id_2);
+CREATE INDEX results_standard_main_phrase_id_3_idx ON results_standard_main (phrase_id_3);
+CREATE INDEX results_standard_main_phrase_id_4_idx ON results_standard_main (phrase_id_4);
+CREATE INDEX results_standard_main_phrase_id_5_idx ON results_standard_main (phrase_id_5);
+CREATE INDEX results_standard_main_phrase_id_6_idx ON results_standard_main (phrase_id_6);
+CREATE INDEX results_standard_main_phrase_id_7_idx ON results_standard_main (phrase_id_7);
 
-CREATE UNIQUE INDEX result_big_idx ON result_big (group_id, formula_id, source_group_id, user_id);
-CREATE INDEX result_big_formula_idx ON result_big (formula_id);
-CREATE INDEX result_big_source_idx ON result_big (source_group_id);
-CREATE INDEX result_big_user_idx ON result_big (user_id);
+--
+-- indexes for table results_standard
+--
+
+--
+-- indexes for table results
+--
+CREATE INDEX results_source_group_idx ON results (source_group_id);
+CREATE INDEX results_formula_idx ON results (formula_id);
+CREATE INDEX results_user_idx ON results (user_id);
+
+--
+-- indexes for table user_results
+--
+ALTER TABLE user_results ADD CONSTRAINT user_results_pkey PRIMARY KEY (group_id, user_id);
+CREATE INDEX user_results_source_group_idx ON user_results (source_group_id);
+CREATE INDEX user_results_user_idx ON user_results (user_id);
+CREATE INDEX user_results_formula_idx ON user_results (formula_id);
+
+--
+-- indexes for table results_prime
+--
+CREATE UNIQUE INDEX results_prime_pkey ON results_prime (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4);
+CREATE INDEX results_prime_phrase_id_1_idx ON results_prime (phrase_id_1);
+CREATE INDEX results_prime_phrase_id_2_idx ON results_prime (phrase_id_2);
+CREATE INDEX results_prime_phrase_id_3_idx ON results_prime (phrase_id_3);
+CREATE INDEX results_prime_phrase_id_4_idx ON results_prime (phrase_id_4);
+CREATE INDEX results_prime_source_group_idx ON results_prime (source_group_id);
+CREATE INDEX results_prime_formula_idx ON results_prime (formula_id);
+CREATE INDEX results_prime_user_idx ON results_prime (user_id);
+
+--
+-- indexes for table user_results_prime
+--
+CREATE UNIQUE INDEX user_results_prime_pkey ON user_results_prime (phrase_id_1,phrase_id_2,phrase_id_3,phrase_id_4, user_id);
+CREATE INDEX user_results_prime_phrase_id_1_idx ON user_results_prime (phrase_id_1);
+CREATE INDEX user_results_prime_phrase_id_2_idx ON user_results_prime (phrase_id_2);
+CREATE INDEX user_results_prime_phrase_id_3_idx ON user_results_prime (phrase_id_3);
+CREATE INDEX user_results_prime_phrase_id_4_idx ON user_results_prime (phrase_id_4);
+CREATE INDEX user_results_prime_source_group_idx ON user_results_prime (source_group_id);
+CREATE INDEX user_results_prime_user_idx ON user_results_prime (user_id);
+CREATE INDEX user_results_prime_formula_idx ON user_results_prime (formula_id);
+
+--
+-- indexes for table results_main
+--
+CREATE UNIQUE INDEX results_main_pkey ON results_main (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, phrase_id_5, phrase_id_6, phrase_id_7, phrase_id_8);
+CREATE INDEX results_main_phrase_id_1_idx ON results_main (phrase_id_1);
+CREATE INDEX results_main_phrase_id_2_idx ON results_main (phrase_id_2);
+CREATE INDEX results_main_phrase_id_3_idx ON results_main (phrase_id_3);
+CREATE INDEX results_main_phrase_id_4_idx ON results_main (phrase_id_4);
+CREATE INDEX results_main_phrase_id_5_idx ON results_main (phrase_id_5);
+CREATE INDEX results_main_phrase_id_6_idx ON results_main (phrase_id_6);
+CREATE INDEX results_main_phrase_id_7_idx ON results_main (phrase_id_7);
+CREATE INDEX results_main_phrase_id_8_idx ON results_main (phrase_id_8);
+CREATE INDEX results_main_source_group_idx ON results_main (source_group_id);
+CREATE INDEX results_main_formula_idx ON results_main (formula_id);
+CREATE INDEX results_main_user_idx ON results_main (user_id);
+
+--
+-- indexes for table user_results_main
+--
+CREATE UNIQUE INDEX user_results_main_pkey ON user_results_main (phrase_id_1,phrase_id_2,phrase_id_3,phrase_id_4, phrase_id_5, phrase_id_6, phrase_id_7, phrase_id_8, user_id);
+CREATE INDEX user_results_main_phrase_id_1_idx ON user_results_main (phrase_id_1);
+CREATE INDEX user_results_main_phrase_id_2_idx ON user_results_main (phrase_id_2);
+CREATE INDEX user_results_main_phrase_id_3_idx ON user_results_main (phrase_id_3);
+CREATE INDEX user_results_main_phrase_id_4_idx ON user_results_main (phrase_id_4);
+CREATE INDEX user_results_main_phrase_id_5_idx ON user_results_main (phrase_id_5);
+CREATE INDEX user_results_main_phrase_id_6_idx ON user_results_main (phrase_id_6);
+CREATE INDEX user_results_main_phrase_id_7_idx ON user_results_main (phrase_id_7);
+CREATE INDEX user_results_main_phrase_id_8_idx ON user_results_main (phrase_id_8);
+CREATE INDEX user_results_main_source_group_idx ON user_results_main (source_group_id);
+CREATE INDEX user_results_main_user_idx ON user_results_main (user_id);
+CREATE INDEX user_results_main_formula_idx ON user_results_main (formula_id);
+
+--
+-- indexes for table results_big
+--
+CREATE INDEX results_big_source_group_idx ON results_big (source_group_id);
+CREATE INDEX results_big_formula_idx ON results_big (formula_id);
+CREATE INDEX results_big_user_idx ON results_big (user_id);
+
+--
+-- indexes for table user_results_big
+--
+ALTER TABLE user_results_big ADD CONSTRAINT user_results_big_pkey PRIMARY KEY (group_id, user_id);
+CREATE INDEX user_results_big_source_group_idx ON user_results_big (source_group_id);
+CREATE INDEX user_results_big_user_idx ON user_results_big (user_id);
+CREATE INDEX user_results_big_formula_idx ON user_results_big (formula_id);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table results_text_standard_prime
+--
+CREATE UNIQUE INDEX results_text_standard_prime_pkey ON results_text_standard_prime (formula_id, phrase_id_1, phrase_id_2, phrase_id_3);
+CREATE INDEX results_text_standard_prime_formula_idx ON results_text_standard_prime (formula_id);
+CREATE INDEX results_text_standard_prime_phrase_id_1_idx ON results_text_standard_prime (phrase_id_1);
+CREATE INDEX results_text_standard_prime_phrase_id_2_idx ON results_text_standard_prime (phrase_id_2);
+CREATE INDEX results_text_standard_prime_phrase_id_3_idx ON results_text_standard_prime (phrase_id_3);
+
+--
+-- indexes for table results_text_standard_main
+--
+CREATE UNIQUE INDEX results_text_standard_main_pkey ON results_text_standard_main (formula_id, phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, phrase_id_5, phrase_id_6, phrase_id_7);
+CREATE INDEX results_text_standard_main_formula_idx ON results_text_standard_main (formula_id);
+CREATE INDEX results_text_standard_main_phrase_id_1_idx ON results_text_standard_main (phrase_id_1);
+CREATE INDEX results_text_standard_main_phrase_id_2_idx ON results_text_standard_main (phrase_id_2);
+CREATE INDEX results_text_standard_main_phrase_id_3_idx ON results_text_standard_main (phrase_id_3);
+CREATE INDEX results_text_standard_main_phrase_id_4_idx ON results_text_standard_main (phrase_id_4);
+CREATE INDEX results_text_standard_main_phrase_id_5_idx ON results_text_standard_main (phrase_id_5);
+CREATE INDEX results_text_standard_main_phrase_id_6_idx ON results_text_standard_main (phrase_id_6);
+CREATE INDEX results_text_standard_main_phrase_id_7_idx ON results_text_standard_main (phrase_id_7);
+
+--
+-- indexes for table results_text_standard
+--
+
+--
+-- indexes for table results_text
+--
+CREATE INDEX results_text_source_group_idx ON results_text (source_group_id);
+CREATE INDEX results_text_formula_idx ON results_text (formula_id);
+CREATE INDEX results_text_user_idx ON results_text (user_id);
+
+--
+-- indexes for table user_results_text
+--
+ALTER TABLE user_results_text ADD CONSTRAINT user_results_text_pkey PRIMARY KEY (group_id, user_id);
+CREATE INDEX user_results_text_source_group_idx ON user_results_text (source_group_id);
+CREATE INDEX user_results_text_user_idx ON user_results_text (user_id);
+CREATE INDEX user_results_text_formula_idx ON user_results_text (formula_id);
+
+--
+-- indexes for table results_text_prime
+--
+CREATE UNIQUE INDEX results_text_prime_pkey ON results_text_prime (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4);
+CREATE INDEX results_text_prime_phrase_id_1_idx ON results_text_prime (phrase_id_1);
+CREATE INDEX results_text_prime_phrase_id_2_idx ON results_text_prime (phrase_id_2);
+CREATE INDEX results_text_prime_phrase_id_3_idx ON results_text_prime (phrase_id_3);
+CREATE INDEX results_text_prime_phrase_id_4_idx ON results_text_prime (phrase_id_4);
+CREATE INDEX results_text_prime_source_group_idx ON results_text_prime (source_group_id);
+CREATE INDEX results_text_prime_formula_idx ON results_text_prime (formula_id);
+CREATE INDEX results_text_prime_user_idx ON results_text_prime (user_id);
+
+--
+-- indexes for table user_results_text_prime
+--
+CREATE UNIQUE INDEX user_results_text_prime_pkey ON user_results_text_prime (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, user_id);
+CREATE INDEX user_results_text_prime_phrase_id_1_idx ON user_results_text_prime (phrase_id_1);
+CREATE INDEX user_results_text_prime_phrase_id_2_idx ON user_results_text_prime (phrase_id_2);
+CREATE INDEX user_results_text_prime_phrase_id_3_idx ON user_results_text_prime (phrase_id_3);
+CREATE INDEX user_results_text_prime_phrase_id_4_idx ON user_results_text_prime (phrase_id_4);
+CREATE INDEX user_results_text_prime_source_group_idx ON user_results_text_prime (source_group_id);
+CREATE INDEX user_results_text_prime_user_idx ON user_results_text_prime (user_id);
+CREATE INDEX user_results_text_prime_formula_idx ON user_results_text_prime (formula_id);
+
+--
+-- indexes for table results_text_main
+--
+CREATE UNIQUE INDEX results_text_main_pkey ON results_text_main (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, phrase_id_5, phrase_id_6, phrase_id_7, phrase_id_8);
+CREATE INDEX results_text_main_phrase_id_1_idx ON results_text_main (phrase_id_1);
+CREATE INDEX results_text_main_phrase_id_2_idx ON results_text_main (phrase_id_2);
+CREATE INDEX results_text_main_phrase_id_3_idx ON results_text_main (phrase_id_3);
+CREATE INDEX results_text_main_phrase_id_4_idx ON results_text_main (phrase_id_4);
+CREATE INDEX results_text_main_phrase_id_5_idx ON results_text_main (phrase_id_5);
+CREATE INDEX results_text_main_phrase_id_6_idx ON results_text_main (phrase_id_6);
+CREATE INDEX results_text_main_phrase_id_7_idx ON results_text_main (phrase_id_7);
+CREATE INDEX results_text_main_phrase_id_8_idx ON results_text_main (phrase_id_8);
+CREATE INDEX results_text_main_source_group_idx ON results_text_main (source_group_id);
+CREATE INDEX results_text_main_formula_idx ON results_text_main (formula_id);
+CREATE INDEX results_text_main_user_idx ON results_text_main (user_id);
+
+--
+-- indexes for table user_results_text_main
+--
+CREATE UNIQUE INDEX user_results_text_main_pkey ON user_results_text_main (phrase_id_1,phrase_id_2,phrase_id_3,phrase_id_4, phrase_id_5, phrase_id_6, phrase_id_7, phrase_id_8, user_id);
+CREATE INDEX user_results_text_main_phrase_id_1_idx ON user_results_text_main (phrase_id_1);
+CREATE INDEX user_results_text_main_phrase_id_2_idx ON user_results_text_main (phrase_id_2);
+CREATE INDEX user_results_text_main_phrase_id_3_idx ON user_results_text_main (phrase_id_3);
+CREATE INDEX user_results_text_main_phrase_id_4_idx ON user_results_text_main (phrase_id_4);
+CREATE INDEX user_results_text_main_phrase_id_5_idx ON user_results_text_main (phrase_id_5);
+CREATE INDEX user_results_text_main_phrase_id_6_idx ON user_results_text_main (phrase_id_6);
+CREATE INDEX user_results_text_main_phrase_id_7_idx ON user_results_text_main (phrase_id_7);
+CREATE INDEX user_results_text_main_phrase_id_8_idx ON user_results_text_main (phrase_id_8);
+CREATE INDEX user_results_text_main_source_group_idx ON user_results_text_main (source_group_id);
+CREATE INDEX user_results_text_main_user_idx ON user_results_text_main (user_id);
+CREATE INDEX user_results_text_main_formula_idx ON user_results_text_main (formula_id);
+
+--
+-- indexes for table results_text_big
+--
+CREATE INDEX results_text_big_source_group_idx ON results_text_big (source_group_id);
+CREATE INDEX results_text_big_formula_idx ON results_text_big (formula_id);
+CREATE INDEX results_text_big_user_idx ON results_text_big (user_id);
+
+--
+-- indexes for table user_results_text_big
+--
+ALTER TABLE user_results_text_big ADD CONSTRAINT user_results_text_big_pkey PRIMARY KEY (group_id, user_id);
+CREATE INDEX user_results_text_big_source_group_idx ON user_results_text_big (source_group_id);
+CREATE INDEX user_results_text_big_user_idx ON user_results_text_big (user_id);
+CREATE INDEX user_results_text_big_formula_idx ON user_results_text_big (formula_id);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table results_time_standard_prime
+--
+CREATE UNIQUE INDEX results_time_standard_prime_pkey ON results_time_standard_prime (formula_id, phrase_id_1, phrase_id_2, phrase_id_3);
+CREATE INDEX results_time_standard_prime_formula_idx ON results_time_standard_prime (formula_id);
+CREATE INDEX results_time_standard_prime_phrase_id_1_idx ON results_time_standard_prime (phrase_id_1);
+CREATE INDEX results_time_standard_prime_phrase_id_2_idx ON results_time_standard_prime (phrase_id_2);
+CREATE INDEX results_time_standard_prime_phrase_id_3_idx ON results_time_standard_prime (phrase_id_3);
+
+--
+-- indexes for table results_time_standard_main
+--
+CREATE UNIQUE INDEX results_time_standard_main_pkey ON results_time_standard_main (formula_id, phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, phrase_id_5, phrase_id_6, phrase_id_7);
+CREATE INDEX results_time_standard_main_formula_idx ON results_time_standard_main (formula_id);
+CREATE INDEX results_time_standard_main_phrase_id_1_idx ON results_time_standard_main (phrase_id_1);
+CREATE INDEX results_time_standard_main_phrase_id_2_idx ON results_time_standard_main (phrase_id_2);
+CREATE INDEX results_time_standard_main_phrase_id_3_idx ON results_time_standard_main (phrase_id_3);
+CREATE INDEX results_time_standard_main_phrase_id_4_idx ON results_time_standard_main (phrase_id_4);
+CREATE INDEX results_time_standard_main_phrase_id_5_idx ON results_time_standard_main (phrase_id_5);
+CREATE INDEX results_time_standard_main_phrase_id_6_idx ON results_time_standard_main (phrase_id_6);
+CREATE INDEX results_time_standard_main_phrase_id_7_idx ON results_time_standard_main (phrase_id_7);
+
+--
+-- indexes for table results_time_standard
+--
+
+--
+-- indexes for table results_time
+--
+CREATE INDEX results_time_source_group_idx ON results_time (source_group_id);
+CREATE INDEX results_time_formula_idx ON results_time (formula_id);
+CREATE INDEX results_time_user_idx ON results_time (user_id);
+
+--
+-- indexes for table user_results_time
+--
+ALTER TABLE user_results_time ADD CONSTRAINT user_results_time_pkey PRIMARY KEY (group_id, user_id);
+CREATE INDEX user_results_time_source_group_idx ON user_results_time (source_group_id);
+CREATE INDEX user_results_time_user_idx ON user_results_time (user_id);
+CREATE INDEX user_results_time_formula_idx ON user_results_time (formula_id);
+
+--
+-- indexes for table results_time_prime
+--
+CREATE UNIQUE INDEX results_time_prime_pkey ON results_time_prime (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4);
+CREATE INDEX results_time_prime_phrase_id_1_idx ON results_time_prime (phrase_id_1);
+CREATE INDEX results_time_prime_phrase_id_2_idx ON results_time_prime (phrase_id_2);
+CREATE INDEX results_time_prime_phrase_id_3_idx ON results_time_prime (phrase_id_3);
+CREATE INDEX results_time_prime_phrase_id_4_idx ON results_time_prime (phrase_id_4);
+CREATE INDEX results_time_prime_source_group_idx ON results_time_prime (source_group_id);
+CREATE INDEX results_time_prime_formula_idx ON results_time_prime (formula_id);
+CREATE INDEX results_time_prime_user_idx ON results_time_prime (user_id);
+
+--
+-- indexes for table user_results_time_prime
+--
+CREATE UNIQUE INDEX user_results_time_prime_pkey ON user_results_time_prime (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, user_id);
+CREATE INDEX user_results_time_prime_phrase_id_1_idx ON user_results_time_prime (phrase_id_1);
+CREATE INDEX user_results_time_prime_phrase_id_2_idx ON user_results_time_prime (phrase_id_2);
+CREATE INDEX user_results_time_prime_phrase_id_3_idx ON user_results_time_prime (phrase_id_3);
+CREATE INDEX user_results_time_prime_phrase_id_4_idx ON user_results_time_prime (phrase_id_4);
+CREATE INDEX user_results_time_prime_source_group_idx ON user_results_time_prime (source_group_id);
+CREATE INDEX user_results_time_prime_user_idx ON user_results_time_prime (user_id);
+CREATE INDEX user_results_time_prime_formula_idx ON user_results_time_prime (formula_id);
+
+--
+-- indexes for table results_time_main
+--
+CREATE UNIQUE INDEX results_time_main_pkey ON results_time_main (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, phrase_id_5, phrase_id_6, phrase_id_7, phrase_id_8);
+CREATE INDEX results_time_main_phrase_id_1_idx ON results_time_main (phrase_id_1);
+CREATE INDEX results_time_main_phrase_id_2_idx ON results_time_main (phrase_id_2);
+CREATE INDEX results_time_main_phrase_id_3_idx ON results_time_main (phrase_id_3);
+CREATE INDEX results_time_main_phrase_id_4_idx ON results_time_main (phrase_id_4);
+CREATE INDEX results_time_main_phrase_id_5_idx ON results_time_main (phrase_id_5);
+CREATE INDEX results_time_main_phrase_id_6_idx ON results_time_main (phrase_id_6);
+CREATE INDEX results_time_main_phrase_id_7_idx ON results_time_main (phrase_id_7);
+CREATE INDEX results_time_main_phrase_id_8_idx ON results_time_main (phrase_id_8);
+CREATE INDEX results_time_main_source_group_idx ON results_time_main (source_group_id);
+CREATE INDEX results_time_main_formula_idx ON results_time_main (formula_id);
+CREATE INDEX results_time_main_user_idx ON results_time_main (user_id);
+
+--
+-- indexes for table user_results_time_main
+--
+CREATE UNIQUE INDEX user_results_time_main_pkey ON user_results_time_main (phrase_id_1,phrase_id_2,phrase_id_3,phrase_id_4, phrase_id_5, phrase_id_6, phrase_id_7, phrase_id_8, user_id);
+CREATE INDEX user_results_time_main_phrase_id_1_idx ON user_results_time_main (phrase_id_1);
+CREATE INDEX user_results_time_main_phrase_id_2_idx ON user_results_time_main (phrase_id_2);
+CREATE INDEX user_results_time_main_phrase_id_3_idx ON user_results_time_main (phrase_id_3);
+CREATE INDEX user_results_time_main_phrase_id_4_idx ON user_results_time_main (phrase_id_4);
+CREATE INDEX user_results_time_main_phrase_id_5_idx ON user_results_time_main (phrase_id_5);
+CREATE INDEX user_results_time_main_phrase_id_6_idx ON user_results_time_main (phrase_id_6);
+CREATE INDEX user_results_time_main_phrase_id_7_idx ON user_results_time_main (phrase_id_7);
+CREATE INDEX user_results_time_main_phrase_id_8_idx ON user_results_time_main (phrase_id_8);
+CREATE INDEX user_results_time_main_source_group_idx ON user_results_time_main (source_group_id);
+CREATE INDEX user_results_time_main_user_idx ON user_results_time_main (user_id);
+CREATE INDEX user_results_time_main_formula_idx ON user_results_time_main (formula_id);
+
+--
+-- indexes for table results_time_big
+--
+CREATE INDEX results_time_big_source_group_idx ON results_time_big (source_group_id);
+CREATE INDEX results_time_big_formula_idx ON results_time_big (formula_id);
+CREATE INDEX results_time_big_user_idx ON results_time_big (user_id);
+
+--
+-- indexes for table user_results_time_big
+--
+ALTER TABLE user_results_time_big ADD CONSTRAINT user_results_time_big_pkey PRIMARY KEY (group_id, user_id);
+CREATE INDEX user_results_time_big_source_group_idx ON user_results_time_big (source_group_id);
+CREATE INDEX user_results_time_big_user_idx ON user_results_time_big (user_id);
+CREATE INDEX user_results_time_big_formula_idx ON user_results_time_big (formula_id);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table results_geo_standard_prime
+--
+CREATE UNIQUE INDEX results_geo_standard_prime_pkey ON results_geo_standard_prime (formula_id, phrase_id_1, phrase_id_2, phrase_id_3);
+CREATE INDEX results_geo_standard_prime_formula_idx ON results_geo_standard_prime (formula_id);
+CREATE INDEX results_geo_standard_prime_phrase_id_1_idx ON results_geo_standard_prime (phrase_id_1);
+CREATE INDEX results_geo_standard_prime_phrase_id_2_idx ON results_geo_standard_prime (phrase_id_2);
+CREATE INDEX results_geo_standard_prime_phrase_id_3_idx ON results_geo_standard_prime (phrase_id_3);
+
+--
+-- indexes for table results_geo_standard_main
+--
+CREATE UNIQUE INDEX results_geo_standard_main_pkey ON results_geo_standard_main (formula_id, phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, phrase_id_5, phrase_id_6, phrase_id_7);
+CREATE INDEX results_geo_standard_main_formula_idx ON results_geo_standard_main (formula_id);
+CREATE INDEX results_geo_standard_main_phrase_id_1_idx ON results_geo_standard_main (phrase_id_1);
+CREATE INDEX results_geo_standard_main_phrase_id_2_idx ON results_geo_standard_main (phrase_id_2);
+CREATE INDEX results_geo_standard_main_phrase_id_3_idx ON results_geo_standard_main (phrase_id_3);
+CREATE INDEX results_geo_standard_main_phrase_id_4_idx ON results_geo_standard_main (phrase_id_4);
+CREATE INDEX results_geo_standard_main_phrase_id_5_idx ON results_geo_standard_main (phrase_id_5);
+CREATE INDEX results_geo_standard_main_phrase_id_6_idx ON results_geo_standard_main (phrase_id_6);
+CREATE INDEX results_geo_standard_main_phrase_id_7_idx ON results_geo_standard_main (phrase_id_7);
+
+--
+-- indexes for table results_geo_standard
+--
+
+--
+-- indexes for table results_geo
+--
+CREATE INDEX results_geo_source_group_idx ON results_geo (source_group_id);
+CREATE INDEX results_geo_formula_idx ON results_geo (formula_id);
+CREATE INDEX results_geo_user_idx ON results_geo (user_id);
+
+--
+-- indexes for table user_results_geo
+--
+ALTER TABLE user_results_geo ADD CONSTRAINT user_results_geo_pkey PRIMARY KEY (group_id, user_id);
+CREATE INDEX user_results_geo_source_group_idx ON user_results_geo (source_group_id);
+CREATE INDEX user_results_geo_user_idx ON user_results_geo (user_id);
+CREATE INDEX user_results_geo_formula_idx ON user_results_geo (formula_id);
+
+--
+-- indexes for table results_geo_prime
+--
+CREATE UNIQUE INDEX results_geo_prime_pkey ON results_geo_prime (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4);
+CREATE INDEX results_geo_prime_phrase_id_1_idx ON results_geo_prime (phrase_id_1);
+CREATE INDEX results_geo_prime_phrase_id_2_idx ON results_geo_prime (phrase_id_2);
+CREATE INDEX results_geo_prime_phrase_id_3_idx ON results_geo_prime (phrase_id_3);
+CREATE INDEX results_geo_prime_phrase_id_4_idx ON results_geo_prime (phrase_id_4);
+CREATE INDEX results_geo_prime_source_group_idx ON results_geo_prime (source_group_id);
+CREATE INDEX results_geo_prime_formula_idx ON results_geo_prime (formula_id);
+CREATE INDEX results_geo_prime_user_idx ON results_geo_prime (user_id);
+
+--
+-- indexes for table user_results_geo_prime
+--
+CREATE UNIQUE INDEX user_results_geo_prime_pkey ON user_results_geo_prime (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, user_id);
+CREATE INDEX user_results_geo_prime_phrase_id_1_idx ON user_results_geo_prime (phrase_id_1);
+CREATE INDEX user_results_geo_prime_phrase_id_2_idx ON user_results_geo_prime (phrase_id_2);
+CREATE INDEX user_results_geo_prime_phrase_id_3_idx ON user_results_geo_prime (phrase_id_3);
+CREATE INDEX user_results_geo_prime_phrase_id_4_idx ON user_results_geo_prime (phrase_id_4);
+CREATE INDEX user_results_geo_prime_source_group_idx ON user_results_geo_prime (source_group_id);
+CREATE INDEX user_results_geo_prime_user_idx ON user_results_geo_prime (user_id);
+CREATE INDEX user_results_geo_prime_formula_idx ON user_results_geo_prime (formula_id);
+
+--
+-- indexes for table results_geo_main
+--
+CREATE UNIQUE INDEX results_geo_main_pkey ON results_geo_main (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, phrase_id_5, phrase_id_6, phrase_id_7, phrase_id_8);
+CREATE INDEX results_geo_main_phrase_id_1_idx ON results_geo_main (phrase_id_1);
+CREATE INDEX results_geo_main_phrase_id_2_idx ON results_geo_main (phrase_id_2);
+CREATE INDEX results_geo_main_phrase_id_3_idx ON results_geo_main (phrase_id_3);
+CREATE INDEX results_geo_main_phrase_id_4_idx ON results_geo_main (phrase_id_4);
+CREATE INDEX results_geo_main_phrase_id_5_idx ON results_geo_main (phrase_id_5);
+CREATE INDEX results_geo_main_phrase_id_6_idx ON results_geo_main (phrase_id_6);
+CREATE INDEX results_geo_main_phrase_id_7_idx ON results_geo_main (phrase_id_7);
+CREATE INDEX results_geo_main_phrase_id_8_idx ON results_geo_main (phrase_id_8);
+CREATE INDEX results_geo_main_source_group_idx ON results_geo_main (source_group_id);
+CREATE INDEX results_geo_main_formula_idx ON results_geo_main (formula_id);
+CREATE INDEX results_geo_main_user_idx ON results_geo_main (user_id);
+
+--
+-- indexes for table user_results_geo_main
+--
+CREATE UNIQUE INDEX user_results_geo_main_pkey ON user_results_geo_main (phrase_id_1,phrase_id_2,phrase_id_3,phrase_id_4, phrase_id_5, phrase_id_6, phrase_id_7, phrase_id_8, user_id);
+CREATE INDEX user_results_geo_main_phrase_id_1_idx ON user_results_geo_main (phrase_id_1);
+CREATE INDEX user_results_geo_main_phrase_id_2_idx ON user_results_geo_main (phrase_id_2);
+CREATE INDEX user_results_geo_main_phrase_id_3_idx ON user_results_geo_main (phrase_id_3);
+CREATE INDEX user_results_geo_main_phrase_id_4_idx ON user_results_geo_main (phrase_id_4);
+CREATE INDEX user_results_geo_main_phrase_id_5_idx ON user_results_geo_main (phrase_id_5);
+CREATE INDEX user_results_geo_main_phrase_id_6_idx ON user_results_geo_main (phrase_id_6);
+CREATE INDEX user_results_geo_main_phrase_id_7_idx ON user_results_geo_main (phrase_id_7);
+CREATE INDEX user_results_geo_main_phrase_id_8_idx ON user_results_geo_main (phrase_id_8);
+CREATE INDEX user_results_geo_main_source_group_idx ON user_results_geo_main (source_group_id);
+CREATE INDEX user_results_geo_main_user_idx ON user_results_geo_main (user_id);
+CREATE INDEX user_results_geo_main_formula_idx ON user_results_geo_main (formula_id);
+
+--
+-- indexes for table results_geo_big
+--
+CREATE INDEX results_geo_big_source_group_idx ON results_geo_big (source_group_id);
+CREATE INDEX results_geo_big_formula_idx ON results_geo_big (formula_id);
+CREATE INDEX results_geo_big_user_idx ON results_geo_big (user_id);
+
+--
+-- indexes for table user_results_geo_big
+--
+ALTER TABLE user_results_geo_big ADD CONSTRAINT user_results_geo_big_pkey PRIMARY KEY (group_id, user_id);
+CREATE INDEX user_results_geo_big_source_group_idx ON user_results_geo_big (source_group_id);
+CREATE INDEX user_results_geo_big_user_idx ON user_results_geo_big (user_id);
+CREATE INDEX user_results_geo_big_formula_idx ON user_results_geo_big (formula_id);
 
 -- --------------------------------------------------------
 
@@ -4077,44 +5970,229 @@ ALTER TABLE source_values
     ADD CONSTRAINT source_values_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id),
     ADD CONSTRAINT source_values_fk_2 FOREIGN KEY (source_id) REFERENCES sources (source_id);
 
+-- --------------------------------------------------------
+
 --
 -- constraints for table values_standard_prime
 --
 ALTER TABLE values_standard_prime
-    ADD CONSTRAINT values_standard_prime_fk_1 FOREIGN KEY (source_id) REFERENCES sources (source_id);
+    ADD CONSTRAINT values_standard_prime_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
 
 --
 -- constraints for table values_standard
 --
 ALTER TABLE values_standard
-    ADD CONSTRAINT values_standard_fk_1 FOREIGN KEY (source_id) REFERENCES sources (source_id);
+    ADD CONSTRAINT values_standard_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
 
 --
 -- constraints for table values
 --
 ALTER TABLE values
-    ADD CONSTRAINT values_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT values_fk_2 FOREIGN KEY (source_id) REFERENCES sources (source_id),
-    ADD CONSTRAINT values_fk_3 FOREIGN KEY (group_id) REFERENCES groups (group_id),
-    ADD CONSTRAINT values_fk_4 FOREIGN KEY (protect_id) REFERENCES protection_types (protection_type_id);
+    ADD CONSTRAINT values_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
+    ADD CONSTRAINT values_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
 
 --
 -- constraints for table user_values
 --
 ALTER TABLE user_values
-    ADD CONSTRAINT user_values_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT user_values_fk_2 FOREIGN KEY (source_id) REFERENCES sources (source_id),
-    ADD CONSTRAINT user_values_fk_3 FOREIGN KEY (share_type_id) REFERENCES share_types (share_type_id),
-    ADD CONSTRAINT user_values_fk_4 FOREIGN KEY (protect_id) REFERENCES protection_types (protection_type_id);
+    ADD CONSTRAINT user_values_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_values_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
 
 --
--- constraints for table user_value_time_series
+-- constraints for table values_prime
 --
-ALTER TABLE user_value_time_series
-    ADD CONSTRAINT user_value_time_series_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT user_value_time_series_fk_2 FOREIGN KEY (source_id) REFERENCES sources (source_id),
-    ADD CONSTRAINT user_value_time_series_fk_3 FOREIGN KEY (share_type_id) REFERENCES share_types (share_type_id),
-    ADD CONSTRAINT user_value_time_series_fk_4 FOREIGN KEY (protect_id) REFERENCES protection_types (protection_type_id);
+ALTER TABLE values_prime
+    ADD CONSTRAINT values_prime_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
+    ADD CONSTRAINT values_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_values_prime
+--
+ALTER TABLE user_values_prime
+    ADD CONSTRAINT user_values_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_values_prime_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
+
+--
+-- constraints for table values_big
+--
+ALTER TABLE values_big
+    ADD CONSTRAINT values_big_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
+    ADD CONSTRAINT values_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_values_big
+--
+ALTER TABLE user_values_big
+    ADD CONSTRAINT user_values_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_values_big_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
+
+-- --------------------------------------------------------
+
+--
+-- constraints for table values_text_standard_prime
+--
+ALTER TABLE values_text_standard_prime
+    ADD CONSTRAINT values_text_standard_prime_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
+
+--
+-- constraints for table values_text_standard
+--
+ALTER TABLE values_text_standard
+    ADD CONSTRAINT values_text_standard_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
+
+--
+-- constraints for table values_text
+--
+ALTER TABLE values_text
+    ADD CONSTRAINT values_text_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
+    ADD CONSTRAINT values_text_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_values_text
+--
+ALTER TABLE user_values_text
+    ADD CONSTRAINT user_values_text_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_values_text_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
+
+--
+-- constraints for table values_text_prime
+--
+ALTER TABLE values_text_prime
+    ADD CONSTRAINT values_text_prime_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
+    ADD CONSTRAINT values_text_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_values_text_prime
+--
+ALTER TABLE user_values_text_prime
+    ADD CONSTRAINT user_values_text_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_values_text_prime_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
+
+--
+-- constraints for table values_text_big
+--
+ALTER TABLE values_text_big
+    ADD CONSTRAINT values_text_big_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
+    ADD CONSTRAINT values_text_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_values_text_big
+--
+ALTER TABLE user_values_text_big
+    ADD CONSTRAINT user_values_text_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_values_text_big_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
+
+-- --------------------------------------------------------
+
+--
+-- constraints for table values_time_standard_prime
+--
+ALTER TABLE values_time_standard_prime
+    ADD CONSTRAINT values_time_standard_prime_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
+
+--
+-- constraints for table values_time_standard
+--
+ALTER TABLE values_time_standard
+    ADD CONSTRAINT values_time_standard_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
+
+--
+-- constraints for table values_time
+--
+ALTER TABLE values_time
+    ADD CONSTRAINT values_time_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
+    ADD CONSTRAINT values_time_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_values_time
+--
+ALTER TABLE user_values_time
+    ADD CONSTRAINT user_values_time_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_values_time_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
+
+--
+-- constraints for table values_time_prime
+--
+ALTER TABLE values_time_prime
+    ADD CONSTRAINT values_time_prime_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
+    ADD CONSTRAINT values_time_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_values_time_prime
+--
+ALTER TABLE user_values_time_prime
+    ADD CONSTRAINT user_values_time_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_values_time_prime_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
+
+--
+-- constraints for table values_time_big
+--
+ALTER TABLE values_time_big
+    ADD CONSTRAINT values_time_big_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
+    ADD CONSTRAINT values_time_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_values_time_big
+--
+ALTER TABLE user_values_time_big
+    ADD CONSTRAINT user_values_time_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_values_time_big_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
+
+-- --------------------------------------------------------
+
+--
+-- constraints for table values_geo_standard_prime
+--
+ALTER TABLE values_geo_standard_prime
+    ADD CONSTRAINT values_geo_standard_prime_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
+
+--
+-- constraints for table values_geo_standard
+--
+ALTER TABLE values_geo_standard
+    ADD CONSTRAINT values_geo_standard_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
+
+--
+-- constraints for table values_geo
+--
+ALTER TABLE values_geo
+    ADD CONSTRAINT values_geo_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
+    ADD CONSTRAINT values_geo_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_values_geo
+--
+ALTER TABLE user_values_geo
+    ADD CONSTRAINT user_values_geo_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_values_geo_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
+
+--
+-- constraints for table values_geo_prime
+--
+ALTER TABLE values_geo_prime
+    ADD CONSTRAINT values_geo_prime_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
+    ADD CONSTRAINT values_geo_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_values_geo_prime
+--
+ALTER TABLE user_values_geo_prime
+    ADD CONSTRAINT user_values_geo_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_values_geo_prime_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
+
+--
+-- constraints for table values_geo_big
+--
+ALTER TABLE values_geo_big
+    ADD CONSTRAINT values_geo_big_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
+    ADD CONSTRAINT values_geo_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_values_geo_big
+--
+ALTER TABLE user_values_geo_big
+    ADD CONSTRAINT user_values_geo_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_values_geo_big_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
 
 -- --------------------------------------------------------
 
@@ -4157,12 +6235,237 @@ ALTER TABLE user_formula_links
     ADD CONSTRAINT user_formula_links_fk_2 FOREIGN KEY (user_id) REFERENCES users (user_id),
     ADD CONSTRAINT user_formula_links_fk_3 FOREIGN KEY (link_type_id) REFERENCES formula_link_types (formula_link_type_id);
 
+-- --------------------------------------------------------
+
 --
 -- constraints for table results
 --
 ALTER TABLE results
-    ADD CONSTRAINT results_fk_1 FOREIGN KEY (formula_id) REFERENCES formulas (formula_id),
-    ADD CONSTRAINT results_fk_2 FOREIGN KEY (user_id) REFERENCES users (user_id);
+    ADD CONSTRAINT results_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id),
+    ADD CONSTRAINT results_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_results
+--
+ALTER TABLE user_results
+    ADD CONSTRAINT user_results_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_results_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
+
+--
+-- constraints for table results_prime
+--
+ALTER TABLE results_prime
+    ADD CONSTRAINT results_prime_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id),
+    ADD CONSTRAINT results_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_results_prime
+--
+ALTER TABLE user_results_prime
+    ADD CONSTRAINT user_results_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_results_prime_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
+
+--
+-- constraints for table results_main
+--
+ALTER TABLE results_main
+    ADD CONSTRAINT results_main_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id),
+    ADD CONSTRAINT results_main_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_results_main
+--
+ALTER TABLE user_results_main
+    ADD CONSTRAINT user_results_main_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_results_main_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
+
+--
+-- constraints for table results_big
+--
+ALTER TABLE results_big
+    ADD CONSTRAINT results_big_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id),
+    ADD CONSTRAINT results_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_results_big
+--
+ALTER TABLE user_results_big
+    ADD CONSTRAINT user_results_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_results_big_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
+
+-- --------------------------------------------------------
+
+--
+-- constraints for table results_text
+--
+ALTER TABLE results_text
+    ADD CONSTRAINT results_text_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id),
+    ADD CONSTRAINT results_text_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_results_text
+--
+ALTER TABLE user_results_text
+    ADD CONSTRAINT user_results_text_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_results_text_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
+
+--
+-- constraints for table results_text_prime
+--
+ALTER TABLE results_text_prime
+    ADD CONSTRAINT results_text_prime_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id),
+    ADD CONSTRAINT results_text_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_results_text_prime
+--
+ALTER TABLE user_results_text_prime
+    ADD CONSTRAINT user_results_text_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_results_text_prime_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
+
+--
+-- constraints for table results_text_main
+--
+ALTER TABLE results_text_main
+    ADD CONSTRAINT results_text_main_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id),
+    ADD CONSTRAINT results_text_main_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_results_text_main
+--
+ALTER TABLE user_results_text_main
+    ADD CONSTRAINT user_results_text_main_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_results_text_main_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
+
+--
+-- constraints for table results_text_big
+--
+ALTER TABLE results_text_big
+    ADD CONSTRAINT results_text_big_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id),
+    ADD CONSTRAINT results_text_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_results_text_big
+--
+ALTER TABLE user_results_text_big
+    ADD CONSTRAINT user_results_text_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_results_text_big_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
+
+-- --------------------------------------------------------
+
+--
+-- constraints for table results_time
+--
+ALTER TABLE results_time
+    ADD CONSTRAINT results_time_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id),
+    ADD CONSTRAINT results_time_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_results_time
+--
+ALTER TABLE user_results_time
+    ADD CONSTRAINT user_results_time_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_results_time_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
+
+--
+-- constraints for table results_time_prime
+--
+ALTER TABLE results_time_prime
+    ADD CONSTRAINT results_time_prime_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id),
+    ADD CONSTRAINT results_time_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_results_time_prime
+--
+ALTER TABLE user_results_time_prime
+    ADD CONSTRAINT user_results_time_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_results_time_prime_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
+
+--
+-- constraints for table results_time_main
+--
+ALTER TABLE results_time_main
+    ADD CONSTRAINT results_time_main_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id),
+    ADD CONSTRAINT results_time_main_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_results_time_main
+--
+ALTER TABLE user_results_time_main
+    ADD CONSTRAINT user_results_time_main_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_results_time_main_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
+
+--
+-- constraints for table results_time_big
+--
+ALTER TABLE results_time_big
+    ADD CONSTRAINT results_time_big_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id),
+    ADD CONSTRAINT results_time_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_results_time_big
+--
+ALTER TABLE user_results_time_big
+    ADD CONSTRAINT user_results_time_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_results_time_big_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
+
+-- --------------------------------------------------------
+
+--
+-- constraints for table results_geo
+--
+ALTER TABLE results_geo
+    ADD CONSTRAINT results_geo_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id),
+    ADD CONSTRAINT results_geo_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_results_geo
+--
+ALTER TABLE user_results_geo
+    ADD CONSTRAINT user_results_geo_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_results_geo_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
+
+--
+-- constraints for table results_geo_prime
+--
+ALTER TABLE results_geo_prime
+    ADD CONSTRAINT results_geo_prime_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id),
+    ADD CONSTRAINT results_geo_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_results_geo_prime
+--
+ALTER TABLE user_results_geo_prime
+    ADD CONSTRAINT user_results_geo_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_results_geo_prime_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
+
+--
+-- constraints for table results_geo_main
+--
+ALTER TABLE results_geo_main
+    ADD CONSTRAINT results_geo_main_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id),
+    ADD CONSTRAINT results_geo_main_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_results_geo_main
+--
+ALTER TABLE user_results_geo_main
+    ADD CONSTRAINT user_results_geo_main_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_results_geo_main_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
+
+--
+-- constraints for table results_geo_big
+--
+ALTER TABLE results_geo_big
+    ADD CONSTRAINT results_geo_big_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id),
+    ADD CONSTRAINT results_geo_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_results_geo_big
+--
+ALTER TABLE user_results_geo_big
+    ADD CONSTRAINT user_results_geo_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_results_geo_big_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
 
 -- --------------------------------------------------------
 --
