@@ -1,4 +1,4 @@
-user_type_id, user_type, code_id, comment
+user_type_id, type_name, code_id, description
 1, 'Guest', 'guest', 'read only'
 2, 'IP address', 'ip_address', 'identified only by IP address'
 3, 'Verified', 'verified', 'verified by email or mobile'

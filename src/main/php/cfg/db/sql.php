@@ -2612,7 +2612,7 @@ class sql
                     $sql .= '-- ';
                     $sql_table .= 'ALTER TABLE ' . $this->name_sql_esc($this->table);
                 }
-                $sql_field = ' ADD CONSTRAINT ' . $name . '_uk';
+                $sql_field = ' ADD CONSTRAINT ' . $this->table . '_' . $name . '_uk';
                 $sql_field .= ' UNIQUE (' . $name . ')';
                 $field_lst[] = $sql_field;
             }

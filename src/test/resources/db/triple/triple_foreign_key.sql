@@ -4,7 +4,7 @@
 -- constraints for table triples
 --
 ALTER TABLE triples
-    ADD CONSTRAINT code_id_uk UNIQUE (code_id),
+    ADD CONSTRAINT triples_code_id_uk UNIQUE (code_id),
     ADD CONSTRAINT triples_user_fk        FOREIGN KEY (user_id)        REFERENCES users (user_id),
     ADD CONSTRAINT triples_verb_fk        FOREIGN KEY (verb_id)        REFERENCES verbs (verb_id),
     ADD CONSTRAINT triples_phrase_type_fk FOREIGN KEY (phrase_type_id) REFERENCES phrase_types (phrase_type_id),

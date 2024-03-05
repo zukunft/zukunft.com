@@ -6,7 +6,7 @@
 
 CREATE TABLE IF NOT EXISTS change_links
 (
-    change_id BIGSERIAL PRIMARY KEY,
+    change_link_id BIGSERIAL PRIMARY KEY,
     change_time      timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP,
     user_id          bigint     NOT NULL,
     change_action_id smallint   NOT NULL,
@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS change_links
 );
 
 COMMENT ON TABLE change_links IS 'to log the link changes done by the users';
-COMMENT ON COLUMN change_links.change_id IS 'the prime key to identify the change change_link';
+COMMENT ON COLUMN change_links.change_link_id IS 'the prime key to identify the change change_link';
 COMMENT ON COLUMN change_links.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_links.user_id IS 'reference to the user who has done the change';
 COMMENT ON COLUMN change_links.change_action_id IS 'the curl action';

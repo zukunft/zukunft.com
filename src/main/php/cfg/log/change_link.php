@@ -106,6 +106,13 @@ class change_link extends change_log
         self::FLD_NEW_TO_ID
     );
 
+    // field lists for the sql table creation that are used for all change logs (incl. value and link changes)
+    const FLD_LST_KEY = array(
+        [self::FLD_ID, sql_field_type::KEY_INT, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_ID_COM],
+        [self::FLD_TIME, sql_field_type::TIME, sql_field_default::TIME_NOT_NULL, sql::INDEX, '', self::FLD_TIME_COM],
+        [user::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, user::class, self::FLD_USER_COM],
+        [self::FLD_ACTION, sql_field_type::INT_SMALL, sql_field_default::NOT_NULL, '', change_action::class, self::FLD_ACTION_COM],
+    );
     // field list to log the actual change of the value with a standard group id
     const FLD_LST_CHANGE = array(
         [self::FLD_TABLE_ID, sql_field_type::INT, sql_field_default::NOT_NULL, '', change_table::class, ''],

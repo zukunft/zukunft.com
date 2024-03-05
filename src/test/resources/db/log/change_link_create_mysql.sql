@@ -6,7 +6,7 @@
 
 CREATE TABLE IF NOT EXISTS change_links
 (
-    change_id        bigint     NOT NULL COMMENT 'the prime key to identify the change change_link',
+    change_link_id   bigint     NOT NULL COMMENT 'the prime key to identify the change change_link',
     change_time      timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'time when the user has confirmed the change',
     user_id          bigint     NOT NULL COMMENT 'reference to the user who has done the change',
     change_action_id smallint   NOT NULL COMMENT 'the curl action',

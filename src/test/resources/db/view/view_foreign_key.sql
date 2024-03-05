@@ -4,8 +4,8 @@
 --
 
 ALTER TABLE views
-    ADD CONSTRAINT view_name_uk UNIQUE (view_name),
-    ADD CONSTRAINT code_id_uk UNIQUE (code_id),
+    ADD CONSTRAINT views_view_name_uk UNIQUE (view_name),
+    ADD CONSTRAINT views_code_id_uk UNIQUE (code_id),
     ADD CONSTRAINT views_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
     ADD CONSTRAINT views_view_type_fk FOREIGN KEY (view_type_id) REFERENCES view_types (view_type_id);
 

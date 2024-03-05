@@ -402,16 +402,16 @@ COMMENT ON COLUMN change_tables.description IS 'the user readable name';
 CREATE TABLE IF NOT EXISTS change_fields
 (
     change_field_id   BIGSERIAL PRIMARY KEY,
-    change_field_name varchar(255)     NOT NULL,
     table_id          bigint           NOT NULL,
+    change_field_name varchar(255)     NOT NULL,
     code_id           varchar(255) DEFAULT NULL,
     description       text         DEFAULT NULL
 );
 
 COMMENT ON TABLE change_fields IS 'to keep the original field name even if a table name has changed';
 COMMENT ON COLUMN change_fields.change_field_id IS 'the internal unique primary index';
-COMMENT ON COLUMN change_fields.change_field_name IS 'the real name';
 COMMENT ON COLUMN change_fields.table_id IS 'because every field must only be unique within a table';
+COMMENT ON COLUMN change_fields.change_field_name IS 'the real name';
 COMMENT ON COLUMN change_fields.code_id IS 'to display the change with some linked information';
 
 -- --------------------------------------------------------
@@ -523,7 +523,7 @@ COMMENT ON COLUMN change_big_values.change_action_id IS 'the curl action';
 
 CREATE TABLE IF NOT EXISTS change_links
 (
-    change_id BIGSERIAL PRIMARY KEY,
+    change_link_id BIGSERIAL PRIMARY KEY,
     change_time      timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP,
     user_id          bigint     NOT NULL,
     change_action_id smallint   NOT NULL,
@@ -544,7 +544,7 @@ CREATE TABLE IF NOT EXISTS change_links
 );
 
 COMMENT ON TABLE change_links IS 'to log the link changes done by the users';
-COMMENT ON COLUMN change_links.change_id IS 'the prime key to identify the change change_link';
+COMMENT ON COLUMN change_links.change_link_id IS 'the prime key to identify the change change_link';
 COMMENT ON COLUMN change_links.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_links.user_id IS 'reference to the user who has done the change';
 COMMENT ON COLUMN change_links.change_action_id IS 'the curl action';
@@ -2055,8 +2055,8 @@ CREATE TABLE IF NOT EXISTS value_time_series
     last_update          timestamp NULL DEFAULT NULL
 );
 
-COMMENT ON TABLE user_value_time_series IS 'common parameters for a list of numbers that differ only by the timestamp';
-COMMENT ON COLUMN user_value_time_series.user_id IS 'the owner / creator of the number list';
+COMMENT ON TABLE value_time_series IS 'common parameters for a list of numbers that differ only by the timestamp';
+COMMENT ON COLUMN value_time_series.user_id IS 'the owner / creator of the number list';
 
 -- --------------------------------------------------------
 
@@ -2324,7 +2324,7 @@ CREATE TABLE IF NOT EXISTS result_standard_prime
     result   double precision
 );
 
-COMMENT ON TABLE result_standard IS 'table to cache the pure formula results related up to four prime phrase without any related information';
+COMMENT ON TABLE result_standard_prime IS 'table to cache the pure formula results related up to four prime phrase without any related information';
 COMMENT ON COLUMN result_standard_prime.group_id IS 'the prime index to find the results';
 
 --
@@ -3157,8 +3157,9 @@ CREATE INDEX change_tables_change_table_name_idx ON change_tables (change_table_
 -- indexes for table change_fields
 --
 
-CREATE INDEX change_fields_change_field_name_idx ON change_fields (change_field_name);
+CREATE UNIQUE INDEX change_fields_unique_idx ON change_fields (table_id,change_field_name);
 CREATE INDEX change_fields_table_idx ON change_fields (table_id);
+CREATE INDEX change_fields_change_field_name_idx ON change_fields (change_field_name);
 
 -- --------------------------------------------------------
 
@@ -3206,7 +3207,7 @@ CREATE INDEX change_big_values_user_idx ON change_big_values (user_id);
 -- indexes for table change_links
 --
 
-CREATE INDEX change_links_change_idx ON change_links (change_id);
+CREATE INDEX change_links_change_link_idx ON change_links (change_link_id);
 CREATE INDEX change_links_change_time_idx ON change_links (change_time);
 CREATE INDEX change_links_user_idx ON change_links (user_id);
 
@@ -3606,7 +3607,6 @@ CREATE INDEX value_time_prime_source_idx ON value_time_prime (source_id);
 --
 -- Indexes for table user_value_time_prime
 --
-ALTER TABLE user_value_time_prime ADD CONSTRAINT user_value_time_prime_pkey PRIMARY KEY (group_id, user_id);
 CREATE INDEX user_value_time_prime_user_idx ON user_value_time_prime (user_id);
 CREATE INDEX user_value_time_prime_source_idx ON user_value_time_prime (source_id);
 
@@ -3838,12 +3838,6 @@ ALTER TABLE sys_log
     ADD CONSTRAINT sys_log_sys_log_status_fk FOREIGN KEY (sys_log_status_id) REFERENCES sys_log_status (sys_log_status_id);
 
 --
--- constraints for table sys_script_times
---
-ALTER TABLE sys_script_times
-    ADD CONSTRAINT sys_script_times_fk_1 FOREIGN KEY (sys_script_id) REFERENCES sys_scripts (sys_script_id);
-
---
 -- constraints for table job_times
 --
 
@@ -3876,8 +3870,7 @@ ALTER TABLE users
 --
 
 ALTER TABLE change_fields
-    ADD CONSTRAINT change_field_name_uk UNIQUE (change_field_name),
-    ADD CONSTRAINT code_id_uk UNIQUE (code_id),
+    ADD CONSTRAINT change_fields_code_id_uk UNIQUE (code_id),
     ADD CONSTRAINT change_fields_change_table_fk FOREIGN KEY (table_id) REFERENCES change_tables (change_table_id);
 
 -- --------------------------------------------------------
@@ -3940,8 +3933,8 @@ ALTER TABLE change_links
 --
 
 ALTER TABLE pods
-    ADD CONSTRAINT type_name_uk UNIQUE (type_name),
-    ADD CONSTRAINT code_id_uk UNIQUE (code_id),
+    ADD CONSTRAINT pods_type_name_uk UNIQUE (type_name),
+    ADD CONSTRAINT pods_code_id_uk UNIQUE (code_id),
     ADD CONSTRAINT pods_pod_type_fk FOREIGN KEY (pod_type_id) REFERENCES pod_types (pod_type_id),
     ADD CONSTRAINT pods_pod_status_fk FOREIGN KEY (pod_status_id) REFERENCES pod_status (pod_status_id),
     ADD CONSTRAINT pods_triple_fk FOREIGN KEY (param_triple_id) REFERENCES triples (triple_id);
@@ -3951,7 +3944,7 @@ ALTER TABLE pods
 --
 
 ALTER TABLE language_forms
-    ADD CONSTRAINT language_form_name_uk UNIQUE (language_form_name),
+    ADD CONSTRAINT language_forms_language_form_name_uk UNIQUE (language_form_name),
     ADD CONSTRAINT language_forms_language_fk FOREIGN KEY (language_id) REFERENCES languages (language_id);
 
 -- --------------------------------------------------------
@@ -3960,8 +3953,8 @@ ALTER TABLE language_forms
 -- constraints for table words
 --
 ALTER TABLE words
-    ADD CONSTRAINT word_name_uk UNIQUE (word_name),
-    ADD CONSTRAINT code_id_uk UNIQUE (code_id),
+    ADD CONSTRAINT words_word_name_uk UNIQUE (word_name),
+    ADD CONSTRAINT words_code_id_uk UNIQUE (code_id),
     ADD CONSTRAINT words_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
     ADD CONSTRAINT words_phrase_type_fk FOREIGN KEY (phrase_type_id) REFERENCES phrase_types (phrase_type_id),
     ADD CONSTRAINT words_view_fk FOREIGN KEY (view_id) REFERENCES views (view_id);
@@ -3982,7 +3975,7 @@ ALTER TABLE user_words
 -- constraints for table triples
 --
 ALTER TABLE triples
-    ADD CONSTRAINT code_id_uk UNIQUE (code_id),
+    ADD CONSTRAINT triples_code_id_uk UNIQUE (code_id),
     ADD CONSTRAINT triples_user_fk        FOREIGN KEY (user_id)        REFERENCES users (user_id),
     ADD CONSTRAINT triples_verb_fk        FOREIGN KEY (verb_id)        REFERENCES verbs (verb_id),
     ADD CONSTRAINT triples_phrase_type_fk FOREIGN KEY (phrase_type_id) REFERENCES phrase_types (phrase_type_id),
@@ -4003,7 +3996,6 @@ ALTER TABLE user_triples
 --
 
 ALTER TABLE phrase_tables
-    ADD CONSTRAINT phrase_tables_phrase_fk FOREIGN KEY (phrase_id) REFERENCES phrases (phrase_id),
     ADD CONSTRAINT phrase_tables_pod_fk FOREIGN KEY (pod_id) REFERENCES pods (pod_id),
     ADD CONSTRAINT phrase_tables_phrase_table_status_fk FOREIGN KEY (phrase_table_status_id) REFERENCES phrase_table_status (phrase_table_status_id);
 
@@ -4051,7 +4043,7 @@ ALTER TABLE user_groups_big
 -- constraints for table sources
 --
 ALTER TABLE sources
-    ADD CONSTRAINT source_name_uk UNIQUE (source_name),
+    ADD CONSTRAINT sources_source_name_uk UNIQUE (source_name),
     ADD CONSTRAINT sources_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
     ADD CONSTRAINT sources_source_type_fk FOREIGN KEY (source_type_id) REFERENCES source_types (source_type_id);
 
@@ -4130,7 +4122,7 @@ ALTER TABLE user_value_time_series
 -- constraints for table formulas
 --
 ALTER TABLE formulas
-    ADD CONSTRAINT formula_name_uk UNIQUE (formula_name),
+    ADD CONSTRAINT formulas_formula_name_uk UNIQUE (formula_name),
     ADD CONSTRAINT formulas_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
     ADD CONSTRAINT formulas_formula_type_fk FOREIGN KEY (formula_type_id) REFERENCES formula_types (formula_type_id),
     ADD CONSTRAINT formulas_view_fk FOREIGN KEY (view_id) REFERENCES views (view_id);
@@ -4178,8 +4170,8 @@ ALTER TABLE results
 --
 
 ALTER TABLE views
-    ADD CONSTRAINT view_name_uk UNIQUE (view_name),
-    ADD CONSTRAINT code_id_uk UNIQUE (code_id),
+    ADD CONSTRAINT views_view_name_uk UNIQUE (view_name),
+    ADD CONSTRAINT views_code_id_uk UNIQUE (code_id),
     ADD CONSTRAINT views_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
     ADD CONSTRAINT views_view_type_fk FOREIGN KEY (view_type_id) REFERENCES view_types (view_type_id);
 
@@ -4200,9 +4192,9 @@ ALTER TABLE user_views
 --
 
 ALTER TABLE components
-    ADD CONSTRAINT component_name_uk UNIQUE (component_name),
-    ADD CONSTRAINT code_id_uk UNIQUE (code_id),
-    ADD CONSTRAINT ui_msg_code_id_uk UNIQUE (ui_msg_code_id),
+    ADD CONSTRAINT components_component_name_uk UNIQUE (component_name),
+    ADD CONSTRAINT components_code_id_uk UNIQUE (code_id),
+    ADD CONSTRAINT components_ui_msg_code_id_uk UNIQUE (ui_msg_code_id),
     ADD CONSTRAINT components_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
     ADD CONSTRAINT components_component_type_fk FOREIGN KEY (component_type_id) REFERENCES component_types (component_type_id),
     ADD CONSTRAINT components_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);

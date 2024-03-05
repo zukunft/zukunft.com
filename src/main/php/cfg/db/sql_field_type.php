@@ -42,6 +42,7 @@ enum sql_field_type: string
 
     // data field types used
     case NAME_UNIQUE = 'unique'; // a unique text up to 255 char long to identify a database row
+    case NAME_UNIQUE_PART = 'uniquePart'; // together with other fields a unique text up to 255 char long to identify a database row
     case NAME = 'name'; // a text up to 255 char long to identify a database row
     case CRONTAB = 'crontab'; // a crontab scheduling without the command
     case IP_ADDR = 'ip_addr'; // an ipv4 or ipv6 address
@@ -65,7 +66,7 @@ enum sql_field_type: string
         return match($this) {
             self::KEY_INT => 'BIGSERIAL',
             self::KEY_512, self::KEY_PART_512, self::REF_512 => 'char(112)',
-            self::NAME_UNIQUE, self::NAME => 'varchar(255)',
+            self::NAME, self::NAME_UNIQUE, self::NAME_UNIQUE_PART => 'varchar(255)',
             self::CRONTAB => 'varchar(20)',
             self::IP_ADDR => 'varchar(46)',
             self::CODE_ID => 'varchar(100)',
@@ -85,7 +86,7 @@ enum sql_field_type: string
             self::KEY_INT, self::INT, self::KEY_INT_NO_AUTO, self::KEY_PART_INT, self::INT_UNIQUE_PART => 'bigint',
             self::KEY_512, self::KEY_PART_512, self::REF_512 => 'char(112)',
             self::KEY_TEXT, self::KEY_PART_TEXT => 'char(255)',
-            self::NAME_UNIQUE, self::NAME => 'varchar(255)',
+            self::NAME, self::NAME_UNIQUE, self::NAME_UNIQUE_PART => 'varchar(255)',
             self::CRONTAB => 'varchar(20)',
             self::IP_ADDR => 'varchar(46)',
             self::CODE_ID => 'varchar(100)',
@@ -117,7 +118,7 @@ enum sql_field_type: string
     public function is_unique_part(): bool
     {
         return match($this) {
-            self::INT_UNIQUE_PART => true,
+            self::NAME_UNIQUE_PART, self::INT_UNIQUE_PART => true,
             default => false,
         };
     }
