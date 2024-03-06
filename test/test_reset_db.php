@@ -94,6 +94,7 @@ if ($usr->id() > 0) {
         run_db_truncate($sys_usr);
         run_db_seq_reset();
         run_db_config_reset();
+        import_system_users();
 
         // recreate the code link database rows
         $db_chk = new db_check();
@@ -367,7 +368,7 @@ function run_db_seq_reset(): void
 }
 
 /**
- * fill th config with the default value for this program version
+ * fill the config with the default value for this program version
  * @return void
  */
 function run_db_config_reset(): void
@@ -377,6 +378,20 @@ function run_db_config_reset(): void
     $cfg = new config();
     $cfg->set(config::VERSION_DB, PRG_VERSION, $db_con);
 
+}
+
+/**
+ * fill the user profiled with the default values for this program version
+ * @return void
+ */
+function run_db_load_user_profiles(): void
+{
+    global $db_con;
+
+    $db_check = new db_check();
+    foreach (USER_CODE_LINK_FILES as $csv_file_name) {
+        $db_check->load_db_code_link_file($csv_file_name, $db_con);
+    }
 }
 
 function run_seq_reset(string $seq_name, int $start_id = 1): void

@@ -452,10 +452,6 @@
       "code_id": "verb_del"
     },
     {
-      "name": "Add New Triple",
-      "code_id": "triple_add"
-    },
-    {
       "name": "Change Triple",
       "description": "Rename a triple",
       "code_id": "triple_edit"

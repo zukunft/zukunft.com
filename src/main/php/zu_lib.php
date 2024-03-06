@@ -786,6 +786,10 @@ define("BASE_CODE_LINK_FILES", serialize(array(
     'view_types',
     'phrase_types'
 )));
+const USER_CODE_LINK_FILES  = [
+    'user_profiles',
+    'user_types',
+];
 const BASE_CODE_LINK_FILE_TYPE = '.csv';
 const SYSTEM_USER_CONFIG_FILE = PATH_BASE_CONFIG_FILES . 'users.json';
 const SYSTEM_VERB_CONFIG_FILE = PATH_BASE_CONFIG_FILES . 'verbs.json';
