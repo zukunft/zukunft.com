@@ -81,11 +81,6 @@ class word_list_tests
         $wrd_names = array(word_api::TN_READ, word_api::TN_ADD);
         $this->assert_sql_by_names($t, $db_con, $wrd_lst, $wrd_names);
 
-        // load by phrase group
-        $wrd_lst = new word_list($usr);
-        $grp_id = 1;
-        $this->assert_sql_by_group_id($t, $db_con, $wrd_lst, $grp_id);
-
         // load by type
         $wrd_lst = new word_list($usr);
         $type_id = 1;
@@ -317,28 +312,6 @@ class word_list_tests
         // check the MySQL query syntax
         $db_con->db_type = sql_db::MYSQL;
         $qp = $lst->load_sql_by_names($db_con->sql_creator(), $words);
-        $t->assert_qp($qp, $db_con->db_type);
-    }
-
-    /**
-     * similar to assert_sql_by_ids, but for a phrase group
-     *
-     * @param test_cleanup $t the test environment
-     * @param sql_db $db_con the test database connection
-     * @param word_list $lst the empty word list object
-     * @param int $grp_id the phrase group id that should be used for selecting the words
-     * @return void
-     */
-    private function assert_sql_by_group_id(test_cleanup $t, sql_db $db_con, word_list $lst, int $grp_id): void
-    {
-        // check the Postgres query syntax
-        $db_con->db_type = sql_db::POSTGRES;
-        $qp = $lst->load_sql_by_grp_id($db_con->sql_creator(), $grp_id);
-        $t->assert_qp($qp, $db_con->db_type);
-
-        // check the MySQL query syntax
-        $db_con->db_type = sql_db::MYSQL;
-        $qp = $lst->load_sql_by_grp_id($db_con->sql_creator(), $grp_id);
         $t->assert_qp($qp, $db_con->db_type);
     }
 

@@ -24,7 +24,6 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO activate the tests and create a unit and read test if possible
     TODO test if a table with 1, 2, 4, 8, 16, 32 or 64 smallint key is faster and more efficient than a table with one bigger index
     TODO create an use the figure database view
-    TODO combine phrase_group_word_links and phrase_group_triple_links to group_links (using phrase)
     TODO clean up the phrase_list (and triple_list and word_list) cfg/class and add unit and db read tests for all
     TODO use $t->assert_sql_by_ids for all lists
     TODO use the load_sql object function for all list load sql functions like in group_list

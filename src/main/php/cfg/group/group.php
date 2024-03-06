@@ -10,8 +10,6 @@
     the index big group is designed to be useful for highly structured values e.g. the ISIN as a 48-bit value with up to 65k fields (because each field can be a triple a multi dimensional tables can be store with index big)
 
     TODO add index and index big tables
-    TODO use a new table group_links to link the phrases to a group
-    TODO add a order_nbr field to the group_links table
     TODO remove the fields word_ids, triple_ids and id_order
     TODO rename to group (and element_group to combination)
     TODO move name and description to user_groups
@@ -122,6 +120,13 @@ class group extends sandbox_multi
     // all database field names excluding the id
     const FLD_NAMES = array(
         self::FLD_DESCRIPTION
+    );
+    // list of fixed tables where a group name overwrite might be stored
+    // TODO check if this can be used somewhere else means if there are unwanted repeatings
+    const TBL_LIST = array(
+        [sql_table_type::MOST],
+        [sql_table_type::PRIME],
+        [sql_table_type::BIG]
     );
 
 

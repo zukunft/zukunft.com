@@ -180,6 +180,8 @@ class word_list extends sandbox_list
 
     /**
      * set the SQL query parameters to load a list of words by the ids
+     * used also for load by group because the ids can be extracted directly from the group id
+     *
      * @param sql $sc with the target db_type set
      * @param array $wrd_ids a list of int values with the word ids
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
@@ -213,33 +215,6 @@ class word_list extends sandbox_list
             $qp->name = '';
         }
         $qp->par = $sc->get_par();
-        return $qp;
-    }
-
-    /**
-     * set the SQL query parameters to load a list of words by the phrase group id
-     * @param sql $sc with the target db_type set
-     * @param int $grp_id the id of the phrase group
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql_by_grp_id(sql $sc, int $grp_id): sql_par
-    {
-        $qp = $this->load_sql($sc, 'group');
-        if ($grp_id > 0) {
-
-            // create the sub query
-            $sub_sc = clone $sc;
-            $sub_sc->set_class(group_link::class);
-            $sub_sc->set_fields(array(phrase::FLD_ID));
-            $sub_sc->add_where(group::FLD_ID, $grp_id);
-
-            // use the sub query
-            $sc->add_where(word::FLD_ID, $sub_sc->sql(1, false), sql_par_type::INT_SUB_IN);
-            $qp->sql = $sc->sql();
-            $qp->par = array_merge($sc->get_par(), $sub_sc->get_par());
-        } else {
-            $qp->name = '';
-        }
         return $qp;
     }
 
