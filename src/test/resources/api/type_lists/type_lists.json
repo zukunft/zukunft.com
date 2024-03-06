@@ -2725,74 +2725,68 @@
       },
       {
         "id": 24,
-        "name": "Add New Triple",
-        "code_id": "triple_add",
-        "components": []
-      },
-      {
-        "id": 25,
         "name": "Change Triple",
         "description": "Rename a triple",
         "code_id": "triple_edit",
         "components": []
       },
       {
-        "id": 26,
+        "id": 25,
         "name": "Delete triple",
         "description": "Exclude or delete a triple",
         "code_id": "triple_del",
         "components": []
       },
       {
-        "id": 27,
+        "id": 26,
         "name": "User Settings",
         "description": "to change the user settings",
         "code_id": "user",
         "components": []
       },
       {
-        "id": 28,
+        "id": 27,
         "name": "Error Log",
         "description": "simple confirm page for a new error that has been logged in the database",
         "code_id": "error_log",
         "components": []
       },
       {
-        "id": 29,
+        "id": 28,
         "name": "System Error List",
         "description": "List the system errors and allow the user to change the status",
         "code_id": "error_update",
         "components": []
       },
       {
-        "id": 30,
+        "id": 29,
         "name": "Import",
         "description": "Select a file to import data",
         "code_id": "import",
         "components": []
       },
       {
-        "id": 31,
+        "id": 30,
         "name": "Add View",
         "code_id": "view_add",
         "components": []
       },
       {
-        "id": 32,
+        "id": 31,
         "name": "Change View",
         "description": "Rename a view",
         "code_id": "view_edit",
         "components": []
       },
       {
-        "id": 33,
+        "id": 32,
         "name": "Delete View",
         "description": "Exclude or delete a view",
         "code_id": "view_del",
         "components": []
       },
       {
-        "id": 34,
+        "id": 33,
         "name": "Add View Component",
         "code_id": "component_add",
         "components": [
@@ -2855,14 +2849,14 @@
         ]
       },
       {
-        "id": 35,
+        "id": 34,
         "name": "Change View Component",
         "description": "Adjust a view component",
         "code_id": "component_edit",
         "components": []
       },
       {
-        "id": 36,
+        "id": 35,
         "name": "Delete View Component",
         "description": "Exclude or delete a view component",
         "code_id": "component_del",
