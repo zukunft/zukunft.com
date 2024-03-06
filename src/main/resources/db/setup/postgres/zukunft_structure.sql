@@ -1135,22 +1135,6 @@ COMMENT ON COLUMN user_sources.excluded       IS 'true if a user, but not all, h
 COMMENT ON COLUMN user_sources.share_type_id  IS 'to restrict the access';
 COMMENT ON COLUMN user_sources.protect_id     IS 'to protect against unwanted changes';
 
-
---
--- table structure for table source_values
--- TODO review
---
-
-CREATE TABLE IF NOT EXISTS source_values
-(
-    group_id     BIGSERIAL PRIMARY KEY,
-    source_id    bigint           NOT NULL,
-    user_id      bigint           NOT NULL,
-    source_value double precision NOT NULL
-);
-
-COMMENT ON TABLE source_values IS 'one user can add different value, which should be the same, but are different';
-
 --
 -- table structure for table import_source
 --
@@ -1242,6 +1226,7 @@ CREATE TABLE IF NOT EXISTS user_refs
 );
 
 
+
 -- --------------------------------------------------------
 
 --
@@ -1330,7 +1315,7 @@ COMMENT ON TABLE user_values                IS 'for user specific changes of num
 COMMENT ON COLUMN user_values.group_id      IS 'the 512-bit prime index to find the user numeric value';
 COMMENT ON COLUMN user_values.user_id       IS 'the changer of the numeric value';
 COMMENT ON COLUMN user_values.numeric_value IS 'the user specific numeric value change';
-COMMENT ON COLUMN user_values.source_id     IS 'the source of the value as given by the user';
+COMMENT ON COLUMN user_values.source_id     IS 'one user can add different values from different sources, that have the same group, but a different value,so the source should be included in the unique key numeric value';
 COMMENT ON COLUMN user_values.last_update   IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
 COMMENT ON COLUMN user_values.excluded      IS 'true if a user, but not all, have removed it';
 COMMENT ON COLUMN user_values.share_type_id IS 'to restrict the access';
@@ -1396,7 +1381,7 @@ COMMENT ON COLUMN user_values_prime.phrase_id_3   IS 'phrase id that is with the
 COMMENT ON COLUMN user_values_prime.phrase_id_4   IS 'phrase id that is with the user id part of the prime key for a numeric value';
 COMMENT ON COLUMN user_values_prime.user_id       IS 'the changer of the numeric value';
 COMMENT ON COLUMN user_values_prime.numeric_value IS 'the user specific numeric value change';
-COMMENT ON COLUMN user_values_prime.source_id     IS 'the source of the value as given by the user';
+COMMENT ON COLUMN user_values_prime.source_id     IS 'one user can add different values from different sources, that have the same group, but a different value,so the source should be included in the unique key numeric value';
 COMMENT ON COLUMN user_values_prime.last_update   IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
 COMMENT ON COLUMN user_values_prime.excluded      IS 'true if a user, but not all, have removed it';
 COMMENT ON COLUMN user_values_prime.share_type_id IS 'to restrict the access';
@@ -1450,7 +1435,7 @@ COMMENT ON TABLE user_values_big                IS 'to store the user specific c
 COMMENT ON COLUMN user_values_big.group_id      IS 'the text index for more than 16 phrases to find the numeric value';
 COMMENT ON COLUMN user_values_big.user_id       IS 'the changer of the numeric value';
 COMMENT ON COLUMN user_values_big.numeric_value IS 'the user specific numeric value change';
-COMMENT ON COLUMN user_values_big.source_id     IS 'the source of the value as given by the user';
+COMMENT ON COLUMN user_values_big.source_id     IS 'one user can add different values from different sources, that have the same group, but a different value,so the source should be included in the unique key numeric value';
 COMMENT ON COLUMN user_values_big.last_update   IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
 COMMENT ON COLUMN user_values_big.excluded      IS 'true if a user, but not all, have removed it';
 COMMENT ON COLUMN user_values_big.share_type_id IS 'to restrict the access';
@@ -1544,7 +1529,7 @@ COMMENT ON TABLE user_values_text                IS 'for user specific changes o
 COMMENT ON COLUMN user_values_text.group_id      IS 'the 512-bit prime index to find the user text value';
 COMMENT ON COLUMN user_values_text.user_id       IS 'the changer of the text value';
 COMMENT ON COLUMN user_values_text.text_value    IS 'the user specific text value change';
-COMMENT ON COLUMN user_values_text.source_id     IS 'the source of the value as given by the user';
+COMMENT ON COLUMN user_values_text.source_id     IS 'one user can add different values from different sources, that have the same group, but a different value,so the source should be included in the unique key text value';
 COMMENT ON COLUMN user_values_text.last_update   IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
 COMMENT ON COLUMN user_values_text.excluded      IS 'true if a user, but not all, have removed it';
 COMMENT ON COLUMN user_values_text.share_type_id IS 'to restrict the access';
@@ -1610,7 +1595,7 @@ COMMENT ON COLUMN user_values_text_prime.phrase_id_3   IS 'phrase id that is wit
 COMMENT ON COLUMN user_values_text_prime.phrase_id_4   IS 'phrase id that is with the user id part of the prime key for a text value';
 COMMENT ON COLUMN user_values_text_prime.user_id       IS 'the changer of the text value';
 COMMENT ON COLUMN user_values_text_prime.text_value    IS 'the user specific text value change';
-COMMENT ON COLUMN user_values_text_prime.source_id     IS 'the source of the value as given by the user';
+COMMENT ON COLUMN user_values_text_prime.source_id     IS 'one user can add different values from different sources, that have the same group, but a different value,so the source should be included in the unique key text value';
 COMMENT ON COLUMN user_values_text_prime.last_update   IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
 COMMENT ON COLUMN user_values_text_prime.excluded      IS 'true if a user, but not all, have removed it';
 COMMENT ON COLUMN user_values_text_prime.share_type_id IS 'to restrict the access';
@@ -1664,7 +1649,7 @@ COMMENT ON TABLE user_values_text_big                IS 'to store the user speci
 COMMENT ON COLUMN user_values_text_big.group_id      IS 'the text index for more than 16 phrases to find the text value';
 COMMENT ON COLUMN user_values_text_big.user_id       IS 'the changer of the text value';
 COMMENT ON COLUMN user_values_text_big.text_value    IS 'the user specific text value change';
-COMMENT ON COLUMN user_values_text_big.source_id     IS 'the source of the value as given by the user';
+COMMENT ON COLUMN user_values_text_big.source_id     IS 'one user can add different values from different sources, that have the same group, but a different value,so the source should be included in the unique key text value';
 COMMENT ON COLUMN user_values_text_big.last_update   IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
 COMMENT ON COLUMN user_values_text_big.excluded      IS 'true if a user, but not all, have removed it';
 COMMENT ON COLUMN user_values_text_big.share_type_id IS 'to restrict the access';
@@ -1758,7 +1743,7 @@ COMMENT ON TABLE user_values_time                IS 'for user specific changes o
 COMMENT ON COLUMN user_values_time.group_id      IS 'the 512-bit prime index to find the user time value';
 COMMENT ON COLUMN user_values_time.user_id       IS 'the changer of the time value';
 COMMENT ON COLUMN user_values_time.time_value    IS 'the user specific timestamp change';
-COMMENT ON COLUMN user_values_time.source_id     IS 'the source of the value as given by the user';
+COMMENT ON COLUMN user_values_time.source_id     IS 'one user can add different values from different sources, that have the same group, but a different value,so the source should be included in the unique key time value';
 COMMENT ON COLUMN user_values_time.last_update   IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
 COMMENT ON COLUMN user_values_time.excluded      IS 'true if a user, but not all, have removed it';
 COMMENT ON COLUMN user_values_time.share_type_id IS 'to restrict the access';
@@ -1824,7 +1809,7 @@ COMMENT ON COLUMN user_values_time_prime.phrase_id_3   IS 'phrase id that is wit
 COMMENT ON COLUMN user_values_time_prime.phrase_id_4   IS 'phrase id that is with the user id part of the prime key for a time value';
 COMMENT ON COLUMN user_values_time_prime.user_id       IS 'the changer of the time value';
 COMMENT ON COLUMN user_values_time_prime.time_value    IS 'the user specific timestamp change';
-COMMENT ON COLUMN user_values_time_prime.source_id     IS 'the source of the value as given by the user';
+COMMENT ON COLUMN user_values_time_prime.source_id     IS 'one user can add different values from different sources, that have the same group, but a different value,so the source should be included in the unique key time value';
 COMMENT ON COLUMN user_values_time_prime.last_update   IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
 COMMENT ON COLUMN user_values_time_prime.excluded      IS 'true if a user, but not all, have removed it';
 COMMENT ON COLUMN user_values_time_prime.share_type_id IS 'to restrict the access';
@@ -1878,7 +1863,7 @@ COMMENT ON TABLE user_values_time_big                IS 'to store the user speci
 COMMENT ON COLUMN user_values_time_big.group_id      IS 'the text index for more than 16 phrases to find the time value';
 COMMENT ON COLUMN user_values_time_big.user_id       IS 'the changer of the time value';
 COMMENT ON COLUMN user_values_time_big.time_value    IS 'the user specific timestamp change';
-COMMENT ON COLUMN user_values_time_big.source_id     IS 'the source of the value as given by the user';
+COMMENT ON COLUMN user_values_time_big.source_id     IS 'one user can add different values from different sources, that have the same group, but a different value,so the source should be included in the unique key time value';
 COMMENT ON COLUMN user_values_time_big.last_update   IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
 COMMENT ON COLUMN user_values_time_big.excluded      IS 'true if a user, but not all, have removed it';
 COMMENT ON COLUMN user_values_time_big.share_type_id IS 'to restrict the access';
@@ -1972,7 +1957,7 @@ COMMENT ON TABLE user_values_geo                IS 'for user specific changes of
 COMMENT ON COLUMN user_values_geo.group_id      IS 'the 512-bit prime index to find the user geo value';
 COMMENT ON COLUMN user_values_geo.user_id       IS 'the changer of the geo value';
 COMMENT ON COLUMN user_values_geo.geo_value     IS 'the user specific geolocation change';
-COMMENT ON COLUMN user_values_geo.source_id     IS 'the source of the value as given by the user';
+COMMENT ON COLUMN user_values_geo.source_id     IS 'one user can add different values from different sources, that have the same group, but a different value,so the source should be included in the unique key geo value';
 COMMENT ON COLUMN user_values_geo.last_update   IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
 COMMENT ON COLUMN user_values_geo.excluded      IS 'true if a user, but not all, have removed it';
 COMMENT ON COLUMN user_values_geo.share_type_id IS 'to restrict the access';
@@ -2038,7 +2023,7 @@ COMMENT ON COLUMN user_values_geo_prime.phrase_id_3   IS 'phrase id that is with
 COMMENT ON COLUMN user_values_geo_prime.phrase_id_4   IS 'phrase id that is with the user id part of the prime key for a geo value';
 COMMENT ON COLUMN user_values_geo_prime.user_id       IS 'the changer of the geo value';
 COMMENT ON COLUMN user_values_geo_prime.geo_value     IS 'the user specific geolocation change';
-COMMENT ON COLUMN user_values_geo_prime.source_id     IS 'the source of the value as given by the user';
+COMMENT ON COLUMN user_values_geo_prime.source_id     IS 'one user can add different values from different sources, that have the same group, but a different value, so the source should be included in the unique key geo value';
 COMMENT ON COLUMN user_values_geo_prime.last_update   IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
 COMMENT ON COLUMN user_values_geo_prime.excluded      IS 'true if a user, but not all, have removed it';
 COMMENT ON COLUMN user_values_geo_prime.share_type_id IS 'to restrict the access';
@@ -2092,7 +2077,7 @@ COMMENT ON TABLE user_values_geo_big                IS 'to store the user specif
 COMMENT ON COLUMN user_values_geo_big.group_id      IS 'the text index for more than 16 phrases to find the geo value';
 COMMENT ON COLUMN user_values_geo_big.user_id       IS 'the changer of the geo value';
 COMMENT ON COLUMN user_values_geo_big.geo_value     IS 'the user specific geolocation change';
-COMMENT ON COLUMN user_values_geo_big.source_id     IS 'the source of the value as given by the user';
+COMMENT ON COLUMN user_values_geo_big.source_id     IS 'one user can add different values from different sources, that have the same group, but a different value, so the source should be included in the unique key geo value';
 COMMENT ON COLUMN user_values_geo_big.last_update   IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
 COMMENT ON COLUMN user_values_geo_big.excluded      IS 'true if a user, but not all, have removed it';
 COMMENT ON COLUMN user_values_geo_big.share_type_id IS 'to restrict the access';
@@ -4773,7 +4758,7 @@ CREATE INDEX values_user_idx ON values (user_id);
 --
 -- indexes for table user_values
 --
-ALTER TABLE user_values ADD CONSTRAINT user_values_pkey PRIMARY KEY (group_id, user_id);
+ALTER TABLE user_values ADD CONSTRAINT user_values_pkey PRIMARY KEY (group_id, user_id, source_id);
 CREATE INDEX user_values_user_idx ON user_values (user_id);
 CREATE INDEX user_values_source_idx ON user_values (source_id);
 
@@ -4791,7 +4776,7 @@ CREATE INDEX values_prime_user_idx ON values_prime (user_id);
 --
 -- indexes for table user_values_prime
 --
-CREATE UNIQUE INDEX user_values_prime_pkey ON user_values_prime (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, user_id);
+CREATE UNIQUE INDEX user_values_prime_pkey ON user_values_prime (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, user_id, source_id);
 CREATE INDEX user_values_prime_phrase_id_1_idx ON user_values_prime (phrase_id_1);
 CREATE INDEX user_values_prime_phrase_id_2_idx ON user_values_prime (phrase_id_2);
 CREATE INDEX user_values_prime_phrase_id_3_idx ON user_values_prime (phrase_id_3);
@@ -4808,7 +4793,7 @@ CREATE INDEX values_big_user_idx ON values_big (user_id);
 --
 -- indexes for table user_values_big
 --
-ALTER TABLE user_values_big ADD CONSTRAINT user_values_big_pkey PRIMARY KEY (group_id, user_id);
+ALTER TABLE user_values_big ADD CONSTRAINT user_values_big_pkey PRIMARY KEY (group_id, user_id, source_id);
 CREATE INDEX user_values_big_user_idx ON user_values_big (user_id);
 CREATE INDEX user_values_big_source_idx ON user_values_big (source_id);
 
@@ -4838,7 +4823,7 @@ CREATE INDEX values_text_user_idx ON values_text (user_id);
 --
 -- indexes for table user_values_text
 --
-ALTER TABLE user_values_text ADD CONSTRAINT user_values_text_pkey PRIMARY KEY (group_id, user_id);
+ALTER TABLE user_values_text ADD CONSTRAINT user_values_text_pkey PRIMARY KEY (group_id, user_id, source_id);
 CREATE INDEX user_values_text_user_idx ON user_values_text (user_id);
 CREATE INDEX user_values_text_source_idx ON user_values_text (source_id);
 
@@ -4856,7 +4841,7 @@ CREATE INDEX values_text_prime_user_idx ON values_text_prime (user_id);
 --
 -- indexes for table user_values_text_prime
 --
-CREATE UNIQUE INDEX user_values_text_prime_pkey ON user_values_text_prime (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, user_id);
+CREATE UNIQUE INDEX user_values_text_prime_pkey ON user_values_text_prime (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, user_id, source_id);
 CREATE INDEX user_values_text_prime_phrase_id_1_idx ON user_values_text_prime (phrase_id_1);
 CREATE INDEX user_values_text_prime_phrase_id_2_idx ON user_values_text_prime (phrase_id_2);
 CREATE INDEX user_values_text_prime_phrase_id_3_idx ON user_values_text_prime (phrase_id_3);
@@ -4873,7 +4858,7 @@ CREATE INDEX values_text_big_user_idx ON values_text_big (user_id);
 --
 -- indexes for table user_values_text_big
 --
-ALTER TABLE user_values_text_big ADD CONSTRAINT user_values_text_big_pkey PRIMARY KEY (group_id, user_id);
+ALTER TABLE user_values_text_big ADD CONSTRAINT user_values_text_big_pkey PRIMARY KEY (group_id, user_id, source_id);
 CREATE INDEX user_values_text_big_user_idx ON user_values_text_big (user_id);
 CREATE INDEX user_values_text_big_source_idx ON user_values_text_big (source_id);
 
@@ -4903,7 +4888,7 @@ CREATE INDEX values_time_user_idx ON values_time (user_id);
 --
 -- indexes for table user_values_time
 --
-ALTER TABLE user_values_time ADD CONSTRAINT user_values_time_pkey PRIMARY KEY (group_id, user_id);
+ALTER TABLE user_values_time ADD CONSTRAINT user_values_time_pkey PRIMARY KEY (group_id, user_id, source_id);
 CREATE INDEX user_values_time_user_idx ON user_values_time (user_id);
 CREATE INDEX user_values_time_source_idx ON user_values_time (source_id);
 
@@ -4921,7 +4906,7 @@ CREATE INDEX values_time_prime_user_idx ON values_time_prime (user_id);
 --
 -- indexes for table user_values_time_prime
 --
-CREATE UNIQUE INDEX user_values_time_prime_pkey ON user_values_time_prime (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, user_id);
+CREATE UNIQUE INDEX user_values_time_prime_pkey ON user_values_time_prime (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, user_id, source_id);
 CREATE INDEX user_values_time_prime_phrase_id_1_idx ON user_values_time_prime (phrase_id_1);
 CREATE INDEX user_values_time_prime_phrase_id_2_idx ON user_values_time_prime (phrase_id_2);
 CREATE INDEX user_values_time_prime_phrase_id_3_idx ON user_values_time_prime (phrase_id_3);
@@ -4938,7 +4923,7 @@ CREATE INDEX values_time_big_user_idx ON values_time_big (user_id);
 --
 -- indexes for table user_values_time_big
 --
-ALTER TABLE user_values_time_big ADD CONSTRAINT user_values_time_big_pkey PRIMARY KEY (group_id, user_id);
+ALTER TABLE user_values_time_big ADD CONSTRAINT user_values_time_big_pkey PRIMARY KEY (group_id, user_id, source_id);
 CREATE INDEX user_values_time_big_user_idx ON user_values_time_big (user_id);
 CREATE INDEX user_values_time_big_source_idx ON user_values_time_big (source_id);
 
@@ -4968,7 +4953,7 @@ CREATE INDEX values_geo_user_idx ON values_geo (user_id);
 --
 -- indexes for table user_values_geo
 --
-ALTER TABLE user_values_geo ADD CONSTRAINT user_values_geo_pkey PRIMARY KEY (group_id, user_id);
+ALTER TABLE user_values_geo ADD CONSTRAINT user_values_geo_pkey PRIMARY KEY (group_id, user_id, source_id);
 CREATE INDEX user_values_geo_user_idx ON user_values_geo (user_id);
 CREATE INDEX user_values_geo_source_idx ON user_values_geo (source_id);
 
@@ -4986,7 +4971,7 @@ CREATE INDEX values_geo_prime_user_idx ON values_geo_prime (user_id);
 --
 -- indexes for table user_values_geo_prime
 --
-CREATE UNIQUE INDEX user_values_geo_prime_pkey ON user_values_geo_prime (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, user_id);
+CREATE UNIQUE INDEX user_values_geo_prime_pkey ON user_values_geo_prime (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, user_id, source_id);
 CREATE INDEX user_values_geo_prime_phrase_id_1_idx ON user_values_geo_prime (phrase_id_1);
 CREATE INDEX user_values_geo_prime_phrase_id_2_idx ON user_values_geo_prime (phrase_id_2);
 CREATE INDEX user_values_geo_prime_phrase_id_3_idx ON user_values_geo_prime (phrase_id_3);
@@ -5003,7 +4988,7 @@ CREATE INDEX values_geo_big_user_idx ON values_geo_big (user_id);
 --
 -- indexes for table user_values_geo_big
 --
-ALTER TABLE user_values_geo_big ADD CONSTRAINT user_values_geo_big_pkey PRIMARY KEY (group_id, user_id);
+ALTER TABLE user_values_geo_big ADD CONSTRAINT user_values_geo_big_pkey PRIMARY KEY (group_id, user_id, source_id);
 CREATE INDEX user_values_geo_big_user_idx ON user_values_geo_big (user_id);
 CREATE INDEX user_values_geo_big_source_idx ON user_values_geo_big (source_id);
 

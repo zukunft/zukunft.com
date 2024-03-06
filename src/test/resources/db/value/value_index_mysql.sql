@@ -30,7 +30,7 @@ ALTER TABLE `values`
 -- indexes for table user_values
 --
 ALTER TABLE user_values
-    ADD PRIMARY KEY (group_id, user_id),
+    ADD PRIMARY KEY (group_id, user_id, source_id),
     ADD KEY user_values_user_idx (user_id),
     ADD KEY user_values_source_idx (source_id);
 
@@ -50,7 +50,7 @@ ALTER TABLE values_prime
 -- indexes for table user_values_prime
 --
 ALTER TABLE user_values_prime
-    ADD PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, user_id),
+    ADD PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, user_id, source_id),
     ADD KEY user_values_prime_phrase_id_1_idx (phrase_id_1),
     ADD KEY user_values_prime_phrase_id_2_idx (phrase_id_2),
     ADD KEY user_values_prime_phrase_id_3_idx (phrase_id_3),
@@ -70,7 +70,7 @@ ALTER TABLE values_big
 -- indexes for table user_values_big
 --
 ALTER TABLE user_values_big
-    ADD PRIMARY KEY (group_id, user_id),
+    ADD PRIMARY KEY (group_id, user_id, source_id),
     ADD KEY user_values_big_user_idx (user_id),
     ADD KEY user_values_big_source_idx (source_id);
 
@@ -105,7 +105,7 @@ ALTER TABLE values_text
 -- indexes for table user_values_text
 --
 ALTER TABLE user_values_text
-    ADD PRIMARY KEY (group_id, user_id),
+    ADD PRIMARY KEY (group_id, user_id, source_id),
     ADD KEY user_values_text_user_idx (user_id),
     ADD KEY user_values_text_source_idx (source_id);
 
@@ -125,7 +125,7 @@ ALTER TABLE values_text_prime
 -- indexes for table user_values_text_prime
 --
 ALTER TABLE user_values_text_prime
-    ADD PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, user_id),
+    ADD PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, user_id, source_id),
     ADD KEY user_values_text_prime_phrase_id_1_idx (phrase_id_1),
     ADD KEY user_values_text_prime_phrase_id_2_idx (phrase_id_2),
     ADD KEY user_values_text_prime_phrase_id_3_idx (phrase_id_3),
@@ -145,7 +145,7 @@ ALTER TABLE values_text_big
 -- indexes for table user_values_text_big
 --
 ALTER TABLE user_values_text_big
-    ADD PRIMARY KEY (group_id, user_id),
+    ADD PRIMARY KEY (group_id, user_id, source_id),
     ADD KEY user_values_text_big_user_idx (user_id),
     ADD KEY user_values_text_big_source_idx (source_id);
 
@@ -181,7 +181,7 @@ ALTER TABLE values_time
 -- indexes for table user_values_time
 --
 ALTER TABLE user_values_time
-    ADD PRIMARY KEY (group_id, user_id),
+    ADD PRIMARY KEY (group_id, user_id, source_id),
     ADD KEY user_values_time_user_idx (user_id),
     ADD KEY user_values_time_source_idx (source_id);
 
@@ -201,7 +201,7 @@ ALTER TABLE values_time_prime
 -- indexes for table user_values_time_prime
 --
 ALTER TABLE user_values_time_prime
-    ADD PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, user_id),
+    ADD PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, user_id, source_id),
     ADD KEY user_values_time_prime_phrase_id_1_idx (phrase_id_1),
     ADD KEY user_values_time_prime_phrase_id_2_idx (phrase_id_2),
     ADD KEY user_values_time_prime_phrase_id_3_idx (phrase_id_3),
@@ -221,7 +221,7 @@ ALTER TABLE values_time_big
 -- indexes for table user_values_time_big
 --
 ALTER TABLE user_values_time_big
-    ADD PRIMARY KEY (group_id, user_id),
+    ADD PRIMARY KEY (group_id, user_id, source_id),
     ADD KEY user_values_time_big_user_idx (user_id),
     ADD KEY user_values_time_big_source_idx (source_id);
 
@@ -257,7 +257,7 @@ ALTER TABLE values_geo
 -- indexes for table user_values_geo
 --
 ALTER TABLE user_values_geo
-    ADD PRIMARY KEY (group_id, user_id),
+    ADD PRIMARY KEY (group_id, user_id, source_id),
     ADD KEY user_values_geo_user_idx (user_id),
     ADD KEY user_values_geo_source_idx (source_id);
 
@@ -277,7 +277,7 @@ ALTER TABLE values_geo_prime
 -- indexes for table user_values_geo_prime
 --
 ALTER TABLE user_values_geo_prime
-    ADD PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, user_id),
+    ADD PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, user_id, source_id),
     ADD KEY user_values_geo_prime_phrase_id_1_idx (phrase_id_1),
     ADD KEY user_values_geo_prime_phrase_id_2_idx (phrase_id_2),
     ADD KEY user_values_geo_prime_phrase_id_3_idx (phrase_id_3),
@@ -297,6 +297,6 @@ ALTER TABLE values_geo_big
 -- indexes for table user_values_geo_big
 --
 ALTER TABLE user_values_geo_big
-    ADD PRIMARY KEY (group_id, user_id),
+    ADD PRIMARY KEY (group_id, user_id, source_id),
     ADD KEY user_values_geo_big_user_idx (user_id),
     ADD KEY user_values_geo_big_source_idx (source_id);

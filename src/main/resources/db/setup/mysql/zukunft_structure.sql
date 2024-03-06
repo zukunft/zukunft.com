@@ -963,19 +963,6 @@ CREATE TABLE IF NOT EXISTS user_sources (
     COMMENT 'for the original sources for the numeric,time and geo values';
 
 --
--- Table structure for table`source_values`
---
-
-CREATE TABLE IF NOT EXISTS `source_values`
-(
-    `group_id`     int(11) NOT NULL,
-    `source_id`    int(11) NOT NULL,
-    `user_id`      int(11) NOT NULL,
-    `source_value` double  NOT NULL
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8 COMMENT ='one user can add different value, which should be the same, but are different  ';
-
---
 -- Table structure for table`import_source`
 --
 
@@ -1039,6 +1026,7 @@ CREATE TABLE IF NOT EXISTS `user_refs`
 
 
 
+
 -- --------------------------------------------------------
 
 --
@@ -1093,7 +1081,7 @@ CREATE TABLE IF NOT EXISTS user_values
     group_id      char(112)     NOT NULL COMMENT 'the 512-bit prime index to find the user numeric value',
     user_id       bigint        NOT NULL COMMENT 'the changer of the numeric value',
     numeric_value double    DEFAULT NULL COMMENT 'the user specific numeric value change',
-    source_id     bigint    DEFAULT NULL COMMENT 'the source of the value as given by the user',
+    source_id     bigint    DEFAULT NULL COMMENT 'one user can add different values from different sources, that have the same group, but a different value, so the source should be included in the unique key numeric value',
     last_update   timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
     excluded      smallint  DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
     share_type_id smallint  DEFAULT NULL COMMENT 'to restrict the access',
@@ -1133,7 +1121,7 @@ CREATE TABLE IF NOT EXISTS user_values_prime
     phrase_id_4   smallint  DEFAULT 0    COMMENT 'phrase id that is with the user id  part of the prime key for a numeric value',
     user_id       bigint        NOT NULL COMMENT 'the changer of the numeric value',
     numeric_value double    DEFAULT NULL COMMENT 'the user specific numeric value change',
-    source_id     bigint    DEFAULT NULL COMMENT 'the source of the value as given by the user',
+    source_id     bigint    DEFAULT NULL COMMENT 'one user can add different values from different sources, that have the same group, but a different value, so the source should be included in the unique key numeric value',
     last_update   timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
     excluded      smallint  DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
     share_type_id smallint  DEFAULT NULL COMMENT 'to restrict the access',
@@ -1167,7 +1155,7 @@ CREATE TABLE IF NOT EXISTS user_values_big
     group_id      char(255)     NOT NULL COMMENT 'the text index for more than 16 phrases to find the numeric value',
     user_id       bigint        NOT NULL COMMENT 'the changer of the numeric value',
     numeric_value double    DEFAULT NULL COMMENT 'the user specific numeric value change',
-    source_id     bigint    DEFAULT NULL COMMENT 'the source of the value as given by the user',
+    source_id     bigint    DEFAULT NULL COMMENT 'one user can add different values from different sources, that have the same group, but a different value, so the source should be included in the unique key numeric value',
     last_update   timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
     excluded      smallint  DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
     share_type_id smallint  DEFAULT NULL COMMENT 'to restrict the access',
@@ -1228,7 +1216,7 @@ CREATE TABLE IF NOT EXISTS user_values_text
     group_id      char(112)     NOT NULL COMMENT 'the 512-bit prime index to find the user text value',
     user_id       bigint        NOT NULL COMMENT 'the changer of the text value',
     text_value    text      DEFAULT NULL COMMENT 'the user specific text value change',
-    source_id     bigint    DEFAULT NULL COMMENT 'the source of the value as given by the user',
+    source_id     bigint    DEFAULT NULL COMMENT 'one user can add different values from different sources, that have the same group, but a different value, so the source should be included in the unique key text value',
     last_update   timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
     excluded      smallint  DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
     share_type_id smallint  DEFAULT NULL COMMENT 'to restrict the access',
@@ -1268,7 +1256,7 @@ CREATE TABLE IF NOT EXISTS user_values_text_prime
     phrase_id_4   smallint  DEFAULT 0    COMMENT 'phrase id that is with the user id  part of the prime key for a text value',
     user_id       bigint        NOT NULL COMMENT 'the changer of the text value',
     text_value    text      DEFAULT NULL COMMENT 'the user specific text value change',
-    source_id     bigint    DEFAULT NULL COMMENT 'the source of the value as given by the user',
+    source_id     bigint    DEFAULT NULL COMMENT 'one user can add different values from different sources, that have the same group, but a different value, so the source should be included in the unique key text value',
     last_update   timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
     excluded      smallint  DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
     share_type_id smallint  DEFAULT NULL COMMENT 'to restrict the access',
@@ -1302,7 +1290,7 @@ CREATE TABLE IF NOT EXISTS user_values_text_big
     group_id      char(255)     NOT NULL COMMENT 'the text index for more than 16 phrases to find the text value',
     user_id       bigint        NOT NULL COMMENT 'the changer of the text value',
     text_value    text      DEFAULT NULL COMMENT 'the user specific text value change',
-    source_id     bigint    DEFAULT NULL COMMENT 'the source of the value as given by the user',
+    source_id     bigint    DEFAULT NULL COMMENT 'one user can add different values from different sources, that have the same group, but a different value, so the source should be included in the unique key text value',
     last_update   timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
     excluded      smallint  DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
     share_type_id smallint  DEFAULT NULL COMMENT 'to restrict the access',
@@ -1363,7 +1351,7 @@ CREATE TABLE IF NOT EXISTS user_values_time
     group_id      char(112)     NOT NULL COMMENT 'the 512-bit prime index to find the user time value',
     user_id       bigint        NOT NULL COMMENT 'the changer of the time value',
     time_value    timestamp DEFAULT NULL COMMENT 'the user specific timestamp change',
-    source_id     bigint    DEFAULT NULL COMMENT 'the source of the value as given by the user',
+    source_id     bigint    DEFAULT NULL COMMENT 'one user can add different values from different sources, that have the same group, but a different value, so the source should be included in the unique key time value',
     last_update   timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
     excluded      smallint  DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
     share_type_id smallint  DEFAULT NULL COMMENT 'to restrict the access',
@@ -1403,7 +1391,7 @@ CREATE TABLE IF NOT EXISTS user_values_time_prime
     phrase_id_4   smallint  DEFAULT 0    COMMENT 'phrase id that is with the user id  part of the prime key for a time value',
     user_id       bigint        NOT NULL COMMENT 'the changer of the time value',
     time_value    timestamp DEFAULT NULL COMMENT 'the user specific timestamp change',
-    source_id     bigint    DEFAULT NULL COMMENT 'the source of the value as given by the user',
+    source_id     bigint    DEFAULT NULL COMMENT 'one user can add different values from different sources, that have the same group, but a different value, so the source should be included in the unique key time value',
     last_update   timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
     excluded      smallint  DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
     share_type_id smallint  DEFAULT NULL COMMENT 'to restrict the access',
@@ -1437,7 +1425,7 @@ CREATE TABLE IF NOT EXISTS user_values_time_big
     group_id      char(255)     NOT NULL COMMENT 'the text index for more than 16 phrases to find the time value',
     user_id       bigint        NOT NULL COMMENT 'the changer of the time value',
     time_value    timestamp DEFAULT NULL COMMENT 'the user specific timestamp change',
-    source_id     bigint    DEFAULT NULL COMMENT 'the source of the value as given by the user',
+    source_id     bigint    DEFAULT NULL COMMENT 'one user can add different values from different sources, that have the same group, but a different value, so the source should be included in the unique key time value',
     last_update   timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
     excluded      smallint  DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
     share_type_id smallint  DEFAULT NULL COMMENT 'to restrict the access',
@@ -1498,7 +1486,7 @@ CREATE TABLE IF NOT EXISTS user_values_geo
     group_id      char(112)     NOT NULL COMMENT 'the 512-bit prime index to find the user geo value',
     user_id       bigint        NOT NULL COMMENT 'the changer of the geo value',
     geo_value     point     DEFAULT NULL COMMENT 'the user specific geolocation change',
-    source_id     bigint    DEFAULT NULL COMMENT 'the source of the value as given by the user',
+    source_id     bigint    DEFAULT NULL COMMENT 'one user can add different values from different sources, that have the same group, but a different value, so the source should be included in the unique key geo value',
     last_update   timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
     excluded      smallint  DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
     share_type_id smallint  DEFAULT NULL COMMENT 'to restrict the access',
@@ -1538,7 +1526,7 @@ CREATE TABLE IF NOT EXISTS user_values_geo_prime
     phrase_id_4   smallint  DEFAULT 0    COMMENT 'phrase id that is with the user id  part of the prime key for a geo value',
     user_id       bigint        NOT NULL COMMENT 'the changer of the geo value',
     geo_value     point     DEFAULT NULL COMMENT 'the user specific geolocation change',
-    source_id     bigint    DEFAULT NULL COMMENT 'the source of the value as given by the user',
+    source_id     bigint    DEFAULT NULL COMMENT 'one user can add different values from different sources, that have the same group, but a different value, so the source should be included in the unique key geo value',
     last_update   timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
     excluded      smallint  DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
     share_type_id smallint  DEFAULT NULL COMMENT 'to restrict the access',
@@ -1572,7 +1560,7 @@ CREATE TABLE IF NOT EXISTS user_values_geo_big
     group_id      char(255)     NOT NULL COMMENT 'the text index for more than 16 phrases to find the geo value',
     user_id       bigint        NOT NULL COMMENT 'the changer of the geo value',
     geo_value     point     DEFAULT NULL COMMENT 'the user specific geolocation change',
-    source_id     bigint    DEFAULT NULL COMMENT 'the source of the value as given by the user',
+    source_id     bigint    DEFAULT NULL COMMENT 'one user can add different values from different sources, that have the same group, but a different value, so the source should be included in the unique key geo value',
     last_update   timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
     excluded      smallint  DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
     share_type_id smallint  DEFAULT NULL COMMENT 'to restrict the access',
@@ -3738,7 +3726,7 @@ ALTER TABLE `values`
 -- indexes for table user_values
 --
 ALTER TABLE user_values
-    ADD PRIMARY KEY (group_id, user_id),
+    ADD PRIMARY KEY (group_id, user_id, source_id),
     ADD KEY user_values_user_idx (user_id),
     ADD KEY user_values_source_idx (source_id);
 
@@ -3758,7 +3746,7 @@ ALTER TABLE values_prime
 -- indexes for table user_values_prime
 --
 ALTER TABLE user_values_prime
-    ADD PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, user_id),
+    ADD PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, user_id, source_id),
     ADD KEY user_values_prime_phrase_id_1_idx (phrase_id_1),
     ADD KEY user_values_prime_phrase_id_2_idx (phrase_id_2),
     ADD KEY user_values_prime_phrase_id_3_idx (phrase_id_3),
@@ -3778,7 +3766,7 @@ ALTER TABLE values_big
 -- indexes for table user_values_big
 --
 ALTER TABLE user_values_big
-    ADD PRIMARY KEY (group_id, user_id),
+    ADD PRIMARY KEY (group_id, user_id, source_id),
     ADD KEY user_values_big_user_idx (user_id),
     ADD KEY user_values_big_source_idx (source_id);
 
@@ -3813,7 +3801,7 @@ ALTER TABLE values_text
 -- indexes for table user_values_text
 --
 ALTER TABLE user_values_text
-    ADD PRIMARY KEY (group_id, user_id),
+    ADD PRIMARY KEY (group_id, user_id, source_id),
     ADD KEY user_values_text_user_idx (user_id),
     ADD KEY user_values_text_source_idx (source_id);
 
@@ -3833,7 +3821,7 @@ ALTER TABLE values_text_prime
 -- indexes for table user_values_text_prime
 --
 ALTER TABLE user_values_text_prime
-    ADD PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, user_id),
+    ADD PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, user_id, source_id),
     ADD KEY user_values_text_prime_phrase_id_1_idx (phrase_id_1),
     ADD KEY user_values_text_prime_phrase_id_2_idx (phrase_id_2),
     ADD KEY user_values_text_prime_phrase_id_3_idx (phrase_id_3),
@@ -3853,7 +3841,7 @@ ALTER TABLE values_text_big
 -- indexes for table user_values_text_big
 --
 ALTER TABLE user_values_text_big
-    ADD PRIMARY KEY (group_id, user_id),
+    ADD PRIMARY KEY (group_id, user_id, source_id),
     ADD KEY user_values_text_big_user_idx (user_id),
     ADD KEY user_values_text_big_source_idx (source_id);
 
@@ -3889,7 +3877,7 @@ ALTER TABLE values_time
 -- indexes for table user_values_time
 --
 ALTER TABLE user_values_time
-    ADD PRIMARY KEY (group_id, user_id),
+    ADD PRIMARY KEY (group_id, user_id, source_id),
     ADD KEY user_values_time_user_idx (user_id),
     ADD KEY user_values_time_source_idx (source_id);
 
@@ -3909,7 +3897,7 @@ ALTER TABLE values_time_prime
 -- indexes for table user_values_time_prime
 --
 ALTER TABLE user_values_time_prime
-    ADD PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, user_id),
+    ADD PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, user_id, source_id),
     ADD KEY user_values_time_prime_phrase_id_1_idx (phrase_id_1),
     ADD KEY user_values_time_prime_phrase_id_2_idx (phrase_id_2),
     ADD KEY user_values_time_prime_phrase_id_3_idx (phrase_id_3),
@@ -3929,7 +3917,7 @@ ALTER TABLE values_time_big
 -- indexes for table user_values_time_big
 --
 ALTER TABLE user_values_time_big
-    ADD PRIMARY KEY (group_id, user_id),
+    ADD PRIMARY KEY (group_id, user_id, source_id),
     ADD KEY user_values_time_big_user_idx (user_id),
     ADD KEY user_values_time_big_source_idx (source_id);
 
@@ -3965,7 +3953,7 @@ ALTER TABLE values_geo
 -- indexes for table user_values_geo
 --
 ALTER TABLE user_values_geo
-    ADD PRIMARY KEY (group_id, user_id),
+    ADD PRIMARY KEY (group_id, user_id, source_id),
     ADD KEY user_values_geo_user_idx (user_id),
     ADD KEY user_values_geo_source_idx (source_id);
 
@@ -3985,7 +3973,7 @@ ALTER TABLE values_geo_prime
 -- indexes for table user_values_geo_prime
 --
 ALTER TABLE user_values_geo_prime
-    ADD PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, user_id),
+    ADD PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, user_id, source_id),
     ADD KEY user_values_geo_prime_phrase_id_1_idx (phrase_id_1),
     ADD KEY user_values_geo_prime_phrase_id_2_idx (phrase_id_2),
     ADD KEY user_values_geo_prime_phrase_id_3_idx (phrase_id_3),
@@ -4005,7 +3993,7 @@ ALTER TABLE values_geo_big
 -- indexes for table user_values_geo_big
 --
 ALTER TABLE user_values_geo_big
-    ADD PRIMARY KEY (group_id, user_id),
+    ADD PRIMARY KEY (group_id, user_id, source_id),
     ADD KEY user_values_geo_big_user_idx (user_id),
     ADD KEY user_values_geo_big_source_idx (source_id);
 

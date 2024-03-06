@@ -83,6 +83,7 @@ class sandbox_value extends sandbox_multi
     const TYPE_TEXT = 'text';
     const TYPE_TIME = 'time';
     const TYPE_GEO = 'geo';
+    const FLD_USER_SOURCE_COM = 'one user can add different values from different sources, that have the same group, but a different value, so the source should be included in the unique key';
 
     // the database field names used for all value tables e.g. also for results
     const FLD_ID_PREFIX = 'phrase_id_';
@@ -142,6 +143,10 @@ class sandbox_value extends sandbox_multi
     );
     const FLD_ALL_SOURCE = array(
         [source::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, source::class, 'the source of the value as given by the user'],
+    );
+    // TODO use this for the user tables
+    const FLD_USER_SOURCE = array(
+        [source::FLD_ID, sql_field_type::KEY_PART_INT, sql_field_default::NULL, sql::INDEX, source::class, self::FLD_USER_SOURCE_COM],
     );
     const FLD_ALL_CHANGED = array(
         [value::FLD_LAST_UPDATE, sql_field_type::TIME, sql_field_default::NULL, '', '', 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation'],
@@ -425,12 +430,21 @@ class sandbox_value extends sandbox_multi
             $this::FLD_ALL_CHANGED,
             $this::FLD_ALL_OWNER,
             sandbox::FLD_LST_ALL);
-        $std_usr_fields = array_merge(
-            $this::FLD_ALL_CHANGER,
-            $fld_par_usr,
-            $this::FLD_ALL_SOURCE,
-            $this::FLD_ALL_CHANGED,
-            sandbox::FLD_LST_ALL);
+        if ($this::class == result::class) {
+            $std_usr_fields = array_merge(
+                $this::FLD_ALL_CHANGER,
+                $fld_par_usr,
+                $this::FLD_ALL_SOURCE,
+                $this::FLD_ALL_CHANGED,
+                sandbox::FLD_LST_ALL);
+        } else {
+            $std_usr_fields = array_merge(
+                $this::FLD_ALL_CHANGER,
+                $fld_par_usr,
+                $this::FLD_USER_SOURCE,
+                $this::FLD_ALL_CHANGED,
+                sandbox::FLD_LST_ALL);
+        }
         $fields = array_merge(self::FLD_KEY, $this::FLD_ALL_SOURCE_GROUP, $std_fields);
 
         // most: for values or results based on up to 16 phrases
