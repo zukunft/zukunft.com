@@ -91,6 +91,7 @@ class group_list extends sandbox_list
 
     /**
      * create an SQL statement to retrieve a list of groups linked to the given phrase from the database
+     * TODO review to load the prime group by id
      *
      * @param sql $sc with the target db_type set
      * @param phrase $phr if set to get all values for this phrase
@@ -138,7 +139,7 @@ class group_list extends sandbox_list
     /**
      * create an SQL statement to retrieve a list of values linked to a phrase from the database
      * from a single table
-     *     *
+     *
      * @param sql $sc with the target db_type set
      * @param phrase $phr if set to get all values for this phrase
      * @param array $tbl_typ_lst the table types for this table

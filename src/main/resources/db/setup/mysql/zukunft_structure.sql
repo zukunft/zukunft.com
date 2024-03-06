@@ -905,83 +905,6 @@ CREATE TABLE IF NOT EXISTS `user_groups_big`
 -- --------------------------------------------------------
 
 --
--- Table structure to link phrases to a group
--- TODO deprecate and use like on group_id instead
---
-
-CREATE TABLE IF NOT EXISTS `group_links`
-(
-    `group_id`  char(112) NOT NULL,
-    `phrase_id` int(11) NOT NULL
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8 COMMENT = 'link phrases to a phrase group for database based selections';
-
---
--- Table structure to store user specific ex- or includes of single link of phrases to groups
---
-
-CREATE TABLE IF NOT EXISTS `user_group_links`
-(
-    `group_id`  char(112) NOT NULL,
-    `phrase_id` int(11) NOT NULL,
-    `user_id`   int(11) DEFAULT NULL,
-    `excluded`  smallint DEFAULT NULL
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8 COMMENT = 'to store user specific ex- or includes of single link of phrases to groups';
-
---
--- Table structure to link phrases to a group
--- TODO deprecate and use like on binary format of group_id instead
---
-
-CREATE TABLE IF NOT EXISTS `group_prime_links`
-(
-    `group_id`  int(11) NOT NULL,
-    `phrase_id` int(11) NOT NULL
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8 COMMENT = 'link phrases to a short phrase group for database based selections';
-
---
--- Table structure to store user specific ex- or includes of single link of phrases to groups
---
-
-CREATE TABLE IF NOT EXISTS `user_group_prime_links`
-(
-    `group_id`  int(11) NOT NULL,
-    `phrase_id` int(11) NOT NULL,
-    `user_id`   int(11) DEFAULT NULL,
-    `excluded`  smallint DEFAULT NULL
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8 COMMENT = 'user specific link to groups with up to four prime phrase';
-
---
--- Table structure to link up more than 16 phrases to a group
--- TODO deprecate and use like on group_id instead
---
-
-CREATE TABLE IF NOT EXISTS `group_big_links`
-(
-    `group_id`  text NOT NULL,
-    `phrase_id` int(11) NOT NULL
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8 COMMENT = 'link phrases to a short phrase group for database based selections';
-
---
--- Table structure to store user specific ex- or includes of single link of phrases to groups
---
-
-CREATE TABLE IF NOT EXISTS `user_group_big_links`
-(
-    `group_id`  text NOT NULL,
-    `phrase_id` int(11) NOT NULL,
-    `user_id`   int(11) DEFAULT NULL,
-    `excluded`  smallint DEFAULT NULL
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8 COMMENT = 'user specific link to groups with up to four prime phrase';
-
--- --------------------------------------------------------
-
---
 -- table structure to link predefined behaviour to a source
 --
 
@@ -4649,21 +4572,6 @@ ALTER TABLE `import_source`
     ADD PRIMARY KEY (`import_source_id`);
 
 --
--- Indexes for table`phrase_groups`
---
-ALTER TABLE `groups`
-    ADD PRIMARY KEY (group_id),
-    ADD UNIQUE KEY `term_ids` (`word_ids`, `triple_ids`);
-
---
--- Indexes for table`phrase_group_word_links`
---
-ALTER TABLE group_links
-    ADD PRIMARY KEY (`phrase_group_word_link_id`),
-    ADD KEY `phrase_group_id` (`phrase_group_id`),
-    ADD KEY `word_id` (`word_id`);
-
---
 -- Indexes for table`phrase_group_triple_links`
 --
 ALTER TABLE `phrase_group_triple_links`
@@ -4846,14 +4754,6 @@ ALTER TABLE `user_official_types`
 ALTER TABLE user_groups
     ADD UNIQUE KEY `phrase_group_id` (group_id, `user_id`),
     ADD KEY `phrase_group_id_2` (group_id),
-    ADD KEY `user_id` (`user_id`);
-
---
--- Indexes for table`user_phrase_group_word_links`
---
-ALTER TABLE user_group_links
-    ADD UNIQUE KEY `phrase_group_word_link_id` (`phrase_group_word_link_id`, `user_id`),
-    ADD KEY `phrase_group_word_link_id_2` (`phrase_group_word_link_id`),
     ADD KEY `user_id` (`user_id`);
 
 --
@@ -5250,16 +5150,7 @@ ALTER TABLE `language_forms`
 --
 ALTER TABLE `groups`
     MODIFY group_id int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table`phrase_group_word_links`
---
-ALTER TABLE group_links
-    MODIFY `phrase_group_word_link_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table`phrase_group_triple_links`
---
-ALTER TABLE `phrase_group_triple_links`
-    MODIFY `phrase_group_triple_link_id` int(11) NOT NULL AUTO_INCREMENT;
+
 --
 -- AUTO_INCREMENT for table`protection_types`
 --
@@ -5979,20 +5870,6 @@ ALTER TABLE `user_formula_links`
 ALTER TABLE user_groups
     ADD CONSTRAINT `user_phrase_groups_fk_1` FOREIGN KEY (group_id) REFERENCES `groups` (group_id),
     ADD CONSTRAINT `user_phrase_groups_fk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
-
---
--- Constraints for table`user_phrase_group_word_links`
---
-ALTER TABLE user_group_links
-    ADD CONSTRAINT `user_phrase_group_word_links_fk_1` FOREIGN KEY (`phrase_group_word_link_id`) REFERENCES user_group_links (`phrase_group_word_link_id`),
-    ADD CONSTRAINT `user_phrase_group_word_links_fk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
-
---
--- Constraints for table`user_phrase_group_triple_links`
---
-ALTER TABLE `user_phrase_group_triple_links`
-    ADD CONSTRAINT `user_phrase_group_triple_links_fk_1` FOREIGN KEY (`phrase_group_triple_link_id`) REFERENCES `phrase_group_triple_links` (`phrase_group_triple_link_id`),
-    ADD CONSTRAINT `user_phrase_group_triple_links_fk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
 
 -- --------------------------------------------------------
 

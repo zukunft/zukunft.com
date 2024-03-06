@@ -1383,18 +1383,6 @@ CREATE INDEX user_groups_big_idx ON user_groups (group_id);
 CREATE INDEX user_groups_big_user_idx ON user_groups (user_id);
 
 --
--- Indexes for table group_links
---
-CREATE UNIQUE INDEX group_link_idx ON group_link (group_id, phrase_id);
-CREATE INDEX group_link_phrase_idx ON group_link (phrase_id);
-
---
--- Indexes for table user_group_links
---
-CREATE UNIQUE INDEX user_group_link_idx ON user_group_link (group_id, phrase_id, user_id);
-CREATE INDEX user_group_link_phrase_idx ON user_group_link (phrase_id, user_id);
-
---
 -- Indexes for table prime group links
 --
 CREATE UNIQUE INDEX groups_prime_link_idx ON groups_prime_link (group_id, phrase_id);
