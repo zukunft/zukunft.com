@@ -91,6 +91,7 @@ use DateTime;
 use Exception;
 use mysqli;
 use mysqli_result;
+use PDOException;
 
 class sql_db
 {
@@ -3697,7 +3698,14 @@ class sql_db
                         } else {
                             if ($this->class != sql_db::TBL_VALUE_TIME_SERIES_DATA) {
                                 if (is_resource($sql_result) or $sql_result::class == 'PgSql\Result') {
-                                    $result = pg_fetch_array($sql_result)[0];
+                                    try {
+                                        $result = pg_fetch_array($sql_result);
+                                        if (is_array($result)) {
+                                            $result = $result[0];
+                                        }
+                                    } catch (PDOException $e) {
+                                        log_err('failed result catch (' . $sql . ')');
+                                    }
                                 } else {
                                     // TODO get the correct db number
                                     $result = 0;

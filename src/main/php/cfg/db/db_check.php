@@ -439,9 +439,6 @@ class db_check
      */
     function db_fill_code_links(sql_db $db_con): void
     {
-        global $debug;
-        $lib = new library();
-
         // first of all set the database version if not yet done
         $cfg = new config();
         $cfg->check(config::VERSION_DB, PRG_VERSION, $db_con);
@@ -449,83 +446,7 @@ class db_check
         // get the list of CSV and loop
         $csv_file_list = unserialize(BASE_CODE_LINK_FILES);
         foreach ($csv_file_list as $csv_file_name) {
-            // load the csv
-            $csv_path = PATH_BASE_CODE_LINK_FILES . $csv_file_name . BASE_CODE_LINK_FILE_TYPE;
-
-            $row = 1;
-            $table_name = $csv_file_name;
-            // TODO change table names to singular form
-            if ($table_name == 'sys_log_status') {
-                $db_type = $table_name;
-            } else {
-                $db_type = substr($table_name, 0, -1);
-            }
-            // TODO ignore empty rows
-            // TODO ignore comma within text e.g. allow 'one, two and three'
-            log_debug('load "' . $table_name . '"', $debug - 6);
-            if (($handle = fopen($csv_path, "r")) !== FALSE) {
-                $continue = true;
-                $id_col_name = '';
-                $col_names = array();
-                while (($data = fgetcsv($handle, 0, ",", "'")) !== FALSE) {
-                    if ($continue) {
-                        if ($row == 1) {
-                            // check if the csv column names match the table names
-                            if (!$db_con->check_column_names($table_name, $lib->array_trim($data))) {
-                                $continue = false;
-                            } else {
-                                $col_names = $lib->array_trim($data);
-                            }
-                            // check if the first column name is the id col
-                            $id_col_name = $data[0];
-                            if (!str_ends_with($id_col_name, sql_db::FLD_ID)) {
-                                $continue = false;
-                            }
-                        } else {
-                            // init row update
-                            $update_col_names = array();
-                            $update_col_values = array();
-                            // get the row id which is expected to be always in the first column
-                            $id = $data[0];
-                            // check if the row id exists
-                            $qp = $this->db_fill_code_link_sql($table_name, $id_col_name, $id);
-                            $db_row = $db_con->get1($qp);
-                            // check if the db row needs to be added
-                            if ($db_row == null) {
-                                // add the row
-                                for ($i = 0; $i < count($data); $i++) {
-                                    $update_col_names[] = $col_names[$i];
-                                    $update_col_values[] = trim($data[$i]);
-                                }
-                                $db_con->set_class($db_type);
-                                $db_con->insert_old($update_col_names, $update_col_values);
-                            } else {
-                                // check, which values need to be updates
-                                for ($i = 1; $i < count($data); $i++) {
-                                    $col_name = $col_names[$i];
-                                    if (array_key_exists($col_name, $db_row)) {
-                                        $db_value = $db_row[$col_name];
-                                        if ($db_value != trim($data[$i]) and trim($data[$i]) != 'NULL') {
-                                            $update_col_names[] = $col_name;
-                                            $update_col_values[] = trim($data[$i]);
-                                        }
-                                    } else {
-                                        log_err('Column check did not work for ' . $col_name);
-                                    }
-                                }
-                                // update the values is needed
-                                if (count($update_col_names) > 0) {
-                                    $db_con->set_class($db_type);
-                                    $db_con->update_old($id, $update_col_names, $update_col_values);
-                                }
-                            }
-                        }
-                    }
-                    $row++;
-                }
-                fclose($handle);
-            }
-
+            $this->load_db_code_link_file($csv_file_name, $db_con);
         }
 
         // set the seq number if needed
@@ -534,4 +455,86 @@ class db_check
         $db_con->seq_reset(sql_db::TBL_CHANGE_ACTION);
     }
 
+    function load_db_code_link_file(string $csv_file_name, sql_db $db_con): void
+    {
+        global $debug;
+        $lib = new library();
+
+        // load the csv
+        $csv_path = PATH_BASE_CODE_LINK_FILES . $csv_file_name . BASE_CODE_LINK_FILE_TYPE;
+
+        $row = 1;
+        $table_name = $csv_file_name;
+        // TODO change table names to singular form
+        if ($table_name == 'sys_log_status') {
+            $db_type = $table_name;
+        } else {
+            $db_type = substr($table_name, 0, -1);
+        }
+        // TODO ignore empty rows
+        // TODO ignore comma within text e.g. allow 'one, two and three'
+        log_debug('load "' . $table_name . '"', $debug - 6);
+        if (($handle = fopen($csv_path, "r")) !== FALSE) {
+            $continue = true;
+            $id_col_name = '';
+            $col_names = array();
+            while (($data = fgetcsv($handle, 0, ",", "'")) !== FALSE) {
+                if ($continue) {
+                    if ($row == 1) {
+                        // check if the csv column names match the table names
+                        if (!$db_con->check_column_names($table_name, $lib->array_trim($data))) {
+                            $continue = false;
+                        } else {
+                            $col_names = $lib->array_trim($data);
+                        }
+                        // check if the first column name is the id col
+                        $id_col_name = $data[0];
+                        if (!str_ends_with($id_col_name, sql_db::FLD_ID)) {
+                            $continue = false;
+                        }
+                    } else {
+                        // init row update
+                        $update_col_names = array();
+                        $update_col_values = array();
+                        // get the row id which is expected to be always in the first column
+                        $id = $data[0];
+                        // check if the row id exists
+                        $qp = $this->db_fill_code_link_sql($table_name, $id_col_name, $id);
+                        $db_row = $db_con->get1($qp);
+                        // check if the db row needs to be added
+                        if ($db_row == null) {
+                            // add the row
+                            for ($i = 0; $i < count($data); $i++) {
+                                $update_col_names[] = $col_names[$i];
+                                $update_col_values[] = trim($data[$i]);
+                            }
+                            $db_con->set_class($db_type);
+                            $db_con->insert_old($update_col_names, $update_col_values);
+                        } else {
+                            // check, which values need to be updates
+                            for ($i = 1; $i < count($data); $i++) {
+                                $col_name = $col_names[$i];
+                                if (array_key_exists($col_name, $db_row)) {
+                                    $db_value = $db_row[$col_name];
+                                    if ($db_value != trim($data[$i]) and trim($data[$i]) != 'NULL') {
+                                        $update_col_names[] = $col_name;
+                                        $update_col_values[] = trim($data[$i]);
+                                    }
+                                } else {
+                                    log_err('Column check did not work for ' . $col_name);
+                                }
+                            }
+                            // update the values is needed
+                            if (count($update_col_names) > 0) {
+                                $db_con->set_class($db_type);
+                                $db_con->update_old($id, $update_col_names, $update_col_values);
+                            }
+                        }
+                    }
+                }
+                $row++;
+            }
+            fclose($handle);
+        }
+    }
 }

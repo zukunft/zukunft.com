@@ -103,6 +103,7 @@ function import_system_users(): bool
             // TODO ask for final confirmation before deleting all users !!!
             run_table_truncate(sql_db::TBL_USER);
             run_seq_reset('users_user_id_seq');
+            run_db_load_user_profiles();
             $usr->set_profile(user_profile::SYSTEM);
             $import_result = import_json_file(SYSTEM_USER_CONFIG_FILE, $usr);
             if (str_starts_with($import_result, ' done ')) {
