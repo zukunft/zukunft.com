@@ -72,7 +72,7 @@ class system_log extends db_object_seq_id
 
     // database and export JSON object field names
     // and comments used for the database creation
-    const TBL_COMMENT = 'for system error traking and to measure execution times';
+    const TBL_COMMENT = 'for system error tracking and to measure execution times';
     const FLD_ID = 'sys_log_id';
     const FLD_TIME_COM = 'timestamp of the creation';
     const FLD_TIME = 'sys_log_time';

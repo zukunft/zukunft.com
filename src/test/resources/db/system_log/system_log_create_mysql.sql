@@ -1,7 +1,7 @@
 -- --------------------------------------------------------
 
 --
--- table structure for system error traking and to measure execution times
+-- table structure for system error tracking and to measure execution times
 --
 
 CREATE TABLE IF NOT EXISTS sys_log
@@ -19,4 +19,4 @@ CREATE TABLE IF NOT EXISTS sys_log
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
-    COMMENT 'for system error traking and to measure execution times';
+    COMMENT 'for system error tracking and to measure execution times';

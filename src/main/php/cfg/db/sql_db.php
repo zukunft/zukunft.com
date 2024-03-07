@@ -77,6 +77,8 @@ use cfg\sys_log_function;
 use cfg\sys_log_level;
 use cfg\sys_log_status;
 use cfg\job_type;
+use cfg\system_time;
+use cfg\system_time_type;
 use cfg\triple;
 use cfg\user;
 use cfg\user\user_profile;
@@ -162,7 +164,7 @@ class sql_db
     const TBL_IP = 'ip_range';
     const TBL_SYS_LOG = 'sys_log';
     const TBL_SYS_LOG_STATUS = 'sys_log_status';
-    const TBL_SYS_SCRIPT = 'sys_script'; // to log the execution times for code optimising
+    const TBL_SYS_SCRIPT = 'system_time_type'; // to log the execution times for code optimising
     const TBL_TASK = 'job';
     const TBL_TASK_TYPE = 'job_type';
 
@@ -199,6 +201,8 @@ class sql_db
         sys_log_status::class,
         sys_log_function::class,
         system_log::class,
+        system_time_type::class,
+        system_time::class,
         job_type::class,
         job_time::class,
         job::class,
@@ -1590,6 +1594,9 @@ class sql_db
         $result = $type . '_name';
         // exceptions to be adjusted
         if ($result == 'link_type_name') {
+            $result = sql::FLD_TYPE_NAME;
+        }
+        if ($result == 'system_time_type_name') {
             $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'phrase_type_name') {

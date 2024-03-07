@@ -43,6 +43,7 @@ use cfg\log\change_link;
 use cfg\log\change_prime_value;
 use cfg\log\change_standard_value;
 use cfg\log\change_table;
+use cfg\log\system_log;
 use cfg\user\user_profile;
 use cfg\user\user_type;
 use cfg\value\value;
@@ -1575,6 +1576,10 @@ class library
             case $this->class_to_name(ip_range::class):
             case $this->class_to_name(session::class):
                 $result = 'system';
+                break;
+            case $this->class_to_name(system_time_type::class):
+            case $this->class_to_name(system_time::class):
+                $result = $this->class_to_name(system_log::class);
                 break;
             case $this->class_to_name(job_time::class):
                 $result = 'job';

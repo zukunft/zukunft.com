@@ -32,10 +32,15 @@
 
 namespace unit;
 
+include_once MODEL_SYSTEM_PATH . 'system_time_type.php';
+include_once MODEL_SYSTEM_PATH . 'system_time.php';
+
 use cfg\config;
 use cfg\library;
 use cfg\db\sql_db;
 use cfg\log\system_log;
+use cfg\system_time;
+use cfg\system_time_type;
 use test\test_cleanup;
 
 class system_log_tests
@@ -73,6 +78,18 @@ class system_log_tests
 
         $log_lst = $t->dummy_system_log_list();
         $t->assert_api($log_lst);
+
+
+        $t->subheader('System time type SQL setup statements');
+        $sys_exe_typ = new system_time_type('');
+        $t->assert_sql_table_create($sys_exe_typ);
+        $t->assert_sql_index_create($sys_exe_typ);
+
+        $t->subheader('System time SQL setup statements');
+        $sys_exe = new system_time();
+        $t->assert_sql_table_create($sys_exe);
+        $t->assert_sql_index_create($sys_exe);
+        $t->assert_sql_foreign_key_create($sys_exe);
 
     }
 

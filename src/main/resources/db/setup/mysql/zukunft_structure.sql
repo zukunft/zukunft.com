@@ -87,7 +87,7 @@ CREATE TABLE IF NOT EXISTS sys_log_functions
 -- --------------------------------------------------------
 
 --
--- table structure for system error traking and to measure execution times
+-- table structure for system error tracking and to measure execution times
 --
 
 CREATE TABLE IF NOT EXISTS sys_log
@@ -105,7 +105,42 @@ CREATE TABLE IF NOT EXISTS sys_log
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
-    COMMENT 'for system error traking and to measure execution times';
+    COMMENT 'for system error tracking and to measure execution times';
+
+-- --------------------------------------------------------
+
+--
+-- table structure to define the execution time groups
+--
+
+CREATE TABLE IF NOT EXISTS system_time_types
+(
+    system_time_type_id bigint          NOT NULL COMMENT 'the internal unique primary index',
+    type_name           varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
+    code_id             varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
+    description         text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'to define the execution time groups';
+
+-- --------------------------------------------------------
+
+--
+-- table structure for system execution time tracking
+--
+
+CREATE TABLE IF NOT EXISTS system_times
+(
+    system_time_id      bigint        NOT NULL COMMENT 'the internal unique primary index',
+    start_time          timestamp     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'start time of the monitoring period',
+    end_time            timestamp DEFAULT NULL COMMENT 'end time of the monitoring period',
+    system_time_type_id bigint        NOT NULL COMMENT 'the area of the execution time e.g. db write',
+    milliseconds        bigint        NOT NULL COMMENT 'the execution time in milliseconds'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'for system execution time tracking';
 
 -- --------------------------------------------------------
 
@@ -3314,6 +3349,28 @@ ALTER TABLE sys_log
 -- --------------------------------------------------------
 
 --
+-- indexes for table system_time_types
+--
+
+ALTER TABLE system_time_types
+    ADD PRIMARY KEY (system_time_type_id),
+    ADD KEY system_time_types_type_name_idx (type_name);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table system_times
+--
+
+ALTER TABLE system_times
+    ADD PRIMARY KEY (system_time_id),
+    ADD KEY system_times_start_time_idx (start_time),
+    ADD KEY system_times_end_time_idx (end_time),
+    ADD KEY system_times_system_time_type_idx (system_time_type_id);
+
+-- --------------------------------------------------------
+
+--
 -- indexes for table job_types
 --
 
@@ -5340,6 +5397,13 @@ ALTER TABLE sys_log
     ADD CONSTRAINT sys_log_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
     ADD CONSTRAINT sys_log_user2_fk FOREIGN KEY (solver_id) REFERENCES users (user_id),
     ADD CONSTRAINT sys_log_sys_log_status_fk FOREIGN KEY (sys_log_status_id) REFERENCES sys_log_status (sys_log_status_id);
+
+--
+-- constraints for table system_times
+--
+
+ALTER TABLE system_times
+    ADD CONSTRAINT system_times_system_time_type_fk FOREIGN KEY (system_time_type_id) REFERENCES system_time_types (system_time_type_id);
 
 --
 -- constraints for table job_times

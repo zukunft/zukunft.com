@@ -1,0 +1,7 @@
+system_time_type_id, type_name, code_id, description
+1, 'not classified', 'not_specified', 'the execution time not yet assigned to any other group'
+2, 'db write', 'db_write', 'the time use to write data to the database'
+3, 'db read', 'db_read', 'the time used to read data from the database'
+4, 'unit tests', 'test_unit', 'total execution time used for the unit tests'
+5, 'db read tests', 'test_db_read', 'total execution time used for the db read tests'
+6, 'unit and integration testing', 'test_db_write', 'total execution time used for the db write tests'

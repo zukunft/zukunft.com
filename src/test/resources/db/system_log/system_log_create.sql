@@ -1,7 +1,7 @@
 -- --------------------------------------------------------
 
 --
--- table structure for system error traking and to measure execution times
+-- table structure for system error tracking and to measure execution times
 --
 
 CREATE TABLE IF NOT EXISTS sys_log
@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS sys_log
     sys_log_status_id   bigint     NOT NULL DEFAULT 1
 );
 
-COMMENT ON TABLE sys_log IS 'for system error traking and to measure execution times';
+COMMENT ON TABLE sys_log IS 'for system error tracking and to measure execution times';
 COMMENT ON COLUMN sys_log.sys_log_id IS 'the internal unique primary index';
 COMMENT ON COLUMN sys_log.sys_log_time IS 'timestamp of the creation';
 COMMENT ON COLUMN sys_log.sys_log_type_id IS 'the level e.g. debug,info,warning,error or fatal';

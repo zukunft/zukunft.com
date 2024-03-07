@@ -777,6 +777,7 @@ define("BASE_CODE_LINK_FILES", serialize(array(
     'source_types',
     'sys_log_status',
     'sys_log_types',
+    'system_time_types',
     'user_official_types',
     'user_profiles',
     'user_types',
@@ -1266,13 +1267,17 @@ function prg_end_write_time($db_con): void
             $sys_script_id = $db_con->add_id($sys_script);
         }
         $start_time_sql = date("Y-m-d H:i:s", $sys_time_start);
+        $end_time_sql = date("Y-m-d H:i:s", $sys_time_end);
+        $interval = $sys_time_end - $sys_time_start;
+        $milliseconds = $interval;
+
         //$db_con->insert();
         if (in_array('REQUEST_URI', $_SERVER)) {
             $calling_uri = $_SERVER['REQUEST_URI'];
         } else {
             $calling_uri = 'localhost';
         }
-        $sql = "INSERT INTO sys_script_times (sys_script_start, sys_script_id, url) VALUES ('" . $start_time_sql . "'," . $sys_script_id . "," . $db_con->sf($calling_uri) . ");";
+        $sql = "INSERT INTO system_times (start_time, system_time_type_id, end_time, milliseconds) VALUES ('" . $start_time_sql . "'," . $sys_script_id . ",'" . $end_time_sql . "', " . $milliseconds . ");";
         $db_con->exe($sql);
     }
 

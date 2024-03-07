@@ -91,7 +91,7 @@ COMMENT ON COLUMN sys_log_functions.description IS 'text to explain the type to 
 -- --------------------------------------------------------
 
 --
--- table structure for system error traking and to measure execution times
+-- table structure for system error tracking and to measure execution times
 --
 
 CREATE TABLE IF NOT EXISTS sys_log
@@ -108,7 +108,7 @@ CREATE TABLE IF NOT EXISTS sys_log
     sys_log_status_id   bigint     NOT NULL DEFAULT 1
 );
 
-COMMENT ON TABLE sys_log IS 'for system error traking and to measure execution times';
+COMMENT ON TABLE sys_log IS 'for system error tracking and to measure execution times';
 COMMENT ON COLUMN sys_log.sys_log_id IS 'the internal unique primary index';
 COMMENT ON COLUMN sys_log.sys_log_time IS 'timestamp of the creation';
 COMMENT ON COLUMN sys_log.sys_log_type_id IS 'the level e.g. debug,info,warning,error or fatal';
@@ -118,6 +118,48 @@ COMMENT ON COLUMN sys_log.sys_log_description IS 'the lond description with all 
 COMMENT ON COLUMN sys_log.sys_log_trace IS 'the generated code trace to local the path to the error cause';
 COMMENT ON COLUMN sys_log.user_id IS 'the id of the user who has caused the log entry';
 COMMENT ON COLUMN sys_log.solver_id IS 'user id of the user that is trying to solve the problem';
+
+-- --------------------------------------------------------
+
+--
+-- table structure to define the execution time groups
+--
+
+CREATE TABLE IF NOT EXISTS system_time_types
+(
+    system_time_type_id BIGSERIAL PRIMARY KEY,
+    type_name           varchar(255) NOT NULL,
+    code_id             varchar(255) DEFAULT NULL,
+    description         text         DEFAULT NULL
+);
+
+COMMENT ON TABLE system_time_types IS 'to define the execution time groups';
+COMMENT ON COLUMN system_time_types.system_time_type_id IS 'the internal unique primary index';
+COMMENT ON COLUMN system_time_types.type_name IS 'the unique type name as shown to the user and used for the selection';
+COMMENT ON COLUMN system_time_types.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
+COMMENT ON COLUMN system_time_types.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
+
+-- --------------------------------------------------------
+
+--
+-- table structure for system execution time tracking
+--
+
+CREATE TABLE IF NOT EXISTS system_times
+(
+    system_time_id BIGSERIAL PRIMARY KEY,
+    start_time          timestamp     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    end_time            timestamp DEFAULT NULL,
+    system_time_type_id bigint        NOT NULL,
+    milliseconds        bigint        NOT NULL
+);
+
+COMMENT ON TABLE system_times IS 'for system execution time tracking';
+COMMENT ON COLUMN system_times.system_time_id IS 'the internal unique primary index';
+COMMENT ON COLUMN system_times.start_time IS 'start time of the monitoring period';
+COMMENT ON COLUMN system_times.end_time IS 'end time of the monitoring period';
+COMMENT ON COLUMN system_times.system_time_type_id IS 'the area of the execution time e.g. db write';
+COMMENT ON COLUMN system_times.milliseconds IS 'the execution time in milliseconds';
 
 -- --------------------------------------------------------
 
@@ -4344,6 +4386,24 @@ CREATE INDEX sys_log_sys_log_status_idx ON sys_log (sys_log_status_id);
 -- --------------------------------------------------------
 
 --
+-- indexes for table system_time_types
+--
+
+CREATE INDEX system_time_types_type_name_idx ON system_time_types (type_name);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table system_times
+--
+
+CREATE INDEX system_times_start_time_idx ON system_times (start_time);
+CREATE INDEX system_times_end_time_idx ON system_times (end_time);
+CREATE INDEX system_times_system_time_type_idx ON system_times (system_time_type_id);
+
+-- --------------------------------------------------------
+
+--
 -- indexes for table job_types
 --
 
@@ -5592,6 +5652,13 @@ ALTER TABLE sys_log
     ADD CONSTRAINT sys_log_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
     ADD CONSTRAINT sys_log_user2_fk FOREIGN KEY (solver_id) REFERENCES users (user_id),
     ADD CONSTRAINT sys_log_sys_log_status_fk FOREIGN KEY (sys_log_status_id) REFERENCES sys_log_status (sys_log_status_id);
+
+--
+-- constraints for table system_times
+--
+
+ALTER TABLE system_times
+    ADD CONSTRAINT system_times_system_time_type_fk FOREIGN KEY (system_time_type_id) REFERENCES system_time_types (system_time_type_id);
 
 --
 -- constraints for table job_times
