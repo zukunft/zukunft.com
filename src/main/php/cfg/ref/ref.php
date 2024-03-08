@@ -61,6 +61,8 @@ include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
 use api\ref\ref as ref_api;
 use cfg\db\sql;
 use cfg\db\sql_db;
+use cfg\db\sql_field_default;
+use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\export\sandbox_exp;
 use cfg\export\ref_exp;
@@ -77,11 +79,17 @@ class ref extends sandbox_link_with_type
      */
 
     // object specific database and JSON object field names
+    const TBL_COMMENT = 'to link external data to internal for syncronisation';
     const FLD_ID = 'ref_id';
+    const FLD_USER_COM = 'the user who has created or adjusted the reference';
+    const FLD_EX_KEY_COM = 'the unique external key used in the other system';
     const FLD_EX_KEY = 'external_key';
     const FLD_TYPE = 'ref_type_id';
+    const FLD_URL_COM = 'the concrete url for the entry inluding the item id';
     const FLD_URL = 'url';
+    const FLD_SOURCE_COM = 'if the reference does not allow a full automatic bidirectional update use the source to define an as good as possible import or at least a check if the reference is still valid';
     const FLD_SOURCE = 'source_id';
+    const FLD_PHRASE_COM = 'the phrase for which the external data should be syncronised';
 
     // all database field names excluding the id used to identify if there are some user specific changes
     const FLD_NAMES = array(
@@ -107,6 +115,18 @@ class ref extends sandbox_link_with_type
         self::FLD_URL,
         sandbox_named::FLD_DESCRIPTION,
         sandbox::FLD_EXCLUDED
+    );
+    // list of fields that CAN be changed by the user
+    const FLD_LST_USER_CAN_CHANGE = array(
+        [self::FLD_URL, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_URL_COM],
+        [sandbox_named::FLD_DESCRIPTION, sql_field_type::TEXT, sql_field_default::NULL, '', '', ''],
+    );
+    // list of fields that CANNOT be changed by the user
+    const FLD_LST_NON_CHANGEABLE = array(
+        [phrase::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_PHRASE_COM],
+        [self::FLD_EX_KEY, sql_field_type::NAME, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_EX_KEY_COM],
+        [ref_type::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, ref_type::class, ref_type::TBL_COMMENT],
+        [source::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, source::class, self::FLD_SOURCE_COM],
     );
 
     // persevered reference names for unit and integration tests

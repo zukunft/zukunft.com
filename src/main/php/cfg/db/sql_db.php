@@ -68,6 +68,7 @@ use cfg\pod;
 use cfg\pod_status;
 use cfg\pod_type;
 use cfg\protection_type;
+use cfg\ref_type;
 use cfg\result\result;
 use cfg\session;
 use cfg\share_type;
@@ -234,8 +235,9 @@ class sql_db
         phrase_table::class,
         phrase_type::class,
         group::class,
-        source::class,
         source_type::class,
+        source::class,
+        ref_type::class,
         value::class,
         formula_type::class,
         formula::class,

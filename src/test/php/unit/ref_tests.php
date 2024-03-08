@@ -33,9 +33,11 @@
 namespace unit;
 
 use api\ref\source as source_api;
+use cfg\ref_type;
 use cfg\ref_type_list;
 use cfg\source_list;
 use cfg\source_type_list;
+use cfg\sys_log_status;
 use html\ref\ref as ref_dsp;
 use html\ref\source as source_dsp;
 use cfg\ref;
@@ -58,6 +60,17 @@ class ref_tests
         $usr->set_id(1);
 
         $t->header('Unit tests of the reference class (src/main/php/model/ref/ref.php)');
+
+        $t->subheader('Ref type SQL setup statements');
+        $ref_typ = new ref_type('');
+        $t->assert_sql_table_create($ref_typ);
+        $t->assert_sql_index_create($ref_typ);
+
+        $t->subheader('Ref type SQL setup statements');
+        $ref = new ref($usr);
+        $t->assert_sql_table_create($ref);
+        $t->assert_sql_index_create($ref);
+        $t->assert_sql_foreign_key_create($ref);
 
         $t->subheader('SQL statement tests');
         $ref = new ref($usr);

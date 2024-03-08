@@ -1606,6 +1606,7 @@ class library
                 $result = $this->class_to_name(language::class);
                 break;
             case $this->class_to_name(source::class):
+            case $this->class_to_name(ref_type::class):
                 $result = $this->class_to_name(ref::class);
                 break;
             case $this->class_to_name(sys_log_status::class):

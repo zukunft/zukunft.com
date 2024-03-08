@@ -1002,54 +1002,62 @@ CREATE TABLE IF NOT EXISTS user_sources (
 -- --------------------------------------------------------
 
 --
--- Table structure for table`ref_types`
+-- table structure to link code functionality to a list of references
 --
 
-CREATE TABLE IF NOT EXISTS `ref_types`
+CREATE TABLE IF NOT EXISTS ref_types
 (
-    `ref_type_id` int(11)      NOT NULL,
-    `type_name`   varchar(200) NOT NULL,
-    `code_id`     varchar(100) NOT NULL,
-    `description` text         NOT NULL,
-    `base_url`    text         NOT NULL
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 5
-  DEFAULT CHARSET = utf8;
+    ref_type_id bigint           NOT NULL COMMENT 'the internal unique primary index',
+    type_name   varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
+    code_id     varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
+    description text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry',
+    base_url    text         DEFAULT NULL COMMENT 'the base url to create the urls for the assigned references'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'to link code functionality to a list of references';
+
+-- --------------------------------------------------------
 
 --
--- Table structure for table`refs`
+-- table structure to link external data to internal for syncronisation
 --
 
-CREATE TABLE IF NOT EXISTS `refs`
+CREATE TABLE IF NOT EXISTS refs
 (
-    `ref_id`       int(11)      NOT NULL,
-    `user_id`      bigint       NOT NULL,
-    `phrase_id`    int(11)      NOT NULL,
-    `external_key` varchar(250) NOT NULL,
-    `ref_type_id`  int(11)      NOT NULL,
-    `source_id`    int(11)      DEFAULT NULL,
-    `url`          text         DEFAULT NULL,
-    `description`  text         DEFAULT NULL,
-    `excluded`     tinyint(4)   DEFAULT NULL
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8;
+    ref_id        bigint       NOT NULL COMMENT 'the internal unique primary index',
+    user_id       bigint   DEFAULT NULL COMMENT 'the owner / creator of the ref',
+    `url`         text     DEFAULT NULL COMMENT 'the concrete url for the entry inluding the item id',
+    description   text     DEFAULT NULL,
+    phrase_id     bigint   DEFAULT NULL COMMENT 'the phrase for which the external data should be syncronised',
+    external_key  varchar(255) NOT NULL COMMENT 'the unique external key used in the other system',
+    ref_type_id   bigint       NOT NULL COMMENT 'to link code functionality to a list of references',
+    source_id     bigint   DEFAULT NULL COMMENT 'if the reference does not allow a full automatic bidirectional update use the source to define an as good as possible import or at least a check if the reference is still valid',
+    excluded      smallint DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
+    share_type_id smallint DEFAULT NULL COMMENT 'to restrict the access',
+    protect_id    smallint DEFAULT NULL COMMENT 'to protect against unwanted changes'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'to link external data to internal for syncronisation';
 
 --
--- Table structure for table`user_refs`
+-- table structure to save user specific changes to link external data to internal for syncronisation
 --
 
-CREATE TABLE IF NOT EXISTS `user_refs`
+CREATE TABLE IF NOT EXISTS user_refs
 (
-    `ref_id`        int(11) NOT NULL,
-    `user_id`       int(11) NOT NULL,
-    `url`           text         DEFAULT NULL,
-    `description`   text         DEFAULT NULL,
-    `excluded`      tinyint(4)   DEFAULT NULL
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8;
-
-
-
+    ref_id        bigint       NOT NULL COMMENT 'with the user_id the internal unique primary index',
+    user_id       bigint       NOT NULL COMMENT 'the changer of the ref',
+    `url`         text     DEFAULT NULL COMMENT 'the concrete url for the entry inluding the item id',
+    description   text     DEFAULT NULL,
+    excluded      smallint DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
+    share_type_id smallint DEFAULT NULL COMMENT 'to restrict the access',
+    protect_id    smallint DEFAULT NULL COMMENT 'to protect against unwanted changes'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'to link external data to internal for syncronisation';
 
 -- --------------------------------------------------------
 
@@ -3745,6 +3753,16 @@ ALTER TABLE user_groups_big
 -- --------------------------------------------------------
 
 --
+-- indexes for table ref_types
+--
+
+ALTER TABLE ref_types
+    ADD PRIMARY KEY (ref_type_id),
+    ADD KEY ref_types_type_name_idx (type_name);
+
+-- --------------------------------------------------------
+
+--
 -- indexes for table values_standard_prime
 --
 ALTER TABLE values_standard_prime
@@ -4622,33 +4640,15 @@ ALTER TABLE `protection_types`
     ADD PRIMARY KEY (`protect_id`),
     ADD UNIQUE KEY `protection_type_id` (`protect_id`);
 
---
--- Indexes for table`refs`
---
-ALTER TABLE `refs`
-    ADD PRIMARY KEY (`ref_id`),
-    ADD UNIQUE KEY `phrase_id` (`phrase_id`, `ref_type_id`),
-    ADD UNIQUE KEY `phrase_id_2` (`phrase_id`, `ref_type_id`),
-    ADD KEY `ref_type_id` (`ref_type_id`);
+-- --------------------------------------------------------
 
 --
--- Indexes for table`ref_types`
+-- indexes for table source_types
 --
-ALTER TABLE `ref_types`
-    ADD PRIMARY KEY (`ref_type_id`),
-    ADD UNIQUE KEY `ref_type_name` (`type_name`, `code_id`);
 
---
--- Indexes for table`sessions`
---
-ALTER TABLE `sessions`
-    ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table`share_types`
---
-ALTER TABLE `share_types`
-    ADD PRIMARY KEY (`share_type_id`);
+ALTER TABLE source_types
+    ADD PRIMARY KEY (source_type_id),
+    ADD KEY source_types_type_name_idx (type_name);
 
 -- --------------------------------------------------------
 
@@ -4674,22 +4674,37 @@ ALTER TABLE user_sources
 -- --------------------------------------------------------
 
 --
--- indexes for table source_types
+-- indexes for table refs
 --
 
-ALTER TABLE source_types
-    ADD PRIMARY KEY (source_type_id),
-    ADD KEY source_types_type_name_idx (type_name);
-
+ALTER TABLE refs
+    ADD PRIMARY KEY (ref_id),
+    ADD KEY refs_user_idx (user_id),
+    ADD KEY refs_phrase_idx (phrase_id),
+    ADD KEY refs_external_key_idx (external_key),
+    ADD KEY refs_ref_type_idx (ref_type_id),
+    ADD KEY refs_source_idx (source_id);
 
 --
--- Indexes for table`source_values`
+-- indexes for table user_refs
 --
-ALTER TABLE `source_values`
-    ADD PRIMARY KEY (`group_id`, `source_id`, `user_id`),
-    ADD KEY `group_id` (`group_id`),
-    ADD KEY `source_id` (`source_id`),
-    ADD KEY `user_id` (`user_id`);
+
+ALTER TABLE user_refs
+    ADD PRIMARY KEY (ref_id,user_id),
+    ADD KEY user_refs_ref_idx (ref_id),
+    ADD KEY user_refs_user_idx (user_id);
+
+--
+-- Indexes for table`sessions`
+--
+ALTER TABLE `sessions`
+    ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table`share_types`
+--
+ALTER TABLE `share_types`
+    ADD PRIMARY KEY (`share_type_id`);
 
 --
 -- Indexes for table`sys_log`
@@ -5559,6 +5574,25 @@ ALTER TABLE user_triples
 ALTER TABLE phrase_tables
     ADD CONSTRAINT phrase_tables_pod_fk FOREIGN KEY (pod_id) REFERENCES pods (pod_id),
     ADD CONSTRAINT phrase_tables_phrase_table_status_fk FOREIGN KEY (phrase_table_status_id) REFERENCES phrase_table_status (phrase_table_status_id);
+
+-- --------------------------------------------------------
+
+--
+-- constraints for table refs
+--
+
+ALTER TABLE refs
+    ADD CONSTRAINT refs_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT refs_ref_type_fk FOREIGN KEY (ref_type_id) REFERENCES ref_types (ref_type_id),
+    ADD CONSTRAINT refs_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
+
+--
+-- constraints for table user_refs
+--
+
+ALTER TABLE user_refs
+    ADD CONSTRAINT user_refs_ref_fk FOREIGN KEY (ref_id) REFERENCES refs (ref_id),
+    ADD CONSTRAINT user_refs_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
 
 -- --------------------------------------------------------
 
