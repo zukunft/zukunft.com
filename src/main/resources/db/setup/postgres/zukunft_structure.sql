@@ -214,14 +214,16 @@ COMMENT ON COLUMN job_times.parameter IS 'the phrase id that contains all parame
 CREATE TABLE IF NOT EXISTS jobs
 (
     job_id BIGSERIAL PRIMARY KEY,
-    user_id         bigint NOT NULL,
-    job_type_id     bigint NOT NULL,
-    request_time    timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    user_id         bigint        NOT NULL,
+    job_type_id     bigint        NOT NULL,
+    request_time    timestamp     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     start_time      timestamp DEFAULT NULL,
     end_time        timestamp DEFAULT NULL,
-    parameter       bigint DEFAULT NULL,
-    change_field_id bigint DEFAULT NULL,
-    row_id          bigint DEFAULT NULL
+    parameter       bigint    DEFAULT NULL,
+    change_field_id bigint    DEFAULT NULL,
+    row_id          bigint    DEFAULT NULL,
+    source_id       bigint    DEFAULT NULL,
+    ref_id          bigint    DEFAULT NULL
 );
 
 COMMENT ON TABLE jobs IS 'for each concrete job run';
@@ -234,6 +236,8 @@ COMMENT ON COLUMN jobs.end_time IS 'timestamp when the job has been completed or
 COMMENT ON COLUMN jobs.parameter IS 'id of the phrase with the snaped parameter set for this job start';
 COMMENT ON COLUMN jobs.change_field_id IS 'e.g. for undo jobs the id of the field that should be changed';
 COMMENT ON COLUMN jobs.row_id IS 'e.g. for undo jobs the id of the row that should be changed';
+COMMENT ON COLUMN jobs.source_id IS 'used for import to link the source';
+COMMENT ON COLUMN jobs.ref_id IS 'used for import to link the reference';
 
 -- --------------------------------------------------------
 
@@ -1176,48 +1180,6 @@ COMMENT ON COLUMN user_sources.code_id        IS 'to select sources used by this
 COMMENT ON COLUMN user_sources.excluded       IS 'true if a user, but not all, have removed it';
 COMMENT ON COLUMN user_sources.share_type_id  IS 'to restrict the access';
 COMMENT ON COLUMN user_sources.protect_id     IS 'to protect against unwanted changes';
-
---
--- table structure for table import_source
---
--- TODO review
---
-
-CREATE TABLE IF NOT EXISTS import_source
-(
-    import_source_id BIGSERIAL PRIMARY KEY,
-    name             varchar(100) NOT NULL,
-    import_type      bigint       NOT NULL,
-    word_id          bigint       NOT NULL
-);
-
-COMMENT ON TABLE import_source IS 'many replace by a term';
-COMMENT ON COLUMN import_source.word_id IS 'the name as a term';
-
---
--- table structure for table source_api
--- TODO check if used and needed
---
-
-CREATE TABLE IF NOT EXISTS source_api
-(
-    source_api_id       BIGSERIAL PRIMARY KEY,
-    source_api_name     varchar(200) NOT NULL,
-    open_api_definition text DEFAULT NULL
-);
-
---
--- table structure for table source_api_user
--- TODO check if used and needed
---
-
-CREATE TABLE IF NOT EXISTS source_api_user
-(
-    source_api_id BIGSERIAL,
-    user_id       BIGSERIAL,
-    source_api_     varchar(200) NOT NULL,
-    open_api_definition text DEFAULT NULL
-);
 
 -- --------------------------------------------------------
 
@@ -4434,6 +4396,8 @@ CREATE INDEX jobs_end_time_idx ON jobs (end_time);
 CREATE INDEX jobs_parameter_idx ON jobs (parameter);
 CREATE INDEX jobs_change_field_idx ON jobs (change_field_id);
 CREATE INDEX jobs_row_idx ON jobs (row_id);
+CREATE INDEX jobs_source_idx ON jobs (source_id);
+CREATE INDEX jobs_ref_idx ON jobs (ref_id);
 
 -- --------------------------------------------------------
 
@@ -5674,7 +5638,9 @@ ALTER TABLE job_times
 
 ALTER TABLE jobs
     ADD CONSTRAINT jobs_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT jobs_job_type_fk FOREIGN KEY (job_type_id) REFERENCES job_types (job_type_id);
+    ADD CONSTRAINT jobs_job_type_fk FOREIGN KEY (job_type_id) REFERENCES job_types (job_type_id),
+    ADD CONSTRAINT jobs_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
+    ADD CONSTRAINT jobs_ref_fk FOREIGN KEY (ref_id) REFERENCES refs (ref_id);
 
 --
 -- constraints for table users
@@ -5877,7 +5843,6 @@ ALTER TABLE user_sources
     ADD CONSTRAINT user_sources_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
     ADD CONSTRAINT user_sources_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
     ADD CONSTRAINT user_sources_source_type_fk FOREIGN KEY (source_type_id) REFERENCES source_types (source_type_id);
-
 
 --
 -- constraints for table refs

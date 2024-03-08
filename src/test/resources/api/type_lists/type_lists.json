@@ -794,6 +794,24 @@
         "code_id": "triple_delete",
         "description": "request to completely delete a triple which can be done if there are no dependencies any more; may create requests to other users",
         "id": 21
+      },
+      {
+        "name": "import source",
+        "code_id": "import_source",
+        "description": "import all references of a source",
+        "id": 22
+      },
+      {
+        "name": "import reference",
+        "code_id": "import_ref",
+        "description": "import a single references",
+        "id": 23
+      },
+      {
+        "name": "export",
+        "code_id": "export",
+        "description": "export data to an api or file",
+        "id": 24
       }
     ],
     "change_action_list": [

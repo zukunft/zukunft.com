@@ -13,4 +13,6 @@ ALTER TABLE jobs
     ADD KEY jobs_end_time_idx (end_time),
     ADD KEY jobs_parameter_idx (parameter),
     ADD KEY jobs_change_field_idx (change_field_id),
-    ADD KEY jobs_row_idx (row_id);
+    ADD KEY jobs_row_idx (row_id),
+    ADD KEY jobs_source_idx (source_id),
+    ADD KEY jobs_ref_idx (ref_id);

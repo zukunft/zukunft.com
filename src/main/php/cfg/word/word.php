@@ -162,6 +162,14 @@ class word extends sandbox_typed
     const SYSTEM_CONFIG = 'system configuration';
     // for the configuration of a single job
     const JOB_CONFIG = 'job configuration';
+    // TODO complete the concrete setup
+    const IMPORT_TYPE = 'import type';
+    const API_WORD = 'API';
+    const URL = 'url';
+    const USER_WORD = 'user';
+    const PASSWORD = 'password';
+    const OPEN_API = 'OpenAPI';
+    const DEFINITION = 'definition';
 
 
     /*

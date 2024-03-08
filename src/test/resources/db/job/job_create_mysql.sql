@@ -14,7 +14,9 @@ CREATE TABLE IF NOT EXISTS jobs
     end_time        timestamp DEFAULT NULL COMMENT 'timestamp when the job has been completed or canceled',
     parameter       bigint    DEFAULT NULL COMMENT 'id of the phrase with the snaped parameter set for this job start',
     change_field_id bigint    DEFAULT NULL COMMENT 'e.g. for undo jobs the id of the field that should be changed',
-    row_id          bigint    DEFAULT NULL COMMENT 'e.g. for undo jobs the id of the row that should be changed'
+    row_id          bigint    DEFAULT NULL COMMENT 'e.g. for undo jobs the id of the row that should be changed',
+    source_id       bigint    DEFAULT NULL COMMENT 'used for import to link the source',
+    ref_id          bigint    DEFAULT NULL COMMENT 'used for import to link the reference'
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8

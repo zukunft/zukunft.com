@@ -121,6 +121,8 @@ class job extends db_object_seq_id_user
     const FLD_CHANGE_FIELD = 'change_field_id';
     const FLD_ROW_COM = 'e.g. for undo jobs the id of the row that should be changed';
     const FLD_ROW = 'row_id';
+    const FLD_SOURCE_COM = 'used for import to link the source';
+    const FLD_REF_COM = 'used for import to link the reference';
 
     // all database field names excluding the id used to identify if there are some user specific changes
     const FLD_NAMES = array(
@@ -143,6 +145,8 @@ class job extends db_object_seq_id_user
         [self::FLD_PARAMETER, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_PARAMETER_COM, phrase::FLD_ID],
         [self::FLD_CHANGE_FIELD, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_CHANGE_FIELD_COM],
         [self::FLD_ROW, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_ROW_COM],
+        [source::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, source::class, self::FLD_SOURCE_COM],
+        [ref::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, ref::class, self::FLD_REF_COM],
     );
 
 

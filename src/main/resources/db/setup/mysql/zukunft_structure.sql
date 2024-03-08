@@ -194,7 +194,9 @@ CREATE TABLE IF NOT EXISTS jobs
     end_time        timestamp DEFAULT NULL COMMENT 'timestamp when the job has been completed or canceled',
     parameter       bigint    DEFAULT NULL COMMENT 'id of the phrase with the snaped parameter set for this job start',
     change_field_id bigint    DEFAULT NULL COMMENT 'e.g. for undo jobs the id of the field that should be changed',
-    row_id          bigint    DEFAULT NULL COMMENT 'e.g. for undo jobs the id of the row that should be changed'
+    row_id          bigint    DEFAULT NULL COMMENT 'e.g. for undo jobs the id of the row that should be changed',
+    source_id       bigint    DEFAULT NULL COMMENT 'used for import to link the source',
+    ref_id          bigint    DEFAULT NULL COMMENT 'used for import to link the reference'
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
@@ -996,19 +998,6 @@ CREATE TABLE IF NOT EXISTS user_sources (
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'for the original sources for the numeric,time and geo values';
-
---
--- Table structure for table`import_source`
---
-
-CREATE TABLE IF NOT EXISTS `import_source`
-(
-    `import_source_id` int(11)      NOT NULL,
-    `name`             varchar(100) NOT NULL,
-    `import_type`      int(11)      NOT NULL,
-    `word_id`          int(11)      NOT NULL COMMENT 'the name as a term'
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8 COMMENT ='many replace by a term';
 
 -- --------------------------------------------------------
 
@@ -3406,7 +3395,9 @@ ALTER TABLE jobs
     ADD KEY jobs_end_time_idx (end_time),
     ADD KEY jobs_parameter_idx (parameter),
     ADD KEY jobs_change_field_idx (change_field_id),
-    ADD KEY jobs_row_idx (row_id);
+    ADD KEY jobs_row_idx (row_id),
+    ADD KEY jobs_source_idx (source_id),
+    ADD KEY jobs_ref_idx (ref_id);
 
 -- --------------------------------------------------------
 
@@ -5419,7 +5410,9 @@ ALTER TABLE job_times
 
 ALTER TABLE jobs
     ADD CONSTRAINT jobs_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT jobs_job_type_fk FOREIGN KEY (job_type_id) REFERENCES job_types (job_type_id);
+    ADD CONSTRAINT jobs_job_type_fk FOREIGN KEY (job_type_id) REFERENCES job_types (job_type_id),
+    ADD CONSTRAINT jobs_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
+    ADD CONSTRAINT jobs_ref_fk FOREIGN KEY (ref_id) REFERENCES refs (ref_id);
 
 --
 -- constraints for table users

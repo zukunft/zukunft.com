@@ -20,3 +20,6 @@ job_type_id, type_name, description, code_id
 19, 'delete table', 'remove a phrase table to replace it with a better fitting table', 'table_delete'
 20, 'delete word', 'request to completely delete a word which can be done if there are no dependencies any more; may create requests to other users', 'word_delete'
 21, 'delete triple', 'request to completely delete a triple which can be done if there are no dependencies any more; may create requests to other users', 'triple_delete'
+22, 'import source', 'import all references of a source', 'import_source'
+23, 'import reference', 'import a single references', 'import_ref'
+24, 'export', 'export data to an api or file', 'export'
