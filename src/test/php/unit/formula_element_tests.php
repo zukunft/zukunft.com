@@ -34,6 +34,7 @@ namespace unit;
 
 include_once MODEL_FORMULA_PATH . 'formula_element_list.php';
 
+use cfg\element_type;
 use cfg\formula_element;
 use cfg\formula_element_list;
 use cfg\db\sql_db;
@@ -54,7 +55,12 @@ class formula_element_tests
 
         $t->header('Unit tests of the formula element class (src/main/php/model/formula/formula_element.php)');
 
-        $t->subheader('SQLy creation tests');
+        $t->subheader('Element SQL setup statements');
+        $elm_typ = new element_type('');
+        $t->assert_sql_table_create($elm_typ);
+        $t->assert_sql_index_create($elm_typ);
+
+        $t->subheader('SQL creation tests');
 
         $elm = $t->dummy_element();
         $t->assert_sql_by_id($db_con, $elm);

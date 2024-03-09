@@ -54,6 +54,7 @@ include_once MODEL_GROUP_PATH . 'group_id.php';
 include_once MODEL_VERB_PATH . 'verb_list.php';
 include_once MODEL_FORMULA_PATH . 'formula_type_list.php';
 include_once MODEL_FORMULA_PATH . 'formula_link_type_list.php';
+include_once MODEL_FORMULA_PATH . 'element_type.php';
 include_once MODEL_FORMULA_PATH . 'formula_element_type_list.php';
 include_once MODEL_VIEW_PATH . 'view_sys_list.php';
 include_once MODEL_VIEW_PATH . 'view_sys_list.php';

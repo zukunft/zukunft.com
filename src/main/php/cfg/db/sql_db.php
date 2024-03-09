@@ -41,6 +41,7 @@ include_once MODEL_SYSTEM_PATH . 'log.php';
 
 use cfg\component\component;
 use cfg\config;
+use cfg\element_type;
 use cfg\formula;
 use cfg\formula_type;
 use cfg\group\group;
@@ -241,6 +242,7 @@ class sql_db
         ref_type::class,
         value::class,
         value_ts_data::class,
+        element_type::class,
         formula_type::class,
         formula::class,
         result::class,

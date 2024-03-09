@@ -2,8 +2,8 @@
 
 /*
 
-    model/formula/formula_element_type_list.php - to link coded functionality to a formula element type
-    -------------------------------------------
+    cgf/formula/formula_element_type_list.php - to link coded functionality to a formula element type
+    -----------------------------------------
 
     TODO review and merge with parameter_type because this will never change, so a fixed enum can be used
 
@@ -39,8 +39,6 @@ use cfg\db\sql_db;
 
 class formula_element_type_list extends type_list
 {
-    // list of the formula element types that have a coded functionality
-    const WORD_SELECTOR = "word_selector";
 
     /**
      * overwrite the general user type list load function to keep the link to the table type capsuled
@@ -59,8 +57,8 @@ class formula_element_type_list extends type_list
     {
         parent::load_dummy();
         $type = new type_object(
-            formula_element_type_list::WORD_SELECTOR,
-            formula_element_type_list::WORD_SELECTOR,
+            element_type::WORD_SELECTOR,
+            element_type::WORD_SELECTOR,
             '',
             2);
         $this->add($type);
@@ -71,7 +69,7 @@ class formula_element_type_list extends type_list
      */
     function default_id(): int
     {
-        return parent::id(formula_element_type_list::WORD_SELECTOR);
+        return parent::id(element_type::WORD_SELECTOR);
     }
 
 }
