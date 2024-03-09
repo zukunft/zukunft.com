@@ -177,6 +177,12 @@ class value_tests
         $vts->grp->set_id(2);
         $this->assert_sql_by_grp($t, $db_con, $vts);
 
+        $t->subheader('Value time series data SQL setup statements');
+        $tsn = $t->value_ts();
+        $t->assert_sql_table_create($tsn);
+        $t->assert_sql_index_create($tsn);
+        $t->assert_sql_foreign_key_create($tsn);
+
     }
 
     /**

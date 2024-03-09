@@ -1638,17 +1638,21 @@ CREATE TABLE IF NOT EXISTS `user_value_time_series`
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8 COMMENT ='common parameters for a user specific list of intraday values';
 
+-- --------------------------------------------------------
+
 --
--- Table structure for table`value_ts_data`
+-- table structure for a single time series value data entry and efficient saving of daily or intra-day values
 --
 
-CREATE TABLE IF NOT EXISTS `value_ts_data`
+CREATE TABLE IF NOT EXISTS value_ts_data
 (
-    `value_time_series_id` int(11)  NOT NULL,
-    `val_time`             datetime NOT NULL,
-    `number`               float    NOT NULL
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8 COMMENT ='for efficient saving of daily or intraday values';
+    value_time_series_id bigint     NOT NULL COMMENT 'link to the value time series',
+    val_time             timestamp  NOT NULL COMMENT 'short name of the configuration entry to be shown to the admin',
+    number               double DEFAULT NULL COMMENT 'the configuration value as a string'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'for a single time series value data entry and efficient saving of daily or intra-day values';
 
 -- --------------------------------------------------------
 
@@ -4991,12 +4995,14 @@ ALTER TABLE `value_relations`
 ALTER TABLE `value_time_series`
     ADD PRIMARY KEY (`value_time_series_id`);
 
---
--- Indexes for table`value_ts_data`
---
-ALTER TABLE `value_ts_data`
-    ADD KEY `value_time_series_id` (`value_time_series_id`, `val_time`);
+-- --------------------------------------------------------
 
+--
+-- indexes for table value_ts_data
+--
+
+ALTER TABLE value_ts_data
+    ADD KEY value_ts_data_value_time_series_idx (value_time_series_id);
 
 --
 -- Indexes for table`views`
@@ -5322,6 +5328,14 @@ ALTER TABLE `value_relations`
 --
 ALTER TABLE `value_time_series`
     MODIFY `value_time_series_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- constraints for table value_ts_data
+--
+
+ALTER TABLE value_ts_data
+    ADD CONSTRAINT value_ts_data_value_time_series_fk FOREIGN KEY (value_time_series_id) REFERENCES value_time_series (value_time_series_id);
+
 --
 -- AUTO_INCREMENT for table`verbs`
 --

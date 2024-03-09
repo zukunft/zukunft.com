@@ -38,6 +38,8 @@ include_once MODEL_HELPER_PATH . 'db_object.php';
 
 use api\system\db_object as db_object_api;
 use cfg\db\sql;
+use cfg\db\sql_field_default;
+use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 
 class db_object_seq_id extends db_object
@@ -174,6 +176,58 @@ class db_object_seq_id extends db_object
     function sql_foreign_key(sql $sc): string
     {
         return $this->sql_foreign_key_create($sc, false, [],false);
+    }
+
+    /**
+     * @param bool $usr_table create a second table for the user overwrites
+     * @param bool $is_sandbox true if the standard sandbox fields should be included
+     * @return array[] with the parameters of the table fields
+     */
+    protected function sql_all_field_par(bool $usr_table = false, bool $is_sandbox = true): array
+    {
+        $fields = [];
+        if (!$usr_table) {
+            if ($is_sandbox) {
+                $fields = array_merge($this->sql_id_field_par($usr_table), sandbox::FLD_ALL_OWNER);
+                $fields = array_merge($fields, $this::FLD_LST_MUST_BE_IN_STD);
+            } else {
+                $fields = array_merge($this->sql_id_field_par(false), $this::FLD_LST_ALL);
+                $fields = array_merge($fields, $this::FLD_LST_EXTRA);
+            }
+        } else {
+            $fields = array_merge($this->sql_id_field_par($usr_table), sandbox::FLD_ALL_CHANGER);
+            $fields = array_merge($fields, $this::FLD_LST_MUST_BUT_USER_CAN_CHANGE);
+        }
+        $fields = array_merge($fields, $this::FLD_LST_USER_CAN_CHANGE);
+        if (!$usr_table) {
+            $fields = array_merge($fields, $this::FLD_LST_NON_CHANGEABLE);
+        }
+        if ($is_sandbox) {
+            $fields = array_merge($fields, sandbox::FLD_LST_ALL);
+        }
+        return $fields;
+    }
+
+    /**
+     * @return array[] with the parameters of the table key field
+     */
+    private function sql_id_field_par(bool $usr_table = false): array
+    {
+        if (!$usr_table) {
+            return array([
+                $this->id_field(),
+                sql_field_type::KEY_INT,
+                sql_field_default::NOT_NULL,
+                '', '',
+                'the internal unique primary index']);
+        } else {
+            return array([
+                $this->id_field(),
+                sql_field_type::KEY_PART_INT,
+                sql_field_default::NOT_NULL,
+                sql::INDEX, $this::class,
+                'with the user_id the internal unique primary index']);
+        }
     }
 
 

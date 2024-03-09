@@ -47,6 +47,7 @@ use cfg\log\system_log;
 use cfg\user\user_profile;
 use cfg\user\user_type;
 use cfg\value\value;
+use cfg\value\value_ts_data;
 use DateTime;
 use DOMDocument;
 use Exception;
@@ -1604,6 +1605,9 @@ class library
                 break;
             case $this->class_to_name(language_form::class):
                 $result = $this->class_to_name(language::class);
+                break;
+            case $this->class_to_name(value_ts_data::class):
+                $result = $this->class_to_name(value::class);
                 break;
             case $this->class_to_name(source::class):
             case $this->class_to_name(ref_type::class):

@@ -87,6 +87,7 @@ use cfg\user\user_type;
 use cfg\user_message;
 use cfg\user_official_type;
 use cfg\value\value;
+use cfg\value\value_ts_data;
 use cfg\verb;
 use cfg\view;
 use cfg\word;
@@ -239,6 +240,7 @@ class sql_db
         source::class,
         ref_type::class,
         value::class,
+        value_ts_data::class,
         formula_type::class,
         formula::class,
         result::class,

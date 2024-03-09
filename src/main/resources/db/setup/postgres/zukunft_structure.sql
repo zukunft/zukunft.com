@@ -2148,8 +2148,8 @@ CREATE TABLE IF NOT EXISTS user_value_time_series
     user_id              bigint             NOT NULL,
     source_id            bigint         DEFAULT NULL,
     excluded             smallint       DEFAULT NULL,
-    share_type_id        smallint         DEFAULT NULL,
-    protect_id           smallint             NOT NULL,
+    share_type_id        smallint       DEFAULT NULL,
+    protect_id           smallint           NOT NULL,
     last_update          timestamp NULL DEFAULT NULL
 );
 
@@ -2162,13 +2162,13 @@ COMMENT ON TABLE user_value_time_series IS 'common parameters for a list of numb
 CREATE TABLE IF NOT EXISTS value_time_series_prime
 (
     value_time_series_id BIGSERIAL      PRIMARY KEY,
-    user_id              bigint         NOT     NULL,
-    source_id            bigint         DEFAULT NULL,
-    group_id             bigint         NOT NULL,
-    excluded             smallint       DEFAULT NULL,
-    share_type_id        smallint         DEFAULT NULL,
-    protect_id           smallint         NOT     NULL,
-    last_update          timestamp NULL DEFAULT NULL
+    user_id       bigint             NOT NULL,
+    source_id     bigint         DEFAULT NULL,
+    group_id      bigint             NOT NULL,
+    excluded      smallint       DEFAULT NULL,
+    share_type_id smallint       DEFAULT NULL,
+    protect_id    smallint           NOT NULL,
+    last_update   timestamp NULL DEFAULT NULL
 );
 
 COMMENT ON TABLE value_time_series IS 'common parameters for a list of intra-day values';
@@ -2195,18 +2195,20 @@ COMMENT ON TABLE user_value_time_series IS 'common parameters for a user specifi
 -- --------------------------------------------------------
 
 --
--- table structure for table value_ts_data
--- TODO generate
+-- table structure for a single time series value data entry and efficient saving of daily or intra-day values
 --
 
 CREATE TABLE IF NOT EXISTS value_ts_data
 (
-    value_time_series_id BIGSERIAL PRIMARY KEY,
+    value_time_series_id bigint NOT NULL,
     val_time             timestamp NOT NULL,
-    number               float     NOT NULL
+    number               double precision DEFAULT NULL
 );
 
-COMMENT ON TABLE value_ts_data IS 'for efficient saving of daily or intra-day values';
+COMMENT ON TABLE value_ts_data IS 'for a single time series value data entry and efficient saving of daily or intra-day values';
+COMMENT ON COLUMN value_ts_data.value_time_series_id IS 'link to the value time series';
+COMMENT ON COLUMN value_ts_data.val_time IS 'short name of the configuration entry to be shown to the admin';
+COMMENT ON COLUMN value_ts_data.number IS 'the configuration value as a string';
 
 -- --------------------------------------------------------
 
@@ -5055,10 +5057,10 @@ CREATE INDEX user_values_geo_big_source_idx ON user_values_geo_big (source_id);
 -- --------------------------------------------------------
 
 --
--- Indexes for table value_ts_data
--- TODO next
+-- indexes for table value_ts_data
 --
-CREATE UNIQUE INDEX value_time_series_idx ON value_ts_data (value_time_series_id, val_time);
+
+CREATE INDEX value_ts_data_value_time_series_idx ON value_ts_data (value_time_series_id);
 
 -- --------------------------------------------------------
 
@@ -6131,6 +6133,13 @@ ALTER TABLE values_geo_big
 ALTER TABLE user_values_geo_big
     ADD CONSTRAINT user_values_geo_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
     ADD CONSTRAINT user_values_geo_big_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
+
+--
+-- constraints for table value_ts_data
+--
+
+ALTER TABLE value_ts_data
+    ADD CONSTRAINT value_ts_data_value_time_series_fk FOREIGN KEY (value_time_series_id) REFERENCES value_time_series (value_time_series_id);
 
 -- --------------------------------------------------------
 

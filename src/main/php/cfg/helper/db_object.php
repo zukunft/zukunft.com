@@ -176,19 +176,19 @@ class db_object
      * @param bool $is_sandbox true if the standard sandbox fields should be included
      * @return array[] with the parameters of the table fields
      */
-    private function sql_all_field_par(bool $usr_table = false, bool $is_sandbox = true): array
+    protected function sql_all_field_par(bool $usr_table = false, bool $is_sandbox = true): array
     {
         $fields = [];
         if (!$usr_table) {
             if ($is_sandbox) {
-                $fields = array_merge($this->sql_id_field_par($usr_table), sandbox::FLD_ALL_OWNER);
+                $fields = sandbox::FLD_ALL_OWNER;
                 $fields = array_merge($fields, $this::FLD_LST_MUST_BE_IN_STD);
             } else {
-                $fields = array_merge($this->sql_id_field_par(false), $this::FLD_LST_ALL);
+                $fields = $this::FLD_LST_ALL;
                 $fields = array_merge($fields, $this::FLD_LST_EXTRA);
             }
         } else {
-            $fields = array_merge($this->sql_id_field_par($usr_table), sandbox::FLD_ALL_CHANGER);
+            $fields = sandbox::FLD_ALL_CHANGER;
             $fields = array_merge($fields, $this::FLD_LST_MUST_BUT_USER_CAN_CHANGE);
         }
         $fields = array_merge($fields, $this::FLD_LST_USER_CAN_CHANGE);
@@ -199,28 +199,6 @@ class db_object
             $fields = array_merge($fields, sandbox::FLD_LST_ALL);
         }
         return $fields;
-    }
-
-    /**
-     * @return array[] with the parameters of the table key field
-     */
-    private function sql_id_field_par(bool $usr_table = false): array
-    {
-        if (!$usr_table) {
-            return array([
-                $this->id_field(),
-                sql_field_type::KEY_INT,
-                sql_field_default::NOT_NULL,
-                '', '',
-                'the internal unique primary index']);
-        } else {
-            return array([
-                $this->id_field(),
-                sql_field_type::KEY_PART_INT,
-                sql_field_default::NOT_NULL,
-                sql::INDEX, $this::class,
-                'with the user_id the internal unique primary index']);
-        }
     }
 
 

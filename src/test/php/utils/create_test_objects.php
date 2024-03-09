@@ -47,6 +47,7 @@ include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_PHRASE_PATH . 'term.php';
 include_once MODEL_COMPONENT_PATH . 'component.php';
 include_once MODEL_COMPONENT_PATH . 'component_list.php';
+include_once MODEL_VALUE_PATH . 'value_ts_data.php';
 include_once WEB_FORMULA_PATH . 'formula.php';
 
 use api\api;
@@ -129,6 +130,7 @@ use cfg\user_profile_list;
 use cfg\value\value;
 use cfg\value\value_list;
 use cfg\value\value_phrase_link;
+use cfg\value\value_ts_data;
 use cfg\verb;
 use cfg\verb_list;
 use cfg\view;
@@ -1273,6 +1275,13 @@ class create_test_objects extends test_base
         $lnk = new value_phrase_link($this->usr1);
         $lnk->set(1, $this->dummy_value(), $this->dummy_phrase());
         return $lnk;
+    }
+
+    function value_ts(): value_ts_data
+    {
+        $ts = new value_ts_data();
+        $ts->value = round(value_api::TV_READ, 13);
+        return $ts;
     }
 
     /**
