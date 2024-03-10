@@ -32,10 +32,13 @@
 
 namespace unit;
 
+include_once MODEL_FORMULA_PATH . 'formula_link_type.php';
 include_once MODEL_FORMULA_PATH . 'formula_link_list.php';
 
+use cfg\element_type;
 use cfg\formula_link;
 use cfg\formula_link_list;
+use cfg\formula_link_type;
 use cfg\library;
 use cfg\db\sql_db;
 use test\test_cleanup;
@@ -58,6 +61,10 @@ class formula_link_tests
 
         $t->header('Unit tests of the formula link class (src/main/php/model/formula/formula_link.php)');
 
+        $t->subheader('Formula link type SQL setup statements');
+        $frm_lnk_typ = new formula_link_type('');
+        $t->assert_sql_table_create($frm_lnk_typ);
+        $t->assert_sql_index_create($frm_lnk_typ);
 
         $t->subheader('SQL user sandbox statement tests');
 

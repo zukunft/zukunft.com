@@ -1713,21 +1713,22 @@ CREATE TABLE IF NOT EXISTS `formula_links`
 -- --------------------------------------------------------
 
 --
--- Table structure for table`formula_link_types`
+-- table structure to assign predefined behaviour to a formula link
 --
 
-CREATE TABLE IF NOT EXISTS `formula_link_types`
+CREATE TABLE IF NOT EXISTS formula_link_types
 (
-    `formula_link_type_id` int(11)      NOT NULL,
-    `type_name`            varchar(200) NOT NULL,
-    `code_id`              varchar(100)          DEFAULT NULL,
-    `formula_id`           int(11)      NOT NULL,
-    `phrase_type_id`       int(11)      NOT NULL DEFAULT 1,
-    `link_type_id`         int(11)      NOT NULL,
-    `description`          text CHARACTER SET ucs2
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8;
+    formula_link_type_id bigint     NOT NULL COMMENT 'the internal unique primary index',
+    type_name      varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
+    code_id        varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
+    description    text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry',
+    formula_id     bigint           NOT NULL,
+    phrase_type_id bigint           NOT NULL,
+    link_type_id   bigint           NOT NULL
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'to assign predefined behaviour to a formula link';
 
 -- --------------------------------------------------------
 
@@ -4122,11 +4123,15 @@ ALTER TABLE `formula_links`
     ADD KEY `formula_id` (`formula_id`),
     ADD KEY `link_type_id` (`link_type_id`);
 
+-- --------------------------------------------------------
+
 --
--- Indexes for table`formula_link_types`
+-- indexes for table formula_link_types
 --
-ALTER TABLE `formula_link_types`
-    ADD PRIMARY KEY (`formula_link_type_id`);
+
+ALTER TABLE formula_link_types
+    ADD PRIMARY KEY (formula_link_type_id),
+    ADD KEY formula_link_types_type_name_idx (type_name);
 
 -- --------------------------------------------------------
 

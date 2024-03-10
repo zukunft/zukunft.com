@@ -1615,6 +1615,9 @@ class library
             case $this->class_to_name(element_type::class):
                 $result = $this->class_to_name(element::class);
                 break;
+            case $this->class_to_name(formula_link_type::class):
+                $result = $this->class_to_name(formula::class);
+                break;
             case $this->class_to_name(sys_log_status::class):
             case $this->class_to_name(sys_log_function::class):
             case $this->class_to_name(job_type::class):
