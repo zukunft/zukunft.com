@@ -2,8 +2,8 @@
 
 /*
 
-    cgf/formula/formula_element_type_list.php - to link coded functionality to a formula element type
-    -----------------------------------------
+    cfg/element/element_type_list.php - to link coded functionality to a formula element type
+    ---------------------------------
 
     TODO review and merge with parameter_type because this will never change, so a fixed enum can be used
 
@@ -24,7 +24,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2024 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -33,11 +33,13 @@
 
 namespace cfg;
 
-global $formula_element_types;
+include_once MODEL_ELEMENT_PATH . 'element_type.php';
 
 use cfg\db\sql_db;
 
-class formula_element_type_list extends type_list
+global $element_types;
+
+class element_type_list extends type_list
 {
 
     /**
@@ -45,7 +47,7 @@ class formula_element_type_list extends type_list
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
      * @return bool true if load was successful
      */
-    function load(sql_db $db_con, string $db_type = sql_db::TBL_FORMULA_ELEMENT_TYPE): bool
+    function load(sql_db $db_con, string $db_type = sql_db::TBL_ELEMENT_TYPE): bool
     {
         return parent::load($db_con, $db_type);
     }

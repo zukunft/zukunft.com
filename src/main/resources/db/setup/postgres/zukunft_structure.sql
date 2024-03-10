@@ -2231,23 +2231,23 @@ COMMENT ON COLUMN element_types.code_id IS 'this id text is unique for all code 
 COMMENT ON COLUMN element_types.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
 
 --
--- table structure for table formula_elements
+-- table structure for table elements
 -- TODO generate
 --
 
-CREATE TABLE IF NOT EXISTS formula_elements
+CREATE TABLE IF NOT EXISTS elements
 (
-    formula_element_id      BIGSERIAL PRIMARY KEY,
+    element_id      BIGSERIAL PRIMARY KEY,
     formula_id              bigint NOT NULL,
     user_id                 bigint NOT NULL,
     order_nbr               bigint NOT NULL,
-    formula_element_type_id bigint NOT NULL,
+    element_type_id bigint NOT NULL,
     ref_id                  bigint       DEFAULT NULL,
     resolved_text           varchar(200) DEFAULT NULL
 );
 
-COMMENT ON TABLE formula_elements IS 'cache for fast update of formula resolved text';
-COMMENT ON COLUMN formula_elements.ref_id IS 'either a term, verb or formula id';
+COMMENT ON TABLE elements IS 'cache for fast update of formula resolved text';
+COMMENT ON COLUMN elements.ref_id IS 'either a term, verb or formula id';
 
 -- --------------------------------------------------------
 
@@ -2377,7 +2377,9 @@ CREATE TABLE IF NOT EXISTS formula_links
     phrase_id       bigint NOT NULL,
     link_type_id    bigint   DEFAULT NULL,
     order_nbr       bigint DEFAULT NULL,
-    excluded        smallint DEFAULT NULL
+    excluded        smallint DEFAULT NULL,
+    share_type_id   smallint     DEFAULT NULL,
+    protect_id      smallint     DEFAULT NULL
 );
 
 COMMENT ON TABLE formula_links IS 'if the term pattern of a value matches this term pattern';
@@ -2392,7 +2394,10 @@ CREATE TABLE IF NOT EXISTS user_formula_links
     formula_link_id BIGSERIAL NOT NULL,
     user_id         bigint    NOT NULL,
     link_type_id    bigint    DEFAULT NULL,
-    excluded        smallint  DEFAULT NULL
+    excluded        smallint  DEFAULT NULL,
+    share_type_id   smallint  DEFAULT NULL,
+    protect_id      smallint  DEFAULT NULL
+
 );
 
 COMMENT ON TABLE user_formula_links IS 'if the term pattern of a value matches this term pattern ';
@@ -5078,10 +5083,10 @@ CREATE INDEX element_types_type_name_idx ON element_types (type_name);
 -- --------------------------------------------------------
 
 --
--- Indexes for table formula_elements
+-- Indexes for table elements
 --
-CREATE INDEX formula_element_idx ON formula_elements (formula_id);
-CREATE INDEX formula_element_type_idx ON formula_elements (formula_element_type_id);
+CREATE INDEX element_idx ON elements (formula_id);
+CREATE INDEX element_type_idx ON elements (element_type_id);
 
 -- --------------------------------------------------------
 
@@ -6175,11 +6180,11 @@ ALTER TABLE user_formulas
     ADD CONSTRAINT user_formulas_view_fk FOREIGN KEY (view_id) REFERENCES views (view_id);
 
 --
--- constraints for table formula_elements
+-- constraints for table elements
 --
-ALTER TABLE formula_elements
-    ADD CONSTRAINT formula_elements_fk_1 FOREIGN KEY (formula_element_type_id) REFERENCES formula_element_types (formula_element_type_id),
-    ADD CONSTRAINT formula_elements_fk_2 FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
+ALTER TABLE elements
+    ADD CONSTRAINT elements_fk_1 FOREIGN KEY (element_type_id) REFERENCES element_types (element_type_id),
+    ADD CONSTRAINT elements_fk_2 FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
 
 --
 -- constraints for table formula_links

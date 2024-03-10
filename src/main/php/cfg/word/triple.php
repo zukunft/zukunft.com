@@ -2199,8 +2199,9 @@ class triple extends sandbox_link_typed implements JsonSerializable
         $result = new user_message();
 
         // collect all phrase groups where this triple is used
-        $grp_lst = new group_list($this->user());
-        $grp_lst->load_by_phr($this->phrase());
+        // TODO activate
+        //$grp_lst = new group_list($this->user());
+        //$grp_lst->load_by_phr($this->phrase());
 
         // collect all values related to this triple
         $val_lst = new value_list($this->user());
@@ -2212,7 +2213,8 @@ class triple extends sandbox_link_typed implements JsonSerializable
         }
 
         // if the user confirms the deletion, the removal process is started with a retry of the triple deletion at the end
-        $result->add($grp_lst->del());
+        // TODO activate
+        //$result->add($grp_lst->del());
 
         return $result;
     }

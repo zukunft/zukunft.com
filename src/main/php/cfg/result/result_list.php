@@ -494,20 +494,12 @@ class result_list extends sandbox_value_list
                 } elseif (get_class($obj) == word::class or get_class($obj) == word_dsp::class) {
                     // TODO check if the results are still correct if the user has excluded the word
                     $db_con->add_par(sql_par_type::INT, $obj->id(), false, true);
-                    $db_con->set_join_fields(
-                        array(result::FLD_GRP),
-                        sql_db::TBL_GROUP_LINK,
-                        result::FLD_GRP,
-                        result::FLD_GRP);
+                    // $db_con->set_join_fields(                        array(result::FLD_GRP),                        sql_db::TBL_GROUP_LINK,                        result::FLD_GRP,                        result::FLD_GRP);
                     $qp->sql = $db_con->select_by_field_list(array(word::FLD_ID));
                 } elseif (get_class($obj) == triple::class) {
                     // TODO check if the results are still correct if the user has excluded the triple
                     $db_con->add_par(sql_par_type::INT, $obj->id(), false, true);
-                    $db_con->set_join_fields(
-                        array(result::FLD_GRP),
-                        sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK,
-                        result::FLD_GRP,
-                        result::FLD_GRP);
+                    //$db_con->set_join_fields( array(result::FLD_GRP),sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK,   result::FLD_GRP,         result::FLD_GRP);
                     $qp->sql = $db_con->select_by_field_list(array(triple::FLD_ID));
                 }
             }

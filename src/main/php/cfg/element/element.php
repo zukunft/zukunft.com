@@ -2,8 +2,8 @@
 
 /*
 
-    model/formula/formula_element.php - either a word, triple, verb or formula with a link to a formula
-    ---------------------------------
+    cgf/element/element.php - either a word, triple, verb or formula with a link to a formula
+    -----------------------
 
     formula elements are terms or expression operators such as add or brackets
     The term formula elements are saved in the database for fast detection of dependencies
@@ -26,7 +26,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2024 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -39,10 +39,10 @@ include_once MODEL_HELPER_PATH . 'db_object_seq_id_user.php';
 
 use cfg\db\sql;
 use cfg\db\sql_par;
-use html\word\word as word_dsp;
 use html\formula\formula as formula_dsp;
+use html\word\word as word_dsp;
 
-class formula_element extends db_object_seq_id_user
+class element extends db_object_seq_id_user
 {
 
     // the allowed objects types for a formula element
@@ -52,9 +52,9 @@ class formula_element extends db_object_seq_id_user
     const TYPE_FORMULA = formula::class;  // a formula is used to include formula results of another formula
 
     // database fields only used for formula elements
-    const FLD_ID = 'formula_element_id';
+    const FLD_ID = 'element_id';
     const FLD_ORDER = 'order_nbr';
-    const FLD_TYPE = 'formula_element_type_id';
+    const FLD_TYPE = 'element_type_id';
     const FLD_REF_ID = 'ref_id';
     // TODO: is resolved text needed?
 
@@ -92,6 +92,7 @@ class formula_element extends db_object_seq_id_user
     function __construct(user $usr)
     {
         parent::__construct($usr);
+        db_object_seq_id_user::__construct($usr);
     }
 
     /**
@@ -131,7 +132,7 @@ class formula_element extends db_object_seq_id_user
     }
 
     /**
-     * @return int|null the database id of the related object
+     * @return int the database id of the related object
      */
     function id(): int
     {
@@ -165,10 +166,9 @@ class formula_element extends db_object_seq_id_user
     /**
      * get the related object (term?) from the database
      * @param int $id the id of the formula element
-     * @param string $class the name of the class which is 'formula_element'
-     * @return int the id of the formula_element found and zero if nothing is found
+     * @return int the id of the element found and zero if nothing is found
      */
-    function load_obj_by_id(int $id, string $class = self::class): int
+    function load_obj_by_id(int $id): int
     {
         if ($id != 0 and $this->user()->is_set()) {
             if ($this->type == self::TYPE_WORD) {
@@ -204,7 +204,7 @@ class formula_element extends db_object_seq_id_user
                     $this->frm_type = $frm->type_cl;
                 }
             }
-            log_debug("formula_element->load got " . $this->dsp_id() . " (" . $this->symbol . ").");
+            log_debug("element->load got " . $this->dsp_id() . " (" . $this->symbol . ").");
         }
         return $id;
     }

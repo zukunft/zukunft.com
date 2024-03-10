@@ -822,8 +822,7 @@ class user extends db_object_seq_id
 
                         // TODO move to functions used here to check class
                         if ($user_profiles->is_empty()) {
-                            $db_chk = new db_check();
-                            $db_chk->db_fill_code_links($db_con);
+                            $db_con->db_fill_code_links();
 
                             // reopen the database to collect the cached lists
                             $db_con->close();

@@ -73,7 +73,7 @@ class group_list extends sandbox_list
         global $db_con;
         $result = false;
 
-        $qp = $this->load_sql_by_phr_old($db_con->sql_creator(), $phr);
+        $qp = $this->load_sql_by_phr($db_con->sql_creator(), $phr);
 
         // similar statement used in triple_list->load, check if changes should be repeated in triple_list.php
         $db_rows = $db_con->get($qp);
@@ -268,38 +268,6 @@ class group_list extends sandbox_list
     {
         $qp = $this->load_sql($sc, 'ids');
         $sc->add_where(group::FLD_ID, $grp_ids);
-        $sc->set_order(group::FLD_ID);
-        $sc->set_page($limit, $offset);
-        $qp->sql = $sc->sql();
-        $qp->par = $sc->get_par();
-        return $qp;
-    }
-
-    /**
-     * set the SQL query parameters to load a list of groups by a phrase id
-     * TODO add pattern matching for 64-bit, 512-bit and text group_id
-     *
-     * @param sql $sc with the target db_type set
-     * @param phrase $phr the phrase to which all linked groups should be returned
-     * @param int $limit the number of rows to return
-     * @param int $offset jump over these number of pages
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql_by_phr_old(sql $sc, phrase $phr, int $limit = 0, int $offset = 0): sql_par
-    {
-
-        $qp = $this->load_sql($sc, 'phr');
-        // overwrite the query name
-        $lib = new library();
-        $class = $lib->class_to_name($this::class);
-        $qp->name = $class . '_by_phr';
-        $sc->set_name($qp->name);
-        $sc->set_join_fields(
-            array(phrase::FLD_ID),
-            sql_db::TBL_GROUP_LINK,
-            group::FLD_ID,
-            group::FLD_ID);
-        $sc->add_where(sql_db::LNK_TBL . '.' . phrase::FLD_ID, $phr->obj_id());
         $sc->set_order(group::FLD_ID);
         $sc->set_page($limit, $offset);
         $qp->sql = $sc->sql();

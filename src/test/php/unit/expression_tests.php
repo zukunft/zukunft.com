@@ -133,7 +133,7 @@ class expression_tests
         // test the element list of the right side
         $elm_grp_lst = $exp->element_list($trm_lst);
         $result = $elm_grp_lst->dsp_id();
-        $target = '"parts","of","total" (formula_element_id '
+        $target = '"parts","of","total" (element_id '
             . word_api::TI_PARTS . ',' . verb_api::TI_OF . ',' . word_api::TI_TOTAL
             . ') for user 1 (zukunft.com system test)';
         //$target = '"' . formula_api::TN_PERCENT . '" (1)';
@@ -160,7 +160,7 @@ class expression_tests
         $test_name = 'test the formula element list';
         $elm_lst = $exp->element_list($trm_lst);
         $result = $elm_lst->dsp_id();
-        $target = '"this","prior","prior" (formula_element_id '
+        $target = '"this","prior","prior" (element_id '
             . word_api::TI_THIS . ',' . word_api::TI_PRIOR . ',' . word_api::TI_PRIOR
             . ') for user 1 (zukunft.com system test)';
         $t->assert($test_name, $result, $target);

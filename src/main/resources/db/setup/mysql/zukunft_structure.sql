@@ -1678,16 +1678,16 @@ CREATE TABLE IF NOT EXISTS value_ts_data
 -- --------------------------------------------------------
 
 --
--- Table structure for table`formula_elements`
+-- Table structure for table`elements`
 --
 
-CREATE TABLE IF NOT EXISTS `formula_elements`
+CREATE TABLE IF NOT EXISTS `elements`
 (
-    `formula_element_id`      int(11) NOT NULL,
+    `element_id`      int(11) NOT NULL,
     `formula_id`              int(11) NOT NULL,
     `user_id`                 int(11) NOT NULL,
     `order_nbr`               int(11) NOT NULL,
-    `formula_element_type_id` int(11) NOT NULL,
+    `element_type_id` int(11) NOT NULL,
     `ref_id`                  int(11)      DEFAULT NULL COMMENT 'either a term, verb or formula id',
     `resolved_text`           varchar(200) DEFAULT NULL
 ) ENGINE = InnoDB
@@ -4106,12 +4106,12 @@ ALTER TABLE `formulas`
     ADD KEY `protect_id` (`protect_id`);
 
 --
--- Indexes for table`formula_elements`
+-- Indexes for table`elements`
 --
-ALTER TABLE `formula_elements`
-    ADD PRIMARY KEY (`formula_element_id`),
+ALTER TABLE `elements`
+    ADD PRIMARY KEY (`element_id`),
     ADD KEY `formula_id` (`formula_id`),
-    ADD KEY `formula_element_type_id` (`formula_element_type_id`);
+    ADD KEY `element_type_id` (`element_type_id`);
 
 --
 -- Indexes for table`formula_links`
@@ -5190,10 +5190,10 @@ ALTER TABLE `change_tables`
 ALTER TABLE `formulas`
     MODIFY `formula_id` int(11) NOT NULL AUTO_INCREMENT;
 --
--- AUTO_INCREMENT for table`formula_elements`
+-- AUTO_INCREMENT for table`elements`
 --
-ALTER TABLE `formula_elements`
-    MODIFY `formula_element_id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `elements`
+    MODIFY `element_id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table`formula_links`
 --

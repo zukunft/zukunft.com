@@ -2,8 +2,8 @@
 
 /*
 
-    model/formula/formula_element_list.php - a list of formula elements to place the name function
-    --------------------------------------
+    cfg/element/element_list.php - a list of formula elements to place the name function
+    ----------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -22,7 +22,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2024 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -33,13 +33,12 @@ namespace cfg;
 
 use cfg\db\sql;
 use cfg\db\sql_par;
-use cfg\db\sql_par_type;
 
 include_once DB_PATH . 'sql_par_type.php';
-include_once MODEL_FORMULA_PATH . 'formula_element.php';
+include_once MODEL_ELEMENT_PATH . 'element.php';
 include_once MODEL_FORMULA_PATH . 'parameter_type.php';
 
-class formula_element_list extends sandbox_list
+class element_list extends sandbox_list
 {
 
     // array $lst is the list of formula elements
@@ -60,10 +59,10 @@ class formula_element_list extends sandbox_list
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
 
-        $sc->set_class(formula_element::class);
+        $sc->set_class(element::class);
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
-        $sc->set_fields(formula_element::FLD_NAMES);
+        $sc->set_fields(element::FLD_NAMES);
         return $qp;
     }
 
@@ -99,7 +98,7 @@ class formula_element_list extends sandbox_list
         $qp = $this->load_sql($sc, 'frm_and_type_id');
         if ($frm_id > 0 and $elm_type_id != 0) {
             $sc->add_where(formula::FLD_ID, $frm_id);
-            $sc->add_where(formula_element::FLD_TYPE, $elm_type_id);
+            $sc->add_where(element::FLD_TYPE, $elm_type_id);
             $sc->add_where(user::FLD_ID, $this->user()->id());
             $qp->sql = $sc->sql();
         } else {
@@ -118,7 +117,7 @@ class formula_element_list extends sandbox_list
         $db_rows = $db_con->get($qp);
         if ($db_rows != null) {
             foreach ($db_rows as $db_row) {
-                $elm = new formula_element($this->user());
+                $elm = new element($this->user());
                 $elm->row_mapper($db_row);
                 $this->add_obj($elm);
                 $result = true;
@@ -136,7 +135,7 @@ class formula_element_list extends sandbox_list
      * add one formula element to the list and keep the order (contrary to the parent function)
      * @returns bool true the element has been added
      */
-    function add(?formula_element $elm_to_add): bool
+    function add(?element $elm_to_add): bool
     {
         $this->add_obj($elm_to_add, true);
         $this->set_lst_dirty();

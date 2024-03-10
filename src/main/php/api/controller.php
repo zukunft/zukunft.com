@@ -107,7 +107,7 @@ class controller
     const API_LIST_PHRASE_TYPES = 'phrase_types';
     const API_LIST_FORMULA_TYPES = 'formula_types';
     const API_LIST_FORMULA_LINK_TYPES = 'formula_link_types';
-    const API_LIST_FORMULA_ELEMENT_TYPES = 'formula_element_types';
+    const API_LIST_ELEMENT_TYPES = 'element_types';
     const API_LIST_VIEW_TYPES = 'view_types';
     const API_LIST_COMPONENT_TYPES = 'component_types';
     // const API_LIST_COMPONENT_LINK_TYPES = 'component_link_types';

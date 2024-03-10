@@ -161,13 +161,13 @@ class system_tests
         $frm_lnk = $t->dummy_formula_link();
         $target = 'from "scale minute to sec" (formula_id 1) to "Mathematics" (word_id 1) as phrase as  (formula_link_id 1)';
         $t->assert($test_name, $frm_lnk->dsp_id(), $target);
-        $test_name = 'debug formula_element id';
+        $test_name = 'debug element id';
         $elm = $t->dummy_element();
         $target = 'word "minute" (98) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $elm->dsp_id(), $target);
-        $test_name = 'debug formula_element_list id';
+        $test_name = 'debug element_list id';
         $elm = $t->dummy_element_list();
-        $target = '"minute" (formula_element_id 98) for user 1 (zukunft.com system test)';
+        $target = '"minute" (element_id 98) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $elm->dsp_id(), $target);
         $test_name = 'debug expression id';
         $exp = $t->dummy_expression();
@@ -320,8 +320,8 @@ class system_tests
         $t->assert_sql_all($db_con, $formula_types);
         $formula_link_types = new formula_link_type_list();
         $t->assert_sql_all($db_con, $formula_link_types);
-        $formula_element_types = new formula_element_type_list();
-        $t->assert_sql_all($db_con, $formula_element_types);
+        $element_types = new element_type_list();
+        $t->assert_sql_all($db_con, $element_types);
         $view_types = new view_type_list();
         $t->assert_sql_all($db_con, $view_types);
         $component_types = new component_type_list();

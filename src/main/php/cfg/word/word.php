@@ -1703,8 +1703,9 @@ class word extends sandbox_typed
         $result = new user_message();
 
         // collect all phrase groups where this word is used
-        $grp_lst = new group_list($this->user());
-        $grp_lst->load_by_phr($this->phrase());
+        // TODO activate
+        //$grp_lst = new group_list($this->user());
+        //$grp_lst->load_by_phr($this->phrase());
 
         // collect all triples where this word is used
         $trp_lst = new triple_list($this->user());
@@ -1725,7 +1726,8 @@ class word extends sandbox_typed
         }
 
         // delete the phrase groups
-        $result->add($grp_lst->del());
+        // TODO activate
+        //$result->add($grp_lst->del());
 
         return $result;
     }

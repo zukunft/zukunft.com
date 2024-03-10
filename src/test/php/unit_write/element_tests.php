@@ -2,7 +2,7 @@
 
 /*
 
-    test/php/unit_write/formula_element_tests.php - write test FORMULA ELEMENTS to the database and check the results
+    test/php/unit_write/element_tests.php - write test FORMULA ELEMENTS to the database and check the results
     ---------------------------------------------
   
 
@@ -37,7 +37,7 @@ use api\word\word as word_api;
 use cfg\verb;
 use test\test_cleanup;
 
-class formula_element_tests
+class element_tests
 {
 
     function run(test_cleanup $t): void
@@ -46,7 +46,7 @@ class formula_element_tests
 
         $back = 0;
 
-        $t->header('Test the formula element class (classes/formula_element.php)');
+        $t->header('Test the formula element class (classes/element.php)');
 
         // load increase formula for testing
         $frm = $t->load_formula(formula_api::TN_SECTOR);
@@ -79,7 +79,7 @@ class formula_element_tests
                 } elseif ($pos == 3) {
                     $target = 'word "System Test Word Total" (' . $wrd_total->id() . ') for user 2 (zukunft.com system test)';
                 }
-                $t->display('formula_element->dsp_id', $target, $result);
+                $t->display('element->dsp_id', $target, $result);
 
                 $result = $elm->name();
                 if ($pos == 0) {
@@ -91,7 +91,7 @@ class formula_element_tests
                 } elseif ($pos == 3) {
                     $target = 'System Test Word Total';
                 }
-                $t->display('formula_element->dsp_id', $target, $result);
+                $t->display('element->dsp_id', $target, $result);
 
                 $result = $elm->name_linked($back);
                 if ($pos == 0) {
@@ -103,7 +103,7 @@ class formula_element_tests
                 } elseif ($pos == 3) {
                     $target = '<a href="/http/view.php?words=' . $wrd_total->id() . '&back=0" title="System Test Word Total">System Test Word Total</a>';
                 }
-                $t->display('formula_element->dsp_id', $target, $result);
+                $t->display('element->dsp_id', $target, $result);
 
                 $pos++;
             }
@@ -120,7 +120,7 @@ class formula_element_tests
 
         $back = 0;
 
-        $t->header('Test the formula element list class (classes/formula_element_list.php)');
+        $t->header('Test the formula element list class (classes/element_list.php)');
 
         // load increase formula for testing
         $frm = $t->load_formula(formula_api::TN_SECTOR);
@@ -130,11 +130,11 @@ class formula_element_tests
         if (!$elm_lst->is_empty()) {
             $result = $elm_lst->name();
             $target = '"Country","can be used as a differentiator for","Canton","System Test Word Total"';
-            $t->dsp_contains(', formula_element_list->dsp_id', $target, $result);
+            $t->dsp_contains(', element_list->dsp_id', $target, $result);
         } else {
             $result = 'formula element list not set';
             $target = '';
-            $t->display('formula_element_list->dsp_id', $target, $result);
+            $t->display('element_list->dsp_id', $target, $result);
         }
 
     }

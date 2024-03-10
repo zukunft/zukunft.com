@@ -2,41 +2,41 @@
 
 /*
 
-  model/formula/formula_element_group.php - a group of formula elements that, in combination, return a value or a list of values
-  ---------------------------------------
-  
-  e.g. for for "ABB", "differentiator" and "Sector" (or "Sectors" "of" "ABB")
-       a list of all sector values is returned
-  or in other words for each element group a where clause for value retrieval is created
-  
-  phrases are always used to select the smallest set of value (in SQL by using "AND" in the where clause)
-  e.g. "ABB" "Sales" excludes the values for "ABB income tax" and "Danone Sales"
-  
-  verbs are always used to add a set of values
-  e.g. "ABB", "Sales", "differentiator" and "Sector" will return a list of Sector sales for ABB
-       so the SQL statement would be "... WHERE ("ABB" AND "Sales" AND "Sector1") OR ("ABB" AND "Sales" AND "Sector2") OR ....
-  
-  This file is part of zukunft.com - calc with words
+    cfg/element/element_group.php - a group of formula elements that, in combination, return a value or a list of values
+    -----------------------------
 
-  zukunft.com is free software: you can redistribute it and/or modify it
-  under the terms of the GNU General Public License as
-  published by the Free Software Foundation, either version 3 of
-  the License, or (at your option) any later version.
-  zukunft.com is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU General Public License for more details.
-  
-  You should have received a copy of the GNU General Public License
-  along with zukunft.com. If not, see <http://www.gnu.org/licenses/agpl.html>.
-  
-  To contact the authors write to:
-  Timon Zielonka <timon@zukunft.com>
-  
-  Copyright (c) 1995-2022 zukunft.com AG, Zurich
-  Heang Lor <heang@zukunft.com>
-  
-  http://zukunft.com
+    e.g. for for "ABB", "differentiator" and "Sector" (or "Sectors" "of" "ABB")
+       a list of all sector values is returned
+    or in other words for each element group a where clause for value retrieval is created
+
+    phrases are always used to select the smallest set of value (in SQL by using "AND" in the where clause)
+    e.g. "ABB" "Sales" excludes the values for "ABB income tax" and "Danone Sales"
+
+    verbs are always used to add a set of values
+    e.g. "ABB", "Sales", "differentiator" and "Sector" will return a list of Sector sales for ABB
+       so the SQL statement would be "... WHERE ("ABB" AND "Sales" AND "Sector1") OR ("ABB" AND "Sales" AND "Sector2") OR ....
+
+    This file is part of zukunft.com - calc with words
+
+    zukunft.com is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as
+    published by the Free Software Foundation, either version 3 of
+    the License, or (at your option) any later version.
+    zukunft.com is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with zukunft.com. If not, see <http://www.gnu.org/licenses/agpl.html>.
+
+    To contact the authors write to:
+    Timon Zielonka <timon@zukunft.com>
+
+    Copyright (c) 1995-2024 zukunft.com AG, Zurich
+    Heang Lor <heang@zukunft.com>
+
+    http://zukunft.com
   
 */
 
@@ -47,10 +47,9 @@ include_once MODEL_FORMULA_PATH . 'figure_list.php';
 use cfg\result\result;
 use cfg\value\value;
 use html\figure\figure as figure_dsp;
-use html\result\result as result_dsp;
 use test\test_api;
 
-class formula_element_group
+class element_group
 {
 
     public ?array $lst = null;           // array of formula elements such as a word, verb or formula
@@ -124,7 +123,7 @@ class formula_element_group
      * set the time phrase based on a predefined formula such as "prior" or "next"
      * e.g. if the predefined formula "prior" is used and the time is 2017 than 2016 should be used
      */
-    private function set_formula_time_phrase(formula_element $frm_elm, phrase_list $val_phr_lst): ?phrase
+    private function set_formula_time_phrase(element $frm_elm, phrase_list $val_phr_lst): ?phrase
     {
         log_debug('for ' . $frm_elm->dsp_id() . ' and ' . $val_phr_lst->dsp_id());
 
@@ -138,7 +137,7 @@ class formula_element_group
         if (isset($val_time_phr)) {
             if ($val_time_phr->id() == 0) {
                 // switched off because it is not working for "this"
-                log_err('No time found for "' . $frm_elm->obj->name . '".', 'formula_element_group->figures');
+                log_err('No time found for "' . $frm_elm->obj->name . '".', 'element_group->figures');
             } else {
                 log_debug('get predefined time result');
                 if (isset($frm_elm->obj)) {

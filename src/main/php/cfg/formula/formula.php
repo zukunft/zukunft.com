@@ -43,7 +43,7 @@ include_once MODEL_SANDBOX_PATH . 'sandbox_typed.php';
 include_once MODEL_FORMULA_PATH . 'formula_type.php';
 include_once MODEL_FORMULA_PATH . 'expression.php';
 include_once MODEL_FORMULA_PATH . 'parameter_type.php';
-include_once MODEL_FORMULA_PATH . 'formula_element_list.php';
+include_once MODEL_ELEMENT_PATH . 'element_list.php';
 include_once MODEL_PHRASE_PATH . 'phrase_type.php';
 include_once API_FORMULA_PATH . 'formula.php';
 include_once WEB_FORMULA_PATH . 'formula.php';
@@ -56,8 +56,8 @@ use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
-use cfg\export\sandbox_exp;
 use cfg\export\formula_exp;
+use cfg\export\sandbox_exp;
 use cfg\result\result;
 use cfg\result\result_list;
 use cfg\value\value;
@@ -1545,7 +1545,7 @@ class formula extends sandbox_typed
         log_debug('got (' . $lib->dsp_array($elm_ids) . ') of type ' . $element_type . ' from text');
 
         // read the existing elements from the database
-        $frm_elm_lst = new formula_element_list($this->user());
+        $frm_elm_lst = new element_list($this->user());
         $qp = $frm_elm_lst->load_sql_by_frm_and_type_id($db_con->sql_creator(), $this->id(), $elm_type_id);
         $db_lst = $db_con->get($qp);
 
@@ -1574,11 +1574,11 @@ class formula extends sandbox_typed
             } else {
                 $field_values[] = $this->user()->id();
             }
-            $field_names[] = 'formula_element_type_id';
+            $field_names[] = 'element_type_id';
             $field_values[] = $elm_type_id;
             $field_names[] = 'ref_id';
             $field_values[] = $elm_add_id;
-            $db_con->set_class(sql_db::TBL_FORMULA_ELEMENT);
+            $db_con->set_class(sql_db::TBL_ELEMENT);
             $field_names[] = 'order_nbr';
             $field_values[] = $elm_order_nbr;
             $add_result = $db_con->insert_old($field_names, $field_values);
@@ -1602,11 +1602,11 @@ class formula extends sandbox_typed
                 $field_names[] = user::FLD_ID;
                 $field_values[] = $frm_usr_id;
             }
-            $field_names[] = 'formula_element_type_id';
+            $field_names[] = 'element_type_id';
             $field_values[] = $elm_type_id;
             $field_names[] = 'ref_id';
             $field_values[] = $elm_del_id;
-            $db_con->set_class(sql_db::TBL_FORMULA_ELEMENT);
+            $db_con->set_class(sql_db::TBL_ELEMENT);
             $del_result = $db_con->delete_old($field_names, $field_values);
             if ($del_result != '') {
                 $result = false;
@@ -1939,7 +1939,7 @@ class formula extends sandbox_typed
         $msg_failed = $this->id() . ' failed for ' . $this->user()->name;
         $msg = '';
 
-        $db_con->set_class(sql_db::TBL_FORMULA_ELEMENT);
+        $db_con->set_class(sql_db::TBL_ELEMENT);
         try {
             $msg = $db_con->delete_old(
                 array(self::FLD_ID, user::FLD_ID),

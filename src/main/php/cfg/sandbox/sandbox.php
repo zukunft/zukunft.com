@@ -2214,7 +2214,7 @@ class sandbox extends db_object_seq_id_user
 
                 // and the corresponding formula elements
                 if ($result->is_ok()) {
-                    $db_con->set_class(sql_db::TBL_FORMULA_ELEMENT);
+                    $db_con->set_class(sql_db::TBL_ELEMENT);
                     $db_con->set_usr($this->user()->id());
                     $msg = $db_con->delete_old(sql_db::TBL_FORMULA . sql_db::FLD_EXT_ID, $this->id);
                     $result->add_message($msg);

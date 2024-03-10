@@ -53,25 +53,22 @@ use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
-use cfg\db\sql_par_type;
 use cfg\db\sql_table_type;
+use cfg\element_list;
 use cfg\export\export;
 use cfg\export\result_exp;
 use cfg\export\sandbox_exp;
 use cfg\expression;
 use cfg\figure;
 use cfg\formula;
-use cfg\formula_element_list;
 use cfg\group\group;
 use cfg\group\group_id;
 use cfg\group\group_list;
 use cfg\library;
 use cfg\parameter_type;
-use cfg\phr_ids;
 use cfg\phrase_list;
 use cfg\sandbox;
 use cfg\sandbox_value;
-use cfg\source;
 use cfg\user;
 use cfg\user_message;
 use cfg\value\value;
@@ -1421,7 +1418,7 @@ class result extends sandbox_value
         $result = array();
 
         // get depending formulas
-        $frm_elm_lst = new formula_element_list($this->user());
+        $frm_elm_lst = new element_list($this->user());
         $frm_elm_lst->load_by_frm_and_type_id($this->frm->id(), parameter_type::FORMULA_ID);
         $frm_ids = array();
         foreach ($frm_elm_lst as $frm_elm) {

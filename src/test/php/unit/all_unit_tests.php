@@ -52,10 +52,10 @@ include_once MODEL_SYSTEM_PATH . 'sys_log_status_list.php';
 include_once MODEL_PHRASE_PATH . 'phrase_types.php';
 include_once MODEL_GROUP_PATH . 'group_id.php';
 include_once MODEL_VERB_PATH . 'verb_list.php';
+include_once MODEL_ELEMENT_PATH . 'element_type_list.php';
 include_once MODEL_FORMULA_PATH . 'formula_type_list.php';
 include_once MODEL_FORMULA_PATH . 'formula_link_type_list.php';
-include_once MODEL_FORMULA_PATH . 'element_type.php';
-include_once MODEL_FORMULA_PATH . 'formula_element_type_list.php';
+include_once MODEL_ELEMENT_PATH . 'element_type.php';
 include_once MODEL_VIEW_PATH . 'view_sys_list.php';
 include_once MODEL_VIEW_PATH . 'view_sys_list.php';
 include_once MODEL_VIEW_PATH . 'view_type.php';
@@ -82,14 +82,14 @@ include_once MODEL_LOG_PATH . 'system_log.php';
 include_once MODEL_LOG_PATH . 'system_log_list.php';
 include_once API_SANDBOX_PATH . 'sandbox_value.php';
 
-use cfg\job_type_list;
 use cfg\component\component_pos_type_list;
 use cfg\component\component_type_list;
 use cfg\component_link_type_list;
 use cfg\db\sql_db;
-use cfg\formula_element_type_list;
+use cfg\element_type_list;
 use cfg\formula_link_type_list;
 use cfg\formula_type_list;
+use cfg\job_type_list;
 use cfg\language_form_list;
 use cfg\language_list;
 use cfg\log\change_action_list;
@@ -102,16 +102,13 @@ use cfg\share_type_list;
 use cfg\source_type_list;
 use cfg\sys_log_status_list;
 use cfg\user;
-use cfg\user_list;
 use cfg\user\user_profile;
+use cfg\user_list;
 use cfg\user_profile_list;
 use cfg\verb_list;
 use cfg\view_sys_list;
 use cfg\view_type_list;
 use test\test_cleanup;
-
-use unit\import_tests as import_tests;
-use unit\html\job as job_html_tests;
 use unit\html\change_log as change_log_html_tests;
 use unit\html\component as component_html_tests;
 use unit\html\component_list as component_list_html_tests;
@@ -119,6 +116,7 @@ use unit\html\figure as figure_html_tests;
 use unit\html\figure_list as figure_list_html_tests;
 use unit\html\formula as formula_html_tests;
 use unit\html\formula_list as formula_list_html_tests;
+use unit\html\job as job_html_tests;
 use unit\html\language as language_html_tests;
 use unit\html\phrase as phrase_html_tests;
 use unit\html\phrase_group as phrase_group_html_tests;
@@ -142,6 +140,7 @@ use unit\html\view as view_html_tests;
 use unit\html\view_list as view_list_html_tests;
 use unit\html\word as word_html_tests;
 use unit\html\word_list as word_list_html_tests;
+use unit\import_tests as import_tests;
 
 class all_unit_tests extends test_cleanup
 {
@@ -199,7 +198,7 @@ class all_unit_tests extends test_cleanup
         $this->init_verbs();
         $this->init_formula_types();
         $this->init_formula_link_types();
-        $this->init_formula_element_types();
+        $this->init_element_types();
         $this->init_views($usr);
         $this->init_view_types();
         $this->init_component_types();
@@ -249,7 +248,7 @@ class all_unit_tests extends test_cleanup
         (new formula_tests)->run($this);
         (new formula_list_tests)->run($this);
         (new formula_link_tests)->run($this); // TODO add assert_api_to_dsp
-        (new formula_element_tests)->run($this);
+        (new element_tests)->run($this);
         (new expression_tests)->run($this);
         (new result_tests)->run($this);
         (new result_list_tests)->run($this);
@@ -397,12 +396,12 @@ class all_unit_tests extends test_cleanup
     /**
      * create formula element type array for the unit tests without database connection
      */
-    function init_formula_element_types(): void
+    function init_element_types(): void
     {
-        global $formula_element_types;
+        global $element_types;
 
-        $formula_element_types = new formula_element_type_list();
-        $formula_element_types->load_dummy();
+        $element_types = new element_type_list();
+        $element_types->load_dummy();
 
     }
 

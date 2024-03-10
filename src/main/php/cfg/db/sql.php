@@ -38,7 +38,7 @@ include_once MODEL_DB_PATH . 'sql_field_default.php';
 include_once MODEL_DB_PATH . 'sql_pg.php';
 
 use cfg\component_link;
-use cfg\formula_element;
+use cfg\element;
 use cfg\formula_link;
 use cfg\group\group;
 use cfg\group\group_id;
@@ -97,10 +97,9 @@ class sql
         value_time_series::class,
         formula_link::class,
         result::class,
-        formula_element::class,
+        element::class,
         component_link::class,
         sql_db::TBL_VALUE_PHRASE_LINK,
-        sql_db::TBL_GROUP_LINK,
         view_term_link::class,
         ref::class,
         sql_db::TBL_IP,
@@ -3239,7 +3238,7 @@ class sql
         if ($result == 'component_position_type_name') {
             $result = sql::FLD_TYPE_NAME;
         }
-        if ($result == 'formula_element_type_name') {
+        if ($result == 'element_type_name') {
             $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'sys_log_type_name') {

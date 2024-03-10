@@ -211,7 +211,7 @@
         "comment": "increase needs to know for which time period the increase should be calculated"
       }
     ],
-    "formula_element_types": [
+    "element_types": [
       {
         "id": 1,
         "code_id": "word",

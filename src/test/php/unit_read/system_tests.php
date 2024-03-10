@@ -94,8 +94,7 @@ class system_tests
 
         $t->subheader('SQL database consistency tests');
 
-        $db_chk = new db_check();
-        $result = $db_chk->db_check_missing_owner($db_con);
+        $result = $db_con->db_check_missing_owner();
         $t->assert('db_consistency->check ', $result, true);
 
         $t->subheader('API unit db tests of preloaded types');

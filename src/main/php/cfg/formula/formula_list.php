@@ -288,12 +288,12 @@ class formula_list extends sandbox_list
         if ($ref_id > 0) {
             $sc->set_join_fields(
                 array(formula::FLD_ID),
-                sql_db::TBL_FORMULA_ELEMENT,
+                sql_db::TBL_ELEMENT,
                 formula::FLD_ID,
                 formula::FLD_ID
             );
-            $sc->add_where(sql_db::LNK_TBL . '.' . formula_element::FLD_REF_ID, $ref_id);
-            $sc->add_where(sql_db::LNK_TBL . '.' . formula_element::FLD_TYPE, $par_type_id);
+            $sc->add_where(sql_db::LNK_TBL . '.' . element::FLD_REF_ID, $ref_id);
+            $sc->add_where(sql_db::LNK_TBL . '.' . element::FLD_TYPE, $par_type_id);
             $qp->sql = $sc->sql();
         } else {
             $qp->name = '';

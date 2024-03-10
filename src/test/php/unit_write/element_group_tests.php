@@ -2,7 +2,7 @@
 
 /*
 
-    test/php/unit_write/formula_element_group_tests.php - write test FORMULA ELEMENT GROUPS to the database and check the results
+    test/php/unit_write/element_group_tests.php - write test FORMULA ELEMENT GROUPS to the database and check the results
     ---------------------------------------------------
 
 
@@ -48,7 +48,7 @@ use cfg\phrase_list;
 use test\test_api;
 use test\test_cleanup;
 
-class formula_element_group_tests
+class element_group_tests
 {
 
     function run(test_cleanup $t): void
@@ -57,7 +57,7 @@ class formula_element_group_tests
         global $usr;
         $lib = new library();
 
-        $t->header('Test the formula element group list class (classes/formula_element_group_list.php)');
+        $t->header('Test the formula element group list class (classes/element_group_list.php)');
 
         // load the test ids
         $frm_this = $t->load_formula(formula_api::TN_READ_THIS);
@@ -73,10 +73,10 @@ class formula_element_group_tests
 
         $result = $elm_grp_lst->dsp_id();
         $target = '"' . formula_api::TN_READ_THIS . '" (' . $frm_this->id() . ') / "' . formula_api::TN_READ_PRIOR . '" (' . $frm_prior->id() . ') / "' . formula_api::TN_READ_PRIOR . '" (' . $frm_prior->id() . ')';
-        $t->dsp_contains(', formula_element_group_list->dsp_id', $target, $result);
+        $t->dsp_contains(', element_group_list->dsp_id', $target, $result);
 
 
-        $t->header('Test the formula element group class (classes/formula_element_group.php)');
+        $t->header('Test the formula element group class (classes/element_group.php)');
 
         // define the element group object to retrieve the value
         if (count($elm_grp_lst->lst()) > 0) {
@@ -93,23 +93,23 @@ class formula_element_group_tests
             // test debug id first
             $result = $elm_grp->dsp_id();
             $target = '"this" (' . $frm_this->id() . ') and "Switzerland","inhabitants","million"';
-            $t->display('formula_element_group->dsp_id', $target, $result);
+            $t->display('element_group->dsp_id', $target, $result);
 
             // test symbol for text replacement in the formula expression text
             $result = $elm_grp->build_symbol();
             $target = '{f' . $frm_this->id() . '}';
-            $t->display('formula_element_group->build_symbol', $target, $result);
+            $t->display('element_group->build_symbol', $target, $result);
 
             // test the display name that can be used for user debugging
             $result = trim($elm_grp->dsp_names());
             $target = trim('<a href="/http/formula_edit.php?id=' . $frm_this->id() . '" title="this">this</a>');
-            $t->display('formula_element_group->dsp_names', $target, $result);
+            $t->display('element_group->dsp_names', $target, $result);
 
             // test if the values for an element group are displayed correctly
             $result = $elm_grp->dsp_values();
             $fig_lst = $elm_grp->figures();
             $target = '<a href="/http/result_edit.php?id=' . $fig_lst->get_first_id() . '" title="8.51">8.51</a>';
-            $t->display('formula_element_group->dsp_values', $target, $result);
+            $t->display('element_group->dsp_values', $target, $result);
 
             // remember the figure list for the figure and figure list class test
             $fig_lst = $elm_grp->figures();
@@ -141,7 +141,7 @@ class formula_element_group_tests
             } else {
                 $result = 'figure list is empty';
                 $target = 'this (3) and "System Test Word Parent e.g. Switzerland","System Test Word Unit e.g. inhabitant"';
-                $t->display('formula_element_group->figures', $target, $result);
+                $t->display('element_group->figures', $target, $result);
             }
 
 
@@ -164,7 +164,7 @@ class formula_element_group_tests
         } else {
             $result = 'formula element group list is empty';
             $target = 'this (3) and "ABB","Sales","CHF","million","' . word_api::TN_2015 . '"@';
-            $t->display('formula_element_group->dsp_names', $target, $result);
+            $t->display('element_group->dsp_names', $target, $result);
         }
 
     }

@@ -43,7 +43,7 @@ if ($usr->id() > 0) {
 
         // recreate the code link database rows
         $db_chk = new db_check();
-        $db_chk->db_fill_code_links($db_con);
+        $db_con->db_fill_code_links();
         import_verbs($usr);
 
 

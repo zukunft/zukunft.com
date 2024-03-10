@@ -49,6 +49,7 @@ use cfg\group\group_id;
 use cfg\ip_range;
 use cfg\job;
 use cfg\job_time;
+use cfg\job_type;
 use cfg\language;
 use cfg\language_form;
 use cfg\library;
@@ -71,6 +72,7 @@ use cfg\pod_type;
 use cfg\protection_type;
 use cfg\ref_type;
 use cfg\result\result;
+use cfg\sandbox;
 use cfg\session;
 use cfg\share_type;
 use cfg\source;
@@ -78,7 +80,6 @@ use cfg\source_type;
 use cfg\sys_log_function;
 use cfg\sys_log_level;
 use cfg\sys_log_status;
-use cfg\job_type;
 use cfg\system_time;
 use cfg\system_time_type;
 use cfg\triple;
@@ -92,8 +93,8 @@ use cfg\value\value_ts_data;
 use cfg\verb;
 use cfg\view;
 use cfg\word;
-use DateTime;
 use Exception;
+use html\html_base;
 use mysqli;
 use mysqli_result;
 use PDOException;
@@ -133,8 +134,6 @@ class sql_db
     const TBL_VERB = 'verb';
     const TBL_PHRASE = 'phrase';
     const TBL_GROUP = 'group';
-    const TBL_GROUP_LINK = 'group_link';
-    const TBL_PHRASE_GROUP_TRIPLE_LINK = 'group_link';
     const TBL_VALUE_TIME_SERIES = 'value_time_series';
     const TBL_VALUE_TIME_SERIES_DATA = 'value_ts_data';
     const TBL_VALUE_PHRASE_LINK = 'value_phrase_link';
@@ -146,8 +145,8 @@ class sql_db
     const TBL_FORMULA_TYPE = 'formula_type';
     const TBL_FORMULA_LINK = 'formula_link';
     const TBL_FORMULA_LINK_TYPE = 'formula_link_type';
-    const TBL_FORMULA_ELEMENT = 'formula_element';
-    const TBL_FORMULA_ELEMENT_TYPE = 'formula_element_type';
+    const TBL_ELEMENT = 'element';
+    const TBL_ELEMENT_TYPE = 'element_type';
     const TBL_RESULT = 'result';
     const TBL_VIEW = 'view';
     const TBL_VIEW_TYPE = 'view_type';
@@ -258,10 +257,9 @@ class sql_db
         sql_db::TBL_VALUE_TIME_SERIES,
         sql_db::TBL_FORMULA_LINK,
         sql_db::TBL_RESULT,
-        sql_db::TBL_FORMULA_ELEMENT,
+        sql_db::TBL_ELEMENT,
         sql_db::TBL_COMPONENT_LINK,
         sql_db::TBL_VALUE_PHRASE_LINK,
-        sql_db::TBL_GROUP_LINK,
         sql_db::TBL_VIEW_TERM_LINK,
         sql_db::TBL_REF,
         sql_db::TBL_IP,
@@ -655,6 +653,41 @@ class sql_db
     }
 
     /**
+     * create the database tables and fill it with the essential data
+     * TODO remove or secure before moving to PROD
+     *
+     * @return user_message true if the database table have been created successful
+     */
+    function setup_db(): user_message
+    {
+        $html = new html_base();
+        $usr_msg = new user_message();
+        $sql = resource_file(DB_RES_PATH . DB_SETUP_PATH . $this->path(sql_db::POSTGRES) . DB_SETUP_SQL_FILE);
+        try {
+            $html->echo( 'Run db setup sql script');
+            $html->echo("\n");
+            $sql_result = $this->exe_script($sql);
+            // TODO review
+            //if ($sql_result) {
+            //    $usr_msg->add_message($sql_result);
+           // }
+        } catch (Exception $e) {
+            $msg = ' creation of the database failed due to ' . $e->getMessage();
+            log_fatal($msg, 'setup_db');
+            $usr_msg->add_message($msg);
+        }
+        $html->echo( 'Reset config');
+        $html->echo("\n");
+        $this->reset_config();
+        import_system_users();
+        $this->db_fill_code_links();
+        $this->db_check_missing_owner();
+        $cfg = new config();
+        $cfg->set(config::LAST_CONSISTENCY_CHECK, gmdate(DATE_ATOM), $this);
+        return $usr_msg;
+    }
+
+    /**
      * @return bool true if the database connection is open
      */
     function connected(): bool
@@ -669,9 +702,140 @@ class sql_db
                 $result = true;
             }
         } else {
-            log_err('Database type ' . $this->db_type . ' not yet implemented');
+            log_fatal('Database type ' . $this->db_type . ' not yet implemented', 'sql_db->connected');
         }
         return $result;
+    }
+
+    /**
+     * @return bool true if all user sandbox objects have an owner
+     */
+    function db_check_missing_owner(): bool
+    {
+        $result = true;
+
+        foreach (sandbox::DB_TYPES as $db_type) {
+            $this->set_class($db_type);
+            $db_lst = $this->missing_owner();
+            if ($db_lst != null) {
+                $result = $this->set_default_owner();
+            }
+        }
+
+        return $result;
+    }
+
+
+    /**
+     * fill the database with all rows that have a code id and code linked
+     */
+    function db_fill_code_links(): void
+    {
+        // first of all set the database version if not yet done
+        $cfg = new config();
+        $cfg->check(config::VERSION_DB, PRG_VERSION, $this);
+
+        // get the list of CSV and loop
+        foreach (BASE_CODE_LINK_FILES as $csv_file_name) {
+            $this->load_db_code_link_file($csv_file_name, $this);
+        }
+
+        // set the seq number if needed
+        $this->seq_reset(sql_db::TBL_CHANGE_TABLE);
+        $this->seq_reset(sql_db::TBL_CHANGE_FIELD);
+        $this->seq_reset(sql_db::TBL_CHANGE_ACTION);
+    }
+
+    function load_db_code_link_file(string $csv_file_name): void
+    {
+        global $debug;
+        $lib = new library();
+
+        // load the csv
+        $csv_path = PATH_BASE_CODE_LINK_FILES . $csv_file_name . BASE_CODE_LINK_FILE_TYPE;
+
+        $row = 1;
+        $table_name = $csv_file_name;
+        // TODO change table names to singular form
+        if ($table_name == 'sys_log_status') {
+            $db_type = $table_name;
+        } else {
+            $db_type = substr($table_name, 0, -1);
+        }
+        // TODO ignore empty rows
+        // TODO ignore comma within text e.g. allow 'one, two and three'
+        log_debug('load "' . $table_name . '"', $debug - 6);
+        if (($handle = fopen($csv_path, "r")) !== FALSE) {
+            $continue = true;
+            $id_col_name = '';
+            $col_names = array();
+            while (($data = fgetcsv($handle, 0, ",", "'")) !== FALSE) {
+                if ($continue) {
+                    if ($row == 1) {
+                        // check if the csv column names match the table names
+                        if (!$this->check_column_names($table_name, $lib->array_trim($data))) {
+                            $continue = false;
+                        } else {
+                            $col_names = $lib->array_trim($data);
+                        }
+                        // check if the first column name is the id col
+                        $id_col_name = $data[0];
+                        if (!str_ends_with($id_col_name, sql_db::FLD_ID)) {
+                            $continue = false;
+                        }
+                    } else {
+                        // init row update
+                        $update_col_names = array();
+                        $update_col_values = array();
+                        // get the row id which is expected to be always in the first column
+                        $id = $data[0];
+                        // check if the row id exists
+                        $qp = $this->db_fill_code_link_sql($table_name, $id_col_name, $id);
+                        $db_row = $this->get1($qp);
+                        // check if the db row needs to be added
+                        if ($db_row == null) {
+                            // add the row
+                            for ($i = 0; $i < count($data); $i++) {
+                                $update_col_names[] = $col_names[$i];
+                                $update_col_values[] = trim($data[$i]);
+                            }
+                            $this->set_class($db_type);
+                            $this->insert_old($update_col_names, $update_col_values);
+                        } else {
+                            // check, which values need to be updates
+                            for ($i = 1; $i < count($data); $i++) {
+                                $col_name = $col_names[$i];
+                                if (array_key_exists($col_name, $db_row)) {
+                                    $db_value = $db_row[$col_name];
+                                    if ($db_value != trim($data[$i]) and trim($data[$i]) != 'NULL') {
+                                        $update_col_names[] = $col_name;
+                                        $update_col_values[] = trim($data[$i]);
+                                    }
+                                } else {
+                                    log_err('Column check did not work for ' . $col_name);
+                                }
+                            }
+                            // update the values is needed
+                            if (count($update_col_names) > 0) {
+                                $this->set_class($db_type);
+                                $this->update_old($id, $update_col_names, $update_col_values);
+                            }
+                        }
+                    }
+                }
+                $row++;
+            }
+            fclose($handle);
+        }
+    }
+
+    function db_fill_code_link_sql(string $table_name, string $id_col_name, int $id): sql_par
+    {
+        $qp = new sql_par($this::class);
+        $qp->name .= 'fill_' . $id_col_name;
+        $qp->sql = "PREPARE " . $qp->name . " (int) AS select * from " . $table_name . " where " . $id_col_name . " = $1;";
+        $qp->par = array($id);
+        return $qp;
     }
 
     /*
@@ -1557,6 +1721,7 @@ class sql_db
         // but not for the user type table, because this is not part of the sandbox tables
         if (str_starts_with($type, sql_db::TBL_USER_PREFIX)
             and $type != sql_db::TBL_USER_TYPE
+            and $type != sql_db::TBL_USER_OFFICIAL_TYPE
             and $type != sql_db::TBL_USER_PROFILE) {
             $type = $lib->str_right_of($type, sql_db::TBL_USER_PREFIX);
         }
@@ -1617,7 +1782,7 @@ class sql_db
         if ($result == 'component_position_type_name') {
             $result = sql::FLD_TYPE_NAME;
         }
-        if ($result == 'formula_element_type_name') {
+        if ($result == 'element_type_name') {
             $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'sys_log_type_name') {
@@ -1695,8 +1860,12 @@ class sql_db
                 $result .= $msg . log::MSG_ERR;
             }
         } catch (Exception $e) {
-            $trace_link = log_err($msg . log::MSG_ERR_USING . $sql . log::MSG_ERR_BECAUSE . $e->getMessage());
-            $result = $msg . log::MSG_ERR_INTERNAL . $trace_link;
+            if ($log_level == sys_log_level::FATAL) {
+                log_fatal($msg . log::MSG_ERR_USING . $sql . log::MSG_ERR_BECAUSE . $e->getMessage(), 'exe_try');
+            } else {
+                $trace_link = log_err($msg . log::MSG_ERR_USING . $sql . log::MSG_ERR_BECAUSE . $e->getMessage());
+                $result = $msg . log::MSG_ERR_INTERNAL . $trace_link;
+            }
         }
         return $result;
     }
@@ -1710,7 +1879,7 @@ class sql_db
     }
 
     /**
-     * execute an change SQL statement on the active database (either Postgres or MySQL)
+     * execute an prepared SQL statement on the active database (either Postgres or MySQL)
      * similar to exe_try, but without exception handling
      *
      * @param string $sql the sql statement that should be executed
@@ -1744,6 +1913,25 @@ class sql_db
             throw new Exception('Unknown database type "' . $this->db_type . '"');
         }
 
+        return $result;
+    }
+
+    /**
+     * execute directly an SQL script without further prepare
+     * @param string $sql the sql script that should be executed
+     * @return \PgSql\Result|mysqli_result
+     * @throws Exception
+     */
+    function exe_script(string $sql): \PgSql\Result|mysqli_result
+    {
+        // execute on the connected database
+        if ($this->db_type == sql_db::POSTGRES) {
+            $result = pg_query($this->postgres_link, $sql);
+        } elseif ($this->db_type == sql_db::MYSQL) {
+            $result = mysqli_query($this->mysql, $sql);
+        } else {
+            throw new Exception('Unknown database type "' . $this->db_type . '"');
+        }
         return $result;
     }
 
@@ -3678,11 +3866,11 @@ class sql_db
                     // return the database row id if the value is not a time series number
                     if ($this->class != sql_db::TBL_VALUE_TIME_SERIES_DATA
                         and $this->class != value::class
-                        and $this->class != sql_db::TBL_RESULT
-                        and $this->class != sql_db::TBL_LANGUAGE_FORM
-                        and $this->class != sql_db::TBL_USER_OFFICIAL_TYPE
-                        and $this->class != sql_db::TBL_USER_TYPE) {
+                        and $this->class != sql_db::TBL_RESULT) {
                         $sql = $sql . ' RETURNING ' . $this->id_field . ';';
+                    }
+                    if ($this->id_field == 'official_type_id') {
+                        log_info('check');
                     }
 
                     /*
@@ -3713,8 +3901,12 @@ class sql_db
                                 if (is_resource($sql_result) or $sql_result::class == 'PgSql\Result') {
                                     try {
                                         $result = pg_fetch_array($sql_result);
-                                        if (is_array($result)) {
-                                            $result = $result[0];
+                                        if ($result === false) {
+                                            $result = 0;
+                                        } else {
+                                            if (is_array($result)) {
+                                                $result = $result[0];
+                                            }
                                         }
                                     } catch (PDOException $e) {
                                         log_err('failed result catch (' . $sql . ')');
@@ -4617,6 +4809,85 @@ class sql_db
             $path = self::MYSQL_EXT;
         }
         return $path;
+    }
+
+    function truncate_table_all(): void
+    {
+        // the sequence names of the tables to reset
+        $html = new html_base();
+        $html->echo('truncate ');
+        $html->echo("\n");
+        foreach (DB_SEQ_LIST as $seq_name) {
+            $this->reset_seq($seq_name);
+        }
+    }
+
+    function truncate_table(string $table_name): void
+    {
+        $html = new html_base();
+        $html->echo('TRUNCATE TABLE ' . $table_name);
+        $html->echo("\n");
+        $sql = 'TRUNCATE ' . $this->get_table_name_esc($table_name) . ' CASCADE;';
+        try {
+            $this->exe($sql);
+        } catch (Exception $e) {
+            log_err('Cannot truncate table ' . $table_name . ' with "' . $sql . '" because: ' . $e->getMessage());
+        }
+    }
+
+    function drop_table(string $table_name): void
+    {
+        $html = new html_base();
+        $html->echo('DROP TABLE ' . $table_name);
+        $html->echo("\n");
+        $sql = 'drop table ' . $table_name . ' cascade;';
+        try {
+            $this->exe($sql);
+        } catch (Exception $e) {
+            log_err('Cannot drop table ' . $table_name . ' with "' . $sql . '" because: ' . $e->getMessage());
+        }
+    }
+
+    function reset_seq_all(): void
+    {
+        // the sequence names of the tables to reset
+        foreach (DB_SEQ_LIST as $seq_name) {
+            $this->reset_seq($seq_name);
+        }
+    }
+
+    function reset_seq(string $seq_name, int $start_id = 1): void
+    {
+        $html = new html_base();
+        $html->echo('RESET SEQUENCE ' . $seq_name);
+        $html->echo("\n");
+        $sql = 'ALTER SEQUENCE ' . $seq_name . ' RESTART ' . $start_id . ';';
+        try {
+            $this->exe($sql);
+        } catch (Exception $e) {
+            log_err('Cannot do sequence reset with "' . $sql . '" because: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * fill the user profiled with the default values for this program version
+     * @return void
+     */
+    function load_user_profiles(): void
+    {
+        foreach (USER_CODE_LINK_FILES as $csv_file_name) {
+            $this->load_db_code_link_file($csv_file_name, $this);
+        }
+    }
+
+    /**
+     * fill the config with the default value for this program version
+     * @return void
+     */
+    function reset_config(): void
+    {
+        $cfg = new config();
+        $cfg->set(config::VERSION_DB, PRG_VERSION, $this);
     }
 
 }

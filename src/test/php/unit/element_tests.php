@@ -2,8 +2,8 @@
 
 /*
 
-    test/unit/formula_element.php - TESTing of the FORMULA ELEMENT and formula element list functions
-    -----------------------------
+    test/unit/element.php - TESTing of the FORMULA ELEMENT and formula element list functions
+    ---------------------
   
 
     This file is part of zukunft.com - calc with words
@@ -32,15 +32,14 @@
 
 namespace unit;
 
-include_once MODEL_FORMULA_PATH . 'formula_element_list.php';
+include_once MODEL_ELEMENT_PATH . 'element_list.php';
 
-use cfg\element_type;
-use cfg\formula_element;
-use cfg\formula_element_list;
 use cfg\db\sql_db;
+use cfg\element_list;
+use cfg\element_type;
 use test\test_cleanup;
 
-class formula_element_tests
+class element_tests
 {
     function run(test_cleanup $t): void
     {
@@ -49,11 +48,11 @@ class formula_element_tests
 
         // init
         $db_con = new sql_db();
-        $t->name = 'formula_element->';
-        $t->resource_path = 'db/formula/';
+        $t->name = 'element->';
+        $t->resource_path = 'db/element/';
         $usr->set_id(1);
 
-        $t->header('Unit tests of the formula element class (src/main/php/model/formula/formula_element.php)');
+        $t->header('Unit tests of the formula element class (src/main/php/model/formula/element.php)');
 
         $t->subheader('Element SQL setup statements');
         $elm_typ = new element_type('');
@@ -69,12 +68,12 @@ class formula_element_tests
         $t->subheader('Database query list creation tests');
 
         // load by formula id
-        $frm_elm_lst = new formula_element_list($usr);
+        $frm_elm_lst = new element_list($usr);
         $frm_id = 5;
         $this->assert_sql_by_frm_id($t, $db_con, $frm_elm_lst, $frm_id);
 
         // load by formula id and filter by element type
-        $frm_elm_lst = new formula_element_list($usr);
+        $frm_elm_lst = new element_list($usr);
         $elm_type_id = 7;
         $this->assert_sql_by_frm_and_type_id($t, $db_con, $frm_elm_lst, $frm_id, $elm_type_id);
 
@@ -97,11 +96,11 @@ class formula_element_tests
      *
      * @param test_cleanup $t the test environment
      * @param sql_db $db_con the test database connection
-     * @param formula_element_list $lst the empty formula element list object
+     * @param element_list $lst the empty formula element list object
      * @param int $frm_id id of the formula to be used for the query creation
      * @return void
      */
-    private function assert_sql_by_frm_id(test_cleanup $t, sql_db $db_con, formula_element_list $lst, int $frm_id): void
+    private function assert_sql_by_frm_id(test_cleanup $t, sql_db $db_con, element_list $lst, int $frm_id): void
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
@@ -120,16 +119,16 @@ class formula_element_tests
      *
      * @param test_cleanup $t the test environment
      * @param sql_db $db_con the test database connection
-     * @param formula_element_list $lst the empty formula element list object
+     * @param element_list $lst the empty formula element list object
      * @param int $frm_id id of the formula to be used for the query creation
      * @param int $elm_type_id
      * @return void
      */
-    private function assert_sql_by_frm_and_type_id(test_cleanup         $t,
-                                                   sql_db               $db_con,
-                                                   formula_element_list $lst,
-                                                   int                  $frm_id,
-                                                   int                  $elm_type_id): void
+    private function assert_sql_by_frm_and_type_id(test_cleanup $t,
+                                                   sql_db       $db_con,
+                                                   element_list $lst,
+                                                   int          $frm_id,
+                                                   int          $elm_type_id): void
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;

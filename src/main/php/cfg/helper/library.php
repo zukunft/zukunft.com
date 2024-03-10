@@ -49,7 +49,6 @@ use cfg\user\user_type;
 use cfg\value\value;
 use cfg\value\value_ts_data;
 use DateTime;
-use DOMDocument;
 use Exception;
 
 class library
@@ -1614,7 +1613,7 @@ class library
                 $result = $this->class_to_name(ref::class);
                 break;
             case $this->class_to_name(element_type::class):
-                $result = $this->class_to_name(formula::class);
+                $result = $this->class_to_name(element::class);
                 break;
             case $this->class_to_name(sys_log_status::class):
             case $this->class_to_name(sys_log_function::class):

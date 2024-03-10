@@ -40,10 +40,10 @@
     word.php
     expression.php
     formula.php
-    formula_element.php
-    formula_element_list.php
-    formula_element_group_list.php
-    formula_element_group.php
+    element.php
+    element_list.php
+    element_group_list.php
+    element_group.php
     formula_list.php
     formula_link_list.php
     parameter_type.php
@@ -137,8 +137,8 @@ use unit_write\job_tests;
 use unit_write\component_link_tests;
 use unit_write\component_tests;
 use unit_write\expression_tests;
-use unit_write\formula_element_group_tests;
-use unit_write\formula_element_tests;
+use unit_write\element_group_tests;
+use unit_write\element_tests;
 use unit_write\formula_link_tests;
 use unit_write\formula_tests;
 use unit_write\formula_trigger_tests;
@@ -270,9 +270,9 @@ if ($start_usr->id() > 0) {
             (new result_tests)->run($t);
             // TODO activate Prio 1
             //(new result_tests)->run_list($t);
-            (new formula_element_tests)->run($t);
-            (new formula_element_tests)->run_list($t);
-            (new formula_element_group_tests)->run($t);
+            (new element_tests)->run($t);
+            (new element_tests)->run_list($t);
+            (new element_group_tests)->run($t);
             (new job_tests)->run($t);
             (new job_tests)->run_list($t);
             (new view_tests)->run($t);

@@ -229,7 +229,7 @@
         "id": 2
       }
     ],
-    "formula_element_types": [
+    "element_types": [
       {
         "name": "word",
         "code_id": "word",

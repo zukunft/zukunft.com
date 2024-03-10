@@ -163,9 +163,9 @@ if ($start_usr->id() > 0) {
             run_formula_trigger_test($t);
             run_result_test($t);
             run_result_list_test($t);
-            run_formula_element_test($t);
-            run_formula_element_list_test($t);
-            run_formula_element_group_test($t);
+            run_element_test($t);
+            run_element_list_test($t);
+            run_element_group_test($t);
             run_job_test($t);
             run_job_list_test($t);
             run_view_test($t);
