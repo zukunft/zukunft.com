@@ -2230,23 +2230,26 @@ COMMENT ON COLUMN element_types.type_name IS 'the unique type name as shown to t
 COMMENT ON COLUMN element_types.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
 COMMENT ON COLUMN element_types.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
 
+-- --------------------------------------------------------
+
 --
--- table structure for table elements
--- TODO generate
+-- table structure cache for fast update of formula resolved text
 --
 
 CREATE TABLE IF NOT EXISTS elements
 (
-    element_id      BIGSERIAL PRIMARY KEY,
-    formula_id              bigint NOT NULL,
-    user_id                 bigint NOT NULL,
-    order_nbr               bigint NOT NULL,
-    element_type_id bigint NOT NULL,
-    ref_id                  bigint       DEFAULT NULL,
-    resolved_text           varchar(200) DEFAULT NULL
+    element_id BIGSERIAL PRIMARY KEY,
+    formula_id      bigint           NOT NULL,
+    order_nbr       bigint           NOT NULL,
+    element_type_id bigint           NOT NULL,
+    user_id         bigint       DEFAULT NULL,
+    ref_id          bigint       DEFAULT NULL,
+    resolved_text   varchar(255) DEFAULT NULL
 );
 
 COMMENT ON TABLE elements IS 'cache for fast update of formula resolved text';
+COMMENT ON COLUMN elements.element_id IS 'the internal unique primary index';
+COMMENT ON COLUMN elements.formula_id IS 'each element can only be used for one formula';
 COMMENT ON COLUMN elements.ref_id IS 'either a term, verb or formula id';
 
 -- --------------------------------------------------------
@@ -5083,10 +5086,10 @@ CREATE INDEX element_types_type_name_idx ON element_types (type_name);
 -- --------------------------------------------------------
 
 --
--- Indexes for table elements
+-- indexes for table elements
 --
-CREATE INDEX element_idx ON elements (formula_id);
-CREATE INDEX element_type_idx ON elements (element_type_id);
+CREATE INDEX elements_formula_idx ON elements (formula_id);
+CREATE INDEX elements_element_type_idx ON elements (element_type_id);
 
 -- --------------------------------------------------------
 
@@ -6182,9 +6185,11 @@ ALTER TABLE user_formulas
 --
 -- constraints for table elements
 --
+
 ALTER TABLE elements
-    ADD CONSTRAINT elements_fk_1 FOREIGN KEY (element_type_id) REFERENCES element_types (element_type_id),
-    ADD CONSTRAINT elements_fk_2 FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
+    ADD CONSTRAINT elements_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id),
+    ADD CONSTRAINT elements_element_type_fk FOREIGN KEY (element_type_id) REFERENCES element_types (element_type_id),
+    ADD CONSTRAINT elements_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
 
 --
 -- constraints for table formula_links

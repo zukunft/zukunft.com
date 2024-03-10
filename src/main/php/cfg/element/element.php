@@ -38,6 +38,8 @@ namespace cfg;
 include_once MODEL_HELPER_PATH . 'db_object_seq_id_user.php';
 
 use cfg\db\sql;
+use cfg\db\sql_field_default;
+use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use html\formula\formula as formula_dsp;
 use html\word\word as word_dsp;
@@ -51,11 +53,22 @@ class element extends db_object_seq_id_user
     const TYPE_VERB = verb::class;        // a verb is used for dynamic usage of linked words for an AND selection
     const TYPE_FORMULA = formula::class;  // a formula is used to include formula results of another formula
 
+
+    /*
+     * database link
+     */
+
+    // comments used for the database creation
+    const TBL_COMMENT = 'cache for fast update of formula resolved text';
+
     // database fields only used for formula elements
     const FLD_ID = 'element_id';
+    const FLD_FORMULA_COM = 'each element can only be used for one formula';
     const FLD_ORDER = 'order_nbr';
     const FLD_TYPE = 'element_type_id';
+    const FLD_REF_ID_COM = 'either a term, verb or formula id';
     const FLD_REF_ID = 'ref_id';
+    const FLD_TEXT = 'resolved_text';
     // TODO: is resolved text needed?
 
     // all database field names excluding the id, standard name and user specific fields
@@ -65,6 +78,16 @@ class element extends db_object_seq_id_user
         self::FLD_ORDER,
         self::FLD_TYPE,
         self::FLD_REF_ID
+    );
+
+    // field lists for the table creation
+    const FLD_LST_ALL = array(
+        [formula::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, formula::class, self::FLD_FORMULA_COM],
+        [self::FLD_ORDER, sql_field_type::INT, sql_field_default::NOT_NULL, '', '', ''],
+        [element_type::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, element_type::class, ''],
+        [user::FLD_ID, sql_field_type::INT, sql_field_default::NULL, '', user::class, ''],
+        [self::FLD_REF_ID, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_REF_ID_COM],
+        [self::FLD_TEXT, sql_field_type::NAME, sql_field_default::NULL, '', '', ''],
     );
 
 

@@ -48,5 +48,6 @@ class element_type extends type_object
 
     // comments used for the database creation
     const TBL_COMMENT = 'to assign predefined behaviour to a formula element';
+    const FLD_ID = "element_type_id";
 
 }

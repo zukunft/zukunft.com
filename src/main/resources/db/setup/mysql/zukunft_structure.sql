@@ -1673,26 +1673,23 @@ CREATE TABLE IF NOT EXISTS value_ts_data
 
 -- --------------------------------------------------------
 
--- .....
-
--- --------------------------------------------------------
-
 --
--- Table structure for table`elements`
+-- table structure cache for fast update of formula resolved text
 --
 
-CREATE TABLE IF NOT EXISTS `elements`
+CREATE TABLE IF NOT EXISTS elements
 (
-    `element_id`      int(11) NOT NULL,
-    `formula_id`              int(11) NOT NULL,
-    `user_id`                 int(11) NOT NULL,
-    `order_nbr`               int(11) NOT NULL,
-    `element_type_id` int(11) NOT NULL,
-    `ref_id`                  int(11)      DEFAULT NULL COMMENT 'either a term, verb or formula id',
-    `resolved_text`           varchar(200) DEFAULT NULL
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8 COMMENT ='cache for fast update of formula resolved text';
+    element_id      bigint     NOT NULL COMMENT 'the internal unique primary index',
+    formula_id      bigint     NOT NULL COMMENT 'each element can only be used for one formula',
+    order_nbr       bigint     NOT NULL,
+    element_type_id bigint     NOT NULL,
+    user_id         bigint DEFAULT NULL,
+    ref_id          bigint DEFAULT NULL COMMENT 'either a term,verb or formula id',
+    resolved_text   varchar(255) DEFAULT NULL
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'cache for fast update of formula resolved text';
 
 -- --------------------------------------------------------
 
@@ -4105,13 +4102,16 @@ ALTER TABLE `formulas`
     ADD KEY `formula_type_id` (`formula_type_id`),
     ADD KEY `protect_id` (`protect_id`);
 
+-- --------------------------------------------------------
+
 --
--- Indexes for table`elements`
+-- indexes for table elements
 --
-ALTER TABLE `elements`
-    ADD PRIMARY KEY (`element_id`),
-    ADD KEY `formula_id` (`formula_id`),
-    ADD KEY `element_type_id` (`element_type_id`);
+
+ALTER TABLE elements
+    ADD PRIMARY KEY (element_id),
+    ADD KEY elements_formula_idx (formula_id),
+    ADD KEY elements_element_type_idx (element_type_id);
 
 --
 -- Indexes for table`formula_links`
@@ -5634,6 +5634,15 @@ ALTER TABLE refs
 ALTER TABLE user_refs
     ADD CONSTRAINT user_refs_ref_fk FOREIGN KEY (ref_id) REFERENCES refs (ref_id),
     ADD CONSTRAINT user_refs_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table elements
+--
+
+ALTER TABLE elements
+    ADD CONSTRAINT elements_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id),
+    ADD CONSTRAINT elements_element_type_fk FOREIGN KEY (element_type_id) REFERENCES element_types (element_type_id),
+    ADD CONSTRAINT elements_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
 
 -- --------------------------------------------------------
 
