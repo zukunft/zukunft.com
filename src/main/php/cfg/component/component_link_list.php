@@ -31,19 +31,21 @@
   
 */
 
-namespace cfg;
+namespace cfg\component;
 
 include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
+include_once MODEL_COMPONENT_PATH . 'component_link.php';
 include_once API_VIEW_PATH . 'component_link_list.php';
 include_once DB_PATH . 'sql.php';
 include_once DB_PATH . 'sql_par_type.php';
 
 use api\view\component_link_list as component_link_list_api;
-use cfg\component\component;
-use cfg\component\component_list;
 use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
+use cfg\sandbox_list;
+use cfg\user_message;
+use cfg\view;
 
 class component_link_list extends sandbox_list
 {

@@ -38,8 +38,8 @@ include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
 
 use api\api;
 use api\word\word as word_api;
+use cfg\component\component_link_list;
 use cfg\component\component_type;
-use cfg\component_link_list;
 use cfg\db\sql_db;
 use cfg\library;
 use cfg\word;

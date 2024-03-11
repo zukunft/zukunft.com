@@ -60,9 +60,9 @@ include_once MODEL_VIEW_PATH . 'view_sys_list.php';
 include_once MODEL_VIEW_PATH . 'view_sys_list.php';
 include_once MODEL_VIEW_PATH . 'view_type.php';
 include_once MODEL_VIEW_PATH . 'view_type_list.php';
-include_once MODEL_VIEW_PATH . 'component_link_type_list.php';
+include_once MODEL_COMPONENT_PATH . 'component_link_type_list.php';
 include_once MODEL_COMPONENT_PATH . 'component_type_list.php';
-include_once MODEL_COMPONENT_PATH . 'component_pos_type_list.php';
+include_once MODEL_COMPONENT_PATH . 'component_position_type_list.php';
 include_once MODEL_VIEW_PATH . 'view_term_link.php';
 include_once MODEL_REF_PATH . 'ref_type_list.php';
 include_once MODEL_REF_PATH . 'source_list.php';
@@ -82,9 +82,9 @@ include_once MODEL_LOG_PATH . 'system_log.php';
 include_once MODEL_LOG_PATH . 'system_log_list.php';
 include_once API_SANDBOX_PATH . 'sandbox_value.php';
 
-use cfg\component\component_pos_type_list;
+use cfg\component\component_link_type_list;
+use cfg\component\component_position_type_list;
 use cfg\component\component_type_list;
-use cfg\component_link_type_list;
 use cfg\db\sql_db;
 use cfg\element_type_list;
 use cfg\formula_link_type_list;
@@ -448,7 +448,7 @@ class all_unit_tests extends test_cleanup
     {
         global $component_position_types;
 
-        $component_position_types = new component_pos_type_list();
+        $component_position_types = new component_position_type_list();
         $component_position_types->load_dummy();
 
     }

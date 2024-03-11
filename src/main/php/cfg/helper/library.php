@@ -34,6 +34,10 @@ namespace cfg;
 
 use api\api;
 use api\sandbox\combine_object as combine_object_api;
+use cfg\component\component;
+use cfg\component\component_link_type;
+use cfg\component\component_position_type;
+use cfg\component\component_type;
 use cfg\db\sql_db;
 use cfg\log\change;
 use cfg\log\change_action;
@@ -1621,6 +1625,11 @@ class library
                 break;
             case $this->class_to_name(view_type::class):
                 $result = $this->class_to_name(view::class);
+                break;
+            case $this->class_to_name(component_link_type::class):
+            case $this->class_to_name(component_position_type::class):
+            case $this->class_to_name(component_type::class):
+                $result = $this->class_to_name(component::class);
                 break;
             case $this->class_to_name(sys_log_status::class):
             case $this->class_to_name(sys_log_function::class):

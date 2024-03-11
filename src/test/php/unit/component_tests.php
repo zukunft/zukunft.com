@@ -36,6 +36,7 @@ include_once MODEL_COMPONENT_PATH . 'component.php';
 
 use api\view\view as view_api;
 use cfg\component\component;
+use cfg\component\component_type;
 use cfg\db\sql_db;
 use html\component\component as component_dsp;
 use test\test_cleanup;
@@ -58,6 +59,9 @@ class component_tests
 
 
         $t->subheader('SQL setup statements');
+        $cmp_typ = new component_type('');
+        $t->assert_sql_table_create($cmp_typ);
+        $t->assert_sql_index_create($cmp_typ);
         $cmp = $t->dummy_component();
         $t->assert_sql_table_create($cmp);
         $t->assert_sql_index_create($cmp);

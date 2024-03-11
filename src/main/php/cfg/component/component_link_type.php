@@ -2,10 +2,8 @@
 
 /*
 
-    model/view/component_link_type_list.php - to define the behaviour if a component is linked to a view
-    ---------------------------------------
-
-    TODO check if really needed
+    cfg/formula/component_link_type.php - db based ENUM of the component view link types
+    ---------------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -24,31 +22,33 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2023 zukunft.com AG, Zurich
+    Copyright (c) 1995-2024 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
-  
+
 */
 
-namespace cfg;
+namespace cfg\component;
 
-use cfg\db\sql_db;
+use cfg\type_object;
 
-include_once DB_PATH . 'sql_db.php';
-
-global $component_link_types;
-
-class component_link_type_list extends type_list
+class component_link_type extends type_object
 {
-    /**
-     * overwrite the general user type list load function to keep the link to the table type capsuled
-     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @return bool true if load was successful
+
+    /*
+     * code links
      */
-    function load(sql_db $db_con, string $db_type = sql_db::TBL_COMPONENT_LINK_TYPE): bool
-    {
-        return parent::load($db_con, $db_type);
-    }
+
+    // list of the component link types that have a coded functionality
+    const DEFAULT = "default"; // a simple link between a formula and a phrase
+
+
+    /*
+     * database link
+     */
+
+    // comments used for the database creation
+    const TBL_COMMENT = 'to assign predefined behaviour to a component view link';
 
 }

@@ -36,27 +36,24 @@ namespace cfg\component;
 include_once DB_PATH . 'sql_par_type.php';
 
 use api\component\component as component_api;
+use cfg\db\sql;
+use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
+use cfg\db\sql_par;
 use cfg\export\component_exp;
+use cfg\export\sandbox_exp;
+use cfg\formula;
 use cfg\log\change_action;
-use cfg\log\change_action_list;
 use cfg\log\change_link;
 use cfg\log\change_table_list;
-use cfg\component_link;
-use cfg\component_link_list;
-use cfg\formula;
 use cfg\phrase;
 use cfg\sandbox;
 use cfg\sandbox_named;
 use cfg\sandbox_typed;
-use cfg\db\sql;
-use cfg\db\sql_par;
-use cfg\db\sql_db;
 use cfg\user;
 use cfg\user_message;
 use cfg\word;
-use cfg\export\sandbox_exp;
 
 class component extends sandbox_typed
 {

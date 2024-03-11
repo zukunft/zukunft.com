@@ -2,8 +2,10 @@
 
 /*
 
-    model/view/component_position_type_list.php - to link coded functionality to a view component position
-    ------------------------------------------------
+    model/view/component_link_type_list.php - to define the behaviour if a component is linked to a view
+    ---------------------------------------
+
+    TODO check if really needed
 
     This file is part of zukunft.com - calc with words
 
@@ -33,41 +35,21 @@ namespace cfg\component;
 
 use cfg\db\sql_db;
 use cfg\type_list;
-use cfg\type_object;
 
 include_once DB_PATH . 'sql_db.php';
-include_once MODEL_COMPONENT_PATH . 'component_pos_type.php';
 
-global $component_position_types;
+global $component_link_types;
 
-class component_pos_type_list extends type_list
+class component_link_type_list extends type_list
 {
-
     /**
      * overwrite the general user type list load function to keep the link to the table type capsuled
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
      * @return bool true if load was successful
      */
-    function load(sql_db $db_con, string $db_type = sql_db::TBL_COMPONENT_POS_TYPE): bool
+    function load(sql_db $db_con, string $db_type = sql_db::TBL_COMPONENT_LINK_TYPE): bool
     {
         return parent::load($db_con, $db_type);
-    }
-
-    /**
-     * adding the view component position types used for unit tests to the dummy list
-     */
-    function load_dummy(): void {
-        parent::load_dummy();
-        $type = new type_object(component_pos_type::SIDE, component_pos_type::SIDE, '', 2);
-        $this->add($type);
-    }
-
-    /**
-     * return the database id of the default view component position type
-     */
-    function default_id(): int
-    {
-        return parent::id(component_pos_type::BELOW);
     }
 
 }

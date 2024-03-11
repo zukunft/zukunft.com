@@ -2,8 +2,8 @@
 
 /*
 
-  model/view/component_pos_type.php - ENUM of the view component position types
-  --------------------------------------
+  cfg/component/component_position_type.php - db based ENUM of the view component position types
+  ------------------------------------
   
   This file is part of zukunft.com - calc with words
 
@@ -31,9 +31,19 @@
 
 namespace cfg\component;
 
-class component_pos_type
+use cfg\type_object;
+
+class component_position_type extends type_object
 {
     // list of the view component position types that have a coded functionality
     const BELOW = "below";
     const SIDE = "side";
+
+    /*
+     * database link
+     */
+
+    // comments used for the database creation
+    const TBL_COMMENT = 'to define the position of components';
+
 }

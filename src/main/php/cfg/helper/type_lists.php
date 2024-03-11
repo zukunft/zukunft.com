@@ -50,9 +50,9 @@ include_once MODEL_VIEW_PATH . 'view_sys_list.php';
 include_once MODEL_VIEW_PATH . 'view_sys_list.php';
 include_once MODEL_VIEW_PATH . 'view_type.php';
 include_once MODEL_VIEW_PATH . 'view_type_list.php';
-include_once MODEL_VIEW_PATH . 'component_link_type_list.php';
+include_once MODEL_COMPONENT_PATH . 'component_link_type_list.php';
 include_once MODEL_COMPONENT_PATH . 'component_type_list.php';
-include_once MODEL_COMPONENT_PATH . 'component_pos_type_list.php';
+include_once MODEL_COMPONENT_PATH . 'component_position_type_list.php';
 include_once MODEL_REF_PATH . 'ref_type_list.php';
 include_once MODEL_REF_PATH . 'source_type_list.php';
 include_once MODEL_SANDBOX_PATH . 'share_type_list.php';
@@ -67,7 +67,7 @@ include_once MODEL_LOG_PATH . 'change_field.php';
 include_once MODEL_LOG_PATH . 'change_field_list.php';
 
 use api\system\type_lists as type_lists_api;
-use cfg\component\component_pos_type_list;
+use cfg\component\component_position_type_list;
 use cfg\component\component_type_list;
 use cfg\db\sql_db;
 use cfg\log\change_action_list;
@@ -196,7 +196,7 @@ class type_lists
         // TODO review: not yet needed?
         //$component_link_types = new component_link_type_list();
         //$component_link_types->load($db_con);
-        $component_position_types = new component_pos_type_list();
+        $component_position_types = new component_position_type_list();
         $component_position_types->load($db_con);
         $ref_types = new ref_type_list();
         $ref_types->load($db_con);

@@ -2938,50 +2938,53 @@ CREATE TABLE IF NOT EXISTS `component_links`
 -- --------------------------------------------------------
 
 --
--- Table structure for table`component_link_types`
+-- table structure to assign predefined behaviour to a component view link
 --
 
-CREATE TABLE IF NOT EXISTS `component_link_types`
+CREATE TABLE IF NOT EXISTS component_link_types
 (
-    `component_link_type_id` int(11)      NOT NULL,
-    `type_name`                   varchar(200) NOT NULL,
-    `code_id`                     varchar(50)  NOT NULL
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8;
+    component_link_type_id bigint NOT NULL COMMENT 'the internal unique primary index',
+    type_name    varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
+    code_id      varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
+    description  text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'to assign predefined behaviour to a component view link';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table`component_position_types`
+-- table structure to define the position of components
 --
 
-CREATE TABLE IF NOT EXISTS `component_position_types`
+CREATE TABLE IF NOT EXISTS component_position_types
 (
-    `component_position_type_id` int(11)      NOT NULL,
-    `type_name`                       varchar(100) NOT NULL,
-    `description`                     text         NOT NULL,
-    `code_id`                         varchar(50)  NOT NULL
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 3
-  DEFAULT CHARSET = utf8 COMMENT ='sideways or down';
+    component_position_type_id bigint NOT NULL COMMENT 'the internal unique primary index',
+    type_name    varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
+    code_id      varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
+    description  text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'to define the position of components';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table`component_types`
+-- table structure to display e.g. a fixed text, term or formula result
 --
 
-CREATE TABLE IF NOT EXISTS `component_types`
+CREATE TABLE IF NOT EXISTS component_types
 (
-    `component_type_id` int(11)      NOT NULL,
-    `type_name`              varchar(100) NOT NULL,
-    `description`            text DEFAULT NULL,
-    `code_id`                varchar(100) NOT NULL
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 17
-  DEFAULT CHARSET = utf8 COMMENT ='fixed text, term or formula result';
-
--- --------------------------------------------------------
+    component_type_id bigint NOT NULL COMMENT 'the internal unique primary index',
+    type_name    varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
+    code_id      varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
+    description  text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'to display e.g. a fixed text, term or formula result';
 
 -- --------------------------------------------------------
 
@@ -5069,23 +5072,35 @@ ALTER TABLE `component_links`
     ADD KEY `component_id` (`component_id`),
     ADD KEY `view_position_type_id` (`position_type`);
 
---
--- Indexes for table`component_link_types`
---
-ALTER TABLE `component_link_types`
-    ADD PRIMARY KEY (`component_link_type_id`);
+-- --------------------------------------------------------
 
 --
--- Indexes for table`component_position_types`
+-- indexes for table component_link_types
 --
-ALTER TABLE `component_position_types`
-    ADD PRIMARY KEY (`component_position_type_id`);
+
+ALTER TABLE component_link_types
+    ADD PRIMARY KEY (component_link_type_id),
+    ADD KEY component_link_types_type_name_idx (type_name);
+
+-- --------------------------------------------------------
 
 --
--- Indexes for table`component_types`
+-- indexes for table component_position_types
 --
-ALTER TABLE `component_types`
-    ADD PRIMARY KEY (`component_type_id`);
+
+ALTER TABLE component_position_types
+    ADD PRIMARY KEY (component_position_type_id),
+    ADD KEY component_position_types_type_name_idx (type_name);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table component_types
+--
+
+ALTER TABLE component_types
+    ADD PRIMARY KEY (component_type_id),
+    ADD KEY component_types_type_name_idx (type_name);
 
 --
 -- Indexes for table`view_link_types`

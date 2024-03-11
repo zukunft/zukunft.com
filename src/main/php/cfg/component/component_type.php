@@ -2,8 +2,8 @@
 
 /*
 
-    model/view/component_type.php - ENUM of the view component types
-    ----------------------------------
+    cfg/component/component_type.php - db based ENUM of the component types
+    --------------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -31,7 +31,9 @@
 
 namespace cfg\component;
 
-class component_type
+use cfg\type_object;
+
+class component_type extends type_object
 {
     // list of the view component types that have a coded functionality
 
@@ -101,5 +103,13 @@ class component_type
         self::ROW_RIGHT,
         self::ROW_END
     );
+
+
+    /*
+     * database link
+     */
+
+    // comments used for the database creation
+    const TBL_COMMENT = 'to display e.g. a fixed text, term or formula result';
 
 }

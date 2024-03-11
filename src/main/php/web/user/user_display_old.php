@@ -30,7 +30,8 @@
 */
 
 use cfg\component\component;
-use cfg\component_link;
+use cfg\component\component_link;
+use cfg\db\sql_db;
 use cfg\formula;
 use cfg\formula_link;
 use cfg\group\group;
@@ -38,7 +39,6 @@ use cfg\phrase;
 use cfg\sandbox;
 use cfg\sandbox_named;
 use cfg\source;
-use cfg\db\sql_db;
 use cfg\system_log_list;
 use cfg\triple;
 use cfg\user;

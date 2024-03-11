@@ -37,7 +37,7 @@ include_once MODEL_DB_PATH . 'sql_field_type.php';
 include_once MODEL_DB_PATH . 'sql_field_default.php';
 include_once MODEL_DB_PATH . 'sql_pg.php';
 
-use cfg\component_link;
+use cfg\component\component_link;
 use cfg\element;
 use cfg\formula_link;
 use cfg\group\group;

@@ -33,15 +33,17 @@ namespace cfg;
 
 include_once DB_PATH . 'sql_par_type.php';
 include_once WEB_VIEW_PATH . 'view.php';
-include_once MODEL_VIEW_PATH . 'component_link.php';
+include_once MODEL_COMPONENT_PATH . 'component_link.php';
 include_once MODEL_COMPONENT_PATH . 'component.php';
 include_once MODEL_COMPONENT_PATH . 'component_list.php';
-include_once MODEL_VIEW_PATH . 'component_link_list.php';
+include_once MODEL_COMPONENT_PATH . 'component_link_list.php';
 include_once SERVICE_EXPORT_PATH . 'view_exp.php';
 include_once SERVICE_EXPORT_PATH . 'component_exp.php';
 
 use api\view\view as view_api;
 use cfg\component\component;
+use cfg\component\component_link;
+use cfg\component\component_link_list;
 use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_field_default;

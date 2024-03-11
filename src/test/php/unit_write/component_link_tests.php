@@ -34,10 +34,10 @@ namespace unit_write;
 
 use api\component\component as component_api;
 use api\view\view as view_api;
+use cfg\component\component;
+use cfg\component\component_link;
 use cfg\log\change_link;
 use cfg\log\change_table_list;
-use cfg\component\component;
-use cfg\component_link;
 use cfg\view;
 use test\test_cleanup;
 

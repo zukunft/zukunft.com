@@ -32,12 +32,11 @@
 
 namespace unit;
 
-include_once MODEL_VIEW_PATH . 'component_link_list.php';
+include_once MODEL_COMPONENT_PATH . 'component_link_list.php';
 
-use cfg\library;
-use cfg\phrase;
+use cfg\component\component_link_list;
 use cfg\db\sql_db;
-use cfg\component_link_list;
+use cfg\library;
 use test\test_cleanup;
 
 class component_link_list_tests

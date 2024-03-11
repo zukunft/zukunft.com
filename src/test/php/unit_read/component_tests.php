@@ -35,7 +35,7 @@ namespace unit_read;
 use api\component\component as component_api;
 use api\view\view as view_api;
 use cfg\component\component;
-use cfg\component_link;
+use cfg\component\component_link;
 use cfg\view;
 use test\test_cleanup;
 

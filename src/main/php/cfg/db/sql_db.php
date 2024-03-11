@@ -40,6 +40,9 @@ include_once MODEL_DB_PATH . 'sql.php';
 include_once MODEL_SYSTEM_PATH . 'log.php';
 
 use cfg\component\component;
+use cfg\component\component_link_type;
+use cfg\component\component_position_type;
+use cfg\component\component_type;
 use cfg\config;
 use cfg\element;
 use cfg\element_type;
@@ -254,6 +257,9 @@ class sql_db
         result::class,
         view_type::class,
         view::class,
+        component_link_type::class,
+        component_position_type::class,
+        component_type::class,
         component::class
     ];
 

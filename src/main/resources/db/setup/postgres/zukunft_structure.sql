@@ -3848,46 +3848,62 @@ COMMENT ON COLUMN user_views.protect_id IS 'to protect against unwanted changes'
 -- --------------------------------------------------------
 
 --
--- table structure for table component_link_types
--- TODO generate type
+-- table structure to assign predefined behaviour to a component view link
 --
 
 CREATE TABLE IF NOT EXISTS component_link_types
 (
-    component_link_type_id      BIGSERIAL PRIMARY KEY,
-    type_name                   varchar(200) NOT NULL,
-    code_id                     varchar(50)  NOT NULL
+    component_link_type_id BIGSERIAL PRIMARY KEY,
+    type_name   varchar(255)     NOT NULL,
+    code_id     varchar(255) DEFAULT NULL,
+    description text         DEFAULT NULL
 );
 
+COMMENT ON TABLE component_link_types IS 'to assign predefined behaviour to a component view link';
+COMMENT ON COLUMN component_link_types.component_link_type_id IS 'the internal unique primary index';
+COMMENT ON COLUMN component_link_types.type_name IS 'the unique type name as shown to the user and used for the selection';
+COMMENT ON COLUMN component_link_types.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
+COMMENT ON COLUMN component_link_types.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
+
+-- --------------------------------------------------------
+
 --
--- table structure for table component_position_types
--- TODO generate type
+-- table structure to define the position of components
 --
 
 CREATE TABLE IF NOT EXISTS component_position_types
 (
-    component_position_type_id      BIGSERIAL PRIMARY KEY,
-    type_name                       varchar(100) NOT NULL,
-    description                     text         NOT NULL,
-    code_id                         varchar(50)  NOT NULL
+    component_position_type_id BIGSERIAL PRIMARY KEY,
+    type_name   varchar(255)     NOT NULL,
+    code_id     varchar(255) DEFAULT NULL,
+    description text         DEFAULT NULL
 );
 
-COMMENT ON TABLE component_position_types IS 'sideways or down';
+COMMENT ON TABLE component_position_types IS 'to define the position of components';
+COMMENT ON COLUMN component_position_types.component_position_type_id IS 'the internal unique primary index';
+COMMENT ON COLUMN component_position_types.type_name IS 'the unique type name as shown to the user and used for the selection';
+COMMENT ON COLUMN component_position_types.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
+COMMENT ON COLUMN component_position_types.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
+
+-- --------------------------------------------------------
 
 --
--- table structure for table component_types
--- TODO generate type
+-- table structure to display e.g. a fixed text, term or formula result
 --
 
 CREATE TABLE IF NOT EXISTS component_types
 (
     component_type_id BIGSERIAL PRIMARY KEY,
-    type_name              varchar(100) NOT NULL,
-    description            text DEFAULT NULL,
-    code_id                varchar(100) NOT NULL
+    type_name   varchar(255)     NOT NULL,
+    code_id     varchar(255) DEFAULT NULL,
+    description text         DEFAULT NULL
 );
 
-COMMENT ON TABLE component_types IS 'fixed text, term or formula result';
+COMMENT ON TABLE component_types IS 'to display e.g. a fixed text, term or formula result';
+COMMENT ON COLUMN component_types.component_type_id IS 'the internal unique primary index';
+COMMENT ON COLUMN component_types.type_name IS 'the unique type name as shown to the user and used for the selection';
+COMMENT ON COLUMN component_types.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
+COMMENT ON COLUMN component_types.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
 
 -- --------------------------------------------------------
 
@@ -5652,6 +5668,30 @@ CREATE INDEX user_views_user_idx ON user_views (user_id);
 CREATE INDEX user_views_language_idx ON user_views (language_id);
 CREATE INDEX user_views_view_name_idx ON user_views (view_name);
 CREATE INDEX user_views_view_type_idx ON user_views (view_type_id);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table component_link_types
+--
+
+CREATE INDEX component_link_types_type_name_idx ON component_link_types (type_name);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table component_position_types
+--
+
+CREATE INDEX component_position_types_type_name_idx ON component_position_types (type_name);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table component_types
+--
+
+CREATE INDEX component_types_type_name_idx ON component_types (type_name);
 
 -- --------------------------------------------------------
 
