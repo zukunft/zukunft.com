@@ -2802,6 +2802,23 @@ CREATE TABLE IF NOT EXISTS `user_phrase_group_triple_links`
 -- --------------------------------------------------------
 
 --
+-- table structure to assign predefined behaviour to a view
+--
+
+CREATE TABLE IF NOT EXISTS view_types
+(
+    view_type_id bigint     NOT NULL COMMENT 'the internal unique primary index',
+    type_name    varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
+    code_id      varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
+    description  text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'to assign predefined behaviour to a view';
+
+-- --------------------------------------------------------
+
+--
 -- table structure to store all user interfaces entry points
 --
 
@@ -3049,22 +3066,6 @@ CREATE TABLE IF NOT EXISTS `view_link_types`
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
   DEFAULT CHARSET = utf8;
-
--- --------------------------------------------------------
-
---
--- Table structure for table`view_type_list`
---
-
-CREATE TABLE IF NOT EXISTS `view_types`
-(
-    `view_type_id` int(11)      NOT NULL,
-    `type_name`    varchar(200) NOT NULL,
-    `description`  text         NOT NULL,
-    `code_id`      varchar(100) DEFAULT NULL
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8 COMMENT ='to group the masks a link a basic format';
 
 -- --------------------------------------------------------
 
@@ -5092,11 +5093,15 @@ ALTER TABLE `component_types`
 ALTER TABLE `view_link_types`
     ADD PRIMARY KEY (`view_link_type_id`);
 
+-- --------------------------------------------------------
+
 --
--- Indexes for table`view_type_list`
+-- indexes for table view_types
 --
-ALTER TABLE `view_types`
-    ADD PRIMARY KEY (`view_type_id`);
+
+ALTER TABLE view_types
+    ADD PRIMARY KEY (view_type_id),
+    ADD KEY view_types_type_name_idx (type_name);
 
 --
 -- Indexes for table`view_term_links`

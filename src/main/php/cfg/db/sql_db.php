@@ -95,6 +95,7 @@ use cfg\value\value;
 use cfg\value\value_ts_data;
 use cfg\verb;
 use cfg\view;
+use cfg\view_type;
 use cfg\word;
 use Exception;
 use html\html_base;
@@ -251,6 +252,7 @@ class sql_db
         formula_type::class,
         formula::class,
         result::class,
+        view_type::class,
         view::class,
         component::class
     ];

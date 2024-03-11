@@ -34,6 +34,7 @@ namespace unit;
 
 use api\view\view as view_api;
 use cfg\view_term_link;
+use cfg\view_type;
 use html\view\view as view_dsp;
 use cfg\library;
 use cfg\db\sql_db;
@@ -59,6 +60,9 @@ class view_tests
 
 
         $t->subheader('SQL setup statements');
+        $dsp_typ = new view_type('');
+        $t->assert_sql_table_create($dsp_typ);
+        $t->assert_sql_index_create($dsp_typ);
         $dsp = $t->dummy_view();
         $t->assert_sql_table_create($dsp);
         $t->assert_sql_index_create($dsp);
