@@ -2374,44 +2374,54 @@ COMMENT ON COLUMN formula_link_types.type_name IS 'the unique type name as shown
 COMMENT ON COLUMN formula_link_types.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
 COMMENT ON COLUMN formula_link_types.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
 
+-- --------------------------------------------------------
+
 --
--- table structure for table formula_links
--- TODO generate link
+-- table structure for the link of a formual to phrases e.g. if the term pattern of a value matches this term pattern
 --
 
 CREATE TABLE IF NOT EXISTS formula_links
 (
     formula_link_id BIGSERIAL PRIMARY KEY,
     user_id         bigint   DEFAULT NULL,
-    formula_id      bigint NOT NULL,
-    phrase_id       bigint NOT NULL,
     link_type_id    bigint   DEFAULT NULL,
-    order_nbr       bigint DEFAULT NULL,
+    order_nbr       bigint   DEFAULT NULL,
+    formula_id      bigint       NOT NULL,
+    phrase_id       bigint       NOT NULL,
     excluded        smallint DEFAULT NULL,
-    share_type_id   smallint     DEFAULT NULL,
-    protect_id      smallint     DEFAULT NULL
+    share_type_id   smallint DEFAULT NULL,
+    protect_id      smallint DEFAULT NULL
 );
 
-COMMENT ON TABLE formula_links IS 'if the term pattern of a value matches this term pattern';
+COMMENT ON TABLE formula_links IS 'for the link of a formual to phrases e.g. if the term pattern of a value matches this term pattern';
+COMMENT ON COLUMN formula_links.formula_link_id IS 'the internal unique primary index';
+COMMENT ON COLUMN formula_links.user_id IS 'the owner / creator of the formula_link';
+COMMENT ON COLUMN formula_links.excluded IS 'true if a user,but not all,have removed it';
+COMMENT ON COLUMN formula_links.share_type_id IS 'to restrict the access';
+COMMENT ON COLUMN formula_links.protect_id IS 'to protect against unwanted changes';
 
 --
--- table structure for table user_formula_links
--- TODO generate link
+-- table structure to save user specific changes for the link of a formual to phrases e.g. if the term pattern of a value matches this term pattern
 --
 
 CREATE TABLE IF NOT EXISTS user_formula_links
 (
-    formula_link_id BIGSERIAL NOT NULL,
-    user_id         bigint    NOT NULL,
-    link_type_id    bigint    DEFAULT NULL,
-    excluded        smallint  DEFAULT NULL,
-    share_type_id   smallint  DEFAULT NULL,
-    protect_id      smallint  DEFAULT NULL
+    formula_link_id bigint       NOT NULL,
+    user_id         bigint       NOT NULL,
+    link_type_id    bigint   DEFAULT NULL,
+    order_nbr       bigint   DEFAULT NULL,
+    excluded        smallint DEFAULT NULL,
+    share_type_id   smallint DEFAULT NULL,
+    protect_id      smallint DEFAULT NULL
 
 );
 
-COMMENT ON TABLE user_formula_links IS 'if the term pattern of a value matches this term pattern ';
-
+COMMENT ON TABLE user_formula_links IS 'for the link of a formual to phrases e.g. if the term pattern of a value matches this term pattern';
+COMMENT ON COLUMN user_formula_links.formula_link_id IS 'with the user_id the internal unique primary index';
+COMMENT ON COLUMN user_formula_links.user_id IS 'the changer of the formula_link';
+COMMENT ON COLUMN user_formula_links.excluded IS 'true if a user,but not all,have removed it';
+COMMENT ON COLUMN user_formula_links.share_type_id IS 'to restrict the access';
+COMMENT ON COLUMN user_formula_links.protect_id IS 'to protect against unwanted changes';
 
 -- --------------------------------------------------------
 
@@ -5134,20 +5144,25 @@ CREATE INDEX user_formulas_formula_name_idx ON user_formulas (formula_name);
 CREATE INDEX user_formulas_formula_type_idx ON user_formulas (formula_type_id);
 CREATE INDEX user_formulas_view_idx ON user_formulas (view_id);
 
---
--- Indexes for table formula_links
---
-CREATE INDEX formula_link_user_idx ON formula_links (user_id);
-CREATE INDEX formula_link_idx ON formula_links (formula_id);
-CREATE INDEX formula_link_type_idx ON formula_links (link_type_id);
+-- --------------------------------------------------------
 
 --
--- Indexes for table user_formula_links
+-- indexes for table formula_links
 --
-CREATE UNIQUE INDEX user_formula_link_unique_idx ON user_formula_links (formula_link_id, user_id);
-CREATE INDEX user_formula_link_idx ON user_formula_links (formula_link_id);
-CREATE INDEX user_formula_link_user_idx ON user_formula_links (user_id);
-CREATE INDEX user_formula_link_type_idx ON user_formula_links (link_type_id);
+
+CREATE INDEX formula_links_user_idx ON formula_links (user_id);
+CREATE INDEX formula_links_link_type_idx ON formula_links (link_type_id);
+CREATE INDEX formula_links_formula_idx ON formula_links (formula_id);
+CREATE INDEX formula_links_phrase_idx ON formula_links (phrase_id);
+
+--
+-- indexes for table user_formula_links
+--
+
+ALTER TABLE user_formula_links ADD CONSTRAINT user_formula_links_pkey PRIMARY KEY (formula_link_id,user_id);
+CREATE INDEX user_formula_links_formula_link_idx ON user_formula_links (formula_link_id);
+CREATE INDEX user_formula_links_user_idx ON user_formula_links (user_id);
+CREATE INDEX user_formula_links_link_type_idx ON user_formula_links (link_type_id);
 
 -- --------------------------------------------------------
 
@@ -6206,19 +6221,25 @@ ALTER TABLE elements
     ADD CONSTRAINT elements_element_type_fk FOREIGN KEY (element_type_id) REFERENCES element_types (element_type_id),
     ADD CONSTRAINT elements_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
 
+-- --------------------------------------------------------
+
 --
 -- constraints for table formula_links
 --
+
 ALTER TABLE formula_links
-    ADD CONSTRAINT formula_links_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id);
+    ADD CONSTRAINT formula_links_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT formula_links_formula_link_type_fk FOREIGN KEY (link_type_id) REFERENCES formula_link_types (link_type_id),
+    ADD CONSTRAINT formula_links_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
 
 --
 -- constraints for table user_formula_links
 --
+
 ALTER TABLE user_formula_links
-    ADD CONSTRAINT user_formula_links_fk_1 FOREIGN KEY (formula_link_id) REFERENCES formula_links (formula_link_id),
-    ADD CONSTRAINT user_formula_links_fk_2 FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT user_formula_links_fk_3 FOREIGN KEY (link_type_id) REFERENCES formula_link_types (formula_link_type_id);
+    ADD CONSTRAINT user_formula_links_formula_link_fk FOREIGN KEY (formula_link_id) REFERENCES formula_links (formula_link_id),
+    ADD CONSTRAINT user_formula_links_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_formula_links_formula_link_type_fk FOREIGN KEY (link_type_id) REFERENCES formula_link_types (link_type_id);
 
 -- --------------------------------------------------------
 

@@ -44,6 +44,7 @@ use cfg\config;
 use cfg\element;
 use cfg\element_type;
 use cfg\formula;
+use cfg\formula_link;
 use cfg\formula_link_type;
 use cfg\formula_type;
 use cfg\group\group;
@@ -246,6 +247,7 @@ class sql_db
         element_type::class,
         element::class,
         formula_link_type::class,
+        formula_link::class,
         formula_type::class,
         formula::class,
         result::class,

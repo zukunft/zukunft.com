@@ -1616,6 +1616,7 @@ class library
                 $result = $this->class_to_name(element::class);
                 break;
             case $this->class_to_name(formula_link_type::class):
+            case $this->class_to_name(formula_link::class):
                 $result = $this->class_to_name(formula::class);
                 break;
             case $this->class_to_name(sys_log_status::class):

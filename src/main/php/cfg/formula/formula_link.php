@@ -33,6 +33,8 @@ namespace cfg;
 
 use cfg\db\sql;
 use cfg\db\sql_db;
+use cfg\db\sql_field_default;
+use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\log\change;
 use cfg\log\change_action;
@@ -48,9 +50,16 @@ class formula_link extends sandbox_link_with_type
     const DEFAULT = "default";               // a simple link between a formula and a phrase
     const TIME_PERIOD = "time_period_based"; // for time based links
 
+    /*
+     * database link
+     */
+
+    // object specific database and JSON object field names
+    const TBL_COMMENT = 'for the link of a formual to phrases e.g. if the term pattern of a value matches this term pattern';
     // the database and JSON object field names used only for formula links
     const FLD_ID = 'formula_link_id';
     const FLD_TYPE = 'link_type_id';
+    const FLD_ORDER = 'order_nbr';
 
     // all database field names excluding the id
     const FLD_NAMES = array(
@@ -81,10 +90,30 @@ class formula_link extends sandbox_link_with_type
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
+    // list of fields that CAN be changed by the user
+    const FLD_LST_USER_CAN_CHANGE = array(
+        [self::FLD_TYPE, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, formula_link_type::class, ''],
+        [self::FLD_ORDER, sql_field_type::INT, sql_field_default::NULL, '', '', ''],
+    );
+    // list of fields that CANNOT be changed by the user
+    const FLD_LST_NON_CHANGEABLE = array(
+        [formula::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, formula::class, ''],
+        [phrase::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, '', ''],
+    );
+
+
+    /*
+     * object vars
+     */
 
     // database fields additional to the user sandbox fields
     public ?int $order_nbr = null;    // to set the priority of the formula links
     public ?int $link_type_id = null; // define a special behavior for this link (maybe not needed at the moment)
+
+
+    /*
+     * construct and map
+     */
 
     /**
      * formula_link constructor that set the parameters for the _sandbox object
