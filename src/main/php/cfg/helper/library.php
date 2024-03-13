@@ -1626,6 +1626,7 @@ class library
                 break;
             case $this->class_to_name(view_type::class):
             case $this->class_to_name(view_link_type::class):
+            case $this->class_to_name(view_term_link::class):
                 $result = $this->class_to_name(view::class);
                 break;
             case $this->class_to_name(component_link_type::class):

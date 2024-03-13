@@ -156,6 +156,10 @@ class view_tests
         $dsp_lnk_typ = new view_link_type('');
         $t->assert_sql_table_create($dsp_lnk_typ);
         $t->assert_sql_index_create($dsp_lnk_typ);
+        $dsp_trm_lnk = new view_term_link($usr);
+        $t->assert_sql_table_create($dsp_trm_lnk);
+        $t->assert_sql_index_create($dsp_trm_lnk);
+        $t->assert_sql_foreign_key_create($dsp_trm_lnk);
 
         $t->subheader('SQL user sandbox statement tests');
         $dsp = new view_term_link($usr);

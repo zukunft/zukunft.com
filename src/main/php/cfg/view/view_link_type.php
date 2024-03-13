@@ -48,5 +48,6 @@ class view_link_type extends type_object
 
     // comments used for the database creation
     const TBL_COMMENT = 'to define the behaviour of the link between a term and a view';
+    const FLD_ID = 'view_link_type_id';
 
 }

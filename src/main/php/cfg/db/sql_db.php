@@ -106,6 +106,7 @@ use cfg\verb;
 use cfg\verb_list;
 use cfg\view;
 use cfg\view_link_type;
+use cfg\view_term_link;
 use cfg\view_type;
 use cfg\word;
 use Exception;
@@ -267,6 +268,7 @@ class sql_db
         view_type::class,
         view::class,
         view_link_type::class,
+        view_term_link::class,
         component_link_type::class,
         position_type::class,
         component_type::class,

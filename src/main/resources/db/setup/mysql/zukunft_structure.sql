@@ -2878,6 +2878,47 @@ CREATE TABLE IF NOT EXISTS view_link_types
 -- --------------------------------------------------------
 
 --
+-- table structure to link view to a word,triple,verb or formula with an n:m relation
+--
+
+CREATE TABLE IF NOT EXISTS view_term_links
+(
+    view_term_link_id bigint       NOT NULL COMMENT 'the internal unique primary index',
+    term_id           bigint       NOT NULL,
+    view_id           bigint       NOT NULL,
+    type_id           smallint     NOT NULL DEFAULT 1 COMMENT '1 = from_term_id is link the terms table; 2=link to the term_links table;3=to term_groups',
+    user_id           bigint   DEFAULT NULL COMMENT 'the owner / creator of the view_term_link',
+    view_link_type_id bigint   DEFAULT NULL,
+    description       text     DEFAULT NULL,
+    excluded          smallint DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
+    share_type_id     smallint DEFAULT NULL COMMENT 'to restrict the access',
+    protect_id        smallint DEFAULT NULL COMMENT 'to protect against unwanted changes'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'to link view to a word,triple,verb or formula with an n:m relation';
+
+--
+-- table structure to save user specific changes to link view to a word,triple,verb or formula with an n:m relation
+--
+
+CREATE TABLE IF NOT EXISTS user_view_term_links
+(
+    view_term_link_id bigint       NOT NULL COMMENT 'with the user_id the internal unique primary index',
+    user_id           bigint       NOT NULL COMMENT 'the changer of the view_term_link',
+    view_link_type_id bigint   DEFAULT NULL,
+    description       text     DEFAULT NULL,
+    excluded          smallint DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
+    share_type_id     smallint DEFAULT NULL COMMENT 'to restrict the access',
+    protect_id        smallint DEFAULT NULL COMMENT 'to protect against unwanted changes'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'to link view to a word,triple,verb or formula with an n:m relation';
+
+-- --------------------------------------------------------
+
+--
 -- table structure for the single components of a view
 --
 
@@ -3090,48 +3131,6 @@ CREATE TABLE IF NOT EXISTS `view_link_types`
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
   DEFAULT CHARSET = utf8;
-
--- --------------------------------------------------------
-
---
--- Table structure for table`view_term_links`
---
-
-CREATE TABLE IF NOT EXISTS `view_term_links`
-(
-    `view_term_link_id` int(11) NOT NULL,
-    `term_id`           int(11) NOT NULL,
-    `type_id`           int(11) NOT NULL DEFAULT '1' COMMENT '1 = from_term_id is link the terms table; 2=link to the term_links table;3=to term_groups',
-    `link_type_id`      int(11)          DEFAULT NULL,
-    `view_id`           int(11)          DEFAULT NULL,
-    `user_id`           int(11) NOT NULL,
-    `description`       text             DEFAULT NULL,
-    `excluded`          tinyint(4)       DEFAULT NULL,
-    `share_type_id`     smallint         DEFAULT NULL,
-    `protect_id`        smallint         DEFAULT NULL
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8 COMMENT ='used to define the default mask for a term or a term group';
-
--- --------------------------------------------------------
-
---
--- Table structure for table`user_view_term_links`
---
-
-CREATE TABLE IF NOT EXISTS `user_view_term_links`
-(
-    `view_term_link_id` int(11) NOT NULL,
-    `type_id`           int(11) NOT NULL DEFAULT '1' COMMENT '1 = from_term_id is link the terms table; 2=link to the term_links table;3=to term_groups',
-    `link_type_id`      int(11)          DEFAULT NULL,
-    `user_id`           int(11) NOT NULL,
-    `description`       text             DEFAULT NULL,
-    `excluded`          tinyint(4)       DEFAULT NULL,
-    `share_type_id`     smallint         DEFAULT NULL,
-    `protect_id`        smallint         DEFAULT NULL
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8 COMMENT ='used to define the default mask for a term or a term group';
-
--- --------------------------------------------------------
 
 -- --------------------------------------------------------
 
@@ -5157,11 +5156,29 @@ ALTER TABLE view_types
     ADD PRIMARY KEY (view_type_id),
     ADD KEY view_types_type_name_idx (type_name);
 
+-- --------------------------------------------------------
+
 --
--- Indexes for table`view_term_links`
+-- indexes for table view_term_links
 --
-ALTER TABLE `view_term_links`
-    ADD PRIMARY KEY (`view_term_link_id`);
+
+ALTER TABLE view_term_links
+    ADD PRIMARY KEY (view_term_link_id),
+    ADD KEY view_term_links_term_idx (term_id),
+    ADD KEY view_term_links_view_idx (view_id),
+    ADD KEY view_term_links_type_idx (type_id),
+    ADD KEY view_term_links_user_idx (user_id),
+    ADD KEY view_term_links_view_link_type_idx (view_link_type_id);
+
+--
+-- indexes for table user_view_term_links
+--
+
+ALTER TABLE user_view_term_links
+    ADD PRIMARY KEY (view_term_link_id,user_id),
+    ADD KEY user_view_term_links_view_term_link_idx (view_term_link_id),
+    ADD KEY user_view_term_links_user_idx (user_id),
+    ADD KEY user_view_term_links_view_link_type_idx (view_link_type_id);
 
 --
 -- Indexes for table`words`
@@ -6370,6 +6387,26 @@ ALTER TABLE user_views
     ADD CONSTRAINT user_views_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
     ADD CONSTRAINT user_views_language_fk FOREIGN KEY (language_id) REFERENCES languages (language_id),
     ADD CONSTRAINT user_views_view_type_fk FOREIGN KEY (view_type_id) REFERENCES view_types (view_type_id);
+
+-- --------------------------------------------------------
+
+--
+-- constraints for table view_term_links
+--
+
+ALTER TABLE view_term_links
+    ADD CONSTRAINT view_term_links_view_fk FOREIGN KEY (view_id) REFERENCES views (view_id),
+    ADD CONSTRAINT view_term_links_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT view_term_links_view_link_type_fk FOREIGN KEY (view_link_type_id) REFERENCES view_link_types (view_link_type_id);
+
+--
+-- constraints for table user_view_term_links
+--
+
+ALTER TABLE user_view_term_links
+    ADD CONSTRAINT user_view_term_links_view_term_link_fk FOREIGN KEY (view_term_link_id) REFERENCES view_term_links (view_term_link_id),
+    ADD CONSTRAINT user_view_term_links_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_view_term_links_view_link_type_fk FOREIGN KEY (view_link_type_id) REFERENCES view_link_types (view_link_type_id);
 
 -- --------------------------------------------------------
 

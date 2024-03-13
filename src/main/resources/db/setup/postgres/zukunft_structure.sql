@@ -4063,52 +4063,55 @@ COMMENT ON COLUMN view_link_types.type_name IS 'the unique type name as shown to
 COMMENT ON COLUMN view_link_types.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
 COMMENT ON COLUMN view_link_types.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
 
+-- --------------------------------------------------------
+
 --
--- table structure for table view_term_links
--- TODO generate link
+-- table structure to link view to a word, triple, verb or formula with an n:m relation
 --
 
 CREATE TABLE IF NOT EXISTS view_term_links
 (
     view_term_link_id BIGSERIAL PRIMARY KEY,
-    term_id           bigint NOT NULL,
-    type_id           bigint NOT NULL   DEFAULT '1',
-    link_type_id      bigint            DEFAULT NULL,
-    view_id           bigint            DEFAULT NULL,
-    user_id           bigint NOT NULL,
-    description       text   NOT NULL,
-    excluded          smallint          DEFAULT NULL,
-    share_type_id     smallint          DEFAULT NULL,
-    protect_id        smallint NOT NULL DEFAULT NULL
+    term_id           bigint             NOT NULL,
+    view_id           bigint             NOT NULL,
+    type_id           smallint NOT NULL DEFAULT 1,
+    user_id           bigint         DEFAULT NULL,
+    view_link_type_id bigint         DEFAULT NULL,
+    description       text           DEFAULT NULL,
+    excluded          smallint       DEFAULT NULL,
+    share_type_id     smallint       DEFAULT NULL,
+    protect_id        smallint       DEFAULT NULL
 );
 
-COMMENT ON TABLE view_term_links IS 'used to define the default mask for a term or a term group';
+COMMENT ON TABLE view_term_links IS 'to link view to a word, triple, verb or formula with an n:m relation';
+COMMENT ON COLUMN view_term_links.view_term_link_id IS 'the internal unique primary index';
 COMMENT ON COLUMN view_term_links.type_id IS '1 = from_term_id is link the terms table; 2=link to the term_links table;3=to term_groups';
+COMMENT ON COLUMN view_term_links.user_id IS 'the owner / creator of the view_term_link';
+COMMENT ON COLUMN view_term_links.excluded IS 'true if a user,but not all,have removed it';
+COMMENT ON COLUMN view_term_links.share_type_id IS 'to restrict the access';
+COMMENT ON COLUMN view_term_links.protect_id IS 'to protect against unwanted changes';
 
 --
--- table structure for table user_view_term_links
--- TODO generate link
+-- table structure to save user specific changes to link view to a word, triple, verb or formula with an n:m relation
 --
 
 CREATE TABLE IF NOT EXISTS user_view_term_links
 (
-    view_term_link_id BIGSERIAL PRIMARY KEY,
-    type_id           bigint NOT NULL   DEFAULT '1',
-    link_type_id      bigint            DEFAULT NULL,
-    user_id           bigint NOT NULL,
-    description       text   NOT NULL,
-    excluded          smallint          DEFAULT NULL,
-    share_type_id     smallint          DEFAULT NULL,
-    protect_id        smallint NOT NULL DEFAULT NULL
+    view_term_link_id bigint       NOT NULL,
+    user_id           bigint       NOT NULL,
+    view_link_type_id bigint   DEFAULT NULL,
+    description       text     DEFAULT NULL,
+    excluded          smallint DEFAULT NULL,
+    share_type_id     smallint DEFAULT NULL,
+    protect_id        smallint DEFAULT NULL
 );
 
--- --------------------------------------------------------
-
---
--- table structure for future use
---
--- TODO generate check remaining
--- TODO generate test create all
+COMMENT ON TABLE user_view_term_links IS 'to link view to a word,triple,verb or formula with an n:m relation';
+COMMENT ON COLUMN user_view_term_links.view_term_link_id IS 'with the user_id the internal unique primary index';
+COMMENT ON COLUMN user_view_term_links.user_id IS 'the changer of the view_term_link';
+COMMENT ON COLUMN user_view_term_links.excluded IS 'true if a user,but not all,have removed it';
+COMMENT ON COLUMN user_view_term_links.share_type_id IS 'to restrict the access';
+COMMENT ON COLUMN user_view_term_links.protect_id IS 'to protect against unwanted changes';
 
 -- --------------------------------------------------------
 
@@ -4397,6 +4400,14 @@ SELECT f.change_field_id                              AS change_table_field_id,
 FROM change_fields AS f,
      change_tables AS t
 WHERE f.table_id = t.change_table_id;
+
+-- --------------------------------------------------------
+
+--
+-- table structure for future use
+--
+-- TODO generate header and footer
+-- TODO generate check remaining
 
 -- --------------------------------------------------------
 
@@ -5699,6 +5710,28 @@ CREATE INDEX user_views_view_type_idx ON user_views (view_type_id);
 -- --------------------------------------------------------
 
 --
+-- indexes for table view_term_links
+--
+
+CREATE INDEX view_term_links_term_idx ON view_term_links (term_id);
+CREATE INDEX view_term_links_view_idx ON view_term_links (view_id);
+CREATE INDEX view_term_links_type_idx ON view_term_links (type_id);
+CREATE INDEX view_term_links_user_idx ON view_term_links (user_id);
+CREATE INDEX view_term_links_view_link_type_idx ON view_term_links (view_link_type_id);
+
+--
+-- indexes for table user_view_term_links
+--
+
+ALTER TABLE user_view_term_links
+    ADD CONSTRAINT user_view_term_links_pkey PRIMARY KEY (view_term_link_id,user_id);
+CREATE INDEX user_view_term_links_view_term_link_idx ON user_view_term_links (view_term_link_id);
+CREATE INDEX user_view_term_links_user_idx ON user_view_term_links (user_id);
+CREATE INDEX user_view_term_links_view_link_type_idx ON user_view_term_links (view_link_type_id);
+
+-- --------------------------------------------------------
+
+--
 -- indexes for table component_link_types
 --
 
@@ -6579,6 +6612,26 @@ ALTER TABLE user_views
     ADD CONSTRAINT user_views_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
     ADD CONSTRAINT user_views_language_fk FOREIGN KEY (language_id) REFERENCES languages (language_id),
     ADD CONSTRAINT user_views_view_type_fk FOREIGN KEY (view_type_id) REFERENCES view_types (view_type_id);
+
+-- --------------------------------------------------------
+
+--
+-- constraints for table view_term_links
+--
+
+ALTER TABLE view_term_links
+    ADD CONSTRAINT view_term_links_view_fk FOREIGN KEY (view_id) REFERENCES views (view_id),
+    ADD CONSTRAINT view_term_links_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT view_term_links_view_link_type_fk FOREIGN KEY (view_link_type_id) REFERENCES view_link_types (view_link_type_id);
+
+--
+-- constraints for table user_view_term_links
+--
+
+ALTER TABLE user_view_term_links
+    ADD CONSTRAINT user_view_term_links_view_term_link_fk FOREIGN KEY (view_term_link_id) REFERENCES view_term_links (view_term_link_id),
+    ADD CONSTRAINT user_view_term_links_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_view_term_links_view_link_type_fk FOREIGN KEY (view_link_type_id) REFERENCES view_link_types (view_link_type_id);
 
 -- --------------------------------------------------------
 
