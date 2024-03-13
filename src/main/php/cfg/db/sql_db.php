@@ -38,6 +38,7 @@ namespace cfg\db;
 include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_DB_PATH . 'sql.php';
 include_once MODEL_SYSTEM_PATH . 'log.php';
+include_once MODEL_IMPORT_PATH . 'import_file.php';
 
 use cfg\component\component;
 use cfg\component\component_link;
@@ -53,10 +54,12 @@ use cfg\formula_link_type;
 use cfg\formula_type;
 use cfg\group\group;
 use cfg\group\group_id;
+use cfg\import\import_file;
 use cfg\ip_range;
 use cfg\job;
 use cfg\job_time;
 use cfg\job_type;
+use cfg\job_type_list;
 use cfg\language;
 use cfg\language_form;
 use cfg\library;
@@ -90,14 +93,17 @@ use cfg\sys_log_status;
 use cfg\system_time;
 use cfg\system_time_type;
 use cfg\triple;
+use cfg\type_lists;
 use cfg\user;
 use cfg\user\user_profile;
 use cfg\user\user_type;
 use cfg\user_message;
 use cfg\user_official_type;
+use cfg\user_profile_list;
 use cfg\value\value;
 use cfg\value\value_ts_data;
 use cfg\verb;
+use cfg\verb_list;
 use cfg\view;
 use cfg\view_type;
 use cfg\word;
@@ -106,6 +112,7 @@ use html\html_base;
 use mysqli;
 use mysqli_result;
 use PDOException;
+use unit_read\all_unit_read_tests;
 
 class sql_db
 {
@@ -678,28 +685,72 @@ class sql_db
     {
         $html = new html_base();
         $usr_msg = new user_message();
+
+        // create the tables, db indexes and foreign keys
         $sql = resource_file(DB_RES_PATH . DB_SETUP_PATH . $this->path(sql_db::POSTGRES) . DB_SETUP_SQL_FILE);
         try {
-            $html->echo( 'Run db setup sql script');
-            $html->echo("\n");
+            $html->echo('Run db setup sql script');
             $sql_result = $this->exe_script($sql);
             // TODO review
             //if ($sql_result) {
             //    $usr_msg->add_message($sql_result);
-           // }
+            // }
         } catch (Exception $e) {
             $msg = ' creation of the database failed due to ' . $e->getMessage();
             log_fatal($msg, 'setup_db');
             $usr_msg->add_message($msg);
         }
-        $html->echo( 'Reset config');
-        $html->echo("\n");
-        $this->reset_config();
-        import_system_users();
-        $this->db_fill_code_links();
-        $this->db_check_missing_owner();
-        $cfg = new config();
-        $cfg->set(config::LAST_CONSISTENCY_CHECK, gmdate(DATE_ATOM), $this);
+
+        // fill the tables with the essential data
+        if ($usr_msg->is_ok()) {
+            $html->echo('Create system users');
+            $this->reset_config();
+            $this->import_system_users();
+
+            // use the system user for the database updates
+            global $usr;
+            $usr = new user;
+            $usr->load_by_id(SYSTEM_USER_ID);
+
+            // recreate the code link database rows
+            $html->echo('Create the code links');
+            $this->db_fill_code_links();
+            $sys_typ_lst = new type_lists();
+            $sys_typ_lst->load($this, $usr);
+
+            // reload the base configuration
+            $job = new job($usr);
+            $job_id = $job->add(job_type_list::BASE_IMPORT);
+
+            $import = new import_file();
+            $this->import_verbs($usr);
+            $import->import_base_config($usr);
+            $import->import_config($usr);
+            $this->db_check_missing_owner();
+
+            // create the test dataset to check the basic write functions
+            $t = new all_unit_read_tests();
+            $t->set_users();
+            $t->create_test_db_entries($t);
+
+            // remove the test dataset for a clean database
+            // TODO use the user message object instead of a string
+            $cleanup_result = $t->cleanup();
+            if (!$cleanup_result) {
+                log_err('Cleanup not successful, because ...');
+            } else {
+                if (!$t->cleanup_check()) {
+                    log_err('Cleanup check not successful.');
+                }
+            }
+
+            // reload the session user parameters
+            $usr = new user;
+            $usr->get();
+
+            $cfg = new config();
+            $cfg->set(config::LAST_CONSISTENCY_CHECK, gmdate(DATE_ATOM), $this);
+        }
         return $usr_msg;
     }
 
@@ -4832,7 +4883,6 @@ class sql_db
         // the sequence names of the tables to reset
         $html = new html_base();
         $html->echo('truncate ');
-        $html->echo("\n");
         foreach (DB_SEQ_LIST as $seq_name) {
             $this->reset_seq($seq_name);
         }
@@ -4842,7 +4892,6 @@ class sql_db
     {
         $html = new html_base();
         $html->echo('TRUNCATE TABLE ' . $table_name);
-        $html->echo("\n");
         $sql = 'TRUNCATE ' . $this->get_table_name_esc($table_name) . ' CASCADE;';
         try {
             $this->exe($sql);
@@ -4855,12 +4904,13 @@ class sql_db
     {
         $html = new html_base();
         $html->echo('DROP TABLE ' . $table_name);
-        $html->echo("\n");
-        $sql = 'drop table ' . $table_name . ' cascade;';
-        try {
-            $this->exe($sql);
-        } catch (Exception $e) {
-            log_err('Cannot drop table ' . $table_name . ' with "' . $sql . '" because: ' . $e->getMessage());
+        if ($this->has_table($table_name)) {
+            $sql = 'drop table ' . $table_name . ' cascade;';
+            try {
+                $this->exe($sql);
+            } catch (Exception $e) {
+                //log_info('Cannot drop table ' . $table_name . ' with "' . $sql . '" because: ' . $e->getMessage());
+            }
         }
     }
 
@@ -4876,7 +4926,6 @@ class sql_db
     {
         $html = new html_base();
         $html->echo('RESET SEQUENCE ' . $seq_name);
-        $html->echo("\n");
         $sql = 'ALTER SEQUENCE ' . $seq_name . ' RESTART ' . $start_id . ';';
         try {
             $this->exe($sql);
@@ -4894,6 +4943,9 @@ class sql_db
         foreach (USER_CODE_LINK_FILES as $csv_file_name) {
             $this->load_db_code_link_file($csv_file_name, $this);
         }
+        global $user_profiles;
+        $user_profiles = new user_profile_list();
+        $user_profiles->load($this);
     }
 
     /**
@@ -4905,5 +4957,57 @@ class sql_db
         $cfg = new config();
         $cfg->set(config::VERSION_DB, PRG_VERSION, $this);
     }
+
+    /**
+     * @return bool true if the user has actuelly been imported
+     */
+    function import_system_users(): bool
+    {
+        $result = false;
+
+        // allow adding only if there is not yet any system user in the database
+        $usr = new user;
+        $usr->load_by_id(SYSTEM_USER_ID);
+
+        if ($usr->id() <= 0) {
+
+            // check if there is really no user in the database with a system profile
+            $check_usr = new user();
+            if (!$check_usr->has_any_user_this_profile(user_profile::SYSTEM)) {
+                // if the system users are missing always reset all users as a double line of defence to prevent system
+                $this->load_user_profiles();
+                $usr->set_profile(user_profile::SYSTEM);
+                $imf = new import_file();
+                $import_result = $imf->json_file(SYSTEM_USER_CONFIG_FILE, $usr);
+                if (str_starts_with($import_result, ' done ')) {
+                    $result = true;
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    function import_verbs(user $usr): bool
+    {
+        global $db_con;
+        global $verbs;
+
+        $result = false;
+
+        if ($usr->is_admin() or $usr->is_system()) {
+            $imf = new import_file();
+            $import_result = $imf->json_file(SYSTEM_VERB_CONFIG_FILE, $usr);
+            if (str_starts_with($import_result, ' done ')) {
+                $result = true;
+            }
+        }
+
+        $verbs = new verb_list($usr);
+        $verbs->load($db_con);
+
+        return $result;
+    }
+
 
 }

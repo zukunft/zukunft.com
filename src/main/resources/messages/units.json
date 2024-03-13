@@ -1419,7 +1419,7 @@
     },
     {
       "name": "scale kWh to joule",
-      "expression": "\"joule\" = \"kWh* 3600000",
+      "expression": "\"joule\" = \"kWh\" * 3600000",
       "assigned_word": "kWh"
     },
     {

@@ -32,9 +32,9 @@
 
 namespace unit;
 
-include_once SERVICE_IMPORT_PATH . 'import.php';
+include_once MODEL_IMPORT_PATH . 'import.php';
 
-use file_import;
+use cfg\import\import;
 use html\html_base;
 use test\test_cleanup;
 
@@ -49,7 +49,7 @@ class import_tests
 
         $test_name = 'JSON import warning creation';
         $json_str = file_get_contents(PATH_TEST_IMPORT_FILES . 'warning_and_error_test.json');
-        $file_import = new file_import;
+        $file_import = new import;
         $result = $file_import->put($json_str, $usr);
         $target = 'Unknown element test';
         $t->assert($test_name, $result->get_last_message(), $target);

@@ -65,6 +65,7 @@ use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\export\user_exp;
 use cfg\export\sandbox_exp;
+use cfg\import\import_file;
 use cfg\log\change;
 use cfg\log\change_action;
 use cfg\log\change_table_list;
@@ -819,43 +820,11 @@ class user extends db_object_seq_id
 
                     // allow to fill the database only if a local user has logged in
                     if ($this->name == self::SYSTEM_LOCAL) {
-
-                        // TODO move to functions used here to check class
-                        if ($user_profiles->is_empty()) {
-                            $db_con->db_fill_code_links();
-
-                            // reopen the database to collect the cached lists
-                            $db_con->close();
-                            $db_con = prg_start("test_reset_db");
-                        }
-
-                        // create the system user before the local user and admin to get the desired database id
-                        import_system_users();
-
-                        // create the admin users
-                        $check_usr = new user();
-                        if (!$check_usr->has_any_user_this_profile(user_profile::ADMIN)) {
-                            $this->set_profile(user_profile::ADMIN);
-                        }
-
                         // add the local admin user to use it for the import
-                        $upd_result = $this->save($db_con);
-
-                        // use the system user for the database initial load
-                        $sys_usr = new user;
-                        $sys_usr->load_by_id(SYSTEM_USER_ID);
-
-                        //
-                        import_verbs($sys_usr);
-
-                        // reload the base configuration
-                        import_base_config($sys_usr);
-                        import_config($sys_usr);
-
+                        $upd_result = $this->create_local_admin($db_con);
                     } else {
                         $upd_result = $this->save($db_con);
                     }
-
 
                     // TODO make sure that the result is always compatible and checked if needed
                     // adding a new user automatically is normal, so the result does not need to be shown to the user
@@ -867,6 +836,19 @@ class user extends db_object_seq_id
         }
         log_debug(' "' . $this->name . '" (' . $this->id . ')');
         return $result;
+    }
+
+    function create_local_admin(sql_db $db_con): string
+    {
+        // create the local admin users but only if there are no other admins
+        $check_usr = new user();
+        if (!$check_usr->has_any_user_this_profile(user_profile::ADMIN)) {
+            $this->set_profile(user_profile::ADMIN);
+        }
+
+        // add the local admin user to use it for the import
+        return $this->save($db_con);
+
     }
 
 

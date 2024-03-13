@@ -32,7 +32,7 @@
 
 namespace unit;
 
-include_once SERVICE_IMPORT_PATH . 'import.php';
+include_once MODEL_IMPORT_PATH . 'import.php';
 
 use cfg\db\sql_db;
 use cfg\library;

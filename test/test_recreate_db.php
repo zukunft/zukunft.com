@@ -36,7 +36,7 @@ const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SE
 const PHP_TEST_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'test' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 
 include_once PHP_PATH . 'zu_lib.php';
-include_once SERVICE_IMPORT_PATH . 'import_file.php';
+include_once MODEL_IMPORT_PATH . 'import_file.php';
 
 use cfg\component\position_type_list;
 use cfg\component\component_type_list;
@@ -63,6 +63,7 @@ use cfg\share_type_list;
 use cfg\source_type_list;
 use cfg\sys_log_function;
 use cfg\user;
+use cfg\user\user_profile;
 use cfg\value\value;
 use cfg\view_type_list;
 use html\html_base;
@@ -71,19 +72,24 @@ use unit_read\all_unit_read_tests;
 global $errors;
 
 // open database and display header
-$db_con = prg_start("test_recreate_db");
+$db_con = prg_start_system("test_recreate_db");
 
-// load the session user parameters
+// load the session user or use a virual user if the table is lost
+// TODO review
 $usr = new user;
-$result = $usr->get();
+if ($db_con->has_table(sql_db::TBL_IP)) {
+    $result = $usr->get();
+} else {
+    $usr->set_id(SYSTEM_USER_ID);
+    $usr->set_profile(user_profile::ADMIN);
+}
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id() > 0) {
     if ($usr->is_admin()) {
 
         $html = new html_base();
-        $html->echo( 'Recreate database');
-        $html->echo("\n");
+        $html->echo('Recreate database');
 
         // load the testing base functions
         include_once '../src/test/php/utils/test_base.php';
@@ -91,7 +97,12 @@ if ($usr->id() > 0) {
         // use the system user for the database updates
         global $usr;
         $usr = new user;
-        $usr->load_by_id(SYSTEM_USER_ID);
+        if ($db_con->has_table(sql_db::TBL_IP)) {
+            $usr->load_by_id(SYSTEM_USER_ID);
+        } else {
+            $usr->set_id(SYSTEM_USER_ID);
+            $usr->set_profile(user_profile::ADMIN);
+        }
         $sys_usr = $usr;
 
         // drop all old database tables
@@ -99,8 +110,7 @@ if ($usr->id() > 0) {
             $db_con->drop_table($table_name);
         }
         $db_con->setup_db();
-        $html->echo( 'Database recreated');
-        $html->echo("\n");
+        $html->echo('Database recreated and reloaded');
 
     }
 }

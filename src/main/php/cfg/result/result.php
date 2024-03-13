@@ -43,6 +43,7 @@
 
 namespace cfg\result;
 
+include_once MODEL_SANDBOX_PATH . 'sandbox_value.php';
 include_once DB_PATH . 'sql_par_type.php';
 include_once DB_PATH . 'sql_table_type.php';
 include_once SERVICE_EXPORT_PATH . 'result_exp.php';

@@ -131,6 +131,7 @@
 
 */
 
+use cfg\import\import_file;
 use cfg\user;
 use unit_write\verb_tests;
 use unit_write\job_tests;
@@ -169,7 +170,7 @@ include_once PHP_PATH . 'zu_lib.php';
 // TODO dismiss by refactoring phrase_list_dsp_old
 include_once MODEL_PHRASE_PATH . 'phr_ids.php';
 include_once MODEL_PHRASE_PATH . 'phrase_list.php';
-include_once SERVICE_IMPORT_PATH . 'import_file.php';
+include_once MODEL_IMPORT_PATH . 'import_file.php';
 
 // load the testing base functions
 const PHP_TEST_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'test' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
@@ -224,7 +225,7 @@ if ($start_usr->id() > 0) {
                 $ip_addr = $_SERVER['REMOTE_ADDR'];
             }
             if ($ip_addr == user::SYSTEM_LOCAL) {
-                import_system_users();
+                $db_con->import_system_users();
             }
 
             $usr->load_by_profile_code(user::SYSTEM_TEST_PROFILE_CODE_ID, $db_con);
@@ -296,7 +297,8 @@ if ($start_usr->id() > 0) {
             // TODO add a test to merge a separate opened phrase Canton Zürich with Zurich (Canton)
             run_word_display_test($t);
 
-            import_base_config($usr);
+            $import = new import_file();
+            $import->import_base_config($usr);
 
             // testing cleanup to remove any remaining test records
             $t->cleanup();

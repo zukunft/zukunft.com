@@ -36,6 +36,8 @@
   
 */
 
+namespace cfg\import;
+
 include_once EXPORT_PATH . 'export.php';
 include_once MODEL_FORMULA_PATH . 'formula.php';
 include_once MODEL_FORMULA_PATH . 'formula_list.php';
@@ -74,7 +76,7 @@ use cfg\view;
 use cfg\view_list;
 use cfg\word;
 
-class file_import
+class import
 {
 
     // parameters to filter the import

@@ -1565,6 +1565,7 @@ class formula extends sandbox_typed
         $elm_order_nbr = 1;
         $lib = new library();
         log_debug('add ' . $element_type . ' (' . $lib->dsp_array($elm_add_ids) . ')');
+        // TODO use element list object
         foreach ($elm_add_ids as $elm_add_id) {
             $field_names = array();
             $field_values = array();
@@ -1576,12 +1577,12 @@ class formula extends sandbox_typed
             } else {
                 $field_values[] = $this->user()->id();
             }
-            $field_names[] = 'element_type_id';
+            $field_names[] = element::FLD_TYPE;
             $field_values[] = $elm_type_id;
-            $field_names[] = 'ref_id';
+            $field_names[] = element::FLD_REF_ID;
             $field_values[] = $elm_add_id;
             $db_con->set_class(sql_db::TBL_ELEMENT);
-            $field_names[] = 'order_nbr';
+            $field_names[] = element::FLD_ORDER;
             $field_values[] = $elm_order_nbr;
             $add_result = $db_con->insert_old($field_names, $field_values);
             // in this case the row id is not needed, but for testing the number of action should be indicated by adding a '1' to the result string
@@ -1604,9 +1605,9 @@ class formula extends sandbox_typed
                 $field_names[] = user::FLD_ID;
                 $field_values[] = $frm_usr_id;
             }
-            $field_names[] = 'element_type_id';
+            $field_names[] = element::FLD_TYPE;
             $field_values[] = $elm_type_id;
-            $field_names[] = 'ref_id';
+            $field_names[] = element::FLD_REF_ID;
             $field_values[] = $elm_del_id;
             $db_con->set_class(sql_db::TBL_ELEMENT);
             $del_result = $db_con->delete_old($field_names, $field_values);
@@ -2415,12 +2416,13 @@ class formula extends sandbox_typed
                     }
                 }
 
-                // update the reference table for fast calculation
-                // a '1' in the result only indicates that an update has been done for testing; '1' doesn't mean that there has been an error
-                if ($result == '') {
-                    if (!$this->element_refresh($this->ref_text)) {
-                        $result .= 'Refresh of the formula elements failed';
-                    }
+            }
+
+            // update the reference table for fast calculation
+            // a '1' in the result only indicates that an update has been done for testing; '1' doesn't mean that there has been an error
+            if ($result == '') {
+                if (!$this->element_refresh($this->ref_text)) {
+                    $result .= 'Refresh of the formula elements failed';
                 }
             }
         }

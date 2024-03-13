@@ -509,6 +509,8 @@ use cfg\sys_log_status_list;
 use cfg\sys_log_function_list;
 use cfg\type_lists;
 use cfg\user;
+use cfg\user\user_profile;
+use cfg\user_profile_list;
 use cfg\view;
 use html\html_base;
 use html\view\view as view_dsp;
@@ -530,7 +532,7 @@ const DB_LINK_PATH = ROOT_PATH . 'db_link' . DIRECTORY_SEPARATOR;
 const DB_PATH = MODEL_PATH . 'db' . DIRECTORY_SEPARATOR;
 const UTIL_PATH = PHP_PATH . 'utils' . DIRECTORY_SEPARATOR;
 const SERVICE_PATH = PHP_PATH . 'service' . DIRECTORY_SEPARATOR;
-const SERVICE_IMPORT_PATH = SERVICE_PATH . 'import' . DIRECTORY_SEPARATOR;
+const MODEL_IMPORT_PATH = MODEL_PATH . 'import' . DIRECTORY_SEPARATOR;
 const SERVICE_EXPORT_PATH = SERVICE_PATH . 'export' . DIRECTORY_SEPARATOR;
 const EXPORT_PATH = MODEL_PATH . 'export' . DIRECTORY_SEPARATOR;
 const SERVICE_MATH_PATH = SERVICE_PATH . 'math' . DIRECTORY_SEPARATOR;
@@ -1477,7 +1479,7 @@ function prg_restart(string $code_name): sql_db
 
 function prg_start_api($code_name): sql_db
 {
-    global $sys_time_start, $sys_script;
+    global $sys_time_start, $sys_script, $user_profiles;
 
     log_debug($code_name . ' ..');
 
@@ -1489,8 +1491,43 @@ function prg_start_api($code_name): sql_db
 
     // link to database
     $db_con = new sql_db;
+    $db_con->db_type = SQL_DB_TYPE;
     $db_con->open();
     log_debug($code_name . ' ... database link open');
+
+    return $db_con;
+}
+
+/**
+ *
+ * @param $code_name
+ * @return sql_db
+ */
+function prg_start_system($code_name): sql_db
+{
+    global $sys_time_start, $sys_script, $user_profiles;
+
+    log_debug($code_name . ' ..');
+
+    $sys_time_start = time();
+    $sys_script = $code_name;
+
+    // resume session (based on cookies)
+    session_start();
+
+    // link to database
+    $db_con = new sql_db;
+    $db_con->db_type = SQL_DB_TYPE;
+    $db_con->open();
+    log_debug($code_name . ' ... database link open');
+
+    // load user profiles
+    $user_profiles = new user_profile_list();
+    if ($db_con->has_table(sql_db::TBL_USER_PROFILE)) {
+        $user_profiles->load($db_con);
+    } else {
+        $user_profiles->load_dummy();
+    }
 
     return $db_con;
 }

@@ -41,6 +41,7 @@
 
 namespace cfg;
 
+include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
 include_once DB_PATH . 'sql_par_type.php';
 include_once API_SANDBOX_PATH . 'type_object.php';
 

@@ -44,7 +44,7 @@ if ($usr->id() > 0) {
         // recreate the code link database rows
         $db_chk = new db_check();
         $db_con->db_fill_code_links();
-        import_verbs($usr);
+        $db_con->import_verbs($usr);
 
 
         // create all code linked records in the database

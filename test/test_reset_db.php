@@ -35,7 +35,7 @@ const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SE
 const PHP_TEST_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'test' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 
 include_once PHP_PATH . 'zu_lib.php';
-include_once SERVICE_IMPORT_PATH . 'import_file.php';
+include_once MODEL_IMPORT_PATH . 'import_file.php';
 
 use cfg\component\position_type_list;
 use cfg\component\component_type_list;
@@ -47,6 +47,7 @@ use cfg\element_type_list;
 use cfg\formula_link_type_list;
 use cfg\formula_type_list;
 use cfg\group\group;
+use cfg\import\import_file;
 use cfg\job;
 use cfg\job_type_list;
 use cfg\language_form_list;
@@ -94,11 +95,11 @@ if ($usr->id() > 0) {
         $db_con->truncate_table_all();
         $db_con->reset_seq_all();
         $db_con->reset_config();
-        import_system_users();
+        $db_con->import_system_users();
 
         // recreate the code link database rows
         $db_con->db_fill_code_links();
-        import_verbs($usr);
+        $db_con->import_verbs($usr);
 
         // reopen the database to reload the list cache
         $db_con->close();
@@ -116,8 +117,9 @@ if ($usr->id() > 0) {
         $job = new job($sys_usr);
         $job_id = $job->add(job_type_list::BASE_IMPORT);
 
-        import_base_config($sys_usr);
-        import_config($usr);
+        $import = new import_file();
+        $import->import_base_config($sys_usr);
+        $import->import_config($usr);
 
         // use the system user again to create the database test datasets
         global $usr;

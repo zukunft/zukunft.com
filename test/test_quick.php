@@ -31,6 +31,7 @@
 
 */
 
+use cfg\import\import_file;
 use cfg\user;
 use unit_read\all_unit_read_tests;
 use unit_read\triple_test;
@@ -91,7 +92,7 @@ if ($start_usr->id() > 0) {
                 $ip_addr = $_SERVER['REMOTE_ADDR'];
             }
             if ($ip_addr == user::SYSTEM_LOCAL) {
-                import_system_users();
+                $db_con->import_system_users();
             }
 
             $usr->load_by_profile_code(user::SYSTEM_TEST_PROFILE_CODE_ID, $db_con);
@@ -177,7 +178,8 @@ if ($start_usr->id() > 0) {
             run_legacy_test($t);
             */
 
-            //import_base_config();
+            //$import = new import_file();
+            //                        $import->import_base_config();
 
             // testing cleanup to remove any remaining test records
             //$t->cleanup();
