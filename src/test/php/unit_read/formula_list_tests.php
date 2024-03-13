@@ -70,45 +70,39 @@ class formula_list_tests
         if ($result != $target) {
             $target = formula_api::TN_READ_ANOTHER . ',' . formula_api::TN_READ; // try another order
         }
-        $t->assert(
-            'load by ids for ' . $frm_lst->dsp_id(),
-            $result, $target);
+        $t->assert('load by ids for ' . $frm_lst->dsp_id(), $result, $target);
 
         // test loading the formulas that use the results related to the word second
+        $test_name = 'formulas that use the word "second" are at least "scale minute to sec"';
         $wrd_sec = new word($t->usr1);
         $wrd_sec->load_by_name(word_api::TN_SECOND);
         $frm_lst = new formula_list($t->usr1);
         $frm_lst->load_by_word_ref($wrd_sec);
-        $t->assert_contains(
-            'formulas that use the word "second" are at least "scale minute to sec"',
-            $frm_lst->names(), [formula_api::TN_READ]);
+        $t->assert_contains($test_name, $frm_lst->names(), [formula_api::TN_READ]);
 
         // test loading the formulas that use the results related to the triple "Zurich (City)"
+        $test_name = 'formulas that use the word "Zurich" are at least "population in the biggest city"';
         $trp_zh = new triple($t->usr1);
         $trp_zh->load_by_name(triple_api::TN_ZH_CITY);
         $frm_lst = new formula_list($t->usr1);
         $frm_lst->load_by_triple_ref($trp_zh);
-        $t->assert_contains(
-            'formulas that use the word "Zurich" are at least "population in the biggest city"',
-            $frm_lst->names(), [formula_api::TN_BIGGEST_CITY]);
+        $t->assert_contains($test_name, $frm_lst->names(), [formula_api::TN_BIGGEST_CITY]);
 
         // test loading the formulas that use the results related to the verb "time step"
+        $test_name = 'formulas that use the verb "time step" are at least "prior"';
         $vrb_time_step = new verb();
         $vrb_time_step->load_by_name(verb_api::TN_TIME_STEP);
         $frm_lst = new formula_list($t->usr1);
         $frm_lst->load_by_verb_ref($vrb_time_step);
-        $t->assert_contains(
-            'formulas that use the verb "time step" are at least "prior"',
-            $frm_lst->names(), [formula_api::TN_READ_PRIOR]);
+        $t->assert_contains($test_name, $frm_lst->names(), [formula_api::TN_READ_PRIOR]);
 
         // test loading the formulas that use the results of a given formula
+        $test_name = 'formulas that use the formula "this" are at least "increase"';
         $frm_this = new formula($t->usr1);
         $frm_this->load_by_name(formula_api::TN_READ_THIS);
         $frm_lst = new formula_list($t->usr1);
         $frm_lst->load_by_formula_ref($frm_this);
-        $t->assert_contains(
-            'formulas that use the formula "this" are at least "increase"',
-            $frm_lst->names(), [formula_api::TN_INCREASE]);
+        $t->assert_contains($test_name, $frm_lst->names(), [formula_api::TN_INCREASE]);
 
         $test_name = 'load formulas staring with i';
         $frm_lst = new formula_list($t->usr1);

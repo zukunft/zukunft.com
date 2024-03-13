@@ -58,6 +58,7 @@ include_once MODEL_FORMULA_PATH . 'formula_link_type_list.php';
 include_once MODEL_ELEMENT_PATH . 'element_type.php';
 include_once MODEL_VIEW_PATH . 'view_sys_list.php';
 include_once MODEL_VIEW_PATH . 'view_sys_list.php';
+include_once MODEL_VIEW_PATH . 'view_link_type.php';
 include_once MODEL_VIEW_PATH . 'view_type.php';
 include_once MODEL_VIEW_PATH . 'view_type_list.php';
 include_once MODEL_COMPONENT_PATH . 'component_link_type_list.php';

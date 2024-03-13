@@ -105,6 +105,7 @@ use cfg\value\value_ts_data;
 use cfg\verb;
 use cfg\verb_list;
 use cfg\view;
+use cfg\view_link_type;
 use cfg\view_type;
 use cfg\word;
 use Exception;
@@ -265,6 +266,7 @@ class sql_db
         result::class,
         view_type::class,
         view::class,
+        view_link_type::class,
         component_link_type::class,
         position_type::class,
         component_type::class,

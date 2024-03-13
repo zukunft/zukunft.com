@@ -4046,16 +4046,22 @@ COMMENT ON COLUMN user_component_links.protect_id IS 'to protect against unwante
 -- --------------------------------------------------------
 
 --
--- table structure for table view_link_types
--- TODO generate type
+-- table structure to define the behaviour of the link between a term and a view
 --
 
 CREATE TABLE IF NOT EXISTS view_link_types
 (
     view_link_type_id BIGSERIAL PRIMARY KEY,
-    type_name         varchar(200) NOT NULL,
-    comment           text         NOT NULL
+    type_name   varchar(255)     NOT NULL,
+    code_id     varchar(255) DEFAULT NULL,
+    description text         DEFAULT NULL
 );
+
+COMMENT ON TABLE view_link_types IS 'to define the behaviour of the link between a term and a view';
+COMMENT ON COLUMN view_link_types.view_link_type_id IS 'the internal unique primary index';
+COMMENT ON COLUMN view_link_types.type_name IS 'the unique type name as shown to the user and used for the selection';
+COMMENT ON COLUMN view_link_types.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
+COMMENT ON COLUMN view_link_types.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
 
 --
 -- table structure for table view_term_links
@@ -5651,6 +5657,14 @@ ALTER TABLE user_results_geo_big ADD CONSTRAINT user_results_geo_big_pkey PRIMAR
 CREATE INDEX user_results_geo_big_source_group_idx ON user_results_geo_big (source_group_id);
 CREATE INDEX user_results_geo_big_user_idx ON user_results_geo_big (user_id);
 CREATE INDEX user_results_geo_big_formula_idx ON user_results_geo_big (formula_id);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table view_link_types
+--
+
+CREATE INDEX view_link_types_type_name_idx ON view_link_types (type_name);
 
 -- --------------------------------------------------------
 

@@ -33,6 +33,7 @@
 namespace unit;
 
 use api\view\view as view_api;
+use cfg\view_link_type;
 use cfg\view_term_link;
 use cfg\view_type;
 use html\view\view as view_dsp;
@@ -151,8 +152,12 @@ class view_tests
 
         $t->header('Unit tests of the view term link class (src/main/php/model/view/view_term_link.php)');
 
-        $t->subheader('SQL user sandbox statement tests');
+        $t->subheader('View link SQL setup statements');
+        $dsp_lnk_typ = new view_link_type('');
+        $t->assert_sql_table_create($dsp_lnk_typ);
+        $t->assert_sql_index_create($dsp_lnk_typ);
 
+        $t->subheader('SQL user sandbox statement tests');
         $dsp = new view_term_link($usr);
         $t->assert_sql_by_id($db_con, $dsp);
     }
