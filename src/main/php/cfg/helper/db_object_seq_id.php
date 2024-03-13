@@ -211,7 +211,7 @@ class db_object_seq_id extends db_object
     /**
      * @return array[] with the parameters of the table key field
      */
-    private function sql_id_field_par(bool $usr_table = false): array
+    protected function sql_id_field_par(bool $usr_table = false): array
     {
         if (!$usr_table) {
             return array([

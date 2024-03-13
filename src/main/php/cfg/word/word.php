@@ -47,6 +47,7 @@ include_once SERVICE_PATH . 'db_code_link.php';
 include_once API_WORD_PATH . 'word.php';
 include_once MODEL_REF_PATH . 'ref.php';
 include_once SERVICE_EXPORT_PATH . 'word_exp.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_typed.php';
 
 use api\api;
 use api\word\word as word_api;

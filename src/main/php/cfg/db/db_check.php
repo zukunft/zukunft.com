@@ -172,7 +172,7 @@ class db_check
         $result .= $db_con->change_column_name(sql_db::TBL_COMPONENT_LINK_TYPE, 'view_component_link_id', 'component_link_id');
         $result .= $db_con->change_column_name(sql_db::TBL_COMPONENT_LINK_TYPE, 'view_component_id', component::FLD_ID);
         $result .= $db_con->change_table_name('view_component_position_type', sql_db::TBL_COMPONENT_POS_TYPE);
-        $result .= $db_con->change_column_name(sql_db::TBL_COMPONENT_POS_TYPE, 'view_component_position_type_id', 'component_position_type_id');
+        $result .= $db_con->change_column_name(sql_db::TBL_COMPONENT_POS_TYPE, 'view_component_position_type_id', 'position_type_id');
         //
         $result .= $db_con->change_table_name('languages_form', sql_db::TBL_LANGUAGE_FORM);
         $result .= $db_con->add_column(sql_db::TBL_USER_PROFILE, 'right_level', 'smallint');

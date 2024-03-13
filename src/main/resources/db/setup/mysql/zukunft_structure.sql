@@ -730,10 +730,10 @@ CREATE TABLE IF NOT EXISTS verbs
 CREATE TABLE IF NOT EXISTS triples
 (
     triple_id           bigint           NOT NULL COMMENT 'the internal unique primary index',
-    user_id             bigint       DEFAULT NULL COMMENT 'the owner / creator of the triple',
     from_phrase_id      bigint           NOT NULL COMMENT 'the phrase_id that is linked',
     verb_id             bigint           NOT NULL COMMENT 'the verb_id that defines how the phrases are linked',
     to_phrase_id        bigint           NOT NULL COMMENT 'the phrase_id to which the first phrase is linked',
+    user_id             bigint       DEFAULT NULL COMMENT 'the owner / creator of the triple',
     triple_name         varchar(255) DEFAULT NULL COMMENT 'the name used which must be unique within the terms of the user',
     name_given          varchar(255) DEFAULT NULL COMMENT 'the unique name manually set by the user,which can be null if the generated name should be used',
     name_generated      varchar(255) DEFAULT NULL COMMENT 'the generated name is saved in the database for database base unique check based on the phrases and verb,which can be overwritten by the given name',
@@ -1732,7 +1732,7 @@ CREATE TABLE IF NOT EXISTS formula_types
 -- --------------------------------------------------------
 
 --
--- table structure for the link of a formual to phrases e.g. if the term pattern of a value matches this term pattern
+-- table structure for the link of a formula to phrases e.g. if the term pattern of a value matches this term pattern
 --
 
 CREATE TABLE IF NOT EXISTS formula_links
@@ -1749,10 +1749,10 @@ CREATE TABLE IF NOT EXISTS formula_links
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
-    COMMENT 'for the link of a formual to phrases e.g. if the term pattern of a value matches this term pattern';
+    COMMENT 'for the link of a formula to phrases e.g. if the term pattern of a value matches this term pattern';
 
 --
--- table structure to save user specific changes for the link of a formual to phrases e.g. if the term pattern of a value matches this term pattern
+-- table structure to save user specific changes for the link of a formula to phrases e.g. if the term pattern of a value matches this term pattern
 --
 
 CREATE TABLE IF NOT EXISTS user_formula_links
@@ -1767,7 +1767,7 @@ CREATE TABLE IF NOT EXISTS user_formula_links
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
-    COMMENT 'for the link of a formual to phrases e.g. if the term pattern of a value matches this term pattern';
+    COMMENT 'for the link of a formula to phrases e.g. if the term pattern of a value matches this term pattern';
 
 -- --------------------------------------------------------
 
@@ -2917,36 +2917,15 @@ CREATE TABLE IF NOT EXISTS user_components
 -- --------------------------------------------------------
 
 --
--- Table structure for table`component_links`
---
-
-CREATE TABLE IF NOT EXISTS `component_links`
-(
-    `component_link_id` int(11) NOT NULL,
-    `user_id`                int(11) NOT NULL,
-    `view_id`                int(11) NOT NULL,
-    `component_id`      int(11) NOT NULL,
-    `order_nbr`              int(11) NOT NULL,
-    `position_type`          int(11) NOT NULL DEFAULT '2' COMMENT '1=side, 2 =below',
-    `excluded`               tinyint(4)       DEFAULT NULL,
-    `share_type_id`          smallint         DEFAULT NULL,
-    `protect_id`             smallint         DEFAULT NULL
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 25
-  DEFAULT CHARSET = utf8 COMMENT ='A named mask entry can be used in several masks e.g. the company name';
-
--- --------------------------------------------------------
-
---
 -- table structure to assign predefined behaviour to a component view link
 --
 
 CREATE TABLE IF NOT EXISTS component_link_types
 (
-    component_link_type_id bigint NOT NULL COMMENT 'the internal unique primary index',
-    type_name    varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
-    code_id      varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
-    description  text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry'
+    component_link_type_id bigint           NOT NULL COMMENT 'the internal unique primary index',
+    type_name              varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
+    code_id                varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
+    description            text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry'
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
@@ -2958,9 +2937,9 @@ CREATE TABLE IF NOT EXISTS component_link_types
 -- table structure to define the position of components
 --
 
-CREATE TABLE IF NOT EXISTS component_position_types
+CREATE TABLE IF NOT EXISTS position_types
 (
-    component_position_type_id bigint NOT NULL COMMENT 'the internal unique primary index',
+    position_type_id bigint NOT NULL COMMENT 'the internal unique primary index',
     type_name    varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
     code_id      varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
     description  text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry'
@@ -2989,20 +2968,45 @@ CREATE TABLE IF NOT EXISTS component_types
 -- --------------------------------------------------------
 
 --
--- Table structure for table`user_component_links`
+-- table structure to link components to views with an n:m relation
 --
 
-CREATE TABLE IF NOT EXISTS `user_component_links`
+CREATE TABLE IF NOT EXISTS component_links
 (
-    `component_link_id` int(11) NOT NULL,
-    `user_id`                int(11) NOT NULL,
-    `order_nbr`              int(11)    DEFAULT NULL,
-    `position_type`          int(11)    DEFAULT NULL,
-    `excluded`               tinyint(4) DEFAULT NULL,
-    `share_type_id`          smallint   DEFAULT NULL,
-    `protect_id`             smallint   DEFAULT NULL
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8;
+    component_link_id          bigint       NOT NULL COMMENT 'the internal unique primary index',
+    view_id                    bigint       NOT NULL,
+    component_id               bigint       NOT NULL,
+    user_id                    bigint   DEFAULT NULL COMMENT 'the owner / creator of the component_link',
+    order_nbr                  bigint       NOT NULL,
+    component_link_type_id     bigint       NOT NULL DEFAULT 1,
+    position_type_id           bigint       NOT NULL DEFAULT 2 COMMENT 'the position of the component e.g. right or below',
+    excluded                   smallint DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
+    share_type_id              smallint DEFAULT NULL COMMENT 'to restrict the access',
+    protect_id                 smallint DEFAULT NULL COMMENT 'to protect against unwanted changes'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'to link components to views with an n:m relation';
+
+--
+-- table structure to save user specific changes to link components to views with an n:m relation
+--
+
+CREATE TABLE IF NOT EXISTS user_component_links
+(
+    component_link_id          bigint       NOT NULL COMMENT 'with the user_id the internal unique primary index',
+    user_id                    bigint       NOT NULL COMMENT 'the changer of the component_link',
+    order_nbr                  bigint   DEFAULT NULL,
+    component_link_type_id     bigint   DEFAULT NULL,
+    position_type_id           bigint   DEFAULT NULL COMMENT 'the position of the component e.g. right or below',
+    excluded                   smallint DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
+    share_type_id              smallint DEFAULT NULL COMMENT 'to restrict the access',
+    protect_id                 smallint DEFAULT NULL COMMENT 'to protect against unwanted changes'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'to link components to views with an n:m relation';
+
 -- --------------------------------------------------------
 
 --
@@ -3687,10 +3691,10 @@ ALTER TABLE verbs
 ALTER TABLE triples
     ADD PRIMARY KEY (triple_id),
     ADD UNIQUE KEY triples_unique_idx  (from_phrase_id, verb_id, to_phrase_id),
-    ADD KEY triples_user_idx           (user_id),
     ADD KEY triples_from_phrase_idx    (from_phrase_id),
     ADD KEY triples_verb_idx           (verb_id),
     ADD KEY triples_to_phrase_idx      (to_phrase_id),
+    ADD KEY triples_user_idx           (user_id),
     ADD KEY triples_triple_name_idx    (triple_name),
     ADD KEY triples_name_given_idx     (name_given),
     ADD KEY triples_name_generated_idx (name_generated),
@@ -4975,14 +4979,31 @@ ALTER TABLE user_components
     ADD KEY user_components_linked_component_idx (linked_component_id),
     ADD KEY user_components_component_link_type_idx (component_link_type_id),
     ADD KEY user_components_link_type_idx (link_type_id);
+
+-- --------------------------------------------------------
+
 --
--- Indexes for table`user_component_links`
+-- indexes for table component_links
 --
-ALTER TABLE `user_component_links`
-    ADD PRIMARY KEY (`component_link_id`, `user_id`),
-    ADD KEY `user_id` (`user_id`),
-    ADD KEY `position_type` (`position_type`),
-    ADD KEY `component_link_id` (`component_link_id`);
+
+ALTER TABLE component_links
+    ADD PRIMARY KEY (component_link_id),
+    ADD KEY component_links_view_idx (view_id),
+    ADD KEY component_links_component_idx (component_id),
+    ADD KEY component_links_user_idx (user_id),
+    ADD KEY component_links_component_link_type_idx (component_link_type_id),
+    ADD KEY component_links_position_type_idx (position_type_id);
+
+--
+-- indexes for table user_component_links
+--
+
+ALTER TABLE user_component_links
+    ADD PRIMARY KEY (component_link_id,user_id),
+    ADD KEY user_component_links_component_link_idx (component_link_id),
+    ADD KEY user_component_links_user_idx (user_id),
+    ADD KEY user_component_links_component_link_type_idx (component_link_type_id),
+    ADD KEY user_component_links_position_type_idx (position_type_id);
 
 --
 -- Indexes for table`user_words`
@@ -5063,15 +5084,6 @@ ALTER TABLE `components`
     ADD PRIMARY KEY (`component_id`),
     ADD KEY `formula_id` (`formula_id`);
 
---
--- Indexes for table`component_links`
---
-ALTER TABLE `component_links`
-    ADD PRIMARY KEY (`component_link_id`),
-    ADD KEY `view_id` (`view_id`),
-    ADD KEY `component_id` (`component_id`),
-    ADD KEY `view_position_type_id` (`position_type`);
-
 -- --------------------------------------------------------
 
 --
@@ -5085,12 +5097,12 @@ ALTER TABLE component_link_types
 -- --------------------------------------------------------
 
 --
--- indexes for table component_position_types
+-- indexes for table position_types
 --
 
-ALTER TABLE component_position_types
-    ADD PRIMARY KEY (component_position_type_id),
-    ADD KEY component_position_types_type_name_idx (type_name);
+ALTER TABLE position_types
+    ADD PRIMARY KEY (position_type_id),
+    ADD KEY position_types_type_name_idx (type_name);
 
 -- --------------------------------------------------------
 
@@ -5424,10 +5436,10 @@ ALTER TABLE `component_links`
 ALTER TABLE `component_link_types`
     MODIFY `component_link_type_id` int(11) NOT NULL AUTO_INCREMENT;
 --
--- AUTO_INCREMENT for table`component_position_types`
+-- AUTO_INCREMENT for table`position_types`
 --
-ALTER TABLE `component_position_types`
-    MODIFY `component_position_type_id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `position_types`
+    MODIFY `position_type_id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table`component_types`
 --
@@ -5627,8 +5639,8 @@ ALTER TABLE user_words
 --
 ALTER TABLE triples
     ADD CONSTRAINT triples_code_id_uk UNIQUE (code_id),
-    ADD CONSTRAINT triples_user_fk        FOREIGN KEY (user_id)        REFERENCES users (user_id),
     ADD CONSTRAINT triples_verb_fk        FOREIGN KEY (verb_id)        REFERENCES verbs (verb_id),
+    ADD CONSTRAINT triples_user_fk        FOREIGN KEY (user_id)        REFERENCES users (user_id),
     ADD CONSTRAINT triples_phrase_type_fk FOREIGN KEY (phrase_type_id) REFERENCES phrase_types (phrase_type_id),
     ADD CONSTRAINT triples_view_fk        FOREIGN KEY (view_id)        REFERENCES views (view_id);
 
@@ -5706,7 +5718,7 @@ ALTER TABLE user_formulas
 
 ALTER TABLE formula_links
     ADD CONSTRAINT formula_links_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT formula_links_formula_link_type_fk FOREIGN KEY (link_type_id) REFERENCES formula_link_types (link_type_id),
+    ADD CONSTRAINT formula_links_formula_link_type_fk FOREIGN KEY (link_type_id) REFERENCES formula_link_types (formula_link_type_id),
     ADD CONSTRAINT formula_links_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
 
 --
@@ -5716,7 +5728,7 @@ ALTER TABLE formula_links
 ALTER TABLE user_formula_links
     ADD CONSTRAINT user_formula_links_formula_link_fk FOREIGN KEY (formula_link_id) REFERENCES formula_links (formula_link_id),
     ADD CONSTRAINT user_formula_links_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT user_formula_links_formula_link_type_fk FOREIGN KEY (link_type_id) REFERENCES formula_link_types (link_type_id);
+    ADD CONSTRAINT user_formula_links_formula_link_type_fk FOREIGN KEY (link_type_id) REFERENCES formula_link_types (formula_link_type_id);
 
 -- --------------------------------------------------------
 
@@ -6356,13 +6368,28 @@ ALTER TABLE user_components
     ADD CONSTRAINT user_components_component_type_fk FOREIGN KEY (component_type_id) REFERENCES component_types (component_type_id),
     ADD CONSTRAINT user_components_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
 
+-- --------------------------------------------------------
+
 --
--- Constraints for table`user_component_links`
+-- constraints for table component_links
 --
-ALTER TABLE `user_component_links`
-    ADD CONSTRAINT `user_component_links_fk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
-    ADD CONSTRAINT `user_component_links_fk_2` FOREIGN KEY (`component_link_id`) REFERENCES `component_links` (`component_link_id`),
-    ADD CONSTRAINT `user_component_links_fk_3` FOREIGN KEY (`position_type`) REFERENCES `component_position_types` (`component_position_type_id`);
+
+ALTER TABLE component_links
+    ADD CONSTRAINT component_links_view_fk FOREIGN KEY (view_id) REFERENCES views (view_id),
+    ADD CONSTRAINT component_links_component_fk FOREIGN KEY (component_id) REFERENCES components (component_id),
+    ADD CONSTRAINT component_links_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT component_links_component_link_type_fk FOREIGN KEY (component_link_type_id) REFERENCES component_link_types (component_link_type_id),
+    ADD CONSTRAINT component_links_position_type_fk FOREIGN KEY (position_type_id) REFERENCES position_types (position_type_id);
+
+--
+-- constraints for table user_component_links
+--
+
+ALTER TABLE user_component_links
+    ADD CONSTRAINT user_component_links_component_link_fk FOREIGN KEY (component_link_id) REFERENCES component_links (component_link_id),
+    ADD CONSTRAINT user_component_links_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_component_links_component_link_type_fk FOREIGN KEY (component_link_type_id) REFERENCES component_link_types (component_link_type_id),
+    ADD CONSTRAINT user_component_links_position_type_fk FOREIGN KEY (position_type_id) REFERENCES position_types (position_type_id);
 
 --
 -- Constraints for table`user_words`
@@ -6394,14 +6421,6 @@ ALTER TABLE `values`
 --
 ALTER TABLE `components`
     ADD CONSTRAINT `components_fk_2` FOREIGN KEY (`formula_id`) REFERENCES `formulas` (`formula_id`);
-
---
--- Constraints for table`component_links`
---
-ALTER TABLE `component_links`
-    ADD CONSTRAINT `component_links_fk_1` FOREIGN KEY (`view_id`) REFERENCES `views` (`view_id`),
-    ADD CONSTRAINT `component_links_fk_2` FOREIGN KEY (`position_type`) REFERENCES `component_position_types` (`component_position_type_id`),
-    ADD CONSTRAINT `component_links_fk_3` FOREIGN KEY (`component_id`) REFERENCES `components` (`component_id`);
 
 --
 -- Constraints for table`words`

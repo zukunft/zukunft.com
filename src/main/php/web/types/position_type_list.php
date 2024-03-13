@@ -2,8 +2,8 @@
 
 /*
 
-    web/types/component_position_type_list.php - the preloaded data component position types used for the html frontend
-    ------------------------------------
+    web/types/position_type_list.php - the preloaded data component position types used for the html frontend
+    --------------------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -34,7 +34,7 @@ namespace html\types;
 
 use html\html_selector;
 
-class component_position_type_list extends type_list
+class position_type_list extends type_list
 {
 
     /**
@@ -42,8 +42,8 @@ class component_position_type_list extends type_list
      */
     function selector(string $form = '', int $selected = 0, string $name = 'position type'): string
     {
-        global $html_component_position_types;
-        return parent::type_selector($html_component_position_types->lst_key(), $name, $form, $selected);
+        global $html_position_types;
+        return parent::type_selector($html_position_types->lst_key(), $name, $form, $selected);
     }
 
 }

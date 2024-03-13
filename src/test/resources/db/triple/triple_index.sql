@@ -5,10 +5,10 @@
 --
 
 CREATE UNIQUE INDEX triples_unique_idx  ON triples (from_phrase_id, verb_id, to_phrase_id);
-CREATE INDEX triples_user_idx           ON triples (user_id);
 CREATE INDEX triples_from_phrase_idx    ON triples (from_phrase_id);
 CREATE INDEX triples_verb_idx           ON triples (verb_id);
 CREATE INDEX triples_to_phrase_idx      ON triples (to_phrase_id);
+CREATE INDEX triples_user_idx           ON triples (user_id);
 CREATE INDEX triples_triple_name_idx    ON triples (triple_name);
 CREATE INDEX triples_name_given_idx     ON triples (name_given);
 CREATE INDEX triples_name_generated_idx ON triples (name_generated);

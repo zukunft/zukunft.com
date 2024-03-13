@@ -632,6 +632,11 @@ include_once SERVICE_PATH . 'db_code_link.php';
 include_once SERVICE_PATH . 'zu_lib_sql_code_link.php';
 include_once SERVICE_PATH . 'config.php';
 
+// to avoid circle include
+include_once MODEL_VALUE_PATH . 'value.php';
+include_once MODEL_VALUE_PATH . 'value_phrase_link.php';
+include_once MODEL_LOG_PATH . 'change_link.php';
+
 // preloaded lists
 include_once MODEL_HELPER_PATH . 'type_list.php';
 include_once MODEL_HELPER_PATH . 'type_lists.php';
@@ -647,7 +652,7 @@ include_once MODEL_FORMULA_PATH . 'formula_link_type_list.php';
 include_once MODEL_VIEW_PATH . 'view_type.php';
 include_once MODEL_VIEW_PATH . 'view_type_list.php';
 include_once MODEL_COMPONENT_PATH . 'component_type_list.php';
-include_once MODEL_COMPONENT_PATH . 'component_position_type_list.php';
+include_once MODEL_COMPONENT_PATH . 'position_type_list.php';
 include_once MODEL_REF_PATH . 'ref_type_list.php';
 include_once MODEL_REF_PATH . 'source_type_list.php';
 include_once MODEL_SANDBOX_PATH . 'share_type_list.php';
@@ -782,7 +787,8 @@ const BASE_CODE_LINK_FILES = [
     'user_official_types',
     'user_profiles',
     'user_types',
-    'component_position_types',
+    'position_types',
+    'component_link_types',
     'component_types',
     'view_link_types',
     'view_types',
@@ -972,7 +978,7 @@ const DB_TABLE_LIST = [
     'user_components',
     'user_component_links',
     'component_links',
-    'component_position_types',
+    'position_types',
     'components',
     'formulas',
     'formula_types',
@@ -1277,6 +1283,16 @@ function log_err(string $msg_text,
 {
     global $errors;
     $errors++;
+    // TODO move the next lines to a class and a private function "get_function_name"
+    $lib = new library();
+    if ($function_name == '' or $function_name == null) {
+        $function_name = (new Exception)->getTraceAsString();
+        $function_name = $lib->str_right_of($function_name, '#1 /home/timon/git/zukunft.com/');
+        $function_name = $lib->str_left_of($function_name, ': log_');
+    }
+    if ($function_trace == '') {
+        $function_trace = (new Exception)->getTraceAsString();
+    }
     return log_msg($msg_text,
         $msg_description,
         sys_log_level::ERROR,

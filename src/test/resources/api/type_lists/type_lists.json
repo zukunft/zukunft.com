@@ -493,7 +493,7 @@
         "id": 32
       }
     ],
-    "component_position_types": [
+    "position_types": [
       {
         "name": "below",
         "code_id": "below",
@@ -1738,8 +1738,8 @@
         "id": 127
       },
       {
-        "name": "16position_type",
-        "code_id": "16position_type",
+        "name": "16position_type_id",
+        "code_id": "16position_type_id",
         "description": "",
         "id": 128
       },
@@ -1756,8 +1756,8 @@
         "id": 130
       },
       {
-        "name": "17position_type",
-        "code_id": "17position_type",
+        "name": "17position_type_id",
+        "code_id": "17position_type_id",
         "description": "",
         "id": 131
       },

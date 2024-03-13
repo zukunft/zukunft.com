@@ -32,6 +32,8 @@
 
 namespace api\word;
 
+include_once API_SANDBOX_PATH . 'list_object.php';
+
 use api\word\word as word_api;
 use api\sandbox\list_object as list_api;
 use cfg\phrase_type;

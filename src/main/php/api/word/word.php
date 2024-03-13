@@ -32,6 +32,8 @@
 
 namespace api\word;
 
+include_once MODEL_SANDBOX_PATH . 'sandbox_typed.php';
+
 use api\phrase\phrase as phrase_api;
 use api\phrase\term as term_api;
 use api\sandbox\sandbox_typed as sandbox_typed_api;

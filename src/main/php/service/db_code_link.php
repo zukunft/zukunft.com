@@ -47,7 +47,7 @@ class db_cl
     const VIEW = "view";
     const VIEW_TYPE = "view_type";
     const VIEW_COMPONENT_TYPE = "component_type";
-    const VIEW_COMPONENT_POS_TYPE = "component_position_type";
+    const VIEW_COMPONENT_POS_TYPE = "position_type";
     const REF_TYPE = "ref_type";
     const SOURCE_TYPE = "source_type";
     const SHARE_TYPE = "share_type";
@@ -136,8 +136,8 @@ class db_cl
 
     function component_pos_type_id(string $code_id): int
     {
-        global $component_position_types;
-        return $component_position_types->id($code_id);
+        global $position_types;
+        return $position_types->id($code_id);
     }
 
     function ref_type_id(string $code_id): int
@@ -256,8 +256,8 @@ class db_cl
 
     function component_pos_type(int $id)
     {
-        global $component_position_types;
-        return $component_position_types->get_by_id($id);
+        global $position_types;
+        return $position_types->get_by_id($id);
     }
 
     function share_type(int $id)
@@ -382,8 +382,8 @@ class db_cl
 
     function component_pos_type_name(int $id): string
     {
-        global $component_position_types;
-        return $component_position_types->name($id);
+        global $position_types;
+        return $position_types->name($id);
     }
 
     function ref_type_name(int $id): string

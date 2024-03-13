@@ -46,7 +46,7 @@ class formula_link_type extends type_object
     const TIME_PERIOD = "time_period_based"; // for time based links
 
     // the database and JSON object field names used only for formula links
-    const FLD_ID = 'formula_link_id';
+    const FLD_ID = 'formula_link_type_id';
     const FLD_TYPE = 'link_type_id';
 
 

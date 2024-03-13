@@ -1,7 +1,7 @@
 -- --------------------------------------------------------
 
 --
--- table structure for the link of a formual to phrases e.g. if the term pattern of a value matches this term pattern
+-- table structure for the link of a formula to phrases e.g. if the term pattern of a value matches this term pattern
 --
 
 CREATE TABLE IF NOT EXISTS formula_links
@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS formula_links
     protect_id      smallint DEFAULT NULL
 );
 
-COMMENT ON TABLE formula_links IS 'for the link of a formual to phrases e.g. if the term pattern of a value matches this term pattern';
+COMMENT ON TABLE formula_links IS 'for the link of a formula to phrases e.g. if the term pattern of a value matches this term pattern';
 COMMENT ON COLUMN formula_links.formula_link_id IS 'the internal unique primary index';
 COMMENT ON COLUMN formula_links.user_id IS 'the owner / creator of the formula_link';
 COMMENT ON COLUMN formula_links.excluded IS 'true if a user,but not all,have removed it';
@@ -25,7 +25,7 @@ COMMENT ON COLUMN formula_links.share_type_id IS 'to restrict the access';
 COMMENT ON COLUMN formula_links.protect_id IS 'to protect against unwanted changes';
 
 --
--- table structure to save user specific changes for the link of a formual to phrases e.g. if the term pattern of a value matches this term pattern
+-- table structure to save user specific changes for the link of a formula to phrases e.g. if the term pattern of a value matches this term pattern
 --
 
 CREATE TABLE IF NOT EXISTS user_formula_links
@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS user_formula_links
 
 );
 
-COMMENT ON TABLE user_formula_links IS 'for the link of a formual to phrases e.g. if the term pattern of a value matches this term pattern';
+COMMENT ON TABLE user_formula_links IS 'for the link of a formula to phrases e.g. if the term pattern of a value matches this term pattern';
 COMMENT ON COLUMN user_formula_links.formula_link_id IS 'with the user_id the internal unique primary index';
 COMMENT ON COLUMN user_formula_links.user_id IS 'the changer of the formula_link';
 COMMENT ON COLUMN user_formula_links.excluded IS 'true if a user,but not all,have removed it';

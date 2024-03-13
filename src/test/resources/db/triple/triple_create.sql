@@ -7,10 +7,10 @@
 CREATE TABLE IF NOT EXISTS triples
 (
     triple_id           BIGSERIAL PRIMARY KEY,
-    user_id             bigint            DEFAULT NULL,
     from_phrase_id      bigint   NOT NULL,
     verb_id             bigint   NOT NULL,
     to_phrase_id        bigint   NOT NULL,
+    user_id             bigint            DEFAULT NULL,
     triple_name         varchar(255)      DEFAULT NULL,
     name_given          varchar(255)      DEFAULT NULL,
     name_generated      varchar(255)      DEFAULT NULL,
@@ -28,10 +28,10 @@ CREATE TABLE IF NOT EXISTS triples
 
 COMMENT ON TABLE triples IS 'to link one word or triple with a verb to another word or triple';
 COMMENT ON COLUMN triples.triple_id IS 'the internal unique primary index';
-COMMENT ON COLUMN triples.user_id IS 'the owner / creator of the triple';
 COMMENT ON COLUMN triples.from_phrase_id IS 'the phrase_id that is linked';
 COMMENT ON COLUMN triples.verb_id IS 'the verb_id that defines how the phrases are linked';
 COMMENT ON COLUMN triples.to_phrase_id IS 'the phrase_id to which the first phrase is linked';
+COMMENT ON COLUMN triples.user_id IS 'the owner / creator of the triple';
 COMMENT ON COLUMN triples.triple_name IS 'the name used which must be unique within the terms of the user';
 COMMENT ON COLUMN triples.name_given IS 'the unique name manually set by the user,which can be null if the generated name should be used';
 COMMENT ON COLUMN triples.name_generated IS 'the generated name is saved in the database for database base unique check based on the phrases and verb,which can be overwritten by the given name';

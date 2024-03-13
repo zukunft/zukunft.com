@@ -1051,8 +1051,8 @@ class user_dsp_old extends user
                     l.component_id, 
                     CASE WHEN (u.order_nbr     <> '' IS NOT TRUE) THEN l.order_nbr     ELSE u.order_nbr     END AS usr_order, 
                     l.order_nbr                                                                  AS std_order, 
-                    CASE WHEN (u.position_type <> '' IS NOT TRUE) THEN l.position_type ELSE u.position_type END AS usr_type, 
-                    l.position_type                                                              AS std_type, 
+                    CASE WHEN (u.position_type_id <> '' IS NOT TRUE) THEN l.position_type_id ELSE u.position_type_id END AS usr_type, 
+                    l.position_type_id                                                              AS std_type, 
                     CASE WHEN (u.excluded      <> '' IS NOT TRUE) THEN l.excluded      ELSE u.excluded      END AS usr_excluded,
                     l.excluded                                                                   AS std_excluded
                FROM user_component_links u,
@@ -1067,8 +1067,8 @@ class user_dsp_old extends user
                     l.component_id, 
                     IF(u.order_nbr     IS NULL, l.order_nbr,     u.order_nbr)     AS usr_order, 
                     l.order_nbr                                                   AS std_order, 
-                    IF(u.position_type IS NULL, l.position_type, u.position_type) AS usr_type, 
-                    l.position_type                                               AS std_type, 
+                    IF(u.position_type_id IS NULL, l.position_type_id, u.position_type_id) AS usr_type, 
+                    l.position_type_id                                               AS std_type, 
                     IF(u.excluded      IS NULL, l.excluded,      u.excluded)      AS usr_excluded,
                     l.excluded                                                    AS std_excluded
                FROM user_component_links u,
@@ -1135,7 +1135,7 @@ class user_dsp_old extends user
                     $sql_other = "SELECT l.component_link_id, 
                                u.user_id, 
                                u.order_nbr, 
-                               u.position_type, 
+                               u.position_type_id, 
                                u.excluded
                           FROM user_component_links u,
                                component_links l

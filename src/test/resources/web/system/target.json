@@ -421,7 +421,7 @@
         "comment": "just to indicate that a form ends"
       }
     ],
-    "component_position_types": [
+    "position_types": [
       {
         "id": 1,
         "code_id": "below",

@@ -41,7 +41,8 @@ class component_link_type extends type_object
      */
 
     // list of the component link types that have a coded functionality
-    const DEFAULT = "default"; // a simple link between a formula and a phrase
+    const ALWAYS = "always"; // the component is always shown as it is
+    const EXPRESSION = "expression"; // the component is only shown if an expression is true
 
 
     /*
@@ -50,5 +51,6 @@ class component_link_type extends type_object
 
     // comments used for the database creation
     const TBL_COMMENT = 'to assign predefined behaviour to a component view link';
+    const FLD_ID = 'component_link_type_id'; // to use in const until final is allowed
 
 }

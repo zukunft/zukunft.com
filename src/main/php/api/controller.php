@@ -111,7 +111,7 @@ class controller
     const API_LIST_VIEW_TYPES = 'view_types';
     const API_LIST_COMPONENT_TYPES = 'component_types';
     // const API_LIST_COMPONENT_LINK_TYPES = 'component_link_types';
-    const API_LIST_COMPONENT_POSITION_TYPES = 'component_position_types';
+    const API_LIST_COMPONENT_POSITION_TYPES = 'position_types';
     const API_LIST_REF_TYPES = 'ref_types';
     const API_LIST_SOURCE_TYPES = 'source_types';
     const API_LIST_SHARE_TYPES = 'share_types';

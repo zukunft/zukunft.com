@@ -32,14 +32,14 @@
 
 namespace unit;
 
-include_once MODEL_COMPONENT_PATH . 'component_position_type.php';
+include_once MODEL_COMPONENT_PATH . 'position_type.php';
 include_once MODEL_COMPONENT_PATH . 'component_link_type.php';
 include_once MODEL_COMPONENT_PATH . 'component_link.php';
 include_once MODEL_COMPONENT_PATH . 'component_link_list.php';
 
 use cfg\component\component_link;
 use cfg\component\component_link_type;
-use cfg\component\component_position_type;
+use cfg\component\position_type;
 use cfg\db\sql_db;
 use test\test_cleanup;
 
@@ -63,9 +63,13 @@ class component_link_tests
         $cmp_lnk_typ = new component_link_type('');
         $t->assert_sql_table_create($cmp_lnk_typ);
         $t->assert_sql_index_create($cmp_lnk_typ);
-        $cmp_pos_typ = new component_position_type('');
+        $cmp_pos_typ = new position_type('');
         $t->assert_sql_table_create($cmp_pos_typ);
         $t->assert_sql_index_create($cmp_pos_typ);
+        $cmp_lnk = $t->dummy_component_link();
+        $t->assert_sql_table_create($cmp_lnk);
+        $t->assert_sql_index_create($cmp_lnk);
+        $t->assert_sql_foreign_key_create($cmp_lnk);
 
         $t->subheader('SQL user sandbox statement tests');
 

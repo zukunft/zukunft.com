@@ -41,6 +41,8 @@ include_once MODEL_SANDBOX_PATH . 'protection_type.php';
 include_once MODEL_SANDBOX_PATH . 'share_type.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_typed.php';
 include_once MODEL_FORMULA_PATH . 'formula_type.php';
+include_once MODEL_FORMULA_PATH . 'formula_link.php';
+include_once MODEL_FORMULA_PATH . 'formula_link_type.php';
 include_once MODEL_FORMULA_PATH . 'expression.php';
 include_once MODEL_FORMULA_PATH . 'parameter_type.php';
 include_once MODEL_ELEMENT_PATH . 'element_list.php';

@@ -53,7 +53,7 @@ include_once WEB_TYPES_PATH . 'ref_type_list.php';
 include_once WEB_TYPES_PATH . 'view_type_list.php';
 include_once WEB_TYPES_PATH . 'component_type_list.php';
 include_once WEB_TYPES_PATH . 'component_link_type_list.php';
-include_once WEB_TYPES_PATH . 'component_position_type_list.php';
+include_once WEB_TYPES_PATH . 'position_type_list.php';
 
 use api\api;
 use controller\controller;
@@ -149,10 +149,10 @@ class type_lists
         }
         */
         if (array_key_exists(controller::API_LIST_COMPONENT_POSITION_TYPES, $json_array)) {
-            $this->set_component_position_types($json_array[controller::API_LIST_COMPONENT_POSITION_TYPES]);
+            $this->set_position_types($json_array[controller::API_LIST_COMPONENT_POSITION_TYPES]);
         } else {
-            log_err('Mandatory component_position_types missing in API JSON ' . json_encode($json_array));
-            $this->set_component_position_types();
+            log_err('Mandatory position_types missing in API JSON ' . json_encode($json_array));
+            $this->set_position_types();
         }
         if (array_key_exists(controller::API_LIST_REF_TYPES, $json_array)) {
             $this->set_ref_types($json_array[controller::API_LIST_REF_TYPES]);
@@ -283,11 +283,11 @@ class type_lists
         $html_component_link_types->set_obj_from_json_array($json_array);
     }
 
-    function set_component_position_types(array $json_array = null): void
+    function set_position_types(array $json_array = null): void
     {
-        global $html_component_position_types;
-        $html_component_position_types = new component_position_type_list();
-        $html_component_position_types->set_obj_from_json_array($json_array);
+        global $html_position_types;
+        $html_position_types = new position_type_list();
+        $html_position_types->set_obj_from_json_array($json_array);
     }
 
     function set_ref_types(array $json_array = null): void

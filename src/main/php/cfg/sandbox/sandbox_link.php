@@ -46,10 +46,18 @@ use cfg\log\change_action_list;
 use cfg\log\change_link;
 use Exception;
 
-include_once MODEL_LOG_PATH . 'change_link.php';
-
 class sandbox_link extends sandbox
 {
+
+    /*
+     * database link
+     */
+
+    // list of fields that select the objects that should be linked
+    // dummy array to enable references here and is overwritten by the child object
+    const FLD_LST_LINK = array();
+    const FLD_LST_MUST_BUT_STD_ONLY = array();
+
 
     /*
      * object vars
@@ -103,6 +111,47 @@ class sandbox_link extends sandbox
     function tob(): object
     {
         return $this->tob;
+    }
+
+
+    /*
+     * sql create
+     */
+
+    /**
+     * create an array with the fields and parameters for the sql table creation of the link object
+     * @param bool $usr_table create a second table for the user overwrites
+     * @param bool $is_sandbox true if the standard sandbox fields should be included
+     * @return array[] with the parameters of the table fields
+     */
+    protected function sql_all_field_par(bool $usr_table = false, bool $is_sandbox = true): array
+    {
+        if (!$usr_table) {
+            // the primary id field is always the first
+            $fields = $this->sql_id_field_par(false);
+            // the link fields are not repeated in the user table because they cannot be changed individually
+            $fields = array_merge($fields, $this::FLD_LST_LINK);
+            // set the owner of the link
+            $fields = array_merge($fields, sandbox::FLD_ALL_OWNER);
+            // mandatory fields that can be changed the user
+            $fields = array_merge($fields, $this::FLD_LST_MUST_BUT_STD_ONLY);
+            // fields that can be changed the user but are empty if the user has not done an overwrite
+            $fields = array_merge($fields, $this::FLD_LST_USER_CAN_CHANGE);
+            $fields = array_merge($fields, $this::FLD_LST_NON_CHANGEABLE);
+        } else {
+            // the primary id field is always the first
+            $fields = $this->sql_id_field_par(true);
+            // a user overwrite must always have a user
+            $fields = array_merge($fields, sandbox::FLD_ALL_CHANGER);
+            // mandatory fields that can be changed the user
+            $fields = array_merge($fields, $this::FLD_LST_MUST_BUT_USER_CAN_CHANGE);
+            // fields that can be changed the user but are empty if the user has not done an overwrite
+            $fields = array_merge($fields, $this::FLD_LST_USER_CAN_CHANGE);
+        }
+        if ($is_sandbox) {
+            $fields = array_merge($fields, sandbox::FLD_LST_ALL);
+        }
+        return $fields;
     }
 
 

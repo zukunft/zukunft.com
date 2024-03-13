@@ -41,6 +41,8 @@ include_once API_VIEW_PATH . 'component_link.php';
 use api\view\component_link as component_link_api;
 use cfg\db\sql;
 use cfg\db\sql_db;
+use cfg\db\sql_field_default;
+use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\export\sandbox_exp;
@@ -57,9 +59,11 @@ class component_link extends sandbox_link_with_type
      */
 
     // the database and JSON object field names used only for formula links
+    const TBL_COMMENT = 'to link components to views with an n:m relation';
     const FLD_ID = 'component_link_id';
     const FLD_ORDER_NBR = 'order_nbr';
-    const FLD_POS_TYPE = 'position_type';
+    const FLD_POS_COM = 'the position of the component e.g. right or below';
+    const FLD_POS_TYPE = 'position_type_id';
 
     // all database field names excluding the user specific fields and the id
     const FLD_NAMES = array(
@@ -86,6 +90,23 @@ class component_link extends sandbox_link_with_type
         sandbox::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
+    );
+    // list of fields that select the objects that should be linked
+    const FLD_LST_LINK = array(
+        [view::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, view::class, ''],
+        [component::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, component::class, ''],
+    );
+    // list of MANDATORY fields that CAN be CHANGEd by the user
+    const FLD_LST_MUST_BUT_STD_ONLY = array(
+        [self::FLD_ORDER_NBR, sql_field_type::INT, sql_field_default::NOT_NULL, '', '', ''],
+        [component_link_type::FLD_ID, sql_field_type::INT, sql_field_default::ONE, sql::INDEX, component_link_type::class, ''],
+        [position_type::FLD_ID, sql_field_type::INT, sql_field_default::TWO, sql::INDEX, position_type::class, self::FLD_POS_COM],
+    );
+    // list of fields that CAN be CHANGEd by the user
+    const FLD_LST_MUST_BUT_USER_CAN_CHANGE = array(
+        [self::FLD_ORDER_NBR, sql_field_type::INT, sql_field_default::NULL, '', '', ''],
+        [component_link_type::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, component_link_type::class, ''],
+        [position_type::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, position_type::class, self::FLD_POS_COM],
     );
 
 
@@ -574,8 +595,8 @@ class component_link extends sandbox_link_with_type
      */
     private function pos_type_name(): string
     {
-        global $component_position_types;
-        return $component_position_types->name($this->type_id);
+        global $position_types;
+        return $position_types->name($this->type_id);
     }
 
     // remember the move of a display component

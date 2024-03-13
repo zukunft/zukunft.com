@@ -40,8 +40,9 @@ include_once MODEL_DB_PATH . 'sql.php';
 include_once MODEL_SYSTEM_PATH . 'log.php';
 
 use cfg\component\component;
+use cfg\component\component_link;
 use cfg\component\component_link_type;
-use cfg\component\component_position_type;
+use cfg\component\position_type;
 use cfg\component\component_type;
 use cfg\config;
 use cfg\element;
@@ -161,7 +162,7 @@ class sql_db
     const TBL_COMPONENT_LINK = 'component_link';
     const TBL_COMPONENT_TYPE = 'component_type';
     const TBL_COMPONENT_LINK_TYPE = 'component_link_type';
-    const TBL_COMPONENT_POS_TYPE = 'component_position_type';
+    const TBL_COMPONENT_POS_TYPE = 'position_type';
     const TBL_VIEW_TERM_LINK = 'view_term_link';
 
     const TBL_CHANGE = 'change';
@@ -258,9 +259,10 @@ class sql_db
         view_type::class,
         view::class,
         component_link_type::class,
-        component_position_type::class,
+        position_type::class,
         component_type::class,
-        component::class
+        component::class,
+        component_link::class
     ];
 
     // tables that do not have a name
@@ -1793,7 +1795,7 @@ class sql_db
         if ($result == 'component_type_name') {
             $result = sql::FLD_TYPE_NAME;
         }
-        if ($result == 'component_position_type_name') {
+        if ($result == 'position_type_name') {
             $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'element_type_name') {

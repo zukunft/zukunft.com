@@ -594,14 +594,14 @@ class sandbox_tests
         // test the component_link load_standard SQL creation
         $db_con->set_class(sql_db::TBL_COMPONENT_LINK);
         $db_con->set_link_fields(view::FLD_ID, component::FLD_ID);
-        $db_con->set_fields(array('order_nbr', 'position_type', sandbox::FLD_EXCLUDED));
+        $db_con->set_fields(array('order_nbr', 'position_type_id', sandbox::FLD_EXCLUDED));
         $db_con->set_where_link_no_fld(1, 2, 3);
         $created_sql = $db_con->select_by_set_id();
         $expected_sql = "SELECT component_link_id,
                      view_id,
                      component_id,
                      order_nbr,
-                     position_type,
+                     position_type_id,
                      excluded
                 FROM component_links 
                WHERE component_link_id = $1;";
@@ -610,14 +610,14 @@ class sandbox_tests
         // ... same but select by the link ids
         $db_con->set_class(sql_db::TBL_COMPONENT_LINK);
         $db_con->set_link_fields(view::FLD_ID, component::FLD_ID);
-        $db_con->set_fields(array('order_nbr', 'position_type', sandbox::FLD_EXCLUDED));
+        $db_con->set_fields(array('order_nbr', 'position_type_id', sandbox::FLD_EXCLUDED));
         $db_con->set_where_link_no_fld(0, 2, 3);
         $created_sql = $db_con->select_by_set_id();
         $expected_sql = "SELECT component_link_id,
                      view_id,
                      component_id,
                      order_nbr,
-                     position_type,
+                     position_type_id,
                      excluded
                 FROM component_links 
                WHERE view_id = $1 AND component_id = $2;";
@@ -626,7 +626,7 @@ class sandbox_tests
         // test the component_link load SQL creation
         $db_con->set_class(sql_db::TBL_COMPONENT_LINK);
         $db_con->set_link_fields(view::FLD_ID, component::FLD_ID);
-        $db_con->set_usr_num_fields(array('order_nbr', 'position_type', sandbox::FLD_EXCLUDED));
+        $db_con->set_usr_num_fields(array('order_nbr', 'position_type_id', sandbox::FLD_EXCLUDED));
         $db_con->set_where_link_no_fld(1, 2, 3);
         $created_sql = $db_con->select_by_set_id();
         $expected_sql = "SELECT 
@@ -635,9 +635,9 @@ class sandbox_tests
                         s.user_id, 
                         s.view_id, 
                         s.component_id, 
-                        CASE WHEN (u.order_nbr     IS NULL) THEN s.order_nbr     ELSE u.order_nbr     END AS order_nbr, 
-                        CASE WHEN (u.position_type IS NULL) THEN s.position_type ELSE u.position_type END AS position_type, 
-                        CASE WHEN (u.excluded      IS NULL) THEN s.excluded      ELSE u.excluded      END AS excluded 
+                        CASE WHEN (u.order_nbr        IS NULL) THEN s.order_nbr        ELSE u.order_nbr        END AS order_nbr, 
+                        CASE WHEN (u.position_type_id IS NULL) THEN s.position_type_id ELSE u.position_type_id END AS position_type_id, 
+                        CASE WHEN (u.excluded         IS NULL) THEN s.excluded         ELSE u.excluded         END AS excluded 
                    FROM component_links s 
               LEFT JOIN user_component_links u ON s.component_link_id = u.component_link_id 
                                                    AND u.user_id = 1 
@@ -976,7 +976,7 @@ class sandbox_tests
         // test the component_link load_standard SQL creation
         $db_con->set_class(sql_db::TBL_COMPONENT_LINK);
         $db_con->set_link_fields(view::FLD_ID, component::FLD_ID);
-        $db_con->set_fields(array('order_nbr', 'position_type', sandbox::FLD_EXCLUDED));
+        $db_con->set_fields(array('order_nbr', 'position_type_id', sandbox::FLD_EXCLUDED));
         $db_con->set_where_link_no_fld(1);
         $created_sql = $db_con->select_by_set_id();
         $expected_sql = "SELECT 
@@ -984,7 +984,7 @@ class sandbox_tests
                         view_id,
                         component_id,
                         order_nbr,
-                        position_type,
+                        position_type_id,
                         excluded
                    FROM component_links 
                   WHERE component_link_id = ?;";
@@ -993,7 +993,7 @@ class sandbox_tests
         // test the component_link load SQL creation
         $db_con->set_class(sql_db::TBL_COMPONENT_LINK);
         $db_con->set_link_fields(view::FLD_ID, component::FLD_ID);
-        $db_con->set_usr_num_fields(array('order_nbr', 'position_type', sandbox::FLD_EXCLUDED));
+        $db_con->set_usr_num_fields(array('order_nbr', 'position_type_id', sandbox::FLD_EXCLUDED));
         $db_con->set_where_link_no_fld(1, 2, 3);
         $created_sql = $db_con->select_by_set_id();
         $sql_avoid_code_check_prefix = "SELECT";
@@ -1002,7 +1002,7 @@ class sandbox_tests
                         u.component_link_id AS user_component_link_id, 
                         s.user_id, s.view_id, s.component_id, 
                         IF(u.order_nbr     IS NULL, s.order_nbr,     u.order_nbr)     AS order_nbr, 
-                        IF(u.position_type IS NULL, s.position_type, u.position_type) AS position_type, 
+                        IF(u.position_type_id IS NULL, s.position_type_id, u.position_type_id) AS position_type_id, 
                         IF(u.excluded      IS NULL, s.excluded,      u.excluded)      AS excluded 
                    FROM component_links s 
               LEFT JOIN user_component_links u ON s.component_link_id = u.component_link_id 
@@ -1291,7 +1291,7 @@ class sandbox_tests
         $db_con->set_class(sql_db::TBL_COMPONENT_LINK);
         //$db_con->set_join_fields(array('position_type'), 'position_type');
         $db_con->set_fields(array(view::FLD_ID, component::FLD_ID));
-        $db_con->set_usr_num_fields(array('order_nbr', 'position_type', sandbox::FLD_EXCLUDED));
+        $db_con->set_usr_num_fields(array('order_nbr', 'position_type_id', sandbox::FLD_EXCLUDED));
         $db_con->set_where_text('s.component_id = 1');
         $created_sql = $db_con->select_by_set_id();
         $expected_sql = "SELECT s.component_link_id,
@@ -1299,9 +1299,9 @@ class sandbox_tests
                      s.user_id,
                      s.view_id, 
                      s.component_id,
-                     CASE WHEN (u.order_nbr   IS NULL) THEN s.order_nbr   ELSE u.order_nbr   END AS order_nbr,
-                     CASE WHEN (u.position_type   IS NULL) THEN s.position_type   ELSE u.position_type   END AS position_type,
-                     CASE WHEN (u.excluded   IS NULL) THEN s.excluded   ELSE u.excluded   END AS excluded
+                     CASE WHEN (u.order_nbr        IS NULL) THEN s.order_nbr        ELSE u.order_nbr        END AS order_nbr,
+                     CASE WHEN (u.position_type_id IS NULL) THEN s.position_type_id ELSE u.position_type_id END AS position_type_id,
+                     CASE WHEN (u.excluded         IS NULL) THEN s.excluded         ELSE u.excluded         END AS excluded
                 FROM component_links s
            LEFT JOIN user_component_links u ON s.component_link_id = u.component_link_id 
                                             AND u.user_id = 1  

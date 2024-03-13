@@ -49,7 +49,6 @@ include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';
 include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_FORMULA_PATH . 'formula.php';
 
 class config extends db_object_seq_id
 {
@@ -60,6 +59,7 @@ class config extends db_object_seq_id
     const YEARS_AUTO_CREATE_DSP = 'years to create';
     const DB_RETRY_MIN = 'system config database retry start delay in sec';
     const DB_RETRY_MAX = 'system config database retry max delay in sec';
+    const AVG_CALC_TIME_SEC = 1000; // the default time in milliseconds for updating all results of on formula
 
     // program configuration names
     const SITE_NAME = 'site_name';                           // the name of the pod
@@ -347,7 +347,7 @@ class config extends db_object_seq_id
                 $result = FIRST_VERSION;
                 break;
             case self::AVG_CALC_TIME:
-                $result = formula::AVG_CALC_TIME;
+                $result = self::AVG_CALC_TIME_SEC;
                 break;
         }
 

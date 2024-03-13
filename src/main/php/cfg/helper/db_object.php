@@ -180,21 +180,21 @@ class db_object
     {
         $fields = [];
         if (!$usr_table) {
+            $fields = array_merge($fields, $this::FLD_LST_NON_CHANGEABLE);
+        }
+        if (!$usr_table) {
             if ($is_sandbox) {
-                $fields = sandbox::FLD_ALL_OWNER;
+                $fields = array_merge($fields, sandbox::FLD_ALL_OWNER);
                 $fields = array_merge($fields, $this::FLD_LST_MUST_BE_IN_STD);
             } else {
-                $fields = $this::FLD_LST_ALL;
+                $fields = array_merge($fields, $this::FLD_LST_ALL);
                 $fields = array_merge($fields, $this::FLD_LST_EXTRA);
             }
         } else {
-            $fields = sandbox::FLD_ALL_CHANGER;
+            $fields = array_merge($fields, sandbox::FLD_ALL_CHANGER);
             $fields = array_merge($fields, $this::FLD_LST_MUST_BUT_USER_CAN_CHANGE);
         }
         $fields = array_merge($fields, $this::FLD_LST_USER_CAN_CHANGE);
-        if (!$usr_table) {
-            $fields = array_merge($fields, $this::FLD_LST_NON_CHANGEABLE);
-        }
         if ($is_sandbox) {
             $fields = array_merge($fields, sandbox::FLD_LST_ALL);
         }

@@ -69,7 +69,7 @@ use cfg\component\component;
 use cfg\component\component_link;
 use cfg\component\component_link_list;
 use cfg\component\component_list;
-use cfg\component\component_position_type_list;
+use cfg\component\position_type_list;
 use cfg\component\component_type;
 use cfg\component\component_type_list;
 use cfg\element;
@@ -176,7 +176,7 @@ class create_test_objects extends test_base
         $view_types = new view_type_list();
         $component_types = new component_type_list();
         //$component_link_types = new component_link_type_list();
-        $component_position_types = new component_position_type_list();
+        $position_types = new position_type_list();
         $ref_types = new ref_type_list();
         $source_types = new source_type_list();
         $share_types = new share_type_list();
@@ -198,7 +198,7 @@ class create_test_objects extends test_base
         $view_types->load_dummy();
         $component_types->load_dummy();
         //$component_link_types->load_dummy();
-        $component_position_types->load_dummy();
+        $position_types->load_dummy();
         $ref_types->load_dummy();
         $source_types->load_dummy();
         $share_types->load_dummy();
@@ -224,7 +224,7 @@ class create_test_objects extends test_base
         $lst->add($view_types->api_obj(), controller::API_LIST_VIEW_TYPES);
         $lst->add($component_types->api_obj(), controller::API_LIST_COMPONENT_TYPES);
         //$lst->add($component_link_types->api_obj(), controller::API_LIST_VIEW_COMPONENT_LINK_TYPES);
-        $lst->add($component_position_types->api_obj(), controller::API_LIST_COMPONENT_POSITION_TYPES);
+        $lst->add($position_types->api_obj(), controller::API_LIST_COMPONENT_POSITION_TYPES);
         $lst->add($ref_types->api_obj(), controller::API_LIST_REF_TYPES);
         $lst->add($source_types->api_obj(), controller::API_LIST_SOURCE_TYPES);
         $lst->add($share_types->api_obj(), controller::API_LIST_SHARE_TYPES);

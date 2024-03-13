@@ -96,7 +96,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
     const FLD_REFS = 'refs';
 
     // list of fields that MUST be set by one user
-    const FLD_LST_MUST_BE_IN_STD = array(
+    const FLD_LST_LINK = array(
         [self::FLD_FROM, sql_field_type::INT_UNIQUE_PART, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_FROM_COM],
         [verb::FLD_ID, sql_field_type::INT_UNIQUE_PART, sql_field_default::NOT_NULL, sql::INDEX, verb::class, self::FLD_VERB_COM],
         [self::FLD_TO, sql_field_type::INT_UNIQUE_PART, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_TO_COM],

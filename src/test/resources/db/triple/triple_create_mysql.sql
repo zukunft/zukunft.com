@@ -7,10 +7,10 @@
 CREATE TABLE IF NOT EXISTS triples
 (
     triple_id           bigint           NOT NULL COMMENT 'the internal unique primary index',
-    user_id             bigint       DEFAULT NULL COMMENT 'the owner / creator of the triple',
     from_phrase_id      bigint           NOT NULL COMMENT 'the phrase_id that is linked',
     verb_id             bigint           NOT NULL COMMENT 'the verb_id that defines how the phrases are linked',
     to_phrase_id        bigint           NOT NULL COMMENT 'the phrase_id to which the first phrase is linked',
+    user_id             bigint       DEFAULT NULL COMMENT 'the owner / creator of the triple',
     triple_name         varchar(255) DEFAULT NULL COMMENT 'the name used which must be unique within the terms of the user',
     name_given          varchar(255) DEFAULT NULL COMMENT 'the unique name manually set by the user,which can be null if the generated name should be used',
     name_generated      varchar(255) DEFAULT NULL COMMENT 'the generated name is saved in the database for database base unique check based on the phrases and verb,which can be overwritten by the given name',

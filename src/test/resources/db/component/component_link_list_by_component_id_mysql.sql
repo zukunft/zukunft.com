@@ -5,16 +5,16 @@ PREPARE component_link_list_by_component_id FROM
             s.view_id,
             s.component_id,
             l.code_id,
-            IF(u.order_nbr       IS NULL,  s.order_nbr,       u.order_nbr)     AS order_nbr,
-            IF(u.position_type   IS NULL,  s.position_type,   u.position_type) AS position_type,
-            IF(u.excluded        IS NULL,  s.excluded,        u.excluded)      AS excluded,
-            IF(u.share_type_id   IS NULL,  s.share_type_id,   u.share_type_id) AS share_type_id,
-            IF(u.protect_id      IS NULL,  s.protect_id,      u.protect_id)    AS protect_id,
-            IF(ul.description    IS NULL,  l.description,    ul.description)   AS description,
-            IF(ul2.view_type_id  IS NULL, l2.view_type_id,  ul2.view_type_id)  AS view_type_id2,
-            IF(ul2.excluded      IS NULL, l2.excluded,      ul2.excluded)      AS excluded2,
-            IF(ul2.share_type_id IS NULL, l2.share_type_id, ul2.share_type_id) AS share_type_id2,
-            IF(ul2.protect_id    IS NULL, l2.protect_id,    ul2.protect_id)    AS protect_id2
+            IF(u.order_nbr        IS NULL,  s.order_nbr,        u.order_nbr)        AS order_nbr,
+            IF(u.position_type_id IS NULL,  s.position_type_id, u.position_type_id) AS position_type_id,
+            IF(u.excluded         IS NULL,  s.excluded,         u.excluded)         AS excluded,
+            IF(u.share_type_id    IS NULL,  s.share_type_id,    u.share_type_id)    AS share_type_id,
+            IF(u.protect_id       IS NULL,  s.protect_id,       u.protect_id)       AS protect_id,
+            IF(ul.description     IS NULL,  l.description,     ul.description)      AS description,
+            IF(ul2.view_type_id   IS NULL, l2.view_type_id,   ul2.view_type_id)     AS view_type_id2,
+            IF(ul2.excluded       IS NULL, l2.excluded,       ul2.excluded)         AS excluded2,
+            IF(ul2.share_type_id  IS NULL, l2.share_type_id,  ul2.share_type_id)    AS share_type_id2,
+            IF(ul2.protect_id     IS NULL, l2.protect_id,     ul2.protect_id)       AS protect_id2
        FROM component_links s
   LEFT JOIN user_component_links u ON s.component_link_id = u.component_link_id AND   u.user_id = ?
   LEFT JOIN views                l ON s.view_id           =   l.view_id

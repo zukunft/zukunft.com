@@ -2,8 +2,8 @@
 
 /*
 
-    model/view/component_position_type_list.php - to link coded functionality to a view component position
-    ------------------------------------------------
+    model/view/position_type_list.php - to link coded functionality to a view component position
+    ---------------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -36,11 +36,11 @@ use cfg\type_list;
 use cfg\type_object;
 
 include_once DB_PATH . 'sql_db.php';
-include_once MODEL_COMPONENT_PATH . 'component_position_type.php';
+include_once MODEL_COMPONENT_PATH . 'position_type.php';
 
-global $component_position_types;
+global $position_types;
 
-class component_position_type_list extends type_list
+class position_type_list extends type_list
 {
 
     /**
@@ -58,7 +58,7 @@ class component_position_type_list extends type_list
      */
     function load_dummy(): void {
         parent::load_dummy();
-        $type = new type_object(component_position_type::SIDE, component_position_type::SIDE, '', 2);
+        $type = new type_object(position_type::SIDE, position_type::SIDE, '', 2);
         $this->add($type);
     }
 
@@ -67,7 +67,7 @@ class component_position_type_list extends type_list
      */
     function default_id(): int
     {
-        return parent::id(component_position_type::BELOW);
+        return parent::id(position_type::BELOW);
     }
 
 }

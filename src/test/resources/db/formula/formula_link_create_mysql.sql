@@ -1,7 +1,7 @@
 -- --------------------------------------------------------
 
 --
--- table structure for the link of a formual to phrases e.g. if the term pattern of a value matches this term pattern
+-- table structure for the link of a formula to phrases e.g. if the term pattern of a value matches this term pattern
 --
 
 CREATE TABLE IF NOT EXISTS formula_links
@@ -18,10 +18,10 @@ CREATE TABLE IF NOT EXISTS formula_links
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
-    COMMENT 'for the link of a formual to phrases e.g. if the term pattern of a value matches this term pattern';
+    COMMENT 'for the link of a formula to phrases e.g. if the term pattern of a value matches this term pattern';
 
 --
--- table structure to save user specific changes for the link of a formual to phrases e.g. if the term pattern of a value matches this term pattern
+-- table structure to save user specific changes for the link of a formula to phrases e.g. if the term pattern of a value matches this term pattern
 --
 
 CREATE TABLE IF NOT EXISTS user_formula_links
@@ -36,4 +36,4 @@ CREATE TABLE IF NOT EXISTS user_formula_links
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
-    COMMENT 'for the link of a formual to phrases e.g. if the term pattern of a value matches this term pattern';
+    COMMENT 'for the link of a formula to phrases e.g. if the term pattern of a value matches this term pattern';

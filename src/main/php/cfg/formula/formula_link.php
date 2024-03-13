@@ -55,7 +55,7 @@ class formula_link extends sandbox_link_with_type
      */
 
     // object specific database and JSON object field names
-    const TBL_COMMENT = 'for the link of a formual to phrases e.g. if the term pattern of a value matches this term pattern';
+    const TBL_COMMENT = 'for the link of a formula to phrases e.g. if the term pattern of a value matches this term pattern';
     // the database and JSON object field names used only for formula links
     const FLD_ID = 'formula_link_id';
     const FLD_TYPE = 'link_type_id';
@@ -92,7 +92,7 @@ class formula_link extends sandbox_link_with_type
     );
     // list of fields that CAN be changed by the user
     const FLD_LST_USER_CAN_CHANGE = array(
-        [self::FLD_TYPE, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, formula_link_type::class, ''],
+        [self::FLD_TYPE, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, formula_link_type::class, '', formula_link_type::FLD_ID],
         [self::FLD_ORDER, sql_field_type::INT, sql_field_default::NULL, '', '', ''],
     );
     // list of fields that CANNOT be changed by the user

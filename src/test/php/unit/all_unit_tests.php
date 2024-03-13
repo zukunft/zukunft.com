@@ -62,7 +62,7 @@ include_once MODEL_VIEW_PATH . 'view_type.php';
 include_once MODEL_VIEW_PATH . 'view_type_list.php';
 include_once MODEL_COMPONENT_PATH . 'component_link_type_list.php';
 include_once MODEL_COMPONENT_PATH . 'component_type_list.php';
-include_once MODEL_COMPONENT_PATH . 'component_position_type_list.php';
+include_once MODEL_COMPONENT_PATH . 'position_type_list.php';
 include_once MODEL_VIEW_PATH . 'view_term_link.php';
 include_once MODEL_REF_PATH . 'ref_type_list.php';
 include_once MODEL_REF_PATH . 'source_list.php';
@@ -83,7 +83,7 @@ include_once MODEL_LOG_PATH . 'system_log_list.php';
 include_once API_SANDBOX_PATH . 'sandbox_value.php';
 
 use cfg\component\component_link_type_list;
-use cfg\component\component_position_type_list;
+use cfg\component\position_type_list;
 use cfg\component\component_type_list;
 use cfg\db\sql_db;
 use cfg\element_type_list;
@@ -446,10 +446,10 @@ class all_unit_tests extends test_cleanup
      */
     function init_component_pos_types(): void
     {
-        global $component_position_types;
+        global $position_types;
 
-        $component_position_types = new component_position_type_list();
-        $component_position_types->load_dummy();
+        $position_types = new position_type_list();
+        $position_types->load_dummy();
 
     }
 

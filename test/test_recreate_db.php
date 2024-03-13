@@ -38,7 +38,7 @@ const PHP_TEST_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'test' . DIRECTO
 include_once PHP_PATH . 'zu_lib.php';
 include_once SERVICE_IMPORT_PATH . 'import_file.php';
 
-use cfg\component\component_position_type_list;
+use cfg\component\position_type_list;
 use cfg\component\component_type_list;
 use cfg\config;
 use cfg\db\db_check;

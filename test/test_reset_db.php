@@ -37,7 +37,7 @@ const PHP_TEST_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'test' . DIRECTO
 include_once PHP_PATH . 'zu_lib.php';
 include_once SERVICE_IMPORT_PATH . 'import_file.php';
 
-use cfg\component\component_position_type_list;
+use cfg\component\position_type_list;
 use cfg\component\component_type_list;
 use cfg\config;
 use cfg\db\db_check;
@@ -262,7 +262,7 @@ function run_preloaded_truncate(): void
     global $view_types;
     global $component_types;
     global $component_link_types;
-    global $component_position_types;
+    global $position_types;
     global $ref_types;
     global $source_types;
     global $share_types;
@@ -287,7 +287,7 @@ function run_preloaded_truncate(): void
     $component_types = new component_type_list();
     // not yet needed?
     //$component_link_types = new component_link_type_list();
-    $component_position_types = new component_position_type_list();
+    $position_types = new position_type_list();
     $ref_types = new ref_type_list();
     $source_types = new source_type_list();
     $share_types = new share_type_list();

@@ -873,10 +873,10 @@ COMMENT ON COLUMN verbs.words IS 'used for how many phrases or formulas';
 CREATE TABLE IF NOT EXISTS triples
 (
     triple_id           BIGSERIAL PRIMARY KEY,
-    user_id             bigint            DEFAULT NULL,
     from_phrase_id      bigint   NOT NULL,
     verb_id             bigint   NOT NULL,
     to_phrase_id        bigint   NOT NULL,
+    user_id             bigint            DEFAULT NULL,
     triple_name         varchar(255)      DEFAULT NULL,
     name_given          varchar(255)      DEFAULT NULL,
     name_generated      varchar(255)      DEFAULT NULL,
@@ -894,10 +894,10 @@ CREATE TABLE IF NOT EXISTS triples
 
 COMMENT ON TABLE triples IS 'to link one word or triple with a verb to another word or triple';
 COMMENT ON COLUMN triples.triple_id IS 'the internal unique primary index';
-COMMENT ON COLUMN triples.user_id IS 'the owner / creator of the triple';
 COMMENT ON COLUMN triples.from_phrase_id IS 'the phrase_id that is linked';
 COMMENT ON COLUMN triples.verb_id IS 'the verb_id that defines how the phrases are linked';
 COMMENT ON COLUMN triples.to_phrase_id IS 'the phrase_id to which the first phrase is linked';
+COMMENT ON COLUMN triples.user_id IS 'the owner / creator of the triple';
 COMMENT ON COLUMN triples.triple_name IS 'the name used which must be unique within the terms of the user';
 COMMENT ON COLUMN triples.name_given IS 'the unique name manually set by the user,which can be null if the generated name should be used';
 COMMENT ON COLUMN triples.name_generated IS 'the generated name is saved in the database for database base unique check based on the phrases and verb,which can be overwritten by the given name';
@@ -2377,7 +2377,7 @@ COMMENT ON COLUMN formula_link_types.description IS 'text to explain the type to
 -- --------------------------------------------------------
 
 --
--- table structure for the link of a formual to phrases e.g. if the term pattern of a value matches this term pattern
+-- table structure for the link of a formula to phrases e.g. if the term pattern of a value matches this term pattern
 --
 
 CREATE TABLE IF NOT EXISTS formula_links
@@ -2393,7 +2393,7 @@ CREATE TABLE IF NOT EXISTS formula_links
     protect_id      smallint DEFAULT NULL
 );
 
-COMMENT ON TABLE formula_links IS 'for the link of a formual to phrases e.g. if the term pattern of a value matches this term pattern';
+COMMENT ON TABLE formula_links IS 'for the link of a formula to phrases e.g. if the term pattern of a value matches this term pattern';
 COMMENT ON COLUMN formula_links.formula_link_id IS 'the internal unique primary index';
 COMMENT ON COLUMN formula_links.user_id IS 'the owner / creator of the formula_link';
 COMMENT ON COLUMN formula_links.excluded IS 'true if a user,but not all,have removed it';
@@ -2401,7 +2401,7 @@ COMMENT ON COLUMN formula_links.share_type_id IS 'to restrict the access';
 COMMENT ON COLUMN formula_links.protect_id IS 'to protect against unwanted changes';
 
 --
--- table structure to save user specific changes for the link of a formual to phrases e.g. if the term pattern of a value matches this term pattern
+-- table structure to save user specific changes for the link of a formula to phrases e.g. if the term pattern of a value matches this term pattern
 --
 
 CREATE TABLE IF NOT EXISTS user_formula_links
@@ -2416,7 +2416,7 @@ CREATE TABLE IF NOT EXISTS user_formula_links
 
 );
 
-COMMENT ON TABLE user_formula_links IS 'for the link of a formual to phrases e.g. if the term pattern of a value matches this term pattern';
+COMMENT ON TABLE user_formula_links IS 'for the link of a formula to phrases e.g. if the term pattern of a value matches this term pattern';
 COMMENT ON COLUMN user_formula_links.formula_link_id IS 'with the user_id the internal unique primary index';
 COMMENT ON COLUMN user_formula_links.user_id IS 'the changer of the formula_link';
 COMMENT ON COLUMN user_formula_links.excluded IS 'true if a user,but not all,have removed it';
@@ -3871,19 +3871,19 @@ COMMENT ON COLUMN component_link_types.description IS 'text to explain the type 
 -- table structure to define the position of components
 --
 
-CREATE TABLE IF NOT EXISTS component_position_types
+CREATE TABLE IF NOT EXISTS position_types
 (
-    component_position_type_id BIGSERIAL PRIMARY KEY,
+    position_type_id BIGSERIAL PRIMARY KEY,
     type_name   varchar(255)     NOT NULL,
     code_id     varchar(255) DEFAULT NULL,
     description text         DEFAULT NULL
 );
 
-COMMENT ON TABLE component_position_types IS 'to define the position of components';
-COMMENT ON COLUMN component_position_types.component_position_type_id IS 'the internal unique primary index';
-COMMENT ON COLUMN component_position_types.type_name IS 'the unique type name as shown to the user and used for the selection';
-COMMENT ON COLUMN component_position_types.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
-COMMENT ON COLUMN component_position_types.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
+COMMENT ON TABLE position_types IS 'to define the position of components';
+COMMENT ON COLUMN position_types.position_type_id IS 'the internal unique primary index';
+COMMENT ON COLUMN position_types.type_name IS 'the unique type name as shown to the user and used for the selection';
+COMMENT ON COLUMN position_types.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
+COMMENT ON COLUMN position_types.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
 
 -- --------------------------------------------------------
 
@@ -3994,41 +3994,54 @@ COMMENT ON COLUMN user_components.protect_id IS 'to protect against unwanted cha
 -- --------------------------------------------------------
 
 --
--- table structure for table component_links
--- TODO generate link
+-- table structure to link components to views with an n:m relation
 --
 
 CREATE TABLE IF NOT EXISTS component_links
 (
-    component_link_id      BIGSERIAL PRIMARY KEY,
-    user_id                bigint   NOT NULL,
-    view_id                bigint   NOT NULL,
-    component_id           bigint   NOT NULL,
-    order_nbr              bigint   NOT NULL,
-    position_type          bigint   NOT NULL DEFAULT '2',
-    excluded               smallint          DEFAULT NULL,
-    share_type_id          smallint          DEFAULT NULL,
-    protect_id             smallint NOT NULL DEFAULT '1'
+    component_link_id BIGSERIAL PRIMARY KEY,
+    view_id                    bigint       NOT NULL,
+    component_id               bigint       NOT NULL,
+    user_id                    bigint   DEFAULT NULL,
+    order_nbr                  bigint       NOT NULL,
+    component_link_type_id     bigint   NOT NULL DEFAULT 1,
+    position_type_id           bigint   NOT NULL DEFAULT 2,
+    excluded                   smallint DEFAULT NULL,
+    share_type_id              smallint DEFAULT NULL,
+    protect_id                 smallint DEFAULT NULL
 );
 
-COMMENT ON TABLE component_links IS 'A named mask entry can be used in several masks e.g. the company name';
-COMMENT ON COLUMN component_links.position_type IS '1=side, 2 =below';
+COMMENT ON TABLE component_links IS 'to link components to views with an n:m relation';
+COMMENT ON COLUMN component_links.component_link_id IS 'the internal unique primary index';
+COMMENT ON COLUMN component_links.user_id IS 'the owner / creator of the component_link';
+COMMENT ON COLUMN component_links.position_type_id IS 'the position of the component e.g. right or below';
+COMMENT ON COLUMN component_links.excluded IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN component_links.share_type_id IS 'to restrict the access';
+COMMENT ON COLUMN component_links.protect_id IS 'to protect against unwanted changes';
 
 --
--- table structure for table user_component_links
--- TODO generate link
+-- table structure to save user specific changes to link components to views with an n:m relation
 --
 
 CREATE TABLE IF NOT EXISTS user_component_links
 (
-    component_link_id bigint   NOT NULL,
-    user_id           bigint   NOT NULL,
-    order_nbr         bigint            DEFAULT NULL,
-    position_type     bigint            DEFAULT NULL,
-    excluded          smallint          DEFAULT NULL,
-    share_type_id     smallint          DEFAULT NULL,
-    protect_id        smallint NOT NULL DEFAULT '1'
+    component_link_id      bigint       NOT NULL,
+    user_id                bigint       NOT NULL,
+    order_nbr              bigint   DEFAULT NULL,
+    component_link_type_id bigint   DEFAULT NULL,
+    position_type_id       bigint   DEFAULT NULL,
+    excluded               smallint DEFAULT NULL,
+    share_type_id          smallint DEFAULT NULL,
+    protect_id             smallint DEFAULT NULL
 );
+
+COMMENT ON TABLE user_component_links IS 'to link components to views with an n:m relation';
+COMMENT ON COLUMN user_component_links.component_link_id IS 'with the user_id the internal unique primary index';
+COMMENT ON COLUMN user_component_links.user_id IS 'the changer of the component_link';
+COMMENT ON COLUMN user_component_links.position_type_id IS 'the position of the component e.g. right or below';
+COMMENT ON COLUMN user_component_links.excluded IS 'true if a user,but not all,have removed it';
+COMMENT ON COLUMN user_component_links.share_type_id IS 'to restrict the access';
+COMMENT ON COLUMN user_component_links.protect_id IS 'to protect against unwanted changes';
 
 -- --------------------------------------------------------
 
@@ -4720,10 +4733,10 @@ CREATE INDEX verbs_verb_name_idx ON verbs (verb_name);
 --
 
 CREATE UNIQUE INDEX triples_unique_idx  ON triples (from_phrase_id, verb_id, to_phrase_id);
-CREATE INDEX triples_user_idx           ON triples (user_id);
 CREATE INDEX triples_from_phrase_idx    ON triples (from_phrase_id);
 CREATE INDEX triples_verb_idx           ON triples (verb_id);
 CREATE INDEX triples_to_phrase_idx      ON triples (to_phrase_id);
+CREATE INDEX triples_user_idx           ON triples (user_id);
 CREATE INDEX triples_triple_name_idx    ON triples (triple_name);
 CREATE INDEX triples_name_given_idx     ON triples (name_given);
 CREATE INDEX triples_name_generated_idx ON triples (name_generated);
@@ -5680,10 +5693,10 @@ CREATE INDEX component_link_types_type_name_idx ON component_link_types (type_na
 -- --------------------------------------------------------
 
 --
--- indexes for table component_position_types
+-- indexes for table position_types
 --
 
-CREATE INDEX component_position_types_type_name_idx ON component_position_types (type_name);
+CREATE INDEX position_types_type_name_idx ON position_types (type_name);
 
 -- --------------------------------------------------------
 
@@ -5727,20 +5740,28 @@ CREATE INDEX user_components_linked_component_idx ON user_components (linked_com
 CREATE INDEX user_components_component_link_type_idx ON user_components (component_link_type_id);
 CREATE INDEX user_components_link_type_idx ON user_components (link_type_id);
 
---
--- Indexes for table component_links
---
-CREATE INDEX component_link_idx ON component_links (view_id);
-CREATE INDEX component_link_component_idx ON component_links (component_id);
-CREATE INDEX component_link_position__idx ON component_links (position_type);
+-- --------------------------------------------------------
 
 --
--- Indexes for table user_component_links
+-- indexes for table component_links
 --
-ALTER TABLE user_component_links ADD CONSTRAINT user_component_link_pkey PRIMARY KEY (component_link_id, user_id);
-CREATE INDEX user_component_link_user_idx ON user_component_links (user_id);
-CREATE INDEX user_component_link_position_idx ON user_component_links (position_type);
-CREATE INDEX user_component_link_view_idx ON user_component_links (component_link_id);
+
+CREATE INDEX component_links_view_idx ON component_links (view_id);
+CREATE INDEX component_links_component_idx ON component_links (component_id);
+CREATE INDEX component_links_user_idx ON component_links (user_id);
+CREATE INDEX component_links_component_link_type_idx ON component_links (component_link_type_id);
+CREATE INDEX component_links_position_type_idx ON component_links (position_type_id);
+
+--
+-- indexes for table user_component_links
+--
+
+ALTER TABLE user_component_links
+    ADD CONSTRAINT user_component_links_pkey PRIMARY KEY (component_link_id,user_id);
+CREATE INDEX user_component_links_component_link_idx ON user_component_links (component_link_id);
+CREATE INDEX user_component_links_user_idx ON user_component_links (user_id);
+CREATE INDEX user_component_links_component_link_type_idx ON user_component_links (component_link_type_id);
+CREATE INDEX user_component_links_position_type_idx ON user_component_links (position_type_id);
 
 -- --------------------------------------------------------
 
@@ -5906,8 +5927,8 @@ ALTER TABLE user_words
 --
 ALTER TABLE triples
     ADD CONSTRAINT triples_code_id_uk UNIQUE (code_id),
-    ADD CONSTRAINT triples_user_fk        FOREIGN KEY (user_id)        REFERENCES users (user_id),
     ADD CONSTRAINT triples_verb_fk        FOREIGN KEY (verb_id)        REFERENCES verbs (verb_id),
+    ADD CONSTRAINT triples_user_fk        FOREIGN KEY (user_id)        REFERENCES users (user_id),
     ADD CONSTRAINT triples_phrase_type_fk FOREIGN KEY (phrase_type_id) REFERENCES phrase_types (phrase_type_id),
     ADD CONSTRAINT triples_view_fk        FOREIGN KEY (view_id)        REFERENCES views (view_id);
 
@@ -6280,7 +6301,7 @@ ALTER TABLE elements
 
 ALTER TABLE formula_links
     ADD CONSTRAINT formula_links_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT formula_links_formula_link_type_fk FOREIGN KEY (link_type_id) REFERENCES formula_link_types (link_type_id),
+    ADD CONSTRAINT formula_links_formula_link_type_fk FOREIGN KEY (link_type_id) REFERENCES formula_link_types (formula_link_type_id),
     ADD CONSTRAINT formula_links_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
 
 --
@@ -6290,7 +6311,7 @@ ALTER TABLE formula_links
 ALTER TABLE user_formula_links
     ADD CONSTRAINT user_formula_links_formula_link_fk FOREIGN KEY (formula_link_id) REFERENCES formula_links (formula_link_id),
     ADD CONSTRAINT user_formula_links_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT user_formula_links_formula_link_type_fk FOREIGN KEY (link_type_id) REFERENCES formula_link_types (link_type_id);
+    ADD CONSTRAINT user_formula_links_formula_link_type_fk FOREIGN KEY (link_type_id) REFERENCES formula_link_types (formula_link_type_id);
 
 -- --------------------------------------------------------
 
@@ -6569,21 +6590,28 @@ ALTER TABLE user_components
     ADD CONSTRAINT user_components_component_type_fk FOREIGN KEY (component_type_id) REFERENCES component_types (component_type_id),
     ADD CONSTRAINT user_components_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
 
+-- --------------------------------------------------------
+
 --
 -- constraints for table component_links
 --
+
 ALTER TABLE component_links
-    ADD CONSTRAINT component_links_fk_1 FOREIGN KEY (view_id) REFERENCES views (view_id),
-    ADD CONSTRAINT component_links_fk_2 FOREIGN KEY (position_type) REFERENCES component_position_types (component_position_type_id),
-    ADD CONSTRAINT component_links_fk_3 FOREIGN KEY (component_id) REFERENCES components (component_id);
+    ADD CONSTRAINT component_links_view_fk FOREIGN KEY (view_id) REFERENCES views (view_id),
+    ADD CONSTRAINT component_links_component_fk FOREIGN KEY (component_id) REFERENCES components (component_id),
+    ADD CONSTRAINT component_links_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT component_links_component_link_type_fk FOREIGN KEY (component_link_type_id) REFERENCES component_link_types (component_link_type_id),
+    ADD CONSTRAINT component_links_position_type_fk FOREIGN KEY (position_type_id) REFERENCES position_types (position_type_id);
 
 --
 -- constraints for table user_component_links
 --
+
 ALTER TABLE user_component_links
-    ADD CONSTRAINT user_component_links_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT user_component_links_fk_2 FOREIGN KEY (component_link_id) REFERENCES component_links (component_link_id),
-    ADD CONSTRAINT user_component_links_fk_3 FOREIGN KEY (position_type) REFERENCES component_position_types (component_position_type_id);
+    ADD CONSTRAINT user_component_links_component_link_fk FOREIGN KEY (component_link_id) REFERENCES component_links (component_link_id),
+    ADD CONSTRAINT user_component_links_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_component_links_component_link_type_fk FOREIGN KEY (component_link_type_id) REFERENCES component_link_types (component_link_type_id),
+    ADD CONSTRAINT user_component_links_position_type_fk FOREIGN KEY (position_type_id) REFERENCES position_types (position_type_id);
 
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

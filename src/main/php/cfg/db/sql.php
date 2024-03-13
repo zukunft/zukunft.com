@@ -3235,7 +3235,7 @@ class sql
         if ($result == 'component_type_name') {
             $result = sql::FLD_TYPE_NAME;
         }
-        if ($result == 'component_position_type_name') {
+        if ($result == 'position_type_name') {
             $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'element_type_name') {
