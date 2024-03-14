@@ -65,6 +65,10 @@ class phrase_tests
 
         $t->header('Unit tests of the phrase class (src/main/php/model/phrase/phrase.php)');
 
+        $t->subheader('Phrase SQL setup statements');
+        $phr = $t->dummy_phrase();
+        $t->assert_sql_view_create($phr);
+
         $t->subheader('SQL statement tests');
 
         $phr = new phrase($usr);

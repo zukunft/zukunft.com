@@ -63,4 +63,15 @@ enum sql_table_type: string
         };
     }
 
+    /**
+     * @return string the name prefix for the query name
+     */
+    function prefix(): string
+    {
+        return match($this) {
+            self::PRIME => 'prime_',
+            self::USER => 'user_',
+            default => '',
+        };
+    }
 }

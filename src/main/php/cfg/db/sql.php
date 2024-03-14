@@ -67,6 +67,17 @@ class sql
     const NULL_VALUE = 'NULL';
     const INDEX = 'INDEX';
     const UNIQUE = 'UNIQUE INDEX';  // TODO check if UNIQUE needs to be used for word and triple names
+    const CREATE = 'CREATE OR REPLACE';
+    const VIEW = 'VIEW';
+    const AS = 'AS';
+    const FROM = 'FROM';
+    const WHERE = 'WHERE';
+    const CASE = 'CASE WHEN';
+    const THEN = 'THEN';
+    const IS_NULL = 'IS NULL';
+    const ELSE = 'ELSE';
+    const END = 'END';
+    const UNION = 'UNION';
     const TRUE = '1'; // representing true in the where part for a smallint field
     const FALSE = '0'; // representing true in the where part for a smallint field
     const ID_NULL = 0; // the 'not set' value for an id; could have been null if postgres index would allow it
@@ -2679,6 +2690,17 @@ class sql
     }
 
     /**
+     * @return string a sql separator just to improve formatting
+     */
+    function sql_view_header(string $view_name, string $view_comment): string
+    {
+        $sql = '-- ';
+        $sql .= '-- structure for view ' . $view_name . ' (' . $view_comment . ') ';
+        $sql .= '-- ';
+        return $sql;
+    }
+
+    /**
      * @return int the number of parameter types actually used e.g. excluding "is null"
      */
     private function used_par_types(): int
@@ -3551,6 +3573,19 @@ class sql
     {
         $lib = new library();
         return $lib->class_to_name($class);
+    }
+
+    /**
+     * @param array $tbl_types list of sql table types that specifies the current case
+     * @return bool true if the list of types specifies that the value has no user overwrites
+     */
+    function is_user(array $tbl_types): bool
+    {
+        if (in_array(sql_table_type::USER, $tbl_types)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }

@@ -4116,132 +4116,132 @@ COMMENT ON COLUMN user_view_term_links.protect_id IS 'to protect against unwante
 -- --------------------------------------------------------
 
 --
--- Structure for view phrase_prime (phrases with an id less than 2^16 so that 4 phrase id fit in a 64 bit db key)
--- TODO generate view
+-- structure for view prime_phrases (phrases with an id less than 2^16 so that 4 phrase id fit in a 64 bit db key)
 --
 
 CREATE OR REPLACE VIEW prime_phrases AS
-SELECT w.word_id   AS phrase_id,
-       w.user_id,
-       w.word_name AS phrase_name,
-       w.description,
-       w.values,
-       w.phrase_type_id,
-       w.excluded,
-       w.share_type_id,
-       w.protect_id
-FROM words AS w
-WHERE w.word_id < 32767 -- 2^16 / 2 - 1
+    SELECT w.word_id   AS phrase_id,
+           w.user_id,
+           w.word_name AS phrase_name,
+           w.description,
+           w.values,
+           w.phrase_type_id,
+           w.excluded,
+           w.share_type_id,
+           w.protect_id
+    FROM words AS w
+    WHERE w.word_id < 32767
 UNION
-SELECT (t.triple_id * -(1)) AS phrase_id,
-       t.user_id,
-       CASE WHEN (t.triple_name IS NULL) THEN
-            CASE WHEN (t.name_given IS NULL)
-                 THEN t.name_generated
-                 ELSE t.name_given END
-            ELSE t.triple_name END AS phrase_name,
-       t.description,
-       t.values,
-       t.phrase_type_id,
-       t.excluded,
-       t.share_type_id,
-       t.protect_id
-FROM triples AS t
-WHERE t.triple_id < 32767; -- 2^16 / 2 - 1
+    SELECT t.triple_id * -1 AS phrase_id,
+           t.user_id,
+           CASE WHEN (t.triple_name IS NULL) THEN
+                    CASE WHEN (t.name_given IS NULL)
+                             THEN t.name_generated
+                         ELSE t.name_given END
+                ELSE t.triple_name END AS phrase_name,
+           t.description,
+           t.values,
+           t.phrase_type_id,
+           t.excluded,
+           t.share_type_id,
+           t.protect_id
+    FROM triples AS t
+    WHERE t.triple_id < 32767;
 
 --
--- Structure for view phrases
--- TODO generate view
+-- structure for view phrases (phrases with an id that is not prime)
 --
 
 CREATE OR REPLACE VIEW phrases AS
-SELECT w.word_id   AS phrase_id,
-       w.user_id,
-       w.word_name AS phrase_name,
-       w.description,
-       w.values,
-       w.phrase_type_id,
-       w.excluded,
-       w.share_type_id,
-       w.protect_id
-FROM words AS w
+    SELECT w.word_id   AS phrase_id,
+           w.user_id,
+           w.word_name AS phrase_name,
+           w.description,
+           w.values,
+           w.phrase_type_id,
+           w.excluded,
+           w.share_type_id,
+           w.protect_id
+    FROM words AS w
 UNION
-SELECT (t.triple_id * -(1)) AS phrase_id,
-       t.user_id,
-       CASE WHEN (t.triple_name IS NULL) THEN
-            CASE WHEN (t.name_given IS NULL)
-                 THEN t.name_generated
-                 ELSE t.name_given END
-            ELSE t.triple_name END AS phrase_name,
-       t.description,
-       t.values,
-       t.phrase_type_id,
-       t.excluded,
-       t.share_type_id,
-       t.protect_id
-FROM triples AS t;
+    SELECT t.triple_id * -1 AS phrase_id,
+           t.user_id,
+           CASE WHEN (t.triple_name IS NULL) THEN
+                    CASE WHEN (t.name_given IS NULL)
+                             THEN t.name_generated
+                         ELSE t.name_given END
+                ELSE t.triple_name END AS phrase_name,
+           t.description,
+           t.values,
+           t.phrase_type_id,
+           t.excluded,
+           t.share_type_id,
+           t.protect_id
+    FROM triples AS t;
 
 --
--- Structure for the user_phrases view
--- TODO generate view
+-- structure for view user_prime_phrases (phrases with an id less than 2^16 so that 4 phrase id fit in a 64 bit db key)
 --
 
 CREATE OR REPLACE VIEW user_prime_phrases AS
-SELECT w.word_id   AS phrase_id,
-       w.user_id,
-       w.word_name AS phrase_name,
-       w.description,
-       w.values,
-       w.excluded,
-       w.share_type_id,
-       w.protect_id
-FROM user_words AS w
-WHERE w.word_id < 32767 -- 2^16 / 2 - 1
+    SELECT w.word_id   AS phrase_id,
+           w.user_id,
+           w.word_name AS phrase_name,
+           w.description,
+           w.values,
+           w.phrase_type_id,
+           w.excluded,
+           w.share_type_id,
+           w.protect_id
+    FROM user_words AS w
+    WHERE w.word_id < 32767
 UNION
-SELECT (t.triple_id * -(1)) AS phrase_id,
-       t.user_id,
-       CASE WHEN (t.triple_name IS NULL) THEN
-            CASE WHEN (t.name_given IS NULL)
-                 THEN t.name_generated
-                 ELSE t.name_given END
-            ELSE t.triple_name END AS phrase_name,
-       t.description,
-       t.values,
-       t.excluded,
-       t.share_type_id,
-       t.protect_id
-FROM user_triples AS t
-WHERE t.triple_id < 32767; -- 2^16 / 2 - 1
+    SELECT t.triple_id * -1 AS phrase_id,
+           t.user_id,
+           CASE WHEN (t.triple_name IS NULL) THEN
+                    CASE WHEN (t.name_given IS NULL)
+                             THEN t.name_generated
+                         ELSE t.name_given END
+                ELSE t.triple_name END AS phrase_name,
+           t.description,
+           t.values,
+           t.phrase_type_id,
+           t.excluded,
+           t.share_type_id,
+           t.protect_id
+    FROM user_triples AS t
+    WHERE t.triple_id < 32767;
 
 --
--- Structure for the user_phrases view
--- TODO generate view
+-- structure for view user_phrases (phrases with an id that is not prime)
 --
 
 CREATE OR REPLACE VIEW user_phrases AS
-SELECT w.word_id   AS phrase_id,
-       w.user_id,
-       w.word_name AS phrase_name,
-       w.description,
-       w.values,
-       w.excluded,
-       w.share_type_id,
-       w.protect_id
-  FROM user_words AS w
+    SELECT w.word_id   AS phrase_id,
+           w.user_id,
+           w.word_name AS phrase_name,
+           w.description,
+           w.values,
+           w.phrase_type_id,
+           w.excluded,
+           w.share_type_id,
+           w.protect_id
+    FROM user_words AS w
 UNION
-SELECT (t.triple_id * -(1)) AS phrase_id,
-       t.user_id,
-       CASE WHEN (t.triple_name IS NULL) THEN
-            CASE WHEN (t.name_given IS NULL)
-                 THEN t.name_generated
-                 ELSE t.name_given END
-            ELSE t.triple_name END AS phrase_name,
-       t.description,
-       t.values,
-       t.excluded,
-       t.share_type_id,
-       t.protect_id
-  FROM user_triples AS t;
+    SELECT t.triple_id * -1 AS phrase_id,
+           t.user_id,
+           CASE WHEN (t.triple_name IS NULL) THEN
+                    CASE WHEN (t.name_given IS NULL)
+                             THEN t.name_generated
+                         ELSE t.name_given END
+                ELSE t.triple_name END AS phrase_name,
+           t.description,
+           t.values,
+           t.phrase_type_id,
+           t.excluded,
+           t.share_type_id,
+           t.protect_id
+    FROM user_triples AS t;
 
 --
 -- Structure for view terms

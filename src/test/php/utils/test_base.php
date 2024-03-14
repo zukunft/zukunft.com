@@ -902,6 +902,34 @@ class test_base
     }
 
     /**
+     * check the SQL statement to create the sql view
+     * for all allowed SQL database dialects
+     *
+     * @param object $usr_obj the user sandbox object e.g. a phrase
+     * @return bool true if all tests are fine
+     */
+    function assert_sql_view_create(object $usr_obj): bool
+    {
+        $lib = new library();
+        $class = $lib->class_to_name($usr_obj::class);
+        // check the Postgres query syntax
+        $sc = new sql(sql_db::POSTGRES);
+        $name = $class . '_view';
+        $expected_sql = $this->assert_sql_expected($name, $sc->db_type);
+        $actual_sql = $usr_obj->sql_view($sc, $class);
+        $result = $this->assert_sql($name, $actual_sql, $expected_sql);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $sc->reset(sql_db::MYSQL);
+            $expected_sql = $this->assert_sql_expected($name, $sc->db_type);
+            $actual_sql = $usr_obj->sql_view($sc, $class);
+            $result = $this->assert_sql($name, $actual_sql, $expected_sql);
+        }
+        return $result;
+    }
+
+    /**
      * check the SQL statement to add a database row
      * for all allowed SQL database dialects
      *
