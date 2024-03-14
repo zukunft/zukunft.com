@@ -1081,49 +1081,13 @@ class result_list extends sandbox_value_list
     /**
      * load all results related to one value
      * TODO check if this is needed
-     * TODO review: the table value_formula_links is not yet filled
-     *              split the backend and frontend part
+     * TODO review: split the backend and frontend part
      *              target is: if a value is changed, what needs to be updated?
      */
     function load_by_val(value $val): string
     {
-        global $db_con;
-
         $phr_lst = $val->phr_lst();
-
-        log_debug("for value " . $val->id());
-        $result = '';
-
-        // list all related formula results
-        $formula_links = '';
-        $sql = "SELECT l.formula_id, f.formula_text FROM value_formula_links l, formulas f WHERE l.group_id = " . $val->id() . " AND l.formula_id = f.formula_id;";
-        //$db_con = New mysql;
-        $db_con->usr_id = $this->user()->id();
-        $db_lst = $db_con->get_old($sql);
-        if ($db_lst != null) {
-            foreach ($db_lst as $db_res) {
-                $frm_id = $db_res[formula::FLD_ID];
-                $formula_text = $db_res[formula::FLD_FORMULA_TEXT];
-                $phr_lst_used = clone $phr_lst;
-                $frm = new formula($this->user());
-                $frm->load_by_id($frm_id);
-                $back = '';
-                $res_list = $frm->to_num($phr_lst_used);
-                $result = $res_list->get_first();
-                // if the result is empty use the id to be able to select the formula
-                if ($result == '') {
-                    $result = $db_res[formula::FLD_ID];
-                }
-                $formula_links .= ' <a href="/http/formula_edit.php?id=' . $db_res[formula::FLD_ID] . '">' . $result . '</a> ';
-            }
-        }
-
-        if ($formula_links <> '') {
-            $result .= ' (or ' . $formula_links . ')';
-        }
-
-        log_debug("res_lst->val_phr_lst ... done.");
-        return $result;
+        return $this->load_by_phr_lst($phr_lst);
     }
 
     /**

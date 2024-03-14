@@ -992,8 +992,7 @@ const DB_TABLE_LIST = [
     'component_types',
     'view_link_types',
     'view_term_links',
-    'user_view_term_links',
-    'value_formula_links'
+    'user_view_term_links'
 ];
 const BASE_CODE_LINK_FILE_TYPE = '.csv';
 const SYSTEM_USER_CONFIG_FILE = PATH_BASE_CONFIG_FILES . 'users.json';

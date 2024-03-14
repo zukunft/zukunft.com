@@ -3068,24 +3068,6 @@ CREATE TABLE IF NOT EXISTS user_component_links
 -- --------------------------------------------------------
 
 --
--- Table structure for table`value_formula_links`
---
-
-CREATE TABLE IF NOT EXISTS `value_formula_links`
-(
-    `value_formula_link_id` int(11) NOT NULL,
-    `group_id`              int(11) DEFAULT NULL,
-    `formula_id`            int(11) DEFAULT NULL,
-    `user_id`               int(11) DEFAULT NULL,
-    `condition_formula_id`  int(11) DEFAULT NULL COMMENT 'if true or 1  to formula is preferred',
-    `comment`               text
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8 COMMENT ='used to select if a saved value should be used or a calculated value';
-
--- --------------------------------------------------------
-
---
 -- Table structure for table`value_phrase_links`
 --
 
@@ -5061,12 +5043,6 @@ ALTER TABLE `values`
     ADD KEY `protect_id` (`protect_id`);
 
 --
--- Indexes for table`value_formula_links`
---
-ALTER TABLE `value_formula_links`
-    ADD PRIMARY KEY (`value_formula_link_id`);
-
---
 -- Indexes for table`value_phrase_links`
 --
 ALTER TABLE `value_phrase_links`
@@ -5425,11 +5401,6 @@ ALTER TABLE `user_types`
 --
 ALTER TABLE `values`
     MODIFY `group_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table`value_formula_links`
---
-ALTER TABLE `value_formula_links`
-    MODIFY `value_formula_link_id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table`value_phrase_links`
 --
