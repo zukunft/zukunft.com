@@ -73,10 +73,14 @@ class sql
     const FROM = 'FROM';
     const WHERE = 'WHERE';
     const CASE = 'CASE WHEN';
+    const CASE_MYSQL = 'IF(';
     const THEN = 'THEN';
+    const THEN_MYSQL = ',';
     const IS_NULL = 'IS NULL';
     const ELSE = 'ELSE';
+    const ELSE_MYSQL = ',';
     const END = 'END';
+    const END_MYSQL = ')';
     const UNION = 'UNION';
     const TRUE = '1'; // representing true in the where part for a smallint field
     const FALSE = '0'; // representing true in the where part for a smallint field
@@ -3582,6 +3586,15 @@ class sql
     function is_user(array $tbl_types): bool
     {
         if (in_array(sql_table_type::USER, $tbl_types)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function is_MySQL(): bool
+    {
+        if ($this->db_type == sql_db::MYSQL) {
             return true;
         } else {
             return false;

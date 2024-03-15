@@ -74,6 +74,17 @@ class db_setup_tests
                     $t->assert_sql_contains($test_name, $sql_fixed, $sql_create);
                 }
             }
+
+            foreach (sql_db::DB_VIEW_CLASSES as $class) {
+                $name = $lib->class_to_name($class);
+
+                $test_name = $name . ' sql view is part of setup sql for ' . $db_type;
+                $sql_create = test_resource_file(
+                    DB_RES_PATH . $lib->class_to_path($name) . DIRECTORY_SEPARATOR .
+                    $name . '_view' . $db->ext($db_type) . '.sql');
+                $t->assert_sql_contains($test_name, $sql_fixed, $sql_create);
+            }
+
         }
         // TODO check that nothing is remaining in the sql setup statement
         //      or that all sql statements have a created by an sql creator call

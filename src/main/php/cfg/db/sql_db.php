@@ -73,6 +73,7 @@ use cfg\log\change_prime_value;
 use cfg\log\change_standard_value;
 use cfg\log\change_table;
 use cfg\log\system_log;
+use cfg\phrase;
 use cfg\phrase_table;
 use cfg\phrase_table_status;
 use cfg\phrase_type;
@@ -274,6 +275,10 @@ class sql_db
         component_type::class,
         component::class,
         component_link::class
+    ];
+    // classes that use a database view
+    const DB_VIEW_CLASSES = [
+        phrase::class
     ];
 
     // tables that do not have a name

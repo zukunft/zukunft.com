@@ -3117,68 +3117,132 @@ CREATE TABLE IF NOT EXISTS `view_link_types`
 -- --------------------------------------------------------
 
 --
--- Structure for view`phrases`
+-- structure for view prime_phrases (phrases with an id less than 2^16 so that 4 phrase id fit in a 64 bit db key)
 --
-DROP TABLE IF EXISTS `phrases`;
 
-CREATE ALGORITHM = UNDEFINED DEFINER =`root`@`localhost` SQL SECURITY DEFINER VIEW `phrases` AS
-select `words`.`word_id`            AS `phrase_id`,
-       `words`.`user_id`            AS `user_id`,
-       `words`.`word_name`          AS `phrase_name`,
-       `words`.`description`        AS `description`,
-       `words`.`values`             AS `values`,
-       `words`.`phrase_type_id`     AS `phrase_type_id`,
-       `words`.`excluded`           AS `excluded`,
-       `words`.`share_type_id`      AS `share_type_id`,
-       `words`.`protect_id` AS `protect_id`
-  from `words`
-union
-select (`triples`.`triple_id` * -(1)) AS `phrase_id`,
-       `triples`.`user_id`               AS `user_id`,
-       if(`triples`.`triple_name` is null,
-          if(`triples`.`name_given` is null,
-             `triples`.`name_generated`,
-             `triples`.`name_given`),
-          `triples`.`triple_name`) AS `phrase_name`,
-       `triples`.`description`           AS `description`,
-       `triples`.`values`                AS `values`,
-       `triples`.`phrase_type_id`        AS `phrase_type_id`,
-       `triples`.`excluded`              AS `excluded`,
-       `triples`.`share_type_id`         AS `share_type_id`,
-       `triples`.`protect_id`    AS `protect_id`
-  from `triples`;
+CREATE OR REPLACE VIEW prime_phrases AS
+SELECT w.word_id AS phrase_id,
+       w.user_id,
+       w.word_name AS phrase_name,
+       w.description,
+       w.`values`,
+       w.phrase_type_id,
+       w.excluded,
+       w.share_type_id,
+       w.protect_id
+FROM words AS w
+WHERE w.word_id < 32767
+UNION
+SELECT t.triple_id * -1 AS phrase_id,
+       t.user_id,
+       IF(t.triple_name IS NULL,
+          IF(t.name_given IS NULL,
+             t.name_generated,
+             t.name_given),
+          t.triple_name) AS phrase_name,
+       t.description,
+       t.`values`,
+       t.phrase_type_id,
+       t.excluded,
+       t.share_type_id,
+       t.protect_id
+FROM triples AS t
+WHERE t.triple_id < 32767;
 
 --
--- Structure for view`phrases`
+-- structure for view phrases (phrases with an id that is not prime)
 --
-DROP TABLE IF EXISTS `user_phrases`;
 
-CREATE ALGORITHM = UNDEFINED DEFINER =`root`@`localhost`SQL
-    SECURITY DEFINER VIEW `user_phrases` AS
-select `user_words`.`word_id`       AS `phrase_id`,
-       `user_words`.`user_id`       AS `user_id`,
-       `user_words`.`word_name`     AS `phrase_name`,
-       `user_words`.`description`   AS `description`,
-       `user_words`.`values`        AS `values`,
-       `user_words`.`excluded`      AS `excluded`,
-       `user_words`.`share_type_id` AS `share_type_id`,
-       `user_words`.`protect_id`    AS `protect_id`
-  from `user_words`
-union
-select (`user_triples`.`triple_id` * -(1)) AS `phrase_id`,
-       `user_triples`.`user_id`               AS `user_id`,
-       if(`user_triples`.`triple_name` is null,
-          if(`user_triples`.`name_given` is null,
-             `user_triples`.`name_generated`,
-             `user_triples`.`name_given`),
-          `user_triples`.`triple_name`) AS `phrase_name`,
-       `user_triples`.`description`           AS `description`,
-       `user_triples`.`values`                AS `values`,
-       `user_triples`.`excluded`              AS `excluded`,
-       `user_triples`.`share_type_id`         AS `share_type_id`,
-       `user_triples`.`protect_id`            AS `protect_id`
-  from `user_triples`;
+CREATE OR REPLACE VIEW phrases AS
+SELECT w.word_id AS phrase_id,
+       w.user_id,
+       w.word_name AS phrase_name,
+       w.description,
+       w.`values`,
+       w.phrase_type_id,
+       w.excluded,
+       w.share_type_id,
+       w.protect_id
+FROM words AS w
+UNION
+SELECT t.triple_id * -1 AS phrase_id,
+       t.user_id,
+       IF(t.triple_name IS NULL,
+          IF(t.name_given IS NULL,
+             t.name_generated,
+             t.name_given),
+          t.triple_name) AS phrase_name,
+       t.description,
+       t.`values`,
+       t.phrase_type_id,
+       t.excluded,
+       t.share_type_id,
+       t.protect_id
+FROM triples AS t;
 
+--
+-- structure for view user_prime_phrases (phrases with an id less than 2^16 so that 4 phrase id fit in a 64 bit db key)
+--
+
+CREATE OR REPLACE VIEW user_prime_phrases AS
+SELECT w.word_id AS phrase_id,
+       w.user_id,
+       w.word_name AS phrase_name,
+       w.description,
+       w.`values`,
+       w.phrase_type_id,
+       w.excluded,
+       w.share_type_id,
+       w.protect_id
+FROM user_words AS w
+WHERE w.word_id < 32767
+UNION
+SELECT t.triple_id * -1 AS phrase_id,
+       t.user_id,
+       IF(t.triple_name IS NULL,
+          IF(t.name_given IS NULL,
+             t.name_generated,
+             t.name_given),
+          t.triple_name) AS phrase_name,
+       t.description,
+       t.`values`,
+       t.phrase_type_id,
+       t.excluded,
+       t.share_type_id,
+       t.protect_id
+FROM user_triples AS t
+WHERE t.triple_id < 32767;
+
+--
+-- structure for view user_phrases (phrases with an id that is not prime)
+--
+
+CREATE OR REPLACE VIEW user_phrases AS
+SELECT w.word_id AS phrase_id,
+       w.user_id,
+       w.word_name AS phrase_name,
+       w.description,
+       w.`values`,
+       w.phrase_type_id,
+       w.excluded,
+       w.share_type_id,
+       w.protect_id
+FROM user_words AS w
+UNION
+SELECT t.triple_id * -1 AS phrase_id,
+       t.user_id,
+       IF(t.triple_name IS NULL,
+          IF(t.name_given IS NULL,
+             t.name_generated,
+             t.name_given),
+          t.triple_name) AS phrase_name,
+       t.description,
+       t.`values`,
+       t.phrase_type_id,
+       t.excluded,
+       t.share_type_id,
+       t.protect_id
+FROM user_triples AS t;
 
 --
 -- Structure for view`terms`
@@ -6017,18 +6081,9 @@ ALTER TABLE user_groups_big
 
 --
 -- Constraints for table`refs`
--- TODO foreign
 --
 ALTER TABLE `refs`
     ADD CONSTRAINT `refs_fk_1` FOREIGN KEY (`ref_type_id`) REFERENCES `ref_types` (`ref_type_id`);
-
---
--- Constraints for table`source_values`
---
-ALTER TABLE `source_values`
-    ADD CONSTRAINT `source_values_fk_3` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
-    ADD CONSTRAINT `source_values_fk_1` FOREIGN KEY (`group_id`) REFERENCES `values` (`group_id`),
-    ADD CONSTRAINT `source_values_fk_2` FOREIGN KEY (`source_id`) REFERENCES `sources` (`source_id`);
 
 --
 -- Constraints for table`sys_log`
