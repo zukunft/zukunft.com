@@ -175,7 +175,7 @@ class sql
     private ?string $order;    // the ORDER                 SQL statement that is used for the next select query
     private ?string $page;     // the LIMIT and OFFSET      SQL statement that is used for the next select query
     private ?string $end;      // the closing               SQL statement that is used for the next select query
-    private ?string $sub_sql;  // a complex sql statement used for the next select query
+    //private ?string $sub_sql;  // a complex sql statement used for the next select query
     private bool $use_page;    // true if the limit and offset statement should be added at the end
 
     // temp for handling the user fields
@@ -300,7 +300,7 @@ class sql
         $this->order = '';
         $this->page = '';
         $this->end = '';
-        $this->sub_sql = '';
+        //$this->sub_sql = '';
         $this->use_page = false;
 
         $this->field_lst = [];
@@ -568,7 +568,7 @@ class sql
      */
     function set_join_sql(string $sql, array $join_field_lst, string $join_field): void
     {
-        $this->sub_sql = $sql;
+        //$this->sub_sql = $sql;
         if ($this->join_type == '' and !$this->join_force_rename
             or ($this->join_field == $join_field and $join_field != '')) {
             $this->join_type = $sql;
@@ -1561,8 +1561,8 @@ class sql
             } elseif ($this->usr_query and $this->join_usr_query) {
                 $result = $this->sep($result);
                 $result .= ' ' . sql_db::ULK_TBL . '.' . $field_esc;
-            } elseif ($this->join_sub_query) {
                 // switched off because at the moment only the change sum should be calculated
+            //} elseif ($this->join_sub_query) {
                 //$result = $this->sep($result);
                 //$result .= ' ' . sql_db::GRP_TBL . '.' . $field_esc;
             }
@@ -3108,7 +3108,7 @@ class sql
 
                 // escape the text value for MySQL
                 if (!isset($this->mysql)) {
-                    $result = $this->sql_escape($result);
+                    $result = $this->name_sql_esc($result);
                 } else {
                     $result = mysqli_real_escape_string($this->mysql, $result);
                 }

@@ -1,7 +1,3 @@
---
--- Database: zukunft
---
-
 -- --------------------------------------------------------
 
 ALTER DATABASE zukunft SET search_path TO public;
@@ -31,19 +27,22 @@ COMMENT ON COLUMN config.description IS 'text to explain the config value to an 
 -- --------------------------------------------------------
 
 --
--- table structure for system log types e.g. info, warning and error
--- TODO change to an enum because this will probably never change
+-- table structure for system log types e.g. info,warning and error
 --
 
 CREATE TABLE IF NOT EXISTS sys_log_types
 (
     sys_log_type_id BIGSERIAL PRIMARY KEY,
-    type_name       varchar(255) NOT NULL,
-    code_id         varchar(255) NOT NULL,
-    description     text     DEFAULT NULL
+    type_name         varchar(255)     NOT NULL,
+    code_id           varchar(255) DEFAULT NULL,
+    description       text         DEFAULT NULL
 );
 
-COMMENT ON TABLE sys_log_types IS 'system log types e.g. info, warning and error';
+COMMENT ON TABLE sys_log_types IS 'for system log types e.g. info,warning and error';
+COMMENT ON COLUMN sys_log_types.sys_log_type_id IS 'the internal unique primary index';
+COMMENT ON COLUMN sys_log_types.type_name IS 'the unique type name as shown to the user and used for the selection';
+COMMENT ON COLUMN sys_log_types.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
+COMMENT ON COLUMN sys_log_types.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
 
 -- --------------------------------------------------------
 
@@ -2119,6 +2118,7 @@ COMMENT ON COLUMN user_values_geo_big.protect_id    IS 'to protect against unwan
 
 --
 -- table structure for the header of a list of numbers that differ only by the timestamp
+-- TODO generate view
 --
 
 CREATE TABLE IF NOT EXISTS value_time_series
@@ -2140,6 +2140,7 @@ COMMENT ON COLUMN value_time_series.user_id IS 'the owner / creator of the numbe
 
 --
 -- table structure for specific user changes in a of numbers that differ only by the timestamp
+-- TODO generate view
 --
 
 CREATE TABLE IF NOT EXISTS user_value_time_series
@@ -4515,21 +4516,12 @@ FROM change_fields AS f,
      change_tables AS t
 WHERE f.table_id = t.change_table_id;
 
--- --------------------------------------------------------
-
---
--- table structure for future use
---
--- TODO generate header and footer
--- TODO generate check remaining
 
 -- --------------------------------------------------------
-
 --
--- Indexes for tables
+-- indexes for tables
 -- remark: no index needed for preloaded tables such as phrase types
 --
-
 -- --------------------------------------------------------
 
 --
@@ -4538,6 +4530,14 @@ WHERE f.table_id = t.change_table_id;
 
 CREATE INDEX config_config_name_idx ON config (config_name);
 CREATE INDEX config_code_idx ON config (code_id);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table sys_log_types
+--
+
+CREATE INDEX sys_log_types_type_name_idx ON sys_log_types (type_name);
 
 -- --------------------------------------------------------
 
@@ -5925,10 +5925,10 @@ CREATE INDEX user_component_links_component_link_type_idx ON user_component_link
 CREATE INDEX user_component_links_position_type_idx ON user_component_links (position_type_id);
 
 -- --------------------------------------------------------
-
 --
 -- foreign key constraints and auto_increment for tables
 --
+-- --------------------------------------------------------
 
 --
 -- constraints for table sys_log
@@ -6793,8 +6793,3 @@ ALTER TABLE user_component_links
     ADD CONSTRAINT user_component_links_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
     ADD CONSTRAINT user_component_links_component_link_type_fk FOREIGN KEY (component_link_type_id) REFERENCES component_link_types (component_link_type_id),
     ADD CONSTRAINT user_component_links_position_type_fk FOREIGN KEY (position_type_id) REFERENCES position_types (position_type_id);
-
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

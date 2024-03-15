@@ -36,17 +36,19 @@ CREATE TABLE IF NOT EXISTS config
 -- --------------------------------------------------------
 
 --
--- Table structure for system log types e.g. info, warning and error
+-- table structure for system log types e.g. info,warning and error
 --
 
-CREATE TABLE IF NOT EXISTS `sys_log_types`
+CREATE TABLE IF NOT EXISTS sys_log_types
 (
-    `sys_log_type_id` int(11)      NOT NULL,
-    `type_name`       varchar(200) NOT NULL,
-    `code_id`         varchar(50)  NOT NULL
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8;
+    sys_log_type_id bigint           NOT NULL COMMENT 'the internal unique primary index',
+    type_name         varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
+    code_id           varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
+    description       text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'for system log types e.g. info,warning and error';
 
 -- --------------------------------------------------------
 
@@ -3534,6 +3536,16 @@ ALTER TABLE config
     ADD PRIMARY KEY (config_id),
     ADD KEY config_config_name_idx (config_name),
     ADD KEY config_code_idx (code_id);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table sys_log_types
+--
+
+ALTER TABLE sys_log_types
+    ADD PRIMARY KEY (sys_log_type_id),
+    ADD KEY sys_log_types_type_name_idx (type_name);
 
 -- --------------------------------------------------------
 

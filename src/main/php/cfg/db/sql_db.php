@@ -81,6 +81,7 @@ use cfg\pod;
 use cfg\pod_status;
 use cfg\pod_type;
 use cfg\protection_type;
+use cfg\ref;
 use cfg\ref_type;
 use cfg\result\result;
 use cfg\sandbox;
@@ -91,6 +92,7 @@ use cfg\source_type;
 use cfg\sys_log_function;
 use cfg\sys_log_level;
 use cfg\sys_log_status;
+use cfg\sys_log_type;
 use cfg\system_time;
 use cfg\system_time_type;
 use cfg\term;
@@ -216,9 +218,17 @@ class sql_db
     // extra names for backward compatibility
     const MYSQL_RESERVED_NAMES_EXTRA = ['VALUE', 'VALUES', 'URL'];
 
+    // setup header and footer
+    const SETUP_HEADER = 'ALTER DATABASE zukunft SET search_path TO public;';
+    const SETUP_COMMENT = '--';
+    const SETUP_INDEX = 'indexes for tables';
+    const SETUP_INDEX_COM = 'remark: no index needed for preloaded tables such as phrase types';
+    const SETUP_FOREIGN_KEY = 'foreign key constraints and auto_increment for tables';
+
     // classes that have a database table
     const DB_TABLE_CLASSES = [
         config::class,
+        sys_log_type::class,
         sys_log_status::class,
         sys_log_function::class,
         system_log::class,
@@ -258,6 +268,7 @@ class sql_db
         source_type::class,
         source::class,
         ref_type::class,
+        ref::class,
         value::class,
         value_ts_data::class,
         element_type::class,
@@ -4845,6 +4856,35 @@ class sql_db
             $result = false;
         }
         return $result;
+    }
+
+    function sql_setup_header(): string
+    {
+        $sc = new sql();
+        $sql = $sc->sql_separator();
+        $sql .= self::SETUP_HEADER;
+        return $sql;
+    }
+
+    function sql_separator_index(): string
+    {
+        $sc = new sql();
+        $sql = $sc->sql_separator();
+        $sql .= self::SETUP_COMMENT . ' ';
+        $sql .= self::SETUP_COMMENT . ' ' . self::SETUP_INDEX . ' ';
+        $sql .= self::SETUP_COMMENT . ' ' . self::SETUP_INDEX_COM . ' ';
+        $sql .= self::SETUP_COMMENT . ' ';
+        return $sql;
+    }
+    function sql_separator_foreign_key(): string
+    {
+        $sc = new sql();
+        $sql = $sc->sql_separator();
+        $sql .= self::SETUP_COMMENT . ' ';
+        $sql .= self::SETUP_COMMENT . ' ' . self::SETUP_FOREIGN_KEY . ' ';
+        $sql .= self::SETUP_COMMENT . ' ';
+        $sql .= $sc->sql_separator();
+        return $sql;
     }
 
     /**

@@ -38,6 +38,7 @@ include_once MODEL_HELPER_PATH . 'db_object.php';
 include_once MODEL_HELPER_PATH . 'type_object.php';
 include_once MODEL_SYSTEM_PATH . 'base_list.php';
 include_once MODEL_SYSTEM_PATH . 'sys_log_function.php';
+include_once MODEL_SYSTEM_PATH . 'sys_log_type.php';
 include_once MODEL_SYSTEM_PATH . 'sys_log_status.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
 include_once MODEL_SYSTEM_PATH . 'sys_log_status_list.php';

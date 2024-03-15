@@ -1635,6 +1635,7 @@ class library
             case $this->class_to_name(component_link::class):
                 $result = $this->class_to_name(component::class);
                 break;
+            case $this->class_to_name(sys_log_type::class):
             case $this->class_to_name(sys_log_status::class):
             case $this->class_to_name(sys_log_function::class):
             case $this->class_to_name(job_type::class):

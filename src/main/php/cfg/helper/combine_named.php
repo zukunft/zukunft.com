@@ -261,24 +261,26 @@ class combine_named extends combine_object
                         $sql_where_fld .= ' ' . sql::AND . ' ';
                     }
                     if ($fld_where_name != '') {
-                        $tbl_where_fld = $tbl_where[$cond_pos];
-                        if (is_array($tbl_where_fld)) {
-                            foreach ($tbl_where_fld as $tbl_where_cond) {
-                                if ($sql_where_cond != '') {
-                                    $sql_where_cond .= ' ' . sql::OR . ' ';
-                                } else {
-                                    $sql_where_cond .= ' (';
+                        if (count($tbl_where) > $cond_pos) {
+                            $tbl_where_fld = $tbl_where[$cond_pos];
+                            if (is_array($tbl_where_fld)) {
+                                foreach ($tbl_where_fld as $tbl_where_cond) {
+                                    if ($sql_where_cond != '') {
+                                        $sql_where_cond .= ' ' . sql::OR . ' ';
+                                    } else {
+                                        $sql_where_cond .= ' (';
+                                    }
+                                    if ($tbl_where_cond != '') {
+                                        $sql_where_cond .= ' ' . $tbl_chr . '.' . $sc->name_sql_esc($fld_where_name) . ' ';
+                                        $sql_where_cond .= $tbl_where_cond;
+                                    }
                                 }
-                                if ($tbl_where_cond != '') {
-                                    $sql_where_cond .= ' ' . $tbl_chr . '.' . $sc->name_sql_esc($fld_where_name) . ' ';
-                                    $sql_where_cond .= $tbl_where_cond;
+                                $sql_where_cond .= ') ';
+                            } else {
+                                if ($tbl_where_fld != '') {
+                                    $sql_where_fld .= ' ' . $tbl_chr . '.' . $sc->name_sql_esc($fld_where_name) . ' ';
+                                    $sql_where_fld .= $tbl_where_fld;
                                 }
-                            }
-                            $sql_where_cond .= ') ';
-                        } else {
-                            if ($tbl_where_fld != '') {
-                                $sql_where_fld .= ' ' . $tbl_chr . '.' . $sc->name_sql_esc($fld_where_name) . ' ';
-                                $sql_where_fld .= $tbl_where_fld;
                             }
                         }
                     }

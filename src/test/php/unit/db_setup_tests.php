@@ -51,6 +51,7 @@ class db_setup_tests
         $db = new sql_db();
         foreach (sql_db::DB_LIST as $db_type) {
             $sql_fixed = resource_file(DB_RES_PATH . DB_SETUP_PATH . $db->path($db_type) . DB_SETUP_SQL_FILE);
+            $sql_fixed_trim = $lib->trim_sql($sql_fixed);
             foreach (sql_db::DB_TABLE_CLASSES as $class) {
                 $name = $lib->class_to_name($class);
 
@@ -59,12 +60,14 @@ class db_setup_tests
                     DB_RES_PATH . $lib->class_to_path($name) . DIRECTORY_SEPARATOR .
                     $name . '_create' . $db->ext($db_type) . '.sql');
                 $t->assert_sql_contains($test_name, $sql_fixed, $sql_create);
+                $sql_fixed_trim = str_replace($lib->trim_sql($sql_create),'', $sql_fixed_trim);
 
                 $test_name = $name . ' sql index is part of setup sql for ' . $db_type;
                 $sql_create = test_resource_file(
                     DB_RES_PATH . $lib->class_to_path($name) . DIRECTORY_SEPARATOR .
                     $name . '_index' . $db->ext($db_type) . '.sql');
                 $t->assert_sql_contains($test_name, $sql_fixed, $sql_create);
+                $sql_fixed_trim = str_replace($lib->trim_sql($sql_create),'', $sql_fixed_trim);
 
                 $filename = DB_RES_PATH . $lib->class_to_path($name) . DIRECTORY_SEPARATOR .
                     $name . '_foreign_key' . $db->ext($db_type) . '.sql';
@@ -73,6 +76,7 @@ class db_setup_tests
                     $sql_create = test_resource_file($filename);
                     $t->assert_sql_contains($test_name, $sql_fixed, $sql_create);
                 }
+                $sql_fixed_trim = str_replace($lib->trim_sql($sql_create),'', $sql_fixed_trim);
             }
 
             foreach (sql_db::DB_VIEW_CLASSES as $class) {
@@ -83,12 +87,20 @@ class db_setup_tests
                     DB_RES_PATH . $lib->class_to_path($name) . DIRECTORY_SEPARATOR .
                     $name . '_view' . $db->ext($db_type) . '.sql');
                 $t->assert_sql_contains($test_name, $sql_fixed, $sql_create);
+                $sql_fixed_trim = str_replace($lib->trim_sql($sql_create),'', $sql_fixed_trim);
             }
 
+            // check header and footer
+            $sql_fixed_trim = str_replace($lib->trim_sql($db->sql_setup_header()),'', $sql_fixed_trim);
+            $sql_fixed_trim = str_replace($lib->trim_sql($db->sql_separator_index()),'', $sql_fixed_trim);
+            $sql_fixed_trim = str_replace($lib->trim_sql($db->sql_separator_foreign_key()),'', $sql_fixed_trim);
+
+            // check that nothing is remaining in the sql setup statement
+            // TODO activate
+            $test_name = 'sql setup remaining for db ' . $db_type;
+            //$t->assert($test_name, $sql_fixed_trim, '');
+
         }
-        // TODO check that nothing is remaining in the sql setup statement
-        //      or that all sql statements have a created by an sql creator call
-        //$t->assert($test_name_all, $result->get_last_message(), $target);
     }
 
 }

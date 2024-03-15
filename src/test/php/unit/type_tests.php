@@ -40,6 +40,7 @@ use cfg\source_type;
 use cfg\sys_log_function;
 use cfg\sys_log_status;
 use cfg\job_type;
+use cfg\sys_log_type;
 use cfg\user\user_profile;
 use cfg\user\user_type;
 use cfg\user_official_type;
@@ -58,7 +59,12 @@ class type_tests
 
         $t->header('Unit tests of the type classes');
 
-        // TODO add sys_log_types, job_types
+        // TODO job_types
+
+        $t->subheader('System log type SQL setup statements');
+        $log_typ = new sys_log_type('');
+        $t->assert_sql_table_create($log_typ);
+        $t->assert_sql_index_create($log_typ);
 
         $t->subheader('System log status SQL setup statements');
         $log_sta = new sys_log_status('');

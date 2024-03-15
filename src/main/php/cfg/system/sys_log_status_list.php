@@ -35,6 +35,7 @@ use cfg\db\sql_db;
 
 include_once MODEL_HELPER_PATH . 'type_list.php';
 include_once MODEL_HELPER_PATH . 'type_object.php';
+include_once MODEL_SYSTEM_PATH . 'sys_log_type.php';
 include_once MODEL_SYSTEM_PATH . 'sys_log_status.php';
 include_once DB_PATH . 'sql_db.php';
 
