@@ -2,8 +2,8 @@
 
 /*
 
-    model/phrase/term.php - either a word, verb, triple or formula
-    ---------------------
+    cfg/phrase/term.php - either a word, verb, triple or formula
+    -------------------
 
     TODO: load formula word
         check triple
@@ -36,7 +36,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2024 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -64,6 +64,7 @@ use api\word\word as word_api;
 use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
+use cfg\db\sql_table_type;
 use html\html_base;
 use html\phrase\term as term_dsp;
 use html\word\word as word_dsp;
@@ -80,9 +81,9 @@ class term extends combine_named
     const FLD_ID = 'term_id';
     const FLD_NAME = 'term_name';
     const FLD_USAGE = 'usage'; // included in the database view to be able to show the user the most relevant terms
-    const FLD_TYPE = 'term_type_id'; // the phrase type for word or triple or the formula type for formulas; not used for verbs
+    const FLD_TYPE = 'term_type_id'; // the term type for word or triple or the formula type for formulas; not used for verbs
 
-    // the common phrase database field names excluding the id and excluding the user specific fields
+    // the common term database field names excluding the id and excluding the user specific fields
     const FLD_NAMES = array(
         self::FLD_TYPE
     );
@@ -102,6 +103,84 @@ class term extends combine_named
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
+    // list of term types used for the database views
+    // using one array of sql table types per view
+    const TBL_PRIME_COM = 'terms with an id less than 2^16 so that 4 term id fit in a 64 bit db key';
+    const TBL_PRIME_WHERE = '< 32767'; // 2^16 / 2 - 1
+    const TBL_WORD_WHERE = ['<> 10', sql::IS_NULL]; // to exclude the formula words from the term view
+    const TBL_COM = 'terms with an id that is not prime';
+    const FLD_WORD_ID_TO_TERM_ID = '* 2 - 1'; // to convert a word id to a term id
+    const FLD_TRIPLE_ID_TO_TERM_ID = '* -2 + 1'; // to convert a triple id to a term id
+    const FLD_FORMULA_ID_TO_TERM_ID = '* 2'; // to convert a formula id to a term id
+    const FLD_VERB_ID_TO_TERM_ID = '* -2'; // to convert a verb id to a term id
+    // each db view can have several sql table types and as second entry a where conditions
+    // or list of or where conditions
+    const TBL_LIST = [
+        [sql_table_type::PRIME, [self::TBL_WORD_WHERE, self::TBL_PRIME_WHERE], self::TBL_PRIME_COM],
+        [sql_table_type::MOST, [self::TBL_WORD_WHERE], self::TBL_COM],
+        [sql_table_type::PRIME, [self::TBL_WORD_WHERE, self::TBL_PRIME_WHERE], self::TBL_PRIME_COM, sql_table_type::USER],
+        [sql_table_type::MOST, [self::TBL_WORD_WHERE], self::TBL_COM, sql_table_type::USER],
+    ];
+    // list of original tables that should be connoted with union
+    // with fields used in the view
+    // the array contains on the first level the class, fields and the where fields
+    // each fields can have additional to the name the target name (AS) and a calculation rules
+    // the field name can also be an array where the first field is use with priority over the following
+    // the where field can be a single field or an array
+    const TBL_FLD_LST_VIEW = [
+        [word::class, [
+            [word::FLD_ID, term::FLD_ID, self::FLD_WORD_ID_TO_TERM_ID],
+            [user::FLD_ID],
+            [word::FLD_NAME, term::FLD_NAME],
+            [sandbox_named::FLD_DESCRIPTION],
+            [word::FLD_VALUES, self::FLD_USAGE],
+            [phrase::FLD_TYPE, self::FLD_TYPE],
+            [sandbox::FLD_EXCLUDED],
+            [sandbox::FLD_SHARE],
+            [sandbox::FLD_PROTECT],
+            ['', formula::FLD_FORMULA_TEXT],
+            ['', formula::FLD_FORMULA_USER_TEXT]
+        ], [phrase::FLD_TYPE, word::FLD_ID]],
+        [triple::class, [
+            [triple::FLD_ID, term::FLD_ID, self::FLD_TRIPLE_ID_TO_TERM_ID],
+            [user::FLD_ID],
+            [[triple::FLD_NAME, triple::FLD_NAME_GIVEN, triple::FLD_NAME_AUTO], term::FLD_NAME],
+            [sandbox_named::FLD_DESCRIPTION],
+            [triple::FLD_VALUES, self::FLD_USAGE],
+            [phrase::FLD_TYPE, self::FLD_TYPE],
+            [sandbox::FLD_EXCLUDED],
+            [sandbox::FLD_SHARE],
+            [sandbox::FLD_PROTECT],
+            ['', formula::FLD_FORMULA_TEXT],
+            ['', formula::FLD_FORMULA_USER_TEXT]
+        ], ['', triple::FLD_ID]],
+        [formula::class, [
+            [formula::FLD_ID, term::FLD_ID, self::FLD_FORMULA_ID_TO_TERM_ID],
+            [user::FLD_ID],
+            [formula::FLD_NAME, term::FLD_NAME],
+            [sandbox_named::FLD_DESCRIPTION],
+            [formula::FLD_USAGE, self::FLD_USAGE],
+            [formula::FLD_TYPE, self::FLD_TYPE],
+            [sandbox::FLD_EXCLUDED],
+            [sandbox::FLD_SHARE],
+            [sandbox::FLD_PROTECT],
+            [formula::FLD_FORMULA_TEXT],
+            [formula::FLD_FORMULA_USER_TEXT]
+        ], ['', formula::FLD_ID]],
+        [verb::class, [
+            [verb::FLD_ID, term::FLD_ID, self::FLD_VERB_ID_TO_TERM_ID],
+            [sql::NULL_VALUE, user::FLD_ID, sql::FLD_CONST],
+            [verb::FLD_NAME, term::FLD_NAME],
+            [sandbox_named::FLD_DESCRIPTION],
+            [verb::FLD_WORDS, self::FLD_USAGE],
+            [sql::NULL_VALUE, self::FLD_TYPE, sql::FLD_CONST],
+            [sql::NULL_VALUE, sandbox::FLD_EXCLUDED, sql::FLD_CONST],
+            [share_type::PUBLIC_ID, sandbox::FLD_SHARE, sql::FLD_CONST],
+            [protection_type::ADMIN_ID, sandbox::FLD_PROTECT, sql::FLD_CONST],
+            ['', formula::FLD_FORMULA_TEXT],
+            ['', formula::FLD_FORMULA_USER_TEXT]
+        ], ['', verb::FLD_ID]]
+    ];
 
 
     /*

@@ -91,6 +91,11 @@ class term_tests
         $t->assert($t->name . 'verb name', $trm->name(), $vrb->name());
 
 
+        $t->subheader('Term SQL setup statements');
+        $trm = $t->dummy_term();
+        $t->assert_sql_view_create($trm);
+
+
         $t->subheader('SQL statement tests');
 
         // check the creation of the prepared sql statements to load a term by id or name

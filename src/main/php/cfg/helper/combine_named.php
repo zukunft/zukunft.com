@@ -201,6 +201,9 @@ class combine_named extends combine_object
             $fld_lst = $tbl[1];
             $fld_where = $tbl[2];
             $tbl_name = $lib->class_to_name($sub_class);
+            if ($sub_class == verb::class) {
+                $usr_prefix = '';
+            }
             $tbl_chr = $tbl_name[0];
             $sql_tbl .= sql::SELECT . ' ';
             $sql_fld = '';
@@ -212,22 +215,91 @@ class combine_named extends combine_object
                 if (is_array($fld_name)) {
                     $sql_fld .= $this->sql_when($sc, $fld_name, $tbl_chr);
                 } else {
-                    $sql_fld .= $tbl_chr . '.' . $sc->name_sql_esc($fld_name);
+                    if (count($fld) > 2) {
+                        if ($fld[2] == sql::FLD_CONST) {
+                            if ($fld_name == '') {
+                                $sql_fld .= "''";
+                            } else {
+                                $sql_fld .= $fld_name;
+                            }
+                        } else {
+                            if ($fld_name == '') {
+                                $sql_fld .= "''";
+                            } else {
+                                $sql_fld .= $tbl_chr . '.' . $sc->name_sql_esc($fld_name);
+                            }
+                        }
+                    } else {
+                        if ($fld_name == '') {
+                            $sql_fld .= "''";
+                        } else {
+                            $sql_fld .= $tbl_chr . '.' . $sc->name_sql_esc($fld_name);
+                        }
+                    }
                 }
                 if (count($fld) > 1) {
                     if (count($fld) > 2) {
-                        $sql_fld .= ' ' . $fld[2] . ' ' . sql::AS . ' ' . $fld[1];
+                        if ($fld[2] != sql::FLD_CONST) {
+                            $sql_fld .= ' ' . $fld[2] . ' ' . sql::AS . ' ' . $sc->name_sql_esc($fld[1]);
+                        } else {
+                            $sql_fld .= ' ' . sql::AS . ' ' . $sc->name_sql_esc($fld[1]);
+                        }
                     } else {
-                        $sql_fld .= ' ' . sql::AS . ' ' . $fld[1];
+                        $sql_fld .= ' ' . sql::AS . ' ' . $sc->name_sql_esc($fld[1]);
                     }
                 }
             }
             $sql_tbl .= $sql_fld . ' ';
             $sql_tbl .= sql::FROM . ' ' . $sc->get_table_name($usr_prefix . $tbl_name) . ' ';
             $sql_tbl .= sql::AS . ' ' . $tbl_chr;
-            if ($tbl_where != '') {
-                $sql_tbl .= ' ' . sql::WHERE . ' ' . $tbl_chr . '.' . $sc->name_sql_esc($fld_where) . ' ';
-                $sql_tbl .= $tbl_where;
+            if (is_array($fld_where)) {
+                $sql_where_fld = '';
+                $sql_where_cond = '';
+                $cond_pos = 0;
+                foreach ($fld_where as $fld_where_name) {
+                    if ($sql_where_fld != '') {
+                        $sql_where_fld .= ' ' . sql::AND . ' ';
+                    }
+                    if ($fld_where_name != '') {
+                        $tbl_where_fld = $tbl_where[$cond_pos];
+                        if (is_array($tbl_where_fld)) {
+                            foreach ($tbl_where_fld as $tbl_where_cond) {
+                                if ($sql_where_cond != '') {
+                                    $sql_where_cond .= ' ' . sql::OR . ' ';
+                                } else {
+                                    $sql_where_cond .= ' (';
+                                }
+                                if ($tbl_where_cond != '') {
+                                    $sql_where_cond .= ' ' . $tbl_chr . '.' . $sc->name_sql_esc($fld_where_name) . ' ';
+                                    $sql_where_cond .= $tbl_where_cond;
+                                }
+                            }
+                            $sql_where_cond .= ') ';
+                        } else {
+                            if ($tbl_where_fld != '') {
+                                $sql_where_fld .= ' ' . $tbl_chr . '.' . $sc->name_sql_esc($fld_where_name) . ' ';
+                                $sql_where_fld .= $tbl_where_fld;
+                            }
+                        }
+                    }
+                    $cond_pos++;
+                }
+                if ($sql_where_fld != '') {
+                    if ($sql_where_cond != '') {
+                        $sql_tbl .= ' ' . sql::WHERE . ' ' . $sql_where_cond . ' ' . sql::AND . ' ' . $sql_where_fld;
+                    } else {
+                        $sql_tbl .= ' ' . sql::WHERE . ' ' . $sql_where_fld;
+                    }
+                } else {
+                    if ($sql_where_cond != '') {
+                        $sql_tbl .= ' ' . sql::WHERE . ' ' . $sql_where_cond;
+                    }
+                }
+            } else {
+                if ($tbl_where != '') {
+                    $sql_tbl .= ' ' . sql::WHERE . ' ' . $tbl_chr . '.' . $sc->name_sql_esc($fld_where) . ' ';
+                    $sql_tbl .= $tbl_where;
+                }
             }
         }
         $sql .= $sql_tbl;
@@ -246,27 +318,27 @@ class combine_named extends combine_object
             }
             $sql .= $tbl_chr . '.' . $sc->name_sql_esc($this_fld) . ' ' . sql::IS_NULL;
             if ($sc->is_MySQL()) {
-                $sql .= ' ' . sql::THEN_MYSQL . ' ';
+                $sql .= sql::THEN_MYSQL . ' ';
             } else {
                 $sql .= ') ' . sql::THEN . ' ';
             }
             if (count($fld_lst) > 1) {
-                $sql .= $this->sql_when($sc, $fld_lst, $tbl_chr) . ' ';
+                $sql .= $this->sql_when($sc, $fld_lst, $tbl_chr);
             } else {
-                $sql .= $tbl_chr . '.' . $fld_lst[0] . ' ';
+                $sql .= $tbl_chr . '.' . $fld_lst[0];
             }
         }
         if (count($fld_lst) > 0) {
             if ($sc->is_MySQL()) {
                 $sql .= sql::ELSE_MYSQL . ' ';
             } else {
-                $sql .= sql::ELSE . ' ';
+                $sql .= ' ' . sql::ELSE . ' ';
             }
             $sql .= $tbl_chr . '.' . $sc->name_sql_esc($this_fld) . ' ';
             if ($sc->is_MySQL()) {
                 $sql .= sql::END_MYSQL;
             } else {
-                $sql .= sql::END;
+                $sql .= ' ' . sql::END;
             }
         }
         return $sql;

@@ -93,6 +93,7 @@ use cfg\sys_log_level;
 use cfg\sys_log_status;
 use cfg\system_time;
 use cfg\system_time_type;
+use cfg\term;
 use cfg\triple;
 use cfg\type_lists;
 use cfg\user;
@@ -278,7 +279,8 @@ class sql_db
     ];
     // classes that use a database view
     const DB_VIEW_CLASSES = [
-        phrase::class
+        phrase::class,
+        term::class
     ];
 
     // tables that do not have a name

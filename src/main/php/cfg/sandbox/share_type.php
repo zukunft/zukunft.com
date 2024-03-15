@@ -38,6 +38,7 @@ class share_type extends type_object
 
     // list of the ref types that have a coded functionality
     const PUBLIC = "public";
+    const PUBLIC_ID = 1;
     const PERSONAL = "personal";
     const GROUP = "group";
     const PRIVATE = "private";
