@@ -992,7 +992,20 @@ const DB_TABLE_LIST = [
     'component_types',
     'view_link_types',
     'view_term_links',
-    'user_view_term_links'
+    'user_view_term_links',
+    'value_formula_links',
+    'value_time_series',
+    'user_value_time_series',
+    'values_time_series_prime',
+    'user_values_time_series_prime',
+    'values_time_series_big',
+    'user_values_time_series_big',
+    'results_time_series',
+    'user_results_time_series',
+    'results_time_series_prime',
+    'user_results_time_series_prime',
+    'results_time_series_big',
+    'user_results_time_series_big'
 ];
 const BASE_CODE_LINK_FILE_TYPE = '.csv';
 const SYSTEM_USER_CONFIG_FILE = PATH_BASE_CONFIG_FILES . 'users.json';

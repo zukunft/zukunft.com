@@ -491,30 +491,6 @@ COMMENT ON COLUMN changes.new_id IS 'new value id';
 -- --------------------------------------------------------
 
 --
--- table structure to log all changes done by any user on values with a standard group id
---
-
-CREATE TABLE IF NOT EXISTS change_standard_values
-(
-    change_id        BIGSERIAL PRIMARY KEY,
-    change_time      timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    user_id          bigint    NOT NULL,
-    change_action_id smallint  NOT NULL,
-    group_id         char(112) NOT NULL,
-    change_field_id  bigint    NOT NULL,
-    old_value        double precision DEFAULT NULL,
-    new_value        double precision DEFAULT NULL
-);
-
-COMMENT ON TABLE change_standard_values IS 'to log all changes done by any user on values with a standard group id';
-COMMENT ON COLUMN change_standard_values.change_id IS 'the prime key to identify the change change_standard_value';
-COMMENT ON COLUMN change_standard_values.change_time IS 'time when the user has confirmed the change';
-COMMENT ON COLUMN change_standard_values.user_id IS 'reference to the user who has done the change';
-COMMENT ON COLUMN change_standard_values.change_action_id IS 'the curl action';
-
--- --------------------------------------------------------
-
---
 -- table structure to log all changes done by any user on values with a prime group id
 --
 
@@ -535,6 +511,30 @@ COMMENT ON COLUMN change_prime_values.change_id IS 'the prime key to identify th
 COMMENT ON COLUMN change_prime_values.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_prime_values.user_id IS 'reference to the user who has done the change';
 COMMENT ON COLUMN change_prime_values.change_action_id IS 'the curl action';
+
+-- --------------------------------------------------------
+
+--
+-- table structure to log all changes done by any user on values with a standard group id
+--
+
+CREATE TABLE IF NOT EXISTS change_standard_values
+(
+    change_id        BIGSERIAL PRIMARY KEY,
+    change_time      timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    user_id          bigint    NOT NULL,
+    change_action_id smallint  NOT NULL,
+    group_id         char(112) NOT NULL,
+    change_field_id  bigint    NOT NULL,
+    old_value        double precision DEFAULT NULL,
+    new_value        double precision DEFAULT NULL
+);
+
+COMMENT ON TABLE change_standard_values IS 'to log all changes done by any user on values with a standard group id';
+COMMENT ON COLUMN change_standard_values.change_id IS 'the prime key to identify the change change_standard_value';
+COMMENT ON COLUMN change_standard_values.change_time IS 'time when the user has confirmed the change';
+COMMENT ON COLUMN change_standard_values.user_id IS 'reference to the user who has done the change';
+COMMENT ON COLUMN change_standard_values.change_action_id IS 'the curl action';
 
 -- --------------------------------------------------------
 
@@ -700,30 +700,6 @@ COMMENT ON COLUMN share_types.share_type_id IS 'the internal unique primary inde
 COMMENT ON COLUMN share_types.type_name IS 'the unique type name as shown to the user and used for the selection';
 COMMENT ON COLUMN share_types.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
 COMMENT ON COLUMN share_types.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
-
--- --------------------------------------------------------
-
---
--- table structure for the phrase type to set the predefined behaviour of a word or triple
---
-
-CREATE TABLE IF NOT EXISTS phrase_types
-(
-    phrase_type_id BIGSERIAL PRIMARY KEY,
-    type_name      varchar(255) NOT NULL,
-    code_id        varchar(255) DEFAULT NULL,
-    description    text         DEFAULT NULL,
-    scaling_factor bigint       DEFAULT NULL,
-    word_symbol    varchar(255) DEFAULT NULL
-);
-
-COMMENT ON TABLE phrase_types IS 'for the phrase type to set the predefined behaviour of a word or triple';
-COMMENT ON COLUMN phrase_types.phrase_type_id IS 'the internal unique primary index';
-COMMENT ON COLUMN phrase_types.type_name IS 'the unique type name as shown to the user and used for the selection';
-COMMENT ON COLUMN phrase_types.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
-COMMENT ON COLUMN phrase_types.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
-COMMENT ON COLUMN phrase_types.scaling_factor IS 'e.g. for percent the scaling factor is 100';
-COMMENT ON COLUMN phrase_types.word_symbol IS 'e.g. for percent the symbol is %';
 
 -- --------------------------------------------------------
 
@@ -987,6 +963,30 @@ COMMENT ON TABLE phrase_tables IS 'remember which phrases are stored in which ta
 COMMENT ON COLUMN phrase_tables.phrase_table_id IS 'the internal unique primary index';
 COMMENT ON COLUMN phrase_tables.phrase_id IS 'the values and results of this phrase are primary stored in dynamic tables on the given pod';
 COMMENT ON COLUMN phrase_tables.pod_id IS 'the primary pod where the values and results related to this phrase saved';
+
+-- --------------------------------------------------------
+
+--
+-- table structure for the phrase type to set the predefined behaviour of a word or triple
+--
+
+CREATE TABLE IF NOT EXISTS phrase_types
+(
+    phrase_type_id BIGSERIAL PRIMARY KEY,
+    type_name      varchar(255) NOT NULL,
+    code_id        varchar(255) DEFAULT NULL,
+    description    text         DEFAULT NULL,
+    scaling_factor bigint       DEFAULT NULL,
+    word_symbol    varchar(255) DEFAULT NULL
+);
+
+COMMENT ON TABLE phrase_types IS 'for the phrase type to set the predefined behaviour of a word or triple';
+COMMENT ON COLUMN phrase_types.phrase_type_id IS 'the internal unique primary index';
+COMMENT ON COLUMN phrase_types.type_name IS 'the unique type name as shown to the user and used for the selection';
+COMMENT ON COLUMN phrase_types.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
+COMMENT ON COLUMN phrase_types.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
+COMMENT ON COLUMN phrase_types.scaling_factor IS 'e.g. for percent the scaling factor is 100';
+COMMENT ON COLUMN phrase_types.word_symbol IS 'e.g. for percent the symbol is %';
 
 -- --------------------------------------------------------
 
@@ -4044,7 +4044,7 @@ COMMENT ON COLUMN user_results_time_series_big.source_group_id       IS 'text re
 COMMENT ON COLUMN user_results_time_series_big.user_id               IS 'the id of the user who has requested the change of the time_series result';
 COMMENT ON COLUMN user_results_time_series_big.result_time_series_id IS 'the 64 bit integer which is unique for the standard and the user series';
 COMMENT ON COLUMN user_results_time_series_big.last_update           IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
-COMMENT ON COLUMN user_results_time_series_big.formula_id IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN user_results_time_series_big.formula_id            IS 'the id of the formula which has been used to calculate this result';
 COMMENT ON COLUMN user_results_time_series_big.excluded              IS 'true if a user, but not all, have removed it';
 COMMENT ON COLUMN user_results_time_series_big.share_type_id         IS 'to restrict the access';
 COMMENT ON COLUMN user_results_time_series_big.protect_id            IS 'to protect against unwanted changes';
@@ -4126,6 +4126,76 @@ COMMENT ON COLUMN user_views.view_type_id IS 'to link coded functionality to vie
 COMMENT ON COLUMN user_views.excluded IS 'true if a user,but not all,have removed it';
 COMMENT ON COLUMN user_views.share_type_id IS 'to restrict the access';
 COMMENT ON COLUMN user_views.protect_id IS 'to protect against unwanted changes';
+
+-- --------------------------------------------------------
+
+--
+-- table structure to define the behaviour of the link between a term and a view
+--
+
+CREATE TABLE IF NOT EXISTS view_link_types
+(
+    view_link_type_id BIGSERIAL PRIMARY KEY,
+    type_name   varchar(255)     NOT NULL,
+    code_id     varchar(255) DEFAULT NULL,
+    description text         DEFAULT NULL
+);
+
+COMMENT ON TABLE view_link_types IS 'to define the behaviour of the link between a term and a view';
+COMMENT ON COLUMN view_link_types.view_link_type_id IS 'the internal unique primary index';
+COMMENT ON COLUMN view_link_types.type_name IS 'the unique type name as shown to the user and used for the selection';
+COMMENT ON COLUMN view_link_types.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
+COMMENT ON COLUMN view_link_types.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
+
+-- --------------------------------------------------------
+
+--
+-- table structure to link view to a word, triple, verb or formula with an n:m relation
+--
+
+CREATE TABLE IF NOT EXISTS view_term_links
+(
+    view_term_link_id BIGSERIAL PRIMARY KEY,
+    term_id           bigint             NOT NULL,
+    view_id           bigint             NOT NULL,
+    type_id           smallint NOT NULL DEFAULT 1,
+    user_id           bigint         DEFAULT NULL,
+    view_link_type_id bigint         DEFAULT NULL,
+    description       text           DEFAULT NULL,
+    excluded          smallint       DEFAULT NULL,
+    share_type_id     smallint       DEFAULT NULL,
+    protect_id        smallint       DEFAULT NULL
+);
+
+COMMENT ON TABLE view_term_links IS 'to link view to a word, triple, verb or formula with an n:m relation';
+COMMENT ON COLUMN view_term_links.view_term_link_id IS 'the internal unique primary index';
+COMMENT ON COLUMN view_term_links.type_id IS '1 = from_term_id is link the terms table; 2=link to the term_links table;3=to term_groups';
+COMMENT ON COLUMN view_term_links.user_id IS 'the owner / creator of the view_term_link';
+COMMENT ON COLUMN view_term_links.excluded IS 'true if a user,but not all,have removed it';
+COMMENT ON COLUMN view_term_links.share_type_id IS 'to restrict the access';
+COMMENT ON COLUMN view_term_links.protect_id IS 'to protect against unwanted changes';
+
+--
+-- table structure to save user specific changes to link view to a word, triple, verb or formula with an n:m relation
+--
+
+CREATE TABLE IF NOT EXISTS user_view_term_links
+(
+    view_term_link_id bigint       NOT NULL,
+    user_id           bigint       NOT NULL,
+    view_link_type_id bigint   DEFAULT NULL,
+    description       text     DEFAULT NULL,
+    excluded          smallint DEFAULT NULL,
+    share_type_id     smallint DEFAULT NULL,
+    protect_id        smallint DEFAULT NULL
+);
+
+COMMENT ON TABLE user_view_term_links IS 'to link view to a word,triple,verb or formula with an n:m relation';
+COMMENT ON COLUMN user_view_term_links.view_term_link_id IS 'with the user_id the internal unique primary index';
+COMMENT ON COLUMN user_view_term_links.user_id IS 'the changer of the view_term_link';
+COMMENT ON COLUMN user_view_term_links.excluded IS 'true if a user,but not all,have removed it';
+COMMENT ON COLUMN user_view_term_links.share_type_id IS 'to restrict the access';
+COMMENT ON COLUMN user_view_term_links.protect_id IS 'to protect against unwanted changes';
 
 -- --------------------------------------------------------
 
@@ -4324,76 +4394,6 @@ COMMENT ON COLUMN user_component_links.position_type_id IS 'the position of the 
 COMMENT ON COLUMN user_component_links.excluded IS 'true if a user,but not all,have removed it';
 COMMENT ON COLUMN user_component_links.share_type_id IS 'to restrict the access';
 COMMENT ON COLUMN user_component_links.protect_id IS 'to protect against unwanted changes';
-
--- --------------------------------------------------------
-
---
--- table structure to define the behaviour of the link between a term and a view
---
-
-CREATE TABLE IF NOT EXISTS view_link_types
-(
-    view_link_type_id BIGSERIAL PRIMARY KEY,
-    type_name   varchar(255)     NOT NULL,
-    code_id     varchar(255) DEFAULT NULL,
-    description text         DEFAULT NULL
-);
-
-COMMENT ON TABLE view_link_types IS 'to define the behaviour of the link between a term and a view';
-COMMENT ON COLUMN view_link_types.view_link_type_id IS 'the internal unique primary index';
-COMMENT ON COLUMN view_link_types.type_name IS 'the unique type name as shown to the user and used for the selection';
-COMMENT ON COLUMN view_link_types.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
-COMMENT ON COLUMN view_link_types.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
-
--- --------------------------------------------------------
-
---
--- table structure to link view to a word, triple, verb or formula with an n:m relation
---
-
-CREATE TABLE IF NOT EXISTS view_term_links
-(
-    view_term_link_id BIGSERIAL PRIMARY KEY,
-    term_id           bigint             NOT NULL,
-    view_id           bigint             NOT NULL,
-    type_id           smallint NOT NULL DEFAULT 1,
-    user_id           bigint         DEFAULT NULL,
-    view_link_type_id bigint         DEFAULT NULL,
-    description       text           DEFAULT NULL,
-    excluded          smallint       DEFAULT NULL,
-    share_type_id     smallint       DEFAULT NULL,
-    protect_id        smallint       DEFAULT NULL
-);
-
-COMMENT ON TABLE view_term_links IS 'to link view to a word, triple, verb or formula with an n:m relation';
-COMMENT ON COLUMN view_term_links.view_term_link_id IS 'the internal unique primary index';
-COMMENT ON COLUMN view_term_links.type_id IS '1 = from_term_id is link the terms table; 2=link to the term_links table;3=to term_groups';
-COMMENT ON COLUMN view_term_links.user_id IS 'the owner / creator of the view_term_link';
-COMMENT ON COLUMN view_term_links.excluded IS 'true if a user,but not all,have removed it';
-COMMENT ON COLUMN view_term_links.share_type_id IS 'to restrict the access';
-COMMENT ON COLUMN view_term_links.protect_id IS 'to protect against unwanted changes';
-
---
--- table structure to save user specific changes to link view to a word, triple, verb or formula with an n:m relation
---
-
-CREATE TABLE IF NOT EXISTS user_view_term_links
-(
-    view_term_link_id bigint       NOT NULL,
-    user_id           bigint       NOT NULL,
-    view_link_type_id bigint   DEFAULT NULL,
-    description       text     DEFAULT NULL,
-    excluded          smallint DEFAULT NULL,
-    share_type_id     smallint DEFAULT NULL,
-    protect_id        smallint DEFAULT NULL
-);
-
-COMMENT ON TABLE user_view_term_links IS 'to link view to a word,triple,verb or formula with an n:m relation';
-COMMENT ON COLUMN user_view_term_links.view_term_link_id IS 'with the user_id the internal unique primary index';
-COMMENT ON COLUMN user_view_term_links.user_id IS 'the changer of the view_term_link';
-COMMENT ON COLUMN user_view_term_links.excluded IS 'true if a user,but not all,have removed it';
-COMMENT ON COLUMN user_view_term_links.share_type_id IS 'to restrict the access';
-COMMENT ON COLUMN user_view_term_links.protect_id IS 'to protect against unwanted changes';
 
 -- --------------------------------------------------------
 
@@ -4995,22 +4995,22 @@ CREATE INDEX changes_user_idx ON changes (user_id);
 -- --------------------------------------------------------
 
 --
--- indexes for table change_standard_values
---
-
-CREATE INDEX change_standard_values_change_idx ON change_standard_values (change_id);
-CREATE INDEX change_standard_values_change_time_idx ON change_standard_values (change_time);
-CREATE INDEX change_standard_values_user_idx ON change_standard_values (user_id);
-
--- --------------------------------------------------------
-
---
 -- indexes for table change_prime_values
 --
 
 CREATE INDEX change_prime_values_change_idx ON change_prime_values (change_id);
 CREATE INDEX change_prime_values_change_time_idx ON change_prime_values (change_time);
 CREATE INDEX change_prime_values_user_idx ON change_prime_values (user_id);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table change_standard_values
+--
+
+CREATE INDEX change_standard_values_change_idx ON change_standard_values (change_id);
+CREATE INDEX change_standard_values_change_time_idx ON change_standard_values (change_time);
+CREATE INDEX change_standard_values_user_idx ON change_standard_values (user_id);
 
 -- --------------------------------------------------------
 
@@ -5073,22 +5073,6 @@ CREATE INDEX protection_types_type_name_idx ON protection_types (type_name);
 --
 
 CREATE INDEX share_types_type_name_idx ON share_types (type_name);
-
--- --------------------------------------------------------
-
---
--- indexes for table phrase_types
---
-
-CREATE INDEX phrase_types_type_name_idx ON phrase_types (type_name);
-
--- --------------------------------------------------------
-
---
--- indexes for table source_types
---
-
-CREATE INDEX source_types_type_name_idx ON source_types (type_name);
 
 -- --------------------------------------------------------
 
@@ -5190,6 +5174,14 @@ CREATE INDEX phrase_tables_phrase_table_status_idx ON phrase_tables (phrase_tabl
 -- --------------------------------------------------------
 
 --
+-- indexes for table phrase_types
+--
+
+CREATE INDEX phrase_types_type_name_idx ON phrase_types (type_name);
+
+-- --------------------------------------------------------
+
+--
 -- indexes for table groups
 --
 CREATE INDEX groups_user_idx ON groups (user_id);
@@ -5225,14 +5217,25 @@ CREATE INDEX user_groups_big_user_idx ON user_groups_big (user_id);
 -- --------------------------------------------------------
 
 --
+-- indexes for table source_types
+--
+
+CREATE INDEX source_types_type_name_idx ON source_types (type_name);
+
+-- --------------------------------------------------------
+
+--
 -- indexes for table sources
 --
+
 CREATE INDEX sources_user_idx        ON sources (user_id);
 CREATE INDEX sources_source_name_idx ON sources (source_name);
 CREATE INDEX sources_source_type_idx ON sources (source_type_id);
+
 --
 -- indexes for table user_sources
 --
+
 ALTER TABLE user_sources ADD CONSTRAINT user_sources_pkey PRIMARY KEY (source_id,user_id);
 CREATE INDEX user_sources_source_idx      ON user_sources (source_id);
 CREATE INDEX user_sources_user_idx        ON user_sources (user_id);
@@ -5611,14 +5614,6 @@ CREATE INDEX elements_element_type_idx ON elements (element_type_id);
 -- --------------------------------------------------------
 
 --
--- indexes for table formula_link_types
---
-
-CREATE INDEX formula_link_types_type_name_idx ON formula_link_types (type_name);
-
--- --------------------------------------------------------
-
---
 -- indexes for table formula_types
 --
 
@@ -5643,6 +5638,14 @@ CREATE INDEX user_formulas_user_idx ON user_formulas (user_id);
 CREATE INDEX user_formulas_formula_name_idx ON user_formulas (formula_name);
 CREATE INDEX user_formulas_formula_type_idx ON user_formulas (formula_type_id);
 CREATE INDEX user_formulas_view_idx ON user_formulas (view_id);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table formula_link_types
+--
+
+CREATE INDEX formula_link_types_type_name_idx ON formula_link_types (type_name);
 
 -- --------------------------------------------------------
 
@@ -6185,14 +6188,6 @@ CREATE INDEX user_results_time_series_big_formula_idx ON user_results_time_serie
 -- --------------------------------------------------------
 
 --
--- indexes for table view_link_types
---
-
-CREATE INDEX view_link_types_type_name_idx ON view_link_types (type_name);
-
--- --------------------------------------------------------
-
---
 -- indexes for table view_types
 --
 
@@ -6219,6 +6214,14 @@ CREATE INDEX user_views_user_idx ON user_views (user_id);
 CREATE INDEX user_views_language_idx ON user_views (language_id);
 CREATE INDEX user_views_view_name_idx ON user_views (view_name);
 CREATE INDEX user_views_view_type_idx ON user_views (view_type_id);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table view_link_types
+--
+
+CREATE INDEX view_link_types_type_name_idx ON view_link_types (type_name);
 
 -- --------------------------------------------------------
 
@@ -6330,6 +6333,13 @@ CREATE INDEX user_component_links_position_type_idx ON user_component_links (pos
 -- --------------------------------------------------------
 
 --
+-- constraints for table system_times
+--
+
+ALTER TABLE system_times
+    ADD CONSTRAINT system_times_system_time_type_fk FOREIGN KEY (system_time_type_id) REFERENCES system_time_types (system_time_type_id);
+
+--
 -- constraints for table sys_log
 --
 
@@ -6338,13 +6348,6 @@ ALTER TABLE sys_log
     ADD CONSTRAINT sys_log_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
     ADD CONSTRAINT sys_log_user2_fk FOREIGN KEY (solver_id) REFERENCES users (user_id),
     ADD CONSTRAINT sys_log_sys_log_status_fk FOREIGN KEY (sys_log_status_id) REFERENCES sys_log_status (sys_log_status_id);
-
---
--- constraints for table system_times
---
-
-ALTER TABLE system_times
-    ADD CONSTRAINT system_times_system_time_type_fk FOREIGN KEY (system_time_type_id) REFERENCES system_time_types (system_time_type_id);
 
 --
 -- constraints for table job_times
@@ -6861,6 +6864,15 @@ ALTER TABLE user_values_time_series_big
     ADD CONSTRAINT user_values_time_series_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
     ADD CONSTRAINT user_values_time_series_big_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
 
+--
+-- constraints for table elements
+--
+
+ALTER TABLE elements
+    ADD CONSTRAINT elements_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id),
+    ADD CONSTRAINT elements_element_type_fk FOREIGN KEY (element_type_id) REFERENCES element_types (element_type_id),
+    ADD CONSTRAINT elements_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
 -- --------------------------------------------------------
 
 --
@@ -6880,15 +6892,6 @@ ALTER TABLE user_formulas
     ADD CONSTRAINT user_formulas_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
     ADD CONSTRAINT user_formulas_formula_type_fk FOREIGN KEY (formula_type_id) REFERENCES formula_types (formula_type_id),
     ADD CONSTRAINT user_formulas_view_fk FOREIGN KEY (view_id) REFERENCES views (view_id);
-
---
--- constraints for table elements
---
-
-ALTER TABLE elements
-    ADD CONSTRAINT elements_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id),
-    ADD CONSTRAINT elements_element_type_fk FOREIGN KEY (element_type_id) REFERENCES element_types (element_type_id),
-    ADD CONSTRAINT elements_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
 
 -- --------------------------------------------------------
 

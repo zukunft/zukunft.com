@@ -599,25 +599,6 @@ CREATE TABLE IF NOT EXISTS share_types
 -- --------------------------------------------------------
 
 --
--- table structure for the phrase type to set the predefined behaviour of a word or triple
---
-
-CREATE TABLE IF NOT EXISTS phrase_types
-(
-    phrase_type_id bigint       NOT NULL     COMMENT 'the internal unique primary index',
-    type_name      varchar(255) NOT NULL     COMMENT 'the unique type name as shown to the user and used for the selection',
-    code_id        varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
-    description    text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry',
-    scaling_factor bigint       DEFAULT NULL COMMENT 'e.g. for percent the scaling factor is 100',
-    word_symbol    varchar(255) DEFAULT NULL COMMENT 'e.g. for percent the symbol is %'
-)
-    ENGINE = InnoDB
-    DEFAULT CHARSET = utf8
-    COMMENT 'for the phrase type to set the predefined behaviour of a word or triple';
-
--- --------------------------------------------------------
-
---
 -- table structure for table languages
 --
 
@@ -816,147 +797,89 @@ CREATE TABLE IF NOT EXISTS phrase_tables
 -- --------------------------------------------------------
 
 --
--- table structure to assign predefined behaviour to a formula element
+-- table structure for the phrase type to set the predefined behaviour of a word or triple
 --
 
-CREATE TABLE IF NOT EXISTS element_types
+CREATE TABLE IF NOT EXISTS phrase_types
 (
-    element_type_id bigint           NOT NULL COMMENT 'the internal unique primary index',
-    type_name       varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
-    code_id         varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
-    description     text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry'
+    phrase_type_id bigint       NOT NULL     COMMENT 'the internal unique primary index',
+    type_name      varchar(255) NOT NULL     COMMENT 'the unique type name as shown to the user and used for the selection',
+    code_id        varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
+    description    text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry',
+    scaling_factor bigint       DEFAULT NULL COMMENT 'e.g. for percent the scaling factor is 100',
+    word_symbol    varchar(255) DEFAULT NULL COMMENT 'e.g. for percent the symbol is %'
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
-    COMMENT 'to assign predefined behaviour to a formula element';
+    COMMENT 'for the phrase type to set the predefined behaviour of a word or triple';
 
 -- --------------------------------------------------------
 
 --
--- table structure the mathematical expression to calculate results based on values and results
+-- table structure to add a user given name using a 512-bit group id index for up to 16 32-bit phrase ids including the order
 --
 
-CREATE TABLE IF NOT EXISTS formulas
-(
-    formula_id        bigint        NOT NULL COMMENT 'the internal unique primary index',
-    user_id           bigint    DEFAULT NULL COMMENT 'the owner / creator of the formula',
-    formula_name      varchar(255)  NOT NULL COMMENT 'the text used to search for formulas that must also be unique for all terms (words, triples, verbs and formulas)',
-    formula_text      text          NOT NULL COMMENT 'the internal formula expression with the database references e.g. {f1} for formula with id 1',
-    resolved_text     text          NOT NULL COMMENT 'the formula expression in user readable format as shown to the user which can include formatting for better readability',
-    description       text      DEFAULT NULL COMMENT 'text to be shown to the user for mouse over; to be replaced by a language form entry',
-    formula_type_id   bigint    DEFAULT NULL COMMENT 'the id of the formula type',
-    all_values_needed smallint  DEFAULT NULL COMMENT 'the "calculate only if all values used in the formula exist" flag should be converted to "all needed for calculation" instead of just displaying "1"',
-    last_update       timestamp DEFAULT NULL COMMENT 'time of the last calculation relevant update',
-    view_id           bigint    DEFAULT NULL COMMENT 'the default mask for this formula',
-    `usage`           bigint    DEFAULT NULL COMMENT 'number of results linked to this formula',
-    excluded          smallint  DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
-    share_type_id     smallint  DEFAULT NULL COMMENT 'to restrict the access',
-    protect_id        smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes'
-)
-    ENGINE = InnoDB
-    DEFAULT CHARSET = utf8
-    COMMENT 'the mathematical expression to calculate results based on values and results';
+CREATE TABLE IF NOT EXISTS `groups` (
+    group_id    char(112)     NOT NULL COMMENT 'the 512-bit prime index to find the group',
+    user_id     bigint    DEFAULT NULL COMMENT 'the owner / creator of the group',
+    group_name  text      DEFAULT NULL COMMENT 'the user specific group name which can contain the phrase names in a different order to display the group (does not need to be unique)',
+    description text      DEFAULT NULL COMMENT 'the user specific description for mouse over helps'
+) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'to add a user given name using a 512-bit group id index for up to 16 32-bit phrase ids including the order';
 
 --
--- table structure to save user specific changes the mathematical expression to calculate results based on values and results
+-- table structure to save user specific changes to add a user given name using a 512-bit group id index for up to 16 32-bit phrase ids including the order
 --
 
-CREATE TABLE IF NOT EXISTS user_formulas
-(
-    formula_id        bigint           NOT NULL COMMENT 'with the user_id the internal unique primary index',
-    user_id           bigint           NOT NULL COMMENT 'the changer of the formula',
-    formula_name      varchar(255) DEFAULT NULL COMMENT 'the text used to search for formulas that must also be unique for all terms (words, triples, verbs and formulas)',
-    formula_text      text         DEFAULT NULL COMMENT 'the internal formula expression with the database references e.g. {f1} for formula with id 1',
-    resolved_text     text         DEFAULT NULL COMMENT 'the formula expression in user readable format as shown to the user which can include formatting for better readability',
-    description       text         DEFAULT NULL COMMENT 'text to be shown to the user for mouse over; to be replaced by a language form entry',
-    formula_type_id   bigint       DEFAULT NULL COMMENT 'the id of the formula type',
-    all_values_needed smallint     DEFAULT NULL COMMENT 'the "calculate only if all values used in the formula exist" flag should be converted to "all needed for calculation" instead of just displaying "1"',
-    last_update       timestamp    DEFAULT NULL COMMENT 'time of the last calculation relevant update',
-    view_id           bigint       DEFAULT NULL COMMENT 'the default mask for this formula',
-    `usage`           bigint       DEFAULT NULL COMMENT 'number of results linked to this formula',
-    excluded          smallint     DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
-    share_type_id     smallint     DEFAULT NULL COMMENT 'to restrict the access',
-    protect_id        smallint     DEFAULT NULL COMMENT 'to protect against unwanted changes'
-)
-    ENGINE = InnoDB
-    DEFAULT CHARSET = utf8
-    COMMENT 'the mathematical expression to calculate results based on values and results';
--- --------------------------------------------------------
+CREATE TABLE IF NOT EXISTS user_groups (
+    group_id    char(112)     NOT NULL COMMENT 'the 512-bit prime index to find the user group',
+    user_id     bigint        NOT NULL COMMENT 'the changer of the group',
+    group_name  text      DEFAULT NULL COMMENT 'the user specific group name which can contain the phrase names in a different order to display the group (does not need to be unique)',
+    description text      DEFAULT NULL COMMENT 'the user specific description for mouse over helps'
+) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'to add a user given name using a 512-bit group id index for up to 16 32-bit phrase ids including the order';
 
 --
--- Table structure for phrase group names
+-- table structure to add a user given name using a 64-bit group id index for up to four 16-bit phrase ids including the order
 --
 
-CREATE TABLE IF NOT EXISTS `groups`
-(
-    `group_id`    char(112) NOT NULL,
-    `group_name`  varchar(1000) DEFAULT NULL COMMENT 'if this is set a manual group for fast selection',
-    `description` varchar(4000) DEFAULT NULL COMMENT 'the automatic created user readable description'
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8 COMMENT = 'to add a user given name using a 512 bit group id index for up to 16 16 bit phrase ids including the order';
+CREATE TABLE IF NOT EXISTS groups_prime (
+    group_id    bigint     NOT NULL COMMENT 'the 64-bit prime index to find the group',
+    user_id     bigint DEFAULT NULL COMMENT 'the owner / creator of the group',
+    group_name  text   DEFAULT NULL COMMENT 'the user specific group name which can contain the phrase names in a different order to display the group (does not need to be unique)',
+    description text   DEFAULT NULL COMMENT 'the user specific description for mouse over helps'
+) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'to add a user given name using a 64-bit group id index for up to four 16-bit phrase ids including the order';
 
 --
--- Table structure for saving a user specific group name
+-- table structure to save user specific changes to add a user given name using a 64-bit group id index for up to four 16-bit phrase ids including the order
 --
 
-CREATE TABLE IF NOT EXISTS `user_groups`
-(
-    `group_id`    char(112) NOT NULL,
-    `user_id`     int(11) NOT NULL,
-    `group_name`  varchar(1000) DEFAULT NULL COMMENT 'if this is set a manual group for fast selection',
-    `description` varchar(4000) DEFAULT NULL COMMENT 'the automatic created user readable description'
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8 COMMENT ='to reduce the number of value to term links';
+CREATE TABLE IF NOT EXISTS user_groups_prime (
+    group_id    bigint     NOT NULL COMMENT 'the 64-bit prime index to find the user group',
+    user_id     bigint     NOT NULL COMMENT 'the changer of the group',
+    group_name  text   DEFAULT NULL COMMENT 'the user specific group name which can contain the phrase names in a different order to display the group (does not need to be unique)',
+    description text   DEFAULT NULL COMMENT 'the user specific description for mouse over helps'
+) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'to add a user given name using a 64-bit group id index for up to four 16-bit phrase ids including the order';
 
 --
--- Table structure for phrase group names of up to four prime phrases
+-- table structure to add a user given name using a group id index with a variable length for more than 16 32-bit phrase ids including the order
 --
 
-CREATE TABLE IF NOT EXISTS `groups_prime`
-(
-    `group_id`    int(11) NOT NULL,
-    `group_name`  varchar(1000) DEFAULT NULL COMMENT 'if this is set a manual group for fast selection',
-    `description` varchar(4000) DEFAULT NULL COMMENT 'the automatic created user readable description'
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8 COMMENT = 'to add a user given name using a 64 bit bigint group id index for up to four 16 bit phrase ids including the order';
+CREATE TABLE IF NOT EXISTS groups_big (
+    group_id    char(255)     NOT NULL COMMENT 'the variable text index to find group',
+    user_id     bigint    DEFAULT NULL COMMENT 'the owner / creator of the group',
+    group_name  text      DEFAULT NULL COMMENT 'the user specific group name which can contain the phrase names in a different order to display the group (does not need to be unique)',
+    description text      DEFAULT NULL COMMENT 'the user specific description for mouse over helps'
+) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'to add a user given name using a group id index with a variable length for more than 16 32-bit phrase ids including the order';
 
 --
--- Table structure for saving a user specific group name
+-- table structure to save user specific changes to add a user given name using a group id index with a variable length for more than 16 32-bit phrase ids including the order
 --
 
-CREATE TABLE IF NOT EXISTS `user_groups_prime`
-(
-    `group_id`    int(11) NOT NULL,
-    `user_id`     int(11) NOT NULL,
-    `group_name`  varchar(1000) DEFAULT NULL COMMENT 'if this is set a manual group for fast selection',
-    `description` varchar(4000) DEFAULT NULL COMMENT 'the automatic created user readable description'
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8 COMMENT = 'to link the user specific name to the group';
-
---
--- Table structure for phrase group names of more than 16 phrases
---
-
-CREATE TABLE IF NOT EXISTS `groups_big`
-(
-    `group_id`    text NOT NULL,
-    `group_name`  varchar(1000) DEFAULT NULL COMMENT 'if this is set a manual group for fast selection',
-    `description` varchar(4000) DEFAULT NULL COMMENT 'the automatic created user readable description'
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8 COMMENT = 'to add a user given name using text group id index for an almost unlimited number of phrase ids including the order';
-
---
--- Table structure for saving a user specific group name for more than 16 phrases
---
-
-CREATE TABLE IF NOT EXISTS `user_groups_big`
-(
-    `group_id`    text NOT NULL,
-    `user_id`     int(11) NOT NULL,
-    `group_name`  varchar(1000) DEFAULT NULL COMMENT 'if this is set a manual group for fast selection',
-    `description` varchar(4000) DEFAULT NULL COMMENT 'the automatic created user readable description'
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8 COMMENT = 'for saving a user specific group name for more than 16 phrases';
+CREATE TABLE IF NOT EXISTS user_groups_big (
+    group_id    char(255)     NOT NULL COMMENT 'the text index for more than 16 phrases to find the group',
+    user_id     bigint        NOT NULL COMMENT 'the changer of the group',
+    group_name  text      DEFAULT NULL COMMENT 'the user specific group name which can contain the phrase names in a different order to display the group (does not need to be unique)',
+    description text      DEFAULT NULL COMMENT 'the user specific description for mouse over helps'
+) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'to add a user given name using a group id index with a variable length for more than 16 32-bit phrase ids including the order';
 
 -- --------------------------------------------------------
 
@@ -1763,6 +1686,23 @@ CREATE TABLE IF NOT EXISTS value_ts_data
 -- --------------------------------------------------------
 
 --
+-- table structure to assign predefined behaviour to a formula element
+--
+
+CREATE TABLE IF NOT EXISTS element_types
+(
+    element_type_id bigint           NOT NULL COMMENT 'the internal unique primary index',
+    type_name       varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
+    code_id         varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
+    description     text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'to assign predefined behaviour to a formula element';
+
+-- --------------------------------------------------------
+
+--
 -- table structure cache for fast update of formula resolved text
 --
 
@@ -1783,6 +1723,76 @@ CREATE TABLE IF NOT EXISTS elements
 -- --------------------------------------------------------
 
 --
+-- table structure to assign predefined behaviour to formulas
+--
+
+CREATE TABLE IF NOT EXISTS formula_types
+(
+    formula_type_id bigint           NOT NULL COMMENT 'the internal unique primary index',
+    type_name       varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
+    code_id         varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
+    description     text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'to assign predefined behaviour to formulas';
+
+
+-- --------------------------------------------------------
+
+--
+-- table structure the mathematical expression to calculate results based on values and results
+--
+
+CREATE TABLE IF NOT EXISTS formulas
+(
+    formula_id        bigint        NOT NULL COMMENT 'the internal unique primary index',
+    user_id           bigint    DEFAULT NULL COMMENT 'the owner / creator of the formula',
+    formula_name      varchar(255)  NOT NULL COMMENT 'the text used to search for formulas that must also be unique for all terms (words, triples, verbs and formulas)',
+    formula_text      text          NOT NULL COMMENT 'the internal formula expression with the database references e.g. {f1} for formula with id 1',
+    resolved_text     text          NOT NULL COMMENT 'the formula expression in user readable format as shown to the user which can include formatting for better readability',
+    description       text      DEFAULT NULL COMMENT 'text to be shown to the user for mouse over; to be replaced by a language form entry',
+    formula_type_id   bigint    DEFAULT NULL COMMENT 'the id of the formula type',
+    all_values_needed smallint  DEFAULT NULL COMMENT 'the "calculate only if all values used in the formula exist" flag should be converted to "all needed for calculation" instead of just displaying "1"',
+    last_update       timestamp DEFAULT NULL COMMENT 'time of the last calculation relevant update',
+    view_id           bigint    DEFAULT NULL COMMENT 'the default mask for this formula',
+    `usage`           bigint    DEFAULT NULL COMMENT 'number of results linked to this formula',
+    excluded          smallint  DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
+    share_type_id     smallint  DEFAULT NULL COMMENT 'to restrict the access',
+    protect_id        smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'the mathematical expression to calculate results based on values and results';
+
+--
+-- table structure to save user specific changes the mathematical expression to calculate results based on values and results
+--
+
+CREATE TABLE IF NOT EXISTS user_formulas
+(
+    formula_id        bigint           NOT NULL COMMENT 'with the user_id the internal unique primary index',
+    user_id           bigint           NOT NULL COMMENT 'the changer of the formula',
+    formula_name      varchar(255) DEFAULT NULL COMMENT 'the text used to search for formulas that must also be unique for all terms (words, triples, verbs and formulas)',
+    formula_text      text         DEFAULT NULL COMMENT 'the internal formula expression with the database references e.g. {f1} for formula with id 1',
+    resolved_text     text         DEFAULT NULL COMMENT 'the formula expression in user readable format as shown to the user which can include formatting for better readability',
+    description       text         DEFAULT NULL COMMENT 'text to be shown to the user for mouse over; to be replaced by a language form entry',
+    formula_type_id   bigint       DEFAULT NULL COMMENT 'the id of the formula type',
+    all_values_needed smallint     DEFAULT NULL COMMENT 'the "calculate only if all values used in the formula exist" flag should be converted to "all needed for calculation" instead of just displaying "1"',
+    last_update       timestamp    DEFAULT NULL COMMENT 'time of the last calculation relevant update',
+    view_id           bigint       DEFAULT NULL COMMENT 'the default mask for this formula',
+    `usage`           bigint       DEFAULT NULL COMMENT 'number of results linked to this formula',
+    excluded          smallint     DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
+    share_type_id     smallint     DEFAULT NULL COMMENT 'to restrict the access',
+    protect_id        smallint     DEFAULT NULL COMMENT 'to protect against unwanted changes'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'the mathematical expression to calculate results based on values and results';
+
+-- --------------------------------------------------------
+
+--
 -- table structure to assign predefined behaviour to a formula link
 --
 
@@ -1799,24 +1809,6 @@ CREATE TABLE IF NOT EXISTS formula_link_types
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'to assign predefined behaviour to a formula link';
-
--- --------------------------------------------------------
-
---
--- table structure to assign predefined behaviour to formulas
---
-
-CREATE TABLE IF NOT EXISTS formula_types
-(
-    formula_type_id bigint           NOT NULL COMMENT 'the internal unique primary index',
-    type_name       varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
-    code_id         varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
-    description     text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry'
-)
-    ENGINE = InnoDB
-    DEFAULT CHARSET = utf8
-    COMMENT 'to assign predefined behaviour to formulas';
-
 
 -- --------------------------------------------------------
 
@@ -2815,212 +2807,6 @@ CREATE TABLE IF NOT EXISTS user_results_time_series_big
     COMMENT 'for the common parameters for a list of numbers that differ only by the timestamp';
 
 -- --------------------------------------------------------
---
--- table structure to add a user given name using a 512-bit group id index for up to 16 32-bit phrase ids including the order
---
-
-CREATE TABLE IF NOT EXISTS `groups` (
-    group_id    char(112)     NOT NULL COMMENT 'the 512-bit prime index to find the group',
-    user_id     bigint    DEFAULT NULL COMMENT 'the owner / creator of the group',
-    group_name  text      DEFAULT NULL COMMENT 'the user specific group name which can contain the phrase names in a different order to display the group (does not need to be unique)',
-    description text      DEFAULT NULL COMMENT 'the user specific description for mouse over helps'
-) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'to add a user given name using a 512-bit group id index for up to 16 32-bit phrase ids including the order';
-
---
--- table structure to save user specific changes to add a user given name using a 512-bit group id index for up to 16 32-bit phrase ids including the order
---
-
-CREATE TABLE IF NOT EXISTS user_groups (
-    group_id    char(112)     NOT NULL COMMENT 'the 512-bit prime index to find the user group',
-    user_id     bigint        NOT NULL COMMENT 'the changer of the group',
-    group_name  text      DEFAULT NULL COMMENT 'the user specific group name which can contain the phrase names in a different order to display the group (does not need to be unique)',
-    description text      DEFAULT NULL COMMENT 'the user specific description for mouse over helps'
-) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'to add a user given name using a 512-bit group id index for up to 16 32-bit phrase ids including the order';
-
---
--- table structure to add a user given name using a 64-bit group id index for up to four 16-bit phrase ids including the order
---
-
-CREATE TABLE IF NOT EXISTS groups_prime (
-    group_id    bigint     NOT NULL COMMENT 'the 64-bit prime index to find the group',
-    user_id     bigint DEFAULT NULL COMMENT 'the owner / creator of the group',
-    group_name  text   DEFAULT NULL COMMENT 'the user specific group name which can contain the phrase names in a different order to display the group (does not need to be unique)',
-    description text   DEFAULT NULL COMMENT 'the user specific description for mouse over helps'
-) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'to add a user given name using a 64-bit group id index for up to four 16-bit phrase ids including the order';
-
---
--- table structure to save user specific changes to add a user given name using a 64-bit group id index for up to four 16-bit phrase ids including the order
---
-
-CREATE TABLE IF NOT EXISTS user_groups_prime (
-    group_id    bigint     NOT NULL COMMENT 'the 64-bit prime index to find the user group',
-    user_id     bigint     NOT NULL COMMENT 'the changer of the group',
-    group_name  text   DEFAULT NULL COMMENT 'the user specific group name which can contain the phrase names in a different order to display the group (does not need to be unique)',
-    description text   DEFAULT NULL COMMENT 'the user specific description for mouse over helps'
-) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'to add a user given name using a 64-bit group id index for up to four 16-bit phrase ids including the order';
-
---
--- table structure to add a user given name using a group id index with a variable length for more than 16 32-bit phrase ids including the order
---
-
-CREATE TABLE IF NOT EXISTS groups_big (
-    group_id    char(255)     NOT NULL COMMENT 'the variable text index to find group',
-    user_id     bigint    DEFAULT NULL COMMENT 'the owner / creator of the group',
-    group_name  text      DEFAULT NULL COMMENT 'the user specific group name which can contain the phrase names in a different order to display the group (does not need to be unique)',
-    description text      DEFAULT NULL COMMENT 'the user specific description for mouse over helps'
-) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'to add a user given name using a group id index with a variable length for more than 16 32-bit phrase ids including the order';
-
---
--- table structure to save user specific changes to add a user given name using a group id index with a variable length for more than 16 32-bit phrase ids including the order
---
-
-CREATE TABLE IF NOT EXISTS user_groups_big (
-    group_id    char(255)     NOT NULL COMMENT 'the text index for more than 16 phrases to find the group',
-    user_id     bigint        NOT NULL COMMENT 'the changer of the group',
-    group_name  text      DEFAULT NULL COMMENT 'the user specific group name which can contain the phrase names in a different order to display the group (does not need to be unique)',
-    description text      DEFAULT NULL COMMENT 'the user specific description for mouse over helps'
-) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'to add a user given name using a group id index with a variable length for more than 16 32-bit phrase ids including the order';
-
--- --------------------------------------------------------
-
---
--- Table structure for table`phrase_groups`
---
-
-CREATE TABLE IF NOT EXISTS `phrase_groups`
-(
-    `phrase_group_id`   int(11) NOT NULL,
-    `phrase_group_name` varchar(1000) DEFAULT NULL COMMENT 'if this is set a manual group for fast selection',
-    `auto_description`  varchar(4000) DEFAULT NULL COMMENT 'the automatic created user readable description',
-    `word_ids`          varchar(255)  DEFAULT NULL,
-    `triple_ids`        varchar(255)  DEFAULT NULL COMMENT 'one field link to the table term_links',
-    `id_order`          varchar(512)  DEFAULT NULL COMMENT 'the phrase ids in the order that the user wants to see them'
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8 COMMENT ='to reduce the number of value to term links';
-
--- --------------------------------------------------------
-
---
--- Stand-in structure for view`phrase_groups_phrase_links`
---
-CREATE TABLE IF NOT EXISTS `phrase_groups_phrase_links`
-(
-    `phrase_groups_phrase_link_id` int(11),
-    `phrase_group_id`             int(11),
-    `phrase_id`                   bigint(20)
-);
--- --------------------------------------------------------
-
---
--- Table structure for table`phrase_group_word_links`
---
-
-CREATE TABLE IF NOT EXISTS `phrase_group_word_links`
-(
-    `phrase_group_word_link_id` int(11) NOT NULL,
-    `phrase_group_id`           int(11) NOT NULL,
-    `word_id`                   int(11) NOT NULL
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8 COMMENT ='link words to a phrase_group for database based selections';
-
--- --------------------------------------------------------
-
---
--- Table structure for table`phrase_group_triple_links`
---
-
-CREATE TABLE IF NOT EXISTS `phrase_group_triple_links`
-(
-    `phrase_group_triple_link_id` int(11) NOT NULL,
-    `phrase_group_id`             int(11) NOT NULL,
-    `triple_id`                   int(11) NOT NULL
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8 COMMENT ='link phrases to a phrase_group for database based selections';
-
--- --------------------------------------------------------
-
--- --------------------------------------------------------
-
---
--- Table structure for table`user_formulas`
---
-
-CREATE TABLE IF NOT EXISTS `user_formulas`
-(
-    `formula_id`        int(11)   NOT NULL,
-    `user_id`           int(11)   NOT NULL,
-    `formula_name`      varchar(200)   DEFAULT NULL,
-    `formula_text`      text,
-    `resolved_text`     text,
-    `description`       text,
-    `formula_type_id`   int(11)        DEFAULT NULL,
-    `all_values_needed` tinyint(4)     DEFAULT NULL,
-    `usage`             int(11)        DEFAULT NULL,
-    `share_type_id`     int(11)        DEFAULT NULL,
-    `protect_id`        int(11)        DEFAULT NULL,
-    `last_update`       timestamp NULL DEFAULT NULL,
-    `excluded`          tinyint(4)     DEFAULT NULL
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8;
-
--- --------------------------------------------------------
-
---
--- Table structure for table`user_phrase_groups`
---
-
-CREATE TABLE IF NOT EXISTS `user_phrase_groups`
-(
-    `phrase_group_id`   int(11) NOT NULL,
-    `user_id`           int(11) NOT NULL,
-    `phrase_group_name` varchar(1000) DEFAULT NULL COMMENT 'if this is set a manual group for fast selection',
-    `auto_description`  varchar(4000) DEFAULT NULL COMMENT 'the automatic created user readable description',
-    `id_order`          varchar(512)  DEFAULT NULL COMMENT 'the phrase ids in the order that the user wants to see them'
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8 COMMENT ='to reduce the number of value to term links';
-
--- --------------------------------------------------------
-
---
--- Stand-in structure for view`user_phrase_groups_phrase_links`
---
-CREATE TABLE IF NOT EXISTS `user_phrase_groups_phrase_links`
-(
-    `phrase_groups_phrase_link_id` int(11),
-    `user_id`                     int(11),
-    `excluded`                    tinyint(4)
-);
--- --------------------------------------------------------
-
---
--- Table structure for table`user_phrase_group_word_links`
---
-
-CREATE TABLE IF NOT EXISTS `user_phrase_group_word_links`
-(
-    `phrase_group_word_link_id` int(11) NOT NULL,
-    `user_id`                   int(11)    DEFAULT NULL,
-    `excluded`                  tinyint(4) DEFAULT NULL
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8 COMMENT ='view for fast group selection based on a triple';
-
--- --------------------------------------------------------
-
---
--- Table structure for table`user_phrase_group_triple_links`
---
-
-CREATE TABLE IF NOT EXISTS `user_phrase_group_triple_links`
-(
-    `phrase_group_triple_link_id` int(11) NOT NULL,
-    `user_id`                     int(11)    DEFAULT NULL,
-    `excluded`                    tinyint(4) DEFAULT NULL
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8 COMMENT ='view for fast group selection based on a triple';
-
--- --------------------------------------------------------
 
 --
 -- table structure to assign predefined behaviour to a view
@@ -3140,6 +2926,57 @@ CREATE TABLE IF NOT EXISTS user_view_term_links
 -- --------------------------------------------------------
 
 --
+-- table structure to assign predefined behaviour to a component view link
+--
+
+CREATE TABLE IF NOT EXISTS component_link_types
+(
+    component_link_type_id bigint           NOT NULL COMMENT 'the internal unique primary index',
+    type_name              varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
+    code_id                varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
+    description            text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'to assign predefined behaviour to a component view link';
+
+-- --------------------------------------------------------
+
+--
+-- table structure to define the position of components
+--
+
+CREATE TABLE IF NOT EXISTS position_types
+(
+    position_type_id bigint NOT NULL COMMENT 'the internal unique primary index',
+    type_name    varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
+    code_id      varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
+    description  text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'to define the position of components';
+
+-- --------------------------------------------------------
+
+--
+-- table structure to display e.g. a fixed text, term or formula result
+--
+
+CREATE TABLE IF NOT EXISTS component_types
+(
+    component_type_id bigint NOT NULL COMMENT 'the internal unique primary index',
+    type_name    varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
+    code_id      varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
+    description  text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'to display e.g. a fixed text, term or formula result';
+
+-- --------------------------------------------------------
+
+--
 -- table structure for the single components of a view
 --
 
@@ -3196,57 +3033,6 @@ CREATE TABLE IF NOT EXISTS user_components
 -- --------------------------------------------------------
 
 --
--- table structure to assign predefined behaviour to a component view link
---
-
-CREATE TABLE IF NOT EXISTS component_link_types
-(
-    component_link_type_id bigint           NOT NULL COMMENT 'the internal unique primary index',
-    type_name              varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
-    code_id                varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
-    description            text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry'
-)
-    ENGINE = InnoDB
-    DEFAULT CHARSET = utf8
-    COMMENT 'to assign predefined behaviour to a component view link';
-
--- --------------------------------------------------------
-
---
--- table structure to define the position of components
---
-
-CREATE TABLE IF NOT EXISTS position_types
-(
-    position_type_id bigint NOT NULL COMMENT 'the internal unique primary index',
-    type_name    varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
-    code_id      varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
-    description  text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry'
-)
-    ENGINE = InnoDB
-    DEFAULT CHARSET = utf8
-    COMMENT 'to define the position of components';
-
--- --------------------------------------------------------
-
---
--- table structure to display e.g. a fixed text, term or formula result
---
-
-CREATE TABLE IF NOT EXISTS component_types
-(
-    component_type_id bigint NOT NULL COMMENT 'the internal unique primary index',
-    type_name    varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
-    code_id      varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
-    description  text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry'
-)
-    ENGINE = InnoDB
-    DEFAULT CHARSET = utf8
-    COMMENT 'to display e.g. a fixed text, term or formula result';
-
--- --------------------------------------------------------
-
---
 -- table structure to link components to views with an n:m relation
 --
 
@@ -3285,55 +3071,6 @@ CREATE TABLE IF NOT EXISTS user_component_links
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'to link components to views with an n:m relation';
-
--- --------------------------------------------------------
-
---
--- Table structure for table`value_phrase_links`
---
-
-CREATE TABLE IF NOT EXISTS `value_phrase_links`
-(
-    `value_phrase_link_id` int(11) NOT NULL,
-    `user_id`              int(11) DEFAULT NULL,
-    `group_id`             int(11) NOT NULL,
-    `phrase_id`            int(11) NOT NULL,
-    `weight`               double  DEFAULT NULL,
-    `link_type_id`         int(11) DEFAULT NULL,
-    `condition_formula_id` int(11) DEFAULT NULL COMMENT 'formula_id of a formula with a boolean result; the term is only added if formula result is true'
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8 COMMENT ='link single word or triple to a value only for fast search';
-
--- --------------------------------------------------------
-
---
--- Table structure for table`value_relations`
---
-
-CREATE TABLE IF NOT EXISTS `value_relations`
-(
-    `value_link_id` int(11) NOT NULL,
-    `from_value`    int(11) NOT NULL,
-    `to_value`      int(11) NOT NULL,
-    `link_type_id`  int(11) NOT NULL
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8 COMMENT ='to link two values directly; maybe not used';
-
--- --------------------------------------------------------
-
---
--- Table structure for table`view_link_types`
---
-
-CREATE TABLE IF NOT EXISTS `view_link_types`
-(
-    `view_link_type_id` int(11)      NOT NULL,
-    `type_name`         varchar(200) NOT NULL,
-    `comment`           text         NOT NULL
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8;
 
 -- --------------------------------------------------------
 
@@ -3741,10 +3478,11 @@ from `change_fields`,
      `change_tables`
 WHERE `change_fields`.table_id = `change_tables`.change_table_id;
 
+-- --------------------------------------------------------
 --
--- Indexes for dumped tables
+-- indexes for tables
+-- remark: no index needed for preloaded tables such as phrase types
 --
-
 -- --------------------------------------------------------
 
 --
@@ -3976,18 +3714,6 @@ ALTER TABLE changes
 -- --------------------------------------------------------
 
 --
--- indexes for table change_standard_values
---
-
-ALTER TABLE change_standard_values
-    ADD PRIMARY KEY (change_id),
-    ADD KEY change_standard_values_change_idx (change_id),
-    ADD KEY change_standard_values_change_time_idx (change_time),
-    ADD KEY change_standard_values_user_idx (user_id);
-
--- --------------------------------------------------------
-
---
 -- indexes for table change_prime_values
 --
 
@@ -3996,6 +3722,18 @@ ALTER TABLE change_prime_values
     ADD KEY change_prime_values_change_idx (change_id),
     ADD KEY change_prime_values_change_time_idx (change_time),
     ADD KEY change_prime_values_user_idx (user_id);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table change_standard_values
+--
+
+ALTER TABLE change_standard_values
+    ADD PRIMARY KEY (change_id),
+    ADD KEY change_standard_values_change_idx (change_id),
+    ADD KEY change_standard_values_change_time_idx (change_time),
+    ADD KEY change_standard_values_user_idx (user_id);
 
 -- --------------------------------------------------------
 
@@ -4051,6 +3789,26 @@ ALTER TABLE pods
     ADD KEY pods_type_name_idx (type_name),
     ADD KEY pods_pod_type_idx (pod_type_id),
     ADD KEY pods_pod_status_idx (pod_status_id);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table protection_types
+--
+
+ALTER TABLE protection_types
+    ADD PRIMARY KEY (protection_type_id),
+    ADD KEY protection_types_type_name_idx (type_name);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table share_types
+--
+
+ALTER TABLE share_types
+    ADD PRIMARY KEY (share_type_id),
+    ADD KEY share_types_type_name_idx (type_name);
 
 -- --------------------------------------------------------
 
@@ -4167,6 +3925,16 @@ ALTER TABLE phrase_tables
 -- --------------------------------------------------------
 
 --
+-- indexes for table phrase_types
+--
+
+ALTER TABLE phrase_types
+    ADD PRIMARY KEY (phrase_type_id),
+    ADD KEY phrase_types_type_name_idx (type_name);
+
+-- --------------------------------------------------------
+
+--
 -- indexes for table groups
 --
 ALTER TABLE `groups`
@@ -4211,12 +3979,66 @@ ALTER TABLE user_groups_big
 -- --------------------------------------------------------
 
 --
+-- indexes for table source_types
+--
+
+ALTER TABLE source_types
+    ADD PRIMARY KEY (source_type_id),
+    ADD KEY source_types_type_name_idx (type_name);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table sources
+--
+ALTER TABLE sources
+    ADD PRIMARY KEY (source_id),
+    ADD KEY sources_user_idx (user_id),
+    ADD KEY sources_source_name_idx (source_name),
+    ADD KEY sources_source_type_idx (source_type_id);
+
+--
+-- indexes for table user_sources
+--
+ALTER TABLE user_sources
+    ADD PRIMARY KEY (source_id, user_id),
+    ADD KEY user_sources_source_idx (source_id),
+    ADD KEY user_sources_user_idx (user_id),
+    ADD KEY user_sources_source_name_idx (source_name),
+    ADD KEY user_sources_source_type_idx (source_type_id);
+
+-- --------------------------------------------------------
+
+--
 -- indexes for table ref_types
 --
 
 ALTER TABLE ref_types
     ADD PRIMARY KEY (ref_type_id),
     ADD KEY ref_types_type_name_idx (type_name);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table refs
+--
+
+ALTER TABLE refs
+    ADD PRIMARY KEY (ref_id),
+    ADD KEY refs_user_idx (user_id),
+    ADD KEY refs_phrase_idx (phrase_id),
+    ADD KEY refs_external_key_idx (external_key),
+    ADD KEY refs_ref_type_idx (ref_type_id),
+    ADD KEY refs_source_idx (source_id);
+
+--
+-- indexes for table user_refs
+--
+
+ALTER TABLE user_refs
+    ADD PRIMARY KEY (ref_id,user_id),
+    ADD KEY user_refs_ref_idx (ref_id),
+    ADD KEY user_refs_user_idx (user_id);
 
 -- --------------------------------------------------------
 
@@ -4588,23 +4410,21 @@ ALTER TABLE user_values_time_series_big
 -- --------------------------------------------------------
 
 --
+-- indexes for table value_ts_data
+--
+
+ALTER TABLE value_ts_data
+    ADD KEY value_ts_data_value_time_series_idx (value_time_series_id);
+
+-- --------------------------------------------------------
+
+--
 -- indexes for table element_types
 --
 
 ALTER TABLE element_types
     ADD PRIMARY KEY (element_type_id),
     ADD KEY element_types_type_name_idx (type_name);
-
---
--- Indexes for table`formulas`
--- TODO next
---
-ALTER TABLE `formulas`
-    ADD PRIMARY KEY (`formula_id`),
-    ADD UNIQUE KEY `name` (`formula_name`),
-    ADD KEY `user_id` (`user_id`),
-    ADD KEY `formula_type_id` (`formula_type_id`),
-    ADD KEY `protect_id` (`protect_id`);
 
 -- --------------------------------------------------------
 
@@ -4620,22 +4440,46 @@ ALTER TABLE elements
 -- --------------------------------------------------------
 
 --
--- indexes for table formula_link_types
---
-
-ALTER TABLE formula_link_types
-    ADD PRIMARY KEY (formula_link_type_id),
-    ADD KEY formula_link_types_type_name_idx (type_name);
-
--- --------------------------------------------------------
-
---
 -- indexes for table formula_types
 --
 
 ALTER TABLE formula_types
     ADD PRIMARY KEY (formula_type_id),
     ADD KEY formula_types_type_name_idx (type_name);
+
+-- --------------------------------------------------------
+--
+-- indexes for table formulas
+--
+
+ALTER TABLE formulas
+    ADD PRIMARY KEY (formula_id),
+    ADD KEY formulas_user_idx (user_id),
+    ADD KEY formulas_formula_name_idx (formula_name),
+    ADD KEY formulas_formula_type_idx (formula_type_id),
+    ADD KEY formulas_view_idx (view_id);
+
+--
+-- indexes for table user_formulas
+--
+
+ALTER TABLE user_formulas
+    ADD PRIMARY KEY (formula_id,user_id),
+    ADD KEY user_formulas_formula_idx (formula_id),
+    ADD KEY user_formulas_user_idx (user_id),
+    ADD KEY user_formulas_formula_name_idx (formula_name),
+    ADD KEY user_formulas_formula_type_idx (formula_type_id),
+    ADD KEY user_formulas_view_idx (view_id);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table formula_link_types
+--
+
+ALTER TABLE formula_link_types
+    ADD PRIMARY KEY (formula_link_type_id),
+    ADD KEY formula_link_types_type_name_idx (type_name);
 
 -- --------------------------------------------------------
 
@@ -5242,243 +5086,15 @@ ALTER TABLE user_results_time_series_big
     ADD KEY user_results_time_series_big_result_time_series_idx (result_time_series_id),
     ADD KEY user_results_time_series_big_formula_idx (formula_id);
 
---
--- Indexes for table`import_source`
---
-ALTER TABLE `import_source`
-    ADD PRIMARY KEY (`import_source_id`);
-
---
--- Indexes for table`phrase_group_triple_links`
---
-ALTER TABLE `phrase_group_triple_links`
-    ADD PRIMARY KEY (`phrase_group_triple_link_id`),
-    ADD KEY `phrase_group_id` (`phrase_group_id`),
-    ADD KEY `triple_id` (`triple_id`);
-
---
--- Indexes for table`protection_types`
---
-ALTER TABLE `protection_types`
-    ADD PRIMARY KEY (`protect_id`),
-    ADD UNIQUE KEY `protection_type_id` (`protect_id`);
-
 -- --------------------------------------------------------
 
 --
--- indexes for table source_types
+-- indexes for table view_types
 --
 
-ALTER TABLE source_types
-    ADD PRIMARY KEY (source_type_id),
-    ADD KEY source_types_type_name_idx (type_name);
-
--- --------------------------------------------------------
-
---
--- indexes for table sources
---
-ALTER TABLE sources
-    ADD PRIMARY KEY (source_id),
-    ADD KEY sources_user_idx (user_id),
-    ADD KEY sources_source_name_idx (source_name),
-    ADD KEY sources_source_type_idx (source_type_id);
-
---
--- indexes for table user_sources
---
-ALTER TABLE user_sources
-    ADD PRIMARY KEY (source_id, user_id),
-    ADD KEY user_sources_source_idx (source_id),
-    ADD KEY user_sources_user_idx (user_id),
-    ADD KEY user_sources_source_name_idx (source_name),
-    ADD KEY user_sources_source_type_idx (source_type_id);
-
--- --------------------------------------------------------
-
---
--- indexes for table refs
---
-
-ALTER TABLE refs
-    ADD PRIMARY KEY (ref_id),
-    ADD KEY refs_user_idx (user_id),
-    ADD KEY refs_phrase_idx (phrase_id),
-    ADD KEY refs_external_key_idx (external_key),
-    ADD KEY refs_ref_type_idx (ref_type_id),
-    ADD KEY refs_source_idx (source_id);
-
---
--- indexes for table user_refs
---
-
-ALTER TABLE user_refs
-    ADD PRIMARY KEY (ref_id,user_id),
-    ADD KEY user_refs_ref_idx (ref_id),
-    ADD KEY user_refs_user_idx (user_id);
-
---
--- Indexes for table`sessions`
---
-ALTER TABLE `sessions`
-    ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table`share_types`
---
-ALTER TABLE `share_types`
-    ADD PRIMARY KEY (`share_type_id`);
-
---
--- Indexes for table`sys_log`
---
-ALTER TABLE `sys_log`
-    ADD PRIMARY KEY (`sys_log_id`),
-    ADD KEY `sys_log_time` (`sys_log_time`),
-    ADD KEY `sys_log_type_id` (`sys_log_type_id`),
-    ADD KEY `sys_log_function_id` (`sys_log_function_id`),
-    ADD KEY `sys_log_status_id` (`sys_log_status_id`);
-
---
--- Indexes for table`sys_log_functions`
---
-ALTER TABLE `sys_log_functions`
-    ADD PRIMARY KEY (`sys_log_function_id`);
-
---
--- Indexes for table`sys_log_status`
---
-ALTER TABLE `sys_log_status`
-    ADD PRIMARY KEY (`sys_log_status_id`);
-
---
--- Indexes for table`sys_log_types`
---
-ALTER TABLE `sys_log_types`
-    ADD PRIMARY KEY (`sys_log_type_id`);
-
---
--- Indexes for table`sys_scripts`
---
-ALTER TABLE `sys_scripts`
-    ADD PRIMARY KEY (`sys_script_id`);
-
---
--- Indexes for table`sys_script_times`
---
-ALTER TABLE `sys_script_times`
-    ADD KEY `sys_script_id` (`sys_script_id`);
-
---
--- Indexes for table`users`
---
-ALTER TABLE `users`
-    ADD PRIMARY KEY (`user_id`),
-    ADD UNIQUE KEY `user_name` (`user_name`),
-    ADD KEY `user_type_id` (`user_type_id`);
-
---
--- Indexes for table`user_attempts`
---
-ALTER TABLE `user_attempts`
-    ADD PRIMARY KEY (`id`);
-
--- --------------------------------------------------------
---
--- indexes for table formulas
---
-
-ALTER TABLE formulas
-    ADD PRIMARY KEY (formula_id),
-    ADD KEY formulas_user_idx (user_id),
-    ADD KEY formulas_formula_name_idx (formula_name),
-    ADD KEY formulas_formula_type_idx (formula_type_id),
-    ADD KEY formulas_view_idx (view_id);
-
---
--- indexes for table user_formulas
---
-
-ALTER TABLE user_formulas
-    ADD PRIMARY KEY (formula_id,user_id),
-    ADD KEY user_formulas_formula_idx (formula_id),
-    ADD KEY user_formulas_user_idx (user_id),
-    ADD KEY user_formulas_formula_name_idx (formula_name),
-    ADD KEY user_formulas_formula_type_idx (formula_type_id),
-    ADD KEY user_formulas_view_idx (view_id);
-
---
--- Indexes for table`user_official_types`
---
-ALTER TABLE `user_official_types`
-    ADD PRIMARY KEY (`user_official_type_id`);
-
---
--- Indexes for table`user_phrase_groups`
---
-ALTER TABLE user_groups
-    ADD UNIQUE KEY `phrase_group_id` (group_id, `user_id`),
-    ADD KEY `phrase_group_id_2` (group_id),
-    ADD KEY `user_id` (`user_id`);
-
---
--- Indexes for table`user_phrase_group_triple_links`
---
-ALTER TABLE `user_phrase_group_triple_links`
-    ADD UNIQUE KEY `phrase_group_triple_link_id` (`phrase_group_triple_link_id`, `user_id`),
-    ADD KEY `phrase_group_triple_link_id_2` (`phrase_group_triple_link_id`),
-    ADD KEY `user_id` (`user_id`);
-
---
--- Indexes for table`user_requests`
---
-ALTER TABLE `user_requests`
-    ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table`user_sources`
---
-ALTER TABLE `user_sources`
-    ADD UNIQUE KEY `source_id` (`source_id`, `user_id`),
-    ADD KEY `user_id` (`user_id`),
-    ADD KEY `source_id_2` (`source_id`),
-    ADD KEY `source_type_id` (`source_type_id`);
-
---
--- Indexes for table`user_refs`
---
-ALTER TABLE `user_refs`
-    ADD UNIQUE KEY `ref_id` (`ref_id`, `user_id`),
-    ADD KEY `user_id` (`user_id`),
-    ADD KEY `ref_id_2` (`ref_id`);
-
---
--- Indexes for table`user_types`
---
-ALTER TABLE `user_types`
-    ADD PRIMARY KEY (`user_type_id`);
-
---
--- Indexes for table`user_values`
---
-ALTER TABLE `user_values`
-    ADD PRIMARY KEY (`group_id`, `user_id`),
-    ADD KEY `user_id` (`user_id`),
-    ADD KEY `source_id` (`source_id`),
-    ADD KEY `group_id` (`group_id`),
-    ADD KEY `share_type` (`share_type_id`),
-    ADD KEY `protect_id` (`protect_id`);
-
---
--- Indexes for table`user_value_time_series`
---
-ALTER TABLE `user_value_time_series`
-    ADD PRIMARY KEY (`value_time_series_id`, `user_id`),
-    ADD KEY `user_id` (`user_id`),
-    ADD KEY `source_id` (`source_id`),
-    ADD KEY `group_id` (`value_time_series_id`),
-    ADD KEY `share_type` (`share_type_id`),
-    ADD KEY `protect_id` (`protect_id`);
+ALTER TABLE view_types
+    ADD PRIMARY KEY (view_type_id),
+    ADD KEY view_types_type_name_idx (type_name);
 
 -- --------------------------------------------------------
 
@@ -5513,6 +5129,60 @@ ALTER TABLE user_views
 ALTER TABLE view_link_types
     ADD PRIMARY KEY (view_link_type_id),
     ADD KEY view_link_types_type_name_idx (type_name);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table view_term_links
+--
+
+ALTER TABLE view_term_links
+    ADD PRIMARY KEY (view_term_link_id),
+    ADD KEY view_term_links_term_idx (term_id),
+    ADD KEY view_term_links_view_idx (view_id),
+    ADD KEY view_term_links_type_idx (type_id),
+    ADD KEY view_term_links_user_idx (user_id),
+    ADD KEY view_term_links_view_link_type_idx (view_link_type_id);
+
+--
+-- indexes for table user_view_term_links
+--
+
+ALTER TABLE user_view_term_links
+    ADD PRIMARY KEY (view_term_link_id,user_id),
+    ADD KEY user_view_term_links_view_term_link_idx (view_term_link_id),
+    ADD KEY user_view_term_links_user_idx (user_id),
+    ADD KEY user_view_term_links_view_link_type_idx (view_link_type_id);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table component_link_types
+--
+
+ALTER TABLE component_link_types
+    ADD PRIMARY KEY (component_link_type_id),
+    ADD KEY component_link_types_type_name_idx (type_name);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table position_types
+--
+
+ALTER TABLE position_types
+    ADD PRIMARY KEY (position_type_id),
+    ADD KEY position_types_type_name_idx (type_name);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table component_types
+--
+
+ALTER TABLE component_types
+    ADD PRIMARY KEY (component_type_id),
+    ADD KEY component_types_type_name_idx (type_name);
 
 -- --------------------------------------------------------
 
@@ -5576,207 +5246,12 @@ ALTER TABLE user_component_links
     ADD KEY user_component_links_component_link_type_idx (component_link_type_id),
     ADD KEY user_component_links_position_type_idx (position_type_id);
 
---
--- Indexes for table`user_words`
---
-ALTER TABLE `user_words`
-    ADD PRIMARY KEY (`word_id`, `user_id`, `language_id`),
-    ADD KEY `word_id` (`word_id`),
-    ADD KEY `user_id` (`user_id`),
-    ADD KEY `language_id` (`language_id`),
-    ADD KEY `phrase_type_id` (`phrase_type_id`),
-    ADD KEY `view_id` (`view_id`);
-
---
--- Indexes for table`user_triples`
---
-ALTER TABLE `user_triples`
-    ADD UNIQUE KEY `triple_id` (`triple_id`, `user_id`),
-    ADD KEY `triple_id_2` (`triple_id`),
-    ADD KEY `user_id` (`user_id`);
-
---
--- Indexes for table`values`
---
-ALTER TABLE `values`
-    ADD PRIMARY KEY (`group_id`),
-    ADD KEY `user_id` (`user_id`),
-    ADD KEY `source_id` (`source_id`),
-    ADD KEY `phrase_group_id` (`phrase_group_id`),
-    ADD KEY `protect_id` (`protect_id`);
-
---
--- Indexes for table`value_phrase_links`
---
-ALTER TABLE `value_phrase_links`
-    ADD PRIMARY KEY (`value_phrase_link_id`),
-    ADD UNIQUE KEY `user_id` (`user_id`, `group_id`, `phrase_id`),
-    ADD KEY `group_id` (`group_id`),
-    ADD KEY `phrase_id` (`phrase_id`);
-
---
--- Indexes for table`value_relations`
---
-ALTER TABLE `value_relations`
-    ADD PRIMARY KEY (`value_link_id`);
-
---
--- Indexes for table`value_time_series`
---
-ALTER TABLE `value_time_series`
-    ADD PRIMARY KEY (`value_time_series_id`);
 
 -- --------------------------------------------------------
-
 --
--- indexes for table value_ts_data
+-- foreign key constraints and auto_increment for tables
 --
-
-ALTER TABLE value_ts_data
-    ADD KEY value_ts_data_value_time_series_idx (value_time_series_id);
-
---
--- Indexes for table`views`
---
-ALTER TABLE `views`
-    ADD PRIMARY KEY (`view_id`),
-    ADD KEY `view_type_id` (`view_type_id`);
-
---
--- Indexes for table`components`
---
-ALTER TABLE `components`
-    ADD PRIMARY KEY (`component_id`),
-    ADD KEY `formula_id` (`formula_id`);
-
 -- --------------------------------------------------------
-
---
--- indexes for table component_link_types
---
-
-ALTER TABLE component_link_types
-    ADD PRIMARY KEY (component_link_type_id),
-    ADD KEY component_link_types_type_name_idx (type_name);
-
--- --------------------------------------------------------
-
---
--- indexes for table position_types
---
-
-ALTER TABLE position_types
-    ADD PRIMARY KEY (position_type_id),
-    ADD KEY position_types_type_name_idx (type_name);
-
--- --------------------------------------------------------
-
---
--- indexes for table component_types
---
-
-ALTER TABLE component_types
-    ADD PRIMARY KEY (component_type_id),
-    ADD KEY component_types_type_name_idx (type_name);
-
---
--- Indexes for table`view_link_types`
---
-ALTER TABLE `view_link_types`
-    ADD PRIMARY KEY (`view_link_type_id`);
-
--- --------------------------------------------------------
-
---
--- indexes for table view_types
---
-
-ALTER TABLE view_types
-    ADD PRIMARY KEY (view_type_id),
-    ADD KEY view_types_type_name_idx (type_name);
-
--- --------------------------------------------------------
-
---
--- indexes for table view_term_links
---
-
-ALTER TABLE view_term_links
-    ADD PRIMARY KEY (view_term_link_id),
-    ADD KEY view_term_links_term_idx (term_id),
-    ADD KEY view_term_links_view_idx (view_id),
-    ADD KEY view_term_links_type_idx (type_id),
-    ADD KEY view_term_links_user_idx (user_id),
-    ADD KEY view_term_links_view_link_type_idx (view_link_type_id);
-
---
--- indexes for table user_view_term_links
---
-
-ALTER TABLE user_view_term_links
-    ADD PRIMARY KEY (view_term_link_id,user_id),
-    ADD KEY user_view_term_links_view_term_link_idx (view_term_link_id),
-    ADD KEY user_view_term_links_user_idx (user_id),
-    ADD KEY user_view_term_links_view_link_type_idx (view_link_type_id);
-
---
--- Indexes for table`words`
---
-ALTER TABLE `words`
-    ADD PRIMARY KEY (`word_id`),
-    ADD UNIQUE KEY `word_name` (`word_name`),
-    ADD KEY `phrase_type_id` (`phrase_type_id`),
-    ADD KEY `view_id` (`view_id`);
-
---
--- Indexes for table`word_del_requests`
---
-ALTER TABLE `word_del_requests`
-    ADD PRIMARY KEY (`word_del_request_id`);
-
---
--- Indexes for table`triples`
---
-ALTER TABLE `triples`
-    ADD PRIMARY KEY (`triple_id`);
-
--- --------------------------------------------------------
-
---
--- indexes for table protection_types
---
-
-ALTER TABLE protection_types
-    ADD PRIMARY KEY (protection_type_id),
-    ADD KEY protection_types_type_name_idx (type_name);
-
--- --------------------------------------------------------
-
---
--- indexes for table share_types
---
-
-ALTER TABLE share_types
-    ADD PRIMARY KEY (share_type_id),
-    ADD KEY share_types_type_name_idx (type_name);
-
--- --------------------------------------------------------
-
---
--- indexes for table phrase_types
---
-
-ALTER TABLE phrase_types
-    ADD PRIMARY KEY (phrase_type_id),
-    ADD KEY phrase_types_type_name_idx (type_name);
-
---
--- Constraints for dumped tables
---
-
---
--- AUTO_INCREMENT for exported tables
---
 
 --
 -- AUTO_INCREMENT for table`jobs`
@@ -6053,6 +5528,13 @@ ALTER TABLE `phrase_types`
     MODIFY `phrase_type_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- constraints for table system_times
+--
+
+ALTER TABLE system_times
+    ADD CONSTRAINT system_times_system_time_type_fk FOREIGN KEY (system_time_type_id) REFERENCES system_time_types (system_time_type_id);
+
+--
 -- constraints for table sys_log
 --
 
@@ -6061,13 +5543,6 @@ ALTER TABLE sys_log
     ADD CONSTRAINT sys_log_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
     ADD CONSTRAINT sys_log_user2_fk FOREIGN KEY (solver_id) REFERENCES users (user_id),
     ADD CONSTRAINT sys_log_sys_log_status_fk FOREIGN KEY (sys_log_status_id) REFERENCES sys_log_status (sys_log_status_id);
-
---
--- constraints for table system_times
---
-
-ALTER TABLE system_times
-    ADD CONSTRAINT system_times_system_time_type_fk FOREIGN KEY (system_time_type_id) REFERENCES system_time_types (system_time_type_id);
 
 --
 -- constraints for table job_times
@@ -6236,6 +5711,62 @@ ALTER TABLE phrase_tables
 -- --------------------------------------------------------
 
 --
+-- constraints for table groups
+--
+ALTER TABLE `groups`
+    ADD CONSTRAINT groups_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_groups
+--
+ALTER TABLE user_groups
+    ADD CONSTRAINT user_groups_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table groups_prime
+--
+ALTER TABLE groups_prime
+    ADD CONSTRAINT groups_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_groups_prime
+--
+ALTER TABLE user_groups_prime
+    ADD CONSTRAINT user_groups_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table groups_big
+--
+ALTER TABLE groups_big
+    ADD CONSTRAINT groups_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_groups_big
+--
+ALTER TABLE user_groups_big
+    ADD CONSTRAINT user_groups_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+-- --------------------------------------------------------
+
+--
+-- constraints for table sources
+--
+ALTER TABLE sources
+    ADD CONSTRAINT sources_source_name_uk UNIQUE (source_name),
+    ADD CONSTRAINT sources_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT sources_source_type_fk FOREIGN KEY (source_type_id) REFERENCES source_types (source_type_id);
+
+--
+-- constraints for table user_sources
+--
+ALTER TABLE user_sources
+    ADD CONSTRAINT user_sources_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
+    ADD CONSTRAINT user_sources_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_sources_source_type_fk FOREIGN KEY (source_type_id) REFERENCES source_types (source_type_id);
+
+-- --------------------------------------------------------
+
+--
 -- constraints for table refs
 --
 
@@ -6251,6 +5782,278 @@ ALTER TABLE refs
 ALTER TABLE user_refs
     ADD CONSTRAINT user_refs_ref_fk FOREIGN KEY (ref_id) REFERENCES refs (ref_id),
     ADD CONSTRAINT user_refs_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+-- --------------------------------------------------------
+
+--
+-- constraints for table values_standard_prime
+--
+ALTER TABLE values_standard_prime
+
+    ADD CONSTRAINT values_standard_prime_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
+
+--
+-- constraints for table values_standard
+--
+ALTER TABLE values_standard
+    ADD CONSTRAINT values_standard_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
+
+--
+-- constraints for table values
+--
+ALTER TABLE `values`
+    ADD CONSTRAINT values_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
+    ADD CONSTRAINT values_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_values
+--
+ALTER TABLE user_values
+    ADD CONSTRAINT user_values_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_values_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
+
+--
+-- constraints for table values_prime
+--
+ALTER TABLE values_prime
+    ADD CONSTRAINT values_prime_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
+    ADD CONSTRAINT values_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_values_prime
+--
+ALTER TABLE user_values_prime
+    ADD CONSTRAINT user_values_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_values_prime_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
+
+--
+-- constraints for table values_big
+--
+ALTER TABLE values_big
+    ADD CONSTRAINT values_big_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
+    ADD CONSTRAINT values_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_values_big
+--
+ALTER TABLE user_values_big
+    ADD CONSTRAINT user_values_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_values_big_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
+
+-- --------------------------------------------------------
+
+--
+-- constraints for table values_text_standard_prime
+--
+ALTER TABLE values_text_standard_prime
+
+    ADD CONSTRAINT values_text_standard_prime_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
+
+--
+-- constraints for table values_text_standard
+--
+ALTER TABLE values_text_standard
+    ADD CONSTRAINT values_text_standard_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
+
+--
+-- constraints for table values_text
+--
+ALTER TABLE values_text
+    ADD CONSTRAINT values_text_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
+    ADD CONSTRAINT values_text_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_values_text
+--
+ALTER TABLE user_values_text
+    ADD CONSTRAINT user_values_text_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_values_text_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
+
+--
+-- constraints for table values_text_prime
+--
+ALTER TABLE values_text_prime
+    ADD CONSTRAINT values_text_prime_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
+    ADD CONSTRAINT values_text_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_values_text_prime
+--
+ALTER TABLE user_values_text_prime
+    ADD CONSTRAINT user_values_text_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_values_text_prime_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
+
+--
+-- constraints for table values_text_big
+--
+ALTER TABLE values_text_big
+    ADD CONSTRAINT values_text_big_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
+    ADD CONSTRAINT values_text_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_values_text_big
+--
+ALTER TABLE user_values_text_big
+    ADD CONSTRAINT user_values_text_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_values_text_big_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
+
+-- --------------------------------------------------------
+
+--
+-- constraints for table values_time_standard_prime
+--
+ALTER TABLE values_time_standard_prime
+
+    ADD CONSTRAINT values_time_standard_prime_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
+
+--
+-- constraints for table values_time_standard
+--
+ALTER TABLE values_time_standard
+    ADD CONSTRAINT values_time_standard_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
+
+--
+-- constraints for table values_time
+--
+ALTER TABLE values_time
+    ADD CONSTRAINT values_time_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
+    ADD CONSTRAINT values_time_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_values_time
+--
+ALTER TABLE user_values_time
+    ADD CONSTRAINT user_values_time_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_values_time_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
+
+--
+-- constraints for table values_time_prime
+--
+ALTER TABLE values_time_prime
+    ADD CONSTRAINT values_time_prime_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
+    ADD CONSTRAINT values_time_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_values_time_prime
+--
+ALTER TABLE user_values_time_prime
+    ADD CONSTRAINT user_values_time_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_values_time_prime_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
+
+--
+-- constraints for table values_time_big
+--
+ALTER TABLE values_time_big
+    ADD CONSTRAINT values_time_big_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
+    ADD CONSTRAINT values_time_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_values_time_big
+--
+ALTER TABLE user_values_time_big
+    ADD CONSTRAINT user_values_time_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_values_time_big_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
+
+-- --------------------------------------------------------
+
+--
+-- constraints for table values_geo_standard_prime
+--
+ALTER TABLE values_geo_standard_prime
+
+    ADD CONSTRAINT values_geo_standard_prime_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
+
+--
+-- constraints for table values_geo_standard
+--
+ALTER TABLE values_geo_standard
+    ADD CONSTRAINT values_geo_standard_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
+
+--
+-- constraints for table values_geo
+--
+ALTER TABLE values_geo
+    ADD CONSTRAINT values_geo_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
+    ADD CONSTRAINT values_geo_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_values_geo
+--
+ALTER TABLE user_values_geo
+    ADD CONSTRAINT user_values_geo_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_values_geo_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
+
+--
+-- constraints for table values_geo_prime
+--
+ALTER TABLE values_geo_prime
+    ADD CONSTRAINT values_geo_prime_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
+    ADD CONSTRAINT values_geo_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_values_geo_prime
+--
+ALTER TABLE user_values_geo_prime
+    ADD CONSTRAINT user_values_geo_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_values_geo_prime_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
+
+--
+-- constraints for table values_geo_big
+--
+ALTER TABLE values_geo_big
+    ADD CONSTRAINT values_geo_big_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
+    ADD CONSTRAINT values_geo_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_values_geo_big
+--
+ALTER TABLE user_values_geo_big
+    ADD CONSTRAINT user_values_geo_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_values_geo_big_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
+
+-- --------------------------------------------------------
+
+--
+-- constraints for table values_time_series
+--
+ALTER TABLE values_time_series
+    ADD CONSTRAINT values_time_series_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
+    ADD CONSTRAINT values_time_series_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_values_time_series
+--
+ALTER TABLE user_values_time_series
+    ADD CONSTRAINT user_values_time_series_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_values_time_series_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
+
+--
+-- constraints for table values_time_series_prime
+--
+ALTER TABLE values_time_series_prime
+    ADD CONSTRAINT values_time_series_prime_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
+    ADD CONSTRAINT values_time_series_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_values_time_series_prime
+--
+ALTER TABLE user_values_time_series_prime
+    ADD CONSTRAINT user_values_time_series_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_values_time_series_prime_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
+
+--
+-- constraints for table values_time_series_big
+--
+ALTER TABLE values_time_series_big
+    ADD CONSTRAINT values_time_series_big_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
+    ADD CONSTRAINT values_time_series_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_values_time_series_big
+--
+ALTER TABLE user_values_time_series_big
+    ADD CONSTRAINT user_values_time_series_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_values_time_series_big_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
 
 --
 -- constraints for table elements
@@ -6580,392 +6383,6 @@ ALTER TABLE user_results_time_series_big
 -- --------------------------------------------------------
 
 --
--- constraints for table groups
---
-ALTER TABLE `groups`
-    ADD CONSTRAINT groups_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
-
---
--- constraints for table user_groups
---
-ALTER TABLE user_groups
-    ADD CONSTRAINT user_groups_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
-
---
--- constraints for table groups_prime
---
-ALTER TABLE groups_prime
-    ADD CONSTRAINT groups_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
-
---
--- constraints for table user_groups_prime
---
-ALTER TABLE user_groups_prime
-    ADD CONSTRAINT user_groups_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
-
---
--- constraints for table groups_big
---
-ALTER TABLE groups_big
-    ADD CONSTRAINT groups_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
-
---
--- constraints for table user_groups_big
---
-ALTER TABLE user_groups_big
-    ADD CONSTRAINT user_groups_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
-
---
--- Constraints for table`refs`
---
-ALTER TABLE `refs`
-    ADD CONSTRAINT `refs_fk_1` FOREIGN KEY (`ref_type_id`) REFERENCES `ref_types` (`ref_type_id`);
-
---
--- Constraints for table`sys_log`
---
-ALTER TABLE `sys_log`
-    ADD CONSTRAINT `sys_log_fk_1` FOREIGN KEY (`sys_log_status_id`) REFERENCES `sys_log_status` (`sys_log_status_id`),
-    ADD CONSTRAINT `sys_log_fk_2` FOREIGN KEY (`sys_log_function_id`) REFERENCES `sys_log_functions` (`sys_log_function_id`),
-    ADD CONSTRAINT `sys_log_fk_3` FOREIGN KEY (`sys_log_type_id`) REFERENCES `sys_log_types` (`sys_log_type_id`);
-
---
--- Constraints for table`sys_script_times`
---
-ALTER TABLE `sys_script_times`
-    ADD CONSTRAINT `sys_script_times_fk_1` FOREIGN KEY (`sys_script_id`) REFERENCES `sys_scripts` (`sys_script_id`);
-
---
--- Constraints for table`users`
---
-ALTER TABLE `users`
-    ADD CONSTRAINT `users_fk_1` FOREIGN KEY (`user_type_id`) REFERENCES `user_types` (`user_type_id`),
-    ADD CONSTRAINT `users_fk_2` FOREIGN KEY (`user_profile_id`) REFERENCES `user_profiles` (`profile_id`);
-
---
--- Constraints for table`user_formulas`
---
-ALTER TABLE `user_formulas`
-    ADD CONSTRAINT `user_formulas_fk_4` FOREIGN KEY (`share_type_id`) REFERENCES `share_types` (`share_type_id`),
-    ADD CONSTRAINT `user_formulas_fk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
-    ADD CONSTRAINT `user_formulas_fk_2` FOREIGN KEY (`formula_type_id`) REFERENCES `formula_types` (`formula_type_id`),
-    ADD CONSTRAINT `user_formulas_fk_3` FOREIGN KEY (`formula_id`) REFERENCES `formulas` (`formula_id`);
-
---
--- Constraints for table`user_formula_links`
---
-ALTER TABLE `user_formula_links`
-    ADD CONSTRAINT `user_formula_links_fk_1` FOREIGN KEY (`formula_link_id`) REFERENCES `formula_links` (`formula_link_id`),
-    ADD CONSTRAINT `user_formula_links_fk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
-    ADD CONSTRAINT `user_formula_links_fk_3` FOREIGN KEY (`link_type_id`) REFERENCES `formula_link_types` (`formula_link_type_id`);
-
---
--- Constraints for table`user_phrase_groups`
---
-ALTER TABLE user_groups
-    ADD CONSTRAINT `user_phrase_groups_fk_1` FOREIGN KEY (group_id) REFERENCES `groups` (group_id),
-    ADD CONSTRAINT `user_phrase_groups_fk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
-
--- --------------------------------------------------------
-
---
--- constraints for table sources
---
-ALTER TABLE sources
-    ADD CONSTRAINT sources_source_name_uk UNIQUE (source_name),
-    ADD CONSTRAINT sources_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT sources_source_type_fk FOREIGN KEY (source_type_id) REFERENCES source_types (source_type_id);
-
---
--- constraints for table user_sources
---
-ALTER TABLE user_sources
-    ADD CONSTRAINT user_sources_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
-    ADD CONSTRAINT user_sources_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT user_sources_source_type_fk FOREIGN KEY (source_type_id) REFERENCES source_types (source_type_id);
-
---
--- Constraints for table`user_refs`
---
-ALTER TABLE `user_refs`
-    ADD CONSTRAINT `user_refs_fk_1` FOREIGN KEY (`ref_id`) REFERENCES `refs` (`ref_id`),
-    ADD CONSTRAINT `user_refs_fk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
-
--- --------------------------------------------------------
-
---
--- constraints for table values_standard_prime
---
-ALTER TABLE values_standard_prime
-
-    ADD CONSTRAINT values_standard_prime_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
-
---
--- constraints for table values_standard
---
-ALTER TABLE values_standard
-    ADD CONSTRAINT values_standard_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
-
---
--- constraints for table values
---
-ALTER TABLE `values`
-    ADD CONSTRAINT values_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
-    ADD CONSTRAINT values_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
-
---
--- constraints for table user_values
---
-ALTER TABLE user_values
-    ADD CONSTRAINT user_values_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT user_values_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
-
---
--- constraints for table values_prime
---
-ALTER TABLE values_prime
-    ADD CONSTRAINT values_prime_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
-    ADD CONSTRAINT values_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
-
---
--- constraints for table user_values_prime
---
-ALTER TABLE user_values_prime
-    ADD CONSTRAINT user_values_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT user_values_prime_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
-
---
--- constraints for table values_big
---
-ALTER TABLE values_big
-    ADD CONSTRAINT values_big_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
-    ADD CONSTRAINT values_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
-
---
--- constraints for table user_values_big
---
-ALTER TABLE user_values_big
-    ADD CONSTRAINT user_values_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT user_values_big_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
-
--- --------------------------------------------------------
-
---
--- constraints for table values_text_standard_prime
---
-ALTER TABLE values_text_standard_prime
-
-    ADD CONSTRAINT values_text_standard_prime_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
-
---
--- constraints for table values_text_standard
---
-ALTER TABLE values_text_standard
-    ADD CONSTRAINT values_text_standard_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
-
---
--- constraints for table values_text
---
-ALTER TABLE values_text
-    ADD CONSTRAINT values_text_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
-    ADD CONSTRAINT values_text_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
-
---
--- constraints for table user_values_text
---
-ALTER TABLE user_values_text
-    ADD CONSTRAINT user_values_text_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT user_values_text_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
-
---
--- constraints for table values_text_prime
---
-ALTER TABLE values_text_prime
-    ADD CONSTRAINT values_text_prime_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
-    ADD CONSTRAINT values_text_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
-
---
--- constraints for table user_values_text_prime
---
-ALTER TABLE user_values_text_prime
-    ADD CONSTRAINT user_values_text_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT user_values_text_prime_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
-
---
--- constraints for table values_text_big
---
-ALTER TABLE values_text_big
-    ADD CONSTRAINT values_text_big_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
-    ADD CONSTRAINT values_text_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
-
---
--- constraints for table user_values_text_big
---
-ALTER TABLE user_values_text_big
-    ADD CONSTRAINT user_values_text_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT user_values_text_big_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
-
--- --------------------------------------------------------
-
---
--- constraints for table values_time_standard_prime
---
-ALTER TABLE values_time_standard_prime
-
-    ADD CONSTRAINT values_time_standard_prime_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
-
---
--- constraints for table values_time_standard
---
-ALTER TABLE values_time_standard
-    ADD CONSTRAINT values_time_standard_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
-
---
--- constraints for table values_time
---
-ALTER TABLE values_time
-    ADD CONSTRAINT values_time_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
-    ADD CONSTRAINT values_time_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
-
---
--- constraints for table user_values_time
---
-ALTER TABLE user_values_time
-    ADD CONSTRAINT user_values_time_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT user_values_time_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
-
---
--- constraints for table values_time_prime
---
-ALTER TABLE values_time_prime
-    ADD CONSTRAINT values_time_prime_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
-    ADD CONSTRAINT values_time_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
-
---
--- constraints for table user_values_time_prime
---
-ALTER TABLE user_values_time_prime
-    ADD CONSTRAINT user_values_time_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT user_values_time_prime_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
-
---
--- constraints for table values_time_big
---
-ALTER TABLE values_time_big
-    ADD CONSTRAINT values_time_big_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
-    ADD CONSTRAINT values_time_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
-
---
--- constraints for table user_values_time_big
---
-ALTER TABLE user_values_time_big
-    ADD CONSTRAINT user_values_time_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT user_values_time_big_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
-
--- --------------------------------------------------------
-
---
--- constraints for table values_geo_standard_prime
---
-ALTER TABLE values_geo_standard_prime
-
-    ADD CONSTRAINT values_geo_standard_prime_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
-
---
--- constraints for table values_geo_standard
---
-ALTER TABLE values_geo_standard
-    ADD CONSTRAINT values_geo_standard_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
-
---
--- constraints for table values_geo
---
-ALTER TABLE values_geo
-    ADD CONSTRAINT values_geo_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
-    ADD CONSTRAINT values_geo_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
-
---
--- constraints for table user_values_geo
---
-ALTER TABLE user_values_geo
-    ADD CONSTRAINT user_values_geo_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT user_values_geo_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
-
---
--- constraints for table values_geo_prime
---
-ALTER TABLE values_geo_prime
-    ADD CONSTRAINT values_geo_prime_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
-    ADD CONSTRAINT values_geo_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
-
---
--- constraints for table user_values_geo_prime
---
-ALTER TABLE user_values_geo_prime
-    ADD CONSTRAINT user_values_geo_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT user_values_geo_prime_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
-
---
--- constraints for table values_geo_big
---
-ALTER TABLE values_geo_big
-    ADD CONSTRAINT values_geo_big_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
-    ADD CONSTRAINT values_geo_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
-
---
--- constraints for table user_values_geo_big
---
-ALTER TABLE user_values_geo_big
-    ADD CONSTRAINT user_values_geo_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT user_values_geo_big_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
-
--- --------------------------------------------------------
-
---
--- constraints for table values_time_series
---
-ALTER TABLE values_time_series
-    ADD CONSTRAINT values_time_series_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
-    ADD CONSTRAINT values_time_series_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
-
---
--- constraints for table user_values_time_series
---
-ALTER TABLE user_values_time_series
-    ADD CONSTRAINT user_values_time_series_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT user_values_time_series_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
-
---
--- constraints for table values_time_series_prime
---
-ALTER TABLE values_time_series_prime
-    ADD CONSTRAINT values_time_series_prime_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
-    ADD CONSTRAINT values_time_series_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
-
---
--- constraints for table user_values_time_series_prime
---
-ALTER TABLE user_values_time_series_prime
-    ADD CONSTRAINT user_values_time_series_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT user_values_time_series_prime_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
-
---
--- constraints for table values_time_series_big
---
-ALTER TABLE values_time_series_big
-    ADD CONSTRAINT values_time_series_big_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
-    ADD CONSTRAINT values_time_series_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
-
---
--- constraints for table user_values_time_series_big
---
-ALTER TABLE user_values_time_series_big
-    ADD CONSTRAINT user_values_time_series_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT user_values_time_series_big_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
-
--- --------------------------------------------------------
-
---
 -- constraints for table views
 --
 
@@ -7052,43 +6469,6 @@ ALTER TABLE user_component_links
     ADD CONSTRAINT user_component_links_component_link_type_fk FOREIGN KEY (component_link_type_id) REFERENCES component_link_types (component_link_type_id),
     ADD CONSTRAINT user_component_links_position_type_fk FOREIGN KEY (position_type_id) REFERENCES position_types (position_type_id);
 
---
--- Constraints for table`user_words`
---
-ALTER TABLE `user_words`
-    ADD CONSTRAINT `user_words_fk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
-    ADD CONSTRAINT `user_words_fk_2` FOREIGN KEY (`phrase_type_id`) REFERENCES `phrase_types` (`phrase_type_id`),
-    ADD CONSTRAINT `user_words_fk_3` FOREIGN KEY (`view_id`) REFERENCES `views` (`view_id`),
-    ADD CONSTRAINT `user_words_fk_4` FOREIGN KEY (`word_id`) REFERENCES `words` (`word_id`);
-
---
--- Constraints for table`user_triples`
---
-ALTER TABLE `user_triples`
-    ADD CONSTRAINT `user_triples_fk_1` FOREIGN KEY (`triple_id`) REFERENCES `triples` (`triple_id`),
-    ADD CONSTRAINT `user_triples_fk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
-
---
--- Constraints for table`values`
---
-ALTER TABLE `values`
-    ADD CONSTRAINT `values_fk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
-    ADD CONSTRAINT `values_fk_2` FOREIGN KEY (`source_id`) REFERENCES `sources` (`source_id`),
-    ADD CONSTRAINT `values_fk_3` FOREIGN KEY (`phrase_group_id`) REFERENCES `groups` (group_id),
-    ADD CONSTRAINT `values_fk_4` FOREIGN KEY (`protect_id`) REFERENCES `protection_types` (`protect_id`);
-
---
--- Constraints for table`components`
---
-ALTER TABLE `components`
-    ADD CONSTRAINT `components_fk_2` FOREIGN KEY (`formula_id`) REFERENCES `formulas` (`formula_id`);
-
---
--- Constraints for table`words`
---
-ALTER TABLE `words`
-    ADD CONSTRAINT `words_fk_1` FOREIGN KEY (`view_id`) REFERENCES `views` (`view_id`),
-    ADD CONSTRAINT `words_fk_2` FOREIGN KEY (`phrase_type_id`) REFERENCES `phrase_types` (`phrase_type_id`);
 
 /*!40101 SET CHARACTER_SET_CLIENT = @OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS = @OLD_CHARACTER_SET_RESULTS */;
