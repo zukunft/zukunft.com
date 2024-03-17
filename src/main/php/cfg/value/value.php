@@ -72,6 +72,8 @@ include_once SERVICE_EXPORT_PATH . 'json.php';
 
 use api\api;
 use api\value\value as value_api;
+use cfg\db\sql_field_default;
+use cfg\db\sql_field_type;
 use cfg\job;
 use cfg\job_type_list;
 use cfg\db\sql;
@@ -126,7 +128,16 @@ class value extends sandbox_value
     const FLD_VALUE_TEXT = 'text_value';
     const FLD_VALUE_TIME = 'time_value';
     const FLD_VALUE_GEO = 'geo_value';
+    const FLD_TS_ID_COM = 'the id of the time series as a 64 bit integer value because the number of time series is not expected to be too high';
+    const FLD_TS_ID_COM_USER = 'the 64 bit integer which is unique for the standard and the user series';
+    const FLD_VALUE_TS_ID = 'value_time_series_id';
     const FLD_LAST_UPDATE = 'last_update';
+    const FLD_ALL_TIME_SERIES = array(
+        [self::FLD_VALUE_TS_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_TS_ID_COM],
+    );
+    const FLD_ALL_TIME_SERIES_USER = array(
+        [self::FLD_VALUE_TS_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_TS_ID_COM_USER],
+    );
 
     // all database field names excluding the id and excluding the user specific fields
     const FLD_NAMES = array();

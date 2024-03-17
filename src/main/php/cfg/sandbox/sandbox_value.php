@@ -79,10 +79,13 @@ class sandbox_value extends sandbox_multi
     const TBL_COMMENT_BIG_CONT = 's related to more than 16 phrases';
     const TBL_COMMENT_BIG_USER = 'to store the user specific changes of ';
     const TBL_COMMENT_BIG_USER_CONT = 's related to more than 16 phrases';
+    // TODO review the time series comments
+    const TBL_COMMENT_TS = 'for the common parameters for a list of numbers that differ only by the timestamp';
     const TYPE_NUMBER = 'numeric';
     const TYPE_TEXT = 'text';
     const TYPE_TIME = 'time';
     const TYPE_GEO = 'geo';
+    const TYPE_TIME_SERIES = 'time_series';
     const FLD_USER_SOURCE_COM = 'one user can add different values from different sources, that have the same group, but a different value, so the source should be included in the unique key';
 
     // the database field names used for all value tables e.g. also for results
@@ -151,6 +154,9 @@ class sandbox_value extends sandbox_multi
     const FLD_ALL_CHANGED = array(
         [value::FLD_LAST_UPDATE, sql_field_type::TIME, sql_field_default::NULL, '', '', 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation'],
     );
+    // dummy list which is always overwritten by either the value or result object
+    const FLD_ALL_TIME_SERIES = array();
+    const FLD_ALL_TIME_SERIES_USER = array();
     const FLD_ALL_SOURCE_GROUP = array();
     const FLD_ALL_SOURCE_GROUP_PRIME = array();
     const FLD_ALL_SOURCE_GROUP_BIG = array();
@@ -368,6 +374,14 @@ class sandbox_value extends sandbox_multi
             '_' . $this::TYPE_GEO, $this::TYPE_GEO
         );
         $sql .= $sql_array[$pos];
+        $sql_array = $this->sql_one_type(
+            $sc,
+            $this::FLD_ALL_TIME_SERIES,
+            $this::FLD_ALL_TIME_SERIES_USER,
+            '_' . $this::TYPE_TIME_SERIES, $this::TYPE_TIME_SERIES,
+            self::TBL_COMMENT_TS
+        );
+        $sql .= $sql_array[$pos];
         return $sql;
     }
 
@@ -388,42 +402,48 @@ class sandbox_value extends sandbox_multi
         array  $fld_par,
         array  $fld_par_usr,
         string $ext_type = '',
-        string $type_name = ''): array
+        string $type_name = '',
+        string $comment_overwrite = ''): array
     {
         $lib = new library();
-        $type_name .= ' ' . $lib->class_to_name($this::class);
+        $type_class_name = $type_name . ' ' . $lib->class_to_name($this::class);
 
         $sql = $sc->sql_separator();
         $sql_index = $sc->sql_separator();
         $sql_foreign = $sc->sql_separator();
 
-        // standard prime: for values or results without user specific changes and for up to four prime phrases
-        $sc->set_class($this::class, false, $ext_type . self::TBL_EXT_STD . sql_table_type::PRIME->extension());
-        $fields = array_merge($this::FLD_KEY_PRIME, $fld_par, $this::FLD_ALL_SOURCE);
-        $sql .= $sc->table_create($fields, $type_name,
-            $this::TBL_COMMENT_STD . $type_name . $this::TBL_COMMENT_STD_PRIME_CONT, $this::class);
-        $sql_index .= $sc->index_create($fields, true);
-        $sql_foreign .= $sc->foreign_key_create($fields);
-
-        // standard main: for results without user specific changes and for up to e prime phrases
-        if ($this::class == result::class) {
-            $sc->set_class($this::class, false, $ext_type . self::TBL_EXT_STD . sql_table_type::MAIN->extension());
-            $fields = array_merge(result::FLD_KEY_MAIN_STD, $fld_par, $this::FLD_ALL_SOURCE);
-            $sql .= $sc->table_create($fields, $type_name,
-                $this::TBL_COMMENT_STD . $type_name . $this::TBL_COMMENT_STD_MAIN_CONT, $this::class);
+        if ($type_name != $this::TYPE_TIME_SERIES) {
+            // standard prime: for values or results without user specific changes and for up to four prime phrases
+            $sc->set_class($this::class, false, $ext_type . self::TBL_EXT_STD . sql_table_type::PRIME->extension());
+            $fields = array_merge($this::FLD_KEY_PRIME, $fld_par, $this::FLD_ALL_SOURCE);
+            $tbl_comment = $this::TBL_COMMENT_STD . $type_class_name . $this::TBL_COMMENT_STD_PRIME_CONT;
+            $sql .= $sc->table_create($fields, $type_class_name, $tbl_comment, $this::class);
             $sql_index .= $sc->index_create($fields, true);
             $sql_foreign .= $sc->foreign_key_create($fields);
+
+            // standard main: for results without user specific changes and for up to e prime phrases
+            if ($this::class == result::class) {
+                $sc->set_class($this::class, false, $ext_type . self::TBL_EXT_STD . sql_table_type::MAIN->extension());
+                $fields = array_merge(result::FLD_KEY_MAIN_STD, $fld_par, $this::FLD_ALL_SOURCE);
+                $tbl_comment = $this::TBL_COMMENT_STD . $type_class_name . $this::TBL_COMMENT_STD_MAIN_CONT;
+                $sql .= $sc->table_create($fields, $type_class_name, $tbl_comment, $this::class);
+                $sql_index .= $sc->index_create($fields, true);
+                $sql_foreign .= $sc->foreign_key_create($fields);
+            }
+
+            // standard: for values or results without user specific changes and for up to 16 phrases
+            $sc->set_class($this::class, false, $ext_type . self::TBL_EXT_STD);
+            $fields = array_merge(self::FLD_KEY, $fld_par, $this::FLD_ALL_SOURCE);
+            $tbl_comment = $this::TBL_COMMENT_STD . $type_class_name . $this::TBL_COMMENT_STD_CONT;
+            if ($comment_overwrite != '') {
+                $tbl_comment = $comment_overwrite;
+            }
+            $sql .= $sc->table_create($fields, $type_class_name, $tbl_comment, $this::class);
+            $sql_index .= $sc->index_create($fields);
+            $sql_foreign .= $sc->foreign_key_create($fields);
+            $sql .= $sc->sql_separator();
         }
 
-        // standard: for values or results without user specific changes and for up to 16 phrases
-        $sc->set_class($this::class, false, $ext_type . self::TBL_EXT_STD);
-        $fields = array_merge(self::FLD_KEY, $fld_par, $this::FLD_ALL_SOURCE);
-        $sql .= $sc->table_create($fields, $type_name,
-            $this::TBL_COMMENT_STD . $type_name . $this::TBL_COMMENT_STD_CONT, $this::class);
-        $sql_index .= $sc->index_create($fields);
-        $sql_foreign .= $sc->foreign_key_create($fields);
-
-        $sql .= $sc->sql_separator();
         $std_fields = array_merge(
             $fld_par,
             $this::FLD_ALL_SOURCE,
@@ -449,15 +469,21 @@ class sandbox_value extends sandbox_multi
 
         // most: for values or results based on up to 16 phrases
         $sc->set_class($this::class, false, $ext_type);
-        $sql .= $sc->table_create($fields, $type_name,
-            $this::TBL_COMMENT . $type_name . $this::TBL_COMMENT_CONT, $this::class);
+        $tbl_comment = $this::TBL_COMMENT . $type_class_name . $this::TBL_COMMENT_CONT;
+        if ($comment_overwrite != '') {
+            $tbl_comment = $comment_overwrite;
+        }
+        $sql .= $sc->table_create($fields, $type_class_name, $tbl_comment, $this::class);
         $sql_index .= $sc->index_create($fields);
         $sql_foreign .= $sc->foreign_key_create($fields);
         $fields = array_merge(self::FLD_KEY_USER, $this::FLD_ALL_SOURCE_GROUP, $std_usr_fields);
         // most user: for user changes in values based on up to 16 phrases
         $sc->set_class($this::class, true, $ext_type);
-        $sql .= $sc->table_create($fields, $type_name,
-            $this::TBL_COMMENT_USER . $type_name . $this::TBL_COMMENT_CONT, $this::class);
+        $tbl_comment = $this::TBL_COMMENT_USER . $type_class_name . $this::TBL_COMMENT_CONT;
+        if ($comment_overwrite != '') {
+            $tbl_comment = $comment_overwrite;
+        }
+        $sql .= $sc->table_create($fields, $type_class_name, $tbl_comment, $this::class);
         $sql_index .= $sc->index_create($fields);
         $sql_foreign .= $sc->foreign_key_create($fields);
 
@@ -465,32 +491,44 @@ class sandbox_value extends sandbox_multi
         $sql .= $sc->sql_separator();
         $fields = array_merge(self::FLD_KEY_PRIME, $this::FLD_ALL_SOURCE_GROUP_PRIME, $std_fields);
         $sc->set_class($this::class, false, $ext_type . sql_table_type::PRIME->extension());
-        $sql .= $sc->table_create($fields, $type_name,
-            $this::TBL_COMMENT_PRIME . $type_name . $this::TBL_COMMENT_PRIME_CONT, $this::class);
+        $tbl_comment = $this::TBL_COMMENT_PRIME . $type_class_name . $this::TBL_COMMENT_PRIME_CONT;
+        if ($comment_overwrite != '') {
+            $tbl_comment = $comment_overwrite;
+        }
+        $sql .= $sc->table_create($fields, $type_class_name, $tbl_comment, $this::class);
         $sql_index .= $sc->index_create($fields, true);
         $sql_foreign .= $sc->foreign_key_create($fields);
         $fields = array_merge(self::FLD_KEY_PRIME_USER, $this::FLD_ALL_SOURCE_GROUP_PRIME, $std_usr_fields);
         // most user: for user changes in values based on up to four prime phrases
         $sc->set_class($this::class, true, $ext_type . sql_table_type::PRIME->extension());
-        $sql .= $sc->table_create($fields, $type_name,
-            $this::TBL_COMMENT_PRIME_USER . $type_name . $this::TBL_COMMENT_PRIME_USER_CONT, $this::class);
+        $tbl_comment = $this::TBL_COMMENT_PRIME_USER . $type_class_name . $this::TBL_COMMENT_PRIME_USER_CONT;
+        if ($comment_overwrite != '') {
+            $tbl_comment = $comment_overwrite;
+        }
+        $sql .= $sc->table_create($fields, $type_class_name, $tbl_comment, $this::class);
         $sql_index .= $sc->index_create($fields, true);
         $sql_foreign .= $sc->foreign_key_create($fields);
 
         // main: for results based on up to eight prime phrases
-        if ($this::class == result::class) {
+        if ($this::class == result::class and $type_name != $this::TYPE_TIME_SERIES) {
             $sql .= $sc->sql_separator();
             $fields = array_merge(result::FLD_KEY_MAIN, $this::FLD_ALL_SOURCE_GROUP_PRIME, $std_fields);
             $sc->set_class($this::class, false, $ext_type . sql_table_type::MAIN->extension());
-            $sql .= $sc->table_create($fields, $type_name,
-                $this::TBL_COMMENT_MAIN . $type_name . $this::TBL_COMMENT_MAIN_CONT, $this::class);
+            $tbl_comment = $this::TBL_COMMENT_MAIN . $type_class_name . $this::TBL_COMMENT_MAIN_CONT;
+            if ($comment_overwrite != '') {
+                $tbl_comment = $comment_overwrite;
+            }
+            $sql .= $sc->table_create($fields, $type_class_name, $tbl_comment, $this::class);
             $sql_index .= $sc->index_create($fields, true);
             $sql_foreign .= $sc->foreign_key_create($fields);
             $fields = array_merge(result::FLD_KEY_MAIN_USER, $this::FLD_ALL_SOURCE_GROUP_PRIME, $std_usr_fields);
             // most user: for user changes in values based on up to four prime phrases
             $sc->set_class($this::class, true, $ext_type . sql_table_type::MAIN->extension());
-            $sql .= $sc->table_create($fields, $type_name,
-                $this::TBL_COMMENT_MAIN_USER . $type_name . $this::TBL_COMMENT_MAIN_USER_CONT, $this::class);
+            $tbl_comment = $this::TBL_COMMENT_MAIN_USER . $type_class_name . $this::TBL_COMMENT_MAIN_USER_CONT;
+            if ($comment_overwrite != '') {
+                $tbl_comment = $comment_overwrite;
+            }
+            $sql .= $sc->table_create($fields, $type_class_name, $tbl_comment, $this::class);
             $sql_index .= $sc->index_create($fields, true);
             $sql_foreign .= $sc->foreign_key_create($fields);
         }
@@ -499,15 +537,21 @@ class sandbox_value extends sandbox_multi
         $sql .= $sc->sql_separator();
         $fields = array_merge(self::FLD_KEY_BIG, $this::FLD_ALL_SOURCE_GROUP_BIG, $std_fields);
         $sc->set_class($this::class, false, $ext_type . sql_table_type::BIG->extension());
-        $sql .= $sc->table_create($fields, $type_name,
-            $this::TBL_COMMENT . $type_name . $this::TBL_COMMENT_BIG_CONT, $this::class);
+        $tbl_comment = $this::TBL_COMMENT . $type_class_name . $this::TBL_COMMENT_BIG_CONT;
+        if ($comment_overwrite != '') {
+            $tbl_comment = $comment_overwrite;
+        }
+        $sql .= $sc->table_create($fields, $type_class_name, $tbl_comment, $this::class);
         $sql_index .= $sc->index_create($fields);
         $sql_foreign .= $sc->foreign_key_create($fields);
         $fields = array_merge(self::FLD_KEY_BIG_USER, $this::FLD_ALL_SOURCE_GROUP_BIG, $std_usr_fields);
         // most user: for user changes in values based on more than 16 phrases
         $sc->set_class($this::class, true, $ext_type . sql_table_type::BIG->extension());
-        $sql .= $sc->table_create($fields, $type_name,
-            $this::TBL_COMMENT_BIG_USER . $type_name . $this::TBL_COMMENT_BIG_USER_CONT, $this::class);
+        $tbl_comment = $this::TBL_COMMENT_BIG_USER . $type_class_name . $this::TBL_COMMENT_BIG_USER_CONT;
+        if ($comment_overwrite != '') {
+            $tbl_comment = $comment_overwrite;
+        }
+        $sql .= $sc->table_create($fields, $type_class_name, $tbl_comment, $this::class);
         $sql_index .= $sc->index_create($fields);
         $sql_foreign .= $sc->foreign_key_create($fields);
 
@@ -957,7 +1001,7 @@ class sandbox_value extends sandbox_multi
      * @return string an empty string if everything is fine or the message that should be shown to the user
      */
     function save_field_user(
-        sql_db                 $db_con,
+        sql_db             $db_con,
         change|change_link $log
     ): string
     {

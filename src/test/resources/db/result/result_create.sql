@@ -1342,3 +1342,189 @@ COMMENT ON COLUMN user_results_geo_big.formula_id      IS 'the id of the formula
 COMMENT ON COLUMN user_results_geo_big.excluded        IS 'true if a user, but not all, have removed it';
 COMMENT ON COLUMN user_results_geo_big.share_type_id   IS 'to restrict the access';
 COMMENT ON COLUMN user_results_geo_big.protect_id      IS 'to protect against unwanted changes';
+
+-- --------------------------------------------------------
+
+--
+-- table structure for the common parameters for a list of numbers that differ only by the timestamp
+--
+
+CREATE TABLE IF NOT EXISTS results_time_series
+(
+    group_id              char(112) PRIMARY KEY,
+    source_group_id       char(112) DEFAULT NULL,
+    result_time_series_id bigint        NOT NULL,
+    last_update           timestamp DEFAULT NULL,
+    formula_id            bigint        NOT NULL,
+    user_id               bigint    DEFAULT NULL,
+    excluded              smallint  DEFAULT NULL,
+    share_type_id         smallint  DEFAULT NULL,
+    protect_id            smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE results_time_series                        IS 'for the common parameters for a list of numbers that differ only by the timestamp';
+COMMENT ON COLUMN results_time_series.group_id              IS 'the 512-bit prime index to find the time_series result';
+COMMENT ON COLUMN results_time_series.source_group_id       IS '512-bit reference to the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN results_time_series.result_time_series_id IS 'the id of the time series as a 64 bit integer value because the number of time series is not expected to be too high';
+COMMENT ON COLUMN results_time_series.last_update           IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN results_time_series.formula_id            IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN results_time_series.user_id               IS 'the id of the user who has requested the calculation';
+COMMENT ON COLUMN results_time_series.excluded              IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN results_time_series.share_type_id         IS 'to restrict the access';
+COMMENT ON COLUMN results_time_series.protect_id            IS 'to protect against unwanted changes';
+
+--
+-- table structure for the common parameters for a list of numbers that differ only by the timestamp
+--
+
+CREATE TABLE IF NOT EXISTS user_results_time_series
+(
+    group_id              char(112)     NOT NULL,
+    source_group_id       char(112) DEFAULT NULL,
+    user_id               bigint        NOT NULL,
+    result_time_series_id bigint        NOT NULL,
+    last_update           timestamp DEFAULT NULL,
+    formula_id            bigint        NOT NULL,
+    excluded              smallint  DEFAULT NULL,
+    share_type_id         smallint  DEFAULT NULL,
+    protect_id            smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE user_results_time_series                        IS 'for the common parameters for a list of numbers that differ only by the timestamp';
+COMMENT ON COLUMN user_results_time_series.group_id              IS 'the 512-bit prime index to find the user time_series result';
+COMMENT ON COLUMN user_results_time_series.source_group_id       IS '512-bit reference to the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN user_results_time_series.user_id               IS 'the id of the user who has requested the change of the time_series result';
+COMMENT ON COLUMN user_results_time_series.result_time_series_id IS 'the 64 bit integer which is unique for the standard and the user series';
+COMMENT ON COLUMN user_results_time_series.last_update           IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN user_results_time_series.formula_id IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN user_results_time_series.excluded              IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN user_results_time_series.share_type_id         IS 'to restrict the access';
+COMMENT ON COLUMN user_results_time_series.protect_id            IS 'to protect against unwanted changes';
+
+-- --------------------------------------------------------
+
+--
+-- table structure for the common parameters for a list of numbers that differ only by the timestamp
+--
+
+CREATE TABLE IF NOT EXISTS results_time_series_prime
+(
+    phrase_id_1           smallint  NOT NULL,
+    phrase_id_2           smallint  DEFAULT 0,
+    phrase_id_3           smallint  DEFAULT 0,
+    phrase_id_4           smallint  DEFAULT 0,
+    source_group_id       bigint    DEFAULT NULL,
+    result_time_series_id bigint        NOT NULL,
+    last_update           timestamp DEFAULT NULL,
+    formula_id            bigint        NOT NULL,
+    user_id               bigint    DEFAULT NULL,
+    excluded              smallint  DEFAULT NULL,
+    share_type_id         smallint  DEFAULT NULL,
+    protect_id            smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE results_time_series_prime                        IS 'for the common parameters for a list of numbers that differ only by the timestamp';
+COMMENT ON COLUMN results_time_series_prime.phrase_id_1           IS 'phrase id that is part of the prime key for a time_series result';
+COMMENT ON COLUMN results_time_series_prime.phrase_id_2           IS 'phrase id that is part of the prime key for a time_series result';
+COMMENT ON COLUMN results_time_series_prime.phrase_id_3           IS 'phrase id that is part of the prime key for a time_series result';
+COMMENT ON COLUMN results_time_series_prime.phrase_id_4           IS 'phrase id that is part of the prime key for a time_series result';
+COMMENT ON COLUMN results_time_series_prime.source_group_id       IS '64-bit reference to the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN results_time_series_prime.result_time_series_id IS 'the id of the time series as a 64 bit integer value because the number of time series is not expected to be too high';
+COMMENT ON COLUMN results_time_series_prime.last_update           IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN results_time_series_prime.formula_id            IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN results_time_series_prime.user_id               IS 'the id of the user who has requested the calculation';
+COMMENT ON COLUMN results_time_series_prime.excluded              IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN results_time_series_prime.share_type_id         IS 'to restrict the access';
+COMMENT ON COLUMN results_time_series_prime.protect_id            IS 'to protect against unwanted changes';
+
+--
+-- table structure for the common parameters for a list of numbers that differ only by the timestamp
+--
+
+CREATE TABLE IF NOT EXISTS user_results_time_series_prime
+(
+    phrase_id_1           smallint      NOT NULL,
+    phrase_id_2           smallint  DEFAULT 0,
+    phrase_id_3           smallint  DEFAULT 0,
+    phrase_id_4           smallint  DEFAULT 0,
+    source_group_id       bigint    DEFAULT NULL,
+    user_id               bigint        NOT NULL,
+    result_time_series_id bigint        NOT NULL,
+    last_update           timestamp DEFAULT NULL,
+    formula_id            bigint        NOT NULL,
+    excluded              smallint  DEFAULT NULL,
+    share_type_id         smallint  DEFAULT NULL,
+    protect_id            smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE user_results_time_series_prime                        IS 'for the common parameters for a list of numbers that differ only by the timestamp';
+COMMENT ON COLUMN user_results_time_series_prime.phrase_id_1           IS 'phrase id that is with the user id part of the prime key for a time_series result';
+COMMENT ON COLUMN user_results_time_series_prime.phrase_id_2           IS 'phrase id that is with the user id part of the prime key for a time_series result';
+COMMENT ON COLUMN user_results_time_series_prime.phrase_id_3           IS 'phrase id that is with the user id part of the prime key for a time_series result';
+COMMENT ON COLUMN user_results_time_series_prime.phrase_id_4           IS 'phrase id that is with the user id part of the prime key for a time_series result';
+COMMENT ON COLUMN user_results_time_series_prime.source_group_id       IS '64-bit reference to the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN user_results_time_series_prime.user_id               IS 'the id of the user who has requested the change of the time_series result';
+COMMENT ON COLUMN user_results_time_series_prime.result_time_series_id IS 'the 64 bit integer which is unique for the standard and the user series';
+COMMENT ON COLUMN user_results_time_series_prime.last_update           IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN user_results_time_series_prime.formula_id            IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN user_results_time_series_prime.excluded              IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN user_results_time_series_prime.share_type_id         IS 'to restrict the access';
+COMMENT ON COLUMN user_results_time_series_prime.protect_id            IS 'to protect against unwanted changes';
+
+-- --------------------------------------------------------
+
+--
+-- table structure for the common parameters for a list of numbers that differ only by the timestamp
+--
+
+CREATE TABLE IF NOT EXISTS results_time_series_big
+(
+    group_id              text PRIMARY KEY,
+    source_group_id       text      DEFAULT NULL,
+    result_time_series_id bigint        NOT NULL,
+    last_update           timestamp DEFAULT NULL,
+    formula_id            bigint        NOT NULL,
+    user_id               bigint    DEFAULT NULL,
+    excluded              smallint  DEFAULT NULL,
+    share_type_id         smallint  DEFAULT NULL,
+    protect_id            smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE results_time_series_big                        IS 'for the common parameters for a list of numbers that differ only by the timestamp';
+COMMENT ON COLUMN results_time_series_big.group_id              IS 'the variable text index to find time_series result';
+COMMENT ON COLUMN results_time_series_big.source_group_id       IS 'text reference to the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN results_time_series_big.result_time_series_id IS 'the id of the time series as a 64 bit integer value because the number of time series is not expected to be too high';
+COMMENT ON COLUMN results_time_series_big.last_update           IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN results_time_series_big.formula_id            IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN results_time_series_big.user_id               IS 'the id of the user who has requested the calculation';
+COMMENT ON COLUMN results_time_series_big.excluded              IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN results_time_series_big.share_type_id         IS 'to restrict the access';
+COMMENT ON COLUMN results_time_series_big.protect_id            IS 'to protect against unwanted changes';
+
+--
+-- table structure for the common parameters for a list of numbers that differ only by the timestamp
+--
+
+CREATE TABLE IF NOT EXISTS user_results_time_series_big
+(
+    group_id              text          NOT NULL,
+    source_group_id       text      DEFAULT NULL,
+    user_id               bigint        NOT NULL,
+    result_time_series_id bigint        NOT NULL,
+    last_update           timestamp DEFAULT NULL,
+    formula_id            bigint        NOT NULL,
+    excluded              smallint  DEFAULT NULL,
+    share_type_id         smallint  DEFAULT NULL,
+    protect_id            smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE user_results_time_series_big                        IS 'for the common parameters for a list of numbers that differ only by the timestamp';
+COMMENT ON COLUMN user_results_time_series_big.group_id              IS 'the text index for more than 16 phrases to find the time_series result';
+COMMENT ON COLUMN user_results_time_series_big.source_group_id       IS 'text reference to the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN user_results_time_series_big.user_id               IS 'the id of the user who has requested the change of the time_series result';
+COMMENT ON COLUMN user_results_time_series_big.result_time_series_id IS 'the 64 bit integer which is unique for the standard and the user series';
+COMMENT ON COLUMN user_results_time_series_big.last_update           IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN user_results_time_series_big.formula_id IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN user_results_time_series_big.excluded              IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN user_results_time_series_big.share_type_id         IS 'to restrict the access';
+COMMENT ON COLUMN user_results_time_series_big.protect_id            IS 'to protect against unwanted changes';

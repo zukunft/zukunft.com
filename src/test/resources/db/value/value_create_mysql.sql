@@ -538,3 +538,129 @@ CREATE TABLE IF NOT EXISTS user_values_geo_big
     share_type_id smallint  DEFAULT NULL COMMENT 'to restrict the access',
     protect_id    smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes'
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'to store the user specific changes of geo values related to more than 16 phrases';
+
+-- --------------------------------------------------------
+
+--
+-- table structure for the common parameters for a list of numbers that differ only by the timestamp
+--
+
+CREATE TABLE IF NOT EXISTS values_time_series
+(
+    group_id             char(112)     NOT NULL COMMENT 'the 512-bit prime index to find the time_series value',
+    value_time_series_id bigint        NOT NULL COMMENT 'the id of the time series as a 64 bit integer value because the number of time series is not expected to be too high',
+    source_id            bigint    DEFAULT NULL COMMENT 'the source of the value as given by the user',
+    last_update          timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
+    user_id              bigint    DEFAULT NULL COMMENT 'the owner / creator of the value',
+    excluded             smallint  DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
+    share_type_id        smallint  DEFAULT NULL COMMENT 'to restrict the access',
+    protect_id           smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'for the common parameters for a list of numbers that differ only by the timestamp';
+
+--
+-- table structure for the common parameters for a list of numbers that differ only by the timestamp
+--
+
+CREATE TABLE IF NOT EXISTS user_values_time_series
+(
+    group_id             char(112)     NOT NULL COMMENT 'the 512-bit prime index to find the user time_series value',
+    user_id              bigint        NOT NULL COMMENT 'the changer of the time_series value',
+    value_time_series_id bigint        NOT NULL COMMENT 'the 64 bit integer which is unique for the standard and the user series',
+    source_id            bigint    DEFAULT NULL COMMENT 'one user can add different values from different sources,that have the same group,but a different value,so the source should be included in the unique key time_series value',
+    last_update          timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
+    excluded             smallint  DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
+    share_type_id        smallint  DEFAULT NULL COMMENT 'to restrict the access',
+    protect_id           smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'for the common parameters for a list of numbers that differ only by the timestamp';
+
+-- --------------------------------------------------------
+
+--
+-- table structure for the common parameters for a list of numbers that differ only by the timestamp
+--
+
+CREATE TABLE IF NOT EXISTS values_time_series_prime
+(
+    phrase_id_1          smallint      NOT NULL COMMENT 'phrase id that is part of the prime key for a time_series value',
+    phrase_id_2          smallint  DEFAULT 0    COMMENT 'phrase id that is part of the prime key for a time_series value',
+    phrase_id_3          smallint  DEFAULT 0    COMMENT 'phrase id that is part of the prime key for a time_series value',
+    phrase_id_4          smallint  DEFAULT 0    COMMENT 'phrase id that is part of the prime key for a time_series value',
+    value_time_series_id bigint        NOT NULL COMMENT 'the id of the time series as a 64 bit integer value because the number of time series is not expected to be too high',
+    source_id            bigint    DEFAULT NULL COMMENT 'the source of the value as given by the user',
+    last_update          timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
+    user_id              bigint    DEFAULT NULL COMMENT 'the owner / creator of the value',
+    excluded             smallint  DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
+    share_type_id        smallint  DEFAULT NULL COMMENT 'to restrict the access',
+    protect_id           smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'for the common parameters for a list of numbers that differ only by the timestamp';
+
+--
+-- table structure for the common parameters for a list of numbers that differ only by the timestamp
+--
+
+CREATE TABLE IF NOT EXISTS user_values_time_series_prime
+(
+    phrase_id_1          smallint      NOT NULL COMMENT 'phrase id that is with the user id part of the prime key for a time_series value',
+    phrase_id_2          smallint  DEFAULT 0    COMMENT 'phrase id that is with the user id part of the prime key for a time_series value',
+    phrase_id_3          smallint  DEFAULT 0    COMMENT 'phrase id that is with the user id part of the prime key for a time_series value',
+    phrase_id_4          smallint  DEFAULT 0    COMMENT 'phrase id that is with the user id part of the prime key for a time_series value',
+    user_id              bigint        NOT NULL COMMENT 'the changer of the time_series value',
+    value_time_series_id bigint        NOT NULL COMMENT 'the 64 bit integer which is unique for the standard and the user series',
+    source_id            bigint    DEFAULT NULL COMMENT 'one user can add different values from different sources,that have the same group,but a different value,so the source should be included in the unique key time_series value',
+    last_update          timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
+    excluded             smallint  DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
+    share_type_id        smallint  DEFAULT NULL COMMENT 'to restrict the access',
+    protect_id           smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'for the common parameters for a list of numbers that differ only by the timestamp';
+
+-- --------------------------------------------------------
+
+--
+-- table structure for the common parameters for a list of numbers that differ only by the timestamp
+--
+
+CREATE TABLE IF NOT EXISTS values_time_series_big
+(
+    group_id             char(255)     NOT NULL COMMENT 'the variable text index to find time_series value',
+    value_time_series_id bigint        NOT NULL COMMENT 'the id of the time series as a 64 bit integer value because the number of time series is not expected to be too high',
+    source_id            bigint    DEFAULT NULL COMMENT 'the source of the value as given by the user',
+    last_update          timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
+    user_id              bigint    DEFAULT NULL COMMENT 'the owner / creator of the value',
+    excluded             smallint  DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
+    share_type_id        smallint  DEFAULT NULL COMMENT 'to restrict the access',
+    protect_id           smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'for the common parameters for a list of numbers that differ only by the timestamp';
+
+--
+-- table structure for the common parameters for a list of numbers that differ only by the timestamp
+--
+
+CREATE TABLE IF NOT EXISTS user_values_time_series_big
+(
+    group_id             char(255)     NOT NULL COMMENT 'the text index for more than 16 phrases to find the time_series value',
+    user_id              bigint        NOT NULL COMMENT 'the changer of the time_series value',
+    value_time_series_id bigint        NOT NULL COMMENT 'the 64 bit integer which is unique for the standard and the user series',
+    source_id            bigint    DEFAULT NULL COMMENT 'one user can add different values from different sources,that have the same group,but a different value,so the source should be included in the unique key time_series value',
+    last_update          timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
+    excluded             smallint  DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
+    share_type_id        smallint  DEFAULT NULL COMMENT 'to restrict the access',
+    protect_id           smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'for the common parameters for a list of numbers that differ only by the timestamp';

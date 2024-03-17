@@ -1620,42 +1620,129 @@ CREATE TABLE IF NOT EXISTS user_values_geo_big
 
 -- --------------------------------------------------------
 
--- .....
+--
+-- table structure for the common parameters for a list of numbers that differ only by the timestamp
+--
+
+CREATE TABLE IF NOT EXISTS values_time_series
+(
+    group_id             char(112)     NOT NULL COMMENT 'the 512-bit prime index to find the time_series value',
+    value_time_series_id bigint        NOT NULL COMMENT 'the id of the time series as a 64 bit integer value because the number of time series is not expected to be too high',
+    source_id            bigint    DEFAULT NULL COMMENT 'the source of the value as given by the user',
+    last_update          timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
+    user_id              bigint    DEFAULT NULL COMMENT 'the owner / creator of the value',
+    excluded             smallint  DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
+    share_type_id        smallint  DEFAULT NULL COMMENT 'to restrict the access',
+    protect_id           smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'for the common parameters for a list of numbers that differ only by the timestamp';
+
+--
+-- table structure for the common parameters for a list of numbers that differ only by the timestamp
+--
+
+CREATE TABLE IF NOT EXISTS user_values_time_series
+(
+    group_id             char(112)     NOT NULL COMMENT 'the 512-bit prime index to find the user time_series value',
+    user_id              bigint        NOT NULL COMMENT 'the changer of the time_series value',
+    value_time_series_id bigint        NOT NULL COMMENT 'the 64 bit integer which is unique for the standard and the user series',
+    source_id            bigint    DEFAULT NULL COMMENT 'one user can add different values from different sources,that have the same group,but a different value,so the source should be included in the unique key time_series value',
+    last_update          timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
+    excluded             smallint  DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
+    share_type_id        smallint  DEFAULT NULL COMMENT 'to restrict the access',
+    protect_id           smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'for the common parameters for a list of numbers that differ only by the timestamp';
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table`value_time_series`
+-- table structure for the common parameters for a list of numbers that differ only by the timestamp
 --
 
-CREATE TABLE IF NOT EXISTS `value_time_series`
+CREATE TABLE IF NOT EXISTS values_time_series_prime
 (
-    `value_time_series_id` int(11)   NOT NULL,
-    `user_id`              int(11)   NOT NULL,
-    `source_id`            int(11)        DEFAULT NULL,
-    `phrase_group_id`      int(11)   NOT NULL,
-    `excluded`             tinyint(4)     DEFAULT NULL,
-    `share_type_id`        int(11)        DEFAULT NULL,
-    `protect_id`           int(11)   NOT NULL,
-    `last_update`          timestamp NULL DEFAULT NULL
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8 COMMENT ='common parameters for a list of intraday values';
+    phrase_id_1          smallint      NOT NULL COMMENT 'phrase id that is part of the prime key for a time_series value',
+    phrase_id_2          smallint  DEFAULT 0    COMMENT 'phrase id that is part of the prime key for a time_series value',
+    phrase_id_3          smallint  DEFAULT 0    COMMENT 'phrase id that is part of the prime key for a time_series value',
+    phrase_id_4          smallint  DEFAULT 0    COMMENT 'phrase id that is part of the prime key for a time_series value',
+    value_time_series_id bigint        NOT NULL COMMENT 'the id of the time series as a 64 bit integer value because the number of time series is not expected to be too high',
+    source_id            bigint    DEFAULT NULL COMMENT 'the source of the value as given by the user',
+    last_update          timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
+    user_id              bigint    DEFAULT NULL COMMENT 'the owner / creator of the value',
+    excluded             smallint  DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
+    share_type_id        smallint  DEFAULT NULL COMMENT 'to restrict the access',
+    protect_id           smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'for the common parameters for a list of numbers that differ only by the timestamp';
 
 --
--- Table structure for table`user_value_time_series`
+-- table structure for the common parameters for a list of numbers that differ only by the timestamp
 --
 
-CREATE TABLE IF NOT EXISTS `user_value_time_series`
+CREATE TABLE IF NOT EXISTS user_values_time_series_prime
 (
-    `value_time_series_id` int(11)   NOT NULL,
-    `user_id`              int(11)   NOT NULL,
-    `source_id`            int(11)        DEFAULT NULL,
-    `excluded`             tinyint(4)     DEFAULT NULL,
-    `share_type_id`        int(11)        DEFAULT NULL,
-    `protect_id`           int(11)   NOT NULL,
-    `last_update`          timestamp NULL DEFAULT NULL
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8 COMMENT ='common parameters for a user specific list of intraday values';
+    phrase_id_1          smallint      NOT NULL COMMENT 'phrase id that is with the user id part of the prime key for a time_series value',
+    phrase_id_2          smallint  DEFAULT 0    COMMENT 'phrase id that is with the user id part of the prime key for a time_series value',
+    phrase_id_3          smallint  DEFAULT 0    COMMENT 'phrase id that is with the user id part of the prime key for a time_series value',
+    phrase_id_4          smallint  DEFAULT 0    COMMENT 'phrase id that is with the user id part of the prime key for a time_series value',
+    user_id              bigint        NOT NULL COMMENT 'the changer of the time_series value',
+    value_time_series_id bigint        NOT NULL COMMENT 'the 64 bit integer which is unique for the standard and the user series',
+    source_id            bigint    DEFAULT NULL COMMENT 'one user can add different values from different sources,that have the same group,but a different value,so the source should be included in the unique key time_series value',
+    last_update          timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
+    excluded             smallint  DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
+    share_type_id        smallint  DEFAULT NULL COMMENT 'to restrict the access',
+    protect_id           smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'for the common parameters for a list of numbers that differ only by the timestamp';
+
+-- --------------------------------------------------------
+
+--
+-- table structure for the common parameters for a list of numbers that differ only by the timestamp
+--
+
+CREATE TABLE IF NOT EXISTS values_time_series_big
+(
+    group_id             char(255)     NOT NULL COMMENT 'the variable text index to find time_series value',
+    value_time_series_id bigint        NOT NULL COMMENT 'the id of the time series as a 64 bit integer value because the number of time series is not expected to be too high',
+    source_id            bigint    DEFAULT NULL COMMENT 'the source of the value as given by the user',
+    last_update          timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
+    user_id              bigint    DEFAULT NULL COMMENT 'the owner / creator of the value',
+    excluded             smallint  DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
+    share_type_id        smallint  DEFAULT NULL COMMENT 'to restrict the access',
+    protect_id           smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'for the common parameters for a list of numbers that differ only by the timestamp';
+
+--
+-- table structure for the common parameters for a list of numbers that differ only by the timestamp
+--
+
+CREATE TABLE IF NOT EXISTS user_values_time_series_big
+(
+    group_id             char(255)     NOT NULL COMMENT 'the text index for more than 16 phrases to find the time_series value',
+    user_id              bigint        NOT NULL COMMENT 'the changer of the time_series value',
+    value_time_series_id bigint        NOT NULL COMMENT 'the 64 bit integer which is unique for the standard and the user series',
+    source_id            bigint    DEFAULT NULL COMMENT 'one user can add different values from different sources,that have the same group,but a different value,so the source should be included in the unique key time_series value',
+    last_update          timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
+    excluded             smallint  DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
+    share_type_id        smallint  DEFAULT NULL COMMENT 'to restrict the access',
+    protect_id           smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'for the common parameters for a list of numbers that differ only by the timestamp';
 
 -- --------------------------------------------------------
 
@@ -2594,6 +2681,138 @@ CREATE TABLE IF NOT EXISTS user_results_geo_big
     share_type_id   smallint  DEFAULT NULL COMMENT 'to restrict the access',
     protect_id      smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes'
 ) ENGINE = InnoDB   DEFAULT CHARSET = utf8 COMMENT 'to store the user specific changes of geo results related to more than 16 phrases';
+
+-- --------------------------------------------------------
+
+--
+-- table structure for the common parameters for a list of numbers that differ only by the timestamp
+--
+
+CREATE TABLE IF NOT EXISTS results_time_series
+(
+    group_id              char(112)     NOT NULL COMMENT 'the 512-bit prime index to find the time_series result',
+    source_group_id       char(112) DEFAULT NULL COMMENT '512-bit reference to the sorted phrase list used to calculate this result',
+    result_time_series_id bigint        NOT NULL COMMENT 'the id of the time series as a 64 bit integer value because the number of time series is not expected to be too high',
+    last_update           timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
+    formula_id            bigint        NOT NULL COMMENT 'the id of the formula which has been used to calculate this result',
+    user_id               bigint    DEFAULT NULL COMMENT 'the id of the user who has requested the calculation',
+    excluded              smallint  DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
+    share_type_id         smallint  DEFAULT NULL COMMENT 'to restrict the access',
+    protect_id            smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'for the common parameters for a list of numbers that differ only by the timestamp';
+
+--
+-- table structure for the common parameters for a list of numbers that differ only by the timestamp
+--
+
+CREATE TABLE IF NOT EXISTS user_results_time_series
+(
+    group_id              char(112)     NOT NULL COMMENT 'the 512-bit prime index to find the user time_series result',
+    source_group_id       char(112) DEFAULT NULL COMMENT '512-bit reference to the sorted phrase list used to calculate this result',
+    user_id               bigint        NOT NULL COMMENT 'the id of the user who has requested the change of the time_series result',
+    result_time_series_id bigint        NOT NULL COMMENT 'the 64 bit integer which is unique for the standard and the user series',
+    last_update           timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
+    formula_id            bigint        NOT NULL COMMENT 'the id of the formula which has been used to calculate this result',
+    excluded              smallint  DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
+    share_type_id         smallint  DEFAULT NULL COMMENT 'to restrict the access',
+    protect_id            smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'for the common parameters for a list of numbers that differ only by the timestamp';
+
+-- --------------------------------------------------------
+
+--
+-- table structure for the common parameters for a list of numbers that differ only by the timestamp
+--
+
+CREATE TABLE IF NOT EXISTS results_time_series_prime
+(
+    phrase_id_1           smallint      NOT NULL COMMENT 'phrase id that is part of the prime key for a time_series result',
+    phrase_id_2           smallint  DEFAULT 0    COMMENT 'phrase id that is part of the prime key for a time_series result',
+    phrase_id_3           smallint  DEFAULT 0    COMMENT 'phrase id that is part of the prime key for a time_series result',
+    phrase_id_4           smallint  DEFAULT 0    COMMENT 'phrase id that is part of the prime key for a time_series result',
+    source_group_id       bigint    DEFAULT NULL COMMENT '64-bit reference to the sorted phrase list used to calculate this result',
+    result_time_series_id bigint        NOT NULL COMMENT 'the id of the time series as a 64 bit integer value because the number of time series is not expected to be too high',
+    last_update           timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
+    formula_id            bigint        NOT NULL COMMENT 'the id of the formula which has been used to calculate this result',
+    user_id               bigint    DEFAULT NULL COMMENT 'the id of the user who has requested the calculation',
+    excluded              smallint  DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
+    share_type_id         smallint  DEFAULT NULL COMMENT 'to restrict the access',
+    protect_id            smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'for the common parameters for a list of numbers that differ only by the timestamp';
+
+--
+-- table structure for the common parameters for a list of numbers that differ only by the timestamp
+--
+
+CREATE TABLE IF NOT EXISTS user_results_time_series_prime
+(
+    phrase_id_1           smallint      NOT NULL COMMENT 'phrase id that is with the user id part of the prime key for a time_series result',
+    phrase_id_2           smallint  DEFAULT 0    COMMENT 'phrase id that is with the user id part of the prime key for a time_series result',
+    phrase_id_3           smallint  DEFAULT 0    COMMENT 'phrase id that is with the user id part of the prime key for a time_series result',
+    phrase_id_4           smallint  DEFAULT 0    COMMENT 'phrase id that is with the user id part of the prime key for a time_series result',
+    source_group_id       bigint    DEFAULT NULL COMMENT '64-bit reference to the sorted phrase list used to calculate this result',
+    user_id               bigint        NOT NULL COMMENT 'the id of the user who has requested the change of the time_series result',
+    result_time_series_id bigint        NOT NULL COMMENT 'the 64 bit integer which is unique for the standard and the user series',
+    last_update           timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
+    formula_id            bigint        NOT NULL COMMENT 'the id of the formula which has been used to calculate this result',
+    excluded              smallint  DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
+    share_type_id         smallint  DEFAULT NULL COMMENT 'to restrict the access',
+    protect_id            smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'for the common parameters for a list of numbers that differ only by the timestamp';
+
+-- --------------------------------------------------------
+
+--
+-- table structure for the common parameters for a list of numbers that differ only by the timestamp
+--
+
+CREATE TABLE IF NOT EXISTS results_time_series_big
+(
+    group_id              char(255)     NOT NULL COMMENT 'the variable text index to find time_series result',
+    source_group_id       text      DEFAULT NULL COMMENT 'text reference to the sorted phrase list used to calculate this result',
+    result_time_series_id bigint        NOT NULL COMMENT 'the id of the time series as a 64 bit integer value because the number of time series is not expected to be too high',
+    last_update           timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
+    formula_id            bigint        NOT NULL COMMENT 'the id of the formula which has been used to calculate this result',
+    user_id               bigint    DEFAULT NULL COMMENT 'the id of the user who has requested the calculation',
+    excluded              smallint  DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
+    share_type_id         smallint  DEFAULT NULL COMMENT 'to restrict the access',
+    protect_id            smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'for the common parameters for a list of numbers that differ only by the timestamp';
+
+--
+-- table structure for the common parameters for a list of numbers that differ only by the timestamp
+--
+
+CREATE TABLE IF NOT EXISTS user_results_time_series_big
+(
+    group_id              char(255)     NOT NULL COMMENT 'the text index for more than 16 phrases to find the time_series result',
+    source_group_id       text      DEFAULT NULL COMMENT 'text reference to the sorted phrase list used to calculate this result',
+    user_id               bigint        NOT NULL COMMENT 'the id of the user who has requested the change of the time_series result',
+    result_time_series_id bigint        NOT NULL COMMENT 'the 64 bit integer which is unique for the standard and the user series',
+    last_update           timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
+    formula_id            bigint        NOT NULL COMMENT 'the id of the formula which has been used to calculate this result',
+    excluded              smallint  DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
+    share_type_id         smallint  DEFAULT NULL COMMENT 'to restrict the access',
+    protect_id            smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'for the common parameters for a list of numbers that differ only by the timestamp';
 
 -- --------------------------------------------------------
 --
@@ -4305,6 +4524,70 @@ ALTER TABLE user_values_geo_big
 -- --------------------------------------------------------
 
 --
+-- indexes for table values_time_series
+--
+ALTER TABLE values_time_series
+    ADD PRIMARY KEY (group_id),
+    ADD KEY values_time_series_value_time_series_idx (value_time_series_id),
+    ADD KEY values_time_series_source_idx (source_id),
+    ADD KEY values_time_series_user_idx (user_id);
+
+--
+-- indexes for table user_values_time_series
+--
+ALTER TABLE user_values_time_series
+    ADD PRIMARY KEY (group_id, user_id, source_id),
+    ADD KEY user_values_time_series_user_idx (user_id),
+    ADD KEY user_values_time_series_value_time_series_idx (value_time_series_id),
+    ADD KEY user_values_time_series_source_idx (source_id);
+
+--
+-- indexes for table values_time_series_prime
+--
+ALTER TABLE values_time_series_prime
+    ADD PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4),
+    ADD KEY values_time_series_prime_phrase_id_1_idx (phrase_id_1),
+    ADD KEY values_time_series_prime_phrase_id_2_idx (phrase_id_2),
+    ADD KEY values_time_series_prime_phrase_id_3_idx (phrase_id_3),
+    ADD KEY values_time_series_prime_phrase_id_4_idx (phrase_id_4),
+    ADD KEY values_time_series_prime_value_time_series_idx (value_time_series_id),
+    ADD KEY values_time_series_prime_source_idx (source_id),
+    ADD KEY values_time_series_prime_user_idx (user_id);
+
+--
+-- indexes for table user_values_time_series_prime
+--
+ALTER TABLE user_values_time_series_prime
+    ADD PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, user_id, source_id),
+    ADD KEY user_values_time_series_prime_phrase_id_1_idx (phrase_id_1),
+    ADD KEY user_values_time_series_prime_phrase_id_2_idx (phrase_id_2),
+    ADD KEY user_values_time_series_prime_phrase_id_3_idx (phrase_id_3),
+    ADD KEY user_values_time_series_prime_phrase_id_4_idx (phrase_id_4),
+    ADD KEY user_values_time_series_prime_user_idx (user_id),
+    ADD KEY user_values_time_series_prime_value_time_series_idx (value_time_series_id),
+    ADD KEY user_values_time_series_prime_source_idx (source_id);
+
+--
+-- indexes for table values_time_series_big
+--
+ALTER TABLE values_time_series_big
+    ADD PRIMARY KEY (group_id),
+    ADD KEY values_time_series_big_value_time_series_idx (value_time_series_id),
+    ADD KEY values_time_series_big_source_idx (source_id),
+    ADD KEY values_time_series_big_user_idx (user_id);
+
+--
+-- indexes for table user_values_time_series_big
+--
+ALTER TABLE user_values_time_series_big
+    ADD PRIMARY KEY (group_id, user_id, source_id),
+    ADD KEY user_values_time_series_big_user_idx (user_id),
+    ADD KEY user_values_time_series_big_value_time_series_idx (value_time_series_id),
+    ADD KEY user_values_time_series_big_source_idx (source_id);
+
+-- --------------------------------------------------------
+
+--
 -- indexes for table element_types
 --
 
@@ -4888,6 +5171,76 @@ ALTER TABLE user_results_geo_big
     ADD KEY user_results_geo_big_source_group_idx (source_group_id),
     ADD KEY user_results_geo_big_user_idx (user_id),
     ADD KEY user_results_geo_big_formula_idx (formula_id);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table results_time_series
+--
+ALTER TABLE results_time_series
+    ADD PRIMARY KEY (group_id),
+    ADD KEY results_time_series_source_group_idx (source_group_id),
+    ADD KEY results_time_series_result_time_series_idx (result_time_series_id),
+    ADD KEY results_time_series_formula_idx (formula_id),
+    ADD KEY results_time_series_user_idx (user_id);
+
+--
+-- indexes for table user_results_time_series
+--
+ALTER TABLE user_results_time_series
+    ADD PRIMARY KEY (group_id, user_id),
+    ADD KEY user_results_time_series_source_group_idx (source_group_id),
+    ADD KEY user_results_time_series_user_idx (user_id),
+    ADD KEY user_results_time_series_result_time_series_idx (result_time_series_id),
+    ADD KEY user_results_time_series_formula_idx (formula_id);
+
+--
+-- indexes for table results_time_series_prime
+--
+ALTER TABLE results_time_series_prime
+    ADD PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4),
+    ADD KEY results_time_series_prime_phrase_id_1_idx (phrase_id_1),
+    ADD KEY results_time_series_prime_phrase_id_2_idx (phrase_id_2),
+    ADD KEY results_time_series_prime_phrase_id_3_idx (phrase_id_3),
+    ADD KEY results_time_series_prime_phrase_id_4_idx (phrase_id_4),
+    ADD KEY results_time_series_prime_source_group_idx (source_group_id),
+    ADD KEY results_time_series_prime_result_time_series_idx (result_time_series_id),
+    ADD KEY results_time_series_prime_formula_idx (formula_id),
+    ADD KEY results_time_series_prime_user_idx (user_id);
+
+--
+-- indexes for table user_results_time_series_prime
+--
+ALTER TABLE user_results_time_series_prime
+    ADD PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, user_id),
+    ADD KEY user_results_time_series_prime_phrase_id_1_idx (phrase_id_1),
+    ADD KEY user_results_time_series_prime_phrase_id_2_idx (phrase_id_2),
+    ADD KEY user_results_time_series_prime_phrase_id_3_idx (phrase_id_3),
+    ADD KEY user_results_time_series_prime_phrase_id_4_idx (phrase_id_4),
+    ADD KEY user_results_time_series_prime_source_group_idx (source_group_id),
+    ADD KEY user_results_time_series_prime_user_idx (user_id),
+    ADD KEY user_results_time_series_prime_result_time_series_idx (result_time_series_id),
+    ADD KEY user_results_time_series_prime_formula_idx (formula_id);
+
+--
+-- indexes for table results_time_series_big
+--
+ALTER TABLE results_time_series_big
+    ADD PRIMARY KEY (group_id),
+    ADD KEY results_time_series_big_source_group_idx (source_group_id),
+    ADD KEY results_time_series_big_result_time_series_idx (result_time_series_id),
+    ADD KEY results_time_series_big_formula_idx (formula_id),
+    ADD KEY results_time_series_big_user_idx (user_id);
+
+--
+-- indexes for table user_results_time_series_big
+--
+ALTER TABLE user_results_time_series_big
+    ADD PRIMARY KEY (group_id, user_id),
+    ADD KEY user_results_time_series_big_source_group_idx (source_group_id),
+    ADD KEY user_results_time_series_big_user_idx (user_id),
+    ADD KEY user_results_time_series_big_result_time_series_idx (result_time_series_id),
+    ADD KEY user_results_time_series_big_formula_idx (formula_id);
 
 --
 -- Indexes for table`import_source`
@@ -5628,13 +5981,6 @@ ALTER TABLE `value_time_series`
     MODIFY `value_time_series_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- constraints for table value_ts_data
---
-
-ALTER TABLE value_ts_data
-    ADD CONSTRAINT value_ts_data_value_time_series_fk FOREIGN KEY (value_time_series_id) REFERENCES value_time_series (value_time_series_id);
-
---
 -- AUTO_INCREMENT for table`verbs`
 --
 ALTER TABLE `verbs`
@@ -6190,6 +6536,50 @@ ALTER TABLE user_results_geo_big
 -- --------------------------------------------------------
 
 --
+-- constraints for table results_time_series
+--
+ALTER TABLE results_time_series
+    ADD CONSTRAINT results_time_series_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id),
+    ADD CONSTRAINT results_time_series_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_results_time_series
+--
+ALTER TABLE user_results_time_series
+    ADD CONSTRAINT user_results_time_series_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_results_time_series_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
+
+--
+-- constraints for table results_time_series_prime
+--
+ALTER TABLE results_time_series_prime
+    ADD CONSTRAINT results_time_series_prime_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id),
+    ADD CONSTRAINT results_time_series_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_results_time_series_prime
+--
+ALTER TABLE user_results_time_series_prime
+    ADD CONSTRAINT user_results_time_series_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_results_time_series_prime_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
+
+--
+-- constraints for table results_time_series_big
+--
+ALTER TABLE results_time_series_big
+    ADD CONSTRAINT results_time_series_big_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id),
+    ADD CONSTRAINT results_time_series_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_results_time_series_big
+--
+ALTER TABLE user_results_time_series_big
+    ADD CONSTRAINT user_results_time_series_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_results_time_series_big_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
+
+-- --------------------------------------------------------
+
+--
 -- constraints for table groups
 --
 ALTER TABLE `groups`
@@ -6529,14 +6919,49 @@ ALTER TABLE user_values_geo_big
     ADD CONSTRAINT user_values_geo_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
     ADD CONSTRAINT user_values_geo_big_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
 
+-- --------------------------------------------------------
+
 --
--- Constraints for table`user_value_time_series`
+-- constraints for table values_time_series
 --
-ALTER TABLE `user_value_time_series`
-    ADD CONSTRAINT `user_value_time_series_fk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
-    ADD CONSTRAINT `user_value_time_series_fk_2` FOREIGN KEY (`source_id`) REFERENCES `sources` (`source_id`),
-    ADD CONSTRAINT `user_value_time_series_fk_3` FOREIGN KEY (`share_type_id`) REFERENCES `share_types` (`share_type_id`),
-    ADD CONSTRAINT `user_value_time_series_fk_4` FOREIGN KEY (`protect_id`) REFERENCES `protection_types` (`protect_id`);
+ALTER TABLE values_time_series
+    ADD CONSTRAINT values_time_series_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
+    ADD CONSTRAINT values_time_series_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_values_time_series
+--
+ALTER TABLE user_values_time_series
+    ADD CONSTRAINT user_values_time_series_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_values_time_series_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
+
+--
+-- constraints for table values_time_series_prime
+--
+ALTER TABLE values_time_series_prime
+    ADD CONSTRAINT values_time_series_prime_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
+    ADD CONSTRAINT values_time_series_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_values_time_series_prime
+--
+ALTER TABLE user_values_time_series_prime
+    ADD CONSTRAINT user_values_time_series_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_values_time_series_prime_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
+
+--
+-- constraints for table values_time_series_big
+--
+ALTER TABLE values_time_series_big
+    ADD CONSTRAINT values_time_series_big_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
+    ADD CONSTRAINT values_time_series_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_values_time_series_big
+--
+ALTER TABLE user_values_time_series_big
+    ADD CONSTRAINT user_values_time_series_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_values_time_series_big_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
 
 -- --------------------------------------------------------
 

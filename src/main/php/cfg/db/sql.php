@@ -3199,10 +3199,10 @@ class sql
             $result = 'users';
         }
         if ($result == 'value_time_seriess') {
-            $result = 'value_time_series';
+            $result = 'values_time_series';
         }
         if ($result == 'user_value_time_seriess') {
-            $result = 'user_value_time_series';
+            $result = 'user_values_time_series';
         }
         if ($result == 'value_ts_datas') {
             $result = 'value_ts_data';

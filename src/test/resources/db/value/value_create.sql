@@ -854,3 +854,177 @@ COMMENT ON COLUMN user_values_geo_big.last_update   IS 'timestamp of the last up
 COMMENT ON COLUMN user_values_geo_big.excluded      IS 'true if a user, but not all, have removed it';
 COMMENT ON COLUMN user_values_geo_big.share_type_id IS 'to restrict the access';
 COMMENT ON COLUMN user_values_geo_big.protect_id    IS 'to protect against unwanted changes';
+
+-- --------------------------------------------------------
+
+--
+-- table structure for the common parameters for a list of numbers that differ only by the timestamp
+--
+
+CREATE TABLE IF NOT EXISTS values_time_series
+(
+    group_id             char(112) PRIMARY KEY,
+    value_time_series_id bigint        NOT NULL,
+    source_id            bigint    DEFAULT NULL,
+    last_update          timestamp DEFAULT NULL,
+    user_id              bigint    DEFAULT NULL,
+    excluded             smallint  DEFAULT NULL,
+    share_type_id        smallint  DEFAULT NULL,
+    protect_id           smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE values_time_series                       IS 'for the common parameters for a list of numbers that differ only by the timestamp';
+COMMENT ON COLUMN values_time_series.group_id             IS 'the 512-bit prime index to find the time_series value';
+COMMENT ON COLUMN values_time_series.value_time_series_id IS 'the id of the time series as a 64 bit integer value because the number of time series is not expected to be too high';
+COMMENT ON COLUMN values_time_series.source_id            IS 'the source of the value as given by the user';
+COMMENT ON COLUMN values_time_series.last_update          IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN values_time_series.user_id              IS 'the owner / creator of the value';
+COMMENT ON COLUMN values_time_series.excluded             IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN values_time_series.share_type_id        IS 'to restrict the access';
+COMMENT ON COLUMN values_time_series.protect_id           IS 'to protect against unwanted changes';
+
+--
+-- table structure for the common parameters for a list of numbers that differ only by the timestamp
+--
+
+CREATE TABLE IF NOT EXISTS user_values_time_series
+(
+    group_id             char(112)     NOT NULL,
+    user_id              bigint        NOT NULL,
+    value_time_series_id bigint        NOT NULL,
+    source_id            bigint    DEFAULT NULL,
+    last_update          timestamp DEFAULT NULL,
+    excluded             smallint  DEFAULT NULL,
+    share_type_id        smallint  DEFAULT NULL,
+    protect_id           smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE user_values_time_series                       IS 'for the common parameters for a list of numbers that differ only by the timestamp';
+COMMENT ON COLUMN user_values_time_series.group_id             IS 'the 512-bit prime index to find the user time_series value';
+COMMENT ON COLUMN user_values_time_series.user_id              IS 'the changer of the time_series value';
+COMMENT ON COLUMN user_values_time_series.value_time_series_id IS 'the 64 bit integer which is unique for the standard and the user series';
+COMMENT ON COLUMN user_values_time_series.source_id            IS 'one user can add different values from different sources, that have the same group, but a different value,so the source should be included in the unique key time_series value';
+COMMENT ON COLUMN user_values_time_series.last_update          IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN user_values_time_series.excluded             IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN user_values_time_series.share_type_id        IS 'to restrict the access';
+COMMENT ON COLUMN user_values_time_series.protect_id           IS 'to protect against unwanted changes';
+
+-- --------------------------------------------------------
+
+--
+-- table structure for the common parameters for a list of numbers that differ only by the timestamp
+--
+
+CREATE TABLE IF NOT EXISTS values_time_series_prime
+(
+    phrase_id_1          smallint  NOT NULL,
+    phrase_id_2          smallint  DEFAULT 0,
+    phrase_id_3          smallint  DEFAULT 0,
+    phrase_id_4          smallint  DEFAULT 0,
+    value_time_series_id bigint        NOT NULL,
+    source_id            bigint    DEFAULT NULL,
+    last_update          timestamp DEFAULT NULL,
+    user_id              bigint    DEFAULT NULL,
+    excluded             smallint  DEFAULT NULL,
+    share_type_id        smallint  DEFAULT NULL,
+    protect_id           smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE values_time_series_prime                       IS 'for the common parameters for a list of numbers that differ only by the timestamp';
+COMMENT ON COLUMN values_time_series_prime.phrase_id_1          IS 'phrase id that is part of the prime key for a time_series value';
+COMMENT ON COLUMN values_time_series_prime.phrase_id_2          IS 'phrase id that is part of the prime key for a time_series value';
+COMMENT ON COLUMN values_time_series_prime.phrase_id_3          IS 'phrase id that is part of the prime key for a time_series value';
+COMMENT ON COLUMN values_time_series_prime.phrase_id_4          IS 'phrase id that is part of the prime key for a time_series value';
+COMMENT ON COLUMN values_time_series_prime.value_time_series_id IS 'the id of the time series as a 64 bit integer value because the number of time series is not expected to be too high';
+COMMENT ON COLUMN values_time_series_prime.source_id            IS 'the source of the value as given by the user';
+COMMENT ON COLUMN values_time_series_prime.last_update          IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN values_time_series_prime.user_id              IS 'the owner / creator of the value';
+COMMENT ON COLUMN values_time_series_prime.excluded             IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN values_time_series_prime.share_type_id        IS 'to restrict the access';
+COMMENT ON COLUMN values_time_series_prime.protect_id           IS 'to protect against unwanted changes';
+
+--
+-- table structure for the common parameters for a list of numbers that differ only by the timestamp
+--
+
+CREATE TABLE IF NOT EXISTS user_values_time_series_prime
+(
+    phrase_id_1          smallint      NOT NULL,
+    phrase_id_2          smallint  DEFAULT 0,
+    phrase_id_3          smallint  DEFAULT 0,
+    phrase_id_4          smallint  DEFAULT 0,
+    user_id              bigint        NOT NULL,
+    value_time_series_id bigint        NOT NULL,
+    source_id            bigint    DEFAULT NULL,
+    last_update          timestamp DEFAULT NULL,
+    excluded             smallint  DEFAULT NULL,
+    share_type_id        smallint  DEFAULT NULL,
+    protect_id           smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE user_values_time_series_prime                       IS 'for the common parameters for a list of numbers that differ only by the timestamp';
+COMMENT ON COLUMN user_values_time_series_prime.phrase_id_1          IS 'phrase id that is with the user id part of the prime key for a time_series value';
+COMMENT ON COLUMN user_values_time_series_prime.phrase_id_2          IS 'phrase id that is with the user id part of the prime key for a time_series value';
+COMMENT ON COLUMN user_values_time_series_prime.phrase_id_3          IS 'phrase id that is with the user id part of the prime key for a time_series value';
+COMMENT ON COLUMN user_values_time_series_prime.phrase_id_4          IS 'phrase id that is with the user id part of the prime key for a time_series value';
+COMMENT ON COLUMN user_values_time_series_prime.user_id              IS 'the changer of the time_series value';
+COMMENT ON COLUMN user_values_time_series_prime.value_time_series_id IS 'the 64 bit integer which is unique for the standard and the user series';
+COMMENT ON COLUMN user_values_time_series_prime.source_id            IS 'one user can add different values from different sources, that have the same group, but a different value, so the source should be included in the unique key time_series value';
+COMMENT ON COLUMN user_values_time_series_prime.last_update          IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN user_values_time_series_prime.excluded             IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN user_values_time_series_prime.share_type_id        IS 'to restrict the access';
+COMMENT ON COLUMN user_values_time_series_prime.protect_id           IS 'to protect against unwanted changes';
+
+-- --------------------------------------------------------
+
+--
+-- table structure for the common parameters for a list of numbers that differ only by the timestamp
+--
+
+CREATE TABLE IF NOT EXISTS values_time_series_big
+(
+    group_id      text PRIMARY KEY,
+    value_time_series_id bigint        NOT NULL,
+    source_id            bigint    DEFAULT NULL,
+    last_update          timestamp DEFAULT NULL,
+    user_id              bigint    DEFAULT NULL,
+    excluded             smallint  DEFAULT NULL,
+    share_type_id        smallint  DEFAULT NULL,
+    protect_id           smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE values_time_series_big                       IS 'for the common parameters for a list of numbers that differ only by the timestamp';
+COMMENT ON COLUMN values_time_series_big.group_id             IS 'the variable text index to find time_series value';
+COMMENT ON COLUMN values_time_series_big.value_time_series_id IS 'the id of the time series as a 64 bit integer value because the number of time series is not expected to be too high';
+COMMENT ON COLUMN values_time_series_big.source_id            IS 'the source of the value as given by the user';
+COMMENT ON COLUMN values_time_series_big.last_update          IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN values_time_series_big.user_id              IS 'the owner / creator of the value';
+COMMENT ON COLUMN values_time_series_big.excluded             IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN values_time_series_big.share_type_id        IS 'to restrict the access';
+COMMENT ON COLUMN values_time_series_big.protect_id           IS 'to protect against unwanted changes';
+
+--
+-- table structure for the common parameters for a list of numbers that differ only by the timestamp
+--
+
+CREATE TABLE IF NOT EXISTS user_values_time_series_big
+(
+    group_id             text          NOT NULL,
+    user_id              bigint        NOT NULL,
+    value_time_series_id bigint        NOT NULL,
+    source_id            bigint    DEFAULT NULL,
+    last_update          timestamp DEFAULT NULL,
+    excluded             smallint  DEFAULT NULL,
+    share_type_id        smallint  DEFAULT NULL,
+    protect_id           smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE user_values_time_series_big                       IS 'for the common parameters for a list of numbers that differ only by the timestamp';
+COMMENT ON COLUMN user_values_time_series_big.group_id             IS 'the text index for more than 16 phrases to find the time_series value';
+COMMENT ON COLUMN user_values_time_series_big.user_id              IS 'the changer of the time_series value';
+COMMENT ON COLUMN user_values_time_series_big.value_time_series_id IS 'the 64 bit integer which is unique for the standard and the user series';
+COMMENT ON COLUMN user_values_time_series_big.source_id            IS 'one user can add different values from different sources, that have the same group, but a different value, so the source should be included in the unique key time_series value';
+COMMENT ON COLUMN user_values_time_series_big.last_update          IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN user_values_time_series_big.excluded             IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN user_values_time_series_big.share_type_id        IS 'to restrict the access';
+COMMENT ON COLUMN user_values_time_series_big.protect_id           IS 'to protect against unwanted changes';

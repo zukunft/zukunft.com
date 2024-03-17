@@ -60,7 +60,7 @@ class value_ts_data extends db_object
 
     // field lists for the table creation
     const FLD_LST_ALL = array(
-        [value_time_series::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, value_time_series::class, self::FLD_ID_COM],
+        [value_time_series::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_ID_COM],
         [self::FLD_TIME, sql_field_type::TIME, sql_field_default::NOT_NULL, '', '', self::FLD_TIME_COM],
         [self::FLD_VALUE, sql_field_type::NUMERIC_FLOAT, sql_field_default::NULL, '', '', self::FLD_VALUE_COM],
     );

@@ -6,6 +6,7 @@
     ---------------------------------
 
     TODO add function that decides if the user values should saved in a complete new time series or if overwrites should be saved
+    TODO create a value_time_series_headers table which is only used to create a unique id for the time series data
 
     To save values that have a timestamp more efficient in a separate table
 
@@ -57,7 +58,10 @@ class value_time_series extends sandbox_value
      */
 
     // object specific database and JSON object field names
+    const TBL_COMMENT = 'for the common parameters for a list of numbers that differ only by the timestamp';
+    const FLD_ID_COM = 'a 64 bit integer value because the number of time series is not expected to be too high';
     const FLD_ID = 'value_time_series_id';
+    const FLD_LAST_UPDATE_COM = 'timestamp of the last update of any value of the list for fast update detection';
     const FLD_LAST_UPDATE = 'last_update';
 
     // all database field names excluding the id and excluding the user specific fields
@@ -78,6 +82,14 @@ class value_time_series extends sandbox_value
     const FLD_NAMES_USR_ONLY = array(
         sandbox::FLD_SHARE
     );
+
+    // list of fixed tables for the time series header
+    const TBL_LIST = array(
+        [sql_table_type::MOST],
+        [sql_table_type::PRIME],
+        [sql_table_type::BIG]
+    );
+
 
     /*
      * object vars

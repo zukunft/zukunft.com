@@ -7,6 +7,7 @@
 
     TODO: add these function
     TODO rename to result
+    TODO create a separate table for the time series results
 
     set_dirty_on_value_update  - set all formula result value to dirty that are depending on an updated values via Apache Kafka messages not via database
     set_dirty_on_result_update - set all formula result value to dirty that are depending on an updated formula result
@@ -93,7 +94,16 @@ class result extends sandbox_value
     const FLD_GRP = 'group_id';
     const FLD_VALUE = 'numeric_value';
     const FLD_LAST_UPDATE = 'last_update';
+    const FLD_TS_ID_COM = 'the id of the time series as a 64 bit integer value because the number of time series is not expected to be too high';
+    const FLD_TS_ID_COM_USER = 'the 64 bit integer which is unique for the standard and the user series';
+    const FLD_RESULT_TS_ID = 'result_time_series_id';
     const FLD_DIRTY = 'dirty';
+    const FLD_ALL_TIME_SERIES = array(
+        [self::FLD_RESULT_TS_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_TS_ID_COM],
+    );
+    const FLD_ALL_TIME_SERIES_USER = array(
+        [self::FLD_RESULT_TS_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_TS_ID_COM_USER],
+    );
 
     // all database field names excluding the id and excluding the user specific fields
     const FLD_NAMES = array(

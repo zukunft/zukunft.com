@@ -225,3 +225,48 @@ ALTER TABLE values_geo_big
 ALTER TABLE user_values_geo_big
     ADD CONSTRAINT user_values_geo_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
     ADD CONSTRAINT user_values_geo_big_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
+
+
+-- --------------------------------------------------------
+
+--
+-- constraints for table values_time_series
+--
+ALTER TABLE values_time_series
+    ADD CONSTRAINT values_time_series_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
+    ADD CONSTRAINT values_time_series_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_values_time_series
+--
+ALTER TABLE user_values_time_series
+    ADD CONSTRAINT user_values_time_series_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_values_time_series_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
+
+--
+-- constraints for table values_time_series_prime
+--
+ALTER TABLE values_time_series_prime
+    ADD CONSTRAINT values_time_series_prime_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
+    ADD CONSTRAINT values_time_series_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_values_time_series_prime
+--
+ALTER TABLE user_values_time_series_prime
+    ADD CONSTRAINT user_values_time_series_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_values_time_series_prime_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
+
+--
+-- constraints for table values_time_series_big
+--
+ALTER TABLE values_time_series_big
+    ADD CONSTRAINT values_time_series_big_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
+    ADD CONSTRAINT values_time_series_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_values_time_series_big
+--
+ALTER TABLE user_values_time_series_big
+    ADD CONSTRAINT user_values_time_series_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_values_time_series_big_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);

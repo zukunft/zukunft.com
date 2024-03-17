@@ -6,6 +6,7 @@ This program should
 - be a GGG browser
 - make the Giant Global Graph usable for the real-time delphi-method
 - an exoskeleton for the brain
+- make slow thinking (Kahneman) faster
 - allow each user have her/his own OLAP cube
 - make efficient community learning easy by connecting all user OLAP cubes point to point
 - allow double-sided tree structures within the cubes by using phrases

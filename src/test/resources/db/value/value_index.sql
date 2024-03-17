@@ -257,3 +257,60 @@ CREATE INDEX values_geo_big_user_idx ON values_geo_big (user_id);
 ALTER TABLE user_values_geo_big ADD CONSTRAINT user_values_geo_big_pkey PRIMARY KEY (group_id, user_id, source_id);
 CREATE INDEX user_values_geo_big_user_idx ON user_values_geo_big (user_id);
 CREATE INDEX user_values_geo_big_source_idx ON user_values_geo_big (source_id);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table values_time_series
+--
+CREATE INDEX values_time_series_value_time_series_idx ON values_time_series (value_time_series_id);
+CREATE INDEX values_time_series_source_idx ON values_time_series (source_id);
+CREATE INDEX values_time_series_user_idx ON values_time_series (user_id);
+
+--
+-- indexes for table user_values_time_series
+--
+ALTER TABLE user_values_time_series ADD CONSTRAINT user_values_time_series_pkey PRIMARY KEY (group_id, user_id, source_id);
+CREATE INDEX user_values_time_series_user_idx ON user_values_time_series (user_id);
+CREATE INDEX user_values_time_series_value_time_series_idx ON user_values_time_series (value_time_series_id);
+CREATE INDEX user_values_time_series_source_idx ON user_values_time_series (source_id);
+
+--
+-- indexes for table values_time_series_prime
+--
+CREATE UNIQUE INDEX values_time_series_prime_pkey ON values_time_series_prime (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4);
+CREATE INDEX values_time_series_prime_phrase_id_1_idx ON values_time_series_prime (phrase_id_1);
+CREATE INDEX values_time_series_prime_phrase_id_2_idx ON values_time_series_prime (phrase_id_2);
+CREATE INDEX values_time_series_prime_phrase_id_3_idx ON values_time_series_prime (phrase_id_3);
+CREATE INDEX values_time_series_prime_phrase_id_4_idx ON values_time_series_prime (phrase_id_4);
+CREATE INDEX values_time_series_prime_value_time_series_idx ON values_time_series_prime (value_time_series_id);
+CREATE INDEX values_time_series_prime_source_idx ON values_time_series_prime (source_id);
+CREATE INDEX values_time_series_prime_user_idx ON values_time_series_prime (user_id);
+
+--
+-- indexes for table user_values_time_series_prime
+--
+CREATE UNIQUE INDEX user_values_time_series_prime_pkey ON user_values_time_series_prime (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, user_id, source_id);
+CREATE INDEX user_values_time_series_prime_phrase_id_1_idx ON user_values_time_series_prime (phrase_id_1);
+CREATE INDEX user_values_time_series_prime_phrase_id_2_idx ON user_values_time_series_prime (phrase_id_2);
+CREATE INDEX user_values_time_series_prime_phrase_id_3_idx ON user_values_time_series_prime (phrase_id_3);
+CREATE INDEX user_values_time_series_prime_phrase_id_4_idx ON user_values_time_series_prime (phrase_id_4);
+CREATE INDEX user_values_time_series_prime_user_idx ON user_values_time_series_prime (user_id);
+CREATE INDEX user_values_time_series_prime_value_time_series_idx ON user_values_time_series_prime (value_time_series_id);
+CREATE INDEX user_values_time_series_prime_source_idx ON user_values_time_series_prime (source_id);
+
+--
+-- indexes for table values_time_series_big
+--
+CREATE INDEX values_time_series_big_value_time_series_idx ON values_time_series_big (value_time_series_id);
+CREATE INDEX values_time_series_big_source_idx ON values_time_series_big (source_id);
+CREATE INDEX values_time_series_big_user_idx ON values_time_series_big (user_id);
+
+--
+-- indexes for table user_values_time_series_big
+--
+ALTER TABLE user_values_time_series_big ADD CONSTRAINT user_values_time_series_big_pkey PRIMARY KEY (group_id, user_id, source_id);
+CREATE INDEX user_values_time_series_big_user_idx ON user_values_time_series_big (user_id);
+CREATE INDEX user_values_time_series_big_value_time_series_idx ON user_values_time_series_big (value_time_series_id);
+CREATE INDEX user_values_time_series_big_source_idx ON user_values_time_series_big (source_id);
+

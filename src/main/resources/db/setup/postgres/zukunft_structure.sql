@@ -2117,81 +2117,176 @@ COMMENT ON COLUMN user_values_geo_big.protect_id    IS 'to protect against unwan
 -- --------------------------------------------------------
 
 --
--- table structure for the header of a list of numbers that differ only by the timestamp
--- TODO generate view
+-- table structure for the common parameters for a list of numbers that differ only by the timestamp
 --
 
-CREATE TABLE IF NOT EXISTS value_time_series
+CREATE TABLE IF NOT EXISTS values_time_series
 (
-    value_time_series_id BIGSERIAL      PRIMARY KEY,
-    user_id              bigint         NOT     NULL,
-    source_id            bigint         DEFAULT NULL,
-    group_id             char(112)      NOT NULL,
-    excluded             smallint       DEFAULT NULL,
-    share_type_id        smallint         DEFAULT NULL,
-    protect_id           smallint         NOT     NULL,
-    last_update          timestamp NULL DEFAULT NULL
+    group_id             char(112) PRIMARY KEY,
+    value_time_series_id bigint        NOT NULL,
+    source_id            bigint    DEFAULT NULL,
+    last_update          timestamp DEFAULT NULL,
+    user_id              bigint    DEFAULT NULL,
+    excluded             smallint  DEFAULT NULL,
+    share_type_id        smallint  DEFAULT NULL,
+    protect_id           smallint  DEFAULT NULL
 );
 
-COMMENT ON TABLE value_time_series IS 'common parameters for a list of numbers that differ only by the timestamp';
-COMMENT ON COLUMN value_time_series.user_id IS 'the owner / creator of the number list';
+COMMENT ON TABLE values_time_series                       IS 'for the common parameters for a list of numbers that differ only by the timestamp';
+COMMENT ON COLUMN values_time_series.group_id             IS 'the 512-bit prime index to find the time_series value';
+COMMENT ON COLUMN values_time_series.value_time_series_id IS 'the id of the time series as a 64 bit integer value because the number of time series is not expected to be too high';
+COMMENT ON COLUMN values_time_series.source_id            IS 'the source of the value as given by the user';
+COMMENT ON COLUMN values_time_series.last_update          IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN values_time_series.user_id              IS 'the owner / creator of the value';
+COMMENT ON COLUMN values_time_series.excluded             IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN values_time_series.share_type_id        IS 'to restrict the access';
+COMMENT ON COLUMN values_time_series.protect_id           IS 'to protect against unwanted changes';
+
+--
+-- table structure for the common parameters for a list of numbers that differ only by the timestamp
+--
+
+CREATE TABLE IF NOT EXISTS user_values_time_series
+(
+    group_id             char(112)     NOT NULL,
+    user_id              bigint        NOT NULL,
+    value_time_series_id bigint        NOT NULL,
+    source_id            bigint    DEFAULT NULL,
+    last_update          timestamp DEFAULT NULL,
+    excluded             smallint  DEFAULT NULL,
+    share_type_id        smallint  DEFAULT NULL,
+    protect_id           smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE user_values_time_series                       IS 'for the common parameters for a list of numbers that differ only by the timestamp';
+COMMENT ON COLUMN user_values_time_series.group_id             IS 'the 512-bit prime index to find the user time_series value';
+COMMENT ON COLUMN user_values_time_series.user_id              IS 'the changer of the time_series value';
+COMMENT ON COLUMN user_values_time_series.value_time_series_id IS 'the 64 bit integer which is unique for the standard and the user series';
+COMMENT ON COLUMN user_values_time_series.source_id            IS 'one user can add different values from different sources, that have the same group, but a different value,so the source should be included in the unique key time_series value';
+COMMENT ON COLUMN user_values_time_series.last_update          IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN user_values_time_series.excluded             IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN user_values_time_series.share_type_id        IS 'to restrict the access';
+COMMENT ON COLUMN user_values_time_series.protect_id           IS 'to protect against unwanted changes';
 
 -- --------------------------------------------------------
 
 --
--- table structure for specific user changes in a of numbers that differ only by the timestamp
--- TODO generate view
+-- table structure for the common parameters for a list of numbers that differ only by the timestamp
 --
 
-CREATE TABLE IF NOT EXISTS user_value_time_series
+CREATE TABLE IF NOT EXISTS values_time_series_prime
 (
-    value_time_series_id BIGSERIAL          NOT NULL,
-    user_id              bigint             NOT NULL,
-    source_id            bigint         DEFAULT NULL,
-    excluded             smallint       DEFAULT NULL,
-    share_type_id        smallint       DEFAULT NULL,
-    protect_id           smallint           NOT NULL,
-    last_update          timestamp NULL DEFAULT NULL
+    phrase_id_1          smallint  NOT NULL,
+    phrase_id_2          smallint  DEFAULT 0,
+    phrase_id_3          smallint  DEFAULT 0,
+    phrase_id_4          smallint  DEFAULT 0,
+    value_time_series_id bigint        NOT NULL,
+    source_id            bigint    DEFAULT NULL,
+    last_update          timestamp DEFAULT NULL,
+    user_id              bigint    DEFAULT NULL,
+    excluded             smallint  DEFAULT NULL,
+    share_type_id        smallint  DEFAULT NULL,
+    protect_id           smallint  DEFAULT NULL
 );
 
-COMMENT ON TABLE user_value_time_series IS 'common parameters for a list of numbers that differ only by the timestamp';
+COMMENT ON TABLE values_time_series_prime                       IS 'for the common parameters for a list of numbers that differ only by the timestamp';
+COMMENT ON COLUMN values_time_series_prime.phrase_id_1          IS 'phrase id that is part of the prime key for a time_series value';
+COMMENT ON COLUMN values_time_series_prime.phrase_id_2          IS 'phrase id that is part of the prime key for a time_series value';
+COMMENT ON COLUMN values_time_series_prime.phrase_id_3          IS 'phrase id that is part of the prime key for a time_series value';
+COMMENT ON COLUMN values_time_series_prime.phrase_id_4          IS 'phrase id that is part of the prime key for a time_series value';
+COMMENT ON COLUMN values_time_series_prime.value_time_series_id IS 'the id of the time series as a 64 bit integer value because the number of time series is not expected to be too high';
+COMMENT ON COLUMN values_time_series_prime.source_id            IS 'the source of the value as given by the user';
+COMMENT ON COLUMN values_time_series_prime.last_update          IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN values_time_series_prime.user_id              IS 'the owner / creator of the value';
+COMMENT ON COLUMN values_time_series_prime.excluded             IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN values_time_series_prime.share_type_id        IS 'to restrict the access';
+COMMENT ON COLUMN values_time_series_prime.protect_id           IS 'to protect against unwanted changes';
 
 --
--- table structure for table value_time_series_prime
+-- table structure for the common parameters for a list of numbers that differ only by the timestamp
 --
 
-CREATE TABLE IF NOT EXISTS value_time_series_prime
+CREATE TABLE IF NOT EXISTS user_values_time_series_prime
 (
-    value_time_series_id BIGSERIAL      PRIMARY KEY,
-    user_id       bigint             NOT NULL,
-    source_id     bigint         DEFAULT NULL,
-    group_id      bigint             NOT NULL,
-    excluded      smallint       DEFAULT NULL,
-    share_type_id smallint       DEFAULT NULL,
-    protect_id    smallint           NOT NULL,
-    last_update   timestamp NULL DEFAULT NULL
+    phrase_id_1          smallint      NOT NULL,
+    phrase_id_2          smallint  DEFAULT 0,
+    phrase_id_3          smallint  DEFAULT 0,
+    phrase_id_4          smallint  DEFAULT 0,
+    user_id              bigint        NOT NULL,
+    value_time_series_id bigint        NOT NULL,
+    source_id            bigint    DEFAULT NULL,
+    last_update          timestamp DEFAULT NULL,
+    excluded             smallint  DEFAULT NULL,
+    share_type_id        smallint  DEFAULT NULL,
+    protect_id           smallint  DEFAULT NULL
 );
 
-COMMENT ON TABLE value_time_series IS 'common parameters for a list of intra-day values';
+COMMENT ON TABLE user_values_time_series_prime                       IS 'for the common parameters for a list of numbers that differ only by the timestamp';
+COMMENT ON COLUMN user_values_time_series_prime.phrase_id_1          IS 'phrase id that is with the user id part of the prime key for a time_series value';
+COMMENT ON COLUMN user_values_time_series_prime.phrase_id_2          IS 'phrase id that is with the user id part of the prime key for a time_series value';
+COMMENT ON COLUMN user_values_time_series_prime.phrase_id_3          IS 'phrase id that is with the user id part of the prime key for a time_series value';
+COMMENT ON COLUMN user_values_time_series_prime.phrase_id_4          IS 'phrase id that is with the user id part of the prime key for a time_series value';
+COMMENT ON COLUMN user_values_time_series_prime.user_id              IS 'the changer of the time_series value';
+COMMENT ON COLUMN user_values_time_series_prime.value_time_series_id IS 'the 64 bit integer which is unique for the standard and the user series';
+COMMENT ON COLUMN user_values_time_series_prime.source_id            IS 'one user can add different values from different sources, that have the same group, but a different value, so the source should be included in the unique key time_series value';
+COMMENT ON COLUMN user_values_time_series_prime.last_update          IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN user_values_time_series_prime.excluded             IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN user_values_time_series_prime.share_type_id        IS 'to restrict the access';
+COMMENT ON COLUMN user_values_time_series_prime.protect_id           IS 'to protect against unwanted changes';
 
 -- --------------------------------------------------------
 
 --
--- table structure for table value_time_series
+-- table structure for the common parameters for a list of numbers that differ only by the timestamp
 --
 
-CREATE TABLE IF NOT EXISTS user_value_time_series_prime
+CREATE TABLE IF NOT EXISTS values_time_series_big
 (
-    value_time_series_id BIGSERIAL          NOT NULL,
-    user_id              bigint             NOT NULL,
-    source_id            bigint         DEFAULT NULL,
-    excluded             smallint       DEFAULT NULL,
-    share_type_id        smallint         DEFAULT NULL,
-    protect_id           smallint             NOT NULL,
-    last_update          timestamp NULL DEFAULT NULL
+    group_id      text PRIMARY KEY,
+    value_time_series_id bigint        NOT NULL,
+    source_id            bigint    DEFAULT NULL,
+    last_update          timestamp DEFAULT NULL,
+    user_id              bigint    DEFAULT NULL,
+    excluded             smallint  DEFAULT NULL,
+    share_type_id        smallint  DEFAULT NULL,
+    protect_id           smallint  DEFAULT NULL
 );
 
-COMMENT ON TABLE user_value_time_series IS 'common parameters for a user specific list of intra-day values';
+COMMENT ON TABLE values_time_series_big                       IS 'for the common parameters for a list of numbers that differ only by the timestamp';
+COMMENT ON COLUMN values_time_series_big.group_id             IS 'the variable text index to find time_series value';
+COMMENT ON COLUMN values_time_series_big.value_time_series_id IS 'the id of the time series as a 64 bit integer value because the number of time series is not expected to be too high';
+COMMENT ON COLUMN values_time_series_big.source_id            IS 'the source of the value as given by the user';
+COMMENT ON COLUMN values_time_series_big.last_update          IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN values_time_series_big.user_id              IS 'the owner / creator of the value';
+COMMENT ON COLUMN values_time_series_big.excluded             IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN values_time_series_big.share_type_id        IS 'to restrict the access';
+COMMENT ON COLUMN values_time_series_big.protect_id           IS 'to protect against unwanted changes';
+
+--
+-- table structure for the common parameters for a list of numbers that differ only by the timestamp
+--
+
+CREATE TABLE IF NOT EXISTS user_values_time_series_big
+(
+    group_id             text          NOT NULL,
+    user_id              bigint        NOT NULL,
+    value_time_series_id bigint        NOT NULL,
+    source_id            bigint    DEFAULT NULL,
+    last_update          timestamp DEFAULT NULL,
+    excluded             smallint  DEFAULT NULL,
+    share_type_id        smallint  DEFAULT NULL,
+    protect_id           smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE user_values_time_series_big                       IS 'for the common parameters for a list of numbers that differ only by the timestamp';
+COMMENT ON COLUMN user_values_time_series_big.group_id             IS 'the text index for more than 16 phrases to find the time_series value';
+COMMENT ON COLUMN user_values_time_series_big.user_id              IS 'the changer of the time_series value';
+COMMENT ON COLUMN user_values_time_series_big.value_time_series_id IS 'the 64 bit integer which is unique for the standard and the user series';
+COMMENT ON COLUMN user_values_time_series_big.source_id            IS 'one user can add different values from different sources, that have the same group, but a different value, so the source should be included in the unique key time_series value';
+COMMENT ON COLUMN user_values_time_series_big.last_update          IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN user_values_time_series_big.excluded             IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN user_values_time_series_big.share_type_id        IS 'to restrict the access';
+COMMENT ON COLUMN user_values_time_series_big.protect_id           IS 'to protect against unwanted changes';
 
 -- --------------------------------------------------------
 
@@ -3771,6 +3866,192 @@ COMMENT ON COLUMN user_results_geo_big.protect_id      IS 'to protect against un
 -- --------------------------------------------------------
 
 --
+-- table structure for the common parameters for a list of numbers that differ only by the timestamp
+--
+
+CREATE TABLE IF NOT EXISTS results_time_series
+(
+    group_id              char(112) PRIMARY KEY,
+    source_group_id       char(112) DEFAULT NULL,
+    result_time_series_id bigint        NOT NULL,
+    last_update           timestamp DEFAULT NULL,
+    formula_id            bigint        NOT NULL,
+    user_id               bigint    DEFAULT NULL,
+    excluded              smallint  DEFAULT NULL,
+    share_type_id         smallint  DEFAULT NULL,
+    protect_id            smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE results_time_series                        IS 'for the common parameters for a list of numbers that differ only by the timestamp';
+COMMENT ON COLUMN results_time_series.group_id              IS 'the 512-bit prime index to find the time_series result';
+COMMENT ON COLUMN results_time_series.source_group_id       IS '512-bit reference to the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN results_time_series.result_time_series_id IS 'the id of the time series as a 64 bit integer value because the number of time series is not expected to be too high';
+COMMENT ON COLUMN results_time_series.last_update           IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN results_time_series.formula_id            IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN results_time_series.user_id               IS 'the id of the user who has requested the calculation';
+COMMENT ON COLUMN results_time_series.excluded              IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN results_time_series.share_type_id         IS 'to restrict the access';
+COMMENT ON COLUMN results_time_series.protect_id            IS 'to protect against unwanted changes';
+
+--
+-- table structure for the common parameters for a list of numbers that differ only by the timestamp
+--
+
+CREATE TABLE IF NOT EXISTS user_results_time_series
+(
+    group_id              char(112)     NOT NULL,
+    source_group_id       char(112) DEFAULT NULL,
+    user_id               bigint        NOT NULL,
+    result_time_series_id bigint        NOT NULL,
+    last_update           timestamp DEFAULT NULL,
+    formula_id            bigint        NOT NULL,
+    excluded              smallint  DEFAULT NULL,
+    share_type_id         smallint  DEFAULT NULL,
+    protect_id            smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE user_results_time_series                        IS 'for the common parameters for a list of numbers that differ only by the timestamp';
+COMMENT ON COLUMN user_results_time_series.group_id              IS 'the 512-bit prime index to find the user time_series result';
+COMMENT ON COLUMN user_results_time_series.source_group_id       IS '512-bit reference to the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN user_results_time_series.user_id               IS 'the id of the user who has requested the change of the time_series result';
+COMMENT ON COLUMN user_results_time_series.result_time_series_id IS 'the 64 bit integer which is unique for the standard and the user series';
+COMMENT ON COLUMN user_results_time_series.last_update           IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN user_results_time_series.formula_id IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN user_results_time_series.excluded              IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN user_results_time_series.share_type_id         IS 'to restrict the access';
+COMMENT ON COLUMN user_results_time_series.protect_id            IS 'to protect against unwanted changes';
+
+-- --------------------------------------------------------
+
+--
+-- table structure for the common parameters for a list of numbers that differ only by the timestamp
+--
+
+CREATE TABLE IF NOT EXISTS results_time_series_prime
+(
+    phrase_id_1           smallint  NOT NULL,
+    phrase_id_2           smallint  DEFAULT 0,
+    phrase_id_3           smallint  DEFAULT 0,
+    phrase_id_4           smallint  DEFAULT 0,
+    source_group_id       bigint    DEFAULT NULL,
+    result_time_series_id bigint        NOT NULL,
+    last_update           timestamp DEFAULT NULL,
+    formula_id            bigint        NOT NULL,
+    user_id               bigint    DEFAULT NULL,
+    excluded              smallint  DEFAULT NULL,
+    share_type_id         smallint  DEFAULT NULL,
+    protect_id            smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE results_time_series_prime                        IS 'for the common parameters for a list of numbers that differ only by the timestamp';
+COMMENT ON COLUMN results_time_series_prime.phrase_id_1           IS 'phrase id that is part of the prime key for a time_series result';
+COMMENT ON COLUMN results_time_series_prime.phrase_id_2           IS 'phrase id that is part of the prime key for a time_series result';
+COMMENT ON COLUMN results_time_series_prime.phrase_id_3           IS 'phrase id that is part of the prime key for a time_series result';
+COMMENT ON COLUMN results_time_series_prime.phrase_id_4           IS 'phrase id that is part of the prime key for a time_series result';
+COMMENT ON COLUMN results_time_series_prime.source_group_id       IS '64-bit reference to the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN results_time_series_prime.result_time_series_id IS 'the id of the time series as a 64 bit integer value because the number of time series is not expected to be too high';
+COMMENT ON COLUMN results_time_series_prime.last_update           IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN results_time_series_prime.formula_id            IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN results_time_series_prime.user_id               IS 'the id of the user who has requested the calculation';
+COMMENT ON COLUMN results_time_series_prime.excluded              IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN results_time_series_prime.share_type_id         IS 'to restrict the access';
+COMMENT ON COLUMN results_time_series_prime.protect_id            IS 'to protect against unwanted changes';
+
+--
+-- table structure for the common parameters for a list of numbers that differ only by the timestamp
+--
+
+CREATE TABLE IF NOT EXISTS user_results_time_series_prime
+(
+    phrase_id_1           smallint      NOT NULL,
+    phrase_id_2           smallint  DEFAULT 0,
+    phrase_id_3           smallint  DEFAULT 0,
+    phrase_id_4           smallint  DEFAULT 0,
+    source_group_id       bigint    DEFAULT NULL,
+    user_id               bigint        NOT NULL,
+    result_time_series_id bigint        NOT NULL,
+    last_update           timestamp DEFAULT NULL,
+    formula_id            bigint        NOT NULL,
+    excluded              smallint  DEFAULT NULL,
+    share_type_id         smallint  DEFAULT NULL,
+    protect_id            smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE user_results_time_series_prime                        IS 'for the common parameters for a list of numbers that differ only by the timestamp';
+COMMENT ON COLUMN user_results_time_series_prime.phrase_id_1           IS 'phrase id that is with the user id part of the prime key for a time_series result';
+COMMENT ON COLUMN user_results_time_series_prime.phrase_id_2           IS 'phrase id that is with the user id part of the prime key for a time_series result';
+COMMENT ON COLUMN user_results_time_series_prime.phrase_id_3           IS 'phrase id that is with the user id part of the prime key for a time_series result';
+COMMENT ON COLUMN user_results_time_series_prime.phrase_id_4           IS 'phrase id that is with the user id part of the prime key for a time_series result';
+COMMENT ON COLUMN user_results_time_series_prime.source_group_id       IS '64-bit reference to the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN user_results_time_series_prime.user_id               IS 'the id of the user who has requested the change of the time_series result';
+COMMENT ON COLUMN user_results_time_series_prime.result_time_series_id IS 'the 64 bit integer which is unique for the standard and the user series';
+COMMENT ON COLUMN user_results_time_series_prime.last_update           IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN user_results_time_series_prime.formula_id            IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN user_results_time_series_prime.excluded              IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN user_results_time_series_prime.share_type_id         IS 'to restrict the access';
+COMMENT ON COLUMN user_results_time_series_prime.protect_id            IS 'to protect against unwanted changes';
+
+-- --------------------------------------------------------
+
+--
+-- table structure for the common parameters for a list of numbers that differ only by the timestamp
+--
+
+CREATE TABLE IF NOT EXISTS results_time_series_big
+(
+    group_id              text PRIMARY KEY,
+    source_group_id       text      DEFAULT NULL,
+    result_time_series_id bigint        NOT NULL,
+    last_update           timestamp DEFAULT NULL,
+    formula_id            bigint        NOT NULL,
+    user_id               bigint    DEFAULT NULL,
+    excluded              smallint  DEFAULT NULL,
+    share_type_id         smallint  DEFAULT NULL,
+    protect_id            smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE results_time_series_big                        IS 'for the common parameters for a list of numbers that differ only by the timestamp';
+COMMENT ON COLUMN results_time_series_big.group_id              IS 'the variable text index to find time_series result';
+COMMENT ON COLUMN results_time_series_big.source_group_id       IS 'text reference to the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN results_time_series_big.result_time_series_id IS 'the id of the time series as a 64 bit integer value because the number of time series is not expected to be too high';
+COMMENT ON COLUMN results_time_series_big.last_update           IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN results_time_series_big.formula_id            IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN results_time_series_big.user_id               IS 'the id of the user who has requested the calculation';
+COMMENT ON COLUMN results_time_series_big.excluded              IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN results_time_series_big.share_type_id         IS 'to restrict the access';
+COMMENT ON COLUMN results_time_series_big.protect_id            IS 'to protect against unwanted changes';
+
+--
+-- table structure for the common parameters for a list of numbers that differ only by the timestamp
+--
+
+CREATE TABLE IF NOT EXISTS user_results_time_series_big
+(
+    group_id              text          NOT NULL,
+    source_group_id       text      DEFAULT NULL,
+    user_id               bigint        NOT NULL,
+    result_time_series_id bigint        NOT NULL,
+    last_update           timestamp DEFAULT NULL,
+    formula_id            bigint        NOT NULL,
+    excluded              smallint  DEFAULT NULL,
+    share_type_id         smallint  DEFAULT NULL,
+    protect_id            smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE user_results_time_series_big                        IS 'for the common parameters for a list of numbers that differ only by the timestamp';
+COMMENT ON COLUMN user_results_time_series_big.group_id              IS 'the text index for more than 16 phrases to find the time_series result';
+COMMENT ON COLUMN user_results_time_series_big.source_group_id       IS 'text reference to the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN user_results_time_series_big.user_id               IS 'the id of the user who has requested the change of the time_series result';
+COMMENT ON COLUMN user_results_time_series_big.result_time_series_id IS 'the 64 bit integer which is unique for the standard and the user series';
+COMMENT ON COLUMN user_results_time_series_big.last_update           IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN user_results_time_series_big.formula_id IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN user_results_time_series_big.excluded              IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN user_results_time_series_big.share_type_id         IS 'to restrict the access';
+COMMENT ON COLUMN user_results_time_series_big.protect_id            IS 'to protect against unwanted changes';
+
+-- --------------------------------------------------------
+
+--
 -- table structure to assign predefined behaviour to a view
 --
 
@@ -5250,6 +5531,62 @@ CREATE INDEX user_values_geo_big_source_idx ON user_values_geo_big (source_id);
 -- --------------------------------------------------------
 
 --
+-- indexes for table values_time_series
+--
+CREATE INDEX values_time_series_value_time_series_idx ON values_time_series (value_time_series_id);
+CREATE INDEX values_time_series_source_idx ON values_time_series (source_id);
+CREATE INDEX values_time_series_user_idx ON values_time_series (user_id);
+
+--
+-- indexes for table user_values_time_series
+--
+ALTER TABLE user_values_time_series ADD CONSTRAINT user_values_time_series_pkey PRIMARY KEY (group_id, user_id, source_id);
+CREATE INDEX user_values_time_series_user_idx ON user_values_time_series (user_id);
+CREATE INDEX user_values_time_series_value_time_series_idx ON user_values_time_series (value_time_series_id);
+CREATE INDEX user_values_time_series_source_idx ON user_values_time_series (source_id);
+
+--
+-- indexes for table values_time_series_prime
+--
+CREATE UNIQUE INDEX values_time_series_prime_pkey ON values_time_series_prime (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4);
+CREATE INDEX values_time_series_prime_phrase_id_1_idx ON values_time_series_prime (phrase_id_1);
+CREATE INDEX values_time_series_prime_phrase_id_2_idx ON values_time_series_prime (phrase_id_2);
+CREATE INDEX values_time_series_prime_phrase_id_3_idx ON values_time_series_prime (phrase_id_3);
+CREATE INDEX values_time_series_prime_phrase_id_4_idx ON values_time_series_prime (phrase_id_4);
+CREATE INDEX values_time_series_prime_value_time_series_idx ON values_time_series_prime (value_time_series_id);
+CREATE INDEX values_time_series_prime_source_idx ON values_time_series_prime (source_id);
+CREATE INDEX values_time_series_prime_user_idx ON values_time_series_prime (user_id);
+
+--
+-- indexes for table user_values_time_series_prime
+--
+CREATE UNIQUE INDEX user_values_time_series_prime_pkey ON user_values_time_series_prime (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, user_id, source_id);
+CREATE INDEX user_values_time_series_prime_phrase_id_1_idx ON user_values_time_series_prime (phrase_id_1);
+CREATE INDEX user_values_time_series_prime_phrase_id_2_idx ON user_values_time_series_prime (phrase_id_2);
+CREATE INDEX user_values_time_series_prime_phrase_id_3_idx ON user_values_time_series_prime (phrase_id_3);
+CREATE INDEX user_values_time_series_prime_phrase_id_4_idx ON user_values_time_series_prime (phrase_id_4);
+CREATE INDEX user_values_time_series_prime_user_idx ON user_values_time_series_prime (user_id);
+CREATE INDEX user_values_time_series_prime_value_time_series_idx ON user_values_time_series_prime (value_time_series_id);
+CREATE INDEX user_values_time_series_prime_source_idx ON user_values_time_series_prime (source_id);
+
+--
+-- indexes for table values_time_series_big
+--
+CREATE INDEX values_time_series_big_value_time_series_idx ON values_time_series_big (value_time_series_id);
+CREATE INDEX values_time_series_big_source_idx ON values_time_series_big (source_id);
+CREATE INDEX values_time_series_big_user_idx ON values_time_series_big (user_id);
+
+--
+-- indexes for table user_values_time_series_big
+--
+ALTER TABLE user_values_time_series_big ADD CONSTRAINT user_values_time_series_big_pkey PRIMARY KEY (group_id, user_id, source_id);
+CREATE INDEX user_values_time_series_big_user_idx ON user_values_time_series_big (user_id);
+CREATE INDEX user_values_time_series_big_value_time_series_idx ON user_values_time_series_big (value_time_series_id);
+CREATE INDEX user_values_time_series_big_source_idx ON user_values_time_series_big (source_id);
+
+-- --------------------------------------------------------
+
+--
 -- indexes for table value_ts_data
 --
 
@@ -5782,6 +6119,68 @@ ALTER TABLE user_results_geo_big ADD CONSTRAINT user_results_geo_big_pkey PRIMAR
 CREATE INDEX user_results_geo_big_source_group_idx ON user_results_geo_big (source_group_id);
 CREATE INDEX user_results_geo_big_user_idx ON user_results_geo_big (user_id);
 CREATE INDEX user_results_geo_big_formula_idx ON user_results_geo_big (formula_id);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table results_time_series
+--
+CREATE INDEX results_time_series_source_group_idx ON results_time_series (source_group_id);
+CREATE INDEX results_time_series_result_time_series_idx ON results_time_series (result_time_series_id);
+CREATE INDEX results_time_series_formula_idx ON results_time_series (formula_id);
+CREATE INDEX results_time_series_user_idx ON results_time_series (user_id);
+
+--
+-- indexes for table user_results_time_series
+--
+ALTER TABLE user_results_time_series ADD CONSTRAINT user_results_time_series_pkey PRIMARY KEY (group_id, user_id);
+CREATE INDEX user_results_time_series_source_group_idx ON user_results_time_series (source_group_id);
+CREATE INDEX user_results_time_series_user_idx ON user_results_time_series (user_id);
+CREATE INDEX user_results_time_series_result_time_series_idx ON user_results_time_series (result_time_series_id);
+CREATE INDEX user_results_time_series_formula_idx ON user_results_time_series (formula_id);
+
+--
+-- indexes for table results_time_series_prime
+--
+CREATE UNIQUE INDEX results_time_series_prime_pkey ON results_time_series_prime (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4);
+CREATE INDEX results_time_series_prime_phrase_id_1_idx ON results_time_series_prime (phrase_id_1);
+CREATE INDEX results_time_series_prime_phrase_id_2_idx ON results_time_series_prime (phrase_id_2);
+CREATE INDEX results_time_series_prime_phrase_id_3_idx ON results_time_series_prime (phrase_id_3);
+CREATE INDEX results_time_series_prime_phrase_id_4_idx ON results_time_series_prime (phrase_id_4);
+CREATE INDEX results_time_series_prime_source_group_idx ON results_time_series_prime (source_group_id);
+CREATE INDEX results_time_series_prime_result_time_series_idx ON results_time_series_prime (result_time_series_id);
+CREATE INDEX results_time_series_prime_formula_idx ON results_time_series_prime (formula_id);
+CREATE INDEX results_time_series_prime_user_idx ON results_time_series_prime (user_id);
+
+--
+-- indexes for table user_results_time_series_prime
+--
+CREATE UNIQUE INDEX user_results_time_series_prime_pkey ON user_results_time_series_prime (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, user_id);
+CREATE INDEX user_results_time_series_prime_phrase_id_1_idx ON user_results_time_series_prime (phrase_id_1);
+CREATE INDEX user_results_time_series_prime_phrase_id_2_idx ON user_results_time_series_prime (phrase_id_2);
+CREATE INDEX user_results_time_series_prime_phrase_id_3_idx ON user_results_time_series_prime (phrase_id_3);
+CREATE INDEX user_results_time_series_prime_phrase_id_4_idx ON user_results_time_series_prime (phrase_id_4);
+CREATE INDEX user_results_time_series_prime_source_group_idx ON user_results_time_series_prime (source_group_id);
+CREATE INDEX user_results_time_series_prime_user_idx ON user_results_time_series_prime (user_id);
+CREATE INDEX user_results_time_series_prime_result_time_series_idx ON user_results_time_series_prime (result_time_series_id);
+CREATE INDEX user_results_time_series_prime_formula_idx ON user_results_time_series_prime (formula_id);
+
+--
+-- indexes for table results_time_series_big
+--
+CREATE INDEX results_time_series_big_source_group_idx ON results_time_series_big (source_group_id);
+CREATE INDEX results_time_series_big_result_time_series_idx ON results_time_series_big (result_time_series_id);
+CREATE INDEX results_time_series_big_formula_idx ON results_time_series_big (formula_id);
+CREATE INDEX results_time_series_big_user_idx ON results_time_series_big (user_id);
+
+--
+-- indexes for table user_results_time_series_big
+--
+ALTER TABLE user_results_time_series_big ADD CONSTRAINT user_results_time_series_big_pkey PRIMARY KEY (group_id, user_id);
+CREATE INDEX user_results_time_series_big_source_group_idx ON user_results_time_series_big (source_group_id);
+CREATE INDEX user_results_time_series_big_user_idx ON user_results_time_series_big (user_id);
+CREATE INDEX user_results_time_series_big_result_time_series_idx ON user_results_time_series_big (result_time_series_id);
+CREATE INDEX user_results_time_series_big_formula_idx ON user_results_time_series_big (formula_id);
 
 -- --------------------------------------------------------
 
@@ -6418,12 +6817,49 @@ ALTER TABLE user_values_geo_big
     ADD CONSTRAINT user_values_geo_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
     ADD CONSTRAINT user_values_geo_big_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
 
---
--- constraints for table value_ts_data
---
+-- --------------------------------------------------------
 
-ALTER TABLE value_ts_data
-    ADD CONSTRAINT value_ts_data_value_time_series_fk FOREIGN KEY (value_time_series_id) REFERENCES value_time_series (value_time_series_id);
+--
+-- constraints for table values_time_series
+--
+ALTER TABLE values_time_series
+    ADD CONSTRAINT values_time_series_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
+    ADD CONSTRAINT values_time_series_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_values_time_series
+--
+ALTER TABLE user_values_time_series
+    ADD CONSTRAINT user_values_time_series_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_values_time_series_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
+
+--
+-- constraints for table values_time_series_prime
+--
+ALTER TABLE values_time_series_prime
+    ADD CONSTRAINT values_time_series_prime_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
+    ADD CONSTRAINT values_time_series_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_values_time_series_prime
+--
+ALTER TABLE user_values_time_series_prime
+    ADD CONSTRAINT user_values_time_series_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_values_time_series_prime_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
+
+--
+-- constraints for table values_time_series_big
+--
+ALTER TABLE values_time_series_big
+    ADD CONSTRAINT values_time_series_big_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
+    ADD CONSTRAINT values_time_series_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_values_time_series_big
+--
+ALTER TABLE user_values_time_series_big
+    ADD CONSTRAINT user_values_time_series_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_values_time_series_big_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
 
 -- --------------------------------------------------------
 
@@ -6705,6 +7141,50 @@ ALTER TABLE results_geo_big
 ALTER TABLE user_results_geo_big
     ADD CONSTRAINT user_results_geo_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
     ADD CONSTRAINT user_results_geo_big_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
+
+-- --------------------------------------------------------
+
+--
+-- constraints for table results_time_series
+--
+ALTER TABLE results_time_series
+    ADD CONSTRAINT results_time_series_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id),
+    ADD CONSTRAINT results_time_series_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_results_time_series
+--
+ALTER TABLE user_results_time_series
+    ADD CONSTRAINT user_results_time_series_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_results_time_series_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
+
+--
+-- constraints for table results_time_series_prime
+--
+ALTER TABLE results_time_series_prime
+    ADD CONSTRAINT results_time_series_prime_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id),
+    ADD CONSTRAINT results_time_series_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_results_time_series_prime
+--
+ALTER TABLE user_results_time_series_prime
+    ADD CONSTRAINT user_results_time_series_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_results_time_series_prime_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
+
+--
+-- constraints for table results_time_series_big
+--
+ALTER TABLE results_time_series_big
+    ADD CONSTRAINT results_time_series_big_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id),
+    ADD CONSTRAINT results_time_series_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+--
+-- constraints for table user_results_time_series_big
+--
+ALTER TABLE user_results_time_series_big
+    ADD CONSTRAINT user_results_time_series_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_results_time_series_big_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
 
 -- --------------------------------------------------------
 --

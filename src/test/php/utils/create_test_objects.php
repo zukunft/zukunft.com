@@ -131,6 +131,7 @@ use cfg\user_profile_list;
 use cfg\value\value;
 use cfg\value\value_list;
 use cfg\value\value_phrase_link;
+use cfg\value\value_time_series;
 use cfg\value\value_ts_data;
 use cfg\verb;
 use cfg\verb_list;
@@ -1276,7 +1277,20 @@ class create_test_objects extends test_base
         return $lnk;
     }
 
-    function value_ts(): value_ts_data
+    /**
+     * @return value_time_series e.g. to test the table and index creation
+     */
+    function value_time_series(): value_time_series
+    {
+        $vts = new value_time_series($this->usr1);
+        $vts->set_grp($this->dummy_phrase_group_16());
+        return $vts;
+    }
+
+    /**
+     * @return value_ts_data for testing e.g. to test matrix calculations
+     */
+    function value_ts_data(): value_ts_data
     {
         $ts = new value_ts_data();
         $ts->value = round(value_api::TV_READ, 13);

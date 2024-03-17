@@ -264,17 +264,17 @@ CREATE TABLE IF NOT EXISTS user_value_time_series
     last_update          timestamp NULL DEFAULT NULL
 );
 
-COMMENT ON TABLE user_value_time_series is 'common parameters for a user specific list of intraday values';
+COMMENT ON TABLE user_values_time_series is 'common parameters for a user specific list of intraday values';
 
 --
 -- Indexes for table user_values
 --
 ALTER TABLE user_value_time_series
     ADD CONSTRAINT user_value_time_series_pkey PRIMARY KEY (value_time_series_id, user_id);
-CREATE INDEX user_value_time_series_user_idx ON user_value_time_series (user_id);
-CREATE INDEX user_value_time_series_source_idx ON user_value_time_series (source_id);
-CREATE INDEX user_value_time_series_share_idx ON user_value_time_series (share_type_id);
-CREATE INDEX user_value_time_series_protection_idx ON user_value_time_series (protect_id);
+CREATE INDEX user_value_time_series_user_idx ON user_values_time_series (user_id);
+CREATE INDEX user_value_time_series_source_idx ON user_values_time_series (source_id);
+CREATE INDEX user_value_time_series_share_idx ON user_values_time_series (share_type_id);
+CREATE INDEX user_value_time_series_protection_idx ON user_values_time_series (protect_id);
 
 --
 -- Constraints for table user_value_time_series

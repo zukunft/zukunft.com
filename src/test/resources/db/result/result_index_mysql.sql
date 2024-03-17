@@ -509,3 +509,73 @@ ALTER TABLE user_results_geo_big
     ADD KEY user_results_geo_big_source_group_idx (source_group_id),
     ADD KEY user_results_geo_big_user_idx (user_id),
     ADD KEY user_results_geo_big_formula_idx (formula_id);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table results_time_series
+--
+ALTER TABLE results_time_series
+    ADD PRIMARY KEY (group_id),
+    ADD KEY results_time_series_source_group_idx (source_group_id),
+    ADD KEY results_time_series_result_time_series_idx (result_time_series_id),
+    ADD KEY results_time_series_formula_idx (formula_id),
+    ADD KEY results_time_series_user_idx (user_id);
+
+--
+-- indexes for table user_results_time_series
+--
+ALTER TABLE user_results_time_series
+    ADD PRIMARY KEY (group_id, user_id),
+    ADD KEY user_results_time_series_source_group_idx (source_group_id),
+    ADD KEY user_results_time_series_user_idx (user_id),
+    ADD KEY user_results_time_series_result_time_series_idx (result_time_series_id),
+    ADD KEY user_results_time_series_formula_idx (formula_id);
+
+--
+-- indexes for table results_time_series_prime
+--
+ALTER TABLE results_time_series_prime
+    ADD PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4),
+    ADD KEY results_time_series_prime_phrase_id_1_idx (phrase_id_1),
+    ADD KEY results_time_series_prime_phrase_id_2_idx (phrase_id_2),
+    ADD KEY results_time_series_prime_phrase_id_3_idx (phrase_id_3),
+    ADD KEY results_time_series_prime_phrase_id_4_idx (phrase_id_4),
+    ADD KEY results_time_series_prime_source_group_idx (source_group_id),
+    ADD KEY results_time_series_prime_result_time_series_idx (result_time_series_id),
+    ADD KEY results_time_series_prime_formula_idx (formula_id),
+    ADD KEY results_time_series_prime_user_idx (user_id);
+
+--
+-- indexes for table user_results_time_series_prime
+--
+ALTER TABLE user_results_time_series_prime
+    ADD PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, user_id),
+    ADD KEY user_results_time_series_prime_phrase_id_1_idx (phrase_id_1),
+    ADD KEY user_results_time_series_prime_phrase_id_2_idx (phrase_id_2),
+    ADD KEY user_results_time_series_prime_phrase_id_3_idx (phrase_id_3),
+    ADD KEY user_results_time_series_prime_phrase_id_4_idx (phrase_id_4),
+    ADD KEY user_results_time_series_prime_source_group_idx (source_group_id),
+    ADD KEY user_results_time_series_prime_user_idx (user_id),
+    ADD KEY user_results_time_series_prime_result_time_series_idx (result_time_series_id),
+    ADD KEY user_results_time_series_prime_formula_idx (formula_id);
+
+--
+-- indexes for table results_time_series_big
+--
+ALTER TABLE results_time_series_big
+    ADD PRIMARY KEY (group_id),
+    ADD KEY results_time_series_big_source_group_idx (source_group_id),
+    ADD KEY results_time_series_big_result_time_series_idx (result_time_series_id),
+    ADD KEY results_time_series_big_formula_idx (formula_id),
+    ADD KEY results_time_series_big_user_idx (user_id);
+
+--
+-- indexes for table user_results_time_series_big
+--
+ALTER TABLE user_results_time_series_big
+    ADD PRIMARY KEY (group_id, user_id),
+    ADD KEY user_results_time_series_big_source_group_idx (source_group_id),
+    ADD KEY user_results_time_series_big_user_idx (user_id),
+    ADD KEY user_results_time_series_big_result_time_series_idx (result_time_series_id),
+    ADD KEY user_results_time_series_big_formula_idx (formula_id);

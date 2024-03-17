@@ -155,7 +155,7 @@ class sql_db
     const TBL_VERB = 'verb';
     const TBL_PHRASE = 'phrase';
     const TBL_GROUP = 'group';
-    const TBL_VALUE_TIME_SERIES = 'value_time_series';
+    const TBL_VALUE_TIME_SERIES = 'values_time_series';
     const TBL_VALUE_TIME_SERIES_DATA = 'value_ts_data';
     const TBL_VALUE_PHRASE_LINK = 'value_phrase_link';
     const TBL_SOURCE = 'source';
@@ -1725,10 +1725,10 @@ class sql_db
         $result = $type . "s";
         // exceptions from the standard table for 'nicer' names
         if ($result == 'value_time_seriess') {
-            $result = 'value_time_series';
+            $result = 'values_time_series';
         }
         if ($result == 'user_value_time_seriess') {
-            $result = 'user_value_time_series';
+            $result = 'user_values_time_series';
         }
         if ($result == 'value_ts_datas') {
             $result = 'value_ts_data';
