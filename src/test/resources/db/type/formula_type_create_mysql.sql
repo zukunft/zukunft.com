@@ -14,3 +14,9 @@ CREATE TABLE IF NOT EXISTS formula_types
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'to assign predefined behaviour to formulas';
+
+--
+-- AUTO_INCREMENT for table formula_types
+--
+ALTER TABLE formula_types
+    MODIFY formula_type_id int(11) NOT NULL AUTO_INCREMENT;

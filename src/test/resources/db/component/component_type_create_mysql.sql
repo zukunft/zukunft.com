@@ -14,3 +14,9 @@ CREATE TABLE IF NOT EXISTS component_types
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'to display e.g. a fixed text, term or formula result';
+
+--
+-- AUTO_INCREMENT for table component_types
+--
+ALTER TABLE component_types
+    MODIFY component_type_id int(11) NOT NULL AUTO_INCREMENT;

@@ -14,3 +14,9 @@ CREATE TABLE IF NOT EXISTS change_actions
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'for add,change,delete,undo and redo actions';
+
+--
+-- AUTO_INCREMENT for table change_actions
+--
+ALTER TABLE change_actions
+    MODIFY change_action_id int(11) NOT NULL AUTO_INCREMENT;

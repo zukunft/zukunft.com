@@ -23,6 +23,12 @@ CREATE TABLE IF NOT EXISTS refs
     COMMENT 'to link external data to internal for syncronisation';
 
 --
+-- AUTO_INCREMENT for table refs
+--
+ALTER TABLE refs
+    MODIFY ref_id int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- table structure to save user specific changes to link external data to internal for syncronisation
 --
 

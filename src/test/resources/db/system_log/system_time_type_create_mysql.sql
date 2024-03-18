@@ -14,3 +14,9 @@ CREATE TABLE IF NOT EXISTS system_time_types
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'to define the execution time groups';
+
+--
+-- AUTO_INCREMENT for table system_time_types
+--
+ALTER TABLE system_time_types
+    MODIFY system_time_type_id int(11) NOT NULL AUTO_INCREMENT;

@@ -18,3 +18,9 @@ CREATE TABLE IF NOT EXISTS change_big_values
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'to log all changes done by any user on values with a big group id';
+
+--
+-- AUTO_INCREMENT for table change_big_values
+--
+ALTER TABLE change_big_values
+    MODIFY change_id int(11) NOT NULL AUTO_INCREMENT;

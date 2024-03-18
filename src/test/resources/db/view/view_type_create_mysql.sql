@@ -14,3 +14,9 @@ CREATE TABLE IF NOT EXISTS view_types
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'to assign predefined behaviour to a view';
+
+--
+-- AUTO_INCREMENT for table view_types
+--
+ALTER TABLE view_types
+    MODIFY view_type_id int(11) NOT NULL AUTO_INCREMENT;

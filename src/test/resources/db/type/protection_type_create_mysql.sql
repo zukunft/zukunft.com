@@ -14,3 +14,9 @@ CREATE TABLE IF NOT EXISTS protection_types
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'for the write access control';
+
+--
+-- AUTO_INCREMENT for table protection_types
+--
+ALTER TABLE protection_types
+    MODIFY protection_type_id int(11) NOT NULL AUTO_INCREMENT;

@@ -14,3 +14,9 @@ CREATE TABLE IF NOT EXISTS user_types
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'for the user types e.g. to set the confirmation level of a user';
+
+--
+-- AUTO_INCREMENT for table user_types
+--
+ALTER TABLE user_types
+    MODIFY user_type_id int(11) NOT NULL AUTO_INCREMENT;

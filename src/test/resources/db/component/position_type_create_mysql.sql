@@ -14,3 +14,9 @@ CREATE TABLE IF NOT EXISTS position_types
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'to define the position of components';
+
+--
+-- AUTO_INCREMENT for table position_types
+--
+ALTER TABLE position_types
+    MODIFY position_type_id int(11) NOT NULL AUTO_INCREMENT;

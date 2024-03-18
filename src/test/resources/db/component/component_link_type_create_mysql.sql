@@ -14,3 +14,9 @@ CREATE TABLE IF NOT EXISTS component_link_types
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'to assign predefined behaviour to a component view link';
+
+--
+-- AUTO_INCREMENT for table component_link_types
+--
+ALTER TABLE component_link_types
+    MODIFY component_link_type_id int(11) NOT NULL AUTO_INCREMENT;

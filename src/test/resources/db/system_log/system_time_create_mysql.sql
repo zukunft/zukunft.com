@@ -15,3 +15,9 @@ CREATE TABLE IF NOT EXISTS system_times
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'for system execution time tracking';
+
+--
+-- AUTO_INCREMENT for table system_times
+--
+ALTER TABLE system_times
+    MODIFY system_time_id int(11) NOT NULL AUTO_INCREMENT;

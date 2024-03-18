@@ -28,3 +28,9 @@ CREATE TABLE IF NOT EXISTS change_links
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'to log the link changes done by the users';
+
+--
+-- AUTO_INCREMENT for table change_links
+--
+ALTER TABLE change_links
+    MODIFY change_link_id int(11) NOT NULL AUTO_INCREMENT;

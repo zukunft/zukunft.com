@@ -14,3 +14,9 @@ CREATE TABLE IF NOT EXISTS phrase_table_status
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'for the actual status of tables for a phrase';
+
+--
+-- AUTO_INCREMENT for table phrase_table_status
+--
+ALTER TABLE phrase_table_status
+    MODIFY phrase_table_status_id int(11) NOT NULL AUTO_INCREMENT;

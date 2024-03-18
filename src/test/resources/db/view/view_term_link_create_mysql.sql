@@ -22,6 +22,12 @@ CREATE TABLE IF NOT EXISTS view_term_links
     COMMENT 'to link view to a word,triple,verb or formula with an n:m relation';
 
 --
+-- AUTO_INCREMENT for table view_term_links
+--
+ALTER TABLE view_term_links
+    MODIFY view_term_link_id int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- table structure to save user specific changes to link view to a word,triple,verb or formula with an n:m relation
 --
 

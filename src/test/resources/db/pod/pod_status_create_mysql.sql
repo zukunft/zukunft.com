@@ -14,3 +14,9 @@ CREATE TABLE IF NOT EXISTS pod_status
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'for the actual status of a pod';
+
+--
+-- AUTO_INCREMENT for table pod_status
+--
+ALTER TABLE pod_status
+    MODIFY pod_status_id int(11) NOT NULL AUTO_INCREMENT;

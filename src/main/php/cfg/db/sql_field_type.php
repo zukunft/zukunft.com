@@ -107,6 +107,14 @@ enum sql_field_type: string
         };
     }
 
+    public function is_auto_increment(): bool
+    {
+        return match($this) {
+            self::KEY_INT => true,
+            default => false,
+        };
+    }
+
     public function is_key_part(): bool
     {
         return match($this) {

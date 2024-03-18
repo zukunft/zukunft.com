@@ -20,3 +20,9 @@ CREATE TABLE IF NOT EXISTS changes
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'to log all changes done by any user on all tables except value and link changes';
+
+--
+-- AUTO_INCREMENT for table changes
+--
+ALTER TABLE changes
+    MODIFY change_id int(11) NOT NULL AUTO_INCREMENT;

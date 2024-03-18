@@ -14,3 +14,9 @@ CREATE TABLE IF NOT EXISTS pod_types
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'for predefined code to a some pods';
+
+--
+-- AUTO_INCREMENT for table pod_types
+--
+ALTER TABLE pod_types
+    MODIFY pod_type_id int(11) NOT NULL AUTO_INCREMENT;

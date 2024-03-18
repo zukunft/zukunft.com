@@ -162,7 +162,7 @@ class db_object_seq_id extends db_object
     function sql_index(sql $sc): string
     {
         $sql = $sc->sql_separator();
-        $sql .= $this->sql_index_create($sc, false, [],false);
+        $sql .= $this->sql_index_create($sc, false, [], false);
         return $sql;
     }
 
@@ -175,7 +175,7 @@ class db_object_seq_id extends db_object
      */
     function sql_foreign_key(sql $sc): string
     {
-        return $this->sql_foreign_key_create($sc, false, [],false);
+        return $this->sql_foreign_key_create($sc, false, [], false);
     }
 
     /**

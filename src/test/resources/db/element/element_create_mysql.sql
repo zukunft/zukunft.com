@@ -17,3 +17,9 @@ CREATE TABLE IF NOT EXISTS elements
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'cache for fast update of formula resolved text';
+
+--
+-- AUTO_INCREMENT for table elements
+--
+ALTER TABLE elements
+    MODIFY element_id int(11) NOT NULL AUTO_INCREMENT;

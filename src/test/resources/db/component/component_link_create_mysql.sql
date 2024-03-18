@@ -22,6 +22,12 @@ CREATE TABLE IF NOT EXISTS component_links
     COMMENT 'to link components to views with an n:m relation';
 
 --
+-- AUTO_INCREMENT for table component_links
+--
+ALTER TABLE component_links
+    MODIFY component_link_id int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- table structure to save user specific changes to link components to views with an n:m relation
 --
 

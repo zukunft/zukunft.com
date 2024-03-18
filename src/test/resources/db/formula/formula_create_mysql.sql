@@ -25,6 +25,12 @@ CREATE TABLE IF NOT EXISTS formulas
     COMMENT 'the mathematical expression to calculate results based on values and results';
 
 --
+-- AUTO_INCREMENT for table formulas
+--
+ALTER TABLE formulas
+    MODIFY formula_id int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- table structure to save user specific changes the mathematical expression to calculate results based on values and results
 --
 

@@ -15,3 +15,9 @@ CREATE TABLE IF NOT EXISTS languages
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'for table languages';
+
+--
+-- AUTO_INCREMENT for table languages
+--
+ALTER TABLE languages
+    MODIFY language_id int(11) NOT NULL AUTO_INCREMENT;

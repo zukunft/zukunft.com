@@ -30,6 +30,12 @@ CREATE TABLE IF NOT EXISTS triples
     COMMENT 'to link one word or triple with a verb to another word or triple';
 
 --
+-- AUTO_INCREMENT for table triples
+--
+ALTER TABLE triples
+    MODIFY triple_id int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- table structure to save user specific changes to link one word or triple with a verb to another word or triple
 --
 

@@ -15,3 +15,9 @@ CREATE TABLE IF NOT EXISTS sys_log_status
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'to define the status of internal errors';
+
+--
+-- AUTO_INCREMENT for table sys_log_status
+--
+ALTER TABLE sys_log_status
+    MODIFY sys_log_status_id int(11) NOT NULL AUTO_INCREMENT;

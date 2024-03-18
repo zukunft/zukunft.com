@@ -20,3 +20,9 @@ CREATE TABLE IF NOT EXISTS sys_log
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'for system error tracking and to measure execution times';
+
+--
+-- AUTO_INCREMENT for table sys_log
+--
+ALTER TABLE sys_log
+    MODIFY sys_log_id int(11) NOT NULL AUTO_INCREMENT;

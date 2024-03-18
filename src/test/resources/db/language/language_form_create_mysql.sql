@@ -15,3 +15,9 @@ CREATE TABLE IF NOT EXISTS language_forms
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'for language forms like plural';
+
+--
+-- AUTO_INCREMENT for table language_forms
+--
+ALTER TABLE language_forms
+    MODIFY language_form_id int(11) NOT NULL AUTO_INCREMENT;

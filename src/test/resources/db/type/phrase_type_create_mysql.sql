@@ -16,3 +16,9 @@ CREATE TABLE IF NOT EXISTS phrase_types
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'for the phrase type to set the predefined behaviour of a word or triple';
+
+--
+-- AUTO_INCREMENT for table phrase_types
+--
+ALTER TABLE phrase_types
+    MODIFY phrase_type_id int(11) NOT NULL AUTO_INCREMENT;

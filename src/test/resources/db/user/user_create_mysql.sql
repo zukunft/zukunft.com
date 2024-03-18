@@ -41,3 +41,9 @@ CREATE TABLE IF NOT EXISTS users
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'for users including system users; only users can add data';
+
+--
+-- AUTO_INCREMENT for table users
+--
+ALTER TABLE users
+    MODIFY user_id int(11) NOT NULL AUTO_INCREMENT;

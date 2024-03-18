@@ -14,3 +14,9 @@ CREATE TABLE IF NOT EXISTS view_link_types
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'to define the behaviour of the link between a term and a view';
+
+--
+-- AUTO_INCREMENT for table view_link_types
+--
+ALTER TABLE view_link_types
+    MODIFY view_link_type_id int(11) NOT NULL AUTO_INCREMENT;

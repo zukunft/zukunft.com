@@ -21,6 +21,12 @@ CREATE TABLE IF NOT EXISTS views
     COMMENT 'to store all user interfaces entry points';
 
 --
+-- AUTO_INCREMENT for table views
+--
+ALTER TABLE views
+    MODIFY view_id int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- table structure to save user specific changes to store all user interfaces entry points
 --
 

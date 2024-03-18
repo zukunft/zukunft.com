@@ -15,3 +15,9 @@ CREATE TABLE IF NOT EXISTS ref_types
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'to link code functionality to a list of references';
+
+--
+-- AUTO_INCREMENT for table ref_types
+--
+ALTER TABLE ref_types
+    MODIFY ref_type_id int(11) NOT NULL AUTO_INCREMENT;

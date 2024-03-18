@@ -14,3 +14,9 @@ CREATE TABLE IF NOT EXISTS sys_log_types
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'for system log types e.g. info,warning and error';
+
+--
+-- AUTO_INCREMENT for table sys_log_types
+--
+ALTER TABLE sys_log_types
+    MODIFY sys_log_type_id int(11) NOT NULL AUTO_INCREMENT;

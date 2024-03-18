@@ -21,6 +21,12 @@ CREATE TABLE IF NOT EXISTS formula_links
     COMMENT 'for the link of a formula to phrases e.g. if the term pattern of a value matches this term pattern';
 
 --
+-- AUTO_INCREMENT for table formula_links
+--
+ALTER TABLE formula_links
+    MODIFY formula_link_id int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- table structure to save user specific changes for the link of a formula to phrases e.g. if the term pattern of a value matches this term pattern
 --
 

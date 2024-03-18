@@ -2463,6 +2463,11 @@ class sql
             }
         }
 
+        // add auto increment if needed
+        if ($this->db_type() == sql_db::MYSQL) {
+            $sql .= $this->auto_increment($class, $fields);;
+        }
+
         return $sql;
     }
 
@@ -2599,6 +2604,28 @@ class sql
         }
         $sql .= $sql_field;
         return $sql;
+    }
+
+    private function auto_increment(string $class, array $fields): string
+    {
+        $sql = '';
+        $id_fld = '';
+        foreach ($fields as $field) {
+            $type = $field[sql::FLD_POS_TYPE];
+            if ($type->is_auto_increment()) {
+                $id_fld = $field[sql::FLD_POS_NAME];
+            }
+        }
+        if ($id_fld != '') {
+            $sql .= '-- ' . "\n";
+            $sql .= '-- AUTO_INCREMENT for table ' . $this->table . ' ' . "\n";
+            $sql .= '-- ' . "\n";
+            $sql .= 'ALTER ' . 'TABLE ' . $this->name_sql_esc($this->table) . ' ' . "\n";
+            $sql .= '    MODIFY ' . $this->name_sql_esc($id_fld) . ' int(11) NOT NULL AUTO_INCREMENT; ' . "\n";
+            $sql .= ' ' . "\n";
+        }
+        return $sql;
+
     }
 
     /**

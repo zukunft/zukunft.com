@@ -15,3 +15,9 @@ CREATE TABLE IF NOT EXISTS change_fields
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'to keep the original field name even if a table name has changed';
+
+--
+-- AUTO_INCREMENT for table change_fields
+--
+ALTER TABLE change_fields
+    MODIFY change_field_id int(11) NOT NULL AUTO_INCREMENT;

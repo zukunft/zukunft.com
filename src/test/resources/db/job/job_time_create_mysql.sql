@@ -16,3 +16,9 @@ CREATE TABLE IF NOT EXISTS job_times
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'to schedule jobs with predefined parameters';
+
+--
+-- AUTO_INCREMENT for table job_times
+--
+ALTER TABLE job_times
+    MODIFY job_time_id int(11) NOT NULL AUTO_INCREMENT;

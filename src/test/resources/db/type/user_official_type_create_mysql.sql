@@ -14,3 +14,9 @@ CREATE TABLE IF NOT EXISTS user_official_types
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'for person identification types e.g. passports';
+
+--
+-- AUTO_INCREMENT for table user_official_types
+--
+ALTER TABLE user_official_types
+    MODIFY user_official_type_id int(11) NOT NULL AUTO_INCREMENT;

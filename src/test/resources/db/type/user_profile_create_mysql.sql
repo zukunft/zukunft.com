@@ -15,3 +15,9 @@ CREATE TABLE IF NOT EXISTS user_profiles
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'to define the user roles and read and write rights';
+
+--
+-- AUTO_INCREMENT for table user_profiles
+--
+ALTER TABLE user_profiles
+    MODIFY user_profile_id int(11) NOT NULL AUTO_INCREMENT;

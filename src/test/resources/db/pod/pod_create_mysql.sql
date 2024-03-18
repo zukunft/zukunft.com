@@ -18,3 +18,9 @@ CREATE TABLE IF NOT EXISTS pods
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'for the technical details of the mash network pods';
+
+--
+-- AUTO_INCREMENT for table pods
+--
+ALTER TABLE pods
+    MODIFY pod_id int(11) NOT NULL AUTO_INCREMENT;

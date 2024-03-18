@@ -33,6 +33,12 @@ CREATE TABLE IF NOT EXISTS config
     DEFAULT CHARSET = utf8
     COMMENT 'for the core configuration of this pod e.g. the program version or pod url';
 
+--
+-- AUTO_INCREMENT for table config
+--
+ALTER TABLE config
+    MODIFY config_id int(11) NOT NULL AUTO_INCREMENT;
+
 -- --------------------------------------------------------
 
 --
@@ -49,6 +55,12 @@ CREATE TABLE IF NOT EXISTS sys_log_types
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'for system log types e.g. info,warning and error';
+
+--
+-- AUTO_INCREMENT for table sys_log_types
+--
+ALTER TABLE sys_log_types
+    MODIFY sys_log_type_id int(11) NOT NULL AUTO_INCREMENT;
 
 -- --------------------------------------------------------
 
@@ -68,6 +80,11 @@ CREATE TABLE IF NOT EXISTS sys_log_status
     DEFAULT CHARSET = utf8
     COMMENT 'to define the status of internal errors';
 
+--
+-- AUTO_INCREMENT for table sys_log_status
+--
+ALTER TABLE sys_log_status
+    MODIFY sys_log_status_id int(11) NOT NULL AUTO_INCREMENT;
 
 -- --------------------------------------------------------
 
@@ -85,6 +102,12 @@ CREATE TABLE IF NOT EXISTS sys_log_functions
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'to group the system log entries by function';
+
+--
+-- AUTO_INCREMENT for table sys_log_functions
+--
+ALTER TABLE sys_log_functions
+    MODIFY sys_log_function_id int(11) NOT NULL AUTO_INCREMENT;
 
 -- --------------------------------------------------------
 
@@ -109,6 +132,12 @@ CREATE TABLE IF NOT EXISTS sys_log
     DEFAULT CHARSET = utf8
     COMMENT 'for system error tracking and to measure execution times';
 
+--
+-- AUTO_INCREMENT for table sys_log
+--
+ALTER TABLE sys_log
+    MODIFY sys_log_id int(11) NOT NULL AUTO_INCREMENT;
+
 -- --------------------------------------------------------
 
 --
@@ -117,7 +146,7 @@ CREATE TABLE IF NOT EXISTS sys_log
 
 CREATE TABLE IF NOT EXISTS system_time_types
 (
-    system_time_type_id bigint          NOT NULL COMMENT 'the internal unique primary index',
+    system_time_type_id bigint           NOT NULL COMMENT 'the internal unique primary index',
     type_name           varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
     code_id             varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
     description         text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry'
@@ -125,6 +154,12 @@ CREATE TABLE IF NOT EXISTS system_time_types
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'to define the execution time groups';
+
+--
+-- AUTO_INCREMENT for table system_time_types
+--
+ALTER TABLE system_time_types
+    MODIFY system_time_type_id int(11) NOT NULL AUTO_INCREMENT;
 
 -- --------------------------------------------------------
 
@@ -144,6 +179,12 @@ CREATE TABLE IF NOT EXISTS system_times
     DEFAULT CHARSET = utf8
     COMMENT 'for system execution time tracking';
 
+--
+-- AUTO_INCREMENT for table system_times
+--
+ALTER TABLE system_times
+    MODIFY system_time_id int(11) NOT NULL AUTO_INCREMENT;
+
 -- --------------------------------------------------------
 
 --
@@ -160,6 +201,12 @@ CREATE TABLE IF NOT EXISTS job_types
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'for predefined batch jobs that can be triggered by a user action or scheduled e.g. data synchronisation';
+
+--
+-- AUTO_INCREMENT for table job_types
+--
+ALTER TABLE job_types
+    MODIFY job_type_id int(11) NOT NULL AUTO_INCREMENT;
 
 -- --------------------------------------------------------
 
@@ -179,6 +226,12 @@ CREATE TABLE IF NOT EXISTS job_times
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'to schedule jobs with predefined parameters';
+
+--
+-- AUTO_INCREMENT for table job_times
+--
+ALTER TABLE job_times
+    MODIFY job_time_id int(11) NOT NULL AUTO_INCREMENT;
 
 -- --------------------------------------------------------
 
@@ -204,6 +257,12 @@ CREATE TABLE IF NOT EXISTS jobs
     DEFAULT CHARSET = utf8
     COMMENT 'for each concrete job run';
 
+--
+-- AUTO_INCREMENT for table jobs
+--
+ALTER TABLE jobs
+    MODIFY job_id int(11) NOT NULL AUTO_INCREMENT;
+
 -- --------------------------------------------------------
 
 --
@@ -220,6 +279,12 @@ CREATE TABLE IF NOT EXISTS user_types
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'for the user types e.g. to set the confirmation level of a user';
+
+--
+-- AUTO_INCREMENT for table user_types
+--
+ALTER TABLE user_types
+    MODIFY user_type_id int(11) NOT NULL AUTO_INCREMENT;
 
 -- --------------------------------------------------------
 
@@ -239,6 +304,12 @@ CREATE TABLE IF NOT EXISTS user_profiles
     DEFAULT CHARSET = utf8
     COMMENT 'to define the user roles and read and write rights';
 
+--
+-- AUTO_INCREMENT for table user_profiles
+--
+ALTER TABLE user_profiles
+    MODIFY user_profile_id int(11) NOT NULL AUTO_INCREMENT;
+
 -- --------------------------------------------------------
 
 --
@@ -255,6 +326,12 @@ CREATE TABLE IF NOT EXISTS user_official_types
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'for person identification types e.g. passports';
+
+--
+-- AUTO_INCREMENT for table user_official_types
+--
+ALTER TABLE user_official_types
+    MODIFY user_official_type_id int(11) NOT NULL AUTO_INCREMENT;
 
 -- --------------------------------------------------------
 
@@ -300,6 +377,12 @@ CREATE TABLE IF NOT EXISTS users
     DEFAULT CHARSET = utf8
     COMMENT 'for users including system users; only users can add data';
 
+--
+-- AUTO_INCREMENT for table users
+--
+ALTER TABLE users
+    MODIFY user_id int(11) NOT NULL AUTO_INCREMENT;
+
 -- --------------------------------------------------------
 
 --
@@ -317,6 +400,13 @@ CREATE TABLE IF NOT EXISTS ip_ranges
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'of ip addresses that should be blocked';
+
+
+--
+-- AUTO_INCREMENT for table ip_ranges
+--
+ALTER TABLE ip_ranges
+    MODIFY ip_range_id int(11) NOT NULL AUTO_INCREMENT;
 
 -- --------------------------------------------------------
 
@@ -338,6 +428,12 @@ CREATE TABLE IF NOT EXISTS sessions
     DEFAULT CHARSET = utf8
     COMMENT 'to control the user frontend sessions';
 
+--
+-- AUTO_INCREMENT for table sessions
+--
+ALTER TABLE sessions
+    MODIFY session_id int(11) NOT NULL AUTO_INCREMENT;
+
 -- --------------------------------------------------------
 
 --
@@ -354,6 +450,12 @@ CREATE TABLE IF NOT EXISTS change_actions
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'for add,change,delete,undo and redo actions';
+
+--
+-- AUTO_INCREMENT for table change_actions
+--
+ALTER TABLE change_actions
+    MODIFY change_action_id int(11) NOT NULL AUTO_INCREMENT;
 
 -- --------------------------------------------------------
 
@@ -372,6 +474,12 @@ CREATE TABLE IF NOT EXISTS change_tables
     DEFAULT CHARSET = utf8
     COMMENT 'to keep the original table name even if a table name has changed and to avoid log changes in case a table is renamed';
 
+--
+-- AUTO_INCREMENT for table change_tables
+--
+ALTER TABLE change_tables
+    MODIFY change_table_id int(11) NOT NULL AUTO_INCREMENT;
+
 -- --------------------------------------------------------
 
 --
@@ -389,6 +497,12 @@ CREATE TABLE IF NOT EXISTS change_fields
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'to keep the original field name even if a table name has changed';
+
+--
+-- AUTO_INCREMENT for table change_fields
+--
+ALTER TABLE change_fields
+    MODIFY change_field_id int(11) NOT NULL AUTO_INCREMENT;
 
 -- --------------------------------------------------------
 
@@ -413,6 +527,12 @@ CREATE TABLE IF NOT EXISTS changes
     DEFAULT CHARSET = utf8
     COMMENT 'to log all changes done by any user on all tables except value and link changes';
 
+--
+-- AUTO_INCREMENT for table changes
+--
+ALTER TABLE changes
+    MODIFY change_id int(11) NOT NULL AUTO_INCREMENT;
+
 -- --------------------------------------------------------
 
 --
@@ -433,6 +553,12 @@ CREATE TABLE IF NOT EXISTS change_standard_values
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'to log all changes done by any user on values with a standard group id';
+
+--
+-- AUTO_INCREMENT for table change_standard_values
+--
+ALTER TABLE change_standard_values
+    MODIFY change_id int(11) NOT NULL AUTO_INCREMENT;
 
 -- --------------------------------------------------------
 
@@ -455,6 +581,12 @@ CREATE TABLE IF NOT EXISTS change_prime_values
     DEFAULT CHARSET = utf8
     COMMENT 'to log all changes done by any user on values with a prime group id';
 
+--
+-- AUTO_INCREMENT for table change_prime_values
+--
+ALTER TABLE change_prime_values
+    MODIFY change_id int(11) NOT NULL AUTO_INCREMENT;
+
 -- --------------------------------------------------------
 
 --
@@ -475,6 +607,12 @@ CREATE TABLE IF NOT EXISTS change_big_values
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'to log all changes done by any user on values with a big group id';
+
+--
+-- AUTO_INCREMENT for table change_big_values
+--
+ALTER TABLE change_big_values
+    MODIFY change_id int(11) NOT NULL AUTO_INCREMENT;
 
 -- --------------------------------------------------------
 
@@ -507,6 +645,12 @@ CREATE TABLE IF NOT EXISTS change_links
     DEFAULT CHARSET = utf8
     COMMENT 'to log the link changes done by the users';
 
+--
+-- AUTO_INCREMENT for table change_links
+--
+ALTER TABLE change_links
+    MODIFY change_link_id int(11) NOT NULL AUTO_INCREMENT;
+
 -- --------------------------------------------------------
 
 --
@@ -524,6 +668,12 @@ CREATE TABLE IF NOT EXISTS pod_types
     DEFAULT CHARSET = utf8
     COMMENT 'for predefined code to a some pods';
 
+--
+-- AUTO_INCREMENT for table pod_types
+--
+ALTER TABLE pod_types
+    MODIFY pod_type_id int(11) NOT NULL AUTO_INCREMENT;
+
 -- --------------------------------------------------------
 
 --
@@ -540,6 +690,12 @@ CREATE TABLE IF NOT EXISTS pod_status
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'for the actual status of a pod';
+
+--
+-- AUTO_INCREMENT for table pod_status
+--
+ALTER TABLE pod_status
+    MODIFY pod_status_id int(11) NOT NULL AUTO_INCREMENT;
 
 -- --------------------------------------------------------
 
@@ -562,6 +718,12 @@ CREATE TABLE IF NOT EXISTS pods
     DEFAULT CHARSET = utf8
     COMMENT 'for the technical details of the mash network pods';
 
+--
+-- AUTO_INCREMENT for table pods
+--
+ALTER TABLE pods
+    MODIFY pod_id int(11) NOT NULL AUTO_INCREMENT;
+
 -- --------------------------------------------------------
 
 --
@@ -579,6 +741,12 @@ CREATE TABLE IF NOT EXISTS protection_types
     DEFAULT CHARSET = utf8
     COMMENT 'for the write access control';
 
+--
+-- AUTO_INCREMENT for table protection_types
+--
+ALTER TABLE protection_types
+    MODIFY protection_type_id int(11) NOT NULL AUTO_INCREMENT;
+
 -- --------------------------------------------------------
 
 --
@@ -595,6 +763,12 @@ CREATE TABLE IF NOT EXISTS share_types
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'for the read access control';
+
+--
+-- AUTO_INCREMENT for table share_types
+--
+ALTER TABLE share_types
+    MODIFY share_type_id int(11) NOT NULL AUTO_INCREMENT;
 
 -- --------------------------------------------------------
 
@@ -614,6 +788,12 @@ CREATE TABLE IF NOT EXISTS languages
     DEFAULT CHARSET = utf8
     COMMENT 'for table languages';
 
+--
+-- AUTO_INCREMENT for table languages
+--
+ALTER TABLE languages
+    MODIFY language_id int(11) NOT NULL AUTO_INCREMENT;
+
 -- --------------------------------------------------------
 
 --
@@ -631,6 +811,12 @@ CREATE TABLE IF NOT EXISTS language_forms
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'for language forms like plural';
+
+--
+-- AUTO_INCREMENT for table language_forms
+--
+ALTER TABLE language_forms
+    MODIFY language_form_id int(11) NOT NULL AUTO_INCREMENT;
 
 -- --------------------------------------------------------
 
@@ -657,6 +843,12 @@ CREATE TABLE IF NOT EXISTS words
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'for a short text, that can be used to search for values or results with a 64 bit database key because humans will never be able to use more than a few million words';
+
+--
+-- AUTO_INCREMENT for table words
+--
+ALTER TABLE words
+    MODIFY word_id int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- table structure to save user specific changes for a short text, that can be used to search for values or results with a 64 bit database key because humans will never be able to use more than a few million words
@@ -704,6 +896,12 @@ CREATE TABLE IF NOT EXISTS verbs
     DEFAULT CHARSET = utf8
     COMMENT 'for verbs / triple predicates to use predefined behavior';
 
+--
+-- AUTO_INCREMENT for table verbs
+--
+ALTER TABLE verbs
+    MODIFY verb_id int(11) NOT NULL AUTO_INCREMENT;
+
 -- --------------------------------------------------------
 
 --
@@ -734,6 +932,12 @@ CREATE TABLE IF NOT EXISTS triples
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'to link one word or triple with a verb to another word or triple';
+
+--
+-- AUTO_INCREMENT for table triples
+--
+ALTER TABLE triples
+    MODIFY triple_id int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- table structure to save user specific changes to link one word or triple with a verb to another word or triple
@@ -768,7 +972,7 @@ CREATE TABLE IF NOT EXISTS user_triples
 
 CREATE TABLE IF NOT EXISTS phrase_table_status
 (
-    phrase_table_status_id bigint           NOT NULL COMMENT 'the internal unique primary index',
+    phrase_table_status_id bigint  NOT NULL COMMENT 'the internal unique primary index',
     type_name     varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
     code_id       varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
     description   text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry'
@@ -776,6 +980,12 @@ CREATE TABLE IF NOT EXISTS phrase_table_status
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'for the actual status of tables for a phrase';
+
+--
+-- AUTO_INCREMENT for table phrase_table_status
+--
+ALTER TABLE phrase_table_status
+    MODIFY phrase_table_status_id int(11) NOT NULL AUTO_INCREMENT;
 
 -- --------------------------------------------------------
 
@@ -793,6 +1003,12 @@ CREATE TABLE IF NOT EXISTS phrase_tables
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'remember which phrases are stored in which table and pod';
+
+--
+-- AUTO_INCREMENT for table phrase_tables
+--
+ALTER TABLE phrase_tables
+    MODIFY phrase_table_id int(11) NOT NULL AUTO_INCREMENT;
 
 -- --------------------------------------------------------
 
@@ -812,6 +1028,12 @@ CREATE TABLE IF NOT EXISTS phrase_types
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'for the phrase type to set the predefined behaviour of a word or triple';
+
+--
+-- AUTO_INCREMENT for table phrase_types
+--
+ALTER TABLE phrase_types
+    MODIFY phrase_type_id int(11) NOT NULL AUTO_INCREMENT;
 
 -- --------------------------------------------------------
 
@@ -898,6 +1120,11 @@ CREATE TABLE IF NOT EXISTS source_types
     DEFAULT CHARSET = utf8
     COMMENT 'to link predefined behaviour to a source';
 
+--
+-- AUTO_INCREMENT for table source_types
+--
+ALTER TABLE source_types
+    MODIFY source_type_id int(11) NOT NULL AUTO_INCREMENT;
 
 -- --------------------------------------------------------
 
@@ -920,6 +1147,12 @@ CREATE TABLE IF NOT EXISTS sources (
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'for the original sources for the numeric,time and geo values';
+
+--
+-- AUTO_INCREMENT for table sources
+--
+ALTER TABLE sources
+    MODIFY source_id int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- table structure to save user specific changes for the original sources for the numeric, time and geo values
@@ -959,6 +1192,12 @@ CREATE TABLE IF NOT EXISTS ref_types
     DEFAULT CHARSET = utf8
     COMMENT 'to link code functionality to a list of references';
 
+--
+-- AUTO_INCREMENT for table ref_types
+--
+ALTER TABLE ref_types
+    MODIFY ref_type_id int(11) NOT NULL AUTO_INCREMENT;
+
 -- --------------------------------------------------------
 
 --
@@ -982,6 +1221,12 @@ CREATE TABLE IF NOT EXISTS refs
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'to link external data to internal for syncronisation';
+
+--
+-- AUTO_INCREMENT for table refs
+--
+ALTER TABLE refs
+    MODIFY ref_id int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- table structure to save user specific changes to link external data to internal for syncronisation
@@ -1700,6 +1945,12 @@ CREATE TABLE IF NOT EXISTS element_types
     DEFAULT CHARSET = utf8
     COMMENT 'to assign predefined behaviour to a formula element';
 
+--
+-- AUTO_INCREMENT for table element_types
+--
+ALTER TABLE element_types
+    MODIFY element_type_id int(11) NOT NULL AUTO_INCREMENT;
+
 -- --------------------------------------------------------
 
 --
@@ -1720,6 +1971,12 @@ CREATE TABLE IF NOT EXISTS elements
     DEFAULT CHARSET = utf8
     COMMENT 'cache for fast update of formula resolved text';
 
+--
+-- AUTO_INCREMENT for table elements
+--
+ALTER TABLE elements
+    MODIFY element_id int(11) NOT NULL AUTO_INCREMENT;
+
 -- --------------------------------------------------------
 
 --
@@ -1737,6 +1994,11 @@ CREATE TABLE IF NOT EXISTS formula_types
     DEFAULT CHARSET = utf8
     COMMENT 'to assign predefined behaviour to formulas';
 
+--
+-- AUTO_INCREMENT for table formula_types
+--
+ALTER TABLE formula_types
+    MODIFY formula_type_id int(11) NOT NULL AUTO_INCREMENT;
 
 -- --------------------------------------------------------
 
@@ -1764,6 +2026,12 @@ CREATE TABLE IF NOT EXISTS formulas
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'the mathematical expression to calculate results based on values and results';
+
+--
+-- AUTO_INCREMENT for table formulas
+--
+ALTER TABLE formulas
+    MODIFY formula_id int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- table structure to save user specific changes the mathematical expression to calculate results based on values and results
@@ -1810,6 +2078,12 @@ CREATE TABLE IF NOT EXISTS formula_link_types
     DEFAULT CHARSET = utf8
     COMMENT 'to assign predefined behaviour to a formula link';
 
+--
+-- AUTO_INCREMENT for table formula_link_types
+--
+ALTER TABLE formula_link_types
+    MODIFY formula_link_type_id int(11) NOT NULL AUTO_INCREMENT;
+
 -- --------------------------------------------------------
 
 --
@@ -1831,6 +2105,12 @@ CREATE TABLE IF NOT EXISTS formula_links
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'for the link of a formula to phrases e.g. if the term pattern of a value matches this term pattern';
+
+--
+-- AUTO_INCREMENT for table formula_links
+--
+ALTER TABLE formula_links
+    MODIFY formula_link_id int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- table structure to save user specific changes for the link of a formula to phrases e.g. if the term pattern of a value matches this term pattern
@@ -2823,6 +3103,12 @@ CREATE TABLE IF NOT EXISTS view_types
     DEFAULT CHARSET = utf8
     COMMENT 'to assign predefined behaviour to a view';
 
+--
+-- AUTO_INCREMENT for table view_types
+--
+ALTER TABLE view_types
+    MODIFY view_type_id int(11) NOT NULL AUTO_INCREMENT;
+
 -- --------------------------------------------------------
 
 --
@@ -2844,6 +3130,12 @@ CREATE TABLE IF NOT EXISTS views
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'to store all user interfaces entry points';
+
+--
+-- AUTO_INCREMENT for table views
+--
+ALTER TABLE views
+    MODIFY view_id int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- table structure to save user specific changes to store all user interfaces entry points
@@ -2882,6 +3174,12 @@ CREATE TABLE IF NOT EXISTS view_link_types
     DEFAULT CHARSET = utf8
     COMMENT 'to define the behaviour of the link between a term and a view';
 
+--
+-- AUTO_INCREMENT for table view_link_types
+--
+ALTER TABLE view_link_types
+    MODIFY view_link_type_id int(11) NOT NULL AUTO_INCREMENT;
+
 -- --------------------------------------------------------
 
 --
@@ -2904,6 +3202,12 @@ CREATE TABLE IF NOT EXISTS view_term_links
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'to link view to a word,triple,verb or formula with an n:m relation';
+
+--
+-- AUTO_INCREMENT for table view_term_links
+--
+ALTER TABLE view_term_links
+    MODIFY view_term_link_id int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- table structure to save user specific changes to link view to a word,triple,verb or formula with an n:m relation
@@ -2940,6 +3244,12 @@ CREATE TABLE IF NOT EXISTS component_link_types
     DEFAULT CHARSET = utf8
     COMMENT 'to assign predefined behaviour to a component view link';
 
+--
+-- AUTO_INCREMENT for table component_link_types
+--
+ALTER TABLE component_link_types
+    MODIFY component_link_type_id int(11) NOT NULL AUTO_INCREMENT;
+
 -- --------------------------------------------------------
 
 --
@@ -2957,6 +3267,12 @@ CREATE TABLE IF NOT EXISTS position_types
     DEFAULT CHARSET = utf8
     COMMENT 'to define the position of components';
 
+--
+-- AUTO_INCREMENT for table position_types
+--
+ALTER TABLE position_types
+    MODIFY position_type_id int(11) NOT NULL AUTO_INCREMENT;
+
 -- --------------------------------------------------------
 
 --
@@ -2973,6 +3289,12 @@ CREATE TABLE IF NOT EXISTS component_types
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'to display e.g. a fixed text, term or formula result';
+
+--
+-- AUTO_INCREMENT for table component_types
+--
+ALTER TABLE component_types
+    MODIFY component_type_id int(11) NOT NULL AUTO_INCREMENT;
 
 -- --------------------------------------------------------
 
@@ -3003,6 +3325,12 @@ CREATE TABLE IF NOT EXISTS components
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'for the single components of a view';
+
+--
+-- AUTO_INCREMENT for table components
+--
+ALTER TABLE components
+    MODIFY component_id int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- table structure to save user specific changes for the single components of a view
@@ -3052,6 +3380,12 @@ CREATE TABLE IF NOT EXISTS component_links
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'to link components to views with an n:m relation';
+
+--
+-- AUTO_INCREMENT for table component_links
+--
+ALTER TABLE component_links
+    MODIFY component_link_id int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- table structure to save user specific changes to link components to views with an n:m relation
@@ -5252,280 +5586,6 @@ ALTER TABLE user_component_links
 -- foreign key constraints and auto_increment for tables
 --
 -- --------------------------------------------------------
-
---
--- AUTO_INCREMENT for table`jobs`
---
-ALTER TABLE `jobs`
-    MODIFY `job_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table`job_types`
---
-ALTER TABLE `job_types`
-    MODIFY `job_type_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table`changes`
---
-ALTER TABLE `changes`
-    MODIFY `change_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table`change_actions`
---
-ALTER TABLE `change_actions`
-    MODIFY `change_action_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table`change_fields`
---
-ALTER TABLE `change_fields`
-    MODIFY `change_field_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table`change_links`
---
-ALTER TABLE `change_links`
-    MODIFY `change_link_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table`change_tables`
---
-ALTER TABLE `change_tables`
-    MODIFY `change_table_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table`formulas`
---
-ALTER TABLE `formulas`
-    MODIFY `formula_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table`elements`
---
-ALTER TABLE `elements`
-    MODIFY `element_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table`formula_links`
---
-ALTER TABLE `formula_links`
-    MODIFY `formula_link_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table`formula_link_types`
---
-ALTER TABLE `formula_link_types`
-    MODIFY `formula_link_type_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table`formula_types`
---
-ALTER TABLE `formula_types`
-    MODIFY `formula_type_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table`results`
---
-ALTER TABLE `results`
-    MODIFY `group_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table`import_source`
---
-ALTER TABLE `import_source`
-    MODIFY `import_source_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table`languages`
---
-ALTER TABLE `languages`
-    MODIFY `language_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table`language_forms`
---
-ALTER TABLE `language_forms`
-    MODIFY `language_form_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table`phrase_groups`
---
-ALTER TABLE `groups`
-    MODIFY group_id int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table`protection_types`
---
-ALTER TABLE `protection_types`
-    MODIFY `protect_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table`refs`
---
-ALTER TABLE `refs`
-    MODIFY `ref_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table`ref_types`
---
-ALTER TABLE `ref_types`
-    MODIFY `ref_type_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table`sessions`
---
-ALTER TABLE `sessions`
-    MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table`share_types`
---
-ALTER TABLE `share_types`
-    MODIFY `share_type_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table`sources`
---
-ALTER TABLE `sources`
-    MODIFY `source_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table`source_types`
---
-ALTER TABLE `source_types`
-    MODIFY `source_type_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table`sys_log`
---
-ALTER TABLE `sys_log`
-    MODIFY `sys_log_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table`sys_log_functions`
---
-ALTER TABLE `sys_log_functions`
-    MODIFY `sys_log_function_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table`sys_log_status`
---
-ALTER TABLE `sys_log_status`
-    MODIFY `sys_log_status_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table`sys_log_types`
---
-ALTER TABLE `sys_log_types`
-    MODIFY `sys_log_type_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table`sys_scripts`
---
-ALTER TABLE `sys_scripts`
-    MODIFY `sys_script_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table`users`
---
-ALTER TABLE `users`
-    MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table`user_attempts`
---
-ALTER TABLE `user_attempts`
-    MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table`ip_ranges`
---
-ALTER TABLE `ip_ranges`
-    MODIFY `ip_range_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table`user_official_types`
---
-ALTER TABLE `user_official_types`
-    MODIFY `user_official_type_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table`user_profiles`
---
-ALTER TABLE `user_profiles`
-    MODIFY `profile_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table`user_requests`
---
-ALTER TABLE `user_requests`
-    MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table`user_types`
---
-ALTER TABLE `user_types`
-    MODIFY `user_type_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table`values`
---
-ALTER TABLE `values`
-    MODIFY `group_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table`value_phrase_links`
---
-ALTER TABLE `value_phrase_links`
-    MODIFY `value_phrase_link_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table`value_relations`
---
-ALTER TABLE `value_relations`
-    MODIFY `value_link_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table`value_time_series`
---
-ALTER TABLE `value_time_series`
-    MODIFY `value_time_series_id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table`verbs`
---
-ALTER TABLE `verbs`
-    MODIFY `verb_id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table`views`
---
-ALTER TABLE `views`
-    MODIFY `view_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table`components`
---
-ALTER TABLE `components`
-    MODIFY `component_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table`component_links`
---
-ALTER TABLE `component_links`
-    MODIFY `component_link_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table`component_link_types`
---
-ALTER TABLE `component_link_types`
-    MODIFY `component_link_type_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table`position_types`
---
-ALTER TABLE `position_types`
-    MODIFY `position_type_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table`component_types`
---
-ALTER TABLE `component_types`
-    MODIFY `component_type_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table`view_link_types`
---
-ALTER TABLE `view_link_types`
-    MODIFY `view_link_type_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table`view_type_list`
---
-ALTER TABLE `view_types`
-    MODIFY `view_type_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table`view_term_links`
---
-ALTER TABLE `view_term_links`
-    MODIFY `view_term_link_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table`words`
---
-ALTER TABLE `words`
-    MODIFY `word_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table`word_del_requests`
---
-ALTER TABLE `word_del_requests`
-    MODIFY `word_del_request_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table`triples`
---
-ALTER TABLE `triples`
-    MODIFY `triple_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table`phrase_types`
---
-ALTER TABLE `phrase_types`
-    MODIFY `phrase_type_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- constraints for table system_times

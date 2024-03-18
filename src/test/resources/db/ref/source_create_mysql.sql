@@ -21,6 +21,12 @@ CREATE TABLE IF NOT EXISTS sources (
     COMMENT 'for the original sources for the numeric,time and geo values';
 
 --
+-- AUTO_INCREMENT for table sources
+--
+ALTER TABLE sources
+    MODIFY source_id int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- table structure to save user specific changes for the original sources for the numeric, time and geo values
 --
 

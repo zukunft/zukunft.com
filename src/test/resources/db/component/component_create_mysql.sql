@@ -29,6 +29,12 @@ CREATE TABLE IF NOT EXISTS components
     COMMENT 'for the single components of a view';
 
 --
+-- AUTO_INCREMENT for table components
+--
+ALTER TABLE components
+    MODIFY component_id int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- table structure to save user specific changes for the single components of a view
 --
 

@@ -17,3 +17,9 @@ CREATE TABLE IF NOT EXISTS formula_link_types
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'to assign predefined behaviour to a formula link';
+
+--
+-- AUTO_INCREMENT for table formula_link_types
+--
+ALTER TABLE formula_link_types
+    MODIFY formula_link_type_id int(11) NOT NULL AUTO_INCREMENT;

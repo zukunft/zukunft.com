@@ -14,3 +14,9 @@ CREATE TABLE IF NOT EXISTS change_tables
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'to keep the original table name even if a table name has changed and to avoid log changes in case a table is renamed';
+
+--
+-- AUTO_INCREMENT for table change_tables
+--
+ALTER TABLE change_tables
+    MODIFY change_table_id int(11) NOT NULL AUTO_INCREMENT;

@@ -20,3 +20,9 @@ CREATE TABLE IF NOT EXISTS verbs
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'for verbs / triple predicates to use predefined behavior';
+
+--
+-- AUTO_INCREMENT for table verbs
+--
+ALTER TABLE verbs
+    MODIFY verb_id int(11) NOT NULL AUTO_INCREMENT;

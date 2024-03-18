@@ -14,3 +14,9 @@ CREATE TABLE IF NOT EXISTS source_types
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'to link predefined behaviour to a source';
+
+--
+-- AUTO_INCREMENT for table source_types
+--
+ALTER TABLE source_types
+    MODIFY source_type_id int(11) NOT NULL AUTO_INCREMENT;

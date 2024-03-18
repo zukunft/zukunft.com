@@ -21,3 +21,9 @@ CREATE TABLE IF NOT EXISTS jobs
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'for each concrete job run';
+
+--
+-- AUTO_INCREMENT for table jobs
+--
+ALTER TABLE jobs
+    MODIFY job_id int(11) NOT NULL AUTO_INCREMENT;

@@ -15,3 +15,9 @@ CREATE TABLE IF NOT EXISTS config
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'for the core configuration of this pod e.g. the program version or pod url';
+
+--
+-- AUTO_INCREMENT for table config
+--
+ALTER TABLE config
+    MODIFY config_id int(11) NOT NULL AUTO_INCREMENT;

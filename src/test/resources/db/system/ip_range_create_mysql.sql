@@ -15,3 +15,9 @@ CREATE TABLE IF NOT EXISTS ip_ranges
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'of ip addresses that should be blocked';
+
+--
+-- AUTO_INCREMENT for table ip_ranges
+--
+ALTER TABLE ip_ranges
+    MODIFY ip_range_id int(11) NOT NULL AUTO_INCREMENT;

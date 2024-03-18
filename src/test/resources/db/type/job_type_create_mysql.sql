@@ -14,3 +14,9 @@ CREATE TABLE IF NOT EXISTS job_types
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'for predefined batch jobs that can be triggered by a user action or scheduled e.g. data synchronisation';
+
+--
+-- AUTO_INCREMENT for table job_types
+--
+ALTER TABLE job_types
+    MODIFY job_type_id int(11) NOT NULL AUTO_INCREMENT;

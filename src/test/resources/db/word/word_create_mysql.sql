@@ -25,6 +25,12 @@ CREATE TABLE IF NOT EXISTS words
     COMMENT 'for a short text, that can be used to search for values or results with a 64 bit database key because humans will never be able to use more than a few million words';
 
 --
+-- AUTO_INCREMENT for table words
+--
+ALTER TABLE words
+    MODIFY word_id int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- table structure to save user specific changes for a short text, that can be used to search for values or results with a 64 bit database key because humans will never be able to use more than a few million words
 --
 

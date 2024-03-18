@@ -17,3 +17,9 @@ CREATE TABLE IF NOT EXISTS sessions
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'to control the user frontend sessions';
+
+--
+-- AUTO_INCREMENT for table sessions
+--
+ALTER TABLE sessions
+    MODIFY session_id int(11) NOT NULL AUTO_INCREMENT;

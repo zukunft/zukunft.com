@@ -14,3 +14,9 @@ CREATE TABLE IF NOT EXISTS share_types
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
     COMMENT 'for the read access control';
+
+--
+-- AUTO_INCREMENT for table share_types
+--
+ALTER TABLE share_types
+    MODIFY share_type_id int(11) NOT NULL AUTO_INCREMENT;
