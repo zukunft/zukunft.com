@@ -14,8 +14,6 @@ use html\phrase\phrase_group as phrase_group_dsp;
     4. commit
 
     but first this needs to be fixed:
-    TODO Substeps: create the sql setup scripts based on the objects
-    TODO Step 27: deprecate the get_old group_list
     TODO Substeps: create insert, update and delete sql create tests for the main objects
     TODO Step 26: deprecate the get_old in result
     TODO Substeps: create insert, update and delete sql create tests for the remaining objects

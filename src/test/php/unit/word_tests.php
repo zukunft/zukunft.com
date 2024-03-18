@@ -60,23 +60,32 @@ class word_tests
         $json_file = 'unit/word/second.json';
         $usr->set_id(1);
 
-        $t->header('Unit tests of the word class (src/main/php/model/word/word.php)');
+        $t->header('word unit tests');
 
-
-        $t->subheader('SQL setup statements');
+        $t->subheader('word sql setup');
         $wrd = $t->dummy_word();
         $t->assert_sql_table_create($wrd);
         $t->assert_sql_index_create($wrd);
         $t->assert_sql_foreign_key_create($wrd);
 
-
-        $t->subheader('SQL user sandbox statement tests');
-
+        $t->subheader('word sql read');
         $wrd = new word($usr);
         $t->assert_sql_by_id($db_con, $wrd);
         $t->assert_sql_by_name($db_con, $wrd);
         $this->assert_sql_formula_name($t, $db_con, $wrd);
 
+        $t->subheader('word sql write');
+        // TODO add to
+        // triple, phrase, group, term, ref, source, value, formula (mit link), element, result, figure, view, component (mit link)
+        // TODO activate db write
+        //$t->assert_sql_insert($db_con, $wrd);
+        //$t->assert_sql_insert($db_con, $wrd, true);
+        // TODO activate db write
+        //$t->assert_sql_update($db_con, $wrd);
+        //$t->assert_sql_update($db_con, $wrd, true);
+        // TODO activate db write
+        //$t->assert_sql_delete($db_con, $wrd);
+        //$t->assert_sql_delete($db_con, $wrd, true);
 
         $t->subheader('SQL load default statement tests');
 

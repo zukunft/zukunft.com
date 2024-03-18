@@ -56,19 +56,25 @@ class verb_tests
         $usr->set_id(1);
 
 
-        $t->header('Unit tests of the verb class (src/main/php/model/verb/verb.php)');
-
-        $t->subheader('Verb SQL setup statements');
+        $t->header('verb unit tests');
         $vrb = new verb();
+
+        $t->subheader('verb sql setup');
         $t->assert_sql_table_create($vrb);
         $t->assert_sql_index_create($vrb);
 
-        $t->subheader('SQL statement tests');
-
-        $vrb = new verb();
+        $t->subheader('verb sql read');
         $t->assert_sql_by_id($db_con, $vrb);
         $t->assert_sql_by_name($db_con, $vrb);
         $t->assert_sql_by_code_id($db_con, $vrb);
+
+        $t->subheader('verb sql write');
+        // TODO activate db write
+        //$t->assert_sql_insert($db_con, $vrb);
+        // TODO activate db write
+        //$t->assert_sql_update($db_con, $vrb);
+        // TODO activate db write
+        //$t->assert_sql_delete($db_con, $vrb);
 
 
         $t->subheader('Im- and Export tests');
