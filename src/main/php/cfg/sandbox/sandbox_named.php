@@ -54,8 +54,9 @@ use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\log\change;
-use cfg\log\change_log_action;
-use cfg\log\change_log_link;
+use cfg\log\change_action;
+use cfg\log\change_action_list;
+use cfg\log\change_link;
 use Exception;
 use cfg\export\sandbox_exp;
 
@@ -321,18 +322,14 @@ class sandbox_named extends sandbox
     /**
      * load a named user sandbox object by name
      * @param string $name the name of the word, triple, formula, verb, view or view component
-     * @param string $class the name of the child class from where the call has been triggered
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_name(string $name, string $class = ''): int
+    function load_by_name(string $name): int
     {
         global $db_con;
 
         log_debug($name);
-        if ($class == '') {
-            $class = $this::class;
-        }
-        $qp = $this->load_sql_by_name($db_con->sql_creator(), $name, $class);
+        $qp = $this->load_sql_by_name($db_con->sql_creator(), $name, $this::class);
         return parent::load($qp);
     }
 
@@ -398,7 +395,7 @@ class sandbox_named extends sandbox
 
         $log = new change($this->user());
         // TODO add the table exceptions from sql_db
-        $log->action = change_log_action::ADD;
+        $log->action = change_action::ADD;
         $log->set_table($this->obj_name . sql_db::TABLE_EXTENSION);
         $log->set_field($this->obj_name . '_name');
         $log->set_user($this->user());
@@ -412,14 +409,14 @@ class sandbox_named extends sandbox
 
     /**
      * set the log entry parameter to delete a object
-     * @returns change_log_link with the object presets e.g. th object name
+     * @returns change_link with the object presets e.g. th object name
      */
     function log_del(): change
     {
         log_debug($this->dsp_id());
 
         $log = new change($this->user());
-        $log->action = change_log_action::DELETE;
+        $log->action = change_action::DELETE;
         $log->set_table($this->obj_name . sql_db::TABLE_EXTENSION);
         $log->set_field($this->obj_name . '_name');
         $log->old_value = $this->name();
@@ -741,8 +738,8 @@ class sandbox_named extends sandbox
             // check with the user namespace
             $db_chk->set_user($this->user());
             if ($this->obj_name == sql_db::TBL_CHANGE) {
-                // for some objects still use the deprecated load_obj_vars method
-                if ($db_chk->load_obj_vars()) {
+                // TODO check if it is working with build in tests
+                if ($db_chk->load_by_id($this->id())) {
                     if ($db_chk->id() > 0) {
                         log_debug($this->dsp_id() . ' has the same name is the already existing "' . $db_chk->dsp_id() . '" of the user namespace');
                         $result = $db_chk;

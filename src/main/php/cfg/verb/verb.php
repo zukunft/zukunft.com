@@ -43,14 +43,17 @@ include_once SERVICE_EXPORT_PATH . 'sandbox_exp_named.php';
 use api\verb\verb as verb_api;
 use cfg\db\sql;
 use cfg\db\sql_db;
+use cfg\db\sql_field_default;
+use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\export\sandbox_exp;
 use cfg\export\sandbox_exp_named;
 use cfg\export\verb_exp;
 use cfg\log\change;
-use cfg\log\change_log_action;
-use cfg\log\change_log_table;
+use cfg\log\change_action;
+use cfg\log\change_action_list;
+use cfg\log\change_table_list;
 use html\html_base;
 use html\html_selector;
 use html\verb\verb as verb_dsp;
@@ -75,9 +78,11 @@ class verb extends type_object
     const CAN_BE = "can_be";
     const CAN_USE = "can_use";
     const SELECTOR = "selector"; // the from_phrase of a selector can be used more than once so the description of the to_phrase should be shown to the user
+    const TO = 'to'; // to define a time period e.g. "12:00 to 13:00" or "1. March 2024 to 3. March 2024"
 
     // directional forms of verbs (maybe move to verb_api or test if only used for testing)
     const FOLLOWED_BY = "is followed by";
+    const FOLLOWER_OF = "is follower of";
 
     // search directions to get related words (phrases)
     const DIRECTION_NO = '';
@@ -89,24 +94,43 @@ class verb extends type_object
      * database link
      */
 
-    // object specific database and JSON object field names
+    // object specific database and JSON object field names and comments
+    const TBL_COMMENT = 'for verbs / triple predicates to use predefined behavior';
     const FLD_ID = 'verb_id';
     const FLD_NAME = 'verb_name';
+    const FLD_CODE_ID_COM = 'id text to link coded functionality to a specific verb';
+    const FLD_CONDITION = 'condition_type';
+    const FLD_FORMULA_COM = 'naming used in formulas';
+    const FLD_FORMULA = 'formula_name';
     const FLD_PLURAL = 'name_plural';
     const FLD_REVERSE = 'name_reverse';
+    const FLD_PLURAL_REVERSE_COM = 'english description for the reverse list, e.g. Companies are ... TODO move to language forms';
     const FLD_PLURAL_REVERSE = 'name_plural_reverse';
-    const FLD_FORMULA = 'formula_name';
+    const FLD_WORDS_COM = 'used for how many phrases or formulas';
     const FLD_WORDS = 'words';
 
     // all database field names excluding the id used to identify if there are some user specific changes
     const FLD_NAMES = array(
-        sql_db::FLD_CODE_ID,
+        sql::FLD_CODE_ID,
         sandbox_named::FLD_DESCRIPTION,
         self::FLD_PLURAL,
         self::FLD_REVERSE,
         self::FLD_PLURAL_REVERSE,
         self::FLD_FORMULA,
         self::FLD_WORDS
+    );
+
+    // field lists for the table creation
+    const FLD_LST_ALL = array(
+        [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_NAME_COM],
+        [sql::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
+        [self::FLD_DESCRIPTION, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
+        [self::FLD_CONDITION, sql_field_type::INT, sql_field_default::NULL, '', '', ''],
+        [self::FLD_FORMULA, sql_field_type::NAME, sql_field_default::NULL, '', '', self::FLD_FORMULA_COM],
+        [self::FLD_PLURAL_REVERSE, sql_field_type::NAME, sql_field_default::NULL, '', '', self::FLD_PLURAL_REVERSE_COM],
+        [self::FLD_PLURAL, sql_field_type::NAME, sql_field_default::NULL, '', '', ''],
+        [self::FLD_REVERSE, sql_field_type::NAME, sql_field_default::NULL, '', '', ''],
+        [self::FLD_WORDS, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_WORDS_COM],
     );
 
 
@@ -181,9 +205,9 @@ class verb extends type_object
     {
         $result = parent::row_mapper($db_row, $id_fld);
         if ($result) {
-            if (array_key_exists(sql_db::FLD_CODE_ID, $db_row)) {
-                if ($db_row[sql_db::FLD_CODE_ID] != null) {
-                    $this->set_code_id($db_row[sql_db::FLD_CODE_ID]);
+            if (array_key_exists(sql::FLD_CODE_ID, $db_row)) {
+                if ($db_row[sql::FLD_CODE_ID] != null) {
+                    $this->set_code_id($db_row[sql::FLD_CODE_ID]);
                 }
             }
             $this->set_name($db_row[$name_fld]);
@@ -290,7 +314,7 @@ class verb extends type_object
     /**
      * @return string the description of the verb
      */
-    function comment(): string
+    function description(): string
     {
         if ($this->description == null) {
             return '';
@@ -406,7 +430,7 @@ class verb extends type_object
     function load_sql_by_code_id(sql $sc, string $code_id, string $class = self::class): sql_par
     {
         $qp = $this->load_sql($sc, 'code_id', $class);
-        $sc->add_where(sql_db::FLD_CODE_ID, $code_id);
+        $sc->add_where(sql::FLD_CODE_ID, $code_id);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -446,7 +470,7 @@ class verb extends type_object
      * @param string $name the name of the verb
      * @return int the id of the verb found and zero if nothing is found
      */
-    function load_by_name(string $name, string $class = self::class): int
+    function load_by_name(string $name): int
     {
         global $db_con;
 
@@ -780,8 +804,8 @@ class verb extends type_object
     {
         log_debug('verb->log_add ' . $this->dsp_id());
         $log = new change($this->usr);
-        $log->action = change_log_action::ADD;
-        $log->set_table(change_log_table::VERB);
+        $log->action = change_action::ADD;
+        $log->set_table(change_table_list::VERB);
         $log->set_field(self::FLD_NAME);
         $log->old_value = '';
         $log->new_value = $this->name;
@@ -796,8 +820,8 @@ class verb extends type_object
     {
         log_debug('verb->log_upd ' . $this->dsp_id() . ' for user ' . $this->user()->name);
         $log = new change($this->usr);
-        $log->action = change_log_action::UPDATE;
-        $log->set_table(change_log_table::VERB);
+        $log->action = change_action::UPDATE;
+        $log->set_table(change_table_list::VERB);
 
         return $log;
     }
@@ -807,8 +831,8 @@ class verb extends type_object
     {
         log_debug('verb->log_del ' . $this->dsp_id() . ' for user ' . $this->user()->name);
         $log = new change($this->usr);
-        $log->action = change_log_action::DELETE;
-        $log->set_table(change_log_table::VERB);
+        $log->action = change_action::DELETE;
+        $log->set_table(change_table_list::VERB);
         $log->set_field(self::FLD_NAME);
         $log->old_value = $this->name;
         $log->new_value = '';
@@ -853,7 +877,7 @@ class verb extends type_object
             $log->new_value = $this->code_id;
             $log->std_value = $db_rec->code_id;
             $log->row_id = $this->id;
-            $log->set_field(sql_db::FLD_CODE_ID);
+            $log->set_field(sql::FLD_CODE_ID);
             $result .= $this->save_field_do($db_con, $log);
         }
         return $result;

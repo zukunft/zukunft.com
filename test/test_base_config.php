@@ -31,6 +31,7 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
+use cfg\import\import_file;
 use controller\controller;
 use html\html_base;
 use html\view\view as view_dsp;
@@ -83,7 +84,8 @@ if ($usr->id() > 0) {
 
         $html->echo("loading of base configuration started<br>");
 
-        import_base_config($usr);
+        $import = new import_file();
+        $import->import_base_config($usr);
 
         $html->echo("loading of base configuration finished<br>");
 

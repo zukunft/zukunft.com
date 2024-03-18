@@ -7,6 +7,7 @@
 
     TODO: add these function
     TODO rename to result
+    TODO create a separate table for the time series results
 
     set_dirty_on_value_update  - set all formula result value to dirty that are depending on an updated values via Apache Kafka messages not via database
     set_dirty_on_result_update - set all formula result value to dirty that are depending on an updated formula result
@@ -43,6 +44,7 @@
 
 namespace cfg\result;
 
+include_once MODEL_SANDBOX_PATH . 'sandbox_value.php';
 include_once DB_PATH . 'sql_par_type.php';
 include_once DB_PATH . 'sql_table_type.php';
 include_once SERVICE_EXPORT_PATH . 'result_exp.php';
@@ -53,25 +55,22 @@ use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
-use cfg\db\sql_par_type;
 use cfg\db\sql_table_type;
+use cfg\element_list;
 use cfg\export\export;
 use cfg\export\result_exp;
 use cfg\export\sandbox_exp;
 use cfg\expression;
 use cfg\figure;
 use cfg\formula;
-use cfg\formula_element_list;
 use cfg\group\group;
 use cfg\group\group_id;
 use cfg\group\group_list;
 use cfg\library;
 use cfg\parameter_type;
-use cfg\phr_ids;
 use cfg\phrase_list;
 use cfg\sandbox;
 use cfg\sandbox_value;
-use cfg\source;
 use cfg\user;
 use cfg\user_message;
 use cfg\value\value;
@@ -95,7 +94,16 @@ class result extends sandbox_value
     const FLD_GRP = 'group_id';
     const FLD_VALUE = 'numeric_value';
     const FLD_LAST_UPDATE = 'last_update';
+    const FLD_TS_ID_COM = 'the id of the time series as a 64 bit integer value because the number of time series is not expected to be too high';
+    const FLD_TS_ID_COM_USER = 'the 64 bit integer which is unique for the standard and the user series';
+    const FLD_RESULT_TS_ID = 'result_time_series_id';
     const FLD_DIRTY = 'dirty';
+    const FLD_ALL_TIME_SERIES = array(
+        [self::FLD_RESULT_TS_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_TS_ID_COM],
+    );
+    const FLD_ALL_TIME_SERIES_USER = array(
+        [self::FLD_RESULT_TS_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_TS_ID_COM_USER],
+    );
 
     // all database field names excluding the id and excluding the user specific fields
     const FLD_NAMES = array(
@@ -106,20 +114,33 @@ class result extends sandbox_value
         self::FLD_LAST_UPDATE
     );
     const FLD_NAMES_ALL = array(
-        formula::FLD_ID,
         user::FLD_ID,
         self::FLD_SOURCE_GRP,
+        formula::FLD_ID,
+        self::FLD_VALUE,
+    );
+    const FLD_NAMES_NON_STD = array(
+        user::FLD_ID,
+        self::FLD_SOURCE_GRP,
+        formula::FLD_ID,
     );
     const FLD_NAMES_STD = array(
-        formula::FLD_ID,
         self::FLD_SOURCE_GRP,
+        formula::FLD_ID,
         self::FLD_VALUE,
     );
     // fields that are not part of the standard result table, but that needs to be included for a correct union field match
     const FLD_NAMES_STD_DUMMY = array(
         user::FLD_ID,
-        formula::FLD_ID,
         self::FLD_SOURCE_GRP,
+    );
+    const FLD_NAMES_STD_NON_DUMMY = array(
+        formula::FLD_ID,
+    );
+    const FLD_NAMES_DUMMY = array(
+        user::FLD_ID,
+        self::FLD_SOURCE_GRP,
+        formula::FLD_ID,
     );
     // list of the user specific numeric database field names
     const FLD_NAMES_NUM_USR_EX_STD = array(
@@ -150,10 +171,70 @@ class result extends sandbox_value
     // TODO add a similar list to the value class
     const TBL_EXT_LST = array(
         sql_table_type::PRIME,
+        sql_table_type::MAIN,
         sql_table_type::MOST,
         sql_table_type::BIG
     );
+    // list of fixed tables where a value might be stored
+    const TBL_LIST = array(
+        [sql_table_type::PRIME, sql_table_type::STANDARD],
+        [sql_table_type::MAIN, sql_table_type::STANDARD],
+        [sql_table_type::MOST, sql_table_type::STANDARD],
+        [sql_table_type::MOST],
+        [sql_table_type::PRIME],
+        [sql_table_type::MAIN],
+        [sql_table_type::BIG]
+    );
+    // list of fixed tables without the pure key value tables
+    const TBL_LIST_EX_STD = array(
+        [sql_table_type::MOST],
+        [sql_table_type::PRIME],
+        [sql_table_type::MAIN],
+        [sql_table_type::BIG]
+    );
 
+    const FLD_KEY_PRIME = array(
+        [formula::FLD_ID, sql_field_type::KEY_PART_INT_SMALL, sql_field_default::NOT_NULL, sql::INDEX, '', 'formula id that is part of the prime key for a'],
+        [sandbox_value::FLD_ID_PREFIX . '1', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::NOT_NULL, sql::INDEX, '', 'phrase id that is part of the prime key for a'],
+        [sandbox_value::FLD_ID_PREFIX . '2', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ZERO, sql::INDEX, '', 'phrase id that is part of the prime key for a'],
+        [sandbox_value::FLD_ID_PREFIX . '3', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ZERO, sql::INDEX, '', 'phrase id that is part of the prime key for a'],
+    );
+    const FLD_KEY_MAIN_STD = array(
+        [formula::FLD_ID, sql_field_type::KEY_PART_INT_SMALL, sql_field_default::NOT_NULL, sql::INDEX, '', 'formula id that is part of the prime key for a'],
+        [sandbox_value::FLD_ID_PREFIX . '1', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::NOT_NULL, sql::INDEX, '', 'phrase id that is part of the prime key for a'],
+        [sandbox_value::FLD_ID_PREFIX . '2', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ZERO, sql::INDEX, '', 'phrase id that is part of the prime key for a'],
+        [sandbox_value::FLD_ID_PREFIX . '3', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ZERO, sql::INDEX, '', 'phrase id that is part of the prime key for a'],
+        [sandbox_value::FLD_ID_PREFIX . '4', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ZERO, sql::INDEX, '', 'phrase id that is part of the prime key for a'],
+        [sandbox_value::FLD_ID_PREFIX . '5', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ZERO, sql::INDEX, '', 'phrase id that is part of the prime key for a'],
+        [sandbox_value::FLD_ID_PREFIX . '6', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ZERO, sql::INDEX, '', 'phrase id that is part of the prime key for a'],
+        [sandbox_value::FLD_ID_PREFIX . '7', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ZERO, sql::INDEX, '', 'phrase id that is part of the prime key for a'],
+    );
+    const FLD_KEY_MAIN = array(
+        [sandbox_value::FLD_ID_PREFIX . '1', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::NOT_NULL, sql::INDEX, '', 'phrase id that is part of the prime key for a'],
+        [sandbox_value::FLD_ID_PREFIX . '2', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ZERO, sql::INDEX, '', 'phrase id that is part of the prime key for a'],
+        [sandbox_value::FLD_ID_PREFIX . '3', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ZERO, sql::INDEX, '', 'phrase id that is part of the prime key for a'],
+        [sandbox_value::FLD_ID_PREFIX . '4', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ZERO, sql::INDEX, '', 'phrase id that is part of the prime key for a'],
+        [sandbox_value::FLD_ID_PREFIX . '5', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ZERO, sql::INDEX, '', 'phrase id that is part of the prime key for a'],
+        [sandbox_value::FLD_ID_PREFIX . '6', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ZERO, sql::INDEX, '', 'phrase id that is part of the prime key for a'],
+        [sandbox_value::FLD_ID_PREFIX . '7', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ZERO, sql::INDEX, '', 'phrase id that is part of the prime key for a'],
+        [sandbox_value::FLD_ID_PREFIX . '8', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ZERO, sql::INDEX, '', 'phrase id that is part of the prime key for a'],
+    );
+    const FLD_KEY_PRIME_USER = array(
+        [formula::FLD_ID, sql_field_type::KEY_PART_INT_SMALL, sql_field_default::NOT_NULL, sql::INDEX, '', 'formula id that is with the user id part of the prime key for a'],
+        [sandbox_value::FLD_ID_PREFIX . '1', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::NOT_NULL, sql::INDEX, '', 'phrase id that is with the user id part of the prime key for a'],
+        [sandbox_value::FLD_ID_PREFIX . '2', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ZERO, sql::INDEX, '', 'phrase id that is with the user id part of the prime key for a'],
+        [sandbox_value::FLD_ID_PREFIX . '3', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ZERO, sql::INDEX, '', 'phrase id that is with the user id part of the prime key for a'],
+    );
+    const FLD_KEY_MAIN_USER = array(
+        [sandbox_value::FLD_ID_PREFIX . '1', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::NOT_NULL, sql::INDEX, '', 'phrase id that is with the user id part of the prime key for a'],
+        [sandbox_value::FLD_ID_PREFIX . '2', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ZERO, sql::INDEX, '', 'phrase id that is with the user id part of the prime key for a'],
+        [sandbox_value::FLD_ID_PREFIX . '3', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ZERO, sql::INDEX, '', 'phrase id that is with the user id part of the prime key for a'],
+        [sandbox_value::FLD_ID_PREFIX . '4', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ZERO, sql::INDEX, '', 'phrase id that is with the user id part of the prime key for a'],
+        [sandbox_value::FLD_ID_PREFIX . '5', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ZERO, sql::INDEX, '', 'phrase id that is with the user id part of the prime key for a'],
+        [sandbox_value::FLD_ID_PREFIX . '6', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ZERO, sql::INDEX, '', 'phrase id that is with the user id part of the prime key for a'],
+        [sandbox_value::FLD_ID_PREFIX . '7', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ZERO, sql::INDEX, '', 'phrase id that is with the user id part of the prime key for a'],
+        [sandbox_value::FLD_ID_PREFIX . '8', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ZERO, sql::INDEX, '', 'phrase id that is with the user id part of the prime key for a'],
+    );
     const FLD_ALL_CHANGED = array(
         [value::FLD_LAST_UPDATE, sql_field_type::TIME, sql_field_default::NULL, '', '', 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation'],
         [formula::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, formula::class, 'the id of the formula which has been used to calculate this result'],
@@ -757,139 +838,6 @@ class result extends sandbox_value
     }
 
     /**
-     * set the SQL query parameters to load a result
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_obj_vars_sql(sql_db $db_con): sql_par
-    {
-        $sql_where = "";
-        if ($this->id > 0) {
-            $qp = $this->load_sql_by_id($db_con->sql_creator(), $this->id);
-        } else {
-            // prepare the search by getting the word group based on the word list
-            log_debug('not by id');
-
-            // set the result group id if the result list is set, but not the group id
-            $phr_grp = null;
-            if (!$this->grp->is_id_set()) {
-                $phr_lst = null;
-                if ($this->grp->phrase_list() != null) {
-                    if (!$this->grp->phrase_list()->is_empty()) {
-                        $phr_lst = clone $this->grp->phrase_list();
-                        //$phr_lst->ex_time();
-                        log_debug('get group by ' . $phr_lst->dsp_name());
-                        // ... or based on the phrase ids
-                    }
-                } elseif (!empty($this->phr_ids())) {
-                    $phr_lst = new phrase_list($this->user());
-                    $phr_lst->load_names_by_ids(new phr_ids($this->phr_ids()));
-                    // ... or to get the most interesting result for this word
-                }
-                if (isset($phr_lst)) {
-                    $this->grp->set_phrase_list($phr_lst);
-                    log_debug('get group for ' . $phr_lst->dsp_name() . ' (including formula name)');
-                    $phr_grp = $phr_lst->get_grp_id();
-                    if (isset($phr_grp)) {
-                        if ($phr_grp->is_id_set()) {
-                            $this->grp = $phr_grp;
-                        }
-                    }
-                }
-            }
-            if (!$this->grp->is_id_set()) {
-                log_debug('group not found!');
-            }
-
-            $db_con->set_class(sql_db::TBL_RESULT);
-            $qp = new sql_par(self::class);
-            $qp->name = 'res_by_';
-
-            // set the source group id if the source list is set, but not the group id
-            if (!$this->src_grp->is_id_set() and $this->src_grp->phrase_list() != null) {
-
-                if (!$this->src_grp->phrase_list()->is_empty()) {
-                    $phr_grp = $this->src_grp->phrase_list()->get_grp_id();
-                    if (isset($phr_grp)) {
-                        if ($phr_grp->is_id_set()) {
-                            $this->src_grp->set_id($phr_grp->id());
-                        }
-                    }
-                    log_debug('source group ' . $this->src_grp->dsp_id() . ' found for ' . $this->src_grp->phrase_list()->dsp_name());
-                }
-            }
-
-            $sql_order = '';
-            // include the source words in the search if requested
-            if ($this->src_grp->is_id_set() and $this->user()->id() > 0) {
-                $qp->name .= '_usr_src_phr_grp';
-                $db_con->add_par(sql_par_type::INT, $this->src_grp->id());
-                $db_con->add_par(sql_par_type::INT, $this->user()->id());
-                if ($sql_where != '') {
-                    $sql_where .= ' AND ';
-                }
-                $sql_where .= " source_group_id = " . $db_con->par_name() . "
-                           AND (user_id = " . $db_con->par_name() . " OR user_id = 0 OR user_id IS NULL) ";
-                $sql_order = " ORDER BY user_id DESC";
-            } else {
-                $qp->name .= '_src_phr_grp';
-                if ($this->src_grp->is_id_set()) {
-                    $db_con->add_par(sql_par_type::INT, $this->src_grp->id());
-                    if ($sql_where != '') {
-                        $sql_where .= ' AND ';
-                    }
-                    $sql_where .= " source_group_id = " . $db_con->par_name() . " AND ";
-                    $sql_order = " ORDER BY user_id";
-                }
-            }
-            // and include the result words in the search, because one source word list can result to two result word
-            // e.g. one time specific and one general
-            // select the result based on words
-            $sql_wrd = "";
-            if ($this->grp->is_id_set() and $this->user()->id() > 0) {
-                $qp->name .= '_usr_phr_grp';
-                $db_con->add_par(sql_par_type::INT, $this->grp->id());
-                $db_con->add_par(sql_par_type::INT, $this->user()->id());
-                if ($sql_where != '') {
-                    $sql_where .= ' AND ';
-                }
-                $sql_where .= " group_id = " . $db_con->par_name() . "
-                          AND (user_id = " . $db_con->par_name() . " OR user_id = 0 OR user_id IS NULL)";
-                $sql_order = " ORDER BY user_id DESC";
-            } else {
-                if ($this->grp->is_id_set()) {
-                    $qp->name .= '_phr_grp';
-                    $db_con->add_par(sql_par_type::INT, $this->grp->id());
-                    if ($sql_where != '') {
-                        $sql_where .= ' AND ';
-                    }
-                    $sql_where .= " group_id = " . $db_con->par_name() . " ";
-                    $sql_order = "ORDER BY user_id";
-                }
-            }
-            // include the formula in the search
-            if ($this->frm->id() > 0) {
-                $qp->name .= '_frm_id';
-                $db_con->add_par(sql_par_type::INT, $this->frm->id());
-                if ($sql_where != '') {
-                    $sql_where .= ' AND ';
-                }
-                $sql_where .= " formula_id = " . $db_con->par_name() . " ";
-            }
-            if ($sql_order <> '') {
-                // if only the target value list is set, get the "best" result
-                // TODO define what is the best result
-                $sql_where .= $sql_order;
-            }
-        }
-
-        if ($sql_where != '') {
-            $qp = $this->load_sql_where($db_con, $qp, $sql_where);
-        }
-        return $qp;
-    }
-
-    /**
      * create the sql statement to add a new result to the database
      * TODO add source group
      *
@@ -996,98 +944,6 @@ class result extends sandbox_value
 
         $qp->par = $sc->par_values();
         return $qp;
-    }
-
-
-
-    // load the missing formula parameters from the database
-    // TODO load user specific values
-    // TODO create load_sql and name the query
-    function load_obj_vars(): bool
-    {
-
-        global $db_con;
-        $result = false;
-
-        // check the all minimal input parameters
-        if ($this->user() == null) {
-            log_err("The user id must be set to load a result.", "result->load");
-        } else {
-
-            // prepare the selection of the result
-            $qp = $this->load_obj_vars_sql($db_con);
-
-            // check if a valid identification is given and load the result
-            if (!$qp->has_par()) {
-                log_err("Either the database ID (" . $this->id() . ") or the source or result words or word group and the user (" . $this->user()->id() . ") must be set to load a result.", "result->load");
-            } else {
-                $result = $this->load_rec($qp);
-
-                // if no general value can be found, test if a more specific value can be found in the database
-                // e.g. if ABB,Sales,2014 is requested, but there is only a value for ABB,Sales,2014,CHF,million get it
-                // similar to the selection in value->load: maybe combine?
-                log_debug('check best guess');
-                if ($this->id() <= 0) {
-                    if (!isset($phr_lst)) {
-                        log_debug('no result found for ' . $qp->sql . ', but phrase list is also not set');
-                    } else {
-                        log_debug('try best guess');
-                        if (count($phr_lst->lst) > 0) {
-                            // the phrase groups with the least number of additional words that have at least one result
-                            $sql_grp_from = '';
-                            $sql_grp_where = '';
-                            $pos = 1;
-                            foreach ($phr_lst->lst as $phr) {
-                                if ($sql_grp_from <> '') {
-                                    $sql_grp_from .= ',';
-                                }
-                                $sql_grp_from .= 'group_word_links l' . $pos;
-                                $pos_prior = $pos - 1;
-                                if ($sql_grp_where <> '') {
-                                    $sql_grp_where .= ' AND l' . $pos_prior . '.group_id = l' . $pos . '.group_id AND ';
-                                }
-                                $qp->name .= '_word_id';
-                                $db_con->add_par(sql_par_type::INT, $phr->id());
-                                $sql_grp_where .= ' l' . $pos . '.word_id = ' . $db_con->par_name();
-                                $pos++;
-                            }
-                            $sql_grp = 'SELECT' . ' l1.group_id 
-                            FROM ' . $sql_grp_from . ' 
-                          WHERE ' . $sql_grp_where;
-                            // TODO:
-                            // count the number of phrases per group
-                            // and add the user specific phrase links
-                            // select also the time
-                            $sql_val = "SELECT group_id 
-                            FROM results
-                          WHERE group_id IN (" . $sql_grp . ");";
-                            log_debug('sql val "' . $sql_val . '"');
-                            //$db_con = new mysql;
-                            $db_con->usr_id = $this->user()->id();
-                            $val_ids_rows = $db_con->get_old($sql_val);
-                            if ($val_ids_rows != null) {
-                                if (count($val_ids_rows) > 0) {
-                                    $val_id_row = $val_ids_rows[0];
-                                    $this->set_id($val_id_row[self::FLD_ID]);
-                                    if ($this->id() > 0) {
-                                        $qp->name .= '_guess_res_id';
-                                        $db_con->add_par(sql_par_type::INT, $this->id());
-                                        $sql_where = "group_id = " . $db_con->par_name();
-                                        $this->load_rec($qp, $sql_where);
-                                        log_debug('best guess id (' . $this->id() . ')');
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                log_debug(phrase_list::class);
-                $this->load_phrases();
-            }
-            log_debug('got id ' . $this->id() . ': ' . $this->value);
-        }
-        return $result;
     }
 
 
@@ -1573,7 +1429,7 @@ class result extends sandbox_value
         $result = array();
 
         // get depending formulas
-        $frm_elm_lst = new formula_element_list($this->user());
+        $frm_elm_lst = new element_list($this->user());
         $frm_elm_lst->load_by_frm_and_type_id($this->frm->id(), parameter_type::FORMULA_ID);
         $frm_ids = array();
         foreach ($frm_elm_lst as $frm_elm) {

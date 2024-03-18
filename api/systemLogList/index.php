@@ -29,11 +29,6 @@
   
 */
 
-use cfg\log\system_log_list;
-use controller\controller;
-use api\log\system_log_list as system_log_list_api;
-use cfg\user;
-
 // standard zukunft header for callable php files to allow debugging and lib loading
 global $debug;
 $debug = $_GET['debug'] ?? 0;
@@ -47,6 +42,11 @@ include_once API_PATH . 'api_message.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_LOG_PATH . 'system_log_list.php';
 include_once API_LOG_PATH . 'system_log_list.php';
+
+use cfg\log\system_log_list;
+use controller\controller;
+use api\log\system_log_list as system_log_list_api;
+use cfg\user;
 
 // open database
 $db_con = prg_start("api/log", "", false);

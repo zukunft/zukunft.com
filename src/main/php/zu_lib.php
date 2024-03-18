@@ -14,11 +14,16 @@ use html\phrase\phrase_group as phrase_group_dsp;
     4. commit
 
     but first this needs to be fixed:
-    TODO remove the time phrase from result
+    TODO Substeps: create the sql setup scripts based on the objects
+    TODO Step 27: deprecate the get_old group_list
+    TODO Substeps: create insert, update and delete sql create tests for the main objects
+    TODO Step 26: deprecate the get_old in result
+    TODO Substeps: create insert, update and delete sql create tests for the remaining objects
+    TODO Step 25: deprecate the get_old in result_list
+    TODO Substeps: move all display functions from the backend objects to the frontend
     TODO activate the tests and create a unit and read test if possible
     TODO test if a table with 1, 2, 4, 8, 16, 32 or 64 smallint key is faster and more efficient than a table with one bigger index
     TODO create an use the figure database view
-    TODO combine phrase_group_word_links and phrase_group_triple_links to group_links (using phrase)
     TODO clean up the phrase_list (and triple_list and word_list) cfg/class and add unit and db read tests for all
     TODO use $t->assert_sql_by_ids for all lists
     TODO use the load_sql object function for all list load sql functions like in group_list
@@ -60,7 +65,6 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO rename phrase_group to group
     TODO move the time field of phrase groups to the group
     TODO check that all times include the time zone
-    TODO load_obj_vars: replace the load_obj_vars with more specific load_by_ functions
     TODO unit test: create a unit test for all possible class functions next to review: formula expression
     TODO api load: expose all load functions to the api (with security check!)
     TODO use always prepared queries based on the value_phrase_link_list_by_phrase_id.sql sample
@@ -83,6 +87,9 @@ use html\phrase\phrase_group as phrase_group_dsp;
          load, im- and export, filter, modify, check, save, del
 
     after that this should be done while keeping step 1. to 4. for each commit:
+    TODO remove the time phrase from result
+    TODO rename change and change_log to change
+    TODO rename system_log to log
     TODO use the json api message header for all api messages
     TODO check if reading triples should use a view to generate the triple name and the generated name
     TODO use the sandbox list for all user lists
@@ -171,7 +178,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO split the load and the load_sql functions to be able to add unit tests for all sql statements
     TODO crawl all public available information from the web and add it as user preset to the database
     TODO rename dsp_text in formula to display
-    TODO rename name_linked in formula_element to name_linked
+    TODO rename name_linked in element to name_linked
     TODO separate the API JSON from the HTML building e.g. dsp_graph should return an JSON file for the one page JS frontend, which can be converted to HTML code
     TODO use separate db users for the db creation (user zukunft_root), admin (user zukunft_admin), the other user roles and (zukunft_insert und zukunft_select) as s second line of defence
     TODO check all data from an URL or from a user form that it contains no SQL code
@@ -227,7 +234,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO Include in the message the user@pot or usergroup@pot that can read, write and export the data and who is owner
     TODO Export of restricted data is always pgp secured and the header includes the access rights,
     TODO rename phrase_group to group
-    TODO rename formula_element to element
+    TODO rename element to element
     TODO check that all modules used are loaded with include_once before the use statement
     TODO create a undo und redo function for a change_log entry
     TODO for behavior that should apply to several types create a property/behavior table with an n:m reration to phrase types e.g. "show preferred as column" for time phrases
@@ -242,7 +249,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO use prioritized change streams to synchronize the databases with out and in cache tables to avoid loss of data due to communication issues
     TODO for prioritized change streams use transfer and process block size parameters e.g. 100 changes are send to another pod and removed from the out cache not before the destination pod has confirmed the writing to the in cache table
     TODO add a table with process steps with step_id, name, description, code_id
-    TODO add a table with process_next_step with step_next_id, from_step_id, to_step_id, name, description, user_profile, user_id, batch_job_id
+    TODO add a table with process_next_step with step_next_id, from_step_id, to_step_id, name, description, user_profile, user_id, job_id
     TODO some index words like can have many items and need to be only valid / unique within a phrase e.g. the ISIN is a phrase within the phrase security identifier (finance)
          create an additional value_index table where the one big and two small int values are the key or
     TODO add a global_id to the word and triple table and reserve the prime ids
@@ -250,6 +257,9 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO save in the local pod setting the value and result tables actually used to speed up value searches
     TODO offer syntactic sugar translation for PL SQL
     TODO reduce the function parameters to 3 or less wherever possible
+    TODO use popular Open Source LLM systems to fill the word and triple (and value) tables
+
+    TODO because some changes e.g. a formula change might cause costly calculations estimate the cost upfront and ask the user to pay for it
 
     TODO term names are expected to change not very often
          that's why each frontend instance should subscribe to term name changes of standard term names
@@ -355,11 +365,11 @@ use html\phrase\phrase_group as phrase_group_dsp;
         ip_range - to filter requests from the internet
         db_object_user - all objects that are user specific
             phrase_group - a sorted list of phrases
-            formula_element - the parameters / parts of a formula expression for fast finding of dependencies (not the db normal form to speed up)
+            element - the parameters / parts of a formula expression for fast finding of dependencies (not the db normal form to speed up)
             change_log - to log a change done by a user
-                change_log_named - log of user changes in named objects e.g. word, triple, ...
-                change_log_link - log of the link changes by a user
-            batch_job - to handle processes that takes longer than the user is expected to wait
+                change_named - log of user changes in named objects e.g. word, triple, ...
+                change_link - log of the link changes by a user
+            job - to handle processes that takes longer than the user is expected to wait
             sandbox - a user sandbox object
                 sandbox_named - user sandbox objects that have a given name
                     sandbox_typed - named sandbox object that have a type and a predefined behavior
@@ -384,7 +394,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
     base_list - a list with pages
         change_log_list - to forward changes to the UI
         system_log_list - to forward the system log entries to the UI
-        batch_job_list - to forward the batch jobs to the UI
+        job_list - to forward the batch jobs to the UI
         ip_range_list - list of the ip ranges
         sandbox_list - a user specific paged list
             word_list - a list of words (TODO move to sandbox_list_named?)
@@ -392,8 +402,8 @@ use html\phrase\phrase_group as phrase_group_dsp;
             value_list - a list of values
             value_phrase_link_list - list of value_phrase_link
             formula_list - a list of formulas
-            formula_element_list - a list of formula elements
-            formula_element_group_list - a list of formula element groups
+            element_list - a list of formula elements
+            element_group_list - a list of formula element groups
             formula_link_list - a list of formula links
             result_list - a list of results
             figure_list - a list of figures
@@ -417,7 +427,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
         phrase_types - list of all word or triple types
         verb_list - list of all verbs
         formula_type_list - a list of all formula types
-        formula_element_type_list - list of all formula element types
+        element_type_list - list of all formula element types
         formula_link_type_list - list of all formula link types
         view_type_list - list of all view types
         component_type_list - list of all component types
@@ -428,9 +438,9 @@ use html\phrase\phrase_group as phrase_group_dsp;
         source_type_list - list of all source types
         language_list - list of all UI languages
         language_form_list - list of all language forms
-        change_log_action - list of all change types
-        change_log_table - list of all db tables that can be changed by the user (including table of past versions)
-        change_log_field - list of all fields in table that a user can change (including fields of past versions)
+        change_action_list - list of all change types
+        change_table_list - list of all db tables that can be changed by the user (including table of past versions)
+        change_field_list - list of all fields in table that a user can change (including fields of past versions)
         job_type_list - list of all batch job types
     combine_object - a object that combines two objects
         combine_named - a combine object with a unique name
@@ -448,7 +458,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
         word_change_list
         phrase_group_list - a list of phrase group that is supposed to be a sandbox_list
         value_phrase_link - db index to find a valur by the phrase (not the db normal form to speed up)
-        formula_element_group - to combine several formula elements that are depending on each other
+        element_group - to combine several formula elements that are depending on each other
         component_type - TODO rename to component_type and move to type_object?
         component_pos_type - TODO use a simple enum?
         ref_link_wikidata - the link to wikidata
@@ -493,11 +503,14 @@ use cfg\db\db_check;
 use cfg\db\sql;
 use cfg\library;
 use cfg\db\sql_db;
-use cfg\sys_log_level;
-use cfg\sys_log_status;
 use cfg\sys_log_function;
+use cfg\sys_log_level;
+use cfg\sys_log_status_list;
+use cfg\sys_log_function_list;
 use cfg\type_lists;
 use cfg\user;
+use cfg\user\user_profile;
+use cfg\user_profile_list;
 use cfg\view;
 use html\html_base;
 use html\view\view as view_dsp;
@@ -512,12 +525,14 @@ const SYSTEM_USER_TEST_ID = 2; //
 const LIST_MIN_NAMES = 4; // number of object names that should al least be shown
 const DEBUG_SHOW_USER = 10; // starting from this debug level the user should be shown in the debug text
 
+const SRC_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR;
+const MAIN_PATH = SRC_PATH . 'main' . DIRECTORY_SEPARATOR;
 const MODEL_PATH = PHP_PATH . 'cfg' . DIRECTORY_SEPARATOR; // path of the main model objects for db saving, api feed and processing
 const DB_LINK_PATH = ROOT_PATH . 'db_link' . DIRECTORY_SEPARATOR;
 const DB_PATH = MODEL_PATH . 'db' . DIRECTORY_SEPARATOR;
 const UTIL_PATH = PHP_PATH . 'utils' . DIRECTORY_SEPARATOR;
 const SERVICE_PATH = PHP_PATH . 'service' . DIRECTORY_SEPARATOR;
-const SERVICE_IMPORT_PATH = SERVICE_PATH . 'import' . DIRECTORY_SEPARATOR;
+const MODEL_IMPORT_PATH = MODEL_PATH . 'import' . DIRECTORY_SEPARATOR;
 const SERVICE_EXPORT_PATH = SERVICE_PATH . 'export' . DIRECTORY_SEPARATOR;
 const EXPORT_PATH = MODEL_PATH . 'export' . DIRECTORY_SEPARATOR;
 const SERVICE_MATH_PATH = SERVICE_PATH . 'math' . DIRECTORY_SEPARATOR;
@@ -534,6 +549,7 @@ const MODEL_GROUP_PATH = MODEL_PATH . 'group' . DIRECTORY_SEPARATOR;
 const MODEL_VERB_PATH = MODEL_PATH . 'verb' . DIRECTORY_SEPARATOR;
 const MODEL_VALUE_PATH = MODEL_PATH . 'value' . DIRECTORY_SEPARATOR;
 const MODEL_REF_PATH = MODEL_PATH . 'ref' . DIRECTORY_SEPARATOR;
+const MODEL_ELEMENT_PATH = MODEL_PATH . 'element' . DIRECTORY_SEPARATOR;
 const MODEL_FORMULA_PATH = MODEL_PATH . 'formula' . DIRECTORY_SEPARATOR;
 const MODEL_RESULT_PATH = MODEL_PATH . 'result' . DIRECTORY_SEPARATOR;
 const MODEL_VIEW_PATH = MODEL_PATH . 'view' . DIRECTORY_SEPARATOR;
@@ -571,6 +587,12 @@ const WEB_FIGURE_PATH = WEB_PATH . 'figure' . DIRECTORY_SEPARATOR;
 const WEB_VIEW_PATH = WEB_PATH . 'view' . DIRECTORY_SEPARATOR;
 const WEB_COMPONENT_PATH = WEB_PATH . 'component' . DIRECTORY_SEPARATOR;
 const WEB_REF_PATH = WEB_PATH . 'ref' . DIRECTORY_SEPARATOR;
+
+// resource paths
+const DB_RES_PATH = 'db' . DIRECTORY_SEPARATOR;
+const DB_SETUP_PATH = 'setup' . DIRECTORY_SEPARATOR;
+
+const DB_SETUP_SQL_FILE = 'zukunft_structure.sql';
 
 // the main global vars to shorten the code by avoiding them in many function calls as parameter
 global $db_com; // the database connection
@@ -612,32 +634,40 @@ include_once SERVICE_PATH . 'db_code_link.php';
 include_once SERVICE_PATH . 'zu_lib_sql_code_link.php';
 include_once SERVICE_PATH . 'config.php';
 
+// to avoid circle include
+include_once MODEL_VALUE_PATH . 'value.php';
+include_once MODEL_VALUE_PATH . 'value_phrase_link.php';
+include_once MODEL_LOG_PATH . 'change_link.php';
+
 // preloaded lists
 include_once MODEL_HELPER_PATH . 'type_list.php';
 include_once MODEL_HELPER_PATH . 'type_lists.php';
 include_once MODEL_SYSTEM_PATH . 'BasicEnum.php';
 include_once MODEL_SYSTEM_PATH . 'sys_log_level.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_status.php';
+include_once MODEL_SYSTEM_PATH . 'sys_log_status_list.php';
 include_once MODEL_USER_PATH . 'user_list.php';
 include_once MODEL_USER_PATH . 'user_profile_list.php';
 include_once MODEL_PHRASE_PATH . 'phrase_types.php';
+include_once MODEL_ELEMENT_PATH . 'element_type_list.php';
 include_once MODEL_FORMULA_PATH . 'formula_type_list.php';
 include_once MODEL_FORMULA_PATH . 'formula_link_type_list.php';
-include_once MODEL_FORMULA_PATH . 'formula_element_type_list.php';
 include_once MODEL_VIEW_PATH . 'view_type.php';
 include_once MODEL_VIEW_PATH . 'view_type_list.php';
 include_once MODEL_COMPONENT_PATH . 'component_type_list.php';
-include_once MODEL_COMPONENT_PATH . 'component_pos_type_list.php';
+include_once MODEL_COMPONENT_PATH . 'position_type_list.php';
 include_once MODEL_REF_PATH . 'ref_type_list.php';
 include_once MODEL_REF_PATH . 'source_type_list.php';
 include_once MODEL_SANDBOX_PATH . 'share_type_list.php';
 include_once MODEL_SANDBOX_PATH . 'protection_type_list.php';
 include_once MODEL_LANGUAGE_PATH . 'language_list.php';
 include_once MODEL_LANGUAGE_PATH . 'language_form_list.php';
-include_once MODEL_SYSTEM_PATH . 'batch_job_type_list.php';
-include_once MODEL_LOG_PATH . 'change_log_action.php';
-include_once MODEL_LOG_PATH . 'change_log_table.php';
-include_once MODEL_LOG_PATH . 'change_log_field.php';
+include_once MODEL_SYSTEM_PATH . 'job_type_list.php';
+include_once MODEL_LOG_PATH . 'change_action.php';
+include_once MODEL_LOG_PATH . 'change_action_list.php';
+include_once MODEL_LOG_PATH . 'change_table.php';
+include_once MODEL_LOG_PATH . 'change_table_list.php';
+include_once MODEL_LOG_PATH . 'change_field.php';
+include_once MODEL_LOG_PATH . 'change_field_list.php';
 include_once MODEL_VERB_PATH . 'verb_list.php';
 include_once MODEL_VIEW_PATH . 'view_sys_list.php';
 
@@ -732,44 +762,257 @@ const ZUH_IMG_UNDO = "/src/main/resources/images/button_undo.svg";
 
 // classes that use a standard sql sequence for the database id
 const SQL_STD_CLASSES = [
-    sys_log_status::class,
+    sys_log_status_list::class,
     sys_log_function::class
 ];
 
 # list of JSON files that define the base configuration of zukunft.com that is supposed never to be changed
 define("PATH_BASE_CONFIG_FILES", ROOT_PATH . 'src/main/resources/');
 const PATH_BASE_CODE_LINK_FILES = PATH_BASE_CONFIG_FILES . 'db_code_links/';
-define("BASE_CODE_LINK_FILES", serialize(array(
-    'calc_and_cleanup_task_types',
+const BASE_CODE_LINK_FILES = [
+    'sys_log_status',
+    'sys_log_types',
+    'job_types',
     'change_actions',
     'change_tables',
     'change_fields',
-    'formula_element_types',
+    'element_types',
     'formula_link_types',
     'formula_types',
-    'language_forms',
     'languages',
+    'language_forms',
     'protection_types',
     'ref_types',
     'share_types',
     'source_types',
-    'sys_log_status',
-    'sys_log_types',
+    'system_time_types',
     'user_official_types',
     'user_profiles',
     'user_types',
-    'component_position_types',
+    'position_types',
+    'component_link_types',
     'component_types',
     'view_link_types',
     'view_types',
     'phrase_types'
-)));
+];
+const USER_CODE_LINK_FILES = [
+    'user_profiles',
+    'user_types',
+];
+// list of all sequences used in the database
+// TODO base the list on the class list const and a sequence name function
+const DB_SEQ_LIST = [
+    'sys_log_status_sys_log_status_id_seq',
+    'sys_log_sys_log_id_seq',
+    'elements_element_id_seq',
+    'element_types_element_type_id_seq',
+    'formula_links_formula_link_id_seq',
+    'formulas_formula_id_seq',
+    'formula_types_formula_type_id_seq',
+    'component_links_component_link_id_seq',
+    'component_link_types_component_link_type_id_seq',
+    'components_component_id_seq',
+    'component_types_component_type_id_seq',
+    'views_view_id_seq',
+    'view_types_view_type_id_seq',
+    'verbs_verb_id_seq',
+    'triples_triple_id_seq',
+    'words_word_id_seq',
+    'phrase_types_phrase_type_id_seq',
+    'sources_source_id_seq',
+    'source_types_source_type_id_seq',
+    'refs_ref_id_seq',
+    'ref_types_ref_type_id_seq',
+    'change_links_change_link_id_seq',
+    'changes_change_id_seq',
+    'change_actions_change_action_id_seq',
+    'change_fields_change_field_id_seq',
+    'change_tables_change_table_id_seq',
+    'config_config_id_seq',
+    'job_types_job_type_id_seq',
+    'jobs_job_id_seq',
+    'sys_log_status_sys_log_status_id_seq',
+    'sys_log_functions_sys_log_function_id_seq',
+    'share_types_share_type_id_seq',
+    'protection_types_protection_type_id_seq',
+    'users_user_id_seq',
+    'user_profiles_user_profile_id_seq'
+];
+const DB_TABLE_LIST = [
+    'config',
+    'sys_log_types',
+    'sys_log',
+    'sys_log_status',
+    'sys_log_functions',
+    'system_times',
+    'system_time_types',
+    'job_times',
+    'jobs',
+    'job_types',
+    'user_official_types',
+    'ip_ranges',
+    'sessions',
+    'changes',
+    'change_standard_values',
+    'change_prime_values',
+    'change_big_values',
+    'change_fields',
+    'change_links',
+    'change_actions',
+    'change_tables',
+    'protection_types',
+    'share_types',
+    'language_forms',
+    'user_words',
+    'words',
+    'user_triples',
+    'phrase_tables',
+    'pods',
+    'pod_types',
+    'pod_status',
+    'triples',
+    'phrase_types',
+    'verbs',
+    'phrase_table_status',
+    'groups',
+    'user_groups',
+    'groups_prime',
+    'user_groups_prime',
+    'groups_big',
+    'user_groups_big',
+    'user_sources',
+    'user_refs',
+    'refs',
+    'ref_types',
+    'values_standard_prime',
+    'values_standard',
+    'values',
+    'user_values',
+    'values_prime',
+    'user_values_prime',
+    'values_big',
+    'user_values_big',
+    'values_text_standard_prime',
+    'values_text_standard',
+    'values_text',
+    'user_values_text',
+    'values_text_prime',
+    'user_values_text_prime',
+    'values_text_big',
+    'user_values_text_big',
+    'values_time_standard_prime',
+    'values_time_standard',
+    'values_time',
+    'user_values_time',
+    'values_time_prime',
+    'user_values_time_prime',
+    'values_time_big',
+    'user_values_time_big',
+    'values_geo_standard_prime',
+    'values_geo_standard',
+    'values_geo',
+    'user_values_geo',
+    'values_geo_prime',
+    'user_values_geo_prime',
+    'values_geo_big',
+    'user_values_geo_big',
+    'sources',
+    'source_types',
+    'user_values_time_series',
+    'value_time_series_prime',
+    'user_value_time_series_prime',
+    'value_ts_data',
+    'values_time_series',
+    'elements',
+    'element_types',
+    'user_formulas',
+    'user_formula_links',
+    'formula_link_types',
+    'formula_links',
+    'results_standard_prime',
+    'results_standard_main',
+    'results_standard',
+    'results',
+    'user_results',
+    'results_prime',
+    'user_results_prime',
+    'results_main',
+    'user_results_main',
+    'results_big',
+    'user_results_big',
+    'results_text_standard_prime',
+    'results_text_standard_main',
+    'results_text_standard',
+    'results_text',
+    'user_results_text',
+    'results_text_prime',
+    'user_results_text_prime',
+    'results_text_main',
+    'user_results_text_main',
+    'results_text_big',
+    'user_results_text_big',
+    'results_time_standard_prime',
+    'results_time_standard_main',
+    'results_time_standard',
+    'results_time',
+    'user_results_time',
+    'results_time_prime',
+    'user_results_time_prime',
+    'results_time_main',
+    'user_results_time_main',
+    'results_time_big',
+    'user_results_time_big',
+    'results_geo_standard_prime',
+    'results_geo_standard_main',
+    'results_geo_standard',
+    'results_geo',
+    'user_results_geo',
+    'results_geo_prime',
+    'user_results_geo_prime',
+    'results_geo_main',
+    'user_results_geo_main',
+    'results_geo_big',
+    'user_results_geo_big',
+    'user_views',
+    'languages',
+    'component_link_types',
+    'user_components',
+    'user_component_links',
+    'component_links',
+    'position_types',
+    'components',
+    'formulas',
+    'formula_types',
+    'views',
+    'users',
+    'user_types',
+    'user_profiles',
+    'view_types',
+    'component_types',
+    'view_link_types',
+    'view_term_links',
+    'user_view_term_links',
+    'value_formula_links',
+    'value_time_series',
+    'user_value_time_series',
+    'values_time_series_prime',
+    'user_values_time_series_prime',
+    'values_time_series_big',
+    'user_values_time_series_big',
+    'results_time_series',
+    'user_results_time_series',
+    'results_time_series_prime',
+    'user_results_time_series_prime',
+    'results_time_series_big',
+    'user_results_time_series_big'
+];
 const BASE_CODE_LINK_FILE_TYPE = '.csv';
 const SYSTEM_USER_CONFIG_FILE = PATH_BASE_CONFIG_FILES . 'users.json';
 const SYSTEM_VERB_CONFIG_FILE = PATH_BASE_CONFIG_FILES . 'verbs.json';
 const SYSTEM_CONFIG_FILE = PATH_BASE_CONFIG_FILES . 'config.json';
 const PATH_BASE_CONFIG_MESSAGE_FILES = PATH_BASE_CONFIG_FILES . 'messages/';
-define("BASE_CONFIG_FILES", serialize(array(
+const BASE_CONFIG_FILES = [
     'system_views.json',
     'sources.json',
     'units.json',
@@ -778,13 +1021,13 @@ define("BASE_CONFIG_FILES", serialize(array(
     'ip_blacklist.json',
     'country.json',
     'company.json'
-)));
+];
 
 # list of all static import files for testing the system consistency
 const PATH_RESOURCE_FILES = ROOT_PATH . 'src/main/resources/';
 const PATH_TEST_FILES = ROOT_PATH . 'src/test/resources/';
 const PATH_TEST_IMPORT_FILES = ROOT_PATH . 'src/test/resources/import/';
-define("TEST_IMPORT_FILE_LIST", serialize(array(
+const TEST_IMPORT_FILE_LIST = [
     'wind_investment.json',
     'companies.json',
     'ABB_2013.json',
@@ -796,8 +1039,9 @@ define("TEST_IMPORT_FILE_LIST", serialize(array(
     'Ultimatum_game.json',
     'COVID-19.json',
     'personal_climate_gas_emissions_timon.json',
-    'THOMY_test.json')));
-define("TEST_IMPORT_FILE_LIST_ALL", serialize(array(
+    'THOMY_test.json'
+];
+const TEST_IMPORT_FILE_LIST_ALL = [
     'wind_investment.json',
     'companies.json',
     'ABB_2013.json',
@@ -811,7 +1055,8 @@ define("TEST_IMPORT_FILE_LIST_ALL", serialize(array(
     'Ultimatum_game.json',
     'COVID-19.json',
     'personal_climate_gas_emissions_timon.json',
-    'THOMY_test.json')));
+    'THOMY_test.json'
+];
 
 # list of import files for quick win testing
 /*
@@ -874,14 +1119,15 @@ function log_debug(string $msg_text = '', int $debug_overwrite = null): string
  * @param user|null $usr is the user who has probably seen the error message
  * @return string the text that can be shown to the user in the navigation bar
  * TODO return the link to the log message so that the user can trace the bug fixing
+ * TODO check that log_msg is never called from any function used here
  */
-function log_msg(string $msg_text,
-                 string $msg_description,
-                 string $msg_log_level,
-                 string $function_name,
-                 string $function_trace,
-                 ?user  $usr = null,
-                 bool   $force_log = false,
+function log_msg(string  $msg_text,
+                 string  $msg_description,
+                 string  $msg_log_level,
+                 string  $function_name,
+                 string  $function_trace,
+                 ?user   $usr = null,
+                 bool    $force_log = false,
                  ?sql_db $given_db_con = null): string
 {
 
@@ -995,6 +1241,7 @@ function log_msg(string $msg_text,
     return $result;
 }
 
+
 function get_user_id(?user $calling_usr = null): ?int
 {
     global $usr;
@@ -1024,11 +1271,11 @@ function log_info(string $msg_text,
         $force_log);
 }
 
-function log_warning(string $msg_text,
-                     string $function_name = '',
-                     string $msg_description = '',
-                     string $function_trace = '',
-                     ?user  $calling_usr = null, 
+function log_warning(string  $msg_text,
+                     string  $function_name = '',
+                     string  $msg_description = '',
+                     string  $function_trace = '',
+                     ?user   $calling_usr = null,
                      ?sql_db $given_db_con = null): string
 {
     return log_msg($msg_text,
@@ -1050,6 +1297,16 @@ function log_err(string $msg_text,
 {
     global $errors;
     $errors++;
+    // TODO move the next lines to a class and a private function "get_function_name"
+    $lib = new library();
+    if ($function_name == '' or $function_name == null) {
+        $function_name = (new Exception)->getTraceAsString();
+        $function_name = $lib->str_right_of($function_name, '#1 /home/timon/git/zukunft.com/');
+        $function_name = $lib->str_left_of($function_name, ': log_');
+    }
+    if ($function_trace == '') {
+        $function_trace = (new Exception)->getTraceAsString();
+    }
     return log_msg($msg_text,
         $msg_description,
         sys_log_level::ERROR,
@@ -1075,6 +1332,15 @@ function log_fatal_db(
     ?user  $calling_usr = null): string
 {
     echo 'FATAL ERROR! ' . $msg_text;
+    $lib = new library();
+    if ($function_name == '' or $function_name == null) {
+        $function_name = (new Exception)->getTraceAsString();
+        $function_name = $lib->str_right_of($function_name, '#1 /home/timon/git/zukunft.com/');
+        $function_name = $lib->str_left_of($function_name, ': log_');
+    }
+    if ($function_trace == '') {
+        $function_trace = (new Exception)->getTraceAsString();
+    }
     return log_msg(
         'FATAL ERROR! ' . $msg_text,
         $msg_description,
@@ -1086,6 +1352,7 @@ function log_fatal_db(
 
 /**
  * try to write the error message to any possible out device if database connection is lost
+ * TODO move to a log class and expose only the interface function
  * @param string $msg_text is a short description that is used to group and limit the number of error messages
  * @param string $msg_description is the description or the problem with all details if two errors have the same $msg_text only one is used
  * @param string $function_name is the function name which has most likely caused the error
@@ -1099,18 +1366,38 @@ function log_fatal(string $msg_text,
                    string $function_trace = '',
                    ?user  $calling_usr = null): string
 {
-    echo 'FATAL ERROR! ' . $msg_text;
-    $STDERR = fopen('error.log', 'wb');
+    $time = (new DateTime())->format('c');
+    echo $time . ': FATAL ERROR! ' . $msg_text;
+    $STDERR = fopen('error.log', 'a');
+    fwrite($STDERR, $time . ': FATAL ERROR! ' . $msg_text . "\n");
+    $write_with_more_info = false;
     $usr_txt = '';
     if ($calling_usr != null) {
         $usr_txt = $calling_usr->dsp_id();
+        $write_with_more_info = true;
     }
-    fwrite($STDERR, 'FATAL ERROR! ' . $msg_text
-        . ' (' . $msg_description
-        . ', function "' . $function_name
-        . '", trace "' . $function_trace
-        . '", by user "' . $usr_txt
-        . '") ' . "\n");
+    if ($write_with_more_info) {
+        fwrite($STDERR, $time . ': FATAL ERROR! ' . $msg_text
+            . '", by user "' . $usr_txt . "\n");
+    }
+    $lib = new library();
+    if ($function_name == '' or $function_name == null) {
+        $function_name = (new Exception)->getTraceAsString();
+        $function_name = $lib->str_right_of($function_name, '#1 /home/timon/git/zukunft.com/');
+        $function_name = $lib->str_left_of($function_name, ': log_');
+        $write_with_more_info = true;
+    }
+    if ($function_trace == '') {
+        $function_trace = (new Exception)->getTraceAsString();
+        $write_with_more_info = true;
+    }
+    if ($write_with_more_info) {
+        fwrite($STDERR, $time . ': FATAL ERROR! ' . $msg_text . "\n"
+            . $msg_description . "\n"
+            . 'function ' . $function_name . "\n"
+            . 'trace ' . "\n" . $function_trace . "\n"
+            . 'by user ' . $usr_txt . "\n");
+    }
     return $msg_text;
 }
 
@@ -1204,7 +1491,7 @@ function prg_restart(string $code_name): sql_db
 
 function prg_start_api($code_name): sql_db
 {
-    global $sys_time_start, $sys_script;
+    global $sys_time_start, $sys_script, $user_profiles;
 
     log_debug($code_name . ' ..');
 
@@ -1216,8 +1503,43 @@ function prg_start_api($code_name): sql_db
 
     // link to database
     $db_con = new sql_db;
+    $db_con->db_type = SQL_DB_TYPE;
     $db_con->open();
     log_debug($code_name . ' ... database link open');
+
+    return $db_con;
+}
+
+/**
+ *
+ * @param $code_name
+ * @return sql_db
+ */
+function prg_start_system($code_name): sql_db
+{
+    global $sys_time_start, $sys_script, $user_profiles;
+
+    log_debug($code_name . ' ..');
+
+    $sys_time_start = time();
+    $sys_script = $code_name;
+
+    // resume session (based on cookies)
+    session_start();
+
+    // link to database
+    $db_con = new sql_db;
+    $db_con->db_type = SQL_DB_TYPE;
+    $db_con->open();
+    log_debug($code_name . ' ... database link open');
+
+    // load user profiles
+    $user_profiles = new user_profile_list();
+    if ($db_con->has_table(sql_db::TBL_USER_PROFILE)) {
+        $user_profiles->load($db_con);
+    } else {
+        $user_profiles->load_dummy();
+    }
 
     return $db_con;
 }
@@ -1238,13 +1560,17 @@ function prg_end_write_time($db_con): void
             $sys_script_id = $db_con->add_id($sys_script);
         }
         $start_time_sql = date("Y-m-d H:i:s", $sys_time_start);
+        $end_time_sql = date("Y-m-d H:i:s", $sys_time_end);
+        $interval = $sys_time_end - $sys_time_start;
+        $milliseconds = $interval;
+
         //$db_con->insert();
         if (in_array('REQUEST_URI', $_SERVER)) {
             $calling_uri = $_SERVER['REQUEST_URI'];
         } else {
             $calling_uri = 'localhost';
         }
-        $sql = "INSERT INTO sys_script_times (sys_script_start, sys_script_id, url) VALUES ('" . $start_time_sql . "'," . $sys_script_id . "," . $db_con->sf($calling_uri) . ");";
+        $sql = "INSERT INTO system_times (start_time, system_time_type_id, end_time, milliseconds) VALUES ('" . $start_time_sql . "'," . $sys_script_id . ",'" . $end_time_sql . "', " . $milliseconds . ");";
         $db_con->exe($sql);
     }
 
@@ -1317,6 +1643,25 @@ function resource_file(string $resource_path): string
     return $result;
 }
 
+/**
+ * @return string the content of a test resource file
+ */
+function test_resource_file(string $resource_path): string
+{
+    $result = file_get_contents(PATH_TEST_FILES . $resource_path);
+    if ($result === false) {
+        $result = 'Cannot get file from ' . PATH_TEST_FILES . $resource_path;
+    }
+    return $result;
+}
+
+/**
+ * @return bool true if the test resource file exists
+ */
+function has_resource_file(string $resource_path): bool
+{
+    return file_exists(PATH_TEST_FILES . $resource_path);
+}
 
 
 /*

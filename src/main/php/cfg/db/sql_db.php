@@ -38,21 +38,88 @@ namespace cfg\db;
 include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_DB_PATH . 'sql.php';
 include_once MODEL_SYSTEM_PATH . 'log.php';
+include_once MODEL_IMPORT_PATH . 'import_file.php';
 
+use cfg\component\component;
+use cfg\component\component_link;
+use cfg\component\component_link_type;
+use cfg\component\position_type;
+use cfg\component\component_type;
 use cfg\config;
+use cfg\element;
+use cfg\element_type;
+use cfg\formula;
+use cfg\formula_link;
+use cfg\formula_link_type;
+use cfg\formula_type;
+use cfg\group\group;
 use cfg\group\group_id;
+use cfg\import\import_file;
+use cfg\ip_range;
+use cfg\job;
+use cfg\job_time;
+use cfg\job_type;
+use cfg\job_type_list;
+use cfg\language;
+use cfg\language_form;
 use cfg\library;
 use cfg\log;
+use cfg\log\change;
+use cfg\log\change_action;
+use cfg\log\change_big_value;
+use cfg\log\change_field;
+use cfg\log\change_link;
+use cfg\log\change_prime_value;
+use cfg\log\change_standard_value;
+use cfg\log\change_table;
+use cfg\log\change_table_field;
+use cfg\log\system_log;
+use cfg\phrase;
+use cfg\phrase_table;
+use cfg\phrase_table_status;
+use cfg\phrase_type;
+use cfg\pod;
+use cfg\pod_status;
+use cfg\pod_type;
+use cfg\protection_type;
+use cfg\ref;
+use cfg\ref_type;
+use cfg\result\result;
+use cfg\sandbox;
+use cfg\session;
+use cfg\share_type;
+use cfg\source;
+use cfg\source_type;
+use cfg\sys_log_function;
 use cfg\sys_log_level;
+use cfg\sys_log_status;
+use cfg\sys_log_type;
+use cfg\system_time;
+use cfg\system_time_type;
+use cfg\term;
 use cfg\triple;
+use cfg\type_lists;
 use cfg\user;
+use cfg\user\user_profile;
+use cfg\user\user_type;
 use cfg\user_message;
+use cfg\user_official_type;
+use cfg\user_profile_list;
 use cfg\value\value;
+use cfg\value\value_ts_data;
+use cfg\verb;
+use cfg\verb_list;
+use cfg\view;
+use cfg\view_link_type;
+use cfg\view_term_link;
+use cfg\view_type;
 use cfg\word;
-use DateTime;
 use Exception;
+use html\html_base;
 use mysqli;
 use mysqli_result;
+use PDOException;
+use unit_read\all_unit_read_tests;
 
 class sql_db
 {
@@ -60,6 +127,13 @@ class sql_db
     // these databases can be used at the moment (must be the same as in zu_lib)
     const POSTGRES = "Postgres";
     const MYSQL = "MySQL";
+    const DB_LIST = [POSTGRES, MYSQL];
+
+    const POSTGRES_PATH = "postgres";
+    const MYSQL_PATH = "mysql";
+
+    const POSTGRES_EXT = "";
+    const MYSQL_EXT = "_mysql";
 
     // data retrieval settings
     const SQL_QUERY_NAME_MAX_LEN = 62; // the query name cannot be longer than 62 chars at least for some databases
@@ -82,9 +156,7 @@ class sql_db
     const TBL_VERB = 'verb';
     const TBL_PHRASE = 'phrase';
     const TBL_GROUP = 'group';
-    const TBL_GROUP_LINK = 'group_link';
-    const TBL_PHRASE_GROUP_TRIPLE_LINK = 'group_link';
-    const TBL_VALUE_TIME_SERIES = 'value_time_series';
+    const TBL_VALUE_TIME_SERIES = 'values_time_series';
     const TBL_VALUE_TIME_SERIES_DATA = 'value_ts_data';
     const TBL_VALUE_PHRASE_LINK = 'value_phrase_link';
     const TBL_SOURCE = 'source';
@@ -95,8 +167,8 @@ class sql_db
     const TBL_FORMULA_TYPE = 'formula_type';
     const TBL_FORMULA_LINK = 'formula_link';
     const TBL_FORMULA_LINK_TYPE = 'formula_link_type';
-    const TBL_FORMULA_ELEMENT = 'formula_element';
-    const TBL_FORMULA_ELEMENT_TYPE = 'formula_element_type';
+    const TBL_ELEMENT = 'element';
+    const TBL_ELEMENT_TYPE = 'element_type';
     const TBL_RESULT = 'result';
     const TBL_VIEW = 'view';
     const TBL_VIEW_TYPE = 'view_type';
@@ -104,7 +176,7 @@ class sql_db
     const TBL_COMPONENT_LINK = 'component_link';
     const TBL_COMPONENT_TYPE = 'component_type';
     const TBL_COMPONENT_LINK_TYPE = 'component_link_type';
-    const TBL_COMPONENT_POS_TYPE = 'component_position_type';
+    const TBL_COMPONENT_POS_TYPE = 'position_type';
     const TBL_VIEW_TERM_LINK = 'view_term_link';
 
     const TBL_CHANGE = 'change';
@@ -113,12 +185,12 @@ class sql_db
     const TBL_CHANGE_ACTION = 'change_action';
     const TBL_CHANGE_LINK = 'change_link';
     const TBL_CONFIG = 'config';
-    const TBL_IP = 'user_blocked_ip';
+    const TBL_IP = 'ip_range';
     const TBL_SYS_LOG = 'sys_log';
     const TBL_SYS_LOG_STATUS = 'sys_log_status';
-    const TBL_SYS_SCRIPT = 'sys_script'; // to log the execution times for code optimising
-    const TBL_TASK = 'calc_and_cleanup_task';
-    const TBL_TASK_TYPE = 'calc_and_cleanup_task_type';
+    const TBL_SYS_SCRIPT = 'system_time_type'; // to log the execution times for code optimising
+    const TBL_TASK = 'job';
+    const TBL_TASK_TYPE = 'job_type';
 
     const TBL_LANGUAGE = 'language';
     const TBL_LANGUAGE_FORM = 'language_form';
@@ -147,6 +219,87 @@ class sql_db
     // extra names for backward compatibility
     const MYSQL_RESERVED_NAMES_EXTRA = ['VALUE', 'VALUES', 'URL'];
 
+    // setup header and footer
+    const SETUP_HEADER = 'ALTER DATABASE zukunft SET search_path TO public;';
+    const SETUP_HEADER_MYSQL = 'SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO"; SET time_zone = "+00:00"; /*!40101 SET @OLD_CHARACTER_SET_CLIENT = @@CHARACTER_SET_CLIENT */; /*!40101 SET @OLD_CHARACTER_SET_RESULTS = @@CHARACTER_SET_RESULTS */; /*!40101 SET @OLD_COLLATION_CONNECTION = @@COLLATION_CONNECTION */; /*!40101 SET NAMES utf8 */; -- Database:`zukunft` ';
+
+    const SETUP_FOOTER = '';
+    const SETUP_FOOTER_MYSQL = '/*!40101 SET CHARACTER_SET_CLIENT = @OLD_CHARACTER_SET_CLIENT */; /*!40101 SET CHARACTER_SET_RESULTS = @OLD_CHARACTER_SET_RESULTS */; /*!40101 SET COLLATION_CONNECTION = @OLD_COLLATION_CONNECTION */;';
+    const SETUP_COMMENT = '--';
+    const SETUP_INDEX = 'indexes for tables';
+    const SETUP_INDEX_COM = 'remark: no index needed for preloaded tables such as phrase types';
+    const SETUP_FOREIGN_KEY = 'foreign key constraints and auto_increment for tables';
+
+    // classes that have a database table
+    const DB_TABLE_CLASSES = [
+        config::class,
+        sys_log_type::class,
+        sys_log_status::class,
+        sys_log_function::class,
+        system_log::class,
+        system_time_type::class,
+        system_time::class,
+        job_type::class,
+        job_time::class,
+        job::class,
+        user_type::class,
+        user_profile::class,
+        user_official_type::class,
+        user::class,
+        ip_range::class,
+        session::class,
+        change_action::class,
+        change_table::class,
+        change_field::class,
+        change::class,
+        change_prime_value::class,
+        change_standard_value::class,
+        change_big_value::class,
+        change_link::class,
+        pod_type::class,
+        pod_status::class,
+        pod::class,
+        protection_type::class,
+        share_type::class,
+        language::class,
+        language_form::class,
+        word::class,
+        verb::class,
+        triple::class,
+        phrase_table_status::class,
+        phrase_table::class,
+        phrase_type::class,
+        group::class,
+        source_type::class,
+        source::class,
+        ref_type::class,
+        ref::class,
+        value::class,
+        value_ts_data::class,
+        element_type::class,
+        element::class,
+        formula_type::class,
+        formula::class,
+        formula_link_type::class,
+        formula_link::class,
+        result::class,
+        view_type::class,
+        view::class,
+        view_link_type::class,
+        view_term_link::class,
+        component_link_type::class,
+        position_type::class,
+        component_type::class,
+        component::class,
+        component_link::class
+    ];
+    // classes that use a database view
+    const DB_VIEW_CLASSES = [
+        phrase::class,
+        term::class,
+        change_table_field::class
+    ];
+
     // tables that do not have a name
     // e.g. sql_db::TBL_TRIPLE is a link which hase a name, but the generated name can be overwritten, so the standard field naming is not used
     const DB_TYPES_NOT_NAMED = [
@@ -155,10 +308,9 @@ class sql_db
         sql_db::TBL_VALUE_TIME_SERIES,
         sql_db::TBL_FORMULA_LINK,
         sql_db::TBL_RESULT,
-        sql_db::TBL_FORMULA_ELEMENT,
+        sql_db::TBL_ELEMENT,
         sql_db::TBL_COMPONENT_LINK,
         sql_db::TBL_VALUE_PHRASE_LINK,
-        sql_db::TBL_GROUP_LINK,
         sql_db::TBL_VIEW_TERM_LINK,
         sql_db::TBL_REF,
         sql_db::TBL_IP,
@@ -199,10 +351,6 @@ class sql_db
     const ULK3_TBL = 'ul3';                       // prefix used for the third user table which should be joined in the result
     const ULK4_TBL = 'ul4';                       // prefix used for the fourth user table which should be joined in the result
     const GRP_TBL = 'g';                          // prefix used for the standard table where data for all users are stored
-
-    const FLD_CODE_ID = 'code_id';                // field name for the code link
-    const FLD_VALUE = 'value';                    // field name e.g. for the configuration value
-    const FLD_TYPE_NAME = 'type_name';            // field name for the user specific name of a type; types are used to assign code to a db row
 
     // formats to force the formatting of a value for an SQL statement e.g. convert true to 1 when using tinyint to save boolean values
     const FLD_FORMAT_TEXT = 'text';               // to force the text formatting of a value for the SQL statement formatting
@@ -276,9 +424,6 @@ class sql_db
     private ?array $join3_usr_num_field_lst = [];   // same as $join_usr_num_field_lst but for the third join
     private ?array $join4_usr_num_field_lst = [];   // same as $join_usr_num_field_lst but for the fourth join
     private ?array $join_usr_count_field_lst = [];  // list of fields that should be returned to the next select query where the count are taken from a joined table
-    //private ?array $join2_usr_count_field_lst = []; // same as $join_usr_count_field_lst but for the second join
-    //private ?array $join3_usr_count_field_lst = []; // same as $join_usr_count_field_lst but for the third join
-    //private ?array $join4_usr_count_field_lst = []; // same as $join_usr_count_field_lst but for the fourth join
     private ?string $join_type = '';                // the type name of the table to join
     private ?string $join2_type = '';               // the type name of the second table to join (maybe later switch to join n tables)
     private ?string $join3_type = '';               // the type name of the third table to join (maybe later switch to join n tables)
@@ -364,9 +509,6 @@ class sql_db
         $this->join3_usr_num_field_lst = [];
         $this->join4_usr_num_field_lst = [];
         $this->join_usr_count_field_lst = [];
-        $this->join2_usr_count_field_lst = [];
-        $this->join3_usr_count_field_lst = [];
-        $this->join4_usr_count_field_lst = [];
         $this->join_type = '';
         $this->join2_type = '';
         $this->join3_type = '';
@@ -540,8 +682,9 @@ class sql_db
         // connect with zukunft user
         $conn_str = 'host=' . $db_server . ' dbname=zukunft user=' . SQL_DB_USER . ' password=' . SQL_DB_PASSWD;
         $this->postgres_link = pg_connect($conn_str);
+        $db_tmp = new sql_db();
         if ($this->postgres_link !== false) {
-            $sql = resource_file('db/setup/postgres/zukunft_structure.sql');
+            $sql = resource_file(DB_RES_PATH . DB_SETUP_PATH . $db_tmp->path(sql_db::POSTGRES) . DB_SETUP_SQL_FILE);
             try {
                 $sql_result = $this->exe($sql);
                 if (!$sql_result) {
@@ -561,6 +704,85 @@ class sql_db
     }
 
     /**
+     * create the database tables and fill it with the essential data
+     * TODO remove or secure before moving to PROD
+     *
+     * @return user_message true if the database table have been created successful
+     */
+    function setup_db(): user_message
+    {
+        $html = new html_base();
+        $usr_msg = new user_message();
+
+        // create the tables, db indexes and foreign keys
+        $sql = resource_file(DB_RES_PATH . DB_SETUP_PATH . $this->path(sql_db::POSTGRES) . DB_SETUP_SQL_FILE);
+        try {
+            $html->echo('Run db setup sql script');
+            $sql_result = $this->exe_script($sql);
+            // TODO review
+            //if ($sql_result) {
+            //    $usr_msg->add_message($sql_result);
+            // }
+        } catch (Exception $e) {
+            $msg = ' creation of the database failed due to ' . $e->getMessage();
+            log_fatal($msg, 'setup_db');
+            $usr_msg->add_message($msg);
+        }
+
+        // fill the tables with the essential data
+        if ($usr_msg->is_ok()) {
+            $html->echo('Create system users');
+            $this->reset_config();
+            $this->import_system_users();
+
+            // use the system user for the database updates
+            global $usr;
+            $usr = new user;
+            $usr->load_by_id(SYSTEM_USER_ID);
+
+            // recreate the code link database rows
+            $html->echo('Create the code links');
+            $this->db_fill_code_links();
+            $sys_typ_lst = new type_lists();
+            $sys_typ_lst->load($this, $usr);
+
+            // reload the base configuration
+            $job = new job($usr);
+            $job_id = $job->add(job_type_list::BASE_IMPORT);
+
+            $import = new import_file();
+            $this->import_verbs($usr);
+            $import->import_base_config($usr);
+            $import->import_config($usr);
+            $this->db_check_missing_owner();
+
+            // create the test dataset to check the basic write functions
+            $t = new all_unit_read_tests();
+            $t->set_users();
+            $t->create_test_db_entries($t);
+
+            // remove the test dataset for a clean database
+            // TODO use the user message object instead of a string
+            $cleanup_result = $t->cleanup();
+            if (!$cleanup_result) {
+                log_err('Cleanup not successful, because ...');
+            } else {
+                if (!$t->cleanup_check()) {
+                    log_err('Cleanup check not successful.');
+                }
+            }
+
+            // reload the session user parameters
+            $usr = new user;
+            $usr->get();
+
+            $cfg = new config();
+            $cfg->set(config::LAST_CONSISTENCY_CHECK, gmdate(DATE_ATOM), $this);
+        }
+        return $usr_msg;
+    }
+
+    /**
      * @return bool true if the database connection is open
      */
     function connected(): bool
@@ -575,9 +797,140 @@ class sql_db
                 $result = true;
             }
         } else {
-            log_err('Database type ' . $this->db_type . ' not yet implemented');
+            log_fatal('Database type ' . $this->db_type . ' not yet implemented', 'sql_db->connected');
         }
         return $result;
+    }
+
+    /**
+     * @return bool true if all user sandbox objects have an owner
+     */
+    function db_check_missing_owner(): bool
+    {
+        $result = true;
+
+        foreach (sandbox::DB_TYPES as $db_type) {
+            $this->set_class($db_type);
+            $db_lst = $this->missing_owner();
+            if ($db_lst != null) {
+                $result = $this->set_default_owner();
+            }
+        }
+
+        return $result;
+    }
+
+
+    /**
+     * fill the database with all rows that have a code id and code linked
+     */
+    function db_fill_code_links(): void
+    {
+        // first of all set the database version if not yet done
+        $cfg = new config();
+        $cfg->check(config::VERSION_DB, PRG_VERSION, $this);
+
+        // get the list of CSV and loop
+        foreach (BASE_CODE_LINK_FILES as $csv_file_name) {
+            $this->load_db_code_link_file($csv_file_name, $this);
+        }
+
+        // set the seq number if needed
+        $this->seq_reset(sql_db::TBL_CHANGE_TABLE);
+        $this->seq_reset(sql_db::TBL_CHANGE_FIELD);
+        $this->seq_reset(sql_db::TBL_CHANGE_ACTION);
+    }
+
+    function load_db_code_link_file(string $csv_file_name): void
+    {
+        global $debug;
+        $lib = new library();
+
+        // load the csv
+        $csv_path = PATH_BASE_CODE_LINK_FILES . $csv_file_name . BASE_CODE_LINK_FILE_TYPE;
+
+        $row = 1;
+        $table_name = $csv_file_name;
+        // TODO change table names to singular form
+        if ($table_name == 'sys_log_status') {
+            $db_type = $table_name;
+        } else {
+            $db_type = substr($table_name, 0, -1);
+        }
+        // TODO ignore empty rows
+        // TODO ignore comma within text e.g. allow 'one, two and three'
+        log_debug('load "' . $table_name . '"', $debug - 6);
+        if (($handle = fopen($csv_path, "r")) !== FALSE) {
+            $continue = true;
+            $id_col_name = '';
+            $col_names = array();
+            while (($data = fgetcsv($handle, 0, ",", "'")) !== FALSE) {
+                if ($continue) {
+                    if ($row == 1) {
+                        // check if the csv column names match the table names
+                        if (!$this->check_column_names($table_name, $lib->array_trim($data))) {
+                            $continue = false;
+                        } else {
+                            $col_names = $lib->array_trim($data);
+                        }
+                        // check if the first column name is the id col
+                        $id_col_name = $data[0];
+                        if (!str_ends_with($id_col_name, sql_db::FLD_ID)) {
+                            $continue = false;
+                        }
+                    } else {
+                        // init row update
+                        $update_col_names = array();
+                        $update_col_values = array();
+                        // get the row id which is expected to be always in the first column
+                        $id = $data[0];
+                        // check if the row id exists
+                        $qp = $this->db_fill_code_link_sql($table_name, $id_col_name, $id);
+                        $db_row = $this->get1($qp);
+                        // check if the db row needs to be added
+                        if ($db_row == null) {
+                            // add the row
+                            for ($i = 0; $i < count($data); $i++) {
+                                $update_col_names[] = $col_names[$i];
+                                $update_col_values[] = trim($data[$i]);
+                            }
+                            $this->set_class($db_type);
+                            $this->insert_old($update_col_names, $update_col_values);
+                        } else {
+                            // check, which values need to be updates
+                            for ($i = 1; $i < count($data); $i++) {
+                                $col_name = $col_names[$i];
+                                if (array_key_exists($col_name, $db_row)) {
+                                    $db_value = $db_row[$col_name];
+                                    if ($db_value != trim($data[$i]) and trim($data[$i]) != 'NULL') {
+                                        $update_col_names[] = $col_name;
+                                        $update_col_values[] = trim($data[$i]);
+                                    }
+                                } else {
+                                    log_err('Column check did not work for ' . $col_name);
+                                }
+                            }
+                            // update the values is needed
+                            if (count($update_col_names) > 0) {
+                                $this->set_class($db_type);
+                                $this->update_old($id, $update_col_names, $update_col_values);
+                            }
+                        }
+                    }
+                }
+                $row++;
+            }
+            fclose($handle);
+        }
+    }
+
+    function db_fill_code_link_sql(string $table_name, string $id_col_name, int $id): sql_par
+    {
+        $qp = new sql_par($this::class);
+        $qp->name .= 'fill_' . $id_col_name;
+        $qp->sql = "PREPARE " . $qp->name . " (int) AS select * from " . $table_name . " where " . $id_col_name . " = $1;";
+        $qp->par = array($id);
+        return $qp;
     }
 
     /*
@@ -893,20 +1246,8 @@ class sql_db
             $this->join_type = $join_type;
             $this->join_usr_count_field_lst = $join_field_lst;
             $this->join_usr_query = true;
-        } elseif ($this->join2_type == '') {
-            $this->join2_type = $join_type;
-            $this->join2_usr_count_field_lst = $join_field_lst;
-            $this->join2_usr_query = true;
-        } elseif ($this->join3_type == '') {
-            $this->join3_type = $join_type;
-            $this->join3_usr_count_field_lst = $join_field_lst;
-            $this->join3_usr_query = true;
-        } elseif ($this->join4_type == '') {
-            $this->join4_type = $join_type;
-            $this->join4_usr_count_field_lst = $join_field_lst;
-            $this->join4_usr_query = true;
         } else {
-            log_err('Max four table count joins expected in version ' . PRG_VERSION);
+            log_err('Max one table count joins expected in version ' . PRG_VERSION);
         }
     }
 
@@ -1390,10 +1731,10 @@ class sql_db
         $result = $type . "s";
         // exceptions from the standard table for 'nicer' names
         if ($result == 'value_time_seriess') {
-            $result = 'value_time_series';
+            $result = 'values_time_series';
         }
         if ($result == 'user_value_time_seriess') {
-            $result = 'user_value_time_series';
+            $result = 'user_values_time_series';
         }
         if ($result == 'value_ts_datas') {
             $result = 'value_ts_data';
@@ -1411,8 +1752,8 @@ class sql_db
             $result = 'user_values';
         }
         // for the database upgrade process only
-        if ($result == 'calc_and_cleanup_task_typess') {
-            $result = 'calc_and_cleanup_task_types';
+        if ($result == 'job_typess') {
+            $result = 'job_types';
         }
         if ($result == 'component_typess') {
             $result = 'component_types';
@@ -1474,7 +1815,9 @@ class sql_db
         // exceptions for user overwrite tables
         // but not for the user type table, because this is not part of the sandbox tables
         if (str_starts_with($type, sql_db::TBL_USER_PREFIX)
-            and $type != sql_db::TBL_USER_TYPE) {
+            and $type != sql_db::TBL_USER_TYPE
+            and $type != sql_db::TBL_USER_OFFICIAL_TYPE
+            and $type != sql_db::TBL_USER_PROFILE) {
             $type = $lib->str_right_of($type, sql_db::TBL_USER_PREFIX);
         }
         $result = $type . sql_db::FLD_EXT_ID;
@@ -1483,7 +1826,7 @@ class sql_db
             $result = 'sys_log_status_id';
         }
         if ($result == 'blocked_ip_id') {
-            $result = 'user_blocked_id';
+            $result = 'ip_range_id';
         }
         return $result;
     }
@@ -1500,7 +1843,7 @@ class sql_db
         }
         // exceptions to be adjusted
         if ($this->id_field == 'blocked_ips_id') {
-            $this->id_field = 'user_blocked_id';
+            $this->id_field = 'ip_range_id';
         }
     }
 
@@ -1517,52 +1860,55 @@ class sql_db
         $result = $type . '_name';
         // exceptions to be adjusted
         if ($result == 'link_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sql::FLD_TYPE_NAME;
+        }
+        if ($result == 'system_time_type_name') {
+            $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'phrase_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'view_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'component_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sql::FLD_TYPE_NAME;
         }
-        if ($result == 'component_position_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+        if ($result == 'position_type_name') {
+            $result = sql::FLD_TYPE_NAME;
         }
-        if ($result == 'formula_element_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+        if ($result == 'element_type_name') {
+            $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'sys_log_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'formula_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'formula_link_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'ref_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'source_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'share_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'protection_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'profile_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'sys_log_status_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sql::FLD_TYPE_NAME;
         }
-        if ($result == 'calc_and_cleanup_task_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+        if ($result == 'job_type_name') {
+            $result = sql::FLD_TYPE_NAME;
         }
         // temp solution until the standard field name for the name field is actually "name" (or something else not object specific)
         if ($result == 'triple_name') {
@@ -1609,8 +1955,12 @@ class sql_db
                 $result .= $msg . log::MSG_ERR;
             }
         } catch (Exception $e) {
-            $trace_link = log_err($msg . log::MSG_ERR_USING . $sql . log::MSG_ERR_BECAUSE . $e->getMessage());
-            $result = $msg . log::MSG_ERR_INTERNAL . $trace_link;
+            if ($log_level == sys_log_level::FATAL) {
+                log_fatal($msg . log::MSG_ERR_USING . $sql . log::MSG_ERR_BECAUSE . $e->getMessage(), 'exe_try');
+            } else {
+                $trace_link = log_err($msg . log::MSG_ERR_USING . $sql . log::MSG_ERR_BECAUSE . $e->getMessage());
+                $result = $msg . log::MSG_ERR_INTERNAL . $trace_link;
+            }
         }
         return $result;
     }
@@ -1624,7 +1974,7 @@ class sql_db
     }
 
     /**
-     * execute an change SQL statement on the active database (either Postgres or MySQL)
+     * execute an prepared SQL statement on the active database (either Postgres or MySQL)
      * similar to exe_try, but without exception handling
      *
      * @param string $sql the sql statement that should be executed
@@ -1658,6 +2008,25 @@ class sql_db
             throw new Exception('Unknown database type "' . $this->db_type . '"');
         }
 
+        return $result;
+    }
+
+    /**
+     * execute directly an SQL script without further prepare
+     * @param string $sql the sql script that should be executed
+     * @return \PgSql\Result|mysqli_result
+     * @throws Exception
+     */
+    function exe_script(string $sql): \PgSql\Result|mysqli_result
+    {
+        // execute on the connected database
+        if ($this->db_type == sql_db::POSTGRES) {
+            $result = pg_query($this->postgres_link, $sql);
+        } elseif ($this->db_type == sql_db::MYSQL) {
+            $result = mysqli_query($this->mysql, $sql);
+        } else {
+            throw new Exception('Unknown database type "' . $this->db_type . '"');
+        }
         return $result;
     }
 
@@ -2441,13 +2810,13 @@ class sql_db
                 $result .= sql_db::STD_TBL . '.';
             }
             $this->add_par(sql_par_type::TEXT, $code_id);
-            $result .= sql_db::FLD_CODE_ID . " = " . $this->par_name();
+            $result .= sql::FLD_CODE_ID . " = " . $this->par_name();
             if ($this->db_type == sql_db::POSTGRES) {
                 $result .= ' AND ';
                 if ($this->usr_query or $this->join <> '') {
                     $result .= sql_db::STD_TBL . '.';
                 }
-                $result .= sql_db::FLD_CODE_ID . ' IS NOT NULL';
+                $result .= sql::FLD_CODE_ID . ' IS NOT NULL';
             }
         } elseif ($name <> '' and !is_null($this->usr_id)) {
             $result .= $this->set_where_name($name, $this->name_field);
@@ -2555,13 +2924,13 @@ class sql_db
                         }
 
                         if ($par_type == sql_par_type::TEXT) {
-                            if ($id_fields[$used_fields] == sql_db::FLD_CODE_ID) {
+                            if ($id_fields[$used_fields] == sql::FLD_CODE_ID) {
                                 if ($this->db_type == sql_db::POSTGRES) {
                                     $this->where .= ' AND ';
                                     if ($this->usr_query or $this->join <> '') {
                                         $this->where .= sql_db::STD_TBL . '.';
                                     }
-                                    $this->where .= sql_db::FLD_CODE_ID . ' IS NOT NULL';
+                                    $this->where .= sql::FLD_CODE_ID . ' IS NOT NULL';
                                 }
                             }
                         }
@@ -2958,7 +3327,7 @@ class sql_db
      */
     function select_by_code_id(bool $has_id = true): string
     {
-        return $this->select_by(array(sql_db::FLD_CODE_ID), $has_id);
+        return $this->select_by(array(sql::FLD_CODE_ID), $has_id);
     }
 
     /**
@@ -3592,11 +3961,11 @@ class sql_db
                     // return the database row id if the value is not a time series number
                     if ($this->class != sql_db::TBL_VALUE_TIME_SERIES_DATA
                         and $this->class != value::class
-                        and $this->class != sql_db::TBL_RESULT
-                        and $this->class != sql_db::TBL_LANGUAGE_FORM
-                        and $this->class != sql_db::TBL_USER_OFFICIAL_TYPE
-                        and $this->class != sql_db::TBL_USER_TYPE) {
+                        and $this->class != sql_db::TBL_RESULT) {
                         $sql = $sql . ' RETURNING ' . $this->id_field . ';';
+                    }
+                    if ($this->id_field == 'official_type_id') {
+                        log_info('check');
                     }
 
                     /*
@@ -3625,7 +3994,18 @@ class sql_db
                         } else {
                             if ($this->class != sql_db::TBL_VALUE_TIME_SERIES_DATA) {
                                 if (is_resource($sql_result) or $sql_result::class == 'PgSql\Result') {
-                                    $result = pg_fetch_array($sql_result)[0];
+                                    try {
+                                        $result = pg_fetch_array($sql_result);
+                                        if ($result === false) {
+                                            $result = 0;
+                                        } else {
+                                            if (is_array($result)) {
+                                                $result = $result[0];
+                                            }
+                                        }
+                                    } catch (PDOException $e) {
+                                        log_err('failed result catch (' . $sql . ')');
+                                    }
                                 } else {
                                     // TODO get the correct db number
                                     $result = 0;
@@ -3751,7 +4131,9 @@ class sql_db
         $sql_where = ' WHERE ' . $this->id_field . ' = ' . $this->sf($id);
         if (substr($this->class, 0, 4) == 'user') {
             // ... but not for the user table itself
-            if ($this->class <> sql_db::TBL_USER and $this->class <> sql_db::TBL_USER_PROFILE and $this->class <> sql_db::TBL_USER_TYPE) {
+            if ($this->class <> sql_db::TBL_USER
+                and $this->class <> sql_db::TBL_USER_TYPE
+                and $this->class <> sql_db::TBL_USER_PROFILE) {
                 $sql_where .= ' AND user_id = ' . $this->usr_id;
             }
         }
@@ -4482,6 +4864,52 @@ class sql_db
         return $result;
     }
 
+    function sql_setup_header(): string
+    {
+        $sc = new sql();
+        $sql = $sc->sql_separator();
+        if ($this->db_type == sql_db::MYSQL) {
+            $sql .= self::SETUP_HEADER_MYSQL;
+        } else {
+            $sql .= self::SETUP_HEADER;
+        }
+        return $sql;
+    }
+
+    function sql_setup_footer(): string
+    {
+        $sc = new sql();
+        $sql = '';
+        if ($this->db_type == sql_db::MYSQL) {
+            $sql .= self::SETUP_FOOTER_MYSQL;
+        } else {
+            $sql .= self::SETUP_FOOTER;
+        }
+        return $sql;
+    }
+
+    function sql_separator_index(): string
+    {
+        $sc = new sql();
+        $sql = $sc->sql_separator();
+        $sql .= self::SETUP_COMMENT . ' ';
+        $sql .= self::SETUP_COMMENT . ' ' . self::SETUP_INDEX . ' ';
+        $sql .= self::SETUP_COMMENT . ' ' . self::SETUP_INDEX_COM . ' ';
+        $sql .= self::SETUP_COMMENT . ' ';
+        return $sql;
+    }
+
+    function sql_separator_foreign_key(): string
+    {
+        $sc = new sql();
+        $sql = $sc->sql_separator();
+        $sql .= self::SETUP_COMMENT . ' ';
+        $sql .= self::SETUP_COMMENT . ' ' . self::SETUP_FOREIGN_KEY . ' ';
+        $sql .= self::SETUP_COMMENT . ' ';
+        $sql .= $sc->sql_separator();
+        return $sql;
+    }
+
     /**
      * @return sql with the same db_type
      */
@@ -4495,5 +4923,165 @@ class sql_db
         }
         return $sc;
     }
+
+    /**
+     * get the folder for db type specific files
+     * @param string $db_type the sql db type name
+     * @return string the folder name including the separator
+     */
+    function path(string $db_type): string
+    {
+        $path = self::POSTGRES_PATH . DIRECTORY_SEPARATOR;
+        if ($db_type == self::MYSQL) {
+            $path = self::MYSQL_PATH . DIRECTORY_SEPARATOR;
+        }
+        return $path;
+    }
+
+    /**
+     * get the file extension
+     * @param string $db_type the sql db type name
+     * @return string the folder name including the separator
+     */
+    function ext(string $db_type): string
+    {
+        $path = self::POSTGRES_EXT;
+        if ($db_type == self::MYSQL) {
+            $path = self::MYSQL_EXT;
+        }
+        return $path;
+    }
+
+    function truncate_table_all(): void
+    {
+        // the sequence names of the tables to reset
+        $html = new html_base();
+        $html->echo('truncate ');
+        foreach (DB_SEQ_LIST as $seq_name) {
+            $this->reset_seq($seq_name);
+        }
+    }
+
+    function truncate_table(string $table_name): void
+    {
+        $html = new html_base();
+        $html->echo('TRUNCATE TABLE ' . $table_name);
+        $sql = 'TRUNCATE ' . $this->get_table_name_esc($table_name) . ' CASCADE;';
+        try {
+            $this->exe($sql);
+        } catch (Exception $e) {
+            log_err('Cannot truncate table ' . $table_name . ' with "' . $sql . '" because: ' . $e->getMessage());
+        }
+    }
+
+    function drop_table(string $table_name): void
+    {
+        $html = new html_base();
+        $html->echo('DROP TABLE ' . $table_name);
+        if ($this->has_table($table_name)) {
+            $sql = 'drop table ' . $table_name . ' cascade;';
+            try {
+                $this->exe($sql);
+            } catch (Exception $e) {
+                //log_info('Cannot drop table ' . $table_name . ' with "' . $sql . '" because: ' . $e->getMessage());
+            }
+        }
+    }
+
+    function reset_seq_all(): void
+    {
+        // the sequence names of the tables to reset
+        foreach (DB_SEQ_LIST as $seq_name) {
+            $this->reset_seq($seq_name);
+        }
+    }
+
+    function reset_seq(string $seq_name, int $start_id = 1): void
+    {
+        $html = new html_base();
+        $html->echo('RESET SEQUENCE ' . $seq_name);
+        $sql = 'ALTER SEQUENCE ' . $seq_name . ' RESTART ' . $start_id . ';';
+        try {
+            $this->exe($sql);
+        } catch (Exception $e) {
+            log_err('Cannot do sequence reset with "' . $sql . '" because: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * fill the user profiled with the default values for this program version
+     * @return void
+     */
+    function load_user_profiles(): void
+    {
+        foreach (USER_CODE_LINK_FILES as $csv_file_name) {
+            $this->load_db_code_link_file($csv_file_name, $this);
+        }
+        global $user_profiles;
+        $user_profiles = new user_profile_list();
+        $user_profiles->load($this);
+    }
+
+    /**
+     * fill the config with the default value for this program version
+     * @return void
+     */
+    function reset_config(): void
+    {
+        $cfg = new config();
+        $cfg->set(config::VERSION_DB, PRG_VERSION, $this);
+    }
+
+    /**
+     * @return bool true if the user has actuelly been imported
+     */
+    function import_system_users(): bool
+    {
+        $result = false;
+
+        // allow adding only if there is not yet any system user in the database
+        $usr = new user;
+        $usr->load_by_id(SYSTEM_USER_ID);
+
+        if ($usr->id() <= 0) {
+
+            // check if there is really no user in the database with a system profile
+            $check_usr = new user();
+            if (!$check_usr->has_any_user_this_profile(user_profile::SYSTEM)) {
+                // if the system users are missing always reset all users as a double line of defence to prevent system
+                $this->load_user_profiles();
+                $usr->set_profile(user_profile::SYSTEM);
+                $imf = new import_file();
+                $import_result = $imf->json_file(SYSTEM_USER_CONFIG_FILE, $usr);
+                if (str_starts_with($import_result, ' done ')) {
+                    $result = true;
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    function import_verbs(user $usr): bool
+    {
+        global $db_con;
+        global $verbs;
+
+        $result = false;
+
+        if ($usr->is_admin() or $usr->is_system()) {
+            $imf = new import_file();
+            $import_result = $imf->json_file(SYSTEM_VERB_CONFIG_FILE, $usr);
+            if (str_starts_with($import_result, ' done ')) {
+                $result = true;
+            }
+        }
+
+        $verbs = new verb_list($usr);
+        $verbs->load($db_con);
+
+        return $result;
+    }
+
 
 }

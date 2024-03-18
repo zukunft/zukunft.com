@@ -7,7 +7,6 @@ PREPARE triple_list_by_phr_lst_and_vrb_up FROM
             s.to_phrase_id,
             s.phrase_type_id,
             s.triple_condition_id,
-            s.triple_condition_type_id,
             l.phrase_type_id AS phrase_type_id1,
             l2.phrase_type_id AS phrase_type_id2,
             IF(u.triple_name     IS NULL,  s.triple_name,     u.triple_name)    AS triple_name,

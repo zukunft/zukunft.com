@@ -38,7 +38,10 @@ enum sql_field_default: string
     case NOT_NULL = 'not_null'; //
     case NULL = 'null'; //
     case ZERO = '0'; //
+    case ONE = '1'; //
+    case TWO = '2'; //
     case TIMESTAMP = 'timestamp'; //
+    case TIME_NOT_NULL = 'timestamp_not_null'; //
 
     public function pg_type(): string
     {
@@ -46,7 +49,10 @@ enum sql_field_default: string
             self::NOT_NULL => 'NOT NULL',
             self::NULL => 'DEFAULT NULL',
             self::ZERO => 'DEFAULT 0',
-            self::TIMESTAMP => 'DEFAULT CURRENT_TIMESTAMP'
+            self::ONE => 'NOT NULL DEFAULT 1',
+            self::TWO => 'NOT NULL DEFAULT 2',
+            self::TIMESTAMP => 'DEFAULT CURRENT_TIMESTAMP',
+            self::TIME_NOT_NULL => 'NOT NULL DEFAULT CURRENT_TIMESTAMP'
         };
     }
 }

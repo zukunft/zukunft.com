@@ -264,17 +264,17 @@ CREATE TABLE IF NOT EXISTS user_value_time_series
     last_update          timestamp NULL DEFAULT NULL
 );
 
-COMMENT ON TABLE user_value_time_series is 'common parameters for a user specific list of intraday values';
+COMMENT ON TABLE user_values_time_series is 'common parameters for a user specific list of intraday values';
 
 --
 -- Indexes for table user_values
 --
 ALTER TABLE user_value_time_series
     ADD CONSTRAINT user_value_time_series_pkey PRIMARY KEY (value_time_series_id, user_id);
-CREATE INDEX user_value_time_series_user_idx ON user_value_time_series (user_id);
-CREATE INDEX user_value_time_series_source_idx ON user_value_time_series (source_id);
-CREATE INDEX user_value_time_series_share_idx ON user_value_time_series (share_type_id);
-CREATE INDEX user_value_time_series_protection_idx ON user_value_time_series (protect_id);
+CREATE INDEX user_value_time_series_user_idx ON user_values_time_series (user_id);
+CREATE INDEX user_value_time_series_source_idx ON user_values_time_series (source_id);
+CREATE INDEX user_value_time_series_share_idx ON user_values_time_series (share_type_id);
+CREATE INDEX user_value_time_series_protection_idx ON user_values_time_series (protect_id);
 
 --
 -- Constraints for table user_value_time_series
@@ -302,7 +302,7 @@ ALTER TABLE user_values
 -- Table structure to log the value changes done by the users
 --
 
-CREATE TABLE IF NOT EXISTS changes_values
+CREATE TABLE IF NOT EXISTS change_values
 (
     change_id        BIGSERIAL PRIMARY KEY,
     change_time      timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -314,14 +314,14 @@ CREATE TABLE IF NOT EXISTS changes_values
     new_value        double precision DEFAULT NULL
 );
 
-COMMENT ON TABLE changes_values is 'to log all changes';
-COMMENT ON COLUMN changes_values.change_time is 'time when the value has been changed';
+COMMENT ON TABLE change_values is 'to log all changes';
+COMMENT ON COLUMN change_values.change_time is 'time when the value has been changed';
 
 --
 -- Table structure to log the value changes done by the users
 --
 
-CREATE TABLE IF NOT EXISTS changes_values_prime
+CREATE TABLE IF NOT EXISTS change_values_prime
 (
     change_id        BIGSERIAL PRIMARY KEY,
     change_time      timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -333,14 +333,14 @@ CREATE TABLE IF NOT EXISTS changes_values_prime
     new_value        double precision DEFAULT NULL
 );
 
-COMMENT ON TABLE changes_values_prime is 'to log changes of prime value';
-COMMENT ON COLUMN changes_values_prime.change_time is 'time when the value has been changed';
+COMMENT ON TABLE change_values_prime is 'to log changes of prime value';
+COMMENT ON COLUMN change_values_prime.change_time is 'time when the value has been changed';
 
 --
 -- Table structure to log the value changes done by the users
 --
 
-CREATE TABLE IF NOT EXISTS changes_values_big
+CREATE TABLE IF NOT EXISTS change_values_big
 (
     change_id        BIGSERIAL PRIMARY KEY,
     change_time      timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -352,8 +352,8 @@ CREATE TABLE IF NOT EXISTS changes_values_big
     new_value        double precision DEFAULT NULL
 );
 
-COMMENT ON TABLE changes_values_big is 'to log all changes';
-COMMENT ON COLUMN changes_values_big.change_time is 'time when the value has been changed';
+COMMENT ON TABLE change_values_big is 'to log all changes';
+COMMENT ON COLUMN change_values_big.change_time is 'time when the value has been changed';
 
 -- --------------------------------------------------------
 
@@ -449,90 +449,6 @@ CREATE TABLE IF NOT EXISTS user_groups_big
 COMMENT ON TABLE user_groups_big is 'to link the user specific name to the group';
 COMMENT ON COLUMN user_groups_big.group_name is 'the user specific group name which can contain the phrase names in a different order';
 COMMENT ON COLUMN user_groups_big.description is 'the user specific description for mouse over helps';
-
---
--- Table structure to link phrases to a group
--- TODO add prime index
---
-
---
--- Table structure to link phrases to a group
--- TODO add prime index
---
-
-CREATE TABLE IF NOT EXISTS group_link
-(
-    group_id  char(112) NOT NULL,
-    phrase_id bigint NOT NULL
-);
-
-COMMENT ON TABLE group_link is 'link phrases to a phrase group for database based selections';
-
---
--- Table structure to store user specific ex- or includes of single link of phrases to groups
---
-
-CREATE TABLE IF NOT EXISTS user_group_link
-(
-    group_id  char(112) NOT NULL,
-    phrase_id bigint    NOT NULL,
-    user_id   bigint    DEFAULT NULL,
-    excluded  smallint  DEFAULT NULL
-);
-
-COMMENT ON TABLE user_group_link is 'to ex- or include user specific link to the standard group';
-
---
--- Table structure to link up to four prime phrases to a group
---
-
-CREATE TABLE IF NOT EXISTS groups_prime_link
-(
-    group_id  BIGSERIAL,
-    phrase_id bigint NOT NULL
-);
-
-COMMENT ON TABLE groups_prime_link is 'link phrases to a short phrase group for database based selections';
-
---
--- Table structure for user specific links of up to four prime phrases per group
---
-
-CREATE TABLE IF NOT EXISTS user_groups_prime_link
-(
-    group_id  BIGSERIAL,
-    phrase_id bigint    NOT NULL,
-    user_id   bigint    DEFAULT NULL,
-    excluded  smallint  DEFAULT NULL
-);
-
-COMMENT ON TABLE user_groups_prime_link is 'user specific link to groups with up to four prime phrase';
-
---
--- Table structure to link up more than 16 phrases to a group
---
-
-CREATE TABLE IF NOT EXISTS groups_big_link
-(
-    group_id  text,
-    phrase_id bigint NOT NULL
-);
-
-COMMENT ON TABLE groups_big_link is 'link phrases to a long phrase group for database based selections';
-
---
--- Table structure for user specific links for more than 16 phrases per group
---
-
-CREATE TABLE IF NOT EXISTS user_groups_big_link
-(
-    group_id  text,
-    phrase_id bigint   NOT NULL,
-    user_id   bigint   DEFAULT NULL,
-    excluded  smallint DEFAULT NULL
-);
-
-COMMENT ON TABLE user_groups_big_link is 'to ex- or include user specific link to the standard group';
 
 -- --------------------------------------------------------
 
@@ -1381,18 +1297,6 @@ CREATE UNIQUE INDEX groups_big_name_idx ON groups_big (group_name);
 CREATE UNIQUE INDEX user_groups_big_name_idx ON user_groups_big (group_name, user_id);
 CREATE INDEX user_groups_big_idx ON user_groups (group_id);
 CREATE INDEX user_groups_big_user_idx ON user_groups (user_id);
-
---
--- Indexes for table group_links
---
-CREATE UNIQUE INDEX group_link_idx ON group_link (group_id, phrase_id);
-CREATE INDEX group_link_phrase_idx ON group_link (phrase_id);
-
---
--- Indexes for table user_group_links
---
-CREATE UNIQUE INDEX user_group_link_idx ON user_group_link (group_id, phrase_id, user_id);
-CREATE INDEX user_group_link_phrase_idx ON user_group_link (phrase_id, user_id);
 
 --
 -- Indexes for table prime group links

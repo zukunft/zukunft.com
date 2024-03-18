@@ -43,11 +43,11 @@ class db_cl
     const VERB = "verb";
     const FORMULA_TYPE = "formula_type";
     const FORMULA_LINK_TYPE = "formula_link_type";
-    const FORMULA_ELEMENT_TYPE = "formula_element_type";
+    const ELEMENT_TYPE = "element_type";
     const VIEW = "view";
     const VIEW_TYPE = "view_type";
     const VIEW_COMPONENT_TYPE = "component_type";
-    const VIEW_COMPONENT_POS_TYPE = "component_position_type";
+    const VIEW_COMPONENT_POS_TYPE = "position_type";
     const REF_TYPE = "ref_type";
     const SOURCE_TYPE = "source_type";
     const SHARE_TYPE = "share_type";
@@ -110,10 +110,10 @@ class db_cl
         return $formula_link_types->id($code_id);
     }
 
-    function formula_element_type_id(string $code_id): int
+    function element_type_id(string $code_id): int
     {
-        global $formula_element_types;
-        return $formula_element_types->id($code_id);
+        global $element_types;
+        return $element_types->id($code_id);
     }
 
     function view_id(string $code_id): int
@@ -136,8 +136,8 @@ class db_cl
 
     function component_pos_type_id(string $code_id): int
     {
-        global $component_position_types;
-        return $component_position_types->id($code_id);
+        global $position_types;
+        return $position_types->id($code_id);
     }
 
     function ref_type_id(string $code_id): int
@@ -184,20 +184,20 @@ class db_cl
 
     function log_action_id(string $code_id): int
     {
-        global $change_log_actions;
-        return $change_log_actions->id($code_id);
+        global $change_action_list;
+        return $change_action_list->id($code_id);
     }
 
     function log_table_id(string $code_id): int
     {
-        global $change_log_tables;
-        return $change_log_tables->id($code_id);
+        global $change_table_list;
+        return $change_table_list->id($code_id);
     }
 
     function log_field_id(string $code_id): int
     {
-        global $change_log_fields;
-        return $change_log_fields->id($code_id);
+        global $change_field_list;
+        return $change_field_list->id($code_id);
     }
 
     /**
@@ -236,10 +236,10 @@ class db_cl
         return $formula_link_types->get_by_id($id);
     }
 
-    function formula_element_type(int $id)
+    function element_type(int $id)
     {
-        global $formula_element_types;
-        return $formula_element_types->get_by_id($id);
+        global $element_types;
+        return $element_types->get_by_id($id);
     }
 
     function view_type(int $id)
@@ -256,8 +256,8 @@ class db_cl
 
     function component_pos_type(int $id)
     {
-        global $component_position_types;
-        return $component_position_types->get_by_id($id);
+        global $position_types;
+        return $position_types->get_by_id($id);
     }
 
     function share_type(int $id)
@@ -292,20 +292,20 @@ class db_cl
 
     function log_action(int $id)
     {
-        global $change_log_actions;
-        return $change_log_actions->get($id);
+        global $change_action_list;
+        return $change_action_list->get($id);
     }
 
     function log_table(int $id)
     {
-        global $change_log_tables;
-        return $change_log_tables->get($id);
+        global $change_table_list;
+        return $change_table_list->get($id);
     }
 
     function log_field(int $id)
     {
-        global $change_log_fields;
-        return $change_log_fields->get($id);
+        global $change_field_list;
+        return $change_field_list->get($id);
     }
 
     /**
@@ -356,10 +356,10 @@ class db_cl
         return $formula_link_types->name($id);
     }
 
-    function formula_element_type_name(int $id): string
+    function element_type_name(int $id): string
     {
-        global $formula_element_types;
-        return $formula_element_types->name($id);
+        global $element_types;
+        return $element_types->name($id);
     }
 
     function view_name(int $id): string
@@ -382,8 +382,8 @@ class db_cl
 
     function component_pos_type_name(int $id): string
     {
-        global $component_position_types;
-        return $component_position_types->name($id);
+        global $position_types;
+        return $position_types->name($id);
     }
 
     function ref_type_name(int $id): string
@@ -430,20 +430,20 @@ class db_cl
 
     function log_action_name(int $id): string
     {
-        global $change_log_actions;
-        return $change_log_actions->name($id);
+        global $change_action_list;
+        return $change_action_list->name($id);
     }
 
     function log_table_name(int $id): string
     {
-        global $change_log_tables;
-        return $change_log_tables->name($id);
+        global $change_table_list;
+        return $change_table_list->name($id);
     }
 
     function log_field_name(int $id): string
     {
-        global $change_log_fields;
-        return $change_log_fields->name($id);
+        global $change_field_list;
+        return $change_field_list->name($id);
     }
 
 }
@@ -482,8 +482,8 @@ function cl_name(string $type, int $id): string
         case db_cl::FORMULA_LINK_TYPE:
             $result = $db_code_link->formula_link_type_name($id);
             break;
-        case db_cl::FORMULA_ELEMENT_TYPE:
-            $result = $db_code_link->formula_element_type_name($id);
+        case db_cl::ELEMENT_TYPE:
+            $result = $db_code_link->element_type_name($id);
             break;
         case db_cl::VIEW:
             $result = $db_code_link->view_name($id);
@@ -566,8 +566,8 @@ function get_type(string $type, string $code_id): type_object
         case db_cl::FORMULA_LINK_TYPE:
             $result = $db_code_link->formula_link_type($db_code_link->formula_link_type_id($code_id));
             break;
-        case db_cl::FORMULA_ELEMENT_TYPE:
-            $result = $db_code_link->formula_element_type($db_code_link->formula_element_type_id($code_id));
+        case db_cl::ELEMENT_TYPE:
+            $result = $db_code_link->element_type($db_code_link->element_type_id($code_id));
             break;
         case db_cl::VIEW_TYPE:
             $result = $db_code_link->view_type($db_code_link->view_type_id($code_id));

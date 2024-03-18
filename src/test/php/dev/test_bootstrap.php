@@ -245,7 +245,7 @@ Test bootstrap
 */
 
 // Free result set
-mysqli_free_result();
+//mysqli_free_result();
 
 // Closing connection
 prg_end($db_con);

@@ -34,6 +34,17 @@ namespace api\user;
 class user
 {
 
+    /*
+     * const for system testing
+     */
+
+    // the fixed system user used for testing
+    // TN_* is the name of the predefined source used for testing
+    // TI_* is the id after adding the predefined sources
+    // TD_* is the description  of the predefined source
+    const TD_READ = 'standard user view for all users';
+    const TD_READ_IP = '66.249.64.95'; // used to check the blocking of an IP address
+
     // field names used for JSON creation
     public string $id;
     public ?string $name;

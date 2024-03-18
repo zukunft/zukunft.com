@@ -107,11 +107,11 @@ class controller
     const API_LIST_PHRASE_TYPES = 'phrase_types';
     const API_LIST_FORMULA_TYPES = 'formula_types';
     const API_LIST_FORMULA_LINK_TYPES = 'formula_link_types';
-    const API_LIST_FORMULA_ELEMENT_TYPES = 'formula_element_types';
+    const API_LIST_ELEMENT_TYPES = 'element_types';
     const API_LIST_VIEW_TYPES = 'view_types';
     const API_LIST_COMPONENT_TYPES = 'component_types';
     // const API_LIST_COMPONENT_LINK_TYPES = 'component_link_types';
-    const API_LIST_COMPONENT_POSITION_TYPES = 'component_position_types';
+    const API_LIST_COMPONENT_POSITION_TYPES = 'position_types';
     const API_LIST_REF_TYPES = 'ref_types';
     const API_LIST_SOURCE_TYPES = 'source_types';
     const API_LIST_SHARE_TYPES = 'share_types';
@@ -120,9 +120,9 @@ class controller
     const API_LIST_LANGUAGE_FORMS = 'language_forms';
     const API_LIST_SYS_LOG_STATI = 'sys_log_stati';
     const API_LIST_JOB_TYPES = 'job_types';
-    const API_LIST_CHANGE_LOG_ACTIONS = 'change_log_actions';
-    const API_LIST_CHANGE_LOG_TABLES = 'change_log_tables';
-    const API_LIST_CHANGE_LOG_FIELDS = 'change_log_fields';
+    const API_LIST_CHANGE_LOG_ACTIONS = 'change_action_list';
+    const API_LIST_CHANGE_LOG_TABLES = 'change_table_list';
+    const API_LIST_CHANGE_LOG_FIELDS = 'change_field_list';
     const API_LIST_VERBS = 'verbs';
     const API_LIST_SYSTEM_VIEWS = 'system_views';
     const API_BACK = 'back'; // to include the url that should be call after an action has been finished into the url

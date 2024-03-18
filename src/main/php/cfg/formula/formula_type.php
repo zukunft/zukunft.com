@@ -45,4 +45,12 @@ class formula_type extends type_object
     const PREV = "time_prior"; // time jump backward: replaces a time term with the previous time term based on the verb follower. E.g. "2017" "next" would lead to use "2016"
     const REV = "reversible";  // used to define a const value that is not supposed to be changed like pi
 
+
+    /*
+     * database link
+     */
+
+    // comments used for the database creation
+    const TBL_COMMENT = 'to assign predefined behaviour to formulas';
+
 }

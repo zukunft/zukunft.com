@@ -8,7 +8,6 @@ PREPARE triple_by_name (bigint, text) AS
                 s.to_phrase_id,
                 s.phrase_type_id,
                 s.triple_condition_id,
-                s.triple_condition_type_id,
                 CASE WHEN (u.triple_name    <> '' IS NOT TRUE) THEN s.triple_name    ELSE u.triple_name    END AS triple_name,
                 CASE WHEN (u.name_given     <> '' IS NOT TRUE) THEN s.name_given     ELSE u.name_given     END AS name_given,
                 CASE WHEN (u.name_generated <> '' IS NOT TRUE) THEN s.name_generated ELSE u.name_generated END AS name_generated,

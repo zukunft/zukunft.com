@@ -7,19 +7,47 @@
 
 CREATE TABLE IF NOT EXISTS results_standard_prime
 (
+    formula_id    smallint         NOT NULL,
     phrase_id_1   smallint         NOT NULL,
     phrase_id_2   smallint         DEFAULT 0,
     phrase_id_3   smallint         DEFAULT 0,
-    phrase_id_4   smallint         DEFAULT 0,
     numeric_value double precision NOT NULL
 );
 
 COMMENT ON TABLE results_standard_prime                IS 'to cache the formula public unprotected numeric results related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated';
+COMMENT ON COLUMN results_standard_prime.formula_id    IS 'formula id that is part of the prime key for a numeric result';
 COMMENT ON COLUMN results_standard_prime.phrase_id_1   IS 'phrase id that is part of the prime key for a numeric result';
 COMMENT ON COLUMN results_standard_prime.phrase_id_2   IS 'phrase id that is part of the prime key for a numeric result';
 COMMENT ON COLUMN results_standard_prime.phrase_id_3   IS 'phrase id that is part of the prime key for a numeric result';
-COMMENT ON COLUMN results_standard_prime.phrase_id_4   IS 'phrase id that is part of the prime key for a numeric result';
 COMMENT ON COLUMN results_standard_prime.numeric_value IS 'the numeric value given by the user';
+
+--
+-- table structure to cache the formula public unprotected numeric results related up to eight prime phrase that have never changed the owner, does not have a description and are rarely updated
+--
+
+CREATE TABLE IF NOT EXISTS results_standard_main
+(
+    formula_id    smallint         NOT NULL,
+    phrase_id_1   smallint         NOT NULL,
+    phrase_id_2   smallint         DEFAULT 0,
+    phrase_id_3   smallint         DEFAULT 0,
+    phrase_id_4   smallint         DEFAULT 0,
+    phrase_id_5   smallint         DEFAULT 0,
+    phrase_id_6   smallint         DEFAULT 0,
+    phrase_id_7   smallint         DEFAULT 0,
+    numeric_value double precision NOT NULL
+);
+
+COMMENT ON TABLE results_standard_main                IS 'to cache the formula public unprotected numeric results related up to eight prime phrase that have never changed the owner, does not have a description and are rarely updated';
+COMMENT ON COLUMN results_standard_main.formula_id    IS 'formula id that is part of the prime key for a numeric result';
+COMMENT ON COLUMN results_standard_main.phrase_id_1   IS 'phrase id that is part of the prime key for a numeric result';
+COMMENT ON COLUMN results_standard_main.phrase_id_2   IS 'phrase id that is part of the prime key for a numeric result';
+COMMENT ON COLUMN results_standard_main.phrase_id_3   IS 'phrase id that is part of the prime key for a numeric result';
+COMMENT ON COLUMN results_standard_main.phrase_id_4   IS 'phrase id that is part of the prime key for a numeric result';
+COMMENT ON COLUMN results_standard_main.phrase_id_5   IS 'phrase id that is part of the prime key for a numeric result';
+COMMENT ON COLUMN results_standard_main.phrase_id_6   IS 'phrase id that is part of the prime key for a numeric result';
+COMMENT ON COLUMN results_standard_main.phrase_id_7   IS 'phrase id that is part of the prime key for a numeric result';
+COMMENT ON COLUMN results_standard_main.numeric_value IS 'the numeric value given by the user';
 
 --
 -- table structure to cache the formula public unprotected numeric results that have never changed the owner, does not have a description and are rarely updated
@@ -166,6 +194,92 @@ COMMENT ON COLUMN user_results_prime.protect_id      IS 'to protect against unwa
 -- --------------------------------------------------------
 
 --
+-- table structure to cache the formula second most often requested numeric results related up to eight prime phrase
+--
+
+CREATE TABLE IF NOT EXISTS results_main
+(
+    phrase_id_1     smallint         NOT NULL,
+    phrase_id_2     smallint         DEFAULT 0,
+    phrase_id_3     smallint         DEFAULT 0,
+    phrase_id_4     smallint         DEFAULT 0,
+    phrase_id_5     smallint         DEFAULT 0,
+    phrase_id_6     smallint         DEFAULT 0,
+    phrase_id_7     smallint         DEFAULT 0,
+    phrase_id_8     smallint         DEFAULT 0,
+    source_group_id bigint           DEFAULT NULL,
+    numeric_value   double precision     NOT NULL,
+    last_update     timestamp        DEFAULT NULL,
+    formula_id      bigint               NOT NULL,
+    user_id         bigint           DEFAULT NULL,
+    excluded        smallint         DEFAULT NULL,
+    share_type_id   smallint         DEFAULT NULL,
+    protect_id      smallint         DEFAULT NULL
+);
+
+COMMENT ON TABLE results_main                  IS 'to cache the formula second most often requested numeric results related up to eight prime phrase';
+COMMENT ON COLUMN results_main.phrase_id_1     IS 'phrase id that is part of the prime key for a numeric result';
+COMMENT ON COLUMN results_main.phrase_id_2     IS 'phrase id that is part of the prime key for a numeric result';
+COMMENT ON COLUMN results_main.phrase_id_3     IS 'phrase id that is part of the prime key for a numeric result';
+COMMENT ON COLUMN results_main.phrase_id_4     IS 'phrase id that is part of the prime key for a numeric result';
+COMMENT ON COLUMN results_main.phrase_id_5     IS 'phrase id that is part of the prime key for a numeric result';
+COMMENT ON COLUMN results_main.phrase_id_6     IS 'phrase id that is part of the prime key for a numeric result';
+COMMENT ON COLUMN results_main.phrase_id_7     IS 'phrase id that is part of the prime key for a numeric result';
+COMMENT ON COLUMN results_main.phrase_id_8     IS 'phrase id that is part of the prime key for a numeric result';
+COMMENT ON COLUMN results_main.source_group_id IS '64-bit reference to the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN results_main.numeric_value   IS 'the numeric value given by the user';
+COMMENT ON COLUMN results_main.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN results_main.formula_id      IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN results_main.user_id         IS 'the id of the user who has requested the calculation';
+COMMENT ON COLUMN results_main.excluded        IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN results_main.share_type_id   IS 'to restrict the access';
+COMMENT ON COLUMN results_main.protect_id      IS 'to protect against unwanted changes';
+
+--
+-- table structure to store the user specific changes to cache the formula second most often requested numeric results related up to eight prime phrase
+--
+
+CREATE TABLE IF NOT EXISTS user_results_main
+(
+    phrase_id_1     smallint         NOT NULL,
+    phrase_id_2     smallint         DEFAULT 0,
+    phrase_id_3     smallint         DEFAULT 0,
+    phrase_id_4     smallint         DEFAULT 0,
+    phrase_id_5     smallint         DEFAULT 0,
+    phrase_id_6     smallint         DEFAULT 0,
+    phrase_id_7     smallint         DEFAULT 0,
+    phrase_id_8     smallint         DEFAULT 0,
+    source_group_id bigint           DEFAULT NULL,
+    user_id         bigint               NOT NULL,
+    numeric_value   double precision DEFAULT NULL,
+    last_update     timestamp        DEFAULT NULL,
+    formula_id      bigint               NOT NULL,
+    excluded        smallint         DEFAULT NULL,
+    share_type_id   smallint         DEFAULT NULL,
+    protect_id      smallint         DEFAULT NULL
+);
+
+COMMENT ON TABLE user_results_main                  IS 'to store the user specific changes to cache the formula second most often requested numeric results related up to eight prime phrase';
+COMMENT ON COLUMN user_results_main.phrase_id_1     IS 'phrase id that is with the user id part of the prime key for a numeric result';
+COMMENT ON COLUMN user_results_main.phrase_id_2     IS 'phrase id that is with the user id part of the prime key for a numeric result';
+COMMENT ON COLUMN user_results_main.phrase_id_3     IS 'phrase id that is with the user id part of the prime key for a numeric result';
+COMMENT ON COLUMN user_results_main.phrase_id_4     IS 'phrase id that is with the user id part of the prime key for a numeric result';
+COMMENT ON COLUMN user_results_main.phrase_id_5     IS 'phrase id that is with the user id part of the prime key for a numeric result';
+COMMENT ON COLUMN user_results_main.phrase_id_6     IS 'phrase id that is with the user id part of the prime key for a numeric result';
+COMMENT ON COLUMN user_results_main.phrase_id_7     IS 'phrase id that is with the user id part of the prime key for a numeric result';
+COMMENT ON COLUMN user_results_main.phrase_id_8     IS 'phrase id that is with the user id part of the prime key for a numeric result';
+COMMENT ON COLUMN user_results_main.source_group_id IS '64-bit reference to the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN user_results_main.user_id         IS 'the id of the user who has requested the change of the numeric result';
+COMMENT ON COLUMN user_results_main.numeric_value   IS 'the user specific numeric value change';
+COMMENT ON COLUMN user_results_main.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN user_results_main.formula_id      IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN user_results_main.excluded        IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN user_results_main.share_type_id   IS 'to restrict the access';
+COMMENT ON COLUMN user_results_main.protect_id      IS 'to protect against unwanted changes';
+
+-- --------------------------------------------------------
+
+--
 -- table structure to cache the formula numeric results related to more than 16 phrases
 --
 
@@ -229,19 +343,47 @@ COMMENT ON COLUMN user_results_big.protect_id      IS 'to protect against unwant
 
 CREATE TABLE IF NOT EXISTS results_text_standard_prime
 (
+    formula_id  smallint NOT NULL,
+    phrase_id_1 smallint NOT NULL,
+    phrase_id_2 smallint DEFAULT 0,
+    phrase_id_3 smallint DEFAULT 0,
+    text_value  text     NOT NULL
+);
+
+COMMENT ON TABLE results_text_standard_prime              IS 'to cache the formula public unprotected text results related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated';
+COMMENT ON COLUMN results_text_standard_prime.formula_id  IS 'formula id that is part of the prime key for a text result';
+COMMENT ON COLUMN results_text_standard_prime.phrase_id_1 IS 'phrase id that is part of the prime key for a text result';
+COMMENT ON COLUMN results_text_standard_prime.phrase_id_2 IS 'phrase id that is part of the prime key for a text result';
+COMMENT ON COLUMN results_text_standard_prime.phrase_id_3 IS 'phrase id that is part of the prime key for a text result';
+COMMENT ON COLUMN results_text_standard_prime.text_value  IS 'the text value given by the user';
+
+--
+-- table structure to cache the formula public unprotected text results related up to eight prime phrase that have never changed the owner, does not have a description and are rarely updated
+--
+
+CREATE TABLE IF NOT EXISTS results_text_standard_main
+(
+    formula_id  smallint NOT NULL,
     phrase_id_1 smallint NOT NULL,
     phrase_id_2 smallint DEFAULT 0,
     phrase_id_3 smallint DEFAULT 0,
     phrase_id_4 smallint DEFAULT 0,
-    text_value text      NOT NULL
+    phrase_id_5 smallint DEFAULT 0,
+    phrase_id_6 smallint DEFAULT 0,
+    phrase_id_7 smallint DEFAULT 0,
+    text_value  text     NOT NULL
 );
 
-COMMENT ON TABLE results_text_standard_prime              IS 'to cache the formula public unprotected text results related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated';
-COMMENT ON COLUMN results_text_standard_prime.phrase_id_1 IS 'phrase id that is part of the prime key for a text result';
-COMMENT ON COLUMN results_text_standard_prime.phrase_id_2 IS 'phrase id that is part of the prime key for a text result';
-COMMENT ON COLUMN results_text_standard_prime.phrase_id_3 IS 'phrase id that is part of the prime key for a text result';
-COMMENT ON COLUMN results_text_standard_prime.phrase_id_4 IS 'phrase id that is part of the prime key for a text result';
-COMMENT ON COLUMN results_text_standard_prime.text_value  IS 'the text value given by the user';
+COMMENT ON TABLE results_text_standard_main              IS 'to cache the formula public unprotected text results related up to eight prime phrase that have never changed the owner, does not have a description and are rarely updated';
+COMMENT ON COLUMN results_text_standard_main.formula_id  IS 'formula id that is part of the prime key for a text result';
+COMMENT ON COLUMN results_text_standard_main.phrase_id_1 IS 'phrase id that is part of the prime key for a text result';
+COMMENT ON COLUMN results_text_standard_main.phrase_id_2 IS 'phrase id that is part of the prime key for a text result';
+COMMENT ON COLUMN results_text_standard_main.phrase_id_3 IS 'phrase id that is part of the prime key for a text result';
+COMMENT ON COLUMN results_text_standard_main.phrase_id_4 IS 'phrase id that is part of the prime key for a text result';
+COMMENT ON COLUMN results_text_standard_main.phrase_id_5 IS 'phrase id that is part of the prime key for a text result';
+COMMENT ON COLUMN results_text_standard_main.phrase_id_6 IS 'phrase id that is part of the prime key for a text result';
+COMMENT ON COLUMN results_text_standard_main.phrase_id_7 IS 'phrase id that is part of the prime key for a text result';
+COMMENT ON COLUMN results_text_standard_main.text_value  IS 'the text value given by the user';
 
 --
 -- table structure to cache the formula public unprotected text results that have never changed the owner, does not have a description and are rarely updated
@@ -323,10 +465,10 @@ COMMENT ON COLUMN user_results_text.protect_id      IS 'to protect against unwan
 
 CREATE TABLE IF NOT EXISTS results_text_prime
 (
-    phrase_id_1   smallint  NOT NULL,
-    phrase_id_2   smallint  DEFAULT 0,
-    phrase_id_3   smallint  DEFAULT 0,
-    phrase_id_4   smallint  DEFAULT 0,
+    phrase_id_1     smallint  NOT NULL,
+    phrase_id_2     smallint  DEFAULT 0,
+    phrase_id_3     smallint  DEFAULT 0,
+    phrase_id_4     smallint  DEFAULT 0,
     source_group_id bigint    DEFAULT NULL,
     text_value      text          NOT NULL,
     last_update     timestamp DEFAULT NULL,
@@ -357,10 +499,10 @@ COMMENT ON COLUMN results_text_prime.protect_id      IS 'to protect against unwa
 
 CREATE TABLE IF NOT EXISTS user_results_text_prime
 (
-    phrase_id_1   smallint  NOT NULL,
-    phrase_id_2   smallint  DEFAULT 0,
-    phrase_id_3   smallint  DEFAULT 0,
-    phrase_id_4   smallint  DEFAULT 0,
+    phrase_id_1     smallint  NOT NULL,
+    phrase_id_2     smallint  DEFAULT 0,
+    phrase_id_3     smallint  DEFAULT 0,
+    phrase_id_4     smallint  DEFAULT 0,
     source_group_id bigint    DEFAULT NULL,
     user_id         bigint        NOT NULL,
     text_value      text      DEFAULT NULL,
@@ -384,6 +526,92 @@ COMMENT ON COLUMN user_results_text_prime.formula_id      IS 'the id of the form
 COMMENT ON COLUMN user_results_text_prime.excluded        IS 'true if a user, but not all, have removed it';
 COMMENT ON COLUMN user_results_text_prime.share_type_id   IS 'to restrict the access';
 COMMENT ON COLUMN user_results_text_prime.protect_id      IS 'to protect against unwanted changes';
+
+-- --------------------------------------------------------
+
+--
+-- table structure to cache the formula second most often requested text results related up to eight prime phrase
+--
+
+CREATE TABLE IF NOT EXISTS results_text_main
+(
+    phrase_id_1     smallint  NOT NULL,
+    phrase_id_2     smallint  DEFAULT 0,
+    phrase_id_3     smallint  DEFAULT 0,
+    phrase_id_4     smallint  DEFAULT 0,
+    phrase_id_5     smallint  DEFAULT 0,
+    phrase_id_6     smallint  DEFAULT 0,
+    phrase_id_7     smallint  DEFAULT 0,
+    phrase_id_8     smallint  DEFAULT 0,
+    source_group_id bigint    DEFAULT NULL,
+    text_value      text      NOT NULL,
+    last_update     timestamp DEFAULT NULL,
+    formula_id      bigint        NOT NULL,
+    user_id         bigint    DEFAULT NULL,
+    excluded        smallint  DEFAULT NULL,
+    share_type_id   smallint  DEFAULT NULL,
+    protect_id      smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE results_text_main                  IS 'to cache the formula second most often requested text results related up to eight prime phrase';
+COMMENT ON COLUMN results_text_main.phrase_id_1     IS 'phrase id that is part of the prime key for a text result';
+COMMENT ON COLUMN results_text_main.phrase_id_2     IS 'phrase id that is part of the prime key for a text result';
+COMMENT ON COLUMN results_text_main.phrase_id_3     IS 'phrase id that is part of the prime key for a text result';
+COMMENT ON COLUMN results_text_main.phrase_id_4     IS 'phrase id that is part of the prime key for a text result';
+COMMENT ON COLUMN results_text_main.phrase_id_5     IS 'phrase id that is part of the prime key for a text result';
+COMMENT ON COLUMN results_text_main.phrase_id_6     IS 'phrase id that is part of the prime key for a text result';
+COMMENT ON COLUMN results_text_main.phrase_id_7     IS 'phrase id that is part of the prime key for a text result';
+COMMENT ON COLUMN results_text_main.phrase_id_8     IS 'phrase id that is part of the prime key for a text result';
+COMMENT ON COLUMN results_text_main.source_group_id IS '64-bit reference to the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN results_text_main.text_value      IS 'the text value given by the user';
+COMMENT ON COLUMN results_text_main.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN results_text_main.formula_id      IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN results_text_main.user_id         IS 'the id of the user who has requested the calculation';
+COMMENT ON COLUMN results_text_main.excluded        IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN results_text_main.share_type_id   IS 'to restrict the access';
+COMMENT ON COLUMN results_text_main.protect_id      IS 'to protect against unwanted changes';
+
+--
+-- table structure to store the user specific changes to cache the formula second most often requested text results related up to eight prime phrase
+--
+
+CREATE TABLE IF NOT EXISTS user_results_text_main
+(
+    phrase_id_1     smallint  NOT NULL,
+    phrase_id_2     smallint  DEFAULT 0,
+    phrase_id_3     smallint  DEFAULT 0,
+    phrase_id_4     smallint  DEFAULT 0,
+    phrase_id_5     smallint  DEFAULT 0,
+    phrase_id_6     smallint  DEFAULT 0,
+    phrase_id_7     smallint  DEFAULT 0,
+    phrase_id_8     smallint  DEFAULT 0,
+    source_group_id bigint    DEFAULT NULL,
+    user_id         bigint        NOT NULL,
+    text_value      text      DEFAULT NULL,
+    last_update     timestamp DEFAULT NULL,
+    formula_id      bigint        NOT NULL,
+    excluded        smallint  DEFAULT NULL,
+    share_type_id   smallint  DEFAULT NULL,
+    protect_id      smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE user_results_text_main                  IS 'to store the user specific changes to cache the formula second most often requested text results related up to eight prime phrase';
+COMMENT ON COLUMN user_results_text_main.phrase_id_1     IS 'phrase id that is with the user id part of the prime key for a text result';
+COMMENT ON COLUMN user_results_text_main.phrase_id_2     IS 'phrase id that is with the user id part of the prime key for a text result';
+COMMENT ON COLUMN user_results_text_main.phrase_id_3     IS 'phrase id that is with the user id part of the prime key for a text result';
+COMMENT ON COLUMN user_results_text_main.phrase_id_4     IS 'phrase id that is with the user id part of the prime key for a text result';
+COMMENT ON COLUMN user_results_text_main.phrase_id_5     IS 'phrase id that is with the user id part of the prime key for a text result';
+COMMENT ON COLUMN user_results_text_main.phrase_id_6     IS 'phrase id that is with the user id part of the prime key for a text result';
+COMMENT ON COLUMN user_results_text_main.phrase_id_7     IS 'phrase id that is with the user id part of the prime key for a text result';
+COMMENT ON COLUMN user_results_text_main.phrase_id_8     IS 'phrase id that is with the user id part of the prime key for a text result';
+COMMENT ON COLUMN user_results_text_main.source_group_id IS '64-bit reference to the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN user_results_text_main.user_id         IS 'the id of the user who has requested the change of the text result';
+COMMENT ON COLUMN user_results_text_main.text_value      IS 'the user specific text value change';
+COMMENT ON COLUMN user_results_text_main.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN user_results_text_main.formula_id      IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN user_results_text_main.excluded        IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN user_results_text_main.share_type_id   IS 'to restrict the access';
+COMMENT ON COLUMN user_results_text_main.protect_id      IS 'to protect against unwanted changes';
 
 -- --------------------------------------------------------
 
@@ -451,19 +679,47 @@ COMMENT ON COLUMN user_results_text_big.protect_id      IS 'to protect against u
 
 CREATE TABLE IF NOT EXISTS results_time_standard_prime
 (
+    formula_id  smallint  NOT NULL,
+    phrase_id_1 smallint  NOT NULL,
+    phrase_id_2 smallint  DEFAULT 0,
+    phrase_id_3 smallint  DEFAULT 0,
+    time_value  timestamp NOT NULL
+);
+
+COMMENT ON TABLE results_time_standard_prime              IS 'to cache the formula public unprotected time results related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated';
+COMMENT ON COLUMN results_time_standard_prime.formula_id  IS 'formula id that is part of the prime key for a time result';
+COMMENT ON COLUMN results_time_standard_prime.phrase_id_1 IS 'phrase id that is part of the prime key for a time result';
+COMMENT ON COLUMN results_time_standard_prime.phrase_id_2 IS 'phrase id that is part of the prime key for a time result';
+COMMENT ON COLUMN results_time_standard_prime.phrase_id_3 IS 'phrase id that is part of the prime key for a time result';
+COMMENT ON COLUMN results_time_standard_prime.time_value  IS 'the timestamp given by the user';
+
+--
+-- table structure to cache the formula public unprotected time results related up to eight prime phrase that have never changed the owner, does not have a description and are rarely updated
+--
+
+CREATE TABLE IF NOT EXISTS results_time_standard_main
+(
+    formula_id  smallint  NOT NULL,
     phrase_id_1 smallint  NOT NULL,
     phrase_id_2 smallint  DEFAULT 0,
     phrase_id_3 smallint  DEFAULT 0,
     phrase_id_4 smallint  DEFAULT 0,
-    time_value timestamp NOT NULL
+    phrase_id_5 smallint  DEFAULT 0,
+    phrase_id_6 smallint  DEFAULT 0,
+    phrase_id_7 smallint  DEFAULT 0,
+    time_value  timestamp NOT NULL
 );
 
-COMMENT ON TABLE results_time_standard_prime              IS 'to cache the formula public unprotected time results related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated';
-COMMENT ON COLUMN results_time_standard_prime.phrase_id_1 IS 'phrase id that is part of the prime key for a time result';
-COMMENT ON COLUMN results_time_standard_prime.phrase_id_2 IS 'phrase id that is part of the prime key for a time result';
-COMMENT ON COLUMN results_time_standard_prime.phrase_id_3 IS 'phrase id that is part of the prime key for a time result';
-COMMENT ON COLUMN results_time_standard_prime.phrase_id_4 IS 'phrase id that is part of the prime key for a time result';
-COMMENT ON COLUMN results_time_standard_prime.time_value  IS 'the timestamp given by the user';
+COMMENT ON TABLE results_time_standard_main              IS 'to cache the formula public unprotected time results related up to eight prime phrase that have never changed the owner, does not have a description and are rarely updated';
+COMMENT ON COLUMN results_time_standard_main.formula_id  IS 'formula id that is part of the prime key for a time result';
+COMMENT ON COLUMN results_time_standard_main.phrase_id_1 IS 'phrase id that is part of the prime key for a time result';
+COMMENT ON COLUMN results_time_standard_main.phrase_id_2 IS 'phrase id that is part of the prime key for a time result';
+COMMENT ON COLUMN results_time_standard_main.phrase_id_3 IS 'phrase id that is part of the prime key for a time result';
+COMMENT ON COLUMN results_time_standard_main.phrase_id_4 IS 'phrase id that is part of the prime key for a time result';
+COMMENT ON COLUMN results_time_standard_main.phrase_id_5 IS 'phrase id that is part of the prime key for a time result';
+COMMENT ON COLUMN results_time_standard_main.phrase_id_6 IS 'phrase id that is part of the prime key for a time result';
+COMMENT ON COLUMN results_time_standard_main.phrase_id_7 IS 'phrase id that is part of the prime key for a time result';
+COMMENT ON COLUMN results_time_standard_main.time_value  IS 'the timestamp given by the user';
 
 --
 -- table structure to cache the formula public unprotected time results that have never changed the owner, does not have a description and are rarely updated
@@ -545,10 +801,10 @@ COMMENT ON COLUMN user_results_time.protect_id      IS 'to protect against unwan
 
 CREATE TABLE IF NOT EXISTS results_time_prime
 (
-    phrase_id_1   smallint  NOT NULL,
-    phrase_id_2   smallint  DEFAULT 0,
-    phrase_id_3   smallint  DEFAULT 0,
-    phrase_id_4   smallint  DEFAULT 0,
+    phrase_id_1     smallint  NOT NULL,
+    phrase_id_2     smallint  DEFAULT 0,
+    phrase_id_3     smallint  DEFAULT 0,
+    phrase_id_4     smallint  DEFAULT 0,
     source_group_id bigint    DEFAULT NULL,
     time_value      timestamp     NOT NULL,
     last_update     timestamp DEFAULT NULL,
@@ -579,10 +835,10 @@ COMMENT ON COLUMN results_time_prime.protect_id      IS 'to protect against unwa
 
 CREATE TABLE IF NOT EXISTS user_results_time_prime
 (
-    phrase_id_1   smallint  NOT NULL,
-    phrase_id_2   smallint  DEFAULT 0,
-    phrase_id_3   smallint  DEFAULT 0,
-    phrase_id_4   smallint  DEFAULT 0,
+    phrase_id_1     smallint  NOT NULL,
+    phrase_id_2     smallint  DEFAULT 0,
+    phrase_id_3     smallint  DEFAULT 0,
+    phrase_id_4     smallint  DEFAULT 0,
     source_group_id bigint    DEFAULT NULL,
     user_id         bigint        NOT NULL,
     time_value      timestamp DEFAULT NULL,
@@ -606,6 +862,92 @@ COMMENT ON COLUMN user_results_time_prime.formula_id      IS 'the id of the form
 COMMENT ON COLUMN user_results_time_prime.excluded        IS 'true if a user, but not all, have removed it';
 COMMENT ON COLUMN user_results_time_prime.share_type_id   IS 'to restrict the access';
 COMMENT ON COLUMN user_results_time_prime.protect_id      IS 'to protect against unwanted changes';
+
+-- --------------------------------------------------------
+
+--
+-- table structure to cache the formula second most often requested time results related up to eight prime phrase
+--
+
+CREATE TABLE IF NOT EXISTS results_time_main
+(
+    phrase_id_1     smallint  NOT NULL,
+    phrase_id_2     smallint  DEFAULT 0,
+    phrase_id_3     smallint  DEFAULT 0,
+    phrase_id_4     smallint  DEFAULT 0,
+    phrase_id_5     smallint  DEFAULT 0,
+    phrase_id_6     smallint  DEFAULT 0,
+    phrase_id_7     smallint  DEFAULT 0,
+    phrase_id_8     smallint  DEFAULT 0,
+    source_group_id bigint    DEFAULT NULL,
+    time_value      timestamp NOT NULL,
+    last_update     timestamp DEFAULT NULL,
+    formula_id      bigint        NOT NULL,
+    user_id         bigint    DEFAULT NULL,
+    excluded        smallint  DEFAULT NULL,
+    share_type_id   smallint  DEFAULT NULL,
+    protect_id      smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE results_time_main                  IS 'to cache the formula second most often requested time results related up to eight prime phrase';
+COMMENT ON COLUMN results_time_main.phrase_id_1     IS 'phrase id that is part of the prime key for a time result';
+COMMENT ON COLUMN results_time_main.phrase_id_2     IS 'phrase id that is part of the prime key for a time result';
+COMMENT ON COLUMN results_time_main.phrase_id_3     IS 'phrase id that is part of the prime key for a time result';
+COMMENT ON COLUMN results_time_main.phrase_id_4     IS 'phrase id that is part of the prime key for a time result';
+COMMENT ON COLUMN results_time_main.phrase_id_5     IS 'phrase id that is part of the prime key for a time result';
+COMMENT ON COLUMN results_time_main.phrase_id_6     IS 'phrase id that is part of the prime key for a time result';
+COMMENT ON COLUMN results_time_main.phrase_id_7     IS 'phrase id that is part of the prime key for a time result';
+COMMENT ON COLUMN results_time_main.phrase_id_8     IS 'phrase id that is part of the prime key for a time result';
+COMMENT ON COLUMN results_time_main.source_group_id IS '64-bit reference to the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN results_time_main.time_value      IS 'the timestamp given by the user';
+COMMENT ON COLUMN results_time_main.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN results_time_main.formula_id      IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN results_time_main.user_id         IS 'the id of the user who has requested the calculation';
+COMMENT ON COLUMN results_time_main.excluded        IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN results_time_main.share_type_id   IS 'to restrict the access';
+COMMENT ON COLUMN results_time_main.protect_id      IS 'to protect against unwanted changes';
+
+--
+-- table structure to store the user specific changes to cache the formula second most often requested time results related up to eight prime phrase
+--
+
+CREATE TABLE IF NOT EXISTS user_results_time_main
+(
+    phrase_id_1     smallint  NOT NULL,
+    phrase_id_2     smallint  DEFAULT 0,
+    phrase_id_3     smallint  DEFAULT 0,
+    phrase_id_4     smallint  DEFAULT 0,
+    phrase_id_5     smallint  DEFAULT 0,
+    phrase_id_6     smallint  DEFAULT 0,
+    phrase_id_7     smallint  DEFAULT 0,
+    phrase_id_8     smallint  DEFAULT 0,
+    source_group_id bigint    DEFAULT NULL,
+    user_id         bigint        NOT NULL,
+    time_value      timestamp DEFAULT NULL,
+    last_update     timestamp DEFAULT NULL,
+    formula_id      bigint        NOT NULL,
+    excluded        smallint  DEFAULT NULL,
+    share_type_id   smallint  DEFAULT NULL,
+    protect_id      smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE user_results_time_main                  IS 'to store the user specific changes to cache the formula second most often requested time results related up to eight prime phrase';
+COMMENT ON COLUMN user_results_time_main.phrase_id_1     IS 'phrase id that is with the user id part of the prime key for a time result';
+COMMENT ON COLUMN user_results_time_main.phrase_id_2     IS 'phrase id that is with the user id part of the prime key for a time result';
+COMMENT ON COLUMN user_results_time_main.phrase_id_3     IS 'phrase id that is with the user id part of the prime key for a time result';
+COMMENT ON COLUMN user_results_time_main.phrase_id_4     IS 'phrase id that is with the user id part of the prime key for a time result';
+COMMENT ON COLUMN user_results_time_main.phrase_id_5     IS 'phrase id that is with the user id part of the prime key for a time result';
+COMMENT ON COLUMN user_results_time_main.phrase_id_6     IS 'phrase id that is with the user id part of the prime key for a time result';
+COMMENT ON COLUMN user_results_time_main.phrase_id_7     IS 'phrase id that is with the user id part of the prime key for a time result';
+COMMENT ON COLUMN user_results_time_main.phrase_id_8     IS 'phrase id that is with the user id part of the prime key for a time result';
+COMMENT ON COLUMN user_results_time_main.source_group_id IS '64-bit reference to the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN user_results_time_main.user_id         IS 'the id of the user who has requested the change of the time result';
+COMMENT ON COLUMN user_results_time_main.time_value      IS 'the user specific timestamp change';
+COMMENT ON COLUMN user_results_time_main.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN user_results_time_main.formula_id      IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN user_results_time_main.excluded        IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN user_results_time_main.share_type_id   IS 'to restrict the access';
+COMMENT ON COLUMN user_results_time_main.protect_id      IS 'to protect against unwanted changes';
 
 -- --------------------------------------------------------
 
@@ -673,19 +1015,47 @@ COMMENT ON COLUMN user_results_time_big.protect_id      IS 'to protect against u
 
 CREATE TABLE IF NOT EXISTS results_geo_standard_prime
 (
+    formula_id  smallint  NOT NULL,
+    phrase_id_1 smallint  NOT NULL,
+    phrase_id_2 smallint  DEFAULT 0,
+    phrase_id_3 smallint  DEFAULT 0,
+    geo_value   point     NOT NULL
+);
+
+COMMENT ON TABLE results_geo_standard_prime              IS 'to cache the formula public unprotected geo results related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated';
+COMMENT ON COLUMN results_geo_standard_prime.formula_id  IS 'formula id that is part of the prime key for a geo result';
+COMMENT ON COLUMN results_geo_standard_prime.phrase_id_1 IS 'phrase id that is part of the prime key for a geo result';
+COMMENT ON COLUMN results_geo_standard_prime.phrase_id_2 IS 'phrase id that is part of the prime key for a geo result';
+COMMENT ON COLUMN results_geo_standard_prime.phrase_id_3 IS 'phrase id that is part of the prime key for a geo result';
+COMMENT ON COLUMN results_geo_standard_prime.geo_value   IS 'the geolocation given by the user';
+
+--
+-- table structure to cache the formula public unprotected geo results related up to eight prime phrase that have never changed the owner, does not have a description and are rarely updated
+--
+
+CREATE TABLE IF NOT EXISTS results_geo_standard_main
+(
+    formula_id  smallint  NOT NULL,
     phrase_id_1 smallint  NOT NULL,
     phrase_id_2 smallint  DEFAULT 0,
     phrase_id_3 smallint  DEFAULT 0,
     phrase_id_4 smallint  DEFAULT 0,
-    geo_value  point     NOT NULL
+    phrase_id_5 smallint  DEFAULT 0,
+    phrase_id_6 smallint  DEFAULT 0,
+    phrase_id_7 smallint  DEFAULT 0,
+    geo_value   point     NOT NULL
 );
 
-COMMENT ON TABLE results_geo_standard_prime              IS 'to cache the formula public unprotected geo results related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated';
-COMMENT ON COLUMN results_geo_standard_prime.phrase_id_1 IS 'phrase id that is part of the prime key for a geo result';
-COMMENT ON COLUMN results_geo_standard_prime.phrase_id_2 IS 'phrase id that is part of the prime key for a geo result';
-COMMENT ON COLUMN results_geo_standard_prime.phrase_id_3 IS 'phrase id that is part of the prime key for a geo result';
-COMMENT ON COLUMN results_geo_standard_prime.phrase_id_4 IS 'phrase id that is part of the prime key for a geo result';
-COMMENT ON COLUMN results_geo_standard_prime.geo_value   IS 'the geolocation given by the user';
+COMMENT ON TABLE results_geo_standard_main              IS 'to cache the formula public unprotected geo results related up to eight prime phrase that have never changed the owner, does not have a description and are rarely updated';
+COMMENT ON COLUMN results_geo_standard_main.formula_id  IS 'formula id that is part of the prime key for a geo result';
+COMMENT ON COLUMN results_geo_standard_main.phrase_id_1 IS 'phrase id that is part of the prime key for a geo result';
+COMMENT ON COLUMN results_geo_standard_main.phrase_id_2 IS 'phrase id that is part of the prime key for a geo result';
+COMMENT ON COLUMN results_geo_standard_main.phrase_id_3 IS 'phrase id that is part of the prime key for a geo result';
+COMMENT ON COLUMN results_geo_standard_main.phrase_id_4 IS 'phrase id that is part of the prime key for a geo result';
+COMMENT ON COLUMN results_geo_standard_main.phrase_id_5 IS 'phrase id that is part of the prime key for a geo result';
+COMMENT ON COLUMN results_geo_standard_main.phrase_id_6 IS 'phrase id that is part of the prime key for a geo result';
+COMMENT ON COLUMN results_geo_standard_main.phrase_id_7 IS 'phrase id that is part of the prime key for a geo result';
+COMMENT ON COLUMN results_geo_standard_main.geo_value   IS 'the geolocation given by the user';
 
 --
 -- table structure to cache the formula public unprotected geo results that have never changed the owner, does not have a description and are rarely updated
@@ -767,10 +1137,10 @@ COMMENT ON COLUMN user_results_geo.protect_id      IS 'to protect against unwant
 
 CREATE TABLE IF NOT EXISTS results_geo_prime
 (
-    phrase_id_1   smallint  NOT NULL,
-    phrase_id_2   smallint  DEFAULT 0,
-    phrase_id_3   smallint  DEFAULT 0,
-    phrase_id_4   smallint  DEFAULT 0,
+    phrase_id_1     smallint  NOT NULL,
+    phrase_id_2     smallint  DEFAULT 0,
+    phrase_id_3     smallint  DEFAULT 0,
+    phrase_id_4     smallint  DEFAULT 0,
     source_group_id bigint    DEFAULT NULL,
     geo_value       point         NOT NULL,
     last_update     timestamp DEFAULT NULL,
@@ -801,10 +1171,10 @@ COMMENT ON COLUMN results_geo_prime.protect_id      IS 'to protect against unwan
 
 CREATE TABLE IF NOT EXISTS user_results_geo_prime
 (
-    phrase_id_1   smallint  NOT NULL,
-    phrase_id_2   smallint  DEFAULT 0,
-    phrase_id_3   smallint  DEFAULT 0,
-    phrase_id_4   smallint  DEFAULT 0,
+    phrase_id_1     smallint  NOT NULL,
+    phrase_id_2     smallint  DEFAULT 0,
+    phrase_id_3     smallint  DEFAULT 0,
+    phrase_id_4     smallint  DEFAULT 0,
     source_group_id bigint    DEFAULT NULL,
     user_id         bigint        NOT NULL,
     geo_value       point     DEFAULT NULL,
@@ -828,6 +1198,92 @@ COMMENT ON COLUMN user_results_geo_prime.formula_id      IS 'the id of the formu
 COMMENT ON COLUMN user_results_geo_prime.excluded        IS 'true if a user, but not all, have removed it';
 COMMENT ON COLUMN user_results_geo_prime.share_type_id   IS 'to restrict the access';
 COMMENT ON COLUMN user_results_geo_prime.protect_id      IS 'to protect against unwanted changes';
+
+-- --------------------------------------------------------
+
+--
+-- table structure to cache the formula second most often requested geo results related up to eight prime phrase
+--
+
+CREATE TABLE IF NOT EXISTS results_geo_main
+(
+    phrase_id_1     smallint  NOT NULL,
+    phrase_id_2     smallint  DEFAULT 0,
+    phrase_id_3     smallint  DEFAULT 0,
+    phrase_id_4     smallint  DEFAULT 0,
+    phrase_id_5     smallint  DEFAULT 0,
+    phrase_id_6     smallint  DEFAULT 0,
+    phrase_id_7     smallint  DEFAULT 0,
+    phrase_id_8     smallint  DEFAULT 0,
+    source_group_id bigint    DEFAULT NULL,
+    geo_value       point NOT NULL,
+    last_update     timestamp DEFAULT NULL,
+    formula_id      bigint        NOT NULL,
+    user_id         bigint    DEFAULT NULL,
+    excluded        smallint  DEFAULT NULL,
+    share_type_id   smallint  DEFAULT NULL,
+    protect_id      smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE results_geo_main                  IS 'to cache the formula second most often requested geo results related up to eight prime phrase';
+COMMENT ON COLUMN results_geo_main.phrase_id_1     IS 'phrase id that is part of the prime key for a geo result';
+COMMENT ON COLUMN results_geo_main.phrase_id_2     IS 'phrase id that is part of the prime key for a geo result';
+COMMENT ON COLUMN results_geo_main.phrase_id_3     IS 'phrase id that is part of the prime key for a geo result';
+COMMENT ON COLUMN results_geo_main.phrase_id_4     IS 'phrase id that is part of the prime key for a geo result';
+COMMENT ON COLUMN results_geo_main.phrase_id_5     IS 'phrase id that is part of the prime key for a geo result';
+COMMENT ON COLUMN results_geo_main.phrase_id_6     IS 'phrase id that is part of the prime key for a geo result';
+COMMENT ON COLUMN results_geo_main.phrase_id_7     IS 'phrase id that is part of the prime key for a geo result';
+COMMENT ON COLUMN results_geo_main.phrase_id_8     IS 'phrase id that is part of the prime key for a geo result';
+COMMENT ON COLUMN results_geo_main.source_group_id IS '64-bit reference to the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN results_geo_main.geo_value       IS 'the geolocation given by the user';
+COMMENT ON COLUMN results_geo_main.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN results_geo_main.formula_id      IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN results_geo_main.user_id         IS 'the id of the user who has requested the calculation';
+COMMENT ON COLUMN results_geo_main.excluded        IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN results_geo_main.share_type_id   IS 'to restrict the access';
+COMMENT ON COLUMN results_geo_main.protect_id      IS 'to protect against unwanted changes';
+
+--
+-- table structure to store the user specific changes to cache the formula second most often requested geo results related up to eight prime phrase
+--
+
+CREATE TABLE IF NOT EXISTS user_results_geo_main
+(
+    phrase_id_1     smallint  NOT NULL,
+    phrase_id_2     smallint  DEFAULT 0,
+    phrase_id_3     smallint  DEFAULT 0,
+    phrase_id_4     smallint  DEFAULT 0,
+    phrase_id_5     smallint  DEFAULT 0,
+    phrase_id_6     smallint  DEFAULT 0,
+    phrase_id_7     smallint  DEFAULT 0,
+    phrase_id_8     smallint  DEFAULT 0,
+    source_group_id bigint    DEFAULT NULL,
+    user_id         bigint        NOT NULL,
+    geo_value       point DEFAULT NULL,
+    last_update     timestamp DEFAULT NULL,
+    formula_id      bigint        NOT NULL,
+    excluded        smallint  DEFAULT NULL,
+    share_type_id   smallint  DEFAULT NULL,
+    protect_id      smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE user_results_geo_main                  IS 'to store the user specific changes to cache the formula second most often requested geo results related up to eight prime phrase';
+COMMENT ON COLUMN user_results_geo_main.phrase_id_1     IS 'phrase id that is with the user id part of the prime key for a geo result';
+COMMENT ON COLUMN user_results_geo_main.phrase_id_2     IS 'phrase id that is with the user id part of the prime key for a geo result';
+COMMENT ON COLUMN user_results_geo_main.phrase_id_3     IS 'phrase id that is with the user id part of the prime key for a geo result';
+COMMENT ON COLUMN user_results_geo_main.phrase_id_4     IS 'phrase id that is with the user id part of the prime key for a geo result';
+COMMENT ON COLUMN user_results_geo_main.phrase_id_5     IS 'phrase id that is with the user id part of the prime key for a geo result';
+COMMENT ON COLUMN user_results_geo_main.phrase_id_6     IS 'phrase id that is with the user id part of the prime key for a geo result';
+COMMENT ON COLUMN user_results_geo_main.phrase_id_7     IS 'phrase id that is with the user id part of the prime key for a geo result';
+COMMENT ON COLUMN user_results_geo_main.phrase_id_8     IS 'phrase id that is with the user id part of the prime key for a geo result';
+COMMENT ON COLUMN user_results_geo_main.source_group_id IS '64-bit reference to the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN user_results_geo_main.user_id         IS 'the id of the user who has requested the change of the geo result';
+COMMENT ON COLUMN user_results_geo_main.geo_value       IS 'the user specific geolocation change';
+COMMENT ON COLUMN user_results_geo_main.last_update     IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN user_results_geo_main.formula_id      IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN user_results_geo_main.excluded        IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN user_results_geo_main.share_type_id   IS 'to restrict the access';
+COMMENT ON COLUMN user_results_geo_main.protect_id      IS 'to protect against unwanted changes';
 
 -- --------------------------------------------------------
 
@@ -886,3 +1342,189 @@ COMMENT ON COLUMN user_results_geo_big.formula_id      IS 'the id of the formula
 COMMENT ON COLUMN user_results_geo_big.excluded        IS 'true if a user, but not all, have removed it';
 COMMENT ON COLUMN user_results_geo_big.share_type_id   IS 'to restrict the access';
 COMMENT ON COLUMN user_results_geo_big.protect_id      IS 'to protect against unwanted changes';
+
+-- --------------------------------------------------------
+
+--
+-- table structure for the common parameters for a list of numbers that differ only by the timestamp
+--
+
+CREATE TABLE IF NOT EXISTS results_time_series
+(
+    group_id              char(112) PRIMARY KEY,
+    source_group_id       char(112) DEFAULT NULL,
+    result_time_series_id bigint        NOT NULL,
+    last_update           timestamp DEFAULT NULL,
+    formula_id            bigint        NOT NULL,
+    user_id               bigint    DEFAULT NULL,
+    excluded              smallint  DEFAULT NULL,
+    share_type_id         smallint  DEFAULT NULL,
+    protect_id            smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE results_time_series                        IS 'for the common parameters for a list of numbers that differ only by the timestamp';
+COMMENT ON COLUMN results_time_series.group_id              IS 'the 512-bit prime index to find the time_series result';
+COMMENT ON COLUMN results_time_series.source_group_id       IS '512-bit reference to the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN results_time_series.result_time_series_id IS 'the id of the time series as a 64 bit integer value because the number of time series is not expected to be too high';
+COMMENT ON COLUMN results_time_series.last_update           IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN results_time_series.formula_id            IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN results_time_series.user_id               IS 'the id of the user who has requested the calculation';
+COMMENT ON COLUMN results_time_series.excluded              IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN results_time_series.share_type_id         IS 'to restrict the access';
+COMMENT ON COLUMN results_time_series.protect_id            IS 'to protect against unwanted changes';
+
+--
+-- table structure for the common parameters for a list of numbers that differ only by the timestamp
+--
+
+CREATE TABLE IF NOT EXISTS user_results_time_series
+(
+    group_id              char(112)     NOT NULL,
+    source_group_id       char(112) DEFAULT NULL,
+    user_id               bigint        NOT NULL,
+    result_time_series_id bigint        NOT NULL,
+    last_update           timestamp DEFAULT NULL,
+    formula_id            bigint        NOT NULL,
+    excluded              smallint  DEFAULT NULL,
+    share_type_id         smallint  DEFAULT NULL,
+    protect_id            smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE user_results_time_series                        IS 'for the common parameters for a list of numbers that differ only by the timestamp';
+COMMENT ON COLUMN user_results_time_series.group_id              IS 'the 512-bit prime index to find the user time_series result';
+COMMENT ON COLUMN user_results_time_series.source_group_id       IS '512-bit reference to the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN user_results_time_series.user_id               IS 'the id of the user who has requested the change of the time_series result';
+COMMENT ON COLUMN user_results_time_series.result_time_series_id IS 'the 64 bit integer which is unique for the standard and the user series';
+COMMENT ON COLUMN user_results_time_series.last_update           IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN user_results_time_series.formula_id IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN user_results_time_series.excluded              IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN user_results_time_series.share_type_id         IS 'to restrict the access';
+COMMENT ON COLUMN user_results_time_series.protect_id            IS 'to protect against unwanted changes';
+
+-- --------------------------------------------------------
+
+--
+-- table structure for the common parameters for a list of numbers that differ only by the timestamp
+--
+
+CREATE TABLE IF NOT EXISTS results_time_series_prime
+(
+    phrase_id_1           smallint  NOT NULL,
+    phrase_id_2           smallint  DEFAULT 0,
+    phrase_id_3           smallint  DEFAULT 0,
+    phrase_id_4           smallint  DEFAULT 0,
+    source_group_id       bigint    DEFAULT NULL,
+    result_time_series_id bigint        NOT NULL,
+    last_update           timestamp DEFAULT NULL,
+    formula_id            bigint        NOT NULL,
+    user_id               bigint    DEFAULT NULL,
+    excluded              smallint  DEFAULT NULL,
+    share_type_id         smallint  DEFAULT NULL,
+    protect_id            smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE results_time_series_prime                        IS 'for the common parameters for a list of numbers that differ only by the timestamp';
+COMMENT ON COLUMN results_time_series_prime.phrase_id_1           IS 'phrase id that is part of the prime key for a time_series result';
+COMMENT ON COLUMN results_time_series_prime.phrase_id_2           IS 'phrase id that is part of the prime key for a time_series result';
+COMMENT ON COLUMN results_time_series_prime.phrase_id_3           IS 'phrase id that is part of the prime key for a time_series result';
+COMMENT ON COLUMN results_time_series_prime.phrase_id_4           IS 'phrase id that is part of the prime key for a time_series result';
+COMMENT ON COLUMN results_time_series_prime.source_group_id       IS '64-bit reference to the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN results_time_series_prime.result_time_series_id IS 'the id of the time series as a 64 bit integer value because the number of time series is not expected to be too high';
+COMMENT ON COLUMN results_time_series_prime.last_update           IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN results_time_series_prime.formula_id            IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN results_time_series_prime.user_id               IS 'the id of the user who has requested the calculation';
+COMMENT ON COLUMN results_time_series_prime.excluded              IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN results_time_series_prime.share_type_id         IS 'to restrict the access';
+COMMENT ON COLUMN results_time_series_prime.protect_id            IS 'to protect against unwanted changes';
+
+--
+-- table structure for the common parameters for a list of numbers that differ only by the timestamp
+--
+
+CREATE TABLE IF NOT EXISTS user_results_time_series_prime
+(
+    phrase_id_1           smallint      NOT NULL,
+    phrase_id_2           smallint  DEFAULT 0,
+    phrase_id_3           smallint  DEFAULT 0,
+    phrase_id_4           smallint  DEFAULT 0,
+    source_group_id       bigint    DEFAULT NULL,
+    user_id               bigint        NOT NULL,
+    result_time_series_id bigint        NOT NULL,
+    last_update           timestamp DEFAULT NULL,
+    formula_id            bigint        NOT NULL,
+    excluded              smallint  DEFAULT NULL,
+    share_type_id         smallint  DEFAULT NULL,
+    protect_id            smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE user_results_time_series_prime                        IS 'for the common parameters for a list of numbers that differ only by the timestamp';
+COMMENT ON COLUMN user_results_time_series_prime.phrase_id_1           IS 'phrase id that is with the user id part of the prime key for a time_series result';
+COMMENT ON COLUMN user_results_time_series_prime.phrase_id_2           IS 'phrase id that is with the user id part of the prime key for a time_series result';
+COMMENT ON COLUMN user_results_time_series_prime.phrase_id_3           IS 'phrase id that is with the user id part of the prime key for a time_series result';
+COMMENT ON COLUMN user_results_time_series_prime.phrase_id_4           IS 'phrase id that is with the user id part of the prime key for a time_series result';
+COMMENT ON COLUMN user_results_time_series_prime.source_group_id       IS '64-bit reference to the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN user_results_time_series_prime.user_id               IS 'the id of the user who has requested the change of the time_series result';
+COMMENT ON COLUMN user_results_time_series_prime.result_time_series_id IS 'the 64 bit integer which is unique for the standard and the user series';
+COMMENT ON COLUMN user_results_time_series_prime.last_update           IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN user_results_time_series_prime.formula_id            IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN user_results_time_series_prime.excluded              IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN user_results_time_series_prime.share_type_id         IS 'to restrict the access';
+COMMENT ON COLUMN user_results_time_series_prime.protect_id            IS 'to protect against unwanted changes';
+
+-- --------------------------------------------------------
+
+--
+-- table structure for the common parameters for a list of numbers that differ only by the timestamp
+--
+
+CREATE TABLE IF NOT EXISTS results_time_series_big
+(
+    group_id              text PRIMARY KEY,
+    source_group_id       text      DEFAULT NULL,
+    result_time_series_id bigint        NOT NULL,
+    last_update           timestamp DEFAULT NULL,
+    formula_id            bigint        NOT NULL,
+    user_id               bigint    DEFAULT NULL,
+    excluded              smallint  DEFAULT NULL,
+    share_type_id         smallint  DEFAULT NULL,
+    protect_id            smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE results_time_series_big                        IS 'for the common parameters for a list of numbers that differ only by the timestamp';
+COMMENT ON COLUMN results_time_series_big.group_id              IS 'the variable text index to find time_series result';
+COMMENT ON COLUMN results_time_series_big.source_group_id       IS 'text reference to the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN results_time_series_big.result_time_series_id IS 'the id of the time series as a 64 bit integer value because the number of time series is not expected to be too high';
+COMMENT ON COLUMN results_time_series_big.last_update           IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN results_time_series_big.formula_id            IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN results_time_series_big.user_id               IS 'the id of the user who has requested the calculation';
+COMMENT ON COLUMN results_time_series_big.excluded              IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN results_time_series_big.share_type_id         IS 'to restrict the access';
+COMMENT ON COLUMN results_time_series_big.protect_id            IS 'to protect against unwanted changes';
+
+--
+-- table structure for the common parameters for a list of numbers that differ only by the timestamp
+--
+
+CREATE TABLE IF NOT EXISTS user_results_time_series_big
+(
+    group_id              text          NOT NULL,
+    source_group_id       text      DEFAULT NULL,
+    user_id               bigint        NOT NULL,
+    result_time_series_id bigint        NOT NULL,
+    last_update           timestamp DEFAULT NULL,
+    formula_id            bigint        NOT NULL,
+    excluded              smallint  DEFAULT NULL,
+    share_type_id         smallint  DEFAULT NULL,
+    protect_id            smallint  DEFAULT NULL
+);
+
+COMMENT ON TABLE user_results_time_series_big                        IS 'for the common parameters for a list of numbers that differ only by the timestamp';
+COMMENT ON COLUMN user_results_time_series_big.group_id              IS 'the text index for more than 16 phrases to find the time_series result';
+COMMENT ON COLUMN user_results_time_series_big.source_group_id       IS 'text reference to the sorted phrase list used to calculate this result';
+COMMENT ON COLUMN user_results_time_series_big.user_id               IS 'the id of the user who has requested the change of the time_series result';
+COMMENT ON COLUMN user_results_time_series_big.result_time_series_id IS 'the 64 bit integer which is unique for the standard and the user series';
+COMMENT ON COLUMN user_results_time_series_big.last_update           IS 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation';
+COMMENT ON COLUMN user_results_time_series_big.formula_id IS 'the id of the formula which has been used to calculate this result';
+COMMENT ON COLUMN user_results_time_series_big.excluded              IS 'true if a user, but not all, have removed it';
+COMMENT ON COLUMN user_results_time_series_big.share_type_id         IS 'to restrict the access';
+COMMENT ON COLUMN user_results_time_series_big.protect_id            IS 'to protect against unwanted changes';

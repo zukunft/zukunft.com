@@ -1,0 +1,3 @@
+component_link_type_id, type_name, description, code_id
+1, 'always', 'the component is always shown as it is', 'always'
+2, 'expression', 'the component is only shown if an expression is true', 'expression'

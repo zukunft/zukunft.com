@@ -33,6 +33,8 @@ namespace cfg;
 
 use api\view\view as view_api;
 use cfg\db\sql;
+use cfg\db\sql_field_default;
+use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\export\sandbox_exp;
 use cfg\export\view_exp;
@@ -45,7 +47,9 @@ class view_term_link extends sandbox_link_typed
      */
 
     // the database and JSON object field names used only for formula links
+    const TBL_COMMENT = 'to link view to a word, triple, verb or formula with an n:m relation';
     const FLD_ID = 'view_term_link_id';
+    const FLD_TYPE_COM = '1 = from_term_id is link the terms table; 2=link to the term_links table;3=to term_groups';
     const FLD_TYPE = 'type_id';
     const FLD_LINK_TYPE = 'link_type_id';
 
@@ -59,6 +63,22 @@ class view_term_link extends sandbox_link_typed
     //
     const FLD_NAMES_USR = array(
         sandbox_named::FLD_DESCRIPTION
+    );
+    // list of fields that select the objects that should be linked
+    const FLD_LST_LINK = array(
+        [term::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, '', ''],
+        [view::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, view::class, ''],
+        [self::FLD_TYPE, sql_field_type::INT_SMALL, sql_field_default::ONE, sql::INDEX, '', self::FLD_TYPE_COM],
+    );
+    // list of MANDATORY fields that CAN be CHANGEd by the user
+    const FLD_LST_MUST_BUT_STD_ONLY = array(
+        [view_link_type::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, view_link_type::class, ''],
+        [sandbox_named::FLD_DESCRIPTION, sql_field_type::TEXT, sql_field_default::NULL, '', '', ''],
+    );
+    // list of fields that CAN be CHANGEd by the user
+    const FLD_LST_MUST_BUT_USER_CAN_CHANGE = array(
+        [view_link_type::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, view_link_type::class, ''],
+        [sandbox_named::FLD_DESCRIPTION, sql_field_type::TEXT, sql_field_default::NULL, '', '', ''],
     );
 
 

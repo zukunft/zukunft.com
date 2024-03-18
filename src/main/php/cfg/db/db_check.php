@@ -42,11 +42,13 @@ use cfg\result\result_two;
 use cfg\sandbox;
 use cfg\sandbox_named;
 use cfg\sys_log_function;
+use cfg\sys_log_level;
 use cfg\user;
+use cfg\user\user_profile;
 use cfg\user_message;
-use cfg\user_profile;
 use cfg\user_profile_list;
-use cfg\value;
+use cfg\value\value;
+use Exception;
 
 class db_check
 {
@@ -65,8 +67,20 @@ class db_check
 
         $result = ''; // the message that should be shown to the user immediately
         $do_consistency_check = false;
-        $cfg = new config();
+        $lib = new library();
 
+        // check if essential config table exists and if not setup the database
+        // TODO remove rewrite before moved to PROD
+        $main_tbl_name = $lib->class_to_name(config::class);
+        if (!$db_con->has_table($main_tbl_name)) {
+            $db_con->setup_db();
+            $db_con->db_fill_code_links();
+            $db_con->db_check_missing_owner();
+            $cfg = new config();
+            $cfg->set(config::LAST_CONSISTENCY_CHECK, gmdate(DATE_ATOM), $db_con);
+        }
+
+        $cfg = new config();
         $cfg->check(config::SITE_NAME, POD_NAME, $db_con);
 
         // get the db version and start the upgrade process if needed
@@ -104,31 +118,13 @@ class db_check
 
         // run a database consistency check now and remember the time
         if ($do_consistency_check) {
-            $this->db_fill_code_links($db_con);
-            $this->db_check_missing_owner($db_con);
+            $db_con->db_fill_code_links();
+            $db_con->db_check_missing_owner();
             $cfg->set(config::LAST_CONSISTENCY_CHECK, gmdate(DATE_ATOM), $db_con);
         }
 
         return $result;
 
-    }
-
-    /**
-     * @return bool true if all user sandbox objects have an owner
-     */
-    function db_check_missing_owner(sql_db $db_con): bool
-    {
-        $result = true;
-
-        foreach (sandbox::DB_TYPES as $db_type) {
-            $db_con->set_class($db_type);
-            $db_lst = $db_con->missing_owner();
-            if ($db_lst != null) {
-                $result = $db_con->set_default_owner();
-            }
-        }
-
-        return $result;
     }
 
 // upgrade the database from any version prior of 0.0.3
@@ -150,8 +146,6 @@ class db_check
         $process_name = 'db_upgrade_0_0_3'; // the info text that is written to the database execution log
         // TODO check if change has been successful
         // rename word_link to triple
-        $result .= $db_con->change_table_name('phrase_group_word_link', sql_db::TBL_GROUP_LINK);
-        $result .= $db_con->change_table_name(sql_db::TBL_USER_PREFIX . 'phrase_group_word_link', sql_db::TBL_USER_PREFIX . sql_db::TBL_GROUP_LINK);
         $result .= $db_con->change_table_name('word_link', self::TBL_TRIPLE);
         $result .= $db_con->change_column_name(self::TBL_TRIPLE, 'word_link_id', 'triple_id');
         $result .= $db_con->change_column_name(self::TBL_TRIPLE, 'word_link_condition_id', 'triple_condition_id');
@@ -178,7 +172,7 @@ class db_check
         $result .= $db_con->change_column_name(sql_db::TBL_COMPONENT_LINK_TYPE, 'view_component_link_id', 'component_link_id');
         $result .= $db_con->change_column_name(sql_db::TBL_COMPONENT_LINK_TYPE, 'view_component_id', component::FLD_ID);
         $result .= $db_con->change_table_name('view_component_position_type', sql_db::TBL_COMPONENT_POS_TYPE);
-        $result .= $db_con->change_column_name(sql_db::TBL_COMPONENT_POS_TYPE, 'view_component_position_type_id', 'component_position_type_id');
+        $result .= $db_con->change_column_name(sql_db::TBL_COMPONENT_POS_TYPE, 'view_component_position_type_id', 'position_type_id');
         //
         $result .= $db_con->change_table_name('languages_form', sql_db::TBL_LANGUAGE_FORM);
         $result .= $db_con->add_column(sql_db::TBL_USER_PROFILE, 'right_level', 'smallint');
@@ -235,7 +229,7 @@ class db_check
         $result .= $db_con->change_column_name(sql_db::TBL_IP, 'isactive', 'is_active');
         $result .= $db_con->change_column_name(sql_db::TBL_USER, 'isactive', 'is_active');
         $result .= $db_con->change_column_name(sql_db::TBL_USER, 'email_alternativ', 'email_alternative');
-        $result .= $db_con->change_column_name(sql_db::TBL_FORMULA_ELEMENT_TYPE, 'formula_element_type_name', 'type_name');
+        $result .= $db_con->change_column_name(sql_db::TBL_ELEMENT_TYPE, 'formula_element_type_name', 'type_name');
         $result .= $db_con->change_column_name(sql_db::TBL_VIEW, 'comment', sandbox_named::FLD_DESCRIPTION);
         $result .= $db_con->change_column_name(sql_db::TBL_USER_PREFIX . sql_db::TBL_VIEW, 'comment', sandbox_named::FLD_DESCRIPTION);
         $result .= $db_con->change_column_name(sql_db::TBL_COMPONENT, 'comment', sandbox_named::FLD_DESCRIPTION);
@@ -329,7 +323,7 @@ class db_check
             $result .= $db_con->exe_try('Filling missing timestamps for users', $sql);
             $sql = 'UPDATE' . ' `users` SET `last_logoff` = CURRENT_TIMESTAMP WHERE `users`.`last_logoff` = 0';
             $result .= $db_con->exe_try('Filling missing logoff timestamps for users', $sql);
-            $sql = 'UPDATE' . ' `users` SET `activation_key_timeout` = CURRENT_TIMESTAMP WHERE `users`.`activation_key_timeout` = 0';
+            $sql = 'UPDATE' . ' `users` SET `activation_timeout` = CURRENT_TIMESTAMP WHERE `users`.`activation_timeout` = 0';
             $result .= $db_con->exe_try('Filling missing activation timestamps for users', $sql);
 
             $sql = file_get_contents(PATH_BASE_CONFIG_FILES . 'db/upgrade/v0.0.3/upgrade_mysql.sql');
@@ -340,7 +334,7 @@ class db_check
             //src/main/resources/db/upgrade/v0.0.3/upgrade_postgres.sql
             //$result .= $db_con->exe_try('Finally add the new views', $sql);
         }
-        $result .= $db_con->add_foreign_key('users_fk_2', sql_db::TBL_USER, 'user_profile_id', sql_db::TBL_USER_PROFILE, 'profile_id');
+        $result .= $db_con->add_foreign_key('users_fk_2', sql_db::TBL_USER, 'user_profile_id', sql_db::TBL_USER_PROFILE, 'user_profile_id');
         // TODO change prime key for postgres user_sources, user_values, user_view, user_components and user_component_links
 
         if ($db_con->db_type == sql_db::MYSQL) {
@@ -420,118 +414,6 @@ class db_check
         }
 
         return $result;
-    }
-
-    function db_fill_code_link_sql(string $table_name, string $id_col_name, int $id): sql_par
-    {
-        $qp = new sql_par($this::class);
-        $qp->name .= 'fill_' . $id_col_name;
-        $qp->sql = "PREPARE " . $qp->name . " (int) AS select * from " . $table_name . " where " . $id_col_name . " = $1;";
-        $qp->par = array($id);
-        return $qp;
-    }
-
-// create the database and fill it with the base configuration data
-//function db_create() {}
-
-    /**
-     * fill the database with all rows that have a code id and code linked
-     */
-    function db_fill_code_links(sql_db $db_con): void
-    {
-        global $debug;
-        $lib = new library();
-
-        // first of all set the database version if not yet done
-        $cfg = new config();
-        $cfg->check(config::VERSION_DB, PRG_VERSION, $db_con);
-
-        // get the list of CSV and loop
-        $csv_file_list = unserialize(BASE_CODE_LINK_FILES);
-        foreach ($csv_file_list as $csv_file_name) {
-            // load the csv
-            $csv_path = PATH_BASE_CODE_LINK_FILES . $csv_file_name . BASE_CODE_LINK_FILE_TYPE;
-
-            $row = 1;
-            $table_name = $csv_file_name;
-            // TODO change table names to singular form
-            if ($table_name == 'sys_log_status') {
-                $db_type = $table_name;
-            } else {
-                $db_type = substr($table_name, 0, -1);
-            }
-            // TODO ignore empty rows
-            // TODO ignore comma within text e.g. allow 'one, two and three'
-            log_debug('load "' . $table_name . '"', $debug - 6);
-            if (($handle = fopen($csv_path, "r")) !== FALSE) {
-                $continue = true;
-                $id_col_name = '';
-                $col_names = array();
-                while (($data = fgetcsv($handle, 0, ",", "'")) !== FALSE) {
-                    if ($continue) {
-                        if ($row == 1) {
-                            // check if the csv column names match the table names
-                            if (!$db_con->check_column_names($table_name, $lib->array_trim($data))) {
-                                $continue = false;
-                            } else {
-                                $col_names = $lib->array_trim($data);
-                            }
-                            // check if the first column name is the id col
-                            $id_col_name = $data[0];
-                            if (!str_ends_with($id_col_name, sql_db::FLD_ID)) {
-                                $continue = false;
-                            }
-                        } else {
-                            // init row update
-                            $update_col_names = array();
-                            $update_col_values = array();
-                            // get the row id which is expected to be always in the first column
-                            $id = $data[0];
-                            // check if the row id exists
-                            $qp = $this->db_fill_code_link_sql($table_name, $id_col_name, $id);
-                            $db_row = $db_con->get1($qp);
-                            // check if the db row needs to be added
-                            if ($db_row == null) {
-                                // add the row
-                                for ($i = 0; $i < count($data); $i++) {
-                                    $update_col_names[] = $col_names[$i];
-                                    $update_col_values[] = trim($data[$i]);
-                                }
-                                $db_con->set_class($db_type);
-                                $db_con->insert_old($update_col_names, $update_col_values);
-                            } else {
-                                // check, which values need to be updates
-                                for ($i = 1; $i < count($data); $i++) {
-                                    $col_name = $col_names[$i];
-                                    if (array_key_exists($col_name, $db_row)) {
-                                        $db_value = $db_row[$col_name];
-                                        if ($db_value != trim($data[$i]) and trim($data[$i]) != 'NULL') {
-                                            $update_col_names[] = $col_name;
-                                            $update_col_values[] = trim($data[$i]);
-                                        }
-                                    } else {
-                                        log_err('Column check did not work for ' . $col_name);
-                                    }
-                                }
-                                // update the values is needed
-                                if (count($update_col_names) > 0) {
-                                    $db_con->set_class($db_type);
-                                    $db_con->update_old($id, $update_col_names, $update_col_values);
-                                }
-                            }
-                        }
-                    }
-                    $row++;
-                }
-                fclose($handle);
-            }
-
-        }
-
-        // set the seq number if needed
-        $db_con->seq_reset(sql_db::TBL_CHANGE_TABLE);
-        $db_con->seq_reset(sql_db::TBL_CHANGE_FIELD);
-        $db_con->seq_reset(sql_db::TBL_CHANGE_ACTION);
     }
 
 }

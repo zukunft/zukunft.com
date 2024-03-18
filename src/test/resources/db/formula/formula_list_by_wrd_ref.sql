@@ -15,6 +15,6 @@ PREPARE formula_list_by_wrd_ref (bigint, bigint, bigint) AS
            CASE WHEN (u.protect_id          IS     NULL) THEN s.protect_id        ELSE u.protect_id        END AS protect_id
       FROM formulas s
  LEFT JOIN user_formulas  u   ON s.formula_id = u.formula_id AND u.user_id = $1
- LEFT JOIN formula_elements l ON s.formula_id = l.formula_id
+ LEFT JOIN elements l ON s.formula_id = l.formula_id
     WHERE l.ref_id = $2
-      AND l.formula_element_type_id = $3;
+      AND l.element_type_id = $3;

@@ -122,8 +122,8 @@
 
 namespace cfg;
 
-include_once MODEL_FORMULA_PATH . 'formula_element_group.php';
-include_once MODEL_FORMULA_PATH . 'formula_element_group_list.php';
+include_once MODEL_ELEMENT_PATH . 'element_group.php';
+include_once MODEL_ELEMENT_PATH . 'element_group_list.php';
 
 use Exception;
 
@@ -330,9 +330,9 @@ class expression
      * e.g. with "Sector" "differentiator" all
      *
      * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
-     * @return formula_element_list|formula_element_group_list with the formula element groups used in the expression
+     * @return element_list|element_group_list with the formula element groups used in the expression
      */
-    function element_grp_lst(?term_list $trm_lst = null): formula_element_list|formula_element_group_list
+    function element_grp_lst(?term_list $trm_lst = null): element_list|element_group_list
     {
         return $this->element_lst_all(expression::SELECT_ALL, TRUE, $trm_lst);
     }
@@ -341,14 +341,14 @@ class expression
      * get a list of all formula elements
      *
      * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
-     * @return formula_element_list a list of all formula elements
+     * @return element_list a list of all formula elements
      * (don't use for number retrieval, use element_grp_lst instead, because )
      */
-    function element_list(?term_list $trm_lst = null): formula_element_list
+    function element_list(?term_list $trm_lst = null): element_list
     {
         $lib = new library();
 
-        $elm_lst = new formula_element_list($this->usr);
+        $elm_lst = new element_list($this->usr);
         $work = $this->r_part();
 
         $obj_sym = $lib->str_between($work, self::TERM_START, self::TERM_END);
@@ -376,7 +376,7 @@ class expression
         $elm_lst = $this->element_list($trm_lst);
         if (!$elm_lst->is_empty()) {
             foreach ($elm_lst->lst() as $elm) {
-                if ($elm->type == formula_element::TYPE_FORMULA) {
+                if ($elm->type == element::TYPE_FORMULA) {
                     if ($elm->obj != null) {
                         if ($elm->obj->type_cl == formula_type::THIS
                             or $elm->obj->type_cl == formula_type::NEXT
@@ -414,7 +414,7 @@ class expression
         $elm_lst = $this->element_list($trm_lst);
         if (!$elm_lst->is_empty()) {
             foreach ($elm_lst->lst() as $elm) {
-                if ($elm->type == formula_element::TYPE_FORMULA) {
+                if ($elm->type == element::TYPE_FORMULA) {
                     if ($elm->obj != null) {
                         if ($elm->obj->type_cl == formula_type::THIS
                             or $elm->obj->type_cl == formula_type::NEXT
@@ -710,11 +710,11 @@ class expression
      *
      * @param string $obj_sym the formula element symbol e.g. t2 for triple with id 2
      * @param term_list|null $trm_lst a list of preloaded terms
-     * @return formula_element the filled formula element
+     * @return element the filled formula element
      */
-    private function element_by_symbol(string $obj_sym, ?term_list $trm_lst = null): formula_element
+    private function element_by_symbol(string $obj_sym, ?term_list $trm_lst = null): element
     {
-        $elm = new formula_element($this->usr);
+        $elm = new element($this->usr);
         $elm->type = match ($obj_sym[0]) {
             self::WORD_SYMBOL => parameter_type::WORD_CLASS,
             self::TRIPLE_SYMBOL => parameter_type::TRIPLE_CLASS,
@@ -750,7 +750,7 @@ class expression
         string     $type = self::SELECT_ALL,
         bool       $group_it = false,
         ?term_list $trm_lst = null
-    ): formula_element_list|formula_element_group_list
+    ): element_list|element_group_list
     {
         log_debug('get ' . $type . ' out of "' . $this->ref_text() . '" for user ' . $this->usr->name);
 
@@ -759,11 +759,11 @@ class expression
         // init result and work vars
         $lst = array();
         if ($group_it) {
-            $result = new formula_element_group_list($this->usr);
-            $elm_grp = new formula_element_group;
+            $result = new element_group_list($this->usr);
+            $elm_grp = new element_group;
             $elm_grp->usr = $this->usr;
         } else {
-            $result = new formula_element_list($this->usr);
+            $result = new element_list($this->usr);
         }
         $result->set_user($this->usr);
         $work = $this->r_part();
@@ -790,22 +790,22 @@ class expression
 
                     // filter the elements if requested
                     if ($type == self::SELECT_PHRASE) {
-                        if ($elm->type != formula_element::TYPE_WORD and $elm->type != formula_element::TYPE_TRIPLE) {
+                        if ($elm->type != element::TYPE_WORD and $elm->type != element::TYPE_TRIPLE) {
                             $elm->obj = null;
                         }
                     }
                     if ($type == self::SELECT_FORMULA) {
-                        if ($elm->type != formula_element::TYPE_FORMULA) {
+                        if ($elm->type != element::TYPE_FORMULA) {
                             $elm->obj = null;
                         }
                     }
                     if ($type == self::SELECT_VERB) {
-                        if ($elm->type != formula_element::TYPE_VERB) {
+                        if ($elm->type != element::TYPE_VERB) {
                             $elm->obj = null;
                         }
                     }
                     if ($type == self::SELECT_VERB_WORD) {
-                        if ($elm->type != formula_element::TYPE_WORD and $elm->type != formula_element::TYPE_VERB) {
+                        if ($elm->type != element::TYPE_WORD and $elm->type != element::TYPE_VERB) {
                             $elm->obj = null;
                         }
                     }
@@ -832,7 +832,7 @@ class expression
                             if (strlen($txt_between_elm) > 0) {
                                 $lst[] = $elm_grp;
                                 log_debug('group finished with ' . $elm->name());
-                                $elm_grp = new formula_element_group;
+                                $elm_grp = new element_group;
                                 $elm_grp->usr = $this->usr;
                             }
                         } else {
@@ -928,7 +928,7 @@ class expression
                 // similar to a part in get_usr_part, maybe combine
                 if ($db_sym == '') {
                     $frm = new formula($this->usr);
-                    $frm->load_by_name($name, formula::class);
+                    $frm->load_by_name($name);
                     if ($frm->id() > 0) {
                         $db_sym = self::FORMULA_START . $frm->id() . self::FORMULA_END;
                         log_debug('found formula "' . $db_sym . '" for "' . $name . '"');
@@ -1131,21 +1131,21 @@ class expression
         $phr_lst = new phrase_list($this->usr);
         foreach ($elm_lst->lst() as $elm) {
             log_debug('check elements ' . $elm->name());
-            if ($elm->type == formula_element::TYPE_FORMULA) {
+            if ($elm->type == element::TYPE_FORMULA) {
                 if (isset($elm->wrd_obj)) {
                     $phr = $elm->wrd_obj->phrase();
                     $phr_lst->add($phr);
                 } else {
                     log_err('Word missing for formula element ' . $elm->dsp_id() . '.', 'expression->phr_verb_lst');
                 }
-            } elseif ($elm->type == formula_element::TYPE_WORD) {
+            } elseif ($elm->type == element::TYPE_WORD) {
                 if (isset($elm->obj)) {
                     $phr = $elm->obj->phrase();
                     $phr_lst->add($phr);
                 } else {
                     log_err('Word missing for formula element ' . $elm->dsp_id() . '.', 'expression->phr_verb_lst');
                 }
-            } elseif ($elm->type == formula_element::TYPE_VERB) {
+            } elseif ($elm->type == element::TYPE_VERB) {
                 log_warning('Use Formula element ' . $elm->dsp_id() . ' has an unexpected type.', 'expression->phr_verb_lst');
             } else {
                 log_err('Formula element ' . $elm->dsp_id() . ' has an unexpected type.', 'expression->phr_verb_lst');

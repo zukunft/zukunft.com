@@ -50,6 +50,38 @@
       "name": "years to create"
     },
     {
+      "name": "calculation",
+      "description": "A calculation is a deliberate mathematical process that transforms one or more inputs into one or more outputs or results.",
+      "refs": [
+        {
+          "name": "Calculation",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "average",
+      "description": "The arithmetic mean – the sum of the numbers divided by how many numbers are in the list",
+      "refs": [
+        {
+          "name": "Average",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "millisecond",
+      "plural": "milliseconds",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Millisecond",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
       "name": "view",
       "description": "to group phrases",
       "protection": "admin_protection"
@@ -245,6 +277,21 @@
     "system config automatic created years": 10,
     "system config min percent to suggest": 0.3,
     "system config views to freeze": 20
-  }
+  },
+  "values": [
+    {
+      "words": [
+        "system configuration",
+        "average",
+        "calculation",
+        "millisecond"
+      ],
+      "name": "average time in milliseconds to update the results of one formula use to estimate how many formulas can be combined on one calculation block",
+      "description": "the average time in milliseconds to update the results of one formula use to estimate how many formulas can be combined on one calculation block",
+      "number": "1000",
+      "share": "public",
+      "protection": "admin_protection"
+    }
+  ]
 }
 

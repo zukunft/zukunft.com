@@ -31,11 +31,12 @@
 
 */
 
+use cfg\import\import_file;
 use cfg\user;
-use test\test_unit_read_db;
-use test\write\triple_test;
-use test\write\value_test;
-use test\write\word_test;
+use unit_read\all_unit_read_tests;
+use unit_read\triple_test;
+use unit_read\value_test;
+use unit_read\word_test;
 
 // standard zukunft header for callable php files to allow debugging and lib loading
 global $debug;
@@ -63,7 +64,7 @@ if ($start_usr->id() > 0) {
 
         // prepare testing
         $usr = $start_usr;
-        $t = new test_unit_read_db();
+        $t = new all_unit_read_tests();
         // TODO activate Prio 2
         //$t->init_unit_db_tests();
 
@@ -91,7 +92,7 @@ if ($start_usr->id() > 0) {
                 $ip_addr = $_SERVER['REMOTE_ADDR'];
             }
             if ($ip_addr == user::SYSTEM_LOCAL) {
-                import_system_users();
+                $db_con->import_system_users();
             }
 
             $usr->load_by_profile_code(user::SYSTEM_TEST_PROFILE_CODE_ID, $db_con);
@@ -163,11 +164,11 @@ if ($start_usr->id() > 0) {
             run_formula_trigger_test($t);
             run_result_test($t);
             run_result_list_test($t);
-            run_formula_element_test($t);
-            run_formula_element_list_test($t);
-            run_formula_element_group_test($t);
-            run_batch_job_test($t);
-            run_batch_job_list_test($t);
+            run_element_test($t);
+            run_element_list_test($t);
+            run_element_group_test($t);
+            run_job_test($t);
+            run_job_list_test($t);
             run_view_test($t);
             run_component_test($t);
             run_component_link_test($t);
@@ -177,7 +178,8 @@ if ($start_usr->id() > 0) {
             run_legacy_test($t);
             */
 
-            //import_base_config();
+            //$import = new import_file();
+            //                        $import->import_base_config();
 
             // testing cleanup to remove any remaining test records
             //$t->cleanup();

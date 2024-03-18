@@ -75,6 +75,9 @@ class triple extends sandbox_typed_api
     const TN_ZH_CANTON_NAME = 'Canton Zurich';
     const TN_ZH_COMPANY = "Zurich Insurance";
     const TN_VESTAS_COMPANY = "Vestas SA";
+    const TN_ABB_COMPANY = "ABB (Company)";
+    const TN_2014_FOLLOW = "2014 is follower of 2013";
+    const TN_TAXES_OF_CF = "Income taxes is part of cash flow statement";
 
 
     /*

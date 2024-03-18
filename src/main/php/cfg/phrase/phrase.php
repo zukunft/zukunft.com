@@ -65,6 +65,7 @@ use api\phrase\phrase as phrase_api;
 use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
+use cfg\db\sql_table_type;
 use cfg\group\group_list;
 use cfg\value\value_list;
 use html\phrase\phrase as phrase_dsp;
@@ -109,6 +110,43 @@ class phrase extends combine_named
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
+    // list of phrase types used for the database views
+    // using one array of sql table types per view
+    const TBL_PRIME_COM = 'phrases with an id less than 2^16 so that 4 phrase id fit in a 64 bit db key';
+    const TBL_PRIME_WHERE = '< 32767';
+    const TBL_COM = 'phrases with an id that is not prime';
+    const TBL_LIST = [
+        [sql_table_type::PRIME, self::TBL_PRIME_WHERE, self::TBL_PRIME_COM],
+        [sql_table_type::MOST, '', self::TBL_COM],
+        [sql_table_type::PRIME, self::TBL_PRIME_WHERE, self::TBL_PRIME_COM, sql_table_type::USER],
+        [sql_table_type::MOST, '', self::TBL_COM, sql_table_type::USER],
+    ];
+    // list of original tables that should be connoted with union
+    // with fields used in the view
+    const TBL_FLD_LST_VIEW = [
+        [word::class, [
+            [word::FLD_ID, phrase::FLD_ID],
+            [user::FLD_ID],
+            [word::FLD_NAME, phrase::FLD_NAME],
+            [sandbox_named::FLD_DESCRIPTION],
+            [word::FLD_VALUES],
+            [phrase::FLD_TYPE],
+            [sandbox::FLD_EXCLUDED],
+            [sandbox::FLD_SHARE],
+            [sandbox::FLD_PROTECT]
+        ], word::FLD_ID],
+        [triple::class, [
+            [triple::FLD_ID, phrase::FLD_ID, '* -1'],
+            [user::FLD_ID],
+            [[triple::FLD_NAME, triple::FLD_NAME_GIVEN, triple::FLD_NAME_AUTO], phrase::FLD_NAME],
+            [sandbox_named::FLD_DESCRIPTION],
+            [triple::FLD_VALUES],
+            [phrase::FLD_TYPE],
+            [sandbox::FLD_EXCLUDED],
+            [sandbox::FLD_SHARE],
+            [sandbox::FLD_PROTECT]
+        ], triple::FLD_ID]
+    ];
 
 
     /*
@@ -588,12 +626,12 @@ class phrase extends combine_named
      * @param string $name the name of the phrase and the related word, triple, formula or verb
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_name(string $name, string $class = self::class): int
+    function load_by_name(string $name): int
     {
         global $db_con;
 
         log_debug($name);
-        $qp = $this->load_sql_by_name($db_con->sql_creator(), $name, $class);
+        $qp = $this->load_sql_by_name($db_con->sql_creator(), $name, $this::class);
         return $this->load($qp);
     }
 
@@ -1374,13 +1412,13 @@ class phrase extends combine_named
 
         // try if the word exists
         $wrd = new word($this->user());
-        $wrd->load_by_name($this->name(), word::class);
+        $wrd->load_by_name($this->name());
         if ($wrd->id() > 0) {
             $this->set_obj_id($wrd->id());
         } else {
             // try if the triple exists
             $trp = new triple($this->user());
-            $trp->load_by_name($this->name(), triple::class);
+            $trp->load_by_name($this->name());
             if ($trp->id() > 0) {
                 $this->set_obj_id($trp->id());
             } else {

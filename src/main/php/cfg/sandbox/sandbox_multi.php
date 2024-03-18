@@ -56,9 +56,10 @@ use cfg\db\sql_par_type;
 use cfg\export\sandbox_exp;
 use cfg\group\group_id;
 use cfg\log\change;
+use cfg\log\change_action;
 use cfg\log\change_log;
-use cfg\log\change_log_action;
-use cfg\log\change_log_link;
+use cfg\log\change_action_list;
+use cfg\log\change_link;
 use cfg\value\value;
 use Exception;
 
@@ -565,16 +566,6 @@ class sandbox_multi extends db_object_multi_user
      * @returns bool  false if the loading has failed
      */
     function load_objects(): bool
-    {
-        log_err('The dummy parent method get_similar has been called, which should never happen');
-        return true;
-    }
-
-    /**
-     * dummy function to get the missing object values from the database that is always overwritten by the child class
-     * @returns bool  false if the loading has failed
-     */
-    function load_obj_vars(): bool
     {
         log_err('The dummy parent method get_similar has been called, which should never happen');
         return true;
@@ -1276,7 +1267,7 @@ class sandbox_multi extends db_object_multi_user
 
         $log = new change($this->user());
 
-        $log->action = change_log_action::ADD;
+        $log->action = change_action::ADD;
         // TODO add the table exceptions from sql_db
         $lib = new library();
         $class = $lib->class_to_name($this::class);
@@ -1290,10 +1281,10 @@ class sandbox_multi extends db_object_multi_user
     /**
      * set the log entry parameter for a new link object
      */
-    function log_link_add(): change_log_link
+    function log_link_add(): change_link
     {
         log_err('The dummy parent method get_similar has been called, which should never happen');
-        return new change_log_link($this->user());
+        return new change_link($this->user());
     }
 
     /**
@@ -1303,7 +1294,7 @@ class sandbox_multi extends db_object_multi_user
     {
         log_debug($this->dsp_id());
         $log->set_user($this->user());
-        $log->action = change_log_action::UPDATE;
+        $log->action = change_action::UPDATE;
         if ($this->can_change()) {
             // TODO add the table exceptions from sql_db
             $log->set_table($this->obj_type . sql_db::TABLE_EXTENSION);
@@ -1329,10 +1320,10 @@ class sandbox_multi extends db_object_multi_user
     /**
      * create a log object for an update of link
      */
-    function log_upd_link(): change_log_link
+    function log_upd_link(): change_link
     {
         log_debug($this->dsp_id());
-        $log = new change_log_link($this->user());
+        $log = new change_link($this->user());
         return $this->log_upd_common($log);
     }
 
@@ -1353,12 +1344,12 @@ class sandbox_multi extends db_object_multi_user
 
     /**
      * dummy function definition that will be overwritten by the child object
-     * @return change_log_link
+     * @return change_link
      */
-    function log_del_link(): change_log_link
+    function log_del_link(): change_link
     {
         log_err('The dummy parent method get_similar has been called, which should never happen');
-        return new change_log_link($this->user());
+        return new change_link($this->user());
     }
 
     /**
@@ -1399,10 +1390,10 @@ class sandbox_multi extends db_object_multi_user
      * actually update a field in the main database record or the user sandbox
      * the usr id is taken into account in sql_db->update (maybe move outside)
      * @param sql_db $db_con the active database connection that should be used
-     * @param change|change_log_link $log the log object to track the change and allow a rollback
+     * @param change|change_link $log the log object to track the change and allow a rollback
      * @return string an empty string if everything is fine or the message that should be shown to the user
      */
-    function save_field_user(sql_db $db_con, change|change_log_link $log): string
+    function save_field_user(sql_db $db_con, change|change_link $log): string
     {
         $result = '';
 
@@ -1530,10 +1521,10 @@ class sandbox_multi extends db_object_multi_user
      * without user the user sandbox
      * the usr id is taken into account in sql_db->update (maybe move outside)
      * @param sql_db $db_con the active database connection that should be used
-     * @param change|change_log_link $log the log object to track the change and allow a rollback
+     * @param change|change_link $log the log object to track the change and allow a rollback
      * @return string an empty string if everything is fine or the message that should be shown to the user
      */
-    function save_field(sql_db $db_con, change|change_log_link $log): string
+    function save_field(sql_db $db_con, change|change_link $log): string
     {
         $result = '';
 
@@ -2203,7 +2194,7 @@ class sandbox_multi extends db_object_multi_user
 
                 // and the corresponding formula elements
                 if ($result->is_ok()) {
-                    $db_con->set_class(sql_db::TBL_FORMULA_ELEMENT);
+                    $db_con->set_class(sql_db::TBL_ELEMENT);
                     $db_con->set_usr($this->user()->id());
                     $msg = $db_con->delete_old(sql_db::TBL_FORMULA . sql_db::FLD_EXT_ID, $this->id);
                     $result->add_message($msg);
@@ -2425,7 +2416,7 @@ class sandbox_multi extends db_object_multi_user
         if ($this->is_prime()) {
             $grp_id = new group_id();
             $id_lst = $grp_id->get_array($this->id());
-            for ($i = count($id_lst); $i < group_id::PRIME_PHRASE; $i++) {
+            for ($i = count($id_lst); $i < group_id::PRIME_PHRASES_STD; $i++) {
                 $id_lst[] = 0;
             }
             return $id_lst;

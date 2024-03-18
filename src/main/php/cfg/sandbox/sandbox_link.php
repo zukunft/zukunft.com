@@ -41,14 +41,23 @@ namespace cfg;
 use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
-use cfg\log\change_log_action;
-use cfg\log\change_log_link;
+use cfg\log\change_action;
+use cfg\log\change_action_list;
+use cfg\log\change_link;
 use Exception;
-
-include_once MODEL_LOG_PATH . 'change_log_link.php';
 
 class sandbox_link extends sandbox
 {
+
+    /*
+     * database link
+     */
+
+    // list of fields that select the objects that should be linked
+    // dummy array to enable references here and is overwritten by the child object
+    const FLD_LST_LINK = array();
+    const FLD_LST_MUST_BUT_STD_ONLY = array();
+
 
     /*
      * object vars
@@ -106,6 +115,47 @@ class sandbox_link extends sandbox
 
 
     /*
+     * sql create
+     */
+
+    /**
+     * create an array with the fields and parameters for the sql table creation of the link object
+     * @param bool $usr_table create a second table for the user overwrites
+     * @param bool $is_sandbox true if the standard sandbox fields should be included
+     * @return array[] with the parameters of the table fields
+     */
+    protected function sql_all_field_par(bool $usr_table = false, bool $is_sandbox = true): array
+    {
+        if (!$usr_table) {
+            // the primary id field is always the first
+            $fields = $this->sql_id_field_par(false);
+            // the link fields are not repeated in the user table because they cannot be changed individually
+            $fields = array_merge($fields, $this::FLD_LST_LINK);
+            // set the owner of the link
+            $fields = array_merge($fields, sandbox::FLD_ALL_OWNER);
+            // mandatory fields that can be changed the user
+            $fields = array_merge($fields, $this::FLD_LST_MUST_BUT_STD_ONLY);
+            // fields that can be changed the user but are empty if the user has not done an overwrite
+            $fields = array_merge($fields, $this::FLD_LST_USER_CAN_CHANGE);
+            $fields = array_merge($fields, $this::FLD_LST_NON_CHANGEABLE);
+        } else {
+            // the primary id field is always the first
+            $fields = $this->sql_id_field_par(true);
+            // a user overwrite must always have a user
+            $fields = array_merge($fields, sandbox::FLD_ALL_CHANGER);
+            // mandatory fields that can be changed the user
+            $fields = array_merge($fields, $this::FLD_LST_MUST_BUT_USER_CAN_CHANGE);
+            // fields that can be changed the user but are empty if the user has not done an overwrite
+            $fields = array_merge($fields, $this::FLD_LST_USER_CAN_CHANGE);
+        }
+        if ($is_sandbox) {
+            $fields = array_merge($fields, sandbox::FLD_LST_ALL);
+        }
+        return $fields;
+    }
+
+
+    /*
      * loading / database access object (DAO) functions
      */
 
@@ -144,7 +194,7 @@ class sandbox_link extends sandbox
      * @param string $class the name of the child class from where the call has been triggered
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_link_id(int $from, int $type, int $to, string $class): int
+    function load_by_link_id(int $from, int $type = 0, int $to = 0, string $class = ''): int
     {
         global $db_con;
 
@@ -274,17 +324,17 @@ class sandbox_link extends sandbox
      * set the log entry parameter for a new link object
      * for all not named objects like links, this function is overwritten
      * e.g. that the user can see "added formula 'scale millions' to word 'mio'"
-     * @returns change_log_link with the object presets e.g. th object name
+     * @returns change_link with the object presets e.g. th object name
      */
-    function log_link_add(): change_log_link
+    function log_link_add(): change_link
     {
         log_debug($this->dsp_id());
 
-        $log = new change_log_link($this->user());
+        $log = new change_link($this->user());
         $log->new_from = $this->fob;
         $log->new_to = $this->tob;
 
-        $log->action = change_log_action::ADD;
+        $log->action = change_action::ADD;
         // TODO add the table exceptions from sql_db
         $log->set_table($this->obj_name . sql_db::TABLE_EXTENSION);
         $log->row_id = 0;
@@ -295,14 +345,14 @@ class sandbox_link extends sandbox
 
     /**
      * set the log entry parameter to delete a object
-     * @returns change_log_link with the object presets e.g. th object name
+     * @returns change_link with the object presets e.g. th object name
      */
-    function log_del_link(): change_log_link
+    function log_del_link(): change_link
     {
         log_debug($this->dsp_id());
 
-        $log = new change_log_link($this->user());
-        $log->action = change_log_action::DELETE;
+        $log = new change_link($this->user());
+        $log->action = change_action::DELETE;
         $log->set_table($this->obj_name . sql_db::TABLE_EXTENSION);
         $log->old_from = $this->fob();
         $log->old_to = $this->tob();
@@ -519,7 +569,7 @@ class sandbox_link extends sandbox
             }
             // check with the user link space
             $db_chk->set_user($this->user());
-            if ($db_chk->load_obj_vars()) {
+            if ($db_chk->load_by_link_id($this->fob->id(), 0, $this->tob->id(), $this::class)) {
                 if ($db_chk->id() > 0) {
                     log_debug('the ' . $this->fob->name() . ' "' . $this->fob->name() . '" is already linked to "' . $this->tob->name() . '" of the user linkspace');
                     $result = $db_chk;

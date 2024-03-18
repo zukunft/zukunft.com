@@ -44,6 +44,10 @@ class source extends sandbox_typed_api
      */
 
     // persevered source names for unit and integration tests (TN means TEST NAME)
+    // TN_* is the name of the predefined source used for testing
+    // TI_* is the id after adding the predefined sources
+    // TD_* is the description  of the predefined source
+    // TU_* is the URL of the predefined source
     const TN_READ = 'wikidata';
     const TN_MATH = 'Mathematical constant';
     const TN_READ_API = 'The International System of Units';
@@ -60,6 +64,8 @@ class source extends sandbox_typed_api
     const TU_ADD_API = 'https://api.zukunft.com/';
     const TN_UPD_API = 'System Test Source API renamed';
     const TD_UPD_API = 'System Test Source Description renamed API';
+    const TN_IPCC_AR6_SYNTHESIS = 'IPCC AR6 Synthesis Report: Climate Change 2022';
+    const TU_IPCC_AR6_SYNTHESIS = 'https://www.ipcc.ch/report/sixth-assessment-report-cycle/';
 
     // parameters used for unit and integration tests
     const TEST_URL_CHANGED = 'https://api.zukunft.com/';

@@ -134,42 +134,4 @@ class group_link extends db_object_seq_id
         return $qp;
     }
 
-    /**
-     * create an SQL statement to retrieve a single phrase group triple link by the id
-     *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql_obj_vars(sql_db $db_con): sql_par
-    {
-        $db_con->set_class(sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK);
-        $qp = new sql_par(self::class);
-
-        if ($this->id > 0) {
-            $qp->name .= sql_db::FLD_ID;
-            $db_con->add_par(sql_par_type::INT, $this->id);
-        } else {
-            log_err('The phrase group triple link id must be set ' .
-                'to load a ' . self::class, self::class . '->load_sql');
-
-        }
-        $db_con->set_fields(self::FLD_NAMES);
-        $db_con->set_name($qp->name);
-        //$db_con->set_usr($this->user()->id());
-        $qp->sql = $db_con->select_by_set_id();
-        $qp->par = $db_con->get_par();
-
-        return $qp;
-    }
-
-    /**
-     * load the triple to phrase group link from the database
-     */
-    function load_by_obj_vars(): bool
-    {
-        global $db_con;
-        $qp = $this->load_sql_obj_vars($db_con);
-        return $this->row_mapper($db_con->get1($qp));
-    }
-
 }

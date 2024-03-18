@@ -30,7 +30,8 @@
 */
 
 use cfg\component\component;
-use cfg\component_link;
+use cfg\component\component_link;
+use cfg\db\sql_db;
 use cfg\formula;
 use cfg\formula_link;
 use cfg\group\group;
@@ -38,7 +39,6 @@ use cfg\phrase;
 use cfg\sandbox;
 use cfg\sandbox_named;
 use cfg\source;
-use cfg\db\sql_db;
 use cfg\system_log_list;
 use cfg\triple;
 use cfg\user;
@@ -207,13 +207,17 @@ class user_dsp_old extends user
                 // create the triple objects with the minimal parameter needed
                 // TODO maybe use row mapper
                 $trp_usr = new triple($this);
-                $trp_usr->set_id($sbx_row['id']);
-                $trp_usr->fob->set_id($sbx_row['from_phrase_id']);
-                $trp_usr->verb->set_id($sbx_row[verb::FLD_ID]);
-                $trp_usr->tob->set_id($sbx_row['to_phrase_id']);
+                $id = $sbx_row['id'];
+                if ($id != 0) {
+                    $trp_usr->load_by_id($id);
+                } else {
+                    $from_id = $sbx_row['from_phrase_id'];
+                    $vrb_id = $sbx_row[verb::FLD_ID];
+                    $to_id = $sbx_row['to_phrase_id'];
+                    $trp_usr->load_by_link_id($from_id, $vrb_id, $to_id);
+                }
                 $trp_usr->set_name($sbx_row['usr_name']);
                 $trp_usr->set_excluded($sbx_row['usr_excluded']);
-                //$trp_usr->load_obj_vars();
 
                 // to review: try to avoid using load_test_user
                 $usr_std = new user;
@@ -1047,8 +1051,8 @@ class user_dsp_old extends user
                     l.component_id, 
                     CASE WHEN (u.order_nbr     <> '' IS NOT TRUE) THEN l.order_nbr     ELSE u.order_nbr     END AS usr_order, 
                     l.order_nbr                                                                  AS std_order, 
-                    CASE WHEN (u.position_type <> '' IS NOT TRUE) THEN l.position_type ELSE u.position_type END AS usr_type, 
-                    l.position_type                                                              AS std_type, 
+                    CASE WHEN (u.position_type_id <> '' IS NOT TRUE) THEN l.position_type_id ELSE u.position_type_id END AS usr_type, 
+                    l.position_type_id                                                              AS std_type, 
                     CASE WHEN (u.excluded      <> '' IS NOT TRUE) THEN l.excluded      ELSE u.excluded      END AS usr_excluded,
                     l.excluded                                                                   AS std_excluded
                FROM user_component_links u,
@@ -1063,8 +1067,8 @@ class user_dsp_old extends user
                     l.component_id, 
                     IF(u.order_nbr     IS NULL, l.order_nbr,     u.order_nbr)     AS usr_order, 
                     l.order_nbr                                                   AS std_order, 
-                    IF(u.position_type IS NULL, l.position_type, u.position_type) AS usr_type, 
-                    l.position_type                                               AS std_type, 
+                    IF(u.position_type_id IS NULL, l.position_type_id, u.position_type_id) AS usr_type, 
+                    l.position_type_id                                               AS std_type, 
                     IF(u.excluded      IS NULL, l.excluded,      u.excluded)      AS usr_excluded,
                     l.excluded                                                    AS std_excluded
                FROM user_component_links u,
@@ -1131,7 +1135,7 @@ class user_dsp_old extends user
                     $sql_other = "SELECT l.component_link_id, 
                                u.user_id, 
                                u.order_nbr, 
-                               u.position_type, 
+                               u.position_type_id, 
                                u.excluded
                           FROM user_component_links u,
                                component_links l

@@ -1303,6 +1303,7 @@ class html_base
     function echo(string $txt): void
     {
         echo $txt;
+        echo "\n";
     }
 
     /**

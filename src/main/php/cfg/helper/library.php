@@ -34,10 +34,27 @@ namespace cfg;
 
 use api\api;
 use api\sandbox\combine_object as combine_object_api;
+use cfg\component\component;
+use cfg\component\component_link;
+use cfg\component\component_link_type;
+use cfg\component\position_type;
+use cfg\component\component_type;
 use cfg\db\sql_db;
+use cfg\log\change;
+use cfg\log\change_action;
+use cfg\log\change_big_value;
+use cfg\log\change_field;
+use cfg\log\change_link;
+use cfg\log\change_prime_value;
+use cfg\log\change_standard_value;
+use cfg\log\change_table;
+use cfg\log\change_table_field;
+use cfg\log\system_log;
+use cfg\user\user_profile;
+use cfg\user\user_type;
 use cfg\value\value;
+use cfg\value\value_ts_data;
 use DateTime;
-use DOMDocument;
 use Exception;
 
 class library
@@ -478,7 +495,7 @@ class library
     function diff_msg(
         string|array|null $result,
         string|array|null $target,
-        bool $ignore_order = true): string
+        bool              $ignore_order = true): string
     {
         if (is_string($target) and is_string($result)) {
             $msg = $this->str_diff_msg($result, $target);
@@ -839,12 +856,12 @@ class library
     /**
      * get the diff of a multidimensional array where the sub item can ba matched by a key
      *
-     * @param array $needle the smaller array that is expected to be part of the haystack array
      * @param array $haystack the bigger array that is expected to contain all items from the needle
+     * @param array $needle the smaller array that is expected to be part of the haystack array
      * @param string $key_name the key name to find the matching item in the haystack
      * @return array an empty array if all item and sub items from the needle are in the haystack
      */
-    function array_recursive_diff(array $needle, array $haystack, string $key_name = sql_db::FLD_ID): array
+    function array_recursive_diff(array $haystack, array $needle, string $key_name = sql_db::FLD_ID): array
     {
         $result = array();
 
@@ -875,14 +892,14 @@ class library
                             }
                         }
                         if ($haystack_key >= 0) {
-                            $inner_haystack = $this->array_recursive_diff($inner_value, $haystack[$key][$haystack_key]);
+                            $inner_haystack = $this->array_recursive_diff($haystack[$key][$haystack_key], $inner_value);
                             if (count($inner_haystack)) {
                                 $result[$key] = $inner_haystack;
                             }
                         }
                     }
                     if ($haystack_key < 0) {
-                        $inner_haystack = $this->array_recursive_diff($value, $haystack[$key]);
+                        $inner_haystack = $this->array_recursive_diff($haystack[$key], $value);
                         if (count($inner_haystack)) {
                             $result[$key] = $inner_haystack;
                         }
@@ -918,7 +935,7 @@ class library
         $json_needle_clean = $this->json_clean($json_needle);
         $json_haystack_clean = $this->json_clean($json_haystack);
         // compare the JSON object not the array to ignore the order
-        $diff = $this->array_recursive_diff($json_needle_clean, $json_haystack_clean);
+        $diff = $this->array_recursive_diff($json_haystack_clean, $json_needle_clean);
         if (count($diff) == 0) {
             return true;
         } else {
@@ -1153,8 +1170,12 @@ class library
                         $to_sep[$to_keys[$to_pos]],
                         $str_type
                     );
-                    array_walk_recursive($sub_diff[self::STR_DIFF_VAL], function ($diff, $key) use (&$diff_part){$diff_part[$key] = $diff;});
-                    array_walk_recursive($sub_diff[self::STR_DIFF_TYP], function ($type, $key) use (&$diff_type){$diff_type[$key] = $type;});
+                    array_walk_recursive($sub_diff[self::STR_DIFF_VAL], function ($diff, $key) use (&$diff_part) {
+                        $diff_part[$key] = $diff;
+                    });
+                    array_walk_recursive($sub_diff[self::STR_DIFF_TYP], function ($type, $key) use (&$diff_type) {
+                        $diff_type[$key] = $type;
+                    });
                     if ($to_pos < count($to)) {
                         $to_pos++;
                     }
@@ -1196,7 +1217,7 @@ class library
     }
 
     /**
-     * @param string $from the part of the target string that should be found in the $to string array
+     * @param array $from the part of the target string that should be found in the $to string array
      * @param array $to the result string converted to an array
      * @param int $start_pos the staring position in the to string array
      * @return int the position of the next match in the to array or -1 if nothing found
@@ -1210,11 +1231,9 @@ class library
             $compare_pos = 0;
             $found = true;
             while ($compare_pos < count($from) and $found) {
-                if ($check_pos + $compare_pos > count($to)) {
+                if ($check_pos + $compare_pos >= count($to)) {
                     $found = false;
                 } else {
-                    $from_char = $from[$compare_pos];
-                    $to_char = $to[$check_pos + $compare_pos];
                     if ($from[$compare_pos] != $to[$check_pos + $compare_pos]) {
                         $found = false;
                     }
@@ -1468,7 +1487,7 @@ class library
         if ($result) {
             if ($json == '') {
                 $result = false;
-            // avoid handling a simple string with high-quotes as a json
+                // avoid handling a simple string with high-quotes as a json
             } elseif (!(str_contains($text, '[')
                 or str_contains($text, '{'))) {
                 $result = false;
@@ -1540,7 +1559,100 @@ class library
      */
     function class_to_name(string $class): string
     {
-        return $this->str_right_of_or_all($class, '\\');
+        $result = $this->str_right_of_or_all($class, '\\');
+        // for some lists
+        switch ($class) {
+            case sys_log_status_list::class;
+                $result = str_replace('_list', '', $result);
+                break;
+        }
+        return $result;
+    }
+
+    /**
+     * the folder where a class can be found
+     * @param string $class including the namespace
+     * @return string class name without the namespace
+     */
+    function class_to_path(string $class): string
+    {
+        $result = $this->class_to_name($class);
+        switch ($result) {
+            case $this->class_to_name(config::class):
+            case $this->class_to_name(ip_range::class):
+            case $this->class_to_name(session::class):
+                $result = 'system';
+                break;
+            case $this->class_to_name(system_time_type::class):
+            case $this->class_to_name(system_time::class):
+                $result = $this->class_to_name(system_log::class);
+                break;
+            case $this->class_to_name(job_time::class):
+                $result = 'job';
+                break;
+            case $this->class_to_name(change_action::class):
+            case $this->class_to_name(change_table::class):
+            case $this->class_to_name(change_field::class):
+            case $this->class_to_name(change::class):
+            case $this->class_to_name(change_prime_value::class):
+            case $this->class_to_name(change_standard_value::class):
+            case $this->class_to_name(change_big_value::class):
+            case $this->class_to_name(change_link::class):
+            case $this->class_to_name(change_table_field::class):
+                $result = 'log';
+                break;
+            case $this->class_to_name(pod_type::class):
+            case $this->class_to_name(pod_status::class):
+                $result = $this->class_to_name(pod::class);
+                break;
+            case $this->class_to_name(phrase_table_status::class):
+            case $this->class_to_name(phrase_table::class):
+                $result = $this->class_to_name(phrase::class);
+                break;
+            case $this->class_to_name(language_form::class):
+                $result = $this->class_to_name(language::class);
+                break;
+            case $this->class_to_name(value_ts_data::class):
+                $result = $this->class_to_name(value::class);
+                break;
+            case $this->class_to_name(source::class):
+            case $this->class_to_name(ref_type::class):
+                $result = $this->class_to_name(ref::class);
+                break;
+            case $this->class_to_name(element_type::class):
+                $result = $this->class_to_name(element::class);
+                break;
+            case $this->class_to_name(formula_link_type::class):
+            case $this->class_to_name(formula_link::class):
+                $result = $this->class_to_name(formula::class);
+                break;
+            case $this->class_to_name(view_type::class):
+            case $this->class_to_name(view_link_type::class):
+            case $this->class_to_name(view_term_link::class):
+                $result = $this->class_to_name(view::class);
+                break;
+            case $this->class_to_name(component_link_type::class):
+            case $this->class_to_name(position_type::class):
+            case $this->class_to_name(component_type::class):
+            case $this->class_to_name(component_link::class):
+                $result = $this->class_to_name(component::class);
+                break;
+            case $this->class_to_name(sys_log_type::class):
+            case $this->class_to_name(sys_log_status::class):
+            case $this->class_to_name(sys_log_function::class):
+            case $this->class_to_name(job_type::class):
+            case $this->class_to_name(user_type::class):
+            case $this->class_to_name(user_profile::class):
+            case $this->class_to_name(user_official_type::class):
+            case $this->class_to_name(protection_type::class):
+            case $this->class_to_name(share_type::class):
+            case $this->class_to_name(phrase_type::class):
+            case $this->class_to_name(source_type::class):
+            case $this->class_to_name(formula_type::class):
+                $result = 'type';
+                break;
+        }
+        return $result;
     }
 
     /*

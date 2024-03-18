@@ -5,7 +5,7 @@ PREPARE component_by_view_id (bigint, bigint) AS
                 s.view_id,
                 s.component_id,
                 CASE WHEN (u.order_nbr             IS     NULL) THEN s.order_nbr          ELSE u.order_nbr           END AS order_nbr,
-                CASE WHEN (u.position_type         IS     NULL) THEN s.position_type      ELSE u.position_type       END AS position_type,
+                CASE WHEN (u.position_type_id      IS     NULL) THEN s.position_type_id   ELSE u.position_type_id    END AS position_type_id,
                 CASE WHEN (u.excluded              IS     NULL) THEN s.excluded           ELSE u.excluded            END AS excluded,
                 CASE WHEN (u.share_type_id         IS     NULL) THEN s.share_type_id      ELSE u.share_type_id       END AS share_type_id,
                 CASE WHEN (u.protect_id            IS     NULL) THEN s.protect_id         ELSE u.protect_id          END AS protect_id,

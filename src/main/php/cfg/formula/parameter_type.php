@@ -2,7 +2,7 @@
 
 /*
 
-    model/formula/formula_element_type.php - enum to link the class string to a db id for a formula element
+    model/formula/element_type.php - enum to link the class string to a db id for a formula element
     --------------------------------------
 
     This file is part of zukunft.com - calc with words

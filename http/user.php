@@ -31,7 +31,7 @@
 */
 
 use cfg\component\component;
-use cfg\component_link;
+use cfg\component\component_link;
 use cfg\db\sql_db;
 use cfg\formula;
 use cfg\formula_link;

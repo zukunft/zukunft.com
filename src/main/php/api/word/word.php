@@ -32,6 +32,8 @@
 
 namespace api\word;
 
+include_once MODEL_SANDBOX_PATH . 'sandbox_typed.php';
+
 use api\phrase\phrase as phrase_api;
 use api\phrase\term as term_api;
 use api\sandbox\sandbox_typed as sandbox_typed_api;
@@ -46,7 +48,7 @@ class word extends sandbox_typed_api
      */
 
     // word names for stand-alone unit tests that are added with the system initial data load
-    // TN_* is the name of the word used for testing
+    // TN_* is the name of the word used for testing created with the initial setup (see also TWN_*)
     // TI_* is the database id based on the initial load
     // TD_* is the tooltip/description of the word
     const TN_READ = 'Mathematics';
@@ -91,14 +93,22 @@ class word extends sandbox_typed_api
     const TI_INHABITANT = 197;
     const TN_INHABITANTS = 'inhabitants';
     const TN_YEAR = 'Year';
+    const TN_2013 = '2013';
+    const TI_2013 = 272;
+    const TN_2014 = '2014';
+    const TI_2014 = 271;
     const TN_2015 = '2015';
+    const TI_2015 = 199;
     const TN_2016 = '2016';
+    const TI_2016 = 200;
     const TN_2017 = '2017';
+    const TI_2017 = 201;
     const TN_2018 = '2018';
+    const TI_2018 = 202;
     const TN_2019 = '2019';
     const TI_2019 = 16;
     const TN_2020 = '2020';
-    const TI_2020 = 202;
+    const TI_2020 = 203;
     const TN_PCT = 'percent';
     const TI_PCT = 166;
     // _PRE are the predefined words
@@ -111,13 +121,26 @@ class word extends sandbox_typed_api
     const TN_TOTAL_PRE = 'total';
     const TI_TOTAL = 211;
     const TN_COMPANY = 'Company';
+    const TN_ABB = 'ABB';
+    const TI_ABB = 269;
+    const TN_VESTAS = 'Vestas';
+    const TI_VESTAS = 270;
+    const TN_CHF = 'CHF';
+    const TI_CHF = 316;
+    const TN_SALES = 'Sales';
+    const TI_SALES = 317;
+    const TN_CASH_FLOW = 'cash flow statement';
+    const TI_CASH_FLOW = 274;
+    const TN_TAX = 'Income taxes';
+    const TI_TAX = 273;
 
     // persevered word names for unit and integration tests based on the database
+    // TWN_* - is a Test Word Name for words created only for testing (see also TN_*)
     const TN_ADD = 'System Test Word';
     const TN_RENAMED = 'System Test Word Renamed';
     const TN_PARENT = 'System Test Word Parent';
     const TN_FIN_REPORT = 'System Test Word with many relations e.g. Financial Report';
-    const TN_CASH_FLOW = 'System Test Word Parent without Inheritance e.g. Cash Flow Statement';
+    const TWN_CASH_FLOW = 'System Test Word Parent without Inheritance e.g. Cash Flow Statement';
     const TN_TAX_REPORT = 'System Test Word Child without Inheritance e.g. Income Taxes';
     const TN_ASSETS = 'System Test Word containing multi levels e.g. Assets';
     const TN_ASSETS_CURRENT = 'System Test Word multi levels e.g. Current Assets';
@@ -127,7 +150,7 @@ class word extends sandbox_typed_api
     const TN_CASH = 'System Test Word multi levels e.g. Cash';
     const TN_2021 = 'System Test Time Word e.g. 2021';
     const TN_2022 = 'System Test Another Time Word e.g. 2022';
-    const TN_CHF = 'System Test Measure Word e.g. CHF';
+    const TWN_CHF = 'System Test Measure Word e.g. CHF';
     const TN_SHARE = 'System Test Word Share';
     const TN_PRICE = 'System Test Word Share Price';
     const TN_EARNING = 'System Test Word Earnings';
@@ -183,7 +206,7 @@ class word extends sandbox_typed_api
         self::TN_RENAMED,
         self::TN_PARENT,
         self::TN_FIN_REPORT,
-        self::TN_CASH_FLOW,
+        self::TWN_CASH_FLOW,
         self::TN_TAX_REPORT,
         self::TN_ASSETS,
         self::TN_ASSETS_CURRENT,
@@ -193,7 +216,7 @@ class word extends sandbox_typed_api
         self::TN_CASH,
         self::TN_2021,
         self::TN_2022,
-        self::TN_CHF,
+        self::TWN_CHF,
         self::TN_SHARE,
         self::TN_PRICE,
         self::TN_EARNING,
@@ -220,7 +243,7 @@ class word extends sandbox_typed_api
         self::TN_RENAMED,
         self::TN_PARENT,
         self::TN_FIN_REPORT,
-        self::TN_CASH_FLOW,
+        self::TWN_CASH_FLOW,
         self::TN_TAX_REPORT,
         self::TN_ASSETS,
         self::TN_ASSETS_CURRENT,
@@ -230,7 +253,7 @@ class word extends sandbox_typed_api
         self::TN_CASH,
         self::TN_2021,
         self::TN_2022,
-        self::TN_CHF,
+        self::TWN_CHF,
         self::TN_SHARE,
         self::TN_PRICE,
         self::TN_EARNING,
@@ -255,7 +278,7 @@ class word extends sandbox_typed_api
         self::TN_ADD,
         self::TN_PARENT,
         self::TN_FIN_REPORT,
-        self::TN_CASH_FLOW,
+        self::TWN_CASH_FLOW,
         self::TN_TAX_REPORT,
         self::TN_ASSETS,
         self::TN_ASSETS_CURRENT,
@@ -265,7 +288,7 @@ class word extends sandbox_typed_api
         self::TN_CASH,
         self::TN_2021,
         self::TN_2022,
-        self::TN_CHF,
+        self::TWN_CHF,
         self::TN_SHARE,
         self::TN_PRICE,
         self::TN_EARNING,
@@ -285,7 +308,7 @@ class word extends sandbox_typed_api
         self::TN_ADD_API,
         self::TN_UPD_API
     );
-    const TEST_WORDS_MEASURE = array(self::TN_CHF);
+    const TEST_WORDS_MEASURE = array(self::TWN_CHF);
     const TEST_WORDS_SCALING_HIDDEN = array(self::TN_ONE);
     const TEST_WORDS_SCALING = array(self::TN_IN_K, self::TN_MIO, self::TN_MIO_SHORT, self::TN_BIL);
     const TEST_WORDS_PERCENT = array(self::TN_PCT);

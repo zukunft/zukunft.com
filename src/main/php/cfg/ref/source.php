@@ -64,28 +64,41 @@ class source extends sandbox_typed
      * database link
      */
 
-    // object specific database and JSON object field names
-    const FLD_ID = 'source_id';
-    const FLD_NAME = 'source_name';
-    const FLD_TYPE = 'source_type_id';
-    const FLD_URL = 'url';
-
     // comments used for the database creation
     const TBL_COMMENT = 'for the original sources for the numeric, time and geo values';
 
+    // object specific database and JSON object field names
+    // *_COM: the description of the field
+    const FLD_ID = 'source_id';
+    const FLD_NAME_COM = 'the unique name of the source used e.g. as the primary search key';
+    const FLD_NAME = 'source_name';
+    const FLD_DESCRIPTION_COM = 'the user specific description of the source for mouse over helps';
+    const FLD_TYPE_COM = 'link to the source type';
+    const FLD_TYPE = 'source_type_id';
+    const FLD_URL_COM = 'the url of the source';
+    const FLD_URL = 'url';
+    const FLD_CODE_ID_COM = 'to select sources used by this program';
+
+    // list of fields that MUST be set by one user
+    const FLD_LST_MUST_BE_IN_STD = array(
+        [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_NAME_COM],
+    );
+    // list of must fields that CAN be changed by the user
+    const FLD_LST_MUST_BUT_USER_CAN_CHANGE = array(
+        [self::FLD_NAME, sql_field_type::NAME, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_COM],
+    );
     // list of fields that can be changed by the user
-    const FLD_LST_CREATE_CHANGEABLE = array(
-        [self::FLD_NAME, sql_field_type::NAME, sql_field_default::NOT_NULL, sql::INDEX, '', 'the unique name of the source used e.g. as the primary search key'],
-        [self::FLD_DESCRIPTION, sql_field_type::TEXT, sql_field_default::NULL, '', '', 'the user specific description of the source for mouse over helps'],
-        [self::FLD_TYPE, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', 'link to the source type'],
-        [self::FLD_URL, sql_field_type::TEXT, sql_field_default::NULL, '', '', 'the url of the source'],
-        [sql_db::FLD_CODE_ID, sql_field_type::CODE_ID, sql_field_default::NULL, '', '', 'to select sources used by this program'],
+    const FLD_LST_USER_CAN_CHANGE = array(
+        [self::FLD_DESCRIPTION, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
+        [self::FLD_TYPE, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, source_type::class, self::FLD_TYPE_COM],
+        [self::FLD_URL, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_URL_COM],
+        [sql::FLD_CODE_ID, sql_field_type::CODE_ID, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
     );
 
     // all database field names excluding the id used to identify if there are some user specific changes
     const FLD_NAMES = array(
         self::FLD_NAME,
-        sql_db::FLD_CODE_ID
+        sql::FLD_CODE_ID
     );
     // list of the user specific database field names
     const FLD_NAMES_USR = array(
@@ -158,7 +171,7 @@ class source extends sandbox_typed
         if ($result) {
             $this->url = $db_row[self::FLD_URL];
             $this->type_id = $db_row[self::FLD_TYPE];
-            $this->code_id = $db_row[sql_db::FLD_CODE_ID];
+            $this->code_id = $db_row[sql::FLD_CODE_ID];
         }
         return $result;
     }
@@ -227,23 +240,40 @@ class source extends sandbox_typed
      */
 
     /**
-     * create the SQL to load the default source always by the id
-     *
-     * @param sql $sc with the target db_type set
-     * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * just set the class name for the user sandbox function
+     * load a source object by name
+     * @param string $name the name source
+     * @return int the id of the object found and zero if nothing is found
      */
-    function load_standard_sql(sql $sc, string $class = self::class): sql_par
+    function load_by_name(string $name): int
     {
-        $sc->set_class(source::class);
-        $sc->set_fields(array_merge(
-            self::FLD_NAMES,
-            self::FLD_NAMES_USR,
-            self::FLD_NAMES_NUM_USR,
-            array(user::FLD_ID)
-        ));
+        return parent::load_by_name($name);
+    }
 
-        return parent::load_standard_sql($sc, $class);
+    /**
+     * just set the class name for the user sandbox function
+     * load a source object by database id
+     * @param int $id the id of the source
+     * @return int the id of the object found and zero if nothing is found
+     */
+    function load_by_id(int $id): int
+    {
+        return parent::load_by_id($id);
+    }
+
+    /**
+     * load a source by code id
+     * @param string $code_id the code id of the source
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return int the id of the object found and zero if nothing is found
+     */
+    function load_by_code_id(string $code_id, string $class = self::class): int
+    {
+        global $db_con;
+
+        log_debug($code_id);
+        $qp = $this->load_sql_by_code_id($db_con->sql_creator(), $code_id, $class);
+        return parent::load($qp);
     }
 
     /**
@@ -265,6 +295,44 @@ class source extends sandbox_typed
     }
 
     /**
+     * create an SQL statement to retrieve a source by code id from the database
+     *
+     * @param sql $sc with the target db_type set
+     * @param string $code_id the code id of the source
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_code_id(sql $sc, string $code_id, string $class): sql_par
+    {
+        $qp = $this->load_sql($sc, 'code_id', $class);
+        $sc->add_where(sql::FLD_CODE_ID, $code_id);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * create the SQL to load the default source always by the id
+     *
+     * @param sql $sc with the target db_type set
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_standard_sql(sql $sc, string $class = self::class): sql_par
+    {
+        $sc->set_class(source::class);
+        $sc->set_fields(array_merge(
+            self::FLD_NAMES,
+            self::FLD_NAMES_USR,
+            self::FLD_NAMES_NUM_USR,
+            array(user::FLD_ID)
+        ));
+
+        return parent::load_standard_sql($sc, $class);
+    }
+
+    /**
      * create the common part of an SQL statement to retrieve the parameters of a source from the database
      *
      * @param sql $sc with the target db_type set
@@ -280,63 +348,6 @@ class source extends sandbox_typed
             self::FLD_NAMES_USR,
             self::FLD_NAMES_NUM_USR
         );
-    }
-
-    /**
-     * create an SQL statement to retrieve a source by code id from the database
-     *
-     * @param sql $sc with the target db_type set
-     * @param string $code_id the code id of the source
-     * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql_by_code_id(sql $sc, string $code_id, string $class): sql_par
-    {
-        $qp = $this->load_sql($sc, 'code_id', $class);
-        $sc->add_where(sql_db::FLD_CODE_ID, $code_id);
-        $qp->sql = $sc->sql();
-        $qp->par = $sc->get_par();
-
-        return $qp;
-    }
-
-    /**
-     * load a source by code id
-     * @param string $code_id the code id of the source
-     * @param string $class the name of the child class from where the call has been triggered
-     * @return int the id of the object found and zero if nothing is found
-     */
-    function load_by_code_id(string $code_id, string $class = self::class): int
-    {
-        global $db_con;
-
-        log_debug($code_id);
-        $qp = $this->load_sql_by_code_id($db_con->sql_creator(), $code_id, $class);
-        return parent::load($qp);
-    }
-
-    /**
-     * just set the class name for the user sandbox function
-     * load a source object by database id
-     * @param int $id the id of the source
-     * @param string $class the source class name
-     * @return int the id of the object found and zero if nothing is found
-     */
-    function load_by_id(int $id, string $class = self::class): int
-    {
-        return parent::load_by_id($id, $class);
-    }
-
-    /**
-     * just set the class name for the user sandbox function
-     * load a source object by name
-     * @param string $name the name source
-     * @param string $class the source class name
-     * @return int the id of the object found and zero if nothing is found
-     */
-    function load_by_name(string $name, string $class = self::class): int
-    {
-        return parent::load_by_name($name, $class);
     }
 
     function name_field(): string

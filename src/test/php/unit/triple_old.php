@@ -30,7 +30,7 @@
 
 */
 
-namespace test;
+namespace unit;
 
 // TODO combine with triple_unit_test
 
@@ -40,8 +40,9 @@ use cfg\db\sql_db;
 use cfg\triple;
 use cfg\verb;
 use cfg\word;
+use test\test_cleanup;
 
-class triple_unit_tests_old
+class triple_old
 {
     function run(test_cleanup $t): void
     {

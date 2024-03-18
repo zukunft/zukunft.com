@@ -52,9 +52,9 @@ class value_list
         $t->subheader('Value list tests');
 
         // create a test set of phrase
-        $phr_zh = $t->dummy_word_zh()->phrase();
+        $phr_zh = $t->zh_word()->phrase();
         $phr_city = $t->city_word()->phrase();
-        $phr_canton = $t->dummy_word_canton()->phrase();
+        $phr_canton = $t->canton()->phrase();
         $phr_ch = $t->city_word()->phrase();
         $phr_inhabitant = $t->dummy_word_inhabitant()->phrase();
         $phr_2019 = $t->dummy_word_2019()->phrase();
@@ -131,6 +131,18 @@ class value_list
         $table_html = $lst_dsp->table($phr_lst_context_dsp);
         $test_page .= 'with context: ' . $header_html . $table_html . '<br>';
         $t->html_test($test_page, 'value_list', $t);
+
+        // TODO add a test that if a view contains beside the "2023 (year)"
+        //      no other phrase that contains the word "2023"
+        //      the "(year)" is not shown to the user, because the user will assume i
+
+        // TODO add s test that if a view contains the word "city"
+        //      or many cities and never a "Canton"
+        //      and the phrase "Zurich (city)" is shown
+        //      only "Zurich" without "(city)" is used
+        //      because the user will assume "City of Zurich"
+        //      on mouseover show the complete phrase name with the description
+
 
     }
 

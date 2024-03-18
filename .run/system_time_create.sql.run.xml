@@ -1,0 +1,8 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="system_time_create.sql" type="DatabaseScript" editBeforeRun="true" nameIsGenerated="true">
+    <script-file value="$PROJECT_DIR$/src/test/resources/db/system_log/system_time_create.sql" />
+    <script-mode>FILE</script-mode>
+    <data-source id="53a988fb-ffe9-4120-a204-464387cdda32" namespace="database/&quot;zukunft&quot;" />
+    <method v="2" />
+  </configuration>
+</component>

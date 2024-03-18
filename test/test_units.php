@@ -46,13 +46,13 @@ include_once PHP_PATH . 'zu_lib.php';
 const PHP_TEST_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'test' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_TEST_PATH . 'utils' . DIRECTORY_SEPARATOR . 'test_base.php';
 
-use test\test_unit;
+use unit\all_unit_tests;
 
 // ---------------
 // prepare testing
 // ---------------
 
-$t = new test_unit();
+$t = new all_unit_tests();
 
 // ------------------
 // start unit testing

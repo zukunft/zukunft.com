@@ -37,6 +37,7 @@ use cfg\db\sql_par;
 
 include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';
+include_once MODEL_HELPER_PATH . 'type_list.php';
 include_once MODEL_REF_PATH . 'ref_type.php';
 
 global $ref_types;
@@ -72,7 +73,7 @@ class ref_type_list extends type_list
         $qp->name = $class;
         $sc->set_name($qp->name);
         //TODO check if $db_con->set_usr($this->user()->id()); is needed
-        $sc->set_fields(array(sandbox_named::FLD_DESCRIPTION, sql_db::FLD_CODE_ID, self::FLD_URL));
+        $sc->set_fields(array(sandbox_named::FLD_DESCRIPTION, sql::FLD_CODE_ID, self::FLD_URL));
         if ($order_field == '') {
             $order_field = $sc->get_id_field_name($class);
         }
@@ -111,8 +112,8 @@ class ref_type_list extends type_list
         $db_lst = $db_con->get($qp);
         if ($db_lst != null) {
             foreach ($db_lst as $db_entry) {
-                $type_code_id = strval($db_entry[sql_db::FLD_CODE_ID]);
-                $type_name = strval($db_entry[sql_db::FLD_TYPE_NAME]);
+                $type_code_id = strval($db_entry[sql::FLD_CODE_ID]);
+                $type_name = strval($db_entry[sql::FLD_TYPE_NAME]);
                 $type_comment = strval($db_entry[sandbox_named::FLD_DESCRIPTION]);
                 $type_obj = new ref_type($type_code_id, $type_name, $type_comment);
                 $type_obj->set_id($db_entry[self::FLD_ID]);
