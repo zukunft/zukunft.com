@@ -458,7 +458,7 @@ class sandbox_list extends base_list
 
     /**
      * @param array $tbl_types list of sql table types that specifies the current case
-     * @return bool true if the list of types specifies that the value has e.g. no protection and is public
+     * @return bool true if the list of types specifies that the value or result has e.g. no protection and is public
      */
     protected function is_std(array $tbl_types): bool
     {
@@ -471,11 +471,25 @@ class sandbox_list extends base_list
 
     /**
      * @param array $tbl_types list of sql table types that specifies the current case
-     * @return bool true if the list of types specifies that the value has max 4 prime phrases
+     * @return bool true if the list of types specifies that the value or result has max 4 prime phrases
      */
     protected function is_prime(array $tbl_types): bool
     {
         if (in_array(sql_table_type::PRIME, $tbl_types)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @param array $tbl_types list of sql table types that specifies the current case
+     * @return bool true if the list of types specifies that the result has max 7 prime phrases plus the formula id
+     *              or 8 prime phrases if the table is not standard
+     */
+    protected function is_main(array $tbl_types): bool
+    {
+        if (in_array(sql_table_type::MAIN, $tbl_types)) {
             return true;
         } else {
             return false;
@@ -507,6 +521,9 @@ class sandbox_list extends base_list
         }
         if ($this->is_prime($tbl_types)) {
             $result .= sql_table_type::PRIME->extension();
+        }
+        if ($this->is_main($tbl_types)) {
+            $result .= sql_table_type::MAIN->extension();
         }
         if ($this->is_big($tbl_types)) {
             $result .= sql_table_type::BIG->extension();

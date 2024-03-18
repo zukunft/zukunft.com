@@ -42,9 +42,10 @@ namespace cfg\value;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db_object_seq_id_user;
-use cfg\log\change_log_action;
-use cfg\log\change_log_link;
-use cfg\log\change_log_table;
+use cfg\log\change_action;
+use cfg\log\change_action_list;
+use cfg\log\change_link;
+use cfg\log\change_table_list;
 use cfg\phrase;
 use cfg\sys_log_level;
 use cfg\user;
@@ -235,12 +236,12 @@ class value_phrase_link extends db_object_seq_id_user
      * set the log entry parameter for a new value word link
      * TODO check if it is not better to log the deletion of a value and creation of a new value?
      */
-    private function log_add(): change_log_link
+    private function log_add(): change_link
     {
         log_debug('val_lnk->log_add for "' . $this->phr->id() . ' to ' . $this->val->id());
-        $log = new change_log_link($this->user());
-        $log->action = change_log_action::ADD;
-        $log->set_table(change_log_table::VALUE_PHRASE_LINK);
+        $log = new change_link($this->user());
+        $log->action = change_action::ADD;
+        $log->set_table(change_table_list::VALUE_PHRASE_LINK);
         $log->new_from = $this->val;
         $log->new_to = $this->phr;
         $log->row_id = 0;
@@ -251,12 +252,12 @@ class value_phrase_link extends db_object_seq_id_user
 
     // set the main log entry parameters for updating one value word link
     // e.g. if the entered the number for "interest income", but see that he has used the word "interest cost" and changes it to "interest income"
-    private function log_upd($db_rec): change_log_link
+    private function log_upd($db_rec): change_link
     {
         log_debug('val_lnk->log_upd for "' . $this->phr->id() . ' to ' . $this->val->id());
-        $log = new change_log_link($this->user());
-        $log->action = change_log_action::UPDATE;
-        $log->set_table(change_log_table::VALUE_PHRASE_LINK); // no user sandbox for links, only the values itself can differ from user to user
+        $log = new change_link($this->user());
+        $log->action = change_action::UPDATE;
+        $log->set_table(change_table_list::VALUE_PHRASE_LINK); // no user sandbox for links, only the values itself can differ from user to user
         //$log->set_field(phrase::FLD_ID);
         $log->old_from = $db_rec->val;
         $log->old_to = $db_rec->wrd;

@@ -261,7 +261,7 @@ $db_con = prg_start("start test.php");
 </html>
 */
 // Free resultset
-mysqli_free_result();
+//mysqli_free_result();
 
 // Closing connection
 prg_end($db_con);

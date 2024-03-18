@@ -46,7 +46,6 @@
 
 */
 
-// TODO move the names and values for testing to the single objects and check that they cannot be used by an user
 // TODO add checks that all id (name or link) changing return the correct error message if the new id already exists
 // TODO build a cascading test classes and split the classes to sections less than 1000 lines of code
 
@@ -55,6 +54,9 @@ namespace test;
 include_once MODEL_USER_PATH . 'user.php';
 include_once DB_PATH . 'sql_table_type.php';
 
+use api\word\word as word_api;
+use cfg\db\sql;
+use cfg\db\sql as sql_creator;
 use cfg\db\sql_par;
 use cfg\log\change;
 use cfg\combine_named;
@@ -85,7 +87,7 @@ use cfg\triple;
 use cfg\triple_list;
 use cfg\trm_ids;
 use cfg\user;
-use cfg\user_profile;
+use cfg\user\user_profile;
 use cfg\value\value;
 use cfg\value\value_list;
 use cfg\verb;
@@ -125,58 +127,62 @@ include_once $root_path . 'src/main/php/service/config.php';
 // load the other test utility modules (beside this base configuration module)
 include_once $path_utils . 'create_test_objects.php';
 include_once $path_utils . 'test_system.php';
-include_once $path_utils . 'test_api.php';
 include_once $path_utils . 'test_db_link.php';
 include_once $path_utils . 'test_user.php';
 include_once $path_utils . 'test_user_sandbox.php';
+include_once $path_utils . 'test_api.php';
 include_once $path_utils . 'test_cleanup.php';
 
 // load the unit testing modules
-include_once $path_unit . 'test_unit.php';
-include_once $path_unit . 'test_lib.php';
-include_once $path_unit . 'math.php';
-include_once $path_unit . 'system.php';
-include_once $path_unit . 'user.php';
-include_once $path_unit . 'user_list.php';
-include_once $path_unit . 'sandbox.php';
-include_once $path_unit . 'word.php';
-include_once $path_unit . 'word_list.php';
-include_once $path_unit . 'triple.php';
-include_once $path_unit . 'triple_list.php';
-include_once $path_unit . 'phrase.php';
-include_once $path_unit . 'phrase_list.php';
-include_once $path_unit . 'phrase_group.php';
-include_once $path_unit . 'group_list.php';
-include_once $path_unit . 'term.php';
-include_once $path_unit . 'term_list.php';
-include_once $path_unit . 'value.php';
-include_once $path_unit . 'value_phrase_link.php';
-include_once $path_unit . 'value_list.php';
-include_once $path_unit . 'formula.php';
-include_once $path_unit . 'formula_list.php';
-include_once $path_unit . 'formula_link.php';
-include_once $path_unit . 'result.php';
+include_once $path_unit . 'all_unit_tests.php';
+include_once $path_unit . 'lib_tests.php';
+include_once $path_unit . 'math_tests.php';
+include_once $path_unit . 'system_tests.php';
+include_once $path_unit . 'pod_tests.php';
+include_once $path_unit . 'user_tests.php';
+include_once $path_unit . 'user_list_tests.php';
+include_once $path_unit . 'sandbox_tests.php';
+include_once $path_unit . 'type_tests.php';
+include_once $path_unit . 'word_tests.php';
+include_once $path_unit . 'word_list_tests.php';
+include_once $path_unit . 'triple_tests.php';
+include_once $path_unit . 'triple_list_tests.php';
+include_once $path_unit . 'phrase_tests.php';
+include_once $path_unit . 'phrase_list_tests.php';
+include_once $path_unit . 'group_tests.php';
+include_once $path_unit . 'group_list_tests.php';
+include_once $path_unit . 'term_tests.php';
+include_once $path_unit . 'term_list_tests.php';
+include_once $path_unit . 'value_tests.php';
+include_once $path_unit . 'value_phrase_link_tests.php';
+include_once $path_unit . 'value_list_tests.php';
+include_once $path_unit . 'formula_tests.php';
+include_once $path_unit . 'formula_list_tests.php';
+include_once $path_unit . 'formula_link_tests.php';
+include_once $path_unit . 'result_tests.php';
 include_once $path_unit . 'result_list_tests.php';
-include_once $path_unit . 'formula_element.php';
-include_once $path_unit . 'figure.php';
-include_once $path_unit . 'figure_list.php';
-include_once $path_unit . 'expression.php';
-include_once $path_unit . 'view.php';
-include_once $path_unit . 'view_list.php';
-include_once $path_unit . 'component.php';
-include_once $path_unit . 'component_link.php';
-include_once $path_unit . 'component_list.php';
-include_once $path_unit . 'component_link_list.php';
-include_once $path_unit . 'verb.php';
-include_once $path_unit . 'ref.php';
-include_once $path_unit . 'language.php';
-include_once $path_unit . 'batch_job.php';
-include_once $path_unit . 'change_log.php';
-include_once $path_unit . 'system_log.php';
-include_once $path_unit . 'import.php';
+include_once $path_unit . 'element_tests.php';
+include_once $path_unit . 'figure_tests.php';
+include_once $path_unit . 'figure_list_tests.php';
+include_once $path_unit . 'expression_tests.php';
+include_once $path_unit . 'view_tests.php';
+include_once $path_unit . 'view_list_tests.php';
+include_once $path_unit . 'component_tests.php';
+include_once $path_unit . 'component_link_tests.php';
+include_once $path_unit . 'component_list_tests.php';
+include_once $path_unit . 'component_link_list_tests.php';
+include_once $path_unit . 'verb_tests.php';
+include_once $path_unit . 'ref_tests.php';
+include_once $path_unit . 'language_tests.php';
+include_once $path_unit . 'job_tests.php';
+include_once $path_unit . 'change_log_tests.php';
+include_once $path_unit . 'system_log_tests.php';
+include_once $path_unit . 'import_tests.php';
+include_once $path_unit . 'db_setup_tests.php';
+include_once $path_unit . 'api_tests.php';
 
 // load the testing functions for creating HTML code
-include_once $path_unit . 'html.php';
+include_once $path_unit . 'html_tests.php';
 include_once $path_unit_dsp . 'test_display.php';
 include_once $path_unit_dsp . 'type_lists.php';
 include_once $path_unit_dsp . 'user.php';
@@ -207,42 +213,42 @@ include_once $path_unit_dsp . 'reference.php';
 include_once $path_unit_dsp . 'language.php';
 include_once $path_unit_dsp . 'change_log.php';
 include_once $path_unit_dsp . 'system_log.php';
-include_once $path_unit_dsp . 'batch_job.php';
+include_once $path_unit_dsp . 'job.php';
 include_once $path_unit_dsp . 'system_views.php';
 
 
 // load the unit testing modules with database read only
-include_once $path_unit_read . 'all.php';
-include_once $path_unit_read . 'system.php';
-include_once $path_unit_read . 'sql_db.php';
-include_once $path_unit_read . 'user.php';
-include_once $path_unit_read . 'batch_job.php';
-include_once $path_unit_read . 'change_log.php';
-include_once $path_unit_read . 'system_log.php';
-include_once $path_unit_read . 'word.php';
-include_once $path_unit_read . 'word_list.php';
-include_once $path_unit_read . 'triple.php';
-include_once $path_unit_read . 'triple_list.php';
-include_once $path_unit_read . 'verb.php';
-include_once $path_unit_read . 'phrase.php';
-include_once $path_unit_read . 'phrase_list.php';
-include_once $path_unit_read . 'phrase_group.php';
-include_once $path_unit_read . 'term.php';
-include_once $path_unit_read . 'term_list.php';
-include_once $path_unit_read . 'value.php';
-include_once $path_unit_read . 'value_list.php';
-include_once $path_unit_read . 'formula.php';
-include_once $path_unit_read . 'formula_list.php';
-include_once $path_unit_read . 'expression.php';
-include_once $path_unit_read . 'view.php';
-include_once $path_unit_read . 'view_list.php';
-include_once $path_unit_read . 'component.php';
-include_once $path_unit_read . 'component_list.php';
-include_once $path_unit_read . 'ref.php';
-include_once $path_unit_read . 'share.php';
-include_once $path_unit_read . 'protection.php';
-include_once $path_unit_read . 'language.php';
-include_once $path_unit_read . 'export.php';
+include_once $path_unit_read . 'all_unit_read_tests.php';
+include_once $path_unit_read . 'system_tests.php';
+include_once $path_unit_read . 'sql_db_tests.php';
+include_once $path_unit_read . 'user_tests.php';
+include_once $path_unit_read . 'job_tests.php';
+include_once $path_unit_read . 'change_log_tests.php';
+include_once $path_unit_read . 'system_log_tests.php';
+include_once $path_unit_read . 'word_tests.php';
+include_once $path_unit_read . 'word_list_tests.php';
+include_once $path_unit_read . 'triple_tests.php';
+include_once $path_unit_read . 'triple_list_tests.php';
+include_once $path_unit_read . 'verb_tests.php';
+include_once $path_unit_read . 'phrase_tests.php';
+include_once $path_unit_read . 'phrase_list_tests.php';
+include_once $path_unit_read . 'phrase_group_tests.php';
+include_once $path_unit_read . 'term_tests.php';
+include_once $path_unit_read . 'term_list_tests.php';
+include_once $path_unit_read . 'value_tests.php';
+include_once $path_unit_read . 'value_list_tests.php';
+include_once $path_unit_read . 'formula_tests.php';
+include_once $path_unit_read . 'formula_list_tests.php';
+include_once $path_unit_read . 'expression_tests.php';
+include_once $path_unit_read . 'view_tests.php';
+include_once $path_unit_read . 'view_list_tests.php';
+include_once $path_unit_read . 'component_tests.php';
+include_once $path_unit_read . 'component_list_tests.php';
+include_once $path_unit_read . 'ref_tests.php';
+include_once $path_unit_read . 'share_tests.php';
+include_once $path_unit_read . 'protection_tests.php';
+include_once $path_unit_read . 'language_tests.php';
+include_once $path_unit_read . 'export_tests.php';
 
 
 // load the testing functions for creating JSON messages for the frontend code
@@ -251,30 +257,31 @@ include_once $path_unit_ui . 'test_word_ui.php';
 include_once $path_unit_ui . 'value_test_ui.php';
 
 // load the testing functions that save data to the database
-include_once $path_unit_write . 'word.php';
-include_once $path_unit_write . 'word_list.php';
-include_once $path_unit_write . 'verb.php';
-include_once $path_unit_write . 'triple.php';
-include_once $path_unit_write . 'phrase.php';
-include_once $path_unit_write . 'phrase_list.php';
-include_once $path_unit_write . 'phrase_group.php';
-include_once $path_unit_write . 'phrase_group_list.php';
-include_once $path_unit_write . 'graph.php';
-include_once $path_unit_write . 'term.php';
-include_once $path_unit_write . 'value.php';
-include_once $path_unit_write . 'source.php';
-include_once $path_unit_write . 'ref.php';
-include_once $path_unit_write . 'expression.php';
-include_once $path_unit_write . 'formula.php';
-include_once $path_unit_write . 'formula_link.php';
-include_once $path_unit_write . 'formula_trigger.php';
-include_once $path_unit_write . 'result.php';
-include_once $path_unit_write . 'formula_element.php';
-include_once $path_unit_write . 'formula_element_group.php';
-include_once $path_unit_write . 'batch_job.php';
-include_once $path_unit_write . 'view.php';
-include_once $path_unit_write . 'component.php';
-include_once $path_unit_write . 'component_link.php';
+include_once $path_unit_write . 'word_tests.php';
+include_once $path_unit_write . 'word_list_tests.php';
+include_once $path_unit_write . 'verb_tests.php';
+include_once $path_unit_write . 'triple_tests.php';
+include_once $path_unit_write . 'phrase_tests.php';
+include_once $path_unit_write . 'phrase_list_tests.php';
+include_once $path_unit_write . 'phrase_group_tests.php';
+include_once $path_unit_write . 'phrase_group_list_tests.php';
+include_once $path_unit_write . 'graph_tests.php';
+include_once $path_unit_write . 'term_tests.php';
+include_once $path_unit_write . 'value_tests.php';
+include_once $path_unit_write . 'source_tests.php';
+include_once $path_unit_write . 'ref_tests.php';
+include_once $path_unit_write . 'expression_tests.php';
+include_once $path_unit_write . 'formula_tests.php';
+include_once $path_unit_write . 'formula_link_tests.php';
+include_once $path_unit_write . 'formula_trigger_tests.php';
+include_once $path_unit_write . 'result_tests.php';
+include_once $path_unit_write . 'element_tests.php';
+include_once $path_unit_write . 'element_group_tests.php';
+include_once $path_unit_write . 'job_tests.php';
+include_once $path_unit_write . 'view_tests.php';
+include_once $path_unit_write . 'component_tests.php';
+include_once $path_unit_write . 'component_link_tests.php';
+
 include_once $path_unit_write . 'test_word_display.php';
 include_once $path_unit_write . 'test_math.php';
 
@@ -288,107 +295,6 @@ include_once $path_dev . 'test_legacy.php';
 // TODO to be dismissed
 include_once WEB_USER_PATH . 'user_display_old.php';
 
-// the fixed system user used for testing
-const TEST_USER_ID = "2";
-const TEST_USER_DESCRIPTION = "standard user view for all users";
-const TEST_USER_IP = "66.249.64.95"; // used to check the blocking of an IP address
-
-/*
-Setting that should be moved to the system config table
-*/
-
-// switch for the email testing
-const TEST_EMAIL = FALSE; // if set to true an email will be sent in case of errors and once a day an "everything fine" email is send
-
-
-// TODO move the test names to the single objects and check for reserved names to avoid conflicts
-// some test words used for testing
-const TW_ABB = "ABB";
-const TW_VESTAS = "Vestas";
-const TW_SALES = "Sales";
-const TW_CHF = "CHF";
-const TW_YEAR = "Year";
-const TW_2013 = "2013";
-const TW_2014 = "2014";
-const TW_2017 = "2017";
-const TW_MIO = "million";
-const TW_CF = "cash flow statement";
-const TW_TAX = "Income taxes";
-
-// some test phrases used for testing
-const TP_ABB = "ABB (Company)";
-const TP_FOLLOW = "2014 is follower of 2013";
-const TP_TAXES = "Income taxes is part of cash flow statement";
-
-// some formula parameter used for testing
-const TF_SECTOR = "sectorweight";
-
-// some numbers used to test the program
-const TV_TEST_SALES_INCREASE_2017_FORMATTED = '90.03 %';
-const TV_NESN_SALES_2016_FORMATTED = '89\'469';
-
-// some source used to test the program
-const TS_IPCC_AR6_SYNTHESIS = 'IPCC AR6 Synthesis Report: Climate Change 2022';
-const TS_IPCC_AR6_SYNTHESIS_URL = 'https://www.ipcc.ch/report/sixth-assessment-report-cycle/';
-const TS_NESN_2016_NAME = 'Nestlé Financial Statement 2016';
-
-
-// max time expected for each function execution
-const TIMEOUT_LIMIT = 0.03; // time limit for normal functions
-const TIMEOUT_LIMIT_PAGE = 0.1;  // time limit for complete webpage
-const TIMEOUT_LIMIT_PAGE_SEMI = 0.6;  // time limit for complete webpage
-const TIMEOUT_LIMIT_PAGE_LONG = 1.2;  // time limit for complete webpage
-const TIMEOUT_LIMIT_DB = 0.2;  // time limit for database modification functions
-const TIMEOUT_LIMIT_DB_MULTI = 0.9;  // time limit for many database modifications
-const TIMEOUT_LIMIT_LONG = 3;    // time limit for complex functions
-const TIMEOUT_LIMIT_IMPORT = 12;    // time limit for complex import tests in seconds
-
-
-// ---------------------------
-// function to support testing
-// ---------------------------
-
-
-/**
- * highlight the first difference between two string
- * @param string|null $from the expected text
- * @param string|null $to the text to compare
- * @return string the first char that differs or an empty string
- */
-function str_diff(?string $from, ?string $to): string
-{
-    $result = '';
-
-    if ($from != null and $to != null) {
-        if ($from != $to) {
-            $f = str_split($from);
-            $t = str_split($to);
-
-            // add message if just one string is shorter
-            if (count($f) < count($t)) {
-                $result = 'pos ' . count($t) . ' less: ' . substr($to, count($f), count($t) - count($f));
-            } elseif (count($t) < count($f)) {
-                $result = 'pos ' . count($f) . ' additional: ' . substr($from, count($t), count($f) - count($t));
-            }
-
-            $i = 0;
-            while ($i < count($f) and $i < count($t) and $result == '') {
-                if ($f[$i] != $t[$i]) {
-                    $result = 'pos ' . $i . ': ' . $f[$i] . ' (' . ord($f[$i]) . ') != ' . $t[$i] . ' (' . ord($t[$i]) . ')';
-                    $result .= ', near ' . substr($from, $i - 10, 20);
-                }
-                $i++;
-            }
-        }
-    } elseif ($from == null and $to != null) {
-        $result = 'less: ' . $to;
-    } elseif ($from != null and $to == null) {
-        $result = 'additional: ' . $from;
-    }
-
-
-    return $result;
-}
 
 /*
  *   testing class - to check the words, values and formulas that should always be in the system
@@ -403,6 +309,26 @@ class test_base
     const TEST_TYPE_CONTAINS = 'contains';
     const FILE_EXT = '.sql';
     const FILE_MYSQL = '_mysql';
+
+
+    /*
+     * Setting that should be moved to the system config table
+     */
+
+    // switch for the email testing
+    const TEST_EMAIL = FALSE; // if set to true an email will be sent in case of errors and once a day an "everything fine" email is send
+
+    // max time expected for each function execution
+    const TIMEOUT_LIMIT = 0.03; // time limit for normal functions
+    const TIMEOUT_LIMIT_PAGE = 0.1;  // time limit for complete webpage
+    const TIMEOUT_LIMIT_PAGE_SEMI = 0.6;  // time limit for complete webpage
+    const TIMEOUT_LIMIT_PAGE_LONG = 1.2;  // time limit for complete webpage
+    const TIMEOUT_LIMIT_DB = 0.2;  // time limit for database modification functions
+    const TIMEOUT_LIMIT_DB_MULTI = 0.9;  // time limit for many database modifications
+    const TIMEOUT_LIMIT_LONG = 3;    // time limit for complex functions
+    const TIMEOUT_LIMIT_IMPORT = 12;    // time limit for complex import tests in seconds
+
+
 
     public user $usr1; // the main user for testing
     public user $usr2; // a second testing user e.g. to test the user sandbox
@@ -502,7 +428,7 @@ class test_base
         string            $test_name,
         string|array|null $result,
         string|array|null $target = '',
-        float             $exe_max_time = TIMEOUT_LIMIT,
+        float             $exe_max_time = self::TIMEOUT_LIMIT,
         string            $comment = '',
         string            $test_type = ''): bool
     {
@@ -545,8 +471,8 @@ class test_base
      * check if the result text contains at least the target text
      *
      * @param string $msg (unique) description of the test
-     * @param string $result the actual result
-     * @param string $target the expected result
+     * @param string $haystack the expected result
+     * @param string $needle the actual result
      * @param float $exe_max_time the expected max time to create the result
      * @param string $comment
      * @param string $test_type
@@ -554,16 +480,17 @@ class test_base
      */
     function assert_text_contains(
         string $msg,
-        string $result,
-        string $target,
-        float  $exe_max_time = TIMEOUT_LIMIT,
+        string $haystack,
+        string $needle,
+        float  $exe_max_time = self::TIMEOUT_LIMIT,
         string $comment = '',
         string $test_type = ''): bool
     {
-        if (strpos($result, $target) !== null) {
-            $result = $target;
+        $pos = strpos($haystack, $needle);
+        if ($pos !== false) {
+            $needle = $haystack;
         }
-        return $this->display(', ' . $msg, $target, $result, $exe_max_time, $comment, $test_type);
+        return $this->display(', ' . $msg, $haystack, $needle, $exe_max_time, $comment, $test_type);
     }
 
     /**
@@ -582,7 +509,7 @@ class test_base
         string $msg,
         int    $min,
         int    $actual,
-        float  $exe_max_time = TIMEOUT_LIMIT,
+        float  $exe_max_time = self::TIMEOUT_LIMIT,
         string $comment = '',
         string $test_type = ''): bool
     {
@@ -611,7 +538,7 @@ class test_base
         string       $msg,
         array        $haystack,
         array|string $needle,
-        float        $exe_max_time = TIMEOUT_LIMIT,
+        float        $exe_max_time = self::TIMEOUT_LIMIT,
         string       $comment = '',
         string       $test_type = ''): bool
     {
@@ -640,7 +567,7 @@ class test_base
         string       $msg,
         array        $haystack,
         array|string $needle,
-        float        $exe_max_time = TIMEOUT_LIMIT,
+        float        $exe_max_time = self::TIMEOUT_LIMIT,
         string       $comment = '',
         string       $test_type = ''): bool
     {
@@ -894,26 +821,25 @@ class test_base
      * check the SQL statement to create the sql table
      * for all allowed SQL database dialects
      *
-     * @param sql_db $db_con does not need to be connected to a real database
      * @param object $usr_obj the user sandbox object e.g. a word
      * @return bool true if all tests are fine
      */
-    function assert_sql_table_create(sql_db $db_con, object $usr_obj): bool
+    function assert_sql_table_create(object $usr_obj): bool
     {
         $lib = new library();
         $class = $lib->class_to_name($usr_obj::class);
         // check the Postgres query syntax
-        $db_con->db_type = sql_db::POSTGRES;
+        $sc = new sql(sql_db::POSTGRES);
         $name = $class . '_create';
-        $expected_sql = $this->assert_sql_expected($name, $db_con->db_type);
-        $actual_sql = $usr_obj->sql_table($db_con->sql_creator(), $class);
+        $expected_sql = $this->assert_sql_expected($name, $sc->db_type);
+        $actual_sql = $usr_obj->sql_table($sc, $class);
         $result = $this->assert_sql($name, $actual_sql, $expected_sql);
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $db_con->db_type = sql_db::MYSQL;
-            $expected_sql = $this->assert_sql_expected($name, $db_con->db_type);
-            $actual_sql = $usr_obj->sql_table($db_con->sql_creator(), $class);
+            $sc->reset(sql_db::MYSQL);
+            $expected_sql = $this->assert_sql_expected($name, $sc->db_type);
+            $actual_sql = $usr_obj->sql_table($sc, $class);
             $result = $this->assert_sql($name, $actual_sql, $expected_sql);
         }
         return $result;
@@ -923,26 +849,25 @@ class test_base
      * check the SQL statement to create the indices related to a table
      * for all allowed SQL database dialects
      *
-     * @param sql_db $db_con does not need to be connected to a real database
      * @param object $usr_obj the user sandbox object e.g. a word
      * @return bool true if all tests are fine
      */
-    function assert_sql_index_create(sql_db $db_con, object $usr_obj): bool
+    function assert_sql_index_create(object $usr_obj): bool
     {
         $lib = new library();
         $class = $lib->class_to_name($usr_obj::class);
         // check the Postgres query syntax
-        $db_con->db_type = sql_db::POSTGRES;
+        $sc = new sql(sql_db::POSTGRES);
         $name = $class . '_index';
-        $expected_sql = $this->assert_sql_expected($name, $db_con->db_type);
-        $actual_sql = $usr_obj->sql_index($db_con->sql_creator(), $class);
+        $expected_sql = $this->assert_sql_expected($name, $sc->db_type);
+        $actual_sql = $usr_obj->sql_index($sc, $class);
         $result = $this->assert_sql($name, $actual_sql, $expected_sql);
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $db_con->db_type = sql_db::MYSQL;
-            $expected_sql = $this->assert_sql_expected($name, $db_con->db_type);
-            $actual_sql = $usr_obj->sql_index($db_con->sql_creator(), $class);
+            $sc->reset(sql_db::MYSQL);
+            $expected_sql = $this->assert_sql_expected($name, $sc->db_type);
+            $actual_sql = $usr_obj->sql_index($sc, $class);
             $result = $this->assert_sql($name, $actual_sql, $expected_sql);
         }
         return $result;
@@ -952,26 +877,81 @@ class test_base
      * check the SQL statement to create the foreign keys related to a table
      * for all allowed SQL database dialects
      *
-     * @param sql_db $db_con does not need to be connected to a real database
      * @param object $usr_obj the user sandbox object e.g. a word
      * @return bool true if all tests are fine
      */
-    function assert_sql_foreign_key_create(sql_db $db_con, object $usr_obj): bool
+    function assert_sql_foreign_key_create(object $usr_obj): bool
     {
         $lib = new library();
         $class = $lib->class_to_name($usr_obj::class);
         // check the Postgres query syntax
-        $db_con->db_type = sql_db::POSTGRES;
+        $sc = new sql(sql_db::POSTGRES);
         $name = $class . '_foreign_key';
-        $expected_sql = $this->assert_sql_expected($name, $db_con->db_type);
-        $actual_sql = $usr_obj->sql_foreign_key($db_con->sql_creator(), $class);
+        $expected_sql = $this->assert_sql_expected($name, $sc->db_type);
+        $actual_sql = $usr_obj->sql_foreign_key($sc, $class);
         $result = $this->assert_sql($name, $actual_sql, $expected_sql);
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $db_con->db_type = sql_db::MYSQL;
-            $expected_sql = $this->assert_sql_expected($name, $db_con->db_type);
-            $actual_sql = $usr_obj->sql_foreign_key($db_con->sql_creator(), $class);
+            $sc->reset(sql_db::MYSQL);
+            $expected_sql = $this->assert_sql_expected($name, $sc->db_type);
+            $actual_sql = $usr_obj->sql_foreign_key($sc, $class);
+            $result = $this->assert_sql($name, $actual_sql, $expected_sql);
+        }
+        return $result;
+    }
+
+    /**
+     * check the SQL statement to create the sql view
+     * for all allowed SQL database dialects
+     *
+     * @param object $usr_obj the user sandbox object e.g. a phrase
+     * @return bool true if all tests are fine
+     */
+    function assert_sql_view_create(object $usr_obj): bool
+    {
+        $lib = new library();
+        $class = $lib->class_to_name($usr_obj::class);
+        // check the Postgres query syntax
+        $sc = new sql(sql_db::POSTGRES);
+        $name = $class . '_view';
+        $expected_sql = $this->assert_sql_expected($name, $sc->db_type);
+        $actual_sql = $usr_obj->sql_view($sc, $class);
+        $result = $this->assert_sql($name, $actual_sql, $expected_sql);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $sc->reset(sql_db::MYSQL);
+            $expected_sql = $this->assert_sql_expected($name, $sc->db_type);
+            $actual_sql = $usr_obj->sql_view($sc, $class);
+            $result = $this->assert_sql($name, $actual_sql, $expected_sql);
+        }
+        return $result;
+    }
+
+    /**
+     * check the SQL statement to create the sql view that links tables
+     * for all allowed SQL database dialects
+     *
+     * @param object $usr_obj the user sandbox object e.g. a phrase
+     * @return bool true if all tests are fine
+     */
+    function assert_sql_view_link_create(object $usr_obj): bool
+    {
+        $lib = new library();
+        $class = $lib->class_to_name($usr_obj::class);
+        // check the Postgres query syntax
+        $sc = new sql(sql_db::POSTGRES);
+        $name = $class . '_view';
+        $expected_sql = $this->assert_sql_expected($name, $sc->db_type);
+        $actual_sql = $usr_obj->sql_view_link($sc, $usr_obj::FLD_LST_VIEW);
+        $result = $this->assert_sql($name, $actual_sql, $expected_sql);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $sc->reset(sql_db::MYSQL);
+            $expected_sql = $this->assert_sql_expected($name, $sc->db_type);
+            $actual_sql = $usr_obj->sql_view_link($sc, $usr_obj::FLD_LST_VIEW);
             $result = $this->assert_sql($name, $actual_sql, $expected_sql);
         }
         return $result;
@@ -1550,29 +1530,29 @@ class test_base
      * test the SQL statement creation for a value or result list
      * similar to assert_load_sql but for a phrase list
      *
-     * @param sql_db $db_con does not need to be connected to a real database
+     * @param string $test_name does not need to be connected to a real database
      * @param object $usr_obj the user sandbox object e.g. a word
      * @param phrase_list $phr_lst the phrase list that should be used for the sql creation
      * @param bool $or if true all values are returned that are linked to any phrase of the list
      */
     function assert_sql_by_phr_lst(
-        sql_db       $db_con,
+        string       $test_name,
         object       $usr_obj,
         phrase_list  $phr_lst,
         bool         $or = false
     ): void
     {
         // check the Postgres query syntax
-        $sc = $db_con->sql_creator();
+        $sc = new sql_creator();
         $sc->db_type = sql_db::POSTGRES;
         $qp = $usr_obj->load_sql_by_phr_lst($sc, $phr_lst, false, $or);
-        $result = $this->assert_qp($qp, $sc->db_type);
+        $result = $this->assert_qp($qp, $sc->db_type, $test_name);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $sc->db_type = sql_db::MYSQL;
             $qp = $usr_obj->load_sql_by_phr_lst($sc, $phr_lst, false, $or);
-            $this->assert_qp($qp, $sc->db_type);
+            $this->assert_qp($qp, $sc->db_type, $test_name);
         }
     }
 
@@ -1675,13 +1655,14 @@ class test_base
      *
      * @param sql_par $qp the query parameters that should be tested
      * @param string $dialect if not Postgres the name of the SQL dialect
+     * @param string $test_name description of the test without the sql name
      * @return bool true if the test is fine
      */
-    function assert_qp(sql_par $qp, string $dialect = ''): bool
+    function assert_qp(sql_par $qp, string $dialect = '', string $test_name = ''): bool
     {
         $expected_sql = $this->assert_sql_expected($qp->name, $dialect);
         $result = $this->assert_sql(
-            $this->name . $qp->name . '_' . $dialect,
+            $this->name . 'sql creation of ' . $qp->name . '_' . $dialect . ' to ' . $test_name,
             $qp->sql,
             $expected_sql
         );
@@ -1721,7 +1702,7 @@ class test_base
     }
 
     /**
-     * test am SQL statement
+     * test a SQL statement
      *
      * @param string $created the created SQL statement that should be checked
      * @param string $expected the fixed SQL statement that is supposed to be correct
@@ -1731,6 +1712,19 @@ class test_base
     {
         $lib = new library();
         return $this->assert($name, $lib->trim_sql($created), $lib->trim_sql($expected));
+    }
+
+    /**
+     * test a SQL statement
+     *
+     * @param string $haystack the fixed SQL statement that is edit by hand
+     * @param string $needle the created SQL statement that should be part of the hand combined sql setup script
+     * @return bool true if the created SQL statement matches the expected SQL statement if the formatting is removed
+     */
+    function assert_sql_contains(string $name, string $haystack, string $needle): bool
+    {
+        $lib = new library();
+        return $this->assert_text_contains($name, $lib->trim_sql($haystack), $lib->trim_sql($needle));
     }
 
     /**
@@ -1806,7 +1800,7 @@ class test_base
         // ... and check the loading via name and check the id
         if ($result) {
             $usr_obj->reset();
-            $usr_obj->load_by_name($name, $usr_obj::class);
+            $usr_obj->load_by_name($name);
             $result = $this->assert($usr_obj::class . '->load', $usr_obj->id(), 1);
         }
         return $result;
@@ -1828,7 +1822,7 @@ class test_base
         // ... and check the loading via name and check the id
         if ($result) {
             $usr_obj->reset();
-            $usr_obj->load_by_name($name, $usr_obj::class);
+            $usr_obj->load_by_name($name);
             $result = $this->assert($usr_obj::class . '->load', $usr_obj->id(), 1);
         }
         return $result;
@@ -1917,7 +1911,7 @@ class test_base
         string       $test_name,
         string|array $target,
         string|array $result,
-        float        $exe_max_time = TIMEOUT_LIMIT,
+        float        $exe_max_time = self::TIMEOUT_LIMIT,
         string       $comment = '',
         string       $test_type = ''): bool
     {
@@ -2009,7 +2003,7 @@ class test_base
         string|array|null $target = '',
         string|array|null $result = '',
         string            $diff_msg = '',
-        float             $exe_max_time = TIMEOUT_LIMIT): bool
+        float             $exe_max_time = self::TIMEOUT_LIMIT): bool
     {
         // calculate the execution time
         $final_msg = '';
@@ -2071,7 +2065,7 @@ class test_base
         string $test_text,
         string $target,
         string $result,
-        float  $exe_max_time = TIMEOUT_LIMIT,
+        float  $exe_max_time = self::TIMEOUT_LIMIT,
         string $comment = ''): bool
     {
         if (!str_contains($result, $target) and $result != '' and $target != '') {
@@ -2092,7 +2086,7 @@ class test_base
                 $this->dsp_warning($msg_net_off);
                 $is_connected = false;
             } else {
-                $this->dsp_contains($msg, $must_contain, $result, TIMEOUT_LIMIT_PAGE_SEMI);
+                $this->dsp_contains($msg, $must_contain, $result, self::TIMEOUT_LIMIT_PAGE_SEMI);
             }
         }
         return $is_connected;
@@ -2343,7 +2337,7 @@ function zu_test_time_setup(test_cleanup $t): string
         for ($year = $start_year; $year <= $end_year; $year++) {
             $this_year = $year;
             $t->test_word(strval($this_year));
-            $wrd_lnk = $t->test_triple(TW_YEAR, verb::IS, $this_year);
+            $wrd_lnk = $t->test_triple(word_api::TN_YEAR, verb::IS, $this_year);
             $result = $wrd_lnk->name();
             if ($prev_year <> '') {
                 $t->test_triple($prev_year, verb::FOLLOW, $this_year);

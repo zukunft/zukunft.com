@@ -7,7 +7,7 @@ PREPARE user_list_by_count_changes FROM
             s.email,
             s.first_name,
             s.last_name,
-            s.last_word_id,
+            s.term_id,
             s.source_id,
             s.user_profile_id,
             l.changes

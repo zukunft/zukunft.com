@@ -36,24 +36,24 @@ namespace cfg\component;
 include_once DB_PATH . 'sql_par_type.php';
 
 use api\component\component as component_api;
+use cfg\db\sql;
+use cfg\db\sql_db;
+use cfg\db\sql_field_default;
+use cfg\db\sql_field_type;
+use cfg\db\sql_par;
 use cfg\export\component_exp;
-use cfg\log\change_log_action;
-use cfg\log\change_log_link;
-use cfg\log\change_log_table;
-use cfg\component_link;
-use cfg\component_link_list;
+use cfg\export\sandbox_exp;
 use cfg\formula;
+use cfg\log\change_action;
+use cfg\log\change_link;
+use cfg\log\change_table_list;
 use cfg\phrase;
 use cfg\sandbox;
 use cfg\sandbox_named;
 use cfg\sandbox_typed;
-use cfg\db\sql;
-use cfg\db\sql_par;
-use cfg\db\sql_db;
 use cfg\user;
 use cfg\user_message;
 use cfg\word;
-use cfg\export\sandbox_exp;
 
 class component extends sandbox_typed
 {
@@ -62,20 +62,66 @@ class component extends sandbox_typed
      * database link
      */
 
+    // comments used for the database creation
+    const TBL_COMMENT = 'for the single components of a view';
+
     // the database and JSON object field names used only for view components links
+    // *_COM: the description of the field
     const FLD_ID = 'component_id';
+    const FLD_NAME_COM = 'the unique name used to select a component by the user';
     const FLD_NAME = 'component_name';
+    const FLD_DESCRIPTION_COM = 'to explain the view component to the user with a mouse over text; to be replaced by a language form entry';
+    const FLD_TYPE_COM = 'to select the predefined functionality';
     const FLD_TYPE = 'component_type_id';
-    const FLD_POSITION = 'position';
+    const FLD_CODE_ID_COM = 'used for system components to select the component by the program code';
+    const FLD_POSITION = 'position'; // TODO move to component_link
+    const FLD_UI_MSG_ID_COM = 'used for system components the id to select the language specific user interface message e.g. "add word"';
     const FLD_UI_MSG_ID = 'ui_msg_code_id';
+    // TODO move the lined phrases to a component phrase link table for n:m relation with a type for each link
+    const FLD_ROW_PHRASE_COM = 'for a tree the related value the start node';
     const FLD_ROW_PHRASE = 'word_id_row';
+    const FLD_COL_PHRASE_COM = 'to define the type for the table columns';
     const FLD_COL_PHRASE = 'word_id_col';
+    const FLD_COL2_PHRASE_COM = 'e.g. "quarter" to show the quarters between the year columns or the second axis of a chart';
     const FLD_COL2_PHRASE = 'word_id_col2';
+    const FLD_FORMULA_COM = 'used for type 6';
+    const FLD_LINK_COMP_COM = 'to link this component to another component';
+    const FLD_LINK_COMP = 'linked_component_id';
+    const FLD_LINK_COMP_TYPE_COM = 'to define how this entry links to the other entry';
+    const FLD_LINK_COMP_TYPE = 'component_link_type_id';
+    const FLD_LINK_TYPE_COM = 'e.g. for type 4 to select possible terms';
     const FLD_LINK_TYPE = 'link_type_id';
+
+    // list of fields that MUST be set by one user
+    const FLD_LST_MUST_BE_IN_STD = array(
+        [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_NAME_COM],
+    );
+    // list of must fields that CAN be changed by the user
+    const FLD_LST_MUST_BUT_USER_CAN_CHANGE = array(
+        [self::FLD_NAME, sql_field_type::NAME, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_COM],
+    );
+    // list of fields that CAN be changed by the user
+    const FLD_LST_USER_CAN_CHANGE = array(
+        [self::FLD_DESCRIPTION, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
+        [self::FLD_TYPE, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, component_type::class, self::FLD_TYPE_COM],
+        // TODO link with a foreign key to phrases (or terms?) if link to a view is allowed
+        [self::FLD_ROW_PHRASE, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_ROW_PHRASE_COM],
+        [formula::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, formula::class, self::FLD_FORMULA_COM],
+        [self::FLD_COL_PHRASE, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_COL_PHRASE_COM],
+        [self::FLD_COL2_PHRASE, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_COL2_PHRASE_COM],
+        [self::FLD_LINK_COMP, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_LINK_COMP_COM],
+        [self::FLD_LINK_COMP_TYPE, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_LINK_COMP_TYPE_COM],
+        [self::FLD_LINK_TYPE, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_LINK_TYPE_COM],
+    );
+    // list of fields that CANNOT be changed by the user
+    const FLD_LST_NON_CHANGEABLE = array(
+        [sql::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
+        [self::FLD_UI_MSG_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_UI_MSG_ID_COM],
+    );
 
     // all database field names excluding the id
     const FLD_NAMES = array(
-        sql_db::FLD_CODE_ID,
+        sql::FLD_CODE_ID,
         self::FLD_UI_MSG_ID
     );
     // list of the user specific database field names
@@ -224,8 +270,8 @@ class component extends sandbox_typed
     {
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld);
         if ($result) {
-            if (array_key_exists(sql_db::FLD_CODE_ID, $db_row)) {
-                $this->code_id = $db_row[sql_db::FLD_CODE_ID];
+            if (array_key_exists(sql::FLD_CODE_ID, $db_row)) {
+                $this->code_id = $db_row[sql::FLD_CODE_ID];
             }
             if (array_key_exists(self::FLD_UI_MSG_ID, $db_row)) {
                 $this->ui_msg_code_id = $db_row[self::FLD_UI_MSG_ID];
@@ -512,12 +558,11 @@ class component extends sandbox_typed
      * just set the class name for the user sandbox function
      * load a view component object by name
      * @param string $name the name view component
-     * @param string $class the view component class name
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_name(string $name, string $class = self::class): int
+    function load_by_name(string $name): int
     {
-        $id = parent::load_by_name($name, $class);
+        $id = parent::load_by_name($name);
         if ($this->id > 0) {
             $this->load_phrases();
         }
@@ -693,7 +738,7 @@ class component extends sandbox_typed
           $db_con = new mysql;
           $db_con->usr_id = $this->user()->id();
           $db_type = $db_con->get1($sql);
-          $this->type_name = $db_type[sql_db::FLD_TYPE_NAME];
+          $this->type_name = $db_type[sql::FLD_TYPE_NAME];
         }
         return $this->type_name;
       } */
@@ -734,9 +779,9 @@ class component extends sandbox_typed
     function log_link($dsp): bool
     {
         log_debug('component->log_link ' . $this->dsp_id() . ' to "' . $dsp->name . '"  for user ' . $this->user()->id());
-        $log = new change_log_link($this->user());
-        $log->action = change_log_action::ADD;
-        $log->set_table(change_log_table::VIEW_LINK);
+        $log = new change_link($this->user());
+        $log->action = change_action::ADD;
+        $log->set_table(change_table_list::VIEW_LINK);
         $log->new_from = clone $this;
         $log->new_to = clone $dsp;
         $log->row_id = $this->id;
@@ -750,9 +795,9 @@ class component extends sandbox_typed
     function log_unlink($dsp): bool
     {
         log_debug($this->dsp_id() . ' from "' . $dsp->name . '" for user ' . $this->user()->id());
-        $log = new change_log_link($this->user());
-        $log->action = change_log_action::DELETE;
-        $log->set_table(change_log_table::VIEW_LINK);
+        $log = new change_link($this->user());
+        $log->action = change_action::DELETE;
+        $log->set_table(change_table_list::VIEW_LINK);
         $log->old_from = clone $this;
         $log->old_to = clone $dsp;
         $log->row_id = $this->id;
@@ -868,7 +913,7 @@ class component extends sandbox_typed
             $log->old_value = $db_rec->code_id;
             $log->new_value = $this->code_id;
             $log->row_id = $this->id;
-            $log->set_field(sql_db::FLD_CODE_ID);
+            $log->set_field(sql::FLD_CODE_ID);
             $result = $this->save_field($db_con, $log);
         }
         return $result;

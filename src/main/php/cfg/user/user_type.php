@@ -35,97 +35,26 @@
 
 */
 
-// TODO combine with class type_object
-
 namespace cfg\user;
 
-use api\sandbox\type_object as type_object_api;
+include_once MODEL_HELPER_PATH . 'type_object.php';
 
-class user_type
+use cfg\type_object;
+
+class user_type extends type_object
 {
 
-    // database and JSON object field names
-    const FLD_NAME = 'type_name';
-
-    // the standard fields of a type
-    public int $id;                // the database id is also used as the array pointer
-    public string $code_id;        // this id text is unique for all code links and is used for system im- and export
-    public string $name;           // simply the type name as shown to the user
-    public ?string $comment = '';  // to explain the type to the user as a tooltip
-
+    // list of the user types that have a coded functionality
+    const GUEST = "Guest"; // a read only access
+    const IP_ADDR = "IP address"; // identified only by IP address
+    const VERIFIED = "Verified"; // verified by email or mobile
+    const SECURED = "Secured"; // verified with a high security e.g. via passport of a trusted country
 
     /*
-     * construct and map
+     * database link
      */
 
-    function __construct(string $code_id, string $name, string $comment = '', int $id = 0)
-    {
-        $this->id = $id;
-        $this->set_code_id($code_id);
-        $this->set_name($name);
-        if ($comment != '') {
-            $this->set_comment($comment);
-        }
-    }
-
-    function reset(): void
-    {
-        $this->id = 0;
-        $this->code_id = '';
-        $this->name = '';
-        $this->comment = null;
-    }
-
-
-    /*
-     * set and get
-     */
-
-    function set_code_id(string $code_id): void
-    {
-        $this->code_id = $code_id;
-    }
-
-    function code_id(): string
-    {
-        return $this->code_id;
-    }
-
-    function set_name(string $name): void
-    {
-        $this->name = $name;
-    }
-
-    function name(): string
-    {
-        return $this->name;
-    }
-
-    function set_comment(string $comment): void
-    {
-        $this->comment = $comment;
-    }
-
-    function comment(): string
-    {
-        return $this->comment;
-    }
-
-
-    /*
-     * cast
-     */
-
-    /**
-     * @return type_object_api the code link frontend api object
-     */
-    function api_obj(): type_object_api
-    {
-        $api_obj = new type_object_api();
-        $api_obj->id = $this->id;
-        $api_obj->name = $this->name;
-        $api_obj->code_id = $this->code_id;
-        return $api_obj;
-    }
+    // comments used for the database creation
+    const TBL_COMMENT = 'for the user types e.g. to set the confirmation level of a user';
 
 }

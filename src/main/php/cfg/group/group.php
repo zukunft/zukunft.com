@@ -10,8 +10,6 @@
     the index big group is designed to be useful for highly structured values e.g. the ISIN as a 48-bit value with up to 65k fields (because each field can be a triple a multi dimensional tables can be store with index big)
 
     TODO add index and index big tables
-    TODO use a new table group_links to link the phrases to a group
-    TODO add a order_nbr field to the group_links table
     TODO remove the fields word_ids, triple_ids and id_order
     TODO rename to group (and element_group to combination)
     TODO move name and description to user_groups
@@ -109,12 +107,12 @@ class group extends sandbox_multi
     // list of fields with parameters used for the database creation
     // the fields that can be changed by the user
     const FLD_KEY_PRIME = array(
-        [group::FLD_ID, sql_field_type::KEY_INT_NO_AUTO, sql_field_default::NOT_NULL, '', '', 'the 64-bit prime index to find the'],
+        [group::FLD_ID, sql_field_type::KEY_INT_NO_AUTO, sql_field_default::NOT_NULL, '', '', 'the 64-bit prime index to find the -=class=-'],
     );
     const FLD_KEY_PRIME_USER = array(
-        [group::FLD_ID, sql_field_type::KEY_PART_INT, sql_field_default::NOT_NULL, '', '', 'the 64-bit prime index to find the user'],
+        [group::FLD_ID, sql_field_type::KEY_PART_INT, sql_field_default::NOT_NULL, '', '', 'the 64-bit prime index to find the user -=class=-'],
     );
-    const FLD_LST_CREATE_CHANGEABLE = array(
+    const FLD_LST_USER_CAN_CHANGE = array(
         [self::FLD_NAME, sql_field_type::TEXT, sql_field_default::NULL, '', '', 'the user specific group name which can contain the phrase names in a different order to display the group (does not need to be unique)'],
         [self::FLD_DESCRIPTION, sql_field_type::TEXT, sql_field_default::NULL, '', '', 'the user specific description for mouse over helps'],
     );
@@ -122,6 +120,13 @@ class group extends sandbox_multi
     // all database field names excluding the id
     const FLD_NAMES = array(
         self::FLD_DESCRIPTION
+    );
+    // list of fixed tables where a group name overwrite might be stored
+    // TODO check if this can be used somewhere else means if there are unwanted repeatings
+    const TBL_LIST = array(
+        [sql_table_type::MOST],
+        [sql_table_type::PRIME],
+        [sql_table_type::BIG]
     );
 
 
@@ -301,7 +306,7 @@ class group extends sandbox_multi
         $name_lst = array();
         $grp_id = new group_id();
         if ($all) {
-            for ($pos = 1; $pos <= group_id::PRIME_PHRASE; $pos++) {
+            for ($pos = 1; $pos <= group_id::PRIME_PHRASES_STD; $pos++) {
                 $name_lst[] = phrase::FLD_ID . '_' . $pos;
             }
         } else {
@@ -503,9 +508,9 @@ class group extends sandbox_multi
     ): array
     {
         $sc->set_class($this::class, $usr_table, $tbl_typ->extension());
-        $fields = array_merge($key_fld, sandbox_value::FLD_ALL_OWNER, $this::FLD_LST_CREATE_CHANGEABLE);
+        $fields = array_merge($key_fld, sandbox_value::FLD_ALL_OWNER, $this::FLD_LST_USER_CAN_CHANGE);
         if ($usr_table) {
-            $fields = array_merge($key_fld, sandbox_value::FLD_ALL_CHANGER, $this::FLD_LST_CREATE_CHANGEABLE);
+            $fields = array_merge($key_fld, sandbox_value::FLD_ALL_CHANGER, $this::FLD_LST_USER_CAN_CHANGE);
         }
         $sql_lst[0] .= parent::sql_table_create($sc, $usr_table, $fields, $tbl_comment);
         $sql_lst[1] .= parent::sql_index_create($sc, $usr_table, $fields);
@@ -829,9 +834,6 @@ class group extends sandbox_multi
 
         // update the database for correct selection references
         if ($this->id > 0) {
-            if ($do_save) {
-                $result .= $this->save_links();  // update the database links for fast selection
-            }
             $result .= $this->generic_name($do_save); // update the generic name if needed
         }
 
@@ -1287,134 +1289,6 @@ class group extends sandbox_multi
     }
 
     /**
-     * create the word group links for faster selection of the word groups based on single words
-     */
-    private function save_links(): string
-    {
-        $result = $this->save_phr_links(sql_db::TBL_WORD);
-        $result .= $this->save_phr_links(sql_db::TBL_TRIPLE);
-        return $result;
-    }
-
-    /**
-     * create links to the group from words or triples for faster selection of the phrase groups based on single words or triples
-     * word and triple links are saved in two different tables to be able to use the database foreign keys
-     */
-    private function save_phr_links($type): string
-    {
-        log_debug();
-
-        global $db_con;
-        $result = '';
-        $lib = new library();
-
-        // create the db link object for all actions
-        $db_con->usr_id = $this->user()->id();
-
-        // switch between the word and triple settings
-        $lnk = new group_link();
-        $qp = $lnk->load_by_group_id_sql($db_con, $this);
-        if ($type == sql_db::TBL_WORD) {
-            $table_name = $db_con->get_table_name(sql_db::TBL_GROUP_LINK);
-            $field_name = word::FLD_ID;
-        } else {
-            $table_name = $db_con->get_table_name(sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK);
-            $field_name = triple::FLD_ID;
-        }
-
-        // read all existing group links
-        $grp_lnk_rows = $db_con->get($qp);
-        $db_ids = array();
-        if ($grp_lnk_rows != null) {
-            foreach ($grp_lnk_rows as $grp_lnk_row) {
-                $db_ids[] = $grp_lnk_row[$field_name];
-            }
-            log_debug('found ' . implode(",", $db_ids));
-        }
-
-        // switch between the word and triple settings
-        if ($type == sql_db::TBL_WORD) {
-            $add_ids = array_diff($this->phrase_list()->wrd_ids(), $db_ids);
-            $del_ids = array_diff($db_ids, $this->phrase_list()->wrd_ids());
-        } else {
-            $add_ids = array_diff($this->phrase_list()->trp_ids(), $db_ids);
-            $del_ids = array_diff($db_ids, $this->phrase_list()->trp_ids());
-        }
-
-        // add the missing links
-        if (count($add_ids) > 0) {
-            $add_nbr = 0;
-            $sql = '';
-            foreach ($add_ids as $add_id) {
-                if ($add_id <> '') {
-                    if ($sql == '') {
-                        $sql = 'INSERT INTO ' . $table_name . ' (group_id, ' . $field_name . ') VALUES ';
-                    }
-                    $sql .= " (" . $this->id . "," . $add_id . ") ";
-                    $add_nbr++;
-                    if ($add_nbr < count($add_ids)) {
-                        $sql .= ",";
-                    } else {
-                        $sql .= ";";
-                    }
-                }
-            }
-            if ($sql <> '') {
-                //$sql_result = $db_con->exe($sql, 'group->save_phr_links', array());
-                $lib = new library();
-                $result = $db_con->exe_try('Adding of group links "' . $lib->dsp_array($add_ids) . '" for ' . $this->id,
-                    $sql);
-            }
-        }
-        $lib = new library();
-        log_debug('added links "' . $lib->dsp_array($add_ids) . '" lead to ' . implode(",", $db_ids));
-
-        // remove the links not needed any more
-        if (count($del_ids) > 0) {
-            log_debug('del ' . implode(",", $del_ids));
-            $sql = 'DELETE FROM ' . $table_name . ' 
-               WHERE group_id = ' . $this->id . '
-                ' . $lib->sql_array($del_ids, ' AND ' . $field_name . ' IN (', ')') . ';';
-            //$sql_result = $db_con->exe($sql, "group->delete_phr_links", array());
-            $result = $db_con->exe_try('Removing of group links "' . $lib->dsp_array($del_ids) . '" from ' . $this->id,
-                $sql);
-        }
-        log_debug('deleted links "' . $lib->dsp_array($del_ids) . '" lead to ' . implode(",", $db_ids));
-
-        return $result;
-    }
-
-    /**
-     * delete all phrase links to the phrase group e.g. to be able to delete the phrase group
-     * @return user_message
-     */
-    function del_phr_links(): user_message
-    {
-        global $db_con;
-        $result = new user_message();
-
-        $db_con->set_class(sql_db::TBL_GROUP_LINK);
-        $db_con->usr_id = $this->user()->id();
-        $msg = $db_con->delete_old(self::FLD_ID, $this->id);
-        $result->add_message($msg);
-
-        $db_con->set_class(sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK);
-        $db_con->usr_id = $this->user()->id();
-        $msg = $db_con->delete_old(self::FLD_ID, $this->id);
-        $result->add_message($msg);
-
-        // delete the related value
-        $val = new value($this->user());
-        $val->load_by_grp($this);
-
-        if ($val->is_id_set()) {
-            $val->del();
-        }
-
-        return $result;
-    }
-
-    /**
      * delete a phrase group that is supposed not to be used anymore
      * the removal if the linked values must be done before calling this function
      * the word and triple links related to this phrase group are also removed
@@ -1424,7 +1298,7 @@ class group extends sandbox_multi
     function del(): user_message
     {
         global $db_con;
-        $result = $this->del_phr_links();
+        $result = new user_message();
 
         $db_con->set_class(sql_db::TBL_GROUP);
         $db_con->usr_id = $this->user()->id();

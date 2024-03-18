@@ -47,17 +47,21 @@ include_once SERVICE_PATH . 'db_code_link.php';
 include_once API_WORD_PATH . 'word.php';
 include_once MODEL_REF_PATH . 'ref.php';
 include_once SERVICE_EXPORT_PATH . 'word_exp.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_typed.php';
 
 use api\api;
 use api\word\word as word_api;
 use cfg\db\sql;
 use cfg\db\sql_db;
+use cfg\db\sql_field_default;
+use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\group\group_list;
 use cfg\log\change;
-use cfg\log\change_log_action;
-use cfg\log\change_log_table;
+use cfg\log\change_action;
+use cfg\log\change_action_list;
+use cfg\log\change_table_list;
 use cfg\value\value_list;
 use html\word\word as word_dsp;
 use cfg\export\sandbox_exp;
@@ -71,15 +75,52 @@ class word extends sandbox_typed
      * database link
      */
 
+    // comments used for the database creation
+    const TBL_COMMENT = 'for a short text, that can be used to search for values or results with a 64 bit database key because humans will never be able to use more than a few million words';
+
     // object specific database and JSON object field names
     // means: database fields only used for words
-    const FLD_ID = 'word_id';
+    // *_COM: the description of the field
+    const FLD_ID = 'word_id'; // TODO change the user_id field comment to 'the user who has changed the standard word'
+    const FLD_NAME_COM = 'the text used for searching';
     const FLD_NAME = 'word_name';
+    const FLD_DESCRIPTION_COM = 'to be replaced by a language form entry';
+    const FLD_TYPE_COM = 'to link coded functionality to words e.g. to exclude measure words from a percent result';
+    const FLD_CODE_ID_COM = 'to link coded functionality to a specific word e.g. to get the values of the system configuration';
+    const FLD_PLURAL_COM = 'to be replaced by a language form entry; TODO to be move to language forms';
     const FLD_PLURAL = 'plural'; // TODO move to language types
+    const FLD_VIEW_COM = 'the default mask for this word';
     const FLD_VIEW = 'view_id';
-    const FLD_VALUES = 'values';
+    const FLD_VALUES_COM = 'number of values linked to the word, which gives an indication of the importance';
+    const FLD_VALUES = 'values'; // TODO convert to a percent value of relative importance e.g. is 100% if all values, results, triples, formulas and views use this word; should be possible to adjust the weight of e.g. values and views with the user specific system settings
+    const FLD_INACTIVE_COM = 'true if the word is not yet active e.g. because it is moved to the prime words with a 16 bit id';
+    const FLD_INACTIVE = 'inactive';
     // the field names used for the im- and export in the json or yaml format
     const FLD_REFS = 'refs';
+
+    // list of fields that MUST be set by one user
+    const FLD_LST_MUST_BE_IN_STD = array(
+        [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_NAME_COM],
+    );
+    // list of must fields that CAN be changed by the user
+    const FLD_LST_MUST_BUT_USER_CAN_CHANGE = array(
+        [language::FLD_ID, sql_field_type::KEY_PART_INT, sql_field_default::ONE, sql::INDEX, language::class, self::FLD_NAME_COM],
+        [self::FLD_NAME, sql_field_type::NAME, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_COM],
+    );
+    // list of fields that CAN be changed by the user
+    const FLD_LST_USER_CAN_CHANGE = array(
+        [self::FLD_PLURAL, sql_field_type::NAME, sql_field_default::NULL, sql::INDEX, '', self::FLD_PLURAL_COM],
+        [self::FLD_DESCRIPTION, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
+        [phrase::FLD_TYPE, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, phrase_type::class, self::FLD_TYPE_COM],
+        [self::FLD_VIEW, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, view::class, self::FLD_VIEW_COM],
+        [self::FLD_VALUES, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_VALUES_COM],
+    );
+    // list of fields that CANNOT be changed by the user
+    const FLD_LST_NON_CHANGEABLE = array(
+        [self::FLD_INACTIVE, sql_field_type::INT_SMALL, sql_field_default::NULL, '', '', self::FLD_INACTIVE_COM],
+        [sql::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
+    );
+
 
     // all database field names excluding the id, standard name and user specific fields
     const FLD_NAMES = array(
@@ -113,13 +154,23 @@ class word extends sandbox_typed
 
 
     /*
-     * const to use the system also for the own system configuration
+     * const names of a words used by the system for its own configuration
      * e.g. the number of decimal places related to the user specific words
      * system configuration that is not related to user sandbox data is using the flat cfg methods
      * included in the preserved word names
      */
 
     const SYSTEM_CONFIG = 'system configuration';
+    // for the configuration of a single job
+    const JOB_CONFIG = 'job configuration';
+    // TODO complete the concrete setup
+    const IMPORT_TYPE = 'import type';
+    const API_WORD = 'API';
+    const URL = 'url';
+    const USER_WORD = 'user';
+    const PASSWORD = 'password';
+    const OPEN_API = 'OpenAPI';
+    const DEFINITION = 'definition';
 
 
     /*
@@ -419,22 +470,6 @@ class word extends sandbox_typed
 
 
     /*
-     * sql create
-     */
-
-    /**
-     * the sql statement to create the table
-     *
-     * @param sql $sc with the target db_type set
-     * @return string the sql statement to create the table
-     */
-    function sql_table(sql $sc): string
-    {
-        $sc->set_class(word::class);
-        return parent::sql_table($sc);
-    }
-
-    /*
      * loading / database access object (DAO) functions
      */
 
@@ -543,12 +578,11 @@ class word extends sandbox_typed
      * just set the class name for the user sandbox function
      * load a word object by name
      * @param string $name the name word
-     * @param string $class the word class name
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_name(string $name, string $class = self::class): int
+    function load_by_name(string $name): int
     {
-        return parent::load_by_name($name, $class);
+        return parent::load_by_name($name);
     }
 
     /**
@@ -621,8 +655,6 @@ class word extends sandbox_typed
     function load_view(): ?view
     {
         $result = null;
-
-        //$this->load_obj_vars();
 
         if ($this->view != null) {
             $result = $this->view;
@@ -775,7 +807,7 @@ class word extends sandbox_typed
             if ($key == sandbox_exp::FLD_VIEW) {
                 $wrd_view = new view($this->user());
                 if (!$test_obj) {
-                    $wrd_view->load_by_name($value, view::class);
+                    $wrd_view->load_by_name($value);
                     if ($wrd_view->id == 0) {
                         $result->add_message('Cannot find view "' . $value . '" when importing ' . $this->dsp_id());
                     } else {
@@ -1551,8 +1583,8 @@ class word extends sandbox_typed
         $msk_new->load_by_id($view_id);
 
         $log = new change($this->user());
-        $log->action = change_log_action::UPDATE;
-        $log->set_table(change_log_table::WORD);
+        $log->action = change_action::UPDATE;
+        $log->set_table(change_table_list::WORD);
         $log->set_field(self::FLD_VIEW);
         if ($this->view_id() > 0) {
             $msk_old = new view($this->user());
@@ -1672,8 +1704,9 @@ class word extends sandbox_typed
         $result = new user_message();
 
         // collect all phrase groups where this word is used
-        $grp_lst = new group_list($this->user());
-        $grp_lst->load_by_phr($this->phrase());
+        // TODO activate
+        //$grp_lst = new group_list($this->user());
+        //$grp_lst->load_by_phr($this->phrase());
 
         // collect all triples where this word is used
         $trp_lst = new triple_list($this->user());
@@ -1694,7 +1727,8 @@ class word extends sandbox_typed
         }
 
         // delete the phrase groups
-        $result->add($grp_lst->del());
+        // TODO activate
+        //$result->add($grp_lst->del());
 
         return $result;
     }

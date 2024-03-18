@@ -47,7 +47,6 @@
 
 namespace cfg;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox_link_with_type.php';
 include_once SERVICE_EXPORT_PATH . 'sandbox_exp.php';
 include_once SERVICE_EXPORT_PATH . 'ref_exp.php';
 include_once MODEL_REF_PATH . 'ref_type.php';
@@ -57,16 +56,20 @@ include_once WEB_REF_PATH . 'ref.php';
 include_once MODEL_REF_PATH . 'source.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_link_with_type.php';
 
 use api\ref\ref as ref_api;
 use cfg\db\sql;
 use cfg\db\sql_db;
+use cfg\db\sql_field_default;
+use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\export\sandbox_exp;
 use cfg\export\ref_exp;
-use cfg\log\change_log_action;
-use cfg\log\change_log_link;
-use cfg\log\change_log_table;
+use cfg\log\change_action;
+use cfg\log\change_action_list;
+use cfg\log\change_link;
+use cfg\log\change_table_list;
 
 class ref extends sandbox_link_with_type
 {
@@ -76,11 +79,17 @@ class ref extends sandbox_link_with_type
      */
 
     // object specific database and JSON object field names
+    const TBL_COMMENT = 'to link external data to internal for syncronisation';
     const FLD_ID = 'ref_id';
+    const FLD_USER_COM = 'the user who has created or adjusted the reference';
+    const FLD_EX_KEY_COM = 'the unique external key used in the other system';
     const FLD_EX_KEY = 'external_key';
     const FLD_TYPE = 'ref_type_id';
+    const FLD_URL_COM = 'the concrete url for the entry inluding the item id';
     const FLD_URL = 'url';
+    const FLD_SOURCE_COM = 'if the reference does not allow a full automatic bidirectional update use the source to define an as good as possible import or at least a check if the reference is still valid';
     const FLD_SOURCE = 'source_id';
+    const FLD_PHRASE_COM = 'the phrase for which the external data should be syncronised';
 
     // all database field names excluding the id used to identify if there are some user specific changes
     const FLD_NAMES = array(
@@ -106,6 +115,18 @@ class ref extends sandbox_link_with_type
         self::FLD_URL,
         sandbox_named::FLD_DESCRIPTION,
         sandbox::FLD_EXCLUDED
+    );
+    // list of fields that CAN be changed by the user
+    const FLD_LST_USER_CAN_CHANGE = array(
+        [self::FLD_URL, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_URL_COM],
+        [sandbox_named::FLD_DESCRIPTION, sql_field_type::TEXT, sql_field_default::NULL, '', '', ''],
+    );
+    // list of fields that CANNOT be changed by the user
+    const FLD_LST_NON_CHANGEABLE = array(
+        [phrase::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_PHRASE_COM],
+        [self::FLD_EX_KEY, sql_field_type::NAME, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_EX_KEY_COM],
+        [ref_type::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, ref_type::class, ref_type::TBL_COMMENT],
+        [source::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, source::class, self::FLD_SOURCE_COM],
     );
 
     // persevered reference names for unit and integration tests
@@ -185,7 +206,7 @@ class ref extends sandbox_link_with_type
             if ($db_row[source::FLD_ID] != null) {
                 if ($db_row[source::FLD_ID] > 0) {
                     $this->source = new source($this->user());
-                    $this->source->load_by_id($db_row[source::FLD_ID], source::class);
+                    $this->source->load_by_id($db_row[source::FLD_ID]);
                 }
             }
             if ($this->load_objects()) {
@@ -406,12 +427,11 @@ class ref extends sandbox_link_with_type
      * just set the class name for the user sandbox function
      * load a reference object by name
      * @param string $name the name reference
-     * @param string $class the reference class name
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_name(string $name, string $class = self::class): int
+    function load_by_name(string $name): int
     {
-        return parent::load_by_name($name, $class);
+        return parent::load_by_name($name, $this::class);
     }
 
     function all_sandbox_fields(): array
@@ -507,7 +527,7 @@ class ref extends sandbox_link_with_type
             if ($key == sandbox_exp::FLD_SOURCE) {
                 $src = new source($this->user());
                 if (!$test_obj) {
-                    $src->load_by_name($value, source::class);
+                    $src->load_by_name($value);
                     if ($src->id == 0) {
                         $result->add_message('Cannot find source "' . $value . '" when importing ' . $this->dsp_id());
                     }
@@ -627,7 +647,7 @@ class ref extends sandbox_link_with_type
     /**
      * set the log entry parameter for a new reference
      */
-    function log_link_add(): change_log_link
+    function log_link_add(): change_link
     {
         log_debug('ref->log_add ' . $this->dsp_id());
 
@@ -639,9 +659,9 @@ class ref extends sandbox_link_with_type
             log_err('The reference type object must be set to log adding an external reference.', 'ref->log_add');
         }
 
-        $log = new change_log_link($this->user());
-        $log->action = change_log_action::ADD;
-        $log->set_table(change_log_table::REF);
+        $log = new change_link($this->user());
+        $log->action = change_action::ADD;
+        $log->set_table(change_table_list::REF);
         // TODO review in log_link
         // TODO object must be loaded before it can be logged
         $log->new_from = $this->phr;
@@ -656,12 +676,12 @@ class ref extends sandbox_link_with_type
     /**
      * set the main log entry parameters for updating one reference field
      */
-    function log_link_upd($db_rec): change_log_link
+    function log_link_upd($db_rec): change_link
     {
         log_debug('ref->log_upd ' . $this->dsp_id());
-        $log = new change_log_link($this->user());
-        $log->action = change_log_action::UPDATE;
-        $log->set_table(change_log_table::REF);
+        $log = new change_link($this->user());
+        $log->action = change_action::UPDATE;
+        $log->set_table(change_table_list::REF);
         $log->old_from = $db_rec->phr;
         $log->old_link = $db_rec->ref_type;
         $log->old_to = $db_rec;
@@ -677,7 +697,7 @@ class ref extends sandbox_link_with_type
     /**
      * set the log entry parameter to delete a reference
      */
-    function log_link_del(): change_log_link
+    function log_link_del(): change_link
     {
         log_debug('ref->log_del ' . $this->dsp_id());
 
@@ -689,9 +709,9 @@ class ref extends sandbox_link_with_type
             log_err('The reference type object must be set to log deletion of an external reference.', 'ref->log_del');
         }
 
-        $log = new change_log_link($this->user());
-        $log->action = change_log_action::DELETE;
-        $log->set_table(change_log_table::REF);
+        $log = new change_link($this->user());
+        $log->action = change_action::DELETE;
+        $log->set_table(change_table_list::REF);
         $log->old_from = $this->phr;
         $log->old_link = $this->ref_type;
         $log->old_to = $this;

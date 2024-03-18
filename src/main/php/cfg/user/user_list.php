@@ -35,6 +35,7 @@ use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
+use cfg\user\user_profile;
 use cfg\value\value;
 
 include_once DB_PATH . 'sql_db.php';
@@ -125,7 +126,7 @@ class user_list
     function load_sql_by_code_id(sql $sc, string $code_id): sql_par
     {
         $qp = $this->load_sql($sc, 'code_id');
-        $sc->add_where(sql_db::FLD_CODE_ID, $code_id);
+        $sc->add_where(sql::FLD_CODE_ID, $code_id);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -147,7 +148,7 @@ class user_list
         $sc->set_join_fields(
             array(user_profile::FLD_LEVEL),
             sql_db::TBL_USER_PROFILE,
-            user::FLD_USER_PROFILE,
+            user::FLD_PROFILE,
             user_profile::FLD_ID);
         $sc->add_where(sql_db::LNK_TBL . '.' . user_profile::FLD_LEVEL, $profile_id, sql_par_type::INT_HIGHER);
         $qp->sql = $sc->sql();
@@ -328,7 +329,7 @@ class user_list
                 $usr = new user;
                 $usr->set_id($db_usr[user::FLD_ID]);
                 $usr->name = $db_usr[user::FLD_NAME];
-                $usr->code_id = $db_usr[sql_db::FLD_CODE_ID];
+                $usr->code_id = $db_usr[sql::FLD_CODE_ID];
                 $this->lst[] = $usr;
             }
         }

@@ -685,6 +685,7 @@ class triple_list extends sandbox_list
 
     /**
      * convert the word list object into a phrase list object
+     * @return phrase_list with all triples of this list as a phrase
      */
     function phrase_lst(): phrase_list
     {

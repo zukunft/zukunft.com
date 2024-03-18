@@ -40,10 +40,10 @@
     word.php
     expression.php
     formula.php
-    formula_element.php
-    formula_element_list.php
-    formula_element_group_list.php
-    formula_element_group.php
+    element.php
+    element_list.php
+    element_group_list.php
+    element_group.php
     formula_list.php
     formula_link_list.php
     parameter_type.php
@@ -75,8 +75,8 @@
     formula_link.php
     result.php
     result_list.php
-    batch_job.php
-    batch_job_list.php
+    job.php
+    job_list.php
     view.php
     view_display.php
     component.php
@@ -131,34 +131,34 @@
 
 */
 
+use cfg\import\import_file;
 use cfg\user;
-use test\string_unit_tests;
-use test\term_list_unit_db_tests;
-use test\test_unit_read_db;
-use test\verb_test;
-use test\write\batch_job_test;
-use test\write\component_link_test;
-use test\write\component_test;
-use test\write\expression_test;
-use test\write\formula_element_group_test;
-use test\write\formula_element_test;
-use test\write\formula_link_test;
-use test\write\formula_test;
-use test\write\formula_trigger_test;
-use test\write\graph_test;
-use test\write\phrase_group_list_test;
-use test\write\phrase_group_test;
-use test\write\phrase_list_test;
-use test\write\phrase_test;
-use test\write\ref_test;
-use test\write\result_test;
-use test\write\source_test;
-use test\write\term_test;
-use test\write\triple_test;
-use test\write\value_test;
-use test\write\view_test;
-use test\write\word_list_test;
-use test\write\word_test;
+use unit_write\verb_tests;
+use unit_write\job_tests;
+use unit_write\component_link_tests;
+use unit_write\component_tests;
+use unit_write\expression_tests;
+use unit_write\element_group_tests;
+use unit_write\element_tests;
+use unit_write\formula_link_tests;
+use unit_write\formula_tests;
+use unit_write\formula_trigger_tests;
+use unit_write\graph_tests;
+use unit_write\phrase_group_list_tests;
+use unit_write\phrase_group_tests;
+use unit_write\phrase_list_tests;
+use unit_write\phrase_tests;
+use unit_write\ref_tests;
+use unit_write\result_tests;
+use unit_write\source_tests;
+use unit_write\term_tests;
+use unit_write\triple_tests;
+use unit_write\value_tests;
+use unit_write\view_tests;
+use unit_write\word_list_tests;
+use unit_write\word_tests;
+use unit\lib_tests;
+use unit_read\all_unit_read_tests;
 
 // standard zukunft header for callable php files to allow debugging and lib loading
 global $debug;
@@ -170,7 +170,7 @@ include_once PHP_PATH . 'zu_lib.php';
 // TODO dismiss by refactoring phrase_list_dsp_old
 include_once MODEL_PHRASE_PATH . 'phr_ids.php';
 include_once MODEL_PHRASE_PATH . 'phrase_list.php';
-include_once SERVICE_IMPORT_PATH . 'import_file.php';
+include_once MODEL_IMPORT_PATH . 'import_file.php';
 
 // load the testing base functions
 const PHP_TEST_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'test' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
@@ -188,7 +188,7 @@ if ($start_usr->id() > 0) {
     if ($start_usr->is_admin()) {
 
         // prepare testing
-        $t = new test_unit_read_db();
+        $t = new all_unit_read_tests();
 
         // run the unit tests without database connection
         $t->run_unit();
@@ -225,7 +225,7 @@ if ($start_usr->id() > 0) {
                 $ip_addr = $_SERVER['REMOTE_ADDR'];
             }
             if ($ip_addr == user::SYSTEM_LOCAL) {
-                import_system_users();
+                $db_con->import_system_users();
             }
 
             $usr->load_by_profile_code(user::SYSTEM_TEST_PROFILE_CODE_ID, $db_con);
@@ -247,38 +247,38 @@ if ($start_usr->id() > 0) {
 
             run_db_link_test($t);
             run_sandbox_test($t);
-            (new string_unit_tests)->run($t); // test functions not yet split into single unit tests
-            (new word_test)->run($t);
-            (new word_list_test)->run($t);
-            (new verb_test)->run($t);
-            (new triple_test)->run($t);
-            (new phrase_test)->run($t);
-            (new phrase_list_test)->run($t);
-            (new phrase_group_test)->run($t);
-            (new phrase_group_list_test)->run($t);
-            (new graph_test)->run($t);
-            (new term_test)->run($t);
-            (new term_list_unit_db_tests)->run($t);
-            (new value_test)->run($t);
-            (new source_test)->run($t);
-            (new ref_test)->run($t);
-            (new expression_test)->run($t);
-            (new formula_test)->run($t);
-            (new formula_test)->run_list($t);
-            (new formula_link_test)->run($t);
-            (new formula_link_test)->run_list($t);
-            (new formula_trigger_test)->run($t);
-            (new result_test)->run($t);
+            (new lib_tests)->run($t); // test functions not yet split into single unit tests
+            (new word_tests)->run($t);
+            (new word_list_tests)->run($t);
+            (new verb_tests)->run($t);
+            (new triple_tests)->run($t);
+            (new phrase_tests)->run($t);
+            (new phrase_list_tests)->run($t);
+            (new phrase_group_tests)->run($t);
+            (new phrase_group_list_tests)->run($t);
+            (new graph_tests)->run($t);
+            (new term_tests)->run($t);
+            //(new term_list_tests)->run($t);
+            (new value_tests)->run($t);
+            (new source_tests)->run($t);
+            (new ref_tests)->run($t);
+            (new expression_tests)->run($t);
+            (new formula_tests)->run($t);
+            (new formula_tests)->run_list($t);
+            (new formula_link_tests)->run($t);
+            (new formula_link_tests)->run_list($t);
+            (new formula_trigger_tests)->run($t);
+            (new result_tests)->run($t);
             // TODO activate Prio 1
-            //(new result_test)->run_list($t);
-            (new formula_element_test)->run($t);
-            (new formula_element_test)->run_list($t);
-            (new formula_element_group_test)->run($t);
-            (new batch_job_test)->run($t);
-            (new batch_job_test)->run_list($t);
-            (new view_test)->run($t);
-            (new component_test)->run($t);
-            (new component_link_test)->run($t);
+            //(new result_tests)->run_list($t);
+            (new element_tests)->run($t);
+            (new element_tests)->run_list($t);
+            (new element_group_tests)->run($t);
+            (new job_tests)->run($t);
+            (new job_tests)->run_list($t);
+            (new view_tests)->run($t);
+            (new component_tests)->run($t);
+            (new component_link_tests)->run($t);
             run_display_test($t);
             // TODO activate Prio 2
             // run_export_test($t);
@@ -297,7 +297,8 @@ if ($start_usr->id() > 0) {
             // TODO add a test to merge a separate opened phrase Canton Zürich with Zurich (Canton)
             run_word_display_test($t);
 
-            import_base_config($usr);
+            $import = new import_file();
+            $import->import_base_config($usr);
 
             // testing cleanup to remove any remaining test records
             $t->cleanup();

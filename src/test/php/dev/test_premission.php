@@ -30,7 +30,9 @@
 
 */
 
-function run_permission_test (testing $t) {
+use test\test_cleanup;
+
+function run_permission_test (test_cleanup $t) {
 
 
     $t->header('Test the user permission level increase');

@@ -37,6 +37,7 @@ include_once DB_PATH . 'sql_par_type.php';
 
 use cfg\db\sql;
 use cfg\db\sql_par;
+use cfg\db\sql_par_type;
 use cfg\library;
 use cfg\phrase;
 use cfg\phrase_list;
@@ -45,6 +46,7 @@ use cfg\db\sql_db;
 use cfg\term_list;
 use cfg\triple;
 use cfg\user_message;
+use cfg\value\value;
 use cfg\word;
 
 class group_list extends sandbox_list
@@ -60,6 +62,133 @@ class group_list extends sandbox_list
     /*
      * load
      */
+
+    /**
+     * load all phrase groups that contain the given phrase
+     * @param phrase $phr
+     * @return bool true if at least one phrase group has been found
+     */
+    function load_by_phr(phrase $phr): bool
+    {
+        global $db_con;
+        $result = false;
+
+        $qp = $this->load_sql_by_phr($db_con->sql_creator(), $phr);
+
+        // similar statement used in triple_list->load, check if changes should be repeated in triple_list.php
+        $db_rows = $db_con->get($qp);
+        if ($db_rows != null) {
+            foreach ($db_rows as $db_row) {
+                $phr_grp = new group($this->user());
+                $phr_grp->row_mapper($db_row);
+                $this->add_obj($phr_grp);
+                $result = true;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * create an SQL statement to retrieve a list of groups linked to the given phrase from the database
+     * TODO review to load the prime group by id
+     *
+     * @param sql $sc with the target db_type set
+     * @param phrase $phr if set to get all values for this phrase
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_phr(
+        sql    $sc,
+        phrase $phr,
+        int    $limit = 0,
+        int    $page = 0
+    ): sql_par
+    {
+        $lib = new library();
+        $qp = new sql_par(group::class);
+        $qp->name = $lib->class_to_name(group_list::class) . '_by_phr';
+        $par_types = array();
+        // loop over the possible tables where the group name overwrite might be stored in this pod
+        foreach (group::TBL_LIST as $tbl_typ) {
+            $sc->reset();
+            $qp_tbl = $this->load_sql_by_phr_single($sc, $phr, $tbl_typ);
+            if ($sc->db_type() != sql_db::MYSQL) {
+                $qp->merge($qp_tbl, true);
+            } else {
+                $qp->merge($qp_tbl);
+            }
+        }
+        // sort the parameters if the parameters are part of the union
+        if ($sc->db_type() != sql_db::MYSQL) {
+            $lib = new library();
+            $qp->par = $lib->key_num_sort($qp->par);
+        }
+
+        foreach ($qp->par as $par) {
+            if (is_numeric($par)) {
+                $par_types[] = sql_par_type::INT;
+            } else {
+                $par_types[] = sql_par_type::TEXT;
+            }
+        }
+        $qp->sql = $sc->prepare_sql($qp->sql, $qp->name, $par_types);
+
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve a list of values linked to a phrase from the database
+     * from a single table
+     *
+     * @param sql $sc with the target db_type set
+     * @param phrase $phr if set to get all values for this phrase
+     * @param array $tbl_typ_lst the table types for this table
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_phr_single(sql $sc, phrase $phr, array $tbl_typ_lst): sql_par
+    {
+        $qp = $this->load_sql_init($sc, group::class, 'phr', $tbl_typ_lst);
+        $grp_id = new group_id();
+        $sc->add_where(group::FLD_ID, $grp_id->int2alpha_num($phr->id()), sql_par_type::LIKE, '$3');
+        $qp->sql = $sc->sql(0, true, false);
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * set the SQL query parameters to load a list of groups
+     * set the fields for a union select of all possible tables
+     *
+     * @param sql $sc with the target db_type set
+     * @param string $class the value or result class name
+     * @param string $query_name the name extension to make the query name unique
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_init(
+        sql    $sc,
+        string $class,
+        string $query_name,
+        array  $tbl_types = []
+    ): sql_par
+    {
+        $is_prime = $this->is_prime($tbl_types);
+        $is_main = $this->is_main($tbl_types);
+
+        $tbl_ext = $this->table_extension($tbl_types);
+        $qp = new sql_par(group_list::class, false, false, $tbl_ext);
+        $qp->name .= $query_name;
+
+        $sc->set_class($class, false, $tbl_ext);
+        // TODO add pattern filter for the prime group id
+        $grp = new group($this->user());
+        $sc->set_id_field($grp->id_field());
+        $sc->set_name($qp->name);
+
+        $sc->set_usr($this->user()->id());
+        $sc->set_fields(group::FLD_NAMES);
+        return $qp;
+    }
 
     /**
      * create the common part of an SQL statement to get a list of phrase groups names from the database
@@ -144,64 +273,6 @@ class group_list extends sandbox_list
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
         return $qp;
-    }
-
-    /**
-     * set the SQL query parameters to load a list of groups by a phrase id
-     * TODO add pattern matching for 64-bit, 512-bit and text group_id
-     *
-     * @param sql $sc with the target db_type set
-     * @param phrase $phr the phrase to which all linked groups should be returned
-     * @param int $limit the number of rows to return
-     * @param int $offset jump over these number of pages
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql_by_phr(sql $sc, phrase $phr, int $limit = 0, int $offset = 0): sql_par
-    {
-        $qp = $this->load_sql($sc, 'phr');
-        // overwrite the query name
-        $lib = new library();
-        $class = $lib->class_to_name($this::class);
-        $qp->name = $class . '_by_phr';
-        $sc->set_name($qp->name);
-        $sc->set_join_fields(
-            array(phrase::FLD_ID),
-            sql_db::TBL_GROUP_LINK,
-            group::FLD_ID,
-            group::FLD_ID);
-        $sc->add_where(sql_db::LNK_TBL . '.' . phrase::FLD_ID, $phr->obj_id());
-        $sc->set_order(group::FLD_ID);
-        $sc->set_page($limit, $offset);
-        $qp->sql = $sc->sql();
-        $qp->par = $sc->get_par();
-        return $qp;
-    }
-
-    /**
-     * load all phrase groups that contain the given phrase
-     * @param phrase $phr
-     * @return bool true if at least one phrase group has been found
-     */
-    function load_by_phr(phrase $phr): bool
-    {
-        global $db_con;
-        $result = false;
-
-        $qp = $this->load_sql_by_phr($db_con->sql_creator(), $phr);
-
-        // similar statement used in triple_list->load, check if changes should be repeated in triple_list.php
-        $db_rows = $db_con->get($qp);
-        if ($db_rows != null) {
-            foreach ($db_rows as $db_row) {
-                $phr_grp = new group($this->user());
-                $phr_grp->row_mapper($db_row);
-                $this->add_obj($phr_grp);
-                $result = true;
-            }
-        }
-
-
-        return $result;
     }
 
     /**

@@ -33,17 +33,21 @@ namespace cfg;
 
 include_once DB_PATH . 'sql_par_type.php';
 include_once WEB_VIEW_PATH . 'view.php';
-include_once MODEL_VIEW_PATH . 'component_link.php';
+include_once MODEL_COMPONENT_PATH . 'component_link.php';
 include_once MODEL_COMPONENT_PATH . 'component.php';
 include_once MODEL_COMPONENT_PATH . 'component_list.php';
-include_once MODEL_VIEW_PATH . 'component_link_list.php';
+include_once MODEL_COMPONENT_PATH . 'component_link_list.php';
 include_once SERVICE_EXPORT_PATH . 'view_exp.php';
 include_once SERVICE_EXPORT_PATH . 'component_exp.php';
 
 use api\view\view as view_api;
 use cfg\component\component;
+use cfg\component\component_link;
+use cfg\component\component_link_list;
 use cfg\db\sql;
 use cfg\db\sql_db;
+use cfg\db\sql_field_default;
+use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\export\sandbox_exp;
@@ -56,16 +60,43 @@ class view extends sandbox_typed
      * database link
      */
 
+    // comments used for the database creation
+    const TBL_COMMENT = 'to store all user interfaces entry points';
+
     // the database and JSON object field names used only for views
+    // *_COM: the description of the field
     const FLD_ID = 'view_id';
+    const FLD_NAME_COM = 'the name of the view used for searching';
     const FLD_NAME = 'view_name';
+    const FLD_DESCRIPTION_COM = 'to explain the view to the user with a mouse over text; to be replaced by a language form entry';
+    const FLD_TYPE_COM = 'to link coded functionality to views e.g. to use a view for the startup page';
     const FLD_TYPE = 'view_type_id';
+    const FLD_CODE_ID_COM = 'to link coded functionality to a specific view e.g. define the internal system views';
     // the JSON object field names
     const FLD_COMPONENT = 'components';
 
+    // list of fields that MUST be set by one user
+    const FLD_LST_MUST_BE_IN_STD = array(
+        [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_NAME_COM],
+    );
+    // list of must fields that CAN be changed by the user
+    const FLD_LST_MUST_BUT_USER_CAN_CHANGE = array(
+        [language::FLD_ID, sql_field_type::KEY_PART_INT, sql_field_default::ONE, sql::INDEX, language::class, self::FLD_NAME_COM],
+        [self::FLD_NAME, sql_field_type::NAME, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_COM],
+    );
+    // list of fields that CAN be changed by the user
+    const FLD_LST_USER_CAN_CHANGE = array(
+        [self::FLD_DESCRIPTION, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
+        [self::FLD_TYPE, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, view_type::class, self::FLD_TYPE_COM],
+    );
+    // list of fields that CANNOT be changed by the user
+    const FLD_LST_NON_CHANGEABLE = array(
+        [sql::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
+    );
+
     // all database field names excluding the id
     const FLD_NAMES = array(
-        sql_db::FLD_CODE_ID
+        sql::FLD_CODE_ID
     );
     // list of the user specific database field names
     const FLD_NAMES_USR = array(
@@ -151,8 +182,8 @@ class view extends sandbox_typed
             if (array_key_exists(self::FLD_TYPE, $db_row)) {
                 $this->type_id = $db_row[self::FLD_TYPE];
             }
-            if (array_key_exists(sql_db::FLD_CODE_ID, $db_row)) {
-                $this->code_id = $db_row[sql_db::FLD_CODE_ID];
+            if (array_key_exists(sql::FLD_CODE_ID, $db_row)) {
+                $this->code_id = $db_row[sql::FLD_CODE_ID];
             }
         }
         return $result;
@@ -371,7 +402,7 @@ class view extends sandbox_typed
     function load_sql_by_code_id(sql $sc, string $code_id, string $class): sql_par
     {
         $qp = $this->load_sql($sc, 'code_id', $class);
-        $sc->add_where(sql_db::FLD_CODE_ID, $code_id);
+        $sc->add_where(sql::FLD_CODE_ID, $code_id);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -524,12 +555,11 @@ class view extends sandbox_typed
      * just set the class name for the user sandbox function
      * load a view object by name
      * @param string $name the name view
-     * @param string $class the view class name
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_name(string $name, string $class = self::class): int
+    function load_by_name(string $name): int
     {
-        return parent::load_by_name($name, $class);
+        return parent::load_by_name($name);
     }
 
 
@@ -859,7 +889,7 @@ class view extends sandbox_typed
                 $log->new_value = $this->code_id;
                 $log->std_value = $std_rec->code_id;
                 $log->row_id = $this->id;
-                $log->set_field(sql_db::FLD_CODE_ID);
+                $log->set_field(sql::FLD_CODE_ID);
                 $result = $this->save_field_user($db_con, $log);
             }
         }

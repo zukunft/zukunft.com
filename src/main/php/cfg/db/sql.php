@@ -37,8 +37,8 @@ include_once MODEL_DB_PATH . 'sql_field_type.php';
 include_once MODEL_DB_PATH . 'sql_field_default.php';
 include_once MODEL_DB_PATH . 'sql_pg.php';
 
-use cfg\component_link;
-use cfg\formula_element;
+use cfg\component\component_link;
+use cfg\element;
 use cfg\formula_link;
 use cfg\group\group;
 use cfg\group\group_id;
@@ -66,10 +66,34 @@ class sql
     const ORDER_DESC = 'DESC';
     const NULL_VALUE = 'NULL';
     const INDEX = 'INDEX';
-    const UNIQUE = 'UNIQUE INDEX';
+    const UNIQUE = 'UNIQUE INDEX';  // TODO check if UNIQUE needs to be used for word and triple names
+    const CREATE = 'CREATE OR REPLACE';
+    const VIEW = 'VIEW';
+    const AS = 'AS';
+    const FROM = 'FROM';
+    const WHERE = 'WHERE';
+    const AND = 'AND';
+    const OR = 'OR';
+    const CONCAT = 'CONCAT';
+    const CASE = 'CASE WHEN';
+    const CASE_MYSQL = 'IF(';
+    const THEN = 'THEN';
+    const THEN_MYSQL = ',';
+    const IS_NULL = 'IS NULL';
+    const ELSE = 'ELSE';
+    const ELSE_MYSQL = ',';
+    const END = 'END';
+    const END_MYSQL = ')';
+    const UNION = 'UNION';
     const TRUE = '1'; // representing true in the where part for a smallint field
     const FALSE = '0'; // representing true in the where part for a smallint field
     const ID_NULL = 0; // the 'not set' value for an id; could have been null if postgres index would allow it
+
+    // sql field names used for several classes
+    const FLD_CODE_ID = 'code_id';     // field name for the code link e.g. for words used for the system configuration
+    const FLD_VALUE = 'value';         // field name e.g. for the configuration value
+    const FLD_TYPE_NAME = 'type_name'; // field name for the user specific name of a type; types are used to assign code to a db row
+    const FLD_CONST = 'const'; // for the view creation to indicate that the field name as a const
 
     // enum values used for the table creation
     const fld_type_ = '';
@@ -81,6 +105,9 @@ class sql
     const PG_PAR_INT = 'bigint';
     const PG_PAR_INT_SMALL = 'smallint';
 
+    // placeholder for the class name in table or field comments
+    const COMMENT_CLASS_NAME = '-=class=-';
+
     // classes where the table that do not have a name
     // e.g. sql_db::TBL_TRIPLE is a link which hase a name, but the generated name can be overwritten, so the standard field naming is not used
     const DB_TYPES_NOT_NAMED = [
@@ -89,10 +116,9 @@ class sql
         value_time_series::class,
         formula_link::class,
         result::class,
-        formula_element::class,
+        element::class,
         component_link::class,
         sql_db::TBL_VALUE_PHRASE_LINK,
-        sql_db::TBL_GROUP_LINK,
         view_term_link::class,
         ref::class,
         sql_db::TBL_IP,
@@ -116,6 +142,7 @@ class sql
     private const FLD_POS_INDEX = 3;
     private const FLD_POS_FOREIGN_LINK = 4;
     private const FLD_POS_COMMENT = 5;
+    private const FLD_POS_NAME_LINK = 6;
 
     // parameters for the sql creation that are set step by step with the functions of the sql creator
     private ?int $usr_id;           // the user id of the person who request the database changes
@@ -149,7 +176,7 @@ class sql
     private ?string $order;    // the ORDER                 SQL statement that is used for the next select query
     private ?string $page;     // the LIMIT and OFFSET      SQL statement that is used for the next select query
     private ?string $end;      // the closing               SQL statement that is used for the next select query
-    private ?string $sub_sql;  // a complex sql statement used for the next select query
+    //private ?string $sub_sql;  // a complex sql statement used for the next select query
     private bool $use_page;    // true if the limit and offset statement should be added at the end
 
     // temp for handling the user fields
@@ -227,9 +254,13 @@ class sql
     /**
      * set the default sql_creator configuration
      */
-    function __construct()
+    function __construct(string $db_type = '')
     {
-        $this->db_type = sql_db::POSTGRES;
+        if ($db_type != '') {
+            $this->db_type = $db_type;
+        } else {
+            $this->db_type = sql_db::POSTGRES;
+        }
         $this->reset();
     }
 
@@ -237,8 +268,11 @@ class sql
     /**
      * reset the previous settings
      */
-    public function reset(): void
+    public function reset(string $db_type = ''): void
     {
+        if ($db_type != '') {
+            $this->db_type = $db_type;
+        }
         $this->usr_id = null;
         $this->usr_view_id = null;
         $this->class = '';
@@ -267,7 +301,7 @@ class sql
         $this->order = '';
         $this->page = '';
         $this->end = '';
-        $this->sub_sql = '';
+        //$this->sub_sql = '';
         $this->use_page = false;
 
         $this->field_lst = [];
@@ -535,7 +569,7 @@ class sql
      */
     function set_join_sql(string $sql, array $join_field_lst, string $join_field): void
     {
-        $this->sub_sql = $sql;
+        //$this->sub_sql = $sql;
         if ($this->join_type == '' and !$this->join_force_rename
             or ($this->join_field == $join_field and $join_field != '')) {
             $this->join_type = $sql;
@@ -1528,8 +1562,8 @@ class sql
             } elseif ($this->usr_query and $this->join_usr_query) {
                 $result = $this->sep($result);
                 $result .= ' ' . sql_db::ULK_TBL . '.' . $field_esc;
-            } elseif ($this->join_sub_query) {
                 // switched off because at the moment only the change sum should be calculated
+            //} elseif ($this->join_sub_query) {
                 //$result = $this->sep($result);
                 //$result .= ' ' . sql_db::GRP_TBL . '.' . $field_esc;
             }
@@ -2125,13 +2159,13 @@ class sql
 
                             // include rows where code_id is null
                             if ($par_type == sql_par_type::TEXT) {
-                                if ($this->par_fields[$i] == sql_db::FLD_CODE_ID) {
+                                if ($this->par_fields[$i] == sql::FLD_CODE_ID) {
                                     if ($this->db_type == sql_db::POSTGRES) {
                                         $result .= ' AND ';
                                         if ($this->usr_query or $this->join <> '') {
                                             $result .= sql_db::STD_TBL . '.';
                                         }
-                                        $result .= sql_db::FLD_CODE_ID . ' IS NOT NULL';
+                                        $result .= sql::FLD_CODE_ID . ' IS NOT NULL';
                                     }
                                 }
                             }
@@ -2317,9 +2351,17 @@ class sql
      * @param array $fields with the field names, types and default value
      * @param string $type_name the name of the value type
      * @param string $tbl_comment describe the purpose of the table for the developer only
+     * @param string $class the class name including the namespace
+     * @param bool $usr_tbl true if the sql for the user overwrite table should be returned
      * @return string the sql statement to create a table
      */
-    function table_create(array $fields, string $type_name = '', string $tbl_comment = ''): string
+    function table_create(
+        array  $fields,
+        string $type_name = '',
+        string $tbl_comment = '',
+        string $class = '',
+        bool   $usr_tbl = false
+    ): string
     {
         $sql = '';
 
@@ -2330,9 +2372,17 @@ class sql
         $sql .= '-- ';
         $sql .= '-- table structure ';
         if ($tbl_comment != '') {
-            $sql .= $tbl_comment;
+            if ($usr_tbl) {
+                $sql .= 'to save user specific changes ' . $tbl_comment;
+            } else {
+                $sql .= $tbl_comment;
+            }
         } else {
-            $sql .= $table_used;
+            if ($usr_tbl) {
+                $sql .= 'for user specific changes of ' . $table_used;
+            } else {
+                $sql .= 'for ' . $table_used;
+            }
         }
         $sql .= ' ';
         $sql .= '-- ';
@@ -2361,6 +2411,11 @@ class sql
             $default = $field[sql::FLD_POS_DEFAULT_VALUE];
             $default_used = $default->pg_type();
             $comment = $field[sql::FLD_POS_COMMENT];
+            if (($type->is_key() or $type->is_key_part()) and $type_name != '') {
+                $comment = $this->comment_set_class($comment, '');
+            } else {
+                $comment = $this->comment_set_class($comment, $class);
+            }
             if ($this->db_type() == sql_db::POSTGRES) {
                 if ($type->is_key()) {
                     $default_used = sql_pg::FLD_KEY;
@@ -2368,11 +2423,13 @@ class sql
             }
             $comment_used = '';
             if ($this->db_type() == sql_db::MYSQL) {
-                $comment_used = " COMMENT '" . $comment;
-                if ($type->is_key() or $type->is_key_part()) {
-                    $comment_used .= ' ' . $type_name;
+                if ($comment != '') {
+                    $comment_used = " COMMENT '" . $comment;
+                    if (($type->is_key() or $type->is_key_part()) and $type_name != '') {
+                        $comment_used .= ' ' . $type_name;
+                    }
+                    $comment_used .= "'";
                 }
-                $comment_used .= "'";
             }
             $sql_fields .= '    ' . $name . ' ' . $type_used . ' ' . $default_used . $comment_used;
         }
@@ -2392,15 +2449,42 @@ class sql
                 $name = $field[sql::FLD_POS_NAME];
                 $type = $field[sql::FLD_POS_TYPE];
                 $comment = $field[sql::FLD_POS_COMMENT];
-                $sql .= "COMMENT ON COLUMN " . $table_used . "." . $name . " IS '" . $comment;
-                if ($type->is_key() or $type->is_key_part()) {
-                    $sql .= ' ' . $type_name;
+                if ($comment != '') {
+                    if (($type->is_key() or $type->is_key_part()) and $type_name != '') {
+                        $comment = $this->comment_set_class($comment, '');
+                    } else {
+                        $comment = $this->comment_set_class($comment, $class);
+                    }
+                    $sql .= "COMMENT ON COLUMN " . $table_used . "." . $name . " IS '" . $comment;
+                    if (($type->is_key() or $type->is_key_part()) and $type_name != '') {
+                        $sql .= ' ' . $type_name;
+                    }
+                    $sql .= "'; ";
                 }
-                $sql .= "'; ";
             }
         }
 
+        // add auto increment if needed
+        if ($this->db_type() == sql_db::MYSQL) {
+            $sql .= $this->auto_increment($class, $fields);;
+        }
+
         return $sql;
+    }
+
+
+    /**
+     * replace the class placeholder in table of field comments with the class name
+     *
+     * @param string $comment_text the table of field comment
+     * @param string $class the class including the namespace
+     * @return string the comment string with the class name
+     */
+    private function comment_set_class(string $comment_text, string $class): string
+    {
+        $lib = new library();
+        $name = $lib->class_to_name($class);
+        return str_replace(sql::COMMENT_CLASS_NAME, $name, $comment_text);
     }
 
     /**
@@ -2464,6 +2548,31 @@ class sql
             }
         }
 
+        // create the unique index sql of combined fields
+        $unique_fields = [];
+        foreach ($fields as $field) {
+            $type = $field[sql::FLD_POS_TYPE];
+            if ($type->is_unique_part()) {
+                $unique_fields[] = $field[sql::FLD_POS_NAME];
+            }
+        }
+        if (count($unique_fields) > 0) {
+            if ($this->db_type() == sql_db::POSTGRES) {
+                $sql .= 'CREATE UNIQUE INDEX ' . $this->table . '_unique_idx ON ';
+                $sql .= ' ' . $this->name_sql_esc($this->table) . ' (';
+                $sql .= implode(', ', $unique_fields);
+                $sql .= '); ';
+            } elseif ($this->db_type() == sql_db::MYSQL) {
+                $sql .= 'ADD UNIQUE KEY ' . $this->table . '_unique_idx (';
+                $sql .= implode(', ', $unique_fields);
+                if (count($index_fields) > 0) {
+                    $sql .= '), ';
+                } else {
+                    $sql .= '); ';
+                }
+            }
+        }
+
         // create the index create sql
         $sql_field = '';
         $field_lst = [];
@@ -2498,6 +2607,28 @@ class sql
         return $sql;
     }
 
+    private function auto_increment(string $class, array $fields): string
+    {
+        $sql = '';
+        $id_fld = '';
+        foreach ($fields as $field) {
+            $type = $field[sql::FLD_POS_TYPE];
+            if ($type->is_auto_increment()) {
+                $id_fld = $field[sql::FLD_POS_NAME];
+            }
+        }
+        if ($id_fld != '') {
+            $sql .= '-- ' . "\n";
+            $sql .= '-- AUTO_INCREMENT for table ' . $this->table . ' ' . "\n";
+            $sql .= '-- ' . "\n";
+            $sql .= 'ALTER ' . 'TABLE ' . $this->name_sql_esc($this->table) . ' ' . "\n";
+            $sql .= '    MODIFY ' . $this->name_sql_esc($id_fld) . ' int(11) NOT NULL AUTO_INCREMENT; ' . "\n";
+            $sql .= ' ' . "\n";
+        }
+        return $sql;
+
+    }
+
     /**
      * generate a sql statement to create the foreign keys for one database table
      *
@@ -2509,12 +2640,39 @@ class sql
         $sql = '';
         $lib = new library();
 
-        // create the foreign key sql statements
         $sql_table = '';
         $sql_fields = '';
         $field_lst = [];
+        $key_lst = [];
+
+        // create the unique constraints
         foreach ($fields as $field) {
             $name = $field[sql::FLD_POS_NAME];
+            $type = $field[sql::FLD_POS_TYPE];
+            if ($type->is_unique()) {
+                // set the header comments
+                if ($sql == '') {
+                    $sql .= '-- ';
+                    $sql .= '-- constraints for table ' . $this->table . ' ';
+                    $sql .= '-- ';
+                    $sql_table .= 'ALTER TABLE ' . $this->name_sql_esc($this->table);
+                }
+                $sql_field = ' ADD CONSTRAINT ' . $this->table . '_' . $name . '_uk';
+                $sql_field .= ' UNIQUE (' . $name . ')';
+                $field_lst[] = $sql_field;
+            }
+        }
+
+        // create the foreign key sql statements
+        foreach ($fields as $field) {
+            $name = $field[sql::FLD_POS_NAME];
+            $name_foreign = $name;
+            if (count($field) > sql::FLD_POS_NAME_LINK) {
+                $name_link = $field[sql::FLD_POS_NAME_LINK];
+                if ($name_link != '') {
+                    $name_foreign = $name_link;
+                }
+            }
             $link = $field[sql::FLD_POS_FOREIGN_LINK];
             $link_used = $lib->class_to_name($link);
             if ($link_used != '') {
@@ -2525,13 +2683,25 @@ class sql
                     $sql .= '-- ';
                     $sql_table .= 'ALTER TABLE ' . $this->name_sql_esc($this->table);
                 }
+                $key = $this->table . '_' . $link_used . '_fk';
+                $key_pos = 1;
+                if (in_array($key, $key_lst)) {
+                    $key_pos++;
+                    $key = $this->table . '_' . $link_used . $key_pos . '_fk';
+                    while (in_array($key, $key_lst)) {
+                        $key_pos++;
+                        $key = $this->table . '_' . $link_used . $key_pos . '_fk';
+                    }
+                }
+                $key_lst[] = $key;
+                $link_used = $this->get_table_name($link_used);
                 if ($this->db_type() == sql_db::POSTGRES) {
-                    $sql_field = ' ADD CONSTRAINT ' . $this->table . '_' . $link_used . '_fk';
-                    $sql_field .= ' FOREIGN KEY (' . $name . ') REFERENCES ' . $link_used . 's (' . $name . ')';
+                    $sql_field = ' ADD CONSTRAINT ' . $key;
+                    $sql_field .= ' FOREIGN KEY (' . $name . ') REFERENCES ' . $link_used . ' (' . $name_foreign . ')';
                     $field_lst[] = $sql_field;
                 } elseif ($this->db_type() == sql_db::MYSQL) {
-                    $sql_field = ' ADD CONSTRAINT ' . $this->table . '_' . $link_used . '_fk';
-                    $sql_field .= ' FOREIGN KEY (' . $name . ') REFERENCES ' . $link_used . 's (' . $name . ')';
+                    $sql_field = ' ADD CONSTRAINT ' . $key;
+                    $sql_field .= ' FOREIGN KEY (' . $name . ') REFERENCES ' . $link_used . ' (' . $name_foreign . ')';
                     $field_lst[] = $sql_field;
                 }
             }
@@ -2551,6 +2721,20 @@ class sql
         $sql = ' ';
         $sql .= '-- -------------------------------------------------------- ';
         $sql .= ' ';
+        return $sql;
+    }
+
+    /**
+     * @return string a sql separator just to improve formatting
+     */
+    function sql_view_header(string $view_name, string $view_comment = ''): string
+    {
+        $sql = '-- ';
+        $sql .= '-- structure for view ' . $view_name . ' ';
+        if ($view_comment != '') {
+            $sql .= '(' . $view_comment . ') ';
+        }
+        $sql .= '-- ';
         return $sql;
     }
 
@@ -2582,7 +2766,8 @@ class sql
                     and $this->class != sql_db::TBL_RESULT
                     and $this->class != sql_db::TBL_LANGUAGE_FORM
                     and $this->class != sql_db::TBL_USER_OFFICIAL_TYPE
-                    and $this->class != sql_db::TBL_USER_TYPE) {
+                    and $this->class != sql_db::TBL_USER_TYPE
+                    and $this->class != sql_db::TBL_USER_PROFILE) {
                     $sql .= ' RETURNING ';
                     if (is_array($this->id_field)) {
                         $sql .= implode(',', $this->id_field);
@@ -2716,7 +2901,8 @@ class sql
                     if ($this->class != sql_db::TBL_VALUE_TIME_SERIES_DATA
                         and $this->class != sql_db::TBL_LANGUAGE_FORM
                         and $this->class != sql_db::TBL_USER_OFFICIAL_TYPE
-                        and $this->class != sql_db::TBL_USER_TYPE) {
+                        and $this->class != sql_db::TBL_USER_TYPE
+                        and $this->class != sql_db::TBL_USER_PROFILE) {
                         $sql = $sql . ' RETURNING ' . $this->id_field . ';';
                     }
 
@@ -2858,7 +3044,8 @@ class sql
         // exceptions for user overwrite tables
         // but not for the user type table, because this is not part of the sandbox tables
         if (str_starts_with($type, sql_db::TBL_USER_PREFIX)
-            and $type != sql_db::TBL_USER_TYPE) {
+            and $type != sql_db::TBL_USER_TYPE
+            and $type != sql_db::TBL_USER_PROFILE) {
             $type = $lib->str_right_of($type, sql_db::TBL_USER_PREFIX);
         }
         $result = $type . sql_db::FLD_EXT_ID;
@@ -2867,7 +3054,7 @@ class sql
             $result = 'sys_log_status_id';
         }
         if ($result == 'blocked_ip_id') {
-            $result = 'user_blocked_id';
+            $result = 'ip_range_id';
         }
         return $result;
     }
@@ -2952,7 +3139,7 @@ class sql
 
                 // escape the text value for MySQL
                 if (!isset($this->mysql)) {
-                    $result = $this->sql_escape($result);
+                    $result = $this->name_sql_esc($result);
                 } else {
                     $result = mysqli_real_escape_string($this->mysql, $result);
                 }
@@ -3021,30 +3208,42 @@ class sql
         // set the standard table name based on the type
         $result = $tbl_name . "s";
         // exceptions from the standard table for 'nicer' names
-        if ($result == 'value_time_seriess') {
-            $result = 'value_time_series';
-        }
-        if ($result == 'user_value_time_seriess') {
-            $result = 'user_value_time_series';
-        }
-        if ($result == 'value_ts_datas') {
-            $result = 'value_ts_data';
-        }
-        if ($result == 'sys_logs') {
-            $result = 'sys_log';
+        if ($result == 'configs') {
+            $result = 'config';
         }
         if ($result == 'sys_log_statuss') {
             $result = 'sys_log_status';
         }
-        if ($result == 'configs') {
-            $result = 'config';
+        if ($result == 'system_logs') {
+            $result = 'sys_log';
+        }
+        if ($result == 'sys_logs') {
+            $result = 'sys_log';
+        }
+        if ($result == 'pod_statuss') {
+            $result = 'pod_status';
+        }
+        if ($result == 'phrase_table_statuss') {
+            $result = 'phrase_table_status';
+        }
+        if ($result == 'userss') {
+            $result = 'users';
+        }
+        if ($result == 'value_time_seriess') {
+            $result = 'values_time_series';
+        }
+        if ($result == 'user_value_time_seriess') {
+            $result = 'user_values_time_series';
+        }
+        if ($result == 'value_ts_datas') {
+            $result = 'value_ts_data';
         }
         if ($result == 'user_valuess') {
             $result = 'user_values';
         }
         // for the database upgrade process only
-        if ($result == 'calc_and_cleanup_task_typess') {
-            $result = 'calc_and_cleanup_task_types';
+        if ($result == 'job_typess') {
+            $result = 'job_types';
         }
         if ($result == 'component_typess') {
             $result = 'component_types';
@@ -3085,52 +3284,52 @@ class sql
         $result = $type . '_name';
         // exceptions to be adjusted
         if ($result == 'link_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'phrase_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'view_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'component_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sql::FLD_TYPE_NAME;
         }
-        if ($result == 'component_position_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+        if ($result == 'position_type_name') {
+            $result = sql::FLD_TYPE_NAME;
         }
-        if ($result == 'formula_element_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+        if ($result == 'element_type_name') {
+            $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'sys_log_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'formula_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'formula_link_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'ref_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'source_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'share_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'protection_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'profile_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'sys_log_status_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+            $result = sql::FLD_TYPE_NAME;
         }
-        if ($result == 'calc_and_cleanup_task_type_name') {
-            $result = sql_db::FLD_TYPE_NAME;
+        if ($result == 'job_type_name') {
+            $result = sql::FLD_TYPE_NAME;
         }
         // temp solution until the standard field name for the name field is actually "name" (or something else not object specific)
         if ($result == 'triple_name') {
@@ -3412,6 +3611,28 @@ class sql
     {
         $lib = new library();
         return $lib->class_to_name($class);
+    }
+
+    /**
+     * @param array $tbl_types list of sql table types that specifies the current case
+     * @return bool true if the list of types specifies that the value has no user overwrites
+     */
+    function is_user(array $tbl_types): bool
+    {
+        if (in_array(sql_table_type::USER, $tbl_types)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function is_MySQL(): bool
+    {
+        if ($this->db_type == sql_db::MYSQL) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }

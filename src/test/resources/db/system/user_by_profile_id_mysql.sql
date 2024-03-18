@@ -6,7 +6,7 @@ PREPARE user_by_profile_id FROM
            email,
            first_name,
            last_name,
-           last_word_id,
+           term_id,
            source_id,
            user_profile_id
       FROM users

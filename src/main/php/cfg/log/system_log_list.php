@@ -37,8 +37,11 @@ include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_HELPER_PATH . 'db_object.php';
 include_once MODEL_HELPER_PATH . 'type_object.php';
 include_once MODEL_SYSTEM_PATH . 'base_list.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
+include_once MODEL_SYSTEM_PATH . 'sys_log_function.php';
+include_once MODEL_SYSTEM_PATH . 'sys_log_type.php';
 include_once MODEL_SYSTEM_PATH . 'sys_log_status.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox.php';
+include_once MODEL_SYSTEM_PATH . 'sys_log_status_list.php';
 include_once MODEL_LOG_PATH . 'system_log.php';
 include_once API_LOG_PATH . 'system_log.php';
 include_once API_LOG_PATH . 'system_log_list.php';
@@ -52,7 +55,9 @@ use cfg\db\sql_par_type;
 use cfg\sandbox;
 use cfg\db\sql_db;
 use cfg\sys_log_function;
+use cfg\sys_log_function_list;
 use cfg\sys_log_status;
+use cfg\sys_log_status_list;
 use cfg\type_object;
 use cfg\user;
 use api\log\system_log_list as system_log_list_api;
@@ -154,8 +159,8 @@ class system_log_list extends base_list
         $qp = new sql_par(self::class);
 
         $sql_where = '';
-        $sql_status = '(' . sql_db::STD_TBL . '.' . system_log::FLD_STATUS . ' <> ' . $sys_log_stati->id(sys_log_status::CLOSED);
-        $sql_status .= ' OR ' . sql_db::STD_TBL . '.' . system_log::FLD_STATUS . ' IS NULL)';
+        $sql_status = '(' . sql_db::STD_TBL . '.' . sys_log_status::FLD_ID . ' <> ' . $sys_log_stati->id(sys_log_status::CLOSED);
+        $sql_status .= ' OR ' . sql_db::STD_TBL . '.' . sys_log_status::FLD_ID . ' IS NULL)';
         if ($this->dsp_type == self::DSP_ALL) {
             $sql_where = $sql_status;
             $qp->name .= self::DSP_ALL;
@@ -180,7 +185,7 @@ class system_log_list extends base_list
             $db_con->set_name($qp->name);
             $db_con->set_usr($this->user()->id());
             $db_con->set_fields(system_log::FLD_NAMES);
-            $db_con->set_join_fields(array(system_log::FLD_FUNCTION_NAME), sys_log_function::class);
+            $db_con->set_join_fields(array(sys_log_function::FLD_NAME), sys_log_function::class);
             $db_con->set_join_fields(array(type_object::FLD_NAME), sql_db::TBL_SYS_LOG_STATUS);
             $db_con->set_join_fields(array(sandbox::FLD_USER_NAME), sql_db::TBL_USER);
             $db_con->set_join_fields(array(

@@ -31,12 +31,10 @@
 */
 
 use api\word\word as word_api;
+use api\user\user as user_api;
 use cfg\user;
 use cfg\user_list;
 use test\test_cleanup;
-use const test\TEST_EMAIL;
-use const test\TEST_USER_DESCRIPTION;
-use const test\TEST_USER_IP;
 
 function run_system_test(test_cleanup $t): void
 {
@@ -48,7 +46,7 @@ function run_system_test(test_cleanup $t): void
     // load the main test word
     $wrd_company = $t->test_word(word_api::TN_COMPANY);
 
-    if (TEST_EMAIL) {
+    if ($t::TEST_EMAIL) {
         $t->header('est mail sending');
         $mail_to = 'timon@zukunft.com';
         $mail_subject = 'Test mailto';
@@ -70,7 +68,7 @@ function run_system_test(test_cleanup $t): void
     // check the first predefined word "Company"
     // load by id
     $usr_test = new user;
-    $usr_test->ip_addr = TEST_USER_IP;
+    $usr_test->ip_addr = user_api::TD_READ_IP;
     $target = 'Your IP ' . $usr_test->ip_addr . ' is blocked at the moment because too much damage from this IP. If you think, this should not be the case, please request the unblocking with an email to admin@zukunft.com.';
     $result = $usr_test->get();
     if ($usr_test->id() > 0) {
@@ -95,7 +93,7 @@ function run_system_test(test_cleanup $t): void
     $usr_lst = new user_list($usr);
     $usr_lst->load_active();
     $result = $usr_lst->name_lst();
-    $target = TEST_USER_DESCRIPTION;
+    $target = user_api::TD_READ;
     $t->dsp_contains(', user_list->load_active', $target, $result);
 
 }

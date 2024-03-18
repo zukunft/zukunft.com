@@ -32,6 +32,9 @@
 namespace cfg;
 
 
+use cfg\db\sql;
+use cfg\db\sql_field_default;
+use cfg\db\sql_field_type;
 use JsonSerializable;
 
 class language extends type_object implements JsonSerializable
@@ -42,7 +45,18 @@ class language extends type_object implements JsonSerializable
      */
 
     // database and JSON object field names
+    const TBL_COMMENT = 'for table languages';
+    const FLD_ID = 'language_id';
     const FLD_NAME = 'language_name';
+    const FLD_WIKI_CODE = 'wikimedia_code';
+
+    // field lists for the table creation
+    const FLD_LST_ALL = array(
+        [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', ''],
+        [sql::FLD_CODE_ID, sql_field_type::CODE_ID, sql_field_default::NULL, '', '', ''],
+        [self::FLD_DESCRIPTION, sql_field_type::TEXT, sql_field_default::NULL, '', '', ''],
+        [self::FLD_WIKI_CODE, sql_field_type::CODE_ID, sql_field_default::NULL, '', '', ''],
+    );
 
 
     /*
@@ -115,16 +129,15 @@ class language extends type_object implements JsonSerializable
      * mainly set the class name for the type object function
      *
      * @param string $name the name of the language
-     * @param string $class the language class name
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_name(string $name, string $class = self::class): int
+    function load_by_name(string $name): int
     {
         global $db_con;
 
         log_debug($name);
         $lib = new library();
-        $dp_type = $lib->class_to_name($class);
+        $dp_type = $lib->class_to_name($this::class);
         $qp = $this->load_sql_by_name($db_con->sql_creator(), $name, $dp_type);
         return $this->load_typ_obj($qp, $dp_type);
     }

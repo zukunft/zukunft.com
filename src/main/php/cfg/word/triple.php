@@ -42,13 +42,16 @@ use api\api;
 use api\word\triple as triple_api;
 use cfg\db\sql;
 use cfg\db\sql_db;
+use cfg\db\sql_field_default;
+use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\group\group_list;
 use cfg\log\change;
-use cfg\log\change_log_action;
-use cfg\log\change_log_link;
-use cfg\log\change_log_table;
+use cfg\log\change_action;
+use cfg\log\change_action_list;
+use cfg\log\change_link;
+use cfg\log\change_table_list;
 use cfg\value\value_list;
 use html\html_base;
 use JsonSerializable;
@@ -64,23 +67,65 @@ class triple extends sandbox_link_typed implements JsonSerializable
      * database link
      */
 
+    // comment used for the database creation
+    const TBL_COMMENT = 'to link one word or triple with a verb to another word or triple';
+
     // object specific database and JSON object field names
     const FLD_ID = 'triple_id';
+    const FLD_FROM_COM = 'the phrase_id that is linked';
     const FLD_FROM = 'from_phrase_id';
+    const FLD_VERB_COM = 'the verb_id that defines how the phrases are linked';
+    const FLD_TO_COM = 'the phrase_id to which the first phrase is linked';
     const FLD_TO = 'to_phrase_id';
-    const FLD_NAME = 'triple_name';  // the name used which must be unique within the terms of the user
-    const FLD_NAME_GIVEN = 'name_given'; // the name set by the user, which can be null if the generated name should be used
-    const FLD_NAME_AUTO = 'name_generated'; // the generated name is saved in the database for database base unique check
+    const FLD_NAME_COM = 'the name used which must be unique within the terms of the user';
+    const FLD_NAME = 'triple_name';
+    const FLD_NAME_GIVEN_COM = 'the unique name manually set by the user, which can be null if the generated name should be used';
+    const FLD_NAME_GIVEN = 'name_given';
+    const FLD_NAME_AUTO_COM = 'the generated name is saved in the database for database base unique check based on the phrases and verb, which can be overwritten by the given name';
+    const FLD_NAME_AUTO = 'name_generated';
+    const FLD_DESCRIPTION_COM = 'text that should be shown to the user in case of mouseover on the triple name';
+    const FLD_VIEW_COM = 'the default mask for this triple';
+    const FLD_VIEW = 'view_id';
+    const FLD_VALUES_COM = 'number of values linked to the word, which gives an indication of the importance';
     const FLD_VALUES = 'values';
+    const FLD_INACTIVE_COM = 'true if the word is not yet active e.g. because it is moved to the prime words with a 16 bit id';
+    const FLD_INACTIVE = 'inactive';
+    const FLD_CODE_ID_COM = 'to link coded functionality to a specific triple e.g. to get the values of the system configuration';
+    const FLD_COND_ID_COM = 'formula_id of a formula with a boolean result; the term is only added if formula result is true';
     const FLD_COND_ID = 'triple_condition_id';
-    const FLD_COND_TYPE = 'triple_condition_type_id';
     const FLD_REFS = 'refs';
+
+    // list of fields that MUST be set by one user
+    const FLD_LST_LINK = array(
+        [self::FLD_FROM, sql_field_type::INT_UNIQUE_PART, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_FROM_COM],
+        [verb::FLD_ID, sql_field_type::INT_UNIQUE_PART, sql_field_default::NOT_NULL, sql::INDEX, verb::class, self::FLD_VERB_COM],
+        [self::FLD_TO, sql_field_type::INT_UNIQUE_PART, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_TO_COM],
+    );
+    // list of must fields that CAN be changed by the user
+    const FLD_LST_MUST_BUT_USER_CAN_CHANGE = array(
+        [language::FLD_ID, sql_field_type::KEY_PART_INT, sql_field_default::ONE, sql::INDEX, language::class, self::FLD_NAME_COM],
+    );
+    // list of fields that CAN be changed by the user
+    const FLD_LST_USER_CAN_CHANGE = array(
+        [self::FLD_NAME, sql_field_type::NAME, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_COM],
+        [self::FLD_NAME_GIVEN, sql_field_type::NAME, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_GIVEN_COM],
+        [self::FLD_NAME_AUTO, sql_field_type::NAME, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_AUTO_COM],
+        [sandbox_named::FLD_DESCRIPTION, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
+        [self::FLD_COND_ID, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_COND_ID_COM],
+        [phrase::FLD_TYPE, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, phrase_type::class, word::FLD_TYPE_COM],
+        [self::FLD_VIEW, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, view::class, self::FLD_VIEW_COM],
+        [self::FLD_VALUES, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_VALUES_COM],
+    );
+    // list of fields that CANNOT be changed by the user
+    const FLD_LST_NON_CHANGEABLE = array(
+        [self::FLD_INACTIVE, sql_field_type::INT_SMALL, sql_field_default::NULL, '', '', self::FLD_INACTIVE_COM],
+        [sql::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
+    );
 
     // all database field names excluding the id and excluding the user specific fields
     const FLD_NAMES = array(
         phrase::FLD_TYPE,
-        self::FLD_COND_ID,
-        self::FLD_COND_TYPE
+        self::FLD_COND_ID
     );
     // list of the link database field names
     // TODO use this name for all links
@@ -288,6 +333,11 @@ class triple extends sandbox_link_typed implements JsonSerializable
         $this->fob = $from_phr;
     }
 
+    function from(): object
+    {
+        return $this->fob;
+    }
+
     /**
      * set the "from" phrase of this triple
      * e.g. "Zurich" for "Zurich (city)" based on "Zurich" (from) "is a" (verb) "city" (to)
@@ -300,6 +350,11 @@ class triple extends sandbox_link_typed implements JsonSerializable
         $this->verb = $vrb;
     }
 
+    function verb(): verb
+    {
+        return $this->verb;
+    }
+
     /**
      * set the "from" phrase of this triple
      * e.g. "city" for "Zurich (city)" based on "Zurich" (from) "is a" (verb) "city" (to)
@@ -310,6 +365,11 @@ class triple extends sandbox_link_typed implements JsonSerializable
     function set_to(phrase $to_phr): void
     {
         $this->tob = $to_phr;
+    }
+
+    function to(): object
+    {
+        return $this->tob;
     }
 
     /**
@@ -408,11 +468,6 @@ class triple extends sandbox_link_typed implements JsonSerializable
     function usage(): ?int
     {
         return $this->values;
-    }
-
-    function verb(): verb
-    {
-        return $this->verb;
     }
 
 
@@ -705,12 +760,11 @@ class triple extends sandbox_link_typed implements JsonSerializable
      *
      * @param sql $sc with the target db_type set
      * @param string $name the name of the triple and the related word, triple, formula or verb
-     * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_name(sql $sc, string $name, string $class): sql_par
+    function load_sql_by_name(sql $sc, string $name): sql_par
     {
-        $qp = $this->load_sql($sc, sql_db::FLD_NAME, $class);
+        $qp = $this->load_sql($sc, sql_db::FLD_NAME, $this::class);
         $sc->add_where($this->name_field(), $name, sql_par_type::TEXT_USR);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -811,30 +865,28 @@ class triple extends sandbox_link_typed implements JsonSerializable
     /**
      * load a triple by name
      * @param string $name the name of the word, triple, formula, verb, view or view component
-     * @param string $class the name of the child class from where the call has been triggered
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_name(string $name, string $class = self::class): int
+    function load_by_name(string $name): int
     {
         global $db_con;
 
         log_debug($name);
-        $qp = $this->load_sql_by_name($db_con->sql_creator(), $name, $class);
+        $qp = $this->load_sql_by_name($db_con->sql_creator(), $name);
         return $this->load($qp);
     }
 
     /**
      * load a triple by the generated name (the name that the triple would have if the user has done not overwrite)
      * @param string $name the generated name of the triple
-     * @param string $class the name of the child class from where the call has been triggered
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_name_generated(string $name, string $class = self::class): int
+    function load_by_name_generated(string $name): int
     {
         global $db_con;
 
         log_debug($name);
-        $qp = $this->load_sql_by_name_generated($db_con->sql_creator(), $name, $class);
+        $qp = $this->load_sql_by_name_generated($db_con->sql_creator(), $name, $this::class);
         return $this->load($qp);
     }
 
@@ -846,7 +898,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
      * @param string $class the name of the child class from where the call has been triggered
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_link_id(int $from, int $type, int $to, string $class = self::class): int
+    function load_by_link_id(int $from, int $type = 0, int $to = 0, string $class = self::class): int
     {
         global $db_con;
 
@@ -1207,7 +1259,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
             if ($key == sandbox_exp::FLD_VIEW) {
                 $trp_view = new view($this->user());
                 if (!$test_obj) {
-                    $trp_view->load_by_name($value, view::class);
+                    $trp_view->load_by_name($value);
                     if ($trp_view->id == 0) {
                         $result->add_message('Cannot find view "' . $value . '" when importing ' . $this->dsp_id());
                     }
@@ -1232,7 +1284,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
             log_debug('saved ' . $this->dsp_id());
 
             if (!$test_obj) {
-                if ($this->id() <= 0) {
+                if ($this->id() == 0) {
                     $result->add_message('Triple ' . $this->dsp_id() . ' cannot be saved');
                 } else {
                     foreach ($in_ex_json as $key => $value) {
@@ -1629,12 +1681,12 @@ class triple extends sandbox_link_typed implements JsonSerializable
      * set the log entry parameter for a new value
      * e.g. that the user can see "added ABB is a Company"
      */
-    function log_link_add(): change_log_link
+    function log_link_add(): change_link
     {
         log_debug('triple->log_link_add for ' . $this->dsp_id() . ' by user "' . $this->user()->name . '"');
-        $log = new change_log_link($this->user());
-        $log->action = change_log_action::ADD;
-        $log->set_table(change_log_table::TRIPLE);
+        $log = new change_link($this->user());
+        $log->action = change_action::ADD;
+        $log->set_table(change_table_list::TRIPLE);
         $log->new_from = $this->fob;
         $log->new_link = $this->verb;
         $log->new_to = $this->tob;
@@ -1647,14 +1699,14 @@ class triple extends sandbox_link_typed implements JsonSerializable
     /**
      * set the main log entry parameters for updating the triple itself
      */
-    function log_upd(): change_log_link
+    function log_upd(): change_link
     {
-        $log = new change_log_link($this->user());
-        $log->action = change_log_action::UPDATE;
+        $log = new change_link($this->user());
+        $log->action = change_action::UPDATE;
         if ($this->can_change()) {
-            $log->set_table(change_log_table::TRIPLE);
+            $log->set_table(change_table_list::TRIPLE);
         } else {
-            $log->set_table(change_log_table::TRIPLE_USR);
+            $log->set_table(change_table_list::TRIPLE_USR);
         }
 
         return $log;
@@ -1664,12 +1716,12 @@ class triple extends sandbox_link_typed implements JsonSerializable
      * set the log entry parameter to delete a triple
      * e.g. that the user can see "ABB is a Company not anymore"
      */
-    function log_del_link(): change_log_link
+    function log_del_link(): change_link
     {
         log_debug('triple->log_link_del for ' . $this->dsp_id() . ' by user "' . $this->user()->name . '"');
-        $log = new change_log_link($this->user());
-        $log->action = change_log_action::DELETE;
-        $log->set_table(change_log_table::TRIPLE);
+        $log = new change_link($this->user());
+        $log->action = change_action::DELETE;
+        $log->set_table(change_table_list::TRIPLE);
         $log->old_from = $this->fob;
         $log->old_link = $this->verb;
         $log->old_to = $this->tob;
@@ -1685,11 +1737,11 @@ class triple extends sandbox_link_typed implements JsonSerializable
     function log_upd_field(): change
     {
         $log = new change($this->user());
-        $log->action = change_log_action::UPDATE;
+        $log->action = change_action::UPDATE;
         if ($this->can_change()) {
-            $log->set_table(change_log_table::TRIPLE);
+            $log->set_table(change_table_list::TRIPLE);
         } else {
-            $log->set_table(change_log_table::TRIPLE_USR);
+            $log->set_table(change_table_list::TRIPLE_USR);
         }
 
         return $log;
@@ -2035,8 +2087,17 @@ class triple extends sandbox_link_typed implements JsonSerializable
             $db_con->set_usr($this->user()->id());
             $db_con->set_class(sql_db::TBL_TRIPLE);
 
+            // check if a triple with the same link exists and if yes, update this triple
+            if ($this->id() == 0) {
+                $db_chk = new triple($this->user());
+                $db_chk->load_by_link_id($this->from()->id(), $this->verb()->id(), $this->to()->id());
+                if ($db_chk->id() != 0) {
+                    $this->set_id($db_chk->id());
+                }
+            }
+
             // check if the opposite triple already exists and if yes, ask for confirmation
-            if ($this->id() <= 0) {
+            if ($this->id() == 0) {
                 log_debug('check if a new triple for "' . $this->fob->name() . '" and "' . $this->tob->name() . '" needs to be created');
                 // check if the reverse triple is already in the database
                 $db_chk_rev = clone $this;
@@ -2053,8 +2114,8 @@ class triple extends sandbox_link_typed implements JsonSerializable
                 }
             }
 
-            // check if the triple already exists and if yes, update it if needed
-            if ($this->id() <= 0 and $result == '') {
+            // check if the triple already exists as standard and if yes, update it if needed
+            if ($this->id() == 0 and $result == '') {
                 log_debug('check if a new triple for "' . $this->fob->name() . '" and "' . $this->tob->name() . '" needs to be created');
                 // check if the same triple is already in the database
                 $db_chk = clone $this;
@@ -2068,7 +2129,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
         // try to save the link only if no question has been raised utils now
         if ($result == '') {
             // check if a new value is supposed to be added
-            if ($this->id() <= 0) {
+            if ($this->id() == 0) {
                 $result .= $this->is_name_used_msg($this->name());
                 if ($result == '') {
                     $result .= $this->add()->get_last_message();
@@ -2138,8 +2199,9 @@ class triple extends sandbox_link_typed implements JsonSerializable
         $result = new user_message();
 
         // collect all phrase groups where this triple is used
-        $grp_lst = new group_list($this->user());
-        $grp_lst->load_by_phr($this->phrase());
+        // TODO activate
+        //$grp_lst = new group_list($this->user());
+        //$grp_lst->load_by_phr($this->phrase());
 
         // collect all values related to this triple
         $val_lst = new value_list($this->user());
@@ -2151,7 +2213,8 @@ class triple extends sandbox_link_typed implements JsonSerializable
         }
 
         // if the user confirms the deletion, the removal process is started with a retry of the triple deletion at the end
-        $result->add($grp_lst->del());
+        // TODO activate
+        //$result->add($grp_lst->del());
 
         return $result;
     }

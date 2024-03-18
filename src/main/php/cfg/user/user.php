@@ -7,6 +7,8 @@
 
     TODO make sure that no right gain is possible
     TODO move the non functional user parameters to hidden words to be able to reuse the standard view functionality
+    TODO log the access attempts to objects with a restriked access
+    TODO build a process so that a user can request access to an object with restrikted access
 
     if a user has done 3 value edits he can add new values (adding a word to a value also creates a new value)
     if a user has added 3 values and at least one is accepted by another user, he can add words and formula and he must have a valid email
@@ -54,12 +56,21 @@ include_once MODEL_USER_PATH . 'user_profile.php';
 include_once SERVICE_EXPORT_PATH . 'user_exp.php';
 
 use api\user\user as user_api;
+use cfg\db\db_check;
 use cfg\db\sql;
 use cfg\db\sql_db;
+use cfg\db\sql_field_default;
+use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\export\user_exp;
 use cfg\export\sandbox_exp;
+use cfg\import\import_file;
+use cfg\log\change;
+use cfg\log\change_action;
+use cfg\log\change_table_list;
+use cfg\user\user_profile;
+use cfg\user\user_type;
 use Exception;
 use html\user\user as user_dsp;
 
@@ -70,47 +81,130 @@ class user extends db_object_seq_id
      * database link
      */
 
-    // database fields only used for user
+    // database fields and comments only used for user
+    const TBL_COMMENT = 'for users including system users; only users can add data';
     const FLD_ID = 'user_id'; // also the field name for foreign keys
+    // fields for the main logon
+    const FLD_NAME_COM = 'the user name unique for this pod';
     const FLD_NAME = 'user_name';
-    const FLD_IP_ADDRESS = 'ip_address';
+    const FLD_IP_ADDR_COM = 'all users a first identified with the ip address';
+    const FLD_IP_ADDR = 'ip_address';
+    const FLD_PASSWORD_COM = 'the hash value of the password';
+    const FLD_PASSWORD = 'password';
+    // description and type
+    const FLD_DESCRIPTION_COM = 'for system users the description to expain the profile to human users';
+    const FLD_DESCRIPTION = 'description';
+    const FLD_CODE_ID_COM = 'to select e.g. the system batch user';
+    const FLD_CODE_ID = 'code_id';
+    const FLD_PROFILE_COM = 'to define the user roles and read and write rights';
+    const FLD_PROFILE = 'user_profile_id';
+    const FLD_TYPE_ID_COM = 'to set the confirmation level of a user';
+    const FLD_TYPE_ID = 'user_type_id';
+    const FLD_LEVEL_COM = 'the access right level to prevent unpermitted right gaining';
+    const FLD_LEVEL = 'right_level';
+    // online verification
+    const FLD_EMAIL_COM = 'the primary email for verification';
     const FLD_EMAIL = 'email';
+    const FLD_EMAIL_STATUS_COM = 'if the email has been verified or if a password reset has been send';
+    const FLD_EMAIL_STATUS = 'email_status';
+    const FLD_EMAIL_ALT_COM = 'an alternative email for account recovery';
+    const FLD_EMAIL_ALT = 'email_alternative';
+    const FLD_TWO_FACTOR_ID = 'mobile_number';
+    const FLD_TWO_FACTOR_STATUS = 'mobile_status';
+    const FLD_ACTIVATION_KEY = 'activation_key';
+    const FLD_ACTIVATION_TIMEOUT = 'activation_timeout';
+    // offline verification
     const FLD_FIRST_NAME = 'first_name';
     const FLD_LAST_NAME = 'last_name';
-    const FLD_LAST_WORD = 'last_word_id';
+    const FLD_NAME_TRIPLE_COM = 'triple that contains e.g. the given name, family name, selected name or title of the person';
+    const FLD_NAME_TRIPLE_ID = 'name_triple_id';
+    const FLD_GEO_TRIPLE_COM = 'the post address with street, city or any other form of geo location for physical transport';
+    const FLD_GEO_TRIPLE_ID = 'geo_triple_id';
+    const FLD_GEO_STATUS = 'geo_status_id';
+    const FLD_OFFICIAL_ID_COM = 'e.g. the number of the passport';
+    const FLD_OFFICIAL_ID = 'official_id';
+    const FLD_OFFICIAL_TYPE_ID = 'official_id_type';
+    const FLD_OFFICIAL_ID_STATUS = 'official_id_status';
+    // settings
+    const FLD_TERM_COM = 'the last term that the user had used';
+    const FLD_TERM = 'term_id';
+    const FLD_VIEW_COM = 'the last mask that the user has used';
+    const FLD_VIEW = 'view_id';
+    const FLD_SOURCE_COM = 'the last source used by this user to have a default for the next value';
     const FLD_SOURCE = 'source_id';
-    const FLD_CODE_ID = 'code_id';
-    const FLD_USER_PROFILE = 'user_profile_id';
+    const FLD_STATUS_COM = 'e.g. to exclude inactive users';
+    const FLD_STATUS = 'user_status_id';
+    const FLD_CREATED = 'created';
+    const FLD_LAST_LOGIN = 'last_login';
+    const FLD_LAST_LOGOUT = 'last_logoff';
+
 
     // database fields used for the user logon process
-    const FLD_ACTIVATION_KEY = 'activation_key';
-    const FLD_ACTIVATION_TIMEOUT = 'activation_key_timeout';
     const FLD_DB_NOW = 'NOW() AS db_now';
 
     // all database field names excluding the id
     const FLD_NAMES = array(
-        sql_db::FLD_CODE_ID,
-        self::FLD_IP_ADDRESS,
+        sql::FLD_CODE_ID,
+        self::FLD_IP_ADDR,
         self::FLD_EMAIL,
         self::FLD_FIRST_NAME,
         self::FLD_LAST_NAME,
-        self::FLD_LAST_WORD,
+        self::FLD_TERM,
         self::FLD_SOURCE,
-        self::FLD_USER_PROFILE,
+        self::FLD_PROFILE,
         self::FLD_ACTIVATION_KEY,
         self::FLD_ACTIVATION_TIMEOUT,
         self::FLD_DB_NOW
     );
     // the database field names excluding the id and the fields for logon
     const FLD_NAMES_LIST = array(
-        sql_db::FLD_CODE_ID,
-        self::FLD_IP_ADDRESS,
+        sql::FLD_CODE_ID,
+        self::FLD_IP_ADDR,
         self::FLD_EMAIL,
         self::FLD_FIRST_NAME,
         self::FLD_LAST_NAME,
-        self::FLD_LAST_WORD,
+        self::FLD_TERM,
         self::FLD_SOURCE,
-        self::FLD_USER_PROFILE
+        self::FLD_PROFILE
+    );
+
+    // field lists for the table creation
+    const FLD_LST_ALL = array(
+        // main logon
+        [self::FLD_NAME, sql_field_type::NAME, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_NAME_COM],
+        [self::FLD_IP_ADDR, sql_field_type::CODE_ID, sql_field_default::NULL, sql::INDEX, '', self::FLD_IP_ADDR_COM],
+        [self::FLD_PASSWORD, sql_field_type::NAME, sql_field_default::NULL, '', '', self::FLD_PASSWORD_COM],
+        // description and type
+        [self::FLD_DESCRIPTION, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
+        [self::FLD_CODE_ID, sql_field_type::CODE_ID, sql_field_default::NULL, sql::INDEX, '', self::FLD_CODE_ID_COM],
+        [self::FLD_PROFILE, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, user_profile::class, self::FLD_PROFILE_COM],
+        [self::FLD_TYPE_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, user_type::class, self::FLD_TYPE_ID_COM],
+        [self::FLD_LEVEL, sql_field_type::INT_SMALL, sql_field_default::NULL, '', '', self::FLD_LEVEL_COM],
+        // online verification
+        [self::FLD_EMAIL, sql_field_type::NAME, sql_field_default::NULL, '', '', self::FLD_EMAIL_COM],
+        [self::FLD_EMAIL_STATUS, sql_field_type::INT_SMALL, sql_field_default::NULL, '', '', self::FLD_EMAIL_STATUS_COM],
+        [self::FLD_EMAIL_ALT, sql_field_type::NAME, sql_field_default::NULL, '', '', self::FLD_EMAIL_ALT_COM],
+        [self::FLD_TWO_FACTOR_ID, sql_field_type::CODE_ID, sql_field_default::NULL, '', '', ''],
+        [self::FLD_TWO_FACTOR_STATUS, sql_field_type::INT_SMALL, sql_field_default::NULL, '', '', ''],
+        [self::FLD_ACTIVATION_KEY, sql_field_type::NAME, sql_field_default::NULL, '', '', ''],
+        [self::FLD_ACTIVATION_TIMEOUT, sql_field_type::TIME, sql_field_default::NULL, '', '', ''],
+        // offline verification
+        [self::FLD_FIRST_NAME, sql_field_type::NAME, sql_field_default::NULL, '', '', ''],
+        [self::FLD_LAST_NAME, sql_field_type::NAME, sql_field_default::NULL, '', '', ''],
+        [self::FLD_NAME_TRIPLE_ID, sql_field_type::INT, sql_field_default::NULL, '', triple::class, self::FLD_NAME_TRIPLE_COM, triple::FLD_ID],
+        [self::FLD_GEO_TRIPLE_ID, sql_field_type::INT, sql_field_default::NULL, '', triple::class, self::FLD_GEO_TRIPLE_COM, triple::FLD_ID],
+        [self::FLD_GEO_STATUS, sql_field_type::INT_SMALL, sql_field_default::NULL, '', '', ''],
+        [self::FLD_OFFICIAL_ID, sql_field_type::NAME, sql_field_default::NULL, '', '', self::FLD_OFFICIAL_ID_COM],
+        [self::FLD_OFFICIAL_TYPE_ID, sql_field_type::INT_SMALL, sql_field_default::NULL, '', '', ''],
+        [self::FLD_OFFICIAL_ID_STATUS, sql_field_type::INT_SMALL, sql_field_default::NULL, '', '', ''],
+        // settings
+        [self::FLD_TERM, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_TERM_COM],
+        [self::FLD_VIEW, sql_field_type::INT, sql_field_default::NULL, '', view::class, self::FLD_VIEW_COM],
+        [self::FLD_SOURCE, sql_field_type::INT, sql_field_default::NULL, '', source::class, self::FLD_SOURCE_COM],
+        [self::FLD_STATUS, sql_field_type::INT_SMALL, sql_field_default::NULL, '', '', self::FLD_STATUS_COM],
+        [self::FLD_CREATED, sql_field_type::TIME, sql_field_default::TIME_NOT_NULL, '', '', ''],
+        [self::FLD_LAST_LOGIN, sql_field_type::TIME, sql_field_default::NULL, '', '', ''],
+        [self::FLD_LAST_LOGOUT, sql_field_type::TIME, sql_field_default::NULL, '', '', ''],
     );
 
 
@@ -246,15 +340,15 @@ class user extends db_object_seq_id
 
         $result = parent::row_mapper($db_row, self::FLD_ID);
         if ($result) {
-            $this->code_id = $db_row[sql_db::FLD_CODE_ID];
+            $this->code_id = $db_row[sql::FLD_CODE_ID];
             $this->name = $db_row[self::FLD_NAME];
-            $this->ip_addr = $db_row[self::FLD_IP_ADDRESS];
+            $this->ip_addr = $db_row[self::FLD_IP_ADDR];
             $this->email = $db_row[self::FLD_EMAIL];
             $this->first_name = $db_row[self::FLD_FIRST_NAME];
             $this->last_name = $db_row[self::FLD_LAST_NAME];
-            $this->wrd_id = $db_row[self::FLD_LAST_WORD];
+            $this->wrd_id = $db_row[self::FLD_TERM];
             $this->source_id = $db_row[self::FLD_SOURCE];
-            $this->profile_id = $db_row[self::FLD_USER_PROFILE];
+            $this->profile_id = $db_row[self::FLD_PROFILE];
             $this->dec_point = DEFAULT_DEC_POINT;
             $this->thousand_sep = DEFAULT_THOUSAND_SEP;
             $this->percent_decimals = DEFAULT_PERCENT_DECIMALS;
@@ -482,7 +576,7 @@ class user extends db_object_seq_id
     function load_sql_by_ip(sql $sc, string $ip_addr, string $class = self::class): sql_par
     {
         $qp = $this->load_sql($sc, 'ip', $class);
-        $sc->add_where(self::FLD_IP_ADDRESS, $ip_addr);
+        $sc->add_where(self::FLD_IP_ADDR, $ip_addr);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -500,7 +594,7 @@ class user extends db_object_seq_id
     function load_sql_by_profile(sql $sc, int $profile_id, string $class = self::class): sql_par
     {
         $qp = $this->load_sql($sc, 'profile', $class);
-        $sc->add_where(self::FLD_USER_PROFILE, $profile_id);
+        $sc->add_where(self::FLD_PROFILE, $profile_id);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -544,10 +638,9 @@ class user extends db_object_seq_id
     /**
      * load one user by name
      * @param string $name the username of the user
-     * @param string $class the name of the user
      * @return int the id of the found user and zero if nothing is found
      */
-    function load_by_name(string $name, string $class = self::class): int
+    function load_by_name(string $name): int
     {
         global $db_con;
 
@@ -727,43 +820,11 @@ class user extends db_object_seq_id
 
                     // allow to fill the database only if a local user has logged in
                     if ($this->name == self::SYSTEM_LOCAL) {
-
-                        // TODO move to functions used here to check class
-                        if ($user_profiles->is_empty()) {
-                            db_fill_code_links($db_con);
-
-                            // reopen the database to collect the cached lists
-                            $db_con->close();
-                            $db_con = prg_start("test_reset_db");
-                        }
-
-                        // create the system user before the local user and admin to get the desired database id
-                        import_system_users();
-
-                        // create the admin users
-                        $check_usr = new user();
-                        if (!$check_usr->has_any_user_this_profile(user_profile::ADMIN)) {
-                            $this->set_profile(user_profile::ADMIN);
-                        }
-
                         // add the local admin user to use it for the import
-                        $upd_result = $this->save($db_con);
-
-                        // use the system user for the database initial load
-                        $sys_usr = new user;
-                        $sys_usr->load_by_id(SYSTEM_USER_ID);
-
-                        //
-                        import_verbs($sys_usr);
-
-                        // reload the base configuration
-                        import_base_config($sys_usr);
-                        import_config($sys_usr);
-
+                        $upd_result = $this->create_local_admin($db_con);
                     } else {
                         $upd_result = $this->save($db_con);
                     }
-
 
                     // TODO make sure that the result is always compatible and checked if needed
                     // adding a new user automatically is normal, so the result does not need to be shown to the user
@@ -775,6 +836,19 @@ class user extends db_object_seq_id
         }
         log_debug(' "' . $this->name . '" (' . $this->id . ')');
         return $result;
+    }
+
+    function create_local_admin(sql_db $db_con): string
+    {
+        // create the local admin users but only if there are no other admins
+        $check_usr = new user();
+        if (!$check_usr->has_any_user_this_profile(user_profile::ADMIN)) {
+            $this->set_profile(user_profile::ADMIN);
+        }
+
+        // add the local admin user to use it for the import
+        return $this->save($db_con);
+
     }
 
 
@@ -1020,8 +1094,8 @@ class user extends db_object_seq_id
     {
         log_debug(' user ' . $this->name);
         $log = new change($this);
-        $log->action = change_log_action::UPDATE;
-        $log->set_table(change_log_table::USER);
+        $log->action = change_action::UPDATE;
+        $log->set_table(change_table_list::USER);
 
         return $log;
     }
@@ -1131,13 +1205,13 @@ class user extends db_object_seq_id
                     }
                 }
                 // add the profile of the user
-                if (!$db_con->update_old($this->id, self::FLD_USER_PROFILE, $this->profile_id)) {
+                if (!$db_con->update_old($this->id, self::FLD_PROFILE, $this->profile_id)) {
                     $result = 'Saving of user profile ' . $this->id . ' failed.';
                 }
                 // add the ip address to the user, but never for system users
                 if ($this->profile_id != $user_profiles->id(user_profile::SYSTEM)
                     and $this->profile_id != $user_profiles->id(user_profile::TEST)) {
-                    if (!$db_con->update_old($this->id, self::FLD_IP_ADDRESS, $this->get_ip())) {
+                    if (!$db_con->update_old($this->id, self::FLD_IP_ADDR, $this->get_ip())) {
                         $result = 'Saving of user ' . $this->id . ' failed.';
                     }
                 }

@@ -35,16 +35,15 @@ include_once API_COMPONENT_PATH . 'component_list.php';
 include_once API_VIEW_PATH . 'component_link_list.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
 
-use api\component\component_list AS component_list_api;
+use api\component\component_list as component_list_api;
 use cfg\combine_named;
-use cfg\component_link;
 use cfg\db\sql;
+use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\sandbox_link_named;
 use cfg\sandbox_list;
 use cfg\sandbox_named;
-use cfg\db\sql_db;
 use cfg\type_list;
 use cfg\user_message;
 use cfg\view;

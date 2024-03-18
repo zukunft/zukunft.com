@@ -44,4 +44,12 @@ class source_type extends type_object
 
     // the url that can be used to receive data if the external key is added
     // public ?string $url = null;
+
+    /*
+     * database link
+     */
+
+    // comments used for the database creation
+    const TBL_COMMENT = 'to link predefined behaviour to a source';
+
 }

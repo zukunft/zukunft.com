@@ -50,8 +50,18 @@ class db_object
     const TBL_COMMENT = '';
     // list of the table fields for the standard read query
     const FLD_NAMES = array();
-    // fields that can be changed by the user with the parameters for the table creation
-    const FLD_LST_CREATE_CHANGEABLE = array();
+
+    // field lists for the table creation overwritten by the child object or grand child for extra fields
+    const FLD_LST_ALL = array();
+    const FLD_LST_EXTRA= array();
+    // list of fields that MUST be set by one user
+    const FLD_LST_MUST_BE_IN_STD = array();
+    // list of must fields that CAN be changed by the user
+    const FLD_LST_MUST_BUT_USER_CAN_CHANGE = array();
+    // fields that CAN be changed by the user with the parameters for the table creation
+    const FLD_LST_USER_CAN_CHANGE = array();
+    // fields that CANNOT be changed by the user with the parameters for the table creation
+    const FLD_LST_NON_CHANGEABLE = array();
 
 
     /*
@@ -82,20 +92,27 @@ class db_object
      * @param bool $usr_table true if the table should save the user specific changes
      * @param array $fields array with all fields and all parameter for the table creation in a two-dimensional array
      * @param string $tbl_comment if given the comment that should be added to the sql create table statement
+     * @param bool $is_sandbox true if the standard sandbox fields should be included
      * @return string the sql statement to create the table
      */
-    function sql_table_create(sql $sc, bool $usr_table = false, array $fields = [], string $tbl_comment = ''): string
+    function sql_table_create(
+        sql    $sc,
+        bool   $usr_table = false,
+        array  $fields = [],
+        string $tbl_comment = '',
+        bool   $is_sandbox = true
+    ): string
     {
         if ($sc->get_table() == '') {
             $sc->set_class($this::class, $usr_table);
         }
         if ($fields == []) {
-            $fields = $this->sql_all_field_par($usr_table);
+            $fields = $this->sql_all_field_par($usr_table, $is_sandbox);
         }
         if ($tbl_comment == '') {
             $tbl_comment = $this::TBL_COMMENT;
         }
-        return $sc->table_create($fields, '', $tbl_comment);
+        return $sc->table_create($fields, '', $tbl_comment, $this::class, $usr_table);
     }
 
     /**
@@ -103,9 +120,10 @@ class db_object
      *
      * @param sql $sc with the target db_type set
      * @param bool $usr_table true if the table should save the user specific changes
+     * @param bool $is_sandbox true if the standard sandbox fields should be included
      * @return string the sql statement to create the table
      */
-    function sql_truncate_create(sql $sc, bool $usr_table = false): string
+    function sql_truncate_create(sql $sc, bool $usr_table = false, bool $is_sandbox = true): string
     {
         if ($sc->get_table() == '') {
             $sc->set_class($this::class, $usr_table);
@@ -119,15 +137,16 @@ class db_object
      * @param sql $sc with the target db_type set
      * @param bool $usr_table true if the table should save the user specific changes
      * @param array $fields array with all fields and all parameter for the table creation in a two-dimensional array
+     * @param bool $is_sandbox true if the standard sandbox fields should be included
      * @return string the sql statement to create the table
      */
-    function sql_index_create(sql $sc, bool $usr_table = false, array $fields = []): string
+    function sql_index_create(sql $sc, bool $usr_table = false, array $fields = [], bool $is_sandbox = true): string
     {
         if ($sc->get_table() == '') {
             $sc->set_class($this::class, $usr_table);
         }
         if ($fields == []) {
-            $fields = $this->sql_all_field_par($usr_table);
+            $fields = $this->sql_all_field_par($usr_table, $is_sandbox);
         }
         return $sc->index_create($fields);
     }
@@ -138,54 +157,48 @@ class db_object
      * @param sql $sc with the target db_type set
      * @param bool $usr_table true if the table should save the user specific changes
      * @param array $fields array with all fields and all parameter for the table creation in a two-dimensional array
+     * @param bool $is_sandbox true if the standard sandbox fields should be included
      * @return string the sql statement to create the table
      */
-    function sql_foreign_key_create(sql $sc, bool $usr_table = false, array $fields = []): string
+    function sql_foreign_key_create(sql $sc, bool $usr_table = false, array $fields = [], bool $is_sandbox = true): string
     {
         if ($sc->get_table() == '') {
             $sc->set_class($this::class, $usr_table);
         }
         if ($fields == []) {
-            $fields = $this->sql_all_field_par($usr_table);
+            $fields = $this->sql_all_field_par($usr_table, $is_sandbox);
         }
         return $sc->foreign_key_create($fields);
     }
 
     /**
+     * @param bool $usr_table create a second table for the user overwrites
+     * @param bool $is_sandbox true if the standard sandbox fields should be included
      * @return array[] with the parameters of the table fields
      */
-    private function sql_all_field_par(bool $usr_table = false): array
+    protected function sql_all_field_par(bool $usr_table = false, bool $is_sandbox = true): array
     {
         $fields = [];
         if (!$usr_table) {
-            $fields = array_merge($this->sql_id_field_par($usr_table), sandbox::FLD_ALL_OWNER);
-        } else {
-            $fields = array_merge($this->sql_id_field_par($usr_table), sandbox::FLD_ALL_CHANGER);
+            $fields = array_merge($fields, $this::FLD_LST_NON_CHANGEABLE);
         }
-        $fields = array_merge($fields, $this::FLD_LST_CREATE_CHANGEABLE);
-        return array_merge($fields, sandbox::FLD_ALL);
-    }
-
-    /**
-     * @return array[] with the parameters of the table key field
-     */
-    private function sql_id_field_par(bool $usr_table = false): array
-    {
         if (!$usr_table) {
-            return array([
-                $this->id_field(),
-                sql_field_type::KEY_INT,
-                sql_field_default::NOT_NULL,
-                '', '',
-                'the internal unique primary index']);
+            if ($is_sandbox) {
+                $fields = array_merge($fields, sandbox::FLD_ALL_OWNER);
+                $fields = array_merge($fields, $this::FLD_LST_MUST_BE_IN_STD);
+            } else {
+                $fields = array_merge($fields, $this::FLD_LST_ALL);
+                $fields = array_merge($fields, $this::FLD_LST_EXTRA);
+            }
         } else {
-            return array([
-                $this->id_field(),
-                sql_field_type::KEY_PART_INT,
-                sql_field_default::NOT_NULL,
-                sql::INDEX, $this::class,
-                'with the user_id the internal unique primary index']);
+            $fields = array_merge($fields, sandbox::FLD_ALL_CHANGER);
+            $fields = array_merge($fields, $this::FLD_LST_MUST_BUT_USER_CAN_CHANGE);
         }
+        $fields = array_merge($fields, $this::FLD_LST_USER_CAN_CHANGE);
+        if ($is_sandbox) {
+            $fields = array_merge($fields, sandbox::FLD_LST_ALL);
+        }
+        return $fields;
     }
 
 

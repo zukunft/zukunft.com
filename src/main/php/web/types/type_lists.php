@@ -34,9 +34,9 @@ namespace html\types;
 
 include_once WEB_TYPES_PATH . 'type_object.php';
 include_once WEB_TYPES_PATH . 'type_list.php';
-include_once WEB_TYPES_PATH . 'change_log_action_list.php';
-include_once WEB_TYPES_PATH . 'change_log_table_list.php';
-include_once WEB_TYPES_PATH . 'change_log_field_list.php';
+include_once WEB_TYPES_PATH . 'change_action_list.php';
+include_once WEB_TYPES_PATH . 'change_table_list.php';
+include_once WEB_TYPES_PATH . 'change_field_list.php';
 include_once WEB_TYPES_PATH . 'system_log_status_list.php';
 include_once WEB_TYPES_PATH . 'user_profiles.php';
 include_once WEB_TYPES_PATH . 'job_type_list.php';
@@ -53,7 +53,7 @@ include_once WEB_TYPES_PATH . 'ref_type_list.php';
 include_once WEB_TYPES_PATH . 'view_type_list.php';
 include_once WEB_TYPES_PATH . 'component_type_list.php';
 include_once WEB_TYPES_PATH . 'component_link_type_list.php';
-include_once WEB_TYPES_PATH . 'component_position_type_list.php';
+include_once WEB_TYPES_PATH . 'position_type_list.php';
 
 use api\api;
 use controller\controller;
@@ -149,10 +149,10 @@ class type_lists
         }
         */
         if (array_key_exists(controller::API_LIST_COMPONENT_POSITION_TYPES, $json_array)) {
-            $this->set_component_position_types($json_array[controller::API_LIST_COMPONENT_POSITION_TYPES]);
+            $this->set_position_types($json_array[controller::API_LIST_COMPONENT_POSITION_TYPES]);
         } else {
-            log_err('Mandatory component_position_types missing in API JSON ' . json_encode($json_array));
-            $this->set_component_position_types();
+            log_err('Mandatory position_types missing in API JSON ' . json_encode($json_array));
+            $this->set_position_types();
         }
         if (array_key_exists(controller::API_LIST_REF_TYPES, $json_array)) {
             $this->set_ref_types($json_array[controller::API_LIST_REF_TYPES]);
@@ -215,22 +215,22 @@ class type_lists
             $this->set_job_types();
         }
         if (array_key_exists(controller::API_LIST_CHANGE_LOG_ACTIONS, $json_array)) {
-            $this->set_change_log_actions($json_array[controller::API_LIST_CHANGE_LOG_ACTIONS]);
+            $this->set_change_action_list($json_array[controller::API_LIST_CHANGE_LOG_ACTIONS]);
         } else {
-            log_err('Mandatory change_log_actions missing in API JSON ' . json_encode($json_array));
-            $this->set_change_log_actions();
+            log_err('Mandatory change_action_list missing in API JSON ' . json_encode($json_array));
+            $this->set_change_action_list();
         }
         if (array_key_exists(controller::API_LIST_CHANGE_LOG_TABLES, $json_array)) {
-            $this->set_change_log_tables($json_array[controller::API_LIST_CHANGE_LOG_TABLES]);
+            $this->set_change_table_list($json_array[controller::API_LIST_CHANGE_LOG_TABLES]);
         } else {
-            log_err('Mandatory change_log_tables missing in API JSON ' . json_encode($json_array));
-            $this->set_change_log_tables();
+            log_err('Mandatory change_table_list missing in API JSON ' . json_encode($json_array));
+            $this->set_change_table_list();
         }
         if (array_key_exists(controller::API_LIST_CHANGE_LOG_FIELDS, $json_array)) {
-            $this->set_change_log_fields($json_array[controller::API_LIST_CHANGE_LOG_FIELDS]);
+            $this->set_change_field_list($json_array[controller::API_LIST_CHANGE_LOG_FIELDS]);
         } else {
-            log_err('Mandatory change_log_fields missing in API JSON ' . json_encode($json_array));
-            $this->set_change_log_fields();
+            log_err('Mandatory change_field_list missing in API JSON ' . json_encode($json_array));
+            $this->set_change_field_list();
         }
     }
 
@@ -283,11 +283,11 @@ class type_lists
         $html_component_link_types->set_obj_from_json_array($json_array);
     }
 
-    function set_component_position_types(array $json_array = null): void
+    function set_position_types(array $json_array = null): void
     {
-        global $html_component_position_types;
-        $html_component_position_types = new component_position_type_list();
-        $html_component_position_types->set_obj_from_json_array($json_array);
+        global $html_position_types;
+        $html_position_types = new position_type_list();
+        $html_position_types->set_obj_from_json_array($json_array);
     }
 
     function set_ref_types(array $json_array = null): void
@@ -353,25 +353,25 @@ class type_lists
         $html_job_types->set_obj_from_json_array($json_array);
     }
 
-    function set_change_log_actions(array $json_array = null): void
+    function set_change_action_list(array $json_array = null): void
     {
-        global $html_change_log_actions;
-        $html_change_log_actions = new change_log_action_list();
-        $html_change_log_actions->set_obj_from_json_array($json_array);
+        global $html_change_action_list;
+        $html_change_action_list = new change_action_list();
+        $html_change_action_list->set_obj_from_json_array($json_array);
     }
 
-    function set_change_log_tables(array $json_array = null): void
+    function set_change_table_list(array $json_array = null): void
     {
-        global $html_change_log_tables;
-        $html_change_log_tables = new change_log_table_list();
-        $html_change_log_tables->set_obj_from_json_array($json_array);
+        global $html_change_table_list;
+        $html_change_table_list = new change_table_list();
+        $html_change_table_list->set_obj_from_json_array($json_array);
     }
 
-    function set_change_log_fields(array $json_array = null): void
+    function set_change_field_list(array $json_array = null): void
     {
-        global $html_change_log_fields;
-        $html_change_log_fields = new change_log_field_list();
-        $html_change_log_fields->set_obj_from_json_array($json_array);
+        global $html_change_field_list;
+        $html_change_field_list = new change_field_list();
+        $html_change_field_list->set_obj_from_json_array($json_array);
     }
 
     function set_system_views(array $json_array = null): void

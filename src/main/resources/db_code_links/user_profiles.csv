@@ -1,4 +1,4 @@
-profile_id, right_level, type_name, code_id, description
+user_profile_id, right_level, type_name, code_id, description
 1, 10, 'normal user', 'normal', NULL
 2, 60, 'admin', 'admin', 'Administrator that can add and change verbs and sees the code_id'
 3, 80, 'developer', 'dev', 'Can see all errors and change the status of the errors, but cannot access the production system'

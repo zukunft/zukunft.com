@@ -72,8 +72,10 @@ include_once SERVICE_EXPORT_PATH . 'json.php';
 
 use api\api;
 use api\value\value as value_api;
-use cfg\batch_job;
-use cfg\batch_job_type_list;
+use cfg\db\sql_field_default;
+use cfg\db\sql_field_type;
+use cfg\job;
+use cfg\job_type_list;
 use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
@@ -89,9 +91,10 @@ use cfg\group\group_id;
 use cfg\library;
 use cfg\log;
 use cfg\log\change;
-use cfg\log\change_log_action;
-use cfg\log\change_log_field;
-use cfg\log\change_log_table;
+use cfg\log\change_action;
+use cfg\log\change_action_list;
+use cfg\log\change_field_list;
+use cfg\log\change_table_list;
 use cfg\phr_ids;
 use cfg\phrase;
 use cfg\phrase_list;
@@ -125,7 +128,16 @@ class value extends sandbox_value
     const FLD_VALUE_TEXT = 'text_value';
     const FLD_VALUE_TIME = 'time_value';
     const FLD_VALUE_GEO = 'geo_value';
+    const FLD_TS_ID_COM = 'the id of the time series as a 64 bit integer value because the number of time series is not expected to be too high';
+    const FLD_TS_ID_COM_USER = 'the 64 bit integer which is unique for the standard and the user series';
+    const FLD_VALUE_TS_ID = 'value_time_series_id';
     const FLD_LAST_UPDATE = 'last_update';
+    const FLD_ALL_TIME_SERIES = array(
+        [self::FLD_VALUE_TS_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_TS_ID_COM],
+    );
+    const FLD_ALL_TIME_SERIES_USER = array(
+        [self::FLD_VALUE_TS_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_TS_ID_COM_USER],
+    );
 
     // all database field names excluding the id and excluding the user specific fields
     const FLD_NAMES = array();
@@ -687,64 +699,13 @@ class value extends sandbox_value
     }
 
     /**
-     * load the missing value parameters from the database
-     */
-    function load_obj_vars(): bool
-    {
-
-        global $db_con;
-        global $debug;
-        $result = true;
-
-        // check the all minimal input parameters
-        if ($this->user() == null) {
-            log_err('The user id must be set to load a result.', 'value->load');
-        } else {
-            log_debug($this->dsp_id(), $debug - 9);
-
-            $qp = $this->load_sql_obj_vars($db_con->sql_creator());
-            $db_val = $db_con->get1($qp);
-            $result = $this->row_mapper_sandbox_multi($db_val, $qp->ext);
-
-            // if not direct value is found try to get a more specific value
-            // similar to result
-            /* TODO review with a concrete test
-            if ($this->id() <= 0 and isset($this->phr_lst)) {
-                if (count($this->phr_lst->lst) > 0) {
-
-                    $qp_val = $this->load_sql($db_con);
-                    log_debug('value->load sql val "' . $qp_val->name . '"');
-                    $db_con->usr_id = $this->user()->id();
-                    $val_ids_rows = $db_con->get($qp_val);
-                    if ($val_ids_rows != null) {
-                        if (count($val_ids_rows) > 0) {
-                            $val_id_row = $val_ids_rows[0];
-                            $this->id() = $val_id_row[self::FLD_ID];
-                            if ($this->id() > 0) {
-                                $sql_where = "s.group_id = " . $this->id();
-                                $qp = $this->load_sql($db_con);
-                                $db_val = $db_con->get1($qp);
-                                $this->row_mapper($db_val, true);
-                                log_debug('value->loaded best guess id (' . $this->id() . ')');
-                            }
-                        }
-                    }
-                }
-            }
-            */
-        }
-        log_debug('got ' . $this->number() . ' with id ' . $this->id, $debug - 1);
-        return $result;
-    }
-
-    /**
      * get the best matching value
      * 1. try to find a value with simply a different scaling e.g. if the number of share are requested, but this is in millions in the database use and scale it
      * 2. check if another measure type can be converted      e.g. if the share price in USD is requested, but only in EUR is in the database convert it
      *    e.g. for "ABB","Sales","2014" the value for "ABB","Sales","2014","million","CHF" will be loaded,
      *    because most values for "ABB", "Sales" are in ,"million","CHF"
      */
-    function load_best()
+    function load_best(): void
     {
         log_debug('value->load_best for ' . $this->dsp_id());
         $this->load_by_grp($this->grp);
@@ -1106,6 +1067,7 @@ class value extends sandbox_value
 
     /**
      * import a value from an external object
+     * TODO import the description and save it in the group description
      *
      * @param array $in_ex_json an array with the data of the json object
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
@@ -1615,11 +1577,11 @@ class value extends sandbox_value
     {
         log_debug('value->log_upd "' . $this->number . '" for user ' . $this->user()->id());
         $log = new change($this->user());
-        $log->action = change_log_action::UPDATE;
+        $log->action = change_action::UPDATE;
         if ($this->can_change()) {
-            $log->set_table(change_log_table::VALUE);
+            $log->set_table(change_table_list::VALUE);
         } else {
-            $log->set_table(change_log_table::VALUE_USR);
+            $log->set_table(change_table_list::VALUE_USR);
         }
 
         return $log;
@@ -1859,8 +1821,8 @@ class value extends sandbox_value
         // save the pending update to the database for the batch calculation
         log_debug('value->save_field_trigger_update group id "' . $this->grp->id() . '" for user ' . $this->user()->name . '');
         if ($this->is_id_set()) {
-            $job = new batch_job($this->user());
-            $job->set_type(batch_job_type_list::VALUE_UPDATE);
+            $job = new job($this->user());
+            $job->set_type(job_type_list::VALUE_UPDATE);
             $job->obj = $this;
             $job->add();
         } else {
@@ -2028,7 +1990,7 @@ class value extends sandbox_value
             $log->new_id = $this->grp()->id();
             $log->std_id = $std_rec->grp()->id();
             $log->row_id = $this->id();
-            $log->set_field(change_log_field::FLD_VALUE_GROUP);
+            $log->set_field(change_field_list::FLD_VALUE_GROUP);
             if ($log->add()) {
                 $ext = $this->grp->table_extension();
                 $db_con->set_class(self::class, false, $ext);

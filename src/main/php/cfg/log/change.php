@@ -2,8 +2,8 @@
 
 /*
 
-    model/log/user_log_named.php - user_log object for logging changes in named objects such as words and formulas
-    ----------------------------
+    cfg/log/change.php - for logging changes in named objects such as words and formulas
+    ------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -40,6 +40,8 @@ use api\log\change_log_named as change_log_named_api;
 use api\sandbox\user_config;
 use cfg\component\component;
 use cfg\db\sql;
+use cfg\db\sql_field_default;
+use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\formula;
 use cfg\db\sql_db;
@@ -61,14 +63,16 @@ class change extends change_log
     const FLD_FIELD_ID = 'change_field_id';
     const FLD_ROW_ID = 'row_id';
     const FLD_OLD_VALUE = 'old_value';
+    const FLD_OLD_ID_COM = 'old value id';
     const FLD_OLD_ID = 'old_id';
     const FLD_NEW_VALUE = 'new_value';
+    const FLD_NEW_ID_COM = 'new value id';
     const FLD_NEW_ID = 'new_id';
 
     // all database field names
     const FLD_NAMES = array(
         user::FLD_ID,
-        self::FLD_CHANGE_TIME,
+        self::FLD_TIME,
         self::FLD_ACTION,
         self::FLD_FIELD_ID,
         self::FLD_ROW_ID,
@@ -76,6 +80,15 @@ class change extends change_log
         self::FLD_OLD_ID,
         self::FLD_NEW_VALUE,
         self::FLD_NEW_ID
+    );
+
+    // field list to log the actual change of the named user sandbox object
+    const FLD_LST_CHANGE = array(
+        [self::FLD_FIELD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, '', change_field::class, ''],
+        [self::FLD_OLD_VALUE, sql_field_type::TEXT, sql_field_default::NULL, '', '', ''],
+        [self::FLD_NEW_VALUE, sql_field_type::TEXT, sql_field_default::NULL, '', '', ''],
+        [self::FLD_OLD_ID, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_OLD_ID_COM],
+        [self::FLD_NEW_ID, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_NEW_ID_COM],
     );
 
 
@@ -106,19 +119,19 @@ class change extends change_log
     function row_mapper(?array $db_row, string $id_fld = ''): bool
     {
         global $debug;
-        global $change_log_fields;
+        global $change_field_list;
         $result = parent::row_mapper($db_row, self::FLD_ID);
         if ($result) {
             $this->action_id = $db_row[self::FLD_ACTION];
             $this->field_id = $db_row[self::FLD_FIELD_ID];
             $this->row_id = $db_row[self::FLD_ROW_ID];
-            $this->set_time_str($db_row[self::FLD_CHANGE_TIME]);
+            $this->set_time_str($db_row[self::FLD_TIME]);
             $this->old_value = $db_row[self::FLD_OLD_VALUE];
             $this->old_id = $db_row[self::FLD_OLD_ID];
             $this->new_value = $db_row[self::FLD_NEW_VALUE];
             $this->new_id = $db_row[self::FLD_NEW_ID];
 
-            $fld_tbl = $change_log_fields->get($this->field_id);
+            $fld_tbl = $change_field_list->get($this->field_id);
             $this->table_id = preg_replace("/[^0-9]/", '', $fld_tbl->name);
             // TODO check if not the complete user should be loaded
             $usr = new user();
@@ -192,8 +205,8 @@ class change extends change_log
         $sc->set_usr($this->user()->id());
         $sc->set_fields(self::FLD_NAMES);
         $sc->set_join_fields(array(user::FLD_NAME), sql_db::TBL_USER);
-        $sc->set_join_fields(array(change_log_field::FLD_TABLE), sql_db::TBL_CHANGE_FIELD);
-        $sc->set_order(self::FLD_CHANGE_TIME, sql::ORDER_DESC);
+        $sc->set_join_fields(array(change_field_list::FLD_TABLE), sql_db::TBL_CHANGE_FIELD);
+        $sc->set_order(self::FLD_TIME, sql::ORDER_DESC);
 
         return $qp;
     }
@@ -267,7 +280,7 @@ class change extends change_log
     function load_sql_old(string $type): sql_par
     {
         global $db_con;
-        global $change_log_tables;
+        global $change_table_list;
 
         $result = ''; // reset the html code var
 
@@ -290,27 +303,27 @@ class change extends change_log
         $sql_row = ' s.row_id  = $2 ';
         // the class specific settings
         if ($type == user::class) {
-            $sql_where = " (f.table_id = " . $change_log_tables->id(change_log_table::WORD) . " 
-                   OR f.table_id = " . $change_log_tables->id(change_log_table::WORD_USR) . ") AND ";
+            $sql_where = " (f.table_id = " . $change_table_list->id(change_table_list::WORD) . " 
+                   OR f.table_id = " . $change_table_list->id(change_table_list::WORD_USR) . ") AND ";
             $sql_row = '';
             $sql_user = 's.user_id = u.user_id
                 AND s.user_id = ' . $this->user()->id() . ' ';
         } elseif ($type == word::class) {
-            //$db_con->add_par(sql_par_type::INT, $change_log_tables->id(change_log_table::WORD));
-            //$db_con->add_par(sql_par_type::INT, $change_log_tables->id(change_log_table::WORD_USR));
+            //$db_con->add_par(sql_par_type::INT, $change_table_list->id(change_table_list::WORD));
+            //$db_con->add_par(sql_par_type::INT, $change_table_list->id(change_table_list::WORD_USR));
             $sql_where = " s.change_field_id = $1 ";
         } elseif ($type == value::class) {
-            $sql_where = " (f.table_id = " . $change_log_tables->id(change_log_table::VALUE) . " 
-                     OR f.table_id = " . $change_log_tables->id(change_log_table::VALUE_USR) . ") AND ";
+            $sql_where = " (f.table_id = " . $change_table_list->id(change_table_list::VALUE) . " 
+                     OR f.table_id = " . $change_table_list->id(change_table_list::VALUE_USR) . ") AND ";
         } elseif ($type == formula::class) {
-            $sql_where = " (f.table_id = " . $change_log_tables->id(change_log_table::FORMULA) . " 
-                     OR f.table_id = " . $change_log_tables->id(change_log_table::FORMULA_USR) . ") AND ";
+            $sql_where = " (f.table_id = " . $change_table_list->id(change_table_list::FORMULA) . " 
+                     OR f.table_id = " . $change_table_list->id(change_table_list::FORMULA_USR) . ") AND ";
         } elseif ($type == view::class) {
-            $sql_where = " (f.table_id = " . $change_log_tables->id(change_log_table::VIEW) . " 
-                     OR f.table_id = " . $change_log_tables->id(change_log_table::VIEW_USR) . ") AND ";
+            $sql_where = " (f.table_id = " . $change_table_list->id(change_table_list::VIEW) . " 
+                     OR f.table_id = " . $change_table_list->id(change_table_list::VIEW_USR) . ") AND ";
         } elseif ($type == component::class) {
-            $sql_where = " (f.table_id = " . $change_log_tables->id(change_log_table::VIEW_COMPONENT) . " 
-                     OR f.table_id = " . $change_log_tables->id(change_log_table::VIEW_COMPONENT_USR) . ") AND ";
+            $sql_where = " (f.table_id = " . $change_table_list->id(change_table_list::VIEW_COMPONENT) . " 
+                     OR f.table_id = " . $change_table_list->id(change_table_list::VIEW_COMPONENT_USR) . ") AND ";
         }
 
         if ($sql_where == '') {

@@ -41,9 +41,11 @@ include_once MODEL_SANDBOX_PATH . 'protection_type.php';
 include_once MODEL_SANDBOX_PATH . 'share_type.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_typed.php';
 include_once MODEL_FORMULA_PATH . 'formula_type.php';
+include_once MODEL_FORMULA_PATH . 'formula_link.php';
+include_once MODEL_FORMULA_PATH . 'formula_link_type.php';
 include_once MODEL_FORMULA_PATH . 'expression.php';
 include_once MODEL_FORMULA_PATH . 'parameter_type.php';
-include_once MODEL_FORMULA_PATH . 'formula_element_list.php';
+include_once MODEL_ELEMENT_PATH . 'element_list.php';
 include_once MODEL_PHRASE_PATH . 'phrase_type.php';
 include_once API_FORMULA_PATH . 'formula.php';
 include_once WEB_FORMULA_PATH . 'formula.php';
@@ -52,10 +54,12 @@ include_once WEB_WORD_PATH . 'word.php';
 use api\formula\formula as formula_api;
 use cfg\db\sql;
 use cfg\db\sql_db;
+use cfg\db\sql_field_default;
+use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
-use cfg\export\sandbox_exp;
 use cfg\export\formula_exp;
+use cfg\export\sandbox_exp;
 use cfg\result\result;
 use cfg\result\result_list;
 use cfg\value\value;
@@ -78,21 +82,60 @@ class formula extends sandbox_typed
      * database link
      */
 
+    // comments used for the database creation
+    const TBL_COMMENT = 'the mathematical expression to calculate results based on values and results';
+
     // object specific database and JSON object field names
     // means: database fields only used for formulas
     // table fields where the change should be encoded before shown to the user
+    // *_COM: the description of the field
     const FLD_ID = 'formula_id';
+    const FLD_NAME_COM = 'the text used to search for formulas that must also be unique for all terms (words, triples, verbs and formulas)';
     const FLD_NAME = 'formula_name';
     const FLD_TYPE = 'formula_type_id';
-    const FLD_FORMULA_TEXT = 'formula_text';       // the internal formula expression with the database references
-    const FLD_FORMULA_USER_TEXT = 'resolved_text'; // the formula expression as shown to the user which can include formatting for better readability
+    const FLD_FORMULA_TEXT_COM = 'the internal formula expression with the database references e.g. {f1} for formula with id 1';
+    const FLD_FORMULA_TEXT = 'formula_text';
+    const FLD_FORMULA_USER_TEXT_COM = 'the formula expression in user readable format as shown to the user which can include formatting for better readability';
+    const FLD_FORMULA_USER_TEXT = 'resolved_text';
     //const FLD_REF_TEXT = "ref_text";             // the formula field "ref_txt" is a more internal field, which should not be shown to the user (only to an admin for debugging)
-    const FLD_FORMULA_TYPE = 'formula_type_id';    // the id of the formula type
-    const FLD_ALL_NEEDED = 'all_values_needed';    // the "calculate only if all values used in the formula exist" flag should be converted to "all needed for calculation" instead of just displaying "1"
+    const FLD_DESCRIPTION_COM = 'text to be shown to the user for mouse over; to be replaced by a language form entry';
+    const FLD_FORMULA_TYPE_COM = 'the id of the formula type';
+    const FLD_FORMULA_TYPE = 'formula_type_id';
+    const FLD_ALL_NEEDED_COM = 'the "calculate only if all values used in the formula exist" flag should be converted to "all needed for calculation" instead of just displaying "1"';
+    const FLD_ALL_NEEDED = 'all_values_needed';
+    const FLD_LAST_UPDATE_COM = 'time of the last calculation relevant update';
     const FLD_LAST_UPDATE = 'last_update';
+    const FLD_VIEW_COM = 'the default mask for this formula';
+    const FLD_VIEW = 'view_id';
+    const FLD_USAGE_COM = 'number of results linked to this formula';
+    const FLD_USAGE = 'usage'; // TODO convert to a percent value of relative importance e.g. is 100% if all results, words and triples use this formula; should be possible to adjust the weight of e.g. values and views with the user specific system settings
+
     // the field names used for the im- and export in the json or yaml format
     const FLD_EXPRESSION = 'expression';
     const FLD_ASSIGN = 'assigned_word';
+
+    // list of fields that MUST be set by one user
+    // TODO add foreign key for share and protection type?
+    const FLD_LST_MUST_BE_IN_STD = array(
+        [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::UNIQUE, '', self::FLD_NAME_COM],
+        [self::FLD_FORMULA_TEXT, sql_field_type::TEXT, sql_field_default::NOT_NULL, '', '', self::FLD_FORMULA_TEXT_COM],
+        [self::FLD_FORMULA_USER_TEXT, sql_field_type::TEXT, sql_field_default::NOT_NULL, '', '', self::FLD_FORMULA_USER_TEXT_COM],
+    );
+    // list of must fields that CAN be changed by the user
+    const FLD_LST_MUST_BUT_USER_CAN_CHANGE = array(
+        [self::FLD_NAME, sql_field_type::NAME, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_COM],
+        [self::FLD_FORMULA_TEXT, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_FORMULA_TEXT_COM],
+        [self::FLD_FORMULA_USER_TEXT, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_FORMULA_USER_TEXT_COM],
+    );
+    // list of fields that CAN be changed by the user
+    const FLD_LST_USER_CAN_CHANGE = array(
+        [self::FLD_DESCRIPTION, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
+        [self::FLD_FORMULA_TYPE, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, formula_type::class, self::FLD_FORMULA_TYPE_COM],
+        [self::FLD_ALL_NEEDED, sql_field_type::INT_SMALL, sql_field_default::NULL, '', '', self::FLD_ALL_NEEDED_COM],
+        [self::FLD_LAST_UPDATE, sql_field_type::TIME, sql_field_default::NULL, '', '', self::FLD_LAST_UPDATE_COM],
+        [self::FLD_VIEW, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, view::class, self::FLD_VIEW_COM],
+        [self::FLD_USAGE, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_USAGE_COM],
+    );
 
     // all database field names excluding the id
     // actually empty because all formula fields are user specific
@@ -456,7 +499,7 @@ class formula extends sandbox_typed
         if ($do_load) {
             log_debug('->load_wrd load ' . $this->dsp_id());
             $name_wrd = new word($this->user());
-            $name_wrd->load_by_name($this->name(), word::class);
+            $name_wrd->load_by_name($this->name());
             if ($name_wrd->id() > 0) {
                 $this->name_wrd = $name_wrd;
             } else {
@@ -493,12 +536,11 @@ class formula extends sandbox_typed
      * just set the class name for the user sandbox function
      * load a formula object by name
      * @param string $name the name formula
-     * @param string $class the formula class name
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_name(string $name, string $class = self::class): int
+    function load_by_name(string $name): int
     {
-        return parent::load_by_name($name, $class);
+        return parent::load_by_name($name);
     }
 
     function name_field(): string
@@ -1043,7 +1085,7 @@ class formula extends sandbox_typed
     function calc_requests($phr_lst) {
     $result = array();
 
-    $calc_request = New batch_job;
+    $calc_request = New job;
     $calc_request->frm     = $this;
     $calc_request->usr     = $this->user();
     $calc_request->phr_lst = $phr_lst;
@@ -1505,7 +1547,7 @@ class formula extends sandbox_typed
         log_debug('got (' . $lib->dsp_array($elm_ids) . ') of type ' . $element_type . ' from text');
 
         // read the existing elements from the database
-        $frm_elm_lst = new formula_element_list($this->user());
+        $frm_elm_lst = new element_list($this->user());
         $qp = $frm_elm_lst->load_sql_by_frm_and_type_id($db_con->sql_creator(), $this->id(), $elm_type_id);
         $db_lst = $db_con->get($qp);
 
@@ -1523,6 +1565,7 @@ class formula extends sandbox_typed
         $elm_order_nbr = 1;
         $lib = new library();
         log_debug('add ' . $element_type . ' (' . $lib->dsp_array($elm_add_ids) . ')');
+        // TODO use element list object
         foreach ($elm_add_ids as $elm_add_id) {
             $field_names = array();
             $field_values = array();
@@ -1534,12 +1577,12 @@ class formula extends sandbox_typed
             } else {
                 $field_values[] = $this->user()->id();
             }
-            $field_names[] = 'formula_element_type_id';
+            $field_names[] = element::FLD_TYPE;
             $field_values[] = $elm_type_id;
-            $field_names[] = 'ref_id';
+            $field_names[] = element::FLD_REF_ID;
             $field_values[] = $elm_add_id;
-            $db_con->set_class(sql_db::TBL_FORMULA_ELEMENT);
-            $field_names[] = 'order_nbr';
+            $db_con->set_class(sql_db::TBL_ELEMENT);
+            $field_names[] = element::FLD_ORDER;
             $field_values[] = $elm_order_nbr;
             $add_result = $db_con->insert_old($field_names, $field_values);
             // in this case the row id is not needed, but for testing the number of action should be indicated by adding a '1' to the result string
@@ -1562,11 +1605,11 @@ class formula extends sandbox_typed
                 $field_names[] = user::FLD_ID;
                 $field_values[] = $frm_usr_id;
             }
-            $field_names[] = 'formula_element_type_id';
+            $field_names[] = element::FLD_TYPE;
             $field_values[] = $elm_type_id;
-            $field_names[] = 'ref_id';
+            $field_names[] = element::FLD_REF_ID;
             $field_values[] = $elm_del_id;
-            $db_con->set_class(sql_db::TBL_FORMULA_ELEMENT);
+            $db_con->set_class(sql_db::TBL_ELEMENT);
             $del_result = $db_con->delete_old($field_names, $field_values);
             if ($del_result != '') {
                 $result = false;
@@ -1899,7 +1942,7 @@ class formula extends sandbox_typed
         $msg_failed = $this->id() . ' failed for ' . $this->user()->name;
         $msg = '';
 
-        $db_con->set_class(sql_db::TBL_FORMULA_ELEMENT);
+        $db_con->set_class(sql_db::TBL_ELEMENT);
         try {
             $msg = $db_con->delete_old(
                 array(self::FLD_ID, user::FLD_ID),
@@ -2373,12 +2416,13 @@ class formula extends sandbox_typed
                     }
                 }
 
-                // update the reference table for fast calculation
-                // a '1' in the result only indicates that an update has been done for testing; '1' doesn't mean that there has been an error
-                if ($result == '') {
-                    if (!$this->element_refresh($this->ref_text)) {
-                        $result .= 'Refresh of the formula elements failed';
-                    }
+            }
+
+            // update the reference table for fast calculation
+            // a '1' in the result only indicates that an update has been done for testing; '1' doesn't mean that there has been an error
+            if ($result == '') {
+                if (!$this->element_refresh($this->ref_text)) {
+                    $result .= 'Refresh of the formula elements failed';
                 }
             }
         }

@@ -37,8 +37,8 @@ include_once MODEL_SANDBOX_PATH . 'sandbox_value_list.php';
 include_once API_RESULT_PATH . 'result_list.php';
 
 use api\result\result_list as result_list_api;
-use cfg\batch_job;
-use cfg\batch_job_list;
+use cfg\job;
+use cfg\job_list;
 use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_table_type;
@@ -49,6 +49,7 @@ use cfg\group\group;
 use cfg\group\group_id;
 use cfg\group\group_list;
 use cfg\library;
+use cfg\phrase;
 use cfg\phrase_list;
 use cfg\sandbox_value_list;
 use cfg\triple;
@@ -106,9 +107,9 @@ class result_list extends sandbox_value_list
      *  TODO use order by in query
      *  TODO use limit and page in query
      *
-     * @param phrase_list $phr_lst phrase list to which all related values should be loaded
-     * @param bool $or if true all values are returned that are linked to any phrase of the list
-     * @param int $limit the number of values that should be loaded at once
+     * @param phrase_list $phr_lst phrase list to which all related results should be loaded
+     * @param bool $or if true all results are returned that are linked to any phrase of the list
+     * @param int $limit the number of results that should be loaded at once
      * @param int $page the offset for the limit
      * @return bool true if at least one value found
      */
@@ -124,6 +125,12 @@ class result_list extends sandbox_value_list
 
     /**
      * load a list of results linked to a formula
+     * used to detect which results needs to be updated in case of a formula change
+     * TODO check if needed that the standard results can also be searched by formula
+     *      advantage is the higher speed in case of a formula update
+     *      disadvantage is that it is not possible to use a pure key value table
+     *      -> measure it based on real life data
+     *      -> a solution could be to include the source group and the formula in the result group id
      *
      * @param formula $frm a named object used for selection e.g. a formula
      * @return bool true if loading has been successful
@@ -132,11 +139,63 @@ class result_list extends sandbox_value_list
     {
         global $db_con;
 
-        $qp = $this->load_by_frm_sql($db_con, $frm);
+        $sc = $db_con->sql_creator();
+        $qp = $this->load_sql_by_frm($sc, $frm);
+        return $this->load($qp);
+    }
+
+    /**
+     * load a list of results based on the given phrases
+     *
+     * @param phrase_list $phr_lst to select the results that are based on any or all of these phase values
+     * @param bool $or if true all results are returned that are based on any phrase of the list
+     * @param int $limit the number of results that should be loaded at once
+     * @param int $page the offset for the limit
+     * @return bool true if loading has been successful
+     */
+    function load_by_src(
+        phrase_list $phr_lst,
+        bool        $or = false,
+        int         $limit = sql_db::ROW_LIMIT,
+        int         $page = 0
+    ): bool
+    {
+        global $db_con;
+
+        if ($phr_lst->is_empty()) {
+            log_warning("At lease one phrase should be given to load a value list");
+        }
+        $sc = $db_con->sql_creator();
+        $qp = $this->load_sql_by_src($sc, $phr_lst, $or, $limit, $page);
         return $this->load($qp);
     }
 
     // internal load
+
+    /**
+     * load a result list base on the given query parameters
+     *
+     * @param sql_par $qp the query parameters that should be used to get the data from the database
+     * @param bool $load_all
+     * @return bool
+     */
+    function load(sql_par $qp, bool $load_all = false): bool
+    {
+        global $db_con;
+        $result = false;
+        if ($qp->name != '') {
+            $db_rows = $db_con->get($qp);
+            if ($db_rows != null) {
+                foreach ($db_rows as $db_row) {
+                    $res = new result($this->user());
+                    $res->row_mapper($db_row);
+                    $this->add_obj($res);
+                    $result = true;
+                }
+            }
+        }
+        return $result;
+    }
 
     /**
      * load a list of results that are linked to each phrase of the given list
@@ -144,17 +203,17 @@ class result_list extends sandbox_value_list
      *      to get the inhabitants of the cities itself first get a phrase list of all cities
      *
      * if $or is true
-     * load a list of values that are related to at least one phrase of the given list
-     *  e.g. for "Zurich (city)" and "Geneva (city)" all values related to the two cities are returned
+     * load a list of results that are related to at least one phrase of the given list
+     *  e.g. for "Zurich (city)" and "Geneva (city)" all results related to the two cities are returned
      *
      *  TODO use order by in query
      *  TODO use limit and page in query
      *
      * @param sql $sc with the target db_type set
-     * @param phrase_list $phr_lst phrase list to which all related values should be loaded
+     * @param phrase_list $phr_lst phrase list to which all related results should be loaded
      * @param bool $usr_tbl true if only the user overwrites should be loaded
-     * @param bool $or if true all values are returned that are linked to any phrase of the list
-     * @param int $limit the number of values that should be loaded at once
+     * @param bool $or if true all results are returned that are linked to any phrase of the list
+     * @param int $limit the number of results that should be loaded at once
      * @param int $page the offset for the limit
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
@@ -171,6 +230,109 @@ class result_list extends sandbox_value_list
     }
 
     /**
+     * create an SQL statement to retrieve a list of results linked to a formula from the database
+     * @param sql $sc
+     * @param formula $frm
+     * @return sql_par
+     */
+    function load_sql_by_frm(sql $sc, formula $frm): sql_par
+    {
+        $qp = new sql_par(result_list::class);
+        $qp->name .= 'frm';
+        $par_types = array();
+        foreach (result::TBL_LIST_EX_STD as $tbl_typ) {
+            $qp_tbl = $this->load_sql_by_frm_single($sc, $frm, $tbl_typ);
+
+            $qp->merge($qp_tbl);
+        }
+        $qp->sql = $sc->prepare_sql($qp->sql, $qp->name, $par_types);
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve a list of results based one of the given phrases from the database
+     * similar to load_sql_by_phr_lst_multi of sandbox_value_list
+     * TODO use a mixed id with a formula id, 2 or 6 phrase ids for the source and result value and 2 for the result only
+     * TODO add ORDER BY (relevance of value)
+     * TODO use LIMIT and PAGE
+     *
+     * @param sql $sc with the target db_type set
+     * @param phrase_list $phr_lst phrase list to which all related results should be loaded
+     * @param bool $usr_tbl true if only the user overwrites should be loaded
+     * @param bool $or true if all results related to any phrase of the list should be loaded
+     * @param int $limit the number of results that should be loaded at once
+     * @param int $page the offset for the limit
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_src(
+        sql         $sc,
+        phrase_list $phr_lst,
+        bool        $usr_tbl = false,
+        bool        $or = false,
+        int         $limit = sql_db::ROW_LIMIT,
+        int         $page = 0
+    ): sql_par
+    {
+        $lib = new library();
+        $qp = new sql_par(result::class);
+        $name_ext = 'src_phr_lst';
+        if ($usr_tbl) {
+            $name_ext .= '_usr';
+        }
+        if ($or) {
+            $name_ext .= '_all';
+        }
+        $name_count = '_p' . $phr_lst->count();
+        $qp->name = $lib->class_to_name(result_list::class) . '_by_' . $name_ext . $name_count;
+        $par_types = array();
+        // loop over the possible tables where the value might be stored in this pod
+        $par_pos = 2;
+        foreach (result::TBL_LIST as $tbl_typ) {
+            $sc->reset();
+            $qp_tbl = $this->load_sql_by_phr_lst_single($sc, result::class, $phr_lst, $or, $tbl_typ, $par_pos);
+            $qp->merge($qp_tbl);
+            $phr_pos = $par_pos + 2;
+        }
+        // sort the parameters if the parameters are part of the union
+        if ($sc->db_type() != sql_db::MYSQL) {
+            $lib = new library();
+            $qp->par = $lib->key_num_sort($qp->par);
+        }
+
+        foreach ($qp->par as $par) {
+            if (is_numeric($par)) {
+                $par_types[] = sql_par_type::INT;
+            } else {
+                $par_types[] = sql_par_type::TEXT;
+            }
+        }
+        $qp->sql = $sc->prepare_sql($qp->sql, $qp->name, $par_types);
+
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve a list of results linked to a phrase from the database
+     * from a single table
+     *     *
+     * @param sql $sc with the target db_type set
+     * @param formula $frm if set to get all results for this phrase
+     * @param array $tbl_typ_lst the table types for this table
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_frm_single(sql $sc, formula $frm, array $tbl_typ_lst): sql_par
+    {
+        $qp = $this->load_sql_init($sc, result::class, 'frm', $tbl_typ_lst);
+        $sc->add_where(formula::FLD_ID, $frm->id());
+        $qp->sql = $sc->sql(0, true, false);
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
+
+    // to review
+
+    /**
      * the common query parameter to get a list of results
      *
      * @param sql $sc the sql creator instance with the target db_type already set
@@ -184,7 +346,7 @@ class result_list extends sandbox_value_list
         $qp->name .= $query_name;
 
         $sc->set_class(result::class, false, $tbl_typ->extension());
-        // overwrite the standard id field name (result_id) with the main database id field for values "group_id"
+        // overwrite the standard id field name (result_id) with the main database id field for results "group_id"
         $res = new result($this->user());
         $sc->set_id_field($res->id_field_list($tbl_typ));
         $sc->set_name($qp->name);
@@ -248,8 +410,7 @@ class result_list extends sandbox_value_list
     /**
      * create the SQL statement to load the results created by the given formula
      *
-     * @param sql $sc the sql creator instance with the target db_type already set
-     * @param formula $frm the formula to select the results
+     * @param string $query_name symbol by what the results are selected e.g. frm
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
 
@@ -269,30 +430,6 @@ class result_list extends sandbox_value_list
         return $qp;
     }
 
-
-    function load_sql_by_frm(sql $sc, formula $frm): sql_par
-    {
-        $qp = $this->load_sql_init_query_par('frm');
-        $par_types = array();
-        foreach (result::TBL_EXT_LST as $ext) {
-            $qp_tbl = $this->load_sql($sc, 'frm', $ext);
-            $sc->add_where(formula::FLD_ID, $frm->id());
-            $qp_tbl->sql = $sc->sql(0, true, false);
-            $qp_tbl->par = $sc->get_par();
-
-            $qp->merge($qp_tbl);
-        }
-
-        $qp->sql = $sc->prepare_sql($qp->sql, $qp->name, $par_types);
-
-        // loop over the tables where the result may be saved
-        // union the sql statements
-        // TODO create an array with the tables where a result could be found
-
-        return $qp;
-    }
-
-
     /**
      * create the SQL to load a list of results link to
      * a formula
@@ -308,7 +445,7 @@ class result_list extends sandbox_value_list
      * @param bool $by_source set to true to force the selection e.g. by source phrase group id
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_obj(sql_db $db_con, object $obj, bool $by_source = false): sql_par
+    function load_sql_by_obj_old(sql_db $db_con, object $obj, bool $by_source = false): sql_par
     {
         $qp = new sql_par(self::class);
         $sql_by = '';
@@ -357,20 +494,12 @@ class result_list extends sandbox_value_list
                 } elseif (get_class($obj) == word::class or get_class($obj) == word_dsp::class) {
                     // TODO check if the results are still correct if the user has excluded the word
                     $db_con->add_par(sql_par_type::INT, $obj->id(), false, true);
-                    $db_con->set_join_fields(
-                        array(result::FLD_GRP),
-                        sql_db::TBL_GROUP_LINK,
-                        result::FLD_GRP,
-                        result::FLD_GRP);
+                    // $db_con->set_join_fields(                        array(result::FLD_GRP),                        sql_db::TBL_GROUP_LINK,                        result::FLD_GRP,                        result::FLD_GRP);
                     $qp->sql = $db_con->select_by_field_list(array(word::FLD_ID));
                 } elseif (get_class($obj) == triple::class) {
                     // TODO check if the results are still correct if the user has excluded the triple
                     $db_con->add_par(sql_par_type::INT, $obj->id(), false, true);
-                    $db_con->set_join_fields(
-                        array(result::FLD_GRP),
-                        sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK,
-                        result::FLD_GRP,
-                        result::FLD_GRP);
+                    //$db_con->set_join_fields( array(result::FLD_GRP),sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK,   result::FLD_GRP,         result::FLD_GRP);
                     $qp->sql = $db_con->select_by_field_list(array(triple::FLD_ID));
                 }
             }
@@ -384,7 +513,7 @@ class result_list extends sandbox_value_list
      * list of potential table extensions where a result may be saved
      *
      * @param array $ids value ids that should be selected
-     * @return array with the unique table extension where the values of the given id list may be found of the group ids
+     * @return array with the unique table extension where the results of the given id list may be found of the group ids
      */
     private function table_extension_list(array $ids): array
     {
@@ -395,43 +524,6 @@ class result_list extends sandbox_value_list
         }
 
         return array_unique($tbl_ext_lst);
-    }
-
-    /**
-     * create the SQL to load a list of results link to a formula
-     *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param formula $frm a named object used for selection e.g. a formula
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_by_frm_sql(sql_db $db_con, formula $frm): sql_par
-    {
-        return $this->load_sql_by_obj($db_con, $frm);
-    }
-
-    /**
-     * load a result list base on the given query parameters
-     *
-     * @param sql_par $qp the query parameters that should be used to get the data from the database
-     * @param bool $load_all
-     * @return bool
-     */
-    function load(sql_par $qp, bool $load_all = false): bool
-    {
-        global $db_con;
-        $result = false;
-        if ($qp->name != '') {
-            $db_rows = $db_con->get($qp);
-            if ($db_rows != null) {
-                foreach ($db_rows as $db_row) {
-                    $res = new result($this->user());
-                    $res->row_mapper($db_row);
-                    $this->add_obj($res);
-                    $result = true;
-                }
-            }
-        }
-        return $result;
     }
 
     /**
@@ -471,7 +563,7 @@ class result_list extends sandbox_value_list
     {
         global $db_con;
 
-        $qp = $this->load_sql_by_obj($db_con, $obj, $by_source);
+        $qp = $this->load_sql_by_obj_old($db_con, $obj, $by_source);
         return $this->load($qp);
     }
 
@@ -700,7 +792,7 @@ class result_list extends sandbox_value_list
             $result[] = $calc_row;
         }
 
-        log_debug('number of values added (' . $lib->dsp_count($result) . ')');
+        log_debug('number of results added (' . $lib->dsp_count($result) . ')');
         return $result;
     }
 */
@@ -715,7 +807,7 @@ class result_list extends sandbox_value_list
     {
         $lib = new library();
         log_debug('res_lst->frm_upd_lst_usr(' . $frm->name() . ',fat' . $phr_lst_frm_assigned->name() . ',ft' . $phr_lst_frm_used->name() . ',' . $usr->name . ')');
-        $result = new batch_job_list($usr);
+        $result = new job_list($usr);
         $added = 0;
 
         // TODO: check if the assigned words are different for the user
@@ -744,7 +836,7 @@ class result_list extends sandbox_value_list
             // remove double requests
 
             if (!$phr_lst->is_empty()) {
-                $calc_request = new batch_job($usr);
+                $calc_request = new job($usr);
                 $calc_request->frm = $frm;
                 $calc_request->phr_lst = $phr_lst;
                 $result->add($calc_request);
@@ -849,7 +941,7 @@ class result_list extends sandbox_value_list
 
     /**
      * get the result that needs to be recalculated if one formula has been updated
-     * TODO should returns a batch_job_list with all formula results that may need to be updated if a formula is updated
+     * TODO should returns a job_list with all formula results that may need to be updated if a formula is updated
      * @param formula $frm - the formula that has been updated
      * $usr - to define which user view should be updated
      */
@@ -929,13 +1021,13 @@ class result_list extends sandbox_value_list
 
         // depending on the formula setting (all words or at least one word)
         // create a result list with all needed word combinations
-        // TODO this get all values that
+        // TODO this get all results that
         // 1. have at least one assigned word and one formula word (one of each)
         // 2. remove all assigned words and formula words from the value word list
-        // 3. aggregate the word list for all values
+        // 3. aggregate the word list for all results
         // this is a kind of word group list, where for each word group list several results are possible,
         // because there may be one value and several results for the same word group
-        log_debug('get all values used in the formula ' . $frm->usr_text . ' that are related to one of the phrases assigned ' . $phr_lst_frm_assigned->dsp_name());
+        log_debug('get all results used in the formula ' . $frm->usr_text . ' that are related to one of the phrases assigned ' . $phr_lst_frm_assigned->dsp_name());
         $phr_grp_lst_val = new group_list($this->user()); // by default the calling user is used, but if needed the value for other users also needs to be updated
         $phr_grp_lst_val->get_by_val_with_one_phr_each($phr_lst_frm_assigned, $phr_lst_frm_used, $phr_frm, $phr_lst_res);
         $phr_grp_lst_val->get_by_res_with_one_phr_each($phr_lst_frm_assigned, $phr_lst_frm_used, $phr_frm, $phr_lst_res);
@@ -943,7 +1035,7 @@ class result_list extends sandbox_value_list
         $phr_grp_lst_val->get_by_res_special($phr_lst_frm_assigned, $phr_lst_preset, $phr_frm, $phr_lst_res); // ... such as "this"
         $phr_grp_lst_used = clone $phr_grp_lst_val;
 
-        // first calculate the standard values for all user and then the user specific values
+        // first calculate the standard results for all user and then the user specific results
         // than loop over the users and check if the user has changed any value, formula or formula assignment
         $usr_lst = new user_list($this->user());
         $usr_lst->load_active();
@@ -957,7 +1049,7 @@ class result_list extends sandbox_value_list
                 $usr_calc_needed = true;
             }
             if ($this->user()->id() == 0 or $usr_calc_needed) {
-                log_debug('update values for user: ' . $usr->name . ' and formula ' . $frm->name());
+                log_debug('update results for user: ' . $usr->name . ' and formula ' . $frm->name());
 
                 $result = $this->frm_upd_lst_usr($frm, $phr_lst_frm_assigned, $phr_lst_frm_used, $phr_grp_lst_used, $usr, $last_msg_time, $collect_pos);
             }
@@ -989,49 +1081,13 @@ class result_list extends sandbox_value_list
     /**
      * load all results related to one value
      * TODO check if this is needed
-     * TODO review: the table value_formula_links is not yet filled
-     *              split the backend and frontend part
+     * TODO review: split the backend and frontend part
      *              target is: if a value is changed, what needs to be updated?
      */
     function load_by_val(value $val): string
     {
-        global $db_con;
-
         $phr_lst = $val->phr_lst();
-
-        log_debug("for value " . $val->id());
-        $result = '';
-
-        // list all related formula results
-        $formula_links = '';
-        $sql = "SELECT l.formula_id, f.formula_text FROM value_formula_links l, formulas f WHERE l.group_id = " . $val->id() . " AND l.formula_id = f.formula_id;";
-        //$db_con = New mysql;
-        $db_con->usr_id = $this->user()->id();
-        $db_lst = $db_con->get_old($sql);
-        if ($db_lst != null) {
-            foreach ($db_lst as $db_res) {
-                $frm_id = $db_res[formula::FLD_ID];
-                $formula_text = $db_res[formula::FLD_FORMULA_TEXT];
-                $phr_lst_used = clone $phr_lst;
-                $frm = new formula($this->user());
-                $frm->load_by_id($frm_id);
-                $back = '';
-                $res_list = $frm->to_num($phr_lst_used);
-                $result = $res_list->get_first();
-                // if the result is empty use the id to be able to select the formula
-                if ($result == '') {
-                    $result = $db_res[formula::FLD_ID];
-                }
-                $formula_links .= ' <a href="/http/formula_edit.php?id=' . $db_res[formula::FLD_ID] . '">' . $result . '</a> ';
-            }
-        }
-
-        if ($formula_links <> '') {
-            $result .= ' (or ' . $formula_links . ')';
-        }
-
-        log_debug("res_lst->val_phr_lst ... done.");
-        return $result;
+        return $this->load_by_phr_lst($phr_lst);
     }
 
     /**

@@ -7,11 +7,11 @@ PREPARE user_by_profile (bigint) AS
          email,
          first_name,
          last_name,
-         last_word_id,
+         term_id,
          source_id,
          user_profile_id,
          activation_key,
-         activation_key_timeout,
+         activation_timeout,
          NOW() AS db_now
     FROM users
    WHERE user_profile_id = $1;

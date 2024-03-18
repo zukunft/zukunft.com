@@ -31,7 +31,6 @@
 */
 
 use test\test_cleanup;
-use const test\TIMEOUT_LIMIT_IMPORT;
 
 function run_import_test($file_list, test_cleanup $t): void
 {
@@ -44,7 +43,7 @@ function run_import_test($file_list, test_cleanup $t): void
     foreach ($file_list as $json_test_filename) {
         $result = import_json_file($import_path . $json_test_filename, $usr);
         $target = 'done';
-        $t->dsp_contains(', import of ' . $json_test_filename . ' contains at least ' . $target, $target, $result, TIMEOUT_LIMIT_IMPORT);
+        $t->dsp_contains(', import of ' . $json_test_filename . ' contains at least ' . $target, $target, $result, $t::TIMEOUT_LIMIT_IMPORT);
     }
 
 }

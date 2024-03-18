@@ -1,2 +1,2 @@
-user_official_type_id, type_name, code_id, comment
+user_official_type_id, type_name, code_id, description
 1, 'passport number', 'passport_nbr', NULL

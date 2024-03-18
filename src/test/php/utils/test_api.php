@@ -2,7 +2,7 @@
 
 /*
 
-    test/utils/test_api.php - quick internal check of the open api definition versus the code
+    test/utils/test_api.php - set of functions for testing the api
     -----------------------
 
     to activate the yaml support on debian use
@@ -40,9 +40,10 @@
 namespace test;
 
 include_once MODEL_LOG_PATH . 'change_log.php';
-include_once MODEL_LOG_PATH . 'change_log_field.php';
+include_once MODEL_LOG_PATH . 'change_field.php';
+include_once MODEL_LOG_PATH . 'change_field_list.php';
 include_once MODEL_LOG_PATH . 'change_log_list.php';
-include_once MODEL_SYSTEM_PATH . 'batch_job.php';
+include_once MODEL_SYSTEM_PATH . 'job.php';
 include_once EXPORT_PATH . 'export.php';
 include_once API_SYSTEM_PATH . 'type_object.php';
 include_once API_PHRASE_PATH . 'phrase_type.php';
@@ -51,299 +52,43 @@ include_once API_LANGUAGE_PATH . 'language_form.php';
 
 use api\api_message;
 use api\component\component as component_api;
-use api\formula\formula as formula_api;
 use api\language\language as language_api;
 use api\language\language_form as language_form_api;
 use api\log\system_log as system_log_api;
 use api\phrase\phrase_type as phrase_type_api;
 use api\ref\ref as ref_api;
-use api\ref\source as source_api;
-use api\system\batch_job as batch_job_api;
+use api\system\job as job_api;
 use api\system\type_object as type_api;
-use api\verb\verb as verb_api;
-use api\view\view as view_api;
-use api\word\word as word_api;
-use cfg\batch_job;
+use cfg\job;
 use cfg\component\component;
-use cfg\component\component_list;
 use cfg\db\sql_db;
 use cfg\export\export;
 use cfg\formula;
-use cfg\formula_list;
 use cfg\language;
 use cfg\language_form;
 use cfg\library;
 use cfg\log\change_log;
-use cfg\log\change_log_field;
-use cfg\log\change_log_list;
 use cfg\log\system_log;
 use cfg\log\system_log_list;
-use cfg\phrase_list;
 use cfg\phrase_type;
 use cfg\ref;
 use cfg\source;
 use cfg\term_list;
-use cfg\triple;
 use cfg\trm_ids;
 use cfg\type_lists;
 use cfg\type_object;
 use cfg\user;
 use cfg\user_message;
 use cfg\value\value;
-use cfg\verb;
-use cfg\view;
 use cfg\word;
-use cfg\word_list;
 use controller\controller;
 use DateTime;
 use Exception;
-use html\phrase\phrase as phrase_dsp;
-use html\word\word as word_dsp;
 
 class test_api extends create_test_objects
 {
     // path
-    const TEST_ROOT_PATH = '/home/timon/git/zukunft.com/';
-    const TEST_ROOT_PATH2 = '/home/timon/PhpstormProjects/zukunft.com/';
-    const OPEN_API_PATH = 'src/main/resources/openapi/zukunft_com_api.yaml';
-
     const API_PATH = 'api/';
-    const PHP_DEFAULT_FILENAME = 'index.php';
-
-
-    /*
-     * do it
-     */
-
-    /**
-     * execute the API test using localhost
-     * @return void
-     */
-    function run_api_test(): void
-    {
-
-        $this->assert_api_get(user::class, 2);
-        $this->assert_api_get_by_text(user::class, user::SYSTEM_TEST_NAME);
-        $this->assert_api_get_by_text(user::class, user::SYSTEM_TEST_EMAIL, controller::URL_VAR_EMAIL);
-        $this->assert_api_get(word::class);
-        $this->assert_api_get_json(word::class, controller::URL_VAR_WORD_ID);
-        $this->assert_api_get_by_text(word::class, word_api::TN_READ);
-        $this->assert_api_get(verb::class);
-        $this->assert_api_get_by_text(verb::class, verb_api::TN_READ);
-        $this->assert_api_get(triple::class);
-        //$this->assert_api_get_by_text(triple::class, triple_api::TN_READ);
-        //$this->assert_api_get(phrase::class);
-        $this->assert_api_get(value::class, 5);
-        $this->assert_api_get(formula::class);
-        $this->assert_api_get_by_text(formula::class, formula_api::TN_READ);
-        $this->assert_api_get(view::class);
-        $this->assert_api_get_by_text(view::class, view_api::TN_READ);
-        $this->assert_api_get(component::class);
-        $this->assert_api_get_by_text(component::class, component_api::TN_READ);
-        $this->assert_api_get(source::class, 3);
-        $this->assert_api_get_by_text(source::class, source_api::TN_READ_API);
-        $this->assert_api_get(ref::class, 4);
-        $this->assert_api_get(batch_job::class);
-        $this->assert_api_get(phrase_type::class);
-        $this->assert_api_get(language::class);
-        $this->assert_api_get(language_form::class);
-
-        $this->assert_api_get_list(type_lists::class);
-        $this->assert_api_get_list(word_list::class, [1, 2, 3]);
-        $this->assert_api_get_list(word_list::class, word_api::TN_READ, controller::URL_VAR_PATTERN);
-        $this->assert_api_get_list(phrase_list::class, [1, 2, 3, -1, -2]);
-        $this->assert_api_get_list(phrase_list::class, word_api::TN_READ, controller::URL_VAR_PATTERN);
-        $this->assert_api_get_list(term_list::class, [1, -1, 2, -2]);
-        $this->assert_api_get_list(formula_list::class, [1]);
-        $this->assert_api_get_list(component_list::class, 3, 'view_id');
-        $this->assert_api_chg_list(
-            change_log_list::class,
-            controller::URL_VAR_WORD_ID, 1,
-            controller::URL_VAR_WORD_FLD, change_log_field::FLD_WORD_NAME);
-        $this->assert_api_get_list(
-            system_log_list::class,
-            [1, 2], 'ids',
-            'system_log_list_api',
-            true);
-        // $this->assert_rest(new word($usr, word_api::TN_READ));
-
-
-        // load the frontend objects via api call
-        $test_name = 'api id and name call of a word';
-        $wrd_zh = new word_dsp();
-        $wrd_zh->load_by_name(word_api::TN_ZH);
-        $wrd_zh->load_by_id($wrd_zh->id());
-        $this->assert($test_name, $wrd_zh->name(), word_api::TN_ZH);
-
-        $test_name = 'api id and name call of a phrase';
-        $phr_zh = new phrase_dsp();
-        $phr_zh->load_by_name(word_api::TN_ZH);
-        $phr_zh->load_by_id($phr_zh->id());
-        $this->assert($test_name, $phr_zh->name(), word_api::TN_ZH);
-
-    }
-
-    /**
-     * get the api message and forward it to the ui
-     * @return void
-     */
-    function run_ui_test(): void
-    {
-        $this->assert_view(controller::DSP_WORD, $this->usr1, new word($this->usr1), 1);
-        $this->assert_view(controller::DSP_WORD_ADD, $this->usr1, new word($this->usr1));
-        $this->assert_view(controller::DSP_WORD_EDIT, $this->usr1, new word($this->usr1), 1);
-        $this->assert_view(controller::DSP_WORD_DEL, $this->usr1, new word($this->usr1), 1);
-        $this->assert_view(controller::DSP_TRIPLE_ADD, $this->usr1, new triple($this->usr1));
-        //$this->assert_view(controller::DSP_COMPONENT_ADD, $this->usr1, new component($this->usr1), 1);
-        // TODO add the frontend reaction tests e.g. call the view.php script with the reaction to add a word
-    }
-
-    /**
-     * test the database update function via simulated api calls of all standard user sandbox objects
-     * @return void
-     */
-    function test_api_write_no_rest_all(): void
-    {
-        $this->test_api_write_no_rest(word::class, $this->word_put_json(), $this->word_post_json());
-        $this->test_api_write_no_rest(source::class, $this->source_put_json(), $this->source_post_json());
-    }
-
-    /**
-     * test the database update function via real api calls for all user sandbox objects
-     * @return void
-     */
-    function test_api_write_all(): void
-    {
-        $this->test_api_write(word::class, $this->word_put_json(), $this->word_post_json());
-        $this->test_api_write(source::class, $this->source_put_json(), $this->source_post_json());
-    }
-
-    /**
-     * test the database update function via simulated api calls for one user sandbox object
-     * @param string $class the class name of the object to test
-     * @param array $add_data the json that should be used to create the user sandbox object
-     * @param array $upd_data the json that should be used to update the user sandbox object
-     * @return void
-     */
-    function test_api_write_no_rest(string $class, array $add_data, array $upd_data): void
-    {
-        // create a new object via api call
-        $id = $this->assert_api_put_no_rest($class, $add_data);
-        // check if the object has been created
-        // the id is ignored in the compare because it depends on the number of rows in the database that cannot be controlled by the test
-        $this->assert_api_get($class, $id, $add_data, true);
-        // update the previous created test object
-        $id = $this->assert_api_post_no_rest($class, $id, $upd_data);
-        // remove the previous created test object
-        $this->assert_api_del_no_rest($class, $id);
-        // check the previous created test object really has been removed
-        //$this->assert_api_get($class, $id, $data, true);
-    }
-
-    /**
-     * test the database update function via real api calls for one user sandbox object
-     * @param string $class the class name of the object to test
-     * @param array $add_data the json that should be used to create the user sandbox object
-     * @param array $upd_data the json that should be used to update the user sandbox object
-     * @return void
-     */
-    function test_api_write(string $class, array $add_data, array $upd_data): void
-    {
-        // create a new source via api call
-        // e.g. curl -i -X PUT -H 'Content-Type: application/json' -d '{"pod":"zukunft.com","type":"source","user_id":2,"user":"zukunft.com system test","version":"0.0.3","timestamp":"2023-01-23T00:07:23+01:00","body":{"id":0,"name":"System Test Source API added","description":"System Test Source Description API","type_id":4,"url":"https:\/\/api.zukunft.com\/"}}' http://localhost/api/source/
-        $id = $this->assert_api_put($class, $add_data, true);
-        if ($id != 0) {
-            // check if the source has been created
-            $this->assert_api_get($class, $id, $add_data, true);
-            //$this->assert_api_post(source::class);
-            $this->assert_api_del($class, $id);
-        } else {
-            $lib = new library();
-            log_err($class . ' cannot be added via PU API call with ' . $lib->dsp_array($add_data));
-        }
-    }
-
-    /*
-     * TODO
-     * add the word type "key"
-     * "key" forces the creation of an internal value table
-     *
-     * add key word test
-     * assume
-     * ABB (Company),Employees, 2021: 15'000
-     * ABBN (Ticker),Employees, 2021: 15'100
-     *
-     *
-     * ABBN (Ticker) is ABB (Company)
-     * -> ask the user which value to use for Employees, 2021
-     * -> until the user has closed the open task 15'000 is used
-     *
-     * if Ticker is defined as a key for companies
-     * -> create a normal table with a unique key
-     * -> and fields like Employees (of a Company)
-     *
-     * the advantage compared to a classic table setup is
-     * that a smooth creation and reverse is supported
-     * to move the data from the word based setup to the table based setup
-     * a batch job is created and once it is finished the alternative
-     * access method is used
-     *
-     * define ISIN as a key
-     * -> street number is move to new table, but not company
-     *
-     */
-
-    /**
-     * check if the main parts of the openapi definition matches the code
-     *
-     * @param test_cleanup $t
-     * @return void
-     */
-    function run_openapi_test(test_cleanup $t): void
-    {
-
-        // init
-        $t->name = 'api->';
-
-        $t->header('Test the open API definition versus the code');
-
-        $test_name = 'check if a controller for each api tag exists';
-        $result = '';
-        $open_api_filename = self::TEST_ROOT_PATH . self::OPEN_API_PATH;
-        if (!file_exists($open_api_filename)) {
-            $open_api_filename = self::TEST_ROOT_PATH2 . self::OPEN_API_PATH;
-        }
-        $api_def = yaml_parse_file($open_api_filename);
-        if ($api_def == null) {
-            log_err('OpenAPI file ' . $open_api_filename . ' missing');
-        } else {
-            $tags = $api_def['tags'];
-            foreach ($tags as $tag) {
-                $paths = $this->get_paths_of_tag($tag['name'], $api_def);
-                foreach ($paths as $path) {
-                    // check if at least some controller code exists for each tag
-                    $filename = self::TEST_ROOT_PATH . self::API_PATH . $path . '/' . self::PHP_DEFAULT_FILENAME;
-                    if (!file_exists($filename)) {
-                        $filename = self::TEST_ROOT_PATH2 . self::API_PATH . $path . '/' . self::PHP_DEFAULT_FILENAME;
-                    }
-                    $ctrl_code = file_get_contents($filename);
-                    if ($ctrl_code == null or $ctrl_code == '') {
-                        if ($result != '') {
-                            $result .= ', ';
-                        }
-                        $result .= 'api for ' . $path . ' missing';
-                    }
-                }
-            }
-        }
-        $target = '';
-        $t->assert($test_name, $result, $target);
-
-        // TODO $test_name = 'check if an api tag for each controller exists';
-
-        // the openapi internal consistency is checked via the online swagger test
-    }
-
 
     /**
      * check if the HTML frontend object can be set based on the api json message
@@ -561,7 +306,7 @@ class test_api extends create_test_objects
                 break;
             case source::class:
                 $src = new source($usr);
-                $src->load_by_id($id, source::class);
+                $src->load_by_id($id);
                 $result = $src->save_from_api_msg($request_body)->get_last_message();
                 // if no message should be shown to the user the adding is expected to be fine
                 // so get the row id to be able to remove the test row later
@@ -836,8 +581,8 @@ class test_api extends create_test_objects
         if ($class == ref::class) {
             $result = ref_api::API_NAME;
         }
-        if ($class == batch_job::class) {
-            $result = batch_job_api::API_NAME;
+        if ($class == job::class) {
+            $result = job_api::API_NAME;
         }
         if ($class == type_object::class) {
             $result = type_api::API_NAME;
@@ -889,6 +634,42 @@ class test_api extends create_test_objects
         return $put_msg;
     }
 
+    /*
+     * helper for openapi test
+     */
+
+    public function get_paths_of_tag(string $tag, array $api_def): array
+    {
+        $lib = new library();
+        $paths = [];
+        $api_paths = $api_def['paths'];
+        foreach ($api_paths as $path_key => $path) {
+            $path_name = $lib->str_right_of($path_key, '/');
+            if (str_contains($path_name, '/')) {
+                $path_name = $lib->str_left_of($path_name, '/');
+            }
+            if (array_key_exists('post', $path)) {
+                $path_posts = $path['post'];
+                if (array_key_exists('tags', $path_posts)) {
+                    $path_tags = $path_posts['tags'];
+                    foreach ($path_tags as $path_tag) {
+                        if ($path_tag == $tag) {
+                            if (!in_array($path_name, $paths)) {
+                                $paths[] = $path_name;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return $paths;
+    }
+
+    /*
+     * helper for api test
+     */
+
     /**
      * remove all volatile fields from a given json array
      *
@@ -933,10 +714,10 @@ class test_api extends create_test_objects
         // remove or replace the volatile time fields
         $json = $this->json_remove_volatile_time_field($json, system_log::FLD_TIME_JSON);
         $json = $this->json_remove_volatile_time_field($json, system_log::FLD_TIMESTAMP_JSON);
-        $json = $this->json_remove_volatile_time_field($json, change_log::FLD_CHANGE_TIME);
-        $json = $this->json_remove_volatile_time_field($json, batch_job::FLD_TIME_REQUEST);
-        $json = $this->json_remove_volatile_time_field($json, batch_job::FLD_TIME_START);
-        $json = $this->json_remove_volatile_time_field($json, batch_job::FLD_TIME_END);
+        $json = $this->json_remove_volatile_time_field($json, change_log::FLD_TIME);
+        $json = $this->json_remove_volatile_time_field($json, job::FLD_TIME_REQUEST);
+        $json = $this->json_remove_volatile_time_field($json, job::FLD_TIME_START);
+        $json = $this->json_remove_volatile_time_field($json, job::FLD_TIME_END);
 
         // remove the id fields if requested
         // for tests with base load dataset the id fields should not be ignored
@@ -1053,35 +834,4 @@ class test_api extends create_test_objects
         return $json;
     }
 
-    /*
-     * helper for openapi test
-     */
-
-    private function get_paths_of_tag(string $tag, array $api_def): array
-    {
-        $lib = new library();
-        $paths = [];
-        $api_paths = $api_def['paths'];
-        foreach ($api_paths as $path_key => $path) {
-            $path_name = $lib->str_right_of($path_key, '/');
-            if (str_contains($path_name, '/')) {
-                $path_name = $lib->str_left_of($path_name, '/');
-            }
-            if (array_key_exists('post', $path)) {
-                $path_posts = $path['post'];
-                if (array_key_exists('tags', $path_posts)) {
-                    $path_tags = $path_posts['tags'];
-                    foreach ($path_tags as $path_tag) {
-                        if ($path_tag == $tag) {
-                            if (!in_array($path_name, $paths)) {
-                                $paths[] = $path_name;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        return $paths;
-    }
 }

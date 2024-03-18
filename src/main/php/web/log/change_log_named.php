@@ -35,13 +35,14 @@ include_once API_SANDBOX_PATH . 'user_config.php';
 
 use api\log\change_log_named as change_log_named_api;
 use api\sandbox\user_config;
+use cfg\log\change_action;
 use html\api;
 use html\button;
 use html\html_base;
 use html\msg;
 use html\system\back_trace;
-use cfg\log\change_log_action;
-use cfg\log\change_log_table;
+use cfg\log\change_action_list;
+use cfg\log\change_table_list;
 use cfg\formula;
 
 class change_log_named extends change_log_named_api
@@ -59,7 +60,7 @@ class change_log_named extends change_log_named_api
 
         // pick the useful field name
         $txt_fld = '';
-        if ($this->table_name() == change_log_table::VALUE) {
+        if ($this->table_name() == change_table_list::VALUE) {
             $txt_fld .= $this->action_name() . ' value';
             // because changing the words creates a new value there is no need to display the words here
         /*
@@ -79,11 +80,11 @@ class change_log_named extends change_log_named_api
             }
         */
         } elseif (!$user_changes) {
-            $txt_fld .= $this->field_name();
+            $txt_fld .= $this->field_description();
             // probably not needed to display the action, because this can be seen by the change itself
             // $result .= $db_row['type'].' '.$db_row['type_field'];
         } else {
-            $txt_fld .= $this->table_name() . ' ' . $this->field_name();
+            $txt_fld .= $this->table_name() . ' ' . $this->field_description();
         }
 
         // create the description for the old and new field value for the user
@@ -132,18 +133,18 @@ class change_log_named extends change_log_named_api
         $undo_text = '';
         $undo_call = '';
         $undo_btn = '';
-        if ($this->table_name() == change_log_table::WORD) {
-            if ($this->action_code_id() == change_log_action::ADD) {
+        if ($this->table_name() == change_table_list::WORD) {
+            if ($this->action_code_id() == change_action::ADD) {
                 $undo_call = $html->url('value' . api::REMOVE, $this->id, $back->url_encode());
                 $undo_btn = (new button($undo_call))->undo(msg::UNDO_ADD);
             }
-        } elseif ($this->table_name() == change_log_table::VIEW) {
-            if ($this->action_code_id() == change_log_action::ADD) {
+        } elseif ($this->table_name() == change_table_list::VIEW) {
+            if ($this->action_code_id() == change_action::ADD) {
                 $undo_call = $html->url('value' . api::REMOVE, $this->id, $back->url_encode());
                 $undo_btn = (new button($undo_call))->undo(msg::UNDO_EDIT);
             }
-        } elseif ($this->table_name() == change_log_table::FORMULA) {
-            if ($this->action_code_id() == change_log_action::UPDATE) {
+        } elseif ($this->table_name() == change_table_list::FORMULA) {
+            if ($this->action_code_id() == change_action::UPDATE) {
                 $undo_call = $html->url(
                     formula::class . api::UPDATE, $this->row_id,
                     $back->url_encode() . '&undo_change=' . $this->id());
@@ -178,9 +179,9 @@ class change_log_named extends change_log_named_api
      */
     private function action_code_id(): string
     {
-        global $change_log_actions;
+        global $change_action_list;
 
-        $action = $change_log_actions->get($this->action_id);
+        $action = $change_action_list->get($this->action_id);
         return $action->code_id;
     }
 
@@ -189,9 +190,9 @@ class change_log_named extends change_log_named_api
      */
     private function action_name(): string
     {
-        global $change_log_actions;
+        global $change_action_list;
 
-        $action = $change_log_actions->get_by_id($this->action_id);
+        $action = $change_action_list->get_by_id($this->action_id);
         return $action->name;
     }
 
@@ -200,21 +201,21 @@ class change_log_named extends change_log_named_api
      */
     private function field_code_id(): string
     {
-        global $change_log_fields;
+        global $change_field_list;
 
-        $field = $change_log_fields->get($this->field_id);
+        $field = $change_field_list->get($this->field_id);
         return $field->code_id;
     }
 
     /**
      * @return string the name of the change field name to show it to the user
      */
-    private function field_name(): string
+    private function field_description(): string
     {
-        global $change_log_fields;
+        global $change_field_list;
 
-        $field = $change_log_fields->get($this->field_id);
-        return $field->comment;
+        $field = $change_field_list->get($this->field_id);
+        return $field->description;
     }
 
     /**
@@ -222,9 +223,9 @@ class change_log_named extends change_log_named_api
      */
     private function table_name(): string
     {
-        global $change_log_tables;
+        global $change_table_list;
 
-        $table = $change_log_tables->get($this->table_id);
+        $table = $change_table_list->get($this->table_id);
         return $table->name;
     }
 

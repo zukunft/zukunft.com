@@ -9,6 +9,7 @@
 */
 
 // standard start for all php code that can be called
+use cfg\db\db_check;
 use cfg\phrase_type;
 use controller\controller;
 use cfg\user;
@@ -41,8 +42,9 @@ if ($usr->id() > 0) {
     if ($usr->is_admin()) {
 
         // recreate the code link database rows
-        db_fill_code_links($db_con);
-        import_verbs($usr);
+        $db_chk = new db_check();
+        $db_con->db_fill_code_links();
+        $db_con->import_verbs($usr);
 
 
         // create all code linked records in the database

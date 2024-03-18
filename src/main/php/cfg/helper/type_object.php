@@ -41,12 +41,15 @@
 
 namespace cfg;
 
+include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
 include_once DB_PATH . 'sql_par_type.php';
 include_once API_SANDBOX_PATH . 'type_object.php';
 
 use api\sandbox\type_object as type_object_api;
 use cfg\db\sql;
 use cfg\db\sql_db;
+use cfg\db\sql_field_default;
+use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use JsonSerializable;
 use model\db_cl;
@@ -58,13 +61,28 @@ class type_object extends db_object_seq_id implements JsonSerializable
      * database link
      */
 
+    // comments used for the database creation
+    const TBL_COMMENT = 'for a type to set the predefined behaviour of an object';
+
     // database and JSON object field names
+    const FLD_ID_COM = 'the database id is also used as the array pointer';
+    const FLD_NAME_COM = 'the unique type name as shown to the user and used for the selection';
     const FLD_NAME = 'type_name';
+    const FLD_CODE_ID_COM = 'this id text is unique for all code links, is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
+    const FLD_DESCRIPTION_COM = 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
+    const FLD_DESCRIPTION = 'description';
 
     // type name exceptions
     const FLD_ACTION = 'change_action_name';
     const FLD_TABLE = 'change_table_name';
     const FLD_FIELD = 'change_table_field_name';
+
+    // field lists for the table creation
+    const FLD_LST_ALL = array(
+        [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_NAME_COM],
+        [sql::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
+        [self::FLD_DESCRIPTION, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
+    );
 
 
     /*
@@ -72,31 +90,39 @@ class type_object extends db_object_seq_id implements JsonSerializable
      */
 
     // the standard fields of a type
-    public string $name;           // simply the type name as shown to the user
-    public ?string $code_id;       // this id text is unique for all code links and is used for system im- and export
-    public ?string $comment = '';  // to explain the type to the user as a tooltip
+    public string $name; // the unique type name as shown to the user
+    public ?string $code_id; // this id text is unique for all code links and is used for system im- and export
+    public ?string $description = '';  // to explain the type to the user as a tooltip
 
 
     /*
      * construct and map
      */
 
-    function __construct(?string $code_id, string $name = '', string $comment = '', int $id = 0)
+    function __construct(?string $code_id, string $name = '', string $description = '', int $id = 0)
     {
         parent::__construct();
         $this->set_id($id);
         $this->set_name($name);
         $this->set_code_id($code_id);
-        if ($comment != '') {
-            $this->set_comment($comment);
+        if ($description != '') {
+            $this->set_description($description);
         }
+    }
+
+    function reset(): void
+    {
+        $this->id = 0;
+        $this->code_id = '';
+        $this->name = '';
+        $this->description = null;
     }
 
     function row_mapper_typ_obj(array $db_row, string $db_type): bool
     {
         $result = parent::row_mapper($db_row, $this->id_field_typ($db_type));
         if ($this->id > 0) {
-            $this->code_id = strval($db_row[sql_db::FLD_CODE_ID]);
+            $this->code_id = strval($db_row[sql::FLD_CODE_ID]);
             $type_name = '';
             if ($db_type == db_cl::LOG_ACTION) {
                 $type_name = strval($db_row[self::FLD_ACTION]);
@@ -109,10 +135,10 @@ class type_object extends db_object_seq_id implements JsonSerializable
             } elseif ($db_type == sql_db::TBL_LANGUAGE_FORM) {
                 $type_name = strval($db_row[language_form::FLD_NAME]);
             } else {
-                $type_name = strval($db_row[sql_db::FLD_TYPE_NAME]);
+                $type_name = strval($db_row[sql::FLD_TYPE_NAME]);
             }
             $this->name = $type_name;
-            $this->comment = strval($db_row[sandbox_named::FLD_DESCRIPTION]);
+            $this->description = strval($db_row[sandbox_named::FLD_DESCRIPTION]);
             $result = true;
         }
         return $result;
@@ -133,9 +159,9 @@ class type_object extends db_object_seq_id implements JsonSerializable
         $this->code_id = $code_id;
     }
 
-    function set_comment(string $comment): void
+    function set_description(string $description): void
     {
-        $this->comment = $comment;
+        $this->description = $description;
     }
 
     function name(): string
@@ -148,9 +174,9 @@ class type_object extends db_object_seq_id implements JsonSerializable
         return $this->code_id;
     }
 
-    function comment(): string
+    function description(): string
     {
-        return $this->comment;
+        return $this->description;
     }
 
 
@@ -182,6 +208,37 @@ class type_object extends db_object_seq_id implements JsonSerializable
         } else {
             return false;
         }
+    }
+
+
+    /*
+     * sql create
+     */
+
+    /**
+     * the sql statement to create the tables of a type object
+     *
+     * @param sql $sc with the target db_type set
+     * @return string the sql statement to create the table
+     */
+    function sql_table(sql $sc): string
+    {
+        $sql = $sc->sql_separator();
+        $sql .= $this->sql_table_create($sc, false, [], '', false);
+        return $sql;
+    }
+
+    /**
+     * the sql statement to create the database indices of a type object
+     *
+     * @param sql $sc with the target db_type set
+     * @return string the sql statement to create the indices
+     */
+    function sql_index(sql $sc): string
+    {
+        $sql = $sc->sql_separator();
+        $sql .= $this->sql_index_create($sc, false, [],false);
+        return $sql;
     }
 
 
@@ -251,7 +308,7 @@ class type_object extends db_object_seq_id implements JsonSerializable
     {
         $typ_lst = new type_list();
         $qp = $typ_lst->load_sql($sc, $class, 'code_id');
-        $sc->add_where(sql_db::FLD_CODE_ID, $code_id);
+        $sc->add_where(sql::FLD_CODE_ID, $code_id);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 

@@ -2,8 +2,8 @@
 
 /*
 
-    model/system/system_error_log_status_list.php - to link coded functionality to a system log status
-    ---------------------------------------------
+    model/system/sys_log_status.php - to link coded functionality to a system log status
+    -------------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -22,59 +22,45 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2023 zukunft.com AG, Zurich
+    Copyright (c) 1995-2022 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
-  
+
 */
 
 namespace cfg;
 
-use cfg\db\sql_db;
+use cfg\db\sql_field_default;
+use cfg\db\sql_field_type;
 
-include_once MODEL_HELPER_PATH . 'type_list.php';
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once DB_PATH . 'sql_db.php';
-
-global $sys_log_stati;
-
-class sys_log_status extends type_list
+class sys_log_status extends type_object
 {
+
+    /*
+     * code links
+     */
+
     // list of all possible log stati
     const OPEN = "new";
     const ASSIGNED = "assigned";
     const RESOLVED = "resolved";
     const CLOSED = "closed";
 
-    /**
-     * overwrite the general user type list load function to keep the link to the table type capsuled
-     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @return bool true if load was successful
-     */
-    function load(sql_db $db_con, string $db_type = sql_db::TBL_SYS_LOG_STATUS): bool
-    {
-        return parent::load($db_con, $db_type);
-    }
 
-    /**
-     * adding the system log stati used for unit tests to the dummy list
+    /*
+     * database link
      */
-    function load_dummy(): void
-    {
-        parent::load_dummy();
-        $type = new type_object(sys_log_status::OPEN, sys_log_status::OPEN, '', 2);
-        $this->add($type);
-        $type = new type_object(sys_log_status::CLOSED, sys_log_status::CLOSED, '', 3);
-        $this->add($type);
-    }
 
-    /**
-     * return the database id of the default system log status
-     */
-    function default_id(): int
-    {
-        return parent::id(sys_log_status::OPEN);
-    }
+    // comments used for the database creation
+    const TBL_COMMENT = 'to define the status of internal errors';
+    const FLD_ID = 'sys_log_status_id'; // name of the id field as const for other const
+    const FLD_ACTION_COM = 'description of the action to get to this status';
+    const FLD_ACTION = 'action';
+
+    // list of fields that are additional to the standard type fields used for the system log status
+    const FLD_LST_EXTRA = array(
+        [self::FLD_ACTION, sql_field_type::NAME, sql_field_default::NULL, '', '', self::FLD_ACTION_COM],
+    );
 
 }

@@ -7,7 +7,6 @@ PREPARE triple_list_by_phr_and_vrb_down (bigint, bigint, bigint) AS
            s.to_phrase_id,
            s.phrase_type_id,
            s.triple_condition_id,
-           s.triple_condition_type_id,
            l.phrase_type_id AS phrase_type_id1,
            l2.phrase_type_id AS phrase_type_id2,
            CASE WHEN (u.triple_name    <> '' IS NOT TRUE) THEN s.triple_name    ELSE u.triple_name     END AS triple_name,

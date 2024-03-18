@@ -32,6 +32,9 @@
 
 namespace cfg;
 
+use cfg\db\sql_field_default;
+use cfg\db\sql_field_type;
+
 include_once MODEL_HELPER_PATH . 'type_object.php';
 
 
@@ -43,5 +46,20 @@ class ref_type extends type_object
 
     // the url that can be used to receive data if the external key is added
     public ?string $url = null;
+
+    /*
+     * database link
+     */
+
+    // comments used for the database creation
+    const TBL_COMMENT = 'to link code functionality to a list of references';
+    const FLD_ID = 'ref_type_id'; // name of the id field as const for other const
+    const FLD_URL_COM = 'the base url to create the urls for the assigned references';
+    const FLD_URL = 'base_url';
+
+    // list of fields that are additional to the standard type fields used for the reference type
+    const FLD_LST_EXTRA = array(
+        [self::FLD_URL, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_URL_COM],
+    );
 
 }

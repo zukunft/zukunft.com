@@ -31,6 +31,10 @@
 
 namespace cfg;
 
+use cfg\db\sql;
+use cfg\db\sql_field_default;
+use cfg\db\sql_field_type;
+
 class language_form extends type_object
 {
 
@@ -39,8 +43,17 @@ class language_form extends type_object
      */
 
     // database and JSON object field names
+    const TBL_COMMENT = 'for language forms like plural';
+    const FLD_NAME_COM = 'type of adjustment of a term in a language e.g. plural';
     const FLD_NAME = 'language_form_name';
 
+    // field lists for the table creation
+    const FLD_LST_ALL = array(
+        [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_COM],
+        [sql::FLD_CODE_ID, sql_field_type::CODE_ID, sql_field_default::NULL, '', '', ''],
+        [self::FLD_DESCRIPTION, sql_field_type::TEXT, sql_field_default::NULL, '', '', ''],
+        [language::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, language::class, ''],
+    );
 
     /*
      * code link

@@ -315,7 +315,7 @@ ALTER TABLE `user_values`
 -- Table structure to log the value changes done by the users
 --
 
-CREATE TABLE IF NOT EXISTS `changes_values`
+CREATE TABLE IF NOT EXISTS `change_values`
 (
     `change_id`        int(11)   NOT NULL,
     `change_time`      timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -334,7 +334,7 @@ CREATE TABLE IF NOT EXISTS `changes_values`
 -- Table structure to log changes of numbers related to not more than four prime phrases
 --
 
-CREATE TABLE IF NOT EXISTS `changes_values_prime`
+CREATE TABLE IF NOT EXISTS `change_values_prime`
 (
     `change_id`        int(11)   NOT NULL,
     `change_time`      timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -353,7 +353,7 @@ CREATE TABLE IF NOT EXISTS `changes_values_prime`
 -- Table structure to log changes of numbers related to more than 16 phrases
 --
 
-CREATE TABLE IF NOT EXISTS `changes_values_big`
+CREATE TABLE IF NOT EXISTS `change_values_big`
 (
     `change_id`        int(11)   NOT NULL,
     `change_time`      timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -453,83 +453,6 @@ CREATE TABLE IF NOT EXISTS `user_groups_big`
     `description` varchar(4000) DEFAULT NULL COMMENT 'the automatic created user readable description'
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8 COMMENT = 'for saving a user specific group name for more than 16 phrases';
-
--- --------------------------------------------------------
-
---
--- Table structure to link phrases to a group
--- TODO deprecate and use like on group_id instead
---
-
-CREATE TABLE IF NOT EXISTS `group_links`
-(
-    `group_id`  char(112) NOT NULL,
-    `phrase_id` int(11) NOT NULL
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8 COMMENT = 'link phrases to a phrase group for database based selections';
-
---
--- Table structure to store user specific ex- or includes of single link of phrases to groups
---
-
-CREATE TABLE IF NOT EXISTS `user_group_links`
-(
-    `group_id`  char(112) NOT NULL,
-    `phrase_id` int(11) NOT NULL,
-    `user_id`   int(11) DEFAULT NULL,
-    `excluded`  smallint DEFAULT NULL
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8 COMMENT = 'to store user specific ex- or includes of single link of phrases to groups';
-
---
--- Table structure to link phrases to a group
--- TODO deprecate and use like on binary format of group_id instead
---
-
-CREATE TABLE IF NOT EXISTS `group_prime_links`
-(
-    `group_id`  int(11) NOT NULL,
-    `phrase_id` int(11) NOT NULL
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8 COMMENT = 'link phrases to a short phrase group for database based selections';
-
---
--- Table structure to store user specific ex- or includes of single link of phrases to groups
---
-
-CREATE TABLE IF NOT EXISTS `user_group_prime_links`
-(
-    `group_id`  int(11) NOT NULL,
-    `phrase_id` int(11) NOT NULL,
-    `user_id`   int(11) DEFAULT NULL,
-    `excluded`  smallint DEFAULT NULL
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8 COMMENT = 'user specific link to groups with up to four prime phrase';
-
---
--- Table structure to link up more than 16 phrases to a group
--- TODO deprecate and use like on group_id instead
---
-
-CREATE TABLE IF NOT EXISTS `group_big_links`
-(
-    `group_id`  text NOT NULL,
-    `phrase_id` int(11) NOT NULL
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8 COMMENT = 'link phrases to a short phrase group for database based selections';
-
---
--- Table structure to store user specific ex- or includes of single link of phrases to groups
---
-
-CREATE TABLE IF NOT EXISTS `user_group_big_links`
-(
-    `group_id`  text NOT NULL,
-    `phrase_id` int(11) NOT NULL,
-    `user_id`   int(11) DEFAULT NULL,
-    `excluded`  smallint DEFAULT NULL
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8 COMMENT = 'user specific link to groups with up to four prime phrase';
 
 -- --------------------------------------------------------
 

@@ -31,7 +31,7 @@
 
 namespace html\view;
 
-use cfg\component_link;
+use cfg\component\component_link;
 
 class component_link_dsp extends component_link
 {

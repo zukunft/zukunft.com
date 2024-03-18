@@ -1,5 +1,5 @@
-user_type_id, user_type, code_id, comment
-1, 'Guest', 'guest', 'read olny'
+user_type_id, type_name, code_id, description
+1, 'Guest', 'guest', 'read only'
 2, 'IP address', 'ip_address', 'identified only by IP address'
 3, 'Verified', 'verified', 'verified by email or mobile'
 4, 'Secured', 'secured', 'verified with a high security e.g. via passport of a trusted country'

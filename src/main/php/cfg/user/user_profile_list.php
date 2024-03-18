@@ -35,6 +35,7 @@ namespace cfg;
 global $user_profiles;
 
 use cfg\db\sql_db;
+use cfg\user\user_profile;
 
 class user_profile_list extends type_list
 {

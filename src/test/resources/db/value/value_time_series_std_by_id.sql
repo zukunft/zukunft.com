@@ -5,5 +5,5 @@ PREPARE value_time_series_std_by_id (text) AS
            source_id,
            excluded,
            protect_id
-      FROM value_time_series
+      FROM values_time_series
      WHERE value_time_series_id = $1;

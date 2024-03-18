@@ -15,6 +15,6 @@ PREPARE formula_list_by_frm_ref FROM
             IF(u.protect_id        IS NULL, s.protect_id,        u.protect_id)        AS protect_id
        FROM formulas s
   LEFT JOIN user_formulas u    ON s.formula_id = u.formula_id AND u.user_id = ?
-  LEFT JOIN formula_elements l ON s.formula_id = l.formula_id
+  LEFT JOIN elements l ON s.formula_id = l.formula_id
       WHERE l.ref_id = ?
-        AND l.formula_element_type_id = ?';
+        AND l.element_type_id = ?';

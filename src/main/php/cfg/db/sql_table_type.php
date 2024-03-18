@@ -35,7 +35,8 @@ enum sql_table_type: string
 {
 
     // the fixed table types for a value or result
-    case PRIME = 'prime'; // up to four 16-bit phrase ids
+    case PRIME = 'prime'; // up to four 16-bit phrase ids or one formula id and three phrase ids
+    case MAIN = 'main'; // for result only one formula id and up to seven 64-bit phrase ids
     case MOST = 'most'; // up to 16 64-bit phrase ids
     case BIG = 'big'; // more than 16 64-bit phrase ids
     case INDEX = 'index'; // one 32-bit and two 16-bit phrase ids
@@ -52,6 +53,7 @@ enum sql_table_type: string
     {
         return match($this) {
             self::PRIME => '_prime',
+            self::MAIN => '_main',
             self::BIG => '_big',
             self::INDEX => '_index',
             self::LARGE => '_large',
@@ -61,4 +63,15 @@ enum sql_table_type: string
         };
     }
 
+    /**
+     * @return string the name prefix for the query name
+     */
+    function prefix(): string
+    {
+        return match($this) {
+            self::PRIME => 'prime_',
+            self::USER => 'user_',
+            default => '',
+        };
+    }
 }

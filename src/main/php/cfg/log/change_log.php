@@ -50,29 +50,31 @@ TODO:
         auto archive the log if the number of changes gets too big
         only log the changes of this pod and used the pod distribution table to get changes from other pods
 
+TODO    if change table gets too big, rename the table to "_up_to_YYYY_MM_DD_HH:MM:SS.000"
+        after that create a new table and start numbering from zero
+
+TODO    rename to change_base
+
 */
 
 namespace cfg\log;
 
 include_once MODEL_HELPER_PATH . 'db_object_seq_id_user.php';
-include_once MODEL_VALUE_PATH . 'value.php';
-include_once MODEL_VALUE_PATH . 'value_phrase_link.php';
 include_once API_LOG_PATH . 'change_log.php';
 
 use api\log\change_log as change_log_api;
-use cfg\component_link;
+use cfg\component\component;
+use cfg\component\component_link;
+use cfg\db\sql;
+use cfg\db\sql_db;
+use cfg\db\sql_field_default;
+use cfg\db\sql_field_type;
 use cfg\db_object_seq_id_user;
 use cfg\formula;
 use cfg\formula_link;
 use cfg\library;
-use cfg\component\component;
-use cfg\db\sql;
-use cfg\db\sql_field_default;
-use cfg\db\sql_field_type;
-use cfg\group\group;
 use cfg\ref;
 use cfg\source;
-use cfg\db\sql_db;
 use cfg\triple;
 use cfg\type_object;
 use cfg\user;
@@ -94,27 +96,32 @@ class change_log extends db_object_seq_id_user
      */
 
     // change log database and JSON object field names
+    const FLD_ID_COM = 'the prime key to identify the change';
     const FLD_ID = 'change_id';
-    const FLD_CHANGE_TIME = 'change_time';
+    const FLD_TIME_COM = 'time when the user has confirmed the change';
+    const FLD_TIME = 'change_time';
+    const FLD_USER_COM = 'reference to the user who has done the change';
+    const FLD_ACTION_COM = 'the curl action';
     const FLD_ACTION = 'change_action_id';
+    const FLD_ROW_ID_COM = 'the prime id in the table with the change';
     const FLD_ROW_ID = 'row_id';
 
     // sql table comments
-    const TBL_COMMENT = 'to log all changes done by any user';
+    const TBL_COMMENT = 'to log all changes done by any user on all tables except value and link changes';
 
     // field lists for the sql table creation that are used for all change logs (incl. value and link changes)
     const FLD_LST_KEY = array(
-        [self::FLD_ID, sql_field_type::KEY_INT, sql_field_default::NOT_NULL, '', '', 'the prime key to identify the change'],
-        [self::FLD_CHANGE_TIME, sql_field_type::TIME, sql_field_default::TIMESTAMP, '', '', 'time when the user has confirmed the change'],
-        [user::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, user::class, 'reference to the user who has done the change'],
-        [self::FLD_ACTION, sql_field_type::INT_SMALL, sql_field_default::NOT_NULL, '', '', 'the curl action'],
+        [self::FLD_ID, sql_field_type::KEY_INT, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_ID_COM],
+        [self::FLD_TIME, sql_field_type::TIME, sql_field_default::TIME_NOT_NULL, sql::INDEX, '', self::FLD_TIME_COM],
+        [user::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, user::class, self::FLD_USER_COM],
+        [self::FLD_ACTION, sql_field_type::INT_SMALL, sql_field_default::NOT_NULL, '', change_action::class, self::FLD_ACTION_COM],
     );
     // field list to log the actual change that is overwritten by the child object e.g. for named, value and link tables
     const FLD_LST_CHANGE = array(
     );
     // field list to identify the database row in the table that has been changed
     const FLD_LST_ROW_ID = array(
-        [self::FLD_ROW_ID, sql_field_type::INT, sql_field_default::NULL, '', '', 'the prime id in the table with the change'],
+        [self::FLD_ROW_ID, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_ROW_ID_COM],
     );
 
 
@@ -176,7 +183,7 @@ class change_log extends db_object_seq_id_user
      */
     function set_action(string $action_name, ?sql_db $given_db_con = null): bool
     {
-        global $change_log_actions;
+        global $change_action_list;
         global $db_con;
 
         $used_db_con = $db_con;
@@ -185,14 +192,14 @@ class change_log extends db_object_seq_id_user
         }
 
         $db_changed = false;
-        $this->action_id = $change_log_actions->id($action_name);
+        $this->action_id = $change_action_list->id($action_name);
         if ($this->action_id <= 0) {
             $this->add_action($used_db_con);
             if ($this->action_id <= 0) {
                 log_err("Cannot add action name " . $action_name);
             } else {
                 $act = new type_object($action_name, $action_name, '', $this->action_id);
-                $change_log_actions->add($act);
+                $change_action_list->add($act);
                 $db_changed = true;
             }
         }
@@ -205,8 +212,8 @@ class change_log extends db_object_seq_id_user
      */
     function action(): string
     {
-        global $change_log_actions;
-        return $change_log_actions->name($this->action_id);
+        global $change_action_list;
+        return $change_action_list->name($this->action_id);
     }
 
     /**
@@ -217,7 +224,7 @@ class change_log extends db_object_seq_id_user
      */
     function set_table(string $table_name, ?sql_db $given_db_con = null): bool
     {
-        global $change_log_tables;
+        global $change_table_list;
         global $db_con;
 
         $used_db_con = $db_con;
@@ -226,14 +233,14 @@ class change_log extends db_object_seq_id_user
         }
 
         $db_changed = false;
-        $this->table_id = $change_log_tables->id($table_name);
+        $this->table_id = $change_table_list->id($table_name);
         if ($this->table_id <= 0) {
             $this->add_table($used_db_con, $table_name);
             if ($this->table_id <= 0) {
                 log_err("Cannot add table name " . $table_name);
             } else {
                 $tbl = new type_object($table_name, $table_name, '', $this->table_id);
-                $change_log_tables->add($tbl);
+                $change_table_list->add($tbl);
                 $db_changed = true;
             }
         }
@@ -246,8 +253,8 @@ class change_log extends db_object_seq_id_user
      */
     function table(): string
     {
-        global $change_log_tables;
-        return $change_log_tables->name($this->table_id);
+        global $change_table_list;
+        return $change_table_list->name($this->table_id);
     }
 
     /**
@@ -258,7 +265,7 @@ class change_log extends db_object_seq_id_user
      */
     function set_field(string $field_name, ?sql_db $given_db_con = null): bool
     {
-        global $change_log_fields;
+        global $change_field_list;
         global $db_con;
 
         $used_db_con = $db_con;
@@ -268,7 +275,7 @@ class change_log extends db_object_seq_id_user
 
         $db_changed = false;
         if ($this->table_id > 0) {
-            $this->field_id = $change_log_fields->id($this->table_id . $field_name);
+            $this->field_id = $change_field_list->id($this->table_id . $field_name);
             if ($this->field_id <= 0) {
                 $this->add_field($used_db_con, $field_name);
                 if ($this->field_id <= 0) {
@@ -279,7 +286,7 @@ class change_log extends db_object_seq_id_user
                         $this->table_id . $field_name,
                         '',
                         $this->field_id);
-                    $change_log_fields->add($tbl);
+                    $change_field_list->add($tbl);
                     $db_changed = true;
                 }
             }
@@ -295,11 +302,11 @@ class change_log extends db_object_seq_id_user
      */
     function field(): string
     {
-        global $change_log_fields;
+        global $change_field_list;
 
         $lib = new library();
 
-        $field_key = $change_log_fields->name($this->field_id);
+        $field_key = $change_field_list->name($this->field_id);
         return $lib->str_right_of($field_key, $this->table_id);
     }
 
@@ -379,7 +386,7 @@ class change_log extends db_object_seq_id_user
 
         $sql_array = $this->sql_one_type(
             $sc,
-            self::FLD_LST_ROW_ID,
+            $this::FLD_LST_ROW_ID,
             '', ''
         );
         return $sql_array[$pos];
@@ -409,9 +416,8 @@ class change_log extends db_object_seq_id_user
         $sql_foreign = $sc->sql_separator();
 
         $sc->set_class($this::class, false, $ext_type);
-        $fields = array_merge(self::FLD_LST_KEY, $fld_row_id, $this::FLD_LST_CHANGE);
-        $sql .= $sc->table_create($fields, $type_name,
-            $this::TBL_COMMENT);
+        $fields = array_merge($this::FLD_LST_KEY, $fld_row_id, $this::FLD_LST_CHANGE);
+        $sql .= $sc->table_create($fields, $type_name, $this::TBL_COMMENT, $this::class);
         $sql_index .= $sc->index_create($fields);
         $sql_foreign .= $sc->foreign_key_create($fields);
 
@@ -431,127 +437,127 @@ class change_log extends db_object_seq_id_user
     function create_log_references(sql_db $db_con): bool
     {
         $db_changed = false;
-        foreach (change_log_action::ACTION_LIST as $action_name) {
+        foreach (change_action::ACTION_LIST as $action_name) {
             $db_changed = $this->set_action($action_name, $db_con);
         }
-        foreach (change_log_table::TABLE_LIST as $table_name) {
+        foreach (change_table_list::TABLE_LIST as $table_name) {
             $db_changed = $this->set_table($table_name, $db_con);
-            if ($table_name == change_log_table::USER) {
+            if ($table_name == change_table_list::USER) {
                 $db_con->set_class(sql_DB::TBL_USER);
                 foreach (user::FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
-            } elseif ($table_name == change_log_table::WORD) {
+            } elseif ($table_name == change_table_list::WORD) {
                 $db_con->set_class(word::class);
                 foreach (word::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
-            } elseif ($table_name == change_log_table::WORD_USR) {
+            } elseif ($table_name == change_table_list::WORD_USR) {
                 $db_con->set_class(sql_db::TBL_USER_PREFIX . sql_DB::TBL_WORD);
                 foreach (word::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
-            } elseif ($table_name == change_log_table::VERB) {
+            } elseif ($table_name == change_table_list::VERB) {
                 $db_con->set_class(sql_DB::TBL_VERB);
                 foreach (verb::FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
-            } elseif ($table_name == change_log_table::TRIPLE) {
+            } elseif ($table_name == change_table_list::TRIPLE) {
                 $db_con->set_class(sql_db::TBL_TRIPLE);
                 foreach (triple::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
-            } elseif ($table_name == change_log_table::TRIPLE_USR) {
+            } elseif ($table_name == change_table_list::TRIPLE_USR) {
                 $db_con->set_class(sql_db::TBL_USER_PREFIX . sql_db::TBL_TRIPLE);
                 foreach (triple::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
-            } elseif ($table_name == change_log_table::VALUE) {
+            } elseif ($table_name == change_table_list::VALUE) {
                 $db_con->set_class(value::class);
                 foreach (value::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
-            } elseif ($table_name == change_log_table::VALUE_USR) {
+            } elseif ($table_name == change_table_list::VALUE_USR) {
                 $db_con->set_class(value::class, true);
                 foreach (value::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
-            } elseif ($table_name == change_log_table::VALUE_LINK) {
+            } elseif ($table_name == change_table_list::VALUE_LINK) {
                 $db_con->set_class(sql_DB::TBL_VALUE_PHRASE_LINK);
                 foreach (value_phrase_link::FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
-            } elseif ($table_name == change_log_table::FORMULA) {
+            } elseif ($table_name == change_table_list::FORMULA) {
                 $db_con->set_class(sql_DB::TBL_FORMULA);
                 foreach (formula::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
-            } elseif ($table_name == change_log_table::FORMULA_USR) {
+            } elseif ($table_name == change_table_list::FORMULA_USR) {
                 $db_con->set_class(sql_db::TBL_USER_PREFIX . sql_DB::TBL_FORMULA_LINK);
                 foreach (formula::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
-            } elseif ($table_name == change_log_table::FORMULA_LINK) {
+            } elseif ($table_name == change_table_list::FORMULA_LINK) {
                 $db_con->set_class(sql_DB::TBL_FORMULA);
                 foreach (formula_link::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
-            } elseif ($table_name == change_log_table::FORMULA_LINK_USR) {
+            } elseif ($table_name == change_table_list::FORMULA_LINK_USR) {
                 $db_con->set_class(sql_db::TBL_USER_PREFIX . sql_DB::TBL_FORMULA_LINK);
                 foreach (formula_link::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
-            } elseif ($table_name == change_log_table::VIEW) {
+            } elseif ($table_name == change_table_list::VIEW) {
                 $db_con->set_class(sql_DB::TBL_VIEW);
                 foreach (view::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
-            } elseif ($table_name == change_log_table::VIEW_USR) {
+            } elseif ($table_name == change_table_list::VIEW_USR) {
                 $db_con->set_class(sql_db::TBL_USER_PREFIX . sql_DB::TBL_VIEW);
                 foreach (view::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
-            } elseif ($table_name == change_log_table::VIEW_TERM_LINK) {
+            } elseif ($table_name == change_table_list::VIEW_TERM_LINK) {
                 $db_con->set_class(sql_DB::TBL_VIEW_TERM_LINK);
                 foreach (view_term_link::FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
-            } elseif ($table_name == change_log_table::VIEW_COMPONENT) {
+            } elseif ($table_name == change_table_list::VIEW_COMPONENT) {
                 $db_con->set_class(sql_DB::TBL_COMPONENT);
                 foreach (component::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
-            } elseif ($table_name == change_log_table::VIEW_COMPONENT_USR) {
+            } elseif ($table_name == change_table_list::VIEW_COMPONENT_USR) {
                 $db_con->set_class(sql_db::TBL_USER_PREFIX . sql_DB::TBL_COMPONENT);
                 foreach (component::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
-            } elseif ($table_name == change_log_table::VIEW_LINK) {
+            } elseif ($table_name == change_table_list::VIEW_LINK) {
                 $db_con->set_class(sql_DB::TBL_COMPONENT_LINK);
                 foreach (component_link::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
-            } elseif ($table_name == change_log_table::VIEW_LINK_USR) {
+            } elseif ($table_name == change_table_list::VIEW_LINK_USR) {
                 $db_con->set_class(sql_db::TBL_USER_PREFIX . sql_DB::TBL_COMPONENT_LINK);
                 foreach (component_link::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
-            } elseif ($table_name == change_log_table::REF) {
+            } elseif ($table_name == change_table_list::REF) {
                 $db_con->set_class(sql_DB::TBL_REF);
                 foreach (ref::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
-            } elseif ($table_name == change_log_table::REF_USR) {
+            } elseif ($table_name == change_table_list::REF_USR) {
                 $db_con->set_class(sql_db::TBL_USER_PREFIX . sql_DB::TBL_REF);
                 foreach (ref::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
-            } elseif ($table_name == change_log_table::SOURCE) {
+            } elseif ($table_name == change_table_list::SOURCE) {
                 $db_con->set_class(source::class);
                 foreach (source::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
-            } elseif ($table_name == change_log_table::SOURCE_USR) {
+            } elseif ($table_name == change_table_list::SOURCE_USR) {
                 $db_con->set_class(sql_db::TBL_USER_PREFIX . sql_DB::TBL_SOURCE);
                 foreach (source::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);

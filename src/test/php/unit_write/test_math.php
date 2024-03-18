@@ -33,10 +33,6 @@
 use api\word\word as word_api;
 use cfg\word_list;
 use test\test_cleanup;
-use const test\TIMEOUT_LIMIT_LONG;
-use const test\TW_ABB;
-use const test\TW_MIO;
-use const test\TW_SALES;
 
 function run_math_test(test_cleanup $t)
 {
@@ -109,7 +105,7 @@ function run_math_test(test_cleanup $t)
     // test zuc_is_math_symbol_or_num
     $formula_part_text = "/{f19}";
     $wrd_lst = new word_list($usr);
-    $wrd_lst->load_by_names(array(TW_ABB, TW_SALES, TW_MIO));
+    $wrd_lst->load_by_names(array(word_api::TN_ABB, word_api::TN_SALES, word_api::TN_MIO));
     $target = 1;
     $result = $calc->is_math_symbol_or_num($formula_part_text);
     $t->display(", zuc_is_math_symbol_or_num: the result for formula \"" . $formula_part_text . "\"", $target, $result);

@@ -38,10 +38,13 @@ include_once DB_PATH . 'sql_par_type.php';
 
 use cfg\db\sql;
 use cfg\db\sql_db;
+use cfg\db\sql_field_default;
+use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\log\change;
-use cfg\log\change_log_action;
+use cfg\log\change_action;
+use cfg\log\change_action_list;
 
 class ip_range extends db_object_seq_id
 {
@@ -52,8 +55,9 @@ class ip_range extends db_object_seq_id
      * database link
      */
 
-    // database and JSON object field names
-    const FLD_ID = 'user_blocked_id';
+    // database and JSON object field names and comments
+    const TBL_COMMENT = 'of ip addresses that should be blocked';
+    const FLD_ID = 'ip_range_id';
     const FLD_FROM = 'ip_from';
     const FLD_TO = 'ip_to';
     const FLD_REASON = 'reason';
@@ -64,6 +68,14 @@ class ip_range extends db_object_seq_id
         self::FLD_TO,
         self::FLD_REASON,
         self::FLD_ACTIVE
+    );
+
+    // field lists for the table creation
+    const FLD_LST_ALL = array(
+        [self::FLD_FROM, sql_field_type::IP_ADDR, sql_field_default::NOT_NULL, sql::INDEX, '', ''],
+        [self::FLD_TO, sql_field_type::IP_ADDR, sql_field_default::NOT_NULL, sql::INDEX, '', ''],
+        [self::FLD_REASON, sql_field_type::TEXT, sql_field_default::NOT_NULL, '', '', ''],
+        [self::FLD_ACTIVE, sql_field_type::INT_SMALL, sql_field_default::ONE, '', '', ''],
     );
 
 
@@ -388,7 +400,7 @@ class ip_range extends db_object_seq_id
         log_debug('->log_add ' . $this->dsp_id());
 
         $log = new change($this->user());
-        $log->action = change_log_action::ADD;
+        $log->action = change_action::ADD;
         $log->set_table(sql_db::TBL_IP);
         $log->set_field(self::FLD_FROM . '_' . self::FLD_TO);
         $log->row_id = 0;
@@ -405,7 +417,7 @@ class ip_range extends db_object_seq_id
     {
         log_debug('->log_upd ' . $this->dsp_id());
         $log = new change($this->user());
-        $log->action = change_log_action::UPDATE;
+        $log->action = change_action::UPDATE;
         $log->set_table(sql_db::TBL_IP);
 
         return $log;
@@ -462,9 +474,9 @@ class ip_range extends db_object_seq_id
     /**
      * get a similar or overlapping ip range
      *
-     * @return ip_range the ip range that matches e.g. to update the reason
+     * @return ip_range|null the ip range that matches e.g. to update the reason
      */
-    function get_similar(): ip_range
+    function get_similar(): ?ip_range
     {
         global $db_con;
         $result = null;
@@ -505,7 +517,7 @@ class ip_range extends db_object_seq_id
             // check possible duplicates before adding
             log_debug('->save check possible duplicates before adding ' . $this->dsp_id());
             $similar = $this->get_similar();
-            if (isset($similar)) {
+            if ($similar != null) {
                 if ($similar->id <> 0) {
                     $this->id = $similar->id;
                 }

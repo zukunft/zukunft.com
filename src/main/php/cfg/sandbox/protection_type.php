@@ -42,6 +42,15 @@ class protection_type extends type_object
     const NO_PROTECT = "no_protection";
     const USER = "user_protection";
     const ADMIN = "admin_protection";
+    const ADMIN_ID = 3;
     const NO_CHANGE = "no_change";
+
+
+    /*
+     * database link
+     */
+
+    // comments used for the database creation
+    const TBL_COMMENT = 'for the write access control';
 
 }

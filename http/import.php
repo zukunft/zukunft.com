@@ -116,7 +116,7 @@ if ($usr->id() > 0) {
             if ($_FILES['fileToUpload']['error'] == UPLOAD_ERR_OK
                 && is_uploaded_file($_FILES['fileToUpload']['tmp_name'])) {
                 $json_str = file_get_contents($_FILES['fileToUpload']['tmp_name']);
-                $import = new file_import;
+                $import = new import;
                 $import_result = $import->put($json_str, $usr);
                 if ($import_result->is_ok()) {
                     $msg .= ' done ('

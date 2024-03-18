@@ -33,7 +33,9 @@
 namespace unit;
 
 use cfg\db\sql;
+use cfg\formula;
 use cfg\group\group;
+use cfg\phrase_list;
 use cfg\result\result_list;
 use cfg\db\sql_db;
 use cfg\triple;
@@ -54,24 +56,27 @@ class result_list_tests
         $db_con = new sql_db();
         $t->name = 'result_list->';
         $t->resource_path = 'db/result/';
+        $res_lst = new result_list($usr);
 
 
         $t->header('Unit tests of the result list class (src/main/php/model/formula/result_list.php)');
 
         $t->subheader('SQL creation tests');
 
-        // sql to load a list of results by ...
-        $res_lst = new result_list($usr);
-        // ... a related to all phrases of a list e.g. the inhabitants of Canton Zurich over time
-        $phr_lst = $t->dummy_phrase_list_zh();
-        $t->assert_sql_by_phr_lst($db_con, $res_lst, $phr_lst);
+        $test_name = 'load a list of results that are a related to all phrases of a list '
+            . 'e.g. the yearly increase of inhabitants of Canton Zurich over time';
+        $t->assert_sql_by_phr_lst($test_name, $res_lst, $t->canton_zh_phrase_list());
+        $test_name = 'load a list of results that are a related a formula '
+            . 'e.g. to update the results if the formula has been updated';
+        $this->assert_sql_by_frm($test_name, $t->formula(), $t);
+        $test_name = 'load a list of results that are a based on all phrases of a list '
+            . 'e.g. to update the results if the value has been updated';
+        $this->assert_sql_by_src($test_name, $t->canton_zh_phrase_list(), $t);
+
         $grp = new group($usr);
         $grp->set_id(2);
         $t->assert_sql_by_group($db_con, $res_lst, $grp);
         $t->assert_sql_by_group($db_con, $res_lst, $grp, true);
-
-        // sql to load a list of results by the formula id
-        $this->assert_sql_by_frm($t);
 
         // sql to load a list of results by the phrase group id
         $res_lst = new result_list($usr);
@@ -122,25 +127,61 @@ class result_list_tests
      *
      * not using assert_load_sql because unique for result list
      *
+     * @param string $test_name the description of the test
      * @param test_cleanup $t the forwarded testing object
      */
-    private function assert_sql_by_frm(test_cleanup $t): void
+    private function assert_sql_by_frm(
+        string $test_name,
+        formula $frm,
+        test_cleanup $t): void
     {
         // create objects
         $sc = new sql();
         $res_lst = new result_list(new user());
-        $frm = $t->dummy_formula();
 
         // check the Postgres query syntax
         $sc->set_db_type(sql_db::POSTGRES);
         $qp = $res_lst->load_sql_by_frm($sc, $frm);
-        $result = $t->assert_qp($qp, $sc->db_type);
+        $result = $t->assert_qp($qp, $sc->db_type, $test_name);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $sc->set_db_type(sql_db::MYSQL);
             $qp = $res_lst->load_sql_by_frm($sc, $frm);
-            $t->assert_qp($qp, $sc->db_type);
+            $t->assert_qp($qp, $sc->db_type, $test_name);
+        }
+    }
+
+    /**
+     * result list by source
+     * SQL statement creation test
+     * TODO align the other assert sql function to this e.g. use sql
+     *
+     * not using assert_load_sql because unique for result list
+     *
+     * @param string $test_name the description of the test
+     * @param phrase_list $phr_lst the list of source phrases
+     * @param test_cleanup $t the forwarded testing object
+     */
+    private function assert_sql_by_src(
+        string $test_name,
+        phrase_list $phr_lst,
+        test_cleanup $t): void
+    {
+        // create objects
+        $sc = new sql();
+        $res_lst = new result_list(new user());
+
+        // check the Postgres query syntax
+        $sc->set_db_type(sql_db::POSTGRES);
+        $qp = $res_lst->load_sql_by_src($sc, $phr_lst);
+        $result = $t->assert_qp($qp, $sc->db_type, $test_name);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $sc->set_db_type(sql_db::MYSQL);
+            $qp = $res_lst->load_sql_by_src($sc, $phr_lst);
+            $t->assert_qp($qp, $sc->db_type, $test_name);
         }
     }
 

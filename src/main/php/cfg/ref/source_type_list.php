@@ -71,7 +71,7 @@ class source_type_list extends type_list
         $qp = new sql_par($class);
         $qp->name = $class;
         $sc->set_name($qp->name);
-        $sc->set_fields(array(sandbox_named::FLD_DESCRIPTION, sql_db::FLD_CODE_ID));
+        $sc->set_fields(array(sandbox_named::FLD_DESCRIPTION, sql::FLD_CODE_ID));
         $sc->set_order($order_field);
 
         return $qp;
@@ -107,8 +107,8 @@ class source_type_list extends type_list
         $db_lst = $db_con->get($qp);
         if ($db_lst != null) {
             foreach ($db_lst as $db_entry) {
-                $type_code_id = strval($db_entry[sql_db::FLD_CODE_ID]);
-                $type_name = strval($db_entry[sql_db::FLD_TYPE_NAME]);
+                $type_code_id = strval($db_entry[sql::FLD_CODE_ID]);
+                $type_name = strval($db_entry[sql::FLD_TYPE_NAME]);
                 $type_comment = strval($db_entry[sandbox_named::FLD_DESCRIPTION]);
                 $type_obj = new source_type($type_code_id, $type_name, $type_comment);
                 $type_obj->set_id($db_entry[self::FLD_ID]);

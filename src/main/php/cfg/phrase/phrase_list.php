@@ -1171,30 +1171,32 @@ class phrase_list extends sandbox_list_named
         global $phrase_types;
 
         $result = new user_message();
-        foreach ($json_obj as $value) {
-            if ($value != '') {
+        foreach ($json_obj as $phr_name) {
+            if ($phr_name != '') {
                 $phr = new phrase($this->user());
                 if ($result->is_ok()) {
                     if (!$test_obj) {
-                        $phr->load_by_name($value);
+                        $phr->load_by_name($phr_name);
                         if ($phr->id() == 0) {
                             // for new phrase use the word object
+                            // TODO add a test case if a triple with the name exists but the triple is based on other phrases than the given phrase
+                            //      e.g. 1. create triple with "1967 "is a" "(year of definition)" but has the name "2019 (year of definition)" and a value with the phrase "1967 (year of definition)" is supposed to be added
                             $wrd = new word($this->user());
-                            $wrd->load_by_name($value, word::class);
+                            $wrd->load_by_name($phr_name);
                             if ($wrd->id() == 0) {
-                                $wrd->set_name($value);
+                                $wrd->set_name($phr_name);
                                 $wrd->type_id = $phrase_types->default_id();
                                 $result->add_message($wrd->save());
                             }
                             if ($wrd->id() == 0) {
-                                log_err('Cannot add word "' . $value . '" when importing ' . $this->dsp_id(), 'value->import_obj');
+                                log_err('Cannot add word "' . $phr_name . '" when importing ' . $this->dsp_id(), 'value->import_obj');
                             } else {
                                 $phr = $wrd->phrase();
                             }
                         }
                     } else {
                         // fallback for unit tests
-                        $phr->set_name($value, word::class);
+                        $phr->set_name($phr_name, word::class);
                         $phr->set_id($test_obj->seq_id());
                     }
                 }
@@ -1647,6 +1649,31 @@ class phrase_list extends sandbox_list_named
             }
             $result->set_lst($phr_lst);
             log_debug($result->dsp_id());
+        }
+        return $result;
+    }
+
+    /**
+     * diff as a function, because the array_diff does not seem to work for an object list
+     *
+     * e.g. for "2014", "2015", "2016", "2017"
+     * and delete list of "2016", "2017","2018"
+     * the result is "2014", "2015"
+     *
+     * @param phrase_list $del_lst is the list of phrases that should be removed from this list object
+     */
+    function get_diff(phrase_list $del_lst): phrase_list
+    {
+        log_debug('phrase_list->diff of ' . $del_lst->dsp_id() . ' and ' . $this->dsp_id());
+
+        $result = clone new phrase_list($this->user());
+        if (!$this->is_empty()) {
+            $lst_ids = $del_lst->id_lst();
+            foreach ($this->lst() as $phr) {
+                if (!in_array($phr->id(), $lst_ids)) {
+                    $result->add($phr);
+                }
+            }
         }
         return $result;
     }

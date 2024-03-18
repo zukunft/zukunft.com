@@ -211,7 +211,7 @@
         "comment": "increase needs to know for which time period the increase should be calculated"
       }
     ],
-    "formula_element_types": [
+    "element_types": [
       {
         "id": 1,
         "code_id": "word",
@@ -421,7 +421,7 @@
         "comment": "just to indicate that a form ends"
       }
     ],
-    "component_position_types": [
+    "position_types": [
       {
         "id": 1,
         "code_id": "below",
@@ -661,7 +661,7 @@
         "comment": "import the base configuration by a system user on initial setup"
       }
     ],
-    "change_log_actions": [
+    "change_action_list": [
       {
         "id": 1,
         "code_id": "add",
@@ -681,7 +681,7 @@
         "comment": ""
       }
     ],
-    "change_log_tables": [
+    "change_table_list": [
       {
         "id": 1,
         "code_id": "users",
@@ -815,7 +815,7 @@
         "comment": ""
       }
     ],
-    "change_log_fields": [
+    "change_field_list": [
       {
         "id": 1,
         "code_id": "2numeric_value",
