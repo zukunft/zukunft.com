@@ -50,6 +50,7 @@ class db_setup_tests
         $test_name_all = 'Combine the class SQL setup scripts and compare with the final sql setup script';
         $db = new sql_db();
         foreach (sql_db::DB_LIST as $db_type) {
+            $db->db_type = $db_type;
             $sql_fixed = resource_file(DB_RES_PATH . DB_SETUP_PATH . $db->path($db_type) . DB_SETUP_SQL_FILE);
             $sql_fixed_trim = $lib->trim_sql($sql_fixed);
             foreach (sql_db::DB_TABLE_CLASSES as $class) {
@@ -91,14 +92,21 @@ class db_setup_tests
             }
 
             // check header and footer
-            $sql_fixed_trim = str_replace($lib->trim_sql($db->sql_setup_header()),'', $sql_fixed_trim);
+            $test_name = 'Check header for ' . $db_type;
+            $header = $lib->trim_sql($db->sql_setup_header());
+            $t->assert_sql_contains($test_name, $sql_fixed, $header);
+            $test_name = 'Check footer for ' . $db_type;
+            $footer = $lib->trim_sql($db->sql_setup_footer());
+            $t->assert_sql_contains($test_name, $sql_fixed, $footer);
+            $sql_fixed_trim = str_replace($header,'', $sql_fixed_trim);
             $sql_fixed_trim = str_replace($lib->trim_sql($db->sql_separator_index()),'', $sql_fixed_trim);
             $sql_fixed_trim = str_replace($lib->trim_sql($db->sql_separator_foreign_key()),'', $sql_fixed_trim);
+            $sql_fixed_trim = str_replace($footer,'', $sql_fixed_trim);
+            $sql_fixed_trim = trim($sql_fixed_trim);
 
             // check that nothing is remaining in the sql setup statement
-            // TODO activate
             $test_name = 'sql setup remaining for db ' . $db_type;
-            //$t->assert($test_name, $sql_fixed_trim, '');
+            $t->assert($test_name, $sql_fixed_trim, '');
 
         }
     }

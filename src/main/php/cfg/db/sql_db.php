@@ -72,6 +72,7 @@ use cfg\log\change_link;
 use cfg\log\change_prime_value;
 use cfg\log\change_standard_value;
 use cfg\log\change_table;
+use cfg\log\change_table_field;
 use cfg\log\system_log;
 use cfg\phrase;
 use cfg\phrase_table;
@@ -220,6 +221,10 @@ class sql_db
 
     // setup header and footer
     const SETUP_HEADER = 'ALTER DATABASE zukunft SET search_path TO public;';
+    const SETUP_HEADER_MYSQL = 'SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO"; SET time_zone = "+00:00"; /*!40101 SET @OLD_CHARACTER_SET_CLIENT = @@CHARACTER_SET_CLIENT */; /*!40101 SET @OLD_CHARACTER_SET_RESULTS = @@CHARACTER_SET_RESULTS */; /*!40101 SET @OLD_COLLATION_CONNECTION = @@COLLATION_CONNECTION */; /*!40101 SET NAMES utf8 */; -- Database:`zukunft` ';
+
+    const SETUP_FOOTER = '';
+    const SETUP_FOOTER_MYSQL = '/*!40101 SET CHARACTER_SET_CLIENT = @OLD_CHARACTER_SET_CLIENT */; /*!40101 SET CHARACTER_SET_RESULTS = @OLD_CHARACTER_SET_RESULTS */; /*!40101 SET COLLATION_CONNECTION = @OLD_COLLATION_CONNECTION */;';
     const SETUP_COMMENT = '--';
     const SETUP_INDEX = 'indexes for tables';
     const SETUP_INDEX_COM = 'remark: no index needed for preloaded tables such as phrase types';
@@ -291,7 +296,8 @@ class sql_db
     // classes that use a database view
     const DB_VIEW_CLASSES = [
         phrase::class,
-        term::class
+        term::class,
+        change_table_field::class
     ];
 
     // tables that do not have a name
@@ -4862,7 +4868,23 @@ class sql_db
     {
         $sc = new sql();
         $sql = $sc->sql_separator();
-        $sql .= self::SETUP_HEADER;
+        if ($this->db_type == sql_db::MYSQL) {
+            $sql .= self::SETUP_HEADER_MYSQL;
+        } else {
+            $sql .= self::SETUP_HEADER;
+        }
+        return $sql;
+    }
+
+    function sql_setup_footer(): string
+    {
+        $sc = new sql();
+        $sql = '';
+        if ($this->db_type == sql_db::MYSQL) {
+            $sql .= self::SETUP_FOOTER_MYSQL;
+        } else {
+            $sql .= self::SETUP_FOOTER;
+        }
         return $sql;
     }
 
@@ -4876,6 +4898,7 @@ class sql_db
         $sql .= self::SETUP_COMMENT . ' ';
         return $sql;
     }
+
     function sql_separator_foreign_key(): string
     {
         $sc = new sql();

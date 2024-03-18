@@ -49,6 +49,7 @@ class change_field extends type_object
 
     // comments used for the database creation
     const TBL_COMMENT = 'to keep the original field name even if a table name has changed';
+    const FLD_ID = 'change_field_id';
     const FLD_NAME_COM = 'the real name';
     const FLD_NAME = 'change_field_name';
     const FLD_TABLE_COM = 'because every field must only be unique within a table';

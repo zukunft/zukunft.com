@@ -43,6 +43,7 @@ use cfg\db\sql_db;
 use cfg\log\change_action;
 use cfg\log\change_field;
 use cfg\log\change_table;
+use cfg\log\change_table_field;
 use html\log\user_log_display;
 use cfg\log\change_link;
 use cfg\log\change_log_list;
@@ -83,6 +84,10 @@ class change_log_tests
         $t->assert_sql_table_create($fld);
         $t->assert_sql_index_create($fld);
         $t->assert_sql_foreign_key_create($fld);
+
+        $t->subheader('Log table field view SQL setup statements');
+        $tbl_fld = new change_table_field();
+        $t->assert_sql_view_link_create($tbl_fld);
 
         $t->subheader('SQL statement creation tests for logging named objects e.g. formula');
         $log = $t->dummy_change_log_named();

@@ -74,6 +74,7 @@ class sql
     const WHERE = 'WHERE';
     const AND = 'AND';
     const OR = 'OR';
+    const CONCAT = 'CONCAT';
     const CASE = 'CASE WHEN';
     const CASE_MYSQL = 'IF(';
     const THEN = 'THEN';
@@ -2726,10 +2727,13 @@ class sql
     /**
      * @return string a sql separator just to improve formatting
      */
-    function sql_view_header(string $view_name, string $view_comment): string
+    function sql_view_header(string $view_name, string $view_comment = ''): string
     {
         $sql = '-- ';
-        $sql .= '-- structure for view ' . $view_name . ' (' . $view_comment . ') ';
+        $sql .= '-- structure for view ' . $view_name . ' ';
+        if ($view_comment != '') {
+            $sql .= '(' . $view_comment . ') ';
+        }
         $sql .= '-- ';
         return $sql;
     }

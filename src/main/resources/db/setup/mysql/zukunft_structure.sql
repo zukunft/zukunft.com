@@ -1,6 +1,4 @@
--- phpMyAdmin SQL Dump
--- version 4.2.12deb2+deb8u8
--- http://www.phpmyadmin.net
+-- --------------------------------------------------------
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -11,9 +9,7 @@ SET time_zone = "+00:00";
 /*!40101 SET @OLD_COLLATION_CONNECTION = @@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8 */;
 
---
 -- Database:`zukunft`
---
 
 -- --------------------------------------------------------
 
@@ -3796,21 +3792,18 @@ UNION
 
 
 --
--- Structure for view`change_table_fields`
+-- structure for view change_table_fields
 --
-DROP TABLE IF EXISTS `change_table_fields`;
 
-CREATE ALGORITHM = UNDEFINED DEFINER =`root`@`localhost`SQL
-    SECURITY DEFINER VIEW `change_table_fields` AS
-select `change_fields`.`change_field_id`                                              AS `change_table_field_id`,
-       CONCAT(`change_tables`.`change_table_id`, `change_fields`.`change_field_name`) AS `change_table_field_name`,
-       `change_fields`.`description`                                                  AS `description`,
-       IF(`change_fields`.`code_id` IS NULL,
-           CONCAT(`change_tables`.`change_table_id`, `change_fields`.`change_field_name`),
-           `change_fields`.`code_id`) AS `code_id`
-from `change_fields`,
-     `change_tables`
-WHERE `change_fields`.table_id = `change_tables`.change_table_id;
+CREATE OR REPLACE  VIEW change_table_fields AS
+SELECT f.change_field_id  AS change_table_field_id,
+       CONCAT(t.change_table_id, f.change_field_name) AS change_table_field_name,
+       f.description,
+       IF(f.code_id IS NULL ,
+          CONCAT(t.change_table_id, f.change_field_name) ,
+          f.code_id) AS code_id
+FROM change_tables AS t, change_fields AS f
+WHERE t.change_table_id = f.table_id;
 
 -- --------------------------------------------------------
 --

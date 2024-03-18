@@ -48,6 +48,7 @@ use cfg\log\change_link;
 use cfg\log\change_prime_value;
 use cfg\log\change_standard_value;
 use cfg\log\change_table;
+use cfg\log\change_table_field;
 use cfg\log\system_log;
 use cfg\user\user_profile;
 use cfg\user\user_type;
@@ -1597,6 +1598,7 @@ class library
             case $this->class_to_name(change_standard_value::class):
             case $this->class_to_name(change_big_value::class):
             case $this->class_to_name(change_link::class):
+            case $this->class_to_name(change_table_field::class):
                 $result = 'log';
                 break;
             case $this->class_to_name(pod_type::class):

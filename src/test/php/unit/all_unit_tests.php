@@ -76,6 +76,7 @@ include_once MODEL_LOG_PATH . 'change_action.php';
 include_once MODEL_LOG_PATH . 'change_action_list.php';
 include_once MODEL_LOG_PATH . 'change_table.php';
 include_once MODEL_LOG_PATH . 'change_table_list.php';
+include_once MODEL_LOG_PATH . 'change_table_field.php';
 include_once MODEL_LOG_PATH . 'change_field.php';
 include_once MODEL_LOG_PATH . 'change_field_list.php';
 include_once MODEL_LOG_PATH . 'change_link.php';
