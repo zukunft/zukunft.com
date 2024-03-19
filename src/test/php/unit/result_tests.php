@@ -87,6 +87,36 @@ class result_tests
         $t->assert_sql_standard($db_con, $res);
         $t->assert_sql_user_changes($db_con, $res);
 
+        $t->subheader('result sql write');
+        $res_prime = $t->dummy_result_prime();
+        $res_prime_max = $t->dummy_result_prime();
+        // TODO activate db write
+        // $t->assert_sql_insert($db_con, $res);
+        // TODO activate db write
+        // $t->assert_sql_insert($db_con, $res, true);
+        // TODO activate db write
+        // $t->assert_sql_insert($db_con, $res_prime);
+        // TODO activate db write
+        // $t->assert_sql_insert($db_con, $res_prime, true);
+        // TODO activate db write
+        // $t->assert_sql_insert($db_con, $res_prime_max);
+        // TODO activate db write
+        // $t->assert_sql_insert($db_con, $res_prime_max, true);
+        // TODO activate db write
+        // $t->assert_sql_update($db_con, $res);
+        // TODO activate db write
+        // $t->assert_sql_update($db_con, $res, true);
+        // TODO activate db write
+        // $t->assert_sql_update($db_con, $res_prime);
+        // TODO activate db write
+        // $t->assert_sql_update($db_con, $res_prime, true);
+        // TODO activate db write
+        // $t->assert_sql_delete($db_con, $res);
+        // TODO activate db write
+        // $t->assert_sql_delete($db_con, $res, true);
+        // TODO activate db write
+        // $t->assert_sql_delete($db_con, $res, true, true);
+
         $t->subheader('Display tests');
 
         // test phrase based default formatter
@@ -114,8 +144,8 @@ class result_tests
 
         $t->subheader('HTML frontend unit tests');
 
-        $val = $t->dummy_result();
-        $t->assert_api_to_dsp($val, new result_dsp());
+        $res = $t->dummy_result();
+        $t->assert_api_to_dsp($res, new result_dsp());
 
     }
 

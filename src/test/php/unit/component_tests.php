@@ -90,6 +90,17 @@ class component_tests
         //$t->assert_sql_all($db_con, $cmp);
         $t->assert_sql_standard($db_con, $cmp);
 
+        $t->subheader('view sql write');
+        // TODO activate db write
+        //$t->assert_sql_insert($db_con, $cmp);
+        //$t->assert_sql_insert($db_con, $cmp, true);
+        // TODO activate db write
+        //$t->assert_sql_update($db_con, $cmp);
+        //$t->assert_sql_update($db_con, $cmp, true);
+        // TODO activate db write
+        //$t->assert_sql_delete($db_con, $cmp);
+        //$t->assert_sql_delete($db_con, $cmp, true);
+
 
         $t->subheader('Convert tests');
 

@@ -188,6 +188,8 @@ class group_tests
         $t->assert_sql_insert($db_con, $grp);
         $grp->set_phrase_list($t->dummy_phrase_list_17_plus());
         $t->assert_sql_insert($db_con, $grp, true);
+        // TODO activate db write
+        //$t->assert_sql_delete($db_con, $grp);
 
 
         $t->header('Unit tests of the phrase group link class (src/main/php/model/group/group_link.php)');

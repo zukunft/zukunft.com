@@ -89,6 +89,17 @@ class component_link_tests
         $lnk->set_id(1);
         $t->assert_sql_user_changes($db_con, $lnk);
 
+        $t->subheader('component link sql write');
+        // TODO activate db write
+        //$t->assert_sql_insert($db_con, $lnk);
+        //$t->assert_sql_insert($db_con, $lnk, true);
+        // TODO activate db write
+        //$t->assert_sql_update($db_con, $lnk);
+        //$t->assert_sql_update($db_con, $lnk, true);
+        // TODO activate db write
+        //$t->assert_sql_delete($db_con, $lnk);
+        //$t->assert_sql_delete($db_con, $lnk, true);
+
     }
 
     /**

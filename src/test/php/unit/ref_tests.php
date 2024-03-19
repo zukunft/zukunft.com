@@ -86,6 +86,17 @@ class ref_tests
         $ref_type_list = new ref_type_list();
         $t->assert_sql_all($db_con, $ref_type_list, sql_db::TBL_REF_TYPE);
 
+        $t->subheader('ref sql write');
+        // TODO activate db write
+        //$t->assert_sql_insert($db_con, $ref);
+        //$t->assert_sql_insert($db_con, $ref, true);
+        // TODO activate db write
+        //$t->assert_sql_update($db_con, $ref);
+        //$t->assert_sql_update($db_con, $ref, true);
+        // TODO activate db write
+        //$t->assert_sql_delete($db_con, $ref);
+        //$t->assert_sql_delete($db_con, $ref, true);
+
         $t->subheader('Im- and Export tests');
         $t->assert_json_file(new ref($usr), $json_file);
 
@@ -127,6 +138,17 @@ class ref_tests
         // sql to load the source types
         $source_type_list = new source_type_list();
         $t->assert_sql_all($db_con, $source_type_list, sql_db::TBL_SOURCE_TYPE);
+
+        $t->subheader('source sql write');
+        // TODO activate db write
+        //$t->assert_sql_insert($db_con, $src);
+        //$t->assert_sql_insert($db_con, $src, true);
+        // TODO activate db write
+        //$t->assert_sql_update($db_con, $src);
+        //$t->assert_sql_update($db_con, $src, true);
+        // TODO activate db write
+        //$t->assert_sql_delete($db_con, $src);
+        //$t->assert_sql_delete($db_con, $src, true);
 
         $t->subheader('Im- and Export tests');
         $t->assert_json_file(new source($usr), $json_file);

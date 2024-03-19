@@ -111,6 +111,16 @@ class view_tests
         $expected_sql = $t->file('db/component/components_by_view_id_mysql.sql');
         $t->display('view->load_components_sql for MySQL', $lib->trim($expected_sql), $lib->trim($created_sql));
 
+        $t->subheader('view sql write');
+        // TODO activate db write
+        //$t->assert_sql_insert($db_con, $dsp);
+        //$t->assert_sql_insert($db_con, $dsp, true);
+        // TODO activate db write
+        //$t->assert_sql_update($db_con, $dsp);
+        //$t->assert_sql_update($db_con, $dsp, true);
+        // TODO activate db write
+        //$t->assert_sql_delete($db_con, $dsp);
+        //$t->assert_sql_delete($db_con, $dsp, true);
 
         $t->subheader('Im- and Export tests');
 

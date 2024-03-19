@@ -92,6 +92,17 @@ class formula_link_tests
         $expected_sql = $t->file('db/formula/formula_link_by_usr_cfg.sql');
         $t->assert('formula_link->load_user_sql by formula link id', $lib->trim($created_sql), $lib->trim($expected_sql));
 
+        $t->subheader('formula link sql write');
+        // TODO activate db write
+        //$t->assert_sql_insert($db_con, $lnk);
+        //$t->assert_sql_insert($db_con, $lnk, true);
+        // TODO activate db write
+        //$t->assert_sql_update($db_con, $lnk);
+        //$t->assert_sql_update($db_con, $lnk, true);
+        // TODO activate db write
+        //$t->assert_sql_delete($db_con, $lnk);
+        //$t->assert_sql_delete($db_con, $lnk, true);
+
         /*
         $t->subheader('Im- and Export tests');
 

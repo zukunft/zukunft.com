@@ -28,16 +28,14 @@ class triple_tests
 
         $t->header('Unit tests of the triple class (src/main/php/model/word/triple.php)');
 
-
-        $t->subheader('SQL setup statements');
+        $t->subheader('triple sql setup');
         $trp = $t->dummy_triple();
         $t->assert_sql_table_create($trp);
         $t->assert_sql_index_create($trp);
         $t->assert_sql_foreign_key_create($trp);
 
 
-        $t->subheader('SQL statement tests');
-
+        $t->subheader('word sql read');
         $trp = new triple($usr);
         $t->assert_sql_by_id($db_con, $trp);
         $t->assert_sql_by_name($db_con, $trp);
@@ -55,6 +53,16 @@ class triple_tests
         $trp->set_name(triple_api::TN_PI);
         $t->assert_sql_standard($db_con, $trp);
 
+        $t->subheader('triple sql write');
+        // TODO activate db write
+        //$t->assert_sql_insert($db_con, $trp);
+        //$t->assert_sql_insert($db_con, $trp, true);
+        // TODO activate db write
+        //$t->assert_sql_update($db_con, $trp);
+        //$t->assert_sql_update($db_con, $trp, true);
+        // TODO activate db write
+        //$t->assert_sql_delete($db_con, $trp);
+        //$t->assert_sql_delete($db_con, $trp, true);
 
         $t->subheader('API unit tests');
 

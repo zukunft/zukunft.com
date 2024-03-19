@@ -74,19 +74,6 @@ class word_tests
         $t->assert_sql_by_name($db_con, $wrd);
         $this->assert_sql_formula_name($t, $db_con, $wrd);
 
-        $t->subheader('word sql write');
-        // TODO add to
-        // triple, phrase, group, term, ref, source, value, formula (mit link), element, result, figure, view, component (mit link)
-        // TODO activate db write
-        //$t->assert_sql_insert($db_con, $wrd);
-        //$t->assert_sql_insert($db_con, $wrd, true);
-        // TODO activate db write
-        //$t->assert_sql_update($db_con, $wrd);
-        //$t->assert_sql_update($db_con, $wrd, true);
-        // TODO activate db write
-        //$t->assert_sql_delete($db_con, $wrd);
-        //$t->assert_sql_delete($db_con, $wrd, true);
-
         $t->subheader('SQL load default statement tests');
 
         // sql to load the word by id
@@ -97,6 +84,17 @@ class word_tests
         $t->assert_sql_user_changes($db_con, $wrd);
         $t->assert_sql_changing_users($db_con, $wrd);
         $this->assert_sql_view($t, $db_con, $wrd);
+
+        $t->subheader('word sql write');
+        // TODO activate db write
+        //$t->assert_sql_insert($db_con, $wrd);
+        //$t->assert_sql_insert($db_con, $wrd, true);
+        // TODO activate db write
+        //$t->assert_sql_update($db_con, $wrd);
+        //$t->assert_sql_update($db_con, $wrd, true);
+        // TODO activate db write
+        //$t->assert_sql_delete($db_con, $wrd);
+        //$t->assert_sql_delete($db_con, $wrd, true);
 
 
         $t->subheader('API unit tests');

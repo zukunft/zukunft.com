@@ -96,6 +96,17 @@ class formula_tests
         $t->assert_sql_standard($db_con, $frm);
 
 
+        $t->subheader('formula sql write');
+        // TODO activate db write
+        //$t->assert_sql_insert($db_con, $frm);
+        //$t->assert_sql_insert($db_con, $frm, true);
+        // TODO activate db write
+        //$t->assert_sql_update($db_con, $frm);
+        //$t->assert_sql_update($db_con, $frm, true);
+        // TODO activate db write
+        //$t->assert_sql_delete($db_con, $frm);
+        //$t->assert_sql_delete($db_con, $frm, true);
+
         $t->subheader('Im- and Export tests');
 
         $t->assert_json_file(new formula($usr), $json_file);

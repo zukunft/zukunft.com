@@ -81,6 +81,17 @@ class element_tests
         $elm_type_id = 7;
         $this->assert_sql_by_frm_and_type_id($t, $db_con, $frm_elm_lst, $frm_id, $elm_type_id);
 
+        $t->subheader('element sql write');
+        // TODO activate db write
+        //$t->assert_sql_insert($db_con, $elm);
+        //$t->assert_sql_insert($db_con, $elm, true);
+        // TODO activate db write
+        //$t->assert_sql_update($db_con, $elm);
+        //$t->assert_sql_update($db_con, $elm, true);
+        // TODO activate db write
+        //$t->assert_sql_delete($db_con, $elm);
+        //$t->assert_sql_delete($db_con, $elm, true);
+
 
         // JSON export list
         /*
