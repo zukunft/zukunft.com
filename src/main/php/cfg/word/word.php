@@ -945,6 +945,23 @@ class word extends sandbox_typed
         return $result;
     }
 
+    /*
+     * db write
+     */
+
+    /**
+     * create the sql statement to add a new word to the database
+     *
+     * @param sql $sc with the target db_type set
+     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     */
+    function sql_insert(sql $sc): sql_par
+    {
+        // fields and values that the word has additional to the standard named user sandbox object
+        $fields = array(phrase::FLD_TYPE, self::FLD_VIEW, self::FLD_PLURAL, self::FLD_VALUES);
+        $values = array($this->type_id(), $this->view, $this->plural, $this->values);
+        return parent::sql_insert_named($sc, $fields, $values);
+    }
 
     /*
      * display functions

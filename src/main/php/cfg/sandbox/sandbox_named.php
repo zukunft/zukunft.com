@@ -55,7 +55,6 @@ use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\log\change;
 use cfg\log\change_action;
-use cfg\log\change_action_list;
 use cfg\log\change_link;
 use Exception;
 use cfg\export\sandbox_exp;
@@ -189,6 +188,39 @@ class sandbox_named extends sandbox
     function description(): ?string
     {
         return $this->description;
+    }
+
+    /**
+     * @return array with the field names of the object and any child object
+     *         is a function and not a const because the id and name fields are a function and php does not yet have final functions
+     */
+    function field_list_named(): array
+    {
+        return [
+            $this->id_field(),
+            user::FLD_ID,
+            $this->name_field(),
+            self::FLD_DESCRIPTION,
+            sandbox::FLD_EXCLUDED,
+            sandbox::FLD_SHARE,
+            sandbox::FLD_PROTECT
+        ];
+    }
+
+    /**
+     * @return array with the field values of the object and any child object
+     */
+    function value_list_named(): array
+    {
+        return [
+            $this->id(),
+            $this->user()->id(),
+            $this->name(),
+            $this->description,
+            $this->excluded,
+            $this->share_id,
+            $this->protection_id
+        ];
     }
 
 
@@ -377,6 +409,38 @@ class sandbox_named extends sandbox
             }
         }
         return $result;
+    }
+
+
+    /*
+     * db write
+     */
+
+    /**
+     * create the sql statement to add a new named sandbox object e.g. word to the database
+     *
+     * @param sql $sc with the target db_type set
+     * @param array $fld_lst list of field names additional to the standard id and name fields
+     * @param array $val_lst list of field values additional to the standard id and name
+     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     */
+    function sql_insert_named(sql $sc, array $fld_lst = [], array $val_lst = []): sql_par
+    {
+        $lib = new library();
+        $sc->set_class($this::class);
+        $sql_name = $lib->class_to_name($this::class);
+        $qp = new sql_par($sql_name);
+        // overwrite the standard auto increase id field name
+        $sc->set_id_field($this->id_field());
+        $qp->name = $sql_name . '_insert';
+        $sc->set_name($qp->name);
+        // add the child object specific fields and values
+        $fields = array_merge($this->field_list_named(), $fld_lst);
+        $values = array_merge($this->value_list_named(), $val_lst);
+        $qp->sql = $sc->sql_insert($fields, $values);
+        $qp->par = $values;
+
+        return $qp;
     }
 
 

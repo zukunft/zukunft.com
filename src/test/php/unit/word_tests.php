@@ -74,9 +74,7 @@ class word_tests
         $t->assert_sql_by_name($db_con, $wrd);
         $this->assert_sql_formula_name($t, $db_con, $wrd);
 
-        $t->subheader('SQL load default statement tests');
-
-        // sql to load the word by id
+        $t->subheader('word sql read default and user changes');
         $wrd = new word($usr);
         $wrd->set_id(2);
         $t->assert_sql_standard($db_con, $wrd);
@@ -87,7 +85,7 @@ class word_tests
 
         $t->subheader('word sql write');
         // TODO activate db write
-        //$t->assert_sql_insert($db_con, $wrd);
+        $t->assert_sql_insert($db_con, $wrd);
         //$t->assert_sql_insert($db_con, $wrd, true);
         // TODO activate db write
         //$t->assert_sql_update($db_con, $wrd);
