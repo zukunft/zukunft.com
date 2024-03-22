@@ -48,6 +48,7 @@ class group extends sandbox_named_api implements JsonSerializable
 
     // persevered phrase group names for unit and integration tests
     const TN_READ = 'Pi (math)';
+    const TN_RENAMED = 'Pi';
 
     const TN_ZH_2019 = 'inhabitant in the city of Zurich (2019)';
     const TN_CH_2019 = 'inhabitant of Switzerland in Mio (2019)';

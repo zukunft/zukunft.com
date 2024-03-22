@@ -182,8 +182,10 @@ class group_tests
         $grp->set_phrase_list($t->dummy_phrase_list_prime());
         $t->assert_sql_insert($db_con, $grp);
         $t->assert_sql_insert($db_con, $grp, true);
-        $t->assert_sql_update($db_con, $grp);
-        $t->assert_sql_update($db_con, $grp, true);
+        $db_grp = $t->group();
+        $grp = $grp->renamed(group_api::TN_RENAMED);
+        $t->assert_sql_update($db_con, $grp, $db_grp);
+        $t->assert_sql_update($db_con, $grp, $db_grp, true);
         $grp->set_phrase_list($t->dummy_phrase_list_16());
         $t->assert_sql_insert($db_con, $grp);
         $grp->set_phrase_list($t->dummy_phrase_list_17_plus());
@@ -301,7 +303,7 @@ class group_tests
                 $trp_phr->set_id($phr_id);
                 $phr_lst->add($trp_phr);
             } else {
-                $wrd_phr = $t->dummy_word()->phrase();
+                $wrd_phr = $t->word()->phrase();
                 $wrd_phr->set_id($phr_id);
                 $phr_lst->add($wrd_phr);
             }

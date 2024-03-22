@@ -386,6 +386,18 @@ class group extends sandbox_multi
         }
     }
 
+    /**
+     * create a clone and update the name (mainly used for unit testing)
+     *
+     * @param string $name the target name
+     * @return $this a clone with the name changed
+     */
+    function renamed(string $name): group
+    {
+        $obj_cpy = clone $this;
+        $obj_cpy->set_name($name);
+        return $obj_cpy;
+    }
 
 
     /*
@@ -1218,52 +1230,6 @@ class group extends sandbox_multi
     }
 
 
-    /*
-     * save function - because the phrase group is a wrapper for a word and triple list the save function should not be called from outside this class
-     */
-
-    /**
-     * get a list of database fields that have been updated
-     *
-     * @param group $grp the compare value to detect the changed fields
-     * @return array list of the database field names that have been updated
-     */
-    function changed_db_fields(group $grp): array
-    {
-        $is_updated = false;
-        $result = [];
-        if ($grp->name() <> $this->name()) {
-            $result[] = self::FLD_NAME;
-            $is_updated = true;
-        }
-        if ($grp->description <> $this->description) {
-            $result[] = self::FLD_DESCRIPTION;
-            $is_updated = true;
-        }
-        return $result;
-    }
-
-    /**
-     * get a list of database field values that have been updated
-     *
-     * @param group $grp the compare value to detect the changed fields
-     * @return array list of the database field values that have been updated
-     */
-    function changed_db_values(group $grp): array
-    {
-        $is_updated = false;
-        $result = [];
-        if ($grp->name() <> $this->name()) {
-            $result[] = $this->name();
-            $is_updated = true;
-        }
-        if ($grp->description <> $this->description) {
-            $result[] = $this->description;
-            $is_updated = true;
-        }
-        return $result;
-    }
-
     /**
      * create a new phrase group
      */
@@ -1308,8 +1274,9 @@ class group extends sandbox_multi
         return $result;
     }
 
+
     /*
-     * cur(l)
+     * sql write
      */
 
     /**
@@ -1324,7 +1291,7 @@ class group extends sandbox_multi
         $qp = $this->sql_common($sc, $usr_tbl);
         // overwrite the standard auto increase id field name
         $sc->set_id_field($this->id_field());
-        $qp->name .= '_insert';
+        $qp->name .= sql::file_sep . sql::file_insert;
         $sc->set_name($qp->name);
         $fields = array(group::FLD_ID, user::FLD_ID, self::FLD_NAME, self::FLD_DESCRIPTION);
         $values = array($this->id(), $this->user()->id(), $this->name, $this->description);
@@ -1338,18 +1305,17 @@ class group extends sandbox_multi
      * create the sql statement to update a group name in the database
      *
      * @param sql $sc with the target db_type set
+     * @param group $db_grp
      * @param bool $usr_tbl true if the user table row should be updated
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_update(
-        sql   $sc,
-        array $fields = [],
-        array $values = [],
-        bool  $usr_tbl = false
-    ): sql_par
+    function sql_update(sql $sc, group $db_grp, bool $usr_tbl = false): sql_par
     {
         $lib = new library();
         $qp = $this->sql_common($sc, $usr_tbl);
+        $fields = $this->db_fields_changed($db_grp);
+        $values = $this->db_values_changed($db_grp);;
+        $all_fields = $this->db_fields_all();
         if (count($fields) == 0) {
             $fields = array(self::FLD_NAME, self::FLD_DESCRIPTION);
         }
@@ -1384,6 +1350,57 @@ class group extends sandbox_multi
             $qp->name .= '_user';
         }
         return $qp;
+    }
+
+
+    /*
+     * sql write fields
+     */
+
+    /**
+     * get a list of all database fields that might be changed excluding the internal database id
+     *
+     * @return array list of all database field names that have been updated
+     */
+    function db_fields_all(): array
+    {
+        return array_merge([self::FLD_NAME, self::FLD_DESCRIPTION]);
+    }
+
+    /**
+     * get a list of database fields that have been updated
+     *
+     * @param group $grp the compare value to detect the changed fields
+     * @return array list of the database field names that have been updated
+     */
+    function db_fields_changed(group $grp): array
+    {
+        $result = [];
+        if ($grp->name() <> $this->name()) {
+            $result[] = self::FLD_NAME;
+        }
+        if ($grp->description <> $this->description) {
+            $result[] = self::FLD_DESCRIPTION;
+        }
+        return $result;
+    }
+
+    /**
+     * get a list of database field values that have been updated
+     *
+     * @param group $grp the compare value to detect the changed fields
+     * @return array list of the database field values that have been updated
+     */
+    function db_values_changed(group $grp): array
+    {
+        $result = [];
+        if ($grp->name() <> $this->name()) {
+            $result[] = $this->name();
+        }
+        if ($grp->description <> $this->description) {
+            $result[] = $this->description;
+        }
+        return $result;
     }
 
 

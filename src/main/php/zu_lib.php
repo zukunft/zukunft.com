@@ -256,6 +256,8 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO offer syntactic sugar translation for PL SQL
     TODO reduce the function parameters to 3 or less wherever possible
     TODO use popular Open Source LLM systems to fill the word and triple (and value) tables
+    TODO do not allow any HTML or script code fragments in the text fields
+    TODO if options are excluded show them in grey with the mouseover reason, why they have been excluded
 
     TODO because some changes e.g. a formula change might cause costly calculations estimate the cost upfront and ask the user to pay for it
 

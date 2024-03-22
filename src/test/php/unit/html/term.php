@@ -45,7 +45,7 @@ class term
 
         $t->subheader('term tests');
 
-        $wrd = new term_dsp($t->dummy_word()->term()->api_json());
+        $wrd = new term_dsp($t->word()->term()->api_json());
         $trp = new term_dsp($t->dummy_triple_pi()->term()->api_json());
         $vrb = new term_dsp($t->dummy_verb()->term()->api_json());
         $frm = new term_dsp($t->formula()->term()->api_json());

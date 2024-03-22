@@ -268,10 +268,11 @@ class result extends sandbox_value
 
     // database fields
     public ?group $src_grp = null;      // the phrase group used that selected the numbers to calculate this result
-    public formula $frm;                       // the formula object used to calculate this result
+    public formula $frm;                // the formula object used to calculate this result
     public group $grp;                  // the phrase group of the result
-    public ?float $value = null;               // ... and finally the numeric value
-    public ?bool $is_std = True;               // true as long as no user specific value, formula or assignment is used for this result
+    // TODO use the value of the sandbox_value object
+    public ?float $value = null;        // ... and finally the numeric value
+    public ?bool $is_std = True;        // true as long as no user specific value, formula or assignment is used for this result
 
     // to deprecate
     public ?DateTime $last_update = null;      // ... and the time of the last update; all updates up to this time are included in this result
@@ -358,10 +359,20 @@ class result extends sandbox_value
         return $this->grp()->id();
     }
 
+    function src_grp_id(): int|string
+    {
+        return $this->src_grp->id();
+    }
+
     function set_grp(group $grp): void
     {
         $this->grp = $grp;
         $this->set_id($grp->id());
+    }
+
+    function frm_id(): int
+    {
+        return $this->frm->id();
     }
 
     function grp(): group
@@ -384,7 +395,7 @@ class result extends sandbox_value
         return $this->is_std;
     }
 
-    function number(): float
+    function number(): ?float
     {
         return $this->value;
     }
@@ -835,115 +846,6 @@ class result extends sandbox_value
             }
         }
         return $result;
-    }
-
-    /**
-     * create the sql statement to add a new result to the database
-     * TODO add source group
-     *
-     * @param sql $sc with the target db_type set
-     * @param bool $usr_tbl true if a db row should be added to the user table
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
-     */
-    function sql_insert(sql $sc, bool $usr_tbl = false): sql_par
-    {
-        $qp = $this->sql_common($sc, $usr_tbl);
-        // overwrite the standard auto increase id field name
-        $sc->set_id_field($this->id_field());
-        $qp->name .= '_insert';
-        $sc->set_name($qp->name);
-        if ($this->grp->is_prime()) {
-            $fields = $this->grp->id_names();
-            $fields[] = user::FLD_ID;
-            $values = $this->grp->id_lst();
-            $values[] = $this->user()->id();
-            if (!$usr_tbl) {
-                $fields[] = self::FLD_VALUE;
-                $fields[] = self::FLD_LAST_UPDATE;
-                $values[] = $this->number;
-                $values[] = sql::NOW;
-            }
-        } else {
-            if ($usr_tbl) {
-                $fields = array(group::FLD_ID, user::FLD_ID);
-                $values = array($this->grp->id(), $this->user()->id());
-            } else {
-                $fields = array(group::FLD_ID, user::FLD_ID, self::FLD_VALUE, self::FLD_LAST_UPDATE);
-                $values = array($this->grp->id(), $this->user()->id(), $this->number, sql::NOW);
-            }
-
-        }
-        $qp->sql = $sc->sql_insert($fields, $values);
-        $par_values = [];
-        foreach (array_keys($values) as $i) {
-            if ($values[$i] != sql::NOW) {
-                $par_values[$i] = $values[$i];
-            }
-        }
-
-        $qp->par = $par_values;
-        return $qp;
-    }
-
-    /**
-     * create the sql statement to update a result in the database
-     * TODO make code review and move part to the parent sandbox value class
-     *
-     * @param sql $sc with the target db_type set
-     * @param bool $usr_tbl true if the user table row should be updated
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
-     */
-    function sql_update(
-        sql   $sc,
-        array $fields = [],
-        array $values = [],
-        bool  $usr_tbl = false
-    ): sql_par
-    {
-        $lib = new library();
-        $qp = $this->sql_common($sc, $usr_tbl);
-        if (count($fields) == 0) {
-            $fields = array(self::FLD_VALUE, self::FLD_LAST_UPDATE);
-        }
-        if (count($values) == 0) {
-            $values = array($this->number, sql::NOW);
-        }
-        $fld_name = implode('_', $lib->sql_name_shorten($fields));
-        $qp->name .= '_update_' . $fld_name;
-        $sc->set_name($qp->name);
-        if ($this->grp->is_prime()) {
-            $id_fields = $this->grp->id_names(true);
-        } else {
-            $id_fields = $this->id_field();
-        }
-        $id = $this->id();
-        $id_lst = [];
-        if (is_array($id_fields)) {
-            if (!is_array($id)) {
-                $grp_id = new group_id();
-                $id_lst = $grp_id->get_array($id, true);
-                foreach ($id_lst as $key => $value) {
-                    if ($value == null) {
-                        $id_lst[$key] = 0;
-                    }
-                }
-            } else {
-                $id_lst = $id;
-            }
-        } else {
-            $id_lst = $id;
-        }
-        if ($usr_tbl) {
-            $id_fields[] = user::FLD_ID;
-            if (!is_array($id_lst)) {
-                $id_lst = [$id_lst];
-            }
-            $id_lst[] = $this->user()->id();
-        }
-        $qp->sql = $sc->sql_update($id_fields, $id_lst, $fields, $values);
-
-        $qp->par = $sc->par_values();
-        return $qp;
     }
 
 
@@ -1675,9 +1577,7 @@ class result extends sandbox_value
                     log_debug($msg);
                     $db_con->set_class(sql_db::TBL_RESULT);
                     $sc = $db_con->sql_creator();
-                    $qp = $this->sql_update($sc,
-                        array(result::FLD_VALUE, result::FLD_LAST_UPDATE),
-                        array($this->value, sql::NOW));
+                    $qp = $this->sql_update($sc, $res_db);
                     $usr_msg = $db_con->update($qp, $msg);
                     if ($usr_msg->is_ok()) {
                         $result = $row_id;
@@ -1720,6 +1620,180 @@ class result extends sandbox_value
         log_debug("id (" . $result . ")");
         return $result;
 
+    }
+
+
+    /*
+     * sql write
+     */
+
+    /**
+     * create the sql statement to add a new result to the database
+     * TODO add source group
+     *
+     * @param sql $sc with the target db_type set
+     * @param bool $usr_tbl true if a db row should be added to the user table
+     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     */
+    function sql_insert(sql $sc, bool $usr_tbl = false): sql_par
+    {
+        $qp = $this->sql_common($sc, $usr_tbl);
+        // overwrite the standard auto increase id field name
+        $sc->set_id_field($this->id_field());
+        $qp->name .= sql::file_sep . sql::file_insert;
+        $sc->set_name($qp->name);
+        if ($this->grp->is_prime()) {
+            $fields = $this->grp->id_names();
+            $fields[] = user::FLD_ID;
+            $values = $this->grp->id_lst();
+            $values[] = $this->user()->id();
+            if (!$usr_tbl) {
+                $fields[] = self::FLD_VALUE;
+                $fields[] = self::FLD_LAST_UPDATE;
+                $values[] = $this->number;
+                $values[] = sql::NOW;
+            }
+        } else {
+            if ($usr_tbl) {
+                $fields = array(group::FLD_ID, user::FLD_ID);
+                $values = array($this->grp->id(), $this->user()->id());
+            } else {
+                $fields = array(group::FLD_ID, user::FLD_ID, self::FLD_VALUE, self::FLD_LAST_UPDATE);
+                $values = array($this->grp->id(), $this->user()->id(), $this->number, sql::NOW);
+            }
+
+        }
+        $qp->sql = $sc->sql_insert($fields, $values);
+        $par_values = [];
+        foreach (array_keys($values) as $i) {
+            if ($values[$i] != sql::NOW) {
+                $par_values[$i] = $values[$i];
+            }
+        }
+
+        $qp->par = $par_values;
+        return $qp;
+    }
+
+    /**
+     * create the sql statement to update a result in the database
+     * TODO make code review and move part to the parent sandbox value class
+     *
+     * @param sql $sc with the target db_type set
+     * @param result $db_res the result object with the database values before the update
+     * @param bool $usr_tbl true if the user table row should be updated
+     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     */
+    function sql_update(sql $sc, result $db_res, bool $usr_tbl = false): sql_par
+    {
+        $lib = new library();
+        $qp = $this->sql_common($sc, $usr_tbl);
+        // get the fields and values that have been changed and needs to be updated in the database
+        $fields = $this->db_fields_changed($db_res);
+        $values = $this->db_values_changed($db_res);;
+        $all_fields = $this->db_fields_all();
+        $fld_name = implode('_', $lib->sql_name_shorten($fields));
+        // TODO use const
+        $qp->name .= '_update_' . $fld_name;
+        $sc->set_name($qp->name);
+        if ($this->grp->is_prime()) {
+            $id_fields = $this->grp->id_names(true);
+        } else {
+            $id_fields = $this->id_field();
+        }
+        $id = $this->id();
+        $id_lst = [];
+        if (is_array($id_fields)) {
+            if (!is_array($id)) {
+                $grp_id = new group_id();
+                $id_lst = $grp_id->get_array($id, true);
+                foreach ($id_lst as $key => $value) {
+                    if ($value == null) {
+                        $id_lst[$key] = 0;
+                    }
+                }
+            } else {
+                $id_lst = $id;
+            }
+        } else {
+            $id_lst = $id;
+        }
+        if ($usr_tbl) {
+            $id_fields[] = user::FLD_ID;
+            if (!is_array($id_lst)) {
+                $id_lst = [$id_lst];
+            }
+            $id_lst[] = $this->user()->id();
+        }
+        $qp->sql = $sc->sql_update($id_fields, $id_lst, $fields, $values);
+
+        $qp->par = $sc->par_values();
+        return $qp;
+    }
+
+
+    /*
+     * sql write fields
+     */
+
+    /**
+     * get a list of database fields that have been updated
+     * excluding the internal only last_update and is_std fields
+     *
+     * @return array list of the database field names that have been updated
+     */
+    function db_fields_all(): array
+    {
+        $result = parent::db_fields_all_value();
+        $result[] = self::FLD_SOURCE . group::FLD_ID;
+        $result[] = formula::FLD_ID;
+        return array_merge($result, $this->db_fields_all_sandbox());
+    }
+
+    /**
+     * get a list of database fields that have been updated
+     * excluding the internal only last_update and is_std fields
+     *
+     * @param result $res the compare value to detect the changed fields
+     * @return array list of the database field names that have been updated
+     */
+    function db_fields_changed(result $res): array
+    {
+        $result = parent::db_fields_changed_value($res);
+        if ($res->src_grp_id() <> $this->src_grp_id()) {
+            $result[] = self::FLD_SOURCE . group::FLD_ID;
+        }
+        if ($res->frm_id() <> $this->frm_id()) {
+            $result[] = formula::FLD_ID;
+        }
+        // if any field has been updated, update the last_update field also
+        if (count($result) == 0 or $this->last_update() == null) {
+            $result[] = self::FLD_LAST_UPDATE;
+        }
+        return array_merge($result, $this->db_fields_changed_sandbox($res));
+    }
+
+    /**
+     * get a list of database values that have been updated
+     * excluding the internal only last_update and is_std values
+     *
+     * @param result $res the compare value to detect the changed fields
+     * @return array list of the database field names that have been updated
+     */
+    function db_values_changed(result $res): array
+    {
+        $result = parent::db_values_changed_value($res);
+        if ($res->src_grp_id() <> $this->src_grp_id()) {
+            $result[] = $this->src_grp_id();
+        }
+        if ($res->frm_id() <> $this->frm_id()) {
+            $result[] = $this->frm_id();
+        }
+        // if any field has been updated, update the last_update field with the predefined now expression
+        if (count($result) == 0 or $this->last_update() == null) {
+            $result[] = sql::NOW;
+        }
+        return array_merge($result, parent::db_values_changed_sandbox($res));
     }
 
 }

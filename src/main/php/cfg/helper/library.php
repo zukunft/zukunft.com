@@ -1655,6 +1655,27 @@ class library
         return $result;
     }
 
+    /**
+     * create a short string that indicates, which fields of all fields have been changed
+     * TODO combine with the sql_name_shorten function
+     *
+     * @param array $fld_lst_chg list of fields names that have been changed
+     * @param array $fld_lst_all list of all fields of the given object
+     * @return string the query name extension to make the query name
+     */
+    function query_changed_field_ext(array $fld_lst_chg, array $fld_lst_all): string
+    {
+        $result = '';
+        foreach ($fld_lst_all as $fld) {
+            if (in_array($fld, $fld_lst_chg)) {
+                $result .= '1';
+            } else {
+                $result .= '0';
+            }
+        }
+        return $result;
+    }
+
     /*
      * shorten a list of fields for sql query naming
      */
@@ -1669,6 +1690,9 @@ class library
         $result = [];
         foreach ($sql_names as $name) {
             $result[] = match ($name) {
+                word::FLD_NAME => 'wrd',
+                sandbox_named::FLD_DESCRIPTION => 'des',
+                phrase::FLD_TYPE => 'pty',
                 value::FLD_ID => 'grp',
                 user::FLD_ID => 'usr',
                 source::FLD_ID => 'src',

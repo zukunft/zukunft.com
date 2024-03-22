@@ -63,7 +63,7 @@ class word_tests
         $t->header('word unit tests');
 
         $t->subheader('word sql setup');
-        $wrd = $t->dummy_word();
+        $wrd = $t->word();
         $t->assert_sql_table_create($wrd);
         $t->assert_sql_index_create($wrd);
         $t->assert_sql_foreign_key_create($wrd);
@@ -85,10 +85,13 @@ class word_tests
 
         $t->subheader('word sql write');
         // TODO activate db write
+        $wrd = $t->word();
         $t->assert_sql_insert($db_con, $wrd);
         //$t->assert_sql_insert($db_con, $wrd, true);
         // TODO activate db write
-        //$t->assert_sql_update($db_con, $wrd);
+        $wrd = $t->word();
+        $wrd_renamed = $wrd->cloned(word_api::TN_RENAMED);
+        $t->assert_sql_update($db_con, $wrd_renamed, $wrd);
         //$t->assert_sql_update($db_con, $wrd, true);
         // TODO activate db write
         //$t->assert_sql_delete($db_con, $wrd);
@@ -113,7 +116,7 @@ class word_tests
 
         $t->subheader('HTML frontend unit tests');
 
-        $wrd = $t->dummy_word();
+        $wrd = $t->word();
         $t->assert_api_to_dsp($wrd, new word_dsp());
 
     }

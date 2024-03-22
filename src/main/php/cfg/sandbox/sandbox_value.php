@@ -235,6 +235,11 @@ class sandbox_value extends sandbox_multi
         return $this->grp;
     }
 
+    function grp_id(): int|string
+    {
+        return $this->grp->id();
+    }
+
     function is_id_set(): bool
     {
         return $this->grp()->is_id_set();
@@ -297,6 +302,61 @@ class sandbox_value extends sandbox_multi
     {
         return $this->grp()->id_lst();
     }
+
+
+    /*
+     * sql write fields
+     */
+
+    /**
+     * list of all fields that can be changed by the user in this object
+     * the last_update field is excluded here because this is an internal only field
+     *
+     * @return array with the field names of the object and any child object
+     */
+    function db_fields_all_value(): array
+    {
+        return [group::FLD_ID, value::FLD_VALUE];
+    }
+
+    /**
+     * list of fields that have been changed compared to a given object
+     * the last_update field is excluded here because this is an internal only field
+     *
+     * @param sandbox_value $sbx the same value sandbox as this to compare which fields have been changed
+     * @return array with the field names of the object and any child object
+     */
+    function db_fields_changed_value(sandbox_value $sbx): array
+    {
+        $result = [];
+        if ($sbx->grp_id() <> $this->grp_id()) {
+            $result[] = group::FLD_ID;
+        }
+        if ($sbx->number() <> $this->number()) {
+            $result[] = value::FLD_VALUE;
+        }
+        return $result;
+    }
+
+    /**
+     * list of fields that have been changed compared to a given object
+     * the last_update field is excluded here because this is an internal only field
+     *
+     * @param sandbox_value $sbx_val the same value sandbox as this to compare which fields have been changed
+     * @return array with the field names of the object and any child object
+     */
+    function db_values_changed_value(sandbox_value $sbx_val): array
+    {
+        $result = [];
+        if ($sbx_val->grp_id() <> $this->grp_id()) {
+            $result[] = $this->grp_id();
+        }
+        if ($sbx_val->number() <> $this->number()) {
+            $result[] = $this->number();
+        }
+        return $result;
+    }
+
 
 
     /*
@@ -971,19 +1031,19 @@ class sandbox_value extends sandbox_multi
     /**
      * create the sql statement to update a value in the database
      * @param sql $sc with the target db_type set
+     * @param sandbox_value $db_obj the value object with the database values before the update
      * @param bool $usr_tbl true if the user table row should be updated
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_update(
-        sql   $sc,
-        array $fields = [],
-        array $values = [],
-        bool  $usr_tbl = false
-    ): sql_par
+    function sql_update_value(sql $sc, sandbox_value $db_obj, bool $usr_tbl = false): sql_par
     {
         $qp = $this->sql_common($sc, $usr_tbl);
-        $qp->name .= '_update';
+        $qp->name .= sql::file_sep . sql::file_update;
         $sc->set_name($qp->name);
+        // get the fields and values that have been changed and needs to be updated in the database
+        $fields = $this->db_fields_changed($db_obj);
+        $values = $this->db_values_changed($db_obj);;
+        $all_fields = $this->db_fields_all();
         $qp->sql = $sc->sql_update($this->id_field(), $this->id(), $fields, $values);
         $qp->par = $values;
         return $qp;
@@ -1023,7 +1083,7 @@ class sandbox_value extends sandbox_multi
                         log_debug($msg);
                         $db_con->set_class(sql_db::TBL_USER_PREFIX . $this->obj_name . $ext);
                         $db_con->set_usr($this->user()->id());
-                        $qp = $this->sql_update($db_con->sql_creator(), array($log->field()), array(null));
+                        $qp = $this->sql_update_fields($db_con->sql_creator(), array($log->field()), array(null));
                         $usr_msg = $db_con->update($qp, $msg);
                         $result = $usr_msg->get_message();
                     }
@@ -1033,7 +1093,7 @@ class sandbox_value extends sandbox_multi
                     log_debug($msg);
                     $db_con->set_class($this->obj_type . $ext);
                     $db_con->set_usr($this->user()->id());
-                    $qp = $this->sql_update($db_con->sql_creator(), array($log->field()), array($new_value));
+                    $qp = $this->sql_update_fields($db_con->sql_creator(), array($log->field()), array($new_value));
                     $usr_msg = $db_con->update($qp, $msg);
                     $result = $usr_msg->get_message();
                 }
@@ -1049,13 +1109,13 @@ class sandbox_value extends sandbox_multi
                     if ($new_value == $std_value) {
                         $msg = 'remove user change of ' . $log->field();
                         log_debug($msg);
-                        $qp = $this->sql_update($db_con->sql_creator(), array($log->field()), array(Null), true);
+                        $qp = $this->sql_update_fields($db_con->sql_creator(), array($log->field()), array(Null), true);
                         $usr_msg = $db_con->update($qp, $msg);
                         $result = $usr_msg->get_message();
                     } else {
                         $msg = 'update of ' . $log->field() . ' to ' . $new_value;
                         log_debug($msg);
-                        $qp = $this->sql_update($db_con->sql_creator(), array($log->field()), array($new_value), true);
+                        $qp = $this->sql_update_fields($db_con->sql_creator(), array($log->field()), array($new_value), true);
                         $usr_msg = $db_con->update($qp, $msg);
                         $result = $usr_msg->get_message();
                     }
@@ -1064,6 +1124,35 @@ class sandbox_value extends sandbox_multi
             }
         }
         return $result;
+    }
+
+
+    /*
+     * clone
+     */
+
+    /**
+     * create a clone and update the number (mainly used for unit testing)
+     *
+     * @param float $number the target value
+     * @return $this a clone with the number changed
+     */
+    function cloned(float $number): sandbox_value
+    {
+        $obj_cpy = clone $this;
+        $obj_cpy->set_number($number);
+        return $obj_cpy;
+    }
+
+    /**
+     * create a clone and reset the timestamp to trigger the update of the depending results
+     * @return $this a clone with the last update set to null
+     */
+    function updated(): sandbox_value
+    {
+        $obj_cpy = clone $this;
+        $obj_cpy->last_update = null;
+        return $obj_cpy;
     }
 
 

@@ -968,17 +968,17 @@ class test_base
      */
     function assert_sql_insert(sql_db $db_con, object $usr_obj, bool $usr_tbl = false): bool
     {
-        $lib = new library();
         // check the Postgres query syntax
-        $db_con->db_type = sql_db::POSTGRES;
-        $qp = $usr_obj->sql_insert($db_con->sql_creator(), $usr_tbl);
-        $result = $this->assert_qp($qp, $db_con->db_type);
+        $sc = $db_con->sql_creator();
+        $sc->db_type = sql_db::POSTGRES;
+        $qp = $usr_obj->sql_insert($sc, $usr_tbl);
+        $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $db_con->db_type = sql_db::MYSQL;
-            $qp = $usr_obj->sql_insert($db_con->sql_creator(), $usr_tbl);
-            $result = $this->assert_qp($qp, $db_con->db_type);
+            $sc->db_type = sql_db::MYSQL;
+            $qp = $usr_obj->sql_insert($sc, $usr_tbl);
+            $result = $this->assert_qp($qp, $sc->db_type);
         }
         return $result;
     }
@@ -989,25 +989,23 @@ class test_base
      *
      * @param sql_db $db_con does not need to be connected to a real database
      * @param object $usr_obj the user sandbox object e.g. a word
+     * @param object $db_obj must be the same object as the $usr_obj but with the valuesfrom the database before the update
      * @param bool $usr_tbl true if a db row should be added to the user table
      * @return bool true if all tests are fine
      */
-    function assert_sql_update(sql_db $db_con, object $usr_obj, bool $usr_tbl = false): bool
+    function assert_sql_update(sql_db $db_con, object $usr_obj, object $db_obj, bool $usr_tbl = false): bool
     {
-        $empty_usr_obj = clone $usr_obj;
-        $empty_usr_obj->reset();
-        $fields = $usr_obj->changed_db_fields($empty_usr_obj);
-        $values = $usr_obj->changed_db_values($empty_usr_obj);
+        $sc = $db_con->sql_creator();
         // check the Postgres query syntax
-        $db_con->db_type = sql_db::POSTGRES;
-        $qp = $usr_obj->sql_update($db_con->sql_creator(), $fields, $values, $usr_tbl);
-        $result = $this->assert_qp($qp, $db_con->db_type);
+        $sc->db_type = sql_db::POSTGRES;
+        $qp = $usr_obj->sql_update($sc, $db_obj, $usr_tbl);
+        $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $db_con->db_type = sql_db::MYSQL;
-            $qp = $usr_obj->sql_update($db_con->sql_creator(), $fields, $values, $usr_tbl);
-            $result = $this->assert_qp($qp, $db_con->db_type);
+            $sc->db_type = sql_db::MYSQL;
+            $qp = $usr_obj->sql_update($sc, $db_obj, $usr_tbl);
+            $result = $this->assert_qp($qp, $sc->db_type);
         }
         return $result;
     }

@@ -945,23 +945,6 @@ class word extends sandbox_typed
         return $result;
     }
 
-    /*
-     * db write
-     */
-
-    /**
-     * create the sql statement to add a new word to the database
-     *
-     * @param sql $sc with the target db_type set
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
-     */
-    function sql_insert(sql $sc): sql_par
-    {
-        // fields and values that the word has additional to the standard named user sandbox object
-        $fields = array(phrase::FLD_TYPE, self::FLD_VIEW, self::FLD_PLURAL, self::FLD_VALUES);
-        $values = array($this->type_id(), $this->view, $this->plural, $this->values);
-        return parent::sql_insert_named($sc, $fields, $values);
-    }
 
     /*
      * display functions
@@ -1748,6 +1731,124 @@ class word extends sandbox_typed
         //$result->add($grp_lst->del());
 
         return $result;
+    }
+
+
+    /*
+     * sql write
+     */
+
+    /**
+     * create the sql statement to add a new word to the database
+     * always all fields are included in the query to be able to remove overwrites with a null value
+     *
+     * @param sql $sc with the target db_type set
+     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     */
+    function sql_insert(sql $sc, bool $usr_tbl = false): sql_par
+    {
+        // fields and values that the word has additional to the standard named user sandbox object
+        $wrd_empty = $this->clone_reset();
+        $fields = $this->db_fields_changed($wrd_empty);
+        $values = $this->db_values_changed($wrd_empty);;
+        return parent::sql_insert_named($sc, $fields, $values);
+    }
+
+    /**
+     * create the sql statement to update a word in the database
+     *
+     * @param sql $sc with the target db_type set
+     * @param word $db_wrd the word with the database values before the update
+     * @param bool $usr_tbl true if the user table row should be updated
+     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     */
+    function sql_update(sql $sc, word $db_wrd, bool $usr_tbl = false): sql_par
+    {
+        // get the fields and values that have been changed
+        // and that needs to be updated in the database
+        // the db_* child function call the corresponding parent function
+        $fields = $this->db_fields_changed($db_wrd);
+        $values = $this->db_values_changed($db_wrd);;
+        $all_fields = $this->db_fields_all();
+        // unlike the db_* function the sql_update_* parent function is called directly
+        return parent::sql_update_named($sc, $fields, $values, $all_fields);
+    }
+
+
+    /*
+     * sql write fields
+     */
+
+    /**
+     * get a list of all database fields that might be changed
+     * excluding the internal fields e.g. the database id
+     * field list must be corresponding to the db_fields_changed fields
+     *
+     * @return array list of all database field names that have been updated
+     */
+    function db_fields_all(): array
+    {
+        return array_merge(
+            parent::db_fields_all_named(),
+            [phrase::FLD_TYPE,
+                self::FLD_VIEW,
+                self::FLD_PLURAL,
+                self::FLD_VALUES],
+            parent::db_fields_all_sandbox()
+        );
+    }
+
+    /**
+     * get a list of database fields that have been updated
+     * field list must be corresponding to the db_values_changed fields
+     *
+     * @param word $wrd the compare value to detect the changed fields
+     * @return array list of the database field names that have been updated
+     */
+    function db_fields_changed(word $wrd): array
+    {
+        $result = parent::db_fields_changed_named($wrd);
+        if ($wrd->type_id() <> $this->type_id()) {
+            $result[] = phrase::FLD_TYPE;
+        }
+        if ($wrd->view_id() <> $this->view_id()) {
+            $result[] = self::FLD_VIEW;
+        }
+        // TODO move to language forms
+        if ($wrd->plural <> $this->plural) {
+            $result[] = self::FLD_PLURAL;
+        }
+        // TODO rename to usage
+        if ($wrd->values <> $this->values) {
+            $result[] = self::FLD_VALUES;
+        }
+        return array_merge($result, $this->db_fields_changed_sandbox($wrd));
+    }
+
+    /**
+     * get a list of database field values that have been updated
+     *
+     * @param word $wrd the compare value to detect the changed fields
+     * @return array list of the database field values that have been updated
+     */
+    function db_values_changed(word $wrd): array
+    {
+        $result = parent::db_values_changed_named($wrd);
+        if ($wrd->type_id() <> $this->type_id()) {
+            $result[] = $this->type_id();
+        }
+        if ($wrd->view_id() <> $this->view_id()) {
+            $result[] = $this->view_id();
+        }
+        // TODO move to language forms
+        if ($wrd->plural <> $this->plural) {
+            $result[] = $this->plural;
+        }
+        // TODO rename to usage
+        if ($wrd->values <> $this->values) {
+            $result[] = $this->values;
+        }
+        return array_merge($result, $this->db_values_changed_sandbox($wrd));
     }
 
 }

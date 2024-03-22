@@ -94,7 +94,7 @@ class system_tests
 
         // create a dummy object of each object and test that the dsp_id debug function does not cause an infinite loop
         $test_name = 'debug word id';
-        $wrd = $t->dummy_word();
+        $wrd = $t->word();
         $target = '"Mathematics" (word_id 1) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $wrd->dsp_id(), $target);
         $test_name = 'debug word list id';
@@ -122,7 +122,7 @@ class system_tests
         $target = '"Mathematical constant","Mathematics","Pi","Pi (math)","constant" (phrase_id 1,2,3,-1,-2) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $phr_lst->dsp_id(), $target);
         $test_name = 'debug phrase_group id';
-        $grp = $t->dummy_phrase_group();
+        $grp = $t->group();
         $target = '"Pi (math)" (group_id 5) as "Pi (math)" for user 1 (zukunft.com system test)';
         $t->assert($test_name, $grp->dsp_id(), $target);
         $test_name = 'debug group_list id';
@@ -138,7 +138,7 @@ class system_tests
         $target = '"Mathematical constant","Mathematics","not set","scale minute to sec" (-2,-1,1,2)';
         $t->assert($test_name, $trm_lst->dsp_id(), $target);
         $test_name = 'debug value id';
-        $val = $t->dummy_value();
+        $val = $t->value();
         $target = '"Pi (math)" 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -2,,,) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $val->dsp_id(), $target);
         $test_name = 'debug value_list id';

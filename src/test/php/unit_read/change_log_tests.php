@@ -62,10 +62,11 @@ class change_log_tests
 
         // prepare the objects for the tests
         // TODO use these test functions for all dummy object creations
-        $wrd = $t->dummy_word();
+        // TODO remove dummy from name because this is anyway know by the $test class
+        $wrd = $t->word();
         $vrb = $t->dummy_verb();
         $trp = $t->dummy_triple_pi();
-        $val = $t->dummy_value();
+        $val = $t->value();
         $frm = $t->formula();
         $src = $t->dummy_source();
         $ref = $t->dummy_reference();

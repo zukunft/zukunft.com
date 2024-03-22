@@ -191,13 +191,37 @@ class sandbox_named extends sandbox
     }
 
     /**
+     * create a clone and update the name (mainly used for unit testing)
+     *
+     * @param string $name the target name
+     * @return $this a clone with the name changed
+     */
+    function cloned(string $name): sandbox_named
+    {
+        $obj_cpy = $this->clone_reset();
+        $obj_cpy->set_name($name);
+        return $obj_cpy;
+    }
+
+    /**
+     * create a clone and empty all fields
+     *
+     * @return $this a clone with the name changed
+     */
+    function clone_reset(): sandbox_named
+    {
+        $obj_cpy = clone $this;
+        $obj_cpy->reset();
+        return $obj_cpy;
+    }
+
+    /**
      * @return array with the field names of the object and any child object
      *         is a function and not a const because the id and name fields are a function and php does not yet have final functions
      */
     function field_list_named(): array
     {
         return [
-            $this->id_field(),
             user::FLD_ID,
             $this->name_field(),
             self::FLD_DESCRIPTION,
@@ -207,13 +231,76 @@ class sandbox_named extends sandbox
         ];
     }
 
+
+    /*
+     * sql write fields
+     */
+
+    /**
+     * get a list of all database fields that might be changed
+     * excluding the internal fields e.g. the database id
+     * field list must be corresponding to the db_fields_changed fields
+     *
+     * @return array list of all database field names that have been updated
+     */
+    function db_fields_all_named(): array
+    {
+        return [
+            user::FLD_ID,
+            $this->name_field(),
+            self::FLD_DESCRIPTION
+        ];
+    }
+
+    /**
+     * get a list of database fields that have been updated
+     * field list must be corresponding to the db_values_changed fields
+     *
+     * @param sandbox_named $sbx the same named sandbox as this to compare which fields have been changed
+     * @return array with the field names of the object and any child object
+     */
+    function db_fields_changed_named(sandbox_named $sbx): array
+    {
+        $result = [];
+        if ($sbx->user_id() <> $this->user_id()) {
+            $result[] = user::FLD_ID;
+        }
+        if ($sbx->name() <> $this->name()) {
+            $result[] = $this->name_field();
+        }
+        if ($sbx->description <> $this->description) {
+            $result[] = self::FLD_DESCRIPTION;
+        }
+        return $result;
+    }
+
+    /**
+     * get a list of database field values that have been updated
+     *
+     * @param sandbox_named $sbx the same named sandbox as this to compare which field values have been changed
+     * @return array with the field values of the object and any child object
+     */
+    function db_values_changed_named(sandbox_named $sbx): array
+    {
+        $result = [];
+        if ($sbx->user_id() <> $this->user_id()) {
+            $result[] = $this->user_id();
+        }
+        if ($sbx->name() <> $this->name()) {
+            $result[] = $this->name();
+        }
+        if ($sbx->description <> $this->description) {
+            $result[] = $this->description();
+        }
+        return $result;
+    }
+
     /**
      * @return array with the field values of the object and any child object
      */
     function value_list_named(): array
     {
         return [
-            $this->id(),
             $this->user()->id(),
             $this->name(),
             $this->description,
@@ -413,7 +500,7 @@ class sandbox_named extends sandbox
 
 
     /*
-     * db write
+     * sql write
      */
 
     /**
@@ -427,19 +514,54 @@ class sandbox_named extends sandbox
     function sql_insert_named(sql $sc, array $fld_lst = [], array $val_lst = []): sql_par
     {
         $lib = new library();
+        $fld_chg_ext = implode('_', $lib->sql_name_shorten($fld_lst));
+        $qp = $this->sql_common($sc, sql::file_sep . sql::file_insert . sql::file_sep . $fld_chg_ext);
+        // add the child object specific fields and values
+        $qp->sql = $sc->sql_insert($fld_lst, $val_lst);
+        $qp->par = $val_lst;
+
+        return $qp;
+    }
+
+    /**
+     * create the sql statement to add a new named sandbox object e.g. word to the database
+     *
+     * @param sql $sc with the target db_type set
+     * @param array $fld_lst list of field names additional to the standard id and name fields
+     * @param array $val_lst list of field values additional to the standard id and name$
+     * @param array $fld_lst_all list of field names of the given object
+     * @return sql_par the SQL update statement, the name of the SQL statement and the parameter list
+     */
+    function sql_update_named(sql $sc, array $fld_lst = [], array $val_lst = [], array $fld_lst_all = []): sql_par
+    {
+        $lib = new library();
+        // TODO use sql_name_shorten
+        $fld_chg_ext = $lib->query_changed_field_ext($fld_lst, $fld_lst_all);
+        $qp = $this->sql_common($sc, sql::file_sep . sql::file_update . sql::file_sep . $fld_chg_ext);
+        $qp->sql = $sc->sql_update($this->id_field(), $this->id(), $fld_lst, $val_lst);
+        $qp->par = $val_lst;
+
+        return $qp;
+    }
+
+    /**
+     * the common part of the sql_insert and sql_update functions
+     * TODO include the sql statements to log the changes
+     *
+     * @param sql $sc with the target db_type set
+     * @param string $name_ext the query name extension to differ insert from update
+     * @return sql_par prepared sql parameter object with the name set
+     */
+    private function sql_common(sql $sc, string $name_ext): sql_par
+    {
+        $lib = new library();
         $sc->set_class($this::class);
         $sql_name = $lib->class_to_name($this::class);
         $qp = new sql_par($sql_name);
         // overwrite the standard auto increase id field name
         $sc->set_id_field($this->id_field());
-        $qp->name = $sql_name . '_insert';
+        $qp->name = $sql_name . $name_ext;
         $sc->set_name($qp->name);
-        // add the child object specific fields and values
-        $fields = array_merge($this->field_list_named(), $fld_lst);
-        $values = array_merge($this->value_list_named(), $val_lst);
-        $qp->sql = $sc->sql_insert($fields, $values);
-        $qp->par = $values;
-
         return $qp;
     }
 

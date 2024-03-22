@@ -70,7 +70,7 @@ class term_tests
 
         $t->subheader('Set and get of the grouped object tests');
 
-        $wrd = $t->dummy_word();
+        $wrd = $t->word();
         $trm = $wrd->term();
         $t->assert($t->name . 'word id', $trm->id_obj(), $wrd->id());
         $t->assert($t->name . 'word name', $trm->name(), $wrd->name_dsp());

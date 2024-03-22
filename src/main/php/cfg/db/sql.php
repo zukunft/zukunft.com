@@ -108,6 +108,13 @@ class sql
     // placeholder for the class name in table or field comments
     const COMMENT_CLASS_NAME = '-=class=-';
 
+    // internal const for unit testing
+    const file_sep = '_'; // for snake case file names
+    const file_insert = 'insert'; // for insert (or create in curl notation) unit test files
+    const file_update = 'update'; // for update unit test files
+    const file_delete = 'delete'; // for delete (or remove in curl notation) unit test files
+    const file_load = 'load'; // for load unit test files
+
     // classes where the table that do not have a name
     // e.g. sql_db::TBL_TRIPLE is a link which hase a name, but the generated name can be overwritten, so the standard field naming is not used
     const DB_TYPES_NOT_NAMED = [
@@ -1041,16 +1048,16 @@ class sql
             }
 
             // gat the value parameter types
-            $par_pos = 0;
+            $par_pos = 1;
             foreach (array_keys($values) as $i) {
                 if ($values[$i] != sql::NOW) {
                     $this->par_types[] = $this->get_sql_par_type($values[$i]);
-                    $this->par_fields[$par_pos] = $this->par_name($par_pos);
+                    $this->par_fields[] = $this->par_name($par_pos);
                     $this->par_values[] = $values[$i];
                     $par_pos++;
                 }
             }
-            $offset = $par_pos;
+            $offset = $par_pos - 1;
         }
 
         // prepare the where class
@@ -1076,7 +1083,6 @@ class sql
         $sql = $this->prepare_this_sql(self::UPDATE);
         $sql .= ' ' . $this->name_sql_esc($this->table);
         $sql_set = '';
-        $par_pos = 0;
         foreach (array_keys($fields) as $i) {
             if ($sql_set == '') {
                 $sql_set .= ' SET ';
@@ -1084,8 +1090,7 @@ class sql
                 $sql_set .= ', ';
             }
             if ($values[$i] != sql::NOW) {
-                $sql_set .= $fields[$i] . ' = ' . $this->par_fields[$par_pos];
-                $par_pos++;
+                $sql_set .= $fields[$i] . ' = ' . $this->par_fields[$i];
             } else {
                 $sql_set .= $fields[$i] . ' = ' . $values[$i];
             }

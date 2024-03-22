@@ -126,7 +126,7 @@ class term_list_tests
         global $usr;
         $trm_lst = new term_list($usr);
         $trm_lst->add($t->dummy_triple_pi()->term());
-        $trm_lst->add($t->dummy_word()->term());
+        $trm_lst->add($t->word()->term());
         return $trm_lst;
     }
 

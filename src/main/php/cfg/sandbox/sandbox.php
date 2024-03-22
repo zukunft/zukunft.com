@@ -256,6 +256,68 @@ class sandbox extends db_object_seq_id_user
 
 
     /*
+     * sql write fields
+     */
+
+    /**
+     * repeat the all_db_fields function in the parent object to prevent polymorph warning
+     * @return array list of all database field names that have been updated
+     */
+    function db_fields_all_sandbox(): array
+    {
+        return [
+            self::FLD_EXCLUDED,
+            self::FLD_SHARE,
+            self::FLD_PROTECT
+        ];
+    }
+
+    /**
+     * list of fields that have been changed compared to a given object
+     * the last_update field is excluded here because this is an internal only field
+     *
+     * @param sandbox $sbx the same sandbox as this to compare which fields have been changed
+     * @return array with the field names of the object and any child object
+     */
+    function db_fields_changed_sandbox(sandbox $sbx): array
+    {
+        $result = [];
+        if ($sbx->excluded <> $this->excluded) {
+            $result[] = self::FLD_EXCLUDED;
+        }
+        if ($sbx->share_id <> $this->share_id) {
+            $result[] = self::FLD_SHARE;
+        }
+        if ($sbx->protection_id <> $this->protection_id) {
+            $result[] = self::FLD_PROTECT;
+        }
+        return $result;
+    }
+
+    /**
+     * list of values that have been changed compared to a given object
+     * the last_update field is excluded here because this is an internal only field
+     *
+     * @param sandbox $sbx the same sandbox as this to compare which fields have been changed
+     * @return array with the field names of the object and any child object
+     */
+    function db_values_changed_sandbox(sandbox $sbx): array
+    {
+        $result = [];
+        if ($sbx->excluded <> $this->excluded) {
+            $result[] = $this->excluded;
+        }
+        if ($sbx->share_id <> $this->share_id) {
+            $result[] = $this->share_id;
+        }
+        if ($sbx->protection_id <> $this->protection_id) {
+            $result[] = $this->protection_id;
+        }
+        return $result;
+    }
+
+
+    /*
      * internal check
      */
 

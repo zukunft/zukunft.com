@@ -152,7 +152,7 @@ class change_log_tests
         $t->subheader('SQL list statement tests');
 
         // prepare the objects for the tests
-        $wrd = $t->dummy_word();
+        $wrd = $t->word();
         $trp = new triple($usr);
         $trp->set(1, triple_api::TN_PI);
 

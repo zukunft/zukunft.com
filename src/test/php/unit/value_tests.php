@@ -63,14 +63,14 @@ class value_tests
         $t->header('Unit tests of the value class (src/main/php/model/value/value.php)');
 
         $t->subheader('SQL statements - setup');
-        $val = $t->dummy_value();
+        $val = $t->value();
         $t->assert_sql_table_create($val);
         $t->assert_sql_index_create($val);
         $t->assert_sql_foreign_key_create($val);
 
         // TODO add sql insert and update tests to all db objects
         $t->subheader('SQL statements - for often used (prime) values');
-        $val = $t->dummy_value();
+        $val = $t->value();
         $val_prime = $t->dummy_value_prime_3();
         $val_prime_max = $t->dummy_value_prime_max();
         $t->assert_sql_insert($db_con, $val);
@@ -81,11 +81,14 @@ class value_tests
         $t->assert_sql_insert($db_con, $val_prime_max, true);
         // TODO for 1 given phrase fill the others with 0 because usually only one value is expected to be changed
         // TODO for update fill the missing phrase id with zeros because only one row should be updated
-        $t->assert_sql_update($db_con, $val);
-        $t->assert_sql_update($db_con, $val, true);
-        $t->assert_sql_update($db_con, $val_prime);
-        $t->assert_sql_update($db_con, $val_prime, true);
-        $this->assert_sql_update_trigger($t, $db_con, $val);
+        $db_val = $val->cloned(value_api::TV_FLOAT);
+        $t->assert_sql_update($db_con, $val, $db_val);
+        $t->assert_sql_update($db_con, $val, $db_val, true);
+        $db_val_prime = $val_prime->cloned(value_api::TV_FLOAT);
+        $t->assert_sql_update($db_con, $val_prime, $db_val_prime);
+        $t->assert_sql_update($db_con, $val_prime, $db_val_prime, true);
+        $val_upd = $val->updated();
+        $this->assert_sql_update_trigger($t, $db_con, $val_upd, $val);
         $t->assert_sql_delete($db_con, $val);
         $t->assert_sql_delete($db_con, $val, true);
         $t->assert_sql_delete($db_con, $val, true, true);
@@ -104,7 +107,8 @@ class value_tests
         // TODO insert value does not need to return the id because this is given by the group id
         $t->assert_sql_insert($db_con, $val);
         $t->assert_sql_insert($db_con, $val, true);
-        $t->assert_sql_update($db_con, $val);
+        $db_val = $val->cloned(value_api::TV_FLOAT);
+        $t->assert_sql_update($db_con, $val, $db_val);
         $t->assert_sql_delete($db_con, $val);
         $t->assert_sql_delete($db_con, $val, true);
         $t->assert_sql_by_id($db_con, $val);
@@ -117,8 +121,9 @@ class value_tests
 
         $t->subheader('SQL statements - for values related to more than 16 phrases');
         $val = $t->dummy_value_17_plus();
+        $db_val = $val->cloned(value_api::TV_FLOAT);
         $t->assert_sql_insert($db_con, $val);
-        $t->assert_sql_update($db_con, $val);
+        $t->assert_sql_update($db_con, $val, $db_val);
         // TODO activate Prio 2
         //$this->assert_sql_by_grp($t, $db_con, $val);
         $t->assert_sql_changer($db_con, $val);
@@ -141,7 +146,7 @@ class value_tests
 
         $t->subheader('HTML frontend unit tests');
 
-        $val = $t->dummy_value();
+        $val = $t->value();
         // TODO add class field to api message
         $t->assert_api_to_dsp($val, new value_dsp());
 
@@ -220,24 +225,25 @@ class value_tests
      *
      * @param test_cleanup $t the testing object with the error counter
      * @param sql_db $db_con does not need to be connected to a real database
-     * @param object $usr_obj the user sandbox object e.g. a word
-     * @param bool $usr_tbl true if a db row should be added to the user table
+     * @param value $val the value without a last update timestamp
+     * @param value $db_val the value as it is expected to be in the database
      * @return bool true if all tests are fine
      */
-    function assert_sql_update_trigger(test_cleanup $t, sql_db $db_con, object $usr_obj, bool $usr_tbl = false): bool
+    function assert_sql_update_trigger(test_cleanup $t, sql_db $db_con, value $val, value $db_val): bool
     {
+        $sc = $db_con->sql_creator();
         $fields = array(value::FLD_LAST_UPDATE);
         $values = array(sql::NOW);
         // check the Postgres query syntax
-        $db_con->db_type = sql_db::POSTGRES;
-        $qp = $usr_obj->sql_update($db_con->sql_creator(), $fields, $values, $usr_tbl);
-        $result = $t->assert_qp($qp, $db_con->db_type);
+        $sc->db_type = sql_db::POSTGRES;
+        $qp = $val->sql_update($sc, $db_val);
+        $result = $t->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $db_con->db_type = sql_db::MYSQL;
-            $qp = $usr_obj->sql_update($db_con->sql_creator(), $fields, $values, $usr_tbl);
-            $result = $t->assert_qp($qp, $db_con->db_type);
+            $sc->db_type = sql_db::MYSQL;
+            $qp = $val->sql_update($sc, $db_val);
+            $result = $t->assert_qp($qp, $sc->db_type);
         }
         return $result;
     }
