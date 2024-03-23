@@ -84,7 +84,8 @@ class sandbox extends db_object_seq_id_user
 
     // database and JSON object field names used in many user sandbox objects
     // the id field is not included here because it is used for the database relations and should be object specific
-    // e.g. always "word_id" instead of simply "id"
+    // e.g. always "word_id" instead of simply "id
+    const FLD_ID = ''; // is always overwritten by the child class just added here to prevent polymorph warning
     const FLD_EXCLUDED = 'excluded';    // field name used to delete the object only for one user
     const FLD_CHANGE_USER = 'change_user_id'; // id of the user how wants something the object to be different from most other users
     const FLD_USER_NAME = 'user_name';
@@ -2230,6 +2231,7 @@ class sandbox extends db_object_seq_id_user
         return $result;
     }
 
+
     /*
      * delete
      */
@@ -2538,6 +2540,49 @@ class sandbox extends db_object_seq_id_user
     {
         $msg = 'ERROR: the type name function should have been overwritten by the child object';
         return log_err($msg);
+    }
+
+
+    /*
+     * sql write
+     */
+
+    /**
+     * update the sandbox object in the database
+     *
+     * @param string $msg the message shown to the user in case of a problem to idemtify the update
+     * @param bool $usr_tbl true if the user sandbox table should be updated
+     * @return user_message the message and potential solution shown to the user in case of a problem
+     */
+    function update(string $msg = '', bool $usr_tbl = false): user_message
+    {
+        global $db_con;
+
+        // set the actual class before accessing the database to ...
+        log_debug($msg);
+        $db_con->set_class($this::class, $usr_tbl);
+        // TODO check if needed
+        $db_con->usr_id = $this->user_id();
+        $sc = $db_con->sql_creator();
+        // reload the database row to prevent failures due to caching
+        $db_row = clone $this;
+        $db_row->load_by_id($this->id());
+        $qp = $this->sql_update($sc, $db_row, $usr_tbl);
+        return $db_con->update($qp, $msg);
+    }
+
+    /**
+     * create the sql statement to update a word in the database
+     * dummy function to be overwritten by the child object
+     *
+     * @param sql $sc with the target db_type set
+     * @param sandbox|source $db_row the sandbox object with the database values before the update
+     * @param bool $usr_tbl true if the user table row should be updated
+     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     */
+    function sql_update(sql $sc, sandbox|source $db_row, bool $usr_tbl = false): sql_par
+    {
+        return new sql_par('');
     }
 
 }

@@ -1428,7 +1428,7 @@ class create_test_objects extends test_base
         return $lst;
     }
 
-    function dummy_source(): source
+    function source(): source
     {
         $src = new source($this->usr1);
         $src->set(3, source_api::TN_READ_API, source_type::PDF);

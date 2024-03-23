@@ -214,7 +214,7 @@ class system_tests
         $target = '"Word" (component_link_id 1) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $cmp_lnk_lst->dsp_id(), $target);
         $test_name = 'debug source id';
-        $src = $t->dummy_source();
+        $src = $t->source();
         $target = '"The International System of Units" (source_id 3) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $src->dsp_id(), $target);
         $test_name = 'debug ref id';

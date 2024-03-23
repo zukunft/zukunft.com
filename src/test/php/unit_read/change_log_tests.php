@@ -68,7 +68,7 @@ class change_log_tests
         $trp = $t->dummy_triple_pi();
         $val = $t->value();
         $frm = $t->formula();
-        $src = $t->dummy_source();
+        $src = $t->source();
         $ref = $t->dummy_reference();
         $dsp = $t->dummy_view();
         $cmp = $t->dummy_component();

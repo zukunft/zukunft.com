@@ -1041,9 +1041,9 @@ class sandbox_value extends sandbox_multi
         $qp->name .= sql::file_sep . sql::file_update;
         $sc->set_name($qp->name);
         // get the fields and values that have been changed and needs to be updated in the database
+        // TODO fix it
         $fields = $this->db_fields_changed($db_obj);
         $values = $this->db_values_changed($db_obj);;
-        $all_fields = $this->db_fields_all();
         $qp->sql = $sc->sql_update($this->id_field(), $this->id(), $fields, $values);
         $qp->par = $values;
         return $qp;

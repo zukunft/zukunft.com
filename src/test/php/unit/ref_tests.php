@@ -141,8 +141,9 @@ class ref_tests
 
         $t->subheader('source sql write');
         // TODO activate db write
-        //$t->assert_sql_insert($db_con, $src);
-        //$t->assert_sql_insert($db_con, $src, true);
+        $src = $t->source();
+        $t->assert_sql_insert($db_con, $src);
+        $t->assert_sql_insert($db_con, $src, true);
         // TODO activate db write
         //$t->assert_sql_update($db_con, $src);
         //$t->assert_sql_update($db_con, $src, true);
@@ -154,7 +155,7 @@ class ref_tests
         $t->assert_json_file(new source($usr), $json_file);
 
         $t->subheader('API and frontend cast unit tests for sources');
-        $src = $t->dummy_source();
+        $src = $t->source();
         $t->assert_api_msg($db_con, $src);
         $t->assert_api_to_dsp($src, new source_dsp());
 

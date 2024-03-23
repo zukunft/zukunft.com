@@ -108,7 +108,7 @@ class change_table_field
             } else {
                 $sql_fld .= $this->sql_field_table($sc, $fld_par);
             }
-            if (count($fld_par) > 1) {
+            if (count($fld_par) > 2) {
                 $fld_as = $fld_par[2];
                 if ($fld_as != '') {
                     $sql_fld .= ' ' . sql::AS . ' ' . $fld_as;

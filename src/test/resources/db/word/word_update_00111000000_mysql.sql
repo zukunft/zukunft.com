@@ -1,4 +1,4 @@
-PREPARE word_update_0111000000 FROM
+PREPARE word_update_00111000000 FROM
     'UPDATE words
         SET word_name = ?,
             description = ?,

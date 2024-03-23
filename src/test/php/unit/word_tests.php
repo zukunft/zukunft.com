@@ -84,21 +84,18 @@ class word_tests
         $this->assert_sql_view($t, $db_con, $wrd);
 
         $t->subheader('word sql write');
-        // TODO activate db write
         $wrd = $t->word();
         $t->assert_sql_insert($db_con, $wrd);
-        //$t->assert_sql_insert($db_con, $wrd, true);
-        // TODO activate db write
-        $wrd = $t->word();
+        $t->assert_sql_insert($db_con, $wrd, true);
         $wrd_renamed = $wrd->cloned(word_api::TN_RENAMED);
         $t->assert_sql_update($db_con, $wrd_renamed, $wrd);
-        //$t->assert_sql_update($db_con, $wrd, true);
+        $t->assert_sql_update($db_con, $wrd_renamed, $wrd, true);
         // TODO activate db write
         //$t->assert_sql_delete($db_con, $wrd);
         //$t->assert_sql_delete($db_con, $wrd, true);
 
 
-        $t->subheader('API unit tests');
+        $t->subheader('word api unit tests');
 
         $wrd = new word($usr);
         $wrd->set(1, word_api::TN_READ, phrase_type::MATH_CONST);
@@ -109,12 +106,12 @@ class word_tests
         $t->assert($t->name . 'api->description', $api_wrd->description, $wrd->description);
 
 
-        $t->subheader('Im- and Export tests');
+        $t->subheader('word im- and export unit tests');
 
         $t->assert_json_file(new word($usr), $json_file);
 
 
-        $t->subheader('HTML frontend unit tests');
+        $t->subheader('word HTML frontend unit tests');
 
         $wrd = $t->word();
         $t->assert_api_to_dsp($wrd, new word_dsp());

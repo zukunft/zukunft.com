@@ -246,6 +246,7 @@ class sandbox_named extends sandbox
     function db_fields_all_named(): array
     {
         return [
+            $this::FLD_ID,
             user::FLD_ID,
             $this->name_field(),
             self::FLD_DESCRIPTION
@@ -257,13 +258,20 @@ class sandbox_named extends sandbox
      * field list must be corresponding to the db_values_changed fields
      *
      * @param sandbox_named $sbx the same named sandbox as this to compare which fields have been changed
+     * @param bool $usr_tbl true if the user table row should be updated
      * @return array with the field names of the object and any child object
      */
-    function db_fields_changed_named(sandbox_named $sbx): array
+    function db_fields_changed_named(sandbox_named $sbx, bool $usr_tbl = false): array
     {
         $result = [];
-        if ($sbx->user_id() <> $this->user_id()) {
+        // for insert of user sandbox rows user id fields always needs to be included
+        if ($usr_tbl) {
+            $result[] = $this::FLD_ID;
             $result[] = user::FLD_ID;
+        } else {
+            if ($sbx->user_id() <> $this->user_id()) {
+                $result[] = user::FLD_ID;
+            }
         }
         if ($sbx->name() <> $this->name()) {
             $result[] = $this->name_field();
@@ -278,13 +286,20 @@ class sandbox_named extends sandbox
      * get a list of database field values that have been updated
      *
      * @param sandbox_named $sbx the same named sandbox as this to compare which field values have been changed
+     * @param bool $usr_tbl true if the user table row should be updated
      * @return array with the field values of the object and any child object
      */
-    function db_values_changed_named(sandbox_named $sbx): array
+    function db_values_changed_named(sandbox_named $sbx, bool $usr_tbl = false): array
     {
         $result = [];
-        if ($sbx->user_id() <> $this->user_id()) {
+        // for insert of user sandbox rows user id fields always needs to be included
+        if ($usr_tbl) {
+            $result[] = $this->id();
             $result[] = $this->user_id();
+        } else {
+            if ($sbx->user_id() <> $this->user_id()) {
+                $result[] = $this->user_id();
+            }
         }
         if ($sbx->name() <> $this->name()) {
             $result[] = $this->name();
@@ -509,13 +524,21 @@ class sandbox_named extends sandbox
      * @param sql $sc with the target db_type set
      * @param array $fld_lst list of field names additional to the standard id and name fields
      * @param array $val_lst list of field values additional to the standard id and name
+     * @param array $fld_lst_all list of field names of the given object
+     * @param bool $usr_tbl true if the user table row should be added
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_insert_named(sql $sc, array $fld_lst = [], array $val_lst = []): sql_par
+    function sql_insert_named(
+        sql   $sc,
+        array $fld_lst = [],
+        array $val_lst = [],
+        array $fld_lst_all = [],
+        bool  $usr_tbl = false): sql_par
     {
         $lib = new library();
-        $fld_chg_ext = implode('_', $lib->sql_name_shorten($fld_lst));
-        $qp = $this->sql_common($sc, sql::file_sep . sql::file_insert . sql::file_sep . $fld_chg_ext);
+        $fld_chg_ext = $lib->sql_field_ext($fld_lst, $fld_lst_all);
+        $ext = sql::file_sep . sql::file_insert . sql::file_sep . $fld_chg_ext;
+        $qp = $this->sql_common($sc, $usr_tbl, $ext);
         // add the child object specific fields and values
         $qp->sql = $sc->sql_insert($fld_lst, $val_lst);
         $qp->par = $val_lst;
@@ -530,15 +553,25 @@ class sandbox_named extends sandbox
      * @param array $fld_lst list of field names additional to the standard id and name fields
      * @param array $val_lst list of field values additional to the standard id and name$
      * @param array $fld_lst_all list of field names of the given object
+     * @param bool $usr_tbl true if the user table row should be updated
      * @return sql_par the SQL update statement, the name of the SQL statement and the parameter list
      */
-    function sql_update_named(sql $sc, array $fld_lst = [], array $val_lst = [], array $fld_lst_all = []): sql_par
+    function sql_update_named(
+        sql   $sc,
+        array $fld_lst = [],
+        array $val_lst = [],
+        array $fld_lst_all = [],
+        bool  $usr_tbl = false): sql_par
     {
         $lib = new library();
-        // TODO use sql_name_shorten
-        $fld_chg_ext = $lib->query_changed_field_ext($fld_lst, $fld_lst_all);
-        $qp = $this->sql_common($sc, sql::file_sep . sql::file_update . sql::file_sep . $fld_chg_ext);
-        $qp->sql = $sc->sql_update($this->id_field(), $this->id(), $fld_lst, $val_lst);
+        $fld_chg_ext = $lib->sql_field_ext($fld_lst, $fld_lst_all);
+        $ext = sql::file_sep . sql::file_update . sql::file_sep . $fld_chg_ext;
+        $qp = $this->sql_common($sc, $usr_tbl, $ext);
+        if ($usr_tbl) {
+            $qp->sql = $sc->sql_update([$this->id_field(), user::FLD_ID], [$this->id(), $this->user_id()], $fld_lst, $val_lst);
+        } else {
+            $qp->sql = $sc->sql_update($this->id_field(), $this->id(), $fld_lst, $val_lst);
+        }
         $qp->par = $val_lst;
 
         return $qp;
@@ -549,18 +582,20 @@ class sandbox_named extends sandbox
      * TODO include the sql statements to log the changes
      *
      * @param sql $sc with the target db_type set
+     * @param bool $usr_tbl true if a db row should be added to the user table
      * @param string $name_ext the query name extension to differ insert from update
      * @return sql_par prepared sql parameter object with the name set
      */
-    private function sql_common(sql $sc, string $name_ext): sql_par
+    private function sql_common(sql $sc, bool $usr_tbl = false, string $name_ext = ''): sql_par
     {
         $lib = new library();
-        $sc->set_class($this::class);
+        $sc->set_class($this::class, $usr_tbl);
         $sql_name = $lib->class_to_name($this::class);
         $qp = new sql_par($sql_name);
-        // overwrite the standard auto increase id field name
-        $sc->set_id_field($this->id_field());
         $qp->name = $sql_name . $name_ext;
+        if ($usr_tbl) {
+            $qp->name .= '_user';
+        }
         $sc->set_name($qp->name);
         return $qp;
     }

@@ -2,8 +2,8 @@
 
 /*
 
-    model/ref/source.php - the source object to define the source for the values
-    --------------------
+    cfg/ref/source.php - the source object to define the source for the values
+    ------------------
 
     a source is always unidirectional
     in many cases a source is just a user base data source without any import
@@ -13,6 +13,22 @@
 
     if the import gets more complex or the interface is bidirectional use a reference type
     references are concrete links between a phrase and an external object
+
+    The main sections of this object are
+    - db const:          const for the database link
+    - object vars:       the variables of this word object
+    - construct and map: including the mapping of the db row to this word object
+    - set and get:       to capsule the vars from unexpected changes
+    - preloaded:         select e.g. types from cache
+    - cast:              create an api object and set the vars from an api json
+    - convert:           convert this word e.g. phrase or term
+    - load:              database access object (DAO) functions
+    - sql fields:        field names for sql
+    - im- and export:    create an export object and set the vars from an import object
+    - sandbox:           manage the user sandbox
+    - save:              manage to update the database
+    - sql write:         sql statement creation to write to the database
+    - sql write fields:  field list for writing to the database
 
 
     This file is part of zukunft.com - calc with words
@@ -32,7 +48,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2023 zukunft.com AG, Zurich
+    Copyright (c) 1995-2024 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -61,7 +77,7 @@ class source extends sandbox_typed
 {
 
     /*
-     * database link
+     * db const
      */
 
     // comments used for the database creation
@@ -210,6 +226,35 @@ class source extends sandbox_typed
 
 
     /*
+     * preloaded
+     */
+
+    /**
+     * @return string the source type name from the array preloaded from the database
+     */
+    function type_name(): string
+    {
+        global $source_types;
+
+        $type_name = '';
+        if ($this->type_id > 0) {
+            $type_name = $source_types->name($this->type_id);
+        }
+        return $type_name;
+    }
+
+    /**
+     * get the code_id of the source type
+     * @return string the code_id of the source type
+     */
+    function type_code_id(): string
+    {
+        global $source_types;
+        return $source_types->code_id($this->type_id);
+    }
+
+
+    /*
      * cast
      */
 
@@ -350,6 +395,11 @@ class source extends sandbox_typed
         );
     }
 
+
+    /*
+     * sql fields
+     */
+
     function name_field(): string
     {
         return self::FLD_NAME;
@@ -358,21 +408,6 @@ class source extends sandbox_typed
     function all_sandbox_fields(): array
     {
         return self::ALL_SANDBOX_FLD_NAMES;
-    }
-
-
-    /**
-     * @return string the source type name from the array preloaded from the database
-     */
-    function type_name(): string
-    {
-        global $source_types;
-
-        $type_name = '';
-        if ($this->type_id > 0) {
-            $type_name = $source_types->name($this->type_id);
-        }
-        return $type_name;
     }
 
 
@@ -478,7 +513,7 @@ class source extends sandbox_typed
 
 
     /*
-     * save
+     * sandbox
      */
 
     /**
@@ -539,6 +574,11 @@ class source extends sandbox_typed
         return parent::load_sql_user_changes($sc, $class);
     }
 
+
+    /*
+     * save
+     */
+
     /**
      * set the update parameters for the source url
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
@@ -574,6 +614,117 @@ class source extends sandbox_typed
         $result .= $this->save_field_url($db_con, $db_rec, $std_rec);
         log_debug('all fields for ' . $this->dsp_id() . ' has been saved');
         return $result;
+    }
+
+
+    /*
+     * sql write
+     */
+
+    /**
+     * create the sql statement to add a new source to the database
+     * always all fields are included in the query to be able to remove overwrites with a null value
+     *
+     * @param sql $sc with the target db_type set
+     * @param bool $usr_tbl true if the user table row should be added
+     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     */
+    function sql_insert(sql $sc, bool $usr_tbl = false): sql_par
+    {
+        // fields and values that the source has additional to the standard named user sandbox object
+        $empty_src = $this->clone_reset();
+        $fields = $this->db_fields_changed($empty_src, $usr_tbl);
+        $values = $this->db_values_changed($empty_src, $usr_tbl);
+        $all_fields = $this->db_fields_all();
+        return parent::sql_insert_named($sc, $fields, $values, $all_fields, $usr_tbl);
+    }
+
+    /**
+     * create the sql statement to update a source in the database
+     *
+     * @param sql $sc with the target db_type set
+     * @param source|sandbox $db_row the source with the database values before the update
+     * @param bool $usr_tbl true if the user table row should be updated
+     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     */
+    function sql_update(sql $sc, source|sandbox $db_row, bool $usr_tbl = false): sql_par
+    {
+        // get the fields and values that have been changed
+        // and that needs to be updated in the database
+        // the db_* child function call the corresponding parent function
+        $fields = $this->db_fields_changed($db_row, $usr_tbl);
+        $values = $this->db_values_changed($db_row, $usr_tbl);
+        $all_fields = $this->db_fields_all();
+        // unlike the db_* function the sql_update_* parent function is called directly
+        return parent::sql_update_named($sc, $fields, $values, $all_fields, $usr_tbl);
+    }
+
+
+    /*
+     * sql write fields
+     */
+
+    /**
+     * get a list of all database fields that might be changed
+     * excluding the internal fields e.g. the database id
+     * field list must be corresponding to the db_fields_changed fields
+     *
+     * @return array list of all database field names that have been updated
+     */
+    function db_fields_all(): array
+    {
+        return array_merge(
+            parent::db_fields_all_named(),
+            [source::FLD_TYPE,
+                self::FLD_URL,
+                sql::FLD_CODE_ID],
+            parent::db_fields_all_sandbox()
+        );
+    }
+
+    /**
+     * get a list of database fields that have been updated
+     * field list must be corresponding to the db_values_changed fields
+     *
+     * @param source $src the compare value to detect the changed fields
+     * @param bool $usr_tbl true if the user table row should be updated
+     * @return array list of the database field names that have been updated
+     */
+    function db_fields_changed(source $src, bool $usr_tbl = false): array
+    {
+        $result =  parent::db_fields_changed_named($src, $usr_tbl);
+        if ($src->type_id() <> $this->type_id()) {
+            $result[] = source::FLD_TYPE;
+        }
+        if ($src->url <> $this->url) {
+            $result[] = self::FLD_URL;
+        }
+        if ($src->code_id <> $this->code_id) {
+            $result[] = sql::FLD_CODE_ID;
+        }
+        return array_merge($result, $this->db_fields_changed_sandbox($src));
+    }
+
+    /**
+     * get a list of database field values that have been updated
+     *
+     * @param source $src the compare value to detect the changed
+     * @param bool $usr_tbl true if the user table row should be updated
+     * @return array list of the database field values that have been updated
+     */
+    function db_values_changed(source $src, bool $usr_tbl = false): array
+    {
+        $result = parent::db_values_changed_named($src, $usr_tbl);
+        if ($src->type_id() <> $this->type_id()) {
+            $result[] = $this->type_id();
+        }
+        if ($src->url <> $this->url) {
+            $result[] = $this->url;
+        }
+        if ($src->code_id <> $this->code_id) {
+            $result[] = $this->code_id;
+        }
+        return array_merge($result, $this->db_values_changed_sandbox($src));
     }
 
 }

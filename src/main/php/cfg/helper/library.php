@@ -1663,7 +1663,7 @@ class library
      * @param array $fld_lst_all list of all fields of the given object
      * @return string the query name extension to make the query name
      */
-    function query_changed_field_ext(array $fld_lst_chg, array $fld_lst_all): string
+    function sql_field_ext(array $fld_lst_chg, array $fld_lst_all): string
     {
         $result = '';
         foreach ($fld_lst_all as $fld) {

@@ -1648,15 +1648,13 @@ class word extends sandbox_typed
         $result = '';
 
         if ($this->id > 0 and $view_id > 0 and $view_id <> $this->view_id()) {
-            log_debug($view_id . ' for ' . $this->dsp_id() . ' and user ' . $this->user()->id());
+            $this->set_view_id($view_id);
             if ($this->log_upd_view($view_id) > 0) {
                 //$db_con = new mysql;
                 $db_con->usr_id = $this->user()->id();
                 if ($this->can_change()) {
-                    $db_con->set_class(word::class);
-                    if (!$db_con->update_old($this->id, "view_id", $view_id)) {
-                        $result = 'setting of view failed';
-                    }
+                    $usr_msg = $this->update('view of word');
+                    $result = $usr_msg->get_last_message();
                 } else {
                     if (!$this->has_usr_cfg()) {
                         if (!$this->add_usr_cfg()) {
@@ -1664,10 +1662,8 @@ class word extends sandbox_typed
                         }
                     }
                     if ($result == '') {
-                        $db_con->set_class(sql_db::TBL_USER_PREFIX . sql_db::TBL_WORD);
-                        if (!$db_con->update_old($this->id, "view_id", $view_id)) {
-                            $result = 'setting of view for user failed';
-                        }
+                        $usr_msg = $this->update('user view of word');
+                        $result = $usr_msg->get_last_message();
                     }
                 }
             }
@@ -1782,35 +1778,37 @@ class word extends sandbox_typed
      * always all fields are included in the query to be able to remove overwrites with a null value
      *
      * @param sql $sc with the target db_type set
+     * @param bool $usr_tbl true if the user table row should be updated
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_insert(sql $sc, bool $usr_tbl = false): sql_par
     {
         // fields and values that the word has additional to the standard named user sandbox object
         $wrd_empty = $this->clone_reset();
-        $fields = $this->db_fields_changed($wrd_empty);
-        $values = $this->db_values_changed($wrd_empty);;
-        return parent::sql_insert_named($sc, $fields, $values);
+        $fields = $this->db_fields_changed($wrd_empty, $usr_tbl);
+        $values = $this->db_values_changed($wrd_empty, $usr_tbl);
+        $all_fields = $this->db_fields_all();
+        return parent::sql_insert_named($sc, $fields, $values, $all_fields, $usr_tbl);
     }
 
     /**
      * create the sql statement to update a word in the database
      *
      * @param sql $sc with the target db_type set
-     * @param word $db_wrd the word with the database values before the update
+     * @param sandbox $db_wrd the word with the database values before the update
      * @param bool $usr_tbl true if the user table row should be updated
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_update(sql $sc, word $db_wrd, bool $usr_tbl = false): sql_par
+    function sql_update(sql $sc, sandbox $db_wrd, bool $usr_tbl = false): sql_par
     {
         // get the fields and values that have been changed
         // and that needs to be updated in the database
         // the db_* child function call the corresponding parent function
         $fields = $this->db_fields_changed($db_wrd);
-        $values = $this->db_values_changed($db_wrd);;
+        $values = $this->db_values_changed($db_wrd);
         $all_fields = $this->db_fields_all();
         // unlike the db_* function the sql_update_* parent function is called directly
-        return parent::sql_update_named($sc, $fields, $values, $all_fields);
+        return parent::sql_update_named($sc, $fields, $values, $all_fields, $usr_tbl);
     }
 
 
@@ -1841,12 +1839,13 @@ class word extends sandbox_typed
      * get a list of database fields that have been updated
      * field list must be corresponding to the db_values_changed fields
      *
-     * @param word $wrd the compare value to detect the changed fields
+     * @param sandbox $wrd the compare value to detect the changed fields
+     * @param bool $usr_tbl true if the user table row should be updated
      * @return array list of the database field names that have been updated
      */
-    function db_fields_changed(word $wrd): array
+    function db_fields_changed(sandbox $wrd, bool $usr_tbl = false): array
     {
-        $result = parent::db_fields_changed_named($wrd);
+        $result = parent::db_fields_changed_named($wrd, $usr_tbl);
         if ($wrd->type_id() <> $this->type_id()) {
             $result[] = phrase::FLD_TYPE;
         }
@@ -1867,12 +1866,13 @@ class word extends sandbox_typed
     /**
      * get a list of database field values that have been updated
      *
-     * @param word $wrd the compare value to detect the changed fields
+     * @param sandbox $wrd the compare value to detect the changed fields
+     * @param bool $usr_tbl true if the user table row should be updated
      * @return array list of the database field values that have been updated
      */
-    function db_values_changed(word $wrd): array
+    function db_values_changed(sandbox $wrd, bool $usr_tbl = false): array
     {
-        $result = parent::db_values_changed_named($wrd);
+        $result = parent::db_values_changed_named($wrd, $usr_tbl);
         if ($wrd->type_id() <> $this->type_id()) {
             $result[] = $this->type_id();
         }
