@@ -633,6 +633,8 @@ class source extends sandbox_typed
     {
         // fields and values that the source has additional to the standard named user sandbox object
         $empty_src = $this->clone_reset();
+        // for a new source the owner should be set, so remove the user id to force writing the user
+        $empty_src->set_user($this->user()->clone_reset());
         $fields = $this->db_fields_changed($empty_src, $usr_tbl);
         $values = $this->db_values_changed($empty_src, $usr_tbl);
         $all_fields = $this->db_fields_all();

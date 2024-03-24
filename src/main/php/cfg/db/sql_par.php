@@ -52,22 +52,19 @@ class sql_par
     public sql_type $typ; // to handle table that does not have a bigint prime index
 
     /**
-     * TODO replace $ext with $tbl_typ
      * @param string $class the name of the calling class used for the unique query name
      * @param array $sql_types list of sql types e.g. insert or load
      * @param string $ext the query name extension e.g. to separate the queries by the number of parameters
-     * @param sql_type $tbl_typ the table extension e.g. to select the table where the data should be saved
      */
     function __construct(
         string         $class,
         array          $sql_types = [],
-        string         $ext = '',
-        sql_type $tbl_typ = sql_type::MOST
-    )
+        string         $ext = '')
     {
         // convert sql types to single parameter
         $is_std = false;
         $all = false;
+        $tbl_typ = sql_type::MOST;
         foreach ($sql_types as $sql_type) {
             if ($sql_type == sql_type::NORM) {
                 $is_std = true;
@@ -80,15 +77,13 @@ class sql_par
             $ext = '';
             foreach ($sql_types as $sql_type) {
                 $ext .= $sql_type->extension();
+                if ($sql_type == sql_type::PRIME or $sql_type == sql_type::BIG) {
+                    $tbl_typ = $sql_type;
+                }
             }
         }
 
         $lib = new library();
-        if ($ext == '') {
-            if ($tbl_typ != sql_type::MOST) {
-                $ext = $tbl_typ->extension();
-            }
-        }
         $this->sql = '';
         $class = $lib->class_to_name($class);
         $name = $class . $ext;

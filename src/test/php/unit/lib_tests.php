@@ -334,8 +334,31 @@ class lib_tests
         $result = $lib->diff_msg($test_result, $test_target);
         $target = '';
         $t->assert("diff_msg, no diff", $result, $target);
+        // ... empty result
+        $test_result = "";
+        $test_target = "1";
+        $result = $lib->diff_msg($test_result, $test_target);
+        $target = '//-1//';
+        $t->assert("empty result, no diff", $result, $target);
+        // ... null result
+        $test_result = null;
+        $result = $lib->diff_msg($test_result, $test_target);
+        $target = 'The type combination of string and NULL are not expected.';
+        $t->assert("empty result, no diff", $result, $target);
+        // ... empty result array
+        $test_result = [];
+        $test_target = ['1'];
+        $result = $lib->diff_msg($test_result, $test_target);
+        $target = '0//+1//';
+        $t->assert("empty result, no diff", $result, $target);
+        // ... json result to bool
+        $test_result = $lib->json_is_similar([1,2], [1]);
+        $result = $lib->diff_msg($test_result, true);
+        $target = '//-1//';
+        $t->assert("empty result, no diff", $result, $target);
         // ... code text with other beginning
         $test_result = 'codeStartingWithMoreCharsText';
+        $test_target = 'Text';
         $result = $lib->diff_msg($test_result, $test_target);
         $target = '//+codeStartingWithMoreChars//Text';
         $t->assert("diff_msg, add chars before", $result, $target);

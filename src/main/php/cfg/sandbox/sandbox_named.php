@@ -772,9 +772,18 @@ class sandbox_named extends sandbox
 
             // insert the new object and save the object key
             // TODO check that always before a db action is called the db type is set correctly
-            $db_con->set_class($this->obj_name);
-            $db_con->set_usr($this->user()->id);
-            $this->id = $db_con->insert_old(array($this->obj_name . '_name', "user_id"), array($this->name, $this->user()->id));
+            if ($this->sql_write_prepared()) {
+                $sc = $db_con->sql_creator();
+                $qp = $this->sql_insert($sc);
+                $usr_msg = $db_con->insert($qp, 'add ' . $this->dsp_id());
+                if ($usr_msg->is_ok()) {
+                    $this->id = $usr_msg->get_row_id();
+                }
+            } else {
+                $db_con->set_class($this->obj_name);
+                $db_con->set_usr($this->user()->id);
+                $this->id = $db_con->insert_old(array($this->obj_name . '_name', "user_id"), array($this->name, $this->user()->id));
+            }
 
             // save the object fields if saving the key was successful
             if ($this->id > 0) {
@@ -786,14 +795,16 @@ class sandbox_named extends sandbox
                 } else {
                     //$result->add_message($this->set_owner($new_owner_id));
 
-                    // create an empty db_rec element to force saving of all set fields
-                    $db_rec = clone $this;
-                    $db_rec->reset();
-                    $db_rec->name = $this->name();
-                    $db_rec->set_user($this->user());
-                    $std_rec = clone $db_rec;
-                    // save the object fields
-                    $result->add_message($this->save_fields($db_con, $db_rec, $std_rec));
+                    if (!$this->sql_write_prepared()) {
+                        // create an empty db_rec element to force saving of all set fields
+                        $db_rec = clone $this;
+                        $db_rec->reset();
+                        $db_rec->name = $this->name();
+                        $db_rec->set_user($this->user());
+                        $std_rec = clone $db_rec;
+                        // save the object fields
+                        $result->add_message($this->save_fields($db_con, $db_rec, $std_rec));
+                    }
                 }
 
             } else {

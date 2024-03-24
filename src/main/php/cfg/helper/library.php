@@ -508,7 +508,7 @@ class library
         } elseif ($target == null and $result == null) {
             $msg = 'Both are null';
         } else {
-            $msg = 'The type combination of ' . gettype($target) . ' and ' . gettype($target) . ' are not expected.';
+            $msg = 'The type combination of ' . gettype($target) . ' and ' . gettype($result) . ' are not expected.';
         }
         return $msg;
     }
@@ -1148,10 +1148,33 @@ class library
         $to_pos = 0;
         $to_last_match_pos = 0;
 
+        // if to is empty from is always a diff
+        if (count($to_keys) == 0) {
+            if ($from_pos < count($from)) {
+                $diff_part[] = $from_sep[$from_keys[$from_pos]];
+                $diff_type[] = self::STR_DIFF_DEL;
+                $from_pos = $from;
+            }
+        }
+
         // check if the from parts are also part of to
         while ($from_pos < count($from)) {
             if (!array_key_exists($to_pos, $to_keys)) {
                 $to_pos = $to_last_match_pos;
+            }
+            if (!array_key_exists($from_pos, $from_keys)) {
+                log_err($from_pos . ' does not exist in ' . $this->dsp_array($from_keys));
+            } else {
+                if (!array_key_exists($from_keys[$from_pos], $from)) {
+                    log_err($from_keys[$from_pos] . ' does not exist in ' . $this->dsp_array($from));
+                }
+            }
+            if (!array_key_exists($to_pos, $to_keys)) {
+                log_err($to_pos . ' does not exist in ' . $this->dsp_array($to_keys));
+            } else {
+                if (!array_key_exists($to_keys[$to_pos], $to)) {
+                    log_err($to_keys[$to_pos] . ' does not exist in ' . $this->dsp_array($to));
+                }
             }
             if ($from[$from_keys[$from_pos]] == $to[$to_keys[$to_pos]]) {
                 $diff_part[] = $to_sep[$to_keys[$to_pos]];

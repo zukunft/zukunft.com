@@ -1226,6 +1226,18 @@ class user extends db_object_seq_id
         return $result;
     }
 
+    /**
+     * create a clone and empty all fields
+     *
+     * @return $this a clone with the name changed
+     */
+    function clone_reset(): user
+    {
+        $obj_cpy = clone $this;
+        $obj_cpy->reset();
+        return $obj_cpy;
+    }
+
 
     /*
      * debug

@@ -1305,8 +1305,13 @@ function log_err(string $msg_text,
     $lib = new library();
     if ($function_name == '' or $function_name == null) {
         $function_name = (new Exception)->getTraceAsString();
-        $function_name = $lib->str_right_of($function_name, '#1 /home/timon/git/zukunft.com/');
-        $function_name = $lib->str_left_of($function_name, ': log_');
+        $function_name = $lib->str_right_of($function_name, '#1 ');
+        $function_name = $lib->str_left_of($function_name, '): ');
+        $function_name = $lib->str_right_of($function_name, '/main/php/');
+        $function_name = $lib->str_left_of($function_name, '.php(');
+    }
+    if ($function_name == '' or $function_name == null) {
+        $function_name = 'no function name detected';
     }
     if ($function_trace == '') {
         $function_trace = (new Exception)->getTraceAsString();

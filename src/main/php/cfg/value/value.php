@@ -490,7 +490,7 @@ class value extends sandbox_value
     {
         $tbl_typ = $this->grp->table_type();
         $ext = $this->grp->table_extension();
-        $qp = new sql_par($class, [sql_type::NORM], $ext . sql_type::NORM->extension(), $tbl_typ);
+        $qp = new sql_par($class, [sql_type::NORM], $ext . sql_type::NORM->extension());
         $qp->name .= sql_db::FLD_ID;
         $sc->set_class($class, false, $tbl_typ->extension());
         $sc->set_name($qp->name);

@@ -1786,6 +1786,8 @@ class word extends sandbox_typed
     {
         // fields and values that the word has additional to the standard named user sandbox object
         $wrd_empty = $this->clone_reset();
+        // for a new word the owner should be set, so remove the user id to force writing the user
+        $wrd_empty->set_user($this->user()->clone_reset());
         $fields = $this->db_fields_changed($wrd_empty, $usr_tbl);
         $values = $this->db_values_changed($wrd_empty, $usr_tbl);
         $all_fields = $this->db_fields_all();
@@ -1840,11 +1842,11 @@ class word extends sandbox_typed
      * get a list of database fields that have been updated
      * field list must be corresponding to the db_values_changed fields
      *
-     * @param sandbox $wrd the compare value to detect the changed fields
+     * @param sandbox|word $wrd the compare value to detect the changed fields
      * @param bool $usr_tbl true if the user table row should be updated
      * @return array list of the database field names that have been updated
      */
-    function db_fields_changed(sandbox $wrd, bool $usr_tbl = false): array
+    function db_fields_changed(sandbox|word $wrd, bool $usr_tbl = false): array
     {
         $result = parent::db_fields_changed_named($wrd, $usr_tbl);
         if ($wrd->type_id() <> $this->type_id()) {
@@ -1867,11 +1869,11 @@ class word extends sandbox_typed
     /**
      * get a list of database field values that have been updated
      *
-     * @param sandbox $wrd the compare value to detect the changed fields
+     * @param sandbox|word $wrd the compare value to detect the changed fields
      * @param bool $usr_tbl true if the user table row should be updated
      * @return array list of the database field values that have been updated
      */
-    function db_values_changed(sandbox $wrd, bool $usr_tbl = false): array
+    function db_values_changed(sandbox|word $wrd, bool $usr_tbl = false): array
     {
         $result = parent::db_values_changed_named($wrd, $usr_tbl);
         if ($wrd->type_id() <> $this->type_id()) {
