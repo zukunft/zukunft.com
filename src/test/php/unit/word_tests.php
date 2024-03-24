@@ -76,7 +76,7 @@ class word_tests
 
         $t->subheader('word sql read default and user changes');
         $wrd = new word($usr);
-        $wrd->set_id(2);
+        $wrd->set_id(word_api::TI_CONST);
         $t->assert_sql_standard($db_con, $wrd);
         $t->assert_sql_not_changed($db_con, $wrd);
         $t->assert_sql_user_changes($db_con, $wrd);
@@ -87,14 +87,19 @@ class word_tests
         $wrd = $t->word();
         $t->assert_sql_insert($db_con, $wrd);
         $t->assert_sql_insert($db_con, $wrd, true);
-        // TODO activate db write
+        // TODO activate db write with log
         // $t->assert_sql_insert($db_con, $wrd, false, true);
+        // $t->assert_sql_insert($db_con, $wrd, true, true);
         $wrd_renamed = $wrd->cloned(word_api::TN_RENAMED);
         $t->assert_sql_update($db_con, $wrd_renamed, $wrd);
         $t->assert_sql_update($db_con, $wrd_renamed, $wrd, true);
-        // TODO activate db write
-        //$t->assert_sql_delete($db_con, $wrd);
-        //$t->assert_sql_delete($db_con, $wrd, true);
+        $t->assert_sql_delete($db_con, $wrd);
+        $t->assert_sql_delete($db_con, $wrd, true);
+        // TODO activate db write with log
+        //$t->assert_sql_delete($db_con, $wrd, false, true);
+        //$t->assert_sql_delete($db_con, $wrd, true, true);
+        $t->assert_sql_delete($db_con, $wrd, false, false, true);
+        $t->assert_sql_delete($db_con, $wrd, true, false, true);
 
 
         $t->subheader('word api unit tests');

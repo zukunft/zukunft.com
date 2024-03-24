@@ -565,7 +565,7 @@ class sandbox_named extends sandbox
     }
 
     /**
-     * create the sql statement to add a new named sandbox object e.g. word to the database
+     * create the sql statement to change or exclude a named sandbox object e.g. word to the database
      *
      * @param sql $sc with the target db_type set
      * @param array $fld_lst list of field names additional to the standard id and name fields
@@ -591,6 +591,39 @@ class sandbox_named extends sandbox
             $qp->sql = $sc->sql_update($this->id_field(), $this->id(), $fld_lst, $val_lst);
         }
         $qp->par = $val_lst;
+
+        return $qp;
+    }
+
+    /**
+     * create the sql statement to delete or exclude a named sandbox object e.g. word to the database
+     *
+     * @param sql $sc with the target db_type set
+     * @param bool $usr_tbl true if the user table row should be updated
+     * @param bool $excluded true if only the excluded user rows should be deleted
+     * @return sql_par the SQL update statement, the name of the SQL statement and the parameter list
+     */
+    function sql_delete(
+        sql  $sc,
+        bool $usr_tbl = false,
+        bool $excluded = false): sql_par
+    {
+        $qp = $this->sql_common($sc, $usr_tbl);
+        $qp->name .= sql::file_sep . sql::file_delete;
+        $par_lst = [$this->id()];
+        if ($excluded) {
+            $qp->name .= '_excluded';
+        }
+        $sc->set_name($qp->name);
+        // delete the user overwrite
+        // but if the excluded user overwrites should be deleted the overwrites for all users should be deleted
+        if ($usr_tbl and !$excluded) {
+            $qp->sql = $sc->sql_delete([$this->id_field(), user::FLD_ID], [$this->id(), $this->user_id()], $excluded);
+            $par_lst[] = $this->user_id();
+        } else {
+            $qp->sql = $sc->sql_delete($this->id_field(), $this->id(), $excluded);
+        }
+        $qp->par = $par_lst;
 
         return $qp;
     }
@@ -720,32 +753,6 @@ class sandbox_named extends sandbox
             }
         }
         return $result;
-    }
-
-    /**
-     * @return bool true if for this database and class
-     *              a prepared script including the write to the log
-     *              for db write should be used
-     */
-    function sql_use_script_with_log(): bool
-    {
-        if (in_array($this::class, sql_db::DB_WRITE_LOG_SCRIPT_CLASSES)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * @return bool true if for this database and class a prepared script for db write should be used
-     */
-    function sql_write_prepared(): bool
-    {
-        if (in_array($this::class, sql_db::DB_WRITE_PREPARED)) {
-            return true;
-        } else {
-            return false;
-        }
     }
 
     /**

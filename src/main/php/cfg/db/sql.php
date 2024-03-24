@@ -1120,15 +1120,15 @@ class sql
     }
 
     /**
-     * create a sql statement to delete a database row
+     * create a sql statement to delete or exclude a database row
      * @param string|array $id_field the id field or id fields of the table from where the row should be deleted
      * @param string|array $id
      * @param bool $excluded true if only the excluded user rows should be deleted
      * @return string
      */
     function sql_delete(
-        string|array $id_field,
-        string|array $id,
+        int|string|array $id_field,
+        int|string|array $id,
         bool         $excluded = false): string
     {
         $lib = new library();

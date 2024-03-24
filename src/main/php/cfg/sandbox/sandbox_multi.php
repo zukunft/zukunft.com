@@ -1563,6 +1563,8 @@ class sandbox_multi extends db_object_multi_user
 
     /**
      * create the sql statement to delete a value in the database
+     * TODO check if user specific overwrites can be deleted
+     *
      * @param sql $sc with the target db_type set
      * @param bool $usr_tbl true if the user table row should be updated
      * @param bool $excluded true if only the excluded user rows should be deleted
@@ -2327,6 +2329,7 @@ class sandbox_multi extends db_object_multi_user
                 if ($this::class == value::class) {
                     $qp = $this->sql_delete($db_con->sql_creator());
                     $msg = $db_con->delete($qp, $this::class . ' user exclusions');
+                    $result->add($msg);
                 } else {
                     $db_con->set_class($this->obj_name);
                     $db_con->set_usr($this->user()->id());

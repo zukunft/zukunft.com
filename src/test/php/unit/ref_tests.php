@@ -148,8 +148,13 @@ class ref_tests
         //$t->assert_sql_update($db_con, $src);
         //$t->assert_sql_update($db_con, $src, true);
         // TODO activate db write
-        //$t->assert_sql_delete($db_con, $src);
-        //$t->assert_sql_delete($db_con, $src, true);
+        $t->assert_sql_delete($db_con, $src);
+        $t->assert_sql_delete($db_con, $src, true);
+        // TODO activate db write with log
+        //$t->assert_sql_delete($db_con, $src, false, true);
+        //$t->assert_sql_delete($db_con, $src, true, true);
+        $t->assert_sql_delete($db_con, $src, false, false, true);
+        $t->assert_sql_delete($db_con, $src, true, false, true);
 
         $t->subheader('Im- and Export tests');
         $t->assert_json_file(new source($usr), $json_file);

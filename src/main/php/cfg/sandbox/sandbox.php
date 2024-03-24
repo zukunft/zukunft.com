@@ -116,13 +116,10 @@ class sandbox extends db_object_seq_id_user
         self::FLD_SHARE // the standard value is per definition share to public
     );
     // dummy arrays that should be overwritten by the child object
-    const FLD_NAMES = array(
-    );
-    const FLD_NAMES_USR = array(
-    );
+    const FLD_NAMES = array();
+    const FLD_NAMES_USR = array();
     // database fields that should only be taken from the user sandbox table
-    const FLD_NAMES_USR_ONLY = array(
-    );
+    const FLD_NAMES_USR_ONLY = array();
     // combine FLD_NAMES_NUM_USR_SBX and FLD_NAMES_NUM_USR_ONLY_SBX just for shorter code
     const FLD_NAMES_NUM_USR = array(
         self::FLD_EXCLUDED,
@@ -1065,7 +1062,7 @@ class sandbox extends db_object_seq_id_user
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
         $sc->set_join_fields(
-            array_merge(array(user::FLD_ID, user::FLD_NAME),user::FLD_NAMES_LIST),
+            array_merge(array(user::FLD_ID, user::FLD_NAME), user::FLD_NAMES_LIST),
             sql_db::TBL_USER,
             user::FLD_ID,
             user::FLD_ID);
@@ -1184,9 +1181,15 @@ class sandbox extends db_object_seq_id_user
 
         $db_con->set_class(sql_db::TBL_USER_PREFIX . $class_name);
         try {
-            $msg = $db_con->delete_old(
-                array($this->id_field(), user::FLD_ID),
-                array($this->id, $this->user()->id()));
+            if ($this->sql_write_prepared()) {
+                $qp = $this->sql_delete($db_con->sql_creator(), true);
+                $usr_msg = $db_con->delete($qp, $this::class . ' user exclusions');
+                $msg = $usr_msg->get_message();
+            } else {
+                $msg = $db_con->delete_old(
+                    array($this->id_field(), user::FLD_ID),
+                    array($this->id, $this->user()->id()));
+            }
             if ($msg == '') {
                 $this->usr_cfg_id = null;
                 $result = true;
@@ -2318,19 +2321,33 @@ class sandbox extends db_object_seq_id_user
 
             // delete first all user configuration that have also been excluded
             if ($result->is_ok()) {
-                $db_con->set_class(sql_db::TBL_USER_PREFIX . $this->obj_name);
-                $db_con->set_usr($this->user()->id());
-                $msg = $db_con->delete_old(
-                    array($this->obj_name . sql_db::FLD_EXT_ID, 'excluded'),
-                    array($this->id, '1'));
-                $result->add_message($msg);
+                if ($this->sql_write_prepared()) {
+                    $sc = $db_con->sql_creator();
+                    $qp = $this->sql_delete($sc, true, true);
+                    $msg = $db_con->delete($qp, $this::class . ' user exclusions');
+                    $result->add($msg);
+                } else {
+                    $db_con->set_class(sql_db::TBL_USER_PREFIX . $this->obj_name);
+                    $db_con->set_usr($this->user()->id());
+                    $msg = $db_con->delete_old(
+                        array($this->obj_name . sql_db::FLD_EXT_ID, 'excluded'),
+                        array($this->id, '1'));
+                    $result->add_message($msg);
+                }
             }
             if ($result->is_ok()) {
                 // finally, delete the object
-                $db_con->set_class($this->obj_name);
-                $db_con->set_usr($this->user()->id());
-                $msg = $db_con->delete_old($this->id_field(), $this->id);
-                $result->add_message($msg);
+                if ($this->sql_write_prepared()) {
+                    $sc = $db_con->sql_creator();
+                    $qp = $this->sql_delete($sc);
+                    $msg = $db_con->delete($qp, $this::class . ' user exclusions');
+                    $result->add($msg);
+                } else {
+                    $db_con->set_class($this->obj_name);
+                    $db_con->set_usr($this->user()->id());
+                    $msg = $db_con->delete_old($this->id_field(), $this->id);
+                    $result->add_message($msg);
+                }
                 log_debug('of ' . $this->dsp_id() . ' done');
             } else {
                 log_err('Delete failed for ' . $this->obj_name, $this->obj_name . '->del_exe', 'Delete failed, because removing the user settings for ' . $this->obj_name . ' ' . $this->dsp_id() . ' returns ' . $msg, (new Exception)->getTraceAsString(), $this->user());
@@ -2616,6 +2633,46 @@ class sandbox extends db_object_seq_id_user
     function sql_update(sql $sc, sandbox|source $db_row, bool $usr_tbl = false): sql_par
     {
         return new sql_par('');
+    }
+
+    /**
+     * create the sql statement to delete a word in the database (not exclude!)
+     * dummy function to be overwritten by the child object
+     *
+     * @param sql $sc with the target db_type set
+     * @param bool $usr_tbl true if the user table row should be updated
+     * @param bool $excluded true if only the excluded user rows should be deleted
+     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     */
+    function sql_delete(sql $sc, bool $usr_tbl = false, bool $excluded = false): sql_par
+    {
+        return new sql_par('');
+    }
+
+    /**
+     * @return bool true if for this database and class
+     *              a prepared script including the write to the log
+     *              for db write should be used
+     */
+    function sql_use_script_with_log(): bool
+    {
+        if (in_array($this::class, sql_db::DB_WRITE_LOG_SCRIPT_CLASSES)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @return bool true if for this database and class a prepared script for db write should be used
+     */
+    function sql_write_prepared(): bool
+    {
+        if (in_array($this::class, sql_db::DB_WRITE_PREPARED)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }
