@@ -64,7 +64,7 @@ use api\word\word as word_api;
 use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
-use cfg\db\sql_table_type;
+use cfg\db\sql_type;
 use html\html_base;
 use html\phrase\term as term_dsp;
 use html\word\word as word_dsp;
@@ -116,10 +116,10 @@ class term extends combine_named
     // each db view can have several sql table types and as second entry a where conditions
     // or list of or where conditions
     const TBL_LIST = [
-        [sql_table_type::PRIME, [self::TBL_WORD_WHERE, self::TBL_PRIME_WHERE], self::TBL_PRIME_COM],
-        [sql_table_type::MOST, [self::TBL_WORD_WHERE], self::TBL_COM],
-        [sql_table_type::PRIME, [self::TBL_WORD_WHERE, self::TBL_PRIME_WHERE], self::TBL_PRIME_COM, sql_table_type::USER],
-        [sql_table_type::MOST, [self::TBL_WORD_WHERE], self::TBL_COM, sql_table_type::USER],
+        [sql_type::PRIME, [self::TBL_WORD_WHERE, self::TBL_PRIME_WHERE], self::TBL_PRIME_COM],
+        [sql_type::MOST, [self::TBL_WORD_WHERE], self::TBL_COM],
+        [sql_type::PRIME, [self::TBL_WORD_WHERE, self::TBL_PRIME_WHERE], self::TBL_PRIME_COM, sql_type::USER],
+        [sql_type::MOST, [self::TBL_WORD_WHERE], self::TBL_COM, sql_type::USER],
     ];
     // list of original tables that should be connoted with union
     // with fields used in the view

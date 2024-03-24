@@ -52,7 +52,7 @@
 namespace test;
 
 include_once MODEL_USER_PATH . 'user.php';
-include_once DB_PATH . 'sql_table_type.php';
+include_once DB_PATH . 'sql_type.php';
 
 use api\word\word as word_api;
 use cfg\db\sql;
@@ -1073,16 +1073,17 @@ class test_base
      */
     function assert_sql_standard(sql_db $db_con, sandbox|sandbox_value $usr_obj): bool
     {
+        $sc = $db_con->sql_creator();
         // check the Postgres query syntax
-        $db_con->db_type = sql_db::POSTGRES;
-        $qp = $usr_obj->load_standard_sql($db_con->sql_creator(), get_class($usr_obj));
-        $result = $this->assert_qp($qp, $db_con->db_type);
+        $sc->db_type = sql_db::POSTGRES;
+        $qp = $usr_obj->load_standard_sql($sc, get_class($usr_obj));
+        $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $db_con->db_type = sql_db::MYSQL;
-            $qp = $usr_obj->load_standard_sql($db_con->sql_creator(), get_class($usr_obj));
-            $result = $this->assert_qp($qp, $db_con->db_type);
+            $sc->db_type = sql_db::MYSQL;
+            $qp = $usr_obj->load_standard_sql($sc, get_class($usr_obj));
+            $result = $this->assert_qp($qp, $sc->db_type);
         }
         return $result;
     }

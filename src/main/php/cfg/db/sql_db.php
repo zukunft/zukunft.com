@@ -70,7 +70,7 @@ use cfg\log\change_big_value;
 use cfg\log\change_field;
 use cfg\log\change_link;
 use cfg\log\change_prime_value;
-use cfg\log\change_standard_value;
+use cfg\log\change_norm_value;
 use cfg\log\change_table;
 use cfg\log\change_table_field;
 use cfg\log\system_log;
@@ -253,7 +253,7 @@ class sql_db
         change_field::class,
         change::class,
         change_prime_value::class,
-        change_standard_value::class,
+        change_norm_value::class,
         change_big_value::class,
         change_link::class,
         pod_type::class,
@@ -3665,7 +3665,7 @@ class sql_db
         ?int           $owner_id = 0,
         string|array   $id_field = '',
         string         $ext = '',
-        sql_table_type $tbl_typ = sql_table_type::MOST
+        sql_type $tbl_typ = sql_type::MOST
     ): sql_par
     {
         $qp = new sql_par($this->class);
@@ -3683,7 +3683,7 @@ class sql_db
         } else {
             // TODO review
             $sql_mid_where = '';
-            if ($tbl_typ == sql_table_type::PRIME) {
+            if ($tbl_typ == sql_type::PRIME) {
                 $grp_id = new group_id();
                 $id_lst = $grp_id->get_array($id, true);
                 if (is_array($this->id_field)) {
@@ -3710,7 +3710,7 @@ class sql_db
                 } else {
                     log_err('the id fields are expected to be an array');
                 }
-            } elseif ($tbl_typ == sql_table_type::BIG) {
+            } elseif ($tbl_typ == sql_type::BIG) {
                 $grp_id = new group_id();
                 $id_lst = $grp_id->get_array($id, true);
                 foreach ($id_lst as $id_item) {

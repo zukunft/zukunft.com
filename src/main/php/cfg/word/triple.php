@@ -46,6 +46,7 @@ use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
+use cfg\db\sql_type;
 use cfg\group\group_list;
 use cfg\log\change;
 use cfg\log\change_action;
@@ -666,7 +667,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
     function load_standard_sql(sql $sc, string $class = self::class): sql_par
     {
         $sc->set_class($class);
-        $qp = new sql_par($class, true);
+        $qp = new sql_par($class, [sql_type::NORM]);
         $qp->name .= $this->load_sql_name_ext();
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());

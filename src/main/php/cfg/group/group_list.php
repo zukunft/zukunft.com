@@ -175,10 +175,10 @@ class group_list extends sandbox_list
         $is_prime = $this->is_prime($tbl_types);
         $is_main = $this->is_main($tbl_types);
 
-        $tbl_ext = $this->table_extension($tbl_types);
-        $qp = new sql_par(group_list::class, false, false, $tbl_ext);
+        $qp = new sql_par(group_list::class, $tbl_types);
         $qp->name .= $query_name;
 
+        $tbl_ext = $this->table_extension($tbl_types);
         $sc->set_class($class, false, $tbl_ext);
         // TODO add pattern filter for the prime group id
         $grp = new group($this->user());

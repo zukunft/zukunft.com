@@ -518,7 +518,7 @@ COMMENT ON COLUMN change_prime_values.change_action_id IS 'the curl action';
 -- table structure to log all changes done by any user on values with a standard group id
 --
 
-CREATE TABLE IF NOT EXISTS change_standard_values
+CREATE TABLE IF NOT EXISTS change_norm_values
 (
     change_id        BIGSERIAL PRIMARY KEY,
     change_time      timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -530,11 +530,11 @@ CREATE TABLE IF NOT EXISTS change_standard_values
     new_value        double precision DEFAULT NULL
 );
 
-COMMENT ON TABLE change_standard_values IS 'to log all changes done by any user on values with a standard group id';
-COMMENT ON COLUMN change_standard_values.change_id IS 'the prime key to identify the change change_standard_value';
-COMMENT ON COLUMN change_standard_values.change_time IS 'time when the user has confirmed the change';
-COMMENT ON COLUMN change_standard_values.user_id IS 'reference to the user who has done the change';
-COMMENT ON COLUMN change_standard_values.change_action_id IS 'the curl action';
+COMMENT ON TABLE change_norm_values IS 'to log all changes done by any user on values with a standard group id';
+COMMENT ON COLUMN change_norm_values.change_id IS 'the prime key to identify the change change_norm_value';
+COMMENT ON COLUMN change_norm_values.change_time IS 'time when the user has confirmed the change';
+COMMENT ON COLUMN change_norm_values.user_id IS 'reference to the user who has done the change';
+COMMENT ON COLUMN change_norm_values.change_action_id IS 'the curl action';
 
 -- --------------------------------------------------------
 
@@ -5005,12 +5005,12 @@ CREATE INDEX change_prime_values_user_idx ON change_prime_values (user_id);
 -- --------------------------------------------------------
 
 --
--- indexes for table change_standard_values
+-- indexes for table change_norm_values
 --
 
-CREATE INDEX change_standard_values_change_idx ON change_standard_values (change_id);
-CREATE INDEX change_standard_values_change_time_idx ON change_standard_values (change_time);
-CREATE INDEX change_standard_values_user_idx ON change_standard_values (user_id);
+CREATE INDEX change_norm_values_change_idx ON change_norm_values (change_id);
+CREATE INDEX change_norm_values_change_time_idx ON change_norm_values (change_time);
+CREATE INDEX change_norm_values_user_idx ON change_norm_values (user_id);
 
 -- --------------------------------------------------------
 
@@ -6401,13 +6401,13 @@ ALTER TABLE changes
 -- --------------------------------------------------------
 
 --
--- constraints for table change_standard_values
+-- constraints for table change_norm_values
 --
 
-ALTER TABLE change_standard_values
-    ADD CONSTRAINT change_standard_values_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT change_standard_values_change_action_fk FOREIGN KEY (change_action_id) REFERENCES change_actions (change_action_id),
-    ADD CONSTRAINT change_standard_values_change_field_fk FOREIGN KEY (change_field_id) REFERENCES change_fields (change_field_id);
+ALTER TABLE change_norm_values
+    ADD CONSTRAINT change_norm_values_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT change_norm_values_change_action_fk FOREIGN KEY (change_action_id) REFERENCES change_actions (change_action_id),
+    ADD CONSTRAINT change_norm_values_change_field_fk FOREIGN KEY (change_field_id) REFERENCES change_fields (change_field_id);
 
 -- --------------------------------------------------------
 

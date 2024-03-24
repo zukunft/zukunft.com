@@ -473,7 +473,7 @@ class sql
             $ext .= $sql_type->extension();
         }
         $this->set_class($class, false, $ext);
-        return new sql_par($class, false, false, $ext);
+        return new sql_par($class, $sql_types);
     }
 
     /**
@@ -3641,7 +3641,7 @@ class sql
      */
     function is_user(array $tbl_types): bool
     {
-        if (in_array(sql_table_type::USER, $tbl_types)) {
+        if (in_array(sql_type::USER, $tbl_types)) {
             return true;
         } else {
             return false;

@@ -32,7 +32,7 @@
 namespace cfg\result;
 
 include_once DB_PATH . 'sql_par_type.php';
-include_once DB_PATH . 'sql_table_type.php';
+include_once DB_PATH . 'sql_type.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_value_list.php';
 include_once API_RESULT_PATH . 'result_list.php';
 
@@ -41,7 +41,7 @@ use cfg\job;
 use cfg\job_list;
 use cfg\db\sql;
 use cfg\db\sql_db;
-use cfg\db\sql_table_type;
+use cfg\db\sql_type;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\formula;
@@ -337,12 +337,12 @@ class result_list extends sandbox_value_list
      *
      * @param sql $sc the sql creator instance with the target db_type already set
      * @param string $query_name the name extension to make the query name unique
-     * @param sql_table_type $tbl_typ the table extension to force the sub table selection
+     * @param sql_type $tbl_typ the table extension to force the sub table selection
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    private function load_sql(sql $sc, string $query_name, sql_table_type $tbl_typ = sql_table_type::MOST): sql_par
+    private function load_sql(sql $sc, string $query_name, sql_type $tbl_typ = sql_type::MOST): sql_par
     {
-        $qp = new sql_par(self::class, false, false, $tbl_typ->extension());
+        $qp = new sql_par(self::class, [$tbl_typ]);
         $qp->name .= $query_name;
 
         $sc->set_class(result::class, false, $tbl_typ->extension());

@@ -38,7 +38,7 @@ include_once MODEL_SYSTEM_PATH . 'sys_log_function_list.php';
 include_once MODEL_LOG_PATH . 'change.php';
 include_once MODEL_LOG_PATH . 'change_value.php';
 include_once MODEL_LOG_PATH . 'change_prime_value.php';
-include_once MODEL_LOG_PATH . 'change_standard_value.php';
+include_once MODEL_LOG_PATH . 'change_norm_value.php';
 include_once MODEL_LOG_PATH . 'change_big_value.php';
 include_once MODEL_LOG_PATH . 'change_action.php';
 include_once MODEL_LOG_PATH . 'change_action_list.php';

@@ -42,7 +42,7 @@ use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par_type;
-use cfg\db\sql_table_type;
+use cfg\db\sql_type;
 use cfg\db\sql_par;
 use cfg\group\group;
 use cfg\group\group_id;
@@ -474,7 +474,7 @@ class sandbox_value extends sandbox_multi
 
         if ($type_name != $this::TYPE_TIME_SERIES) {
             // standard prime: for values or results without user specific changes and for up to four prime phrases
-            $sc->set_class($this::class, false, $ext_type . self::TBL_EXT_STD . sql_table_type::PRIME->extension());
+            $sc->set_class($this::class, false, $ext_type . self::TBL_EXT_STD . sql_type::PRIME->extension());
             $fields = array_merge($this::FLD_KEY_PRIME, $fld_par, $this::FLD_ALL_SOURCE);
             $tbl_comment = $this::TBL_COMMENT_STD . $type_class_name . $this::TBL_COMMENT_STD_PRIME_CONT;
             $sql .= $sc->table_create($fields, $type_class_name, $tbl_comment, $this::class);
@@ -483,7 +483,7 @@ class sandbox_value extends sandbox_multi
 
             // standard main: for results without user specific changes and for up to e prime phrases
             if ($this::class == result::class) {
-                $sc->set_class($this::class, false, $ext_type . self::TBL_EXT_STD . sql_table_type::MAIN->extension());
+                $sc->set_class($this::class, false, $ext_type . self::TBL_EXT_STD . sql_type::MAIN->extension());
                 $fields = array_merge(result::FLD_KEY_MAIN_STD, $fld_par, $this::FLD_ALL_SOURCE);
                 $tbl_comment = $this::TBL_COMMENT_STD . $type_class_name . $this::TBL_COMMENT_STD_MAIN_CONT;
                 $sql .= $sc->table_create($fields, $type_class_name, $tbl_comment, $this::class);
@@ -550,7 +550,7 @@ class sandbox_value extends sandbox_multi
         // most: for values or results based on up to four prime phrases
         $sql .= $sc->sql_separator();
         $fields = array_merge(self::FLD_KEY_PRIME, $this::FLD_ALL_SOURCE_GROUP_PRIME, $std_fields);
-        $sc->set_class($this::class, false, $ext_type . sql_table_type::PRIME->extension());
+        $sc->set_class($this::class, false, $ext_type . sql_type::PRIME->extension());
         $tbl_comment = $this::TBL_COMMENT_PRIME . $type_class_name . $this::TBL_COMMENT_PRIME_CONT;
         if ($comment_overwrite != '') {
             $tbl_comment = $comment_overwrite;
@@ -560,7 +560,7 @@ class sandbox_value extends sandbox_multi
         $sql_foreign .= $sc->foreign_key_create($fields);
         $fields = array_merge(self::FLD_KEY_PRIME_USER, $this::FLD_ALL_SOURCE_GROUP_PRIME, $std_usr_fields);
         // most user: for user changes in values based on up to four prime phrases
-        $sc->set_class($this::class, true, $ext_type . sql_table_type::PRIME->extension());
+        $sc->set_class($this::class, true, $ext_type . sql_type::PRIME->extension());
         $tbl_comment = $this::TBL_COMMENT_PRIME_USER . $type_class_name . $this::TBL_COMMENT_PRIME_USER_CONT;
         if ($comment_overwrite != '') {
             $tbl_comment = $comment_overwrite;
@@ -573,7 +573,7 @@ class sandbox_value extends sandbox_multi
         if ($this::class == result::class and $type_name != $this::TYPE_TIME_SERIES) {
             $sql .= $sc->sql_separator();
             $fields = array_merge(result::FLD_KEY_MAIN, $this::FLD_ALL_SOURCE_GROUP_PRIME, $std_fields);
-            $sc->set_class($this::class, false, $ext_type . sql_table_type::MAIN->extension());
+            $sc->set_class($this::class, false, $ext_type . sql_type::MAIN->extension());
             $tbl_comment = $this::TBL_COMMENT_MAIN . $type_class_name . $this::TBL_COMMENT_MAIN_CONT;
             if ($comment_overwrite != '') {
                 $tbl_comment = $comment_overwrite;
@@ -583,7 +583,7 @@ class sandbox_value extends sandbox_multi
             $sql_foreign .= $sc->foreign_key_create($fields);
             $fields = array_merge(result::FLD_KEY_MAIN_USER, $this::FLD_ALL_SOURCE_GROUP_PRIME, $std_usr_fields);
             // most user: for user changes in values based on up to four prime phrases
-            $sc->set_class($this::class, true, $ext_type . sql_table_type::MAIN->extension());
+            $sc->set_class($this::class, true, $ext_type . sql_type::MAIN->extension());
             $tbl_comment = $this::TBL_COMMENT_MAIN_USER . $type_class_name . $this::TBL_COMMENT_MAIN_USER_CONT;
             if ($comment_overwrite != '') {
                 $tbl_comment = $comment_overwrite;
@@ -596,7 +596,7 @@ class sandbox_value extends sandbox_multi
         // big: for values based on more than 16 phrases
         $sql .= $sc->sql_separator();
         $fields = array_merge(self::FLD_KEY_BIG, $this::FLD_ALL_SOURCE_GROUP_BIG, $std_fields);
-        $sc->set_class($this::class, false, $ext_type . sql_table_type::BIG->extension());
+        $sc->set_class($this::class, false, $ext_type . sql_type::BIG->extension());
         $tbl_comment = $this::TBL_COMMENT . $type_class_name . $this::TBL_COMMENT_BIG_CONT;
         if ($comment_overwrite != '') {
             $tbl_comment = $comment_overwrite;
@@ -606,7 +606,7 @@ class sandbox_value extends sandbox_multi
         $sql_foreign .= $sc->foreign_key_create($fields);
         $fields = array_merge(self::FLD_KEY_BIG_USER, $this::FLD_ALL_SOURCE_GROUP_BIG, $std_usr_fields);
         // most user: for user changes in values based on more than 16 phrases
-        $sc->set_class($this::class, true, $ext_type . sql_table_type::BIG->extension());
+        $sc->set_class($this::class, true, $ext_type . sql_type::BIG->extension());
         $tbl_comment = $this::TBL_COMMENT_BIG_USER . $type_class_name . $this::TBL_COMMENT_BIG_USER_CONT;
         if ($comment_overwrite != '') {
             $tbl_comment = $comment_overwrite;
@@ -709,7 +709,7 @@ class sandbox_value extends sandbox_multi
      */
     function load_sql_user_changes(sql $sc, string $class = self::class): sql_par
     {
-        $qp = new sql_par($class, false, false, $this->grp->table_extension());
+        $qp = new sql_par($class, [], $this->grp->table_extension());
         $qp->name .= 'usr_cfg';
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
@@ -739,7 +739,7 @@ class sandbox_value extends sandbox_multi
     function load_sql_changer(sql $sc): sql_par
     {
         $tbl_typ = $this->grp->table_type();
-        $qp = new sql_par($this::class, false, true, '', $tbl_typ);
+        $qp = new sql_par($this::class, [sql_type::COMPLETE], '', $tbl_typ);
         $qp->name .= 'changer';
         if ($this->owner_id > 0) {
             $qp->name .= '_ex_owner';
@@ -894,13 +894,13 @@ class sandbox_value extends sandbox_multi
     /**
      * set the id field based on the given table type
      * used for list load queries where the id if not yet set
-     * @param sql_table_type $tbl_typ the table type that should be used for the id field selection
+     * @param sql_type $tbl_typ the table type that should be used for the id field selection
      * @return string|array the field name(s) of the prime database index of the object
      */
-    function id_field_list(sql_table_type $tbl_typ = sql_table_type::MOST): string|array
+    function id_field_list(sql_type $tbl_typ = sql_type::MOST): string|array
     {
         $lib = new library();
-        if ($tbl_typ == sql_table_type::PRIME) {
+        if ($tbl_typ == sql_type::PRIME) {
             $id_fields = array();
             $base_name = $lib->class_to_name(phrase::class) . sql_db::FLD_EXT_ID . '_';
             for ($i = 1; $i <= group_id::PRIME_PHRASES_STD; $i++) {

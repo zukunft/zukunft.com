@@ -36,6 +36,7 @@ use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
+use cfg\db\sql_type;
 use cfg\log\change;
 use cfg\log\change_action;
 use cfg\log\change_action_list;
@@ -340,7 +341,7 @@ class formula_link extends sandbox_link_with_type
     function load_standard_sql(sql $sc, string $class = self::class): sql_par
     {
         $sc->set_class($class);
-        $qp = new sql_par($class, true);
+        $qp = new sql_par($class, [sql_type::NORM]);
         $qp->name .= $this->load_sql_name_extension();
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());

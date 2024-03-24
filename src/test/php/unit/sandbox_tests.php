@@ -194,22 +194,22 @@ class sandbox_tests
         // test a simple SQL user select query for Postgres by name
         $db_con->db_type = sql_db::POSTGRES;
         $db_con->set_class(sql_db::TBL_USER);
-        $db_con->set_name('formula_link_std_by_id');
+        $db_con->set_name('formula_link_norm_by_id');
         $db_con->set_usr(SYSTEM_USER_ID);
         $db_con->set_where_std(null, 'Test User');
         $created_sql = $db_con->select_by_set_id();
         $expected_sql = $t->file('db/formula/formula_link_by_id.sql');
-        $expected_sql = "PREPARE formula_link_std_by_id (text) AS SELECT user_id, user_name FROM users WHERE user_name = $1;";
+        $expected_sql = "PREPARE formula_link_norm_by_id (text) AS SELECT user_id, user_name FROM users WHERE user_name = $1;";
         $t->display('Postgres select max', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // ... same for MySQL
         $db_con->db_type = sql_db::MYSQL;
         $db_con->set_class(sql_db::TBL_USER);
-        $db_con->set_name('formula_link_std_by_id_mysql');
+        $db_con->set_name('formula_link_norm_by_id_mysql');
         $db_con->set_usr(SYSTEM_USER_ID);
         $db_con->set_where_std(null, 'Test User');
         $created_sql = $db_con->select_by_set_id();
-        $expected_sql = "PREPARE formula_link_std_by_id_mysql FROM 'SELECT user_id,  user_name FROM users WHERE user_name = ?';";
+        $expected_sql = "PREPARE formula_link_norm_by_id_mysql FROM 'SELECT user_id,  user_name FROM users WHERE user_name = ?';";
         $t->display('MySQL select max', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // test a simple SQL max select creation for Postgres without where

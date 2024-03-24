@@ -48,7 +48,7 @@ include_once MODEL_GROUP_PATH . 'group_id_list.php';
 use api\value\value_list as value_list_api;
 use cfg\db\sql;
 use cfg\db\sql_db;
-use cfg\db\sql_table_type;
+use cfg\db\sql_type;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\group\group;
@@ -324,14 +324,14 @@ class value_list extends sandbox_value_list
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_multi(
-        sql            $sc,
-        string         $query_name,
-        string         $ext = '',
-        sql_table_type $tbl_typ = sql_table_type::MOST,
-        bool           $usr_tbl = false
+        sql      $sc,
+        string   $query_name,
+        string   $ext = '',
+        sql_type $tbl_typ = sql_type::MOST,
+        bool     $usr_tbl = false
     ): sql_par
     {
-        $qp = new sql_par(value::class, false, false, $ext);
+        $qp = new sql_par(value::class, [], $ext);
         $qp->name .= $query_name;
 
         $sc->set_class(value::class, $usr_tbl, $ext);
@@ -483,7 +483,7 @@ class value_list extends sandbox_value_list
             $tbl_typ = array_shift($matrix_row);
             // TODO add the union query creation for the other table types
             // combine the select statements with and instead of union if possible
-            if ($tbl_typ == sql_table_type::PRIME) {
+            if ($tbl_typ == sql_type::PRIME) {
                 $max_row_ids = array_shift($matrix_row);
                 $phr_id_lst = $matrix_row;
 
@@ -541,7 +541,7 @@ class value_list extends sandbox_value_list
         $par_types = array();
         foreach ($tbl_id_matrix as $matrix_row) {
             $tbl_typ = array_shift($matrix_row);
-            if ($tbl_typ == sql_table_type::PRIME) {
+            if ($tbl_typ == sql_type::PRIME) {
                 $max_row_ids = array_shift($matrix_row);
                 $phr_id_lst = $matrix_row;
                 $qp_tbl = $this->load_sql_multi($sc, 'grp_lst', $tbl_typ->extension(), $tbl_typ, $usr_tbl);

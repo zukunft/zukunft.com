@@ -65,7 +65,7 @@ use api\phrase\phrase as phrase_api;
 use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
-use cfg\db\sql_table_type;
+use cfg\db\sql_type;
 use cfg\group\group_list;
 use cfg\value\value_list;
 use html\phrase\phrase as phrase_dsp;
@@ -116,10 +116,10 @@ class phrase extends combine_named
     const TBL_PRIME_WHERE = '< 32767';
     const TBL_COM = 'phrases with an id that is not prime';
     const TBL_LIST = [
-        [sql_table_type::PRIME, self::TBL_PRIME_WHERE, self::TBL_PRIME_COM],
-        [sql_table_type::MOST, '', self::TBL_COM],
-        [sql_table_type::PRIME, self::TBL_PRIME_WHERE, self::TBL_PRIME_COM, sql_table_type::USER],
-        [sql_table_type::MOST, '', self::TBL_COM, sql_table_type::USER],
+        [sql_type::PRIME, self::TBL_PRIME_WHERE, self::TBL_PRIME_COM],
+        [sql_type::MOST, '', self::TBL_COM],
+        [sql_type::PRIME, self::TBL_PRIME_WHERE, self::TBL_PRIME_COM, sql_type::USER],
+        [sql_type::MOST, '', self::TBL_COM, sql_type::USER],
     ];
     // list of original tables that should be connoted with union
     // with fields used in the view

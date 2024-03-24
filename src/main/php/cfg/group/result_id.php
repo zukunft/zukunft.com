@@ -72,7 +72,7 @@ namespace cfg\group;
 
 include_once MODEL_GROUP_PATH . 'id.php';
 
-use cfg\db\sql_table_type;
+use cfg\db\sql_type;
 use cfg\formula;
 use cfg\phrase_list;
 

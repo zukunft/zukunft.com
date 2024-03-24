@@ -43,7 +43,7 @@ use cfg\db\sql;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
-use cfg\db\sql_table_type;
+use cfg\db\sql_type;
 use cfg\formula;
 use cfg\db\sql_db;
 use cfg\library;
@@ -453,7 +453,7 @@ class change extends change_log
      */
     function sql_insert(sql $sc): sql_par
     {
-        $qp = $sc->sql_par(self::class, [sql_table_type::INSERT]);
+        $qp = $sc->sql_par(self::class, [sql_type::INSERT]);
         $qp->sql = $sc->sql_insert($this->db_fields(), $this->db_values());
         $qp->par = $this->db_values();
 

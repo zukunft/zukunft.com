@@ -36,7 +36,7 @@ use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
-use cfg\db\sql_table_type;
+use cfg\db\sql_type;
 use cfg\db\sql_par;
 use cfg\group\group;
 use cfg\result\result;
@@ -214,22 +214,22 @@ class db_object
      * @param string $query_name the name of the selection fields to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
      * @param string $ext the query name extension e.g. to differentiate queries based on 1,2, or more phrases
-     * @param sql_table_type $tbl_typ the table name extension e.g. to switch between standard and prime values
+     * @param sql_type $tbl_typ the table name extension e.g. to switch between standard and prime values
      * @param bool $usr_tbl true if a db row should be added to the user table
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     public function load_sql_multi(
-        sql            $sc,
-        string         $query_name,
-        string         $class,
-        string         $ext = '',
-        sql_table_type $tbl_typ = sql_table_type::MOST,
-        bool           $usr_tbl = false
+        sql      $sc,
+        string   $query_name,
+        string   $class,
+        string   $ext = '',
+        sql_type $tbl_typ = sql_type::MOST,
+        bool     $usr_tbl = false
     ): sql_par
     {
         $lib = new library();
         $tbl_name = $lib->class_to_name($class);
-        $qp = new sql_par($tbl_name, false, false, $ext, $tbl_typ);
+        $qp = new sql_par($tbl_name, [], $ext, $tbl_typ);
         $qp->name .= $query_name;
         $sc->set_class($class, $usr_tbl, $tbl_typ->extension());
         $sc->set_name($qp->name);

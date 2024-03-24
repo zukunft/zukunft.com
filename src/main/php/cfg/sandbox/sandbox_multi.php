@@ -53,6 +53,7 @@ use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
+use cfg\db\sql_type;
 use cfg\export\sandbox_exp;
 use cfg\group\group_id;
 use cfg\log\change;
@@ -468,7 +469,7 @@ class sandbox_multi extends db_object_multi_user
      */
     function load_standard_sql(sql $sc, string $class = self::class): sql_par
     {
-        $qp = new sql_par($class, true);
+        $qp = new sql_par($class, [sql_type::NORM]);
         $qp->name .= sql_db::FLD_ID;
 
         $sc->set_name($qp->name);

@@ -55,6 +55,7 @@ use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
+use cfg\db\sql_type;
 use cfg\export\sandbox_exp;
 use cfg\log\change;
 use cfg\log\change_action;
@@ -523,7 +524,7 @@ class sandbox extends db_object_seq_id_user
      */
     function load_standard_sql(sql $sc, string $class = self::class): sql_par
     {
-        $qp = new sql_par($class, true);
+        $qp = new sql_par($class, [sql_type::NORM]);
         $qp->name .= sql_db::FLD_ID;
 
         $sc->set_name($qp->name);

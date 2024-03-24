@@ -35,7 +35,7 @@
 namespace cfg;
 
 use cfg\db\sql;
-use cfg\db\sql_table_type;
+use cfg\db\sql_type;
 
 include_once MODEL_HELPER_PATH . 'combine_object.php';
 
@@ -48,10 +48,10 @@ class combine_named extends combine_object
 
     // list of phrase types used for the database views
     const TBL_LIST = array(
-        [sql_table_type::PRIME],
-        [sql_table_type::MOST],
-        [sql_table_type::PRIME, sql_table_type::USER],
-        [sql_table_type::MOST, sql_table_type::USER]
+        [sql_type::PRIME],
+        [sql_type::MOST],
+        [sql_type::PRIME, sql_type::USER],
+        [sql_type::MOST, sql_type::USER]
     );
     // list of original tables that should be connoted with union
     // with fields used in the view
@@ -172,7 +172,7 @@ class combine_named extends combine_object
             $tbl_com = $tbl_typ_lst[2];
             $usr_prefix = '';
             if ($sc->is_user($tbl_typ_lst)) {
-                $usr_prefix = sql_table_type::USER->prefix();
+                $usr_prefix = sql_type::USER->prefix();
             }
             $sql .= $sc->sql_view_header($sc->get_table_name($usr_prefix . $tbl_typ->prefix() . $tbl_name), $tbl_com);
             $sql .= $this->sql_create_view($sc, $tbl_name, $tbl_typ_lst) . '; ';
@@ -185,7 +185,7 @@ class combine_named extends combine_object
         $lib = new library();
         $usr_prefix = '';
         if ($sc->is_user($tbl_typ_lst)) {
-            $usr_prefix = sql_table_type::USER->prefix();
+            $usr_prefix = sql_type::USER->prefix();
         }
         $tbl_typ = $tbl_typ_lst[0];
         $tbl_where = $tbl_typ_lst[1];

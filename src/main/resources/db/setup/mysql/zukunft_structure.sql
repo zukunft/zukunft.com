@@ -535,9 +535,9 @@ ALTER TABLE changes
 -- table structure to log all changes done by any user on values with a standard group id
 --
 
-CREATE TABLE IF NOT EXISTS change_standard_values
+CREATE TABLE IF NOT EXISTS change_norm_values
 (
-    change_id        bigint     NOT NULL COMMENT 'the prime key to identify the change change_standard_value',
+    change_id        bigint     NOT NULL COMMENT 'the prime key to identify the change change_norm_value',
     change_time      timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'time when the user has confirmed the change',
     user_id          bigint     NOT NULL COMMENT 'reference to the user who has done the change',
     change_action_id smallint   NOT NULL COMMENT 'the curl action',
@@ -551,9 +551,9 @@ CREATE TABLE IF NOT EXISTS change_standard_values
     COMMENT 'to log all changes done by any user on values with a standard group id';
 
 --
--- AUTO_INCREMENT for table change_standard_values
+-- AUTO_INCREMENT for table change_norm_values
 --
-ALTER TABLE change_standard_values
+ALTER TABLE change_norm_values
     MODIFY change_id int(11) NOT NULL AUTO_INCREMENT;
 
 -- --------------------------------------------------------
@@ -4053,14 +4053,14 @@ ALTER TABLE change_prime_values
 -- --------------------------------------------------------
 
 --
--- indexes for table change_standard_values
+-- indexes for table change_norm_values
 --
 
-ALTER TABLE change_standard_values
+ALTER TABLE change_norm_values
     ADD PRIMARY KEY (change_id),
-    ADD KEY change_standard_values_change_idx (change_id),
-    ADD KEY change_standard_values_change_time_idx (change_time),
-    ADD KEY change_standard_values_user_idx (user_id);
+    ADD KEY change_norm_values_change_idx (change_id),
+    ADD KEY change_norm_values_change_time_idx (change_time),
+    ADD KEY change_norm_values_user_idx (user_id);
 
 -- --------------------------------------------------------
 
@@ -5649,13 +5649,13 @@ ALTER TABLE changes
 -- --------------------------------------------------------
 
 --
--- constraints for table change_standard_values
+-- constraints for table change_norm_values
 --
 
-ALTER TABLE change_standard_values
-    ADD CONSTRAINT change_standard_values_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT change_standard_values_change_action_fk FOREIGN KEY (change_action_id) REFERENCES change_actions (change_action_id),
-    ADD CONSTRAINT change_standard_values_change_field_fk FOREIGN KEY (change_field_id) REFERENCES change_fields (change_field_id);
+ALTER TABLE change_norm_values
+    ADD CONSTRAINT change_norm_values_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT change_norm_values_change_action_fk FOREIGN KEY (change_action_id) REFERENCES change_actions (change_action_id),
+    ADD CONSTRAINT change_norm_values_change_field_fk FOREIGN KEY (change_field_id) REFERENCES change_fields (change_field_id);
 
 -- --------------------------------------------------------
 

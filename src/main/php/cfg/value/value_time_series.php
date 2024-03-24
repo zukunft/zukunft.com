@@ -39,7 +39,7 @@ namespace cfg\value;
 
 use cfg\db\sql;
 use cfg\db\sql_db;
-use cfg\db\sql_table_type;
+use cfg\db\sql_type;
 use cfg\db\sql_par;
 use cfg\group\group;
 use cfg\library;
@@ -85,9 +85,9 @@ class value_time_series extends sandbox_value
 
     // list of fixed tables for the time series header
     const TBL_LIST = array(
-        [sql_table_type::MOST],
-        [sql_table_type::PRIME],
-        [sql_table_type::BIG]
+        [sql_type::MOST],
+        [sql_type::PRIME],
+        [sql_type::BIG]
     );
 
 
@@ -215,17 +215,17 @@ class value_time_series extends sandbox_value
      * @param string $query_name the name extension to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
      * @param string $ext the query name extension e.g. to differentiate queries based on 1,2, or more phrases
-     * @param sql_table_type $tbl_typ the table name extension e.g. to switch between standard and prime values
+     * @param sql_type $tbl_typ the table name extension e.g. to switch between standard and prime values
      * @param bool $usr_tbl true if a db row should be added to the user table
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_multi(
-        sql            $sc,
-        string         $query_name,
-        string         $class = self::class,
-        string         $ext = '',
-        sql_table_type $tbl_typ = sql_table_type::MOST,
-        bool           $usr_tbl = false
+        sql      $sc,
+        string   $query_name,
+        string   $class = self::class,
+        string   $ext = '',
+        sql_type $tbl_typ = sql_type::MOST,
+        bool     $usr_tbl = false
     ): sql_par
     {
         $qp = parent::load_sql_multi($sc, $query_name, $class, $ext, $tbl_typ, $usr_tbl);

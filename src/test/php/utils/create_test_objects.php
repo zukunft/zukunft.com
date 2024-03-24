@@ -101,7 +101,7 @@ use cfg\log\change_field_list;
 use cfg\log\change_link;
 use cfg\log\change_log_list;
 use cfg\log\change_prime_value;
-use cfg\log\change_standard_value;
+use cfg\log\change_norm_value;
 use cfg\log\change_table_list;
 use cfg\log\system_log;
 use cfg\log\system_log_list;
@@ -1679,13 +1679,13 @@ class create_test_objects extends test_base
     }
 
     /**
-     * @return change_standard_value a change log entry of a value with some dummy values and a standard group id
+     * @return change_norm_value a change log entry of a value with some dummy values and a standard group id
      */
-    function dummy_change_log_value(): change_standard_value
+    function dummy_change_log_value(): change_norm_value
     {
         global $usr_sys;
 
-        $chg = new change_standard_value($usr_sys);
+        $chg = new change_norm_value($usr_sys);
         $chg->set_time_str(self::DUMMY_DATETIME);
         $chg->set_action(change_action::ADD);
         $chg->set_table(change_table_list::WORD);

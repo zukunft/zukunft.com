@@ -35,7 +35,7 @@ namespace cfg\log;
 use cfg\db\sql;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
-use cfg\db\sql_table_type;
+use cfg\db\sql_type;
 use cfg\library;
 use cfg\sandbox_named;
 use cfg\verb;

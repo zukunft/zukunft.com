@@ -858,7 +858,7 @@ const DB_TABLE_LIST = [
     'ip_ranges',
     'sessions',
     'changes',
-    'change_standard_values',
+    'change_norm_values',
     'change_prime_values',
     'change_big_values',
     'change_fields',

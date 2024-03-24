@@ -49,27 +49,43 @@ class sql_par
     public string $name;  // the unique name of the SQL statement
     public array $par;    // the list of the parameters used for the execution
     public string $ext;   // the extension used e.g. to decide if the index is int or string
-    public sql_table_type $typ; // to handle table that does not have a bigint prime index
+    public sql_type $typ; // to handle table that does not have a bigint prime index
 
     /**
      * TODO replace $ext with $tbl_typ
      * @param string $class the name of the calling class used for the unique query name
-     * @param bool $is_std true if the standard data for all users should be loaded
-     * @param bool $all true if all rows should be loaded
+     * @param array $sql_types list of sql types e.g. insert or load
      * @param string $ext the query name extension e.g. to separate the queries by the number of parameters
-     * @param sql_table_type $tbl_typ the table extension e.g. to select the table where the data should be saved
+     * @param sql_type $tbl_typ the table extension e.g. to select the table where the data should be saved
      */
     function __construct(
         string         $class,
-        bool           $is_std = false,
-        bool           $all = false,
+        array          $sql_types = [],
         string         $ext = '',
-        sql_table_type $tbl_typ = sql_table_type::MOST
+        sql_type $tbl_typ = sql_type::MOST
     )
     {
+        // convert sql types to single parameter
+        $is_std = false;
+        $all = false;
+        foreach ($sql_types as $sql_type) {
+            if ($sql_type == sql_type::NORM) {
+                $is_std = true;
+            }
+            if ($sql_type == sql_type::COMPLETE) {
+                $all = true;
+            }
+        }
+        if ($ext == '') {
+            $ext = '';
+            foreach ($sql_types as $sql_type) {
+                $ext .= $sql_type->extension();
+            }
+        }
+
         $lib = new library();
         if ($ext == '') {
-            if ($tbl_typ != sql_table_type::MOST) {
+            if ($tbl_typ != sql_type::MOST) {
                 $ext = $tbl_typ->extension();
             }
         }
@@ -77,11 +93,11 @@ class sql_par
         $class = $lib->class_to_name($class);
         $name = $class . $ext;
         if ($is_std) {
-            $this->name = $name . '_std_by_';
+            $this->name = $name . '_by_';
         } elseif ($all) {
             $this->name = $name . '_';
         } else {
-            // TODO base this on a list of sql_table_types
+            // TODO base this on a list of sql_types
             if ($ext != '_insert' and $ext != '_update' and $ext != '_delete') {
                 $this->name = $name . '_by_';
             } else {

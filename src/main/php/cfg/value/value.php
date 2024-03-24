@@ -79,7 +79,7 @@ use cfg\job_type_list;
 use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
-use cfg\db\sql_table_type;
+use cfg\db\sql_type;
 use cfg\export\export;
 use cfg\export\sandbox_exp;
 use cfg\export\source_exp;
@@ -184,11 +184,11 @@ class value extends sandbox_value
     );
     // list of fixed tables where a value might be stored
     const TBL_LIST = array(
-        [sql_table_type::PRIME, sql_table_type::STANDARD],
-        [sql_table_type::MOST, sql_table_type::STANDARD],
-        [sql_table_type::MOST],
-        [sql_table_type::PRIME],
-        [sql_table_type::BIG]
+        [sql_type::PRIME, sql_type::STANDARD],
+        [sql_type::MOST, sql_type::STANDARD],
+        [sql_type::MOST],
+        [sql_type::PRIME],
+        [sql_type::BIG]
     );
 
 
@@ -490,7 +490,7 @@ class value extends sandbox_value
     {
         $tbl_typ = $this->grp->table_type();
         $ext = $this->grp->table_extension();
-        $qp = new sql_par($class, true, false, $ext, $tbl_typ);
+        $qp = new sql_par($class, [sql_type::NORM], $ext . sql_type::NORM->extension(), $tbl_typ);
         $qp->name .= sql_db::FLD_ID;
         $sc->set_class($class, false, $tbl_typ->extension());
         $sc->set_name($qp->name);
@@ -520,17 +520,17 @@ class value extends sandbox_value
      * @param string $query_name the name extension to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
      * @param string $ext the query name extension e.g. to differentiate queries based on 1,2, or more phrases
-     * @param sql_table_type $tbl_typ the table name extension e.g. to switch between standard and prime values
+     * @param sql_type $tbl_typ the table name extension e.g. to switch between standard and prime values
      * @param bool $usr_tbl true if a db row should be added to the user table
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_multi(
-        sql            $sc,
-        string         $query_name,
-        string         $class = self::class,
-        string         $ext = '',
-        sql_table_type $tbl_typ = sql_table_type::MOST,
-        bool           $usr_tbl = false
+        sql      $sc,
+        string   $query_name,
+        string   $class = self::class,
+        string   $ext = '',
+        sql_type $tbl_typ = sql_type::MOST,
+        bool     $usr_tbl = false
     ): sql_par
     {
         $qp = parent::load_sql_multi($sc, $query_name, $class, $ext, $tbl_typ, $usr_tbl);

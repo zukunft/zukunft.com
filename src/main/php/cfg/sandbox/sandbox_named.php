@@ -53,6 +53,7 @@ use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
+use cfg\db\sql_type;
 use cfg\log\change;
 use cfg\log\change_action;
 use cfg\log\change_link;
@@ -393,7 +394,7 @@ class sandbox_named extends sandbox
      */
     function load_standard_sql(sql $sc, string $class = self::class): sql_par
     {
-        $qp = new sql_par($class, true);
+        $qp = new sql_par($class, [sql_type::NORM]);
         if ($this->id() != 0) {
             $qp->name .= sql_db::FLD_ID;
         } elseif ($this->name() != '') {

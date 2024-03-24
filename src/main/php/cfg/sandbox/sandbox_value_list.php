@@ -313,7 +313,7 @@ class sandbox_value_list extends sandbox_list
         }
 
         $tbl_ext = $this->table_extension($tbl_types);
-        $qp = new sql_par($list_class, $is_std, false, $tbl_ext);
+        $qp = new sql_par($list_class, $tbl_types, $tbl_ext);
         $qp->name .= $query_name;
 
         $sc->set_class($class, false, $tbl_ext);
