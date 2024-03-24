@@ -43,8 +43,10 @@ use cfg\db\sql;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
+use cfg\db\sql_table_type;
 use cfg\formula;
 use cfg\db\sql_db;
+use cfg\library;
 use cfg\user;
 use cfg\value\value;
 use cfg\view;
@@ -56,7 +58,7 @@ class change extends change_log
 {
 
     /*
-      * database link
+      * db const
       */
 
     // user log database and JSON object field names for named user sandbox objects
@@ -185,7 +187,7 @@ class change extends change_log
 
 
     /*
-     * loading
+     * load
      */
 
     /**
@@ -354,6 +356,173 @@ class change extends change_log
         return $qp;
     }
 
+
+    /*
+     * save
+     */
+
+    /**
+     * log a user change of a word, value or formula
+     * @return true if the change has been logged successfully
+     */
+    function add(): bool
+    {
+        log_debug(' do "' . $this->action
+            . '" in "' . $this->table()
+            . ',' . $this->field()
+            . '" log change from "'
+            . $this->old_value . '" (id ' . $this->old_id . ')' .
+            ' to "' . $this->new_value . '" (id ' . $this->new_id . ') in row ' . $this->row_id);
+
+        global $db_con;
+
+        //parent::add_table();
+        //parent::add_field();
+        parent::add_action($db_con);
+
+        $sql_fields = $this->db_fields();
+        $sql_values = $this->db_values();
+
+        //$db_con = new mysql;
+        $db_type = $db_con->get_class();
+        $db_con->set_class(sql_db::TBL_CHANGE);
+        $db_con->set_usr($this->user()->id());
+        $log_id = $db_con->insert_old($sql_fields, $sql_values);
+
+        if ($log_id <= 0) {
+            // write the error message in steps to get at least some message if the parameters has caused the error
+            if ($this->user() == null) {
+                log_fatal("Insert to change log failed.", "user_log->add", 'Insert to change log failed', (new Exception)->getTraceAsString());
+            } else {
+                log_fatal("Insert to change log failed with (" . $this->user()->dsp_id() . "," . $this->action . "," . $this->table() . "," . $this->field() . ")", "user_log->add");
+                log_fatal("Insert to change log failed with (" . $this->user()->dsp_id() . "," . $this->action . "," . $this->table() . "," . $this->field() . "," . $this->old_value . "," . $this->new_value . "," . $this->row_id . ")", "user_log->add");
+            }
+            $result = False;
+        } else {
+            $this->set_id($log_id);
+            // restore the type before saving the log
+            $db_con->set_class($db_type);
+            $result = True;
+        }
+
+        return $result;
+    }
+
+    /**
+     * add the row id to an existing log entry
+     * e.g. because the row id is known after the adding of the real record,
+     * but the log entry has been created upfront to make sure that logging is complete
+     * TODO: accept also strings as row_id for values and results
+     */
+    function add_ref($row_id): bool
+    {
+        log_debug("user_log->add_ref (" . $row_id . " to " . $this->id() . " for user " . $this->user()->dsp_id() . ")");
+
+        global $db_con;
+        $result = false;
+
+        $db_type = $db_con->get_class();
+        $db_con->set_class(sql_db::TBL_CHANGE);
+        $db_con->set_usr($this->user()->id());
+        if ($db_con->update_old($this->id(), self::FLD_ROW_ID, $row_id)) {
+            // restore the type before saving the log
+            $db_con->set_class($db_type);
+            $result = True;
+        } else {
+            // write the error message in steps to get at least some message if the parameters has caused the error
+            if ($this->user() == null) {
+                log_fatal("Update of reference in the change log failed.", "user_log->add_ref", 'Update of reference in the change log failed', (new Exception)->getTraceAsString());
+            } else {
+                log_fatal("Update of reference in the change log failed with (" . $this->user()->dsp_id() . "," . $this->action . "," . $this->table() . "," . $this->field() . ")", "user_log->add_ref");
+                log_fatal("Update of reference in the change log failed with (" . $this->user()->dsp_id() . "," . $this->action . "," . $this->table() . "," . $this->field() . "," . $this->old_value . "," . $this->new_value . "," . $this->row_id . ")", "user_log->add_ref");
+            }
+        }
+        return $result;
+    }
+
+
+    /*
+     * sql write
+     */
+
+    /**
+     * create the sql statement to add a log entry to the database
+     *
+     * @param sql $sc with the target db_type set
+     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     */
+    function sql_insert(sql $sc): sql_par
+    {
+        $qp = $sc->sql_par(self::class, [sql_table_type::INSERT]);
+        $qp->sql = $sc->sql_insert($this->db_fields(), $this->db_values());
+        $qp->par = $this->db_values();
+
+        return $qp;
+    }
+
+
+    /*
+     * sql write fields
+     */
+
+    /**
+     * get a list of all database fields
+     * list must be corresponding to the db_values fields
+     *
+     * @return array list of the database field names
+     */
+    function db_fields(): array
+    {
+        $sql_fields = array();
+        $sql_fields[] = user::FLD_ID;
+        $sql_fields[] = change_action::FLD_ID;
+        $sql_fields[] = change_field::FLD_ID;
+
+        $sql_fields[] = self::FLD_OLD_VALUE;
+        $sql_fields[] = self::FLD_NEW_VALUE;
+
+        if ($this->old_id > 0 or $this->new_id > 0) {
+            $sql_fields[] = self::FLD_OLD_ID;
+            $sql_fields[] = self::FLD_NEW_ID;
+        }
+
+        $sql_fields[] = self::FLD_ROW_ID;
+        return $sql_fields;
+    }
+
+    /**
+     * get a list of database field values that have been updated
+     *
+     * @return array list of the database field values
+     */
+    function db_values(): array
+    {
+        $sql_values = array();
+        $sql_values[] = $this->user()->id();
+        $sql_values[] = $this->action_id;
+        $sql_values[] = $this->field_id;
+
+        $sql_values[] = $this->old_value;
+        $sql_values[] = $this->new_value;
+
+        if ($this->old_id > 0 or $this->new_id > 0) {
+            $sql_values[] = $this->old_id;
+            $sql_values[] = $this->new_id;
+        }
+
+        $sql_values[] = $this->row_id;
+        return $sql_values;
+    }
+
+
+
+
+    /*
+     * display
+     */
+
+    // TODO to be move to frontend
+
     /**
      * @return string the last change of given user
      *                optional without time for automatic testing
@@ -423,106 +592,6 @@ class change extends change_log
                 }
             } else {
                 $result .= 'added ' . $this->new_value;
-            }
-        }
-        return $result;
-    }
-
-    /**
-     * log a user change of a word, value or formula
-     * @return true if the change has been logged successfully
-     */
-    function add(): bool
-    {
-        log_debug(' do "' . $this->action
-            . '" in "' . $this->table()
-            . ',' . $this->field()
-            . '" log change from "'
-            . $this->old_value . '" (id ' . $this->old_id . ')' .
-            ' to "' . $this->new_value . '" (id ' . $this->new_id . ') in row ' . $this->row_id);
-
-        global $db_con;
-
-        //parent::add_table();
-        //parent::add_field();
-        parent::add_action($db_con);
-
-        $sql_fields = array();
-        $sql_values = array();
-        $sql_fields[] = "user_id";
-        $sql_values[] = $this->user()->id();
-        $sql_fields[] = "change_action_id";
-        $sql_values[] = $this->action_id;
-        $sql_fields[] = "change_field_id";
-        $sql_values[] = $this->field_id;
-
-        $sql_fields[] = "old_value";
-        $sql_values[] = $this->old_value;
-        $sql_fields[] = "new_value";
-        $sql_values[] = $this->new_value;
-
-        if ($this->old_id > 0 or $this->new_id > 0) {
-            $sql_fields[] = "old_id";
-            $sql_values[] = $this->old_id;
-            $sql_fields[] = "new_id";
-            $sql_values[] = $this->new_id;
-        }
-
-        $sql_fields[] = "row_id";
-        $sql_values[] = $this->row_id;
-
-        //$db_con = new mysql;
-        $db_type = $db_con->get_class();
-        $db_con->set_class(sql_db::TBL_CHANGE);
-        $db_con->set_usr($this->user()->id());
-        $log_id = $db_con->insert_old($sql_fields, $sql_values);
-
-        if ($log_id <= 0) {
-            // write the error message in steps to get at least some message if the parameters has caused the error
-            if ($this->user() == null) {
-                log_fatal("Insert to change log failed.", "user_log->add", 'Insert to change log failed', (new Exception)->getTraceAsString());
-            } else {
-                log_fatal("Insert to change log failed with (" . $this->user()->dsp_id() . "," . $this->action . "," . $this->table() . "," . $this->field() . ")", "user_log->add");
-                log_fatal("Insert to change log failed with (" . $this->user()->dsp_id() . "," . $this->action . "," . $this->table() . "," . $this->field() . "," . $this->old_value . "," . $this->new_value . "," . $this->row_id . ")", "user_log->add");
-            }
-            $result = False;
-        } else {
-            $this->set_id($log_id);
-            // restore the type before saving the log
-            $db_con->set_class($db_type);
-            $result = True;
-        }
-
-        return $result;
-    }
-
-    /**
-     * add the row id to an existing log entry
-     * e.g. because the row id is known after the adding of the real record,
-     * but the log entry has been created upfront to make sure that logging is complete
-     * TODO: accept also strings as row_id for values and results
-     */
-    function add_ref($row_id): bool
-    {
-        log_debug("user_log->add_ref (" . $row_id . " to " . $this->id() . " for user " . $this->user()->dsp_id() . ")");
-
-        global $db_con;
-        $result = false;
-
-        $db_type = $db_con->get_class();
-        $db_con->set_class(sql_db::TBL_CHANGE);
-        $db_con->set_usr($this->user()->id());
-        if ($db_con->update_old($this->id(), "row_id", $row_id)) {
-            // restore the type before saving the log
-            $db_con->set_class($db_type);
-            $result = True;
-        } else {
-            // write the error message in steps to get at least some message if the parameters has caused the error
-            if ($this->user() == null) {
-                log_fatal("Update of reference in the change log failed.", "user_log->add_ref", 'Update of reference in the change log failed', (new Exception)->getTraceAsString());
-            } else {
-                log_fatal("Update of reference in the change log failed with (" . $this->user()->dsp_id() . "," . $this->action . "," . $this->table() . "," . $this->field() . ")", "user_log->add_ref");
-                log_fatal("Update of reference in the change log failed with (" . $this->user()->dsp_id() . "," . $this->action . "," . $this->table() . "," . $this->field() . "," . $this->old_value . "," . $this->new_value . "," . $this->row_id . ")", "user_log->add_ref");
             }
         }
         return $result;

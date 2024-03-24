@@ -520,6 +520,7 @@ class sandbox_named extends sandbox
 
     /**
      * create the sql statement to add a new named sandbox object e.g. word to the database
+     * TODO add qp merge
      *
      * @param sql $sc with the target db_type set
      * @param array $fld_lst list of field names additional to the standard id and name fields
@@ -533,12 +534,28 @@ class sandbox_named extends sandbox
         array $fld_lst = [],
         array $val_lst = [],
         array $fld_lst_all = [],
-        bool  $usr_tbl = false): sql_par
+        bool  $usr_tbl = false,
+        bool  $and_log = false): sql_par
     {
         $lib = new library();
+
+        if (count($fld_lst) != count($val_lst)) {
+            log_err('fields (' . $lib->dsp_array($fld_lst) . ') does not match with values (' . $lib->dsp_array($val_lst) . ')');
+        }
         $fld_chg_ext = $lib->sql_field_ext($fld_lst, $fld_lst_all);
         $ext = sql::file_sep . sql::file_insert . sql::file_sep . $fld_chg_ext;
         $qp = $this->sql_common($sc, $usr_tbl, $ext);
+        if ($and_log) {
+            $sc_log = clone $sc;
+            $i = 0;
+            foreach ($fld_lst as $fld) {
+                $log = new change($this->user());
+                $log->set_table_by_class($this::class);
+                $log->set_field($fld);
+                $log->new_value = $val_lst[$i];
+                $sql_log = $log->sql_insert($sc_log);
+            }
+        }
         // add the child object specific fields and values
         $qp->sql = $sc->sql_insert($fld_lst, $val_lst);
         $qp->par = $val_lst;
@@ -705,12 +722,41 @@ class sandbox_named extends sandbox
     }
 
     /**
+     * @return bool true if for this database and class
+     *              a prepared script including the write to the log
+     *              for db write should be used
+     */
+    function sql_use_script_with_log(): bool
+    {
+        if (in_array($this::class, sql_db::DB_WRITE_LOG_SCRIPT_CLASSES)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @return bool true if for this database and class a prepared script for db write should be used
+     */
+    function sql_write_prepared(): bool
+    {
+        if (in_array($this::class, sql_db::DB_WRITE_PREPARED)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * create a new named object
      * @return user_message with status ok
      *                      or if something went wrong
      *                      the message that should be shown to the user
      *                      including suggested solutions
-     * TODO do a rollback in case of an error
+     * TODO do a rollback in case of an
+     * TODO used prepared sql_insert for all fields
+     * TODO use optional sql insert with log
+     * TODO use prepared sql insert
      */
     function add(): user_message
     {

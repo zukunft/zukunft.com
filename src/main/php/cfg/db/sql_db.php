@@ -300,6 +300,16 @@ class sql_db
         change_table_field::class
     ];
 
+    // classes that use a sql write script with log write
+    const DB_WRITE_LOG_SCRIPT_CLASSES = [
+        word::class,
+        source::class];
+
+    // classes that use a sql write script with log write
+    const DB_WRITE_PREPARED = [
+        word::class,
+        source::class];
+
     // tables that do not have a name
     // e.g. sql_db::TBL_TRIPLE is a link which hase a name, but the generated name can be overwritten, so the standard field naming is not used
     const DB_TYPES_NOT_NAMED = [

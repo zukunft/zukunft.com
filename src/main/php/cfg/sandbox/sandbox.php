@@ -2554,6 +2554,25 @@ class sandbox extends db_object_seq_id_user
      * @param bool $usr_tbl true if the user sandbox table should be updated
      * @return user_message the message and potential solution shown to the user in case of a problem
      */
+    function insert(string $msg = '', bool $usr_tbl = false): user_message
+    {
+        global $db_con;
+
+        // set the actual class before accessing the database to ...
+        log_debug($msg);
+        $db_con->set_class($this::class, $usr_tbl);
+        $sc = $db_con->sql_creator();
+        $qp = $this->sql_insert($sc, $usr_tbl);
+        return $db_con->insert($qp, $msg);
+    }
+
+    /**
+     * update the sandbox object in the database
+     *
+     * @param string $msg the message shown to the user in case of a problem to idemtify the update
+     * @param bool $usr_tbl true if the user sandbox table should be updated
+     * @return user_message the message and potential solution shown to the user in case of a problem
+     */
     function update(string $msg = '', bool $usr_tbl = false): user_message
     {
         global $db_con;
@@ -2569,6 +2588,19 @@ class sandbox extends db_object_seq_id_user
         $db_row->load_by_id($this->id());
         $qp = $this->sql_update($sc, $db_row, $usr_tbl);
         return $db_con->update($qp, $msg);
+    }
+
+    /**
+     * create the sql statement to insert a sandbox object in the database
+     * dummy function to be overwritten by the child object
+     *
+     * @param sql $sc with the target db_type set
+     * @param bool $usr_tbl true if the user table row should be updated
+     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     */
+    function sql_insert(sql $sc, bool $usr_tbl = false): sql_par
+    {
+        return new sql_par('');
     }
 
     /**

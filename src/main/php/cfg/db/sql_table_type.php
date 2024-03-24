@@ -34,6 +34,11 @@ namespace cfg\db;
 enum sql_table_type: string
 {
 
+    // curl sql statement types
+    case INSERT = 'insert';
+    case UPDATE = 'update';
+    case DELETE = 'delete';
+
     // the fixed table types for a value or result
     case PRIME = 'prime'; // up to four 16-bit phrase ids or one formula id and three phrase ids
     case MAIN = 'main'; // for result only one formula id and up to seven 64-bit phrase ids
@@ -52,13 +57,16 @@ enum sql_table_type: string
     public function extension(): string
     {
         return match($this) {
-            self::PRIME => '_prime',
-            self::MAIN => '_main',
-            self::BIG => '_big',
-            self::INDEX => '_index',
-            self::LARGE => '_large',
-            self::STANDARD => '_standard',
-            self::USER => '_user',
+            self::INSERT => sql::file_sep . 'insert',
+            self::UPDATE => sql::file_sep . 'update',
+            self::DELETE => sql::file_sep . 'delete',
+            self::PRIME => sql::file_sep . 'prime',
+            self::MAIN => sql::file_sep . 'main',
+            self::BIG => sql::file_sep . 'big',
+            self::INDEX => sql::file_sep . 'index',
+            self::LARGE => sql::file_sep . 'large',
+            self::STANDARD => sql::file_sep . 'standard',
+            self::USER => sql::file_sep . 'user',
             default => '',
         };
     }
@@ -69,8 +77,8 @@ enum sql_table_type: string
     function prefix(): string
     {
         return match($this) {
-            self::PRIME => 'prime_',
-            self::USER => 'user_',
+            self::PRIME => 'prime' . sql::file_sep,
+            self::USER => 'user' . sql::file_sep,
             default => '',
         };
     }

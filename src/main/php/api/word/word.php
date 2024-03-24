@@ -54,6 +54,7 @@ class word extends sandbox_typed_api
     const TN_READ = 'Mathematics';
     const TD_READ = 'Mathematics is an area of knowledge that includes the topics of numbers and formulas';
     const TI_MATH = 1;
+    const TN_READ_PLURAL = 'Mathematics';
     const TN_CONST = 'constant';
     const TD_CONST = 'fixed and well-defined number';
     const TI_CONST = 2;

@@ -81,7 +81,12 @@ class sql_par
         } elseif ($all) {
             $this->name = $name . '_';
         } else {
-            $this->name = $name . '_by_';
+            // TODO base this on a list of sql_table_types
+            if ($ext != '_insert' and $ext != '_update' and $ext != '_delete') {
+                $this->name = $name . '_by_';
+            } else {
+                $this->name = $name;
+            }
         }
         $this->par = array();
         $this->ext = $ext;

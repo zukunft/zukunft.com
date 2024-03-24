@@ -120,6 +120,9 @@ class change_log_tests
         $t->assert_sql_index_create($log_lnk);
         $t->assert_sql_foreign_key_create($log_lnk);
 
+        $t->subheader('change log sql write');
+        $log = $t->dummy_change_log_named();
+        // $t->assert_sql_insert($db_con, $log);
 
         $t->subheader('SQL statement tests');
         $log = new change($usr);

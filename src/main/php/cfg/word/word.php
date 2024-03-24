@@ -1779,9 +1779,10 @@ class word extends sandbox_typed
      *
      * @param sql $sc with the target db_type set
      * @param bool $usr_tbl true if the user table row should be updated
+     * @param bool $and_log true if also the changes should be written
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_insert(sql $sc, bool $usr_tbl = false): sql_par
+    function sql_insert(sql $sc, bool $usr_tbl = false, bool $and_log = false): sql_par
     {
         // fields and values that the word has additional to the standard named user sandbox object
         $wrd_empty = $this->clone_reset();
@@ -1795,17 +1796,17 @@ class word extends sandbox_typed
      * create the sql statement to update a word in the database
      *
      * @param sql $sc with the target db_type set
-     * @param sandbox $db_wrd the word with the database values before the update
+     * @param sandbox|word $db_row the word with the database values before the update
      * @param bool $usr_tbl true if the user table row should be updated
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_update(sql $sc, sandbox $db_wrd, bool $usr_tbl = false): sql_par
+    function sql_update(sql $sc, sandbox|word $db_row, bool $usr_tbl = false): sql_par
     {
         // get the fields and values that have been changed
         // and that needs to be updated in the database
         // the db_* child function call the corresponding parent function
-        $fields = $this->db_fields_changed($db_wrd);
-        $values = $this->db_values_changed($db_wrd);
+        $fields = $this->db_fields_changed($db_row);
+        $values = $this->db_values_changed($db_row);
         $all_fields = $this->db_fields_all();
         // unlike the db_* function the sql_update_* parent function is called directly
         return parent::sql_update_named($sc, $fields, $values, $all_fields, $usr_tbl);

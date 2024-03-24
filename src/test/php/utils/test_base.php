@@ -329,7 +329,6 @@ class test_base
     const TIMEOUT_LIMIT_IMPORT = 12;    // time limit for complex import tests in seconds
 
 
-
     public user $usr1; // the main user for testing
     public user $usr2; // a second testing user e.g. to test the user sandbox
 
@@ -964,9 +963,10 @@ class test_base
      * @param sql_db $db_con does not need to be connected to a real database
      * @param object $usr_obj the user sandbox object e.g. a word
      * @param bool $usr_tbl true if a db row should be added to the user table
+     * @param bool $and_log true if also the changes should be written
      * @return bool true if all tests are fine
      */
-    function assert_sql_insert(sql_db $db_con, object $usr_obj, bool $usr_tbl = false): bool
+    function assert_sql_insert(sql_db $db_con, object $usr_obj, bool $usr_tbl = false, bool $and_log = false): bool
     {
         // check the Postgres query syntax
         $sc = $db_con->sql_creator();
@@ -991,9 +991,10 @@ class test_base
      * @param object $usr_obj the user sandbox object e.g. a word
      * @param object $db_obj must be the same object as the $usr_obj but with the valuesfrom the database before the update
      * @param bool $usr_tbl true if a db row should be added to the user table
+     * @param bool $and_log true if also the changes should be written
      * @return bool true if all tests are fine
      */
-    function assert_sql_update(sql_db $db_con, object $usr_obj, object $db_obj, bool $usr_tbl = false): bool
+    function assert_sql_update(sql_db $db_con, object $usr_obj, object $db_obj, bool $usr_tbl = false, bool $and_log = false): bool
     {
         $sc = $db_con->sql_creator();
         // check the Postgres query syntax
@@ -1017,21 +1018,23 @@ class test_base
      * @param sql_db $db_con does not need to be connected to a real database
      * @param object $usr_obj the user sandbox object e.g. a word
      * @param bool $usr_tbl true if a db row should be added to the user table
+     * @param bool $and_log true if also the changes should be written
      * @param bool $excluded true if only the excluded user rows should be deleted
      * @return bool true if all tests are fine
      */
-    function assert_sql_delete(sql_db $db_con, object $usr_obj, bool $usr_tbl = false, bool $excluded = false): bool
+    function assert_sql_delete(sql_db $db_con, object $usr_obj, bool $usr_tbl = false, bool $and_log = false, bool $excluded = false): bool
     {
+        $sc = $db_con->sql_creator();
         // check the Postgres query syntax
-        $db_con->db_type = sql_db::POSTGRES;
-        $qp = $usr_obj->sql_delete($db_con->sql_creator(), $usr_tbl, $excluded);
-        $result = $this->assert_qp($qp, $db_con->db_type);
+        $sc->db_type = sql_db::POSTGRES;
+        $qp = $usr_obj->sql_delete($sc, $usr_tbl, $excluded);
+        $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $db_con->db_type = sql_db::MYSQL;
-            $qp = $usr_obj->sql_delete($db_con->sql_creator(), $usr_tbl, $excluded);
-            $result = $this->assert_qp($qp, $db_con->db_type);
+            $sc->db_type = sql_db::MYSQL;
+            $qp = $usr_obj->sql_delete($sc, $usr_tbl, $excluded);
+            $result = $this->assert_qp($qp, $sc->db_type);
         }
         return $result;
     }
@@ -1534,10 +1537,10 @@ class test_base
      * @param bool $or if true all values are returned that are linked to any phrase of the list
      */
     function assert_sql_by_phr_lst(
-        string       $test_name,
-        object       $usr_obj,
-        phrase_list  $phr_lst,
-        bool         $or = false
+        string      $test_name,
+        object      $usr_obj,
+        phrase_list $phr_lst,
+        bool        $or = false
     ): void
     {
         // check the Postgres query syntax
@@ -1689,7 +1692,7 @@ class test_base
         } else {
             $file_name_ext = $dialect;
         }
-        $file_name =  $this->resource_path . $name . $file_name_ext . self::FILE_EXT;
+        $file_name = $this->resource_path . $name . $file_name_ext . self::FILE_EXT;
         $expected_sql = $this->file($file_name);
         if ($expected_sql == '') {
             $msg = 'File ' . $file_name . ' with the expected SQL statement is missing.';

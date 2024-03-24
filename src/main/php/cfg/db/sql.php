@@ -460,6 +460,23 @@ class sql
      */
 
     /**
+     * create a sql parameter object with presets based on the class and a sql type list
+     *
+     * @param string $class the class name to which the sql statements should be created
+     * @param array $sql_types list of sql types to specify which kind of sql statement should be created
+     * @return sql_par set of sql parameters with some presets
+     */
+    function sql_par(string $class, array $sql_types = []): sql_par
+    {
+        $ext = '';
+        foreach ($sql_types as $sql_type) {
+            $ext .= $sql_type->extension();
+        }
+        $this->set_class($class, false, $ext);
+        return new sql_par($class, false, false, $ext);
+    }
+
+    /**
      * define the table that should be used for the next select, insert, update or delete statement
      * resets all previous db query settings such as fields, user_fields, so this should be the first statement when defining a database query
      * TODO check that this is always called directly before the query is created, so that

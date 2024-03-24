@@ -328,6 +328,24 @@ class create_test_objects extends test_base
     }
 
     /**
+     * @return word "Mathematics" with all object variables set for complete unit testing
+     */
+    function word_filled(): word
+    {
+        $wrd = new word($this->usr1);
+        $wrd->set(word_api::TI_MATH, word_api::TN_READ);
+        $wrd->description = word_api::TD_READ;
+        $wrd->set_type(phrase_type::NORMAL);
+        $wrd->plural = word_api::TN_READ_PLURAL;
+        $wrd->set_view_id(view_api::TI_READ);
+        $wrd->values = 1;
+        $wrd->excluded = true;
+        $wrd->share_id = 1;
+        $wrd->protection_id = 1;
+        return $wrd;
+    }
+
+    /**
      * @return word_dsp the word "Mathematics" for frontend unit testing
      */
     function dummy_word_dsp(): word_dsp
@@ -1463,7 +1481,7 @@ class create_test_objects extends test_base
         $dsp = new view($this->usr1);
         $dsp->set(1, view_api::TN_READ);
         $dsp->description = view_api::TD_READ;
-        $dsp->code_id = view_api::TI_READ;
+        $dsp->code_id = view_api::TC_READ;
         return $dsp;
     }
 
@@ -1479,7 +1497,7 @@ class create_test_objects extends test_base
         $dsp = new view($this->usr1);
         $dsp->set(3, view_api::TN_FORM);
         $dsp->description = view_api::TD_FORM;
-        $dsp->code_id = view_api::TI_FORM;
+        $dsp->code_id = view_api::TC_FORM;
         $dsp->cmp_lnk_lst = $this->dummy_components_word_add($dsp);
         return $dsp;
     }

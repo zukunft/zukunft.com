@@ -69,7 +69,7 @@ class type_lists
 
         // use the system view to start the HTML test page
         global $html_system_views;
-        $dsp = $html_system_views->get(view_api::TI_READ);
+        $dsp = $html_system_views->get(view_api::TC_READ);
         $wrd = $t->dummy_word_dsp();
         $wrd->set_name('All type selectors');
         $test_page = $dsp->show($wrd, '') . '<br><br>';

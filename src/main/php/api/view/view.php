@@ -50,10 +50,12 @@ class view extends sandbox_typed_api
     // persevered view names for unit and integration tests
     // TN_* means 'test name'
     // TD_* means 'test description'
-    // TI_* means 'test code id'
+    // TC_* means 'test code id'
+    // TI_* means 'test id'
     const TN_READ = 'Word';
     const TD_READ = 'the default view for words';
-    const TI_READ = 'word';
+    const TC_READ = 'word';
+    const TI_READ = 1;
     const TN_ADD = 'System Test View';
     const TN_RENAMED = 'System Test View Renamed';
     const TN_COMPLETE = 'System Test View Complete';
@@ -64,7 +66,7 @@ class view extends sandbox_typed_api
     // to test a system view (add word) as unit test without database
     const TN_FORM = 'Add word';
     const TD_FORM = 'system form to add a word';
-    const TI_FORM = 'word_add';
+    const TC_FORM = 'word_add';
 
     const TN_READ_RATIO = 'Company ratios';
     const TN_READ_NESN_2016 = 'Nestlé Financial Statement 2016';

@@ -87,6 +87,7 @@ class word_tests
         $wrd = $t->word();
         $t->assert_sql_insert($db_con, $wrd);
         $t->assert_sql_insert($db_con, $wrd, true);
+        // $t->assert_sql_insert($db_con, $wrd, false, true);
         $wrd_renamed = $wrd->cloned(word_api::TN_RENAMED);
         $t->assert_sql_update($db_con, $wrd_renamed, $wrd);
         $t->assert_sql_update($db_con, $wrd_renamed, $wrd, true);

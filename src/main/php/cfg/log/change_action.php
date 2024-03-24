@@ -61,6 +61,7 @@ class change_action extends type_object
 
     // comments used for the database creation
     const TBL_COMMENT = 'for add, change, delete, undo and redo actions';
+    const FLD_ID = 'change_action_id';
     const FLD_NAME = 'change_action_name';
 
     // field lists for the table creation

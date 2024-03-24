@@ -91,7 +91,7 @@ class value_tests
         $this->assert_sql_update_trigger($t, $db_con, $val_upd, $val);
         $t->assert_sql_delete($db_con, $val);
         $t->assert_sql_delete($db_con, $val, true);
-        $t->assert_sql_delete($db_con, $val, true, true);
+        $t->assert_sql_delete($db_con, $val, true, false, true);
         $this->assert_sql_by_grp($t, $db_con, $val);
 
         // ... and the related default value

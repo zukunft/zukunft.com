@@ -8,6 +8,18 @@
     for reading the user changes from the database and forwarding them to
     the API and frontend model/log/changeLog* should be used
 
+    The main sections of this object are
+    - db const:          const for the database link
+    - object vars:       the variables of this word object
+    - construct and map: including the mapping of the db row to this word object
+    - cast:              create an api object and set the vars from an api json
+    - load:              database access object (DAO) functions
+    - save:              manage to update the database
+    - sql write:         sql statement creation to write to the database
+    - sql write fields:  field list for writing to the database
+    - display:           internal support functions for debugging
+
+
     This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it
@@ -25,7 +37,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2024 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -245,6 +257,13 @@ class change_log extends db_object_seq_id_user
             }
         }
         return $db_changed;
+    }
+
+    function set_table_by_class(string $class): bool
+    {
+        $lib = new library();
+        $name = $lib->class_to_name($class);
+        return $this->set_table($name);
     }
 
     /**
