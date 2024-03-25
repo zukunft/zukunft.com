@@ -2,12 +2,39 @@
 
 /*
 
-    model/sandbox/sandbox.php - the superclass for handling user specific objects including the database saving
-    -------------------------
+    cfg/sandbox/sandbox.php - the superclass for handling user specific objects including the database saving
+    -----------------------
+
+    TODO should be merged once php allows aggregating extends e.g. sandbox extends db_object, db_user_object
 
     This superclass should be used by the classes words, formula, ... to enable user specific values and links
     similar to sandbox.php but for database objects that have an auto sequence prime id
-    TODO should be merged once php allows aggregating extends e.g. sandbox extends db_object, db_user_object
+
+    The main sections of this object are
+    - sandbox types:     const to group the classes
+    - db const:          const for the database link
+    - object vars:       the variables of this word object
+    - construct and map: including the mapping of the db row to this word object
+    - set and get:       to capsule the vars from unexpected changes
+    - preloaded:         select e.g. types from cache
+    - cast:              create an api object and set the vars from an api json
+    - load:              database access object (DAO) functions
+    - im- and export:    create an export object and set the vars from an import object
+    - information:       functions to make code easier to read
+    - owner and access:  functions to make code easier to read
+    - sandbox:           manage the user sandbox
+    - log:               write the changes to the log
+    - save fields:       write single fields to the database
+    - save id:           update the id in the database and create user messages
+    - similar:           check for similar objects before writing to the database
+    - add:               create and execute the db insert statements
+    - save:              manage to update the database
+    - delete:            manage to remove from the database
+    - type field:        write the type field to the database (to review)
+    - sql write:         sql statement creation to write to the database
+    - sql write fields:  field list for writing to the database
+    - sql create:        to create the database table, index and foreign keys
+    - internal check:    for testing during development
 
 
     This file is part of zukunft.com - calc with words
@@ -27,7 +54,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2023 zukunft.com AG, Zurich
+    Copyright (c) 1995-2024 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -60,10 +87,7 @@ use cfg\export\sandbox_exp;
 use cfg\log\change;
 use cfg\log\change_action;
 use cfg\log\change_log;
-use cfg\log\change_action_list;
 use cfg\log\change_link;
-use cfg\result\result;
-use cfg\value\value;
 use Exception;
 
 class sandbox extends db_object_seq_id_user
@@ -74,13 +98,14 @@ class sandbox extends db_object_seq_id_user
      */
 
     // the main types of user sandbox objects
+    // TODO maybe to be replaced by class lists
     const TYPE_NAMED = 'named';  // for user sandbox objects which have a unique name like formulas
     const TYPE_LINK = 'link';    // for user sandbox objects that link two objects like formula links
     const TYPE_VALUE = 'value';  // for user sandbox objects that are used to save values
 
 
     /*
-     * database link
+     * db const
      */
 
     // database and JSON object field names used in many user sandbox objects
@@ -206,187 +231,6 @@ class sandbox extends db_object_seq_id_user
         $this->excluded = false;
     }
 
-
-    /*
-     * set and get
-     */
-
-    /**
-     * set the excluded field from a database value
-     * with postgres and MySQL this is pretty strait forward so more to prevent future issues
-     *
-     * @param bool $db_val the value from the database row array
-     * @return void
-     */
-    function set_excluded(?bool $db_val): void
-    {
-        if ($db_val == null) {
-            $this->excluded = false;
-        } else {
-            $this->excluded = $db_val;
-        }
-    }
-
-    /**
-     * set excluded to 'true' to switch off the usage of this user sandbox object
-     * @return void
-     */
-    function exclude(): void
-    {
-        $this->excluded = true;
-    }
-
-    /**
-     * set excluded to 'false' to switch on the usage of this user sandbox object
-     * @return void
-     */
-    function include(): void
-    {
-        $this->excluded = false;
-    }
-
-    /**
-     * @return bool true if the user does not want to use this object at all
-     */
-    function is_excluded(): bool
-    {
-        return $this->excluded;
-    }
-
-
-    /*
-     * sql write fields
-     */
-
-    /**
-     * repeat the all_db_fields function in the parent object to prevent polymorph warning
-     * @return array list of all database field names that have been updated
-     */
-    function db_fields_all_sandbox(): array
-    {
-        return [
-            self::FLD_EXCLUDED,
-            self::FLD_SHARE,
-            self::FLD_PROTECT
-        ];
-    }
-
-    /**
-     * list of fields that have been changed compared to a given object
-     * the last_update field is excluded here because this is an internal only field
-     *
-     * @param sandbox $sbx the same sandbox as this to compare which fields have been changed
-     * @return array with the field names of the object and any child object
-     */
-    function db_fields_changed_sandbox(sandbox $sbx): array
-    {
-        $result = [];
-        if ($sbx->excluded <> $this->excluded) {
-            $result[] = self::FLD_EXCLUDED;
-        }
-        if ($sbx->share_id <> $this->share_id) {
-            $result[] = self::FLD_SHARE;
-        }
-        if ($sbx->protection_id <> $this->protection_id) {
-            $result[] = self::FLD_PROTECT;
-        }
-        return $result;
-    }
-
-    /**
-     * list of values that have been changed compared to a given object
-     * the last_update field is excluded here because this is an internal only field
-     *
-     * @param sandbox $sbx the same sandbox as this to compare which fields have been changed
-     * @return array with the field names of the object and any child object
-     */
-    function db_values_changed_sandbox(sandbox $sbx): array
-    {
-        $result = [];
-        if ($sbx->excluded <> $this->excluded) {
-            $result[] = $this->excluded;
-        }
-        if ($sbx->share_id <> $this->share_id) {
-            $result[] = $this->share_id;
-        }
-        if ($sbx->protection_id <> $this->protection_id) {
-            $result[] = $this->protection_id;
-        }
-        return $result;
-    }
-
-
-    /*
-     * internal check
-     */
-
-    /**
-     * TODO deprecate because using the object const is actually faster in execution
-     * return the expected database id field name of the object
-     * should actually be static, but seems to be not yet possible
-     * TODO check if it can be combined with id_field()
-     */
-    function fld_id(string $class = self::class): string
-    {
-        $lib = new library();
-        return $lib->class_to_name($class) . sql_db::FLD_EXT_ID;
-    }
-
-    function fld_usr_id(string $class = self::class): string
-    {
-        $lib = new library();
-        return sql_db::USER_PREFIX . $lib->class_to_name($class) . sql_db::FLD_EXT_ID;
-    }
-
-    function fld_name(string $class = self::class): string
-    {
-        $lib = new library();
-        return $lib->class_to_name($class) . sql_db::FLD_EXT_NAME;
-    }
-
-    /**
-     * @param object $api_obj frontend API object filled with the database id
-     */
-    function fill_api_obj(object $api_obj): void
-    {
-        $api_obj->set_id($this->id());
-    }
-
-    /**
-     * @return object frontend API object filled with the database id
-     */
-    function fill_min_obj(object $min_obj): object
-    {
-        $min_obj->set_id($this->id());
-        return $min_obj;
-    }
-
-    /**
-     * TODO deprecate
-     * fill a similar object that is extended with display interface functions
-     *
-     * @param object $dsp_obj the object that should be filled with all user sandbox values
-     */
-    function fill_dsp_obj(object $dsp_obj): void
-    {
-        $dsp_obj->set_id($this->id());
-        $dsp_obj->usr_cfg_id = $this->usr_cfg_id;
-        $dsp_obj->usr = $this->user();
-        $dsp_obj->owner_id = $this->owner_id;
-        $dsp_obj->excluded = $this->is_excluded();
-    }
-
-    /*
-      these functions differ for each object, so they are always in the child class and not this in the superclass
-
-      private function load_standard() {
-      }
-
-      function load() {
-      }
-
-    */
-
     /**
      * map the database fields to the object fields
      * to be extended by the child object
@@ -460,289 +304,54 @@ class sandbox extends db_object_seq_id_user
 
 
     /*
-     * sql create
+     * set and get
      */
 
     /**
-     * the sql statement to create the tables of a sandbox object
+     * set the excluded field from a database value
+     * with postgres and MySQL this is pretty strait forward so more to prevent future issues
      *
-     * @param sql $sc with the target db_type set
-     * @return string the sql statement to create the table
+     * @param bool $db_val the value from the database row array
+     * @return void
      */
-    function sql_table(sql $sc): string
+    function set_excluded(?bool $db_val): void
     {
-        $sql = $sc->sql_separator();
-        $sql .= $this->sql_table_create($sc);
-        $sc->set_class($this::class, true);
-        $sql .= $this->sql_table_create($sc, true);
-        return $sql;
-    }
-
-    /**
-     * the sql statement to create the database indices of a sandbox object
-     *
-     * @param sql $sc with the target db_type set
-     * @return string the sql statement to create the indices
-     */
-    function sql_index(sql $sc): string
-    {
-        $sql = $sc->sql_separator();
-        $sql .= $this->sql_index_create($sc);
-        $sc->set_class($this::class, true);
-        $sql .= $this->sql_index_create($sc, true);
-        return $sql;
-    }
-
-    /**
-     * the sql statement to create the foreign keys of a sandbox object
-     *
-     * @param sql $sc with the target db_type set
-     * @return string the sql statement to create the foreign keys
-     */
-    function sql_foreign_key(sql $sc): string
-    {
-        $sql = $sc->sql_separator();
-        $sql .= $this->sql_foreign_key_create($sc);
-        $sc->set_class($this::class, true);
-        $sql .= $this->sql_foreign_key_create($sc, true);
-        return $sql;
-    }
-
-
-    /*
-     * load
-     */
-
-    /**
-     * create the SQL to load the single default value always by the id
-     * @param sql $sc with the target db_type set
-     * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_standard_sql(sql $sc, string $class = self::class): sql_par
-    {
-        $qp = new sql_par($class, [sql_type::NORM]);
-        $qp->name .= sql_db::FLD_ID;
-
-        $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id());
-        $sc->add_where($this->id_field(), $this->id());
-        $qp->sql = $sc->sql();
-        $qp->par = $sc->get_par();
-
-        return $qp;
-    }
-
-    /**
-     * create the SQL to load the single default value always by something else than the main id
-     * @param sql $sc with the target db_type set
-     * @param sql_par $qp the query parameters with the class and name already set
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_standard_sql_by(sql $sc, sql_par $qp): sql_par
-    {
-        $qp->name .= '_std';
-        $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id());
-        $qp->sql = $sc->sql();
-        $qp->par = $sc->get_par();
-
-        return $qp;
-    }
-
-    /**
-     * load the object parameters for all users
-     * @param sql_par|null $qp the query parameter created by the function of the child object e.g. word->load_standard
-     * @param string $class the name of the child class from where the call has been triggered
-     * @return bool true if the standard object has been loaded
-     */
-    function load_standard(?sql_par $qp = null, string $class = ''): bool
-    {
-        global $db_con;
-        $result = false;
-
-        if ($this->id <= 0) {
-            log_err('The ' . $class . ' id must be set to load ' . $class, $class . '->load_standard');
+        if ($db_val == null) {
+            $this->excluded = false;
         } else {
-            $db_row = $db_con->get1($qp);
-            $result = $this->row_mapper_sandbox($db_row, true, false);
+            $this->excluded = $db_val;
         }
-        return $result;
     }
 
     /**
-     * function that must be overwritten by the child object
-     * @return array with all field names of the user sandbox object excluding the prime id field
+     * set excluded to 'true' to switch off the usage of this user sandbox object
+     * @return void
      */
-    protected function all_sandbox_fields(): array
+    function exclude(): void
     {
-        return array();
+        $this->excluded = true;
     }
 
     /**
-     * prepare the SQL parameter to load a single user specific value
-     *
-     * @param sql $sc with the target db_type set
-     * @param string $query_name the name of the selection fields to make the query name unique
-     * @param array $fields list of the fields from the child object
-     * @param array $usr_fields list of the user specified fields from the child object
-     * @param array $usr_num_fields list of the fields from the child object
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * set excluded to 'false' to switch on the usage of this user sandbox object
+     * @return void
      */
-    function load_sql_fields(
-        sql    $sc,
-        string $query_name,
-        array  $fields,
-        array  $usr_fields,
-        array  $usr_num_fields,
-    ): sql_par
+    function include(): void
     {
-        $qp = parent::load_sql($sc, $query_name);
-        $sc->set_usr($this->user()->id());
-        $sc->set_fields($fields);
-        $sc->set_usr_fields($usr_fields);
-        $sc->set_usr_num_fields($usr_num_fields);
-
-        return $qp;
+        $this->excluded = false;
     }
 
     /**
-     * create the SQL to load a sandbox object with numeric user specific fields
-     *
-     * @param sql $sc with the target db_type set
-     * @param sandbox $sbx the name of the child class from where the call has been triggered
-     * @param string $query_name the name extension to make the query name unique
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return bool true if the user does not want to use this object at all
      */
-    function load_sql_usr_num(sql $sc, sandbox $sbx, string $query_name): sql_par
+    function is_excluded(): bool
     {
-        $lib = new library();
-
-        $qp = new sql_par($sbx::class);
-        $qp->name .= $query_name;
-
-        $sc->set_class($sbx::class);
-        $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id());
-        $sc->set_fields($sbx::FLD_NAMES);
-        $sc->set_usr_fields($sbx::FLD_NAMES_USR);
-        $sc->set_usr_num_fields($sbx::FLD_NAMES_NUM_USR);
-        $sc->set_usr_only_fields($sbx::FLD_NAMES_USR_ONLY);
-
-        return $qp;
-    }
-
-    /**
-     * create the SQL to load a single user specific value
-     * TODO replace by load_sql_usr or load_sql_usr_num
-     *
-     * @param sql $sc with the target db_type set
-     * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql_obj_vars(sql $sc, string $class): sql_par
-    {
-        return new sql_par($class);
-    }
-
-    function load_owner(): bool
-    {
-        global $db_con;
-        $result = false;
-
-        if ($this->id > 0) {
-
-            // TODO: try to avoid using load_test_user
-            if ($this->owner_id > 0) {
-                $usr = new user;
-                if ($usr->load_by_id($this->owner_id)) {
-                    $this->set_user($usr);
-                    $result = true;
-                }
-            } else {
-                // take the ownership if it is not yet done. The ownership is probably missing due to an error in an older program version.
-                $db_con->set_class($this->obj_name);
-                $db_con->set_usr($this->user()->id());
-                if ($db_con->update_old($this->id, user::FLD_ID, $this->user()->id())) {
-                    $result = true;
-                }
-            }
-        }
-        return $result;
-    }
-
-    /**
-     * load one database row e.g. word, triple, formula, view or component from the database
-     * for values and result the db key might be an 512-bit id or even a string
-     * so for values and results the load_non_int_db_key function is used instead of this load function
-     *
-     * @param sql_par $qp the query parameters created by the calling function
-     * @return int the id of the object found and zero if nothing is found
-     */
-    protected function load(sql_par $qp): int
-    {
-        global $db_con;
-
-        $db_row = $db_con->get1($qp);
-        $this->row_mapper_sandbox($db_row);
-        return $this->id();
-    }
-
-    /**
-     * dummy function to get the missing objects from the database that is always overwritten by the child class
-     * @returns bool  false if the loading has failed
-     */
-    function load_objects(): bool
-    {
-        log_err('The dummy parent method get_similar has been called, which should never happen');
-        return true;
+        return $this->excluded;
     }
 
 
     /*
-     *  check functions
-     */
-
-    /*
-    // check if the owner is set for all records of a user sandbox object
-    // e.g. if the owner of a new triple is set correctly at creation
-    //      if not changes of another can overwrite the standard and by that influence the setup of the creator
-    function chk_owner ($type, $correct) {
-      zu_debug($this->obj_name.'->chk_owner for '.$type);
-
-      global $db_con;
-      $msg = '';
-
-      // just to allow the call with one line
-      if ($type <> '') {
-        $this->obj_name = $type;
-      }
-
-      //$db_con = New mysql;
-      $db_con->set_type($this->obj_name);
-      $db_con->set_usr($this->user()->id());
-
-      if ($correct === True) {
-        // set the default owner for all records with a missing owner
-        $change_txt = $db_con->set_default_owner();
-        if ($change_txt <> '') {
-          $msg = 'Owner set for '.$change_txt.' '.$type.'s.';
-        }
-      } else {
-        // get the list of records with a missing owner
-        $id_lst = $db_con->missing_owner();
-        $id_txt = implode(",",$id_lst);
-        if ($id_txt <> '') {
-          $msg = 'Owner not set for '.$type.' ID '.$id_txt.'.';
-        }
-      }
-
-      return $id_lst;
-    }
-    */
-
-    /*
-     * type loading functions
+     * preloaded
      */
 
     /**
@@ -792,6 +401,240 @@ class sandbox extends db_object_seq_id_user
         }
 
         return $protection_types->name($this->protection_id);
+    }
+
+
+    /*
+     * cast
+     */
+
+    /**
+     * @param object $api_obj frontend API object filled with the database id
+     */
+    function fill_api_obj(object $api_obj): void
+    {
+        $api_obj->set_id($this->id());
+    }
+
+    /**
+     * @return object frontend API object filled with the database id
+     */
+    function fill_min_obj(object $min_obj): object
+    {
+        $min_obj->set_id($this->id());
+        return $min_obj;
+    }
+
+    /**
+     * TODO deprecate
+     * fill a similar object that is extended with display interface functions
+     *
+     * @param object $dsp_obj the object that should be filled with all user sandbox values
+     */
+    function fill_dsp_obj(object $dsp_obj): void
+    {
+        $dsp_obj->set_id($this->id());
+        $dsp_obj->usr_cfg_id = $this->usr_cfg_id;
+        $dsp_obj->usr = $this->user();
+        $dsp_obj->owner_id = $this->owner_id;
+        $dsp_obj->excluded = $this->is_excluded();
+    }
+
+
+    /*
+     * load
+     */
+
+    /*
+     * these functions differ for each object, so they are always in the child class and not this in the superclass
+     *
+     * private function load_standard() {}
+     * function load() {}
+    */
+
+    /**
+     * load one database row e.g. word, triple, formula, view or component from the database
+     * for values and result the db key might be an 512-bit id or even a string
+     * so for values and results the load_non_int_db_key function is used instead of this load function
+     *
+     * @param sql_par $qp the query parameters created by the calling function
+     * @return int the id of the object found and zero if nothing is found
+     */
+    protected function load(sql_par $qp): int
+    {
+        global $db_con;
+
+        $db_row = $db_con->get1($qp);
+        $this->row_mapper_sandbox($db_row);
+        return $this->id();
+    }
+
+    /**
+     * load the object parameters for all users
+     * @param sql_par|null $qp the query parameter created by the function of the child object e.g. word->load_standard
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return bool true if the standard object has been loaded
+     */
+    function load_standard(?sql_par $qp = null, string $class = ''): bool
+    {
+        global $db_con;
+        $result = false;
+
+        if ($this->id <= 0) {
+            log_err('The ' . $class . ' id must be set to load ' . $class, $class . '->load_standard');
+        } else {
+            $db_row = $db_con->get1($qp);
+            $result = $this->row_mapper_sandbox($db_row, true, false);
+        }
+        return $result;
+    }
+
+    /**
+     * create the SQL to load the single default value always by the id
+     * @param sql $sc with the target db_type set
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_standard_sql(sql $sc, string $class = self::class): sql_par
+    {
+        $qp = new sql_par($class, [sql_type::NORM]);
+        $qp->name .= sql_db::FLD_ID;
+
+        $sc->set_name($qp->name);
+        $sc->set_usr($this->user()->id());
+        $sc->add_where($this->id_field(), $this->id());
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * create the SQL to load the single default value always by something else than the main id
+     * @param sql $sc with the target db_type set
+     * @param sql_par $qp the query parameters with the class and name already set
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_standard_sql_by(sql $sc, sql_par $qp): sql_par
+    {
+        $qp->name .= '_std';
+        $sc->set_name($qp->name);
+        $sc->set_usr($this->user()->id());
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * create the SQL to load a sandbox object with numeric user specific fields
+     *
+     * @param sql $sc with the target db_type set
+     * @param sandbox $sbx the name of the child class from where the call has been triggered
+     * @param string $query_name the name extension to make the query name unique
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_usr_num(sql $sc, sandbox $sbx, string $query_name): sql_par
+    {
+        $lib = new library();
+
+        $qp = new sql_par($sbx::class);
+        $qp->name .= $query_name;
+
+        $sc->set_class($sbx::class);
+        $sc->set_name($qp->name);
+        $sc->set_usr($this->user()->id());
+        $sc->set_fields($sbx::FLD_NAMES);
+        $sc->set_usr_fields($sbx::FLD_NAMES_USR);
+        $sc->set_usr_num_fields($sbx::FLD_NAMES_NUM_USR);
+        $sc->set_usr_only_fields($sbx::FLD_NAMES_USR_ONLY);
+
+        return $qp;
+    }
+
+    /**
+     * prepare the SQL parameter to load a single user specific value
+     *
+     * @param sql $sc with the target db_type set
+     * @param string $query_name the name of the selection fields to make the query name unique
+     * @param array $fields list of the fields from the child object
+     * @param array $usr_fields list of the user specified fields from the child object
+     * @param array $usr_num_fields list of the fields from the child object
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_fields(
+        sql    $sc,
+        string $query_name,
+        array  $fields,
+        array  $usr_fields,
+        array  $usr_num_fields,
+    ): sql_par
+    {
+        $qp = parent::load_sql($sc, $query_name);
+        $sc->set_usr($this->user()->id());
+        $sc->set_fields($fields);
+        $sc->set_usr_fields($usr_fields);
+        $sc->set_usr_num_fields($usr_num_fields);
+
+        return $qp;
+    }
+
+    /**
+     * function that must be overwritten by the child object
+     * @return array with all field names of the user sandbox object excluding the prime id field
+     */
+    protected function all_sandbox_fields(): array
+    {
+        return array();
+    }
+
+    /**
+     * create the SQL to load a single user specific value
+     * TODO replace by load_sql_usr or load_sql_usr_num
+     *
+     * @param sql $sc with the target db_type set
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_obj_vars(sql $sc, string $class): sql_par
+    {
+        return new sql_par($class);
+    }
+
+    function load_owner(): bool
+    {
+        global $db_con;
+        $result = false;
+
+        if ($this->id > 0) {
+
+            // TODO: try to avoid using load_test_user
+            if ($this->owner_id > 0) {
+                $usr = new user;
+                if ($usr->load_by_id($this->owner_id)) {
+                    $this->set_user($usr);
+                    $result = true;
+                }
+            } else {
+                // take the ownership if it is not yet done. The ownership is probably missing due to an error in an older program version.
+                $db_con->set_class($this->obj_name);
+                $db_con->set_usr($this->user()->id());
+                if ($db_con->update_old($this->id, user::FLD_ID, $this->user()->id())) {
+                    $result = true;
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * dummy function to get the missing objects from the database that is always overwritten by the child class
+     * @returns bool  false if the loading has failed
+     */
+    function load_objects(): bool
+    {
+        log_err('The dummy parent method get_similar has been called, which should never happen');
+        return true;
     }
 
 
@@ -901,7 +744,7 @@ class sandbox extends db_object_seq_id_user
 
 
     /*
-     * save support - ownership and access
+     * owner and access
      */
 
     /**
@@ -963,8 +806,10 @@ class sandbox extends db_object_seq_id_user
         return $result;
     }
 
-    // true if no other user has modified the object
-    // assuming that in this case no confirmation from the other users for an object change is needed
+    /**
+     * @return bool true if no other user has modified the object
+     * assuming that in this case no confirmation from the other users for an object change is needed
+     */
     function not_changed(): bool
     {
         $result = true;
@@ -999,6 +844,7 @@ class sandbox extends db_object_seq_id_user
 
     /**
      * create an SQL statement to get all the users that have changed this value
+     * TODO deprecate
      * @param sql_db $db_con
      * @return sql_par
      */
@@ -1146,7 +992,7 @@ class sandbox extends db_object_seq_id_user
 
 
     /*
-     * save support - user sandbox
+     * sandbox
      */
 
     /**
@@ -1402,7 +1248,7 @@ class sandbox extends db_object_seq_id_user
 
 
     /*
-     * save support - log changes
+     * log
      */
 
     /**
@@ -1520,7 +1366,7 @@ class sandbox extends db_object_seq_id_user
 
 
     /*
-     * save support - save fields
+     * save fields
      */
 
     /**
@@ -1777,7 +1623,7 @@ class sandbox extends db_object_seq_id_user
 
 
     /*
-     * save support - check id
+     * save id
      */
 
     /**
@@ -1921,8 +1767,9 @@ class sandbox extends db_object_seq_id_user
         return '';
     }
 
+
     /*
-     * save support - check similar
+     * similar
      */
 
     /**
@@ -2507,6 +2354,7 @@ class sandbox extends db_object_seq_id_user
 
     /**
      * set the update parameters for the word, triple, formula, view or component type
+     * TODO review
      * TODO: log the ref
      * TODO: save the reference also in the log
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
@@ -2674,6 +2522,189 @@ class sandbox extends db_object_seq_id_user
             return false;
         }
     }
+
+
+    /*
+     * sql write fields
+     */
+
+    /**
+     * repeat the all_db_fields function in the parent object to prevent polymorph warning
+     * @return array list of all database field names that have been updated
+     */
+    function db_fields_all_sandbox(): array
+    {
+        return [
+            self::FLD_EXCLUDED,
+            self::FLD_SHARE,
+            self::FLD_PROTECT
+        ];
+    }
+
+    /**
+     * list of fields that have been changed compared to a given object
+     * the last_update field is excluded here because this is an internal only field
+     *
+     * @param sandbox $sbx the same sandbox as this to compare which fields have been changed
+     * @return array with the field names of the object and any child object
+     */
+    function db_fields_changed_sandbox(sandbox $sbx): array
+    {
+        $result = [];
+        if ($sbx->excluded <> $this->excluded) {
+            $result[] = self::FLD_EXCLUDED;
+        }
+        if ($sbx->share_id <> $this->share_id) {
+            $result[] = self::FLD_SHARE;
+        }
+        if ($sbx->protection_id <> $this->protection_id) {
+            $result[] = self::FLD_PROTECT;
+        }
+        return $result;
+    }
+
+    /**
+     * list of values that have been changed compared to a given object
+     * the last_update field is excluded here because this is an internal only field
+     *
+     * @param sandbox $sbx the same sandbox as this to compare which fields have been changed
+     * @return array with the field names of the object and any child object
+     */
+    function db_values_changed_sandbox(sandbox $sbx): array
+    {
+        $result = [];
+        if ($sbx->excluded <> $this->excluded) {
+            $result[] = $this->excluded;
+        }
+        if ($sbx->share_id <> $this->share_id) {
+            $result[] = $this->share_id;
+        }
+        if ($sbx->protection_id <> $this->protection_id) {
+            $result[] = $this->protection_id;
+        }
+        return $result;
+    }
+
+
+    /*
+     * sql create
+     */
+
+    /**
+     * the sql statement to create the tables of a sandbox object
+     *
+     * @param sql $sc with the target db_type set
+     * @return string the sql statement to create the table
+     */
+    function sql_table(sql $sc): string
+    {
+        $sql = $sc->sql_separator();
+        $sql .= $this->sql_table_create($sc);
+        $sc->set_class($this::class, true);
+        $sql .= $this->sql_table_create($sc, true);
+        return $sql;
+    }
+
+    /**
+     * the sql statement to create the database indices of a sandbox object
+     *
+     * @param sql $sc with the target db_type set
+     * @return string the sql statement to create the indices
+     */
+    function sql_index(sql $sc): string
+    {
+        $sql = $sc->sql_separator();
+        $sql .= $this->sql_index_create($sc);
+        $sc->set_class($this::class, true);
+        $sql .= $this->sql_index_create($sc, true);
+        return $sql;
+    }
+
+    /**
+     * the sql statement to create the foreign keys of a sandbox object
+     *
+     * @param sql $sc with the target db_type set
+     * @return string the sql statement to create the foreign keys
+     */
+    function sql_foreign_key(sql $sc): string
+    {
+        $sql = $sc->sql_separator();
+        $sql .= $this->sql_foreign_key_create($sc);
+        $sc->set_class($this::class, true);
+        $sql .= $this->sql_foreign_key_create($sc, true);
+        return $sql;
+    }
+
+
+    /*
+     * internal check
+     */
+
+    /**
+     * TODO deprecate because using the object const is actually faster in execution
+     * return the expected database id field name of the object
+     * should actually be static, but seems to be not yet possible
+     * TODO check if it can be combined with id_field()
+     */
+    function fld_id(string $class = self::class): string
+    {
+        $lib = new library();
+        return $lib->class_to_name($class) . sql_db::FLD_EXT_ID;
+    }
+
+    function fld_usr_id(string $class = self::class): string
+    {
+        $lib = new library();
+        return sql_db::USER_PREFIX . $lib->class_to_name($class) . sql_db::FLD_EXT_ID;
+    }
+
+    function fld_name(string $class = self::class): string
+    {
+        $lib = new library();
+        return $lib->class_to_name($class) . sql_db::FLD_EXT_NAME;
+    }
+
+    /*
+     *  check functions
+     */
+
+    /*
+    // check if the owner is set for all records of a user sandbox object
+    // e.g. if the owner of a new triple is set correctly at creation
+    //      if not changes of another can overwrite the standard and by that influence the setup of the creator
+    function chk_owner ($type, $correct) {
+      zu_debug($this->obj_name.'->chk_owner for '.$type);
+
+      global $db_con;
+      $msg = '';
+
+      // just to allow the call with one line
+      if ($type <> '') {
+        $this->obj_name = $type;
+      }
+
+      //$db_con = New mysql;
+      $db_con->set_type($this->obj_name);
+      $db_con->set_usr($this->user()->id());
+
+      if ($correct === True) {
+        // set the default owner for all records with a missing owner
+        $change_txt = $db_con->set_default_owner();
+        if ($change_txt <> '') {
+          $msg = 'Owner set for '.$change_txt.' '.$type.'s.';
+        }
+      } else {
+        // get the list of records with a missing owner
+        $id_lst = $db_con->missing_owner();
+        $id_txt = implode(",",$id_lst);
+        if ($id_txt <> '') {
+          $msg = 'Owner not set for '.$type.' ID '.$id_txt.'.';
+        }
+      }
+
+      return $id_lst;
+    }
+    */
 
 }
 
