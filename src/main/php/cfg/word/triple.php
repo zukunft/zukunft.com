@@ -205,7 +205,6 @@ class triple extends sandbox_link_typed implements JsonSerializable
 
         $this->obj_name = sql_db::TBL_TRIPLE;
         $this->rename_can_switch = UI_CAN_CHANGE_triple_NAME;
-        $this->obj_type = sandbox::TYPE_LINK;
 
         $this->reset();
         $this->name_given = null;

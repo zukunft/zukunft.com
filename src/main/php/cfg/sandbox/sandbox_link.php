@@ -408,7 +408,7 @@ class sandbox_link extends sandbox
 
             // save the object fields if saving the key was successful
             if ($this->id > 0) {
-                log_debug($this->obj_type . ' ' . $this->dsp_id() . ' has been added');
+                log_debug($this::class . ' ' . $this->dsp_id() . ' has been added');
                 // update the id in the log
                 if (!$log->add_ref($this->id)) {
                     $result->add_message('Updating the reference in the log failed');
@@ -428,7 +428,7 @@ class sandbox_link extends sandbox
                 }
 
             } else {
-                $result->add_message('Adding ' . $this->obj_type . ' ' . $this->dsp_id() . ' failed due to logging error.');
+                $result->add_message('Adding ' . $this::class . ' ' . $this->dsp_id() . ' failed due to logging error.');
             }
         }
 
@@ -595,6 +595,27 @@ class sandbox_link extends sandbox
     {
         log_warning('The dummy parent method get_similar has been called, which should never happen');
         return '';
+    }
+
+
+    /*
+     * internal
+     */
+
+    /**
+     * @return bool true if this sandbox object links two objects (final function)
+     */
+    function is_link_obj(): bool
+    {
+        return true;
+    }
+
+    /**
+     * @return bool true if this sandbox object has a name as unique key (final function)
+     */
+    function is_named_obj(): bool
+    {
+        return false;
     }
 
 

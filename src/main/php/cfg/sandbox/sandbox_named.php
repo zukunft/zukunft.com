@@ -711,43 +711,46 @@ class sandbox_named extends sandbox
     {
         global $usr;
 
+        // TODO move to languga based messages
+        $msg_res = 'is a reserved';
+        $msg_for = 'name for system testing. Please use another name';
         $result = '';
         if (!$usr->is_system()) {
-            if ($this->obj_type == sandbox::TYPE_NAMED) {
+            if ($this->is_named_obj()) {
                 if ($this::class == word::class) {
                     if (in_array($this->name, word_api::RESERVED_WORDS)) {
                         // the admin user needs to add the read test word during initial load
                         if (!$usr->is_admin()) {
-                            $result = '"' . $this->name() . '" is a reserved name for system testing. Please use another name';
+                            $result = '"' . $this->name() . '" ' . $msg_res . ' ' . $msg_for;
                         }
                     }
                 } elseif ($this::class == phrase::class) {
                     if (in_array($this->name, phrase_api::RESERVED_PHRASES)) {
-                        $result = '"' . $this->name() . '" is a reserved phrase name for system testing. Please use another name';
+                        $result = '"' . $this->name() . '" ' . $msg_res . ' phrase ' . $msg_for;
                     }
                 } elseif ($this::class == formula::class) {
                     if (in_array($this->name, formula_api::RESERVED_FORMULAS)) {
                         if ($usr->is_admin() and $this->name() != formula_api::TN_READ) {
-                            $result = '"' . $this->name() . '" is a reserved formula name for system testing. Please use another name';
+                            $result = '"' . $this->name() . '" ' . $msg_res . ' formula ' . $msg_for;
                         }
                     }
                 } elseif ($this::class == view::class) {
                     if (in_array($this->name, view_api::RESERVED_VIEWS)) {
                         if ($usr->is_admin() and $this->name() != view_api::TN_READ) {
-                            $result = '"' . $this->name() . '" is a reserved view name for system testing. Please use another name';
+                            $result = '"' . $this->name() . '" ' . $msg_res . ' view ' . $msg_for;
                         }
                     }
                 } elseif ($this::class == component::class) {
                     if (in_array($this->name, component_api::RESERVED_COMPONENTS)) {
                         if ($usr->is_admin() and $this->name() != component_api::TN_READ) {
-                            $result = '"' . $this->name() . '" is a reserved view component name for system testing. Please use another name';
+                            $result = '"' . $this->name() . '" ' . $msg_res . ' view component ' . $msg_for;
                         }
                     }
                 } elseif ($this::class == source::class) {
                     if (in_array($this->name, source_api::RESERVED_SOURCES)) {
                         // the admin user needs to add the read test source during initial load
                         if ($usr->is_admin() and $this->name() != source_api::TN_READ) {
-                            $result = '"' . $this->name() . '" is a reserved source name for system testing. Please use another name';
+                            $result = '"' . $this->name() . '" ' . $msg_res . ' source ' . $msg_for;
                         }
                     }
                 }
@@ -795,7 +798,7 @@ class sandbox_named extends sandbox
 
             // save the object fields if saving the key was successful
             if ($this->id > 0) {
-                log_debug($this->obj_type . ' ' . $this->dsp_id() . ' has been added');
+                log_debug($this::class . ' ' . $this->dsp_id() . ' has been added');
                 // update the id in the log
                 if (!$log->add_ref($this->id)) {
                     $result->add_message('Updating the reference in the log failed');
@@ -816,7 +819,7 @@ class sandbox_named extends sandbox
                 }
 
             } else {
-                $result->add_message('Adding ' . $this->obj_type . ' ' . $this->dsp_id() . ' failed due to logging error.');
+                $result->add_message('Adding ' . $this::class . ' ' . $this->dsp_id() . ' failed due to logging error.');
             }
         }
 
@@ -1047,6 +1050,19 @@ class sandbox_named extends sandbox
         }
 
         return $result;
+    }
+
+
+    /*
+     * internal
+     */
+
+    /**
+     * @return bool true if this sandbox object has a name as unique key (final function)
+     */
+    function is_named_obj(): bool
+    {
+        return true;
     }
 
 

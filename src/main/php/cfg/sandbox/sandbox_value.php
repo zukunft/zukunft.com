@@ -943,10 +943,12 @@ class sandbox_value extends sandbox_multi
     function log_add(): change
     {
         log_debug($this->dsp_id());
+        $lib = new library();
 
         $log = new change($this->user());
         $log->action = change_action::ADD;
-        $log->set_table($this->obj_type . sql_db::TABLE_EXTENSION);
+        $class = $lib->class_to_name($this::class);
+        $log->set_table($class . sql_db::TABLE_EXTENSION);
         $log->set_field(change_field_list::FLD_NUMERIC_VALUE);
         $log->old_value = '';
         $log->new_value = $this->number;
@@ -973,10 +975,10 @@ class sandbox_value extends sandbox_multi
     function log_del(): change
     {
         log_debug($this->dsp_id());
+        $lib = new library();
 
         $log = new change($this->user());
         $log->action = change_action::DELETE;
-        $lib = new library();
         $class = $lib->class_to_name($this::class);
         $log->set_table($class . sql_db::TABLE_EXTENSION);
         $log->set_field(change_field_list::FLD_NUMERIC_VALUE);
@@ -1001,7 +1003,7 @@ class sandbox_value extends sandbox_multi
     function save_id_fields(sql_db $db_con, sandbox_multi $db_rec, sandbox_multi $std_rec): string
     {
 
-        return 'The user sandbox save_id_fields does not support ' . $this->obj_type . ' for ' . $this->obj_name;
+        return 'The user sandbox save_id_fields does not support ' . $this::class . ' for ' . $this->obj_name;
     }
 
 
@@ -1091,7 +1093,7 @@ class sandbox_value extends sandbox_multi
                 } else {
                     $msg = 'update of ' . $log->field() . ' to ' . $new_value;
                     log_debug($msg);
-                    $db_con->set_class($this->obj_type . $ext);
+                    $db_con->set_class($this::class, false, $ext);
                     $db_con->set_usr($this->user()->id());
                     $qp = $this->sql_update_fields($db_con->sql_creator(), array($log->field()), array($new_value));
                     $usr_msg = $db_con->update($qp, $msg);
@@ -1153,6 +1155,27 @@ class sandbox_value extends sandbox_multi
         $obj_cpy = clone $this;
         $obj_cpy->last_update = null;
         return $obj_cpy;
+    }
+
+
+    /*
+     * internal
+     */
+
+    /**
+     * @return bool true if this sandbox object is a value or result (final function)
+     */
+    function is_value_obj(): bool
+    {
+        return true;
+    }
+
+    /**
+     * @return bool true if this sandbox object has a name as unique key (final function)
+     */
+    function is_named_obj(): bool
+    {
+        return false;
     }
 
 

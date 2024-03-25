@@ -172,7 +172,6 @@ class sandbox extends db_object_seq_id_user
     // fields to define the object; should be set in the constructor of the child object
     // TODO use object class instead
     public ?string $obj_name = null;       // the object type to create the correct database fields e.g. for the type "word" the database field for the id is "word_id"
-    public ?string $obj_type = null;       // either a "named" object or a "link" object
     public bool $rename_can_switch = True; // true if renaming an object can switch to another object with the new name
 
     // database fields that are used in all objects and that have a specific behavior
@@ -216,8 +215,6 @@ class sandbox extends db_object_seq_id_user
     function __construct(user $usr)
     {
         parent::__construct($usr);
-        // the default type that is overwritten by the child objects
-        $this->obj_type = self::TYPE_NAMED;
     }
 
     /**
@@ -1085,16 +1082,16 @@ class sandbox extends db_object_seq_id_user
 
 
         if (!$this->has_usr_cfg()) {
-            if ($this->obj_type == self::TYPE_NAMED) {
+            if ($this->is_named_obj()) {
                 log_debug('for "' . $this->dsp_id() . ' und user ' . $this->user()->name);
-            } elseif ($this->obj_type == self::TYPE_LINK) {
+            } elseif ($this->is_link_obj()) {
                 if (isset($this->fob) and isset($this->tob)) {
                     log_debug('for "' . $this->fob->name . '"/"' . $this->tob->name . '" by user "' . $this->user()->name . '"');
                 } else {
                     log_debug('for "' . $this->id . '" and user "' . $this->user()->name . '"');
                 }
             } else {
-                log_err('Unknown user sandbox type ' . $this->obj_type . ' in ' . $this->obj_name, $this->obj_name . '->log_add');
+                log_err('Unknown user sandbox type ' . $this::class . ' in ' . $this->obj_name, $this->obj_name . '->log_add');
             }
             $lib = new library();
             $class = $lib->class_to_name($class);
@@ -1326,7 +1323,7 @@ class sandbox extends db_object_seq_id_user
     function log_upd()
     {
         log_debug($this->dsp_id());
-        if ($this->obj_type == self::TYPE_NAMED) {
+        if ($this->is_named_obj()) {
             $log = $this->log_upd_field();
         } else {
             $log = $this->log_upd_link();
@@ -1477,13 +1474,13 @@ class sandbox extends db_object_seq_id_user
         $log = new change_log($this->user());
         if ($db_rec->is_excluded() <> $this->is_excluded()) {
             if ($this->is_excluded()) {
-                if ($this->obj_type == self::TYPE_LINK) {
+                if ($this->is_link_obj()) {
                     $log = $this->log_del_link();
                 } else {
                     $log = $this->log_del();
                 }
             } else {
-                if ($this->obj_type == self::TYPE_LINK) {
+                if ($this->is_link_obj()) {
                     $log = $this->log_link_add();
                 } else {
                     $log = $this->log_add();
@@ -1722,12 +1719,12 @@ class sandbox extends db_object_seq_id_user
                     log_debug('change the existing ' . $this->obj_name . ' ' . $this->dsp_id() . ' (db ' . $db_rec->dsp_id() . ', standard ' . $std_rec->dsp_id() . ')');
                     // TODO check if next line is needed
                     //$this->load_objects();
-                    if ($this->obj_type == self::TYPE_LINK) {
+                    if ($this->is_link_obj()) {
                         $result .= $this->save_id_fields_link($db_con, $db_rec, $std_rec);
-                    } elseif ($this->obj_type == self::TYPE_NAMED) {
+                    } elseif ($this->is_named_obj()) {
                         $result .= $this->save_id_fields($db_con, $db_rec, $std_rec);
                     } else {
-                        log_info('Save of id field for ' . $this->obj_type . ' not expected');
+                        log_info('Save of id field for ' . $this::class . ' not expected');
                     }
                 } else {
                     // if the target link has not yet been created
@@ -1959,7 +1956,7 @@ class sandbox extends db_object_seq_id_user
         if ($result == '') {
 
             // load the objects if needed
-            if ($this->obj_type == self::TYPE_LINK) {
+            if ($this->is_link_obj()) {
                 $this->load_objects();
             }
 
@@ -2027,7 +2024,7 @@ class sandbox extends db_object_seq_id_user
                         $result .= 'Reloading of user ' . $this->obj_name . ' failed';
                     } else {
                         log_debug('reloaded from db');
-                        if ($this->obj_type == self::TYPE_LINK) {
+                        if ($this->is_link_obj()) {
                             if (!$db_rec->load_objects()) {
                                 $result .= 'Reloading of the object for ' . $this->obj_name . ' failed';
                             }
@@ -2103,7 +2100,7 @@ class sandbox extends db_object_seq_id_user
         $result = new user_message();
 
         // log the deletion request
-        if ($this->obj_type == self::TYPE_LINK) {
+        if ($this->is_link_obj()) {
             $log = $this->log_del_link();
         } else {
             $log = $this->log_del();
@@ -2241,7 +2238,7 @@ class sandbox extends db_object_seq_id_user
                 log_warning('Delete failed', $this->obj_name . '->del', 'Delete failed, because it seems that the ' . $this->obj_name . ' ' . $this->dsp_id() . ' has been deleted in the meantime.', (new Exception)->getTraceAsString(), $this->user());
             } else {
                 // reload the objects if needed
-                if ($this->obj_type == self::TYPE_LINK) {
+                if ($this->is_link_obj()) {
                     if (!$this->load_objects()) {
                         $msg .= 'Reloading of linked objects ' . $this->obj_name . ' ' . $this->dsp_id() . ' failed.';
                     }
@@ -2295,7 +2292,7 @@ class sandbox extends db_object_seq_id_user
                         $db_rec->set_user($this->user());
                         if ($db_rec->load_by_id($this->id, $db_rec::class)) {
                             log_debug('reloaded ' . $db_rec->dsp_id() . ' from database');
-                            if ($this->obj_type == self::TYPE_LINK) {
+                            if ($this->is_link_obj()) {
                                 if (!$db_rec->load_objects()) {
                                     $msg .= 'Reloading of linked objects ' . $this->obj_name . ' ' . $this->dsp_id() . ' failed.';
                                 }
@@ -2664,6 +2661,34 @@ class sandbox extends db_object_seq_id_user
         $lib = new library();
         return $lib->class_to_name($class) . sql_db::FLD_EXT_NAME;
     }
+
+    /**
+     * @return bool true if this sandbox object has a name as unique key
+     * final function overwritten by the child object
+     */
+    function is_named_obj(): bool
+    {
+        return true;
+    }
+
+    /**
+     * @return bool true if this sandbox object links two objects
+     * final function overwritten by the child object
+     */
+    function is_link_obj(): bool
+    {
+        return false;
+    }
+
+    /**
+     * @return bool true if this sandbox object is a value or result
+     * final function overwritten by the child object
+     */
+    function is_value_obj(): bool
+    {
+        return false;
+    }
+
 
     /*
      *  check functions
