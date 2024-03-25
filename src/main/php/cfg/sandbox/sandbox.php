@@ -76,6 +76,7 @@ include_once MODEL_PHRASE_PATH . 'phrase_type.php';
 include_once MODEL_SANDBOX_PATH . 'protection_type.php';
 include_once MODEL_SANDBOX_PATH . 'share_type.php';
 
+use cfg\component\component;
 use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_field_default;
@@ -155,9 +156,9 @@ class sandbox extends db_object_seq_id_user
     // so exclude values and result TODO check missing owner for values and results
     const DB_TYPES = array(
         sql_db::TBL_WORD,
-        sql_db::TBL_TRIPLE,
+        triple::class,
         sql_db::TBL_FORMULA,
-        sql_db::TBL_FORMULA_LINK,
+        formula_link::class,
         sql_db::TBL_VIEW,
         sql_db::TBL_COMPONENT,
         sql_db::TBL_COMPONENT_LINK
@@ -617,7 +618,7 @@ class sandbox extends db_object_seq_id_user
                 }
             } else {
                 // take the ownership if it is not yet done. The ownership is probably missing due to an error in an older program version.
-                $db_con->set_class($this->obj_name);
+                $db_con->set_class($this::class);
                 $db_con->set_usr($this->user()->id());
                 if ($db_con->update_old($this->id, user::FLD_ID, $this->user()->id())) {
                     $result = true;
@@ -703,7 +704,7 @@ class sandbox extends db_object_seq_id_user
         if ($this->owner_id > 0) {
             $qp->name .= '_ex_owner';
         }
-        $db_con->set_class($this->obj_name, true);
+        $db_con->set_class($this::class, true);
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->user()->id());
         $db_con->set_fields(array(user::FLD_ID));
@@ -787,7 +788,7 @@ class sandbox extends db_object_seq_id_user
             $std->set_user($this->user());
             $std->load_standard();
 
-            $db_con->set_class($this->obj_name);
+            $db_con->set_class($this::class);
             $db_con->set_usr($this->user()->id());
             if (!$db_con->update_old($this->id, user::FLD_ID, $new_owner_id)) {
                 $result = false;
@@ -855,7 +856,7 @@ class sandbox extends db_object_seq_id_user
         if ($this->owner_id > 0) {
             $qp->name .= '_ex_owner';
         }
-        $db_con->set_class($this->obj_name, true);
+        $db_con->set_class($this::class, true);
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->user()->id());
         $db_con->set_fields(array(user::FLD_ID));
@@ -878,7 +879,7 @@ class sandbox extends db_object_seq_id_user
         global $db_con;
 
         $user_id = 0;
-        $db_con->set_class($this->obj_name);
+        $db_con->set_class($this::class);
         $db_con->set_usr($this->user()->id());
         //$qp = $this->load_sql_changer($db_con->sql_creator());
         $qp = $this->load_sql_changer_old($db_con);
@@ -1099,7 +1100,7 @@ class sandbox extends db_object_seq_id_user
             $class = $lib->class_to_name($class);
 
             // check again if there ist not yet a record
-            $db_con->set_class($this->obj_name, true);
+            $db_con->set_class($this::class, true);
             $qp = new sql_par($class);
             $qp->name = $class . '_add_usr_cfg';
             $db_con->set_name($qp->name);
@@ -1408,7 +1409,7 @@ class sandbox extends db_object_seq_id_user
                     }
                     $this->del_usr_cfg_if_not_needed(); // don't care what the result is, because in most cases it is fine to keep the user sandbox row
                 } else {
-                    $db_con->set_class($this->obj_name);
+                    $db_con->set_class($this::class);
                     $db_con->set_usr($this->user()->id());
                     if (!$db_con->update_old($this->id, $log->field(), $new_value)) {
                         $result = 'update of ' . $log->field() . ' to ' . $new_value . ' failed';
@@ -1458,7 +1459,7 @@ class sandbox extends db_object_seq_id_user
             $new_value = $log->new_value;
         }
         if ($log->add()) {
-            $db_con->set_class($this->obj_name);
+            $db_con->set_class($this::class);
             $db_con->set_usr($this->user()->id());
             if (!$db_con->update_old($this->id, $log->field(), $new_value)) {
                 $result = 'update of value for ' . $log->field() . ' to ' . $new_value . ' failed';
@@ -1511,7 +1512,7 @@ class sandbox extends db_object_seq_id_user
             $std_value = $std_rec->is_excluded();
             // similar to $this->save_field_do
             if ($this->can_change()) {
-                $db_con->set_class($this->obj_name);
+                $db_con->set_class($this::class);
                 $db_con->set_usr($this->user()->id());
                 if (!$db_con->update_old($this->id, $log->field(), $new_value)) {
                     $result .= 'excluding of ' . $this->obj_name . ' failed';
@@ -1797,15 +1798,15 @@ class sandbox extends db_object_seq_id_user
         $result = false;
 
         /*
-        if ($this->obj_name == sql_db::TBL_WORD and $obj_to_check->obj_name == sql_db::TBL_FORMULA) {
+        if ($this::class == word::class and $obj_to_check->obj_name == sql_db::TBL_FORMULA) {
             // special case if word should be created representing the formula it is a kind of same at least the creation of the word should be alloed
             if ($this->name == $obj_to_check->name) {
                 $result = true;
             }
-        } elseif ($this->obj_name == sql_db::TBL_WORD and $obj_to_check->obj_name == sql_db::TBL_WORD) {
+        } elseif ($this::class == word::class and $obj_to_check->obj_name == sql_db::TBL_WORD) {
 
         */
-        if ($this->obj_name == sql_db::TBL_WORD and $obj_to_check->obj_name == sql_db::TBL_WORD) {
+        if ($this::class == word::class and $obj_to_check->obj_name == sql_db::TBL_WORD) {
             // special case a word should not be combined with a word that is representing a formulas
             if ($this->name() == $obj_to_check->name()) {
                 if (isset($this->type_id) and isset($obj_to_check->type_id)) {
@@ -1856,10 +1857,10 @@ class sandbox extends db_object_seq_id_user
                 $result = $this->is_same_std($obj_to_check);
             } else {
                 // create a synthetic unique index over words, phrase, verbs and formulas
-                if ($this->obj_name == sql_db::TBL_WORD
-                    or $this->obj_name == sql_db::TBL_TRIPLE
-                    or $this->obj_name == sql_db::TBL_FORMULA
-                    or $this->obj_name == sql_db::TBL_VERB) {
+                if ($this::class == word::class
+                    or $this::class == triple::class
+                    or $this::class == formula::class
+                    or $this::class == verb::class) {
                     if ($this->name() == $obj_to_check->name()) {
                         $result = true;
                     }
@@ -1963,7 +1964,7 @@ class sandbox extends db_object_seq_id_user
             }
 
             // configure the global database connection object for the select, insert, update and delete queries
-            $db_con->set_class($this->obj_name);
+            $db_con->set_class($this::class);
             $db_con->set_usr($this->user()->id());
 
             // create an object to check possible duplicates
@@ -2031,7 +2032,7 @@ class sandbox extends db_object_seq_id_user
                                 $result .= 'Reloading of the object for ' . $this->obj_name . ' failed';
                             }
                             // configure the global database connection object again to overwrite any changes from load_objects
-                            $db_con->set_class($this->obj_name);
+                            $db_con->set_class($this::class);
                             $db_con->set_usr($this->user()->id());
                         }
                         // relevant is if there is a user config in the database
@@ -2111,19 +2112,19 @@ class sandbox extends db_object_seq_id_user
             $db_con->usr_id = $this->user()->id();
 
             // for words first delete all links
-            if ($this->obj_name == sql_db::TBL_WORD) {
+            if ($this::class == word::class) {
                 $msg = $this->del_links();
                 $result->add($msg);
             }
 
             // for triples first delete all links
-            if ($this->obj_name == sql_db::TBL_TRIPLE) {
+            if ($this::class == triple::class) {
                 $msg = $this->del_links();
                 $result->add($msg);
             }
 
             // for formulas first delete all links
-            if ($this->obj_name == sql_db::TBL_FORMULA) {
+            if ($this::class == formula::class) {
                 $msg = $this->del_links();
                 $result->add($msg);
 
@@ -2155,13 +2156,13 @@ class sandbox extends db_object_seq_id_user
             }
 
             // for view components first delete all links
-            if ($this->obj_name == sql_db::TBL_COMPONENT) {
+            if ($this::class == component::class) {
                 $msg = $this->del_links();
                 $result->add($msg);
             }
 
             // for views first delete all links
-            if ($this->obj_name == sql_db::TBL_VIEW) {
+            if ($this::class == view::class) {
                 $msg = $this->del_links();
                 $result->add($msg);
             }
@@ -2190,7 +2191,7 @@ class sandbox extends db_object_seq_id_user
                     $msg = $db_con->delete($qp, $this::class . ' user exclusions');
                     $result->add($msg);
                 } else {
-                    $db_con->set_class($this->obj_name);
+                    $db_con->set_class($this::class);
                     $db_con->set_usr($this->user()->id());
                     $msg = $db_con->delete_old($this->id_field(), $this->id);
                     $result->add_message($msg);
@@ -2370,7 +2371,7 @@ class sandbox extends db_object_seq_id_user
     {
         $result = '';
         if ($db_rec->type_id <> $this->type_id) {
-            if ($this->obj_name == sql_db::TBL_TRIPLE) {
+            if ($this::class == triple::class) {
                 $log = $this->log_upd_field();
             } else {
                 $log = $this->log_upd();
@@ -2383,11 +2384,11 @@ class sandbox extends db_object_seq_id_user
             $log->std_id = $std_rec->type_id;
             $log->row_id = $this->id;
             // special case just to shorten the field name
-            if ($this->obj_name == sql_db::TBL_FORMULA_LINK) {
+            if ($this::class == formula_link::class) {
                 $log->set_field(formula_link::FLD_TYPE);
-            } elseif ($this->obj_name == sql_db::TBL_WORD) {
+            } elseif ($this::class == word::class) {
                 $log->set_field(phrase::FLD_TYPE);
-            } elseif ($this->obj_name == sql_db::TBL_TRIPLE) {
+            } elseif ($this::class == triple::class) {
                 $log->set_field(phrase::FLD_TYPE);
             } else {
                 $log->set_field($this->obj_name . sql_db::FLD_EXT_TYPE_ID);

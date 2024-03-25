@@ -231,7 +231,7 @@ class formula_list extends sandbox_list
         if ($phr->id() <> 0) {
             $sc->set_join_fields(
                 array(phrase::FLD_ID),
-                sql_db::TBL_FORMULA_LINK,
+                formula_link::class,
                 formula::FLD_ID,
                 formula::FLD_ID
             );
@@ -256,7 +256,7 @@ class formula_list extends sandbox_list
         if ($phr_lst->count() > 0) {
             $sc->set_join_fields(
                 array(phrase::FLD_ID),
-                sql_db::TBL_FORMULA_LINK,
+                formula_link::class,
                 formula::FLD_ID,
                 formula::FLD_ID
             );

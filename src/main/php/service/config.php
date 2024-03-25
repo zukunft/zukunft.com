@@ -258,6 +258,7 @@ class config extends db_object_seq_id
 
         $db_value = $this->default_value($code_id);
         $db_description = $this->default_description($code_id);
+        $db_con->set_class(self::class);
         $db_id = $db_con->insert_old(
             array(
                 sql::FLD_CODE_ID,
@@ -284,6 +285,7 @@ class config extends db_object_seq_id
     private function add(string $code_id, string $value, string $description, sql_db $db_con): bool
     {
         $result = false;
+        $db_con->set_class(self::class);
         $db_id = $db_con->insert_old(
             array(
                 sql::FLD_CODE_ID,

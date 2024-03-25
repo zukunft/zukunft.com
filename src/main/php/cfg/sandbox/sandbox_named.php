@@ -49,6 +49,7 @@ use api\phrase\phrase as phrase_api;
 use api\ref\source as source_api;
 use api\view\view as view_api;
 use api\word\word as word_api;
+use cfg\component\component;
 use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
@@ -713,36 +714,36 @@ class sandbox_named extends sandbox
         $result = '';
         if (!$usr->is_system()) {
             if ($this->obj_type == sandbox::TYPE_NAMED) {
-                if ($this->obj_name == sql_db::TBL_WORD) {
+                if ($this::class == word::class) {
                     if (in_array($this->name, word_api::RESERVED_WORDS)) {
                         // the admin user needs to add the read test word during initial load
                         if (!$usr->is_admin()) {
                             $result = '"' . $this->name() . '" is a reserved name for system testing. Please use another name';
                         }
                     }
-                } elseif ($this->obj_name == sql_db::TBL_PHRASE) {
+                } elseif ($this::class == phrase::class) {
                     if (in_array($this->name, phrase_api::RESERVED_PHRASES)) {
                         $result = '"' . $this->name() . '" is a reserved phrase name for system testing. Please use another name';
                     }
-                } elseif ($this->obj_name == sql_db::TBL_FORMULA) {
+                } elseif ($this::class == formula::class) {
                     if (in_array($this->name, formula_api::RESERVED_FORMULAS)) {
                         if ($usr->is_admin() and $this->name() != formula_api::TN_READ) {
                             $result = '"' . $this->name() . '" is a reserved formula name for system testing. Please use another name';
                         }
                     }
-                } elseif ($this->obj_name == sql_db::TBL_VIEW) {
+                } elseif ($this::class == view::class) {
                     if (in_array($this->name, view_api::RESERVED_VIEWS)) {
                         if ($usr->is_admin() and $this->name() != view_api::TN_READ) {
                             $result = '"' . $this->name() . '" is a reserved view name for system testing. Please use another name';
                         }
                     }
-                } elseif ($this->obj_name == sql_db::TBL_COMPONENT) {
+                } elseif ($this::class == component::class) {
                     if (in_array($this->name, component_api::RESERVED_COMPONENTS)) {
                         if ($usr->is_admin() and $this->name() != component_api::TN_READ) {
                             $result = '"' . $this->name() . '" is a reserved view component name for system testing. Please use another name';
                         }
                     }
-                } elseif ($this->obj_name == sql_db::TBL_SOURCE) {
+                } elseif ($this::class == source::class) {
                     if (in_array($this->name, source_api::RESERVED_SOURCES)) {
                         // the admin user needs to add the read test source during initial load
                         if ($usr->is_admin() and $this->name() != source_api::TN_READ) {
@@ -787,7 +788,7 @@ class sandbox_named extends sandbox
                     $this->id = $usr_msg->get_row_id();
                 }
             } else {
-                $db_con->set_class($this->obj_name);
+                $db_con->set_class($this::class);
                 $db_con->set_usr($this->user()->id);
                 $this->id = $db_con->insert_old(array($this->obj_name . '_name', "user_id"), array($this->name, $this->user()->id));
             }
@@ -917,7 +918,7 @@ class sandbox_named extends sandbox
 
             $log->row_id = $this->id;
             if ($log->add()) {
-                $db_con->set_class($this->obj_name);
+                $db_con->set_class($this::class);
                 $db_con->set_usr($this->user()->id);
                 if (!$db_con->update_old($this->id,
                     array($this->obj_name . '_name'),
@@ -959,7 +960,7 @@ class sandbox_named extends sandbox
                 $result = $this->is_same_std($obj_to_check);
             } else {
                 // create a synthetic unique index over words, phrase, verbs and formulas
-                if ($this->obj_name == sql_db::TBL_WORD or $this->obj_name == sql_db::TBL_PHRASE or $this->obj_name == sql_db::TBL_FORMULA or $this->obj_name == sql_db::TBL_VERB) {
+                if ($this::class == word::class or $this::class == phrase::class or $this::class == formula::class or $this::class == verb::class) {
                     if ($this->name == $obj_to_check->name()) {
                         $result = true;
                     }
@@ -989,10 +990,10 @@ class sandbox_named extends sandbox
         // check potential duplicate by name
         // for words and formulas it needs to be checked if a term (word, verb or formula) with the same name already exist
         // for verbs the check is inside the verbs class because verbs are not part of the user sandbox
-        if ($this->obj_name == sql_db::TBL_WORD
-            or $this->obj_name == sql_db::TBL_VERB
-            or $this->obj_name == sql_db::TBL_TRIPLE
-            or $this->obj_name == sql_db::TBL_FORMULA) {
+        if ($this::class == word::class
+            or $this::class == verb::class
+            or $this::class == triple::class
+            or $this::class == formula::class) {
             $similar_trm = $this->get_term();
             if ($similar_trm->id_obj() > 0) {
                 $result = $similar_trm->obj();
@@ -1023,7 +1024,7 @@ class sandbox_named extends sandbox
             }
             // check with the user namespace
             $db_chk->set_user($this->user());
-            if ($this->obj_name == sql_db::TBL_CHANGE) {
+            if ($this::class == change::class) {
                 // TODO check if it is working with build in tests
                 if ($db_chk->load_by_id($this->id())) {
                     if ($db_chk->id() > 0) {

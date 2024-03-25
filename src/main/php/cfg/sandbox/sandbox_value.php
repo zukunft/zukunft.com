@@ -771,7 +771,7 @@ class sandbox_value extends sandbox_multi
         global $db_con;
 
         $user_id = 0;
-        $db_con->set_class($this->obj_name);
+        $db_con->set_class($this::class);
         $db_con->set_usr($this->user()->id());
         $qp = $this->load_sql_changer($db_con->sql_creator());
         $db_row = $db_con->get1($qp);

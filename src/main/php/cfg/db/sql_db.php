@@ -312,14 +312,15 @@ class sql_db
 
     // tables that do not have a name
     // e.g. sql_db::TBL_TRIPLE is a link which hase a name, but the generated name can be overwritten, so the standard field naming is not used
+    // TODO use class
     const DB_TYPES_NOT_NAMED = [
-        sql_db::TBL_TRIPLE,
+        triple::class,
         value::class,
         sql_db::TBL_VALUE_TIME_SERIES,
-        sql_db::TBL_FORMULA_LINK,
+        formula_link::class,
         sql_db::TBL_RESULT,
         sql_db::TBL_ELEMENT,
-        sql_db::TBL_COMPONENT_LINK,
+        component_link::class,
         sql_db::TBL_VALUE_PHRASE_LINK,
         sql_db::TBL_VIEW_TERM_LINK,
         sql_db::TBL_REF,
@@ -337,7 +338,12 @@ class sql_db
 
     // tables that link two named tables
     // TODO set automatically by set_link_fields???
-    const DB_TYPES_LINK = [sql_db::TBL_TRIPLE, sql_db::TBL_FORMULA_LINK, sql_db::TBL_COMPONENT_LINK, sql_db::TBL_REF];
+    const DB_TYPES_LINK = [
+        triple::class,
+        formula_link::class,
+        component_link::class,
+        sql_db::TBL_REF
+    ];
 
 
     // open used name extension for the prepared sql statements
@@ -1797,11 +1803,11 @@ class sql_db
     /**
      * set the table name based on the already set type / class
      * TODO use always the user table flag
-     * @param $usr_table
+     * @param bool $usr_table
      * @param string $ext the table name extension e.g. to switch between standard and prime values
      * @return void
      */
-    private function set_table($usr_table = false, string $ext = ''): void
+    private function set_table(bool $usr_table = false, string $ext = ''): void
     {
         global $debug;
 
@@ -3931,7 +3937,6 @@ class sql_db
         $lib = new library();
 
         // escape the fields and values and build the SQL statement
-        $this->set_table();
         $sql = 'INSERT INTO ' . $this->name_sql_esc($this->table);
 
         if (is_array($fields)) {

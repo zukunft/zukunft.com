@@ -286,7 +286,7 @@ class word_list extends sandbox_list
             }
             $sc->set_join_fields(
                 array(verb::FLD_ID),
-                sql_db::TBL_TRIPLE,
+                triple::class,
                 word::FLD_ID,
                 $join_field);
             // verbs can have a negative id for the reverse selection

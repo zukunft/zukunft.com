@@ -741,7 +741,7 @@ class word extends sandbox_typed
 
         global $db_con;
 
-        $db_con->set_class(sql_db::TBL_FORMULA_LINK);
+        $db_con->set_class(formula_link::class);
         $qp = new sql_par(self::class);
         $qp->name = 'word_formula_by_id';
         $db_con->set_name($qp->name);
@@ -1222,7 +1222,7 @@ class word extends sandbox_typed
 
         $link_id = $verbs->id(verb::FOLLOW);
         $db_con->usr_id = $this->user()->id();
-        $db_con->set_class(sql_db::TBL_TRIPLE);
+        $db_con->set_class(triple::class);
         $key_result = $db_con->get_value_2key('from_phrase_id', 'to_phrase_id', $this->id, verb::FLD_ID, $link_id);
         if (is_numeric($key_result)) {
             $id = intval($key_result);
@@ -1248,7 +1248,7 @@ class word extends sandbox_typed
 
         $link_id = $verbs->id(verb::FOLLOW);
         $db_con->usr_id = $this->user()->id();
-        $db_con->set_class(sql_db::TBL_TRIPLE);
+        $db_con->set_class(triple::class);
         $key_result = $db_con->get_value_2key('to_phrase_id', 'from_phrase_id', $this->id, verb::FLD_ID, $link_id);
         if (is_numeric($key_result)) {
             $id = intval($key_result);

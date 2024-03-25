@@ -762,7 +762,7 @@ class component_link extends sandbox_link_with_type
             }
 
             // check again if there is not yet a record
-            $db_con->set_class(sql_db::TBL_COMPONENT_LINK, true);
+            $db_con->set_class(self::class, true);
             $qp = new sql_par(self::class);
             $qp->name = 'component_link_add_usr_cfg';
             $db_con->set_name($qp->name);
@@ -889,6 +889,7 @@ class component_link extends sandbox_link_with_type
     function add_insert(): int
     {
         global $db_con;
+        $db_con->set_class(self::class);
         return $db_con->insert_old(
             array($this->from_name . sql_db::FLD_EXT_ID, $this->to_name . sql_db::FLD_EXT_ID, "user_id", 'order_nbr'),
             array($this->view()->id(), $this->component()->id(), $this->user()->id(), $this->order_nbr));

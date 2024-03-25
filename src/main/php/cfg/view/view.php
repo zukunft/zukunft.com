@@ -497,7 +497,7 @@ class view extends sandbox_typed
             log_err("Either the database ID (" . $this->id . "), the view name (" . $this->name . ") or the code_id (" . $this->code_id . ")  must be set to load the components of a view.", "view->load_components_sql");
         }
 
-        $db_con->set_class(sql_db::TBL_COMPONENT_LINK);
+        $db_con->set_class(component_link::class);
         $db_con->set_usr($this->user()->id());
         $db_con->set_name($qp->name);
         $db_con->set_fields(component_link::FLD_NAMES);

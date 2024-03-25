@@ -482,12 +482,12 @@ class change_log extends db_object_seq_id_user
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } elseif ($table_name == change_table_list::TRIPLE) {
-                $db_con->set_class(sql_db::TBL_TRIPLE);
+                $db_con->set_class(triple::class);
                 foreach (triple::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } elseif ($table_name == change_table_list::TRIPLE_USR) {
-                $db_con->set_class(sql_db::TBL_USER_PREFIX . sql_db::TBL_TRIPLE);
+                $db_con->set_class(triple::class, true);
                 foreach (triple::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }

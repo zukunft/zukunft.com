@@ -125,7 +125,7 @@ class verb_list extends type_list
         }
 
         if ($qp->name != '') {
-            $db_con->set_class(sql_db::TBL_TRIPLE);
+            $db_con->set_class(triple::class);
             $db_con->set_name($qp->name);
             $db_con->set_usr($this->user()->id());
             $db_con->set_usr_num_fields(array(sandbox::FLD_EXCLUDED));

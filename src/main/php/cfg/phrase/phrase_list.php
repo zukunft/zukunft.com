@@ -553,7 +553,7 @@ class phrase_list extends sandbox_list_named
             }
             $sc->set_join_fields(
                 array(verb::FLD_ID),
-                sql_db::TBL_TRIPLE,
+                triple::class,
                 phrase::FLD_ID,
                 $join_field);
             $sc->set_name($qp->name);

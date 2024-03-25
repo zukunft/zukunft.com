@@ -391,7 +391,7 @@ class test_cleanup extends test_api
         //$html->echo_html($db_con->seq_reset(sql_db::TBL_GROUP_LINK));
         //$html->echo_html($db_con->seq_reset(sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK));
         $html->echo_html($db_con->seq_reset(sql_db::TBL_FORMULA));
-        $html->echo_html($db_con->seq_reset(sql_db::TBL_FORMULA_LINK));
+        $html->echo_html($db_con->seq_reset(formula_link::class));
         $html->echo_html($db_con->seq_reset(sql_db::TBL_VIEW));
         $html->echo_html($db_con->seq_reset(sql_db::TBL_COMPONENT));
         $html->echo_html($db_con->seq_reset(sql_db::TBL_COMPONENT_LINK));

@@ -504,7 +504,7 @@ class formula_link extends sandbox_link_with_type
      */
     function not_changed_sql(sql_db $db_con): sql_par
     {
-        $db_con->set_class(sql_db::TBL_FORMULA_LINK);
+        $db_con->set_class(formula_link::class);
         return $db_con->load_sql_not_changed($this->id, $this->owner_id);
     }
 
@@ -558,7 +558,7 @@ class formula_link extends sandbox_link_with_type
                 $this->usr_cfg_id = $db_row[formula_link::FLD_ID];
             }
             // create an entry in the user sandbox
-            $db_con->set_class(sql_db::TBL_USER_PREFIX . sql_db::TBL_FORMULA_LINK);
+            $db_con->set_class(formula_link::class, true);
             $log_id = $db_con->insert_old(array(formula_link::FLD_ID, user::FLD_ID), array($this->id, $this->user()->id()));
             if ($log_id <= 0) {
                 log_err('Insert of user_formula_link failed.');
@@ -610,6 +610,7 @@ class formula_link extends sandbox_link_with_type
     function add_insert(): int
     {
         global $db_con;
+        $db_con->set_class(self::class);
         return $db_con->insert_old(
             array($this->from_name . sql_db::FLD_EXT_ID, $this->to_name . sql_db::FLD_EXT_ID, "user_id", 'order_nbr'),
             array($this->fob->id(), $this->tob->id(), $this->user()->id, $this->order_nbr));
@@ -639,7 +640,7 @@ class formula_link extends sandbox_link_with_type
 
         // build the database object because the is anyway needed
         $db_con->set_usr($this->user()->id());
-        $db_con->set_class(sql_db::TBL_FORMULA_LINK);
+        $db_con->set_class(formula_link::class);
 
         // check if a new value is supposed to be added
         if ($this->id <= 0) {
@@ -666,7 +667,7 @@ class formula_link extends sandbox_link_with_type
             $db_rec = new formula_link($this->user());
             $db_rec->load_by_id($this->id());
             $db_rec->load_objects();
-            $db_con->set_class(sql_db::TBL_FORMULA_LINK);
+            $db_con->set_class(formula_link::class);
             log_debug("database formula loaded (" . $db_rec->id . ")");
             $std_rec = new formula_link($this->user()); // must also be set to allow to take the ownership
             $std_rec->id = $this->id;

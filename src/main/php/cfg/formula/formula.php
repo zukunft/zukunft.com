@@ -1581,9 +1581,9 @@ class formula extends sandbox_typed
             $field_values[] = $elm_type_id;
             $field_names[] = element::FLD_REF_ID;
             $field_values[] = $elm_add_id;
-            $db_con->set_class(sql_db::TBL_ELEMENT);
             $field_names[] = element::FLD_ORDER;
             $field_values[] = $elm_order_nbr;
+            $db_con->set_class(sql_db::TBL_ELEMENT);
             $add_result = $db_con->insert_old($field_names, $field_values);
             // in this case the row id is not needed, but for testing the number of action should be indicated by adding a '1' to the result string
             //if ($add_result > 0) {

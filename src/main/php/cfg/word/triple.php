@@ -709,7 +709,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
                 $new_name = $this->name();
                 log_debug('triple->load_standard check if name ' . $this->dsp_id() . ' needs to be updated to "' . $new_name . '"');
                 if ($new_name <> $this->name) {
-                    $db_con->set_class(sql_db::TBL_TRIPLE);
+                    $db_con->set_class(triple::class);
                     $result = $db_con->update_old($this->id(), self::FLD_NAME_GIVEN, $new_name);
                     $this->name = $new_name;
                 }
@@ -826,7 +826,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
             $new_name = $this->name_generated();
             log_debug('triple->load check if name ' . $this->dsp_id() . ' needs to be updated to "' . $new_name . '"');
             if ($new_name <> $this->name_generated) {
-                $db_con->set_class(sql_db::TBL_TRIPLE);
+                $db_con->set_class(triple::class);
                 $db_con->update_old($this->id(), self::FLD_NAME_AUTO, $new_name);
                 $this->set_name_generated($new_name);
             }
@@ -1579,7 +1579,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
      */
     function not_changed_sql(sql_db $db_con): sql_par
     {
-        $db_con->set_class(sql_db::TBL_TRIPLE);
+        $db_con->set_class(triple::class);
         return $db_con->load_sql_not_changed($this->id(), $this->owner_id);
     }
 
@@ -1634,7 +1634,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
             }
 
             // check again if there ist not yet a record
-            $db_con->set_class(sql_db::TBL_TRIPLE, true);
+            $db_con->set_class(triple::class, true);
             $qp = new sql_par(self::class);
             $qp->name = 'triple_add_usr_cfg';
             $db_con->set_name($qp->name);
@@ -1648,7 +1648,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
             }
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
-                $db_con->set_class(sql_db::TBL_USER_PREFIX . sql_db::TBL_TRIPLE);
+                $db_con->set_class(triple::class, true);
                 $log_id = $db_con->insert_old(array(self::FLD_ID, user::FLD_ID), array($this->id(), $this->user()->id()));
                 if ($log_id <= 0) {
                     log_err('Insert of user_triple failed.');
@@ -1937,7 +1937,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
             $log->row_id = $this->id;
             //$log->set_field(self::FLD_FROM);
             if ($log->add()) {
-                $db_con->set_class(sql_db::TBL_TRIPLE);
+                $db_con->set_class(triple::class);
                 if (!$db_con->update_old($this->id(),
                     array("from_phrase_id", "verb_id", "to_phrase_id"),
                     array($this->fob->id(), $this->verb->id(), $this->tob->id()))) {
@@ -2034,7 +2034,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
         $log = $this->log_link_add();
         if ($log->id() > 0) {
             // insert the new triple
-            $db_con->set_class(sql_db::TBL_TRIPLE);
+            $db_con->set_class(triple::class);
             $this->set_id($db_con->insert_old(array("from_phrase_id", "verb_id", "to_phrase_id", "user_id"),
                 array($this->fob->id(), $this->verb->id(), $this->tob->id(), $this->user()->id())));
             // TODO make sure on all add functions that the database object is always set
@@ -2086,7 +2086,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
 
             // build the database object because the is anyway needed
             $db_con->set_usr($this->user()->id());
-            $db_con->set_class(sql_db::TBL_TRIPLE);
+            $db_con->set_class(triple::class);
 
             // check if a triple with the same link exists and if yes, update this triple
             if ($this->id() == 0) {

@@ -178,10 +178,10 @@ class formula_link_list extends sandbox_list
                     //$db_con = new mysql;
                     $db_con->usr_id = $this->user()->id();
                     // delete first all user configuration that have also been excluded
-                    $db_con->set_class(sql_db::TBL_USER_PREFIX . sql_db::TBL_FORMULA_LINK);
+                    $db_con->set_class(formula_link::class, true);
                     $result = $db_con->delete_old(array(formula_link::FLD_ID, sandbox::FLD_EXCLUDED), array($frm_lnk->id(), '1'));
                     if ($result == '') {
-                        $db_con->set_class(sql_db::TBL_FORMULA_LINK);
+                        $db_con->set_class(formula_link::class);
                         $result = $db_con->delete_old(formula_link::FLD_ID, $frm_lnk->id());
                     }
                 } else {
