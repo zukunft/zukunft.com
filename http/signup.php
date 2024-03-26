@@ -90,7 +90,7 @@ if (isset($_POST['submit'])) {
         $usr_email = $_POST['email'];
         $pw_hash = hash('sha256', mysqli_real_escape_string($db_con->mysql, $_POST['password']));
         //$pw_hash = password_hash($_POST['password'], password_DEFAULT);
-        $db_con->set_class(sql_db::TBL_USER);
+        $db_con->set_class(user::class);
         $db_con->set_usr(SYSTEM_USER_ID);
         $log_id = $db_con->insert_old(array('user_name', 'email', 'password'), array($usr_name, $usr_email, $pw_hash));
         if ($log_id <= 0) {

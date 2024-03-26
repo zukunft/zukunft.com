@@ -1002,8 +1002,9 @@ class sandbox_value extends sandbox_multi
      */
     function save_id_fields(sql_db $db_con, sandbox_multi $db_rec, sandbox_multi $std_rec): string
     {
-
-        return 'The user sandbox save_id_fields does not support ' . $this::class . ' for ' . $this->obj_name;
+        $lib = new library();
+        $class_name = $lib->class_to_name($this::class);
+        return 'The user sandbox save_id_fields does not support ' . $class_name . ' for ' . $this->obj_name;
     }
 
 
@@ -1083,7 +1084,7 @@ class sandbox_value extends sandbox_multi
                     if ($this->has_usr_cfg()) {
                         $msg = 'remove user change of ' . $log->field();
                         log_debug($msg);
-                        $db_con->set_class(sql_db::TBL_USER_PREFIX . $this->obj_name . $ext);
+                        $db_con->set_class($this::class, true, $ext);
                         $db_con->set_usr($this->user()->id());
                         $qp = $this->sql_update_fields($db_con->sql_creator(), array($log->field()), array(null));
                         $usr_msg = $db_con->update($qp, $msg);
@@ -1106,7 +1107,7 @@ class sandbox_value extends sandbox_multi
                     }
                 }
                 if ($result == '') {
-                    $db_con->set_class(sql_db::TBL_USER_PREFIX . $this->obj_name . $ext);
+                    $db_con->set_class($this::class, true, $ext);
                     $db_con->set_usr($this->user()->id());
                     if ($new_value == $std_value) {
                         $msg = 'remove user change of ' . $log->field();

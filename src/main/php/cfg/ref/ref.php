@@ -827,7 +827,7 @@ class ref extends sandbox_link_with_type
         $log = $this->log_link_add();
         if ($log->id() > 0) {
             // insert the new reference
-            $db_con->set_class(sql_db::TBL_REF);
+            $db_con->set_class(ref::class);
             $db_con->set_usr($this->user()->id());
 
             $this->id = $db_con->insert_old(
@@ -892,7 +892,7 @@ class ref extends sandbox_link_with_type
         if ($this->user() != null) {
             $db_con->set_usr($this->user()->id());
         }
-        $db_con->set_class(sql_db::TBL_REF);
+        $db_con->set_class(ref::class);
 
         // check if the external reference is supposed to be added
         if ($this->id <= 0) {
@@ -928,7 +928,7 @@ class ref extends sandbox_link_with_type
             if ($this->external_key <> $db_rec->external_key) {
                 $log = $this->log_link_upd($db_rec);
                 if ($log->id() > 0) {
-                    $db_con->set_class(sql_db::TBL_REF);
+                    $db_con->set_class(ref::class);
                     if ($db_con->update_old($this->id, self::FLD_EX_KEY, $this->external_key)) {
                         log_debug('ref->save update ... done.');
                     }
@@ -966,7 +966,7 @@ class ref extends sandbox_link_with_type
             } else {
                 $log = $this->log_link_del();
                 if ($log->id() > 0) {
-                    $db_con->set_class(sql_db::TBL_REF);
+                    $db_con->set_class(ref::class);
                     $del_result = $db_con->delete_old(self::FLD_ID, $this->id);
                     if ($del_result == '') {
                         log_debug('done.');

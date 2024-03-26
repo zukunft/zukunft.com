@@ -1555,7 +1555,7 @@ class result extends sandbox_value
             // build the database object because the is anyway needed
             //$db_con = new mysql;
             $db_con->set_usr($this->user()->id());
-            $db_con->set_class(sql_db::TBL_RESULT);
+            $db_con->set_class(result::class);
 
             // build the word list if needed to separate the time word from the word list
             $this->save_prepare_wrds();
@@ -1575,7 +1575,7 @@ class result extends sandbox_value
                     $msg = 'update result ' . result::FLD_VALUE . ' to ' . $this->value
                         . ' from ' . $db_val . ' for ' . $this->dsp_id();
                     log_debug($msg);
-                    $db_con->set_class(sql_db::TBL_RESULT);
+                    $db_con->set_class(result::class);
                     $sc = $db_con->sql_creator();
                     $qp = $this->sql_update($sc, $res_db);
                     $usr_msg = $db_con->update($qp, $msg);
@@ -1607,7 +1607,7 @@ class result extends sandbox_value
                 $field_names[] = result::FLD_LAST_UPDATE;
                 //$field_values[] = sql_creator::NOW; // replaced with time of last change that has been included in the calculation
                 $field_values[] = $this->last_val_update->format('Y-m-d H:i:s');
-                $db_con->set_class(sql_db::TBL_RESULT);
+                $db_con->set_class(result::class);
                 $sc = $db_con->sql_creator();
                 $qp = $this->sql_insert($sc);
                 $usr_msg = $db_con->insert($qp, $msg);

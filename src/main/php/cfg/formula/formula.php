@@ -832,7 +832,7 @@ class formula extends sandbox_typed
 
         global $db_con;
 
-        $db_con->set_class(sql_db::TBL_RESULT);
+        $db_con->set_class(result::class);
         $db_con->set_usr($this->user()->id);
         return $db_con->delete_old(self::FLD_ID, $this->id);
     }
@@ -1583,7 +1583,7 @@ class formula extends sandbox_typed
             $field_values[] = $elm_add_id;
             $field_names[] = element::FLD_ORDER;
             $field_values[] = $elm_order_nbr;
-            $db_con->set_class(sql_db::TBL_ELEMENT);
+            $db_con->set_class(element::class);
             $add_result = $db_con->insert_old($field_names, $field_values);
             // in this case the row id is not needed, but for testing the number of action should be indicated by adding a '1' to the result string
             //if ($add_result > 0) {
@@ -1609,7 +1609,7 @@ class formula extends sandbox_typed
             $field_values[] = $elm_type_id;
             $field_names[] = element::FLD_REF_ID;
             $field_values[] = $elm_del_id;
-            $db_con->set_class(sql_db::TBL_ELEMENT);
+            $db_con->set_class(element::class);
             $del_result = $db_con->delete_old($field_names, $field_values);
             if ($del_result != '') {
                 $result = false;
@@ -1870,7 +1870,7 @@ class formula extends sandbox_typed
             // check again if there ist not yet a record
             if (!$this->check_usr_cfg()) {
                 // create an entry in the user sandbox
-                $db_con->set_class(sql_db::TBL_USER_PREFIX . sql_db::TBL_FORMULA);
+                $db_con->set_class(formula::class, true);
                 $log_id = $db_con->insert_old(array(self::FLD_ID, user::FLD_ID), array($this->id(), $this->user()->id));
                 if ($log_id <= 0) {
                     log_err('Insert of user_formula failed.');
@@ -1895,7 +1895,7 @@ class formula extends sandbox_typed
     {
         $lib = new library();
         $class = $lib->class_to_name($class);
-        $db_con->set_class(sql_db::TBL_FORMULA, true);
+        $db_con->set_class(formula::class, true);
         $qp = new sql_par($class);
         $qp->name = $class . '_user_sandbox';
         $db_con->set_name($qp->name);
@@ -1942,7 +1942,7 @@ class formula extends sandbox_typed
         $msg_failed = $this->id() . ' failed for ' . $this->user()->name;
         $msg = '';
 
-        $db_con->set_class(sql_db::TBL_ELEMENT);
+        $db_con->set_class(element::class);
         try {
             $msg = $db_con->delete_old(
                 array(self::FLD_ID, user::FLD_ID),
@@ -1953,7 +1953,7 @@ class formula extends sandbox_typed
         if ($msg != '') {
             log_err($action . ' elements ' . $msg_failed . ' because ' . $msg);
         } else {
-            $db_con->set_class(sql_db::TBL_USER_PREFIX . sql_db::TBL_FORMULA);
+            $db_con->set_class(formula::class, true);
             try {
                 $msg = $db_con->delete_old(
                     array(self::FLD_ID, user::FLD_ID),
@@ -2004,7 +2004,7 @@ class formula extends sandbox_typed
     {
         $result = '';
         $this->last_update = new DateTime();
-        $db_con->set_class(sql_db::TBL_FORMULA);
+        $db_con->set_class(formula::class);
         if (!$db_con->update_old($this->id(), self::FLD_LAST_UPDATE, sql::NOW)) {
             $result = 'saving the update trigger for formula ' . $this->dsp_id() . ' failed';
         }
@@ -2174,7 +2174,7 @@ class formula extends sandbox_typed
             $log->row_id = $this->id;
             $log->set_field(self::FLD_NAME);
             if ($log->add()) {
-                $db_con->set_class(sql_db::TBL_FORMULA);
+                $db_con->set_class(formula::class);
                 if (!$db_con->update_old($this->id(),
                     array(self::FLD_NAME),
                     array($this->name()))) {
@@ -2299,7 +2299,7 @@ class formula extends sandbox_typed
         $log = $this->log_add();
         if ($log->id() > 0) {
             // insert the new formula
-            $db_con->set_class(sql_db::TBL_FORMULA);
+            $db_con->set_class(formula::class);
             // include the formula_text and the resolved_text, because they should never be empty which is also forced by the db structure
             $this->set_id($db_con->insert_old(
                 array(self::FLD_NAME, user::FLD_ID, self::FLD_LAST_UPDATE, self::FLD_FORMULA_TEXT, self::FLD_FORMULA_USER_TEXT),
@@ -2353,7 +2353,7 @@ class formula extends sandbox_typed
 
             // build the database object because the is anyway needed
             $db_con->set_usr($this->user()->id);
-            $db_con->set_class(sql_db::TBL_FORMULA);
+            $db_con->set_class(formula::class);
 
             // check if a new formula is supposed to be added
             if ($this->id() <= 0) {

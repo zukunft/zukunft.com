@@ -819,7 +819,7 @@ class sandbox_named extends sandbox
                 }
 
             } else {
-                $result->add_message('Adding ' . $this::class . ' ' . $this->dsp_id() . ' failed due to logging error.');
+                $result->add_message('Adding ' . $class_name . ' ' . $this->dsp_id() . ' failed due to logging error.');
             }
         }
 
@@ -851,7 +851,8 @@ class sandbox_named extends sandbox
      */
     function msg_id_already_used(): string
     {
-        return 'A ' . $this->obj_name . ' with the name "' . $this->name() . '" already exists. Please use another name.';
+        $lib = new library();
+        return 'A ' . $lib->class_to_name($this::class) . ' with the name "' . $this->name() . '" already exists. Please use another name.';
     }
 
     /**

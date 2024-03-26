@@ -106,6 +106,8 @@ use cfg\user_message;
 use cfg\user_official_type;
 use cfg\user_profile_list;
 use cfg\value\value;
+use cfg\value\value_phrase_link;
+use cfg\value\value_time_series;
 use cfg\value\value_ts_data;
 use cfg\verb;
 use cfg\verb_list;
@@ -316,17 +318,17 @@ class sql_db
     const DB_TYPES_NOT_NAMED = [
         triple::class,
         value::class,
-        sql_db::TBL_VALUE_TIME_SERIES,
+        value_time_series::class,
         formula_link::class,
-        sql_db::TBL_RESULT,
-        sql_db::TBL_ELEMENT,
+        result::class,
+        element::class,
         component_link::class,
-        sql_db::TBL_VALUE_PHRASE_LINK,
-        sql_db::TBL_VIEW_TERM_LINK,
-        sql_db::TBL_REF,
+        value_phrase_link::class,
+        view_term_link::class,
+        ref::class,
         sql_db::TBL_IP,
-        sql_db::TBL_CHANGE,
-        sql_db::TBL_CHANGE_LINK,
+        change::class,
+        change_link::class,
         sql_db::TBL_SYS_LOG,
         sql_db::TBL_TASK,
         sql_db::VT_PHRASE_GROUP_LINK
@@ -342,7 +344,7 @@ class sql_db
         triple::class,
         formula_link::class,
         component_link::class,
-        sql_db::TBL_REF
+        ref::class
     ];
 
 
@@ -3493,11 +3495,13 @@ class sql_db
      */
     function count_sql(string $sql_name = '', string $id_fld = ''): string
     {
+        $lib = new library();
+        $class = $lib->class_to_name($this->class);
         if ($id_fld == '') {
-            $id_fld = $this->class . self::FLD_EXT_ID;
+            $id_fld = $class . self::FLD_EXT_ID;
         }
         if ($sql_name == '') {
-            $sql_name = $this->class . '_count';
+            $sql_name = $class . '_count';
         }
         $sql = 'PREPARE ' . $sql_name . ' AS
                     SELECT count(' . self::STD_TBL . '.' . $id_fld . ') + count(' . self::USR_TBL . '.' . $id_fld . ') AS count
@@ -4211,8 +4215,6 @@ class sql_db
             log_debug('in "' . $this->class . '" WHERE "' . $id_fields . '" IS "' . $id_values . '" for user ' . $this->usr_id);
 
         }
-
-        $this->set_table();
 
         if (is_array($id_fields)) {
             $sql = 'DELETE ' . 'FROM ' . $this->name_sql_esc($this->table);

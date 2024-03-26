@@ -46,6 +46,7 @@ use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\export\sandbox_exp;
+use cfg\library;
 use cfg\sandbox;
 use cfg\sandbox_link_with_type;
 use cfg\user;
@@ -136,9 +137,10 @@ class component_link extends sandbox_link_with_type
     function __construct(user $usr)
     {
         parent::__construct($usr);
-        $this->obj_name = sql_db::TBL_COMPONENT_LINK;
-        $this->from_name = sql_db::TBL_VIEW;
-        $this->to_name = sql_db::TBL_COMPONENT;
+        $lib = new library();
+        $this->obj_name = $lib->class_to_name(component_link::class);
+        $this->from_name = $lib->class_to_name(view::class);
+        $this->to_name = $lib->class_to_name(component::class);
 
         $this->rename_can_switch = UI_CAN_CHANGE_VIEW_COMPONENT_LINK;
 
@@ -775,7 +777,7 @@ class component_link extends sandbox_link_with_type
             }
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
-                $db_con->set_class(sql_db::TBL_USER_PREFIX . sql_db::TBL_COMPONENT_LINK);
+                $db_con->set_class(component_link::class, true);
                 $log_id = $db_con->insert_old(array(self::FLD_ID, user::FLD_ID), array($this->id, $this->user()->id()));
                 if ($log_id <= 0) {
                     log_err('Insert of user_component_link failed.');
@@ -888,6 +890,7 @@ class component_link extends sandbox_link_with_type
     function add_insert(): int
     {
         global $db_con;
+        $lib = new library();
         $db_con->set_class(self::class);
         return $db_con->insert_old(
             array($this->from_name . sql_db::FLD_EXT_ID, $this->to_name . sql_db::FLD_EXT_ID, "user_id", 'order_nbr'),

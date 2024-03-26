@@ -194,7 +194,7 @@ class sandbox_tests
 
         // test a simple SQL user select query for Postgres by name
         $db_con->db_type = sql_db::POSTGRES;
-        $db_con->set_class(sql_db::TBL_USER);
+        $db_con->set_class(user::class);
         $db_con->set_name('formula_link_norm_by_id');
         $db_con->set_usr(SYSTEM_USER_ID);
         $db_con->set_where_std(null, 'Test User');
@@ -205,7 +205,7 @@ class sandbox_tests
 
         // ... same for MySQL
         $db_con->db_type = sql_db::MYSQL;
-        $db_con->set_class(sql_db::TBL_USER);
+        $db_con->set_class(user::class);
         $db_con->set_name('formula_link_norm_by_id_mysql');
         $db_con->set_usr(SYSTEM_USER_ID);
         $db_con->set_where_std(null, 'Test User');
@@ -233,7 +233,7 @@ class sandbox_tests
         // test a simple SQL select creation for Postgres without the standard id and name identification
         $sc = new sql();
         $sc->set_db_type(sql_db::POSTGRES);
-        $sc->set_class(sql_db::TBL_CONFIG);
+        $sc->set_class(config::class);
         $sc->set_name('query_test');
         $sc->set_fields(array('value'));
         $sc->add_where(sql::FLD_CODE_ID, config::VERSION_DB);
@@ -256,7 +256,7 @@ class sandbox_tests
 
         // test a simple SQL select creation for Postgres with the standard id and name identification
         $db_con->db_type = sql_db::POSTGRES;
-        $db_con->set_class(sql_db::TBL_SOURCE_TYPE);
+        $db_con->set_class(source_type::class);
         $db_con->set_name('source_type_by_id');
         $db_con->set_where_std(2);
         $created_sql = $db_con->select_by_set_id();
@@ -268,7 +268,7 @@ class sandbox_tests
 
         // ... same for MySQL
         $db_con->db_type = sql_db::MYSQL;
-        $db_con->set_class(sql_db::TBL_SOURCE_TYPE);
+        $db_con->set_class(source_type::class);
         $db_con->set_name('source_type_by_id');
         $db_con->set_where_std(2);
         $created_sql = $db_con->select_by_set_id();
@@ -480,7 +480,7 @@ class sandbox_tests
         $t->display('Postgres all user select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // ... similar with joined fields
-        $db_con->set_class(sql_db::TBL_FORMULA);
+        $db_con->set_class(formula::class);
         $db_con->set_fields(array(
             user::FLD_ID,
             formula::FLD_FORMULA_TEXT,
@@ -510,7 +510,7 @@ class sandbox_tests
         $t->display('Postgres all user join select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // ... same for user sandbox data (should match with the parameters in formula->load)
-        $db_con->set_class(sql_db::TBL_FORMULA);
+        $db_con->set_class(formula::class);
         $db_con->set_usr_fields(array('formula_text', 'resolved_text', sandbox_named::FLD_DESCRIPTION));
         $db_con->set_usr_num_fields(array(
             formula::FLD_FORMULA_TYPE,
@@ -559,7 +559,7 @@ class sandbox_tests
         $t->display('Postgres user sandbox link select by where text', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // test the view load_standard SQL creation
-        $db_con->set_class(sql_db::TBL_VIEW);
+        $db_con->set_class(view::class);
         $db_con->set_fields(array(sandbox_named::FLD_DESCRIPTION, view::FLD_TYPE, sandbox::FLD_EXCLUDED));
         $db_con->set_where_std(1);
         $created_sql = $db_con->select_by_set_id();
@@ -573,7 +573,7 @@ class sandbox_tests
         $t->display('Postgres view load_standard select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // test the view load SQL creation
-        $db_con->set_class(sql_db::TBL_VIEW);
+        $db_con->set_class(view::class);
         $db_con->set_usr_fields(array(sandbox_named::FLD_DESCRIPTION));
         $db_con->set_usr_num_fields(array(view::FLD_TYPE, sandbox::FLD_EXCLUDED));
         $db_con->set_where_std(1);
@@ -681,7 +681,7 @@ class sandbox_tests
         $t->display('Postgres formula_link load select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // test the component load_standard SQL creation
-        $db_con->set_class(sql_db::TBL_COMPONENT);
+        $db_con->set_class(component::class);
         $db_con->set_fields(array(sandbox_named::FLD_DESCRIPTION, 'component_type_id', 'word_id_row', 'link_type_id', formula::FLD_ID, 'word_id_col', 'word_id_col2', sandbox::FLD_EXCLUDED));
         $db_con->set_where_std(1);
         $created_sql = $db_con->select_by_set_id();
@@ -700,7 +700,7 @@ class sandbox_tests
         $t->display('Postgres component load_standard select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // test the component load SQL creation
-        $db_con->set_class(sql_db::TBL_COMPONENT);
+        $db_con->set_class(component::class);
         $db_con->set_usr_fields(array(sandbox_named::FLD_DESCRIPTION));
         $db_con->set_usr_num_fields(array('component_type_id', 'word_id_row', 'link_type_id', formula::FLD_ID, 'word_id_col', 'word_id_col2', sandbox::FLD_EXCLUDED));
         $db_con->set_where_std(1);
@@ -890,7 +890,7 @@ class sandbox_tests
         $t->display('MySQL all user select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // ... similar with joined fields
-        $db_con->set_class(sql_db::TBL_FORMULA);
+        $db_con->set_class(formula::class);
         $db_con->set_fields(array(
             user::FLD_ID,
             formula::FLD_FORMULA_TEXT,
@@ -920,7 +920,7 @@ class sandbox_tests
         $t->display('MySQL all user join select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // ... same for user sandbox data
-        $db_con->set_class(sql_db::TBL_FORMULA);
+        $db_con->set_class(formula::class);
         $db_con->set_usr_fields(array(
             formula::FLD_FORMULA_TEXT,
             formula::FLD_FORMULA_USER_TEXT,
@@ -1048,7 +1048,7 @@ class sandbox_tests
         $t->display('MySQL formula_link load select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // test the component load_standard SQL creation
-        $db_con->set_class(sql_db::TBL_COMPONENT);
+        $db_con->set_class(component::class);
         $db_con->set_fields(array(sandbox_named::FLD_DESCRIPTION, 'component_type_id', 'word_id_row', 'link_type_id', formula::FLD_ID, 'word_id_col', 'word_id_col2', sandbox::FLD_EXCLUDED));
         $db_con->set_where_std(1);
         $created_sql = $db_con->select_by_set_id();
@@ -1067,7 +1067,7 @@ class sandbox_tests
         $t->display('MySQL component load_standard select by id', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // test the component load SQL creation
-        $db_con->set_class(sql_db::TBL_COMPONENT);
+        $db_con->set_class(component::class);
         $db_con->set_usr_fields(array(sandbox_named::FLD_DESCRIPTION));
         $db_con->set_usr_num_fields(array('component_type_id', 'word_id_row', 'link_type_id', formula::FLD_ID, 'word_id_col', 'word_id_col2', sandbox::FLD_EXCLUDED));
         $db_con->set_where_std(1);

@@ -517,7 +517,11 @@ class triple extends sandbox_link_typed implements JsonSerializable
     function type_code_id(): string
     {
         global $phrase_types;
-        return $phrase_types->code_id($this->type_id);
+        if ($this->type_id == null) {
+            return '';
+        } else {
+            return $phrase_types->code_id($this->type_id);
+        }
     }
 
     // TODO add a function for each type and streamline the call

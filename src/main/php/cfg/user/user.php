@@ -1065,7 +1065,7 @@ class user extends db_object_seq_id
         global $db_con;
         //$db_con = new mysql;
         $db_con->usr_id = $this->id;
-        $db_con->set_class(sql_db::TBL_USER);
+        $db_con->set_class(user::class);
         return $db_con->update_old($this->id, 'source_id', $source_id);
     }
 
@@ -1077,7 +1077,7 @@ class user extends db_object_seq_id
         global $db_con;
         //$db_con = new mysql;
         $db_con->usr_id = $this->id;
-        $result = $db_con->set_class(sql_db::TBL_USER);
+        $result = $db_con->set_class(user::class);
         //$result = $db_con->update($this->id, verb::FLD_ID, $vrb_id);
         return $result;
     }
@@ -1116,7 +1116,7 @@ class user extends db_object_seq_id
             $log->row_id = $this->id;
             $log->set_field($fld_name);
             if ($log->add()) {
-                $db_con->set_class(sql_db::TBL_USER);
+                $db_con->set_class(user::class);
                 $result = $db_con->update_old($this->id, $log->field(), $log->new_value);
             }
         }
@@ -1137,7 +1137,7 @@ class user extends db_object_seq_id
 
         // build the database object because the is anyway needed
         $db_con->usr_id = $this->id;
-        $db_con->set_class(sql_db::TBL_USER);
+        $db_con->set_class(user::class);
 
         $db_usr = new user;
         $db_id = $db_usr->load_by_id($this->id);
@@ -1174,7 +1174,7 @@ class user extends db_object_seq_id
         // build the database object because the is anyway needed
         //$db_con = new mysql;
         $db_con->usr_id = $this->id;
-        $db_con->set_class(sql_db::TBL_USER);
+        $db_con->set_class(user::class);
 
         if ($this->id <= 0) {
             log_debug(" add (" . $this->name . ")");

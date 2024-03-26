@@ -1154,7 +1154,7 @@ class group extends sandbox_multi
             if ($this->id > 0) {
                 // update the generic name in the database
                 $db_con->usr_id = $this->user()->id();
-                $db_con->set_class(sql_db::TBL_GROUP);
+                $db_con->set_class(group::class);
                 // TODO activate Prio 2
                 /*
                 if ($db_con->update_old($this->id, self::FLD_DESCRIPTION, $group_name)) {
@@ -1266,7 +1266,7 @@ class group extends sandbox_multi
         global $db_con;
         $result = new user_message();
 
-        $db_con->set_class(sql_db::TBL_GROUP);
+        $db_con->set_class(group::class);
         $db_con->usr_id = $this->user()->id();
         $msg = $db_con->delete_old(self::FLD_ID, $this->id);
         $result->add_message($msg);

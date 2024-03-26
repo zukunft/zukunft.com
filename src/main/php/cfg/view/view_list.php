@@ -163,7 +163,7 @@ class view_list extends sandbox_list
     function load_sql(sql_db $db_con, string $class = self::class): sql_par
     {
         $qp = new sql_par($class);
-        $db_con->set_class(sql_db::TBL_VIEW);
+        $db_con->set_class(view::class);
         $db_con->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
         $db_con->set_usr($this->user()->id());
         $db_con->set_fields(view::FLD_NAMES);
@@ -185,7 +185,7 @@ class view_list extends sandbox_list
         $db_con->set_name($qp->name);
         $db_con->set_join_fields(
             component_link::FLD_NAMES,
-            sql_db::TBL_COMPONENT_LINK,
+            component_link::class,
             view::FLD_ID,
             view::FLD_ID);
         $db_con->set_order(component_link::FLD_ORDER_NBR, '', sql_db::LNK_TBL);

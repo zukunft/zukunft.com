@@ -855,7 +855,7 @@ class verb extends type_object
         }
         if ($log->add()) {
             if ($this->can_change()) {
-                $db_con->set_class(sql_db::TBL_VERB);
+                $db_con->set_class(verb::class);
                 if (!$db_con->update_old($this->id, $log->field(), $new_value)) {
                     $result .= 'updating ' . $log->field() . ' to ' . $new_value . ' for verb ' . $this->dsp_id() . ' failed';
                 }
@@ -1059,7 +1059,7 @@ class verb extends type_object
         $log = $this->log_add();
         if ($log->id() > 0) {
             // insert the new verb
-            $db_con->set_class(sql_db::TBL_VERB);
+            $db_con->set_class(verb::class);
             $this->id = $db_con->insert_old(self::FLD_NAME, $this->name);
             if ($this->id > 0) {
                 // update the id in the log
@@ -1122,7 +1122,7 @@ class verb extends type_object
 
         // build the database object because the is anyway needed
         $db_con->set_usr($this->user()->id());
-        $db_con->set_class(sql_db::TBL_VERB);
+        $db_con->set_class(verb::class);
 
         // check if a new verb is supposed to be added
         if ($this->id <= 0) {
@@ -1215,7 +1215,7 @@ class verb extends type_object
                 $log = $this->log_del();
                 if ($log->id() > 0) {
                     $db_con->usr_id = $this->user()->id();
-                    $db_con->set_class(sql_db::TBL_VERB);
+                    $db_con->set_class(verb::class);
                     $result = $db_con->delete_old(self::FLD_ID, $this->id);
                 }
             } else {

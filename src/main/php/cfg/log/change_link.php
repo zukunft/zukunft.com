@@ -205,7 +205,7 @@ class change_link extends change_log
     {
         $qp = new sql_par(self::class);
         $qp->name .= 'user_last';
-        $sc->set_class(sql_db::TBL_CHANGE_LINK);
+        $sc->set_class(change_link::class);
 
         $sc->set_name($qp->name);
         $sc->set_usr($usr->id);
@@ -223,7 +223,7 @@ class change_link extends change_log
     {
         $qp = new sql_par(self::class);
         $qp->name .= 'table';
-        $db_con->set_class(sql_db::TBL_CHANGE_LINK);
+        $db_con->set_class(change_link::class);
 
         $fields = [];
         $values = [];
@@ -290,7 +290,7 @@ class change_link extends change_log
 
         // if e.g. a "value" is changed $table_name is "values" and the reference 1 is saved in the log to save space
         $db_type = $db_con->get_class();
-        $db_con->set_class(sql_db::TBL_CHANGE_TABLE);
+        $db_con->set_class(change_table::class);
         $table_id = $db_con->get_id($table_name);
 
         // add new table name if needed
@@ -319,7 +319,7 @@ class change_link extends change_log
 
         // if e.g. the action is "add" the reference 1 is saved in the log table to save space
         $db_type = $db_con->get_class();
-        $db_con->set_class(sql_db::TBL_CHANGE_ACTION);
+        $db_con->set_class(change_action::class);
         $action_id = $db_con->get_id($this->action);
 
         // add new action name if needed
@@ -420,7 +420,7 @@ class change_link extends change_log
 
         //$db_con = new mysql;
         $db_type = $db_con->get_class();
-        $db_con->set_class(sql_db::TBL_CHANGE_LINK);
+        $db_con->set_class(change_link::class);
         $db_con->set_usr($this->user()->id());
         $log_id = $db_con->insert_old($sql_fields, $sql_values);
 
@@ -622,7 +622,7 @@ class change_link extends change_log
 
         //$db_con = new mysql;
         $db_type = $db_con->get_class();
-        $db_con->set_class(sql_db::TBL_CHANGE_LINK);
+        $db_con->set_class(change_link::class);
         $db_con->set_usr($this->user()->id());
         $log_id = $db_con->insert_old($sql_fields, $sql_values);
 
@@ -657,7 +657,7 @@ class change_link extends change_log
 
         $result = true;
         $db_type = $db_con->get_class();
-        $db_con->set_class(sql_db::TBL_CHANGE_LINK);
+        $db_con->set_class(change_link::class);
         $db_con->set_usr($this->user()->id());
         if (!$db_con->update_old($this->id(), 'row_id', $row_id)) {
             // write the error message in steps to get at least some message if the parameters causes an additional the error

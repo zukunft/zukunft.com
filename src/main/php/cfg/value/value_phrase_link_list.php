@@ -60,7 +60,7 @@ class value_phrase_link_list extends sandbox_list
      */
     function load_sql(sql_db $db_con, ?phrase $phr = null, ?value $val = null): sql_par
     {
-        $db_con->set_class(sql_db::TBL_VALUE_PHRASE_LINK);
+        $db_con->set_class(value_phrase_link::class);
         $qp = new sql_par(self::class);
         $sql_by = '';
 

@@ -1656,7 +1656,7 @@ class value extends sandbox_value
             // create the db link object for all actions
             $db_con->usr_id = $this->user()->id();
 
-            $table_name = $db_con->get_table_name(sql_db::TBL_VALUE_PHRASE_LINK);
+            $table_name = $db_con->get_table_name(value_phrase_link::class);
             $field_name = phrase::FLD_ID;
 
             // add the missing links

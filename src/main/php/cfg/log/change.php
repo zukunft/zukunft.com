@@ -201,12 +201,12 @@ class change extends change_log
     function load_sql(sql $sc, string $query_name): sql_par
     {
         $qp = new sql_par($this::class);
-        $sc->set_class(sql_db::TBL_CHANGE);
+        $sc->set_class(change::class);
         $qp->name .= $query_name;
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
         $sc->set_fields(self::FLD_NAMES);
-        $sc->set_join_fields(array(user::FLD_NAME), sql_db::TBL_USER);
+        $sc->set_join_fields(array(user::FLD_NAME), user::class);
         $sc->set_join_fields(array(change_field_list::FLD_TABLE), sql_db::TBL_CHANGE_FIELD);
         $sc->set_order(self::FLD_TIME, sql::ORDER_DESC);
 
@@ -269,7 +269,7 @@ class change extends change_log
     {
         $qp = new sql_par(self::class);
         $qp->name .= 'user';
-        $db_con->set_class(sql_db::TBL_CHANGE);
+        $db_con->set_class(change::class);
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->user()->id());
         $db_con->set_fields(self::FLD_NAMES);
@@ -385,7 +385,7 @@ class change extends change_log
 
         //$db_con = new mysql;
         $db_type = $db_con->get_class();
-        $db_con->set_class(sql_db::TBL_CHANGE);
+        $db_con->set_class(change::class);
         $db_con->set_usr($this->user()->id());
         $log_id = $db_con->insert_old($sql_fields, $sql_values);
 
@@ -422,7 +422,7 @@ class change extends change_log
         $result = false;
 
         $db_type = $db_con->get_class();
-        $db_con->set_class(sql_db::TBL_CHANGE);
+        $db_con->set_class(change::class);
         $db_con->set_usr($this->user()->id());
         if ($db_con->update_old($this->id(), self::FLD_ROW_ID, $row_id)) {
             // restore the type before saving the log

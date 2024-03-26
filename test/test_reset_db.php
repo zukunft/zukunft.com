@@ -37,35 +37,64 @@ const PHP_TEST_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'test' . DIRECTO
 include_once PHP_PATH . 'zu_lib.php';
 include_once MODEL_IMPORT_PATH . 'import_file.php';
 
+use cfg\component\component;
+use cfg\component\component_link;
+use cfg\component\component_link_type;
+use cfg\component\component_type;
 use cfg\component\position_type_list;
 use cfg\component\component_type_list;
 use cfg\config;
 use cfg\db\db_check;
 use cfg\db\sql;
 use cfg\db\sql_db;
+use cfg\element;
+use cfg\element_type;
 use cfg\element_type_list;
+use cfg\formula;
+use cfg\formula_link;
 use cfg\formula_link_type_list;
+use cfg\formula_type;
 use cfg\formula_type_list;
 use cfg\group\group;
 use cfg\import\import_file;
 use cfg\job;
+use cfg\job_type;
 use cfg\job_type_list;
 use cfg\language_form_list;
 use cfg\language_list;
 use cfg\library;
+use cfg\log\change;
+use cfg\log\change_action;
 use cfg\log\change_action_list;
+use cfg\log\change_field;
 use cfg\log\change_field_list;
+use cfg\log\change_link;
+use cfg\log\change_table;
 use cfg\log\change_table_list;
+use cfg\phrase_type;
 use cfg\phrase_types;
 use cfg\protection_type_list;
+use cfg\ref;
+use cfg\ref_type;
 use cfg\ref_type_list;
+use cfg\result\result;
 use cfg\share_type_list;
+use cfg\source;
+use cfg\source_type;
 use cfg\source_type_list;
 use cfg\sys_log_function;
+use cfg\sys_log_status;
+use cfg\triple;
 use cfg\user;
+use cfg\user\user_profile;
 use cfg\value\value;
+use cfg\verb;
+use cfg\view;
+use cfg\view_type;
 use cfg\view_type_list;
+use cfg\word;
 use html\html_base;
+use html\types\share;
 use unit_read\all_unit_read_tests;
 
 global $errors;
@@ -174,55 +203,54 @@ function run_db_truncate(user $sys_usr): void
 
     // the tables in order to avoid the usage of CASCADE
     $table_names = array(
-        sql_db::TBL_USER_PREFIX . value::class,
+        [value::class, true],
         value::class,
-        sql_db::TBL_RESULT,
-        sql_db::TBL_ELEMENT,
-        sql_db::TBL_ELEMENT_TYPE,
-        sql_db::TBL_USER_PREFIX . sql_db::TBL_FORMULA_LINK,
-        sql_db::TBL_FORMULA_LINK,
-        sql_db::TBL_USER_PREFIX . sql_db::TBL_FORMULA,
-        sql_db::TBL_FORMULA,
-        sql_db::TBL_FORMULA_TYPE,
-        sql_db::TBL_USER_PREFIX . sql_db::TBL_COMPONENT_LINK,
-        sql_db::TBL_COMPONENT_LINK,
-        sql_db::TBL_COMPONENT_LINK_TYPE,
-        sql_db::TBL_USER_PREFIX . sql_db::TBL_COMPONENT,
-        sql_db::TBL_COMPONENT,
-        sql_db::TBL_COMPONENT_TYPE,
-        sql_db::TBL_USER_PREFIX . sql_db::TBL_VIEW,
-        sql_db::TBL_VIEW,
-        sql_db::TBL_VIEW_TYPE,
-        sql_db::TBL_USER_PREFIX . sql_db::TBL_GROUP,
-        sql_db::TBL_GROUP,
-        sql_db::TBL_VERB,
-        sql_db::TBL_USER_PREFIX . sql_db::TBL_TRIPLE,
-        sql_db::TBL_TRIPLE,
-        sql_db::TBL_USER_PREFIX . sql_db::TBL_WORD,
-        sql_db::TBL_WORD,
-        sql_db::TBL_PHRASE_TYPE,
-        sql_db::TBL_USER_PREFIX . sql_db::TBL_SOURCE,
-        sql_db::TBL_SOURCE,
-        sql_db::TBL_SOURCE_TYPE,
-        sql_db::TBL_REF,
-        sql_db::TBL_REF_TYPE,
-        sql_db::TBL_CHANGE_LINK,
-        sql_db::TBL_CHANGE,
-        sql_db::TBL_CHANGE_ACTION,
-        sql_db::TBL_CHANGE_FIELD,
-        sql_db::TBL_CHANGE_TABLE,
-        sql_db::TBL_CONFIG,
-        sql_db::TBL_TASK,
-        sql_db::TBL_TASK_TYPE,
+        result::class,
+        element::class,
+        element_type::class,
+        [formula_link::class, true],
+        formula_link::class,
+        [formula::class, true],
+        formula::class,
+        formula_type::class,
+        [component_link::class, true],
+        component_link::class,
+        component_link_type::class,
+        [component::class, true],
+        component::class,
+        component_type::class,
+        [view::class, true],
+        view::class,
+        view_type::class,
+        [group::class, true],
+        group::class,
+        verb::class,
+        [triple::class, true],
+        triple::class,
+        [word::class, true],
+        word::class,
+        phrase_type::class,
+        [source::class, true],
+        source::class,
+        source_type::class,
+        ref::class,
+        ref_type::class,
+        change_link::class,
+        change::class,
+        change_action::class,
+        change_field::class,
+        change_table::class,
+        config::class,
+        job::class,
+        job_type::class,
         //sql_db::TBL_SYS_SCRIPT,
-        sql_db::TBL_TASK,
         sql_db::TBL_SYS_LOG,
-        sql_db::TBL_SYS_LOG_STATUS,
+        sys_log_status::class,
         sys_log_function::class,
         sql_db::TBL_SHARE,
         sql_db::TBL_PROTECTION,
-        sql_db::TBL_USER,
-        sql_db::TBL_USER_PROFILE
+        user::class,
+        user_profile::class
     );
     $html = new html_base();
     $html->echo("\n");
@@ -244,8 +272,19 @@ function run_db_truncate(user $sys_usr): void
     }
 
     // truncate the other tables
-    foreach ($table_names as $class) {
-        $table_name = $lib->class_to_name($class);
+    foreach ($table_names as $entry) {
+        $usr_tbl = false;
+        if (is_array($entry)) {
+            $class = $entry[0];
+            $usr_tbl = $entry[1];
+        } else {
+            $class = $entry;
+        }
+        if ($usr_tbl) {
+            $table_name = sql_db::TBL_USER_PREFIX . $lib->class_to_name($class);
+        } else {
+            $table_name = $lib->class_to_name($class);
+        }
         $db_con->truncate_table($table_name);
     }
 

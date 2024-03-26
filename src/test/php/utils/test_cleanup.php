@@ -40,8 +40,11 @@ use api\word\triple as triple_api;
 use api\verb\verb as verb_api;
 use api\view\view as view_api;
 use api\word\word as word_api;
+use cfg\component\component;
+use cfg\component\component_link;
 use cfg\db\sql_par;
 use cfg\formula;
+use cfg\formula_link;
 use cfg\formula_type;
 use cfg\library;
 use cfg\phrase;
@@ -49,11 +52,13 @@ use cfg\phrase_list;
 use cfg\phrase_type;
 use cfg\ref_type;
 use cfg\db\sql_db;
+use cfg\source;
 use cfg\term;
 use cfg\term_list;
 use cfg\triple;
 use cfg\value\value;
 use cfg\verb;
+use cfg\view;
 use cfg\word;
 use html\html_base;
 
@@ -387,15 +392,15 @@ class test_cleanup extends test_api
 
         // TODO better use a info system log message
         $html = new html_base();
-        $html->echo_html($db_con->seq_reset(sql_db::TBL_WORD));
+        $html->echo_html($db_con->seq_reset(word::class));
         //$html->echo_html($db_con->seq_reset(sql_db::TBL_GROUP_LINK));
         //$html->echo_html($db_con->seq_reset(sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK));
-        $html->echo_html($db_con->seq_reset(sql_db::TBL_FORMULA));
+        $html->echo_html($db_con->seq_reset(formula::class));
         $html->echo_html($db_con->seq_reset(formula_link::class));
-        $html->echo_html($db_con->seq_reset(sql_db::TBL_VIEW));
-        $html->echo_html($db_con->seq_reset(sql_db::TBL_COMPONENT));
-        $html->echo_html($db_con->seq_reset(sql_db::TBL_COMPONENT_LINK));
-        $html->echo_html($db_con->seq_reset(sql_db::TBL_SOURCE));
+        $html->echo_html($db_con->seq_reset(view::class));
+        $html->echo_html($db_con->seq_reset(component::class));
+        $html->echo_html($db_con->seq_reset(component_link::class));
+        $html->echo_html($db_con->seq_reset(source::class));
 
         if ($result == '') {
             return true;

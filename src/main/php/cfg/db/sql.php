@@ -43,12 +43,15 @@ use cfg\formula_link;
 use cfg\group\group;
 use cfg\group\group_id;
 use cfg\library;
+use cfg\log\change;
+use cfg\log\change_link;
 use cfg\ref;
 use cfg\result\result;
 use cfg\sandbox;
 use cfg\triple;
 use cfg\user;
 use cfg\value\value;
+use cfg\value\value_phrase_link;
 use cfg\value\value_time_series;
 use cfg\view_term_link;
 
@@ -125,12 +128,12 @@ class sql
         result::class,
         element::class,
         component_link::class,
-        sql_db::TBL_VALUE_PHRASE_LINK,
+        value_phrase_link::class,
         view_term_link::class,
         ref::class,
         sql_db::TBL_IP,
-        sql_db::TBL_CHANGE,
-        sql_db::TBL_CHANGE_LINK,
+        change::class,
+        change_link::class,
         sql_db::TBL_SYS_LOG,
         sql_db::TBL_TASK,
         sql_db::VT_PHRASE_GROUP_LINK

@@ -470,7 +470,7 @@ class result_list extends sandbox_value_list
                 ') must be set to load a ' . self::class, self::class . '->load_sql');
             $qp->name = '';
         } else {
-            $db_con->set_class(sql_db::TBL_RESULT);
+            $db_con->set_class(result::class);
             // overwrite the standard id field name (result_id) with the main database id field for results "group_id"
             $res = new result($this->user());
             $db_con->set_id_field($res->id_field());

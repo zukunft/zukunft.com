@@ -591,9 +591,9 @@ class component extends sandbox_typed
      */
     function set_join(sql $sc): sql
     {
-        $sc->set_join_fields(component::FLD_NAMES, sql_db::TBL_COMPONENT);
-        $sc->set_join_usr_fields(component::FLD_NAMES_USR, sql_db::TBL_COMPONENT);
-        $sc->set_join_usr_num_fields(component::FLD_NAMES_NUM_USR, sql_db::TBL_COMPONENT);
+        $sc->set_join_fields(component::FLD_NAMES, component::class);
+        $sc->set_join_usr_fields(component::FLD_NAMES_USR, component::class);
+        $sc->set_join_usr_num_fields(component::FLD_NAMES_NUM_USR, component::class);
         return $sc;
     }
 
@@ -851,7 +851,7 @@ class component extends sandbox_typed
             log_debug('for "' . $this->dsp_id() . ' und user ' . $this->user()->name);
 
             // check again if there ist not yet a record
-            $db_con->set_class(sql_db::TBL_COMPONENT, true);
+            $db_con->set_class(component::class, true);
             $qp = new sql_par(self::class);
             $qp->name = 'component_del_usr_cfg_if';
             $db_con->set_name($qp->name);
@@ -866,7 +866,7 @@ class component extends sandbox_typed
             }
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
-                $db_con->set_class(sql_db::TBL_USER_PREFIX . sql_db::TBL_COMPONENT);
+                $db_con->set_class(component::class, true);
                 $log_id = $db_con->insert_old(array(component::FLD_ID, user::FLD_ID), array($this->id, $this->user()->id()));
                 if ($log_id <= 0) {
                     log_err('Insert of user_component failed.');

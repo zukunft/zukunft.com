@@ -329,6 +329,7 @@ class sandbox_link extends sandbox
     function log_link_add(): change_link
     {
         log_debug($this->dsp_id());
+        $lib = new library();
 
         $log = new change_link($this->user());
         $log->new_from = $this->fob;
@@ -336,7 +337,8 @@ class sandbox_link extends sandbox
 
         $log->action = change_action::ADD;
         // TODO add the table exceptions from sql_db
-        $log->set_table($this->obj_name . sql_db::TABLE_EXTENSION);
+        $tbl_name = $lib->class_to_name($this->obj_name);
+        $log->set_table($tbl_name . sql_db::TABLE_EXTENSION);
         $log->row_id = 0;
         $log->add();
 
@@ -350,10 +352,12 @@ class sandbox_link extends sandbox
     function log_del_link(): change_link
     {
         log_debug($this->dsp_id());
+        $lib = new library();
 
         $log = new change_link($this->user());
         $log->action = change_action::DELETE;
-        $log->set_table($this->obj_name . sql_db::TABLE_EXTENSION);
+        $tbl_name = $lib->class_to_name($this->obj_name);
+        $log->set_table($tbl_name . sql_db::TABLE_EXTENSION);
         $log->old_from = $this->fob();
         $log->old_to = $this->tob();
 
@@ -392,6 +396,8 @@ class sandbox_link extends sandbox
     function add(): user_message
     {
         log_debug($this->dsp_id());
+        $lib = new library();
+        $class_name = $lib->class_to_name($this::class);
 
         global $db_con;
         $result = new user_message();
@@ -428,7 +434,7 @@ class sandbox_link extends sandbox
                 }
 
             } else {
-                $result->add_message('Adding ' . $this::class . ' ' . $this->dsp_id() . ' failed due to logging error.');
+                $result->add_message('Adding ' . $class_name . ' ' . $this->dsp_id() . ' failed due to logging error.');
             }
         }
 
@@ -461,7 +467,9 @@ class sandbox_link extends sandbox
      */
     function msg_id_already_used(): string
     {
-        return 'A ' . $this->obj_name . ' from ' . $this->fob->dsp_id() . ' to ' . $this->tob->dsp_id() . ' already exists.';
+        $lib = new library();
+        $class_name = $lib->class_to_name($this::class);
+        return 'A ' . $class_name . ' from ' . $this->fob->dsp_id() . ' to ' . $this->tob->dsp_id() . ' already exists.';
     }
 
     /**

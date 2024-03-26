@@ -77,6 +77,7 @@ include_once MODEL_SANDBOX_PATH . 'protection_type.php';
 include_once MODEL_SANDBOX_PATH . 'share_type.php';
 
 use cfg\component\component;
+use cfg\component\component_link;
 use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_field_default;
@@ -89,6 +90,7 @@ use cfg\log\change;
 use cfg\log\change_action;
 use cfg\log\change_log;
 use cfg\log\change_link;
+use cfg\result\result;
 use Exception;
 
 class sandbox extends db_object_seq_id_user
@@ -155,13 +157,13 @@ class sandbox extends db_object_seq_id_user
     // list of all user sandbox database types with a standard ID
     // so exclude values and result TODO check missing owner for values and results
     const DB_TYPES = array(
-        sql_db::TBL_WORD,
+        word::class,
         triple::class,
-        sql_db::TBL_FORMULA,
+        formula::class,
         formula_link::class,
-        sql_db::TBL_VIEW,
-        sql_db::TBL_COMPONENT,
-        sql_db::TBL_COMPONENT_LINK
+        view::class,
+        component::class,
+        component_link::class
     );
 
 
@@ -1016,14 +1018,14 @@ class sandbox extends db_object_seq_id_user
     function del_usr_cfg_exe($db_con): bool
     {
         log_debug($this->dsp_id() . ' und user ' . $this->user()->name);
-
-        $result = false;
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
+
+        $result = false;
         $action = 'Deletion of user ' . $class_name . ' ';
         $msg_failed = $this->id . ' failed for ' . $this->user()->name;
 
-        $db_con->set_class(sql_db::TBL_USER_PREFIX . $class_name);
+        $db_con->set_class($this::class, true);
         try {
             if ($this->sql_write_prepared()) {
                 $qp = $this->sql_delete($db_con->sql_creator(), true);
@@ -1052,6 +1054,8 @@ class sandbox extends db_object_seq_id_user
     function del_usr_cfg(): bool
     {
         log_debug($this->dsp_id());
+        $lib = new library();
+        $class_name = $lib->class_to_name($this::class);
 
         global $db_con;
         $result = true;
@@ -1064,7 +1068,7 @@ class sandbox extends db_object_seq_id_user
             }
 
         } else {
-            log_err('The database ID and the user must be set to remove a user specific modification of ' . $this->obj_name . '.', $this->obj_name . '->del_usr_cfg');
+            log_err('The database ID and the user must be set to remove a user specific modification of ' . $class_name . '.', $this->obj_name . '->del_usr_cfg');
         }
 
         return $result;
@@ -1079,6 +1083,9 @@ class sandbox extends db_object_seq_id_user
     {
         global $db_con;
         $result = true;
+        $lib = new library();
+        $class_name = $lib->class_to_name($this::class);
+        $class = $lib->class_to_name($class);
 
 
         if (!$this->has_usr_cfg()) {
@@ -1091,10 +1098,8 @@ class sandbox extends db_object_seq_id_user
                     log_debug('for "' . $this->id . '" and user "' . $this->user()->name . '"');
                 }
             } else {
-                log_err('Unknown user sandbox type ' . $this::class . ' in ' . $this->obj_name, $this->obj_name . '->log_add');
+                log_err('Unknown user sandbox type ' . $class_name . ' in ' . $this->obj_name, $this->obj_name . '->log_add');
             }
-            $lib = new library();
-            $class = $lib->class_to_name($class);
 
             // check again if there ist not yet a record
             $db_con->set_class($this::class, true);
@@ -1111,7 +1116,7 @@ class sandbox extends db_object_seq_id_user
             }
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
-                $db_con->set_class(sql_db::TBL_USER_PREFIX . $this->obj_name);
+                $db_con->set_class($this::class, true);
                 $db_con->set_usr($this->user()->id());
                 $log_id = $db_con->insert_old(array($this->id_field(), user::FLD_ID), array($this->id, $this->user()->id()));
                 if ($log_id <= 0) {
@@ -1398,7 +1403,7 @@ class sandbox extends db_object_seq_id_user
                 if ($new_value == $std_value) {
                     if ($this->has_usr_cfg()) {
                         log_debug('remove user change');
-                        $db_con->set_class(sql_db::TBL_USER_PREFIX . $this->obj_name);
+                        $db_con->set_class($this::class, true);
                         $db_con->set_usr($this->user()->id());
                         if (!$db_con->update_old($this->id, $log->field(), Null)) {
                             $result = 'remove of ' . $log->field() . ' failed';
@@ -1419,7 +1424,7 @@ class sandbox extends db_object_seq_id_user
                     }
                 }
                 if ($result == '') {
-                    $db_con->set_class(sql_db::TBL_USER_PREFIX . $this->obj_name);
+                    $db_con->set_class($this::class, true);
                     $db_con->set_usr($this->user()->id());
                     if ($new_value == $std_value) {
                         log_debug('remove user change');
@@ -1502,6 +1507,8 @@ class sandbox extends db_object_seq_id_user
     {
         log_debug($this->dsp_id());
         $result = '';
+        $lib = new library();
+        $class_name = $lib->class_to_name($this::class);
 
         if ($db_rec->is_excluded() <> $this->is_excluded()) {
             $log = $this->save_field_excluded_log($db_rec);
@@ -1512,7 +1519,7 @@ class sandbox extends db_object_seq_id_user
                 $db_con->set_class($this::class);
                 $db_con->set_usr($this->user()->id());
                 if (!$db_con->update_old($this->id, $log->field(), $new_value)) {
-                    $result .= 'excluding of ' . $this->obj_name . ' failed';
+                    $result .= 'excluding of ' . $class_name . ' failed';
                 }
             } else {
                 if (!$this->has_usr_cfg()) {
@@ -1521,15 +1528,15 @@ class sandbox extends db_object_seq_id_user
                     }
                 }
                 if ($result == '') {
-                    $db_con->set_class(sql_db::TBL_USER_PREFIX . $this->obj_name);
+                    $db_con->set_class($this::class, true);
                     $db_con->set_usr($this->user()->id());
                     if ($new_value == $std_value) {
                         if (!$db_con->update_old($this->id, $log->field(), Null)) {
-                            $result .= 'include of ' . $this->obj_name . ' for user failed';
+                            $result .= 'include of ' . $class_name . ' for user failed';
                         }
                     } else {
                         if (!$db_con->update_old($this->id, $log->field(), $new_value)) {
-                            $result .= 'excluding of ' . $this->obj_name . ' for user failed';
+                            $result .= 'excluding of ' . $class_name . ' for user failed';
                         }
                     }
                     if (!$this->del_usr_cfg_if_not_needed()) {
@@ -1580,7 +1587,7 @@ class sandbox extends db_object_seq_id_user
                     }
                 }
                 if ($result == '') {
-                    $db_con->set_class(sql_db::TBL_USER_PREFIX . $this->obj_name);
+                    $db_con->set_class($this::class, true);
                     $db_con->set_usr($this->user()->id());
                     if (!$db_con->update_old($this->id, $log->field(), $new_value)) {
                         $result = 'setting of share type failed';
@@ -1679,6 +1686,8 @@ class sandbox extends db_object_seq_id_user
     {
         log_debug($this->dsp_id());
         $result = '';
+        $lib = new library();
+        $class_name = $lib->class_to_name($this::class);
 
         if ($this->is_id_updated($db_rec)) {
             $db_chk = $this->get_obj_with_same_id_fields();
@@ -1689,7 +1698,7 @@ class sandbox extends db_object_seq_id_user
                     $to_del = clone $db_rec;
                     $msg = $to_del->del();
                     if (!$msg->is_ok()) {
-                        $result .= 'Failed to delete the unused ' . $this->obj_name;
+                        $result .= 'Failed to delete the unused ' . $class_name;
                     }
                     if ($result = '') {
                         // .. and use it for the update
@@ -1702,10 +1711,10 @@ class sandbox extends db_object_seq_id_user
                         $db_rec->exclude();
                         $result .= $this->save_field_excluded($db_con, $db_rec, $std_rec);
                         if ($result == '') {
-                            log_debug('found a ' . $this->obj_name . ' target ' . $db_chk->dsp_id() . ', so del ' . $db_rec->dsp_id() . ' and add ' . $this->dsp_id());
+                            log_debug('found a ' . $class_name . ' target ' . $db_chk->dsp_id() . ', so del ' . $db_rec->dsp_id() . ' and add ' . $this->dsp_id());
                         } else {
                             //$result = 'Failed to exclude the unused ' . $this->obj_name;
-                            $result .= 'A ' . $this->obj_name . ' with the name "' . $this->name() . '" already exists. Please use another name or merge with this ' . $this->obj_name . '.';
+                            $result .= 'A ' . $class_name . ' with the name "' . $this->name() . '" already exists. Please use another name or merge with this ' . $class_name . '.';
                         }
                     }
                 } else {
@@ -1716,7 +1725,7 @@ class sandbox extends db_object_seq_id_user
                 // TODO check if e.g. for word links and formula links "and $this->not_used()" needs to be added
                 if ($this->can_change()) {
                     // in this case change is allowed and done
-                    log_debug('change the existing ' . $this->obj_name . ' ' . $this->dsp_id() . ' (db ' . $db_rec->dsp_id() . ', standard ' . $std_rec->dsp_id() . ')');
+                    log_debug('change the existing ' . $class_name . ' ' . $this->dsp_id() . ' (db ' . $db_rec->dsp_id() . ', standard ' . $std_rec->dsp_id() . ')');
                     // TODO check if next line is needed
                     //$this->load_objects();
                     if ($this->is_link_obj()) {
@@ -1724,7 +1733,7 @@ class sandbox extends db_object_seq_id_user
                     } elseif ($this->is_named_obj()) {
                         $result .= $this->save_id_fields($db_con, $db_rec, $std_rec);
                     } else {
-                        log_info('Save of id field for ' . $this::class . ' not expected');
+                        log_info('Save of id field for ' . $class_name . ' not expected');
                     }
                 } else {
                     // if the target link has not yet been created
@@ -1947,6 +1956,8 @@ class sandbox extends db_object_seq_id_user
     function save(): string
     {
         log_debug($this->dsp_id());
+        $lib = new library();
+        $class_name = $lib->class_to_name($this::class);
 
         global $db_con;
 
@@ -2021,12 +2032,12 @@ class sandbox extends db_object_seq_id_user
                     $db_rec->reset();
                     $db_rec->set_user($this->user());
                     if ($db_rec->load_by_id($this->id, $db_rec::class) != $this->id()) {
-                        $result .= 'Reloading of user ' . $this->obj_name . ' failed';
+                        $result .= 'Reloading of user ' . $class_name . ' failed';
                     } else {
                         log_debug('reloaded from db');
                         if ($this->is_link_obj()) {
                             if (!$db_rec->load_objects()) {
-                                $result .= 'Reloading of the object for ' . $this->obj_name . ' failed';
+                                $result .= 'Reloading of the object for ' . $class_name . ' failed';
                             }
                             // configure the global database connection object again to overwrite any changes from load_objects
                             $db_con->set_class($this::class);
@@ -2047,7 +2058,7 @@ class sandbox extends db_object_seq_id_user
                     $std_rec->set_user($this->user()); // must also be set to allow to take the ownership
                     if ($result == '') {
                         if (!$std_rec->load_standard()) {
-                            $result .= 'Reloading of the default values for ' . $this->obj_name . ' failed';
+                            $result .= 'Reloading of the default values for ' . $class_name . ' failed';
                         }
                     }
 
@@ -2073,7 +2084,7 @@ class sandbox extends db_object_seq_id_user
                 }
             }
             if ($result != '') {
-                log_err($result, 'user_sandbox_' . $this->obj_name . '->save');
+                log_err($result, 'user_sandbox_' . $class_name . '->save');
             }
         }
 
@@ -2092,6 +2103,8 @@ class sandbox extends db_object_seq_id_user
     private function del_exe(): string
     {
         log_debug($this->dsp_id());
+        $lib = new library();
+        $class_name = $lib->class_to_name($this::class);
 
         global $db_con;
         global $phrase_types;
@@ -2127,7 +2140,7 @@ class sandbox extends db_object_seq_id_user
 
                 // and the corresponding formula elements
                 if ($result->is_ok()) {
-                    $db_con->set_class(sql_db::TBL_ELEMENT);
+                    $db_con->set_class(element::class);
                     $db_con->set_usr($this->user()->id());
                     $msg = $db_con->delete_old(sql_db::TBL_FORMULA . sql_db::FLD_EXT_ID, $this->id);
                     $result->add_message($msg);
@@ -2135,7 +2148,7 @@ class sandbox extends db_object_seq_id_user
 
                 // and the corresponding results
                 if ($result->is_ok()) {
-                    $db_con->set_class(sql_db::TBL_RESULT);
+                    $db_con->set_class(result::class);
                     $db_con->set_usr($this->user()->id());
                     $msg = $db_con->delete_old(sql_db::TBL_FORMULA . sql_db::FLD_EXT_ID, $this->id);
                     $result->add_message($msg);
@@ -2172,10 +2185,10 @@ class sandbox extends db_object_seq_id_user
                     $msg = $db_con->delete($qp, $this::class . ' user exclusions');
                     $result->add($msg);
                 } else {
-                    $db_con->set_class(sql_db::TBL_USER_PREFIX . $this->obj_name);
+                    $db_con->set_class($this::class, true);
                     $db_con->set_usr($this->user()->id());
                     $msg = $db_con->delete_old(
-                        array($this->obj_name . sql_db::FLD_EXT_ID, 'excluded'),
+                        array($class_name . sql_db::FLD_EXT_ID, 'excluded'),
                         array($this->id, '1'));
                     $result->add_message($msg);
                 }
@@ -2195,7 +2208,7 @@ class sandbox extends db_object_seq_id_user
                 }
                 log_debug('of ' . $this->dsp_id() . ' done');
             } else {
-                log_err('Delete failed for ' . $this->obj_name, $this->obj_name . '->del_exe', 'Delete failed, because removing the user settings for ' . $this->obj_name . ' ' . $this->dsp_id() . ' returns ' . $msg, (new Exception)->getTraceAsString(), $this->user());
+                log_err('Delete failed for ' . $class_name, $this->obj_name . '->del_exe', 'Delete failed, because removing the user settings for ' . $class_name . ' ' . $this->dsp_id() . ' returns ' . $msg, (new Exception)->getTraceAsString(), $this->user());
             }
         }
 
@@ -2216,6 +2229,8 @@ class sandbox extends db_object_seq_id_user
     function del(): user_message
     {
         log_debug($this->dsp_id());
+        $lib = new library();
+        $class_name = $lib->class_to_name($this::class);
 
         global $db_con;
         $result = new user_message();
@@ -2230,17 +2245,17 @@ class sandbox extends db_object_seq_id_user
         }
 
         if (!$reloaded) {
-            log_warning('Reload of for deletion has lead to unexpected', $this->obj_name . '->del', 'Reload of ' . $this->obj_name . ' ' . $this->dsp_id() . ' for deletion or exclude has unexpectedly lead to ' . $msg . '.', (new Exception)->getTraceAsString(), $this->user());
+            log_warning('Reload of for deletion has lead to unexpected', $this->obj_name . '->del', 'Reload of ' . $class_name . ' ' . $this->dsp_id() . ' for deletion or exclude has unexpectedly lead to ' . $msg . '.', (new Exception)->getTraceAsString(), $this->user());
         } else {
             log_debug('reloaded ' . $this->dsp_id());
             // check if the object is still valid
             if ($this->id <= 0) {
-                log_warning('Delete failed', $this->obj_name . '->del', 'Delete failed, because it seems that the ' . $this->obj_name . ' ' . $this->dsp_id() . ' has been deleted in the meantime.', (new Exception)->getTraceAsString(), $this->user());
+                log_warning('Delete failed', $this->obj_name . '->del', 'Delete failed, because it seems that the ' . $class_name . ' ' . $this->dsp_id() . ' has been deleted in the meantime.', (new Exception)->getTraceAsString(), $this->user());
             } else {
                 // reload the objects if needed
                 if ($this->is_link_obj()) {
                     if (!$this->load_objects()) {
-                        $msg .= 'Reloading of linked objects ' . $this->obj_name . ' ' . $this->dsp_id() . ' failed.';
+                        $msg .= 'Reloading of linked objects ' . $class_name . ' ' . $this->dsp_id() . ' failed.';
                     }
                 }
                 // check if the object simply can be deleted, because it has never been used
@@ -2253,7 +2268,7 @@ class sandbox extends db_object_seq_id_user
                         // get median user
                         $new_owner_id = $this->median_user();
                         if ($new_owner_id == 0) {
-                            log_err('Delete failed', $this->obj_name . '->del', 'Delete failed, because no median user found for ' . $this->obj_name . ' ' . $this->dsp_id() . ' but change is nevertheless not allowed.', (new Exception)->getTraceAsString(), $this->user());
+                            log_err('Delete failed', $this->obj_name . '->del', 'Delete failed, because no median user found for ' . $class_name . ' ' . $this->dsp_id() . ' but change is nevertheless not allowed.', (new Exception)->getTraceAsString(), $this->user());
                         } else {
                             log_debug('set owner for ' . $this->dsp_id() . ' to user id "' . $new_owner_id . '"');
 
@@ -2261,7 +2276,7 @@ class sandbox extends db_object_seq_id_user
 
                             // set owner
                             if (!$this->set_owner($new_owner_id)) {
-                                $msg .= 'Setting of owner while deleting ' . $this->obj_name . ' failed';
+                                $msg .= 'Setting of owner while deleting ' . $class_name . ' failed';
                                 log_err($msg, $this->obj_name . '->del');
 
                             }
@@ -2270,7 +2285,7 @@ class sandbox extends db_object_seq_id_user
                             // does not use del_usr_cfg because the deletion request has already been logged
                             if ($msg == '') {
                                 if (!$this->del_usr_cfg_exe($db_con)) {
-                                    $msg .= 'Deleting of ' . $this->obj_name . ' failed';
+                                    $msg .= 'Deleting of ' . $class_name . ' failed';
                                 }
                             }
 
@@ -2294,7 +2309,7 @@ class sandbox extends db_object_seq_id_user
                             log_debug('reloaded ' . $db_rec->dsp_id() . ' from database');
                             if ($this->is_link_obj()) {
                                 if (!$db_rec->load_objects()) {
-                                    $msg .= 'Reloading of linked objects ' . $this->obj_name . ' ' . $this->dsp_id() . ' failed.';
+                                    $msg .= 'Reloading of linked objects ' . $class_name . ' ' . $this->dsp_id() . ' failed.';
                                 }
                             }
                         }
@@ -2304,7 +2319,7 @@ class sandbox extends db_object_seq_id_user
                             $std_rec->id = $this->id;
                             $std_rec->set_user($this->user()); // must also be set to allow to take the ownership
                             if (!$std_rec->load_standard()) {
-                                $msg .= 'Reloading of standard ' . $this->obj_name . ' ' . $this->dsp_id() . ' failed.';
+                                $msg .= 'Reloading of standard ' . $class_name . ' ' . $this->dsp_id() . ' failed.';
                             }
                         }
                         if ($msg == '') {
@@ -2327,7 +2342,9 @@ class sandbox extends db_object_seq_id_user
      */
     function id_used_msg(sandbox $obj_to_add): string
     {
-        return 'A ' . $this->obj_name . ' with the name ' . $obj_to_add->dsp_id() . ' already exists. '
+        $lib = new library();
+        $class_name = $lib->class_to_name($this::class);
+        return 'A ' . $class_name . ' with the name ' . $obj_to_add->dsp_id() . ' already exists. '
             . 'Please use another ' . $obj_to_add->obj_name . ' name.';
     }
 

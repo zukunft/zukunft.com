@@ -164,7 +164,7 @@ class value_phrase_link extends db_object_seq_id_user
      */
     function load_sql_obj_vars(sql_db $db_con): sql_par
     {
-        $db_con->set_class(sql_db::TBL_VALUE_PHRASE_LINK);
+        $db_con->set_class(value_phrase_link::class);
         $qp = new sql_par(self::class);
         $sql_where = '';
 
@@ -275,7 +275,7 @@ class value_phrase_link extends db_object_seq_id_user
         if ($db_rec->wrd->id <> $this->phr->id()) {
             $log = $this->log_upd($db_con);
             if ($log->add()) {
-                $db_con->set_class(sql_db::TBL_VALUE_PHRASE_LINK);
+                $db_con->set_class(value_phrase_link::class);
                 $result .= $db_con->update_old($this->id, phrase::FLD_ID, $this->phr->id());
             }
         }
@@ -320,7 +320,7 @@ class value_phrase_link extends db_object_seq_id_user
 
         global $db_con;
         $db_con->set_usr($this->user()->id());
-        $db_con->set_class(sql_db::TBL_VALUE_PHRASE_LINK);
+        $db_con->set_class(value_phrase_link::class);
 
         if (!$this->used()) {
             // check if a new value is supposed to be added
@@ -342,7 +342,7 @@ class value_phrase_link extends db_object_seq_id_user
                 $log = $this->log_add();
                 if ($log->id() > 0) {
                     // insert the new value_phrase_link
-                    $db_con->set_class(sql_db::TBL_VALUE_PHRASE_LINK);
+                    $db_con->set_class(value_phrase_link::class);
                     $this->id = $db_con->insert_old(array("group_id", "word_id"), array($this->val->id(), $this->phr->id()));
                     if ($this->id > 0) {
                         // update the id in the log
@@ -392,7 +392,7 @@ class value_phrase_link extends db_object_seq_id_user
             if ($log->id() > 0) {
                 //$db_con = new mysql;
                 $db_con->usr_id = $this->user()->id();
-                $db_con->set_class(sql_db::TBL_VALUE_PHRASE_LINK);
+                $db_con->set_class(value_phrase_link::class);
                 $result .= $db_con->delete_old(array(value::FLD_ID, phrase::FLD_ID), array($this->val->id(), $this->phr->id()));
             }
         } else {

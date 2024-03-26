@@ -504,10 +504,10 @@ class view extends sandbox_typed
         $db_con->set_usr_num_fields(component_link::FLD_NAMES_NUM_USR);
         $db_con->set_join_usr_fields(
             array_merge(component::FLD_NAMES_USR, array(component::FLD_NAME)),
-            sql_db::TBL_COMPONENT);
+            component::class);
         $db_con->set_join_usr_num_fields(
             component::FLD_NAMES_NUM_USR,
-            sql_db::TBL_COMPONENT);
+            component::class);
         $db_con->add_par(sql_par_type::INT, $this->id);
         $db_con->set_order(component_link::FLD_ORDER_NBR);
         $qp->sql = $db_con->select_by_field_list(array(view::FLD_ID));

@@ -377,7 +377,7 @@ class formula_list extends sandbox_list
     {
         $lib = new library();
         $class = $lib->class_to_name(self::class);
-        $db_con->set_class(sql_db::TBL_FORMULA);
+        $db_con->set_class(formula::class);
         $qp = new sql_par($class);
         $db_con->set_usr($this->user()->id());
         $db_con->set_all();

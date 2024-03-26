@@ -38,6 +38,7 @@ include_once MODEL_LOG_PATH . 'system_log_list.php';
 include_once API_LOG_PATH . 'system_log.php';
 
 use cfg\config;
+use cfg\formula;
 use cfg\log\system_log_list;
 use cfg\log\system_log;
 use api\log\system_log as system_log_api;
@@ -387,7 +388,7 @@ class system_tests
         $t->subheader('System consistency tests');
 
         // sql to check the system consistency
-        $db_con->set_class(sql_db::TBL_FORMULA);
+        $db_con->set_class(formula::class);
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $db_con->missing_owner_sql();
         $expected_sql = $t->file('db/system/missing_owner_by_formula.sql');
@@ -531,7 +532,7 @@ class system_tests
         $t->subheader('SQL database link tests');
 
         $db_con = new sql_db();
-        $db_con->set_class(sql_db::TBL_FORMULA);
+        $db_con->set_class(formula::class);
         $created = $db_con->count_sql();
         $expected = file_get_contents(PATH_TEST_FILES . 'db/formula/formula_count.sql');
         $t->assert_sql('sql_db->count', $created, $expected);

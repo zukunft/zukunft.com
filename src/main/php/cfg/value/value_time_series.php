@@ -303,7 +303,7 @@ class value_time_series extends sandbox_value
         // log the insert attempt first
         $log = $this->log_add();
         if ($log->id() > 0) {
-            $db_con->set_class(sql_db::TBL_VALUE_TIME_SERIES);
+            $db_con->set_class(value_time_series::class);
             $this->id = $db_con->insert_old(
                 array(group::FLD_ID, user::FLD_ID, self::FLD_LAST_UPDATE),
                 array($this->grp->id(), $this->user()->id(), sql::NOW));
@@ -362,7 +362,7 @@ class value_time_series extends sandbox_value
         $result = '';
 
         // build the database object because the is anyway needed
-        $db_con->set_class(sql_db::TBL_VALUE_TIME_SERIES);
+        $db_con->set_class(value_time_series::class);
         $db_con->set_usr($this->user()->id());
 
         // check if a new time series is supposed to be added
