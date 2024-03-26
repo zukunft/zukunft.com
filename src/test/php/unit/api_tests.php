@@ -137,6 +137,7 @@ class api_tests
         $t->assert_api_get(triple::class);
         //$t->assert_api_get_by_text(triple::class, triple_api::TN_READ);
         //$t->assert_api_get(phrase::class);
+        // the value contains only the phrase id and name in the api message because the phrase are expected to be cached in the frontend
         $t->assert_api_get(value::class, 5);
         $t->assert_api_get(formula::class);
         $t->assert_api_get_by_text(formula::class, formula_api::TN_READ);

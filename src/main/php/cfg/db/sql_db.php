@@ -2425,7 +2425,6 @@ class sql_db
         log_debug($field_name . ' from ' . $this->class . ' where ' . $id_name . ' = ' . $this->sf($id));
 
         if ($this->class <> '') {
-            $this->set_table();
 
             // set fallback values
             if ($field_name == '') {
@@ -2465,7 +2464,6 @@ class sql_db
         $result = '';
         log_debug($field_name . ' from ' . $this->class . ' where ' . $id1_name . ' = ' . $id1 . ' and ' . $id2_name . ' = ' . $id2);
 
-        $this->set_table();
         $sql = "SELECT " . $this->name_sql_esc($field_name) .
             "     FROM " . $this->name_sql_esc($this->table);
         if ($this->db_type == self::POSTGRES) {
@@ -2499,7 +2497,6 @@ class sql_db
         $result = '';
         log_debug('for "' . $name . '" of the db object "' . $this->class . '"');
 
-        $this->set_table();
         $this->set_id_field();
         $this->set_name_field();
         $result .= $this->get_value($this->id_field, $this->name_field, $name);
@@ -2516,7 +2513,6 @@ class sql_db
         $result = '';
         log_debug('for "' . $id . '" of the db object "' . $this->class . '"');
 
-        $this->set_table();
         $this->set_id_field();
         $this->set_name_field();
         $result = $this->get_value($this->name_field, $this->id_field, $id);
@@ -2533,7 +2529,6 @@ class sql_db
         $result = '';
         log_debug('for "' . $name . ',' . $field2_name . ',' . $field2_value . '" of the db object "' . $this->class . '"');
 
-        $this->set_table();
         $this->set_id_field();
         $this->set_name_field();
         $result = $this->get_value_2key($this->id_field, $this->name_field, $name, $field2_name, $field2_value);
@@ -2549,7 +2544,6 @@ class sql_db
     {
         log_debug($this->class);
 
-        $this->set_table();
         $this->set_id_field();
         $this->set_name_field();
         /* this query looks easier than the one below, but it does not word for user exclusions
@@ -2598,7 +2592,6 @@ class sql_db
     {
         log_debug("sql_db->sql_std_lst (" . $this->class . ")");
 
-        $this->set_table();
         $this->set_id_field();
         $this->set_name_field();
         $sql = "SELECT " . $this->name_sql_esc($this->id_field) . " AS id,
@@ -3636,7 +3629,6 @@ class sql_db
         }
         $this->set_name($qp->name);
         $this->set_usr($this->usr_id);
-        $this->set_table();
         $this->set_id_field($id_field);
         $this->set_fields(array(user::FLD_ID));
         if ($id == 0) {
@@ -3757,7 +3749,6 @@ class sql_db
         $qp->name .= $this->class;
         $this->set_name($qp->name);
         $this->set_usr($this->usr_id);
-        $this->set_table();
         $this->set_id_field();
         $qp->sql = "SELECT " . $this->id_field . " AS id
                       FROM " . $this->name_sql_esc($this->table) . "
@@ -3793,7 +3784,6 @@ class sql_db
             log_err('Cannot load system used in set_default_owner');
             $result = false;
         } else {
-            $this->set_table();
             $sql = "UPDATE " . $this->name_sql_esc($this->table) . "
                SET user_id = " . $sys_usr->id() . "
              WHERE user_id IS NULL;";
@@ -4091,7 +4081,6 @@ class sql_db
     {
         log_debug($name . ' to ' . $this->class);
 
-        $this->set_table();
         $this->set_name_field();
         $result = $this->insert_old($this->name_field, $name);
 
@@ -4106,7 +4095,6 @@ class sql_db
     {
         log_debug($name . ',' . $field2_name . ',' . $field2_value . ' to ' . $this->class);
 
-        $this->set_table();
         $this->set_name_field();
         //zu_debug('sql_db->add_id_2key add "'.$this->name_field.','.$field2_name.'" "'.$name.','.$field2_value.'"');
         $result = $this->insert_old(array($this->name_field, $field2_name), array($name, $field2_value));
@@ -4133,7 +4121,6 @@ class sql_db
 
         // check parameter
         $par_ok = true;
-        $this->set_table();
         $this->set_id_field($id_field);
         if ($debug > 0) {
             if ($this->table == "") {

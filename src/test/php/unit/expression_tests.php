@@ -149,7 +149,7 @@ class expression_tests
 
         $test_name = 'test getting the phrase ids';
         $result = implode(",", $exp->phr_id_lst($exp->ref_text())->lst);
-        $target = implode(",", array(166, word_api::TI_THIS, word_api::TI_PRIOR));
+        $target = implode(",", array(word_api::TI_PCT, word_api::TI_THIS, word_api::TI_PRIOR));
         $t->assert($test_name, $result, $target);
 
         $test_name = 'test the conversion of the database reference text to the user text';

@@ -398,8 +398,8 @@ class test_api extends create_test_objects
     {
         // naming exception (to be removed?)
         $lib = new library();
-        $class = $this->class_to_api($class);
-        $url = $this->class_to_url($class);
+        $class_api = $this->class_to_api($class);
+        $url = $this->class_to_url($class_api);
         $data = array(controller::URL_VAR_ID => $id);
         // TODO check why for formula a double call is needed
         if ($class == formula::class) {
@@ -408,13 +408,13 @@ class test_api extends create_test_objects
         // TODO simulate other users
         $actual = json_decode($this->api_call("GET", $url, $data), true);
         if ($actual == null) {
-            log_err('GET api call for ' . $class . ' returned an empty result');
+            log_err('GET api call for ' . $class_api . ' returned an empty result');
         }
         $filename = '';
-        if ($class == value::class or $class == $lib->class_to_name(value::class)) {
+        if ($class == value::class) {
             $filename = "value_non_std";
         }
-        return $this->assert_api_compare($class, $actual, $expected, $filename, false, $ignore_id);
+        return $this->assert_api_compare($class_api, $actual, $expected, $filename, false, $ignore_id);
     }
 
     /**

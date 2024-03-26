@@ -89,6 +89,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
          load, im- and export, filter, modify, check, save, del
 
     after that this should be done while keeping step 1. to 4. for each commit:
+    TODO the first frontend should look like Excel wit a big empty sheet and file save and load and only a few suggestions while writing to a cell
     TODO remove the time phrase from result
     TODO rename change and change_log to change
     TODO rename system_log to log

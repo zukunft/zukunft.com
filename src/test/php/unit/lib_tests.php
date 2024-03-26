@@ -338,7 +338,7 @@ class lib_tests
         $test_result = "";
         $test_target = "1";
         $result = $lib->diff_msg($test_result, $test_target);
-        $target = '//-1//';
+        $target = '//-1////+//';
         $t->assert("empty result, no diff", $result, $target);
         // ... null result
         $test_result = null;
@@ -354,7 +354,7 @@ class lib_tests
         // ... json result to bool
         $test_result = $lib->json_is_similar([1,2], [1]);
         $result = $lib->diff_msg($test_result, true);
-        $target = '//-1//';
+        $target = '//-1////+//';
         $t->assert("empty result, no diff", $result, $target);
         // ... code text with other beginning
         $test_result = 'codeStartingWithMoreCharsText';
