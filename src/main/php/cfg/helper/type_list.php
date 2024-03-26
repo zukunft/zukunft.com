@@ -205,12 +205,12 @@ class type_list
      * e.g. a db_type is phrase_type or view type
      *
      * @param sql $sc with the target db_type set
-     * @param string $db_type the class of the related object e.g. phrase_type or formula_type
+     * @param string $class the class of the related object e.g. phrase_type or formula_type
      * @return sql_par the sql statement with the parameters and the name
      */
-    function load_sql_all(sql $sc, string $db_type): sql_par
+    function load_sql_all(sql $sc, string $class): sql_par
     {
-        $qp = $this->load_sql($sc, $db_type);
+        $qp = $this->load_sql($sc, $class);
         $sc->set_page(sql_db::ROW_MAX, 0);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -221,29 +221,29 @@ class type_list
     /**
      * force to reload the type names and translations from the database
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param string $db_type the database name e.g. the table name without s
+     * @param string $class the database name e.g. the table name without s
      * @return array the list of types
      */
-    private function load_list(sql_db $db_con, string $db_type): array
+    private function load_list(sql_db $db_con, string $class): array
     {
         $this->lst = [];
-        $qp = $this->load_sql_all($db_con->sql_creator(), $db_type);
+        $qp = $this->load_sql_all($db_con->sql_creator(), $class);
         $db_lst = $db_con->get($qp);
         if ($db_lst != null) {
             foreach ($db_lst as $db_row) {
-                $type_id = $db_row[$db_con->get_id_field_name($db_type)];
+                $type_id = $db_row[$db_con->get_id_field_name($class)];
                 $type_code_id = strval($db_row[sql::FLD_CODE_ID]);
                 // database field name exceptions
                 $type_name = '';
-                if ($db_type == db_cl::LOG_ACTION) {
+                if ($class == db_cl::LOG_ACTION) {
                     $type_name = strval($db_row[type_object::FLD_ACTION]);
-                } elseif ($db_type == db_cl::LOG_TABLE) {
+                } elseif ($class == db_cl::LOG_TABLE) {
                     $type_name = strval($db_row[type_object::FLD_TABLE]);
-                } elseif ($db_type == sql_db::VT_TABLE_FIELD) {
+                } elseif ($class == sql_db::VT_TABLE_FIELD) {
                     $type_name = strval($db_row[type_object::FLD_FIELD]);
-                } elseif ($db_type == sql_db::TBL_LANGUAGE) {
+                } elseif ($class == sql_db::TBL_LANGUAGE) {
                     $type_name = strval($db_row[language::FLD_NAME]);
-                } elseif ($db_type == sql_db::TBL_LANGUAGE_FORM) {
+                } elseif ($class == sql_db::TBL_LANGUAGE_FORM) {
                     $type_name = strval($db_row[language_form::FLD_NAME]);
                 } else {
                     $type_name = strval($db_row[sql::FLD_TYPE_NAME]);
@@ -274,14 +274,17 @@ class type_list
 
     /**
      * reload a type list from the database e.g. because a translation has changed and fill the hash table
-     * @param string $db_type the database table type name to select either word, formula, view, ...
+     * @param string $class the child object class for the database table type name to select either word, formula, view, ...
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
      * @return bool true if load was successful
      */
-    function load(sql_db $db_con, string $db_type): bool
+    function load(sql_db $db_con, string $class = ''): bool
     {
         $result = false;
-        $this->lst = $this->load_list($db_con, $db_type);
+        if ($class == '') {
+            $class = $this::class;
+        }
+        $this->lst = $this->load_list($db_con, $class);
         $this->hash = $this->get_hash($this->lst);
         if (count($this->hash) > 0) {
             $result = true;

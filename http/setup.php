@@ -43,35 +43,10 @@ if ($usr->id() > 0) {
 
         // recreate the code link database rows
         $db_chk = new db_check();
-        $db_con->db_fill_code_links();
-        $db_con->import_verbs($usr);
 
-
-        // create all code linked records in the database
-        // created in the database because on one hand, they can be used like all user added records
-        // on the other side, these records have special function that are defined in the code
-        // link always is done with the field "code_id"
-        // this way the user can give the record another name without using the code link
-        // maybe the code link should be shown to the user for
-        sql_code_link(controller::DSP_WORD_ADD, "Add new words", $db_con);
-        sql_code_link(controller::DSP_WORD_EDIT, "Word Edit", $db_con);
-        sql_code_link(controller::DSP_VALUE_ADD, "Add new values", $db_con);
-        sql_code_link(controller::DSP_VALUE_EDIT, "Value Edit", $db_con);
-        sql_code_link(controller::DSP_FORMULA_ADD, "Add new formula", $db_con);
-        sql_code_link(controller::DSP_FORMULA_EDIT, "Formula Edit", $db_con);
-        sql_code_link(controller::DSP_VIEW_ADD, "Add new view", $db_con);
-        sql_code_link(controller::DSP_VIEW_EDIT, "view Edit", $db_con);
-        sql_code_link(controller::DSP_IMPORT, "Import", $db_con);
-
-        sql_code_link(phrase_type::TIME, "Time Word", $db_con);
-        //sql_code_link(DBL_LINK_TYPE_IS,      "is a", $db_con);
-
-        // create test records
-        // these records are used for the test cases
-
-        // TODO check why loading seems to be not needed here
-        // import_config($usr);
-
+        // with the check the tables will be created and the system data will be loaded
+        // TODO compare with test_recreate.php
+        $result = $db_chk->db_check($db_con);
 
         log_debug("setup ... done.");
     }}

@@ -112,13 +112,13 @@ class ref_list extends type_list
      * force to reload the complete list of refs from the database
      *
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param string $db_type the database name e.g. the table name without s
+     * @param string $class the database name e.g. the table name without s
      * @return bool true if at least one ref has been loaded
      */
-    function load(sql_db $db_con, string $db_type = sql_db::TBL_VERB): bool
+    function load(sql_db $db_con, string $class = sql_db::TBL_VERB): bool
     {
         $result = false;
-        $this->set_lst($this->load_list($db_con, $db_type));
+        $this->set_lst($this->load_list($db_con, $class));
         if ($this->count() > 0) {
             $result = true;
         }

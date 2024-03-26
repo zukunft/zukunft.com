@@ -146,10 +146,10 @@ class view_sys_list extends type_list
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
      * @return bool true if load was successful
      */
-    function load(sql_db $db_con, string $db_type = sql_db::TBL_VIEW): bool
+    function load(sql_db $db_con, string $class = sql_db::TBL_VIEW): bool
     {
         $result = false;
-        $this->set_lst($this->load_list($db_con, $db_type));
+        $this->set_lst($this->load_list($db_con, $class));
         if ($this->count() > 0) {
             $result = true;
         }

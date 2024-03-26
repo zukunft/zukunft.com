@@ -37,7 +37,7 @@ function run_db_link_test(test_cleanup $t): void
 {
     global $change_table_list;
 
-    $t->header('Test database link functions (zu_lib_sql_code_link.php)');
+    $t->header('Test database link functions');
 
     // test code link
     $id = change_table_list::WORD;

@@ -264,6 +264,12 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO do not allow any HTML or script code fragments in the text fields
     TODO if options are excluded show them in grey with the mouseover reason, why they have been excluded
 
+    TODO use cases:
+        these the optimal tax rates are
+            from -10% needed to fulfill the basic needed
+            to 99% for everything more than the community is able to invest to save one live
+            reason: this is the optimal combination between safety and prestige
+
     TODO because some changes e.g. a formula change might cause costly calculations estimate the cost upfront and ask the user to pay for it
 
     TODO term names are expected to change not very often
@@ -636,7 +642,6 @@ include_once WEB_HTML_PATH . 'html_base.php';
 // include all other libraries that are usually needed
 include_once DB_LINK_PATH . 'zu_lib_sql_link.php';
 include_once SERVICE_PATH . 'db_code_link.php';
-include_once SERVICE_PATH . 'zu_lib_sql_code_link.php';
 include_once SERVICE_PATH . 'config.php';
 
 // to avoid circle include

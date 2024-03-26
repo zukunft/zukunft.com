@@ -223,12 +223,12 @@ class verb_list extends type_list
      * create an SQL statement to load all verbs from the database
      *
      * @param sql $sc with the target db_type set
-     * @param string $db_type the class name to be compatible with the user sandbox load_sql functions
+     * @param string $class the class name to be compatible with the user sandbox load_sql functions
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_all(sql $sc, string $db_type): sql_par
+    function load_sql_all(sql $sc, string $class): sql_par
     {
-        $qp = $this->load_sql($sc, $db_type);
+        $qp = $this->load_sql($sc, $class);
         $sc->set_page(sql_db::ROW_MAX, 0);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -262,13 +262,13 @@ class verb_list extends type_list
      * force to reload the complete list of verbs from the database
      *
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param string $db_type the database name e.g. the table name without s
+     * @param string $class the database name e.g. the table name without s
      * @return bool true if at least one verb has been loaded
      */
-    function load(sql_db $db_con, string $db_type = sql_db::TBL_VERB): bool
+    function load(sql_db $db_con, string $class = sql_db::TBL_VERB): bool
     {
         $result = false;
-        $this->set_lst($this->load_list($db_con, $db_type));
+        $this->set_lst($this->load_list($db_con, $class));
         if ($this->count() > 0) {
             $result = true;
         }

@@ -81,12 +81,12 @@ class source_type_list extends type_list
      * create an SQL statement to load all source types from the database
      *
      * @param sql $sc with the target db_type set
-     * @param string $db_type the class name to be compatible with the user sandbox load_sql functions
+     * @param string $class the class name to be compatible with the user sandbox load_sql functions
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_all(sql $sc, string $db_type): sql_par
+    function load_sql_all(sql $sc, string $class): sql_par
     {
-        $qp = $this->load_sql($sc, $db_type);
+        $qp = $this->load_sql($sc, $class);
         $sc->set_page(sql_db::ROW_MAX, 0);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -120,14 +120,14 @@ class source_type_list extends type_list
 
     /**
      * overwrite the general user type list load_by_db function to keep the link to the table type capsuled
-     * @param string $db_type the database table type name to select either word, formula, view, ...
+     * @param string $class the database table type name to select either word, formula, view, ...
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
      * @return bool true if load was successful
      */
-    function load(sql_db $db_con, string $db_type = sql_db::TBL_SOURCE_TYPE): bool
+    function load(sql_db $db_con, string $class = sql_db::TBL_SOURCE_TYPE): bool
     {
         $result = false;
-        $this->load_list($db_con, $db_type);
+        $this->load_list($db_con, $class);
         if (!$this->is_empty()) {
             $result = true;
         }

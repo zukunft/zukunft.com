@@ -827,8 +827,8 @@ class sql_db
     {
         $result = true;
 
-        foreach (sandbox::DB_TYPES as $db_type) {
-            $this->set_class($db_type);
+        foreach (sandbox::DB_TYPES as $class) {
+            $this->set_class($class);
             $db_lst = $this->missing_owner();
             if ($db_lst != null) {
                 $result = $this->set_default_owner();
@@ -854,9 +854,9 @@ class sql_db
         }
 
         // set the seq number if needed
-        $this->seq_reset(sql_db::TBL_CHANGE_TABLE);
-        $this->seq_reset(sql_db::TBL_CHANGE_FIELD);
-        $this->seq_reset(sql_db::TBL_CHANGE_ACTION);
+        $this->seq_reset(change_table::class);
+        $this->seq_reset(change_field::class);
+        $this->seq_reset(change_action::class);
     }
 
     function load_db_code_link_file(string $csv_file_name): void
@@ -4377,13 +4377,13 @@ class sql_db
 
     /**
      * reset the seq number
-     * @param string $type the class name to which the related table should be reset
+     * @param string $class the class name to which the related table should be reset
      * @return string any warning message to be shown to the admin user
      */
-    function seq_reset(string $type): string
+    function seq_reset(string $class): string
     {
         $msg = '';
-        $this->set_class($type);
+        $this->set_class($class);
         $sql_max = 'SELECT MAX(' . $this->name_sql_esc($this->id_field) . ') AS max_id FROM ' . $this->name_sql_esc($this->table) . ';';
         // $db_con->set_fields(array('MAX(group_id) AS max_id'));
         // $sql_max = $db_con->select();
@@ -4400,9 +4400,9 @@ class sql_db
                 } elseif ($this->db_type == sql_db::MYSQL) {
                     $sql = 'ALTER TABLE ' . $this->name_sql_esc($this->table) . ' auto_increment = ' . $next_id . ';';
                 } else {
-                    log_err('Unexpected SQL type ' . $type);
+                    log_err('Unexpected SQL type ' . $class);
                 }
-                $this->exe_try('Resetting sequence for ' . $type, $sql);
+                $this->exe_try('Resetting sequence for ' . $class, $sql);
                 $msg = 'Next database id for ' . $this->table . ': ' . $next_id;
 
             }
