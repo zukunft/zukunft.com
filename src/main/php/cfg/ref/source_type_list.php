@@ -53,57 +53,15 @@ class source_type_list extends type_list
     //const FLD_URL = 'base_url';
 
     /**
-     * overwrite the user_type_list function to create the SQL to load the source types
-     *
-     * @param sql $sc with the target db_type set
-     * @param string $class the database name e.g. the table name without s
-     * @param string $query_name the name extension to make the query name unique
-     * @param string $order_field set if the type list should e.g. be sorted by the name instead of the id
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql(
-        sql    $sc,
-        string $class,
-        string $query_name = 'all',
-        string $order_field = self::FLD_ID): sql_par
-    {
-        $sc->set_class($class);
-        $qp = new sql_par($class);
-        $qp->name = $class;
-        $sc->set_name($qp->name);
-        $sc->set_fields(array(sandbox_named::FLD_DESCRIPTION, sql::FLD_CODE_ID));
-        $sc->set_order($order_field);
-
-        return $qp;
-    }
-
-    /**
-     * create an SQL statement to load all source types from the database
-     *
-     * @param sql $sc with the target db_type set
-     * @param string $class the class name to be compatible with the user sandbox load_sql functions
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql_all(sql $sc, string $class): sql_par
-    {
-        $qp = $this->load_sql($sc, $class);
-        $sc->set_page(sql_db::ROW_MAX, 0);
-        $qp->sql = $sc->sql();
-        $qp->par = $sc->get_par();
-
-        return $qp;
-    }
-
-    /**
      * overwrite the user_type_list function to include the specific fields like the url
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param string $db_type the database name e.g. the table name without s
-     * @return void the list of source types
+     * @param string $class the database name e.g. the table name without s
+     * @return array the list of source types
      */
-    private function load_list(sql_db $db_con, string $db_type): void
+    protected function load_list(sql_db $db_con, string $class): array
     {
         $this->reset();
-        $qp = $this->load_sql_all($db_con->sql_creator(), $db_type);
+        $qp = $this->load_sql_all($db_con->sql_creator(), $class);
         $db_lst = $db_con->get($qp);
         if ($db_lst != null) {
             foreach ($db_lst as $db_entry) {
@@ -116,22 +74,7 @@ class source_type_list extends type_list
                 $this->add($type_obj);
             }
         }
-    }
-
-    /**
-     * overwrite the general user type list load_by_db function to keep the link to the table type capsuled
-     * @param string $class the database table type name to select either word, formula, view, ...
-     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @return bool true if load was successful
-     */
-    function load(sql_db $db_con, string $class = sql_db::TBL_SOURCE_TYPE): bool
-    {
-        $result = false;
-        $this->load_list($db_con, $class);
-        if (!$this->is_empty()) {
-            $result = true;
-        }
-        return $result;
+        return $this->lst();
     }
 
     /**

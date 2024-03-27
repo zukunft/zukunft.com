@@ -92,7 +92,7 @@ class ref_list extends type_list
      * @param string $class the class of the related object e.g. phrase_type or formula_type
      * @return array the list of types
      */
-    private function load_list(sql_db $db_con, string $class): array
+    protected function load_list(sql_db $db_con, string $class): array
     {
         global $usr;
         $this->reset();

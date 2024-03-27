@@ -1,4 +1,4 @@
-PREPARE source_type FROM
+PREPARE source_type_all FROM
    'SELECT source_type_id,
            type_name,
            description,

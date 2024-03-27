@@ -1334,27 +1334,23 @@ class test_base
      *
      * @param sql_db $db_con does not need to be connected to a real database
      * @param object $usr_obj the user sandbox object e.g. a word
-     * @param string $db_type to define the database type if it does not match the class
+     * @param string $class to define the database type if it does not match the class
      * @return bool true if all tests are fine
      */
-    function assert_sql_all(sql_db $db_con, object $usr_obj, string $db_type = ''): bool
+    function assert_sql_all(sql_db $db_con, object $usr_obj, string $class = ''): bool
     {
-        $lib = new library();
-        if ($db_type == '') {
-            $db_type = get_class($usr_obj);
-            $db_type = $lib->class_to_name($db_type);
-        }
+        $sc = $db_con->sql_creator();
 
         // check the Postgres query syntax
-        $db_con->db_type = sql_db::POSTGRES;
-        $qp = $usr_obj->load_sql_all($db_con->sql_creator(), $db_type);
-        $result = $this->assert_qp($qp, $db_con->db_type);
+        $sc->db_type = sql_db::POSTGRES;
+        $qp = $usr_obj->load_sql_all($sc, $class);
+        $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $db_con->db_type = sql_db::MYSQL;
-            $qp = $usr_obj->load_sql_all($db_con->sql_creator(), $db_type);
-            $result = $this->assert_qp($qp, $db_con->db_type);
+            $sc->db_type = sql_db::MYSQL;
+            $qp = $usr_obj->load_sql_all($sc, $class);
+            $result = $this->assert_qp($qp, $sc->db_type);
         }
         return $result;
     }

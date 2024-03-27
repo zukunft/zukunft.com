@@ -122,10 +122,10 @@ class view_sys_list extends type_list
     /**
      * force to reload the list of views from the database that have a used code id
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param string $db_type the database name in this case view just for compatibility reasons
+     * @param string $class the database name in this case view just for compatibility reasons
      * @return array the list of views used by the system
      */
-    private function load_list(sql_db $db_con, string $db_type): array
+    protected function load_list(sql_db $db_con, string $class): array
     {
         $this->reset();
         $qp = $this->load_sql_list($db_con);
@@ -146,7 +146,7 @@ class view_sys_list extends type_list
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
      * @return bool true if load was successful
      */
-    function load(sql_db $db_con, string $class = sql_db::TBL_VIEW): bool
+    function load(sql_db $db_con, string $class = view::class): bool
     {
         $result = false;
         $this->set_lst($this->load_list($db_con, $class));

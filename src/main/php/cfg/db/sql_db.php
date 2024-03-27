@@ -149,31 +149,14 @@ class sql_db
     // the used database objects (the table name is in most cases with an extra 's', because each table contains the data for many objects)
     // TODO use const for all object names
     // TODO try to use the class name if possible
-    const TBL_USER_TYPE = 'user_type';
-    const TBL_USER_PROFILE = 'user_profile';
-    const TBL_USER_OFFICIAL_TYPE = 'user_official_type';
-    const TBL_WORD = 'word';
-    const TBL_PHRASE_TYPE = 'phrase_type';
     const TBL_VERB = 'verb';
     const TBL_PHRASE = 'phrase';
-    const TBL_VALUE_TIME_SERIES = 'values_time_series';
-    const TBL_VALUE_TIME_SERIES_DATA = 'value_ts_data';
-    const TBL_SOURCE_TYPE = 'source_type';
-    const TBL_REF_TYPE = 'ref_type';
     const TBL_FORMULA = 'formula';
-    const TBL_RESULT = 'result';
-    const TBL_VIEW = 'view';
-    const TBL_COMPONENT_LINK = 'component_link';
-    const TBL_VIEW_TERM_LINK = 'view_term_link';
-
-    const TBL_CHANGE_FIELD = 'change_field';
-    const TBL_IP = 'ip_range';
     const TBL_SYS_LOG = 'sys_log';
     const TBL_SYS_LOG_STATUS = 'sys_log_status';
     const TBL_SYS_SCRIPT = 'system_time_type'; // to log the execution times for code optimising
     const TBL_TASK = 'job';
 
-    const TBL_LANGUAGE_FORM = 'language_form';
 
     const TBL_USER_PREFIX = 'user_';
 

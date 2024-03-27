@@ -36,6 +36,7 @@ use api\ref\source as source_api;
 use cfg\ref_type;
 use cfg\ref_type_list;
 use cfg\source_list;
+use cfg\source_type;
 use cfg\source_type_list;
 use cfg\sys_log_status;
 use html\ref\ref as ref_dsp;
@@ -84,7 +85,7 @@ class ref_tests
 
         // sql to load the ref types
         $ref_type_list = new ref_type_list();
-        $t->assert_sql_all($db_con, $ref_type_list, sql_db::TBL_REF_TYPE);
+        $t->assert_sql_all($db_con, $ref_type_list);
 
         $t->subheader('ref sql write');
         // TODO activate db write
@@ -137,7 +138,7 @@ class ref_tests
 
         // sql to load the source types
         $source_type_list = new source_type_list();
-        $t->assert_sql_all($db_con, $source_type_list, sql_db::TBL_SOURCE_TYPE);
+        $t->assert_sql_all($db_con, $source_type_list);
 
         $t->subheader('source sql write');
         // TODO activate db write

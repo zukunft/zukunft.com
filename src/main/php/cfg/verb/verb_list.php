@@ -192,61 +192,16 @@ class verb_list extends type_list
     }
 
     /**
-     * common part to create an SQL statement to load all verbs from the database
-     *
-     * @param sql $sc with the target db_type set
-     * @param string $class the class name to be compatible with the user sandbox load_sql functions
-     * @param string $query_name the name extension to make the query name unique
-     * @param string $order_field set if the type list should e.g. be sorted by the name instead of the id
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql(
-        sql    $sc,
-        string $class = self::class,
-        string $query_name = 'all',
-        string $order_field = verb::FLD_ID): sql_par
-    {
-        $sc->set_class(verb::class);
-        $qp = new sql_par($class);
-        $qp->name = $class . '_' . $query_name;
-
-        $sc->set_name($qp->name);
-        //TODO check if $db_con->set_usr($this->user()->id()); is needed
-        $sc->set_fields(verb::FLD_NAMES);
-        $sc->set_order($order_field);
-
-        return $qp;
-    }
-
-
-    /**
-     * create an SQL statement to load all verbs from the database
-     *
-     * @param sql $sc with the target db_type set
-     * @param string $class the class name to be compatible with the user sandbox load_sql functions
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql_all(sql $sc, string $class): sql_par
-    {
-        $qp = $this->load_sql($sc, $class);
-        $sc->set_page(sql_db::ROW_MAX, 0);
-        $qp->sql = $sc->sql();
-        $qp->par = $sc->get_par();
-
-        return $qp;
-    }
-
-    /**
      * force to reload the complete list of verbs from the database
      *
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param string $db_type the database name e.g. the table name without s
+     * @param string $class the database name e.g. the table name without s
      * @return array the list of types
      */
-    private function load_list(sql_db $db_con, string $db_type): array
+    protected function load_list(sql_db $db_con, string $class): array
     {
         $this->reset();
-        $qp = $this->load_sql_all($db_con->sql_creator(), $db_type);
+        $qp = $this->load_sql_all($db_con->sql_creator(), $class);
         $db_lst = $db_con->get($qp);
         if ($db_lst != null) {
             foreach ($db_lst as $db_row) {
@@ -256,24 +211,6 @@ class verb_list extends type_list
             }
         }
         return $this->lst();
-    }
-
-    /**
-     * force to reload the complete list of verbs from the database
-     *
-     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param string $class the database name e.g. the table name without s
-     * @return bool true if at least one verb has been loaded
-     */
-    function load(sql_db $db_con, string $class = sql_db::TBL_VERB): bool
-    {
-        $result = false;
-        $this->set_lst($this->load_list($db_con, $class));
-        if ($this->count() > 0) {
-            $result = true;
-        }
-        return $result;
-
     }
 
     /**

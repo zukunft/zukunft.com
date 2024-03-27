@@ -1,4 +1,4 @@
-PREPARE verb_list_all FROM
+PREPARE verb_all FROM
    'SELECT
          verb_id,
          verb_name,

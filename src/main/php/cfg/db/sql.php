@@ -2953,7 +2953,7 @@ class sql
                                 log_err('Execution of ' . $sql . ' failed due to ' . $sql_error);
                             }
                         } else {
-                            if ($this->class != sql_db::TBL_VALUE_TIME_SERIES_DATA) {
+                            if (!in_array($this->class, sql_db::DB_TABLE_WITHOUT_AUTO_ID)) {
                                 if (is_resource($sql_result) or $sql_result::class == 'PgSql\Result') {
                                     $result = pg_fetch_array($sql_result)[0];
                                 } else {

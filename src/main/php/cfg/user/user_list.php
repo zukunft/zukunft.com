@@ -147,7 +147,7 @@ class user_list
         $qp = $this->load_sql($sc, 'profiles');
         $sc->set_join_fields(
             array(user_profile::FLD_LEVEL),
-            sql_db::TBL_USER_PROFILE,
+            user_profile::class,
             user::FLD_PROFILE,
             user_profile::FLD_ID);
         $sc->add_where(sql_db::LNK_TBL . '.' . user_profile::FLD_LEVEL, $profile_id, sql_par_type::INT_HIGHER);

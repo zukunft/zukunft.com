@@ -423,7 +423,7 @@ class view extends sandbox_typed
         $qp = $this->load_sql($sc, 'term', $class);
         $sc->set_join_fields(
             view_term_link::FLD_NAMES,
-            sql_db::TBL_VIEW_TERM_LINK,
+            view_term_link::class,
             view::FLD_ID,
             view::FLD_ID);
         $sc->add_where(sql_db::LNK_TBL . '.' . term::FLD_ID, $trm->id());
@@ -582,9 +582,9 @@ class view extends sandbox_typed
      */
     function set_join(sql $sc): sql
     {
-        $sc->set_join_fields(view::FLD_NAMES, sql_db::TBL_VIEW);
-        $sc->set_join_usr_fields(view::FLD_NAMES_USR, sql_db::TBL_VIEW);
-        $sc->set_join_usr_num_fields(view::FLD_NAMES_NUM_USR, sql_db::TBL_VIEW);
+        $sc->set_join_fields(view::FLD_NAMES, view::class);
+        $sc->set_join_usr_fields(view::FLD_NAMES_USR, view::class);
+        $sc->set_join_usr_num_fields(view::FLD_NAMES_NUM_USR, view::class);
         return $sc;
     }
 
