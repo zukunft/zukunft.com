@@ -149,13 +149,9 @@ class sql_db
     // the used database objects (the table name is in most cases with an extra 's', because each table contains the data for many objects)
     // TODO use const for all object names
     // TODO try to use the class name if possible
-    const TBL_VERB = 'verb';
     const TBL_PHRASE = 'phrase';
     const TBL_FORMULA = 'formula';
     const TBL_SYS_LOG = 'sys_log';
-    const TBL_SYS_LOG_STATUS = 'sys_log_status';
-    const TBL_SYS_SCRIPT = 'system_time_type'; // to log the execution times for code optimising
-    const TBL_TASK = 'job';
 
 
     const TBL_USER_PREFIX = 'user_';
@@ -300,7 +296,7 @@ class sql_db
         change::class,
         change_link::class,
         sql_db::TBL_SYS_LOG,
-        sql_db::TBL_TASK,
+        job::class,
         sql_db::VT_PHRASE_GROUP_LINK
     ];
     const CLASSES_WITH_USER_CHANGES = [

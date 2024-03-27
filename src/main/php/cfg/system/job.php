@@ -294,7 +294,7 @@ class job extends db_object_seq_id_user
     function load_sql(sql $sc, string $query_name, string $class = self::class): sql_par
     {
         $qp = parent::load_sql_multi($sc, $query_name, $class);
-        $sc->set_class(sql_db::TBL_TASK);
+        $sc->set_class(job::class);
 
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
@@ -398,7 +398,7 @@ class job extends db_object_seq_id_user
                     log_debug('connect');
                     //$db_con = New mysql;
                     $db_type = $db_con->get_class();
-                    $db_con->set_class(sql_db::TBL_TASK);
+                    $db_con->set_class(job::class);
                     $db_con->set_usr($this->user()->id());
                     $job_id = $db_con->insert_old(array(user::FLD_ID, self::FLD_TIME_REQUEST, self::FLD_TYPE, self::FLD_ROW),
                         array($this->user()->id(), sql::NOW, $this->type_id(), $this->row_id));
@@ -444,7 +444,7 @@ class job extends db_object_seq_id_user
 
         //$db_con = New mysql;
         $db_type = $db_con->get_class();
-        $db_con->set_class(sql_db::TBL_TASK);
+        $db_con->set_class(job::class);
         $db_con->usr_id = $this->user()->id();
         $result = $db_con->update_old($this->id, 'end_time', sql::NOW);
         $db_con->set_class($db_type);
@@ -461,7 +461,7 @@ class job extends db_object_seq_id_user
         //$db_con = New mysql;
         $db_type = $db_con->get_class();
         $db_con->usr_id = $this->user()->id();
-        $db_con->set_class(sql_db::TBL_TASK);
+        $db_con->set_class(job::class);
         $result = $db_con->update_old($this->id, 'start_time', sql::NOW);
 
         log_debug($this->type_code_id() . ' with ' . $result);

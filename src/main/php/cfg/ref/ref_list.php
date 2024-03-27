@@ -115,7 +115,7 @@ class ref_list extends type_list
      * @param string $class the database name e.g. the table name without s
      * @return bool true if at least one ref has been loaded
      */
-    function load(sql_db $db_con, string $class = sql_db::TBL_VERB): bool
+    function load(sql_db $db_con, string $class = verb::class): bool
     {
         $result = false;
         $this->set_lst($this->load_list($db_con, $class));

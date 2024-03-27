@@ -644,18 +644,13 @@ class sandbox_multi extends db_object_multi_user
     // e.g. if the owner of a new triple is set correctly at creation
     //      if not changes of another can overwrite the standard and by that influence the setup of the creator
     function chk_owner ($type, $correct) {
-      zu_debug($this->obj_name.'->chk_owner for '.$type);
+      zu_debug($this::class.'->chk_owner for '.$type);
 
       global $db_con;
       $msg = '';
 
-      // just to allow the call with one line
-      if ($type <> '') {
-        $this->obj_name = $type;
-      }
-
       //$db_con = New mysql;
-      $db_con->set_type($this->obj_name);
+      $db_con->set_type($this::class);
       $db_con->set_usr($this->user()->id());
 
       if ($correct === True) {
@@ -1938,12 +1933,12 @@ class sandbox_multi extends db_object_multi_user
         $result = false;
 
         /*
-        if ($this::class == word::class and $obj_to_check->obj_name == sql_db::TBL_FORMULA) {
+        if ($this::class == word::class and $obj_to_check::class == formula::class) {
             // special case if word should be created representing the formula it is a kind of same at least the creation of the word should be alloed
             if ($this->name == $obj_to_check->name) {
                 $result = true;
             }
-        } elseif ($this::class == word::class and $obj_to_check->obj_name == sql_db::TBL_WORD) {
+        } elseif ($this::class == word::class and $obj_to_check::class == word::class) {
 
         */
         if ($this::class == word::class) {

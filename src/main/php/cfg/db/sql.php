@@ -44,6 +44,7 @@ use cfg\group\group;
 use cfg\group\group_id;
 use cfg\ip_range;
 use cfg\ip_range_list;
+use cfg\job;
 use cfg\language_form;
 use cfg\library;
 use cfg\log\change;
@@ -143,7 +144,7 @@ class sql
         change::class,
         change_link::class,
         sql_db::TBL_SYS_LOG,
-        sql_db::TBL_TASK,
+        job::class,
         sql_db::VT_PHRASE_GROUP_LINK
     ];
     // classes where the tables have no auto increase id

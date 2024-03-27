@@ -1806,12 +1806,12 @@ class sandbox extends db_object_seq_id_user
         $result = false;
 
         /*
-        if ($this::class == word::class and $obj_to_check->obj_name == sql_db::TBL_FORMULA) {
+        if ($this::class == word::class and $obj_to_check::class == formula::class) {
             // special case if word should be created representing the formula it is a kind of same at least the creation of the word should be alloed
             if ($this->name == $obj_to_check->name) {
                 $result = true;
             }
-        } elseif ($this::class == word::class and $obj_to_check->obj_name == sql_db::TBL_WORD) {
+        } elseif ($this::class == word::class and $obj_to_check::class == word::class) {
 
         */
         if ($this::class == word::class) {

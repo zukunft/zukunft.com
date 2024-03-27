@@ -46,6 +46,7 @@ use api\word\word as word_api;
 use cfg\session;
 use cfg\sys_log_status;
 use cfg\user\user_type;
+use cfg\verb;
 use DateTime;
 use cfg\ip_range;
 use cfg\ip_range_list;
@@ -415,7 +416,7 @@ class system_tests
 
         // sql to load by id
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $db_con->remove_prefix_sql(sql_db::TBL_VERB, 'code_id');
+        $qp = $db_con->remove_prefix_sql($lib->class_to_name(verb::class), 'code_id');
         $expected_sql = $t->file('db/system/remove_prefix_by_verb_code_id.sql');
         $t->assert('database_upgrade->remove_prefix of verb code_id', $lib->trim($qp->sql), $lib->trim($expected_sql));
 
@@ -428,7 +429,7 @@ class system_tests
 
         // ... and the same for MySQL by replication the SQL builder statements
         $db_con->db_type = sql_db::MYSQL;
-        $qp = $db_con->remove_prefix_sql(sql_db::TBL_VERB, 'code_id');
+        $qp = $db_con->remove_prefix_sql($lib->class_to_name(verb::class), 'code_id');
         $expected_sql = $t->file('db/system/remove_prefix_by_verb_code_id_mysql.sql');
         $t->assert('database_upgrade->remove_prefix of verb code_id for MySQL', $lib->trim($qp->sql), $lib->trim($expected_sql));
 
