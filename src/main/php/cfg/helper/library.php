@@ -1585,13 +1585,33 @@ class library
         $result = $this->str_right_of_or_all($class, '\\');
         // for some lists and exceptions
         switch ($class) {
-            /*
             case phrase_types::class;
                 $result = str_replace('_types', '_type', $result);
                 break;
-            */
             case sys_log_status_list::class;
                 $result = str_replace('_list', '', $result);
+                break;
+        }
+        return $result;
+    }
+
+    /**
+     * remove the namespace from the class name and adds the name extention for the table
+     * @param string $class including the namespace
+     * @return string class name without the namespace
+     */
+    function class_to_table(string $class): string
+    {
+        $result = $this->class_to_name($class) .  sql_db::TABLE_EXTENSION;
+        // for some lists and exceptions
+        switch ($class) {
+            /*
+            case phrase_types::class;
+                $result = str_replace('_typess', '_types', $result);
+                break;
+            */
+            case sys_log_status::class;
+                $result = str_replace('_statuss', '_status', $result);
                 break;
         }
         return $result;

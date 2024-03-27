@@ -907,7 +907,7 @@ class sandbox extends db_object_seq_id_user
         $sc->set_usr($this->user()->id());
         $sc->set_join_fields(
             array_merge(array(user::FLD_ID, user::FLD_NAME), user::FLD_NAMES_LIST),
-            sql_db::TBL_USER,
+            user::class,
             user::FLD_ID,
             user::FLD_ID);
         $sc->add_where($this->id_field(), $this->id());

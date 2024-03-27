@@ -178,7 +178,7 @@ class component_list extends sandbox_list
         $sc->set_name($qp->name);
         $sc->set_join_fields(
             component_link::FLD_NAMES,
-            sql_db::TBL_COMPONENT_LINK,
+            component_link::class,
             component::FLD_ID,
             component::FLD_ID);
         $sc->add_where(sql_db::LNK_TBL . '.' . view::FLD_ID, $id);

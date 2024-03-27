@@ -42,6 +42,9 @@ use cfg\element;
 use cfg\formula_link;
 use cfg\group\group;
 use cfg\group\group_id;
+use cfg\ip_range;
+use cfg\ip_range_list;
+use cfg\language_form;
 use cfg\library;
 use cfg\log\change;
 use cfg\log\change_link;
@@ -50,9 +53,13 @@ use cfg\result\result;
 use cfg\sandbox;
 use cfg\triple;
 use cfg\user;
+use cfg\user\user_profile;
+use cfg\user\user_type;
+use cfg\user_official_type;
 use cfg\value\value;
 use cfg\value\value_phrase_link;
 use cfg\value\value_time_series;
+use cfg\value\value_ts_data;
 use cfg\view_term_link;
 
 class sql
@@ -131,7 +138,8 @@ class sql
         value_phrase_link::class,
         view_term_link::class,
         ref::class,
-        sql_db::TBL_IP,
+        ip_range::class,
+        ip_range_list::class,
         change::class,
         change_link::class,
         sql_db::TBL_SYS_LOG,
@@ -1132,7 +1140,7 @@ class sql
     function sql_delete(
         int|string|array $id_field,
         int|string|array $id,
-        bool         $excluded = false): string
+        bool             $excluded = false): string
     {
         $lib = new library();
         $id_field_par = '';
@@ -1588,7 +1596,7 @@ class sql
                 $result = $this->sep($result);
                 $result .= ' ' . sql_db::ULK_TBL . '.' . $field_esc;
                 // switched off because at the moment only the change sum should be calculated
-            //} elseif ($this->join_sub_query) {
+                //} elseif ($this->join_sub_query) {
                 //$result = $this->sep($result);
                 //$result .= ' ' . sql_db::GRP_TBL . '.' . $field_esc;
             }
@@ -2785,14 +2793,8 @@ class sql
         $lib = new library();
         if ($sql_statement_type == self::INSERT) {
             if ($this->db_type == sql_db::POSTGRES) {
-                // return the database row id if the value is not a time series number
-                if ($this->class != sql_db::TBL_VALUE_TIME_SERIES_DATA
-                    and $this->class != $lib->class_to_name(value::class)
-                    and $this->class != sql_db::TBL_RESULT
-                    and $this->class != sql_db::TBL_LANGUAGE_FORM
-                    and $this->class != sql_db::TBL_USER_OFFICIAL_TYPE
-                    and $this->class != sql_db::TBL_USER_TYPE
-                    and $this->class != sql_db::TBL_USER_PROFILE) {
+                // return the database row id if the table uses auto id series
+                if (!in_array($this::class, sql_db::DB_TABLE_WITHOUT_AUTO_ID)) {
                     $sql .= ' RETURNING ';
                     if (is_array($this->id_field)) {
                         $sql .= implode(',', $this->id_field);
@@ -2922,12 +2924,8 @@ class sql
                         log_err('Database connection lost', 'insert');
                     }
                 } else {
-                    // return the database row id if the value is not a time series number
-                    if ($this->class != sql_db::TBL_VALUE_TIME_SERIES_DATA
-                        and $this->class != sql_db::TBL_LANGUAGE_FORM
-                        and $this->class != sql_db::TBL_USER_OFFICIAL_TYPE
-                        and $this->class != sql_db::TBL_USER_TYPE
-                        and $this->class != sql_db::TBL_USER_PROFILE) {
+                    // return the database row id if the table uses auto id series
+                    if (!in_array($this::class, sql_db::DB_TABLE_WITHOUT_AUTO_ID)) {
                         $sql = $sql . ' RETURNING ' . $this->id_field . ';';
                     }
 
@@ -3063,14 +3061,14 @@ class sql
     function get_id_field_name(string $class): string
     {
         $lib = new library();
-
         $type = $lib->class_to_name($class);
 
         // exceptions for user overwrite tables
         // but not for the user type table, because this is not part of the sandbox tables
         if (str_starts_with($type, sql_db::TBL_USER_PREFIX)
-            and $type != sql_db::TBL_USER_TYPE
-            and $type != sql_db::TBL_USER_PROFILE) {
+            and $class != user_type::class
+            and $class != user_official_type::class
+            and $class != user_profile::class) {
             $type = $lib->str_right_of($type, sql_db::TBL_USER_PREFIX);
         }
         $result = $type . sql_db::FLD_EXT_ID;

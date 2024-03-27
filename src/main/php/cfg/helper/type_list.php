@@ -194,14 +194,14 @@ class type_list
     {
         $lib = new library();
         $db_type = $lib->class_to_name($class);
-        $sc->set_class($db_type);
+        $sc->set_class($class);
         $qp = new sql_par($db_type);
         $qp->name = $db_type . '_' . $query_name;
         $sc->set_name($qp->name);
         //TODO check if $db_con->set_usr($this->user()->id()); is needed
         $sc->set_fields(array(sandbox_named::FLD_DESCRIPTION, sql::FLD_CODE_ID));
         if ($order_field == '') {
-            $order_field = $sc->get_id_field_name($db_type);
+            $order_field = $sc->get_id_field_name($class);
         }
         $sc->set_order($order_field);
 
@@ -242,14 +242,12 @@ class type_list
      */
     private function load_list(sql_db $db_con, string $class): array
     {
-        $lib = new library();
         $this->lst = [];
         $qp = $this->load_sql_all($db_con->sql_creator(), $class);
         $db_lst = $db_con->get($qp);
         if ($db_lst != null) {
             foreach ($db_lst as $db_row) {
-                $tbl_typ = $lib->class_to_name($class);
-                $type_id = $db_row[$db_con->get_id_field_name($tbl_typ)];
+                $type_id = $db_row[$db_con->get_id_field_name($class)];
                 $type_code_id = strval($db_row[sql::FLD_CODE_ID]);
                 // database field name exceptions
                 $type_name = '';

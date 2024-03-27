@@ -289,8 +289,8 @@ class system_log extends db_object_seq_id
         $sc->set_fields(self::FLD_NAMES);
         $sc->set_join_fields(array(sys_log_function::FLD_NAME), sys_log_function::class);
         $sc->set_join_fields(array(type_object::FLD_NAME), sql_db::TBL_SYS_LOG_STATUS);
-        $sc->set_join_fields(array(sandbox::FLD_USER_NAME), sql_db::TBL_USER);
-        $sc->set_join_fields(array(sandbox::FLD_USER_NAME . ' AS ' . self::FLD_SOLVER_NAME), sql_db::TBL_USER, self::FLD_SOLVER);
+        $sc->set_join_fields(array(sandbox::FLD_USER_NAME), user::class);
+        $sc->set_join_fields(array(sandbox::FLD_USER_NAME . ' AS ' . self::FLD_SOLVER_NAME), user::class, self::FLD_SOLVER);
 
         return $qp;
     }

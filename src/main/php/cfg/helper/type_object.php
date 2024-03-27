@@ -344,10 +344,10 @@ class type_object extends db_object_seq_id implements JsonSerializable
         return $this->id();
     }
 
-    private function id_field_typ(string $db_type): string
+    private function id_field_typ(string $class): string
     {
         global $db_con;
-        return $db_con->get_id_field_name($db_type);
+        return $db_con->get_id_field_name($class);
     }
 
     private function name_field_typ(string $db_type): string

@@ -510,19 +510,43 @@ use html\phrase\phrase_group as phrase_group_dsp;
 
 */
 
+use cfg\component\component_link_type;
+use cfg\component\component_type;
+use cfg\component\position_type;
 use cfg\db\db_check;
 use cfg\db\sql;
+use cfg\element_type;
+use cfg\formula_link_type;
+use cfg\formula_type;
+use cfg\job_type;
+use cfg\language;
+use cfg\language_form;
 use cfg\library;
 use cfg\db\sql_db;
+use cfg\log\change_action;
+use cfg\log\change_field;
+use cfg\log\change_table;
+use cfg\phrase_types;
+use cfg\protection_type;
+use cfg\ref_type;
+use cfg\share_type;
+use cfg\source_type;
 use cfg\sys_log_function;
 use cfg\sys_log_level;
+use cfg\sys_log_status;
 use cfg\sys_log_status_list;
 use cfg\sys_log_function_list;
+use cfg\sys_log_type;
+use cfg\system_time_type;
 use cfg\type_lists;
 use cfg\user;
 use cfg\user\user_profile;
+use cfg\user\user_type;
+use cfg\user_official_type;
 use cfg\user_profile_list;
 use cfg\view;
+use cfg\view_link_type;
+use cfg\view_type;
 use html\html_base;
 use html\view\view as view_dsp;
 use cfg\log\change_log;
@@ -777,38 +801,42 @@ const SQL_STD_CLASSES = [
 ];
 
 # list of JSON files that define the base configuration of zukunft.com that is supposed never to be changed
+// TODO make the csv file list based on the class name
 define("PATH_BASE_CONFIG_FILES", ROOT_PATH . 'src/main/resources/');
 const PATH_BASE_CODE_LINK_FILES = PATH_BASE_CONFIG_FILES . 'db_code_links/';
+
+// type classes that have a csv file for the initial load
 const BASE_CODE_LINK_FILES = [
-    'sys_log_status',
-    'sys_log_types',
-    'job_types',
-    'change_actions',
-    'change_tables',
-    'change_fields',
-    'element_types',
-    'formula_link_types',
-    'formula_types',
-    'languages',
-    'language_forms',
-    'protection_types',
-    'ref_types',
-    'share_types',
-    'source_types',
-    'system_time_types',
-    'user_official_types',
-    'user_profiles',
-    'user_types',
-    'position_types',
-    'component_link_types',
-    'component_types',
-    'view_link_types',
-    'view_types',
-    'phrase_types'
+    sys_log_status::class,
+    sys_log_type::class,
+    job_type::class,
+    change_action::class,
+    change_table::class,
+    change_field::class,
+    element_type::class,
+    formula_link_type::class,
+    formula_type::class,
+    language::class,
+    language_form::class,
+    protection_type::class,
+    ref_type::class,
+    share_type::class,
+    source_type::class,
+    system_time_type::class,
+    user_official_type::class,
+    user_profile::class,
+    user_type::class,
+    user_type::class,
+    position_type::class,
+    component_link_type::class,
+    component_type::class,
+    view_link_type::class,
+    view_type::class,
+    phrase_types::class
 ];
 const USER_CODE_LINK_FILES = [
-    'user_profiles',
-    'user_types',
+    user_profile::class,
+    user_type::class
 ];
 // list of all sequences used in the database
 // TODO base the list on the class list const and a sequence name function
@@ -1551,7 +1579,9 @@ function prg_start_system($code_name): sql_db
 
     // load user profiles
     $user_profiles = new user_profile_list();
-    if ($db_con->has_table(sql_db::TBL_USER_PROFILE)) {
+    $lib = new library();
+    $tbl_name = $lib->class_to_name(user_profile::class);
+    if ($db_con->has_table($tbl_name)) {
         $user_profiles->load($db_con);
     } else {
         $user_profiles->load_dummy();

@@ -48,6 +48,7 @@ use cfg\element_type_list;
 use cfg\formula_link_type_list;
 use cfg\formula_type_list;
 use cfg\group\group;
+use cfg\ip_range;
 use cfg\job;
 use cfg\job_type_list;
 use cfg\language_form_list;
@@ -77,7 +78,9 @@ $db_con = prg_start_system("test_recreate_db");
 // load the session user or use a virual user if the table is lost
 // TODO review
 $usr = new user;
-if ($db_con->has_table(sql_db::TBL_IP)) {
+$lib = new library();
+$ip_tbl_name = $lib->class_to_name(ip_range::class);
+if ($db_con->has_table($ip_tbl_name)) {
     $result = $usr->get();
 } else {
     $usr->set_id(SYSTEM_USER_ID);
@@ -97,7 +100,7 @@ if ($usr->id() > 0) {
         // use the system user for the database updates
         global $usr;
         $usr = new user;
-        if ($db_con->has_table(sql_db::TBL_IP)) {
+        if ($db_con->has_table($ip_tbl_name)) {
             $usr->load_by_id(SYSTEM_USER_ID);
         } else {
             $usr->set_id(SYSTEM_USER_ID);

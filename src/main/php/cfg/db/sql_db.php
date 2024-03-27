@@ -56,6 +56,7 @@ use cfg\group\group;
 use cfg\group\group_id;
 use cfg\import\import_file;
 use cfg\ip_range;
+use cfg\ip_range_list;
 use cfg\job;
 use cfg\job_time;
 use cfg\job_type;
@@ -148,7 +149,6 @@ class sql_db
     // the used database objects (the table name is in most cases with an extra 's', because each table contains the data for many objects)
     // TODO use const for all object names
     // TODO try to use the class name if possible
-    const TBL_USER = 'user';
     const TBL_USER_TYPE = 'user_type';
     const TBL_USER_PROFILE = 'user_profile';
     const TBL_USER_OFFICIAL_TYPE = 'user_official_type';
@@ -275,6 +275,17 @@ class sql_db
         term::class,
         change_table_field::class
     ];
+    // classes that does not have a series id
+    const DB_TABLE_WITHOUT_AUTO_ID = [
+        value_ts_data::class,
+        value::class,
+        result::class,
+        language_form::class,
+        user_official_type::class,
+        user_type::class,
+        user_profile_list::class,
+        user_profile::class
+    ];
 
     // classes that use a sql write script with log write
     const DB_WRITE_LOG_SCRIPT_CLASSES = [
@@ -289,6 +300,7 @@ class sql_db
     // tables that do not have a name
     // e.g. sql_db::TBL_TRIPLE is a link which hase a name, but the generated name can be overwritten, so the standard field naming is not used
     // TODO use class
+    // TODO switch the the sql const
     const DB_TYPES_NOT_NAMED = [
         triple::class,
         value::class,
@@ -300,7 +312,8 @@ class sql_db
         value_phrase_link::class,
         view_term_link::class,
         ref::class,
-        sql_db::TBL_IP,
+        ip_range::class,
+        ip_range_list::class,
         change::class,
         change_link::class,
         sql_db::TBL_SYS_LOG,
@@ -833,22 +846,16 @@ class sql_db
         $this->seq_reset(change_action::class);
     }
 
-    function load_db_code_link_file(string $csv_file_name): void
+    function load_db_code_link_file(string $class): void
     {
         global $debug;
         $lib = new library();
+        $table_name =  $lib->class_to_table($class);
 
         // load the csv
-        $csv_path = PATH_BASE_CODE_LINK_FILES . $csv_file_name . BASE_CODE_LINK_FILE_TYPE;
+        $csv_path = PATH_BASE_CODE_LINK_FILES . $table_name . BASE_CODE_LINK_FILE_TYPE;
 
         $row = 1;
-        $table_name = $csv_file_name;
-        // TODO change table names to singular form
-        if ($table_name == 'sys_log_status') {
-            $db_type = $table_name;
-        } else {
-            $db_type = substr($table_name, 0, -1);
-        }
         // TODO ignore empty rows
         // TODO ignore comma within text e.g. allow 'one, two and three'
         log_debug('load "' . $table_name . '"', $debug - 6);
@@ -886,7 +893,7 @@ class sql_db
                                 $update_col_names[] = $col_names[$i];
                                 $update_col_values[] = trim($data[$i]);
                             }
-                            $this->set_class($db_type);
+                            $this->set_class($class);
                             $this->insert_old($update_col_names, $update_col_values);
                         } else {
                             // check, which values need to be updates
@@ -904,7 +911,7 @@ class sql_db
                             }
                             // update the values is needed
                             if (count($update_col_names) > 0) {
-                                $this->set_class($db_type);
+                                $this->set_class($class);
                                 $this->update_old($id, $update_col_names, $update_col_values);
                             }
                         }
@@ -1722,6 +1729,9 @@ class sql_db
         // set the standard table name based on the type
         $result = $type . "s";
         // exceptions from the standard table for 'nicer' names
+        if ($result == 'phrase_typess') {
+            $result = 'phrase_types';
+        }
         if ($result == 'value_time_seriess') {
             $result = 'values_time_series';
         }
@@ -1800,16 +1810,17 @@ class sql_db
         log_debug('to "' . $this->table . '"', $debug - 20);
     }
 
-    function get_id_field_name(string $type): string
+    function get_id_field_name(string $class): string
     {
         $lib = new library();
+        $type = $lib->class_to_name($class);
 
         // exceptions for user overwrite tables
         // but not for the user type table, because this is not part of the sandbox tables
         if (str_starts_with($type, sql_db::TBL_USER_PREFIX)
-            and $type != sql_db::TBL_USER_TYPE
-            and $type != sql_db::TBL_USER_OFFICIAL_TYPE
-            and $type != sql_db::TBL_USER_PROFILE) {
+            and $class != user_type::class
+            and $class != user_official_type::class
+            and $class != user_profile::class) {
             $type = $lib->str_right_of($type, sql_db::TBL_USER_PREFIX);
         }
         $result = $type . sql_db::FLD_EXT_ID;
@@ -1825,17 +1836,17 @@ class sql_db
 
     function set_id_field(string|array $given_name = ''): void
     {
-        $lib = new library();
-        $type = $lib->class_to_name($this->class);
-
         if ($given_name != '') {
             $this->id_field = $given_name;
         } else {
-            $this->id_field = $this->get_id_field_name($type);
+            $this->id_field = $this->get_id_field_name($this->class);
         }
         // exceptions to be adjusted
         if ($this->id_field == 'blocked_ips_id') {
             $this->id_field = 'ip_range_id';
+        }
+        if ($this->id_field == 'phrase_types_id') {
+            $this->id_field = 'phrase_type_id';
         }
     }
 
@@ -1855,6 +1866,9 @@ class sql_db
             $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'system_time_type_name') {
+            $result = sql::FLD_TYPE_NAME;
+        }
+        if ($result == 'phrase_types_name') {
             $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'phrase_type_name') {
@@ -3637,11 +3651,11 @@ class sql_db
      *                 in the previous set dialect
      */
     function load_sql_not_changed_multi(
-        int            $id,
-        ?int           $owner_id = 0,
-        string|array   $id_field = '',
-        string         $ext = '',
-        sql_type $tbl_typ = sql_type::MOST
+        int          $id,
+        ?int         $owner_id = 0,
+        string|array $id_field = '',
+        string       $ext = '',
+        sql_type     $tbl_typ = sql_type::MOST
     ): sql_par
     {
         $qp = new sql_par($this->class);
@@ -3942,9 +3956,7 @@ class sql_db
                     }
                 } else {
                     // return the database row id if the value is not a time series number
-                    if ($this->class != sql_db::TBL_VALUE_TIME_SERIES_DATA
-                        and $this->class != value::class
-                        and $this->class != sql_db::TBL_RESULT) {
+                    if (!in_array($this->class, sql_db::DB_TABLE_WITHOUT_AUTO_ID)) {
                         $sql = $sql . ' RETURNING ' . $this->id_field . ';';
                     }
                     if ($this->id_field == 'official_type_id') {
@@ -3975,7 +3987,7 @@ class sql_db
                                 log_err('Execution of ' . $sql . ' failed due to ' . $sql_error);
                             }
                         } else {
-                            if ($this->class != sql_db::TBL_VALUE_TIME_SERIES_DATA) {
+                            if (!in_array($this->class, sql_db::DB_TABLE_WITHOUT_AUTO_ID)) {
                                 if (is_resource($sql_result) or $sql_result::class == 'PgSql\Result') {
                                     try {
                                         $result = pg_fetch_array($sql_result);
@@ -4111,9 +4123,9 @@ class sql_db
         $sql_where = ' WHERE ' . $this->id_field . ' = ' . $this->sf($id);
         if (substr($this->class, 0, 4) == 'user') {
             // ... but not for the user table itself
-            if ($this->class <> sql_db::TBL_USER
-                and $this->class <> sql_db::TBL_USER_TYPE
-                and $this->class <> sql_db::TBL_USER_PROFILE) {
+            if ($this->class <> user::class
+                and $this->class <> user_type::class
+                and $this->class <> user_profile::class) {
                 $sql_where .= ' AND user_id = ' . $this->usr_id;
             }
         }
