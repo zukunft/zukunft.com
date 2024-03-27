@@ -1030,6 +1030,7 @@ const BASE_CONFIG_FILES = [
     'time_definition.json',
     'ip_blacklist.json',
     'country.json',
+    'solution_prio.json',
     'company.json'
 ];
 

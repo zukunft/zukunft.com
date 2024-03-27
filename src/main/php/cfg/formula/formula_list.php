@@ -288,7 +288,7 @@ class formula_list extends sandbox_list
         if ($ref_id > 0) {
             $sc->set_join_fields(
                 array(formula::FLD_ID),
-                sql_db::TBL_ELEMENT,
+                element::class,
                 formula::FLD_ID,
                 formula::FLD_ID
             );

@@ -54,16 +54,6 @@ class job_type_list extends type_list
     const BASE_IMPORT = "base_import"; // import the base configuration by a system user on initial setup
 
     /**
-     * overwrite the general user type list load function to keep the link to the table type capsuled
-     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @return bool true if load was successful
-     */
-    function load(sql_db $db_con, string $class = sql_db::TBL_TASK_TYPE): bool
-    {
-        return parent::load($db_con, $class);
-    }
-
-    /**
      * adding the job type used for unit tests to a dummy list
      */
     function load_dummy(): void

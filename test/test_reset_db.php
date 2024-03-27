@@ -73,11 +73,13 @@ use cfg\log\change_table;
 use cfg\log\change_table_list;
 use cfg\phrase_type;
 use cfg\phrase_types;
+use cfg\protection_type;
 use cfg\protection_type_list;
 use cfg\ref;
 use cfg\ref_type;
 use cfg\ref_type_list;
 use cfg\result\result;
+use cfg\share_type;
 use cfg\share_type_list;
 use cfg\source;
 use cfg\source_type;
@@ -247,8 +249,8 @@ function run_db_truncate(user $sys_usr): void
         sql_db::TBL_SYS_LOG,
         sys_log_status::class,
         sys_log_function::class,
-        sql_db::TBL_SHARE,
-        sql_db::TBL_PROTECTION,
+        share_type::class,
+        protection_type::class,
         user::class,
         user_profile::class
     );

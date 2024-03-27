@@ -1583,8 +1583,13 @@ class library
     function class_to_name(string $class): string
     {
         $result = $this->str_right_of_or_all($class, '\\');
-        // for some lists
+        // for some lists and exceptions
         switch ($class) {
+            /*
+            case phrase_types::class;
+                $result = str_replace('_types', '_type', $result);
+                break;
+            */
             case sys_log_status_list::class;
                 $result = str_replace('_list', '', $result);
                 break;
@@ -1611,7 +1616,7 @@ class library
                 $result = $this->class_to_name(system_log::class);
                 break;
             case $this->class_to_name(job_time::class):
-                $result = 'job';
+                $result = $this->class_to_name(job::class);
                 break;
             case $this->class_to_name(change_action::class):
             case $this->class_to_name(change_table::class):

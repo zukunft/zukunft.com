@@ -105,16 +105,6 @@ class change_table_list extends type_list
     );
 
     /**
-     * overwrite the general user type list load function to keep the link to the table type capsuled
-     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @return bool true if load was successful
-     */
-    function load(sql_db $db_con, string $db_type = sql_db::TBL_CHANGE_TABLE): bool
-    {
-        return parent::load($db_con, $db_type);
-    }
-
-    /**
      * adding the system log stati used for unit tests to the dummy list
      */
     function load_dummy(): void

@@ -52,10 +52,10 @@ class language_tests
         $t->subheader('Language db read tests');
 
         $test_name = 'load language ' . language::DEFAULT . ' by name and id';
-        $phr = new language(language::DEFAULT);
-        $phr->load_by_name(language::TN_READ, language::class);
+        $lan = new language(language::DEFAULT);
+        $lan->load_by_name(language::TN_READ, language::class);
         $lan_by_id = new language(language::DEFAULT);
-        $lan_by_id->load_by_id($phr->id(), language::class);
+        $lan_by_id->load_by_id($lan->id(), language::class);
         $t->assert($test_name, $lan_by_id->name(), language::TN_READ);
         
 

@@ -129,12 +129,8 @@ class phrase_type extends type_object
         $lib = new library();
         log_debug($id);
         $dp_type = $lib->class_to_name($class);
-        // TODO rename table phrase_type to phrase_type
-        if ($dp_type == 'phrase_type') {
-            $dp_type = 'phrase_type';
-        }
         $qp = $this->load_sql_by_id($db_con->sql_creator(), $id, $dp_type);
-        return $this->load_typ_obj($qp, $dp_type);
+        return $this->load_typ_obj($qp, $class);
     }
 
 }

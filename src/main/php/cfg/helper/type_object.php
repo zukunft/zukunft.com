@@ -51,6 +51,10 @@ use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
+use cfg\log\change_action;
+use cfg\log\change_field;
+use cfg\log\change_table;
+use cfg\log\change_table_field;
 use JsonSerializable;
 use model\db_cl;
 
@@ -118,22 +122,32 @@ class type_object extends db_object_seq_id implements JsonSerializable
         $this->description = null;
     }
 
-    function row_mapper_typ_obj(array $db_row, string $db_type): bool
+    /**
+     * fill the type object vars based on a array of fields from the database
+     * @param array $db_row with the data from the database
+     * @param string $class the type class name that should be filled
+     * @return bool true if all expected object vars have been set
+     */
+    function row_mapper_typ_obj(array $db_row, string $class): bool
     {
-        $result = parent::row_mapper($db_row, $this->id_field_typ($db_type));
+        $result = parent::row_mapper($db_row, $this->id_field_typ($class));
+        // set the id upfront to allow row mapping
+        if ($class == language::class AND array_key_exists(language::FLD_ID, $db_row)) {
+            $this->id = ($db_row[language::FLD_ID]);
+        }
         if ($this->id > 0) {
             $this->code_id = strval($db_row[sql::FLD_CODE_ID]);
             $type_name = '';
-            if ($db_type == db_cl::LOG_ACTION) {
+            if ($class == change_action::class) {
                 $type_name = strval($db_row[self::FLD_ACTION]);
-            } elseif ($db_type == db_cl::LOG_TABLE) {
+            } elseif ($class == change_table::class) {
                 $type_name = strval($db_row[self::FLD_TABLE]);
-            } elseif ($db_type == sql_db::VT_TABLE_FIELD) {
+            } elseif ($class == change_table_field::class) {
                 $type_name = strval($db_row[self::FLD_FIELD]);
-            } elseif ($db_type == sql_db::TBL_LANGUAGE) {
-                $type_name = strval($db_row[language::FLD_NAME]);
-            } elseif ($db_type == sql_db::TBL_LANGUAGE_FORM) {
+            } elseif ($class == language_form::class) {
                 $type_name = strval($db_row[language_form::FLD_NAME]);
+            } elseif ($class == language::class) {
+                $type_name = strval($db_row[language::FLD_NAME]);
             } else {
                 $type_name = strval($db_row[sql::FLD_TYPE_NAME]);
             }
@@ -237,7 +251,7 @@ class type_object extends db_object_seq_id implements JsonSerializable
     function sql_index(sql $sc): string
     {
         $sql = $sc->sql_separator();
-        $sql .= $this->sql_index_create($sc, false, [],false);
+        $sql .= $this->sql_index_create($sc, false, [], false);
         return $sql;
     }
 
@@ -318,14 +332,15 @@ class type_object extends db_object_seq_id implements JsonSerializable
     /**
      * load a type object e.g. phrase type, language or language form from the database
      * @param sql_par $qp the query parameters created by the calling function
+     * @param string $class the type class name that should be filled
      * @return int the id of the object found and zero if nothing is found
      */
-    protected function load_typ_obj(sql_par $qp, string $db_type): int
+    protected function load_typ_obj(sql_par $qp, string $class): int
     {
         global $db_con;
 
         $db_row = $db_con->get1($qp);
-        $this->row_mapper_typ_obj($db_row, $db_type);
+        $this->row_mapper_typ_obj($db_row, $class);
         return $this->id();
     }
 

@@ -40,9 +40,23 @@ include_once API_SYSTEM_PATH . 'type_list.php';
 include_once WEB_USER_PATH . 'user_type_list.php';
 
 use api\system\type_list as type_list_api;
+use cfg\component\component_link_type;
+use cfg\component\component_link_type_list;
+use cfg\component\component_type;
+use cfg\component\component_type_list;
+use cfg\component\position_type;
+use cfg\component\position_type_list;
 use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
+use cfg\log\change_action;
+use cfg\log\change_action_list;
+use cfg\log\change_field;
+use cfg\log\change_field_list;
+use cfg\log\change_table;
+use cfg\log\change_table_field;
+use cfg\log\change_table_list;
+use cfg\user\user_profile;
 use html\user\user_type_list as type_list_dsp;
 use model\db_cl;
 
@@ -204,6 +218,8 @@ class type_list
      * a 'database type' is a group of type used for the same objects
      * e.g. a db_type is phrase_type or view type
      *
+     * TODO create a warning if number of rows is above the sql_db::ROW_MAX limit
+     *
      * @param sql $sc with the target db_type set
      * @param string $class the class of the related object e.g. phrase_type or formula_type
      * @return sql_par the sql statement with the parameters and the name
@@ -226,25 +242,27 @@ class type_list
      */
     private function load_list(sql_db $db_con, string $class): array
     {
+        $lib = new library();
         $this->lst = [];
         $qp = $this->load_sql_all($db_con->sql_creator(), $class);
         $db_lst = $db_con->get($qp);
         if ($db_lst != null) {
             foreach ($db_lst as $db_row) {
-                $type_id = $db_row[$db_con->get_id_field_name($class)];
+                $tbl_typ = $lib->class_to_name($class);
+                $type_id = $db_row[$db_con->get_id_field_name($tbl_typ)];
                 $type_code_id = strval($db_row[sql::FLD_CODE_ID]);
                 // database field name exceptions
                 $type_name = '';
-                if ($class == db_cl::LOG_ACTION) {
+                if ($class == change_action::class) {
                     $type_name = strval($db_row[type_object::FLD_ACTION]);
-                } elseif ($class == db_cl::LOG_TABLE) {
+                } elseif ($class == change_table::class) {
                     $type_name = strval($db_row[type_object::FLD_TABLE]);
-                } elseif ($class == sql_db::VT_TABLE_FIELD) {
+                } elseif ($class == change_table_field::class) {
                     $type_name = strval($db_row[type_object::FLD_FIELD]);
-                } elseif ($class == sql_db::TBL_LANGUAGE) {
-                    $type_name = strval($db_row[language::FLD_NAME]);
-                } elseif ($class == sql_db::TBL_LANGUAGE_FORM) {
+                } elseif ($class == language_form::class) {
                     $type_name = strval($db_row[language_form::FLD_NAME]);
+                } elseif ($class == language::class) {
+                    $type_name = strval($db_row[language::FLD_NAME]);
                 } else {
                     $type_name = strval($db_row[sql::FLD_TYPE_NAME]);
                 }
@@ -283,6 +301,29 @@ class type_list
         $result = false;
         if ($class == '') {
             $class = $this::class;
+            // replace the type list class with the type class because the load is done from the list object instead of the type object
+            $class = match($class) {
+                sys_log_function_list::class => sys_log_function::class,
+                sys_log_status_list::class => sys_log_status::class,
+                user_profile_list::class => user_profile::class,
+                change_action_list::class => change_action::class,
+                change_table_list::class => change_table::class,
+                change_field_list::class => change_table_field::class,
+                share_type_list::class => share_type::class,
+                protection_type_list::class => protection_type::class,
+                job_type_list::class => job_type::class,
+                language_form_list::class => language_form::class,
+                language_list::class => language::class,
+                formula_type_list::class => formula_type::class,
+                formula_link_type_list::class => formula_link_type::class,
+                element_type_list::class => element_type::class,
+                view_type_list::class => view_type::class,
+                component_type_list::class => component_type::class,
+                component_link_type_list::class => component_link_type::class,
+                position_type_list::class => position_type::class,
+                default => $class,
+            };
+
         }
         $this->lst = $this->load_list($db_con, $class);
         $this->hash = $this->get_hash($this->lst);

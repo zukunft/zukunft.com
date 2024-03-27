@@ -157,54 +157,33 @@ class sql_db
     const TBL_TRIPLE = 'triple';
     const TBL_VERB = 'verb';
     const TBL_PHRASE = 'phrase';
-    const TBL_GROUP = 'group';
     const TBL_VALUE_TIME_SERIES = 'values_time_series';
     const TBL_VALUE_TIME_SERIES_DATA = 'value_ts_data';
-    const TBL_VALUE_PHRASE_LINK = 'value_phrase_link';
     const TBL_SOURCE = 'source';
     const TBL_SOURCE_TYPE = 'source_type';
     const TBL_REF = 'ref';
     const TBL_REF_TYPE = 'ref_type';
     const TBL_FORMULA = 'formula';
-    const TBL_FORMULA_TYPE = 'formula_type';
     const TBL_FORMULA_LINK = 'formula_link';
-    const TBL_FORMULA_LINK_TYPE = 'formula_link_type';
-    const TBL_ELEMENT = 'element';
-    const TBL_ELEMENT_TYPE = 'element_type';
     const TBL_RESULT = 'result';
     const TBL_VIEW = 'view';
-    const TBL_VIEW_TYPE = 'view_type';
     const TBL_COMPONENT = 'component';
     const TBL_COMPONENT_LINK = 'component_link';
-    const TBL_COMPONENT_TYPE = 'component_type';
-    const TBL_COMPONENT_LINK_TYPE = 'component_link_type';
-    const TBL_COMPONENT_POS_TYPE = 'position_type';
     const TBL_VIEW_TERM_LINK = 'view_term_link';
 
-    const TBL_CHANGE = 'change';
-    const TBL_CHANGE_TABLE = 'change_table';
     const TBL_CHANGE_FIELD = 'change_field';
-    const TBL_CHANGE_ACTION = 'change_action';
-    const TBL_CHANGE_LINK = 'change_link';
-    const TBL_CONFIG = 'config';
     const TBL_IP = 'ip_range';
     const TBL_SYS_LOG = 'sys_log';
     const TBL_SYS_LOG_STATUS = 'sys_log_status';
     const TBL_SYS_SCRIPT = 'system_time_type'; // to log the execution times for code optimising
     const TBL_TASK = 'job';
-    const TBL_TASK_TYPE = 'job_type';
 
-    const TBL_LANGUAGE = 'language';
     const TBL_LANGUAGE_FORM = 'language_form';
-
-    const TBL_SHARE = 'share_type';
-    const TBL_PROTECTION = 'protection_type';
 
     const TBL_USER_PREFIX = 'user_';
 
     // the synthetic view tables (VT) for union query creation
     const VT_PHRASE_GROUP_LINK = 'group_link'; // TODO deprecate
-    const VT_TABLE_FIELD = 'change_table_field';
 
     // difference between the object name and the table name
     const TABLE_EXTENSION = 's';

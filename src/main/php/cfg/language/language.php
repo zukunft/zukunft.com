@@ -121,7 +121,7 @@ class language extends type_object implements JsonSerializable
         $lib = new library();
         $dp_type = $lib->class_to_name($class);
         $qp = $this->load_sql_by_id($db_con->sql_creator(), $id, $dp_type);
-        return $this->load_typ_obj($qp, $dp_type);
+        return $this->load_typ_obj($qp, $class);
     }
 
     /**
@@ -139,7 +139,7 @@ class language extends type_object implements JsonSerializable
         $lib = new library();
         $dp_type = $lib->class_to_name($this::class);
         $qp = $this->load_sql_by_name($db_con->sql_creator(), $name, $dp_type);
-        return $this->load_typ_obj($qp, $dp_type);
+        return $this->load_typ_obj($qp, $this::class);
     }
 
 }
