@@ -206,7 +206,6 @@ class formula extends sandbox_typed
         parent::__construct($usr);
         $this->reset();
 
-        $this->obj_name = sql_db::TBL_FORMULA;
         $this->rename_can_switch = UI_CAN_CHANGE_FORMULA_NAME;
     }
 

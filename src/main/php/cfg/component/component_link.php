@@ -138,7 +138,6 @@ class component_link extends sandbox_link_with_type
     {
         parent::__construct($usr);
         $lib = new library();
-        $this->obj_name = $lib->class_to_name(component_link::class);
         $this->from_name = $lib->class_to_name(view::class);
         $this->to_name = $lib->class_to_name(component::class);
 

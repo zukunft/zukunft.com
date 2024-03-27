@@ -110,7 +110,6 @@ class value_time_series extends sandbox_value
     function __construct(user $usr)
     {
         parent::__construct($usr);
-        $this->obj_name = sql_db::TBL_VALUE_TIME_SERIES;
 
         $this->rename_can_switch = UI_CAN_CHANGE_VALUE;
 

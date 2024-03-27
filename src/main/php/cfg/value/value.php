@@ -218,7 +218,6 @@ class value extends sandbox_value
     function __construct(user $usr, ?float $num_val = null, ?group $phr_grp = null)
     {
         parent::__construct($usr);
-        $this->obj_name = self::class;
 
         $this->rename_can_switch = UI_CAN_CHANGE_VALUE;
 

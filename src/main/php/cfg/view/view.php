@@ -143,7 +143,6 @@ class view extends sandbox_typed
         $this->reset();
 
         parent::__construct($usr);
-        $this->obj_name = sql_db::TBL_VIEW;
         $this->rename_can_switch = UI_CAN_CHANGE_VIEW_NAME;
     }
 

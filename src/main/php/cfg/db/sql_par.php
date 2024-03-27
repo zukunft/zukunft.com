@@ -85,8 +85,8 @@ class sql_par
 
         $lib = new library();
         $this->sql = '';
-        $class = $lib->class_to_name($class);
-        $name = $class . $ext;
+        $class_name = $lib->class_to_name($class);
+        $name = $class_name . $ext;
         if ($is_std) {
             $this->name = $name . '_by_';
         } elseif ($all) {

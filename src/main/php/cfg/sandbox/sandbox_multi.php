@@ -62,6 +62,7 @@ use cfg\log\change;
 use cfg\log\change_action;
 use cfg\log\change_log;
 use cfg\log\change_link;
+use cfg\result\result;
 use cfg\value\value;
 use Exception;
 
@@ -940,7 +941,7 @@ class sandbox_multi extends db_object_multi_user
      */
     function changer_sql(sql_db $db_con): sql_par
     {
-        $qp = new sql_par($this->obj_name);
+        $qp = new sql_par($this::class);
         $qp->name .= 'changer';
         if ($this->owner_id > 0) {
             $qp->name .= '_ex_owner';
@@ -1075,7 +1076,7 @@ class sandbox_multi extends db_object_multi_user
             $result = true;
         }
 
-        log_debug($this->obj_name . zu_dsp_bool($result));
+        log_debug($this::class . zu_dsp_bool($result));
         return $result;
     }
 
@@ -1151,7 +1152,7 @@ class sandbox_multi extends db_object_multi_user
             }
 
         } else {
-            log_err('The database ID and the user must be set to remove a user specific modification of ' . $class_name . '.', $this->obj_name . '->del_usr_cfg');
+            log_err('The database ID and the user must be set to remove a user specific modification of ' . $class_name . '.', $this::class . '->del_usr_cfg');
         }
 
         return $result;
@@ -1834,7 +1835,7 @@ class sandbox_multi extends db_object_multi_user
                     $to_del = clone $db_rec;
                     $msg = $to_del->del();
                     if (!$msg->is_ok()) {
-                        $result .= 'Failed to delete the unused ' . $this->obj_name;
+                        $result .= 'Failed to delete the unused ' . $this::class ;
                     }
                     if ($result = '') {
                         // .. and use it for the update
@@ -1849,7 +1850,7 @@ class sandbox_multi extends db_object_multi_user
                         if ($result == '') {
                             log_debug('found a ' . $class_name . ' target ' . $db_chk->dsp_id() . ', so del ' . $db_rec->dsp_id() . ' and add ' . $this->dsp_id());
                         } else {
-                            //$result = 'Failed to exclude the unused ' . $this->obj_name;
+                            //$result = 'Failed to exclude the unused ' . $this::class ;
                             $result .= 'A ' . $class_name . ' with the name "' . $this->name() . '" already exists. Please use another name or merge with this ' . $class_name . '.';
                         }
                     }
@@ -1875,7 +1876,7 @@ class sandbox_multi extends db_object_multi_user
                     $to_del = clone $db_rec;
                     $msg = $to_del->del();
                     if (!$msg->is_ok()) {
-                        $result .= 'Failed to delete the unused ' . $this->obj_name;
+                        $result .= 'Failed to delete the unused ' . $this::class ;
                     }
                     // TODO .. and create a deletion request for all users ???
 
@@ -1945,7 +1946,7 @@ class sandbox_multi extends db_object_multi_user
         } elseif ($this::class == word::class and $obj_to_check->obj_name == sql_db::TBL_WORD) {
 
         */
-        if ($this::class == word::class and $obj_to_check->obj_name == sql_db::TBL_WORD) {
+        if ($this::class == word::class) {
             // special case a word should not be combined with a word that is representing a formulas
             if ($this->name() == $obj_to_check->name()) {
                 if (isset($this->type_id) and isset($obj_to_check->type_id)) {
@@ -1974,7 +1975,7 @@ class sandbox_multi extends db_object_multi_user
                     $result = true;
                 }
             }
-        } elseif ($this->obj_name == $obj_to_check->obj_name) {
+        } elseif ($this::class == $obj_to_check::class) {
             $result = $this->is_same_std($obj_to_check);
         }
         return $result;
@@ -1992,7 +1993,7 @@ class sandbox_multi extends db_object_multi_user
         $result = false;
         if ($obj_to_check != null) {
             //
-            if ($this->obj_name == $obj_to_check->obj_name) {
+            if ($this::class == $obj_to_check::class) {
                 $result = $this->is_same_std($obj_to_check);
             } else {
                 // create a synthetic unique index over words, phrase, verbs and formulas
@@ -2321,7 +2322,7 @@ class sandbox_multi extends db_object_multi_user
                     $db_con->set_usr($this->user()->id());
                     // TODO use prepared query
                     $msg = $db_con->delete_old(
-                        array($this->obj_name . sql_db::FLD_EXT_ID, 'excluded'),
+                        array($class_name . sql_db::FLD_EXT_ID, 'excluded'),
                         array($this->id, '1'));
                     $result->add_message($msg);
                 }
@@ -2340,7 +2341,7 @@ class sandbox_multi extends db_object_multi_user
                 }
                 log_debug('of ' . $this->dsp_id() . ' done');
             } else {
-                log_err('Delete failed for ' . $this->obj_name, $this->obj_name . '->del_exe', 'Delete failed, because removing the user settings for ' . $class_name . ' ' . $this->dsp_id() . ' returns ' . $msg, (new Exception)->getTraceAsString(), $this->user());
+                log_err('Delete failed for ' . $this::class , $this::class . '->del_exe', 'Delete failed, because removing the user settings for ' . $class_name . ' ' . $this->dsp_id() . ' returns ' . $msg, (new Exception)->getTraceAsString(), $this->user());
             }
         }
 
@@ -2377,12 +2378,12 @@ class sandbox_multi extends db_object_multi_user
         }
 
         if (!$reloaded) {
-            log_warning('Reload of for deletion has lead to unexpected', $this->obj_name . '->del', 'Reload of ' . $class_name . ' ' . $this->dsp_id() . ' for deletion or exclude has unexpectedly lead to ' . $msg . '.', (new Exception)->getTraceAsString(), $this->user());
+            log_warning('Reload of for deletion has lead to unexpected', $this::class . '->del', 'Reload of ' . $class_name . ' ' . $this->dsp_id() . ' for deletion or exclude has unexpectedly lead to ' . $msg . '.', (new Exception)->getTraceAsString(), $this->user());
         } else {
             log_debug('reloaded ' . $this->dsp_id());
             // check if the object is still valid
             if ($this->id <= 0) {
-                log_warning('Delete failed', $this->obj_name . '->del', 'Delete failed, because it seems that the ' . $class_name . ' ' . $this->dsp_id() . ' has been deleted in the meantime.', (new Exception)->getTraceAsString(), $this->user());
+                log_warning('Delete failed', $this::class . '->del', 'Delete failed, because it seems that the ' . $class_name . ' ' . $this->dsp_id() . ' has been deleted in the meantime.', (new Exception)->getTraceAsString(), $this->user());
             } else {
                 // reload the objects if needed
                 if ($this->is_link_obj()) {
@@ -2400,7 +2401,7 @@ class sandbox_multi extends db_object_multi_user
                         // get median user
                         $new_owner_id = $this->median_user();
                         if ($new_owner_id == 0) {
-                            log_err('Delete failed', $this->obj_name . '->del', 'Delete failed, because no median user found for ' . $class_name . ' ' . $this->dsp_id() . ' but change is nevertheless not allowed.', (new Exception)->getTraceAsString(), $this->user());
+                            log_err('Delete failed', $this::class . '->del', 'Delete failed, because no median user found for ' . $class_name . ' ' . $this->dsp_id() . ' but change is nevertheless not allowed.', (new Exception)->getTraceAsString(), $this->user());
                         } else {
                             log_debug('set owner for ' . $this->dsp_id() . ' to user id "' . $new_owner_id . '"');
 
@@ -2409,7 +2410,7 @@ class sandbox_multi extends db_object_multi_user
                             // set owner
                             if (!$this->set_owner($new_owner_id)) {
                                 $msg .= 'Setting of owner while deleting ' . $class_name . ' failed';
-                                log_err($msg, $this->obj_name . '->del');
+                                log_err($msg, $this::class . '->del');
 
                             }
 
@@ -2475,8 +2476,9 @@ class sandbox_multi extends db_object_multi_user
     function id_used_msg(sandbox_multi $obj_to_add): string
     {
         $lib = new library();
+        $obj_to_add_name = $lib->class_to_name($obj_to_add::class);
         return 'A ' . $lib->class_to_name($this::class) . ' with the name ' . $obj_to_add->dsp_id() . ' already exists. '
-            . 'Please use another ' . $obj_to_add->obj_name . ' name.';
+            . 'Please use another ' . $obj_to_add_name . ' name.';
     }
 
     /**
@@ -2541,6 +2543,9 @@ class sandbox_multi extends db_object_multi_user
         sandbox_multi $std_rec
     ): string
     {
+        $lib = new library();
+        $class_name = $lib->class_to_name($this::class);
+
         $result = '';
         if ($db_rec->type_id <> $this->type_id) {
             if ($this::class == triple::class) {
@@ -2563,7 +2568,7 @@ class sandbox_multi extends db_object_multi_user
             } elseif ($this::class == triple::class) {
                 $log->set_field(phrase::FLD_TYPE);
             } else {
-                $log->set_field($this->obj_name . sql_db::FLD_EXT_TYPE_ID);
+                $log->set_field($class_name . sql_db::FLD_EXT_TYPE_ID);
             }
             $result .= $this->save_field_user($db_con, $log);
             log_debug('changed type to "' . $log->new_value . '" (from ' . $log->new_id . ')');

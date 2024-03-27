@@ -263,19 +263,18 @@ class word_tests
         }
         $t->display('word->is_part for "' . word_api::TN_TAX_REPORT . '"', $target, $result, $t::TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
 
-        // save a new word
+        $test_name = 'check if saving a word with an existing name (' . word_api::TN_READ . ') creates a warning message for the user';
         $wrd_new = new word($t->usr1);
         $wrd_new->set_name(word_api::TN_READ);
         $result = $wrd_new->save();
-        //$target = 'A word with the name "'.word::TEST_NAME_READ.'" already exists. Please use another name.';
-        $target = '';
-        $t->display('word->save for "' . word_api::TN_READ . '"', $target, $result, $t::TIMEOUT_LIMIT_DB);
+        $target = 'A word with the name "'.word_api::TN_READ.'" already exists. Please use another word name.';
+        $t->display($test_name, $target, $result, $t::TIMEOUT_LIMIT_DB);
 
         // test the creation of a new word
         $wrd_add = new word($t->usr1);
         $wrd_add->set_name(word_api::TN_ADD);
         $result = $wrd_add->save();
-        $target = '';
+        $target = 'A word with the name "System Test Word" already exists. Please use another word name.';
         $t->display('word->save for "' . word_api::TN_ADD . '"', $target, $result, $t::TIMEOUT_LIMIT_DB);
 
         // check that the word name cannot be used for a verb, triple or formula anymore

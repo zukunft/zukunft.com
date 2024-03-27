@@ -226,7 +226,6 @@ class word extends sandbox_typed
         parent::__construct($usr);
 
         $lib = new library();
-        $this->obj_name = $lib->class_to_name(word::class);
         $this->rename_can_switch = UI_CAN_CHANGE_WORD_NAME;
     }
 

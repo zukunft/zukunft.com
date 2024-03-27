@@ -153,7 +153,6 @@ class source extends sandbox_typed
     function __construct(user $usr)
     {
         parent::__construct($usr);
-        $this->obj_name = sql_db::TBL_SOURCE;
 
         $this->rename_can_switch = UI_CAN_CHANGE_SOURCE_NAME;
     }

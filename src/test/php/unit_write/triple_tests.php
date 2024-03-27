@@ -223,7 +223,7 @@ class triple_tests
         $wrd = new word($t->usr1);
         $wrd->set_name(triple_api::TN_ADD_AUTO);
         $result = $wrd->save();
-        $target = 'A triple with the name "System Test Triple" (word_id no set) for user 2 (zukunft.com system test) already exists. ' .
+        $target = 'A triple with the name "System Test Triple" already exists. ' .
             'Please use another word name.';
         $t->assert('word cannot have a standard triple name', $result, $target);
 

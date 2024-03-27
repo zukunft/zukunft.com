@@ -197,7 +197,6 @@ class component extends sandbox_typed
     function __construct(user $usr)
     {
         parent::__construct($usr);
-        $this->obj_name = sql_db::TBL_COMPONENT;
 
         $this->rename_can_switch = UI_CAN_CHANGE_VIEW_COMPONENT_NAME;
     }

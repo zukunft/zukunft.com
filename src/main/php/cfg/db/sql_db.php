@@ -154,20 +154,15 @@ class sql_db
     const TBL_USER_OFFICIAL_TYPE = 'user_official_type';
     const TBL_WORD = 'word';
     const TBL_PHRASE_TYPE = 'phrase_type';
-    const TBL_TRIPLE = 'triple';
     const TBL_VERB = 'verb';
     const TBL_PHRASE = 'phrase';
     const TBL_VALUE_TIME_SERIES = 'values_time_series';
     const TBL_VALUE_TIME_SERIES_DATA = 'value_ts_data';
-    const TBL_SOURCE = 'source';
     const TBL_SOURCE_TYPE = 'source_type';
-    const TBL_REF = 'ref';
     const TBL_REF_TYPE = 'ref_type';
     const TBL_FORMULA = 'formula';
-    const TBL_FORMULA_LINK = 'formula_link';
     const TBL_RESULT = 'result';
     const TBL_VIEW = 'view';
-    const TBL_COMPONENT = 'component';
     const TBL_COMPONENT_LINK = 'component_link';
     const TBL_VIEW_TERM_LINK = 'view_term_link';
 

@@ -665,12 +665,14 @@ class sandbox_named extends sandbox
     function log_add(): change
     {
         log_debug($this->dsp_id());
+        $lib = new library();
+        $tbl_name = $lib->class_to_name($this::class);
 
         $log = new change($this->user());
         // TODO add the table exceptions from sql_db
         $log->action = change_action::ADD;
-        $log->set_table($this->obj_name . sql_db::TABLE_EXTENSION);
-        $log->set_field($this->obj_name . '_name');
+        $log->set_table($tbl_name . sql_db::TABLE_EXTENSION);
+        $log->set_field($tbl_name . '_name');
         $log->set_user($this->user());
         $log->old_value = '';
         $log->new_value = $this->name();
@@ -687,11 +689,13 @@ class sandbox_named extends sandbox
     function log_del(): change
     {
         log_debug($this->dsp_id());
+        $lib = new library();
+        $tbl_name = $lib->class_to_name($this::class);
 
         $log = new change($this->user());
         $log->action = change_action::DELETE;
-        $log->set_table($this->obj_name . sql_db::TABLE_EXTENSION);
-        $log->set_field($this->obj_name . '_name');
+        $log->set_table($tbl_name . sql_db::TABLE_EXTENSION);
+        $log->set_field($tbl_name . '_name');
         $log->old_value = $this->name();
         $log->new_value = '';
 
@@ -776,6 +780,8 @@ class sandbox_named extends sandbox
 
         global $db_con;
         $result = new user_message();
+        $lib = new library();
+        $class_name = $lib->class_to_name($this::class);
 
         // log the insert attempt first
         $log = $this->log_add();
@@ -793,7 +799,7 @@ class sandbox_named extends sandbox
             } else {
                 $db_con->set_class($this::class);
                 $db_con->set_usr($this->user()->id);
-                $this->id = $db_con->insert_old(array($this->obj_name . '_name', "user_id"), array($this->name, $this->user()->id));
+                $this->id = $db_con->insert_old(array($class_name . '_name', "user_id"), array($this->name, $this->user()->id));
             }
 
             // save the object fields if saving the key was successful
@@ -910,6 +916,8 @@ class sandbox_named extends sandbox
     {
         $result = '';
         log_debug($this->dsp_id());
+        $lib = new library();
+        $tbl_name = $lib->class_to_name($this::class);
 
         if ($this->is_id_updated($db_rec)) {
             log_debug('to ' . $this->dsp_id() . ' from ' . $db_rec->dsp_id() . ' (standard ' . $std_rec->dsp_id() . ')');
@@ -918,14 +926,14 @@ class sandbox_named extends sandbox
             $log->old_value = $db_rec->name();
             $log->new_value = $this->name();
             $log->std_value = $std_rec->name();
-            $log->set_field($this->obj_name . '_name');
+            $log->set_field($tbl_name . '_name');
 
             $log->row_id = $this->id;
             if ($log->add()) {
                 $db_con->set_class($this::class);
                 $db_con->set_usr($this->user()->id);
                 if (!$db_con->update_old($this->id,
-                    array($this->obj_name . '_name'),
+                    array($tbl_name . '_name'),
                     array($this->name))) {
                     $result .= 'update of name to ' . $this->name() . 'failed';
                 }
@@ -960,7 +968,7 @@ class sandbox_named extends sandbox
     {
         $result = false;
         if ($obj_to_check != null) {
-            if ($this->obj_name == $obj_to_check->obj_name) {
+            if ($this::class == $obj_to_check::class) {
                 $result = $this->is_same_std($obj_to_check);
             } else {
                 // create a synthetic unique index over words, phrase, verbs and formulas

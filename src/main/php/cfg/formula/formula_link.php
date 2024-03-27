@@ -122,7 +122,6 @@ class formula_link extends sandbox_link_with_type
     function __construct(user $usr)
     {
         parent::__construct($usr);
-        $this->obj_name = sql_db::TBL_FORMULA_LINK;
         $this->from_name = sql_db::TBL_FORMULA;
         $this->to_name = sql_db::TBL_PHRASE;
 
