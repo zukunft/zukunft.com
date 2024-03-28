@@ -2,8 +2,8 @@
 
 /*
 
-    /web/system/system_log_list.php - the display extension of the system error log api object
-    -------------------------------
+    /web/system/sys_log_list.php - the display extension of the system error log api object
+    ----------------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -30,15 +30,15 @@
 
 */
 
-namespace html\log;
+namespace html\system;
 
-include_once API_LOG_PATH . 'system_log_list.php';
+include_once API_SYSTEM_PATH . 'sys_log_list.php';
 
-use api\log\system_log_list as system_log_list_api;
-use html\html_base;
 use cfg\user;
+use controller\system\sys_log_list as sys_log_list_api;
+use html\html_base;
 
-class system_log_list_dsp_old extends system_log_list_api
+class sys_log_list_dsp_old extends sys_log_list_api
 {
 
     /**
@@ -55,12 +55,12 @@ class system_log_list_dsp_old extends system_log_list_api
         $result = ''; // reset the html code var
         $rows = '';   // the html code of the rows
 
-        if (count($this->system_log) > 0) {
+        if (count($this->sys_log) > 0) {
             // prepare to show a system log entry
-            $log_dsp = $this->system_log[0];
+            $log_dsp = $this->sys_log[0];
             if ($log_dsp->time <> '') {
                 $row_nbr = 0;
-                foreach ($this->system_log as $log_dsp) {
+                foreach ($this->sys_log as $log_dsp) {
                     $row_nbr++;
                     if ($row_nbr == 1) {
                         $rows .= $this->headline_html();

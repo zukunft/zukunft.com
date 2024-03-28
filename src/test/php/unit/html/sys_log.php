@@ -2,8 +2,8 @@
 
 /*
 
-    test/unit/html/system_log.php - testing of the system log display functions
-    -----------------------------
+    test/unit/html/sys_log.php - testing of the system log display functions
+    --------------------------
   
 
     This file is part of zukunft.com - calc with words
@@ -33,10 +33,10 @@
 namespace unit\html;
 
 use html\html_base;
-use html\log\system_log_list as system_log_list_dsp;
+use html\system\sys_log_list as sys_log_list_dsp;
 use test\test_cleanup;
 
-class system_log
+class sys_log
 {
     function run(test_cleanup $t): void
     {
@@ -46,13 +46,13 @@ class system_log
 
         // test the system log html display functions
         $test_page = $html->text_h2('system log display test');
-        $log_lst = new system_log_list_dsp($t->dummy_system_log_list()->api_json($t->usr1));
+        $log_lst = new sys_log_list_dsp($t->sys_log_list()->api_json($t->usr1));
         $test_page .= 'user view of a table with system log entries<br>';
         $test_page .= $log_lst->display() . '<br>';
         $test_page .= 'admin view of a table with system log entries<br>';
         $test_page .= $log_lst->display_admin() . '<br>';
 
-        $t->html_test($test_page, 'system_log', $t);
+        $t->html_test($test_page, 'sys_log', $t);
     }
 
 }

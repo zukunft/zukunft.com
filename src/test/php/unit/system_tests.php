@@ -34,25 +34,24 @@ namespace unit;
 include_once MODEL_SYSTEM_PATH . 'ip_range.php';
 include_once MODEL_SYSTEM_PATH . 'ip_range_list.php';
 include_once MODEL_SYSTEM_PATH . 'session.php';
-include_once MODEL_LOG_PATH . 'system_log_list.php';
-include_once API_LOG_PATH . 'system_log.php';
+include_once MODEL_SYSTEM_PATH . 'sys_log_list.php';
+include_once API_SYSTEM_PATH . 'sys_log.php';
 
-use cfg\config;
-use cfg\formula;
-use cfg\log\system_log_list;
-use cfg\log\system_log;
-use api\log\system_log as system_log_api;
 use api\word\word as word_api;
-use cfg\session;
-use cfg\sys_log_status;
-use cfg\user\user_type;
-use cfg\verb;
-use DateTime;
+use cfg\config;
+use cfg\db\sql_db;
+use cfg\formula;
 use cfg\ip_range;
 use cfg\ip_range_list;
 use cfg\library;
-use cfg\db\sql_db;
+use cfg\session;
+use cfg\sys_log;
+use cfg\sys_log_list;
+use cfg\sys_log_status;
 use cfg\sys_log_status_list;
+use cfg\verb;
+use controller\system\sys_log as sys_log_api;
+use DateTime;
 use test\test_cleanup;
 
 class system_tests
@@ -231,8 +230,8 @@ class system_tests
         $chg = $t->dummy_change_log_list_named();
         $target = 'change log id 0 at 2022-12-26T18:23:45+01:00 add words  row 1';
         $t->assert($test_name, $chg->dsp_id(), $target);
-        $test_name = 'debug system_log id';
-        $log = $t->dummy_sys_log();
+        $test_name = 'debug sys_log id';
+        $log = $t->sys_log();
         $target = 'system log id 1 at 2023-01-03T20:59:59+01:00 row the log text that describes the problem for the user or system admin';
         $t->assert($test_name, $log->dsp_id(), $target);
         $test_name = 'debug job id';
@@ -406,7 +405,7 @@ class system_tests
         $db_con->db_type = sql_db::MYSQL;
         $qp = $db_con->missing_owner_sql();
         $expected_sql = $t->file('db/system/missing_owner_by_formula_mysql.sql');
-        $t->assert('system_log->load_sql by id for MySQL', $lib->trim($qp->sql), $lib->trim($expected_sql));
+        $t->assert('sys_log->load_sql by id for MySQL', $lib->trim($qp->sql), $lib->trim($expected_sql));
 
         /*
          * database upgrade SQL creation tests
@@ -439,15 +438,15 @@ class system_tests
 
         $t->subheader('System log list tests');
 
-        $log_lst = new system_log_list();
+        $log_lst = new sys_log_list();
         $log_lst->set_user($usr);
 
         // sql to load all
         $db_con->db_type = sql_db::POSTGRES;
-        $log_lst->dsp_type = system_log_list::DSP_ALL;
+        $log_lst->dsp_type = sys_log_list::DSP_ALL;
         $created_sql = $log_lst->load_sql($db_con)->sql;
-        $expected_sql = $t->file('db/system_log/system_log_list.sql');
-        $t->assert('system_log_list->load_sql by id', $lib->trim($created_sql), $lib->trim($expected_sql));
+        $expected_sql = $t->file('db/sys_log/sys_log_list.sql');
+        $t->assert('sys_log_list->load_sql by id', $lib->trim($created_sql), $lib->trim($expected_sql));
 
         // ... and check if the prepared sql name is unique
         $result = false;
@@ -456,13 +455,13 @@ class system_tests
             $result = true;
             $sql_names[] = $sql_name;
         }
-        $t->assert('system_log_list->load_sql all', $result, true);
+        $t->assert('sys_log_list->load_sql all', $result, true);
 
         // ... and the same for MySQL by replication the SQL builder statements
         $db_con->db_type = sql_db::MYSQL;
         $created_sql = $log_lst->load_sql($db_con)->sql;
-        $expected_sql = $t->file('db/system_log/system_log_list_mysql.sql');
-        $t->assert('system_log_list->load_sql by id for MySQL', $lib->trim($created_sql), $lib->trim($expected_sql));
+        $expected_sql = $t->file('db/sys_log/sys_log_list_mysql.sql');
+        $t->assert('sys_log_list->load_sql by id for MySQL', $lib->trim($created_sql), $lib->trim($expected_sql));
 
         /*
          * system log frontend API tests
@@ -470,60 +469,60 @@ class system_tests
 
         $t->subheader('System log frontend API tests');
 
-        $log = new system_log();
+        $log = new sys_log();
         $log->set_id(1);
-        $log->log_time = new DateTime(system_log_api::TV_TIME);
+        $log->log_time = new DateTime(sys_log_api::TV_TIME);
         $log->usr_name = $usr->name;
-        $log->log_text = system_log_api::TV_LOG_TEXT;
+        $log->log_text = sys_log_api::TV_LOG_TEXT;
         //$log->log_trace = (new Exception)->getTraceAsString();
-        $log->log_trace = system_log_api::TV_LOG_TRACE;
-        $log->function_name = system_log_api::TV_FUNC_NAME;
-        $log->solver_name = system_log_api::TV_SOLVE_ID;
+        $log->log_trace = sys_log_api::TV_LOG_TRACE;
+        $log->function_name = sys_log_api::TV_FUNC_NAME;
+        $log->solver_name = sys_log_api::TV_SOLVE_ID;
         $log->status_name = $sys_log_stati->id(sys_log_status::OPEN);
         $log_dsp = $log->get_api_obj();
         $created = $log_dsp->get_json();
-        $expected = file_get_contents(PATH_TEST_FILES . 'api/system/system_log.json');
-        $t->assert('system_log_dsp->get_json', $lib->trim_json($created), $lib->trim_json($expected));
+        $expected = file_get_contents(PATH_TEST_FILES . 'api/system/sys_log.json');
+        $t->assert('sys_log_dsp->get_json', $lib->trim_json($created), $lib->trim_json($expected));
 
         // html code for the system log entry for normal users
         $created = $log_dsp->get_html($usr);
-        $expected = file_get_contents(PATH_TEST_FILES . 'web/system/system_log.html');
-        $t->assert('system_log_dsp->get_json', $lib->trim_html($created), $lib->trim_html($expected));
+        $expected = file_get_contents(PATH_TEST_FILES . 'web/system/sys_log.html');
+        $t->assert('sys_log_dsp->get_json', $lib->trim_html($created), $lib->trim_html($expected));
 
         // ... and the same for admin users
         $created = $log_dsp->get_html($usr_sys);
-        $expected = file_get_contents(PATH_TEST_FILES . 'web/system/system_log_admin.html');
-        $t->assert('system_log_dsp->get_json', $lib->trim_html($created), $lib->trim_html($expected));
+        $expected = file_get_contents(PATH_TEST_FILES . 'web/system/sys_log_admin.html');
+        $t->assert('sys_log_dsp->get_json', $lib->trim_html($created), $lib->trim_html($expected));
 
         // create a second system log entry to create a list
-        $log2 = new system_log();
+        $log2 = new sys_log();
         $log2->set_id(2);
-        $log2->log_time = new DateTime(system_log_api::TV_TIME);
+        $log2->log_time = new DateTime(sys_log_api::TV_TIME);
         $log2->usr_name = $usr->name;
-        $log2->log_text = system_log_api::T2_LOG_TEXT;
+        $log2->log_text = sys_log_api::T2_LOG_TEXT;
         //$log2->log_trace = (new Exception)->getTraceAsString();
-        $log2->log_trace = system_log_api::T2_LOG_TRACE;
-        $log2->function_name = system_log_api::T2_FUNC_NAME;
-        $log2->solver_name = system_log_api::TV_SOLVE_ID;
+        $log2->log_trace = sys_log_api::T2_LOG_TRACE;
+        $log2->function_name = sys_log_api::T2_FUNC_NAME;
+        $log2->solver_name = sys_log_api::TV_SOLVE_ID;
         $log2->status_name = $sys_log_stati->id(sys_log_status::CLOSED);
 
-        $log_lst = new system_log_list();
+        $log_lst = new sys_log_list();
         $log_lst->add($log);
         $log_lst->add($log2);
 
         $log_lst_dsp = $log_lst->dsp_obj();
         $created = $log_lst_dsp->get_json();
-        $expected = file_get_contents(PATH_TEST_FILES . 'api/system_log_list/system_log_list.json');
+        $expected = file_get_contents(PATH_TEST_FILES . 'api/sys_log_list/sys_log_list.json');
         $created = json_encode($t->json_remove_volatile(json_decode($created, true)));
-        $t->assert('system_log_list_dsp->get_json', $lib->trim_json($created), $lib->trim_json($expected));
+        $t->assert('sys_log_list_dsp->get_json', $lib->trim_json($created), $lib->trim_json($expected));
 
         $created = $log_lst_dsp->get_html();
-        $expected = file_get_contents(PATH_TEST_FILES . 'web/system/system_log_list.html');
-        $t->assert('system_log_list_dsp->display', $lib->trim_html($created), $lib->trim_html($expected));
+        $expected = file_get_contents(PATH_TEST_FILES . 'web/system/sys_log_list.html');
+        $t->assert('sys_log_list_dsp->display', $lib->trim_html($created), $lib->trim_html($expected));
 
         $created = $log_lst_dsp->get_html_page();
-        $expected = file_get_contents(PATH_TEST_FILES . 'web/system/system_log_list_page.html');
-        $t->assert('system_log_list_dsp->display', $lib->trim_html($created), $lib->trim_html($expected));
+        $expected = file_get_contents(PATH_TEST_FILES . 'web/system/sys_log_list_page.html');
+        $t->assert('sys_log_list_dsp->display', $lib->trim_html($created), $lib->trim_html($expected));
 
 
         /*

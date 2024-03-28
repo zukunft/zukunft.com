@@ -95,7 +95,7 @@ class controller
 
 
     const API_BODY = 'body';
-    const API_BODY_SYS_LOG = 'system_log';
+    const API_BODY_SYS_LOG = 'sys_log';
 
     // to include the objects that should be displayed in one api message
     const API_WORD = 'word';

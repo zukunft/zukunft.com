@@ -54,25 +54,24 @@ use api\api_message;
 use api\component\component as component_api;
 use api\language\language as language_api;
 use api\language\language_form as language_form_api;
-use api\log\system_log as system_log_api;
 use api\phrase\phrase_type as phrase_type_api;
 use api\ref\ref as ref_api;
 use api\system\job as job_api;
 use api\system\type_object as type_api;
-use cfg\job;
 use cfg\component\component;
 use cfg\db\sql_db;
 use cfg\export\export;
 use cfg\formula;
+use cfg\job;
 use cfg\language;
 use cfg\language_form;
 use cfg\library;
 use cfg\log\change_log;
-use cfg\log\system_log;
-use cfg\log\system_log_list;
 use cfg\phrase_type;
 use cfg\ref;
 use cfg\source;
+use cfg\sys_log;
+use cfg\sys_log_list;
 use cfg\term_list;
 use cfg\trm_ids;
 use cfg\type_lists;
@@ -82,6 +81,7 @@ use cfg\user_message;
 use cfg\value\value;
 use cfg\word;
 use controller\controller;
+use controller\system\sys_log as sys_log_api;
 use DateTime;
 use Exception;
 
@@ -125,7 +125,7 @@ class test_api extends create_test_objects
     {
         $class = $usr_obj::class;
         $class = $this->class_to_api($class);
-        if ($usr_obj::class == system_log_list::class
+        if ($usr_obj::class == sys_log_list::class
             or $usr_obj::class == type_lists::class) {
             $api_obj = $usr_obj->api_obj($this->usr1, false);
         } else {
@@ -712,8 +712,8 @@ class test_api extends create_test_objects
     private function json_remove_volatile_item(array $json, bool $ignore_id): array
     {
         // remove or replace the volatile time fields
-        $json = $this->json_remove_volatile_time_field($json, system_log::FLD_TIME_JSON);
-        $json = $this->json_remove_volatile_time_field($json, system_log::FLD_TIMESTAMP_JSON);
+        $json = $this->json_remove_volatile_time_field($json, sys_log::FLD_TIME_JSON);
+        $json = $this->json_remove_volatile_time_field($json, sys_log::FLD_TIMESTAMP_JSON);
         $json = $this->json_remove_volatile_time_field($json, change_log::FLD_TIME);
         $json = $this->json_remove_volatile_time_field($json, job::FLD_TIME_REQUEST);
         $json = $this->json_remove_volatile_time_field($json, job::FLD_TIME_START);
@@ -772,7 +772,7 @@ class test_api extends create_test_objects
                 $json = $this->json_remove_volatile_unset_field($json, $fld_name);
                 unset($json[$fld_name]);
             } else {
-                $new_value = (new DateTime(system_log_api::TV_TIME))->format('Y-m-d H:i:s');
+                $new_value = (new DateTime(sys_log_api::TV_TIME))->format('Y-m-d H:i:s');
                 $json = $this->json_remove_volatile_replace_field($json, $fld_name, $new_value);
             }
         }

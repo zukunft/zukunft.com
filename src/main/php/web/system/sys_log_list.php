@@ -2,8 +2,8 @@
 
 /*
 
-    /web/log/system_log_list.php - the display extension of the system error log api object
-    ----------------------------
+    /web/log/sys_log_list.php - the display extension of the system error log api object
+    -------------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -30,17 +30,17 @@
 
 */
 
-namespace html\log;
+namespace html\system;
 
 include_once WEB_SANDBOX_PATH . 'list.php';
-include_once WEB_LOG_PATH . 'system_log.php';
+include_once WEB_SYSTEM_PATH . 'sys_log.php';
 
 use controller\controller;
 use html\html_base;
 use html\list_dsp;
-use html\log\system_log as system_log_dsp;
+use html\system\sys_log as sys_log_dsp;
 
-class system_log_list extends list_dsp
+class sys_log_list extends list_dsp
 {
 
     /*
@@ -69,7 +69,7 @@ class system_log_list extends list_dsp
      */
     function set_obj_from_json_array(array $json_array): object
     {
-        $sys_log = new system_log_dsp();
+        $sys_log = new sys_log_dsp();
         $sys_log->set_from_json_array($json_array);
         return $sys_log;
     }
@@ -81,10 +81,10 @@ class system_log_list extends list_dsp
 
     /**
      * add a system log entry to the list
-     * @param system_log_dsp $sys_log the log frontend entry that should be added to the list
+     * @param sys_log_dsp $sys_log the log frontend entry that should be added to the list
      * @returns bool true if the system log entry has been added
      */
-    function add(system_log_dsp $sys_log): bool
+    function add(sys_log_dsp $sys_log): bool
     {
         return parent::add_obj($sys_log);
     }
@@ -112,7 +112,7 @@ class system_log_list extends list_dsp
 
     /**
      * @param string $back the back trace url for the undo functionality
-     * @return string with a list of the system_log names with html links
+     * @return string with a list of the sys_log names with html links
      * ex. names_linked
      */
     function display_admin(string $back = '', string $style = ''): string

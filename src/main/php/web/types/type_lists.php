@@ -37,7 +37,7 @@ include_once WEB_TYPES_PATH . 'type_list.php';
 include_once WEB_TYPES_PATH . 'change_action_list.php';
 include_once WEB_TYPES_PATH . 'change_table_list.php';
 include_once WEB_TYPES_PATH . 'change_field_list.php';
-include_once WEB_TYPES_PATH . 'system_log_status_list.php';
+include_once WEB_TYPES_PATH . 'sys_log_status_list.php';
 include_once WEB_TYPES_PATH . 'user_profiles.php';
 include_once WEB_TYPES_PATH . 'job_type_list.php';
 include_once WEB_TYPES_PATH . 'languages.php';
@@ -342,7 +342,7 @@ class type_lists
     function set_sys_log_stati(array $json_array = null): void
     {
         global $html_sys_log_stati;
-        $html_sys_log_stati = new system_log_status_list();
+        $html_sys_log_stati = new sys_log_status_list();
         $html_sys_log_stati->set_obj_from_json_array($json_array);
     }
 

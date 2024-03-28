@@ -54,7 +54,6 @@ use api\api;
 use api\api_message;
 use api\component\component as component_api;
 use api\formula\formula as formula_api;
-use api\log\system_log as system_log_api;
 use api\phrase\group as group_api;
 use api\ref\ref as ref_api;
 use api\ref\source as source_api;
@@ -69,9 +68,9 @@ use cfg\component\component;
 use cfg\component\component_link;
 use cfg\component\component_link_list;
 use cfg\component\component_list;
-use cfg\component\position_type_list;
 use cfg\component\component_type;
 use cfg\component\component_type_list;
+use cfg\component\position_type_list;
 use cfg\element;
 use cfg\element_list;
 use cfg\element_type_list;
@@ -100,11 +99,9 @@ use cfg\log\change_big_value;
 use cfg\log\change_field_list;
 use cfg\log\change_link;
 use cfg\log\change_log_list;
-use cfg\log\change_prime_value;
 use cfg\log\change_norm_value;
+use cfg\log\change_prime_value;
 use cfg\log\change_table_list;
-use cfg\log\system_log;
-use cfg\log\system_log_list;
 use cfg\phrase;
 use cfg\phrase_list;
 use cfg\phrase_type;
@@ -118,6 +115,8 @@ use cfg\share_type_list;
 use cfg\source;
 use cfg\source_type;
 use cfg\source_type_list;
+use cfg\sys_log;
+use cfg\sys_log_list;
 use cfg\sys_log_status;
 use cfg\sys_log_status_list;
 use cfg\term;
@@ -141,6 +140,7 @@ use cfg\view_type_list;
 use cfg\word;
 use cfg\word_list;
 use controller\controller;
+use controller\system\sys_log as sys_log_api;
 use DateTime;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\word\word as word_dsp;
@@ -1748,37 +1748,37 @@ class create_test_objects extends test_base
     }
 
     /**
-     * @return system_log a system error entry
+     * @return sys_log a system error entry
      */
-    function dummy_sys_log(): system_log
+    function sys_log(): sys_log
     {
         global $sys_log_stati;
-        $sys = new system_log();
+        $sys = new sys_log();
         $sys->set_id(1);
-        $sys->log_time = new DateTime(system_log_api::TV_TIME);
+        $sys->log_time = new DateTime(sys_log_api::TV_TIME);
         $sys->usr_name = user::SYSTEM_TEST_NAME;
-        $sys->log_text = system_log_api::TV_LOG_TEXT;
-        $sys->log_trace = system_log_api::TV_LOG_TRACE;
-        $sys->function_name = system_log_api::TV_FUNC_NAME;
-        $sys->solver_name = system_log_api::TV_SOLVE_ID;
+        $sys->log_text = sys_log_api::TV_LOG_TEXT;
+        $sys->log_trace = sys_log_api::TV_LOG_TRACE;
+        $sys->function_name = sys_log_api::TV_FUNC_NAME;
+        $sys->solver_name = sys_log_api::TV_SOLVE_ID;
         $sys->status_name = $sys_log_stati->id(sys_log_status::OPEN);
         return $sys;
     }
 
     /**
-     * @return system_log a system error entry
+     * @return sys_log a system error entry
      */
-    function dummy_sys_log2(): system_log
+    function sys_log2(): sys_log
     {
         global $sys_log_stati;
-        $sys = new system_log();
+        $sys = new sys_log();
         $sys->set_id(2);
-        $sys->log_time = new DateTime(system_log_api::TV_TIME);
+        $sys->log_time = new DateTime(sys_log_api::TV_TIME);
         $sys->usr_name = user::SYSTEM_TEST_NAME;
-        $sys->log_text = system_log_api::T2_LOG_TEXT;
-        $sys->log_trace = system_log_api::T2_LOG_TRACE;
-        $sys->function_name = system_log_api::T2_FUNC_NAME;
-        $sys->solver_name = system_log_api::TV_SOLVE_ID;
+        $sys->log_text = sys_log_api::T2_LOG_TEXT;
+        $sys->log_trace = sys_log_api::T2_LOG_TRACE;
+        $sys->function_name = sys_log_api::T2_FUNC_NAME;
+        $sys->solver_name = sys_log_api::TV_SOLVE_ID;
         $sys->status_name = $sys_log_stati->id(sys_log_status::CLOSED);
         return $sys;
     }
@@ -1789,9 +1789,9 @@ class create_test_objects extends test_base
     function dummy_job(): job
     {
         $sys_usr = $this->system_user();
-        $job = new job($sys_usr, new DateTime(system_log_api::TV_TIME));
+        $job = new job($sys_usr, new DateTime(sys_log_api::TV_TIME));
         $job->set_id(1);
-        $job->start_time = new DateTime(system_log_api::TV_TIME);
+        $job->start_time = new DateTime(sys_log_api::TV_TIME);
         $job->set_type(job_type_list::BASE_IMPORT);
         $job->row_id = 1;
         return $job;
@@ -1811,13 +1811,13 @@ class create_test_objects extends test_base
     }
 
     /**
-     * @return system_log_list a list of system error entries with some dummy values
+     * @return sys_log_list a list of system error entries with some dummy values
      */
-    function dummy_system_log_list(): system_log_list
+    function sys_log_list(): sys_log_list
     {
-        $sys_lst = new system_log_list();
-        $sys_lst->add($this->dummy_sys_log());
-        $sys_lst->add($this->dummy_sys_log2());
+        $sys_lst = new sys_log_list();
+        $sys_lst->add($this->sys_log());
+        $sys_lst->add($this->sys_log2());
         return $sys_lst;
     }
 

@@ -2,8 +2,8 @@
 
 /*
 
-    test/php/unit_read/system_log.php - database unit testing of the error log functions
-    ---------------------------------
+    test/php/unit_read/sys_log.php - database unit testing of the error log functions
+    ------------------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -32,11 +32,11 @@
 
 namespace unit_read;
 
-use cfg\log\system_log_list;
+use cfg\sys_log_list;
 use cfg\user;
 use test\test_cleanup;
 
-class system_log_tests
+class sys_log_tests
 {
 
     function run(test_cleanup $t): void
@@ -57,16 +57,16 @@ class system_log_tests
         $sys_usr->load_by_id(SYSTEM_USER_TEST_ID);
 
         // check if loading the system errors technically works
-        $err_lst = new system_log_list();
+        $err_lst = new sys_log_list();
         $err_lst->set_user($sys_usr);
-        $err_lst->dsp_type = system_log_list::DSP_ALL;
+        $err_lst->dsp_type = sys_log_list::DSP_ALL;
         $err_lst->page = 0;
         $err_lst->size = 20;
         $result = $err_lst->load_all();
         $t->assert('system errors', $result, true);
 
         $t->subheader('API unit db tests');
-        $t->assert_api($err_lst, 'system_log_list_setup', true);
+        $t->assert_api($err_lst, 'sys_log_list_setup', true);
 
     }
 

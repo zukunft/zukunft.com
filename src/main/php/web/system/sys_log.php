@@ -2,8 +2,8 @@
 
 /*
 
-    /web/log/system_log.php - create the html code to display on system log entry
-    -----------------------
+    /web/log/sys_log.php - create the html code to display on system log entry
+    --------------------
 
     This file is part of the frontend of zukunft.com - calc with words
 
@@ -29,17 +29,16 @@
   
 */
 
-namespace html\log;
+namespace html\system;
 
 include_once WEB_LOG_PATH . 'log.php';
 
 use api\api;
-use controller\controller;
 use DateTimeInterface;
-use html\log\log as log_dsp;
 use html\html_base;
+use html\log\log as log_dsp;
 
-class system_log extends log_dsp
+class sys_log extends log_dsp
 {
 
     /*
@@ -173,7 +172,7 @@ class system_log extends log_dsp
     }
 
     /**
-     * display a system_log with a link to the main page for the system_log
+     * display a sys_log with a link to the main page for the sys_log
      * @param string|null $back the back trace url for the undo functionality
      * @param string $style the CSS style that should be used
      * @returns string the html code to show one system log entry for admin users

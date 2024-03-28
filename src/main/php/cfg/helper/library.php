@@ -37,19 +37,18 @@ use api\sandbox\combine_object as combine_object_api;
 use cfg\component\component;
 use cfg\component\component_link;
 use cfg\component\component_link_type;
-use cfg\component\position_type;
 use cfg\component\component_type;
+use cfg\component\position_type;
 use cfg\db\sql_db;
 use cfg\log\change;
 use cfg\log\change_action;
 use cfg\log\change_big_value;
 use cfg\log\change_field;
 use cfg\log\change_link;
-use cfg\log\change_prime_value;
 use cfg\log\change_norm_value;
+use cfg\log\change_prime_value;
 use cfg\log\change_table;
 use cfg\log\change_table_field;
-use cfg\log\system_log;
 use cfg\user\user_profile;
 use cfg\user\user_type;
 use cfg\value\value;
@@ -1633,7 +1632,7 @@ class library
                 break;
             case $this->class_to_name(system_time_type::class):
             case $this->class_to_name(system_time::class):
-                $result = $this->class_to_name(system_log::class);
+                $result = $this->class_to_name(sys_log::class);
                 break;
             case $this->class_to_name(job_time::class):
                 $result = $this->class_to_name(job::class);

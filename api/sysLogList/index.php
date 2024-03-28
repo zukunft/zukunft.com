@@ -40,13 +40,13 @@ include_once API_PATH . 'api.php';
 include_once API_PATH . 'controller.php';
 include_once API_PATH . 'api_message.php';
 include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_LOG_PATH . 'system_log_list.php';
-include_once API_LOG_PATH . 'system_log_list.php';
+include_once MODEL_SYSTEM_PATH . 'sys_log_list.php';
+include_once API_SYSTEM_PATH . 'sys_log_list.php';
 
-use cfg\log\system_log_list;
-use controller\controller;
-use api\log\system_log_list as system_log_list_api;
+use cfg\sys_log_list;
 use cfg\user;
+use controller\controller;
+use controller\system\sys_log_list as sys_log_list_api;
 
 // open database
 $db_con = prg_start("api/log", "", false);
@@ -56,14 +56,14 @@ $db_con = prg_start("api/log", "", false);
 $usr = new user;
 $msg = $usr->get();
 
-$result = new system_log_list_api($db_con, $usr);
+$result = new sys_log_list_api($db_con, $usr);
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id() > 0) {
 
-    $lst = new system_log_list();
+    $lst = new sys_log_list();
     $lst->set_user($usr);
-    $lst->dsp_type = system_log_list::DSP_ALL;
+    $lst->dsp_type = sys_log_list::DSP_ALL;
     $lst->page = 0;
     $lst->size = 20;
     $lst->load_all();

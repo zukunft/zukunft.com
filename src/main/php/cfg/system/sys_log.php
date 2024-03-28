@@ -2,8 +2,8 @@
 
 /*
 
-    model/system/system_log.php - object to handle a system errors
-    ---------------------------
+    cfg/system/sys_log.php - object to handle a system errors
+    ----------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -22,14 +22,14 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2023 zukunft.com AG, Zurich
+    Copyright (c) 1995-2024 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
   
 */
 
-namespace cfg\log;
+namespace cfg;
 
 include_once MODEL_HELPER_PATH . 'db_object.php';
 include_once MODEL_HELPER_PATH . 'type_list.php';
@@ -44,26 +44,20 @@ include_once MODEL_LOG_PATH . 'change_action.php';
 include_once MODEL_LOG_PATH . 'change_action_list.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
 include_once API_SANDBOX_PATH . 'sandbox_value.php';
-include_once API_LOG_PATH . 'system_log.php';
+include_once API_SYSTEM_PATH . 'sys_log.php';
 
+use cfg\db\sql;
+use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
-use cfg\db\sql;
-use cfg\db_object_seq_id;
-use cfg\library;
-use cfg\sandbox;
-use cfg\db\sql_db;
-use cfg\sys_log_function;
-use cfg\sys_log_status;
-use cfg\type_list;
-use cfg\type_object;
-use cfg\user;
-use api\log\system_log as system_log_api;
+use cfg\log\change;
+use cfg\log\change_action;
+use controller\system\sys_log as sys_log_api;
 use DateTime;
 use DateTimeInterface;
 
-class system_log extends db_object_seq_id
+class sys_log extends db_object_seq_id
 {
 
     /*
@@ -207,11 +201,11 @@ class system_log extends db_object_seq_id
      */
 
     /**
-     * @return system_log_api a filled frontend api object
+     * @return sys_log_api a filled frontend api object
      */
-    function get_api_obj(): system_log_api
+    function get_api_obj(): sys_log_api
     {
-        $dsp_obj = new system_log_api();
+        $dsp_obj = new sys_log_api();
         $dsp_obj->id = $this->id();
         $dsp_obj->time = $this->log_time->format('Y-m-d H:i:s');
         $dsp_obj->user = $this->usr_name;
@@ -345,7 +339,7 @@ class system_log extends db_object_seq_id
     }
 
     /**
-     * @return string sys_log_id instead of system_log_id
+     * @return string sys_log_id instead of sys_log_id
      */
     function id_field(): string
     {
@@ -372,10 +366,10 @@ class system_log extends db_object_seq_id
     /**
      * set the update parameters for the error status
      * @param sql_db $db_con the active database connection
-     * @param system_log $db_rec the system log entry as saved in the database before the change
+     * @param sys_log $db_rec the system log entry as saved in the database before the change
      * @return bool true if the status field has been updated
      */
-    private function save_field_status(sql_db $db_con, system_log $db_rec): bool
+    private function save_field_status(sql_db $db_con, sys_log $db_rec): bool
     {
         log_debug();
         $result = false;
@@ -407,7 +401,7 @@ class system_log extends db_object_seq_id
         $db_con->set_class(sql_db::TBL_SYS_LOG);
 
         if ($this->id() > 0) {
-            $db_rec = new system_log;
+            $db_rec = new sys_log;
             $db_rec->set_user($this->user());
             if ($db_rec->load_by_id($this->id())) {
                 log_debug("database entry loaded");

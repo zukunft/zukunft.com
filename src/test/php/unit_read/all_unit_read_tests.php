@@ -78,7 +78,7 @@ class all_unit_read_tests extends all_unit_tests
         (new ref_tests)->run($this);
         (new language_tests)->run($this);
         (new change_log_tests)->run($this);
-        (new system_log_tests)->run($this);
+        (new sys_log_tests)->run($this);
         (new job_tests)->run($this);
 
         // load the types from the api message

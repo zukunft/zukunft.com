@@ -50,59 +50,40 @@ include_once API_PHRASE_PATH . 'phrase_type.php';
 include_once API_LANGUAGE_PATH . 'language.php';
 include_once API_LANGUAGE_PATH . 'language_form.php';
 
-use api\api_message;
 use api\component\component as component_api;
 use api\formula\formula as formula_api;
-use api\language\language as language_api;
-use api\language\language_form as language_form_api;
-use api\log\system_log as system_log_api;
-use api\phrase\phrase_type as phrase_type_api;
-use api\ref\ref as ref_api;
 use api\ref\source as source_api;
-use api\system\job as job_api;
-use api\system\type_object as type_api;
 use api\verb\verb as verb_api;
 use api\view\view as view_api;
 use api\word\word as word_api;
-use cfg\job;
 use cfg\component\component;
 use cfg\component\component_list;
-use cfg\db\sql_db;
-use cfg\export\export;
 use cfg\formula;
 use cfg\formula_list;
+use cfg\job;
 use cfg\language;
 use cfg\language_form;
 use cfg\library;
-use cfg\log\change_log;
 use cfg\log\change_field_list;
 use cfg\log\change_log_list;
-use cfg\log\system_log;
-use cfg\log\system_log_list;
 use cfg\phrase_list;
 use cfg\phrase_type;
 use cfg\ref;
 use cfg\source;
+use cfg\sys_log_list;
 use cfg\term_list;
 use cfg\triple;
-use cfg\trm_ids;
 use cfg\type_lists;
-use cfg\type_object;
 use cfg\user;
-use cfg\user_message;
 use cfg\value\value;
 use cfg\verb;
 use cfg\view;
 use cfg\word;
 use cfg\word_list;
 use controller\controller;
-use DateTime;
-use Exception;
 use html\phrase\phrase as phrase_dsp;
 use html\word\word as word_dsp;
-use test\create_test_objects;
 use test\test_cleanup;
-use const test\HOST_TESTING;
 
 class api_tests
 {
@@ -166,9 +147,9 @@ class api_tests
             controller::URL_VAR_WORD_ID, 1,
             controller::URL_VAR_WORD_FLD, change_field_list::FLD_WORD_NAME);
         $t->assert_api_get_list(
-            system_log_list::class,
+            sys_log_list::class,
             [1, 2], 'ids',
-            'system_log_list_api',
+            'sys_log_list_api',
             true);
         // $t->assert_rest(new word($usr, word_api::TN_READ));
 

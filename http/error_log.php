@@ -38,20 +38,19 @@
 
 */
 
-use controller\controller;
-use cfg\log\system_log;
-use html\log\system_log as system_log_dsp;
-use html\html_base;
-use html\view\view as view_dsp;
+use cfg\sys_log;
 use cfg\user;
 use cfg\view;
 use cfg\word;
+use controller\controller;
+use html\system\sys_log as sys_log_dsp;
+use html\view\view as view_dsp;
 
 function err_dsp($err_id, $user_id): string
 {
-    $log = new system_log();
+    $log = new sys_log();
     $log->load_by_id($err_id);
-    $dsp = new system_log_dsp($log->api_json());
+    $dsp = new sys_log_dsp($log->api_json());
     return $dsp->page_view();
 }
 

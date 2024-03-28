@@ -55,7 +55,7 @@ class db_cl
     const LANGUAGE = "language";
     const LANGUAGE_FORM = "language_form";
     const USER_PROFILE = "user_profile_type";
-    const LOG_STATUS = "system_log_status";
+    const LOG_STATUS = "sys_log_status";
     const LOG_ACTION = "change_action";
     const LOG_TABLE = "change_table";
     const LOG_FIELD = "change_field";

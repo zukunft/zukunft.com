@@ -2,8 +2,8 @@
 
 /*
 
-    web/types/system_log_status.php - the preloaded system log actions used for the html frontend
-    -------------------------------
+    web/types/sys_log_status.php - the preloaded system log actions used for the html frontend
+    ----------------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -23,7 +23,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2023 zukunft.com AG, Zurich
+    Copyright (c) 1995-2024 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -32,7 +32,7 @@
 
 namespace html\types;
 
-class system_log_status_list extends type_list
+class sys_log_status_list extends type_list
 {
 
 }

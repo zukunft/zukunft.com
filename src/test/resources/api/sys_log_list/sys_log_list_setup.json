@@ -4,7 +4,7 @@
   "user_id": 2,
   "user": "zukunft.com system test",
   "version": "0.0.3",
-  "system_log": [
+  "sys_log": [
     {
       "id": 1,
       "time": "2023-01-03 20:59:59",

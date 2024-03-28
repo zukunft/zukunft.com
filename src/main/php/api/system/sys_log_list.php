@@ -2,8 +2,8 @@
 
 /*
 
-    api/system/system_log_list.php - the simple export object to create a json for the frontend API
-    ------------------------------
+    api/system/sys_log_list.php - the simple export object to create a json for the frontend API
+    ---------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -22,14 +22,14 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2024 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
 
 */
 
-namespace api\log;
+namespace controller\system;
 
 include_once API_PATH . 'api_message.php';
 
@@ -39,17 +39,17 @@ use cfg\user;
 use controller\controller;
 use JsonSerializable;
 
-class system_log_list extends api_message implements JsonSerializable
+class sys_log_list extends api_message implements JsonSerializable
 {
 
     // field names used for JSON creation
-    public ?array $system_log = null;      // a list of system error objects
+    public ?array $sys_log = null;      // a list of system error objects
 
     function __construct(sql_db $db_con, ?user $usr = null)
     {
         parent::__construct($db_con, controller::API_BODY_SYS_LOG, $usr);
         $this->type = api_message::SYS_LOG;
-        $this->system_log = null;
+        $this->sys_log = null;
         if ($usr != null) {
             $this->user_id = $usr->id();
             $this->user = $usr->name;

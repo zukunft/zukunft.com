@@ -43,8 +43,8 @@ include_once MODEL_IMPORT_PATH . 'import_file.php';
 use cfg\component\component;
 use cfg\component\component_link;
 use cfg\component\component_link_type;
-use cfg\component\position_type;
 use cfg\component\component_type;
+use cfg\component\position_type;
 use cfg\config;
 use cfg\element;
 use cfg\element_type;
@@ -70,11 +70,10 @@ use cfg\log\change_action;
 use cfg\log\change_big_value;
 use cfg\log\change_field;
 use cfg\log\change_link;
-use cfg\log\change_prime_value;
 use cfg\log\change_norm_value;
+use cfg\log\change_prime_value;
 use cfg\log\change_table;
 use cfg\log\change_table_field;
-use cfg\log\system_log;
 use cfg\phrase;
 use cfg\phrase_table;
 use cfg\phrase_table_status;
@@ -91,6 +90,7 @@ use cfg\session;
 use cfg\share_type;
 use cfg\source;
 use cfg\source_type;
+use cfg\sys_log;
 use cfg\sys_log_function;
 use cfg\sys_log_level;
 use cfg\sys_log_status;
@@ -191,7 +191,7 @@ class sql_db
         sys_log_type::class,
         sys_log_status::class,
         sys_log_function::class,
-        system_log::class,
+        sys_log::class,
         system_time_type::class,
         system_time::class,
         job_type::class,

@@ -32,7 +32,7 @@
 
 namespace unit_read;
 
-include_once MODEL_LOG_PATH . 'system_log.php';
+include_once MODEL_SYSTEM_PATH . 'sys_log.php';
 include_once DB_PATH . 'db_check.php';
 
 use cfg\job_type_list;

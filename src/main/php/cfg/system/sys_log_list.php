@@ -2,8 +2,8 @@
 
 /*
 
-  model/system/system_log_list.php - a list of system error objects
-  --------------------------------
+  cfg/system/sys_log_list.php - a list of system error objects
+  ---------------------------
   
   This file is part of zukunft.com - calc with words
 
@@ -22,14 +22,14 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2023 zukunft.com AG, Zurich
+  Copyright (c) 1995-2024 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
   
 */
 
-namespace cfg\log;
+namespace cfg;
 
 include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';
@@ -42,28 +42,20 @@ include_once MODEL_SYSTEM_PATH . 'sys_log_type.php';
 include_once MODEL_SYSTEM_PATH . 'sys_log_status.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
 include_once MODEL_SYSTEM_PATH . 'sys_log_status_list.php';
-include_once MODEL_LOG_PATH . 'system_log.php';
-include_once API_LOG_PATH . 'system_log.php';
-include_once API_LOG_PATH . 'system_log_list.php';
-include_once WEB_LOG_PATH . 'system_log_list.php';
-include_once WEB_LOG_PATH . 'system_log_list_old.php';
+include_once MODEL_SYSTEM_PATH . 'sys_log.php';
+include_once API_SYSTEM_PATH . 'sys_log.php';
+include_once API_SYSTEM_PATH . 'sys_log_list.php';
+include_once WEB_SYSTEM_PATH . 'sys_log_list.php';
+include_once WEB_SYSTEM_PATH . 'sys_log_list_old.php';
 
-use cfg\base_list;
 use cfg\db\sql;
+use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
-use cfg\sandbox;
-use cfg\db\sql_db;
-use cfg\sys_log_function;
-use cfg\sys_log_function_list;
-use cfg\sys_log_status;
-use cfg\sys_log_status_list;
-use cfg\type_object;
-use cfg\user;
-use api\log\system_log_list as system_log_list_api;
-use html\log\system_log_list_dsp_old;
+use controller\system\sys_log_list as sys_log_list_api;
+use html\system\sys_log_list_dsp_old;
 
-class system_log_list extends base_list
+class sys_log_list extends base_list
 {
 
     // display types
@@ -107,15 +99,15 @@ class system_log_list extends base_list
      */
 
     /**
-     * @return system_log_list_api a filled frontend api object
+     * @return sys_log_list_api a filled frontend api object
      */
-    function api_obj(user $usr): system_log_list_api
+    function api_obj(user $usr): sys_log_list_api
     {
         global $db_con;
-        $api_obj = new system_log_list_api($db_con, $usr);
+        $api_obj = new sys_log_list_api($db_con, $usr);
         foreach ($this->lst() as $log) {
             //$api_obj->add($log->api_obj());
-            $api_obj->system_log[] = $log->get_api_obj();
+            $api_obj->sys_log[] = $log->get_api_obj();
         }
         return $api_obj;
     }
@@ -129,16 +121,16 @@ class system_log_list extends base_list
     }
 
     /**
-     * @return system_log_list_dsp_old a filled frontend display object
+     * @return sys_log_list_dsp_old a filled frontend display object
      */
-    function dsp_obj(): system_log_list_dsp_old
+    function dsp_obj(): sys_log_list_dsp_old
     {
         global $usr;
         global $db_con;
-        $dsp_obj = new system_log_list_dsp_old($db_con, $usr);
+        $dsp_obj = new sys_log_list_dsp_old($db_con, $usr);
         foreach ($this->lst() as $log) {
             //$dsp_obj->add($log->dsp_obj());
-            $dsp_obj->system_log[] = $log->get_api_obj();
+            $dsp_obj->sys_log[] = $log->get_api_obj();
         }
         return $dsp_obj;
     }
@@ -184,15 +176,15 @@ class system_log_list extends base_list
             $db_con->set_class(sql_db::TBL_SYS_LOG);
             $db_con->set_name($qp->name);
             $db_con->set_usr($this->user()->id());
-            $db_con->set_fields(system_log::FLD_NAMES);
+            $db_con->set_fields(sys_log::FLD_NAMES);
             $db_con->set_join_fields(array(sys_log_function::FLD_NAME), sys_log_function::class);
             $db_con->set_join_fields(array(type_object::FLD_NAME), sys_log_status::class);
             $db_con->set_join_fields(array(sandbox::FLD_USER_NAME), user::class);
             $db_con->set_join_fields(array(
-                sandbox::FLD_USER_NAME . ' AS ' . system_log::FLD_SOLVER_NAME),
-                user::class, system_log::FLD_SOLVER);
+                sandbox::FLD_USER_NAME . ' AS ' . sys_log::FLD_SOLVER_NAME),
+                user::class, sys_log::FLD_SOLVER);
             $db_con->set_where_text($sql_where);
-            $db_con->set_order(system_log::FLD_TIME, sql::ORDER_DESC);
+            $db_con->set_order(sys_log::FLD_TIME, sql::ORDER_DESC);
             $db_con->set_page_par($this->size, $this->page);
             $sql = $db_con->select_by_set_id();
             $qp->sql = $sql;
@@ -218,7 +210,7 @@ class system_log_list extends base_list
 
         if (count($db_lst) > 0) {
             foreach ($db_lst as $db_row) {
-                $log = new system_log();
+                $log = new sys_log();
                 $log->row_mapper($db_row);
                 $this->add_obj($log);
             }
@@ -240,10 +232,10 @@ class system_log_list extends base_list
 
     /**
      * simple add another system log entry to the list
-     * @param system_log $log_to_add the log entry that should be added to the list
+     * @param sys_log $log_to_add the log entry that should be added to the list
      * @returns bool true the log entry has been added
      */
-    function add(system_log $log_to_add): void
+    function add(sys_log $log_to_add): void
     {
         $this->add_obj($log_to_add);
     }

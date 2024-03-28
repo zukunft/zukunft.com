@@ -2,8 +2,8 @@
 
 /*
 
-    test/unit/error_log.php - unit testing of the user log functions
-    ------------------------
+    test/unit/sys_log_tests.php - unit testing of the user log functions
+    ---------------------------
   
 
     This file is part of zukunft.com - calc with words
@@ -35,48 +35,47 @@ namespace unit;
 include_once MODEL_SYSTEM_PATH . 'system_time_type.php';
 include_once MODEL_SYSTEM_PATH . 'system_time.php';
 
-use cfg\config;
-use cfg\library;
 use cfg\db\sql_db;
-use cfg\log\system_log;
+use cfg\library;
+use cfg\sys_log;
 use cfg\system_time;
 use cfg\system_time_type;
 use test\test_cleanup;
 
-class system_log_tests
+class sys_log_tests
 {
     function run(test_cleanup $t): void
     {
 
         global $usr;
 
-        $t->header('Unit tests of the system exception log display class (src/main/php/log/system_log_*.php)');
+        $t->header('Unit tests of the system exception log display class (src/main/php/log/sys_log_*.php)');
 
         $t->subheader('SQL statement tests');
 
         // init
         $lib = new library();
         $db_con = new sql_db();
-        $t->name = 'system_log->';
-        $t->resource_path = 'db/system_log/';
+        $t->name = 'sys_log->';
+        $t->resource_path = 'db/sys_log/';
         $usr->set_id(1);
 
 
         $t->subheader('System log SQL setup statements');
-        $log = new system_log();
+        $log = new sys_log();
         $t->assert_sql_table_create($log);
         $t->assert_sql_index_create($log);
         $t->assert_sql_foreign_key_create($log);
 
 
         // sql to load one error by id
-        $err = new system_log();
+        $err = new sys_log();
         $t->assert_sql_by_id($db_con, $err);
 
 
         $t->subheader('API unit tests');
 
-        $log_lst = $t->dummy_system_log_list();
+        $log_lst = $t->sys_log_list();
         $t->assert_api($log_lst);
 
 

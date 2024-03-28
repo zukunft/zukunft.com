@@ -2,8 +2,8 @@
 
 /*
 
-    api/system/system_log.php - the simple object to create a json for the frontend API
-    -------------------------
+    api/system/sys_log.php - the simple object to create a json for the frontend API
+    ----------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -29,20 +29,19 @@
 
 */
 
-namespace api\log;
+namespace controller\system;
 
 include_once API_USER_PATH . 'user.php';
 include_once WEB_HTML_PATH . 'html_base.php';
 include_once WEB_HTML_PATH . 'api.php';
 
+use cfg\db_object_seq_id;
 use cfg\sys_log_status;
+use cfg\user;
 use html\api;
 use html\html_base;
-use cfg\db_object_seq_id;
-use cfg\sys_log_status_list;
-use cfg\user;
 
-class system_log extends db_object_seq_id
+class sys_log extends db_object_seq_id
 {
 
     CONST TV_TIME = '2023-01-03T20:59:59+0100'; // time for unit tests

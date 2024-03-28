@@ -92,7 +92,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO the first frontend should look like Excel wit a big empty sheet and file save and load and only a few suggestions while writing to a cell
     TODO remove the time phrase from result
     TODO rename change and change_log to change
-    TODO rename system_log to log
+    TODO rename sys_log to log
     TODO use the json api message header for all api messages
     TODO check if reading triples should use a view to generate the triple name and the generated name
     TODO use the sandbox list for all user lists
@@ -372,7 +372,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
         phrase_group_link - db index to find a phrase group by the phrase (not the db normal form to speed up)
             phrase_group_word_link - phrase_group_link for a word
             phrase_group_triple_link - phrase_group_link for a triple
-        system_log - log entries by the system to improve the setup and code
+        sys_log - log entries by the system to improve the setup and code
         ip_range - to filter requests from the internet
         db_object_user - all objects that are user specific
             phrase_group - a sorted list of phrases
@@ -404,7 +404,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
                     value_time_series - a list of very similar numbers added by the user e.g. that only have a different timestamp  (TODO rename to series)
     base_list - a list with pages
         change_log_list - to forward changes to the UI
-        system_log_list - to forward the system log entries to the UI
+        sys_log_list - to forward the system log entries to the UI
         job_list - to forward the batch jobs to the UI
         ip_range_list - list of the ip ranges
         sandbox_list - a user specific paged list

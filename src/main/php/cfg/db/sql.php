@@ -3238,7 +3238,7 @@ class sql
         if ($result == 'sys_log_statuss') {
             $result = 'sys_log_status';
         }
-        if ($result == 'system_logs') {
+        if ($result == 'sys_logs') {
             $result = 'sys_log';
         }
         if ($result == 'sys_logs') {

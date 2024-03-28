@@ -39,10 +39,10 @@ use cfg\phrase;
 use cfg\sandbox;
 use cfg\sandbox_named;
 use cfg\source;
-use cfg\system_log_list;
+use cfg\sys_log_list;
 use cfg\triple;
 use cfg\user;
-use cfg\value;
+use cfg\value\value;
 use cfg\verb;
 use cfg\view;
 use html\html_base;
@@ -94,7 +94,7 @@ class user_dsp_old extends user
         log_debug($dsp_type . ' errors for user ' . $this->name);
 
         $result = '';
-        $err_lst = new system_log_list;
+        $err_lst = new sys_log_list;
         $err_lst->set_user($this);
         $err_lst->page = $page;
         $err_lst->size = $size;
