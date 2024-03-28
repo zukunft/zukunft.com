@@ -145,12 +145,6 @@ class sql_db
     const ROW_LIMIT = 20; // default number of rows per page/query if the user has not defined another limit
     const ROW_MAX = 2000; // the max number of rows per query to avoid long response times
 
-    // SQL table and model object names used
-    // the used database objects (the table name is in most cases with an extra 's', because each table contains the data for many objects)
-    // TODO use const for all object names
-    // TODO try to use the class name if possible
-    const TBL_PHRASE = 'phrase';
-
     const TBL_USER_PREFIX = 'user_';
 
     // the synthetic view tables (VT) for union query creation

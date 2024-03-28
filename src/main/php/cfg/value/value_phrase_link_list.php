@@ -85,7 +85,7 @@ class value_phrase_link_list extends sandbox_list
             if ($val != null) {
                 $db_con->set_join_fields(array(group::FLD_ID), value::class, group::FLD_ID, group::FLD_ID);
             } else {
-                $db_con->set_join_fields(array(phrase::FLD_ID), sql_db::TBL_PHRASE);
+                $db_con->set_join_fields(array(phrase::FLD_ID), phrase::class);
             }
             if ($val != null) {
                 if ($val->is_id_set()) {

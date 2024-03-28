@@ -163,38 +163,38 @@ class triple_list extends sandbox_list
         // also load the linked user specific phrase with the same SQL statement (word until now)
         $sc->set_join_fields(
             phrase::FLD_NAMES,
-            sql_db::TBL_PHRASE,
+            phrase::class,
             triple::FLD_FROM,
             phrase::FLD_ID
         );
         $sc->set_join_usr_fields(
             phrase::FLD_NAMES_USR,
-            sql_db::TBL_PHRASE,
+            phrase::class,
             triple::FLD_FROM,
             phrase::FLD_ID
         );
         $sc->set_join_usr_num_fields(
             phrase::FLD_NAMES_NUM_USR,
-            sql_db::TBL_PHRASE,
+            phrase::class,
             triple::FLD_FROM,
             phrase::FLD_ID,
             true
         );
         $sc->set_join_fields(
             phrase::FLD_NAMES,
-            sql_db::TBL_PHRASE,
+            phrase::class,
             triple::FLD_TO,
             phrase::FLD_ID
         );
         $sc->set_join_usr_fields(
             phrase::FLD_NAMES_USR,
-            sql_db::TBL_PHRASE,
+            phrase::class,
             triple::FLD_TO,
             phrase::FLD_ID
         );
         $sc->set_join_usr_num_fields(
             phrase::FLD_NAMES_NUM_USR,
-            sql_db::TBL_PHRASE,
+            phrase::class,
             triple::FLD_TO,
             phrase::FLD_ID,
             true
