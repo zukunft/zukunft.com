@@ -84,6 +84,7 @@ use cfg\share_type_list;
 use cfg\source;
 use cfg\source_type;
 use cfg\source_type_list;
+use cfg\sys_log;
 use cfg\sys_log_function;
 use cfg\sys_log_status;
 use cfg\triple;
@@ -246,7 +247,7 @@ function run_db_truncate(user $sys_usr): void
         job::class,
         job_type::class,
         //sql_db::TBL_SYS_SCRIPT,
-        sql_db::TBL_SYS_LOG,
+        sys_log::class,
         sys_log_status::class,
         sys_log_function::class,
         share_type::class,

@@ -277,7 +277,7 @@ class sys_log extends db_object_seq_id
     function load_sql(sql $sc, string $query_name = sql_db::FLD_ID, string $class = self::class): sql_par
     {
         $qp = parent::load_sql($sc, $query_name, $class);
-        $sc->set_class(sql_db::TBL_SYS_LOG);
+        $sc->set_class(sys_log::class);
 
         $sc->set_name($qp->name);
         $sc->set_fields(self::FLD_NAMES);
@@ -331,9 +331,11 @@ class sys_log extends db_object_seq_id
     private function log_upd(): change
     {
         log_debug();
+        $lib = new library();
+        $tbl_name = $lib->class_to_name(sys_log::class);
         $log = new change($this->user());
         $log->action = change_action::UPDATE;
-        $log->set_table(sql_db::TBL_SYS_LOG);
+        $log->set_table($tbl_name);
 
         return $log;
     }
@@ -357,7 +359,7 @@ class sys_log extends db_object_seq_id
         log_debug();
         $result = true;
         if ($log->add()) {
-            $db_con->set_class(sql_db::TBL_SYS_LOG);
+            $db_con->set_class(sys_log::class);
             $result = $db_con->update_old($this->id(), $log->field(), $log->new_id);
         }
         return $result;
@@ -398,7 +400,7 @@ class sys_log extends db_object_seq_id
 
         // build the database object because the is anyway needed
         $db_con->set_usr($this->user()->id());
-        $db_con->set_class(sql_db::TBL_SYS_LOG);
+        $db_con->set_class(sys_log::class);
 
         if ($this->id() > 0) {
             $db_rec = new sys_log;

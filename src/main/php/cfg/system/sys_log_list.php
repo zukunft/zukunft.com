@@ -173,7 +173,7 @@ class sys_log_list extends base_list
         }
 
         if ($sql_where <> '') {
-            $db_con->set_class(sql_db::TBL_SYS_LOG);
+            $db_con->set_class(sys_log::class);
             $db_con->set_name($qp->name);
             $db_con->set_usr($this->user()->id());
             $db_con->set_fields(sys_log::FLD_NAMES);

@@ -263,6 +263,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO use popular Open Source LLM systems to fill the word and triple (and value) tables
     TODO do not allow any HTML or script code fragments in the text fields
     TODO if options are excluded show them in grey with the mouseover reason, why they have been excluded
+    TODO ad sample how the use Reuters RIC where the price is in pence
 
     TODO use cases:
         these the optimal tax rates are
@@ -1254,7 +1255,7 @@ function log_msg(string  $msg_text,
                     $fields[] = "user_id";
                     $values[] = $user_id;
                 }
-                $used_db_con->set_class(sql_db::TBL_SYS_LOG);
+                $used_db_con->set_class(sys_log::class);
 
                 $sys_log_id = $used_db_con->insert_old($fields, $values, false);
                 //$sql_result = mysqli_query($sql) or die('zukunft.com system log failed by query '.$sql.': '.mysqli_error().'. If this happens again, please send this message to errors@zukunft.com.');

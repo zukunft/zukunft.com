@@ -52,6 +52,7 @@ use cfg\log\change_link;
 use cfg\ref;
 use cfg\result\result;
 use cfg\sandbox;
+use cfg\sys_log;
 use cfg\triple;
 use cfg\user;
 use cfg\user\user_profile;
@@ -143,7 +144,7 @@ class sql
         ip_range_list::class,
         change::class,
         change_link::class,
-        sql_db::TBL_SYS_LOG,
+        sys_log::class,
         job::class,
         sql_db::VT_PHRASE_GROUP_LINK
     ];

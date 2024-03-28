@@ -151,8 +151,6 @@ class sql_db
     // TODO try to use the class name if possible
     const TBL_PHRASE = 'phrase';
     const TBL_FORMULA = 'formula';
-    const TBL_SYS_LOG = 'sys_log';
-
 
     const TBL_USER_PREFIX = 'user_';
 
@@ -295,7 +293,7 @@ class sql_db
         ip_range_list::class,
         change::class,
         change_link::class,
-        sql_db::TBL_SYS_LOG,
+        sys_log::class,
         job::class,
         sql_db::VT_PHRASE_GROUP_LINK
     ];
