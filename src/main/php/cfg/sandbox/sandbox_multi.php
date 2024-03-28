@@ -1948,13 +1948,9 @@ class sandbox_multi extends db_object_multi_user
                     if ($this->type_id == $obj_to_check->type_id) {
                         $result = true;
                     } else {
-                        if ($this->type_id == sql_db::TBL_FORMULA
-                            and $obj_to_check->type_id == $phrase_types->id(phrase_type::FORMULA_LINK)) {
-                            // if one is a formula and the other is a formula link word, the two objects are representing the same formula object (but the calling function should use the formula to update)
-                            $result = true;
-                        } elseif ($obj_to_check->type_id == sql_db::TBL_FORMULA
+                        if ($obj_to_check::class == formula::class
                             and $this->type_id == $phrase_types->id(phrase_type::FORMULA_LINK)) {
-                            // like above, but the other way round
+                            // if one is a formula and the other is a formula link word, the two objects are representing the same formula object (but the calling function should use the formula to update)
                             $result = true;
                         } elseif ($this->type_id == $phrase_types->id(phrase_type::FORMULA_LINK)
                             or $obj_to_check->type_id == $phrase_types->id(phrase_type::FORMULA_LINK)) {
@@ -2270,7 +2266,7 @@ class sandbox_multi extends db_object_multi_user
                 if ($result->is_ok()) {
                     $db_con->set_class(element::class);
                     $db_con->set_usr($this->user()->id());
-                    $msg = $db_con->delete_old(sql_db::TBL_FORMULA . sql_db::FLD_EXT_ID, $this->id);
+                    $msg = $db_con->delete_old($this->id_field(), $this->id);
                     $result->add_message($msg);
                 }
 
@@ -2278,7 +2274,7 @@ class sandbox_multi extends db_object_multi_user
                 if ($result->is_ok()) {
                     $db_con->set_class(result::class);
                     $db_con->set_usr($this->user()->id());
-                    $msg = $db_con->delete_old(sql_db::TBL_FORMULA . sql_db::FLD_EXT_ID, $this->id);
+                    $msg = $db_con->delete_old($this->id_field(), $this->id);
                     $result->add_message($msg);
                 }
 

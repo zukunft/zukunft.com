@@ -150,7 +150,6 @@ class sql_db
     // TODO use const for all object names
     // TODO try to use the class name if possible
     const TBL_PHRASE = 'phrase';
-    const TBL_FORMULA = 'formula';
 
     const TBL_USER_PREFIX = 'user_';
 
@@ -3423,10 +3422,10 @@ class sql_db
      * create the SQL parameters to count the number of rows related to a database table type
      * @return ?int the number of rows or null if something went wrong
      */
-    function count(string $type_name = '', string $id_fld = ''): ?int
+    function count(string $class = '', string $id_fld = ''): ?int
     {
-        if ($type_name != '') {
-            $this->set_class($type_name);
+        if ($class != '') {
+            $this->set_class($class);
         }
         return $this->get1_int($this->count_qp());
     }
@@ -3437,11 +3436,12 @@ class sql_db
      */
     function count_qp(string $class_name = '', string $id_fld = ''): sql_par
     {
+        $lib = new library();
         if ($class_name == '') {
-            $class_name = $this->class;
+            $class_name = $lib->class_to_name($this->class);
         }
         $qp = new sql_par($class_name);
-        $qp->name = $this->class . '_count';
+        $qp->name = $class_name . '_count';
         $qp->sql = $this->count_sql($qp->name, $id_fld);
         return $qp;
     }
@@ -3461,11 +3461,10 @@ class sql_db
         if ($sql_name == '') {
             $sql_name = $class . '_count';
         }
-        $sql = 'PREPARE ' . $sql_name . ' AS
+        return 'PREPARE ' . $sql_name . ' AS
                     SELECT count(' . self::STD_TBL . '.' . $id_fld . ') + count(' . self::USR_TBL . '.' . $id_fld . ') AS count
                       FROM ' . $this->table . ' ' . self::STD_TBL . '
                  LEFT JOIN ' . sql_db::USER_PREFIX . $this->table . '  ' . self::USR_TBL . ' ON ' . self::STD_TBL . '.' . $id_fld . ' = ' . self::USR_TBL . '.' . $id_fld . ';';
-        return $sql;
     }
 
     /**

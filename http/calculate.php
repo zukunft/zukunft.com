@@ -32,11 +32,13 @@
 
 */
 
+use cfg\formula;
 use cfg\formula_list;
 use cfg\library;
-use cfg\result_list;
+use cfg\result\result_list;
 use cfg\db\sql_db;
 use cfg\user;
+use controller\controller;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . '/../';
@@ -65,7 +67,7 @@ if ($usr->id() > 0) {
     log_debug("create the calculation queue ... ");
 
     // estimate the block size for useful UI updates
-    $total_formulas = $db_con->count(sql_db::TBL_FORMULA);
+    $total_formulas = $db_con->count(formula::class);
     $calc_blocks = (new formula_list($usr))->calc_blocks($db_con, $total_formulas);
     $block_size = max(1, round($total_formulas / $calc_blocks, 0));
 

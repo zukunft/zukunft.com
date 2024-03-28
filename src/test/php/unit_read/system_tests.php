@@ -35,6 +35,7 @@ namespace unit_read;
 include_once MODEL_SYSTEM_PATH . 'sys_log.php';
 include_once DB_PATH . 'db_check.php';
 
+use cfg\formula;
 use cfg\job_type_list;
 use cfg\db\db_check;
 use cfg\sys_log_status;
@@ -86,7 +87,7 @@ class system_tests
 
         $t->subheader('SQL database read tests');
 
-        $t->assert_greater_zero('sql_db->count', $db_con->count(sql_db::TBL_FORMULA));
+        $t->assert_greater_zero('sql_db->count', $db_con->count(formula::class));
 
         /*
          * SQL database consistency tests

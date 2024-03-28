@@ -602,7 +602,7 @@ class formula_list extends sandbox_list
      */
     function count_db(sql_db $db_con): ?int
     {
-        return $db_con->count(sql_db::TBL_FORMULA);
+        return $db_con->count(formula::class);
     }
 
 
@@ -711,7 +711,7 @@ class formula_list extends sandbox_list
     {
         $cfg = new config();
         if ($total_formulas == 0) {
-            $total_formulas = $db_con->count(sql_db::TBL_FORMULA);
+            $total_formulas = $db_con->count(formula::class);
         }
         $avg_calc_time = $cfg->get_db(config::AVG_CALC_TIME, $db_con);
         $total_expected_time = $total_formulas * $avg_calc_time;
