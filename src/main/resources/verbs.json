@@ -164,6 +164,14 @@
       "name_plural": "are selectors for",
       "name_plural_reverse": "are grouped by",
       "name_reverse": "is grouped by"
+    },
+    {
+      "name": "is symbol for",
+      "code_id": "symbol",
+      "description": "is used as a symbol for",
+      "name_plural_reverse": "can have symbols",
+      "name_plural": "are symbols for",
+      "name_reverse": "can have symbol"
     }
   ]
 }

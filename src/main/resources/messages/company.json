@@ -7,6 +7,101 @@
   ],
   "words": [
     {
+      "name": "Currency",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Currency",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q8142",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Euro",
+      "refs": [
+        {
+          "name": "Euro",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "US dollar",
+      "refs": [
+        {
+          "name": "United States dollar",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Pound sterling",
+      "refs": [
+        {
+          "name": "Pound sterling",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Japanese yen",
+      "refs": [
+        {
+          "name": "Japanese yen",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Denomination"
+    },
+    {
+      "name": "pence"
+    },
+    {
+      "name": "€",
+      "refs": [
+        {
+          "name": "Euro_sign",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "$",
+      "refs": [
+        {
+          "name": "Dollar_sign",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "£",
+      "refs": [
+        {
+          "name": "Pound_sign",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "¥",
+      "refs": [
+        {
+          "name": "Yen and yuan sign",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "p"
+    },
+    {
       "name": "Equity"
     },
     {
@@ -25,11 +120,75 @@
       "name": "total"
     }
   ],
+  "triples": [
+    {
+      "from": "Euro",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "US dollar",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "Pound sterling",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "Japanese yen",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "name": "Currency denomination",
+      "from": "Currency",
+      "verb": "can use",
+      "to": "Denomination",
+      "refs": [
+        {
+          "name": "Denomination_(currency)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "from": "€",
+      "verb": "is symbol for",
+      "to": "Euro"
+    },
+    {
+      "from": "$",
+      "verb": "is symbol for",
+      "to": "US dollar"
+    },
+    {
+      "from": "£",
+      "verb": "is symbol for",
+      "to": "Pound sterling"
+    },
+    {
+      "from": "¥",
+      "verb": "is symbol for",
+      "to": "Japanese yen"
+    },
+    {
+      "from": "p",
+      "verb": "is symbol for",
+      "to": "pence"
+    }
+  ],
   "formulas": [
     {
       "name": "PE Ratio",
       "expression": "= \"Share Price\" / \"Earnings\"",
       "assigned_word": "Share"
+    },
+    {
+      "name": "scalte pence to Pound",
+      "expression": "\"Pound\" = \"pence\" * 100",
+      "assigned_word": "pence"
     }
   ],
   "views": [
