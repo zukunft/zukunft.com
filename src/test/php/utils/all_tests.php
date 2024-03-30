@@ -39,10 +39,19 @@ const ROOT_PATH = __DIR__;
 const TEST_PATH = ROOT_PATH . '/../'; // the test base path
 const UNIT_WRITE_PATH = TEST_PATH . 'unit_write/'; // for the unit tests that save to database (and cleanup the test data after completion)
 
+// test settings
+
+const ERROR_LIMIT = 0; // increase to 1 or more to detect more than one error message with one run
+const ONLY_UNIT_TESTS = false; // set to true if only the unit tests should be performed
+const RESET_DB = true; // if true the database is completely overwritten for testing; must always be false for UAT and PROD
+
 include_once UNIT_WRITE_PATH . 'all_unit_write_tests.php';
 
 use cfg\import\import_file;
+use cfg\ip_range;
+use cfg\library;
 use cfg\user;
+use cfg\user\user_profile;
 use unit\lib_tests;
 use unit_write\all_unit_write_tests;
 
@@ -54,46 +63,55 @@ class all_tests extends all_unit_write_tests
         global $usr;
         global $errors;
 
+        // init tests
         $errors = 0;
-        $error_limit = 0;
-        $this->header('Start all the zukunft.com tests');
+        $this->header('Start of all the zukunft.com tests');
 
         // run the unit tests without database connection
         $this->run_unit();
 
-        // reload the setting lists after using dummy list for the unit tests
-        if ($errors <= $error_limit) {
-            $db_con->close();
-            $db_con = prg_restart("reload cache after unit testing");
-        }
-
-        // create the testing users
-        if ($errors <= $error_limit) {
-            $this->set_users();
-            $usr = $this->usr1;
-        }
-
-        // check that the main database test entries are still active
-        if ($errors <= $error_limit) {
-            $this->create_test_db_entries($this);
-        }
-
-        // run the unit database tests
-        if ($errors <= $error_limit) {
-            $this->init_unit_db_tests();
-            $this->usr1->load_usr_data();
+        // run the database read tests
+        if ($errors <= ERROR_LIMIT and !ONLY_UNIT_TESTS) {
             $this->run_unit_db_tests($this);
         }
 
-        // cleanup also before testing to remove any leftovers
-        if ($errors <= $error_limit) {
-            $this->clean_up_unit_db_tests();
+        if (RESET_DB and $errors <= ERROR_LIMIT and !ONLY_UNIT_TESTS) {
+            $this->header('Start database recreation');
+
+            // check if at least some database tables still exists
+            $lib = new library();
+            $ip_tbl_name = $lib->class_to_name(ip_range::class);
+            if ($db_con->has_table($ip_tbl_name)) {
+                $result = $usr->get();
+            } else {
+                $usr->set_id(SYSTEM_USER_ID);
+                $usr->set_profile(user_profile::ADMIN);
+            }
+
+            // remember the user
+            $test_usr = $usr;
+
+            // use the system user for the database updates
+            if ($db_con->has_table($ip_tbl_name)) {
+                $usr->load_by_id(SYSTEM_USER_ID);
+            } else {
+                $usr->set_id(SYSTEM_USER_ID);
+                $usr->set_profile(user_profile::ADMIN);
+            }
+
+            // drop all old database tables
+            foreach (DB_TABLE_LIST as $table_name) {
+                $db_con->drop_table($table_name);
+            }
+            $db_con->setup_db();
+
+            // restore the test user
+            $usr = $test_usr;
         }
 
         // switch to the test user
         // create the system user before the local user and admin to get the desired database id
-        if ($errors <= $error_limit) {
-            $usr = new user;
+        if ($errors <= ERROR_LIMIT and !ONLY_UNIT_TESTS) {
             $usr->load_by_profile_code(user::SYSTEM_TEST_PROFILE_CODE_ID, $db_con);
             if ($usr->id() <= 0) {
 
@@ -116,7 +134,7 @@ class all_tests extends all_unit_write_tests
             // start testing the system functionality
             // --------------------------------------
 
-            if ($errors <= $error_limit) {
+            if ($errors <= ERROR_LIMIT) {
                 run_system_test($this);
                 run_user_test($this);
             }
@@ -126,14 +144,19 @@ class all_tests extends all_unit_write_tests
             //$this->test_api_write_no_rest_all();
             //$this->test_api_write_all();
 
-            if ($errors <= $error_limit) {
+            if ($errors <= ERROR_LIMIT) {
                 run_db_link_test($this);
                 run_sandbox_test($this);
             }
 
-            if ($errors <= $error_limit) {
+            if ($errors <= ERROR_LIMIT) {
                 (new lib_tests)->run($this); // test functions not yet split into single unit tests
 
+                // create the test dataset to check the basic write functions
+                $this->set_users();
+                $this->create_test_db_entries($this);
+
+                // run the db write tests
                 $this->run_db_write_tests($this);
 
                 run_display_test($this);

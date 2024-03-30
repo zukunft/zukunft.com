@@ -41,15 +41,34 @@ use api\word\word as word_api;
 use cfg\user_message;
 use cfg\verb;
 use html\types\type_lists as type_list_dsp;
+use test\all_tests;
 use unit\api_tests;
 use unit\all_unit_tests;
 
 class all_unit_read_tests extends all_unit_tests
 {
 
-    function run_unit_db_tests(): void
+    function run_unit_db_tests(all_tests $t): void
     {
+        global $db_con;
+        global $usr;
+
         $this->header('Start the zukunft.com unit database read only tests');
+
+        // reload the setting lists after using dummy list for the unit tests
+        $db_con->close();
+        $db_con = prg_restart("reload cache after unit testing");
+
+        // create the testing users
+        $this->set_users();
+        $usr = $this->usr1;
+
+        // check that the main database test entries are still active
+        $this->create_test_db_entries($t);
+
+        // run the unit database tests
+        $this->init_unit_db_tests();
+        $this->usr1->load_usr_data();
 
         // do the database unit tests
         (new system_tests)->run($this);
@@ -91,6 +110,8 @@ class all_unit_read_tests extends all_unit_tests
         $api_test->run_ui_test($this);
         (new export_tests())->run($this);
 
+        // cleanup also before testing to remove any leftovers
+        $this->clean_up_unit_db_tests();
 
     }
 

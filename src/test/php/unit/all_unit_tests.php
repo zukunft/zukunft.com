@@ -155,7 +155,7 @@ class all_unit_tests extends test_cleanup
      */
     function run_unit(): void
     {
-        $this->header('Start the zukunft.com unit tests');
+        $this->header('Start unit tests');
 
         // remember the global var for restore after the unit tests
         global $db_con;

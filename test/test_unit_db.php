@@ -34,6 +34,7 @@
 
 // standard zukunft header for callable php files to allow debugging and lib loading
 use cfg\user;
+use test\all_tests;
 use unit_read\all_unit_read_tests;
 
 global $debug;
@@ -73,7 +74,7 @@ if ($start_usr->id() > 0) {
         // --------------------------------------------------
 
         // prepare testing
-        $t = new all_unit_read_tests();
+        $t = new all_tests();
 
         // set the testing users
         $t->set_users();
@@ -85,7 +86,7 @@ if ($start_usr->id() > 0) {
         // load the predefined objects like the verbs and system views
         $t->usr1->load_usr_data();
 
-        $t->run_unit_db_tests();
+        $t->run_unit_db_tests($t);
 
         // display the test results
         $t->dsp_result_html();

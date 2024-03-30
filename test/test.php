@@ -139,11 +139,6 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'zu_lib.php';
 
-// TODO dismiss by refactoring phrase_list_dsp_old
-include_once MODEL_PHRASE_PATH . 'phr_ids.php';
-include_once MODEL_PHRASE_PATH . 'phrase_list.php';
-include_once MODEL_IMPORT_PATH . 'import_file.php';
-
 // load the testing base functions
 const PHP_TEST_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'test' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_TEST_PATH . 'utils/test_base.php';
@@ -165,7 +160,7 @@ if ($start_usr->id() > 0) {
     if ($start_usr->is_admin()) {
 
         // run all unit, read and write tests
-        $msg = (new all_tests())->run_all_tests();
+        (new all_tests())->run_all_tests();
 
     }
 }
