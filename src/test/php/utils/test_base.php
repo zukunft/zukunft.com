@@ -257,6 +257,7 @@ include_once $path_unit_ui . 'test_word_ui.php';
 include_once $path_unit_ui . 'value_test_ui.php';
 
 // load the testing functions that save data to the database
+include_once $path_unit_write . 'all_unit_write_tests.php';
 include_once $path_unit_write . 'word_tests.php';
 include_once $path_unit_write . 'word_list_tests.php';
 include_once $path_unit_write . 'verb_tests.php';
@@ -284,6 +285,9 @@ include_once $path_unit_write . 'component_link_tests.php';
 
 include_once $path_unit_write . 'test_word_display.php';
 include_once $path_unit_write . 'test_math.php';
+
+//
+include_once $path_utils . 'all_tests.php';
 
 // load the integration test functions
 include_once $path_it . 'test_import.php';

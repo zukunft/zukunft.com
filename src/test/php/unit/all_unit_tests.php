@@ -110,6 +110,7 @@ use cfg\user_profile_list;
 use cfg\verb_list;
 use cfg\view_sys_list;
 use cfg\view_type_list;
+use test\all_tests;
 use test\test_cleanup;
 use unit\html\change_log as change_log_html_tests;
 use unit\html\component as component_html_tests;
@@ -163,7 +164,6 @@ class all_unit_tests extends test_cleanup
         global $usr_sys;
         global $user_profiles;
         global $errors;
-        $errors = 0;
         $global_db_con = $db_con;
         $global_sql_names = $sql_names;
         $global_usr = $usr;
@@ -218,7 +218,8 @@ class all_unit_tests extends test_cleanup
         $this->init_log_fields();
 
         // do the general unit tests
-        (new lib_tests)->run($this); // test functions not yet split into single unit tests
+        $all = new all_tests();
+        (new lib_tests)->run($all); // test functions not yet split into single unit tests
         (new math_tests)->run($this);
         (new system_tests)->run($this);
         (new sys_log_tests)->run($this); // TODO add assert_api_to_dsp
@@ -319,7 +320,6 @@ class all_unit_tests extends test_cleanup
 
         $sys_log_stati = new sys_log_status_list();
         $sys_log_stati->load_dummy();
-
     }
 
     /**
@@ -332,7 +332,6 @@ class all_unit_tests extends test_cleanup
 
         $system_users = new user_list($usr_sys);
         $system_users->load_dummy();
-
     }
 
     /**

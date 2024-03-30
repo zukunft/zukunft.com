@@ -42,6 +42,7 @@ use cfg\library;
 use cfg\triple;
 use cfg\verb;
 use cfg\word;
+use test\all_tests;
 use test\test_cleanup;
 use function test\zu_test_time_setup;
 
@@ -269,7 +270,7 @@ class triple_tests
 
     }
 
-    function create_test_triples(test_cleanup $t): void
+    function create_test_triples(all_tests $t): void
     {
         $t->header('Check if all base phrases are correct');
 

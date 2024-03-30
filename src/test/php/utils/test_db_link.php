@@ -31,9 +31,9 @@
 */
 
 use cfg\log\change_table_list;
-use test\test_cleanup;
+use test\all_tests;
 
-function run_db_link_test(test_cleanup $t): void
+function run_db_link_test(all_tests $t): void
 {
     global $change_table_list;
 

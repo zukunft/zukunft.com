@@ -37,13 +37,13 @@ include_once MODEL_USER_PATH . 'user_message.php';
 use cfg\library;
 use DateTimeInterface;
 use cfg\user_message;
-use test\test_cleanup;
+use test\all_tests;
 
 global $db_con;
 
 class lib_tests
 {
-    function run(test_cleanup $t): void
+    function run(all_tests $t): void
     {
         global $debug;
         $lib = new library();

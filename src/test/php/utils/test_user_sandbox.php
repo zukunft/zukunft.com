@@ -35,9 +35,9 @@ use api\ref\source as source_api;
 use cfg\phrase_type;
 use cfg\source;
 use cfg\word;
-use test\test_cleanup;
+use test\all_tests;
 
-function run_sandbox_test(test_cleanup $t): void
+function run_sandbox_test(all_tests $t): void
 {
 
     global $phrase_types;

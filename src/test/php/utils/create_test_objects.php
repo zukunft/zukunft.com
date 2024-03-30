@@ -2755,7 +2755,7 @@ class create_test_objects extends test_base
      * create all database entries used for the read db unit tests
      * @return void
      */
-    function create_test_db_entries(all_unit_read_tests $t): void
+    function create_test_db_entries(all_tests $t): void
     {
         (new word_tests())->create_test_words($t);
         (new triple_tests())->create_test_triples($t);

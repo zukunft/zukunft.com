@@ -46,6 +46,7 @@ use cfg\sandbox_named;
 use cfg\triple;
 use cfg\verb;
 use cfg\word;
+use test\all_tests;
 use test\test_cleanup;
 
 class word_tests
@@ -505,7 +506,7 @@ class word_tests
         */
     }
 
-    function create_test_words(test_cleanup $t): void
+    function create_test_words(all_tests $t): void
     {
 
         $t->header('Check if all base words are correct');

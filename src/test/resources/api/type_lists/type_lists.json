@@ -2239,6 +2239,17 @@
         "frm_name": null,
         "usage": 0,
         "id": 21
+      },
+      {
+        "name": "is symbol for",
+        "code_id": "symbol",
+        "description": "is used as a symbol for",
+        "plural": "are symbols for",
+        "reverse": "can have symbol",
+        "rev_plural": "can have symbols",
+        "frm_name": null,
+        "usage": 0,
+        "id": 22
       }
     ],
     "system_views": [

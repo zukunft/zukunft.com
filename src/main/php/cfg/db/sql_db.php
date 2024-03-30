@@ -122,7 +122,7 @@ use html\html_base;
 use mysqli;
 use mysqli_result;
 use PDOException;
-use unit_read\all_unit_read_tests;
+use test\all_tests;
 
 class sql_db
 {
@@ -732,7 +732,7 @@ class sql_db
             $this->db_check_missing_owner();
 
             // create the test dataset to check the basic write functions
-            $t = new all_unit_read_tests();
+            $t = new all_tests();
             $t->set_users();
             $t->create_test_db_entries($t);
 

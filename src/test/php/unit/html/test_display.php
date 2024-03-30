@@ -40,9 +40,9 @@ use controller\controller;
 use html\button;
 use html\html_base;
 use html\msg;
-use test\test_cleanup;
+use test\all_tests;
 
-function run_display_test(test_cleanup $t): void
+function run_display_test(all_tests $t): void
 {
 
     global $usr;

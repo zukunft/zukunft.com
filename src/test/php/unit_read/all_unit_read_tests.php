@@ -38,6 +38,7 @@ use api\phrase\group as group_api;
 use api\value\value as value_api;
 use api\word\triple as triple_api;
 use api\word\word as word_api;
+use cfg\user_message;
 use cfg\verb;
 use html\types\type_lists as type_list_dsp;
 use unit\api_tests;

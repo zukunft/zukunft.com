@@ -42,9 +42,9 @@ use html\word\word as word_dsp;
 use cfg\library;
 use cfg\verb;
 use cfg\word;
-use test\test_cleanup;
+use test\all_tests;
 
-function run_word_display_test(test_cleanup $t): void
+function run_word_display_test(all_tests $t): void
 {
 
     global $usr;
