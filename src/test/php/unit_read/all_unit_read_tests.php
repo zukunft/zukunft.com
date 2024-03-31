@@ -115,7 +115,7 @@ class all_unit_read_tests extends all_unit_tests
 
     }
 
-    function init_unit_db_tests(): void
+    private function init_unit_db_tests(): void
     {
         // add functional test rows to the database for read testing e.g. exclude sandbox entries
         $this->test_triple(
@@ -138,7 +138,7 @@ class all_unit_read_tests extends all_unit_tests
      * to have a clean database without test rows
      * @return void
      */
-    function clean_up_unit_db_tests(): void
+    private function clean_up_unit_db_tests(): void
     {
         //$this->del_triple_by_name(triple_api::TN_READ_NAME);
         //$phr_grp = $this->load_phrase_group_by_name(group_api::TN_READ);

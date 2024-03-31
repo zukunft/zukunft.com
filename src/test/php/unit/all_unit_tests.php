@@ -87,6 +87,7 @@ include_once API_SANDBOX_PATH . 'sandbox_value.php';
 use cfg\component\component_link_type_list;
 use cfg\component\position_type_list;
 use cfg\component\component_type_list;
+use cfg\db\db_check;
 use cfg\db\sql_db;
 use cfg\element_type_list;
 use cfg\formula_link_type_list;
@@ -151,6 +152,28 @@ class all_unit_tests extends test_cleanup
     private int $seq_id = 0;
 
     /**
+     * run a single test for faster debugging
+     */
+    function run_single(): void
+    {
+        // prepare for unit testing
+        $this->db_con_for_unit_tests();
+        $this->users_for_unit_tests();
+        $this->init_unit_tests();
+
+        // run the selected test
+        (new system_tests)->run($this);
+
+        /*
+        global $db_con;
+
+        // to test the database upgrade
+        $db_chk = new db_check();
+        $db_chk->db_upgrade_0_0_3($db_con);
+        */
+    }
+
+    /**
      * run all unit test in a useful order
      */
     function run_unit(): void
@@ -161,61 +184,18 @@ class all_unit_tests extends test_cleanup
         global $db_con;
         global $sql_names;
         global $usr;
-        global $usr_sys;
-        global $user_profiles;
-        global $errors;
         $global_db_con = $db_con;
         $global_sql_names = $sql_names;
         $global_usr = $usr;
 
-        // just to test the database abstraction layer, but without real connection to any database
-        $db_con = new sql_db;
-        $db_con->db_type = SQL_DB_TYPE;
-        // create a list with all prepared sql queries to check if the name is unique
-        $sql_names = array();
+        // create a dummy db connection for testing
+        $this->db_con_for_unit_tests();
 
-        // create a dummy user for testing
-        $usr = new user;
-        $usr->set_id(user::SYSTEM_TEST_ID);
-        $usr->name = user::SYSTEM_TEST_NAME;
-        $this->usr1 = $usr;
-
-        // create a dummy system user for unit testing
-        $usr_sys = new user;
-        $usr_sys->set_id(user::SYSTEM_ID);
-        $usr_sys->name = user::SYSTEM_NAME;
+        // create a dummy users for testing
+        $this->users_for_unit_tests();
 
         // prepare the unit tests
-        $this->init_sys_log_status();
-        $this->init_sys_users();
-        $this->init_user_profiles();
-        $this->init_job_types();
-
-        // set the profile of the test users
-        $usr->profile_id = $user_profiles->id(user_profile::NORMAL);
-        $usr_sys->profile_id = $user_profiles->id(user_profile::SYSTEM);
-
-        // continue with preparing unit tests
-        $this->init_phrase_types();
-        $this->init_verbs();
-        $this->init_formula_types();
-        $this->init_formula_link_types();
-        $this->init_element_types();
-        $this->init_views($usr);
-        $this->init_view_types();
-        $this->init_component_types();
-        $this->init_component_link_types();
-        $this->init_component_pos_types();
-        $this->init_ref_types();
-        $this->init_source_types();
-        $this->init_share_types();
-        $this->init_protection_types();
-        $this->init_languages();
-        $this->init_language_forms();
-        $this->init_job_types();
-        $this->init_log_actions();
-        $this->init_log_tables();
-        $this->init_log_fields();
+        $this->init_unit_tests();
 
         // do the general unit tests
         $all = new all_tests();
@@ -312,9 +292,88 @@ class all_unit_tests extends test_cleanup
     }
 
     /**
+     * create a dummy database connection for internal unit testing
+     * @return void
+     */
+    private function db_con_for_unit_tests(): void
+    {
+        global $db_con;
+        global $sql_names;
+
+        // just to test the database abstraction layer, but without real connection to any database
+        $db_con = new sql_db;
+        $db_con->db_type = SQL_DB_TYPE;
+        // create a list with all prepared sql queries to check if the name is unique
+        $sql_names = array();
+
+    }
+
+    /**
+     * create the dummy users for internal unit testing
+     * @return void
+     */
+    private function users_for_unit_tests(): void
+    {
+        global $usr;
+        global $usr_sys;
+
+        // create a dummy user for testing
+        $usr = new user;
+        $usr->set_id(user::SYSTEM_TEST_ID);
+        $usr->name = user::SYSTEM_TEST_NAME;
+        $this->usr1 = $usr;
+
+        // create a dummy system user for unit testing
+        $usr_sys = new user;
+        $usr_sys->set_id(user::SYSTEM_ID);
+        $usr_sys->name = user::SYSTEM_NAME;
+
+    }
+
+    private function init_unit_tests(): void
+    {
+        global $usr;
+        global $usr_sys;
+        global $user_profiles;
+
+        // prepare the unit tests
+        $this->init_sys_log_status();
+        $this->init_sys_users();
+        $this->init_user_profiles();
+        $this->init_job_types();
+
+        // set the profile of the test users
+        $usr->profile_id = $user_profiles->id(user_profile::NORMAL);
+        $usr_sys->profile_id = $user_profiles->id(user_profile::SYSTEM);
+
+        // continue with preparing unit tests
+        $this->init_phrase_types();
+        $this->init_verbs();
+        $this->init_formula_types();
+        $this->init_formula_link_types();
+        $this->init_element_types();
+        $this->init_views($usr);
+        $this->init_view_types();
+        $this->init_component_types();
+        $this->init_component_link_types();
+        $this->init_component_pos_types();
+        $this->init_ref_types();
+        $this->init_source_types();
+        $this->init_share_types();
+        $this->init_protection_types();
+        $this->init_languages();
+        $this->init_language_forms();
+        $this->init_job_types();
+        $this->init_log_actions();
+        $this->init_log_tables();
+        $this->init_log_fields();
+
+    }
+
+    /**
      * create the system log status list for the unit tests without database connection
      */
-    function init_sys_log_status(): void
+    private function init_sys_log_status(): void
     {
         global $sys_log_stati;
 
@@ -325,7 +384,7 @@ class all_unit_tests extends test_cleanup
     /**
      * create the system user list for the unit tests without database connection
      */
-    function init_sys_users(): void
+    private function init_sys_users(): void
     {
         global $usr_sys;
         global $system_users;
@@ -337,7 +396,7 @@ class all_unit_tests extends test_cleanup
     /**
      * create the user profiles for the unit tests without database connection
      */
-    function init_user_profiles(): void
+    private function init_user_profiles(): void
     {
         global $user_profiles;
 
@@ -349,7 +408,7 @@ class all_unit_tests extends test_cleanup
     /**
      * create word type array for the unit tests without database connection
      */
-    function init_phrase_types(): void
+    private function init_phrase_types(): void
     {
         global $phrase_types;
 
@@ -361,7 +420,7 @@ class all_unit_tests extends test_cleanup
     /**
      * create verb array for the unit tests without database connection
      */
-    function init_verbs(): void
+    private function init_verbs(): void
     {
         global $verbs;
 
@@ -373,7 +432,7 @@ class all_unit_tests extends test_cleanup
     /**
      * create formula type array for the unit tests without database connection
      */
-    function init_formula_types(): void
+    private function init_formula_types(): void
     {
         global $formula_types;
 
@@ -385,7 +444,7 @@ class all_unit_tests extends test_cleanup
     /**
      * create formula link type array for the unit tests without database connection
      */
-    function init_formula_link_types(): void
+    private function init_formula_link_types(): void
     {
         global $formula_link_types;
 
@@ -397,7 +456,7 @@ class all_unit_tests extends test_cleanup
     /**
      * create formula element type array for the unit tests without database connection
      */
-    function init_element_types(): void
+    private function init_element_types(): void
     {
         global $element_types;
 
@@ -409,7 +468,7 @@ class all_unit_tests extends test_cleanup
     /**
      * create an array of the system views for the unit tests without database connection
      */
-    function init_views(user $usr): void
+    private function init_views(user $usr): void
     {
         global $system_views;
 
@@ -421,7 +480,7 @@ class all_unit_tests extends test_cleanup
     /**
      * create view type array for the unit tests without database connection
      */
-    function init_view_types(): void
+    private function init_view_types(): void
     {
         global $view_types;
 
@@ -433,7 +492,7 @@ class all_unit_tests extends test_cleanup
     /**
      * create view component type array for the unit tests without database connection
      */
-    function init_component_types(): void
+    private function init_component_types(): void
     {
         global $component_types;
 
@@ -445,7 +504,7 @@ class all_unit_tests extends test_cleanup
     /**
      * create view component position type array for the unit tests without database connection
      */
-    function init_component_pos_types(): void
+    private function init_component_pos_types(): void
     {
         global $position_types;
 
@@ -457,7 +516,7 @@ class all_unit_tests extends test_cleanup
     /**
      * create view component link type array for the unit tests without database connection
      */
-    function init_component_link_types(): void
+    private function init_component_link_types(): void
     {
         global $component_link_types;
 
@@ -469,7 +528,7 @@ class all_unit_tests extends test_cleanup
     /**
      * create ref type array for the unit tests without database connection
      */
-    function init_ref_types(): void
+    private function init_ref_types(): void
     {
         global $ref_types;
 
@@ -481,7 +540,7 @@ class all_unit_tests extends test_cleanup
     /**
      * create source type array for the unit tests without database connection
      */
-    function init_source_types(): void
+    private function init_source_types(): void
     {
         global $source_types;
 
@@ -493,7 +552,7 @@ class all_unit_tests extends test_cleanup
     /**
      * create share type array for the unit tests without database connection
      */
-    function init_share_types(): void
+    private function init_share_types(): void
     {
         global $share_types;
 
@@ -505,7 +564,7 @@ class all_unit_tests extends test_cleanup
     /**
      * create protection type array for the unit tests without database connection
      */
-    function init_protection_types(): void
+    private function init_protection_types(): void
     {
         global $protection_types;
 
@@ -517,7 +576,7 @@ class all_unit_tests extends test_cleanup
     /**
      * create languages array for the unit tests without database connection
      */
-    function init_languages(): void
+    private function init_languages(): void
     {
         global $languages;
 
@@ -529,7 +588,7 @@ class all_unit_tests extends test_cleanup
     /**
      * create language forms array for the unit tests without database connection
      */
-    function init_language_forms(): void
+    private function init_language_forms(): void
     {
         global $language_forms;
 
@@ -541,7 +600,7 @@ class all_unit_tests extends test_cleanup
     /**
      * create the job types array for the unit tests without database connection
      */
-    function init_job_types(): void
+    private function init_job_types(): void
     {
         global $job_types;
 
@@ -553,7 +612,7 @@ class all_unit_tests extends test_cleanup
     /**
      * create log table array for the unit tests without database connection
      */
-    function init_log_actions(): void
+    private function init_log_actions(): void
     {
         global $change_action_list;
 
@@ -565,7 +624,7 @@ class all_unit_tests extends test_cleanup
     /**
      * create log table array for the unit tests without database connection
      */
-    function init_log_tables(): void
+    private function init_log_tables(): void
     {
         global $change_table_list;
 
@@ -577,7 +636,7 @@ class all_unit_tests extends test_cleanup
     /**
      * create log field array for the unit tests without database connection
      */
-    function init_log_fields(): void
+    private function init_log_fields(): void
     {
         global $change_field_list;
 
