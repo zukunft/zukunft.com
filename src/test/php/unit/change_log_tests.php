@@ -90,14 +90,14 @@ class change_log_tests
         $t->assert_sql_view_link_create($tbl_fld);
 
         $t->subheader('SQL statement creation tests for logging named objects e.g. formula');
-        $log = $t->dummy_change_log_named();
+        $log = $t->change_log_named();
         $t->assert_sql_table_create($log);
         $t->assert_sql_index_create($log);
         $t->assert_sql_foreign_key_create($log);
         // TODO add auto increment test for all mysql tables
 
         $t->subheader('SQL statement creation tests for logging standard value');
-        $log_val_std = $t->dummy_change_log_value();
+        $log_val_std = $t->change_log_value();
         $t->assert_sql_table_create($log_val_std);
         $t->assert_sql_index_create($log_val_std);
         $t->assert_sql_foreign_key_create($log_val_std);
@@ -121,8 +121,8 @@ class change_log_tests
         $t->assert_sql_foreign_key_create($log_lnk);
 
         $t->subheader('change log sql write');
-        $log = $t->dummy_change_log_named();
-        // $t->assert_sql_insert($db_con, $log);
+        $log = $t->change_log_named();
+        $t->assert_sql_insert($db_con, $log);
 
         $t->subheader('SQL statement tests');
         $log = new change($usr);

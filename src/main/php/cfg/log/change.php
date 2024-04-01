@@ -5,6 +5,18 @@
     cfg/log/change.php - for logging changes in named objects such as words and formulas
     ------------------
 
+    The main sections of this object are
+    - db const:          const for the database link
+    - object vars:       the variables of this change log object
+    - construct and map: including the mapping of the db row to this change log object
+    - cast:              create an api object and set the vars from an api json
+    - load:              database access object (DAO) functions
+    - save:              manage to update the database
+    - sql write:         sql statement creation to write to the database
+    - sql write fields:  field list for writing to the database
+    - display:           TODO to be move to frontend
+
+
     This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it
@@ -58,8 +70,8 @@ class change extends change_log
 {
 
     /*
-      * db const
-      */
+     * db const
+     */
 
     // user log database and JSON object field names for named user sandbox objects
     const FLD_FIELD_ID = 'change_field_id';
@@ -454,6 +466,8 @@ class change extends change_log
     function sql_insert(sql $sc): sql_par
     {
         $qp = $sc->sql_par(self::class, [sql_type::INSERT]);
+        $sc->set_class($this::class);
+        $sc->set_name($qp->name);
         $qp->sql = $sc->sql_insert($this->db_fields(), $this->db_values());
         $qp->par = $this->db_values();
 
@@ -513,8 +527,6 @@ class change extends change_log
         $sql_values[] = $this->row_id;
         return $sql_values;
     }
-
-
 
 
     /*

@@ -1664,7 +1664,7 @@ class create_test_objects extends test_base
     /**
      * @return change a change log entry of a named user sandbox object with some dummy values
      */
-    function dummy_change_log_named(): change
+    function change_log_named(): change
     {
         global $usr_sys;
 
@@ -1681,7 +1681,7 @@ class create_test_objects extends test_base
     /**
      * @return change_norm_value a change log entry of a value with some dummy values and a standard group id
      */
-    function dummy_change_log_value(): change_norm_value
+    function change_log_value(): change_norm_value
     {
         global $usr_sys;
 
@@ -1806,7 +1806,7 @@ class create_test_objects extends test_base
     function dummy_change_log_list_named(): change_log_list
     {
         $log_lst = new change_log_list();
-        $log_lst->add($this->dummy_change_log_named());
+        $log_lst->add($this->change_log_named());
         return $log_lst;
     }
 
