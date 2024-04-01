@@ -1841,28 +1841,28 @@ class word extends sandbox_typed
      * get a list of database fields that have been updated
      * field list must be corresponding to the db_values_changed fields
      *
-     * @param sandbox|word $wrd the compare value to detect the changed fields
+     * @param sandbox|word $sbx the compare value to detect the changed fields
      * @param bool $usr_tbl true if the user table row should be updated
      * @return array list of the database field names that have been updated
      */
-    function db_fields_changed(sandbox|word $wrd, bool $usr_tbl = false): array
+    function db_fields_changed(sandbox|word $sbx, bool $usr_tbl = false): array
     {
-        $result = parent::db_fields_changed_named($wrd, $usr_tbl);
-        if ($wrd->type_id() <> $this->type_id()) {
+        $result = parent::db_fields_changed_named($sbx, $usr_tbl);
+        if ($sbx->type_id() <> $this->type_id()) {
             $result[] = phrase::FLD_TYPE;
         }
-        if ($wrd->view_id() <> $this->view_id()) {
+        if ($sbx->view_id() <> $this->view_id()) {
             $result[] = self::FLD_VIEW;
         }
         // TODO move to language forms
-        if ($wrd->plural <> $this->plural) {
+        if ($sbx->plural <> $this->plural) {
             $result[] = self::FLD_PLURAL;
         }
         // TODO rename to usage
-        if ($wrd->values <> $this->values) {
+        if ($sbx->values <> $this->values) {
             $result[] = self::FLD_VALUES;
         }
-        return array_merge($result, $this->db_fields_changed_sandbox($wrd));
+        return array_merge($result, $this->db_fields_changed_sandbox($sbx));
     }
 
     /**

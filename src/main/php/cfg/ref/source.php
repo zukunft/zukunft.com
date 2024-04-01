@@ -687,23 +687,23 @@ class source extends sandbox_typed
      * get a list of database fields that have been updated
      * field list must be corresponding to the db_values_changed fields
      *
-     * @param source $src the compare value to detect the changed fields
+     * @param sandbox|source $sbx the compare value to detect the changed fields
      * @param bool $usr_tbl true if the user table row should be updated
      * @return array list of the database field names that have been updated
      */
-    function db_fields_changed(source $src, bool $usr_tbl = false): array
+    function db_fields_changed(sandbox|source $sbx, bool $usr_tbl = false): array
     {
-        $result =  parent::db_fields_changed_named($src, $usr_tbl);
-        if ($src->type_id() <> $this->type_id()) {
+        $result =  parent::db_fields_changed_named($sbx, $usr_tbl);
+        if ($sbx->type_id() <> $this->type_id()) {
             $result[] = source::FLD_TYPE;
         }
-        if ($src->url <> $this->url) {
+        if ($sbx->url <> $this->url) {
             $result[] = self::FLD_URL;
         }
-        if ($src->code_id <> $this->code_id) {
+        if ($sbx->code_id <> $this->code_id) {
             $result[] = sql::FLD_CODE_ID;
         }
-        return array_merge($result, $this->db_fields_changed_sandbox($src));
+        return array_merge($result, $this->db_fields_changed_sandbox($sbx));
     }
 
     /**

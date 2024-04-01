@@ -1375,6 +1375,61 @@ class sandbox extends db_object_seq_id_user
      */
 
     /**
+     * update all fields and create or delete the user overwrite database row if needed
+     * TODO activate and use it
+     *
+     * @param sql_db $db_con the active database connection that should be used
+     * @param sandbox $db_obj this object with the variables set in the database before the update
+     * @param sandbox $norm_obj this object with the variables of the norm set as in the database before the update
+     * @return user_message if anything fails the message for the user to fix the issue
+     */
+    function save_all_fields(sql_db $db_con, sandbox $db_obj, sandbox $norm_obj): user_message
+    {
+        // always return a user message and if everything is fine, it is just empty
+        $usr_msg = new user_message();
+        // the sql creator is used more than once, so create it upfront
+        $sc = $db_con->sql_creator();
+        // if the user is allowed to change the norm row e.g. because no other user has used it, change the norm row directly
+        if ($this->can_change()) {
+            // if there is no difference between the user row and the norm row remove all fields from the user row
+            if ($this->no_diff($norm_obj)) {
+                if ($this->has_usr_cfg()) {
+                    $qp = $this->sql_delete($sc, true);
+                    $usr_msg->add($db_con->delete($qp, 'remove user overwrites of ' . $this->dsp_id()));
+                }
+                // check if some user overwrites can be removed
+                $this->del_usr_cfg_if_not_needed(); // don't care what the result is, because in most cases it is fine to keep the user sandbox row
+            } else {
+                // apply the changes directly to the norm db record
+                $qp = $this->sql_update($sc, $norm_obj);
+                $usr_msg->add($db_con->update($qp, 'update ' . $this->dsp_id()));
+            }
+        } else {
+            // if the norm row should not be changed by the user, create a user sandbox row if needed
+            if (!$this->has_usr_cfg()) {
+                if (!$this->add_usr_cfg()) {
+                    $usr_msg->add_message('creation of user sandbox for ' . $this->dsp_id() . ' failed');
+                }
+            }
+            if ($usr_msg->is_ok()) {
+                if ($this->no_diff($norm_obj)) {
+                    if ($this->has_usr_cfg()) {
+                        $qp = $this->sql_delete($sc, true);
+                        $usr_msg->add($db_con->delete($qp, 'remove user overwrites of ' . $this->dsp_id()));
+                    }
+                } else {
+                    // apply the changes directly to the norm db record
+                    $qp = $this->sql_update($sc, $norm_obj, true);
+                    $usr_msg->add($db_con->update($qp, 'update user row for ' . $this->dsp_id()));
+                }
+                // check if some user overwrites can be removed
+                $this->del_usr_cfg_if_not_needed(); // don't care what the result is, because in most cases it is fine to keep the user sandbox row
+            }
+        }
+        return $usr_msg;
+    }
+
+    /**
      * dummy function to save all updated word fields, which is always overwritten by the child class
      */
     function save_fields(sql_db $db_con, sandbox $db_rec, sandbox $std_rec): string
@@ -1470,6 +1525,21 @@ class sandbox extends db_object_seq_id_user
             }
         }
         return $result;
+    }
+
+    /**
+     * detects if this object has be changed compared to the given object
+     *
+     * @param sandbox $db_obj the user database or standard record for compare
+     * @return bool true if any of the fields does not match
+     */
+    function no_diff(sandbox $db_obj): bool
+    {
+        if (count($this->db_fields_changed($db_obj)) > 0) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     /**
@@ -1821,7 +1891,7 @@ class sandbox extends db_object_seq_id_user
                     if ($this->type_id == $obj_to_check->type_id) {
                         $result = true;
                     } else {
-                       if ($obj_to_check::class == formula::class
+                        if ($obj_to_check::class == formula::class
                             and $this->type_id == $phrase_types->id(phrase_type::FORMULA_LINK)) {
                             // if one is a formula and the other is a formula link word, the two objects are representing the same formula object (but the calling function should use the formula to update)
                             $result = true;
@@ -2071,13 +2141,19 @@ class sandbox extends db_object_seq_id_user
 
                     // check if the id parameters are supposed to be changed
                     if ($result == '') {
+                        // TODO for the prepared update just revered the name if not allowed
                         $result .= $this->save_id_if_updated($db_con, $db_rec, $std_rec);
                     }
 
                     // if a problem has appeared up to here, don't try to save the values
                     // the problem is shown to the user by the calling interactive script
                     if ($result == '') {
-                        $result .= $this->save_fields($db_con, $db_rec, $std_rec);
+                        // TODO activate when the prepared SQL is ready to use
+                        //if (!$this->sql_write_prepared()) {
+                            $result .= $this->save_fields($db_con, $db_rec, $std_rec);
+                        //} else {
+                        //    $result .= $this->save_all_fields($db_con, $db_rec, $std_rec)->get_last_message();
+                        //}
                     }
                 }
             }
@@ -2577,6 +2653,20 @@ class sandbox extends db_object_seq_id_user
         }
         return $result;
     }
+
+    /**
+     * dummy function get a list of database fields that have been updated
+     * should always be overwriten by the child object
+     *
+     * @param sandbox $sbx the compare value to detect the changed fields
+     * @param bool $usr_tbl true if the user table row should be updated
+     * @return array list of the database field names that have been updated
+     */
+    function db_fields_changed(sandbox $sbx, bool $usr_tbl = false): array
+    {
+        return array();
+    }
+
 
     /**
      * list of values that have been changed compared to a given object

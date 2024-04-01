@@ -930,6 +930,9 @@ class sandbox_named extends sandbox
 
             $log->row_id = $this->id;
             if ($log->add()) {
+                // TODO activate when the prepared SQL is ready to use
+                // only do the update here if the update is not done with one sql statement at the end
+                //if (!$this->sql_write_prepared()) {
                 $db_con->set_class($this::class);
                 $db_con->set_usr($this->user()->id);
                 if (!$db_con->update_old($this->id,
@@ -937,6 +940,7 @@ class sandbox_named extends sandbox
                     array($this->name))) {
                     $result .= 'update of name to ' . $this->name() . 'failed';
                 }
+                //}
             }
         }
         log_debug('for ' . $this->dsp_id() . ' done');

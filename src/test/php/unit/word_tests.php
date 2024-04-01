@@ -93,6 +93,9 @@ class word_tests
         $wrd_renamed = $wrd->cloned(word_api::TN_RENAMED);
         $t->assert_sql_update($db_con, $wrd_renamed, $wrd);
         $t->assert_sql_update($db_con, $wrd_renamed, $wrd, true);
+        // TODO activate db write with log
+        //$t->assert_sql_update($db_con, $wrd_renamed, $wrd, false, true);
+        //$t->assert_sql_update($db_con, $wrd_renamed, $wrd, true, true);
         $t->assert_sql_delete($db_con, $wrd);
         $t->assert_sql_delete($db_con, $wrd, true);
         // TODO activate db write with log
@@ -100,6 +103,9 @@ class word_tests
         //$t->assert_sql_delete($db_con, $wrd, true, true);
         $t->assert_sql_delete($db_con, $wrd, false, false, true);
         $t->assert_sql_delete($db_con, $wrd, true, false, true);
+        // TODO activate db write with log
+        //$t->assert_sql_delete($db_con, $wrd, false, true, true);
+        //$t->assert_sql_delete($db_con, $wrd, true, true, true);
 
 
         $t->subheader('word api unit tests');
