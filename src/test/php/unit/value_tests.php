@@ -37,6 +37,7 @@ include_once MODEL_VALUE_PATH . 'value_time_series.php';
 use api\phrase\group as group_api;
 use api\value\value as value_api;
 use cfg\db\sql;
+use cfg\db\sql_type;
 use cfg\group\group;
 use cfg\db\sql_db;
 use cfg\value\value;
@@ -74,24 +75,24 @@ class value_tests
         $val_prime = $t->dummy_value_prime_3();
         $val_prime_max = $t->dummy_value_prime_max();
         $t->assert_sql_insert($db_con, $val);
-        $t->assert_sql_insert($db_con, $val, true);
+        $t->assert_sql_insert($db_con, $val, [sql_type::USER]);
         $t->assert_sql_insert($db_con, $val_prime);
-        $t->assert_sql_insert($db_con, $val_prime, true);
+        $t->assert_sql_insert($db_con, $val_prime, [sql_type::USER]);
         $t->assert_sql_insert($db_con, $val_prime_max);
-        $t->assert_sql_insert($db_con, $val_prime_max, true);
+        $t->assert_sql_insert($db_con, $val_prime_max, [sql_type::USER]);
         // TODO for 1 given phrase fill the others with 0 because usually only one value is expected to be changed
         // TODO for update fill the missing phrase id with zeros because only one row should be updated
         $db_val = $val->cloned(value_api::TV_FLOAT);
         $t->assert_sql_update($db_con, $val, $db_val);
-        $t->assert_sql_update($db_con, $val, $db_val, true);
+        $t->assert_sql_update($db_con, $val, $db_val, [sql_type::USER]);
         $db_val_prime = $val_prime->cloned(value_api::TV_FLOAT);
         $t->assert_sql_update($db_con, $val_prime, $db_val_prime);
-        $t->assert_sql_update($db_con, $val_prime, $db_val_prime, true);
+        $t->assert_sql_update($db_con, $val_prime, $db_val_prime, [sql_type::USER]);
         $val_upd = $val->updated();
         $this->assert_sql_update_trigger($t, $db_con, $val_upd, $val);
         $t->assert_sql_delete($db_con, $val);
-        $t->assert_sql_delete($db_con, $val, true);
-        $t->assert_sql_delete($db_con, $val, true, false, true);
+        $t->assert_sql_delete($db_con, $val, [sql_type::USER]);
+        $t->assert_sql_delete($db_con, $val, [sql_type::USER], false, true);
         $this->assert_sql_by_grp($t, $db_con, $val);
 
         // ... and the related default value
@@ -106,11 +107,11 @@ class value_tests
         $val = $t->dummy_value_16();
         // TODO insert value does not need to return the id because this is given by the group id
         $t->assert_sql_insert($db_con, $val);
-        $t->assert_sql_insert($db_con, $val, true);
+        $t->assert_sql_insert($db_con, $val, [sql_type::USER], true);
         $db_val = $val->cloned(value_api::TV_FLOAT);
         $t->assert_sql_update($db_con, $val, $db_val);
         $t->assert_sql_delete($db_con, $val);
-        $t->assert_sql_delete($db_con, $val, true);
+        $t->assert_sql_delete($db_con, $val, [sql_type::USER], true);
         $t->assert_sql_by_id($db_con, $val);
         // TODO activate Prio 2
         //$this->assert_sql_by_grp($t, $db_con, $val);

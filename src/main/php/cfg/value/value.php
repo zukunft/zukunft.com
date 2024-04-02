@@ -1555,7 +1555,7 @@ class value extends sandbox_value
                 // create an entry in the user sandbox
                 $ext = $this->grp->table_extension();
                 $db_con->set_class($class, true, $ext);
-                $qp = $this->sql_insert($db_con->sql_creator(), true);
+                $qp = $this->sql_insert($db_con->sql_creator(), [sql_type::USER], true);
                 $usr_msg = $db_con->insert($qp, 'add user specific value');
                 $result = $usr_msg->is_ok();
             }
@@ -2223,12 +2223,13 @@ class value extends sandbox_value
     /**
      * create the sql statement to add a new value to the database
      * @param sql $sc with the target db_type set
-     * @param bool $usr_tbl true if a db row should be added to the user table
+     * @param array $tbl_typ_lst the table types for this table
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_insert(sql $sc, bool $usr_tbl = false): sql_par
+    function sql_insert(sql $sc, array $tbl_typ_lst = []): sql_par
     {
-        $qp = $this->sql_common($sc, $usr_tbl);
+        $usr_tbl = $this->is_usr_tbl($tbl_typ_lst);
+        $qp = $this->sql_common($sc, $tbl_typ_lst);
         // overwrite the standard auto increase id field name
         $sc->set_id_field($this->id_field());
         $qp->name .= sql::file_sep . sql::file_insert;
@@ -2254,7 +2255,7 @@ class value extends sandbox_value
             }
 
         }
-        $qp->sql = $sc->sql_insert($fields, $values);
+        $qp->sql = $sc->create_sql_insert($fields, $values);
         $par_values = [];
         foreach (array_keys($values) as $i) {
             if ($values[$i] != sql::NOW) {
@@ -2272,15 +2273,15 @@ class value extends sandbox_value
      *
      * @param sql $sc with the target db_type set
      * @param value $db_val the value object with the database values before the update
-     * @param bool $usr_tbl true if the user table row should be updated
+     * @param array $tbl_typ_lst the table types for this table
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_update(sql $sc, value $db_val, bool $usr_tbl = false): sql_par
+    function sql_update(sql $sc, value $db_val, array $tbl_typ_lst = []): sql_par
     {
         // get the fields and values that have been changed and needs to be updated in the database
         $fields = $this->db_fields_changed($db_val);
         $values = $this->db_values_changed($db_val);
-        return $this->sql_update_fields($sc, $fields, $values, $usr_tbl);
+        return $this->sql_update_fields($sc, $fields, $values, $tbl_typ_lst);
 
     }
 
@@ -2290,13 +2291,15 @@ class value extends sandbox_value
      *
      * @param sql $sc with the target db_type set
      * @param array $fields the field names that should be updated in the database
+     * @param array $tbl_typ_lst the table types for this table
      * @param bool $usr_tbl true if the user table row should be updated
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_update_fields(sql $sc, array $fields = [], array $values = [], bool $usr_tbl = false): sql_par
+    function sql_update_fields(sql $sc, array $fields = [], array $values = [], array $tbl_typ_lst = [], bool $usr_tbl = false): sql_par
     {
         $lib = new library();
-        $qp = $this->sql_common($sc, $usr_tbl);
+        $usr_tbl = $this->is_usr_tbl($tbl_typ_lst);
+        $qp = $this->sql_common($sc, $tbl_typ_lst);
         // get the fields and values that have been changed and needs to be updated in the database
         $all_fields = $this->db_fields_all();
         $fld_name = implode('_', $lib->sql_name_shorten($fields));
@@ -2331,7 +2334,7 @@ class value extends sandbox_value
             }
             $id_lst[] = $this->user()->id();
         }
-        $qp->sql = $sc->sql_update($id_fields, $id_lst, $fields, $values);
+        $qp->sql = $sc->create_sql_update($id_fields, $id_lst, $fields, $values);
 
         $qp->par = $sc->par_values();
         return $qp;

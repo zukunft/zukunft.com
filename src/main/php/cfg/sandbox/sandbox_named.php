@@ -528,7 +528,7 @@ class sandbox_named extends sandbox
      * @param array $fld_lst list of field names additional to the standard id and name fields
      * @param array $val_lst list of field values additional to the standard id and name
      * @param array $fld_lst_all list of field names of the given object
-     * @param bool $usr_tbl true if the user table row should be added
+     * @param array $tbl_typ_lst the table types for this table
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_insert_named(
@@ -536,7 +536,7 @@ class sandbox_named extends sandbox
         array $fld_lst = [],
         array $val_lst = [],
         array $fld_lst_all = [],
-        bool  $usr_tbl = false,
+        array $tbl_typ_lst = [],
         bool  $and_log = false): sql_par
     {
         $lib = new library();
@@ -546,7 +546,7 @@ class sandbox_named extends sandbox
         }
         $fld_chg_ext = $lib->sql_field_ext($fld_lst, $fld_lst_all);
         $ext = sql::file_sep . sql::file_insert . sql::file_sep . $fld_chg_ext;
-        $qp = $this->sql_common($sc, $usr_tbl, $ext);
+        $qp = $this->sql_common($sc, $tbl_typ_lst, $ext);
         if ($and_log) {
             $sc_log = clone $sc;
             $i = 0;
@@ -555,11 +555,11 @@ class sandbox_named extends sandbox
                 $log->set_table_by_class($this::class);
                 $log->set_field($fld);
                 $log->new_value = $val_lst[$i];
-                $sql_log = $log->sql_insert($sc_log);
+                $sql_log = $log->sql_insert($sc_log, $tbl_typ_lst);
             }
         }
         // add the child object specific fields and values
-        $qp->sql = $sc->sql_insert($fld_lst, $val_lst);
+        $qp->sql = $sc->create_sql_insert($fld_lst, $val_lst);
         $qp->par = $val_lst;
 
         return $qp;
@@ -572,6 +572,7 @@ class sandbox_named extends sandbox
      * @param array $fld_lst list of field names additional to the standard id and name fields
      * @param array $val_lst list of field values additional to the standard id and name$
      * @param array $fld_lst_all list of field names of the given object
+     * @param array $tbl_typ_lst the table types for this table
      * @param bool $usr_tbl true if the user table row should be updated
      * @return sql_par the SQL update statement, the name of the SQL statement and the parameter list
      */
@@ -580,16 +581,18 @@ class sandbox_named extends sandbox
         array $fld_lst = [],
         array $val_lst = [],
         array $fld_lst_all = [],
+        array $tbl_typ_lst = [],
         bool  $usr_tbl = false): sql_par
     {
         $lib = new library();
+        $usr_tbl = $this->is_usr_tbl($tbl_typ_lst);
         $fld_chg_ext = $lib->sql_field_ext($fld_lst, $fld_lst_all);
         $ext = sql::file_sep . sql::file_update . sql::file_sep . $fld_chg_ext;
-        $qp = $this->sql_common($sc, $usr_tbl, $ext);
+        $qp = $this->sql_common($sc, $tbl_typ_lst, $ext);
         if ($usr_tbl) {
-            $qp->sql = $sc->sql_update([$this->id_field(), user::FLD_ID], [$this->id(), $this->user_id()], $fld_lst, $val_lst);
+            $qp->sql = $sc->create_sql_update([$this->id_field(), user::FLD_ID], [$this->id(), $this->user_id()], $fld_lst, $val_lst);
         } else {
-            $qp->sql = $sc->sql_update($this->id_field(), $this->id(), $fld_lst, $val_lst);
+            $qp->sql = $sc->create_sql_update($this->id_field(), $this->id(), $fld_lst, $val_lst);
         }
         $qp->par = $val_lst;
 
@@ -600,16 +603,17 @@ class sandbox_named extends sandbox
      * create the sql statement to delete or exclude a named sandbox object e.g. word to the database
      *
      * @param sql $sc with the target db_type set
-     * @param bool $usr_tbl true if the user table row should be updated
+     * @param array $tbl_typ_lst the table types for this table
      * @param bool $excluded true if only the excluded user rows should be deleted
      * @return sql_par the SQL update statement, the name of the SQL statement and the parameter list
      */
     function sql_delete(
-        sql  $sc,
-        bool $usr_tbl = false,
-        bool $excluded = false): sql_par
+        sql   $sc,
+        array $tbl_typ_lst = [],
+        bool  $excluded = false): sql_par
     {
-        $qp = $this->sql_common($sc, $usr_tbl);
+        $usr_tbl = $this->is_usr_tbl($tbl_typ_lst);
+        $qp = $this->sql_common($sc, $tbl_typ_lst);
         $qp->name .= sql::file_sep . sql::file_delete;
         $par_lst = [$this->id()];
         if ($excluded) {
@@ -619,10 +623,10 @@ class sandbox_named extends sandbox
         // delete the user overwrite
         // but if the excluded user overwrites should be deleted the overwrites for all users should be deleted
         if ($usr_tbl and !$excluded) {
-            $qp->sql = $sc->sql_delete([$this->id_field(), user::FLD_ID], [$this->id(), $this->user_id()], $excluded);
+            $qp->sql = $sc->create_sql_delete([$this->id_field(), user::FLD_ID], [$this->id(), $this->user_id()], $excluded);
             $par_lst[] = $this->user_id();
         } else {
-            $qp->sql = $sc->sql_delete($this->id_field(), $this->id(), $excluded);
+            $qp->sql = $sc->create_sql_delete($this->id_field(), $this->id(), $excluded);
         }
         $qp->par = $par_lst;
 
@@ -634,13 +638,14 @@ class sandbox_named extends sandbox
      * TODO include the sql statements to log the changes
      *
      * @param sql $sc with the target db_type set
-     * @param bool $usr_tbl true if a db row should be added to the user table
+     * @param array $tbl_typ_lst the table types for this table
      * @param string $name_ext the query name extension to differ insert from update
      * @return sql_par prepared sql parameter object with the name set
      */
-    private function sql_common(sql $sc, bool $usr_tbl = false, string $name_ext = ''): sql_par
+    private function sql_common(sql $sc, array $tbl_typ_lst = [], string $name_ext = ''): sql_par
     {
         $lib = new library();
+        $usr_tbl = $this->is_usr_tbl($tbl_typ_lst);
         $sc->set_class($this::class, $usr_tbl);
         $sql_name = $lib->class_to_name($this::class);
         $qp = new sql_par($sql_name);

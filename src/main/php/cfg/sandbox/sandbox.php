@@ -1026,7 +1026,7 @@ class sandbox extends db_object_seq_id_user
         $db_con->set_class($this::class, true);
         try {
             if ($this->sql_write_prepared()) {
-                $qp = $this->sql_delete($db_con->sql_creator(), true);
+                $qp = $this->sql_delete($db_con->sql_creator(), [sql_type::USER]);
                 $usr_msg = $db_con->delete($qp, $this::class . ' user exclusions');
                 $msg = $usr_msg->get_message();
             } else {
@@ -1394,7 +1394,7 @@ class sandbox extends db_object_seq_id_user
             // if there is no difference between the user row and the norm row remove all fields from the user row
             if ($this->no_diff($norm_obj)) {
                 if ($this->has_usr_cfg()) {
-                    $qp = $this->sql_delete($sc, true);
+                    $qp = $this->sql_delete($sc, [sql_type::USER]);
                     $usr_msg->add($db_con->delete($qp, 'remove user overwrites of ' . $this->dsp_id()));
                 }
                 // check if some user overwrites can be removed
@@ -1414,12 +1414,12 @@ class sandbox extends db_object_seq_id_user
             if ($usr_msg->is_ok()) {
                 if ($this->no_diff($norm_obj)) {
                     if ($this->has_usr_cfg()) {
-                        $qp = $this->sql_delete($sc, true);
+                        $qp = $this->sql_delete($sc, [sql_type::USER]);
                         $usr_msg->add($db_con->delete($qp, 'remove user overwrites of ' . $this->dsp_id()));
                     }
                 } else {
                     // apply the changes directly to the norm db record
-                    $qp = $this->sql_update($sc, $norm_obj, true);
+                    $qp = $this->sql_update($sc, $norm_obj, [sql_type::USER]);
                     $usr_msg->add($db_con->update($qp, 'update user row for ' . $this->dsp_id()));
                 }
                 // check if some user overwrites can be removed
@@ -2150,7 +2150,7 @@ class sandbox extends db_object_seq_id_user
                     if ($result == '') {
                         // TODO activate when the prepared SQL is ready to use
                         //if (!$this->sql_write_prepared()) {
-                            $result .= $this->save_fields($db_con, $db_rec, $std_rec);
+                        $result .= $this->save_fields($db_con, $db_rec, $std_rec);
                         //} else {
                         //    $result .= $this->save_all_fields($db_con, $db_rec, $std_rec)->get_last_message();
                         //}
@@ -2255,7 +2255,7 @@ class sandbox extends db_object_seq_id_user
             if ($result->is_ok()) {
                 if ($this->sql_write_prepared()) {
                     $sc = $db_con->sql_creator();
-                    $qp = $this->sql_delete($sc, true, true);
+                    $qp = $this->sql_delete($sc, [sql_type::USER], true, true);
                     $msg = $db_con->delete($qp, $this::class . ' user exclusions');
                     $result->add($msg);
                 } else {
@@ -2508,18 +2508,18 @@ class sandbox extends db_object_seq_id_user
      * update the sandbox object in the database
      *
      * @param string $msg the message shown to the user in case of a problem to idemtify the update
-     * @param bool $usr_tbl true if the user sandbox table should be updated
+     * @param array $tbl_typ_lst the table types for this table
      * @return user_message the message and potential solution shown to the user in case of a problem
      */
-    function insert(string $msg = '', bool $usr_tbl = false): user_message
+    function insert(string $msg = '', array $tbl_typ_lst = []): user_message
     {
         global $db_con;
 
         // set the actual class before accessing the database to ...
         log_debug($msg);
-        $db_con->set_class($this::class, $usr_tbl);
+        $db_con->set_class($this::class, $this->is_usr_tbl($tbl_typ_lst));
         $sc = $db_con->sql_creator();
-        $qp = $this->sql_insert($sc, $usr_tbl);
+        $qp = $this->sql_insert($sc, $tbl_typ_lst);
         return $db_con->insert($qp, $msg);
     }
 
@@ -2527,23 +2527,23 @@ class sandbox extends db_object_seq_id_user
      * update the sandbox object in the database
      *
      * @param string $msg the message shown to the user in case of a problem to idemtify the update
-     * @param bool $usr_tbl true if the user sandbox table should be updated
+     * @param array $tbl_typ_lst the table types for this table
      * @return user_message the message and potential solution shown to the user in case of a problem
      */
-    function update(string $msg = '', bool $usr_tbl = false): user_message
+    function update(string $msg = '', array $tbl_typ_lst = []): user_message
     {
         global $db_con;
 
         // set the actual class before accessing the database to ...
         log_debug($msg);
-        $db_con->set_class($this::class, $usr_tbl);
+        $db_con->set_class($this::class, $this->is_usr_tbl($tbl_typ_lst));
         // TODO check if needed
         $db_con->usr_id = $this->user_id();
         $sc = $db_con->sql_creator();
         // reload the database row to prevent failures due to caching
         $db_row = clone $this;
         $db_row->load_by_id($this->id());
-        $qp = $this->sql_update($sc, $db_row, $usr_tbl);
+        $qp = $this->sql_update($sc, $db_row, $tbl_typ_lst);
         return $db_con->update($qp, $msg);
     }
 
@@ -2552,10 +2552,10 @@ class sandbox extends db_object_seq_id_user
      * dummy function to be overwritten by the child object
      *
      * @param sql $sc with the target db_type set
-     * @param bool $usr_tbl true if the user table row should be updated
+     * @param array $tbl_typ_lst the table types for this table
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_insert(sql $sc, bool $usr_tbl = false): sql_par
+    function sql_insert(sql $sc, array $tbl_typ_lst = []): sql_par
     {
         return new sql_par('');
     }
@@ -2566,10 +2566,10 @@ class sandbox extends db_object_seq_id_user
      *
      * @param sql $sc with the target db_type set
      * @param sandbox|source $db_row the sandbox object with the database values before the update
-     * @param bool $usr_tbl true if the user table row should be updated
+     * @param array $tbl_typ_lst the table types for this table
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_update(sql $sc, sandbox|source $db_row, bool $usr_tbl = false): sql_par
+    function sql_update(sql $sc, sandbox|source $db_row, array $tbl_typ_lst = []): sql_par
     {
         return new sql_par('');
     }
@@ -2579,11 +2579,11 @@ class sandbox extends db_object_seq_id_user
      * dummy function to be overwritten by the child object
      *
      * @param sql $sc with the target db_type set
-     * @param bool $usr_tbl true if the user table row should be updated
+     * @param array $tbl_typ_lst the table types for this table
      * @param bool $excluded true if only the excluded user rows should be deleted
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_delete(sql $sc, bool $usr_tbl = false, bool $excluded = false): sql_par
+    function sql_delete(sql $sc, array $tbl_typ_lst = [], bool $excluded = false): sql_par
     {
         return new sql_par('');
     }

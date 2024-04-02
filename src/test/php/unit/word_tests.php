@@ -39,6 +39,7 @@ include_once WEB_WORD_PATH . 'word.php';
 
 use api\formula\formula as formula_api;
 use cfg\db\sql_db;
+use cfg\db\sql_type;
 use cfg\phrase_type;
 use cfg\word;
 use api\word\word as word_api;
@@ -86,23 +87,23 @@ class word_tests
         $t->subheader('word sql write');
         $wrd = $t->word();
         $t->assert_sql_insert($db_con, $wrd);
-        $t->assert_sql_insert($db_con, $wrd, true);
+        $t->assert_sql_insert($db_con, $wrd, [sql_type::USER]);
         // TODO activate db write with log
         // $t->assert_sql_insert($db_con, $wrd, false, true);
         // $t->assert_sql_insert($db_con, $wrd, true, true);
         $wrd_renamed = $wrd->cloned(word_api::TN_RENAMED);
         $t->assert_sql_update($db_con, $wrd_renamed, $wrd);
-        $t->assert_sql_update($db_con, $wrd_renamed, $wrd, true);
+        $t->assert_sql_update($db_con, $wrd_renamed, $wrd, [sql_type::USER]);
         // TODO activate db write with log
         //$t->assert_sql_update($db_con, $wrd_renamed, $wrd, false, true);
         //$t->assert_sql_update($db_con, $wrd_renamed, $wrd, true, true);
         $t->assert_sql_delete($db_con, $wrd);
-        $t->assert_sql_delete($db_con, $wrd, true);
+        $t->assert_sql_delete($db_con, $wrd, [sql_type::USER]);
         // TODO activate db write with log
         //$t->assert_sql_delete($db_con, $wrd, false, true);
         //$t->assert_sql_delete($db_con, $wrd, true, true);
-        $t->assert_sql_delete($db_con, $wrd, false, false, true);
-        $t->assert_sql_delete($db_con, $wrd, true, false, true);
+        $t->assert_sql_delete($db_con, $wrd, [], false, true);
+        $t->assert_sql_delete($db_con, $wrd, [sql_type::USER], false, true);
         // TODO activate db write with log
         //$t->assert_sql_delete($db_con, $wrd, false, true, true);
         //$t->assert_sql_delete($db_con, $wrd, true, true, true);

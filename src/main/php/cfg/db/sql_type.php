@@ -3,7 +3,7 @@
 /*
 
     /model/dp/sql_type.php - enum of the sql table extension type for value and result tables
-    ----------------------------
+    ----------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -53,6 +53,10 @@ enum sql_type: string
     // the fixed table subtypes
     case STANDARD = 'standard'; // value or result that is public and unprotected
     case USER = 'user'; // for user specific values and results
+
+    // sql builder parameters
+    case SUB = 'sub'; // the created sql statement should be used as part of another prepared sql statement
+    case LOG = 'log'; // the created sql statement should include statements for logging the changes
 
     /**
      * @return string the name extension for the query name

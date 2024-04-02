@@ -1011,13 +1011,14 @@ class sandbox_value extends sandbox_multi
     /**
      * the common part of the sql statement creation for insert and update statements
      * @param sql $sc with the target db_type set
-     * @param bool $usr_tbl true if a db row should be added to the user table
+     * @param array $tbl_typ_lst the table types for this table
      * @param bool $phr_nbr true if the number of phrases should be included in the extension
      * @return sql_par the common part for insert and update sql statements
      */
-    protected function sql_common(sql $sc, bool $usr_tbl = false, bool $phr_nbr = true): sql_par
+    protected function sql_common(sql $sc, array $tbl_typ_lst = [], bool $phr_nbr = true): sql_par
     {
         $lib = new library();
+        $usr_tbl = $this->is_usr_tbl($tbl_typ_lst);
         // the value table name is not yet using the number of phrase keys as extension
         $ext = $this->grp->table_extension($phr_nbr);
         $tbl_typ = $this->grp->table_type();
@@ -1035,19 +1036,19 @@ class sandbox_value extends sandbox_multi
      * create the sql statement to update a value in the database
      * @param sql $sc with the target db_type set
      * @param sandbox_value $db_obj the value object with the database values before the update
-     * @param bool $usr_tbl true if the user table row should be updated
+     * @param array $tbl_typ_lst the table types for this table
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_update_value(sql $sc, sandbox_value $db_obj, bool $usr_tbl = false): sql_par
+    function sql_update_value(sql $sc, sandbox_value $db_obj, array $tbl_typ_lst): sql_par
     {
-        $qp = $this->sql_common($sc, $usr_tbl);
+        $qp = $this->sql_common($sc, $tbl_typ_lst);
         $qp->name .= sql::file_sep . sql::file_update;
         $sc->set_name($qp->name);
         // get the fields and values that have been changed and needs to be updated in the database
         // TODO fix it
         $fields = $this->db_fields_changed($db_obj);
         $values = $this->db_values_changed($db_obj);;
-        $qp->sql = $sc->sql_update($this->id_field(), $this->id(), $fields, $values);
+        $qp->sql = $sc->create_sql_update($this->id_field(), $this->id(), $fields, $values);
         $qp->par = $values;
         return $qp;
     }
@@ -1112,13 +1113,13 @@ class sandbox_value extends sandbox_multi
                     if ($new_value == $std_value) {
                         $msg = 'remove user change of ' . $log->field();
                         log_debug($msg);
-                        $qp = $this->sql_update_fields($db_con->sql_creator(), array($log->field()), array(Null), true);
+                        $qp = $this->sql_update_fields($db_con->sql_creator(), array($log->field()), array(Null), [sql_type::USER]);
                         $usr_msg = $db_con->update($qp, $msg);
                         $result = $usr_msg->get_message();
                     } else {
                         $msg = 'update of ' . $log->field() . ' to ' . $new_value;
                         log_debug($msg);
-                        $qp = $this->sql_update_fields($db_con->sql_creator(), array($log->field()), array($new_value), true);
+                        $qp = $this->sql_update_fields($db_con->sql_creator(), array($log->field()), array($new_value), [sql_type::USER]);
                         $usr_msg = $db_con->update($qp, $msg);
                         $result = $usr_msg->get_message();
                     }

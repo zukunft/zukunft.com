@@ -33,12 +33,11 @@
 namespace unit;
 
 use api\ref\source as source_api;
+use cfg\db\sql_type;
 use cfg\ref_type;
 use cfg\ref_type_list;
 use cfg\source_list;
-use cfg\source_type;
 use cfg\source_type_list;
-use cfg\sys_log_status;
 use html\ref\ref as ref_dsp;
 use html\ref\source as source_dsp;
 use cfg\ref;
@@ -144,18 +143,18 @@ class ref_tests
         // TODO activate db write
         $src = $t->source();
         $t->assert_sql_insert($db_con, $src);
-        $t->assert_sql_insert($db_con, $src, true);
+        $t->assert_sql_insert($db_con, $src, [sql_type::USER]);
         // TODO activate db write
         //$t->assert_sql_update($db_con, $src);
         //$t->assert_sql_update($db_con, $src, true);
         // TODO activate db write
         $t->assert_sql_delete($db_con, $src);
-        $t->assert_sql_delete($db_con, $src, true);
+        $t->assert_sql_delete($db_con, $src, [sql_type::USER]);
         // TODO activate db write with log
         //$t->assert_sql_delete($db_con, $src, false, true);
         //$t->assert_sql_delete($db_con, $src, true, true);
-        $t->assert_sql_delete($db_con, $src, false, false, true);
-        $t->assert_sql_delete($db_con, $src, true, false, true);
+        $t->assert_sql_delete($db_con, $src, [], false, true);
+        $t->assert_sql_delete($db_con, $src, [sql_type::USER], false, true);
 
         $t->subheader('Im- and Export tests');
         $t->assert_json_file(new source($usr), $json_file);

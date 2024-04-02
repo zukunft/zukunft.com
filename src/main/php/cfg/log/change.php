@@ -461,14 +461,16 @@ class change extends change_log
      * create the sql statement to add a log entry to the database
      *
      * @param sql $sc with the target db_type set
+     * @param array $tbl_typ_lst the table types for this table
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_insert(sql $sc): sql_par
+    function sql_insert(sql $sc, array $tbl_typ_lst): sql_par
     {
-        $qp = $sc->sql_par(self::class, [sql_type::INSERT]);
+        $tbl_typ_lst[] = sql_type::INSERT;
+        $qp = $sc->sql_par(self::class, $tbl_typ_lst);
         $sc->set_class($this::class);
         $sc->set_name($qp->name);
-        $qp->sql = $sc->sql_insert($this->db_fields(), $this->db_values());
+        $qp->sql = $sc->create_sql_insert($this->db_fields(), $this->db_values());
         $qp->par = $this->db_values();
 
         return $qp;

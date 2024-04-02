@@ -998,7 +998,7 @@ class sql
      * @param bool $log_err false if
      * @return string the prepared sql insert statement
      */
-    function sql_insert(array $fields, array $values, bool $log_err = true): string
+    function create_sql_insert(array $fields, array $values, bool $log_err = true): string
     {
         $lib = new library();
 
@@ -1047,7 +1047,17 @@ class sql
         return $this->end_sql($sql, self::INSERT);
     }
 
-    function sql_update(
+    /**
+     * create the sql statement to update a row to the database
+     *
+     * @param string|array $id_field name of the id field (or list of field names)
+     * @param int|string|array $id the unique id of the row that should be updated
+     * @param array $fields with the fields names to add
+     * @param array $values with the field values to add
+     * @param bool $log_err false if
+     * @return string the prepared sql insert statement
+     */
+    function create_sql_update(
         string|array     $id_field,
         string|array|int $id,
         array            $fields,
@@ -1134,12 +1144,12 @@ class sql
 
     /**
      * create a sql statement to delete or exclude a database row
-     * @param string|array $id_field the id field or id fields of the table from where the row should be deleted
-     * @param string|array $id
+     * @param int|string|array $id_field the id field or id fields of the table from where the row should be deleted
+     * @param int|string|array $id
      * @param bool $excluded true if only the excluded user rows should be deleted
      * @return string
      */
-    function sql_delete(
+    function create_sql_delete(
         int|string|array $id_field,
         int|string|array $id,
         bool             $excluded = false): string

@@ -282,16 +282,17 @@ class sandbox_multi extends db_object_multi_user
         }
         return $result;
     }
+
     /**
      * create the sql statement to update multi table sandbox object in the database
      * to be overwritten by the child objects
      *
      * @param sql $sc with the target db_type set
      * @param array $fields the field names that should be updated in the database
-     * @param bool $usr_tbl true if the user table row should be updated
+     * @param array $tbl_typ_lst the table types for this table
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_update_fields(sql $sc, array $fields = [], array $values = [], bool $usr_tbl = false): sql_par
+    function sql_update_fields(sql $sc, array $fields = [], array $values = [], array $tbl_typ_lst = []): sql_par
     {
         return new sql_par($this::class);
     }
@@ -1112,7 +1113,7 @@ class sandbox_multi extends db_object_multi_user
 
         $db_con->set_class($this::class, true);
         try {
-            $qp = $this->sql_delete($db_con->sql_creator(), true);
+            $qp = $this->sql_delete($db_con->sql_creator(), [sql_type::USER]);
             $usr_msg = $db_con->delete($qp, $this::class . ' user exclusions');
             $msg = $usr_msg->get_message();
             if ($msg == '') {
@@ -1538,7 +1539,7 @@ class sandbox_multi extends db_object_multi_user
         }
         $qp->name .= sql::file_sep . sql::file_update;
         $sc->set_name($qp->name);
-        $qp->sql = $sc->sql_update($this->id_field(), $this->id(), $fields, $values);
+        $qp->sql = $sc->create_sql_update($this->id_field(), $this->id(), $fields, $values);
         $values[] = $this->id();
         $par_values = [];
         foreach (array_keys($values) as $i) {
@@ -1556,24 +1557,24 @@ class sandbox_multi extends db_object_multi_user
      * TODO check if user specific overwrites can be deleted
      *
      * @param sql $sc with the target db_type set
-     * @param bool $usr_tbl true if the user table row should be updated
+     * @param array $tbl_typ_lst the table types for this table
      * @param bool $excluded true if only the excluded user rows should be deleted
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_delete(
-        sql  $sc,
-        bool $usr_tbl = false,
-        bool $excluded = false
+        sql   $sc,
+        array $tbl_typ_lst = [],
+        bool  $excluded = false
     ): sql_par
     {
-        $qp = $this->sql_common($sc, $usr_tbl, false);
+        $qp = $this->sql_common($sc, $tbl_typ_lst, false);
         $qp->name .= sql::file_sep . sql::file_delete;
         if ($excluded) {
             $qp->name .= '_excluded';
         }
         $sc->set_name($qp->name);
         $id_lst = $this->id_or_lst();
-        $qp->sql = $sc->sql_delete($this->id_field(), $id_lst, $excluded);
+        $qp->sql = $sc->create_sql_delete($this->id_field(), $id_lst, $excluded);
         if (is_array($id_lst)) {
             $qp->par = $id_lst;
         } else {
@@ -1728,7 +1729,7 @@ class sandbox_multi extends db_object_multi_user
                 if ($result == '') {
                     $db_con->set_class($this::class, true);
                     $db_con->set_usr($this->user()->id());
-                    $qp = $this->sql_update_fields($db_con->sql_creator(), array($log->field()), array($new_value), true);
+                    $qp = $this->sql_update_fields($db_con->sql_creator(), array($log->field()), array($new_value), [sql_type::USER]);
                     $usr_msg = $db_con->update($qp, 'setting of share type');
                     $result = $usr_msg->get_message();
                 }
@@ -1830,7 +1831,7 @@ class sandbox_multi extends db_object_multi_user
                     $to_del = clone $db_rec;
                     $msg = $to_del->del();
                     if (!$msg->is_ok()) {
-                        $result .= 'Failed to delete the unused ' . $this::class ;
+                        $result .= 'Failed to delete the unused ' . $this::class;
                     }
                     if ($result = '') {
                         // .. and use it for the update
@@ -1871,7 +1872,7 @@ class sandbox_multi extends db_object_multi_user
                     $to_del = clone $db_rec;
                     $msg = $to_del->del();
                     if (!$msg->is_ok()) {
-                        $result .= 'Failed to delete the unused ' . $this::class ;
+                        $result .= 'Failed to delete the unused ' . $this::class;
                     }
                     // TODO .. and create a deletion request for all users ???
 
@@ -2305,7 +2306,7 @@ class sandbox_multi extends db_object_multi_user
             if ($result->is_ok()) {
                 // TODO always use the qp based setup
                 if ($this::class == value::class) {
-                    $qp = $this->sql_delete($db_con->sql_creator(), true, true);
+                    $qp = $this->sql_delete($db_con->sql_creator(), [sql_type::USER], true);
                     $msg = $db_con->delete($qp, $this::class . ' user exclusions');
                     $result->add($msg);
                 } else {
@@ -2332,7 +2333,7 @@ class sandbox_multi extends db_object_multi_user
                 }
                 log_debug('of ' . $this->dsp_id() . ' done');
             } else {
-                log_err('Delete failed for ' . $this::class , $this::class . '->del_exe', 'Delete failed, because removing the user settings for ' . $class_name . ' ' . $this->dsp_id() . ' returns ' . $msg, (new Exception)->getTraceAsString(), $this->user());
+                log_err('Delete failed for ' . $this::class, $this::class . '->del_exe', 'Delete failed, because removing the user settings for ' . $class_name . ' ' . $this->dsp_id() . ' returns ' . $msg, (new Exception)->getTraceAsString(), $this->user());
             }
         }
 

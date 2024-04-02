@@ -966,22 +966,22 @@ class test_base
      *
      * @param sql_db $db_con does not need to be connected to a real database
      * @param object $usr_obj the user sandbox object e.g. a word
-     * @param bool $usr_tbl true if a db row should be added to the user table
+     * @param array $tbl_typ_lst the table types for this table
      * @param bool $and_log true if also the changes should be written
      * @return bool true if all tests are fine
      */
-    function assert_sql_insert(sql_db $db_con, object $usr_obj, bool $usr_tbl = false, bool $and_log = false): bool
+    function assert_sql_insert(sql_db $db_con, object $usr_obj, array $tbl_typ_lst = [], bool $and_log = false): bool
     {
         // check the Postgres query syntax
         $sc = $db_con->sql_creator();
         $sc->db_type = sql_db::POSTGRES;
-        $qp = $usr_obj->sql_insert($sc, $usr_tbl);
+        $qp = $usr_obj->sql_insert($sc, $tbl_typ_lst);
         $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $sc->db_type = sql_db::MYSQL;
-            $qp = $usr_obj->sql_insert($sc, $usr_tbl);
+            $qp = $usr_obj->sql_insert($sc, $tbl_typ_lst);
             $result = $this->assert_qp($qp, $sc->db_type);
         }
         return $result;
@@ -994,22 +994,22 @@ class test_base
      * @param sql_db $db_con does not need to be connected to a real database
      * @param object $usr_obj the user sandbox object e.g. a word
      * @param object $db_obj must be the same object as the $usr_obj but with the valuesfrom the database before the update
-     * @param bool $usr_tbl true if a db row should be added to the user table
+     * @param array $tbl_typ_lst the table types for this table
      * @param bool $and_log true if also the changes should be written
      * @return bool true if all tests are fine
      */
-    function assert_sql_update(sql_db $db_con, object $usr_obj, object $db_obj, bool $usr_tbl = false, bool $and_log = false): bool
+    function assert_sql_update(sql_db $db_con, object $usr_obj, object $db_obj, array $tbl_typ_lst = [], bool $and_log = false): bool
     {
         $sc = $db_con->sql_creator();
         // check the Postgres query syntax
         $sc->db_type = sql_db::POSTGRES;
-        $qp = $usr_obj->sql_update($sc, $db_obj, $usr_tbl);
+        $qp = $usr_obj->sql_update($sc, $db_obj, $tbl_typ_lst);
         $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $sc->db_type = sql_db::MYSQL;
-            $qp = $usr_obj->sql_update($sc, $db_obj, $usr_tbl);
+            $qp = $usr_obj->sql_update($sc, $db_obj, $tbl_typ_lst);
             $result = $this->assert_qp($qp, $sc->db_type);
         }
         return $result;
@@ -1021,23 +1021,23 @@ class test_base
      *
      * @param sql_db $db_con does not need to be connected to a real database
      * @param object $usr_obj the user sandbox object e.g. a word
-     * @param bool $usr_tbl true if a db row should be added to the user table
+     * @param array $tbl_typ_lst the table types for this table
      * @param bool $and_log true if also the changes should be written
      * @param bool $excluded true if only the excluded user rows should be deleted
      * @return bool true if all tests are fine
      */
-    function assert_sql_delete(sql_db $db_con, object $usr_obj, bool $usr_tbl = false, bool $and_log = false, bool $excluded = false): bool
+    function assert_sql_delete(sql_db $db_con, object $usr_obj, array $tbl_typ_lst = [], bool $and_log = false, bool $excluded = false): bool
     {
         $sc = $db_con->sql_creator();
         // check the Postgres query syntax
         $sc->db_type = sql_db::POSTGRES;
-        $qp = $usr_obj->sql_delete($sc, $usr_tbl, $excluded);
+        $qp = $usr_obj->sql_delete($sc, $tbl_typ_lst, $excluded);
         $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $sc->db_type = sql_db::MYSQL;
-            $qp = $usr_obj->sql_delete($sc, $usr_tbl, $excluded);
+            $qp = $usr_obj->sql_delete($sc, $tbl_typ_lst, $excluded);
             $result = $this->assert_qp($qp, $sc->db_type);
         }
         return $result;

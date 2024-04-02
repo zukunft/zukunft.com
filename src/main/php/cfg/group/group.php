@@ -1283,19 +1283,19 @@ class group extends sandbox_multi
      * create the sql statement to add a new group name to the database
      *
      * @param sql $sc with the target db_type set
-     * @param bool $usr_tbl true if a db row should be added to the user table
+     * @param array $tbl_typ_lst the table types for this table
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_insert(sql $sc, bool $usr_tbl = false): sql_par
+    function sql_insert(sql $sc, array $tbl_typ_lst): sql_par
     {
-        $qp = $this->sql_common($sc, $usr_tbl);
+        $qp = $this->sql_common($sc, $tbl_typ_lst);
         // overwrite the standard auto increase id field name
         $sc->set_id_field($this->id_field());
         $qp->name .= sql::file_sep . sql::file_insert;
         $sc->set_name($qp->name);
         $fields = array(group::FLD_ID, user::FLD_ID, self::FLD_NAME, self::FLD_DESCRIPTION);
         $values = array($this->id(), $this->user()->id(), $this->name, $this->description);
-        $qp->sql = $sc->sql_insert($fields, $values);
+        $qp->sql = $sc->create_sql_insert($fields, $values);
         $qp->par = $values;
 
         return $qp;
@@ -1306,13 +1306,13 @@ class group extends sandbox_multi
      *
      * @param sql $sc with the target db_type set
      * @param group $db_grp
-     * @param bool $usr_tbl true if the user table row should be updated
+     * @param array $tbl_typ_lst the table types for this table
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_update(sql $sc, group $db_grp, bool $usr_tbl = false): sql_par
+    function sql_update(sql $sc, group $db_grp, array $tbl_typ_lst): sql_par
     {
         $lib = new library();
-        $qp = $this->sql_common($sc, $usr_tbl);
+        $qp = $this->sql_common($sc, $tbl_typ_lst);
         $fields = $this->db_fields_changed($db_grp);
         $values = $this->db_values_changed($db_grp);;
         $all_fields = $this->db_fields_all();
@@ -1325,7 +1325,7 @@ class group extends sandbox_multi
         $fld_name = implode('_', $lib->sql_name_shorten($fields));
         $qp->name .= '_upd_' . $fld_name;
         $sc->set_name($qp->name);
-        $qp->sql = $sc->sql_update($this->id_field(), $this->id(), $fields, $values);
+        $qp->sql = $sc->create_sql_update($this->id_field(), $this->id(), $fields, $values);
         $values[] = $this->id();
         $qp->par = $values;
         return $qp;
@@ -1334,12 +1334,13 @@ class group extends sandbox_multi
     /**
      * the common part of the sql statement creation for insert and update statements
      * @param sql $sc with the target db_type set
-     * @param bool $usr_tbl true if a db row should be added to the user table
+     * @param array $tbl_typ_lst the table types for this table
      * @return sql_par the common part for insert and update sql statements
      */
-    protected function sql_common(sql $sc, bool $usr_tbl = false): sql_par
+    protected function sql_common(sql $sc, array $tbl_typ_lst = []): sql_par
     {
         $lib = new library();
+        $usr_tbl = $this->is_usr_tbl($tbl_typ_lst);
         $tbl_typ = $this->table_type();
         $ext = $tbl_typ->extension();
         $sc->set_class($this::class, $usr_tbl, $tbl_typ->extension());

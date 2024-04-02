@@ -39,16 +39,14 @@ include_once MODEL_GROUP_PATH . 'group_list.php';
 include_once MODEL_GROUP_PATH . 'result_id.php';
 
 use api\phrase\group as group_api;
+use cfg\db\sql_type;
 use cfg\group\group_id;
 use cfg\group\group;
 use cfg\group\group_link;
-use cfg\group\group_list;
 use cfg\group\result_id;
 use cfg\library;
 use cfg\phrase_list;
 use cfg\db\sql_db;
-use cfg\word;
-use cfg\word_list;
 use test\test_cleanup;
 
 class group_tests
@@ -181,15 +179,15 @@ class group_tests
         $t->subheader('SQL statements - write');
         $grp->set_phrase_list($t->dummy_phrase_list_prime());
         $t->assert_sql_insert($db_con, $grp);
-        $t->assert_sql_insert($db_con, $grp, true);
+        $t->assert_sql_insert($db_con, $grp, [sql_type::USER]);
         $db_grp = $t->group();
         $grp = $grp->renamed(group_api::TN_RENAMED);
         $t->assert_sql_update($db_con, $grp, $db_grp);
-        $t->assert_sql_update($db_con, $grp, $db_grp, true);
+        $t->assert_sql_update($db_con, $grp, $db_grp, [sql_type::USER]);
         $grp->set_phrase_list($t->dummy_phrase_list_16());
         $t->assert_sql_insert($db_con, $grp);
         $grp->set_phrase_list($t->dummy_phrase_list_17_plus());
-        $t->assert_sql_insert($db_con, $grp, true);
+        $t->assert_sql_insert($db_con, $grp, [sql_type::USER]);
         // TODO activate db write
         //$t->assert_sql_delete($db_con, $grp);
 

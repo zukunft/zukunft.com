@@ -312,4 +312,13 @@ class db_object
         return $lib->class_to_name($this::class) . sql_db::FLD_EXT_ID;
     }
 
+    protected function is_usr_tbl(array $tbl_typ_lst): bool
+    {
+        if (in_array(sql_type::USER, $tbl_typ_lst)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }

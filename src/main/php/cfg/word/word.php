@@ -1777,12 +1777,13 @@ class word extends sandbox_typed
      * always all fields are included in the query to be able to remove overwrites with a null value
      *
      * @param sql $sc with the target db_type set
-     * @param bool $usr_tbl true if the user table row should be updated
+     * @param array $tbl_typ_lst the table types for this table
      * @param bool $and_log true if also the changes should be written
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_insert(sql $sc, bool $usr_tbl = false, bool $and_log = false): sql_par
+    function sql_insert(sql $sc, array $tbl_typ_lst = [], bool $and_log = false): sql_par
     {
+        $usr_tbl = $this->is_usr_tbl($tbl_typ_lst);
         // fields and values that the word has additional to the standard named user sandbox object
         $wrd_empty = $this->clone_reset();
         // for a new word the owner should be set, so remove the user id to force writing the user
@@ -1790,7 +1791,7 @@ class word extends sandbox_typed
         $fields = $this->db_fields_changed($wrd_empty, $usr_tbl);
         $values = $this->db_values_changed($wrd_empty, $usr_tbl);
         $all_fields = $this->db_fields_all();
-        return parent::sql_insert_named($sc, $fields, $values, $all_fields, $usr_tbl);
+        return parent::sql_insert_named($sc, $fields, $values, $all_fields, $tbl_typ_lst);
     }
 
     /**
@@ -1798,11 +1799,12 @@ class word extends sandbox_typed
      *
      * @param sql $sc with the target db_type set
      * @param sandbox|word $db_row the word with the database values before the update
-     * @param bool $usr_tbl true if the user table row should be updated
+     * @param array $tbl_typ_lst the table types for this table
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_update(sql $sc, sandbox|word $db_row, bool $usr_tbl = false): sql_par
+    function sql_update(sql $sc, sandbox|word $db_row, array $tbl_typ_lst = []): sql_par
     {
+        $usr_tbl = $this->is_usr_tbl($tbl_typ_lst);
         // get the fields and values that have been changed
         // and that needs to be updated in the database
         // the db_* child function call the corresponding parent function
@@ -1810,7 +1812,7 @@ class word extends sandbox_typed
         $values = $this->db_values_changed($db_row);
         $all_fields = $this->db_fields_all();
         // unlike the db_* function the sql_update_* parent function is called directly
-        return parent::sql_update_named($sc, $fields, $values, $all_fields, $usr_tbl);
+        return parent::sql_update_named($sc, $fields, $values, $all_fields, $tbl_typ_lst);
     }
 
 

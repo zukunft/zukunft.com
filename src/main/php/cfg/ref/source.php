@@ -625,11 +625,12 @@ class source extends sandbox_typed
      * always all fields are included in the query to be able to remove overwrites with a null value
      *
      * @param sql $sc with the target db_type set
-     * @param bool $usr_tbl true if the user table row should be added
+     * @param array $tbl_typ_lst the table types for this table
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_insert(sql $sc, bool $usr_tbl = false): sql_par
+    function sql_insert(sql $sc, array $tbl_typ_lst = []): sql_par
     {
+        $usr_tbl = $this->is_usr_tbl($tbl_typ_lst);
         // fields and values that the source has additional to the standard named user sandbox object
         $empty_src = $this->clone_reset();
         // for a new source the owner should be set, so remove the user id to force writing the user
@@ -637,7 +638,7 @@ class source extends sandbox_typed
         $fields = $this->db_fields_changed($empty_src, $usr_tbl);
         $values = $this->db_values_changed($empty_src, $usr_tbl);
         $all_fields = $this->db_fields_all();
-        return parent::sql_insert_named($sc, $fields, $values, $all_fields, $usr_tbl);
+        return parent::sql_insert_named($sc, $fields, $values, $all_fields, $tbl_typ_lst);
     }
 
     /**
@@ -645,11 +646,12 @@ class source extends sandbox_typed
      *
      * @param sql $sc with the target db_type set
      * @param source|sandbox $db_row the source with the database values before the update
-     * @param bool $usr_tbl true if the user table row should be updated
+     * @param array $tbl_typ_lst the table types for this table
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_update(sql $sc, source|sandbox $db_row, bool $usr_tbl = false): sql_par
+    function sql_update(sql $sc, source|sandbox $db_row, array $tbl_typ_lst = []): sql_par
     {
+        $usr_tbl = $this->is_usr_tbl($tbl_typ_lst);
         // get the fields and values that have been changed
         // and that needs to be updated in the database
         // the db_* child function call the corresponding parent function
@@ -657,7 +659,7 @@ class source extends sandbox_typed
         $values = $this->db_values_changed($db_row, $usr_tbl);
         $all_fields = $this->db_fields_all();
         // unlike the db_* function the sql_update_* parent function is called directly
-        return parent::sql_update_named($sc, $fields, $values, $all_fields, $usr_tbl);
+        return parent::sql_update_named($sc, $fields, $values, $all_fields, $tbl_typ_lst);
     }
 
 
@@ -693,7 +695,7 @@ class source extends sandbox_typed
      */
     function db_fields_changed(sandbox|source $sbx, bool $usr_tbl = false): array
     {
-        $result =  parent::db_fields_changed_named($sbx, $usr_tbl);
+        $result = parent::db_fields_changed_named($sbx, $usr_tbl);
         if ($sbx->type_id() <> $this->type_id()) {
             $result[] = source::FLD_TYPE;
         }
