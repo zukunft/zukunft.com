@@ -2255,7 +2255,7 @@ class sandbox extends db_object_seq_id_user
             if ($result->is_ok()) {
                 if ($this->sql_write_prepared()) {
                     $sc = $db_con->sql_creator();
-                    $qp = $this->sql_delete($sc, [sql_type::USER], true, true);
+                    $qp = $this->sql_delete($sc, [sql_type::USER, sql_type::EXCLUDE]);
                     $msg = $db_con->delete($qp, $this::class . ' user exclusions');
                     $result->add($msg);
                 } else {
@@ -2580,10 +2580,9 @@ class sandbox extends db_object_seq_id_user
      *
      * @param sql $sc with the target db_type set
      * @param array $tbl_typ_lst the table types for this table
-     * @param bool $excluded true if only the excluded user rows should be deleted
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_delete(sql $sc, array $tbl_typ_lst = [], bool $excluded = false): sql_par
+    function sql_delete(sql $sc, array $tbl_typ_lst = []): sql_par
     {
         return new sql_par('');
     }

@@ -57,6 +57,7 @@ enum sql_type: string
     // sql builder parameters
     case SUB = 'sub'; // the created sql statement should be used as part of another prepared sql statement
     case LOG = 'log'; // the created sql statement should include statements for logging the changes
+    case EXCLUDE = 'exclude'; // instead of a delete create a sql to exclude a row
 
     /**
      * @return string the name extension for the query name

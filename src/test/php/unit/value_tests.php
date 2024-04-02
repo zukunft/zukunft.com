@@ -92,7 +92,7 @@ class value_tests
         $this->assert_sql_update_trigger($t, $db_con, $val_upd, $val);
         $t->assert_sql_delete($db_con, $val);
         $t->assert_sql_delete($db_con, $val, [sql_type::USER]);
-        $t->assert_sql_delete($db_con, $val, [sql_type::USER], false, true);
+        $t->assert_sql_delete($db_con, $val, [sql_type::USER, sql_type::EXCLUDE]);
         $this->assert_sql_by_grp($t, $db_con, $val);
 
         // ... and the related default value
@@ -107,11 +107,11 @@ class value_tests
         $val = $t->dummy_value_16();
         // TODO insert value does not need to return the id because this is given by the group id
         $t->assert_sql_insert($db_con, $val);
-        $t->assert_sql_insert($db_con, $val, [sql_type::USER], true);
+        $t->assert_sql_insert($db_con, $val, [sql_type::USER]);
         $db_val = $val->cloned(value_api::TV_FLOAT);
         $t->assert_sql_update($db_con, $val, $db_val);
         $t->assert_sql_delete($db_con, $val);
-        $t->assert_sql_delete($db_con, $val, [sql_type::USER], true);
+        $t->assert_sql_delete($db_con, $val, [sql_type::USER]);
         $t->assert_sql_by_id($db_con, $val);
         // TODO activate Prio 2
         //$this->assert_sql_by_grp($t, $db_con, $val);

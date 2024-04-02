@@ -1558,15 +1558,14 @@ class sandbox_multi extends db_object_multi_user
      *
      * @param sql $sc with the target db_type set
      * @param array $tbl_typ_lst the table types for this table
-     * @param bool $excluded true if only the excluded user rows should be deleted
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_delete(
         sql   $sc,
-        array $tbl_typ_lst = [],
-        bool  $excluded = false
+        array $tbl_typ_lst = []
     ): sql_par
     {
+        $excluded = $this->exclude_sql($tbl_typ_lst);
         $qp = $this->sql_common($sc, $tbl_typ_lst, false);
         $qp->name .= sql::file_sep . sql::file_delete;
         if ($excluded) {
@@ -2306,7 +2305,7 @@ class sandbox_multi extends db_object_multi_user
             if ($result->is_ok()) {
                 // TODO always use the qp based setup
                 if ($this::class == value::class) {
-                    $qp = $this->sql_delete($db_con->sql_creator(), [sql_type::USER], true);
+                    $qp = $this->sql_delete($db_con->sql_creator(), [sql_type::USER, sql_type::EXCLUDE]);
                     $msg = $db_con->delete($qp, $this::class . ' user exclusions');
                     $result->add($msg);
                 } else {

@@ -89,24 +89,24 @@ class word_tests
         $t->assert_sql_insert($db_con, $wrd);
         $t->assert_sql_insert($db_con, $wrd, [sql_type::USER]);
         // TODO activate db write with log
-        // $t->assert_sql_insert($db_con, $wrd, false, true);
-        // $t->assert_sql_insert($db_con, $wrd, true, true);
+        // $t->assert_sql_insert($db_con, $wrd, [sql_type::LOG]);
+        // $t->assert_sql_insert($db_con, $wrd, [sql_type::LOG, sql_type::USER]);
         $wrd_renamed = $wrd->cloned(word_api::TN_RENAMED);
         $t->assert_sql_update($db_con, $wrd_renamed, $wrd);
         $t->assert_sql_update($db_con, $wrd_renamed, $wrd, [sql_type::USER]);
         // TODO activate db write with log
-        //$t->assert_sql_update($db_con, $wrd_renamed, $wrd, false, true);
-        //$t->assert_sql_update($db_con, $wrd_renamed, $wrd, true, true);
+        //$t->assert_sql_update($db_con, $wrd_renamed, $wrd, [sql_type::LOG]);
+        //$t->assert_sql_update($db_con, $wrd_renamed, $wrd, [sql_type::LOG, sql_type::USER]);
         $t->assert_sql_delete($db_con, $wrd);
         $t->assert_sql_delete($db_con, $wrd, [sql_type::USER]);
         // TODO activate db write with log
-        //$t->assert_sql_delete($db_con, $wrd, false, true);
-        //$t->assert_sql_delete($db_con, $wrd, true, true);
-        $t->assert_sql_delete($db_con, $wrd, [], false, true);
-        $t->assert_sql_delete($db_con, $wrd, [sql_type::USER], false, true);
+        //$t->assert_sql_delete($db_con, $wrd, [sql_type::LOG]);
+        //$t->assert_sql_delete($db_con, $wrd, [sql_type::LOG, sql_type::USER]);
+        $t->assert_sql_delete($db_con, $wrd, [sql_type::EXCLUDE]);
+        $t->assert_sql_delete($db_con, $wrd, [sql_type::USER, sql_type::EXCLUDE]);
         // TODO activate db write with log
-        //$t->assert_sql_delete($db_con, $wrd, false, true, true);
-        //$t->assert_sql_delete($db_con, $wrd, true, true, true);
+        //$t->assert_sql_delete($db_con, $wrd, [sql_type::LOG], true);
+        //$t->assert_sql_delete($db_con, $wrd, [sql_type::LOG, sql_type::USER], true);
 
 
         $t->subheader('word api unit tests');

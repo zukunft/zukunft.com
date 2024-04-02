@@ -312,9 +312,26 @@ class db_object
         return $lib->class_to_name($this::class) . sql_db::FLD_EXT_ID;
     }
 
+    /**
+     * @param array $tbl_typ_lst of parameters for the sql creation
+     * @return bool true if sql should point to the user sandbox table
+     */
     protected function is_usr_tbl(array $tbl_typ_lst): bool
     {
         if (in_array(sql_type::USER, $tbl_typ_lst)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @param array $tbl_typ_lst of parameters for the sql creation
+     * @return bool true if the type list suggests to exclude the row instead of deleting it
+     */
+    protected function exclude_sql(array $tbl_typ_lst): bool
+    {
+        if (in_array(sql_type::EXCLUDE, $tbl_typ_lst)) {
             return true;
         } else {
             return false;
