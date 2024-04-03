@@ -144,7 +144,7 @@ class value_time_series extends sandbox_value
         string $id_fld = self::FLD_ID): bool
     {
         $lib = new library();
-        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, self::FLD_ID);
+        $result = parent::row_mapper_multi($db_row, '', self::FLD_ID);
         if ($result) {
             $this->grp->set_id($db_row[group::FLD_ID]);
             if ($db_row[source::FLD_ID] > 0) {
