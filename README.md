@@ -143,6 +143,9 @@ object extensions
 - _dsp (DiSPlay)           - to create the HTML code to display the object
 - _min_dsp                 - the display object based on the API object instead of the backend object
 
+internal
+- sc (Sql Creator)         - for writing SQL statements
+
 frontend:
 - ui (UserInterface)       - the definition of the user interface, mainly used to display either the JavaScript based single page design, the bootstrap based HTML design, the design based on pure HTML code or a pure text output for testing
 - djs (DiSPlay JavaScript) - functions for the vue.js JavaScript user interface implementation

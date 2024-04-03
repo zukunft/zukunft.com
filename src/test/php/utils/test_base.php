@@ -966,22 +966,22 @@ class test_base
      *
      * @param sql_db $db_con does not need to be connected to a real database
      * @param object $usr_obj the user sandbox object e.g. a word
-     * @param array $tbl_typ_lst the table types for this table
+     * @param array $sc_par_lst the parameters for the sql statement creation
      * @param bool $and_log true if also the changes should be written
      * @return bool true if all tests are fine
      */
-    function assert_sql_insert(sql_db $db_con, object $usr_obj, array $tbl_typ_lst = [], bool $and_log = false): bool
+    function assert_sql_insert(sql_db $db_con, object $usr_obj, array $sc_par_lst = [], bool $and_log = false): bool
     {
         // check the Postgres query syntax
         $sc = $db_con->sql_creator();
         $sc->db_type = sql_db::POSTGRES;
-        $qp = $usr_obj->sql_insert($sc, $tbl_typ_lst);
+        $qp = $usr_obj->sql_insert($sc, $sc_par_lst);
         $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $sc->db_type = sql_db::MYSQL;
-            $qp = $usr_obj->sql_insert($sc, $tbl_typ_lst);
+            $qp = $usr_obj->sql_insert($sc, $sc_par_lst);
             $result = $this->assert_qp($qp, $sc->db_type);
         }
         return $result;
@@ -993,22 +993,22 @@ class test_base
      *
      * @param sql_db $db_con does not need to be connected to a real database
      * @param object $usr_obj the user sandbox object e.g. a word
-     * @param object $db_obj must be the same object as the $usr_obj but with the valuesfrom the database before the update
-     * @param array $tbl_typ_lst the table types for this table
+     * @param object $db_obj must be the same object as the $usr_obj but with the values from the database before the update
+     * @param array $sc_par_lst the parameters for the sql statement creation
      * @return bool true if all tests are fine
      */
-    function assert_sql_update(sql_db $db_con, object $usr_obj, object $db_obj, array $tbl_typ_lst = []): bool
+    function assert_sql_update(sql_db $db_con, object $usr_obj, object $db_obj, array $sc_par_lst = []): bool
     {
         $sc = $db_con->sql_creator();
         // check the Postgres query syntax
         $sc->db_type = sql_db::POSTGRES;
-        $qp = $usr_obj->sql_update($sc, $db_obj, $tbl_typ_lst);
+        $qp = $usr_obj->sql_update($sc, $db_obj, $sc_par_lst);
         $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $sc->db_type = sql_db::MYSQL;
-            $qp = $usr_obj->sql_update($sc, $db_obj, $tbl_typ_lst);
+            $qp = $usr_obj->sql_update($sc, $db_obj, $sc_par_lst);
             $result = $this->assert_qp($qp, $sc->db_type);
         }
         return $result;
@@ -1020,21 +1020,21 @@ class test_base
      *
      * @param sql_db $db_con does not need to be connected to a real database
      * @param object $usr_obj the user sandbox object e.g. a word
-     * @param array $tbl_typ_lst the table types for this table
+     * @param array $sc_par_lst the parameters for the sql statement creation
      * @return bool true if all tests are fine
      */
-    function assert_sql_delete(sql_db $db_con, object $usr_obj, array $tbl_typ_lst = []): bool
+    function assert_sql_delete(sql_db $db_con, object $usr_obj, array $sc_par_lst = []): bool
     {
         $sc = $db_con->sql_creator();
         // check the Postgres query syntax
         $sc->db_type = sql_db::POSTGRES;
-        $qp = $usr_obj->sql_delete($sc, $tbl_typ_lst);
+        $qp = $usr_obj->sql_delete($sc, $sc_par_lst);
         $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $sc->db_type = sql_db::MYSQL;
-            $qp = $usr_obj->sql_delete($sc, $tbl_typ_lst);
+            $qp = $usr_obj->sql_delete($sc, $sc_par_lst);
             $result = $this->assert_qp($qp, $sc->db_type);
         }
         return $result;

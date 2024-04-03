@@ -2508,18 +2508,18 @@ class sandbox extends db_object_seq_id_user
      * update the sandbox object in the database
      *
      * @param string $msg the message shown to the user in case of a problem to idemtify the update
-     * @param array $tbl_typ_lst the table types for this table
+     * @param array $sc_par_lst the parameters for the sql statement creation
      * @return user_message the message and potential solution shown to the user in case of a problem
      */
-    function insert(string $msg = '', array $tbl_typ_lst = []): user_message
+    function insert(string $msg = '', array $sc_par_lst = []): user_message
     {
         global $db_con;
 
         // set the actual class before accessing the database to ...
         log_debug($msg);
-        $db_con->set_class($this::class, $this->is_usr_tbl($tbl_typ_lst));
+        $db_con->set_class($this::class, $this->is_usr_tbl($sc_par_lst));
         $sc = $db_con->sql_creator();
-        $qp = $this->sql_insert($sc, $tbl_typ_lst);
+        $qp = $this->sql_insert($sc, $sc_par_lst);
         return $db_con->insert($qp, $msg);
     }
 
@@ -2527,23 +2527,23 @@ class sandbox extends db_object_seq_id_user
      * update the sandbox object in the database
      *
      * @param string $msg the message shown to the user in case of a problem to idemtify the update
-     * @param array $tbl_typ_lst the table types for this table
+     * @param array $sc_par_lst the parameters for the sql statement creation
      * @return user_message the message and potential solution shown to the user in case of a problem
      */
-    function update(string $msg = '', array $tbl_typ_lst = []): user_message
+    function update(string $msg = '', array $sc_par_lst = []): user_message
     {
         global $db_con;
 
         // set the actual class before accessing the database to ...
         log_debug($msg);
-        $db_con->set_class($this::class, $this->is_usr_tbl($tbl_typ_lst));
+        $db_con->set_class($this::class, $this->is_usr_tbl($sc_par_lst));
         // TODO check if needed
         $db_con->usr_id = $this->user_id();
         $sc = $db_con->sql_creator();
         // reload the database row to prevent failures due to caching
         $db_row = clone $this;
         $db_row->load_by_id($this->id());
-        $qp = $this->sql_update($sc, $db_row, $tbl_typ_lst);
+        $qp = $this->sql_update($sc, $db_row, $sc_par_lst);
         return $db_con->update($qp, $msg);
     }
 
@@ -2552,10 +2552,10 @@ class sandbox extends db_object_seq_id_user
      * dummy function to be overwritten by the child object
      *
      * @param sql $sc with the target db_type set
-     * @param array $tbl_typ_lst the table types for this table
+     * @param array $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_insert(sql $sc, array $tbl_typ_lst = []): sql_par
+    function sql_insert(sql $sc, array $sc_par_lst = []): sql_par
     {
         return new sql_par('');
     }
@@ -2566,10 +2566,10 @@ class sandbox extends db_object_seq_id_user
      *
      * @param sql $sc with the target db_type set
      * @param sandbox|source $db_row the sandbox object with the database values before the update
-     * @param array $tbl_typ_lst the table types for this table
+     * @param array $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_update(sql $sc, sandbox|source $db_row, array $tbl_typ_lst = []): sql_par
+    function sql_update(sql $sc, sandbox|source $db_row, array $sc_par_lst = []): sql_par
     {
         return new sql_par('');
     }
@@ -2579,10 +2579,10 @@ class sandbox extends db_object_seq_id_user
      * dummy function to be overwritten by the child object
      *
      * @param sql $sc with the target db_type set
-     * @param array $tbl_typ_lst the table types for this table
+     * @param array $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_delete(sql $sc, array $tbl_typ_lst = []): sql_par
+    function sql_delete(sql $sc, array $sc_par_lst = []): sql_par
     {
         return new sql_par('');
     }

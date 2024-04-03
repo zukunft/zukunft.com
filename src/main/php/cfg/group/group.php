@@ -1283,12 +1283,12 @@ class group extends sandbox_multi
      * create the sql statement to add a new group name to the database
      *
      * @param sql $sc with the target db_type set
-     * @param array $tbl_typ_lst the table types for this table
+     * @param array $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_insert(sql $sc, array $tbl_typ_lst): sql_par
+    function sql_insert(sql $sc, array $sc_par_lst): sql_par
     {
-        $qp = $this->sql_common($sc, $tbl_typ_lst);
+        $qp = $this->sql_common($sc, $sc_par_lst);
         // overwrite the standard auto increase id field name
         $sc->set_id_field($this->id_field());
         $qp->name .= sql::file_sep . sql::file_insert;
@@ -1306,13 +1306,13 @@ class group extends sandbox_multi
      *
      * @param sql $sc with the target db_type set
      * @param group $db_grp
-     * @param array $tbl_typ_lst the table types for this table
+     * @param array $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_update(sql $sc, group $db_grp, array $tbl_typ_lst): sql_par
+    function sql_update(sql $sc, group $db_grp, array $sc_par_lst): sql_par
     {
         $lib = new library();
-        $qp = $this->sql_common($sc, $tbl_typ_lst);
+        $qp = $this->sql_common($sc, $sc_par_lst);
         $fields = $this->db_fields_changed($db_grp);
         $values = $this->db_values_changed($db_grp);;
         $all_fields = $this->db_fields_all();
@@ -1334,13 +1334,13 @@ class group extends sandbox_multi
     /**
      * the common part of the sql statement creation for insert and update statements
      * @param sql $sc with the target db_type set
-     * @param array $tbl_typ_lst the table types for this table
+     * @param array $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the common part for insert and update sql statements
      */
-    protected function sql_common(sql $sc, array $tbl_typ_lst = []): sql_par
+    protected function sql_common(sql $sc, array $sc_par_lst = []): sql_par
     {
         $lib = new library();
-        $usr_tbl = $this->is_usr_tbl($tbl_typ_lst);
+        $usr_tbl = $this->is_usr_tbl($sc_par_lst);
         $tbl_typ = $this->table_type();
         $ext = $tbl_typ->extension();
         $sc->set_class($this::class, $usr_tbl, $tbl_typ->extension());

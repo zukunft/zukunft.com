@@ -289,10 +289,10 @@ class sandbox_multi extends db_object_multi_user
      *
      * @param sql $sc with the target db_type set
      * @param array $fields the field names that should be updated in the database
-     * @param array $tbl_typ_lst the table types for this table
+     * @param array $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_update_fields(sql $sc, array $fields = [], array $values = [], array $tbl_typ_lst = []): sql_par
+    function sql_update_fields(sql $sc, array $fields = [], array $values = [], array $sc_par_lst = []): sql_par
     {
         return new sql_par($this::class);
     }
@@ -1557,16 +1557,16 @@ class sandbox_multi extends db_object_multi_user
      * TODO check if user specific overwrites can be deleted
      *
      * @param sql $sc with the target db_type set
-     * @param array $tbl_typ_lst the table types for this table
+     * @param array $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_delete(
         sql   $sc,
-        array $tbl_typ_lst = []
+        array $sc_par_lst = []
     ): sql_par
     {
-        $excluded = $this->exclude_sql($tbl_typ_lst);
-        $qp = $this->sql_common($sc, $tbl_typ_lst, false);
+        $excluded = $this->exclude_sql($sc_par_lst);
+        $qp = $this->sql_common($sc, $sc_par_lst, false);
         $qp->name .= sql::file_sep . sql::file_delete;
         if ($excluded) {
             $qp->name .= '_excluded';

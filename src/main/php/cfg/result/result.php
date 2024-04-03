@@ -1632,13 +1632,13 @@ class result extends sandbox_value
      * TODO add source group
      *
      * @param sql $sc with the target db_type set
-     * @param array $tbl_typ_lst the table types for this table
+     * @param array $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_insert(sql $sc, array $tbl_typ_lst): sql_par
+    function sql_insert(sql $sc, array $sc_par_lst): sql_par
     {
-        $qp = $this->sql_common($sc, $tbl_typ_lst);
-        $usr_tbl = $this->is_usr_tbl($tbl_typ_lst);
+        $qp = $this->sql_common($sc, $sc_par_lst);
+        $usr_tbl = $this->is_usr_tbl($sc_par_lst);
         // overwrite the standard auto increase id field name
         $sc->set_id_field($this->id_field());
         $qp->name .= sql::file_sep . sql::file_insert;
@@ -1682,14 +1682,14 @@ class result extends sandbox_value
      *
      * @param sql $sc with the target db_type set
      * @param result $db_res the result object with the database values before the update
-     * @param array $tbl_typ_lst the table types for this table
+     * @param array $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_update(sql $sc, result $db_res, array $tbl_typ_lst = []): sql_par
+    function sql_update(sql $sc, result $db_res, array $sc_par_lst = []): sql_par
     {
         $lib = new library();
-        $usr_tbl = $this->is_usr_tbl($tbl_typ_lst);
-        $qp = $this->sql_common($sc, $tbl_typ_lst);
+        $usr_tbl = $this->is_usr_tbl($sc_par_lst);
+        $qp = $this->sql_common($sc, $sc_par_lst);
         // get the fields and values that have been changed and needs to be updated in the database
         $fields = $this->db_fields_changed($db_res);
         $values = $this->db_values_changed($db_res);;

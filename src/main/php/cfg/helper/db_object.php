@@ -313,12 +313,12 @@ class db_object
     }
 
     /**
-     * @param array $tbl_typ_lst of parameters for the sql creation
+     * @param array $sc_par_lst of parameters for the sql creation
      * @return bool true if sql should point to the user sandbox table
      */
-    protected function is_usr_tbl(array $tbl_typ_lst): bool
+    protected function is_usr_tbl(array $sc_par_lst): bool
     {
-        if (in_array(sql_type::USER, $tbl_typ_lst)) {
+        if (in_array(sql_type::USER, $sc_par_lst)) {
             return true;
         } else {
             return false;
@@ -326,12 +326,25 @@ class db_object
     }
 
     /**
-     * @param array $tbl_typ_lst of parameters for the sql creation
+     * @param array $sc_par_lst of parameters for the sql creation
+     * @return bool true if sql is supposed to be part of another sql statement
+     */
+    protected function is_sub_tbl(array $sc_par_lst): bool
+    {
+        if (in_array(sql_type::SUB, $sc_par_lst)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @param array $sc_par_lst of parameters for the sql creation
      * @return bool true if the type list suggests to exclude the row instead of deleting it
      */
-    protected function exclude_sql(array $tbl_typ_lst): bool
+    protected function exclude_sql(array $sc_par_lst): bool
     {
-        if (in_array(sql_type::EXCLUDE, $tbl_typ_lst)) {
+        if (in_array(sql_type::EXCLUDE, $sc_par_lst)) {
             return true;
         } else {
             return false;

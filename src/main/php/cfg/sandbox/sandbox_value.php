@@ -1011,14 +1011,14 @@ class sandbox_value extends sandbox_multi
     /**
      * the common part of the sql statement creation for insert and update statements
      * @param sql $sc with the target db_type set
-     * @param array $tbl_typ_lst the table types for this table
+     * @param array $sc_par_lst the parameters for the sql statement creation
      * @param bool $phr_nbr true if the number of phrases should be included in the extension
      * @return sql_par the common part for insert and update sql statements
      */
-    protected function sql_common(sql $sc, array $tbl_typ_lst = [], bool $phr_nbr = true): sql_par
+    protected function sql_common(sql $sc, array $sc_par_lst = [], bool $phr_nbr = true): sql_par
     {
         $lib = new library();
-        $usr_tbl = $this->is_usr_tbl($tbl_typ_lst);
+        $usr_tbl = $this->is_usr_tbl($sc_par_lst);
         // the value table name is not yet using the number of phrase keys as extension
         $ext = $this->grp->table_extension($phr_nbr);
         $tbl_typ = $this->grp->table_type();
@@ -1036,12 +1036,12 @@ class sandbox_value extends sandbox_multi
      * create the sql statement to update a value in the database
      * @param sql $sc with the target db_type set
      * @param sandbox_value $db_obj the value object with the database values before the update
-     * @param array $tbl_typ_lst the table types for this table
+     * @param array $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_update_value(sql $sc, sandbox_value $db_obj, array $tbl_typ_lst): sql_par
+    function sql_update_value(sql $sc, sandbox_value $db_obj, array $sc_par_lst): sql_par
     {
-        $qp = $this->sql_common($sc, $tbl_typ_lst);
+        $qp = $this->sql_common($sc, $sc_par_lst);
         $qp->name .= sql::file_sep . sql::file_update;
         $sc->set_name($qp->name);
         // get the fields and values that have been changed and needs to be updated in the database

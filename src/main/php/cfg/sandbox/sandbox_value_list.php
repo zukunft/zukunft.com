@@ -173,7 +173,7 @@ class sandbox_value_list extends sandbox_list
      * @param string $class the value or result class name
      * @param phrase_list $phr_lst if set to get all values for this phrase
      * @param bool $or true if all values related to any phrase of the list should be loaded
-     * @param array $tbl_typ_lst the table types for this table
+     * @param array $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_by_phr_lst_single(
@@ -181,16 +181,16 @@ class sandbox_value_list extends sandbox_list
         string      $class,
         phrase_list $phr_lst,
         bool        $or,
-        array       $tbl_typ_lst,
+        array       $sc_par_lst,
         int         $par_pos,
         int         $frm_id = 0
     ): sql_par
     {
-        $qp = $this->load_sql_init($sc, $class, 'phr', $tbl_typ_lst);
-        if ($this->is_prime($tbl_typ_lst)) {
+        $qp = $this->load_sql_init($sc, $class, 'phr', $sc_par_lst);
+        if ($this->is_prime($sc_par_lst)) {
             $max_phr = group_id::PRIME_PHRASES_STD;
             if (($class == result::class
-                    or $class == result_list::class) and $this->is_std($tbl_typ_lst)) {
+                    or $class == result_list::class) and $this->is_std($sc_par_lst)) {
                 $max_phr = result_id::PRIME_PHRASES_STD;
                 if ($frm_id != 0) {
                     $sc->add_where(formula::FLD_ID, $frm_id, sql_par_type::INT_SAME, '$' . $par_pos);
@@ -198,10 +198,10 @@ class sandbox_value_list extends sandbox_list
                 }
             }
             $par_pos = $this->load_sql_set_phrase_fields($sc, $phr_lst, $or, $par_pos, $max_phr);
-        } elseif ($this->is_main($tbl_typ_lst)) {
+        } elseif ($this->is_main($sc_par_lst)) {
             // only for results
             $max_phr = result_id::MAIN_SOURCE_PHRASES + result_id::MAIN_RESULT_PHRASES;
-            if ($this->is_std($tbl_typ_lst)) {
+            if ($this->is_std($sc_par_lst)) {
                 $max_phr += result_id::MAIN_PHRASES_STD;
             } else {
                 $max_phr += result_id::MAIN_PHRASES;

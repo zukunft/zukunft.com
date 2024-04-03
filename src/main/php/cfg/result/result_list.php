@@ -317,12 +317,12 @@ class result_list extends sandbox_value_list
      *     *
      * @param sql $sc with the target db_type set
      * @param formula $frm if set to get all results for this phrase
-     * @param array $tbl_typ_lst the table types for this table
+     * @param array $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_frm_single(sql $sc, formula $frm, array $tbl_typ_lst): sql_par
+    function load_sql_by_frm_single(sql $sc, formula $frm, array $sc_par_lst): sql_par
     {
-        $qp = $this->load_sql_init($sc, result::class, 'frm', $tbl_typ_lst);
+        $qp = $this->load_sql_init($sc, result::class, 'frm', $sc_par_lst);
         $sc->add_where(formula::FLD_ID, $frm->id());
         $qp->sql = $sc->sql(0, true, false);
         $qp->par = $sc->get_par();

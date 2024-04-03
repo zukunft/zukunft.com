@@ -992,13 +992,20 @@ class sql
     /**
      * create the sql statement to add a row to the database
      * TODO add fields types for inserting prime values to change the id to smallint
+     * TODO check if log_err is always set correctly
      *
      * @param array $fields with the fields names to add
      * @param array $values with the field values to add
-     * @param bool $log_err false if
+     * @param array $sc_par_lst the parameters for the sql statement creation
+     * @param bool $log_err false if called from a log function to prevent loops
      * @return string the prepared sql insert statement
      */
-    function create_sql_insert(array $fields, array $values, bool $log_err = true): string
+    function create_sql_insert(
+        array $fields,
+        array $values,
+        array $sc_par_lst = [],
+        bool  $log_err = true
+    ): string
     {
         $lib = new library();
 
@@ -2357,7 +2364,9 @@ class sql
     private function prepare_this_sql(string $sql_statement_type = sql::SELECT): string
     {
         $sql = '';
-        if (count($this->par_types) > 0
+        if ($this->sub_query) {
+            $sql = $sql_statement_type;
+        } elseif (count($this->par_types) > 0
             or $this->join_sub_query
             or $this->join2_sub_query
             or $this->join3_sub_query
@@ -2381,12 +2390,9 @@ class sql
                 }
             }
         } else {
-            if ($this->sub_query) {
-                $sql = $sql_statement_type;
-            } else {
-                log_err('Query name is given, but parameters types are missing for ' . $this->query_name);
-            }
+            log_err('Query is not a sub query, but parameters types are missing for ' . $this->query_name);
         }
+
         return $sql;
     }
 

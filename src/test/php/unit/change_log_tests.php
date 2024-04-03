@@ -38,6 +38,7 @@ include_once MODEL_LOG_PATH . 'change_link.php';
 
 use api\word\triple as triple_api;
 use cfg\config;
+use cfg\db\sql_type;
 use cfg\library;
 use cfg\db\sql_db;
 use cfg\log\change_action;
@@ -123,6 +124,7 @@ class change_log_tests
         $t->subheader('change log sql write');
         $log = $t->change_log_named();
         $t->assert_sql_insert($db_con, $log);
+        //$t->assert_sql_insert($db_con, $log, [sql_type::SUB]);
 
         $t->subheader('SQL statement tests');
         $log = new change($usr);

@@ -360,12 +360,12 @@ class value_list extends sandbox_value_list
     private function table_type_list_unique(array $ids): array
     {
         $grp_id = new group_id();
-        $tbl_typ_lst = array();
+        $sc_par_lst = array();
         foreach ($ids as $id) {
-            $tbl_typ_lst[] = $grp_id->table_type($id);
+            $sc_par_lst[] = $grp_id->table_type($id);
         }
 
-        return $this->array_unique_type($tbl_typ_lst);
+        return $this->array_unique_type($sc_par_lst);
     }
 
     private function array_unique_type(array $typ_lst): array
@@ -581,13 +581,13 @@ class value_list extends sandbox_value_list
      *     *
      * @param sql $sc with the target db_type set
      * @param phrase $phr if set to get all values for this phrase
-     * @param array $tbl_typ_lst the table types for this table
+     * @param array $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_phr_single(sql $sc, phrase $phr, array $tbl_typ_lst): sql_par
+    function load_sql_by_phr_single(sql $sc, phrase $phr, array $sc_par_lst): sql_par
     {
-        $qp = $this->load_sql_init($sc, value::class,  'phr', $tbl_typ_lst);
-        if ($this->is_prime($tbl_typ_lst)) {
+        $qp = $this->load_sql_init($sc, value::class,  'phr', $sc_par_lst);
+        if ($this->is_prime($sc_par_lst)) {
             for ($i = 1; $i <= group_id::PRIME_PHRASES_STD; $i++) {
                 $sc->add_where(phrase::FLD_ID . '_' . $i, $phr->id(), sql_par_type::INT_SAME_OR, '$2');
             }
