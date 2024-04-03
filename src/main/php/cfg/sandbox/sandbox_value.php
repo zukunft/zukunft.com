@@ -793,9 +793,10 @@ class sandbox_value extends sandbox_multi
      */
     protected function load_sql_by_grp_id(sql $sc, string $query_name, string $class = self::class): sql_par
     {
-        $tbl_typ = $this->grp()->table_type();
+        $sc_par_lst = [];
+        $sc_par_lst[] = $this->grp()->table_type();
         $ext = $this->grp()->table_extension();
-        $qp = $this->load_sql_multi($sc, $query_name, $class, $ext, $tbl_typ);
+        $qp = $this->load_sql_multi($sc, $query_name, $class, $sc_par_lst, $ext);
         return $this->load_sql_set_where($qp, $sc, $ext);
     }
 

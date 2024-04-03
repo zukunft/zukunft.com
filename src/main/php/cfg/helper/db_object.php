@@ -212,30 +212,23 @@ class db_object
      * @param sql $sc with the target db_type set
      * @param string $query_name the name of the selection fields to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
+     * @param array $sc_par_lst the parameters for the sql statement creation
      * @param string $ext the query name extension e.g. to differentiate queries based on 1,2, or more phrases
-     * @param sql_type $tbl_typ the table name extension e.g. to switch between standard and prime values
-     * @param bool $usr_tbl true if a db row should be added to the user table
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     public function load_sql_multi(
         sql      $sc,
         string   $query_name,
         string   $class,
-        string   $ext = '',
-        sql_type $tbl_typ = sql_type::MOST,
-        bool     $usr_tbl = false
+        array    $sc_par_lst = [],
+        string   $ext = ''
     ): sql_par
     {
-        // TODO move to the calling function
-        $sc_par_lst = [$tbl_typ];
-        if ($usr_tbl) {
-            $sc_par_lst[] = sql_type::USER;
-        }
         $lib = new library();
         $tbl_name = $lib->class_to_name($class);
         $qp = new sql_par($tbl_name, $sc_par_lst, $ext);
         $qp->name .= $query_name;
-        $sc->set_class($class, $sc_par_lst, $tbl_typ->extension());
+        $sc->set_class($class, $sc_par_lst, $sc->tbl_ext_ex_user($sc_par_lst));
         $sc->set_name($qp->name);
         $sc->set_fields($this::FLD_NAMES);
 
@@ -252,7 +245,7 @@ class db_object
      */
     function load_sql(sql $sc, string $query_name): sql_par
     {
-        return $this->load_sql_multi($sc, $query_name, $this::class);
+        return $this->load_sql_multi($sc, $query_name, $this::class, [sql_type::MOST]);
     }
 
     /**
@@ -271,9 +264,10 @@ class db_object
             or $class == result::class) {
             $grp = new group(new user());
             $grp->set_id($id);
-            $typ = $grp->table_type();
+            $sc_par_lst = [];
+            $sc_par_lst[] = $grp->table_type();
             $ext = $grp->table_extension();
-            $qp = $this->load_sql_multi($sc, sql_db::FLD_ID, $class, $ext, $typ);
+            $qp = $this->load_sql_multi($sc, sql_db::FLD_ID, $class, $sc_par_lst, $ext);
         } else {
             $qp = $this->load_sql($sc, sql_db::FLD_ID);
         }

@@ -1519,27 +1519,24 @@ class sandbox_multi extends db_object_multi_user
      * to be overwritten by child object
      *
      * @param sql $sc with the target db_type set
-     * @param bool $usr_tbl true if the user table row should be updated
+     * @param array $fields ???
+     * @param array $values ???
+     * @param array $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_update_multi(
         sql   $sc,
         array $fields = [],
         array $values = [],
-        bool  $usr_tbl = false
+        array $sc_par_lst = []
     ): sql_par
     {
         $lib = new library();
-        // TODO move to the calling function
-        $sc_par_lst = [];
-        if ($usr_tbl) {
-            $sc_par_lst[] = sql_type::USER;
-        }
         $sc->set_class($this::class, $sc_par_lst);
         $sql_name = $lib->class_to_name($this::class);
         $qp = new sql_par($sql_name);
         $qp->name = $sql_name;
-        if ($usr_tbl) {
+        if ($sc->is_usr_tbl($sc_par_lst)) {
             $qp->name .= '_user';
         }
         $qp->name .= sql::file_sep . sql::file_update;

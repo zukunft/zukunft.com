@@ -548,8 +548,9 @@ class group extends sandbox_multi
         $this->set_id($id);
         // for the group the number of phrases are not relevant for the queries
         $ext = $this->table_extension(false);
-        $tbl_typ = $this->table_type();
-        $qp = $this->load_sql_multi($sc, sql_db::FLD_ID, $class, $ext, $tbl_typ);
+        $sc_par_lst = [];
+        $sc_par_lst[] = $this->table_type();
+        $qp = $this->load_sql_multi($sc, sql_db::FLD_ID, $class, $sc_par_lst, $ext);
         $sc->add_where($this->id_field(), $id);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();

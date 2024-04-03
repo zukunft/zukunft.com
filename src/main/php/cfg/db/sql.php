@@ -505,11 +505,6 @@ class sql
         global $usr;
 
         $this->reset();
-        // TODO move to set_table()
-        $usr_tbl = $this->is_usr_tbl($sc_par_lst);
-        if ($ext == '') {
-            $ext = $this->tbl_ext_ex_user($sc_par_lst);
-        }
         $this->class = $class;
         if ($usr == null) {
             $this->set_usr(SYSTEM_USER_ID); // if the session user is not yet set, use the system user id to test the database compatibility
@@ -520,7 +515,7 @@ class sql
                 $this->set_usr($usr->id()); // by default use the session user id
             }
         }
-        $this->set_table($usr_tbl, $ext);
+        $this->set_table($sc_par_lst, $ext);
         $this->set_id_field();
         return true;
     }
@@ -3210,15 +3205,20 @@ class sql
 
     /**
      * set the table name and init some related parameters
-     * @param bool $usr_table true if the user sandbox table should be used
+     * @param array $sc_par_lst the parameters for the sql statement creation
      * @param string $ext the table name extension e.g. to switch between standard and prime values
      * @return void
      */
-    private function set_table(bool $usr_table = false, string $ext = ''): void
+    private function set_table(array $sc_par_lst = [], string $ext = ''): void
     {
         global $debug;
         $this->table = '';
-        if ($usr_table) {
+
+        $usr_tbl = $this->is_usr_tbl($sc_par_lst);
+        if ($ext == '') {
+            $ext = $this->tbl_ext_ex_user($sc_par_lst);
+        }
+        if ($usr_tbl) {
             $this->table = sql_db::USER_PREFIX;
         }
         $this->table .= $this->get_table_name($this->class);

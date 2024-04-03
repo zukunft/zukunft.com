@@ -212,6 +212,7 @@ class value_time_series extends sandbox_value
      * @param sql $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
+     * @param array $sc_par_lst the parameters for the sql statement creation
      * @param string $ext the query name extension e.g. to differentiate queries based on 1,2, or more phrases
      * @param sql_type $tbl_typ the table name extension e.g. to switch between standard and prime values
      * @param bool $usr_tbl true if a db row should be added to the user table
@@ -221,12 +222,11 @@ class value_time_series extends sandbox_value
         sql      $sc,
         string   $query_name,
         string   $class = self::class,
-        string   $ext = '',
-        sql_type $tbl_typ = sql_type::MOST,
-        bool     $usr_tbl = false
+        array    $sc_par_lst = [],
+        string   $ext = ''
     ): sql_par
     {
-        $qp = parent::load_sql_multi($sc, $query_name, $class, $ext, $tbl_typ, $usr_tbl);
+        $qp = parent::load_sql_multi($sc, $query_name, $class, $sc_par_lst, $ext);
 
         // overwrite the standard id field name (value_id) with the main database id field for values "group_id"
         $sc->set_id_field($this->id_field());

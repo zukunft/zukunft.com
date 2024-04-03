@@ -486,6 +486,7 @@ class result extends sandbox_value
      * @param sql $sc with the target db_type set
      * @param string $query_name the unique name of the query e.g. id or name
      * @param string $class the name of the child class from where the call has been triggered
+     * @param array $sc_par_lst the parameters for the sql statement creation
      * @param string $ext the query name extension e.g. to differentiate queries based on 1,2, or more phrases
      * @param sql_type $tbl_typ the table name extension e.g. to switch between standard and prime values
      * @param bool $usr_tbl true if a db row should be added to the user table
@@ -495,15 +496,14 @@ class result extends sandbox_value
         sql      $sc,
         string   $query_name,
         string   $class = self::class,
-        string   $ext = '',
-        sql_type $tbl_typ = sql_type::MOST,
-        bool     $usr_tbl = false
+        array    $sc_par_lst = [],
+        string   $ext = ''
     ): sql_par
     {
-        $qp = parent::load_sql_multi($sc, $query_name, $class, $ext, $tbl_typ, $usr_tbl);
+        $qp = parent::load_sql_multi($sc, $query_name, $class, $sc_par_lst, $ext);
 
         // overwrite the standard id field name (result_id) with the main database id field for results "group_id"
-        $sc->set_id_field($this->id_field($tbl_typ));
+        $sc->set_id_field($this->id_field());
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
         $sc->set_fields(self::FLD_NAMES);
@@ -1635,7 +1635,7 @@ class result extends sandbox_value
      * @param array $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_insert(sql $sc, array $sc_par_lst): sql_par
+    function sql_insert(sql $sc, array $sc_par_lst = []): sql_par
     {
         $qp = $this->sql_common($sc, $sc_par_lst);
         $usr_tbl = $sc->is_usr_tbl($sc_par_lst);
@@ -1756,23 +1756,23 @@ class result extends sandbox_value
      * get a list of database fields that have been updated
      * excluding the internal only last_update and is_std fields
      *
-     * @param result|sandbox_value $res the compare value to detect the changed fields
+     * @param result|sandbox_value $sbv the compare value to detect the changed fields
      * @return array list of the database field names that have been updated
      */
-    function db_fields_changed(result|sandbox_value $res): array
+    function db_fields_changed(result|sandbox_value $sbv): array
     {
-        $result = parent::db_fields_changed_value($res);
-        if ($res->src_grp_id() <> $this->src_grp_id()) {
+        $result = parent::db_fields_changed_value($sbv);
+        if ($sbv->src_grp_id() <> $this->src_grp_id()) {
             $result[] = self::FLD_SOURCE . group::FLD_ID;
         }
-        if ($res->frm_id() <> $this->frm_id()) {
+        if ($sbv->frm_id() <> $this->frm_id()) {
             $result[] = formula::FLD_ID;
         }
         // if any field has been updated, update the last_update field also
         if (count($result) == 0 or $this->last_update() == null) {
             $result[] = self::FLD_LAST_UPDATE;
         }
-        return array_merge($result, $this->db_fields_changed_sandbox($res));
+        return array_merge($result, $this->db_fields_changed_sandbox($sbv));
     }
 
     /**
