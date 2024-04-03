@@ -902,7 +902,7 @@ class sandbox extends db_object_seq_id_user
         $qp->name .= 'user_list';
 
         $class = $lib->class_to_name($this::class);
-        $sc->set_class($class, true);
+        $sc->set_class($class, [sql_type::USER]);
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
         $sc->set_join_fields(
@@ -2517,7 +2517,8 @@ class sandbox extends db_object_seq_id_user
 
         // set the actual class before accessing the database to ...
         log_debug($msg);
-        $db_con->set_class($this::class, $this->is_usr_tbl($sc_par_lst));
+        $sc = $db_con->sql_creator();
+        $db_con->set_class($this::class, $sc->is_usr_tbl($sc_par_lst));
         $sc = $db_con->sql_creator();
         $qp = $this->sql_insert($sc, $sc_par_lst);
         return $db_con->insert($qp, $msg);
@@ -2536,7 +2537,8 @@ class sandbox extends db_object_seq_id_user
 
         // set the actual class before accessing the database to ...
         log_debug($msg);
-        $db_con->set_class($this::class, $this->is_usr_tbl($sc_par_lst));
+        $sc = $db_con->sql_creator();
+        $db_con->set_class($this::class, $sc->is_usr_tbl($sc_par_lst));
         // TODO check if needed
         $db_con->usr_id = $this->user_id();
         $sc = $db_con->sql_creator();
@@ -2703,9 +2705,9 @@ class sandbox extends db_object_seq_id_user
     function sql_table(sql $sc): string
     {
         $sql = $sc->sql_separator();
-        $sql .= $this->sql_table_create($sc);
-        $sc->set_class($this::class, true);
-        $sql .= $this->sql_table_create($sc, true);
+        $sql .= $this->sql_table_create($sc, [sql_type::SANDBOX]);
+        $sc->set_class($this::class, [sql_type::USER]);
+        $sql .= $this->sql_table_create($sc, [sql_type::SANDBOX, sql_type::USER]);
         return $sql;
     }
 
@@ -2718,9 +2720,9 @@ class sandbox extends db_object_seq_id_user
     function sql_index(sql $sc): string
     {
         $sql = $sc->sql_separator();
-        $sql .= $this->sql_index_create($sc);
-        $sc->set_class($this::class, true);
-        $sql .= $this->sql_index_create($sc, true);
+        $sql .= $this->sql_index_create($sc, [sql_type::SANDBOX]);
+        $sc->set_class($this::class, [sql_type::USER]);
+        $sql .= $this->sql_index_create($sc, [sql_type::SANDBOX, sql_type::USER]);
         return $sql;
     }
 
@@ -2733,9 +2735,9 @@ class sandbox extends db_object_seq_id_user
     function sql_foreign_key(sql $sc): string
     {
         $sql = $sc->sql_separator();
-        $sql .= $this->sql_foreign_key_create($sc);
-        $sc->set_class($this::class, true);
-        $sql .= $this->sql_foreign_key_create($sc, true);
+        $sql .= $this->sql_foreign_key_create($sc, [sql_type::SANDBOX]);
+        $sc->set_class($this::class, [sql_type::USER]);
+        $sql .= $this->sql_foreign_key_create($sc, [sql_type::SANDBOX, sql_type::USER]);
         return $sql;
     }
 

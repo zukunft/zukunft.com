@@ -179,7 +179,7 @@ class group_list extends sandbox_list
         $qp->name .= $query_name;
 
         $tbl_ext = $this->table_extension($tbl_types);
-        $sc->set_class($class, false, $tbl_ext);
+        $sc->set_class($class, [], $tbl_ext);
         // TODO add pattern filter for the prime group id
         $grp = new group($this->user());
         $sc->set_id_field($grp->id_field());

@@ -289,7 +289,7 @@ class formula_link extends sandbox_link_with_type
      */
     function load_sql_user_changes(sql $sc, string $class = self::class): sql_par
     {
-        $sc->set_class($class, true);
+        $sc->set_class($class, [sql_type::USER]);
         return parent::load_sql_user_changes($sc, $class);
     }
 

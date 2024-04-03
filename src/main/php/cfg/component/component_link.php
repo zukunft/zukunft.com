@@ -45,6 +45,7 @@ use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
+use cfg\db\sql_type;
 use cfg\export\sandbox_exp;
 use cfg\library;
 use cfg\sandbox;
@@ -819,7 +820,7 @@ class component_link extends sandbox_link_with_type
      */
     function load_sql_user_changes(sql $sc, string $class = self::class): sql_par
     {
-        $sc->set_class($class, true);
+        $sc->set_class($class, [sql_type::USER]);
         return parent::load_sql_user_changes($sc, $class);
     }
 

@@ -345,7 +345,7 @@ class result_list extends sandbox_value_list
         $qp = new sql_par(self::class, [$tbl_typ]);
         $qp->name .= $query_name;
 
-        $sc->set_class(result::class, false, $tbl_typ->extension());
+        $sc->set_class(result::class, [], $tbl_typ->extension());
         // overwrite the standard id field name (result_id) with the main database id field for results "group_id"
         $res = new result($this->user());
         $sc->set_id_field($res->id_field_list($tbl_typ));

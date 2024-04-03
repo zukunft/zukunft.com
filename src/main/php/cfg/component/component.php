@@ -41,6 +41,7 @@ use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
+use cfg\db\sql_type;
 use cfg\export\component_exp;
 use cfg\export\sandbox_exp;
 use cfg\formula;
@@ -518,7 +519,7 @@ class component extends sandbox_typed
         if ($this->word_id_col2 > 0) {
             $wrd_col2 = new word($this->user());
             $wrd_col2->load_by_id($this->word_id_col2, word::class);
-            $this->col_sub_phrase = $wrd_col2;
+            $this->col_sub_phrase = $wrd_col2->phrase();
             $result = $wrd_col2->name();
         }
         return $result;
@@ -889,7 +890,7 @@ class component extends sandbox_typed
      */
     function load_sql_user_changes(sql $sc, string $class = self::class): sql_par
     {
-        $sc->set_class(self::class, true);
+        $sc->set_class(self::class, [sql_type::USER]);
         $sc->set_fields(array_merge(
             self::FLD_NAMES_USR,
             self::FLD_NAMES_NUM_USR

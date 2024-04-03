@@ -585,7 +585,7 @@ class sandbox_named extends sandbox
         bool  $usr_tbl = false): sql_par
     {
         $lib = new library();
-        $usr_tbl = $this->is_usr_tbl($sc_par_lst);
+        $usr_tbl = $sc->is_usr_tbl($sc_par_lst);
         $fld_chg_ext = $lib->sql_field_ext($fld_lst, $fld_lst_all);
         $ext = sql::file_sep . sql::file_update . sql::file_sep . $fld_chg_ext;
         $qp = $this->sql_common($sc, $sc_par_lst, $ext);
@@ -610,8 +610,8 @@ class sandbox_named extends sandbox
         sql   $sc,
         array $sc_par_lst = []): sql_par
     {
-        $usr_tbl = $this->is_usr_tbl($sc_par_lst);
-        $excluded = $this->exclude_sql($sc_par_lst);
+        $usr_tbl = $sc->is_usr_tbl($sc_par_lst);
+        $excluded = $sc->exclude_sql($sc_par_lst);
         $qp = $this->sql_common($sc, $sc_par_lst);
         $qp->name .= sql::file_sep . sql::file_delete;
         $par_lst = [$this->id()];
@@ -644,8 +644,8 @@ class sandbox_named extends sandbox
     private function sql_common(sql $sc, array $sc_par_lst = [], string $name_ext = ''): sql_par
     {
         $lib = new library();
-        $usr_tbl = $this->is_usr_tbl($sc_par_lst);
-        $sc->set_class($this::class, $usr_tbl);
+        $usr_tbl = $sc->is_usr_tbl($sc_par_lst);
+        $sc->set_class($this::class, $sc_par_lst);
         $sql_name = $lib->class_to_name($this::class);
         $qp = new sql_par($sql_name);
         $qp->name = $sql_name . $name_ext;

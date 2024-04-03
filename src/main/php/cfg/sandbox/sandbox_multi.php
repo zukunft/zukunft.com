@@ -990,7 +990,7 @@ class sandbox_multi extends db_object_multi_user
         $qp->name .= 'user_list';
 
         $class = $lib->class_to_name($this::class);
-        $sc->set_class($class, true);
+        $sc->set_class($class, [sql_type::USER]);
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
         $sc->set_join_fields(
@@ -1530,7 +1530,12 @@ class sandbox_multi extends db_object_multi_user
     ): sql_par
     {
         $lib = new library();
-        $sc->set_class($this::class, $usr_tbl);
+        // TODO move to the calling function
+        $sc_par_lst = [];
+        if ($usr_tbl) {
+            $sc_par_lst[] = sql_type::USER;
+        }
+        $sc->set_class($this::class, $sc_par_lst);
         $sql_name = $lib->class_to_name($this::class);
         $qp = new sql_par($sql_name);
         $qp->name = $sql_name;
@@ -1565,7 +1570,7 @@ class sandbox_multi extends db_object_multi_user
         array $sc_par_lst = []
     ): sql_par
     {
-        $excluded = $this->exclude_sql($sc_par_lst);
+        $excluded = $sc->exclude_sql($sc_par_lst);
         $qp = $this->sql_common($sc, $sc_par_lst, false);
         $qp->name .= sql::file_sep . sql::file_delete;
         if ($excluded) {

@@ -105,7 +105,7 @@ class config extends db_object_seq_id
     function sql_table(sql $sc): string
     {
         $sql = $sc->sql_separator();
-        $sql .= $this->sql_table_create($sc, false, [], '', false);
+        $sql .= $this->sql_table_create($sc);
         return $sql;
     }
 
@@ -118,7 +118,7 @@ class config extends db_object_seq_id
     function sql_index(sql $sc): string
     {
         $sql = $sc->sql_separator();
-        $sql .= $this->sql_index_create($sc, false, [],false);
+        $sql .= $this->sql_index_create($sc);
         return $sql;
     }
 

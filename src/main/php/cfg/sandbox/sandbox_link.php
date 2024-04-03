@@ -120,13 +120,16 @@ class sandbox_link extends sandbox
 
     /**
      * create an array with the fields and parameters for the sql table creation of the link object
-     * @param bool $usr_table create a second table for the user overwrites
-     * @param bool $is_sandbox true if the standard sandbox fields should be included
+     *
+     * @param sql $sc with the target db_type set
+     * @param array $sc_par_lst of parameters for the sql creation
      * @return array[] with the parameters of the table fields
      */
-    protected function sql_all_field_par(bool $usr_table = false, bool $is_sandbox = true): array
+    protected function sql_all_field_par(sql $sc, array $sc_par_lst = []): array
     {
-        if (!$usr_table) {
+        $usr_tbl = $sc->is_usr_tbl($sc_par_lst);
+        $use_sandbox = $sc->use_sandbox_fields($sc_par_lst);
+        if (!$usr_tbl) {
             // the primary id field is always the first
             $fields = $this->sql_id_field_par(false);
             // the link fields are not repeated in the user table because they cannot be changed individually
@@ -148,7 +151,7 @@ class sandbox_link extends sandbox
             // fields that can be changed the user but are empty if the user has not done an overwrite
             $fields = array_merge($fields, $this::FLD_LST_USER_CAN_CHANGE);
         }
-        if ($is_sandbox) {
+        if ($use_sandbox) {
             $fields = array_merge($fields, sandbox::FLD_LST_ALL);
         }
         return $fields;

@@ -82,6 +82,7 @@ use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
+use cfg\db\sql_type;
 use cfg\log\change;
 use cfg\log\change_action;
 use cfg\log\change_table_list;
@@ -1558,7 +1559,7 @@ class word extends sandbox_typed
      */
     function load_sql_user_changes(sql $sc, string $class = self::class): sql_par
     {
-        $sc->set_class(word::class, true);
+        $sc->set_class(word::class, [sql_type::USER]);
         return parent::load_sql_user_changes($sc, $class);
     }
 
@@ -1783,7 +1784,7 @@ class word extends sandbox_typed
      */
     function sql_insert(sql $sc, array $sc_par_lst = [], bool $and_log = false): sql_par
     {
-        $usr_tbl = $this->is_usr_tbl($sc_par_lst);
+        $usr_tbl = $sc->is_usr_tbl($sc_par_lst);
         // fields and values that the word has additional to the standard named user sandbox object
         $wrd_empty = $this->clone_reset();
         // for a new word the owner should be set, so remove the user id to force writing the user
@@ -1804,7 +1805,7 @@ class word extends sandbox_typed
      */
     function sql_update(sql $sc, sandbox|word $db_row, array $sc_par_lst = []): sql_par
     {
-        $usr_tbl = $this->is_usr_tbl($sc_par_lst);
+        $usr_tbl = $sc->is_usr_tbl($sc_par_lst);
         // get the fields and values that have been changed
         // and that needs to be updated in the database
         // the db_* child function call the corresponding parent function

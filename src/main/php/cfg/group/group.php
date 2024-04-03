@@ -492,42 +492,41 @@ class group extends sandbox_multi
         $sql_foreign = $sc->sql_separator();
         $sql_truncate = '';
         $sql_lst = [$sql, $sql_index, $sql_foreign, $sql_truncate];
-        $sql_lst = $this->sql_one_tbl($sc, false, sql_type::MOST, sandbox_value::FLD_KEY, $this::TBL_COMMENT, $sql_lst);
-        $sql_lst = $this->sql_one_tbl($sc, true, sql_type::MOST, sandbox_value::FLD_KEY_USER, $this::TBL_COMMENT, $sql_lst);
-        $sql_lst = $this->sql_one_tbl($sc, false, sql_type::PRIME, group::FLD_KEY_PRIME, $this::TBL_COMMENT_PRIME, $sql_lst);
-        $sql_lst = $this->sql_one_tbl($sc, true, sql_type::PRIME, group::FLD_KEY_PRIME_USER, $this::TBL_COMMENT_PRIME, $sql_lst);
-        $sql_lst = $this->sql_one_tbl($sc, false, sql_type::BIG, sandbox_value::FLD_KEY_BIG, $this::TBL_COMMENT_BIG, $sql_lst);
-        return $this->sql_one_tbl($sc, true, sql_type::BIG, sandbox_value::FLD_KEY_BIG_USER, $this::TBL_COMMENT_BIG, $sql_lst);
+        $sql_lst = $this->sql_one_tbl($sc, [sql_type::MOST], sandbox_value::FLD_KEY, $this::TBL_COMMENT, $sql_lst);
+        $sql_lst = $this->sql_one_tbl($sc, [sql_type::MOST, sql_type::USER], sandbox_value::FLD_KEY_USER, $this::TBL_COMMENT, $sql_lst);
+        $sql_lst = $this->sql_one_tbl($sc, [sql_type::PRIME], group::FLD_KEY_PRIME, $this::TBL_COMMENT_PRIME, $sql_lst);
+        $sql_lst = $this->sql_one_tbl($sc, [sql_type::PRIME, sql_type::USER], group::FLD_KEY_PRIME_USER, $this::TBL_COMMENT_PRIME, $sql_lst);
+        $sql_lst = $this->sql_one_tbl($sc, [sql_type::BIG], sandbox_value::FLD_KEY_BIG, $this::TBL_COMMENT_BIG, $sql_lst);
+        return $this->sql_one_tbl($sc, [sql_type::BIG, sql_type::USER], sandbox_value::FLD_KEY_BIG_USER, $this::TBL_COMMENT_BIG, $sql_lst);
     }
 
     /**
      * add the sql statements for one table to the given array of sql statements
      * @param sql $sc the sql creator object with the target db_type set
-     * @param bool $usr_table true if the table should save the user specific changes
-     * @param sql_type $tbl_typ the table extension e.g. prime for a short list of primarily used phrases
+     * @param array $sc_par_lst of parameters for the sql creation
      * @param array $key_fld with the parameter for the table primary key field
      * @param string $tbl_comment the comment for the table in the sql statement
      * @param array $sql_lst the list with the sql statements created until now
      * @return array the list of sql statements including the statements created by this function call
      */
     private function sql_one_tbl(
-        sql      $sc,
-        bool     $usr_table,
-        sql_type $tbl_typ,
-        array    $key_fld,
-        string   $tbl_comment,
-        array    $sql_lst
+        sql    $sc,
+        array  $sc_par_lst,
+        array  $key_fld,
+        string $tbl_comment,
+        array  $sql_lst
     ): array
     {
-        $sc->set_class($this::class, $usr_table, $tbl_typ->extension());
+        $sc->set_class($this::class, $sc_par_lst);
         $fields = array_merge($key_fld, sandbox_value::FLD_ALL_OWNER, $this::FLD_LST_USER_CAN_CHANGE);
-        if ($usr_table) {
+        $usr_tbl = $sc->is_usr_tbl($sc_par_lst);
+        if ($usr_tbl) {
             $fields = array_merge($key_fld, sandbox_value::FLD_ALL_CHANGER, $this::FLD_LST_USER_CAN_CHANGE);
         }
-        $sql_lst[0] .= parent::sql_table_create($sc, $usr_table, $fields, $tbl_comment);
-        $sql_lst[1] .= parent::sql_index_create($sc, $usr_table, $fields);
-        $sql_lst[2] .= parent::sql_foreign_key_create($sc, $usr_table, $fields);
-        $sql_lst[3] .= parent::sql_truncate_create($sc, $usr_table);
+        $sql_lst[0] .= parent::sql_table_create($sc, $sc_par_lst, $fields, $tbl_comment);
+        $sql_lst[1] .= parent::sql_index_create($sc, $sc_par_lst, $fields);
+        $sql_lst[2] .= parent::sql_foreign_key_create($sc, $sc_par_lst, $fields);
+        $sql_lst[3] .= parent::sql_truncate_create($sc, $sc_par_lst);
         return $sql_lst;
     }
 
@@ -1340,10 +1339,10 @@ class group extends sandbox_multi
     protected function sql_common(sql $sc, array $sc_par_lst = []): sql_par
     {
         $lib = new library();
-        $usr_tbl = $this->is_usr_tbl($sc_par_lst);
+        $usr_tbl = $sc->is_usr_tbl($sc_par_lst);
         $tbl_typ = $this->table_type();
         $ext = $tbl_typ->extension();
-        $sc->set_class($this::class, $usr_tbl, $tbl_typ->extension());
+        $sc->set_class($this::class, $sc_par_lst, $tbl_typ->extension());
         $sql_name = $lib->class_to_name($this::class);
         $qp = new sql_par($sql_name);
         $qp->name = $sql_name . $ext;

@@ -1672,7 +1672,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
      */
     function load_sql_user_changes(sql $sc, string $class = self::class): sql_par
     {
-        $sc->set_class($class, true);
+        $sc->set_class($class, [sql_type::USER]);
         $sc->set_fields(array_merge(
             self::FLD_NAMES_USR,
             self::FLD_NAMES_NUM_USR

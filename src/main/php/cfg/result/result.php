@@ -469,7 +469,7 @@ class result extends sandbox_value
         $ext = $this->grp->table_extension();
         $qp = new sql_par($class, [sql_type::NORM], $ext . sql_type::NORM->extension());
         $qp->name .= sql_db::FLD_ID;
-        $sc->set_class($class, false, $tbl_typ->extension());
+        $sc->set_class($class, [], $tbl_typ->extension());
         $sc->set_name($qp->name);
         $sc->set_id_field($this->id_field());
         $sc->set_fields(array_merge(self::FLD_NAMES, array(user::FLD_ID)));
@@ -619,7 +619,7 @@ class result extends sandbox_value
     function load_sql_user_changes(sql $sc, string $class = self::class): sql_par
     {
         $tbl_typ = $this->grp->table_type();
-        $sc->set_class($class, true, $tbl_typ->extension());
+        $sc->set_class($class, [sql_type::USER], $tbl_typ->extension());
         // overwrite the standard id field name (result_id) with the main database id field for results "group_id"
         $sc->set_id_field($this->id_field());
         return parent::load_sql_user_changes($sc, $class);
@@ -1638,7 +1638,7 @@ class result extends sandbox_value
     function sql_insert(sql $sc, array $sc_par_lst): sql_par
     {
         $qp = $this->sql_common($sc, $sc_par_lst);
-        $usr_tbl = $this->is_usr_tbl($sc_par_lst);
+        $usr_tbl = $sc->is_usr_tbl($sc_par_lst);
         // overwrite the standard auto increase id field name
         $sc->set_id_field($this->id_field());
         $qp->name .= sql::file_sep . sql::file_insert;
@@ -1688,7 +1688,7 @@ class result extends sandbox_value
     function sql_update(sql $sc, result $db_res, array $sc_par_lst = []): sql_par
     {
         $lib = new library();
-        $usr_tbl = $this->is_usr_tbl($sc_par_lst);
+        $usr_tbl = $sc->is_usr_tbl($sc_par_lst);
         $qp = $this->sql_common($sc, $sc_par_lst);
         // get the fields and values that have been changed and needs to be updated in the database
         $fields = $this->db_fields_changed($db_res);
@@ -1756,10 +1756,10 @@ class result extends sandbox_value
      * get a list of database fields that have been updated
      * excluding the internal only last_update and is_std fields
      *
-     * @param result $res the compare value to detect the changed fields
+     * @param result|sandbox_value $res the compare value to detect the changed fields
      * @return array list of the database field names that have been updated
      */
-    function db_fields_changed(result $res): array
+    function db_fields_changed(result|sandbox_value $res): array
     {
         $result = parent::db_fields_changed_value($res);
         if ($res->src_grp_id() <> $this->src_grp_id()) {
@@ -1779,10 +1779,10 @@ class result extends sandbox_value
      * get a list of database values that have been updated
      * excluding the internal only last_update and is_std values
      *
-     * @param result $res the compare value to detect the changed fields
+     * @param sandbox_value|result $res the compare value to detect the changed fields
      * @return array list of the database field names that have been updated
      */
-    function db_values_changed(result $res): array
+    function db_values_changed(sandbox_value|result $res): array
     {
         $result = parent::db_values_changed_value($res);
         if ($res->src_grp_id() <> $this->src_grp_id()) {

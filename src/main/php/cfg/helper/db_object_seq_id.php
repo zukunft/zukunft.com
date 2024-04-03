@@ -148,7 +148,7 @@ class db_object_seq_id extends db_object
     function sql_table(sql $sc): string
     {
         $sql = $sc->sql_separator();
-        $sql .= $this->sql_table_create($sc, false, [], '', false);
+        $sql .= $this->sql_table_create($sc);
         return $sql;
     }
 
@@ -162,47 +162,51 @@ class db_object_seq_id extends db_object
     function sql_index(sql $sc): string
     {
         $sql = $sc->sql_separator();
-        $sql .= $this->sql_index_create($sc, false, [], false);
+        $sql .= $this->sql_index_create($sc);
         return $sql;
     }
 
     /**
      * the sql statements to create all foreign keys
-     * is e.g. overwriten for the user sandbox objects
+     * is e.g. overwritten for the user sandbox objects
      *
      * @param sql $sc with the target db_type set
      * @return string the sql statement to create the foreign keys
      */
     function sql_foreign_key(sql $sc): string
     {
-        return $this->sql_foreign_key_create($sc, false, [], false);
+        return $this->sql_foreign_key_create($sc, [], [], false);
     }
 
     /**
-     * @param bool $usr_table create a second table for the user overwrites
-     * @param bool $is_sandbox true if the standard sandbox fields should be included
+     *  create a list of fields with the parameters for this object
+     *
+     * @param sql $sc with the target db_type set
+     * @param array $sc_par_lst of parameters for the sql creation
      * @return array[] with the parameters of the table fields
      */
-    protected function sql_all_field_par(bool $usr_table = false, bool $is_sandbox = true): array
+    protected function sql_all_field_par(sql $sc, array $sc_par_lst = []): array
     {
+        $usr_tbl = $sc->is_usr_tbl($sc_par_lst);
+        $use_sandbox = $sc->use_sandbox_fields($sc_par_lst);
         $fields = [];
-        if (!$usr_table) {
-            if ($is_sandbox) {
-                $fields = array_merge($this->sql_id_field_par($usr_table), sandbox::FLD_ALL_OWNER);
+        if (!$usr_tbl) {
+            if ($use_sandbox) {
+                $fields = array_merge($this->sql_id_field_par(false), sandbox::FLD_ALL_OWNER);
                 $fields = array_merge($fields, $this::FLD_LST_MUST_BE_IN_STD);
             } else {
                 $fields = array_merge($this->sql_id_field_par(false), $this::FLD_LST_ALL);
                 $fields = array_merge($fields, $this::FLD_LST_EXTRA);
             }
         } else {
-            $fields = array_merge($this->sql_id_field_par($usr_table), sandbox::FLD_ALL_CHANGER);
+            $fields = array_merge($this->sql_id_field_par(true), sandbox::FLD_ALL_CHANGER);
             $fields = array_merge($fields, $this::FLD_LST_MUST_BUT_USER_CAN_CHANGE);
         }
         $fields = array_merge($fields, $this::FLD_LST_USER_CAN_CHANGE);
-        if (!$usr_table) {
+        if (!$usr_tbl) {
             $fields = array_merge($fields, $this::FLD_LST_NON_CHANGEABLE);
         }
-        if ($is_sandbox) {
+        if ($use_sandbox) {
             $fields = array_merge($fields, sandbox::FLD_LST_ALL);
         }
         return $fields;

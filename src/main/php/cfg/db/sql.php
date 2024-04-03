@@ -485,7 +485,7 @@ class sql
         foreach ($sql_types as $sql_type) {
             $ext .= $sql_type->extension();
         }
-        $this->set_class($class, false, $ext);
+        $this->set_class($class, [], $ext);
         return new sql_par($class, $sql_types);
     }
 
@@ -496,15 +496,20 @@ class sql
      * TODO check if this is called with the class name and if there are exceptions
      *
      * @param string $class is a string that is used to select the table name, the id field and the name field
-     * @param bool $usr_table if it is true the user table instead of the standard table is used
+     * @param array $sc_par_lst the parameters for the sql statement creation
      * @param string $ext the table name extension e.g. to switch between standard and prime values
      * @return bool true if setting the type was successful
      */
-    function set_class(string $class, bool $usr_table = false, string $ext = ''): bool
+    function set_class(string $class, array $sc_par_lst = [], string $ext = ''): bool
     {
         global $usr;
 
         $this->reset();
+        // TODO move to set_table()
+        $usr_tbl = $this->is_usr_tbl($sc_par_lst);
+        if ($ext == '') {
+            $ext = $this->tbl_ext_ex_user($sc_par_lst);
+        }
         $this->class = $class;
         if ($usr == null) {
             $this->set_usr(SYSTEM_USER_ID); // if the session user is not yet set, use the system user id to test the database compatibility
@@ -515,7 +520,7 @@ class sql
                 $this->set_usr($usr->id()); // by default use the session user id
             }
         }
-        $this->set_table($usr_table, $ext);
+        $this->set_table($usr_tbl, $ext);
         $this->set_id_field();
         return true;
     }
@@ -3670,6 +3675,85 @@ class sql
     function is_MySQL(): bool
     {
         if ($this->db_type == sql_db::MYSQL) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * function that can be overwritten by the child object
+     * e.g. if the object name does not match the generated id field name
+     * e.g. to group_id for values and results
+     * @return string|array the field name(s) of the prime database index of the object
+     */
+    function id_field(): string|array
+    {
+        $lib = new library();
+        return $lib->class_to_name($this::class) . sql_db::FLD_EXT_ID;
+    }
+
+    /**
+     * @param array $sc_par_lst of parameters for the sql creation
+     * @return bool true if sql should point to the user sandbox table
+     */
+    public function is_usr_tbl(array $sc_par_lst): bool
+    {
+        if (in_array(sql_type::USER, $sc_par_lst)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @param array $sc_par_lst of parameters for the sql creation
+     * @return bool true if the standard sandbox fields should be added to the sql statement
+     */
+    public function use_sandbox_fields(array $sc_par_lst): bool
+    {
+        if (in_array(sql_type::SANDBOX, $sc_par_lst)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @param array $sc_par_lst of parameters for the sql creation
+     * @return string the table name extension excluding the user sandbox indication
+     */
+    public function tbl_ext_ex_user(array $sc_par_lst): string
+    {
+        $ext = '';
+        foreach ($sc_par_lst as $sc_par) {
+            if ($sc_par != sql_type::USER) {
+                $ext .= $sc_par->extension();
+            }
+        }
+        return $ext;
+    }
+
+    /**
+     * @param array $sc_par_lst of parameters for the sql creation
+     * @return bool true if sql is supposed to be part of another sql statement
+     */
+    protected function is_sub_tbl(array $sc_par_lst): bool
+    {
+        if (in_array(sql_type::SUB, $sc_par_lst)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @param array $sc_par_lst of parameters for the sql creation
+     * @return bool true if the type list suggests to exclude the row instead of deleting it
+     */
+    public function exclude_sql(array $sc_par_lst): bool
+    {
+        if (in_array(sql_type::EXCLUDE, $sc_par_lst)) {
             return true;
         } else {
             return false;

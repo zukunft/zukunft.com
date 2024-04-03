@@ -326,15 +326,13 @@ class value_list extends sandbox_value_list
     function load_sql_multi(
         sql      $sc,
         string   $query_name,
-        string   $ext = '',
-        sql_type $tbl_typ = sql_type::MOST,
-        bool     $usr_tbl = false
+        array    $sc_par_lst
     ): sql_par
     {
-        $qp = new sql_par(value::class, [], $ext);
+        $qp = new sql_par(value::class, [], $sc->tbl_ext_ex_user($sc_par_lst));
         $qp->name .= $query_name;
 
-        $sc->set_class(value::class, $usr_tbl, $ext);
+        $sc->set_class(value::class, $sc_par_lst);
         // overwrite the standard id field name (value_id) with the main database id field for values "group_id"
         $val = new value($this->user());
         $sc->set_id_field($val->id_field());
@@ -480,14 +478,20 @@ class value_list extends sandbox_value_list
         $par_offset = 0;
         $par_types = array();
         foreach ($tbl_id_matrix as $matrix_row) {
+            $sc_par_lst = [];
             $tbl_typ = array_shift($matrix_row);
+            $sc_par_lst[] = $tbl_typ;
             // TODO add the union query creation for the other table types
             // combine the select statements with and instead of union if possible
             if ($tbl_typ == sql_type::PRIME) {
                 $max_row_ids = array_shift($matrix_row);
                 $phr_id_lst = $matrix_row;
 
-                $qp_tbl = $this->load_sql_multi($sc, '', $tbl_typ->extension(), $tbl_typ, $usr_tbl);
+                // TODO move to the calling function
+                if ($usr_tbl) {
+                    $sc_par_lst[] = sql_type::USER;
+                }
+                $qp_tbl = $this->load_sql_multi($sc, '', $sc_par_lst);
                 if ($par_offset == 0) {
                     $sc->set_usr_num_fields(value::FLD_NAMES_NUM_USR);
                 } else {
@@ -540,11 +544,18 @@ class value_list extends sandbox_value_list
         $par_offset = 0;
         $par_types = array();
         foreach ($tbl_id_matrix as $matrix_row) {
+            $sc_par_lst = [];
             $tbl_typ = array_shift($matrix_row);
+            $sc_par_lst[] = $tbl_typ;
             if ($tbl_typ == sql_type::PRIME) {
                 $max_row_ids = array_shift($matrix_row);
                 $phr_id_lst = $matrix_row;
-                $qp_tbl = $this->load_sql_multi($sc, 'grp_lst', $tbl_typ->extension(), $tbl_typ, $usr_tbl);
+
+                // TODO move to the calling function
+                if ($usr_tbl) {
+                    $sc_par_lst[] = sql_type::USER;
+                }
+                $qp_tbl = $this->load_sql_multi($sc, 'grp_lst', $sc_par_lst);
                 if ($par_offset == 0) {
                     $sc->set_usr_num_fields(value::FLD_NAMES_NUM_USR);
                 } else {
@@ -586,7 +597,7 @@ class value_list extends sandbox_value_list
      */
     function load_sql_by_phr_single(sql $sc, phrase $phr, array $sc_par_lst): sql_par
     {
-        $qp = $this->load_sql_init($sc, value::class,  'phr', $sc_par_lst);
+        $qp = $this->load_sql_init($sc, value::class, 'phr', $sc_par_lst);
         if ($this->is_prime($sc_par_lst)) {
             for ($i = 1; $i <= group_id::PRIME_PHRASES_STD; $i++) {
                 $sc->add_where(phrase::FLD_ID . '_' . $i, $phr->id(), sql_par_type::INT_SAME_OR, '$2');

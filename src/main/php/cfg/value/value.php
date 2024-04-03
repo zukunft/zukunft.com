@@ -490,7 +490,7 @@ class value extends sandbox_value
         $ext = $this->grp->table_extension();
         $qp = new sql_par($class, [sql_type::NORM], $ext . sql_type::NORM->extension());
         $qp->name .= sql_db::FLD_ID;
-        $sc->set_class($class, false, $tbl_typ->extension());
+        $sc->set_class($class, [], $tbl_typ->extension());
         $sc->set_name($qp->name);
         $sc->set_id_field($this->id_field());
         $sc->set_fields(array_merge(self::FLD_NAMES, self::FLD_NAMES_NUM_USR, array(user::FLD_ID)));
@@ -583,7 +583,7 @@ class value extends sandbox_value
         $sql_where = '';
         $sql_grp = '';
 
-        $sc->set_class($class, false, $ext);
+        $sc->set_class($class, [], $ext);
         if ($this->is_id_set()) {
             $qp->name .= sql_db::FLD_ID;
         } elseif ($this->grp->is_id_set()) {
@@ -1555,7 +1555,7 @@ class value extends sandbox_value
                 // create an entry in the user sandbox
                 $ext = $this->grp->table_extension();
                 $db_con->set_class($class, true, $ext);
-                $qp = $this->sql_insert($db_con->sql_creator(), [sql_type::USER], true);
+                $qp = $this->sql_insert($db_con->sql_creator(), [sql_type::USER]);
                 $usr_msg = $db_con->insert($qp, 'add user specific value');
                 $result = $usr_msg->is_ok();
             }
@@ -1573,7 +1573,7 @@ class value extends sandbox_value
     function load_sql_user_changes(sql $sc, string $class = self::class): sql_par
     {
         $tbl_typ = $this->grp->table_type();
-        $sc->set_class($class, true, $tbl_typ->extension());
+        $sc->set_class($class, [sql_type::USER], $tbl_typ->extension());
         // overwrite the standard id field name (value_id) with the main database id field for values "group_id"
         $sc->set_id_field($this->id_field());
         return parent::load_sql_user_changes($sc, $class);
@@ -2228,7 +2228,7 @@ class value extends sandbox_value
      */
     function sql_insert(sql $sc, array $sc_par_lst = []): sql_par
     {
-        $usr_tbl = $this->is_usr_tbl($sc_par_lst);
+        $usr_tbl = $sc->is_usr_tbl($sc_par_lst);
         $qp = $this->sql_common($sc, $sc_par_lst);
         // overwrite the standard auto increase id field name
         $sc->set_id_field($this->id_field());
@@ -2298,7 +2298,7 @@ class value extends sandbox_value
     function sql_update_fields(sql $sc, array $fields = [], array $values = [], array $sc_par_lst = [], bool $usr_tbl = false): sql_par
     {
         $lib = new library();
-        $usr_tbl = $this->is_usr_tbl($sc_par_lst);
+        $usr_tbl = $sc->is_usr_tbl($sc_par_lst);
         $qp = $this->sql_common($sc, $sc_par_lst);
         // get the fields and values that have been changed and needs to be updated in the database
         $all_fields = $this->db_fields_all();
@@ -2362,10 +2362,10 @@ class value extends sandbox_value
      * get a list of database fields that have been updated
      * excluding the internal only last_update and is_std fields
      *
-     * @param value $val the compare value to detect the changed fields
+     * @param sandbox_value|value $val the compare value to detect the changed fields
      * @return array list of the database field names that have been updated
      */
-    function db_fields_changed(value $val): array
+    function db_fields_changed(sandbox_value|value $val): array
     {
         $result = parent::db_fields_changed_value($val);
         if ($val->src_id() <> $this->src_id()) {
@@ -2382,10 +2382,10 @@ class value extends sandbox_value
      * get a list of database values that have been updated
      * excluding the internal only last_update and is_std values
      *
-     * @param value $val the compare value to detect the changed fields
+     * @param value|sandbox_value $val the compare value to detect the changed fields
      * @return array list of the database field names that have been updated
      */
-    function db_values_changed(value $val): array
+    function db_values_changed(value|sandbox_value $val): array
     {
         $result = parent::db_values_changed_value($val);
         if ($val->src_id() <> $this->src_id()) {

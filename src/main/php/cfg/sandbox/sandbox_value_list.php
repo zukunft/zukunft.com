@@ -316,7 +316,7 @@ class sandbox_value_list extends sandbox_list
         $qp = new sql_par($list_class, $tbl_types, $tbl_ext);
         $qp->name .= $query_name;
 
-        $sc->set_class($class, false, $tbl_ext);
+        $sc->set_class($class, [], $tbl_ext);
         // overwrite the standard id field name (value_id) with the main database id field for values "group_id"
         $val = new value($this->user());
         if ($is_prime) {

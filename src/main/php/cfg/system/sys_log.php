@@ -232,7 +232,7 @@ class sys_log extends db_object_seq_id
     function sql_table(sql $sc): string
     {
         $sql = $sc->sql_separator();
-        $sql .= $this->sql_table_create($sc, false, [], '', false);
+        $sql .= $this->sql_table_create($sc);
         return $sql;
     }
 
@@ -245,7 +245,7 @@ class sys_log extends db_object_seq_id
     function sql_index(sql $sc): string
     {
         $sql = $sc->sql_separator();
-        $sql .= $this->sql_index_create($sc, false, [],false);
+        $sql .= $this->sql_index_create($sc);
         return $sql;
     }
 
@@ -257,7 +257,7 @@ class sys_log extends db_object_seq_id
      */
     function sql_foreign_key(sql $sc): string
     {
-        return $this->sql_foreign_key_create($sc, false, [],false);
+        return $this->sql_foreign_key_create($sc, [], [],false);
     }
 
 
