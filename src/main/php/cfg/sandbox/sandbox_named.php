@@ -536,26 +536,32 @@ class sandbox_named extends sandbox
         array $fld_lst = [],
         array $val_lst = [],
         array $fld_lst_all = [],
-        array $sc_par_lst = [],
-        bool  $and_log = false): sql_par
+        array $sc_par_lst = []): sql_par
     {
         $lib = new library();
 
         if (count($fld_lst) != count($val_lst)) {
             log_err('fields (' . $lib->dsp_array($fld_lst) . ') does not match with values (' . $lib->dsp_array($val_lst) . ')');
         }
+        $and_log = $sc->and_log($sc_par_lst);
         $fld_chg_ext = $lib->sql_field_ext($fld_lst, $fld_lst_all);
-        $ext = sql::file_sep . sql::file_insert . sql::file_sep . $fld_chg_ext;
-        $qp = $this->sql_common($sc, $sc_par_lst, $ext);
+        $ext = sql::file_sep . sql::file_insert;
         if ($and_log) {
+            $ext .= sql_type::LOG->extension();
+        }
+        $ext .= sql::file_sep . $fld_chg_ext;
+        $qp = $this->sql_common($sc, $sc_par_lst, $ext);
+        if ($sc->and_log($sc_par_lst)) {
             $sc_log = clone $sc;
+            $sc_par_lst_sub = $sc_par_lst;
+            $sc_par_lst_sub[] = sql_type::SUB;
             $i = 0;
             foreach ($fld_lst as $fld) {
                 $log = new change($this->user());
                 $log->set_table_by_class($this::class);
                 $log->set_field($fld);
                 $log->new_value = $val_lst[$i];
-                $sql_log = $log->sql_insert($sc_log, $sc_par_lst);
+                $sql_log = $log->sql_insert($sc_log, $sc_par_lst_sub);
             }
         }
         // add the child object specific fields and values

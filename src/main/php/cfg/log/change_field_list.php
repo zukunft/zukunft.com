@@ -45,6 +45,9 @@ class change_field_list extends type_list
 {
 
     const TN_WORD_VIEW = "values";
+    const TI_WORD_USER_ID = 9;
+    const TI_WORD_NAME = 10;
+    const TI_WORD_DESCRIPTION = 11;
 
     /*
      * database link
@@ -55,8 +58,12 @@ class change_field_list extends type_list
     // *_NAME is the name as used in the program or as it has been used in a previous program version
     // *_NAME_DSP is the description that should be shown to the user
     const FLD_TABLE = 'table_id';
+    // TODO add the user_id to the field list because the owner can change and this should be included in the log
+    const FLD_USER_ID = 'user_id';
+    const FLD_USER_ID_DSP = 'user';
     const FLD_WORD_NAME = 'word_name';
     const FLD_WORD_NAME_DSP = 'name';
+    const FLD_WORD_DESCRIPTION = 'description';
     const FLD_WORD_VIEW = 'view_id';
     const FLD_WORD_PLURAL = 'plural';
     const FLD_PHRASE_TYPE = 'phrase_type_id';
@@ -88,12 +95,26 @@ class change_field_list extends type_list
 
         parent::load_dummy();
         $table_id = $change_table_list->id(change_table_list::WORD);
+        $table_field_name = $table_id . change_field_list::FLD_USER_ID;
+        $type = new type_object(
+            $table_field_name,
+            change_field_list::FLD_USER_ID,
+            change_field_list::FLD_USER_ID_DSP,
+            change_field_list::TI_WORD_USER_ID);
+        $this->add($type);
         $table_field_name = $table_id . change_field_list::FLD_WORD_NAME;
         $type = new type_object(
             $table_field_name,
             change_field_list::FLD_WORD_NAME,
             change_field_list::FLD_WORD_NAME_DSP,
-            9);
+            change_field_list::TI_WORD_NAME);
+        $this->add($type);
+        $table_field_name = $table_id . change_field_list::FLD_WORD_DESCRIPTION;
+        $type = new type_object(
+            $table_field_name,
+            change_field_list::FLD_WORD_DESCRIPTION,
+            change_field_list::FLD_WORD_DESCRIPTION,
+            change_field_list::TI_WORD_DESCRIPTION);
         $this->add($type);
     }
 

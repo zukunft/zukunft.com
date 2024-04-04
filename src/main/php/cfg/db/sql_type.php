@@ -78,6 +78,7 @@ enum sql_type: string
             self::STANDARD => sql::file_sep . 'standard',
             self::USER => sql::file_sep . 'user',
             self::SUB => sql::file_sep . 'sub',
+            self::LOG => sql::file_sep . 'log',
             default => '',
         };
     }

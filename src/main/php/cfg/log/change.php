@@ -467,8 +467,8 @@ class change extends change_log
     function sql_insert(sql $sc, array $sc_par_lst): sql_par
     {
         $sc_par_lst[] = sql_type::INSERT;
-        $qp = $sc->sql_par(self::class, $sc_par_lst);
-        $sc->set_class($this::class);
+        $qp = $sc->sql_par($this::class, $sc_par_lst);
+        $sc->set_class($this::class, $sc_par_lst);
         $sc->set_name($qp->name);
         $qp->sql = $sc->create_sql_insert($this->db_fields(), $this->db_values(), $sc_par_lst);
         $qp->par = $this->db_values();

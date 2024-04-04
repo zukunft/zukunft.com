@@ -476,17 +476,17 @@ class sql
      * create a sql parameter object with presets based on the class and a sql type list
      *
      * @param string $class the class name to which the sql statements should be created
-     * @param array $sql_types list of sql types to specify which kind of sql statement should be created
+     * @param array $sc_par_lst list of sql types to specify which kind of sql statement should be created
      * @return sql_par set of sql parameters with some presets
      */
-    function sql_par(string $class, array $sql_types = []): sql_par
+    function sql_par(string $class, array $sc_par_lst = []): sql_par
     {
         $ext = '';
-        foreach ($sql_types as $sql_type) {
+        foreach ($sc_par_lst as $sql_type) {
             $ext .= $sql_type->extension();
         }
         $this->set_class($class, [], $ext);
-        return new sql_par($class, $sql_types);
+        return new sql_par($class, $sc_par_lst);
     }
 
     /**
@@ -1013,6 +1013,12 @@ class sql
         if ($this->query_name == '') {
             log_err('SQL statement is not yet named');
         }
+
+        // set the missing parameter from the list
+        if ($this->is_sub_tbl($sc_par_lst)) {
+            $this->sub_query = true;
+        }
+
         $sql_fld = '';
         $sql_val = '';
         if (count($fields) <> count($values)) {
@@ -3699,11 +3705,7 @@ class sql
      */
     public function is_usr_tbl(array $sc_par_lst): bool
     {
-        if (in_array(sql_type::USER, $sc_par_lst)) {
-            return true;
-        } else {
-            return false;
-        }
+        return in_array(sql_type::USER, $sc_par_lst);
     }
 
     /**
@@ -3712,18 +3714,14 @@ class sql
      */
     public function use_sandbox_fields(array $sc_par_lst): bool
     {
-        if (in_array(sql_type::SANDBOX, $sc_par_lst)) {
-            return true;
-        } else {
-            return false;
-        }
+        return in_array(sql_type::SANDBOX, $sc_par_lst);
     }
 
     /**
      * @param array $sc_par_lst of parameters for the sql creation
      * @return string the table name extension excluding the user sandbox indication
      */
-    public function tbl_ext_ex_user(array $sc_par_lst): string
+    public function ext_ex_user(array $sc_par_lst): string
     {
         $ext = '';
         foreach ($sc_par_lst as $sc_par) {
@@ -3735,16 +3733,52 @@ class sql
     }
 
     /**
+     * the extension of the table name so excluding the insert, update and delete query name extension
+     *
+     * @param array $sc_par_lst of parameters for the sql creation
+     * @return string the table name extension excluding the user sandbox indication
+     */
+    public function tbl_ext_ex_user(array $sc_par_lst): string
+    {
+        $ext = '';
+        foreach ($sc_par_lst as $sc_par) {
+            if ($sc_par != sql_type::USER
+                and $sc_par != sql_type::INSERT
+                and $sc_par != sql_type::UPDATE
+                and $sc_par != sql_type::DELETE
+                and $sc_par != sql_type::SUB) {
+                $ext .= $sc_par->extension();
+            }
+        }
+        return $ext;
+    }
+
+    /**
+     * the extension of the table name so excluding the insert, update and delete query name extension
+     *
+     * @param array $sc_par_lst of parameters for the sql creation
+     * @return bool true if a insert, update or delete sql statement should be created
+     */
+    public function is_cur_not_l(array $sc_par_lst): bool
+    {
+        $result = false;
+        foreach ($sc_par_lst as $sc_par) {
+            if ($sc_par == sql_type::INSERT
+                or $sc_par == sql_type::UPDATE
+                or $sc_par == sql_type::DELETE) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
      * @param array $sc_par_lst of parameters for the sql creation
      * @return bool true if sql is supposed to be part of another sql statement
      */
     protected function is_sub_tbl(array $sc_par_lst): bool
     {
-        if (in_array(sql_type::SUB, $sc_par_lst)) {
-            return true;
-        } else {
-            return false;
-        }
+        return in_array(sql_type::SUB, $sc_par_lst);
     }
 
     /**
@@ -3753,11 +3787,16 @@ class sql
      */
     public function exclude_sql(array $sc_par_lst): bool
     {
-        if (in_array(sql_type::EXCLUDE, $sc_par_lst)) {
-            return true;
-        } else {
-            return false;
-        }
+        return in_array(sql_type::EXCLUDE, $sc_par_lst);
+    }
+
+    /**
+     * @param array $sc_par_lst of parameters for the sql creation
+     * @return bool true if a sql function should be created that also creates the log entries
+     */
+    public function and_log(array $sc_par_lst): bool
+    {
+        return in_array(sql_type::LOG, $sc_par_lst);
     }
 
 }

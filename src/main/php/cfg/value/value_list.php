@@ -329,7 +329,7 @@ class value_list extends sandbox_value_list
         array    $sc_par_lst
     ): sql_par
     {
-        $qp = new sql_par(value::class, [], $sc->tbl_ext_ex_user($sc_par_lst));
+        $qp = new sql_par(value::class, [], $sc->ext_ex_user($sc_par_lst));
         $qp->name .= $query_name;
 
         $sc->set_class(value::class, $sc_par_lst);

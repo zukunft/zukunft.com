@@ -89,7 +89,7 @@ class word_tests
         $t->assert_sql_insert($db_con, $wrd);
         $t->assert_sql_insert($db_con, $wrd, [sql_type::USER]);
         // TODO activate db write with log
-        // $t->assert_sql_insert($db_con, $wrd, [sql_type::LOG]);
+        //$t->assert_sql_insert($db_con, $wrd, [sql_type::LOG]);
         // $t->assert_sql_insert($db_con, $wrd, [sql_type::LOG, sql_type::USER]);
         $wrd_renamed = $wrd->cloned(word_api::TN_RENAMED);
         $t->assert_sql_update($db_con, $wrd_renamed, $wrd);

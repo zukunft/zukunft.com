@@ -1778,11 +1778,10 @@ class word extends sandbox_typed
      * always all fields are included in the query to be able to remove overwrites with a null value
      *
      * @param sql $sc with the target db_type set
-     * @param array $sc_par_lst the parameters for the sql statement creation
-     * @param bool $and_log true if also the changes should be written
+     * @param array $sc_par_lst the parameters for the sql statement creation* @param bool $and_log true if also the changes should be written
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_insert(sql $sc, array $sc_par_lst = [], bool $and_log = false): sql_par
+    function sql_insert(sql $sc, array $sc_par_lst = []): sql_par
     {
         $usr_tbl = $sc->is_usr_tbl($sc_par_lst);
         // fields and values that the word has additional to the standard named user sandbox object

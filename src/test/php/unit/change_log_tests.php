@@ -124,7 +124,7 @@ class change_log_tests
         $t->subheader('change log sql write');
         $log = $t->change_log_named();
         $t->assert_sql_insert($db_con, $log);
-        //$t->assert_sql_insert($db_con, $log, [sql_type::SUB]);
+        $t->assert_sql_insert($db_con, $log, [sql_type::SUB]);
 
         $t->subheader('SQL statement tests');
         $log = new change($usr);

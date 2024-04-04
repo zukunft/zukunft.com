@@ -263,7 +263,7 @@ class change_log extends db_object_seq_id_user
     {
         $lib = new library();
         $name = $lib->class_to_name($class);
-        return $this->set_table($name);
+        return $this->set_table($name . sql_db::TABLE_EXTENSION);
     }
 
     /**

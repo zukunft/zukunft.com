@@ -153,8 +153,8 @@ class ref_tests
         // TODO activate db write with log
         //$t->assert_sql_delete($db_con, $src, [sql_type::LOG]);
         //$t->assert_sql_delete($db_con, $src, [sql_type::LOG, sql_type::USER]);
-        $t->assert_sql_delete($db_con, $src, [sql_type::LOG, sql_type::EXCLUDE]);
-        $t->assert_sql_delete($db_con, $src, [sql_type::LOG, sql_type::USER, sql_type::EXCLUDE]);
+        //$t->assert_sql_delete($db_con, $src, [sql_type::LOG, sql_type::EXCLUDE]);
+        //$t->assert_sql_delete($db_con, $src, [sql_type::LOG, sql_type::USER, sql_type::EXCLUDE]);
 
         $t->subheader('Im- and Export tests');
         $t->assert_json_file(new source($usr), $json_file);

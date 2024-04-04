@@ -228,7 +228,7 @@ class db_object
         $tbl_name = $lib->class_to_name($class);
         $qp = new sql_par($tbl_name, $sc_par_lst, $ext);
         $qp->name .= $query_name;
-        $sc->set_class($class, $sc_par_lst, $sc->tbl_ext_ex_user($sc_par_lst));
+        $sc->set_class($class, $sc_par_lst, $sc->ext_ex_user($sc_par_lst));
         $sc->set_name($qp->name);
         $sc->set_fields($this::FLD_NAMES);
 

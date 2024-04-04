@@ -32,6 +32,9 @@
 
 namespace cfg;
 
+use cfg\db\sql_db;
+use cfg\db\sql_par;
+
 class word_change_list
 {
     // array of the loaded word objects
