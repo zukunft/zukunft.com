@@ -210,6 +210,7 @@ class all_unit_write_tests extends all_unit_read_tests
 
                 $import = new import_file();
                 $import->import_base_config($usr);
+                $import->import_test_files($usr);
             }
 
             // testing cleanup to remove any remaining test records

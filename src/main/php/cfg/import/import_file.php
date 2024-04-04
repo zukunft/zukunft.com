@@ -139,4 +139,29 @@ class import_file
 
         return $result;
     }
+
+    /**
+     * import some zukunft.com test json files
+     */
+    function import_test_files(user $usr): string
+    {
+        $result = '';
+        log_info('test import',
+            'import_test_files',
+            'import of the some test json files',
+            'import_test_files',
+            $usr, true
+        );
+
+        $html = new html_base();
+        foreach (TEST_IMPORT_FILE_LIST as $filename) {
+            $html->echo('load ' . $filename);
+            $result .= $this->json_file(PATH_TEST_IMPORT_FILES . $filename, $usr);
+        }
+
+        log_debug('import test ... done');
+
+        return $result;
+    }
+
 }

@@ -162,7 +162,8 @@ class all_unit_tests extends test_cleanup
         $this->init_unit_tests();
 
         // run the selected test
-        (new system_tests)->run($this);
+        // (new system_tests)->run($this);
+        (new import_tests)->run($this);
 
         /*
         global $db_con;

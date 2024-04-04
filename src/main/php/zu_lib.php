@@ -1068,18 +1068,9 @@ const PATH_RESOURCE_FILES = ROOT_PATH . 'src/main/resources/';
 const PATH_TEST_FILES = ROOT_PATH . 'src/test/resources/';
 const PATH_TEST_IMPORT_FILES = ROOT_PATH . 'src/test/resources/import/';
 const TEST_IMPORT_FILE_LIST = [
-    'wind_investment.json',
+    'wikipedia/democratie_index_table.json',
     'companies.json',
-    'ABB_2013.json',
-    'ABB_2017.json',
-    'ABB_2019.json',
-    'NESN_2019.json',
-    'countries.json',
-    'real_estate.json',
-    'Ultimatum_game.json',
-    'COVID-19.json',
-    'personal_climate_gas_emissions_timon.json',
-    'THOMY_test.json'
+    'countries.json'
 ];
 const TEST_IMPORT_FILE_LIST_ALL = [
     'wind_investment.json',
@@ -1092,6 +1083,7 @@ const TEST_IMPORT_FILE_LIST_ALL = [
     'real_estate.json',
     'travel_scoring.json',
     'travel_scoring_value_list.json',
+    'wikipedia/democratie_index_table.json',
     'Ultimatum_game.json',
     'COVID-19.json',
     'personal_climate_gas_emissions_timon.json',

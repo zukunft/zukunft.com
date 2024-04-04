@@ -1,0 +1,3385 @@
+== List by country ==
+The following table shows each nation's score over the years. The regions are assigned by the Economist Intelligence Unit, and may differ from conventional classifications (for example, Turkey is grouped in Western Europe).
+<div class="nowraplinks">{{TOC top|title=Regions|primary=false}}
+* [[#North America|North America]]
+* [[#Western Europe|Western Europe]]
+* [[#Central and Eastern Europe|Central and Eastern Europe]]
+* [[#Latin America and the Caribbean|Latin America and the Caribbean]]
+* [[#Asia and Australasia|Asia and Australasia]]
+* [[#Middle East and North Africa|Middle East and North Africa]]
+* [[#Sub-Saharan Africa|Sub-Saharan Africa]]
+{{TOC bottom}}
+</div>
+
+<div style="overflow:auto">
+{| class="wikitable sortable mw-datatable" style="text-align:center;"
+|-class="is-sticky"
+!Region
+!2023 rank
+!Country
+!Regime type
+!2023
+!2022
+!2021
+!2020
+!2019
+!2018
+!2017
+!2016
+!2015
+!2014
+!2013
+!2012
+!2011
+!2010
+!2008
+!2006
+|-
+|style="text-align:left;" rowspan="2" id="North America"| North America
+|13
+|style="text-align:left;"|{{CAN}}
+|Full democracy
+| style="background:#2f5cd5; color: white;" |'''8.69'''
+| style="background:#2f5cd5; color: white;" |'''8.88'''
+| style="background:#2f5cd5; color: white;" |'''8.87'''
+| style="background:#0c3091; color: white;" |'''9.24'''
+| style="background:#0c3091; color: white;" |'''9.22'''
+| style="background:#0c3091; color: white;" |'''9.15'''
+| style="background:#0c3091; color: white;" |'''9.15'''
+| style="background:#0c3091; color: white;" |'''9.15'''
+| style="background:#0c3091; color: white;" |'''9.08'''
+| style="background:#0c3091; color: white;" |'''9.08'''
+| style="background:#0c3091; color: white;" |'''9.08'''
+| style="background:#0c3091; color: white;" |'''9.08'''
+| style="background:#0c3091; color: white;" |'''9.08'''
+| style="background:#0c3091; color: white;" |'''9.08'''
+| style="background:#0c3091; color: white;" |'''9.07'''
+| style="background:#0c3091; color: white;" |'''9.07'''
+|-
+|29
+|style="text-align:left;"|{{USA}}
+|Flawed democracy
+| bgcolor="#6bd2df" |'''7.85'''
+| bgcolor="#6bd2df" |'''7.85'''
+| bgcolor="#6bd2df" |'''7.85'''
+| bgcolor="#6bd2df" |'''7.92'''
+| bgcolor="#6bd2df" |'''7.96'''
+| bgcolor="#6bd2df" |'''7.96'''
+| bgcolor="#6bd2df" |'''7.98'''
+| bgcolor="#6bd2df" |'''7.98'''
+| style="background:#2f5cd5; color: white;" |'''8.05'''
+| style="background:#2f5cd5; color: white;" |'''8.11'''
+| style="background:#2f5cd5; color: white;" |'''8.11'''
+| style="background:#2f5cd5; color: white;" |'''8.11'''
+| style="background:#2f5cd5; color: white;" |'''8.11'''
+| style="background:#2f5cd5; color: white;" |'''8.18'''
+| style="background:#2f5cd5; color: white;" |'''8.22'''
+| style="background:#2f5cd5; color: white;" |'''8.22'''
+|-
+|style="text-align:left;" rowspan="21" id="Western Europe"| Western Europe
+|18
+|style="text-align:left;"|{{AUT}}
+|Full democracy
+| style="background:#2f5cd5; color: white;" |'''8.28'''
+| style="background:#2f5cd5; color: white;" |'''8.20'''
+| style="background:#2f5cd5; color: white;" |'''8.07'''
+| style="background:#2f5cd5; color: white;" |'''8.16'''
+| style="background:#2f5cd5; color: white;" |'''8.29'''
+| style="background:#2f5cd5; color: white;" |'''8.29'''
+| style="background:#2f5cd5; color: white;" |'''8.42'''
+| style="background:#2f5cd5; color: white;" |'''8.41'''
+| style="background:#2f5cd5; color: white;" |'''8.54'''
+| style="background:#2f5cd5; color: white;" |'''8.54'''
+| style="background:#2f5cd5; color: white;" |'''8.48'''
+| style="background:#2f5cd5; color: white;" |'''8.62'''
+| style="background:#2f5cd5; color: white;" |'''8.49'''
+| style="background:#2f5cd5; color: white;" |'''8.49'''
+| style="background:#2f5cd5; color: white;" |'''8.49'''
+| style="background:#2f5cd5; color: white;" |'''8.69'''
+|-
+|36
+|style="text-align:left;"|{{BEL}}
+|Flawed democracy
+| bgcolor="#6bd2df" |'''7.64'''
+| bgcolor="#6bd2df" |'''7.64'''
+| bgcolor="#6bd2df" |'''7.51'''
+| bgcolor="#6bd2df" |'''7.51'''
+| bgcolor="#6bd2df" |'''7.64'''
+| bgcolor="#6bd2df" |'''7.78'''
+| bgcolor="#6bd2df" |'''7.78'''
+| bgcolor="#6bd2df" |'''7.77'''
+| bgcolor="#6bd2df" |'''7.93'''
+| bgcolor="#6bd2df" |'''7.93'''
+| style="background:#2f5cd5; color: white;" |'''8.05'''
+| style="background:#2f5cd5; color: white;" |'''8.05'''
+| style="background:#2f5cd5; color: white;" |'''8.05'''
+| style="background:#2f5cd5; color: white;" |'''8.05'''
+| style="background:#2f5cd5; color: white;" |'''8.16'''
+| style="background:#2f5cd5; color: white;" |'''8.15'''
+|-
+|37
+|style="text-align:left;"|{{CYP}}
+|Flawed democracy
+| bgcolor="#6bd2df" |'''7.38'''
+| bgcolor="#6bd2df" |'''7.38'''
+| bgcolor="#6bd2df" |'''7.43'''
+| bgcolor="#6bd2df" |'''7.56'''
+| bgcolor="#6bd2df" |'''7.59'''
+| bgcolor="#6bd2df" |'''7.59'''
+| bgcolor="#6bd2df" |'''7.59'''
+| bgcolor="#6bd2df" |'''7.65'''
+| bgcolor="#6bd2df" |'''7.53'''
+| bgcolor="#6bd2df" |'''7.40'''
+| bgcolor="#6bd2df" |'''7.29'''
+| bgcolor="#6bd2df" |'''7.29'''
+| bgcolor="#6bd2df" |'''7.29'''
+| bgcolor="#6bd2df" |'''7.29'''
+| bgcolor="#6bd2df" |'''7.70'''
+| bgcolor="#6bd2df" |'''7.60'''
+|-
+|6
+|style="text-align:left;"|{{DNK}}
+|Full democracy
+| style="background:#0c3091; color: white;" |'''9.28'''
+| style="background:#0c3091; color: white;" |'''9.28'''
+| style="background:#0c3091; color: white;" |'''9.09'''
+| style="background:#0c3091; color: white;" |'''9.15'''
+| style="background:#0c3091; color: white;" |'''9.22'''
+| style="background:#0c3091; color: white;" |'''9.22'''
+| style="background:#0c3091; color: white;" |'''9.22'''
+| style="background:#0c3091; color: white;" |'''9.20'''
+| style="background:#0c3091; color: white;" |'''9.11'''
+| style="background:#0c3091; color: white;" |'''9.11'''
+| style="background:#0c3091; color: white;" |'''9.38'''
+| style="background:#0c3091; color: white;" |'''9.52'''
+| style="background:#0c3091; color: white;" |'''9.52'''
+| style="background:#0c3091; color: white;" |'''9.52'''
+| style="background:#0c3091; color: white;" |'''9.52'''
+| style="background:#0c3091; color: white;" |'''9.52'''
+|-
+|5
+|style="text-align:left;"|{{FIN}}
+|Full democracy
+| style="background:#0c3091; color: white;" |'''9.30'''
+| style="background:#0c3091; color: white;" |'''9.29'''
+| style="background:#0c3091; color: white;" |'''9.27'''
+| style="background:#0c3091; color: white;" |'''9.20'''
+| style="background:#0c3091; color: white;" |'''9.25'''
+| style="background:#0c3091; color: white;" |'''9.14'''
+| style="background:#0c3091; color: white;" |'''9.03'''
+| style="background:#0c3091; color: white;" |'''9.03'''
+| style="background:#0c3091; color: white;" |'''9.03'''
+| style="background:#0c3091; color: white;" |'''9.03'''
+| style="background:#0c3091; color: white;" |'''9.03'''
+| style="background:#0c3091; color: white;" |'''9.06'''
+| style="background:#0c3091; color: white;" |'''9.06'''
+| style="background:#0c3091; color: white;" |'''9.19'''
+| style="background:#0c3091; color: white;" |'''9.25'''
+| style="background:#0c3091; color: white;" |'''9.25'''
+|-
+|23
+|style="text-align:left;"|{{FRA}}
+|Full democracy
+| style="background:#2f5cd5; color: white;" |'''8.07'''
+| style="background:#2f5cd5; color: white;" |'''8.07'''
+| bgcolor="#6bd2df" |'''7.99'''
+| bgcolor="#6bd2df" |'''7.99'''
+| style="background:#2f5cd5; color: white;" |'''8.12'''
+| bgcolor="#6bd2df" |'''7.80'''
+| bgcolor="#6bd2df" |'''7.80'''
+| bgcolor="#6bd2df" |'''7.92'''
+| bgcolor="#6bd2df" |'''7.92'''
+| style="background:#2f5cd5; color: white;" |'''8.04'''
+| bgcolor="#6bd2df" |'''7.92'''
+| bgcolor="#6bd2df" |'''7.88'''
+| bgcolor="#6bd2df" |'''7.77'''
+| bgcolor="#6bd2df" |'''7.77'''
+| style="background:#2f5cd5; color: white;" |'''8.07'''
+| style="background:#2f5cd5; color: white;" |'''8.07'''
+|-
+|12
+|style="text-align:left;"|{{DEU}}
+|Full democracy
+| style="background:#2f5cd5; color: white;" |'''8.80'''
+| style="background:#2f5cd5; color: white;" |'''8.80'''
+| style="background:#2f5cd5; color: white;" |'''8.67'''
+| style="background:#2f5cd5; color: white;" |'''8.67'''
+| style="background:#2f5cd5; color: white;" |'''8.68'''
+| style="background:#2f5cd5; color: white;" |'''8.68'''
+| style="background:#2f5cd5; color: white;" |'''8.61'''
+| style="background:#2f5cd5; color: white;" |'''8.63'''
+| style="background:#2f5cd5; color: white;" |'''8.64'''
+| style="background:#2f5cd5; color: white;" |'''8.64'''
+| style="background:#2f5cd5; color: white;" |'''8.31'''
+| style="background:#2f5cd5; color: white;" |'''8.34'''
+| style="background:#2f5cd5; color: white;" |'''8.34'''
+| style="background:#2f5cd5; color: white;" |'''8.38'''
+| style="background:#2f5cd5; color: white;" |'''8.82'''
+| style="background:#2f5cd5; color: white;" |'''8.82'''
+|-
+|20
+|style="text-align:left;"|{{GRC}}
+|Full democracy
+| style="background:#2f5cd5; color: white;" |'''8.14'''
+| bgcolor="#6bd2df" |'''7.97'''
+| bgcolor="#6bd2df" |'''7.56'''
+| bgcolor="#6bd2df" |'''7.39'''
+| bgcolor="#6bd2df" |'''7.43'''
+| bgcolor="#6bd2df" |'''7.29'''
+| bgcolor="#6bd2df" |'''7.29'''
+| bgcolor="#6bd2df" |'''7.23'''
+| bgcolor="#6bd2df" |'''7.45'''
+| bgcolor="#6bd2df" |'''7.45'''
+| bgcolor="#6bd2df" |'''7.65'''
+| bgcolor="#6bd2df" |'''7.65'''
+| bgcolor="#6bd2df" |'''7.65'''
+| bgcolor="#6bd2df" |'''7.92'''
+| style="background:#2f5cd5; color: white;" |'''8.13'''
+| style="background:#2f5cd5; color: white;" |'''8.13'''
+|-
+|3
+|style="text-align:left;"|{{ISL}}
+|Full democracy
+| style="background:#0c3091; color: white;" |'''9.45'''
+| style="background:#0c3091; color: white;" |'''9.52'''
+| style="background:#0c3091; color: white;" |'''9.18'''
+| style="background:#0c3091; color: white;" |'''9.37'''
+| style="background:#0c3091; color: white;" |'''9.58'''
+| style="background:#0c3091; color: white;" |'''9.58'''
+| style="background:#0c3091; color: white;" |'''9.58'''
+| style="background:#0c3091; color: white;" |'''9.50'''
+| style="background:#0c3091; color: white;" |'''9.58'''
+| style="background:#0c3091; color: white;" |'''9.58'''
+| style="background:#0c3091; color: white;" |'''9.65'''
+| style="background:#0c3091; color: white;" |'''9.65'''
+| style="background:#0c3091; color: white;" |'''9.65'''
+| style="background:#0c3091; color: white;" |'''9.65'''
+| style="background:#0c3091; color: white;" |'''9.65'''
+| style="background:#0c3091; color: white;" |'''9.71'''
+|-
+|7
+|style="text-align:left;"|{{IRL}}
+|Full democracy
+| style="background:#0c3091; color: white;" |'''9.19'''
+| style="background:#0c3091; color: white;" |'''9.13'''
+| style="background:#2f5cd5; color: white;" |'''9.00'''
+| style="background:#0c3091; color: white;" |'''9.05'''
+| style="background:#0c3091; color: white;" |'''9.24'''
+| style="background:#0c3091; color: white;" |'''9.15'''
+| style="background:#0c3091; color: white;" |'''9.15'''
+| style="background:#0c3091; color: white;" |'''9.15'''
+| style="background:#2f5cd5; color: white;" |'''8.85'''
+| style="background:#2f5cd5; color: white;" |'''8.72'''
+| style="background:#2f5cd5; color: white;" |'''8.68'''
+| style="background:#2f5cd5; color: white;" |'''8.56'''
+| style="background:#2f5cd5; color: white;" |'''8.56'''
+| style="background:#2f5cd5; color: white;" |'''8.79'''
+| style="background:#0c3091; color: white;" |'''9.01'''
+| style="background:#0c3091; color: white;" |'''9.01'''
+|-
+|34
+|style="text-align:left;"|{{ITA}}
+|Flawed democracy
+| bgcolor="#6bd2df" |'''7.69'''
+| bgcolor="#6bd2df" |'''7.69'''
+| bgcolor="#6bd2df" |'''7.68'''
+| bgcolor="#6bd2df" |'''7.74'''
+| bgcolor="#6bd2df" |'''7.52'''
+| bgcolor="#6bd2df" |'''7.71'''
+| bgcolor="#6bd2df" |'''7.98'''
+| bgcolor="#6bd2df" |'''7.98'''
+| bgcolor="#6bd2df" |'''7.98'''
+| bgcolor="#6bd2df" |'''7.85'''
+| bgcolor="#6bd2df" |'''7.85'''
+| bgcolor="#6bd2df" |'''7.74'''
+| bgcolor="#6bd2df" |'''7.74'''
+| bgcolor="#6bd2df" |'''7.83'''
+| bgcolor="#6bd2df" |'''7.98'''
+| bgcolor="#6bd2df" |'''7.73'''
+|-
+|11
+|style="text-align:left;"|{{LUX}}
+|Full democracy
+| style="background:#2f5cd5; color: white;" |'''8.81'''
+| style="background:#2f5cd5; color: white;" |'''8.81'''
+| style="background:#2f5cd5; color: white;" |'''8.68'''
+| style="background:#2f5cd5; color: white;" |'''8.68'''
+| style="background:#2f5cd5; color: white;" |'''8.81'''
+| style="background:#2f5cd5; color: white;" |'''8.81'''
+| style="background:#2f5cd5; color: white;" |'''8.81'''
+| style="background:#2f5cd5; color: white;" |'''8.81'''
+| style="background:#2f5cd5; color: white;" |'''8.88'''
+| style="background:#2f5cd5; color: white;" |'''8.88'''
+| style="background:#2f5cd5; color: white;" |'''8.88'''
+| style="background:#2f5cd5; color: white;" |'''8.88'''
+| style="background:#2f5cd5; color: white;" |'''8.88'''
+| style="background:#2f5cd5; color: white;" |'''8.88'''
+| style="background:#0c3091; color: white;" |'''9.10'''
+| style="background:#0c3091; color: white;" |'''9.10'''
+|-
+|28
+|style="text-align:left;"|{{MLT}}
+|Flawed democracy
+| bgcolor="#6bd2df" |'''7.93'''
+| bgcolor="#6bd2df" |'''7.70'''
+| bgcolor="#6bd2df" |'''7.57'''
+| bgcolor="#6bd2df" |'''7.68'''
+| bgcolor="#6bd2df" |'''7.95'''
+| style="background:#2f5cd5; color: white;" |'''8.21'''
+| style="background:#2f5cd5; color: white;" |'''8.15'''
+| style="background:#2f5cd5; color: white;" |'''8.39'''
+| style="background:#2f5cd5; color: white;" |'''8.39'''
+| style="background:#2f5cd5; color: white;" |'''8.39'''
+| style="background:#2f5cd5; color: white;" |'''8.28'''
+| style="background:#2f5cd5; color: white;" |'''8.28'''
+| style="background:#2f5cd5; color: white;" |'''8.28'''
+| style="background:#2f5cd5; color: white;" |'''8.28'''
+| style="background:#2f5cd5; color: white;" |'''8.39'''
+| style="background:#2f5cd5; color: white;" |'''8.39'''
+|-
+|9
+|style="text-align:left;"|{{NLD}}
+|Full democracy
+| style="background:#0c3091; color: white;" |'''9.00'''
+| style="background:#0c3091; color: white;" |'''9.00'''
+| style="background:#2f5cd5; color: white;" |'''8.88'''
+| style="background:#2f5cd5; color: white;" |'''8.96'''
+| style="background:#0c3091; color: white;" |'''9.01'''
+| style="background:#2f5cd5; color: white;" |'''8.89'''
+| style="background:#2f5cd5; color: white;" |'''8.89'''
+| style="background:#2f5cd5; color: white;" |'''8.80'''
+| style="background:#2f5cd5; color: white;" |'''8.92'''
+| style="background:#2f5cd5; color: white;" |'''8.92'''
+| style="background:#2f5cd5; color: white;" |'''8.84'''
+| style="background:#2f5cd5; color: white;" |'''8.99'''
+| style="background:#2f5cd5; color: white;" |'''8.99'''
+| style="background:#2f5cd5; color: white;" |'''8.99'''
+| style="background:#0c3091; color: white;" |'''9.53'''
+| style="background:#0c3091; color: white;" |'''9.66'''
+|-
+|1
+|style="text-align:left;"|{{NOR}}
+|Full democracy
+| style="background:#0c3091; color: white;" |'''9.81'''
+| style="background:#0c3091; color: white;" |'''9.81'''
+| style="background:#0c3091; color: white;" |'''9.75'''
+| style="background:#0c3091; color: white;" |'''9.81'''
+| style="background:#0c3091; color: white;" |'''9.87'''
+| style="background:#0c3091; color: white;" |'''9.87'''
+| style="background:#0c3091; color: white;" |'''9.87'''
+| style="background:#0c3091; color: white;" |'''9.93'''
+| style="background:#0c3091; color: white;" |'''9.93'''
+| style="background:#0c3091; color: white;" |'''9.93'''
+| style="background:#0c3091; color: white;" |'''9.93'''
+| style="background:#0c3091; color: white;" |'''9.93'''
+| style="background:#0c3091; color: white;" |'''9.80'''
+| style="background:#0c3091; color: white;" |'''9.80'''
+| style="background:#0c3091; color: white;" |'''9.68'''
+| style="background:#0c3091; color: white;" |'''9.55'''
+|-
+|31
+|style="text-align:left;"|{{PRT}}
+|Flawed democracy
+| bgcolor="#6bd2df" |'''7.75'''
+| bgcolor="#6bd2df" |'''7.95'''
+| bgcolor="#6bd2df" |'''7.82'''
+| bgcolor="#6bd2df" |'''7.90'''
+| style="background:#2f5cd5; color: white;" |'''8.03'''
+| bgcolor="#6bd2df" |'''7.84'''
+| bgcolor="#6bd2df" |'''7.84'''
+| bgcolor="#6bd2df" |'''7.86'''
+| bgcolor="#6bd2df" |'''7.79'''
+| bgcolor="#6bd2df" |'''7.79'''
+| bgcolor="#6bd2df" |'''7.65'''
+| bgcolor="#6bd2df" |'''7.92'''
+| bgcolor="#6bd2df" |'''7.81'''
+| style="background:#2f5cd5; color: white;" |'''8.02'''
+| style="background:#2f5cd5; color: white;" |'''8.05'''
+| style="background:#2f5cd5; color: white;" |'''8.16'''
+|-
+|23
+|style="text-align:left;"|{{ESP}}
+|Full democracy
+| style="background:#2f5cd5; color: white;" |'''8.07'''
+| style="background:#2f5cd5; color: white;" |'''8.07'''
+| bgcolor="#6bd2df" |'''7.94'''
+| style="background:#2f5cd5; color: white;" |'''8.12'''
+| style="background:#2f5cd5; color: white;" |'''8.29'''
+| style="background:#2f5cd5; color: white;" |'''8.08'''
+| style="background:#2f5cd5; color: white;" |'''8.08'''
+| style="background:#2f5cd5; color: white;" |'''8.30'''
+| style="background:#2f5cd5; color: white;" |'''8.30'''
+| style="background:#2f5cd5; color: white;" |'''8.05'''
+| style="background:#2f5cd5; color: white;" |'''8.02'''
+| style="background:#2f5cd5; color: white;" |'''8.02'''
+| style="background:#2f5cd5; color: white;" |'''8.02'''
+| style="background:#2f5cd5; color: white;" |'''8.16'''
+| style="background:#2f5cd5; color: white;" |'''8.45'''
+| style="background:#2f5cd5; color: white;" |'''8.34'''
+|-
+|4
+|style="text-align:left;"|{{SWE}}
+|Full democracy
+| style="background:#0c3091; color: white;" |'''9.39'''
+| style="background:#0c3091; color: white;" |'''9.39'''
+| style="background:#0c3091; color: white;" |'''9.26'''
+| style="background:#0c3091; color: white;" |'''9.26'''
+| style="background:#0c3091; color: white;" |'''9.39'''
+| style="background:#0c3091; color: white;" |'''9.39'''
+| style="background:#0c3091; color: white;" |'''9.39'''
+| style="background:#0c3091; color: white;" |'''9.39'''
+| style="background:#0c3091; color: white;" |'''9.45'''
+| style="background:#0c3091; color: white;" |'''9.73'''
+| style="background:#0c3091; color: white;" |'''9.73'''
+| style="background:#0c3091; color: white;" |'''9.73'''
+| style="background:#0c3091; color: white;" |'''9.50'''
+| style="background:#0c3091; color: white;" |'''9.50'''
+| style="background:#0c3091; color: white;" |'''9.88'''
+| style="background:#0c3091; color: white;" |'''9.88'''
+|-
+|8
+|style="text-align:left;"|{{CHE}}
+|Full democracy
+| style="background:#0c3091; color: white;" |'''9.14'''
+| style="background:#0c3091; color: white;" |'''9.14'''
+| style="background:#2f5cd5; color: white;" |'''8.90'''
+| style="background:#2f5cd5; color: white;" |'''8.83'''
+| style="background:#0c3091; color: white;" |'''9.03'''
+| style="background:#0c3091; color: white;" |'''9.03'''
+| style="background:#0c3091; color: white;" |'''9.03'''
+| style="background:#0c3091; color: white;" |'''9.09'''
+| style="background:#0c3091; color: white;" |'''9.09'''
+| style="background:#0c3091; color: white;" |'''9.09'''
+| style="background:#0c3091; color: white;" |'''9.09'''
+| style="background:#0c3091; color: white;" |'''9.09'''
+| style="background:#0c3091; color: white;" |'''9.09'''
+| style="background:#0c3091; color: white;" |'''9.09'''
+| style="background:#0c3091; color: white;" |'''9.15'''
+| style="background:#0c3091; color: white;" |'''9.02'''
+|-
+|102
+|style="text-align:left;"|{{TUR}}
+|Hybrid regime
+| bgcolor="#fad45d" |'''4.33'''
+| bgcolor="#fad45d" |'''4.35'''
+| bgcolor="#fad45d" |'''4.35'''
+| bgcolor="#fad45d" |'''4.48'''
+| bgcolor="#fad45d" |'''4.09'''
+| bgcolor="#fad45d" |'''4.37'''
+| bgcolor="#fad45d" |'''4.88'''
+| bgcolor="#f9f8bb" |'''5.04'''
+| bgcolor="#f9f8bb" |'''5.12'''
+| bgcolor="#f9f8bb" |'''5.12'''
+| bgcolor="#f9f8bb" |'''5.63'''
+| bgcolor="#f9f8bb" |'''5.76'''
+| bgcolor="#f9f8bb" |'''5.73'''
+| bgcolor="#f9f8bb" |'''5.73'''
+| bgcolor="#f9f8bb" |'''5.69'''
+| bgcolor="#f9f8bb" |'''5.70'''
+|-
+|18
+|style="text-align:left;"|{{GBR}}
+|Full democracy
+| style="background:#2f5cd5; color: white;" |'''8.28'''
+| style="background:#2f5cd5; color: white;" |'''8.28'''
+| style="background:#2f5cd5; color: white;" |'''8.10'''
+| style="background:#2f5cd5; color: white;" |'''8.54'''
+| style="background:#2f5cd5; color: white;" |'''8.52'''
+| style="background:#2f5cd5; color: white;" |'''8.53'''
+| style="background:#2f5cd5; color: white;" |'''8.53'''
+| style="background:#2f5cd5; color: white;" |'''8.36'''
+| style="background:#2f5cd5; color: white;" |'''8.31'''
+| style="background:#2f5cd5; color: white;" |'''8.31'''
+| style="background:#2f5cd5; color: white;" |'''8.31'''
+| style="background:#2f5cd5; color: white;" |'''8.21'''
+| style="background:#2f5cd5; color: white;" |'''8.16'''
+| style="background:#2f5cd5; color: white;" |'''8.16'''
+| style="background:#2f5cd5; color: white;" |'''8.15'''
+| style="background:#2f5cd5; color: white;" |'''8.08'''
+|-
+|style="text-align:left;" rowspan="28" id="Central and Eastern Europe"| Central and Eastern Europe
+|66
+|style="text-align:left;"|{{ALB}}
+|Flawed democracy
+| bgcolor="#c3eded" |'''6.28'''
+| bgcolor="#c3eded" |'''6.41'''
+| bgcolor="#c3eded" |'''6.11'''
+| bgcolor="#c3eded" |'''6.08'''
+| bgcolor="#f9f8bb" |'''5.89'''
+| bgcolor="#f9f8bb" |'''5.98'''
+| bgcolor="#f9f8bb" |'''5.98'''
+| bgcolor="#f9f8bb" |'''5.91'''
+| bgcolor="#f9f8bb" |'''5.91'''
+| bgcolor="#f9f8bb" |'''5.67'''
+| bgcolor="#f9f8bb" |'''5.67'''
+| bgcolor="#f9f8bb" |'''5.67'''
+| bgcolor="#f9f8bb" |'''5.81'''
+| bgcolor="#f9f8bb" |'''5.86'''
+| bgcolor="#f9f8bb" |'''5.91'''
+| bgcolor="#f9f8bb" |'''5.91'''
+|-
+|84
+|style="text-align:left;"|{{ARM}}
+|Hybrid regime
+| bgcolor="#f9f8bb" |'''5.42'''
+| bgcolor="#f9f8bb" |'''5.63'''
+| bgcolor="#f9f8bb" |'''5.49'''
+| bgcolor="#f9f8bb" |'''5.35'''
+| bgcolor="#f9f8bb" |'''5.54'''
+| bgcolor="#fad45d" |'''4.79'''
+| bgcolor="#fad45d" |'''4.11'''
+| style="background:#da820f; color: white;" |'''3.88'''
+| style="background:#da820f; color: white;" |'''4.00'''
+| bgcolor="#fad45d" |'''4.13'''
+| bgcolor="#fad45d" |'''4.02'''
+| bgcolor="#fad45d" |'''4.09'''
+| bgcolor="#fad45d" |'''4.09'''
+| bgcolor="#fad45d" |'''4.09'''
+| bgcolor="#fad45d" |'''4.09'''
+| bgcolor="#fad45d" |'''4.15'''
+|-
+|130
+|style="text-align:left;"|{{AZE}}
+|Authoritarian
+| style="background:#a8261f; color: white;" |'''2.80'''
+| style="background:#a8261f; color: white;" |'''2.87'''
+| style="background:#a8261f; color: white;" |'''2.68'''
+| style="background:#a8261f; color: white;" |'''2.68'''
+| style="background:#a8261f; color: white;" |'''2.75'''
+| style="background:#a8261f; color: white;" |'''2.65'''
+| style="background:#a8261f; color: white;" |'''2.65'''
+| style="background:#a8261f; color: white;" |'''2.65'''
+| style="background:#a8261f; color: white;" |'''2.71'''
+| style="background:#a8261f; color: white;" |'''2.83'''
+| style="background:#da820f; color: white;" |'''3.06'''
+| style="background:#da820f; color: white;" |'''3.15'''
+| style="background:#da820f; color: white;" |'''3.15'''
+| style="background:#da820f; color: white;" |'''3.15'''
+| style="background:#da820f; color: white;" |'''3.19'''
+| style="background:#da820f; color: white;" |'''3.31'''
+|-
+|153
+|style="text-align:left;"|{{BLR}}
+|Authoritarian
+| style="background:#66000f; color: white;" |'''1.99'''
+| style="background:#66000f; color: white;" |'''1.99'''
+| style="background:#a8261f; color: white;" |'''2.41'''
+| style="background:#a8261f; color: white;" |'''2.59'''
+| style="background:#a8261f; color: white;" |'''2.48'''
+| style="background:#da820f; color: white;" |'''3.13'''
+| style="background:#da820f; color: white;" |'''3.13'''
+| style="background:#da820f; color: white;" |'''3.54'''
+| style="background:#da820f; color: white;" |'''3.62'''
+| style="background:#da820f; color: white;" |'''3.69'''
+| style="background:#da820f; color: white;" |'''3.04'''
+| style="background:#da820f; color: white;" |'''3.04'''
+| style="background:#da820f; color: white;" |'''3.16'''
+| style="background:#da820f; color: white;" |'''3.34'''
+| style="background:#da820f; color: white;" |'''3.34'''
+| style="background:#da820f; color: white;" |'''3.34'''
+|-
+|94
+|style="text-align:left;"|{{BIH}}
+|Hybrid regime
+| bgcolor="#f9f8bb" |'''5.00'''
+| bgcolor="#f9f8bb" |'''5.00'''
+| bgcolor="#f9f8bb" |'''5.04'''
+| bgcolor="#fad45d" |'''4.84'''
+| bgcolor="#fad45d" |'''4.86'''
+| bgcolor="#fad45d" |'''4.98'''
+| bgcolor="#fad45d" |'''4.87'''
+| bgcolor="#fad45d" |'''4.87'''
+| bgcolor="#fad45d" |'''4.83'''
+| bgcolor="#fad45d" |'''4.78'''
+| bgcolor="#f9f8bb" |'''5.02'''
+| bgcolor="#f9f8bb" |'''5.11'''
+| bgcolor="#f9f8bb" |'''5.24'''
+| bgcolor="#f9f8bb" |'''5.32'''
+| bgcolor="#f9f8bb" |'''5.70'''
+| bgcolor="#f9f8bb" |'''5.78'''
+|-
+|62
+|style="text-align:left;"|{{BGR}}
+|Flawed democracy
+| bgcolor="#c3eded" |'''6.41'''
+| bgcolor="#c3eded" |'''6.53'''
+| bgcolor="#c3eded" |'''6.64'''
+| bgcolor="#c3eded" |'''6.71'''
+| bgcolor="#6bd2df" |'''7.03'''
+| bgcolor="#6bd2df" |'''7.03'''
+| bgcolor="#6bd2df" |'''7.03'''
+| bgcolor="#6bd2df" |'''7.01'''
+| bgcolor="#6bd2df" |'''7.14'''
+| bgcolor="#c3eded" |'''6.73'''
+| bgcolor="#c3eded" |'''6.83'''
+| bgcolor="#c3eded" |'''6.72'''
+| bgcolor="#c3eded" |'''6.78'''
+| bgcolor="#c3eded" |'''6.84'''
+| bgcolor="#6bd2df" |'''7.02'''
+| bgcolor="#6bd2df" |'''7.10'''
+|-
+|58
+|style="text-align:left;"|{{HRV}}
+|Flawed democracy
+| bgcolor="#c3eded" |'''6.50'''
+| bgcolor="#c3eded" |'''6.50'''
+| bgcolor="#c3eded" |'''6.50'''
+| bgcolor="#c3eded" |'''6.50'''
+| bgcolor="#c3eded" |'''6.57'''
+| bgcolor="#c3eded" |'''6.57'''
+| bgcolor="#c3eded" |'''6.63'''
+| bgcolor="#c3eded" |'''6.75'''
+| bgcolor="#c3eded" |'''6.93'''
+| bgcolor="#c3eded" |'''6.93'''
+| bgcolor="#c3eded" |'''6.93'''
+| bgcolor="#c3eded" |'''6.93'''
+| bgcolor="#c3eded" |'''6.73'''
+| bgcolor="#c3eded" |'''6.81'''
+| bgcolor="#6bd2df" |'''7.04'''
+| bgcolor="#6bd2df" |'''7.04'''
+|-
+|26
+|style="text-align:left;"|{{CZE}}
+|Flawed democracy
+| bgcolor="#6bd2df" |'''7.97'''
+| bgcolor="#6bd2df" |'''7.97'''
+| bgcolor="#6bd2df" |'''7.74'''
+| bgcolor="#6bd2df" |'''7.67'''
+| bgcolor="#6bd2df" |'''7.69'''
+| bgcolor="#6bd2df" |'''7.69'''
+| bgcolor="#6bd2df" |'''7.62'''
+| bgcolor="#6bd2df" |'''7.82'''
+| bgcolor="#6bd2df" |'''7.94'''
+| bgcolor="#6bd2df" |'''7.94'''
+| style="background:#2f5cd5; color: white;" |'''8.06'''
+| style="background:#2f5cd5; color: white;" |'''8.19'''
+| style="background:#2f5cd5; color: white;" |'''8.19'''
+| style="background:#2f5cd5; color: white;" |'''8.19'''
+| style="background:#2f5cd5; color: white;" |'''8.19'''
+| style="background:#2f5cd5; color: white;" |'''8.17'''
+|-
+|27
+|style="text-align:left;"|{{EST}}
+|Flawed democracy
+| bgcolor="#6bd2df" |'''7.96'''
+| bgcolor="#6bd2df" |'''7.96'''
+| bgcolor="#6bd2df" |'''7.84'''
+| bgcolor="#6bd2df" |'''7.84'''
+| bgcolor="#6bd2df" |'''7.90'''
+| bgcolor="#6bd2df" |'''7.97'''
+| bgcolor="#6bd2df" |'''7.79'''
+| bgcolor="#6bd2df" |'''7.85'''
+| bgcolor="#6bd2df" |'''7.85'''
+| bgcolor="#6bd2df" |'''7.74'''
+| bgcolor="#6bd2df" |'''7.61'''
+| bgcolor="#6bd2df" |'''7.61'''
+| bgcolor="#6bd2df" |'''7.61'''
+| bgcolor="#6bd2df" |'''7.68'''
+| bgcolor="#6bd2df" |'''7.68'''
+| bgcolor="#6bd2df" |'''7.74'''
+|-
+|89
+|style="text-align:left;"|{{GEO}}
+|Hybrid regime
+| bgcolor="#f9f8bb" |'''5.20'''
+| bgcolor="#f9f8bb" |'''5.20'''
+| bgcolor="#f9f8bb" |'''5.12'''
+| bgcolor="#f9f8bb" |'''5.31'''
+| bgcolor="#f9f8bb" |'''5.42'''
+| bgcolor="#f9f8bb" |'''5.50'''
+| bgcolor="#f9f8bb" |'''5.93'''
+| bgcolor="#f9f8bb" |'''5.93'''
+| bgcolor="#f9f8bb" |'''5.88'''
+| bgcolor="#f9f8bb" |'''5.82'''
+| bgcolor="#f9f8bb" |'''5.95'''
+| bgcolor="#f9f8bb" |'''5.53'''
+| bgcolor="#fad45d" |'''4.74'''
+| bgcolor="#fad45d" |'''4.59'''
+| bgcolor="#fad45d" |'''4.62'''
+| bgcolor="#fad45d" |'''4.90'''
+|-
+|50
+|style="text-align:left;"|{{HUN}}
+|Flawed democracy
+| bgcolor="#c3eded" |'''6.72'''
+| bgcolor="#c3eded" |'''6.64'''
+| bgcolor="#c3eded" |'''6.50'''
+| bgcolor="#c3eded" |'''6.56'''
+| bgcolor="#c3eded" |'''6.63'''
+| bgcolor="#c3eded" |'''6.63'''
+| bgcolor="#c3eded" |'''6.64'''
+| bgcolor="#c3eded" |'''6.72'''
+| bgcolor="#c3eded" |'''6.84'''
+| bgcolor="#c3eded" |'''6.90'''
+| bgcolor="#c3eded" |'''6.96'''
+| bgcolor="#c3eded" |'''6.96'''
+| bgcolor="#6bd2df" |'''7.04'''
+| bgcolor="#6bd2df" |'''7.21'''
+| bgcolor="#6bd2df" |'''7.44'''
+| bgcolor="#6bd2df" |'''7.53'''
+|-
+|120
+|style="text-align:left;"|{{KAZ}}
+|Authoritarian
+| style="background:#da820f; color: white;" |'''3.08'''
+| style="background:#da820f; color: white;" |'''3.08'''
+| style="background:#da820f; color: white;" |'''3.08'''
+| style="background:#da820f; color: white;" |'''3.14'''
+| style="background:#a8261f; color: white;" |'''2.94'''
+| style="background:#a8261f; color: white;" |'''2.94'''
+| style="background:#da820f; color: white;" |'''3.06'''
+| style="background:#da820f; color: white;" |'''3.06'''
+| style="background:#da820f; color: white;" |'''3.06'''
+| style="background:#da820f; color: white;" |'''3.17'''
+| style="background:#da820f; color: white;" |'''3.06'''
+| style="background:#a8261f; color: white;" |'''2.95'''
+| style="background:#da820f; color: white;" |'''3.24'''
+| style="background:#da820f; color: white;" |'''3.30'''
+| style="background:#da820f; color: white;" |'''3.45'''
+| style="background:#da820f; color: white;" |'''3.62'''
+|-
+|109
+|style="text-align:left;"|{{KGZ}}
+|Authoritarian
+| style="background:#da820f; color: white;" |'''3.70'''
+| style="background:#da820f; color: white;" |'''3.62'''
+| style="background:#da820f; color: white;" |'''3.62'''
+| bgcolor="#fad45d" |'''4.21'''
+| bgcolor="#fad45d" |'''4.89'''
+| bgcolor="#f9f8bb" |'''5.11'''
+| bgcolor="#f9f8bb" |'''5.11'''
+| bgcolor="#fad45d" |'''4.93'''
+| bgcolor="#f9f8bb" |'''5.33'''
+| bgcolor="#f9f8bb" |'''5.24'''
+| bgcolor="#fad45d" |'''4.69'''
+| bgcolor="#fad45d" |'''4.69'''
+| bgcolor="#fad45d" |'''4.34'''
+| bgcolor="#fad45d" |'''4.31'''
+| bgcolor="#fad45d" |'''4.05'''
+| bgcolor="#fad45d" |'''4.08'''
+|-
+|37
+|style="text-align:left;"|{{LVA}}
+|Flawed democracy
+| bgcolor="#6bd2df" |'''7.38'''
+| bgcolor="#6bd2df" |'''7.37'''
+| bgcolor="#6bd2df" |'''7.31'''
+| bgcolor="#6bd2df" |'''7.24'''
+| bgcolor="#6bd2df" |'''7.49'''
+| bgcolor="#6bd2df" |'''7.38'''
+| bgcolor="#6bd2df" |'''7.25'''
+| bgcolor="#6bd2df" |'''7.31'''
+| bgcolor="#6bd2df" |'''7.37'''
+| bgcolor="#6bd2df" |'''7.48'''
+| bgcolor="#6bd2df" |'''7.05'''
+| bgcolor="#6bd2df" |'''7.05'''
+| bgcolor="#6bd2df" |'''7.05'''
+| bgcolor="#6bd2df" |'''7.05'''
+| bgcolor="#6bd2df" |'''7.23'''
+| bgcolor="#6bd2df" |'''7.37'''
+|-
+|39
+|style="text-align:left;"|{{LTU}}
+|Flawed democracy
+| bgcolor="#6bd2df" |'''7.31'''
+| bgcolor="#6bd2df" |'''7.31'''
+| bgcolor="#6bd2df" |'''7.18'''
+| bgcolor="#6bd2df" |'''7.13'''
+| bgcolor="#6bd2df" |'''7.50'''
+| bgcolor="#6bd2df" |'''7.50'''
+| bgcolor="#6bd2df" |'''7.41'''
+| bgcolor="#6bd2df" |'''7.47'''
+| bgcolor="#6bd2df" |'''7.54'''
+| bgcolor="#6bd2df" |'''7.54'''
+| bgcolor="#6bd2df" |'''7.54'''
+| bgcolor="#6bd2df" |'''7.24'''
+| bgcolor="#6bd2df" |'''7.24'''
+| bgcolor="#6bd2df" |'''7.24'''
+| bgcolor="#6bd2df" |'''7.36'''
+| bgcolor="#6bd2df" |'''7.43'''
+|-
+|68
+|style="text-align:left;"|{{MDA}}
+|Flawed democracy
+| bgcolor="#c3eded" |'''6.23'''
+| bgcolor="#c3eded" |'''6.23'''
+| bgcolor="#c3eded" |'''6.10'''
+| bgcolor="#f9f8bb" |'''5.78'''
+| bgcolor="#f9f8bb" |'''5.75'''
+| bgcolor="#f9f8bb" |'''5.85'''
+| bgcolor="#f9f8bb" |'''5.94'''
+| bgcolor="#c3eded" |'''6.01'''
+| bgcolor="#c3eded" |'''6.35'''
+| bgcolor="#c3eded" |'''6.32'''
+| bgcolor="#c3eded" |'''6.32'''
+| bgcolor="#c3eded" |'''6.32'''
+| bgcolor="#c3eded" |'''6.32'''
+| bgcolor="#c3eded" |'''6.33'''
+| bgcolor="#c3eded" |'''6.50'''
+| bgcolor="#c3eded" |'''6.50'''
+|-
+|52
+|style="text-align:left;"|{{MNE}}
+|Flawed democracy
+| bgcolor="#c3eded" |'''6.67'''
+| bgcolor="#c3eded" |'''6.45'''
+| bgcolor="#c3eded" |'''6.02'''
+| bgcolor="#f9f8bb" |'''5.77'''
+| bgcolor="#f9f8bb" |'''5.65'''
+| bgcolor="#f9f8bb" |'''5.74'''
+| bgcolor="#f9f8bb" |'''5.69'''
+| bgcolor="#f9f8bb" |'''5.72'''
+| bgcolor="#c3eded" |'''6.01'''
+| bgcolor="#f9f8bb" |'''5.94'''
+| bgcolor="#f9f8bb" |'''5.94'''
+| bgcolor="#c3eded" |'''6.05'''
+| bgcolor="#c3eded" |'''6.15'''
+| bgcolor="#c3eded" |'''6.27'''
+| bgcolor="#c3eded" |'''6.43'''
+| bgcolor="#c3eded" |'''6.57'''
+|-
+|72
+|style="text-align:left;"|{{MKD}}
+|Flawed democracy
+| bgcolor="#c3eded" |'''6.03'''
+| bgcolor="#c3eded" |'''6.10'''
+| bgcolor="#c3eded" |'''6.03'''
+| bgcolor="#f9f8bb" |'''5.89'''
+| bgcolor="#f9f8bb" |'''5.97'''
+| bgcolor="#f9f8bb" |'''5.87'''
+| bgcolor="#f9f8bb" |'''5.57'''
+| bgcolor="#f9f8bb" |'''5.23'''
+| bgcolor="#c3eded" |'''6.02'''
+| bgcolor="#c3eded" |'''6.25'''
+| bgcolor="#c3eded" |'''6.16'''
+| bgcolor="#c3eded" |'''6.16'''
+| bgcolor="#c3eded" |'''6.16'''
+| bgcolor="#c3eded" |'''6.16'''
+| bgcolor="#c3eded" |'''6.21'''
+| bgcolor="#c3eded" |'''6.33'''
+|-
+|41
+|style="text-align:left;"|{{POL}}
+|Flawed democracy
+| bgcolor="#6bd2df" |'''7.18'''
+| bgcolor="#6bd2df" |'''7.04'''
+| bgcolor="#c3eded" |'''6.80'''
+| bgcolor="#c3eded" |'''6.85'''
+| bgcolor="#c3eded" |'''6.62'''
+| bgcolor="#c3eded" |'''6.67'''
+| bgcolor="#c3eded" |'''6.67'''
+| bgcolor="#c3eded" |'''6.83'''
+| bgcolor="#6bd2df" |'''7.09'''
+| bgcolor="#6bd2df" |'''7.47'''
+| bgcolor="#6bd2df" |'''7.12'''
+| bgcolor="#6bd2df" |'''7.12'''
+| bgcolor="#6bd2df" |'''7.12'''
+| bgcolor="#6bd2df" |'''7.05'''
+| bgcolor="#6bd2df" |'''7.30'''
+| bgcolor="#6bd2df" |'''7.30'''
+|-
+|60
+|style="text-align:left;"|{{ROU}}
+|Flawed democracy
+| bgcolor="#c3eded" |'''6.45'''
+| bgcolor="#c3eded" |'''6.45'''
+| bgcolor="#c3eded" |'''6.43'''
+| bgcolor="#c3eded" |'''6.40'''
+| bgcolor="#c3eded" |'''6.49'''
+| bgcolor="#c3eded" |'''6.38'''
+| bgcolor="#c3eded" |'''6.44'''
+| bgcolor="#c3eded" |'''6.62'''
+| bgcolor="#c3eded" |'''6.68'''
+| bgcolor="#c3eded" |'''6.68'''
+| bgcolor="#c3eded" |'''6.54'''
+| bgcolor="#c3eded" |'''6.54'''
+| bgcolor="#c3eded" |'''6.54'''
+| bgcolor="#c3eded" |'''6.60'''
+| bgcolor="#6bd2df" |'''7.06'''
+| bgcolor="#6bd2df" |'''7.06'''
+|-
+|144
+|style="text-align:left;"|{{RUS}}
+|Authoritarian
+| style="background:#a8261f; color: white;" |'''2.22'''
+| style="background:#a8261f; color: white;" |'''2.28'''
+| style="background:#da820f; color: white;" |'''3.24'''
+| style="background:#da820f; color: white;" |'''3.31'''
+| style="background:#da820f; color: white;" |'''3.11'''
+| style="background:#a8261f; color: white;" |'''2.94'''
+| style="background:#da820f; color: white;" |'''3.17'''
+| style="background:#da820f; color: white;" |'''3.24'''
+| style="background:#da820f; color: white;" |'''3.31'''
+| style="background:#da820f; color: white;" |'''3.39'''
+| style="background:#da820f; color: white;" |'''3.59'''
+| style="background:#da820f; color: white;" |'''3.74'''
+| style="background:#da820f; color: white;" |'''3.92'''
+| bgcolor="#fad45d" |'''4.26'''
+| bgcolor="#fad45d" |'''4.48'''
+| bgcolor="#f9f8bb" |'''5.02'''
+|-
+|64
+|style="text-align:left;"|{{SRB}}
+|Flawed democracy
+| bgcolor="#c3eded" |'''6.33'''
+| bgcolor="#c3eded" |'''6.33'''
+| bgcolor="#c3eded" |'''6.36'''
+| bgcolor="#c3eded" |'''6.22'''
+| bgcolor="#c3eded" |'''6.41'''
+| bgcolor="#c3eded" |'''6.41'''
+| bgcolor="#c3eded" |'''6.41'''
+| bgcolor="#c3eded" |'''6.57'''
+| bgcolor="#c3eded" |'''6.71'''
+| bgcolor="#c3eded" |'''6.71'''
+| bgcolor="#c3eded" |'''6.67'''
+| bgcolor="#c3eded" |'''6.33'''
+| bgcolor="#c3eded" |'''6.33'''
+| bgcolor="#c3eded" |'''6.33'''
+| bgcolor="#c3eded" |'''6.49'''
+| bgcolor="#c3eded" |'''6.62'''
+|-
+|44
+|style="text-align:left;"|{{SVK}}
+|Flawed democracy
+| bgcolor="#6bd2df" |'''7.07'''
+| bgcolor="#6bd2df" |'''7.07'''
+| bgcolor="#6bd2df" |'''7.03'''
+| bgcolor="#c3eded" |'''6.97'''
+| bgcolor="#6bd2df" |'''7.17'''
+| bgcolor="#6bd2df" |'''7.10'''
+| bgcolor="#6bd2df" |'''7.16'''
+| bgcolor="#6bd2df" |'''7.29'''
+| bgcolor="#6bd2df" |'''7.29'''
+| bgcolor="#6bd2df" |'''7.35'''
+| bgcolor="#6bd2df" |'''7.35'''
+| bgcolor="#6bd2df" |'''7.35'''
+| bgcolor="#6bd2df" |'''7.35'''
+| bgcolor="#6bd2df" |'''7.35'''
+| bgcolor="#6bd2df" |'''7.33'''
+| bgcolor="#6bd2df" |'''7.40'''
+|-
+|31
+|style="text-align:left;"|{{SVN}}
+|Flawed democracy
+| bgcolor="#6bd2df" |'''7.75'''
+| bgcolor="#6bd2df" |'''7.75'''
+| bgcolor="#6bd2df" |'''7.54'''
+| bgcolor="#6bd2df" |'''7.54'''
+| bgcolor="#6bd2df" |'''7.50'''
+| bgcolor="#6bd2df" |'''7.50'''
+| bgcolor="#6bd2df" |'''7.50'''
+| bgcolor="#6bd2df" |'''7.51'''
+| bgcolor="#6bd2df" |'''7.57'''
+| bgcolor="#6bd2df" |'''7.57'''
+| bgcolor="#6bd2df" |'''7.88'''
+| bgcolor="#6bd2df" |'''7.88'''
+| bgcolor="#6bd2df" |'''7.76'''
+| bgcolor="#6bd2df" |'''7.69'''
+| bgcolor="#6bd2df" |'''7.96'''
+| bgcolor="#6bd2df" |'''7.96'''
+|-
+|157
+|style="text-align:left;"|{{TJK}}
+|Authoritarian
+| style="background:#660018; color: white;" |'''1.94'''
+| style="background:#660018; color: white;" |'''1.94'''
+| style="background:#660018; color: white;" |'''1.94'''
+| style="background:#660018; color: white;" |'''1.94'''
+| style="background:#660018; color: white;" |'''1.93'''
+| style="background:#660018; color: white;" |'''1.93'''
+| style="background:#660018; color: white;" |'''1.93'''
+| style="background:#660018; color: white;" |'''1.89'''
+| style="background:#660018; color: white;" |'''1.95'''
+| style="background:#a8261f; color: white;" |'''2.37'''
+| style="background:#a8261f; color: white;" |'''2.51'''
+| style="background:#a8261f; color: white;" |'''2.51'''
+| style="background:#a8261f; color: white;" |'''2.51'''
+| style="background:#a8261f; color: white;" |'''2.51'''
+| style="background:#a8261f; color: white;" |'''2.45'''
+| style="background:#a8261f; color: white;" |'''2.45'''
+|-
+|161
+|style="text-align:left;"|{{TKM}}
+|Authoritarian
+| style="background:#66000f; color: white;" |'''1.66'''
+| style="background:#66000f; color: white;" |'''1.66'''
+| style="background:#660018; color: white;" |'''1.66'''
+| style="background:#660018; color: white;" |'''1.72'''
+| style="background:#660018; color: white;" |'''1.72'''
+| style="background:#660018; color: white;" |'''1.72'''
+| style="background:#660018; color: white;" |'''1.72'''
+| style="background:#660018; color: white;" |'''1.83'''
+| style="background:#660018; color: white;" |'''1.83'''
+| style="background:#660018; color: white;" |'''1.83'''
+| style="background:#660018; color: white;" |'''1.72'''
+| style="background:#660018; color: white;" |'''1.72'''
+| style="background:#660018; color: white;" |'''1.72'''
+| style="background:#660018; color: white;" |'''1.72'''
+| style="background:#660018; color: white;" |'''1.72'''
+| style="background:#660018; color: white;" |'''1.83'''
+|-
+|91
+|style="text-align:left;"|{{UKR}}
+|Hybrid regime
+| bgcolor="#f9f8bb" |'''5.06'''
+| bgcolor="#f9f8bb" |'''5.42'''
+| bgcolor="#f9f8bb" |'''5.57'''
+| bgcolor="#f9f8bb" |'''5.81'''
+| bgcolor="#f9f8bb" |'''5.90'''
+| bgcolor="#f9f8bb" |'''5.69'''
+| bgcolor="#f9f8bb" |'''5.69'''
+| bgcolor="#f9f8bb" |'''5.70'''
+| bgcolor="#f9f8bb" |'''5.70'''
+| bgcolor="#f9f8bb" |'''5.42'''
+| bgcolor="#f9f8bb" |'''5.84'''
+| bgcolor="#f9f8bb" |'''5.91'''
+| bgcolor="#f9f8bb" |'''5.94'''
+| bgcolor="#c3eded" |'''6.30'''
+| bgcolor="#c3eded" |'''6.94'''
+| bgcolor="#c3eded" |'''6.94'''
+|-
+|149
+|style="text-align:left;"|{{UZB}}
+|Authoritarian
+| style="background:#a8261f; color: white;" |'''2.12'''
+| style="background:#a8261f; color: white;" |'''2.12'''
+| style="background:#a8261f; color: white;" |'''2.12'''
+| style="background:#a8261f; color: white;" |'''2.12'''
+| style="background:#a8261f; color: white;" |'''2.01'''
+| style="background:#a8261f; color: white;" |'''2.01'''
+| style="background:#660018; color: white;" |'''1.95'''
+| style="background:#660018; color: white;" |'''1.95'''
+| style="background:#660018; color: white;" |'''1.95'''
+| style="background:#a8261f; color: white;" |'''2.45'''
+| style="background:#660018; color: white;" |'''1.72'''
+| style="background:#660018; color: white;" |'''1.72'''
+| style="background:#660018; color: white;" |'''1.74'''
+| style="background:#660018; color: white;" |'''1.74'''
+| style="background:#660018; color: white;" |'''1.74'''
+| style="background:#660018; color: white;" |'''1.85'''
+|-
+|style="text-align:left;" rowspan="24" id="Latin America and the Caribbean" | Latin America and the Caribbean
+|54
+|style="text-align:left;"|{{ARG}}
+|Flawed democracy
+| bgcolor="#c3eded" |'''6.62'''
+| bgcolor="#c3eded" |'''6.85'''
+| bgcolor="#c3eded" |'''6.81'''
+| bgcolor="#c3eded" |'''6.95'''
+| bgcolor="#6bd2df" |'''7.02'''
+| bgcolor="#6bd2df" |'''7.02'''
+| bgcolor="#c3eded" |'''6.96'''
+| bgcolor="#c3eded" |'''6.96'''
+| bgcolor="#6bd2df" |'''7.02'''
+| bgcolor="#c3eded" |'''6.84'''
+| bgcolor="#c3eded" |'''6.84'''
+| bgcolor="#c3eded" |'''6.84'''
+| bgcolor="#c3eded" |'''6.84'''
+| bgcolor="#c3eded" |'''6.84'''
+| bgcolor="#c3eded" |'''6.63'''
+| bgcolor="#c3eded" |'''6.63'''
+|-
+|106
+|style="text-align:left;"|{{BOL}}
+|Hybrid regime
+| bgcolor="#fad45d" |'''4.20'''
+| bgcolor="#fad45d" |'''4.51'''
+| bgcolor="#fad45d" |'''4.65'''
+| bgcolor="#f9f8bb" |'''5.08'''
+| bgcolor="#fad45d" |'''4.84'''
+| bgcolor="#f9f8bb" |'''5.70'''
+| bgcolor="#f9f8bb" |'''5.49'''
+| bgcolor="#f9f8bb" |'''5.63'''
+| bgcolor="#f9f8bb" |'''5.75'''
+| bgcolor="#f9f8bb" |'''5.79'''
+| bgcolor="#f9f8bb" |'''5.79'''
+| bgcolor="#f9f8bb" |'''5.84'''
+| bgcolor="#f9f8bb" |'''5.84'''
+| bgcolor="#f9f8bb" |'''5.92'''
+| bgcolor="#c3eded" |'''6.15'''
+| bgcolor="#f9f8bb" |'''5.98'''
+|-
+|51
+|style="text-align:left;"|{{BRA}}
+|Flawed democracy
+| bgcolor="#c3eded" |'''6.68'''
+| bgcolor="#c3eded" |'''6.78'''
+| bgcolor="#c3eded" |'''6.86'''
+| bgcolor="#c3eded" |'''6.92'''
+| bgcolor="#c3eded" |'''6.86'''
+| bgcolor="#c3eded" |'''6.97'''
+| bgcolor="#c3eded" |'''6.86'''
+| bgcolor="#c3eded" |'''6.90'''
+| bgcolor="#c3eded" |'''6.96'''
+| bgcolor="#6bd2df" |'''7.38'''
+| bgcolor="#6bd2df" |'''7.12'''
+| bgcolor="#6bd2df" |'''7.12'''
+| bgcolor="#6bd2df" |'''7.12'''
+| bgcolor="#6bd2df" |'''7.12'''
+| bgcolor="#6bd2df" |'''7.38'''
+| bgcolor="#6bd2df" |'''7.38'''
+|-
+|25
+|style="text-align:left;"|{{CHL}}
+|Flawed democracy
+| bgcolor="#6bd2df" |'''7.98'''
+| style="background:#2f5cd5; color: white;" |'''8.22'''
+| bgcolor="#6bd2df" |'''7.92'''
+| style="background:#2f5cd5; color: white;" |'''8.28'''
+| style="background:#2f5cd5; color: white;" |'''8.08'''
+| bgcolor="#6bd2df" |'''7.97'''
+| bgcolor="#6bd2df" |'''7.84'''
+| bgcolor="#6bd2df" |'''7.78'''
+| bgcolor="#6bd2df" |'''7.84'''
+| bgcolor="#6bd2df" |'''7.80'''
+| bgcolor="#6bd2df" |'''7.80'''
+| bgcolor="#6bd2df" |'''7.54'''
+| bgcolor="#6bd2df" |'''7.54'''
+| bgcolor="#6bd2df" |'''7.67'''
+| bgcolor="#6bd2df" |'''7.89'''
+| bgcolor="#6bd2df" |'''7.89'''
+|-
+|55
+|style="text-align:left;"|{{COL}}
+|Flawed democracy
+| bgcolor="#c3eded" |'''6.55'''
+| bgcolor="#c3eded" |'''6.72'''
+| bgcolor="#c3eded" |'''6.48'''
+| bgcolor="#6bd2df" |'''7.04'''
+| bgcolor="#6bd2df" |'''7.13'''
+| bgcolor="#c3eded" |'''6.96'''
+| bgcolor="#c3eded" |'''6.67'''
+| bgcolor="#c3eded" |'''6.67'''
+| bgcolor="#c3eded" |'''6.62'''
+| bgcolor="#c3eded" |'''6.55'''
+| bgcolor="#c3eded" |'''6.55'''
+| bgcolor="#c3eded" |'''6.63'''
+| bgcolor="#c3eded" |'''6.63'''
+| bgcolor="#c3eded" |'''6.55'''
+| bgcolor="#c3eded" |'''6.54'''
+| bgcolor="#c3eded" |'''6.40'''
+|-
+|17
+|style="text-align:left;"|{{CRI}}
+|Full democracy
+| style="background:#2f5cd5; color: white;" |'''8.29'''
+| style="background:#2f5cd5; color: white;" |'''8.29'''
+| style="background:#2f5cd5; color: white;" |'''8.07'''
+| style="background:#2f5cd5; color: white;" |'''8.16'''
+| style="background:#2f5cd5; color: white;" |'''8.13'''
+| style="background:#2f5cd5; color: white;" |'''8.07'''
+| bgcolor="#6bd2df" |'''7.88'''
+| bgcolor="#6bd2df" |'''7.88'''
+| bgcolor="#6bd2df" |'''7.96'''
+| style="background:#2f5cd5; color: white;" |'''8.03'''
+| style="background:#2f5cd5; color: white;" |'''8.03'''
+| style="background:#2f5cd5; color: white;" |'''8.10'''
+| style="background:#2f5cd5; color: white;" |'''8.10'''
+| style="background:#2f5cd5; color: white;" |'''8.04'''
+| style="background:#2f5cd5; color: white;" |'''8.04'''
+| style="background:#2f5cd5; color: white;" |'''8.04'''
+|-
+|135
+|style="text-align:left;"|{{CUB}}
+|Authoritarian
+| style="background:#a8261f; color: white;" |'''2.65'''
+| style="background:#a8261f; color: white;" |'''2.65'''
+| style="background:#a8261f; color: white;" |'''2.59'''
+| style="background:#a8261f; color: white;" |'''2.84'''
+| style="background:#a8261f; color: white;" |'''2.84'''
+| style="background:#a8261f; color: white;" |'''3.00'''
+| style="background:#da820f; color: white;" |'''3.31'''
+| style="background:#da820f; color: white;" |'''3.46'''
+| style="background:#da820f; color: white;" |'''3.52'''
+| style="background:#da820f; color: white;" |'''3.52'''
+| style="background:#da820f; color: white;" |'''3.52'''
+| style="background:#da820f; color: white;" |'''3.52'''
+| style="background:#da820f; color: white;" |'''3.52'''
+| style="background:#da820f; color: white;" |'''3.52'''
+| style="background:#da820f; color: white;" |'''3.52'''
+| style="background:#da820f; color: white;" |'''3.52'''
+|-
+|61
+|style="text-align:left;"|{{DOM}}
+|Flawed democracy
+| bgcolor="#c3eded" |'''6.44'''
+| bgcolor="#c3eded" |'''6.39'''
+| bgcolor="#c3eded" |'''6.45'''
+| bgcolor="#c3eded" |'''6.32'''
+| bgcolor="#c3eded" |'''6.54'''
+| bgcolor="#c3eded" |'''6.54'''
+| bgcolor="#c3eded" |'''6.66'''
+| bgcolor="#c3eded" |'''6.67'''
+| bgcolor="#c3eded" |'''6.67'''
+| bgcolor="#c3eded" |'''6.67'''
+| bgcolor="#c3eded" |'''6.74'''
+| bgcolor="#c3eded" |'''6.49'''
+| bgcolor="#c3eded" |'''6.20'''
+| bgcolor="#c3eded" |'''6.20'''
+| bgcolor="#c3eded" |'''6.20'''
+| bgcolor="#c3eded" |'''6.13'''
+|-
+|85
+|style="text-align:left;"|{{ECU}}
+|Hybrid regime
+| bgcolor="#f9f8bb" |'''5.41'''
+| bgcolor="#f9f8bb" |'''5.69'''
+| bgcolor="#f9f8bb" |'''5.71'''
+| bgcolor="#c3eded" |'''6.13'''
+| bgcolor="#c3eded" |'''6.33'''
+| bgcolor="#c3eded" |'''6.27'''
+| bgcolor="#c3eded" |'''6.02'''
+| bgcolor="#f9f8bb" |'''5.81'''
+| bgcolor="#f9f8bb" |'''5.87'''
+| bgcolor="#f9f8bb" |'''5.87'''
+| bgcolor="#f9f8bb" |'''5.87'''
+| bgcolor="#f9f8bb" |'''5.78'''
+| bgcolor="#f9f8bb" |'''5.72'''
+| bgcolor="#f9f8bb" |'''5.77'''
+| bgcolor="#f9f8bb" |'''5.64'''
+| bgcolor="#f9f8bb" |'''5.64'''
+|-
+|96
+|style="text-align:left;"|{{SLV}}
+|Hybrid regime
+| bgcolor="#fad45d" |'''4.71'''
+| bgcolor="#f9f8bb" |'''5.06'''
+| bgcolor="#f9f8bb" |'''5.72'''
+| bgcolor="#f9f8bb" |'''5.90'''
+| bgcolor="#c3eded" |'''6.15'''
+| bgcolor="#f9f8bb" |'''5.96'''
+| bgcolor="#c3eded" |'''6.43'''
+| bgcolor="#c3eded" |'''6.64'''
+| bgcolor="#c3eded" |'''6.64'''
+| bgcolor="#c3eded" |'''6.53'''
+| bgcolor="#c3eded" |'''6.53'''
+| bgcolor="#c3eded" |'''6.47'''
+| bgcolor="#c3eded" |'''6.47'''
+| bgcolor="#c3eded" |'''6.47'''
+| bgcolor="#c3eded" |'''6.40'''
+| bgcolor="#c3eded" |'''6.22'''
+|-
+|100
+|style="text-align:left;"|{{GTM}}
+|Hybrid regime
+| bgcolor="#fad45d" |'''4.47'''
+| bgcolor="#fad45d" |'''4.68'''
+| bgcolor="#fad45d" |'''4.62'''
+| bgcolor="#fad45d" |'''4.97'''
+| bgcolor="#f9f8bb" |'''5.26'''
+| bgcolor="#f9f8bb" |'''5.60'''
+| bgcolor="#f9f8bb" |'''5.86'''
+| bgcolor="#f9f8bb" |'''5.92'''
+| bgcolor="#f9f8bb" |'''5.92'''
+| bgcolor="#f9f8bb" |'''5.81'''
+| bgcolor="#f9f8bb" |'''5.81'''
+| bgcolor="#f9f8bb" |'''5.88'''
+| bgcolor="#f9f8bb" |'''5.88'''
+| bgcolor="#c3eded" |'''6.05'''
+| bgcolor="#c3eded" |'''6.07'''
+| bgcolor="#c3eded" |'''6.07'''
+|-
+|67
+|style="text-align:left;"|{{GUY}}
+|Flawed democracy
+| bgcolor="#c3eded" |'''6.26'''
+| bgcolor="#c3eded" |'''6.34'''
+| bgcolor="#c3eded" |'''6.25'''
+| bgcolor="#c3eded" |'''6.01'''
+| bgcolor="#c3eded" |'''6.15'''
+| bgcolor="#c3eded" |'''6.67'''
+| bgcolor="#c3eded" |'''6.46'''
+| bgcolor="#c3eded" |'''6.25'''
+| bgcolor="#c3eded" |'''6.05'''
+| bgcolor="#f9f8bb" |'''5.91'''
+| bgcolor="#c3eded" |'''6.05'''
+| bgcolor="#c3eded" |'''6.05'''
+| bgcolor="#c3eded" |'''6.05'''
+| bgcolor="#c3eded" |'''6.05'''
+| bgcolor="#c3eded" |'''6.12'''
+| bgcolor="#c3eded" |'''6.15'''
+|-
+|129
+|style="text-align:left;"|{{HTI}}
+|Authoritarian
+| style="background:#a8261f; color: white;" |'''2.81'''
+| style="background:#a8261f; color: white;" |'''2.81'''
+| style="background:#da820f; color: white;" |'''3.48'''
+| bgcolor="#fad45d" |'''4.22'''
+| bgcolor="#fad45d" |'''4.57'''
+| bgcolor="#fad45d" |'''4.91'''
+| bgcolor="#fad45d" |'''4.03'''
+| bgcolor="#fad45d" |'''4.02'''
+| style="background:#da820f; color: white;" |'''3.94'''
+| style="background:#da820f; color: white;" |'''3.82'''
+| style="background:#da820f; color: white;" |'''3.94'''
+| style="background:#da820f; color: white;" |'''3.96'''
+| style="background:#da820f; color: white;" |'''4.00'''
+| style="background:#da820f; color: white;" |'''4.00'''
+| bgcolor="#fad45d" |'''4.19'''
+| bgcolor="#fad45d" |'''4.19'''
+|-
+|95
+|style="text-align:left;"|{{HND}}
+|Hybrid regime
+| bgcolor="#fad45d" |'''4.98'''
+| bgcolor="#f9f8bb" |'''5.15'''
+| bgcolor="#f9f8bb" |'''5.10'''
+| bgcolor="#f9f8bb" |'''5.36'''
+| bgcolor="#f9f8bb" |'''5.42'''
+| bgcolor="#f9f8bb" |'''5.63'''
+| bgcolor="#f9f8bb" |'''5.72'''
+| bgcolor="#f9f8bb" |'''5.92'''
+| bgcolor="#f9f8bb" |'''5.84'''
+| bgcolor="#f9f8bb" |'''5.84'''
+| bgcolor="#f9f8bb" |'''5.84'''
+| bgcolor="#f9f8bb" |'''5.84'''
+| bgcolor="#f9f8bb" |'''5.84'''
+| bgcolor="#f9f8bb" |'''5.76'''
+| bgcolor="#c3eded" |'''6.18'''
+| bgcolor="#c3eded" |'''6.25'''
+|-
+|45
+|style="text-align:left;"|{{JAM}}
+|Flawed democracy
+| bgcolor="#6bd2df" |'''7.06'''
+| bgcolor="#6bd2df" |'''7.13'''
+| bgcolor="#6bd2df" |'''7.13'''
+| bgcolor="#6bd2df" |'''7.13'''
+| bgcolor="#c3eded" |'''6.96'''
+| bgcolor="#6bd2df" |'''7.02'''
+| bgcolor="#6bd2df" |'''7.29'''
+| bgcolor="#6bd2df" |'''7.39'''
+| bgcolor="#6bd2df" |'''7.39'''
+| bgcolor="#6bd2df" |'''7.39'''
+| bgcolor="#6bd2df" |'''7.39'''
+| bgcolor="#6bd2df" |'''7.39'''
+| bgcolor="#6bd2df" |'''7.13'''
+| bgcolor="#6bd2df" |'''7.21'''
+| bgcolor="#6bd2df" |'''7.21'''
+| bgcolor="#6bd2df" |'''7.34'''
+|-
+|90
+|style="text-align:left;"|{{MEX}}
+|Hybrid regime
+| bgcolor="#f9f8bb" |'''5.14'''
+| bgcolor="#f9f8bb" |'''5.25'''
+| bgcolor="#f9f8bb" |'''5.57'''
+| bgcolor="#c3eded" |'''6.07'''
+| bgcolor="#c3eded" |'''6.09'''
+| bgcolor="#c3eded" |'''6.19'''
+| bgcolor="#c3eded" |'''6.41'''
+| bgcolor="#c3eded" |'''6.47'''
+| bgcolor="#c3eded" |'''6.55'''
+| bgcolor="#c3eded" |'''6.68'''
+| bgcolor="#c3eded" |'''6.91'''
+| bgcolor="#c3eded" |'''6.90'''
+| bgcolor="#c3eded" |'''6.93'''
+| bgcolor="#c3eded" |'''6.93'''
+| bgcolor="#c3eded" |'''6.78'''
+| bgcolor="#c3eded" |'''6.67'''
+|-
+|143
+|style="text-align:left;"|{{NIC}}
+|Authoritarian
+| style="background:#a8261f; color: white;" |'''2.26'''
+| style="background:#a8261f; color: white;" |'''2.50'''
+| style="background:#a8261f; color: white;" |'''2.69'''
+| style="background:#da820f; color: white;" |'''3.60'''
+| style="background:#da820f; color: white;" |'''3.55'''
+| style="background:#da820f; color: white;" |'''3.63'''
+| bgcolor="#fad45d" |'''4.66'''
+| bgcolor="#fad45d" |'''4.81'''
+| bgcolor="#f9f8bb" |'''5.26'''
+| bgcolor="#f9f8bb" |'''5.32'''
+| bgcolor="#f9f8bb" |'''5.46'''
+| bgcolor="#f9f8bb" |'''5.56'''
+| bgcolor="#f9f8bb" |'''5.56'''
+| bgcolor="#f9f8bb" |'''5.73'''
+| bgcolor="#c3eded" |'''6.07'''
+| bgcolor="#f9f8bb" |'''5.68'''
+|-
+|48
+|style="text-align:left;"|{{PAN}}
+|Flawed democracy
+| bgcolor="#c3eded" |'''6.91'''
+| bgcolor="#c3eded" |'''6.91'''
+| bgcolor="#c3eded" |'''6.85'''
+| bgcolor="#6bd2df" |'''7.18'''
+| bgcolor="#6bd2df" |'''7.05'''
+| bgcolor="#6bd2df" |'''7.05'''
+| bgcolor="#6bd2df" |'''7.08'''
+| bgcolor="#6bd2df" |'''7.13'''
+| bgcolor="#6bd2df" |'''7.19'''
+| bgcolor="#6bd2df" |'''7.08'''
+| bgcolor="#6bd2df" |'''7.08'''
+| bgcolor="#6bd2df" |'''7.08'''
+| bgcolor="#6bd2df" |'''7.08'''
+| bgcolor="#6bd2df" |'''7.15'''
+| bgcolor="#6bd2df" |'''7.35'''
+| bgcolor="#6bd2df" |'''7.35'''
+|-
+|74
+|style="text-align:left;"|{{PRY}}
+|Flawed democracy
+| bgcolor="#c3eded" |'''6.00'''
+| bgcolor="#f9f8bb" |'''5.89'''
+| bgcolor="#f9f8bb" |'''5.86'''
+| bgcolor="#c3eded" |'''6.18'''
+| bgcolor="#c3eded" |'''6.24'''
+| bgcolor="#c3eded" |'''6.24'''
+| bgcolor="#c3eded" |'''6.31'''
+| bgcolor="#c3eded" |'''6.27'''
+| bgcolor="#c3eded" |'''6.33'''
+| bgcolor="#c3eded" |'''6.26'''
+| bgcolor="#c3eded" |'''6.26'''
+| bgcolor="#c3eded" |'''6.26'''
+| bgcolor="#c3eded" |'''6.40'''
+| bgcolor="#c3eded" |'''6.40'''
+| bgcolor="#c3eded" |'''6.40'''
+| bgcolor="#c3eded" |'''6.16'''
+|-
+|77
+|style="text-align:left;"|{{PER}}
+|Hybrid regime
+| bgcolor="#f9f8bb" |'''5.81'''
+| bgcolor="#f9f8bb" |'''5.92'''
+| bgcolor="#c3eded" |'''6.09'''
+| bgcolor="#c3eded" |'''6.53'''
+| bgcolor="#c3eded" |'''6.60'''
+| bgcolor="#c3eded" |'''6.60'''
+| bgcolor="#c3eded" |'''6.49'''
+| bgcolor="#c3eded" |'''6.65'''
+| bgcolor="#c3eded" |'''6.58'''
+| bgcolor="#c3eded" |'''6.54'''
+| bgcolor="#c3eded" |'''6.54'''
+| bgcolor="#c3eded" |'''6.47'''
+| bgcolor="#c3eded" |'''6.59'''
+| bgcolor="#c3eded" |'''6.40'''
+| bgcolor="#c3eded" |'''6.31'''
+| bgcolor="#c3eded" |'''6.11'''
+|-
+|49
+|style="text-align:left;"|{{SUR}}
+|Flawed democracy
+| bgcolor="#c3eded" |'''6.88'''
+| bgcolor="#c3eded" |'''6.95'''
+| bgcolor="#c3eded" |'''6.82'''
+| bgcolor="#c3eded" |'''6.82'''
+| bgcolor="#c3eded" |'''6.98'''
+| bgcolor="#c3eded" |'''6.98'''
+| bgcolor="#c3eded" |'''6.76'''
+| bgcolor="#c3eded" |'''6.77'''
+| bgcolor="#c3eded" |'''6.77'''
+| bgcolor="#c3eded" |'''6.77'''
+| bgcolor="#c3eded" |'''6.77'''
+| bgcolor="#c3eded" |'''6.65'''
+| bgcolor="#c3eded" |'''6.65'''
+| bgcolor="#c3eded" |'''6.65'''
+| bgcolor="#c3eded" |'''6.58'''
+| bgcolor="#c3eded" |'''6.52'''
+|-
+|43
+|style="text-align:left;"|{{TTO}}
+|Flawed democracy
+| bgcolor="#6bd2df" |'''7.16'''
+| bgcolor="#6bd2df" |'''7.16'''
+| bgcolor="#6bd2df" |'''7.16'''
+| bgcolor="#6bd2df" |'''7.16'''
+| bgcolor="#6bd2df" |'''7.16'''
+| bgcolor="#6bd2df" |'''7.16'''
+| bgcolor="#6bd2df" |'''7.04'''
+| bgcolor="#6bd2df" |'''7.10'''
+| bgcolor="#6bd2df" |'''7.10'''
+| bgcolor="#c3eded" |'''6.99'''
+| bgcolor="#c3eded" |'''6.99'''
+| bgcolor="#c3eded" |'''6.99'''
+| bgcolor="#6bd2df" |'''7.16'''
+| bgcolor="#6bd2df" |'''7.16'''
+| bgcolor="#6bd2df" |'''7.21'''
+| bgcolor="#6bd2df" |'''7.18'''
+|-
+|14
+|style="text-align:left;"|{{URY}}
+|Full democracy
+| style="background:#2f5cd5; color: white;" |'''8.66'''
+| style="background:#2f5cd5; color: white;" |'''8.91'''
+| style="background:#2f5cd5; color: white;" |'''8.85'''
+| style="background:#2f5cd5; color: white;" |'''8.61'''
+| style="background:#2f5cd5; color: white;" |'''8.38'''
+| style="background:#2f5cd5; color: white;" |'''8.38'''
+| style="background:#2f5cd5; color: white;" |'''8.12'''
+| style="background:#2f5cd5; color: white;" |'''8.17'''
+| style="background:#2f5cd5; color: white;" |'''8.17'''
+| style="background:#2f5cd5; color: white;" |'''8.17'''
+| style="background:#2f5cd5; color: white;" |'''8.17'''
+| style="background:#2f5cd5; color: white;" |'''8.17'''
+| style="background:#2f5cd5; color: white;" |'''8.17'''
+| style="background:#2f5cd5; color: white;" |'''8.10'''
+| style="background:#2f5cd5; color: white;" |'''8.08'''
+| bgcolor="#6bd2df" |'''7.96'''
+|-
+|142
+|style="text-align:left;"|{{VEN}}
+|Authoritarian
+| style="background:#a8261f; color: white;" |'''2.31'''
+| style="background:#a8261f; color: white;" |'''2.23'''
+| style="background:#a8261f; color: white;" |'''2.11'''
+| style="background:#a8261f; color: white;" |'''2.76'''
+| style="background:#a8261f; color: white;" |'''2.88'''
+| style="background:#da820f; color: white;" |'''3.16'''
+| style="background:#da820f; color: white;" |'''3.87'''
+| bgcolor="#fad45d" |'''4.68'''
+| bgcolor="#fad45d" |'''5.00'''
+| bgcolor="#f9f8bb" |'''5.07'''
+| bgcolor="#f9f8bb" |'''5.07'''
+| bgcolor="#f9f8bb" |'''5.15'''
+| bgcolor="#f9f8bb" |'''5.08'''
+| bgcolor="#f9f8bb" |'''5.18'''
+| bgcolor="#f9f8bb" |'''5.34'''
+| bgcolor="#f9f8bb" |'''5.42'''
+|-
+|style="text-align:left;" rowspan="28" id="Asia and Australasia" | Asia and Australasia
+|167
+|style="text-align:left;"|{{AFG}}
+|Authoritarian
+| style="background:#240011; color: white;" |'''0.26'''
+| style="background:#240011; color: white;" |'''0.32'''
+| style="background:#240011; color: white;" |'''0.32'''
+| style="background:#a8261f; color: white;" |'''2.85'''
+| style="background:#a8261f; color: white;" |'''2.85'''
+| style="background:#a8261f; color: white;" |'''2.97'''
+| style="background:#a8261f; color: white;" |'''2.55'''
+| style="background:#a8261f; color: white;" |'''2.55'''
+| style="background:#a8261f; color: white;" |'''2.77'''
+| style="background:#a8261f; color: white;" |'''2.77'''
+| style="background:#a8261f; color: white;" |'''2.48'''
+| style="background:#a8261f; color: white;" |'''2.48'''
+| style="background:#a8261f; color: white;" |'''2.48'''
+| style="background:#a8261f; color: white;" |'''2.48'''
+| style="background:#da820f; color: white;" |'''3.02'''
+| style="background:#da820f; color: white;" |'''3.06'''
+|-
+|14
+|style="text-align:left;"|{{AUS}}
+|Full democracy
+| style="background:#2f5cd5; color: white;" |'''8.66'''
+| style="background:#2f5cd5; color: white;" |'''8.71'''
+| style="background:#2f5cd5; color: white;" |'''8.90'''
+| style="background:#2f5cd5; color: white;" |'''8.96'''
+| style="background:#0c3091; color: white;" |'''9.09'''
+| style="background:#0c3091; color: white;" |'''9.09'''
+| style="background:#0c3091; color: white;" |'''9.09'''
+| style="background:#0c3091; color: white;" |'''9.01'''
+| style="background:#0c3091; color: white;" |'''9.01'''
+| style="background:#0c3091; color: white;" |'''9.01'''
+| style="background:#0c3091; color: white;" |'''9.13'''
+| style="background:#0c3091; color: white;" |'''9.22'''
+| style="background:#0c3091; color: white;" |'''9.22'''
+| style="background:#0c3091; color: white;" |'''9.22'''
+| style="background:#0c3091; color: white;" |'''9.09'''
+| style="background:#0c3091; color: white;" |'''9.09'''
+|-
+|75
+|style="text-align:left;"|{{BGD}}
+|Hybrid regime
+| bgcolor="#f9f8bb" |'''5.87'''
+| bgcolor="#f9f8bb" |'''5.99'''
+| bgcolor="#f9f8bb" |'''5.99'''
+| bgcolor="#f9f8bb" |'''5.99'''
+| bgcolor="#f9f8bb" |'''5.88'''
+| bgcolor="#f9f8bb" |'''5.57'''
+| bgcolor="#f9f8bb" |'''5.43'''
+| bgcolor="#f9f8bb" |'''5.73'''
+| bgcolor="#f9f8bb" |'''5.73'''
+| bgcolor="#f9f8bb" |'''5.78'''
+| bgcolor="#f9f8bb" |'''5.86'''
+| bgcolor="#f9f8bb" |'''5.86'''
+| bgcolor="#f9f8bb" |'''5.86'''
+| bgcolor="#f9f8bb" |'''5.87'''
+| bgcolor="#f9f8bb" |'''5.52'''
+| bgcolor="#c3eded" |'''6.11'''
+|-
+|81
+|style="text-align:left;"|{{BTN}}
+|Hybrid regime
+| bgcolor="#f9f8bb" |'''5.54'''
+| bgcolor="#f9f8bb" |'''5.54'''
+| bgcolor="#f9f8bb" |'''5.71'''
+| bgcolor="#f9f8bb" |'''5.71'''
+| bgcolor="#f9f8bb" |'''5.30'''
+| bgcolor="#f9f8bb" |'''5.30'''
+| bgcolor="#f9f8bb" |'''5.08'''
+| bgcolor="#fad45d" |'''4.93'''
+| bgcolor="#fad45d" |'''4.93'''
+| bgcolor="#fad45d" |'''4.87'''
+| bgcolor="#fad45d" |'''4.82'''
+| bgcolor="#fad45d" |'''4.65'''
+| bgcolor="#fad45d" |'''4.57'''
+| bgcolor="#fad45d" |'''4.68'''
+| bgcolor="#fad45d" |'''4.30'''
+| style="background:#a8261f; color: white;" |'''2.62'''
+|-
+|121
+|style="text-align:left;"|{{KHM}}
+|Authoritarian
+| style="background:#da820f; color: white;" |'''3.05'''
+| style="background:#da820f; color: white;" |'''3.18'''
+| style="background:#a8261f; color: white;" |'''2.90'''
+| style="background:#da820f; color: white;" |'''3.10'''
+| style="background:#da820f; color: white;" |'''3.53'''
+| style="background:#da820f; color: white;" |'''3.59'''
+| style="background:#da820f; color: white;" |'''3.63'''
+| bgcolor="#fad45d" |'''4.27'''
+| bgcolor="#fad45d" |'''4.27'''
+| bgcolor="#fad45d" |'''4.78'''
+| bgcolor="#fad45d" |'''4.60'''
+| bgcolor="#fad45d" |'''4.96'''
+| bgcolor="#fad45d" |'''4.87'''
+| bgcolor="#fad45d" |'''4.87'''
+| bgcolor="#fad45d" |'''4.87'''
+| bgcolor="#fad45d" |'''4.77'''
+|-
+|148
+|style="text-align:left;"|{{sort|China, People's Republic of | {{CHN}} }}
+|Authoritarian
+| style="background:#a8261f; color: white;" |'''2.12'''
+| style="background:#66000f; color: white;" |'''1.94'''
+| style="background:#a8261f; color: white;" |'''2.21'''
+| style="background:#a8261f; color: white;" |'''2.27'''
+| style="background:#a8261f; color: white;" |'''2.26'''
+| style="background:#da820f; color: white;" |'''3.32'''
+| style="background:#da820f; color: white;" |'''3.10'''
+| style="background:#da820f; color: white;" |'''3.18'''
+| style="background:#da820f; color: white;" |'''3.14'''
+| style="background:#a8261f; color: white;" |'''3.00'''
+| style="background:#a8261f; color: white;" |'''3.00'''
+| style="background:#a8261f; color: white;" |'''3.00'''
+| style="background:#da820f; color: white;" |'''3.14'''
+| style="background:#da820f; color: white;" |'''3.14'''
+| style="background:#da820f; color: white;" |'''3.04'''
+| style="background:#a8261f; color: white;" |'''2.97'''
+|-
+|80
+|style="text-align:left;"|{{FJI}}
+|Hybrid regime
+| bgcolor="#f9f8bb" |'''5.55'''
+| bgcolor="#f9f8bb" |'''5.55'''
+| bgcolor="#f9f8bb" |'''5.61'''
+| bgcolor="#f9f8bb" |'''5.72'''
+| bgcolor="#f9f8bb" |'''5.85'''
+| bgcolor="#f9f8bb" |'''5.85'''
+| bgcolor="#f9f8bb" |'''5.85'''
+| bgcolor="#f9f8bb" |'''5.64'''
+| bgcolor="#f9f8bb" |'''5.69'''
+| bgcolor="#f9f8bb" |'''5.61'''
+| style="background:#da820f; color: white;" |'''3.61'''
+| style="background:#da820f; color: white;" |'''3.67'''
+| style="background:#da820f; color: white;" |'''3.67'''
+| style="background:#da820f; color: white;" |'''3.62'''
+| bgcolor="#f9f8bb" |'''5.11'''
+| bgcolor="#f9f8bb" |'''5.66'''
+|-
+|88
+|style="text-align:left;"|{{HKG}}
+|Hybrid regime
+| bgcolor="#f9f8bb" |'''5.24'''
+| bgcolor="#f9f8bb" |'''5.28'''
+| bgcolor="#f9f8bb" |'''5.60'''
+| bgcolor="#f9f8bb" |'''5.57'''
+| bgcolor="#c3eded" |'''6.02'''
+| bgcolor="#c3eded" |'''6.15'''
+| bgcolor="#c3eded" |'''6.31'''
+| bgcolor="#c3eded" |'''6.42'''
+| bgcolor="#c3eded" |'''6.50'''
+| bgcolor="#c3eded" |'''6.46'''
+| bgcolor="#c3eded" |'''6.42'''
+| bgcolor="#c3eded" |'''6.42'''
+| bgcolor="#f9f8bb" |'''5.92'''
+| bgcolor="#f9f8bb" |'''5.92'''
+| bgcolor="#f9f8bb" |'''5.85'''
+| bgcolor="#c3eded" |'''6.03'''
+|-
+|41
+|style="text-align:left;"|{{IND}}
+|Flawed democracy
+| bgcolor="#6bd2df" |'''7.18'''
+| bgcolor="#6bd2df" |'''7.04'''
+| bgcolor="#c3eded" |'''6.91'''
+| bgcolor="#c3eded" |'''6.61'''
+| bgcolor="#c3eded" |'''6.90'''
+| bgcolor="#6bd2df" |'''7.23'''
+| bgcolor="#6bd2df" |'''7.23'''
+| bgcolor="#6bd2df" |'''7.81'''
+| bgcolor="#6bd2df" |'''7.74'''
+| bgcolor="#6bd2df" |'''7.92'''
+| bgcolor="#6bd2df" |'''7.69'''
+| bgcolor="#6bd2df" |'''7.52'''
+| bgcolor="#6bd2df" |'''7.30'''
+| bgcolor="#6bd2df" |'''7.28'''
+| bgcolor="#6bd2df" |'''7.80'''
+| bgcolor="#6bd2df" |'''7.68'''
+|-
+|56
+|style="text-align:left;"|{{IDN}}
+|Flawed democracy
+| bgcolor="#c3eded" |'''6.53'''
+| bgcolor="#c3eded" |'''6.71'''
+| bgcolor="#c3eded" |'''6.71'''
+| bgcolor="#c3eded" |'''6.30'''
+| bgcolor="#c3eded" |'''6.48'''
+| bgcolor="#c3eded" |'''6.39'''
+| bgcolor="#c3eded" |'''6.39'''
+| bgcolor="#c3eded" |'''6.97'''
+| bgcolor="#6bd2df" |'''7.03'''
+| bgcolor="#c3eded" |'''6.95'''
+| bgcolor="#c3eded" |'''6.82'''
+| bgcolor="#c3eded" |'''6.76'''
+| bgcolor="#c3eded" |'''6.53'''
+| bgcolor="#c3eded" |'''6.53'''
+| bgcolor="#c3eded" |'''6.34'''
+| bgcolor="#c3eded" |'''6.41'''
+|-
+|16
+|style="text-align:left;"|{{JPN}}
+|Full democracy
+| style="background:#2f5cd5; color: white;" |'''8.40'''
+| style="background:#2f5cd5; color: white;" |'''8.33'''
+| style="background:#2f5cd5; color: white;" |'''8.15'''
+| style="background:#2f5cd5; color: white;" |'''8.13'''
+| bgcolor="#6bd2df" |'''7.99'''
+| bgcolor="#6bd2df" |'''7.99'''
+| bgcolor="#6bd2df" |'''7.88'''
+| bgcolor="#6bd2df" |'''7.99'''
+| bgcolor="#6bd2df" |'''7.96'''
+| style="background:#2f5cd5; color: white;" |'''8.08'''
+| style="background:#2f5cd5; color: white;" |'''8.08'''
+| style="background:#2f5cd5; color: white;" |'''8.08'''
+| style="background:#2f5cd5; color: white;" |'''8.08'''
+| style="background:#2f5cd5; color: white;" |'''8.08'''
+| style="background:#2f5cd5; color: white;" |'''8.25'''
+| style="background:#2f5cd5; color: white;" |'''8.15'''
+|-
+|159
+|style="text-align:left;"|{{LAO}}
+|Authoritarian
+| style="background:#66000f; color: white;" |'''1.71'''
+| style="background:#66000f; color: white;" |'''1.77'''
+| style="background:#660018; color: white;" |'''1.77'''
+| style="background:#660018; color: white;" |'''1.77'''
+| style="background:#a8261f; color: white;" |'''2.14'''
+| style="background:#a8261f; color: white;" |'''2.37'''
+| style="background:#a8261f; color: white;" |'''2.37'''
+| style="background:#a8261f; color: white;" |'''2.37'''
+| style="background:#a8261f; color: white;" |'''2.21'''
+| style="background:#a8261f; color: white;" |'''2.21'''
+| style="background:#a8261f; color: white;" |'''2.21'''
+| style="background:#a8261f; color: white;" |'''2.32'''
+| style="background:#a8261f; color: white;" |'''2.10'''
+| style="background:#a8261f; color: white;" |'''2.10'''
+| style="background:#a8261f; color: white;" |'''2.10'''
+| style="background:#a8261f; color: white;" |'''2.10'''
+|-
+|40
+|style="text-align:left;"|{{MYS}}
+|Flawed democracy
+| bgcolor="#6bd2df" |'''7.29'''
+| bgcolor="#6bd2df" |'''7.30'''
+| bgcolor="#6bd2df" |'''7.24'''
+| bgcolor="#6bd2df" |'''7.19'''
+| bgcolor="#6bd2df" |'''7.16'''
+| bgcolor="#c3eded" |'''6.88'''
+| bgcolor="#c3eded" |'''6.54'''
+| bgcolor="#c3eded" |'''6.54'''
+| bgcolor="#c3eded" |'''6.43'''
+| bgcolor="#c3eded" |'''6.49'''
+| bgcolor="#c3eded" |'''6.49'''
+| bgcolor="#c3eded" |'''6.41'''
+| bgcolor="#c3eded" |'''6.19'''
+| bgcolor="#c3eded" |'''6.19'''
+| bgcolor="#c3eded" |'''6.36'''
+| bgcolor="#f9f8bb" |'''5.98'''
+|-
+|59
+|style="text-align:left;"|{{MNG}}
+|Flawed democracy
+| bgcolor="#c3eded" |'''6.48'''
+| bgcolor="#c3eded" |'''6.35'''
+| bgcolor="#c3eded" |'''6.42'''
+| bgcolor="#c3eded" |'''6.48'''
+| bgcolor="#c3eded" |'''6.50'''
+| bgcolor="#c3eded" |'''6.50'''
+| bgcolor="#c3eded" |'''6.50'''
+| bgcolor="#c3eded" |'''6.62'''
+| bgcolor="#c3eded" |'''6.62'''
+| bgcolor="#c3eded" |'''6.62'''
+| bgcolor="#c3eded" |'''6.51'''
+| bgcolor="#c3eded" |'''6.35'''
+| bgcolor="#c3eded" |'''6.23'''
+| bgcolor="#c3eded" |'''6.36'''
+| bgcolor="#c3eded" |'''6.60'''
+| bgcolor="#c3eded" |'''6.60'''
+|-
+|166
+|style="text-align:left;"|{{MMR}}
+|Authoritarian
+| style="background:#240011; color: white;" |'''0.85'''
+| style="background:#240011; color: white;" |'''0.74'''
+| style="background:#660018; color: white;" |'''1.02'''
+| style="background:#da820f; color: white;" |'''3.04'''
+| style="background:#da820f; color: white;" |'''3.55'''
+| style="background:#da820f; color: white;" |'''3.83'''
+| style="background:#da820f; color: white;" |'''3.83'''
+| bgcolor="#fad45d" |'''4.20'''
+| bgcolor="#fad45d" |'''4.14'''
+| style="background:#da820f; color: white;" |'''3.05'''
+| style="background:#a8261f; color: white;" |'''2.76'''
+| style="background:#a8261f; color: white;" |'''2.35'''
+| style="background:#660018; color: white;" |'''1.77'''
+| style="background:#660018; color: white;" |'''1.77'''
+| style="background:#660018; color: white;" |'''1.77'''
+| style="background:#660018; color: white;" |'''1.77'''
+|-
+|98
+|style="text-align:left;"|{{NPL}}
+|Hybrid regime
+| bgcolor="#fad45d" |'''4.60'''
+| bgcolor="#fad45d" |'''4.49'''
+| bgcolor="#fad45d" |'''4.41'''
+| bgcolor="#f9f8bb" |'''5.22'''
+| bgcolor="#f9f8bb" |'''5.28'''
+| bgcolor="#f9f8bb" |'''5.18'''
+| bgcolor="#f9f8bb" |'''5.18'''
+| bgcolor="#fad45d" |'''4.86'''
+| bgcolor="#fad45d" |'''4.77'''
+| bgcolor="#fad45d" |'''4.77'''
+| bgcolor="#fad45d" |'''4.77'''
+| bgcolor="#fad45d" |'''4.16'''
+| bgcolor="#fad45d" |'''4.24'''
+| bgcolor="#fad45d" |'''4.24'''
+| bgcolor="#fad45d" |'''4.05'''
+| style="background:#da820f; color: white;" |'''3.42'''
+|-
+|2
+|style="text-align:left;"|{{NZL}}
+|Full democracy
+| style="background:#0c3091; color: white;" |'''9.61'''
+| style="background:#0c3091; color: white;" |'''9.61'''
+| style="background:#0c3091; color: white;" |'''9.37'''
+| style="background:#0c3091; color: white;" |'''9.25'''
+| style="background:#0c3091; color: white;" |'''9.26'''
+| style="background:#0c3091; color: white;" |'''9.26'''
+| style="background:#0c3091; color: white;" |'''9.26'''
+| style="background:#0c3091; color: white;" |'''9.26'''
+| style="background:#0c3091; color: white;" |'''9.26'''
+| style="background:#0c3091; color: white;" |'''9.26'''
+| style="background:#0c3091; color: white;" |'''9.26'''
+| style="background:#0c3091; color: white;" |'''9.26'''
+| style="background:#0c3091; color: white;" |'''9.26'''
+| style="background:#0c3091; color: white;" |'''9.26'''
+| style="background:#0c3091; color: white;" |'''9.19'''
+| style="background:#0c3091; color: white;" |'''9.01'''
+|-
+|165
+|style="text-align:left;"|{{sort|Korea, North| {{PRK}} }}
+|Authoritarian
+| style="background:#66000f; color: white;" |'''1.08'''
+| style="background:#66000f; color: white;" |'''1.08'''
+| style="background:#660018; color: white;" |'''1.08'''
+| style="background:#660018; color: white;" |'''1.08'''
+| style="background:#660018; color: white;" |'''1.08'''
+| style="background:#660018; color: white;" |'''1.08'''
+| style="background:#660018; color: white;" |'''1.08'''
+| style="background:#660018; color: white;" |'''1.08'''
+| style="background:#660018; color: white;" |'''1.08'''
+| style="background:#660018; color: white;" |'''1.08'''
+| style="background:#660018; color: white;" |'''1.08'''
+| style="background:#660018; color: white;" |'''1.08'''
+| style="background:#660018; color: white;" |'''1.08'''
+| style="background:#660018; color: white;" |'''1.08'''
+| style="background:#240011; color: white;" |'''0.86'''
+| style="background:#660018; color: white;" |'''1.03'''
+|-
+|118
+|style="text-align:left;"|{{PAK}}
+|Authoritarian
+| style="background:#da820f; color: white;" |'''3.25'''
+| bgcolor="#fad45d" |'''4.13'''
+| bgcolor="#fad45d" |'''4.31'''
+| bgcolor="#fad45d" |'''4.31'''
+| bgcolor="#fad45d" |'''4.25'''
+| bgcolor="#fad45d" |'''4.17'''
+| bgcolor="#fad45d" |'''4.26'''
+| bgcolor="#fad45d" |'''4.33'''
+| bgcolor="#fad45d" |'''4.40'''
+| bgcolor="#fad45d" |'''4.64'''
+| bgcolor="#fad45d" |'''4.64'''
+| bgcolor="#fad45d" |'''4.57'''
+| bgcolor="#fad45d" |'''4.55'''
+| bgcolor="#fad45d" |'''4.55'''
+| bgcolor="#fad45d" |'''4.46'''
+| style="background:#da820f; color: white;" |'''3.92'''
+|-
+|72
+|style="text-align:left;"|{{PNG}}
+|Flawed democracy
+| bgcolor="#c3eded" |'''6.03'''
+| bgcolor="#f9f8bb" |'''5.97'''
+| bgcolor="#c3eded" |'''6.10'''
+| bgcolor="#c3eded" |'''6.10'''
+| bgcolor="#c3eded" |'''6.03'''
+| bgcolor="#c3eded" |'''6.03'''
+| bgcolor="#c3eded" |'''6.03'''
+| bgcolor="#c3eded" |'''6.03'''
+| bgcolor="#c3eded" |'''6.03'''
+| bgcolor="#c3eded" |'''6.03'''
+| bgcolor="#c3eded" |'''6.36'''
+| bgcolor="#c3eded" |'''6.32'''
+| bgcolor="#c3eded" |'''6.32'''
+| bgcolor="#c3eded" |'''6.54'''
+| bgcolor="#c3eded" |'''6.54'''
+| bgcolor="#c3eded" |'''6.54'''
+|-
+|53
+|style="text-align:left;"|{{PHL}}
+|Flawed democracy
+| bgcolor="#c3eded" |'''6.66'''
+| bgcolor="#c3eded" |'''6.73'''
+| bgcolor="#c3eded" |'''6.62'''
+| bgcolor="#c3eded" |'''6.56'''
+| bgcolor="#c3eded" |'''6.64'''
+| bgcolor="#c3eded" |'''6.71'''
+| bgcolor="#c3eded" |'''6.71'''
+| bgcolor="#c3eded" |'''6.94'''
+| bgcolor="#c3eded" |'''6.84'''
+| bgcolor="#c3eded" |'''6.77'''
+| bgcolor="#c3eded" |'''6.41'''
+| bgcolor="#c3eded" |'''6.30'''
+| bgcolor="#c3eded" |'''6.12'''
+| bgcolor="#c3eded" |'''6.12'''
+| bgcolor="#c3eded" |'''6.12'''
+| bgcolor="#c3eded" |'''6.48'''
+|-
+|69
+|style="text-align:left;"|{{SGP}}
+|Flawed democracy
+| bgcolor="#c3eded" |'''6.18'''
+| bgcolor="#c3eded" |'''6.22'''
+| bgcolor="#c3eded" |'''6.23'''
+| bgcolor="#c3eded" |'''6.03'''
+| bgcolor="#c3eded" |'''6.02'''
+| bgcolor="#c3eded" |'''6.38'''
+| bgcolor="#c3eded" |'''6.32'''
+| bgcolor="#c3eded" |'''6.38'''
+| bgcolor="#c3eded" |'''6.14'''
+| bgcolor="#c3eded" |'''6.03'''
+| bgcolor="#f9f8bb" |'''5.92'''
+| bgcolor="#f9f8bb" |'''5.88'''
+| bgcolor="#f9f8bb" |'''5.89'''
+| bgcolor="#f9f8bb" |'''5.89'''
+| bgcolor="#f9f8bb" |'''5.89'''
+| bgcolor="#f9f8bb" |'''5.89'''
+|-
+|22
+|style="text-align:left;"|{{sort|Korea, South| {{KOR}} }}
+|Full democracy
+| style="background:#2f5cd5; color: white;" |'''8.09'''
+| style="background:#2f5cd5; color: white;" |'''8.03'''
+| style="background:#2f5cd5; color: white;" |'''8.16'''
+| style="background:#2f5cd5; color: white;" |'''8.01'''
+| bgcolor="#6bd2df" |'''8.00'''
+| bgcolor="#6bd2df" |'''8.00'''
+| bgcolor="#6bd2df" |'''8.00'''
+| bgcolor="#6bd2df" |'''7.92'''
+| bgcolor="#6bd2df" |'''7.97'''
+| style="background:#2f5cd5; color: white;" |'''8.06'''
+| style="background:#2f5cd5; color: white;" |'''8.06'''
+| style="background:#2f5cd5; color: white;" |'''8.13'''
+| style="background:#2f5cd5; color: white;" |'''8.06'''
+| style="background:#2f5cd5; color: white;" |'''8.11'''
+| style="background:#2f5cd5; color: white;" |'''8.01'''
+| bgcolor="#6bd2df" |'''7.88'''
+|-
+|70
+|style="text-align:left;"|{{LKA}}
+|Flawed democracy
+| bgcolor="#c3eded" |'''6.17'''
+| bgcolor="#c3eded" |'''6.47'''
+| bgcolor="#c3eded" |'''6.14'''
+| bgcolor="#c3eded" |'''6.14'''
+| bgcolor="#c3eded" |'''6.27'''
+| bgcolor="#c3eded" |'''6.19'''
+| bgcolor="#c3eded" |'''6.48'''
+| bgcolor="#c3eded" |'''6.48'''
+| bgcolor="#c3eded" |'''6.42'''
+| bgcolor="#f9f8bb" |'''5.69'''
+| bgcolor="#f9f8bb" |'''5.69'''
+| bgcolor="#f9f8bb" |'''5.75'''
+| bgcolor="#c3eded" |'''6.58'''
+| bgcolor="#c3eded" |'''6.64'''
+| bgcolor="#c3eded" |'''6.61'''
+| bgcolor="#c3eded" |'''6.58'''
+|-
+|10
+|style="text-align:left;"|{{sort|Taiwan (Republic of China)| {{TWN}}}}
+|Full democracy
+| style="background:#2f5cd5; color: white;" |'''8.92'''
+| style="background:#2f5cd5; color: white;" |'''8.99'''
+| style="background:#2f5cd5; color: white;" |'''8.99'''
+| style="background:#2f5cd5; color: white;" |'''8.94'''
+| bgcolor="#6bd2df" |'''7.73'''
+| bgcolor="#6bd2df" |'''7.73'''
+| bgcolor="#6bd2df" |'''7.73'''
+| bgcolor="#6bd2df" |'''7.79'''
+| bgcolor="#6bd2df" |'''7.83'''
+| bgcolor="#6bd2df" |'''7.65'''
+| bgcolor="#6bd2df" |'''7.57'''
+| bgcolor="#6bd2df" |'''7.57'''
+| bgcolor="#6bd2df" |'''7.46'''
+| bgcolor="#6bd2df" |'''7.52'''
+| bgcolor="#6bd2df" |'''7.82'''
+| bgcolor="#6bd2df" |'''7.82'''
+|-
+|63
+|style="text-align:left;"|{{THA}}
+|Flawed democracy
+| bgcolor="#c3eded" |'''6.35'''
+| bgcolor="#c3eded" |'''6.67'''
+| bgcolor="#c3eded" |'''6.04'''
+| bgcolor="#c3eded" |'''6.04'''
+| bgcolor="#c3eded" |'''6.32'''
+| bgcolor="#fad45d" |'''4.63'''
+| bgcolor="#fad45d" |'''4.63'''
+| bgcolor="#fad45d" |'''4.92'''
+| bgcolor="#f9f8bb" |'''5.09'''
+| bgcolor="#f9f8bb" |'''5.39'''
+| bgcolor="#c3eded" |'''6.25'''
+| bgcolor="#c3eded" |'''6.55'''
+| bgcolor="#c3eded" |'''6.55'''
+| bgcolor="#c3eded" |'''6.55'''
+| bgcolor="#c3eded" |'''6.81'''
+| bgcolor="#f9f8bb" |'''5.67'''
+|-
+|45
+|style="text-align:left;"|{{ETM}}
+|Flawed democracy
+| bgcolor="#6bd2df" |'''7.06'''
+| bgcolor="#6bd2df" |'''7.06'''
+| bgcolor="#6bd2df" |'''7.06'''
+| bgcolor="#6bd2df" |'''7.06'''
+| bgcolor="#6bd2df" |'''7.19'''
+| bgcolor="#6bd2df" |'''7.19'''
+| bgcolor="#6bd2df" |'''7.19'''
+| bgcolor="#6bd2df" |'''7.24'''
+| bgcolor="#6bd2df" |'''7.24'''
+| bgcolor="#6bd2df" |'''7.24'''
+| bgcolor="#6bd2df" |'''7.24'''
+| bgcolor="#6bd2df" |'''7.16'''
+| bgcolor="#6bd2df" |'''7.22'''
+| bgcolor="#6bd2df" |'''7.22'''
+| bgcolor="#6bd2df" |'''7.22'''
+| bgcolor="#c3eded" |'''6.41'''
+|-
+|136
+|style="text-align:left;"|{{VNM}}
+|Authoritarian
+| style="background:#a8261f; color: white;" |'''2.62'''
+| style="background:#a8261f; color: white;" |'''2.73'''
+| style="background:#a8261f; color: white;" |'''2.94'''
+| style="background:#a8261f; color: white;" |'''2.94'''
+| style="background:#da820f; color: white;" |'''3.08'''
+| style="background:#da820f; color: white;" |'''3.08'''
+| style="background:#da820f; color: white;" |'''3.08'''
+| style="background:#da820f; color: white;" |'''3.38'''
+| style="background:#da820f; color: white;" |'''3.53'''
+| style="background:#da820f; color: white;" |'''3.41'''
+| style="background:#da820f; color: white;" |'''3.29'''
+| style="background:#a8261f; color: white;" |'''2.89'''
+| style="background:#a8261f; color: white;" |'''2.96'''
+| style="background:#a8261f; color: white;" |'''2.94'''
+| style="background:#a8261f; color: white;" |'''2.53'''
+| style="background:#a8261f; color: white;" |'''2.75'''
+|-
+|style="text-align:left;" rowspan="20" id="Middle East and North Africa" | Middle East and North Africa
+|110
+|style="text-align:left;"|{{DZA}}
+|Authoritarian
+| style="background:#da820f; color: white;" |'''3.66'''
+| style="background:#da820f; color: white;" |'''3.66'''
+| style="background:#da820f; color: white;" |'''3.77'''
+| style="background:#da820f; color: white;" |'''3.77'''
+| bgcolor="#fad45d" |'''4.01'''
+| style="background:#da820f; color: white;" |'''3.50'''
+| style="background:#da820f; color: white;" |'''3.56'''
+| style="background:#da820f; color: white;" |'''3.56'''
+| style="background:#da820f; color: white;" |'''3.95'''
+| style="background:#da820f; color: white;" |'''3.83'''
+| style="background:#da820f; color: white;" |'''3.83'''
+| style="background:#da820f; color: white;" |'''3.83'''
+| style="background:#da820f; color: white;" |'''3.44'''
+| style="background:#da820f; color: white;" |'''3.44'''
+| style="background:#da820f; color: white;" |'''3.32'''
+| style="background:#da820f; color: white;" |'''3.17'''
+|-
+|139
+|style="text-align:left;"|{{BHR}}
+|Authoritarian
+| style="background:#a8261f; color: white;" |'''2.52'''
+| style="background:#a8261f; color: white;" |'''2.52'''
+| style="background:#a8261f; color: white;" |'''2.52'''
+| style="background:#a8261f; color: white;" |'''2.49'''
+| style="background:#a8261f; color: white;" |'''2.55'''
+| style="background:#a8261f; color: white;" |'''2.71'''
+| style="background:#a8261f; color: white;" |'''2.71'''
+| style="background:#a8261f; color: white;" |'''2.79'''
+| style="background:#a8261f; color: white;" |'''2.79'''
+| style="background:#a8261f; color: white;" |'''2.87'''
+| style="background:#a8261f; color: white;" |'''2.87'''
+| style="background:#a8261f; color: white;" |'''2.53'''
+| style="background:#a8261f; color: white;" |'''2.92'''
+| style="background:#da820f; color: white;" |'''3.49'''
+| style="background:#da820f; color: white;" |'''3.38'''
+| style="background:#da820f; color: white;" |'''3.53'''
+|-
+|127
+|style="text-align:left;"|{{EGY}}
+|Authoritarian
+| style="background:#a8261f; color: white;" |'''2.93'''
+| style="background:#a8261f; color: white;" |'''2.93'''
+| style="background:#a8261f; color: white;" |'''2.93'''
+| style="background:#a8261f; color: white;" |'''2.93'''
+| style="background:#da820f; color: white;" |'''3.06'''
+| style="background:#da820f; color: white;" |'''3.36'''
+| style="background:#da820f; color: white;" |'''3.36'''
+| style="background:#da820f; color: white;" |'''3.31'''
+| style="background:#da820f; color: white;" |'''3.18'''
+| style="background:#da820f; color: white;" |'''3.16'''
+| style="background:#da820f; color: white;" |'''3.27'''
+| bgcolor="#fad45d" |'''4.56'''
+| style="background:#da820f; color: white;" |'''3.95'''
+| style="background:#da820f; color: white;" |'''3.07'''
+| style="background:#da820f; color: white;" |'''3.89'''
+| style="background:#da820f; color: white;" |'''3.90'''
+|-
+|154
+|style="text-align:left;"|{{IRN}}
+|Authoritarian
+| style="background:#66000f; color: white;" |'''1.96'''
+| style="background:#66000f; color: white;" |'''1.96'''
+| style="background:#660018; color: white;" |'''1.95'''
+| style="background:#a8261f; color: white;" |'''2.20'''
+| style="background:#a8261f; color: white;" |'''2.38'''
+| style="background:#a8261f; color: white;" |'''2.45'''
+| style="background:#a8261f; color: white;" |'''2.45'''
+| style="background:#a8261f; color: white;" |'''2.34'''
+| style="background:#a8261f; color: white;" |'''2.16'''
+| style="background:#660018; color: white;" |'''1.98'''
+| style="background:#660018; color: white;" |'''1.98'''
+| style="background:#660018; color: white;" |'''1.98'''
+| style="background:#660018; color: white;" |'''1.98'''
+| style="background:#660018; color: white;" |'''1.94'''
+| style="background:#a8261f; color: white;" |'''2.83'''
+| style="background:#a8261f; color: white;" |'''2.93'''
+|-
+|128
+|style="text-align:left;"|{{IRQ}}
+|Authoritarian
+| style="background:#a8261f; color: white;" |'''2.88'''
+| style="background:#da820f; color: white;" |'''3.13'''
+| style="background:#da820f; color: white;" |'''3.51'''
+| style="background:#da820f; color: white;" |'''3.62'''
+| style="background:#da820f; color: white;" |'''3.74'''
+| bgcolor="#fad45d" |'''4.06'''
+| bgcolor="#fad45d" |'''4.09'''
+| bgcolor="#fad45d" |'''4.08'''
+| bgcolor="#fad45d" |'''4.08'''
+| bgcolor="#fad45d" |'''4.23'''
+| bgcolor="#fad45d" |'''4.10'''
+| bgcolor="#fad45d" |'''4.10'''
+| bgcolor="#fad45d" |'''4.03'''
+| style="background:#da820f; color: white;" |'''4.00'''
+| style="background:#da820f; color: white;" |'''4.00'''
+| bgcolor="#fad45d" |'''4.01'''
+|-
+|30
+|style="text-align:left;"|{{ISR}}
+|Flawed democracy
+| bgcolor="#6bd2df" |'''7.80'''
+| bgcolor="#6bd2df" |'''7.93'''
+| bgcolor="#6bd2df" |'''7.97'''
+| bgcolor="#6bd2df" |'''7.84'''
+| bgcolor="#6bd2df" |'''7.86'''
+| bgcolor="#6bd2df" |'''7.79'''
+| bgcolor="#6bd2df" |'''7.79'''
+| bgcolor="#6bd2df" |'''7.85'''
+| bgcolor="#6bd2df" |'''7.77'''
+| bgcolor="#6bd2df" |'''7.63'''
+| bgcolor="#6bd2df" |'''7.53'''
+| bgcolor="#6bd2df" |'''7.53'''
+| bgcolor="#6bd2df" |'''7.53'''
+| bgcolor="#6bd2df" |'''7.48'''
+| bgcolor="#6bd2df" |'''7.48'''
+| bgcolor="#6bd2df" |'''7.28'''
+|-
+|122
+|style="text-align:left;"|{{JOR}}
+|Authoritarian
+| style="background:#da820f; color: white;" |'''3.04'''
+| style="background:#da820f; color: white;" |'''3.17'''
+| style="background:#da820f; color: white;" |'''3.49'''
+| style="background:#da820f; color: white;" |'''3.62'''
+| style="background:#da820f; color: white;" |'''3.93'''
+| style="background:#da820f; color: white;" |'''3.93'''
+| style="background:#da820f; color: white;" |'''3.87'''
+| style="background:#da820f; color: white;" |'''3.96'''
+| style="background:#da820f; color: white;" |'''3.86'''
+| style="background:#da820f; color: white;" |'''3.76'''
+| style="background:#da820f; color: white;" |'''3.76'''
+| style="background:#da820f; color: white;" |'''3.76'''
+| style="background:#da820f; color: white;" |'''3.89'''
+| style="background:#da820f; color: white;" |'''3.74'''
+| style="background:#da820f; color: white;" |'''3.93'''
+| style="background:#da820f; color: white;" |'''3.92'''
+|-
+|114
+|style="text-align:left;"|{{KWT}}
+|Authoritarian
+| style="background:#da820f; color: white;" |'''3.50'''
+| style="background:#da820f; color: white;" |'''3.83'''
+| style="background:#da820f; color: white;" |'''3.91'''
+| style="background:#da820f; color: white;" |'''3.80'''
+| style="background:#da820f; color: white;" |'''3.93'''
+| style="background:#da820f; color: white;" |'''3.85'''
+| style="background:#da820f; color: white;" |'''3.85'''
+| style="background:#da820f; color: white;" |'''3.85'''
+| style="background:#da820f; color: white;" |'''3.85'''
+| style="background:#da820f; color: white;" |'''3.78'''
+| style="background:#da820f; color: white;" |'''3.78'''
+| style="background:#da820f; color: white;" |'''3.78'''
+| style="background:#da820f; color: white;" |'''3.74'''
+| style="background:#da820f; color: white;" |'''3.88'''
+| style="background:#da820f; color: white;" |'''3.39'''
+| style="background:#da820f; color: white;" |'''3.09'''
+|-
+|112
+|style="text-align:left;"|{{LBN}}
+|Authoritarian
+| style="background:#da820f; color: white;" |'''3.56'''
+| style="background:#da820f; color: white;" |'''3.64'''
+| style="background:#da820f; color: white;" |'''3.84'''
+| bgcolor="#fad45d" |'''4.16'''
+| bgcolor="#fad45d" |'''4.36'''
+| bgcolor="#fad45d" |'''4.63'''
+| bgcolor="#fad45d" |'''4.72'''
+| bgcolor="#fad45d" |'''4.86'''
+| bgcolor="#fad45d" |'''4.86'''
+| bgcolor="#f9f8bb" |'''5.12'''
+| bgcolor="#f9f8bb" |'''5.05'''
+| bgcolor="#f9f8bb" |'''5.05'''
+| bgcolor="#f9f8bb" |'''5.32'''
+| bgcolor="#f9f8bb" |'''5.82'''
+| bgcolor="#f9f8bb" |'''5.62'''
+| bgcolor="#f9f8bb" |'''5.82'''
+|-
+|151
+|style="text-align:left;"|{{LBY}}
+|Authoritarian
+| style="background:#660018; color: white;" |'''1.78'''
+| style="background:#a8261f; color: white;" |'''2.06'''
+| style="background:#660018; color: white;" |'''1.95'''
+| style="background:#660018; color: white;" |'''1.95'''
+| style="background:#a8261f; color: white;" |'''2.02'''
+| style="background:#a8261f; color: white;" |'''2.19'''
+| style="background:#a8261f; color: white;" |'''2.32'''
+| style="background:#a8261f; color: white;" |'''2.25'''
+| style="background:#a8261f; color: white;" |'''2.25'''
+| style="background:#da820f; color: white;" |'''3.80'''
+| bgcolor="#fad45d" |'''4.82'''
+| bgcolor="#f9f8bb" |'''5.15'''
+| style="background:#da820f; color: white;" |'''3.55'''
+| style="background:#660018; color: white;" |'''1.94'''
+| style="background:#660018; color: white;" |'''2.00'''
+| style="background:#660018; color: white;" |'''1.84'''
+|-
+|93
+|style="text-align:left;"|{{MAR}}
+|Hybrid regime
+| bgcolor="#f9f8bb" |'''5.04'''
+| bgcolor="#f9f8bb" |'''5.04'''
+| bgcolor="#f9f8bb" |'''5.04'''
+| bgcolor="#f9f8bb" |'''5.04'''
+| bgcolor="#f9f8bb" |'''5.10'''
+| bgcolor="#fad45d" |'''4.99'''
+| bgcolor="#fad45d" |'''4.87'''
+| bgcolor="#fad45d" |'''4.77'''
+| bgcolor="#fad45d" |'''4.66'''
+| style="background:#da820f; color: white;" |'''4.00'''
+| bgcolor="#fad45d" |'''4.07'''
+| bgcolor="#fad45d" |'''4.07'''
+| style="background:#da820f; color: white;" |'''3.83'''
+| style="background:#da820f; color: white;" |'''3.79'''
+| style="background:#da820f; color: white;" |'''3.88'''
+| style="background:#da820f; color: white;" |'''3.90'''
+|-
+|119
+|style="text-align:left;"|{{OMN}}
+|Authoritarian
+| style="background:#da820f; color: white;" |'''3.12'''
+| style="background:#da820f; color: white;" |'''3.12'''
+| style="background:#a8261f; color: white;" |'''3.00'''
+| style="background:#a8261f; color: white;" |'''3.00'''
+| style="background:#da820f; color: white;" |'''3.06'''
+| style="background:#da820f; color: white;" |'''3.04'''
+| style="background:#da820f; color: white;" |'''3.04'''
+| style="background:#da820f; color: white;" |'''3.04'''
+| style="background:#da820f; color: white;" |'''3.04'''
+| style="background:#da820f; color: white;" |'''3.15'''
+| style="background:#da820f; color: white;" |'''3.26'''
+| style="background:#da820f; color: white;" |'''3.26'''
+| style="background:#da820f; color: white;" |'''3.26'''
+| style="background:#a8261f; color: white;" |'''2.86'''
+| style="background:#a8261f; color: white;" |'''2.98'''
+| style="background:#a8261f; color: white;" |'''2.77'''
+|-
+|115
+|style="text-align:left;"|{{PSE}}
+|Authoritarian
+| style="background:#da820f; color: white;" |'''3.47'''
+| style="background:#da820f; color: white;" |'''3.86'''
+| style="background:#da820f; color: white;" |'''3.94'''
+| style="background:#da820f; color: white;" |'''3.83'''
+| style="background:#da820f; color: white;" |'''3.89'''
+| bgcolor="#fad45d" |'''4.39'''
+| bgcolor="#fad45d" |'''4.46'''
+| bgcolor="#fad45d" |'''4.49'''
+| bgcolor="#fad45d" |'''4.57'''
+| bgcolor="#fad45d" |'''4.72'''
+| bgcolor="#fad45d" |'''4.80'''
+| bgcolor="#fad45d" |'''4.80'''
+| bgcolor="#fad45d" |'''4.97'''
+| bgcolor="#f9f8bb" |'''5.44'''
+| bgcolor="#f9f8bb" |'''5.83'''
+| bgcolor="#c3eded" |'''6.01'''
+|-
+|111
+|style="text-align:left;"|{{QAT}}
+|Authoritarian
+| style="background:#da820f; color: white;" |'''3.65'''
+| style="background:#da820f; color: white;" |'''3.65'''
+| style="background:#da820f; color: white;" |'''3.65'''
+| style="background:#da820f; color: white;" |'''3.24'''
+| style="background:#da820f; color: white;" |'''3.19'''
+| style="background:#da820f; color: white;" |'''3.19'''
+| style="background:#da820f; color: white;" |'''3.19'''
+| style="background:#da820f; color: white;" |'''3.18'''
+| style="background:#da820f; color: white;" |'''3.18'''
+| style="background:#da820f; color: white;" |'''3.18'''
+| style="background:#da820f; color: white;" |'''3.18'''
+| style="background:#da820f; color: white;" |'''3.18'''
+| style="background:#da820f; color: white;" |'''3.18'''
+| style="background:#da820f; color: white;" |'''3.09'''
+| style="background:#a8261f; color: white;" |'''2.92'''
+| style="background:#a8261f; color: white;" |'''2.78'''
+|-
+|150
+|style="text-align:left;"|{{SAU}}
+|Authoritarian
+| style="background:#a8261f; color: white;" |'''2.08'''
+| style="background:#a8261f; color: white;" |'''2.08'''
+| style="background:#a8261f; color: white;" |'''2.08'''
+| style="background:#a8261f; color: white;" |'''2.08'''
+| style="background:#660018; color: white;" |'''1.93'''
+| style="background:#660018; color: white;" |'''1.93'''
+| style="background:#660018; color: white;" |'''1.93'''
+| style="background:#660018; color: white;" |'''1.93'''
+| style="background:#660018; color: white;" |'''1.93'''
+| style="background:#660018; color: white;" |'''1.82'''
+| style="background:#660018; color: white;" |'''1.82'''
+| style="background:#660018; color: white;" |'''1.71'''
+| style="background:#660018; color: white;" |'''1.77'''
+| style="background:#660018; color: white;" |'''1.84'''
+| style="background:#660018; color: white;" |'''1.90'''
+| style="background:#660018; color: white;" |'''1.92'''
+|-
+|144
+|style="text-align:left;"|{{SDN}}
+|Authoritarian
+| style="background:#66000f; color: white;" |'''1.76'''
+| style="background:#a8261f; color: white;" |'''2.47'''
+| style="background:#a8261f; color: white;" |'''2.47'''
+| style="background:#a8261f; color: white;" |'''2.54'''
+| style="background:#a8261f; color: white;" |'''2.70'''
+| style="background:#a8261f; color: white;" |'''2.15'''
+| style="background:#a8261f; color: white;" |'''2.15'''
+| style="background:#a8261f; color: white;" |'''2.37'''
+| style="background:#a8261f; color: white;" |'''2.37'''
+| style="background:#a8261f; color: white;" |'''2.54'''
+| style="background:#a8261f; color: white;" |'''2.54'''
+| style="background:#a8261f; color: white;" |'''2.38'''
+| style="background:#a8261f; color: white;" |'''2.38'''
+| style="background:#a8261f; color: white;" |'''2.42'''
+| style="background:#a8261f; color: white;" |'''2.81'''
+| style="background:#a8261f; color: white;" |'''2.90'''
+|-
+|163
+|style="text-align:left;"|{{SYR}}
+|Authoritarian
+| style="background:#66000f; color: white;" |'''1.43'''
+| style="background:#66000f; color: white;" |'''1.43'''
+| style="background:#660018; color: white;" |'''1.43'''
+| style="background:#660018; color: white;" |'''1.43'''
+| style="background:#660018; color: white;" |'''1.43'''
+| style="background:#660018; color: white;" |'''1.43'''
+| style="background:#660018; color: white;" |'''1.43'''
+| style="background:#660018; color: white;" |'''1.43'''
+| style="background:#660018; color: white;" |'''1.43'''
+| style="background:#660018; color: white;" |'''1.74'''
+| style="background:#660018; color: white;" |'''1.86'''
+| style="background:#660018; color: white;" |'''1.63'''
+| style="background:#660018; color: white;" |'''1.99'''
+| style="background:#a8261f; color: white;" |'''2.31'''
+| style="background:#a8261f; color: white;" |'''2.18'''
+| style="background:#a8261f; color: white;" |'''2.36'''
+|-
+|82
+|style="text-align:left;"|{{TUN}}
+|Hybrid regime
+| bgcolor="#f9f8bb" |'''5.51'''
+| bgcolor="#f9f8bb" |'''5.51'''
+| bgcolor="#f9f8bb" |'''5.99'''
+| bgcolor="#c3eded" |'''6.59'''
+| bgcolor="#c3eded" |'''6.72'''
+| bgcolor="#c3eded" |'''6.41'''
+| bgcolor="#c3eded" |'''6.32'''
+| bgcolor="#c3eded" |'''6.40'''
+| bgcolor="#c3eded" |'''6.72'''
+| bgcolor="#c3eded" |'''6.31'''
+| bgcolor="#f9f8bb" |'''5.76'''
+| bgcolor="#f9f8bb" |'''5.67'''
+| bgcolor="#f9f8bb" |'''5.53'''
+| style="background:#a8261f; color: white;" |'''2.79'''
+| style="background:#a8261f; color: white;" |'''2.96'''
+| style="background:#da820f; color: white;" |'''3.06'''
+|-
+|125
+|style="text-align:left;"|{{ARE}}
+|Authoritarian
+| style="background:#da820f; color: white;" |'''3.01'''
+| style="background:#a8261f; color: white;" |'''2.90'''
+| style="background:#a8261f; color: white;" |'''2.90'''
+| style="background:#a8261f; color: white;" |'''2.70'''
+| style="background:#a8261f; color: white;" |'''2.76'''
+| style="background:#a8261f; color: white;" |'''2.76'''
+| style="background:#a8261f; color: white;" |'''2.69'''
+| style="background:#a8261f; color: white;" |'''2.75'''
+| style="background:#a8261f; color: white;" |'''2.75'''
+| style="background:#a8261f; color: white;" |'''2.64'''
+| style="background:#a8261f; color: white;" |'''2.52'''
+| style="background:#a8261f; color: white;" |'''2.58'''
+| style="background:#a8261f; color: white;" |'''2.58'''
+| style="background:#a8261f; color: white;" |'''2.52'''
+| style="background:#a8261f; color: white;" |'''2.60'''
+| style="background:#a8261f; color: white;" |'''2.42'''
+|-
+|155
+|style="text-align:left;"|{{YEM}}
+|Authoritarian
+| style="background:#66000f; color: white;" |'''1.95'''
+| style="background:#66000f; color: white;" |'''1.95'''
+| style="background:#660018; color: white;" |'''1.95'''
+| style="background:#660018; color: white;" |'''1.95'''
+| style="background:#660018; color: white;" |'''1.95'''
+| style="background:#660018; color: white;" |'''1.95'''
+| style="background:#a8261f; color: white;" |'''2.07'''
+| style="background:#a8261f; color: white;" |'''2.07'''
+| style="background:#a8261f; color: white;" |'''2.24'''
+| style="background:#a8261f; color: white;" |'''2.79'''
+| style="background:#a8261f; color: white;" |'''2.79'''
+| style="background:#da820f; color: white;" |'''3.12'''
+| style="background:#a8261f; color: white;" |'''2.57'''
+| style="background:#a8261f; color: white;" |'''2.64'''
+| style="background:#a8261f; color: white;" |'''2.95'''
+| style="background:#a8261f; color: white;" |'''2.98'''
+|-
+|style="text-align:left;" rowspan="44" id="Sub-Saharan Africa" | Sub-Saharan Africa
+|109
+|style="text-align:left;"|{{AGO}}
+|Hybrid regime
+| bgcolor="#fad45d" |'''4.18'''
+| style="background:#da820f; color: white;" |'''3.96'''
+| style="background:#da820f; color: white;" |'''3.37'''
+| style="background:#da820f; color: white;" |'''3.66'''
+| style="background:#da820f; color: white;" |'''3.72'''
+| style="background:#da820f; color: white;" |'''3.62'''
+| style="background:#da820f; color: white;" |'''3.62'''
+| style="background:#da820f; color: white;" |'''3.40'''
+| style="background:#da820f; color: white;" |'''3.35'''
+| style="background:#da820f; color: white;" |'''3.35'''
+| style="background:#da820f; color: white;" |'''3.35'''
+| style="background:#da820f; color: white;" |'''3.35'''
+| style="background:#da820f; color: white;" |'''3.32'''
+| style="background:#da820f; color: white;" |'''3.32'''
+| style="background:#da820f; color: white;" |'''3.35'''
+| style="background:#a8261f; color: white;" |'''2.41'''
+|-
+|104
+|style="text-align:left;"|{{BEN}}
+|Hybrid regime
+| bgcolor="#fad45d" |'''4.68'''
+| bgcolor="#fad45d" |'''4.28'''
+| bgcolor="#fad45d" |'''4.19'''
+| bgcolor="#fad45d" |'''4.58'''
+| bgcolor="#f9f8bb" |'''5.09'''
+| bgcolor="#f9f8bb" |'''5.74'''
+| bgcolor="#f9f8bb" |'''5.61'''
+| bgcolor="#f9f8bb" |'''5.67'''
+| bgcolor="#f9f8bb" |'''5.72'''
+| bgcolor="#f9f8bb" |'''5.65'''
+| bgcolor="#f9f8bb" |'''5.87'''
+| bgcolor="#f9f8bb" |'''6.00'''
+| bgcolor="#c3eded" |'''6.06'''
+| bgcolor="#c3eded" |'''6.17'''
+| bgcolor="#c3eded" |'''6.06'''
+| bgcolor="#c3eded" |'''6.16'''
+|-
+|32
+|style="text-align:left;"|{{BWA}}
+|Flawed democracy
+| bgcolor="#6bd2df" |'''7.73'''
+| bgcolor="#6bd2df" |'''7.73'''
+| bgcolor="#6bd2df" |'''7.73'''
+| bgcolor="#6bd2df" |'''7.62'''
+| bgcolor="#6bd2df" |'''7.81'''
+| bgcolor="#6bd2df" |'''7.81'''
+| bgcolor="#6bd2df" |'''7.81'''
+| bgcolor="#6bd2df" |'''7.87'''
+| bgcolor="#6bd2df" |'''7.87'''
+| bgcolor="#6bd2df" |'''7.87'''
+| bgcolor="#6bd2df" |'''7.98'''
+| bgcolor="#6bd2df" |'''7.85'''
+| bgcolor="#6bd2df" |'''7.63'''
+| bgcolor="#6bd2df" |'''7.63'''
+| bgcolor="#6bd2df" |'''7.47'''
+| bgcolor="#6bd2df" |'''7.60'''
+|-
+|127
+|style="text-align:left;"|{{BFA}}
+|Authoritarian
+| style="background:#a8261f; color: white;" |'''2.73'''
+| style="background:#da820f; color: white;" |'''3.08'''
+| style="background:#da820f; color: white;" |'''3.84'''
+| style="background:#da820f; color: white;" |'''3.73'''
+| bgcolor="#fad45d" |'''4.04'''
+| bgcolor="#fad45d" |'''4.75'''
+| bgcolor="#fad45d" |'''4.75'''
+| bgcolor="#fad45d" |'''4.70'''
+| bgcolor="#fad45d" |'''4.70'''
+| bgcolor="#fad45d" |'''4.09'''
+| bgcolor="#fad45d" |'''4.15'''
+| style="background:#da820f; color: white;" |'''3.52'''
+| style="background:#da820f; color: white;" |'''3.59'''
+| style="background:#da820f; color: white;" |'''3.59'''
+| style="background:#da820f; color: white;" |'''3.60'''
+| style="background:#da820f; color: white;" |'''3.72'''
+|-
+|148
+|style="text-align:left;"|{{BDI}}
+|Authoritarian
+| style="background:#a8261f; color: white;" |'''2.13'''
+| style="background:#a8261f; color: white;" |'''2.13'''
+| style="background:#a8261f; color: white;" |'''2.13'''
+| style="background:#a8261f; color: white;" |'''2.14'''
+| style="background:#a8261f; color: white;" |'''2.15'''
+| style="background:#a8261f; color: white;" |'''2.33'''
+| style="background:#a8261f; color: white;" |'''2.33'''
+| style="background:#a8261f; color: white;" |'''2.40'''
+| style="background:#a8261f; color: white;" |'''2.49'''
+| style="background:#da820f; color: white;" |'''3.33'''
+| style="background:#da820f; color: white;" |'''3.41'''
+| style="background:#da820f; color: white;" |'''3.60'''
+| bgcolor="#fad45d" |'''4.01'''
+| bgcolor="#fad45d" |'''4.01'''
+| bgcolor="#fad45d" |'''4.51'''
+| bgcolor="#fad45d" |'''4.51'''
+|-
+|35
+|style="text-align:left;"|{{CPV}}
+|Flawed democracy
+| bgcolor="#6bd2df" |'''7.65'''
+| bgcolor="#6bd2df" |'''7.65'''
+| bgcolor="#6bd2df" |'''7.65'''
+| bgcolor="#6bd2df" |'''7.65'''
+| bgcolor="#6bd2df" |'''7.78'''
+| bgcolor="#6bd2df" |'''7.88'''
+| bgcolor="#6bd2df" |'''7.88'''
+| bgcolor="#6bd2df" |'''7.94'''
+| bgcolor="#6bd2df" |'''7.81'''
+| bgcolor="#6bd2df" |'''7.81'''
+| bgcolor="#6bd2df" |'''7.92'''
+| bgcolor="#6bd2df" |'''7.92'''
+| bgcolor="#6bd2df" |'''7.92'''
+| bgcolor="#6bd2df" |'''7.94'''
+| bgcolor="#6bd2df" |'''7.81'''
+| bgcolor="#6bd2df" |'''7.43'''
+|-
+|140
+|style="text-align:left;"|{{CMR}}
+|Authoritarian
+| style="background:#a8261f; color: white;" |'''2.56'''
+| style="background:#a8261f; color: white;" |'''2.56'''
+| style="background:#a8261f; color: white;" |'''2.56'''
+| style="background:#a8261f; color: white;" |'''2.77'''
+| style="background:#a8261f; color: white;" |'''2.85'''
+| style="background:#da820f; color: white;" |'''3.28'''
+| style="background:#da820f; color: white;" |'''3.61'''
+| style="background:#da820f; color: white;" |'''3.46'''
+| style="background:#da820f; color: white;" |'''3.66'''
+| style="background:#da820f; color: white;" |'''3.41'''
+| style="background:#da820f; color: white;" |'''3.41'''
+| style="background:#da820f; color: white;" |'''3.44'''
+| style="background:#da820f; color: white;" |'''3.41'''
+| style="background:#da820f; color: white;" |'''3.41'''
+| style="background:#da820f; color: white;" |'''3.46'''
+| style="background:#da820f; color: white;" |'''3.27'''
+|-
+|164
+|style="text-align:left;"|{{CAF}}
+|Authoritarian
+| style="background:#66000f; color: white;" |'''1.18'''
+| style="background:#66000f; color: white;" |'''1.35'''
+| style="background:#660018; color: white;" |'''1.43'''
+| style="background:#660018; color: white;" |'''1.32'''
+| style="background:#660018; color: white;" |'''1.32'''
+| style="background:#660018; color: white;" |'''1.52'''
+| style="background:#660018; color: white;" |'''1.52'''
+| style="background:#660018; color: white;" |'''1.61'''
+| style="background:#660018; color: white;" |'''1.57'''
+| style="background:#660018; color: white;" |'''1.49'''
+| style="background:#660018; color: white;" |'''1.49'''
+| style="background:#660018; color: white;" |'''1.99'''
+| style="background:#660018; color: white;" |'''1.82'''
+| style="background:#660018; color: white;" |'''1.82'''
+| style="background:#660018; color: white;" |'''1.86'''
+| style="background:#660018; color: white;" |'''1.61'''
+|-
+|160
+|style="text-align:left;"|{{TCD}}
+|Authoritarian
+| style="background:#66000f; color: white;" |'''1.67'''
+| style="background:#66000f; color: white;" |'''1.67'''
+| style="background:#660018; color: white;" |'''1.67'''
+| style="background:#660018; color: white;" |'''1.55'''
+| style="background:#660018; color: white;" |'''1.61'''
+| style="background:#660018; color: white;" |'''1.61'''
+| style="background:#660018; color: white;" |'''1.50'''
+| style="background:#660018; color: white;" |'''1.50'''
+| style="background:#660018; color: white;" |'''1.50'''
+| style="background:#660018; color: white;" |'''1.50'''
+| style="background:#660018; color: white;" |'''1.50'''
+| style="background:#660018; color: white;" |'''1.62'''
+| style="background:#660018; color: white;" |'''1.62'''
+| style="background:#660018; color: white;" |'''1.52'''
+| style="background:#660018; color: white;" |'''1.52'''
+| style="background:#660018; color: white;" |'''1.65'''
+|-
+|120
+|style="text-align:left;"|{{COM}}
+|Authoritarian
+| style="background:#da820f; color: white;" |'''3.04'''
+| style="background:#da820f; color: white;" |'''3.20'''
+| style="background:#da820f; color: white;" |'''3.20'''
+| style="background:#da820f; color: white;" |'''3.09'''
+| style="background:#da820f; color: white;" |'''3.15'''
+| style="background:#da820f; color: white;" |'''3.71'''
+| style="background:#da820f; color: white;" |'''3.71'''
+| style="background:#da820f; color: white;" |'''3.71'''
+| style="background:#da820f; color: white;" |'''3.71'''
+| style="background:#da820f; color: white;" |'''3.52'''
+| style="background:#da820f; color: white;" |'''3.52'''
+| style="background:#da820f; color: white;" |'''3.52'''
+| style="background:#da820f; color: white;" |'''3.52'''
+| style="background:#da820f; color: white;" |'''3.41'''
+| style="background:#da820f; color: white;" |'''3.58'''
+| style="background:#da820f; color: white;" |'''3.90'''
+|-
+|136
+|style="text-align:left;"|{{sort|Congo, Repubblica del | {{COG}} }}
+|Authoritarian
+| style="background:#a8261f; color: white;" |'''2.79'''
+| style="background:#a8261f; color: white;" |'''2.79'''
+| style="background:#a8261f; color: white;" |'''2.79'''
+| style="background:#da820f; color: white;" |'''3.11'''
+| style="background:#da820f; color: white;" |'''3.11'''
+| style="background:#da820f; color: white;" |'''3.31'''
+| style="background:#da820f; color: white;" |'''3.25'''
+| style="background:#a8261f; color: white;" |'''2.91'''
+| style="background:#a8261f; color: white;" |'''2.91'''
+| style="background:#a8261f; color: white;" |'''2.89'''
+| style="background:#a8261f; color: white;" |'''2.89'''
+| style="background:#a8261f; color: white;" |'''2.89'''
+| style="background:#a8261f; color: white;" |'''2.89'''
+| style="background:#a8261f; color: white;" |'''2.89'''
+| style="background:#a8261f; color: white;" |'''2.94'''
+| style="background:#da820f; color: white;" |'''3.19'''
+|-
+|106
+|style="text-align:left;"|{{CIV}}
+|Hybrid regime
+| bgcolor="#fad45d" |'''4.22'''
+| bgcolor="#fad45d" |'''4.22'''
+| bgcolor="#fad45d" |'''4.22'''
+| bgcolor="#fad45d" |'''4.11'''
+| bgcolor="#fad45d" |'''4.05'''
+| bgcolor="#fad45d" |'''4.15'''
+| style="background:#da820f; color: white;" |'''3.93'''
+| style="background:#da820f; color: white;" |'''3.81'''
+| style="background:#da820f; color: white;" |'''3.31'''
+| style="background:#da820f; color: white;" |'''3.53'''
+| style="background:#da820f; color: white;" |'''3.25'''
+| style="background:#da820f; color: white;" |'''3.25'''
+| style="background:#da820f; color: white;" |'''3.08'''
+| style="background:#da820f; color: white;" |'''3.02'''
+| style="background:#da820f; color: white;" |'''3.27'''
+| style="background:#da820f; color: white;" |'''3.38'''
+|-
+|162
+|style="text-align:left;"|{{sort| Congo, Democratic Republic of the | {{COD}} }}
+|Authoritarian
+| style="background:#66000f; color: white;" |'''1.68'''
+| style="background:#66000f; color: white;" |'''1.48'''
+| style="background:#660018; color: white;" |'''1.40'''
+| style="background:#660018; color: white;" |'''1.13'''
+| style="background:#660018; color: white;" |'''1.13'''
+| style="background:#660018; color: white;" |'''1.49'''
+| style="background:#660018; color: white;" |'''1.61'''
+| style="background:#660018; color: white;" |'''1.93'''
+| style="background:#a8261f; color: white;" |'''2.11'''
+| style="background:#660018; color: white;" |'''1.75'''
+| style="background:#660018; color: white;" |'''1.83'''
+| style="background:#660018; color: white;" |'''1.92'''
+| style="background:#a8261f; color: white;" |'''2.15'''
+| style="background:#a8261f; color: white;" |'''2.15'''
+| style="background:#a8261f; color: white;" |'''2.28'''
+| style="background:#a8261f; color: white;" |'''2.76'''
+|-
+|137
+|style="text-align:left;"|{{DJI}}
+|Authoritarian
+| style="background:#a8261f; color: white;" |'''2.70'''
+| style="background:#a8261f; color: white;" |'''2.74'''
+| style="background:#a8261f; color: white;" |'''2.74'''
+| style="background:#a8261f; color: white;" |'''2.71'''
+| style="background:#a8261f; color: white;" |'''2.77'''
+| style="background:#a8261f; color: white;" |'''2.87'''
+| style="background:#a8261f; color: white;" |'''2.76'''
+| style="background:#a8261f; color: white;" |'''2.83'''
+| style="background:#a8261f; color: white;" |'''2.90'''
+| style="background:#a8261f; color: white;" |'''2.99'''
+| style="background:#a8261f; color: white;" |'''2.96'''
+| style="background:#a8261f; color: white;" |'''2.74'''
+| style="background:#a8261f; color: white;" |'''2.68'''
+| style="background:#a8261f; color: white;" |'''2.20'''
+| style="background:#a8261f; color: white;" |'''2.37'''
+| style="background:#a8261f; color: white;" |'''2.37'''
+|-
+|158
+|style="text-align:left;"|{{GNQ}}
+|Authoritarian
+| style="background:#66000f; color: white;" |'''1.92'''
+| style="background:#66000f; color: white;" |'''1.92'''
+| style="background:#660018; color: white;" |'''1.92'''
+| style="background:#660018; color: white;" |'''1.92'''
+| style="background:#660018; color: white;" |'''1.92'''
+| style="background:#660018; color: white;" |'''1.92'''
+| style="background:#660018; color: white;" |'''1.81'''
+| style="background:#660018; color: white;" |'''1.70'''
+| style="background:#660018; color: white;" |'''1.77'''
+| style="background:#660018; color: white;" |'''1.66'''
+| style="background:#660018; color: white;" |'''1.77'''
+| style="background:#660018; color: white;" |'''1.83'''
+| style="background:#660018; color: white;" |'''1.77'''
+| style="background:#660018; color: white;" |'''1.84'''
+| style="background:#a8261f; color: white;" |'''2.19'''
+| style="background:#a8261f; color: white;" |'''2.09'''
+|-
+|152
+|style="text-align:left;"|{{ERI}}
+|Authoritarian
+| style="background:#66000f; color: white;" |'''1.97'''
+| style="background:#a8261f; color: white;" |'''2.03'''
+| style="background:#a8261f; color: white;" |'''2.03'''
+| style="background:#a8261f; color: white;" |'''2.15'''
+| style="background:#a8261f; color: white;" |'''2.37'''
+| style="background:#a8261f; color: white;" |'''2.37'''
+| style="background:#a8261f; color: white;" |'''2.37'''
+| style="background:#a8261f; color: white;" |'''2.37'''
+| style="background:#a8261f; color: white;" |'''2.37'''
+| style="background:#a8261f; color: white;" |'''2.44'''
+| style="background:#a8261f; color: white;" |'''2.40'''
+| style="background:#a8261f; color: white;" |'''2.40'''
+| style="background:#a8261f; color: white;" |'''2.34'''
+| style="background:#a8261f; color: white;" |'''2.31'''
+| style="background:#a8261f; color: white;" |'''2.31'''
+| style="background:#a8261f; color: white;" |'''2.31'''
+|-
+|129
+|style="text-align:left;"|{{SWZ}}
+|Authoritarian
+| style="background:#a8261f; color: white;" |'''2.78'''
+| style="background:#da820f; color: white;" |'''3.01'''
+| style="background:#da820f; color: white;" |'''3.08'''
+| style="background:#da820f; color: white;" |'''3.08'''
+| style="background:#da820f; color: white;" |'''3.14'''
+| style="background:#da820f; color: white;" |'''3.03'''
+| style="background:#da820f; color: white;" |'''3.03'''
+| style="background:#da820f; color: white;" |'''3.03'''
+| style="background:#da820f; color: white;" |'''3.09'''
+| style="background:#da820f; color: white;" |'''3.09'''
+| style="background:#da820f; color: white;" |'''3.20'''
+| style="background:#da820f; color: white;" |'''3.20'''
+| style="background:#da820f; color: white;" |'''3.26'''
+| style="background:#a8261f; color: white;" |'''2.90'''
+| style="background:#da820f; color: white;" |'''3.04'''
+| style="background:#a8261f; color: white;" |'''2.93'''
+|-
+|122
+|style="text-align:left;"|{{ETH}}
+|Authoritarian
+| style="background:#da820f; color: white;" |'''3.37'''
+| style="background:#da820f; color: white;" |'''3.17'''
+| style="background:#da820f; color: white;" |'''3.30'''
+| style="background:#da820f; color: white;" |'''3.38'''
+| style="background:#da820f; color: white;" |'''3.44'''
+| style="background:#da820f; color: white;" |'''3.35'''
+| style="background:#da820f; color: white;" |'''3.42'''
+| style="background:#da820f; color: white;" |'''3.60'''
+| style="background:#da820f; color: white;" |'''3.83'''
+| style="background:#da820f; color: white;" |'''3.72'''
+| style="background:#da820f; color: white;" |'''3.83'''
+| style="background:#da820f; color: white;" |'''3.72'''
+| style="background:#da820f; color: white;" |'''3.79'''
+| style="background:#da820f; color: white;" |'''3.68'''
+| bgcolor="#fad45d" |'''4.52'''
+| bgcolor="#fad45d" |'''4.72'''
+|-
+|118
+|style="text-align:left;"|{{GAB}}
+|Authoritarian
+| style="background:#a8261f; color: white;" |'''2.18'''
+| style="background:#da820f; color: white;" |'''3.40'''
+| style="background:#da820f; color: white;" |'''3.40'''
+| style="background:#da820f; color: white;" |'''3.54'''
+| style="background:#da820f; color: white;" |'''3.61'''
+| style="background:#da820f; color: white;" |'''3.61'''
+| style="background:#da820f; color: white;" |'''3.61'''
+| style="background:#da820f; color: white;" |'''3.74'''
+| style="background:#da820f; color: white;" |'''3.76'''
+| style="background:#da820f; color: white;" |'''3.76'''
+| style="background:#da820f; color: white;" |'''3.76'''
+| style="background:#da820f; color: white;" |'''3.56'''
+| style="background:#da820f; color: white;" |'''3.48'''
+| style="background:#da820f; color: white;" |'''3.29'''
+| style="background:#a8261f; color: white;" |'''3.00'''
+| style="background:#a8261f; color: white;" |'''2.72'''
+|-
+|102
+|style="text-align:left;"|{{sort|Gambia, The| {{GMB}}}}
+|Hybrid regime
+| bgcolor="#fad45d" |'''4.47'''
+| bgcolor="#fad45d" |'''4.47'''
+| bgcolor="#fad45d" |'''4.41'''
+| bgcolor="#fad45d" |'''4.49'''
+| bgcolor="#fad45d" |'''4.33'''
+| bgcolor="#fad45d" |'''4.31'''
+| bgcolor="#fad45d" |'''4.06'''
+| style="background:#a8261f; color: white;" |'''2.91'''
+| style="background:#a8261f; color: white;" |'''2.97'''
+| style="background:#da820f; color: white;" |'''3.05'''
+| style="background:#da820f; color: white;" |'''3.31'''
+| style="background:#da820f; color: white;" |'''3.31'''
+| style="background:#da820f; color: white;" |'''3.38'''
+| style="background:#da820f; color: white;" |'''3.38'''
+| bgcolor="#fad45d" |'''4.19'''
+| bgcolor="#fad45d" |'''4.39'''
+|-
+|63
+|style="text-align:left;"|{{GHA}}
+|Flawed democracy
+| bgcolor="#c3eded" |'''6.30'''
+| bgcolor="#c3eded" |'''6.43'''
+| bgcolor="#c3eded" |'''6.50'''
+| bgcolor="#c3eded" |'''6.50'''
+| bgcolor="#c3eded" |'''6.63'''
+| bgcolor="#c3eded" |'''6.63'''
+| bgcolor="#c3eded" |'''6.69'''
+| bgcolor="#c3eded" |'''6.75'''
+| bgcolor="#c3eded" |'''6.86'''
+| bgcolor="#c3eded" |'''6.33'''
+| bgcolor="#c3eded" |'''6.33'''
+| bgcolor="#c3eded" |'''6.02'''
+| bgcolor="#c3eded" |'''6.02'''
+| bgcolor="#c3eded" |'''6.02'''
+| bgcolor="#f9f8bb" |'''5.35'''
+| bgcolor="#f9f8bb" |'''5.35'''
+|-
+|145
+|style="text-align:left;"|{{GIN}}
+|Authoritarian
+| style="background:#a8261f; color: white;" |'''2.21'''
+| style="background:#a8261f; color: white;" |'''2.32'''
+| style="background:#a8261f; color: white;" |'''2.28'''
+| style="background:#da820f; color: white;" |'''3.08'''
+| style="background:#da820f; color: white;" |'''3.14'''
+| style="background:#da820f; color: white;" |'''3.14'''
+| style="background:#da820f; color: white;" |'''3.14'''
+| style="background:#da820f; color: white;" |'''3.14'''
+| style="background:#da820f; color: white;" |'''3.14'''
+| style="background:#da820f; color: white;" |'''3.01'''
+| style="background:#a8261f; color: white;" |'''2.84'''
+| style="background:#a8261f; color: white;" |'''2.79'''
+| style="background:#a8261f; color: white;" |'''2.79'''
+| style="background:#a8261f; color: white;" |'''2.79'''
+| style="background:#a8261f; color: white;" |'''2.09'''
+| style="background:#a8261f; color: white;" |'''2.02'''
+|-
+|140
+|style="text-align:left;"|{{GNB}}
+|Authoritarian
+| style="background:#a8261f; color: white;" |'''2.45'''
+| style="background:#a8261f; color: white;" |'''2.56'''
+| style="background:#a8261f; color: white;" |'''2.75'''
+| style="background:#a8261f; color: white;" |'''2.63'''
+| style="background:#a8261f; color: white;" |'''2.63'''
+| style="background:#660018; color: white;" |'''1.98'''
+| style="background:#660018; color: white;" |'''1.98'''
+| style="background:#660018; color: white;" |'''1.98'''
+| style="background:#660018; color: white;" |'''1.93'''
+| style="background:#660018; color: white;" |'''1.93'''
+| style="background:#660018; color: white;" |'''1.26'''
+| style="background:#660018; color: white;" |'''1.43'''
+| style="background:#660018; color: white;" |'''1.99'''
+| style="background:#660018; color: white;" |'''1.99'''
+| style="background:#660018; color: white;" |'''1.99'''
+| style="background:#660018; color: white;" |'''2.00'''
+|-
+|94
+|style="text-align:left;"|{{KEN}}
+|Hybrid regime
+| bgcolor="#f9f8bb" |'''5.05'''
+| bgcolor="#f9f8bb" |'''5.05'''
+| bgcolor="#f9f8bb" |'''5.05'''
+| bgcolor="#f9f8bb" |'''5.05'''
+| bgcolor="#f9f8bb" |'''5.18'''
+| bgcolor="#f9f8bb" |'''5.11'''
+| bgcolor="#f9f8bb" |'''5.11'''
+| bgcolor="#f9f8bb" |'''5.33'''
+| bgcolor="#f9f8bb" |'''5.33'''
+| bgcolor="#f9f8bb" |'''5.13'''
+| bgcolor="#f9f8bb" |'''5.13'''
+| bgcolor="#fad45d" |'''4.71'''
+| bgcolor="#fad45d" |'''4.71'''
+| bgcolor="#fad45d" |'''4.71'''
+| bgcolor="#fad45d" |'''4.79'''
+| bgcolor="#f9f8bb" |'''5.08'''
+|-
+|71
+|style="text-align:left;"|{{LSO}}
+|Flawed democracy
+| bgcolor="#c3eded" |'''6.06'''
+| bgcolor="#c3eded" |'''6.19'''
+| bgcolor="#c3eded" |'''6.30'''
+| bgcolor="#c3eded" |'''6.30'''
+| bgcolor="#c3eded" |'''6.54'''
+| bgcolor="#c3eded" |'''6.64'''
+| bgcolor="#c3eded" |'''6.64'''
+| bgcolor="#c3eded" |'''6.59'''
+| bgcolor="#c3eded" |'''6.59'''
+| bgcolor="#c3eded" |'''6.66'''
+| bgcolor="#c3eded" |'''6.66'''
+| bgcolor="#c3eded" |'''6.66'''
+| bgcolor="#c3eded" |'''6.33'''
+| bgcolor="#c3eded" |'''6.02'''
+| bgcolor="#c3eded" |'''6.29'''
+| bgcolor="#c3eded" |'''6.48'''
+|-
+|86
+|style="text-align:left;"|{{LBR}}
+|Hybrid regime
+| bgcolor="#f9f8bb" |'''5.57'''
+| bgcolor="#f9f8bb" |'''5.43'''
+| bgcolor="#f9f8bb" |'''5.43'''
+| bgcolor="#f9f8bb" |'''5.32'''
+| bgcolor="#f9f8bb" |'''5.45'''
+| bgcolor="#f9f8bb" |'''5.35'''
+| bgcolor="#f9f8bb" |'''5.23'''
+| bgcolor="#f9f8bb" |'''5.31'''
+| bgcolor="#fad45d" |'''4.95'''
+| bgcolor="#fad45d" |'''4.95'''
+| bgcolor="#fad45d" |'''4.95'''
+| bgcolor="#fad45d" |'''4.95'''
+| bgcolor="#f9f8bb" |'''5.07'''
+| bgcolor="#f9f8bb" |'''5.07'''
+| bgcolor="#f9f8bb" |'''5.25'''
+| bgcolor="#f9f8bb" |'''5.22'''
+|-
+|80
+|style="text-align:left;"|{{MDG}}
+|Hybrid regime
+| bgcolor="#f9f8bb" |'''5.26'''
+| bgcolor="#f9f8bb" |'''5.70'''
+| bgcolor="#f9f8bb" |'''5.70'''
+| bgcolor="#f9f8bb" |'''5.70'''
+| bgcolor="#f9f8bb" |'''5.64'''
+| bgcolor="#f9f8bb" |'''5.22'''
+| bgcolor="#f9f8bb" |'''5.11'''
+| bgcolor="#f9f8bb" |'''5.07'''
+| bgcolor="#fad45d" |'''4.85'''
+| bgcolor="#fad45d" |'''4.42'''
+| bgcolor="#fad45d" |'''4.32'''
+| style="background:#da820f; color: white;" |'''3.93'''
+| style="background:#da820f; color: white;" |'''3.93'''
+| style="background:#da820f; color: white;" |'''3.94'''
+| bgcolor="#f9f8bb" |'''5.57'''
+| bgcolor="#f9f8bb" |'''5.82'''
+|-
+|76
+|style="text-align:left;"|{{MWI}}
+|Hybrid regime
+| bgcolor="#f9f8bb" |'''5.85'''
+| bgcolor="#f9f8bb" |'''5.91'''
+| bgcolor="#f9f8bb" |'''5.74'''
+| bgcolor="#f9f8bb" |'''5.74'''
+| bgcolor="#f9f8bb" |'''5.50'''
+| bgcolor="#f9f8bb" |'''5.49'''
+| bgcolor="#f9f8bb" |'''5.49'''
+| bgcolor="#f9f8bb" |'''5.55'''
+| bgcolor="#f9f8bb" |'''5.55'''
+| bgcolor="#f9f8bb" |'''5.66'''
+| bgcolor="#f9f8bb" |'''6.00'''
+| bgcolor="#c3eded" |'''6.08'''
+| bgcolor="#f9f8bb" |'''5.84'''
+| bgcolor="#f9f8bb" |'''5.84'''
+| bgcolor="#f9f8bb" |'''5.13'''
+| bgcolor="#fad45d" |'''4.97'''
+|-
+|119
+|style="text-align:left;"|{{MLI}}
+|Authoritarian
+| style="background:#a8261f; color: white;" |'''2.58'''
+| style="background:#da820f; color: white;" |'''3.23'''
+| style="background:#da820f; color: white;" |'''3.48'''
+| style="background:#da820f; color: white;" |'''3.93'''
+| bgcolor="#fad45d" |'''4.92'''
+| bgcolor="#f9f8bb" |'''5.41'''
+| bgcolor="#f9f8bb" |'''5.64'''
+| bgcolor="#f9f8bb" |'''5.70'''
+| bgcolor="#f9f8bb" |'''5.70'''
+| bgcolor="#f9f8bb" |'''5.79'''
+| bgcolor="#f9f8bb" |'''5.90'''
+| bgcolor="#f9f8bb" |'''5.12'''
+| bgcolor="#c3eded" |'''6.36'''
+| bgcolor="#c3eded" |'''6.01'''
+| bgcolor="#f9f8bb" |'''5.87'''
+| bgcolor="#f9f8bb" |'''5.99'''
+|-
+|108
+|style="text-align:left;"|{{MRT}}
+|Hybrid regime
+| bgcolor="#fad45d" |'''4.14'''
+| bgcolor="#fad45d" |'''4.03'''
+| bgcolor="#fad45d" |'''4.03'''
+| style="background:#da820f; color: white;" |'''3.92'''
+| style="background:#da820f; color: white;" |'''3.92'''
+| style="background:#da820f; color: white;" |'''3.82'''
+| style="background:#da820f; color: white;" |'''3.82'''
+| style="background:#da820f; color: white;" |'''3.96'''
+| style="background:#da820f; color: white;" |'''3.96'''
+| bgcolor="#fad45d" |'''4.17'''
+| bgcolor="#fad45d" |'''4.17'''
+| bgcolor="#fad45d" |'''4.17'''
+| bgcolor="#fad45d" |'''4.17'''
+| style="background:#da820f; color: white;" |'''3.86'''
+| style="background:#da820f; color: white;" |'''3.91'''
+| style="background:#da820f; color: white;" |'''3.12'''
+|-
+|21
+|style="text-align:left;"|{{MUS}}
+|Full democracy
+| style="background:#2f5cd5; color: white;" |'''8.14'''
+| style="background:#2f5cd5; color: white;" |'''8.14'''
+| style="background:#2f5cd5; color: white;" |'''8.08'''
+| style="background:#2f5cd5; color: white;" |'''8.14'''
+| style="background:#2f5cd5; color: white;" |'''8.22'''
+| style="background:#2f5cd5; color: white;" |'''8.22'''
+| style="background:#2f5cd5; color: white;" |'''8.22'''
+| style="background:#2f5cd5; color: white;" |'''8.28'''
+| style="background:#2f5cd5; color: white;" |'''8.27'''
+| style="background:#2f5cd5; color: white;" |'''8.17'''
+| style="background:#2f5cd5; color: white;" |'''8.17'''
+| style="background:#2f5cd5; color: white;" |'''8.17'''
+| style="background:#2f5cd5; color: white;" |'''8.04'''
+| style="background:#2f5cd5; color: white;" |'''8.04'''
+| style="background:#2f5cd5; color: white;" |'''8.04'''
+| style="background:#2f5cd5; color: white;" |'''8.04'''
+|-
+|117
+|style="text-align:left;"|{{MOZ}}
+|Authoritarian
+| style="background:#da820f; color: white;" |'''3.51'''
+| style="background:#da820f; color: white;" |'''3.51'''
+| style="background:#da820f; color: white;" |'''3.51'''
+| style="background:#da820f; color: white;" |'''3.51'''
+| style="background:#da820f; color: white;" |'''3.65'''
+| style="background:#da820f; color: white;" |'''3.85'''
+| bgcolor="#fad45d" |'''4.02'''
+| bgcolor="#fad45d" |'''4.02'''
+| bgcolor="#fad45d" |'''4.60'''
+| bgcolor="#fad45d" |'''4.66'''
+| bgcolor="#fad45d" |'''4.77'''
+| bgcolor="#fad45d" |'''4.88'''
+| bgcolor="#fad45d" |'''4.90'''
+| bgcolor="#fad45d" |'''4.90'''
+| bgcolor="#f9f8bb" |'''5.49'''
+| bgcolor="#f9f8bb" |'''5.28'''
+|-
+|58
+|style="text-align:left;"|{{NAM}}
+|Flawed democracy
+| bgcolor="#c3eded" |'''6.52'''
+| bgcolor="#c3eded" |'''6.52'''
+| bgcolor="#c3eded" |'''6.52'''
+| bgcolor="#c3eded" |'''6.52'''
+| bgcolor="#c3eded" |'''6.43'''
+| bgcolor="#c3eded" |'''6.25'''
+| bgcolor="#c3eded" |'''6.31'''
+| bgcolor="#c3eded" |'''6.31'''
+| bgcolor="#c3eded" |'''6.31'''
+| bgcolor="#c3eded" |'''6.24'''
+| bgcolor="#c3eded" |'''6.24'''
+| bgcolor="#c3eded" |'''6.24'''
+| bgcolor="#c3eded" |'''6.24'''
+| bgcolor="#c3eded" |'''6.23'''
+| bgcolor="#c3eded" |'''6.48'''
+| bgcolor="#c3eded" |'''6.54'''
+|-
+|112
+|style="text-align:left;"|{{NER}}
+|Authoritarian
+| style="background:#a8261f; color: white;" |'''2.37'''
+| style="background:#da820f; color: white;" |'''3.73'''
+| style="background:#da820f; color: white;" |'''3.22'''
+| style="background:#da820f; color: white;" |'''3.29'''
+| style="background:#da820f; color: white;" |'''3.29'''
+| style="background:#da820f; color: white;" |'''3.76'''
+| style="background:#da820f; color: white;" |'''3.76'''
+| style="background:#da820f; color: white;" |'''3.96'''
+| bgcolor="#fad45d" |'''4.62'''
+| bgcolor="#fad45d" |'''4.02'''
+| bgcolor="#fad45d" |'''4.08'''
+| bgcolor="#fad45d" |'''4.16'''
+| bgcolor="#fad45d" |'''4.16'''
+| style="background:#da820f; color: white;" |'''3.38'''
+| style="background:#da820f; color: white;" |'''3.41'''
+| style="background:#da820f; color: white;" |'''3.54'''
+|-
+|105
+|style="text-align:left;"|{{NGA}}
+|Hybrid regime
+| bgcolor="#fad45d" |'''4.23'''
+| bgcolor="#fad45d" |'''4.23'''
+| bgcolor="#fad45d" |'''4.11'''
+| bgcolor="#fad45d" |'''4.10'''
+| bgcolor="#fad45d" |'''4.12'''
+| bgcolor="#fad45d" |'''4.44'''
+| bgcolor="#fad45d" |'''4.44'''
+| bgcolor="#fad45d" |'''4.50'''
+| style="background:#da820f; color: white;" |'''3.85'''
+| style="background:#da820f; color: white;" |'''3.76'''
+| style="background:#da820f; color: white;" |'''3.77'''
+| style="background:#da820f; color: white;" |'''3.77'''
+| style="background:#da820f; color: white;" |'''3.83'''
+| style="background:#da820f; color: white;" |'''3.47'''
+| style="background:#da820f; color: white;" |'''3.53'''
+| style="background:#da820f; color: white;" |'''3.52'''
+|-
+|126
+|style="text-align:left;"|{{RWA}}
+|Authoritarian
+| style="background:#da820f; color: white;" |'''3.30'''
+| style="background:#da820f; color: white;" |'''3.10'''
+| style="background:#da820f; color: white;" |'''3.10'''
+| style="background:#da820f; color: white;" |'''3.10'''
+| style="background:#da820f; color: white;" |'''3.16'''
+| style="background:#da820f; color: white;" |'''3.35'''
+| style="background:#da820f; color: white;" |'''3.19'''
+| style="background:#da820f; color: white;" |'''3.07'''
+| style="background:#da820f; color: white;" |'''3.07'''
+| style="background:#da820f; color: white;" |'''3.25'''
+| style="background:#da820f; color: white;" |'''3.38'''
+| style="background:#da820f; color: white;" |'''3.36'''
+| style="background:#da820f; color: white;" |'''3.25'''
+| style="background:#da820f; color: white;" |'''3.25'''
+| style="background:#da820f; color: white;" |'''3.71'''
+| style="background:#da820f; color: white;" |'''3.82'''
+|-
+|79
+|style="text-align:left;"|{{SEN}}
+|Hybrid regime
+| bgcolor="#f9f8bb" |'''5.48'''
+| bgcolor="#f9f8bb" |'''5.72'''
+| bgcolor="#f9f8bb" |'''5.53'''
+| bgcolor="#f9f8bb" |'''5.67'''
+| bgcolor="#f9f8bb" |'''5.81'''
+| bgcolor="#c3eded" |'''6.15'''
+| bgcolor="#c3eded" |'''6.15'''
+| bgcolor="#c3eded" |'''6.21'''
+| bgcolor="#c3eded" |'''6.08'''
+| bgcolor="#c3eded" |'''6.15'''
+| bgcolor="#c3eded" |'''6.15'''
+| bgcolor="#c3eded" |'''6.09'''
+| bgcolor="#f9f8bb" |'''5.51'''
+| bgcolor="#f9f8bb" |'''5.27'''
+| bgcolor="#f9f8bb" |'''5.37'''
+| bgcolor="#f9f8bb" |'''5.37'''
+|-
+|96
+|style="text-align:left;"|{{SLE}}
+|Hybrid regime
+| bgcolor="#fad45d" |'''4.32'''
+| bgcolor="#f9f8bb" |'''5.03'''
+| bgcolor="#fad45d" |'''4.97'''
+| bgcolor="#fad45d" |'''4.86'''
+| bgcolor="#fad45d" |'''4.86'''
+| bgcolor="#fad45d" |'''4.66'''
+| bgcolor="#fad45d" |'''4.66'''
+| bgcolor="#fad45d" |'''4.55'''
+| bgcolor="#fad45d" |'''4.55'''
+| bgcolor="#fad45d" |'''4.56'''
+| bgcolor="#fad45d" |'''4.64'''
+| bgcolor="#fad45d" |'''4.71'''
+| bgcolor="#fad45d" |'''4.51'''
+| bgcolor="#fad45d" |'''4.51'''
+| bgcolor="#fad45d" |'''4.11'''
+| style="background:#da820f; color: white;" |'''3.57'''
+|-
+|45
+|style="text-align:left;"|{{ZAF}}
+|Flawed democracy
+| bgcolor="#6bd2df" |'''7.05'''
+| bgcolor="#6bd2df" |'''7.05'''
+| bgcolor="#6bd2df" |'''7.05'''
+| bgcolor="#6bd2df" |'''7.05'''
+| bgcolor="#6bd2df" |'''7.24'''
+| bgcolor="#6bd2df" |'''7.24'''
+| bgcolor="#6bd2df" |'''7.24'''
+| bgcolor="#6bd2df" |'''7.41'''
+| bgcolor="#6bd2df" |'''7.56'''
+| bgcolor="#6bd2df" |'''7.82'''
+| bgcolor="#6bd2df" |'''7.90'''
+| bgcolor="#6bd2df" |'''7.79'''
+| bgcolor="#6bd2df" |'''7.79'''
+| bgcolor="#6bd2df" |'''7.79'''
+| bgcolor="#6bd2df" |'''7.91'''
+| bgcolor="#6bd2df" |'''7.91'''
+|-
+|92
+|style="text-align:left;"|{{TZA}}
+|Hybrid regime
+| bgcolor="#f9f8bb" |'''5.35'''
+| bgcolor="#f9f8bb" |'''5.10'''
+| bgcolor="#f9f8bb" |'''5.10'''
+| bgcolor="#f9f8bb" |'''5.10'''
+| bgcolor="#f9f8bb" |'''5.16'''
+| bgcolor="#f9f8bb" |'''5.41'''
+| bgcolor="#f9f8bb" |'''5.47'''
+| bgcolor="#f9f8bb" |'''5.76'''
+| bgcolor="#f9f8bb" |'''5.58'''
+| bgcolor="#f9f8bb" |'''5.77'''
+| bgcolor="#f9f8bb" |'''5.77'''
+| bgcolor="#f9f8bb" |'''5.88'''
+| bgcolor="#f9f8bb" |'''5.64'''
+| bgcolor="#f9f8bb" |'''5.64'''
+| bgcolor="#f9f8bb" |'''5.28'''
+| bgcolor="#f9f8bb" |'''5.18'''
+|-
+|130
+|style="text-align:left;"|{{TGO}}
+|Authoritarian
+| style="background:#a8261f; color: white;" |'''2.99'''
+| style="background:#a8261f; color: white;" |'''2.99'''
+| style="background:#a8261f; color: white;" |'''2.80'''
+| style="background:#a8261f; color: white;" |'''2.80'''
+| style="background:#da820f; color: white;" |'''3.30'''
+| style="background:#da820f; color: white;" |'''3.10'''
+| style="background:#da820f; color: white;" |'''3.05'''
+| style="background:#da820f; color: white;" |'''3.32'''
+| style="background:#da820f; color: white;" |'''3.41'''
+| style="background:#da820f; color: white;" |'''3.45'''
+| style="background:#da820f; color: white;" |'''3.45'''
+| style="background:#da820f; color: white;" |'''3.45'''
+| style="background:#da820f; color: white;" |'''3.45'''
+| style="background:#da820f; color: white;" |'''3.45'''
+| style="background:#a8261f; color: white;" |'''2.43'''
+| style="background:#660018; color: white;" |'''1.75'''
+|-
+|99
+|style="text-align:left;"|{{UGA}}
+|Hybrid regime
+| bgcolor="#fad45d" |'''4.49'''
+| bgcolor="#fad45d" |'''4.55'''
+| bgcolor="#fad45d" |'''4.48'''
+| bgcolor="#fad45d" |'''4.94'''
+| bgcolor="#f9f8bb" |'''5.02'''
+| bgcolor="#f9f8bb" |'''5.20'''
+| bgcolor="#f9f8bb" |'''5.09'''
+| bgcolor="#f9f8bb" |'''5.26'''
+| bgcolor="#f9f8bb" |'''5.22'''
+| bgcolor="#f9f8bb" |'''5.22'''
+| bgcolor="#f9f8bb" |'''5.22'''
+| bgcolor="#f9f8bb" |'''5.16'''
+| bgcolor="#f9f8bb" |'''5.13'''
+| bgcolor="#f9f8bb" |'''5.05'''
+| bgcolor="#f9f8bb" |'''5.03'''
+| bgcolor="#f9f8bb" |'''5.14'''
+|-
+|78
+|style="text-align:left;"|{{ZMB}}
+|Hybrid regime
+| bgcolor="#f9f8bb" |'''5.80'''
+| bgcolor="#f9f8bb" |'''5.80'''
+| bgcolor="#f9f8bb" |'''5.72'''
+| bgcolor="#fad45d" |'''4.86'''
+| bgcolor="#f9f8bb" |'''5.09'''
+| bgcolor="#f9f8bb" |'''5.61'''
+| bgcolor="#f9f8bb" |'''5.68'''
+| bgcolor="#f9f8bb" |'''5.99'''
+| bgcolor="#c3eded" |'''6.28'''
+| bgcolor="#c3eded" |'''6.39'''
+| bgcolor="#c3eded" |'''6.26'''
+| bgcolor="#c3eded" |'''6.26'''
+| bgcolor="#c3eded" |'''6.19'''
+| bgcolor="#f9f8bb" |'''5.68'''
+| bgcolor="#f9f8bb" |'''5.25'''
+| bgcolor="#f9f8bb" |'''5.25'''
+|-
+|132
+|style="text-align:left;"|{{ZWE}}
+|Authoritarian
+| style="background:#da820f; color: white;" |'''3.04'''
+| style="background:#a8261f; color: white;" |'''2.92'''
+| style="background:#a8261f; color: white;" |'''2.92'''
+| style="background:#da820f; color: white;" |'''3.16'''
+| style="background:#da820f; color: white;" |'''3.16'''
+| style="background:#da820f; color: white;" |'''3.16'''
+| style="background:#da820f; color: white;" |'''3.16'''
+| style="background:#da820f; color: white;" |'''3.05'''
+| style="background:#da820f; color: white;" |'''3.05'''
+| style="background:#a8261f; color: white;" |'''2.78'''
+| style="background:#a8261f; color: white;" |'''2.67'''
+| style="background:#a8261f; color: white;" |'''2.67'''
+| style="background:#a8261f; color: white;" |'''2.68'''
+| style="background:#a8261f; color: white;" |'''2.64'''
+| style="background:#a8261f; color: white;" |'''2.53'''
+| style="background:#a8261f; color: white;" |'''2.62'''
+|}
+</div>
