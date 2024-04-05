@@ -332,6 +332,8 @@ class test_base
     const TIMEOUT_LIMIT_LONG = 3;    // time limit for complex functions
     const TIMEOUT_LIMIT_IMPORT = 12;    // time limit for complex import tests in seconds
 
+    const TEST_TIMESTAMP = '2024-04-05T08:35:30+00:00'; // fixed timestamp used for testing
+
 
     public user $usr1; // the main user for testing
     public user $usr2; // a second testing user e.g. to test the user sandbox

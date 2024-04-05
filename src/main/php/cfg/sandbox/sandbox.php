@@ -1762,66 +1762,72 @@ class sandbox extends db_object_seq_id_user
         $class_name = $lib->class_to_name($this::class);
 
         if ($this->is_id_updated($db_rec)) {
-            $db_chk = $this->get_obj_with_same_id_fields();
-            if ($db_chk->id <> 0) {
-                log_debug('target already exists');
-                if ($this->rename_can_switch) {
-                    // ... if yes request to delete or exclude the record with the id parameters before the change
-                    $to_del = clone $db_rec;
-                    $msg = $to_del->del();
-                    if (!$msg->is_ok()) {
-                        $result .= 'Failed to delete the unused ' . $class_name;
-                    }
-                    if ($result = '') {
-                        // .. and use it for the update
-                        // TODO review the logging: from the user view this is a change not a delete and update
-                        $this->id = $db_chk->id;
-                        $this->owner_id = $db_chk->owner_id;
-                        // TODO check which links needs to be updated, because this is a kind of combine objects
-                        // force the include again
-                        $this->include();
-                        $db_rec->exclude();
-                        $result .= $this->save_field_excluded($db_con, $db_rec, $std_rec);
-                        if ($result == '') {
-                            log_debug('found a ' . $class_name . ' target ' . $db_chk->dsp_id() . ', so del ' . $db_rec->dsp_id() . ' and add ' . $this->dsp_id());
-                        } else {
-                            //$result = 'Failed to exclude the unused ' . $this-::class;
-                            $result .= 'A ' . $class_name . ' with the name "' . $this->name() . '" already exists. Please use another name or merge with this ' . $class_name . '.';
-                        }
-                    }
-                } else {
-                    $result .= $this->msg_id_already_used();
-                }
-            } else {
-                log_debug('target does not yet exist');
-                // TODO check if e.g. for word links and formula links "and $this->not_used()" needs to be added
-                if ($this->can_change()) {
-                    // in this case change is allowed and done
-                    log_debug('change the existing ' . $class_name . ' ' . $this->dsp_id() . ' (db ' . $db_rec->dsp_id() . ', standard ' . $std_rec->dsp_id() . ')');
-                    // TODO check if next line is needed
-                    //$this->load_objects();
-                    if ($this->is_link_obj()) {
-                        $result .= $this->save_id_fields_link($db_con, $db_rec, $std_rec);
-                    } elseif ($this->is_named_obj()) {
-                        $result .= $this->save_id_fields($db_con, $db_rec, $std_rec);
-                    } else {
-                        log_info('Save of id field for ' . $class_name . ' not expected');
-                    }
-                } else {
-                    // if the target link has not yet been created
-                    // ... request to delete the old
-                    $to_del = clone $db_rec;
-                    $msg = $to_del->del();
-                    if (!$msg->is_ok()) {
-                        $result .= 'Failed to delete the unused ' . $this::class;
-                    }
-                    // TODO .. and create a deletion request for all users ???
 
-                    if ($result = '') {
-                        // ... and create a new display component link
-                        $this->id = 0;
-                        $this->owner_id = $this->user()->id();
-                        $result .= $this->add()->get_last_message();
+            // check the preserved names
+            $result = $this->check_preserved();
+
+            if ($result == '') {
+                $db_chk = $this->get_obj_with_same_id_fields();
+                if ($db_chk->id <> 0) {
+                    log_debug('target already exists');
+                    if ($this->rename_can_switch) {
+                        // ... if yes request to delete or exclude the record with the id parameters before the change
+                        $to_del = clone $db_rec;
+                        $msg = $to_del->del();
+                        if (!$msg->is_ok()) {
+                            $result .= 'Failed to delete the unused ' . $class_name;
+                        }
+                        if ($result = '') {
+                            // .. and use it for the update
+                            // TODO review the logging: from the user view this is a change not a delete and update
+                            $this->id = $db_chk->id;
+                            $this->owner_id = $db_chk->owner_id;
+                            // TODO check which links needs to be updated, because this is a kind of combine objects
+                            // force the include again
+                            $this->include();
+                            $db_rec->exclude();
+                            $result .= $this->save_field_excluded($db_con, $db_rec, $std_rec);
+                            if ($result == '') {
+                                log_debug('found a ' . $class_name . ' target ' . $db_chk->dsp_id() . ', so del ' . $db_rec->dsp_id() . ' and add ' . $this->dsp_id());
+                            } else {
+                                //$result = 'Failed to exclude the unused ' . $this-::class;
+                                $result .= 'A ' . $class_name . ' with the name "' . $this->name() . '" already exists. Please use another name or merge with this ' . $class_name . '.';
+                            }
+                        }
+                    } else {
+                        $result .= $this->msg_id_already_used();
+                    }
+                } else {
+                    log_debug('target does not yet exist');
+                    // TODO check if e.g. for word links and formula links "and $this->not_used()" needs to be added
+                    if ($this->can_change()) {
+                        // in this case change is allowed and done
+                        log_debug('change the existing ' . $class_name . ' ' . $this->dsp_id() . ' (db ' . $db_rec->dsp_id() . ', standard ' . $std_rec->dsp_id() . ')');
+                        // TODO check if next line is needed
+                        //$this->load_objects();
+                        if ($this->is_link_obj()) {
+                            $result .= $this->save_id_fields_link($db_con, $db_rec, $std_rec);
+                        } elseif ($this->is_named_obj()) {
+                            $result .= $this->save_id_fields($db_con, $db_rec, $std_rec);
+                        } else {
+                            log_info('Save of id field for ' . $class_name . ' not expected');
+                        }
+                    } else {
+                        // if the target link has not yet been created
+                        // ... request to delete the old
+                        $to_del = clone $db_rec;
+                        $msg = $to_del->del();
+                        if (!$msg->is_ok()) {
+                            $result .= 'Failed to delete the unused ' . $this::class;
+                        }
+                        // TODO .. and create a deletion request for all users ???
+
+                        if ($result = '') {
+                            // ... and create a new display component link
+                            $this->id = 0;
+                            $this->owner_id = $this->user()->id();
+                            $result .= $this->add()->get_last_message();
+                        }
                     }
                 }
             }
@@ -2029,56 +2035,59 @@ class sandbox extends db_object_seq_id_user
 
         global $db_con;
 
-        // check the preserved names
-        $result = $this->check_preserved();
+        $result = '';
 
-        if ($result == '') {
+        // load the objects if needed
+        if ($this->is_link_obj()) {
+            $this->load_objects();
+        }
 
-            // load the objects if needed
-            if ($this->is_link_obj()) {
-                $this->load_objects();
-            }
+        // configure the global database connection object for the select, insert, update and delete queries
+        $db_con->set_class($this::class);
+        $db_con->set_usr($this->user()->id());
 
-            // configure the global database connection object for the select, insert, update and delete queries
-            $db_con->set_class($this::class);
-            $db_con->set_usr($this->user()->id());
+        // create an object to check possible duplicates
+        $similar = null;
 
-            // create an object to check possible duplicates
-            $similar = null;
-
-            // if a new object is supposed to be added check upfront for a similar object to prevent adding duplicates
-            if ($this->id() == 0) {
-                log_debug('check possible duplicates before adding ' . $this->dsp_id());
-                $similar = $this->get_similar();
-                if ($similar->id() <> 0) {
-                    // check that the get_similar function has really found a similar object and report potential program errors
-                    if (!$this->is_similar($similar)) {
-                        $result .= $this->dsp_id() . ' seems to be not similar to ' . $similar->dsp_id();
+        // if a new object is supposed to be added check upfront for a similar object to prevent adding duplicates
+        if ($this->id() == 0) {
+            log_debug('check possible duplicates before adding ' . $this->dsp_id());
+            $similar = $this->get_similar();
+            if ($similar->id() <> 0) {
+                // check that the get_similar function has really found a similar object and report potential program errors
+                if (!$this->is_similar($similar)) {
+                    $result .= $this->dsp_id() . ' seems to be not similar to ' . $similar->dsp_id();
+                } else {
+                    // if similar is found set the id to trigger the updating instead of adding
+                    $similar->load_by_id($similar->id, $similar::class); // e.g. to get the type_id
+                    // prevent that the id of a formula is used for the word with the type formula link
+                    if (get_class($this) == get_class($similar)) {
+                        $this->id = $similar->id;
                     } else {
-                        // if similar is found set the id to trigger the updating instead of adding
-                        $similar->load_by_id($similar->id, $similar::class); // e.g. to get the type_id
-                        // prevent that the id of a formula is used for the word with the type formula link
-                        if (get_class($this) == get_class($similar)) {
-                            $this->id = $similar->id;
-                        } else {
-                            if (!((get_class($this) == word::class and get_class($similar) == formula::class)
-                                or (get_class($this) == triple::class and get_class($similar) == formula::class))) {
-                                $result = $similar->id_used_msg($this);
-                            }
+                        if (!((get_class($this) == word::class and get_class($similar) == formula::class)
+                            or (get_class($this) == triple::class and get_class($similar) == formula::class))) {
+                            $result = $similar->id_used_msg($this);
                         }
                     }
-                } else {
-                    $similar = null;
                 }
-
+            } else {
+                $similar = null;
             }
+
         }
 
         // create a new object if nothing similar has been found
         if ($result == '') {
             if ($this->id == 0) {
-                log_debug('add');
-                $result = $this->add()->get_last_message();
+
+                // check the preserved names
+                $result = $this->check_preserved();
+
+                if ($result == '') {
+                    log_debug('add');
+                    $result = $this->add()->get_last_message();
+                }
+
             } else {
                 // if the similar object is not the same as $this object, suggest renaming $this object
                 if ($similar != null) {

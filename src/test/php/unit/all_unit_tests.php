@@ -92,6 +92,7 @@ use cfg\db\sql_db;
 use cfg\element_type_list;
 use cfg\formula_link_type_list;
 use cfg\formula_type_list;
+use cfg\import\import_file;
 use cfg\job_type_list;
 use cfg\language_form_list;
 use cfg\language_list;
@@ -156,6 +157,8 @@ class all_unit_tests extends test_cleanup
      */
     function run_single(): void
     {
+        global $usr;
+
         // prepare for unit testing
         $this->db_con_for_unit_tests();
         $this->users_for_unit_tests();
@@ -164,6 +167,8 @@ class all_unit_tests extends test_cleanup
         // run the selected test
         // (new system_tests)->run($this);
         (new import_tests)->run($this);
+        $import = new import_file();
+        $import->import_test_files($usr);
 
         /*
         global $db_con;

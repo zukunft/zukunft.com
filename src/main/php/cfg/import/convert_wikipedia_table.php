@@ -33,7 +33,11 @@
 namespace cfg\import;
 
 
+use cfg\export\export;
 use cfg\library;
+use cfg\user;
+use DateTime;
+use DateTimeInterface;
 
 class convert_wikipedia_table
 {
@@ -54,16 +58,83 @@ class convert_wikipedia_table
 
     /**
      * convert a wikipedia table to a zukunft.com json string
-     * @param string $wiki_tbl
+     * @param string $wiki_tbl wth the wikipedia table
+     * @param user $usr the user how has initiated the convertion
+     * @param array $context a list of phrases that describes the context of the table
      * @return string
      */
-    function convert(string $wiki_tbl): string
+    function convert(
+        string $wiki_tbl,
+        user   $usr,
+        string $timestamp,
+        array  $context,
+        string $row_name_in,
+        int    $col_of_row_name,
+        string $col_name_in,
+        string $col_type,
+        int    $col_start
+    ): string
+    {
+        $table = $this->wikipedia_table_to_array($wiki_tbl);
+        $col_names = $table[0];
+        $rows = $table[1];
+
+        // map the table to a json
+        $json = $this->header($usr, $timestamp);
+        $json[export::SELECTION] = $context;
+        $words = [];
+        $word = [];
+        $word[export::NAME] = $row_name_in;
+        $words[] = $word;
+        $word[export::NAME] = $col_name_in;
+        $words[] = $word;
+        foreach ($rows as $row) {
+            $word[export::NAME] = $row[$col_of_row_name];
+            $words[] = $word;
+        }
+        $i = 0;
+        foreach ($col_names as $col_name) {
+            if ($i > $col_start) {
+                $word[export::NAME] = $col_name;
+                $word[export::TYPE] = $col_type;
+                $words[] = $word;
+            }
+            $i++;
+        }
+        $json[export::WORDS] = $words;
+        $val_list = [];
+        foreach ($rows as $row_in) {
+            $val_row = [];
+            $context_row = $context;
+            $context_row[] = $row_in[1];
+            $val_row[export::CONTEXT] = $context_row;
+            $i = 0;
+            $val_row_items = [];
+            foreach ($row_in as $item) {
+                if ($i > $col_start) {
+                    $val_row_items[$col_names[$i]] = $item;
+                }
+                $i++;
+            }
+            $val_row[export::VALUES] = $val_row_items;
+            $val_list[] = $val_row;
+        }
+        $json[export::VALUE_LIST] = $val_list;
+        return json_encode($json);
+    }
+
+    /**
+     * convert a wikipedia table into an array
+     *
+     * @param string $wiki_tbl the wikipedia table as a string
+     * @return array the array where the first entry is the column names and the second an array of the table rows
+     */
+    private function wikipedia_table_to_array(string $wiki_tbl): array
     {
         $lib = new library();
-        $result = '';
         $col_names = [];
         $rows = [];
-        $row = [];
+        $row_in = [];
         $tbl_str = $lib->str_right_of($wiki_tbl, self::TABLE_START . self::CLASS_NAME);
         if ($tbl_str != '') {
             $tbl_str = $lib->str_left_of($tbl_str, self::TABLE_END);
@@ -87,9 +158,9 @@ class convert_wikipedia_table
                     $data_row = $lib->str_left_of($tbl_str, self::ROW_END);
                     if ($data_row == self::ROW_MAKER) {
                         // new row
-                        if (count($row) > 0) {
-                            $rows[] = $row;
-                            $row = [];
+                        if (count($row_in) > 0) {
+                            $rows[] = $row_in;
+                            $row_in = [];
                         }
                         $tbl_str = $lib->str_right_of($tbl_str, self::ROW_END);
                     }
@@ -119,65 +190,35 @@ class convert_wikipedia_table
                             }
                         }
                         if ($row_entry != '') {
-                            $row[] = $row_entry;
+                            $row_in[] = $row_entry;
                         }
                         $tbl_str = $lib->str_right_of($tbl_str, self::ROW_END);
                     }
                 }
                 // last row
-                if (count($row) > 0) {
-                    $rows[] = $row;
+                if (count($row_in) > 0) {
+                    $rows[] = $row_in;
                 }
             }
         }
-        $result .= '{"version": "0.0.3", "time": "2022-02-12 18:09:36", "user": "timon",';
-        $result .= '"selection": ["Democracy Index"],';
-        $result .= '"words": [';
-        $result .= '{"name": "Country"},';
-        foreach ($rows as $row) {
-            $result .= '{"name": "' . $row[1] . '"},';
-        }
-        $result .= '{"name": "Year"},';
-        $i = 0;
-        $year_item = '';
-        foreach ($col_names as $col_name) {
-            if ($i > 3) {
-                if ($year_item != '') {
-                    $year_item .= ',';
-                }
-                $year_item .= '{ "name": "' . $col_name . '", "type": "time"}';
-            }
-            $i++;
-        }
-        $result .= $year_item;
-        $result .= '],';
-        $result .= '"value-list": [';
-        $val_list = '';
-        foreach ($rows as $row) {
-            if ($val_list != '') {
-                $val_list .= ',';
-            }
-            $val_list .= '{';
-            $val_list .= '"context": ["Democracy Index","' . $row[1] . '"],';
-            $val_list .= '"values": [';
-            $i = 0;
-            $val_item = '';
-            foreach ($row as $item) {
-                if ($val_item != '') {
-                    $val_item .= ',';
-                }
-                if ($i > 3) {
-                    $val_item .= '{"' . $col_names[$i] . '": ' . $item . '}';
-                }
-                $i++;
-            }
-            $val_list .= $val_item;
-            $val_list .= ']';
-            $val_list .= '}';
-        }
-        $result .= $val_list;
-        $result .= ']';
-        $result .= '}';
-        return $result;
+        $table = [];
+        $table[] = $col_names;
+        $table[] = $rows;
+
+        return $table;
     }
+
+    private function header(user $usr, string $timestamp = ''): array
+    {
+        $header = [];
+        $header[export::POD] = POD_NAME;
+        $header[export::VERSION] = PRG_VERSION;
+        if ($timestamp == '') {
+            $header[export::TIME] = (new DateTime())->format(DateTimeInterface::ATOM);
+        } else {
+            $header[export::TIME] = $timestamp;
+        }
+        return $header;
+    }
+
 }

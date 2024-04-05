@@ -324,9 +324,9 @@ class value_list extends sandbox_value_list
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_multi(
-        sql      $sc,
-        string   $query_name,
-        array    $sc_par_lst
+        sql    $sc,
+        string $query_name,
+        array  $sc_par_lst
     ): sql_par
     {
         $qp = new sql_par(value::class, [], $sc->ext_ex_user($sc_par_lst));
@@ -729,32 +729,63 @@ class value_list extends sandbox_value_list
             }
 
             if ($key == self::FLD_EX_VALUES) {
-                foreach ($value as $val_entry) {
-                    foreach ($val_entry as $val_key => $val_number) {
-                        $val_to_add = clone $val;
-                        $phr_lst_to_add = clone $phr_lst;
-                        $val_phr = new phrase($this->user());
-                        if ($test_obj) {
-                            $val_phr->set_name($val_key, word::class);
-                            $val_phr->set_id($test_obj->seq_id());
-                        } else {
-                            $val_phr->load_by_name($val_key);
+                foreach ($value as $val_entry_key => $val_entry) {
+                    if (is_array($val_entry)) {
+                        foreach ($val_entry as $val_key => $val_number) {
+                            $result = $this->add_value(
+                                $val_key,
+                                $val_number,
+                                $val,
+                                $phr_lst,
+                                $do_save,
+                                $result,
+                                $test_obj);
                         }
-                        $phr_lst_to_add->add($val_phr);
-                        $val_to_add->set_number($val_number);
-                        $val_to_add->grp = $phr_lst_to_add->get_grp_id($do_save);
-                        if ($test_obj) {
-                            $val_to_add->set_id($test_obj->seq_id());
-                        } else {
-                            $result->add_message($val_to_add->save());
-                        }
-                        $this->add_obj($val_to_add);
+                    } else {
+                        $result = $this->add_value(
+                            $val_entry_key,
+                            $val_entry,
+                            $val,
+                            $phr_lst,
+                            $do_save,
+                            $result,
+                            $test_obj);
                     }
                 }
             }
-
         }
 
+        return $result;
+    }
+
+    private function add_value(
+        $val_key,
+        $val_number,
+        value $val,
+        phrase_list $phr_lst,
+        bool $do_save,
+        user_message $result,
+        object $test_obj = null
+    ): user_message
+    {
+        $val_to_add = clone $val;
+        $phr_lst_to_add = clone $phr_lst;
+        $val_phr = new phrase($this->user());
+        if ($test_obj) {
+            $val_phr->set_name($val_key, word::class);
+            $val_phr->set_id($test_obj->seq_id());
+        } else {
+            $val_phr->load_by_name($val_key);
+        }
+        $phr_lst_to_add->add($val_phr);
+        $val_to_add->set_number($val_number);
+        $val_to_add->grp = $phr_lst_to_add->get_grp_id($do_save);
+        if ($test_obj) {
+            $val_to_add->set_id($test_obj->seq_id());
+        } else {
+            $result->add_message($val_to_add->save());
+        }
+        $this->add_obj($val_to_add);
         return $result;
     }
 

@@ -65,6 +65,8 @@ class export
     const USERS = 'users';
     const VERBS = 'verbs';
     const WORDS = 'words';
+    const NAME = 'name';
+    const TYPE = 'type';
     const PHRASES = 'phrases';
     const PHRASE_VALUES = 'phrase-values';
     const TRIPLES = 'triples';
@@ -73,6 +75,7 @@ class export
     const REFS = 'refs';
     const VALUES = 'values';
     const VALUE_LIST = 'value-list';
+    const CONTEXT = 'context';
     const VIEWS = 'views';
     const COMPONENTS = 'components';
     const CALC_VALIDATION = 'calc-validation';

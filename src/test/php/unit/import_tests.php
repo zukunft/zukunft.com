@@ -38,6 +38,7 @@ include_once MODEL_IMPORT_PATH . 'convert_wikipedia_table.php';
 use cfg\import\convert_wikipedia_table;
 use cfg\import\import;
 use html\html_base;
+use test\test_base;
 use test\test_cleanup;
 
 class import_tests
@@ -62,7 +63,10 @@ class import_tests
         $in_table = file_get_contents(PATH_TEST_IMPORT_FILES . 'wikipedia/democratie_index_table.txt');
         $json_str = file_get_contents(PATH_TEST_IMPORT_FILES . 'wikipedia/democratie_index_table.json');
         $conv_wiki = new convert_wikipedia_table;
-        $conv_str = $conv_wiki->convert($in_table);
+        $conv_str = $conv_wiki->convert($in_table, $usr, test_base::TEST_TIMESTAMP,
+            ['Democracy Index'],
+            'Country', 1,
+            'Year', 'time', 3);
         $result = json_decode($conv_str, true);
         $target = json_decode($json_str, true);
         $t->assert_json($test_name, $result, $target);
