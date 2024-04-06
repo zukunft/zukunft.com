@@ -45,10 +45,12 @@ use cfg\library;
  */
 class sql_par
 {
-    public string $sql;   // the SQL statement to create a prepared query
-    public string $name;  // the unique name of the SQL statement
-    public array $par;    // the list of the parameters used for the execution
-    public string $ext;   // the extension used e.g. to decide if the index is int or string
+    public string $sql;     // the SQL statement to create a prepared query
+    public string $name;    // the unique name of the SQL statement
+    public array $par;      // the list of the parameters used for the execution
+    public array $par_name_lst; // the list of the parameters names to reuse already added parameters
+    public array $par_type_lst; // the list of the parameters types
+    public string $ext;     // the extension used e.g. to decide if the index is int or string
     public sql_type $typ; // to handle table that does not have a bigint prime index
 
     /**
@@ -117,7 +119,7 @@ class sql_par
     }
 
     /**
-     * combine two sql and the related parameters to one sql statement
+     * merge two sql and the related parameters to one sql statement
      *
      * @param sql_par $qp
      * @param bool $unique true if the parameters should be unique
@@ -130,6 +132,25 @@ class sql_par
         } else {
             $this->sql .= ' UNION ' . $qp->sql;
         }
+        if ($unique) {
+            $this->par = array_unique(array_merge($this->par, $qp->par));
+        } else {
+            $this->par = array_merge($this->par, $qp->par);
+        }
+        return $this;
+    }
+
+    /**
+     * combine two sql and the related parameters to one sql statement
+     * without the union for a sql function
+     *
+     * @param sql_par $qp
+     * @param bool $unique true if the parameters should be unique
+     * @return sql_par
+     */
+    function combine(sql_par $qp, bool $unique = false): sql_par
+    {
+        $this->sql .= $qp->sql;
         if ($unique) {
             $this->par = array_unique(array_merge($this->par, $qp->par));
         } else {

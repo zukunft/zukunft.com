@@ -48,6 +48,7 @@ class change_field_list extends type_list
     const TI_WORD_USER_ID = 9;
     const TI_WORD_NAME = 10;
     const TI_WORD_DESCRIPTION = 11;
+    const TI_WORD_PHRASE_TYPE = 12;
 
     /*
      * database link
@@ -67,6 +68,7 @@ class change_field_list extends type_list
     const FLD_WORD_VIEW = 'view_id';
     const FLD_WORD_PLURAL = 'plural';
     const FLD_PHRASE_TYPE = 'phrase_type_id';
+    const FLD_PHRASE_TYPE_DSP = 'type';
     const FLD_VERB_NAME = 'verb_name';
     const FLD_TRIPLE_NAME = 'triple_name';
     const FLD_GIVEN_NAME = 'name_given';
@@ -115,6 +117,13 @@ class change_field_list extends type_list
             change_field_list::FLD_WORD_DESCRIPTION,
             change_field_list::FLD_WORD_DESCRIPTION,
             change_field_list::TI_WORD_DESCRIPTION);
+        $this->add($type);
+        $table_field_name = $table_id . change_field_list::FLD_PHRASE_TYPE;
+        $type = new type_object(
+            $table_field_name,
+            change_field_list::FLD_PHRASE_TYPE,
+            change_field_list::FLD_PHRASE_TYPE_DSP,
+            change_field_list::TI_WORD_PHRASE_TYPE);
         $this->add($type);
     }
 

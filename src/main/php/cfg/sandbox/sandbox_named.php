@@ -538,11 +538,14 @@ class sandbox_named extends sandbox
         array $fld_lst_all = [],
         array $sc_par_lst = []): sql_par
     {
-        $lib = new library();
 
+        // check the parameters
+        $lib = new library();
         if (count($fld_lst) != count($val_lst)) {
             log_err('fields (' . $lib->dsp_array($fld_lst) . ') does not match with values (' . $lib->dsp_array($val_lst) . ')');
         }
+
+        // create the main query parameter object and set the name
         $and_log = $sc->and_log($sc_par_lst);
         $fld_chg_ext = $lib->sql_field_ext($fld_lst, $fld_lst_all);
         $ext = sql::file_sep . sql::file_insert;
@@ -551,22 +554,43 @@ class sandbox_named extends sandbox
         }
         $ext .= sql::file_sep . $fld_chg_ext;
         $qp = $this->sql_common($sc, $sc_par_lst, $ext);
+
         if ($sc->and_log($sc_par_lst)) {
+
+            $par_name_lst = [];
+            $par_value_lst = [];
+            $par_type_lst = [];
+
+            // create the query parameters for the single log entries
             $sc_log = clone $sc;
             $sc_par_lst_sub = $sc_par_lst;
             $sc_par_lst_sub[] = sql_type::SUB;
             $i = 0;
+
             foreach ($fld_lst as $fld) {
                 $log = new change($this->user());
                 $log->set_table_by_class($this::class);
                 $log->set_field($fld);
                 $log->new_value = $val_lst[$i];
-                $sql_log = $log->sql_insert($sc_log, $sc_par_lst_sub);
+                // TODO get the id of the new entry and use it in the log
+                $qp_log = $log->sql_insert($sc_log, $sc_par_lst_sub);
+                $qp->combine($qp_log);
             }
+
+            // create the query parameters for the actual change
+            $qp_chg = clone $qp;
+            $qp_chg->sql = $sc->create_sql_insert($fld_lst, $val_lst);
+            $qp_chg->par = $val_lst;
+
+            // merge all together and create the function
+            $qp->combine($qp_chg);
+            // TODO add the function header and footer
+
+        } else {
+            // add the child object specific fields and values
+            $qp->sql = $sc->create_sql_insert($fld_lst, $val_lst);
+            $qp->par = $val_lst;
         }
-        // add the child object specific fields and values
-        $qp->sql = $sc->create_sql_insert($fld_lst, $val_lst);
-        $qp->par = $val_lst;
 
         return $qp;
     }
