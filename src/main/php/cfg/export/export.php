@@ -70,6 +70,9 @@ class export
     const PHRASES = 'phrases';
     const PHRASE_VALUES = 'phrase-values';
     const TRIPLES = 'triples';
+    const FROM = 'from';
+    const VERB = 'verb';
+    const TO = 'to';
     const FORMULAS = 'formulas';
     const SOURCES = 'sources';
     const REFS = 'refs';

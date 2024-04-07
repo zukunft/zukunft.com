@@ -768,6 +768,9 @@ class test_base
         if (!$lib->json_is_similar($result, $target)) {
             $diff = $lib->diff_msg($result, $target);
         }
+        // TODO remove after development is complete
+        $result_str = json_encode($result);
+        $target_str = json_encode($target);
         return $this->assert($test_name, $diff, '');
     }
 

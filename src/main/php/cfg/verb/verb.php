@@ -67,6 +67,8 @@ class verb extends type_object
 
     // the unique id of predicates or verbs
     // to link a db row to predefined program code
+    // TODO add an easy way to get the name from the code id
+    // TODO add a check if all verbs have a const und linked functionalities
     const NOT_SET = "not_set";
     const IS = "is";
     const IS_PART_OF = "contains";
@@ -83,6 +85,7 @@ class verb extends type_object
     // directional forms of verbs (maybe move to verb_api or test if only used for testing)
     const FOLLOWED_BY = "is followed by";
     const FOLLOWER_OF = "is follower of";
+    const SYMBOL = "symbol";
 
     // search directions to get related words (phrases)
     const DIRECTION_NO = '';

@@ -33,8 +33,10 @@
 namespace cfg\import;
 
 
+use api\verb\verb as verb_api;
 use cfg\export\export;
 use cfg\library;
+use cfg\triple;
 use cfg\user;
 use DateTime;
 use DateTimeInterface;
@@ -42,25 +44,42 @@ use DateTimeInterface;
 class convert_wikipedia_table
 {
 
+    const KEY_TABLE_NAME = 'table_name';
+
     const TABLE_START = '{| class=';
     const TABLE_END = '|}';
-    const CLASS_NAME = '"wikitable sortable mw-datatable"';
+    const CLASS_NAME = '"wikitable';
 
     const ROW_END = "\n";
     const ROW_MAKER = '|-';
     const COL_MAKER_HEADER = '!';
     const COL_MAKER = '|';
+    const COL_MAKER_INNER = '||';
     const NUMBER_MAKER = "'''";
     const LINK_MAKER = "{{";
+    const LINK_FLAGDECO = "flagdeco";
+    const LINK_MONO = "mono";
+    const LINK_SORT = "sort";
+    const LINK_STYLE = "style=";
     const LINK_MAKER_END = "}}";
+    const LINK_LONG_MAKER = "[[";
+    const LINK_LONG_MAKER_END = "]]";
     const ITEM_IGNORE_MAKER = "rowspan";
     const SORT_MAKER = "sort";
 
     /**
      * convert a wikipedia table to a zukunft.com json string
+     * TODO review and move the parameters to a more general context
+     *
      * @param string $wiki_tbl wth the wikipedia table
      * @param user $usr the user how has initiated the convertion
+     * @param string $timestamp
      * @param array $context a list of phrases that describes the context of the table
+     * @param string $row_name_in
+     * @param int $col_of_row_name
+     * @param string $col_name_in
+     * @param string $col_type
+     * @param int $col_start
      * @return string
      */
     function convert(
@@ -124,7 +143,107 @@ class convert_wikipedia_table
     }
 
     /**
+     * convert a wikitable2json to a zukunft.com json
+     * based on wikitable2json
+     * TODO use it to compare wikipedia table with wikidata and report the differences
+     *
+     * @param string $wiki_json wth the wikipedia table
+     * @param user $usr the user how has initiated the convertion
+     * @param string $timestamp the timestamp of the import
+     * @param int $table_nbr position of the tbale that should be converted
+     * @param array $context a list of phrases that describes the context of the table
+     * @param string $row_name_wiki column name used to select the row name
+     * @param string $row_name_out name for the row entry in the target json
+     * @param string $col_name_wiki column name used to select the row name
+     * @param string $col_name_out
+     * @return string
+     */
+    function convert_wiki_json(
+        string $wiki_json,
+        user   $usr,
+        string $timestamp,
+        int    $table_nbr = 0,
+        array  $context = [],
+        string $row_name_wiki = '',
+        string $row_name_out = '',
+        string $col_name_wiki = '',
+        string $col_name_out = ''
+    ): string
+    {
+        global $verbs;
+
+        if ($col_name_out == '') {
+            $col_name_out = $col_name_wiki;
+        }
+
+        $wiki_json = json_decode($wiki_json, true);
+
+        $json = $this->header($usr, $timestamp);
+        $words = [];
+        $triples = [];
+
+        //
+        foreach ($context as $context_name) {
+            $word = [];
+            $word[export::NAME] = $context_name;
+            $words[] = $word;
+        }
+        $word = [];
+        $word[export::NAME] = $context[0] . ' ' . $col_name_out;
+        $words[] = $word;
+        $word = [];
+        $word[export::NAME] = $row_name_out;
+        $words[] = $word;
+
+        // select the target table
+        $wiki_table = $wiki_json[$table_nbr];
+
+        // get the header row
+        $header_row = array_shift($wiki_table);
+        $pos_row = array_search($row_name_wiki, $header_row);
+        $pos_col = array_search($col_name_wiki, $header_row);
+
+        // write the words
+        foreach ($wiki_table as $wiki_row) {
+            $word = [];
+            $word[export::NAME] = $wiki_row[$pos_row];
+            $words[] = $word;
+            $word = [];
+            $word[export::NAME] = $wiki_row[$pos_col];
+            $words[] = $word;
+        }
+
+        //get the triple
+        foreach ($wiki_table as $wiki_row) {
+            $trp = [];
+            $trp[export::FROM] = $wiki_row[$pos_row];
+            $trp[export::VERB] = verb_api::TN_IS;
+            $trp[export::TO] = $row_name_out;
+            $triples[] = $trp;
+            $trp = [];
+            $trp[export::FROM] = $wiki_row[$pos_col];
+            $trp[export::VERB] = verb_api::TN_IS;
+            $trp[export::TO] = $context[0] . ' ' . $col_name_out;
+            $triples[] = $trp;
+            $trp = [];
+            $trp[export::FROM] = $wiki_row[$pos_col];
+            $trp[export::VERB] = verb_api::TN_SYMBOL;
+            $trp[export::TO] = $wiki_row[$pos_row];
+            $triples[] = $trp;
+        }
+
+        $json[export::WORDS] = $words;
+        $json[export::TRIPLES] = $triples;
+        return json_encode($json);
+    }
+
+    /**
      * convert a wikipedia table into an array
+     * - the first array are the column headlines
+     * - and the following arrays are the rows
+     *   - each cell can be a string with the written value
+     *   - or an array where the written value is the first entry
+     *     and the
      *
      * @param string $wiki_tbl the wikipedia table as a string
      * @return array the array where the first entry is the column names and the second an array of the table rows
@@ -149,6 +268,7 @@ class convert_wikipedia_table
                 while (substr($tbl_str, 0, 1) == self::COL_MAKER_HEADER) {
                     $col_name = $lib->str_right_of($tbl_str, self::COL_MAKER_HEADER);
                     $col_name = $lib->str_left_of($col_name, self::ROW_END);
+                    $col_name = $this->wikipedia_cell_to_string_or_array($col_name);
                     $col_names[] = $col_name;
                     $tbl_str = $lib->str_right_of($tbl_str, self::ROW_END);
                 }
@@ -166,31 +286,33 @@ class convert_wikipedia_table
                     }
                     while (str_starts_with($tbl_str, self::COL_MAKER)
                         and !str_starts_with($tbl_str, self::ROW_MAKER)) {
-                        $row_entry = $lib->str_right_of($tbl_str, self::COL_MAKER);
-                        $row_entry = $lib->str_left_of($row_entry, self::ROW_END);
-                        if (strpos($row_entry, self::ITEM_IGNORE_MAKER) > 0) {
-                            $row_entry = '';
-                        } else {
-                            // remove style
-                            if (strpos($row_entry, self::COL_MAKER) > 1) {
-                                $row_entry = $lib->str_right_of($row_entry, self::COL_MAKER);
-                                if (str_starts_with($row_entry, self::NUMBER_MAKER)) {
-                                    $row_entry = $lib->str_between($row_entry, self::NUMBER_MAKER, self::NUMBER_MAKER);
+                        $row_entry = $lib->str_left_of($tbl_str, self::ROW_END);
+                        $row_entry = $lib->str_right_of($row_entry, self::COL_MAKER);
+                        if (str_contains($row_entry, self::COL_MAKER_INNER)) {
+                            $row_remaining = $row_entry;
+                            while (str_contains($row_remaining, self::COL_MAKER_INNER)) {
+                                $row_entry = $lib->str_left_of($row_entry, self::COL_MAKER_INNER);
+                                if (strpos($row_entry, self::ITEM_IGNORE_MAKER) > 0) {
+                                    $row_entry = '';
+                                } else {
+                                    // get the cell text
+                                    $row_entry = $this->wikipedia_cell_to_string_or_array($row_entry);
                                 }
-                                if (str_starts_with($row_entry, self::LINK_MAKER)) {
-                                    $row_entry = $lib->str_between($row_entry, self::LINK_MAKER, self::LINK_MAKER_END);
+                                if ($row_entry != '') {
+                                    $row_in[] = $row_entry;
                                 }
-                                if (str_starts_with($row_entry, self::SORT_MAKER)) {
-                                    // TODO get sort name
-                                    $row_entry = $lib->str_right_of($row_entry, self::LINK_MAKER, self::LINK_MAKER_END);
-                                }
-                                if (str_starts_with($row_entry, self::LINK_MAKER)) {
-                                    $row_entry = $lib->str_between($row_entry, self::LINK_MAKER, self::LINK_MAKER_END);
-                                }
+                                $row_remaining = $lib->str_right_of($row_remaining, self::COL_MAKER_INNER);
                             }
-                        }
-                        if ($row_entry != '') {
-                            $row_in[] = $row_entry;
+                        } else {
+                            if (strpos($row_entry, self::ITEM_IGNORE_MAKER) > 0) {
+                                $row_entry = '';
+                            } else {
+                                // get the cell text
+                                $row_entry = $this->wikipedia_cell_to_string_or_array($row_entry);
+                            }
+                            if ($row_entry != '') {
+                                $row_in[] = $row_entry;
+                            }
                         }
                         $tbl_str = $lib->str_right_of($tbl_str, self::ROW_END);
                     }
@@ -206,6 +328,95 @@ class convert_wikipedia_table
         $table[] = $rows;
 
         return $table;
+    }
+
+    /**
+     * get the display text from a wikipedia cell
+     * @param string $in_text the text of the cell
+     * @return string|array the text shown to the user or an array with triples
+     */
+    private function wikipedia_cell_to_string_or_array(string $in_text): string|array
+    {
+        $lib = new library();
+        $result = '';
+        $remaining = $in_text;
+
+        // ignore styles
+        if (str_contains($remaining, self::COL_MAKER)
+            and str_contains($remaining, self::LINK_STYLE)) {
+            $remaining = $lib->str_right_of($remaining, self::LINK_STYLE);
+            $remaining = $lib->str_right_of($remaining, self::COL_MAKER);
+        }
+
+        // ignore sort
+        if (str_contains($remaining, self::COL_MAKER)
+            and str_contains($remaining, self::SORT_MAKER)) {
+            // TODO get sort name
+            $remaining = $lib->str_right_of($remaining, self::SORT_MAKER);
+            $remaining = $lib->str_right_of($remaining, self::COL_MAKER);
+            $sort_name = $lib->str_left_of($remaining, self::COL_MAKER);
+            $remaining = $lib->str_right_of($remaining, self::COL_MAKER);
+        }
+
+        // get the number
+        if ($lib->str_between($remaining, self::NUMBER_MAKER, self::NUMBER_MAKER) != '') {
+            $number_text = $lib->str_between($remaining, self::NUMBER_MAKER, self::NUMBER_MAKER);
+            $result .= $number_text;
+            $remaining = $lib->str_right_of($remaining, self::NUMBER_MAKER);
+            $remaining = $lib->str_right_of($remaining, self::NUMBER_MAKER);
+        }
+
+        // get the text from links
+        if (str_contains($remaining, self::LINK_LONG_MAKER)
+            and str_contains($remaining, self::LINK_LONG_MAKER_END)) {
+            $result .= $lib->str_left_of($remaining, self::LINK_LONG_MAKER);
+            $link_text = $lib->str_between($remaining, self::LINK_LONG_MAKER, self::LINK_LONG_MAKER_END);
+            if (str_contains($link_text, self::COL_MAKER)) {
+                $link_text = $lib->str_right_of($link_text, self::COL_MAKER);
+            }
+            $result .= $link_text;
+            $remaining = $lib->str_right_of($remaining, self::LINK_LONG_MAKER_END);
+        }
+        if (str_contains($remaining, self::COL_MAKER)) {
+            if (str_starts_with($remaining, self::SORT_MAKER)) {
+                // TODO get sort name
+                $remaining = $lib->str_right_of($remaining, self::LINK_MAKER);
+            }
+        }
+        if (str_contains($remaining, self::LINK_MAKER)
+            and str_contains($remaining, self::LINK_MAKER_END)) {
+            $result = $lib->str_left_of($remaining, self::LINK_MAKER);
+            $link_text = $lib->str_between($remaining, self::LINK_MAKER, self::LINK_MAKER_END);
+            if (str_contains($link_text, self::COL_MAKER)) {
+                $link_type = $lib->str_left_of($link_text, self::COL_MAKER);
+                if ($link_type != self::LINK_FLAGDECO) {
+                    $link_text = $lib->str_right_of($link_text, self::COL_MAKER);
+                }
+            }
+            $result .= $link_text;
+            $remaining = $lib->str_right_of($remaining, self::LINK_LONG_MAKER_END);
+        }
+        $result .= $remaining;
+        return trim($result);
+    }
+
+    private function wikipedia_text_to_json_array(string $wiki_text, array $result): array
+    {
+        $lib = new library();
+        if (str_contains($wiki_text, self::LINK_MAKER)) {
+            $link_text = $lib->str_right_of($wiki_text, self::LINK_MAKER);
+            if (str_contains($link_text, self::LINK_MAKER_END)) {
+                $link_text = $lib->str_left_of($link_text, self::LINK_MAKER_END);
+                $link_type = $lib->str_left_of($link_text, self::COL_MAKER);
+                $link_text = $lib->str_right_of($link_text, self::COL_MAKER);
+                if ($link_type == self::LINK_FLAGDECO) {
+                    $link_result = [];
+                    $link_result[self::LINK_FLAGDECO] = $link_text;
+                    $result[] = $link_result;
+                }
+            }
+        }
+        return $result;
     }
 
     private function header(user $usr, string $timestamp = ''): array

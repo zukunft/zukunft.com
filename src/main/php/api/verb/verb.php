@@ -59,6 +59,7 @@ class verb extends sandbox_named_api
     const TI_OF = 4;
     const TN_TIME_STEP = "time jump";
     const TN_ADD = "System Test Verb";
+    const TN_SYMBOL = 'is symbol for';
 
     // word groups for creating the test words and remove them after the test
     const RESERVED_WORDS = array(

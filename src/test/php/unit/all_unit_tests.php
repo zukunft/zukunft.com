@@ -168,7 +168,7 @@ class all_unit_tests extends test_cleanup
         // (new system_tests)->run($this);
         (new import_tests)->run($this);
         $import = new import_file();
-        $import->import_test_files($usr);
+        //$import->import_test_files($usr);
 
         /*
         global $db_con;

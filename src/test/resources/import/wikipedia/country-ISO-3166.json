@@ -1,0 +1,5262 @@
+{
+  "pod": "zukunft.com",
+  "version": "0.0.3",
+  "time": "2024-04-05T08:35:30+00:00",
+  "words": [
+    {
+      "name": "ISO 3166"
+    },
+    {
+      "name": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "name": "Country"
+    },
+    {
+      "name": "Afghanistan"
+    },
+    {
+      "name": "AFG"
+    },
+    {
+      "name": "\u00c5land Islands"
+    },
+    {
+      "name": "ALA"
+    },
+    {
+      "name": "Albania"
+    },
+    {
+      "name": "ALB"
+    },
+    {
+      "name": "Algeria"
+    },
+    {
+      "name": "DZA"
+    },
+    {
+      "name": "American Samoa"
+    },
+    {
+      "name": "ASM"
+    },
+    {
+      "name": "Andorra"
+    },
+    {
+      "name": "AND"
+    },
+    {
+      "name": "Angola"
+    },
+    {
+      "name": "AGO"
+    },
+    {
+      "name": "Anguilla"
+    },
+    {
+      "name": "AIA"
+    },
+    {
+      "name": "Antarctica"
+    },
+    {
+      "name": "ATA"
+    },
+    {
+      "name": "Antigua and Barbuda"
+    },
+    {
+      "name": "ATG"
+    },
+    {
+      "name": "Argentina"
+    },
+    {
+      "name": "ARG"
+    },
+    {
+      "name": "Armenia"
+    },
+    {
+      "name": "ARM"
+    },
+    {
+      "name": "Aruba"
+    },
+    {
+      "name": "ABW"
+    },
+    {
+      "name": "Australia"
+    },
+    {
+      "name": "AUS"
+    },
+    {
+      "name": "Austria"
+    },
+    {
+      "name": "AUT"
+    },
+    {
+      "name": "Azerbaijan"
+    },
+    {
+      "name": "AZE"
+    },
+    {
+      "name": "Bahamas"
+    },
+    {
+      "name": "BHS"
+    },
+    {
+      "name": "Bahrain"
+    },
+    {
+      "name": "BHR"
+    },
+    {
+      "name": "Bangladesh"
+    },
+    {
+      "name": "BGD"
+    },
+    {
+      "name": "Barbados"
+    },
+    {
+      "name": "BRB"
+    },
+    {
+      "name": "Belarus"
+    },
+    {
+      "name": "BLR"
+    },
+    {
+      "name": "Belgium"
+    },
+    {
+      "name": "BEL"
+    },
+    {
+      "name": "Belize"
+    },
+    {
+      "name": "BLZ"
+    },
+    {
+      "name": "Benin"
+    },
+    {
+      "name": "BEN"
+    },
+    {
+      "name": "Bermuda"
+    },
+    {
+      "name": "BMU"
+    },
+    {
+      "name": "Bhutan"
+    },
+    {
+      "name": "BTN"
+    },
+    {
+      "name": [
+        "Bolivia, Plurinational State of",
+        {
+          "link": "Bolivia"
+        }
+      ]
+    },
+    {
+      "name": "BOL"
+    },
+    {
+      "name": "Bonaire, Sint Eustatius and Saba"
+    },
+    {
+      "name": "BES"
+    },
+    {
+      "name": "Bosnia and Herzegovina"
+    },
+    {
+      "name": "BIH"
+    },
+    {
+      "name": "Botswana"
+    },
+    {
+      "name": "BWA"
+    },
+    {
+      "name": "Bouvet Island"
+    },
+    {
+      "name": "BVT"
+    },
+    {
+      "name": "Brazil"
+    },
+    {
+      "name": "BRA"
+    },
+    {
+      "name": "British Indian Ocean Territory"
+    },
+    {
+      "name": "IOT"
+    },
+    {
+      "name": "Brunei Darussalam"
+    },
+    {
+      "name": "BRN"
+    },
+    {
+      "name": "Bulgaria"
+    },
+    {
+      "name": "BGR"
+    },
+    {
+      "name": "Burkina Faso"
+    },
+    {
+      "name": "BFA"
+    },
+    {
+      "name": "Burundi"
+    },
+    {
+      "name": "BDI"
+    },
+    {
+      "name": "Cabo Verde"
+    },
+    {
+      "name": "CPV"
+    },
+    {
+      "name": "Cambodia"
+    },
+    {
+      "name": "KHM"
+    },
+    {
+      "name": "Cameroon"
+    },
+    {
+      "name": "CMR"
+    },
+    {
+      "name": "Canada"
+    },
+    {
+      "name": "CAN"
+    },
+    {
+      "name": "Cayman Islands"
+    },
+    {
+      "name": "CYM"
+    },
+    {
+      "name": "Central African Republic"
+    },
+    {
+      "name": "CAF"
+    },
+    {
+      "name": "Chad"
+    },
+    {
+      "name": "TCD"
+    },
+    {
+      "name": "Chile"
+    },
+    {
+      "name": "CHL"
+    },
+    {
+      "name": "China"
+    },
+    {
+      "name": "CHN"
+    },
+    {
+      "name": "Christmas Island"
+    },
+    {
+      "name": "CXR"
+    },
+    {
+      "name": "Cocos (Keeling) Islands"
+    },
+    {
+      "name": "CCK"
+    },
+    {
+      "name": "Colombia"
+    },
+    {
+      "name": "COL"
+    },
+    {
+      "name": "Comoros"
+    },
+    {
+      "name": "COM"
+    },
+    {
+      "name": "Congo"
+    },
+    {
+      "name": "COG"
+    },
+    {
+      "name": "Congo, Democratic Republic of the"
+    },
+    {
+      "name": "COD"
+    },
+    {
+      "name": "Cook Islands"
+    },
+    {
+      "name": "COK"
+    },
+    {
+      "name": "Costa Rica"
+    },
+    {
+      "name": "CRI"
+    },
+    {
+      "name": "C\u00f4te d'Ivoire"
+    },
+    {
+      "name": "CIV"
+    },
+    {
+      "name": "Croatia"
+    },
+    {
+      "name": "HRV"
+    },
+    {
+      "name": "Cuba"
+    },
+    {
+      "name": "CUB"
+    },
+    {
+      "name": "Cura\u00e7ao"
+    },
+    {
+      "name": "CUW"
+    },
+    {
+      "name": "Cyprus"
+    },
+    {
+      "name": "CYP"
+    },
+    {
+      "name": "Czechia"
+    },
+    {
+      "name": "CZE"
+    },
+    {
+      "name": "Denmark"
+    },
+    {
+      "name": "DNK"
+    },
+    {
+      "name": "Djibouti"
+    },
+    {
+      "name": "DJI"
+    },
+    {
+      "name": "Dominica"
+    },
+    {
+      "name": "DMA"
+    },
+    {
+      "name": "Dominican Republic"
+    },
+    {
+      "name": "DOM"
+    },
+    {
+      "name": "Ecuador"
+    },
+    {
+      "name": "ECU"
+    },
+    {
+      "name": "Egypt"
+    },
+    {
+      "name": "EGY"
+    },
+    {
+      "name": "El Salvador"
+    },
+    {
+      "name": "SLV"
+    },
+    {
+      "name": "Equatorial Guinea"
+    },
+    {
+      "name": "GNQ"
+    },
+    {
+      "name": "Eritrea"
+    },
+    {
+      "name": "ERI"
+    },
+    {
+      "name": "Estonia"
+    },
+    {
+      "name": "EST"
+    },
+    {
+      "name": "Eswatini"
+    },
+    {
+      "name": "SWZ"
+    },
+    {
+      "name": "Ethiopia"
+    },
+    {
+      "name": "ETH"
+    },
+    {
+      "name": "Falkland Islands (Malvinas)"
+    },
+    {
+      "name": "FLK"
+    },
+    {
+      "name": "Faroe Islands"
+    },
+    {
+      "name": "FRO"
+    },
+    {
+      "name": "Fiji"
+    },
+    {
+      "name": "FJI"
+    },
+    {
+      "name": "Finland"
+    },
+    {
+      "name": "FIN"
+    },
+    {
+      "name": "France"
+    },
+    {
+      "name": "FRA"
+    },
+    {
+      "name": "French Guiana"
+    },
+    {
+      "name": "GUF"
+    },
+    {
+      "name": "French Polynesia"
+    },
+    {
+      "name": "PYF"
+    },
+    {
+      "name": "French Southern Territories"
+    },
+    {
+      "name": "ATF"
+    },
+    {
+      "name": "Gabon"
+    },
+    {
+      "name": "GAB"
+    },
+    {
+      "name": "Gambia"
+    },
+    {
+      "name": "GMB"
+    },
+    {
+      "name": "Georgia"
+    },
+    {
+      "name": "GEO"
+    },
+    {
+      "name": "Germany"
+    },
+    {
+      "name": "DEU"
+    },
+    {
+      "name": "Ghana"
+    },
+    {
+      "name": "GHA"
+    },
+    {
+      "name": "Gibraltar"
+    },
+    {
+      "name": "GIB"
+    },
+    {
+      "name": "Greece"
+    },
+    {
+      "name": "GRC"
+    },
+    {
+      "name": "Greenland"
+    },
+    {
+      "name": "GRL"
+    },
+    {
+      "name": "Grenada"
+    },
+    {
+      "name": "GRD"
+    },
+    {
+      "name": "Guadeloupe"
+    },
+    {
+      "name": "GLP"
+    },
+    {
+      "name": "Guam"
+    },
+    {
+      "name": "GUM"
+    },
+    {
+      "name": "Guatemala"
+    },
+    {
+      "name": "GTM"
+    },
+    {
+      "name": "Guernsey"
+    },
+    {
+      "name": "GGY"
+    },
+    {
+      "name": "Guinea"
+    },
+    {
+      "name": "GIN"
+    },
+    {
+      "name": "Guinea-Bissau"
+    },
+    {
+      "name": "GNB"
+    },
+    {
+      "name": "Guyana"
+    },
+    {
+      "name": "GUY"
+    },
+    {
+      "name": "Haiti"
+    },
+    {
+      "name": "HTI"
+    },
+    {
+      "name": "Heard Island and McDonald Islands"
+    },
+    {
+      "name": "HMD"
+    },
+    {
+      "name": "Holy See"
+    },
+    {
+      "name": "VAT"
+    },
+    {
+      "name": "Honduras"
+    },
+    {
+      "name": "HND"
+    },
+    {
+      "name": "Hong Kong"
+    },
+    {
+      "name": "HKG"
+    },
+    {
+      "name": "Hungary"
+    },
+    {
+      "name": "HUN"
+    },
+    {
+      "name": "Iceland"
+    },
+    {
+      "name": "ISL"
+    },
+    {
+      "name": "India"
+    },
+    {
+      "name": "IND"
+    },
+    {
+      "name": "Indonesia"
+    },
+    {
+      "name": "IDN"
+    },
+    {
+      "name": "Iran, Islamic Republic of"
+    },
+    {
+      "name": "IRN"
+    },
+    {
+      "name": "Iraq"
+    },
+    {
+      "name": "IRQ"
+    },
+    {
+      "name": "Ireland"
+    },
+    {
+      "name": "IRL"
+    },
+    {
+      "name": "Isle of Man"
+    },
+    {
+      "name": "IMN"
+    },
+    {
+      "name": "Israel"
+    },
+    {
+      "name": "ISR"
+    },
+    {
+      "name": "Italy"
+    },
+    {
+      "name": "ITA"
+    },
+    {
+      "name": "Jamaica"
+    },
+    {
+      "name": "JAM"
+    },
+    {
+      "name": "Japan"
+    },
+    {
+      "name": "JPN"
+    },
+    {
+      "name": "Jersey"
+    },
+    {
+      "name": "JEY"
+    },
+    {
+      "name": "Jordan"
+    },
+    {
+      "name": "JOR"
+    },
+    {
+      "name": "Kazakhstan"
+    },
+    {
+      "name": "KAZ"
+    },
+    {
+      "name": "Kenya"
+    },
+    {
+      "name": "KEN"
+    },
+    {
+      "name": "Kiribati"
+    },
+    {
+      "name": "KIR"
+    },
+    {
+      "name": "Korea, Democratic People's Republic of"
+    },
+    {
+      "name": "PRK"
+    },
+    {
+      "name": "Korea, Republic of"
+    },
+    {
+      "name": "KOR"
+    },
+    {
+      "name": "Kuwait"
+    },
+    {
+      "name": "KWT"
+    },
+    {
+      "name": "Kyrgyzstan"
+    },
+    {
+      "name": "KGZ"
+    },
+    {
+      "name": "Lao People's Democratic Republic"
+    },
+    {
+      "name": "LAO"
+    },
+    {
+      "name": "Latvia"
+    },
+    {
+      "name": "LVA"
+    },
+    {
+      "name": "Lebanon"
+    },
+    {
+      "name": "LBN"
+    },
+    {
+      "name": "Lesotho"
+    },
+    {
+      "name": "LSO"
+    },
+    {
+      "name": "Liberia"
+    },
+    {
+      "name": "LBR"
+    },
+    {
+      "name": "Libya"
+    },
+    {
+      "name": "LBY"
+    },
+    {
+      "name": "Liechtenstein"
+    },
+    {
+      "name": "LIE"
+    },
+    {
+      "name": "Lithuania"
+    },
+    {
+      "name": "LTU"
+    },
+    {
+      "name": "Luxembourg"
+    },
+    {
+      "name": "LUX"
+    },
+    {
+      "name": "Macao"
+    },
+    {
+      "name": "MAC"
+    },
+    {
+      "name": "Madagascar"
+    },
+    {
+      "name": "MDG"
+    },
+    {
+      "name": "Malawi"
+    },
+    {
+      "name": "MWI"
+    },
+    {
+      "name": "Malaysia"
+    },
+    {
+      "name": "MYS"
+    },
+    {
+      "name": "Maldives"
+    },
+    {
+      "name": "MDV"
+    },
+    {
+      "name": "Mali"
+    },
+    {
+      "name": "MLI"
+    },
+    {
+      "name": "Malta"
+    },
+    {
+      "name": "MLT"
+    },
+    {
+      "name": "Marshall Islands"
+    },
+    {
+      "name": "MHL"
+    },
+    {
+      "name": "Martinique"
+    },
+    {
+      "name": "MTQ"
+    },
+    {
+      "name": "Mauritania"
+    },
+    {
+      "name": "MRT"
+    },
+    {
+      "name": "Mauritius"
+    },
+    {
+      "name": "MUS"
+    },
+    {
+      "name": "Mayotte"
+    },
+    {
+      "name": "MYT"
+    },
+    {
+      "name": "Mexico"
+    },
+    {
+      "name": "MEX"
+    },
+    {
+      "name": "Micronesia, Federated States of"
+    },
+    {
+      "name": "FSM"
+    },
+    {
+      "name": "Moldova, Republic of"
+    },
+    {
+      "name": "MDA"
+    },
+    {
+      "name": "Monaco"
+    },
+    {
+      "name": "MCO"
+    },
+    {
+      "name": "Mongolia"
+    },
+    {
+      "name": "MNG"
+    },
+    {
+      "name": "Montenegro"
+    },
+    {
+      "name": "MNE"
+    },
+    {
+      "name": "Montserrat"
+    },
+    {
+      "name": "MSR"
+    },
+    {
+      "name": "Morocco"
+    },
+    {
+      "name": "MAR"
+    },
+    {
+      "name": "Mozambique"
+    },
+    {
+      "name": "MOZ"
+    },
+    {
+      "name": "Myanmar"
+    },
+    {
+      "name": "MMR"
+    },
+    {
+      "name": "Namibia"
+    },
+    {
+      "name": "NAM"
+    },
+    {
+      "name": "Nauru"
+    },
+    {
+      "name": "NRU"
+    },
+    {
+      "name": "Nepal"
+    },
+    {
+      "name": "NPL"
+    },
+    {
+      "name": "Netherlands, Kingdom of the"
+    },
+    {
+      "name": "NLD"
+    },
+    {
+      "name": "New Caledonia"
+    },
+    {
+      "name": "NCL"
+    },
+    {
+      "name": "New Zealand"
+    },
+    {
+      "name": "NZL"
+    },
+    {
+      "name": "Nicaragua"
+    },
+    {
+      "name": "NIC"
+    },
+    {
+      "name": "Niger"
+    },
+    {
+      "name": "NER"
+    },
+    {
+      "name": "Nigeria"
+    },
+    {
+      "name": "NGA"
+    },
+    {
+      "name": "Niue"
+    },
+    {
+      "name": "NIU"
+    },
+    {
+      "name": "Norfolk Island"
+    },
+    {
+      "name": "NFK"
+    },
+    {
+      "name": "North Macedonia"
+    },
+    {
+      "name": "MKD"
+    },
+    {
+      "name": "Northern Mariana Islands"
+    },
+    {
+      "name": "MNP"
+    },
+    {
+      "name": "Norway"
+    },
+    {
+      "name": "NOR"
+    },
+    {
+      "name": "Oman"
+    },
+    {
+      "name": "OMN"
+    },
+    {
+      "name": "Pakistan"
+    },
+    {
+      "name": "PAK"
+    },
+    {
+      "name": "Palau"
+    },
+    {
+      "name": "PLW"
+    },
+    {
+      "name": "Palestine, State of"
+    },
+    {
+      "name": "PSE"
+    },
+    {
+      "name": "Panama"
+    },
+    {
+      "name": "PAN"
+    },
+    {
+      "name": "Papua New Guinea"
+    },
+    {
+      "name": "PNG"
+    },
+    {
+      "name": "Paraguay"
+    },
+    {
+      "name": "PRY"
+    },
+    {
+      "name": "Peru"
+    },
+    {
+      "name": "PER"
+    },
+    {
+      "name": "Philippines"
+    },
+    {
+      "name": "PHL"
+    },
+    {
+      "name": "Pitcairn"
+    },
+    {
+      "name": "PCN"
+    },
+    {
+      "name": "Poland"
+    },
+    {
+      "name": "POL"
+    },
+    {
+      "name": "Portugal"
+    },
+    {
+      "name": "PRT"
+    },
+    {
+      "name": "Puerto Rico"
+    },
+    {
+      "name": "PRI"
+    },
+    {
+      "name": "Qatar"
+    },
+    {
+      "name": "QAT"
+    },
+    {
+      "name": "R\u00e9union"
+    },
+    {
+      "name": "REU"
+    },
+    {
+      "name": "Romania"
+    },
+    {
+      "name": "ROU"
+    },
+    {
+      "name": "Russian Federation"
+    },
+    {
+      "name": "RUS"
+    },
+    {
+      "name": "Rwanda"
+    },
+    {
+      "name": "RWA"
+    },
+    {
+      "name": "Saint Barth\u00e9lemy"
+    },
+    {
+      "name": "BLM"
+    },
+    {
+      "name": "Saint Helena, Ascension and Tristan da Cunha[lower-alpha 4]"
+    },
+    {
+      "name": "SHN"
+    },
+    {
+      "name": "Saint Kitts and Nevis"
+    },
+    {
+      "name": "KNA"
+    },
+    {
+      "name": "Saint Lucia"
+    },
+    {
+      "name": "LCA"
+    },
+    {
+      "name": "Saint Martin (French part)"
+    },
+    {
+      "name": "MAF"
+    },
+    {
+      "name": "Saint Pierre and Miquelon"
+    },
+    {
+      "name": "SPM"
+    },
+    {
+      "name": "Saint Vincent and the Grenadines"
+    },
+    {
+      "name": "VCT"
+    },
+    {
+      "name": "Samoa"
+    },
+    {
+      "name": "WSM"
+    },
+    {
+      "name": "San Marino"
+    },
+    {
+      "name": "SMR"
+    },
+    {
+      "name": "Sao Tome and Principe"
+    },
+    {
+      "name": "STP"
+    },
+    {
+      "name": "Saudi Arabia"
+    },
+    {
+      "name": "SAU"
+    },
+    {
+      "name": "Senegal"
+    },
+    {
+      "name": "SEN"
+    },
+    {
+      "name": "Serbia"
+    },
+    {
+      "name": "SRB"
+    },
+    {
+      "name": "Seychelles"
+    },
+    {
+      "name": "SYC"
+    },
+    {
+      "name": "Sierra Leone"
+    },
+    {
+      "name": "SLE"
+    },
+    {
+      "name": "Singapore"
+    },
+    {
+      "name": "SGP"
+    },
+    {
+      "name": "Sint Maarten (Dutch part)"
+    },
+    {
+      "name": "SXM"
+    },
+    {
+      "name": "Slovakia"
+    },
+    {
+      "name": "SVK"
+    },
+    {
+      "name": "Slovenia"
+    },
+    {
+      "name": "SVN"
+    },
+    {
+      "name": "Solomon Islands"
+    },
+    {
+      "name": "SLB"
+    },
+    {
+      "name": "Somalia"
+    },
+    {
+      "name": "SOM"
+    },
+    {
+      "name": "South Africa"
+    },
+    {
+      "name": "ZAF"
+    },
+    {
+      "name": "South Georgia and the South Sandwich Islands"
+    },
+    {
+      "name": "SGS"
+    },
+    {
+      "name": "South Sudan"
+    },
+    {
+      "name": "SSD"
+    },
+    {
+      "name": "Spain"
+    },
+    {
+      "name": "ESP"
+    },
+    {
+      "name": "Sri Lanka"
+    },
+    {
+      "name": "LKA"
+    },
+    {
+      "name": "Sudan"
+    },
+    {
+      "name": "SDN"
+    },
+    {
+      "name": "Suriname"
+    },
+    {
+      "name": "SUR"
+    },
+    {
+      "name": "Svalbard and Jan Mayen"
+    },
+    {
+      "name": "SJM"
+    },
+    {
+      "name": "Sweden"
+    },
+    {
+      "name": "SWE"
+    },
+    {
+      "name": "Switzerland"
+    },
+    {
+      "name": "CHE"
+    },
+    {
+      "name": "Syrian Arab Republic"
+    },
+    {
+      "name": "SYR"
+    },
+    {
+      "name": "Taiwan, Province of China"
+    },
+    {
+      "name": "TWN"
+    },
+    {
+      "name": "Tajikistan"
+    },
+    {
+      "name": "TJK"
+    },
+    {
+      "name": "Tanzania, United Republic of"
+    },
+    {
+      "name": "TZA"
+    },
+    {
+      "name": "Thailand"
+    },
+    {
+      "name": "THA"
+    },
+    {
+      "name": "Timor-Leste"
+    },
+    {
+      "name": "TLS"
+    },
+    {
+      "name": "Togo"
+    },
+    {
+      "name": "TGO"
+    },
+    {
+      "name": "Tokelau"
+    },
+    {
+      "name": "TKL"
+    },
+    {
+      "name": "Tonga"
+    },
+    {
+      "name": "TON"
+    },
+    {
+      "name": "Trinidad and Tobago"
+    },
+    {
+      "name": "TTO"
+    },
+    {
+      "name": "Tunisia"
+    },
+    {
+      "name": "TUN"
+    },
+    {
+      "name": "T\u00fcrkiye"
+    },
+    {
+      "name": "TUR"
+    },
+    {
+      "name": "Turkmenistan"
+    },
+    {
+      "name": "TKM"
+    },
+    {
+      "name": "Turks and Caicos Islands"
+    },
+    {
+      "name": "TCA"
+    },
+    {
+      "name": "Tuvalu"
+    },
+    {
+      "name": "TUV"
+    },
+    {
+      "name": "Uganda"
+    },
+    {
+      "name": "UGA"
+    },
+    {
+      "name": "Ukraine"
+    },
+    {
+      "name": "UKR"
+    },
+    {
+      "name": "United Arab Emirates"
+    },
+    {
+      "name": "ARE"
+    },
+    {
+      "name": "United Kingdom of Great Britain and Northern Ireland"
+    },
+    {
+      "name": "GBR"
+    },
+    {
+      "name": "United States of America"
+    },
+    {
+      "name": "USA"
+    },
+    {
+      "name": "United States Minor Outlying Islands[lower-alpha 6]"
+    },
+    {
+      "name": "UMI"
+    },
+    {
+      "name": "Uruguay"
+    },
+    {
+      "name": "URY"
+    },
+    {
+      "name": "Uzbekistan"
+    },
+    {
+      "name": "UZB"
+    },
+    {
+      "name": "Vanuatu"
+    },
+    {
+      "name": "VUT"
+    },
+    {
+      "name": "Venezuela, Bolivarian Republic of"
+    },
+    {
+      "name": "VEN"
+    },
+    {
+      "name": "Viet Nam"
+    },
+    {
+      "name": "VNM"
+    },
+    {
+      "name": "Virgin Islands (British)"
+    },
+    {
+      "name": "VGB"
+    },
+    {
+      "name": "Virgin Islands (U.S.)"
+    },
+    {
+      "name": "VIR"
+    },
+    {
+      "name": "Wallis and Futuna"
+    },
+    {
+      "name": "WLF"
+    },
+    {
+      "name": "Western Sahara"
+    },
+    {
+      "name": "ESH"
+    },
+    {
+      "name": "Yemen"
+    },
+    {
+      "name": "YEM"
+    },
+    {
+      "name": "Zambia"
+    },
+    {
+      "name": "ZMB"
+    },
+    {
+      "name": "Zimbabwe"
+    },
+    {
+      "name": "ZWE"
+    }
+  ],
+  "triples": [
+    {
+      "from": "Afghanistan",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "AFG",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "AFG",
+      "verb": "is symbol for",
+      "to": "Afghanistan"
+    },
+    {
+      "from": "\u00c5land Islands",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "ALA",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "ALA",
+      "verb": "is symbol for",
+      "to": "\u00c5land Islands"
+    },
+    {
+      "from": "Albania",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "ALB",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "ALB",
+      "verb": "is symbol for",
+      "to": "Albania"
+    },
+    {
+      "from": "Algeria",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "DZA",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "DZA",
+      "verb": "is symbol for",
+      "to": "Algeria"
+    },
+    {
+      "from": "American Samoa",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "ASM",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "ASM",
+      "verb": "is symbol for",
+      "to": "American Samoa"
+    },
+    {
+      "from": "Andorra",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "AND",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "AND",
+      "verb": "is symbol for",
+      "to": "Andorra"
+    },
+    {
+      "from": "Angola",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "AGO",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "AGO",
+      "verb": "is symbol for",
+      "to": "Angola"
+    },
+    {
+      "from": "Anguilla",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "AIA",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "AIA",
+      "verb": "is symbol for",
+      "to": "Anguilla"
+    },
+    {
+      "from": "Antarctica",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "ATA",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "ATA",
+      "verb": "is symbol for",
+      "to": "Antarctica"
+    },
+    {
+      "from": "Antigua and Barbuda",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "ATG",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "ATG",
+      "verb": "is symbol for",
+      "to": "Antigua and Barbuda"
+    },
+    {
+      "from": "Argentina",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "ARG",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "ARG",
+      "verb": "is symbol for",
+      "to": "Argentina"
+    },
+    {
+      "from": "Armenia",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "ARM",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "ARM",
+      "verb": "is symbol for",
+      "to": "Armenia"
+    },
+    {
+      "from": "Aruba",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "ABW",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "ABW",
+      "verb": "is symbol for",
+      "to": "Aruba"
+    },
+    {
+      "from": "Australia",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "AUS",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "AUS",
+      "verb": "is symbol for",
+      "to": "Australia"
+    },
+    {
+      "from": "Austria",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "AUT",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "AUT",
+      "verb": "is symbol for",
+      "to": "Austria"
+    },
+    {
+      "from": "Azerbaijan",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "AZE",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "AZE",
+      "verb": "is symbol for",
+      "to": "Azerbaijan"
+    },
+    {
+      "from": "Bahamas",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "BHS",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "BHS",
+      "verb": "is symbol for",
+      "to": "Bahamas"
+    },
+    {
+      "from": "Bahrain",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "BHR",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "BHR",
+      "verb": "is symbol for",
+      "to": "Bahrain"
+    },
+    {
+      "from": "Bangladesh",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "BGD",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "BGD",
+      "verb": "is symbol for",
+      "to": "Bangladesh"
+    },
+    {
+      "from": "Barbados",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "BRB",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "BRB",
+      "verb": "is symbol for",
+      "to": "Barbados"
+    },
+    {
+      "from": "Belarus",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "BLR",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "BLR",
+      "verb": "is symbol for",
+      "to": "Belarus"
+    },
+    {
+      "from": "Belgium",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "BEL",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "BEL",
+      "verb": "is symbol for",
+      "to": "Belgium"
+    },
+    {
+      "from": "Belize",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "BLZ",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "BLZ",
+      "verb": "is symbol for",
+      "to": "Belize"
+    },
+    {
+      "from": "Benin",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "BEN",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "BEN",
+      "verb": "is symbol for",
+      "to": "Benin"
+    },
+    {
+      "from": "Bermuda",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "BMU",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "BMU",
+      "verb": "is symbol for",
+      "to": "Bermuda"
+    },
+    {
+      "from": "Bhutan",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "BTN",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "BTN",
+      "verb": "is symbol for",
+      "to": "Bhutan"
+    },
+    {
+      "from": [
+        "Bolivia, Plurinational State of",
+        {
+          "link": "Bolivia"
+        }
+      ],
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "BOL",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "BOL",
+      "verb": "is symbol for",
+      "to": [
+        "Bolivia, Plurinational State of",
+        {
+          "link": "Bolivia"
+        }
+      ]
+    },
+    {
+      "from": "Bonaire, Sint Eustatius and Saba",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "BES",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "BES",
+      "verb": "is symbol for",
+      "to": "Bonaire, Sint Eustatius and Saba"
+    },
+    {
+      "from": "Bosnia and Herzegovina",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "BIH",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "BIH",
+      "verb": "is symbol for",
+      "to": "Bosnia and Herzegovina"
+    },
+    {
+      "from": "Botswana",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "BWA",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "BWA",
+      "verb": "is symbol for",
+      "to": "Botswana"
+    },
+    {
+      "from": "Bouvet Island",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "BVT",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "BVT",
+      "verb": "is symbol for",
+      "to": "Bouvet Island"
+    },
+    {
+      "from": "Brazil",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "BRA",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "BRA",
+      "verb": "is symbol for",
+      "to": "Brazil"
+    },
+    {
+      "from": "British Indian Ocean Territory",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "IOT",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "IOT",
+      "verb": "is symbol for",
+      "to": "British Indian Ocean Territory"
+    },
+    {
+      "from": "Brunei Darussalam",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "BRN",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "BRN",
+      "verb": "is symbol for",
+      "to": "Brunei Darussalam"
+    },
+    {
+      "from": "Bulgaria",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "BGR",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "BGR",
+      "verb": "is symbol for",
+      "to": "Bulgaria"
+    },
+    {
+      "from": "Burkina Faso",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "BFA",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "BFA",
+      "verb": "is symbol for",
+      "to": "Burkina Faso"
+    },
+    {
+      "from": "Burundi",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "BDI",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "BDI",
+      "verb": "is symbol for",
+      "to": "Burundi"
+    },
+    {
+      "from": "Cabo Verde",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "CPV",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "CPV",
+      "verb": "is symbol for",
+      "to": "Cabo Verde"
+    },
+    {
+      "from": "Cambodia",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "KHM",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "KHM",
+      "verb": "is symbol for",
+      "to": "Cambodia"
+    },
+    {
+      "from": "Cameroon",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "CMR",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "CMR",
+      "verb": "is symbol for",
+      "to": "Cameroon"
+    },
+    {
+      "from": "Canada",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "CAN",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "CAN",
+      "verb": "is symbol for",
+      "to": "Canada"
+    },
+    {
+      "from": "Cayman Islands",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "CYM",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "CYM",
+      "verb": "is symbol for",
+      "to": "Cayman Islands"
+    },
+    {
+      "from": "Central African Republic",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "CAF",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "CAF",
+      "verb": "is symbol for",
+      "to": "Central African Republic"
+    },
+    {
+      "from": "Chad",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "TCD",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "TCD",
+      "verb": "is symbol for",
+      "to": "Chad"
+    },
+    {
+      "from": "Chile",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "CHL",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "CHL",
+      "verb": "is symbol for",
+      "to": "Chile"
+    },
+    {
+      "from": "China",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "CHN",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "CHN",
+      "verb": "is symbol for",
+      "to": "China"
+    },
+    {
+      "from": "Christmas Island",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "CXR",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "CXR",
+      "verb": "is symbol for",
+      "to": "Christmas Island"
+    },
+    {
+      "from": "Cocos (Keeling) Islands",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "CCK",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "CCK",
+      "verb": "is symbol for",
+      "to": "Cocos (Keeling) Islands"
+    },
+    {
+      "from": "Colombia",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "COL",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "COL",
+      "verb": "is symbol for",
+      "to": "Colombia"
+    },
+    {
+      "from": "Comoros",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "COM",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "COM",
+      "verb": "is symbol for",
+      "to": "Comoros"
+    },
+    {
+      "from": "Congo",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "COG",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "COG",
+      "verb": "is symbol for",
+      "to": "Congo"
+    },
+    {
+      "from": "Congo, Democratic Republic of the",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "COD",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "COD",
+      "verb": "is symbol for",
+      "to": "Congo, Democratic Republic of the"
+    },
+    {
+      "from": "Cook Islands",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "COK",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "COK",
+      "verb": "is symbol for",
+      "to": "Cook Islands"
+    },
+    {
+      "from": "Costa Rica",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "CRI",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "CRI",
+      "verb": "is symbol for",
+      "to": "Costa Rica"
+    },
+    {
+      "from": "C\u00f4te d'Ivoire",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "CIV",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "CIV",
+      "verb": "is symbol for",
+      "to": "C\u00f4te d'Ivoire"
+    },
+    {
+      "from": "Croatia",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "HRV",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "HRV",
+      "verb": "is symbol for",
+      "to": "Croatia"
+    },
+    {
+      "from": "Cuba",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "CUB",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "CUB",
+      "verb": "is symbol for",
+      "to": "Cuba"
+    },
+    {
+      "from": "Cura\u00e7ao",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "CUW",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "CUW",
+      "verb": "is symbol for",
+      "to": "Cura\u00e7ao"
+    },
+    {
+      "from": "Cyprus",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "CYP",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "CYP",
+      "verb": "is symbol for",
+      "to": "Cyprus"
+    },
+    {
+      "from": "Czechia",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "CZE",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "CZE",
+      "verb": "is symbol for",
+      "to": "Czechia"
+    },
+    {
+      "from": "Denmark",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "DNK",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "DNK",
+      "verb": "is symbol for",
+      "to": "Denmark"
+    },
+    {
+      "from": "Djibouti",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "DJI",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "DJI",
+      "verb": "is symbol for",
+      "to": "Djibouti"
+    },
+    {
+      "from": "Dominica",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "DMA",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "DMA",
+      "verb": "is symbol for",
+      "to": "Dominica"
+    },
+    {
+      "from": "Dominican Republic",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "DOM",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "DOM",
+      "verb": "is symbol for",
+      "to": "Dominican Republic"
+    },
+    {
+      "from": "Ecuador",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "ECU",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "ECU",
+      "verb": "is symbol for",
+      "to": "Ecuador"
+    },
+    {
+      "from": "Egypt",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "EGY",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "EGY",
+      "verb": "is symbol for",
+      "to": "Egypt"
+    },
+    {
+      "from": "El Salvador",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "SLV",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "SLV",
+      "verb": "is symbol for",
+      "to": "El Salvador"
+    },
+    {
+      "from": "Equatorial Guinea",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "GNQ",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "GNQ",
+      "verb": "is symbol for",
+      "to": "Equatorial Guinea"
+    },
+    {
+      "from": "Eritrea",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "ERI",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "ERI",
+      "verb": "is symbol for",
+      "to": "Eritrea"
+    },
+    {
+      "from": "Estonia",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "EST",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "EST",
+      "verb": "is symbol for",
+      "to": "Estonia"
+    },
+    {
+      "from": "Eswatini",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "SWZ",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "SWZ",
+      "verb": "is symbol for",
+      "to": "Eswatini"
+    },
+    {
+      "from": "Ethiopia",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "ETH",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "ETH",
+      "verb": "is symbol for",
+      "to": "Ethiopia"
+    },
+    {
+      "from": "Falkland Islands (Malvinas)",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "FLK",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "FLK",
+      "verb": "is symbol for",
+      "to": "Falkland Islands (Malvinas)"
+    },
+    {
+      "from": "Faroe Islands",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "FRO",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "FRO",
+      "verb": "is symbol for",
+      "to": "Faroe Islands"
+    },
+    {
+      "from": "Fiji",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "FJI",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "FJI",
+      "verb": "is symbol for",
+      "to": "Fiji"
+    },
+    {
+      "from": "Finland",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "FIN",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "FIN",
+      "verb": "is symbol for",
+      "to": "Finland"
+    },
+    {
+      "from": "France",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "FRA",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "FRA",
+      "verb": "is symbol for",
+      "to": "France"
+    },
+    {
+      "from": "French Guiana",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "GUF",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "GUF",
+      "verb": "is symbol for",
+      "to": "French Guiana"
+    },
+    {
+      "from": "French Polynesia",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "PYF",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "PYF",
+      "verb": "is symbol for",
+      "to": "French Polynesia"
+    },
+    {
+      "from": "French Southern Territories",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "ATF",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "ATF",
+      "verb": "is symbol for",
+      "to": "French Southern Territories"
+    },
+    {
+      "from": "Gabon",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "GAB",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "GAB",
+      "verb": "is symbol for",
+      "to": "Gabon"
+    },
+    {
+      "from": "Gambia",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "GMB",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "GMB",
+      "verb": "is symbol for",
+      "to": "Gambia"
+    },
+    {
+      "from": "Georgia",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "GEO",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "GEO",
+      "verb": "is symbol for",
+      "to": "Georgia"
+    },
+    {
+      "from": "Germany",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "DEU",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "DEU",
+      "verb": "is symbol for",
+      "to": "Germany"
+    },
+    {
+      "from": "Ghana",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "GHA",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "GHA",
+      "verb": "is symbol for",
+      "to": "Ghana"
+    },
+    {
+      "from": "Gibraltar",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "GIB",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "GIB",
+      "verb": "is symbol for",
+      "to": "Gibraltar"
+    },
+    {
+      "from": "Greece",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "GRC",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "GRC",
+      "verb": "is symbol for",
+      "to": "Greece"
+    },
+    {
+      "from": "Greenland",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "GRL",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "GRL",
+      "verb": "is symbol for",
+      "to": "Greenland"
+    },
+    {
+      "from": "Grenada",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "GRD",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "GRD",
+      "verb": "is symbol for",
+      "to": "Grenada"
+    },
+    {
+      "from": "Guadeloupe",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "GLP",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "GLP",
+      "verb": "is symbol for",
+      "to": "Guadeloupe"
+    },
+    {
+      "from": "Guam",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "GUM",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "GUM",
+      "verb": "is symbol for",
+      "to": "Guam"
+    },
+    {
+      "from": "Guatemala",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "GTM",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "GTM",
+      "verb": "is symbol for",
+      "to": "Guatemala"
+    },
+    {
+      "from": "Guernsey",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "GGY",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "GGY",
+      "verb": "is symbol for",
+      "to": "Guernsey"
+    },
+    {
+      "from": "Guinea",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "GIN",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "GIN",
+      "verb": "is symbol for",
+      "to": "Guinea"
+    },
+    {
+      "from": "Guinea-Bissau",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "GNB",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "GNB",
+      "verb": "is symbol for",
+      "to": "Guinea-Bissau"
+    },
+    {
+      "from": "Guyana",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "GUY",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "GUY",
+      "verb": "is symbol for",
+      "to": "Guyana"
+    },
+    {
+      "from": "Haiti",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "HTI",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "HTI",
+      "verb": "is symbol for",
+      "to": "Haiti"
+    },
+    {
+      "from": "Heard Island and McDonald Islands",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "HMD",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "HMD",
+      "verb": "is symbol for",
+      "to": "Heard Island and McDonald Islands"
+    },
+    {
+      "from": "Holy See",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "VAT",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "VAT",
+      "verb": "is symbol for",
+      "to": "Holy See"
+    },
+    {
+      "from": "Honduras",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "HND",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "HND",
+      "verb": "is symbol for",
+      "to": "Honduras"
+    },
+    {
+      "from": "Hong Kong",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "HKG",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "HKG",
+      "verb": "is symbol for",
+      "to": "Hong Kong"
+    },
+    {
+      "from": "Hungary",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "HUN",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "HUN",
+      "verb": "is symbol for",
+      "to": "Hungary"
+    },
+    {
+      "from": "Iceland",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "ISL",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "ISL",
+      "verb": "is symbol for",
+      "to": "Iceland"
+    },
+    {
+      "from": "India",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "IND",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "IND",
+      "verb": "is symbol for",
+      "to": "India"
+    },
+    {
+      "from": "Indonesia",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "IDN",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "IDN",
+      "verb": "is symbol for",
+      "to": "Indonesia"
+    },
+    {
+      "from": "Iran, Islamic Republic of",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "IRN",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "IRN",
+      "verb": "is symbol for",
+      "to": "Iran, Islamic Republic of"
+    },
+    {
+      "from": "Iraq",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "IRQ",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "IRQ",
+      "verb": "is symbol for",
+      "to": "Iraq"
+    },
+    {
+      "from": "Ireland",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "IRL",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "IRL",
+      "verb": "is symbol for",
+      "to": "Ireland"
+    },
+    {
+      "from": "Isle of Man",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "IMN",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "IMN",
+      "verb": "is symbol for",
+      "to": "Isle of Man"
+    },
+    {
+      "from": "Israel",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "ISR",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "ISR",
+      "verb": "is symbol for",
+      "to": "Israel"
+    },
+    {
+      "from": "Italy",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "ITA",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "ITA",
+      "verb": "is symbol for",
+      "to": "Italy"
+    },
+    {
+      "from": "Jamaica",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "JAM",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "JAM",
+      "verb": "is symbol for",
+      "to": "Jamaica"
+    },
+    {
+      "from": "Japan",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "JPN",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "JPN",
+      "verb": "is symbol for",
+      "to": "Japan"
+    },
+    {
+      "from": "Jersey",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "JEY",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "JEY",
+      "verb": "is symbol for",
+      "to": "Jersey"
+    },
+    {
+      "from": "Jordan",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "JOR",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "JOR",
+      "verb": "is symbol for",
+      "to": "Jordan"
+    },
+    {
+      "from": "Kazakhstan",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "KAZ",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "KAZ",
+      "verb": "is symbol for",
+      "to": "Kazakhstan"
+    },
+    {
+      "from": "Kenya",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "KEN",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "KEN",
+      "verb": "is symbol for",
+      "to": "Kenya"
+    },
+    {
+      "from": "Kiribati",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "KIR",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "KIR",
+      "verb": "is symbol for",
+      "to": "Kiribati"
+    },
+    {
+      "from": "Korea, Democratic People's Republic of",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "PRK",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "PRK",
+      "verb": "is symbol for",
+      "to": "Korea, Democratic People's Republic of"
+    },
+    {
+      "from": "Korea, Republic of",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "KOR",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "KOR",
+      "verb": "is symbol for",
+      "to": "Korea, Republic of"
+    },
+    {
+      "from": "Kuwait",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "KWT",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "KWT",
+      "verb": "is symbol for",
+      "to": "Kuwait"
+    },
+    {
+      "from": "Kyrgyzstan",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "KGZ",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "KGZ",
+      "verb": "is symbol for",
+      "to": "Kyrgyzstan"
+    },
+    {
+      "from": "Lao People's Democratic Republic",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "LAO",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "LAO",
+      "verb": "is symbol for",
+      "to": "Lao People's Democratic Republic"
+    },
+    {
+      "from": "Latvia",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "LVA",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "LVA",
+      "verb": "is symbol for",
+      "to": "Latvia"
+    },
+    {
+      "from": "Lebanon",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "LBN",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "LBN",
+      "verb": "is symbol for",
+      "to": "Lebanon"
+    },
+    {
+      "from": "Lesotho",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "LSO",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "LSO",
+      "verb": "is symbol for",
+      "to": "Lesotho"
+    },
+    {
+      "from": "Liberia",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "LBR",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "LBR",
+      "verb": "is symbol for",
+      "to": "Liberia"
+    },
+    {
+      "from": "Libya",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "LBY",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "LBY",
+      "verb": "is symbol for",
+      "to": "Libya"
+    },
+    {
+      "from": "Liechtenstein",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "LIE",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "LIE",
+      "verb": "is symbol for",
+      "to": "Liechtenstein"
+    },
+    {
+      "from": "Lithuania",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "LTU",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "LTU",
+      "verb": "is symbol for",
+      "to": "Lithuania"
+    },
+    {
+      "from": "Luxembourg",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "LUX",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "LUX",
+      "verb": "is symbol for",
+      "to": "Luxembourg"
+    },
+    {
+      "from": "Macao",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "MAC",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "MAC",
+      "verb": "is symbol for",
+      "to": "Macao"
+    },
+    {
+      "from": "Madagascar",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "MDG",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "MDG",
+      "verb": "is symbol for",
+      "to": "Madagascar"
+    },
+    {
+      "from": "Malawi",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "MWI",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "MWI",
+      "verb": "is symbol for",
+      "to": "Malawi"
+    },
+    {
+      "from": "Malaysia",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "MYS",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "MYS",
+      "verb": "is symbol for",
+      "to": "Malaysia"
+    },
+    {
+      "from": "Maldives",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "MDV",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "MDV",
+      "verb": "is symbol for",
+      "to": "Maldives"
+    },
+    {
+      "from": "Mali",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "MLI",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "MLI",
+      "verb": "is symbol for",
+      "to": "Mali"
+    },
+    {
+      "from": "Malta",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "MLT",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "MLT",
+      "verb": "is symbol for",
+      "to": "Malta"
+    },
+    {
+      "from": "Marshall Islands",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "MHL",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "MHL",
+      "verb": "is symbol for",
+      "to": "Marshall Islands"
+    },
+    {
+      "from": "Martinique",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "MTQ",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "MTQ",
+      "verb": "is symbol for",
+      "to": "Martinique"
+    },
+    {
+      "from": "Mauritania",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "MRT",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "MRT",
+      "verb": "is symbol for",
+      "to": "Mauritania"
+    },
+    {
+      "from": "Mauritius",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "MUS",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "MUS",
+      "verb": "is symbol for",
+      "to": "Mauritius"
+    },
+    {
+      "from": "Mayotte",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "MYT",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "MYT",
+      "verb": "is symbol for",
+      "to": "Mayotte"
+    },
+    {
+      "from": "Mexico",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "MEX",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "MEX",
+      "verb": "is symbol for",
+      "to": "Mexico"
+    },
+    {
+      "from": "Micronesia, Federated States of",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "FSM",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "FSM",
+      "verb": "is symbol for",
+      "to": "Micronesia, Federated States of"
+    },
+    {
+      "from": "Moldova, Republic of",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "MDA",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "MDA",
+      "verb": "is symbol for",
+      "to": "Moldova, Republic of"
+    },
+    {
+      "from": "Monaco",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "MCO",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "MCO",
+      "verb": "is symbol for",
+      "to": "Monaco"
+    },
+    {
+      "from": "Mongolia",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "MNG",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "MNG",
+      "verb": "is symbol for",
+      "to": "Mongolia"
+    },
+    {
+      "from": "Montenegro",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "MNE",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "MNE",
+      "verb": "is symbol for",
+      "to": "Montenegro"
+    },
+    {
+      "from": "Montserrat",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "MSR",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "MSR",
+      "verb": "is symbol for",
+      "to": "Montserrat"
+    },
+    {
+      "from": "Morocco",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "MAR",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "MAR",
+      "verb": "is symbol for",
+      "to": "Morocco"
+    },
+    {
+      "from": "Mozambique",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "MOZ",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "MOZ",
+      "verb": "is symbol for",
+      "to": "Mozambique"
+    },
+    {
+      "from": "Myanmar",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "MMR",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "MMR",
+      "verb": "is symbol for",
+      "to": "Myanmar"
+    },
+    {
+      "from": "Namibia",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "NAM",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "NAM",
+      "verb": "is symbol for",
+      "to": "Namibia"
+    },
+    {
+      "from": "Nauru",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "NRU",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "NRU",
+      "verb": "is symbol for",
+      "to": "Nauru"
+    },
+    {
+      "from": "Nepal",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "NPL",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "NPL",
+      "verb": "is symbol for",
+      "to": "Nepal"
+    },
+    {
+      "from": "Netherlands, Kingdom of the",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "NLD",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "NLD",
+      "verb": "is symbol for",
+      "to": "Netherlands, Kingdom of the"
+    },
+    {
+      "from": "New Caledonia",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "NCL",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "NCL",
+      "verb": "is symbol for",
+      "to": "New Caledonia"
+    },
+    {
+      "from": "New Zealand",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "NZL",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "NZL",
+      "verb": "is symbol for",
+      "to": "New Zealand"
+    },
+    {
+      "from": "Nicaragua",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "NIC",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "NIC",
+      "verb": "is symbol for",
+      "to": "Nicaragua"
+    },
+    {
+      "from": "Niger",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "NER",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "NER",
+      "verb": "is symbol for",
+      "to": "Niger"
+    },
+    {
+      "from": "Nigeria",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "NGA",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "NGA",
+      "verb": "is symbol for",
+      "to": "Nigeria"
+    },
+    {
+      "from": "Niue",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "NIU",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "NIU",
+      "verb": "is symbol for",
+      "to": "Niue"
+    },
+    {
+      "from": "Norfolk Island",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "NFK",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "NFK",
+      "verb": "is symbol for",
+      "to": "Norfolk Island"
+    },
+    {
+      "from": "North Macedonia",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "MKD",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "MKD",
+      "verb": "is symbol for",
+      "to": "North Macedonia"
+    },
+    {
+      "from": "Northern Mariana Islands",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "MNP",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "MNP",
+      "verb": "is symbol for",
+      "to": "Northern Mariana Islands"
+    },
+    {
+      "from": "Norway",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "NOR",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "NOR",
+      "verb": "is symbol for",
+      "to": "Norway"
+    },
+    {
+      "from": "Oman",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "OMN",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "OMN",
+      "verb": "is symbol for",
+      "to": "Oman"
+    },
+    {
+      "from": "Pakistan",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "PAK",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "PAK",
+      "verb": "is symbol for",
+      "to": "Pakistan"
+    },
+    {
+      "from": "Palau",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "PLW",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "PLW",
+      "verb": "is symbol for",
+      "to": "Palau"
+    },
+    {
+      "from": "Palestine, State of",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "PSE",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "PSE",
+      "verb": "is symbol for",
+      "to": "Palestine, State of"
+    },
+    {
+      "from": "Panama",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "PAN",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "PAN",
+      "verb": "is symbol for",
+      "to": "Panama"
+    },
+    {
+      "from": "Papua New Guinea",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "PNG",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "PNG",
+      "verb": "is symbol for",
+      "to": "Papua New Guinea"
+    },
+    {
+      "from": "Paraguay",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "PRY",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "PRY",
+      "verb": "is symbol for",
+      "to": "Paraguay"
+    },
+    {
+      "from": "Peru",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "PER",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "PER",
+      "verb": "is symbol for",
+      "to": "Peru"
+    },
+    {
+      "from": "Philippines",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "PHL",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "PHL",
+      "verb": "is symbol for",
+      "to": "Philippines"
+    },
+    {
+      "from": "Pitcairn",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "PCN",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "PCN",
+      "verb": "is symbol for",
+      "to": "Pitcairn"
+    },
+    {
+      "from": "Poland",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "POL",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "POL",
+      "verb": "is symbol for",
+      "to": "Poland"
+    },
+    {
+      "from": "Portugal",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "PRT",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "PRT",
+      "verb": "is symbol for",
+      "to": "Portugal"
+    },
+    {
+      "from": "Puerto Rico",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "PRI",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "PRI",
+      "verb": "is symbol for",
+      "to": "Puerto Rico"
+    },
+    {
+      "from": "Qatar",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "QAT",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "QAT",
+      "verb": "is symbol for",
+      "to": "Qatar"
+    },
+    {
+      "from": "R\u00e9union",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "REU",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "REU",
+      "verb": "is symbol for",
+      "to": "R\u00e9union"
+    },
+    {
+      "from": "Romania",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "ROU",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "ROU",
+      "verb": "is symbol for",
+      "to": "Romania"
+    },
+    {
+      "from": "Russian Federation",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "RUS",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "RUS",
+      "verb": "is symbol for",
+      "to": "Russian Federation"
+    },
+    {
+      "from": "Rwanda",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "RWA",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "RWA",
+      "verb": "is symbol for",
+      "to": "Rwanda"
+    },
+    {
+      "from": "Saint Barth\u00e9lemy",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "BLM",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "BLM",
+      "verb": "is symbol for",
+      "to": "Saint Barth\u00e9lemy"
+    },
+    {
+      "from": "Saint Helena, Ascension and Tristan da Cunha[lower-alpha 4]",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "SHN",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "SHN",
+      "verb": "is symbol for",
+      "to": "Saint Helena, Ascension and Tristan da Cunha[lower-alpha 4]"
+    },
+    {
+      "from": "Saint Kitts and Nevis",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "KNA",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "KNA",
+      "verb": "is symbol for",
+      "to": "Saint Kitts and Nevis"
+    },
+    {
+      "from": "Saint Lucia",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "LCA",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "LCA",
+      "verb": "is symbol for",
+      "to": "Saint Lucia"
+    },
+    {
+      "from": "Saint Martin (French part)",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "MAF",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "MAF",
+      "verb": "is symbol for",
+      "to": "Saint Martin (French part)"
+    },
+    {
+      "from": "Saint Pierre and Miquelon",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "SPM",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "SPM",
+      "verb": "is symbol for",
+      "to": "Saint Pierre and Miquelon"
+    },
+    {
+      "from": "Saint Vincent and the Grenadines",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "VCT",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "VCT",
+      "verb": "is symbol for",
+      "to": "Saint Vincent and the Grenadines"
+    },
+    {
+      "from": "Samoa",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "WSM",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "WSM",
+      "verb": "is symbol for",
+      "to": "Samoa"
+    },
+    {
+      "from": "San Marino",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "SMR",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "SMR",
+      "verb": "is symbol for",
+      "to": "San Marino"
+    },
+    {
+      "from": "Sao Tome and Principe",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "STP",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "STP",
+      "verb": "is symbol for",
+      "to": "Sao Tome and Principe"
+    },
+    {
+      "from": "Saudi Arabia",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "SAU",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "SAU",
+      "verb": "is symbol for",
+      "to": "Saudi Arabia"
+    },
+    {
+      "from": "Senegal",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "SEN",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "SEN",
+      "verb": "is symbol for",
+      "to": "Senegal"
+    },
+    {
+      "from": "Serbia",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "SRB",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "SRB",
+      "verb": "is symbol for",
+      "to": "Serbia"
+    },
+    {
+      "from": "Seychelles",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "SYC",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "SYC",
+      "verb": "is symbol for",
+      "to": "Seychelles"
+    },
+    {
+      "from": "Sierra Leone",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "SLE",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "SLE",
+      "verb": "is symbol for",
+      "to": "Sierra Leone"
+    },
+    {
+      "from": "Singapore",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "SGP",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "SGP",
+      "verb": "is symbol for",
+      "to": "Singapore"
+    },
+    {
+      "from": "Sint Maarten (Dutch part)",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "SXM",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "SXM",
+      "verb": "is symbol for",
+      "to": "Sint Maarten (Dutch part)"
+    },
+    {
+      "from": "Slovakia",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "SVK",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "SVK",
+      "verb": "is symbol for",
+      "to": "Slovakia"
+    },
+    {
+      "from": "Slovenia",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "SVN",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "SVN",
+      "verb": "is symbol for",
+      "to": "Slovenia"
+    },
+    {
+      "from": "Solomon Islands",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "SLB",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "SLB",
+      "verb": "is symbol for",
+      "to": "Solomon Islands"
+    },
+    {
+      "from": "Somalia",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "SOM",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "SOM",
+      "verb": "is symbol for",
+      "to": "Somalia"
+    },
+    {
+      "from": "South Africa",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "ZAF",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "ZAF",
+      "verb": "is symbol for",
+      "to": "South Africa"
+    },
+    {
+      "from": "South Georgia and the South Sandwich Islands",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "SGS",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "SGS",
+      "verb": "is symbol for",
+      "to": "South Georgia and the South Sandwich Islands"
+    },
+    {
+      "from": "South Sudan",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "SSD",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "SSD",
+      "verb": "is symbol for",
+      "to": "South Sudan"
+    },
+    {
+      "from": "Spain",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "ESP",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "ESP",
+      "verb": "is symbol for",
+      "to": "Spain"
+    },
+    {
+      "from": "Sri Lanka",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "LKA",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "LKA",
+      "verb": "is symbol for",
+      "to": "Sri Lanka"
+    },
+    {
+      "from": "Sudan",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "SDN",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "SDN",
+      "verb": "is symbol for",
+      "to": "Sudan"
+    },
+    {
+      "from": "Suriname",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "SUR",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "SUR",
+      "verb": "is symbol for",
+      "to": "Suriname"
+    },
+    {
+      "from": "Svalbard and Jan Mayen",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "SJM",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "SJM",
+      "verb": "is symbol for",
+      "to": "Svalbard and Jan Mayen"
+    },
+    {
+      "from": "Sweden",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "SWE",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "SWE",
+      "verb": "is symbol for",
+      "to": "Sweden"
+    },
+    {
+      "from": "Switzerland",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "CHE",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "CHE",
+      "verb": "is symbol for",
+      "to": "Switzerland"
+    },
+    {
+      "from": "Syrian Arab Republic",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "SYR",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "SYR",
+      "verb": "is symbol for",
+      "to": "Syrian Arab Republic"
+    },
+    {
+      "from": "Taiwan, Province of China",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "TWN",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "TWN",
+      "verb": "is symbol for",
+      "to": "Taiwan, Province of China"
+    },
+    {
+      "from": "Tajikistan",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "TJK",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "TJK",
+      "verb": "is symbol for",
+      "to": "Tajikistan"
+    },
+    {
+      "from": "Tanzania, United Republic of",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "TZA",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "TZA",
+      "verb": "is symbol for",
+      "to": "Tanzania, United Republic of"
+    },
+    {
+      "from": "Thailand",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "THA",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "THA",
+      "verb": "is symbol for",
+      "to": "Thailand"
+    },
+    {
+      "from": "Timor-Leste",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "TLS",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "TLS",
+      "verb": "is symbol for",
+      "to": "Timor-Leste"
+    },
+    {
+      "from": "Togo",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "TGO",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "TGO",
+      "verb": "is symbol for",
+      "to": "Togo"
+    },
+    {
+      "from": "Tokelau",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "TKL",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "TKL",
+      "verb": "is symbol for",
+      "to": "Tokelau"
+    },
+    {
+      "from": "Tonga",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "TON",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "TON",
+      "verb": "is symbol for",
+      "to": "Tonga"
+    },
+    {
+      "from": "Trinidad and Tobago",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "TTO",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "TTO",
+      "verb": "is symbol for",
+      "to": "Trinidad and Tobago"
+    },
+    {
+      "from": "Tunisia",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "TUN",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "TUN",
+      "verb": "is symbol for",
+      "to": "Tunisia"
+    },
+    {
+      "from": "T\u00fcrkiye",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "TUR",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "TUR",
+      "verb": "is symbol for",
+      "to": "T\u00fcrkiye"
+    },
+    {
+      "from": "Turkmenistan",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "TKM",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "TKM",
+      "verb": "is symbol for",
+      "to": "Turkmenistan"
+    },
+    {
+      "from": "Turks and Caicos Islands",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "TCA",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "TCA",
+      "verb": "is symbol for",
+      "to": "Turks and Caicos Islands"
+    },
+    {
+      "from": "Tuvalu",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "TUV",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "TUV",
+      "verb": "is symbol for",
+      "to": "Tuvalu"
+    },
+    {
+      "from": "Uganda",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "UGA",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "UGA",
+      "verb": "is symbol for",
+      "to": "Uganda"
+    },
+    {
+      "from": "Ukraine",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "UKR",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "UKR",
+      "verb": "is symbol for",
+      "to": "Ukraine"
+    },
+    {
+      "from": "United Arab Emirates",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "ARE",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "ARE",
+      "verb": "is symbol for",
+      "to": "United Arab Emirates"
+    },
+    {
+      "from": "United Kingdom of Great Britain and Northern Ireland",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "GBR",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "GBR",
+      "verb": "is symbol for",
+      "to": "United Kingdom of Great Britain and Northern Ireland"
+    },
+    {
+      "from": "United States of America",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "USA",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "USA",
+      "verb": "is symbol for",
+      "to": "United States of America"
+    },
+    {
+      "from": "United States Minor Outlying Islands[lower-alpha 6]",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "UMI",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "UMI",
+      "verb": "is symbol for",
+      "to": "United States Minor Outlying Islands[lower-alpha 6]"
+    },
+    {
+      "from": "Uruguay",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "URY",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "URY",
+      "verb": "is symbol for",
+      "to": "Uruguay"
+    },
+    {
+      "from": "Uzbekistan",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "UZB",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "UZB",
+      "verb": "is symbol for",
+      "to": "Uzbekistan"
+    },
+    {
+      "from": "Vanuatu",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "VUT",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "VUT",
+      "verb": "is symbol for",
+      "to": "Vanuatu"
+    },
+    {
+      "from": "Venezuela, Bolivarian Republic of",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "VEN",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "VEN",
+      "verb": "is symbol for",
+      "to": "Venezuela, Bolivarian Republic of"
+    },
+    {
+      "from": "Viet Nam",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "VNM",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "VNM",
+      "verb": "is symbol for",
+      "to": "Viet Nam"
+    },
+    {
+      "from": "Virgin Islands (British)",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "VGB",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "VGB",
+      "verb": "is symbol for",
+      "to": "Virgin Islands (British)"
+    },
+    {
+      "from": "Virgin Islands (U.S.)",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "VIR",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "VIR",
+      "verb": "is symbol for",
+      "to": "Virgin Islands (U.S.)"
+    },
+    {
+      "from": "Wallis and Futuna",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "WLF",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "WLF",
+      "verb": "is symbol for",
+      "to": "Wallis and Futuna"
+    },
+    {
+      "from": "Western Sahara",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "ESH",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "ESH",
+      "verb": "is symbol for",
+      "to": "Western Sahara"
+    },
+    {
+      "from": "Yemen",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "YEM",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "YEM",
+      "verb": "is symbol for",
+      "to": "Yemen"
+    },
+    {
+      "from": "Zambia",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "ZMB",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "ZMB",
+      "verb": "is symbol for",
+      "to": "Zambia"
+    },
+    {
+      "from": "Zimbabwe",
+      "verb": "is a",
+      "to": "Country"
+    },
+    {
+      "from": "ZWE",
+      "verb": "is a",
+      "to": "ISO 3166 Alpha-3 code"
+    },
+    {
+      "from": "ZWE",
+      "verb": "is symbol for",
+      "to": "Zimbabwe"
+    }
+  ]
+}
