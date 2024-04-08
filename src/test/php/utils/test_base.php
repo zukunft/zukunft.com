@@ -473,6 +473,25 @@ class test_base
     }
 
     /**
+     * check if the result text is empty
+     * e.g. because the result string is a difference message
+     *
+     * @param string $msg (unique) description of the test
+     * @param string $err_message the error message which is expected to be an empty string
+     * @return bool true is the result is fine
+     */
+    function assert_empty(
+        string $msg,
+        string $err_message): bool
+    {
+        if ($err_message == '') {
+            return true;
+        } else {
+            return $this->assert_dsp($msg, false, $err_message, '');
+        }
+    }
+
+    /**
      * check if the result text contains at least the target text
      *
      * @param string $msg (unique) description of the test
@@ -771,7 +790,7 @@ class test_base
         // TODO remove after development is complete
         $result_str = json_encode($result);
         $target_str = json_encode($target);
-        return $this->assert($test_name, $diff, '');
+        return $this->assert_empty($test_name, $diff);
     }
 
     /**

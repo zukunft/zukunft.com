@@ -1,0 +1,2746 @@
+{
+  "pod": "zukunft.com",
+  "version": "0.0.3",
+  "time": "2024-04-05T08:35:30+00:00",
+  "words": [
+    {
+      "name": "Currency"
+    },
+    {
+      "name": "ISO 4217code"
+    },
+    {
+      "name": "Symbol orabbreviation"
+    },
+    {
+      "name": "Proportion of daily volume April 2019"
+    },
+    {
+      "name": "Proportion of daily volume April 2022"
+    },
+    {
+      "name": "Growth rate (2019\u20132022)"
+    },
+    {
+      "name": "U.S. dollar"
+    },
+    {
+      "name": "USD"
+    },
+    {
+      "name": "US$"
+    },
+    {
+      "name": "Euro"
+    },
+    {
+      "name": "EUR"
+    },
+    {
+      "name": "\u20ac"
+    },
+    {
+      "name": "Japanese yen"
+    },
+    {
+      "name": "JPY"
+    },
+    {
+      "name": "\u00a5 \/ \u5186"
+    },
+    {
+      "name": "Sterling"
+    },
+    {
+      "name": "GBP"
+    },
+    {
+      "name": "\u00a3"
+    },
+    {
+      "name": "Renminbi"
+    },
+    {
+      "name": "CNY"
+    },
+    {
+      "name": "\u00a5 \/ \u5143"
+    },
+    {
+      "name": "Australian dollar"
+    },
+    {
+      "name": "AUD"
+    },
+    {
+      "name": "A$"
+    },
+    {
+      "name": "Canadian dollar"
+    },
+    {
+      "name": "CAD"
+    },
+    {
+      "name": "C$"
+    },
+    {
+      "name": "Swiss franc"
+    },
+    {
+      "name": "CHF"
+    },
+    {
+      "name": "Hong Kong dollar"
+    },
+    {
+      "name": "HKD"
+    },
+    {
+      "name": "HK$"
+    },
+    {
+      "name": "Singapore dollar"
+    },
+    {
+      "name": "SGD"
+    },
+    {
+      "name": "S$"
+    },
+    {
+      "name": "Swedish krona"
+    },
+    {
+      "name": "SEK"
+    },
+    {
+      "name": "kr"
+    },
+    {
+      "name": "South Korean won"
+    },
+    {
+      "name": "KRW"
+    },
+    {
+      "name": "\u20a9 \/ \uc6d0"
+    },
+    {
+      "name": "Norwegian krone"
+    },
+    {
+      "name": "NOK"
+    },
+    {
+      "name": "New Zealand dollar"
+    },
+    {
+      "name": "NZD"
+    },
+    {
+      "name": "NZ$"
+    },
+    {
+      "name": "Indian rupee"
+    },
+    {
+      "name": "INR"
+    },
+    {
+      "name": "\u20b9"
+    },
+    {
+      "name": "Mexican peso"
+    },
+    {
+      "name": "MXN"
+    },
+    {
+      "name": "MX$"
+    },
+    {
+      "name": "New Taiwan dollar"
+    },
+    {
+      "name": "TWD"
+    },
+    {
+      "name": "NT$"
+    },
+    {
+      "name": "South African rand"
+    },
+    {
+      "name": "ZAR"
+    },
+    {
+      "name": "R"
+    },
+    {
+      "name": "Brazilian real"
+    },
+    {
+      "name": "BRL"
+    },
+    {
+      "name": "R$"
+    },
+    {
+      "name": "Danish krone"
+    },
+    {
+      "name": "DKK"
+    },
+    {
+      "name": "Polish z\u0142oty"
+    },
+    {
+      "name": "PLN"
+    },
+    {
+      "name": "z\u0142"
+    },
+    {
+      "name": "Thai baht"
+    },
+    {
+      "name": "THB"
+    },
+    {
+      "name": "\u0e3f"
+    },
+    {
+      "name": "Israeli new shekel"
+    },
+    {
+      "name": "ILS"
+    },
+    {
+      "name": "\u20aa"
+    },
+    {
+      "name": "Indonesian rupiah"
+    },
+    {
+      "name": "IDR"
+    },
+    {
+      "name": "Rp"
+    },
+    {
+      "name": "Czech koruna"
+    },
+    {
+      "name": "CZK"
+    },
+    {
+      "name": "K\u010d"
+    },
+    {
+      "name": "UAE dirham"
+    },
+    {
+      "name": "AED"
+    },
+    {
+      "name": "\u062f.\u0625"
+    },
+    {
+      "name": "Turkish lira"
+    },
+    {
+      "name": "TRY"
+    },
+    {
+      "name": "\u20ba"
+    },
+    {
+      "name": "Hungarian forint"
+    },
+    {
+      "name": "HUF"
+    },
+    {
+      "name": "Ft"
+    },
+    {
+      "name": "Chilean peso"
+    },
+    {
+      "name": "CLP"
+    },
+    {
+      "name": "CLP$"
+    },
+    {
+      "name": "Saudi riyal"
+    },
+    {
+      "name": "SAR"
+    },
+    {
+      "name": "\ufdfc"
+    },
+    {
+      "name": "Philippine peso"
+    },
+    {
+      "name": "PHP"
+    },
+    {
+      "name": "\u20b1"
+    },
+    {
+      "name": "Malaysian ringgit"
+    },
+    {
+      "name": "MYR"
+    },
+    {
+      "name": "RM"
+    },
+    {
+      "name": "Colombian peso"
+    },
+    {
+      "name": "COP"
+    },
+    {
+      "name": "COL$"
+    },
+    {
+      "name": "Russian ruble"
+    },
+    {
+      "name": "RUB"
+    },
+    {
+      "name": "\u20bd"
+    },
+    {
+      "name": "Romanian leu"
+    },
+    {
+      "name": "RON"
+    },
+    {
+      "name": "L"
+    },
+    {
+      "name": "Peruvian sol"
+    },
+    {
+      "name": "PEN"
+    },
+    {
+      "name": "S\/"
+    },
+    {
+      "name": "Bahraini dinar"
+    },
+    {
+      "name": "BHD"
+    },
+    {
+      "name": ".\u062f.\u0628"
+    },
+    {
+      "name": "Bulgarian lev"
+    },
+    {
+      "name": "BGN"
+    },
+    {
+      "name": "Argentine peso"
+    },
+    {
+      "name": "ARS"
+    },
+    {
+      "name": "ARG$"
+    },
+    {
+      "name": "Other"
+    },
+    {
+      "name": "Total"
+    }
+  ],
+  "triples": [
+    {
+      "from": "U.S. dollar",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "USD",
+      "verb": "is a",
+      "to": "ISO 4217code"
+    },
+    {
+      "from": "USD",
+      "verb": "is symbol for",
+      "to": "U.S. dollar"
+    },
+    {
+      "from": "US$",
+      "verb": "is a",
+      "to": "Symbol orabbreviation"
+    },
+    {
+      "from": "US$",
+      "verb": "is symbol for",
+      "to": "U.S. dollar"
+    },
+    {
+      "from": "Euro",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "EUR",
+      "verb": "is a",
+      "to": "ISO 4217code"
+    },
+    {
+      "from": "EUR",
+      "verb": "is symbol for",
+      "to": "Euro"
+    },
+    {
+      "from": "\u20ac",
+      "verb": "is a",
+      "to": "Symbol orabbreviation"
+    },
+    {
+      "from": "\u20ac",
+      "verb": "is symbol for",
+      "to": "Euro"
+    },
+    {
+      "from": "Japanese yen",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "JPY",
+      "verb": "is a",
+      "to": "ISO 4217code"
+    },
+    {
+      "from": "JPY",
+      "verb": "is symbol for",
+      "to": "Japanese yen"
+    },
+    {
+      "from": "\u00a5 \/ \u5186",
+      "verb": "is a",
+      "to": "Symbol orabbreviation"
+    },
+    {
+      "from": "\u00a5 \/ \u5186",
+      "verb": "is symbol for",
+      "to": "Japanese yen"
+    },
+    {
+      "from": "Sterling",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "GBP",
+      "verb": "is a",
+      "to": "ISO 4217code"
+    },
+    {
+      "from": "GBP",
+      "verb": "is symbol for",
+      "to": "Sterling"
+    },
+    {
+      "from": "\u00a3",
+      "verb": "is a",
+      "to": "Symbol orabbreviation"
+    },
+    {
+      "from": "\u00a3",
+      "verb": "is symbol for",
+      "to": "Sterling"
+    },
+    {
+      "from": "Renminbi",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "CNY",
+      "verb": "is a",
+      "to": "ISO 4217code"
+    },
+    {
+      "from": "CNY",
+      "verb": "is symbol for",
+      "to": "Renminbi"
+    },
+    {
+      "from": "\u00a5 \/ \u5143",
+      "verb": "is a",
+      "to": "Symbol orabbreviation"
+    },
+    {
+      "from": "\u00a5 \/ \u5143",
+      "verb": "is symbol for",
+      "to": "Renminbi"
+    },
+    {
+      "from": "Australian dollar",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "AUD",
+      "verb": "is a",
+      "to": "ISO 4217code"
+    },
+    {
+      "from": "AUD",
+      "verb": "is symbol for",
+      "to": "Australian dollar"
+    },
+    {
+      "from": "A$",
+      "verb": "is a",
+      "to": "Symbol orabbreviation"
+    },
+    {
+      "from": "A$",
+      "verb": "is symbol for",
+      "to": "Australian dollar"
+    },
+    {
+      "from": "Canadian dollar",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "CAD",
+      "verb": "is a",
+      "to": "ISO 4217code"
+    },
+    {
+      "from": "CAD",
+      "verb": "is symbol for",
+      "to": "Canadian dollar"
+    },
+    {
+      "from": "C$",
+      "verb": "is a",
+      "to": "Symbol orabbreviation"
+    },
+    {
+      "from": "C$",
+      "verb": "is symbol for",
+      "to": "Canadian dollar"
+    },
+    {
+      "from": "Swiss franc",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "CHF",
+      "verb": "is a",
+      "to": "ISO 4217code"
+    },
+    {
+      "from": "CHF",
+      "verb": "is symbol for",
+      "to": "Swiss franc"
+    },
+    {
+      "from": "CHF",
+      "verb": "is a",
+      "to": "Symbol orabbreviation"
+    },
+    {
+      "from": "CHF",
+      "verb": "is symbol for",
+      "to": "Swiss franc"
+    },
+    {
+      "from": "Hong Kong dollar",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "HKD",
+      "verb": "is a",
+      "to": "ISO 4217code"
+    },
+    {
+      "from": "HKD",
+      "verb": "is symbol for",
+      "to": "Hong Kong dollar"
+    },
+    {
+      "from": "HK$",
+      "verb": "is a",
+      "to": "Symbol orabbreviation"
+    },
+    {
+      "from": "HK$",
+      "verb": "is symbol for",
+      "to": "Hong Kong dollar"
+    },
+    {
+      "from": "Singapore dollar",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "SGD",
+      "verb": "is a",
+      "to": "ISO 4217code"
+    },
+    {
+      "from": "SGD",
+      "verb": "is symbol for",
+      "to": "Singapore dollar"
+    },
+    {
+      "from": "S$",
+      "verb": "is a",
+      "to": "Symbol orabbreviation"
+    },
+    {
+      "from": "S$",
+      "verb": "is symbol for",
+      "to": "Singapore dollar"
+    },
+    {
+      "from": "Swedish krona",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "SEK",
+      "verb": "is a",
+      "to": "ISO 4217code"
+    },
+    {
+      "from": "SEK",
+      "verb": "is symbol for",
+      "to": "Swedish krona"
+    },
+    {
+      "from": "kr",
+      "verb": "is a",
+      "to": "Symbol orabbreviation"
+    },
+    {
+      "from": "kr",
+      "verb": "is symbol for",
+      "to": "Swedish krona"
+    },
+    {
+      "from": "South Korean won",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "KRW",
+      "verb": "is a",
+      "to": "ISO 4217code"
+    },
+    {
+      "from": "KRW",
+      "verb": "is symbol for",
+      "to": "South Korean won"
+    },
+    {
+      "from": "\u20a9 \/ \uc6d0",
+      "verb": "is a",
+      "to": "Symbol orabbreviation"
+    },
+    {
+      "from": "\u20a9 \/ \uc6d0",
+      "verb": "is symbol for",
+      "to": "South Korean won"
+    },
+    {
+      "from": "Norwegian krone",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "NOK",
+      "verb": "is a",
+      "to": "ISO 4217code"
+    },
+    {
+      "from": "NOK",
+      "verb": "is symbol for",
+      "to": "Norwegian krone"
+    },
+    {
+      "from": "kr",
+      "verb": "is a",
+      "to": "Symbol orabbreviation"
+    },
+    {
+      "from": "kr",
+      "verb": "is symbol for",
+      "to": "Norwegian krone"
+    },
+    {
+      "from": "New Zealand dollar",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "NZD",
+      "verb": "is a",
+      "to": "ISO 4217code"
+    },
+    {
+      "from": "NZD",
+      "verb": "is symbol for",
+      "to": "New Zealand dollar"
+    },
+    {
+      "from": "NZ$",
+      "verb": "is a",
+      "to": "Symbol orabbreviation"
+    },
+    {
+      "from": "NZ$",
+      "verb": "is symbol for",
+      "to": "New Zealand dollar"
+    },
+    {
+      "from": "Indian rupee",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "INR",
+      "verb": "is a",
+      "to": "ISO 4217code"
+    },
+    {
+      "from": "INR",
+      "verb": "is symbol for",
+      "to": "Indian rupee"
+    },
+    {
+      "from": "\u20b9",
+      "verb": "is a",
+      "to": "Symbol orabbreviation"
+    },
+    {
+      "from": "\u20b9",
+      "verb": "is symbol for",
+      "to": "Indian rupee"
+    },
+    {
+      "from": "Mexican peso",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "MXN",
+      "verb": "is a",
+      "to": "ISO 4217code"
+    },
+    {
+      "from": "MXN",
+      "verb": "is symbol for",
+      "to": "Mexican peso"
+    },
+    {
+      "from": "MX$",
+      "verb": "is a",
+      "to": "Symbol orabbreviation"
+    },
+    {
+      "from": "MX$",
+      "verb": "is symbol for",
+      "to": "Mexican peso"
+    },
+    {
+      "from": "New Taiwan dollar",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "TWD",
+      "verb": "is a",
+      "to": "ISO 4217code"
+    },
+    {
+      "from": "TWD",
+      "verb": "is symbol for",
+      "to": "New Taiwan dollar"
+    },
+    {
+      "from": "NT$",
+      "verb": "is a",
+      "to": "Symbol orabbreviation"
+    },
+    {
+      "from": "NT$",
+      "verb": "is symbol for",
+      "to": "New Taiwan dollar"
+    },
+    {
+      "from": "South African rand",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "ZAR",
+      "verb": "is a",
+      "to": "ISO 4217code"
+    },
+    {
+      "from": "ZAR",
+      "verb": "is symbol for",
+      "to": "South African rand"
+    },
+    {
+      "from": "R",
+      "verb": "is a",
+      "to": "Symbol orabbreviation"
+    },
+    {
+      "from": "R",
+      "verb": "is symbol for",
+      "to": "South African rand"
+    },
+    {
+      "from": "Brazilian real",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "BRL",
+      "verb": "is a",
+      "to": "ISO 4217code"
+    },
+    {
+      "from": "BRL",
+      "verb": "is symbol for",
+      "to": "Brazilian real"
+    },
+    {
+      "from": "R$",
+      "verb": "is a",
+      "to": "Symbol orabbreviation"
+    },
+    {
+      "from": "R$",
+      "verb": "is symbol for",
+      "to": "Brazilian real"
+    },
+    {
+      "from": "Danish krone",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "DKK",
+      "verb": "is a",
+      "to": "ISO 4217code"
+    },
+    {
+      "from": "DKK",
+      "verb": "is symbol for",
+      "to": "Danish krone"
+    },
+    {
+      "from": "kr",
+      "verb": "is a",
+      "to": "Symbol orabbreviation"
+    },
+    {
+      "from": "kr",
+      "verb": "is symbol for",
+      "to": "Danish krone"
+    },
+    {
+      "from": "Polish z\u0142oty",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "PLN",
+      "verb": "is a",
+      "to": "ISO 4217code"
+    },
+    {
+      "from": "PLN",
+      "verb": "is symbol for",
+      "to": "Polish z\u0142oty"
+    },
+    {
+      "from": "z\u0142",
+      "verb": "is a",
+      "to": "Symbol orabbreviation"
+    },
+    {
+      "from": "z\u0142",
+      "verb": "is symbol for",
+      "to": "Polish z\u0142oty"
+    },
+    {
+      "from": "Thai baht",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "THB",
+      "verb": "is a",
+      "to": "ISO 4217code"
+    },
+    {
+      "from": "THB",
+      "verb": "is symbol for",
+      "to": "Thai baht"
+    },
+    {
+      "from": "\u0e3f",
+      "verb": "is a",
+      "to": "Symbol orabbreviation"
+    },
+    {
+      "from": "\u0e3f",
+      "verb": "is symbol for",
+      "to": "Thai baht"
+    },
+    {
+      "from": "Israeli new shekel",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "ILS",
+      "verb": "is a",
+      "to": "ISO 4217code"
+    },
+    {
+      "from": "ILS",
+      "verb": "is symbol for",
+      "to": "Israeli new shekel"
+    },
+    {
+      "from": "\u20aa",
+      "verb": "is a",
+      "to": "Symbol orabbreviation"
+    },
+    {
+      "from": "\u20aa",
+      "verb": "is symbol for",
+      "to": "Israeli new shekel"
+    },
+    {
+      "from": "Indonesian rupiah",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "IDR",
+      "verb": "is a",
+      "to": "ISO 4217code"
+    },
+    {
+      "from": "IDR",
+      "verb": "is symbol for",
+      "to": "Indonesian rupiah"
+    },
+    {
+      "from": "Rp",
+      "verb": "is a",
+      "to": "Symbol orabbreviation"
+    },
+    {
+      "from": "Rp",
+      "verb": "is symbol for",
+      "to": "Indonesian rupiah"
+    },
+    {
+      "from": "Czech koruna",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "CZK",
+      "verb": "is a",
+      "to": "ISO 4217code"
+    },
+    {
+      "from": "CZK",
+      "verb": "is symbol for",
+      "to": "Czech koruna"
+    },
+    {
+      "from": "K\u010d",
+      "verb": "is a",
+      "to": "Symbol orabbreviation"
+    },
+    {
+      "from": "K\u010d",
+      "verb": "is symbol for",
+      "to": "Czech koruna"
+    },
+    {
+      "from": "UAE dirham",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "AED",
+      "verb": "is a",
+      "to": "ISO 4217code"
+    },
+    {
+      "from": "AED",
+      "verb": "is symbol for",
+      "to": "UAE dirham"
+    },
+    {
+      "from": "\u062f.\u0625",
+      "verb": "is a",
+      "to": "Symbol orabbreviation"
+    },
+    {
+      "from": "\u062f.\u0625",
+      "verb": "is symbol for",
+      "to": "UAE dirham"
+    },
+    {
+      "from": "Turkish lira",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "TRY",
+      "verb": "is a",
+      "to": "ISO 4217code"
+    },
+    {
+      "from": "TRY",
+      "verb": "is symbol for",
+      "to": "Turkish lira"
+    },
+    {
+      "from": "\u20ba",
+      "verb": "is a",
+      "to": "Symbol orabbreviation"
+    },
+    {
+      "from": "\u20ba",
+      "verb": "is symbol for",
+      "to": "Turkish lira"
+    },
+    {
+      "from": "Hungarian forint",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "HUF",
+      "verb": "is a",
+      "to": "ISO 4217code"
+    },
+    {
+      "from": "HUF",
+      "verb": "is symbol for",
+      "to": "Hungarian forint"
+    },
+    {
+      "from": "Ft",
+      "verb": "is a",
+      "to": "Symbol orabbreviation"
+    },
+    {
+      "from": "Ft",
+      "verb": "is symbol for",
+      "to": "Hungarian forint"
+    },
+    {
+      "from": "Chilean peso",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "CLP",
+      "verb": "is a",
+      "to": "ISO 4217code"
+    },
+    {
+      "from": "CLP",
+      "verb": "is symbol for",
+      "to": "Chilean peso"
+    },
+    {
+      "from": "CLP$",
+      "verb": "is a",
+      "to": "Symbol orabbreviation"
+    },
+    {
+      "from": "CLP$",
+      "verb": "is symbol for",
+      "to": "Chilean peso"
+    },
+    {
+      "from": "Saudi riyal",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "SAR",
+      "verb": "is a",
+      "to": "ISO 4217code"
+    },
+    {
+      "from": "SAR",
+      "verb": "is symbol for",
+      "to": "Saudi riyal"
+    },
+    {
+      "from": "\ufdfc",
+      "verb": "is a",
+      "to": "Symbol orabbreviation"
+    },
+    {
+      "from": "\ufdfc",
+      "verb": "is symbol for",
+      "to": "Saudi riyal"
+    },
+    {
+      "from": "Philippine peso",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "PHP",
+      "verb": "is a",
+      "to": "ISO 4217code"
+    },
+    {
+      "from": "PHP",
+      "verb": "is symbol for",
+      "to": "Philippine peso"
+    },
+    {
+      "from": "\u20b1",
+      "verb": "is a",
+      "to": "Symbol orabbreviation"
+    },
+    {
+      "from": "\u20b1",
+      "verb": "is symbol for",
+      "to": "Philippine peso"
+    },
+    {
+      "from": "Malaysian ringgit",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "MYR",
+      "verb": "is a",
+      "to": "ISO 4217code"
+    },
+    {
+      "from": "MYR",
+      "verb": "is symbol for",
+      "to": "Malaysian ringgit"
+    },
+    {
+      "from": "RM",
+      "verb": "is a",
+      "to": "Symbol orabbreviation"
+    },
+    {
+      "from": "RM",
+      "verb": "is symbol for",
+      "to": "Malaysian ringgit"
+    },
+    {
+      "from": "Colombian peso",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "COP",
+      "verb": "is a",
+      "to": "ISO 4217code"
+    },
+    {
+      "from": "COP",
+      "verb": "is symbol for",
+      "to": "Colombian peso"
+    },
+    {
+      "from": "COL$",
+      "verb": "is a",
+      "to": "Symbol orabbreviation"
+    },
+    {
+      "from": "COL$",
+      "verb": "is symbol for",
+      "to": "Colombian peso"
+    },
+    {
+      "from": "Russian ruble",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "RUB",
+      "verb": "is a",
+      "to": "ISO 4217code"
+    },
+    {
+      "from": "RUB",
+      "verb": "is symbol for",
+      "to": "Russian ruble"
+    },
+    {
+      "from": "\u20bd",
+      "verb": "is a",
+      "to": "Symbol orabbreviation"
+    },
+    {
+      "from": "\u20bd",
+      "verb": "is symbol for",
+      "to": "Russian ruble"
+    },
+    {
+      "from": "Romanian leu",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "RON",
+      "verb": "is a",
+      "to": "ISO 4217code"
+    },
+    {
+      "from": "RON",
+      "verb": "is symbol for",
+      "to": "Romanian leu"
+    },
+    {
+      "from": "L",
+      "verb": "is a",
+      "to": "Symbol orabbreviation"
+    },
+    {
+      "from": "L",
+      "verb": "is symbol for",
+      "to": "Romanian leu"
+    },
+    {
+      "from": "Peruvian sol",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "PEN",
+      "verb": "is a",
+      "to": "ISO 4217code"
+    },
+    {
+      "from": "PEN",
+      "verb": "is symbol for",
+      "to": "Peruvian sol"
+    },
+    {
+      "from": "S\/",
+      "verb": "is a",
+      "to": "Symbol orabbreviation"
+    },
+    {
+      "from": "S\/",
+      "verb": "is symbol for",
+      "to": "Peruvian sol"
+    },
+    {
+      "from": "Bahraini dinar",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "BHD",
+      "verb": "is a",
+      "to": "ISO 4217code"
+    },
+    {
+      "from": "BHD",
+      "verb": "is symbol for",
+      "to": "Bahraini dinar"
+    },
+    {
+      "from": ".\u062f.\u0628",
+      "verb": "is a",
+      "to": "Symbol orabbreviation"
+    },
+    {
+      "from": ".\u062f.\u0628",
+      "verb": "is symbol for",
+      "to": "Bahraini dinar"
+    },
+    {
+      "from": "Bulgarian lev",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "BGN",
+      "verb": "is a",
+      "to": "ISO 4217code"
+    },
+    {
+      "from": "BGN",
+      "verb": "is symbol for",
+      "to": "Bulgarian lev"
+    },
+    {
+      "from": "BGN",
+      "verb": "is a",
+      "to": "Symbol orabbreviation"
+    },
+    {
+      "from": "BGN",
+      "verb": "is symbol for",
+      "to": "Bulgarian lev"
+    },
+    {
+      "from": "Argentine peso",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "ARS",
+      "verb": "is a",
+      "to": "ISO 4217code"
+    },
+    {
+      "from": "ARS",
+      "verb": "is symbol for",
+      "to": "Argentine peso"
+    },
+    {
+      "from": "ARG$",
+      "verb": "is a",
+      "to": "Symbol orabbreviation"
+    },
+    {
+      "from": "ARG$",
+      "verb": "is symbol for",
+      "to": "Argentine peso"
+    },
+    {
+      "from": "Other",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "",
+      "verb": "is a",
+      "to": "ISO 4217code"
+    },
+    {
+      "from": "",
+      "verb": "is symbol for",
+      "to": "Other"
+    },
+    {
+      "from": "",
+      "verb": "is a",
+      "to": "Symbol orabbreviation"
+    },
+    {
+      "from": "",
+      "verb": "is symbol for",
+      "to": "Other"
+    },
+    {
+      "from": "Total[lower-alpha 2]",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "Total[lower-alpha 2]",
+      "verb": "is a",
+      "to": "ISO 4217code"
+    },
+    {
+      "from": "Total[lower-alpha 2]",
+      "verb": "is symbol for",
+      "to": "Total[lower-alpha 2]"
+    },
+    {
+      "from": "Total[lower-alpha 2]",
+      "verb": "is a",
+      "to": "Symbol orabbreviation"
+    },
+    {
+      "from": "Total[lower-alpha 2]",
+      "verb": "is symbol for",
+      "to": "Total[lower-alpha 2]"
+    },
+    {
+      "from": "",
+      "verb": "is a",
+      "to": "Growth rate (2019\u20132022)"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        {
+          "name": "U.S. dollar"
+        },
+        {
+          "name": "Proportion of daily volume April 2019"
+        }
+      ],
+      "number": 88.3
+    },
+    {
+      "words": [
+        {
+          "name": "U.S. dollar"
+        },
+        {
+          "name": "Proportion of daily volume April 2022"
+        }
+      ],
+      "number": 88.5
+    },
+    {
+      "words": [
+        {
+          "name": "U.S. dollar"
+        },
+        {
+          "name": "Growth rate (2019\u20132022)"
+        }
+      ],
+      "number": 0.2
+    },
+    {
+      "words": [
+        {
+          "name": "Euro"
+        },
+        {
+          "name": "Proportion of daily volume April 2019"
+        }
+      ],
+      "number": 32.3
+    },
+    {
+      "words": [
+        {
+          "name": "Euro"
+        },
+        {
+          "name": "Proportion of daily volume April 2022"
+        }
+      ],
+      "number": 30.5
+    },
+    {
+      "words": [
+        {
+          "name": "Euro"
+        },
+        {
+          "name": "Growth rate (2019\u20132022)"
+        }
+      ],
+      "number": 5.5
+    },
+    {
+      "words": [
+        {
+          "name": "Japanese yen"
+        },
+        {
+          "name": "Proportion of daily volume April 2019"
+        }
+      ],
+      "number": 16.8
+    },
+    {
+      "words": [
+        {
+          "name": "Japanese yen"
+        },
+        {
+          "name": "Proportion of daily volume April 2022"
+        }
+      ],
+      "number": 16.7
+    },
+    {
+      "words": [
+        {
+          "name": "Japanese yen"
+        },
+        {
+          "name": "Growth rate (2019\u20132022)"
+        }
+      ],
+      "number": 0.6
+    },
+    {
+      "words": [
+        {
+          "name": "Sterling"
+        },
+        {
+          "name": "Proportion of daily volume April 2019"
+        }
+      ],
+      "number": 12.8
+    },
+    {
+      "words": [
+        {
+          "name": "Sterling"
+        },
+        {
+          "name": "Proportion of daily volume April 2022"
+        }
+      ],
+      "number": 12.9
+    },
+    {
+      "words": [
+        {
+          "name": "Sterling"
+        },
+        {
+          "name": "Growth rate (2019\u20132022)"
+        }
+      ],
+      "number": 0.7
+    },
+    {
+      "words": [
+        {
+          "name": "Renminbi"
+        },
+        {
+          "name": "Proportion of daily volume April 2019"
+        }
+      ],
+      "number": 4.3
+    },
+    {
+      "words": [
+        {
+          "name": "Renminbi"
+        },
+        {
+          "name": "Proportion of daily volume April 2022"
+        }
+      ],
+      "number": 7
+    },
+    {
+      "words": [
+        {
+          "name": "Renminbi"
+        },
+        {
+          "name": "Growth rate (2019\u20132022)"
+        }
+      ],
+      "number": 62.7
+    },
+    {
+      "words": [
+        {
+          "name": "Australian dollar"
+        },
+        {
+          "name": "Proportion of daily volume April 2019"
+        }
+      ],
+      "number": 6.8
+    },
+    {
+      "words": [
+        {
+          "name": "Australian dollar"
+        },
+        {
+          "name": "Proportion of daily volume April 2022"
+        }
+      ],
+      "number": 6.4
+    },
+    {
+      "words": [
+        {
+          "name": "Australian dollar"
+        },
+        {
+          "name": "Growth rate (2019\u20132022)"
+        }
+      ],
+      "number": 5.8
+    },
+    {
+      "words": [
+        {
+          "name": "Canadian dollar"
+        },
+        {
+          "name": "Proportion of daily volume April 2019"
+        }
+      ],
+      "number": 5
+    },
+    {
+      "words": [
+        {
+          "name": "Canadian dollar"
+        },
+        {
+          "name": "Proportion of daily volume April 2022"
+        }
+      ],
+      "number": 6.2
+    },
+    {
+      "words": [
+        {
+          "name": "Canadian dollar"
+        },
+        {
+          "name": "Growth rate (2019\u20132022)"
+        }
+      ],
+      "number": 24
+    },
+    {
+      "words": [
+        {
+          "name": "Swiss franc"
+        },
+        {
+          "name": "Proportion of daily volume April 2019"
+        }
+      ],
+      "number": 4.9
+    },
+    {
+      "words": [
+        {
+          "name": "Swiss franc"
+        },
+        {
+          "name": "Proportion of daily volume April 2022"
+        }
+      ],
+      "number": 5.2
+    },
+    {
+      "words": [
+        {
+          "name": "Swiss franc"
+        },
+        {
+          "name": "Growth rate (2019\u20132022)"
+        }
+      ],
+      "number": 6.1
+    },
+    {
+      "words": [
+        {
+          "name": "Hong Kong dollar"
+        },
+        {
+          "name": "Proportion of daily volume April 2019"
+        }
+      ],
+      "number": 3.5
+    },
+    {
+      "words": [
+        {
+          "name": "Hong Kong dollar"
+        },
+        {
+          "name": "Proportion of daily volume April 2022"
+        }
+      ],
+      "number": 2.6
+    },
+    {
+      "words": [
+        {
+          "name": "Hong Kong dollar"
+        },
+        {
+          "name": "Growth rate (2019\u20132022)"
+        }
+      ],
+      "number": 25.7
+    },
+    {
+      "words": [
+        {
+          "name": "Singapore dollar"
+        },
+        {
+          "name": "Proportion of daily volume April 2019"
+        }
+      ],
+      "number": 1.8
+    },
+    {
+      "words": [
+        {
+          "name": "Singapore dollar"
+        },
+        {
+          "name": "Proportion of daily volume April 2022"
+        }
+      ],
+      "number": 2.4
+    },
+    {
+      "words": [
+        {
+          "name": "Singapore dollar"
+        },
+        {
+          "name": "Growth rate (2019\u20132022)"
+        }
+      ],
+      "number": 33.3
+    },
+    {
+      "words": [
+        {
+          "name": "Swedish krona"
+        },
+        {
+          "name": "Proportion of daily volume April 2019"
+        }
+      ],
+      "number": 2
+    },
+    {
+      "words": [
+        {
+          "name": "Swedish krona"
+        },
+        {
+          "name": "Proportion of daily volume April 2022"
+        }
+      ],
+      "number": 2.2
+    },
+    {
+      "words": [
+        {
+          "name": "Swedish krona"
+        },
+        {
+          "name": "Growth rate (2019\u20132022)"
+        }
+      ],
+      "number": 10
+    },
+    {
+      "words": [
+        {
+          "name": "South Korean won"
+        },
+        {
+          "name": "Proportion of daily volume April 2019"
+        }
+      ],
+      "number": 2
+    },
+    {
+      "words": [
+        {
+          "name": "South Korean won"
+        },
+        {
+          "name": "Proportion of daily volume April 2022"
+        }
+      ],
+      "number": 1.9
+    },
+    {
+      "words": [
+        {
+          "name": "South Korean won"
+        },
+        {
+          "name": "Growth rate (2019\u20132022)"
+        }
+      ],
+      "number": 5
+    },
+    {
+      "words": [
+        {
+          "name": "Norwegian krone"
+        },
+        {
+          "name": "Proportion of daily volume April 2019"
+        }
+      ],
+      "number": 1.8
+    },
+    {
+      "words": [
+        {
+          "name": "Norwegian krone"
+        },
+        {
+          "name": "Proportion of daily volume April 2022"
+        }
+      ],
+      "number": 1.7
+    },
+    {
+      "words": [
+        {
+          "name": "Norwegian krone"
+        },
+        {
+          "name": "Growth rate (2019\u20132022)"
+        }
+      ],
+      "number": 5.5
+    },
+    {
+      "words": [
+        {
+          "name": "New Zealand dollar"
+        },
+        {
+          "name": "Proportion of daily volume April 2019"
+        }
+      ],
+      "number": 2.1
+    },
+    {
+      "words": [
+        {
+          "name": "New Zealand dollar"
+        },
+        {
+          "name": "Proportion of daily volume April 2022"
+        }
+      ],
+      "number": 1.7
+    },
+    {
+      "words": [
+        {
+          "name": "New Zealand dollar"
+        },
+        {
+          "name": "Growth rate (2019\u20132022)"
+        }
+      ],
+      "number": 19
+    },
+    {
+      "words": [
+        {
+          "name": "Indian rupee"
+        },
+        {
+          "name": "Proportion of daily volume April 2019"
+        }
+      ],
+      "number": 1.7
+    },
+    {
+      "words": [
+        {
+          "name": "Indian rupee"
+        },
+        {
+          "name": "Proportion of daily volume April 2022"
+        }
+      ],
+      "number": 1.6
+    },
+    {
+      "words": [
+        {
+          "name": "Indian rupee"
+        },
+        {
+          "name": "Growth rate (2019\u20132022)"
+        }
+      ],
+      "number": 5.8
+    },
+    {
+      "words": [
+        {
+          "name": "Mexican peso"
+        },
+        {
+          "name": "Proportion of daily volume April 2019"
+        }
+      ],
+      "number": 1.7
+    },
+    {
+      "words": [
+        {
+          "name": "Mexican peso"
+        },
+        {
+          "name": "Proportion of daily volume April 2022"
+        }
+      ],
+      "number": 1.5
+    },
+    {
+      "words": [
+        {
+          "name": "Mexican peso"
+        },
+        {
+          "name": "Growth rate (2019\u20132022)"
+        }
+      ],
+      "number": 11.7
+    },
+    {
+      "words": [
+        {
+          "name": "New Taiwan dollar"
+        },
+        {
+          "name": "Proportion of daily volume April 2019"
+        }
+      ],
+      "number": 0.9
+    },
+    {
+      "words": [
+        {
+          "name": "New Taiwan dollar"
+        },
+        {
+          "name": "Proportion of daily volume April 2022"
+        }
+      ],
+      "number": 1.1
+    },
+    {
+      "words": [
+        {
+          "name": "New Taiwan dollar"
+        },
+        {
+          "name": "Growth rate (2019\u20132022)"
+        }
+      ],
+      "number": 22.2
+    },
+    {
+      "words": [
+        {
+          "name": "South African rand"
+        },
+        {
+          "name": "Proportion of daily volume April 2019"
+        }
+      ],
+      "number": 1.1
+    },
+    {
+      "words": [
+        {
+          "name": "South African rand"
+        },
+        {
+          "name": "Proportion of daily volume April 2022"
+        }
+      ],
+      "number": 1
+    },
+    {
+      "words": [
+        {
+          "name": "South African rand"
+        },
+        {
+          "name": "Growth rate (2019\u20132022)"
+        }
+      ],
+      "number": 9
+    },
+    {
+      "words": [
+        {
+          "name": "Brazilian real"
+        },
+        {
+          "name": "Proportion of daily volume April 2019"
+        }
+      ],
+      "number": 1.1
+    },
+    {
+      "words": [
+        {
+          "name": "Brazilian real"
+        },
+        {
+          "name": "Proportion of daily volume April 2022"
+        }
+      ],
+      "number": 0.9
+    },
+    {
+      "words": [
+        {
+          "name": "Brazilian real"
+        },
+        {
+          "name": "Growth rate (2019\u20132022)"
+        }
+      ],
+      "number": 18.1
+    },
+    {
+      "words": [
+        {
+          "name": "Danish krone"
+        },
+        {
+          "name": "Proportion of daily volume April 2019"
+        }
+      ],
+      "number": 0.6
+    },
+    {
+      "words": [
+        {
+          "name": "Danish krone"
+        },
+        {
+          "name": "Proportion of daily volume April 2022"
+        }
+      ],
+      "number": 0.7
+    },
+    {
+      "words": [
+        {
+          "name": "Danish krone"
+        },
+        {
+          "name": "Growth rate (2019\u20132022)"
+        }
+      ],
+      "number": 16.6
+    },
+    {
+      "words": [
+        {
+          "name": "Polish z\u0142oty"
+        },
+        {
+          "name": "Proportion of daily volume April 2019"
+        }
+      ],
+      "number": 0.6
+    },
+    {
+      "words": [
+        {
+          "name": "Polish z\u0142oty"
+        },
+        {
+          "name": "Proportion of daily volume April 2022"
+        }
+      ],
+      "number": 0.7
+    },
+    {
+      "words": [
+        {
+          "name": "Polish z\u0142oty"
+        },
+        {
+          "name": "Growth rate (2019\u20132022)"
+        }
+      ],
+      "number": 16.6
+    },
+    {
+      "words": [
+        {
+          "name": "Thai baht"
+        },
+        {
+          "name": "Proportion of daily volume April 2019"
+        }
+      ],
+      "number": 0.5
+    },
+    {
+      "words": [
+        {
+          "name": "Thai baht"
+        },
+        {
+          "name": "Proportion of daily volume April 2022"
+        }
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        {
+          "name": "Thai baht"
+        },
+        {
+          "name": "Growth rate (2019\u20132022)"
+        }
+      ],
+      "number": 20
+    },
+    {
+      "words": [
+        {
+          "name": "Israeli new shekel"
+        },
+        {
+          "name": "Proportion of daily volume April 2019"
+        }
+      ],
+      "number": 0.3
+    },
+    {
+      "words": [
+        {
+          "name": "Israeli new shekel"
+        },
+        {
+          "name": "Proportion of daily volume April 2022"
+        }
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        {
+          "name": "Israeli new shekel"
+        },
+        {
+          "name": "Growth rate (2019\u20132022)"
+        }
+      ],
+      "number": 33.3
+    },
+    {
+      "words": [
+        {
+          "name": "Indonesian rupiah"
+        },
+        {
+          "name": "Proportion of daily volume April 2019"
+        }
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        {
+          "name": "Indonesian rupiah"
+        },
+        {
+          "name": "Proportion of daily volume April 2022"
+        }
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        {
+          "name": "Indonesian rupiah"
+        },
+        {
+          "name": "Growth rate (2019\u20132022)"
+        }
+      ],
+      "number": 0
+    },
+    {
+      "words": [
+        {
+          "name": "Czech koruna"
+        },
+        {
+          "name": "Proportion of daily volume April 2019"
+        }
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        {
+          "name": "Czech koruna"
+        },
+        {
+          "name": "Proportion of daily volume April 2022"
+        }
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        {
+          "name": "Czech koruna"
+        },
+        {
+          "name": "Growth rate (2019\u20132022)"
+        }
+      ],
+      "number": 0
+    },
+    {
+      "words": [
+        {
+          "name": "UAE dirham"
+        },
+        {
+          "name": "Proportion of daily volume April 2019"
+        }
+      ],
+      "number": 0.2
+    },
+    {
+      "words": [
+        {
+          "name": "UAE dirham"
+        },
+        {
+          "name": "Proportion of daily volume April 2022"
+        }
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        {
+          "name": "UAE dirham"
+        },
+        {
+          "name": "Growth rate (2019\u20132022)"
+        }
+      ],
+      "number": 100
+    },
+    {
+      "words": [
+        {
+          "name": "Turkish lira"
+        },
+        {
+          "name": "Proportion of daily volume April 2019"
+        }
+      ],
+      "number": 1.1
+    },
+    {
+      "words": [
+        {
+          "name": "Turkish lira"
+        },
+        {
+          "name": "Proportion of daily volume April 2022"
+        }
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        {
+          "name": "Turkish lira"
+        },
+        {
+          "name": "Growth rate (2019\u20132022)"
+        }
+      ],
+      "number": 63.6
+    },
+    {
+      "words": [
+        {
+          "name": "Hungarian forint"
+        },
+        {
+          "name": "Proportion of daily volume April 2019"
+        }
+      ],
+      "number": 0.4
+    },
+    {
+      "words": [
+        {
+          "name": "Hungarian forint"
+        },
+        {
+          "name": "Proportion of daily volume April 2022"
+        }
+      ],
+      "number": 0.3
+    },
+    {
+      "words": [
+        {
+          "name": "Hungarian forint"
+        },
+        {
+          "name": "Growth rate (2019\u20132022)"
+        }
+      ],
+      "number": 25
+    },
+    {
+      "words": [
+        {
+          "name": "Chilean peso"
+        },
+        {
+          "name": "Proportion of daily volume April 2019"
+        }
+      ],
+      "number": 0.3
+    },
+    {
+      "words": [
+        {
+          "name": "Chilean peso"
+        },
+        {
+          "name": "Proportion of daily volume April 2022"
+        }
+      ],
+      "number": 0.3
+    },
+    {
+      "words": [
+        {
+          "name": "Chilean peso"
+        },
+        {
+          "name": "Growth rate (2019\u20132022)"
+        }
+      ],
+      "number": 0
+    },
+    {
+      "words": [
+        {
+          "name": "Saudi riyal"
+        },
+        {
+          "name": "Proportion of daily volume April 2019"
+        }
+      ],
+      "number": 0.2
+    },
+    {
+      "words": [
+        {
+          "name": "Saudi riyal"
+        },
+        {
+          "name": "Proportion of daily volume April 2022"
+        }
+      ],
+      "number": 0.2
+    },
+    {
+      "words": [
+        {
+          "name": "Saudi riyal"
+        },
+        {
+          "name": "Growth rate (2019\u20132022)"
+        }
+      ],
+      "number": 0
+    },
+    {
+      "words": [
+        {
+          "name": "Philippine peso"
+        },
+        {
+          "name": "Proportion of daily volume April 2019"
+        }
+      ],
+      "number": 0.3
+    },
+    {
+      "words": [
+        {
+          "name": "Philippine peso"
+        },
+        {
+          "name": "Proportion of daily volume April 2022"
+        }
+      ],
+      "number": 0.2
+    },
+    {
+      "words": [
+        {
+          "name": "Philippine peso"
+        },
+        {
+          "name": "Growth rate (2019\u20132022)"
+        }
+      ],
+      "number": 33.3
+    },
+    {
+      "words": [
+        {
+          "name": "Malaysian ringgit"
+        },
+        {
+          "name": "Proportion of daily volume April 2019"
+        }
+      ],
+      "number": 0.2
+    },
+    {
+      "words": [
+        {
+          "name": "Malaysian ringgit"
+        },
+        {
+          "name": "Proportion of daily volume April 2022"
+        }
+      ],
+      "number": 0.2
+    },
+    {
+      "words": [
+        {
+          "name": "Malaysian ringgit"
+        },
+        {
+          "name": "Growth rate (2019\u20132022)"
+        }
+      ],
+      "number": 0
+    },
+    {
+      "words": [
+        {
+          "name": "Colombian peso"
+        },
+        {
+          "name": "Proportion of daily volume April 2019"
+        }
+      ],
+      "number": 0.2
+    },
+    {
+      "words": [
+        {
+          "name": "Colombian peso"
+        },
+        {
+          "name": "Proportion of daily volume April 2022"
+        }
+      ],
+      "number": 0.2
+    },
+    {
+      "words": [
+        {
+          "name": "Colombian peso"
+        },
+        {
+          "name": "Growth rate (2019\u20132022)"
+        }
+      ],
+      "number": 0
+    },
+    {
+      "words": [
+        {
+          "name": "Russian ruble"
+        },
+        {
+          "name": "Proportion of daily volume April 2019"
+        }
+      ],
+      "number": 1.1
+    },
+    {
+      "words": [
+        {
+          "name": "Russian ruble"
+        },
+        {
+          "name": "Proportion of daily volume April 2022"
+        }
+      ],
+      "number": 0.2
+    },
+    {
+      "words": [
+        {
+          "name": "Russian ruble"
+        },
+        {
+          "name": "Growth rate (2019\u20132022)"
+        }
+      ],
+      "number": 81.8
+    },
+    {
+      "words": [
+        {
+          "name": "Romanian leu"
+        },
+        {
+          "name": "Proportion of daily volume April 2019"
+        }
+      ],
+      "number": 0.1
+    },
+    {
+      "words": [
+        {
+          "name": "Romanian leu"
+        },
+        {
+          "name": "Proportion of daily volume April 2022"
+        }
+      ],
+      "number": 0.1
+    },
+    {
+      "words": [
+        {
+          "name": "Romanian leu"
+        },
+        {
+          "name": "Growth rate (2019\u20132022)"
+        }
+      ],
+      "number": 0
+    },
+    {
+      "words": [
+        {
+          "name": "Peruvian sol"
+        },
+        {
+          "name": "Proportion of daily volume April 2019"
+        }
+      ],
+      "number": 0.1
+    },
+    {
+      "words": [
+        {
+          "name": "Peruvian sol"
+        },
+        {
+          "name": "Proportion of daily volume April 2022"
+        }
+      ],
+      "number": 0.1
+    },
+    {
+      "words": [
+        {
+          "name": "Peruvian sol"
+        },
+        {
+          "name": "Growth rate (2019\u20132022)"
+        }
+      ],
+      "number": 0
+    },
+    {
+      "words": [
+        {
+          "name": "Bahraini dinar"
+        },
+        {
+          "name": "Proportion of daily volume April 2019"
+        }
+      ],
+      "number": 0
+    },
+    {
+      "words": [
+        {
+          "name": "Bahraini dinar"
+        },
+        {
+          "name": "Proportion of daily volume April 2022"
+        }
+      ],
+      "number": 0
+    },
+    {
+      "words": [
+        {
+          "name": "Bahraini dinar"
+        },
+        {
+          "name": "Growth rate (2019\u20132022)"
+        }
+      ],
+      "number": 0
+    },
+    {
+      "words": [
+        {
+          "name": "Bulgarian lev"
+        },
+        {
+          "name": "Proportion of daily volume April 2019"
+        }
+      ],
+      "number": 0
+    },
+    {
+      "words": [
+        {
+          "name": "Bulgarian lev"
+        },
+        {
+          "name": "Proportion of daily volume April 2022"
+        }
+      ],
+      "number": 0
+    },
+    {
+      "words": [
+        {
+          "name": "Bulgarian lev"
+        },
+        {
+          "name": "Growth rate (2019\u20132022)"
+        }
+      ],
+      "number": 0
+    },
+    {
+      "words": [
+        {
+          "name": "Argentine peso"
+        },
+        {
+          "name": "Proportion of daily volume April 2019"
+        }
+      ],
+      "number": 0.1
+    },
+    {
+      "words": [
+        {
+          "name": "Argentine peso"
+        },
+        {
+          "name": "Proportion of daily volume April 2022"
+        }
+      ],
+      "number": 0
+    },
+    {
+      "words": [
+        {
+          "name": "Argentine peso"
+        },
+        {
+          "name": "Growth rate (2019\u20132022)"
+        }
+      ],
+      "number": 100
+    },
+    {
+      "words": [
+        {
+          "name": "Other"
+        },
+        {
+          "name": "Proportion of daily volume April 2019"
+        }
+      ],
+      "number": 1.8
+    },
+    {
+      "words": [
+        {
+          "name": "Other"
+        },
+        {
+          "name": "Proportion of daily volume April 2022"
+        }
+      ],
+      "number": 2.3
+    },
+    {
+      "words": [
+        {
+          "name": "Other"
+        },
+        {
+          "name": "Growth rate (2019\u20132022)"
+        }
+      ],
+      "number": 27.7
+    },
+    {
+      "words": [
+        {
+          "name": "Total[lower-alpha 2]"
+        },
+        {
+          "name": "Proportion of daily volume April 2019"
+        }
+      ],
+      "number": 200
+    },
+    {
+      "words": [
+        {
+          "name": "Total[lower-alpha 2]"
+        },
+        {
+          "name": "Proportion of daily volume April 2022"
+        }
+      ],
+      "number": 200
+    }
+  ]
+}

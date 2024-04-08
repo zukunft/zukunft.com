@@ -421,7 +421,7 @@ class lib_tests
         $test_result = json_decode($t->file('/web/system/result.json'), true);
         $test_target = json_decode($t->file('/web/system/target.json'), true);
         $result = $lib->diff_msg($test_result, $test_target);
-        $target = '64//+{"id":65,"code_id":"18excluded","name":"18excluded","comment":""}//, 65//+{"id":66,"code_id":"14excluded","name":"14excluded","comment":""}// ... and 1 more';
+        $target = 'pos  5: pos  20: 64//-{"id":65,"code_id":"18excluded","name":"18excluded","comment":""}//, 65//-{"id":66,"code_id":"14excluded","name":"14excluded","comment":""}// ... and 1 more';
         $t->assert("diff_msg, json in long string", $result, $target);
         // ... sql files
         $test_result = $t->file('/web/system/result.sql');

@@ -146,6 +146,8 @@ class convert_wikipedia_table
      * convert a wikitable2json to a zukunft.com json
      * based on wikitable2json
      * TODO use it to compare wikipedia table with wikidata and report the differences
+     * TODO base all assumptions on the given context
+     * TODO add a word splitter to seperate e.g. "Growth rate (2019–2022)" to "Growth rate", "2019" and "2022"
      *
      * @param string $wiki_json wth the wikipedia table
      * @param user $usr the user how has initiated the convertion
@@ -162,8 +164,9 @@ class convert_wikipedia_table
         string $wiki_json,
         user   $usr,
         string $timestamp,
-        int    $table_nbr = 0,
         array  $context = [],
+        array  $exclude_col_names = [],
+        int    $table_nbr = 0,
         string $row_name_wiki = '',
         string $row_name_out = '',
         string $col_name_wiki = '',
@@ -172,69 +175,277 @@ class convert_wikipedia_table
     {
         global $verbs;
 
+        $wiki_json = json_decode($wiki_json, true);
+
+        // temp context asumption
+        // TODO get these from the given context
+        $list_of_symbols = ['ISO 4217code', 'Symbol orabbreviation'];
+
+        // prepare the result
+        $json = $this->header($usr, $timestamp);
+        $word_lst = [];
+        $triples = [];
+        $values = [];
+
+        // usually the first column of a table contains the "key"
+        $id_column = null;
+
+        // add the context to the result
+        foreach ($context as $context_name) {
+            $word_lst[] = $context_name;
+        }
+
+        // TODO remove: special cases to be deprecated
         if ($col_name_out == '') {
             $col_name_out = $col_name_wiki;
         }
-
-        $wiki_json = json_decode($wiki_json, true);
-
-        $json = $this->header($usr, $timestamp);
-        $words = [];
-        $triples = [];
-
-        //
-        foreach ($context as $context_name) {
-            $word = [];
-            $word[export::NAME] = $context_name;
-            $words[] = $word;
+        if ($col_name_out != '') {
+            $word_lst[] = $context[1] . ' ' . $col_name_out;
         }
-        $word = [];
-        $word[export::NAME] = $context[0] . ' ' . $col_name_out;
-        $words[] = $word;
-        $word = [];
-        $word[export::NAME] = $row_name_out;
-        $words[] = $word;
+        if ($row_name_out != '') {
+            $word_lst[] = $row_name_out;
+        }
 
         // select the target table
         $wiki_table = $wiki_json[$table_nbr];
 
         // get the header row
         $header_row = array_shift($wiki_table);
+
+        // select the columns to convert
+        $col_names = [];
+        $col_positions = [];
+        $i = 0;
+        foreach ($header_row as $col_name) {
+            if (!in_array($col_name, $exclude_col_names)) {
+                $word_lst[] = $col_name;
+                $col_names[$i] = $col_name;
+                $col_positions[] = $i;
+                if ($id_column == null) {
+                    $id_column = $i;
+                }
+            }
+            $i++;
+        }
+
         $pos_row = array_search($row_name_wiki, $header_row);
         $pos_col = array_search($col_name_wiki, $header_row);
 
-        // write the words
+        // write the words from the rows
         foreach ($wiki_table as $wiki_row) {
-            $word = [];
-            $word[export::NAME] = $wiki_row[$pos_row];
-            $words[] = $word;
-            $word = [];
-            $word[export::NAME] = $wiki_row[$pos_col];
-            $words[] = $word;
+            $row_key = '';
+            for ($i = 0; $i < count($wiki_row); $i++) {
+                if ($i == $id_column) {
+                    $row_key = $wiki_row[$i];
+                }
+            }
+            for ($i = 0; $i < count($wiki_row); $i++) {
+                if (in_array($i, $col_positions)) {
+                    if ($this->is_value($wiki_row[$i])) {
+                        $value = [];
+                        $val_words = [];
+                        $val_word = [];
+                        $val_word[export::NAME] = $row_key;
+                        $val_words[] = $val_word;
+                        $val_word = [];
+                        $val_word[export::NAME] = $col_names[$i];
+                        $val_words[] = $val_word;
+                        if ($this->get_value_words($wiki_row[$i]) != null) {
+                            $val_words[] = $this->get_value_words($wiki_row[$i]);
+                        }
+                        $value[export::WORDS] = $val_words;
+                        $value[export::VALUE_NUMBER] = $this->get_value($wiki_row[$i]);
+                        $values[] = $value;
+                    } else {
+                        $word_entry = $wiki_row[$i];
+                        $word_lst[] = $word_entry;
+                    }
+                }
+            }
         }
 
-        //get the triple
+        // get the triples
         foreach ($wiki_table as $wiki_row) {
-            $trp = [];
-            $trp[export::FROM] = $wiki_row[$pos_row];
-            $trp[export::VERB] = verb_api::TN_IS;
-            $trp[export::TO] = $row_name_out;
-            $triples[] = $trp;
-            $trp = [];
-            $trp[export::FROM] = $wiki_row[$pos_col];
-            $trp[export::VERB] = verb_api::TN_IS;
-            $trp[export::TO] = $context[0] . ' ' . $col_name_out;
-            $triples[] = $trp;
-            $trp = [];
-            $trp[export::FROM] = $wiki_row[$pos_col];
-            $trp[export::VERB] = verb_api::TN_SYMBOL;
-            $trp[export::TO] = $wiki_row[$pos_row];
-            $triples[] = $trp;
+
+            // remember the row key
+            $row_key = '';
+            for ($i = 0; $i < count($wiki_row); $i++) {
+                if ($i == $id_column) {
+                    $row_key = $wiki_row[$i];
+                }
+            }
+
+            if ($col_name_out == '') {
+                for ($i = 0; $i < count($wiki_row); $i++) {
+
+                    // create a triple only for the selected columns
+                    if (in_array($i, $col_positions)) {
+                        if (!$this->is_value($wiki_row[$i])) {
+                            // assume that the row name has an "is a" relation to the column name
+                            $trp = [];
+                            $trp[export::FROM] = $wiki_row[$i];
+                            $trp[export::VERB] = verb_api::TN_IS;
+                            if ($row_name_out != '') {
+                                $trp[export::TO] = $row_name_out;
+                            } else {
+                                $trp[export::TO] = $col_names[$i];
+                            }
+                            $triples[] = $trp;
+
+                            // create other assumend relations
+                            if (in_array($col_names[$i], $list_of_symbols)) {
+                                $trp = [];
+                                $trp[export::FROM] = $wiki_row[$i];
+                                $trp[export::VERB] = verb_api::TN_SYMBOL;
+                                $trp[export::TO] = $row_key;
+                                $triples[] = $trp;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // TODO remove: special cases to be deprecated
+            if ($col_name_out != '') {
+                $trp = [];
+                $trp[export::FROM] = $wiki_row[$pos_row];
+                $trp[export::VERB] = verb_api::TN_IS;
+                $trp[export::TO] = $row_name_out;
+                $triples[] = $trp;
+
+                $trp = [];
+                $trp[export::FROM] = $wiki_row[$pos_col];
+                $trp[export::VERB] = verb_api::TN_IS;
+                $trp[export::TO] = $context[1] . ' ' . $col_name_out;
+                $triples[] = $trp;
+
+                $trp = [];
+                $trp[export::FROM] = $wiki_row[$pos_col];
+                $trp[export::VERB] = verb_api::TN_SYMBOL;
+                $trp[export::TO] = $wiki_row[$pos_row];
+                $triples[] = $trp;
+            }
+
         }
 
-        $json[export::WORDS] = $words;
-        $json[export::TRIPLES] = $triples;
+        // create the json based on the word list
+        $words = $this->word_names_to_array($word_lst);
+
+        if (count($words) > 0) {
+            $json[export::WORDS] = $words;
+        }
+        if (count($triples) > 0) {
+            $json[export::TRIPLES] = $triples;
+        }
+        if (count($values) > 0) {
+            $json[export::VALUES] = $values;
+        }
         return json_encode($json);
+    }
+
+    /**
+     * create array for the json based on the word list
+     * @param array $word_lst
+     * @return array
+     */
+    private function word_names_to_array(array $word_lst): array
+    {
+        $words = [];
+        $words_in_list = [];
+
+        foreach ($word_lst as $word_entry) {
+            $word_name = '';
+            $word = [];
+            if (is_array($word_entry)) {
+                foreach ($word_entry as $word_part) {
+                    if (is_array($word_part)) {
+                        foreach ($word_part as $key => $word_part_par) {
+                            $word[$key] = $word_part_par;
+                        }
+                    } else {
+                        // TODO base this on the ontologie / context
+                        $word_name = str_replace('[lower-alpha 2]', '', $word_part);
+                        $word[export::NAME] = $word_name;
+                    }
+                }
+            } else {
+                if ($word_entry != '') {
+                    if (!in_array($word_entry, $words_in_list)) {
+                        // TODO base this on the ontologie / context
+                        $word_name = str_replace('[lower-alpha 2]', '', $word_entry);
+                        $word[export::NAME] = $word_name;
+                    }
+                }
+            }
+            if ($word_name != '') {
+                if (!in_array($word_name, $words_in_list)) {
+                    $words[] = $word;
+                    $words_in_list[] = $word_name;
+                }
+            }
+        }
+        return $words;
+    }
+
+    /**
+     * @param string|array $cell_text the text of a table cell
+     * @return bool
+     */
+    private function is_value(string|array $cell_text): bool
+    {
+        if (is_array($cell_text)) {
+            return false;
+        } else {
+            // remove percent symbol
+            // TODO base this on the ontologie / context
+            $cell_text = str_replace('%', '', $cell_text);
+            if (is_numeric($cell_text)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
+    /**
+     * @param string|array $cell_text the text of a table cell
+     * @return array|null
+     */
+    private function get_value_words(string|array $cell_text): array|null
+    {
+        if (is_array($cell_text)) {
+            return null;
+        } else {
+            // remove percent symbol
+            // TODO base this on the ontologie / context
+            if ($cell_text == '%') {
+                $word = [];
+                $word[export::NAME] = '%';
+                return $word;
+            } else {
+                return null;
+            }
+        }
+    }
+
+    /**
+     * @param string|array $cell_text the text of a table cell
+     * @return float|null
+     */
+    private function get_value(string|array $cell_text): ?float
+    {
+        if (is_array($cell_text)) {
+            return null;
+        } else {
+            // remove percent symbol
+            // TODO base this on the ontologie / context
+            $cell_text = str_replace('%', '', $cell_text);
+            if (is_numeric($cell_text)) {
+                return floatval($cell_text);
+            } else {
+                return null;
+            }
+        }
     }
 
     /**

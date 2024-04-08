@@ -588,8 +588,12 @@ class library
         foreach ($target as $key => $value) {
             if (array_key_exists($key, $result)) {
                 if ($value != $result[$key]) {
-                    $msg .= $this->str_sep($msg);
-                    $msg .= 'pos  ' . $key . ': ' . $this->diff_msg($result[$key], $value);
+                    // check if the diff is only the order of the items
+                    $diff = $this->diff_msg($result[$key], $value);
+                    if ($diff != '') {
+                        $msg .= $this->str_sep($msg);
+                        $msg .= 'pos  ' . $key . ': ' . $diff;
+                    }
                 }
             }
         }
@@ -654,8 +658,15 @@ class library
                     $more++;
                 }
             } else {
-                if (is_array($value)) {
-                    $msg .= $this->array_explain_missing($result[$key], $value);
+                if (!$result[$key] == $value) {
+                    if (is_array($result[$key]) and is_array($value)) {
+                        $msg .= $this->array_explain_missing($result[$key], $value);
+                    } else {
+                        if ($msg != '') {
+                            $msg .= ', ';
+                        }
+                        $msg .= $value . ' is not ' . $result[$key];
+                    }
                 }
             }
         }
@@ -1601,7 +1612,7 @@ class library
      */
     function class_to_table(string $class): string
     {
-        $result = $this->class_to_name($class) .  sql_db::TABLE_EXTENSION;
+        $result = $this->class_to_name($class) . sql_db::TABLE_EXTENSION;
         // for some lists and exceptions
         switch ($class) {
             /*

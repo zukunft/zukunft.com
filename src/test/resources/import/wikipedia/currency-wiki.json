@@ -1,0 +1,494 @@
+[
+  [
+    [
+      "Rank",
+      "Currency",
+      "ISO 4217code",
+      "Symbol orabbreviation",
+      "Proportion of daily volume April 2019",
+      "Proportion of daily volume April 2022",
+      "Growth rate (2019–2022)"
+    ],
+    [
+      "1",
+      "U.S. dollar",
+      "USD",
+      "US$",
+      "88.3%",
+      "88.5%",
+      "0.2%"
+    ],
+    [
+      "2",
+      "Euro",
+      "EUR",
+      "€",
+      "32.3%",
+      "30.5%",
+      "5.5%"
+    ],
+    [
+      "3",
+      "Japanese yen",
+      "JPY",
+      "¥ / 円",
+      "16.8%",
+      "16.7%",
+      "0.6%"
+    ],
+    [
+      "4",
+      "Sterling",
+      "GBP",
+      "£",
+      "12.8%",
+      "12.9%",
+      "0.7%"
+    ],
+    [
+      "5",
+      "Renminbi",
+      "CNY",
+      "¥ / 元",
+      "4.3%",
+      "7.0%",
+      "62.7%"
+    ],
+    [
+      "6",
+      "Australian dollar",
+      "AUD",
+      "A$",
+      "6.8%",
+      "6.4%",
+      "5.8%"
+    ],
+    [
+      "7",
+      "Canadian dollar",
+      "CAD",
+      "C$",
+      "5.0%",
+      "6.2%",
+      "24%"
+    ],
+    [
+      "8",
+      "Swiss franc",
+      "CHF",
+      "CHF",
+      "4.9%",
+      "5.2%",
+      "6.1%"
+    ],
+    [
+      "9",
+      "Hong Kong dollar",
+      "HKD",
+      "HK$",
+      "3.5%",
+      "2.6%",
+      "25.7%"
+    ],
+    [
+      "10",
+      "Singapore dollar",
+      "SGD",
+      "S$",
+      "1.8%",
+      "2.4%",
+      "33.3%"
+    ],
+    [
+      "11",
+      "Swedish krona",
+      "SEK",
+      "kr",
+      "2.0%",
+      "2.2%",
+      "10%"
+    ],
+    [
+      "12",
+      "South Korean won",
+      "KRW",
+      "₩ / 원",
+      "2.0%",
+      "1.9%",
+      "5%"
+    ],
+    [
+      "13",
+      "Norwegian krone",
+      "NOK",
+      "kr",
+      "1.8%",
+      "1.7%",
+      "5.5%"
+    ],
+    [
+      "14",
+      "New Zealand dollar",
+      "NZD",
+      "NZ$",
+      "2.1%",
+      "1.7%",
+      "19%"
+    ],
+    [
+      "15",
+      "Indian rupee",
+      "INR",
+      "₹",
+      "1.7%",
+      "1.6%",
+      "5.8%"
+    ],
+    [
+      "16",
+      "Mexican peso",
+      "MXN",
+      "MX$",
+      "1.7%",
+      "1.5%",
+      "11.7%"
+    ],
+    [
+      "17",
+      "New Taiwan dollar",
+      "TWD",
+      "NT$",
+      "0.9%",
+      "1.1%",
+      "22.2%"
+    ],
+    [
+      "18",
+      "South African rand",
+      "ZAR",
+      "R",
+      "1.1%",
+      "1.0%",
+      "9%"
+    ],
+    [
+      "19",
+      "Brazilian real",
+      "BRL",
+      "R$",
+      "1.1%",
+      "0.9%",
+      "18.1%"
+    ],
+    [
+      "20",
+      "Danish krone",
+      "DKK",
+      "kr",
+      "0.6%",
+      "0.7%",
+      "16.6%"
+    ],
+    [
+      "21",
+      "Polish złoty",
+      "PLN",
+      "zł",
+      "0.6%",
+      "0.7%",
+      "16.6%"
+    ],
+    [
+      "22",
+      "Thai baht",
+      "THB",
+      "฿",
+      "0.5%",
+      "0.4%",
+      "20%"
+    ],
+    [
+      "23",
+      "Israeli new shekel",
+      "ILS",
+      "₪",
+      "0.3%",
+      "0.4%",
+      "33.3%"
+    ],
+    [
+      "24",
+      "Indonesian rupiah",
+      "IDR",
+      "Rp",
+      "0.4%",
+      "0.4%",
+      "0%"
+    ],
+    [
+      "25",
+      "Czech koruna",
+      "CZK",
+      "Kč",
+      "0.4%",
+      "0.4%",
+      "0%"
+    ],
+    [
+      "26",
+      "UAE dirham",
+      "AED",
+      "د.إ",
+      "0.2%",
+      "0.4%",
+      "100%"
+    ],
+    [
+      "27",
+      "Turkish lira",
+      "TRY",
+      "₺",
+      "1.1%",
+      "0.4%",
+      "63.6%"
+    ],
+    [
+      "28",
+      "Hungarian forint",
+      "HUF",
+      "Ft",
+      "0.4%",
+      "0.3%",
+      "25%"
+    ],
+    [
+      "29",
+      "Chilean peso",
+      "CLP",
+      "CLP$",
+      "0.3%",
+      "0.3%",
+      "0%"
+    ],
+    [
+      "30",
+      "Saudi riyal",
+      "SAR",
+      "﷼",
+      "0.2%",
+      "0.2%",
+      "0%"
+    ],
+    [
+      "31",
+      "Philippine peso",
+      "PHP",
+      "₱",
+      "0.3%",
+      "0.2%",
+      "33.3%"
+    ],
+    [
+      "32",
+      "Malaysian ringgit",
+      "MYR",
+      "RM",
+      "0.2%",
+      "0.2%",
+      "0%"
+    ],
+    [
+      "33",
+      "Colombian peso",
+      "COP",
+      "COL$",
+      "0.2%",
+      "0.2%",
+      "0%"
+    ],
+    [
+      "34",
+      "Russian ruble",
+      "RUB",
+      "₽",
+      "1.1%",
+      "0.2%",
+      "81.8%"
+    ],
+    [
+      "35",
+      "Romanian leu",
+      "RON",
+      "L",
+      "0.1%",
+      "0.1%",
+      "0%"
+    ],
+    [
+      "36",
+      "Peruvian sol",
+      "PEN",
+      "S/",
+      "0.1%",
+      "0.1%",
+      "0%"
+    ],
+    [
+      "37",
+      "Bahraini dinar",
+      "BHD",
+      ".د.ب",
+      "0.0%",
+      "0.0%",
+      "0%"
+    ],
+    [
+      "38",
+      "Bulgarian lev",
+      "BGN",
+      "BGN",
+      "0.0%",
+      "0.0%",
+      "0%"
+    ],
+    [
+      "39",
+      "Argentine peso",
+      "ARS",
+      "ARG$",
+      "0.1%",
+      "0.0%",
+      "100%"
+    ],
+    [
+      "…",
+      "Other",
+      "",
+      "",
+      "1.8%",
+      "2.3%",
+      "27.7%"
+    ],
+    [
+      "Total[lower-alpha 2]",
+      "Total[lower-alpha 2]",
+      "Total[lower-alpha 2]",
+      "Total[lower-alpha 2]",
+      "200.0%",
+      "200.0%",
+      ""
+    ]
+  ],
+  [
+    [
+      "Rank",
+      "Currency",
+      "February 2024"
+    ],
+    [
+      "",
+      "World",
+      "100.00%"
+    ],
+    [
+      "1",
+      "United States dollar",
+      "46.56%"
+    ],
+    [
+      "2",
+      "Euro",
+      "23.25%"
+    ],
+    [
+      "3",
+      "Pound sterling",
+      "6.90%"
+    ],
+    [
+      "4",
+      "Chinese renminbi",
+      "4.00%"
+    ],
+    [
+      "5",
+      "Japanese yen",
+      "3.73%"
+    ],
+    [
+      "6",
+      "Canadian dollar",
+      "2.44%"
+    ],
+    [
+      "7",
+      "Australian dollar",
+      "1.68%"
+    ],
+    [
+      "8",
+      "Hong Kong dollar",
+      "1.55%"
+    ],
+    [
+      "9",
+      "Singapore dollar",
+      "1.32%"
+    ],
+    [
+      "10",
+      "Thai baht",
+      "1.08%"
+    ],
+    [
+      "11",
+      "Swiss franc",
+      "0.99%"
+    ],
+    [
+      "12",
+      "Swedish krona",
+      "0.84%"
+    ],
+    [
+      "13",
+      "Norwegian krone",
+      "0.80%"
+    ],
+    [
+      "14",
+      "Polish złoty",
+      "0.69%"
+    ],
+    [
+      "15",
+      "Danish krone",
+      "0.53%"
+    ],
+    [
+      "16",
+      "Malaysian ringgit",
+      "0.39%"
+    ],
+    [
+      "17",
+      "New Zealand dollar",
+      "0.36%"
+    ],
+    [
+      "18",
+      "Mexican peso",
+      "0.34%"
+    ],
+    [
+      "19",
+      "Philippine peso",
+      "0.31%"
+    ],
+    [
+      "20",
+      "South African rand",
+      "0.29%"
+    ]
+  ]
+]

@@ -77,6 +77,7 @@ class export
     const SOURCES = 'sources';
     const REFS = 'refs';
     const VALUES = 'values';
+    const VALUE_NUMBER = 'number';
     const VALUE_LIST = 'value-list';
     const CONTEXT = 'context';
     const VIEWS = 'views';

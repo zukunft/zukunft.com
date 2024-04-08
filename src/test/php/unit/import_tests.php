@@ -76,13 +76,25 @@ class import_tests
         $json_str = file_get_contents(PATH_TEST_IMPORT_FILES . 'wikipedia/country-ISO-3166.json');
         $conv_wiki = new convert_wikipedia_table;
         // TODO review the parameter context
-        $conv_str = $conv_wiki->convert_wiki_json($in_table, $usr, test_base::TEST_TIMESTAMP, 1,
-            ['ISO 3166'],
+        $conv_str = $conv_wiki->convert_wiki_json($in_table, $usr, test_base::TEST_TIMESTAMP,
+            ['Country', 'ISO 3166'], ['Alpha-2 code', 'Numeric code', 'Link to  ISO 3166-2', 'Independent'], 1,
             'English short name  (using title case)','Country',
             'Alpha-3 code',      '');
         $result = json_decode($conv_str, true);
         $target = json_decode($json_str, true);
         $t->assert_json($test_name, $result, $target);
+
+        $test_name = 'wikipedia data table json to zukunft.com JSON';
+        $in_table = file_get_contents(PATH_TEST_IMPORT_FILES . 'wikipedia/currency-wiki.json');
+        $json_str = file_get_contents(PATH_TEST_IMPORT_FILES . 'wikipedia/currency.json');
+        $conv_wiki = new convert_wikipedia_table;
+        // TODO review the parameter context
+        $conv_str = $conv_wiki->convert_wiki_json($in_table, $usr, test_base::TEST_TIMESTAMP,
+            [], ['Rank']);
+        $result = json_decode($conv_str, true);
+        $target = json_decode($json_str, true);
+        $t->assert_json($test_name, $result, $target);
+
     }
 
 }
