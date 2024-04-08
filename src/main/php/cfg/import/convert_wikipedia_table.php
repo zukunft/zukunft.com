@@ -244,12 +244,8 @@ class convert_wikipedia_table
                     if ($this->is_value($wiki_row[$i])) {
                         $value = [];
                         $val_words = [];
-                        $val_word = [];
-                        $val_word[export::NAME] = $row_key;
-                        $val_words[] = $val_word;
-                        $val_word = [];
-                        $val_word[export::NAME] = $col_names[$i];
-                        $val_words[] = $val_word;
+                        $val_words[] = $row_key;
+                        $val_words[] = $col_names[$i];
                         if ($this->get_value_words($wiki_row[$i]) != null) {
                             $val_words[] = $this->get_value_words($wiki_row[$i]);
                         }
@@ -272,6 +268,9 @@ class convert_wikipedia_table
             for ($i = 0; $i < count($wiki_row); $i++) {
                 if ($i == $id_column) {
                     $row_key = $wiki_row[$i];
+                    if (is_array($row_key)) {
+                        $row_key = $row_key[0];
+                    }
                 }
             }
 
@@ -280,10 +279,14 @@ class convert_wikipedia_table
 
                     // create a triple only for the selected columns
                     if (in_array($i, $col_positions)) {
-                        if (!$this->is_value($wiki_row[$i])) {
+                        $phr_name = $wiki_row[$i];
+                        if (is_array($phr_name)) {
+                            $phr_name = $phr_name[0];
+                        }
+                        if (!$this->is_value($phr_name)) {
                             // assume that the row name has an "is a" relation to the column name
                             $trp = [];
-                            $trp[export::FROM] = $wiki_row[$i];
+                            $trp[export::FROM] = $phr_name;
                             $trp[export::VERB] = verb_api::TN_IS;
                             if ($row_name_out != '') {
                                 $trp[export::TO] = $row_name_out;
@@ -295,7 +298,7 @@ class convert_wikipedia_table
                             // create other assumend relations
                             if (in_array($col_names[$i], $list_of_symbols)) {
                                 $trp = [];
-                                $trp[export::FROM] = $wiki_row[$i];
+                                $trp[export::FROM] = $phr_name;
                                 $trp[export::VERB] = verb_api::TN_SYMBOL;
                                 $trp[export::TO] = $row_key;
                                 $triples[] = $trp;
@@ -308,7 +311,11 @@ class convert_wikipedia_table
             // TODO remove: special cases to be deprecated
             if ($col_name_out != '') {
                 $trp = [];
-                $trp[export::FROM] = $wiki_row[$pos_row];
+                $row_key = $wiki_row[$pos_row];
+                if (is_array($row_key)) {
+                    $row_key = $row_key[0];
+                }
+                $trp[export::FROM] = $row_key;
                 $trp[export::VERB] = verb_api::TN_IS;
                 $trp[export::TO] = $row_name_out;
                 $triples[] = $trp;
@@ -322,7 +329,7 @@ class convert_wikipedia_table
                 $trp = [];
                 $trp[export::FROM] = $wiki_row[$pos_col];
                 $trp[export::VERB] = verb_api::TN_SYMBOL;
-                $trp[export::TO] = $wiki_row[$pos_row];
+                $trp[export::TO] = $row_key;
                 $triples[] = $trp;
             }
 

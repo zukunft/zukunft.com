@@ -94,7 +94,9 @@ use cfg\log\change;
 use cfg\log\change_action;
 use cfg\log\change_action_list;
 use cfg\log\change_field_list;
+use cfg\log\change_log;
 use cfg\log\change_table_list;
+use cfg\log\change_value;
 use cfg\phr_ids;
 use cfg\phrase;
 use cfg\phrase_list;
@@ -524,11 +526,11 @@ class value extends sandbox_value
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_multi(
-        sql      $sc,
-        string   $query_name,
-        string   $class = self::class,
-        array    $sc_par_lst = [],
-        string   $ext = ''
+        sql    $sc,
+        string $query_name,
+        string $class = self::class,
+        array  $sc_par_lst = [],
+        string $ext = ''
     ): sql_par
     {
         $qp = parent::load_sql_multi($sc, $query_name, $class, $sc_par_lst, $ext);
@@ -1582,10 +1584,10 @@ class value extends sandbox_value
     /**
      * set the log entry parameters for a value update
      */
-    function log_upd(): change
+    function log_upd(): change_value
     {
         log_debug('value->log_upd "' . $this->number . '" for user ' . $this->user()->id());
-        $log = new change($this->user());
+        $log = new change_value($this->user());
         $log->action = change_action::UPDATE;
         if ($this->can_change()) {
             $log->set_table(change_table_list::VALUE);
@@ -1852,7 +1854,7 @@ class value extends sandbox_value
             $log->old_value = $db_rec->number();
             $log->new_value = $this->number();
             $log->std_value = $std_rec->number();
-            $log->row_id = $this->id();
+            $this->save_set_log_id($log);
             $log->set_field(self::FLD_VALUE);
             $result .= $this->save_field_user($db_con, $log);
             // updating the number is definitely relevant for calculation, so force to update the timestamp
@@ -1861,7 +1863,6 @@ class value extends sandbox_value
         }
         return $result;
     }
-
 
     /**
      * set the update parameters for the source link
@@ -1877,11 +1878,26 @@ class value extends sandbox_value
             $log->new_id = $this->get_source_id();
             $log->std_value = $std_rec->source_name();
             $log->std_id = $std_rec->get_source_id();
-            $log->row_id = $this->id();
+            $this->save_set_log_id($log);
             $log->set_field(source::FLD_ID);
             $result = $this->save_field_user($db_con, $log);
         }
         return $result;
+    }
+
+    /**
+     * set to row id for the log
+     * @param change_value|change_log $log
+     * @return void
+     */
+    function save_set_log_id(change_value|change_log $log): void
+    {
+        $id = $this->id();
+        if (is_string($id)) {
+            $log->group_id = $id;
+        } else {
+            $log->row_id = $id;
+        }
     }
 
     /**

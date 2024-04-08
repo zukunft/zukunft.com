@@ -89,6 +89,8 @@ use html\phrase\phrase_group as phrase_group_dsp;
          load, im- and export, filter, modify, check, save, del
 
     after that this should be done while keeping step 1. to 4. for each commit:
+    TODO validate the import bevor staring the import e.g. check if a triple has always from, verb and to
+    TODO create a word-list for import where just the names are listed without further indications
     TODO the first frontend should look like Excel wit a big empty sheet and file save and load and only a few suggestions while writing to a cell
     TODO remove the time phrase from result
     TODO rename change and change_log to change
@@ -1068,22 +1070,26 @@ const PATH_RESOURCE_FILES = ROOT_PATH . 'src/main/resources/';
 const PATH_TEST_FILES = ROOT_PATH . 'src/test/resources/';
 const PATH_TEST_IMPORT_FILES = ROOT_PATH . 'src/test/resources/import/';
 const TEST_IMPORT_FILE_LIST = [
+    'countries.json',
+    'wikipedia/country-ISO-3166.json',
     'wikipedia/democratie_index_table.json',
-    'companies.json',
-    'countries.json'
+    'wikipedia/currency.json',
+    'companies.json'
 ];
 const TEST_IMPORT_FILE_LIST_ALL = [
-    'wind_investment.json',
+    'countries.json',
+    'wikipedia/country-ISO-3166.json',
+    'wikipedia/democratie_index_table.json',
+    'wikipedia/currency.json',
+    'travel_scoring.json',
+    'travel_scoring_value_list.json',
     'companies.json',
+    'wind_investment.json',
     'ABB_2013.json',
     'ABB_2017.json',
     'ABB_2019.json',
     'NESN_2019.json',
-    'countries.json',
     'real_estate.json',
-    'travel_scoring.json',
-    'travel_scoring_value_list.json',
-    'wikipedia/democratie_index_table.json',
     'Ultimatum_game.json',
     'COVID-19.json',
     'personal_climate_gas_emissions_timon.json',

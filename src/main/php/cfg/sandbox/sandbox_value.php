@@ -51,6 +51,7 @@ use cfg\log\change_action;
 use cfg\log\change_action_list;
 use cfg\log\change_field_list;
 use cfg\log\change_link;
+use cfg\log\change_value;
 use cfg\result\result;
 use cfg\value\value;
 use DateTime;
@@ -1088,12 +1089,12 @@ class sandbox_value extends sandbox_multi
      * but the technical log needs to remember in which actual table the change has been saved
      *
      * @param sql_db $db_con the active database connection that should be used
-     * @param change|change_link $log the log object to track the change and allow a rollback
+     * @param change|change_value|change_link $log the log object to track the change and allow a rollback
      * @return string an empty string if everything is fine or the message that should be shown to the user
      */
     function save_field_user(
         sql_db             $db_con,
-        change|change_link $log
+        change|change_value|change_link $log
     ): string
     {
         $result = '';

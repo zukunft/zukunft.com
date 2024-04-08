@@ -1402,1343 +1402,855 @@
   "values": [
     {
       "words": [
-        {
-          "name": "U.S. dollar"
-        },
-        {
-          "name": "Proportion of daily volume April 2019"
-        }
+        "U.S. dollar",
+        "Proportion of daily volume April 2019"
       ],
       "number": 88.3
     },
     {
       "words": [
-        {
-          "name": "U.S. dollar"
-        },
-        {
-          "name": "Proportion of daily volume April 2022"
-        }
+        "U.S. dollar",
+        "Proportion of daily volume April 2022"
       ],
       "number": 88.5
     },
     {
       "words": [
-        {
-          "name": "U.S. dollar"
-        },
-        {
-          "name": "Growth rate (2019\u20132022)"
-        }
+        "U.S. dollar",
+        "Growth rate (2019\u20132022)"
       ],
       "number": 0.2
     },
     {
       "words": [
-        {
-          "name": "Euro"
-        },
-        {
-          "name": "Proportion of daily volume April 2019"
-        }
+        "Euro",
+        "Proportion of daily volume April 2019"
       ],
       "number": 32.3
     },
     {
       "words": [
-        {
-          "name": "Euro"
-        },
-        {
-          "name": "Proportion of daily volume April 2022"
-        }
+        "Euro",
+        "Proportion of daily volume April 2022"
       ],
       "number": 30.5
     },
     {
       "words": [
-        {
-          "name": "Euro"
-        },
-        {
-          "name": "Growth rate (2019\u20132022)"
-        }
+        "Euro",
+        "Growth rate (2019\u20132022)"
       ],
       "number": 5.5
     },
     {
       "words": [
-        {
-          "name": "Japanese yen"
-        },
-        {
-          "name": "Proportion of daily volume April 2019"
-        }
+        "Japanese yen",
+        "Proportion of daily volume April 2019"
       ],
       "number": 16.8
     },
     {
       "words": [
-        {
-          "name": "Japanese yen"
-        },
-        {
-          "name": "Proportion of daily volume April 2022"
-        }
+        "Japanese yen",
+        "Proportion of daily volume April 2022"
       ],
       "number": 16.7
     },
     {
       "words": [
-        {
-          "name": "Japanese yen"
-        },
-        {
-          "name": "Growth rate (2019\u20132022)"
-        }
+        "Japanese yen",
+        "Growth rate (2019\u20132022)"
       ],
       "number": 0.6
     },
     {
       "words": [
-        {
-          "name": "Sterling"
-        },
-        {
-          "name": "Proportion of daily volume April 2019"
-        }
+        "Sterling",
+        "Proportion of daily volume April 2019"
       ],
       "number": 12.8
     },
     {
       "words": [
-        {
-          "name": "Sterling"
-        },
-        {
-          "name": "Proportion of daily volume April 2022"
-        }
+        "Sterling",
+        "Proportion of daily volume April 2022"
       ],
       "number": 12.9
     },
     {
       "words": [
-        {
-          "name": "Sterling"
-        },
-        {
-          "name": "Growth rate (2019\u20132022)"
-        }
+        "Sterling",
+        "Growth rate (2019\u20132022)"
       ],
       "number": 0.7
     },
     {
       "words": [
-        {
-          "name": "Renminbi"
-        },
-        {
-          "name": "Proportion of daily volume April 2019"
-        }
+        "Renminbi",
+        "Proportion of daily volume April 2019"
       ],
       "number": 4.3
     },
     {
       "words": [
-        {
-          "name": "Renminbi"
-        },
-        {
-          "name": "Proportion of daily volume April 2022"
-        }
+        "Renminbi",
+        "Proportion of daily volume April 2022"
       ],
       "number": 7
     },
     {
       "words": [
-        {
-          "name": "Renminbi"
-        },
-        {
-          "name": "Growth rate (2019\u20132022)"
-        }
+        "Renminbi",
+        "Growth rate (2019\u20132022)"
       ],
       "number": 62.7
     },
     {
       "words": [
-        {
-          "name": "Australian dollar"
-        },
-        {
-          "name": "Proportion of daily volume April 2019"
-        }
+        "Australian dollar",
+        "Proportion of daily volume April 2019"
       ],
       "number": 6.8
     },
     {
       "words": [
-        {
-          "name": "Australian dollar"
-        },
-        {
-          "name": "Proportion of daily volume April 2022"
-        }
+        "Australian dollar",
+        "Proportion of daily volume April 2022"
       ],
       "number": 6.4
     },
     {
       "words": [
-        {
-          "name": "Australian dollar"
-        },
-        {
-          "name": "Growth rate (2019\u20132022)"
-        }
+        "Australian dollar",
+        "Growth rate (2019\u20132022)"
       ],
       "number": 5.8
     },
     {
       "words": [
-        {
-          "name": "Canadian dollar"
-        },
-        {
-          "name": "Proportion of daily volume April 2019"
-        }
+        "Canadian dollar",
+        "Proportion of daily volume April 2019"
       ],
       "number": 5
     },
     {
       "words": [
-        {
-          "name": "Canadian dollar"
-        },
-        {
-          "name": "Proportion of daily volume April 2022"
-        }
+        "Canadian dollar",
+        "Proportion of daily volume April 2022"
       ],
       "number": 6.2
     },
     {
       "words": [
-        {
-          "name": "Canadian dollar"
-        },
-        {
-          "name": "Growth rate (2019\u20132022)"
-        }
+        "Canadian dollar",
+        "Growth rate (2019\u20132022)"
       ],
       "number": 24
     },
     {
       "words": [
-        {
-          "name": "Swiss franc"
-        },
-        {
-          "name": "Proportion of daily volume April 2019"
-        }
+        "Swiss franc",
+        "Proportion of daily volume April 2019"
       ],
       "number": 4.9
     },
     {
       "words": [
-        {
-          "name": "Swiss franc"
-        },
-        {
-          "name": "Proportion of daily volume April 2022"
-        }
+        "Swiss franc",
+        "Proportion of daily volume April 2022"
       ],
       "number": 5.2
     },
     {
       "words": [
-        {
-          "name": "Swiss franc"
-        },
-        {
-          "name": "Growth rate (2019\u20132022)"
-        }
+        "Swiss franc",
+        "Growth rate (2019\u20132022)"
       ],
       "number": 6.1
     },
     {
       "words": [
-        {
-          "name": "Hong Kong dollar"
-        },
-        {
-          "name": "Proportion of daily volume April 2019"
-        }
+        "Hong Kong dollar",
+        "Proportion of daily volume April 2019"
       ],
       "number": 3.5
     },
     {
       "words": [
-        {
-          "name": "Hong Kong dollar"
-        },
-        {
-          "name": "Proportion of daily volume April 2022"
-        }
+        "Hong Kong dollar",
+        "Proportion of daily volume April 2022"
       ],
       "number": 2.6
     },
     {
       "words": [
-        {
-          "name": "Hong Kong dollar"
-        },
-        {
-          "name": "Growth rate (2019\u20132022)"
-        }
+        "Hong Kong dollar",
+        "Growth rate (2019\u20132022)"
       ],
       "number": 25.7
     },
     {
       "words": [
-        {
-          "name": "Singapore dollar"
-        },
-        {
-          "name": "Proportion of daily volume April 2019"
-        }
+        "Singapore dollar",
+        "Proportion of daily volume April 2019"
       ],
       "number": 1.8
     },
     {
       "words": [
-        {
-          "name": "Singapore dollar"
-        },
-        {
-          "name": "Proportion of daily volume April 2022"
-        }
+        "Singapore dollar",
+        "Proportion of daily volume April 2022"
       ],
       "number": 2.4
     },
     {
       "words": [
-        {
-          "name": "Singapore dollar"
-        },
-        {
-          "name": "Growth rate (2019\u20132022)"
-        }
+        "Singapore dollar",
+        "Growth rate (2019\u20132022)"
       ],
       "number": 33.3
     },
     {
       "words": [
-        {
-          "name": "Swedish krona"
-        },
-        {
-          "name": "Proportion of daily volume April 2019"
-        }
+        "Swedish krona",
+        "Proportion of daily volume April 2019"
       ],
       "number": 2
     },
     {
       "words": [
-        {
-          "name": "Swedish krona"
-        },
-        {
-          "name": "Proportion of daily volume April 2022"
-        }
+        "Swedish krona",
+        "Proportion of daily volume April 2022"
       ],
       "number": 2.2
     },
     {
       "words": [
-        {
-          "name": "Swedish krona"
-        },
-        {
-          "name": "Growth rate (2019\u20132022)"
-        }
+        "Swedish krona",
+        "Growth rate (2019\u20132022)"
       ],
       "number": 10
     },
     {
       "words": [
-        {
-          "name": "South Korean won"
-        },
-        {
-          "name": "Proportion of daily volume April 2019"
-        }
+        "South Korean won",
+        "Proportion of daily volume April 2019"
       ],
       "number": 2
     },
     {
       "words": [
-        {
-          "name": "South Korean won"
-        },
-        {
-          "name": "Proportion of daily volume April 2022"
-        }
+        "South Korean won",
+        "Proportion of daily volume April 2022"
       ],
       "number": 1.9
     },
     {
       "words": [
-        {
-          "name": "South Korean won"
-        },
-        {
-          "name": "Growth rate (2019\u20132022)"
-        }
+        "South Korean won",
+        "Growth rate (2019\u20132022)"
       ],
       "number": 5
     },
     {
       "words": [
-        {
-          "name": "Norwegian krone"
-        },
-        {
-          "name": "Proportion of daily volume April 2019"
-        }
+        "Norwegian krone",
+        "Proportion of daily volume April 2019"
       ],
       "number": 1.8
     },
     {
       "words": [
-        {
-          "name": "Norwegian krone"
-        },
-        {
-          "name": "Proportion of daily volume April 2022"
-        }
+        "Norwegian krone",
+        "Proportion of daily volume April 2022"
       ],
       "number": 1.7
     },
     {
       "words": [
-        {
-          "name": "Norwegian krone"
-        },
-        {
-          "name": "Growth rate (2019\u20132022)"
-        }
+        "Norwegian krone",
+        "Growth rate (2019\u20132022)"
       ],
       "number": 5.5
     },
     {
       "words": [
-        {
-          "name": "New Zealand dollar"
-        },
-        {
-          "name": "Proportion of daily volume April 2019"
-        }
+        "New Zealand dollar",
+        "Proportion of daily volume April 2019"
       ],
       "number": 2.1
     },
     {
       "words": [
-        {
-          "name": "New Zealand dollar"
-        },
-        {
-          "name": "Proportion of daily volume April 2022"
-        }
+        "New Zealand dollar",
+        "Proportion of daily volume April 2022"
       ],
       "number": 1.7
     },
     {
       "words": [
-        {
-          "name": "New Zealand dollar"
-        },
-        {
-          "name": "Growth rate (2019\u20132022)"
-        }
+        "New Zealand dollar",
+        "Growth rate (2019\u20132022)"
       ],
       "number": 19
     },
     {
       "words": [
-        {
-          "name": "Indian rupee"
-        },
-        {
-          "name": "Proportion of daily volume April 2019"
-        }
+        "Indian rupee",
+        "Proportion of daily volume April 2019"
       ],
       "number": 1.7
     },
     {
       "words": [
-        {
-          "name": "Indian rupee"
-        },
-        {
-          "name": "Proportion of daily volume April 2022"
-        }
+        "Indian rupee",
+        "Proportion of daily volume April 2022"
       ],
       "number": 1.6
     },
     {
       "words": [
-        {
-          "name": "Indian rupee"
-        },
-        {
-          "name": "Growth rate (2019\u20132022)"
-        }
+        "Indian rupee",
+        "Growth rate (2019\u20132022)"
       ],
       "number": 5.8
     },
     {
       "words": [
-        {
-          "name": "Mexican peso"
-        },
-        {
-          "name": "Proportion of daily volume April 2019"
-        }
+        "Mexican peso",
+        "Proportion of daily volume April 2019"
       ],
       "number": 1.7
     },
     {
       "words": [
-        {
-          "name": "Mexican peso"
-        },
-        {
-          "name": "Proportion of daily volume April 2022"
-        }
+        "Mexican peso",
+        "Proportion of daily volume April 2022"
       ],
       "number": 1.5
     },
     {
       "words": [
-        {
-          "name": "Mexican peso"
-        },
-        {
-          "name": "Growth rate (2019\u20132022)"
-        }
+        "Mexican peso",
+        "Growth rate (2019\u20132022)"
       ],
       "number": 11.7
     },
     {
       "words": [
-        {
-          "name": "New Taiwan dollar"
-        },
-        {
-          "name": "Proportion of daily volume April 2019"
-        }
+        "New Taiwan dollar",
+        "Proportion of daily volume April 2019"
       ],
       "number": 0.9
     },
     {
       "words": [
-        {
-          "name": "New Taiwan dollar"
-        },
-        {
-          "name": "Proportion of daily volume April 2022"
-        }
+        "New Taiwan dollar",
+        "Proportion of daily volume April 2022"
       ],
       "number": 1.1
     },
     {
       "words": [
-        {
-          "name": "New Taiwan dollar"
-        },
-        {
-          "name": "Growth rate (2019\u20132022)"
-        }
+        "New Taiwan dollar",
+        "Growth rate (2019\u20132022)"
       ],
       "number": 22.2
     },
     {
       "words": [
-        {
-          "name": "South African rand"
-        },
-        {
-          "name": "Proportion of daily volume April 2019"
-        }
+        "South African rand",
+        "Proportion of daily volume April 2019"
       ],
       "number": 1.1
     },
     {
       "words": [
-        {
-          "name": "South African rand"
-        },
-        {
-          "name": "Proportion of daily volume April 2022"
-        }
+        "South African rand",
+        "Proportion of daily volume April 2022"
       ],
       "number": 1
     },
     {
       "words": [
-        {
-          "name": "South African rand"
-        },
-        {
-          "name": "Growth rate (2019\u20132022)"
-        }
+        "South African rand",
+        "Growth rate (2019\u20132022)"
       ],
       "number": 9
     },
     {
       "words": [
-        {
-          "name": "Brazilian real"
-        },
-        {
-          "name": "Proportion of daily volume April 2019"
-        }
+        "Brazilian real",
+        "Proportion of daily volume April 2019"
       ],
       "number": 1.1
     },
     {
       "words": [
-        {
-          "name": "Brazilian real"
-        },
-        {
-          "name": "Proportion of daily volume April 2022"
-        }
+        "Brazilian real",
+        "Proportion of daily volume April 2022"
       ],
       "number": 0.9
     },
     {
       "words": [
-        {
-          "name": "Brazilian real"
-        },
-        {
-          "name": "Growth rate (2019\u20132022)"
-        }
+        "Brazilian real",
+        "Growth rate (2019\u20132022)"
       ],
       "number": 18.1
     },
     {
       "words": [
-        {
-          "name": "Danish krone"
-        },
-        {
-          "name": "Proportion of daily volume April 2019"
-        }
+        "Danish krone",
+        "Proportion of daily volume April 2019"
       ],
       "number": 0.6
     },
     {
       "words": [
-        {
-          "name": "Danish krone"
-        },
-        {
-          "name": "Proportion of daily volume April 2022"
-        }
+        "Danish krone",
+        "Proportion of daily volume April 2022"
       ],
       "number": 0.7
     },
     {
       "words": [
-        {
-          "name": "Danish krone"
-        },
-        {
-          "name": "Growth rate (2019\u20132022)"
-        }
+        "Danish krone",
+        "Growth rate (2019\u20132022)"
       ],
       "number": 16.6
     },
     {
       "words": [
-        {
-          "name": "Polish z\u0142oty"
-        },
-        {
-          "name": "Proportion of daily volume April 2019"
-        }
+        "Polish z\u0142oty",
+        "Proportion of daily volume April 2019"
       ],
       "number": 0.6
     },
     {
       "words": [
-        {
-          "name": "Polish z\u0142oty"
-        },
-        {
-          "name": "Proportion of daily volume April 2022"
-        }
+        "Polish z\u0142oty",
+        "Proportion of daily volume April 2022"
       ],
       "number": 0.7
     },
     {
       "words": [
-        {
-          "name": "Polish z\u0142oty"
-        },
-        {
-          "name": "Growth rate (2019\u20132022)"
-        }
+        "Polish z\u0142oty",
+        "Growth rate (2019\u20132022)"
       ],
       "number": 16.6
     },
     {
       "words": [
-        {
-          "name": "Thai baht"
-        },
-        {
-          "name": "Proportion of daily volume April 2019"
-        }
+        "Thai baht",
+        "Proportion of daily volume April 2019"
       ],
       "number": 0.5
     },
     {
       "words": [
-        {
-          "name": "Thai baht"
-        },
-        {
-          "name": "Proportion of daily volume April 2022"
-        }
+        "Thai baht",
+        "Proportion of daily volume April 2022"
       ],
       "number": 0.4
     },
     {
       "words": [
-        {
-          "name": "Thai baht"
-        },
-        {
-          "name": "Growth rate (2019\u20132022)"
-        }
+        "Thai baht",
+        "Growth rate (2019\u20132022)"
       ],
       "number": 20
     },
     {
       "words": [
-        {
-          "name": "Israeli new shekel"
-        },
-        {
-          "name": "Proportion of daily volume April 2019"
-        }
+        "Israeli new shekel",
+        "Proportion of daily volume April 2019"
       ],
       "number": 0.3
     },
     {
       "words": [
-        {
-          "name": "Israeli new shekel"
-        },
-        {
-          "name": "Proportion of daily volume April 2022"
-        }
+        "Israeli new shekel",
+        "Proportion of daily volume April 2022"
       ],
       "number": 0.4
     },
     {
       "words": [
-        {
-          "name": "Israeli new shekel"
-        },
-        {
-          "name": "Growth rate (2019\u20132022)"
-        }
+        "Israeli new shekel",
+        "Growth rate (2019\u20132022)"
       ],
       "number": 33.3
     },
     {
       "words": [
-        {
-          "name": "Indonesian rupiah"
-        },
-        {
-          "name": "Proportion of daily volume April 2019"
-        }
+        "Indonesian rupiah",
+        "Proportion of daily volume April 2019"
       ],
       "number": 0.4
     },
     {
       "words": [
-        {
-          "name": "Indonesian rupiah"
-        },
-        {
-          "name": "Proportion of daily volume April 2022"
-        }
+        "Indonesian rupiah",
+        "Proportion of daily volume April 2022"
       ],
       "number": 0.4
     },
     {
       "words": [
-        {
-          "name": "Indonesian rupiah"
-        },
-        {
-          "name": "Growth rate (2019\u20132022)"
-        }
+        "Indonesian rupiah",
+        "Growth rate (2019\u20132022)"
       ],
       "number": 0
     },
     {
       "words": [
-        {
-          "name": "Czech koruna"
-        },
-        {
-          "name": "Proportion of daily volume April 2019"
-        }
+        "Czech koruna",
+        "Proportion of daily volume April 2019"
       ],
       "number": 0.4
     },
     {
       "words": [
-        {
-          "name": "Czech koruna"
-        },
-        {
-          "name": "Proportion of daily volume April 2022"
-        }
+        "Czech koruna",
+        "Proportion of daily volume April 2022"
       ],
       "number": 0.4
     },
     {
       "words": [
-        {
-          "name": "Czech koruna"
-        },
-        {
-          "name": "Growth rate (2019\u20132022)"
-        }
+        "Czech koruna",
+        "Growth rate (2019\u20132022)"
       ],
       "number": 0
     },
     {
       "words": [
-        {
-          "name": "UAE dirham"
-        },
-        {
-          "name": "Proportion of daily volume April 2019"
-        }
+        "UAE dirham",
+        "Proportion of daily volume April 2019"
       ],
       "number": 0.2
     },
     {
       "words": [
-        {
-          "name": "UAE dirham"
-        },
-        {
-          "name": "Proportion of daily volume April 2022"
-        }
+        "UAE dirham",
+        "Proportion of daily volume April 2022"
       ],
       "number": 0.4
     },
     {
       "words": [
-        {
-          "name": "UAE dirham"
-        },
-        {
-          "name": "Growth rate (2019\u20132022)"
-        }
+        "UAE dirham",
+        "Growth rate (2019\u20132022)"
       ],
       "number": 100
     },
     {
       "words": [
-        {
-          "name": "Turkish lira"
-        },
-        {
-          "name": "Proportion of daily volume April 2019"
-        }
+        "Turkish lira",
+        "Proportion of daily volume April 2019"
       ],
       "number": 1.1
     },
     {
       "words": [
-        {
-          "name": "Turkish lira"
-        },
-        {
-          "name": "Proportion of daily volume April 2022"
-        }
+        "Turkish lira",
+        "Proportion of daily volume April 2022"
       ],
       "number": 0.4
     },
     {
       "words": [
-        {
-          "name": "Turkish lira"
-        },
-        {
-          "name": "Growth rate (2019\u20132022)"
-        }
+        "Turkish lira",
+        "Growth rate (2019\u20132022)"
       ],
       "number": 63.6
     },
     {
       "words": [
-        {
-          "name": "Hungarian forint"
-        },
-        {
-          "name": "Proportion of daily volume April 2019"
-        }
+        "Hungarian forint",
+        "Proportion of daily volume April 2019"
       ],
       "number": 0.4
     },
     {
       "words": [
-        {
-          "name": "Hungarian forint"
-        },
-        {
-          "name": "Proportion of daily volume April 2022"
-        }
+        "Hungarian forint",
+        "Proportion of daily volume April 2022"
       ],
       "number": 0.3
     },
     {
       "words": [
-        {
-          "name": "Hungarian forint"
-        },
-        {
-          "name": "Growth rate (2019\u20132022)"
-        }
+        "Hungarian forint",
+        "Growth rate (2019\u20132022)"
       ],
       "number": 25
     },
     {
       "words": [
-        {
-          "name": "Chilean peso"
-        },
-        {
-          "name": "Proportion of daily volume April 2019"
-        }
+        "Chilean peso",
+        "Proportion of daily volume April 2019"
       ],
       "number": 0.3
     },
     {
       "words": [
-        {
-          "name": "Chilean peso"
-        },
-        {
-          "name": "Proportion of daily volume April 2022"
-        }
+        "Chilean peso",
+        "Proportion of daily volume April 2022"
       ],
       "number": 0.3
     },
     {
       "words": [
-        {
-          "name": "Chilean peso"
-        },
-        {
-          "name": "Growth rate (2019\u20132022)"
-        }
+        "Chilean peso",
+        "Growth rate (2019\u20132022)"
       ],
       "number": 0
     },
     {
       "words": [
-        {
-          "name": "Saudi riyal"
-        },
-        {
-          "name": "Proportion of daily volume April 2019"
-        }
+        "Saudi riyal",
+        "Proportion of daily volume April 2019"
       ],
       "number": 0.2
     },
     {
       "words": [
-        {
-          "name": "Saudi riyal"
-        },
-        {
-          "name": "Proportion of daily volume April 2022"
-        }
+        "Saudi riyal",
+        "Proportion of daily volume April 2022"
       ],
       "number": 0.2
     },
     {
       "words": [
-        {
-          "name": "Saudi riyal"
-        },
-        {
-          "name": "Growth rate (2019\u20132022)"
-        }
+        "Saudi riyal",
+        "Growth rate (2019\u20132022)"
       ],
       "number": 0
     },
     {
       "words": [
-        {
-          "name": "Philippine peso"
-        },
-        {
-          "name": "Proportion of daily volume April 2019"
-        }
+        "Philippine peso",
+        "Proportion of daily volume April 2019"
       ],
       "number": 0.3
     },
     {
       "words": [
-        {
-          "name": "Philippine peso"
-        },
-        {
-          "name": "Proportion of daily volume April 2022"
-        }
+        "Philippine peso",
+        "Proportion of daily volume April 2022"
       ],
       "number": 0.2
     },
     {
       "words": [
-        {
-          "name": "Philippine peso"
-        },
-        {
-          "name": "Growth rate (2019\u20132022)"
-        }
+        "Philippine peso",
+        "Growth rate (2019\u20132022)"
       ],
       "number": 33.3
     },
     {
       "words": [
-        {
-          "name": "Malaysian ringgit"
-        },
-        {
-          "name": "Proportion of daily volume April 2019"
-        }
+        "Malaysian ringgit",
+        "Proportion of daily volume April 2019"
       ],
       "number": 0.2
     },
     {
       "words": [
-        {
-          "name": "Malaysian ringgit"
-        },
-        {
-          "name": "Proportion of daily volume April 2022"
-        }
+        "Malaysian ringgit",
+        "Proportion of daily volume April 2022"
       ],
       "number": 0.2
     },
     {
       "words": [
-        {
-          "name": "Malaysian ringgit"
-        },
-        {
-          "name": "Growth rate (2019\u20132022)"
-        }
+        "Malaysian ringgit",
+        "Growth rate (2019\u20132022)"
       ],
       "number": 0
     },
     {
       "words": [
-        {
-          "name": "Colombian peso"
-        },
-        {
-          "name": "Proportion of daily volume April 2019"
-        }
+        "Colombian peso",
+        "Proportion of daily volume April 2019"
       ],
       "number": 0.2
     },
     {
       "words": [
-        {
-          "name": "Colombian peso"
-        },
-        {
-          "name": "Proportion of daily volume April 2022"
-        }
+        "Colombian peso",
+        "Proportion of daily volume April 2022"
       ],
       "number": 0.2
     },
     {
       "words": [
-        {
-          "name": "Colombian peso"
-        },
-        {
-          "name": "Growth rate (2019\u20132022)"
-        }
+        "Colombian peso",
+        "Growth rate (2019\u20132022)"
       ],
       "number": 0
     },
     {
       "words": [
-        {
-          "name": "Russian ruble"
-        },
-        {
-          "name": "Proportion of daily volume April 2019"
-        }
+        "Russian ruble",
+        "Proportion of daily volume April 2019"
       ],
       "number": 1.1
     },
     {
       "words": [
-        {
-          "name": "Russian ruble"
-        },
-        {
-          "name": "Proportion of daily volume April 2022"
-        }
+        "Russian ruble",
+        "Proportion of daily volume April 2022"
       ],
       "number": 0.2
     },
     {
       "words": [
-        {
-          "name": "Russian ruble"
-        },
-        {
-          "name": "Growth rate (2019\u20132022)"
-        }
+        "Russian ruble",
+        "Growth rate (2019\u20132022)"
       ],
       "number": 81.8
     },
     {
       "words": [
-        {
-          "name": "Romanian leu"
-        },
-        {
-          "name": "Proportion of daily volume April 2019"
-        }
+        "Romanian leu",
+        "Proportion of daily volume April 2019"
       ],
       "number": 0.1
     },
     {
       "words": [
-        {
-          "name": "Romanian leu"
-        },
-        {
-          "name": "Proportion of daily volume April 2022"
-        }
+        "Romanian leu",
+        "Proportion of daily volume April 2022"
       ],
       "number": 0.1
     },
     {
       "words": [
-        {
-          "name": "Romanian leu"
-        },
-        {
-          "name": "Growth rate (2019\u20132022)"
-        }
+        "Romanian leu",
+        "Growth rate (2019\u20132022)"
       ],
       "number": 0
     },
     {
       "words": [
-        {
-          "name": "Peruvian sol"
-        },
-        {
-          "name": "Proportion of daily volume April 2019"
-        }
+        "Peruvian sol",
+        "Proportion of daily volume April 2019"
       ],
       "number": 0.1
     },
     {
       "words": [
-        {
-          "name": "Peruvian sol"
-        },
-        {
-          "name": "Proportion of daily volume April 2022"
-        }
+        "Peruvian sol",
+        "Proportion of daily volume April 2022"
       ],
       "number": 0.1
     },
     {
       "words": [
-        {
-          "name": "Peruvian sol"
-        },
-        {
-          "name": "Growth rate (2019\u20132022)"
-        }
+        "Peruvian sol",
+        "Growth rate (2019\u20132022)"
       ],
       "number": 0
     },
     {
       "words": [
-        {
-          "name": "Bahraini dinar"
-        },
-        {
-          "name": "Proportion of daily volume April 2019"
-        }
+        "Bahraini dinar",
+        "Proportion of daily volume April 2019"
       ],
       "number": 0
     },
     {
       "words": [
-        {
-          "name": "Bahraini dinar"
-        },
-        {
-          "name": "Proportion of daily volume April 2022"
-        }
+        "Bahraini dinar",
+        "Proportion of daily volume April 2022"
       ],
       "number": 0
     },
     {
       "words": [
-        {
-          "name": "Bahraini dinar"
-        },
-        {
-          "name": "Growth rate (2019\u20132022)"
-        }
+        "Bahraini dinar",
+        "Growth rate (2019\u20132022)"
       ],
       "number": 0
     },
     {
       "words": [
-        {
-          "name": "Bulgarian lev"
-        },
-        {
-          "name": "Proportion of daily volume April 2019"
-        }
+        "Bulgarian lev",
+        "Proportion of daily volume April 2019"
       ],
       "number": 0
     },
     {
       "words": [
-        {
-          "name": "Bulgarian lev"
-        },
-        {
-          "name": "Proportion of daily volume April 2022"
-        }
+        "Bulgarian lev",
+        "Proportion of daily volume April 2022"
       ],
       "number": 0
     },
     {
       "words": [
-        {
-          "name": "Bulgarian lev"
-        },
-        {
-          "name": "Growth rate (2019\u20132022)"
-        }
+        "Bulgarian lev",
+        "Growth rate (2019\u20132022)"
       ],
       "number": 0
     },
     {
       "words": [
-        {
-          "name": "Argentine peso"
-        },
-        {
-          "name": "Proportion of daily volume April 2019"
-        }
+        "Argentine peso",
+        "Proportion of daily volume April 2019"
       ],
       "number": 0.1
     },
     {
       "words": [
-        {
-          "name": "Argentine peso"
-        },
-        {
-          "name": "Proportion of daily volume April 2022"
-        }
+        "Argentine peso",
+        "Proportion of daily volume April 2022"
       ],
       "number": 0
     },
     {
       "words": [
-        {
-          "name": "Argentine peso"
-        },
-        {
-          "name": "Growth rate (2019\u20132022)"
-        }
+        "Argentine peso",
+        "Growth rate (2019\u20132022)"
       ],
       "number": 100
     },
     {
       "words": [
-        {
-          "name": "Other"
-        },
-        {
-          "name": "Proportion of daily volume April 2019"
-        }
+        "Other",
+        "Proportion of daily volume April 2019"
       ],
       "number": 1.8
     },
     {
       "words": [
-        {
-          "name": "Other"
-        },
-        {
-          "name": "Proportion of daily volume April 2022"
-        }
+        "Other",
+        "Proportion of daily volume April 2022"
       ],
       "number": 2.3
     },
     {
       "words": [
-        {
-          "name": "Other"
-        },
-        {
-          "name": "Growth rate (2019\u20132022)"
-        }
+        "Other",
+        "Growth rate (2019\u20132022)"
       ],
       "number": 27.7
     },
     {
       "words": [
-        {
-          "name": "Total[lower-alpha 2]"
-        },
-        {
-          "name": "Proportion of daily volume April 2019"
-        }
+        "Total[lower-alpha 2]",
+        "Proportion of daily volume April 2019"
       ],
       "number": 200
     },
     {
       "words": [
-        {
-          "name": "Total[lower-alpha 2]"
-        },
-        {
-          "name": "Proportion of daily volume April 2022"
-        }
+        "Total[lower-alpha 2]",
+        "Proportion of daily volume April 2022"
       ],
       "number": 200
     }

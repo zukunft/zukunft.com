@@ -1176,22 +1176,33 @@ class phrase_list extends sandbox_list_named
                 $phr = new phrase($this->user());
                 if ($result->is_ok()) {
                     if (!$test_obj) {
-                        $phr->load_by_name($phr_name);
-                        if ($phr->id() == 0) {
-                            // for new phrase use the word object
-                            // TODO add a test case if a triple with the name exists but the triple is based on other phrases than the given phrase
-                            //      e.g. 1. create triple with "1967 "is a" "(year of definition)" but has the name "2019 (year of definition)" and a value with the phrase "1967 (year of definition)" is supposed to be added
-                            $wrd = new word($this->user());
-                            $wrd->load_by_name($phr_name);
-                            if ($wrd->id() == 0) {
-                                $wrd->set_name($phr_name);
-                                $wrd->type_id = $phrase_types->default_id();
-                                $result->add_message($wrd->save());
+                        // TODO prevent that this happens at all
+                        if (is_array($phr_name)) {
+                            $lib = new library();
+                            log_err($lib->dsp_array($phr_name) . ' is expected to be a string');
+                            // TODO remove this fallback solution
+                            if (count($phr_name) == 1) {
+                                $phr_name = $phr_name[0];
                             }
-                            if ($wrd->id() == 0) {
-                                log_err('Cannot add word "' . $phr_name . '" when importing ' . $this->dsp_id(), 'value->import_obj');
-                            } else {
-                                $phr = $wrd->phrase();
+                        }
+                        if (!is_array($phr_name)) {
+                            $phr->load_by_name($phr_name);
+                            if ($phr->id() == 0) {
+                                // for new phrase use the word object
+                                // TODO add a test case if a triple with the name exists but the triple is based on other phrases than the given phrase
+                                //      e.g. 1. create triple with "1967 "is a" "(year of definition)" but has the name "2019 (year of definition)" and a value with the phrase "1967 (year of definition)" is supposed to be added
+                                $wrd = new word($this->user());
+                                $wrd->load_by_name($phr_name);
+                                if ($wrd->id() == 0) {
+                                    $wrd->set_name($phr_name);
+                                    $wrd->type_id = $phrase_types->default_id();
+                                    $result->add_message($wrd->save());
+                                }
+                                if ($wrd->id() == 0) {
+                                    log_err('Cannot add word "' . $phr_name . '" when importing ' . $this->dsp_id(), 'value->import_obj');
+                                } else {
+                                    $phr = $wrd->phrase();
+                                }
                             }
                         }
                     } else {

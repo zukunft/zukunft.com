@@ -85,4 +85,6 @@ class change_value extends change_log
     public string|float|int|null $std_value = null;  // the standard field value for all users that does not have changed it
     public ?int $std_id = null;        // the standard reference id for all users that does not have changed it
 
+    public ?string $group_id = null;  // the reference id of the row in the database table
+
 }

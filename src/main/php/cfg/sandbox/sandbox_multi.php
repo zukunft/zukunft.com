@@ -62,6 +62,7 @@ use cfg\log\change;
 use cfg\log\change_action;
 use cfg\log\change_log;
 use cfg\log\change_link;
+use cfg\log\change_value;
 use cfg\result\result;
 use cfg\value\value;
 use Exception;
@@ -1653,6 +1654,7 @@ class sandbox_multi extends db_object_multi_user
 
         if ($db_rec->is_excluded() <> $this->is_excluded()) {
             $log = $this->save_field_excluded_log($db_rec);
+            $this->save_set_log_id($log);
             $new_value = $this->is_excluded();
             $std_value = $std_rec->is_excluded();
             // similar to $this->save_field_do
@@ -1710,7 +1712,7 @@ class sandbox_multi extends db_object_multi_user
             // TODO is the setting of the standard needed?
             $log->std_value = $std_rec->share_type_name();
             $log->std_id = $std_rec->share_id;
-            $log->row_id = $this->id;
+            $this->save_set_log_id($log);
             $log->set_field(self::FLD_SHARE);
 
             // save_field_do is not used because the share type can only be set on the user record
@@ -1758,13 +1760,28 @@ class sandbox_multi extends db_object_multi_user
             $log->new_id = $this->protection_id;
             $log->std_value = $std_rec->protection_type_name();
             $log->std_id = $std_rec->protection_id;
-            $log->row_id = $this->id;
+            $this->save_set_log_id($log);
             $log->set_field(self::FLD_PROTECT);
             $result .= $this->save_field_user($db_con, $log);
         }
 
         log_debug($this->dsp_id());
         return $result;
+    }
+
+    /**
+     * set to row id for the log
+     * @param change_value|change_log $log
+     * @return void
+     */
+    function save_set_log_id(change_value|change_log $log): void
+    {
+        $id = $this->id();
+        if (is_string($id)) {
+            $log->group_id = $id;
+        } else {
+            $log->row_id = $id;
+        }
     }
 
 

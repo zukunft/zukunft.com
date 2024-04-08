@@ -1906,12 +1906,7 @@
       "to": "Bhutan"
     },
     {
-      "from": [
-        "Bolivia, Plurinational State of",
-        {
-          "link": "Bolivia"
-        }
-      ],
+      "from": "Bolivia, Plurinational State of",
       "verb": "is a",
       "to": "Country"
     },
@@ -1923,12 +1918,7 @@
     {
       "from": "BOL",
       "verb": "is symbol for",
-      "to": [
-        "Bolivia, Plurinational State of",
-        {
-          "link": "Bolivia"
-        }
-      ]
+      "to": "Bolivia, Plurinational State of"
     },
     {
       "from": "Bonaire, Sint Eustatius and Saba",

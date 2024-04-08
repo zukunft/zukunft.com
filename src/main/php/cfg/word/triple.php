@@ -1230,7 +1230,11 @@ class triple extends sandbox_link_typed implements JsonSerializable
                     $lib = new library();
                     $result->add_message('from name should not be empty at ' . $lib->dsp_array($in_ex_json));
                 } else {
-                    $this->fob = $this->import_phrase($value, $test_obj);
+                    if (is_string($value)) {
+                        $this->fob = $this->import_phrase($value, $test_obj);
+                    } else {
+                        log_err($value . ' is expected to be a string');
+                    }
                 }
             }
             if ($key == self::FLD_EX_TO) {
