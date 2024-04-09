@@ -5,514 +5,178 @@
   "selection": [
     "Democracy Index"
   ],
+  "word-list": [
+    "Country",
+    "Year",
+    "CAN",
+    "USA",
+    "AUT",
+    "BEL",
+    "CYP",
+    "DNK",
+    "FIN",
+    "FRA",
+    "DEU",
+    "GRC",
+    "ISL",
+    "IRL",
+    "ITA",
+    "LUX",
+    "MLT",
+    "NLD",
+    "NOR",
+    "PRT",
+    "ESP",
+    "SWE",
+    "CHE",
+    "TUR",
+    "GBR",
+    "ALB",
+    "ARM",
+    "AZE",
+    "BLR",
+    "BIH",
+    "BGR",
+    "HRV",
+    "CZE",
+    "EST",
+    "GEO",
+    "HUN",
+    "KAZ",
+    "KGZ",
+    "LVA",
+    "LTU",
+    "MDA",
+    "MNE",
+    "MKD",
+    "POL",
+    "ROU",
+    "RUS",
+    "SRB",
+    "SVK",
+    "SVN",
+    "TJK",
+    "TKM",
+    "UKR",
+    "UZB",
+    "ARG",
+    "BOL",
+    "BRA",
+    "CHL",
+    "COL",
+    "CRI",
+    "CUB",
+    "DOM",
+    "ECU",
+    "SLV",
+    "GTM",
+    "GUY",
+    "HTI",
+    "HND",
+    "JAM",
+    "MEX",
+    "NIC",
+    "PAN",
+    "PRY",
+    "PER",
+    "SUR",
+    "TTO",
+    "URY",
+    "VEN",
+    "AFG",
+    "AUS",
+    "BGD",
+    "BTN",
+    "KHM",
+    "CHN",
+    "FJI",
+    "HKG",
+    "IND",
+    "IDN",
+    "JPN",
+    "LAO",
+    "MYS",
+    "MNG",
+    "MMR",
+    "NPL",
+    "NZL",
+    "PRK",
+    "PAK",
+    "PNG",
+    "PHL",
+    "SGP",
+    "KOR",
+    "LKA",
+    "TWN",
+    "THA",
+    "ETM",
+    "VNM",
+    "DZA",
+    "BHR",
+    "EGY",
+    "IRN",
+    "IRQ",
+    "ISR",
+    "JOR",
+    "KWT",
+    "LBN",
+    "LBY",
+    "MAR",
+    "OMN",
+    "PSE",
+    "QAT",
+    "SAU",
+    "SDN",
+    "SYR",
+    "TUN",
+    "ARE",
+    "YEM",
+    "AGO",
+    "BEN",
+    "BWA",
+    "BFA",
+    "BDI",
+    "CPV",
+    "CMR",
+    "CAF",
+    "TCD",
+    "COM",
+    "COG",
+    "CIV",
+    "COD",
+    "DJI",
+    "GNQ",
+    "ERI",
+    "SWZ",
+    "ETH",
+    "GAB",
+    "GMB",
+    "GHA",
+    "GIN",
+    "GNB",
+    "KEN",
+    "LSO",
+    "LBR",
+    "MDG",
+    "MWI",
+    "MLI",
+    "MRT",
+    "MUS",
+    "MOZ",
+    "NAM",
+    "NER",
+    "NGA",
+    "RWA",
+    "SEN",
+    "SLE",
+    "ZAF",
+    "TZA",
+    "TGO",
+    "UGA",
+    "ZMB",
+    "ZWE"
+  ],
   "words": [
-    {
-      "name": "Country"
-    },
-    {
-      "name": "Year"
-    },
-    {
-      "name": "CAN"
-    },
-    {
-      "name": "USA"
-    },
-    {
-      "name": "AUT"
-    },
-    {
-      "name": "BEL"
-    },
-    {
-      "name": "CYP"
-    },
-    {
-      "name": "DNK"
-    },
-    {
-      "name": "FIN"
-    },
-    {
-      "name": "FRA"
-    },
-    {
-      "name": "DEU"
-    },
-    {
-      "name": "GRC"
-    },
-    {
-      "name": "ISL"
-    },
-    {
-      "name": "IRL"
-    },
-    {
-      "name": "ITA"
-    },
-    {
-      "name": "LUX"
-    },
-    {
-      "name": "MLT"
-    },
-    {
-      "name": "NLD"
-    },
-    {
-      "name": "NOR"
-    },
-    {
-      "name": "PRT"
-    },
-    {
-      "name": "ESP"
-    },
-    {
-      "name": "SWE"
-    },
-    {
-      "name": "CHE"
-    },
-    {
-      "name": "TUR"
-    },
-    {
-      "name": "GBR"
-    },
-    {
-      "name": "ALB"
-    },
-    {
-      "name": "ARM"
-    },
-    {
-      "name": "AZE"
-    },
-    {
-      "name": "BLR"
-    },
-    {
-      "name": "BIH"
-    },
-    {
-      "name": "BGR"
-    },
-    {
-      "name": "HRV"
-    },
-    {
-      "name": "CZE"
-    },
-    {
-      "name": "EST"
-    },
-    {
-      "name": "GEO"
-    },
-    {
-      "name": "HUN"
-    },
-    {
-      "name": "KAZ"
-    },
-    {
-      "name": "KGZ"
-    },
-    {
-      "name": "LVA"
-    },
-    {
-      "name": "LTU"
-    },
-    {
-      "name": "MDA"
-    },
-    {
-      "name": "MNE"
-    },
-    {
-      "name": "MKD"
-    },
-    {
-      "name": "POL"
-    },
-    {
-      "name": "ROU"
-    },
-    {
-      "name": "RUS"
-    },
-    {
-      "name": "SRB"
-    },
-    {
-      "name": "SVK"
-    },
-    {
-      "name": "SVN"
-    },
-    {
-      "name": "TJK"
-    },
-    {
-      "name": "TKM"
-    },
-    {
-      "name": "UKR"
-    },
-    {
-      "name": "UZB"
-    },
-    {
-      "name": "ARG"
-    },
-    {
-      "name": "BOL"
-    },
-    {
-      "name": "BRA"
-    },
-    {
-      "name": "CHL"
-    },
-    {
-      "name": "COL"
-    },
-    {
-      "name": "CRI"
-    },
-    {
-      "name": "CUB"
-    },
-    {
-      "name": "DOM"
-    },
-    {
-      "name": "ECU"
-    },
-    {
-      "name": "SLV"
-    },
-    {
-      "name": "GTM"
-    },
-    {
-      "name": "GUY"
-    },
-    {
-      "name": "HTI"
-    },
-    {
-      "name": "HND"
-    },
-    {
-      "name": "JAM"
-    },
-    {
-      "name": "MEX"
-    },
-    {
-      "name": "NIC"
-    },
-    {
-      "name": "PAN"
-    },
-    {
-      "name": "PRY"
-    },
-    {
-      "name": "PER"
-    },
-    {
-      "name": "SUR"
-    },
-    {
-      "name": "TTO"
-    },
-    {
-      "name": "URY"
-    },
-    {
-      "name": "VEN"
-    },
-    {
-      "name": "AFG"
-    },
-    {
-      "name": "AUS"
-    },
-    {
-      "name": "BGD"
-    },
-    {
-      "name": "BTN"
-    },
-    {
-      "name": "KHM"
-    },
-    {
-      "name": "CHN"
-    },
-    {
-      "name": "FJI"
-    },
-    {
-      "name": "HKG"
-    },
-    {
-      "name": "IND"
-    },
-    {
-      "name": "IDN"
-    },
-    {
-      "name": "JPN"
-    },
-    {
-      "name": "LAO"
-    },
-    {
-      "name": "MYS"
-    },
-    {
-      "name": "MNG"
-    },
-    {
-      "name": "MMR"
-    },
-    {
-      "name": "NPL"
-    },
-    {
-      "name": "NZL"
-    },
-    {
-      "name": "PRK"
-    },
-    {
-      "name": "PAK"
-    },
-    {
-      "name": "PNG"
-    },
-    {
-      "name": "PHL"
-    },
-    {
-      "name": "SGP"
-    },
-    {
-      "name": "KOR"
-    },
-    {
-      "name": "LKA"
-    },
-    {
-      "name": "TWN"
-    },
-    {
-      "name": "THA"
-    },
-    {
-      "name": "ETM"
-    },
-    {
-      "name": "VNM"
-    },
-    {
-      "name": "DZA"
-    },
-    {
-      "name": "BHR"
-    },
-    {
-      "name": "EGY"
-    },
-    {
-      "name": "IRN"
-    },
-    {
-      "name": "IRQ"
-    },
-    {
-      "name": "ISR"
-    },
-    {
-      "name": "JOR"
-    },
-    {
-      "name": "KWT"
-    },
-    {
-      "name": "LBN"
-    },
-    {
-      "name": "LBY"
-    },
-    {
-      "name": "MAR"
-    },
-    {
-      "name": "OMN"
-    },
-    {
-      "name": "PSE"
-    },
-    {
-      "name": "QAT"
-    },
-    {
-      "name": "SAU"
-    },
-    {
-      "name": "SDN"
-    },
-    {
-      "name": "SYR"
-    },
-    {
-      "name": "TUN"
-    },
-    {
-      "name": "ARE"
-    },
-    {
-      "name": "YEM"
-    },
-    {
-      "name": "AGO"
-    },
-    {
-      "name": "BEN"
-    },
-    {
-      "name": "BWA"
-    },
-    {
-      "name": "BFA"
-    },
-    {
-      "name": "BDI"
-    },
-    {
-      "name": "CPV"
-    },
-    {
-      "name": "CMR"
-    },
-    {
-      "name": "CAF"
-    },
-    {
-      "name": "TCD"
-    },
-    {
-      "name": "COM"
-    },
-    {
-      "name": "COG"
-    },
-    {
-      "name": "CIV"
-    },
-    {
-      "name": "COD"
-    },
-    {
-      "name": "DJI"
-    },
-    {
-      "name": "GNQ"
-    },
-    {
-      "name": "ERI"
-    },
-    {
-      "name": "SWZ"
-    },
-    {
-      "name": "ETH"
-    },
-    {
-      "name": "GAB"
-    },
-    {
-      "name": "GMB"
-    },
-    {
-      "name": "GHA"
-    },
-    {
-      "name": "GIN"
-    },
-    {
-      "name": "GNB"
-    },
-    {
-      "name": "KEN"
-    },
-    {
-      "name": "LSO"
-    },
-    {
-      "name": "LBR"
-    },
-    {
-      "name": "MDG"
-    },
-    {
-      "name": "MWI"
-    },
-    {
-      "name": "MLI"
-    },
-    {
-      "name": "MRT"
-    },
-    {
-      "name": "MUS"
-    },
-    {
-      "name": "MOZ"
-    },
-    {
-      "name": "NAM"
-    },
-    {
-      "name": "NER"
-    },
-    {
-      "name": "NGA"
-    },
-    {
-      "name": "RWA"
-    },
-    {
-      "name": "SEN"
-    },
-    {
-      "name": "SLE"
-    },
-    {
-      "name": "ZAF"
-    },
-    {
-      "name": "TZA"
-    },
-    {
-      "name": "TGO"
-    },
-    {
-      "name": "UGA"
-    },
-    {
-      "name": "ZMB"
-    },
-    {
-      "name": "ZWE"
-    },
     {
       "name": "2023",
       "type": "time"

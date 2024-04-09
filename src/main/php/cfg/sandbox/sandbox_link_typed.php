@@ -105,4 +105,26 @@ class sandbox_link_typed extends sandbox_link_named
         $dsp_obj->set_type_id($this->type_id());
     }
 
+
+    /*
+     * information
+     */
+
+    /**
+     * check if the typed object in the database needs to be updated
+     *
+     * @param sandbox_link_typed $db_obj the word as saved in the database
+     * @return bool true if this word has infos that should be saved in the datanase
+     */
+    function needs_db_update_typed(sandbox_link_typed $db_obj): bool
+    {
+        $result = parent::needs_db_update_named($db_obj);
+        if ($this->type_id != null) {
+            if ($this->type_id != $db_obj->type_id) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
 }

@@ -297,7 +297,7 @@ class group_tests
         $phr_lst = new phrase_list($t->usr1);
         foreach ($ids as $phr_id) {
             if ($phr_id < 0) {
-                $trp_phr = $t->dummy_triple()->phrase();
+                $trp_phr = $t->triple()->phrase();
                 $trp_phr->set_id($phr_id);
                 $phr_lst->add($trp_phr);
             } else {

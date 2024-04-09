@@ -62,6 +62,7 @@ use cfg\formula;
 use cfg\formula_list;
 use cfg\ip_range;
 use cfg\library;
+use cfg\phrase_list;
 use cfg\ref;
 use cfg\result\result;
 use cfg\result\result_list;
@@ -75,6 +76,7 @@ use cfg\verb;
 use cfg\view;
 use cfg\view_list;
 use cfg\word;
+use cfg\word_list;
 
 class import
 {
@@ -224,6 +226,17 @@ class import
                         }
                         $result->add($import_result);
                     }
+                } elseif ($key == export::WORD_LIST) {
+                    // a list of just the word names without further parameter
+                    // phrase list because a word might also be a triple
+                    $phr_lst = new phrase_list($usr_trigger);
+                    $import_result = $phr_lst->import_names($json_obj);
+                    if ($import_result->is_ok()) {
+                        $this->words_done++;
+                    } else {
+                        $this->words_failed++;
+                    }
+                    $result->add($import_result);
                 } elseif ($key == export::TRIPLES) {
                     foreach ($json_obj as $triple) {
                         $wrd_lnk = new triple($usr_trigger);

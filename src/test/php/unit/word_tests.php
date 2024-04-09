@@ -124,6 +124,11 @@ class word_tests
 
         $t->assert_json_file(new word($usr), $json_file);
 
+        $test_name = 'check if database would not be updated if only the name is given in import';
+        $in_wrd = $t->word_name_only();
+        $db_wrd = $t->word_filled();
+        $t->assert($t->name . 'needs_db_update ' . $test_name, $in_wrd->needs_db_update($db_wrd), false);
+
 
         $t->subheader('word HTML frontend unit tests');
 

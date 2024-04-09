@@ -63,8 +63,8 @@ class sandbox_link extends sandbox
      * object vars
      */
 
-    public ?object $fob = null;        // the object from which this linked object is creating the connection
-    public ?object $tob = null;        // the object to   which this linked object is creating the connection
+    public ?object $fob = null; // the From OBject which this linked object is creating the connection
+    public ?object $tob = null; // the To   OBject which this linked object is creating the connection
 
     // database fields only used for objects that link two objects
     // TODO create a more specific object that covers all the objects that could be linked e.g. linkable_object
@@ -314,6 +314,33 @@ class sandbox_link extends sandbox
         if (!$result) {
             log_warning("The formula link " . $this->dsp_id()
                 . " is not unique", "formula_link->load");
+        }
+        return $result;
+    }
+
+
+    /*
+     * information
+     */
+
+    /**
+     * check if the named object in the database needs to be updated
+     *
+     * @param sandbox_link $db_obj the word as saved in the database
+     * @return bool true if this word has infos that should be saved in the datanase
+     */
+    function needs_db_update_linked(sandbox_link $db_obj): bool
+    {
+        $result = parent::needs_db_update_sandbox($db_obj);
+        if ($this->fob->id() != 0) {
+            if ($this->fob->id() != $db_obj->fob->id()) {
+                $result = true;
+            }
+        }
+        if ($this->tob->id() != 0) {
+            if ($this->tob->id() != $db_obj->tob->id()) {
+                $result = true;
+            }
         }
         return $result;
     }

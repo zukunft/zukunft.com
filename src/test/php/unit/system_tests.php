@@ -107,7 +107,7 @@ class system_tests
         $target = 'not set/not_set (verb_id 1) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $vrb->dsp_id(), $target);
         $test_name = 'debug triple id';
-        $trp = $t->dummy_triple();
+        $trp = $t->triple();
         $target = '"constant" "is part of" "Mathematics" (2,3,1 -> triple_id 1) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $trp->dsp_id(), $target);
         $test_name = 'debug triple_list id';
@@ -115,7 +115,7 @@ class system_tests
         $target = '"Pi (math)" (triple_id 2) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $trp_lst->dsp_id(), $target);
         $test_name = 'debug phrase id';
-        $phr = $t->dummy_triple()->phrase();
+        $phr = $t->triple()->phrase();
         $target = '"constant" "is part of" "Mathematics" (2,3,1 -> triple_id 1) for user 1 (zukunft.com system test) as phrase';
         $t->assert($test_name, $phr->dsp_id(), $target);
         $test_name = 'debug phrase_list id';

@@ -7,6 +7,19 @@
 
     This superclass should be used by the classes words, formula, ... to enable user specific values and links
 
+    The main sections of this object are
+    - db const:          const for the database link
+    - object vars:       the variables of this word object
+    - construct and map: including the mapping of the db row to this word object
+    - set and get:       to capsule the vars from unexpected changes
+    - cast:              create an api object and set the vars from an api json
+    - load:              database access object (DAO) functions
+    - im- and export:    create an export object and set the vars from an import object
+    - information:       functions to make code easier to read
+    - save:              manage to update the database
+    - sql write:         sql statement creation to write to the database
+    - sql write fields:  field list for writing to the database
+
 
     This file is part of zukunft.com - calc with words
 
@@ -25,7 +38,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2024 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -65,7 +78,7 @@ class sandbox_named extends sandbox
 {
 
     /*
-     * database link
+     * db const
      */
 
     // object specific database and JSON object field names
@@ -235,100 +248,6 @@ class sandbox_named extends sandbox
 
 
     /*
-     * sql write fields
-     */
-
-    /**
-     * get a list of all database fields that might be changed
-     * excluding the internal fields e.g. the database id
-     * field list must be corresponding to the db_fields_changed fields
-     *
-     * @return array list of all database field names that have been updated
-     */
-    function db_fields_all_named(): array
-    {
-        return [
-            $this::FLD_ID,
-            user::FLD_ID,
-            $this->name_field(),
-            self::FLD_DESCRIPTION
-        ];
-    }
-
-    /**
-     * get a list of database fields that have been updated
-     * field list must be corresponding to the db_values_changed fields
-     *
-     * @param sandbox_named $sbx the same named sandbox as this to compare which fields have been changed
-     * @param bool $usr_tbl true if the user table row should be updated
-     * @return array with the field names of the object and any child object
-     */
-    function db_fields_changed_named(sandbox_named $sbx, bool $usr_tbl = false): array
-    {
-        $result = [];
-        // for insert of user sandbox rows user id fields always needs to be included
-        if ($usr_tbl) {
-            $result[] = $this::FLD_ID;
-            $result[] = user::FLD_ID;
-        } else {
-            if ($sbx->user_id() <> $this->user_id()) {
-                $result[] = user::FLD_ID;
-            }
-        }
-        if ($sbx->name() <> $this->name()) {
-            $result[] = $this->name_field();
-        }
-        if ($sbx->description <> $this->description) {
-            $result[] = self::FLD_DESCRIPTION;
-        }
-        return $result;
-    }
-
-    /**
-     * get a list of database field values that have been updated
-     *
-     * @param sandbox_named $sbx the same named sandbox as this to compare which field values have been changed
-     * @param bool $usr_tbl true if the user table row should be updated
-     * @return array with the field values of the object and any child object
-     */
-    function db_values_changed_named(sandbox_named $sbx, bool $usr_tbl = false): array
-    {
-        $result = [];
-        // for insert of user sandbox rows user id fields always needs to be included
-        if ($usr_tbl) {
-            $result[] = $this->id();
-            $result[] = $this->user_id();
-        } else {
-            if ($sbx->user_id() <> $this->user_id()) {
-                $result[] = $this->user_id();
-            }
-        }
-        if ($sbx->name() <> $this->name()) {
-            $result[] = $this->name();
-        }
-        if ($sbx->description <> $this->description) {
-            $result[] = $this->description();
-        }
-        return $result;
-    }
-
-    /**
-     * @return array with the field values of the object and any child object
-     */
-    function value_list_named(): array
-    {
-        return [
-            $this->user()->id(),
-            $this->name(),
-            $this->description,
-            $this->excluded,
-            $this->share_id,
-            $this->protection_id
-        ];
-    }
-
-
-    /*
      * cast
      */
 
@@ -384,7 +303,7 @@ class sandbox_named extends sandbox
 
 
     /*
-     * loading
+     * load
      */
 
     /**
@@ -517,173 +436,29 @@ class sandbox_named extends sandbox
 
 
     /*
-     * sql write
+     * information
      */
 
     /**
-     * create the sql statement to add a new named sandbox object e.g. word to the database
-     * TODO add qp merge
+     * check if the named object in the database needs to be updated
      *
-     * @param sql $sc with the target db_type set
-     * @param array $fld_lst list of field names additional to the standard id and name fields
-     * @param array $val_lst list of field values additional to the standard id and name
-     * @param array $fld_lst_all list of field names of the given object
-     * @param array $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     * @param sandbox_named $db_obj the word as saved in the database
+     * @return bool true if this word has infos that should be saved in the datanase
      */
-    function sql_insert_named(
-        sql   $sc,
-        array $fld_lst = [],
-        array $val_lst = [],
-        array $fld_lst_all = [],
-        array $sc_par_lst = []): sql_par
+    function needs_db_update_named(sandbox_named $db_obj): bool
     {
-
-        // check the parameters
-        $lib = new library();
-        if (count($fld_lst) != count($val_lst)) {
-            log_err('fields (' . $lib->dsp_array($fld_lst) . ') does not match with values (' . $lib->dsp_array($val_lst) . ')');
-        }
-
-        // create the main query parameter object and set the name
-        $and_log = $sc->and_log($sc_par_lst);
-        $fld_chg_ext = $lib->sql_field_ext($fld_lst, $fld_lst_all);
-        $ext = sql::file_sep . sql::file_insert;
-        if ($and_log) {
-            $ext .= sql_type::LOG->extension();
-        }
-        $ext .= sql::file_sep . $fld_chg_ext;
-        $qp = $this->sql_common($sc, $sc_par_lst, $ext);
-
-        if ($sc->and_log($sc_par_lst)) {
-
-            $par_name_lst = [];
-            $par_value_lst = [];
-            $par_type_lst = [];
-
-            // create the query parameters for the single log entries
-            $sc_log = clone $sc;
-            $sc_par_lst_sub = $sc_par_lst;
-            $sc_par_lst_sub[] = sql_type::SUB;
-            $i = 0;
-
-            foreach ($fld_lst as $fld) {
-                $log = new change($this->user());
-                $log->set_table_by_class($this::class);
-                $log->set_field($fld);
-                $log->new_value = $val_lst[$i];
-                // TODO get the id of the new entry and use it in the log
-                $qp_log = $log->sql_insert($sc_log, $sc_par_lst_sub);
-                $qp->combine($qp_log);
+        $result = parent::needs_db_update_sandbox($db_obj);
+        if ($this->name != null) {
+            if ($this->name != $db_obj->name) {
+                $result = true;
             }
-
-            // create the query parameters for the actual change
-            $qp_chg = clone $qp;
-            $qp_chg->sql = $sc->create_sql_insert($fld_lst, $val_lst);
-            $qp_chg->par = $val_lst;
-
-            // merge all together and create the function
-            $qp->combine($qp_chg);
-            // TODO add the function header and footer
-
-        } else {
-            // add the child object specific fields and values
-            $qp->sql = $sc->create_sql_insert($fld_lst, $val_lst);
-            $qp->par = $val_lst;
         }
-
-        return $qp;
-    }
-
-    /**
-     * create the sql statement to change or exclude a named sandbox object e.g. word to the database
-     *
-     * @param sql $sc with the target db_type set
-     * @param array $fld_lst list of field names additional to the standard id and name fields
-     * @param array $val_lst list of field values additional to the standard id and name$
-     * @param array $fld_lst_all list of field names of the given object
-     * @param array $sc_par_lst the parameters for the sql statement creation
-     * @param bool $usr_tbl true if the user table row should be updated
-     * @return sql_par the SQL update statement, the name of the SQL statement and the parameter list
-     */
-    function sql_update_named(
-        sql   $sc,
-        array $fld_lst = [],
-        array $val_lst = [],
-        array $fld_lst_all = [],
-        array $sc_par_lst = [],
-        bool  $usr_tbl = false): sql_par
-    {
-        $lib = new library();
-        $usr_tbl = $sc->is_usr_tbl($sc_par_lst);
-        $fld_chg_ext = $lib->sql_field_ext($fld_lst, $fld_lst_all);
-        $ext = sql::file_sep . sql::file_update . sql::file_sep . $fld_chg_ext;
-        $qp = $this->sql_common($sc, $sc_par_lst, $ext);
-        if ($usr_tbl) {
-            $qp->sql = $sc->create_sql_update([$this->id_field(), user::FLD_ID], [$this->id(), $this->user_id()], $fld_lst, $val_lst);
-        } else {
-            $qp->sql = $sc->create_sql_update($this->id_field(), $this->id(), $fld_lst, $val_lst);
+        if ($this->description != null) {
+            if ($this->description != $db_obj->description) {
+                $result = true;
+            }
         }
-        $qp->par = $val_lst;
-
-        return $qp;
-    }
-
-    /**
-     * create the sql statement to delete or exclude a named sandbox object e.g. word to the database
-     *
-     * @param sql $sc with the target db_type set
-     * @param array $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL update statement, the name of the SQL statement and the parameter list
-     */
-    function sql_delete(
-        sql   $sc,
-        array $sc_par_lst = []): sql_par
-    {
-        $usr_tbl = $sc->is_usr_tbl($sc_par_lst);
-        $excluded = $sc->exclude_sql($sc_par_lst);
-        $qp = $this->sql_common($sc, $sc_par_lst);
-        $qp->name .= sql::file_sep . sql::file_delete;
-        $par_lst = [$this->id()];
-        if ($excluded) {
-            $qp->name .= '_excluded';
-        }
-        $sc->set_name($qp->name);
-        // delete the user overwrite
-        // but if the excluded user overwrites should be deleted the overwrites for all users should be deleted
-        if ($usr_tbl and !$excluded) {
-            $qp->sql = $sc->create_sql_delete([$this->id_field(), user::FLD_ID], [$this->id(), $this->user_id()], $excluded);
-            $par_lst[] = $this->user_id();
-        } else {
-            $qp->sql = $sc->create_sql_delete($this->id_field(), $this->id(), $excluded);
-        }
-        $qp->par = $par_lst;
-
-        return $qp;
-    }
-
-    /**
-     * the common part of the sql_insert and sql_update functions
-     * TODO include the sql statements to log the changes
-     *
-     * @param sql $sc with the target db_type set
-     * @param array $sc_par_lst the parameters for the sql statement creation
-     * @param string $name_ext the query name extension to differ insert from update
-     * @return sql_par prepared sql parameter object with the name set
-     */
-    private function sql_common(sql $sc, array $sc_par_lst = [], string $name_ext = ''): sql_par
-    {
-        $lib = new library();
-        $usr_tbl = $sc->is_usr_tbl($sc_par_lst);
-        $sc->set_class($this::class, $sc_par_lst);
-        $sql_name = $lib->class_to_name($this::class);
-        $qp = new sql_par($sql_name);
-        $qp->name = $sql_name . $name_ext;
-        if ($usr_tbl) {
-            $qp->name .= '_user';
-        }
-        $sc->set_name($qp->name);
-        return $qp;
+        return $result;
     }
 
 
@@ -1097,6 +872,271 @@ class sandbox_named extends sandbox
         }
 
         return $result;
+    }
+
+
+    /*
+     * sql write
+     */
+
+    /**
+     * create the sql statement to add a new named sandbox object e.g. word to the database
+     * TODO add qp merge
+     *
+     * @param sql $sc with the target db_type set
+     * @param array $fld_lst list of field names additional to the standard id and name fields
+     * @param array $val_lst list of field values additional to the standard id and name
+     * @param array $fld_lst_all list of field names of the given object
+     * @param array $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     */
+    function sql_insert_named(
+        sql   $sc,
+        array $fld_lst = [],
+        array $val_lst = [],
+        array $fld_lst_all = [],
+        array $sc_par_lst = []): sql_par
+    {
+
+        // check the parameters
+        $lib = new library();
+        if (count($fld_lst) != count($val_lst)) {
+            log_err('fields (' . $lib->dsp_array($fld_lst) . ') does not match with values (' . $lib->dsp_array($val_lst) . ')');
+        }
+
+        // create the main query parameter object and set the name
+        $and_log = $sc->and_log($sc_par_lst);
+        $fld_chg_ext = $lib->sql_field_ext($fld_lst, $fld_lst_all);
+        $ext = sql::file_sep . sql::file_insert;
+        if ($and_log) {
+            $ext .= sql_type::LOG->extension();
+        }
+        $ext .= sql::file_sep . $fld_chg_ext;
+        $qp = $this->sql_common($sc, $sc_par_lst, $ext);
+
+        if ($sc->and_log($sc_par_lst)) {
+
+            $par_name_lst = [];
+            $par_value_lst = [];
+            $par_type_lst = [];
+
+            // create the query parameters for the single log entries
+            $sc_log = clone $sc;
+            $sc_par_lst_sub = $sc_par_lst;
+            $sc_par_lst_sub[] = sql_type::SUB;
+            $i = 0;
+
+            foreach ($fld_lst as $fld) {
+                $log = new change($this->user());
+                $log->set_table_by_class($this::class);
+                $log->set_field($fld);
+                $log->new_value = $val_lst[$i];
+                // TODO get the id of the new entry and use it in the log
+                $qp_log = $log->sql_insert($sc_log, $sc_par_lst_sub);
+                $qp->combine($qp_log);
+            }
+
+            // create the query parameters for the actual change
+            $qp_chg = clone $qp;
+            $qp_chg->sql = $sc->create_sql_insert($fld_lst, $val_lst);
+            $qp_chg->par = $val_lst;
+
+            // merge all together and create the function
+            $qp->combine($qp_chg);
+            // TODO add the function header and footer
+
+        } else {
+            // add the child object specific fields and values
+            $qp->sql = $sc->create_sql_insert($fld_lst, $val_lst);
+            $qp->par = $val_lst;
+        }
+
+        return $qp;
+    }
+
+    /**
+     * create the sql statement to change or exclude a named sandbox object e.g. word to the database
+     *
+     * @param sql $sc with the target db_type set
+     * @param array $fld_lst list of field names additional to the standard id and name fields
+     * @param array $val_lst list of field values additional to the standard id and name$
+     * @param array $fld_lst_all list of field names of the given object
+     * @param array $sc_par_lst the parameters for the sql statement creation
+     * @param bool $usr_tbl true if the user table row should be updated
+     * @return sql_par the SQL update statement, the name of the SQL statement and the parameter list
+     */
+    function sql_update_named(
+        sql   $sc,
+        array $fld_lst = [],
+        array $val_lst = [],
+        array $fld_lst_all = [],
+        array $sc_par_lst = [],
+        bool  $usr_tbl = false): sql_par
+    {
+        $lib = new library();
+        $usr_tbl = $sc->is_usr_tbl($sc_par_lst);
+        $fld_chg_ext = $lib->sql_field_ext($fld_lst, $fld_lst_all);
+        $ext = sql::file_sep . sql::file_update . sql::file_sep . $fld_chg_ext;
+        $qp = $this->sql_common($sc, $sc_par_lst, $ext);
+        if ($usr_tbl) {
+            $qp->sql = $sc->create_sql_update([$this->id_field(), user::FLD_ID], [$this->id(), $this->user_id()], $fld_lst, $val_lst);
+        } else {
+            $qp->sql = $sc->create_sql_update($this->id_field(), $this->id(), $fld_lst, $val_lst);
+        }
+        $qp->par = $val_lst;
+
+        return $qp;
+    }
+
+    /**
+     * create the sql statement to delete or exclude a named sandbox object e.g. word to the database
+     *
+     * @param sql $sc with the target db_type set
+     * @param array $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par the SQL update statement, the name of the SQL statement and the parameter list
+     */
+    function sql_delete(
+        sql   $sc,
+        array $sc_par_lst = []): sql_par
+    {
+        $usr_tbl = $sc->is_usr_tbl($sc_par_lst);
+        $excluded = $sc->exclude_sql($sc_par_lst);
+        $qp = $this->sql_common($sc, $sc_par_lst);
+        $qp->name .= sql::file_sep . sql::file_delete;
+        $par_lst = [$this->id()];
+        if ($excluded) {
+            $qp->name .= '_excluded';
+        }
+        $sc->set_name($qp->name);
+        // delete the user overwrite
+        // but if the excluded user overwrites should be deleted the overwrites for all users should be deleted
+        if ($usr_tbl and !$excluded) {
+            $qp->sql = $sc->create_sql_delete([$this->id_field(), user::FLD_ID], [$this->id(), $this->user_id()], $excluded);
+            $par_lst[] = $this->user_id();
+        } else {
+            $qp->sql = $sc->create_sql_delete($this->id_field(), $this->id(), $excluded);
+        }
+        $qp->par = $par_lst;
+
+        return $qp;
+    }
+
+    /**
+     * the common part of the sql_insert and sql_update functions
+     * TODO include the sql statements to log the changes
+     *
+     * @param sql $sc with the target db_type set
+     * @param array $sc_par_lst the parameters for the sql statement creation
+     * @param string $name_ext the query name extension to differ insert from update
+     * @return sql_par prepared sql parameter object with the name set
+     */
+    private function sql_common(sql $sc, array $sc_par_lst = [], string $name_ext = ''): sql_par
+    {
+        $lib = new library();
+        $usr_tbl = $sc->is_usr_tbl($sc_par_lst);
+        $sc->set_class($this::class, $sc_par_lst);
+        $sql_name = $lib->class_to_name($this::class);
+        $qp = new sql_par($sql_name);
+        $qp->name = $sql_name . $name_ext;
+        if ($usr_tbl) {
+            $qp->name .= '_user';
+        }
+        $sc->set_name($qp->name);
+        return $qp;
+    }
+
+
+    /*
+     * sql write fields
+     */
+
+    /**
+     * get a list of all database fields that might be changed
+     * excluding the internal fields e.g. the database id
+     * field list must be corresponding to the db_fields_changed fields
+     *
+     * @return array list of all database field names that have been updated
+     */
+    function db_fields_all_named(): array
+    {
+        return [
+            $this::FLD_ID,
+            user::FLD_ID,
+            $this->name_field(),
+            self::FLD_DESCRIPTION
+        ];
+    }
+
+    /**
+     * get a list of database fields that have been updated
+     * field list must be corresponding to the db_values_changed fields
+     *
+     * @param sandbox_named $sbx the same named sandbox as this to compare which fields have been changed
+     * @param bool $usr_tbl true if the user table row should be updated
+     * @return array with the field names of the object and any child object
+     */
+    function db_fields_changed_named(sandbox_named $sbx, bool $usr_tbl = false): array
+    {
+        $result = [];
+        // for insert of user sandbox rows user id fields always needs to be included
+        if ($usr_tbl) {
+            $result[] = $this::FLD_ID;
+            $result[] = user::FLD_ID;
+        } else {
+            if ($sbx->user_id() <> $this->user_id()) {
+                $result[] = user::FLD_ID;
+            }
+        }
+        if ($sbx->name() <> $this->name()) {
+            $result[] = $this->name_field();
+        }
+        if ($sbx->description <> $this->description) {
+            $result[] = self::FLD_DESCRIPTION;
+        }
+        return $result;
+    }
+
+    /**
+     * get a list of database field values that have been updated
+     *
+     * @param sandbox_named $sbx the same named sandbox as this to compare which field values have been changed
+     * @param bool $usr_tbl true if the user table row should be updated
+     * @return array with the field values of the object and any child object
+     */
+    function db_values_changed_named(sandbox_named $sbx, bool $usr_tbl = false): array
+    {
+        $result = [];
+        // for insert of user sandbox rows user id fields always needs to be included
+        if ($usr_tbl) {
+            $result[] = $this->id();
+            $result[] = $this->user_id();
+        } else {
+            if ($sbx->user_id() <> $this->user_id()) {
+                $result[] = $this->user_id();
+            }
+        }
+        if ($sbx->name() <> $this->name()) {
+            $result[] = $this->name();
+        }
+        if ($sbx->description <> $this->description) {
+            $result[] = $this->description();
+        }
+        return $result;
+    }
+
+    /**
+     * @return array with the field values of the object and any child object
+     */
+    function value_list_named(): array
+    {
+        return [
+            $this->user()->id(),
+            $this->name(),
+            $this->description,
+            $this->excluded,
+            $this->share_id,
+            $this->protection_id
+        ];
     }
 
 

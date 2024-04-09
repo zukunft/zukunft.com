@@ -855,6 +855,31 @@ class phrase extends combine_named
         }
     }
 
+    /*
+     * information
+     */
+    /**
+     * check if the word in the database needs to be updated
+     * e.g. for import  if this word has only the name set, the protection should not be updated in the database
+     *
+     * @param phrase $db_phr the word as saved in the database
+     * @return bool true if this word has infos that should be saved in the datanase
+     */
+    function needs_db_update(phrase $db_phr): bool
+    {
+        if ($this->is_word() and $db_phr->is_word()) {
+            $wrd = $this->obj();
+            $db_wrd = $this->obj();
+            return $wrd->needs_db_update($db_wrd);
+        } elseif ($this->is_triple() and $db_phr->is_triple()) {
+            $trp = $this->obj();
+            $db_trp = $this->obj();
+            return $trp->needs_db_update($db_trp);
+        } else {
+            return true;
+        }
+    }
+
 
     /*
      * data retrieval
@@ -934,7 +959,7 @@ class phrase extends combine_named
      * display functions
      */
 
-// return the name (just because all objects should have a name function)
+    // return the name (just because all objects should have a name function)
     function dsp_name(): string
     {
         //$result = $this->name();
@@ -1048,7 +1073,9 @@ class phrase extends combine_named
     }
 
 
-// returns a list of phrase that are related to this word e.g. for "ABB" it will return "Company" (but not "ABB"???)
+    /**
+     * returns a list of phrase that are related to this word e.g. for "ABB" it will return "Company" (but not "ABB"???)
+     */
     function is(): phrase_list
     {
         $this_lst = $this->lst();

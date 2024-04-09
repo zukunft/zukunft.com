@@ -1224,6 +1224,25 @@ class phrase_list extends sandbox_list_named
         return $result;
     }
 
+    /**
+     * import a word list object from a JSON array object
+     *
+     * @param array $json_obj an array with the data of the json object
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     */
+    function import_names(array $json_obj): user_message
+    {
+        $result = new user_message();
+        foreach ($json_obj as $word_name) {
+            $wrd = new word($this->user());
+            $wrd->set_name($word_name);
+            $this->add($wrd->phrase());
+        }
+        $this->save();
+
+        return $result;
+    }
+
 
     /*
      * check and information functions
@@ -2269,9 +2288,37 @@ class phrase_list extends sandbox_list_named
     function save(): string
     {
         $result = '';
+
+        // get the phrase names that are already in the database
+        $db_lst = clone $this;
+        $db_lst->reset();
+        $db_lst->load_by_names($this->names());
+
+        // create a list of phrase that needs to be added and that needs to be updated
+        $add_lst = clone $this;
+        $add_lst->reset();
+        $chg_lst = clone $this;
+        $chg_lst->reset();
         foreach ($this->lst() as $phr) {
+            $db_phr = $db_lst->get_obj_by_name($phr->name());
+            if ($db_phr == null) {
+                $add_lst->add_obj($phr);
+            } else {
+                if ($phr->needs_db_update($db_phr)) {
+                    $chg_lst->add_obj($phr);
+                }
+            }
+        }
+
+        // add the missing phrase
+        foreach ($add_lst->lst() as $phr) {
             $result .= $phr->save();
         }
+        // update the phrase that are needed
+        foreach ($chg_lst->lst() as $phr) {
+            $result .= $phr->save();
+        }
+
         return $result;
     }
 

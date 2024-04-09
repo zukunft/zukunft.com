@@ -65,6 +65,7 @@ class export
     const USERS = 'users';
     const VERBS = 'verbs';
     const WORDS = 'words';
+    const WORD_LIST = 'word-list'; // a list of the word names without further parameters
     const NAME = 'name';
     const TYPE = 'type';
     const PHRASES = 'phrases';

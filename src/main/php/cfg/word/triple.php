@@ -8,6 +8,23 @@
     A link can also be used in replacement for a word
     e.g. "Zurich (Company)" where the link "Zurich is a company" is used
 
+    The main sections of this object are
+    - db const:          const for the database link
+    - im/export const:   const for the im and export link
+    - object vars:       the variables of this word object
+    - construct and map: including the mapping of the db row to this word object
+    - set and get:       to capsule the vars from unexpected changes
+    - preloaded:         select e.g. types from cache
+    - cast:              create an api object and set the vars from an api json
+    - load:              database access object (DAO) functions
+    - im- and export:    create an export object and set the vars from an import object
+    - information:       functions to make code easier to read
+    - internal:          e.g. to generate the name based on the link
+    - save:              manage to update the database
+    - debug:             internal support functions for debugging
+    - display:           to be moved to the frontend object
+
+
     This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it
@@ -25,7 +42,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2023 zukunft.com AG, Zurich
+    Copyright (c) 1995-2024 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -65,7 +82,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
 {
 
     /*
-     * database link
+     * db const
      */
 
     // comment used for the database creation
@@ -164,7 +181,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
 
 
     /*
-     * im- and export link
+     * im- and export const
      */
 
     // the field names used for the im- and export in the json or yaml format
@@ -469,7 +486,6 @@ class triple extends sandbox_link_typed implements JsonSerializable
         return $this->values;
     }
 
-
     /**
      * @return string|null the name manually set by the user or null if the generated name should be used
      */
@@ -494,9 +510,18 @@ class triple extends sandbox_link_typed implements JsonSerializable
         return $this->description();
     }
 
+    /**
+     * get the database id of the phrase type
+     * @return int|null the id of the word type
+     */
+    function type_id(): ?int
+    {
+        return $this->type_id;
+    }
+
 
     /*
-     * get preloaded information
+     * preloaded
      */
 
     /**
@@ -575,113 +600,96 @@ class triple extends sandbox_link_typed implements JsonSerializable
         return $this->api_obj()->get_json();
     }
 
-
-    /*
-     * set and get
+    /**
+     * convert the word object into a phrase object
      */
+    function phrase(): phrase
+    {
+        $phr = new phrase($this->user());
+        // the triple has positive id, but the phrase uses a negative id
+        $phr->set_name($this->name, triple::class);
+        $phr->set_obj($this);
+        log_debug('triple->phrase of ' . $this->dsp_id());
+        return $phr;
+    }
 
     /**
-     * map a triple api json to this model triple object
-     * similar to the import_obj function but using the database id instead of names as the unique key
-     * @param array $api_json the api array with the triple values that should be mapped
+     * @returns term the triple object cast into a term object
+     * TODO remove lines not needed any more
      */
-    function set_by_api_json(array $api_json): user_message
+    function term(): term
     {
-        global $phrase_types;
-
-        $msg = new user_message();
-
-        // make sure that there are no unexpected leftovers
-        $usr = $this->user();
-        $this->reset();
-        $this->set_user($usr);
-
-        foreach ($api_json as $key => $value) {
-
-            if ($key == api::FLD_ID) {
-                $this->set_id($value);
-            }
-            if ($key == api::FLD_NAME) {
-                $this->set_name($value);
-            }
-            if ($key == api::FLD_DESCRIPTION) {
-                if ($value <> '') {
-                    $this->description = $value;
-                }
-            }
-            if ($key == api::FLD_TYPE) {
-                $this->type_id = $phrase_types->id($value);
-            }
-
-            /* TODO
-            if ($key == self::FLD_PLURAL) {
-                if ($value <> '') {
-                    $this->plural = $value;
-                }
-            }
-            if ($key == share_type::JSON_FLD) {
-                $this->share_id = $share_types->id($value);
-            }
-            if ($key == protection_type::JSON_FLD) {
-                $this->protection_id = $protection_types->id($value);
-            }
-            if ($key == exp_obj::FLD_VIEW) {
-                $wrd_view = new view($this->user());
-                if ($do_save) {
-                    $wrd_view->load_by_name($value, view::class);
-                    if ($wrd_view->id == 0) {
-                        $result->add_message('Cannot find view "' . $value . '" when importing ' . $this->dsp_id());
-                    } else {
-                        $this->view_id = $wrd_view->id;
-                    }
-                } else {
-                    $wrd_view->set_name($value);
-                }
-                $this->view = $wrd_view;
-            }
-
-            if ($key == api::FLD_PHRASES) {
-                $phr_lst = new phrase_list($this->user());
-                $msg->add($phr_lst->db_obj($value));
-                if ($msg->is_ok()) {
-                    $this->grp->phr_lst = $phr_lst;
-                }
-            }
-            */
-
-        }
-
-        return $msg;
+        $trm = new term($this->user());
+        $trm->set_id_from_obj($this->id(), self::class);
+        $trm->set_name($this->name(), triple::class);
+        $trm->set_obj($this);
+        log_debug($this->dsp_id());
+        return $trm;
     }
 
 
     /*
-     * loading / database access object (DAO) functions
+     * load
      */
 
     /**
-     * create the SQL to load the default triple always by the id
-     *
-     * @param sql $sc with the target db_type set
-     * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * load a triple by name
+     * @param string $name the name of the word, triple, formula, verb, view or view component
+     * @return int the id of the object found and zero if nothing is found
      */
-    function load_standard_sql(sql $sc, string $class = self::class): sql_par
+    function load_by_name(string $name): int
     {
-        $sc->set_class($class);
-        $qp = new sql_par($class, [sql_type::NORM]);
-        $qp->name .= $this->load_sql_name_ext();
-        $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id());
-        $sc->set_fields(array_merge(
-            self::FLD_NAMES_LINK,
-            self::FLD_NAMES,
-            self::FLD_NAMES_USR,
-            self::FLD_NAMES_NUM_USR,
-            array(user::FLD_ID)
-        ));
+        global $db_con;
 
-        return $this->load_sql_select_qp($sc, $qp);
+        log_debug($name);
+        $qp = $this->load_sql_by_name($db_con->sql_creator(), $name);
+        return $this->load($qp);
+    }
+
+    /**
+     * load a triple by database id
+     * @param int $id the id of the word, triple, formula, verb, view or view component
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return int the id of the object found and zero if nothing is found
+     */
+    function load_by_id(int $id, string $class = self::class): int
+    {
+        global $db_con;
+
+        log_debug($id);
+        $qp = $this->load_sql_by_id($db_con->sql_creator(), $id, $class);
+        return $this->load($qp);
+    }
+
+    /**
+     * load a triple by the generated name (the name that the triple would have if the user has done not overwrite)
+     * @param string $name the generated name of the triple
+     * @return int the id of the object found and zero if nothing is found
+     */
+    function load_by_name_generated(string $name): int
+    {
+        global $db_con;
+
+        log_debug($name);
+        $qp = $this->load_sql_by_name_generated($db_con->sql_creator(), $name, $this::class);
+        return $this->load($qp);
+    }
+
+    /**
+     * load a triple by the ids of the linked objects
+     * @param int $from the id of the phrase that is linked
+     * @param int $type the type id of the link
+     * @param int $to the id of the phrase to which is the link directed
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return int the id of the object found and zero if nothing is found
+     */
+    function load_by_link_id(int $from, int $type = 0, int $to = 0, string $class = self::class): int
+    {
+        global $db_con;
+
+        log_debug($from . ' ' . $type . ' ' . $to);
+        $qp = $this->load_sql_by_link($db_con->sql_creator(), $from, $type, $to, $class);
+        return $this->load($qp);
     }
 
     /**
@@ -720,6 +728,31 @@ class triple extends sandbox_link_typed implements JsonSerializable
         }
 
         return $result;
+    }
+
+    /**
+     * create the SQL to load the default triple always by the id
+     *
+     * @param sql $sc with the target db_type set
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_standard_sql(sql $sc, string $class = self::class): sql_par
+    {
+        $sc->set_class($class);
+        $qp = new sql_par($class, [sql_type::NORM]);
+        $qp->name .= $this->load_sql_name_ext();
+        $sc->set_name($qp->name);
+        $sc->set_usr($this->user()->id());
+        $sc->set_fields(array_merge(
+            self::FLD_NAMES_LINK,
+            self::FLD_NAMES,
+            self::FLD_NAMES_USR,
+            self::FLD_NAMES_NUM_USR,
+            array(user::FLD_ID)
+        ));
+
+        return $this->load_sql_select_qp($sc, $qp);
     }
 
     /**
@@ -850,66 +883,6 @@ class triple extends sandbox_link_typed implements JsonSerializable
         return $this->id();
     }
 
-    /**
-     * load a triple by database id
-     * @param int $id the id of the word, triple, formula, verb, view or view component
-     * @param string $class the name of the child class from where the call has been triggered
-     * @return int the id of the object found and zero if nothing is found
-     */
-    function load_by_id(int $id, string $class = self::class): int
-    {
-        global $db_con;
-
-        log_debug($id);
-        $qp = $this->load_sql_by_id($db_con->sql_creator(), $id, $class);
-        return $this->load($qp);
-    }
-
-    /**
-     * load a triple by name
-     * @param string $name the name of the word, triple, formula, verb, view or view component
-     * @return int the id of the object found and zero if nothing is found
-     */
-    function load_by_name(string $name): int
-    {
-        global $db_con;
-
-        log_debug($name);
-        $qp = $this->load_sql_by_name($db_con->sql_creator(), $name);
-        return $this->load($qp);
-    }
-
-    /**
-     * load a triple by the generated name (the name that the triple would have if the user has done not overwrite)
-     * @param string $name the generated name of the triple
-     * @return int the id of the object found and zero if nothing is found
-     */
-    function load_by_name_generated(string $name): int
-    {
-        global $db_con;
-
-        log_debug($name);
-        $qp = $this->load_sql_by_name_generated($db_con->sql_creator(), $name, $this::class);
-        return $this->load($qp);
-    }
-
-    /**
-     * load a triple by the ids of the linked objects
-     * @param int $from the id of the phrase that is linked
-     * @param int $type the type id of the link
-     * @param int $to the id of the phrase to which is the link directed
-     * @param string $class the name of the child class from where the call has been triggered
-     * @return int the id of the object found and zero if nothing is found
-     */
-    function load_by_link_id(int $from, int $type = 0, int $to = 0, string $class = self::class): int
-    {
-        global $db_con;
-
-        log_debug($from . ' ' . $type . ' ' . $to);
-        $qp = $this->load_sql_by_link($db_con->sql_creator(), $from, $type, $to, $class);
-        return $this->load($qp);
-    }
-
     function name_field(): string
     {
         return self::FLD_NAME;
@@ -924,7 +897,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
      * if needed reverse the order if the user has entered it the other way round
      * e.g. "Cask Flow Statement" "contains" "Taxes" instead of "Taxes" "is part of" "Cask Flow Statement"
      */
-    private function check_order()
+    private function check_order(): void
     {
         if ($this->verb->id() < 0) {
             $to = $this->tob;
@@ -1093,6 +1066,23 @@ class triple extends sandbox_link_typed implements JsonSerializable
     }
 
     /**
+     * create an SQL statement to retrieve the user changes of the current triple
+     *
+     * @param sql $sc with the target db_type set
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_user_changes(sql $sc, string $class = self::class): sql_par
+    {
+        $sc->set_class($class, [sql_type::USER]);
+        $sc->set_fields(array_merge(
+            self::FLD_NAMES_USR,
+            self::FLD_NAMES_NUM_USR
+        ));
+        return parent::load_sql_user_changes($sc, $class);
+    }
+
+    /**
      * @return true if no link objects is missing
      */
     private function has_objects(): bool
@@ -1150,9 +1140,84 @@ class triple extends sandbox_link_typed implements JsonSerializable
         return $wrd_lst;
     }
 
+
     /*
-     * interface
+     * im- and export
      */
+
+    /**
+     * map a triple api json to this model triple object
+     * similar to the import_obj function but using the database id instead of names as the unique key
+     * @param array $api_json the api array with the triple values that should be mapped
+     */
+    function set_by_api_json(array $api_json): user_message
+    {
+        global $phrase_types;
+
+        $msg = new user_message();
+
+        // make sure that there are no unexpected leftovers
+        $usr = $this->user();
+        $this->reset();
+        $this->set_user($usr);
+
+        foreach ($api_json as $key => $value) {
+
+            if ($key == api::FLD_ID) {
+                $this->set_id($value);
+            }
+            if ($key == api::FLD_NAME) {
+                $this->set_name($value);
+            }
+            if ($key == api::FLD_DESCRIPTION) {
+                if ($value <> '') {
+                    $this->description = $value;
+                }
+            }
+            if ($key == api::FLD_TYPE) {
+                $this->type_id = $phrase_types->id($value);
+            }
+
+            /* TODO
+            if ($key == self::FLD_PLURAL) {
+                if ($value <> '') {
+                    $this->plural = $value;
+                }
+            }
+            if ($key == share_type::JSON_FLD) {
+                $this->share_id = $share_types->id($value);
+            }
+            if ($key == protection_type::JSON_FLD) {
+                $this->protection_id = $protection_types->id($value);
+            }
+            if ($key == exp_obj::FLD_VIEW) {
+                $wrd_view = new view($this->user());
+                if ($do_save) {
+                    $wrd_view->load_by_name($value, view::class);
+                    if ($wrd_view->id == 0) {
+                        $result->add_message('Cannot find view "' . $value . '" when importing ' . $this->dsp_id());
+                    } else {
+                        $this->view_id = $wrd_view->id;
+                    }
+                } else {
+                    $wrd_view->set_name($value);
+                }
+                $this->view = $wrd_view;
+            }
+
+            if ($key == api::FLD_PHRASES) {
+                $phr_lst = new phrase_list($this->user());
+                $msg->add($phr_lst->db_obj($value));
+                if ($msg->is_ok()) {
+                    $this->grp->phr_lst = $phr_lst;
+                }
+            }
+            */
+
+        }
+
+        return $msg;
+    }
 
     /**
      * an array of the value vars including the private vars
@@ -1161,17 +1226,13 @@ class triple extends sandbox_link_typed implements JsonSerializable
     {
         $vars = get_object_vars($this);
         if ($this->fob->obj() != null) {
-            $vars['from'] = $this->fob->obj()->name_dsp();
+            $vars[self::FLD_EX_FROM] = $this->fob->obj()->name_dsp();
         }
         if ($this->tob->obj() != null) {
-            $vars['to'] = $this->tob->obj()->name_dsp();
+            $vars[self::FLD_EX_TO] = $this->tob->obj()->name_dsp();
         }
         return $vars;
     }
-
-    /*
-     * import ans export
-     */
 
     /**
      * get a phrase based on the name (and save it if needed and requested)
@@ -1201,11 +1262,6 @@ class triple extends sandbox_link_typed implements JsonSerializable
         }
         return $result;
     }
-
-
-    /*
-     * im- and export
-     */
 
     /**
      * import a triple from a json object
@@ -1372,7 +1428,40 @@ class triple extends sandbox_link_typed implements JsonSerializable
 
 
     /*
-     * display
+     * information
+     */
+
+    /**
+     * check if the word in the database needs to be updated
+     * e.g. for import  if this word has only the name set, the protection should not be updated in the database
+     *
+     * @param triple $db_trp the word as saved in the database
+     * @return bool true if this word has infos that should be saved in the datanase
+     */
+    function needs_db_update(triple $db_trp): bool
+    {
+        $result = parent::needs_db_update_typed($db_trp);
+        if ($this->verb->id() > 0) {
+            if ($this->verb->id() != $db_trp->verb->id()) {
+                $result = true;
+            }
+        }
+        if ($this->name_given != null) {
+            if ($this->name_given != $db_trp->name_given) {
+                $result = true;
+            }
+        }
+        if ($this->values != null) {
+            if ($this->values != $db_trp->values) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+
+    /*
+     * internal
      */
 
     /**
@@ -1400,172 +1489,9 @@ class triple extends sandbox_link_typed implements JsonSerializable
         }
     }
 
-    /**
-     * get the database id of the phrase type
-     * @return int|null the id of the word type
-     */
-    function type_id(): ?int
-    {
-        return $this->type_id;
-    }
-
-    /**
-     * display one link to the user by returning the HTML code for the link to the calling function
-     * TODO include the user sandbox in the selection
-     */
-    private
-    function display(): string
-    {
-        log_debug("triple->dsp " . $this->id() . ".");
-
-        $result = ''; // reset the html code var
-
-        // get the link from the database
-        $this->load_objects();
-
-        // prepare to show the triple
-        $result .= $this->fob->name() . ' '; // e.g. Australia
-        $result .= $this->verb->name() . ' '; // e.g. is a
-        $result .= $this->tob->name();       // e.g. Country
-
-        return $result;
-    }
-
-    /**
-     * similar to dsp, but display the reverse expression
-     */
-    private
-    function dsp_r(): string
-    {
-        log_debug("triple->dsp_r " . $this->id() . ".");
-
-        $result = ''; // reset the html code var
-
-        // get the link from the database
-        $this->load_objects();
-
-        // prepare to show the triple
-        $result .= $this->tob->name() . ' ';   // e.g. Countries
-        $result .= $this->verb->name() . ' '; // e.g. are
-        $result .= $this->fob->name();     // e.g. Australia (and others)
-
-        return $result;
-    }
-
-    /**
-     * display a form to create a triple
-     */
-    function dsp_add(string $back = ''): string
-    {
-        log_debug();
-        $html = new html_base();
-        $result = ''; // reset the html code var
-
-        // at least to create the dummy objects to display the selectors
-        $this->load_objects();
-
-        // for creating a new triple the first word / triple is fixed
-        $form_name = 'link_add';
-        //$result .= 'Create a combined word (semantic triple):<br>';
-        $result .= '<br>Define a new relation for <br><br>';
-        $result .= '<b>' . $this->fob->name() . '</b> ';
-        $result .= $html->dsp_form_start($form_name);
-        $result .= $html->input("back", $back);
-        $result .= $html->input("confirm", '1');
-        $result .= $html->input("from", $this->fob->id());
-        $result .= '<div class="form-row">';
-        if (isset($this->verb)) {
-            $result .= $this->verb->dsp_selector('both', $form_name, html_base::COL_SM_6, $back);
-        }
-        if (isset($this->tob)) {
-            $result .= $this->tob->dsp_selector(0, $form_name, 0, html_base::COL_SM_6, $back);
-        }
-        $result .= '</div>';
-        $result .= '<br>';
-        $result .= $html->dsp_form_end('', $back);
-
-        return $result;
-    }
-
-    /**
-     * display a form to adjust the link between too words or triples
-     */
-    function dsp_del(string $back = ''): string
-    {
-        log_debug("triple->dsp_del " . $this->id() . ".");
-        $result = ''; // reset the html code var
-
-        $result .= \html\btn_yesno('Is "' . $this->display() . '" wrong?', '/http/link_del.php?id=' . $this->id() . '&back=' . $back);
-        $result .= '<br><br>... and "' . $this->dsp_r() . '" is also wrong.<br><br>If you press Yes, both rules will be removed.';
-
-        return $result;
-    }
-
-    /**
-     * simply to display a single triple in a table
-     */
-    function display_linked(): string
-    {
-        return '<a href="/http/view.php?link=' . $this->id() . '" title="' . $this->name() . '">' . $this->name() . '</a>';
-    }
-
-    /**
-     * simply to display a single triple in a table
-     */
-    function dsp_tbl($intent): string
-    {
-        log_debug('triple->dsp_tbl');
-        $result = '    <td>' . "\n";
-        while ($intent > 0) {
-            $result .= '&nbsp;';
-            $intent = $intent - 1;
-        }
-        $result .= '      ' . $this->display_linked() . "\n";
-        $result .= '    </td>' . "\n";
-        return $result;
-    }
-
-    function dsp_tbl_row(): string
-    {
-        $result = '  <tr>' . "\n";
-        $result .= $this->dsp_tbl(0);
-        $result .= '  </tr>' . "\n";
-        return $result;
-    }
 
     /*
-     * convert functions
-     */
-
-    /**
-     * convert the word object into a phrase object
-     */
-    function phrase(): phrase
-    {
-        $phr = new phrase($this->user());
-        // the triple has positive id, but the phrase uses a negative id
-        $phr->set_name($this->name, triple::class);
-        $phr->set_obj($this);
-        log_debug('triple->phrase of ' . $this->dsp_id());
-        return $phr;
-    }
-
-    /**
-     * @returns term the triple object cast into a term object
-     * TODO remove lines not needed any more
-     */
-    function term(): term
-    {
-        $trm = new term($this->user());
-        $trm->set_id_from_obj($this->id(), self::class);
-        $trm->set_name($this->name(), triple::class);
-        $trm->set_obj($this);
-        log_debug($this->dsp_id());
-        return $trm;
-    }
-
-    /*
-     * save functions
+     * save
      */
 
     /**
@@ -1665,23 +1591,6 @@ class triple extends sandbox_link_typed implements JsonSerializable
             }
         }
         return $result;
-    }
-
-    /**
-     * create an SQL statement to retrieve the user changes of the current triple
-     *
-     * @param sql $sc with the target db_type set
-     * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql_user_changes(sql $sc, string $class = self::class): sql_par
-    {
-        $sc->set_class($class, [sql_type::USER]);
-        $sc->set_fields(array_merge(
-            self::FLD_NAMES_USR,
-            self::FLD_NAMES_NUM_USR
-        ));
-        return parent::load_sql_user_changes($sc, $class);
     }
 
     /**
@@ -2274,6 +2183,135 @@ class triple extends sandbox_link_typed implements JsonSerializable
             }
         }
 
+        return $result;
+    }
+
+
+    /*
+     * display
+     */
+
+    /**
+     * display one link to the user by returning the HTML code for the link to the calling function
+     * TODO include the user sandbox in the selection
+     */
+    private
+    function display(): string
+    {
+        log_debug("triple->dsp " . $this->id() . ".");
+
+        $result = ''; // reset the html code var
+
+        // get the link from the database
+        $this->load_objects();
+
+        // prepare to show the triple
+        $result .= $this->fob->name() . ' '; // e.g. Australia
+        $result .= $this->verb->name() . ' '; // e.g. is a
+        $result .= $this->tob->name();       // e.g. Country
+
+        return $result;
+    }
+
+    /**
+     * similar to dsp, but display the reverse expression
+     */
+    private
+    function dsp_r(): string
+    {
+        log_debug("triple->dsp_r " . $this->id() . ".");
+
+        $result = ''; // reset the html code var
+
+        // get the link from the database
+        $this->load_objects();
+
+        // prepare to show the triple
+        $result .= $this->tob->name() . ' ';   // e.g. Countries
+        $result .= $this->verb->name() . ' '; // e.g. are
+        $result .= $this->fob->name();     // e.g. Australia (and others)
+
+        return $result;
+    }
+
+    /**
+     * display a form to create a triple
+     */
+    function dsp_add(string $back = ''): string
+    {
+        log_debug();
+        $html = new html_base();
+        $result = ''; // reset the html code var
+
+        // at least to create the dummy objects to display the selectors
+        $this->load_objects();
+
+        // for creating a new triple the first word / triple is fixed
+        $form_name = 'link_add';
+        //$result .= 'Create a combined word (semantic triple):<br>';
+        $result .= '<br>Define a new relation for <br><br>';
+        $result .= '<b>' . $this->fob->name() . '</b> ';
+        $result .= $html->dsp_form_start($form_name);
+        $result .= $html->input("back", $back);
+        $result .= $html->input("confirm", '1');
+        $result .= $html->input("from", $this->fob->id());
+        $result .= '<div class="form-row">';
+        if (isset($this->verb)) {
+            $result .= $this->verb->dsp_selector('both', $form_name, html_base::COL_SM_6, $back);
+        }
+        if (isset($this->tob)) {
+            $result .= $this->tob->dsp_selector(0, $form_name, 0, html_base::COL_SM_6, $back);
+        }
+        $result .= '</div>';
+        $result .= '<br>';
+        $result .= $html->dsp_form_end('', $back);
+
+        return $result;
+    }
+
+    /**
+     * display a form to adjust the link between too words or triples
+     */
+    function dsp_del(string $back = ''): string
+    {
+        log_debug("triple->dsp_del " . $this->id() . ".");
+        $result = ''; // reset the html code var
+
+        $result .= \html\btn_yesno('Is "' . $this->display() . '" wrong?', '/http/link_del.php?id=' . $this->id() . '&back=' . $back);
+        $result .= '<br><br>... and "' . $this->dsp_r() . '" is also wrong.<br><br>If you press Yes, both rules will be removed.';
+
+        return $result;
+    }
+
+    /**
+     * simply to display a single triple in a table
+     */
+    function display_linked(): string
+    {
+        return '<a href="/http/view.php?link=' . $this->id() . '" title="' . $this->name() . '">' . $this->name() . '</a>';
+    }
+
+    /**
+     * simply to display a single triple in a table
+     */
+    function dsp_tbl($intent): string
+    {
+        log_debug('triple->dsp_tbl');
+        $result = '    <td>' . "\n";
+        while ($intent > 0) {
+            $result .= '&nbsp;';
+            $intent = $intent - 1;
+        }
+        $result .= '      ' . $this->display_linked() . "\n";
+        $result .= '    </td>' . "\n";
+        return $result;
+    }
+
+    function dsp_tbl_row(): string
+    {
+        $result = '  <tr>' . "\n";
+        $result .= $this->dsp_tbl(0);
+        $result .= '  </tr>' . "\n";
         return $result;
     }
 

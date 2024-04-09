@@ -29,7 +29,7 @@ class triple_tests
         $t->header('Unit tests of the triple class (src/main/php/model/word/triple.php)');
 
         $t->subheader('triple sql setup');
-        $trp = $t->dummy_triple();
+        $trp = $t->triple();
         $t->assert_sql_table_create($trp);
         $t->assert_sql_index_create($trp);
         $t->assert_sql_foreign_key_create($trp);
@@ -80,6 +80,16 @@ class triple_tests
         $t->subheader('Im- and Export tests');
 
         $t->assert_json_file(new triple($usr), $json_file);
+
+        $test_name = 'check if database would not be updated if only the name is given in import';
+        $in_trp = $t->triple_name_only();
+        $db_trp = $t->triple();
+        $t->assert($t->name . 'needs_db_update ' . $test_name, $in_trp->needs_db_update($db_trp), false);
+
+        $in_trp = $t->triple_link_only();
+        $db_trp = $t->triple();
+        $t->assert($t->name . 'needs_db_update ' . $test_name, $in_trp->needs_db_update($db_trp), false);
+
 
 
         $t->subheader('HTML frontend unit tests');

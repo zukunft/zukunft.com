@@ -691,6 +691,34 @@ class sandbox extends db_object_seq_id_user
      */
 
     /**
+     * check if the sandbox object in the database needs to be updated
+     *
+     * @param sandbox $db_obj the word as saved in the database
+     * @return bool true if this word has infos that should be saved in the datanase
+     */
+    function needs_db_update_sandbox(sandbox $db_obj): bool
+    {
+        $result = false;
+        if ($this->owner_id != null) {
+            if ($this->owner_id != $db_obj->owner_id) {
+                $result = true;
+            }
+        }
+        if ($this->share_id != null) {
+            if ($this->share_id != $db_obj->share_id) {
+                $result = true;
+            }
+        }
+        if ($this->protection_id != null) {
+            if ($this->protection_id != $db_obj->protection_id) {
+                $result = true;
+            }
+        }
+        // TODO what about excluded?
+        return $result;
+    }
+
+    /**
      * @param sql_db $db_con
      * @return sql_par sql parameter to get the user id of the most often used link (position) beside the standard (position)
      */

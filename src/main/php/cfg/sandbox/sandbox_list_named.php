@@ -95,12 +95,15 @@ class sandbox_list_named extends sandbox_list
      * should be cast by the child function get_by_name
      *
      * @param string $name the unique name of the object that should be returned
-     * @return object|null the found user sandbox object or null if no name is found
+     * @return term|phrase|null the found user sandbox object or null if no name is found
      */
-    function get_obj_by_name(string $name): ?term
+    function get_obj_by_name(string $name): term|phrase|null
     {
         $key_lst = $this->name_pos_lst();
-        $pos = $key_lst[$name];
+        $pos = null;
+        if (key_exists($name, $key_lst)) {
+            $pos = $key_lst[$name];
+        }
         if ($pos !== null) {
             return $this->get($pos);
         } else {
@@ -125,12 +128,9 @@ class sandbox_list_named extends sandbox_list
         if (!in_array($obj_to_add->name(), $this->name_pos_lst()) or $allow_duplicates) {
             // if a sandbox object has a name, but not (yet) an id, add it nevertheless to the list
             if ($obj_to_add->id() == null) {
-                $this->add_obj($obj_to_add);
                 $this->set_lst_dirty();
-                $result = true;
-            } else {
-                $result = parent::add_obj($obj_to_add, $allow_duplicates);
             }
+            $result = parent::add_obj($obj_to_add, $allow_duplicates);
         }
         return $result;
     }

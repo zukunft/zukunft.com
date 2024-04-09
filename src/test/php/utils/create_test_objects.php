@@ -328,6 +328,16 @@ class create_test_objects extends test_base
     }
 
     /**
+     * @return word "Mathematics" without the id e.g. as given by the import
+     */
+    function word_name_only(): word
+    {
+        $wrd = new word($this->usr1);
+        $wrd->set_name(word_api::TN_READ);
+        return $wrd;
+    }
+
+    /**
      * @return word "Mathematics" with all object variables set for complete unit testing
      */
     function word_filled(): word
@@ -647,7 +657,7 @@ class create_test_objects extends test_base
     /**
      * @return triple "Mathematical constant" used for unit testing
      */
-    function dummy_triple(): triple
+    function triple(): triple
     {
         $trp = new triple($this->usr1);
         $trp->set(triple_api::TI_READ, triple_api::TN_READ);
@@ -656,6 +666,28 @@ class create_test_objects extends test_base
         $trp->set_verb($this->dummy_verb_part());
         $trp->set_to($this->word()->phrase());
         $trp->set_type(phrase_type::MATH_CONST);
+        return $trp;
+    }
+
+    /**
+     * @return triple "Mathematical constant" with only the name set as it may be created by the import
+     */
+    function triple_name_only(): triple
+    {
+        $trp = new triple($this->usr1);
+        $trp->set_name(triple_api::TN_READ);
+        return $trp;
+    }
+
+    /**
+     * @return triple "Mathematical constant" with only the link names set as it may be created by the import
+     */
+    function triple_link_only(): triple
+    {
+        $trp = new triple($this->usr1);
+        $trp->set_from($this->dummy_word_const()->phrase());
+        $trp->set_verb($this->dummy_verb_part());
+        $trp->set_to($this->word()->phrase());
         return $trp;
     }
 
@@ -669,7 +701,7 @@ class create_test_objects extends test_base
         $trp->description = triple_api::TD_PI;
         $trp->set_from($this->dummy_word_pi()->phrase());
         $trp->set_verb($this->dummy_verb_is());
-        $trp->set_to($this->dummy_triple()->phrase());
+        $trp->set_to($this->triple()->phrase());
         $trp->set_type(phrase_type::TRIPLE_HIDDEN);
         return $trp;
     }
@@ -684,7 +716,7 @@ class create_test_objects extends test_base
         $trp->description = triple_api::TD_E;
         $trp->set_from($this->dummy_word_e()->phrase());
         $trp->set_verb($this->dummy_verb_is());
-        $trp->set_to($this->dummy_triple()->phrase());
+        $trp->set_to($this->triple()->phrase());
         $trp->set_type(phrase_type::TRIPLE_HIDDEN);
         return $trp;
     }
@@ -769,7 +801,7 @@ class create_test_objects extends test_base
         $lst->add($this->word()->phrase());
         $lst->add($this->dummy_word_const()->phrase());
         $lst->add($this->dummy_word_pi()->phrase());
-        $lst->add($this->dummy_triple()->phrase());
+        $lst->add($this->triple()->phrase());
         $lst->add($this->dummy_triple_pi()->phrase());
         return $lst;
     }
@@ -779,7 +811,7 @@ class create_test_objects extends test_base
         $lst = new phrase_list($this->usr1);
         $lst->add($this->word()->phrase());
         $lst->add($this->dummy_word_const()->phrase());
-        $lst->add($this->dummy_triple()->phrase());
+        $lst->add($this->triple()->phrase());
         $lst->add($this->dummy_triple_pi()->phrase());
         return $lst;
     }
@@ -791,7 +823,7 @@ class create_test_objects extends test_base
     {
         $lst = new phrase_list($this->usr1);
         $lst->add($this->dummy_word_pi()->phrase());
-        $lst->add($this->dummy_triple()->phrase());
+        $lst->add($this->triple()->phrase());
         return $lst;
     }
 
@@ -885,7 +917,7 @@ class create_test_objects extends test_base
         $wrd->set_id(1);
         $wrd->set_name('word1');
         $lst->add($wrd->phrase());
-        $trp = $this->dummy_triple();
+        $trp = $this->triple();
         $trp->set_id(11);
         $trp->set_name('triple1');
         $lst->add($trp->phrase());
@@ -893,7 +925,7 @@ class create_test_objects extends test_base
         $wrd->set_id(12);
         $wrd->set_name('word2');
         $lst->add($wrd->phrase());
-        $trp = $this->dummy_triple();
+        $trp = $this->triple();
         $trp->set_id(37);
         $trp->set_name('triple2');
         $lst->add($trp->phrase());
@@ -901,7 +933,7 @@ class create_test_objects extends test_base
         $wrd->set_id(38);
         $wrd->set_name('word3');
         $lst->add($wrd->phrase());
-        $trp = $this->dummy_triple();
+        $trp = $this->triple();
         $trp->set_id(64);
         $trp->set_name('triple3');
         $lst->add($trp->phrase());
@@ -909,7 +941,7 @@ class create_test_objects extends test_base
         $wrd->set_id(376);
         $wrd->set_name('word4');
         $lst->add($wrd->phrase());
-        $trp = $this->dummy_triple();
+        $trp = $this->triple();
         $trp->set_id(2367);
         $trp->set_name('triple4');
         $lst->add($trp->phrase());
@@ -917,7 +949,7 @@ class create_test_objects extends test_base
         $wrd->set_id(13108);
         $wrd->set_name('word5');
         $lst->add($wrd->phrase());
-        $trp = $this->dummy_triple();
+        $trp = $this->triple();
         $trp->set_id(82124);
         $trp->set_name('triple5');
         $lst->add($trp->phrase());
@@ -925,7 +957,7 @@ class create_test_objects extends test_base
         $wrd->set_id(505294);
         $wrd->set_name('word6');
         $lst->add($wrd->phrase());
-        $trp = $this->dummy_triple();
+        $trp = $this->triple();
         $trp->set_id(2815273);
         $trp->set_name('triple6');
         $lst->add($trp->phrase());
@@ -956,7 +988,7 @@ class create_test_objects extends test_base
     function dummy_phrase_list_14(): phrase_list
     {
         $lst = $this->dummy_phrase_list_13();
-        $trp = $this->dummy_triple();
+        $trp = $this->triple();
         $trp->set_id(106841477);
         $trp->set_name('triple7');
         $lst->add($trp->phrase());
@@ -983,7 +1015,7 @@ class create_test_objects extends test_base
     function dummy_phrase_list_14b(): phrase_list
     {
         $lst = $this->dummy_phrase_list_13();
-        $trp = $this->dummy_triple();
+        $trp = $this->triple();
         $trp->set_id(3516593476);
         $trp->set_name('triple8');
         $lst->add($trp->phrase());
@@ -1012,7 +1044,7 @@ class create_test_objects extends test_base
     function dummy_phrase_list_16(): phrase_list
     {
         $lst = $this->dummy_phrase_list_13();
-        $trp = $this->dummy_triple();
+        $trp = $this->triple();
         $trp->set_id(106841477);
         $trp->set_name('triple7');
         $lst->add($trp->phrase());
@@ -1020,7 +1052,7 @@ class create_test_objects extends test_base
         $wrd->set_id(628779863);
         $wrd->set_name('word8');
         $lst->add($wrd->phrase());
-        $trp = $this->dummy_triple();
+        $trp = $this->triple();
         $trp->set_id(3516593476);
         $trp->set_name('triple8');
         $lst->add($trp->phrase());
@@ -1166,7 +1198,7 @@ class create_test_objects extends test_base
 
     function dummy_term_triple(): term
     {
-        return $this->dummy_triple()->term();
+        return $this->triple()->term();
     }
 
     function dummy_term_formula(): term

@@ -41,6 +41,7 @@
     - sql write fields:  field list for writing to the database
     - debug:             internal support functions for debugging
 
+
     This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it
@@ -1000,6 +1001,29 @@ class word extends sandbox_typed
     function is_percent(): bool
     {
         return $this->is_type(phrase_type::PERCENT);
+    }
+
+    /**
+     * check if the word in the database needs to be updated
+     * e.g. for import  if this word has only the name set, the protection should not be updated in the database
+     *
+     * @param word $db_wrd the word as saved in the database
+     * @return bool true if this word has infos that should be saved in the datanase
+     */
+    function needs_db_update(word $db_wrd): bool
+    {
+        $result = parent::needs_db_update_typed($db_wrd);
+        if ($this->plural != null) {
+            if ($this->plural != $db_wrd->plural) {
+                $result = true;
+            }
+        }
+        if ($this->values != null) {
+            if ($this->values != $db_wrd->values) {
+                $result = true;
+            }
+        }
+        return $result;
     }
 
 

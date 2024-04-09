@@ -95,32 +95,30 @@ class convert_wikipedia_table
     ): string
     {
         $table = $this->wikipedia_table_to_array($wiki_tbl);
+
+        // init json vars
+        $word_list = []; // list of simple words where only the name is added / checked
+        $words = []; // list of more complex words where more than the name should be imported
+
         $col_names = $table[0];
         $rows = $table[1];
 
         // map the table to a json
-        $json = $this->header($usr, $timestamp);
-        $json[export::SELECTION] = $context;
-        $words = [];
-        $word = [];
-        $word[export::NAME] = $row_name_in;
-        $words[] = $word;
-        $word[export::NAME] = $col_name_in;
-        $words[] = $word;
+        $word_list[] = $row_name_in;
+        $word_list[] = $col_name_in;
         foreach ($rows as $row) {
-            $word[export::NAME] = $row[$col_of_row_name];
-            $words[] = $word;
+            $word_list[] = $row[$col_of_row_name];
         }
         $i = 0;
         foreach ($col_names as $col_name) {
             if ($i > $col_start) {
+                $word = [];
                 $word[export::NAME] = $col_name;
                 $word[export::TYPE] = $col_type;
                 $words[] = $word;
             }
             $i++;
         }
-        $json[export::WORDS] = $words;
         $val_list = [];
         foreach ($rows as $row_in) {
             $val_row = [];
@@ -138,7 +136,14 @@ class convert_wikipedia_table
             $val_row[export::VALUES] = $val_row_items;
             $val_list[] = $val_row;
         }
+
+        // build the json
+        $json = $this->header($usr, $timestamp);
+        $json[export::SELECTION] = $context;
+        $json[export::WORD_LIST] = $word_list;
+        $json[export::WORDS] = $words;
         $json[export::VALUE_LIST] = $val_list;
+
         return json_encode($json);
     }
 
