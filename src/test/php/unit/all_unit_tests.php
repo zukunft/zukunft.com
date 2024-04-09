@@ -157,18 +157,60 @@ class all_unit_tests extends test_cleanup
      */
     function run_single(): void
     {
+
+        /*
+         * unit testing - prepare
+         */
+
+        // remember the global var for restore after the unit tests
+        global $db_con;
+        global $sql_names;
         global $usr;
+        $global_db_con = $db_con;
+        $global_sql_names = $sql_names;
+        $global_usr = $usr;
 
         // prepare for unit testing
         $this->db_con_for_unit_tests();
         $this->users_for_unit_tests();
         $this->init_unit_tests();
 
-        // run the selected test
+        /*
+         * unit testing - run
+         */
+
+        // run the selected unit tests
         // (new system_tests)->run($this);
         (new import_tests)->run($this);
-        $import = new import_file();
-        //$import->import_test_files($usr);
+
+        // restore the global vars
+        $db_con = $global_db_con;
+        $sql_names = $global_sql_names;
+        $usr = $global_usr;
+
+
+        /*
+         * db write testing - prepare
+         */
+
+        // reload the setting lists after using dummy list for the unit tests
+        $db_con->close();
+        $db_con = prg_restart("reload cache after unit testing");
+
+        // create the testing users
+        $this->set_users();
+        $usr = $this->usr1;
+
+        if ($usr->id() > 0) {
+
+            /*
+             * db write testing - run
+             */
+
+            // run the selected db write
+            $import = new import_file();
+            $import->import_test_files($usr);
+        }
 
         /*
         global $db_con;

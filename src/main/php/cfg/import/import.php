@@ -81,6 +81,9 @@ use cfg\word_list;
 class import
 {
 
+    // import assumption
+    const IMPORT_VALIDAT_PCT_TIME = 10;
+
     // parameters to filter the import
     public ?user $usr = null; // the user who wants to import data
     public ?string $json_str = null; // a string with the json data to import
@@ -115,13 +118,15 @@ class import
 
     public float $last_display_time;
 
-    function display_progress(int $pos, int $total): void
+    function display_progress(int $pos, int $total, string $topic = ''): void
     {
+        $lib = new library();
         $check_time = microtime(true);
         $time_since_last_display = $check_time - $this->last_display_time;
         if ($time_since_last_display > UI_MIN_RESPONSE_TIME) {
             $progress = round($pos / $total * 100) . '%';
-            echo '<br><br>import' . $progress . ' done<br>';
+            //echo '<br><br>import' . $progress . ' done<br>';
+            echo $progress . ' ' . $lib->class_to_name($topic) . "\n";
             log_debug('import->put ' . $progress);
             $this->last_display_time = microtime(true);
         }
@@ -151,7 +156,9 @@ class import
                 $result->add_warning('JSON string is empty');
             }
         } else {
-            $total = $lib->count_recursive($json_array, 1);
+            $total = $lib->count_recursive($json_array, 3);
+            $val_steps = round(self::IMPORT_VALIDAT_PCT_TIME * $total);
+            $total = $total + $val_steps;
 
             // get the user first to allow user specific validation
             $usr_import = null;
@@ -213,6 +220,8 @@ class import
                         } else {
                             $this->verbs_failed++;
                         }
+                        $this->display_progress($pos, $total, verb::class);
+                        $pos++;
                     }
                     $result->add($import_result);
                 } elseif ($key == export::WORDS) {
@@ -225,6 +234,8 @@ class import
                             $this->words_failed++;
                         }
                         $result->add($import_result);
+                        $this->display_progress($pos, $total, word::class);
+                        $pos++;
                     }
                 } elseif ($key == export::WORD_LIST) {
                     // a list of just the word names without further parameter
@@ -237,6 +248,8 @@ class import
                         $this->words_failed++;
                     }
                     $result->add($import_result);
+                    $this->display_progress($pos, $total, phrase_list::class);
+                    $pos++;
                 } elseif ($key == export::TRIPLES) {
                     foreach ($json_obj as $triple) {
                         $wrd_lnk = new triple($usr_trigger);
@@ -247,6 +260,8 @@ class import
                             $this->triples_failed++;
                         }
                         $result->add($import_result);
+                        $this->display_progress($pos, $total, triple::class);
+                        $pos++;
                     }
                 } elseif ($key == export::FORMULAS) {
                     foreach ($json_obj as $formula) {
@@ -259,6 +274,8 @@ class import
                             $this->formulas_failed++;
                         }
                         $result->add($import_result);
+                        $this->display_progress($pos, $total, formula::class);
+                        $pos++;
                     }
                 } elseif ($key == export::SOURCES) {
                     foreach ($json_obj as $value) {
@@ -270,6 +287,8 @@ class import
                             $this->sources_failed++;
                         }
                         $result->add($import_result);
+                        $this->display_progress($pos, $total, source::class);
+                        $pos++;
                     }
                 } elseif ($key == export::REFS) {
                     foreach ($json_obj as $value) {
@@ -281,6 +300,8 @@ class import
                             $this->refs_failed++;
                         }
                         $result->add($import_result);
+                        $this->display_progress($pos, $total, ref::class);
+                        $pos++;
                     }
                 } elseif ($key == export::PHRASE_VALUES) {
                     foreach ($json_obj as $val_key => $number) {
@@ -292,6 +313,8 @@ class import
                             $this->values_failed++;
                         }
                         $result->add($import_result);
+                        $this->display_progress($pos, $total, value::class);
+                        $pos++;
                     }
                 } elseif ($key == export::VALUES) {
                     foreach ($json_obj as $value) {
@@ -303,6 +326,8 @@ class import
                             $this->values_failed++;
                         }
                         $result->add($import_result);
+                        $this->display_progress($pos, $total, value::class);
+                        $pos++;
                     }
                 } elseif ($key == export::VALUE_LIST) {
                     // TODO add a unit test
@@ -315,6 +340,8 @@ class import
                             $this->list_values_failed++;
                         }
                         $result->add($import_result);
+                        $this->display_progress($pos, $total, value_list::class);
+                        $pos++;
                     }
                 } elseif ($key == export::VIEWS) {
                     foreach ($json_obj as $view) {
@@ -326,6 +353,8 @@ class import
                             $this->views_failed++;
                         }
                         $result->add($import_result);
+                        $this->display_progress($pos, $total, view::class);
+                        $pos++;
                     }
                 } elseif ($key == export::COMPONENTS) {
                     foreach ($json_obj as $cmp) {
@@ -337,6 +366,8 @@ class import
                             $this->components_failed++;
                         }
                         $result->add($import_result);
+                        $this->display_progress($pos, $total, component::class);
+                        $pos++;
                     }
                 } elseif ($key == export::CALC_VALIDATION) {
                     // TODO add a unit test
@@ -350,6 +381,8 @@ class import
                             $this->calc_validations_failed++;
                         }
                         $result->add($import_result);
+                        $this->display_progress($pos, $total, result::class);
+                        $pos++;
                     }
                 } elseif ($key == export::VIEW_VALIDATION) {
                     // TODO switch to view result
@@ -364,6 +397,8 @@ class import
                             $this->view_validations_failed++;
                         }
                         $result->add($import_result);
+                        $this->display_progress($pos, $total, view::class);
+                        $pos++;
                     }
                 } elseif ($key == export::IP_BLACKLIST) {
                     foreach ($json_obj as $ip_range) {
@@ -376,11 +411,16 @@ class import
                             $this->system_failed++;
                         }
                         $result->add($import_result);
+                        $this->display_progress($pos, $total, ip_range::class);
+                        $pos++;
                     }
                 } else {
                     $result->add_message('Unknown element ' . $key);
                 }
             }
+
+            // show 90% before validation starts
+            $this->display_progress($total - $val_steps, $total);
 
             // validate the import
             if (!$frm_to_calc->is_empty()) {
@@ -396,6 +436,9 @@ class import
                     log_debug($res->dsp_id());
                 }
             }
+
+            // show 100% before validation starts
+            $this->display_progress($total, $total);
         }
 
         return $result;

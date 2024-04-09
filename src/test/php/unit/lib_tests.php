@@ -571,6 +571,11 @@ class lib_tests
         $result = $lib->count_recursive($json_array, 20);
         $t->assert("count_recursive - count level 0", $result, 8);
 
+        $json_text = file_get_contents(PATH_TEST_IMPORT_FILES . 'wikipedia/democratie_index_table.json');
+        $json_array = json_decode($json_text, true);
+        $result = $lib->count_recursive($json_array, 3);
+        $t->assert("count_recursive - count level 0", $result, 177);
+
         // recursive diff
         $result = json_encode($lib->array_recursive_diff(
             json_decode($json_haystack, true),

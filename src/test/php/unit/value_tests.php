@@ -120,6 +120,12 @@ class value_tests
         // ... and the related default value
         $t->assert_sql_standard($db_con, $val);
 
+        // ... and to check if any user has uses another than the default value
+        // TODO prio 1 activate
+        //$t->assert_sql_not_changed($db_con, $val);
+        //$t->assert_sql_user_changes($db_con, $val);
+        //$t->assert_sql_changer($db_con, $val);
+
         $t->subheader('SQL statements - for values related to more than 16 phrases');
         $val = $t->dummy_value_17_plus();
         $db_val = $val->cloned(value_api::TV_FLOAT);
@@ -131,6 +137,12 @@ class value_tests
 
         // ... and the related default value
         $t->assert_sql_standard($db_con, $val);
+
+        // ... and to check if any user has uses another than the default value
+        // TODO prio 1 activate
+        //$t->assert_sql_not_changed($db_con, $val);
+        //$t->assert_sql_user_changes($db_con, $val);
+        //$t->assert_sql_changer($db_con, $val);
 
 
         $t->subheader('Database query creation tests');
