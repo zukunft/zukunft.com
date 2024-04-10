@@ -100,7 +100,7 @@ class value_tests
         $t->assert_sql_standard($sc, $val);
 
         // ... and to check if any user has uses another than the default value
-        $t->assert_sql_not_changed($db_con, $val);
+        $t->assert_sql_not_changed($sc, $val);
         $t->assert_sql_user_changes($sc, $val);
         $t->assert_sql_changer($sc, $val);
 

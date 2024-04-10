@@ -3521,7 +3521,6 @@ class sql
             $qp->name .= '_not_owned';
         }
         $this->set_name($qp->name);
-        $this->set_usr($this->usr_id);
         $this->set_table([$tbl_typ]);
         $this->set_id_field($id_field);
         $this->set_fields(array(user::FLD_ID));
@@ -3576,7 +3575,48 @@ class sql
                 $this->add_par(sql_par_type::INT, $owner_id);
                 $sql_mid .= " AND " . user::FLD_ID . " <> " . $this->par_name();
             }
-            $qp->sql = $this->prepare_sql($qp->sql, $qp->name, $this->get_par_types()) . $sql_mid;
+            $sql_mid = sql::SELECT . ' ' . $sql_mid;
+            $qp->sql = $this->prepare_sql($sql_mid, $qp->name, $this->get_par_types());
+        }
+        $qp->par = $this->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * create a SQL select statement for the connected database
+     * to detect if someone else has used the object
+     * @param int $id the unique database id if the object to check
+     * @param int|null $owner_id the user id of the owner of the object
+     * @param string $id_field the field name of the prime database key if not standard
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     *                 in the previous set dialect
+     */
+    function load_sql_not_changed(int $id, ?int $owner_id = 0, string $id_field = ''): sql_par
+    {
+        $qp = new sql_par($this->class);
+        $qp->name .= 'not_changed';
+        if ($owner_id > 0) {
+            $qp->name .= '_not_owned';
+        }
+        $this->set_name($qp->name);
+        $this->set_usr($this->usr_id);
+        $this->set_id_field($id_field);
+        $this->set_fields(array(user::FLD_ID));
+        if ($id == 0) {
+            log_err('The id must be set to detect if the link has been changed');
+        } else {
+            $this->add_par(sql_par_type::INT, $id);
+            $sql_mid = " " . user::FLD_ID .
+                " FROM " . $this->name_sql_esc(sql_db::TBL_USER_PREFIX . $this->table) .
+                " WHERE " . $this->id_field . " = " . $this->par_name() . "
+                 AND (excluded <> 1 OR excluded is NULL)";
+            if ($owner_id > 0) {
+                $this->add_par(sql_par_type::INT, $owner_id);
+                $sql_mid .= " AND " . user::FLD_ID . " <> " . $this->par_name();
+            }
+            $sql_mid = sql::SELECT . ' ' . $sql_mid;
+            $qp->sql = $this->prepare_sql($sql_mid, $qp->name, $this->get_par_types());
             $qp->sql = $this->end_sql($qp->sql);
         }
         $qp->par = $this->get_par();

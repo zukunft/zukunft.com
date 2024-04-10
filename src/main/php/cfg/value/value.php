@@ -1458,13 +1458,12 @@ class value extends sandbox_value
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      *                 to check if the value has been changed
      */
-    function not_changed_sql(sql_db $db_con): sql_par
+    function not_changed_sql(sql $sc): sql_par
     {
         $tbl_typ = $this->grp->table_type();
         $ext = $this->grp->table_extension();
-        $db_con->set_class(self::class, false, $tbl_typ->extension());
-        $sc = $db_con->sql_creator();
-        return $db_con->load_sql_not_changed_multi($this->id, $this->owner_id, $this->id_field(), $ext, $tbl_typ);
+        $sc->set_class(self::class, [$tbl_typ]);
+        return $sc->load_sql_not_changed_multi($this->id, $this->owner_id, $this->id_field(), $ext, $tbl_typ);
     }
 
     /**
@@ -1480,7 +1479,7 @@ class value extends sandbox_value
         if (!$this->is_id_set()) {
             log_err('The id must be set to check if the formula has been changed');
         } else {
-            $qp = $this->not_changed_sql($db_con);
+            $qp = $this->not_changed_sql($db_con->sql_creator());
             $db_row = $db_con->get1($qp);
             if ($db_row[user::FLD_ID] > 0) {
                 $result = false;

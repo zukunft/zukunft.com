@@ -1845,34 +1845,34 @@ class test_base
      * @param sandbox|sandbox_value $usr_obj the user sandbox object e.g. a word
      * @return bool true if all tests are fine
      */
-    function assert_sql_not_changed(sql_db $db_con, sandbox|sandbox_value $usr_obj): bool
+    function assert_sql_not_changed(sql $sc, sandbox|sandbox_value $usr_obj): bool
     {
         // check the Postgres query syntax
         $usr_obj->owner_id = 0;
-        $db_con->db_type = sql_db::POSTGRES;
-        $qp = $usr_obj->not_changed_sql($db_con);
-        $result = $this->assert_qp($qp, $db_con->db_type);
+        $sc->db_type = sql_db::POSTGRES;
+        $qp = $usr_obj->not_changed_sql($sc);
+        $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check with owner
         if ($result) {
             $usr_obj->owner_id = 1;
-            $qp = $usr_obj->not_changed_sql($db_con);
-            $result = $this->assert_qp($qp, $db_con->db_type);
+            $qp = $usr_obj->not_changed_sql($sc);
+            $result = $this->assert_qp($qp, $sc->db_type);
         }
 
         // ... and check the MySQL query syntax
         if ($result) {
             $usr_obj->owner_id = 0;
-            $db_con->db_type = sql_db::MYSQL;
-            $qp = $usr_obj->not_changed_sql($db_con);
-            $result = $this->assert_qp($qp, $db_con->db_type);
+            $sc->db_type = sql_db::MYSQL;
+            $qp = $usr_obj->not_changed_sql($sc);
+            $result = $this->assert_qp($qp, $sc->db_type);
         }
 
         // ... and check with owner
         if ($result) {
             $usr_obj->owner_id = 1;
-            $qp = $usr_obj->not_changed_sql($db_con);
-            $result = $this->assert_qp($qp, $db_con->db_type);
+            $qp = $usr_obj->not_changed_sql($sc);
+            $result = $this->assert_qp($qp, $sc->db_type);
         }
 
         return $result;

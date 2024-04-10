@@ -81,7 +81,7 @@ class word_tests
         $wrd = new word($usr);
         $wrd->set_id(word_api::TI_CONST);
         $t->assert_sql_standard($sc, $wrd);
-        $t->assert_sql_not_changed($db_con, $wrd);
+        $t->assert_sql_not_changed($sc, $wrd);
         $t->assert_sql_user_changes($sc, $wrd);
         $t->assert_sql_changing_users($sc, $wrd);
         $this->assert_sql_view($t, $db_con, $wrd);

@@ -89,7 +89,7 @@ class triple_old
         $t->assert_sql_by_obj_vars($db_con, $trp);
         $t->assert_sql_standard($sc, $trp);
         $trp->set_id(5);
-        $t->assert_sql_not_changed($db_con, $trp);
+        $t->assert_sql_not_changed($sc, $trp);
         $t->assert_sql_user_changes($sc, $trp);
 
         // sql to check the usage of a triple

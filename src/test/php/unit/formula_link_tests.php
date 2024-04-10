@@ -86,7 +86,7 @@ class formula_link_tests
         $lnk = new formula_link($usr);
         $lnk->set_id(1);
         $t->assert_sql_standard($sc, $lnk);
-        $t->assert_sql_not_changed($db_con, $lnk);
+        $t->assert_sql_not_changed($sc, $lnk);
 
         // sql to load the user formula link by id
         $db_con->db_type = sql_db::POSTGRES;

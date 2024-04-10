@@ -1810,11 +1810,11 @@ class formula extends sandbox_typed
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      *                 to check if the formula has been changed
      */
-    function not_changed_sql(sql_db $db_con): sql_par
+    function not_changed_sql(sql $sc): sql_par
     {
         $lib = new library();
-        $db_con->set_class($lib->class_to_name(self::class));
-        return $db_con->load_sql_not_changed($this->id(), $this->owner_id);
+        $sc->set_class($lib->class_to_name(self::class));
+        return $sc->load_sql_not_changed($this->id(), $this->owner_id);
     }
 
     /**
@@ -1831,7 +1831,7 @@ class formula extends sandbox_typed
         if ($this->id() == 0) {
             log_err('The id must be set to check if the formula has been changed');
         } else {
-            $qp = $this->not_changed_sql($db_con);
+            $qp = $this->not_changed_sql($db_con->sql_creator());
             $db_row = $db_con->get1($qp);
             if ($db_row != null) {
                 if ($db_row[user::FLD_ID] > 0) {

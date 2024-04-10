@@ -134,7 +134,7 @@ class ref_tests
         $src->set_name(source_api::TN_READ);
         $t->assert_sql_standard($sc, $src);
         $src->set_id(5);
-        $t->assert_sql_not_changed($db_con, $src);
+        $t->assert_sql_not_changed($sc, $src);
         $t->assert_sql_user_changes($sc, $src);
 
         // sql to load the source types

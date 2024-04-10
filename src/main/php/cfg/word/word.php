@@ -1513,10 +1513,10 @@ class word extends sandbox_typed
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      *                 to check if the word has been changed
      */
-    function not_changed_sql(sql_db $db_con): sql_par
+    function not_changed_sql(sql $sc): sql_par
     {
-        $db_con->set_class(word::class);
-        return $db_con->load_sql_not_changed($this->id, $this->owner_id);
+        $sc->set_class(word::class);
+        return $sc->load_sql_not_changed($this->id, $this->owner_id);
     }
 
     /**

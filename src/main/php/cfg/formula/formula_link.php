@@ -501,10 +501,10 @@ class formula_link extends sandbox_link_with_type
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      *                 to check if no one else has changed the formula link
      */
-    function not_changed_sql(sql_db $db_con): sql_par
+    function not_changed_sql(sql $sc): sql_par
     {
-        $db_con->set_class(formula_link::class);
-        return $db_con->load_sql_not_changed($this->id, $this->owner_id);
+        $sc->set_class(formula_link::class);
+        return $sc->load_sql_not_changed($this->id, $this->owner_id);
     }
 
     /**
@@ -516,7 +516,7 @@ class formula_link extends sandbox_link_with_type
 
         global $db_con;
         $result = true;
-        $qp = $this->not_changed_sql($db_con);
+        $qp = $this->not_changed_sql($db_con->sql_creator());
         $db_con->usr_id = $this->user()->id();
         $db_row = $db_con->get1($qp);
         if ($db_row != null) {
