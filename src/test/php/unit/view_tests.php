@@ -33,6 +33,7 @@
 namespace unit;
 
 use api\view\view as view_api;
+use cfg\db\sql;
 use cfg\view_link_type;
 use cfg\view_term_link;
 use cfg\view_type;
@@ -52,6 +53,7 @@ class view_tests
         // init
         $lib = new library();
         $db_con = new sql_db();
+        $sc = new sql();
         $t->name = 'view->';
         $t->resource_path = 'db/view/';
         $json_file = 'unit/view/car_costs.json';
@@ -86,7 +88,7 @@ class view_tests
         $dsp->set_id(2);
         //$t->assert_load_sql($db_con, $dsp);
         $t->assert_sql_standard($db_con, $dsp);
-        $t->assert_sql_user_changes($db_con, $dsp);
+        $t->assert_sql_user_changes($sc, $dsp);
 
         // sql to load the view by name
         $dsp = new view($usr);

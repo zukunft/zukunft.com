@@ -37,6 +37,7 @@ include_once MODEL_FORMULA_PATH . 'expression.php';
 use api\formula\formula as formula_api;
 use api\value\value as value_api;
 use api\word\word as word_api;
+use cfg\db\sql;
 use cfg\expression;
 use cfg\formula;
 use cfg\phrase_list;
@@ -56,6 +57,7 @@ class formula_tests
 
         // init
         $db_con = new sql_db();
+        $sc = new sql();
         $t->name = 'formula->';
         $t->resource_path = 'db/formula/';
         $json_file = 'unit/formula/scale_second_to_minute.json';
@@ -86,7 +88,7 @@ class formula_tests
         //$t->assert_sql_all($db_con, $frm);
         $t->assert_sql_standard($db_con, $frm);
         $t->assert_sql_not_changed($db_con, $frm);
-        $t->assert_sql_user_changes($db_con, $frm);
+        $t->assert_sql_user_changes($sc, $frm);
         $this->assert_sql_user_changes_frm($t, $db_con, $frm);
 
         // sql to load the formula by name

@@ -32,6 +32,7 @@
 
 namespace unit;
 
+use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\job_time;
 use cfg\user;
@@ -48,6 +49,7 @@ class user_tests
 
         // init
         $db_con = new sql_db();
+        $sc = new sql();
         $t->name = 'user->';
         $t->resource_path = 'db/user/';
         $json_file = 'unit/user/user_import.json';

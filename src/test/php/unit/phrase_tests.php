@@ -35,6 +35,7 @@ namespace unit;
 include_once WEB_PHRASE_PATH . 'phrase.php';
 
 use api\word\word as word_api;
+use cfg\db\sql;
 use cfg\phrase_table;
 use cfg\phrase_table_status;
 use cfg\phrase_type;
@@ -57,6 +58,7 @@ class phrase_tests
 
         // init
         $db_con = new sql_db();
+        $sc = new sql();
         $t->name = 'phrase->';
         $t->resource_path = 'db/phrase/';
         $json_file = 'unit/phrase/second.json';

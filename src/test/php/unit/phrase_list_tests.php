@@ -64,6 +64,7 @@ class phrase_list_tests
 
         // init
         $db_con = new sql_db();
+        $sc = new sql();
         $t->name = 'phrase_list->';
         $t->resource_path = 'db/phrase/';
 

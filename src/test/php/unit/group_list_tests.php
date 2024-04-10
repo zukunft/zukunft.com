@@ -34,6 +34,7 @@ namespace unit;
 
 include_once MODEL_GROUP_PATH . 'group_list.php';
 
+use cfg\db\sql;
 use cfg\group\group_list;
 use cfg\db\sql_db;
 use test\test_cleanup;
@@ -47,6 +48,7 @@ class group_list_tests
 
         // init
         $db_con = new sql_db();
+        $sc = new sql();
         $t->name = 'group_list->';
         $t->resource_path = 'db/group/';
         $usr->set_id(1);

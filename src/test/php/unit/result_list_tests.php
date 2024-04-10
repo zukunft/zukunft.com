@@ -54,6 +54,7 @@ class result_list_tests
 
         // init
         $db_con = new sql_db();
+        $sc = new sql();
         $t->name = 'result_list->';
         $t->resource_path = 'db/result/';
         $res_lst = new result_list($usr);

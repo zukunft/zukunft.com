@@ -34,6 +34,7 @@ namespace unit;
 
 include_once MODEL_SYSTEM_PATH . 'job_list.php';
 
+use cfg\db\sql;
 use cfg\job_time;
 use cfg\job_type_list;
 use cfg\job;
@@ -50,6 +51,7 @@ class job_tests
 
         // init
         $db_con = new sql_db();
+        $sc = new sql();
         $t->name = 'job->';
         $t->resource_path = 'db/job/';
 

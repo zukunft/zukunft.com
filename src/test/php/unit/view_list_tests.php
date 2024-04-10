@@ -33,6 +33,7 @@
 namespace unit;
 
 use api\view\view as view_api;
+use cfg\db\sql;
 use cfg\view;
 use cfg\view_sys_list;
 use cfg\db\sql_db;
@@ -48,6 +49,7 @@ class view_list_tests
 
         // init
         $db_con = new sql_db();
+        $sc = new sql();
         $t->name = 'view_list->';
         $t->resource_path = 'db/view/';
         $json_file = 'unit/view/view_list.json';

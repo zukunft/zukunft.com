@@ -6,6 +6,7 @@ include_once API_WORD_PATH . 'triple.php';
 
 use api\word\triple as triple_api;
 use api\word\word as word_api;
+use cfg\db\sql;
 use html\word\triple as triple_dsp;
 use cfg\db\sql_db;
 use cfg\triple;
@@ -21,6 +22,7 @@ class triple_tests
 
         // init
         $db_con = new sql_db();
+        $sc = new sql();
         $t->name = 'triple->';
         $t->resource_path = 'db/triple/';
         $json_file = 'unit/triple/pi.json';
@@ -46,7 +48,7 @@ class triple_tests
         $trp = new triple($usr);
         $trp->set_id(2);
         $t->assert_sql_standard($db_con, $trp);
-        $t->assert_sql_user_changes($db_con, $trp);
+        $t->assert_sql_user_changes($sc, $trp);
 
         // sql to load the triple by name
         $trp = new triple($usr);

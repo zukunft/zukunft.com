@@ -32,6 +32,7 @@ use api\formula\formula as formula_api;
 use api\word\triple as triple_api;
 use api\verb\verb as verb_api;
 use api\word\word as word_api;
+use cfg\db\sql;
 use cfg\phrase_list;
 use cfg\trm_ids;
 use html\html_base;
@@ -61,6 +62,7 @@ class term_list_tests
 
         // init
         $db_con = new sql_db();
+        $sc = new sql();
         $t->name = 'term_list->';
         $t->resource_path = 'db/term/';
 

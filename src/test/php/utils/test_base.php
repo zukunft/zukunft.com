@@ -1117,22 +1117,22 @@ class test_base
      * check the SQL statements to get the user sandbox changes
      * e.g. the value a user has changed of word, triple, value or formulas
      *
-     * @param sql_db $db_con does not need to be connected to a real database
+     * @param sql $sc a sql creator object that can be empty
      * @param sandbox|sandbox_value $usr_obj the user sandbox object e.g. a word
      * @return bool true if all tests are fine
      */
-    function assert_sql_user_changes(sql_db $db_con, sandbox|sandbox_value $usr_obj): bool
+    function assert_sql_user_changes(sql $sc, sandbox|sandbox_value $usr_obj): bool
     {
         // check the Postgres query syntax
-        $db_con->db_type = sql_db::POSTGRES;
-        $qp = $usr_obj->load_sql_user_changes($db_con->sql_creator());
-        $result = $this->assert_qp($qp, $db_con->db_type);
+        $sc->db_type = sql_db::POSTGRES;
+        $qp = $usr_obj->load_sql_user_changes($sc);
+        $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $db_con->db_type = sql_db::MYSQL;
-            $qp = $usr_obj->load_sql_user_changes($db_con->sql_creator());
-            $result = $this->assert_qp($qp, $db_con->db_type);
+            $sc->db_type = sql_db::MYSQL;
+            $qp = $usr_obj->load_sql_user_changes($sc);
+            $result = $this->assert_qp($qp, $sc->db_type);
         }
 
         return $result;

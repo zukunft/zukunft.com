@@ -37,6 +37,7 @@ include_once MODEL_COMPONENT_PATH . 'component.php';
 use api\view\view as view_api;
 use cfg\component\component;
 use cfg\component\component_type;
+use cfg\db\sql;
 use cfg\db\sql_db;
 use html\component\component as component_dsp;
 use test\test_cleanup;
@@ -50,6 +51,7 @@ class component_tests
 
         // init
         $db_con = new sql_db();
+        $sc = new sql();
         $t->name = 'component->';
         $t->resource_path = 'db/component/';
         $json_file = 'unit/view/component_import.json';
@@ -82,7 +84,7 @@ class component_tests
         $cmp->set_id(2);
         //$t->assert_sql_all($db_con, $cmp);
         $t->assert_sql_standard($db_con, $cmp);
-        $t->assert_sql_user_changes($db_con, $cmp);
+        $t->assert_sql_user_changes($sc, $cmp);
 
         // sql to load the view components by name
         $cmp = new component($usr);

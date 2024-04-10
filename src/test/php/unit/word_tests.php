@@ -38,6 +38,7 @@ include_once API_WORD_PATH . 'word.php';
 include_once WEB_WORD_PATH . 'word.php';
 
 use api\formula\formula as formula_api;
+use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_type;
 use cfg\phrase_type;
@@ -56,6 +57,7 @@ class word_tests
 
         // init
         $db_con = new sql_db();
+        $sc = new sql();
         $t->name = 'word->';
         $t->resource_path = 'db/word/';
         $json_file = 'unit/word/second.json';
@@ -80,7 +82,7 @@ class word_tests
         $wrd->set_id(word_api::TI_CONST);
         $t->assert_sql_standard($db_con, $wrd);
         $t->assert_sql_not_changed($db_con, $wrd);
-        $t->assert_sql_user_changes($db_con, $wrd);
+        $t->assert_sql_user_changes($sc, $wrd);
         $t->assert_sql_changing_users($db_con, $wrd);
         $this->assert_sql_view($t, $db_con, $wrd);
 

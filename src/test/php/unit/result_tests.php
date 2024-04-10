@@ -36,6 +36,7 @@ include_once API_RESULT_PATH . 'result.php';
 
 use api\result\result as result_api;
 use api\word\word as word_api;
+use cfg\db\sql;
 use cfg\formula;
 use cfg\group\group;
 use cfg\group\group_list;
@@ -55,6 +56,7 @@ class result_tests
 
         // init
         $db_con = new sql_db();
+        $sc = new sql();
         $t->name = 'result->';
         $t->resource_path = 'db/result/';
         $json_file = 'unit/result/result_import_part.json';
@@ -85,7 +87,7 @@ class result_tests
 
         // sql to load the standard result by id
         $t->assert_sql_standard($db_con, $res);
-        $t->assert_sql_user_changes($db_con, $res);
+        $t->assert_sql_user_changes($sc, $res);
 
         $t->subheader('result sql write');
         $res_prime = $t->dummy_result_prime();

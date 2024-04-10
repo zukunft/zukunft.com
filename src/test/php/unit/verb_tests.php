@@ -32,6 +32,7 @@
 
 namespace unit;
 
+use cfg\db\sql;
 use cfg\foaf_direction;
 use cfg\verb_list;
 use html\verb\verb as verb_dsp;
@@ -50,6 +51,7 @@ class verb_tests
 
         // init
         $db_con = new sql_db();
+        $sc = new sql();
         $t->name = 'verb->';
         $t->resource_path = 'db/verb/';
         $json_file = 'unit/verb/is_a.json';

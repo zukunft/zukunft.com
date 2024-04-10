@@ -33,6 +33,7 @@ include_once WEB_FORMULA_PATH . 'formula_list.php';
 
 use api\formula\formula as formula_api;
 use api\word\word as word_api;
+use cfg\db\sql;
 use cfg\formula;
 use cfg\triple;
 use cfg\verb;
@@ -55,6 +56,7 @@ class formula_list_tests
 
         // init
         $db_con = new sql_db();
+        $sc = new sql();
         $t->name = 'formula_list->';
         $t->resource_path = 'db/formula/';
         $json_file = 'unit/formula/formula_list.json';

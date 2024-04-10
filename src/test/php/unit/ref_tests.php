@@ -33,6 +33,7 @@
 namespace unit;
 
 use api\ref\source as source_api;
+use cfg\db\sql;
 use cfg\db\sql_type;
 use cfg\ref_type;
 use cfg\ref_type_list;
@@ -54,6 +55,7 @@ class ref_tests
 
         // init for reference
         $db_con = new sql_db();
+        $sc = new sql();
         $t->name = 'ref->';
         $t->resource_path = 'db/ref/';
         $json_file = 'unit/ref/wikipedia.json';
@@ -133,7 +135,7 @@ class ref_tests
         $t->assert_sql_standard($db_con, $src);
         $src->set_id(5);
         $t->assert_sql_not_changed($db_con, $src);
-        $t->assert_sql_user_changes($db_con, $src);
+        $t->assert_sql_user_changes($sc, $src);
 
         // sql to load the source types
         $source_type_list = new source_type_list();

@@ -1574,8 +1574,9 @@ class value extends sandbox_value
      */
     function load_sql_user_changes(sql $sc, string $class = self::class): sql_par
     {
-        $tbl_typ = $this->grp->table_type();
-        $sc->set_class($class, [sql_type::USER], $tbl_typ->extension());
+        $sc_par_lst = [sql_type::USER];
+        $sc_par_lst[] = $this->grp->table_type();
+        $sc->set_class($class, $sc_par_lst);
         // overwrite the standard id field name (value_id) with the main database id field for values "group_id"
         $sc->set_id_field($this->id_field());
         return parent::load_sql_user_changes($sc, $class);

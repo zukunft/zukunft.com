@@ -37,6 +37,7 @@ include_once WEB_WORD_PATH . 'word_list.php';
 
 use api\verb\verb as verb_api;
 use api\word\word as word_api;
+use cfg\db\sql;
 use cfg\foaf_direction;
 use cfg\phrase_type;
 use cfg\library;
@@ -58,6 +59,7 @@ class word_list_tests
 
         // init
         $db_con = new sql_db();
+        $sc = new sql();
         $t->name = 'word_list->';
         $t->resource_path = 'db/word/';
         $json_file = 'unit/word/word_list.json';

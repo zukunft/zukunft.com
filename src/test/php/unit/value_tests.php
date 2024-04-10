@@ -55,6 +55,7 @@ class value_tests
 
         // init
         $db_con = new sql_db();
+        $sc = new sql();
         $t->name = 'value->';
         $t->resource_path = 'db/value/';
         $json_file = 'unit/value/speed_of_light.json';
@@ -100,7 +101,7 @@ class value_tests
 
         // ... and to check if any user has uses another than the default value
         $t->assert_sql_not_changed($db_con, $val);
-        $t->assert_sql_user_changes($db_con, $val);
+        $t->assert_sql_user_changes($sc, $val);
         $t->assert_sql_changer($db_con, $val);
 
         $t->subheader('SQL statements - for values related to up to 16 phrases');
@@ -123,7 +124,7 @@ class value_tests
         // ... and to check if any user has uses another than the default value
         // TODO prio 1 activate
         //$t->assert_sql_not_changed($db_con, $val);
-        //$t->assert_sql_user_changes($db_con, $val);
+        $t->assert_sql_user_changes($sc, $val);
         //$t->assert_sql_changer($db_con, $val);
 
         $t->subheader('SQL statements - for values related to more than 16 phrases');
@@ -141,7 +142,7 @@ class value_tests
         // ... and to check if any user has uses another than the default value
         // TODO prio 1 activate
         //$t->assert_sql_not_changed($db_con, $val);
-        //$t->assert_sql_user_changes($db_con, $val);
+        //$t->assert_sql_user_changes($sc, $val);
         //$t->assert_sql_changer($db_con, $val);
 
 

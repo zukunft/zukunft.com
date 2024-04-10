@@ -36,6 +36,7 @@ namespace unit;
 
 use api\phrase\phrase as phrase_api;
 use api\word\triple as triple_api;
+use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\triple;
 use cfg\verb;
@@ -51,6 +52,7 @@ class triple_old
 
         // init
         $db_con = new sql_db();
+        $sc = new sql();
         $t->name = 'triple->';
         $t->resource_path = 'db/triple/';
         $json_file = 'unit/triple/pi.json';
@@ -88,7 +90,7 @@ class triple_old
         $t->assert_sql_standard($db_con, $trp);
         $trp->set_id(5);
         $t->assert_sql_not_changed($db_con, $trp);
-        $t->assert_sql_user_changes($db_con, $trp);
+        $t->assert_sql_user_changes($sc, $trp);
 
         // sql to check the usage of a triple
 

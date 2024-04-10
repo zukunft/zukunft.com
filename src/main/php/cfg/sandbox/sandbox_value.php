@@ -716,8 +716,13 @@ class sandbox_value extends sandbox_multi
         $sc->set_usr($this->user()->id());
         $sc->set_fields($this->all_sandbox_fields());
 
-        $fields = $this->id_names();
-        $values = $this->id_lst();
+        if ($this->grp->is_prime()) {
+            $fields = $this->id_names();
+            $values = $this->id_lst();
+        } else {
+            $fields = array(group::FLD_ID);
+            $values = array($this->grp->id());
+        }
         $pos = 0;
         foreach ($fields as $field) {
             $sc->add_where($field, $values[$pos]);
