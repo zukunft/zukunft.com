@@ -76,7 +76,7 @@ class formula_tests
         $t->subheader('SQL user sandbox statement tests');
 
         $frm = new formula($usr);
-        $t->assert_sql_by_id($db_con, $frm);
+        $t->assert_sql_by_id($sc, $frm);
         $t->assert_sql_by_name($db_con, $frm);
 
 
@@ -86,7 +86,7 @@ class formula_tests
         $frm = new formula($usr);
         $frm->set_id(2);
         //$t->assert_sql_all($db_con, $frm);
-        $t->assert_sql_standard($db_con, $frm);
+        $t->assert_sql_standard($sc, $frm);
         $t->assert_sql_not_changed($db_con, $frm);
         $t->assert_sql_user_changes($sc, $frm);
         $this->assert_sql_user_changes_frm($t, $db_con, $frm);
@@ -95,19 +95,19 @@ class formula_tests
         $frm = new formula($usr);
         $frm->set_name(formula_api::TF_READ_SCALE_MIO);
         //$t->assert_sql_all($db_con, $frm);
-        $t->assert_sql_standard($db_con, $frm);
+        $t->assert_sql_standard($sc, $frm);
 
 
         $t->subheader('formula sql write');
         // TODO activate db write
-        //$t->assert_sql_insert($db_con, $frm);
-        //$t->assert_sql_insert($db_con, $frm, true);
+        //$t->assert_sql_insert($sc, $frm);
+        //$t->assert_sql_insert($sc, $frm, true);
         // TODO activate db write
-        //$t->assert_sql_update($db_con, $frm);
-        //$t->assert_sql_update($db_con, $frm, true);
+        //$t->assert_sql_update($sc, $frm);
+        //$t->assert_sql_update($sc, $frm, true);
         // TODO activate db write
-        //$t->assert_sql_delete($db_con, $frm);
-        //$t->assert_sql_delete($db_con, $frm, true);
+        //$t->assert_sql_delete($sc, $frm);
+        //$t->assert_sql_delete($sc, $frm, true);
 
         $t->subheader('Im- and Export tests');
 

@@ -39,6 +39,7 @@ include_once MODEL_GROUP_PATH . 'group_list.php';
 include_once MODEL_GROUP_PATH . 'result_id.php';
 
 use api\phrase\group as group_api;
+use cfg\db\sql;
 use cfg\db\sql_type;
 use cfg\group\group_id;
 use cfg\group\group;
@@ -59,6 +60,7 @@ class group_tests
         // init
         $lib = new library();
         $db_con = new sql_db();
+        $sc = new sql();
         $t->name = 'group->';
         $t->resource_path = 'db/group/';
         $usr->set_id(1);
@@ -169,27 +171,27 @@ class group_tests
         $t->assert_sql_table_create($grp);
         $t->assert_sql_index_create($grp);
         $t->assert_sql_foreign_key_create($grp);
-        $t->assert_sql_truncate($db_con, $grp);
+        $t->assert_sql_truncate($sc, $grp);
 
         $t->subheader('SQL statements - read');
-        //$t->assert_sql_by_id($db_con, $grp);
+        //$t->assert_sql_by_id($sc, $grp);
         $t->assert_sql_by_name($db_con, $grp);
         $this->assert_sql_by_phrase_list($t, $db_con);
 
         $t->subheader('SQL statements - write');
         $grp->set_phrase_list($t->dummy_phrase_list_prime());
-        $t->assert_sql_insert($db_con, $grp);
-        $t->assert_sql_insert($db_con, $grp, [sql_type::USER]);
+        $t->assert_sql_insert($sc, $grp);
+        $t->assert_sql_insert($sc, $grp, [sql_type::USER]);
         $db_grp = $t->group();
         $grp = $grp->renamed(group_api::TN_RENAMED);
-        $t->assert_sql_update($db_con, $grp, $db_grp);
-        $t->assert_sql_update($db_con, $grp, $db_grp, [sql_type::USER]);
+        $t->assert_sql_update($sc, $grp, $db_grp);
+        $t->assert_sql_update($sc, $grp, $db_grp, [sql_type::USER]);
         $grp->set_phrase_list($t->dummy_phrase_list_16());
-        $t->assert_sql_insert($db_con, $grp);
+        $t->assert_sql_insert($sc, $grp);
         $grp->set_phrase_list($t->dummy_phrase_list_17_plus());
-        $t->assert_sql_insert($db_con, $grp, [sql_type::USER]);
+        $t->assert_sql_insert($sc, $grp, [sql_type::USER]);
         // TODO activate db write
-        //$t->assert_sql_delete($db_con, $grp);
+        //$t->assert_sql_delete($sc, $grp);
 
 
         $t->header('Unit tests of the phrase group link class (src/main/php/model/group/group_link.php)');
@@ -201,7 +203,7 @@ class group_tests
         // sql to load the phrase links related to a group
         $grp_lnk = new group_link();
         // TODO activate Prio 3 or use group id
-        //$t->assert_sql_by_id($db_con, $grp_lnk);
+        //$t->assert_sql_by_id($sc, $grp_lnk);
 
         $grp->set_id(14);
         // TODO activate Prio 3 or use group id

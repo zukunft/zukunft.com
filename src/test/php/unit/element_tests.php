@@ -68,7 +68,7 @@ class element_tests
         $t->subheader('SQL creation tests');
 
         $elm = $t->dummy_element();
-        $t->assert_sql_by_id($db_con, $elm);
+        $t->assert_sql_by_id($sc, $elm);
 
 
         $t->subheader('Database query list creation tests');
@@ -85,14 +85,14 @@ class element_tests
 
         $t->subheader('element sql write');
         // TODO activate db write
-        //$t->assert_sql_insert($db_con, $elm);
-        //$t->assert_sql_insert($db_con, $elm, true);
+        //$t->assert_sql_insert($sc, $elm);
+        //$t->assert_sql_insert($sc, $elm, true);
         // TODO activate db write
-        //$t->assert_sql_update($db_con, $elm);
-        //$t->assert_sql_update($db_con, $elm, true);
+        //$t->assert_sql_update($sc, $elm);
+        //$t->assert_sql_update($sc, $elm, true);
         // TODO activate db write
-        //$t->assert_sql_delete($db_con, $elm);
-        //$t->assert_sql_delete($db_con, $elm, true);
+        //$t->assert_sql_delete($sc, $elm);
+        //$t->assert_sql_delete($sc, $elm, true);
 
 
         // JSON export list

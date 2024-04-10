@@ -35,7 +35,7 @@ namespace unit;
 include_once MODEL_SYSTEM_PATH . 'system_time_type.php';
 include_once MODEL_SYSTEM_PATH . 'system_time.php';
 
-use cfg\db\sql_db;
+use cfg\db\sql;
 use cfg\library;
 use cfg\sys_log;
 use cfg\system_time;
@@ -55,7 +55,7 @@ class sys_log_tests
 
         // init
         $lib = new library();
-        $db_con = new sql_db();
+        $sc = new sql();
         $t->name = 'sys_log->';
         $t->resource_path = 'db/sys_log/';
         $usr->set_id(1);
@@ -70,7 +70,7 @@ class sys_log_tests
 
         // sql to load one error by id
         $err = new sys_log();
-        $t->assert_sql_by_id($db_con, $err);
+        $t->assert_sql_by_id($sc, $err);
 
 
         $t->subheader('API unit tests');

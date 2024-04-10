@@ -35,6 +35,7 @@ namespace unit;
 include_once WEB_VALUE_PATH . 'value_list.php';
 include_once MODEL_VALUE_PATH . 'value_list.php';
 
+use cfg\db\sql;
 use cfg\db\sql_par;
 use cfg\value\value_list;
 use html\value\value_list as value_list_dsp;
@@ -60,6 +61,7 @@ class value_list_tests
         // init
         $lib = new library();
         $db_con = new sql_db();
+        $sc = new sql();
         $t->name = 'value_list->';
         $t->resource_path = 'db/value/';
         $json_file = 'unit/value/travel_scoring_value_list.json';

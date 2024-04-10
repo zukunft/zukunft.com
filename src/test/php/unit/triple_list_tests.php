@@ -36,6 +36,7 @@ include_once MODEL_WORD_PATH . 'triple_list.php';
 include_once WEB_WORD_PATH . 'triple_list.php';
 
 use api\word\triple as triple_api;
+use cfg\db\sql;
 use cfg\foaf_direction;
 use cfg\phrase_list;
 use cfg\triple;
@@ -60,6 +61,7 @@ class triple_list_tests
         // init
         $lib = new library();
         $db_con = new sql_db();
+        $sc = new sql();
         $t->name = 'triple_list->';
         $t->resource_path = 'db/triple/';
         $json_file = 'unit/triple/triple_list.json';

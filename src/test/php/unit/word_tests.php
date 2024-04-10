@@ -73,14 +73,14 @@ class word_tests
 
         $t->subheader('word sql read');
         $wrd = new word($usr);
-        $t->assert_sql_by_id($db_con, $wrd);
+        $t->assert_sql_by_id($sc, $wrd);
         $t->assert_sql_by_name($db_con, $wrd);
         $this->assert_sql_formula_name($t, $db_con, $wrd);
 
         $t->subheader('word sql read default and user changes');
         $wrd = new word($usr);
         $wrd->set_id(word_api::TI_CONST);
-        $t->assert_sql_standard($db_con, $wrd);
+        $t->assert_sql_standard($sc, $wrd);
         $t->assert_sql_not_changed($db_con, $wrd);
         $t->assert_sql_user_changes($sc, $wrd);
         $t->assert_sql_changing_users($db_con, $wrd);
@@ -88,27 +88,27 @@ class word_tests
 
         $t->subheader('word sql write');
         $wrd = $t->word();
-        $t->assert_sql_insert($db_con, $wrd);
-        $t->assert_sql_insert($db_con, $wrd, [sql_type::USER]);
+        $t->assert_sql_insert($sc, $wrd);
+        $t->assert_sql_insert($sc, $wrd, [sql_type::USER]);
         // TODO activate db write with log
-        //$t->assert_sql_insert($db_con, $wrd, [sql_type::LOG]);
-        // $t->assert_sql_insert($db_con, $wrd, [sql_type::LOG, sql_type::USER]);
+        //$t->assert_sql_insert($sc, $wrd, [sql_type::LOG]);
+        // $t->assert_sql_insert($sc, $wrd, [sql_type::LOG, sql_type::USER]);
         $wrd_renamed = $wrd->cloned(word_api::TN_RENAMED);
-        $t->assert_sql_update($db_con, $wrd_renamed, $wrd);
-        $t->assert_sql_update($db_con, $wrd_renamed, $wrd, [sql_type::USER]);
+        $t->assert_sql_update($sc, $wrd_renamed, $wrd);
+        $t->assert_sql_update($sc, $wrd_renamed, $wrd, [sql_type::USER]);
         // TODO activate db write with log
-        //$t->assert_sql_update($db_con, $wrd_renamed, $wrd, [sql_type::LOG]);
-        //$t->assert_sql_update($db_con, $wrd_renamed, $wrd, [sql_type::LOG, sql_type::USER]);
-        $t->assert_sql_delete($db_con, $wrd);
-        $t->assert_sql_delete($db_con, $wrd, [sql_type::USER]);
+        //$t->assert_sql_update($sc, $wrd_renamed, $wrd, [sql_type::LOG]);
+        //$t->assert_sql_update($sc, $wrd_renamed, $wrd, [sql_type::LOG, sql_type::USER]);
+        $t->assert_sql_delete($sc, $wrd);
+        $t->assert_sql_delete($sc, $wrd, [sql_type::USER]);
         // TODO activate db write with log
-        //$t->assert_sql_delete($db_con, $wrd, [sql_type::LOG]);
-        //$t->assert_sql_delete($db_con, $wrd, [sql_type::LOG, sql_type::USER]);
-        $t->assert_sql_delete($db_con, $wrd, [sql_type::EXCLUDE]);
-        $t->assert_sql_delete($db_con, $wrd, [sql_type::USER, sql_type::EXCLUDE]);
+        //$t->assert_sql_delete($sc, $wrd, [sql_type::LOG]);
+        //$t->assert_sql_delete($sc, $wrd, [sql_type::LOG, sql_type::USER]);
+        $t->assert_sql_delete($sc, $wrd, [sql_type::EXCLUDE]);
+        $t->assert_sql_delete($sc, $wrd, [sql_type::USER, sql_type::EXCLUDE]);
         // TODO activate db write with log
-        //$t->assert_sql_delete($db_con, $wrd, [sql_type::LOG], true);
-        //$t->assert_sql_delete($db_con, $wrd, [sql_type::LOG, sql_type::USER], true);
+        //$t->assert_sql_delete($sc, $wrd, [sql_type::LOG], true);
+        //$t->assert_sql_delete($sc, $wrd, [sql_type::LOG, sql_type::USER], true);
 
 
         $t->subheader('word api unit tests');

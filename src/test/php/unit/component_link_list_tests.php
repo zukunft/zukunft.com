@@ -35,6 +35,7 @@ namespace unit;
 include_once MODEL_COMPONENT_PATH . 'component_link_list.php';
 
 use cfg\component\component_link_list;
+use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\library;
 use test\test_cleanup;
@@ -49,6 +50,7 @@ class component_link_list_tests
         // init
         $lib = new library();
         $db_con = new sql_db();
+        $sc = new sql();
         $t->name = 'component_link_list->';
         $t->resource_path = 'db/component/';
         $usr->set_id(1);

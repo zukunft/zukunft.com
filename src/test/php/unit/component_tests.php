@@ -73,7 +73,7 @@ class component_tests
         $t->subheader('SQL user sandbox statement tests');
 
         $cmp = new component($usr);
-        $t->assert_sql_by_id($db_con, $cmp);
+        $t->assert_sql_by_id($sc, $cmp);
         $t->assert_sql_by_name($db_con, $cmp);
 
 
@@ -83,25 +83,25 @@ class component_tests
         $cmp = new component($usr);
         $cmp->set_id(2);
         //$t->assert_sql_all($db_con, $cmp);
-        $t->assert_sql_standard($db_con, $cmp);
+        $t->assert_sql_standard($sc, $cmp);
         $t->assert_sql_user_changes($sc, $cmp);
 
         // sql to load the view components by name
         $cmp = new component($usr);
         $cmp->set_name(view_api::TN_ADD);
         //$t->assert_sql_all($db_con, $cmp);
-        $t->assert_sql_standard($db_con, $cmp);
+        $t->assert_sql_standard($sc, $cmp);
 
         $t->subheader('view sql write');
         // TODO activate db write
-        //$t->assert_sql_insert($db_con, $cmp);
-        //$t->assert_sql_insert($db_con, $cmp, true);
+        //$t->assert_sql_insert($sc, $cmp);
+        //$t->assert_sql_insert($sc, $cmp, true);
         // TODO activate db write
-        //$t->assert_sql_update($db_con, $cmp);
-        //$t->assert_sql_update($db_con, $cmp, true);
+        //$t->assert_sql_update($sc, $cmp);
+        //$t->assert_sql_update($sc, $cmp, true);
         // TODO activate db write
-        //$t->assert_sql_delete($db_con, $cmp);
-        //$t->assert_sql_delete($db_con, $cmp, true);
+        //$t->assert_sql_delete($sc, $cmp);
+        //$t->assert_sql_delete($sc, $cmp, true);
 
 
         $t->subheader('Convert tests');

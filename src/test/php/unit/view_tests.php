@@ -75,7 +75,7 @@ class view_tests
         $t->subheader('SQL user sandbox statement tests');
 
         $dsp = new view($usr);
-        $t->assert_sql_by_id($db_con, $dsp);
+        $t->assert_sql_by_id($sc, $dsp);
         $t->assert_sql_by_name($db_con, $dsp);
         $t->assert_sql_by_code_id($db_con, $dsp);
         $t->assert_sql_by_term($db_con, $dsp, $t->dummy_term());
@@ -87,14 +87,14 @@ class view_tests
         $dsp = new view($usr);
         $dsp->set_id(2);
         //$t->assert_load_sql($db_con, $dsp);
-        $t->assert_sql_standard($db_con, $dsp);
+        $t->assert_sql_standard($sc, $dsp);
         $t->assert_sql_user_changes($sc, $dsp);
 
         // sql to load the view by name
         $dsp = new view($usr);
         $dsp->set_name(view_api::TN_ADD);
         //$t->assert_load_sql($db_con, $dsp);
-        $t->assert_sql_standard($db_con, $dsp);
+        $t->assert_sql_standard($sc, $dsp);
 
         // sql to load the view components
         $dsp = new view($usr);
@@ -115,14 +115,14 @@ class view_tests
 
         $t->subheader('view sql write');
         // TODO activate db write
-        //$t->assert_sql_insert($db_con, $dsp);
-        //$t->assert_sql_insert($db_con, $dsp, true);
+        //$t->assert_sql_insert($sc, $dsp);
+        //$t->assert_sql_insert($sc, $dsp, true);
         // TODO activate db write
-        //$t->assert_sql_update($db_con, $dsp);
-        //$t->assert_sql_update($db_con, $dsp, true);
+        //$t->assert_sql_update($sc, $dsp);
+        //$t->assert_sql_update($sc, $dsp, true);
         // TODO activate db write
-        //$t->assert_sql_delete($db_con, $dsp);
-        //$t->assert_sql_delete($db_con, $dsp, true);
+        //$t->assert_sql_delete($sc, $dsp);
+        //$t->assert_sql_delete($sc, $dsp, true);
 
         $t->subheader('Im- and Export tests');
 
@@ -175,7 +175,7 @@ class view_tests
 
         $t->subheader('SQL user sandbox statement tests');
         $dsp = new view_term_link($usr);
-        $t->assert_sql_by_id($db_con, $dsp);
+        $t->assert_sql_by_id($sc, $dsp);
     }
 
 }

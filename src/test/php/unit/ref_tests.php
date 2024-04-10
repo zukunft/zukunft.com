@@ -76,13 +76,13 @@ class ref_tests
 
         $t->subheader('SQL statement tests');
         $ref = new ref($usr);
-        $t->assert_sql_by_id($db_con, $ref);
+        $t->assert_sql_by_id($sc, $ref);
         $this->assert_sql_link_ids($t, $db_con, $ref);
 
         // sql to load a ref by id
         $ref = new ref($usr);
         $ref->set_id(3);
-        $t->assert_sql_standard($db_con, $ref);
+        $t->assert_sql_standard($sc, $ref);
 
         // sql to load the ref types
         $ref_type_list = new ref_type_list();
@@ -90,14 +90,14 @@ class ref_tests
 
         $t->subheader('ref sql write');
         // TODO activate db write
-        //$t->assert_sql_insert($db_con, $ref);
-        //$t->assert_sql_insert($db_con, $ref, true);
+        //$t->assert_sql_insert($sc, $ref);
+        //$t->assert_sql_insert($sc, $ref, true);
         // TODO activate db write
-        //$t->assert_sql_update($db_con, $ref);
-        //$t->assert_sql_update($db_con, $ref, true);
+        //$t->assert_sql_update($sc, $ref);
+        //$t->assert_sql_update($sc, $ref, true);
         // TODO activate db write
-        //$t->assert_sql_delete($db_con, $ref);
-        //$t->assert_sql_delete($db_con, $ref, true);
+        //$t->assert_sql_delete($sc, $ref);
+        //$t->assert_sql_delete($sc, $ref, true);
 
         $t->subheader('Im- and Export tests');
         $t->assert_json_file(new ref($usr), $json_file);
@@ -120,19 +120,19 @@ class ref_tests
         $t->assert_sql_table_create($src);
         $t->assert_sql_index_create($src);
         $t->assert_sql_foreign_key_create($src);
-        $t->assert_sql_by_id($db_con, $src);
+        $t->assert_sql_by_id($sc, $src);
         $t->assert_sql_by_name($db_con, $src);
         $t->assert_sql_by_code_id($db_con, $src);
 
         // sql to load a source by id
         $src = new source($usr);
         $src->set_id(4);
-        $t->assert_sql_standard($db_con, $src);
+        $t->assert_sql_standard($sc, $src);
 
         // sql to load a source by name
         $src = new source($usr);
         $src->set_name(source_api::TN_READ);
-        $t->assert_sql_standard($db_con, $src);
+        $t->assert_sql_standard($sc, $src);
         $src->set_id(5);
         $t->assert_sql_not_changed($db_con, $src);
         $t->assert_sql_user_changes($sc, $src);
@@ -144,19 +144,19 @@ class ref_tests
         $t->subheader('source sql write');
         // TODO activate db write
         $src = $t->source();
-        $t->assert_sql_insert($db_con, $src);
-        $t->assert_sql_insert($db_con, $src, [sql_type::USER]);
+        $t->assert_sql_insert($sc, $src);
+        $t->assert_sql_insert($sc, $src, [sql_type::USER]);
         // TODO activate db write
-        //$t->assert_sql_update($db_con, $src);
-        //$t->assert_sql_update($db_con, $src, [sql_type::USER]);
+        //$t->assert_sql_update($sc, $src);
+        //$t->assert_sql_update($sc, $src, [sql_type::USER]);
         // TODO activate db write
-        $t->assert_sql_delete($db_con, $src);
-        $t->assert_sql_delete($db_con, $src, [sql_type::USER]);
+        $t->assert_sql_delete($sc, $src);
+        $t->assert_sql_delete($sc, $src, [sql_type::USER]);
         // TODO activate db write with log
-        //$t->assert_sql_delete($db_con, $src, [sql_type::LOG]);
-        //$t->assert_sql_delete($db_con, $src, [sql_type::LOG, sql_type::USER]);
-        //$t->assert_sql_delete($db_con, $src, [sql_type::LOG, sql_type::EXCLUDE]);
-        //$t->assert_sql_delete($db_con, $src, [sql_type::LOG, sql_type::USER, sql_type::EXCLUDE]);
+        //$t->assert_sql_delete($sc, $src, [sql_type::LOG]);
+        //$t->assert_sql_delete($sc, $src, [sql_type::LOG, sql_type::USER]);
+        //$t->assert_sql_delete($sc, $src, [sql_type::LOG, sql_type::EXCLUDE]);
+        //$t->assert_sql_delete($sc, $src, [sql_type::LOG, sql_type::USER, sql_type::EXCLUDE]);
 
         $t->subheader('Im- and Export tests');
         $t->assert_json_file(new source($usr), $json_file);

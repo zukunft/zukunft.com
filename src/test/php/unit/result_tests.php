@@ -73,51 +73,51 @@ class result_tests
 
         // check the sql to load a result by the id
         $res = $t->dummy_result_16();
-        $t->assert_sql_by_id($db_con, $res);
+        $t->assert_sql_by_id($sc, $res);
         $this->assert_sql_by_group($t, $db_con, $res);
         $this->assert_sql_by_formula_and_group($t, $db_con, $res);
         $this->assert_sql_by_formula_and_group_list($t, $db_con, $res);
         $this->assert_sql_load_std_by_group_id($t, $db_con, $res);
 
         $res = $t->dummy_result_prime();
-        $t->assert_sql_by_id($db_con, $res);
+        $t->assert_sql_by_id($sc, $res);
         $this->assert_sql_by_group($t, $db_con, $res);
 
         $t->subheader('SQL load default statement tests');
 
         // sql to load the standard result by id
-        $t->assert_sql_standard($db_con, $res);
+        $t->assert_sql_standard($sc, $res);
         $t->assert_sql_user_changes($sc, $res);
 
         $t->subheader('result sql write');
         $res_prime = $t->dummy_result_prime();
         $res_prime_max = $t->dummy_result_prime();
         // TODO activate db write
-        // $t->assert_sql_insert($db_con, $res);
+        // $t->assert_sql_insert($sc, $res);
         // TODO activate db write
-        // $t->assert_sql_insert($db_con, $res, true);
+        // $t->assert_sql_insert($sc, $res, true);
         // TODO activate db write
-        // $t->assert_sql_insert($db_con, $res_prime);
+        // $t->assert_sql_insert($sc, $res_prime);
         // TODO activate db write
-        // $t->assert_sql_insert($db_con, $res_prime, true);
+        // $t->assert_sql_insert($sc, $res_prime, true);
         // TODO activate db write
-        // $t->assert_sql_insert($db_con, $res_prime_max);
+        // $t->assert_sql_insert($sc, $res_prime_max);
         // TODO activate db write
-        // $t->assert_sql_insert($db_con, $res_prime_max, true);
+        // $t->assert_sql_insert($sc, $res_prime_max, true);
         // TODO activate db write
-        // $t->assert_sql_update($db_con, $res);
+        // $t->assert_sql_update($sc, $res);
         // TODO activate db write
-        // $t->assert_sql_update($db_con, $res, true);
+        // $t->assert_sql_update($sc, $res, true);
         // TODO activate db write
-        // $t->assert_sql_update($db_con, $res_prime);
+        // $t->assert_sql_update($sc, $res_prime);
         // TODO activate db write
-        // $t->assert_sql_update($db_con, $res_prime, true);
+        // $t->assert_sql_update($sc, $res_prime, true);
         // TODO activate db write
-        // $t->assert_sql_delete($db_con, $res);
+        // $t->assert_sql_delete($sc, $res);
         // TODO activate db write
-        // $t->assert_sql_delete($db_con, $res, true);
+        // $t->assert_sql_delete($sc, $res, true);
         // TODO activate db write
-        // $t->assert_sql_delete($db_con, $res, true, true);
+        // $t->assert_sql_delete($sc, $res, true, true);
 
         $t->subheader('Display tests');
 

@@ -39,7 +39,7 @@ class triple_tests
 
         $t->subheader('word sql read');
         $trp = new triple($usr);
-        $t->assert_sql_by_id($db_con, $trp);
+        $t->assert_sql_by_id($sc, $trp);
         $t->assert_sql_by_name($db_con, $trp);
         $t->assert_sql_by_link($db_con, $trp);
         $this->assert_sql_by_name_generated($db_con, $trp, $t);
@@ -47,24 +47,24 @@ class triple_tests
         // sql to load the triple by id
         $trp = new triple($usr);
         $trp->set_id(2);
-        $t->assert_sql_standard($db_con, $trp);
+        $t->assert_sql_standard($sc, $trp);
         $t->assert_sql_user_changes($sc, $trp);
 
         // sql to load the triple by name
         $trp = new triple($usr);
         $trp->set_name(triple_api::TN_PI);
-        $t->assert_sql_standard($db_con, $trp);
+        $t->assert_sql_standard($sc, $trp);
 
         $t->subheader('triple sql write');
         // TODO activate db write
-        //$t->assert_sql_insert($db_con, $trp);
-        //$t->assert_sql_insert($db_con, $trp, true);
+        //$t->assert_sql_insert($sc, $trp);
+        //$t->assert_sql_insert($sc, $trp, true);
         // TODO activate db write
-        //$t->assert_sql_update($db_con, $trp);
-        //$t->assert_sql_update($db_con, $trp, true);
+        //$t->assert_sql_update($sc, $trp);
+        //$t->assert_sql_update($sc, $trp, true);
         // TODO activate db write
-        //$t->assert_sql_delete($db_con, $trp);
-        //$t->assert_sql_delete($db_con, $trp, true);
+        //$t->assert_sql_delete($sc, $trp);
+        //$t->assert_sql_delete($sc, $trp, true);
 
         $t->subheader('API unit tests');
 

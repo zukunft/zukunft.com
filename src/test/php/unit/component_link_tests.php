@@ -77,7 +77,7 @@ class component_link_tests
 
         // SQL creation tests (mainly to use the IDE check for the generated SQL statements)
         $vcl = new component_link($usr);
-        $t->assert_sql_by_id($db_con, $vcl);
+        $t->assert_sql_by_id($sc, $vcl);
         $t->assert_sql_by_link($db_con, $vcl);
         $this->assert_sql_link_and_type($t, $db_con, $vcl);
         $this->assert_sql_link_and_pos($t, $db_con, $vcl);
@@ -93,14 +93,14 @@ class component_link_tests
 
         $t->subheader('component link sql write');
         // TODO activate db write
-        //$t->assert_sql_insert($db_con, $lnk);
-        //$t->assert_sql_insert($db_con, $lnk, true);
+        //$t->assert_sql_insert($sc, $lnk);
+        //$t->assert_sql_insert($sc, $lnk, true);
         // TODO activate db write
-        //$t->assert_sql_update($db_con, $lnk);
-        //$t->assert_sql_update($db_con, $lnk, true);
+        //$t->assert_sql_update($sc, $lnk);
+        //$t->assert_sql_update($sc, $lnk, true);
         // TODO activate db write
-        //$t->assert_sql_delete($db_con, $lnk);
-        //$t->assert_sql_delete($db_con, $lnk, true);
+        //$t->assert_sql_delete($sc, $lnk);
+        //$t->assert_sql_delete($sc, $lnk, true);
 
     }
 

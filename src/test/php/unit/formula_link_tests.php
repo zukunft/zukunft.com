@@ -35,6 +35,7 @@ namespace unit;
 include_once MODEL_FORMULA_PATH . 'formula_link_type.php';
 include_once MODEL_FORMULA_PATH . 'formula_link_list.php';
 
+use cfg\db\sql;
 use cfg\element_type;
 use cfg\formula_link;
 use cfg\formula_link_list;
@@ -53,6 +54,7 @@ class formula_link_tests
         // init
         $lib = new library();
         $db_con = new sql_db();
+        $sc = new sql();
         $t->name = 'formula_link->';
         $t->resource_path = 'db/formula/';
         $usr->set_id(1);
@@ -74,7 +76,7 @@ class formula_link_tests
 
         // SQL creation tests (mainly to use the IDE check for the generated SQL statements)
         $flk = new formula_link($usr);
-        $t->assert_sql_by_id($db_con, $flk);
+        $t->assert_sql_by_id($sc, $flk);
         $t->assert_sql_by_link($db_con, $flk);
 
 
@@ -83,7 +85,7 @@ class formula_link_tests
         // sql to load the standard formula link by id
         $lnk = new formula_link($usr);
         $lnk->set_id(1);
-        $t->assert_sql_standard($db_con, $lnk);
+        $t->assert_sql_standard($sc, $lnk);
         $t->assert_sql_not_changed($db_con, $lnk);
 
         // sql to load the user formula link by id
@@ -94,14 +96,14 @@ class formula_link_tests
 
         $t->subheader('formula link sql write');
         // TODO activate db write
-        //$t->assert_sql_insert($db_con, $lnk);
-        //$t->assert_sql_insert($db_con, $lnk, true);
+        //$t->assert_sql_insert($sc, $lnk);
+        //$t->assert_sql_insert($sc, $lnk, true);
         // TODO activate db write
-        //$t->assert_sql_update($db_con, $lnk);
-        //$t->assert_sql_update($db_con, $lnk, true);
+        //$t->assert_sql_update($sc, $lnk);
+        //$t->assert_sql_update($sc, $lnk, true);
         // TODO activate db write
-        //$t->assert_sql_delete($db_con, $lnk);
-        //$t->assert_sql_delete($db_con, $lnk, true);
+        //$t->assert_sql_delete($sc, $lnk);
+        //$t->assert_sql_delete($sc, $lnk, true);
 
         /*
         $t->subheader('Im- and Export tests');

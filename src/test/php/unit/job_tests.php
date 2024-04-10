@@ -74,7 +74,7 @@ class job_tests
 
         // sql to load one batch job
         $job = new job($usr);
-        $t->assert_sql_by_id($db_con, $job);
+        $t->assert_sql_by_id($sc, $job);
 
         // sql to load a list of open batch jobs
         $sys_usr = $t->system_user();

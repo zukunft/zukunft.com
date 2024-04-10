@@ -75,29 +75,29 @@ class value_tests
         $val = $t->value();
         $val_prime = $t->dummy_value_prime_3();
         $val_prime_max = $t->dummy_value_prime_max();
-        $t->assert_sql_insert($db_con, $val);
-        $t->assert_sql_insert($db_con, $val, [sql_type::USER]);
-        $t->assert_sql_insert($db_con, $val_prime);
-        $t->assert_sql_insert($db_con, $val_prime, [sql_type::USER]);
-        $t->assert_sql_insert($db_con, $val_prime_max);
-        $t->assert_sql_insert($db_con, $val_prime_max, [sql_type::USER]);
+        $t->assert_sql_insert($sc, $val);
+        $t->assert_sql_insert($sc, $val, [sql_type::USER]);
+        $t->assert_sql_insert($sc, $val_prime);
+        $t->assert_sql_insert($sc, $val_prime, [sql_type::USER]);
+        $t->assert_sql_insert($sc, $val_prime_max);
+        $t->assert_sql_insert($sc, $val_prime_max, [sql_type::USER]);
         // TODO for 1 given phrase fill the others with 0 because usually only one value is expected to be changed
         // TODO for update fill the missing phrase id with zeros because only one row should be updated
         $db_val = $val->cloned(value_api::TV_FLOAT);
-        $t->assert_sql_update($db_con, $val, $db_val);
-        $t->assert_sql_update($db_con, $val, $db_val, [sql_type::USER]);
+        $t->assert_sql_update($sc, $val, $db_val);
+        $t->assert_sql_update($sc, $val, $db_val, [sql_type::USER]);
         $db_val_prime = $val_prime->cloned(value_api::TV_FLOAT);
-        $t->assert_sql_update($db_con, $val_prime, $db_val_prime);
-        $t->assert_sql_update($db_con, $val_prime, $db_val_prime, [sql_type::USER]);
+        $t->assert_sql_update($sc, $val_prime, $db_val_prime);
+        $t->assert_sql_update($sc, $val_prime, $db_val_prime, [sql_type::USER]);
         $val_upd = $val->updated();
         $this->assert_sql_update_trigger($t, $db_con, $val_upd, $val);
-        $t->assert_sql_delete($db_con, $val);
-        $t->assert_sql_delete($db_con, $val, [sql_type::USER]);
-        $t->assert_sql_delete($db_con, $val, [sql_type::USER, sql_type::EXCLUDE]);
+        $t->assert_sql_delete($sc, $val);
+        $t->assert_sql_delete($sc, $val, [sql_type::USER]);
+        $t->assert_sql_delete($sc, $val, [sql_type::USER, sql_type::EXCLUDE]);
         $this->assert_sql_by_grp($t, $db_con, $val);
 
         // ... and the related default value
-        $t->assert_sql_standard($db_con, $val);
+        $t->assert_sql_standard($sc, $val);
 
         // ... and to check if any user has uses another than the default value
         $t->assert_sql_not_changed($db_con, $val);
@@ -107,19 +107,19 @@ class value_tests
         $t->subheader('SQL statements - for values related to up to 16 phrases');
         $val = $t->dummy_value_16();
         // TODO insert value does not need to return the id because this is given by the group id
-        $t->assert_sql_insert($db_con, $val);
-        $t->assert_sql_insert($db_con, $val, [sql_type::USER]);
+        $t->assert_sql_insert($sc, $val);
+        $t->assert_sql_insert($sc, $val, [sql_type::USER]);
         $db_val = $val->cloned(value_api::TV_FLOAT);
-        $t->assert_sql_update($db_con, $val, $db_val);
-        $t->assert_sql_delete($db_con, $val);
-        $t->assert_sql_delete($db_con, $val, [sql_type::USER]);
-        $t->assert_sql_by_id($db_con, $val);
+        $t->assert_sql_update($sc, $val, $db_val);
+        $t->assert_sql_delete($sc, $val);
+        $t->assert_sql_delete($sc, $val, [sql_type::USER]);
+        $t->assert_sql_by_id($sc, $val);
         // TODO activate Prio 2
         //$this->assert_sql_by_grp($t, $db_con, $val);
         $t->assert_sql_changer($db_con, $val);
 
         // ... and the related default value
-        $t->assert_sql_standard($db_con, $val);
+        $t->assert_sql_standard($sc, $val);
 
         // ... and to check if any user has uses another than the default value
         // TODO prio 1 activate
@@ -130,14 +130,14 @@ class value_tests
         $t->subheader('SQL statements - for values related to more than 16 phrases');
         $val = $t->dummy_value_17_plus();
         $db_val = $val->cloned(value_api::TV_FLOAT);
-        $t->assert_sql_insert($db_con, $val);
-        $t->assert_sql_update($db_con, $val, $db_val);
+        $t->assert_sql_insert($sc, $val);
+        $t->assert_sql_update($sc, $val, $db_val);
         // TODO activate Prio 2
         //$this->assert_sql_by_grp($t, $db_con, $val);
         $t->assert_sql_changer($db_con, $val);
 
         // ... and the related default value
-        $t->assert_sql_standard($db_con, $val);
+        $t->assert_sql_standard($sc, $val);
 
         // ... and to check if any user has uses another than the default value
         // TODO prio 1 activate
@@ -186,10 +186,10 @@ class value_tests
         // sql to load a user specific time series by id
         $vts = new value_time_series($usr);
         $vts->set_grp($t->dummy_phrase_group_16());
-        $t->assert_sql_by_id($db_con, $vts);
+        $t->assert_sql_by_id($sc, $vts);
 
         // ... and the related default time series
-        $t->assert_sql_standard($db_con, $vts);
+        $t->assert_sql_standard($sc, $vts);
 
         // sql to load a user specific time series by phrase group id
         $vts->reset($usr);

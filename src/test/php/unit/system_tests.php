@@ -39,6 +39,7 @@ include_once API_SYSTEM_PATH . 'sys_log.php';
 
 use api\word\word as word_api;
 use cfg\config;
+use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\formula;
 use cfg\ip_range;
@@ -67,6 +68,7 @@ class system_tests
         // init
         $lib = new library();
         $db_con = new sql_db();
+        $sc = new sql();
         $t->name = 'system->';
         $t->resource_path = 'db/system/';
         $usr->set_id(1);
@@ -254,7 +256,7 @@ class system_tests
          */
 
         $ip_range = new ip_range();
-        $t->assert_sql_by_id($db_con, $ip_range);
+        $t->assert_sql_by_id($sc, $ip_range);
 
         // sql to load by ip range
         $db_con->db_type = sql_db::POSTGRES;

@@ -32,6 +32,7 @@
 
 namespace unit;
 
+use cfg\db\sql;
 use cfg\library;
 use cfg\db\sql_db;
 use cfg\user;
@@ -49,6 +50,7 @@ class user_list_tests
         // init
         $lib = new library();
         $db_con = new sql_db();
+        $sc = new sql();
         $t->name = 'user_list->';
         $t->resource_path = 'db/user/';
         $usr->set_id(1);

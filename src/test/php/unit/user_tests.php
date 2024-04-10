@@ -68,7 +68,7 @@ class user_tests
         $t->subheader('SQL statement tests');
 
         $test_usr = new user();
-        $t->assert_sql_by_id($db_con, $test_usr);
+        $t->assert_sql_by_id($sc, $test_usr);
         $t->assert_sql_by_name($db_con, $test_usr);
         $this->assert_sql_by_email($t, $db_con, $test_usr);
         $this->assert_sql_by_name_or_email($t, $db_con, $test_usr);

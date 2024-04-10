@@ -66,17 +66,17 @@ class verb_tests
         $t->assert_sql_index_create($vrb);
 
         $t->subheader('verb sql read');
-        $t->assert_sql_by_id($db_con, $vrb);
+        $t->assert_sql_by_id($sc, $vrb);
         $t->assert_sql_by_name($db_con, $vrb);
         $t->assert_sql_by_code_id($db_con, $vrb);
 
         $t->subheader('verb sql write');
         // TODO activate db write
-        //$t->assert_sql_insert($db_con, $vrb);
+        //$t->assert_sql_insert($sc, $vrb);
         // TODO activate db write
-        //$t->assert_sql_update($db_con, $vrb);
+        //$t->assert_sql_update($sc, $vrb);
         // TODO activate db write
-        //$t->assert_sql_delete($db_con, $vrb);
+        //$t->assert_sql_delete($sc, $vrb);
 
 
         $t->subheader('Im- and Export tests');
