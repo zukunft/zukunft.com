@@ -858,6 +858,7 @@ class phrase extends combine_named
     /*
      * information
      */
+
     /**
      * check if the word in the database needs to be updated
      * e.g. for import  if this word has only the name set, the protection should not be updated in the database
@@ -877,6 +878,23 @@ class phrase extends combine_named
             return $trp->needs_db_update($db_trp);
         } else {
             return true;
+        }
+    }
+
+    /**
+     * @param string $type the ENUM string of the fixed type
+     * @returns bool true if the word has the given type
+     */
+    function is_type(string $type): bool
+    {
+        if ($this->is_word()) {
+            $wrd = $this->obj();
+            return $wrd->is_type($type);
+        } elseif ($this->is_triple()) {
+            $trp = $this->obj();
+            return $trp->is_type($type);
+        } else {
+            return false;
         }
     }
 

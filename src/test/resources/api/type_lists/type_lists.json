@@ -181,6 +181,18 @@
         "code_id": "group",
         "description": "words used to group and select other words to shorten the selection",
         "id": 24
+      },
+      {
+        "name": "symbol",
+        "code_id": "symbol",
+        "description": "words that indicate e.g. that a table column contains a symbol",
+        "id": 25
+      },
+      {
+        "name": "rank",
+        "code_id": "rank",
+        "description": "words that indicate e.g. that a table column contains a ranking number",
+        "id": 26
       }
     ],
     "formula_types": [

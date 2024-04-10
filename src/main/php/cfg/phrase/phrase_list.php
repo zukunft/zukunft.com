@@ -1488,7 +1488,7 @@ class phrase_list extends sandbox_list_named
     /**
      * similar to diff, but using an id array to exclude instead of a phrase list object
      */
-    function diff_by_ids($del_phr_ids)
+    function diff_by_ids($del_phr_ids): void
     {
         $this->id_lst();
         foreach ($del_phr_ids as $del_phr_id) {
@@ -1655,6 +1655,30 @@ class phrase_list extends sandbox_list_named
             }
         }
         return $lst;
+    }
+
+    /**
+     * @param string $phr_typ code_id of the type that should be selected
+     * @return phrase_list
+     */
+    function get_by_type(string $phr_typ): phrase_list
+    {
+        $lst = new phrase_list($this->user());
+        foreach ($this->lst() as $phr) {
+            if ($phr->is_type($phr_typ)) {
+                $lst->add($phr);
+            }
+        }
+        return $lst;
+    }
+
+    /**
+     * @param string $phr_typ code_id of the type that should be selected
+     * @return array
+     */
+    function get_names_by_type(string $phr_typ): array
+    {
+        return $this->get_by_type($phr_typ)->names();
     }
 
     /**

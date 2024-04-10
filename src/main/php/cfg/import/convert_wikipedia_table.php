@@ -37,6 +37,7 @@ use api\verb\verb as verb_api;
 use cfg\export\export;
 use cfg\library;
 use cfg\phrase_list;
+use cfg\phrase_type;
 use cfg\triple;
 use cfg\user;
 use DateTime;
@@ -183,16 +184,16 @@ class convert_wikipedia_table
     {
         global $verbs;
 
+        // create context for assumptions
+        $list_of_symbols = []; // if a row contains a symbol and a name they are usually linked
         $phr_lst = new phrase_list($usr);
         if ($context != '') {
             $phr_lst->import_context(json_decode($context, true));
+            $list_of_symbols = $phr_lst->get_names_by_type(phrase_type::SYMBOL);
         }
 
-        $wiki_json = json_decode($wiki_json, true);
 
-        // temp context asumption
-        // TODO get these from the given context
-        $list_of_symbols = ['ISO 4217code', 'Symbol orabbreviation'];
+        $wiki_json = json_decode($wiki_json, true);
 
         // prepare the result
         $json = $this->header($usr, $timestamp);

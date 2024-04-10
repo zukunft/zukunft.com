@@ -561,6 +561,20 @@ class triple extends sandbox_link_typed implements JsonSerializable
         }
     }
 
+    /**
+     * @return bool true if the triple is a of the given type
+     */
+    function is_type(string $typ): bool
+    {
+        global $phrase_types;
+
+        $result = false;
+        if ($this->type_id == $phrase_types->id($typ)) {
+            $result = true;
+        }
+        return $result;
+    }
+
 
     /*
      * cast

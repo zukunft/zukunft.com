@@ -963,8 +963,6 @@ class word extends sandbox_typed
     {
         global $phrase_types;
 
-        log_debug($this->dsp_id() . ' is ' . $type);
-
         $result = false;
         if ($this->type_id == $phrase_types->id($type)) {
             $result = true;
