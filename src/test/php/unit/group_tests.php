@@ -175,7 +175,7 @@ class group_tests
 
         $t->subheader('SQL statements - read');
         //$t->assert_sql_by_id($sc, $grp);
-        $t->assert_sql_by_name($db_con, $grp);
+        $t->assert_sql_by_name($sc, $grp);
         $this->assert_sql_by_phrase_list($t, $db_con);
 
         $t->subheader('SQL statements - write');

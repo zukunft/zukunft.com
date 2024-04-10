@@ -294,7 +294,7 @@ class system_tests
 
         // check if the sql to load the complete list of all ... types is created as expected
         $sys_log_status = new sys_log_status_list();
-        $t->assert_sql_all($db_con, $sys_log_status);
+        $t->assert_sql_all($sc, $sys_log_status);
 
 
         $t->subheader('system config sql tests');

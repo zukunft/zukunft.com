@@ -77,7 +77,7 @@ class formula_link_tests
         // SQL creation tests (mainly to use the IDE check for the generated SQL statements)
         $flk = new formula_link($usr);
         $t->assert_sql_by_id($sc, $flk);
-        $t->assert_sql_by_link($db_con, $flk);
+        $t->assert_sql_by_link($sc, $flk);
 
 
         $t->subheader('SQL load default statement tests');

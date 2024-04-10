@@ -80,7 +80,7 @@ class value_list_tests
         $this->assert_sql_by_phr($t, $db_con, $val_lst, $phr);
         // ... a list of ids
         $val_ids = $t->dummy_value_list()->id_lst();
-        $t->assert_sql_by_ids($db_con, $val_lst, $val_ids);
+        $t->assert_sql_by_ids($sc, $val_lst, $val_ids);
         // ... a list of groups
         $grp_lst = $t->dummy_phrase_list_small();
         $this->assert_sql_by_grp_lst($t, $db_con, $val_lst, $grp_lst);

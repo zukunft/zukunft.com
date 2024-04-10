@@ -65,8 +65,8 @@ class view_list_tests
 
         // load of non system view
         $msk_lst = new view_list($usr);
-        $t->assert_sql_names($db_con, $msk_lst, new view($usr));
-        $t->assert_sql_names($db_con, $msk_lst, new view($usr), view_api::TN_READ);
+        $t->assert_sql_names($sc, $msk_lst, new view($usr));
+        $t->assert_sql_names($sc, $msk_lst, new view($usr), view_api::TN_READ);
 
         $msk_lst = new view_list($usr);
         $this->assert_sql_by_component_id($t, $db_con, $msk_lst);

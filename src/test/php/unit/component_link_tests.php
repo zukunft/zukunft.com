@@ -78,7 +78,7 @@ class component_link_tests
         // SQL creation tests (mainly to use the IDE check for the generated SQL statements)
         $vcl = new component_link($usr);
         $t->assert_sql_by_id($sc, $vcl);
-        $t->assert_sql_by_link($db_con, $vcl);
+        $t->assert_sql_by_link($sc, $vcl);
         $this->assert_sql_link_and_type($t, $db_con, $vcl);
         $this->assert_sql_link_and_pos($t, $db_con, $vcl);
         $this->assert_sql_max_pos($t, $db_con, $vcl);

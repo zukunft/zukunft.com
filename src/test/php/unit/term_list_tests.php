@@ -79,14 +79,14 @@ class term_list_tests
 
         // load only the names
         $phr_lst = new term_list($usr);
-        $t->assert_sql_names($db_con, $phr_lst, new term($usr));
-        $t->assert_sql_names($db_con, $phr_lst, new term($usr), verb_api::TN_IS);
+        $t->assert_sql_names($sc, $phr_lst, new term($usr));
+        $t->assert_sql_names($sc, $phr_lst, new term($usr), verb_api::TN_IS);
 
         $trm_lst = new term_list($usr);
         $trm_ids = new trm_ids(array(3, -2, 4, -7));
-        $t->assert_sql_by_ids($db_con, $trm_lst, $trm_ids);
+        $t->assert_sql_by_ids($sc, $trm_lst, $trm_ids);
         $lst = $this->new_list();
-        $t->assert_sql_like($db_con, $lst);
+        $t->assert_sql_like($sc, $lst);
 
 
         $t->subheader('API unit tests');

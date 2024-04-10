@@ -86,7 +86,7 @@ class ref_tests
 
         // sql to load the ref types
         $ref_type_list = new ref_type_list();
-        $t->assert_sql_all($db_con, $ref_type_list);
+        $t->assert_sql_all($sc, $ref_type_list);
 
         $t->subheader('ref sql write');
         // TODO activate db write
@@ -121,8 +121,8 @@ class ref_tests
         $t->assert_sql_index_create($src);
         $t->assert_sql_foreign_key_create($src);
         $t->assert_sql_by_id($sc, $src);
-        $t->assert_sql_by_name($db_con, $src);
-        $t->assert_sql_by_code_id($db_con, $src);
+        $t->assert_sql_by_name($sc, $src);
+        $t->assert_sql_by_code_id($sc, $src);
 
         // sql to load a source by id
         $src = new source($usr);
@@ -139,7 +139,7 @@ class ref_tests
 
         // sql to load the source types
         $source_type_list = new source_type_list();
-        $t->assert_sql_all($db_con, $source_type_list);
+        $t->assert_sql_all($sc, $source_type_list);
 
         $t->subheader('source sql write');
         // TODO activate db write
@@ -172,9 +172,9 @@ class ref_tests
 
         $src_lst = new source_list($usr);
         $trm_ids = array(1, 2, 3);
-        $t->assert_sql_by_ids($db_con, $src_lst, $trm_ids);
+        $t->assert_sql_by_ids($sc, $src_lst, $trm_ids);
         $src_lst = new source_list($usr);
-        $t->assert_sql_like($db_con, $src_lst);
+        $t->assert_sql_like($sc, $src_lst);
 
     }
 

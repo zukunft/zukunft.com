@@ -74,7 +74,7 @@ class component_tests
 
         $cmp = new component($usr);
         $t->assert_sql_by_id($sc, $cmp);
-        $t->assert_sql_by_name($db_con, $cmp);
+        $t->assert_sql_by_name($sc, $cmp);
 
 
         $t->subheader('SQL statement tests');

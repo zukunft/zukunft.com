@@ -73,12 +73,12 @@ class triple_list_tests
 
         // load only the names
         $trp_lst = new triple_list($usr);
-        $t->assert_sql_names($db_con, $trp_lst, new triple($usr));
-        $t->assert_sql_names($db_con, $trp_lst, new triple($usr), triple_api::TD_READ);
+        $t->assert_sql_names($sc, $trp_lst, new triple($usr));
+        $t->assert_sql_names($sc, $trp_lst, new triple($usr), triple_api::TD_READ);
 
         // load by triple ids
         $trp_lst = new triple_list($usr);
-        $t->assert_sql_by_ids($db_con, $trp_lst, array(3,2,4));
+        $t->assert_sql_by_ids($sc, $trp_lst, array(3,2,4));
 
         // load by phr
         $trp_lst = new triple_list($usr);

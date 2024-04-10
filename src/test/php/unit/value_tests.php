@@ -102,7 +102,7 @@ class value_tests
         // ... and to check if any user has uses another than the default value
         $t->assert_sql_not_changed($db_con, $val);
         $t->assert_sql_user_changes($sc, $val);
-        $t->assert_sql_changer($db_con, $val);
+        $t->assert_sql_changer($sc, $val);
 
         $t->subheader('SQL statements - for values related to up to 16 phrases');
         $val = $t->dummy_value_16();
@@ -116,7 +116,7 @@ class value_tests
         $t->assert_sql_by_id($sc, $val);
         // TODO activate Prio 2
         //$this->assert_sql_by_grp($t, $db_con, $val);
-        $t->assert_sql_changer($db_con, $val);
+        $t->assert_sql_changer($sc, $val);
 
         // ... and the related default value
         $t->assert_sql_standard($sc, $val);
@@ -134,7 +134,7 @@ class value_tests
         $t->assert_sql_update($sc, $val, $db_val);
         // TODO activate Prio 2
         //$this->assert_sql_by_grp($t, $db_con, $val);
-        $t->assert_sql_changer($db_con, $val);
+        $t->assert_sql_changer($sc, $val);
 
         // ... and the related default value
         $t->assert_sql_standard($sc, $val);
@@ -142,7 +142,7 @@ class value_tests
         // ... and to check if any user has uses another than the default value
         // TODO prio 1 activate
         //$t->assert_sql_not_changed($db_con, $val);
-        //$t->assert_sql_user_changes($sc, $val);
+        $t->assert_sql_user_changes($sc, $val);
         //$t->assert_sql_changer($db_con, $val);
 
 

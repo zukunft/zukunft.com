@@ -75,7 +75,7 @@ class phrase_tests
 
         $phr = new phrase($usr);
         $t->assert_sql_by_id($sc, $phr);
-        $t->assert_sql_by_name($db_con, $phr);
+        $t->assert_sql_by_name($sc, $phr);
 
         // sql to load the phrase by id
         $phr = new phrase($usr);

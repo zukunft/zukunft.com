@@ -61,7 +61,7 @@ class component_link_list_tests
 
         // load by component_link ids
         $lst = new component_link_list($usr);
-        //$t->assert_sql_by_ids($db_con, $lst, array(3, 2, 4));
+        //$t->assert_sql_by_ids($sc, $lst, array(3, 2, 4));
 
         // load by view
         $lst = new component_link_list($usr);

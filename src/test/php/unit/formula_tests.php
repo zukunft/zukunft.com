@@ -77,7 +77,7 @@ class formula_tests
 
         $frm = new formula($usr);
         $t->assert_sql_by_id($sc, $frm);
-        $t->assert_sql_by_name($db_con, $frm);
+        $t->assert_sql_by_name($sc, $frm);
 
 
         $t->subheader('SQL statement tests');

@@ -89,6 +89,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
          load, im- and export, filter, modify, check, save, del
 
     after that this should be done while keeping step 1. to 4. for each commit:
+    TODO add a system execution time measurment that covers e.g. the import of words (values, ...) ber second
     TODO validate the import bevor staring the import e.g. check if a triple has always from, verb and to
     TODO create a word-list for import where just the names are listed without further indications
     TODO the first frontend should look like Excel wit a big empty sheet and file save and load and only a few suggestions while writing to a cell
@@ -1482,7 +1483,7 @@ function prg_start(string $code_name, string $style = "", $echo_header = true): 
 function prg_restart(string $code_name): sql_db
 {
 
-    global $sc;
+    global $db_con;
 
     // link to database
     $db_con = new sql_db;

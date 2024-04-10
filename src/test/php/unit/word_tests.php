@@ -74,7 +74,7 @@ class word_tests
         $t->subheader('word sql read');
         $wrd = new word($usr);
         $t->assert_sql_by_id($sc, $wrd);
-        $t->assert_sql_by_name($db_con, $wrd);
+        $t->assert_sql_by_name($sc, $wrd);
         $this->assert_sql_formula_name($t, $db_con, $wrd);
 
         $t->subheader('word sql read default and user changes');
@@ -83,7 +83,7 @@ class word_tests
         $t->assert_sql_standard($sc, $wrd);
         $t->assert_sql_not_changed($db_con, $wrd);
         $t->assert_sql_user_changes($sc, $wrd);
-        $t->assert_sql_changing_users($db_con, $wrd);
+        $t->assert_sql_changing_users($sc, $wrd);
         $this->assert_sql_view($t, $db_con, $wrd);
 
         $t->subheader('word sql write');

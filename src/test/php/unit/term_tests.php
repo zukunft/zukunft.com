@@ -105,7 +105,7 @@ class term_tests
         // TODO use assert_load_sql_name for all named objects
         $trm = new term($usr);
         $t->assert_sql_by_id($sc, $trm);
-        $t->assert_sql_by_name($db_con, $trm);
+        $t->assert_sql_by_name($sc, $trm);
 
 
         $t->subheader('HTML frontend unit tests');

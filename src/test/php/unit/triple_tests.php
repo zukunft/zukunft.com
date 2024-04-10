@@ -40,8 +40,8 @@ class triple_tests
         $t->subheader('word sql read');
         $trp = new triple($usr);
         $t->assert_sql_by_id($sc, $trp);
-        $t->assert_sql_by_name($db_con, $trp);
-        $t->assert_sql_by_link($db_con, $trp);
+        $t->assert_sql_by_name($sc, $trp);
+        $t->assert_sql_by_link($sc, $trp);
         $this->assert_sql_by_name_generated($db_con, $trp, $t);
 
         // sql to load the triple by id

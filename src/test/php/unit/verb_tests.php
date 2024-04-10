@@ -67,8 +67,8 @@ class verb_tests
 
         $t->subheader('verb sql read');
         $t->assert_sql_by_id($sc, $vrb);
-        $t->assert_sql_by_name($db_con, $vrb);
-        $t->assert_sql_by_code_id($db_con, $vrb);
+        $t->assert_sql_by_name($sc, $vrb);
+        $t->assert_sql_by_code_id($sc, $vrb);
 
         $t->subheader('verb sql write');
         // TODO activate db write
@@ -99,7 +99,7 @@ class verb_tests
 
         // sql to load a list with all verbs
         $vrb_lst = new verb_list($usr);
-        $t->assert_sql_all($db_con, $vrb_lst);
+        $t->assert_sql_all($sc, $vrb_lst);
 
         // sql to load a verb list by phrase id and direction up
         $vrb_lst = new verb_list($usr);

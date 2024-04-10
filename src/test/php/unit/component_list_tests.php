@@ -60,8 +60,8 @@ class component_list_tests
 
         // load only the names
         $phr_lst = new component_list($usr);
-        $t->assert_sql_names($db_con, $phr_lst, new component($usr));
-        $t->assert_sql_names($db_con, $phr_lst, new component($usr), component_api::TN_READ);
+        $t->assert_sql_names($sc, $phr_lst, new component($usr));
+        $t->assert_sql_names($sc, $phr_lst, new component($usr), component_api::TN_READ);
 
         $cmp_lst = new component_list($usr);
         $this->assert_sql_by_view_id($t, $db_con, $cmp_lst);

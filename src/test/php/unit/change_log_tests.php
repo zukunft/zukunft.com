@@ -130,10 +130,10 @@ class change_log_tests
 
         $t->subheader('SQL statement tests');
         $log = new change($usr);
-        $t->assert_sql_by_user($db_con, $log);
+        $t->assert_sql_by_user($sc, $log);
 
         $log = new change_link($usr);
-        $t->assert_sql_by_user($db_con, $log);
+        $t->assert_sql_by_user($sc, $log);
 
         // sql to load the word by id
         $log_dsp = new user_log_display($usr);

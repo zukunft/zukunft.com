@@ -83,19 +83,19 @@ class phrase_list_tests
 
         // load by name pattern (expected to be most often used)
         $phr_lst = new phrase_list($usr);
-        $t->assert_sql_like($db_con, $phr_lst, 'S');
+        $t->assert_sql_like($sc, $phr_lst, 'S');
 
         // load by phrase ids
         $phr_lst = new phrase_list($usr);
         $phr_ids = new phr_ids(array(3, -2, 4, -7));
-        $t->assert_sql_by_ids($db_con, $phr_lst, $phr_ids);
+        $t->assert_sql_by_ids($sc, $phr_lst, $phr_ids);
         $this->assert_sql_names_by_ids($t, $db_con, $phr_lst, $phr_ids);
         $phr_names = array(word_api::TN_READ, triple_api::TN_READ);
         $t->assert_sql_by_names($db_con, $phr_lst, $phr_names);
 
         // to review
-        $t->assert_sql_names($db_con, $phr_lst, new phrase($usr));
-        $t->assert_sql_names($db_con, $phr_lst, new phrase($usr), triple_api::TN_READ);
+        $t->assert_sql_names($sc, $phr_lst, new phrase($usr));
+        $t->assert_sql_names($sc, $phr_lst, new phrase($usr), triple_api::TN_READ);
 
         $this->test = $t;
 
