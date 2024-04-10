@@ -36,6 +36,7 @@ namespace cfg\import;
 use api\verb\verb as verb_api;
 use cfg\export\export;
 use cfg\library;
+use cfg\phrase_list;
 use cfg\triple;
 use cfg\user;
 use DateTime;
@@ -158,7 +159,8 @@ class convert_wikipedia_table
      * @param user $usr the user how has initiated the convertion
      * @param string $timestamp the timestamp of the import
      * @param int $table_nbr position of the tbale that should be converted
-     * @param array $context a list of phrases that describes the context of the table
+     * @param string $context a json string with a phrase list for the import context
+     * @param array $context_array a list of phrases that describes the context of the table
      * @param string $row_name_wiki column name used to select the row name
      * @param string $row_name_out name for the row entry in the target json
      * @param string $col_name_wiki column name used to select the row name
@@ -169,7 +171,8 @@ class convert_wikipedia_table
         string $wiki_json,
         user   $usr,
         string $timestamp,
-        array  $context = [],
+        string $context = '',
+        array  $context_array = [],
         array  $exclude_col_names = [],
         int    $table_nbr = 0,
         string $row_name_wiki = '',
@@ -179,6 +182,11 @@ class convert_wikipedia_table
     ): string
     {
         global $verbs;
+
+        $phr_lst = new phrase_list($usr);
+        if ($context != '') {
+            $phr_lst->import_context(json_decode($context, true));
+        }
 
         $wiki_json = json_decode($wiki_json, true);
 
@@ -196,7 +204,7 @@ class convert_wikipedia_table
         $id_column = null;
 
         // add the context to the result
-        foreach ($context as $context_name) {
+        foreach ($context_array as $context_name) {
             $word_lst[] = $context_name;
         }
 
@@ -205,7 +213,7 @@ class convert_wikipedia_table
             $col_name_out = $col_name_wiki;
         }
         if ($col_name_out != '') {
-            $word_lst[] = $context[1] . ' ' . $col_name_out;
+            $word_lst[] = $context_array[1] . ' ' . $col_name_out;
         }
         if ($row_name_out != '') {
             $word_lst[] = $row_name_out;
@@ -328,7 +336,7 @@ class convert_wikipedia_table
                 $trp = [];
                 $trp[export::FROM] = $wiki_row[$pos_col];
                 $trp[export::VERB] = verb_api::TN_IS;
-                $trp[export::TO] = $context[1] . ' ' . $col_name_out;
+                $trp[export::TO] = $context_array[1] . ' ' . $col_name_out;
                 $triples[] = $trp;
 
                 $trp = [];

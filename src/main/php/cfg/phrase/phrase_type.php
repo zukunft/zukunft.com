@@ -64,6 +64,8 @@ class phrase_type extends type_object
     const TRIPLE_HIDDEN = "hidden_triple";
     const SYSTEM_HIDDEN = "hidden_system";
     const GROUP = "group";
+    const SYMBOL = "symbol"; // is expected to be a symbol e.g. used to preselect columns for table import
+    const RANK = "rank"; // is expected to be a ranking number e.g. used to preselect columns for table import
     const THIS = "this";
     const NEXT = "next";
     const PRIOR = "previous";

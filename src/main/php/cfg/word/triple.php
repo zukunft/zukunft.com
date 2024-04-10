@@ -1275,6 +1275,57 @@ class triple extends sandbox_link_typed implements JsonSerializable
         global $phrase_types;
 
         log_debug();
+
+        // set the object vars based on the json
+        $result = $this->import_obj_fill($in_ex_json, $test_obj);
+
+        // save the triple in the database
+        if (!$test_obj) {
+            if ($result->is_ok()) {
+                // remove unneeded given names
+                $this->set_names();
+                $result->add_message($this->save());
+            }
+        }
+
+        // add related parameters to the word object
+        if ($result->is_ok()) {
+            log_debug('saved ' . $this->dsp_id());
+
+            if (!$test_obj) {
+                if ($this->id() == 0) {
+                    $result->add_message('Triple ' . $this->dsp_id() . ' cannot be saved');
+                } else {
+                    foreach ($in_ex_json as $key => $value) {
+                        if ($result->is_ok()) {
+                            if ($key == self::FLD_REFS) {
+                                foreach ($value as $ref_data) {
+                                    $ref_obj = new ref($this->user());
+                                    $ref_obj->phr = $this->phrase();
+                                    $result->add($ref_obj->import_obj($ref_data, $test_obj));
+                                    $this->ref_lst[] = $ref_obj;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * set the vars of this triple object based on the given json without writing to the database
+     *
+     * @param array $in_ex_json an array with the data of the json object
+     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
+     * @return user_message
+     */
+    function import_obj_fill(array $in_ex_json, object $test_obj = null): user_message
+    {
+        global $phrase_types;
+
         $result = parent::import_obj($in_ex_json, $test_obj);
 
         foreach ($in_ex_json as $key => $value) {
@@ -1330,39 +1381,6 @@ class triple extends sandbox_link_typed implements JsonSerializable
                     $trp_view->set_name($value);
                 }
                 $this->view = $trp_view;
-            }
-        }
-
-        // save the triple in the database
-        if (!$test_obj) {
-            if ($result->is_ok()) {
-                // remove unneeded given names
-                $this->set_names();
-                $result->add_message($this->save());
-            }
-        }
-
-        // add related parameters to the word object
-        if ($result->is_ok()) {
-            log_debug('saved ' . $this->dsp_id());
-
-            if (!$test_obj) {
-                if ($this->id() == 0) {
-                    $result->add_message('Triple ' . $this->dsp_id() . ' cannot be saved');
-                } else {
-                    foreach ($in_ex_json as $key => $value) {
-                        if ($result->is_ok()) {
-                            if ($key == self::FLD_REFS) {
-                                foreach ($value as $ref_data) {
-                                    $ref_obj = new ref($this->user());
-                                    $ref_obj->phr = $this->phrase();
-                                    $result->add($ref_obj->import_obj($ref_data, $test_obj));
-                                    $this->ref_lst[] = $ref_obj;
-                                }
-                            }
-                        }
-                    }
-                }
             }
         }
 

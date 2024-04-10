@@ -68,7 +68,9 @@ class phrase_types extends type_list
         phrase_type::INFO,
         phrase_type::TRIPLE_HIDDEN,
         phrase_type::SYSTEM_HIDDEN,
-        phrase_type::GROUP
+        phrase_type::GROUP,
+        phrase_type::SYMBOL,
+        phrase_type::RANK
     );
 
     /**
