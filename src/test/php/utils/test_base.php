@@ -1492,15 +1492,14 @@ class test_base
      * check the SQL statements to load a list by name for all allowed SQL database dialects
      * similar to assert_sql_by_ids but for a name list
      *
-     * @param sql_db $db_con does not need to be connected to a real database
+     * @param sql $sc a sql creator object that can be empty
      * @param object $usr_obj the user sandbox object e.g. a word
      * @param array $names with the names of the objects that should be loaded
      * @return bool true if all tests are fine
      */
-    function assert_sql_by_names(sql_db $db_con, object $usr_obj, array $names): bool
+    function assert_sql_by_names(sql $sc, object $usr_obj, array $names): bool
     {
         // check the Postgres query syntax
-        $sc = $db_con->sql_creator();
         $sc->db_type = sql_db::POSTGRES;
         $qp = $usr_obj->load_sql_by_names($sc, $names);
         $result = $this->assert_qp($qp, $sc->db_type);
@@ -1517,15 +1516,14 @@ class test_base
     /**
      * check the SQL statements to load a group by phrase list for all allowed SQL database dialects
      *
-     * @param sql_db $db_con does not need to be connected to a real database
+     * @param sql $sc a sql creator object that can be empty
      * @param object $usr_obj the user sandbox object e.g. a word
      * @param phrase $phr with the names of the objects that should be loaded
      * @return bool true if all tests are fine
      */
-    function assert_sql_by_phrase(sql_db $db_con, object $usr_obj, phrase $phr): bool
+    function assert_sql_by_phrase(sql $sc, object $usr_obj, phrase $phr): bool
     {
         // check the Postgres query syntax
-        $sc = $db_con->sql_creator();
         $sc->db_type = sql_db::POSTGRES;
         $qp = $usr_obj->load_sql_by_phr($sc, $phr);
         $result = $this->assert_qp($qp, $sc->db_type);
@@ -1572,16 +1570,15 @@ class test_base
     /**
      * check the SQL statements to load a list of result by group
      *
-     * @param sql_db $db_con does not need to be connected to a real database
+     * @param sql $sc a sql creator object that can be empty
      * @param object $usr_obj the user sandbox object e.g. a word
      * @param group $grp with the phrase to select the results
      * @param bool $by_source set to true to force the selection e.g. by source phrase group id
      * @return bool true if all tests are fine
      */
-    function assert_sql_by_group(sql_db $db_con, object $usr_obj, group $grp, bool $by_source = false): bool
+    function assert_sql_by_group(sql $sc, object $usr_obj, group $grp, bool $by_source = false): bool
     {
         // check the Postgres query syntax
-        $sc = $db_con->sql_creator();
         $sc->db_type = sql_db::POSTGRES;
         if ($by_source) {
             $qp = $usr_obj->load_sql_by_src_grp($sc, $grp);
@@ -1636,15 +1633,14 @@ class test_base
     /**
      * check the SQL statements for loading a list of objects selected by the type in all allowed SQL database dialects
      *
-     * @param sql_db $db_con does not need to be connected to a real database
+     * @param sql $sc a sql creator object that can be empty
      * @param object $lst_obj the list object e.g. batch job list
      * @param string $type_code_id the type code id that should be used for the selection
      * @return bool true if all tests are fine
      */
-    function assert_sql_list_by_type(sql_db $db_con, object $lst_obj, string $type_code_id): bool
+    function assert_sql_list_by_type(sql $sc, object $lst_obj, string $type_code_id): bool
     {
         // check the Postgres query syntax
-        $sc = $db_con->sql_creator();
         $sc->db_type = sql_db::POSTGRES;
         $qp = $lst_obj->load_sql_by_type($sc, $type_code_id, $lst_obj::class);
         $result = $this->assert_qp($qp, $sc->db_type);

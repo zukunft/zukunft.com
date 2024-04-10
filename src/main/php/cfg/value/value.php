@@ -1463,6 +1463,7 @@ class value extends sandbox_value
         $tbl_typ = $this->grp->table_type();
         $ext = $this->grp->table_extension();
         $db_con->set_class(self::class, false, $tbl_typ->extension());
+        $sc = $db_con->sql_creator();
         return $db_con->load_sql_not_changed_multi($this->id, $this->owner_id, $this->id_field(), $ext, $tbl_typ);
     }
 

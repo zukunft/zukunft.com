@@ -61,7 +61,7 @@ class group_list_tests
         $grp_lst = new group_list($usr);
         $t->assert_sql_by_ids($sc, $grp_lst, array(3,2,4));
         $t->assert_sql_names_by_ids($sc, $grp_lst, array(3,2,4));
-        $t->assert_sql_by_phrase($db_con, $grp_lst, $t->word()->phrase());
+        $t->assert_sql_by_phrase($sc, $grp_lst, $t->word()->phrase());
 
     }
 

@@ -744,13 +744,14 @@ class sandbox_value extends sandbox_multi
      */
     function load_sql_changer(sql $sc): sql_par
     {
-        $tbl_typ = $this->grp->table_type();
-        $qp = new sql_par($this::class, [$tbl_typ, sql_type::COMPLETE]);
+        $sc_par_lst = [sql_type::COMPLETE, sql_type::USER];
+        $sc_par_lst[] = $this->grp->table_type();
+        $qp = new sql_par($this::class, $sc_par_lst);
         $qp->name .= 'changer';
         if ($this->owner_id > 0) {
             $qp->name .= '_ex_owner';
         }
-        $sc->set_class($this::class, [sql_type::USER], $tbl_typ->extension());
+        $sc->set_class($this::class, $sc_par_lst);
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
         // overwrite the standard id field because e.g. prime values have a combined id field
@@ -760,7 +761,6 @@ class sandbox_value extends sandbox_multi
         $sc->add_where(sandbox::FLD_EXCLUDED, 1, sql_par_type::INT_NOT_OR_NULL);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
-        $qp->ext = $tbl_typ->extension();
 
         return $qp;
     }

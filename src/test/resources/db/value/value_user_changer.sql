@@ -1,4 +1,4 @@
-PREPARE value_changer (text, bigint) AS
+PREPARE value_user_changer (text, bigint) AS
     SELECT group_id,
            user_id
       FROM user_values

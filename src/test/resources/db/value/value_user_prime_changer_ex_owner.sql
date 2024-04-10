@@ -1,4 +1,4 @@
-PREPARE value_prime_changer_ex_owner (bigint, bigint, bigint, bigint, bigint) AS
+PREPARE value_user_prime_changer_ex_owner (bigint, bigint, bigint, bigint, bigint) AS
     SELECT phrase_id_1,
            phrase_id_2,
            phrase_id_3,

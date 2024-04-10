@@ -76,8 +76,8 @@ class result_list_tests
 
         $grp = new group($usr);
         $grp->set_id(2);
-        $t->assert_sql_by_group($db_con, $res_lst, $grp);
-        $t->assert_sql_by_group($db_con, $res_lst, $grp, true);
+        $t->assert_sql_by_group($sc, $res_lst, $grp);
+        $t->assert_sql_by_group($sc, $res_lst, $grp, true);
 
         // sql to load a list of results by the phrase group id
         $res_lst = new result_list($usr);

@@ -91,7 +91,7 @@ class phrase_list_tests
         $t->assert_sql_by_ids($sc, $phr_lst, $phr_ids);
         $this->assert_sql_names_by_ids($t, $db_con, $phr_lst, $phr_ids);
         $phr_names = array(word_api::TN_READ, triple_api::TN_READ);
-        $t->assert_sql_by_names($db_con, $phr_lst, $phr_names);
+        $t->assert_sql_by_names($sc, $phr_lst, $phr_names);
 
         // to review
         $t->assert_sql_names($sc, $phr_lst, new phrase($usr));
