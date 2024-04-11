@@ -112,6 +112,7 @@ use cfg\user_profile_list;
 use cfg\verb_list;
 use cfg\view_sys_list;
 use cfg\view_type_list;
+use local_ui_tests;
 use test\all_tests;
 use test\test_cleanup;
 use unit\html\change_log as change_log_html_tests;
@@ -332,6 +333,8 @@ class all_unit_tests extends test_cleanup
         (new sys_log_html_tests)->run($this);
         (new job_html_tests)->run($this);
         (new system_views_html_tests)->run($this);
+
+        (new local_ui_tests())->run($this);
 
         // restore the global vars
         $db_con = $global_db_con;

@@ -567,6 +567,7 @@ const DEBUG_SHOW_USER = 10; // starting from this debug level the user should be
 
 const SRC_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR;
 const MAIN_PATH = SRC_PATH . 'main' . DIRECTORY_SEPARATOR;
+const PHP_PATH = MAIN_PATH . 'php' . DIRECTORY_SEPARATOR;
 const MODEL_PATH = PHP_PATH . 'cfg' . DIRECTORY_SEPARATOR; // path of the main model objects for db saving, api feed and processing
 const DB_LINK_PATH = ROOT_PATH . 'db_link' . DIRECTORY_SEPARATOR;
 const DB_PATH = MODEL_PATH . 'db' . DIRECTORY_SEPARATOR;

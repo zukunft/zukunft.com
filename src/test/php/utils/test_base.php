@@ -252,6 +252,7 @@ include_once $path_unit_read . 'export_tests.php';
 
 
 // load the testing functions for creating JSON messages for the frontend code
+include_once $path_unit_ui . 'local_ui_tests.php';
 include_once $path_unit_ui . 'test_formula_ui.php';
 include_once $path_unit_ui . 'test_word_ui.php';
 include_once $path_unit_ui . 'value_test_ui.php';

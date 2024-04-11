@@ -2,8 +2,9 @@
 
 /*
 
-    about.php - display the legal information
-    ---------
+    test/php/unit_ui/local_ui_tests.php - test if some key page are working on localhost
+    -----------------------------------
+  
 
     This file is part of zukunft.com - calc with words
 
@@ -22,29 +23,29 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2024 zukunft.com AG, Zurich
+    Copyright (c) 1995-2022 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
-  
+
 */
 
-// standard zukunft header for callable php files to allow debugging and lib loading
-use html\html_base;
+use test\test_cleanup;
 
-$debug = $_GET['debug'] ?? 0;
-const ROOT_PATH = __DIR__ . '/../';
-include_once ROOT_PATH . 'src/main/php/zu_lib.php';
-if ($debug > 0) {
-    echo 'libs loaded<br>';
+class local_ui_tests
+{
+
+    function run(test_cleanup $t): void
+    {
+
+        $t->header('test local ui');
+
+        $t->subheader('check about page e.g. to check the library');
+
+        $test_name = 'check about page e.g. to check the library';
+        $result = file_get_contents('http://localhost/http/about.php');
+        $target = 'zukunft.com AG';
+        $t->assert_text_contains($test_name, $result, $target);
+
+    }
 }
-
-// open database 
-$db_con = prg_start("about", "center_form", false);
-
-// display the view
-$html = new html_base();
-echo $html->about();
-
-// close the database  
-prg_end_api($db_con);
