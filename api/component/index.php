@@ -29,11 +29,6 @@
   
 */
 
-use api\component\component as component_api;
-use cfg\component\component;
-use cfg\user;
-use controller\controller;
-
 // standard zukunft header for callable php files to allow debugging and lib loading
 global $debug;
 $debug = $_GET['debug'] ?? 0;
@@ -47,6 +42,11 @@ include_once API_PATH . 'api_message.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_COMPONENT_PATH . 'component.php';
 include_once API_VIEW_PATH . 'view_cmp.php';
+
+use api\component\component as component_api;
+use cfg\component\component;
+use cfg\user;
+use controller\controller;
 
 // open database
 $db_con = prg_start("api/component", "", false);

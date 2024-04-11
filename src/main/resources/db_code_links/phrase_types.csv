@@ -25,3 +25,4 @@ phrase_type_id, type_name, description, code_id, scaling_factor, word_symbol
 24, 'group and select', 'words used to group and select other words to shorten the selection', 'group', NULL, ''
 25, 'symbol', 'words that indicate e.g. that a table column contains a symbol', 'symbol', NULL, ''
 26, 'rank', 'words that indicate e.g. that a table column contains a ranking number', 'rank', NULL, ''
+27, 'ignore', 'words that indicate e.g. to set column names to be excluded from the import', 'ignore', NULL, ''

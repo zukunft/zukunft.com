@@ -29,11 +29,6 @@
   
 */
 
-use controller\controller;
-use cfg\user;
-use cfg\view;
-use api\view\view as view_api;
-
 // standard zukunft header for callable php files to allow debugging and lib loading
 global $debug;
 $debug = $_GET['debug'] ?? 0;
@@ -47,6 +42,11 @@ include_once API_PATH . 'api_message.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_VIEW_PATH . 'view.php';
 include_once API_VIEW_PATH . 'view.php';
+
+use controller\controller;
+use cfg\user;
+use cfg\view;
+use api\view\view as view_api;
 
 // open database
 $db_con = prg_start("api/view", "", false);

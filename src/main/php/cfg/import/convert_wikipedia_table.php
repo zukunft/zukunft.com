@@ -174,7 +174,7 @@ class convert_wikipedia_table
         string $timestamp,
         string $context = '',
         array  $context_array = [],
-        array  $exclude_col_names = [],
+        array  $exclude_col_names_in = [],
         int    $table_nbr = 0,
         string $row_name_wiki = '',
         string $row_name_out = '',
@@ -186,11 +186,16 @@ class convert_wikipedia_table
 
         // create context for assumptions
         $list_of_symbols = []; // if a row contains a symbol and a name they are usually linked
+        $rank_names = []; // list of phrase names that indicate a columns that contains a rank with should not be included in the result
+        $ignore_names = []; // list of phrase names that indicate a columns should not be included in the result
         $phr_lst = new phrase_list($usr);
         if ($context != '') {
             $phr_lst->import_context(json_decode($context, true));
             $list_of_symbols = $phr_lst->get_names_by_type(phrase_type::SYMBOL);
+            $rank_names = $phr_lst->get_names_by_type(phrase_type::RANK);
+            $ignore_names = $phr_lst->get_names_by_type(phrase_type::IGNORE);
         }
+        $exclude_col_names = array_merge($rank_names, $ignore_names);
 
 
         $wiki_json = json_decode($wiki_json, true);

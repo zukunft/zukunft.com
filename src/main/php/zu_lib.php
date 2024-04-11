@@ -567,12 +567,12 @@ const DEBUG_SHOW_USER = 10; // starting from this debug level the user should be
 
 const SRC_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR;
 const MAIN_PATH = SRC_PATH . 'main' . DIRECTORY_SEPARATOR;
-const PHP_PATH = MAIN_PATH . 'php' . DIRECTORY_SEPARATOR;
-const MODEL_PATH = PHP_PATH . 'cfg' . DIRECTORY_SEPARATOR; // path of the main model objects for db saving, api feed and processing
+const PHP_PATH_LIB = MAIN_PATH . 'php' . DIRECTORY_SEPARATOR; // recreation of the PHP_PATH for library use only
+const MODEL_PATH = PHP_PATH_LIB . 'cfg' . DIRECTORY_SEPARATOR; // path of the main model objects for db saving, api feed and processing
 const DB_LINK_PATH = ROOT_PATH . 'db_link' . DIRECTORY_SEPARATOR;
 const DB_PATH = MODEL_PATH . 'db' . DIRECTORY_SEPARATOR;
-const UTIL_PATH = PHP_PATH . 'utils' . DIRECTORY_SEPARATOR;
-const SERVICE_PATH = PHP_PATH . 'service' . DIRECTORY_SEPARATOR;
+const UTIL_PATH = PHP_PATH_LIB . 'utils' . DIRECTORY_SEPARATOR;
+const SERVICE_PATH = PHP_PATH_LIB . 'service' . DIRECTORY_SEPARATOR;
 const MODEL_IMPORT_PATH = MODEL_PATH . 'import' . DIRECTORY_SEPARATOR;
 const SERVICE_EXPORT_PATH = SERVICE_PATH . 'export' . DIRECTORY_SEPARATOR;
 const EXPORT_PATH = MODEL_PATH . 'export' . DIRECTORY_SEPARATOR;
@@ -595,7 +595,7 @@ const MODEL_FORMULA_PATH = MODEL_PATH . 'formula' . DIRECTORY_SEPARATOR;
 const MODEL_RESULT_PATH = MODEL_PATH . 'result' . DIRECTORY_SEPARATOR;
 const MODEL_VIEW_PATH = MODEL_PATH . 'view' . DIRECTORY_SEPARATOR;
 const MODEL_COMPONENT_PATH = MODEL_PATH . 'component' . DIRECTORY_SEPARATOR;
-const API_PATH = PHP_PATH . 'api' . DIRECTORY_SEPARATOR; // path of the api objects for the message creation to the frontend
+const API_PATH = PHP_PATH_LIB . 'api' . DIRECTORY_SEPARATOR; // path of the api objects for the message creation to the frontend
 const API_SANDBOX_PATH = API_PATH . 'sandbox' . DIRECTORY_SEPARATOR;
 const API_SYSTEM_PATH = API_PATH . 'system' . DIRECTORY_SEPARATOR;
 const API_USER_PATH = API_PATH . 'user' . DIRECTORY_SEPARATOR;
@@ -610,7 +610,7 @@ const API_RESULT_PATH = API_PATH . 'result' . DIRECTORY_SEPARATOR;
 const API_VIEW_PATH = API_PATH . 'view' . DIRECTORY_SEPARATOR;
 const API_COMPONENT_PATH = API_PATH . 'component' . DIRECTORY_SEPARATOR;
 const API_REF_PATH = API_PATH . 'ref' . DIRECTORY_SEPARATOR;
-const WEB_PATH = PHP_PATH . 'web' . DIRECTORY_SEPARATOR; // path of the pure html frontend objects
+const WEB_PATH = PHP_PATH_LIB . 'web' . DIRECTORY_SEPARATOR; // path of the pure html frontend objects
 const WEB_LOG_PATH = WEB_PATH . 'log' . DIRECTORY_SEPARATOR;
 const WEB_USER_PATH = WEB_PATH . 'user' . DIRECTORY_SEPARATOR;
 const WEB_SYSTEM_PATH = WEB_PATH . 'system' . DIRECTORY_SEPARATOR;
@@ -716,7 +716,7 @@ include_once MODEL_VIEW_PATH . 'view_sys_list.php';
 include_once SERVICE_MATH_PATH . 'calc_internal.php';
 
 // settings
-include_once PHP_PATH . 'application.php';
+include_once PHP_PATH_LIB . 'application.php';
 
 // potentially to be loaded by composer
 //include_once $path_php . 'utils/json-diff/JsonDiff.php';

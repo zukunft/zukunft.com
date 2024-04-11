@@ -193,6 +193,12 @@
         "code_id": "rank",
         "description": "words that indicate e.g. that a table column contains a ranking number",
         "id": 26
+      },
+      {
+        "name": "ignore",
+        "code_id": "ignore",
+        "description": "words that indicate e.g. to set column names to be excluded from the import",
+        "id": 27
       }
     ],
     "formula_types": [
