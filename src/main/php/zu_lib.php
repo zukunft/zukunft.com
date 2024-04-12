@@ -90,6 +90,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
          load, im- and export, filter, modify, check, save, del
 
     after that this should be done while keeping step 1. to 4. for each commit:
+    TODO check that all relevant vars are forwarded from the backend object to the api and display object
     TODO add a system execution time measurment that covers e.g. the import of words (values, ...) ber second
     TODO validate the import bevor staring the import e.g. check if a triple has always from, verb and to
     TODO create a word-list for import where just the names are listed without further indications

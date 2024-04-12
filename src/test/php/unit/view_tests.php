@@ -137,8 +137,14 @@ class view_tests
 
         $dsp = $t->dummy_view_with_components();
         $t->assert_api($dsp, 'view_with_components');
-        // TODO activate Prio 1
-        //$t->assert_api_to_dsp($dsp, new view_dsp());
+        $t->assert_api_to_dsp($dsp, new view_dsp());
+
+        $test_name = 'view dsp create from json string';
+        $json = '{"id":1,"name":"Word","description":"the default view for words","code_id":"word"}';
+        $msk_dsp = new view_dsp($json);
+        $dsp_text = $msk_dsp->display();
+        $target = 'Word';
+        $t->assert($test_name, $dsp_text, $target);
 
 
         /*

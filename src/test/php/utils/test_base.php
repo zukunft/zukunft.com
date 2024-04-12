@@ -483,12 +483,15 @@ class test_base
      */
     function assert_empty(
         string $msg,
-        string $err_message): bool
+        string $err_message,
+        string $result_str = '',
+        string $target_str = ''
+    ): bool
     {
         if ($err_message == '') {
             return true;
         } else {
-            return $this->assert_dsp($msg, false, $err_message, '');
+            return $this->assert_dsp($msg . $err_message, false, $target_str, $result_str, $err_message);
         }
     }
 
@@ -788,10 +791,9 @@ class test_base
         if (!$lib->json_is_similar($result, $target)) {
             $diff = $lib->diff_msg($result, $target);
         }
-        // TODO remove after development is complete
         $result_str = json_encode($result);
         $target_str = json_encode($target);
-        return $this->assert_empty($test_name, $diff);
+        return $this->assert_empty($test_name, $diff, $result_str, $target_str);
     }
 
     /**

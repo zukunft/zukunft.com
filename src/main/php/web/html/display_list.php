@@ -32,10 +32,13 @@
   
 */
 
-use html\api;
-use html\html_base;
+namespace html;
 
-class dsp_list extends html_base
+include_once WEB_HTML_PATH . 'html_base.php';
+
+use cfg\library;
+
+class display_list extends html_base
 {
 
     // the parameters

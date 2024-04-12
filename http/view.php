@@ -2,7 +2,7 @@
 
 /*
 
-    view.php - create the final HTML code to display a zukunft.com view
+    view.php - create the HTML code to display a zukunft.com view
     --------
 
     - the view contains the overall formatting like page size
@@ -37,14 +37,19 @@
 // to allow debugging of errors in the library that only appear on the server
 $debug = $_GET['debug'] ?? 0;
 // get the root path from the path of this file (relative path)
-const ROOT_PATH = __DIR__ . '/../';
+const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 // set the other path once for all scripts
-include_once ROOT_PATH . 'src/main/php/zu_lib.php';
+const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
+// load once the common const and vars used almost every time
+include_once PHP_PATH . 'zu_lib.php';
 
 // load what is used here
 include_once API_PATH . 'controller.php';
 include_once WEB_HTML_PATH . 'api.php';
 include_once WEB_VIEW_PATH . 'view.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_VIEW_PATH . 'view.php';
+include_once MODEL_WORD_PATH . 'word.php';
 
 use controller\controller;
 use html\api;
@@ -60,8 +65,7 @@ global $system_views;
 
 $result = ''; // reset the html code var
 $msg = ''; // to collect all messages that should be shown to the user immediately
-//$back = $_GET[controller::API_BACK] ?? ''; // the word id from which this value change has been called (maybe later any page)
-$back = $_GET['back'] ?? ''; // the word id from which this value change has been called (maybe later any page)
+$back = $_GET[controller::API_BACK] ?? ''; // the word id from which this value change has been called (maybe later any page)
 
 // load the session user parameters
 $usr = new user;
@@ -107,7 +111,6 @@ if ($usr->id() > 0) {
                 }
             }
         }
-        echo '$view_idf "' . $view_id . '"';
 
         // create a display object, select and load the view and display the word according to the view
         if ($view_id > 0) {

@@ -97,7 +97,7 @@ Decisions
 Naming conventions for vars:
 ---------------------------
 
-backend
+backend - main
 - wrd (WoRD)               - a word that is used as a subject or object in a resource description framework (RDF / "triple") graph
 and used to retrieve the numeric values
 - val (VALue)              - a numeric value that can be used for calculations
@@ -106,6 +106,7 @@ which can be either in the usr (USeR) format with real words
 or in the db (DataBase) format with database id references
 or in the math (MATHematical) format, which should contain only numeric values
 
+backend - core
 - vrb (VeRB)               - a predicate (mostly just a verb) that defines the type of links two words;
 by default a verb can be used forward and backward e.g. ABB is a company and companies are ABB, ...
 if the reverse name is empty, the verb can only be used the forward way
@@ -121,30 +122,32 @@ verbs are also named as triples
 - elm (ELeMents)           - a structured reference for terms, verbs or formulas mostly used for formula elements (cancel? replace with term?)
 - res (RESult)             - the calculated number of a formula
 - fig (FIGure)             - either a value set by the user or a calculated formula result
+- src (SouRCe)             - url or description where a value is taken from
+- ref (REFerence)          - url with and external unique id to sync data with external systems
+- msk (MaSK)               - a view that is shown to the user (dsp - DiSPlay until now)
+- cmp (CoMPonent)          - one part of a view so a kind of view component (ex view entry)
+
+backend - admin
 - usr (USeR)               - the person who is logged in
 - log                      - to save all changes in a user readable format
-- src (SouRCe)             - url or description where a value is taken from
 
+backend - internal
+- dsl (DSp cmp Link)       - link of a view component to a view
 - sbx (SandBoX)            - the user sandbox tables where the adjustments of the users are saved
 - uso (User Sbx Object)    - an object (word, value, formula, ...) that uses the user sandbox
 (useless?)
 - id (IDentifier)          - internal prime key of a database row
 - ids (IDentifierS)        - an simple array of database table IDs (ids_txt is the text / imploded version of the ids array)
 - lst (LiST)               - an array of objects
-- dsp (DiSPlay)            - a view/mask that is shown to the user
-- cmp (CoMPonent)          - one part of a view so a kind of view component (ex view entry)
-- dsl (DSp cmp Link)       - link of a view component to a view
 - cl (Code Link)           - a text used to identify one predefined database entry that triggers to use of some program code
 - sf (Sql Format)          - to convert a text for the database
+- sc (Sql Creator)         - for writing SQL statements
 
 object extensions
 - _min (MINimal)           - the minimal object used for the frontend API and only valid for the session user
 - _exp (EXPort)            - the export object that does not have any internal database references
 - _dsp (DiSPlay)           - to create the HTML code to display the object
 - _min_dsp                 - the display object based on the API object instead of the backend object
-
-internal
-- sc (Sql Creator)         - for writing SQL statements
 
 frontend:
 - ui (UserInterface)       - the definition of the user interface, mainly used to display either the JavaScript based single page design, the bootstrap based HTML design, the design based on pure HTML code or a pure text output for testing
@@ -159,8 +162,8 @@ a view object or a function that return HTML code that can be displayed
 to be deprecated:
 - glst (Get LiST)          - is used to name the private internal functions that can also create the user list
 - ulst (User LiST)         - an array of objects that should be shown to the user, so like lst, but without the objects exclude by the user
-  the user list should only be used to display something and never for checking if an item exists
-  this is the short for for sbx_lst
+  the list should only be used to display something and never for checking if an item exists
+  this is the short for the sbx_lst
 
 
 database change setup

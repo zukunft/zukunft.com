@@ -63,6 +63,7 @@ class api
     const FLD_PHRASES = 'phrases';
     const FLD_COMPONENTS = 'components';
     const FLD_POSITION = 'position';
+    const FLD_LINK_ID = 'link_id';
 
     // object fields
     const FLD_NUMBER = 'number'; // a float number used for values and results

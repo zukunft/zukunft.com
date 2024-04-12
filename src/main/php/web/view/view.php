@@ -35,6 +35,17 @@
 namespace html\view;
 
 include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
+include_once API_PATH . 'api.php';
+include_once API_COMPONENT_PATH . 'component.php';
+include_once MODEL_COMPONENT_PATH . 'component.php';
+include_once MODEL_DB_PATH . 'sql_db.php';
+include_once MODEL_HELPER_PATH . 'library.php';
+include_once MODEL_VIEW_PATH . 'view_list.php';
+include_once MODEL_VIEW_PATH . 'view_type.php';
+include_once MODEL_WORD_PATH . 'word.php';
+include_once WEB_HTML_PATH . 'display_list.php';
+include_once WEB_COMPONENT_PATH . 'component.php';
+include_once WEB_COMPONENT_PATH . 'component_list.php';
 include_once WEB_WORD_PATH . 'word.php';
 
 use api\api;
@@ -45,7 +56,7 @@ use cfg\library;
 use cfg\view_list;
 use cfg\view_type;
 use cfg\word;
-use dsp_list;
+use html\display_list;
 use html\component\component as component_dsp;
 use html\component\component_list as component_list_dsp;
 use controller\controller;
@@ -713,7 +724,7 @@ class view extends sandbox_typed
             log_err('Loading of view components for ' . $this->dsp_id() . ' failed');
         } else {
             log_debug('loaded');
-            $dsp_list = new dsp_list;
+            $dsp_list = new display_list;
             $dsp_list->lst = $this->cmp_lst->lst();
             $dsp_list->id_field = component::FLD_ID;
             $dsp_list->script_name = "view_edit.php";
