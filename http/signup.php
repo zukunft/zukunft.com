@@ -30,16 +30,16 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
-use html\html_base;
-use cfg\sandbox;
-use cfg\db\sql_db;
-use cfg\user;
-
+global $debug;
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
-include_once ROOT_PATH . 'src/main/php/zu_lib.php';
+const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
+include_once PHP_PATH . 'zu_lib.php';
 
-// open database 
+use html\html_base;
+use cfg\user;
+
+// open database
 $db_con = prg_start("signup", "center_form");
 $html = new html_base();
 

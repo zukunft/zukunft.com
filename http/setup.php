@@ -9,14 +9,14 @@
 */
 
 // standard start for all php code that can be called
-use cfg\db\db_check;
-use cfg\phrase_type;
-use controller\controller;
-use cfg\user;
-
-if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
+global $debug;
+$debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
-include_once ROOT_PATH . 'src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
+const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
+include_once PHP_PATH . 'zu_lib.php';
+
+use cfg\db\db_check;
+use cfg\user;
 
 /*
 

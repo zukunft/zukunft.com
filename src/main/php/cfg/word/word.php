@@ -1328,7 +1328,9 @@ class word extends sandbox_typed
         $qp = $this->view_sql($db_con);
         $db_row = $db_con->get1($qp);
         if (isset($db_row)) {
-            $view_id = $db_row[self::FLD_VIEW];
+            if ($db_row[self::FLD_VIEW] != null) {
+                $view_id = $db_row[self::FLD_VIEW];
+            }
         }
 
         log_debug('for ' . $this->dsp_id() . ' got ' . $view_id);

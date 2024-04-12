@@ -88,6 +88,13 @@ class word_tests
         $wrd = $t->load_word(word_api::TN_READ, $t->usr1);
         $t->assert_api_obj($wrd);
 
+        $t->subheader('Word frontend tests');
+
+        $test_name = 'get the most useful view for a word';
+        $wrd = $t->load_word(word_api::TN_READ, $t->usr1);
+        $dsp_id = $wrd->calc_view_id();
+        $t->assert($test_name, $dsp_id, 1);
+
 
         $t->header('Unit database tests of the word list class (src/main/php/model/word/word_list.php)');
         $t->name = 'word list read db->';

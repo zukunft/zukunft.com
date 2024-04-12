@@ -34,6 +34,18 @@
 */
 
 // for callable php files the standard zukunft.com header to load all classes and allow debugging
+// to allow debugging of errors in the library that only appear on the server
+$debug = $_GET['debug'] ?? 0;
+// get the root path from the path of this file (relative path)
+const ROOT_PATH = __DIR__ . '/../';
+// set the other path once for all scripts
+include_once ROOT_PATH . 'src/main/php/zu_lib.php';
+
+// load what is used here
+include_once API_PATH . 'controller.php';
+include_once WEB_HTML_PATH . 'api.php';
+include_once WEB_VIEW_PATH . 'view.php';
+
 use controller\controller;
 use html\api;
 use html\view\view as view_dsp;
@@ -41,18 +53,15 @@ use cfg\user;
 use cfg\view;
 use cfg\word;
 
-$debug = $_GET['debug'] ?? 0;
-const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
-include_once ROOT_PATH . 'src/main/php/zu_lib.php';
-
-// open database 
+// open database
 $db_con = prg_start("view");
 
 global $system_views;
 
 $result = ''; // reset the html code var
 $msg = ''; // to collect all messages that should be shown to the user immediately
-$back = $_GET[controller::API_BACK]; // the word id from which this value change has been called (maybe later any page)
+//$back = $_GET[controller::API_BACK] ?? ''; // the word id from which this value change has been called (maybe later any page)
+$back = $_GET['back'] ?? ''; // the word id from which this value change has been called (maybe later any page)
 
 // load the session user parameters
 $usr = new user;
@@ -63,10 +72,12 @@ if ($usr->id() > 0) {
 
     $usr->load_usr_data();
 
+    $view_words = $_GET[api::PAR_VIEW_WORDS] ?? '';
+
     // get the word(s) to display
     // TODO replace it with phrase
     $wrd = new word($usr);
-    if (isset($_GET[api::PAR_VIEW_WORDS])) {
+    if ($view_words != '') {
         $wrd->main_wrd_from_txt($_GET[api::PAR_VIEW_WORDS]);
     } else {
         // get last word used by the user or a default value
@@ -76,14 +87,14 @@ if ($usr->id() > 0) {
     // select the view
     if ($wrd->id() > 0) {
         // if the user has changed the view for this word, save it
-        if (isset($_GET['new_id'])) {
-            $view_id = $_GET['new_id'];
-            $wrd->save_view($view_id);
+        $new_view_id = $_GET[api::PAR_VIEW_NEW_ID] ?? '';
+        if ($new_view_id != '') {
+            $wrd->save_view($new_view_id);
+            $view_id = $new_view_id;
         } else {
             // if the user has selected a special view, use it
-            if (isset($_GET['view'])) {
-                $view_id = $_GET['view'];
-            } else {
+            $view_id = $_GET[api::PAR_VIEW_ID] ?? '';
+            if ($view_id == '') {
                 // if the user has set a view for this word, use it
                 $view_id = $wrd->view_id();
                 if ($view_id <= 0) {
@@ -96,6 +107,7 @@ if ($usr->id() > 0) {
                 }
             }
         }
+        echo '$view_idf "' . $view_id . '"';
 
         // create a display object, select and load the view and display the word according to the view
         if ($view_id > 0) {

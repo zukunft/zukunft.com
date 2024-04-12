@@ -84,6 +84,8 @@ class api
     const PAR_LOG_STATUS = 'status'; // to set the status of a log entry
     const PAR_VIEW_SOURCES = 'sources';  // to select the formulas that should be display
     const PAR_VIEW_LANGUAGES = 'languages';  // to select the formulas that should be display
+    const PAR_VIEW_NEW_ID = 'new_id'; // if the user has changed the view for this word, save it
+    const PAR_VIEW_ID = 'view'; // if the user has selected a special view, use it
 
     // styles used
     const STYLE_GREY = 'grey';
