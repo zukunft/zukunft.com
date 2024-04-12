@@ -39,7 +39,7 @@ use html\component\component as component_dsp;
 use controller\controller;
 use html\button;
 use html\html_base;
-use html\msg;
+use html\system\messages;
 use test\all_tests;
 
 function run_display_test(all_tests $t): void
@@ -81,25 +81,25 @@ function run_display_test(all_tests $t): void
     $back = '1';
     $target = '<a href="/http/word_add.php" title="Add test"><img src="/src/main/resources/images/button_add.svg" alt="Add test"></a>';
     $target = '<a href="/http/word_add.php" title="add new word">';
-    $result = (new button($url, $back))->add(msg::WORD_ADD);
+    $result = (new button($url, $back))->add(messages::WORD_ADD);
     $t->dsp_contains(", btn_add", $target, $result);
 
     $url = $html->url(controller::DSP_WORD_EDIT);
     $target = '<a href="/http/view.php" title="Edit test"><img src="/src/main/resources/images/button_edit.svg" alt="Edit test"></a>';
     $target = '<a href="/http/word_edit.php" title="rename word"><i class="far fa-edit"></i></a>';
-    $result = (new button($url, $back))->edit(msg::WORD_EDIT);
+    $result = (new button($url, $back))->edit(messages::WORD_EDIT);
     $t->dsp_contains(", btn_edit", $target, $result);
 
     $url = $html->url(controller::DSP_WORD_DEL);
     $target = '<a href="/http/view.php" title="Del test"><img src="/src/main/resources/images/button_del.svg" alt="Del test"></a>';
     $target = '<a href="/http/word_del.php" title="Delete word"><i class="far fa-times-circle"></i></a>';
-    $result = (new button($url, $back))->del(msg::WORD_DEL);
+    $result = (new button($url, $back))->del(messages::WORD_DEL);
     $t->dsp_contains(", btn_del", $target, $result);
 
     $url = $html->url(controller::DSP_WORD);
     $target = '<a href="/http/view.php" title="Undo test"><img src="/src/main/resources/images/button_undo.svg" alt="Undo test"></a>';
     $target = '<a href="/http/word.php" title="undo"><img src="/src/main/resources/images/button_undo.svg" alt="undo"></a>';
-    $result = (new button($url, $back))->undo(msg::UNDO);
+    $result = (new button($url, $back))->undo(messages::UNDO);
     $t->display(", btn_undo", $target, $result);
 
     $url = $html->url(controller::DSP_WORD_ADD);

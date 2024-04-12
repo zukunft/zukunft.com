@@ -38,8 +38,8 @@ use html\api;
 use html\button;
 use html\html_base;
 use html\html_selector;
-use html\msg;
 use html\phrase\phrase_list as phrase_list_dsp;
+use html\system\messages;
 use html\word\word as word_dsp;
 use html\phrase\phrase as phrase_dsp;
 use html\sandbox\sandbox_typed;
@@ -288,7 +288,7 @@ class triple extends sandbox_typed
 
         $html = new html_base();
         $url = $html->url(api::PATH_FIXED . 'link' . api::CREATE . api::EXT, $this->id, $this->id);
-        $btn = (new button($url. $back))->edit(msg::TRIPLE_ADD);
+        $btn = (new button($url. $back))->edit(messages::TRIPLE_ADD);
 
         return $html->td($btn);
     }
@@ -301,7 +301,7 @@ class triple extends sandbox_typed
 
         $html = new html_base();
         $url = $html->url(api::PATH_FIXED . 'link' . api::UPDATE . api::EXT, $this->id, $trp->id());
-        $btn = (new button($url. $back))->edit(msg::TRIPLE_EDIT);
+        $btn = (new button($url. $back))->edit(messages::TRIPLE_EDIT);
 
         return $html->td($btn);
     }

@@ -47,7 +47,7 @@ use html\api as api_dsp;
 use html\button;
 use html\combine_named_dsp;
 use html\html_base;
-use html\msg;
+use html\system\messages;
 use html\word\word as word_dsp;
 use html\word\triple as triple_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
@@ -248,10 +248,10 @@ class phrase extends combine_named_dsp
     {
         if ($this->is_word()) {
             $obj_name = api_dsp::WORD;
-            $ui_msg_id = msg::WORD_DEL;
+            $ui_msg_id = messages::WORD_DEL;
         } else {
             $obj_name = api_dsp::TRIPLE;
-            $ui_msg_id = msg::TRIPLE_DEL;
+            $ui_msg_id = messages::TRIPLE_DEL;
         }
         $url = (new html_base())->url($obj_name . api_dsp::REMOVE, $this->id(), $this->id());
         return (new button($url))->del($ui_msg_id);

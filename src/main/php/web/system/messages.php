@@ -30,9 +30,9 @@
 
 */
 
-namespace html;
+namespace html\system;
 
-class msg
+class messages
 {
 
     // text to be shon in buttons

@@ -117,7 +117,7 @@ if ($usr->id() > 0) {
             $msk = new view($usr);
             $msk->load_by_id($view_id, view::class);
             $msk_dsp = new view_dsp($msk->api_json());
-            $dsp_text = $msk_dsp->display($wrd, $back);
+            $dsp_text = $msk_dsp->show(null, $back);
 
             // use a fallback if the view is empty
             if ($dsp_text == '' or $msk->name() == '') {

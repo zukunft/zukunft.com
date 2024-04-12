@@ -171,6 +171,9 @@ class api_tests
 
     /**
      * get the api message and forward it to the ui
+     * TODO move all other HTML frontend tests to this
+     *
+     * @param test_cleanup $t
      * @return void
      */
     function run_ui_test(test_cleanup $t): void

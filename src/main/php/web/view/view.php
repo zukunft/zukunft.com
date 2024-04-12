@@ -46,7 +46,15 @@ include_once MODEL_WORD_PATH . 'word.php';
 include_once WEB_HTML_PATH . 'display_list.php';
 include_once WEB_COMPONENT_PATH . 'component.php';
 include_once WEB_COMPONENT_PATH . 'component_list.php';
+include_once WEB_HTML_PATH . 'html_base.php';
+include_once WEB_HTML_PATH . 'api.php';
+include_once WEB_HTML_PATH . 'button.php';
+include_once WEB_SYSTEM_PATH . 'messages.php';
+include_once WEB_LOG_PATH . 'user_log_display.php';
+include_once WEB_SANDBOX_PATH . 'db_object.php';
+include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
 include_once WEB_WORD_PATH . 'word.php';
+include_once WEB_WORD_PATH . 'triple.php';
 
 use api\api;
 use api\component\component as component_api;
@@ -60,11 +68,11 @@ use html\display_list;
 use html\component\component as component_dsp;
 use html\component\component_list as component_list_dsp;
 use controller\controller;
+use html\html_base;
 use html\api as api_dsp;
 use html\button;
-use html\html_base;
+use html\system\messages;
 use html\log\user_log_display;
-use html\msg;
 use html\sandbox\db_object as db_object_dsp;
 use html\sandbox\sandbox_typed;
 use html\word\word as word_dsp;
@@ -318,10 +326,11 @@ class view extends sandbox_typed
             $class = $lib->class_to_name(view::class);
             //$url_edit = $html->url($class . api_dsp::UPDATE, $this->id, $back, '', word::class . '=' . $back);
             $url_edit = $html->url($class . api_dsp::UPDATE, $this->id, '', '');
-            $result .= (new button($url_edit))->edit(msg::VIEW_EDIT);
+            $btn = new button($url_edit);
+            $result .= $btn->edit(messages::VIEW_EDIT);
             //$url_add = $html->url($class . api_dsp::CREATE, 0, $back, '', word::class . '=' . $back);
             $url_add = $html->url($class . api_dsp::CREATE, 0, '', '');
-            $result .= (new button($url_add))->add(msg::VIEW_ADD);
+            $result .= (new button($url_add))->add(messages::VIEW_ADD);
             $result .= '      </li>';
         }
         $result .= '    </ul>';
@@ -381,16 +390,16 @@ class view extends sandbox_typed
         $result .= '<td class="right_ref">';
         if ($this->is_system() and !$usr->is_admin()) {
             $url = $html->url(api_dsp::SEARCH);
-            $result .= (new button($url, $back))->find(msg::SEARCH_MAIN) . ' - ';
+            $result .= (new button($url, $back))->find(messages::SEARCH_MAIN) . ' - ';
             $result .= $this->name . ' ';
         } else {
             $url = '/http/find.php?word=' . $back;
-            $result .= (new button($url, $back))->find(msg::SEARCH_MAIN) . ' - ';
+            $result .= (new button($url, $back))->find(messages::SEARCH_MAIN) . ' - ';
             $result .= $this->dsp_view_name($back);
             $url = $html->url(controller::DSP_VIEW_EDIT, $this->id());
-            $result .= (new button($url, $back))->edit(msg::VIEW_EDIT, $this->name) . ' ';
+            $result .= (new button($url, $back))->edit(messages::VIEW_EDIT, $this->name) . ' ';
             $url = $html->url(controller::DSP_VIEW_ADD);
-            $result .= (new button($url, $back))->add(msg::VIEW_ADD);
+            $result .= (new button($url, $back))->add(messages::VIEW_ADD);
         }
         $result .= ' - ';
         log_debug($this->dsp_id() . ' (' . $this->id . ')');
@@ -740,7 +749,7 @@ class view extends sandbox_typed
             if ($add_cmp > 0) {
                 $result .= 'View component to add: ';
                 $url = $html->url(controller::DSP_VIEW_ADD, $this->id, $back, '', word::class . '=' . $wrd->id() . '&add_entry=-1&');
-                $result .= (new button($url, $back))->add(msg::COMPONENT_ADD);
+                $result .= (new button($url, $back))->add(messages::COMPONENT_ADD);
                 $id_selected = 0; // no default view component to add defined yet, maybe use the last???
                 $result .= $this->component_selector($script, '', $id_selected);
 
@@ -753,7 +762,7 @@ class view extends sandbox_typed
                 $result .= $html->dsp_form_end('', "/http/view_edit.php?id=" . $this->id . "&word=" . $wrd->id() . "&back=" . $back);
             } else {
                 $url = $html->url(controller::DSP_COMPONENT_LINK, $this->id, $back, '', word::class . '=' . $wrd->id() . '&add_entry=1');
-                $result .= (new button($url, $back))->add(msg::COMPONENT_ADD);
+                $result .= (new button($url, $back))->add(messages::COMPONENT_ADD);
             }
         }
         if (UI_USE_BOOTSTRAP) {

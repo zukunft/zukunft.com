@@ -39,11 +39,12 @@ use cfg\log\change_action;
 use html\api;
 use html\button;
 use html\html_base;
-use html\msg;
+use html\message;
 use html\system\back_trace;
 use cfg\log\change_action_list;
 use cfg\log\change_table_list;
 use cfg\formula;
+use html\system\messages;
 
 class change_log_named extends change_log_named_api
 {
@@ -136,19 +137,19 @@ class change_log_named extends change_log_named_api
         if ($this->table_name() == change_table_list::WORD) {
             if ($this->action_code_id() == change_action::ADD) {
                 $undo_call = $html->url('value' . api::REMOVE, $this->id, $back->url_encode());
-                $undo_btn = (new button($undo_call))->undo(msg::UNDO_ADD);
+                $undo_btn = (new button($undo_call))->undo(messages::UNDO_ADD);
             }
         } elseif ($this->table_name() == change_table_list::VIEW) {
             if ($this->action_code_id() == change_action::ADD) {
                 $undo_call = $html->url('value' . api::REMOVE, $this->id, $back->url_encode());
-                $undo_btn = (new button($undo_call))->undo(msg::UNDO_EDIT);
+                $undo_btn = (new button($undo_call))->undo(messages::UNDO_EDIT);
             }
         } elseif ($this->table_name() == change_table_list::FORMULA) {
             if ($this->action_code_id() == change_action::UPDATE) {
                 $undo_call = $html->url(
                     formula::class . api::UPDATE, $this->row_id,
                     $back->url_encode() . '&undo_change=' . $this->id());
-                $undo_btn = (new button($undo_call))->undo(msg::UNDO_DEL);
+                $undo_btn = (new button($undo_call))->undo(messages::UNDO_DEL);
             }
         }
         // display the undo button

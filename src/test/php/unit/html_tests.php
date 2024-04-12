@@ -51,7 +51,7 @@ use cfg\verb_list;
 use controller\controller;
 use html\button;
 use html\html_base;
-use html\msg;
+use html\system\messages;
 use html\result\result as result_dsp;
 use html\result\result_list as result_list_dsp;
 use html\component\component as component_dsp;
@@ -103,7 +103,7 @@ class html_tests
 
         // button add
         $url = $html->url(controller::DSP_WORD_ADD);
-        $t->html_test((new button($url))->add(msg::WORD_ADD), 'button_add', $t);
+        $t->html_test((new button($url))->add(messages::WORD_ADD), 'button_add', $t);
 
 
         $t->subheader('HTML list tests');

@@ -52,12 +52,13 @@ use html\button;
 use html\html_base;
 use html\html_selector;
 use html\log\user_log_display;
-use html\msg;
+use html\message;
 use html\phrase\phrase as phrase_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\phrase\term as term_dsp;
 use html\result\result as result_dsp;
 use html\sandbox\sandbox_typed;
+use html\system\messages;
 use html\word\word as word_dsp;
 
 class formula extends sandbox_typed
@@ -219,7 +220,7 @@ class formula extends sandbox_typed
     function btn_add(string $back = ''): string
     {
         $url = $this->obj_url(controller::DSP_FORMULA_ADD);
-        return (new button($url, $back))->add(msg::FORMULA_ADD, $this->name);
+        return (new button($url, $back))->add(messages::FORMULA_ADD, $this->name);
     }
 
     /**
@@ -230,7 +231,7 @@ class formula extends sandbox_typed
     function btn_edit(string $back = ''): string
     {
         $url = $this->obj_url(controller::DSP_FORMULA_EDIT);
-        return (new button($url, $back))->edit(msg::FORMULA_EDIT, msg::FOR . $this->name);
+        return (new button($url, $back))->edit(messages::FORMULA_EDIT, messages::FOR . $this->name);
     }
 
     /**
@@ -241,7 +242,7 @@ class formula extends sandbox_typed
     function btn_del(string $back = ''): string
     {
         $url = $this->obj_url(controller::DSP_FORMULA_DEL);
-        return (new button($url, $back))->del(msg::FORMULA_DEL, msg::OF . $this->name);
+        return (new button($url, $back))->del(messages::FORMULA_DEL, messages::OF . $this->name);
     }
 
 
@@ -459,7 +460,7 @@ class formula extends sandbox_typed
             if ($this->id > 0) {
                 $url = $this->obj_url(controller::DSP_FORMULA_ADD);
                 // TODO check if 'add_link=1' is needed
-                $result .= (new button($url, $back))->add(msg::FORMULA_ADD);
+                $result .= (new button($url, $back))->add(messages::FORMULA_ADD);
             }
         }
         $result .= '    </td>';
@@ -584,7 +585,7 @@ class formula extends sandbox_typed
         log_debug($phr_id);
         $result = '    <td>' . "\n";
         $url = \html\api::PATH_FIXED . self::class . api_dsp::UPDATE . api_dsp::EXT . '?id=' . $this->id . '&unlink_phrase=' . $phr_id . '&back=' . $back;
-        $result .= (new button($url, $back))->del(msg::FORMULA_UNLINK);
+        $result .= (new button($url, $back))->del(messages::FORMULA_UNLINK);
         $result .= '    </td>' . "\n";
         return $result;
     }

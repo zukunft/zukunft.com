@@ -30,14 +30,14 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
+use cfg\value\value;
 use controller\controller;
 use html\api;
 use html\button;
 use html\html_base;
-use html\msg;
+use html\system\messages;
 use html\view\view as view_dsp;
 use cfg\user;
-use cfg\value;
 use cfg\view;
 
 $debug = $_GET['debug'] ?? 0;
@@ -88,9 +88,9 @@ if ($usr->id() > 0) {
 
             $val->load_phrases();
             $url = $html->url(api::VALUE . api::REMOVE, $val_id, $back);
-            $ui_msg = new msg();
+            $ui_msg = new messages();
             $result .= (new button($url, $back))->yesno(
-                msg::VALUE_DEL, $val->number() . $ui_msg->txt(msg::FOR) . $val->phr_lst()->dsp_name() . '?');
+                messages::VALUE_DEL, $val->number() . $ui_msg->txt(messages::FOR) . $val->phr_lst()->dsp_name() . '?');
         }
     } else {
         $result .= $html->dsp_go_back($back, $usr);

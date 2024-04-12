@@ -46,12 +46,12 @@ use html\formula\formula as formula_dsp;
 use html\log\change_log_named as change_log_named_dsp;
 use html\html_base;
 use html\log\user_log_display;
-use html\msg;
 use html\phrase\phrase as phrase_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\phrase\term as term_dsp;
 use html\sandbox\sandbox_typed;
 use html\system\back_trace;
+use html\system\messages;
 use html\word\word as word_dsp;
 
 class word extends sandbox_typed
@@ -319,12 +319,12 @@ class word extends sandbox_typed
     function form_add(string $back = ''): string
     {
         $html = new html_base();
-        $ui_msg = new msg();
+        $ui_msg = new messages();
 
-        $header = $html->text_h2($ui_msg->txt(msg::FORM_WORD_ADD_TITLE));
+        $header = $html->text_h2($ui_msg->txt(messages::FORM_WORD_ADD_TITLE));
         $hidden_fields = $html->form_hidden("back", $back);
         $hidden_fields .= $html->form_hidden("confirm", '1');
-        $detail_fields = $html->form_text("word_name", $this->plural(), $ui_msg->txt(msg::FORM_WORD_FLD_NAME));
+        $detail_fields = $html->form_text("word_name", $this->plural(), $ui_msg->txt(messages::FORM_WORD_FLD_NAME));
         $detail_row = $html->fr($detail_fields) . '<br>';
 
         // TODO complete
@@ -425,7 +425,7 @@ class word extends sandbox_typed
     function btn_del(string $back = ''): string
     {
         $url = (new html_base())->url(api::WORD . api::REMOVE, $this->id, $this->id);
-        return (new button($url, $back))->del(msg::WORD_DEL);
+        return (new button($url, $back))->del(messages::WORD_DEL);
     }
 
     /**
@@ -434,7 +434,7 @@ class word extends sandbox_typed
     function btn_unlink(int $link_id, string $back = ''): string
     {
         $url = (new html_base())->url(api::LINK . api::REMOVE, $link_id, $this->id);
-        return (new button($url, $back))->del(msg::WORD_UNLINK);
+        return (new button($url, $back))->del(messages::WORD_UNLINK);
     }
 
     /*
@@ -752,7 +752,7 @@ class word extends sandbox_typed
 
         $log_dsp = new user_log_display($this->user());
         $log_dsp->id = $this->id;
-        $log_dsp->type = \cfg\log\word::class;
+        $log_dsp->type = word::class;
         $log_dsp->page = $page;
         $log_dsp->size = $size;
         $log_dsp->call = $call;

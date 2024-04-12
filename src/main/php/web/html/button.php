@@ -34,8 +34,12 @@
 
 namespace html;
 
+include_once MODEL_HELPER_PATH . 'library.php';
+include_once MODEL_PHRASE_PATH . 'phrase_list.php';
+
 use cfg\library;
 use cfg\phrase_list;
+use html\system\messages;
 
 class button
 {
@@ -105,7 +109,7 @@ class button
     private function set_ui_msg(string $ui_msg_id = '', string $explain = ''): void
     {
         if ($ui_msg_id != '') {
-            $ui_msg = new msg();
+            $ui_msg = new messages();
             $this->title = $ui_msg->txt($ui_msg_id);
         }
         if ($explain != '') {
@@ -201,7 +205,7 @@ class button
         //zu_debug("button->yesno ".$this->title.".", 10);
 
         if ($ui_msg_id != '') {
-            $ui_msg = new msg();
+            $ui_msg = new message();
             $this->title = $ui_msg->txt($ui_msg_id);
         }
         if ($explain != '') {
