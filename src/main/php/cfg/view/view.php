@@ -31,14 +31,23 @@
 
 namespace cfg;
 
-include_once DB_PATH . 'sql_par_type.php';
-include_once WEB_VIEW_PATH . 'view.php';
-include_once MODEL_COMPONENT_PATH . 'component_link.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_typed.php';
+include_once API_VIEW_PATH . 'view.php';
 include_once MODEL_COMPONENT_PATH . 'component.php';
 include_once MODEL_COMPONENT_PATH . 'component_list.php';
+include_once MODEL_COMPONENT_PATH . 'component_link.php';
 include_once MODEL_COMPONENT_PATH . 'component_link_list.php';
+include_once MODEL_DB_PATH . 'sql.php';
+include_once MODEL_DB_PATH . 'sql_db.php';
+include_once MODEL_DB_PATH . 'sql_field_default.php';
+include_once MODEL_DB_PATH . 'sql_field_type.php';
+include_once MODEL_DB_PATH . 'sql_par.php';
+include_once MODEL_DB_PATH . 'sql_par_type.php';
+include_once MODEL_DB_PATH . 'sql_type.php';
+include_once SERVICE_EXPORT_PATH . 'sandbox_exp.php';
 include_once SERVICE_EXPORT_PATH . 'view_exp.php';
 include_once SERVICE_EXPORT_PATH . 'component_exp.php';
+include_once WEB_VIEW_PATH . 'view.php';
 
 use api\view\view as view_api;
 use cfg\component\component;
@@ -525,8 +534,7 @@ class view extends sandbox_typed
     {
         global $db_con;
 
-        log_debug($this->dsp_id());
-
+        log_debug();
         $db_con_used = $db_con_given;
         if ($db_con_used == null) {
             $db_con_used = $db_con;

@@ -91,7 +91,20 @@ class view extends sandbox_typed
 
     // objects that should be displayed (only one is supposed to be not null)
     // the word, triple or formula object that should be shown to the user
-    protected ?db_object_dsp $dbo = null;
+    protected ?db_object_dsp $dbo;
+
+
+    /*
+     * construct and map
+     */
+
+    function __construct(?string $api_json = null)
+    {
+        $this->code_id = null;
+        $this->cmp_lst = new component_list_dsp();
+        $this->dbo = null;
+        parent::__construct($api_json);
+    }
 
 
     /*
@@ -160,7 +173,7 @@ class view extends sandbox_typed
         return $this->cmp_lst;
     }
 
-    function code_id(): string
+    function code_id(): ?string
     {
         return $this->code_id;
     }
@@ -190,34 +203,21 @@ class view extends sandbox_typed
 
     /**
      * create the html code to view a sandbox object
-     * @param db_object_dsp|null $dbo the word, triple or formula object that should be shown to the user
+     * @param db_object_dsp $dbo the word, triple or formula object that should be shown to the user
      * @param string $back the history of the user actions to allow rollbacks
      * @param bool $test_mode true to create a reproducible result e.g. by using just one phrase
      * @return string the html code for a view: this is the main function of this lib
      * TODO use backtrace or use a global backtrace var
      */
-    function show(db_object_dsp $dbo = null, string $back = '', bool $test_mode = false): string
+    function show(db_object_dsp $dbo, string $back = '', bool $test_mode = false): string
     {
         $result = '';
 
-        // if the object is not given use the object from the api message
-        if ($dbo == null) {
-            $dbo = $this->dbo;
-        }
+        log_debug($dbo->dsp_id() . ' with the view ' . $this->dsp_id());
 
-        if ($dbo == null) {
-            if (in_array($this->code_id(), controller::DSP_SYS_ADD)) {
-                log_info('Nothing to show with add view ' . $this->dsp_id());
-            } else {
-                log_err('Nothing to show with view ' . $this->dsp_id());
-            }
-        } else {
-            log_debug($dbo->dsp_id() . ' with the view ' . $this->dsp_id());
-
-            // check and correct the parameters
-            if ($back == '') {
-                $back = $dbo->id();
-            }
+        // check and correct the parameters
+        if ($back == '') {
+            $back = $dbo->id();
         }
 
         if ($this->id() <= 0) {
@@ -237,15 +237,17 @@ class view extends sandbox_typed
     /**
      * create the html code for all components of this view
      *
-     * @param db_object_dsp|null $dbo the word, triple or formula object that should be shown to the user
+     * @param db_object_dsp $dbo the word, triple or formula object that should be shown to the user
      * @param bool $test_mode true to create a reproducible result e.g. by using just one phrase
      * @return string the html code of all view components
      */
-    private function dsp_entries(?db_object_dsp $dbo, string $back, bool $test_mode = false): string
+    private function dsp_entries(db_object_dsp $dbo, string $back, bool $test_mode = false): string
     {
         log_debug($this->dsp_id());
         $result = '';
-        if (!$this->cmp_lst->is_empty()) {
+        if ($this->cmp_lst->is_empty()) {
+            log_debug('no components for ' . $this->dsp_id());
+        } else {
             foreach ($this->cmp_lst->lst() as $cmp) {
                 $result .= $cmp->dsp_entries($dbo, $back, $test_mode);
             }

@@ -659,7 +659,7 @@ class sql_db
         $this->postgres_link = pg_connect($conn_str);
         $db_tmp = new sql_db();
         if ($this->postgres_link !== false) {
-            $sql = resource_file(DB_RES_PATH . DB_SETUP_PATH . $db_tmp->path(sql_db::POSTGRES) . DB_SETUP_SQL_FILE);
+            $sql = resource_file(DB_RES_SUB_PATH . DB_SETUP_SUB_PATH . $db_tmp->path(sql_db::POSTGRES) . DB_SETUP_SQL_FILE);
             try {
                 $sql_result = $this->exe($sql);
                 if (!$sql_result) {
@@ -690,7 +690,7 @@ class sql_db
         $usr_msg = new user_message();
 
         // create the tables, db indexes and foreign keys
-        $sql = resource_file(DB_RES_PATH . DB_SETUP_PATH . $this->path(sql_db::POSTGRES) . DB_SETUP_SQL_FILE);
+        $sql = resource_file(DB_RES_SUB_PATH . DB_SETUP_SUB_PATH . $this->path(sql_db::POSTGRES) . DB_SETUP_SQL_FILE);
         try {
             $html->echo('Run db setup sql script');
             $sql_result = $this->exe_script($sql);

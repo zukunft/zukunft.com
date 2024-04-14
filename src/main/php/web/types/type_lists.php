@@ -54,11 +54,9 @@ include_once WEB_TYPES_PATH . 'view_type_list.php';
 include_once WEB_TYPES_PATH . 'component_type_list.php';
 include_once WEB_TYPES_PATH . 'component_link_type_list.php';
 include_once WEB_TYPES_PATH . 'position_type_list.php';
+include_once WEB_VIEW_PATH . 'view_list.php';
 
-use api\api;
 use controller\controller;
-use html\html_selector;
-use html\types\type_object as type_object_dsp;
 use html\view\view_list as view_list_dsp;
 
 class type_lists
@@ -380,6 +378,5 @@ class type_lists
         $html_system_views = new view_list_dsp();
         $html_system_views->set_from_json_array($json_array);
     }
-
 
 }

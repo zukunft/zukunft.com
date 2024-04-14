@@ -44,7 +44,7 @@ class sandbox_typed extends sandbox_named
     // e.g. all value assigned with the percent word are per default shown as percent with two decimals
     // the frontend object just contains the id of the type
     // because the type can be fast selected from the preloaded type list
-    private ?int $type_id;
+    private ?int $type_id = null;
 
 
     /*

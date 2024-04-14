@@ -25,7 +25,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2024 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -39,12 +39,22 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'zu_lib.php';
 
-// load the testing base functions
-const PHP_TEST_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'test' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
-include_once PHP_TEST_PATH . 'utils/test_base.php';
+// set the test base path
+const TEST_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'test' . DIRECTORY_SEPARATOR;
+// the test code path
+const TEST_PHP_PATH = TEST_PATH . 'php' . DIRECTORY_SEPARATOR;
+// path for the general tests and test setup
+const TEST_PHP_UTIL_PATH = TEST_PHP_PATH . 'utils' . DIRECTORY_SEPARATOR;
+
+// load the base testing functions
+include_once TEST_PHP_UTIL_PATH . 'test_base.php';
+
+// load the main test control class
+include_once TEST_PHP_UTIL_PATH . 'all_tests.php';
 
 use cfg\user;
 use test\all_tests;
+
 
 global $db_con;
 

@@ -44,6 +44,7 @@ const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SE
 include_once PHP_PATH . 'zu_lib.php';
 
 // load what is used here
+include_once PHP_PATH . 'frontend.php';
 include_once API_PATH . 'controller.php';
 include_once WEB_HTML_PATH . 'api.php';
 include_once WEB_VIEW_PATH . 'view.php';
@@ -57,6 +58,8 @@ use html\view\view as view_dsp;
 use cfg\user;
 use cfg\view;
 use cfg\word;
+use html\types\type_lists as type_lists_dsp;
+use html\word\word as word_dsp;
 
 // open database
 $db_con = prg_start("view");
@@ -74,7 +77,15 @@ $result .= $usr->get();
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id() > 0) {
 
+    // TODO move to the frontend __construct
+    $main = new frontend();
+    $api_msg = $main->api_get(type_lists_dsp::class);
+    $frontend_cache = new type_lists_dsp($api_msg);
+
     $usr->load_usr_data();
+
+    // set the object that should be displayed
+    $dbo_dsp = new word_dsp();
 
     $view_words = $_GET[api::PAR_VIEW_WORDS] ?? '';
 
@@ -89,6 +100,7 @@ if ($usr->id() > 0) {
     }
 
     // select the view
+    // TODO move as much a possible to backend functions
     if ($wrd->id() > 0) {
         // if the user has changed the view for this word, save it
         $new_view_id = $_GET[api::PAR_VIEW_NEW_ID] ?? '';
@@ -114,10 +126,13 @@ if ($usr->id() > 0) {
 
         // create a display object, select and load the view and display the word according to the view
         if ($view_id > 0) {
+            // TODO first create the frontend object and call from the frontend object the api
+            // TODO for system views avoid the backend call by using the cache from the frontend
             $msk = new view($usr);
             $msk->load_by_id($view_id, view::class);
+            $msk->load_components();
             $msk_dsp = new view_dsp($msk->api_json());
-            $dsp_text = $msk_dsp->show(null, $back);
+            $dsp_text = $msk_dsp->show($dbo_dsp, $back);
 
             // use a fallback if the view is empty
             if ($dsp_text == '' or $msk->name() == '') {

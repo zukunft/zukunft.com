@@ -87,7 +87,6 @@ include_once API_SANDBOX_PATH . 'sandbox_value.php';
 use cfg\component\component_link_type_list;
 use cfg\component\position_type_list;
 use cfg\component\component_type_list;
-use cfg\db\db_check;
 use cfg\db\sql_db;
 use cfg\element_type_list;
 use cfg\formula_link_type_list;
@@ -112,7 +111,6 @@ use cfg\user_profile_list;
 use cfg\verb_list;
 use cfg\view_sys_list;
 use cfg\view_type_list;
-use local_ui_tests;
 use test\all_tests;
 use test\test_cleanup;
 use unit\html\change_log as change_log_html_tests;
@@ -147,6 +145,7 @@ use unit\html\view_list as view_list_html_tests;
 use unit\html\word as word_html_tests;
 use unit\html\word_list as word_list_html_tests;
 use unit\import_tests as import_tests;
+use unit_ui\local_ui_tests;
 
 class all_unit_tests extends test_cleanup
 {

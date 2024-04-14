@@ -33,9 +33,9 @@
 
 namespace html;
 
-use html\system\messages;
-
 include_once WEB_SYSTEM_PATH . 'messages.php';
+
+use html\system\messages;
 
 class html_selector
 {

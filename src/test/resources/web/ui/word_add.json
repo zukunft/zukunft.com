@@ -1,0 +1,87 @@
+{
+  "id": 3,
+  "name": "Add New Word",
+  "type_id": 7,
+  "code_id": "word_add",
+  "components": [
+    {
+      "id": 2,
+      "name": "system form title word add",
+      "description": "show the language specific title for the system form to add a new word",
+      "type_id": 17,
+      "link_id": 3,
+      "position": 1
+    },
+    {
+      "id": 7,
+      "name": "system form hidden back stack",
+      "description": "field that contains the stack for the undo actions",
+      "type_id": 18,
+      "link_id": 4,
+      "position": 2
+    },
+    {
+      "id": 8,
+      "name": "system form hidden confirm status",
+      "description": "switch on that the form saving needs an extra confirm by the user",
+      "type_id": 19,
+      "link_id": 5,
+      "position": 3
+    },
+    {
+      "id": 9,
+      "name": "system form field name",
+      "description": "the name field in a form",
+      "type_id": 20,
+      "link_id": 6,
+      "position": 4
+    },
+    {
+      "id": 10,
+      "name": "system form field description",
+      "description": "the description field in a form",
+      "type_id": 21,
+      "link_id": 7,
+      "position": 5
+    },
+    {
+      "id": 14,
+      "name": "system form select share type",
+      "description": "selector for the share type",
+      "type_id": 24,
+      "link_id": 8,
+      "position": 6
+    },
+    {
+      "id": 15,
+      "name": "system form select protection type",
+      "description": "selector for the protection type",
+      "type_id": 25,
+      "link_id": 9,
+      "position": 7
+    },
+    {
+      "id": 16,
+      "name": "system form button cancel",
+      "description": "button to cancel the form action and go back to the previous view",
+      "type_id": 26,
+      "link_id": 10,
+      "position": 8
+    },
+    {
+      "id": 17,
+      "name": "system form button save",
+      "description": "button to save the form field into the database",
+      "type_id": 27,
+      "link_id": 11,
+      "position": 9
+    },
+    {
+      "id": 19,
+      "name": "system form end",
+      "type_id": 29,
+      "link_id": 12,
+      "position": 10
+    }
+  ]
+}

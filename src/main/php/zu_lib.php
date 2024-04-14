@@ -271,6 +271,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO ad sample how the use Reuters RIC where the price is in pence
 
     TODO use cases:
+        create a sample how to create a personal pension plan for 1. 2. and 3. pillar independend from banks and pension funds
         these the optimal tax rates are
             from -10% needed to fulfill the basic needed
             to 99% for everything more than the community is able to invest to save one live
@@ -566,6 +567,7 @@ const SYSTEM_USER_TEST_ID = 2; //
 const LIST_MIN_NAMES = 4; // number of object names that should al least be shown
 const DEBUG_SHOW_USER = 10; // starting from this debug level the user should be shown in the debug text
 
+// set all path for the program code here at once
 const SRC_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR;
 const MAIN_PATH = SRC_PATH . 'main' . DIRECTORY_SEPARATOR;
 const PHP_PATH_LIB = MAIN_PATH . 'php' . DIRECTORY_SEPARATOR; // recreation of the PHP_PATH for library use only
@@ -631,8 +633,17 @@ const WEB_COMPONENT_PATH = WEB_PATH . 'component' . DIRECTORY_SEPARATOR;
 const WEB_REF_PATH = WEB_PATH . 'ref' . DIRECTORY_SEPARATOR;
 
 // resource paths
-const DB_RES_PATH = 'db' . DIRECTORY_SEPARATOR;
-const DB_SETUP_PATH = 'setup' . DIRECTORY_SEPARATOR;
+const RES_PATH = MAIN_PATH . 'resources' . DIRECTORY_SEPARATOR;
+const IMAGE_RES_PATH = RES_PATH . 'images' . DIRECTORY_SEPARATOR;
+const DB_RES_SUB_PATH = 'db' . DIRECTORY_SEPARATOR;
+const DB_SETUP_SUB_PATH = 'setup' . DIRECTORY_SEPARATOR;
+
+// resource paths used for testing to avoid local paths in the test resources
+const REL_ROOT_PATH = DIRECTORY_SEPARATOR;
+const REL_SRC_PATH = REL_ROOT_PATH . 'src' . DIRECTORY_SEPARATOR;
+const REL_MAIN_PATH = REL_SRC_PATH . 'main' . DIRECTORY_SEPARATOR;
+const REL_RES_PATH = REL_MAIN_PATH . 'resources' . DIRECTORY_SEPARATOR;
+const REL_IMAGE_PATH = REL_RES_PATH . 'images' . DIRECTORY_SEPARATOR;
 
 const DB_SETUP_SQL_FILE = 'zukunft_structure.sql';
 
@@ -1070,7 +1081,6 @@ const BASE_CONFIG_FILES = [
 ];
 
 # list of all static import files for testing the system consistency
-const PATH_RESOURCE_FILES = ROOT_PATH . 'src/main/resources/';
 const PATH_TEST_FILES = ROOT_PATH . 'src/test/resources/';
 const PATH_TEST_IMPORT_FILES = ROOT_PATH . 'src/test/resources/import/';
 const TEST_IMPORT_FILE_LIST = [
@@ -1451,6 +1461,7 @@ function log_fatal(string $msg_text,
 /**
  * should be called from all code that can be accessed by an url
  * return null if the db connection fails or the db is not compatible
+ * TODO create a seperate class for starting the backend and frontend
  *
  * @param string $code_name the place that is displayed to the user e.g. add word
  * @param string $style the display style used to show the place
@@ -1685,31 +1696,11 @@ function prg_end_api($link)
  */
 function resource_file(string $resource_path): string
 {
-    $result = file_get_contents(PATH_RESOURCE_FILES . $resource_path);
+    $result = file_get_contents(RES_PATH . $resource_path);
     if ($result === false) {
-        $result = 'Cannot get file from ' . PATH_RESOURCE_FILES . $resource_path;
+        $result = 'Cannot get file from ' . RES_PATH . $resource_path;
     }
     return $result;
-}
-
-/**
- * @return string the content of a test resource file
- */
-function test_resource_file(string $resource_path): string
-{
-    $result = file_get_contents(PATH_TEST_FILES . $resource_path);
-    if ($result === false) {
-        $result = 'Cannot get file from ' . PATH_TEST_FILES . $resource_path;
-    }
-    return $result;
-}
-
-/**
- * @return bool true if the test resource file exists
- */
-function has_resource_file(string $resource_path): bool
-{
-    return file_exists(PATH_TEST_FILES . $resource_path);
 }
 
 

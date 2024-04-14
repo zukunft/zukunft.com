@@ -137,20 +137,14 @@
 namespace test;
 
 
-// test settings
+// main test settings
 const ERROR_LIMIT = 0; // increase to 1 or more to detect more than one error message with one run
-const ONLY_UNIT_TESTS = true; // set to true if only the unit tests should be performed
+const ONLY_UNIT_TESTS = false; // set to true if only the unit tests should be performed
 const RESET_DB = true; // if true the database is completely overwritten for testing; must always be false for UAT and PROD
 const RESET_DB_ONLY = false; // true to force resetting the database without any other tests
 const QUICK_TEST_ONLY = false; // true to run only a single test for faster debugging
 
-
-// used paths
-const ROOT_PATH = __DIR__;
-const TEST_PATH = ROOT_PATH . '/../'; // the test base path
-const UNIT_WRITE_PATH = TEST_PATH . 'unit_write/'; // for the unit tests that save to database (and cleanup the test data after completion)
-
-include_once UNIT_WRITE_PATH . 'all_unit_write_tests.php';
+include_once TEST_UNIT_WRITE_PATH . 'all_unit_write_tests.php';
 
 use unit_write\all_unit_write_tests;
 

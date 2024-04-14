@@ -30,6 +30,12 @@
 
 */
 
+// for callable php files the standard zukunft.com header to load all classes and allow debugging
+$debug = $_GET['debug'] ?? 0;
+const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
+const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
+include_once PHP_PATH . 'zu_lib.php';
+
 use controller\controller;
 use html\html_base;
 use html\view\view as view_dsp;
@@ -37,10 +43,6 @@ use html\word\word_list as word_list_dsp;
 use cfg\user;
 use cfg\view;
 use cfg\word_list;
-
-$debug = $_GET['debug'] ?? 0;
-const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
-include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 
 global $system_views;
 

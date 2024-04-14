@@ -85,6 +85,7 @@ class component extends sandbox_typed
     function dsp_entries(?db_object_dsp $dbo, string $back, bool $test_mode = false): string
     {
         if ($dbo == null) {
+            // the $dbo check and the message creation has already been done in the view level
             log_debug($this->dsp_id());
         } else {
             log_debug($dbo->dsp_id() . ' with the view ' . $this->dsp_id());
@@ -126,6 +127,7 @@ class component extends sandbox_typed
             component_type::ROW_END => $this->row_end(),
             default => 'program code for component type ' . $type_code_id . ' missing<br>'
         };
+        log_debug($this->dsp_id() . ' created');
 
         return $result;
     }
@@ -255,11 +257,11 @@ class component extends sandbox_typed
     }
 
     /**
-     * @param db_object_dsp $dbo
+     * @param db_object_dsp|null $dbo
      * @return string the html code to start a new form and display the tile
      * TODO replace _add with a parameter value
      */
-    function form_tile(db_object_dsp $dbo): string
+    function form_tile(?db_object_dsp $dbo): string
     {
         $lib = new library();
         $html = new html_base();

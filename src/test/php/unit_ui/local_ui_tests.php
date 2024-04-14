@@ -30,7 +30,12 @@
 
 */
 
+namespace unit_ui;
+
+use html\view\view as view_dsp;
+use html\word\word as word_dsp;
 use test\test_cleanup;
+use const test\TEST_RES_UI_PATH;
 
 class local_ui_tests
 {
@@ -45,6 +50,13 @@ class local_ui_tests
         $test_name = 'check about page e.g. to check the library';
         $result = file_get_contents('http://localhost/http/about.php');
         $target = 'zukunft.com AG';
+        $t->assert_text_contains($test_name, $result, $target);
+
+        $api_json = file_get_contents(TEST_RES_UI_PATH . 'word_add.json');
+        $msk_dsp = new view_dsp($api_json);
+        $wrd = new word_dsp();
+        $result = $msk_dsp->show($wrd, '');
+        $target = 'word';
         $t->assert_text_contains($test_name, $result, $target);
 
     }

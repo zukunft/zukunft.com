@@ -44,7 +44,7 @@ class share extends type_list
      */
     function selector(
         string $form = '',
-        int $selected = 0,
+        int    $selected = 0,
         string $name = self::NAME,
         string $bs_class = '',
         string $label = ''

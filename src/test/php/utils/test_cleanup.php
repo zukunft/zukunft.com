@@ -531,7 +531,7 @@ class test_cleanup extends test_api
         $result = true;
         $qp = new sql_par(self::class);
         $qp->name .= $sql_file_name;
-        $qp->sql = file_get_contents(PATH_TEST_FILES . $sql_file_name);
+        $qp->sql = $this->file($sql_file_name);
         $db_rows = $db_con->get($qp);
         if ($db_rows != false) {
             log_err('There are ' . count($db_rows) . ' unexpected system test rows detected by ' . $sql_file_name);
