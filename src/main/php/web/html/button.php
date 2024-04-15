@@ -34,12 +34,12 @@
 
 namespace html;
 
-include_once MODEL_HELPER_PATH . 'library.php';
+include_once SHARED_PATH . 'library.php';
 include_once MODEL_PHRASE_PATH . 'phrase_list.php';
 
-use cfg\library;
 use cfg\phrase_list;
 use html\system\messages;
+use shared\library;
 
 class button
 {

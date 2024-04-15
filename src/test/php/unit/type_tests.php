@@ -33,13 +33,13 @@
 namespace unit;
 
 use cfg\formula_type;
+use cfg\job_type;
 use cfg\phrase_type;
 use cfg\protection_type;
 use cfg\share_type;
 use cfg\source_type;
 use cfg\sys_log_function;
 use cfg\sys_log_status;
-use cfg\job_type;
 use cfg\sys_log_type;
 use cfg\user\user_profile;
 use cfg\user\user_type;

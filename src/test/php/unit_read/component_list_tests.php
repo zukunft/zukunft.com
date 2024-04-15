@@ -34,7 +34,7 @@ namespace unit_read;
 
 use api\component\component as component_api;
 use cfg\component\component_list;
-use cfg\library;
+use shared\library;
 use test\test_cleanup;
 
 class component_list_tests

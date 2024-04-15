@@ -31,11 +31,12 @@
 
 */
 
-namespace html;
+namespace html\sandbox;
 
-use cfg\library;
 use controller\controller;
 use html\api as api_dsp;
+use html\html_selector;
+use shared\library;
 
 class list_dsp
 {

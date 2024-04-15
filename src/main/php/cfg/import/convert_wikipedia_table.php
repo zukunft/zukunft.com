@@ -35,13 +35,12 @@ namespace cfg\import;
 
 use api\verb\verb as verb_api;
 use cfg\export\export;
-use cfg\library;
 use cfg\phrase_list;
 use cfg\phrase_type;
-use cfg\triple;
 use cfg\user;
 use DateTime;
 use DateTimeInterface;
+use shared\library;
 
 class convert_wikipedia_table
 {

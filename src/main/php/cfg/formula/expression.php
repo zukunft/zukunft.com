@@ -126,6 +126,7 @@ include_once MODEL_ELEMENT_PATH . 'element_group.php';
 include_once MODEL_ELEMENT_PATH . 'element_group_list.php';
 
 use Exception;
+use shared\library;
 
 class expression
 {

@@ -65,7 +65,6 @@ use cfg\formula;
 use cfg\job;
 use cfg\language;
 use cfg\language_form;
-use cfg\library;
 use cfg\log\change_log;
 use cfg\phrase_type;
 use cfg\ref;
@@ -84,6 +83,7 @@ use controller\controller;
 use controller\system\sys_log as sys_log_api;
 use DateTime;
 use Exception;
+use shared\library;
 
 class test_api extends create_test_objects
 {

@@ -33,10 +33,10 @@
 namespace unit;
 
 use cfg\db\sql;
-use cfg\library;
 use cfg\db\sql_db;
 use cfg\user;
 use cfg\user_list;
+use shared\library;
 use test\test_cleanup;
 
 class user_list_tests

@@ -36,12 +36,11 @@ include_once MODEL_FORMULA_PATH . 'formula_link_type.php';
 include_once MODEL_FORMULA_PATH . 'formula_link_list.php';
 
 use cfg\db\sql;
-use cfg\element_type;
+use cfg\db\sql_db;
 use cfg\formula_link;
 use cfg\formula_link_list;
 use cfg\formula_link_type;
-use cfg\library;
-use cfg\db\sql_db;
+use shared\library;
 use test\test_cleanup;
 
 class formula_link_tests

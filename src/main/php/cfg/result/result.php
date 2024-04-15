@@ -66,7 +66,6 @@ use cfg\formula;
 use cfg\group\group;
 use cfg\group\group_id;
 use cfg\group\group_list;
-use cfg\library;
 use cfg\parameter_type;
 use cfg\phrase_list;
 use cfg\sandbox;
@@ -77,6 +76,7 @@ use cfg\value\value;
 use DateTime;
 use html\formula\formula as formula_dsp;
 use html\html_base;
+use shared\library;
 
 class result extends sandbox_value
 {

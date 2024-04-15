@@ -33,11 +33,11 @@
 namespace unit;
 
 use api\formula\formula as formula_api;
-use api\word\word as word_api;
 use api\verb\verb as verb_api;
+use api\word\word as word_api;
 use cfg\expression;
-use cfg\library;
 use cfg\term_list;
+use shared\library;
 use test\test_cleanup;
 
 class expression_tests

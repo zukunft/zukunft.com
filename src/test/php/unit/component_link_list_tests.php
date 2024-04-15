@@ -37,7 +37,7 @@ include_once MODEL_COMPONENT_PATH . 'component_link_list.php';
 use cfg\component\component_link_list;
 use cfg\db\sql;
 use cfg\db\sql_db;
-use cfg\library;
+use shared\library;
 use test\test_cleanup;
 
 class component_link_list_tests

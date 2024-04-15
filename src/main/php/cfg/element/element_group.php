@@ -47,6 +47,7 @@ include_once MODEL_FORMULA_PATH . 'figure_list.php';
 use cfg\result\result;
 use cfg\value\value;
 use html\figure\figure as figure_dsp;
+use shared\library;
 use test\test_api;
 
 class element_group

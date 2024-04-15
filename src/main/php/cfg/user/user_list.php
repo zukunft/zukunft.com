@@ -37,6 +37,7 @@ use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\user\user_profile;
 use cfg\value\value;
+use shared\library;
 
 include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';

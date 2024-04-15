@@ -32,12 +32,12 @@
 
 namespace html\system;
 
-include_once WEB_SANDBOX_PATH . 'list.php';
+include_once WEB_SANDBOX_PATH . 'list_dsp.php';
 include_once WEB_SYSTEM_PATH . 'job.php';
 
 use controller\controller;
 use html\html_base;
-use html\list_dsp;
+use html\sandbox\list_dsp;
 use html\system\job as job_dsp;
 
 class job_list extends list_dsp

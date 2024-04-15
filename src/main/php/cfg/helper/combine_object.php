@@ -41,6 +41,7 @@
 namespace cfg;
 
 use cfg\db\sql_db;
+use shared\library;
 
 class combine_object
 {

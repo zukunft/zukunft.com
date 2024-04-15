@@ -37,8 +37,7 @@
 
 namespace cfg\db;
 
-use cfg\group\group_id;
-use cfg\library;
+use shared\library;
 
 /**
  * a query object to build and fill prepared queries

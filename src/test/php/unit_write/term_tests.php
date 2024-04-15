@@ -32,15 +32,13 @@
 
 namespace unit_write;
 
-use cfg\library;
-use cfg\word;
-use cfg\triple;
-use cfg\verb;
-use cfg\formula;
-use cfg\term;
-use api\word\word as word_api;
-use api\word\triple as triple_api;
 use api\formula\formula as formula_api;
+use api\word\triple as triple_api;
+use api\word\word as word_api;
+use cfg\term;
+use cfg\verb;
+use cfg\word;
+use shared\library;
 use test\test_cleanup;
 
 class term_tests

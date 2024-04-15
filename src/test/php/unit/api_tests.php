@@ -63,7 +63,6 @@ use cfg\formula_list;
 use cfg\job;
 use cfg\language;
 use cfg\language_form;
-use cfg\library;
 use cfg\log\change_field_list;
 use cfg\log\change_log_list;
 use cfg\phrase_list;
@@ -83,6 +82,7 @@ use cfg\word_list;
 use controller\controller;
 use html\phrase\phrase as phrase_dsp;
 use html\word\word as word_dsp;
+use shared\library;
 use test\test_cleanup;
 
 class api_tests

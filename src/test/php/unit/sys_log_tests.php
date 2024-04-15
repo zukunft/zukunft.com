@@ -36,10 +36,10 @@ include_once MODEL_SYSTEM_PATH . 'system_time_type.php';
 include_once MODEL_SYSTEM_PATH . 'system_time.php';
 
 use cfg\db\sql;
-use cfg\library;
 use cfg\sys_log;
 use cfg\system_time;
 use cfg\system_time_type;
+use shared\library;
 use test\test_cleanup;
 
 class sys_log_tests

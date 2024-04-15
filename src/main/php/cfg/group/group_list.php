@@ -36,18 +36,15 @@ namespace cfg\group;
 include_once DB_PATH . 'sql_par_type.php';
 
 use cfg\db\sql;
+use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
-use cfg\library;
 use cfg\phrase;
 use cfg\phrase_list;
 use cfg\sandbox_list;
-use cfg\db\sql_db;
 use cfg\term_list;
-use cfg\triple;
 use cfg\user_message;
-use cfg\value\value;
-use cfg\word;
+use shared\library;
 
 class group_list extends sandbox_list
 {

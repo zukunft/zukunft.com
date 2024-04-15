@@ -52,11 +52,9 @@ use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\log\change_action;
-use cfg\log\change_field;
 use cfg\log\change_table;
 use cfg\log\change_table_field;
 use JsonSerializable;
-use model\db_cl;
 
 class type_object extends db_object_seq_id implements JsonSerializable
 {

@@ -34,14 +34,13 @@
 // start testing the system functionality 
 // --------------------------------------
 
-use api\phrase\phrase as phrase_api;
 use api\word\triple as triple_api;
 use api\word\word as word_api;
 use cfg\foaf_direction;
-use html\word\word as word_dsp;
-use cfg\library;
 use cfg\verb;
 use cfg\word;
+use html\word\word as word_dsp;
+use shared\library;
 use test\all_tests;
 
 function run_word_display_test(all_tests $t): void

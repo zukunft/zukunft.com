@@ -522,27 +522,27 @@ use cfg\component\component_type;
 use cfg\component\position_type;
 use cfg\db\db_check;
 use cfg\db\sql;
+use cfg\db\sql_db;
 use cfg\element_type;
 use cfg\formula_link_type;
 use cfg\formula_type;
 use cfg\job_type;
 use cfg\language;
 use cfg\language_form;
-use cfg\library;
-use cfg\db\sql_db;
 use cfg\log\change_action;
 use cfg\log\change_field;
+use cfg\log\change_log;
 use cfg\log\change_table;
 use cfg\phrase_types;
 use cfg\protection_type;
 use cfg\ref_type;
 use cfg\share_type;
 use cfg\source_type;
+use cfg\sys_log;
 use cfg\sys_log_function;
 use cfg\sys_log_level;
 use cfg\sys_log_status;
 use cfg\sys_log_status_list;
-use cfg\sys_log_function_list;
 use cfg\sys_log_type;
 use cfg\system_time_type;
 use cfg\type_lists;
@@ -556,7 +556,7 @@ use cfg\view_link_type;
 use cfg\view_type;
 use html\html_base;
 use html\view\view as view_dsp;
-use cfg\log\change_log;
+use shared\library;
 use test\test_cleanup;
 
 // the fixed system user
@@ -598,6 +598,10 @@ const MODEL_FORMULA_PATH = MODEL_PATH . 'formula' . DIRECTORY_SEPARATOR;
 const MODEL_RESULT_PATH = MODEL_PATH . 'result' . DIRECTORY_SEPARATOR;
 const MODEL_VIEW_PATH = MODEL_PATH . 'view' . DIRECTORY_SEPARATOR;
 const MODEL_COMPONENT_PATH = MODEL_PATH . 'component' . DIRECTORY_SEPARATOR;
+
+const SHARED_PATH = PHP_PATH_LIB . 'shared' . DIRECTORY_SEPARATOR;
+const SHARED_TYPES_PATH = SHARED_PATH . 'types' . DIRECTORY_SEPARATOR;
+
 const API_PATH = PHP_PATH_LIB . 'api' . DIRECTORY_SEPARATOR; // path of the api objects for the message creation to the frontend
 const API_SANDBOX_PATH = API_PATH . 'sandbox' . DIRECTORY_SEPARATOR;
 const API_SYSTEM_PATH = API_PATH . 'system' . DIRECTORY_SEPARATOR;
@@ -644,6 +648,26 @@ const REL_SRC_PATH = REL_ROOT_PATH . 'src' . DIRECTORY_SEPARATOR;
 const REL_MAIN_PATH = REL_SRC_PATH . 'main' . DIRECTORY_SEPARATOR;
 const REL_RES_PATH = REL_MAIN_PATH . 'resources' . DIRECTORY_SEPARATOR;
 const REL_IMAGE_PATH = REL_RES_PATH . 'images' . DIRECTORY_SEPARATOR;
+
+// TODO remove once the frontend separation is completed
+const LOG_PATH = WEB_PATH . 'log' . DIRECTORY_SEPARATOR;
+const USER_PATH = WEB_PATH . 'user' . DIRECTORY_SEPARATOR;
+const SYSTEM_PATH = WEB_PATH . 'system' . DIRECTORY_SEPARATOR;
+const TYPES_PATH = WEB_PATH . 'types' . DIRECTORY_SEPARATOR;
+const SANDBOX_PATH = WEB_PATH . 'sandbox' . DIRECTORY_SEPARATOR;
+const HTML_PATH = WEB_PATH . 'html' . DIRECTORY_SEPARATOR;
+const HIST_PATH = WEB_PATH . 'hist' . DIRECTORY_SEPARATOR;
+const WORD_PATH = WEB_PATH . 'word' . DIRECTORY_SEPARATOR;
+const PHRASE_PATH = WEB_PATH . 'phrase' . DIRECTORY_SEPARATOR;
+const VERB_PATH = WEB_PATH . 'verb' . DIRECTORY_SEPARATOR;
+const VALUE_PATH = WEB_PATH . 'value' . DIRECTORY_SEPARATOR;
+const FORMULA_PATH = WEB_PATH . 'formula' . DIRECTORY_SEPARATOR;
+const RESULT_PATH = WEB_PATH . 'result' . DIRECTORY_SEPARATOR;
+const FIGURE_PATH = WEB_PATH . 'figure' . DIRECTORY_SEPARATOR;
+const VIEW_PATH = WEB_PATH . 'view' . DIRECTORY_SEPARATOR;
+const COMPONENT_PATH = WEB_PATH . 'component' . DIRECTORY_SEPARATOR;
+const REF_PATH = WEB_PATH . 'ref' . DIRECTORY_SEPARATOR;
+
 
 const DB_SETUP_SQL_FILE = 'zukunft_structure.sql';
 
@@ -802,15 +826,6 @@ const DEFAULT_THOUSAND_SEP = "'";
 const DEFAULT_PERCENT_DECIMALS = 2;
 
 const ZUC_MAX_CALC_LAYERS = '10000';    // max number of calculation layers
-
-
-// file links used
-//const ZUH_IMG_ADD       = "/src/main/resources/images/button_add_small.jpg";
-//const ZUH_IMG_EDIT      = "/src/main/resources/images/button_edit_small.jpg";
-const ZUH_IMG_ADD = "/src/main/resources/images/button_add.svg";
-const ZUH_IMG_EDIT = "/src/main/resources/images/button_edit.svg";
-const ZUH_IMG_DEL = "/src/main/resources/images/button_del.svg";
-const ZUH_IMG_UNDO = "/src/main/resources/images/button_undo.svg";
 
 // classes that use a standard sql sequence for the database id
 const SQL_STD_CLASSES = [

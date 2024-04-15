@@ -38,6 +38,7 @@
 
 namespace cfg\import;
 
+include_once SHARED_PATH . 'library.php';
 include_once EXPORT_PATH . 'export.php';
 include_once MODEL_FORMULA_PATH . 'formula.php';
 include_once MODEL_FORMULA_PATH . 'formula_list.php';
@@ -45,7 +46,6 @@ include_once MODEL_RESULT_PATH . 'result.php';
 include_once MODEL_RESULT_PATH . 'result_list.php';
 include_once MODEL_SYSTEM_PATH . 'ip_range.php';
 include_once MODEL_SYSTEM_PATH . 'session.php';
-include_once MODEL_HELPER_PATH . 'library.php';
 include_once MODEL_REF_PATH . 'ref.php';
 include_once MODEL_REF_PATH . 'source.php';
 include_once MODEL_WORD_PATH . 'word.php';
@@ -61,7 +61,6 @@ use cfg\export\export;
 use cfg\formula;
 use cfg\formula_list;
 use cfg\ip_range;
-use cfg\library;
 use cfg\phrase_list;
 use cfg\ref;
 use cfg\result\result;
@@ -76,7 +75,7 @@ use cfg\verb;
 use cfg\view;
 use cfg\view_list;
 use cfg\word;
-use cfg\word_list;
+use shared\library;
 
 class import
 {

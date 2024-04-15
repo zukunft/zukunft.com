@@ -36,14 +36,12 @@ include_once WEB_VALUE_PATH . 'value_list.php';
 include_once MODEL_VALUE_PATH . 'value_list.php';
 
 use cfg\db\sql;
-use cfg\db\sql_par;
-use cfg\value\value_list;
-use html\value\value_list as value_list_dsp;
-use cfg\library;
+use cfg\db\sql_db;
 use cfg\phrase;
 use cfg\phrase_list;
-use cfg\db\sql_db;
-use cfg\word;
+use cfg\value\value_list;
+use html\value\value_list as value_list_dsp;
+use shared\library;
 use test\test_cleanup;
 
 class value_list_tests

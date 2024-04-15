@@ -35,16 +35,16 @@ namespace unit_write;
 include_once MODEL_VALUE_PATH . 'value_dsp_old.php';
 
 use api\value\value as value_api;
-use api\word\word as word_api;
 use api\word\triple as triple_api;
+use api\word\word as word_api;
+use cfg\log\change;
+use cfg\log\change_field_list;
+use cfg\log\change_table_list;
+use cfg\phrase_list;
 use cfg\value\value;
 use cfg\value\value_dsp_old;
 use html\figure\figure as figure_dsp;
-use cfg\log\change_field_list;
-use cfg\log\change;
-use cfg\log\change_table_list;
-use cfg\library;
-use cfg\phrase_list;
+use shared\library;
 use test\test_cleanup;
 
 class value_tests

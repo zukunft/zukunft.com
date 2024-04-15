@@ -37,18 +37,15 @@ include_once WEB_WORD_PATH . 'triple_list.php';
 
 use api\word\triple as triple_api;
 use cfg\db\sql;
+use cfg\db\sql_db;
 use cfg\foaf_direction;
+use cfg\phrase;
 use cfg\phrase_list;
 use cfg\triple;
-use cfg\verb_list;
-use html\word\triple_list as triple_list_dsp;
-use cfg\library;
-use cfg\phrase;
-use cfg\db\sql_db;
 use cfg\triple_list;
 use cfg\verb;
-use cfg\word;
-use cfg\word_list;
+use html\word\triple_list as triple_list_dsp;
+use shared\library;
 use test\test_cleanup;
 
 class triple_list_tests

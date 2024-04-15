@@ -31,10 +31,10 @@
 
 namespace html\ref;
 
-include_once WEB_SANDBOX_PATH . 'list.php';
+include_once WEB_SANDBOX_PATH . 'list_dsp.php';
 include_once WEB_REF_PATH . 'source.php';
 
-use html\list_dsp;
+use html\sandbox\list_dsp;
 use html\ref\source as source_dsp;
 
 class source_list extends list_dsp

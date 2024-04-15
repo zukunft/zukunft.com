@@ -32,16 +32,15 @@
 
 namespace unit_write;
 
-use api\phrase\phrase as phrase_api;
 use api\word\triple as triple_api;
 use api\word\word as word_api;
-use cfg\phrase_type;
-use cfg\library;
 use cfg\phr_ids;
 use cfg\phrase_list;
+use cfg\phrase_type;
 use cfg\triple;
 use cfg\verb;
 use cfg\word_list;
+use shared\library;
 use test\test_cleanup;
 
 class phrase_list_tests

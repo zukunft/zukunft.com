@@ -30,7 +30,7 @@
   
 */
 
-namespace cfg;
+namespace shared;
 
 use api\api;
 use api\sandbox\combine_object as combine_object_api;
@@ -39,7 +39,20 @@ use cfg\component\component_link;
 use cfg\component\component_link_type;
 use cfg\component\component_type;
 use cfg\component\position_type;
+use cfg\config;
 use cfg\db\sql_db;
+use cfg\element;
+use cfg\element_type;
+use cfg\formula;
+use cfg\formula_link;
+use cfg\formula_link_type;
+use cfg\formula_type;
+use cfg\ip_range;
+use cfg\job;
+use cfg\job_time;
+use cfg\job_type;
+use cfg\language;
+use cfg\language_form;
 use cfg\log\change;
 use cfg\log\change_action;
 use cfg\log\change_big_value;
@@ -49,10 +62,40 @@ use cfg\log\change_norm_value;
 use cfg\log\change_prime_value;
 use cfg\log\change_table;
 use cfg\log\change_table_field;
+use cfg\phrase;
+use cfg\phrase_table;
+use cfg\phrase_table_status;
+use cfg\phrase_type;
+use cfg\phrase_types;
+use cfg\pod;
+use cfg\pod_status;
+use cfg\pod_type;
+use cfg\protection_type;
+use cfg\ref;
+use cfg\ref_type;
+use cfg\sandbox_named;
+use cfg\session;
+use cfg\share_type;
+use cfg\source;
+use cfg\source_type;
+use cfg\sys_log;
+use cfg\sys_log_function;
+use cfg\sys_log_status;
+use cfg\sys_log_status_list;
+use cfg\sys_log_type;
+use cfg\system_time;
+use cfg\system_time_type;
+use cfg\user;
 use cfg\user\user_profile;
 use cfg\user\user_type;
+use cfg\user_official_type;
 use cfg\value\value;
 use cfg\value\value_ts_data;
+use cfg\view;
+use cfg\view_link_type;
+use cfg\view_term_link;
+use cfg\view_type;
+use cfg\word;
 use DateTime;
 use Exception;
 
@@ -824,10 +867,10 @@ class library
                 if (array_key_exists(0, $a)) {
                     if (is_array($a[0])) {
                         if (array_key_exists(combine_object_api::FLD_CLASS, $a[0])) {
-                            usort($a, array('cfg\library', 'sort_array_by_class'));
+                            usort($a, array('shared\library', 'sort_array_by_class'));
                         }
                         if (array_key_exists(api::FLD_ID, $a[0])) {
-                            usort($a, array('cfg\library', 'sort_array_by_id'));
+                            usort($a, array('shared\library', 'sort_array_by_id'));
                         }
                     }
                 }

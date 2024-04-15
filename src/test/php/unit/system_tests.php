@@ -44,7 +44,6 @@ use cfg\db\sql_db;
 use cfg\formula;
 use cfg\ip_range;
 use cfg\ip_range_list;
-use cfg\library;
 use cfg\session;
 use cfg\sys_log;
 use cfg\sys_log_list;
@@ -53,6 +52,7 @@ use cfg\sys_log_status_list;
 use cfg\verb;
 use controller\system\sys_log as sys_log_api;
 use DateTime;
+use shared\library;
 use test\test_cleanup;
 
 class system_tests

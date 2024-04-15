@@ -66,8 +66,8 @@ use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_type;
 use html\html_base;
-use html\phrase\term as term_dsp;
 use html\word\word as word_dsp;
+use shared\library;
 
 class term extends combine_named
 {

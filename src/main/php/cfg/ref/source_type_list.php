@@ -33,7 +33,7 @@ namespace cfg;
 
 use cfg\db\sql;
 use cfg\db\sql_db;
-use cfg\db\sql_par;
+use shared\library;
 
 include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';

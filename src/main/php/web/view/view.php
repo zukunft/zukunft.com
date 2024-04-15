@@ -34,12 +34,13 @@
 
 namespace html\view;
 
+include_once SANDBOX_PATH . 'config.php';
 include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
 include_once API_PATH . 'api.php';
 include_once API_COMPONENT_PATH . 'component.php';
 include_once MODEL_COMPONENT_PATH . 'component.php';
 include_once MODEL_DB_PATH . 'sql_db.php';
-include_once MODEL_HELPER_PATH . 'library.php';
+include_once SHARED_PATH . 'library.php';
 include_once MODEL_VIEW_PATH . 'view_list.php';
 include_once MODEL_VIEW_PATH . 'view_type.php';
 include_once MODEL_WORD_PATH . 'word.php';
@@ -56,27 +57,28 @@ include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
 include_once WEB_WORD_PATH . 'word.php';
 include_once WEB_WORD_PATH . 'triple.php';
 
+// TODO remove model classes
 use api\api;
 use api\component\component as component_api;
 use cfg\component\component;
-use cfg\db\sql_db;
-use cfg\library;
 use cfg\view_list;
 use cfg\view_type;
 use cfg\word;
-use html\display_list;
-use html\component\component as component_dsp;
-use html\component\component_list as component_list_dsp;
 use controller\controller;
-use html\html_base;
 use html\api as api_dsp;
 use html\button;
-use html\system\messages;
+use html\component\component as component_dsp;
+use html\component\component_list as component_list_dsp;
+use html\display_list;
+use html\html_base;
 use html\log\user_log_display;
+use html\sandbox\config;
 use html\sandbox\db_object as db_object_dsp;
 use html\sandbox\sandbox_typed;
-use html\word\word as word_dsp;
+use html\system\messages;
 use html\word\triple as triple_dsp;
+use html\word\word as word_dsp;
+use shared\library;
 
 class view extends sandbox_typed
 {
@@ -676,13 +678,13 @@ class view extends sandbox_typed
             $comp_html = $this->linked_components($add_cmp, $wrd, $script, $back);
 
             // collect the history
-            $changes = $this->dsp_hist(0, sql_db::ROW_LIMIT, '', $back);
+            $changes = $this->dsp_hist(0, config::ROW_LIMIT, '', $back);
             if (trim($changes) <> "") {
                 $hist_html = $changes;
             } else {
                 $hist_html = 'Nothing changed yet.';
             }
-            $changes = $this->dsp_hist_links(0, sql_db::ROW_LIMIT, '', $back);
+            $changes = $this->dsp_hist_links(0, config::ROW_LIMIT, '', $back);
             if (trim($changes) <> "") {
                 $link_html = $changes;
             } else {

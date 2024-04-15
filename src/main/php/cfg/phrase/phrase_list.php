@@ -79,6 +79,7 @@ use cfg\group\group_id;
 use cfg\value\value;
 use cfg\value\value_list;
 use html\word\word as word_dsp;
+use shared\library;
 
 class phrase_list extends sandbox_list_named
 {

@@ -34,13 +34,13 @@ namespace unit;
 
 use api\view\view as view_api;
 use cfg\db\sql;
+use cfg\db\sql_db;
+use cfg\view;
 use cfg\view_link_type;
 use cfg\view_term_link;
 use cfg\view_type;
 use html\view\view as view_dsp;
-use cfg\library;
-use cfg\db\sql_db;
-use cfg\view;
+use shared\library;
 use test\test_cleanup;
 
 class view_tests

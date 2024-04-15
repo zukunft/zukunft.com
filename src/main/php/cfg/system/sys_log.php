@@ -56,6 +56,7 @@ use cfg\log\change_action;
 use controller\system\sys_log as sys_log_api;
 use DateTime;
 use DateTimeInterface;
+use shared\library;
 
 class sys_log extends db_object_seq_id
 {

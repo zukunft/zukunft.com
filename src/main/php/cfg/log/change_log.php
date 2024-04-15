@@ -84,7 +84,6 @@ use cfg\db\sql_field_type;
 use cfg\db_object_seq_id_user;
 use cfg\formula;
 use cfg\formula_link;
-use cfg\library;
 use cfg\ref;
 use cfg\source;
 use cfg\triple;
@@ -99,6 +98,7 @@ use cfg\word;
 use DateTime;
 use DateTimeInterface;
 use Exception;
+use shared\library;
 
 class change_log extends db_object_seq_id_user
 {

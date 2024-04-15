@@ -35,7 +35,7 @@ namespace unit;
 include_once MODEL_IMPORT_PATH . 'import.php';
 
 use cfg\db\sql_db;
-use cfg\library;
+use shared\library;
 use test\test_cleanup;
 
 class db_setup_tests

@@ -33,7 +33,6 @@
 namespace cfg\value;
 
 use cfg\db\sql_db;
-use cfg\library;
 use cfg\phrase;
 use cfg\user;
 use cfg\user_message;
@@ -41,8 +40,9 @@ use controller\controller;
 use html\api;
 use html\html_base;
 use html\log\user_log_display;
-use html\word\word as word_dsp;
 use html\ref\source as source_dsp;
+use html\word\word as word_dsp;
+use shared\library;
 
 class value_dsp_old extends value
 {

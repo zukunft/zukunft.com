@@ -33,13 +33,13 @@
 namespace unit_read;
 
 use api\ref\source as source_api;
-use cfg\library;
 use cfg\phrase_type;
+use cfg\ref;
 use cfg\ref_type_list;
 use cfg\source_list;
 use cfg\source_type;
 use cfg\source_type_list;
-use cfg\ref;
+use shared\library;
 use test\test_cleanup;
 
 class ref_tests

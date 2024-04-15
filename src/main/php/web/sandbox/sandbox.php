@@ -33,8 +33,7 @@
 namespace html\sandbox;
 
 include_once WEB_SANDBOX_PATH . 'db_object.php';
-include_once WEB_PATH . 'html_base.php';
-include_once WEB_TYPES_PATH . 'type_lists.php';
+include_once WEB_HTML_PATH . 'html_base.php';
 include_once API_SANDBOX_PATH . 'sandbox_named.php';
 
 use html\sandbox\db_object as db_object_dsp;

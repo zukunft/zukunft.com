@@ -36,6 +36,7 @@ namespace cfg;
 
 use cfg\db\sql;
 use cfg\db\sql_type;
+use shared\library;
 
 include_once MODEL_HELPER_PATH . 'combine_object.php';
 

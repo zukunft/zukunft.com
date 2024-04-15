@@ -31,10 +31,10 @@
 
 namespace html\component;
 
-include_once WEB_SANDBOX_PATH . 'list.php';
+include_once WEB_SANDBOX_PATH . 'list_dsp.php';
 include_once WEB_COMPONENT_PATH . 'component.php';
 
-use html\list_dsp;
+use html\sandbox\list_dsp;
 use html\component\component as component_dsp;
 
 class component_list extends list_dsp

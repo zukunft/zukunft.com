@@ -48,13 +48,15 @@ include_once MODEL_GROUP_PATH . 'group_id_list.php';
 use api\value\value_list as value_list_api;
 use cfg\db\sql;
 use cfg\db\sql_db;
-use cfg\db\sql_type;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
+use cfg\db\sql_type;
+use cfg\export\sandbox_exp;
+use cfg\export\source_exp;
+use cfg\export\value_list_exp;
 use cfg\group\group;
 use cfg\group\group_id;
 use cfg\group\group_list;
-use cfg\library;
 use cfg\phrase;
 use cfg\phrase_list;
 use cfg\protection_type;
@@ -65,9 +67,7 @@ use cfg\source;
 use cfg\user_message;
 use cfg\word;
 use cfg\word_list;
-use cfg\export\sandbox_exp;
-use cfg\export\source_exp;
-use cfg\export\value_list_exp;
+use shared\library;
 
 class value_list extends sandbox_value_list
 {

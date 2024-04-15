@@ -31,11 +31,11 @@
 
 namespace cfg;
 
-use cfg\db\sql;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
+use shared\library;
 
-include_once MODEL_HELPER_PATH . 'library.php';
+include_once SHARED_PATH . 'library.php';
 include_once MODEL_HELPER_PATH . 'type_object.php';
 
 class phrase_type extends type_object

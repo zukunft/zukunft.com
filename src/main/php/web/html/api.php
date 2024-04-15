@@ -32,8 +32,8 @@
 
 namespace html;
 
-use cfg\library;
 use controller\controller;
+use shared\library;
 
 class api
 {

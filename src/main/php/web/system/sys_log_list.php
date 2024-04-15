@@ -32,12 +32,12 @@
 
 namespace html\system;
 
-include_once WEB_SANDBOX_PATH . 'list.php';
+include_once WEB_SANDBOX_PATH . 'list_dsp.php';
 include_once WEB_SYSTEM_PATH . 'sys_log.php';
 
 use controller\controller;
 use html\html_base;
-use html\list_dsp;
+use html\sandbox\list_dsp;
 use html\system\sys_log as sys_log_dsp;
 
 class sys_log_list extends list_dsp

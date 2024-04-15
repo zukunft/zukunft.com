@@ -2,8 +2,10 @@
 
 /*
 
-    web/types/formula_type_list.php - the preloaded data formula types used for the html frontend
-    -------------------------------
+    web/sandbox/config.php - to cache and manage the user config in the frontend
+    ----------------------
+
+    This superclass should be used by the classes word_dsp, formula_dsp, ... to enable user specific values and links
 
 
     This file is part of zukunft.com - calc with words
@@ -27,25 +29,17 @@
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
-  
+
 */
 
-namespace html\types;
+namespace html\sandbox;
 
-include_once TYPES_PATH . 'type_list.php';
-
-class formula_type_list extends type_list
+class config
 {
 
-    const NAME = 'formula type';
-
-    /**
-     * @returns string the html code to select a type from this list
-     */
-    function selector(string $form = '', int $selected = 0, string $name = self::NAME): string
-    {
-        global $html_formula_types;
-        return parent::type_selector($html_formula_types->lst_key(), $name, $form, $selected);
-    }
+    // default number of rows per page/query if the user has not defined another limit
+    const ROW_LIMIT = 20;
 
 }
+
+

@@ -47,11 +47,11 @@ use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\db\sql_type;
 use cfg\export\sandbox_exp;
-use cfg\library;
 use cfg\sandbox;
 use cfg\sandbox_link_with_type;
 use cfg\user;
 use cfg\view;
+use shared\library;
 
 class component_link extends sandbox_link_with_type
 {

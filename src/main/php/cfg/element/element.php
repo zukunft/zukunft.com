@@ -43,6 +43,7 @@ use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use html\formula\formula as formula_dsp;
 use html\word\word as word_dsp;
+use shared\library;
 
 class element extends db_object_seq_id_user
 {

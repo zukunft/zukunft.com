@@ -36,17 +36,16 @@ namespace html\formula;
 
 include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
 
+use api\api;
 use cfg\db\sql_db;
 use cfg\expression;
 use cfg\formula_link_list;
-use cfg\library;
 use cfg\phrase;
 use cfg\phrase_list;
 use cfg\result\result;
 use cfg\result\result_list;
 use cfg\term_list;
 use controller\controller;
-use api\api;
 use html\api as api_dsp;
 use html\button;
 use html\html_base;
@@ -60,6 +59,7 @@ use html\result\result as result_dsp;
 use html\sandbox\sandbox_typed;
 use html\system\messages;
 use html\word\word as word_dsp;
+use shared\library;
 
 class formula extends sandbox_typed
 {

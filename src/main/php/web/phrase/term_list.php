@@ -36,14 +36,14 @@ namespace html\phrase;
 
 use api\phrase\term as term_api;
 use api\sandbox\combine_object as combine_object_api;
-use html\list_dsp;
-use html\word\word as word_dsp;
-use html\word\triple as triple_dsp;
 use html\formula\formula as formula_dsp;
+use html\sandbox\list_dsp;
 use html\verb\verb as verb_dsp;
-use cfg\library;
+use html\word\triple as triple_dsp;
+use html\word\word as word_dsp;
+use shared\library;
 
-include_once WEB_SANDBOX_PATH . 'list.php';
+include_once WEB_SANDBOX_PATH . 'list_dsp.php';
 
 class term_list extends list_dsp
 {

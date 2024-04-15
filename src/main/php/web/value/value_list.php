@@ -37,7 +37,6 @@ namespace html\value;
 include_once WEB_PHRASE_PATH . 'phrase_group_list.php';
 
 use cfg\group\group;
-use cfg\library;
 use cfg\phr_ids;
 use cfg\phrase;
 use cfg\phrase_list;
@@ -47,11 +46,12 @@ use controller\controller;
 use html\api;
 use html\button;
 use html\html_base;
-use html\list_dsp;
+use html\sandbox\list_dsp;
 use html\phrase\phrase_group_list as phrase_group_list_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\value\value as value_dsp;
 use html\word\word as word_dsp;
+use shared\library;
 
 class value_list extends list_dsp
 {

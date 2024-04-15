@@ -2,9 +2,8 @@
 
 /*
 
-    web/types/formula_type_list.php - the preloaded data formula types used for the html frontend
-    -------------------------------
-
+    model/sandbox/protection_type.php - to define if and how an object can changed
+    ---------------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -27,25 +26,21 @@
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
-  
+
 */
 
-namespace html\types;
+namespace shared\types;
 
-include_once TYPES_PATH . 'type_list.php';
-
-class formula_type_list extends type_list
+class protection_type
 {
+    // the field name used for the JSON im- and export
+    const JSON_FLD = 'protection';
 
-    const NAME = 'formula type';
-
-    /**
-     * @returns string the html code to select a type from this list
-     */
-    function selector(string $form = '', int $selected = 0, string $name = self::NAME): string
-    {
-        global $html_formula_types;
-        return parent::type_selector($html_formula_types->lst_key(), $name, $form, $selected);
-    }
+    // list of the protection types that have a coded functionality
+    const NO_PROTECT = "no_protection";
+    const USER = "user_protection";
+    const ADMIN = "admin_protection";
+    const ADMIN_ID = 3;
+    const NO_CHANGE = "no_change";
 
 }

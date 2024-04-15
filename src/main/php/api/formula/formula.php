@@ -33,7 +33,9 @@
 namespace api\formula;
 
 include_once API_SANDBOX_PATH . 'sandbox_typed.php';
-include_once WEB_FORMULA_PATH . 'formula.php';
+include_once API_PHRASE_PATH . 'term.php';
+include_once API_WORD_PATH . 'word.php';
+include_once API_VERB_PATH . 'verb.php';
 
 use api\phrase\term as term_api;
 use api\sandbox\sandbox_typed as sandbox_typed_api;

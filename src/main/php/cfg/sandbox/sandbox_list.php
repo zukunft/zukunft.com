@@ -39,6 +39,7 @@ use cfg\db\sql_par_type;
 use cfg\db\sql_type;
 use cfg\result\result_list;
 use cfg\value\value_list;
+use shared\library;
 
 include_once MODEL_SYSTEM_PATH . 'base_list.php';
 

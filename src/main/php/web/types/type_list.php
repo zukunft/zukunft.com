@@ -35,15 +35,15 @@
 
 namespace html\types;
 
-include_once API_PATH . 'api.php';
-include_once WEB_TYPES_PATH . 'type_object.php';
-include_once WEB_TYPES_PATH . 'protection.php';
-include_once WEB_HTML_PATH . 'html_selector.php';
+include_once SHARED_PATH . 'api.php';
+include_once TYPES_PATH . 'type_object.php';
+include_once TYPES_PATH . 'protection.php';
+include_once HTML_PATH . 'html_selector.php';
 
-use api\api;
-use cfg\library;
+use shared\api;
 use html\html_selector;
 use html\types\type_object as type_object_dsp;
+use shared\library;
 
 class type_list
 {

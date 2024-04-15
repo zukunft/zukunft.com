@@ -40,14 +40,14 @@ include_once MODEL_GROUP_PATH . 'result_id.php';
 
 use api\phrase\group as group_api;
 use cfg\db\sql;
+use cfg\db\sql_db;
 use cfg\db\sql_type;
-use cfg\group\group_id;
 use cfg\group\group;
+use cfg\group\group_id;
 use cfg\group\group_link;
 use cfg\group\result_id;
-use cfg\library;
 use cfg\phrase_list;
-use cfg\db\sql_db;
+use shared\library;
 use test\test_cleanup;
 
 class group_tests

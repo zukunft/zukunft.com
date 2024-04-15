@@ -31,10 +31,10 @@
 
 namespace html\view;
 
-include_once WEB_SANDBOX_PATH . 'list.php';
-include_once MODEL_VIEW_PATH . 'view_list.php';
+include_once SANDBOX_PATH . 'list_dsp.php';
+include_once VIEW_PATH . 'view.php';
 
-use html\list_dsp;
+use html\sandbox\list_dsp;
 use html\view\view as view_dsp;
 
 class view_list extends list_dsp
@@ -63,6 +63,18 @@ class view_list extends list_dsp
         foreach ($this->lst as $dsp) {
             if ($dsp->code_id() == $code_id) {
                 $result = $dsp;
+            }
+        }
+        return $result;
+    }
+
+    function get_by_id(int $id): view_dsp
+    {
+        // TODO use a hash list
+        $result = new view_dsp();
+        foreach ($this->lst as $msk) {
+            if ($msk->id() == $id) {
+                $result = $msk;
             }
         }
         return $result;

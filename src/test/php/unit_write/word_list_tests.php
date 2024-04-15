@@ -36,9 +36,9 @@ use api\value\value as value_api;
 use api\word\word as word_api;
 use cfg\foaf_direction;
 use cfg\group\group;
-use cfg\library;
 use cfg\verb;
 use cfg\word_list;
+use shared\library;
 use test\test_cleanup;
 
 class word_list_tests

@@ -61,11 +61,11 @@ use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\group\group;
 use cfg\group\group_id;
-use cfg\group\group_link;
 use cfg\value\value;
 use cfg\value\value_list;
 use html\word\word as word_dsp;
 use html\word\word_list as word_list_dsp;
+use shared\library;
 
 class word_list extends sandbox_list
 {

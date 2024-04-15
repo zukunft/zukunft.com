@@ -41,7 +41,6 @@ use api\word\word as word_api;
 use cfg\component\component_link_list;
 use cfg\component\component_type;
 use cfg\db\sql_db;
-use cfg\library;
 use cfg\word;
 use controller\controller;
 use html\html_base;
@@ -53,6 +52,7 @@ use html\sandbox\db_object as db_object_dsp;
 use html\sandbox\sandbox_typed;
 use html\view\view as view_dsp;
 use html\view\view_list;
+use shared\library;
 
 class component extends sandbox_typed
 {

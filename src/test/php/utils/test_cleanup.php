@@ -36,9 +36,9 @@ use api\component\component as component_api;
 use api\formula\formula as formula_api;
 use api\phrase\phrase as phrase_api;
 use api\ref\source as source_api;
-use api\word\triple as triple_api;
 use api\verb\verb as verb_api;
 use api\view\view as view_api;
+use api\word\triple as triple_api;
 use api\word\word as word_api;
 use cfg\component\component;
 use cfg\component\component_link;
@@ -46,12 +46,10 @@ use cfg\db\sql_par;
 use cfg\formula;
 use cfg\formula_link;
 use cfg\formula_type;
-use cfg\library;
 use cfg\phrase;
 use cfg\phrase_list;
 use cfg\phrase_type;
 use cfg\ref_type;
-use cfg\db\sql_db;
 use cfg\source;
 use cfg\term;
 use cfg\term_list;
@@ -61,6 +59,7 @@ use cfg\verb;
 use cfg\view;
 use cfg\word;
 use html\html_base;
+use shared\library;
 
 class test_cleanup extends test_api
 {

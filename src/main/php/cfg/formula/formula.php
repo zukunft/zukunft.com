@@ -68,6 +68,7 @@ use DateTime;
 use Exception;
 use html\word\word as word_dsp;
 use math;
+use shared\library;
 
 class formula extends sandbox_typed
 {

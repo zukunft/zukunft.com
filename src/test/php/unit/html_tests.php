@@ -37,24 +37,24 @@ include_once WEB_HTML_PATH . 'button.php';
 include_once WEB_RESULT_PATH . 'result_list.php';
 
 use api\component\component as component_api;
-use api\phrase\phrase as phrase_api;
 use api\phrase\group as group_api;
+use api\phrase\phrase as phrase_api;
 use api\phrase\phrase_list as phrase_list_api;
 use api\result\result as result_api;
 use api\value\value as value_api;
 use api\word\word as word_api;
 use cfg\component\component;
 use cfg\component\component_type;
-use cfg\library;
 use cfg\verb;
 use cfg\verb_list;
 use controller\controller;
 use html\button;
+use html\component\component as component_dsp;
 use html\html_base;
-use html\system\messages;
 use html\result\result as result_dsp;
 use html\result\result_list as result_list_dsp;
-use html\component\component as component_dsp;
+use html\system\messages;
+use shared\library;
 use test\test_cleanup;
 
 class html_tests

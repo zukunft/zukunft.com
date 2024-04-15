@@ -35,17 +35,16 @@ namespace unit;
 include_once MODEL_WORD_PATH . 'word_list.php';
 include_once WEB_WORD_PATH . 'word_list.php';
 
-use api\verb\verb as verb_api;
 use api\word\word as word_api;
 use cfg\db\sql;
+use cfg\db\sql_db;
 use cfg\foaf_direction;
 use cfg\phrase_type;
-use cfg\library;
-use cfg\db\sql_db;
 use cfg\verb;
 use cfg\word;
 use cfg\word_list;
 use html\word\word_list as word_list_dsp;
+use shared\library;
 use test\test_cleanup;
 
 class word_list_tests

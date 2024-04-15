@@ -33,12 +33,8 @@
 namespace cfg\log;
 
 use cfg\db\sql;
-use cfg\db\sql_field_default;
-use cfg\db\sql_field_type;
-use cfg\db\sql_type;
-use cfg\library;
 use cfg\sandbox_named;
-use cfg\verb;
+use shared\library;
 
 class change_table_field
 {

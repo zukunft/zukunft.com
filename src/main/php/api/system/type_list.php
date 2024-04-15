@@ -35,15 +35,15 @@ namespace api\system;
 include_once API_VERB_PATH . 'verb.php';
 include_once API_VIEW_PATH . 'view.php';
 include_once API_SANDBOX_PATH . 'list_object.php';
-include_once WEB_SANDBOX_PATH . 'list.php';
+include_once WEB_SANDBOX_PATH . 'list_dsp.php';
 
 use api\api;
-use api\sandbox\type_object as type_api;
 use api\sandbox\list_object as list_api;
-use JsonSerializable;
-use html\user\user_type_list as type_list_dsp;
+use api\sandbox\type_object as type_api;
 use cfg\verb;
 use cfg\view;
+use html\user\user_type_list as type_list_dsp;
+use JsonSerializable;
 
 class type_list extends list_api implements JsonSerializable
 {

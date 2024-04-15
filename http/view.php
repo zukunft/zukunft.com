@@ -78,7 +78,7 @@ $result .= $usr->get();
 if ($usr->id() > 0) {
 
     // TODO move to the frontend __construct
-    $main = new frontend();
+    $main = new frontend('view');
     $api_msg = $main->api_get(type_lists_dsp::class);
     $frontend_cache = new type_lists_dsp($api_msg);
 

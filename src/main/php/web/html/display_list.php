@@ -36,7 +36,7 @@ namespace html;
 
 include_once WEB_HTML_PATH . 'html_base.php';
 
-use cfg\library;
+use shared\library;
 
 class display_list extends html_base
 {

@@ -43,13 +43,13 @@
 
 namespace cfg\export;
 
-include_once MODEL_HELPER_PATH . 'library.php';
+include_once SHARED_PATH . 'library.php';
 
 use cfg\config;
-use cfg\library;
 use cfg\phrase_list;
 use cfg\user;
 use html\phrase\phrase_list as phrase_list_dsp;
+use shared\library;
 
 class export
 {

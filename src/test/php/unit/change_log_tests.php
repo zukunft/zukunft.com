@@ -37,21 +37,20 @@ include_once MODEL_LOG_PATH . 'change.php';
 include_once MODEL_LOG_PATH . 'change_link.php';
 
 use api\word\triple as triple_api;
-use cfg\config;
 use cfg\db\sql;
-use cfg\db\sql_type;
-use cfg\library;
 use cfg\db\sql_db;
+use cfg\db\sql_type;
+use cfg\log\change;
 use cfg\log\change_action;
 use cfg\log\change_field;
-use cfg\log\change_table;
-use cfg\log\change_table_field;
-use html\log\user_log_display;
 use cfg\log\change_link;
 use cfg\log\change_log_list;
-use cfg\log\change;
+use cfg\log\change_table;
+use cfg\log\change_table_field;
 use cfg\triple;
 use cfg\user;
+use html\log\user_log_display;
+use shared\library;
 use test\test_cleanup;
 
 class change_log_tests

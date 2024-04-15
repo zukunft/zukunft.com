@@ -44,7 +44,7 @@ use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\log\change;
 use cfg\log\change_action;
-use cfg\log\change_action_list;
+use shared\library;
 
 class ip_range extends db_object_seq_id
 {

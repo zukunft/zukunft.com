@@ -32,14 +32,13 @@
 
 namespace unit_read;
 
-use api\word\word as word_api;
-use api\word\triple as triple_api;
 use api\formula\formula as formula_api;
 use api\verb\verb as verb_api;
-use cfg\formula;
-use cfg\library;
+use api\word\triple as triple_api;
+use api\word\word as word_api;
 use cfg\term_list;
 use cfg\trm_ids;
+use shared\library;
 use test\test_cleanup;
 
 class term_list_tests

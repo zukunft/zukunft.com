@@ -41,6 +41,7 @@ use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use html\formula\formula as formula_dsp;
 use html\formula\formula_list as formula_list_dsp;
+use shared\library;
 
 class formula_list extends sandbox_list
 {

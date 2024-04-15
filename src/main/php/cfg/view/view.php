@@ -62,6 +62,7 @@ use cfg\db\sql_par_type;
 use cfg\db\sql_type;
 use cfg\export\sandbox_exp;
 use cfg\export\view_exp;
+use shared\library;
 
 class view extends sandbox_typed
 {

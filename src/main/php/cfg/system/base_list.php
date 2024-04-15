@@ -34,6 +34,7 @@
 namespace cfg;
 
 use cfg\db\sql_db;
+use shared\library;
 
 class base_list
 {
