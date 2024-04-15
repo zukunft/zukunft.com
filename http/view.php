@@ -46,14 +46,14 @@ include_once PHP_PATH . 'zu_lib.php';
 // load what is used here
 include_once PHP_PATH . 'frontend.php';
 include_once API_PATH . 'controller.php';
-include_once WEB_HTML_PATH . 'api.php';
+include_once WEB_HTML_PATH . 'rest_ctrl.php';
 include_once WEB_VIEW_PATH . 'view.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_VIEW_PATH . 'view.php';
 include_once MODEL_WORD_PATH . 'word.php';
 
 use controller\controller;
-use html\api;
+use html\rest_ctrl;
 use html\view\view as view_dsp;
 use cfg\user;
 use cfg\view;
@@ -87,13 +87,13 @@ if ($usr->id() > 0) {
     // set the object that should be displayed
     $dbo_dsp = new word_dsp();
 
-    $view_words = $_GET[api::PAR_VIEW_WORDS] ?? '';
+    $view_words = $_GET[rest_ctrl::PAR_VIEW_WORDS] ?? '';
 
     // get the word(s) to display
     // TODO replace it with phrase
     $wrd = new word($usr);
     if ($view_words != '') {
-        $wrd->main_wrd_from_txt($_GET[api::PAR_VIEW_WORDS]);
+        $wrd->main_wrd_from_txt($_GET[rest_ctrl::PAR_VIEW_WORDS]);
     } else {
         // get last word used by the user or a default value
         $wrd = $usr->last_wrd();
@@ -103,13 +103,13 @@ if ($usr->id() > 0) {
     // TODO move as much a possible to backend functions
     if ($wrd->id() > 0) {
         // if the user has changed the view for this word, save it
-        $new_view_id = $_GET[api::PAR_VIEW_NEW_ID] ?? '';
+        $new_view_id = $_GET[rest_ctrl::PAR_VIEW_NEW_ID] ?? '';
         if ($new_view_id != '') {
             $wrd->save_view($new_view_id);
             $view_id = $new_view_id;
         } else {
             // if the user has selected a special view, use it
-            $view_id = $_GET[api::PAR_VIEW_ID] ?? '';
+            $view_id = $_GET[rest_ctrl::PAR_VIEW_ID] ?? '';
             if ($view_id == '') {
                 // if the user has set a view for this word, use it
                 $view_id = $wrd->view_id();

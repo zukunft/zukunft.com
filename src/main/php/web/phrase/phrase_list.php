@@ -34,9 +34,8 @@
 
 namespace html\phrase;
 
-include_once WEB_SANDBOX_PATH . 'list_dsp.php';
-include_once WEB_PHRASE_PATH . 'phrase.php';
-include_once WEB_PHRASE_PATH . 'phrase_list.php';
+include_once SANDBOX_PATH . 'list_dsp.php';
+include_once PHRASE_PATH . 'phrase.php';
 
 use api\phrase\term as term_api;
 use api\sandbox\combine_object as combine_object_api;
@@ -47,7 +46,7 @@ use cfg\phrase_list as phrase_list_db;
 use cfg\user;
 use cfg\verb_list;
 use controller\controller;
-use html\api as api_dsp;
+use html\rest_ctrl as api_dsp;
 use html\html_base;
 use html\sandbox\list_dsp;
 use html\phrase\phrase as phrase_dsp;

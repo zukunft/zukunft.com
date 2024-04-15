@@ -43,7 +43,7 @@ use cfg\phrase_list;
 use cfg\result\result_list;
 use cfg\word_list;
 use controller\controller;
-use html\api;
+use html\rest_ctrl;
 use html\button;
 use html\html_base;
 use html\sandbox\list_dsp;
@@ -320,7 +320,7 @@ class value_list extends list_dsp
             $result .= '  <tr>' . "\n";
             $result .= '    <th></th>' . "\n";
             foreach ($time_lst->lst() as $time_word) {
-                $result .= $time_word->dsp_obj()->dsp_th($back, api::STYLE_RIGHT);
+                $result .= $time_word->dsp_obj()->dsp_th($back, rest_ctrl::STYLE_RIGHT);
             }
             $result .= '  </tr>' . "\n";
 

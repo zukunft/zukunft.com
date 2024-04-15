@@ -40,7 +40,7 @@ include_once API_SANDBOX_PATH . 'sandbox_value.php';
 
 use controller\controller;
 use api\api;
-use html\api as api_dsp;
+use html\rest_ctrl as api_dsp;
 use html\html_base;
 use html\phrase\phrase_group;
 use html\phrase\phrase_list as phrase_list_dsp;

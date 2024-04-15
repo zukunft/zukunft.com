@@ -117,6 +117,40 @@ class type_list
         return $result;
     }
 
+    function code_id(int $id): string
+    {
+        $result = '';
+        $type = $this->get($id);
+        if ($type != null) {
+            $result = $type->code_id;
+        //} else {
+            //log_err('Type code id not found for ' . $id . ' in ' . $this->dsp_id());
+        }
+        return $result;
+    }
+
+    /**
+     * pick a type from the preloaded object list
+     * @param int $id the database id of the expected type
+     * @return type_object|null the type object
+     */
+    function get(int $id): ?type_object
+    {
+        $result = null;
+        if ($id > 0) {
+            if (in_array($id, $this->hash)) {
+                $key = array_search($id, $this->hash);
+                $lst_key = array_search($key, array_keys($this->hash));
+                $result = $this->lst[$lst_key];
+            //} else {
+                //log_err('Type with is ' . $id . ' not found in ' . $this->dsp_id());
+            }
+        //} else {
+            //log_debug('Type id not set');
+        }
+        return $result;
+    }
+
 
     /*
      * modify functions

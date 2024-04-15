@@ -35,11 +35,14 @@ namespace html;
 use controller\controller;
 use shared\library;
 
-class api
+class rest_ctrl
 {
 
     // methods used
     const GET = 'GET';
+    const POST = 'POST';
+    const PUT = 'PUT';
+    const DELETE = 'DELETE';
 
     // TODO to be move to the environment variables as defined in appication.yaml
     // the url of the backend
@@ -158,25 +161,25 @@ class api
         return $ctrl->check_api_msg($jsom_msg);
     }
 
+    // TODO combine with frontend
     function api_call(string $method, string $url, array $data): string
     {
         $curl = curl_init();
         $data_json = json_encode($data);
 
-
         switch ($method) {
-            case "POST":
-                curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
+            case self::POST:
+                curl_setopt($curl, CURLOPT_CUSTOMREQUEST, self::POST);
                 break;
-            case "PUT":
+            case self::PUT:
                 curl_setopt($curl,
                     CURLOPT_HTTPHEADER,
                     array('Content-Type: application/json', 'Content-Length: ' . strlen($data_json)));
-                curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "PUT");
+                curl_setopt($curl, CURLOPT_CUSTOMREQUEST, self::PUT);
                 curl_setopt($curl, CURLOPT_POSTFIELDS, $data_json);
                 break;
-            case "DELETE":
-                curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "DELETE");
+            case self::DELETE:
+                curl_setopt($curl, CURLOPT_CUSTOMREQUEST, self::DELETE);
                 $url = sprintf("%s?%s", $url, http_build_query($data));
                 break;
             default:

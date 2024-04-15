@@ -37,6 +37,9 @@ const SHARED_TYPES_PATH = SHARED_PATH . 'types' . DIRECTORY_SEPARATOR;
 const API_PATH = PHP_PATH . 'api' . DIRECTORY_SEPARATOR;
 const API_USER_PATH = API_PATH . 'user' . DIRECTORY_SEPARATOR;
 const API_SANDBOX_PATH = API_PATH . 'sandbox' . DIRECTORY_SEPARATOR;
+const API_WORD_PATH = API_PATH . 'word' . DIRECTORY_SEPARATOR;
+const API_PHRASE_PATH = API_PATH . 'phrase' . DIRECTORY_SEPARATOR;
+const API_COMPONENT_PATH = API_PATH . 'component' . DIRECTORY_SEPARATOR;
 
 // path of the pure html frontend objects
 const WEB_PATH = PHP_PATH . 'web' . DIRECTORY_SEPARATOR;
@@ -206,7 +209,9 @@ class frontend
 
     function get_user(): user
     {
-        return new user();
+        global $usr;
+        $usr = new user();
+        return $usr;
     }
 
 
@@ -255,16 +260,14 @@ class frontend
         string       $id_fld = 'ids'
     ): string
     {
-        log_debug();
         $lib = new library();
-        $class = $lib->class_to_name($class);
+        $class = $lib->class_to_name_pur($class);
         $url = self::HOST_DEV . api::URL_API_PATH . $lib->camelize_ex_1($class);
         if (is_array($ids)) {
             $data = array($id_fld => implode(",", $ids));
         } else {
             $data = array($id_fld => $ids);
         }
-        log_debug('api_call');
         return $this->api_call("GET", $url, $data);
     }
 
@@ -276,10 +279,8 @@ class frontend
      * @param array $data with the json that should be included in the backend call
      * @return string the answer from the backend
      */
-    private function api_call(string $method, string $url, array $data): string
+    function api_call(string $method, string $url, array $data): string
     {
-        log_debug();
-
         $curl = curl_init();
         $data_json = json_encode($data);
 
@@ -314,9 +315,7 @@ class frontend
 
         $result = curl_exec($curl);
 
-        log_debug('api_call do');
         curl_close($curl);
-        log_debug('api_call done');
 
         return $result;
     }

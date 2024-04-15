@@ -46,7 +46,7 @@ use cfg\result\result;
 use cfg\result\result_list;
 use cfg\term_list;
 use controller\controller;
-use html\api as api_dsp;
+use html\rest_ctrl as api_dsp;
 use html\button;
 use html\html_base;
 use html\html_selector;
@@ -584,7 +584,7 @@ class formula extends sandbox_typed
     {
         log_debug($phr_id);
         $result = '    <td>' . "\n";
-        $url = \html\api::PATH_FIXED . self::class . api_dsp::UPDATE . api_dsp::EXT . '?id=' . $this->id . '&unlink_phrase=' . $phr_id . '&back=' . $back;
+        $url = \html\rest_ctrl::PATH_FIXED . self::class . api_dsp::UPDATE . api_dsp::EXT . '?id=' . $this->id . '&unlink_phrase=' . $phr_id . '&back=' . $back;
         $result .= (new button($url, $back))->del(messages::FORMULA_UNLINK);
         $result .= '    </td>' . "\n";
         return $result;

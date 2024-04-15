@@ -32,10 +32,9 @@
 
 namespace html\sandbox;
 
-include_once WEB_SANDBOX_PATH . 'sandbox_named.php';
+include_once SANDBOX_PATH . 'sandbox_named.php';
 
 use api\api;
-
 
 class sandbox_typed extends sandbox_named
 {

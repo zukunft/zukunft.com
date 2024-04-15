@@ -34,7 +34,7 @@
 
 namespace html;
 
-include_once WEB_HTML_PATH . 'html_base.php';
+include_once HTML_PATH . 'html_base.php';
 
 use shared\library;
 
@@ -59,7 +59,7 @@ class display_list extends html_base
         $row_nbr = 0;
         $num_rows = count($this->lst);
         foreach ($this->lst as $entry) {
-            if (UI_USE_BOOTSTRAP) {
+            if (html_base::UI_USE_BOOTSTRAP) {
                 $result .= '<tr><td>';
             }
 
@@ -76,12 +76,12 @@ class display_list extends html_base
             if ($row_nbr < $num_rows) {
                 $result .= '<a href="/http/' . $this->script_name . '?id=' . $this->script_parameter . '&move_down=' . $entry->id . '">down</a>';
             }
-            if (UI_USE_BOOTSTRAP) {
+            if (html_base::UI_USE_BOOTSTRAP) {
                 $result .= '</td><td>';
             }
             $result .= ' ';
             $result .= \html\btn_del('Delete ' . $lib->str_left_of($this->id_field, "_id"), $this->script_name . '?id=' . $this->script_parameter . '&del=' . $entry->id);
-            if (UI_USE_BOOTSTRAP) {
+            if (html_base::UI_USE_BOOTSTRAP) {
                 $result .= '</td></tr>';
             }
             $result .= '<br>';

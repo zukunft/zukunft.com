@@ -33,12 +33,12 @@ namespace controller\system;
 
 include_once API_USER_PATH . 'user.php';
 include_once WEB_HTML_PATH . 'html_base.php';
-include_once WEB_HTML_PATH . 'api.php';
+include_once WEB_HTML_PATH . 'rest_ctrl.php';
 
 use cfg\db_object_seq_id;
 use cfg\sys_log_status;
 use cfg\user;
-use html\api;
+use html\rest_ctrl;
 use html\html_base;
 
 class sys_log extends db_object_seq_id
@@ -104,8 +104,8 @@ class sys_log extends db_object_seq_id
         $row_text .= $html->td($this->status);
         if ($usr != null) {
             if ($usr->is_admin() or $usr->is_system()) {
-                $par_status = api::PAR_LOG_STATUS. '=' . $sys_log_stati->id(sys_log_status::CLOSED);
-                $url = $html->url(api::ERROR_UPDATE, $this->id, $back, '', $par_status);
+                $par_status = rest_ctrl::PAR_LOG_STATUS. '=' . $sys_log_stati->id(sys_log_status::CLOSED);
+                $url = $html->url(rest_ctrl::ERROR_UPDATE, $this->id, $back, '', $par_status);
                 $row_text .= $html->td($html->ref($url, 'close'));
             }
         }

@@ -40,7 +40,7 @@ include_once PHP_PATH . 'zu_lib.php';
 
 // load what is used here
 include_once API_PATH . 'controller.php';
-include_once WEB_HTML_PATH . 'api.php';
+include_once WEB_HTML_PATH . 'rest_ctrl.php';
 include_once WEB_VIEW_PATH . 'view.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_VIEW_PATH . 'view.php';

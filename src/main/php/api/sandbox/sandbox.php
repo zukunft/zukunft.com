@@ -35,19 +35,7 @@
 namespace api\sandbox;
 
 use api\api;
-use api\formula\formula as formula_api;
-use api\value\value as value_api;
-use api\word\triple as triple_api;
-use api\word\word as word_api;
-use cfg\value\value;
 use JsonSerializable;
-use cfg\formula;
-use cfg\sandbox as sandbox_cfg;
-use cfg\sandbox_value as sandbox_value_cfg;
-use cfg\triple;
-use cfg\user;
-use cfg\word;
-use function log_err;
 
 class sandbox implements JsonSerializable
 {
@@ -103,34 +91,6 @@ class sandbox implements JsonSerializable
         $vars = array();
         $vars[api::FLD_ID] = $this->id();
         return $vars;
-    }
-
-
-    /*
-     * casting
-     */
-
-    /**
-     * helper function for unit testing to create an empty model object from an api object
-     * fill the model / db object based on the api json message
-     * should be part of the save_from_api_msg functions
-     * TODO review
-     */
-    function db_obj(user $usr, string $class): sandbox_cfg|sandbox_value_cfg
-    {
-        $db_obj = null;
-        if ($class == word_api::class) {
-            $db_obj = new word($usr);
-        } elseif ($class == triple_api::class) {
-            $db_obj = new triple($usr);
-        } elseif ($class == value_api::class) {
-            $db_obj = new value($usr);
-        } elseif ($class == formula_api::class) {
-            $db_obj = new formula($usr);
-        } else {
-            log_err('API class "' . $class . '" not yet implemented');
-        }
-        return $db_obj;
     }
 
 

@@ -32,20 +32,20 @@
 
 namespace html\phrase;
 
-include_once WEB_SANDBOX_PATH . 'combine_named.php';
+include_once SANDBOX_PATH . 'combine_named.php';
 include_once API_SANDBOX_PATH . 'combine_object.php';
 include_once API_PHRASE_PATH . 'phrase.php';
-include_once WEB_WORD_PATH . 'word.php';
-include_once WEB_WORD_PATH . 'triple.php';
+include_once WORD_PATH . 'word.php';
+include_once WORD_PATH . 'triple.php';
 
 use api\phrase\phrase as phrase_api;
 use api\sandbox\combine_object as combine_object_api;
 use api\api;
 use cfg\foaf_direction;
 use cfg\verb_list;
-use html\api as api_dsp;
+use html\rest_ctrl as api_dsp;
 use html\button;
-use html\combine_named_dsp;
+use html\sandbox\combine_named as combine_named_dsp;
 use html\html_base;
 use html\system\messages;
 use html\word\word as word_dsp;

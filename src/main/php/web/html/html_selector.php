@@ -101,7 +101,7 @@ class html_selector
           $label == $this->name;
         }
         */
-        if (UI_USE_BOOTSTRAP) {
+        if (html_base::UI_USE_BOOTSTRAP) {
             $result .= '<div class="form-group ' . $this->bs_class . '">';
             if ($this->label != "") {
                 $result .= '<label for="' . $this->name . '">' . $this->label . '</label>';
@@ -146,7 +146,7 @@ class html_selector
         } else {
             $result = '</select>';
         }
-        if (UI_USE_BOOTSTRAP) {
+        if (html_base::UI_USE_BOOTSTRAP) {
             $result .= '</div>';
         }
         return $result;

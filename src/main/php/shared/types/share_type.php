@@ -2,8 +2,8 @@
 
 /*
 
-    cfg/view/view_type.php - db based ENUM of the view types
-    ----------------------
+    model/sandbox/share_type.php - to define if an object can be shared between the users
+    ----------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -26,36 +26,21 @@
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
-  
+
 */
 
-namespace cfg;
+namespace shared\types;
 
-class view_type extends type_object
+class share_type
 {
+    // the field name used for the JSON im- and export
+    const JSON_FLD = 'share';
 
-    // TODO used the const from the shared view_type
-    // list of the view types that have a coded functionality
-    const DEFAULT = "default";
-    const ENTRY = "entry";
-    const MASK_DEFAULT = "mask_default";
-    const PRESENT = "presentation";
-    const WORD_DEFAULT = "word_default";
-    const DETAIL = "detail_view";
-    const SYSTEM = "system";
-
-    // list of view types that are used by the system
-    // and should not be assignable by users
-    const SYSTEM_TYPES = array(
-        self::SYSTEM
-    );
-
-
-    /*
-     * database link
-     */
-
-    // comments used for the database creation
-    const TBL_COMMENT = 'to assign predefined behaviour to a view';
+    // list of the ref types that have a coded functionality
+    const PUBLIC = "public";
+    const PUBLIC_ID = 1;
+    const PERSONAL = "personal";
+    const GROUP = "group";
+    const PRIVATE = "private";
 
 }

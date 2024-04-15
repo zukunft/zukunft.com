@@ -54,7 +54,11 @@ namespace test;
 include_once MODEL_USER_PATH . 'user.php';
 include_once DB_PATH . 'sql_type.php';
 
+use api\sandbox\sandbox as sandbox_api;
 use api\word\word as word_api;
+use api\word\triple as triple_api;
+use api\value\value as value_api;
+use api\formula\formula as formula_api;
 use cfg\combine_named;
 use cfg\combine_object;
 use cfg\component\component;
@@ -610,7 +614,7 @@ class test_base
         $recreated_json = json_decode("{}", true);
         $api_obj = $usr_obj->api_obj();
         if ($api_obj->id() == $usr_obj->id()) {
-            $db_obj = $api_obj->db_obj($usr_obj->user(), get_class($api_obj));
+            $db_obj = $this->db_obj($usr_obj->user(), $api_obj::class);
             $db_obj->load_by_id($usr_obj->id(), get_class($usr_obj));
             $recreated_json = json_decode(json_encode($db_obj->export_obj(false)), true);
         }
@@ -621,6 +625,27 @@ class test_base
         return $this->assert($this->name . 'API check', $result, true);
     }
 
+    /**
+     * helper function for unit testing to create an empty model object from an api object
+     * fill the model / db object based on the api json message
+     * should be part of the save_from_api_msg functions
+     */
+    private function db_obj(user $usr, string $class): sandbox|sandbox_value
+    {
+        $db_obj = null;
+        if ($class == word_api::class) {
+            $db_obj = new word($usr);
+        } elseif ($class == triple_api::class) {
+            $db_obj = new triple($usr);
+        } elseif ($class == value_api::class) {
+            $db_obj = new value($usr);
+        } elseif ($class == formula_api::class) {
+            $db_obj = new formula($usr);
+        } else {
+            log_err('API class "' . $class . '" not yet implemented');
+        }
+        return $db_obj;
+    }
     /**
      * check if the
      *
@@ -671,7 +696,7 @@ class test_base
         $recreated_json = '';
         $api_obj = $usr_obj->api_obj();
         if ($api_obj->id == $usr_obj->id) {
-            $db_obj = $api_obj->db_obj($usr_obj->usr, get_class($api_obj));
+            $db_obj = $this->db_obj($usr_obj->usr, $api_obj::class);
             $recreated_json = json_decode(json_encode($db_obj->export_obj(false)), true);
         }
         $result = $lib->json_is_similar($original_json, $recreated_json);
@@ -2262,6 +2287,7 @@ class test_base
         }
     }
 
+    // TODO use the rest_ctrl version
     function api_call(string $method, string $url, array $data): string
     {
         $curl = curl_init();

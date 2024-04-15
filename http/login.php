@@ -37,7 +37,7 @@ const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SE
 include_once PHP_PATH . 'zu_lib.php';
 
 use controller\controller;
-use html\api;
+use html\rest_ctrl;
 use html\html_base;
 use cfg\user;
 
@@ -92,7 +92,7 @@ if ($usr->id() > 0) {
             //header("Location: ../view.php?sid=".SID."");
             exit;
         } else {
-            $msg .= $html->dsp_err('Login failed. ' .  $html->ref($html->url(api::LOGIN_RESET), 'Forgot password?', 'Send a new password via email.'));
+            $msg .= $html->dsp_err('Login failed. ' .  $html->ref($html->url(rest_ctrl::LOGIN_RESET), 'Forgot password?', 'Send a new password via email.'));
         }
     }
 }

@@ -37,7 +37,7 @@ use cfg\phrase;
 use cfg\user;
 use cfg\user_message;
 use controller\controller;
-use html\api;
+use html\rest_ctrl;
 use html\html_base;
 use html\log\user_log_display;
 use html\ref\source as source_dsp;
@@ -317,10 +317,10 @@ class value_dsp_old extends value
                 }
                 // prepare a new value display
                 $row_value = $db_row["numeric_value"];
-                $word_names = $wrd->display_linked(api::STYLE_GREY);
+                $word_names = $wrd->display_linked(rest_ctrl::STYLE_GREY);
                 $group_id = $new_group_id;
             } else {
-                $word_names .= ", " . $wrd->display_linked(api::STYLE_GREY);
+                $word_names .= ", " . $wrd->display_linked(rest_ctrl::STYLE_GREY);
             }
         }
         // display the last row if there has been at least one word
@@ -644,7 +644,7 @@ class value_dsp_old extends value
                 $samples = $this->dsp_samples($main_wrd->id, $this->ids(), 10, $back);
                 log_debug("value->dsp_edit samples.");
                 if (trim($samples) <> "") {
-                    $result .= $html->dsp_text_h3('Please have a look at these other "' . $main_wrd->dsp_obj()->display_linked(api::STYLE_GREY) . '" values as an indication', 'change_hist');
+                    $result .= $html->dsp_text_h3('Please have a look at these other "' . $main_wrd->dsp_obj()->display_linked(rest_ctrl::STYLE_GREY) . '" values as an indication', 'change_hist');
                     $result .= $samples;
                 }
             }

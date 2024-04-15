@@ -29,12 +29,11 @@
   
 */
 
-namespace cfg;
+namespace shared\types;
 
-class view_type extends type_object
+class view_type
 {
 
-    // TODO used the const from the shared view_type
     // list of the view types that have a coded functionality
     const DEFAULT = "default";
     const ENTRY = "entry";
@@ -49,13 +48,5 @@ class view_type extends type_object
     const SYSTEM_TYPES = array(
         self::SYSTEM
     );
-
-
-    /*
-     * database link
-     */
-
-    // comments used for the database creation
-    const TBL_COMMENT = 'to assign predefined behaviour to a view';
 
 }

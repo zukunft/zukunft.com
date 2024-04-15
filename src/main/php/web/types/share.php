@@ -32,7 +32,9 @@
 
 namespace html\types;
 
-use cfg\share_type;
+include_once SHARED_TYPES_PATH . 'share_type.php';
+
+use shared\types\share_type;
 
 class share extends type_list
 {

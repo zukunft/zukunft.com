@@ -41,7 +41,7 @@ use api\value\value as value_api;
 use html\figure\figure as figure_dsp;
 use html\value\value as value_dsp;
 use html\result\result as result_dsp;
-use html\api;
+use html\rest_ctrl;
 use test\test_cleanup;
 
 class figure_tests
@@ -104,7 +104,7 @@ class figure_tests
         $fig = $t->dummy_figure_value();
         $dsp = $t->dsp_obj($fig, new figure_dsp());
         $html_link = $dsp->display_linked();
-        $t->assert_text_contains('figure html link', $html_link, api::RESULT_EDIT);
+        $t->assert_text_contains('figure html link', $html_link, rest_ctrl::RESULT_EDIT);
 
     }
 

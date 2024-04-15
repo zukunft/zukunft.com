@@ -14,6 +14,8 @@ use html\phrase\phrase_group as phrase_group_dsp;
     4. commit
 
     but first this needs to be fixed:
+    TODO remove backend classes from frontend
+    TODO remove frontend classes from backend
     TODO Substeps: create insert, update and delete sql create tests for the main objects
                    include the log in the prepared sql write statement
     TODO Step 26: deprecate the get_old in result

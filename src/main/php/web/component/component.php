@@ -34,12 +34,12 @@
 
 namespace html\component;
 
-include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
+include_once SANDBOX_PATH . 'sandbox_typed.php';
+include_once SHARED_TYPES_PATH . 'component_type.php';
 
 use api\api;
 use api\word\word as word_api;
-use cfg\component\component_link_list;
-use cfg\component\component_type;
+use shared\types\component_type;
 use cfg\db\sql_db;
 use cfg\word;
 use controller\controller;
@@ -50,7 +50,6 @@ use html\phrase\phrase as phrase_dsp;
 use html\phrase\phrase_list;
 use html\sandbox\db_object as db_object_dsp;
 use html\sandbox\sandbox_typed;
-use html\view\view as view_dsp;
 use html\view\view_list;
 use shared\library;
 
@@ -59,6 +58,9 @@ class component extends sandbox_typed
 
     const FORM_ADD = 'component_add';
     const FORM_EDIT = 'component_edit';
+
+    // TODO to be move to
+    const FLD_ID = 'component_id';
 
     /*
      * object vars
@@ -86,9 +88,9 @@ class component extends sandbox_typed
     {
         if ($dbo == null) {
             // the $dbo check and the message creation has already been done in the view level
-            log_debug($this->dsp_id());
+            $this->log_debug($this->dsp_id());
         } else {
-            log_debug($dbo->dsp_id() . ' with the view ' . $this->dsp_id());
+            $this->log_debug($dbo->dsp_id() . ' with the view ' . $this->dsp_id());
         }
 
         $result = '';
@@ -127,7 +129,7 @@ class component extends sandbox_typed
             component_type::ROW_END => $this->row_end(),
             default => 'program code for component type ' . $type_code_id . ' missing<br>'
         };
-        log_debug($this->dsp_id() . ' created');
+        $this->log_debug($this->dsp_id() . ' created');
 
         return $result;
     }
@@ -434,12 +436,12 @@ class component extends sandbox_typed
 
     private function type_code_id(): string
     {
-        global $component_types;
+        global $html_component_types;
         if ($this->type_id() == null) {
-            log_err('Code id for ' . $this->dsp_id() . ' missing');
+            $this->log_err('Code id for ' . $this->dsp_id() . ' missing');
             return '';
         } else {
-            return $component_types->code_id($this->type_id());
+            return $html_component_types->code_id($this->type_id());
         }
     }
 
@@ -588,7 +590,7 @@ class component extends sandbox_typed
      */
     function dsp_edit(int $add_link, word $wrd, string $back): string
     {
-        log_debug($this->dsp_id() . ' (called from ' . $back . ')');
+        $this->log_debug($this->dsp_id() . ' (called from ' . $back . ')');
         $result = '';
         $html = new html_base();
 
@@ -821,31 +823,28 @@ class component extends sandbox_typed
      */
     private function linked_views($add_link, $wrd, $back): string
     {
-        log_debug("id " . $this->id . " (word " . $wrd->id . ", add " . $add_link . ").");
+        $this->log_debug("id " . $this->id . " (word " . $wrd->id . ", add " . $add_link . ").");
 
         global $usr;
         global $db_con;
         $html = new html_base();
         $result = '';
 
-        if (UI_USE_BOOTSTRAP) {
+        if (html_base::UI_USE_BOOTSTRAP) {
             $result .= $html->dsp_tbl_start_hist();
         } else {
             $result .= $html->dsp_tbl_start_half();
         }
 
-        $lnk_lst = new component_link_list($this->user());
-        $lnk_lst->load_by_component($this);
+        $msk_lst = new view_list();
+        $msk_lst->load_by_component_id($this->id());
 
-        foreach ($lnk_lst as $lnk) {
+        foreach ($msk_lst as $msk) {
             $result .= '  <tr>' . "\n";
             $result .= '    <td>' . "\n";
-            $dsp = new view_dsp();
-            $dsp->id = $lnk->fob->id();
-            $dsp->name = $lnk->fob->name();
-            $result .= '      ' . $dsp->name_linked($wrd, $back) . "\n";
+            $result .= '      ' . $msk->name_linked($wrd, $back) . "\n";
             $result .= '    </td>' . "\n";
-            $result .= $this->btn_unlink($lnk->fob->id(), $wrd, $back);
+            $result .= $this->btn_unlink($msk->id(), $wrd, $back);
             $result .= '  </tr>' . "\n";
         }
 
@@ -872,12 +871,12 @@ class component extends sandbox_typed
     // display the history of a view component
     function dsp_hist($page, $size, $call, $back): string
     {
-        log_debug("for id " . $this->id . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
+        $this->log_debug("for id " . $this->id . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
         $result = ''; // reset the html code var
 
         $log_dsp = new user_log_display($this->user());
         $log_dsp->id = $this->id;
-        $log_dsp->usr = $this->user();
+        //$log_dsp->usr = $this->user();
         $log_dsp->type = component::class;
         $log_dsp->page = $page;
         $log_dsp->size = $size;
@@ -885,14 +884,14 @@ class component extends sandbox_typed
         $log_dsp->back = $back;
         $result .= $log_dsp->dsp_hist();
 
-        log_debug("done");
+        $this->log_debug("done");
         return $result;
     }
 
     // display the link history of a view component
     function dsp_hist_links($page, $size, $call, $back): string
     {
-        log_debug("for id " . $this->id . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
+        $this->log_debug("for id " . $this->id . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
         $result = ''; // reset the html code var
 
         $log_dsp = new user_log_display($this->user());
@@ -904,8 +903,18 @@ class component extends sandbox_typed
         $log_dsp->back = $back;
         $result .= $log_dsp->dsp_hist_links();
 
-        log_debug("done");
+        $this->log_debug("done");
         return $result;
+    }
+
+    function log_err(string $msg): void
+    {
+        echo $msg;
+    }
+
+    function log_debug(string $msg): void
+    {
+        echo '';
     }
 
 

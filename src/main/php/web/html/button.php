@@ -35,11 +35,13 @@
 namespace html;
 
 include_once SHARED_PATH . 'library.php';
-include_once MODEL_PHRASE_PATH . 'phrase_list.php';
+include_once PHRASE_PATH . 'phrase_list.php';
+include_once SYSTEM_PATH . 'messages.php';
 
-use cfg\phrase_list;
-use html\system\messages;
 use shared\library;
+use html\phrase\phrase_list;
+use html\system\messages;
+//use http\Message;
 
 class button
 {
@@ -205,8 +207,10 @@ class button
         //zu_debug("button->yesno ".$this->title.".", 10);
 
         if ($ui_msg_id != '') {
-            $ui_msg = new message();
-            $this->title = $ui_msg->txt($ui_msg_id);
+            // TODO review
+            //$ui_msg = new message();
+            //$this->title = $ui_msg->txt($ui_msg_id);
+            $this->title = '';
         }
         if ($explain != '') {
             $this->title .= $explain;
@@ -239,7 +243,8 @@ class button
                 } else {
                     $this->title = "add new value";
                 }
-                $url_phr = $phr_lst->id_url_long();
+                // TODO activate
+                //$url_phr = $phr_lst->id_url_long();
             }
         }
 

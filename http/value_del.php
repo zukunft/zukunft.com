@@ -32,7 +32,7 @@
 // standard zukunft header for callable php files to allow debugging and lib loading
 use cfg\value\value;
 use controller\controller;
-use html\api;
+use html\rest_ctrl;
 use html\button;
 use html\html_base;
 use html\system\messages;
@@ -87,7 +87,7 @@ if ($usr->id() > 0) {
             $result .= $msk_dsp->dsp_navbar($back);
 
             $val->load_phrases();
-            $url = $html->url(api::VALUE . api::REMOVE, $val_id, $back);
+            $url = $html->url(rest_ctrl::VALUE . rest_ctrl::REMOVE, $val_id, $back);
             $ui_msg = new messages();
             $result .= (new button($url, $back))->yesno(
                 messages::VALUE_DEL, $val->number() . $ui_msg->txt(messages::FOR) . $val->phr_lst()->dsp_name() . '?');

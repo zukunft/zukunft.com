@@ -64,6 +64,7 @@ include_once VIEW_PATH . 'view_list.php';
 include_once SHARED_PATH . 'api.php';
 
 use html\view\view_list as view_list_dsp;
+use html\word\word as word_dsp;
 use shared\api;
 
 class type_lists
@@ -112,129 +113,129 @@ class type_lists
         if (array_key_exists(api::JSON_LIST_USER_PROFILES, $json_array)) {
             $this->set_user_profiles($json_array[api::JSON_LIST_USER_PROFILES]);
         } else {
-            log_err('Mandatory user profiles missing in API JSON ' . json_encode($json_array));
+            $this->log_err('Mandatory user profiles missing in API JSON ' . json_encode($json_array));
             $this->set_user_profiles();
         }
         if (array_key_exists(api::JSON_LIST_PHRASE_TYPES, $json_array)) {
             $this->set_phrase_types($json_array[api::JSON_LIST_PHRASE_TYPES]);
         } else {
-            log_err('Mandatory phrase_types missing in API JSON ' . json_encode($json_array));
+            $this->log_err('Mandatory phrase_types missing in API JSON ' . json_encode($json_array));
             $this->set_phrase_types();
         }
         if (array_key_exists(api::JSON_LIST_FORMULA_TYPES, $json_array)) {
             $this->set_formula_types($json_array[api::JSON_LIST_FORMULA_TYPES]);
         } else {
-            log_err('Mandatory formula_types missing in API JSON ' . json_encode($json_array));
+            $this->log_err('Mandatory formula_types missing in API JSON ' . json_encode($json_array));
             $this->set_formula_types();
         }
         if (array_key_exists(api::JSON_LIST_FORMULA_LINK_TYPES, $json_array)) {
             $this->set_formula_link_types($json_array[api::JSON_LIST_FORMULA_LINK_TYPES]);
         } else {
-            log_err('Mandatory formula_link_types missing in API JSON ' . json_encode($json_array));
+            $this->log_err('Mandatory formula_link_types missing in API JSON ' . json_encode($json_array));
             $this->set_formula_link_types();
         }
         if (array_key_exists(api::JSON_LIST_VIEW_TYPES, $json_array)) {
             $this->set_view_types($json_array[api::JSON_LIST_VIEW_TYPES]);
         } else {
-            log_err('Mandatory view_types missing in API JSON ' . json_encode($json_array));
+            $this->log_err('Mandatory view_types missing in API JSON ' . json_encode($json_array));
             $this->set_view_types();
         }
         if (array_key_exists(api::JSON_LIST_COMPONENT_TYPES, $json_array)) {
             $this->set_component_types($json_array[api::JSON_LIST_COMPONENT_TYPES]);
         } else {
-            log_err('Mandatory component_types missing in API JSON ' . json_encode($json_array));
+            $this->log_err('Mandatory component_types missing in API JSON ' . json_encode($json_array));
             $this->set_component_types();
         }
         /*
         if (array_key_exists(api::JSON_LIST_VIEW_COMPONENT_LINK_TYPES, $json_array)) {
             $this->set_component_link_types($json_array[api::JSON_LIST_VIEW_COMPONENT_LINK_TYPES]);
         } else {
-            log_err('Mandatory component_link_types missing in API JSON ' . json_encode($json_array));
+            $this->log_err('Mandatory component_link_types missing in API JSON ' . json_encode($json_array));
             $this->set_component_link_types();
         }
         */
         if (array_key_exists(api::JSON_LIST_COMPONENT_POSITION_TYPES, $json_array)) {
             $this->set_position_types($json_array[api::JSON_LIST_COMPONENT_POSITION_TYPES]);
         } else {
-            log_err('Mandatory position_types missing in API JSON ' . json_encode($json_array));
+            $this->log_err('Mandatory position_types missing in API JSON ' . json_encode($json_array));
             $this->set_position_types();
         }
         if (array_key_exists(api::JSON_LIST_REF_TYPES, $json_array)) {
             $this->set_ref_types($json_array[api::JSON_LIST_REF_TYPES]);
         } else {
-            log_err('Mandatory ref_types missing in API JSON ' . json_encode($json_array));
+            $this->log_err('Mandatory ref_types missing in API JSON ' . json_encode($json_array));
             $this->set_ref_types();
         }
         if (array_key_exists(api::JSON_LIST_SOURCE_TYPES, $json_array)) {
             $this->set_source_types($json_array[api::JSON_LIST_SOURCE_TYPES]);
         } else {
-            log_err('Mandatory source_types missing in API JSON ' . json_encode($json_array));
+            $this->log_err('Mandatory source_types missing in API JSON ' . json_encode($json_array));
             $this->set_source_types();
         }
         if (array_key_exists(api::JSON_LIST_SHARE_TYPES, $json_array)) {
             $this->set_share_types($json_array[api::JSON_LIST_SHARE_TYPES]);
         } else {
-            log_err('Mandatory share_types missing in API JSON ' . json_encode($json_array));
+            $this->log_err('Mandatory share_types missing in API JSON ' . json_encode($json_array));
             $this->set_share_types();
         }
         if (array_key_exists(api::JSON_LIST_PROTECTION_TYPES, $json_array)) {
             $this->set_protection_types($json_array[api::JSON_LIST_PROTECTION_TYPES]);
         } else {
-            log_err('Mandatory protection_types missing in API JSON ' . json_encode($json_array));
+            $this->log_err('Mandatory protection_types missing in API JSON ' . json_encode($json_array));
             $this->set_protection_types();
         }
         if (array_key_exists(api::JSON_LIST_LANGUAGES, $json_array)) {
             $this->set_languages($json_array[api::JSON_LIST_LANGUAGES]);
         } else {
-            log_err('Mandatory languages missing in API JSON ' . json_encode($json_array));
+            $this->log_err('Mandatory languages missing in API JSON ' . json_encode($json_array));
             $this->set_languages();
         }
         if (array_key_exists(api::JSON_LIST_LANGUAGE_FORMS, $json_array)) {
             $this->set_language_forms($json_array[api::JSON_LIST_LANGUAGE_FORMS]);
         } else {
-            log_err('Mandatory language_forms missing in API JSON ' . json_encode($json_array));
+            $this->log_err('Mandatory language_forms missing in API JSON ' . json_encode($json_array));
             $this->set_language_forms();
         }
         if (array_key_exists(api::JSON_LIST_VERBS, $json_array)) {
             $this->set_verbs($json_array[api::JSON_LIST_VERBS]);
         } else {
-            log_err('Mandatory verbs missing in API JSON ' . json_encode($json_array));
+            $this->log_err('Mandatory verbs missing in API JSON ' . json_encode($json_array));
             $this->set_verbs();
         }
         if (array_key_exists(api::JSON_LIST_SYSTEM_VIEWS, $json_array)) {
             $this->set_system_views($json_array[api::JSON_LIST_SYSTEM_VIEWS]);
         } else {
-            //log_err('Mandatory system_views missing in API JSON ' . json_encode($json_array));
+            //$this->log_err('Mandatory system_views missing in API JSON ' . json_encode($json_array));
             $this->set_system_views();
         }
         if (array_key_exists(api::JSON_LIST_SYS_LOG_STATI, $json_array)) {
             $this->set_sys_log_stati($json_array[api::JSON_LIST_SYS_LOG_STATI]);
         } else {
-            log_err('Mandatory sys_log_stati missing in API JSON ' . json_encode($json_array));
+            $this->log_err('Mandatory sys_log_stati missing in API JSON ' . json_encode($json_array));
             $this->set_sys_log_stati();
         }
         if (array_key_exists(api::JSON_LIST_JOB_TYPES, $json_array)) {
             $this->set_job_types($json_array[api::JSON_LIST_JOB_TYPES]);
         } else {
-            log_err('Mandatory job_types missing in API JSON ' . json_encode($json_array));
+            $this->log_err('Mandatory job_types missing in API JSON ' . json_encode($json_array));
             $this->set_job_types();
         }
         if (array_key_exists(api::JSON_LIST_CHANGE_LOG_ACTIONS, $json_array)) {
             $this->set_change_action_list($json_array[api::JSON_LIST_CHANGE_LOG_ACTIONS]);
         } else {
-            log_err('Mandatory change_action_list missing in API JSON ' . json_encode($json_array));
+            $this->log_err('Mandatory change_action_list missing in API JSON ' . json_encode($json_array));
             $this->set_change_action_list();
         }
         if (array_key_exists(api::JSON_LIST_CHANGE_LOG_TABLES, $json_array)) {
             $this->set_change_table_list($json_array[api::JSON_LIST_CHANGE_LOG_TABLES]);
         } else {
-            log_err('Mandatory change_table_list missing in API JSON ' . json_encode($json_array));
+            $this->log_err('Mandatory change_table_list missing in API JSON ' . json_encode($json_array));
             $this->set_change_table_list();
         }
         if (array_key_exists(api::JSON_LIST_CHANGE_LOG_FIELDS, $json_array)) {
             $this->set_change_field_list($json_array[api::JSON_LIST_CHANGE_LOG_FIELDS]);
         } else {
-            log_err('Mandatory change_field_list missing in API JSON ' . json_encode($json_array));
+            $this->log_err('Mandatory change_field_list missing in API JSON ' . json_encode($json_array));
             $this->set_change_field_list();
         }
     }
@@ -391,7 +392,14 @@ class type_lists
     {
         global $html_system_views;
         $msk = $html_system_views->get_by_id($id);
-        return $msk->show();
+        $wrd = new word_dsp();
+        return $msk->show($wrd);
     }
+
+    function log_err(string $msg): void
+    {
+        echo $msg;
+    }
+
 
 }

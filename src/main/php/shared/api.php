@@ -39,8 +39,38 @@ class api
      * URL
      */
 
+    // TODO review (move to application.yaml)
+    const HOST_DEV = 'http://localhost/';
+    const HOST_UAT = 'https://test.zukunft.com/';
+    const HOST_PROD = 'https://www.zukunft.com/';
+    const HOST_SYS_LOG = '';
+
+    // TODO always use these const instead e.g. of the controller const
     // the parameter names used in the url or in the result json
     const URL_API_PATH = 'api/';
+    const URL_VAR_ID = 'id'; // the internal database id that should never be shown to the user
+    const URL_VAR_ID_LST = 'ids'; // a comma seperated list of internal database ids
+    const URL_VAR_NAME = 'name'; // the unique name of a term, view, component, user, source, language or type
+    const URL_VAR_PATTERN = 'pattern'; // part of a name to select a named object such as word, triple, ...
+    const URL_VAR_COMMENT = 'comment';
+    const URL_VAR_DESCRIPTION = 'description';
+    const URL_VAR_DEBUG = 'debug'; // to force the output of debug messages
+    const URL_VAR_CODE_ID = 'code_id';
+    const URL_VAR_WORD = 'words';
+    const URL_VAR_PHRASE = 'phrase'; // the id (or name?) of one phrase
+    const URL_VAR_DIRECTION = 'dir'; // 'up' to get the parents and 'down' for the children
+    const URL_VAR_LEVELS = 'levels'; // the number of search levels'
+    const URL_VAR_MSG = 'message';
+    const URL_VAR_RESULT = 'result';
+    const URL_VAR_EMAIL = 'email';
+    const URL_VAR_VIEW_ID = 'view_id';
+    const URL_VAR_CMP_ID = 'component_id';
+
+    // used for the change log
+    const URL_VAR_WORD_ID = 'word_id';
+    const URL_VAR_WORD_FLD = 'word_field';
+    const URL_VAR_LINK_PHRASE = 'link_phrase';
+    const URL_VAR_UNLINK_PHRASE = 'unlink_phrase';
 
 
     /*
@@ -143,6 +173,20 @@ class api
     // phrase api specific fields
     const FLD_PHRASE_CLASS = 'class';
 
+    // TODO review
+    // to include the objects that should be displayed in one api message
+    const API_WORD = 'word';
+    const API_TRIPLE = 'triple';
+
+    const DSP_VIEW_ADD = "view_add";
+    const DSP_VIEW_EDIT = "view_edit";
+    const DSP_VIEW_DEL = "view_del";
+    const DSP_COMPONENT_ADD = "component_add";
+    const DSP_COMPONENT_EDIT = "component_edit";
+    const DSP_COMPONENT_DEL = "component_del";
+    const DSP_COMPONENT_LINK = "component_link";
+    const DSP_COMPONENT_UNLINK = "component_unlink";
+
 
     /**
      * check if an api message is fine
@@ -171,6 +215,19 @@ class api
         } else {
             return array();
         }
+    }
+
+    /**
+     * create the base url
+     *
+     * @param string $class the name of the class that should be requested from the backend
+     * @return string the base url for the backend request
+     */
+    function class_to_url(string $class): string
+    {
+        $lib = new library();
+        $class = $lib->class_to_name($class);
+        return self::HOST_DEV . self::URL_API_PATH . $lib->camelize_ex_1($class);
     }
 
 }

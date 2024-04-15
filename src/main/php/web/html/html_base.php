@@ -61,6 +61,8 @@ class html_base
     const COL_SM_10 = 'col-sm-10';
     const COL_SM_12 = 'col-sm-12';
 
+    // TODO move the user interface setting to the user page, so that he can define which UI he wants to use
+    const UI_USE_BOOTSTRAP = 1; // IF FALSE a simple HTML frontend without javascript is used
 
     const IMG_LOGO = "/src/main/resources/images/ZUKUNFT_logo.svg";
 
@@ -90,7 +92,7 @@ class html_base
             $result .= '<head><title>zukunft.com</title>';
         }
         $result .= '  <meta charset="utf-8">';
-        if (UI_USE_BOOTSTRAP) {
+        if (self::UI_USE_BOOTSTRAP) {
             // include the bootstrap stylesheets
             $result .= '  <link rel="stylesheet" href="https://www.zukunft.com/lib_external/bootstrap/4.3.1/css/bootstrap.css">';
             // include the jQuery UI stylesheets
@@ -122,7 +124,7 @@ class html_base
             $result .= '  <link rel="stylesheet" type="text/css" href="/src/main/resources/style/style.css" />';
         }
         $result .= '</head>';
-        if (UI_USE_BOOTSTRAP) {
+        if (self::UI_USE_BOOTSTRAP) {
             $result .= '<body>';
             $result .= '  <div class="container">';
         } else {
@@ -150,7 +152,7 @@ class html_base
             $result .= '<head><title>zukunft.com</title>';
         }
         $result .= '  <meta charset="utf-8">';
-        if (UI_USE_BOOTSTRAP) {
+        if (self::UI_USE_BOOTSTRAP) {
             // include the bootstrap stylesheets
             $result .= '  <link rel="stylesheet" href="https://www.zukunft.com/lib_external/bootstrap/4.3.1/css/bootstrap.css">';
             $result .= '  <link rel="stylesheet" type="text/css" href="/src/main/resources/style/style_bs.css" />';
@@ -161,7 +163,7 @@ class html_base
             $result .= '  <link rel="stylesheet" type="text/css" href="/src/main/resources/style/style.css" />';
         }
         $result .= '</head>';
-        if (UI_USE_BOOTSTRAP) {
+        if (self::UI_USE_BOOTSTRAP) {
             $result .= '<body>';
             $result .= '  <div class="container">';
         } else {
@@ -178,11 +180,11 @@ class html_base
     function footer(bool $no_about = false): string
     {
         $result = '';
-        if (UI_USE_BOOTSTRAP) {
+        if (self::UI_USE_BOOTSTRAP) {
             $result = '    </div>';
         }
         $result .= '  <footer>';
-        if (UI_USE_BOOTSTRAP) {
+        if (self::UI_USE_BOOTSTRAP) {
             $result .= '  <div class="text-center">';
         } else {
             $result .= '  <div class="footer">';
@@ -255,7 +257,7 @@ class html_base
                  string|array $par = '',
                  string       $id_ext = ''): string
     {
-        $result = api::PATH_FIXED . $obj_name . api::EXT;
+        $result = rest_ctrl::PATH_FIXED . $obj_name . rest_ctrl::EXT;
         if ($id <> 0) {
             if ($par != '') {
                 $result .= '?' . $par . '=' . $id;
@@ -280,7 +282,7 @@ class html_base
      */
     function url_api(string $obj_name): string
     {
-        return $this->host() . api::PATH . $obj_name . '/';
+        return $this->host() . rest_ctrl::PATH . $obj_name . '/';
     }
 
     /**
@@ -298,7 +300,7 @@ class html_base
     function text_h1(string $title, string $style = ''): string
     {
         $result = '';
-        if (UI_USE_BOOTSTRAP) {
+        if (self::UI_USE_BOOTSTRAP) {
             $result .= "<h2>" . $title . "</h2>";
         } else {
             if ($style <> "") {
@@ -313,7 +315,7 @@ class html_base
     function text_h2(string $title, string $style = ''): string
     {
         $result = '';
-        if (UI_USE_BOOTSTRAP) {
+        if (self::UI_USE_BOOTSTRAP) {
             $result .= "<h4>" . $title . "</h4>";
         } else {
             if ($style <> "") {
@@ -336,7 +338,7 @@ class html_base
     function logo(): string
     {
         $result = '';
-        if (UI_USE_BOOTSTRAP) {
+        if (self::UI_USE_BOOTSTRAP) {
             $result .= '<a class="navbar-brand" href="/http/view.php" title="zukunft.com">';
             $result .= '<img src="' . self::IMG_LOGO . '" alt="zukunft.com" style="height: 4em;">';
         } else {
@@ -430,7 +432,7 @@ class html_base
 
     private function tbl_start(): string
     {
-        if (UI_USE_BOOTSTRAP) {
+        if (self::UI_USE_BOOTSTRAP) {
             $result = '<table class="table table-striped table-bordered">';
         } else {
             $result = '<table style="width:' . $this->tbl_width() . '">';
@@ -440,7 +442,7 @@ class html_base
 
     function tbl_start_half(): string
     {
-        if (UI_USE_BOOTSTRAP) {
+        if (self::UI_USE_BOOTSTRAP) {
             $result = '<table class="table ' . html_base::COL_SM_5 . ' table-striped table-bordered">';
         } else {
             $result = '<table style="width:' . $this->tbl_width_half() . '">';
@@ -450,7 +452,7 @@ class html_base
 
     function tbl_start_hist(): string
     {
-        if (UI_USE_BOOTSTRAP) {
+        if (self::UI_USE_BOOTSTRAP) {
             $result = '<table class="table table-borderless text-muted">';
         } else {
             $result = '<table class="change_hist"';
@@ -463,7 +465,7 @@ class html_base
      */
     function tbl_start_select(): string
     {
-        if (UI_USE_BOOTSTRAP) {
+        if (self::UI_USE_BOOTSTRAP) {
             $result = '<table class="table ' . html_base::COL_SM_10 . ' table-borderless">' . "\n";
         } else {
             $result = '<table style="width:' . $this->tbl_width_half() . '">' . "\n";
@@ -502,7 +504,7 @@ class html_base
      */
     function fr(string $row_text): string
     {
-        return '<div class="' . api::CLASS_FORM_ROW . '">' . $row_text . '</div>';
+        return '<div class="' . rest_ctrl::CLASS_FORM_ROW . '">' . $row_text . '</div>';
     }
 
     /**
@@ -521,7 +523,7 @@ class html_base
         if ($label == '') {
             $label = strtoupper($field[0]) . substr($field, 1) . ':';
         }
-        if (UI_USE_BOOTSTRAP) {
+        if (self::UI_USE_BOOTSTRAP) {
             $result .= $this->dsp_form_fld($field, $txt_value, $label, $class, $attribute);
         } else {
             $result .= $field . ': <input type="text" name="' . $field . '" value="' . $txt_value . '">';
@@ -546,7 +548,7 @@ class html_base
     function form_end_with_submit(string $submit_name, string $back, $del_call = ''): string
     {
         $result = '';
-        if (UI_USE_BOOTSTRAP) {
+        if (self::UI_USE_BOOTSTRAP) {
             if ($submit_name == "") {
                 $result .= '<button type="submit" class="btn btn-outline-success btn-space">Save</button>';
             } else {
@@ -637,7 +639,7 @@ class html_base
      */
     function edit_url(string $class): string
     {
-        return $class . api::UPDATE . api::EXT;
+        return $class . rest_ctrl::UPDATE . rest_ctrl::EXT;
     }
 
     /**
@@ -699,13 +701,13 @@ class html_base
 
         foreach ($item_lst as $item) {
             if ($item->id() != null) {
-                $url = $this->url($class . api::UPDATE, $item->id(), $back);
+                $url = $this->url($class . rest_ctrl::UPDATE, $item->id(), $back);
                 $result .= $this->ref($url, $item->name());
                 $result .= '<br>';
             }
         }
-        $url_add = $this->url($class . api::CREATE, 0, $back);
-        $result .= (new button($url_add, $back))->add($class . api::CREATE);
+        $url_add = $this->url($class . rest_ctrl::CREATE, 0, $back);
+        $result .= (new button($url_add, $back))->add($class . rest_ctrl::CREATE);
         $result .= '<br>';
 
         return $result;
@@ -745,7 +747,7 @@ class html_base
     function dsp_text_h1($title, $style = '')
     {
         $result = '';
-        if (UI_USE_BOOTSTRAP) {
+        if (self::UI_USE_BOOTSTRAP) {
             $result .= "<h2>" . $title . "</h2>";
         } else {
             if ($style <> "") {
@@ -760,7 +762,7 @@ class html_base
     function dsp_text_h2($title, $style = ''): string
     {
         $result = '';
-        if (UI_USE_BOOTSTRAP) {
+        if (self::UI_USE_BOOTSTRAP) {
             $result .= "<h4>" . $title . "</h4>";
         } else {
             if ($style <> "") {
@@ -775,7 +777,7 @@ class html_base
     function dsp_text_h3($title, $style = ''): string
     {
         $result = '';
-        if (UI_USE_BOOTSTRAP) {
+        if (self::UI_USE_BOOTSTRAP) {
             $result .= "<h6>" . $title . "</h6>";
         } else {
             if ($style <> "") {
@@ -812,7 +814,7 @@ class html_base
     function dsp_btn_text($btn_name, $call): string
     {
         $result = '';
-        if (UI_USE_BOOTSTRAP) {
+        if (self::UI_USE_BOOTSTRAP) {
             $result .= '<a href="' . $call . '" class="btn btn-outline-secondary btn-space" role="button">' . $btn_name . '</a>';
         } else {
             $result .= '<a href="' . $call . '">' . $btn_name . '</a>';
@@ -824,7 +826,7 @@ class html_base
     function dsp_err($err_text): string
     {
         $result = '';
-        if (UI_USE_BOOTSTRAP) {
+        if (self::UI_USE_BOOTSTRAP) {
             $result .= '<style class="text-danger">' . $err_text . '</style>';
         } else {
             $result .= '<style color="red">' . $err_text . '</style>';
@@ -913,7 +915,7 @@ class html_base
 
     function dsp_tbl_start(): string
     {
-        if (UI_USE_BOOTSTRAP) {
+        if (self::UI_USE_BOOTSTRAP) {
             $result = '<table class="table table-striped table-bordered">' . "\n";
         } else {
             $result = '<table style="width:' . $this->dsp_tbl_width() . '">' . "\n";
@@ -923,7 +925,7 @@ class html_base
 
     function dsp_tbl_start_half(): string
     {
-        if (UI_USE_BOOTSTRAP) {
+        if (self::UI_USE_BOOTSTRAP) {
             $result = '<table class="table ' . html_base::COL_SM_5 . ' table-borderless">' . "\n";
         } else {
             $result = '<table style="width:' . $this->dsp_tbl_width_half() . '">' . "\n";
@@ -933,7 +935,7 @@ class html_base
 
     function dsp_tbl_start_hist(): string
     {
-        if (UI_USE_BOOTSTRAP) {
+        if (self::UI_USE_BOOTSTRAP) {
             $result = '<table class="table table-borderless text-muted">' . "\n";
         } else {
             $result = '<table class="change_hist"' . "\n";
@@ -944,7 +946,7 @@ class html_base
 // a table for a list of selectors
     function dsp_tbl_start_select(): string
     {
-        if (UI_USE_BOOTSTRAP) {
+        if (self::UI_USE_BOOTSTRAP) {
             $result = '<table class="table ' . html_base::COL_SM_10 . ' table-borderless">' . "\n";
         } else {
             $result = '<table style="width:' . $this->dsp_tbl_width_half() . '">' . "\n";
@@ -974,7 +976,7 @@ class html_base
     function dsp_form_end($submit_name, $back, $del_call = ''): string
     {
         $result = '';
-        if (UI_USE_BOOTSTRAP) {
+        if (self::UI_USE_BOOTSTRAP) {
             if ($submit_name == "") {
                 $result .= '<button type="submit" class="btn btn-outline-success btn-space">Save</button>';
             } else {
@@ -1009,7 +1011,7 @@ class html_base
 
     function dsp_form_center(): string
     {
-        if (UI_USE_BOOTSTRAP) {
+        if (self::UI_USE_BOOTSTRAP) {
             return '<div class="container text-center">';
         } else {
             return '<div class="center_form">';
@@ -1032,7 +1034,7 @@ class html_base
     function dsp_form_text($field, $txt_value, $label, $class = self::COL_SM_4, $attribute = ''): string
     {
         $result = '';
-        if (UI_USE_BOOTSTRAP) {
+        if (self::UI_USE_BOOTSTRAP) {
             $result .= $this->dsp_form_fld($field, $txt_value, $label, $class, $attribute);
         } else {
             $result .= '' . $field . ': <input type="text" name="' . $field . '" value="' . $txt_value . '">';
@@ -1044,7 +1046,7 @@ class html_base
     function dsp_form_text_big($field, $txt_value, $label, $class = self::COL_SM_4, $attribute = ''): string
     {
         $result = '';
-        if (UI_USE_BOOTSTRAP) {
+        if (self::UI_USE_BOOTSTRAP) {
             $result .= $this->dsp_form_fld($field, $txt_value, $label, $class, $attribute);
         } else {
             $result .= '' . $field . ': <input type="text" name="' . $field . '" class="resizedTextbox" value="' . $txt_value . '">';
@@ -1059,7 +1061,7 @@ class html_base
         if ($label == '') {
             $label = $field;
         }
-        if (UI_USE_BOOTSTRAP) {
+        if (self::UI_USE_BOOTSTRAP) {
             $result .= '<div class="form-group ' . $class . '">';
             $result .= '<label for="' . $field . '">' . $label . '</label>';
             $result .= '<input class="form-control" name="' . $field . '" id="' . $field . '" value="' . $txt_value . '" ' . $attribute . '>';
@@ -1077,7 +1079,7 @@ class html_base
         if ($label == '') {
             $label = $field;
         }
-        if (UI_USE_BOOTSTRAP) {
+        if (self::UI_USE_BOOTSTRAP) {
             $result .= '<div class="form-check-inline">';
             $result .= '<label class="form-check-label">';
             $result .= '<input class="form-check-input" type="checkbox" name="' . $field . '"';
@@ -1104,7 +1106,7 @@ class html_base
     {
         $result = '';
         /*
-        if (UI_USE_BOOTSTRAP) {
+        if (self::UI_USE_BOOTSTRAP) {
           $result .= ' <form>';
           $result .= '  <div class="custom-file">';
           $result .= '    <input type="file" class="custom-file-input" id="fileToUpload">';

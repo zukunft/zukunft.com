@@ -32,6 +32,8 @@
 
 namespace api\component;
 
+include_once API_SANDBOX_PATH . 'sandbox_typed.php';
+
 use api\sandbox\sandbox_typed as sandbox_typed_api;
 
 class component extends sandbox_typed_api

@@ -31,8 +31,8 @@
 
 namespace html\component;
 
-include_once WEB_SANDBOX_PATH . 'list_dsp.php';
-include_once WEB_COMPONENT_PATH . 'component.php';
+include_once SANDBOX_PATH . 'list_dsp.php';
+include_once COMPONENT_PATH . 'component.php';
 
 use html\sandbox\list_dsp;
 use html\component\component as component_dsp;
@@ -67,6 +67,18 @@ class component_list extends list_dsp
             $this->add_obj($this->set_obj_from_json_array($value), true);
         }
     }
+
+    /*
+     * load
+     */
+
+    function load_by_view_id(int $id): bool
+    {
+        $url = '';
+        return true;
+
+    }
+
 
 
     /*

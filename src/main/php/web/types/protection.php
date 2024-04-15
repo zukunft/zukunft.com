@@ -32,7 +32,9 @@
 
 namespace html\types;
 
-use cfg\protection_type;
+include_once SHARED_TYPES_PATH . 'protection_type.php';
+
+use shared\types\protection_type;
 
 class protection extends type_list
 {

@@ -1630,6 +1630,17 @@ class library
 
     /**
      * remove the namespace from the class name
+     * same as class_to_name but without backend exceptions
+     * @param string $class including the namespace
+     * @return string class name without the namespace
+     */
+    function class_to_name_pur(string $class): string
+    {
+        return $this->str_right_of_or_all($class, '\\');
+    }
+
+    /**
+     * remove the namespace from the class name
      * @param string $class including the namespace
      * @return string class name without the namespace
      */

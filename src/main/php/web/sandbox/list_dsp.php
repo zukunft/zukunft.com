@@ -34,7 +34,7 @@
 namespace html\sandbox;
 
 use controller\controller;
-use html\api as api_dsp;
+use html\rest_ctrl as api_dsp;
 use html\html_selector;
 use shared\library;
 
@@ -244,7 +244,7 @@ class list_dsp
     /**
      * @returns array with all unique ids of this list
      */
-    protected function id_lst(): array
+    function id_lst(): array
     {
         $result = array();
         if ($this->lst_dirty) {

@@ -34,8 +34,10 @@ namespace html\view;
 include_once SANDBOX_PATH . 'list_dsp.php';
 include_once VIEW_PATH . 'view.php';
 
+use html\rest_ctrl;
 use html\sandbox\list_dsp;
 use html\view\view as view_dsp;
+use shared\api;
 
 class view_list extends list_dsp
 {
@@ -76,6 +78,30 @@ class view_list extends list_dsp
             if ($msk->id() == $id) {
                 $result = $msk;
             }
+        }
+        return $result;
+    }
+
+    /*
+     * load
+     */
+
+    /**
+     * get the views that use this component from the backend
+     *
+     * @param int $id of the component
+     * @return bool true if the load has been successful
+     */
+    function load_by_component_id(int $id): bool
+    {
+        $result = false;
+
+        $data = array(api::URL_VAR_CMP_ID => $id);
+        $rest = new rest_ctrl();
+        $json_body = $rest->api_get(view::class, $data);
+        $this->set_from_json_array($json_body);
+        if (!$this->is_empty()) {
+            $result = true;
         }
         return $result;
     }
