@@ -118,7 +118,7 @@ class frontend
      * servers
      */
 
-    // TODO review (move to application.yaml)
+    // TODO review (move to application.yaml and detect and fix it on initial program start)
     const HOST_DEV = 'http://localhost/';
     const HOST_UAT = 'https://test.zukunft.com/';
     const HOST_PROD = 'https://www.zukunft.com/';
@@ -182,7 +182,7 @@ class frontend
 
         $usr = $this->get_user();
 
-        // load upfront the forntend cache
+        // load upfront the frontend cache
         $api_msg = $this->api_get(type_lists::class);
         $this->typ_lst_cache = new type_lists($api_msg);
 

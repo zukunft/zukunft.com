@@ -14,6 +14,9 @@ use html\phrase\phrase_group as phrase_group_dsp;
     4. commit
 
     but first this needs to be fixed:
+    TODO use only one REST call
+    TODO use only shared type const and remove the others
+    TODO fix the button frontend issue
     TODO remove backend classes from frontend
     TODO remove frontend classes from backend
     TODO Substeps: create insert, update and delete sql create tests for the main objects

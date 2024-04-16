@@ -60,7 +60,7 @@ use api\api;
 use shared\api as api_shared;
 use api\component\component as component_api;
 use html\rest_ctrl as api_dsp;
-use html\button;
+use html\button as button_dsp;
 use html\component\component as component_dsp;
 use html\component\component_list as component_list_dsp;
 use html\display_list;
@@ -75,6 +75,7 @@ use html\word\triple as triple_dsp;
 use html\word\word as word_dsp;
 use shared\library;
 use shared\types\view_type;
+use function html\btn_edit;
 
 class view extends sandbox_typed
 {
@@ -323,16 +324,18 @@ class view extends sandbox_typed
             $class = $lib->class_to_name(view::class);
             //$url_edit = $html->url($class . api_dsp::UPDATE, $this->id, $back, '', word::class . '=' . $back);
             $url_edit = $html->url($class . api_dsp::UPDATE, $this->id, '', '');
-            // TODO fix for frondend based version
+            // TODO fix for frontend based version
             //echo 'button init';
-            $btn = new button($url_edit);
-            // TODO fix for frondend based version
-            //echo 'button call';
-            $result .= $btn->edit(messages::VIEW_EDIT);
+            $result .= $this->btn_edit(messages::VIEW_EDIT, $url_edit);
+            //echo 'button_dsp init' . $url_edit;
+            //$btn = new button_dsp($url_edit, '');
+            // TODO fix for frontend based version
+            //$result .= $btn->edit(messages::VIEW_EDIT);
             //$url_add = $html->url($class . api_dsp::CREATE, 0, $back, '', word::class . '=' . $back);
             $url_add = $html->url($class . api_dsp::CREATE, 0, '', '');
-            // TODO fix for frondend based version
-            $result .= (new button($url_add))->add(messages::VIEW_ADD);
+            // TODO fix for frontend based version
+            //$result .= (new button_dsp($url_add))->add(messages::VIEW_ADD);
+            $result .= $this->btn_add(messages::VIEW_ADD, $url_add);
             $result .= '      </li>';
         }
         $result .= '    </ul>';
@@ -368,6 +371,30 @@ class view extends sandbox_typed
         return $result;
     }
 
+    /**
+     * temp version to debug a frontend bug
+     * @param string $text
+     * @param string $url
+     * @return string
+     */
+    private function btn_add(string $text, string $url): string
+    {
+        $icon = 'fa-plus-square';
+        return '<a href="' . $url . '" title="' . $text . '"><i class="far ' . $icon . '"></i></a>';
+    }
+
+    /**
+     * temp version to debug a frontend bug
+     * @param string $text
+     * @param string $url
+     * @return string
+     */
+    private function btn_edit(string $text, string $url): string
+    {
+        $icon = 'fa-edit';
+        return '<a href="' . $url . '" title="' . $text . '"><i class="far ' . $icon . '"></i></a>';
+    }
+
     private function input_search_pattern(): string
     {
         $html = new html_base();
@@ -392,16 +419,16 @@ class view extends sandbox_typed
         $result .= '<td class="right_ref">';
         if ($this->is_system() and !$usr->is_admin()) {
             $url = $html->url(api_dsp::SEARCH);
-            $result .= (new button($url, $back))->find(messages::SEARCH_MAIN) . ' - ';
+            $result .= (new button_dsp($url, $back))->find(messages::SEARCH_MAIN) . ' - ';
             $result .= $this->name . ' ';
         } else {
             $url = '/http/find.php?word=' . $back;
-            $result .= (new button($url, $back))->find(messages::SEARCH_MAIN) . ' - ';
+            $result .= (new button_dsp($url, $back))->find(messages::SEARCH_MAIN) . ' - ';
             $result .= $this->dsp_view_name($back);
             $url = $html->url(api_shared::DSP_VIEW_EDIT, $this->id());
-            $result .= (new button($url, $back))->edit(messages::VIEW_EDIT, $this->name) . ' ';
+            $result .= (new button_dsp($url, $back))->edit(messages::VIEW_EDIT, $this->name) . ' ';
             $url = $html->url(api_shared::DSP_VIEW_ADD);
-            $result .= (new button($url, $back))->add(messages::VIEW_ADD);
+            $result .= (new button_dsp($url, $back))->add(messages::VIEW_ADD);
         }
         $result .= ' - ';
         $result .= $this->dsp_user($back);
@@ -750,7 +777,7 @@ class view extends sandbox_typed
             if ($add_cmp > 0) {
                 $result .= 'View component to add: ';
                 $url = $html->url(api_shared::DSP_VIEW_ADD, $this->id, $back, '', word_dsp::class . '=' . $wrd->id() . '&add_entry=-1&');
-                $result .= (new button($url, $back))->add(messages::COMPONENT_ADD);
+                $result .= (new button_dsp($url, $back))->add(messages::COMPONENT_ADD);
                 $id_selected = 0; // no default view component to add defined yet, maybe use the last???
                 $result .= $this->component_selector($script, '', $id_selected);
 
@@ -763,7 +790,7 @@ class view extends sandbox_typed
                 $result .= $html->dsp_form_end('', "/http/view_edit.php?id=" . $this->id . "&word=" . $wrd->id() . "&back=" . $back);
             } else {
                 $url = $html->url(api_shared::DSP_COMPONENT_LINK, $this->id, $back, '', word_dsp::class . '=' . $wrd->id() . '&add_entry=1');
-                $result .= (new button($url, $back))->add(messages::COMPONENT_ADD);
+                $result .= (new button_dsp($url, $back))->add(messages::COMPONENT_ADD);
             }
         }
         if (html_base::UI_USE_BOOTSTRAP) {
