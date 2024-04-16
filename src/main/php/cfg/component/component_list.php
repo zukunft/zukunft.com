@@ -31,10 +31,12 @@
 
 namespace cfg\component;
 
+include_once SHARED_TYPES_PATH . 'component_type.php';
 include_once API_COMPONENT_PATH . 'component_list.php';
 include_once API_VIEW_PATH . 'component_link_list.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
 
+use shared\types\component_type as comp_type_shared;
 use api\component\component_list as component_list_api;
 use cfg\combine_named;
 use cfg\db\sql;
@@ -121,7 +123,7 @@ class component_list extends sandbox_list
         $typ_lst = new type_list();
         $sc->add_where(
             component::FLD_TYPE,
-            implode(',', $typ_lst->component_id_list(component_type::SYSTEM_TYPES)),
+            implode(',', $typ_lst->component_id_list(comp_type_shared::SYSTEM_TYPES)),
             sql_par_type::CONST_NOT_IN);
 
         $qp->sql = $sc->sql();

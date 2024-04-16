@@ -32,6 +32,9 @@
 
 namespace unit_read;
 
+include_once SHARED_TYPES_PATH . 'protection_type.php';
+
+use shared\types\protection_type as protect_type_shared;
 use cfg\protection_type;
 use cfg\protection_type_list;
 use test\test_cleanup;
@@ -58,8 +61,8 @@ class protection_tests
         $t->assert('load types', $result, true);
 
         // ... and check if at least the most critical is loaded
-        $result = $protection_types->id(protection_type::NO_PROTECT);
-        $t->assert('check ' . protection_type::NO_PROTECT, $result, 1);
+        $result = $protection_types->id(protect_type_shared::NO_PROTECT);
+        $t->assert('check ' . protect_type_shared::NO_PROTECT, $result, 1);
     }
 
 }

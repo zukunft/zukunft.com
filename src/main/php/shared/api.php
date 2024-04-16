@@ -43,6 +43,15 @@ class api
     const HOST_DEV = 'http://localhost/';
     const HOST_UAT = 'https://test.zukunft.com/';
     const HOST_PROD = 'https://www.zukunft.com/';
+    const BS_PATH_DEV = 'bootstrap-5.3.3-dist/';
+    const BS_PATH_UAT = 'bootstrap/4.1.3/';
+    const BS_PATH_PROD = 'bootstrap/4.1.3/';
+    const BS_JS = 'js' . DIRECTORY_SEPARATOR . 'bootstrap.js';
+    const BS_CSS_PATH_DEV = 'bootstrap-5.3.3-dist/';
+    const BS_CSS_PATH_UAT = 'bootstrap/4.3.1/';
+    const BS_CSS_PATH_PROD = 'bootstrap/4.3.1/';
+    const BS_CSS = 'css' . DIRECTORY_SEPARATOR . 'bootstrap.css';
+    const EXT_LIB_PATH = 'lib_external' . DIRECTORY_SEPARATOR;
     const HOST_SYS_LOG = '';
 
     // TODO always use these const instead e.g. of the controller const

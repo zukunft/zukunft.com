@@ -32,6 +32,9 @@
 
 namespace unit_read;
 
+include_once SHARED_TYPES_PATH . 'component_type.php';
+
+use shared\types\component_type as comp_type_shared;
 use api\component\component as component_api;
 use api\view\view as view_api;
 use cfg\component\component;
@@ -137,8 +140,8 @@ class view_tests
         $t->assert('load_types', $result, true);
 
         // ... and check if at least the most critical is loaded
-        $result = $component_types->id(component_type::TEXT);
-        $t->assert('check type' . component_type::TEXT, $result, 3);
+        $result = $component_types->id(comp_type_shared::TEXT);
+        $t->assert('check type' . comp_type_shared::TEXT, $result, 3);
     }
 
 }

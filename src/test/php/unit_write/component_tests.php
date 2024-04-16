@@ -32,6 +32,9 @@
 
 namespace unit_write;
 
+include_once SHARED_TYPES_PATH . 'component_type.php';
+
+use shared\types\component_type as comp_type_shared;
 use api\component\component as component_api;
 use cfg\component\component;
 use cfg\log\change_field_list;
@@ -146,7 +149,7 @@ class component_tests
         $cmp_renamed = new component($t->usr1);
         $cmp_renamed->load_by_name(component_api::TN_RENAMED, component::class);
         $cmp_renamed->description = 'Just added for testing the user sandbox';
-        $cmp_renamed->type_id = $component_types->id(component_type::PHRASE_NAME);
+        $cmp_renamed->type_id = $component_types->id(comp_type_shared::PHRASE_NAME);
         $result = $cmp_renamed->save();
         $target = '';
         $t->display('component->save all component fields beside the name for "' . component_api::TN_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_LONG);
@@ -158,7 +161,7 @@ class component_tests
         $target = 'Just added for testing the user sandbox';
         $t->display('component->load comment for "' . component_api::TN_RENAMED . '"', $target, $result);
         $result = $cmp_reloaded->type_id;
-        $target = $component_types->id(component_type::PHRASE_NAME);
+        $target = $component_types->id(comp_type_shared::PHRASE_NAME);
         $t->display('component->load type_id for "' . component_api::TN_RENAMED . '"', $target, $result);
 
         // check if the component parameter adding have been logged
@@ -179,7 +182,7 @@ class component_tests
         $cmp_usr2 = new component($t->usr2);
         $cmp_usr2->load_by_name(component_api::TN_RENAMED, component::class);
         $cmp_usr2->description = 'Just changed for testing the user sandbox';
-        $cmp_usr2->type_id = $component_types->id(component_type::FORMULAS);
+        $cmp_usr2->type_id = $component_types->id(comp_type_shared::FORMULAS);
         $result = $cmp_usr2->save();
         $target = '';
         $t->display('component->save all component fields for user 2 beside the name for "' . component_api::TN_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
@@ -191,7 +194,7 @@ class component_tests
         $target = 'Just changed for testing the user sandbox';
         $t->display('component->load comment for "' . component_api::TN_RENAMED . '"', $target, $result);
         $result = $cmp_usr2_reloaded->type_id;
-        $target = $component_types->id(component_type::FORMULAS);
+        $target = $component_types->id(comp_type_shared::FORMULAS);
         $t->display('component->load type_id for "' . component_api::TN_RENAMED . '"', $target, $result);
 
         // check the component for the original user remains unchanged
@@ -201,14 +204,14 @@ class component_tests
         $target = 'Just added for testing the user sandbox';
         $t->display('component->load comment for "' . component_api::TN_RENAMED . '"', $target, $result);
         $result = $cmp_reloaded->type_id;
-        $target = $component_types->id(component_type::PHRASE_NAME);
+        $target = $component_types->id(comp_type_shared::PHRASE_NAME);
         $t->display('component->load type_id for "' . component_api::TN_RENAMED . '"', $target, $result);
 
         // check if undo all specific changes removes the user component
         $cmp_usr2 = new component($t->usr2);
         $cmp_usr2->load_by_name(component_api::TN_RENAMED, component::class);
         $cmp_usr2->description = 'Just added for testing the user sandbox';
-        $cmp_usr2->type_id = $component_types->id(component_type::PHRASE_NAME);
+        $cmp_usr2->type_id = $component_types->id(comp_type_shared::PHRASE_NAME);
         $result = $cmp_usr2->save();
         $target = '';
         $t->display('component->save undo the user component fields beside the name for "' . component_api::TN_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
@@ -232,11 +235,11 @@ class component_tests
     {
         $t->header('Check if all base view components are existing');
 
-        $t->test_component(component_api::TN_TITLE, component_type::PHRASE_NAME);
-        $t->test_component(component_api::TN_VALUES, component_type::VALUES_ALL);
-        $t->test_component(component_api::TN_RESULTS, component_type::FORMULA_RESULTS);
-        $t->test_component(component_api::TN_EXCLUDED, component_type::PHRASE_NAME);
-        $t->test_component(component_api::TN_TABLE, component_type::NUMERIC_VALUE);
+        $t->test_component(component_api::TN_TITLE, comp_type_shared::PHRASE_NAME);
+        $t->test_component(component_api::TN_VALUES, comp_type_shared::VALUES_ALL);
+        $t->test_component(component_api::TN_RESULTS, comp_type_shared::FORMULA_RESULTS);
+        $t->test_component(component_api::TN_EXCLUDED, comp_type_shared::PHRASE_NAME);
+        $t->test_component(component_api::TN_TABLE, comp_type_shared::NUMERIC_VALUE);
 
         // modify the special test cases
         global $usr;

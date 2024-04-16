@@ -373,26 +373,34 @@ class view extends sandbox_typed
 
     /**
      * temp version to debug a frontend bug
-     * @param string $text
+     * @param string $ui_msg_id
      * @param string $url
      * @return string
      */
-    private function btn_add(string $text, string $url): string
+    private function btn_add(string $ui_msg_id, string $url): string
     {
         $icon = 'fa-plus-square';
-        return '<a href="' . $url . '" title="' . $text . '"><i class="far ' . $icon . '"></i></a>';
+
+        $ui_msg = new messages();
+        $title = $ui_msg->txt($ui_msg_id);
+
+        return '<a href="' . $url . '" title="' . $title . '"><i class="far ' . $icon . '"></i></a>';
     }
 
     /**
      * temp version to debug a frontend bug
-     * @param string $text
+     * @param string $ui_msg_id
      * @param string $url
      * @return string
      */
-    private function btn_edit(string $text, string $url): string
+    private function btn_edit(string $ui_msg_id, string $url): string
     {
         $icon = 'fa-edit';
-        return '<a href="' . $url . '" title="' . $text . '"><i class="far ' . $icon . '"></i></a>';
+
+        $ui_msg = new messages();
+        $title = $ui_msg->txt($ui_msg_id);
+
+        return '<a href="' . $url . '" title="' . $title . '"><i class="far ' . $icon . '"></i></a>';
     }
 
     private function input_search_pattern(): string

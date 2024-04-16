@@ -30,6 +30,9 @@
 
 */
 
+include_once SHARED_TYPES_PATH . 'component_type.php';
+
+use shared\types\component_type as comp_type_shared;
 use api\view\view as view_api;
 use api\word\word as word_api;
 use cfg\component\component;
@@ -66,7 +69,7 @@ function run_display_test(all_tests $t): void
 
     // test if a simple text component can be created
     $cmp = new component($usr);
-    $cmp->type_id = $component_types->id(component_type::TEXT);
+    $cmp->type_id = $component_types->id(comp_type_shared::TEXT);
     $cmp->set_id(1);
     $cmp->set_name(view_api::TN_READ_NESN_2016);
     $cmp_dsp = new component_dsp($cmp->api_json());

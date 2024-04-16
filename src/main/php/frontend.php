@@ -99,6 +99,8 @@ include_once TYPES_PATH . 'type_lists.php';
 
 include_once VIEW_PATH . 'view_list.php';
 
+use html\html_base;
+use html\rest_ctrl;
 use shared\library;
 use shared\api;
 use html\user\user;
@@ -186,6 +188,10 @@ class frontend
         $api_msg = $this->api_get(type_lists::class);
         $this->typ_lst_cache = new type_lists($api_msg);
 
+        // html header
+        $html = new html_base();
+        echo $html->header('', '', api::HOST_DEV, api::BS_PATH_DEV, api::BS_CSS_PATH_DEV);
+
         if (self::HOST_SYS_LOG != '') {
             $result .= $this->log_info('start ' . $this->code_name);
         }
@@ -194,6 +200,9 @@ class frontend
 
     function end(): string
     {
+        $html = new html_base();
+        echo $html->footer();
+
         $duration = microtime(true) - $this->start_time;
         if (self::HOST_SYS_LOG != '') {
             return $this->log_info('end ' . $this->code_name);
@@ -268,56 +277,8 @@ class frontend
         } else {
             $data = array($id_fld => $ids);
         }
-        return $this->api_call("GET", $url, $data);
-    }
-
-    /**
-     * the actual call of the api using REST
-     *
-     * @param string $method either GET, POST, PUT or DELETE
-     * @param string $url with the absolut path
-     * @param array $data with the json that should be included in the backend call
-     * @return string the answer from the backend
-     */
-    function api_call(string $method, string $url, array $data): string
-    {
-        $curl = curl_init();
-        $data_json = json_encode($data);
-
-
-        switch ($method) {
-            case "POST":
-                curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
-                break;
-            case "PUT":
-                curl_setopt($curl,
-                    CURLOPT_HTTPHEADER,
-                    array('Content-Type: application/json', 'Content-Length: ' . strlen($data_json)));
-                curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "PUT");
-                curl_setopt($curl, CURLOPT_POSTFIELDS, $data_json);
-                break;
-            case "DELETE":
-                curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "DELETE");
-                $url = sprintf("%s?%s", $url, http_build_query($data));
-                break;
-            default:
-                $url = sprintf("%s?%s", $url, http_build_query($data));
-
-        }
-
-        // Optional Authentication:
-        curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-        curl_setopt($curl, CURLOPT_USERPWD, "username:password");
-
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
-
-        $result = curl_exec($curl);
-
-        curl_close($curl);
-
-        return $result;
+        $ctrl = new rest_ctrl();
+        return $ctrl->api_call(rest_ctrl::GET, $url, $data);
     }
 
 }

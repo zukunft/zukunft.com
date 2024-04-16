@@ -100,6 +100,7 @@ use cfg\word;
 use cfg\word_list;
 use controller\controller;
 use html\html_base;
+use html\rest_ctrl;
 use html\sandbox\db_object as db_object_dsp;
 use html\view\view as view_dsp;
 use html\word\triple as triple_dsp;
@@ -672,7 +673,8 @@ class test_base
         $test_name = $lib->class_to_name($test_name);
         $url = HOST_TESTING . controller::URL_API_PATH . 'json';
         $data = array($fld => $id);
-        $actual = json_decode($this->api_call("GET", $url, $data), true);
+        $ctrl = new rest_ctrl();
+        $actual = json_decode($ctrl->api_call(rest_ctrl::GET, $url, $data), true);
         // TODO remove next line (added for faster debugging only)
         $json_actual = json_encode($actual);
         $expected_text = $this->file('api/json/' . $test_name . '.json');
@@ -2285,48 +2287,6 @@ class test_base
         if ($frm->id() == 0) {
             $frm->set_id($this->next_seq_nbr());
         }
-    }
-
-    // TODO use the rest_ctrl version
-    function api_call(string $method, string $url, array $data): string
-    {
-        $curl = curl_init();
-        $data_json = json_encode($data);
-
-
-        switch ($method) {
-            case "POST":
-                curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
-                break;
-            case "PUT":
-                curl_setopt($curl,
-                    CURLOPT_HTTPHEADER,
-                    array('Content-Type: application/json', 'Content-Length: ' . strlen($data_json)));
-                curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "PUT");
-                curl_setopt($curl, CURLOPT_POSTFIELDS, $data_json);
-                break;
-            case "DELETE":
-                curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "DELETE");
-                $url = sprintf("%s?%s", $url, http_build_query($data));
-                break;
-            default:
-                $url = sprintf("%s?%s", $url, http_build_query($data));
-
-        }
-
-        // Optional Authentication:
-        curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-        curl_setopt($curl, CURLOPT_USERPWD, "username:password");
-
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
-
-        $result = curl_exec($curl);
-
-        curl_close($curl);
-
-        return $result;
     }
 
     private function html_page(string $body): string

@@ -34,6 +34,9 @@
 
 namespace html;
 
+include_once SHARED_PATH . 'api.php';
+
+use shared\api;
 use const test\HOST_TESTING;
 
 class html_base
@@ -82,8 +85,28 @@ class html_base
      * @param string $style e.g. to center for the login page
      * @returns string the general HTML header
      */
-    function header(string $title, string $style = ""): string
+    function header(
+        string $title,
+        string $style = "",
+        string $server_url = '',
+        string $bs_path = '',
+        string $bs_css_path = ''
+    ): string
     {
+        // set the fallback values
+        if ($server_url == '') {
+            $server_url = api::HOST_PROD;
+        }
+        if ($bs_path == '') {
+            $bs_path = api::BS_PATH_PROD;
+        }
+        if ($bs_css_path == '') {
+            $bs_css_path = api::BS_CSS_PATH_PROD;
+        }
+
+        // set vars to shorten the lines
+        $url_ext_lib = $server_url . api::EXT_LIB_PATH;
+
         $result = '<!DOCTYPE html>';
         $result .= '<html lang="en">'; // TODO: to be adjusted depending on the display language
         if ($title <> "") {
@@ -94,31 +117,31 @@ class html_base
         $result .= '  <meta charset="utf-8">';
         if (self::UI_USE_BOOTSTRAP) {
             // include the bootstrap stylesheets
-            $result .= '  <link rel="stylesheet" href="https://www.zukunft.com/lib_external/bootstrap/4.3.1/css/bootstrap.css">';
+            $result .= '  <link rel="stylesheet" href="' . $url_ext_lib . $bs_css_path . api::BS_CSS .'">';
             // include the jQuery UI stylesheets
-            $result .= '  <link rel="stylesheet" href="https://www.zukunft.com/lib_external/jQueryUI/1.12.1/jquery-ui.css">';
+            $result .= '  <link rel="stylesheet" href="' . $server_url . 'lib_external/jQueryUI/1.12.1/jquery-ui.css">';
             // include the jQuery library
-            $result .= '  <script src="https://www.zukunft.com/lib_external/jQuery/jquery-3.3.1.js"></script>';
+            $result .= '  <script src="' . $url_ext_lib . 'jQuery/jquery-3.3.1.js"></script>';
             // include the jQuery UI library
-            $result .= '  <script src="https://www.zukunft.com/lib_external/jQueryUI/1.12.1/jquery-ui.js"></script>';
+            $result .= '  <script src="' . $url_ext_lib . 'jQueryUI/1.12.1/jquery-ui.js"></script>';
             // include the popper.js library
-            $result .= '  <script src="https://www.zukunft.com/lib_external/popper.js/1.14.5/popper.min.js"></script>';
+            $result .= '  <script src="' . $url_ext_lib . 'popper.js/1.14.5/popper.min.js"></script>';
             // include the tether library
-            //$result .= '  <script src="https://www.zukunft.com/lib_external/tether/dist/js/tether.min.js"></script>';
+            //$result .= '  <script src="' . $url_ext_lib . 'tether/dist/js/tether.min.js"></script>';
             // include the typeahead and Bloodhound JavaScript plugins
-            //$result .= '  <script src="https://www.zukunft.com/lib_external/typeahead/bootstrap3-typeahead.js"></script>';
-            //$result .= '  <script src="https://www.zukunft.com/lib_external/typeahead/typeahead.bundle.js"></script>';
+            //$result .= '  <script src="' . $url_ext_lib . 'typeahead/bootstrap3-typeahead.js"></script>';
+            //$result .= '  <script src="' . $url_ext_lib . 'typeahead/typeahead.bundle.js"></script>';
             // include the bootstrap Tokenfield JavaScript plugins
-            // $result .= '  <script src="https://www.zukunft.com/lib_external/bootstrap-tokenfield/dist/bootstrap-tokenfield.js"></script>';
+            // $result .= '  <script src="' . $url_ext_lib . 'bootstrap-tokenfield/dist/bootstrap-tokenfield.js"></script>';
             // include the bootstrap Tokenfield stylesheets
-            //$result .= '  <script src="https://www.zukunft.com/lib_external/bootstrap-tokenfield/dist/css/bootstrap-tokenfield.css"></script>';
+            //$result .= '  <script src="' . $url_ext_lib . 'bootstrap-tokenfield/dist/css/bootstrap-tokenfield.css"></script>';
             // include the bootstrap JavaScript plugins
-            $result .= '  <script src="https://www.zukunft.com/lib_external/bootstrap/4.1.3/js/bootstrap.js"></script>';
+            $result .= '  <script src="' . $url_ext_lib . $bs_path . api::BS_JS . '"></script>';
             // adjust the styles where needed
             $result .= '  <link rel="stylesheet" type="text/css" href="/src/main/resources/style/style_bs.css" />';
             // load the icon font
-            $result .= '  <link rel="stylesheet" href="https://www.zukunft.com/lib_external/fontawesome/css/all.css">';
-            $result .= '  <script defer src="https://www.zukunft.com/lib_external/fontawesome/js/all.js"></script>';
+            $result .= '  <link rel="stylesheet" href="' . $url_ext_lib . 'fontawesome/css/all.css">';
+            $result .= '  <script defer src="' . $url_ext_lib . 'fontawesome/js/all.js"></script>';
         } else {
             // use a simple stylesheet without Javascript
             $result .= '  <link rel="stylesheet" type="text/css" href="/src/main/resources/style/style.css" />';
@@ -142,8 +165,21 @@ class html_base
      * @param string $title simple the HTML title used
      * @returns string the simple HTML header for unit tests
      */
-    function header_test(string $title): string
+    function header_test(string $title, string $server_url = '', string $bs_path = '', string $bs_css_path = ''): string
     {
+        if ($server_url == '') {
+            $server_url = api::HOST_DEV;
+        }
+        if ($bs_path == '') {
+            $bs_path = api::BS_PATH_DEV;
+        }
+        if ($bs_css_path == '') {
+            $bs_css_path = api::BS_CSS_PATH_DEV;
+        }
+
+        // set vars to shorten the lines
+        $url_ext_lib = $server_url . api::EXT_LIB_PATH;
+
         $result = '<!DOCTYPE html>';
         $result .= '<html lang="en">'; // TODO: to be adjusted depending on the display language
         if ($title <> "") {
@@ -154,10 +190,10 @@ class html_base
         $result .= '  <meta charset="utf-8">';
         if (self::UI_USE_BOOTSTRAP) {
             // include the bootstrap stylesheets
-            $result .= '  <link rel="stylesheet" href="https://www.zukunft.com/lib_external/bootstrap/4.3.1/css/bootstrap.css">';
+            $result .= '  <link rel="stylesheet" href="' . $url_ext_lib . $bs_css_path . api::BS_CSS . '">';
             $result .= '  <link rel="stylesheet" type="text/css" href="/src/main/resources/style/style_bs.css" />';
             // load the icon font
-            $result .= '  <link rel="stylesheet" href="https://www.zukunft.com/lib_external/fontawesome/css/all.css">';
+            $result .= '  <link rel="stylesheet" href="' . $url_ext_lib . 'fontawesome/css/all.css">';
         } else {
             // use a simple stylesheet without Javascript
             $result .= '  <link rel="stylesheet" type="text/css" href="/src/main/resources/style/style.css" />';

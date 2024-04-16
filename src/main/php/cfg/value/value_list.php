@@ -40,11 +40,13 @@
 
 namespace cfg\value;
 
+include_once SHARED_TYPES_PATH . 'protection_type.php';
 include_once DB_PATH . 'sql_par_type.php';
 include_once API_VALUE_PATH . 'value_list.php';
 include_once SERVICE_EXPORT_PATH . 'value_list_exp.php';
 include_once MODEL_GROUP_PATH . 'group_id_list.php';
 
+use shared\types\protection_type as protect_type_shared;
 use api\value\value_list as value_list_api;
 use cfg\db\sql;
 use cfg\db\sql_db;
@@ -708,7 +710,7 @@ class value_list extends sandbox_value_list
                 $val->share_id = $share_types->id($value);
             }
 
-            if ($key == protection_type::JSON_FLD) {
+            if ($key == protect_type_shared::JSON_FLD) {
                 $val->protection_id = $protection_types->id($value);
             }
 
@@ -835,7 +837,7 @@ class value_list extends sandbox_value_list
 
             // add the protection type
             log_debug('get protection');
-            if ($val0->protection_id > 0 and $val0->protection_id <> $protection_types->id(protection_type::NO_PROTECT)) {
+            if ($val0->protection_id > 0 and $val0->protection_id <> $protection_types->id(protect_type_shared::NO_PROTECT)) {
                 $result->protection = $val0->protection_type_code_id();
             }
 

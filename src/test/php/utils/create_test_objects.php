@@ -41,6 +41,7 @@
 
 namespace test;
 
+include_once SHARED_TYPES_PATH . 'component_type.php';
 include_once API_REF_PATH . 'ref.php';
 include_once API_PHRASE_PATH . 'group.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
@@ -50,6 +51,7 @@ include_once MODEL_COMPONENT_PATH . 'component_list.php';
 include_once MODEL_VALUE_PATH . 'value_ts_data.php';
 include_once WEB_FORMULA_PATH . 'formula.php';
 
+use shared\types\component_type as comp_type_shared;
 use api\api;
 use api\api_message;
 use api\component\component as component_api;
@@ -1544,7 +1546,7 @@ class create_test_objects extends test_base
     function dummy_component(): component
     {
         $cmp = new component($this->usr1);
-        $cmp->set(1, component_api::TN_READ, component_type::PHRASE_NAME);
+        $cmp->set(1, component_api::TN_READ, comp_type_shared::PHRASE_NAME);
         $cmp->description = component_api::TD_READ;
         return $cmp;
     }
@@ -1552,7 +1554,7 @@ class create_test_objects extends test_base
     function dummy_component_word_add_title(): component
     {
         $cmp = new component($this->usr1);
-        $cmp->set(1, component_api::TN_FORM_TITLE, component_type::FORM_TITLE);
+        $cmp->set(1, component_api::TN_FORM_TITLE, comp_type_shared::FORM_TITLE);
         $cmp->description = component_api::TD_FORM_TITLE;
         $cmp->code_id = component_api::TI_FORM_TITLE;
         return $cmp;
@@ -1561,7 +1563,7 @@ class create_test_objects extends test_base
     function dummy_component_word_add_back_stack(): component
     {
         $cmp = new component($this->usr1);
-        $cmp->set(2, component_api::TN_FORM_BACK, component_type::FORM_BACK);
+        $cmp->set(2, component_api::TN_FORM_BACK, comp_type_shared::FORM_BACK);
         $cmp->description = component_api::TD_FORM_BACK;
         $cmp->code_id = component_api::TI_FORM_BACK;
         return $cmp;
@@ -1570,7 +1572,7 @@ class create_test_objects extends test_base
     function dummy_component_word_add_button_confirm(): component
     {
         $cmp = new component($this->usr1);
-        $cmp->set(3, component_api::TN_FORM_CONFIRM, component_type::FORM_CONFIRM);
+        $cmp->set(3, component_api::TN_FORM_CONFIRM, comp_type_shared::FORM_CONFIRM);
         $cmp->description = component_api::TD_FORM_CONFIRM;
         $cmp->code_id = component_api::TI_FORM_CONFIRM;
         return $cmp;
@@ -1579,7 +1581,7 @@ class create_test_objects extends test_base
     function dummy_component_word_add_name(): component
     {
         $cmp = new component($this->usr1);
-        $cmp->set(4, component_api::TN_FORM_NAME, component_type::FORM_NAME);
+        $cmp->set(4, component_api::TN_FORM_NAME, comp_type_shared::FORM_NAME);
         $cmp->description = component_api::TD_FORM_NAME;
         $cmp->code_id = component_api::TI_FORM_NAME;
         return $cmp;
@@ -1588,7 +1590,7 @@ class create_test_objects extends test_base
     function dummy_component_word_add_description(): component
     {
         $cmp = new component($this->usr1);
-        $cmp->set(5, component_api::TN_FORM_DESCRIPTION, component_type::FORM_DESCRIPTION);
+        $cmp->set(5, component_api::TN_FORM_DESCRIPTION, comp_type_shared::FORM_DESCRIPTION);
         $cmp->description = component_api::TD_FORM_DESCRIPTION;
         $cmp->code_id = component_api::TI_FORM_DESCRIPTION;
         return $cmp;
@@ -1597,7 +1599,7 @@ class create_test_objects extends test_base
     function dummy_component_word_add_share_type(): component
     {
         $cmp = new component($this->usr1);
-        $cmp->set(6, component_api::TN_FORM_SHARE_TYPE, component_type::FORM_SHARE_TYPE);
+        $cmp->set(6, component_api::TN_FORM_SHARE_TYPE, comp_type_shared::FORM_SHARE_TYPE);
         $cmp->description = component_api::TD_FORM_SHARE_TYPE;
         $cmp->code_id = component_api::TI_FORM_SHARE_TYPE;
         return $cmp;
@@ -1606,7 +1608,7 @@ class create_test_objects extends test_base
     function dummy_component_word_add_protection_type(): component
     {
         $cmp = new component($this->usr1);
-        $cmp->set(7, component_api::TN_FORM_PROTECTION_TYPE, component_type::FORM_PROTECTION_TYPE);
+        $cmp->set(7, component_api::TN_FORM_PROTECTION_TYPE, comp_type_shared::FORM_PROTECTION_TYPE);
         $cmp->description = component_api::TD_FORM_PROTECTION_TYPE;
         $cmp->code_id = component_api::TI_FORM_PROTECTION_TYPE;
         return $cmp;
@@ -1615,7 +1617,7 @@ class create_test_objects extends test_base
     function dummy_component_word_add_cancel(): component
     {
         $cmp = new component($this->usr1);
-        $cmp->set(8, component_api::TN_FORM_CANCEL, component_type::FORM_CANCEL);
+        $cmp->set(8, component_api::TN_FORM_CANCEL, comp_type_shared::FORM_CANCEL);
         $cmp->description = component_api::TD_FORM_CANCEL;
         $cmp->code_id = component_api::TI_FORM_CANCEL;
         return $cmp;
@@ -1624,7 +1626,7 @@ class create_test_objects extends test_base
     function dummy_component_word_add_save(): component
     {
         $cmp = new component($this->usr1);
-        $cmp->set(9, component_api::TN_FORM_SAVE, component_type::FORM_SAVE);
+        $cmp->set(9, component_api::TN_FORM_SAVE, comp_type_shared::FORM_SAVE);
         $cmp->description = component_api::TD_FORM_SAVE;
         $cmp->code_id = component_api::TI_FORM_SAVE;
         return $cmp;
@@ -1633,7 +1635,7 @@ class create_test_objects extends test_base
     function dummy_component_word_add_form_end(): component
     {
         $cmp = new component($this->usr1);
-        $cmp->set(10, component_api::TN_FORM_END, component_type::FORM_END);
+        $cmp->set(10, component_api::TN_FORM_END, comp_type_shared::FORM_END);
         $cmp->description = component_api::TD_FORM_END;
         $cmp->code_id = component_api::TI_FORM_END;
         return $cmp;

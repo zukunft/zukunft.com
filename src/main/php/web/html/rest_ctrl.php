@@ -161,7 +161,14 @@ class rest_ctrl
         return $ctrl->check_api_msg($jsom_msg);
     }
 
-    // TODO combine with frontend
+    /**
+     * execute an api call
+     *
+     * @param string $method the REST method (GET, POST, PUT or DELETE)
+     * @param string $url the url that should be called
+     * @param array $data the data as a json array that should be included in the call
+     * @return string the result from the backend
+     */
     function api_call(string $method, string $url, array $data): string
     {
         $curl = curl_init();

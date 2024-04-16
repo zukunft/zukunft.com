@@ -31,6 +31,7 @@
 
 namespace cfg;
 
+include_once SHARED_TYPES_PATH . 'protection_type.php';
 include_once SERVICE_EXPORT_PATH . 'formula_exp.php';
 include_once MODEL_RESULT_PATH . 'result_list.php';
 
@@ -51,6 +52,7 @@ include_once API_FORMULA_PATH . 'formula.php';
 include_once WEB_FORMULA_PATH . 'formula.php';
 include_once WEB_WORD_PATH . 'word.php';
 
+use shared\types\protection_type as protect_type_shared;
 use api\formula\formula as formula_api;
 use cfg\db\sql;
 use cfg\db\sql_db;
@@ -1407,7 +1409,7 @@ class formula extends sandbox_typed
         }
 
         // add the protection type
-        if ($this->protection_id > 0 and $this->protection_id <> $protection_types->id(protection_type::NO_PROTECT)) {
+        if ($this->protection_id > 0 and $this->protection_id <> $protection_types->id(protect_type_shared::NO_PROTECT)) {
             $result->protection = $this->protection_type_code_id();
         }
 

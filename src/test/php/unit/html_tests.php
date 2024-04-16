@@ -32,10 +32,12 @@
 
 namespace unit;
 
+include_once SHARED_TYPES_PATH . 'component_type.php';
 include_once WEB_HTML_PATH . 'html_selector.php';
 include_once WEB_HTML_PATH . 'button.php';
 include_once WEB_RESULT_PATH . 'result_list.php';
 
+use shared\types\component_type as comp_type_shared;
 use api\component\component as component_api;
 use api\phrase\group as group_api;
 use api\phrase\phrase as phrase_api;
@@ -206,7 +208,7 @@ class html_tests
         $t->subheader('View component tests');
 
         $cmp = new component($usr);
-        $cmp->set(1, component_api::TN_ADD, component_type::TEXT);
+        $cmp->set(1, component_api::TN_ADD, comp_type_shared::TEXT);
         $cmp_dsp = new component_dsp($cmp->api_json());
         $t->html_test($cmp_dsp->html(), 'component_text', $t);
 

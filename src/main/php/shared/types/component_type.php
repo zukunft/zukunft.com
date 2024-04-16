@@ -33,6 +33,7 @@ namespace shared\types;
 
 class component_type
 {
+
     // list of the view component types that have a coded functionality
 
     // just to display a simple text

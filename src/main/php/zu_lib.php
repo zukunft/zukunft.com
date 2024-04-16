@@ -14,9 +14,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
     4. commit
 
     but first this needs to be fixed:
-    TODO use only one REST call
     TODO use only shared type const and remove the others
-    TODO fix the button frontend issue
     TODO remove backend classes from frontend
     TODO remove frontend classes from backend
     TODO Substeps: create insert, update and delete sql create tests for the main objects
@@ -103,6 +101,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO remove the time phrase from result
     TODO rename change and change_log to change
     TODO rename sys_log to log
+    TODO fix the button frontend issue
     TODO use the json api message header for all api messages
     TODO check if reading triples should use a view to generate the triple name and the generated name
     TODO use the sandbox list for all user lists

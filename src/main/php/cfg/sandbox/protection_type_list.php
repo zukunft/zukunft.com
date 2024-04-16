@@ -32,8 +32,11 @@
 
 namespace cfg;
 
+include_once SHARED_TYPES_PATH . 'protection_type.php';
 include_once DB_PATH . 'sql_db.php';
 include_once MODEL_SANDBOX_PATH . 'protection_type.php';
+
+use shared\types\protection_type as protect_type_shared;
 
 global $protection_types;
 
@@ -46,13 +49,13 @@ class protection_type_list extends type_list
     function load_dummy(): void
     {
         $this->reset();
-        $type = new type_object(protection_type::NO_PROTECT, protection_type::NO_PROTECT, '', 1);
+        $type = new type_object(protect_type_shared::NO_PROTECT, protect_type_shared::NO_PROTECT, '', 1);
         $this->add($type);
-        $type = new type_object(protection_type::USER, protection_type::USER, '', 2);
+        $type = new type_object(protect_type_shared::USER, protect_type_shared::USER, '', 2);
         $this->add($type);
-        $type = new type_object(protection_type::ADMIN, protection_type::ADMIN, '', 3);
+        $type = new type_object(protect_type_shared::ADMIN, protect_type_shared::ADMIN, '', 3);
         $this->add($type);
-        $type = new type_object(protection_type::NO_CHANGE, protection_type::NO_CHANGE, '', 4);
+        $type = new type_object(protect_type_shared::NO_CHANGE, protect_type_shared::NO_CHANGE, '', 4);
         $this->add($type);
     }
 
@@ -61,7 +64,7 @@ class protection_type_list extends type_list
      */
     function default_id(): int
     {
-        return parent::id(protection_type::NO_PROTECT);
+        return parent::id(protect_type_shared::NO_PROTECT);
     }
 
 }

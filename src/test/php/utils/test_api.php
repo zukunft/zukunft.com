@@ -83,6 +83,7 @@ use controller\controller;
 use controller\system\sys_log as sys_log_api;
 use DateTime;
 use Exception;
+use html\rest_ctrl;
 use shared\library;
 
 class test_api extends create_test_objects
@@ -153,7 +154,8 @@ class test_api extends create_test_objects
         $class = $this->class_to_api($class);
         $url = $this->class_to_url($class);
         $data_string = json_encode($data);
-        $actual = json_decode($this->api_call("PUT", $url . '/', $data), true);
+        $ctrl = new rest_ctrl();
+        $actual = json_decode($ctrl->api_call(rest_ctrl::PUT, $url . '/', $data), true);
         $actual_text = json_encode($actual);
         $expected_raw_text = $this->file('api/' . $class . '/' . $class . '_put_response.json');
         $expected = json_decode($expected_raw_text, true);
@@ -208,7 +210,8 @@ class test_api extends create_test_objects
         $class = $this->class_to_api($class);
         $url = $this->class_to_url($class);
         $data = array("id" => $id);
-        $actual = json_decode($this->api_call("DELETE", $url, $data), true);
+        $ctrl = new rest_ctrl();
+        $actual = json_decode($ctrl->api_call(rest_ctrl::DELETE, $url, $data), true);
         if ($actual == null) {
             return false;
         } else {
@@ -398,15 +401,16 @@ class test_api extends create_test_objects
     {
         // naming exception (to be removed?)
         $lib = new library();
+        $ctrl = new rest_ctrl();
         $class_api = $this->class_to_api($class);
         $url = $this->class_to_url($class_api);
         $data = array(controller::URL_VAR_ID => $id);
         // TODO check why for formula a double call is needed
         if ($class == formula::class) {
-            $actual = json_decode($this->api_call("GET", $url, $data), true);
+            $actual = json_decode($ctrl->api_call(rest_ctrl::GET, $url, $data), true);
         }
         // TODO simulate other users
-        $actual = json_decode($this->api_call("GET", $url, $data), true);
+        $actual = json_decode($ctrl->api_call(rest_ctrl::GET, $url, $data), true);
         if ($actual == null) {
             log_err('GET api call for ' . $class_api . ' returned an empty result');
         }
@@ -431,7 +435,8 @@ class test_api extends create_test_objects
         $class = $this->class_to_api($class);
         $url = $this->class_to_url($class);
         $data = array($field => $name);
-        $actual = json_decode($this->api_call("GET", $url, $data), true);
+        $ctrl = new rest_ctrl();
+        $actual = json_decode($ctrl->api_call(rest_ctrl::GET, $url, $data), true);
         return $this->assert_api_compare($class, $actual);
     }
 
@@ -461,7 +466,8 @@ class test_api extends create_test_objects
         } else {
             $data = array($id_fld => $ids);
         }
-        $actual = json_decode($this->api_call("GET", $url, $data), true);
+        $ctrl = new rest_ctrl();
+        $actual = json_decode($ctrl->api_call(rest_ctrl::GET, $url, $data), true);
 
         // TODO remove
         if ($class == $lib->class_to_name(term_list::class)) {
@@ -498,7 +504,8 @@ class test_api extends create_test_objects
         } else {
             $data = array($id_fld => $id);
         }
-        $actual = json_decode($this->api_call("GET", $url, $data), true);
+        $ctrl = new rest_ctrl();
+        $actual = json_decode($ctrl->api_call(rest_ctrl::GET, $url, $data), true);
 
         return $this->assert_api_compare($class, $actual);
     }
