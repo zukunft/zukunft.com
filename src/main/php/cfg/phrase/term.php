@@ -46,6 +46,7 @@
 namespace cfg;
 
 include_once SHARED_TYPES_PATH . 'protection_type.php';
+include_once SHARED_TYPES_PATH . 'share_type.php';
 include_once MODEL_HELPER_PATH . 'combine_named.php';
 include_once API_PHRASE_PATH . 'term.php';
 include_once API_WORD_PATH . 'word.php';
@@ -61,6 +62,7 @@ include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once WEB_PHRASE_PATH . 'term.php';
 
 use shared\types\protection_type as protect_type_shared;
+use shared\types\share_type as share_type_shared;
 use api\phrase\term as term_api;
 use api\word\word as word_api;
 use cfg\db\sql;
@@ -177,7 +179,7 @@ class term extends combine_named
             [verb::FLD_WORDS, self::FLD_USAGE],
             [sql::NULL_VALUE, self::FLD_TYPE, sql::FLD_CONST],
             [sql::NULL_VALUE, sandbox::FLD_EXCLUDED, sql::FLD_CONST],
-            [share_type::PUBLIC_ID, sandbox::FLD_SHARE, sql::FLD_CONST],
+            [share_type_shared::PUBLIC_ID, sandbox::FLD_SHARE, sql::FLD_CONST],
             [protect_type_shared::ADMIN_ID, sandbox::FLD_PROTECT, sql::FLD_CONST],
             ['', formula::FLD_FORMULA_TEXT],
             ['', formula::FLD_FORMULA_USER_TEXT]

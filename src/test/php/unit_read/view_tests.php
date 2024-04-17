@@ -32,8 +32,10 @@
 
 namespace unit_read;
 
+include_once SHARED_TYPES_PATH . 'view_type.php';
 include_once SHARED_TYPES_PATH . 'component_type.php';
 
+use shared\types\view_type as view_type_shared;
 use shared\types\component_type as comp_type_shared;
 use api\component\component as component_api;
 use api\view\view as view_api;
@@ -85,8 +87,8 @@ class view_tests
         $t->assert('load_types', $result, true);
 
         // ... and check if at least the most critical is loaded
-        $result = $view_types->id(view_type::DEFAULT);
-        $t->assert('check type' . view_type::DEFAULT, $result, 1);
+        $result = $view_types->id(view_type_shared::DEFAULT);
+        $t->assert('check type' . view_type_shared::DEFAULT, $result, 1);
 
 
         $t->subheader('View API object creation tests');

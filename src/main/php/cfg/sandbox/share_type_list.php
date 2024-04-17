@@ -32,10 +32,12 @@
 
 namespace cfg;
 
-use cfg\db\sql_db;
-
+include_once SHARED_TYPES_PATH . 'share_type.php';
 include_once DB_PATH . 'sql_db.php';
 include_once MODEL_SANDBOX_PATH . 'share_type.php';
+
+use shared\types\share_type as share_type_shared;
+use cfg\db\sql_db;
 
 global $share_types;
 
@@ -48,13 +50,13 @@ class share_type_list extends type_list
     function load_dummy(): void
     {
         $this->reset();
-        $type = new type_object(share_type::PUBLIC, share_type::PUBLIC, '', 1);
+        $type = new type_object(share_type_shared::PUBLIC, share_type_shared::PUBLIC, '', 1);
         $this->add($type);
-        $type = new type_object(share_type::PERSONAL, share_type::PERSONAL, '', 2);
+        $type = new type_object(share_type_shared::PERSONAL, share_type_shared::PERSONAL, '', 2);
         $this->add($type);
-        $type = new type_object(share_type::GROUP, share_type::GROUP, '', 3);
+        $type = new type_object(share_type_shared::GROUP, share_type_shared::GROUP, '', 3);
         $this->add($type);
-        $type = new type_object(share_type::PRIVATE, share_type::PRIVATE, '', 4);
+        $type = new type_object(share_type_shared::PRIVATE, share_type_shared::PRIVATE, '', 4);
         $this->add($type);
     }
 
@@ -63,7 +65,7 @@ class share_type_list extends type_list
      */
     function default_id(): int
     {
-        return parent::id(share_type::PUBLIC);
+        return parent::id(share_type_shared::PUBLIC);
     }
 
 }

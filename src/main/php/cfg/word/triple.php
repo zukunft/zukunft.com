@@ -52,11 +52,13 @@
 namespace cfg;
 
 include_once SHARED_TYPES_PATH . 'protection_type.php';
+include_once SHARED_TYPES_PATH . 'share_type.php';
 include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_link_typed.php';
 include_once SERVICE_EXPORT_PATH . 'triple_exp.php';
 
 use shared\types\protection_type as protect_type_shared;
+use shared\types\share_type as share_type_shared;
 use api\api;
 use api\word\triple as triple_api;
 use cfg\db\sql;
@@ -1199,7 +1201,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
                     $this->plural = $value;
                 }
             }
-            if ($key == share_type::JSON_FLD) {
+            if ($key == share_type_shared::JSON_FLD) {
                 $this->share_id = $share_types->id($value);
             }
             if ($key == protect_type_shared::JSON_FLD) {
@@ -1437,7 +1439,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
         }
 
         // add the share type
-        if ($this->share_id > 0 and $this->share_id <> $share_types->id(share_type::PUBLIC)) {
+        if ($this->share_id > 0 and $this->share_id <> $share_types->id(share_type_shared::PUBLIC)) {
             $result->share = $this->share_type_code_id();
         }
 

@@ -14,9 +14,6 @@ use html\phrase\phrase_group as phrase_group_dsp;
     4. commit
 
     but first this needs to be fixed:
-    TODO use only shared type const and remove the others
-    TODO remove backend classes from frontend
-    TODO remove frontend classes from backend
     TODO Substeps: create insert, update and delete sql create tests for the main objects
                    include the log in the prepared sql write statement
     TODO Step 26: deprecate the get_old in result
@@ -25,6 +22,10 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO Substeps: move all display functions from the backend objects to the frontend
     TODO Step 24: deprecate the get_old in user_list
     TODO Substeps: sort and group the functions in a class e.g. based on the word class sample
+    TODO Step 23: deprecate the get_old in value_dsp
+    TODO remove backend classes from frontend
+    TODO Step 22: deprecate the get_old in value_list
+    TODO remove frontend classes from backend
     TODO activate the tests and create a unit and read test if possible
     TODO for user_values allow a source 0=not set or exclude the source_id from the prime index?
     TODO test if a table with 1, 2, 4, 8, 16, 32 or 64 smallint key is faster and more efficient than a table with one bigger index

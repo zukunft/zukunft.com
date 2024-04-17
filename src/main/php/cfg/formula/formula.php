@@ -32,6 +32,7 @@
 namespace cfg;
 
 include_once SHARED_TYPES_PATH . 'protection_type.php';
+include_once SHARED_TYPES_PATH . 'share_type.php';
 include_once SERVICE_EXPORT_PATH . 'formula_exp.php';
 include_once MODEL_RESULT_PATH . 'result_list.php';
 
@@ -53,6 +54,7 @@ include_once WEB_FORMULA_PATH . 'formula.php';
 include_once WEB_WORD_PATH . 'word.php';
 
 use shared\types\protection_type as protect_type_shared;
+use shared\types\share_type as share_type_shared;
 use api\formula\formula as formula_api;
 use cfg\db\sql;
 use cfg\db\sql_db;
@@ -1404,7 +1406,7 @@ class formula extends sandbox_typed
         }
 
         // add the share type
-        if ($this->share_id > 0 and $this->share_id <> $share_types->id(share_type::PUBLIC)) {
+        if ($this->share_id > 0 and $this->share_id <> $share_types->id(share_type_shared::PUBLIC)) {
             $result->share = $this->share_type_code_id();
         }
 

@@ -69,6 +69,7 @@
 namespace cfg;
 
 include_once SHARED_TYPES_PATH . 'protection_type.php';
+include_once SHARED_TYPES_PATH . 'share_type.php';
 include_once SERVICE_EXPORT_PATH . 'sandbox_exp_named.php';
 include_once SERVICE_PATH . 'db_code_link.php';
 include_once API_WORD_PATH . 'word.php';
@@ -77,6 +78,7 @@ include_once SERVICE_EXPORT_PATH . 'word_exp.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_typed.php';
 
 use shared\types\protection_type as protect_type_shared;
+use shared\types\share_type as share_type_shared;
 use api\api;
 use api\word\word as word_api;
 use cfg\db\sql;
@@ -470,7 +472,7 @@ class word extends sandbox_typed
                     $this->plural = $value;
                 }
             }
-            if ($key == share_type::JSON_FLD) {
+            if ($key == share_type_shared::JSON_FLD) {
                 $this->share_id = $share_types->id($value);
             }
             if ($key == protect_type_shared::JSON_FLD) {
@@ -902,7 +904,7 @@ class word extends sandbox_typed
         }
 
         // add the share type
-        if ($this->share_id > 0 and $this->share_id <> $share_types->id(share_type::PUBLIC)) {
+        if ($this->share_id > 0 and $this->share_id <> $share_types->id(share_type_shared::PUBLIC)) {
             $result->share = $this->share_type_code_id();
         }
 

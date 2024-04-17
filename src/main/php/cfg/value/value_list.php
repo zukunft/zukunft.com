@@ -41,12 +41,14 @@
 namespace cfg\value;
 
 include_once SHARED_TYPES_PATH . 'protection_type.php';
+include_once SHARED_TYPES_PATH . 'share_type.php';
 include_once DB_PATH . 'sql_par_type.php';
 include_once API_VALUE_PATH . 'value_list.php';
 include_once SERVICE_EXPORT_PATH . 'value_list_exp.php';
 include_once MODEL_GROUP_PATH . 'group_id_list.php';
 
 use shared\types\protection_type as protect_type_shared;
+use shared\types\share_type as share_type_shared;
 use api\value\value_list as value_list_api;
 use cfg\db\sql;
 use cfg\db\sql_db;
@@ -706,7 +708,7 @@ class value_list extends sandbox_value_list
                 }
             }
 
-            if ($key == share_type::JSON_FLD) {
+            if ($key == share_type_shared::JSON_FLD) {
                 $val->share_id = $share_types->id($value);
             }
 
@@ -831,7 +833,7 @@ class value_list extends sandbox_value_list
 
             // add the share type
             log_debug('get share');
-            if ($val0->share_id > 0 and $val0->share_id <> $share_types->id(share_type::PUBLIC)) {
+            if ($val0->share_id > 0 and $val0->share_id <> $share_types->id(share_type_shared::PUBLIC)) {
                 $result->share = $val0->share_type_code_id();
             }
 

@@ -69,6 +69,7 @@
 namespace cfg;
 
 include_once SHARED_TYPES_PATH . 'protection_type.php';
+include_once SHARED_TYPES_PATH . 'share_type.php';
 include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';
 include_once DB_PATH . 'sql_par_type.php';
@@ -78,6 +79,7 @@ include_once MODEL_SANDBOX_PATH . 'protection_type.php';
 include_once MODEL_SANDBOX_PATH . 'share_type.php';
 
 use shared\types\protection_type as protect_type_shared;
+use shared\types\share_type as share_type_shared;
 use cfg\component\component;
 use cfg\component\component_link;
 use cfg\db\sql;
@@ -299,7 +301,7 @@ class sandbox extends db_object_seq_id_user
     {
         global $share_types;
         global $protection_types;
-        $this->share_id = $share_types->id(share_type::PUBLIC);
+        $this->share_id = $share_types->id(share_type_shared::PUBLIC);
         $this->protection_id = $protection_types->id(protect_type_shared::NO_PROTECT);
     }
 
@@ -373,7 +375,7 @@ class sandbox extends db_object_seq_id_user
 
         // use the default share type if not set
         if ($this->share_id <= 0) {
-            $this->share_id = $share_types->id(share_type::PUBLIC);
+            $this->share_id = $share_types->id(share_type_shared::PUBLIC);
         }
 
         global $share_types;
@@ -658,7 +660,7 @@ class sandbox extends db_object_seq_id_user
 
         $result = parent::import_db_obj($this, $test_obj);
         foreach ($in_ex_json as $key => $value) {
-            if ($key == share_type::JSON_FLD) {
+            if ($key == share_type_shared::JSON_FLD) {
                 $this->share_id = $share_types->id($value);
                 if ($this->share_id < 0) {
                     $lib = new library();

@@ -62,6 +62,7 @@
 namespace cfg\value;
 
 include_once SHARED_TYPES_PATH . 'protection_type.php';
+include_once SHARED_TYPES_PATH . 'share_type.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_value.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
 include_once MODEL_GROUP_PATH . 'group.php';
@@ -72,6 +73,7 @@ include_once SERVICE_EXPORT_PATH . 'value_exp.php';
 include_once SERVICE_EXPORT_PATH . 'json.php';
 
 use shared\types\protection_type as protect_type_shared;
+use shared\types\share_type as share_type_shared;
 use api\api;
 use api\value\value as value_api;
 use cfg\db\sql;
@@ -426,7 +428,7 @@ class value extends sandbox_value
                 }
             }
 
-            if ($key == share_type::JSON_FLD) {
+            if ($key == share_type_shared::JSON_FLD) {
                 $this->share_id = $share_types->id($value);
             }
 
@@ -1218,7 +1220,7 @@ class value extends sandbox_value
         $result->number = $this->number;
 
         // add the share type
-        if ($this->share_id > 0 and $this->share_id <> $share_types->id(share_type::PUBLIC)) {
+        if ($this->share_id > 0 and $this->share_id <> $share_types->id(share_type_shared::PUBLIC)) {
             $result->share = $this->share_type_code_id();
         }
 
@@ -1306,7 +1308,7 @@ class value extends sandbox_value
             }
         }
 
-        if ($key == share_type::JSON_FLD) {
+        if ($key == share_type_shared::JSON_FLD) {
             $this->share_id = $share_types->id($value);
         }
 
