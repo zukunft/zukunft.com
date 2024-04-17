@@ -66,16 +66,16 @@ Target user experience:
 - prevent duplicates in the values or formulas to force user to social interaction
 
 General coding principles:
-1. **Don't repeat yourself**: one point of change (https://en.wikipedia.org/wiki/Don%27t_repeat_yourself)
-2. **test**: each function should have a unit test called from test_units.php or test_unit_db.php
+1. **Don't repeat yourself**: one point of change (https://en.wikipedia.org/wiki/Don%27t_repeat_yourself) (but coded repeating by intention can be used)
+2. **test**: each facade function should have a unit test called from test_units.php or test_unit_db.php
   with zukunft.com/test a complete unit and integration test
   best: first write the test and then the code
-3. **least dependencies**: use the least external code possible because https://archive.fosdem.org/2021/schedule/event/dep_as_strong_as_the_weakest_link/
-4. **best guess**: in case of incomplete data best guess assumptions should be used and the assumption is shown to the user
+3. **only needed dependencies**: use the least external code possible because https://archive.fosdem.org/2021/schedule/event/dep_as_strong_as_the_weakest_link/
+4. **best guess**: assume almost everything can happen and in case of incomplete data use best guess assumptions to complete the process but report the assumption to the calling function and create the message to the user if all assumptions are collected
 5. **never change** a running system (until you have a very, very good reason)
-6. **one click update**: allow to update a pod with one click on the fly 
+6. **one click update**: allow to update a pod with one click on the fly (https://en.wikipedia.org/wiki/Continuous_delivery)
 7. **log in/out**: all user changes and data im- and export are logged with an undo and redo option
-8. **top down**: the most important functions should be on top of each class
+8. **small code package**: split if function and classes are getting too big or at least the most important functions within a class should be on top of each class
 9. **error detection** and tracking: in case something unexpected happens the code should try to create an internal error message to enable later debugging
 10. **self speaking** error messages
 11. **shared api** with in code auto check

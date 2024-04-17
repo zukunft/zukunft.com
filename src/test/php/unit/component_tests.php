@@ -95,13 +95,13 @@ class component_tests
         $t->subheader('view sql write');
         // TODO activate db write
         //$t->assert_sql_insert($sc, $cmp);
-        //$t->assert_sql_insert($sc, $cmp, true);
+        //$t->assert_sql_insert($sc, $cmp, [sql_type::USER]);
         // TODO activate db write
         //$t->assert_sql_update($sc, $cmp);
-        //$t->assert_sql_update($sc, $cmp, true);
+        //$t->assert_sql_update($sc, $cmp, [sql_type::USER]);
         // TODO activate db write
         //$t->assert_sql_delete($sc, $cmp);
-        //$t->assert_sql_delete($sc, $cmp, true);
+        //$t->assert_sql_delete($sc, $cmp, [sql_type::USER]);
 
 
         $t->subheader('Convert tests');

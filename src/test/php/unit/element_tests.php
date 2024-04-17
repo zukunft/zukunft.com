@@ -86,13 +86,13 @@ class element_tests
         $t->subheader('element sql write');
         // TODO activate db write
         //$t->assert_sql_insert($sc, $elm);
-        //$t->assert_sql_insert($sc, $elm, true);
+        //$t->assert_sql_insert($sc, $elm, [sql_type::USER]);
         // TODO activate db write
         //$t->assert_sql_update($sc, $elm);
-        //$t->assert_sql_update($sc, $elm, true);
+        //$t->assert_sql_update($sc, $elm, [sql_type::USER]);
         // TODO activate db write
         //$t->assert_sql_delete($sc, $elm);
-        //$t->assert_sql_delete($sc, $elm, true);
+        //$t->assert_sql_delete($sc, $elm, [sql_type::USER]);
 
 
         // JSON export list

@@ -2601,6 +2601,7 @@ class sandbox extends db_object_seq_id_user
      */
     function sql_insert(sql $sc, array $sc_par_lst = []): sql_par
     {
+        log_err('sql_insert is probably missing for ' . $this::class);
         return new sql_par('');
     }
 
@@ -2609,12 +2610,13 @@ class sandbox extends db_object_seq_id_user
      * dummy function to be overwritten by the child object
      *
      * @param sql $sc with the target db_type set
-     * @param sandbox|source $db_row the sandbox object with the database values before the update
+     * @param sandbox $db_row the sandbox object with the database values before the update
      * @param array $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_update(sql $sc, sandbox|source $db_row, array $sc_par_lst = []): sql_par
+    function sql_update(sql $sc, sandbox $db_row, array $sc_par_lst = []): sql_par
     {
+        log_err('sql_update is probably missing for ' . $this::class);
         return new sql_par('');
     }
 

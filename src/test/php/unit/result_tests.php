@@ -95,7 +95,7 @@ class result_tests
         // TODO activate db write
         // $t->assert_sql_insert($sc, $res);
         // TODO activate db write
-        // $t->assert_sql_insert($sc, $res, true);
+        // $t->assert_sql_insert($sc, $res, [sql_type::USER]);
         // TODO activate db write
         // $t->assert_sql_insert($sc, $res_prime);
         // TODO activate db write
@@ -107,7 +107,7 @@ class result_tests
         // TODO activate db write
         // $t->assert_sql_update($sc, $res);
         // TODO activate db write
-        // $t->assert_sql_update($sc, $res, true);
+        // $t->assert_sql_update($sc, $res, [sql_type::USER]);
         // TODO activate db write
         // $t->assert_sql_update($sc, $res_prime);
         // TODO activate db write
@@ -115,9 +115,9 @@ class result_tests
         // TODO activate db write
         // $t->assert_sql_delete($sc, $res);
         // TODO activate db write
-        // $t->assert_sql_delete($sc, $res, true);
+        // $t->assert_sql_delete($sc, $res, [sql_type::USER]);
         // TODO activate db write
-        // $t->assert_sql_delete($sc, $res, true, true);
+        // $t->assert_sql_delete($sc, $res, [sql_type::USER], true);
 
         $t->subheader('Display tests');
 

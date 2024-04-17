@@ -58,13 +58,13 @@ class triple_tests
         $t->subheader('triple sql write');
         // TODO activate db write
         //$t->assert_sql_insert($sc, $trp);
-        //$t->assert_sql_insert($sc, $trp, true);
+        //$t->assert_sql_insert($sc, $trp, [sql_type::USER]);
         // TODO activate db write
         //$t->assert_sql_update($sc, $trp);
-        //$t->assert_sql_update($sc, $trp, true);
+        //$t->assert_sql_update($sc, $trp, [sql_type::USER]);
         // TODO activate db write
         //$t->assert_sql_delete($sc, $trp);
-        //$t->assert_sql_delete($sc, $trp, true);
+        //$t->assert_sql_delete($sc, $trp, [sql_type::USER]);
 
         $t->subheader('API unit tests');
 

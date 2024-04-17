@@ -2,8 +2,30 @@
 
 /*
 
-    model/formula/formula.php - the main formula object
-    -------------------------
+    cfg/formula/formula.php - the main formula object
+    -----------------------
+
+    The main sections of this object are
+    - db const:          const for the database link
+    - object vars:       the variables of this formula object
+    - construct and map: including the mapping of the db row to this formula object
+    - set and get:       to capsule the vars from unexpected changes
+    - preloaded:         select e.g. types from cache
+    - cast:              create an api object and set the vars from an api json
+    - load:              database access object (DAO) functions
+    - word:              manage the related word
+    - info:              functions to make code easier to read
+    - assign:            to define when a formula should be used
+    - result:            manage the formula results
+    - calc:              manage the formula calculation
+    - im- and export:    create an export object and set the vars from an import object
+    - expression:        handel to single parts of a formula
+    - link:              add or remove a link to a word (this is user specific, so use the user sandbox)
+    - save:              to update the formula in the database and for the user sandbox
+    - del:               manage to remove from the database
+    - sql write:         sql statement creation to write to the database
+    - sql write fields:  field list for writing to the database
+
 
     This file is part of zukunft.com - calc with words
 
@@ -22,7 +44,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2023 zukunft.com AG, Zurich
+    Copyright (c) 1995-2024 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -78,14 +100,7 @@ class formula extends sandbox_typed
 {
 
     /*
-     * default startup values
-     */
-
-    const AVG_CALC_TIME = 1000; // the default time in milliseconds for updating all results of on formula
-
-
-    /*
-     * database link
+     * db const
      */
 
     // comments used for the database creation
@@ -98,6 +113,7 @@ class formula extends sandbox_typed
     const FLD_ID = 'formula_id';
     const FLD_NAME_COM = 'the text used to search for formulas that must also be unique for all terms (words, triples, verbs and formulas)';
     const FLD_NAME = 'formula_name';
+    const FLD_TYPE_COM = 'the id of the formula type';
     const FLD_TYPE = 'formula_type_id';
     const FLD_FORMULA_TEXT_COM = 'the internal formula expression with the database references e.g. {f1} for formula with id 1';
     const FLD_FORMULA_TEXT = 'formula_text';
@@ -105,8 +121,6 @@ class formula extends sandbox_typed
     const FLD_FORMULA_USER_TEXT = 'resolved_text';
     //const FLD_REF_TEXT = "ref_text";             // the formula field "ref_txt" is a more internal field, which should not be shown to the user (only to an admin for debugging)
     const FLD_DESCRIPTION_COM = 'text to be shown to the user for mouse over; to be replaced by a language form entry';
-    const FLD_FORMULA_TYPE_COM = 'the id of the formula type';
-    const FLD_FORMULA_TYPE = 'formula_type_id';
     const FLD_ALL_NEEDED_COM = 'the "calculate only if all values used in the formula exist" flag should be converted to "all needed for calculation" instead of just displaying "1"';
     const FLD_ALL_NEEDED = 'all_values_needed';
     const FLD_LAST_UPDATE_COM = 'time of the last calculation relevant update';
@@ -136,7 +150,7 @@ class formula extends sandbox_typed
     // list of fields that CAN be changed by the user
     const FLD_LST_USER_CAN_CHANGE = array(
         [self::FLD_DESCRIPTION, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
-        [self::FLD_FORMULA_TYPE, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, formula_type::class, self::FLD_FORMULA_TYPE_COM],
+        [self::FLD_TYPE, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, formula_type::class, self::FLD_TYPE_COM],
         [self::FLD_ALL_NEEDED, sql_field_type::INT_SMALL, sql_field_default::NULL, '', '', self::FLD_ALL_NEEDED_COM],
         [self::FLD_LAST_UPDATE, sql_field_type::TIME, sql_field_default::NULL, '', '', self::FLD_LAST_UPDATE_COM],
         [self::FLD_VIEW, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, view::class, self::FLD_VIEW_COM],
@@ -156,7 +170,7 @@ class formula extends sandbox_typed
     );
     // list of the user specific numeric database field names
     const FLD_NAMES_NUM_USR = array(
-        self::FLD_FORMULA_TYPE,
+        self::FLD_TYPE,
         self::FLD_ALL_NEEDED,
         self::FLD_LAST_UPDATE,
         sandbox::FLD_EXCLUDED,
@@ -169,7 +183,7 @@ class formula extends sandbox_typed
         self::FLD_FORMULA_TEXT,
         self::FLD_FORMULA_USER_TEXT,
         sandbox_named::FLD_DESCRIPTION,
-        self::FLD_FORMULA_TYPE,
+        self::FLD_TYPE,
         self::FLD_ALL_NEEDED,
         self::FLD_LAST_UPDATE,
         sandbox::FLD_EXCLUDED,
@@ -190,6 +204,8 @@ class formula extends sandbox_typed
     public ?string $description = '';      // describes to the user what this formula is doing
     public ?bool $need_all_val = false;    // calculate and save the result only if all used values are not null
     public ?DateTime $last_update = null;  // the time of the last update of fields that may influence the calculated results
+    private ?view $view;                   // name of the default view for this formula
+    private ?int $usage = null;            // indicator of the popularity for sorting selection boxes
 
     // in memory only fields
     public ?string $type_cl = '';          // the code id of the formula type
@@ -238,6 +254,8 @@ class formula extends sandbox_typed
 
         $this->needs_res_upd = false;
         $this->ref_text_r = '';
+
+        $this->view = null;
     }
 
     /**
@@ -263,20 +281,28 @@ class formula extends sandbox_typed
         $lib = new library();
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld);
         if ($result) {
+            if (array_key_exists($type_fld, $db_row)) {
+                $this->type_id = $db_row[$type_fld];
+            }
             if (array_key_exists(self::FLD_FORMULA_TEXT, $db_row)) {
                 $this->ref_text = $db_row[self::FLD_FORMULA_TEXT];
             }
             if (array_key_exists(self::FLD_FORMULA_USER_TEXT, $db_row)) {
                 $this->usr_text = $db_row[self::FLD_FORMULA_USER_TEXT];
             }
-            if (array_key_exists($type_fld, $db_row)) {
-                $this->type_id = $db_row[$type_fld];
+            if (array_key_exists(self::FLD_ALL_NEEDED, $db_row)) {
+                $this->need_all_val = $lib->get_bool($db_row[self::FLD_ALL_NEEDED]);
             }
             if (array_key_exists(self::FLD_LAST_UPDATE, $db_row)) {
                 $this->last_update = $lib->get_datetime($db_row[self::FLD_LAST_UPDATE], $this->dsp_id());
             }
-            if (array_key_exists(self::FLD_ALL_NEEDED, $db_row)) {
-                $this->need_all_val = $lib->get_bool($db_row[self::FLD_ALL_NEEDED]);
+            if (array_key_exists(self::FLD_VIEW, $db_row)) {
+                if ($db_row[self::FLD_VIEW] != null) {
+                    $this->set_view_id($db_row[self::FLD_VIEW]);
+                }
+            }
+            if (array_key_exists(self::FLD_USAGE, $db_row)) {
+                $this->set_usage($db_row[self::FLD_USAGE]);
             }
 
             if ($this->type_id > 0) {
@@ -340,17 +366,40 @@ class formula extends sandbox_typed
      * @param int $usage a higher value moves the formula to the top of the selection list
      * @return void
      */
-    function set_usage(int $usage): void
+    function set_usage(?int $usage): void
     {
-        //$this->values = $usage;
+        $this->usage = $usage;
     }
 
     /**
-     * @return int a higher number indicates a higher usage
+     * @param int $id the id of the default view the should be remembered
      */
-    function usage(): int
+    function set_view_id(int $id): void
     {
-        return 0;
+        if ($this->view == null) {
+            $this->view = new view($this->user());
+        }
+        $this->view->set_id($id);
+    }
+
+    /**
+     * @return int the id of the default view for this word or null if no view is preferred
+     */
+    function view_id(): int
+    {
+        if ($this->view == null) {
+            return 0;
+        } else {
+            return $this->view->id();
+        }
+    }
+
+    /**
+     * @return int|null a higher number indicates a higher usage
+     */
+    function usage(): ?int
+    {
+        return $this->usage;
     }
 
     function name(): string
@@ -391,7 +440,7 @@ class formula extends sandbox_typed
 
 
     /*
-     * get preloaded information
+     * preloaded
      */
 
     /**
@@ -408,6 +457,16 @@ class formula extends sandbox_typed
     /*
      * cast
      */
+
+    /**
+     * @returns term the formula object cast into a term object
+     */
+    function term(): term
+    {
+        $trm = new term($this->user());
+        $trm->set_obj($this);
+        return $trm;
+    }
 
     /**
      * @return formula_api the formula frontend api object
@@ -430,8 +489,49 @@ class formula extends sandbox_typed
 
 
     /*
-     * loading
+     * load
      */
+
+    /**
+     * just set the class name for the user sandbox function
+     * load a formula object by name
+     * @param string $name the name formula
+     * @return int the id of the object found and zero if nothing is found
+     */
+    function load_by_name(string $name): int
+    {
+        return parent::load_by_name($name);
+    }
+
+    /**
+     * just set the class name for the user sandbox function
+     * load a formula object by database id
+     * @param int $id the id of the formula
+     * @param string $class the formula class name
+     * @return int the id of the object found and zero if nothing is found
+     */
+    function load_by_id(int $id, string $class = self::class): int
+    {
+        return parent::load_by_id($id, $class);
+    }
+
+    /**
+     * load the formula parameters for all users
+     * @param sql_par|null $qp placeholder to align the function parameters with the parent
+     * @param string $class the name of this class to be delivered to the parent function
+     * @return bool true if the standard formula has been loaded
+     */
+    function load_standard(?sql_par $qp = null, string $class = self::class): bool
+    {
+        global $db_con;
+        $qp = $this->load_standard_sql($db_con->sql_creator());
+        $result = parent::load_standard($qp, $class);
+
+        if ($result) {
+            $result = $this->load_owner();
+        }
+        return $result;
+    }
 
     /**
      * create the SQL to load the default formula always by the id
@@ -451,24 +551,6 @@ class formula extends sandbox_typed
         ));
 
         return parent::load_standard_sql($sc, $class);
-    }
-
-    /**
-     * load the formula parameters for all users
-     * @param sql_par|null $qp placeholder to align the function parameters with the parent
-     * @param string $class the name of this class to be delivered to the parent function
-     * @return bool true if the standard formula has been loaded
-     */
-    function load_standard(?sql_par $qp = null, string $class = self::class): bool
-    {
-        global $db_con;
-        $qp = $this->load_standard_sql($db_con->sql_creator());
-        $result = parent::load_standard($qp, $class);
-
-        if ($result) {
-            $result = $this->load_owner();
-        }
-        return $result;
     }
 
     /**
@@ -525,29 +607,6 @@ class formula extends sandbox_typed
         return $result;
     }
 
-    /**
-     * just set the class name for the user sandbox function
-     * load a formula object by database id
-     * @param int $id the id of the formula
-     * @param string $class the formula class name
-     * @return int the id of the object found and zero if nothing is found
-     */
-    function load_by_id(int $id, string $class = self::class): int
-    {
-        return parent::load_by_id($id, $class);
-    }
-
-    /**
-     * just set the class name for the user sandbox function
-     * load a formula object by name
-     * @param string $name the name formula
-     * @return int the id of the object found and zero if nothing is found
-     */
-    function load_by_name(string $name): int
-    {
-        return parent::load_by_name($name);
-    }
-
     function name_field(): string
     {
         return self::FLD_NAME;
@@ -557,6 +616,11 @@ class formula extends sandbox_typed
     {
         return self::ALL_SANDBOX_FLD_NAMES;
     }
+
+
+    /*
+     * word
+     */
 
     /**
      * add the corresponding name word for the formula name to the database without similar check
@@ -608,6 +672,11 @@ class formula extends sandbox_typed
         }
         return $result;
     }
+
+
+    /*
+     * info
+     */
 
     /**
      * return the true if the formula has a special type and the result is a kind of hardcoded
@@ -723,6 +792,11 @@ class formula extends sandbox_typed
         return $result;
     }
 
+
+    /*
+     * assign
+     */
+
     /**
      * lists of all words directly assigned to a formula and where the formula should be used
      */
@@ -801,7 +875,6 @@ class formula extends sandbox_typed
         return $phr_lst;
     }
 
-
     /**
      * the complete list of a phrases assigned to a formula
      */
@@ -818,12 +891,16 @@ class formula extends sandbox_typed
         return $this->assign_phr_glst(true);
     }
 
-
+    // TODO review
     public static function cmp($a, $b): string
     {
         return strcmp($a->name, $b->name);
     }
 
+
+    /*
+     * result
+     */
 
     /**
      * delete all results for this formula
@@ -864,8 +941,14 @@ class formula extends sandbox_typed
     }
 
 
+    /*
+     * calc
+     */
+
     /**
      * fill the formula in the reference format with numbers
+     * TODO review by splitting it up
+     *
      * @param phrase_list $phr_lst list of phrase used to select the value for the calculation
      * @param phrase_list|null $pre_phr_lst list of preloaded / cached terms
      * TODO verbs
@@ -1085,7 +1168,7 @@ class formula extends sandbox_typed
         return $res_lst;
     }
 
-// create the calculation request for one formula and one usr
+    // create the calculation request for one formula and one usr
     /*
     function calc_requests($phr_lst) {
     $result = array();
@@ -1430,7 +1513,8 @@ class formula extends sandbox_typed
     }
 
     /*
-     * probably to be replaced with expression functions
+     * expression
+     * TODO probably to be replaced with expression functions
      */
 
     /**
@@ -1685,22 +1769,9 @@ class formula extends sandbox_typed
         return $result;
     }
 
-    /*
-     * convert functions
-     */
-
-    /**
-     * @returns term the formula object cast into a term object
-     */
-    function term(): term
-    {
-        $trm = new term($this->user());
-        $trm->set_obj($this);
-        return $trm;
-    }
 
     /*
-     * link functions - add or remove a link to a word (this is user specific, so use the user sandbox)
+     * link
      */
 
     /**
@@ -1737,8 +1808,9 @@ class formula extends sandbox_typed
         return $result;
     }
 
+
     /*
-     * save functions - to update the formula in the database and for the user sandbox
+     * save
      */
 
     /**
@@ -2440,6 +2512,11 @@ class formula extends sandbox_typed
 
     }
 
+
+    /*
+     * del
+     */
+
     // TODO user specific???
     function del_links(): user_message
     {
@@ -2450,6 +2527,152 @@ class formula extends sandbox_typed
             $result->add_message($msg);
         }
         return $result;
+    }
+
+    /*
+     * sql write
+     */
+
+    /**
+     * create the sql statement to add a new formula to the database
+     * always all fields are included in the query to be able to remove overwrites with a null value
+     *
+     * @param sql $sc with the target db_type set
+     * @param array $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     */
+    function sql_insert(sql $sc, array $sc_par_lst = []): sql_par
+    {
+        $usr_tbl = $sc->is_usr_tbl($sc_par_lst);
+        // fields and values that the word has additional to the standard named user sandbox object
+        $frm_empty = $this->clone_reset();
+        // for a new word the owner should be set, so remove the user id to force writing the user
+        $frm_empty->set_user($this->user()->clone_reset());
+        $fields = $this->db_fields_changed($frm_empty, $usr_tbl);
+        $values = $this->db_values_changed($frm_empty, $usr_tbl);
+        $all_fields = $this->db_fields_all();
+        return parent::sql_insert_named($sc, $fields, $values, $all_fields, $sc_par_lst);
+    }
+
+    /**
+     * create the sql statement to update a formula in the database
+     *
+     * @param sql $sc with the target db_type set
+     * @param sandbox|formula $db_row the formula with the database values before the update
+     * @param array $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     */
+    function sql_update(sql $sc, sandbox|formula $db_row, array $sc_par_lst = []): sql_par
+    {
+        $usr_tbl = $sc->is_usr_tbl($sc_par_lst);
+        // get the fields and values that have been changed
+        // and that needs to be updated in the database
+        // the db_* child function call the corresponding parent function
+        $fields = $this->db_fields_changed($db_row);
+        $values = $this->db_values_changed($db_row);
+        $all_fields = $this->db_fields_all();
+        // unlike the db_* function the sql_update_* parent function is called directly
+        return parent::sql_update_named($sc, $fields, $values, $all_fields, $sc_par_lst);
+    }
+
+
+    /*
+     * sql write fields
+     */
+
+    /**
+     * get a list of all database fields that might be changed
+     * excluding the internal fields e.g. the database id
+     * field list must be corresponding to the db_fields_changed fields
+     *
+     * @return array list of all database field names that have been updated
+     */
+    function db_fields_all(): array
+    {
+        return array_merge(
+            parent::db_fields_all_named(),
+            [
+                self::FLD_TYPE,
+                self::FLD_FORMULA_TEXT,
+                self::FLD_FORMULA_USER_TEXT,
+                self::FLD_ALL_NEEDED,
+                self::FLD_LAST_UPDATE,
+                self::FLD_VIEW,
+                self::FLD_USAGE
+            ],
+            parent::db_fields_all_sandbox()
+        );
+    }
+
+    /**
+     * get a list of database fields that have been updated
+     * field list must be corresponding to the db_values_changed fields
+     *
+     * @param sandbox|formula $frm the compare value to detect the changed fields
+     * @param bool $usr_tbl true if the user table row should be updated
+     * @return array list of the database field names that have been updated
+     */
+    function db_fields_changed(sandbox|formula $frm, bool $usr_tbl = false): array
+    {
+        $result = parent::db_fields_changed_named($frm, $usr_tbl);
+        if ($frm->type_id() <> $this->type_id()) {
+            $result[] = self::FLD_TYPE;
+        }
+        if ($frm->ref_text <> $this->ref_text) {
+            $result[] = self::FLD_FORMULA_TEXT;
+        }
+        if ($frm->usr_text <> $this->usr_text) {
+            $result[] = self::FLD_FORMULA_USER_TEXT;
+        }
+        if ($frm->need_all_val <> $this->need_all_val) {
+            $result[] = self::FLD_ALL_NEEDED;
+        }
+        // TODO maybe exclude?
+        if ($frm->last_update <> $this->last_update) {
+            $result[] = self::FLD_LAST_UPDATE;
+        }
+        if ($frm->view_id() <> $this->view_id()) {
+            $result[] = self::FLD_VIEW;
+        }
+        if ($frm->usage() <> $this->usage()) {
+            $result[] = self::FLD_USAGE;
+        }
+        return array_merge($result, $this->db_fields_changed_sandbox($frm));
+    }
+
+    /**
+     * get a list of database field values that have been updated
+     *
+     * @param sandbox|formula $frm the compare value to detect the changed fields
+     * @param bool $usr_tbl true if the user table row should be updated
+     * @return array list of the database field values that have been updated
+     */
+    function db_values_changed(sandbox|formula $frm, bool $usr_tbl = false): array
+    {
+        $result = parent::db_values_changed_named($frm, $usr_tbl);
+        if ($frm->type_id() <> $this->type_id()) {
+            $result[] = $this->type_id();
+        }
+        if ($frm->ref_text <> $this->ref_text) {
+            $result[] = $this->ref_text;
+        }
+        if ($frm->usr_text <> $this->usr_text) {
+            $result[] = $this->usr_text;
+        }
+        if ($frm->need_all_val <> $this->need_all_val) {
+            $result[] = $this->need_all_val;
+        }
+        // TODO format for db?
+        if ($frm->last_update <> $this->last_update) {
+            $result[] = $this->last_update;
+        }
+        if ($frm->view_id() <> $this->view_id()) {
+            $result[] = $this->view_id();
+        }
+        if ($frm->usage() <> $this->usage()) {
+            $result[] = $this->usage();
+        }
+        return array_merge($result, $this->db_values_changed_sandbox($frm));
     }
 
 }

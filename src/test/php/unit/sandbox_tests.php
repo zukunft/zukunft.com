@@ -485,7 +485,7 @@ class sandbox_tests
             formula::FLD_FORMULA_TEXT,
             formula::FLD_FORMULA_USER_TEXT,
             sandbox_named::FLD_DESCRIPTION,
-            formula::FLD_FORMULA_TYPE,
+            formula::FLD_TYPE,
             formula::FLD_ALL_NEEDED,
             formula::FLD_LAST_UPDATE,
             sandbox::FLD_EXCLUDED));
@@ -512,7 +512,7 @@ class sandbox_tests
         $db_con->set_class(formula::class);
         $db_con->set_usr_fields(array('formula_text', 'resolved_text', sandbox_named::FLD_DESCRIPTION));
         $db_con->set_usr_num_fields(array(
-            formula::FLD_FORMULA_TYPE,
+            formula::FLD_TYPE,
             formula::FLD_ALL_NEEDED,
             formula::FLD_LAST_UPDATE));
         $db_con->set_usr_bool_fields(array(sandbox::FLD_EXCLUDED));
@@ -895,7 +895,7 @@ class sandbox_tests
             formula::FLD_FORMULA_TEXT,
             formula::FLD_FORMULA_USER_TEXT,
             sandbox_named::FLD_DESCRIPTION,
-            formula::FLD_FORMULA_TYPE,
+            formula::FLD_TYPE,
             formula::FLD_ALL_NEEDED,
             formula::FLD_LAST_UPDATE,
             sandbox::FLD_EXCLUDED));
@@ -925,7 +925,7 @@ class sandbox_tests
             formula::FLD_FORMULA_USER_TEXT,
             sandbox_named::FLD_DESCRIPTION));
         $db_con->set_usr_num_fields(array(
-            formula::FLD_FORMULA_TYPE,
+            formula::FLD_TYPE,
             formula::FLD_ALL_NEEDED,
             formula::FLD_LAST_UPDATE,
             sandbox::FLD_EXCLUDED));
@@ -1149,7 +1149,7 @@ class sandbox_tests
                        " . $db_con->get_usr_field(formula::FLD_FORMULA_TEXT, 'f', 'u') . ",
                        " . $db_con->get_usr_field(formula::FLD_FORMULA_USER_TEXT, 'f', 'u') . ",
                        " . $db_con->get_usr_field(sandbox_named::FLD_DESCRIPTION, 'f', 'u') . ",
-                       " . $db_con->get_usr_field(formula::FLD_FORMULA_TYPE, 'f', 'u', sql_db::FLD_FORMAT_VAL) . ",
+                       " . $db_con->get_usr_field(formula::FLD_TYPE, 'f', 'u', sql_db::FLD_FORMAT_VAL) . ",
                        " . $db_con->get_usr_field(sql::FLD_CODE_ID, 't', 'c') . ",
                        " . $db_con->get_usr_field(formula::FLD_ALL_NEEDED, 'f', 'u', sql_db::FLD_FORMAT_VAL) . ",
                        " . $db_con->get_usr_field(formula::FLD_LAST_UPDATE, 'f', 'u', sql_db::FLD_FORMAT_VAL) . ",

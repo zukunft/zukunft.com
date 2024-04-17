@@ -63,7 +63,7 @@ class formula_tests
         $json_file = 'unit/formula/scale_second_to_minute.json';
         $usr->set_id(1);
 
-        $t->header('Unit tests of the formula class (src/main/php/model/formula/formula.php)');
+        $t->header('formula unit tests');
 
 
         $t->subheader('SQL setup statements');
@@ -100,14 +100,17 @@ class formula_tests
 
         $t->subheader('formula sql write');
         // TODO activate db write
-        //$t->assert_sql_insert($sc, $frm);
-        //$t->assert_sql_insert($sc, $frm, true);
+        $t->assert_sql_insert($sc, $frm);
+        //$t->assert_sql_insert($sc, $frm, [sql_type::USER]);
+        // TODO activate db write with log
+        //$t->assert_sql_insert($sc, $frm, [sql_type::LOG]);
+        //$t->assert_sql_insert($sc, $frm, [sql_type::LOG, sql_type::USER]);
         // TODO activate db write
         //$t->assert_sql_update($sc, $frm);
-        //$t->assert_sql_update($sc, $frm, true);
+        //$t->assert_sql_update($sc, $frm, [sql_type::USER]);
         // TODO activate db write
         //$t->assert_sql_delete($sc, $frm);
-        //$t->assert_sql_delete($sc, $frm, true);
+        //$t->assert_sql_delete($sc, $frm, [sql_type::USER]);
 
         $t->subheader('Im- and Export tests');
 

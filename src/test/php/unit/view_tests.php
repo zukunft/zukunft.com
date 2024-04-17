@@ -116,13 +116,13 @@ class view_tests
         $t->subheader('view sql write');
         // TODO activate db write
         //$t->assert_sql_insert($sc, $dsp);
-        //$t->assert_sql_insert($sc, $dsp, true);
+        //$t->assert_sql_insert($sc, $dsp, [sql_type::USER]);
         // TODO activate db write
         //$t->assert_sql_update($sc, $dsp);
-        //$t->assert_sql_update($sc, $dsp, true);
+        //$t->assert_sql_update($sc, $dsp, [sql_type::USER]);
         // TODO activate db write
         //$t->assert_sql_delete($sc, $dsp);
-        //$t->assert_sql_delete($sc, $dsp, true);
+        //$t->assert_sql_delete($sc, $dsp, [sql_type::USER]);
 
         $t->subheader('Im- and Export tests');
 

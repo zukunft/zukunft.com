@@ -91,13 +91,13 @@ class ref_tests
         $t->subheader('ref sql write');
         // TODO activate db write
         //$t->assert_sql_insert($sc, $ref);
-        //$t->assert_sql_insert($sc, $ref, true);
+        //$t->assert_sql_insert($sc, $ref, [sql_type::USER]);
         // TODO activate db write
         //$t->assert_sql_update($sc, $ref);
-        //$t->assert_sql_update($sc, $ref, true);
+        //$t->assert_sql_update($sc, $ref, [sql_type::USER]);
         // TODO activate db write
         //$t->assert_sql_delete($sc, $ref);
-        //$t->assert_sql_delete($sc, $ref, true);
+        //$t->assert_sql_delete($sc, $ref, [sql_type::USER]);
 
         $t->subheader('Im- and Export tests');
         $t->assert_json_file(new ref($usr), $json_file);
