@@ -120,7 +120,9 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO check that all load function have an API and are added in the OpenAPI document
     TODO use the api functions and the html frontend function
     TODO create a vue.js based frontend
+    TODO add users to add python based hooks on types and verbs with a zukunft.com object model
     TODO add terraform.io script for deployments
+    TODO automatically measure the test coverage (e.g. the number of facade functions that have a positive and negative test)
     TODO capsule (change from public to private or protected) all class vars that have dependencies e.g lst of user_type_list
     TODO split frontend and backend an connect them using api objects
     TODO add a text export format to the display objects and use it for JSON import validation e.g. for the travel list

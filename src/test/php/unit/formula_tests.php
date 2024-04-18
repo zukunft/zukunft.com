@@ -38,6 +38,7 @@ use api\formula\formula as formula_api;
 use api\value\value as value_api;
 use api\word\word as word_api;
 use cfg\db\sql;
+use cfg\db\sql_type;
 use cfg\expression;
 use cfg\formula;
 use cfg\phrase_list;
@@ -101,16 +102,21 @@ class formula_tests
         $t->subheader('formula sql write');
         // TODO activate db write
         $t->assert_sql_insert($sc, $frm);
-        //$t->assert_sql_insert($sc, $frm, [sql_type::USER]);
+        $t->assert_sql_insert($sc, $frm, [sql_type::USER]);
         // TODO activate db write with log
         //$t->assert_sql_insert($sc, $frm, [sql_type::LOG]);
         //$t->assert_sql_insert($sc, $frm, [sql_type::LOG, sql_type::USER]);
         // TODO activate db write
-        //$t->assert_sql_update($sc, $frm);
-        //$t->assert_sql_update($sc, $frm, [sql_type::USER]);
+        // TODO add a test with all fields changed
+        $frm_renamed = $frm->cloned(formula_api::TN_RENAMED);
+        $t->assert_sql_update($sc, $frm_renamed, $frm);
+        $t->assert_sql_update($sc, $frm_renamed, $frm, [sql_type::USER]);
+        // TODO activate db write with log
+        //$t->assert_sql_update($sc, $frm_renamed, $frm, [sql_type::LOG]);
+        //$t->assert_sql_update($sc, $frm_renamed, $frm, [sql_type::LOG, sql_type::USER]);
         // TODO activate db write
-        //$t->assert_sql_delete($sc, $frm);
-        //$t->assert_sql_delete($sc, $frm, [sql_type::USER]);
+        $t->assert_sql_delete($sc, $frm);
+        $t->assert_sql_delete($sc, $frm, [sql_type::USER]);
 
         $t->subheader('Im- and Export tests');
 
