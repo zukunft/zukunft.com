@@ -35,17 +35,19 @@ class component_type
 {
 
     // list of the view component types that have a coded functionality
+    // until the initial import csv is not yet created based on these const the resources/db_code_links/component_types needs to be inline
 
-    // just to display a simple text
+    // just to display a fixed text
     const TEXT = "text";
-    const WORD = "fixed";
-    const WORD_SELECT = "word_select";
+    // show the user specific name of a word or triple with the description on mouseover without allowing to change it
+    const PHRASE = "phrase";
+    // show the word or triple name and give the user the possibility to change the name
+    const PHRASE_NAME = "phrase_name";
+    const PHRASE_SELECT = "phrase_select";
     // show all word that this words is based on
     const WORDS_UP = "word_list_up";
     // show all words that are based on the given start word
     const WORDS_DOWN = "word_list_down";
-    // show the word name and give the user the possibility to change the word name
-    const PHRASE_NAME = "word_name";
     // a word list with some key numbers e.g. all companies with the PE ratio
     const NUMERIC_VALUE = "word_value_list";
     // shows all: all words that link to the given word and all values related to the given word
@@ -101,6 +103,28 @@ class component_type
         self::ROW_START,
         self::ROW_RIGHT,
         self::ROW_END
+    );
+
+    // list of the component types used for unit testing
+    const TEST_TYPES = array(
+        [self::TEXT, 2],
+        [self::PHRASE_NAME, 8],
+        [self::FORM_TITLE, 17],
+        [self::FORM_BACK, 18],
+        [self::FORM_CONFIRM, 19],
+        [self::FORM_NAME, 20],
+        [self::FORM_DESCRIPTION, 21],
+        [self::FORM_PHRASE, 22],
+        [self::FORM_VERB_SELECTOR, 23],
+        [self::FORM_SHARE_TYPE, 24],
+        [self::FORM_PROTECTION_TYPE, 25],
+        [self::FORM_CANCEL, 26],
+        [self::FORM_SAVE, 27],
+        [self::FORM_DEL, 28],
+        [self::FORM_END, 29],
+        [self::ROW_START, 30],
+        [self::ROW_RIGHT, 31],
+        [self::ROW_END, 32]
     );
 
 }

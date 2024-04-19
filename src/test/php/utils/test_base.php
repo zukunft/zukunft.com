@@ -1942,8 +1942,8 @@ class test_base
      * display the result of one test e.g. if adding a value has been successful
      *
      * @param string $test_name the message show to the admin / developer to identify the test
-     * @param string|array $target the expected result
-     * @param string|array $result the actual result
+     * @param string|array|null $target the expected result
+     * @param string|array|null $result the actual result
      * @param float $exe_max_time the expected time to create the result to identify unexpected slow functions
      * @param string $comment optional and additional information to explain the test
      * @param string $test_type 'contains' to check only that the expected target is part of the actual result
@@ -1951,8 +1951,8 @@ class test_base
      */
     function display(
         string       $test_name,
-        string|array $target,
-        string|array $result,
+        string|array|null $target,
+        string|array|null $result,
         float        $exe_max_time = self::TIMEOUT_LIMIT,
         string       $comment = '',
         string       $test_type = ''): bool
@@ -1962,64 +1962,75 @@ class test_base
         $lib = new library();
         $msg = '';
 
-        // do the compare depending on the type
-        if (is_string($result)) {
-            $result = $this->test_remove_color($result);
+        // precheck
+        if ($target === null) {
+            $msg = 'target should not be null';
         }
-        if ($test_type == self::TEST_TYPE_CONTAINS) {
-            $msg = $lib->explain_missing($result, $target);
-        } else {
-            $msg = $lib->diff_msg($result, $target);
+        if ($result === null) {
+            $msg = 'result should not be null';
         }
 
-        // explain the check
-        if ($msg != '') {
-            if (is_array($target)) {
-                if ($test_type == self::TEST_TYPE_CONTAINS) {
-                    $msg .= " should contain \"" . $lib->dsp_array($target) . "\"";
-                } else {
-                    $msg .= " should be \"" . $lib->dsp_array($target) . "\"";
-                }
-            } else {
-                if ($test_type == self::TEST_TYPE_CONTAINS) {
-                    $msg .= " should contain \"" . $target . "\"";
-                } else {
-                    $msg .= " should be \"" . $target . "\"";
-                }
+        if ($msg == '') {
+            // do the compare depending on the type
+            if (is_string($result)) {
+                $result = $this->test_remove_color($result);
             }
-            if ($result == $target) {
-                if ($test_type == self::TEST_TYPE_CONTAINS) {
-                    $msg .= " and it contains ";
-                } else {
-                    $msg .= " and it is ";
-                }
+            if ($test_type == self::TEST_TYPE_CONTAINS) {
+                $msg = $lib->explain_missing($result, $target);
             } else {
-                if ($test_type == self::TEST_TYPE_CONTAINS) {
-                    $msg .= ", but ";
-                } else {
-                    $test_name .= ", but it is ";
-                }
+                $msg = $lib->diff_msg($result, $target);
             }
-            if (is_array($result)) {
-                if ($result != null) {
-                    if (is_array($result[0])) {
-                        $msg .= "\"";
-                        foreach ($result[0] as $result_item) {
-                            if ($result_item <> $result[0]) {
-                                $msg .= ",";
-                            }
-                            $msg .= implode(":", $lib->array_flat($result_item));
-                        }
-                        $msg .= "\"";
+
+            // explain the check
+            if ($msg != '') {
+                if (is_array($target)) {
+                    if ($test_type == self::TEST_TYPE_CONTAINS) {
+                        $msg .= " should contain \"" . $lib->dsp_array($target) . "\"";
                     } else {
-                        $msg .= "\"" . $lib->dsp_array($result) . "\"";
+                        $msg .= " should be \"" . $lib->dsp_array($target) . "\"";
+                    }
+                } else {
+                    if ($test_type == self::TEST_TYPE_CONTAINS) {
+                        $msg .= " should contain \"" . $target . "\"";
+                    } else {
+                        $msg .= " should be \"" . $target . "\"";
                     }
                 }
-            }
-            if ($comment <> '') {
-                $msg .= ' (' . $comment . ')';
+                if ($result == $target) {
+                    if ($test_type == self::TEST_TYPE_CONTAINS) {
+                        $msg .= " and it contains ";
+                    } else {
+                        $msg .= " and it is ";
+                    }
+                } else {
+                    if ($test_type == self::TEST_TYPE_CONTAINS) {
+                        $msg .= ", but ";
+                    } else {
+                        $test_name .= ", but it is ";
+                    }
+                }
+                if (is_array($result)) {
+                    if ($result != null) {
+                        if (is_array($result[0])) {
+                            $msg .= "\"";
+                            foreach ($result[0] as $result_item) {
+                                if ($result_item <> $result[0]) {
+                                    $msg .= ",";
+                                }
+                                $msg .= implode(":", $lib->array_flat($result_item));
+                            }
+                            $msg .= "\"";
+                        } else {
+                            $msg .= "\"" . $lib->dsp_array($result) . "\"";
+                        }
+                    }
+                }
+                if ($comment <> '') {
+                    $msg .= ' (' . $comment . ')';
+                }
             }
         }
+
         if ($msg == '') {
             $test_result = true;
         } else {

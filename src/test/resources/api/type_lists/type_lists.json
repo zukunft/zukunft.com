@@ -320,8 +320,8 @@
     "component_types": [
       {
         "name": "word selector",
-        "code_id": "word_select",
-        "description": "",
+        "code_id": "phrase_select",
+        "description": "to select a word or triple",
         "id": 1
       },
       {
@@ -338,8 +338,8 @@
       },
       {
         "name": "fixed word",
-        "code_id": "fixed",
-        "description": "just display a word as a text",
+        "code_id": "phrase",
+        "description": "show the user specifc name of a word or a triple as a text",
         "id": 4
       },
       {
@@ -362,7 +362,7 @@
       },
       {
         "name": "word name",
-        "code_id": "word_name",
+        "code_id": "phrase_name",
         "description": "show the word name and give the user the possibility to change the word name",
         "id": 8
       },
@@ -2296,7 +2296,7 @@
       {
         "id": 2,
         "name": "Start view",
-        "description": "A dynamic start mask that shows a interesting fact",
+        "description": "A dynamic start mask that shows a table for calcalations with the biggest problems from the user point of view and suggestions what the user can do to solve these problems",
         "type_id": 2,
         "code_id": "entry_view",
         "components": [

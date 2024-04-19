@@ -99,7 +99,7 @@ class component extends sandbox_typed
         $type_code_id = $this->type_code_id();
         $result .= match ($type_code_id) {
             component_type::TEXT => $this->text(),
-            component_type::WORD => $this->display_name(),
+            component_type::PHRASE => $this->display_name(),
             component_type::PHRASE_NAME => $this->phrase_name($dbo),
             component_type::VALUES_RELATED => $this->table($dbo),
             component_type::NUMERIC_VALUE => $this->num_list($dbo, $back),

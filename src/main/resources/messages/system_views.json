@@ -9,7 +9,7 @@
     {
       "name": "Word",
       "description": "simply show the word name",
-      "type": "word_name"
+      "type": "phrase_name"
     },
     {
       "name": "system form title word add",
@@ -163,7 +163,7 @@
     },
     {
       "name": "Start view",
-      "description": "A dynamic start mask that shows a interesting fact",
+      "description": "A dynamic start mask that shows a table for calcalations with the biggest problems from the user point of view and suggestions what the user can do to solve these problems",
       "type": "entry",
       "code_id": "entry_view",
       "components": [

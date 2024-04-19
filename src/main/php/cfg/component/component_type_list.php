@@ -38,7 +38,6 @@ include_once MODEL_HELPER_PATH . 'type_list.php';
 include_once MODEL_HELPER_PATH . 'type_object.php';
 
 use shared\types\component_type as comp_type_shared;
-use cfg\db\sql_db;
 use cfg\type_list;
 use cfg\type_object;
 
@@ -52,42 +51,12 @@ class component_type_list extends type_list
      */
     function load_dummy(): void {
         parent::load_dummy();
-        $type = new type_object(comp_type_shared::TEXT, comp_type_shared::TEXT, '', 2);
-        $this->add($type);
-        $type = new type_object(comp_type_shared::PHRASE_NAME, comp_type_shared::PHRASE_NAME, '', 8);
-        $this->add($type);
-        $type = new type_object(comp_type_shared::FORM_TITLE, comp_type_shared::FORM_TITLE, '', 17);
-        $this->add($type);
-        $type = new type_object(comp_type_shared::FORM_BACK, comp_type_shared::FORM_BACK, '', 18);
-        $this->add($type);
-        $type = new type_object(comp_type_shared::FORM_CONFIRM, comp_type_shared::FORM_CONFIRM, '', 19);
-        $this->add($type);
-        $type = new type_object(comp_type_shared::FORM_NAME, comp_type_shared::FORM_NAME, '', 20);
-        $this->add($type);
-        $type = new type_object(comp_type_shared::FORM_DESCRIPTION, comp_type_shared::FORM_DESCRIPTION, '', 21);
-        $this->add($type);
-        $type = new type_object(comp_type_shared::FORM_PHRASE, comp_type_shared::FORM_PHRASE, '', 22);
-        $this->add($type);
-        $type = new type_object(comp_type_shared::FORM_VERB_SELECTOR, comp_type_shared::FORM_VERB_SELECTOR, '', 23);
-        $this->add($type);
-        $type = new type_object(comp_type_shared::FORM_SHARE_TYPE, comp_type_shared::FORM_SHARE_TYPE, '', 24);
-        $this->add($type);
-        $type = new type_object(comp_type_shared::FORM_PROTECTION_TYPE, comp_type_shared::FORM_PROTECTION_TYPE, '', 25);
-        $this->add($type);
-        $type = new type_object(comp_type_shared::FORM_CANCEL, comp_type_shared::FORM_CANCEL, '', 26);
-        $this->add($type);
-        $type = new type_object(comp_type_shared::FORM_SAVE, comp_type_shared::FORM_SAVE, '', 27);
-        $this->add($type);
-        $type = new type_object(comp_type_shared::FORM_DEL, comp_type_shared::FORM_DEL, '', 28);
-        $this->add($type);
-        $type = new type_object(comp_type_shared::FORM_END, comp_type_shared::FORM_END, '', 29);
-        $this->add($type);
-        $type = new type_object(comp_type_shared::ROW_START, comp_type_shared::ROW_START, '', 30);
-        $this->add($type);
-        $type = new type_object(comp_type_shared::ROW_RIGHT, comp_type_shared::ROW_RIGHT, '', 31);
-        $this->add($type);
-        $type = new type_object(comp_type_shared::ROW_END, comp_type_shared::ROW_END, '', 32);
-        $this->add($type);
+        foreach (comp_type_shared::TEST_TYPES as $cmp_typ) {
+            $code_id = $cmp_typ[0];
+            $id = $cmp_typ[1];
+            $type = new type_object($code_id, $code_id, '', $id);
+            $this->add($type);
+        }
     }
 
     /**
