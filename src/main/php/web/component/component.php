@@ -36,9 +36,11 @@ namespace html\component;
 
 include_once SANDBOX_PATH . 'sandbox_typed.php';
 include_once SHARED_TYPES_PATH . 'component_type.php';
+include_once HTML_PATH . 'sheet.php';
 
 use api\api;
 use api\word\word as word_api;
+use html\sheet;
 use shared\types\component_type;
 use cfg\db\sql_db;
 use cfg\word;
@@ -127,6 +129,7 @@ class component extends sandbox_typed
             component_type::ROW_START => $this->row_start(),
             component_type::ROW_RIGHT => $this->row_right(),
             component_type::ROW_END => $this->row_end(),
+            component_type::CALC_SHEET => $this->calc_sheet(),
             default => 'program code for component type ' . $type_code_id . ' missing<br>'
         };
         $this->log_debug($this->dsp_id() . ' created');
@@ -427,6 +430,15 @@ class component extends sandbox_typed
     {
         $html = new html_base();
         return $html->row_end();
+    }
+
+    /**
+     * @return string just to indicate that a row ends
+     */
+    function calc_sheet(): string
+    {
+        $sheet = new sheet();
+        return $sheet->calc_sheet();
     }
 
 

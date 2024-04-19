@@ -172,6 +172,22 @@
       "name_plural_reverse": "can have symbols",
       "name_plural": "are symbols for",
       "name_reverse": "can have symbol"
+    },
+    {
+      "name": "can cause",
+      "code_id": "can_cause",
+      "description": "there is a causal relation with a factor",
+      "name_plural": "can cause",
+      "name_plural_reverse": "can be caused by",
+      "name_reverse": "can be caused by"
+    },
+    {
+      "name": "and",
+      "code_id": "and",
+      "description": "combine two phrases a a new phrase",
+      "name_plural": "and",
+      "name_plural_reverse": "and",
+      "name_reverse": "and"
     }
   ]
 }

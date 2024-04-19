@@ -35,9 +35,11 @@ class component_type
 {
 
     // list of the view component types that have a coded functionality
+    // where *_COM is the description for the tooltip
     // until the initial import csv is not yet created based on these const the resources/db_code_links/component_types needs to be inline
 
     // just to display a fixed text
+    const TEXT_COM = "simply to display a variable text";
     const TEXT = "text";
     // show the user specific name of a word or triple with the description on mouseover without allowing to change it
     const PHRASE = "phrase";
@@ -84,6 +86,13 @@ class component_type
     const ROW_START = "row_start";
     const ROW_RIGHT = "row_right";
     const ROW_END = "row_end";
+    const CALC_SHEET = "calc_sheet";
+
+    // a list with all types for the initial load with name, code_id and description
+    const ALL_TYPES = [
+        self::TEXT,self::TEXT,self::TEXT_COM
+    ];
+
 
     // list of component types that should not be used for non system views
     const SYSTEM_TYPES = array(

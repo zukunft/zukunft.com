@@ -509,6 +509,12 @@
         "code_id": "row_end",
         "description": "just to indicate that a row ends",
         "id": 32
+      },
+      {
+        "name": "spreadsheet",
+        "code_id": "calc_sheet",
+        "description": "spreadsheet that allows calculations by adding formulas to cells",
+        "id": 33
       }
     ],
     "position_types": [
@@ -2274,6 +2280,28 @@
         "frm_name": null,
         "usage": 0,
         "id": 22
+      },
+      {
+        "name": "can cause",
+        "code_id": "can_cause",
+        "description": "there is a causal relation with a factor",
+        "plural": "can cause",
+        "reverse": "can be caused by",
+        "rev_plural": "can be caused by",
+        "frm_name": null,
+        "usage": 0,
+        "id": 23
+      },
+      {
+        "name": "and",
+        "code_id": "",
+        "description": "combine two phrases a a new phrase",
+        "plural": "and",
+        "reverse": "and",
+        "rev_plural": "and",
+        "frm_name": null,
+        "usage": 0,
+        "id": 24
       }
     ],
     "system_views": [
@@ -2301,10 +2329,10 @@
         "code_id": "entry_view",
         "components": [
           {
-            "id": 1,
-            "name": "Word",
-            "description": "simply show the word name",
-            "type_id": 8,
+            "id": 23,
+            "name": "spreadsheet",
+            "description": "s sheet with words, number and formulas",
+            "type_id": 33,
             "link_id": 2,
             "position": 1
           }

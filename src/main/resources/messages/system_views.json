@@ -147,6 +147,11 @@
       "name": "system formatter row end",
       "type": "row_end",
       "code_id": "row_end"
+    },
+    {
+      "name": "spreadsheet",
+      "description": "s sheet with words, number and formulas",
+      "type": "calc_sheet"
     }
   ],
   "views": [
@@ -169,7 +174,7 @@
       "components": [
         {
           "position": "1",
-          "name": "Word"
+          "name": "spreadsheet"
         }
       ]
     },

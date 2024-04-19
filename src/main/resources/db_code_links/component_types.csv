@@ -31,3 +31,4 @@ component_type_id, type_name, description, code_id
 30, 'row start', 'combine the next elements to one row', 'row_start'
 31, 'row right', 'combine the next elements to one row and align to the right', 'row_right'
 32, 'row end', 'just to indicate that a row ends', 'row_end'
+33, 'spreadsheet', 'spreadsheet that allows calculations by adding formulas to cells', 'calc_sheet'

@@ -436,6 +436,8 @@ class word extends sandbox_typed
     /**
      * map a word api json to this model word object
      * similar to the import_obj function but using the database id instead of names as the unique key
+     * TODO add a test case to check if an import of a pure name overwrites the existing type setting
+     *      or if loading later adding a word with admin_protection and type does not overwrite the type and protection
      * @param array $api_json the api array with the word values that should be mapped
      */
     function set_by_api_json(array $api_json): user_message
