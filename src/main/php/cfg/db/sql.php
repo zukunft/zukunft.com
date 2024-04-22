@@ -79,10 +79,15 @@ class sql
     const UNIQUE = 'UNIQUE INDEX';  // TODO check if UNIQUE needs to be used for word and triple names
     const PREPARE = 'PREPARE';
     const CREATE = 'CREATE OR REPLACE';
+    const DROP_MYSQL = 'DROP FUNCTION IF EXISTS';
     const FUNCTION = 'FUNCTION';
+    const FUNCTION_MYSQL = 'CREATE FUNCTION';
     const FUNCTION_BEGIN = '$$ BEGIN';
+    const FUNCTION_BEGIN_MYSQL = 'BEGIN';
     const FUNCTION_END = 'END $$ LANGUAGE plpgsql';
+    const FUNCTION_END_MYSQL = 'END';
     const FUNCTION_NO_RETURN = 'RETURNS void AS';
+    const FUNCTION_NO_RETURN_MYSQL = 'RETURNS void';
     const VIEW = 'VIEW';
     const AS = 'AS';
     const FROM = 'FROM';
@@ -1121,9 +1126,9 @@ class sql
             }
             if ($val_tbl != '') {
                 $sql .= ' ' . sql::FROM . ' ' . $val_tbl;
-                return $this->end_sql($sql, self::FUNCTION);
+                return $this->end_sql($sql, self::FUNCTION, $sc_par_lst);
             } else {
-                return $this->end_sql($sql, self::INSERT);
+                return $this->end_sql($sql, self::INSERT, $sc_par_lst);
             }
         }
 
@@ -2495,13 +2500,22 @@ class sql
                         $sql = sql::PREPARE . ' ' . $this->query_name . ' AS ' . $sql_statement_type;
                     }
                 } elseif ($this->db_type == sql_db::MYSQL) {
-                    if ($sql_statement_type == sql::FUNCTION) {
-                        // TODO review
-                        $sql = sql::CREATE . ' ' . sql::FUNCTION . ' ' . $this->query_name . " FROM '" . $sql_statement_type;
+                    if ($this->used_par_types() > 0) {
+                        $par_types = $this->par_types_to_postgres();
+                        if ($sql_statement_type == sql::FUNCTION) {
+                            $par_string = '(' . $this->par_named_types($par_types) . ')';
+                            $sql = sql::DROP_MYSQL . ' ' . $this->query_name . '; ';
+                            $sql .= sql::FUNCTION_MYSQL . ' ' . $this->query_name . ' '
+                                . $par_string . ' ' . sql::FUNCTION_NO_RETURN_MYSQL;
+                            $this->end = ' ';
+                        } else {
+                            $sql = sql::PREPARE . ' ' . $this->query_name . " FROM '" . $sql_statement_type;
+                            $this->end = "';";
+                        }
                     } else {
                         $sql = sql::PREPARE . ' ' . $this->query_name . " FROM '" . $sql_statement_type;
+                        $this->end = "';";
                     }
-                    $this->end = "';";
                 } else {
                     log_err('Prepare SQL not yet defined for SQL dialect ' . $this->db_type);
                 }
@@ -2944,9 +2958,10 @@ class sql
     }
 
     /**
+     * @param array $sc_par_lst the parameters for the sql statement creation
      * @return string with the SQL closing statement for the current query
      */
-    private function end_sql(string $sql, string $sql_statement_type = sql::SELECT): string
+    private function end_sql(string $sql, string $sql_statement_type = sql::SELECT, array $sc_par_lst = []): string
     {
         $lib = new library();
         if ($sql_statement_type == self::INSERT) {
@@ -2961,6 +2976,11 @@ class sql
                     }
                     // TODO check if not the next line needs to be used
                     // $sql = $sql . " SELECT currval('" . $this->id_field . "_seq'); ";
+                }
+            } else {
+                if (in_array(sql_type::NAMED_PAR, $sc_par_lst)) {
+                    $sql .= ' RETURNING ';
+                    $sql .= $this->id_field;
                 }
             }
         }

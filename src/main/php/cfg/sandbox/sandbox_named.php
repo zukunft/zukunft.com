@@ -919,7 +919,11 @@ class sandbox_named extends sandbox
         if ($sc->and_log($sc_par_lst)) {
 
             // init the function body
-            $func_body = sql::FUNCTION_BEGIN;
+            if ($sc->db_type == sql_db::POSTGRES) {
+                $func_body = sql::FUNCTION_BEGIN;
+            } else {
+                $func_body = sql::FUNCTION_BEGIN_MYSQL;
+            }
             $func_body .= ' ' . sql::WITH;
 
             // list of parameters used for the function
@@ -1027,7 +1031,11 @@ class sandbox_named extends sandbox
             $func_body .= ' ' . $qp_update->sql . ' ';
 
             //
-            $func_body .= ' ' . sql::FUNCTION_END;
+            if ($sc->db_type == sql_db::POSTGRES) {
+                $func_body .= ' ' . sql::FUNCTION_END;
+            } else {
+                $func_body .= ' ' . sql::FUNCTION_END_MYSQL;
+            }
 
 
             // create the query parameters for the actual change
