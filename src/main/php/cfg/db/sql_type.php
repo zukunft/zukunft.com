@@ -56,7 +56,10 @@ enum sql_type: string
 
     // sql builder parameters
     case SUB = 'sub'; // the created sql statement should be used as part of another prepared sql statement
+    case LIST = 'list'; // the created sql statement should be used as part of with sql statement
     case LOG = 'log'; // the created sql statement should include statements for logging the changes
+    case NAMED_PAR = 'named_par'; // to use named parameters in the prepared query e.g. _user_id instead od $1
+    case VALUE_SELECT = 'value_select'; // use a select statement for the insert values
     case EXCLUDE = 'exclude'; // instead of delete create a sql to exclude one row
     case SANDBOX = 'sandbox'; // to include the standard sandbox fields in the sql statement
 
@@ -78,6 +81,7 @@ enum sql_type: string
             self::STANDARD => sql::file_sep . 'standard',
             self::USER => sql::file_sep . 'user',
             self::SUB => sql::file_sep . 'sub',
+            self::LIST => sql::file_sep . 'list',
             self::LOG => sql::file_sep . 'log',
             default => '',
         };

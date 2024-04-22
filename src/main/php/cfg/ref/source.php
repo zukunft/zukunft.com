@@ -73,6 +73,7 @@ use cfg\db\sql_par;
 use cfg\db\sql_type;
 use cfg\export\sandbox_exp;
 use cfg\export\source_exp;
+use shared\library;
 
 class source extends sandbox_typed
 {
@@ -631,13 +632,12 @@ class source extends sandbox_typed
      */
     function sql_insert(sql $sc, array $sc_par_lst = []): sql_par
     {
-        $usr_tbl = $sc->is_usr_tbl($sc_par_lst);
         // fields and values that the source has additional to the standard named user sandbox object
         $empty_src = $this->clone_reset();
         // for a new source the owner should be set, so remove the user id to force writing the user
         $empty_src->set_user($this->user()->clone_reset());
-        $fields = $this->db_fields_changed($empty_src, $usr_tbl);
-        $values = $this->db_values_changed($empty_src, $usr_tbl);
+        $fields = $this->db_fields_changed($empty_src, $sc_par_lst);
+        $values = $this->db_values_changed($empty_src, $sc_par_lst);
         $all_fields = $this->db_fields_all();
         return parent::sql_insert_named($sc, $fields, $values, $all_fields, $sc_par_lst);
     }
@@ -652,12 +652,11 @@ class source extends sandbox_typed
      */
     function sql_update(sql $sc, source|sandbox $db_row, array $sc_par_lst = []): sql_par
     {
-        $usr_tbl = $sc->is_usr_tbl($sc_par_lst);
         // get the fields and values that have been changed
         // and that needs to be updated in the database
         // the db_* child function call the corresponding parent function
-        $fields = $this->db_fields_changed($db_row, $usr_tbl);
-        $values = $this->db_values_changed($db_row, $usr_tbl);
+        $fields = $this->db_fields_changed($db_row, $sc_par_lst);
+        $values = $this->db_values_changed($db_row, $sc_par_lst);
         $all_fields = $this->db_fields_all();
         // unlike the db_* function the sql_update_* parent function is called directly
         return parent::sql_update_named($sc, $fields, $values, $all_fields, $sc_par_lst);
@@ -691,44 +690,71 @@ class source extends sandbox_typed
      * field list must be corresponding to the db_values_changed fields
      *
      * @param sandbox|source $sbx the compare value to detect the changed fields
-     * @param bool $usr_tbl true if the user table row should be updated
+     * @param array $sc_par_lst the parameters for the sql statement creation
      * @return array list of the database field names that have been updated
      */
-    function db_fields_changed(sandbox|source $sbx, bool $usr_tbl = false): array
+    function db_fields_changed(sandbox|source $sbx, array $sc_par_lst = []): array
     {
-        $result = parent::db_fields_changed_named($sbx, $usr_tbl);
+        $sc = new sql();
+        $do_log = $sc->and_log($sc_par_lst);
+        $result = parent::db_fields_changed_named($sbx, $sc_par_lst);
         if ($sbx->type_id() <> $this->type_id()) {
+            if ($do_log) {
+                $result[] = sql::FLD_LOG_FIELD_PREFIX . source::FLD_TYPE;
+            }
             $result[] = source::FLD_TYPE;
         }
         if ($sbx->url <> $this->url) {
+            if ($do_log) {
+                $result[] = sql::FLD_LOG_FIELD_PREFIX . self::FLD_URL;
+            }
             $result[] = self::FLD_URL;
         }
         if ($sbx->code_id <> $this->code_id) {
+            if ($do_log) {
+                $result[] = sql::FLD_LOG_FIELD_PREFIX . sql::FLD_CODE_ID;
+            }
             $result[] = sql::FLD_CODE_ID;
         }
-        return array_merge($result, $this->db_fields_changed_sandbox($sbx));
+        return array_merge($result, $this->db_fields_changed_sandbox($sbx, $sc_par_lst));
     }
 
     /**
      * get a list of database field values that have been updated
      *
      * @param source $src the compare value to detect the changed
-     * @param bool $usr_tbl true if the user table row should be updated
+     * @param array $sc_par_lst the parameters for the sql statement creation
      * @return array list of the database field values that have been updated
      */
-    function db_values_changed(source $src, bool $usr_tbl = false): array
+    function db_values_changed(source $src, array $sc_par_lst = []): array
     {
-        $result = parent::db_values_changed_named($src, $usr_tbl);
+        // get the preloaded ids for logging
+        $sc = new sql();
+        $do_log = $sc->and_log($sc_par_lst);
+        $table_id = $sc->table_id($this::class);
+        global $change_field_list;
+
+        // create the value array
+        $result = parent::db_values_changed_named($src, $sc_par_lst);
         if ($src->type_id() <> $this->type_id()) {
+            if ($do_log) {
+                $result[] = $change_field_list->id($table_id . phrase::FLD_TYPE);
+            }
             $result[] = $this->type_id();
         }
         if ($src->url <> $this->url) {
+            if ($do_log) {
+                $result[] = $change_field_list->id($table_id . self::FLD_URL);
+            }
             $result[] = $this->url;
         }
         if ($src->code_id <> $this->code_id) {
+            if ($do_log) {
+                $result[] = $change_field_list->id($table_id . sql::FLD_CODE_ID);
+            }
             $result[] = $this->code_id;
         }
-        return array_merge($result, $this->db_values_changed_sandbox($src));
+        return array_merge($result, $this->db_values_changed_sandbox($src, $sc_par_lst));
     }
 
 }

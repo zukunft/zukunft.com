@@ -896,7 +896,7 @@ class sql_db
     {
         $qp = new sql_par($this::class);
         $qp->name .= 'fill_' . $id_col_name;
-        $qp->sql = "PREPARE " . $qp->name . " (int) AS select * from " . $table_name . " where " . $id_col_name . " = $1;";
+        $qp->sql = sql::PREPARE . ' ' . $qp->name . " (int) AS select * from " . $table_name . " where " . $id_col_name . " = $1;";
         $qp->par = array($id);
         return $qp;
     }
@@ -2054,7 +2054,7 @@ class sql_db
             } else {
                 // prepare the query if needed
                 if (!$this->has_query($sql_name)) {
-                    if (str_starts_with($sql, 'PREPARE')) {
+                    if (str_starts_with($sql, sql::PREPARE)) {
                         $result = pg_query($this->postgres_link, $sql);
                     } else {
                         $result = pg_prepare($this->postgres_link, $sql_name, $sql);
@@ -3454,7 +3454,7 @@ class sql_db
         if ($sql_name == '') {
             $sql_name = $class . '_count';
         }
-        return 'PREPARE ' . $sql_name . ' AS
+        return sql::PREPARE . ' ' . $sql_name . ' AS
                     SELECT count(' . self::STD_TBL . '.' . $id_fld . ') + count(' . self::USR_TBL . '.' . $id_fld . ') AS count
                       FROM ' . $this->table . ' ' . self::STD_TBL . '
                  LEFT JOIN ' . sql_db::USER_PREFIX . $this->table . '  ' . self::USR_TBL . ' ON ' . self::STD_TBL . '.' . $id_fld . ' = ' . self::USR_TBL . '.' . $id_fld . ';';
@@ -3503,6 +3503,7 @@ class sql_db
     }
 
     /**
+     * TODO deprecate and replace by sql creator function
      * @return string with the SQL prepare statement for the current query
      */
     private function prepare_sql(): string
@@ -3511,9 +3512,9 @@ class sql_db
         if (count($this->par_types) > 0) {
             if ($this->db_type == sql_db::POSTGRES) {
                 $par_types = $this->par_types_to_postgres();
-                $sql = 'PREPARE ' . $this->query_name . ' (' . implode(', ', $par_types) . ') AS SELECT';
+                $sql = sql::PREPARE . ' ' . $this->query_name . ' (' . implode(', ', $par_types) . ') AS SELECT';
             } elseif ($this->db_type == sql_db::MYSQL) {
-                $sql = "PREPARE " . $this->query_name . " FROM '" . sql::SELECT;
+                $sql = sql::PREPARE . ' ' . $this->query_name . " FROM '" . sql::SELECT;
                 $this->end = "';";
             } else {
                 log_err('Prepare SQL not yet defined for SQL dialect ' . $this->db_type);

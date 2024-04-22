@@ -50,6 +50,7 @@ use cfg\phrase;
 use cfg\sandbox;
 use cfg\sandbox_named;
 use cfg\source;
+use cfg\source_type;
 use cfg\triple;
 use cfg\user;
 use cfg\value\value;
@@ -198,6 +199,7 @@ class sandbox_tests
         $db_con->set_usr(SYSTEM_USER_ID);
         $db_con->set_where_std(null, 'Test User');
         $created_sql = $db_con->select_by_set_id();
+        // TODO use the file
         $expected_sql = $t->file('db/formula/formula_link_by_id.sql');
         $expected_sql = "PREPARE formula_link_norm_by_id (text) AS SELECT user_id, user_name FROM users WHERE user_name = $1;";
         $t->display('Postgres select max', $lib->trim($expected_sql), $lib->trim($created_sql));

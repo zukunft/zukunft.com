@@ -2543,13 +2543,12 @@ class formula extends sandbox_typed
      */
     function sql_insert(sql $sc, array $sc_par_lst = []): sql_par
     {
-        $usr_tbl = $sc->is_usr_tbl($sc_par_lst);
         // fields and values that the word has additional to the standard named user sandbox object
         $frm_empty = $this->clone_reset();
         // for a new word the owner should be set, so remove the user id to force writing the user
         $frm_empty->set_user($this->user()->clone_reset());
-        $fields = $this->db_fields_changed($frm_empty, $usr_tbl);
-        $values = $this->db_values_changed($frm_empty, $usr_tbl);
+        $fields = $this->db_fields_changed($frm_empty, $sc_par_lst);
+        $values = $this->db_values_changed($frm_empty, $sc_par_lst);
         $all_fields = $this->db_fields_all();
         return parent::sql_insert_named($sc, $fields, $values, $all_fields, $sc_par_lst);
     }
@@ -2609,70 +2608,121 @@ class formula extends sandbox_typed
      * field list must be corresponding to the db_values_changed fields
      *
      * @param sandbox|formula $frm the compare value to detect the changed fields
-     * @param bool $usr_tbl true if the user table row should be updated
+     * @param array $sc_par_lst the parameters for the sql statement creation
      * @return array list of the database field names that have been updated
      */
-    function db_fields_changed(sandbox|formula $frm, bool $usr_tbl = false): array
+    function db_fields_changed(sandbox|formula $frm, array $sc_par_lst = []): array
     {
-        $result = parent::db_fields_changed_named($frm, $usr_tbl);
+        $sc = new sql();
+        $do_log = $sc->and_log($sc_par_lst);
+        $result = parent::db_fields_changed_named($frm, $sc_par_lst);
         if ($frm->type_id() <> $this->type_id()) {
+            if ($do_log) {
+                $result[] = sql::FLD_LOG_FIELD_PREFIX . self::FLD_TYPE;
+            }
             $result[] = self::FLD_TYPE;
         }
         if ($frm->ref_text <> $this->ref_text) {
+            if ($do_log) {
+                $result[] = sql::FLD_LOG_FIELD_PREFIX . self::FLD_FORMULA_TEXT;
+            }
             $result[] = self::FLD_FORMULA_TEXT;
         }
         if ($frm->usr_text <> $this->usr_text) {
+            if ($do_log) {
+                $result[] = sql::FLD_LOG_FIELD_PREFIX . self::FLD_FORMULA_USER_TEXT;
+            }
             $result[] = self::FLD_FORMULA_USER_TEXT;
         }
         if ($frm->need_all_val <> $this->need_all_val) {
+            if ($do_log) {
+                $result[] = sql::FLD_LOG_FIELD_PREFIX . self::FLD_ALL_NEEDED;
+            }
             $result[] = self::FLD_ALL_NEEDED;
         }
         // TODO maybe exclude?
         if ($frm->last_update <> $this->last_update) {
+            if ($do_log) {
+                $result[] = sql::FLD_LOG_FIELD_PREFIX . self::FLD_LAST_UPDATE;
+            }
             $result[] = self::FLD_LAST_UPDATE;
         }
         if ($frm->view_id() <> $this->view_id()) {
+            if ($do_log) {
+                $result[] = sql::FLD_LOG_FIELD_PREFIX . self::FLD_VIEW;
+            }
             $result[] = self::FLD_VIEW;
         }
         if ($frm->usage() <> $this->usage()) {
+            if ($do_log) {
+                $result[] = sql::FLD_LOG_FIELD_PREFIX . self::FLD_USAGE;
+            }
             $result[] = self::FLD_USAGE;
         }
-        return array_merge($result, $this->db_fields_changed_sandbox($frm));
+        return array_merge($result, $this->db_fields_changed_sandbox($frm, $sc_par_lst));
     }
 
     /**
      * get a list of database field values that have been updated
      *
      * @param sandbox|formula $frm the compare value to detect the changed fields
-     * @param bool $usr_tbl true if the user table row should be updated
+     * @param array $sc_par_lst the parameters for the sql statement creation
      * @return array list of the database field values that have been updated
      */
-    function db_values_changed(sandbox|formula $frm, bool $usr_tbl = false): array
+    function db_values_changed(sandbox|formula $frm, array $sc_par_lst = []): array
     {
-        $result = parent::db_values_changed_named($frm, $usr_tbl);
+        // get the preloaded ids for logging
+        $sc = new sql();
+        $do_log = $sc->and_log($sc_par_lst);
+        $table_id = $sc->table_id($this::class);
+        global $change_field_list;
+
+        // create the value array
+        $result = parent::db_values_changed_named($frm, $sc_par_lst);
         if ($frm->type_id() <> $this->type_id()) {
+            if ($do_log) {
+                $result[] = $change_field_list->id($table_id . self::FLD_TYPE);
+            }
             $result[] = $this->type_id();
         }
         if ($frm->ref_text <> $this->ref_text) {
+            if ($do_log) {
+                $result[] = $change_field_list->id($table_id . self::FLD_FORMULA_TEXT);
+            }
             $result[] = $this->ref_text;
         }
         if ($frm->usr_text <> $this->usr_text) {
+            if ($do_log) {
+                $result[] = $change_field_list->id($table_id . self::FLD_FORMULA_USER_TEXT);
+            }
             $result[] = $this->usr_text;
         }
         if ($frm->need_all_val <> $this->need_all_val) {
+            if ($do_log) {
+                $result[] = $change_field_list->id($table_id . self::FLD_ALL_NEEDED);
+            }
             $result[] = $this->need_all_val;
         }
         // TODO format for db?
         if ($frm->last_update <> $this->last_update) {
+            if ($do_log) {
+                $result[] = $change_field_list->id($table_id . self::FLD_LAST_UPDATE);
+            }
             $result[] = $this->last_update;
         }
         if ($frm->view_id() <> $this->view_id()) {
+            if ($do_log) {
+                $result[] = $change_field_list->id($table_id . self::FLD_VIEW);
+            }
             $result[] = $this->view_id();
         }
         if ($frm->usage() <> $this->usage()) {
+            if ($do_log) {
+                $result[] = $change_field_list->id($table_id . self::FLD_USAGE);
+            }
             $result[] = $this->usage();
         }
-        return array_merge($result, $this->db_values_changed_sandbox($frm));
+        return array_merge($result, $this->db_values_changed_sandbox($frm, $sc_par_lst));
     }
 
 }

@@ -1779,23 +1779,23 @@ class result extends sandbox_value
      * get a list of database values that have been updated
      * excluding the internal only last_update and is_std values
      *
-     * @param sandbox_value|result $res the compare value to detect the changed fields
+     * @param sandbox_value|result $sbv the compare value to detect the changed fields
      * @return array list of the database field names that have been updated
      */
-    function db_values_changed(sandbox_value|result $res): array
+    function db_values_changed(sandbox_value|result $sbv): array
     {
-        $result = parent::db_values_changed_value($res);
-        if ($res->src_grp_id() <> $this->src_grp_id()) {
+        $result = parent::db_values_changed_value($sbv);
+        if ($sbv->src_grp_id() <> $this->src_grp_id()) {
             $result[] = $this->src_grp_id();
         }
-        if ($res->frm_id() <> $this->frm_id()) {
+        if ($sbv->frm_id() <> $this->frm_id()) {
             $result[] = $this->frm_id();
         }
         // if any field has been updated, update the last_update field with the predefined now expression
         if (count($result) == 0 or $this->last_update() == null) {
             $result[] = sql::NOW;
         }
-        return array_merge($result, parent::db_values_changed_sandbox($res));
+        return array_merge($result, parent::db_values_changed_sandbox($sbv));
     }
 
 }

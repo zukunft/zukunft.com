@@ -56,6 +56,7 @@ use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
+use cfg\db\sql_par_type;
 use cfg\db\sql_type;
 use cfg\formula;
 use cfg\user;
@@ -64,6 +65,7 @@ use cfg\view;
 use cfg\word;
 use Exception;
 use html\log\change_log_named as change_log_named_dsp;
+use shared\library;
 
 class change extends change_log
 {
@@ -461,15 +463,24 @@ class change extends change_log
      *
      * @param sql $sc with the target db_type set
      * @param array $sc_par_lst the parameters for the sql statement creation
+     * @param string $ext the name extention that should be used
+     * @param string $val_tbl name of the table to select the values to insert
+     * @param string $add_fld name of the database key field
+     * @param string $row_fld name of the database id field
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_insert(sql $sc, array $sc_par_lst): sql_par
+    function sql_insert(sql $sc, array $sc_par_lst, string $ext = '', string $val_tbl = '', string $add_fld = '', string $row_fld = ''): sql_par
     {
         $sc_par_lst[] = sql_type::INSERT;
         $qp = $sc->sql_par($this::class, $sc_par_lst);
         $sc->set_class($this::class, $sc_par_lst);
+        if ($sc->is_list_tbl($sc_par_lst)) {
+            $lib = new library();
+            $qp->name = $lib->class_to_name($this::class) . $ext;
+        }
         $sc->set_name($qp->name);
-        $qp->sql = $sc->create_sql_insert($this->db_fields(), $this->db_values(), $sc_par_lst);
+        $qp->sql = $sc->create_sql_insert(
+            $this->db_fields(), $this->db_values(), [], $sc_par_lst, true, $val_tbl, $add_fld, $row_fld);
         $qp->par = $this->db_values();
 
         return $qp;
@@ -493,11 +504,17 @@ class change extends change_log
         $sql_fields[] = change_action::FLD_ID;
         $sql_fields[] = change_field::FLD_ID;
 
-        $sql_fields[] = self::FLD_OLD_VALUE;
-        $sql_fields[] = self::FLD_NEW_VALUE;
+        if ($this->old_value != null) {
+            $sql_fields[] = self::FLD_OLD_VALUE;
+        }
+        if ($this->new_value != null) {
+            $sql_fields[] = self::FLD_NEW_VALUE;
+        }
 
-        if ($this->old_id > 0 or $this->new_id > 0) {
+        if ($this->old_id > 0) {
             $sql_fields[] = self::FLD_OLD_ID;
+        }
+        if ($this->new_id > 0) {
             $sql_fields[] = self::FLD_NEW_ID;
         }
 
@@ -517,11 +534,17 @@ class change extends change_log
         $sql_values[] = $this->action_id;
         $sql_values[] = $this->field_id;
 
-        $sql_values[] = $this->old_value;
-        $sql_values[] = $this->new_value;
+        if ($this->old_value != null) {
+            $sql_values[] = $this->old_value;
+        }
+        if ($this->new_value != null) {
+            $sql_values[] = $this->new_value;
+        }
 
-        if ($this->old_id > 0 or $this->new_id > 0) {
-            $sql_values[] = $this->old_id;
+        if ($this->old_id > 0) {
+            $sql_values[] = $this->new_id;
+        }
+        if ($this->new_id > 0) {
             $sql_values[] = $this->new_id;
         }
 

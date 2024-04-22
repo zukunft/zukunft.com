@@ -2682,18 +2682,36 @@ class sandbox extends db_object_seq_id_user
      * the last_update field is excluded here because this is an internal only field
      *
      * @param sandbox $sbx the same sandbox as this to compare which fields have been changed
+     * @param array $sc_par_lst the parameters for the sql statement creation
      * @return array with the field names of the object and any child object
      */
-    function db_fields_changed_sandbox(sandbox $sbx): array
+    function db_fields_changed_sandbox(sandbox $sbx, array $sc_par_lst = []): array
     {
         $result = [];
+
+        $sc = new sql();
+        $do_log = $sc->and_log($sc_par_lst);
+        $lib = new library();
+        global $change_table_list;
+        global $change_field_list;
+        $table_id = $change_table_list->id($lib->class_to_name($this::class));
+
         if ($sbx->excluded <> $this->excluded) {
+            if ($do_log) {
+                $result[] = sql::FLD_LOG_FIELD_PREFIX . self::FLD_EXCLUDED;
+            }
             $result[] = self::FLD_EXCLUDED;
         }
         if ($sbx->share_id <> $this->share_id) {
+            if ($do_log) {
+                $result[] = sql::FLD_LOG_FIELD_PREFIX . self::FLD_SHARE;
+            }
             $result[] = self::FLD_SHARE;
         }
         if ($sbx->protection_id <> $this->protection_id) {
+            if ($do_log) {
+                $result[] = sql::FLD_LOG_FIELD_PREFIX . self::FLD_PROTECT;
+            }
             $result[] = self::FLD_PROTECT;
         }
         return $result;
@@ -2704,10 +2722,10 @@ class sandbox extends db_object_seq_id_user
      * should always be overwriten by the child object
      *
      * @param sandbox $sbx the compare value to detect the changed fields
-     * @param bool $usr_tbl true if the user table row should be updated
+     * @param array $sc_par_lst the parameters for the sql statement creation
      * @return array list of the database field names that have been updated
      */
-    function db_fields_changed(sandbox $sbx, bool $usr_tbl = false): array
+    function db_fields_changed(sandbox $sbx, array $sc_par_lst = []): array
     {
         return array();
     }
@@ -2718,18 +2736,36 @@ class sandbox extends db_object_seq_id_user
      * the last_update field is excluded here because this is an internal only field
      *
      * @param sandbox $sbx the same sandbox as this to compare which fields have been changed
+     * @param array $sc_par_lst the parameters for the sql statement creation
      * @return array with the field names of the object and any child object
      */
-    function db_values_changed_sandbox(sandbox $sbx): array
+    function db_values_changed_sandbox(sandbox $sbx, array $sc_par_lst = []): array
     {
         $result = [];
+
+        $sc = new sql();
+        $do_log = $sc->and_log($sc_par_lst);
+        $lib = new library();
+        global $change_table_list;
+        global $change_field_list;
+        $table_id = $change_table_list->id($lib->class_to_name($this::class));
+
         if ($sbx->excluded <> $this->excluded) {
+            if ($do_log) {
+                $result[] = $change_field_list->id($table_id . self::FLD_EXCLUDED);
+            }
             $result[] = $this->excluded;
         }
         if ($sbx->share_id <> $this->share_id) {
+            if ($do_log) {
+                $result[] = $change_field_list->id($table_id . self::FLD_SHARE);
+            }
             $result[] = $this->share_id;
         }
         if ($sbx->protection_id <> $this->protection_id) {
+            if ($do_log) {
+                $result[] = $change_field_list->id($table_id . self::FLD_PROTECT);
+            }
             $result[] = $this->protection_id;
         }
         return $result;

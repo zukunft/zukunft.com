@@ -284,6 +284,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
             from -10% needed to fulfill the basic needed
             to 99% for everything more than the community is able to invest to save one live
             reason: this is the optimal combination between safety and prestige
+        Show the roof top potential solar potential of 120 Gigawatt vs. usage in persent of solar energy in turkey https://de.dsisolar.com/info/t-rkiye-s-rooftop-solar-potential-enough-to-me-89783977.html
 
     TODO because some changes e.g. a formula change might cause costly calculations estimate the cost upfront and ask the user to pay for it
 

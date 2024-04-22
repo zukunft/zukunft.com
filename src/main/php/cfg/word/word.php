@@ -1831,14 +1831,19 @@ class word extends sandbox_typed
      */
     function sql_insert(sql $sc, array $sc_par_lst = []): sql_par
     {
-        $usr_tbl = $sc->is_usr_tbl($sc_par_lst);
         // fields and values that the word has additional to the standard named user sandbox object
         $wrd_empty = $this->clone_reset();
         // for a new word the owner should be set, so remove the user id to force writing the user
         $wrd_empty->set_user($this->user()->clone_reset());
-        $fields = $this->db_fields_changed($wrd_empty, $usr_tbl);
-        $values = $this->db_values_changed($wrd_empty, $usr_tbl);
+        $fields = $this->db_fields_changed($wrd_empty, $sc_par_lst);
+        $values = $this->db_values_changed($wrd_empty, $sc_par_lst);
         $all_fields = $this->db_fields_all();
+        // add the fields and values for logging
+        if ($sc->and_log($sc_par_lst)) {
+            global $change_action_list;
+            $fields[] = change_action::FLD_ID;
+            $values[] = $change_action_list->id(change_action::ADD);
+        }
         return parent::sql_insert_named($sc, $fields, $values, $all_fields, $sc_par_lst);
     }
 
@@ -1852,12 +1857,11 @@ class word extends sandbox_typed
      */
     function sql_update(sql $sc, sandbox|word $db_row, array $sc_par_lst = []): sql_par
     {
-        $usr_tbl = $sc->is_usr_tbl($sc_par_lst);
         // get the fields and values that have been changed
         // and that needs to be updated in the database
         // the db_* child function call the corresponding parent function
-        $fields = $this->db_fields_changed($db_row);
-        $values = $this->db_values_changed($db_row);
+        $fields = $this->db_fields_changed($db_row, $sc_par_lst);
+        $values = $this->db_values_changed($db_row, $sc_par_lst);
         $all_fields = $this->db_fields_all();
         // unlike the db_* function the sql_update_* parent function is called directly
         return parent::sql_update_named($sc, $fields, $values, $all_fields, $sc_par_lst);
@@ -1892,54 +1896,87 @@ class word extends sandbox_typed
      * field list must be corresponding to the db_values_changed fields
      *
      * @param sandbox|word $sbx the compare value to detect the changed fields
-     * @param bool $usr_tbl true if the user table row should be updated
+     * @param array $sc_par_lst the parameters for the sql statement creation
      * @return array list of the database field names that have been updated
      */
-    function db_fields_changed(sandbox|word $sbx, bool $usr_tbl = false): array
+    function db_fields_changed(sandbox|word $sbx, array $sc_par_lst = []): array
     {
-        $result = parent::db_fields_changed_named($sbx, $usr_tbl);
+        $sc = new sql();
+        $do_log = $sc->and_log($sc_par_lst);
+        $result = parent::db_fields_changed_named($sbx, $sc_par_lst);
         if ($sbx->type_id() <> $this->type_id()) {
+            if ($do_log) {
+                $result[] = sql::FLD_LOG_FIELD_PREFIX . phrase::FLD_TYPE;
+            }
             $result[] = phrase::FLD_TYPE;
         }
         if ($sbx->view_id() <> $this->view_id()) {
+            if ($do_log) {
+                $result[] = sql::FLD_LOG_FIELD_PREFIX . self::FLD_VIEW;
+            }
             $result[] = self::FLD_VIEW;
         }
         // TODO move to language forms
         if ($sbx->plural <> $this->plural) {
+            if ($do_log) {
+                $result[] = sql::FLD_LOG_FIELD_PREFIX . self::FLD_PLURAL;
+            }
             $result[] = self::FLD_PLURAL;
         }
         // TODO rename to usage
         if ($sbx->values <> $this->values) {
+            if ($do_log) {
+                $result[] = sql::FLD_LOG_FIELD_PREFIX . self::FLD_VALUES;
+            }
             $result[] = self::FLD_VALUES;
         }
-        return array_merge($result, $this->db_fields_changed_sandbox($sbx));
+        return array_merge($result, $this->db_fields_changed_sandbox($sbx, $sc_par_lst));
     }
 
     /**
      * get a list of database field values that have been updated
      *
      * @param sandbox|word $wrd the compare value to detect the changed fields
-     * @param bool $usr_tbl true if the user table row should be updated
+     * @param array $sc_par_lst the parameters for the sql statement creation
      * @return array list of the database field values that have been updated
      */
-    function db_values_changed(sandbox|word $wrd, bool $usr_tbl = false): array
+    function db_values_changed(sandbox|word $wrd, array $sc_par_lst = []): array
     {
-        $result = parent::db_values_changed_named($wrd, $usr_tbl);
+        // get the preloaded ids for logging
+        $sc = new sql();
+        $do_log = $sc->and_log($sc_par_lst);
+        $table_id = $sc->table_id($this::class);
+        global $change_field_list;
+
+        // create the value array
+        $result = parent::db_values_changed_named($wrd, $sc_par_lst);
         if ($wrd->type_id() <> $this->type_id()) {
+            if ($do_log) {
+                $result[] = $change_field_list->id($table_id . phrase::FLD_TYPE);
+            }
             $result[] = $this->type_id();
         }
         if ($wrd->view_id() <> $this->view_id()) {
+            if ($do_log) {
+                $result[] = $change_field_list->id($table_id . self::FLD_VIEW);
+            }
             $result[] = $this->view_id();
         }
         // TODO move to language forms
         if ($wrd->plural <> $this->plural) {
+            if ($do_log) {
+                $result[] = $change_field_list->id($table_id . self::FLD_PLURAL);
+            }
             $result[] = $this->plural;
         }
         // TODO rename to usage
         if ($wrd->values <> $this->values) {
+            if ($do_log) {
+                $result[] = $change_field_list->id($table_id . self::FLD_VALUES);
+            }
             $result[] = $this->values;
         }
-        return array_merge($result, $this->db_values_changed_sandbox($wrd));
+        return array_merge($result, $this->db_values_changed_sandbox($wrd, $sc_par_lst));
     }
 
 

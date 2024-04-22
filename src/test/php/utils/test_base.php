@@ -1031,6 +1031,9 @@ class test_base
         // check the Postgres query syntax
         $sc->db_type = sql_db::POSTGRES;
         $qp = $usr_obj->sql_insert($sc, $sc_par_lst);
+        if ($sc->and_log($sc_par_lst)) {
+
+        }
         $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
@@ -1705,7 +1708,7 @@ class test_base
         $expected_sql = $this->assert_sql_expected($qp->name, $dialect);
         $result = $this->assert_sql(
             $this->name . 'sql creation of ' . $qp->name . '_' . $dialect . ' to ' . $test_name,
-            $qp->sql,
+            $qp->sql . $qp->call,
             $expected_sql
         );
 

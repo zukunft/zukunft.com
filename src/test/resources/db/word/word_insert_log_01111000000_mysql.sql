@@ -1,21 +1,10 @@
-CREATE OR REPLACE FUNCTION word_insert_log_01111000000
-    (_word_name               text,
-     _user_id                 bigint,
-     _change_action_id        smallint,
-     _field_id_word_name      smallint,
-     _field_id_user_id        smallint,
-     _field_id_description    smallint,
-     _description             text,
-     _field_id_phrase_type_id smallint,
-     _phrase_type_id          bigint) RETURNS void AS
-$$
+CREATE OR REPLACE FUNCTION word_insert_log_01111000000 FROM 'FUNCTION';$$
 BEGIN
 
     WITH
         word_insert  AS (
             INSERT INTO words ( word_name)
-                 VALUES       (_word_name)
-              RETURNING         word_id ),
+                 VALUES       (_word_name) ),
 
         change_insert_word_name AS (
             INSERT INTO changes ( user_id, change_action_id, change_field_id,    new_value,            row_id)
