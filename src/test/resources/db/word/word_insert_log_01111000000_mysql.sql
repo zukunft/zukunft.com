@@ -39,9 +39,9 @@ SELECT word_insert_log_01111000000
        ('Mathematics'::text,
         1::bigint,
         1::smallint,
-        -1::smallint,
-        -1::smallint,
-        -1::smallint,
+        10::smallint,
+        9::smallint,
+        11::smallint,
         'Mathematics is an area of knowledge that includes the topics of numbers and formulas'::text,
-        -1::smallint,
+        12::smallint,
         1::bigint);

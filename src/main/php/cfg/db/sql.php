@@ -486,7 +486,7 @@ class sql
     {
         $lib = new library();
         global $change_table_list;
-        return $change_table_list->id($lib->class_to_name($class));
+        return $change_table_list->id($this->get_table_name($class));
     }
 
 
