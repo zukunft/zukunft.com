@@ -1031,9 +1031,6 @@ class test_base
         // check the Postgres query syntax
         $sc->db_type = sql_db::POSTGRES;
         $qp = $usr_obj->sql_insert($sc, $sc_par_lst);
-        if ($sc->and_log($sc_par_lst)) {
-
-        }
         $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax

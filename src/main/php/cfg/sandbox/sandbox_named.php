@@ -1196,9 +1196,10 @@ class sandbox_named extends sandbox
         $result = [];
         $sc = new sql();
         $usr_tbl = $sc->is_usr_tbl($sc_par_lst);
+        $is_insert = $sc->is_insert($sc_par_lst);
         $do_log = $sc->and_log($sc_par_lst);
-        // for insert of user sandbox rows user id fields always needs to be included
-        if ($usr_tbl) {
+        // for insert statements of user sandbox rows user id fields always needs to be included
+        if ($usr_tbl and $is_insert) {
             if ($do_log) {
                 $result[] = sql::FLD_LOG_FIELD_PREFIX . $this::FLD_ID;
             }
@@ -1249,8 +1250,9 @@ class sandbox_named extends sandbox
         $result = [];
         $sc = new sql();
         $usr_tbl = $sc->is_usr_tbl($sc_par_lst);
+        $is_insert = $sc->is_insert($sc_par_lst);
         // for insert of user sandbox rows user id fields always needs to be included
-        if ($usr_tbl) {
+        if ($usr_tbl and $is_insert) {
             if ($do_log) {
                 $result[] = $change_field_list->id($table_id . $this::FLD_ID);
             }

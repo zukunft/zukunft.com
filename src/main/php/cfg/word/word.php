@@ -1835,6 +1835,9 @@ class word extends sandbox_typed
         $wrd_empty = $this->clone_reset();
         // for a new word the owner should be set, so remove the user id to force writing the user
         $wrd_empty->set_user($this->user()->clone_reset());
+        if (!in_array(sql_type::INSERT, $sc_par_lst)) {
+            $sc_par_lst[] = sql_type::INSERT;
+        }
         $fields = $this->db_fields_changed($wrd_empty, $sc_par_lst);
         $values = $this->db_values_changed($wrd_empty, $sc_par_lst);
         $all_fields = $this->db_fields_all();

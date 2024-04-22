@@ -636,6 +636,9 @@ class source extends sandbox_typed
         $empty_src = $this->clone_reset();
         // for a new source the owner should be set, so remove the user id to force writing the user
         $empty_src->set_user($this->user()->clone_reset());
+        if (!in_array(sql_type::INSERT, $sc_par_lst)) {
+            $sc_par_lst[] = sql_type::INSERT;
+        }
         $fields = $this->db_fields_changed($empty_src, $sc_par_lst);
         $values = $this->db_values_changed($empty_src, $sc_par_lst);
         $all_fields = $this->db_fields_all();

@@ -3975,6 +3975,15 @@ class sql
 
     /**
      * @param array $sc_par_lst of parameters for the sql creation
+     * @return bool true if a insert sql statement should be created
+     */
+    public function is_insert(array $sc_par_lst): bool
+    {
+        return in_array(sql_type::INSERT, $sc_par_lst);
+    }
+
+    /**
+     * @param array $sc_par_lst of parameters for the sql creation
      * @return bool true if sql should point to the user sandbox table
      */
     public function is_usr_tbl(array $sc_par_lst): bool
