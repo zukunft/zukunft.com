@@ -1058,6 +1058,7 @@ class sql
 
         $sql_fld = '';
         $sql_val = '';
+        $usr_tbl = $this->is_usr_tbl($sc_par_lst);
         if (count($fields) <> count($values)) {
             if ($log_err) {
                 log_fatal_db(
@@ -1095,7 +1096,11 @@ class sql
                         if ($fld_name == change::FLD_ROW_ID and $val_tbl != '') {
                             $fld_name = $val_tbl . '.' . $chg_row_fld;
                         } else {
-                            $fld_name = '_' . $fld_name;
+                            if ($fld_name == change::FLD_ROW_ID and $usr_tbl) {
+                                $fld_name = '_' . $chg_row_fld;
+                            } else {
+                                $fld_name = '_' . $fld_name;
+                            }
                         }
                         $this->par_fields[] = $fld_name;
                     } else {
@@ -1117,7 +1122,7 @@ class sql
             $sql = $this->prepare_this_sql(self::INSERT);
             $sql .= ' INTO ' . $this->name_sql_esc($this->table);
             $sql .= $sql_fld;
-            if ($val_tbl != '') {
+            if ($val_tbl != '' or $usr_tbl) {
                 $sql .= ' ' . sql::SELECT . ' ';
                 $sql .= $sql_val;
             } else {
@@ -1128,6 +1133,11 @@ class sql
                 $sql .= ' ' . sql::FROM . ' ' . $val_tbl;
                 return $this->end_sql($sql, self::FUNCTION, $sc_par_lst);
             } else {
+                // for log entries and user changes the change id does not needs to be returned
+                // to indicate this tell the sql end function that this is a log table
+                if ($this->class == change::class and in_array(sql_type::NAMED_PAR, $sc_par_lst)) {
+                    $sc_par_lst[] = sql_type::NO_ID_RETURN;
+                }
                 return $this->end_sql($sql, self::INSERT, $sc_par_lst);
             }
         }
@@ -2964,23 +2974,30 @@ class sql
     private function end_sql(string $sql, string $sql_statement_type = sql::SELECT, array $sc_par_lst = []): string
     {
         $lib = new library();
+        $no_id_return = in_array(sql_type::NO_ID_RETURN, $sc_par_lst);
         if ($sql_statement_type == self::INSERT) {
             if ($this->db_type == sql_db::POSTGRES) {
                 // return the database row id if the table uses auto id series
                 if (!in_array($this::class, sql_db::DB_TABLE_WITHOUT_AUTO_ID)) {
-                    $sql .= ' RETURNING ';
-                    if (is_array($this->id_field)) {
-                        $sql .= implode(',', $this->id_field);
-                    } else {
-                        $sql .= $this->id_field;
+                    // for the change log and user specific changes the id of the new change log entry is not needed
+                    // because the id is combination of user_id amd the row_id and both are know already
+                    if (!$no_id_return) {
+                        $sql .= ' RETURNING ';
+                        if (is_array($this->id_field)) {
+                            $sql .= implode(',', $this->id_field);
+                        } else {
+                            $sql .= $this->id_field;
+                        }
+                        // TODO check if not the next line needs to be used
+                        // $sql = $sql . " SELECT currval('" . $this->id_field . "_seq'); ";
                     }
-                    // TODO check if not the next line needs to be used
-                    // $sql = $sql . " SELECT currval('" . $this->id_field . "_seq'); ";
                 }
             } else {
                 if (in_array(sql_type::NAMED_PAR, $sc_par_lst)) {
-                    $sql .= ' RETURNING ';
-                    $sql .= $this->id_field;
+                    if (!$no_id_return) {
+                        $sql .= ' RETURNING ';
+                        $sql .= $this->id_field;
+                    }
                 }
             }
         }

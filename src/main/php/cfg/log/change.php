@@ -472,8 +472,13 @@ class change extends change_log
     function sql_insert(sql $sc, array $sc_par_lst, string $ext = '', string $val_tbl = '', string $add_fld = '', string $row_fld = ''): sql_par
     {
         $sc_par_lst[] = sql_type::INSERT;
-        $qp = $sc->sql_par($this::class, $sc_par_lst);
-        $sc->set_class($this::class, $sc_par_lst);
+        // do not use the user extension for the change table name
+        $sc_par_lst_chg = $sc_par_lst;
+        if (($key = array_search(sql_type::USER, $sc_par_lst_chg)) !== false) {
+            unset($sc_par_lst_chg[$key]);
+        }
+        $qp = $sc->sql_par($this::class, $sc_par_lst_chg);
+        $sc->set_class($this::class, $sc_par_lst_chg);
         if ($sc->is_list_tbl($sc_par_lst)) {
             $lib = new library();
             $qp->name = $lib->class_to_name($this::class) . $ext;
