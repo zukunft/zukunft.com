@@ -64,6 +64,7 @@ use api\api;
 use api\phrase\phrase as phrase_api;
 use cfg\db\sql;
 use cfg\db\sql_db;
+use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_type;
 use cfg\group\group_list;
@@ -82,9 +83,11 @@ class phrase extends combine_named
      */
 
     // the database and JSON object duplicate field names for combined word and triples mainly to link phrases
+    // *_SQLTYP is the sql data type used for the field
     const FLD_ID = 'phrase_id';
     const FLD_NAME = 'phrase_name';
     const FLD_TYPE = 'phrase_type_id';
+    const FLD_TYPE_SQLTYP = sql_field_type::INT;
     const FLD_VALUES = 'values';
 
     // the common phrase database field names excluding the id and excluding the user specific fields

@@ -67,6 +67,7 @@ class sys_log extends db_object_seq_id
 
     // database and export JSON object field names
     // and comments used for the database creation
+    // *_SQLTYP is the sql data type used for the field
     const TBL_COMMENT = 'for system error tracking and to measure execution times';
     const FLD_ID = 'sys_log_id';
     const FLD_TIME_COM = 'timestamp of the creation';
@@ -79,6 +80,7 @@ class sys_log extends db_object_seq_id
     const FLD_TEXT = 'sys_log_text';
     const FLD_DESCRIPTION_COM = 'the lond description with all details of the log entry to solve ti issue';
     const FLD_DESCRIPTION = 'sys_log_description';
+    const FLD_DESCRIPTION_SQLTYP = sql_field_type::TEXT;
     const FLD_TRACE_COM = 'the generated code trace to local the path to the error cause';
     const FLD_TRACE = 'sys_log_trace';
     const FLD_USER_COM = 'the id of the user who has caused the log entry';
@@ -110,7 +112,7 @@ class sys_log extends db_object_seq_id
         [self::FLD_TYPE, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_TYPE_COM],
         [self::FLD_FUNCTION, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, sys_log_function::class, self::FLD_FUNCTION_COM],
         [self::FLD_TEXT, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_TEXT_COM],
-        [self::FLD_DESCRIPTION, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
+        [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQLTYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
         [self::FLD_TRACE, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_TRACE_COM],
         [user::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, user::class, self::FLD_USER_COM],
         [self::FLD_SOLVER, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, user::class, self::FLD_SOLVER_COM, user::FLD_ID],

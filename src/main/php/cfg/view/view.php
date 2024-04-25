@@ -97,7 +97,7 @@ class view extends sandbox_typed
     );
     // list of fields that CAN be changed by the user
     const FLD_LST_USER_CAN_CHANGE = array(
-        [self::FLD_DESCRIPTION, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
+        [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQLTYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
         [self::FLD_TYPE, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, view_type::class, self::FLD_TYPE_COM],
     );
     // list of fields that CANNOT be changed by the user

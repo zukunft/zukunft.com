@@ -79,6 +79,7 @@ class ref extends sandbox_link_with_type
      */
 
     // object specific database and JSON object field names
+    // *_SQLTYP is the sql data type used for the field
     const TBL_COMMENT = 'to link external data to internal for syncronisation';
     const FLD_ID = 'ref_id';
     const FLD_USER_COM = 'the user who has created or adjusted the reference';
@@ -87,6 +88,7 @@ class ref extends sandbox_link_with_type
     const FLD_TYPE = 'ref_type_id';
     const FLD_URL_COM = 'the concrete url for the entry inluding the item id';
     const FLD_URL = 'url';
+    const FLD_DESCRIPTION_SQLTYP = sql_field_type::TEXT;
     const FLD_SOURCE_COM = 'if the reference does not allow a full automatic bidirectional update use the source to define an as good as possible import or at least a check if the reference is still valid';
     const FLD_SOURCE = 'source_id';
     const FLD_PHRASE_COM = 'the phrase for which the external data should be syncronised';
@@ -119,7 +121,7 @@ class ref extends sandbox_link_with_type
     // list of fields that CAN be changed by the user
     const FLD_LST_USER_CAN_CHANGE = array(
         [self::FLD_URL, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_URL_COM],
-        [sandbox_named::FLD_DESCRIPTION, sql_field_type::TEXT, sql_field_default::NULL, '', '', ''],
+        [sandbox_named::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQLTYP, sql_field_default::NULL, '', '', ''],
     );
     // list of fields that CANNOT be changed by the user
     const FLD_LST_NON_CHANGEABLE = array(

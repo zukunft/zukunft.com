@@ -185,6 +185,7 @@ class sql
     private ?string $query_name;    // unique name of the query to precompile and use the query
     private bool $usr_query;        // true, if the query is expected to retrieve user specific data
     private bool $grp_query;        // true, if the query should calculate the value for a group of database rows; cannot be combined with other query types
+    // TODO replace by a sc_par_lst
     private bool $sub_query;        // true, if the query is a sub query for another query
     private bool $list_query;       // true, if the query is part of a list of queries used for a with statement
     private bool $all_query;        // true, if the query is expected to retrieve the standard and the user specific data
@@ -1115,9 +1116,15 @@ class sql
         }
 
         // create a prepare SQL statement if possible
+        $sql_type = self::INSERT;
+        $sc_par_lst_end = [];
+        if ($this->and_log($sc_par_lst)) {
+            $sql_type = self::FUNCTION;
+        }
+        $sql = $this->prepare_this_sql($sql_type);
         if ($this->and_log($sc_par_lst)) {
             $sql = $this->prepare_this_sql(self::FUNCTION);
-            return $this->end_sql($sql, self::FUNCTION);
+            return $this->end_sql($sql, $sql_type);
         } else {
             $sql = $this->prepare_this_sql(self::INSERT);
             $sql .= ' INTO ' . $this->name_sql_esc($this->table);
@@ -1131,17 +1138,18 @@ class sql
             }
             if ($val_tbl != '') {
                 $sql .= ' ' . sql::FROM . ' ' . $val_tbl;
-                return $this->end_sql($sql, self::FUNCTION, $sc_par_lst);
+                $sql_type = self::FUNCTION;
             } else {
-                // for log entries and user changes the change id does not needs to be returned
+                // for log entries and user changes the change id does not need to be returned
                 // to indicate this tell the sql end function that this is a log table
                 if ($this->class == change::class and in_array(sql_type::NAMED_PAR, $sc_par_lst)) {
                     $sc_par_lst[] = sql_type::NO_ID_RETURN;
                 }
-                return $this->end_sql($sql, self::INSERT, $sc_par_lst);
             }
+            $sc_par_lst_end = $sc_par_lst;
         }
 
+        return $this->end_sql($sql, $sql_type, $sc_par_lst_end);
     }
 
     /**
@@ -1162,6 +1170,7 @@ class sql
         string|array|int $id,
         array            $fields,
         array            $values,
+        array            $types = [],
         array            $sc_par_lst = [],
         bool             $log_err = true,
         string           $val_tbl = '',
@@ -1195,7 +1204,11 @@ class sql
             $par_pos = 1;
             foreach (array_keys($values) as $i) {
                 if ($values[$i] != sql::NOW) {
-                    $this->par_types[] = $this->get_sql_par_type($values[$i]);
+                    if (count($values) == count($types)) {
+                        $this->par_types[] = $types[$i];
+                    } else {
+                        $this->par_types[] = $this->get_sql_par_type($values[$i]);
+                    }
                     if ($use_named_par) {
                         $fld_name = $fields[$i];
                         $fld_name = '_' . $fld_name;
@@ -1235,11 +1248,14 @@ class sql
         }
 
         // create a prepare SQL statement if possible
+        $sql_type = self::UPDATE;
         if ($this->and_log($sc_par_lst)) {
-            $sql = self::UPDATE . ' ';
-        } else {
-            $sql = $this->prepare_this_sql(self::UPDATE);
+            $sql_type = self::FUNCTION;
         }
+        if ($this->is_sub_tbl($sc_par_lst)) {
+            $this->sub_query = true;
+        }
+        $sql = $this->prepare_this_sql($sql_type);
         $sql .= ' ' . $this->name_sql_esc($this->table);
         $sql_set = '';
         foreach (array_keys($fields) as $i) {
@@ -1262,7 +1278,7 @@ class sql
 
         $sql .= $sql_where;
 
-        return $this->end_sql($sql, self::UPDATE);
+        return $this->end_sql($sql, $sql_type);
     }
 
     /**
@@ -4008,6 +4024,26 @@ class sql
     function id_field_name(): string
     {
         return $this->id_field;
+    }
+
+
+    /*
+     * sql types
+     */
+
+    /**
+     * remove a sql type parameter from a list
+     * @param sql_type $type_to_remove the sql type parameter that should be removed from the list
+     * @param array $sc_par_lst the list of sql type parameters before the removal
+     * @return array a clone of the list without the given paramater
+     */
+    public function sql_par_remove(sql_type $type_to_remove, array $sc_par_lst): array
+    {
+        $result = $sc_par_lst;
+        if (($key = array_search($type_to_remove, $result)) !== false) {
+            unset($result[$key]);
+        }
+        return $result;
     }
 
     /**

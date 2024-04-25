@@ -91,9 +91,16 @@ class group extends sandbox_multi
      */
 
     // object specific database and JSON object field names
+    // *_COM: the description of the field
+    // *_SQLTYP is the sql data type used for the field
+    const FLD_ID_COM = 'the 64-bit prime index to find the -=class=-';
+    const FLD_ID_COM_USER = 'the 64-bit prime index to find the user -=class=-';
     const FLD_ID = 'group_id';
+    const FLD_NAME_COM = 'the user specific group name which can contain the phrase names in a different order to display the group (does not need to be unique)';
     const FLD_NAME = 'group_name';
+    const FLD_DESCRIPTION_COM = 'the user specific description for mouse over helps';
     const FLD_DESCRIPTION = 'description';
+    const FLD_DESCRIPTION_SQLTYP = sql_field_type::TEXT;
 
     // comments used for the database creation
     const TBL_COMMENT = 'to add a user given name using a 512-bit group id index for up to 16 32-bit phrase ids including the order';
@@ -105,14 +112,14 @@ class group extends sandbox_multi
     // list of fields with parameters used for the database creation
     // the fields that can be changed by the user
     const FLD_KEY_PRIME = array(
-        [group::FLD_ID, sql_field_type::KEY_INT_NO_AUTO, sql_field_default::NOT_NULL, '', '', 'the 64-bit prime index to find the -=class=-'],
+        [group::FLD_ID, sql_field_type::KEY_INT_NO_AUTO, sql_field_default::NOT_NULL, '', '', self::FLD_ID_COM],
     );
     const FLD_KEY_PRIME_USER = array(
-        [group::FLD_ID, sql_field_type::KEY_PART_INT, sql_field_default::NOT_NULL, '', '', 'the 64-bit prime index to find the user -=class=-'],
+        [group::FLD_ID, sql_field_type::KEY_PART_INT, sql_field_default::NOT_NULL, '', '', self::FLD_ID_COM_USER],
     );
     const FLD_LST_USER_CAN_CHANGE = array(
-        [self::FLD_NAME, sql_field_type::TEXT, sql_field_default::NULL, '', '', 'the user specific group name which can contain the phrase names in a different order to display the group (does not need to be unique)'],
-        [self::FLD_DESCRIPTION, sql_field_type::TEXT, sql_field_default::NULL, '', '', 'the user specific description for mouse over helps'],
+        [self::FLD_NAME, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_NAME_COM],
+        [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQLTYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
     );
 
     // all database field names excluding the id

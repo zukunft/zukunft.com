@@ -119,24 +119,34 @@ class sandbox extends db_object_seq_id_user
     // database and JSON object field names used in many user sandbox objects
     // the id field is not included here because it is used for the database relations and should be object specific
     // e.g. always "word_id" instead of simply "id
+    // *_COM: the description of the field
+    // *_SQLTYP is the sql data type used for the field
+    const FLD_ID_COM = 'the owner / creator of the -=class=-';
+    const FLD_ID_COM_CHANGER = 'the changer of the -=class=-';
     const FLD_ID = ''; // is always overwritten by the child class just added here to prevent polymorph warning
+    const FLD_EXCLUDED_COM = 'true if a user, but not all, have removed it';
     const FLD_EXCLUDED = 'excluded';    // field name used to delete the object only for one user
+    const FLD_EXCLUDED_SQLTYP = sql_field_type::BOOL;
     const FLD_CHANGE_USER = 'change_user_id'; // id of the user how wants something the object to be different from most other users
     const FLD_USER_NAME = 'user_name';
+    const FLD_SHARE_COM = 'to restrict the access';
     const FLD_SHARE = "share_type_id";  // field name for the share permission
+    const FLD_SHARE_SQLTYP = sql_field_type::INT_SMALL;
+    const FLD_PROTECT_COM = 'to protect against unwanted changes';
     const FLD_PROTECT = "protect_id";   // field name for the protection level
+    const FLD_PROTECT_SQLTYP = sql_field_type::INT_SMALL;
 
     // field lists for the table creation
     const FLD_ALL_OWNER = array(
-        [user::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, user::class, 'the owner / creator of the -=class=-'],
+        [user::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, user::class, self::FLD_ID_COM],
     );
     const FLD_ALL_CHANGER = array(
-        [user::FLD_ID, sql_field_type::KEY_PART_INT, sql_field_default::NOT_NULL, sql::INDEX, user::class, 'the changer of the -=class=-'],
+        [user::FLD_ID, sql_field_type::KEY_PART_INT, sql_field_default::NOT_NULL, sql::INDEX, user::class, self::FLD_ID_COM_CHANGER],
     );
     const FLD_LST_ALL = array(
-        [self::FLD_EXCLUDED, sql_field_type::BOOL, sql_field_default::NULL, '', '', 'true if a user, but not all, have removed it'],
-        [self::FLD_SHARE, sql_field_type::INT_SMALL, sql_field_default::NULL, '', '', 'to restrict the access'],
-        [self::FLD_PROTECT, sql_field_type::INT_SMALL, sql_field_default::NULL, '', '', 'to protect against unwanted changes'],
+        [self::FLD_EXCLUDED, self::FLD_EXCLUDED_SQLTYP, sql_field_default::NULL, '', '', self::FLD_EXCLUDED_COM],
+        [self::FLD_SHARE, self::FLD_SHARE_SQLTYP, sql_field_default::NULL, '', '', self::FLD_SHARE_COM],
+        [self::FLD_PROTECT, self::FLD_PROTECT_SQLTYP, sql_field_default::NULL, '', '', self::FLD_PROTECT_COM],
     );
 
     // numeric and user specific database field names that are user for most user sandbox objects
@@ -2675,6 +2685,71 @@ class sandbox extends db_object_seq_id_user
             self::FLD_SHARE,
             self::FLD_PROTECT
         ];
+    }
+
+    /**
+     * get a list of database field names, values and types that have been changed compared to a given object
+     * to add to the list with the list of the child object e.g. word
+     * the last_update field is excluded here because this is an internal only field
+     *
+     * @param sandbox $sbx the same sandbox as this to compare which fields have been changed
+     * @param array $sc_par_lst the parameters for the sql statement creation
+     * @return array with the field names of the object and any child object
+     */
+    function db_changed_sandbox(sandbox $sbx, array $sc_par_lst = []): array
+    {
+        global $change_table_list;
+        global $change_field_list;
+
+        $lst = [];
+        $sc = new sql();
+        $do_log = $sc->and_log($sc_par_lst);
+        $lib = new library();
+        $table_id = $change_table_list->id($lib->class_to_name($this::class));
+
+        if ($sbx->excluded <> $this->excluded) {
+            if ($do_log) {
+                $lst[] = [
+                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_EXCLUDED,
+                    $change_field_list->id($table_id . self::FLD_EXCLUDED),
+                    change::FLD_FIELD_ID_SQLTYP
+                ];
+            }
+            $lst[] = [
+                self::FLD_EXCLUDED,
+                $this->excluded,
+                self::FLD_EXCLUDED_SQLTYP
+            ];
+        }
+        if ($sbx->share_id <> $this->share_id) {
+            if ($do_log) {
+                $lst[] = [
+                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_SHARE,
+                    $change_field_list->id($table_id . self::FLD_SHARE),
+                    change::FLD_FIELD_ID_SQLTYP
+                ];
+            }
+            $lst[] = [
+                self::FLD_SHARE,
+                $this->share_id,
+                self::FLD_SHARE_SQLTYP
+            ];
+        }
+        if ($sbx->protection_id <> $this->protection_id) {
+            if ($do_log) {
+                $lst[] = [
+                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_PROTECT,
+                    $change_field_list->id($table_id . self::FLD_PROTECT),
+                    change::FLD_FIELD_ID_SQLTYP
+                ];
+            }
+            $lst[] = [
+                self::FLD_PROTECT,
+                $this->protection_id,
+                self::FLD_PROTECT_SQLTYP
+            ];
+        }
+        return $lst;
     }
 
     /**

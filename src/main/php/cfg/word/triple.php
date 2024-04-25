@@ -105,6 +105,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
     const FLD_NAME_AUTO_COM = 'the generated name is saved in the database for database base unique check based on the phrases and verb, which can be overwritten by the given name';
     const FLD_NAME_AUTO = 'name_generated';
     const FLD_DESCRIPTION_COM = 'text that should be shown to the user in case of mouseover on the triple name';
+    const FLD_DESCRIPTION_SQLTYP = sql_field_type::TEXT;
     const FLD_VIEW_COM = 'the default mask for this triple';
     const FLD_VIEW = 'view_id';
     const FLD_VALUES_COM = 'number of values linked to the word, which gives an indication of the importance';
@@ -131,7 +132,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
         [self::FLD_NAME, sql_field_type::NAME, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_COM],
         [self::FLD_NAME_GIVEN, sql_field_type::NAME, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_GIVEN_COM],
         [self::FLD_NAME_AUTO, sql_field_type::NAME, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_AUTO_COM],
-        [sandbox_named::FLD_DESCRIPTION, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
+        [sandbox_named::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQLTYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
         [self::FLD_COND_ID, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_COND_ID_COM],
         [phrase::FLD_TYPE, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, phrase_type::class, word::FLD_TYPE_COM],
         [self::FLD_VIEW, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, view::class, self::FLD_VIEW_COM],

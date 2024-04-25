@@ -82,6 +82,8 @@ class user extends db_object_seq_id
      */
 
     // database fields and comments only used for user
+    // *_COM: the description of the field
+    // *_SQLTYP is the sql data type used for the field
     const TBL_COMMENT = 'for users including system users; only users can add data';
     const FLD_ID = 'user_id'; // also the field name for foreign keys
     // fields for the main logon
@@ -94,6 +96,7 @@ class user extends db_object_seq_id
     // description and type
     const FLD_DESCRIPTION_COM = 'for system users the description to expain the profile to human users';
     const FLD_DESCRIPTION = 'description';
+    const FLD_DESCRIPTION_SQLTYP = sql_field_type::TEXT;
     const FLD_CODE_ID_COM = 'to select e.g. the system batch user';
     const FLD_CODE_ID = 'code_id';
     const FLD_PROFILE_COM = 'to define the user roles and read and write rights';
@@ -175,7 +178,7 @@ class user extends db_object_seq_id
         [self::FLD_IP_ADDR, sql_field_type::CODE_ID, sql_field_default::NULL, sql::INDEX, '', self::FLD_IP_ADDR_COM],
         [self::FLD_PASSWORD, sql_field_type::NAME, sql_field_default::NULL, '', '', self::FLD_PASSWORD_COM],
         // description and type
-        [self::FLD_DESCRIPTION, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
+        [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQLTYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
         [self::FLD_CODE_ID, sql_field_type::CODE_ID, sql_field_default::NULL, sql::INDEX, '', self::FLD_CODE_ID_COM],
         [self::FLD_PROFILE, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, user_profile::class, self::FLD_PROFILE_COM],
         [self::FLD_TYPE_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, user_type::class, self::FLD_TYPE_ID_COM],

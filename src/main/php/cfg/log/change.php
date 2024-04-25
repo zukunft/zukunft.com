@@ -75,14 +75,21 @@ class change extends change_log
      */
 
     // user log database and JSON object field names for named user sandbox objects
+    // *_COM is the description of the field
+    // *_SQLTYP is the sql data type used for the field
     const FLD_FIELD_ID = 'change_field_id';
+    const FLD_FIELD_ID_SQLTYP = sql_field_type::INT;
     const FLD_ROW_ID = 'row_id';
     const FLD_OLD_VALUE = 'old_value';
+    const FLD_OLD_VALUE_SQLTYP = sql_field_type::TEXT;
     const FLD_OLD_ID_COM = 'old value id';
     const FLD_OLD_ID = 'old_id';
+    const FLD_OLD_ID_SQLTYP = sql_field_type::INT;
     const FLD_NEW_VALUE = 'new_value';
+    const FLD_NEW_VALUE_SQLTYP = sql_field_type::TEXT;
     const FLD_NEW_ID_COM = 'new value id';
     const FLD_NEW_ID = 'new_id';
+    const FLD_NEW_ID_SQLTYP = sql_field_type::INT;
 
     // all database field names
     const FLD_NAMES = array(
@@ -99,11 +106,11 @@ class change extends change_log
 
     // field list to log the actual change of the named user sandbox object
     const FLD_LST_CHANGE = array(
-        [self::FLD_FIELD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, '', change_field::class, ''],
-        [self::FLD_OLD_VALUE, sql_field_type::TEXT, sql_field_default::NULL, '', '', ''],
-        [self::FLD_NEW_VALUE, sql_field_type::TEXT, sql_field_default::NULL, '', '', ''],
-        [self::FLD_OLD_ID, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_OLD_ID_COM],
-        [self::FLD_NEW_ID, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_NEW_ID_COM],
+        [self::FLD_FIELD_ID, self::FLD_FIELD_ID_SQLTYP, sql_field_default::NOT_NULL, '', change_field::class, ''],
+        [self::FLD_OLD_VALUE, self::FLD_OLD_VALUE_SQLTYP, sql_field_default::NULL, '', '', ''],
+        [self::FLD_NEW_VALUE, self::FLD_NEW_VALUE_SQLTYP, sql_field_default::NULL, '', '', ''],
+        [self::FLD_OLD_ID, self::FLD_OLD_ID_SQLTYP, sql_field_default::NULL, '', '', self::FLD_OLD_ID_COM],
+        [self::FLD_NEW_ID, self::FLD_NEW_ID_SQLTYP, sql_field_default::NULL, '', '', self::FLD_NEW_ID_COM],
     );
 
 
@@ -473,10 +480,7 @@ class change extends change_log
     {
         $sc_par_lst[] = sql_type::INSERT;
         // do not use the user extension for the change table name
-        $sc_par_lst_chg = $sc_par_lst;
-        if (($key = array_search(sql_type::USER, $sc_par_lst_chg)) !== false) {
-            unset($sc_par_lst_chg[$key]);
-        }
+        $sc_par_lst_chg = $sc->sql_par_remove(sql_type::USER, $sc_par_lst);
         $qp = $sc->sql_par($this::class, $sc_par_lst_chg);
         $sc->set_class($this::class, $sc_par_lst_chg);
         if ($sc->is_list_tbl($sc_par_lst)) {

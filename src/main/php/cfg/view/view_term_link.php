@@ -47,8 +47,10 @@ class view_term_link extends sandbox_link_typed
      */
 
     // the database and JSON object field names used only for formula links
+    // *_SQLTYP is the sql data type used for the field
     const TBL_COMMENT = 'to link view to a word, triple, verb or formula with an n:m relation';
     const FLD_ID = 'view_term_link_id';
+    const FLD_DESCRIPTION_SQLTYP = sql_field_type::TEXT;
     const FLD_TYPE_COM = '1 = from_term_id is link the terms table; 2=link to the term_links table;3=to term_groups';
     const FLD_TYPE = 'type_id';
     const FLD_LINK_TYPE = 'link_type_id';
@@ -73,12 +75,12 @@ class view_term_link extends sandbox_link_typed
     // list of MANDATORY fields that CAN be CHANGEd by the user
     const FLD_LST_MUST_BUT_STD_ONLY = array(
         [view_link_type::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, view_link_type::class, ''],
-        [sandbox_named::FLD_DESCRIPTION, sql_field_type::TEXT, sql_field_default::NULL, '', '', ''],
+        [sandbox_named::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQLTYP, sql_field_default::NULL, '', '', ''],
     );
     // list of fields that CAN be CHANGEd by the user
     const FLD_LST_MUST_BUT_USER_CAN_CHANGE = array(
         [view_link_type::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, view_link_type::class, ''],
-        [sandbox_named::FLD_DESCRIPTION, sql_field_type::TEXT, sql_field_default::NULL, '', '', ''],
+        [sandbox_named::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQLTYP, sql_field_default::NULL, '', '', ''],
     );
 
 

@@ -65,6 +65,7 @@ use api\word\word as word_api;
 use cfg\component\component;
 use cfg\db\sql;
 use cfg\db\sql_db;
+use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\db\sql_type;
@@ -83,8 +84,11 @@ class sandbox_named extends sandbox
      */
 
     // object specific database and JSON object field names
+    // *_SQLTYP is the sql data type used for the field
     const FLD_NAME = 'name';
+    const FLD_NAME_SQLTYP = sql_field_type::NAME; // in many cases overwritten by NAME_UNIQUE
     const FLD_DESCRIPTION = 'description';
+    const FLD_DESCRIPTION_SQLTYP = sql_field_type::TEXT;
 
 
     /*
@@ -622,6 +626,7 @@ class sandbox_named extends sandbox
                 } else {
                     //$result->add_message($this->set_owner($new_owner_id));
 
+                    // TODO all all objects to the pontential used of the prepared sql function with log
                     if (!$this->sql_write_prepared()) {
                         // create an empty db_rec element to force saving of all set fields
                         $db_rec = clone $this;
@@ -933,10 +938,7 @@ class sandbox_named extends sandbox
             $par_type_lst = [];
 
             // don't use the log parameter for the sub queries
-            $sc_par_lst_sub = $sc_par_lst;
-            if (($key = array_search(sql_type::LOG, $sc_par_lst_sub)) !== false) {
-                unset($sc_par_lst_sub[$key]);
-            }
+            $sc_par_lst_sub = $sc->sql_par_remove(sql_type::LOG, $sc_par_lst);
             $sc_par_lst_sub[] = sql_type::LIST;
 
             if ($usr_tbl) {
@@ -1058,13 +1060,11 @@ class sandbox_named extends sandbox
                 $sc_update = clone $sc;
                 $sc_par_lst_upd = $sc_par_lst;
                 $sc_par_lst_upd[] = sql_type::UPDATE;
-                $sc_par_lst_upd_ex_log = $sc_par_lst_upd;
-                if (($key = array_search(sql_type::LOG, $sc_par_lst_upd_ex_log)) !== false) {
-                    unset($sc_par_lst_upd_ex_log[$key]);
-                }
+                $sc_par_lst_upd_ex_log = $sc->sql_par_remove(sql_type::LOG, $sc_par_lst_upd);
+                $sc_par_lst_upd_ex_log[] = sql_type::SUB;
                 $qp_update = $this->sql_common($sc_update, $sc_par_lst_upd_ex_log);;
                 $qp_update->sql = $sc_update->create_sql_update(
-                    $id_field, $row_id_val, $update_fields, $update_values, $sc_par_lst_upd, true, $insert_tmp_tbl, $id_field);
+                    $id_field, $row_id_val, $update_fields, $update_values, [], $sc_par_lst_upd_ex_log, true, $insert_tmp_tbl, $id_field);
                 // add the insert row to the function body
                 $func_body .= ' ' . $qp_update->sql . ' ';
             }
@@ -1137,16 +1137,214 @@ class sandbox_named extends sandbox
         bool  $usr_tbl = false): sql_par
     {
         $lib = new library();
+        $and_log = $sc->and_log($sc_par_lst);
         $usr_tbl = $sc->is_usr_tbl($sc_par_lst);
         $fld_chg_ext = $lib->sql_field_ext($fld_lst, $fld_lst_all);
-        $ext = sql::file_sep . sql::file_update . sql::file_sep . $fld_chg_ext;
-        $qp = $this->sql_common($sc, $sc_par_lst, $ext);
-        if ($usr_tbl) {
-            $qp->sql = $sc->create_sql_update([$this->id_field(), user::FLD_ID], [$this->id(), $this->user_id()], $fld_lst, $val_lst);
-        } else {
-            $qp->sql = $sc->create_sql_update($this->id_field(), $this->id(), $fld_lst, $val_lst);
+        $ext = sql::file_sep . sql::file_update;
+        if ($and_log) {
+            $ext .= sql_type::LOG->extension();
         }
-        $qp->par = $val_lst;
+        $ext .= sql::file_sep . $fld_chg_ext;
+        $qp = $this->sql_common($sc, $sc_par_lst, $ext);
+        if ($and_log) {
+            $qp = $this->sql_update_named_and_log($sc, $qp, $fld_lst, $val_lst, $fld_lst_all, $sc_par_lst);
+        } else {
+            if ($usr_tbl) {
+                $qp->sql = $sc->create_sql_update(
+                    [$this->id_field(), user::FLD_ID], [$this->id(), $this->user_id()], $fld_lst, $val_lst);
+            } else {
+                $qp->sql = $sc->create_sql_update($this->id_field(), $this->id(), $fld_lst, $val_lst);
+            }
+            $qp->par = $val_lst;
+        }
+
+        return $qp;
+    }
+
+    private function sql_update_named_and_log(
+        sql     $sc,
+        sql_par $qp,
+        array   $fld_lst = [],
+        array   $val_lst = [],
+        array   $fld_lst_all = [],
+        array   $sc_par_lst = []
+    ): sql_par
+    {
+        // set some var names to shorten the code lines
+        $usr_tbl = $sc->is_usr_tbl($sc_par_lst);
+        $ext = sql::file_sep . sql::file_insert;
+        $id_fld = $sc->id_field_name();
+        $id_val = '_' . $id_fld;
+
+        // list of parameters actually used in order of the function usage
+        $par_name_lst = [];
+        $par_value_lst = [];
+        $par_type_lst = [];
+
+        // init the function body
+        if ($sc->db_type == sql_db::POSTGRES) {
+            $func_body = sql::FUNCTION_BEGIN;
+        } else {
+            $func_body = sql::FUNCTION_BEGIN_MYSQL;
+        }
+        $func_body .= ' ' . sql::WITH;
+
+        // don't use the log parameter for the sub queries
+        $sc_par_lst_sub = $sc->sql_par_remove(sql_type::LOG, $sc_par_lst);
+        $sc_par_lst_sub[] = sql_type::LIST;
+
+        // get the fields actually changed
+        $fld_lst_chg = array_intersect($fld_lst, $fld_lst_all);
+
+        // for the user sandbox table remove the primary key fields from the list
+        if ($usr_tbl) {
+            $key_fld_pos = array_search($id_fld, $fld_lst_chg);
+            unset($fld_lst_chg[$key_fld_pos]);
+            $key_fld_pos = array_search(user::FLD_ID, $fld_lst_chg);
+            unset($fld_lst_chg[$key_fld_pos]);
+        }
+
+        // the fields that where the changes should be added to the change log
+        $fld_lst_to_log = $fld_lst_chg;
+
+        // create the queries for the log entries
+        $func_body_change = '';
+        foreach ($fld_lst_to_log as $fld) {
+            if ($func_body_change != '') {
+                $func_body_change .= ', ';
+            }
+            $log = new change($this->user());
+            $log->set_table_by_class($this::class);
+            $log->set_field($fld);
+            $val_key = array_search($fld, $fld_lst);
+            $log->new_value = $val_lst[$val_key];
+            // TODO get the id of the new entry and use it in the log
+            $sc_log = clone $sc;
+            $sc_par_lst_log = $sc_par_lst_sub;
+            $sc_par_lst_log[] = sql_type::VALUE_SELECT;
+            $qp_log = $log->sql_insert(
+                $sc_log, $sc_par_lst_log, $ext . '_' . $fld, '', $fld, $id_fld);
+
+            // TODO get the fields used in the change log sql from the sql
+            $func_body_change .= ' ' . $qp_log->name . ' ' . sql::AS . ' (';
+            $func_body_change .= ' ' . $qp_log->sql . ')';
+
+            // add the user_id if needed
+            if (!in_array(user::FLD_ID, $par_name_lst)) {
+                $par_name_lst[] = user::FLD_ID;
+                $val_key = array_search(user::FLD_ID, $fld_lst);
+                $par_value_lst[] = $val_lst[$val_key];
+                $par_type_lst[] = sql_par_type::INT;
+            }
+
+            // add the change_action_id if needed
+            if (!in_array(change_action::FLD_ID, $par_name_lst)) {
+                $par_name_lst[] = change_action::FLD_ID;
+                $val_key = array_search(change_action::FLD_ID, $fld_lst);
+                $par_value_lst[] = $val_lst[$val_key];
+                $par_type_lst[] = sql_par_type::INT_SMALL;
+            }
+
+            // add the field_id of the field actually changed if needed
+            if (!in_array(sql::FLD_LOG_FIELD_PREFIX . $fld, $par_name_lst)) {
+                $par_name_lst[] = sql::FLD_LOG_FIELD_PREFIX . $fld;
+                $val_key = array_search(sql::FLD_LOG_FIELD_PREFIX . $fld, $fld_lst);
+                $par_value_lst[] = $val_lst[$val_key];
+                $par_type_lst[] = sql_par_type::INT_SMALL;
+            }
+
+            // add the field value of the field actually changed if needed
+            if (!in_array($fld, $par_name_lst)) {
+                $par_name_lst[] = $fld;
+                $val_key = array_search($fld, $fld_lst);
+                $par_value_lst[] = $val_lst[$val_key];
+                $par_type_lst[] = $sc->get_sql_par_type($val_lst[$val_key]);
+            }
+
+            // add the row id of the standard table for user overwrites
+            if ($usr_tbl) {
+                if (!in_array($id_fld, $par_name_lst)) {
+                    $par_name_lst[] = $id_fld;
+                    $val_key = array_search($id_fld, $fld_lst);
+                    $par_value_lst[] = $val_lst[$val_key];
+                    $par_type_lst[] = $sc->get_sql_par_type($val_lst[$val_key]);
+                }
+            }
+        }
+        $func_body .= ' ' . $func_body_change;
+
+        if ($usr_tbl) {
+            // insert the value in the user table
+            $fld_lst_to_log = array_merge([$this->id_field(), user::FLD_ID], $fld_lst_chg);
+            $insert_values = [];
+            foreach ($fld_lst_to_log as $fld) {
+                $val_key = array_search($fld, $fld_lst);
+                $insert_values[] = $val_lst[$val_key];
+            }
+            $sc_insert = clone $sc;
+            $qp_insert = $this->sql_common($sc_insert, $sc_par_lst_sub);
+            $sc_par_lst_sub[] = sql_type::NO_ID_RETURN;
+            $qp_insert->sql = $sc_insert->create_sql_insert($fld_lst_to_log, $insert_values, [], $sc_par_lst_sub);
+            // add the insert row to the function body and close the with statement with a semicoln
+            $func_body .= ' ' . $qp_insert->sql . ';';
+        } else {
+            // update the fields excluding the unique id
+            $update_fields = array_values($fld_lst_chg);
+            $update_values = [];
+            foreach ($fld_lst_chg as $fld) {
+                $val_key = array_search($fld, $fld_lst);
+                $update_values[] = $val_lst[$val_key];
+            }
+            $sc_update = clone $sc;
+            $sc_par_lst_upd = $sc_par_lst;
+            $sc_par_lst_upd[] = sql_type::UPDATE;
+            $sc_par_lst_upd_ex_log = $sc->sql_par_remove(sql_type::LOG, $sc_par_lst_upd);
+            $qp_update = $this->sql_common($sc_update, $sc_par_lst_upd_ex_log);;
+            $qp_update->sql = $sc_update->create_sql_update(
+                $id_fld, $id_val, $update_fields, $update_values, $sc_par_lst_upd, [], true, '', $id_fld);
+            // add the insert row to the function body
+            $func_body .= ' ' . $qp_update->sql . ' ';
+        }
+
+        //
+        if ($sc->db_type == sql_db::POSTGRES) {
+            $func_body .= ' ' . sql::FUNCTION_END;
+        } else {
+            $func_body .= ' ' . sql::FUNCTION_END_MYSQL;
+        }
+
+
+        // create the query parameters for the actual change
+        $qp_chg = clone $qp;
+        $qp_chg->sql = $sc->create_sql_update(
+            $id_fld, $id_val, $par_name_lst, $par_value_lst, $par_type_lst, $sc_par_lst);
+        $qp_chg->par = $val_lst;
+
+        // merge all together and create the function
+        $qp->sql = $qp_chg->sql . $func_body . ';';
+
+        $qp->call = ' ' . sql::SELECT . ' ' . $qp_chg->name . ' (';
+        $i = 0;
+        $call_val_str = '';
+        $pg_types = $sc->par_types_to_postgres($par_type_lst);
+
+        foreach ($par_value_lst as $par_val) {
+            if ($call_val_str != '') {
+                $call_val_str .= ', ';
+            }
+            $par_typ = $par_type_lst[$i];
+            $val_typ = $pg_types[$i];
+            if ($par_typ == sql_par_type::TEXT) {
+                $call_val_str .= "'" . $par_val . "'";
+            } else {
+                $call_val_str .= $par_val;
+            }
+            if ($val_typ != '') {
+                $call_val_str .= '::' . $val_typ;
+            }
+            $i++;
+        }
+        $qp->call .= $call_val_str . ');';
 
         return $qp;
     }
@@ -1228,6 +1426,84 @@ class sandbox_named extends sandbox
             $this->name_field(),
             self::FLD_DESCRIPTION
         ];
+    }
+
+    /**
+     * get a list of database field names, values and types that have been updated
+     * of the object to combine the list with the list of the child object e.g. word
+     *
+     * @param sandbox_named $sbx the same named sandbox as this to compare which fields have been changed
+     * @param array $sc_par_lst the parameters for the sql statement creation
+     * @return array with the field names of the object and any child object
+     */
+    function db_changed_named(sandbox_named $sbx, array $sc_par_lst = []): array
+    {
+        global $change_field_list;
+
+        $lst = [];
+        $sc = new sql();
+        $usr_tbl = $sc->is_usr_tbl($sc_par_lst);
+        $is_insert = $sc->is_insert($sc_par_lst);
+        $do_log = $sc->and_log($sc_par_lst);
+        $table_id = $sc->table_id($this::class);
+
+        // for insert statements of user sandbox rows user id fields always needs to be included
+        if ($usr_tbl and $is_insert) {
+            $lst[] = [
+                $this::FLD_ID,
+                $this->id(),
+                db_object_seq_id::FLD_ID_SQLTYP
+            ];
+            $lst[] = [
+                user::FLD_ID,
+                $this->user_id(),
+                db_object_seq_id::FLD_ID_SQLTYP
+            ];
+        } else {
+            if ($sbx->user_id() <> $this->user_id()) {
+                if ($do_log) {
+                    $lst[] = [
+                        sql::FLD_LOG_FIELD_PREFIX . user::FLD_ID,
+                        $change_field_list->id($table_id . user::FLD_ID),
+                        change::FLD_FIELD_ID_SQLTYP
+                    ];
+                }
+                $lst[] = [
+                    user::FLD_ID,
+                    $this->user_id(),
+                    db_object_seq_id::FLD_ID_SQLTYP
+                ];
+            }
+        }
+        if ($sbx->name() <> $this->name()) {
+            if ($do_log) {
+                $lst[] = [
+                    sql::FLD_LOG_FIELD_PREFIX . $this->name_field(),
+                    $change_field_list->id($table_id . $this->name_field()),
+                    change::FLD_FIELD_ID_SQLTYP
+                ];
+            }
+            $lst[] = [
+                $this->name_field(),
+                $this->name(),
+                self::FLD_NAME_SQLTYP
+            ];
+        }
+        if ($sbx->description <> $this->description) {
+            if ($do_log) {
+                $lst[] = [
+                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_DESCRIPTION,
+                    $change_field_list->id($table_id . self::FLD_DESCRIPTION),
+                    change::FLD_FIELD_ID_SQLTYP
+                ];
+            }
+            $lst[] = [
+                self::FLD_DESCRIPTION,
+                $this->description(),
+                self::FLD_DESCRIPTION_SQLTYP
+            ];
+        }
+        return $lst;
     }
 
     /**
