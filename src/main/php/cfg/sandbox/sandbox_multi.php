@@ -51,6 +51,7 @@ include_once MODEL_PHRASE_PATH . 'phrase_type.php';
 include_once MODEL_SANDBOX_PATH . 'protection_type.php';
 include_once MODEL_SANDBOX_PATH . 'share_type.php';
 
+use cfg\db\sql_field_type;
 use shared\types\protection_type as protect_type_shared;
 use shared\types\share_type as share_type_shared;
 use cfg\component\component;
@@ -82,10 +83,14 @@ class sandbox_multi extends db_object_multi_user
     // database and JSON object field names used in many user sandbox objects
     // the id field is not included here because it is used for the database relations and should be object specific
     // e.g. always "word_id" instead of simply "id"
+    // *_SQLTYP is the sql data type used for the field
     const FLD_EXCLUDED = 'excluded';    // field name used to delete the object only for one user
+    const FLD_EXCLUDED_SQLTYP = sql_field_type::BOOL;
     const FLD_USER_NAME = 'user_name';
     const FLD_SHARE = "share_type_id";  // field name for the share permission
+    const FLD_SHARE_SQLTYP = sql_field_type::INT_SMALL;
     const FLD_PROTECT = "protect_id";   // field name for the protection level
+    const FLD_PROTECT_SQLTYP = sql_field_type::INT_SMALL;
 
     // numeric and user specific database field names that are user for most user sandbox objects
     const FLD_NAMES_NUM_USR_SBX = array(
@@ -252,6 +257,40 @@ class sandbox_multi extends db_object_multi_user
      * @param sandbox_multi $sbx the same sandbox as this to compare which fields have been changed
      * @return array with the field names of the object and any child object
      */
+    function db_changed_sandbox(sandbox_multi $sbx): array
+    {
+        $lst = [];
+        if ($sbx->excluded <> $this->excluded) {
+            $lst[] = [
+                self::FLD_EXCLUDED,
+                $this->excluded,
+                self::FLD_EXCLUDED_SQLTYP
+            ];
+        }
+        if ($sbx->share_id <> $this->share_id) {
+            $lst[] = [
+                self::FLD_SHARE,
+                $this->share_id,
+                self::FLD_SHARE_SQLTYP
+            ];
+        }
+        if ($sbx->protection_id <> $this->protection_id) {
+            $lst[] = [
+                self::FLD_PROTECT,
+                $this->protection_id,
+                self::FLD_PROTECT_SQLTYP
+            ];
+        }
+        return $lst;
+    }
+
+    /**
+     * list of fields that have been changed compared to a given object
+     * the last_update field is excluded here because this is an internal only field
+     *
+     * @param sandbox_multi $sbx the same sandbox as this to compare which fields have been changed
+     * @return array with the field names of the object and any child object
+     */
     function db_fields_changed_sandbox(sandbox_multi $sbx): array
     {
         $result = [];
@@ -294,11 +333,11 @@ class sandbox_multi extends db_object_multi_user
      * to be overwritten by the child objects
      *
      * @param sql $sc with the target db_type set
-     * @param array $fields the field names that should be updated in the database
+     * @param array $fld_val_typ_lst list of field names, values and sql types additional to the standard id and name fields
      * @param array $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_update_fields(sql $sc, array $fields = [], array $values = [], array $sc_par_lst = []): sql_par
+    function sql_update_fields(sql $sc, array $fld_val_typ_lst = [], array $sc_par_lst = []): sql_par
     {
         return new sql_par($this::class);
     }
@@ -1525,15 +1564,13 @@ class sandbox_multi extends db_object_multi_user
      * to be overwritten by child object
      *
      * @param sql $sc with the target db_type set
-     * @param array $fields ???
-     * @param array $values ???
+     * @param array $fld_val_typ_lst list of field names, values and sql types additional to the standard id and name fields
      * @param array $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_update_multi(
         sql   $sc,
-        array $fields = [],
-        array $values = [],
+        array $fld_val_typ_lst = [],
         array $sc_par_lst = []
     ): sql_par
     {
@@ -1547,7 +1584,8 @@ class sandbox_multi extends db_object_multi_user
         }
         $qp->name .= sql::file_sep . sql::file_update;
         $sc->set_name($qp->name);
-        $qp->sql = $sc->create_sql_update($this->id_field(), $this->id(), $fields, $values);
+        $qp->sql = $sc->create_sql_update($this->id_field(), $this->id(), $fld_val_typ_lst);
+        $values = $sc->get_values($fld_val_typ_lst);
         $values[] = $this->id();
         $par_values = [];
         foreach (array_keys($values) as $i) {
@@ -1737,7 +1775,8 @@ class sandbox_multi extends db_object_multi_user
                 if ($result == '') {
                     $db_con->set_class($this::class, true);
                     $db_con->set_usr($this->user()->id());
-                    $qp = $this->sql_update_fields($db_con->sql_creator(), array($log->field()), array($new_value), [sql_type::USER]);
+                    $fld_val_typ_lst = [[$log->field(), $new_value, '']];
+                    $qp = $this->sql_update_fields($db_con->sql_creator(), $fld_val_typ_lst, [sql_type::USER]);
                     $usr_msg = $db_con->update($qp, 'setting of share type');
                     $result = $usr_msg->get_message();
                 }

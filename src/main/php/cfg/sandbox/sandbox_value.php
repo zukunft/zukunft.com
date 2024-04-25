@@ -321,6 +321,34 @@ class sandbox_value extends sandbox_multi
     }
 
     /**
+     * get a list of database field names, values and types that have been updated
+     * the last_update field is excluded here because this is an internal only field
+     *
+     * @param sandbox_value $sbx the same value sandbox as this to compare which fields have been changed
+     * @return array with the field names of the object and any child object
+     */
+    function db_changed_value(sandbox_value $sbx): array
+    {
+        $lst = [];
+        if ($sbx->grp_id() <> $this->grp_id()) {
+            // TODO review the group type
+            $lst[] = [
+                group::FLD_ID,
+                $this->grp_id(),
+                sql_field_type::INT
+            ];
+        }
+        if ($sbx->number() <> $this->number()) {
+            $lst[] = [
+                value::FLD_VALUE,
+                $this->number(),
+                sql_field_type::NUMERIC_FLOAT
+            ];
+        }
+        return $lst;
+    }
+
+    /**
      * list of fields that have been changed compared to a given object
      * the last_update field is excluded here because this is an internal only field
      *
@@ -1053,11 +1081,24 @@ class sandbox_value extends sandbox_multi
         $sc->set_name($qp->name);
         // get the fields and values that have been changed and needs to be updated in the database
         // TODO fix it
-        $fields = $this->db_fields_changed($db_obj);
-        $values = $this->db_values_changed($db_obj);;
-        $qp->sql = $sc->create_sql_update($this->id_field(), $this->id(), $fields, $values);
+        $fld_val_typ_lst = $this->db_changed($db_obj);
+        $qp->sql = $sc->create_sql_update($this->id_field(), $this->id(), $fld_val_typ_lst);
+        $values = $sc->get_values($fld_val_typ_lst);
         $qp->par = $values;
         return $qp;
+    }
+
+    /**
+     * dummy function to be overwritten by the child object
+     * get a list of database fields that have been updated
+     * excluding the internal only last_update and is_std fields
+     *
+     * @param sandbox_value $sbv the compare value to detect the changed fields
+     * @return array list of the database field names that have been updated
+     */
+    function db_changed(sandbox_value $sbv): array
+    {
+        return [];
     }
 
     /**
@@ -1120,7 +1161,8 @@ class sandbox_value extends sandbox_multi
                         log_debug($msg);
                         $db_con->set_class($this::class, true, $ext);
                         $db_con->set_usr($this->user()->id());
-                        $qp = $this->sql_update_fields($db_con->sql_creator(), array($log->field()), array(null));
+                        $fld_val_typ_lst = [[$log->field(), null, null]];
+                        $qp = $this->sql_update_fields($db_con->sql_creator(), $fld_val_typ_lst);
                         $usr_msg = $db_con->update($qp, $msg);
                         $result = $usr_msg->get_message();
                     }
@@ -1130,7 +1172,8 @@ class sandbox_value extends sandbox_multi
                     log_debug($msg);
                     $db_con->set_class($this::class, false, $ext);
                     $db_con->set_usr($this->user()->id());
-                    $qp = $this->sql_update_fields($db_con->sql_creator(), array($log->field()), array($new_value));
+                    $fld_val_typ_lst = [[$log->field(), $new_value, '']];
+                    $qp = $this->sql_update_fields($db_con->sql_creator(), $fld_val_typ_lst);
                     $usr_msg = $db_con->update($qp, $msg);
                     $result = $usr_msg->get_message();
                 }
@@ -1146,16 +1189,16 @@ class sandbox_value extends sandbox_multi
                     if ($new_value == $std_value) {
                         $msg = 'remove user change of ' . $log->field();
                         log_debug($msg);
-                        $qp = $this->sql_update_fields($db_con->sql_creator(), array($log->field()), array(Null), [sql_type::USER]);
-                        $usr_msg = $db_con->update($qp, $msg);
-                        $result = $usr_msg->get_message();
+                        $fld_val_typ_lst = [[$log->field(), Null, '']];
+                        $qp = $this->sql_update_fields($db_con->sql_creator(), $fld_val_typ_lst, [sql_type::USER]);
                     } else {
                         $msg = 'update of ' . $log->field() . ' to ' . $new_value;
                         log_debug($msg);
-                        $qp = $this->sql_update_fields($db_con->sql_creator(), array($log->field()), array($new_value), [sql_type::USER]);
-                        $usr_msg = $db_con->update($qp, $msg);
-                        $result = $usr_msg->get_message();
+                        $fld_val_typ_lst = [[$log->field(), $new_value, '']];
+                        $qp = $this->sql_update_fields($db_con->sql_creator(), $fld_val_typ_lst, [sql_type::USER]);
                     }
+                    $usr_msg = $db_con->update($qp, $msg);
+                    $result = $usr_msg->get_message();
                     $this->del_usr_cfg_if_not_needed(); // don't care what the result is, because in most cases it is fine to keep the user sandbox row
                 }
             }

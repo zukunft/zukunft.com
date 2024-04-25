@@ -1060,6 +1060,14 @@ class sandbox_named extends sandbox
                     $val_key = array_search($fld, $fld_lst);
                     $update_values[] = $val_lst[$val_key];
                 }
+                $update_types = [];
+                foreach ($update_values as $val) {
+                    $update_types[] = $sc->get_sql_par_type($update_values);
+                }
+                $update_fld_val_typ_lst = [];
+                foreach ($update_fields as $key => $field) {
+                    $update_fld_val_typ_lst[] = [$field, $update_values[$key], $update_types[$key]];
+                }
                 $sc_update = clone $sc;
                 $sc_par_lst_upd = $sc_par_lst;
                 $sc_par_lst_upd[] = sql_type::UPDATE;
@@ -1067,7 +1075,7 @@ class sandbox_named extends sandbox
                 $sc_par_lst_upd_ex_log[] = sql_type::SUB;
                 $qp_update = $this->sql_common($sc_update, $sc_par_lst_upd_ex_log);;
                 $qp_update->sql = $sc_update->create_sql_update(
-                    $id_field, $row_id_val, $update_fields, $update_values, [], $sc_par_lst_upd_ex_log, true, $insert_tmp_tbl, $id_field);
+                    $id_field, $row_id_val, $update_fld_val_typ_lst, [], $sc_par_lst_upd_ex_log, true, $insert_tmp_tbl, $id_field);
                 // add the insert row to the function body
                 $func_body .= ' ' . $qp_update->sql . ' ';
             }
@@ -1154,9 +1162,9 @@ class sandbox_named extends sandbox
         } else {
             if ($usr_tbl) {
                 $qp->sql = $sc->create_sql_update(
-                    [$this->id_field(), user::FLD_ID], [$this->id(), $this->user_id()], $fld_lst, $val_lst);
+                    [$this->id_field(), user::FLD_ID], [$this->id(), $this->user_id()], $fld_val_typ_lst);
             } else {
-                $qp->sql = $sc->create_sql_update($this->id_field(), $this->id(), $fld_lst, $val_lst);
+                $qp->sql = $sc->create_sql_update($this->id_field(), $this->id(), $fld_val_typ_lst);
             }
             $qp->par = $val_lst;
         }
@@ -1301,13 +1309,21 @@ class sandbox_named extends sandbox
                 $val_key = array_search($fld, $fld_lst);
                 $update_values[] = $val_lst[$val_key];
             }
+            $update_types = [];
+            foreach ($update_values as $val) {
+                $update_types[] = $sc->get_sql_par_type($update_values);
+            }
+            $update_fld_val_typ_lst = [];
+            foreach ($update_fields as $key => $field) {
+                $update_fld_val_typ_lst[] = [$field, $update_values[$key], $update_types[$key]];
+            }
             $sc_update = clone $sc;
             $sc_par_lst_upd = $sc_par_lst;
             $sc_par_lst_upd[] = sql_type::UPDATE;
             $sc_par_lst_upd_ex_log = $sc->sql_par_remove(sql_type::LOG, $sc_par_lst_upd);
             $qp_update = $this->sql_common($sc_update, $sc_par_lst_upd_ex_log);;
             $qp_update->sql = $sc_update->create_sql_update(
-                $id_fld, $id_val, $update_fields, $update_values, $sc_par_lst_upd, [], true, '', $id_fld);
+                $id_fld, $id_val, $update_fld_val_typ_lst, $sc_par_lst_upd, [], true, '', $id_fld);
             // add the insert row to the function body
             $func_body .= ' ' . $qp_update->sql . ' ';
         }

@@ -113,6 +113,7 @@ class formula extends sandbox_typed
     // *_COM: the description of the field
     // *_SQLTYP is the sql data type used for the field
     const FLD_ID = 'formula_id';
+    const FLD_ID_SQLTYP = sql_field_type::INT;
     const FLD_NAME_COM = 'the text used to search for formulas that must also be unique for all terms (words, triples, verbs and formulas)';
     const FLD_NAME = 'formula_name';
     const FLD_TYPE_COM = 'the id of the formula type';

@@ -1691,9 +1691,8 @@ class result extends sandbox_value
         $usr_tbl = $sc->is_usr_tbl($sc_par_lst);
         $qp = $this->sql_common($sc, $sc_par_lst);
         // get the fields and values that have been changed and needs to be updated in the database
-        $fields = $this->db_fields_changed($db_res);
-        $values = $this->db_values_changed($db_res);;
-        $all_fields = $this->db_fields_all();
+        $fld_val_typ_lst = $this->db_changed($db_res);
+        $fields = $sc->get_fields($fld_val_typ_lst);
         $fld_name = implode('_', $lib->sql_name_shorten($fields));
         // TODO use const
         $qp->name .= '_update_' . $fld_name;
@@ -1727,7 +1726,7 @@ class result extends sandbox_value
             }
             $id_lst[] = $this->user()->id();
         }
-        $qp->sql = $sc->create_sql_update($id_fields, $id_lst, $fields, $values);
+        $qp->sql = $sc->create_sql_update($id_fields, $id_lst, $fld_val_typ_lst);
 
         $qp->par = $sc->par_values();
         return $qp;
@@ -1753,49 +1752,39 @@ class result extends sandbox_value
     }
 
     /**
-     * get a list of database fields that have been updated
+     * get a list of database field names, values and types that have been updated
      * excluding the internal only last_update and is_std fields
      *
      * @param result|sandbox_value $sbv the compare value to detect the changed fields
      * @return array list of the database field names that have been updated
      */
-    function db_fields_changed(result|sandbox_value $sbv): array
+    function db_changed(result|sandbox_value $sbv): array
     {
-        $result = parent::db_fields_changed_value($sbv);
+        $lst = parent::db_changed_value($sbv);
         if ($sbv->src_grp_id() <> $this->src_grp_id()) {
-            $result[] = self::FLD_SOURCE . group::FLD_ID;
+            // TODO review type
+            $lst[] = [
+                self::FLD_SOURCE . group::FLD_ID,
+                $this->src_grp_id(),
+                sql_field_type::INT
+            ];
         }
         if ($sbv->frm_id() <> $this->frm_id()) {
-            $result[] = formula::FLD_ID;
+            $lst[] = [
+                formula::FLD_ID,
+                $this->frm_id(),
+                formula::FLD_ID_SQLTYP
+            ];
         }
         // if any field has been updated, update the last_update field also
-        if (count($result) == 0 or $this->last_update() == null) {
-            $result[] = self::FLD_LAST_UPDATE;
+        if (count($lst) == 0 or $this->last_update() == null) {
+            $lst[] = [
+                self::FLD_LAST_UPDATE,
+                sql::NOW,
+                sql_field_type::TIME
+            ];
         }
-        return array_merge($result, $this->db_fields_changed_sandbox($sbv));
-    }
-
-    /**
-     * get a list of database values that have been updated
-     * excluding the internal only last_update and is_std values
-     *
-     * @param sandbox_value|result $sbv the compare value to detect the changed fields
-     * @return array list of the database field names that have been updated
-     */
-    function db_values_changed(sandbox_value|result $sbv): array
-    {
-        $result = parent::db_values_changed_value($sbv);
-        if ($sbv->src_grp_id() <> $this->src_grp_id()) {
-            $result[] = $this->src_grp_id();
-        }
-        if ($sbv->frm_id() <> $this->frm_id()) {
-            $result[] = $this->frm_id();
-        }
-        // if any field has been updated, update the last_update field with the predefined now expression
-        if (count($result) == 0 or $this->last_update() == null) {
-            $result[] = sql::NOW;
-        }
-        return array_merge($result, parent::db_values_changed_sandbox($sbv));
+        return array_merge($lst, $this->db_changed_sandbox($sbv));
     }
 
 }

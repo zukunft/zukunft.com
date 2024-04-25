@@ -1157,8 +1157,7 @@ class sql
      *
      * @param string|array $id_field name of the id field (or list of field names)
      * @param int|string|array $id the unique id of the row that should be updated
-     * @param array $fields with the fields names to add
-     * @param array $values with the field values to add
+     * @param array $fld_val_typ_lst list of field names, values and sql types additional to the standard id and name fields
      * @param array $sc_par_lst the parameters for the sql statement creation
      * @param bool $log_err false if
      * @param string $val_tbl name of the table to select the values to insert
@@ -1168,14 +1167,18 @@ class sql
     function create_sql_update(
         string|array     $id_field,
         string|array|int $id,
-        array            $fields,
-        array            $values,
+        array            $fld_val_typ_lst,
         array            $types = [],
         array            $sc_par_lst = [],
         bool             $log_err = true,
         string           $val_tbl = '',
         string           $chg_row_fld = ''): string
     {
+
+        // TODO deprecate
+        $fields = $this->get_fields($fld_val_typ_lst);
+        $values = $this->get_values($fld_val_typ_lst);
+
         $lib = new library();
         $id_field_par = '';
         $offset = 0;

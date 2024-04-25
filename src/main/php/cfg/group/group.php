@@ -98,6 +98,7 @@ class group extends sandbox_multi
     const FLD_ID = 'group_id';
     const FLD_NAME_COM = 'the user specific group name which can contain the phrase names in a different order to display the group (does not need to be unique)';
     const FLD_NAME = 'group_name';
+    const FLD_NAME_SQLTYP = sql_field_type::TEXT;
     const FLD_DESCRIPTION_COM = 'the user specific description for mouse over helps';
     const FLD_DESCRIPTION = 'description';
     const FLD_DESCRIPTION_SQLTYP = sql_field_type::TEXT;
@@ -118,7 +119,7 @@ class group extends sandbox_multi
         [group::FLD_ID, sql_field_type::KEY_PART_INT, sql_field_default::NOT_NULL, '', '', self::FLD_ID_COM_USER],
     );
     const FLD_LST_USER_CAN_CHANGE = array(
-        [self::FLD_NAME, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_NAME_COM],
+        [self::FLD_NAME, self::FLD_NAME_SQLTYP, sql_field_default::NULL, '', '', self::FLD_NAME_COM],
         [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQLTYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
     );
 
@@ -1318,19 +1319,19 @@ class group extends sandbox_multi
     {
         $lib = new library();
         $qp = $this->sql_common($sc, $sc_par_lst);
-        $fields = $this->db_fields_changed($db_grp);
-        $values = $this->db_values_changed($db_grp);;
-        $all_fields = $this->db_fields_all();
-        if (count($fields) == 0) {
-            $fields = array(self::FLD_NAME, self::FLD_DESCRIPTION);
+        $fld_val_typ_lst = $this->db_changed($db_grp);
+        if (count($fld_val_typ_lst) == 0) {
+            $fld_val_typ_lst = [
+                [self::FLD_NAME, $this->name, self::FLD_NAME_SQLTYP],
+                [self::FLD_DESCRIPTION, $this->description, self::FLD_DESCRIPTION_SQLTYP]
+            ];
         }
-        if (count($values) == 0) {
-            $values = array($this->name, $this->description);
-        }
+        $fields = $sc->get_fields($fld_val_typ_lst);
         $fld_name = implode('_', $lib->sql_name_shorten($fields));
         $qp->name .= '_upd_' . $fld_name;
         $sc->set_name($qp->name);
-        $qp->sql = $sc->create_sql_update($this->id_field(), $this->id(), $fields, $values);
+        $qp->sql = $sc->create_sql_update($this->id_field(), $this->id(), $fld_val_typ_lst);
+        $values = $sc->get_values($fld_val_typ_lst);
         $values[] = $this->id();
         $qp->par = $values;
         return $qp;
@@ -1379,34 +1380,24 @@ class group extends sandbox_multi
      * @param group $grp the compare value to detect the changed fields
      * @return array list of the database field names that have been updated
      */
-    function db_fields_changed(group $grp): array
+    function db_changed(group $grp): array
     {
-        $result = [];
+        $lst = [];
         if ($grp->name() <> $this->name()) {
-            $result[] = self::FLD_NAME;
+            $lst[] = [
+                self::FLD_NAME,
+                $this->name(),
+                self::FLD_NAME_SQLTYP
+            ];
         }
         if ($grp->description <> $this->description) {
-            $result[] = self::FLD_DESCRIPTION;
+            $lst[] = [
+                self::FLD_DESCRIPTION,
+                $this->description,
+                self::FLD_DESCRIPTION_SQLTYP
+            ];
         }
-        return $result;
-    }
-
-    /**
-     * get a list of database field values that have been updated
-     *
-     * @param group $grp the compare value to detect the changed fields
-     * @return array list of the database field values that have been updated
-     */
-    function db_values_changed(group $grp): array
-    {
-        $result = [];
-        if ($grp->name() <> $this->name()) {
-            $result[] = $this->name();
-        }
-        if ($grp->description <> $this->description) {
-            $result[] = $this->description;
-        }
-        return $result;
+        return $lst;
     }
 
 
