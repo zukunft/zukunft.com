@@ -890,19 +890,21 @@ class sandbox_named extends sandbox
      * TODO add qp merge
      *
      * @param sql $sc with the target db_type set
-     * @param array $fld_lst list of field names additional to the standard id and name fields
-     * @param array $val_lst list of field values additional to the standard id and name
+     * @param array $fld_val_typ_lst list of field names, values and sql types additional to the standard id and name fields
      * @param array $fld_lst_all list of field names of the given object
      * @param array $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_insert_named(
         sql   $sc,
-        array $fld_lst = [],
-        array $val_lst = [],
+        array $fld_val_typ_lst = [],
         array $fld_lst_all = [],
         array $sc_par_lst = []): sql_par
     {
+
+        // TODO deprecate
+        $fld_lst = $sc->get_fields($fld_val_typ_lst);
+        $val_lst = $sc->get_values($fld_val_typ_lst);
 
         // check the parameters
         $lib = new library();
@@ -913,6 +915,7 @@ class sandbox_named extends sandbox
         // create the main query parameter object and set the name
         $and_log = $sc->and_log($sc_par_lst);
         $usr_tbl = $sc->is_usr_tbl($sc_par_lst);
+        $fld_lst = $sc->get_fields($fld_val_typ_lst);
         $fld_chg_ext = $lib->sql_field_ext($fld_lst, $fld_lst_all);
         $ext = sql::file_sep . sql::file_insert;
         $ext_sub = $ext;
@@ -1121,24 +1124,24 @@ class sandbox_named extends sandbox
      * create the sql statement to change or exclude a named sandbox object e.g. word to the database
      *
      * @param sql $sc with the target db_type set
-     * @param array $fld_lst list of field names additional to the standard id and name fields
-     * @param array $val_lst list of field values additional to the standard id and name$
+     * @param array $fld_val_typ_lst list of field names, values and sql types additional to the standard id and name fields
      * @param array $fld_lst_all list of field names of the given object
      * @param array $sc_par_lst the parameters for the sql statement creation
-     * @param bool $usr_tbl true if the user table row should be updated
      * @return sql_par the SQL update statement, the name of the SQL statement and the parameter list
      */
     function sql_update_named(
         sql   $sc,
-        array $fld_lst = [],
-        array $val_lst = [],
+        array $fld_val_typ_lst = [],
         array $fld_lst_all = [],
-        array $sc_par_lst = [],
-        bool  $usr_tbl = false): sql_par
+        array $sc_par_lst = []): sql_par
     {
+        // TODO deprecate
+        $val_lst = $sc->get_values($fld_val_typ_lst);
+
         $lib = new library();
         $and_log = $sc->and_log($sc_par_lst);
         $usr_tbl = $sc->is_usr_tbl($sc_par_lst);
+        $fld_lst = $sc->get_fields($fld_val_typ_lst);
         $fld_chg_ext = $lib->sql_field_ext($fld_lst, $fld_lst_all);
         $ext = sql::file_sep . sql::file_update;
         if ($and_log) {
@@ -1147,7 +1150,7 @@ class sandbox_named extends sandbox
         $ext .= sql::file_sep . $fld_chg_ext;
         $qp = $this->sql_common($sc, $sc_par_lst, $ext);
         if ($and_log) {
-            $qp = $this->sql_update_named_and_log($sc, $qp, $fld_lst, $val_lst, $fld_lst_all, $sc_par_lst);
+            $qp = $this->sql_update_named_and_log($sc, $qp, $fld_val_typ_lst, $fld_lst_all, $sc_par_lst);
         } else {
             if ($usr_tbl) {
                 $qp->sql = $sc->create_sql_update(
@@ -1164,12 +1167,15 @@ class sandbox_named extends sandbox
     private function sql_update_named_and_log(
         sql     $sc,
         sql_par $qp,
-        array   $fld_lst = [],
-        array   $val_lst = [],
+        array   $fld_val_typ_lst = [],
         array   $fld_lst_all = [],
         array   $sc_par_lst = []
     ): sql_par
     {
+        // TODO deprecate
+        $fld_lst = $sc->get_fields($fld_val_typ_lst);
+        $val_lst = $sc->get_values($fld_val_typ_lst);
+
         // set some var names to shorten the code lines
         $usr_tbl = $sc->is_usr_tbl($sc_par_lst);
         $ext = sql::file_sep . sql::file_insert;

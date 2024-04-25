@@ -73,6 +73,7 @@ use cfg\db\sql_par;
 use cfg\db\sql_type;
 use cfg\export\sandbox_exp;
 use cfg\export\source_exp;
+use cfg\log\change;
 use shared\library;
 
 class source extends sandbox_typed
@@ -87,14 +88,17 @@ class source extends sandbox_typed
 
     // object specific database and JSON object field names
     // *_COM: the description of the field
+    // *_SQLTYP is the sql data type used for the field
     const FLD_ID = 'source_id';
     const FLD_NAME_COM = 'the unique name of the source used e.g. as the primary search key';
     const FLD_NAME = 'source_name';
     const FLD_DESCRIPTION_COM = 'the user specific description of the source for mouse over helps';
     const FLD_TYPE_COM = 'link to the source type';
     const FLD_TYPE = 'source_type_id';
+    const FLD_TYPE_SQLTYP = sql_field_type::INT;
     const FLD_URL_COM = 'the url of the source';
     const FLD_URL = 'url';
+    const FLD_URL_SQLTYP = sql_field_type::TEXT;
     const FLD_CODE_ID_COM = 'to select sources used by this program';
 
     // list of fields that MUST be set by one user
@@ -103,13 +107,13 @@ class source extends sandbox_typed
     );
     // list of must fields that CAN be changed by the user
     const FLD_LST_MUST_BUT_USER_CAN_CHANGE = array(
-        [self::FLD_NAME, sql_field_type::NAME, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_COM],
+        [self::FLD_NAME, self::FLD_NAME_SQLTYP, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_COM],
     );
     // list of fields that can be changed by the user
     const FLD_LST_USER_CAN_CHANGE = array(
         [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQLTYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
-        [self::FLD_TYPE, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, source_type::class, self::FLD_TYPE_COM],
-        [self::FLD_URL, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_URL_COM],
+        [self::FLD_TYPE, self::FLD_TYPE_SQLTYP, sql_field_default::NULL, sql::INDEX, source_type::class, self::FLD_TYPE_COM],
+        [self::FLD_URL, self::FLD_URL_SQLTYP, sql_field_default::NULL, '', '', self::FLD_URL_COM],
         [sql::FLD_CODE_ID, sql_field_type::CODE_ID, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
     );
 
@@ -639,10 +643,9 @@ class source extends sandbox_typed
         if (!in_array(sql_type::INSERT, $sc_par_lst)) {
             $sc_par_lst[] = sql_type::INSERT;
         }
-        $fields = $this->db_fields_changed($empty_src, $sc_par_lst);
-        $values = $this->db_values_changed($empty_src, $sc_par_lst);
+        $fld_val_typ_lst = $this->db_changed($empty_src, $sc_par_lst);
         $all_fields = $this->db_fields_all();
-        return parent::sql_insert_named($sc, $fields, $values, $all_fields, $sc_par_lst);
+        return parent::sql_insert_named($sc, $fld_val_typ_lst, $all_fields, $sc_par_lst);
     }
 
     /**
@@ -658,11 +661,10 @@ class source extends sandbox_typed
         // get the fields and values that have been changed
         // and that needs to be updated in the database
         // the db_* child function call the corresponding parent function
-        $fields = $this->db_fields_changed($db_row, $sc_par_lst);
-        $values = $this->db_values_changed($db_row, $sc_par_lst);
+        $fld_val_typ_lst = $this->db_changed($db_row, $sc_par_lst);
         $all_fields = $this->db_fields_all();
         // unlike the db_* function the sql_update_* parent function is called directly
-        return parent::sql_update_named($sc, $fields, $values, $all_fields, $sc_par_lst);
+        return parent::sql_update_named($sc, $fld_val_typ_lst, $all_fields, $sc_par_lst);
     }
 
 
@@ -689,75 +691,64 @@ class source extends sandbox_typed
     }
 
     /**
-     * get a list of database fields that have been updated
-     * field list must be corresponding to the db_values_changed fields
+     * get a list of database field names, values and types that have been updated
      *
      * @param sandbox|source $sbx the compare value to detect the changed fields
      * @param array $sc_par_lst the parameters for the sql statement creation
      * @return array list of the database field names that have been updated
      */
-    function db_fields_changed(sandbox|source $sbx, array $sc_par_lst = []): array
+    function db_changed(sandbox|source $sbx, array $sc_par_lst = []): array
     {
-        $sc = new sql();
-        $do_log = $sc->and_log($sc_par_lst);
-        $result = parent::db_fields_changed_named($sbx, $sc_par_lst);
-        if ($sbx->type_id() <> $this->type_id()) {
-            if ($do_log) {
-                $result[] = sql::FLD_LOG_FIELD_PREFIX . source::FLD_TYPE;
-            }
-            $result[] = source::FLD_TYPE;
-        }
-        if ($sbx->url <> $this->url) {
-            if ($do_log) {
-                $result[] = sql::FLD_LOG_FIELD_PREFIX . self::FLD_URL;
-            }
-            $result[] = self::FLD_URL;
-        }
-        if ($sbx->code_id <> $this->code_id) {
-            if ($do_log) {
-                $result[] = sql::FLD_LOG_FIELD_PREFIX . sql::FLD_CODE_ID;
-            }
-            $result[] = sql::FLD_CODE_ID;
-        }
-        return array_merge($result, $this->db_fields_changed_sandbox($sbx, $sc_par_lst));
-    }
+        global $change_field_list;
 
-    /**
-     * get a list of database field values that have been updated
-     *
-     * @param source $src the compare value to detect the changed
-     * @param array $sc_par_lst the parameters for the sql statement creation
-     * @return array list of the database field values that have been updated
-     */
-    function db_values_changed(source $src, array $sc_par_lst = []): array
-    {
-        // get the preloaded ids for logging
         $sc = new sql();
         $do_log = $sc->and_log($sc_par_lst);
         $table_id = $sc->table_id($this::class);
-        global $change_field_list;
 
-        // create the value array
-        $result = parent::db_values_changed_named($src, $sc_par_lst);
-        if ($src->type_id() <> $this->type_id()) {
+        $lst = parent::db_changed_named($sbx, $sc_par_lst);
+        if ($sbx->type_id() <> $this->type_id()) {
             if ($do_log) {
-                $result[] = $change_field_list->id($table_id . phrase::FLD_TYPE);
+                $lst[] = [
+                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_TYPE,
+                    $change_field_list->id($table_id . self::FLD_TYPE),
+                    change::FLD_FIELD_ID_SQLTYP
+                ];
             }
-            $result[] = $this->type_id();
+            $lst[] = [
+                self::FLD_TYPE,
+                $this->type_id(),
+                self::FLD_TYPE_SQLTYP
+            ];
         }
-        if ($src->url <> $this->url) {
+        if ($sbx->url <> $this->url) {
             if ($do_log) {
-                $result[] = $change_field_list->id($table_id . self::FLD_URL);
+                $lst[] = [
+                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_URL,
+                    $change_field_list->id($table_id . self::FLD_URL),
+                    change::FLD_FIELD_ID_SQLTYP
+                ];
             }
-            $result[] = $this->url;
+            $lst[] = [
+                self::FLD_URL,
+                $this->url,
+                self::FLD_URL_SQLTYP
+            ];
         }
-        if ($src->code_id <> $this->code_id) {
+        if ($sbx->code_id <> $this->code_id) {
             if ($do_log) {
-                $result[] = $change_field_list->id($table_id . sql::FLD_CODE_ID);
+                $lst[] = [
+                    sql::FLD_LOG_FIELD_PREFIX . sql::FLD_CODE_ID,
+                    $change_field_list->id($table_id . sql::FLD_CODE_ID),
+                    change::FLD_FIELD_ID_SQLTYP
+                ];
             }
-            $result[] = $this->code_id;
+            $lst[] = [
+                sql::FLD_CODE_ID,
+                $this->code_id,
+                sql_field_type::CODE_ID
+            ];
         }
-        return array_merge($result, $this->db_values_changed_sandbox($src, $sc_par_lst));
+        return array_merge($lst, $this->db_changed_sandbox($sbx, $sc_par_lst));
     }
 
 }

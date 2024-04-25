@@ -2792,19 +2792,6 @@ class sandbox extends db_object_seq_id_user
         return $result;
     }
 
-    /**
-     * dummy function get a list of database fields that have been updated
-     * should always be overwriten by the child object
-     *
-     * @param sandbox $sbx the compare value to detect the changed fields
-     * @param array $sc_par_lst the parameters for the sql statement creation
-     * @return array list of the database field names that have been updated
-     */
-    function db_fields_changed(sandbox $sbx, array $sc_par_lst = []): array
-    {
-        return array();
-    }
-
 
     /**
      * list of values that have been changed compared to a given object

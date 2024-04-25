@@ -4174,4 +4174,47 @@ class sql
         return in_array(sql_type::NAMED_PAR, $sc_par_lst);
     }
 
+    /*
+     * field, value and sql field type list
+     */
+
+    /**
+     * @param array $fld_val_typ_lst an array with an array of the field name, value and the sql field type
+     * @return array with the sql field names of the given list
+     */
+    function get_fields(array $fld_val_typ_lst): array
+    {
+        $fields = [];
+        foreach ($fld_val_typ_lst as $fld_val) {
+            $fields[] = $fld_val[0];
+        }
+        return $fields;
+    }
+
+    /**
+     * @param array $fld_val_typ_lst an array with an array of the field name, value and the sql field type
+     * @return array with the sql field values of the given list
+     */
+    function get_values(array $fld_val_typ_lst): array
+    {
+        $values = [];
+        foreach ($fld_val_typ_lst as $fld_val) {
+            $values[] = $fld_val[1];
+        }
+        return $values;
+    }
+
+    /**
+     * @param array $fld_val_typ_lst an array with an array of the field name, value and the sql field type
+     * @return array with the sql field types of the given list
+     */
+    function get_types(array $fld_val_typ_lst): array
+    {
+        $types = [];
+        foreach ($fld_val_typ_lst as $fld_val) {
+            $types[] = $fld_val[2];
+        }
+        return $types;
+    }
+
 }

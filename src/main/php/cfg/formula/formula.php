@@ -75,6 +75,7 @@ include_once API_FORMULA_PATH . 'formula.php';
 include_once WEB_FORMULA_PATH . 'formula.php';
 include_once WEB_WORD_PATH . 'word.php';
 
+use cfg\log\change;
 use shared\types\protection_type as protect_type_shared;
 use shared\types\share_type as share_type_shared;
 use api\formula\formula as formula_api;
@@ -110,25 +111,33 @@ class formula extends sandbox_typed
     // means: database fields only used for formulas
     // table fields where the change should be encoded before shown to the user
     // *_COM: the description of the field
+    // *_SQLTYP is the sql data type used for the field
     const FLD_ID = 'formula_id';
     const FLD_NAME_COM = 'the text used to search for formulas that must also be unique for all terms (words, triples, verbs and formulas)';
     const FLD_NAME = 'formula_name';
     const FLD_TYPE_COM = 'the id of the formula type';
     const FLD_TYPE = 'formula_type_id';
+    const FLD_TYPE_SQLTYP = sql_field_type::INT;
     const FLD_FORMULA_TEXT_COM = 'the internal formula expression with the database references e.g. {f1} for formula with id 1';
     const FLD_FORMULA_TEXT = 'formula_text';
+    const FLD_FORMULA_TEXT_SQLTYP = sql_field_type::TEXT;
     const FLD_FORMULA_USER_TEXT_COM = 'the formula expression in user readable format as shown to the user which can include formatting for better readability';
     const FLD_FORMULA_USER_TEXT = 'resolved_text';
+    const FLD_FORMULA_USER_TEXT_SQLTYP = sql_field_type::TEXT;
     //const FLD_REF_TEXT = "ref_text";             // the formula field "ref_txt" is a more internal field, which should not be shown to the user (only to an admin for debugging)
     const FLD_DESCRIPTION_COM = 'text to be shown to the user for mouse over; to be replaced by a language form entry';
     const FLD_ALL_NEEDED_COM = 'the "calculate only if all values used in the formula exist" flag should be converted to "all needed for calculation" instead of just displaying "1"';
     const FLD_ALL_NEEDED = 'all_values_needed';
+    const FLD_ALL_NEEDED_SQLTYP = sql_field_type::INT_SMALL;
     const FLD_LAST_UPDATE_COM = 'time of the last calculation relevant update';
     const FLD_LAST_UPDATE = 'last_update';
+    const FLD_LAST_UPDATE_SQLTYP = sql_field_type::TIME;
     const FLD_VIEW_COM = 'the default mask for this formula';
     const FLD_VIEW = 'view_id';
+    const FLD_VIEW_SQLTYP = sql_field_type::INT;
     const FLD_USAGE_COM = 'number of results linked to this formula';
     const FLD_USAGE = 'usage'; // TODO convert to a percent value of relative importance e.g. is 100% if all results, words and triples use this formula; should be possible to adjust the weight of e.g. values and views with the user specific system settings
+    const FLD_USAGE_SQLTYP = sql_field_type::INT;
 
     // the field names used for the im- and export in the json or yaml format
     const FLD_EXPRESSION = 'expression';
@@ -138,23 +147,23 @@ class formula extends sandbox_typed
     // TODO add foreign key for share and protection type?
     const FLD_LST_MUST_BE_IN_STD = array(
         [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::UNIQUE, '', self::FLD_NAME_COM],
-        [self::FLD_FORMULA_TEXT, sql_field_type::TEXT, sql_field_default::NOT_NULL, '', '', self::FLD_FORMULA_TEXT_COM],
-        [self::FLD_FORMULA_USER_TEXT, sql_field_type::TEXT, sql_field_default::NOT_NULL, '', '', self::FLD_FORMULA_USER_TEXT_COM],
+        [self::FLD_FORMULA_TEXT, self::FLD_FORMULA_TEXT_SQLTYP, sql_field_default::NOT_NULL, '', '', self::FLD_FORMULA_TEXT_COM],
+        [self::FLD_FORMULA_USER_TEXT, self::FLD_FORMULA_USER_TEXT_SQLTYP, sql_field_default::NOT_NULL, '', '', self::FLD_FORMULA_USER_TEXT_COM],
     );
     // list of must fields that CAN be changed by the user
     const FLD_LST_MUST_BUT_USER_CAN_CHANGE = array(
-        [self::FLD_NAME, sql_field_type::NAME, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_COM],
-        [self::FLD_FORMULA_TEXT, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_FORMULA_TEXT_COM],
-        [self::FLD_FORMULA_USER_TEXT, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_FORMULA_USER_TEXT_COM],
+        [self::FLD_NAME, self::FLD_NAME_SQLTYP, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_COM],
+        [self::FLD_FORMULA_TEXT, self::FLD_FORMULA_TEXT_SQLTYP, sql_field_default::NULL, '', '', self::FLD_FORMULA_TEXT_COM],
+        [self::FLD_FORMULA_USER_TEXT, self::FLD_FORMULA_USER_TEXT_SQLTYP, sql_field_default::NULL, '', '', self::FLD_FORMULA_USER_TEXT_COM],
     );
     // list of fields that CAN be changed by the user
     const FLD_LST_USER_CAN_CHANGE = array(
         [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQLTYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
-        [self::FLD_TYPE, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, formula_type::class, self::FLD_TYPE_COM],
-        [self::FLD_ALL_NEEDED, sql_field_type::INT_SMALL, sql_field_default::NULL, '', '', self::FLD_ALL_NEEDED_COM],
-        [self::FLD_LAST_UPDATE, sql_field_type::TIME, sql_field_default::NULL, '', '', self::FLD_LAST_UPDATE_COM],
-        [self::FLD_VIEW, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, view::class, self::FLD_VIEW_COM],
-        [self::FLD_USAGE, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_USAGE_COM],
+        [self::FLD_TYPE, self::FLD_TYPE_SQLTYP, sql_field_default::NULL, sql::INDEX, formula_type::class, self::FLD_TYPE_COM],
+        [self::FLD_ALL_NEEDED, self::FLD_ALL_NEEDED_SQLTYP, sql_field_default::NULL, '', '', self::FLD_ALL_NEEDED_COM],
+        [self::FLD_LAST_UPDATE, self::FLD_LAST_UPDATE_SQLTYP, sql_field_default::NULL, '', '', self::FLD_LAST_UPDATE_COM],
+        [self::FLD_VIEW, self::FLD_VIEW_SQLTYP, sql_field_default::NULL, sql::INDEX, view::class, self::FLD_VIEW_COM],
+        [self::FLD_USAGE, self::FLD_USAGE_SQLTYP, sql_field_default::NULL, '', '', self::FLD_USAGE_COM],
     );
 
     // all database field names excluding the id
@@ -2550,10 +2559,9 @@ class formula extends sandbox_typed
         if (!in_array(sql_type::INSERT, $sc_par_lst)) {
             $sc_par_lst[] = sql_type::INSERT;
         }
-        $fields = $this->db_fields_changed($frm_empty, $sc_par_lst);
-        $values = $this->db_values_changed($frm_empty, $sc_par_lst);
+        $fld_val_typ_lst = $this->db_changed($frm_empty, $sc_par_lst);
         $all_fields = $this->db_fields_all();
-        return parent::sql_insert_named($sc, $fields, $values, $all_fields, $sc_par_lst);
+        return parent::sql_insert_named($sc, $fld_val_typ_lst, $all_fields, $sc_par_lst);
     }
 
     /**
@@ -2570,11 +2578,10 @@ class formula extends sandbox_typed
         // get the fields and values that have been changed
         // and that needs to be updated in the database
         // the db_* child function call the corresponding parent function
-        $fields = $this->db_fields_changed($db_row);
-        $values = $this->db_values_changed($db_row);
+        $fld_val_typ_lst = $this->db_changed($db_row, $sc_par_lst);
         $all_fields = $this->db_fields_all();
         // unlike the db_* function the sql_update_* parent function is called directly
-        return parent::sql_update_named($sc, $fields, $values, $all_fields, $sc_par_lst);
+        return parent::sql_update_named($sc, $fld_val_typ_lst, $all_fields, $sc_par_lst);
     }
 
 
@@ -2607,125 +2614,121 @@ class formula extends sandbox_typed
     }
 
     /**
-     * get a list of database fields that have been updated
-     * field list must be corresponding to the db_values_changed fields
+     * get a list of database field names, values and types that have been updated
      *
      * @param sandbox|formula $frm the compare value to detect the changed fields
      * @param array $sc_par_lst the parameters for the sql statement creation
-     * @return array list of the database field names that have been updated
+     * @return array list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
-    function db_fields_changed(sandbox|formula $frm, array $sc_par_lst = []): array
+    function db_changed(sandbox|formula $frm, array $sc_par_lst = []): array
     {
+        global $change_field_list;
+
         $sc = new sql();
         $do_log = $sc->and_log($sc_par_lst);
-        $result = parent::db_fields_changed_named($frm, $sc_par_lst);
+        $table_id = $sc->table_id($this::class);
+
+        $lst = parent::db_changed_named($frm, $sc_par_lst);
         if ($frm->type_id() <> $this->type_id()) {
             if ($do_log) {
-                $result[] = sql::FLD_LOG_FIELD_PREFIX . self::FLD_TYPE;
+                $lst[] = [
+                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_TYPE,
+                    $change_field_list->id($table_id . self::FLD_TYPE),
+                    change::FLD_FIELD_ID_SQLTYP
+                ];
             }
-            $result[] = self::FLD_TYPE;
+            $lst[] = [
+                self::FLD_TYPE,
+                $this->type_id(),
+                self::FLD_TYPE_SQLTYP
+            ];
         }
         if ($frm->ref_text <> $this->ref_text) {
             if ($do_log) {
-                $result[] = sql::FLD_LOG_FIELD_PREFIX . self::FLD_FORMULA_TEXT;
+                $lst[] = [
+                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_FORMULA_TEXT,
+                    $change_field_list->id($table_id . self::FLD_FORMULA_TEXT),
+                    change::FLD_FIELD_ID_SQLTYP
+                ];
             }
-            $result[] = self::FLD_FORMULA_TEXT;
+            $lst[] = [
+                self::FLD_FORMULA_TEXT,
+                $this->ref_text,
+                self::FLD_FORMULA_TEXT_SQLTYP
+            ];
         }
         if ($frm->usr_text <> $this->usr_text) {
             if ($do_log) {
-                $result[] = sql::FLD_LOG_FIELD_PREFIX . self::FLD_FORMULA_USER_TEXT;
+                $lst[] = [
+                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_FORMULA_USER_TEXT,
+                    $change_field_list->id($table_id . self::FLD_FORMULA_USER_TEXT),
+                    change::FLD_FIELD_ID_SQLTYP
+                ];
             }
-            $result[] = self::FLD_FORMULA_USER_TEXT;
+            $lst[] = [
+                self::FLD_FORMULA_USER_TEXT,
+                $this->usr_text,
+                self::FLD_FORMULA_USER_TEXT_SQLTYP
+            ];
         }
         if ($frm->need_all_val <> $this->need_all_val) {
             if ($do_log) {
-                $result[] = sql::FLD_LOG_FIELD_PREFIX . self::FLD_ALL_NEEDED;
+                $lst[] = [
+                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_ALL_NEEDED,
+                    $change_field_list->id($table_id . self::FLD_ALL_NEEDED),
+                    change::FLD_FIELD_ID_SQLTYP
+                ];
             }
-            $result[] = self::FLD_ALL_NEEDED;
+            $lst[] = [
+                self::FLD_ALL_NEEDED,
+                $this->need_all_val,
+                self::FLD_ALL_NEEDED_SQLTYP
+            ];
         }
         // TODO maybe exclude?
         if ($frm->last_update <> $this->last_update) {
             if ($do_log) {
-                $result[] = sql::FLD_LOG_FIELD_PREFIX . self::FLD_LAST_UPDATE;
+                $lst[] = [
+                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_LAST_UPDATE,
+                    $change_field_list->id($table_id . self::FLD_LAST_UPDATE),
+                    change::FLD_FIELD_ID_SQLTYP
+                ];
             }
-            $result[] = self::FLD_LAST_UPDATE;
+            $lst[] = [
+                self::FLD_LAST_UPDATE,
+                $this->last_update,
+                self::FLD_LAST_UPDATE_SQLTYP
+            ];
         }
         if ($frm->view_id() <> $this->view_id()) {
             if ($do_log) {
-                $result[] = sql::FLD_LOG_FIELD_PREFIX . self::FLD_VIEW;
+                $lst[] = [
+                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_VIEW,
+                    $change_field_list->id($table_id . self::FLD_VIEW),
+                    change::FLD_FIELD_ID_SQLTYP
+                ];
             }
-            $result[] = self::FLD_VIEW;
+            $lst[] = [
+                self::FLD_VIEW,
+                $this->view_id(),
+                self::FLD_VIEW_SQLTYP
+            ];
         }
         if ($frm->usage() <> $this->usage()) {
             if ($do_log) {
-                $result[] = sql::FLD_LOG_FIELD_PREFIX . self::FLD_USAGE;
+                $lst[] = [
+                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_USAGE,
+                    $change_field_list->id($table_id . self::FLD_USAGE),
+                    change::FLD_FIELD_ID_SQLTYP
+                ];
             }
-            $result[] = self::FLD_USAGE;
+            $lst[] = [
+                self::FLD_USAGE,
+                $this->usage(),
+                self::FLD_USAGE_SQLTYP
+            ];
         }
-        return array_merge($result, $this->db_fields_changed_sandbox($frm, $sc_par_lst));
-    }
-
-    /**
-     * get a list of database field values that have been updated
-     *
-     * @param sandbox|formula $frm the compare value to detect the changed fields
-     * @param array $sc_par_lst the parameters for the sql statement creation
-     * @return array list of the database field values that have been updated
-     */
-    function db_values_changed(sandbox|formula $frm, array $sc_par_lst = []): array
-    {
-        // get the preloaded ids for logging
-        $sc = new sql();
-        $do_log = $sc->and_log($sc_par_lst);
-        $table_id = $sc->table_id($this::class);
-        global $change_field_list;
-
-        // create the value array
-        $result = parent::db_values_changed_named($frm, $sc_par_lst);
-        if ($frm->type_id() <> $this->type_id()) {
-            if ($do_log) {
-                $result[] = $change_field_list->id($table_id . self::FLD_TYPE);
-            }
-            $result[] = $this->type_id();
-        }
-        if ($frm->ref_text <> $this->ref_text) {
-            if ($do_log) {
-                $result[] = $change_field_list->id($table_id . self::FLD_FORMULA_TEXT);
-            }
-            $result[] = $this->ref_text;
-        }
-        if ($frm->usr_text <> $this->usr_text) {
-            if ($do_log) {
-                $result[] = $change_field_list->id($table_id . self::FLD_FORMULA_USER_TEXT);
-            }
-            $result[] = $this->usr_text;
-        }
-        if ($frm->need_all_val <> $this->need_all_val) {
-            if ($do_log) {
-                $result[] = $change_field_list->id($table_id . self::FLD_ALL_NEEDED);
-            }
-            $result[] = $this->need_all_val;
-        }
-        // TODO format for db?
-        if ($frm->last_update <> $this->last_update) {
-            if ($do_log) {
-                $result[] = $change_field_list->id($table_id . self::FLD_LAST_UPDATE);
-            }
-            $result[] = $this->last_update;
-        }
-        if ($frm->view_id() <> $this->view_id()) {
-            if ($do_log) {
-                $result[] = $change_field_list->id($table_id . self::FLD_VIEW);
-            }
-            $result[] = $this->view_id();
-        }
-        if ($frm->usage() <> $this->usage()) {
-            if ($do_log) {
-                $result[] = $change_field_list->id($table_id . self::FLD_USAGE);
-            }
-            $result[] = $this->usage();
-        }
-        return array_merge($result, $this->db_values_changed_sandbox($frm, $sc_par_lst));
+        return array_merge($lst, $this->db_changed_sandbox($frm, $sc_par_lst));
     }
 
 }
