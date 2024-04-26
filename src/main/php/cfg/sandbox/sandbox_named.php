@@ -1337,9 +1337,13 @@ class sandbox_named extends sandbox
 
 
         // create the query parameters for the actual change
+        $par_fld_val_typ_lst = [];
+        foreach ($par_name_lst as $key => $fld) {
+            $par_fld_val_typ_lst[] = [$fld, $par_value_lst[$key], $par_type_lst[$key]];
+        }
         $qp_chg = clone $qp;
         $qp_chg->sql = $sc->create_sql_update(
-            $id_fld, $id_val, $par_name_lst, $par_value_lst, $par_type_lst, $sc_par_lst);
+            $id_fld, $id_val, $par_fld_val_typ_lst, [], $sc_par_lst);
         $qp_chg->par = $val_lst;
 
         // merge all together and create the function

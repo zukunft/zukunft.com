@@ -6,13 +6,13 @@
 
 CREATE TABLE IF NOT EXISTS formula_link_types
 (
-    formula_link_type_id BIGSERIAL PRIMARY KEY,
+    formula_link_type_id SERIAL PRIMARY KEY,
     type_name            varchar(255)     NOT NULL,
     code_id              varchar(255) DEFAULT NULL,
     description          text         DEFAULT NULL,
     formula_id           bigint           NOT NULL,
-    phrase_type_id       bigint           NOT NULL,
-    link_type_id         bigint           NOT NULL
+    phrase_type_id       smallint         NOT NULL,
+    link_type_id         smallint         NOT NULL
 );
 
 COMMENT ON TABLE formula_link_types IS 'to assign predefined behaviour to a formula link';

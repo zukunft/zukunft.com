@@ -70,16 +70,16 @@ class view_term_link extends sandbox_link_typed
     const FLD_LST_LINK = array(
         [term::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, '', ''],
         [view::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, view::class, ''],
-        [self::FLD_TYPE, sql_field_type::INT_SMALL, sql_field_default::ONE, sql::INDEX, '', self::FLD_TYPE_COM],
+        [self::FLD_TYPE, type_object::FLD_ID_SQLTYP, sql_field_default::ONE, sql::INDEX, '', self::FLD_TYPE_COM],
     );
     // list of MANDATORY fields that CAN be CHANGEd by the user
     const FLD_LST_MUST_BUT_STD_ONLY = array(
-        [view_link_type::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, view_link_type::class, ''],
+        [view_link_type::FLD_ID, type_object::FLD_ID_SQLTYP, sql_field_default::NULL, sql::INDEX, view_link_type::class, ''],
         [sandbox_named::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQLTYP, sql_field_default::NULL, '', '', ''],
     );
     // list of fields that CAN be CHANGEd by the user
     const FLD_LST_MUST_BUT_USER_CAN_CHANGE = array(
-        [view_link_type::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, view_link_type::class, ''],
+        [view_link_type::FLD_ID, type_object::FLD_ID_SQLTYP, sql_field_default::NULL, sql::INDEX, view_link_type::class, ''],
         [sandbox_named::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQLTYP, sql_field_default::NULL, '', '', ''],
     );
 

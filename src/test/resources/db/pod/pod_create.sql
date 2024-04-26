@@ -10,9 +10,9 @@ CREATE TABLE IF NOT EXISTS pods
     type_name       varchar(255)     NOT NULL,
     code_id         varchar(255) DEFAULT NULL,
     description     text         DEFAULT NULL,
-    pod_type_id     bigint       DEFAULT NULL,
+    pod_type_id     smallint     DEFAULT NULL,
     pod_url         varchar(255)     NOT NULL,
-    pod_status_id   bigint       DEFAULT NULL,
+    pod_status_id   smallint     DEFAULT NULL,
     param_triple_id bigint       DEFAULT NULL
 );
 

@@ -2379,9 +2379,9 @@ class create_test_objects extends test_base
     /**
      * load a phrase group by the list of phrase names
      * @param array $array_of_phrase_str with the names of the words or triples
-     * @return group
+     * @return group|null
      */
-    function load_phrase_group(array $array_of_phrase_str): group
+    function load_phrase_group(array $array_of_phrase_str): ?group
     {
         return $this->load_phrase_list($array_of_phrase_str)->get_grp_id();
     }

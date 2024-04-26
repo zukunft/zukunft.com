@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS elements
     element_id BIGSERIAL PRIMARY KEY,
     formula_id      bigint           NOT NULL,
     order_nbr       bigint           NOT NULL,
-    element_type_id bigint           NOT NULL,
+    element_type_id smallint         NOT NULL,
     user_id         bigint       DEFAULT NULL,
     ref_id          bigint       DEFAULT NULL,
     resolved_text   varchar(255) DEFAULT NULL

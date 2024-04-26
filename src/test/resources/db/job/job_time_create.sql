@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS job_times
 (
     job_time_id BIGSERIAL PRIMARY KEY,
     schedule    varchar(20) DEFAULT NULL,
-    job_type_id bigint          NOT NULL,
+    job_type_id smallint        NOT NULL,
     user_id     bigint          NOT NULL,
     start       timestamp   DEFAULT NULL,
     parameter   bigint      DEFAULT NULL

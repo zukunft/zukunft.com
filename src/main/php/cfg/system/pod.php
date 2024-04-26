@@ -49,14 +49,15 @@ class pod extends type_object
     const TBL_COMMENT = 'for the technical details of the mash network pods';
     const FLD_ID_COM = 'the unique id of the pods within this pod database';
     const FLD_ID = 'pod_id';
+    const FLD_ID_SQLTYP = sql_field_type::INT; // overwrite the type object setting because the number of pods may be bigger
     const FLD_URL = 'pod_url';
     const FLD_PARAM = 'param_triple_id';
 
     // field lists for the table creation
     const FLD_LST_EXTRA = array(
-        [pod_type::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, pod_type::class, ''],
+        [pod_type::FLD_ID, type_object::FLD_ID_SQLTYP, sql_field_default::NULL, sql::INDEX, pod_type::class, ''],
         [self::FLD_URL, sql_field_type::NAME, sql_field_default::NOT_NULL, '', '', ''],
-        [pod_status::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, pod_status::class, ''],
+        [pod_status::FLD_ID, type_object::FLD_ID_SQLTYP, sql_field_default::NULL, sql::INDEX, pod_status::class, ''],
         [self::FLD_PARAM, sql_field_type::INT, sql_field_default::NULL, '', triple::class, '', triple::FLD_ID],
     );
 

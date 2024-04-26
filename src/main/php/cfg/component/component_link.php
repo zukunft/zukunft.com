@@ -49,6 +49,7 @@ use cfg\db\sql_type;
 use cfg\export\sandbox_exp;
 use cfg\sandbox;
 use cfg\sandbox_link_with_type;
+use cfg\type_object;
 use cfg\user;
 use cfg\view;
 use shared\library;
@@ -101,14 +102,14 @@ class component_link extends sandbox_link_with_type
     // list of MANDATORY fields that CAN be CHANGEd by the user
     const FLD_LST_MUST_BUT_STD_ONLY = array(
         [self::FLD_ORDER_NBR, sql_field_type::INT, sql_field_default::NOT_NULL, '', '', ''],
-        [component_link_type::FLD_ID, sql_field_type::INT, sql_field_default::ONE, sql::INDEX, component_link_type::class, ''],
-        [position_type::FLD_ID, sql_field_type::INT, sql_field_default::TWO, sql::INDEX, position_type::class, self::FLD_POS_COM],
+        [component_link_type::FLD_ID, type_object::FLD_ID_SQLTYP, sql_field_default::ONE, sql::INDEX, component_link_type::class, ''],
+        [position_type::FLD_ID, type_object::FLD_ID_SQLTYP, sql_field_default::TWO, sql::INDEX, position_type::class, self::FLD_POS_COM],
     );
     // list of fields that CAN be CHANGEd by the user
     const FLD_LST_MUST_BUT_USER_CAN_CHANGE = array(
         [self::FLD_ORDER_NBR, sql_field_type::INT, sql_field_default::NULL, '', '', ''],
-        [component_link_type::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, component_link_type::class, ''],
-        [position_type::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, position_type::class, self::FLD_POS_COM],
+        [component_link_type::FLD_ID, type_object::FLD_ID_SQLTYP, sql_field_default::NULL, sql::INDEX, component_link_type::class, ''],
+        [position_type::FLD_ID, type_object::FLD_ID_SQLTYP, sql_field_default::NULL, sql::INDEX, position_type::class, self::FLD_POS_COM],
     );
 
 

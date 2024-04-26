@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS system_times
     system_time_id BIGSERIAL PRIMARY KEY,
     start_time          timestamp     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     end_time            timestamp DEFAULT NULL,
-    system_time_type_id bigint        NOT NULL,
+    system_time_type_id smallint      NOT NULL,
     milliseconds        bigint        NOT NULL
 );
 

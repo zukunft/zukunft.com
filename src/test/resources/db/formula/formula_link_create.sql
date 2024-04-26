@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS formula_links
 (
     formula_link_id BIGSERIAL PRIMARY KEY,
     user_id         bigint   DEFAULT NULL,
-    link_type_id    bigint   DEFAULT NULL,
+    link_type_id    smallint DEFAULT NULL,
     order_nbr       bigint   DEFAULT NULL,
     formula_id      bigint       NOT NULL,
     phrase_id       bigint       NOT NULL,
@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS user_formula_links
 (
     formula_link_id bigint       NOT NULL,
     user_id         bigint       NOT NULL,
-    link_type_id    bigint   DEFAULT NULL,
+    link_type_id    smallint DEFAULT NULL,
     order_nbr       bigint   DEFAULT NULL,
     excluded        smallint DEFAULT NULL,
     share_type_id   smallint DEFAULT NULL,

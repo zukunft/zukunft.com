@@ -63,6 +63,7 @@ enum sql_type: string
     case VALUE_SELECT = 'value_select'; // use a select statement for the insert values
     case EXCLUDE = 'exclude'; // instead of delete create a sql to exclude one row
     case SANDBOX = 'sandbox'; // to include the standard sandbox fields in the sql statement
+    case KEY_SMALL_INT = 'key_small_int'; // use a smallint as the prime db key e.g. for types
 
     /**
      * @return string the name extension for the query name

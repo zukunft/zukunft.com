@@ -109,8 +109,8 @@ class sys_log extends db_object_seq_id
     // field lists for the table creation
     const FLD_LST_ALL = array(
         [self::FLD_TIME, sql_field_type::TIME, sql_field_default::TIME_NOT_NULL, sql::INDEX, '', self::FLD_TIME_COM],
-        [self::FLD_TYPE, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_TYPE_COM],
-        [self::FLD_FUNCTION, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, sys_log_function::class, self::FLD_FUNCTION_COM],
+        [self::FLD_TYPE, type_object::FLD_ID_SQLTYP, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_TYPE_COM],
+        [self::FLD_FUNCTION, type_object::FLD_ID_SQLTYP, sql_field_default::NOT_NULL, sql::INDEX, sys_log_function::class, self::FLD_FUNCTION_COM],
         [self::FLD_TEXT, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_TEXT_COM],
         [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQLTYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
         [self::FLD_TRACE, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_TRACE_COM],

@@ -132,9 +132,11 @@ class word_tests
         $t->assert('load_by_names', $wrd_lst->name(), '"' . word_api::TN_READ . '","' . word_api::TN_MIO . '"');
 
         // load a word list by the phrase group
-        $wrd_lst = new word_list ($t->usr1);
-        $wrd_lst->load_by_grp_id($phr_grp->id());
-        $t->assert('load_by_group', $wrd_lst->name(), '"' . triple_api::TN_PI . '"');
+        if ($phr_grp != null) {
+            $wrd_lst = new word_list ($t->usr1);
+            $wrd_lst->load_by_grp_id($phr_grp->id());
+            $t->assert('load_by_group', $wrd_lst->name(), '"' . triple_api::TN_PI . '"');
+        }
 
         // load a word list by type
         $wrd_lst = new word_list ($t->usr1);

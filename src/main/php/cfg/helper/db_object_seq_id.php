@@ -41,6 +41,7 @@ use cfg\db\sql;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
+use cfg\db\sql_type;
 
 class db_object_seq_id extends db_object
 {
@@ -196,18 +197,18 @@ class db_object_seq_id extends db_object
     protected function sql_all_field_par(sql $sc, array $sc_par_lst = []): array
     {
         $usr_tbl = $sc->is_usr_tbl($sc_par_lst);
+        $small_key =  in_array(sql_type::KEY_SMALL_INT, $sc_par_lst);
         $use_sandbox = $sc->use_sandbox_fields($sc_par_lst);
-        $fields = [];
         if (!$usr_tbl) {
             if ($use_sandbox) {
-                $fields = array_merge($this->sql_id_field_par(false), sandbox::FLD_ALL_OWNER);
+                $fields = array_merge($this->sql_id_field_par(false, $small_key), sandbox::FLD_ALL_OWNER);
                 $fields = array_merge($fields, $this::FLD_LST_MUST_BE_IN_STD);
             } else {
-                $fields = array_merge($this->sql_id_field_par(false), $this::FLD_LST_ALL);
+                $fields = array_merge($this->sql_id_field_par(false, $small_key), $this::FLD_LST_ALL);
                 $fields = array_merge($fields, $this::FLD_LST_EXTRA);
             }
         } else {
-            $fields = array_merge($this->sql_id_field_par(true), sandbox::FLD_ALL_CHANGER);
+            $fields = array_merge($this->sql_id_field_par(true, $small_key), sandbox::FLD_ALL_CHANGER);
             $fields = array_merge($fields, $this::FLD_LST_MUST_BUT_USER_CAN_CHANGE);
         }
         $fields = array_merge($fields, $this::FLD_LST_USER_CAN_CHANGE);
@@ -223,22 +224,30 @@ class db_object_seq_id extends db_object
     /**
      * @return array[] with the parameters of the table key field
      */
-    protected function sql_id_field_par(bool $usr_table = false): array
+    protected function sql_id_field_par(bool $usr_table = false, bool $small_key = false): array
     {
-        if (!$usr_table) {
+        if ($usr_table) {
+            $fld_typ = sql_field_type::KEY_PART_INT;
+            if ($small_key) {
+                $fld_typ = sql_field_type::KEY_PART_INT_SMALL;
+            }
             return array([
                 $this->id_field(),
-                sql_field_type::KEY_INT,
-                sql_field_default::NOT_NULL,
-                '', '',
-                'the internal unique primary index']);
-        } else {
-            return array([
-                $this->id_field(),
-                sql_field_type::KEY_PART_INT,
+                $fld_typ,
                 sql_field_default::NOT_NULL,
                 sql::INDEX, $this::class,
                 'with the user_id the internal unique primary index']);
+        } else {
+            $fld_typ = sql_field_type::KEY_INT;
+            if ($small_key) {
+                $fld_typ = sql_field_type::KEY_INT_SMALL;
+            }
+            return array([
+                $this->id_field(),
+                $fld_typ,
+                sql_field_default::NOT_NULL,
+                '', '',
+                'the internal unique primary index']);
         }
     }
 

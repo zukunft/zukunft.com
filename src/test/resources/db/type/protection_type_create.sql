@@ -6,7 +6,7 @@
 
 CREATE TABLE IF NOT EXISTS protection_types
 (
-    protection_type_id BIGSERIAL PRIMARY KEY,
+    protection_type_id SERIAL PRIMARY KEY,
     type_name          varchar(255) NOT NULL,
     code_id            varchar(255) DEFAULT NULL,
     description        text         DEFAULT NULL

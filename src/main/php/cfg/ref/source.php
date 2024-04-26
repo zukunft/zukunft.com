@@ -95,7 +95,6 @@ class source extends sandbox_typed
     const FLD_DESCRIPTION_COM = 'the user specific description of the source for mouse over helps';
     const FLD_TYPE_COM = 'link to the source type';
     const FLD_TYPE = 'source_type_id';
-    const FLD_TYPE_SQLTYP = sql_field_type::INT;
     const FLD_URL_COM = 'the url of the source';
     const FLD_URL = 'url';
     const FLD_URL_SQLTYP = sql_field_type::TEXT;
@@ -112,7 +111,7 @@ class source extends sandbox_typed
     // list of fields that can be changed by the user
     const FLD_LST_USER_CAN_CHANGE = array(
         [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQLTYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
-        [self::FLD_TYPE, self::FLD_TYPE_SQLTYP, sql_field_default::NULL, sql::INDEX, source_type::class, self::FLD_TYPE_COM],
+        [self::FLD_TYPE, type_object::FLD_ID_SQLTYP, sql_field_default::NULL, sql::INDEX, source_type::class, self::FLD_TYPE_COM],
         [self::FLD_URL, self::FLD_URL_SQLTYP, sql_field_default::NULL, '', '', self::FLD_URL_COM],
         [sql::FLD_CODE_ID, sql_field_type::CODE_ID, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
     );
@@ -717,7 +716,7 @@ class source extends sandbox_typed
             $lst[] = [
                 self::FLD_TYPE,
                 $this->type_id(),
-                self::FLD_TYPE_SQLTYP
+                type_object::FLD_ID_SQLTYP
             ];
         }
         if ($sbx->url <> $this->url) {

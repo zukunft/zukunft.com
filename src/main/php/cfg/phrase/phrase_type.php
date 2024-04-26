@@ -82,7 +82,6 @@ class phrase_type extends type_object
     const TBL_COMMENT = 'for the phrase type to set the predefined behaviour of a word or triple';
 
     // database and JSON object field names additional to the type field only for phrase types
-    const FLD_ID = 'phrase_type_id';
     const FLD_SCALE_COM = 'e.g. for percent the scaling factor is 100';
     const FLD_SCALE = 'scaling_factor';
     const FLD_SYMBOL_COM = 'e.g. for percent the symbol is %';

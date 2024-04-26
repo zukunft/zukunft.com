@@ -32,7 +32,7 @@ COMMENT ON COLUMN config.description IS 'text to explain the config value to an 
 
 CREATE TABLE IF NOT EXISTS sys_log_types
 (
-    sys_log_type_id BIGSERIAL PRIMARY KEY,
+    sys_log_type_id SERIAL PRIMARY KEY,
     type_name         varchar(255)     NOT NULL,
     code_id           varchar(255) DEFAULT NULL,
     description       text         DEFAULT NULL
@@ -52,7 +52,7 @@ COMMENT ON COLUMN sys_log_types.description IS 'text to explain the type to the 
 
 CREATE TABLE IF NOT EXISTS sys_log_status
 (
-    sys_log_status_id BIGSERIAL PRIMARY KEY,
+    sys_log_status_id SERIAL PRIMARY KEY,
     type_name         varchar(255)     NOT NULL,
     code_id           varchar(255) DEFAULT NULL,
     description       text         DEFAULT NULL,
@@ -75,7 +75,7 @@ COMMENT ON COLUMN sys_log_status.action IS 'description of the action to get to 
 
 CREATE TABLE IF NOT EXISTS sys_log_functions
 (
-    sys_log_function_id   BIGSERIAL PRIMARY KEY,
+    sys_log_function_id   SERIAL PRIMARY KEY,
     sys_log_function_name varchar(255)     NOT NULL,
     code_id               varchar(255) DEFAULT NULL,
     description           text         DEFAULT NULL
@@ -97,8 +97,8 @@ CREATE TABLE IF NOT EXISTS sys_log
 (
     sys_log_id          BIGSERIAL PRIMARY KEY,
     sys_log_time        timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    sys_log_type_id     bigint     NOT NULL,
-    sys_log_function_id bigint     NOT NULL,
+    sys_log_type_id     smallint   NOT NULL,
+    sys_log_function_id smallint   NOT NULL,
     sys_log_text        text   DEFAULT NULL,
     sys_log_description text   DEFAULT NULL,
     sys_log_trace       text   DEFAULT NULL,
@@ -126,7 +126,7 @@ COMMENT ON COLUMN sys_log.solver_id IS 'user id of the user that is trying to so
 
 CREATE TABLE IF NOT EXISTS system_time_types
 (
-    system_time_type_id BIGSERIAL PRIMARY KEY,
+    system_time_type_id SERIAL PRIMARY KEY,
     type_name           varchar(255) NOT NULL,
     code_id             varchar(255) DEFAULT NULL,
     description         text         DEFAULT NULL
@@ -149,7 +149,7 @@ CREATE TABLE IF NOT EXISTS system_times
     system_time_id BIGSERIAL PRIMARY KEY,
     start_time          timestamp     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     end_time            timestamp DEFAULT NULL,
-    system_time_type_id bigint        NOT NULL,
+    system_time_type_id smallint      NOT NULL,
     milliseconds        bigint        NOT NULL
 );
 
@@ -168,7 +168,7 @@ COMMENT ON COLUMN system_times.milliseconds IS 'the execution time in millisecon
 
 CREATE TABLE IF NOT EXISTS job_types
 (
-    job_type_id BIGSERIAL PRIMARY KEY,
+    job_type_id SERIAL PRIMARY KEY,
     type_name   varchar(255) NOT NULL,
     code_id     varchar(255) DEFAULT NULL,
     description text         DEFAULT NULL
@@ -190,7 +190,7 @@ CREATE TABLE IF NOT EXISTS job_times
 (
     job_time_id BIGSERIAL PRIMARY KEY,
     schedule    varchar(20) DEFAULT NULL,
-    job_type_id bigint          NOT NULL,
+    job_type_id smallint        NOT NULL,
     user_id     bigint          NOT NULL,
     start       timestamp   DEFAULT NULL,
     parameter   bigint      DEFAULT NULL
@@ -214,12 +214,12 @@ CREATE TABLE IF NOT EXISTS jobs
 (
     job_id BIGSERIAL PRIMARY KEY,
     user_id         bigint        NOT NULL,
-    job_type_id     bigint        NOT NULL,
+    job_type_id     smallint      NOT NULL,
     request_time    timestamp     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     start_time      timestamp DEFAULT NULL,
     end_time        timestamp DEFAULT NULL,
     parameter       bigint    DEFAULT NULL,
-    change_field_id bigint    DEFAULT NULL,
+    change_field_id smallint  DEFAULT NULL,
     row_id          bigint    DEFAULT NULL,
     source_id       bigint    DEFAULT NULL,
     ref_id          bigint    DEFAULT NULL
@@ -246,7 +246,7 @@ COMMENT ON COLUMN jobs.ref_id IS 'used for import to link the reference';
 
 CREATE TABLE IF NOT EXISTS user_types
 (
-    user_type_id BIGSERIAL PRIMARY KEY,
+    user_type_id SERIAL PRIMARY KEY,
     type_name    varchar(255) NOT NULL,
     code_id      varchar(255) DEFAULT NULL,
     description  text DEFAULT NULL
@@ -266,7 +266,7 @@ COMMENT ON COLUMN user_types.description IS 'text to explain the type to the use
 
 CREATE TABLE IF NOT EXISTS user_profiles
 (
-    user_profile_id BIGSERIAL PRIMARY KEY,
+    user_profile_id SERIAL PRIMARY KEY,
     type_name    varchar(255) NOT NULL,
     code_id      varchar(255) DEFAULT NULL,
     description  text         DEFAULT NULL,
@@ -288,7 +288,7 @@ COMMENT ON COLUMN user_profiles.right_level IS 'the access right level to preven
 
 CREATE TABLE IF NOT EXISTS user_official_types
 (
-    user_official_type_id BIGSERIAL PRIMARY KEY,
+    user_official_type_id SERIAL PRIMARY KEY,
     type_name             varchar(255) NOT NULL,
     code_id               varchar(255) DEFAULT NULL,
     description           text         DEFAULT NULL
@@ -409,7 +409,7 @@ COMMENT ON COLUMN sessions.uid IS 'the user session id as get by the frontend';
 
 CREATE TABLE IF NOT EXISTS change_actions
 (
-    change_action_id BIGSERIAL PRIMARY KEY,
+    change_action_id   SERIAL PRIMARY KEY,
     change_action_name varchar(255) NOT NULL,
     code_id            varchar(255) NOT NULL,
     description        text     DEFAULT NULL
@@ -426,7 +426,7 @@ COMMENT ON COLUMN change_actions.change_action_id IS 'the internal unique primar
 
 CREATE TABLE IF NOT EXISTS change_tables
 (
-    change_table_id   BIGSERIAL PRIMARY KEY,
+    change_table_id   SERIAL PRIMARY KEY,
     change_table_name varchar(255)     NOT NULL,
     code_id           varchar(255) DEFAULT NULL,
     description       text         DEFAULT NULL
@@ -446,7 +446,7 @@ COMMENT ON COLUMN change_tables.description IS 'the user readable name';
 
 CREATE TABLE IF NOT EXISTS change_fields
 (
-    change_field_id   BIGSERIAL PRIMARY KEY,
+    change_field_id   SERIAL PRIMARY KEY,
     table_id          bigint           NOT NULL,
     change_field_name varchar(255)     NOT NULL,
     code_id           varchar(255) DEFAULT NULL,
@@ -472,7 +472,7 @@ CREATE TABLE IF NOT EXISTS changes
     user_id          bigint     NOT NULL,
     change_action_id smallint   NOT NULL,
     row_id           bigint DEFAULT NULL,
-    change_field_id  bigint     NOT NULL,
+    change_field_id  smallint   NOT NULL,
     old_value        text   DEFAULT NULL,
     new_value        text   DEFAULT NULL,
     old_id           bigint DEFAULT NULL,
@@ -501,7 +501,7 @@ CREATE TABLE IF NOT EXISTS change_prime_values
     user_id          bigint    NOT NULL,
     change_action_id smallint  NOT NULL,
     group_id         bigint    NOT NULL,
-    change_field_id  bigint    NOT NULL,
+    change_field_id  smallint  NOT NULL,
     old_value        double precision DEFAULT NULL,
     new_value        double precision DEFAULT NULL
 );
@@ -525,7 +525,7 @@ CREATE TABLE IF NOT EXISTS change_norm_values
     user_id          bigint    NOT NULL,
     change_action_id smallint  NOT NULL,
     group_id         char(112) NOT NULL,
-    change_field_id  bigint    NOT NULL,
+    change_field_id  smallint  NOT NULL,
     old_value        double precision DEFAULT NULL,
     new_value        double precision DEFAULT NULL
 );
@@ -549,7 +549,7 @@ CREATE TABLE IF NOT EXISTS change_big_values
     user_id          bigint    NOT NULL,
     change_action_id smallint  NOT NULL,
     group_id         text      NOT NULL,
-    change_field_id  bigint    NOT NULL,
+    change_field_id  smallint  NOT NULL,
     old_value        double precision DEFAULT NULL,
     new_value        double precision DEFAULT NULL
 );
@@ -605,7 +605,7 @@ COMMENT ON COLUMN change_links.new_text_to IS 'the fixed text to display to the 
 
 CREATE TABLE IF NOT EXISTS pod_types
 (
-    pod_type_id BIGSERIAL PRIMARY KEY,
+    pod_type_id SERIAL PRIMARY KEY,
     type_name   varchar(255)     NOT NULL,
     code_id     varchar(255) DEFAULT NULL,
     description text         DEFAULT NULL
@@ -625,7 +625,7 @@ COMMENT ON COLUMN pod_types.description IS 'text to explain the type to the user
 
 CREATE TABLE IF NOT EXISTS pod_status
 (
-    pod_status_id BIGSERIAL PRIMARY KEY,
+    pod_status_id SERIAL PRIMARY KEY,
     type_name     varchar(255)     NOT NULL,
     code_id       varchar(255) DEFAULT NULL,
     description   text         DEFAULT NULL
@@ -649,9 +649,9 @@ CREATE TABLE IF NOT EXISTS pods
     type_name       varchar(255)     NOT NULL,
     code_id         varchar(255) DEFAULT NULL,
     description     text         DEFAULT NULL,
-    pod_type_id     bigint       DEFAULT NULL,
+    pod_type_id     smallint     DEFAULT NULL,
     pod_url         varchar(255)     NOT NULL,
-    pod_status_id   bigint       DEFAULT NULL,
+    pod_status_id   smallint     DEFAULT NULL,
     param_triple_id bigint       DEFAULT NULL
 );
 
@@ -669,7 +669,7 @@ COMMENT ON COLUMN pods.description IS 'text to explain the type to the user as a
 
 CREATE TABLE IF NOT EXISTS protection_types
 (
-    protection_type_id BIGSERIAL PRIMARY KEY,
+    protection_type_id SERIAL PRIMARY KEY,
     type_name          varchar(255) NOT NULL,
     code_id            varchar(255) DEFAULT NULL,
     description        text         DEFAULT NULL
@@ -689,7 +689,7 @@ COMMENT ON COLUMN protection_types.description IS 'text to explain the type to t
 
 CREATE TABLE IF NOT EXISTS share_types
 (
-    share_type_id BIGSERIAL PRIMARY KEY,
+    share_type_id SERIAL PRIMARY KEY,
     type_name     varchar(255) NOT NULL,
     code_id       varchar(255) DEFAULT NULL,
     description   text         DEFAULT NULL
@@ -709,7 +709,7 @@ COMMENT ON COLUMN share_types.description IS 'text to explain the type to the us
 
 CREATE TABLE IF NOT EXISTS languages
 (
-    language_id    BIGSERIAL PRIMARY KEY,
+    language_id    SERIAL PRIMARY KEY,
     language_name  varchar(255)     NOT NULL,
     code_id        varchar(100) DEFAULT NULL,
     description    text         DEFAULT NULL,
@@ -727,7 +727,7 @@ COMMENT ON COLUMN languages.language_id IS 'the internal unique primary index';
 
 CREATE TABLE IF NOT EXISTS language_forms
 (
-    language_form_id   BIGSERIAL PRIMARY KEY,
+    language_form_id   SERIAL PRIMARY KEY,
     language_form_name varchar(255) DEFAULT NULL,
     code_id            varchar(100) DEFAULT NULL,
     description        text         DEFAULT NULL,
@@ -751,7 +751,7 @@ CREATE TABLE IF NOT EXISTS words
     word_name      varchar(255) NOT NULL,
     plural         varchar(255)          DEFAULT NULL,
     description    text                  DEFAULT NULL,
-    phrase_type_id bigint                DEFAULT NULL,
+    phrase_type_id smallint              DEFAULT NULL,
     view_id        bigint                DEFAULT NULL,
     values         bigint                DEFAULT NULL,
     inactive       smallint              DEFAULT NULL,
@@ -788,7 +788,7 @@ CREATE TABLE IF NOT EXISTS user_words
     word_name      varchar(255)      DEFAULT NULL,
     plural         varchar(255)      DEFAULT NULL,
     description    text              DEFAULT NULL,
-    phrase_type_id bigint            DEFAULT NULL,
+    phrase_type_id smallint          DEFAULT NULL,
     view_id        bigint            DEFAULT NULL,
     values         bigint            DEFAULT NULL,
     excluded       smallint          DEFAULT NULL,
@@ -818,7 +818,7 @@ COMMENT ON COLUMN user_words.protect_id IS 'to protect against unwanted changes'
 
 CREATE TABLE IF NOT EXISTS verbs
 (
-    verb_id             BIGSERIAL PRIMARY KEY,
+    verb_id             SERIAL PRIMARY KEY,
     verb_name           varchar(255)     NOT NULL,
     code_id             varchar(255) DEFAULT NULL,
     description         text         DEFAULT NULL,
@@ -857,7 +857,7 @@ CREATE TABLE IF NOT EXISTS triples
     name_generated      varchar(255)      DEFAULT NULL,
     description         text              DEFAULT NULL,
     triple_condition_id bigint            DEFAULT NULL,
-    phrase_type_id      bigint            DEFAULT NULL,
+    phrase_type_id      smallint          DEFAULT NULL,
     view_id             bigint            DEFAULT NULL,
     values              bigint            DEFAULT NULL,
     inactive            smallint          DEFAULT NULL,
@@ -901,7 +901,7 @@ CREATE TABLE IF NOT EXISTS user_triples
     name_generated      varchar(255)      DEFAULT NULL,
     description         text              DEFAULT NULL,
     triple_condition_id bigint            DEFAULT NULL,
-    phrase_type_id      bigint            DEFAULT NULL,
+    phrase_type_id      smallint          DEFAULT NULL,
     view_id             bigint            DEFAULT NULL,
     values              bigint            DEFAULT NULL,
     excluded            smallint          DEFAULT NULL,
@@ -933,7 +933,7 @@ COMMENT ON COLUMN user_triples.protect_id IS 'to protect against unwanted change
 
 CREATE TABLE IF NOT EXISTS phrase_table_status
 (
-    phrase_table_status_id BIGSERIAL PRIMARY KEY,
+    phrase_table_status_id SERIAL PRIMARY KEY,
     type_name     varchar(255)     NOT NULL,
     code_id       varchar(255) DEFAULT NULL,
     description   text         DEFAULT NULL
@@ -972,7 +972,7 @@ COMMENT ON COLUMN phrase_tables.pod_id IS 'the primary pod where the values and 
 
 CREATE TABLE IF NOT EXISTS phrase_types
 (
-    phrase_type_id BIGSERIAL PRIMARY KEY,
+    phrase_type_id SERIAL PRIMARY KEY,
     type_name      varchar(255) NOT NULL,
     code_id        varchar(255) DEFAULT NULL,
     description    text         DEFAULT NULL,
@@ -1106,7 +1106,7 @@ COMMENT ON COLUMN user_groups_big.description IS 'the user specific description 
 
 CREATE TABLE IF NOT EXISTS source_types
 (
-    source_type_id BIGSERIAL PRIMARY KEY,
+    source_type_id SERIAL PRIMARY KEY,
     type_name      varchar(255) NOT NULL,
     code_id        varchar(255) DEFAULT NULL,
     description    text         DEFAULT NULL
@@ -1130,7 +1130,7 @@ CREATE TABLE IF NOT EXISTS sources
     user_id        bigint       DEFAULT NULL,
     source_name    varchar(255)     NOT NULL,
     description    text         DEFAULT NULL,
-    source_type_id bigint       DEFAULT NULL,
+    source_type_id smallint     DEFAULT NULL,
     url            text         DEFAULT NULL,
     code_id        varchar(100) DEFAULT NULL,
     excluded       smallint     DEFAULT NULL,
@@ -1160,7 +1160,7 @@ CREATE TABLE IF NOT EXISTS user_sources
     user_id        bigint           NOT NULL,
     source_name    varchar(255) DEFAULT NULL,
     description    text         DEFAULT NULL,
-    source_type_id bigint       DEFAULT NULL,
+    source_type_id smallint     DEFAULT NULL,
     url            text         DEFAULT NULL,
     code_id        varchar(100) DEFAULT NULL,
     excluded       smallint     DEFAULT NULL,
@@ -1188,7 +1188,7 @@ COMMENT ON COLUMN user_sources.protect_id     IS 'to protect against unwanted ch
 
 CREATE TABLE IF NOT EXISTS ref_types
 (
-    ref_type_id BIGSERIAL PRIMARY KEY,
+    ref_type_id SERIAL PRIMARY KEY,
     type_name   varchar(255)     NOT NULL,
     code_id     varchar(255) DEFAULT NULL,
     description text         DEFAULT NULL,
@@ -2314,7 +2314,7 @@ COMMENT ON COLUMN value_ts_data.number IS 'the configuration value as a string';
 
 CREATE TABLE IF NOT EXISTS element_types
 (
-    element_type_id BIGSERIAL PRIMARY KEY,
+    element_type_id SERIAL PRIMARY KEY,
     type_name       varchar(255) NOT NULL,
     code_id         varchar(255) DEFAULT NULL,
     description     text         DEFAULT NULL
@@ -2337,7 +2337,7 @@ CREATE TABLE IF NOT EXISTS elements
     element_id BIGSERIAL PRIMARY KEY,
     formula_id      bigint           NOT NULL,
     order_nbr       bigint           NOT NULL,
-    element_type_id bigint           NOT NULL,
+    element_type_id smallint         NOT NULL,
     user_id         bigint       DEFAULT NULL,
     ref_id          bigint       DEFAULT NULL,
     resolved_text   varchar(255) DEFAULT NULL
@@ -2356,7 +2356,7 @@ COMMENT ON COLUMN elements.ref_id IS 'either a term, verb or formula id';
 
 CREATE TABLE IF NOT EXISTS formula_types
 (
-    formula_type_id BIGSERIAL PRIMARY KEY,
+    formula_type_id SERIAL PRIMARY KEY,
     type_name       varchar(255) NOT NULL,
     code_id         varchar(255) DEFAULT NULL,
     description     text         DEFAULT NULL
@@ -2455,13 +2455,13 @@ COMMENT ON COLUMN user_formulas.protect_id IS 'to protect against unwanted chang
 
 CREATE TABLE IF NOT EXISTS formula_link_types
 (
-    formula_link_type_id BIGSERIAL PRIMARY KEY,
+    formula_link_type_id SERIAL PRIMARY KEY,
     type_name            varchar(255)     NOT NULL,
     code_id              varchar(255) DEFAULT NULL,
     description          text         DEFAULT NULL,
     formula_id           bigint           NOT NULL,
-    phrase_type_id       bigint           NOT NULL,
-    link_type_id         bigint           NOT NULL
+    phrase_type_id       smallint         NOT NULL,
+    link_type_id         smallint         NOT NULL
 );
 
 COMMENT ON TABLE formula_link_types IS 'to assign predefined behaviour to a formula link';
@@ -2480,7 +2480,7 @@ CREATE TABLE IF NOT EXISTS formula_links
 (
     formula_link_id BIGSERIAL PRIMARY KEY,
     user_id         bigint   DEFAULT NULL,
-    link_type_id    bigint   DEFAULT NULL,
+    link_type_id    smallint DEFAULT NULL,
     order_nbr       bigint   DEFAULT NULL,
     formula_id      bigint       NOT NULL,
     phrase_id       bigint       NOT NULL,
@@ -2504,7 +2504,7 @@ CREATE TABLE IF NOT EXISTS user_formula_links
 (
     formula_link_id bigint       NOT NULL,
     user_id         bigint       NOT NULL,
-    link_type_id    bigint   DEFAULT NULL,
+    link_type_id    smallint DEFAULT NULL,
     order_nbr       bigint   DEFAULT NULL,
     excluded        smallint DEFAULT NULL,
     share_type_id   smallint DEFAULT NULL,
@@ -4057,7 +4057,7 @@ COMMENT ON COLUMN user_results_time_series_big.protect_id            IS 'to prot
 
 CREATE TABLE IF NOT EXISTS view_types
 (
-    view_type_id BIGSERIAL PRIMARY KEY,
+    view_type_id SERIAL PRIMARY KEY,
     type_name    varchar(255)     NOT NULL,
     code_id      varchar(255) DEFAULT NULL,
     description  text         DEFAULT NULL
@@ -4081,7 +4081,7 @@ CREATE TABLE IF NOT EXISTS views
     user_id       bigint       DEFAULT NULL,
     view_name     varchar(255)     NOT NULL,
     description   text         DEFAULT NULL,
-    view_type_id  bigint       DEFAULT NULL,
+    view_type_id  smallint     DEFAULT NULL,
     code_id       varchar(255) DEFAULT NULL,
     excluded      smallint     DEFAULT NULL,
     share_type_id smallint     DEFAULT NULL,
@@ -4110,7 +4110,7 @@ CREATE TABLE IF NOT EXISTS user_views
     language_id   bigint   NOT NULL DEFAULT 1,
     view_name     varchar(255)      DEFAULT NULL,
     description   text              DEFAULT NULL,
-    view_type_id  bigint            DEFAULT NULL,
+    view_type_id  smallint          DEFAULT NULL,
     excluded      smallint          DEFAULT NULL,
     share_type_id smallint          DEFAULT NULL,
     protect_id    smallint          DEFAULT NULL
@@ -4135,7 +4135,7 @@ COMMENT ON COLUMN user_views.protect_id IS 'to protect against unwanted changes'
 
 CREATE TABLE IF NOT EXISTS view_link_types
 (
-    view_link_type_id BIGSERIAL PRIMARY KEY,
+    view_link_type_id SERIAL PRIMARY KEY,
     type_name   varchar(255)     NOT NULL,
     code_id     varchar(255) DEFAULT NULL,
     description text         DEFAULT NULL
@@ -4160,7 +4160,7 @@ CREATE TABLE IF NOT EXISTS view_term_links
     view_id           bigint             NOT NULL,
     type_id           smallint NOT NULL DEFAULT 1,
     user_id           bigint         DEFAULT NULL,
-    view_link_type_id bigint         DEFAULT NULL,
+    view_link_type_id smallint       DEFAULT NULL,
     description       text           DEFAULT NULL,
     excluded          smallint       DEFAULT NULL,
     share_type_id     smallint       DEFAULT NULL,
@@ -4183,7 +4183,7 @@ CREATE TABLE IF NOT EXISTS user_view_term_links
 (
     view_term_link_id bigint       NOT NULL,
     user_id           bigint       NOT NULL,
-    view_link_type_id bigint   DEFAULT NULL,
+    view_link_type_id smallint DEFAULT NULL,
     description       text     DEFAULT NULL,
     excluded          smallint DEFAULT NULL,
     share_type_id     smallint DEFAULT NULL,
@@ -4205,7 +4205,7 @@ COMMENT ON COLUMN user_view_term_links.protect_id IS 'to protect against unwante
 
 CREATE TABLE IF NOT EXISTS component_link_types
 (
-    component_link_type_id BIGSERIAL PRIMARY KEY,
+    component_link_type_id SERIAL PRIMARY KEY,
     type_name   varchar(255)     NOT NULL,
     code_id     varchar(255) DEFAULT NULL,
     description text         DEFAULT NULL
@@ -4225,7 +4225,7 @@ COMMENT ON COLUMN component_link_types.description IS 'text to explain the type 
 
 CREATE TABLE IF NOT EXISTS position_types
 (
-    position_type_id BIGSERIAL PRIMARY KEY,
+    position_type_id SERIAL PRIMARY KEY,
     type_name   varchar(255)     NOT NULL,
     code_id     varchar(255) DEFAULT NULL,
     description text         DEFAULT NULL
@@ -4245,7 +4245,7 @@ COMMENT ON COLUMN position_types.description IS 'text to explain the type to the
 
 CREATE TABLE IF NOT EXISTS component_types
 (
-    component_type_id BIGSERIAL PRIMARY KEY,
+    component_type_id SERIAL PRIMARY KEY,
     type_name   varchar(255)     NOT NULL,
     code_id     varchar(255) DEFAULT NULL,
     description text         DEFAULT NULL
@@ -4269,14 +4269,14 @@ CREATE TABLE IF NOT EXISTS components
     user_id                     bigint       DEFAULT NULL,
     component_name              varchar(255)     NOT NULL,
     description                 text         DEFAULT NULL,
-    component_type_id           bigint       DEFAULT NULL,
+    component_type_id           smallint     DEFAULT NULL,
     word_id_row                 bigint       DEFAULT NULL,
     formula_id                  bigint       DEFAULT NULL,
     word_id_col                 bigint       DEFAULT NULL,
     word_id_col2                bigint       DEFAULT NULL,
     linked_component_id         bigint       DEFAULT NULL,
-    component_link_type_id      bigint       DEFAULT NULL,
-    link_type_id                bigint       DEFAULT NULL,
+    component_link_type_id      smallint     DEFAULT NULL,
+    link_type_id                smallint     DEFAULT NULL,
     code_id                     varchar(255) DEFAULT NULL,
     ui_msg_code_id              varchar(255) DEFAULT NULL,
     excluded                    smallint     DEFAULT NULL,
@@ -4313,14 +4313,14 @@ CREATE TABLE IF NOT EXISTS user_components
     user_id                bigint           NOT NULL,
     component_name         varchar(255) DEFAULT NULL,
     description            text         DEFAULT NULL,
-    component_type_id      bigint       DEFAULT NULL,
+    component_type_id      smallint     DEFAULT NULL,
     word_id_row            bigint       DEFAULT NULL,
     formula_id             bigint       DEFAULT NULL,
     word_id_col            bigint       DEFAULT NULL,
     word_id_col2           bigint       DEFAULT NULL,
     linked_component_id    bigint       DEFAULT NULL,
-    component_link_type_id bigint       DEFAULT NULL,
-    link_type_id           bigint       DEFAULT NULL,
+    component_link_type_id smallint     DEFAULT NULL,
+    link_type_id           smallint     DEFAULT NULL,
     excluded               smallint     DEFAULT NULL,
     share_type_id          smallint     DEFAULT NULL,
     protect_id             smallint     DEFAULT NULL
@@ -4356,8 +4356,8 @@ CREATE TABLE IF NOT EXISTS component_links
     component_id               bigint       NOT NULL,
     user_id                    bigint   DEFAULT NULL,
     order_nbr                  bigint       NOT NULL,
-    component_link_type_id     bigint   NOT NULL DEFAULT 1,
-    position_type_id           bigint   NOT NULL DEFAULT 2,
+    component_link_type_id     smallint NOT NULL DEFAULT 1,
+    position_type_id           smallint NOT NULL DEFAULT 2,
     excluded                   smallint DEFAULT NULL,
     share_type_id              smallint DEFAULT NULL,
     protect_id                 smallint DEFAULT NULL
@@ -4380,8 +4380,8 @@ CREATE TABLE IF NOT EXISTS user_component_links
     component_link_id      bigint       NOT NULL,
     user_id                bigint       NOT NULL,
     order_nbr              bigint   DEFAULT NULL,
-    component_link_type_id bigint   DEFAULT NULL,
-    position_type_id       bigint   DEFAULT NULL,
+    component_link_type_id smallint DEFAULT NULL,
+    position_type_id       smallint DEFAULT NULL,
     excluded               smallint DEFAULT NULL,
     share_type_id          smallint DEFAULT NULL,
     protect_id             smallint DEFAULT NULL

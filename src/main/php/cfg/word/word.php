@@ -1851,7 +1851,7 @@ class word extends sandbox_typed
             $fld_val_typ_lst[] = [
                 change_action::FLD_ID,
                 $change_action_list->id(change_action::ADD),
-                change::FLD_FIELD_ID_SQLTYP
+                type_object::FLD_ID_SQLTYP
             ];
         }
         return parent::sql_insert_named($sc, $fld_val_typ_lst, $all_fields, $sc_par_lst);

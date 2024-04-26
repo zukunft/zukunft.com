@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS change_prime_values
     user_id          bigint     NOT NULL COMMENT 'reference to the user who has done the change',
     change_action_id smallint   NOT NULL COMMENT 'the curl action',
     group_id         bigint     NOT NULL,
-    change_field_id  bigint     NOT NULL,
+    change_field_id  smallint   NOT NULL,
     old_value        double DEFAULT NULL,
     new_value        double DEFAULT NULL
 )

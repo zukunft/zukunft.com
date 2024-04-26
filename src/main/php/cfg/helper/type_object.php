@@ -51,6 +51,8 @@ use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
+use cfg\db\sql_par_type;
+use cfg\db\sql_type;
 use cfg\log\change_action;
 use cfg\log\change_table;
 use cfg\log\change_table_field;
@@ -69,6 +71,7 @@ class type_object extends db_object_seq_id implements JsonSerializable
 
     // database and JSON object field names
     const FLD_ID_COM = 'the database id is also used as the array pointer';
+    const FLD_ID_SQLTYP = sql_field_type::INT_SMALL;
     const FLD_NAME_COM = 'the unique type name as shown to the user and used for the selection';
     const FLD_NAME = 'type_name';
     const FLD_CODE_ID_COM = 'this id text is unique for all code links, is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
@@ -238,7 +241,12 @@ class type_object extends db_object_seq_id implements JsonSerializable
     function sql_table(sql $sc): string
     {
         $sql = $sc->sql_separator();
-        $sql .= $this->sql_table_create($sc);
+        // the pod is a type object but the number of pods might be significant higher than the number of types
+        if ($this:: class == pod::class) {
+            $sql .= $this->sql_table_create($sc);
+        } else {
+            $sql .= $this->sql_table_create($sc, [sql_type::KEY_SMALL_INT]);
+        }
         return $sql;
     }
 

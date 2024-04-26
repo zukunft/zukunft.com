@@ -8,8 +8,8 @@ CREATE TABLE IF NOT EXISTS sys_log
 (
     sys_log_id          BIGSERIAL PRIMARY KEY,
     sys_log_time        timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    sys_log_type_id     bigint     NOT NULL,
-    sys_log_function_id bigint     NOT NULL,
+    sys_log_type_id     smallint   NOT NULL,
+    sys_log_function_id smallint   NOT NULL,
     sys_log_text        text   DEFAULT NULL,
     sys_log_description text   DEFAULT NULL,
     sys_log_trace       text   DEFAULT NULL,

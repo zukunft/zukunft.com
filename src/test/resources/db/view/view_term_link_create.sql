@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS view_term_links
     view_id           bigint             NOT NULL,
     type_id           smallint NOT NULL DEFAULT 1,
     user_id           bigint         DEFAULT NULL,
-    view_link_type_id bigint         DEFAULT NULL,
+    view_link_type_id smallint       DEFAULT NULL,
     description       text           DEFAULT NULL,
     excluded          smallint       DEFAULT NULL,
     share_type_id     smallint       DEFAULT NULL,
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS user_view_term_links
 (
     view_term_link_id bigint       NOT NULL,
     user_id           bigint       NOT NULL,
-    view_link_type_id bigint   DEFAULT NULL,
+    view_link_type_id smallint DEFAULT NULL,
     description       text     DEFAULT NULL,
     excluded          smallint DEFAULT NULL,
     share_type_id     smallint DEFAULT NULL,

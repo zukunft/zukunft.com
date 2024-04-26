@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS change_norm_values
     user_id          bigint    NOT NULL,
     change_action_id smallint  NOT NULL,
     group_id         char(112) NOT NULL,
-    change_field_id  bigint    NOT NULL,
+    change_field_id  smallint  NOT NULL,
     old_value        double precision DEFAULT NULL,
     new_value        double precision DEFAULT NULL
 );

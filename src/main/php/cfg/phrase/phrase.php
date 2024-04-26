@@ -87,7 +87,7 @@ class phrase extends combine_named
     const FLD_ID = 'phrase_id';
     const FLD_NAME = 'phrase_name';
     const FLD_TYPE = 'phrase_type_id';
-    const FLD_TYPE_SQLTYP = sql_field_type::INT;
+    const FLD_TYPE_SQLTYP = sql_field_type::INT_SMALL;
     const FLD_VALUES = 'values';
 
     // the common phrase database field names excluding the id and excluding the user specific fields

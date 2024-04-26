@@ -78,7 +78,7 @@ class change extends change_log
     // *_COM is the description of the field
     // *_SQLTYP is the sql data type used for the field
     const FLD_FIELD_ID = 'change_field_id';
-    const FLD_FIELD_ID_SQLTYP = sql_field_type::INT;
+    const FLD_FIELD_ID_SQLTYP = sql_field_type::INT_SMALL;
     const FLD_ROW_ID = 'row_id';
     const FLD_OLD_VALUE = 'old_value';
     const FLD_OLD_VALUE_SQLTYP = sql_field_type::TEXT;

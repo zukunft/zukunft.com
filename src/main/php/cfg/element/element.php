@@ -85,7 +85,7 @@ class element extends db_object_seq_id_user
     const FLD_LST_ALL = array(
         [formula::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, formula::class, self::FLD_FORMULA_COM],
         [self::FLD_ORDER, sql_field_type::INT, sql_field_default::NOT_NULL, '', '', ''],
-        [element_type::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, element_type::class, ''],
+        [element_type::FLD_ID, type_object::FLD_ID_SQLTYP, sql_field_default::NOT_NULL, sql::INDEX, element_type::class, ''],
         [user::FLD_ID, sql_field_type::INT, sql_field_default::NULL, '', user::class, ''],
         [self::FLD_REF_ID, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_REF_ID_COM],
         [self::FLD_TEXT, sql_field_type::NAME, sql_field_default::NULL, '', '', ''],
