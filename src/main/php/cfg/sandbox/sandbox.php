@@ -78,6 +78,7 @@ include_once MODEL_PHRASE_PATH . 'phrase_type.php';
 include_once MODEL_SANDBOX_PATH . 'protection_type.php';
 include_once MODEL_SANDBOX_PATH . 'share_type.php';
 
+use cfg\db\sql_par_field_list;
 use shared\types\protection_type as protect_type_shared;
 use shared\types\share_type as share_type_shared;
 use cfg\component\component;
@@ -2685,6 +2686,74 @@ class sandbox extends db_object_seq_id_user
             self::FLD_SHARE,
             self::FLD_PROTECT
         ];
+    }
+
+    /**
+     * get a list of database field names, values and types that have been changed compared to a given object
+     * to add to the list with the list of the child object e.g. word
+     * the last_update field is excluded here because this is an internal only field
+     *
+     * @param sandbox $sbx the same sandbox as this to compare which fields have been changed
+     * @param array $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par_field_list with the field names of the object and any child object
+     */
+    function db_changed_sandbox_list(sandbox $sbx, array $sc_par_lst = []): sql_par_field_list
+    {
+        global $change_table_list;
+        global $change_field_list;
+
+        $lst = new sql_par_field_list();
+        $sc = new sql();
+        $do_log = $sc->and_log($sc_par_lst);
+        $lib = new library();
+        $table_id = $change_table_list->id($lib->class_to_name($this::class));
+
+        if ($sbx->excluded <> $this->excluded) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_EXCLUDED,
+                    $change_field_list->id($table_id . self::FLD_EXCLUDED),
+                    change::FLD_FIELD_ID_SQLTYP
+                );
+            }
+            $lst->add_field(
+                self::FLD_EXCLUDED,
+                $this->excluded,
+                self::FLD_EXCLUDED_SQLTYP,
+                $sbx->excluded
+            );
+        }
+        if ($sbx->share_id <> $this->share_id) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_SHARE,
+                    $change_field_list->id($table_id . self::FLD_SHARE),
+                    change::FLD_FIELD_ID_SQLTYP
+                );
+            }
+            $lst->add_field(
+                self::FLD_SHARE,
+                $this->share_id,
+                self::FLD_SHARE_SQLTYP,
+                $this->share_id
+            );
+        }
+        if ($sbx->protection_id <> $this->protection_id) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_PROTECT,
+                    $change_field_list->id($table_id . self::FLD_PROTECT),
+                    change::FLD_FIELD_ID_SQLTYP
+                );
+            }
+            $lst->add_field(
+                self::FLD_PROTECT,
+                $this->protection_id,
+                self::FLD_PROTECT_SQLTYP,
+                $sbx->protection_id
+            );
+        }
+        return $lst;
     }
 
     /**

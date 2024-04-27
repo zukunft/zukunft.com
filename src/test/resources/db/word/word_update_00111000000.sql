@@ -1,4 +1,4 @@
-PREPARE word_update_00111000000 (text,text,text,bigint) AS
+PREPARE word_update_00111000000 (text, text, smallint, bigint) AS
     UPDATE words
        SET word_name = $1,
            description = $2,

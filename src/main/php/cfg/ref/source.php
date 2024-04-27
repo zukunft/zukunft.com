@@ -70,6 +70,7 @@ use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
+use cfg\db\sql_par_field_list;
 use cfg\db\sql_type;
 use cfg\export\sandbox_exp;
 use cfg\export\source_exp;
@@ -660,10 +661,10 @@ class source extends sandbox_typed
         // get the fields and values that have been changed
         // and that needs to be updated in the database
         // the db_* child function call the corresponding parent function
-        $fld_val_typ_lst = $this->db_changed($db_row, $sc_par_lst);
+        $fvt_lst = $this->db_changed_list($db_row, $sc_par_lst);
         $all_fields = $this->db_fields_all();
         // unlike the db_* function the sql_update_* parent function is called directly
-        return parent::sql_update_named($sc, $fld_val_typ_lst, $all_fields, $sc_par_lst);
+        return parent::sql_update_named($sc, $fvt_lst, $all_fields, $sc_par_lst);
     }
 
 
@@ -687,6 +688,70 @@ class source extends sandbox_typed
                 sql::FLD_CODE_ID],
             parent::db_fields_all_sandbox()
         );
+    }
+
+    /**
+     * get a list of database field names, values and types that have been updated
+     *
+     * @param sandbox|source $sbx the compare value to detect the changed fields
+     * @param array $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par_field_list list of the database field names that have been updated
+     */
+    function db_changed_list(sandbox|source $sbx, array $sc_par_lst = []): sql_par_field_list
+    {
+        global $change_field_list;
+
+        $sc = new sql();
+        $do_log = $sc->and_log($sc_par_lst);
+        $table_id = $sc->table_id($this::class);
+
+        $lst = parent::db_changed_named_list($sbx, $sc_par_lst);
+        if ($sbx->type_id() <> $this->type_id()) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_TYPE,
+                    $change_field_list->id($table_id . self::FLD_TYPE),
+                    change::FLD_FIELD_ID_SQLTYP
+                );
+            }
+            $lst->add_field(
+                self::FLD_TYPE,
+                $this->type_id(),
+                type_object::FLD_ID_SQLTYP,
+                $sbx->type_id()
+            );
+        }
+        if ($sbx->url <> $this->url) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_URL,
+                    $change_field_list->id($table_id . self::FLD_URL),
+                    change::FLD_FIELD_ID_SQLTYP
+                );
+            }
+            $lst->add_field(
+                self::FLD_URL,
+                $this->url,
+                self::FLD_URL_SQLTYP,
+                $sbx->url
+            );
+        }
+        if ($sbx->code_id <> $this->code_id) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . sql::FLD_CODE_ID,
+                    $change_field_list->id($table_id . sql::FLD_CODE_ID),
+                    change::FLD_FIELD_ID_SQLTYP
+                );
+            }
+            $lst->add_field(
+                sql::FLD_CODE_ID,
+                $this->code_id,
+                sql_field_type::CODE_ID,
+                $sbx->code_id
+            );
+        }
+        return $lst->merge($this->db_changed_sandbox_list($sbx, $sc_par_lst));
     }
 
     /**

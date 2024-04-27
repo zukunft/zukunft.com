@@ -61,6 +61,7 @@ enum sql_type: string
     case NO_ID_RETURN = 'no_id_return'; // the created sql statement does not need to return the id
     case NAMED_PAR = 'named_par'; // to use named parameters in the prepared query e.g. _user_id instead od $1
     case VALUE_SELECT = 'value_select'; // use a select statement for the insert values
+    case UPDATE_PART = 'update_part'; // the sql statement is part of an update action which implies that no new db row id is added
     case EXCLUDE = 'exclude'; // instead of delete create a sql to exclude one row
     case SANDBOX = 'sandbox'; // to include the standard sandbox fields in the sql statement
     case KEY_SMALL_INT = 'key_small_int'; // use a smallint as the prime db key e.g. for types

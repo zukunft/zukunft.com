@@ -55,6 +55,7 @@ use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
+use cfg\db\sql_par_field_list;
 use cfg\db\sql_type;
 use cfg\element_list;
 use cfg\export\export;
@@ -1726,7 +1727,9 @@ class result extends sandbox_value
             }
             $id_lst[] = $this->user()->id();
         }
-        $qp->sql = $sc->create_sql_update($id_fields, $id_lst, $fld_val_typ_lst);
+        $fvt_lst = new sql_par_field_list();
+        $fvt_lst->set($fld_val_typ_lst);
+        $qp->sql = $sc->create_sql_update($id_fields, $id_lst, $fvt_lst);
 
         $qp->par = $sc->par_values();
         return $qp;

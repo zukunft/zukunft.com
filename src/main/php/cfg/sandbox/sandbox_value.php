@@ -42,6 +42,7 @@ use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
+use cfg\db\sql_par_field_list;
 use cfg\db\sql_par_type;
 use cfg\db\sql_type;
 use cfg\group\group;
@@ -1082,7 +1083,9 @@ class sandbox_value extends sandbox_multi
         // get the fields and values that have been changed and needs to be updated in the database
         // TODO fix it
         $fld_val_typ_lst = $this->db_changed($db_obj);
-        $qp->sql = $sc->create_sql_update($this->id_field(), $this->id(), $fld_val_typ_lst);
+        $fvt_lst = new sql_par_field_list();
+        $fvt_lst->set($fld_val_typ_lst);
+        $qp->sql = $sc->create_sql_update($this->id_field(), $this->id(), $fvt_lst);
         $values = $sc->get_values($fld_val_typ_lst);
         $qp->par = $values;
         return $qp;

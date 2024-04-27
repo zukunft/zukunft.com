@@ -68,6 +68,7 @@ use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
+use cfg\db\sql_par_field_list;
 use cfg\db\sql_par_type;
 use cfg\db\sql_type;
 use cfg\export\sandbox_exp;
@@ -1330,7 +1331,9 @@ class group extends sandbox_multi
         $fld_name = implode('_', $lib->sql_name_shorten($fields));
         $qp->name .= '_upd_' . $fld_name;
         $sc->set_name($qp->name);
-        $qp->sql = $sc->create_sql_update($this->id_field(), $this->id(), $fld_val_typ_lst);
+        $fvt_lst = new sql_par_field_list();
+        $fvt_lst->set($fld_val_typ_lst);
+        $qp->sql = $sc->create_sql_update($this->id_field(), $this->id(), $fvt_lst);
         $values = $sc->get_values($fld_val_typ_lst);
         $values[] = $this->id();
         $qp->par = $values;

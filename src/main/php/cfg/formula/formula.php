@@ -75,6 +75,7 @@ include_once API_FORMULA_PATH . 'formula.php';
 include_once WEB_FORMULA_PATH . 'formula.php';
 include_once WEB_WORD_PATH . 'word.php';
 
+use cfg\db\sql_par_field_list;
 use cfg\log\change;
 use shared\types\protection_type as protect_type_shared;
 use shared\types\share_type as share_type_shared;
@@ -2579,10 +2580,10 @@ class formula extends sandbox_typed
         // get the fields and values that have been changed
         // and that needs to be updated in the database
         // the db_* child function call the corresponding parent function
-        $fld_val_typ_lst = $this->db_changed($db_row, $sc_par_lst);
+        $fvt_lst = $this->db_changed_list($db_row, $sc_par_lst);
         $all_fields = $this->db_fields_all();
         // unlike the db_* function the sql_update_* parent function is called directly
-        return parent::sql_update_named($sc, $fld_val_typ_lst, $all_fields, $sc_par_lst);
+        return parent::sql_update_named($sc, $fvt_lst, $all_fields, $sc_par_lst);
     }
 
 
@@ -2612,6 +2613,131 @@ class formula extends sandbox_typed
             ],
             parent::db_fields_all_sandbox()
         );
+    }
+
+    /**
+     * get a list of database field names, values and types that have been updated
+     *
+     * @param sandbox|formula $frm the compare value to detect the changed fields
+     * @param array $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
+     */
+    function db_changed_list(sandbox|formula $frm, array $sc_par_lst = []): sql_par_field_list
+    {
+        global $change_field_list;
+
+        $sc = new sql();
+        $do_log = $sc->and_log($sc_par_lst);
+        $table_id = $sc->table_id($this::class);
+
+        $lst = parent::db_changed_named_list($frm, $sc_par_lst);
+        if ($frm->type_id() <> $this->type_id()) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_TYPE,
+                    $change_field_list->id($table_id . self::FLD_TYPE),
+                    change::FLD_FIELD_ID_SQLTYP
+                );
+            }
+            $lst->add_field(
+                self::FLD_TYPE,
+                $this->type_id(),
+                self::FLD_TYPE_SQLTYP,
+                $frm->type_id()
+            );
+        }
+        if ($frm->ref_text <> $this->ref_text) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_FORMULA_TEXT,
+                    $change_field_list->id($table_id . self::FLD_FORMULA_TEXT),
+                    change::FLD_FIELD_ID_SQLTYP
+                );
+            }
+            $lst->add_field(
+                self::FLD_FORMULA_TEXT,
+                $this->ref_text,
+                self::FLD_FORMULA_TEXT_SQLTYP,
+                $frm->ref_text
+            );
+        }
+        if ($frm->usr_text <> $this->usr_text) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_FORMULA_USER_TEXT,
+                    $change_field_list->id($table_id . self::FLD_FORMULA_USER_TEXT),
+                    change::FLD_FIELD_ID_SQLTYP
+                );
+            }
+            $lst->add_field(
+                self::FLD_FORMULA_USER_TEXT,
+                $this->usr_text,
+                self::FLD_FORMULA_USER_TEXT_SQLTYP,
+                $frm->usr_text
+            );
+        }
+        if ($frm->need_all_val <> $this->need_all_val) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_ALL_NEEDED,
+                    $change_field_list->id($table_id . self::FLD_ALL_NEEDED),
+                    change::FLD_FIELD_ID_SQLTYP
+                );
+            }
+            $lst->add_field(
+                self::FLD_ALL_NEEDED,
+                $this->need_all_val,
+                self::FLD_ALL_NEEDED_SQLTYP,
+                $frm->need_all_val
+            );
+        }
+        // TODO maybe exclude?
+        if ($frm->last_update <> $this->last_update) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_LAST_UPDATE,
+                    $change_field_list->id($table_id . self::FLD_LAST_UPDATE),
+                    change::FLD_FIELD_ID_SQLTYP
+                );
+            }
+            $lst->add_field(
+                self::FLD_LAST_UPDATE,
+                $this->last_update,
+                self::FLD_LAST_UPDATE_SQLTYP,
+                $frm->last_update
+            );
+        }
+        if ($frm->view_id() <> $this->view_id()) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_VIEW,
+                    $change_field_list->id($table_id . self::FLD_VIEW),
+                    change::FLD_FIELD_ID_SQLTYP
+                );
+            }
+            $lst->add_field(
+                self::FLD_VIEW,
+                $this->view_id(),
+                self::FLD_VIEW_SQLTYP,
+                $frm->view_id()
+            );
+        }
+        if ($frm->usage() <> $this->usage()) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_USAGE,
+                    $change_field_list->id($table_id . self::FLD_USAGE),
+                    change::FLD_FIELD_ID_SQLTYP
+                );
+            }
+            $lst->add_field(
+                self::FLD_USAGE,
+                $this->usage(),
+                self::FLD_USAGE_SQLTYP,
+                $frm->usage()
+            );
+        }
+        return $lst->merge($this->db_changed_sandbox_list($frm, $sc_par_lst));
     }
 
     /**

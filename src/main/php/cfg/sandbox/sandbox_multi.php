@@ -52,6 +52,7 @@ include_once MODEL_SANDBOX_PATH . 'protection_type.php';
 include_once MODEL_SANDBOX_PATH . 'share_type.php';
 
 use cfg\db\sql_field_type;
+use cfg\db\sql_par_field_list;
 use shared\types\protection_type as protect_type_shared;
 use shared\types\share_type as share_type_shared;
 use cfg\component\component;
@@ -1584,7 +1585,9 @@ class sandbox_multi extends db_object_multi_user
         }
         $qp->name .= sql::file_sep . sql::file_update;
         $sc->set_name($qp->name);
-        $qp->sql = $sc->create_sql_update($this->id_field(), $this->id(), $fld_val_typ_lst);
+        $fvt_lst = new sql_par_field_list();
+        $fvt_lst->set($fld_val_typ_lst);
+        $qp->sql = $sc->create_sql_update($this->id_field(), $this->id(), $fvt_lst);
         $values = $sc->get_values($fld_val_typ_lst);
         $values[] = $this->id();
         $par_values = [];

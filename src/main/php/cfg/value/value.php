@@ -72,6 +72,7 @@ include_once SERVICE_EXPORT_PATH . 'source_exp.php';
 include_once SERVICE_EXPORT_PATH . 'value_exp.php';
 include_once SERVICE_EXPORT_PATH . 'json.php';
 
+use cfg\db\sql_par_field_list;
 use shared\types\protection_type as protect_type_shared;
 use shared\types\share_type as share_type_shared;
 use api\api;
@@ -2351,7 +2352,9 @@ class value extends sandbox_value
             }
             $id_lst[] = $this->user()->id();
         }
-        $qp->sql = $sc->create_sql_update($id_fields, $id_lst, $fld_val_typ_lst);
+        $fvt_lst = new sql_par_field_list();
+        $fvt_lst->set($fld_val_typ_lst);
+        $qp->sql = $sc->create_sql_update($id_fields, $id_lst, $fvt_lst);
 
         $qp->par = $sc->par_values();
         return $qp;
