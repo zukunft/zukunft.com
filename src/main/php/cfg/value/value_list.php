@@ -47,6 +47,7 @@ include_once API_VALUE_PATH . 'value_list.php';
 include_once SERVICE_EXPORT_PATH . 'value_list_exp.php';
 include_once MODEL_GROUP_PATH . 'group_id_list.php';
 
+use cfg\db\sql_type_list;
 use shared\types\protection_type as protect_type_shared;
 use shared\types\share_type as share_type_shared;
 use api\value\value_list as value_list_api;
@@ -325,15 +326,16 @@ class value_list extends sandbox_value_list
      * set the SQL query parameters to load a list of values
      * @param sql $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_multi(
         sql    $sc,
         string $query_name,
-        array  $sc_par_lst
+        sql_type_list  $sc_par_lst
     ): sql_par
     {
-        $qp = new sql_par(value::class, [], $sc->ext_ex_user($sc_par_lst));
+        $qp = new sql_par(value::class, new sql_type_list([]), $sc_par_lst->ext_ex_user());
         $qp->name .= $query_name;
 
         $sc->set_class(value::class, $sc_par_lst);
@@ -482,9 +484,9 @@ class value_list extends sandbox_value_list
         $par_offset = 0;
         $par_types = array();
         foreach ($tbl_id_matrix as $matrix_row) {
-            $sc_par_lst = [];
+            $sc_par_lst = new sql_type_list([]);
             $tbl_typ = array_shift($matrix_row);
-            $sc_par_lst[] = $tbl_typ;
+            $sc_par_lst->add($tbl_typ);
             // TODO add the union query creation for the other table types
             // combine the select statements with and instead of union if possible
             if ($tbl_typ == sql_type::PRIME) {
@@ -493,7 +495,7 @@ class value_list extends sandbox_value_list
 
                 // TODO move to the calling function
                 if ($usr_tbl) {
-                    $sc_par_lst[] = sql_type::USER;
+                    $sc_par_lst->add(sql_type::USER);
                 }
                 $qp_tbl = $this->load_sql_multi($sc, '', $sc_par_lst);
                 if ($par_offset == 0) {
@@ -548,16 +550,16 @@ class value_list extends sandbox_value_list
         $par_offset = 0;
         $par_types = array();
         foreach ($tbl_id_matrix as $matrix_row) {
-            $sc_par_lst = [];
+            $sc_par_lst = new sql_type_list([]);
             $tbl_typ = array_shift($matrix_row);
-            $sc_par_lst[] = $tbl_typ;
+            $sc_par_lst->add($tbl_typ);
             if ($tbl_typ == sql_type::PRIME) {
                 $max_row_ids = array_shift($matrix_row);
                 $phr_id_lst = $matrix_row;
 
                 // TODO move to the calling function
                 if ($usr_tbl) {
-                    $sc_par_lst[] = sql_type::USER;
+                    $sc_par_lst->add(sql_type::USER);
                 }
                 $qp_tbl = $this->load_sql_multi($sc, 'grp_lst', $sc_par_lst);
                 if ($par_offset == 0) {

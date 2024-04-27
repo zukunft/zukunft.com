@@ -36,6 +36,7 @@ use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_type;
+use cfg\db\sql_type_list;
 use cfg\group\group;
 use cfg\result\result;
 use cfg\value\value;
@@ -88,16 +89,16 @@ class db_object
      * the sql statement to create the table for this (or a child) object
      *
      * @param sql $sc with the target db_type set
-     * @param array $sc_par_lst of parameters for the sql creation
+     * @param sql_type_list $sc_par_lst of parameters for the sql creation
      * @param array $fields array with all fields and all parameter for the table creation in a two-dimensional array
      * @param string $tbl_comment if given the comment that should be added to the sql create table statement
      * @return string the sql statement to create the table
      */
     function sql_table_create(
-        sql    $sc,
-        array  $sc_par_lst = [],
-        array  $fields = [],
-        string $tbl_comment = ''
+        sql           $sc,
+        sql_type_list $sc_par_lst = new sql_type_list([]),
+        array         $fields = [],
+        string        $tbl_comment = ''
     ): string
     {
         if ($sc->get_table() == '') {
@@ -109,17 +110,17 @@ class db_object
         if ($tbl_comment == '') {
             $tbl_comment = $this::TBL_COMMENT;
         }
-        return $sc->table_create($fields, '', $tbl_comment, $this::class, $sc->is_usr_tbl($sc_par_lst));
+        return $sc->table_create($fields, '', $tbl_comment, $this::class, $sc_par_lst->is_usr_tbl());
     }
 
     /**
      * the name of the sql table for this (or a child) object
      *
      * @param sql $sc with the target db_type set
-     * @param array $sc_par_lst of parameters for the sql creation
+     * @param sql_type_list $sc_par_lst of parameters for the sql creation
      * @return string the sql statement to create the table
      */
-    function sql_truncate_create(sql $sc, array $sc_par_lst = []): string
+    function sql_truncate_create(sql $sc, sql_type_list $sc_par_lst): string
     {
         if ($sc->get_table() == '') {
             $sc->set_class($this::class, $sc_par_lst);
@@ -131,11 +132,11 @@ class db_object
      * the sql statement to create the indices for this (or a child) object
      *
      * @param sql $sc with the target db_type set
-     * @param array $sc_par_lst of parameters for the sql creation
+     * @param sql_type_list $sc_par_lst of parameters for the sql creation
      * @param array $fields array with all fields and all parameter for the table creation in a two-dimensional array
      * @return string the sql statement to create the table
      */
-    function sql_index_create(sql $sc, array $sc_par_lst = [], array $fields = []): string
+    function sql_index_create(sql $sc, sql_type_list $sc_par_lst = new sql_type_list([]), array $fields = []): string
     {
         if ($sc->get_table() == '') {
             $sc->set_class($this::class, $sc_par_lst);
@@ -150,11 +151,11 @@ class db_object
      * the sql statement to create the foreign keys for this (or a child) object
      *
      * @param sql $sc with the target db_type set
-     * @param array $sc_par_lst of parameters for the sql creation
+     * @param sql_type_list $sc_par_lst of parameters for the sql creation
      * @param array $fields array with all fields and all parameter for the table creation in a two-dimensional array
      * @return string the sql statement to create the table
      */
-    function sql_foreign_key_create(sql $sc, array $sc_par_lst = [], array $fields = []): string
+    function sql_foreign_key_create(sql $sc, sql_type_list $sc_par_lst = new sql_type_list([]), array $fields = []): string
     {
         if ($sc->get_table() == '') {
             $sc->set_class($this::class, $sc_par_lst);
@@ -169,13 +170,13 @@ class db_object
      * create a list of fields with the parameters for this object
      *
      * @param sql $sc with the target db_type set
-     * @param array $sc_par_lst of parameters for the sql creation
+     * @param sql_type_list $sc_par_lst of parameters for the sql creation
      * @return array[] with the parameters of the table fields
      */
-    protected function sql_all_field_par(sql $sc, array $sc_par_lst = []): array
+    protected function sql_all_field_par(sql $sc, sql_type_list $sc_par_lst): array
     {
-        $usr_tbl = $sc->is_usr_tbl($sc_par_lst);
-        $use_sandbox = $sc->use_sandbox_fields($sc_par_lst);
+        $usr_tbl = $sc_par_lst->is_usr_tbl();
+        $use_sandbox = $sc_par_lst->use_sandbox_fields($sc_par_lst);
         $fields = [];
         if (!$usr_tbl) {
             $fields = array_merge($fields, $this::FLD_LST_NON_CHANGEABLE);
@@ -211,23 +212,23 @@ class db_object
      * @param sql $sc with the target db_type set
      * @param string $query_name the name of the selection fields to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
-     * @param array $sc_par_lst the parameters for the sql statement creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param string $ext the query name extension e.g. to differentiate queries based on 1,2, or more phrases
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     public function load_sql_multi(
-        sql      $sc,
-        string   $query_name,
-        string   $class,
-        array    $sc_par_lst = [],
-        string   $ext = ''
+        sql           $sc,
+        string        $query_name,
+        string        $class,
+        sql_type_list $sc_par_lst,
+        string        $ext = ''
     ): sql_par
     {
         $lib = new library();
         $tbl_name = $lib->class_to_name($class);
         $qp = new sql_par($tbl_name, $sc_par_lst, $ext);
         $qp->name .= $query_name;
-        $sc->set_class($class, $sc_par_lst, $sc->ext_ex_user($sc_par_lst));
+        $sc->set_class($class, $sc_par_lst, $sc_par_lst->ext_ex_user());
         $sc->set_name($qp->name);
         $sc->set_fields($this::FLD_NAMES);
 
@@ -244,7 +245,7 @@ class db_object
      */
     function load_sql(sql $sc, string $query_name): sql_par
     {
-        return $this->load_sql_multi($sc, $query_name, $this::class, [sql_type::MOST]);
+        return $this->load_sql_multi($sc, $query_name, $this::class, new sql_type_list([sql_type::MOST]));
     }
 
     /**

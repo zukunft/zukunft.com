@@ -42,6 +42,7 @@ use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\db\sql_type;
+use cfg\db\sql_type_list;
 use cfg\formula;
 use cfg\group\group;
 use cfg\group\group_id;
@@ -341,10 +342,10 @@ class result_list extends sandbox_value_list
      */
     private function load_sql(sql $sc, string $query_name, sql_type $tbl_typ = sql_type::MOST): sql_par
     {
-        $qp = new sql_par(self::class, [$tbl_typ]);
+        $qp = new sql_par(self::class, new sql_type_list([$tbl_typ]));
         $qp->name .= $query_name;
 
-        $sc->set_class(result::class, [], $tbl_typ->extension());
+        $sc->set_class(result::class, new sql_type_list([]), $tbl_typ->extension());
         // overwrite the standard id field name (result_id) with the main database id field for results "group_id"
         $res = new result($this->user());
         $sc->set_id_field($res->id_field_list($tbl_typ));

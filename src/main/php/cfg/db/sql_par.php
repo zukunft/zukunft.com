@@ -55,19 +55,19 @@ class sql_par
 
     /**
      * @param string $class the name of the calling class used for the unique query name
-     * @param array $sc_par_lst list of sql types e.g. insert or load
+     * @param sql_type_list $sc_par_lst list of sql types e.g. insert or load
      * @param string $ext the query name extension e.g. to separate the queries by the number of parameters
      */
     function __construct(
-        string $class,
-        array  $sc_par_lst = [],
-        string $ext = '')
+        string        $class,
+        sql_type_list $sc_par_lst = new sql_type_list([]),
+        string        $ext = '')
     {
         // convert sql types to single parameter
         $is_std = false;
         $all = false;
         $tbl_typ = sql_type::MOST;
-        foreach ($sc_par_lst as $sql_type) {
+        foreach ($sc_par_lst->lst as $sql_type) {
             if ($sql_type == sql_type::NORM) {
                 $is_std = true;
             }
@@ -77,7 +77,7 @@ class sql_par
         }
         if ($ext == '') {
             $ext = '';
-            foreach ($sc_par_lst as $sql_type) {
+            foreach ($sc_par_lst->lst as $sql_type) {
                 $ext .= $sql_type->extension();
                 if ($sql_type == sql_type::PRIME or $sql_type == sql_type::BIG) {
                     $tbl_typ = $sql_type;
@@ -95,7 +95,7 @@ class sql_par
             $this->name = $name . '_';
         } else {
             $sc = new sql();
-            if (!$sc->is_cur_not_l($sc_par_lst)) {
+            if (!$sc_par_lst->is_cur_not_l()) {
                 $this->name = $name . '_by_';
             } else {
                 $this->name = $name;

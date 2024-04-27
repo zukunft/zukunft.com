@@ -72,6 +72,7 @@ use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_type;
+use cfg\db\sql_type_list;
 use cfg\export\sandbox_exp;
 use cfg\export\source_exp;
 use cfg\log\change;
@@ -575,7 +576,7 @@ class source extends sandbox_typed
      */
     function load_sql_user_changes(sql $sc, string $class = self::class): sql_par
     {
-        $sc->set_class(source::class, [sql_type::USER]);
+        $sc->set_class(source::class, new sql_type_list([sql_type::USER]));
         return parent::load_sql_user_changes($sc, $class);
     }
 
@@ -631,18 +632,16 @@ class source extends sandbox_typed
      * always all fields are included in the query to be able to remove overwrites with a null value
      *
      * @param sql $sc with the target db_type set
-     * @param array $sc_par_lst the parameters for the sql statement creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_insert(sql $sc, array $sc_par_lst = []): sql_par
+    function sql_insert(sql $sc, sql_type_list $sc_par_lst = new sql_type_list([])): sql_par
     {
         // fields and values that the source has additional to the standard named user sandbox object
         $empty_src = $this->clone_reset();
         // for a new source the owner should be set, so remove the user id to force writing the user
         $empty_src->set_user($this->user()->clone_reset());
-        if (!in_array(sql_type::INSERT, $sc_par_lst)) {
-            $sc_par_lst[] = sql_type::INSERT;
-        }
+        $sc_par_lst->add(sql_type::INSERT);
         $fvt_lst = $this->db_changed_list($empty_src, $sc_par_lst);
         $all_fields = $this->db_fields_all();
         return parent::sql_insert_named($sc, $fvt_lst, $all_fields, $sc_par_lst);
@@ -653,10 +652,10 @@ class source extends sandbox_typed
      *
      * @param sql $sc with the target db_type set
      * @param source|sandbox $db_row the source with the database values before the update
-     * @param array $sc_par_lst the parameters for the sql statement creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_update(sql $sc, source|sandbox $db_row, array $sc_par_lst = []): sql_par
+    function sql_update(sql $sc, source|sandbox $db_row, sql_type_list $sc_par_lst = new sql_type_list([])): sql_par
     {
         // get the fields and values that have been changed
         // and that needs to be updated in the database
@@ -694,15 +693,15 @@ class source extends sandbox_typed
      * get a list of database field names, values and types that have been updated
      *
      * @param sandbox|source $sbx the compare value to detect the changed fields
-     * @param array $sc_par_lst the parameters for the sql statement creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list of the database field names that have been updated
      */
-    function db_changed_list(sandbox|source $sbx, array $sc_par_lst = []): sql_par_field_list
+    function db_changed_list(sandbox|source $sbx, sql_type_list $sc_par_lst): sql_par_field_list
     {
         global $change_field_list;
 
         $sc = new sql();
-        $do_log = $sc->and_log($sc_par_lst);
+        $do_log = $sc_par_lst->and_log();
         $table_id = $sc->table_id($this::class);
 
         $lst = parent::db_changed_named_list($sbx, $sc_par_lst);
@@ -752,67 +751,6 @@ class source extends sandbox_typed
             );
         }
         return $lst->merge($this->db_changed_sandbox_list($sbx, $sc_par_lst));
-    }
-
-    /**
-     * get a list of database field names, values and types that have been updated
-     *
-     * @param sandbox|source $sbx the compare value to detect the changed fields
-     * @param array $sc_par_lst the parameters for the sql statement creation
-     * @return array list of the database field names that have been updated
-     */
-    function db_changed(sandbox|source $sbx, array $sc_par_lst = []): array
-    {
-        global $change_field_list;
-
-        $sc = new sql();
-        $do_log = $sc->and_log($sc_par_lst);
-        $table_id = $sc->table_id($this::class);
-
-        $lst = parent::db_changed_named($sbx, $sc_par_lst);
-        if ($sbx->type_id() <> $this->type_id()) {
-            if ($do_log) {
-                $lst[] = [
-                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_TYPE,
-                    $change_field_list->id($table_id . self::FLD_TYPE),
-                    change::FLD_FIELD_ID_SQLTYP
-                ];
-            }
-            $lst[] = [
-                self::FLD_TYPE,
-                $this->type_id(),
-                type_object::FLD_ID_SQLTYP
-            ];
-        }
-        if ($sbx->url <> $this->url) {
-            if ($do_log) {
-                $lst[] = [
-                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_URL,
-                    $change_field_list->id($table_id . self::FLD_URL),
-                    change::FLD_FIELD_ID_SQLTYP
-                ];
-            }
-            $lst[] = [
-                self::FLD_URL,
-                $this->url,
-                self::FLD_URL_SQLTYP
-            ];
-        }
-        if ($sbx->code_id <> $this->code_id) {
-            if ($do_log) {
-                $lst[] = [
-                    sql::FLD_LOG_FIELD_PREFIX . sql::FLD_CODE_ID,
-                    $change_field_list->id($table_id . sql::FLD_CODE_ID),
-                    change::FLD_FIELD_ID_SQLTYP
-                ];
-            }
-            $lst[] = [
-                sql::FLD_CODE_ID,
-                $this->code_id,
-                sql_field_type::CODE_ID
-            ];
-        }
-        return array_merge($lst, $this->db_changed_sandbox($sbx, $sc_par_lst));
     }
 
 }

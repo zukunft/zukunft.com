@@ -53,6 +53,7 @@ use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\db\sql_type;
+use cfg\db\sql_type_list;
 use cfg\log\change_action;
 use cfg\log\change_table;
 use cfg\log\change_table_field;
@@ -245,7 +246,7 @@ class type_object extends db_object_seq_id implements JsonSerializable
         if ($this:: class == pod::class) {
             $sql .= $this->sql_table_create($sc);
         } else {
-            $sql .= $this->sql_table_create($sc, [sql_type::KEY_SMALL_INT]);
+            $sql .= $this->sql_table_create($sc, new sql_type_list([sql_type::KEY_SMALL_INT]));
         }
         return $sql;
     }

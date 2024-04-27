@@ -81,6 +81,7 @@ use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_type;
+use cfg\db\sql_type_list;
 use DateTime;
 use DateTimeInterface;
 
@@ -294,7 +295,7 @@ class job extends db_object_seq_id_user
      */
     function load_sql(sql $sc, string $query_name, string $class = self::class): sql_par
     {
-        $qp = parent::load_sql_multi($sc, $query_name, $class, [sql_type::MOST]);
+        $qp = parent::load_sql_multi($sc, $query_name, $class, new sql_type_list([sql_type::MOST]));
         $sc->set_class(job::class);
 
         $sc->set_name($qp->name);

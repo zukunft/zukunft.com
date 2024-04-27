@@ -47,6 +47,8 @@
 
 namespace cfg;
 
+include_once DB_PATH . 'sql_type.php';
+include_once DB_PATH . 'sql_type_list.php';
 include_once DB_PATH . 'sql_par_type.php';
 include_once DB_PATH . 'sql_par_field.php';
 include_once DB_PATH . 'sql_par_field_list.php';
@@ -72,6 +74,7 @@ use cfg\db\sql_par;
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_par_type;
 use cfg\db\sql_type;
+use cfg\db\sql_type_list;
 use cfg\export\sandbox_exp;
 use cfg\log\change;
 use cfg\log\change_action;
@@ -322,7 +325,7 @@ class sandbox_named extends sandbox
      */
     function load_standard_sql(sql $sc, string $class = self::class): sql_par
     {
-        $qp = new sql_par($class, [sql_type::NORM]);
+        $qp = new sql_par($class, new sql_type_list([sql_type::NORM]));
         if ($this->id() != 0) {
             $qp->name .= sql_db::FLD_ID;
         } elseif ($this->name() != '') {
@@ -895,14 +898,14 @@ class sandbox_named extends sandbox
      * @param sql $sc with the target db_type set
      * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
      * @param array $fld_lst_all list of field names of the given object
-     * @param array $sc_par_lst the parameters for the sql statement creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_insert_named(
         sql                $sc,
         sql_par_field_list $fvt_lst,
         array              $fld_lst_all = [],
-        array              $sc_par_lst = []): sql_par
+        sql_type_list      $sc_par_lst = new sql_type_list([])): sql_par
     {
 
         // TODO deprecate
@@ -916,8 +919,8 @@ class sandbox_named extends sandbox
         }
 
         // create the main query parameter object and set the name
-        $and_log = $sc->and_log($sc_par_lst);
-        $usr_tbl = $sc->is_usr_tbl($sc_par_lst);
+        $and_log = $sc_par_lst->and_log();
+        $usr_tbl = $sc_par_lst->is_usr_tbl();
         $fld_chg_ext = $lib->sql_field_ext($fld_lst, $fld_lst_all);
         $ext = sql::file_sep . sql::file_insert;
         $ext_sub = $ext;
@@ -927,7 +930,7 @@ class sandbox_named extends sandbox
         $ext .= sql::file_sep . $fld_chg_ext;
         $qp = $this->sql_common($sc, $sc_par_lst, $ext);
 
-        if ($sc->and_log($sc_par_lst)) {
+        if ($sc_par_lst->and_log()) {
 
             // init the function body
             if ($sc->db_type == sql_db::POSTGRES) {
@@ -943,8 +946,8 @@ class sandbox_named extends sandbox
             $par_type_lst = [];
 
             // don't use the log parameter for the sub queries
-            $sc_par_lst_sub = $sc->sql_par_remove(sql_type::LOG, $sc_par_lst);
-            $sc_par_lst_sub[] = sql_type::LIST;
+            $sc_par_lst_sub = $sc_par_lst->remove(sql_type::LOG);
+            $sc_par_lst_sub->add(sql_type::LIST);
 
             if ($usr_tbl) {
                 $insert_tmp_tbl = '';
@@ -999,8 +1002,8 @@ class sandbox_named extends sandbox
                 // TODO get the id of the new entry and use it in the log
                 $sc_log = clone $sc;
                 $sc_par_lst_log = $sc_par_lst_sub;
-                $sc_par_lst_log[] = sql_type::VALUE_SELECT;
-                $sc_par_lst_log[] = sql_type::UPDATE_PART;
+                $sc_par_lst_log->add(sql_type::VALUE_SELECT);
+                $sc_par_lst_log->add(sql_type::UPDATE_PART);
                 $qp_log = $log->sql_insert(
                     $sc_log, $sc_par_lst_log, $ext_sub . '_' . $fld, $insert_tmp_tbl, $fld, $id_field);
 
@@ -1052,7 +1055,7 @@ class sandbox_named extends sandbox
                 }
                 $sc_insert = clone $sc;
                 $qp_insert = $this->sql_common($sc_insert, $sc_par_lst_sub);
-                $sc_par_lst_sub[] = sql_type::NO_ID_RETURN;
+                $sc_par_lst_sub->add(sql_type::NO_ID_RETURN);
                 $qp_insert->sql = $sc_insert->create_sql_insert($fld_lst_ex_log_and_key, $insert_values, [], $sc_par_lst_sub);
                 // add the insert row to the function body and close the with statement with an ;
                 $func_body .= ' ' . $qp_insert->sql . ';';
@@ -1074,9 +1077,9 @@ class sandbox_named extends sandbox
                 }
                 $sc_update = clone $sc;
                 $sc_par_lst_upd = $sc_par_lst;
-                $sc_par_lst_upd[] = sql_type::UPDATE;
-                $sc_par_lst_upd_ex_log = $sc->sql_par_remove(sql_type::LOG, $sc_par_lst_upd);
-                $sc_par_lst_upd_ex_log[] = sql_type::SUB;
+                $sc_par_lst_upd->add(sql_type::UPDATE);
+                $sc_par_lst_upd_ex_log = $sc_par_lst_upd->remove(sql_type::LOG);
+                $sc_par_lst_upd_ex_log->add(sql_type::SUB);
                 $qp_update = $this->sql_common($sc_update, $sc_par_lst_upd_ex_log);;
                 $update_fvt_lst = new sql_par_field_list();
                 $update_fvt_lst->set($update_fld_val_typ_lst);
@@ -1140,21 +1143,21 @@ class sandbox_named extends sandbox
      * @param sql $sc with the target db_type set
      * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
      * @param array $fld_lst_all list of field names of the given object
-     * @param array $sc_par_lst the parameters for the sql statement creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL update statement, the name of the SQL statement and the parameter list
      */
     function sql_update_named(
         sql                $sc,
         sql_par_field_list $fvt_lst,
         array              $fld_lst_all = [],
-        array              $sc_par_lst = []): sql_par
+        sql_type_list      $sc_par_lst = new sql_type_list([])): sql_par
     {
         // TODO deprecate
         $val_lst = $fvt_lst->values();
 
         $lib = new library();
-        $and_log = $sc->and_log($sc_par_lst);
-        $usr_tbl = $sc->is_usr_tbl($sc_par_lst);
+        $and_log = $sc_par_lst->and_log();
+        $usr_tbl = $sc_par_lst->is_usr_tbl();
         $fld_lst = $fvt_lst->names();
         $fld_chg_ext = $lib->sql_field_ext($fld_lst, $fld_lst_all);
         $ext = sql::file_sep . sql::file_update;
@@ -1178,17 +1181,25 @@ class sandbox_named extends sandbox
         return $qp;
     }
 
+    /**
+     * @param sql $sc the sql creator object with the db type set
+     * @param sql_par $qp the query parameter with the name already set
+     * @param sql_par_field_list $par_lst
+     * @param array $fld_lst_all
+     * @param sql_type_list $sc_par_lst
+     * @return sql_par
+     */
     private function sql_update_named_and_log(
         sql                $sc,
         sql_par            $qp,
         sql_par_field_list $par_lst,
         array              $fld_lst_all = [],
-        array              $sc_par_lst = []
+        sql_type_list      $sc_par_lst = new sql_type_list([])
     ): sql_par
     {
 
         // set some var names to shorten the code lines
-        $usr_tbl = $sc->is_usr_tbl($sc_par_lst);
+        $usr_tbl = $sc_par_lst->is_usr_tbl();
         $ext = sql::file_sep . sql::file_insert;
         $id_fld = $sc->id_field_name();
         $id_val = '_' . $id_fld;
@@ -1208,8 +1219,8 @@ class sandbox_named extends sandbox
         $func_body .= ' ' . sql::WITH;
 
         // don't use the log parameter for the sub queries
-        $sc_par_lst_sub = $sc->sql_par_remove(sql_type::LOG, $sc_par_lst);
-        $sc_par_lst_sub[] = sql_type::LIST;
+        $sc_par_lst_sub = $sc_par_lst->remove(sql_type::LOG);
+        $sc_par_lst_sub->add(sql_type::LIST);
 
         // get the fields actually changed
         $fld_lst = $par_lst->names();
@@ -1254,8 +1265,8 @@ class sandbox_named extends sandbox
             // TODO get the id of the new entry and use it in the log
             $sc_log = clone $sc;
             $sc_par_lst_log = $sc_par_lst_sub;
-            $sc_par_lst_log[] = sql_type::VALUE_SELECT;
-            $sc_par_lst_log[] = sql_type::UPDATE_PART;
+            $sc_par_lst_log->add(sql_type::VALUE_SELECT);
+            $sc_par_lst_log->add(sql_type::UPDATE_PART);
             // TODO replace dummy value table with an enum value
             $qp_log = $log->sql_insert(
                 $sc_log, $sc_par_lst_log, $ext . '_' . $fld->name, 'dummy', $fld->name, $id_fld);
@@ -1337,11 +1348,8 @@ class sandbox_named extends sandbox
                 $update_fld_val_typ_lst[] = [$field, $update_values[$key], $update_types[$key]];
             }
             $sc_update = clone $sc;
-            $sc_par_lst_upd = [];
-            $sc_par_lst_upd[] = sql_type::NAMED_PAR;
-            $sc_par_lst_upd[] = sql_type::UPDATE;
-            $sc_par_lst_upd[] = sql_type::UPDATE_PART;
-            $sc_par_lst_upd_ex_log = $sc->sql_par_remove(sql_type::LOG, $sc_par_lst_upd);
+            $sc_par_lst_upd = new sql_type_list([sql_type::NAMED_PAR, sql_type::UPDATE, sql_type::UPDATE_PART]);
+            $sc_par_lst_upd_ex_log = $sc_par_lst_upd->remove(sql_type::LOG);
             $qp_update = $this->sql_common($sc_update, $sc_par_lst_upd_ex_log);;
             $update_fvt_lst = new sql_par_field_list();
             $update_fvt_lst->set($update_fld_val_typ_lst);
@@ -1386,15 +1394,15 @@ class sandbox_named extends sandbox
      * create the sql statement to delete or exclude a named sandbox object e.g. word to the database
      *
      * @param sql $sc with the target db_type set
-     * @param array $sc_par_lst the parameters for the sql statement creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL update statement, the name of the SQL statement and the parameter list
      */
     function sql_delete(
-        sql   $sc,
-        array $sc_par_lst = []): sql_par
+        sql           $sc,
+        sql_type_list $sc_par_lst = new sql_type_list([])): sql_par
     {
-        $usr_tbl = $sc->is_usr_tbl($sc_par_lst);
-        $excluded = $sc->exclude_sql($sc_par_lst);
+        $usr_tbl = $sc_par_lst->is_usr_tbl($sc_par_lst);
+        $excluded = $sc_par_lst->exclude_sql($sc_par_lst);
         $qp = $this->sql_common($sc, $sc_par_lst);
         $qp->name .= sql::file_sep . sql::file_delete;
         $par_lst = [$this->id()];
@@ -1420,14 +1428,14 @@ class sandbox_named extends sandbox
      * TODO include the sql statements to log the changes
      *
      * @param sql $sc with the target db_type set
-     * @param array $sc_par_lst the parameters for the sql statement creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param string $name_ext the query name extension to differ insert from update
      * @return sql_par prepared sql parameter object with the name set
      */
-    private function sql_common(sql $sc, array $sc_par_lst = [], string $name_ext = ''): sql_par
+    private function sql_common(sql $sc, sql_type_list $sc_par_lst = new sql_type_list([]), string $name_ext = ''): sql_par
     {
         $lib = new library();
-        $usr_tbl = $sc->is_usr_tbl($sc_par_lst);
+        $usr_tbl = $sc_par_lst->is_usr_tbl();
         $sc->set_class($this::class, $sc_par_lst);
         $sql_name = $lib->class_to_name($this::class);
         $qp = new sql_par($sql_name);
@@ -1466,18 +1474,18 @@ class sandbox_named extends sandbox
      * of the object to combine the list with the list of the child object e.g. word
      *
      * @param sandbox_named $sbx the same named sandbox as this to compare which fields have been changed
-     * @param array $sc_par_lst the parameters for the sql statement creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list with the field names of the object and any child object
      */
-    function db_changed_named_list(sandbox_named $sbx, array $sc_par_lst = []): sql_par_field_list
+    function db_changed_named_list(sandbox_named $sbx, sql_type_list $sc_par_lst): sql_par_field_list
     {
         global $change_field_list;
 
         $lst = new sql_par_field_list();
         $sc = new sql();
-        $usr_tbl = $sc->is_usr_tbl($sc_par_lst);
-        $is_insert = $sc->is_insert($sc_par_lst);
-        $do_log = $sc->and_log($sc_par_lst);
+        $usr_tbl = $sc_par_lst->is_usr_tbl();
+        $is_insert = $sc_par_lst->is_insert();
+        $do_log = $sc_par_lst->and_log();
         $table_id = $sc->table_id($this::class);
 
         // for insert statements of user sandbox rows user id fields always needs to be included
@@ -1550,188 +1558,6 @@ class sandbox_named extends sandbox
             );
         }
         return $lst;
-    }
-
-    /**
-     * get a list of database field names, values and types that have been updated
-     * of the object to combine the list with the list of the child object e.g. word
-     *
-     * @param sandbox_named $sbx the same named sandbox as this to compare which fields have been changed
-     * @param array $sc_par_lst the parameters for the sql statement creation
-     * @return array with the field names of the object and any child object
-     */
-    function db_changed_named(sandbox_named $sbx, array $sc_par_lst = []): array
-    {
-        global $change_field_list;
-
-        $lst = [];
-        $sc = new sql();
-        $usr_tbl = $sc->is_usr_tbl($sc_par_lst);
-        $is_insert = $sc->is_insert($sc_par_lst);
-        $do_log = $sc->and_log($sc_par_lst);
-        $table_id = $sc->table_id($this::class);
-
-        // for insert statements of user sandbox rows user id fields always needs to be included
-        if ($usr_tbl and $is_insert) {
-            $lst[] = [
-                $this::FLD_ID,
-                $this->id(),
-                db_object_seq_id::FLD_ID_SQLTYP
-            ];
-            $lst[] = [
-                user::FLD_ID,
-                $this->user_id(),
-                db_object_seq_id::FLD_ID_SQLTYP
-            ];
-        } else {
-            if ($sbx->user_id() <> $this->user_id()) {
-                if ($do_log) {
-                    $lst[] = [
-                        sql::FLD_LOG_FIELD_PREFIX . user::FLD_ID,
-                        $change_field_list->id($table_id . user::FLD_ID),
-                        change::FLD_FIELD_ID_SQLTYP
-                    ];
-                }
-                $lst[] = [
-                    user::FLD_ID,
-                    $this->user_id(),
-                    db_object_seq_id::FLD_ID_SQLTYP
-                ];
-            }
-        }
-        if ($sbx->name() <> $this->name()) {
-            if ($do_log) {
-                $lst[] = [
-                    sql::FLD_LOG_FIELD_PREFIX . $this->name_field(),
-                    $change_field_list->id($table_id . $this->name_field()),
-                    change::FLD_FIELD_ID_SQLTYP
-                ];
-            }
-            $lst[] = [
-                $this->name_field(),
-                $this->name(),
-                self::FLD_NAME_SQLTYP
-            ];
-        }
-        if ($sbx->description <> $this->description) {
-            if ($do_log) {
-                $lst[] = [
-                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_DESCRIPTION,
-                    $change_field_list->id($table_id . self::FLD_DESCRIPTION),
-                    change::FLD_FIELD_ID_SQLTYP
-                ];
-            }
-            $lst[] = [
-                self::FLD_DESCRIPTION,
-                $this->description(),
-                self::FLD_DESCRIPTION_SQLTYP
-            ];
-        }
-        return $lst;
-    }
-
-    /**
-     * get a list of database fields that have been updated
-     * field list must be corresponding to the db_values_changed fields
-     *
-     * @param sandbox_named $sbx the same named sandbox as this to compare which fields have been changed
-     * @param array $sc_par_lst the parameters for the sql statement creation
-     * @return array with the field names of the object and any child object
-     */
-    function db_fields_changed_named(sandbox_named $sbx, array $sc_par_lst = []): array
-    {
-        $result = [];
-        $sc = new sql();
-        $usr_tbl = $sc->is_usr_tbl($sc_par_lst);
-        $is_insert = $sc->is_insert($sc_par_lst);
-        $do_log = $sc->and_log($sc_par_lst);
-        // for insert statements of user sandbox rows user id fields always needs to be included
-        if ($usr_tbl and $is_insert) {
-            $result[] = $this::FLD_ID;
-            $result[] = user::FLD_ID;
-        } else {
-            if ($sbx->user_id() <> $this->user_id()) {
-                if ($do_log) {
-                    $result[] = sql::FLD_LOG_FIELD_PREFIX . user::FLD_ID;
-                }
-                $result[] = user::FLD_ID;
-            }
-        }
-        if ($sbx->name() <> $this->name()) {
-            if ($do_log) {
-                $result[] = sql::FLD_LOG_FIELD_PREFIX . $this->name_field();
-            }
-            $result[] = $this->name_field();
-        }
-        if ($sbx->description <> $this->description) {
-            if ($do_log) {
-                $result[] = sql::FLD_LOG_FIELD_PREFIX . self::FLD_DESCRIPTION;
-            }
-            $result[] = self::FLD_DESCRIPTION;
-        }
-        return $result;
-    }
-
-    /**
-     * get a list of database field values that have been updated
-     *
-     * @param sandbox_named $sbx the same named sandbox as this to compare which field values have been changed
-     * @param array $sc_par_lst the parameters for the sql statement creation
-     * @return array with the field values of the object and any child object
-     */
-    function db_values_changed_named(sandbox_named $sbx, array $sc_par_lst = []): array
-    {
-        // get the preloaded ids for logging
-        $sc = new sql();
-        $do_log = $sc->and_log($sc_par_lst);
-        $table_id = $sc->table_id($this::class);
-        global $change_field_list;
-
-        // create the value array
-        $result = [];
-        $sc = new sql();
-        $usr_tbl = $sc->is_usr_tbl($sc_par_lst);
-        $is_insert = $sc->is_insert($sc_par_lst);
-        // for insert of user sandbox rows user id fields always needs to be included
-        if ($usr_tbl and $is_insert) {
-            $result[] = $this->id();
-            $result[] = $this->user_id();
-        } else {
-            if ($sbx->user_id() <> $this->user_id()) {
-                if ($do_log) {
-                    $result[] = $change_field_list->id($table_id . user::FLD_ID);
-                }
-                $result[] = $this->user_id();
-            }
-        }
-        if ($sbx->name() <> $this->name()) {
-            if ($do_log) {
-                $result[] = $change_field_list->id($table_id . $this->name_field());
-            }
-            $result[] = $this->name();
-        }
-        if ($sbx->description <> $this->description) {
-            if ($do_log) {
-                $result[] = $change_field_list->id($table_id . self::FLD_DESCRIPTION);
-            }
-            $result[] = $this->description();
-        }
-        return $result;
-    }
-
-    /**
-     * @return array with the field values of the object and any child object
-     */
-    function value_list_named(): array
-    {
-        return [
-            $this->user()->id(),
-            $this->name(),
-            $this->description,
-            $this->excluded,
-            $this->share_id,
-            $this->protection_id
-        ];
     }
 
 

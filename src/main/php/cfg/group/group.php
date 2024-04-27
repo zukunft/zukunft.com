@@ -71,6 +71,7 @@ use cfg\db\sql_par;
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_par_type;
 use cfg\db\sql_type;
+use cfg\db\sql_type_list;
 use cfg\export\sandbox_exp;
 use cfg\phr_ids;
 use cfg\phrase;
@@ -499,18 +500,18 @@ class group extends sandbox_multi
         $sql_foreign = $sc->sql_separator();
         $sql_truncate = '';
         $sql_lst = [$sql, $sql_index, $sql_foreign, $sql_truncate];
-        $sql_lst = $this->sql_one_tbl($sc, [sql_type::MOST], sandbox_value::FLD_KEY, $this::TBL_COMMENT, $sql_lst);
-        $sql_lst = $this->sql_one_tbl($sc, [sql_type::MOST, sql_type::USER], sandbox_value::FLD_KEY_USER, $this::TBL_COMMENT, $sql_lst);
-        $sql_lst = $this->sql_one_tbl($sc, [sql_type::PRIME], group::FLD_KEY_PRIME, $this::TBL_COMMENT_PRIME, $sql_lst);
-        $sql_lst = $this->sql_one_tbl($sc, [sql_type::PRIME, sql_type::USER], group::FLD_KEY_PRIME_USER, $this::TBL_COMMENT_PRIME, $sql_lst);
-        $sql_lst = $this->sql_one_tbl($sc, [sql_type::BIG], sandbox_value::FLD_KEY_BIG, $this::TBL_COMMENT_BIG, $sql_lst);
-        return $this->sql_one_tbl($sc, [sql_type::BIG, sql_type::USER], sandbox_value::FLD_KEY_BIG_USER, $this::TBL_COMMENT_BIG, $sql_lst);
+        $sql_lst = $this->sql_one_tbl($sc, new sql_type_list([sql_type::MOST]), sandbox_value::FLD_KEY, $this::TBL_COMMENT, $sql_lst);
+        $sql_lst = $this->sql_one_tbl($sc, new sql_type_list([sql_type::MOST, sql_type::USER]), sandbox_value::FLD_KEY_USER, $this::TBL_COMMENT, $sql_lst);
+        $sql_lst = $this->sql_one_tbl($sc, new sql_type_list([sql_type::PRIME]), group::FLD_KEY_PRIME, $this::TBL_COMMENT_PRIME, $sql_lst);
+        $sql_lst = $this->sql_one_tbl($sc, new sql_type_list([sql_type::PRIME, sql_type::USER]), group::FLD_KEY_PRIME_USER, $this::TBL_COMMENT_PRIME, $sql_lst);
+        $sql_lst = $this->sql_one_tbl($sc, new sql_type_list([sql_type::BIG]), sandbox_value::FLD_KEY_BIG, $this::TBL_COMMENT_BIG, $sql_lst);
+        return $this->sql_one_tbl($sc, new sql_type_list([sql_type::BIG, sql_type::USER]), sandbox_value::FLD_KEY_BIG_USER, $this::TBL_COMMENT_BIG, $sql_lst);
     }
 
     /**
      * add the sql statements for one table to the given array of sql statements
      * @param sql $sc the sql creator object with the target db_type set
-     * @param array $sc_par_lst of parameters for the sql creation
+     * @param sql_type_list $sc_par_lst of parameters for the sql creation
      * @param array $key_fld with the parameter for the table primary key field
      * @param string $tbl_comment the comment for the table in the sql statement
      * @param array $sql_lst the list with the sql statements created until now
@@ -518,7 +519,7 @@ class group extends sandbox_multi
      */
     private function sql_one_tbl(
         sql    $sc,
-        array  $sc_par_lst,
+        sql_type_list  $sc_par_lst,
         array  $key_fld,
         string $tbl_comment,
         array  $sql_lst
@@ -526,7 +527,7 @@ class group extends sandbox_multi
     {
         $sc->set_class($this::class, $sc_par_lst);
         $fields = array_merge($key_fld, sandbox_value::FLD_ALL_OWNER, $this::FLD_LST_USER_CAN_CHANGE);
-        $usr_tbl = $sc->is_usr_tbl($sc_par_lst);
+        $usr_tbl = $sc_par_lst->is_usr_tbl();
         if ($usr_tbl) {
             $fields = array_merge($key_fld, sandbox_value::FLD_ALL_CHANGER, $this::FLD_LST_USER_CAN_CHANGE);
         }
@@ -555,8 +556,7 @@ class group extends sandbox_multi
         $this->set_id($id);
         // for the group the number of phrases are not relevant for the queries
         $ext = $this->table_extension(false);
-        $sc_par_lst = [];
-        $sc_par_lst[] = $this->table_type();
+        $sc_par_lst = new sql_type_list([$this->table_type()]);
         $qp = $this->load_sql_multi($sc, sql_db::FLD_ID, $class, $sc_par_lst, $ext);
         $sc->add_where($this->id_field(), $id);
         $qp->sql = $sc->sql();
@@ -1290,10 +1290,10 @@ class group extends sandbox_multi
      * create the sql statement to add a new group name to the database
      *
      * @param sql $sc with the target db_type set
-     * @param array $sc_par_lst the parameters for the sql statement creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_insert(sql $sc, array $sc_par_lst): sql_par
+    function sql_insert(sql $sc, sql_type_list $sc_par_lst): sql_par
     {
         $qp = $this->sql_common($sc, $sc_par_lst);
         // overwrite the standard auto increase id field name
@@ -1313,10 +1313,10 @@ class group extends sandbox_multi
      *
      * @param sql $sc with the target db_type set
      * @param group $db_grp
-     * @param array $sc_par_lst the parameters for the sql statement creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_update(sql $sc, group $db_grp, array $sc_par_lst): sql_par
+    function sql_update(sql $sc, group $db_grp, sql_type_list $sc_par_lst): sql_par
     {
         $lib = new library();
         $qp = $this->sql_common($sc, $sc_par_lst);
@@ -1343,13 +1343,13 @@ class group extends sandbox_multi
     /**
      * the common part of the sql statement creation for insert and update statements
      * @param sql $sc with the target db_type set
-     * @param array $sc_par_lst the parameters for the sql statement creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the common part for insert and update sql statements
      */
-    protected function sql_common(sql $sc, array $sc_par_lst = []): sql_par
+    protected function sql_common(sql $sc, sql_type_list $sc_par_lst): sql_par
     {
         $lib = new library();
-        $usr_tbl = $sc->is_usr_tbl($sc_par_lst);
+        $usr_tbl = $sc_par_lst->is_usr_tbl();
         $tbl_typ = $this->table_type();
         $ext = $tbl_typ->extension();
         $sc->set_class($this::class, $sc_par_lst, $tbl_typ->extension());

@@ -37,6 +37,7 @@ use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\db\sql_type;
+use cfg\db\sql_type_list;
 use cfg\result\result_list;
 use cfg\value\value_list;
 use shared\library;
@@ -159,7 +160,7 @@ class sandbox_list extends base_list
     {
         $lib = new library();
 
-        $qp = new sql_par($sbx::class, [sql_type::COMPLETE]);
+        $qp = new sql_par($sbx::class, new sql_type_list([sql_type::COMPLETE]));
         $qp->name .= 'names';
 
         //$sc->set_class($lib->class_to_name($sbx::class));

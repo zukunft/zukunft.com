@@ -51,6 +51,7 @@ use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
+use cfg\db\sql_type_list;
 use cfg\log\change;
 use cfg\log\change_action;
 use controller\system\sys_log as sys_log_api;
@@ -260,7 +261,7 @@ class sys_log extends db_object_seq_id
      */
     function sql_foreign_key(sql $sc): string
     {
-        return $this->sql_foreign_key_create($sc, [], [],false);
+        return $this->sql_foreign_key_create($sc, new sql_type_list([]), [], false);
     }
 
 

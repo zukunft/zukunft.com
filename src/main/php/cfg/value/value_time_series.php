@@ -41,6 +41,7 @@ use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_type;
+use cfg\db\sql_type_list;
 use cfg\group\group;
 use cfg\sandbox;
 use cfg\sandbox_value;
@@ -211,17 +212,15 @@ class value_time_series extends sandbox_value
      * @param sql $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
-     * @param array $sc_par_lst the parameters for the sql statement creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param string $ext the query name extension e.g. to differentiate queries based on 1,2, or more phrases
-     * @param sql_type $tbl_typ the table name extension e.g. to switch between standard and prime values
-     * @param bool $usr_tbl true if a db row should be added to the user table
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_multi(
         sql      $sc,
         string   $query_name,
         string   $class = self::class,
-        array    $sc_par_lst = [],
+        sql_type_list    $sc_par_lst = new sql_type_list([]),
         string   $ext = ''
     ): sql_par
     {

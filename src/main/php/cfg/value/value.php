@@ -73,6 +73,7 @@ include_once SERVICE_EXPORT_PATH . 'value_exp.php';
 include_once SERVICE_EXPORT_PATH . 'json.php';
 
 use cfg\db\sql_par_field_list;
+use cfg\db\sql_type_list;
 use shared\types\protection_type as protect_type_shared;
 use shared\types\share_type as share_type_shared;
 use api\api;
@@ -492,9 +493,9 @@ class value extends sandbox_value
     {
         $tbl_typ = $this->grp->table_type();
         $ext = $this->grp->table_extension();
-        $qp = new sql_par($class, [sql_type::NORM], $ext . sql_type::NORM->extension());
+        $qp = new sql_par($class,  new sql_type_list([sql_type::NORM]), $ext . sql_type::NORM->extension());
         $qp->name .= sql_db::FLD_ID;
-        $sc->set_class($class, [], $tbl_typ->extension());
+        $sc->set_class($class, new sql_type_list([]), $tbl_typ->extension());
         $sc->set_name($qp->name);
         $sc->set_id_field($this->id_field());
         $sc->set_fields(array_merge(self::FLD_NAMES, self::FLD_NAMES_NUM_USR, array(user::FLD_ID)));
@@ -521,18 +522,16 @@ class value extends sandbox_value
      * @param sql $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
-     * @param array $sc_par_lst the parameters for the sql statement creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param string $ext the query name extension e.g. to differentiate queries based on 1,2, or more phrases
-     * @param sql_type $tbl_typ the table name extension e.g. to switch between standard and prime values
-     * @param bool $usr_tbl true if a db row should be added to the user table
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_multi(
-        sql    $sc,
-        string $query_name,
-        string $class = self::class,
-        array  $sc_par_lst = [],
-        string $ext = ''
+        sql           $sc,
+        string        $query_name,
+        string        $class = self::class,
+        sql_type_list $sc_par_lst = new sql_type_list([]),
+        string        $ext = ''
     ): sql_par
     {
         $qp = parent::load_sql_multi($sc, $query_name, $class, $sc_par_lst, $ext);
@@ -1464,7 +1463,7 @@ class value extends sandbox_value
     {
         $tbl_typ = $this->grp->table_type();
         $ext = $this->grp->table_extension();
-        $sc->set_class(self::class, [$tbl_typ]);
+        $sc->set_class(self::class, new sql_type_list([$tbl_typ]));
         return $sc->load_sql_not_changed_multi($this->id, $this->owner_id, $this->id_field(), $ext, $tbl_typ);
     }
 
@@ -1559,7 +1558,7 @@ class value extends sandbox_value
                 // create an entry in the user sandbox
                 $ext = $this->grp->table_extension();
                 $db_con->set_class($class, true, $ext);
-                $qp = $this->sql_insert($db_con->sql_creator(), [sql_type::USER]);
+                $qp = $this->sql_insert($db_con->sql_creator(), new sql_type_list([sql_type::USER]));
                 $usr_msg = $db_con->insert($qp, 'add user specific value');
                 $result = $usr_msg->is_ok();
             }
@@ -1576,8 +1575,8 @@ class value extends sandbox_value
      */
     function load_sql_user_changes(sql $sc, string $class = self::class): sql_par
     {
-        $sc_par_lst = [sql_type::USER];
-        $sc_par_lst[] = $this->grp->table_type();
+        $sc_par_lst = new sql_type_list([sql_type::USER]);
+        $sc_par_lst->add($this->grp->table_type());
         $sc->set_class($class, $sc_par_lst);
         // overwrite the standard id field name (value_id) with the main database id field for values "group_id"
         $sc->set_id_field($this->id_field());
@@ -2243,12 +2242,12 @@ class value extends sandbox_value
     /**
      * create the sql statement to add a new value to the database
      * @param sql $sc with the target db_type set
-     * @param array $sc_par_lst the parameters for the sql statement creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_insert(sql $sc, array $sc_par_lst = []): sql_par
+    function sql_insert(sql $sc, sql_type_list $sc_par_lst= new sql_type_list([])): sql_par
     {
-        $usr_tbl = $sc->is_usr_tbl($sc_par_lst);
+        $usr_tbl = $sc_par_lst->is_usr_tbl($sc_par_lst);
         $qp = $this->sql_common($sc, $sc_par_lst);
         // overwrite the standard auto increase id field name
         $sc->set_id_field($this->id_field());
@@ -2293,10 +2292,10 @@ class value extends sandbox_value
      *
      * @param sql $sc with the target db_type set
      * @param value $db_val the value object with the database values before the update
-     * @param array $sc_par_lst the parameters for the sql statement creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_update(sql $sc, value $db_val, array $sc_par_lst = []): sql_par
+    function sql_update(sql $sc, value $db_val, sql_type_list $sc_par_lst = new sql_type_list([])): sql_par
     {
         // get the fields and values that have been changed and needs to be updated in the database
         $fld_val_typ_lst = $this->db_changed($db_val);
@@ -2309,13 +2308,13 @@ class value extends sandbox_value
      *
      * @param sql $sc with the target db_type set
      * @param array $fld_val_typ_lst list of field names, values and sql types additional to the standard id and name fields
-     * @param array $sc_par_lst the parameters for the sql statement creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_update_fields(sql $sc, array $fld_val_typ_lst = [], array $sc_par_lst = []): sql_par
+    function sql_update_fields(sql $sc, array $fld_val_typ_lst = [], sql_type_list $sc_par_lst = new sql_type_list([])): sql_par
     {
         $lib = new library();
-        $usr_tbl = $sc->is_usr_tbl($sc_par_lst);
+        $usr_tbl = $sc_par_lst->is_usr_tbl();
         $qp = $this->sql_common($sc, $sc_par_lst);
         // get the fields and values that have been changed and needs to be updated in the database
         $all_fields = $this->db_fields_all();

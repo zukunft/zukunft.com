@@ -42,6 +42,7 @@ use api\phrase\group as group_api;
 use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_type;
+use cfg\db\sql_type_list;
 use cfg\group\group;
 use cfg\group\group_id;
 use cfg\group\group_link;

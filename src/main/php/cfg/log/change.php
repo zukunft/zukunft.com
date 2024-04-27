@@ -58,6 +58,7 @@ use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\db\sql_type;
+use cfg\db\sql_type_list;
 use cfg\formula;
 use cfg\user;
 use cfg\value\value;
@@ -469,7 +470,7 @@ class change extends change_log
      * create the sql statement to add a log entry to the database
      *
      * @param sql $sc with the target db_type set
-     * @param array $sc_par_lst the parameters for the sql statement creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param string $ext the name extention that should be used
      * @param string $val_tbl name of the table to select the values to insert
      * @param string $add_fld name of the database key field
@@ -477,20 +478,20 @@ class change extends change_log
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_insert(
-        sql $sc,
-        array $sc_par_lst,
-        string $ext = '',
-        string $val_tbl = '',
-        string $add_fld = '',
-        string $row_fld = ''
+        sql           $sc,
+        sql_type_list $sc_par_lst,
+        string        $ext = '',
+        string        $val_tbl = '',
+        string        $add_fld = '',
+        string        $row_fld = ''
     ): sql_par
     {
-        $sc_par_lst[] = sql_type::INSERT;
+        $sc_par_lst->add(sql_type::INSERT);
         // do not use the user extension for the change table name
-        $sc_par_lst_chg = $sc->sql_par_remove(sql_type::USER, $sc_par_lst);
+        $sc_par_lst_chg = $sc_par_lst->remove(sql_type::USER);
         $qp = $sc->sql_par($this::class, $sc_par_lst_chg);
         $sc->set_class($this::class, $sc_par_lst_chg);
-        if ($sc->is_list_tbl($sc_par_lst)) {
+        if ($sc_par_lst->is_list_tbl()) {
             $lib = new library();
             $qp->name = $lib->class_to_name($this::class) . $ext;
         }

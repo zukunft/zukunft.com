@@ -53,6 +53,7 @@ include_once MODEL_SANDBOX_PATH . 'share_type.php';
 
 use cfg\db\sql_field_type;
 use cfg\db\sql_par_field_list;
+use cfg\db\sql_type_list;
 use shared\types\protection_type as protect_type_shared;
 use shared\types\share_type as share_type_shared;
 use cfg\component\component;
@@ -286,59 +287,15 @@ class sandbox_multi extends db_object_multi_user
     }
 
     /**
-     * list of fields that have been changed compared to a given object
-     * the last_update field is excluded here because this is an internal only field
-     *
-     * @param sandbox_multi $sbx the same sandbox as this to compare which fields have been changed
-     * @return array with the field names of the object and any child object
-     */
-    function db_fields_changed_sandbox(sandbox_multi $sbx): array
-    {
-        $result = [];
-        if ($sbx->excluded <> $this->excluded) {
-            $result[] = self::FLD_EXCLUDED;
-        }
-        if ($sbx->share_id <> $this->share_id) {
-            $result[] = self::FLD_SHARE;
-        }
-        if ($sbx->protection_id <> $this->protection_id) {
-            $result[] = self::FLD_PROTECT;
-        }
-        return $result;
-    }
-
-    /**
-     * list of values that have been changed compared to a given object
-     * the last_update field is excluded here because this is an internal only field
-     *
-     * @param sandbox_multi $sbx the same sandbox as this to compare which fields have been changed
-     * @return array with the field names of the object and any child object
-     */
-    function db_values_changed_sandbox(sandbox_multi $sbx): array
-    {
-        $result = [];
-        if ($sbx->excluded <> $this->excluded) {
-            $result[] = $this->excluded;
-        }
-        if ($sbx->share_id <> $this->share_id) {
-            $result[] = $this->share_id;
-        }
-        if ($sbx->protection_id <> $this->protection_id) {
-            $result[] = $this->protection_id;
-        }
-        return $result;
-    }
-
-    /**
      * create the sql statement to update multi table sandbox object in the database
      * to be overwritten by the child objects
      *
      * @param sql $sc with the target db_type set
      * @param array $fld_val_typ_lst list of field names, values and sql types additional to the standard id and name fields
-     * @param array $sc_par_lst the parameters for the sql statement creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_update_fields(sql $sc, array $fld_val_typ_lst = [], array $sc_par_lst = []): sql_par
+    function sql_update_fields(sql $sc, array $fld_val_typ_lst = [], sql_type_list $sc_par_lst = new sql_type_list([])): sql_par
     {
         return new sql_par($this::class);
     }
@@ -505,7 +462,7 @@ class sandbox_multi extends db_object_multi_user
      */
     function load_standard_sql(sql $sc, string $class = self::class): sql_par
     {
-        $qp = new sql_par($class, [sql_type::NORM]);
+        $qp = new sql_par($class, new sql_type_list([sql_type::NORM]));
         $qp->name .= sql_db::FLD_ID;
 
         $sc->set_name($qp->name);
@@ -1036,7 +993,7 @@ class sandbox_multi extends db_object_multi_user
         $qp->name .= 'user_list';
 
         $class = $lib->class_to_name($this::class);
-        $sc->set_class($class, [sql_type::USER]);
+        $sc->set_class($class, new sql_type_list([sql_type::USER]));
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
         $sc->set_join_fields(
@@ -1159,7 +1116,7 @@ class sandbox_multi extends db_object_multi_user
 
         $db_con->set_class($this::class, true);
         try {
-            $qp = $this->sql_delete($db_con->sql_creator(), [sql_type::USER]);
+            $qp = $this->sql_delete($db_con->sql_creator(), new sql_type_list([sql_type::USER]));
             $usr_msg = $db_con->delete($qp, $this::class . ' user exclusions');
             $msg = $usr_msg->get_message();
             if ($msg == '') {
@@ -1566,13 +1523,13 @@ class sandbox_multi extends db_object_multi_user
      *
      * @param sql $sc with the target db_type set
      * @param array $fld_val_typ_lst list of field names, values and sql types additional to the standard id and name fields
-     * @param array $sc_par_lst the parameters for the sql statement creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_update_multi(
         sql   $sc,
         array $fld_val_typ_lst = [],
-        array $sc_par_lst = []
+        sql_type_list $sc_par_lst = new sql_type_list([])
     ): sql_par
     {
         $lib = new library();
@@ -1580,7 +1537,7 @@ class sandbox_multi extends db_object_multi_user
         $sql_name = $lib->class_to_name($this::class);
         $qp = new sql_par($sql_name);
         $qp->name = $sql_name;
-        if ($sc->is_usr_tbl($sc_par_lst)) {
+        if ($sc_par_lst->is_usr_tbl()) {
             $qp->name .= '_user';
         }
         $qp->name .= sql::file_sep . sql::file_update;
@@ -1606,15 +1563,15 @@ class sandbox_multi extends db_object_multi_user
      * TODO check if user specific overwrites can be deleted
      *
      * @param sql $sc with the target db_type set
-     * @param array $sc_par_lst the parameters for the sql statement creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_delete(
         sql   $sc,
-        array $sc_par_lst = []
+        sql_type_list $sc_par_lst = new sql_type_list([])
     ): sql_par
     {
-        $excluded = $sc->exclude_sql($sc_par_lst);
+        $excluded = $sc_par_lst->exclude_sql();
         $qp = $this->sql_common($sc, $sc_par_lst, false);
         $qp->name .= sql::file_sep . sql::file_delete;
         if ($excluded) {
@@ -1779,7 +1736,7 @@ class sandbox_multi extends db_object_multi_user
                     $db_con->set_class($this::class, true);
                     $db_con->set_usr($this->user()->id());
                     $fld_val_typ_lst = [[$log->field(), $new_value, '']];
-                    $qp = $this->sql_update_fields($db_con->sql_creator(), $fld_val_typ_lst, [sql_type::USER]);
+                    $qp = $this->sql_update_fields($db_con->sql_creator(), $fld_val_typ_lst, new sql_type_list([sql_type::USER]));
                     $usr_msg = $db_con->update($qp, 'setting of share type');
                     $result = $usr_msg->get_message();
                 }
@@ -2371,7 +2328,7 @@ class sandbox_multi extends db_object_multi_user
             if ($result->is_ok()) {
                 // TODO always use the qp based setup
                 if ($this::class == value::class) {
-                    $qp = $this->sql_delete($db_con->sql_creator(), [sql_type::USER, sql_type::EXCLUDE]);
+                    $qp = $this->sql_delete($db_con->sql_creator(), new sql_type_list([sql_type::USER, sql_type::EXCLUDE]));
                     $msg = $db_con->delete($qp, $this::class . ' user exclusions');
                     $result->add($msg);
                 } else {

@@ -57,6 +57,7 @@ include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_link_typed.php';
 include_once SERVICE_EXPORT_PATH . 'triple_exp.php';
 
+use cfg\db\sql_type_list;
 use shared\types\protection_type as protect_type_shared;
 use shared\types\share_type as share_type_shared;
 use api\api;
@@ -758,7 +759,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
     function load_standard_sql(sql $sc, string $class = self::class): sql_par
     {
         $sc->set_class($class);
-        $qp = new sql_par($class, [sql_type::NORM]);
+        $qp = new sql_par($class, new sql_type_list([sql_type::NORM]));
         $qp->name .= $this->load_sql_name_ext();
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
@@ -1092,7 +1093,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
      */
     function load_sql_user_changes(sql $sc, string $class = self::class): sql_par
     {
-        $sc->set_class($class, [sql_type::USER]);
+        $sc->set_class($class, new sql_type_list([sql_type::USER]));
         $sc->set_fields(array_merge(
             self::FLD_NAMES_USR,
             self::FLD_NAMES_NUM_USR

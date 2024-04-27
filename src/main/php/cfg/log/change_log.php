@@ -81,6 +81,7 @@ use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
+use cfg\db\sql_type_list;
 use cfg\db_object_seq_id_user;
 use cfg\formula;
 use cfg\formula_link;
@@ -434,7 +435,7 @@ class change_log extends db_object_seq_id_user
         $sql_index = $sc->sql_separator();
         $sql_foreign = $sc->sql_separator();
 
-        $sc->set_class($this::class, [], $ext_type);
+        $sc->set_class($this::class, new sql_type_list([]), $ext_type);
         $fields = array_merge($this::FLD_LST_KEY, $fld_row_id, $this::FLD_LST_CHANGE);
         $sql .= $sc->table_create($fields, $type_name, $this::TBL_COMMENT, $this::class);
         $sql_index .= $sc->index_create($fields);

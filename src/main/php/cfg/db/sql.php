@@ -509,16 +509,13 @@ class sql
      * create a sql parameter object with presets based on the class and a sql type list
      *
      * @param string $class the class name to which the sql statements should be created
-     * @param array $sc_par_lst list of sql types to specify which kind of sql statement should be created
+     * @param sql_type_list $sc_par_lst list of sql types to specify which kind of sql statement should be created
      * @return sql_par set of sql parameters with some presets
      */
-    function sql_par(string $class, array $sc_par_lst = []): sql_par
+    function sql_par(string $class, sql_type_list $sc_par_lst): sql_par
     {
-        $ext = '';
-        foreach ($sc_par_lst as $sql_type) {
-            $ext .= $sql_type->extension();
-        }
-        $this->set_class($class, [], $ext);
+        $ext = $sc_par_lst->extension();
+        $this->set_class($class, new sql_type_list([]), $ext);
         return new sql_par($class, $sc_par_lst);
     }
 
@@ -529,11 +526,11 @@ class sql
      * TODO check if this is called with the class name and if there are exceptions
      *
      * @param string $class is a string that is used to select the table name, the id field and the name field
-     * @param array $sc_par_lst the parameters for the sql statement creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param string $ext the table name extension e.g. to switch between standard and prime values
      * @return bool true if setting the type was successful
      */
-    function set_class(string $class, array $sc_par_lst = [], string $ext = ''): bool
+    function set_class(string $class, sql_type_list $sc_par_lst = new sql_type_list([]), string $ext = ''): bool
     {
         global $usr;
 
@@ -1029,7 +1026,7 @@ class sql
      *
      * @param array $fields with the fields names to add
      * @param array $values with the field values to add
-     * @param array $sc_par_lst the parameters for the sql statement creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param bool $log_err false if called from a log function to prevent loops
      * @param string $val_tbl name of the table to select the values to insert
      * @param string $chg_add_fld the field name of the field that should be added (only used for change log)
@@ -1037,14 +1034,14 @@ class sql
      * @return string the prepared sql insert statement
      */
     function create_sql_insert(
-        array  $fields,
-        array  $values,
-        array  $types = [],
-        array  $sc_par_lst = [],
-        bool   $log_err = true,
-        string $val_tbl = '',
-        string $chg_add_fld = '',
-        string $chg_row_fld = ''
+        array         $fields,
+        array         $values,
+        array         $types = [],
+        sql_type_list $sc_par_lst = new sql_type_list([]),
+        bool          $log_err = true,
+        string        $val_tbl = '',
+        string        $chg_add_fld = '',
+        string        $chg_row_fld = ''
     ): string
     {
         $lib = new library();
@@ -1055,17 +1052,17 @@ class sql
         }
 
         // set the missing parameter from the list
-        if ($this->is_sub_tbl($sc_par_lst) or $this->is_list_tbl($sc_par_lst)) {
+        if ($sc_par_lst->is_sub_tbl() or $sc_par_lst->is_list_tbl()) {
             $this->sub_query = true;
         }
-        if ($this->is_list_tbl($sc_par_lst)) {
+        if ($sc_par_lst->is_list_tbl()) {
             $this->list_query = true;
         }
 
         $sql_fld = '';
         $sql_val = '';
-        $usr_tbl = $this->is_usr_tbl($sc_par_lst);
-        $update_part = $this->is_update_part($sc_par_lst);
+        $usr_tbl = $sc_par_lst->is_usr_tbl();
+        $update_part = $sc_par_lst->is_update_part();
         if (count($fields) <> count($values)) {
             if ($log_err) {
                 log_fatal_db(
@@ -1082,7 +1079,7 @@ class sql
 
             // gat the value parameter types
             $par_pos = 1;
-            $use_named_par = $this->use_named_par($sc_par_lst);
+            $use_named_par = $sc_par_lst->use_named_par();
             foreach (array_keys($values) as $i) {
                 $this->par_values[] = $values[$i];
                 if ($values[$i] != sql::NOW) {
@@ -1128,11 +1125,11 @@ class sql
         // create a prepare SQL statement if possible
         $sql_type = self::INSERT;
         $sc_par_lst_end = [];
-        if ($this->and_log($sc_par_lst)) {
+        if ($sc_par_lst->and_log()) {
             $sql_type = self::FUNCTION;
         }
         $sql = $this->prepare_this_sql($sql_type);
-        if ($this->and_log($sc_par_lst)) {
+        if ($sc_par_lst->and_log()) {
             $sql = $this->prepare_this_sql(self::FUNCTION);
             return $this->end_sql($sql, $sql_type);
         } else {
@@ -1152,8 +1149,8 @@ class sql
             } else {
                 // for log entries and user changes the change id does not need to be returned
                 // to indicate this tell the sql end function that this is a log table
-                if ($this->class == change::class and in_array(sql_type::NAMED_PAR, $sc_par_lst)) {
-                    $sc_par_lst[] = sql_type::NO_ID_RETURN;
+                if ($this->class == change::class and $sc_par_lst->use_named_par()) {
+                    $sc_par_lst->add(sql_type::NO_ID_RETURN);
                 }
             }
             $sc_par_lst_end = $sc_par_lst;
@@ -1169,7 +1166,7 @@ class sql
      * @param string|array $id_field name of the id field (or list of field names)
      * @param int|string|array $id the unique id of the row that should be updated
      * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
-     * @param array $sc_par_lst the parameters for the sql statement creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param bool $log_err false if
      * @param string $val_tbl name of the table to select the values to insert
      * @param string $chg_row_fld the row name of the field that should be added (only used for change log)
@@ -1180,14 +1177,14 @@ class sql
         string|array|int   $id,
         sql_par_field_list $fvt_lst,
         array              $types = [],
-        array              $sc_par_lst = [],
+        sql_type_list      $sc_par_lst = new sql_type_list([]),
         bool               $log_err = true,
         string             $val_tbl = '',
         string             $chg_row_fld = ''): string
     {
 
         $id_field_par = '';
-        $use_named_par = $this->use_named_par($sc_par_lst);
+        $use_named_par = $sc_par_lst->use_named_par();
 
         // check if the minimum parameters are set
         if ($this->query_name == '') {
@@ -1239,7 +1236,7 @@ class sql
             $sql_where = $this->sql_where($id_field, $id_lst, $offset, $id_field_par);
         } else {
             if ($use_named_par) {
-                if (in_array(sql_type::INSERT, $sc_par_lst)) {
+                if ($sc_par_lst->is_insert()) {
                     $id_field_used = $this->table . '.' . $id_field;
                     $sql_where = $this->sql_where($id_field_used, $id, $offset, $id);
                 } else {
@@ -1252,16 +1249,16 @@ class sql
 
         // create a prepare SQL statement if possible
         $sql_type = self::UPDATE;
-        if ($this->and_log($sc_par_lst)) {
+        if ($sc_par_lst->and_log()) {
             $sql_type = self::FUNCTION;
         }
-        if ($this->is_sub_tbl($sc_par_lst)) {
+        if ($sc_par_lst->is_sub_tbl()) {
             $this->sub_query = true;
         }
-        if ($this->and_log($sc_par_lst)) {
+        if ($sc_par_lst->and_log()) {
             $sql = $this->prepare_this_sql(self::FUNCTION);
         } else {
-            if ($this->is_update_part($sc_par_lst)) {
+            if ($sc_par_lst->is_update_part()) {
                 $sql = sql::UPDATE;
             } else {
                 $sql = $this->prepare_this_sql($sql_type);
@@ -3001,13 +2998,13 @@ class sql
     }
 
     /**
-     * @param array $sc_par_lst the parameters for the sql statement creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return string with the SQL closing statement for the current query
      */
-    private function end_sql(string $sql, string $sql_statement_type = sql::SELECT, array $sc_par_lst = []): string
+    private function end_sql(string $sql, string $sql_statement_type = sql::SELECT, sql_type_list $sc_par_lst = new sql_type_list([])): string
     {
         $lib = new library();
-        $no_id_return = in_array(sql_type::NO_ID_RETURN, $sc_par_lst);
+        $no_id_return = $sc_par_lst->no_id_return();
         if ($sql_statement_type == self::INSERT) {
             if ($this->db_type == sql_db::POSTGRES) {
                 // return the database row id if the table uses auto id series
@@ -3026,7 +3023,7 @@ class sql
                     }
                 }
             } else {
-                if (in_array(sql_type::NAMED_PAR, $sc_par_lst)) {
+                if ($sc_par_lst->use_named_par()) {
                     if (!$no_id_return) {
                         $sql .= ' RETURNING ';
                         $sql .= $this->id_field;
@@ -3419,18 +3416,18 @@ class sql
 
     /**
      * set the table name and init some related parameters
-     * @param array $sc_par_lst the parameters for the sql statement creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param string $ext the table name extension e.g. to switch between standard and prime values
      * @return void
      */
-    private function set_table(array $sc_par_lst = [], string $ext = ''): void
+    private function set_table(sql_type_list $sc_par_lst, string $ext = ''): void
     {
         global $debug;
         $this->table = '';
 
-        $usr_tbl = $this->is_usr_tbl($sc_par_lst);
+        $usr_tbl = $sc_par_lst->is_usr_tbl();
         if ($ext == '') {
-            $ext = $this->tbl_ext_ex_user($sc_par_lst);
+            $ext = $sc_par_lst->tbl_ext_ex_user();
         }
         if ($usr_tbl) {
             $this->table = sql_db::USER_PREFIX;
@@ -3744,7 +3741,7 @@ class sql
             $qp->name .= '_not_owned';
         }
         $this->set_name($qp->name);
-        $this->set_table([$tbl_typ]);
+        $this->set_table(new sql_type_list([$tbl_typ]));
         $this->set_id_field($id_field);
         $this->set_fields(array(user::FLD_ID));
         if ($id == 0) {
@@ -4059,161 +4056,6 @@ class sql
     }
 
 
-    /*
-     * sql types
-     */
-
-    /**
-     * remove a sql type parameter from a list
-     * @param sql_type $type_to_remove the sql type parameter that should be removed from the list
-     * @param array $sc_par_lst the list of sql type parameters before the removal
-     * @return array a clone of the list without the given paramater
-     */
-    public function sql_par_remove(sql_type $type_to_remove, array $sc_par_lst): array
-    {
-        $result = $sc_par_lst;
-        if (($key = array_search($type_to_remove, $result)) !== false) {
-            unset($result[$key]);
-        }
-        return $result;
-    }
-
-    /**
-     * @param array $sc_par_lst of parameters for the sql creation
-     * @return bool true if a insert sql statement should be created
-     */
-    public function is_insert(array $sc_par_lst): bool
-    {
-        return in_array(sql_type::INSERT, $sc_par_lst);
-    }
-
-    /**
-     * @param array $sc_par_lst of parameters for the sql creation
-     * @return bool true if sql should point to the user sandbox table
-     */
-    public function is_usr_tbl(array $sc_par_lst): bool
-    {
-        return in_array(sql_type::USER, $sc_par_lst);
-    }
-
-    /**
-     * @param array $sc_par_lst of parameters for the sql creation
-     * @return bool true if sql is part of an update function
-     */
-    public function is_update_part(array $sc_par_lst): bool
-    {
-        return in_array(sql_type::UPDATE_PART, $sc_par_lst);
-    }
-
-    /**
-     * @param array $sc_par_lst of parameters for the sql creation
-     * @return bool true if the standard sandbox fields should be added to the sql statement
-     */
-    public function use_sandbox_fields(array $sc_par_lst): bool
-    {
-        return in_array(sql_type::SANDBOX, $sc_par_lst);
-    }
-
-    /**
-     * @param array $sc_par_lst of parameters for the sql creation
-     * @return string the table name extension excluding the user sandbox indication
-     */
-    public function ext_ex_user(array $sc_par_lst): string
-    {
-        $ext = '';
-        foreach ($sc_par_lst as $sc_par) {
-            if ($sc_par != sql_type::USER) {
-                $ext .= $sc_par->extension();
-            }
-        }
-        return $ext;
-    }
-
-    /**
-     * the extension of the table name so excluding the insert, update and delete query name extension
-     *
-     * @param array $sc_par_lst of parameters for the sql creation
-     * @return string the table name extension excluding the user sandbox indication
-     */
-    public function tbl_ext_ex_user(array $sc_par_lst): string
-    {
-        $ext = '';
-        foreach ($sc_par_lst as $sc_par) {
-            if ($sc_par != sql_type::USER
-                and $sc_par != sql_type::INSERT
-                and $sc_par != sql_type::UPDATE
-                and $sc_par != sql_type::DELETE
-                and $sc_par != sql_type::SUB
-                and $sc_par != sql_type::LIST) {
-                $ext .= $sc_par->extension();
-            }
-        }
-        return $ext;
-    }
-
-    /**
-     * the extension of the table name so excluding the insert, update and delete query name extension
-     *
-     * @param array $sc_par_lst of parameters for the sql creation
-     * @return bool true if a insert, update or delete sql statement should be created
-     */
-    public function is_cur_not_l(array $sc_par_lst): bool
-    {
-        $result = false;
-        foreach ($sc_par_lst as $sc_par) {
-            if ($sc_par == sql_type::INSERT
-                or $sc_par == sql_type::UPDATE
-                or $sc_par == sql_type::DELETE) {
-                $result = true;
-            }
-        }
-        return $result;
-    }
-
-    /**
-     * @param array $sc_par_lst of parameters for the sql creation
-     * @return bool true if sql is supposed to be part of another sql statement
-     */
-    protected function is_sub_tbl(array $sc_par_lst): bool
-    {
-        return in_array(sql_type::SUB, $sc_par_lst);
-    }
-
-    /**
-     * @param array $sc_par_lst of parameters for the sql creation
-     * @return bool true if sql is supposed to be part of another sql statement
-     */
-    public function is_list_tbl(array $sc_par_lst): bool
-    {
-        return in_array(sql_type::LIST, $sc_par_lst);
-    }
-
-    /**
-     * @param array $sc_par_lst of parameters for the sql creation
-     * @return bool true if the type list suggests to exclude the row instead of deleting it
-     */
-    public function exclude_sql(array $sc_par_lst): bool
-    {
-        return in_array(sql_type::EXCLUDE, $sc_par_lst);
-    }
-
-    /**
-     * @param array $sc_par_lst of parameters for the sql creation
-     * @return bool true if a sql function should be created that also creates the log entries
-     */
-    public function and_log(array $sc_par_lst): bool
-    {
-        return in_array(sql_type::LOG, $sc_par_lst);
-    }
-
-    /**
-     * @param array $sc_par_lst of parameters for the sql creation
-     * @return bool true if named parameters should be used
-     */
-    public function use_named_par(array $sc_par_lst): bool
-    {
-        return in_array(sql_type::NAMED_PAR, $sc_par_lst);
-    }
 
     /*
      * field, value and sql field type list

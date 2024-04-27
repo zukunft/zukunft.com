@@ -41,6 +41,7 @@ namespace cfg;
 use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
+use cfg\db\sql_type_list;
 use cfg\log\change_action;
 use cfg\log\change_link;
 use Exception;
@@ -122,13 +123,13 @@ class sandbox_link extends sandbox
      * create an array with the fields and parameters for the sql table creation of the link object
      *
      * @param sql $sc with the target db_type set
-     * @param array $sc_par_lst of parameters for the sql creation
+     * @param sql_type_list $sc_par_lst of parameters for the sql creation
      * @return array[] with the parameters of the table fields
      */
-    protected function sql_all_field_par(sql $sc, array $sc_par_lst = []): array
+    protected function sql_all_field_par(sql $sc, sql_type_list $sc_par_lst): array
     {
-        $usr_tbl = $sc->is_usr_tbl($sc_par_lst);
-        $use_sandbox = $sc->use_sandbox_fields($sc_par_lst);
+        $usr_tbl = $sc_par_lst->is_usr_tbl();
+        $use_sandbox = $sc_par_lst->use_sandbox_fields();
         if (!$usr_tbl) {
             // the primary id field is always the first
             $fields = $this->sql_id_field_par(false);

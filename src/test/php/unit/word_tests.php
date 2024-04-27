@@ -41,6 +41,7 @@ use api\formula\formula as formula_api;
 use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_type;
+use cfg\db\sql_type_list;
 use cfg\phrase_type;
 use cfg\word;
 use api\word\word as word_api;

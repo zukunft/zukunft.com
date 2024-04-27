@@ -68,6 +68,7 @@ use cfg\db\sql;
 use cfg\db\sql as sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
+use cfg\db\sql_type_list;
 use cfg\db_object_seq_id;
 use cfg\fig_ids;
 use cfg\formula;
@@ -1023,11 +1024,12 @@ class test_base
      *
      * @param sql $sc a sql creator object that can be empty
      * @param object $usr_obj the user sandbox object e.g. a word
-     * @param array $sc_par_lst the parameters for the sql statement creation
+     * @param array $sc_par_lst_in the parameters for the sql statement creation
      * @return bool true if all tests are fine
      */
-    function assert_sql_insert(sql $sc, object $usr_obj, array $sc_par_lst = []): bool
+    function assert_sql_insert(sql $sc, object $usr_obj, array $sc_par_lst_in = []): bool
     {
+        $sc_par_lst = new sql_type_list($sc_par_lst_in);
         // check the Postgres query syntax
         $sc->db_type = sql_db::POSTGRES;
         $qp = $usr_obj->sql_insert($sc, $sc_par_lst);
@@ -1049,11 +1051,12 @@ class test_base
      * @param sql $sc a sql creator object that can be empty
      * @param object $usr_obj the user sandbox object e.g. a word
      * @param object $db_obj must be the same object as the $usr_obj but with the values from the database before the update
-     * @param array $sc_par_lst the parameters for the sql statement creation
+     * @param array $sc_par_lst_in the parameters for the sql statement creation
      * @return bool true if all tests are fine
      */
-    function assert_sql_update(sql $sc, object $usr_obj, object $db_obj, array $sc_par_lst = []): bool
+    function assert_sql_update(sql $sc, object $usr_obj, object $db_obj, array $sc_par_lst_in = []): bool
     {
+        $sc_par_lst = new sql_type_list($sc_par_lst_in);
         // check the Postgres query syntax
         $sc->db_type = sql_db::POSTGRES;
         $qp = $usr_obj->sql_update($sc, $db_obj, $sc_par_lst);
@@ -1074,11 +1077,12 @@ class test_base
      *
      * @param sql $sc a sql creator object that can be empty
      * @param object $usr_obj the user sandbox object e.g. a word
-     * @param array $sc_par_lst the parameters for the sql statement creation
+     * @param array $sc_par_lst_in the parameters for the sql statement creation
      * @return bool true if all tests are fine
      */
-    function assert_sql_delete(sql $sc, object $usr_obj, array $sc_par_lst = []): bool
+    function assert_sql_delete(sql $sc, object $usr_obj, array $sc_par_lst_in = []): bool
     {
+        $sc_par_lst = new sql_type_list($sc_par_lst_in);
         // check the Postgres query syntax
         $sc->db_type = sql_db::POSTGRES;
         $qp = $usr_obj->sql_delete($sc, $sc_par_lst);

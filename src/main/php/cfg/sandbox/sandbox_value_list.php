@@ -38,6 +38,7 @@ use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
+use cfg\db\sql_type_list;
 use cfg\group\group;
 use cfg\group\group_id;
 use cfg\group\result_id;
@@ -314,10 +315,10 @@ class sandbox_value_list extends sandbox_list
         }
 
         $tbl_ext = $this->table_extension($tbl_types);
-        $qp = new sql_par($list_class, $tbl_types, $tbl_ext);
+        $qp = new sql_par($list_class, new sql_type_list($tbl_types), $tbl_ext);
         $qp->name .= $query_name;
 
-        $sc->set_class($class, [], $tbl_ext);
+        $sc->set_class($class, new sql_type_list([]), $tbl_ext);
         // overwrite the standard id field name (value_id) with the main database id field for values "group_id"
         $val = new value($this->user());
         if ($is_prime) {

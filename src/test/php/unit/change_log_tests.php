@@ -32,6 +32,8 @@
 
 namespace unit;
 
+include_once DB_PATH . 'sql_type.php';
+include_once DB_PATH . 'sql_type_list.php';
 include_once WEB_LOG_PATH . 'user_log_display.php';
 include_once MODEL_LOG_PATH . 'change.php';
 include_once MODEL_LOG_PATH . 'change_link.php';
@@ -40,6 +42,7 @@ use api\word\triple as triple_api;
 use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_type;
+use cfg\db\sql_type_list;
 use cfg\log\change;
 use cfg\log\change_action;
 use cfg\log\change_field;

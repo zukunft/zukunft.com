@@ -2,7 +2,7 @@
 
 /*
 
-    /model/dp/sql_type.php - enum of the sql table extension type for value and result tables
+    /model/dp/sql_type.php - enum of the sql statement creation parameters
     ----------------------
 
     This file is part of zukunft.com - calc with words

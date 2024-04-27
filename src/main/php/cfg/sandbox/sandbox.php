@@ -79,6 +79,7 @@ include_once MODEL_SANDBOX_PATH . 'protection_type.php';
 include_once MODEL_SANDBOX_PATH . 'share_type.php';
 
 use cfg\db\sql_par_field_list;
+use cfg\db\sql_type_list;
 use shared\types\protection_type as protect_type_shared;
 use shared\types\share_type as share_type_shared;
 use cfg\component\component;
@@ -511,7 +512,7 @@ class sandbox extends db_object_seq_id_user
      */
     function load_standard_sql(sql $sc, string $class = self::class): sql_par
     {
-        $qp = new sql_par($class, [sql_type::NORM]);
+        $qp = new sql_par($class, new sql_type_list([sql_type::NORM]));
         $qp->name .= sql_db::FLD_ID;
 
         $sc->set_name($qp->name);
@@ -946,7 +947,7 @@ class sandbox extends db_object_seq_id_user
         $qp->name .= 'user_list';
 
         $class = $lib->class_to_name($this::class);
-        $sc->set_class($class, [sql_type::USER]);
+        $sc->set_class($class, new sql_type_list([sql_type::USER]));
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
         $sc->set_join_fields(
@@ -1070,7 +1071,7 @@ class sandbox extends db_object_seq_id_user
         $db_con->set_class($this::class, true);
         try {
             if ($this->sql_write_prepared()) {
-                $qp = $this->sql_delete($db_con->sql_creator(), [sql_type::USER]);
+                $qp = $this->sql_delete($db_con->sql_creator(), new sql_type_list([sql_type::USER]));
                 $usr_msg = $db_con->delete($qp, $this::class . ' user exclusions');
                 $msg = $usr_msg->get_message();
             } else {
@@ -1438,7 +1439,7 @@ class sandbox extends db_object_seq_id_user
             // if there is no difference between the user row and the norm row remove all fields from the user row
             if ($this->no_diff($norm_obj)) {
                 if ($this->has_usr_cfg()) {
-                    $qp = $this->sql_delete($sc, [sql_type::USER]);
+                    $qp = $this->sql_delete($sc, new sql_type_list([sql_type::USER]));
                     $usr_msg->add($db_con->delete($qp, 'remove user overwrites of ' . $this->dsp_id()));
                 }
                 // check if some user overwrites can be removed
@@ -1458,12 +1459,12 @@ class sandbox extends db_object_seq_id_user
             if ($usr_msg->is_ok()) {
                 if ($this->no_diff($norm_obj)) {
                     if ($this->has_usr_cfg()) {
-                        $qp = $this->sql_delete($sc, [sql_type::USER]);
+                        $qp = $this->sql_delete($sc, new sql_type_list([sql_type::USER]));
                         $usr_msg->add($db_con->delete($qp, 'remove user overwrites of ' . $this->dsp_id()));
                     }
                 } else {
                     // apply the changes directly to the norm db record
-                    $qp = $this->sql_update($sc, $norm_obj, [sql_type::USER]);
+                    $qp = $this->sql_update($sc, $norm_obj, new sql_type_list([sql_type::USER]));
                     $usr_msg->add($db_con->update($qp, 'update user row for ' . $this->dsp_id()));
                 }
                 // check if some user overwrites can be removed
@@ -2308,7 +2309,7 @@ class sandbox extends db_object_seq_id_user
             if ($result->is_ok()) {
                 if ($this->sql_write_prepared()) {
                     $sc = $db_con->sql_creator();
-                    $qp = $this->sql_delete($sc, [sql_type::USER, sql_type::EXCLUDE]);
+                    $qp = $this->sql_delete($sc, new sql_type_list([sql_type::USER, sql_type::EXCLUDE]));
                     $msg = $db_con->delete($qp, $this::class . ' user exclusions');
                     $result->add($msg);
                 } else {
@@ -2561,17 +2562,17 @@ class sandbox extends db_object_seq_id_user
      * update the sandbox object in the database
      *
      * @param string $msg the message shown to the user in case of a problem to idemtify the update
-     * @param array $sc_par_lst the parameters for the sql statement creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return user_message the message and potential solution shown to the user in case of a problem
      */
-    function insert(string $msg = '', array $sc_par_lst = []): user_message
+    function insert(string $msg = '', sql_type_list $sc_par_lst = new sql_type_list([])): user_message
     {
         global $db_con;
 
         // set the actual class before accessing the database to ...
         log_debug($msg);
         $sc = $db_con->sql_creator();
-        $db_con->set_class($this::class, $sc->is_usr_tbl($sc_par_lst));
+        $db_con->set_class($this::class, $sc_par_lst->is_usr_tbl());
         $sc = $db_con->sql_creator();
         $qp = $this->sql_insert($sc, $sc_par_lst);
         return $db_con->insert($qp, $msg);
@@ -2581,17 +2582,17 @@ class sandbox extends db_object_seq_id_user
      * update the sandbox object in the database
      *
      * @param string $msg the message shown to the user in case of a problem to idemtify the update
-     * @param array $sc_par_lst the parameters for the sql statement creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return user_message the message and potential solution shown to the user in case of a problem
      */
-    function update(string $msg = '', array $sc_par_lst = []): user_message
+    function update(string $msg = '', sql_type_list $sc_par_lst): user_message
     {
         global $db_con;
 
         // set the actual class before accessing the database to ...
         log_debug($msg);
         $sc = $db_con->sql_creator();
-        $db_con->set_class($this::class, $sc->is_usr_tbl($sc_par_lst));
+        $db_con->set_class($this::class, $sc_par_lst->is_usr_tbl());
         // TODO check if needed
         $db_con->usr_id = $this->user_id();
         $sc = $db_con->sql_creator();
@@ -2607,10 +2608,10 @@ class sandbox extends db_object_seq_id_user
      * dummy function to be overwritten by the child object
      *
      * @param sql $sc with the target db_type set
-     * @param array $sc_par_lst the parameters for the sql statement creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_insert(sql $sc, array $sc_par_lst = []): sql_par
+    function sql_insert(sql $sc, sql_type_list $sc_par_lst = new sql_type_list([])): sql_par
     {
         log_err('sql_insert is probably missing for ' . $this::class);
         return new sql_par('');
@@ -2622,10 +2623,10 @@ class sandbox extends db_object_seq_id_user
      *
      * @param sql $sc with the target db_type set
      * @param sandbox $db_row the sandbox object with the database values before the update
-     * @param array $sc_par_lst the parameters for the sql statement creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_update(sql $sc, sandbox $db_row, array $sc_par_lst = []): sql_par
+    function sql_update(sql $sc, sandbox $db_row, sql_type_list $sc_par_lst  = new sql_type_list([])): sql_par
     {
         log_err('sql_update is probably missing for ' . $this::class);
         return new sql_par('');
@@ -2636,10 +2637,10 @@ class sandbox extends db_object_seq_id_user
      * dummy function to be overwritten by the child object
      *
      * @param sql $sc with the target db_type set
-     * @param array $sc_par_lst the parameters for the sql statement creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_delete(sql $sc, array $sc_par_lst = []): sql_par
+    function sql_delete(sql $sc, sql_type_list $sc_par_lst = new sql_type_list([])): sql_par
     {
         return new sql_par('');
     }
@@ -2694,17 +2695,17 @@ class sandbox extends db_object_seq_id_user
      * the last_update field is excluded here because this is an internal only field
      *
      * @param sandbox $sbx the same sandbox as this to compare which fields have been changed
-     * @param array $sc_par_lst the parameters for the sql statement creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list with the field names of the object and any child object
      */
-    function db_changed_sandbox_list(sandbox $sbx, array $sc_par_lst = []): sql_par_field_list
+    function db_changed_sandbox_list(sandbox $sbx, sql_type_list $sc_par_lst): sql_par_field_list
     {
         global $change_table_list;
         global $change_field_list;
 
         $lst = new sql_par_field_list();
         $sc = new sql();
-        $do_log = $sc->and_log($sc_par_lst);
+        $do_log = $sc_par_lst->and_log();
         $lib = new library();
         $table_id = $change_table_list->id($lib->class_to_name($this::class));
 
@@ -2756,152 +2757,6 @@ class sandbox extends db_object_seq_id_user
         return $lst;
     }
 
-    /**
-     * get a list of database field names, values and types that have been changed compared to a given object
-     * to add to the list with the list of the child object e.g. word
-     * the last_update field is excluded here because this is an internal only field
-     *
-     * @param sandbox $sbx the same sandbox as this to compare which fields have been changed
-     * @param array $sc_par_lst the parameters for the sql statement creation
-     * @return array with the field names of the object and any child object
-     */
-    function db_changed_sandbox(sandbox $sbx, array $sc_par_lst = []): array
-    {
-        global $change_table_list;
-        global $change_field_list;
-
-        $lst = [];
-        $sc = new sql();
-        $do_log = $sc->and_log($sc_par_lst);
-        $lib = new library();
-        $table_id = $change_table_list->id($lib->class_to_name($this::class));
-
-        if ($sbx->excluded <> $this->excluded) {
-            if ($do_log) {
-                $lst[] = [
-                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_EXCLUDED,
-                    $change_field_list->id($table_id . self::FLD_EXCLUDED),
-                    change::FLD_FIELD_ID_SQLTYP
-                ];
-            }
-            $lst[] = [
-                self::FLD_EXCLUDED,
-                $this->excluded,
-                self::FLD_EXCLUDED_SQLTYP
-            ];
-        }
-        if ($sbx->share_id <> $this->share_id) {
-            if ($do_log) {
-                $lst[] = [
-                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_SHARE,
-                    $change_field_list->id($table_id . self::FLD_SHARE),
-                    change::FLD_FIELD_ID_SQLTYP
-                ];
-            }
-            $lst[] = [
-                self::FLD_SHARE,
-                $this->share_id,
-                self::FLD_SHARE_SQLTYP
-            ];
-        }
-        if ($sbx->protection_id <> $this->protection_id) {
-            if ($do_log) {
-                $lst[] = [
-                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_PROTECT,
-                    $change_field_list->id($table_id . self::FLD_PROTECT),
-                    change::FLD_FIELD_ID_SQLTYP
-                ];
-            }
-            $lst[] = [
-                self::FLD_PROTECT,
-                $this->protection_id,
-                self::FLD_PROTECT_SQLTYP
-            ];
-        }
-        return $lst;
-    }
-
-    /**
-     * list of fields that have been changed compared to a given object
-     * the last_update field is excluded here because this is an internal only field
-     *
-     * @param sandbox $sbx the same sandbox as this to compare which fields have been changed
-     * @param array $sc_par_lst the parameters for the sql statement creation
-     * @return array with the field names of the object and any child object
-     */
-    function db_fields_changed_sandbox(sandbox $sbx, array $sc_par_lst = []): array
-    {
-        $result = [];
-
-        $sc = new sql();
-        $do_log = $sc->and_log($sc_par_lst);
-        $lib = new library();
-        global $change_table_list;
-        global $change_field_list;
-        $table_id = $change_table_list->id($lib->class_to_name($this::class));
-
-        if ($sbx->excluded <> $this->excluded) {
-            if ($do_log) {
-                $result[] = sql::FLD_LOG_FIELD_PREFIX . self::FLD_EXCLUDED;
-            }
-            $result[] = self::FLD_EXCLUDED;
-        }
-        if ($sbx->share_id <> $this->share_id) {
-            if ($do_log) {
-                $result[] = sql::FLD_LOG_FIELD_PREFIX . self::FLD_SHARE;
-            }
-            $result[] = self::FLD_SHARE;
-        }
-        if ($sbx->protection_id <> $this->protection_id) {
-            if ($do_log) {
-                $result[] = sql::FLD_LOG_FIELD_PREFIX . self::FLD_PROTECT;
-            }
-            $result[] = self::FLD_PROTECT;
-        }
-        return $result;
-    }
-
-
-    /**
-     * list of values that have been changed compared to a given object
-     * the last_update field is excluded here because this is an internal only field
-     *
-     * @param sandbox $sbx the same sandbox as this to compare which fields have been changed
-     * @param array $sc_par_lst the parameters for the sql statement creation
-     * @return array with the field names of the object and any child object
-     */
-    function db_values_changed_sandbox(sandbox $sbx, array $sc_par_lst = []): array
-    {
-        $result = [];
-
-        $sc = new sql();
-        $do_log = $sc->and_log($sc_par_lst);
-        $lib = new library();
-        global $change_table_list;
-        global $change_field_list;
-        $table_id = $change_table_list->id($lib->class_to_name($this::class));
-
-        if ($sbx->excluded <> $this->excluded) {
-            if ($do_log) {
-                $result[] = $change_field_list->id($table_id . self::FLD_EXCLUDED);
-            }
-            $result[] = $this->excluded;
-        }
-        if ($sbx->share_id <> $this->share_id) {
-            if ($do_log) {
-                $result[] = $change_field_list->id($table_id . self::FLD_SHARE);
-            }
-            $result[] = $this->share_id;
-        }
-        if ($sbx->protection_id <> $this->protection_id) {
-            if ($do_log) {
-                $result[] = $change_field_list->id($table_id . self::FLD_PROTECT);
-            }
-            $result[] = $this->protection_id;
-        }
-        return $result;
-    }
-
 
     /*
      * sql create
@@ -2916,9 +2771,9 @@ class sandbox extends db_object_seq_id_user
     function sql_table(sql $sc): string
     {
         $sql = $sc->sql_separator();
-        $sql .= $this->sql_table_create($sc, [sql_type::SANDBOX]);
-        $sc->set_class($this::class, [sql_type::USER]);
-        $sql .= $this->sql_table_create($sc, [sql_type::SANDBOX, sql_type::USER]);
+        $sql .= $this->sql_table_create($sc, new sql_type_list([sql_type::SANDBOX]));
+        $sc->set_class($this::class, new sql_type_list([sql_type::USER]));
+        $sql .= $this->sql_table_create($sc, new sql_type_list([sql_type::SANDBOX, sql_type::USER]));
         return $sql;
     }
 
@@ -2931,9 +2786,9 @@ class sandbox extends db_object_seq_id_user
     function sql_index(sql $sc): string
     {
         $sql = $sc->sql_separator();
-        $sql .= $this->sql_index_create($sc, [sql_type::SANDBOX]);
-        $sc->set_class($this::class, [sql_type::USER]);
-        $sql .= $this->sql_index_create($sc, [sql_type::SANDBOX, sql_type::USER]);
+        $sql .= $this->sql_index_create($sc, new sql_type_list([sql_type::SANDBOX]));
+        $sc->set_class($this::class, new sql_type_list([sql_type::USER]));
+        $sql .= $this->sql_index_create($sc, new sql_type_list([sql_type::SANDBOX, sql_type::USER]));
         return $sql;
     }
 
@@ -2946,9 +2801,9 @@ class sandbox extends db_object_seq_id_user
     function sql_foreign_key(sql $sc): string
     {
         $sql = $sc->sql_separator();
-        $sql .= $this->sql_foreign_key_create($sc, [sql_type::SANDBOX]);
-        $sc->set_class($this::class, [sql_type::USER]);
-        $sql .= $this->sql_foreign_key_create($sc, [sql_type::SANDBOX, sql_type::USER]);
+        $sql .= $this->sql_foreign_key_create($sc, new sql_type_list([sql_type::SANDBOX]));
+        $sc->set_class($this::class, new sql_type_list([sql_type::USER]));
+        $sql .= $this->sql_foreign_key_create($sc, new sql_type_list([sql_type::SANDBOX, sql_type::USER]));
         return $sql;
     }
 

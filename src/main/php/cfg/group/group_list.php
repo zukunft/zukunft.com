@@ -39,6 +39,7 @@ use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
+use cfg\db\sql_type_list;
 use cfg\phrase;
 use cfg\phrase_list;
 use cfg\sandbox_list;
@@ -172,11 +173,11 @@ class group_list extends sandbox_list
         $is_prime = $this->is_prime($tbl_types);
         $is_main = $this->is_main($tbl_types);
 
-        $qp = new sql_par(group_list::class, $tbl_types);
+        $qp = new sql_par(group_list::class, new sql_type_list($tbl_types));
         $qp->name .= $query_name;
 
         $tbl_ext = $this->table_extension($tbl_types);
-        $sc->set_class($class, [], $tbl_ext);
+        $sc->set_class($class, new sql_type_list([]), $tbl_ext);
         // TODO add pattern filter for the prime group id
         $grp = new group($this->user());
         $sc->set_id_field($grp->id_field());

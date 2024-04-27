@@ -42,6 +42,7 @@ use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_type;
+use cfg\db\sql_type_list;
 
 class db_object_seq_id extends db_object
 {
@@ -184,21 +185,21 @@ class db_object_seq_id extends db_object
      */
     function sql_foreign_key(sql $sc): string
     {
-        return $this->sql_foreign_key_create($sc, [], [], false);
+        return $this->sql_foreign_key_create($sc, new sql_type_list([]), [], false);
     }
 
     /**
      *  create a list of fields with the parameters for this object
      *
      * @param sql $sc with the target db_type set
-     * @param array $sc_par_lst of parameters for the sql creation
+     * @param sql_type_list $sc_par_lst of parameters for the sql creation
      * @return array[] with the parameters of the table fields
      */
-    protected function sql_all_field_par(sql $sc, array $sc_par_lst = []): array
+    protected function sql_all_field_par(sql $sc, sql_type_list $sc_par_lst): array
     {
-        $usr_tbl = $sc->is_usr_tbl($sc_par_lst);
-        $small_key =  in_array(sql_type::KEY_SMALL_INT, $sc_par_lst);
-        $use_sandbox = $sc->use_sandbox_fields($sc_par_lst);
+        $usr_tbl = $sc_par_lst->is_usr_tbl();
+        $small_key =  $sc_par_lst->has_key_int_small();
+        $use_sandbox = $sc_par_lst->use_sandbox_fields();
         if (!$usr_tbl) {
             if ($use_sandbox) {
                 $fields = array_merge($this->sql_id_field_par(false, $small_key), sandbox::FLD_ALL_OWNER);
