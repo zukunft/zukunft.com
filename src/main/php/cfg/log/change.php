@@ -476,7 +476,14 @@ class change extends change_log
      * @param string $row_fld name of the database id field
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_insert(sql $sc, array $sc_par_lst, string $ext = '', string $val_tbl = '', string $add_fld = '', string $row_fld = ''): sql_par
+    function sql_insert(
+        sql $sc,
+        array $sc_par_lst,
+        string $ext = '',
+        string $val_tbl = '',
+        string $add_fld = '',
+        string $row_fld = ''
+    ): sql_par
     {
         $sc_par_lst[] = sql_type::INSERT;
         // do not use the user extension for the change table name
@@ -513,10 +520,10 @@ class change extends change_log
         $sql_fields[] = change_action::FLD_ID;
         $sql_fields[] = change_field::FLD_ID;
 
-        if ($this->old_value != null) {
+        if ($this->old_value !== null) {
             $sql_fields[] = self::FLD_OLD_VALUE;
         }
-        if ($this->new_value != null) {
+        if ($this->new_value !== null) {
             $sql_fields[] = self::FLD_NEW_VALUE;
         }
 
@@ -543,10 +550,10 @@ class change extends change_log
         $sql_values[] = $this->action_id;
         $sql_values[] = $this->field_id;
 
-        if ($this->old_value != null) {
+        if ($this->old_value !== null) {
             $sql_values[] = $this->old_value;
         }
-        if ($this->new_value != null) {
+        if ($this->new_value !== null) {
             $sql_values[] = $this->new_value;
         }
 

@@ -96,7 +96,7 @@ class word_tests
         $t->assert_sql_update($sc, $wrd_renamed, $wrd);
         $t->assert_sql_update($sc, $wrd_renamed, $wrd, [sql_type::USER]);
         // TODO activate db write with log
-        //$t->assert_sql_update($sc, $wrd_renamed, $wrd, [sql_type::LOG, sql_type::NAMED_PAR]);
+        $t->assert_sql_update($sc, $wrd_renamed, $wrd, [sql_type::LOG, sql_type::NAMED_PAR]);
         //$t->assert_sql_update($sc, $wrd_renamed, $wrd, [sql_type::LOG, sql_type::NAMED_PAR, sql_type::USER]);
         $t->assert_sql_delete($sc, $wrd);
         $t->assert_sql_delete($sc, $wrd, [sql_type::USER]);

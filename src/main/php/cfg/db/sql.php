@@ -1097,6 +1097,9 @@ class sql
                         if ($fld_name == change::FLD_FIELD_ID) {
                             $fld_name = sql::FLD_LOG_FIELD_PREFIX . $chg_add_fld;
                         }
+                        if ($fld_name == change::FLD_OLD_VALUE) {
+                            $fld_name = $chg_add_fld . '_old';
+                        }
                         if ($fld_name == change::FLD_NEW_VALUE) {
                             $fld_name = $chg_add_fld;
                         }
@@ -3655,52 +3658,63 @@ class sql
         }
         $result = array();
         foreach ($in_types as $type) {
-            switch ($type) {
-                case sql_par_type::INT_LIST:
-                case sql_par_type::INT_LIST_OR:
-                    $result[] = self::PG_PAR_INT . '[]';
-                    break;
-                case sql_par_type::INT:
-                case sql_par_type::INT_OR:
-                case sql_par_type::INT_HIGHER:
-                case sql_par_type::INT_LOWER:
-                case sql_par_type::INT_NOT:
-                case sql_par_type::INT_NOT_OR_NULL:
-                case sql_par_type::INT_SUB:
-                case sql_par_type::INT_SUB_IN:
-                case sql_par_type::LIMIT:
-                case sql_par_type::OFFSET:
-                    $result[] = self::PG_PAR_INT;
-                    break;
-                case sql_par_type::INT_SMALL:
-                    $result[] = self::PG_PAR_INT_SMALL;
-                    break;
-                case sql_par_type::TEXT_LIST:
-                    $result[] = 'text[]';
-                    break;
-                case sql_field_type::NAME:
-                case sql_par_type::LIKE_R:
-                case sql_par_type::LIKE:
-                case sql_par_type::LIKE_OR:
-                case sql_par_type::TEXT_OR:
-                case sql_par_type::TEXT_USR:
-                    $result[] = 'text';
-                    break;
-                case sql_par_type::CONST:
-                case sql_par_type::CONST_NOT:
-                case sql_par_type::CONST_NOT_IN:
-                case sql_par_type::IS_NULL:
-                case sql_par_type::NOT_NULL:
-                case sql_par_type::MIN:
-                case sql_par_type::MAX:
-                case sql_par_type::COUNT:
-                    break;
-                case sql_field_type::NUMERIC_FLOAT:
-                    $result[] = 'numeric';
-                    break;
-                default:
-                    $result[] = $type->value;
+            $pg_type = $this->par_type_to_postgres($type);
+            // TODO review const excusion
+            if ($pg_type != '') {
+                $result[] = $this->par_type_to_postgres($type);
             }
+        }
+        return $result;
+    }
+
+    function par_type_to_postgres(sql_par_type|sql_field_type $type): string
+    {
+        $result = '';
+        switch ($type) {
+            case sql_par_type::INT_LIST:
+            case sql_par_type::INT_LIST_OR:
+                $result = self::PG_PAR_INT . '[]';
+                break;
+            case sql_par_type::INT:
+            case sql_par_type::INT_OR:
+            case sql_par_type::INT_HIGHER:
+            case sql_par_type::INT_LOWER:
+            case sql_par_type::INT_NOT:
+            case sql_par_type::INT_NOT_OR_NULL:
+            case sql_par_type::INT_SUB:
+            case sql_par_type::INT_SUB_IN:
+            case sql_par_type::LIMIT:
+            case sql_par_type::OFFSET:
+                $result = self::PG_PAR_INT;
+                break;
+            case sql_par_type::INT_SMALL:
+                $result = self::PG_PAR_INT_SMALL;
+                break;
+            case sql_par_type::TEXT_LIST:
+                $result = 'text[]';
+                break;
+            case sql_field_type::NAME:
+            case sql_par_type::LIKE_R:
+            case sql_par_type::LIKE:
+            case sql_par_type::LIKE_OR:
+            case sql_par_type::TEXT_OR:
+            case sql_par_type::TEXT_USR:
+                $result = 'text';
+                break;
+            case sql_par_type::CONST:
+            case sql_par_type::CONST_NOT:
+            case sql_par_type::CONST_NOT_IN:
+            case sql_par_type::IS_NULL:
+            case sql_par_type::NOT_NULL:
+            case sql_par_type::MIN:
+            case sql_par_type::MAX:
+            case sql_par_type::COUNT:
+                break;
+            case sql_field_type::NUMERIC_FLOAT:
+                $result = 'numeric';
+                break;
+            default:
+                $result = $type->value;
         }
         return $result;
     }

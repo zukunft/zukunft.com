@@ -893,21 +893,21 @@ class sandbox_named extends sandbox
      * TODO add qp merge
      *
      * @param sql $sc with the target db_type set
-     * @param array $fld_val_typ_lst list of field names, values and sql types additional to the standard id and name fields
+     * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
      * @param array $fld_lst_all list of field names of the given object
      * @param array $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_insert_named(
-        sql   $sc,
-        array $fld_val_typ_lst = [],
-        array $fld_lst_all = [],
-        array $sc_par_lst = []): sql_par
+        sql                $sc,
+        sql_par_field_list $fvt_lst,
+        array              $fld_lst_all = [],
+        array              $sc_par_lst = []): sql_par
     {
 
         // TODO deprecate
-        $fld_lst = $sc->get_fields($fld_val_typ_lst);
-        $val_lst = $sc->get_values($fld_val_typ_lst);
+        $fld_lst = $fvt_lst->names();
+        $val_lst = $fvt_lst->values();
 
         // check the parameters
         $lib = new library();
@@ -918,7 +918,6 @@ class sandbox_named extends sandbox
         // create the main query parameter object and set the name
         $and_log = $sc->and_log($sc_par_lst);
         $usr_tbl = $sc->is_usr_tbl($sc_par_lst);
-        $fld_lst = $sc->get_fields($fld_val_typ_lst);
         $fld_chg_ext = $lib->sql_field_ext($fld_lst, $fld_lst_all);
         $ext = sql::file_sep . sql::file_insert;
         $ext_sub = $ext;
@@ -996,10 +995,12 @@ class sandbox_named extends sandbox
                 $log->set_field($fld);
                 $val_key = array_search($fld, $fld_lst);
                 $log->new_value = $val_lst[$val_key];
+                $log->old_value = $fvt_lst->get_old($fld);
                 // TODO get the id of the new entry and use it in the log
                 $sc_log = clone $sc;
                 $sc_par_lst_log = $sc_par_lst_sub;
                 $sc_par_lst_log[] = sql_type::VALUE_SELECT;
+                $sc_par_lst_log[] = sql_type::UPDATE_PART;
                 $qp_log = $log->sql_insert(
                     $sc_log, $sc_par_lst_log, $ext_sub . '_' . $fld, $insert_tmp_tbl, $fld, $id_field);
 
@@ -1178,11 +1179,11 @@ class sandbox_named extends sandbox
     }
 
     private function sql_update_named_and_log(
-        sql     $sc,
-        sql_par $qp,
-        sql_par_field_list   $par_lst,
-        array   $fld_lst_all = [],
-        array   $sc_par_lst = []
+        sql                $sc,
+        sql_par            $qp,
+        sql_par_field_list $par_lst,
+        array              $fld_lst_all = [],
+        array              $sc_par_lst = []
     ): sql_par
     {
 
@@ -1193,6 +1194,7 @@ class sandbox_named extends sandbox
         $id_val = '_' . $id_fld;
 
         // list of parameters actually used in order of the function usage
+        $par_fvt_lst = new sql_par_field_list();
         $par_name_lst = [];
         $par_value_lst = [];
         $par_type_lst = [];
@@ -1237,7 +1239,17 @@ class sandbox_named extends sandbox
             $log = new change($this->user());
             $log->set_table_by_class($this::class);
             $log->set_field($fld->name);
+            $log->old_value = $par_lst->get_old($fld->name);
             $log->new_value = $fld->value;
+            // make shure that also overwrites are added to the log
+            if ($log->old_value != null or $log->new_value != null) {
+                if ($log->old_value == null) {
+                    $log->old_value = '';
+                }
+                if ($log->new_value == null) {
+                    $log->new_value = '';
+                }
+            }
 
             // TODO get the id of the new entry and use it in the log
             $sc_log = clone $sc;
@@ -1271,6 +1283,13 @@ class sandbox_named extends sandbox
                 $par_name_lst[] = sql::FLD_LOG_FIELD_PREFIX . $fld->name;
                 $par_value_lst[] = $par_lst->get_value(sql::FLD_LOG_FIELD_PREFIX . $fld->name);
                 $par_type_lst[] = sql_par_type::INT_SMALL;
+            }
+
+            // add the db field value of the field actually changed if needed
+            if (!in_array($fld->name, $par_name_lst)) {
+                $par_name_lst[] = $fld->name . '_old';
+                $par_value_lst[] = $par_lst->get_old($fld->name);
+                $par_type_lst[] = $par_lst->get_type($fld->name);
             }
 
             // add the field value of the field actually changed if needed
@@ -1346,7 +1365,6 @@ class sandbox_named extends sandbox
             $par_fld_val_typ_lst[] = [$fld, $par_value_lst[$key], $par_type_lst[$key]];
         }
         $qp_chg = clone $qp;
-        $par_fvt_lst = new sql_par_field_list();
         $par_fvt_lst->set($par_fld_val_typ_lst);
         $qp_chg->sql = $sc->create_sql_update(
             $id_fld, $id_val, $par_fvt_lst, [], $sc_par_lst);
@@ -1356,26 +1374,9 @@ class sandbox_named extends sandbox
         $qp->sql = $qp_chg->sql . $func_body . ';';
 
         $qp->call = ' ' . sql::SELECT . ' ' . $qp_chg->name . ' (';
-        $i = 0;
-        $call_val_str = '';
-        $pg_types = $sc->par_types_to_postgres($par_type_lst);
 
-        foreach ($par_value_lst as $par_val) {
-            if ($call_val_str != '') {
-                $call_val_str .= ', ';
-            }
-            $par_typ = $par_type_lst[$i];
-            $val_typ = $pg_types[$i];
-            if ($par_typ == sql_par_type::TEXT or $par_typ == sql_field_type::NAME) {
-                $call_val_str .= "'" . $par_val . "'";
-            } else {
-                $call_val_str .= $par_val;
-            }
-            if ($val_typ != '') {
-                $call_val_str .= '::' . $val_typ;
-            }
-            $i++;
-        }
+        $call_val_str = $par_fvt_lst->par_sql($sc);
+
         $qp->call .= $call_val_str . ');';
 
         return $qp;
@@ -1500,11 +1501,16 @@ class sandbox_named extends sandbox
                         change::FLD_FIELD_ID_SQLTYP
                     );
                 }
+                if ($sbx->user_id() == 0) {
+                    $old_user_id = null;
+                } else {
+                    $old_user_id = $sbx->user_id();
+                }
                 $lst->add_field(
                     user::FLD_ID,
                     $this->user_id(),
                     db_object_seq_id::FLD_ID_SQLTYP,
-                    $sbx->user_id()
+                    $old_user_id
                 );
             }
         }
@@ -1516,11 +1522,16 @@ class sandbox_named extends sandbox
                     change::FLD_FIELD_ID_SQLTYP
                 );
             }
+            if ($sbx->name() == '') {
+                $old_name = null;
+            } else {
+                $old_name = $sbx->name();
+            }
             $lst->add_field(
                 $this->name_field(),
                 $this->name(),
                 self::FLD_NAME_SQLTYP,
-                $sbx->name()
+                $old_name
             );
         }
         if ($sbx->description <> $this->description) {

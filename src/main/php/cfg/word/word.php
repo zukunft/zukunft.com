@@ -1844,18 +1844,18 @@ class word extends sandbox_typed
         if (!in_array(sql_type::INSERT, $sc_par_lst)) {
             $sc_par_lst[] = sql_type::INSERT;
         }
-        $fld_val_typ_lst = $this->db_changed($wrd_empty, $sc_par_lst);
+        $fvt_lst = $this->db_changed_list($wrd_empty, $sc_par_lst);
         $all_fields = $this->db_fields_all();
         // add the fields and values for logging
         if ($sc->and_log($sc_par_lst)) {
             global $change_action_list;
-            $fld_val_typ_lst[] = [
+            $fvt_lst->add_field(
                 change_action::FLD_ID,
                 $change_action_list->id(change_action::ADD),
                 type_object::FLD_ID_SQLTYP
-            ];
+            );
         }
-        return parent::sql_insert_named($sc, $fld_val_typ_lst, $all_fields, $sc_par_lst);
+        return parent::sql_insert_named($sc, $fvt_lst, $all_fields, $sc_par_lst);
     }
 
     /**

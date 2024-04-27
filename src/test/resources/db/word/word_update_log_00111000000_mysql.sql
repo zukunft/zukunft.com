@@ -1,4 +1,5 @@
-CREATE OR REPLACE FUNCTION word_update_log_00111000000
+DROP FUNCTION IF EXISTS word_update_log_00111000000;
+CREATE FUNCTION word_update_log_00111000000
     (_user_id                 bigint,
      _change_action_id        smallint,
      _field_id_word_name      smallint,
@@ -10,8 +11,7 @@ CREATE OR REPLACE FUNCTION word_update_log_00111000000
      _description             text,
      _field_id_phrase_type_id smallint,
      _phrase_type_id_old      smallint,
-     _phrase_type_id          smallint) RETURNS void AS
-$$
+     _phrase_type_id          smallint) RETURNS void
 BEGIN
 
     WITH
@@ -33,8 +33,7 @@ BEGIN
            phrase_type_id = _phrase_type_id
      WHERE word_id = _word_id;
 
-END
-$$ LANGUAGE plpgsql;
+END;
 
 SELECT word_update_log_00111000000
        (10::bigint,

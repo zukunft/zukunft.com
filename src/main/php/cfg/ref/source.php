@@ -643,9 +643,9 @@ class source extends sandbox_typed
         if (!in_array(sql_type::INSERT, $sc_par_lst)) {
             $sc_par_lst[] = sql_type::INSERT;
         }
-        $fld_val_typ_lst = $this->db_changed($empty_src, $sc_par_lst);
+        $fvt_lst = $this->db_changed_list($empty_src, $sc_par_lst);
         $all_fields = $this->db_fields_all();
-        return parent::sql_insert_named($sc, $fld_val_typ_lst, $all_fields, $sc_par_lst);
+        return parent::sql_insert_named($sc, $fvt_lst, $all_fields, $sc_par_lst);
     }
 
     /**

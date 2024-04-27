@@ -68,7 +68,7 @@ class sql_par_field_list
         string                      $name,
         string|int|float|null       $value,
         sql_par_type|sql_field_type $type,
-        string|int|float|null       $old = ''
+        string|int|float|null       $old = null
     ): void
     {
         $fld = new sql_par_field();
@@ -92,7 +92,7 @@ class sql_par_field_list
     {
         $result = [];
         foreach ($this->lst as $fld) {
-            $result[] = $fld->valur;
+            $result[] = $fld->value;
         }
         return $result;
     }
@@ -132,6 +132,18 @@ class sql_par_field_list
         return $this->lst[$key]->value;
     }
 
+    /**
+     * get the old value for the given field name
+     * @param string $name the name of the field to select
+     * @return string|int|float|null the value related to the given field name
+     */
+    function get_old(string $name): string|int|float|null
+    {
+        $key = array_search($name, $this->names());
+        return $this->lst[$key]->old;
+    }
+
+
     function get_type(string $name): sql_par_type|sql_field_type
     {
         $key = array_search($name, $this->names());
@@ -153,6 +165,37 @@ class sql_par_field_list
                 $this->lst[$key]->name = $sc->name_sql_esc($fld->name);
             }
         }
+    }
+
+    /**
+     * create the sql function call parameter statement
+     * @param sql $sc
+     * @return void
+     */
+    function par_sql(sql $sc): string
+    {
+        $sql = '';
+        foreach ($this->lst as $key => $fld) {
+            if ($sql != '') {
+                $sql .= ', ';
+            }
+            $par_typ = $fld->type;
+            $val_typ = $sc->par_type_to_postgres($fld->type);
+            if ($fld->value === null) {
+                $sql .= 'null';
+            } else {
+                if ($par_typ == sql_par_type::TEXT or $par_typ == sql_field_type::TEXT
+                    or $par_typ == sql_field_type::NAME) {
+                    $sql .= "'" . $fld->value . "'";
+                } else {
+                    $sql .= $fld->value;
+                }
+            }
+            if ($val_typ != '') {
+                $sql .= '::' . $val_typ;
+            }
+        }
+        return $sql;
     }
 
 }
