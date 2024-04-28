@@ -56,10 +56,12 @@ use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
+use cfg\db\sql_par_field_list;
 use cfg\db\sql_par_type;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
 use cfg\formula;
+use cfg\type_object;
 use cfg\user;
 use cfg\value\value;
 use cfg\view;
@@ -498,7 +500,7 @@ class change extends change_log
         }
         $sc->set_name($qp->name);
         $qp->sql = $sc->create_sql_insert(
-            $this->db_fields(), $this->db_values(), [], $sc_par_lst, true, $val_tbl, $add_fld, $row_fld);
+            $this->db_field_values_types($sc), $sc_par_lst, true, $val_tbl, $add_fld, $row_fld);
         $qp->par = $this->db_values();
 
         return $qp;
@@ -512,6 +514,38 @@ class change extends change_log
     /**
      * get a list of all database fields
      * list must be corresponding to the db_values fields
+     *
+     * @return sql_par_field_list list of the database field names
+     */
+    function db_field_values_types(sql $sc): sql_par_field_list
+    {
+        $fvt_lst = new sql_par_field_list();
+        $fvt_lst->add_field(user::FLD_ID, $this->user()->id(), user::FLD_ID_SQLTYP);
+        $fvt_lst->add_field(change_action::FLD_ID, $this->action_id, type_object::FLD_ID_SQLTYP);
+        $fvt_lst->add_field(change_field::FLD_ID, $this->field_id, type_object::FLD_ID_SQLTYP);
+
+        if ($this->old_value !== null) {
+            $fvt_lst->add_field(self::FLD_OLD_VALUE, $this->old_value, $sc->get_sql_par_type($this->old_value));
+        }
+        if ($this->new_value !== null) {
+            $fvt_lst->add_field(self::FLD_NEW_VALUE, $this->new_value, $sc->get_sql_par_type($this->new_value));
+        }
+
+        if ($this->old_id > 0) {
+            $fvt_lst->add_field(self::FLD_OLD_ID, $this->old_id, sql_par_type::INT);
+        }
+        if ($this->new_id > 0) {
+            $fvt_lst->add_field(self::FLD_NEW_ID, $this->new_id, sql_par_type::INT);
+        }
+
+        $fvt_lst->add_field(self::FLD_ROW_ID, $this->row_id, sql_par_type::INT);
+        return $fvt_lst;
+    }
+
+    /**
+     * get a list of all database fields
+     * list must be corresponding to the db_values fields
+     * TODO deprecate
      *
      * @return array list of the database field names
      */

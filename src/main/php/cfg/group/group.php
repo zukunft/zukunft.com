@@ -1300,10 +1300,15 @@ class group extends sandbox_multi
         $sc->set_id_field($this->id_field());
         $qp->name .= sql::file_sep . sql::file_insert;
         $sc->set_name($qp->name);
-        $fields = array(group::FLD_ID, user::FLD_ID, self::FLD_NAME, self::FLD_DESCRIPTION);
-        $values = array($this->id(), $this->user()->id(), $this->name, $this->description);
-        $qp->sql = $sc->create_sql_insert($fields, $values);
-        $qp->par = $values;
+        $fvt_lst = new sql_par_field_list();
+        $fvt_lst->set([
+            [group::FLD_ID, $this->id(), $sc->get_sql_par_type($this->id())],
+            [user::FLD_ID, $this->user()->id(), sql_par_type::INT],
+            [self::FLD_NAME, $this->name, sql_par_type::TEXT],
+            [self::FLD_DESCRIPTION, $this->description, sql_par_type::TEXT]
+        ]);
+        $qp->sql = $sc->create_sql_insert($fvt_lst);
+        $qp->par = $fvt_lst->values();
 
         return $qp;
     }

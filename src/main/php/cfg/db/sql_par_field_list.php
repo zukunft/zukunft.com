@@ -32,6 +32,8 @@
 
 namespace cfg\db;
 
+use shared\library;
+
 class sql_par_field_list
 {
     // assumned positions of the field name, value and type in the array used for set
@@ -92,6 +94,29 @@ class sql_par_field_list
         $this->add($fld);
     }
 
+    function fill_from_arrays(array $fields, array $values, array $types = []): void
+    {
+        if (count($fields) <> count($values)) {
+            $lib = new library();
+            log_err(
+                'SQL insert call with different number of fields (' . $lib->dsp_count($fields)
+                . ': ' . $lib->dsp_array($fields) . ') and values (' . $lib->dsp_count($values)
+                . ': ' . $lib->dsp_array($values) . ').', "user_log->add");
+        } else {
+            $i = 0;
+            foreach ($fields as $fld) {
+                $val = $values[$i];
+                $sc = new sql();
+                $type = $sc->get_sql_par_type($val);
+                if (count($types) == count($fields)) {
+                    $type = $types[$i];
+                }
+                $this->add_field($fld, $val, $type);
+                $i++;
+            }
+        }
+    }
+
     function names(): array
     {
         $result = [];
@@ -132,6 +157,32 @@ class sql_par_field_list
             }
         }
         return $result;
+    }
+
+    /**
+     * @param array $names_to_select list of field names that should be selected for the result list
+     * @return sql_par_field_list with the sql parameter fields that matches the field names
+     */
+    function get_intersect(array $names_to_select): sql_par_field_list
+    {
+        $result = new sql_par_field_list();
+        foreach ($this->lst as $fld) {
+            if (in_array($fld->name, $names_to_select)) {
+                $result->add($fld);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * get the value for the given field name
+     * @param string $name the name of the field to select
+     * @return sql_par_field the name, value and type selected by the name
+     */
+    function get(string $name): sql_par_field
+    {
+        $key = array_search($name, $this->names());
+        return $this->lst[$key];
     }
 
     /**

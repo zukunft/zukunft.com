@@ -1024,8 +1024,7 @@ class sql
      * TODO add fields types for inserting prime values to change the id to smallint
      * TODO check if log_err is always set correctly
      *
-     * @param array $fields with the fields names to add
-     * @param array $values with the field values to add
+     * @param sql_par_field_list $fvt_lst list of field names, values and sql types to add
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param bool $log_err false if called from a log function to prevent loops
      * @param string $val_tbl name of the table to select the values to insert
@@ -1034,14 +1033,12 @@ class sql
      * @return string the prepared sql insert statement
      */
     function create_sql_insert(
-        array         $fields,
-        array         $values,
-        array         $types = [],
-        sql_type_list $sc_par_lst = new sql_type_list([]),
-        bool          $log_err = true,
-        string        $val_tbl = '',
-        string        $chg_add_fld = '',
-        string        $chg_row_fld = ''
+        sql_par_field_list $fvt_lst,
+        sql_type_list      $sc_par_lst = new sql_type_list([]),
+        bool               $log_err = true,
+        string             $val_tbl = '',
+        string             $chg_add_fld = '',
+        string             $chg_row_fld = ''
     ): string
     {
         $lib = new library();
@@ -1059,70 +1056,62 @@ class sql
             $this->list_query = true;
         }
 
-        $sql_fld = '';
-        $sql_val = '';
         $usr_tbl = $sc_par_lst->is_usr_tbl();
         $update_part = $sc_par_lst->is_update_part();
-        if (count($fields) <> count($values)) {
-            if ($log_err) {
-                log_fatal_db(
-                    'SQL insert call with different number of fields (' . $lib->dsp_count($fields)
-                    . ': ' . $lib->dsp_array($fields) . ') and values (' . $lib->dsp_count($values)
-                    . ': ' . $lib->dsp_array($values) . ').', "user_log->add");
-            }
-        } else {
-            // escape the field names if needed
-            foreach (array_keys($fields) as $i) {
-                $fields[$i] = $this->name_sql_esc($fields[$i]);
-            }
-            $sql_fld = $lib->sql_array($fields, ' (', ') ');
 
-            // gat the value parameter types
-            $par_pos = 1;
-            $use_named_par = $sc_par_lst->use_named_par();
-            foreach (array_keys($values) as $i) {
-                $this->par_values[] = $values[$i];
-                if ($values[$i] != sql::NOW) {
-                    if (count($values) == count($types)) {
-                        $this->par_types[] = $types[$i];
-                    } else {
-                        $this->par_types[] = $this->get_sql_par_type($values[$i]);
-                    }
-                    if ($use_named_par) {
-                        $fld_name = $fields[$i];
-                        // TODO remove these exceptions
-                        if ($fld_name == change::FLD_FIELD_ID) {
-                            $fld_name = sql::FLD_LOG_FIELD_PREFIX . $chg_add_fld;
-                        }
-                        if ($fld_name == change::FLD_OLD_VALUE) {
-                            $fld_name = $chg_add_fld . change::FLD_OLD_EXT;
-                        }
-                        if ($fld_name == change::FLD_NEW_VALUE) {
-                            $fld_name = $chg_add_fld;
-                        }
-                        if ($fld_name == change::FLD_ROW_ID
-                            and $val_tbl != ''
-                            and !$sc_par_lst->use_select_for_insert()) {
-                            $fld_name = $val_tbl . '.' . $chg_row_fld;
-                        } else {
-                            if ($fld_name == change::FLD_ROW_ID
-                                and ($usr_tbl or $update_part)) {
-                                $fld_name = '_' . $chg_row_fld;
-                            } else {
-                                $fld_name = '_' . $fld_name;
-                            }
-                        }
-                        $this->par_fields[] = $fld_name;
-                    } else {
-                        $this->par_fields[] = $this->par_name($par_pos);
-                    }
-                    $par_pos++;
+        // escape the field names if needed
+        $fvt_lst->esc_names($this);
+
+        $sql_fld = $lib->sql_array($fvt_lst->names(), ' (', ') ');
+
+        // get the value parameter types
+        $par_pos = 1;
+        $use_named_par = $sc_par_lst->use_named_par();
+        foreach ($fvt_lst->lst as $fvt) {
+            $fld = $fvt->name;
+            $val = $fvt->value;
+            $typ = $fvt->type;
+            $this->par_values[] = $val;
+            if ($fvt->value != sql::NOW) {
+                if ($typ != '') {
+                    $this->par_types[] = $typ;
                 } else {
-                    $this->par_fields[] = $values[$i];
+                    $this->par_types[] = $this->get_sql_par_type($val);
                 }
+                if ($use_named_par) {
+                    $fld_name = $fld;
+                    // TODO remove these exceptions
+                    if ($fld_name == change::FLD_FIELD_ID) {
+                        $fld_name = sql::FLD_LOG_FIELD_PREFIX . $chg_add_fld;
+                    }
+                    if ($fld_name == change::FLD_OLD_VALUE) {
+                        $fld_name = $chg_add_fld . change::FLD_OLD_EXT;
+                    }
+                    if ($fld_name == change::FLD_NEW_VALUE) {
+                        $fld_name = $chg_add_fld;
+                    }
+                    if ($fld_name == change::FLD_ROW_ID
+                        and $val_tbl != ''
+                        and !$sc_par_lst->use_select_for_insert()) {
+                        $fld_name = $val_tbl . '.' . $chg_row_fld;
+                    } else {
+                        if ($fld_name == change::FLD_ROW_ID
+                            and ($usr_tbl or $update_part)) {
+                            $fld_name = '_' . $chg_row_fld;
+                        } else {
+                            $fld_name = '_' . $fld_name;
+                        }
+                    }
+                    $this->par_fields[] = $fld_name;
+                } else {
+                    $this->par_fields[] = $this->par_name($par_pos);
+                }
+                $par_pos++;
+            } else {
+                $this->par_fields[] = $val;
             }
-            $sql_val = $lib->sql_array($this->par_fields, ' ', ' ');
         }
+        $sql_val = $lib->sql_array($this->par_fields, ' ', ' ');
 
         // create a prepare SQL statement if possible
         $sql_type = self::INSERT;

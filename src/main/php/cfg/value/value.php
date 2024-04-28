@@ -2274,7 +2274,9 @@ class value extends sandbox_value
             }
 
         }
-        $qp->sql = $sc->create_sql_insert($fields, $values);
+        $fvt_lst = new sql_par_field_list();
+        $fvt_lst->fill_from_arrays($fields, $values);
+        $qp->sql = $sc->create_sql_insert($fvt_lst);
         $par_values = [];
         foreach (array_keys($values) as $i) {
             if ($values[$i] != sql::NOW) {

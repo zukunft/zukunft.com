@@ -86,6 +86,7 @@ class user extends db_object_seq_id
     // *_SQLTYP is the sql data type used for the field
     const TBL_COMMENT = 'for users including system users; only users can add data';
     const FLD_ID = 'user_id'; // also the field name for foreign keys
+    const FLD_ID_SQLTYP = sql_field_type::INT;
     // fields for the main logon
     const FLD_NAME_COM = 'the user name unique for this pod';
     const FLD_NAME = 'user_name';
