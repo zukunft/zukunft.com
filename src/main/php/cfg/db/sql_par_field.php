@@ -38,7 +38,7 @@ class sql_par_field
     public string $name;   // the name of the sql field
     public string|int|float|null $value;  // the value that should be used e.g. for a function
     public string|int|float|null $old;    // the value that is in the database until now
-    public sql_par_type|sql_field_type|string $type;   // the type of the sql field
+    public sql_par_type|string $type;   // the type of the sql field
 
 }
 

@@ -518,11 +518,11 @@ class group extends sandbox_multi
      * @return array the list of sql statements including the statements created by this function call
      */
     private function sql_one_tbl(
-        sql    $sc,
-        sql_type_list  $sc_par_lst,
-        array  $key_fld,
-        string $tbl_comment,
-        array  $sql_lst
+        sql           $sc,
+        sql_type_list $sc_par_lst,
+        array         $key_fld,
+        string        $tbl_comment,
+        array         $sql_lst
     ): array
     {
         $sc->set_class($this::class, $sc_par_lst);

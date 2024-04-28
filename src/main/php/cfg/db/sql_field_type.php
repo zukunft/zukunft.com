@@ -85,7 +85,7 @@ enum sql_field_type: string
     public function mysql_type(): string
     {
         return match($this) {
-            self::KEY_INT, self::INT, self::KEY_INT_NO_AUTO, self::KEY_PART_INT, self::INT_UNIQUE_PART => 'bigint',
+            self::INT, self::KEY_INT, self::KEY_INT_NO_AUTO, self::KEY_PART_INT, self::INT_UNIQUE_PART => 'bigint',
             self::KEY_512, self::KEY_PART_512, self::REF_512 => 'char(112)',
             self::KEY_TEXT, self::KEY_PART_TEXT => 'char(255)',
             self::NAME, self::NAME_UNIQUE, self::NAME_UNIQUE_PART => 'varchar(255)',
@@ -98,6 +98,16 @@ enum sql_field_type: string
             self::TIME => 'timestamp',
             self::GEO => 'point',
             default => 'MySQL type ' . $this->value .' missing',
+        };
+    }
+
+    public function par_type(): sql_par_type
+    {
+        return match($this) {
+            self::INT, self::KEY_INT, self::KEY_INT_NO_AUTO, self::KEY_PART_INT, self::INT_UNIQUE_PART => sql_par_type::INT,
+            self::INT_SMALL => sql_par_type::INT_SMALL,
+            self::NUMERIC_FLOAT => sql_par_type::FLOAT,
+            default => sql_par_type::TEXT,
         };
     }
 

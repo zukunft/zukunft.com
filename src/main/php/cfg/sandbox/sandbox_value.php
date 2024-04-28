@@ -1147,6 +1147,7 @@ class sandbox_value extends sandbox_multi
     ): string
     {
         $result = '';
+        $sc = $db_con->sql_creator();
 
         if ($log->new_id > 0) {
             $new_value = $log->new_id;
@@ -1158,6 +1159,7 @@ class sandbox_value extends sandbox_multi
         $ext = $this->grp()->table_extension();
         if ($log->add()) {
             if ($this->can_change()) {
+                $sql_fld_typ = $sc->get_sql_par_type($new_value);
                 if ($new_value == $std_value) {
                     if ($this->has_usr_cfg()) {
                         $msg = 'remove user change of ' . $log->field();
@@ -1175,7 +1177,7 @@ class sandbox_value extends sandbox_multi
                     log_debug($msg);
                     $db_con->set_class($this::class, false, $ext);
                     $db_con->set_usr($this->user()->id());
-                    $fld_val_typ_lst = [[$log->field(), $new_value, '']];
+                    $fld_val_typ_lst = [[$log->field(), $new_value, $sql_fld_typ]];
                     $qp = $this->sql_update_fields($db_con->sql_creator(), $fld_val_typ_lst);
                     $usr_msg = $db_con->update($qp, $msg);
                     $result = $usr_msg->get_message();
@@ -1189,17 +1191,17 @@ class sandbox_value extends sandbox_multi
                 if ($result == '') {
                     $db_con->set_class($this::class, true, $ext);
                     $db_con->set_usr($this->user()->id());
+                    $sql_fld_typ = $sc->get_sql_par_type($new_value);
                     if ($new_value == $std_value) {
                         $msg = 'remove user change of ' . $log->field();
                         log_debug($msg);
-                        $fld_val_typ_lst = [[$log->field(), Null, '']];
-                        $qp = $this->sql_update_fields($db_con->sql_creator(), $fld_val_typ_lst, new sql_type_list([sql_type::USER]));
+                        $fld_val_typ_lst = [[$log->field(), Null, $sql_fld_typ]];
                     } else {
                         $msg = 'update of ' . $log->field() . ' to ' . $new_value;
                         log_debug($msg);
-                        $fld_val_typ_lst = [[$log->field(), $new_value, '']];
-                        $qp = $this->sql_update_fields($db_con->sql_creator(), $fld_val_typ_lst, new sql_type_list([sql_type::USER]));
+                        $fld_val_typ_lst = [[$log->field(), $new_value, $sql_fld_typ]];
                     }
+                    $qp = $this->sql_update_fields($db_con->sql_creator(), $fld_val_typ_lst, new sql_type_list([sql_type::USER]));
                     $usr_msg = $db_con->update($qp, $msg);
                     $result = $usr_msg->get_message();
                     $this->del_usr_cfg_if_not_needed(); // don't care what the result is, because in most cases it is fine to keep the user sandbox row

@@ -933,12 +933,7 @@ class sandbox_named extends sandbox
         if ($sc_par_lst->and_log()) {
 
             // init the function body
-            if ($sc->db_type == sql_db::POSTGRES) {
-                $func_body = sql::FUNCTION_BEGIN;
-            } else {
-                $func_body = sql::FUNCTION_BEGIN_MYSQL;
-            }
-            $func_body .= ' ' . sql::WITH;
+            $sql = $sc->sql_func_start();
 
             // list of parameters actually used in the function in order of usage
             $par_name_lst = [];
@@ -963,8 +958,8 @@ class sandbox_named extends sandbox
 
                 // add the insert row to the function body
                 $insert_tmp_tbl = $qp_insert->name;
-                $func_body .= ' ' . $insert_tmp_tbl . ' ' . sql::AS . ' (';
-                $func_body .= ' ' . $qp_insert->sql . '), ';
+                $sql .= ' ' . $insert_tmp_tbl . ' ' . sql::AS . ' (';
+                $sql .= ' ' . $qp_insert->sql . '), ';
                 $par_name_lst[] = $insert_field;
                 $par_value_lst[] = $insert_value;
                 $par_type_lst[] = sql_par_type::TEXT;
@@ -1043,7 +1038,7 @@ class sandbox_named extends sandbox
                     }
                 }
             }
-            $func_body .= ' ' . $func_body_change;
+            $sql .= ' ' . $func_body_change;
 
             if ($usr_tbl) {
                 // insert the value in the user table
@@ -1058,7 +1053,7 @@ class sandbox_named extends sandbox
                 $sc_par_lst_sub->add(sql_type::NO_ID_RETURN);
                 $qp_insert->sql = $sc_insert->create_sql_insert($fld_lst_ex_log_and_key, $insert_values, [], $sc_par_lst_sub);
                 // add the insert row to the function body and close the with statement with an ;
-                $func_body .= ' ' . $qp_insert->sql . ';';
+                $sql .= ' ' . $qp_insert->sql . ';';
             } else {
                 // update the fields excluding the unique id
                 $update_fields = array_values($fld_lst_ex_log);
@@ -1086,16 +1081,10 @@ class sandbox_named extends sandbox
                 $qp_update->sql = $sc_update->create_sql_update(
                     $id_field, $row_id_val, $update_fvt_lst, [], $sc_par_lst_upd_ex_log, true, $insert_tmp_tbl, $id_field);
                 // add the insert row to the function body
-                $func_body .= ' ' . $qp_update->sql . ' ';
+                $sql .= ' ' . $qp_update->sql . ' ';
             }
 
-            //
-            if ($sc->db_type == sql_db::POSTGRES) {
-                $func_body .= ' ' . sql::FUNCTION_END;
-            } else {
-                $func_body .= ' ' . sql::FUNCTION_END_MYSQL;
-            }
-
+            $sql .= $sc->sql_func_end();
 
             // create the query parameters for the actual change
             $qp_chg = clone $qp;
@@ -1103,7 +1092,7 @@ class sandbox_named extends sandbox
             $qp_chg->par = $val_lst;
 
             // merge all together and create the function
-            $qp->sql = $qp_chg->sql . $func_body . ';';
+            $qp->sql = $qp_chg->sql . $sql . ';';
 
             $qp->call = ' ' . sql::SELECT . ' ' . $qp_chg->name . ' (';
             $i = 0;
@@ -1205,18 +1194,10 @@ class sandbox_named extends sandbox
         $id_val = '_' . $id_fld;
 
         // list of parameters actually used in order of the function usage
-        $par_fvt_lst = new sql_par_field_list();
-        $par_name_lst = [];
-        $par_value_lst = [];
-        $par_type_lst = [];
+        $par_lst_out = new sql_par_field_list();
 
         // init the function body
-        if ($sc->db_type == sql_db::POSTGRES) {
-            $func_body = sql::FUNCTION_BEGIN;
-        } else {
-            $func_body = sql::FUNCTION_BEGIN_MYSQL;
-        }
-        $func_body .= ' ' . sql::WITH;
+        $sql = $sc->sql_func_start();
 
         // don't use the log parameter for the sub queries
         $sc_par_lst_sub = $sc_par_lst->remove(sql_type::LOG);
@@ -1267,59 +1248,53 @@ class sandbox_named extends sandbox
             $sc_par_lst_log = $sc_par_lst_sub;
             $sc_par_lst_log->add(sql_type::VALUE_SELECT);
             $sc_par_lst_log->add(sql_type::UPDATE_PART);
+            $sc_par_lst_log->add(sql_type::SELECT_FOR_INSERT);
             // TODO replace dummy value table with an enum value
             $qp_log = $log->sql_insert(
-                $sc_log, $sc_par_lst_log, $ext . '_' . $fld->name, 'dummy', $fld->name, $id_fld);
+                $sc_log, $sc_par_lst_log, $ext . '_' . $fld->name, '', $fld->name, $id_fld);
 
             // TODO get the fields used in the change log sql from the sql
             $func_body_change .= ' ' . $qp_log->name . ' ' . sql::AS . ' (';
             $func_body_change .= ' ' . $qp_log->sql . ')';
 
             // add the user_id if needed
-            if (!in_array(user::FLD_ID, $par_name_lst)) {
-                $par_name_lst[] = user::FLD_ID;
-                $par_value_lst[] = $par_lst->get_value(user::FLD_ID);
-                $par_type_lst[] = sql_par_type::INT;
-            }
+            $par_lst_out->add_field(
+                user::FLD_ID,
+                $par_lst->get_value(user::FLD_ID),
+                sql_par_type::INT);
 
             // add the change_action_id if needed
-            if (!in_array(change_action::FLD_ID, $par_name_lst)) {
-                $par_name_lst[] = change_action::FLD_ID;
-                $par_value_lst[] = $par_lst->get_value(change_action::FLD_ID);
-                $par_type_lst[] = sql_par_type::INT_SMALL;
-            }
+            $par_lst_out->add_field(
+                change_action::FLD_ID,
+                $par_lst->get_value(change_action::FLD_ID),
+                sql_par_type::INT_SMALL);
 
             // add the field_id of the field actually changed if needed
-            if (!in_array(sql::FLD_LOG_FIELD_PREFIX . $fld->name, $par_name_lst)) {
-                $par_name_lst[] = sql::FLD_LOG_FIELD_PREFIX . $fld->name;
-                $par_value_lst[] = $par_lst->get_value(sql::FLD_LOG_FIELD_PREFIX . $fld->name);
-                $par_type_lst[] = sql_par_type::INT_SMALL;
-            }
+            $par_lst_out->add_field(
+                sql::FLD_LOG_FIELD_PREFIX . $fld->name,
+                $par_lst->get_value(sql::FLD_LOG_FIELD_PREFIX . $fld->name),
+                sql_par_type::INT_SMALL);
 
             // add the db field value of the field actually changed if needed
-            if (!in_array($fld->name, $par_name_lst)) {
-                $par_name_lst[] = $fld->name . '_old';
-                $par_value_lst[] = $par_lst->get_old($fld->name);
-                $par_type_lst[] = $par_lst->get_type($fld->name);
-            }
+            $par_lst_out->add_field(
+                $fld->name . change::FLD_OLD_EXT,
+                $par_lst->get_old($fld->name),
+                $par_lst->get_type($fld->name));
 
             // add the field value of the field actually changed if needed
-            if (!in_array($fld->name, $par_name_lst)) {
-                $par_name_lst[] = $fld->name;
-                $par_value_lst[] = $par_lst->get_value($fld->name);
-                $par_type_lst[] = $par_lst->get_type($fld->name);
-            }
+            $par_lst_out->add_field(
+                $fld->name,
+                $par_lst->get_value($fld->name),
+                $par_lst->get_type($fld->name));
 
             // add the row id of the standard table for user overwrites
-            if (!in_array($id_fld, $par_name_lst)) {
-                $par_name_lst[] = $id_fld;
-                $par_value_lst[] = $par_lst->get_value($id_fld);
-                // TODO fix it
-                //$par_type_lst[] = $par_lst->get_type($id_fld);
-                $par_type_lst[] = sql_par_type::INT;
-            }
+            // TODO fix the type
+            $par_lst_out->add_field(
+                $id_fld,
+                $par_lst->get_value($id_fld),
+                sql_par_type::INT);
         }
-        $func_body .= ' ' . $func_body_change;
+        $sql .= ' ' . $func_body_change;
 
         if ($usr_tbl) {
             // insert the value in the user table
@@ -1333,7 +1308,7 @@ class sandbox_named extends sandbox
             $sc_par_lst_sub[] = sql_type::NO_ID_RETURN;
             $qp_insert->sql = $sc_insert->create_sql_insert($fld_lst_to_log, $insert_values, [], $sc_par_lst_sub);
             // add the insert row to the function body and close the with statement with a semicoln
-            $func_body .= ' ' . $qp_insert->sql . ';';
+            $sql .= ' ' . $qp_insert->sql . ';';
         } else {
             // update the fields excluding the unique id
             $update_fields = array_values($fld_lst_chg);
@@ -1356,34 +1331,24 @@ class sandbox_named extends sandbox
             $qp_update->sql = $sc_update->create_sql_update(
                 $id_fld, $id_val, $update_fvt_lst, [], $sc_par_lst_upd, true, '', $id_fld);
             // add the insert row to the function body
-            $func_body .= ' ' . $qp_update->sql . ' ';
+            $sql .= ' ' . $qp_update->sql . ' ';
         }
 
-        //
-        if ($sc->db_type == sql_db::POSTGRES) {
-            $func_body .= ' ' . sql::FUNCTION_END;
-        } else {
-            $func_body .= ' ' . sql::FUNCTION_END_MYSQL;
-        }
+        $sql .= $sc->sql_func_end();
 
 
         // create the query parameters for the actual change
-        $par_fld_val_typ_lst = [];
-        foreach ($par_name_lst as $key => $fld) {
-            $par_fld_val_typ_lst[] = [$fld, $par_value_lst[$key], $par_type_lst[$key]];
-        }
         $qp_chg = clone $qp;
-        $par_fvt_lst->set($par_fld_val_typ_lst);
         $qp_chg->sql = $sc->create_sql_update(
-            $id_fld, $id_val, $par_fvt_lst, [], $sc_par_lst);
+            $id_fld, $id_val, $par_lst_out, [], $sc_par_lst);
         $qp_chg->par = $par_lst->values();
 
         // merge all together and create the function
-        $qp->sql = $qp_chg->sql . $func_body . ';';
+        $qp->sql = $qp_chg->sql . $sql . ';';
 
         $qp->call = ' ' . sql::SELECT . ' ' . $qp_chg->name . ' (';
 
-        $call_val_str = $par_fvt_lst->par_sql($sc);
+        $call_val_str = $par_lst_out->par_sql($sc);
 
         $qp->call .= $call_val_str . ');';
 

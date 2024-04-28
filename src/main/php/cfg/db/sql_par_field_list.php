@@ -52,7 +52,16 @@ class sql_par_field_list
             $fld = new sql_par_field();
             $fld->name = $fld_array[self::FLD_POS];
             $fld->value = $fld_array[self::VAL_POS];
-            $fld->type = $fld_array[self::TYP_POS];
+            $type = $fld_array[self::TYP_POS];
+            if (is_string($type)) {
+                $fld->type = sql_par_type::TEXT;
+            } else {
+                if ($type::class === sql_field_type::class) {
+                    $fld->type = $type->par_type();
+                } else {
+                    $fld->type = $type;
+                }
+            }
             $this->lst[] = $fld;
         }
     }
@@ -74,7 +83,11 @@ class sql_par_field_list
         $fld = new sql_par_field();
         $fld->name = $name;
         $fld->value = $value;
-        $fld->type = $type;
+        if ($type::class === sql_field_type::class) {
+            $fld->type = $type->par_type();
+        } else {
+            $fld->type = $type;
+        }
         $fld->old = $old;
         $this->add($fld);
     }

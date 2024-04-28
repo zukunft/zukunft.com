@@ -125,6 +125,14 @@ class sql_type_list
     }
 
     /**
+     * @return bool true if the new values for an insert statement should be selected
+     */
+    public function use_select_for_insert(): bool
+    {
+        return in_array(sql_type::SELECT_FOR_INSERT, $this->lst);
+    }
+
+    /**
      * @return bool true if named parameters should be used
      */
     public function use_named_par(): bool

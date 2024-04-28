@@ -1616,7 +1616,7 @@ class sandbox_multi extends db_object_multi_user
     }
 
     /**
-     * @param sandbox $db_rec the object as saved in the database before the change
+     * @param sandbox_multi $db_rec the object as saved in the database before the change
      * @return change_log the log object predefined for excluding
      */
     function save_field_excluded_log(sandbox_multi $db_rec): change_log
@@ -1644,8 +1644,8 @@ class sandbox_multi extends db_object_multi_user
     /**
      * set the update parameters for the value excluded
      * @param sql_db $db_con the active database connection that should be used
-     * @param sandbox $db_rec the object as saved in the database before this field is updated
-     * @param sandbox $std_rec the default object without user specific changes
+     * @param sandbox_multi $db_rec the object as saved in the database before this field is updated
+     * @param sandbox_multi $std_rec the default object without user specific changes
      * returns false if something has gone wrong
      */
     function save_field_excluded(sql_db $db_con, sandbox_multi $db_rec, sandbox_multi $std_rec): string
@@ -1735,7 +1735,7 @@ class sandbox_multi extends db_object_multi_user
                 if ($result == '') {
                     $db_con->set_class($this::class, true);
                     $db_con->set_usr($this->user()->id());
-                    $fld_val_typ_lst = [[$log->field(), $new_value, '']];
+                    $fld_val_typ_lst = [[$log->field(), $new_value, sql_par_type::INT_SMALL]];
                     $qp = $this->sql_update_fields($db_con->sql_creator(), $fld_val_typ_lst, new sql_type_list([sql_type::USER]));
                     $usr_msg = $db_con->update($qp, 'setting of share type');
                     $result = $usr_msg->get_message();

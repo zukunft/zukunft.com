@@ -91,6 +91,7 @@ class change extends change_log
     const FLD_NEW_ID_COM = 'new value id';
     const FLD_NEW_ID = 'new_id';
     const FLD_NEW_ID_SQLTYP = sql_field_type::INT;
+    const FLD_OLD_EXT = '_old';
 
     // all database field names
     const FLD_NAMES = array(

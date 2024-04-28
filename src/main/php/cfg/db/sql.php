@@ -1095,12 +1095,14 @@ class sql
                             $fld_name = sql::FLD_LOG_FIELD_PREFIX . $chg_add_fld;
                         }
                         if ($fld_name == change::FLD_OLD_VALUE) {
-                            $fld_name = $chg_add_fld . '_old';
+                            $fld_name = $chg_add_fld . change::FLD_OLD_EXT;
                         }
                         if ($fld_name == change::FLD_NEW_VALUE) {
                             $fld_name = $chg_add_fld;
                         }
-                        if ($fld_name == change::FLD_ROW_ID and $val_tbl != '' and $val_tbl != 'dummy') {
+                        if ($fld_name == change::FLD_ROW_ID
+                            and $val_tbl != ''
+                            and !$sc_par_lst->use_select_for_insert()) {
                             $fld_name = $val_tbl . '.' . $chg_row_fld;
                         } else {
                             if ($fld_name == change::FLD_ROW_ID
@@ -1136,14 +1138,14 @@ class sql
             $sql = $this->prepare_this_sql(self::INSERT);
             $sql .= ' INTO ' . $this->name_sql_esc($this->table);
             $sql .= $sql_fld;
-            if ($val_tbl != '' or $usr_tbl) {
+            if ($sc_par_lst->use_select_for_insert() or $val_tbl != '' or $usr_tbl) {
                 $sql .= ' ' . sql::SELECT . ' ';
                 $sql .= $sql_val;
             } else {
                 $sql .= ' VALUES ';
                 $sql .= '(' . $sql_val . ')';
             }
-            if ($val_tbl != '' and $val_tbl != 'dummy') {
+            if ($val_tbl != '') {
                 $sql .= ' ' . sql::FROM . ' ' . $val_tbl;
                 $sql_type = self::FUNCTION;
             } else {
@@ -1291,6 +1293,33 @@ class sql
 
         }
         return $this->end_sql($sql, $sql_type);
+    }
+
+    /**
+     * @return string that starts a sql function
+     */
+    function sql_func_start(): string
+    {
+        if ($this->db_type == sql_db::POSTGRES) {
+            $sql = sql::FUNCTION_BEGIN;
+        } else {
+            $sql = sql::FUNCTION_BEGIN_MYSQL;
+        }
+        $sql .= ' ' . sql::WITH;
+        return $sql;
+    }
+
+    /**
+     * @return string that starts a sql function
+     */
+    function sql_func_end(): string
+    {
+        if ($this->db_type == sql_db::POSTGRES) {
+            $sql = ' ' . sql::FUNCTION_END;
+        } else {
+            $sql = ' ' . sql::FUNCTION_END_MYSQL;
+        }
+        return $sql;
     }
 
     /**
