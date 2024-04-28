@@ -1176,6 +1176,7 @@ class sql
 
         $id_field_par = '';
         $use_named_par = $sc_par_lst->use_named_par();
+        $usr_tbl = $sc_par_lst->is_usr_tbl();
 
         // check if the minimum parameters are set
         if ($this->query_name == '') {
@@ -1231,7 +1232,14 @@ class sql
                     $id_field_used = $this->table . '.' . $id_field;
                     $sql_where = $this->sql_where($id_field_used, $id, $offset, $id);
                 } else {
-                    $sql_where = $this->sql_where($id_field, $id, $offset, $id);
+                    if ($usr_tbl) {
+                        $sql_where = $this->sql_where_no_par(
+                            [$id_field, user::FLD_ID],
+                            [$id, '_' . user::FLD_ID], $offset, $id, true);
+
+                    } else {
+                        $sql_where = $this->sql_where($id_field, $id, $offset, $id);
+                    }
                 }
             } else {
                 $sql_where = $this->sql_where($id_field, $id, $offset, $id_field_par);
@@ -1347,14 +1355,18 @@ class sql
     /**
      * @param string|array $id_field the id field or id fields of the table from where the row should be deleted
      * @param int|string|array $id
+     * @param int $offset
      * @param string $id_field_par
+     * @param bool $is_named = false true if named parameters are used
      * @return string with the where statement
      */
     private function sql_where(
         string|array     $id_field,
         int|string|array $id,
         int              $offset = 0,
-        string           $id_field_par = ''): string
+        string           $id_field_par = '',
+        bool             $is_named = false
+    ): string
     {
         // gat the value parameter types
         if (is_array($id_field)) {
@@ -1375,16 +1387,41 @@ class sql
         }
 
         // create a prepare SQL statement if possible
+        return $this->sql_where_no_par($id_field, $id, $offset, $id_field_par, $is_named);
+    }
+
+    /**
+     * @param string|array $id_field the id field or id fields of the table from where the row should be deleted
+     * @param int|string|array $id
+     * @param int $offset
+     * @param string $id_field_par
+     * @param bool $is_named
+     * @return string with the where statement
+     */
+    private function sql_where_no_par(
+        string|array     $id_field,
+        int|string|array $id,
+        int              $offset = 0,
+        string           $id_field_par = '',
+        bool             $is_named = false
+    ): string
+    {
+
+        // create a prepare SQL statement if possible
         $sql_where = '';
         if (is_array($id_field)) {
             $pos = $offset;
-            foreach ($id_field as $id_fld) {
+            foreach ($id_field as $key => $id_fld) {
                 if ($sql_where != '') {
                     $sql_where .= ' AND ';
                 } else {
                     $sql_where .= ' WHERE ';
                 }
-                $sql_where .= $id_fld . ' = ' . $this->par_fields[$pos];
+                if ($is_named) {
+                    $sql_where .= $id_fld . ' = ' . $id[$key];
+                } else {
+                    $sql_where .= $id_fld . ' = ' . $this->par_fields[$pos];
+                }
                 $pos++;
             }
         } else {

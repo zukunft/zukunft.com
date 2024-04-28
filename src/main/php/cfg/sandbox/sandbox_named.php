@@ -1274,43 +1274,36 @@ class sandbox_named extends sandbox
         }
         $sql .= ' ' . $func_body_change;
 
-        if ($usr_tbl) {
-            // insert the value in the user table
-            $fld_lst_to_log = array_merge([$this->id_field(), user::FLD_ID], $fld_lst_chg);
-            $fvt_lst_to_log = $fvt_lst->get_intersect($fld_lst_to_log);
-            $sc_insert = clone $sc;
-            $qp_insert = $this->sql_common($sc_insert, $sc_par_lst_sub);
-            $sc_par_lst_sub[] = sql_type::NO_ID_RETURN;
-            $qp_insert->sql = $sc_insert->create_sql_insert($fvt_lst_to_log, $sc_par_lst_sub);
-            // add the insert row to the function body and close the with statement with a semicoln
-            $sql .= ' ' . $qp_insert->sql . ';';
-        } else {
-            // update the fields excluding the unique id
-            $update_fields = array_values($fld_lst_chg);
-            $update_values = [];
-            $update_types = [];
-            foreach ($fld_lst_chg as $fld) {
-                $update_values[] = $fvt_lst->get_value($fld);
-                $update_types[] = $fvt_lst->get_type($fld);
-            }
-            $update_fld_val_typ_lst = [];
-            foreach ($update_fields as $key => $field) {
-                $update_fld_val_typ_lst[] = [$field, $update_values[$key], $update_types[$key]];
-            }
-            $sc_update = clone $sc;
-            $sc_par_lst_upd = new sql_type_list([sql_type::NAMED_PAR, sql_type::UPDATE, sql_type::UPDATE_PART]);
-            $sc_par_lst_upd_ex_log = $sc_par_lst_upd->remove(sql_type::LOG);
-            $qp_update = $this->sql_common($sc_update, $sc_par_lst_upd_ex_log);;
-            $update_fvt_lst = new sql_par_field_list();
-            $update_fvt_lst->set($update_fld_val_typ_lst);
-            $qp_update->sql = $sc_update->create_sql_update(
-                $id_fld, $id_val, $update_fvt_lst, [], $sc_par_lst_upd, true, '', $id_fld);
-            // add the insert row to the function body
-            $sql .= ' ' . $qp_update->sql . ' ';
+        // update the fields excluding the unique id
+        $update_fields = array_values($fld_lst_chg);
+        $update_values = [];
+        $update_types = [];
+        foreach ($fld_lst_chg as $fld) {
+            $update_values[] = $fvt_lst->get_value($fld);
+            $update_types[] = $fvt_lst->get_type($fld);
         }
+        $update_fld_val_typ_lst = [];
+        foreach ($update_fields as $key => $field) {
+            $update_fld_val_typ_lst[] = [$field, $update_values[$key], $update_types[$key]];
+        }
+        $sc_update = clone $sc;
+        $sc_par_lst_upd = new sql_type_list([sql_type::NAMED_PAR, sql_type::UPDATE, sql_type::UPDATE_PART]);
+        $sc_par_lst_upd_ex_log = $sc_par_lst_upd->remove(sql_type::LOG);
+        if ($usr_tbl) {
+            $sc_par_lst_upd_ex_log->add(sql_type::USER);
+        }
+        $qp_update = $this->sql_common($sc_update, $sc_par_lst_upd_ex_log);;
+        $update_fvt_lst = new sql_par_field_list();
+        $update_fvt_lst->set($update_fld_val_typ_lst);
+        if ($usr_tbl) {
+            $sc_par_lst_upd->add(sql_type::USER);
+        }
+        $qp_update->sql = $sc_update->create_sql_update(
+            $id_fld, $id_val, $update_fvt_lst, [], $sc_par_lst_upd, true, '', $id_fld);
+        // add the insert row to the function body
+        $sql .= ' ' . $qp_update->sql . ' ';
 
         $sql .= $sc->sql_func_end();
-
 
         // create the query parameters for the actual change
         $qp_chg = clone $qp;
