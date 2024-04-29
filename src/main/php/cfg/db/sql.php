@@ -79,15 +79,15 @@ class sql
     const UNIQUE = 'UNIQUE INDEX';  // TODO check if UNIQUE needs to be used for word and triple names
     const PREPARE = 'PREPARE';
     const CREATE = 'CREATE OR REPLACE';
-    const DROP_MYSQL = 'DROP FUNCTION IF EXISTS';
+    const DROP_MYSQL = 'DROP PROCEDURE IF EXISTS';
     const FUNCTION = 'FUNCTION';
-    const FUNCTION_MYSQL = 'CREATE FUNCTION';
+    const FUNCTION_MYSQL = 'CREATE PROCEDURE';
     const FUNCTION_BEGIN = '$$ BEGIN';
     const FUNCTION_BEGIN_MYSQL = 'BEGIN';
     const FUNCTION_END = 'END $$ LANGUAGE plpgsql';
     const FUNCTION_END_MYSQL = 'END';
     const FUNCTION_NO_RETURN = 'RETURNS void AS';
-    const FUNCTION_NO_RETURN_MYSQL = 'RETURNS void';
+    const FUNCTION_NO_RETURN_MYSQL = '';
     const VIEW = 'VIEW';
     const AS = 'AS';
     const FROM = 'FROM';
@@ -201,6 +201,8 @@ class sql
     private ?string $id_from_field; // only for link objects the id field of the source object
     private ?string $id_to_field;   // only for link objects the id field of the destination object
     private ?string $id_link_field; // only for link objects the id field of the link type object
+    // TODO replace by a fvt_lst
+    private ?sql_par_field_list $fvt_lst; // the list of the fields, values and types that shoudl be used to create the sql statement
     private ?array $par_fields;     // list of field names to create the sql where statement
     private ?array $par_values;     // list of the parameter value to make sure they are in the same order as the parameter
     private ?array $par_types;      // list of the parameter types, which also defines a precompiled query
@@ -329,6 +331,7 @@ class sql
         $this->id_from_field = '';
         $this->id_to_field = '';
         $this->id_link_field = '';
+        $this->fvt_lst = new sql_par_field_list();
         $this->par_fields = [];
         $this->par_values = [];
         $this->par_types = [];
@@ -985,7 +988,7 @@ class sql
      *
      * @param int $par_offset in case of a sub query the number of parameter set until here of the main query
      * @param bool $has_id to be able to create also SQL statements for tables that does not have a single unique key
-     * @param bool $prepare can be set to false the create sql parts of a union query
+     * @param bool $prepare can be set to false the created sql parts of a union query
      * @return string the created SQL statement in the previous set dialect
      */
     function sql(int $par_offset = 0, bool $has_id = true, bool $prepare = true): string
@@ -1058,6 +1061,7 @@ class sql
 
         $usr_tbl = $sc_par_lst->is_usr_tbl();
         $update_part = $sc_par_lst->is_update_part();
+        $delete_part = $sc_par_lst->is_delete_part();
 
         // escape the field names if needed
         $fvt_lst->esc_names($this);
@@ -1085,7 +1089,10 @@ class sql
                         $fld_name = sql::FLD_LOG_FIELD_PREFIX . $chg_add_fld;
                     }
                     if ($fld_name == change::FLD_OLD_VALUE) {
-                        $fld_name = $chg_add_fld . change::FLD_OLD_EXT;
+                        $fld_name = $chg_add_fld;
+                        if (!$delete_part) {
+                            $fld_name = $fld_name . change::FLD_OLD_EXT;
+                        }
                     }
                     if ($fld_name == change::FLD_NEW_VALUE) {
                         $fld_name = $chg_add_fld;
@@ -1096,7 +1103,7 @@ class sql
                         $fld_name = $val_tbl . '.' . $chg_row_fld;
                     } else {
                         if ($fld_name == change::FLD_ROW_ID
-                            and ($usr_tbl or $update_part)) {
+                            and ($usr_tbl or $update_part or $delete_part)) {
                             $fld_name = '_' . $chg_row_fld;
                         } else {
                             $fld_name = '_' . $fld_name;
@@ -1295,14 +1302,16 @@ class sql
     /**
      * @return string that starts a sql function
      */
-    function sql_func_start(): string
+    function sql_func_start(sql_type_list $sc_par_lst): string
     {
         if ($this->db_type == sql_db::POSTGRES) {
             $sql = sql::FUNCTION_BEGIN;
         } else {
             $sql = sql::FUNCTION_BEGIN_MYSQL;
         }
-        $sql .= ' ' . sql::WITH;
+        if ($this->db_type == sql_db::POSTGRES or $sc_par_lst->is_insert()) {
+            $sql .= ' ' . sql::WITH;
+        }
         return $sql;
     }
 
@@ -1323,33 +1332,59 @@ class sql
      * create a sql statement to delete or exclude a database row
      * @param int|string|array $id_field the id field or id fields of the table from where the row should be deleted
      * @param int|string|array $id
-     * @param bool $excluded true if only the excluded user rows should be deleted
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return string
      */
     function create_sql_delete(
-        int|string|array $id_field,
-        int|string|array $id,
-        bool             $excluded = false): string
+        int|string|array   $id_field,
+        int|string|array   $id,
+        sql_type_list      $sc_par_lst = new sql_type_list([]),
+        sql_par_field_list $fvt_lst = new sql_par_field_list(),
+    ): string
     {
         $lib = new library();
         $id_field_par = '';
+        $excluded = $sc_par_lst->exclude_sql();
 
         // check if the minimum parameters are set
         if ($this->query_name == '') {
             log_err('SQL statement is not yet named');
         }
 
-        $sql_where = $this->sql_where($id_field, $id);
+        if ($sc_par_lst->use_named_par()) {
+            if ($sc_par_lst->is_usr_tbl()) {
+                $sql_where = $this->sql_where_no_par(
+                    [$id_field, user::FLD_ID],
+                    ['_' . $id_field, '_' . user::FLD_ID], 0, '_' . $id_field, true);
+            } else {
+                $sql_where = $this->sql_where_no_par($id_field, '_' . $id_field, 0, '_' . $id_field);
+            }
+        } else {
+            $sql_where = $this->sql_where($id_field, $id);
+        }
 
-        $sql = $this->prepare_this_sql(self::DELETE);
-        $sql .= ' ' . $this->name_sql_esc($this->table);
-        $sql .= $sql_where;
+        if ($sc_par_lst->and_log()) {
+            if ($sc_par_lst->create_function()) {
+                $sql = $this->prepare_this_sql(self::FUNCTION, $sc_par_lst, $fvt_lst);
+            } else {
+                $sql = sql::DELETE . ' ' . $this->table . ' ';
+                $sql .= $sql_where;
+            }
+        } else {
+            $sql = $this->prepare_this_sql(self::DELETE);
+            $sql .= ' ' . $this->name_sql_esc($this->table);
+            $sql .= $sql_where;
+        }
 
         if ($excluded) {
             $sql .= ' AND ' . sandbox::FLD_EXCLUDED . ' = ' . sql::TRUE;
         }
 
-        return $this->end_sql($sql, self::DELETE);
+        if ($sc_par_lst->create_function()) {
+            return $sql;
+        } else {
+            return $this->end_sql($sql, self::DELETE);
+        }
     }
 
     /**
@@ -2564,59 +2599,81 @@ class sql
      * @return string with the SQL prepare statement for the current query
      */
     private function prepare_this_sql(
-        string $sql_statement_type = sql::SELECT
+        string             $sql_statement_type = sql::SELECT,
+        sql_type_list      $sc_par_lst = new sql_type_list([]),
+        sql_par_field_list $fvt_lst = new sql_par_field_list()
     ): string
     {
         $sql = '';
-        if ($this->sub_query) {
-            $sql = $sql_statement_type;
-        } elseif (count($this->par_types) > 0
-            or $this->join_sub_query
-            or $this->join2_sub_query
-            or $this->join3_sub_query
-            or $this->join4_sub_query) {
-            // used for sub queries
-            if ($this->query_name == '') {
-                $sql = $sql_statement_type;
-            } else {
+        if (!$fvt_lst->is_empty()) {
+            if ($sc_par_lst->create_function()) {
+                $par_string = '(' . $fvt_lst->par_names($this) . ')';
                 if ($this->db_type == sql_db::POSTGRES) {
-                    if ($this->used_par_types() > 0) {
-                        $par_types = $this->par_types_to_postgres();
-                        if ($sql_statement_type == sql::FUNCTION) {
-                            $par_string = '(' . $this->par_named_types($par_types) . ')';
-                            $sql = sql::CREATE . ' ' . sql::FUNCTION . ' ' . $this->query_name . ' '
-                                . $par_string . ' ' . sql::FUNCTION_NO_RETURN;
+                    $sql = sql::CREATE . ' ' . sql::FUNCTION . ' ' . $this->query_name . ' '
+                        . $par_string . ' ' . sql::FUNCTION_NO_RETURN . ' ';
+                } else {
+                    $sql = sql::DROP_MYSQL . ' ' . $this->query_name . '; ';
+                    $sql .= sql::FUNCTION_MYSQL . ' ' . $this->query_name . ' '
+                        . $par_string . ' ' . sql::FUNCTION_NO_RETURN_MYSQL . ' ';
+                }
+            } else {
+                log_err('SQL statement creation not yet defined for SQL ' . $sc_par_lst->dsp_id());
+            }
+
+        } else {
+
+            // TODO move this to fvt_lst based
+
+            if ($this->sub_query) {
+                $sql = $sql_statement_type;
+            } elseif (count($this->par_types) > 0
+                or $this->join_sub_query
+                or $this->join2_sub_query
+                or $this->join3_sub_query
+                or $this->join4_sub_query) {
+                // used for sub queries
+                if ($this->query_name == '') {
+                    $sql = $sql_statement_type;
+                } else {
+                    if ($this->db_type == sql_db::POSTGRES) {
+                        if ($this->used_par_types() > 0) {
+                            $par_types = $this->par_types_to_postgres();
+                            if ($sql_statement_type == sql::FUNCTION) {
+                                $par_string = '(' . $this->par_named_types($par_types) . ')';
+                                $sql = sql::CREATE . ' ' . sql::FUNCTION . ' ' . $this->query_name . ' '
+                                    . $par_string . ' ' . sql::FUNCTION_NO_RETURN;
+                            } else {
+                                $par_string = '(' . implode(', ', $par_types) . ')';
+                                $sql = sql::PREPARE . ' ' . $this->query_name . ' '
+                                    . $par_string . ' AS ' . $sql_statement_type;
+                            }
                         } else {
-                            $par_string = '(' . implode(', ', $par_types) . ')';
-                            $sql = sql::PREPARE . ' ' . $this->query_name . ' '
-                                . $par_string . ' AS ' . $sql_statement_type;
+                            $sql = sql::PREPARE . ' ' . $this->query_name . ' AS ' . $sql_statement_type;
                         }
-                    } else {
-                        $sql = sql::PREPARE . ' ' . $this->query_name . ' AS ' . $sql_statement_type;
-                    }
-                } elseif ($this->db_type == sql_db::MYSQL) {
-                    if ($this->used_par_types() > 0) {
-                        $par_types = $this->par_types_to_postgres();
-                        if ($sql_statement_type == sql::FUNCTION) {
-                            $par_string = '(' . $this->par_named_types($par_types) . ')';
-                            $sql = sql::DROP_MYSQL . ' ' . $this->query_name . '; ';
-                            $sql .= sql::FUNCTION_MYSQL . ' ' . $this->query_name . ' '
-                                . $par_string . ' ' . sql::FUNCTION_NO_RETURN_MYSQL;
-                            $this->end = ' ';
+                    } elseif ($this->db_type == sql_db::MYSQL) {
+                        if ($this->used_par_types() > 0) {
+                            $par_types = $this->par_types_to_postgres();
+                            if ($sql_statement_type == sql::FUNCTION) {
+                                $par_string = '(' . $this->par_named_types($par_types) . ')';
+                                $sql = sql::DROP_MYSQL . ' ' . $this->query_name . '; ';
+                                $sql .= sql::FUNCTION_MYSQL . ' ' . $this->query_name . ' '
+                                    . $par_string . ' ' . sql::FUNCTION_NO_RETURN_MYSQL;
+                                $this->end = ' ';
+                            } else {
+                                $sql = sql::PREPARE . ' ' . $this->query_name . " FROM '" . $sql_statement_type;
+                                $this->end = "';";
+                            }
                         } else {
                             $sql = sql::PREPARE . ' ' . $this->query_name . " FROM '" . $sql_statement_type;
                             $this->end = "';";
                         }
                     } else {
-                        $sql = sql::PREPARE . ' ' . $this->query_name . " FROM '" . $sql_statement_type;
-                        $this->end = "';";
+                        log_err('Prepare SQL not yet defined for SQL dialect ' . $this->db_type);
                     }
-                } else {
-                    log_err('Prepare SQL not yet defined for SQL dialect ' . $this->db_type);
                 }
+            } else {
+                log_err('Query is not a sub query, but parameters types are missing for ' . $this->query_name);
             }
-        } else {
-            log_err('Query is not a sub query, but parameters types are missing for ' . $this->query_name);
         }
 
         return $sql;

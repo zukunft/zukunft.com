@@ -957,7 +957,7 @@ class sandbox_named extends sandbox
         $par_lst_out = new sql_par_field_list();
 
         // init the function body
-        $sql = $sc->sql_func_start();
+        $sql = $sc->sql_func_start($sc_par_lst);
 
         // don't use the log parameter for the sub queries
         $sc_par_lst_sub = $sc_par_lst->remove(sql_type::LOG);
@@ -1175,7 +1175,7 @@ class sandbox_named extends sandbox
         $par_lst_out = new sql_par_field_list();
 
         // init the function body
-        $sql = $sc->sql_func_start();
+        $sql = $sc->sql_func_start($sc_par_lst);
 
         // don't use the log parameter for the sub queries
         $sc_par_lst_sub = $sc_par_lst->remove(sql_type::LOG);
@@ -1201,8 +1201,10 @@ class sandbox_named extends sandbox
         foreach ($par_lst_chg as $fld) {
 
             // add the seperator between the single insert log statements
-            if ($func_body_change != '') {
-                $func_body_change .= ', ';
+            if ($sc->db_type == sql_db::POSTGRES) {
+                if ($func_body_change != '') {
+                    $func_body_change .= ', ';
+                }
             }
 
             // create the insert log statement for the field of the loop
@@ -1232,8 +1234,12 @@ class sandbox_named extends sandbox
                 $sc_log, $sc_par_lst_log, $ext . '_' . $fld->name, '', $fld->name, $id_fld);
 
             // TODO get the fields used in the change log sql from the sql
-            $func_body_change .= ' ' . $qp_log->name . ' ' . sql::AS . ' (';
-            $func_body_change .= ' ' . $qp_log->sql . ')';
+            if ($sc->db_type == sql_db::POSTGRES) {
+                $func_body_change .= ' ' . $qp_log->name . ' ' . sql::AS . ' (';
+                $func_body_change .= ' ' . $qp_log->sql . ')';
+            } else {
+                $func_body_change .= ' ' . $qp_log->sql . ';';
+            }
 
             // add the user_id if needed
             $par_lst_out->add_field(
@@ -1332,26 +1338,168 @@ class sandbox_named extends sandbox
      */
     function sql_delete(
         sql           $sc,
-        sql_type_list $sc_par_lst = new sql_type_list([])): sql_par
+        sql_type_list $sc_par_lst = new sql_type_list([])
+    ): sql_par
     {
-        $usr_tbl = $sc_par_lst->is_usr_tbl($sc_par_lst);
-        $excluded = $sc_par_lst->exclude_sql($sc_par_lst);
-        $qp = $this->sql_common($sc, $sc_par_lst);
-        $qp->name .= sql::file_sep . sql::file_delete;
-        $par_lst = [$this->id()];
-        if ($excluded) {
-            $qp->name .= '_excluded';
+        $sc_par_lst->add(sql_type::DELETE);
+        $usr_tbl = $sc_par_lst->is_usr_tbl();
+        $and_log = $sc_par_lst->and_log();
+        $excluded = $sc_par_lst->exclude_sql();
+        $ext = sql::file_sep . sql::file_delete;
+        if ($and_log) {
+            $ext .= sql_type::LOG->extension();
         }
+        if ($excluded) {
+            $ext .= '_excluded';
+        }
+        $qp = $this->sql_common($sc, $sc_par_lst, $ext);
+        $par_lst = [$this->id()];
         $sc->set_name($qp->name);
         // delete the user overwrite
         // but if the excluded user overwrites should be deleted the overwrites for all users should be deleted
-        if ($usr_tbl and !$excluded) {
-            $qp->sql = $sc->create_sql_delete([$this->id_field(), user::FLD_ID], [$this->id(), $this->user_id()], $excluded);
-            $par_lst[] = $this->user_id();
+        if ($and_log) {
+            $qp = $this->sql_delete_and_log($sc, $qp, $sc_par_lst);
         } else {
-            $qp->sql = $sc->create_sql_delete($this->id_field(), $this->id(), $excluded);
+            if ($usr_tbl and !$excluded) {
+                $qp->sql = $sc->create_sql_delete(
+                    [$this->id_field(), user::FLD_ID], [$this->id(), $this->user_id()], $sc_par_lst);
+                $par_lst[] = $this->user_id();
+            } else {
+                $qp->sql = $sc->create_sql_delete($this->id_field(), $this->id(), $sc_par_lst);
+            }
+            $qp->par = $par_lst;
         }
-        $qp->par = $par_lst;
+
+        return $qp;
+    }
+
+    /**
+     * @param sql $sc the sql creator object with the db type set
+     * @param sql_par $qp the query parameter with the name already set
+     * @param sql_type_list $sc_par_lst
+     * @return sql_par
+     */
+    private function sql_delete_and_log(
+        sql           $sc,
+        sql_par       $qp,
+        sql_type_list $sc_par_lst = new sql_type_list([])
+    ): sql_par
+    {
+        global $change_action_list;
+        global $change_field_list;
+        $table_id = $sc->table_id($this::class);
+
+        // set some var names to shorten the code lines
+        $ext = sql::file_sep . sql::file_delete;
+        $id_fld = $sc->id_field_name();
+        $id_val = '_' . $id_fld;
+        $name_fld = $this->name_field();
+
+        // list of parameters actually used in order of the function usage
+        $fvt_lst_out = new sql_par_field_list();
+
+        // init the function body
+        $sql = $sc->sql_func_start($sc_par_lst);
+
+        // don't use the log parameter for the sub queries
+        $sc_par_lst_sub = clone $sc_par_lst;
+        $sc_par_lst_sub->add(sql_type::LIST);
+        $sc_par_lst_sub->add(sql_type::NAMED_PAR);
+        $sc_par_lst_sub->add(sql_type::DELETE_PART);
+        $sc_par_lst_log = $sc_par_lst_sub->remove(sql_type::LOG);
+        $sc_par_lst_log->add(sql_type::SELECT_FOR_INSERT);
+
+        // create the queries for the log entries
+        $func_body_change = '';
+
+        // create the insert log statement for the field of the loop
+        $log = new change($this->user());
+        $log->set_table_by_class($this::class);
+        $log->set_field($name_fld);
+        $log->old_value = $this->name();
+        $log->new_value = null;
+
+        $sc_log = clone $sc;
+        // TODO replace dummy value table with an enum value
+        $qp_log = $log->sql_insert(
+            $sc_log, $sc_par_lst_log, $ext . '_' . $name_fld, '', $name_fld, $id_fld);
+
+        // TODO get the fields used in the change log sql from the sql
+        if ($sc->db_type == sql_db::POSTGRES) {
+            $func_body_change .= ' ' . $qp_log->name . ' ' . sql::AS . ' (';
+            $func_body_change .= ' ' . $qp_log->sql . ')';
+        } else {
+            $func_body_change .= ' ' . $qp_log->sql . ';';
+        }
+
+        // add the user_id if needed
+        $fvt_lst_out->add_field(
+            user::FLD_ID,
+            $this->user_id(),
+            sql_par_type::INT);
+
+        // add the change_action_id if needed
+        $fvt_lst_out->add_field(
+            change_action::FLD_ID,
+            $change_action_list->id(change_action::DELETE),
+            sql_par_type::INT_SMALL);
+
+        // add the field_id of the field actually changed if needed
+        $fvt_lst_out->add_field(
+            sql::FLD_LOG_FIELD_PREFIX . $name_fld,
+            $change_field_list->id($table_id . $name_fld),
+            sql_par_type::INT_SMALL);
+
+        // add the db field value of the field actually changed if needed
+        $fvt_lst_out->add_field(
+            $name_fld,
+            $this->name(),
+            sql_par_type::TEXT);
+
+        // add the row id of the standard table for user overwrites
+        $fvt_lst_out->add_field(
+            $this->id_field(),
+            $this->id(),
+            sql_par_type::INT);
+
+        $sql .= ' ' . $func_body_change;
+
+        // create the actual delete or exclude statement
+        $sc_delete = clone $sc;
+        $sc_par_lst_del = clone $sc_par_lst;
+        $sc_par_lst_del->add(sql_type::DELETE);
+        $sc_par_lst_del->add(sql_type::NAMED_PAR);
+        $qp_delete = $this->sql_common($sc_delete, $sc_par_lst_log);;
+        $qp_delete->sql = $sc_delete->create_sql_delete(
+            $id_fld, $id_val, $sc_par_lst_sub);
+        // add the insert row to the function body
+        $sql .= ' ' . $qp_delete->sql . ' ';
+
+        $sql .= $sc->sql_func_end();
+
+        // create the query parameters for the call
+        $qp_func = clone $qp;
+        $sc_par_lst_func = clone $sc_par_lst;
+        $sc_par_lst_func->add(sql_type::FUNCTION);
+        $sc_par_lst_func->add(sql_type::DELETE);
+        $ext = sql::file_sep . sql::file_delete;
+        if ($sc_par_lst->and_log()) {
+            $ext .= sql_type::LOG->extension();
+        }
+        $qp_func = $this->sql_common($sc_delete, $sc_par_lst_func, $ext);
+        $qp_func->sql = $sc->create_sql_delete(
+            $id_fld, $id_val, $sc_par_lst_func, $fvt_lst_out);
+        $qp_func->par = $fvt_lst_out->values();
+
+        // merge all together and create the function
+        $qp->sql = $qp_func->sql . $sql . ';';
+
+        // create the function call
+        $qp->call = ' ' . sql::SELECT . ' ' . $qp_func->name . ' (';
+
+        $call_val_str = $fvt_lst_out->par_sql($sc);
+
+        $qp->call .= $call_val_str . ');';
 
         return $qp;
     }
@@ -1362,7 +1510,7 @@ class sandbox_named extends sandbox
      *
      * @param sql $sc with the target db_type set
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @param string $name_ext the query name extension to differ insert from update
+     * @param string $name_ext the query name extension to differ the queries based on the fields changed
      * @return sql_par prepared sql parameter object with the name set
      */
     private function sql_common(sql $sc, sql_type_list $sc_par_lst = new sql_type_list([]), string $name_ext = ''): sql_par

@@ -48,9 +48,9 @@ class change_action_list extends type_list
         parent::load_dummy();
         $type = new type_object(change_action::ADD, change_action::ADD, '', 1);
         $this->add($type);
-        $type = new type_object(change_action::DELETE, change_action::DELETE, '',2);
+        $type = new type_object(change_action::UPDATE, change_action::UPDATE, '', 2);
         $this->add($type);
-        $type = new type_object(change_action::UPDATE, change_action::UPDATE, '', 3);
+        $type = new type_object(change_action::DELETE, change_action::DELETE, '',3);
         $this->add($type);
     }
 

@@ -1,5 +1,5 @@
-DROP FUNCTION IF EXISTS word_insert_log_01111000000;
-CREATE FUNCTION word_insert_log_01111000000
+DROP PROCEDURE IF EXISTS word_insert_log_01111000000;
+CREATE PROCEDURE word_insert_log_01111000000
 (_word_name               text,
  _user_id                 bigint,
  _change_action_id        smallint,
@@ -8,7 +8,7 @@ CREATE FUNCTION word_insert_log_01111000000
  _field_id_description    smallint,
  _description             text,
  _field_id_phrase_type_id smallint,
- _phrase_type_id          bigint) RETURNS void
+ _phrase_type_id          bigint)
 BEGIN
     WITH
         word_insert  AS (
@@ -45,12 +45,12 @@ BEGIN
 END;
 
 SELECT word_insert_log_01111000000
-       ('Mathematics'::text,
-        1::bigint,
-        1::smallint,
-        10::smallint,
-        9::smallint,
-        11::smallint,
-        'Mathematics is an area of knowledge that includes the topics of numbers and formulas'::text,
-        12::smallint,
-        1::bigint);
+       ('Mathematics',
+        1,
+        1,
+        10,
+        9,
+        11,
+        'Mathematics is an area of knowledge that includes the topics of numbers and formulas',
+        12,
+        1);

@@ -39,7 +39,7 @@ $$ LANGUAGE plpgsql;
 
 SELECT word_update_log_00111000000_user
        (10::bigint,
-        3::smallint,
+        2::smallint,
         10::smallint,
         'Mathematics'::text,
         'System Test Word Renamed'::text,

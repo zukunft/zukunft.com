@@ -117,6 +117,15 @@ class sql_par_field_list
         }
     }
 
+    function is_empty(): bool
+    {
+        if (count($this->lst) == 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     function names(): array
     {
         $result = [];
@@ -234,7 +243,7 @@ class sql_par_field_list
     /**
      * create the sql function call parameter statement
      * @param sql $sc
-     * @return void
+     * @return string
      */
     function par_sql(sql $sc): string
     {
@@ -255,8 +264,31 @@ class sql_par_field_list
                     $sql .= $fld->value;
                 }
             }
+            if ($sc->db_type == sql_db::POSTGRES) {
+                if ($val_typ != '') {
+                    $sql .= '::' . $val_typ;
+                }
+            }
+        }
+        return $sql;
+    }
+
+    /**
+     * create the sql function call parameter statement
+     * @param sql $sc
+     * @return string
+     */
+    function par_names(sql $sc): string
+    {
+        $sql = '';
+        foreach ($this->lst as $key => $fld) {
+            if ($sql != '') {
+                $sql .= ', ';
+            }
+            $val_typ = $sc->par_type_to_postgres($fld->type);
+            $sql .= '_' . $fld->name;
             if ($val_typ != '') {
-                $sql .= '::' . $val_typ;
+                $sql .= ' ' . $val_typ;
             }
         }
         return $sql;

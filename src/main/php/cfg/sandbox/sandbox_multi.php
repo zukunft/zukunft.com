@@ -1579,7 +1579,7 @@ class sandbox_multi extends db_object_multi_user
         }
         $sc->set_name($qp->name);
         $id_lst = $this->id_or_lst();
-        $qp->sql = $sc->create_sql_delete($this->id_field(), $id_lst, $excluded);
+        $qp->sql = $sc->create_sql_delete($this->id_field(), $id_lst, $sc_par_lst);
         if (is_array($id_lst)) {
             $qp->par = $id_lst;
         } else {

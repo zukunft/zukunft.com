@@ -1836,7 +1836,10 @@ class word extends sandbox_typed
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_insert(sql $sc, sql_type_list $sc_par_lst = new sql_type_list([])): sql_par
+    function sql_insert(
+        sql $sc,
+        sql_type_list $sc_par_lst = new sql_type_list([])
+    ): sql_par
     {
         // fields and values that the word has additional to the standard named user sandbox object
         $wrd_empty = $this->clone_reset();

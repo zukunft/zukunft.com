@@ -125,6 +125,14 @@ class sql_type_list
     }
 
     /**
+     * @return bool true if sql is part of an update function
+     */
+    public function is_delete_part(): bool
+    {
+        return in_array(sql_type::DELETE_PART, $this->lst);
+    }
+
+    /**
      * @return bool true if the new values for an insert statement should be selected
      */
     public function use_select_for_insert(): bool
@@ -141,11 +149,19 @@ class sql_type_list
     }
 
     /**
-     * @return bool true if a sql function should be created that also creates the log entries
+     * @return bool true if the sql function should be created that also creates the log entries
      */
     public function and_log(): bool
     {
         return in_array(sql_type::LOG, $this->lst);
+    }
+
+    /**
+     * @return bool true if a sql function should be created that combines a list of sql statements
+     */
+    public function create_function(): bool
+    {
+        return in_array(sql_type::FUNCTION, $this->lst);
     }
 
     /**
@@ -227,6 +243,14 @@ class sql_type_list
             $ext .= $sql_type->extension();
         }
         return $ext;
+    }
+
+    /**
+     * @return string with the paraneters in a human-readable format
+     */
+    public function dsp_id(): string
+    {
+        return implode(', ', $this->lst);
     }
 
     /**

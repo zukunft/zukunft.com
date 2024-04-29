@@ -1,4 +1,4 @@
-PREPARE source_user_delete_excluded (bigint) AS
+PREPARE source_delete_excluded_user (bigint) AS
     DELETE FROM user_sources
            WHERE source_id = $1
              AND excluded = 1;

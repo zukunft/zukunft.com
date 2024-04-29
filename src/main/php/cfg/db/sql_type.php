@@ -55,6 +55,7 @@ enum sql_type: string
     case USER = 'user'; // for user specific values and results
 
     // sql builder parameters
+    case FUNCTION = 'function'; // create a function that combines a list of sql statements
     case SUB = 'sub'; // the created sql statement should be used as part of another prepared sql statement
     case LIST = 'list'; // the created sql statement should be used as part of with sql statement
     case LOG = 'log'; // the created sql statement should include statements for logging the changes
@@ -62,6 +63,7 @@ enum sql_type: string
     case NAMED_PAR = 'named_par'; // to use named parameters in the prepared query e.g. _user_id instead od $1
     case VALUE_SELECT = 'value_select'; // use a select statement for the insert values
     case UPDATE_PART = 'update_part'; // the sql statement is part of an update action which implies that no new db row id is added
+    case DELETE_PART = 'delete_part'; // the sql statement is part of a delete function which implies that only old fields are used
     case EXCLUDE = 'exclude'; // instead of delete create a sql to exclude one row
     case SANDBOX = 'sandbox'; // to include the standard sandbox fields in the sql statement
     case KEY_SMALL_INT = 'key_small_int'; // use a smallint as the prime db key e.g. for types
