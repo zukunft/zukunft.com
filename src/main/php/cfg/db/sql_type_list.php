@@ -119,6 +119,14 @@ class sql_type_list
     /**
      * @return bool true if sql is part of an update function
      */
+    public function is_insert_part(): bool
+    {
+        return in_array(sql_type::INSERT_PART, $this->lst);
+    }
+
+    /**
+     * @return bool true if sql is part of an update function
+     */
     public function is_update_part(): bool
     {
         return in_array(sql_type::UPDATE_PART, $this->lst);

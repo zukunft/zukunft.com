@@ -168,8 +168,8 @@ class source extends sandbox_typed
     {
         parent::reset();
 
-        $this->url = '';
-        $this->code_id = '';
+        $this->url = null;
+        $this->code_id = null;
     }
 
     /**

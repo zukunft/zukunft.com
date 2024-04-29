@@ -10,16 +10,13 @@ CREATE PROCEDURE word_insert_log_11111000000_user
      _field_id_phrase_type_id smallint,
      _phrase_type_id          bigint)
 BEGIN
-    WITH
-        change_insert_word_name AS (
-            INSERT INTO changes ( user_id, change_action_id, change_field_id,    new_value, row_id)
-                 SELECT          _user_id,_change_action_id,_field_id_word_name,_word_name,_word_id),
-        change_insert_description AS (
-            INSERT INTO changes ( user_id, change_action_id, change_field_id,      new_value,   row_id)
-                 SELECT          _user_id,_change_action_id,_field_id_description,_description,_word_id),
-        change_insert_phrase_type_id AS (
-            INSERT INTO changes ( user_id, change_action_id, change_field_id,         new_value,      row_id)
-                 SELECT          _user_id,_change_action_id,_field_id_phrase_type_id,_phrase_type_id,_word_id)
+
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,    new_value, row_id)
+         SELECT          _user_id,_change_action_id,_field_id_word_name,_word_name,_word_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,      new_value,   row_id)
+         SELECT          _user_id,_change_action_id,_field_id_description,_description,_word_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,         new_value,      row_id)
+         SELECT          _user_id,_change_action_id,_field_id_phrase_type_id,_phrase_type_id,_word_id ;
 
     INSERT INTO user_words
                 (word_id, user_id, word_name, description, phrase_type_id)

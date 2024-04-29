@@ -106,6 +106,7 @@ class sql
     const END_MYSQL = ')';
     const UNION = 'UNION';
     const WITH = 'WITH';
+    const LAST_ID_MYSQL = 'SELECT LAST_INSERT_ID() AS ';
     const TRUE = '1'; // representing true in the where part for a smallint field
     const FALSE = '0'; // representing true in the where part for a smallint field
     const ID_NULL = 0; // the 'not set' value for an id; could have been null if postgres index would allow it
@@ -1060,13 +1061,16 @@ class sql
         }
 
         $usr_tbl = $sc_par_lst->is_usr_tbl();
+        $insert_part = $sc_par_lst->is_insert_part();
         $update_part = $sc_par_lst->is_update_part();
         $delete_part = $sc_par_lst->is_delete_part();
 
-        // escape the field names if needed
-        $fvt_lst->esc_names($this);
-
-        $sql_fld = $lib->sql_array($fvt_lst->names(), ' (', ') ');
+        $fld_names = $fvt_lst->names();
+        $fld_names_esc = [];
+        foreach ($fld_names as $fld_name) {
+            $fld_names_esc[] = $this->name_sql_esc($fld_name);
+        }
+        $sql_fld = $lib->sql_array($fld_names_esc, ' (', ') ');
 
         // get the value parameter types
         $par_pos = 1;
@@ -1103,8 +1107,14 @@ class sql
                         $fld_name = $val_tbl . '.' . $chg_row_fld;
                     } else {
                         if ($fld_name == change::FLD_ROW_ID
-                            and ($usr_tbl or $update_part or $delete_part)) {
-                            $fld_name = '_' . $chg_row_fld;
+                            and ($usr_tbl or $insert_part or $update_part or $delete_part)) {
+                            if ($this->db_type == sql_db::MYSQL
+                                and !$usr_tbl
+                                and $insert_part) {
+                                $fld_name = '@' . $chg_row_fld;
+                            } else {
+                                $fld_name = '_' . $chg_row_fld;
+                            }
                         } else {
                             $fld_name = '_' . $fld_name;
                         }
@@ -1189,9 +1199,6 @@ class sql
         if ($this->query_name == '') {
             log_err('SQL statement is not yet named');
         }
-
-        // escape the field names if needed
-        $fvt_lst->esc_names($this);
 
         // gat the value parameter types
         $par_pos = 1;
@@ -1281,9 +1288,9 @@ class sql
                     $sql_set .= ', ';
                 }
                 if ($val != sql::NOW) {
-                    $sql_set .= $fld . ' = ' . $this->par_fields[$i];
+                    $sql_set .= $this->name_sql_esc($fld) . ' = ' . $this->name_sql_esc($this->par_fields[$i]);
                 } else {
-                    $sql_set .= $fld . ' = ' . $val;
+                    $sql_set .= $this->name_sql_esc($fld) . ' = ' . $val;
                 }
                 $i++;
             }
@@ -1309,7 +1316,7 @@ class sql
         } else {
             $sql = sql::FUNCTION_BEGIN_MYSQL;
         }
-        if ($this->db_type == sql_db::POSTGRES or $sc_par_lst->is_insert()) {
+        if ($this->db_type == sql_db::POSTGRES) {
             $sql .= ' ' . sql::WITH;
         }
         return $sql;

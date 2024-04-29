@@ -49,6 +49,10 @@ class change_field_list extends type_list
     const TI_WORD_NAME = 10;
     const TI_WORD_DESCRIPTION = 11;
     const TI_WORD_PHRASE_TYPE = 12;
+    const TI_SOURCE_NAME = 56;
+    const TI_SOURCE_DESCRIPTION = 57;
+    const TI_SOURCE_PHRASE_TYPE = 58;
+    const TI_SOURCE_URL = 59;
 
     /*
      * database link
@@ -81,6 +85,10 @@ class change_field_list extends type_list
     const FLD_FORMULA_TYPE = 'formula_type_id';
     const FLD_FORMULA_ALL = 'all_values_needed';
     const FLD_SOURCE_NAME = 'source_name';
+    const FLD_SOURCE_DESCRIPTION = 'description';
+    const FLD_SOURCE_NAME_DSP = 'name';
+    const FLD_SOURCE_TYPE = 'source_type_id';
+    const FLD_SOURCE_TYPE_DSP = 'type';
     const FLD_SOURCE_URL = 'url';
     const FLD_VIEW_NAME = 'view_name';
     const FLD_COMPONENT_NAME = 'component_name';
@@ -96,6 +104,8 @@ class change_field_list extends type_list
         global $change_table_list;
 
         parent::load_dummy();
+
+        // TODO load from csv
         $table_id = $change_table_list->id(change_table_list::WORD);
         $table_field_name = $table_id . change_field_list::FLD_USER_ID;
         $type = new type_object(
@@ -124,6 +134,43 @@ class change_field_list extends type_list
             change_field_list::FLD_PHRASE_TYPE,
             change_field_list::FLD_PHRASE_TYPE_DSP,
             change_field_list::TI_WORD_PHRASE_TYPE);
+        $this->add($type);
+
+        $table_id = $change_table_list->id(change_table_list::SOURCE);
+        $table_field_name = $table_id . change_field_list::FLD_USER_ID;
+        $type = new type_object(
+            $table_field_name,
+            change_field_list::FLD_USER_ID,
+            change_field_list::FLD_USER_ID_DSP,
+            change_field_list::TI_WORD_USER_ID);
+        $this->add($type);
+        $table_field_name = $table_id . change_field_list::FLD_SOURCE_NAME;
+        $type = new type_object(
+            $table_field_name,
+            change_field_list::FLD_SOURCE_NAME,
+            change_field_list::FLD_SOURCE_NAME_DSP,
+            change_field_list::TI_SOURCE_NAME);
+        $this->add($type);
+        $table_field_name = $table_id . change_field_list::FLD_SOURCE_DESCRIPTION;
+        $type = new type_object(
+            $table_field_name,
+            change_field_list::FLD_SOURCE_DESCRIPTION,
+            change_field_list::FLD_SOURCE_DESCRIPTION,
+            change_field_list::TI_SOURCE_DESCRIPTION);
+        $this->add($type);
+        $table_field_name = $table_id . change_field_list::FLD_SOURCE_TYPE;
+        $type = new type_object(
+            $table_field_name,
+            change_field_list::FLD_SOURCE_TYPE,
+            change_field_list::FLD_SOURCE_TYPE_DSP,
+            change_field_list::TI_SOURCE_PHRASE_TYPE);
+        $this->add($type);
+        $table_field_name = $table_id . change_field_list::FLD_SOURCE_URL;
+        $type = new type_object(
+            $table_field_name,
+            change_field_list::FLD_SOURCE_URL,
+            change_field_list::FLD_SOURCE_URL,
+            change_field_list::TI_SOURCE_URL);
         $this->add($type);
     }
 

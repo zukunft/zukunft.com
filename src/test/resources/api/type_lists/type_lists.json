@@ -846,14 +846,14 @@
         "id": 1
       },
       {
-        "name": "del",
-        "code_id": "del",
+        "name": "update",
+        "code_id": "update",
         "description": "",
         "id": 2
       },
       {
-        "name": "update",
-        "code_id": "update",
+        "name": "del",
+        "code_id": "del",
         "description": "",
         "id": 3
       }

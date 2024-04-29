@@ -147,6 +147,8 @@ class ref_tests
         $src = $t->source();
         $t->assert_sql_insert($sc, $src);
         $t->assert_sql_insert($sc, $src, [sql_type::USER]);
+        $t->assert_sql_insert($sc, $src, [sql_type::LOG, sql_type::NAMED_PAR]);
+        $t->assert_sql_insert($sc, $src, [sql_type::LOG, sql_type::NAMED_PAR, sql_type::USER]);
         // TODO activate db write
         //$t->assert_sql_update($sc, $src);
         //$t->assert_sql_update($sc, $src, [sql_type::USER]);

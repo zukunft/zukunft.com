@@ -972,17 +972,43 @@ class sandbox_named extends sandbox
             $fvt_insert_list->add($fvt_insert);
             $sc_insert = clone $sc;
             $qp_insert = $this->sql_common($sc_insert, $sc_par_lst_sub, $ext);;
+            if ($sc->db_type == sql_db::MYSQL) {
+                $sc_par_lst_sub->add(sql_type::NO_ID_RETURN);
+            }
             $qp_insert->sql = $sc_insert->create_sql_insert($fvt_insert_list, $sc_par_lst_sub);
             $qp_insert->par = [$fvt_insert->value];
 
             // add the insert row to the function body
-            $insert_tmp_tbl = $qp_insert->name;
-            $sql .= ' ' . $insert_tmp_tbl . ' ' . sql::AS . ' (';
-            $sql .= ' ' . $qp_insert->sql . '), ';
+            $insert_tmp_tbl = '';
+            if ($sc->db_type == sql_db::POSTGRES) {
+                $insert_tmp_tbl = $qp_insert->name;
+                $sql .= ' ' . $insert_tmp_tbl . ' ' . sql::AS . ' (';
+                $sql .= ' ' . $qp_insert->sql . '), ';
+            } elseif ($sc->db_type == sql_db::MYSQL) {
+                $sql .= ' ' . $qp_insert->sql . '; ';
+            } else {
+                $sql .= ' ' . $insert_tmp_tbl . ' ' . sql::AS . ' (';
+                $sql .= ' ' . $qp_insert->sql . '), ';
+            }
             $par_lst_out->add($fvt_insert);
         }
         $id_field = $sc->id_field_name();
-        $row_id_val = $insert_tmp_tbl . '.' . $id_field;
+        if ($sc->db_type == sql_db::POSTGRES) {
+            $row_id_val = $insert_tmp_tbl . '.' . $id_field;
+        } elseif ($sc->db_type == sql_db::MYSQL) {
+            if ($usr_tbl) {
+                $row_id_val = '_' . $id_field;
+            } else {
+                $row_id_val = '@' . $id_field;
+            }
+        } else {
+            $row_id_val = $insert_tmp_tbl . '.' . $id_field;
+        }
+
+        // get the new row id for MySQL db
+        if ($sc->db_type == sql_db::MYSQL and !$usr_tbl) {
+            $sql .= ' ' . sql::LAST_ID_MYSQL . $row_id_val . '; ';
+        }
 
         // get the data fields and move the unique db key field to the first entry
         $fld_lst_ex_log = array_intersect($fvt_lst->names(), $fld_lst_all);
@@ -1002,8 +1028,10 @@ class sandbox_named extends sandbox
         // create the query parameters for the single log entries
         $func_body_change = '';
         foreach ($fld_lst_ex_log_and_key as $fld) {
-            if ($func_body_change != '') {
-                $func_body_change .= ', ';
+            if ($sc->db_type == sql_db::POSTGRES) {
+                if ($func_body_change != '') {
+                    $func_body_change .= ', ';
+                }
             }
             $log = new change($this->user());
             $log->set_table_by_class($this::class);
@@ -1014,13 +1042,22 @@ class sandbox_named extends sandbox
             $sc_log = clone $sc;
             $sc_par_lst_log = $sc_par_lst_sub;
             $sc_par_lst_log->add(sql_type::VALUE_SELECT);
-            $sc_par_lst_log->add(sql_type::UPDATE_PART);
+            if ($sc->db_type == sql_db::MYSQL) {
+                $sc_par_lst_log->add(sql_type::SELECT_FOR_INSERT);
+            }
+            $sc_par_lst_log->add(sql_type::INSERT_PART);
             $qp_log = $log->sql_insert(
                 $sc_log, $sc_par_lst_log, $ext . '_' . $fld, $insert_tmp_tbl, $fld, $id_field);
 
             // TODO get the fields used in the change log sql from the sql
-            $func_body_change .= ' ' . $qp_log->name . ' ' . sql::AS . ' (';
-            $func_body_change .= ' ' . $qp_log->sql . ')';
+            if ($sc->db_type == sql_db::POSTGRES) {
+                $func_body_change .= ' ' . $qp_log->name . ' ' . sql::AS . ' (';
+                $func_body_change .= ' ' . $qp_log->sql . ')';
+            } elseif ($sc->db_type == sql_db::MYSQL) {
+                $func_body_change .= ' ' . $qp_log->sql . '; ';
+            } else {
+                $func_body_change .= ' ' . $qp_log->sql . ' ';
+            }
             $par_lst_out->add_field(
                 user::FLD_ID,
                 $fvt_lst->get_value(user::FLD_ID),

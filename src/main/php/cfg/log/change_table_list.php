@@ -116,6 +116,8 @@ class change_table_list extends type_list
         $this->add($type);
         $type = new type_object(change_table_list::WORD, change_table_list::WORD, '', 5);
         $this->add($type);
+        $type = new type_object(change_table_list::SOURCE, change_table_list::SOURCE, '', 20);
+        $this->add($type);
     }
 
     /**
