@@ -1349,8 +1349,6 @@ class sql
         sql_par_field_list $fvt_lst = new sql_par_field_list(),
     ): string
     {
-        $lib = new library();
-        $id_field_par = '';
         $excluded = $sc_par_lst->exclude_sql();
 
         // check if the minimum parameters are set
@@ -1376,15 +1374,18 @@ class sql
             } else {
                 $sql = sql::DELETE . ' ' . $this->table . ' ';
                 $sql .= $sql_where;
+                if ($excluded) {
+                    $sql .= ' AND ' . sandbox::FLD_EXCLUDED . ' = ' . sql::TRUE;
+                }
             }
         } else {
             $sql = $this->prepare_this_sql(self::DELETE);
             $sql .= ' ' . $this->name_sql_esc($this->table);
             $sql .= $sql_where;
-        }
 
-        if ($excluded) {
-            $sql .= ' AND ' . sandbox::FLD_EXCLUDED . ' = ' . sql::TRUE;
+            if ($excluded) {
+                $sql .= ' AND ' . sandbox::FLD_EXCLUDED . ' = ' . sql::TRUE;
+            }
         }
 
         if ($sc_par_lst->create_function()) {

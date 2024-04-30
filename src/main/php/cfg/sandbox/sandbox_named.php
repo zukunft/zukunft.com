@@ -1552,6 +1552,9 @@ class sandbox_named extends sandbox
         if ($sc_par_lst->and_log()) {
             $ext .= sql_type::LOG->extension();
         }
+        if ($sc_par_lst->exclude_sql()) {
+            $ext .= '_excluded';
+        }
         $qp_func = $this->sql_common($sc_delete, $sc_par_lst_func, $ext);
         $qp_func->sql = $sc->create_sql_delete(
             $id_fld, $id_val, $sc_par_lst_func, $fvt_lst_out);
