@@ -34,6 +34,7 @@ namespace cfg\log;
 use cfg\db\sql_db;
 use cfg\type_list;
 use cfg\type_object;
+use test\create_test_objects;
 
 include_once DB_PATH . 'sql_db.php';
 include_once MODEL_HELPER_PATH . 'type_list.php';
@@ -110,14 +111,9 @@ class change_table_list extends type_list
     function load_dummy(): void
     {
         parent::load_dummy();
-        $type = new type_object(change_table_list::VALUE, change_table_list::VALUE, '', 2);
-        $this->add($type);
-        $type = new type_object(change_table_list::USER, change_table_list::USER, '', 3);
-        $this->add($type);
-        $type = new type_object(change_table_list::WORD, change_table_list::WORD, '', 5);
-        $this->add($type);
-        $type = new type_object(change_table_list::SOURCE, change_table_list::SOURCE, '', 20);
-        $this->add($type);
+        // read the corresponding names and description from the internal config csv files
+        $t = new create_test_objects();
+        $t->read_from_config_csv($this);
     }
 
     /**

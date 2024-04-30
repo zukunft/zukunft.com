@@ -51,6 +51,9 @@ include_once MODEL_COMPONENT_PATH . 'component_list.php';
 include_once MODEL_VALUE_PATH . 'value_ts_data.php';
 include_once WEB_FORMULA_PATH . 'formula.php';
 
+use cfg\db\sql_db;
+use cfg\log\change_field;
+use cfg\log\change_table;
 use shared\types\component_type as comp_type_shared;
 use api\api;
 use api\api_message;
@@ -170,6 +173,8 @@ class create_test_objects extends test_base
     {
         global $db_con;
 
+        $is_ok = true;
+
         $user_profiles = new user_profile_list();
         $phrase_types = new phrase_types();
         $formula_types = new formula_type_list();
@@ -215,7 +220,7 @@ class create_test_objects extends test_base
         $verbs->load_dummy();
 
         // read the corresponding names and description from the internal config csv files
-        $this->read_name_from_config_csv($phrase_types);
+        $this->read_all_names_from_config_csv($phrase_types);
 
         $lst = new type_lists_api($db_con, $usr);
         $lst->add($user_profiles->api_obj(), controller::API_LIST_USER_PROFILES);
@@ -246,64 +251,155 @@ class create_test_objects extends test_base
         return $lst;
     }
 
-    private function read_name_from_config_csv(type_list $list): bool
+    /**
+     * reads the name and description from the csv resource file and changes the corresponding type list entry
+     * used to simplify the dummy list creation because this way only only a list of code_ids is needed to create a list
+     *
+     * @param type_list $list the type list that should be filled
+     * @return bool true if the list has been updated
+     */
+    public function read_all_names_from_config_csv(type_list $list): bool
     {
         $result = false;
 
         $lib = new library();
         $type = $lib->class_to_name($list::class);
 
-        // get the list of CSV and loop
-        foreach (BASE_CODE_LINK_FILES as $csv_file_name) {
-            if ($csv_file_name == $type) {
-                // load the csv
-                $csv_path = PATH_BASE_CODE_LINK_FILES . $csv_file_name . BASE_CODE_LINK_FILE_TYPE;
-                $row = 1;
-                $code_id_col = 0;
-                $name_col = 0;
-                $desc_col = 0;
-                if (($handle = fopen($csv_path, "r")) !== FALSE) {
-                    while (($data = fgetcsv($handle, 0, ",", "'")) !== FALSE) {
-                        if ($row == 1) {
-                            $col_names = $lib->array_trim($data);
-                            if (in_array(api::FLD_CODE_ID, $col_names)) {
-                                $code_id_col = array_search(api::FLD_CODE_ID, $col_names);
-                            }
-                            if (in_array(type_object::FLD_NAME, $col_names)) {
-                                $name_col = array_search(type_object::FLD_NAME, $col_names);
-                            }
-                            if (in_array(api::FLD_DESCRIPTION, $col_names)) {
-                                $desc_col = array_search(api::FLD_DESCRIPTION, $col_names);
-                            }
+        // load the csv
+        $csv_path = $this->config_csv_get_file($list);
+        if ($csv_path != '') {
+            $row = 1;
+            $code_id_col = 0;
+            $name_col = 0;
+            $desc_col = 0;
+            if (($handle = fopen($csv_path, "r")) !== FALSE) {
+                while (($data = fgetcsv($handle, 0, ",", "'")) !== FALSE) {
+                    if ($row == 1) {
+                        $col_names = $lib->array_trim($data);
+                        if (in_array(api::FLD_CODE_ID, $col_names)) {
+                            $code_id_col = array_search(api::FLD_CODE_ID, $col_names);
+                        }
+                        if (in_array(type_object::FLD_NAME, $col_names)) {
+                            $name_col = array_search(type_object::FLD_NAME, $col_names);
+                        }
+                        if (in_array(api::FLD_DESCRIPTION, $col_names)) {
+                            $desc_col = array_search(api::FLD_DESCRIPTION, $col_names);
+                        }
+                    } else {
+                        $typ_obj = null;
+                        $code_id = trim($data[$code_id_col]);
+                        if ($code_id == 'NULL') {
+                            $id = $data[0];
+                            $typ_obj = $list->get($id);
                         } else {
-                            $typ_obj = null;
-                            $code_id = trim($data[$code_id_col]);
-                            if ($code_id == 'NULL') {
-                                $id = $data[0];
-                                $typ_obj = $list->get($id);
+                            if ($list->id($code_id) == null) {
+                                log_warning($type . ' ' . $data[$name_col] . ' not jet included in the unit tests');
                             } else {
-                                if ($list->id($code_id) == null) {
-                                    log_warning($type . ' ' . $data[$name_col] . ' not jet included in the unit tests');
-                                } else {
-                                    $typ_obj = $list->get_by_code_id($code_id);
-                                }
-                            }
-                            if ($typ_obj != null) {
-                                $typ_obj->set_name($data[$name_col]);
-                                if ($desc_col > 0) {
-                                    $typ_obj->set_description($data[$desc_col]);
-                                }
+                                $typ_obj = $list->get_by_code_id($code_id);
                             }
                         }
-                        $row++;
+                        if ($typ_obj != null) {
+                            $typ_obj->set_name($data[$name_col]);
+                            if ($desc_col > 0) {
+                                $typ_obj->set_description($data[$desc_col]);
+                            }
+                        }
                     }
-                    fclose($handle);
+                    $row++;
                 }
+                fclose($handle);
                 $result = true;
             }
         }
-
         return $result;
+    }
+
+    /**
+     * fill the list base on the csv resource file
+     *
+     * @param type_list $list the type list that should be filled
+     * @return type_list the filled type list
+     */
+    public function read_from_config_csv(type_list $list): type_list
+    {
+        $lib = new library();
+
+        // load the csv
+        $csv_path = $this->config_csv_get_file($list);
+        if ($csv_path != '') {
+            $row = 1;
+            $code_id_col = 0;
+            $id_col = 0;
+            $name_col = 0;
+            $desc_col = 0;
+            // change log field specific
+            $table_col = 0;
+            if (($handle = fopen($csv_path, "r")) !== FALSE) {
+                while (($data = fgetcsv($handle, 0, ",", "'")) !== FALSE) {
+                    if ($row == 1) {
+                        $col_names = $lib->array_trim($data);
+                        if (in_array(api::FLD_ID, $col_names)) {
+                            $id_col = array_search(api::FLD_ID, $col_names);
+                        } elseif (in_array(change_table::FLD_ID, $col_names)) {
+                            $id_col = array_search(change_table::FLD_ID, $col_names);
+                        } elseif (in_array(change_field::FLD_ID, $col_names)) {
+                            $id_col = array_search(change_field::FLD_ID, $col_names);
+                        }
+                        if (in_array(api::FLD_CODE_ID, $col_names)) {
+                            $code_id_col = array_search(api::FLD_CODE_ID, $col_names);
+                        }
+                        if (in_array(type_object::FLD_NAME, $col_names)) {
+                            $name_col = array_search(type_object::FLD_NAME, $col_names);
+                        } elseif (in_array(change_table::FLD_NAME, $col_names)) {
+                            $name_col = array_search(change_table::FLD_NAME, $col_names);
+                        } elseif (in_array(change_field::FLD_NAME, $col_names)) {
+                            $name_col = array_search(change_field::FLD_NAME, $col_names);
+                        }
+
+                        if (in_array(change_field::FLD_TABLE, $col_names)) {
+                            $table_col = array_search(change_field::FLD_TABLE, $col_names);
+                        }
+                        if (in_array(api::FLD_DESCRIPTION, $col_names)) {
+                            $desc_col = array_search(api::FLD_DESCRIPTION, $col_names);
+                        }
+                    } else {
+                        if ($table_col > 0) {
+                            $typ_obj = new type_object($data[$table_col] . $data[$name_col]);
+                        } else {
+                            $typ_obj = new type_object($data[$name_col]);
+                        }
+                        $typ_obj->set_id($data[$id_col]);
+                        $typ_obj->set_name($data[$name_col]);
+                        $typ_obj->set_description($data[$desc_col]);
+                        $list->add($typ_obj);
+                    }
+                    $row++;
+                }
+                fclose($handle);
+            }
+        }
+        return $list;
+    }
+
+    private
+    function config_csv_get_file(type_list $list): string
+    {
+        $csv_path = '';
+        $lib = new library();
+        $type = $lib->class_to_name($list::class);
+        foreach (BASE_CODE_LINK_FILES as $csv_class) {
+            $csv_file_name = $lib->class_to_name($csv_class);
+            if (str_ends_with($type, '_list')) {
+                $csv_list_type = $csv_file_name . '_list';
+            } else {
+                $csv_list_type = $csv_file_name;
+            }
+            $csv_file_name .= sql_db::TABLE_EXTENSION;
+            if ($csv_list_type == $type) {
+                $csv_path = PATH_BASE_CODE_LINK_FILES . $csv_file_name . BASE_CODE_LINK_FILE_TYPE;
+            }
+        }
+        return $csv_path;
     }
 
     /**
@@ -453,8 +549,8 @@ class create_test_objects extends test_base
         return $wrd;
     }
 
-    // TODO explain for each test object for which test it is used
-    // TODO rename because in the test object "$t->" the prefix dummy is not needed
+// TODO explain for each test object for which test it is used
+// TODO rename because in the test object "$t->" the prefix dummy is not needed
     function dummy_word_this(): word
     {
         $wrd = new word($this->usr1);

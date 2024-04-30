@@ -920,7 +920,9 @@ class sandbox_named extends sandbox
         $ext .= sql::file_sep . $fld_chg_ext;
         $qp = $this->sql_common($sc, $sc_par_lst, $ext);
 
-        if ($sc_par_lst->and_log()) {
+        if ($and_log) {
+            // log functions must always use named parameters
+            $sc_par_lst->add(sql_type::NAMED_PAR);
             $qp = $this->sql_insert_named_and_log($sc, $qp, $fvt_lst, $fld_lst_all, $sc_par_lst);
         } else {
             // add the child object specific fields and values
@@ -1179,6 +1181,8 @@ class sandbox_named extends sandbox
         $ext .= sql::file_sep . $fld_chg_ext;
         $qp = $this->sql_common($sc, $sc_par_lst, $ext);
         if ($and_log) {
+            // log functions must always use named parameters
+            $sc_par_lst->add(sql_type::NAMED_PAR);
             $qp = $this->sql_update_named_and_log($sc, $qp, $fvt_lst, $fld_lst_all, $sc_par_lst);
         } else {
             if ($usr_tbl) {
@@ -1418,6 +1422,8 @@ class sandbox_named extends sandbox
         // delete the user overwrite
         // but if the excluded user overwrites should be deleted the overwrites for all users should be deleted
         if ($and_log) {
+            // log functions must always use named parameters
+            $sc_par_lst->add(sql_type::NAMED_PAR);
             $qp = $this->sql_delete_and_log($sc, $qp, $sc_par_lst);
         } else {
             if ($usr_tbl and !$excluded) {

@@ -34,12 +34,12 @@ END;
 SELECT source_insert_log_1111110000_user
        (1,
         1,
-        56,
+        57,
         'The International System of Units',
         3,
-        57,
-        'Bureau International des Poids et Mesures - The intergovernmental organization through which Member States act together on matters related to measurement science and measurement standards',
         58,
-        4,
+        'Bureau International des Poids et Mesures - The intergovernmental organization through which Member States act together on matters related to measurement science and measurement standards',
         59,
+        4,
+        60,
         'https://www.bipm.org/documents/20126/41483022/SI-Brochure-9.pdf');

@@ -11,7 +11,7 @@ FROM change_links c,
      change_actions a,
      change_tables t,
      users u
-WHERE ( c.change_table_id = 3 )
+WHERE ( c.change_table_id = 1 )
   AND c.change_table_id  = t.change_table_id
   AND c.change_action_id = a.change_action_id
   AND c.user_id = u.user_id
