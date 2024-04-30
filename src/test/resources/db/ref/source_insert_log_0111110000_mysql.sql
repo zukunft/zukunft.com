@@ -1,9 +1,9 @@
 DROP PROCEDURE IF EXISTS source_insert_log_0111110000;
 CREATE PROCEDURE source_insert_log_0111110000
-    (_source_name               text,
+    (_source_name             text,
      _user_id                 bigint,
      _change_action_id        smallint,
-     _field_id_source_name      smallint,
+     _field_id_source_name    smallint,
      _field_id_user_id        smallint,
      _field_id_description    smallint,
      _description             text,
@@ -45,7 +45,7 @@ END;
 SELECT source_insert_log_0111110000
        ('The International System of Units',
         1,
-        9,
+        1,
         56,
         9,
         57,

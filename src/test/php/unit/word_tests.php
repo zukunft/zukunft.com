@@ -91,13 +91,16 @@ class word_tests
         $wrd = $t->word();
         $t->assert_sql_insert($sc, $wrd);
         $t->assert_sql_insert($sc, $wrd, [sql_type::USER]);
+        // TODO use db write
         $t->assert_sql_insert($sc, $wrd, [sql_type::LOG, sql_type::NAMED_PAR]);
         $t->assert_sql_insert($sc, $wrd, [sql_type::LOG, sql_type::NAMED_PAR, sql_type::USER]);
         $wrd_renamed = $wrd->cloned(word_api::TN_RENAMED);
+        $wrd_renamed->set_id($wrd->id());
         $t->assert_sql_update($sc, $wrd_renamed, $wrd);
         $t->assert_sql_update($sc, $wrd_renamed, $wrd, [sql_type::USER]);
         $t->assert_sql_update($sc, $wrd_renamed, $wrd, [sql_type::LOG, sql_type::NAMED_PAR]);
         $t->assert_sql_update($sc, $wrd_renamed, $wrd, [sql_type::LOG, sql_type::NAMED_PAR, sql_type::USER]);
+        // TODO add full change test
         $t->assert_sql_delete($sc, $wrd);
         $t->assert_sql_delete($sc, $wrd, [sql_type::USER]);
         $t->assert_sql_delete($sc, $wrd, [sql_type::LOG]);

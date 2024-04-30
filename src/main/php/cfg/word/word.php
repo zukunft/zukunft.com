@@ -1848,15 +1848,6 @@ class word extends sandbox_typed
         $sc_par_lst->add(sql_type::INSERT);
         $fvt_lst = $this->db_changed_list($wrd_empty, $sc_par_lst);
         $all_fields = $this->db_fields_all();
-        // add the fields and values for logging
-        if ($sc_par_lst->and_log()) {
-            global $change_action_list;
-            $fvt_lst->add_field(
-                change_action::FLD_ID,
-                $change_action_list->id(change_action::ADD),
-                type_object::FLD_ID_SQLTYP
-            );
-        }
         return parent::sql_insert_named($sc, $fvt_lst, $all_fields, $sc_par_lst);
     }
 
@@ -1876,15 +1867,6 @@ class word extends sandbox_typed
         // including the sql parameters for logging
         $fld_lst = $this->db_changed_list($db_row, $sc_par_lst);
         $all_fields = $this->db_fields_all();
-        // add the general field name, value and type for logging
-        if ($sc_par_lst->and_log()) {
-            global $change_action_list;
-            $fld_lst->add_field(
-                change_action::FLD_ID,
-                $change_action_list->id(change_action::UPDATE),
-                change::FLD_FIELD_ID_SQLTYP
-            );
-        }
         // unlike the db_* function the sql_update_* parent function is called directly
         return parent::sql_update_named($sc, $fld_lst, $all_fields, $sc_par_lst);
     }

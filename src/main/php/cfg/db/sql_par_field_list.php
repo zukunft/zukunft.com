@@ -202,7 +202,11 @@ class sql_par_field_list
     function get_value(string $name): string|int|float|null
     {
         $key = array_search($name, $this->names());
-        return $this->lst[$key]->value;
+        if ($key === false) {
+            return null;
+        } else {
+            return $this->lst[$key]->value;
+        }
     }
 
     /**

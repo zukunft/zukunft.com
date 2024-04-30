@@ -143,15 +143,18 @@ class ref_tests
         $t->assert_sql_all($sc, $source_type_list);
 
         $t->subheader('source sql write');
-        // TODO activate db write
+        // TODO use db write
         $src = $t->source();
         $t->assert_sql_insert($sc, $src);
         $t->assert_sql_insert($sc, $src, [sql_type::USER]);
         $t->assert_sql_insert($sc, $src, [sql_type::LOG, sql_type::NAMED_PAR]);
         $t->assert_sql_insert($sc, $src, [sql_type::LOG, sql_type::NAMED_PAR, sql_type::USER]);
-        // TODO activate db write
-        //$t->assert_sql_update($sc, $src);
-        //$t->assert_sql_update($sc, $src, [sql_type::USER]);
+        $src_renamed = $src->cloned(source_api::TN_RENAMED);
+        $src_renamed->set_id($src->id());
+        $t->assert_sql_update($sc, $src_renamed, $src);
+        $t->assert_sql_update($sc, $src_renamed, $src, [sql_type::USER]);
+        $t->assert_sql_update($sc, $src_renamed, $src, [sql_type::LOG, sql_type::NAMED_PAR]);
+        $t->assert_sql_update($sc, $src_renamed, $src, [sql_type::LOG, sql_type::NAMED_PAR, sql_type::USER]);
         // TODO activate db write
         $t->assert_sql_delete($sc, $src);
         $t->assert_sql_delete($sc, $src, [sql_type::USER]);

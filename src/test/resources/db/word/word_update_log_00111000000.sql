@@ -37,12 +37,12 @@ END
 $$ LANGUAGE plpgsql;
 
 SELECT word_update_log_00111000000
-       (10::bigint,
+       (1::bigint,
         2::smallint,
         10::smallint,
         'Mathematics'::text,
         'System Test Word Renamed'::text,
-        10::bigint,
+        1::bigint,
         11::smallint,
         'Mathematics is an area of knowledge that includes the topics of numbers and formulas'::text,
         null::text,

@@ -30,12 +30,12 @@ BEGIN
 END;
 
 SELECT word_update_log_00111000000
-       (10,
+       (1,
         2,
         10,
         'Mathematics',
         'System Test Word Renamed',
-        10,
+        1,
         11,
         'Mathematics is an area of knowledge that includes the topics of numbers and formulas',
         null,

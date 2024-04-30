@@ -953,6 +953,14 @@ class sandbox_named extends sandbox
         $usr_tbl = $sc_par_lst->is_usr_tbl();
         $ext = sql::file_sep . sql::file_insert;
 
+        // add the change action field to the list for the log entries
+        global $change_action_list;
+        $fvt_lst->add_field(
+            change_action::FLD_ID,
+            $change_action_list->id(change_action::ADD),
+            type_object::FLD_ID_SQLTYP
+        );
+
         // list of parameters actually used in order of the function usage
         $par_lst_out = new sql_par_field_list();
 
@@ -1208,6 +1216,14 @@ class sandbox_named extends sandbox
         $id_fld = $sc->id_field_name();
         $id_val = '_' . $id_fld;
 
+        // add the change action field to the list for the log entries
+        global $change_action_list;
+        $fvt_lst->add_field(
+            change_action::FLD_ID,
+            $change_action_list->id(change_action::UPDATE),
+            type_object::FLD_ID_SQLTYP
+        );
+
         // list of parameters actually used in order of the function usage
         $par_lst_out = new sql_par_field_list();
 
@@ -1279,10 +1295,14 @@ class sandbox_named extends sandbox
             }
 
             // add the user_id if needed
+            $log_usr_id = $fvt_lst->get_value(user::FLD_ID);
+            if ($log_usr_id == null) {
+                $log_usr_id = $this->user_id();
+            }
             $par_lst_out->add_field(
                 user::FLD_ID,
-                $fvt_lst->get_value(user::FLD_ID),
-                sql_par_type::INT);
+                $log_usr_id,
+                db_object_seq_id::FLD_ID_SQLTYP);
 
             // add the change_action_id if needed
             $par_lst_out->add_field(
@@ -1309,11 +1329,14 @@ class sandbox_named extends sandbox
                 $fvt_lst->get_type($fld->name));
 
             // add the row id of the standard table for user overwrites
-            // TODO fix the type
+            $log_id = $fvt_lst->get_value($id_fld);
+            if ($log_id == null) {
+                $log_id = $this->id();
+            }
             $par_lst_out->add_field(
                 $id_fld,
-                $fvt_lst->get_value($id_fld),
-                sql_par_type::INT);
+                $log_id,
+                db_object_seq_id::FLD_ID_SQLTYP);
         }
         $sql .= ' ' . $func_body_change;
 

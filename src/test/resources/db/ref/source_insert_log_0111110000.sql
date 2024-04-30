@@ -57,7 +57,7 @@ $$ LANGUAGE plpgsql;
 SELECT source_insert_log_0111110000
        ('The International System of Units'::text,
         1::bigint,
-        9::smallint,
+        1::smallint,
         56::smallint,
         9::smallint,
         57::smallint,

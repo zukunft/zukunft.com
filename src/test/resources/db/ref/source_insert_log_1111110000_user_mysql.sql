@@ -33,7 +33,7 @@ END;
 
 SELECT source_insert_log_1111110000_user
        (1,
-        3,
+        1,
         56,
         'The International System of Units',
         3,
