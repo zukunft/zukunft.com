@@ -655,6 +655,8 @@ class change_log extends db_object_seq_id_user
 
         // add new field name if needed
         if ($field_id <= 0) {
+            // TODO use a "normal" insert statement
+            // TODO do not log NOW() field
             $field_id = $db_con->add_id_2key($field_name, "table_id", $this->table_id);
         }
         if ($field_id > 0) {

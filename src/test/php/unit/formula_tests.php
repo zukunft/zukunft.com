@@ -103,9 +103,8 @@ class formula_tests
         // TODO activate db write
         $t->assert_sql_insert($sc, $frm);
         $t->assert_sql_insert($sc, $frm, [sql_type::USER]);
-        // TODO activate db write with log
-        //$t->assert_sql_insert($sc, $frm, [sql_type::LOG]);
-        //$t->assert_sql_insert($sc, $frm, [sql_type::LOG, sql_type::USER]);
+        $t->assert_sql_insert($sc, $frm, [sql_type::LOG]);
+        $t->assert_sql_insert($sc, $frm, [sql_type::LOG, sql_type::USER]);
         // TODO activate db write
         // TODO add a test with all fields changed
         $frm_renamed = $frm->cloned(formula_api::TN_RENAMED);

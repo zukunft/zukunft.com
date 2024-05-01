@@ -21,3 +21,5 @@ change_table_id, change_table_name, description, code_id
 20,'sources',,'sources'
 21,'user_sources',,'user_sources'
 22,'refs',,'refs'
+23,'ip_range',,'ip_range'
+24,'user_refs',,'user_refs'
