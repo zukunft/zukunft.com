@@ -55,25 +55,18 @@ class word_tests
     function run(test_cleanup $t): void
     {
         global $phrase_types;
+
+        // init
         $lib = new library();
+        $t->name = 'word db write->';
 
-        $t->header('Test the word class (classes/word.php)');
 
-        // load the main test words
-        $wrd_read = $t->load_word(word_api::TN_READ);
+        $t->header('word db write tests');
 
-        // check if loading a word by name and id works
-        $wrd_by_name = $t->add_word(word_api::TN_READ, null, $t->usr1);
-        $wrd_by_id = new word($t->usr1);
-        $wrd_by_id->load_by_id($wrd_by_name->id());
-        $target = word_api::TN_READ;
-        $result = $wrd_by_id->name();
-        $t->assert('word->load of ' . $wrd_read->id() . ' by id ' . $wrd_by_name->id(), $result, $target);
-
-        // word type
+        $test_name = 'test saving word type ' . phrase_type::TIME . ' by adding add time word ' . word_api::TN_2021;
         $wrd_time = $t->test_word(word_api::TN_2021, phrase_type::TIME);
         $result = $wrd_time->is_type(phrase_type::TIME);
-        $t->assert('word->is_type for ' . word_api::TN_2021 . ' and "' . phrase_type::TIME . '"', $result, true);
+        $t->assert($test_name, $result, true);
 
         // is time
         $result = $wrd_time->is_time();
@@ -118,6 +111,9 @@ class word_tests
         $wrd_prior = $wrd_time_next->prior();
         $result = $wrd_prior->name();
         $t->assert('word->prior for ' . word_api::TN_2022, $result, $target);
+
+        // load the main test words
+        $wrd_read = $t->load_word(word_api::TN_READ);
 
         // create a parent test word
         $wrd_parent = $t->test_word(word_api::TN_PARENT);

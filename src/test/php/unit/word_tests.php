@@ -64,6 +64,7 @@ class word_tests
         $json_file = 'unit/word/second.json';
         $usr->set_id(1);
 
+
         $t->header('word unit tests');
 
         $t->subheader('word sql setup');

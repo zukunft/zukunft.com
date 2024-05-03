@@ -2092,8 +2092,7 @@ class create_test_objects extends test_base
     function test_word(string $wrd_name, ?string $wrd_type_code_id = null, ?user $test_usr = null): word
     {
         $wrd = $this->add_word($wrd_name, $wrd_type_code_id, $test_usr);
-        $target = $wrd_name;
-        $this->display('testing->add_word', $target, $wrd->name());
+        $this->assert('add_word', $wrd->name(), $wrd_name);
         return $wrd;
     }
 

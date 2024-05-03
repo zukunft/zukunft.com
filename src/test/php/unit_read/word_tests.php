@@ -53,18 +53,18 @@ class word_tests
         global $phrase_types;
 
         // init
-        $t->header('Unit database tests of the word class (src/main/php/model/word/word.php)');
-        $t->name = 'word read db->';
+        $t->name = 'word db read->';
         $t->resource_path = 'db/word/';
 
 
-        $t->subheader('Word db read tests');
+        $t->header('word db read tests');
 
-        $test_name = 'load word ' . word_api::TN_READ . ' by name and id';
-        $wrd = new word($t->usr1);
-        $wrd->load_by_name(word_api::TN_READ, word::class);
+        $t->subheader('load');
+
+        $test_name = word_api::TN_READ . ' by name and id';
+        $wrd = $t->load_word(word_api::TN_READ);
         $wrd_by_id = new word($t->usr1);
-        $wrd_by_id->load_by_id($wrd->id(), word::class);
+        $wrd_by_id->load_by_id($wrd->id());
         $t->assert($test_name, $wrd_by_id->name(), word_api::TN_READ);
         $t->assert($test_name, $wrd_by_id->description, word_api::TD_READ);
 
