@@ -2707,7 +2707,7 @@ class sandbox extends db_object_seq_id_user
         $sc = new sql();
         $do_log = $sc_par_lst->and_log();
         $lib = new library();
-        $table_id = $change_table_list->id($lib->class_to_name($this::class));
+        $table_id = $sc->table_id($this::class);
 
         if ($sbx->excluded <> $this->excluded) {
             if ($do_log) {
@@ -2736,7 +2736,7 @@ class sandbox extends db_object_seq_id_user
                 self::FLD_SHARE,
                 $this->share_id,
                 self::FLD_SHARE_SQLTYP,
-                $this->share_id
+                $sbx->share_id
             );
         }
         if ($sbx->protection_id <> $this->protection_id) {

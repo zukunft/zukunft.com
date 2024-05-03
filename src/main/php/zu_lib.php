@@ -533,19 +533,25 @@ use cfg\component\position_type;
 use cfg\db\db_check;
 use cfg\db\sql;
 use cfg\db\sql_db;
+use cfg\element;
 use cfg\element_type;
 use cfg\formula_link_type;
 use cfg\formula_type;
+use cfg\job;
 use cfg\job_type;
 use cfg\language;
 use cfg\language_form;
 use cfg\log\change_action;
 use cfg\log\change_field;
+use cfg\log\change_link;
 use cfg\log\change_log;
 use cfg\log\change_table;
+use cfg\log\change_value;
 use cfg\phrase_types;
 use cfg\protection_type;
 use cfg\ref_type;
+use cfg\result\result;
+use cfg\session;
 use cfg\share_type;
 use cfg\source_type;
 use cfg\sys_log;
@@ -554,6 +560,7 @@ use cfg\sys_log_level;
 use cfg\sys_log_status;
 use cfg\sys_log_status_list;
 use cfg\sys_log_type;
+use cfg\system_time;
 use cfg\system_time_type;
 use cfg\type_lists;
 use cfg\user;
@@ -869,7 +876,6 @@ const BASE_CODE_LINK_FILES = [
     user_official_type::class,
     user_profile::class,
     user_type::class,
-    user_type::class,
     position_type::class,
     component_link_type::class,
     component_type::class,
@@ -877,6 +883,35 @@ const BASE_CODE_LINK_FILES = [
     view_type::class,
     phrase_types::class
 ];
+
+// list of classes that use a database table but where the changes do not need to be logged
+const CLASSES_NO_CHANGE_LOG =[
+    sys_log_status::class,
+    sys_log_function::class,
+    sys_log_type::class,
+    system_time_type::class,
+    system_time::class,
+    change_action::class,
+    change_table::class,
+    change_field::class,
+    change_link::class,
+    change_value::class,
+    'change*',
+    session::class,
+    job::class,
+    element::class,
+    'phrase*',
+    'user_phrase*',
+    'prime_phrase*',
+    'user_prime_phrase*',
+    'term*',
+    'user_term*',
+    'prime_term*',
+    'user_prime_term*',
+    'result*',
+    'user_result*',
+];
+
 const USER_CODE_LINK_FILES = [
     user_profile::class,
     user_type::class

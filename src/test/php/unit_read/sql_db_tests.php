@@ -32,6 +32,9 @@
 
 namespace unit_read;
 
+use cfg\db\sql_db;
+use cfg\user_message;
+use shared\library;
 use test\test_cleanup;
 
 class sql_db_tests
@@ -60,7 +63,68 @@ class sql_db_tests
         );
         $t->assert('change_column_name', $result, '');
 
+        $test_name = 'csv check for the change log ';
+        $this->assert_table_field_preload($test_name, $t, $db_con);
+
     }
 
+    private function assert_table_field_preload(string $test_name, test_cleanup $t, sql_db $db_con): void
+    {
+        global $change_table_list;
+        global $change_field_list;
+
+        $tbl_msg = new user_message();
+        $fld_msg = new user_message();
+        $next_tbl_id = $change_table_list->count() + 1;
+        $next_fld_id = $change_field_list->count() + 1;
+
+        $tbl_lst = $db_con->get_tables();
+        foreach ($tbl_lst as $tbl) {
+            if (!$this->table_no_change_log($tbl)) {
+                $tbl_id = $change_table_list->id($tbl);
+                if ($tbl_id == -1) {
+                    $tbl_msg->add_message($next_tbl_id . ",'" . $tbl . "',,'" . $tbl . "'");
+                    $next_tbl_id++;
+                } else {
+                    $fld_lst = $db_con->get_fields($tbl);
+                    foreach ($fld_lst as $fld) {
+                        $fld_id = $change_field_list->id($tbl_id . $fld);
+                        if ($fld_id == -1) {
+                            $fld_msg->add_message($next_fld_id . "," . $fld . "," . $tbl_id . ",,");
+                            $next_fld_id++;
+                        } else {
+                            log_debug('found field ' . $tbl_id . $tbl);
+                        }
+                    }
+                }
+            }
+        }
+        $t->assert($test_name . 'tables', $tbl_msg->all_message_text(), '');
+        $t->assert($test_name . 'fields', $fld_msg->all_message_text(), '');
+    }
+
+    private function table_no_change_log(string $tbl_name): bool
+    {
+        $result = false;
+        $lib = new library();
+        foreach (CLASSES_NO_CHANGE_LOG as $class) {
+            if ($tbl_name == $class) {
+                $result = true;
+            } else {
+                $no_log_name = $lib->class_to_table($class);
+                if ($tbl_name == $no_log_name) {
+                    $result = true;
+                } else {
+                    if (str_ends_with($class, '*')) {
+                        if (str_starts_with($tbl_name, rtrim($class, "*"))) {
+                            $result = true;
+                        }
+                    }
+                }
+            }
+
+        }
+        return $result;
+    }
 }
 

@@ -2306,6 +2306,9 @@ class sql_db
 
     /**
      * returns all values of an SQL query in an array
+     *
+     * @param sql_par $qp the sql statement to get the db rows
+     * @return array the database rows or an empty array
      */
     function get(sql_par $qp): array
     {
@@ -2314,9 +2317,21 @@ class sql_db
     }
 
     /**
+     * returns all values of an SQL query in an array
+     * without using prepared for internal use only
+     *
+     * @param string $sql the sql statement to get the db rows
+     * @return array the database row or null
+     */
+    function get_internal(string $sql): array
+    {
+        return $this->fetch_all($sql);
+    }
+
+    /**
      * get only the first record from the database
      * based on a not prepared sql query
-     * only for internal use where no parameter can be influenced by an user
+     * only for internal use where no parameter can be influenced by a user
      *
      * @param string $sql the sql statement to get the db row
      * @return array|null the database row or null
@@ -4288,6 +4303,46 @@ class sql_db
             if ($sql_result) {
                 $result = true;
             }
+        }
+        return $result;
+    }
+
+    /**
+     * for testing only
+     * @return array with the table names actually created in the database
+     */
+    function get_tables(): array
+    {
+        $result = [];
+        if ($this->db_type == sql_db::POSTGRES) {
+            $sql = "select table_name from information_schema.tables where table_schema not in ('pg_catalog', 'information_schema') and table_schema not like 'pg_toast%'";
+        } else {
+            $sql = 'SELECT TABLE_NAME FROM INFORMATION_SCHEMA.COLUMNS;';
+        }
+        $sql_result = $this->get_internal($sql);
+        foreach ($sql_result as $row) {
+            $result[] = $row[0];
+        }
+        return $result;
+    }
+
+    /**
+     * for testing only
+     * @return array with the field names of one table actually used in the database
+     */
+    function get_fields(string $tbl_name): array
+    {
+        $result = [];
+        if ($this->db_type == sql_db::POSTGRES) {
+            $sql = "SELECT column_name FROM information_schema.columns WHERE table_name   = '" . $tbl_name . "';";
+        } elseif ($this->db_type == sql_db::MYSQL) {
+            $sql = "SELECT TRUE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'zukunft' AND TABLE_NAME = '" . $tbl_name . "';";
+        } else {
+            $sql = "SELECT TRUE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'zukunft' AND TABLE_NAME = '" . $tbl_name . "';";
+        }
+        $sql_result = $this->get_internal($sql);
+        foreach ($sql_result as $row) {
+            $result[] = $row[0];
         }
         return $result;
     }

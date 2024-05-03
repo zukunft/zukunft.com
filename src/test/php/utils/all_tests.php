@@ -143,6 +143,7 @@ const ONLY_UNIT_TESTS = false; // set to true if only the unit tests should be p
 const RESET_DB = true; // if true the database is completely overwritten for testing; must always be false for UAT and PROD
 const RESET_DB_ONLY = false; // true to force resetting the database without any other tests
 const QUICK_TEST_ONLY = false; // true to run only a single test for faster debugging
+const WRITE_TEST = true; // perform also the db write tests
 
 include_once TEST_UNIT_WRITE_PATH . 'all_unit_write_tests.php';
 
@@ -176,7 +177,7 @@ class all_tests extends all_unit_write_tests
             $this->run_db_recreate();
         }
 
-        if ($errors <= ERROR_LIMIT and !ONLY_UNIT_TESTS and !RESET_DB_ONLY and !QUICK_TEST_ONLY) {
+        if ($errors <= ERROR_LIMIT and !ONLY_UNIT_TESTS and !RESET_DB_ONLY and !QUICK_TEST_ONLY AND WRITE_TEST) {
             $this->run_db_write_tests($this);
         }
 
