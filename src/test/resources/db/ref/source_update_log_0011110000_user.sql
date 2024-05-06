@@ -13,26 +13,18 @@ CREATE OR REPLACE FUNCTION source_update_log_0011110000_user
      _source_type_id          smallint,
      _field_id_url            smallint,
      _url_old                 text,
-     _url                     text) RETURNS void AS
+     _url                     text) RETURNS bigint AS
 $$
 BEGIN
 
-    WITH
-        change_insert_source_name AS (
-            INSERT INTO changes ( user_id, change_action_id, change_field_id,      old_value,       new_value,   row_id)
-                 SELECT          _user_id,_change_action_id,_field_id_source_name,_source_name_old,_source_name,_source_id),
-        change_insert_description
-                     AS (
-            INSERT INTO changes ( user_id, change_action_id, change_field_id,      old_value,       new_value,   row_id)
-                 SELECT          _user_id,_change_action_id,_field_id_description,_description_old,_description,_source_id),
-        change_insert_source_type_id
-                     AS (
-            INSERT INTO changes ( user_id, change_action_id, change_field_id,         old_value,          new_value,      row_id)
-                 SELECT          _user_id,_change_action_id,_field_id_source_type_id,_source_type_id_old,_source_type_id,_source_id),
-        change_insert_url
-                     AS (
-            INSERT INTO changes ( user_id, change_action_id, change_field_id, old_value, new_value, row_id)
-                 SELECT          _user_id,_change_action_id,_field_id_url,   _url_old,  _url,      _source_id)
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,      old_value,       new_value,   row_id)
+         SELECT          _user_id,_change_action_id,_field_id_source_name,_source_name_old,_source_name,_source_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,      old_value,       new_value,   row_id)
+         SELECT          _user_id,_change_action_id,_field_id_description,_description_old,_description,_source_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,         old_value,          new_value,      row_id)
+         SELECT          _user_id,_change_action_id,_field_id_source_type_id,_source_type_id_old,_source_type_id,_source_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id, old_value, new_value, row_id)
+         SELECT          _user_id,_change_action_id,_field_id_url,   _url_old,  _url,      _source_id ;
 
     UPDATE user_sources
        SET source_name    = _source_name,

@@ -14,31 +14,31 @@ CREATE PROCEDURE source_insert_log_0111110000
 BEGIN
 
     INSERT INTO sources ( source_name)
-         VALUES         (_source_name);
+         SELECT          _source_name ;
 
-    SELECT LAST_INSERT_ID() AS @source_id;
+    SELECT LAST_INSERT_ID() AS @new_source_id;
 
     INSERT INTO changes ( user_id, change_action_id, change_field_id,    new_value,     row_id)
-         SELECT          _user_id,_change_action_id,_field_id_source_name,_source_name,@source_id ;
+         SELECT          _user_id,_change_action_id,_field_id_source_name,_source_name,@new_source_id ;
 
     INSERT INTO changes ( user_id, change_action_id, change_field_id,  new_value, row_id)
-         SELECT          _user_id,_change_action_id,_field_id_user_id,_user_id,  @source_id ;
+         SELECT          _user_id,_change_action_id,_field_id_user_id,_user_id,  @new_source_id ;
 
     INSERT INTO changes ( user_id, change_action_id, change_field_id,      new_value,   row_id)
-         SELECT          _user_id,_change_action_id,_field_id_description,_description,@source_id ;
+         SELECT          _user_id,_change_action_id,_field_id_description,_description,@new_source_id ;
 
     INSERT INTO changes ( user_id, change_action_id, change_field_id,         new_value,      row_id)
-         SELECT          _user_id,_change_action_id,_field_id_source_type_id,_source_type_id,@source_id ;
+         SELECT          _user_id,_change_action_id,_field_id_source_type_id,_source_type_id,@new_source_id ;
 
     INSERT INTO changes ( user_id, change_action_id, change_field_id, new_value, row_id)
-         SELECT          _user_id,_change_action_id,_field_id_url,   _url,      @source_id ;
+         SELECT          _user_id,_change_action_id,_field_id_url,   _url,      @new_source_id ;
 
     UPDATE sources
        SET user_id        = _user_id,
            description    = _description,
            source_type_id = _source_type_id,
            `url`          = _url
-     WHERE sources.source_id = @source_id;
+     WHERE sources.source_id = @new_source_id;
 
 END;
 

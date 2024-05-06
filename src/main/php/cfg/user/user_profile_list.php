@@ -36,6 +36,7 @@ global $user_profiles;
 
 use cfg\db\sql_db;
 use cfg\user\user_profile;
+use test\create_test_objects;
 
 class user_profile_list extends type_list
 {
@@ -46,10 +47,9 @@ class user_profile_list extends type_list
     function load_dummy(): void
     {
         $this->reset();
-        $type = new type_object(user_profile::NORMAL, user_profile::NORMAL, '', 2);
-        $this->add($type);
-        $type = new type_object(user_profile::ADMIN, user_profile::ADMIN, '', 3);
-        $this->add($type);
+        // read the corresponding names and description from the internal config csv files
+        $t = new create_test_objects();
+        $t->read_from_config_csv($this);
     }
 
     /**

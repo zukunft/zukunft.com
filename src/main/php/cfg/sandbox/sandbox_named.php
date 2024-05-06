@@ -585,6 +585,8 @@ class sandbox_named extends sandbox
 
     /**
      * create a new named object
+     *
+     * @param bool $use_func if true a predefined function is used that also creates the log entries
      * @return user_message with status ok
      *                      or if something went wrong
      *                      the message that should be shown to the user
@@ -594,7 +596,7 @@ class sandbox_named extends sandbox
      * TODO use optional sql insert with log
      * TODO use prepared sql insert
      */
-    function add(): user_message
+    function add(bool $use_func = false): user_message
     {
         log_debug($this->dsp_id());
 
@@ -603,50 +605,58 @@ class sandbox_named extends sandbox
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
 
-        // log the insert attempt first
-        $log = $this->log_add();
-        if ($log->id() > 0) {
+        if ($use_func) {
+            $sc = $db_con->sql_creator();
+            $qp = $this->sql_insert($sc, new sql_type_list([sql_type::LOG]));
+            $usr_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id());
+            $result->add($usr_msg);
+        } else {
 
-            // insert the new object and save the object key
-            // TODO check that always before a db action is called the db type is set correctly
-            if ($this->sql_write_prepared()) {
-                $sc = $db_con->sql_creator();
-                $qp = $this->sql_insert($sc);
-                $usr_msg = $db_con->insert($qp, 'add ' . $this->dsp_id());
-                if ($usr_msg->is_ok()) {
-                    $this->id = $usr_msg->get_row_id();
-                }
-            } else {
-                $db_con->set_class($this::class);
-                $db_con->set_usr($this->user()->id);
-                $this->id = $db_con->insert_old(array($class_name . '_name', "user_id"), array($this->name, $this->user()->id));
-            }
+            // log the insert attempt first
+            $log = $this->log_add();
+            if ($log->id() > 0) {
 
-            // save the object fields if saving the key was successful
-            if ($this->id > 0) {
-                log_debug($this::class . ' ' . $this->dsp_id() . ' has been added');
-                // update the id in the log
-                if (!$log->add_ref($this->id)) {
-                    $result->add_message('Updating the reference in the log failed');
-                    // TODO do rollback or retry?
-                } else {
-                    //$result->add_message($this->set_owner($new_owner_id));
-
-                    // TODO all all objects to the pontential used of the prepared sql function with log
-                    if (!$this->sql_write_prepared()) {
-                        // create an empty db_rec element to force saving of all set fields
-                        $db_rec = clone $this;
-                        $db_rec->reset();
-                        $db_rec->name = $this->name();
-                        $db_rec->set_user($this->user());
-                        $std_rec = clone $db_rec;
-                        // save the object fields
-                        $result->add_message($this->save_fields($db_con, $db_rec, $std_rec));
+                // insert the new object and save the object key
+                // TODO check that always before a db action is called the db type is set correctly
+                if ($this->sql_write_prepared()) {
+                    $sc = $db_con->sql_creator();
+                    $qp = $this->sql_insert($sc);
+                    $usr_msg = $db_con->insert($qp, 'add ' . $this->dsp_id());
+                    if ($usr_msg->is_ok()) {
+                        $this->id = $usr_msg->get_row_id();
                     }
+                } else {
+                    $db_con->set_class($this::class);
+                    $db_con->set_usr($this->user()->id);
+                    $this->id = $db_con->insert_old(array($class_name . '_name', "user_id"), array($this->name, $this->user()->id));
                 }
 
-            } else {
-                $result->add_message('Adding ' . $class_name . ' ' . $this->dsp_id() . ' failed due to logging error.');
+                // save the object fields if saving the key was successful
+                if ($this->id > 0) {
+                    log_debug($this::class . ' ' . $this->dsp_id() . ' has been added');
+                    // update the id in the log
+                    if (!$log->add_ref($this->id)) {
+                        $result->add_message('Updating the reference in the log failed');
+                        // TODO do rollback or retry?
+                    } else {
+                        //$result->add_message($this->set_owner($new_owner_id));
+
+                        // TODO all all objects to the pontential used of the prepared sql function with log
+                        if (!$this->sql_write_prepared()) {
+                            // create an empty db_rec element to force saving of all set fields
+                            $db_rec = clone $this;
+                            $db_rec->reset();
+                            $db_rec->name = $this->name();
+                            $db_rec->set_user($this->user());
+                            $std_rec = clone $db_rec;
+                            // save the object fields
+                            $result->add_message($this->save_fields($db_con, $db_rec, $std_rec));
+                        }
+                    }
+
+                } else {
+                    $result->add_message('Adding ' . $class_name . ' ' . $this->dsp_id() . ' failed due to logging error.');
+                }
             }
         }
 
@@ -967,49 +977,50 @@ class sandbox_named extends sandbox
         $par_lst_out = new sql_par_field_list();
 
         // init the function body
-        $sql = $sc->sql_func_start($sc_par_lst);
+        $id_field = $sc->id_field_name();
+
+        if ($usr_tbl) {
+            $id_fld_new = '_' . $id_field;
+        } else {
+            $id_fld_new = sql::FLD_ID_NEW_PREFIX . $id_field;
+        }
+
+        $sql = $sc->sql_func_start($id_fld_new, $sc_par_lst);
 
         // don't use the log parameter for the sub queries
         $sc_par_lst_sub = $sc_par_lst->remove(sql_type::LOG);
         $sc_par_lst_sub->add(sql_type::LIST);
+        $sc_par_lst_log = clone $sc_par_lst_sub;
 
+        $fvt_insert = $fvt_lst->get($this->name_field());
         if ($usr_tbl) {
             $insert_tmp_tbl = '';
         } else {
             // create the sql to insert the row
-            $fvt_insert = $fvt_lst->get($this->name_field());
             $fvt_insert_list = new sql_par_field_list();
             $fvt_insert_list->add($fvt_insert);
             $sc_insert = clone $sc;
             $qp_insert = $this->sql_common($sc_insert, $sc_par_lst_sub, $ext);;
+            $sc_par_lst_sub->add(sql_type::SELECT_FOR_INSERT);
             if ($sc->db_type == sql_db::MYSQL) {
                 $sc_par_lst_sub->add(sql_type::NO_ID_RETURN);
             }
-            $qp_insert->sql = $sc_insert->create_sql_insert($fvt_insert_list, $sc_par_lst_sub);
+            $qp_insert->sql = $sc_insert->create_sql_insert(
+                $fvt_insert_list, $sc_par_lst_sub, true, '', '', '', $id_fld_new);
             $qp_insert->par = [$fvt_insert->value];
 
             // add the insert row to the function body
             $insert_tmp_tbl = '';
-            if ($sc->db_type == sql_db::POSTGRES) {
-                $insert_tmp_tbl = $qp_insert->name;
-                $sql .= ' ' . $insert_tmp_tbl . ' ' . sql::AS . ' (';
-                $sql .= ' ' . $qp_insert->sql . '), ';
-            } elseif ($sc->db_type == sql_db::MYSQL) {
-                $sql .= ' ' . $qp_insert->sql . '; ';
-            } else {
-                $sql .= ' ' . $insert_tmp_tbl . ' ' . sql::AS . ' (';
-                $sql .= ' ' . $qp_insert->sql . '), ';
-            }
+            $sql .= ' ' . $qp_insert->sql . '; ';
             $par_lst_out->add($fvt_insert);
         }
-        $id_field = $sc->id_field_name();
         if ($sc->db_type == sql_db::POSTGRES) {
-            $row_id_val = $insert_tmp_tbl . '.' . $id_field;
+            $row_id_val = $id_fld_new;
         } elseif ($sc->db_type == sql_db::MYSQL) {
             if ($usr_tbl) {
                 $row_id_val = '_' . $id_field;
             } else {
-                $row_id_val = '@' . $id_field;
+                $row_id_val = '@' . $id_fld_new;
             }
         } else {
             $row_id_val = $insert_tmp_tbl . '.' . $id_field;
@@ -1038,11 +1049,6 @@ class sandbox_named extends sandbox
         // create the query parameters for the single log entries
         $func_body_change = '';
         foreach ($fld_lst_ex_log_and_key as $fld) {
-            if ($sc->db_type == sql_db::POSTGRES) {
-                if ($func_body_change != '') {
-                    $func_body_change .= ', ';
-                }
-            }
             $log = new change($this->user());
             $log->set_table_by_class($this::class);
             $log->set_field($fld);
@@ -1050,24 +1056,14 @@ class sandbox_named extends sandbox
             $log->old_value = $fvt_lst->get_old($fld);
             // TODO get the id of the new entry and use it in the log
             $sc_log = clone $sc;
-            $sc_par_lst_log = $sc_par_lst_sub;
             $sc_par_lst_log->add(sql_type::VALUE_SELECT);
-            if ($sc->db_type == sql_db::MYSQL) {
-                $sc_par_lst_log->add(sql_type::SELECT_FOR_INSERT);
-            }
+            $sc_par_lst_log->add(sql_type::SELECT_FOR_INSERT);
             $sc_par_lst_log->add(sql_type::INSERT_PART);
             $qp_log = $log->sql_insert(
-                $sc_log, $sc_par_lst_log, $ext . '_' . $fld, $insert_tmp_tbl, $fld, $id_field);
+                $sc_log, $sc_par_lst_log, $ext . '_' . $fld, '', $fld, $id_fld_new);
 
             // TODO get the fields used in the change log sql from the sql
-            if ($sc->db_type == sql_db::POSTGRES) {
-                $func_body_change .= ' ' . $qp_log->name . ' ' . sql::AS . ' (';
-                $func_body_change .= ' ' . $qp_log->sql . ')';
-            } elseif ($sc->db_type == sql_db::MYSQL) {
-                $func_body_change .= ' ' . $qp_log->sql . '; ';
-            } else {
-                $func_body_change .= ' ' . $qp_log->sql . ' ';
-            }
+            $func_body_change .= ' ' . $qp_log->sql . '; ';
             $par_lst_out->add_field(
                 user::FLD_ID,
                 $fvt_lst->get_value(user::FLD_ID),
@@ -1127,9 +1123,15 @@ class sandbox_named extends sandbox
             $update_fvt_lst = new sql_par_field_list();
             $update_fvt_lst->set($update_fld_val_typ_lst);
             $qp_update->sql = $sc_update->create_sql_update(
-                $id_field, $row_id_val, $update_fvt_lst, [], $sc_par_lst_upd_ex_log, true, $insert_tmp_tbl, $id_field);
+                $id_field, $row_id_val, $update_fvt_lst, [], $sc_par_lst_upd_ex_log);
             // add the insert row to the function body
             $sql .= ' ' . $qp_update->sql . ' ';
+        }
+
+        if ($sc->db_type == sql_db::POSTGRES) {
+            if ($id_fld_new != '' and !$usr_tbl) {
+                $sql .= sql::RETURN . ' ' . $id_fld_new . '; ';
+            }
         }
 
         $sql .= $sc->sql_func_end();
@@ -1137,10 +1139,10 @@ class sandbox_named extends sandbox
         // create the query parameters for the actual change
         $qp_chg = clone $qp;
         $qp_chg->sql = $sc->create_sql_insert($par_lst_out, $sc_par_lst);
-        $qp_chg->par = $fvt_lst->values();
 
         // merge all together and create the function
         $qp->sql = $qp_chg->sql . $sql . ';';
+        $qp->par = $par_lst_out->values();
 
         $qp->call = ' ' . sql::SELECT . ' ' . $qp_chg->name . ' (';
 
@@ -1232,7 +1234,7 @@ class sandbox_named extends sandbox
         $par_lst_out = new sql_par_field_list();
 
         // init the function body
-        $sql = $sc->sql_func_start($sc_par_lst);
+        $sql = $sc->sql_func_start('', $sc_par_lst);
 
         // don't use the log parameter for the sub queries
         $sc_par_lst_sub = $sc_par_lst->remove(sql_type::LOG);
@@ -1257,20 +1259,13 @@ class sandbox_named extends sandbox
         $func_body_change = '';
         foreach ($par_lst_chg as $fld) {
 
-            // add the seperator between the single insert log statements
-            if ($sc->db_type == sql_db::POSTGRES) {
-                if ($func_body_change != '') {
-                    $func_body_change .= ', ';
-                }
-            }
-
             // create the insert log statement for the field of the loop
             $log = new change($this->user());
             $log->set_table_by_class($this::class);
             $log->set_field($fld->name);
             $log->old_value = $fvt_lst->get_old($fld->name);
             $log->new_value = $fld->value;
-            // make shure that also overwrites are added to the log
+            // make sure that also overwrites are added to the log
             if ($log->old_value != null or $log->new_value != null) {
                 if ($log->old_value == null) {
                     $log->old_value = '';
@@ -1288,15 +1283,10 @@ class sandbox_named extends sandbox
             $sc_par_lst_log->add(sql_type::SELECT_FOR_INSERT);
             // TODO replace dummy value table with an enum value
             $qp_log = $log->sql_insert(
-                $sc_log, $sc_par_lst_log, $ext . '_' . $fld->name, '', $fld->name, $id_fld);
+                $sc_log, $sc_par_lst_log, $ext . '_' . $fld->name, '', $fld->name, $id_val);
 
             // TODO get the fields used in the change log sql from the sql
-            if ($sc->db_type == sql_db::POSTGRES) {
-                $func_body_change .= ' ' . $qp_log->name . ' ' . sql::AS . ' (';
-                $func_body_change .= ' ' . $qp_log->sql . ')';
-            } else {
-                $func_body_change .= ' ' . $qp_log->sql . ';';
-            }
+            $func_body_change .= ' ' . $qp_log->sql . ';';
 
             // add the user_id if needed
             $log_usr_id = $fvt_lst->get_value(user::FLD_ID);
@@ -1465,7 +1455,7 @@ class sandbox_named extends sandbox
         $fvt_lst_out = new sql_par_field_list();
 
         // init the function body
-        $sql = $sc->sql_func_start($sc_par_lst);
+        $sql = $sc->sql_func_start('', $sc_par_lst);
 
         // don't use the log parameter for the sub queries
         $sc_par_lst_sub = clone $sc_par_lst;
@@ -1488,15 +1478,10 @@ class sandbox_named extends sandbox
         $sc_log = clone $sc;
         // TODO replace dummy value table with an enum value
         $qp_log = $log->sql_insert(
-            $sc_log, $sc_par_lst_log, $ext . '_' . $name_fld, '', $name_fld, $id_fld);
+            $sc_log, $sc_par_lst_log, $ext . '_' . $name_fld, '', $name_fld, $id_val);
 
         // TODO get the fields used in the change log sql from the sql
-        if ($sc->db_type == sql_db::POSTGRES) {
-            $func_body_change .= ' ' . $qp_log->name . ' ' . sql::AS . ' (';
-            $func_body_change .= ' ' . $qp_log->sql . ')';
-        } else {
-            $func_body_change .= ' ' . $qp_log->sql . ';';
-        }
+        $func_body_change .= ' ' . $qp_log->sql . ';';
 
         // add the user_id if needed
         $fvt_lst_out->add_field(

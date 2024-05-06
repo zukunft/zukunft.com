@@ -3,14 +3,12 @@ CREATE OR REPLACE FUNCTION formula_insert_log_11100000000000_user
      _change_action_id        smallint,
      _field_id_formula_name   smallint,
      _formula_name            text,
-     _formula_id              bigint) RETURNS void AS
+     _formula_id              bigint) RETURNS bigint AS
 $$
 BEGIN
 
-    WITH
-        change_insert_formula_name AS (
-            INSERT INTO changes ( user_id, change_action_id, change_field_id,       new_value,    row_id)
-                 SELECT          _user_id,_change_action_id,_field_id_formula_name,_formula_name,_formula_id)
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,       new_value,    row_id)
+         SELECT          _user_id,_change_action_id,_field_id_formula_name,_formula_name,_formula_id ;
 
     INSERT INTO user_formulas
                 (formula_id, user_id, formula_name)

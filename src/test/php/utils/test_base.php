@@ -468,6 +468,25 @@ class test_base
     }
 
     /**
+     * check if the result is true
+     *
+     * @param string $msg (unique) description of the test
+     * @param bool $result the result of the previous called test
+     * @return bool true is the result is fine
+     */
+    function assert_true(
+        string $msg,
+        bool $result
+    ): bool
+    {
+        if ($result === true) {
+            return true;
+        } else {
+            return $this->assert_dsp($msg, false, '', '', '');
+        }
+    }
+
+    /**
      * check if the result text is empty
      * e.g. because the result string is a difference message
      *

@@ -618,9 +618,10 @@ class formula_link extends sandbox_link_with_type
 
     /**
      * update a formula_link in the database or create a user formula_link
+     * @param bool $use_func if true a predefined function is used that also creates the log entries
      * @return string the message shown to the user why the action has failed or an empty string if everything is fine
      */
-    function save(): string
+    function save(bool $use_func = false): string
     {
 
         global $db_con;

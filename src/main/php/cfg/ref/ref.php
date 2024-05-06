@@ -815,9 +815,10 @@ class ref extends sandbox_link_with_type
 
     /**
      * update a ref in the database or update the existing
+     * @param bool $use_func if true a predefined function is used that also creates the log entries
      * @return user_message the database id of the created reference or 0 if not successful
      */
-    function add(): user_message
+    function add(bool $use_func = false): user_message
     {
         log_debug('ref->add ' . $this->dsp_id());
 
@@ -880,9 +881,10 @@ class ref extends sandbox_link_with_type
 
     /**
      * update a ref in the database or update the existing
+     * @param bool $use_func if true a predefined function is used that also creates the log entries
      * @return string the id of the updated or created reference
      */
-    function save(): string
+    function save(bool $use_func = false): string
     {
         log_debug();
 

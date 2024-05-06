@@ -819,7 +819,7 @@ class sql_db
     {
         global $debug;
         $lib = new library();
-        $table_name =  $lib->class_to_table($class);
+        $table_name = $lib->class_to_table($class);
 
         // load the csv
         $csv_path = PATH_BASE_CODE_LINK_FILES . $table_name . BASE_CODE_LINK_FILE_TYPE;
@@ -1925,7 +1925,7 @@ class sql_db
     {
         $result = '';
         try {
-            $sql_result = $this->exe($sql, $sql_name, $sql_array, $log_level);
+            $sql_result = $this->exe($sql, $sql_name, $sql_array, '', $log_level);
             if (!$sql_result) {
                 $result .= $msg . log::MSG_ERR;
             }
@@ -1955,6 +1955,7 @@ class sql_db
      * @param string $sql the sql statement that should be executed
      * @param string $sql_name the unique name of the sql statement
      * @param array $sql_array the values that should be used for executing the precompiled SQL statement
+     * @param string $sql_call the query with the fields set e.g. to execute a function
      * @param int $log_level the log level is given by the calling function because after some errors the program may nevertheless continue
      * @return \PgSql\Result|mysqli_result the result of the sql statement
      * @throws Exception the message that should be shown to the system admin for debugging
@@ -1967,6 +1968,7 @@ class sql_db
         string $sql,
         string $sql_name = '',
         array  $sql_array = array(),
+        string $sql_call = '',
         int    $log_level = sys_log_level::ERROR
     ): \PgSql\Result|mysqli_result
     {
@@ -1976,9 +1978,9 @@ class sql_db
 
         // Postgres part
         if ($this->db_type == sql_db::POSTGRES) {
-            $result = $this->exe_postgres($sql, $sql_name, $sql_array, $log_level);            // check database connection
+            $result = $this->exe_postgres($sql, $sql_name, $sql_array, $sql_call, $log_level);            // check database connection
         } elseif ($this->db_type == sql_db::MYSQL) {
-            $result = $this->exe_mysql($sql, $sql_name, $sql_array, $log_level);            // check database connection
+            $result = $this->exe_mysql($sql, $sql_name, $sql_array, $sql_call, $log_level);            // check database connection
         } else {
             throw new Exception('Unknown database type "' . $this->db_type . '"');
         }
@@ -2012,6 +2014,7 @@ class sql_db
      * @param string $sql the sql statement that should be executed
      * @param string $sql_name the unique name of the sql statement
      * @param array $sql_array the values that should be used for executing the precompiled SQL statement
+     * @param string $sql_call the query with the fields set e.g. to execute a function
      * @param int $log_level the log level is given by the calling function because after some errors the program may nevertheless continue
      * @return \PgSql\Result the message that should be shown to the user if something went wrong or an empty string
      * @throws Exception the message that should be shown to the system admin for debugging
@@ -2025,6 +2028,7 @@ class sql_db
         string $sql,
         string $sql_name = '',
         array  $sql_array = array(),
+        string $sql_call = '',
         int    $log_level = sys_log_level::ERROR
     ): \PgSql\Result
     {
@@ -2054,7 +2058,8 @@ class sql_db
             } else {
                 // prepare the query if needed
                 if (!$this->has_query($sql_name)) {
-                    if (str_starts_with($sql, sql::PREPARE)) {
+                    if (str_starts_with($sql, sql::PREPARE)
+                        or str_starts_with($sql, sql::CREATE)) {
                         $result = pg_query($this->postgres_link, $sql);
                     } else {
                         $result = pg_prepare($this->postgres_link, $sql_name, $sql);
@@ -2074,7 +2079,11 @@ class sql_db
                 }
                 $pg_array[] = '}';
                 */
-                $result = pg_execute($this->postgres_link, $sql_name, $sql_array);
+                if ($sql_call != '') {
+                    $result = pg_query($this->postgres_link, $sql_call);
+                } else {
+                    $result = pg_execute($this->postgres_link, $sql_name, $sql_array);
+                }
             }
             if ($result === false) {
                 throw new Exception('Database error ' . pg_last_error($this->postgres_link) . ' when querying ' . $sql);
@@ -2091,6 +2100,7 @@ class sql_db
      * @param string $sql the sql statement that should be executed
      * @param string $sql_name the unique name of the sql statement
      * @param array $sql_array the values that should be used for executing the precompiled SQL statement
+     * @param string $sql_call the query with the fields set e.g. to execute a function
      * @param int $log_level the log level is given by the calling function because after some errors the program may nevertheless continue
      * @return mysqli_result the message that should be shown to the system admin for debugging
      * @throws Exception
@@ -2104,6 +2114,7 @@ class sql_db
         string $sql,
         string $sql_name = '',
         array  $sql_array = array(),
+        string $sql_call = '',
         int    $log_level = sys_log_level::ERROR): mysqli_result
     {
         $result = null;
@@ -3634,7 +3645,12 @@ class sql_db
 
             //return $this->exe($sql, 'user_default', array());
             try {
-                $result = $this->exe($sql, '', array());
+                $sql_result = $this->exe($sql, '', array());
+                if (!$sql_result) {
+                    $result = false;
+                } else {
+                    $result = true;
+                }
             } catch (Exception $e) {
                 $msg = 'Select';
                 log_err($msg . log::MSG_ERR_USING . $sql . log::MSG_ERR_BECAUSE . $e->getMessage());
@@ -3665,15 +3681,18 @@ class sql_db
         $result = new user_message();
         $err_msg = 'Insert of ' . $description . ' failed.';
         try {
-            $sql_result = $this->exe($qp->sql, $qp->name, $qp->par);
+            $sql_result = $this->exe($qp->sql, $qp->name, $qp->par, $qp->call);
             $db_id = 0;
             if ($this->db_type == sql_db::POSTGRES) {
                 $sql_error = pg_result_error($sql_result);
                 if ($sql_error != '') {
                     log_err($sql_error . ' while executing ' . $qp->sql);
                 } else {
-                    $db_id = pg_fetch_array($sql_result)[0];
-                    //$result = $db_con->lastInsertId('yourIdColumn');
+                    if ($qp->call == '') {
+                        $db_id = pg_fetch_array($sql_result)[0];
+                    } else {
+                        $db_id = pg_fetch_array($sql_result)[0];
+                    }
                 }
             } else {
                 $db_id = mysqli_fetch_array($sql_result, MYSQLI_BOTH);
@@ -3813,7 +3832,7 @@ class sql_db
                 } else {
                     // return the database row id if the value is not a time series number
                     if (!in_array($this->class, sql_db::DB_TABLE_WITHOUT_AUTO_ID)) {
-                        $sql = $sql . ' RETURNING ' . $this->id_field . ';';
+                        $sql .= ' ' . sql::RETURNING . ' ' . $this->id_field . ';';
                     }
                     if ($this->id_field == 'official_type_id') {
                         log_info('check');

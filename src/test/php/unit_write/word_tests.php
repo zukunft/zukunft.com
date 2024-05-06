@@ -63,6 +63,15 @@ class word_tests
 
         $t->header('word db write tests');
 
+        $test_name = 'add word ' . word_api::TN_ADD_VIA_FUNC . ' via sql function ';
+        $wrd = new word($t->usr1);
+        $wrd->set_name(word_api::TN_ADD_VIA_FUNC);
+        $wrd->save(true);
+        $wrd->reset();
+        $wrd->load_by_name(word_api::TN_ADD_VIA_FUNC);
+        //$t->assert_true($test_name, $wrd->isset());
+
+
         $test_name = 'test saving word type ' . phrase_type::TIME . ' by adding add time word ' . word_api::TN_2021;
         $wrd_time = $t->test_word(word_api::TN_2021, phrase_type::TIME);
         $result = $wrd_time->is_type(phrase_type::TIME);

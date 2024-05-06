@@ -9,47 +9,34 @@ CREATE OR REPLACE FUNCTION source_insert_log_0111110000
      _field_id_source_type_id smallint,
      _source_type_id          bigint,
      _field_id_url            smallint,
-     _url                     text) RETURNS void AS
+     _url                     text) RETURNS bigint AS
 $$
+DECLARE new_source_id bigint;
 BEGIN
 
-    WITH
-        source_insert  AS (
-            INSERT INTO sources ( source_name)
-                 VALUES       (_source_name)
-              RETURNING         source_id ),
+    INSERT INTO sources ( source_name)
+         SELECT          _source_name
+      RETURNING           source_id INTO new_source_id;
 
-        change_insert_source_name AS (
-            INSERT INTO changes ( user_id, change_action_id, change_field_id,      new_value,                row_id)
-                 SELECT          _user_id,_change_action_id,_field_id_source_name,_source_name,source_insert.source_id
-                   FROM source_insert),
-        change_insert_user_id
-                     AS (
-            INSERT INTO changes ( user_id, change_action_id, change_field_id,  new_value,              row_id)
-                 SELECT          _user_id,_change_action_id,_field_id_user_id,_user_id,  source_insert.source_id
-                   FROM source_insert),
-        change_insert_description
-                     AS (
-            INSERT INTO changes ( user_id, change_action_id, change_field_id,      new_value,                row_id)
-                 SELECT          _user_id,_change_action_id,_field_id_description,_description,source_insert.source_id
-                   FROM source_insert),
-        change_insert_source_type_id
-                     AS (
-            INSERT INTO changes ( user_id, change_action_id, change_field_id,         new_value,                   row_id)
-                 SELECT          _user_id,_change_action_id,_field_id_source_type_id,_source_type_id,source_insert.source_id
-                   FROM source_insert),
-        change_insert_url
-                     AS (
-            INSERT INTO changes ( user_id, change_action_id, change_field_id, new_value,        row_id)
-                 SELECT          _user_id,_change_action_id,_field_id_url,   _url,source_insert.source_id
-                   FROM source_insert)
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,      new_value,  row_id)
+         SELECT          _user_id,_change_action_id,_field_id_source_name,_source_name,new_source_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,  new_value, row_id)
+         SELECT          _user_id,_change_action_id,_field_id_user_id,_user_id,   new_source_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,      new_value,  row_id)
+         SELECT          _user_id,_change_action_id,_field_id_description,_description,new_source_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,         new_value,     row_id)
+         SELECT          _user_id,_change_action_id,_field_id_source_type_id,_source_type_id,new_source_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id, new_value, row_id)
+         SELECT          _user_id,_change_action_id,_field_id_url,   _url,       new_source_id ;
+
     UPDATE sources
        SET user_id        = _user_id,
            description    = _description,
            source_type_id = _source_type_id,
            url            = _url
-      FROM source_insert
-     WHERE sources.source_id = source_insert.source_id;
+     WHERE sources.source_id = new_source_id;
+
+    RETURN new_source_id;
 
 END
 $$ LANGUAGE plpgsql;

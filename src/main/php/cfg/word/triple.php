@@ -554,6 +554,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
     }
 
     // TODO add a function for each type and streamline the call
+
     /**
      * @return bool
      */
@@ -1970,12 +1971,13 @@ class triple extends sandbox_link_typed implements JsonSerializable
 
     /**
      * add a new triple to the database
+     * @param bool $use_func if true a predefined function is used that also creates the log entries
      * @return user_message with status ok
      *                      or if something went wrong
      *                      the message that should be shown to the user
      *                      including suggested solutions
      */
-    function add(): user_message
+    function add(bool $use_func = false): user_message
     {
         log_debug('triple->add new triple for "' . $this->fob->name() . '" ' . $this->verb->name() . ' "' . $this->tob->name() . '"');
 
@@ -2019,9 +2021,10 @@ class triple extends sandbox_link_typed implements JsonSerializable
 
     /**
      * update a triple in the database or create a user triple
+     * @param bool $use_func if true a predefined function is used that also creates the log entries
      * @return string an empty string if everything is fine otherwise the message that should be shown to the user
      */
-    function save(): string
+    function save(bool $use_func = false): string
     {
         log_debug($this->dsp_id());
 

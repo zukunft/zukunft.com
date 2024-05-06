@@ -172,8 +172,7 @@ class formula extends sandbox_typed
     // all database field names excluding the id
     // actually empty because all formula fields are user specific
     // TODO check if last_update must be user specific
-    const FLD_NAMES = array(
-    );
+    const FLD_NAMES = array();
     // list of the user specific database field names
     const FLD_NAMES_USR = array(
         self::FLD_FORMULA_TEXT,
@@ -2372,12 +2371,13 @@ class formula extends sandbox_typed
      * create a new formula
      * the user sandbox function is overwritten because the formula text should never be null
      * and the corresponding formula word is created
+     * @param bool $use_func if true a predefined function is used that also creates the log entries
      * @return user_message with status ok
      *                      or if something went wrong
      *                      the message that should be shown to the user
      *                      including suggested solutions
      */
-    function add(): user_message
+    function add(bool $use_func = false): user_message
     {
         log_debug('->add ' . $this->dsp_id());
 
@@ -2426,9 +2426,10 @@ class formula extends sandbox_typed
      * add or update a formula in the database or create a user formula
      * overwrite the _sandbox function to create the formula ref text; maybe combine later
      *
+     * @param bool $use_func if true a predefined function is used that also creates the log entries
      * @return string the message shown to the user why the action has failed or an empty string if everything is fine
      */
-    function save(): string
+    function save(bool $use_func = false): string
     {
         log_debug('->save >' . $this->usr_text . '< (id ' . $this->id() . ') as ' . $this->dsp_id() . ' for user ' . $this->user()->name);
 

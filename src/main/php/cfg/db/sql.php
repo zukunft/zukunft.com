@@ -82,12 +82,17 @@ class sql
     const DROP_MYSQL = 'DROP PROCEDURE IF EXISTS';
     const FUNCTION = 'FUNCTION';
     const FUNCTION_MYSQL = 'CREATE PROCEDURE';
-    const FUNCTION_BEGIN = '$$ BEGIN';
+    const FUNCTION_NAME = '$$';
+    const FUNCTION_DECLARE = 'DECLARE';
+    const FUNCTION_BEGIN = 'BEGIN';
     const FUNCTION_BEGIN_MYSQL = 'BEGIN';
+    const INTO = 'INTO';
     const FUNCTION_END = 'END $$ LANGUAGE plpgsql';
     const FUNCTION_END_MYSQL = 'END';
-    const FUNCTION_NO_RETURN = 'RETURNS void AS';
+    const FUNCTION_NO_RETURN = 'RETURNS bigint AS';
     const FUNCTION_NO_RETURN_MYSQL = '';
+    const RETURNING = 'RETURNING';
+    const RETURN = 'RETURN';
     const VIEW = 'VIEW';
     const AS = 'AS';
     const FROM = 'FROM';
@@ -119,6 +124,7 @@ class sql
 
     // for sql functions that do the change log and the actual change with on function
     const FLD_LOG_FIELD_PREFIX = 'field_id_'; // added to the field name to include the preloaded log field id
+    const FLD_ID_NEW_PREFIX = 'new_'; // added to the field id name to remember the sequence id
 
     // enum values used for the table creation
     const fld_type_ = '';
@@ -1042,7 +1048,8 @@ class sql
         bool               $log_err = true,
         string             $val_tbl = '',
         string             $chg_add_fld = '',
-        string             $chg_row_fld = ''
+        string             $chg_row_fld = '',
+        string             $new_id_fld = ''
     ): string
     {
         $lib = new library();
@@ -1113,7 +1120,7 @@ class sql
                                 and $insert_part) {
                                 $fld_name = '@' . $chg_row_fld;
                             } else {
-                                $fld_name = '_' . $chg_row_fld;
+                                $fld_name = $chg_row_fld;
                             }
                         } else {
                             $fld_name = '_' . $fld_name;
@@ -1164,7 +1171,7 @@ class sql
             $sc_par_lst_end = $sc_par_lst;
         }
 
-        return $this->end_sql($sql, $sql_type, $sc_par_lst_end);
+        return $this->end_sql($sql, $sql_type, $sc_par_lst_end, $new_id_fld);
     }
 
     /**
@@ -1309,15 +1316,17 @@ class sql
     /**
      * @return string that starts a sql function
      */
-    function sql_func_start(sql_type_list $sc_par_lst): string
+    function sql_func_start(string $fld_new_id, sql_type_list $sc_par_lst): string
     {
+        $usr_tbl = $sc_par_lst->is_usr_tbl();
         if ($this->db_type == sql_db::POSTGRES) {
-            $sql = sql::FUNCTION_BEGIN;
+            $sql = sql::FUNCTION_NAME . ' ';
+            if ($fld_new_id != '' and !$usr_tbl) {
+                $sql .= sql::FUNCTION_DECLARE . ' ' . $fld_new_id . ' ' . sql_field_type::INT->value . '; ';
+            }
+            $sql .= sql::FUNCTION_BEGIN;
         } else {
             $sql = sql::FUNCTION_BEGIN_MYSQL;
-        }
-        if ($this->db_type == sql_db::POSTGRES) {
-            $sql .= ' ' . sql::WITH;
         }
         return $sql;
     }
@@ -3118,10 +3127,16 @@ class sql
     }
 
     /**
+     * finish an sql statement
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return string with the SQL closing statement for the current query
      */
-    private function end_sql(string $sql, string $sql_statement_type = sql::SELECT, sql_type_list $sc_par_lst = new sql_type_list([])): string
+    private function end_sql(
+        string        $sql,
+        string        $sql_statement_type = sql::SELECT,
+        sql_type_list $sc_par_lst = new sql_type_list([]),
+        string        $new_id_fld = ''
+    ): string
     {
         $lib = new library();
         $no_id_return = $sc_par_lst->no_id_return();
@@ -3132,11 +3147,14 @@ class sql
                     // for the change log and user specific changes the id of the new change log entry is not needed
                     // because the id is combination of user_id amd the row_id and both are know already
                     if (!$no_id_return) {
-                        $sql .= ' RETURNING ';
+                        $sql .= ' ' . sql::RETURNING . ' ';
                         if (is_array($this->id_field)) {
                             $sql .= implode(',', $this->id_field);
                         } else {
                             $sql .= $this->id_field;
+                        }
+                        if ($new_id_fld != '') {
+                            $sql .= ' ' . sql::INTO . ' ' . $new_id_fld;
                         }
                         // TODO check if not the next line needs to be used
                         // $sql = $sql . " SELECT currval('" . $this->id_field . "_seq'); ";
@@ -3145,7 +3163,7 @@ class sql
             } else {
                 if ($sc_par_lst->use_named_par()) {
                     if (!$no_id_return) {
-                        $sql .= ' RETURNING ';
+                        $sql .= ' ' . sql::RETURNING . ' ';
                         $sql .= $this->id_field;
                     }
                 }
@@ -3275,7 +3293,7 @@ class sql
                 } else {
                     // return the database row id if the table uses auto id series
                     if (!in_array($this::class, sql_db::DB_TABLE_WITHOUT_AUTO_ID)) {
-                        $sql = $sql . ' RETURNING ' . $this->id_field . ';';
+                        $sql .= ' ' . sql::RETURNING . ' ' . $this->id_field . ';';
                     }
 
                     /*

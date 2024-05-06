@@ -12,27 +12,27 @@ CREATE PROCEDURE word_insert_log_01111000000
 BEGIN
 
     INSERT INTO words ( word_name)
-         VALUES       (_word_name);
+         SELECT        _word_name ;
 
-    SELECT LAST_INSERT_ID() AS @word_id;
+    SELECT LAST_INSERT_ID() AS @new_word_id;
 
     INSERT INTO changes ( user_id, change_action_id, change_field_id,    new_value, row_id)
-         SELECT          _user_id,_change_action_id,_field_id_word_name,_word_name,@word_id ;
+         SELECT          _user_id,_change_action_id,_field_id_word_name,_word_name,@new_word_id ;
 
     INSERT INTO changes ( user_id, change_action_id, change_field_id,  new_value, row_id)
-         SELECT          _user_id,_change_action_id,_field_id_user_id,_user_id,  @word_id ;
+         SELECT          _user_id,_change_action_id,_field_id_user_id,_user_id,  @new_word_id ;
 
     INSERT INTO changes ( user_id, change_action_id, change_field_id,      new_value,   row_id)
-         SELECT          _user_id,_change_action_id,_field_id_description,_description,@word_id ;
+         SELECT          _user_id,_change_action_id,_field_id_description,_description,@new_word_id ;
 
     INSERT INTO changes ( user_id, change_action_id, change_field_id,         new_value,      row_id)
-         SELECT          _user_id,_change_action_id,_field_id_phrase_type_id,_phrase_type_id,@word_id ;
+         SELECT          _user_id,_change_action_id,_field_id_phrase_type_id,_phrase_type_id,@new_word_id ;
 
     UPDATE words
        SET user_id        = _user_id,
            description    = _description,
            phrase_type_id = _phrase_type_id
-     WHERE words.word_id = @word_id;
+     WHERE words.word_id = @new_word_id;
 
 END;
 

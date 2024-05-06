@@ -2021,12 +2021,13 @@ class sandbox extends db_object_seq_id_user
 
     /**
      * dummy function that is supposed to be overwritten by the child classes for e.g. named or link objects
+     * @param bool $use_func if true a predefined function is used that also creates the log entries
      * @return user_message with status ok
      *                      or if something went wrong
      *                      the message that should be shown to the user
      *                      including suggested solutions
      */
-    function add(): user_message
+    function add(bool $use_func = false): user_message
     {
         $result = new user_message();
         $msg = 'The dummy parent add function has been called, which should never happen';
@@ -2051,7 +2052,7 @@ class sandbox extends db_object_seq_id_user
      * a time word can also describe a period
      */
 
-    /*
+    /**
      * add or update a user sandbox object (word, value, formula or ...) in the database
      * returns either the id of the updated or created object or a message with the reason why it has failed that can be shown to the user
      *
@@ -2070,9 +2071,10 @@ class sandbox extends db_object_seq_id_user
      * TODO check also that a word does not match any user name (or find a solution for each user namespace)
      * TODO return a user_message with a suggested solution instead of a string
      *
+     * @param bool $use_func if true a predefined function is used that also creates the log entries
      */
 
-    function save(): string
+    function save(bool $use_func = false): string
     {
         log_debug($this->dsp_id());
         $lib = new library();
@@ -2130,7 +2132,7 @@ class sandbox extends db_object_seq_id_user
 
                 if ($result == '') {
                     log_debug('add');
-                    $result = $this->add()->get_last_message();
+                    $result = $this->add($use_func)->get_last_message();
                 }
 
             } else {
@@ -2626,7 +2628,7 @@ class sandbox extends db_object_seq_id_user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_update(sql $sc, sandbox $db_row, sql_type_list $sc_par_lst  = new sql_type_list([])): sql_par
+    function sql_update(sql $sc, sandbox $db_row, sql_type_list $sc_par_lst = new sql_type_list([])): sql_par
     {
         log_err('sql_update is probably missing for ' . $this::class);
         return new sql_par('');

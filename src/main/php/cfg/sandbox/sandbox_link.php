@@ -418,13 +418,14 @@ class sandbox_link extends sandbox
 
     /**
      * create a new link object and log the change
+     * @param bool $use_func if true a predefined function is used that also creates the log entries
      * @return user_message with status ok
      *                      or if something went wrong
      *                      the message that should be shown to the user
      *                      including suggested solutions
      * TODO do a rollback in case of an error
      */
-    function add(): user_message
+    function add(bool $use_func = false): user_message
     {
         log_debug($this->dsp_id());
         $lib = new library();
