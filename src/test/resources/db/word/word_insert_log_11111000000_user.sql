@@ -25,13 +25,7 @@ BEGIN
 END
 $$ LANGUAGE plpgsql;
 
-SELECT word_insert_log_11111000000_user
-       (1::bigint,
-        1::smallint,
-        10::smallint,
-        'Mathematics'::text,
-        1::bigint,
-        11::smallint,
-        'Mathematics is an area of knowledge that includes the topics of numbers and formulas'::text,
-        12::smallint,
-        1::bigint);
+PREPARE word_insert_log_11111000000_user_call
+        (bigint,smallint,smallint,text,bigint,smallint,text,smallint,bigint) AS
+    SELECT word_insert_log_11111000000_user
+        ($1,$2,$3,$4,$5,$6,$7,$8,$9);

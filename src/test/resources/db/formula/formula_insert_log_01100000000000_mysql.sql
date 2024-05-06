@@ -24,9 +24,5 @@ BEGIN
 
 END;
 
-SELECT formula_insert_log_01100000000000
-       ('"one" = "millions" * 1000000',
-        1,
-        1,
-        30,
-        173);
+PREPARE formula_insert_log_01100000000000_call FROM
+    'SELECT formula_insert_log_01100000000000 (?,?,?,?,?)';

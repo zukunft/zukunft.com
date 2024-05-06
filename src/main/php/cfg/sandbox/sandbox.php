@@ -2071,18 +2071,28 @@ class sandbox extends db_object_seq_id_user
      * TODO check also that a word does not match any user name (or find a solution for each user namespace)
      * TODO return a user_message with a suggested solution instead of a string
      *
-     * @param bool $use_func if true a predefined function is used that also creates the log entries
+     * @param bool|null $use_func if true a predefined function is used that also creates the log entries
      */
 
-    function save(bool $use_func = false): string
+    function save(?bool $use_func = null): string
     {
         log_debug($this->dsp_id());
-        $lib = new library();
-        $class_name = $lib->class_to_name($this::class);
 
         global $db_con;
 
         $result = '';
+
+        $lib = new library();
+        $class_name = $lib->class_to_name($this::class);
+
+        // decide which db write method should be used
+        if ($use_func === null) {
+            if (in_array($this::class, sql_db::CLASSES_USE_WITH_LOG_FUNC_FOR_SAVE)) {
+                $use_func = true;
+            } else {
+                $use_func = false;
+            }
+        }
 
         // load the objects if needed
         if ($this->is_link_obj()) {

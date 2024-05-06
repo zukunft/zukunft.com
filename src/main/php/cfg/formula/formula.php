@@ -2429,12 +2429,21 @@ class formula extends sandbox_typed
      * @param bool $use_func if true a predefined function is used that also creates the log entries
      * @return string the message shown to the user why the action has failed or an empty string if everything is fine
      */
-    function save(bool $use_func = false): string
+    function save(?bool $use_func = null): string
     {
         log_debug('->save >' . $this->usr_text . '< (id ' . $this->id() . ') as ' . $this->dsp_id() . ' for user ' . $this->user()->name);
 
         global $db_con;
         global $phrase_types;
+
+        // decide which db write method should be used
+        if ($use_func === null) {
+            if (in_array($this::class, sql_db::CLASSES_USE_WITH_LOG_FUNC_FOR_SAVE)) {
+                $use_func = true;
+            } else {
+                $use_func = false;
+            }
+        }
 
         // check the preserved names
         $result = $this->check_preserved();
@@ -2473,7 +2482,7 @@ class formula extends sandbox_typed
                 // convert the formula text to db format (any error messages should have been returned from the calling user script)
                 $result .= $this->generate_ref_text();
                 if ($result == '') {
-                    $result .= $this->add()->get_last_message();
+                    $result .= $this->add($use_func)->get_last_message();
                 }
             } else {
                 log_debug('update ' . $this->id);

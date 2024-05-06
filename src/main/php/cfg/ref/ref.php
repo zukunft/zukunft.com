@@ -884,7 +884,7 @@ class ref extends sandbox_link_with_type
      * @param bool $use_func if true a predefined function is used that also creates the log entries
      * @return string the id of the updated or created reference
      */
-    function save(bool $use_func = false): string
+    function save(?bool $use_func = false): string
     {
         log_debug();
 

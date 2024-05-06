@@ -69,7 +69,7 @@ class word_tests
         $wrd->save(true);
         $wrd->reset();
         $wrd->load_by_name(word_api::TN_ADD_VIA_FUNC);
-        //$t->assert_true($test_name, $wrd->isset());
+        $t->assert_true($test_name, $wrd->isset());
 
 
         $test_name = 'test saving word type ' . phrase_type::TIME . ' by adding add time word ' . word_api::TN_2021;

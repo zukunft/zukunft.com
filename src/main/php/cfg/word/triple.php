@@ -2024,7 +2024,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
      * @param bool $use_func if true a predefined function is used that also creates the log entries
      * @return string an empty string if everything is fine otherwise the message that should be shown to the user
      */
-    function save(bool $use_func = false): string
+    function save(?bool $use_func = false): string
     {
         log_debug($this->dsp_id());
 

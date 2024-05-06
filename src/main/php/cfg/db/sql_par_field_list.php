@@ -278,6 +278,47 @@ class sql_par_field_list
     }
 
     /**
+     * create the sql call parameter type statement part
+     * @param sql $sc
+     * @return string
+     */
+    function par_types(sql $sc): string
+    {
+        $sql = '';
+        foreach ($this->lst as $key => $fld) {
+            if ($sql != '') {
+                $sql .= ', ';
+            }
+            $val_typ = $sc->par_type_to_postgres($fld->type);
+            $sql .= $val_typ;
+        }
+        return $sql;
+    }
+
+    /**
+     * create the sql call parameter symbol statement part
+     * @param sql $sc
+     * @return string
+     */
+    function par_vars(sql $sc): string
+    {
+        $sql = '';
+        $pos = 1;
+        foreach ($this->lst as $key => $fld) {
+            if ($sql != '') {
+                $sql .= ', ';
+            }
+            if ($sc->db_type == sql_db::POSTGRES) {
+                $sql .= '$' . $pos;
+            } else {
+                $sql .= '?';
+            }
+            $pos++;
+        }
+        return $sql;
+    }
+
+    /**
      * create the sql function call parameter statement
      * @param sql $sc
      * @return string

@@ -609,6 +609,9 @@ class sandbox_named extends sandbox
             $sc = $db_con->sql_creator();
             $qp = $this->sql_insert($sc, new sql_type_list([sql_type::LOG]));
             $usr_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id());
+            if ($usr_msg->is_ok()) {
+                $this->id = $usr_msg->get_row_id();
+            }
             $result->add($usr_msg);
         } else {
 
@@ -1144,11 +1147,21 @@ class sandbox_named extends sandbox
         $qp->sql = $qp_chg->sql . $sql . ';';
         $qp->par = $par_lst_out->values();
 
-        $qp->call = ' ' . sql::SELECT . ' ' . $qp_chg->name . ' (';
-
-        $call_val_str = $par_lst_out->par_sql($sc);
-
-        $qp->call .= $call_val_str . ');';
+        // create the call sql statement
+        $qp->call_name = $qp_chg->name . '_call';
+        $qp->call = ' ' . sql::PREPARE . ' ' . $qp_chg->name . '_call';
+        if ($sc->db_type == sql_db::POSTGRES) {
+            $qp->call .= ' (' . $par_lst_out->par_types($sc) . ') ' . sql::AS . ' ';
+        } else {
+            $qp->call .= ' ' . sql::FROM . " '";
+        }
+        $qp->call .= sql::SELECT . ' ' . $qp_chg->name;
+        $qp->call .= ' (' . $par_lst_out->par_vars($sc) . ')';
+        if ($sc->db_type == sql_db::POSTGRES) {
+            $qp->call .= ';';
+        } else {
+            $qp->call .= "';";
+        }
 
         return $qp;
     }

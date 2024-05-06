@@ -885,7 +885,7 @@ const BASE_CODE_LINK_FILES = [
 ];
 
 // list of classes that use a database table but where the changes do not need to be logged
-const CLASSES_NO_CHANGE_LOG =[
+const CLASSES_NO_CHANGE_LOG = [
     sys_log_status::class,
     sys_log_function::class,
     sys_log_type::class,

@@ -255,6 +255,13 @@ class sql_db
         user_profile_list::class,
         user_profile::class
     ];
+    // classes which should use the "with log" function for saving data
+    const CLASSES_USE_WITH_LOG_FUNC_FOR_SAVE = [
+        word::class,
+        source::class,
+        formula::class,
+    ];
+
 
     // classes that use a sql write script with log write
     const DB_WRITE_LOG_SCRIPT_CLASSES = [
@@ -1969,6 +1976,7 @@ class sql_db
         string $sql_name = '',
         array  $sql_array = array(),
         string $sql_call = '',
+        string $sql_call_name = '',
         int    $log_level = sys_log_level::ERROR
     ): \PgSql\Result|mysqli_result
     {
@@ -1978,7 +1986,7 @@ class sql_db
 
         // Postgres part
         if ($this->db_type == sql_db::POSTGRES) {
-            $result = $this->exe_postgres($sql, $sql_name, $sql_array, $sql_call, $log_level);            // check database connection
+            $result = $this->exe_postgres($sql, $sql_name, $sql_array, $sql_call, $sql_call_name, $log_level);            // check database connection
         } elseif ($this->db_type == sql_db::MYSQL) {
             $result = $this->exe_mysql($sql, $sql_name, $sql_array, $sql_call, $log_level);            // check database connection
         } else {
@@ -2029,6 +2037,7 @@ class sql_db
         string $sql_name = '',
         array  $sql_array = array(),
         string $sql_call = '',
+        string $sql_call_name = '',
         int    $log_level = sys_log_level::ERROR
     ): \PgSql\Result
     {
@@ -2080,7 +2089,15 @@ class sql_db
                 $pg_array[] = '}';
                 */
                 if ($sql_call != '') {
-                    $result = pg_query($this->postgres_link, $sql_call);
+                    if (!$this->has_query($sql_call)) {
+                        $result = pg_query($this->postgres_link, $sql_call);
+                        if ($result === false) {
+                            throw new Exception('Database error ' . pg_last_error($this->postgres_link) . ' when preparing ' . $sql);
+                        } else {
+                            $this->prepared_sql_names[] = $sql_call;
+                        }
+                    }
+                    $result = pg_execute($this->postgres_link, $sql_call_name, $sql_array);
                 } else {
                     $result = pg_execute($this->postgres_link, $sql_name, $sql_array);
                 }
@@ -3681,18 +3698,14 @@ class sql_db
         $result = new user_message();
         $err_msg = 'Insert of ' . $description . ' failed.';
         try {
-            $sql_result = $this->exe($qp->sql, $qp->name, $qp->par, $qp->call);
+            $sql_result = $this->exe($qp->sql, $qp->name, $qp->par, $qp->call, $qp->call_name);
             $db_id = 0;
             if ($this->db_type == sql_db::POSTGRES) {
                 $sql_error = pg_result_error($sql_result);
                 if ($sql_error != '') {
                     log_err($sql_error . ' while executing ' . $qp->sql);
                 } else {
-                    if ($qp->call == '') {
-                        $db_id = pg_fetch_array($sql_result)[0];
-                    } else {
-                        $db_id = pg_fetch_array($sql_result)[0];
-                    }
+                    $db_id = pg_fetch_array($sql_result)[0];
                 }
             } else {
                 $db_id = mysqli_fetch_array($sql_result, MYSQLI_BOTH);

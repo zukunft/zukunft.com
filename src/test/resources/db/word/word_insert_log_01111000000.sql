@@ -39,13 +39,7 @@ BEGIN
 END
 $$ LANGUAGE plpgsql;
 
+PREPARE word_insert_log_01111000000_call
+    (text, bigint, smallint, smallint, smallint, smallint, text, smallint, bigint) AS
 SELECT word_insert_log_01111000000
-       ('Mathematics'::text,
-        1::bigint,
-        1::smallint,
-        10::smallint,
-        9::smallint,
-        11::smallint,
-        'Mathematics is an area of knowledge that includes the topics of numbers and formulas'::text,
-        12::smallint,
-        1::bigint);
+    ($1,$2, $3, $4, $5, $6, $7, $8, $9);

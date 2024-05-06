@@ -24,13 +24,5 @@ BEGIN
 
 END;
 
-SELECT word_insert_log_11111000000_user
-       (1,
-        1,
-        10,
-        'Mathematics',
-        1,
-        11,
-        'Mathematics is an area of knowledge that includes the topics of numbers and formulas',
-        12,
-        1);
+PREPARE word_insert_log_11111000000_user_call FROM
+    'SELECT word_insert_log_11111000000_user (?,?,?,?,?,?,?,?,?)';

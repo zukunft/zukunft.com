@@ -17,9 +17,7 @@ BEGIN
 END
 $$ LANGUAGE plpgsql;
 
-SELECT formula_insert_log_11100000000000_user
-       (1::bigint,
-        1::smallint,
-        30::smallint,
-        '"one" = "millions" * 1000000'::text,
-        0::bigint);
+PREPARE formula_insert_log_11100000000000_user_call
+        (bigint,smallint,smallint,text,bigint) AS
+    SELECT formula_insert_log_11100000000000_user
+        ($1,$2,$3,$4,$5);

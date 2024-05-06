@@ -48,6 +48,7 @@ class sql_par
     public string $name;    // the unique name of the SQL statement
     public array $par;      // the list of the parameters used for the execution
     public string $call;    // the sql call for function sql statements
+    public string $call_name;// the sql call name
     public array $par_name_lst; // the list of the parameters names to reuse already added parameters
     public array $par_type_lst; // the list of the parameters types
     public string $ext;     // the extension used e.g. to decide if the index is int or string
@@ -105,6 +106,7 @@ class sql_par
         $this->ext = $ext;
         $this->typ = $tbl_typ;
         $this->call = '';
+        $this->call_name = '';
     }
 
     /**
