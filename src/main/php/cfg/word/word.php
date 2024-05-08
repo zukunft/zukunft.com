@@ -146,7 +146,7 @@ class word extends sandbox_typed
     // list of fields that CAN be changed by the user
     const FLD_LST_USER_CAN_CHANGE = array(
         [self::FLD_PLURAL, self::FLD_PLURAL_SQLTYP, sql_field_default::NULL, sql::INDEX, '', self::FLD_PLURAL_COM],
-        [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQLTYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
+        [sandbox_named::FLD_DESCRIPTION, sandbox_named::FLD_DESCRIPTION_SQLTYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
         [phrase::FLD_TYPE, phrase::FLD_TYPE_SQLTYP, sql_field_default::NULL, sql::INDEX, phrase_type::class, self::FLD_TYPE_COM],
         [self::FLD_VIEW, self::FLD_VIEW_SQLTYP, sql_field_default::NULL, sql::INDEX, view::class, self::FLD_VIEW_COM],
         [self::FLD_VALUES, self::FLD_VALUES_SQLTYP, sql_field_default::NULL, '', '', self::FLD_VALUES_COM],

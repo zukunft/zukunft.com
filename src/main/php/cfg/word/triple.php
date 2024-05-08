@@ -57,6 +57,7 @@ include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_link_typed.php';
 include_once SERVICE_EXPORT_PATH . 'triple_exp.php';
 
+use cfg\db\sql_par_field_list;
 use cfg\db\sql_type_list;
 use shared\types\protection_type as protect_type_shared;
 use shared\types\share_type as share_type_shared;
@@ -103,14 +104,18 @@ class triple extends sandbox_link_typed implements JsonSerializable
     const FLD_NAME = 'triple_name';
     const FLD_NAME_GIVEN_COM = 'the unique name manually set by the user, which can be null if the generated name should be used';
     const FLD_NAME_GIVEN = 'name_given';
+    const FLD_NAME_GIVEN_SQLTYP = sql_field_type::NAME;
     const FLD_NAME_AUTO_COM = 'the generated name is saved in the database for database base unique check based on the phrases and verb, which can be overwritten by the given name';
     const FLD_NAME_AUTO = 'name_generated';
+    const FLD_NAME_AUTO_SQLTYP = sql_field_type::NAME;
     const FLD_DESCRIPTION_COM = 'text that should be shown to the user in case of mouseover on the triple name';
     const FLD_DESCRIPTION_SQLTYP = sql_field_type::TEXT;
     const FLD_VIEW_COM = 'the default mask for this triple';
     const FLD_VIEW = 'view_id';
+    const FLD_VIEW_SQLTYP = sql_field_type::INT;
     const FLD_VALUES_COM = 'number of values linked to the word, which gives an indication of the importance';
     const FLD_VALUES = 'values';
+    const FLD_VALUES_SQLTYP = sql_field_type::INT;
     const FLD_INACTIVE_COM = 'true if the word is not yet active e.g. because it is moved to the prime words with a 16 bit id';
     const FLD_INACTIVE = 'inactive';
     const FLD_CODE_ID_COM = 'to link coded functionality to a specific triple e.g. to get the values of the system configuration';
@@ -131,8 +136,8 @@ class triple extends sandbox_link_typed implements JsonSerializable
     // list of fields that CAN be changed by the user
     const FLD_LST_USER_CAN_CHANGE = array(
         [self::FLD_NAME, sql_field_type::NAME, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_COM],
-        [self::FLD_NAME_GIVEN, sql_field_type::NAME, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_GIVEN_COM],
-        [self::FLD_NAME_AUTO, sql_field_type::NAME, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_AUTO_COM],
+        [self::FLD_NAME_GIVEN, self::FLD_NAME_GIVEN_SQLTYP, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_GIVEN_COM],
+        [self::FLD_NAME_AUTO, self::FLD_NAME_AUTO_SQLTYP, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_AUTO_COM],
         [sandbox_named::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQLTYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
         [self::FLD_COND_ID, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_COND_ID_COM],
         [phrase::FLD_TYPE, phrase::FLD_TYPE_SQLTYP, sql_field_default::NULL, sql::INDEX, phrase_type::class, word::FLD_TYPE_COM],
@@ -377,6 +382,14 @@ class triple extends sandbox_link_typed implements JsonSerializable
     }
 
     /**
+     * @return int the id of the default view for this triple or null if no view is preferred
+     */
+    function verb_id(): int
+    {
+        return $this->verb->id();
+    }
+
+    /**
      * set the "from" phrase of this triple
      * e.g. "city" for "Zurich (city)" based on "Zurich" (from) "is a" (verb) "city" (to)
      *
@@ -524,6 +537,18 @@ class triple extends sandbox_link_typed implements JsonSerializable
         return $this->type_id;
     }
 
+    /**
+     * @return int the id of the default view for this triple or null if no view is preferred
+     */
+    function view_id(): int
+    {
+        if ($this->view == null) {
+            return 0;
+        } else {
+            return $this->view->id();
+        }
+    }
+
 
     /*
      * preloaded
@@ -579,6 +604,21 @@ class triple extends sandbox_link_typed implements JsonSerializable
             $result = true;
         }
         return $result;
+    }
+
+    function from_field(): string
+    {
+        return self::FLD_FROM;
+    }
+
+    function type_field(): string
+    {
+        return verb::FLD_ID;
+    }
+
+    function to_field(): string
+    {
+        return self::FLD_TO;
     }
 
 
@@ -1617,9 +1657,18 @@ class triple extends sandbox_link_typed implements JsonSerializable
                 $this->usr_cfg_id = $db_row[self::FLD_ID];
             }
             if (!$this->has_usr_cfg()) {
-                // create an entry in the user sandbox
-                $db_con->set_class(triple::class, true);
-                $log_id = $db_con->insert_old(array(self::FLD_ID, user::FLD_ID), array($this->id(), $this->user()->id()));
+                if ($this->sql_write_prepared()) {
+                    $sc = $db_con->sql_creator();
+                    $qp = $this->sql_insert($sc);
+                    $usr_msg = $db_con->insert($qp, 'add ' . $this->dsp_id());
+                    if ($usr_msg->is_ok()) {
+                        $log_id = $usr_msg->get_row_id();
+                    }
+                } else {
+                    // create an entry in the user sandbox
+                    $db_con->set_class(triple::class, true);
+                    $log_id = $db_con->insert_old(array(self::FLD_ID, user::FLD_ID), array($this->id(), $this->user()->id()));
+                }
                 if ($log_id <= 0) {
                     log_err('Insert of user_triple failed.');
                     $result = false;
@@ -1988,9 +2037,18 @@ class triple extends sandbox_link_typed implements JsonSerializable
         $log = $this->log_link_add();
         if ($log->id() > 0) {
             // insert the new triple
-            $db_con->set_class(triple::class);
-            $this->set_id($db_con->insert_old(array("from_phrase_id", "verb_id", "to_phrase_id", "user_id"),
-                array($this->fob->id(), $this->verb->id(), $this->tob->id(), $this->user()->id())));
+            if ($this->sql_write_prepared()) {
+                $sc = $db_con->sql_creator();
+                $qp = $this->sql_insert($sc);
+                $usr_msg = $db_con->insert($qp, 'add ' . $this->dsp_id());
+                if ($usr_msg->is_ok()) {
+                    $this->set_id($usr_msg->get_row_id());
+                }
+            } else {
+                $db_con->set_class(triple::class);
+                $this->set_id($db_con->insert_old(array("from_phrase_id", "verb_id", "to_phrase_id", "user_id"),
+                    array($this->fob->id(), $this->verb->id(), $this->tob->id(), $this->user()->id())));
+            }
             // TODO make sure on all add functions that the database object is always set
             //array($this->fob->id(), $this->verb->id() , $this->tob->id(), $this->user()->id()));
             if ($this->id() > 0) {
@@ -2021,15 +2079,24 @@ class triple extends sandbox_link_typed implements JsonSerializable
 
     /**
      * update a triple in the database or create a user triple
-     * @param bool $use_func if true a predefined function is used that also creates the log entries
+     * @param bool|null $use_func if true a predefined function is used that also creates the log entries
      * @return string an empty string if everything is fine otherwise the message that should be shown to the user
      */
-    function save(?bool $use_func = false): string
+    function save(?bool $use_func = null): string
     {
         log_debug($this->dsp_id());
 
         global $db_con;
         $html = new html_base();
+
+        // decide which db write method should be used
+        if ($use_func === null) {
+            if (in_array($this::class, sql_db::CLASSES_USE_WITH_LOG_FUNC_FOR_SAVE)) {
+                $use_func = true;
+            } else {
+                $use_func = false;
+            }
+        }
 
         // check the preserved names
         $result = $this->check_preserved();
@@ -2088,7 +2155,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
             if ($this->id() == 0) {
                 $result .= $this->is_name_used_msg($this->name());
                 if ($result == '') {
-                    $result .= $this->add()->get_last_message();
+                    $result .= $this->add($use_func)->get_last_message();
                     if ($result != '') {
                         log_info($result);
                     }
@@ -2174,6 +2241,192 @@ class triple extends sandbox_link_typed implements JsonSerializable
 
         return $result;
     }
+
+
+    /*
+     * sql write
+     */
+
+    /**
+     * create the sql statement to add a new triple to the database
+     * always all fields are included in the query to be able to remove overwrites with a null value
+     *
+     * @param sql $sc with the target db_type set
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     */
+    function sql_insert(
+        sql           $sc,
+        sql_type_list $sc_par_lst = new sql_type_list([])
+    ): sql_par
+    {
+        // fields and values that the word has additional to the standard named user sandbox object
+        $wrd_empty = $this->clone_reset();
+        // for a new word the owner should be set, so remove the user id to force writing the user
+        $wrd_empty->set_user($this->user()->clone_reset());
+        $sc_par_lst->add(sql_type::INSERT);
+        $fvt_lst = $this->db_changed_list($wrd_empty, $sc_par_lst);
+        $all_fields = $this->db_fields_all($sc_par_lst);
+        return parent::sql_insert_named($sc, $fvt_lst, $all_fields, $sc_par_lst);
+    }
+
+    /**
+     * create the sql statement to update a triple in the database
+     *
+     * @param sql $sc with the target db_type set
+     * @param sandbox|triple $db_row the word with the database values before the update
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     */
+    function sql_update(sql $sc, sandbox|triple $db_row, sql_type_list $sc_par_lst = new sql_type_list([])): sql_par
+    {
+        // get the field names, values and parameter types that have been changed
+        // and that needs to be updated in the database
+        // the db_* child function call the corresponding parent function
+        // including the sql parameters for logging
+        $fld_lst = $this->db_changed_list($db_row, $sc_par_lst);
+        $all_fields = $this->db_fields_all($sc_par_lst);
+        // unlike the db_* function the sql_update_* parent function is called directly
+        return parent::sql_update_named($sc, $fld_lst, $all_fields, $sc_par_lst);
+    }
+
+
+    /*
+     * sql write fields
+     */
+
+    /**
+     * get a list of all database fields that might be changed
+     * excluding the internal fields e.g. the database id
+     * field list must be corresponding to the db_fields_changed fields
+     *
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return array list of all database field names that have been updated
+     */
+    function db_fields_all(sql_type_list $sc_par_lst): array
+    {
+        return array_merge(
+            parent::db_all_fields_named_link($sc_par_lst),
+            [verb::FLD_ID,
+                self::FLD_NAME_GIVEN,
+                self::FLD_NAME_AUTO,
+                self::FLD_VALUES,
+                self::FLD_VIEW],
+            parent::db_fields_all_sandbox()
+        );
+    }
+
+    /**
+     * get a list of database field names, values and types that have been updated
+     *
+     * @param sandbox|triple $sbx the compare value to detect the changed fields
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
+     */
+    function db_changed_list(sandbox|triple $sbx, sql_type_list $sc_par_lst): sql_par_field_list
+    {
+        global $change_field_list;
+
+        $sc = new sql();
+        $do_log = $sc_par_lst->and_log();
+        $usr_tbl = $sc_par_lst->is_usr_tbl();
+        $table_id = $sc->table_id($this::class);
+
+        // should be corresponding with the list of triple object vars
+        $lst = parent::db_changed_fields_named_link($sbx, $sc_par_lst);
+        // the link type cannot be changed by the user, because this would be another link
+        if (!$usr_tbl) {
+            if ($sbx->verb_id() <> $this->verb_id()) {
+                if ($do_log) {
+                    $lst->add_field(
+                        sql::FLD_LOG_FIELD_PREFIX . verb::FLD_ID,
+                        $change_field_list->id($table_id . verb::FLD_ID),
+                        change::FLD_FIELD_ID_SQLTYP
+                    );
+                }
+                $lst->add_field(
+                    verb::FLD_ID,
+                    $this->verb_id(),
+                    type_object::FLD_ID_SQLTYP,
+                    $sbx->verb_id()
+                );
+            }
+        }
+        if ($sbx->name_given() <> $this->name_given()) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_NAME_GIVEN,
+                    $change_field_list->id($table_id . self::FLD_NAME_GIVEN),
+                    change::FLD_FIELD_ID_SQLTYP
+                );
+            }
+            if ($sbx->name_given() == '') {
+                $old_name = null;
+            } else {
+                $old_name = $sbx->name_given();
+            }
+            $lst->add_field(
+                self::FLD_NAME_GIVEN,
+                $this->name_given(),
+                self::FLD_NAME_GIVEN_SQLTYP,
+                $old_name
+            );
+        }
+        if ($sbx->name_generated() <> $this->name_generated()) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_NAME_AUTO,
+                    $change_field_list->id($table_id . self::FLD_NAME_AUTO),
+                    change::FLD_FIELD_ID_SQLTYP
+                );
+            }
+            if ($sbx->name_generated() == '') {
+                $old_name = null;
+            } else {
+                $old_name = $sbx->name_generated();
+            }
+            $lst->add_field(
+                self::FLD_NAME_AUTO,
+                $this->name_generated(),
+                self::FLD_NAME_AUTO_SQLTYP,
+                $old_name
+            );
+        }
+        // TODO rename to usage
+        if ($sbx->values <> $this->values) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_VALUES,
+                    $change_field_list->id($table_id . self::FLD_VALUES),
+                    change::FLD_FIELD_ID_SQLTYP
+                );
+            }
+            $lst->add_field(
+                self::FLD_VALUES,
+                $this->values,
+                self::FLD_VALUES_SQLTYP,
+                $sbx->values
+            );
+        }
+        if ($sbx->view_id() <> $this->view_id()) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_VIEW,
+                    $change_field_list->id($table_id . self::FLD_VIEW),
+                    change::FLD_FIELD_ID_SQLTYP
+                );
+            }
+            $lst->add_field(
+                self::FLD_VIEW,
+                $this->view_id(),
+                self::FLD_VIEW_SQLTYP,
+                $sbx->view_id()
+            );
+        }
+        // TODO add ref list
+        return $lst->merge($this->db_changed_sandbox_list($sbx, $sc_par_lst));
+    }
+
 
 
     /*

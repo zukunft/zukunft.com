@@ -7,6 +7,7 @@ include_once API_WORD_PATH . 'triple.php';
 use api\word\triple as triple_api;
 use api\word\word as word_api;
 use cfg\db\sql;
+use cfg\db\sql_type;
 use html\word\triple as triple_dsp;
 use cfg\db\sql_db;
 use cfg\triple;
@@ -28,7 +29,7 @@ class triple_tests
         $json_file = 'unit/triple/pi.json';
         $usr->set_id(1);
 
-        $t->header('Unit tests of the triple class (src/main/php/model/word/triple.php)');
+        $t->header('triple unit tests');
 
         $t->subheader('triple sql setup');
         $trp = $t->triple();
@@ -37,13 +38,14 @@ class triple_tests
         $t->assert_sql_foreign_key_create($trp);
 
 
-        $t->subheader('word sql read');
+        $t->subheader('triple sql read');
         $trp = new triple($usr);
         $t->assert_sql_by_id($sc, $trp);
         $t->assert_sql_by_name($sc, $trp);
         $t->assert_sql_by_link($sc, $trp);
         $this->assert_sql_by_name_generated($db_con, $trp, $t);
 
+        $t->subheader('triple sql read default and user changes');
         // sql to load the triple by id
         $trp = new triple($usr);
         $trp->set_id(2);
@@ -56,9 +58,12 @@ class triple_tests
         $t->assert_sql_standard($sc, $trp);
 
         $t->subheader('triple sql write');
+        $trp = $t->triple();
         // TODO activate db write
-        //$t->assert_sql_insert($sc, $trp);
-        //$t->assert_sql_insert($sc, $trp, [sql_type::USER]);
+        $t->assert_sql_insert($sc, $trp);
+        $t->assert_sql_insert($sc, $trp, [sql_type::USER]);
+        //$t->assert_sql_insert($sc, $trp, [sql_type::LOG]);
+        //$t->assert_sql_insert($sc, $trp, [sql_type::LOG, sql_type::USER]);
         // TODO activate db write
         //$t->assert_sql_update($sc, $trp);
         //$t->assert_sql_update($sc, $trp, [sql_type::USER]);

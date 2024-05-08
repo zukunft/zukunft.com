@@ -16,6 +16,9 @@ use html\phrase\phrase_group as phrase_group_dsp;
     but first this needs to be fixed:
     TODO Substeps: create insert, update and delete sql create tests for the main objects
                    include the log in the prepared sql write statement
+    TODO combine db_row and std_row for with-log use of update word
+    TODO use with-log for insert links e.g. triple
+    TODO use with-log for insert values
     TODO Step 26: deprecate the get_old in result
     TODO Substeps: create insert, update and delete sql create tests for the remaining objects
     TODO Step 25: deprecate the get_old in group_list

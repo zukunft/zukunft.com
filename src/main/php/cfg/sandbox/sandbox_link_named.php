@@ -31,8 +31,12 @@
 
 namespace cfg;
 
+use cfg\db\sql;
 use cfg\db\sql_db;
+use cfg\db\sql_par_field_list;
+use cfg\db\sql_type_list;
 use cfg\export\sandbox_exp;
+use cfg\log\change;
 
 include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
 
@@ -110,6 +114,16 @@ class sandbox_link_named extends sandbox_link
     function name(): string
     {
         return $this->name;
+    }
+
+    /**
+     * dummy function that should always be overwritten by the child object
+     * @return string
+     */
+    function name_field(): string
+    {
+        log_err('function name_field() missing in class ' . $this::class);
+        return '';
     }
 
 
@@ -196,6 +210,84 @@ class sandbox_link_named extends sandbox_link
             }
         }
         return $result;
+    }
+
+
+    /*
+     * sql write fields
+     */
+
+    /**
+     * get a list of all database fields that might be changed of the named link object
+     * excluding the internal fields e.g. the database id
+     * field list must be corresponding to the db_fields_changed fields
+     *
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return array list of all database field names that have been updated
+     */
+    function db_all_fields_named_link(sql_type_list $sc_par_lst): array
+    {
+        return array_merge(
+            parent::db_all_fields_link($sc_par_lst),
+            [$this->name_field(),
+                sandbox_named::FLD_DESCRIPTION
+            ]);
+    }
+
+    /**
+     * get a list of database field names, values and types that have been updated
+     * of the object to combine the list with the list of the child object e.g. word
+     *
+     * @param sandbox|sandbox_link_named $sbx the same named sandbox as this to compare which fields have been changed
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par_field_list with the field names of the object and any child object
+     */
+    function db_changed_fields_named_link(sandbox|sandbox_link_named $sbx, sql_type_list $sc_par_lst): sql_par_field_list
+    {
+        global $change_field_list;
+
+        $sc = new sql();
+        $do_log = $sc_par_lst->and_log();
+        $table_id = $sc->table_id($this::class);
+
+        $lst = parent::db_changed_fields_link($sbx, $sc_par_lst);
+        // for insert statements of user sandbox rows user id fields always needs to be included
+        if ($sbx->name() <> $this->name()) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . $this->name_field(),
+                    $change_field_list->id($table_id . $this->name_field()),
+                    change::FLD_FIELD_ID_SQLTYP
+                );
+            }
+            if ($sbx->name() == '') {
+                $old_name = null;
+            } else {
+                $old_name = $sbx->name();
+            }
+            $lst->add_field(
+                $this->name_field(),
+                $this->name(),
+                sandbox_named::FLD_NAME_SQLTYP,
+                $old_name
+            );
+        }
+        if ($sbx->description <> $this->description) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . sandbox_named::FLD_DESCRIPTION,
+                    $change_field_list->id($table_id . sandbox_named::FLD_DESCRIPTION),
+                    change::FLD_FIELD_ID_SQLTYP
+                );
+            }
+            $lst->add_field(
+                sandbox_named::FLD_DESCRIPTION,
+                $this->description,
+                sandbox_named::FLD_DESCRIPTION_SQLTYP,
+                $sbx->description
+            );
+        }
+        return $lst;
     }
 
 }

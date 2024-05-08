@@ -40,8 +40,11 @@ namespace cfg;
 
 use cfg\db\sql;
 use cfg\db\sql_db;
+use cfg\db\sql_field_type;
 use cfg\db\sql_par;
+use cfg\db\sql_par_field_list;
 use cfg\db\sql_type_list;
+use cfg\log\change;
 use cfg\log\change_action;
 use cfg\log\change_link;
 use Exception;
@@ -104,6 +107,18 @@ class sandbox_link extends sandbox
         return $this->fob;
     }
 
+    /**
+     * @return int the id of the linked object
+     */
+    function from_id(): int
+    {
+        if ($this->fob == null) {
+            return 0;
+        } else {
+            return $this->fob->id();
+        }
+    }
+
     function set_tob(object $tob): void
     {
         $this->tob = $tob;
@@ -112,6 +127,18 @@ class sandbox_link extends sandbox
     function tob(): object
     {
         return $this->tob;
+    }
+
+    /**
+     * @return int the id of the linked object
+     */
+    function to_id(): int
+    {
+        if ($this->tob == null) {
+            return 0;
+        } else {
+            return $this->tob->id();
+        }
     }
 
 
@@ -635,6 +662,125 @@ class sandbox_link extends sandbox
     {
         log_warning('The dummy parent method get_similar has been called, which should never happen');
         return '';
+    }
+
+
+    /*
+     * sql write fields
+     */
+
+    /**
+     * get a list of all database fields that might be changed of the named link object
+     * excluding the internal fields e.g. the database id
+     * field list must be corresponding to the db_fields_changed fields
+     *
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return array list of all database field names that have been updated
+     */
+    function db_all_fields_link(sql_type_list $sc_par_lst): array
+    {
+        $usr_tbl = $sc_par_lst->is_usr_tbl();
+        if ($usr_tbl) {
+            return [$this::FLD_ID,
+                user::FLD_ID
+            ];
+        } else {
+            return [$this::FLD_ID,
+                user::FLD_ID,
+                $this->from_field(),
+                $this->type_field(),
+                $this->to_field()
+            ];
+        }
+    }
+
+    /**
+     * get a list of database field names, values and types that have been updated
+     * of the object to combine the list with the list of the child object e.g. word
+     *
+     * @param sandbox|sandbox_link $sbx the same named sandbox as this to compare which fields have been changed
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par_field_list with the field names of the object and any child object
+     */
+    function db_changed_fields_link(sandbox|sandbox_link $sbx, sql_type_list $sc_par_lst): sql_par_field_list
+    {
+        global $change_field_list;
+
+        $lst = new sql_par_field_list();
+        $sc = new sql();
+        $usr_tbl = $sc_par_lst->is_usr_tbl();
+        $is_insert = $sc_par_lst->is_insert();
+        $do_log = $sc_par_lst->and_log();
+        $table_id = $sc->table_id($this::class);
+
+        // for insert statements of user sandbox rows user id fields always needs to be included
+        if ($usr_tbl and $is_insert) {
+            $lst->add_field(
+                $this::FLD_ID,
+                $this->id(),
+                db_object_seq_id::FLD_ID_SQLTYP
+            );
+            $lst->add_field(
+                user::FLD_ID,
+                $this->user_id(),
+                db_object_seq_id::FLD_ID_SQLTYP
+            );
+        } else {
+            if ($sbx->user_id() <> $this->user_id()) {
+                if ($do_log) {
+                    $lst->add_field(
+                        sql::FLD_LOG_FIELD_PREFIX . user::FLD_ID,
+                        $change_field_list->id($table_id . user::FLD_ID),
+                        change::FLD_FIELD_ID_SQLTYP
+                    );
+                }
+                if ($sbx->user_id() == 0) {
+                    $old_user_id = null;
+                } else {
+                    $old_user_id = $sbx->user_id();
+                }
+                $lst->add_field(
+                    user::FLD_ID,
+                    $this->user_id(),
+                    db_object_seq_id::FLD_ID_SQLTYP,
+                    $old_user_id
+                );
+            }
+        }
+        // the link type cannot be changed by the user, because this would be another link
+        if (!$usr_tbl) {
+            if ($sbx->from_id() <> $this->from_id()) {
+                if ($do_log) {
+                    $lst->add_field(
+                        sql::FLD_LOG_FIELD_PREFIX . $this->from_field(),
+                        $change_field_list->id($table_id . $this->from_field()),
+                        change::FLD_FIELD_ID_SQLTYP
+                    );
+                }
+                $lst->add_field(
+                    $this->from_field(),
+                    $this->from_id(),
+                    sql_field_type::INT,
+                    $sbx->from_id()
+                );
+            }
+            if ($sbx->to_id() <> $this->to_id()) {
+                if ($do_log) {
+                    $lst->add_field(
+                        sql::FLD_LOG_FIELD_PREFIX . $this->to_field(),
+                        $change_field_list->id($table_id . $this->to_field()),
+                        change::FLD_FIELD_ID_SQLTYP
+                    );
+                }
+                $lst->add_field(
+                    $this->to_field(),
+                    $this->to_id(),
+                    sql_field_type::INT,
+                    $sbx->to_id()
+                );
+            }
+        }
+        return $lst;
     }
 
 
