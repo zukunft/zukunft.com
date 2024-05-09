@@ -50,7 +50,7 @@ class sql_par
     public string $call;    // the sql call for function sql statements
     public string $call_name;// the sql call name
     public array $par_name_lst; // the list of the parameters names to reuse already added parameters
-    public array $par_type_lst; // the list of the parameters types
+    public sql_par_field $par_fld; //
     public string $ext;     // the extension used e.g. to decide if the index is int or string
     public sql_type $typ; // to handle table that does not have a bigint prime index
 
