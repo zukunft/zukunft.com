@@ -395,15 +395,6 @@ class sandbox_named extends sandbox
         return array($this->id_field(), $this->name_field());
     }
 
-    /**
-     * dummy function that should always be overwritten by the child object
-     * @return string
-     */
-    function name_field(): string
-    {
-        return '';
-    }
-
 
     /*
      * im- and export
@@ -945,7 +936,7 @@ class sandbox_named extends sandbox
      * @param sql_type_list $sc_par_lst_sub the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_insert_named_and_log_key_field(
+    function sql_insert_key_field(
         sql                $sc,
         sql_par            $qp,
         sql_par_field_list $fvt_lst,
@@ -1184,7 +1175,7 @@ class sandbox_named extends sandbox
      */
 
     /**
-     * get a list of all database fields that might be changed
+     * get a list of all database fields that might be changed by the user
      * excluding the internal fields e.g. the database id
      * field list must be corresponding to the db_fields_changed fields
      *

@@ -46,6 +46,7 @@ use cfg\ip_range;
 use cfg\ip_range_list;
 use cfg\job;
 use cfg\log\change;
+use cfg\log\change_action;
 use cfg\log\change_link;
 use cfg\ref;
 use cfg\result\result;
@@ -124,7 +125,9 @@ class sql
 
     // for sql functions that do the change log and the actual change with on function
     const FLD_LOG_FIELD_PREFIX = 'field_id_'; // added to the field name to include the preloaded log field id
-    const FLD_ID_NEW_PREFIX = 'new_'; // added to the field id name to remember the sequence id
+    const PAR_PREFIX = '_'; // to seperate the parameter names e.g. _word_id instead of word_id for the given parameter
+    const PAR_PREFIX_MYSQL = '@'; // for the new sequence id using MySQL
+    const PAR_NEW_ID_PREFIX = 'new_'; // added to the field id name to remember the sequence id
 
     // enum values used for the table creation
     const fld_type_ = '';
@@ -1342,6 +1345,123 @@ class sql
             $sql = ' ' . sql::FUNCTION_END_MYSQL;
         }
         return $sql;
+    }
+
+    /**
+     * create the sql function part to log the changes
+     * @param string $class the class name of the calling object
+     * @param user $usr the user who has requested the change
+     * @param array $fld_lst list of field names that have been changed
+     * @param sql_par_field_list $fvt_lst fields (with value and type) used for the change
+     * @return sql_par
+     */
+    function sql_func_log(
+        string $class,
+        user $usr,
+        array $fld_lst,
+        sql_par_field_list $fvt_lst,
+        sql_type_list $sc_par_lst
+    ): sql_par
+    {
+        // set some var names to shorten the code lines
+        $id_field = $this->id_field_name();
+        $usr_tbl = $sc_par_lst->is_usr_tbl();
+        $ext = sql::file_sep . sql::file_insert;
+        $id_fld_new = $this->var_name_new_id($sc_par_lst);
+
+        // init the result
+        $qp = new sql_par($this::class);
+        $par_lst_out = new sql_par_field_list();
+        $qp->sql = ' ';
+
+        // set the parameters for the log sql statement creation
+        $sc_log = clone $this;
+        $sc_par_lst->add(sql_type::VALUE_SELECT);
+        $sc_par_lst->add(sql_type::SELECT_FOR_INSERT);
+        $sc_par_lst->add(sql_type::INSERT_PART);
+
+        // create the log sql statements for each field
+        foreach ($fld_lst as $fld) {
+            // init the log object
+            $log = new change($usr);
+            $log->set_table_by_class($class);
+            $log->set_field($fld);
+            $log->new_value = $fvt_lst->get_value($fld);
+            $log->old_value = $fvt_lst->get_old($fld);
+
+            // create the sql for the log entry
+            $qp_log = $log->sql_insert(
+                $sc_log, $sc_par_lst, $ext . '_' . $fld, '', $fld, $id_fld_new);
+
+            // add the fields used to the list
+            // maybe later get the fields used in the change log sql from the sql
+            $qp->sql .= ' ' . $qp_log->sql . '; ';
+            $par_lst_out->add_field(
+                user::FLD_ID,
+                $fvt_lst->get_value(user::FLD_ID),
+                sql_par_type::INT);
+            $par_lst_out->add_field(
+                change_action::FLD_ID,
+                $fvt_lst->get_value(change_action::FLD_ID),
+                sql_par_type::INT_SMALL);
+            $par_lst_out->add_field(
+                sql::FLD_LOG_FIELD_PREFIX . $fld,
+                $fvt_lst->get_value(sql::FLD_LOG_FIELD_PREFIX . $fld),
+                sql_par_type::INT_SMALL);
+            $par_lst_out->add_field(
+                $fld,
+                $fvt_lst->get_value($fld),
+                $this->get_sql_par_type($fvt_lst->get_value($fld)));
+            if ($usr_tbl) {
+                $par_lst_out->add_field(
+                    $id_field,
+                    $fvt_lst->get_value($id_field),
+                    $this->get_sql_par_type($fvt_lst->get_value($id_field)));
+            }
+        }
+
+        // transfer the fields used to the calling function
+        $qp->par_fld_lst = $par_lst_out;
+
+        return $qp;
+    }
+
+    /**
+     * create the sql function variable name for the db row id e.g. _word_id
+     *
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return string the sql function var name for the row id e.g. _word_id
+     */
+    function var_name_row_id(sql_type_list $sc_par_lst): string
+    {
+        $result = $this->id_field_name();
+        $new_id_fld = $this->var_name_new_id($sc_par_lst);
+        if ($this->db_type == sql_db::POSTGRES) {
+            $result = $new_id_fld;
+        } elseif ($this->db_type == sql_db::MYSQL) {
+            if ($sc_par_lst->is_usr_tbl()) {
+                $result = self::PAR_PREFIX . $this->id_field_name();
+            } else {
+                $result = self::PAR_PREFIX_MYSQL . $new_id_fld;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * create the sql function variable name for the new sequence db row id e.g. new_word_id
+     *
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return string the sql function var name for the new sequence db row id e.g. new_word_id
+     */
+    function var_name_new_id(sql_type_list $sc_par_lst): string
+    {
+        $id_field = $this->id_field_name();
+        $result = self::PAR_NEW_ID_PREFIX . $id_field;
+        if ($sc_par_lst->is_usr_tbl()) {
+            $result = self::PAR_PREFIX . $id_field;
+        }
+        return $result;
     }
 
     /**

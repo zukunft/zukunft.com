@@ -75,6 +75,13 @@ class sql_par_field_list
         }
     }
 
+    function add_list(sql_par_field_list $fld_lst): void
+    {
+        foreach ($fld_lst->lst as $fld) {
+            $this->add($fld);
+        }
+    }
+
     function add_field(
         string                      $name,
         string|int|float|null       $value,
