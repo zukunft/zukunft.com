@@ -7,6 +7,19 @@
 
     This superclass should be used by the class word links, formula links and view link
 
+    The main sections of this object are
+    - db const:          const for the database link
+    - object vars:       the variables of this word object
+    - construct and map: including the mapping of the db row to this word object
+    - set and get:       to capsule the vars from unexpected changes
+    - sql create:        to support the initial database setup
+    - cast:              create an api object and set the vars from an api json
+    - load:              database access object (DAO) functions
+    - info:              functions to make code easier to read
+    - log:               functions to track the changes
+    - save:              manage to update the database
+    - sql write:         sql statement creation to write to the database
+
     TODO add weight with int and 100'000 as 100% because
          humans usually cannot handle more than 100'000 words
          so weight sorted list has a single place for each word
@@ -43,6 +56,7 @@ use cfg\db\sql_db;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_par_field_list;
+use cfg\db\sql_type;
 use cfg\db\sql_type_list;
 use cfg\log\change;
 use cfg\log\change_action;
@@ -54,7 +68,7 @@ class sandbox_link extends sandbox
 {
 
     /*
-     * database link
+     * db const
      */
 
     // list of fields that select the objects that should be linked
@@ -166,7 +180,7 @@ class sandbox_link extends sandbox
             $fields = array_merge($fields, sandbox::FLD_ALL_OWNER);
             // mandatory fields that can be changed the user
             $fields = array_merge($fields, $this::FLD_LST_MUST_BUT_STD_ONLY);
-            // fields that can be changed the user but are empty if the user has not done an overwrite
+            // fields that can be changed the user but are empty if the user has not overwriten the fields
             $fields = array_merge($fields, $this::FLD_LST_USER_CAN_CHANGE);
             $fields = array_merge($fields, $this::FLD_LST_NON_CHANGEABLE);
         } else {
@@ -176,7 +190,7 @@ class sandbox_link extends sandbox
             $fields = array_merge($fields, sandbox::FLD_ALL_CHANGER);
             // mandatory fields that can be changed the user
             $fields = array_merge($fields, $this::FLD_LST_MUST_BUT_USER_CAN_CHANGE);
-            // fields that can be changed the user but are empty if the user has not done an overwrite
+            // fields that can be changed the user but are empty if the user has not overwriten the fields
             $fields = array_merge($fields, $this::FLD_LST_USER_CAN_CHANGE);
         }
         if ($use_sandbox) {
@@ -187,7 +201,49 @@ class sandbox_link extends sandbox
 
 
     /*
-     * loading / database access object (DAO) functions
+     * cast
+     */
+
+    /*
+    /**
+     * set the vars of the minimal api object based on this link object
+     * @param object $api_obj frontend API object filled with the database id
+     *
+     * @return void
+    function fill_api_obj(object $api_obj): void
+    {
+        parent::fill_api_obj($api_obj);
+
+        if ($this->fob != null) {
+            $api_obj->fob = $this->fob->api_obj();
+        }
+        if ($this->tob != null) {
+            $api_obj->tob = $this->tob->api_obj();
+        }
+    }
+    */
+
+    /**
+     * fill a similar object that is extended with display interface functions
+     * @param object $dsp_obj
+     *
+     * @return void
+     */
+    function fill_dsp_obj(object $dsp_obj): void
+    {
+        parent::fill_dsp_obj($dsp_obj);
+
+        if ($this->fob != null) {
+            $dsp_obj->fob = $this->fob->dsp_obj();
+        }
+        if ($this->tob != null) {
+            $dsp_obj->tob = $this->tob->dsp_obj();
+        }
+    }
+
+
+    /*
+     * load
      */
 
     /**
@@ -268,43 +324,6 @@ class sandbox_link extends sandbox
         return '';
     }
 
-    /*
-    /**
-     * set the vars of the minimal api object based on this link object
-     * @param object $api_obj frontend API object filled with the database id
-     *
-     * @return void
-    function fill_api_obj(object $api_obj): void
-    {
-        parent::fill_api_obj($api_obj);
-
-        if ($this->fob != null) {
-            $api_obj->fob = $this->fob->api_obj();
-        }
-        if ($this->tob != null) {
-            $api_obj->tob = $this->tob->api_obj();
-        }
-    }
-    */
-
-    /**
-     * fill a similar object that is extended with display interface functions
-     * @param object $dsp_obj
-     *
-     * @return void
-     */
-    function fill_dsp_obj(object $dsp_obj): void
-    {
-        parent::fill_dsp_obj($dsp_obj);
-
-        if ($this->fob != null) {
-            $dsp_obj->fob = $this->fob->dsp_obj();
-        }
-        if ($this->tob != null) {
-            $dsp_obj->tob = $this->tob->dsp_obj();
-        }
-    }
-
 
     /*
      * info
@@ -345,11 +364,6 @@ class sandbox_link extends sandbox
         }
         return $result;
     }
-
-
-    /*
-     * information
-     */
 
     /**
      * check if the named object in the database needs to be updated
@@ -650,18 +664,76 @@ class sandbox_link extends sandbox
 
 
     /*
-     * internal
+     * sql write
      */
 
     /**
-     * dummy function definition that should not be called
-     * TODO check why it is called
-     * @return string
+     * create the sql statement to add a new named sandbox object e.g. word to the database
+     * TODO add qp merge
+     *
+     * @param sql $sc with the target db_type set
+     * @param sql_par $qp
+     * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
+     * @param string $id_fld_new
+     * @param sql_type_list $sc_par_lst_sub the parameters for the sql statement creation
+     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    protected function check_preserved(): string
+    function sql_insert_key_field(
+        sql                $sc,
+        sql_par            $qp,
+        sql_par_field_list $fvt_lst,
+        string             $id_fld_new,
+        sql_type_list      $sc_par_lst_sub = new sql_type_list([])
+    ): sql_par
     {
-        log_warning('The dummy parent method get_similar has been called, which should never happen');
-        return '';
+        // set some var names to shorten the code lines
+        $usr_tbl = $sc_par_lst_sub->is_usr_tbl();
+        $ext = sql::file_sep . sql::file_insert;
+
+        // init the function body
+        $id_field = $sc->id_field_name();
+
+        // list of parameters actually used in order of the function usage
+        $sql = '';
+        $fvt_insert = $fvt_lst->get($this->name_field());
+
+        // create the sql to insert the row
+        $fvt_insert_list = new sql_par_field_list();
+        $fvt_insert_list->add($fvt_insert);
+        $sc_insert = clone $sc;
+        $qp_insert = $this->sql_common($sc_insert, $sc_par_lst_sub, $ext);;
+        $sc_par_lst_sub->add(sql_type::SELECT_FOR_INSERT);
+        if ($sc->db_type == sql_db::MYSQL) {
+            $sc_par_lst_sub->add(sql_type::NO_ID_RETURN);
+        }
+        $qp_insert->sql = $sc_insert->create_sql_insert(
+            $fvt_insert_list, $sc_par_lst_sub, true, '', '', '', $id_fld_new);
+        $qp_insert->par = [$fvt_insert->value];
+
+        // add the insert row to the function body
+        $sql .= ' ' . $qp_insert->sql . '; ';
+
+        if ($sc->db_type == sql_db::POSTGRES) {
+            $row_id_val = $id_fld_new;
+        } elseif ($sc->db_type == sql_db::MYSQL) {
+            if ($usr_tbl) {
+                $row_id_val = '_' . $id_field;
+            } else {
+                $row_id_val = '@' . $id_fld_new;
+            }
+        } else {
+            $row_id_val = $id_field;
+        }
+
+        // get the new row id for MySQL db
+        if ($sc->db_type == sql_db::MYSQL and !$usr_tbl) {
+            $sql .= ' ' . sql::LAST_ID_MYSQL . $row_id_val . '; ';
+        }
+
+        $qp->sql = $sql;
+        $qp->par_fld = $fvt_insert;
+
+        return $qp;
     }
 
 
@@ -787,6 +859,18 @@ class sandbox_link extends sandbox
     /*
      * internal
      */
+
+    /**
+     * dummy function definition that should not be called
+     * TODO check why it is called
+     * @return string
+     */
+    protected function check_preserved(): string
+    {
+        log_warning('The dummy parent method get_similar has been called, which should never happen');
+        return '';
+    }
+
 
     /**
      * @return bool true if this sandbox object links two objects (final function)

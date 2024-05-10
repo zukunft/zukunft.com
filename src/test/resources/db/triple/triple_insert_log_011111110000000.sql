@@ -16,7 +16,7 @@ BEGIN
 
     INSERT INTO triples ( from_phrase_id, verb_id, to_phrase_id)
          SELECT          _from_phrase_id,_verb_id,_to_phrase_id
-      RETURNING         triple_id INTO new_triple_id;
+      RETURNING triple_id INTO new_triple_id;
 
     INSERT INTO change_links ( user_id, change_action_id, change_table_id, new_from_id,    new_link_id, new_to_id,   row_id)
          SELECT               _user_id,_change_action_id,_change_table_id,_from_phrase_id,_verb_id,    _to_phrase_id,new_triple_id;
@@ -31,9 +31,9 @@ BEGIN
          SELECT          _user_id,_change_action_id,_field_id_description,_description,new_triple_id ;
 
     UPDATE triples
-       SET user_id        = _user_id,
-           triple_name    = _triple_name,
-           description    = _description
+       SET user_id     = _user_id,
+           triple_name = _triple_name,
+           description = _description
      WHERE triples.triple_id = new_triple_id;
 
     RETURN new_triple_id;
