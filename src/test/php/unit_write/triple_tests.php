@@ -54,7 +54,20 @@ class triple_tests
         global $verbs;
         $lib = new library();
 
-        $t->header('Test the word link class (classes/triple.php)');
+        $t->header('triple db write tests');
+
+        $test_name = 'add triple ' . triple_api::TN_ADD_VIA_FUNC . ' via sql function ';
+        $trp = new triple($t->usr1);
+        $trp->set_name(triple_api::TN_ADD_VIA_FUNC);
+        $wrd_add_func = $t->load_word(word_api::TN_ADD_VIA_FUNC);
+        $wrd_math = $t->load_word(word_api::TN_READ);
+        $trp->set_from($wrd_add_func->phrase());
+        $trp->set_verb($verbs->get_verb(verb::IS));
+        $trp->set_to($wrd_math->phrase());
+        $trp->save(true);
+        $trp->reset();
+        $trp->load_by_name(triple_api::TN_ADD_VIA_FUNC);
+        $t->assert_true($test_name, $trp->isset());
 
         // load the main test word and verb
         $is_id = $verbs->id(verb::IS);
@@ -93,18 +106,18 @@ class triple_tests
 
         // add a triple based on the id of the added test word, verb and the parent test word
         $wrd_from = $t->test_word(word_api::TN_RENAMED);
-        $wrd = $t->test_word(word_api::TN_PARENT);
+        $wrd_to = $t->test_word(word_api::TN_PARENT);
         $trp = new triple($t->usr1);
         $trp->fob->set_id($wrd_from->id());
         $trp->verb->set_id($is_id);
-        $trp->tob->set_id($wrd->id());
-        if ($wrd_from->id() <> 0 and $is_id and $wrd->id() <> 0) {
+        $trp->tob->set_id($wrd_to->id());
+        if ($wrd_from->id() <> 0 and $is_id and $wrd_to->id() <> 0) {
             $result = $trp->save();
         } else {
             $result = 'id missing';
         }
         $target = '';
-        $t->display('triple->save "' . $wrd_from->name() . '" ' . verb::IS . ' "' . $wrd->name() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('triple->save "' . $wrd_from->name() . '" ' . verb::IS . ' "' . $wrd_to->name() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         $t->subheader("... and also testing the user log link class (classes/user_log_link.php)");
 
@@ -113,21 +126,21 @@ class triple_tests
         $log->set_table(change_table_list::TRIPLE);
         $log->new_from_id = $wrd_from->id();
         $log->new_link_id = $is_id;
-        $log->new_to_id = $wrd->id();
+        $log->new_to_id = $wrd_to->id();
         $result = $log->dsp_last(true);
         $target = 'zukunft.com system test linked ' . word_api::TN_RENAMED . ' to ' . word_api::TN_PARENT;
-        $t->display('triple->save logged for "' . $wrd_from->name() . '" ' . verb::IS . ' "' . $wrd->name() . '"', $target, $result);
+        $t->display('triple->save logged for "' . $wrd_from->name() . '" ' . verb::IS . ' "' . $wrd_to->name() . '"', $target, $result);
 
         // ... check if the link is shown correctly
 
         $trp = new triple($t->usr1);
-        $trp->load_by_link_id($wrd_from->id(), $is_id, $wrd->id());
+        $trp->load_by_link_id($wrd_from->id(), $is_id, $wrd_to->id());
         $result = $trp->name();
         $target = word_api::TN_RENAMED . ' (' . word_api::TN_PARENT . ')';
         $t->display('triple->load', $target, $result);
         // ... check if the link is shown correctly also for the second user
         $lnk2 = new triple($t->usr2);
-        $lnk2->load_by_link_id($wrd_from->id(), $is_id, $wrd->id());
+        $lnk2->load_by_link_id($wrd_from->id(), $is_id, $wrd_to->id());
         $result = $lnk2->name();
         $target = word_api::TN_RENAMED . ' (' . word_api::TN_PARENT . ')';
         $t->display('triple->load for user "' . $t->usr2->name . '"', $target, $result);
@@ -136,29 +149,29 @@ class triple_tests
 
         // if second user removes the new link
         $trp = new triple($t->usr2);
-        $trp->load_by_link_id($wrd_from->id(), $is_id, $wrd->id());
+        $trp->load_by_link_id($wrd_from->id(), $is_id, $wrd_to->id());
         $msg = $trp->del();
         $result = $msg->get_last_message();
         $target = '';
-        $t->display('triple->del "' . $wrd_from->name() . '" ' . verb::IS . ' "' . $wrd->name() . '" by user "' . $t->usr2->name . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('triple->del "' . $wrd_from->name() . '" ' . verb::IS . ' "' . $wrd_to->name() . '" by user "' . $t->usr2->name . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // ... check if the removal of the link for the second user has been logged
         $log = new change_link($t->usr2);
         $log->set_table(change_table_list::TRIPLE);
         $log->old_from_id = $wrd_from->id();
         $log->old_link_id = $is_id;
-        $log->old_to_id = $wrd->id();
+        $log->old_to_id = $wrd_to->id();
         $result = $log->dsp_last(true);
         $target = 'zukunft.com system test partner unlinked ' . word_api::TN_RENAMED . ' from ' . word_api::TN_PARENT . '';
-        $t->display('triple->del logged for "' . $wrd_from->name() . '" ' . verb::IS . ' "' . $wrd->name() . '" and user "' . $t->usr2->name . '"', $target, $result);
+        $t->display('triple->del logged for "' . $wrd_from->name() . '" ' . verb::IS . ' "' . $wrd_to->name() . '" and user "' . $t->usr2->name . '"', $target, $result);
 
 
         // ... check if the link is really not used any more for the second user
         $lnk2 = new triple($t->usr2);
-        $lnk2->load_by_link_id($wrd_from->id(), $is_id, $wrd->id());
+        $lnk2->load_by_link_id($wrd_from->id(), $is_id, $wrd_to->id());
         $result = $lnk2->name();
         $target = '';
-        $t->display('triple->load "' . $wrd_from->name() . '" ' . verb::IS . ' "' . $wrd->name() . '" for user "' . $t->usr2->name . '" not any more', $target, $result, $t::TIMEOUT_LIMIT_PAGE_SEMI);
+        $t->display('triple->load "' . $wrd_from->name() . '" ' . verb::IS . ' "' . $wrd_to->name() . '" for user "' . $t->usr2->name . '" not any more', $target, $result, $t::TIMEOUT_LIMIT_PAGE_SEMI);
 
         // ... check if the value update for the second user has been triggered
 
@@ -166,37 +179,37 @@ class triple_tests
 
         // ... check if the link is still used for the first user
         $trp = new triple($t->usr1);
-        $trp->load_by_link_id($wrd_from->id(), $is_id, $wrd->id());
+        $trp->load_by_link_id($wrd_from->id(), $is_id, $wrd_to->id());
         $result = $trp->name();
         $target = '' . word_api::TN_RENAMED . ' (' . word_api::TN_PARENT . ')';
-        $t->display('triple->load of "' . $wrd_from->name() . '" ' . verb::IS . ' "' . $wrd->name() . '" is still used for user "' . $t->usr1->name . '"', $target, $result, $t::TIMEOUT_LIMIT_PAGE_SEMI);
+        $t->display('triple->load of "' . $wrd_from->name() . '" ' . verb::IS . ' "' . $wrd_to->name() . '" is still used for user "' . $t->usr1->name . '"', $target, $result, $t::TIMEOUT_LIMIT_PAGE_SEMI);
 
         // ... check if the values for the first user are still the same
 
         // if the first user also removes the link, both records should be deleted
         $trp = new triple($t->usr1);
-        $trp->load_by_link_id($wrd_from->id(), $is_id, $wrd->id());
+        $trp->load_by_link_id($wrd_from->id(), $is_id, $wrd_to->id());
         $msg = $trp->del();
         $result = $msg->get_last_message();
         $target = '';
-        $t->display('triple->del "' . $wrd_from->name() . '" ' . verb::IS . ' "' . $wrd->name() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('triple->del "' . $wrd_from->name() . '" ' . verb::IS . ' "' . $wrd_to->name() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check the correct logging
         $log = new change_link($t->usr1);
         $log->set_table(change_table_list::TRIPLE);
         $log->old_from_id = $wrd_from->id();
         $log->old_link_id = $is_id;
-        $log->old_to_id = $wrd->id();
+        $log->old_to_id = $wrd_to->id();
         $result = $log->dsp_last(true);
         $target = 'zukunft.com system test unlinked ' . word_api::TN_RENAMED . ' from ' . word_api::TN_PARENT;
-        $t->display('triple->del logged for "' . $wrd_from->name() . '" ' . verb::IS . ' "' . $wrd->name() . '" and user "' . $t->usr1->name . '"', $target, $result);
+        $t->display('triple->del logged for "' . $wrd_from->name() . '" ' . verb::IS . ' "' . $wrd_to->name() . '" and user "' . $t->usr1->name . '"', $target, $result);
 
         // check if the formula is not used any more for both users
         $trp = new triple($t->usr1);
-        $trp->load_by_link_id($wrd_from->id(), $is_id, $wrd->id());
+        $trp->load_by_link_id($wrd_from->id(), $is_id, $wrd_to->id());
         $result = $trp->name();
         $target = '';
-        $t->display('triple->load of "' . $wrd_from->name() . '" ' . verb::IS . ' "' . $wrd->name() . '" for user "' . $t->usr1->name . '" not used any more', $target, $result);
+        $t->display('triple->load of "' . $wrd_from->name() . '" ' . verb::IS . ' "' . $wrd_to->name() . '" for user "' . $t->usr1->name . '" not used any more', $target, $result);
 
         // check if the name of a triple can be changed
         $trp = $t->test_triple(word_api::TN_RENAMED, verb::IS, word_api::TN_PARENT);
@@ -214,10 +227,10 @@ class triple_tests
         $log->set_table(change_table_list::TRIPLE);
         $log->old_from_id = $wrd_from->id();
         $log->old_link_id = $is_id;
-        $log->old_to_id = $wrd->id();
+        $log->old_to_id = $wrd_to->id();
         $result = $log->dsp_last(true);
         $target = 'zukunft.com system test unlinked ' . word_api::TN_RENAMED . ' from ' . word_api::TN_PARENT;
-        $t->display('triple->del logged for "' . $wrd_from->name() . '" ' . verb::IS . ' "' . $wrd->name() . '" and user "' . $t->usr1->name . '"', $target, $result);
+        $t->display('triple->del logged for "' . $wrd_from->name() . '" ' . verb::IS . ' "' . $wrd_to->name() . '" and user "' . $t->usr1->name . '"', $target, $result);
 
         // check that even after renaming the triple no word with the standard name of the triple can be added
         $wrd = new word($t->usr1);

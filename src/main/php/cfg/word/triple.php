@@ -2033,44 +2033,57 @@ class triple extends sandbox_link_typed implements JsonSerializable
         global $db_con;
         $result = new user_message();
 
-        // log the insert attempt first
-        $log = $this->log_link_add();
-        if ($log->id() > 0) {
-            // insert the new triple
-            if ($this->sql_write_prepared()) {
-                $sc = $db_con->sql_creator();
-                $qp = $this->sql_insert($sc);
-                $usr_msg = $db_con->insert($qp, 'add ' . $this->dsp_id());
-                if ($usr_msg->is_ok()) {
-                    $this->set_id($usr_msg->get_row_id());
-                }
-            } else {
-                $db_con->set_class(triple::class);
-                $this->set_id($db_con->insert_old(array("from_phrase_id", "verb_id", "to_phrase_id", "user_id"),
-                    array($this->fob->id(), $this->verb->id(), $this->tob->id(), $this->user()->id())));
+        if ($use_func) {
+            // TODO review: do not set the generated name if it matches the name
+            $this->set_names();
+            $sc = $db_con->sql_creator();
+            $qp = $this->sql_insert($sc, new sql_type_list([sql_type::LOG]));
+            $usr_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id());
+            if ($usr_msg->is_ok()) {
+                $this->id = $usr_msg->get_row_id();
             }
-            // TODO make sure on all add functions that the database object is always set
-            //array($this->fob->id(), $this->verb->id() , $this->tob->id(), $this->user()->id()));
-            if ($this->id() > 0) {
-                // update the id in the log
-                if (!$log->add_ref($this->id())) {
-                    $result->add_message('Updating the reference in the log failed');
-                    // TODO do rollback or retry?
+            $result->add($usr_msg);
+        } else {
+
+            // log the insert attempt first
+            $log = $this->log_link_add();
+            if ($log->id() > 0) {
+                // insert the new triple
+                if ($this->sql_write_prepared()) {
+                    $sc = $db_con->sql_creator();
+                    $qp = $this->sql_insert($sc);
+                    $usr_msg = $db_con->insert($qp, 'add ' . $this->dsp_id());
+                    if ($usr_msg->is_ok()) {
+                        $this->set_id($usr_msg->get_row_id());
+                    }
                 } else {
-
-                    // create an empty db_rec element to force saving of all set fields
-                    $db_rec = new triple($this->user());
-                    $db_rec->fob = $this->fob;
-                    $db_rec->verb = $this->verb;
-                    $db_rec->tob = $this->tob;
-                    $std_rec = clone $db_rec;
-                    // save the triple fields
-                    $result->add_message($this->save_name_fields($db_con, $db_rec, $std_rec));
-                    $result->add_message($this->save_triple_fields($db_con, $db_rec, $std_rec));
+                    $db_con->set_class(triple::class);
+                    $this->set_id($db_con->insert_old(array("from_phrase_id", "verb_id", "to_phrase_id", "user_id"),
+                        array($this->fob->id(), $this->verb->id(), $this->tob->id(), $this->user()->id())));
                 }
+                // TODO make sure on all add functions that the database object is always set
+                //array($this->fob->id(), $this->verb->id() , $this->tob->id(), $this->user()->id()));
+                if ($this->id() > 0) {
+                    // update the id in the log
+                    if (!$log->add_ref($this->id())) {
+                        $result->add_message('Updating the reference in the log failed');
+                        // TODO do rollback or retry?
+                    } else {
 
-            } else {
-                $result->add_message("Adding triple " . $this->name . " failed");
+                        // create an empty db_rec element to force saving of all set fields
+                        $db_rec = new triple($this->user());
+                        $db_rec->fob = $this->fob;
+                        $db_rec->verb = $this->verb;
+                        $db_rec->tob = $this->tob;
+                        $std_rec = clone $db_rec;
+                        // save the triple fields
+                        $result->add_message($this->save_name_fields($db_con, $db_rec, $std_rec));
+                        $result->add_message($this->save_triple_fields($db_con, $db_rec, $std_rec));
+                    }
+
+                } else {
+                    $result->add_message("Adding triple " . $this->name . " failed");
+                }
             }
         }
 

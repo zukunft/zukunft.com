@@ -38,6 +38,7 @@ use api\phrase\term as term_api;
 use api\sandbox\sandbox_typed as sandbox_typed_api;
 use api\verb\verb as verb_api;
 use cfg\phrase_type;
+use cfg\word as word_cfg;
 
 class triple extends sandbox_typed_api
 {
@@ -63,6 +64,7 @@ class triple extends sandbox_typed_api
     const TN_ADD = 'System Test Triple';
     const TN_ADD_AUTO = 'System Test Triple';
     const TN_EXCLUDED = 'System Test Excluded Zurich Insurance is not part of the City of Zurich';
+    const TN_ADD_VIA_FUNC = 'System Test Triple added via sql function';
 
     const TN_ZH_CITY = 'Zurich (City)';
     const TI_ZH_CITY = 38;
@@ -79,6 +81,18 @@ class triple extends sandbox_typed_api
     const TN_2014_FOLLOW = "2014 is follower of 2013";
     const TN_TAXES_OF_CF = "Income taxes is part of cash flow statement";
 
+    // list of predefined triple used for system testing that are expected to be never renamed
+    const RESERVED_TRIPLES = array(
+        word_cfg::SYSTEM_CONFIG,
+        self::TN_ADD,
+        self::TN_EXCLUDED
+    );
+    // list of triples that are used for system testing that should be removed are the system test has been completed
+    // and that are never expected to be used by a user
+    const TEST_TRIPLES = array(
+        self::TN_ADD,
+        self::TN_ADD_VIA_FUNC
+    );
 
     /*
      * object vars

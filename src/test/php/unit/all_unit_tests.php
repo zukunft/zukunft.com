@@ -209,6 +209,7 @@ class all_unit_tests extends test_cleanup
 
             // run the selected db write
             (new word_tests)->run($this);
+            (new triple_tests)->run($this);
             $import = new import_file();
             //  $import->import_test_files($usr);
         }

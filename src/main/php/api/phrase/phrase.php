@@ -55,6 +55,7 @@ class phrase extends combine_named_api implements JsonSerializable
     const CLASS_WORD = 'word';
     const CLASS_TRIPLE = 'triple';
 
+    // TODO move to triple API
     // phrase names used for system testing
     const RESERVED_PHRASES = array(
         triple_api::TN_ADD,
