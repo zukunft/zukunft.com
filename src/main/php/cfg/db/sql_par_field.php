@@ -39,6 +39,7 @@ class sql_par_field
     public string|int|float|null $value;  // the value that should be used e.g. for a function
     public string|int|float|null $old;    // the value that is in the database until now
     public sql_par_type|string $type;   // the type of the sql field
+    public string $par_name;   // the parameter name of the field used from the change log e.g. for the sql field name "new_from_id" the parameter name is "_new_phrase_id"
 
 }
 

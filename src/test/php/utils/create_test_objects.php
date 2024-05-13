@@ -1861,17 +1861,17 @@ class create_test_objects extends test_base
     /**
      * @return change_link a change log entry of a link change
      */
-    function dummy_change_log_link(): change_link
+    function change_log_link(): change_link
     {
         global $usr_sys;
 
         $chg = new change_link($usr_sys);
         $chg->set_time_str(self::DUMMY_DATETIME);
         $chg->set_action(change_action::ADD);
-        $chg->set_table(change_table_list::WORD);
-        $chg->set_field(change_field_list::FLD_WORD_NAME);
-        $chg->new_text_from = value_api::TV_READ_SHORTEST;
-        $chg->new_text_to = value_api::TV_READ_SHORTEST;
+        $chg->set_table(change_table_list::TRIPLE);
+        $chg->new_from_id = word_api::TI_CONST;
+        $chg->new_link_id = verb_api::TI_PART;
+        $chg->new_to_id = word_api::TI_MATH;
         $chg->row_id = 1;
         return $chg;
     }

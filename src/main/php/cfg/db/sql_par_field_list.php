@@ -36,7 +36,7 @@ use shared\library;
 
 class sql_par_field_list
 {
-    // assumned positions of the field name, value and type in the array used for set
+    // assumed positions of the field name, value and type in the array used for set
     private const FLD_POS = 0;
     private const VAL_POS = 1;
     private const TYP_POS = 2;

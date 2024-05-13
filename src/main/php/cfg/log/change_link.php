@@ -50,11 +50,17 @@ use cfg\db\sql;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
+use cfg\db\sql_par_field_list;
+use cfg\db\sql_par_type;
+use cfg\db\sql_type;
+use cfg\db\sql_type_list;
 use cfg\source;
 use cfg\db\sql_db;
+use cfg\type_object;
 use cfg\user;
 use cfg\word;
 use Exception;
+use shared\library;
 
 include_once MODEL_LOG_PATH . 'change_log.php';
 include_once DB_PATH . 'sql_db.php';
@@ -709,6 +715,185 @@ class change_link extends change_log
         }
 
         return $result;
+    }
+
+
+    /*
+     * sql write
+     */
+
+    /**
+     * create the sql statement to add a log link entry to the database
+     *
+     * @param sql $sc with the target db_type set
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     */
+    function sql_insert(
+        sql           $sc,
+        sql_type_list $sc_par_lst
+    ): sql_par
+    {
+        $sc_par_lst->add(sql_type::INSERT);
+        // do not use the user extension for the change table name
+        $sc_par_lst_chg = $sc_par_lst->remove(sql_type::USER);
+        $qp = $sc->sql_par($this::class, $sc_par_lst_chg);
+        $sc->set_class($this::class, $sc_par_lst_chg);
+        if ($sc_par_lst->is_list_tbl()) {
+            $lib = new library();
+            $qp->name = $lib->class_to_name($this::class);
+        }
+        $sc->set_name($qp->name);
+        $qp->sql = $sc->create_sql_insert($this->db_field_values_types($sc), $sc_par_lst);
+        $qp->par = $this->db_values();
+
+        return $qp;
+    }
+
+
+    /*
+     * sql write fields
+     */
+
+    /**
+     * get a list of all database fields to log am link
+     * list must be corresponding to the db_values fields
+     *
+     * @return sql_par_field_list list of the database field names
+     */
+    function db_field_values_types(sql $sc): sql_par_field_list
+    {
+        $fvt_lst = new sql_par_field_list();
+        $fvt_lst->add_field(user::FLD_ID, $this->user()->id(), user::FLD_ID_SQLTYP);
+        $fvt_lst->add_field(change_action::FLD_ID, $this->action_id, type_object::FLD_ID_SQLTYP);
+        $fvt_lst->add_field(change_table::FLD_ID, $this->table_id, type_object::FLD_ID_SQLTYP);
+
+        if ($this->old_text_from !== null) {
+            $fvt_lst->add_field(self::FLD_OLD_FROM_TEXT, $this->old_text_from, $sc->get_sql_par_type($this->old_text_from));
+        }
+        if ($this->old_text_link !== null) {
+            $fvt_lst->add_field(self::FLD_OLD_LINK_TEXT, $this->old_text_link, $sc->get_sql_par_type($this->old_text_link));
+        }
+        if ($this->old_text_to !== null) {
+            $fvt_lst->add_field(self::FLD_OLD_TO_TEXT, $this->old_text_to, $sc->get_sql_par_type($this->old_text_to));
+        }
+        if ($this->new_text_from !== null) {
+            $fvt_lst->add_field(self::FLD_NEW_FROM_TEXT, $this->new_text_from, $sc->get_sql_par_type($this->new_text_from));
+        }
+        if ($this->new_text_link !== null) {
+            $fvt_lst->add_field(self::FLD_NEW_LINK_TEXT, $this->new_text_link, $sc->get_sql_par_type($this->new_text_link));
+        }
+        if ($this->new_text_to !== null) {
+            $fvt_lst->add_field(self::FLD_NEW_TO_TEXT, $this->new_text_to, $sc->get_sql_par_type($this->new_text_to));
+        }
+
+        if ($this->old_from_id > 0) {
+            $fvt_lst->add_field(self::FLD_OLD_FROM_ID, $this->old_from_id, sql_par_type::INT);
+        }
+        if ($this->old_link_id > 0) {
+            $fvt_lst->add_field(self::FLD_OLD_LINK_ID, $this->old_link_id, sql_par_type::INT);
+        }
+        if ($this->old_to_id > 0) {
+            $fvt_lst->add_field(self::FLD_OLD_TO_ID, $this->old_to_id, sql_par_type::INT);
+        }
+        if ($this->new_from_id > 0) {
+            $fvt_lst->add_field(self::FLD_NEW_FROM_ID, $this->new_from_id, sql_par_type::INT);
+        }
+        if ($this->new_link_id > 0) {
+            $fvt_lst->add_field(self::FLD_NEW_LINK_ID, $this->new_link_id, sql_par_type::INT);
+        }
+        if ($this->new_to_id > 0) {
+            $fvt_lst->add_field(self::FLD_NEW_TO_ID, $this->new_to_id, sql_par_type::INT);
+        }
+
+        $fvt_lst->add_field(self::FLD_ROW_ID, $this->row_id, sql_par_type::INT);
+        return $fvt_lst;
+    }
+
+    /**
+     * get a list of all database fields
+     * list must be corresponding to the db_values fields
+     * TODO deprecate
+     *
+     * @return array list of the database field names
+     */
+    function db_fields(): array
+    {
+        $sql_fields = array();
+        $sql_fields[] = user::FLD_ID;
+        $sql_fields[] = change_action::FLD_ID;
+        $sql_fields[] = change_field::FLD_ID;
+
+        if ($this->old_text_from !== null) {
+            $sql_fields[] = self::FLD_OLD_FROM_TEXT;
+        }
+        if ($this->old_text_link !== null) {
+            $sql_fields[] = self::FLD_OLD_LINK_TEXT;
+        }
+        if ($this->old_text_to !== null) {
+            $sql_fields[] = self::FLD_OLD_TO_TEXT;
+        }
+        if ($this->new_text_from !== null) {
+            $sql_fields[] = self::FLD_NEW_FROM_TEXT;
+        }
+        if ($this->new_text_link !== null) {
+            $sql_fields[] = self::FLD_NEW_LINK_TEXT;
+        }
+        if ($this->new_text_to !== null) {
+            $sql_fields[] = self::FLD_NEW_TO_TEXT;
+        }
+
+        if ($this->old_from_id > 0) {
+            $sql_fields[] = self::FLD_OLD_FROM_ID;
+        }
+        if ($this->old_link_id > 0) {
+            $sql_fields[] = self::FLD_OLD_LINK_ID;
+        }
+        if ($this->old_to_id > 0) {
+            $sql_fields[] = self::FLD_OLD_TO_ID;
+        }
+        if ($this->new_from_id > 0) {
+            $sql_fields[] = self::FLD_NEW_FROM_ID;
+        }
+        if ($this->new_link_id > 0) {
+            $sql_fields[] = self::FLD_NEW_LINK_ID;
+        }
+        if ($this->new_to_id > 0) {
+            $sql_fields[] = self::FLD_NEW_TO_ID;
+        }
+
+        $sql_fields[] = self::FLD_ROW_ID;
+        return $sql_fields;
+    }
+
+    /**
+     * get a list of database field values that have been updated
+     *
+     * @return array list of the database field values
+     */
+    function db_values(): array
+    {
+        $sql_values = array();
+        $sql_values[] = $this->user()->id();
+        $sql_values[] = $this->action_id;
+        $sql_values[] = $this->field_id;
+
+        if ($this->old_value !== null) {
+            $sql_values[] = $this->old_value;
+        }
+        if ($this->new_value !== null) {
+            $sql_values[] = $this->new_value;
+        }
+
+        if ($this->old_id > 0) {
+            $sql_values[] = $this->new_id;
+        }
+        if ($this->new_id > 0) {
+            $sql_values[] = $this->new_id;
+        }
+
+        $sql_values[] = $this->row_id;
+        return $sql_values;
     }
 
 

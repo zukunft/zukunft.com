@@ -474,7 +474,7 @@ class change extends change_log
      *
      * @param sql $sc with the target db_type set
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @param string $ext the name extention that should be used
+     * @param string $ext the name extension that should be used
      * @param string $val_tbl name of the table to select the values to insert
      * @param string $add_fld name of the database key field
      * @param string $row_fld name of the database id field

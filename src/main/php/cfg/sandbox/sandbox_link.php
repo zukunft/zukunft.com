@@ -293,39 +293,6 @@ class sandbox_link extends sandbox
 
 
     /*
-     * dummy load related function that are overwritten by the child objects
-     */
-
-    /**
-     * dummy function for the subject object that should always be overwritten by the child object
-     * @return string
-     */
-    function from_field(): string
-    {
-        return '';
-    }
-
-    /**
-     * dummy function for the predicate object that should always be overwritten by the child object
-     * @return string
-     */
-    function type_field(): string
-    {
-        return '';
-    }
-
-    /**
-     * dummy function for the object (grammar) object (computer science)
-     * that should always be overwritten by the child object
-     * @return string
-     */
-    function to_field(): string
-    {
-        return '';
-    }
-
-
-    /*
      * info
      */
 
@@ -668,7 +635,7 @@ class sandbox_link extends sandbox
      */
 
     /**
-     * create the sql statement to add a new named sandbox object e.g. word to the database
+     * create the sql statement to add a new link sandbox object e.g. triple to the database
      * TODO add qp merge
      *
      * @param sql $sc with the target db_type set
@@ -695,11 +662,15 @@ class sandbox_link extends sandbox
 
         // list of parameters actually used in order of the function usage
         $sql = '';
-        $fvt_insert = $fvt_lst->get($this->name_field());
+        $fvt_insert_from = $fvt_lst->get($this->from_field());
+        $fvt_insert_type = $fvt_lst->get($this->type_field());
+        $fvt_insert_to = $fvt_lst->get($this->to_field());
 
         // create the sql to insert the row
         $fvt_insert_list = new sql_par_field_list();
-        $fvt_insert_list->add($fvt_insert);
+        $fvt_insert_list->add($fvt_insert_from);
+        $fvt_insert_list->add($fvt_insert_type);
+        $fvt_insert_list->add($fvt_insert_to);
         $sc_insert = clone $sc;
         $qp_insert = $this->sql_common($sc_insert, $sc_par_lst_sub, $ext);;
         $sc_par_lst_sub->add(sql_type::SELECT_FOR_INSERT);
@@ -708,30 +679,18 @@ class sandbox_link extends sandbox
         }
         $qp_insert->sql = $sc_insert->create_sql_insert(
             $fvt_insert_list, $sc_par_lst_sub, true, '', '', '', $id_fld_new);
-        $qp_insert->par = [$fvt_insert->value];
+        $qp_insert->par = [$fvt_insert_from->value, $fvt_insert_type->value, $fvt_insert_to->value];
 
         // add the insert row to the function body
         $sql .= ' ' . $qp_insert->sql . '; ';
 
-        if ($sc->db_type == sql_db::POSTGRES) {
-            $row_id_val = $id_fld_new;
-        } elseif ($sc->db_type == sql_db::MYSQL) {
-            if ($usr_tbl) {
-                $row_id_val = '_' . $id_field;
-            } else {
-                $row_id_val = '@' . $id_fld_new;
-            }
-        } else {
-            $row_id_val = $id_field;
-        }
-
         // get the new row id for MySQL db
         if ($sc->db_type == sql_db::MYSQL and !$usr_tbl) {
-            $sql .= ' ' . sql::LAST_ID_MYSQL . $row_id_val . '; ';
+            $sql .= ' ' . sql::LAST_ID_MYSQL . $sc->var_name_row_id($sc_par_lst_sub) . '; ';
         }
 
         $qp->sql = $sql;
-        $qp->par_fld = $fvt_insert;
+        $qp->par_fld_lst = $fvt_insert_list;
 
         return $qp;
     }

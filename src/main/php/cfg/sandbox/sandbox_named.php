@@ -893,7 +893,7 @@ class sandbox_named extends sandbox
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_insert_named(
+    function sql_insert_switch(
         sql                $sc,
         sql_par_field_list $fvt_lst,
         array              $fld_lst_all = [],
@@ -915,7 +915,7 @@ class sandbox_named extends sandbox
         if ($and_log) {
             // log functions must always use named parameters
             $sc_par_lst->add(sql_type::NAMED_PAR);
-            $qp = $this->sql_insert_named_and_log($sc, $qp, $fvt_lst, $fld_lst_all, $sc_par_lst);
+            $qp = $this->sql_insert_with_log($sc, $qp, $fvt_lst, $fld_lst_all, $sc_par_lst);
         } else {
             // add the child object specific fields and values
             $qp->sql = $sc->create_sql_insert($fvt_lst);
@@ -971,21 +971,9 @@ class sandbox_named extends sandbox
         // add the insert row to the function body
         $sql .= ' ' . $qp_insert->sql . '; ';
 
-        if ($sc->db_type == sql_db::POSTGRES) {
-            $row_id_val = $id_fld_new;
-        } elseif ($sc->db_type == sql_db::MYSQL) {
-            if ($usr_tbl) {
-                $row_id_val = '_' . $id_field;
-            } else {
-                $row_id_val = '@' . $id_fld_new;
-            }
-        } else {
-            $row_id_val = $id_field;
-        }
-
         // get the new row id for MySQL db
         if ($sc->db_type == sql_db::MYSQL and !$usr_tbl) {
-            $sql .= ' ' . sql::LAST_ID_MYSQL . $row_id_val . '; ';
+            $sql .= ' ' . sql::LAST_ID_MYSQL . $sc->var_name_row_id($sc_par_lst_sub) . '; ';
         }
 
         $qp->sql = $sql;

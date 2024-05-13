@@ -2250,6 +2250,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
     /**
      * create the sql statement to add a new triple to the database
      * always all fields are included in the query to be able to remove overwrites with a null value
+     * TODO check first the query name and skip the sql building if not needed
      *
      * @param sql $sc with the target db_type set
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
@@ -2267,7 +2268,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
         $sc_par_lst->add(sql_type::INSERT);
         $fvt_lst = $this->db_changed_list($wrd_empty, $sc_par_lst);
         $all_fields = $this->db_fields_all($sc_par_lst);
-        return parent::sql_insert_named($sc, $fvt_lst, $all_fields, $sc_par_lst);
+        return parent::sql_insert_switch($sc, $fvt_lst, $all_fields, $sc_par_lst);
     }
 
     /**

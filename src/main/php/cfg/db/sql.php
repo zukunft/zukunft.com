@@ -48,9 +48,12 @@ use cfg\job;
 use cfg\log\change;
 use cfg\log\change_action;
 use cfg\log\change_link;
+use cfg\log\change_table;
 use cfg\ref;
 use cfg\result\result;
 use cfg\sandbox;
+use cfg\sandbox_link;
+use cfg\sandbox_link_typed;
 use cfg\sys_log;
 use cfg\triple;
 use cfg\user;
@@ -1121,7 +1124,7 @@ class sql
                             if ($this->db_type == sql_db::MYSQL
                                 and !$usr_tbl
                                 and $insert_part) {
-                                $fld_name = '@' . $chg_row_fld;
+                                $fld_name = sql::PAR_PREFIX_MYSQL . $chg_row_fld;
                             } else {
                                 $fld_name = $chg_row_fld;
                             }
@@ -1353,14 +1356,15 @@ class sql
      * @param user $usr the user who has requested the change
      * @param array $fld_lst list of field names that have been changed
      * @param sql_par_field_list $fvt_lst fields (with value and type) used for the change
-     * @return sql_par
+     * @param sql_type_list $sc_par_lst
+     * @return sql_par with the sql and the list of parameters actually used
      */
     function sql_func_log(
-        string $class,
-        user $usr,
-        array $fld_lst,
+        string             $class,
+        user               $usr,
+        array              $fld_lst,
         sql_par_field_list $fvt_lst,
-        sql_type_list $sc_par_lst
+        sql_type_list      $sc_par_lst
     ): sql_par
     {
         // set some var names to shorten the code lines
@@ -1421,6 +1425,56 @@ class sql
         }
 
         // transfer the fields used to the calling function
+        $qp->par_fld_lst = $par_lst_out;
+
+        return $qp;
+    }
+
+    /**
+     * create the sql function part to log adding a link
+     * @param sandbox|sandbox_link|sandbox_link_typed $sbx the name of the calling class use for the query names
+     * @param user $usr
+     * @param sql_par_field_list $fvt_lst
+     * @return sql_par
+     */
+    function sql_func_log_link(
+        sandbox|sandbox_link|sandbox_link_typed $sbx,
+        user                            $usr,
+        sql_par_field_list              $fvt_lst,
+        sql_type_list                   $sc_par_lst
+    ): sql_par
+    {
+        $log = new change_link($usr);
+        $log->set_table_by_class($sbx::class);
+        $log->new_from_id = $sbx->from_id();
+        if ($sbx::class == sandbox_link_typed::class or $sbx::class == triple::class) {
+            $log->new_link_id = $sbx->type_id();
+        }
+        $log->new_to_id = $sbx->to_id();
+
+        // set the parameters for the log sql statement creation
+        $sc_log = clone $this;
+        $sc_par_lst->add(sql_type::VALUE_SELECT);
+        $sc_par_lst->add(sql_type::SELECT_FOR_INSERT);
+        $sc_par_lst->add(sql_type::INSERT_PART);
+
+        // create the sql for the log entry
+        $qp = $log->sql_insert(
+            $sc_log, $sc_par_lst);
+
+        $par_lst_out = new sql_par_field_list();
+        $par_lst_out->add_field(
+            user::FLD_ID,
+            $fvt_lst->get_value(user::FLD_ID),
+            sql_par_type::INT);
+        $par_lst_out->add_field(
+            change_action::FLD_ID,
+            $fvt_lst->get_value(change_action::FLD_ID),
+            sql_par_type::INT_SMALL);
+        $par_lst_out->add_field(
+            change_table::FLD_ID,
+            $fvt_lst->get_value(change_table::FLD_ID),
+            sql_par_type::INT_SMALL);
         $qp->par_fld_lst = $par_lst_out;
 
         return $qp;

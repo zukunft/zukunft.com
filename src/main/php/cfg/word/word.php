@@ -1848,7 +1848,7 @@ class word extends sandbox_typed
         $sc_par_lst->add(sql_type::INSERT);
         $fvt_lst = $this->db_changed_list($wrd_empty, $sc_par_lst);
         $all_fields = $this->db_fields_all();
-        return parent::sql_insert_named($sc, $fvt_lst, $all_fields, $sc_par_lst);
+        return parent::sql_insert_switch($sc, $fvt_lst, $all_fields, $sc_par_lst);
     }
 
     /**

@@ -80,6 +80,7 @@ include_once MODEL_SANDBOX_PATH . 'share_type.php';
 
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_type_list;
+use cfg\log\change_table;
 use shared\types\protection_type as protect_type_shared;
 use shared\types\share_type as share_type_shared;
 use cfg\component\component;
@@ -430,11 +431,43 @@ class sandbox extends db_object_seq_id_user
         return $protection_types->name($this->protection_id);
     }
 
+    /*
+     * dummy load related function that are overwritten by the child objects
+     */
+
     /**
      * dummy function that should always be overwritten by the child object
      * @return string
      */
     function name_field(): string
+    {
+        return '';
+    }
+
+    /**
+     * dummy function for the subject object that should always be overwritten by the child object
+     * @return string
+     */
+    function from_field(): string
+    {
+        return '';
+    }
+
+    /**
+     * dummy function for the predicate object that should always be overwritten by the child object
+     * @return string
+     */
+    function type_field(): string
+    {
+        return '';
+    }
+
+    /**
+     * dummy function for the object (grammar) object (computer science)
+     * that should always be overwritten by the child object
+     * @return string
+     */
+    function to_field(): string
     {
         return '';
     }
@@ -2847,6 +2880,7 @@ class sandbox extends db_object_seq_id_user
 
     /**
      * create the sql statement to add a new sandbox object e.g. word, triple or value to the database
+     * "_switch" because either including the logging or without
      * TODO add qp merge
      *
      * @param sql $sc with the target db_type set
@@ -2855,7 +2889,7 @@ class sandbox extends db_object_seq_id_user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_insert_named(
+    function sql_insert_switch(
         sql                $sc,
         sql_par_field_list $fvt_lst,
         array              $fld_lst_all = [],
@@ -2874,10 +2908,11 @@ class sandbox extends db_object_seq_id_user
         $ext .= sql::file_sep . $fld_chg_ext;
         $qp = $this->sql_common($sc, $sc_par_lst, $ext);
 
+        // TODO check if query has already been build and if yes, skip sql creation
         if ($and_log) {
             // log functions must always use named parameters
             $sc_par_lst->add(sql_type::NAMED_PAR);
-            $qp = $this->sql_insert_named_and_log($sc, $qp, $fvt_lst, $fld_lst_all, $sc_par_lst);
+            $qp = $this->sql_insert_with_log($sc, $qp, $fvt_lst, $fld_lst_all, $sc_par_lst);
         } else {
             // add the child object specific fields and values
             $qp->sql = $sc->create_sql_insert($fvt_lst);
@@ -2897,7 +2932,7 @@ class sandbox extends db_object_seq_id_user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_insert_named_and_log(
+    function sql_insert_with_log(
         sql                $sc,
         sql_par            $qp,
         sql_par_field_list $fvt_lst,
@@ -2918,6 +2953,15 @@ class sandbox extends db_object_seq_id_user
             $change_action_list->id(change_action::ADD),
             type_object::FLD_ID_SQLTYP
         );
+        if ($this->is_link_obj()) {
+            global $change_table_list;
+            $lib = new library();
+            $fvt_lst->add_field(
+                change_table::FLD_ID,
+                $change_table_list->id($lib->class_to_table($this::class)),
+                type_object::FLD_ID_SQLTYP
+            );
+        }
 
         // list of parameters actually used in order of the function usage
         $par_lst_out = new sql_par_field_list();
@@ -2932,15 +2976,21 @@ class sandbox extends db_object_seq_id_user
         $sc_par_lst_log = clone $sc_par_lst_sub;
 
         // create sql to set the prime key upfront to get the sequence id
+        $qp_id = clone $qp;
         if (!$usr_tbl) {
-            $qp_id = clone $qp;
             $qp_id = $this->sql_insert_key_field($sc, $qp_id, $fvt_lst, $id_fld_new, $sc_par_lst_sub);
-            $par_lst_out->add($qp_id->par_fld);
+            if ($this->is_link_obj()) {
+                $par_lst_out->add_list($qp_id->par_fld_lst);
+            }
+            if ($this->is_named_obj()) {
+                $par_lst_out->add($qp_id->par_fld);
+            }
             $sql .= $qp_id->sql;
         }
 
         // get the data fields and move the unique db key field to the first entry
         $fld_lst_ex_log = array_intersect($fvt_lst->names(), $fld_lst_all);
+
         if ($usr_tbl) {
             $key_fld_pos = array_search($this->id_field(), $fld_lst_ex_log);
             unset($fld_lst_ex_log[$key_fld_pos]);
@@ -2953,10 +3003,22 @@ class sandbox extends db_object_seq_id_user
             $fld_lst_ex_log_and_key = array_merge([$qp_id->par_fld->name], $fld_lst_ex_log);
         }
 
-        // create the query parameters for the single log entries
+        if ($this->is_link_obj()) {
+
+            // create the log entry for the link
+            $qp_log_lnk = $sc->sql_func_log_link($this, $this->user(), $fvt_lst, $sc_par_lst_log);
+            $sql .= ' ' . $qp_log_lnk->sql;
+            $par_lst_out->add_list($qp_log_lnk->par_fld_lst);
+
+            // remove the link fields from the field list for the log entries, because the log is done with the log_link already
+            $fld_lst_ex_log_and_key = array_diff($fld_lst_ex_log_and_key, $qp_id->par_fld_lst->names());
+        }
+
+        // create the query parameters for the log entries for the single fields
         $qp_log = $sc->sql_func_log($this::class, $this->user(), $fld_lst_ex_log_and_key, $fvt_lst, $sc_par_lst_log);
         $sql .= ' ' . $qp_log->sql;
         $par_lst_out->add_list($qp_log->par_fld_lst);
+
 
         if ($usr_tbl) {
             // insert a new row in the user table

@@ -33,7 +33,9 @@ namespace cfg;
 
 use cfg\db\sql;
 use cfg\db\sql_db;
+use cfg\db\sql_par;
 use cfg\db\sql_par_field_list;
+use cfg\db\sql_type;
 use cfg\db\sql_type_list;
 use cfg\export\sandbox_exp;
 use cfg\log\change;
@@ -210,6 +212,68 @@ class sandbox_link_named extends sandbox_link
             }
         }
         return $result;
+    }
+
+
+    /*
+     * sql write
+     */
+
+    /**
+     * create the sql statement to add a new named sandbox object e.g. word to the database
+     * TODO add qp merge
+     *
+     * @param sql $sc with the target db_type set
+     * @param sql_par $qp
+     * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
+     * @param string $id_fld_new
+     * @param sql_type_list $sc_par_lst_sub the parameters for the sql statement creation
+     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     */
+    function sql_insert_key_field(
+        sql                $sc,
+        sql_par            $qp,
+        sql_par_field_list $fvt_lst,
+        string             $id_fld_new,
+        sql_type_list      $sc_par_lst_sub = new sql_type_list([])
+    ): sql_par
+    {
+        // set some var names to shorten the code lines
+        $usr_tbl = $sc_par_lst_sub->is_usr_tbl();
+        $ext = sql::file_sep . sql::file_insert;
+
+        // list of parameters actually used in order of the function usage
+        $sql = '';
+
+        $qp_lnk = parent::sql_insert_key_field($sc, $qp, $fvt_lst, $id_fld_new, $sc_par_lst_sub);
+
+        // create the sql to insert the row
+        $fvt_insert = $fvt_lst->get($this->name_field());
+        $fvt_insert_list = new sql_par_field_list();
+        $fvt_insert_list->add($fvt_insert);
+        $sc_insert = clone $sc;
+        $qp_insert = $this->sql_common($sc_insert, $sc_par_lst_sub, $ext);;
+        $sc_par_lst_sub->add(sql_type::SELECT_FOR_INSERT);
+        if ($sc->db_type == sql_db::MYSQL) {
+            $sc_par_lst_sub->add(sql_type::NO_ID_RETURN);
+        }
+        $qp_insert->sql = $sc_insert->create_sql_insert(
+            $fvt_insert_list, $sc_par_lst_sub, true, '', '', '', $id_fld_new);
+        $qp_insert->par = [$fvt_insert->value];
+
+        // add the insert row to the function body
+        //$sql .= ' ' . $qp_insert->sql . '; ';
+
+        // get the new row id for MySQL db
+        if ($sc->db_type == sql_db::MYSQL and !$usr_tbl) {
+            $sql .= ' ' . sql::LAST_ID_MYSQL . $sc->var_name_row_id($sc_par_lst_sub) . '; ';
+        }
+
+        $qp->sql = $qp_lnk->sql . ' ' . $sql;
+        $qp->par_fld_lst = $qp_lnk->par_fld_lst;
+        $qp->par_fld = $fvt_insert;
+
+        return $qp;
     }
 
 

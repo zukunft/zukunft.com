@@ -120,7 +120,7 @@ class change_log_tests
         $t->assert_sql_foreign_key_create($log_val_big);
 
         $t->subheader('SQL statement creation tests for logging link changes');
-        $log_lnk = $t->dummy_change_log_link();
+        $log_lnk = $t->change_log_link();
         $t->assert_sql_table_create($log_lnk);
         $t->assert_sql_index_create($log_lnk);
         $t->assert_sql_foreign_key_create($log_lnk);
@@ -129,6 +129,11 @@ class change_log_tests
         $log = $t->change_log_named();
         $t->assert_sql_insert($sc, $log);
         $t->assert_sql_insert($sc, $log, [sql_type::SUB]);
+
+        $t->subheader('change link log sql write');
+        $log_lnk = $t->change_log_link();
+        $t->assert_sql_insert($sc, $log_lnk);
+        $t->assert_sql_insert($sc, $log_lnk, [sql_type::SUB]);
 
         $t->subheader('SQL statement tests');
         $log = new change($usr);
