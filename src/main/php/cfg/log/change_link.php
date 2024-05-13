@@ -54,6 +54,7 @@ use cfg\db\sql_par_field_list;
 use cfg\db\sql_par_type;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
+use cfg\sandbox_link;
 use cfg\source;
 use cfg\db\sql_db;
 use cfg\type_object;
@@ -727,11 +728,13 @@ class change_link extends change_log
      *
      * @param sql $sc with the target db_type set
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @param sandbox_link|null $sbx the sandbox link object used to get the sql parameter names e.g. "_from_phrase_id" instead of "_new_from_id"
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_insert(
         sql           $sc,
-        sql_type_list $sc_par_lst
+        sql_type_list $sc_par_lst,
+        ?sandbox_link  $sbx = null
     ): sql_par
     {
         $sc_par_lst->add(sql_type::INSERT);
@@ -744,7 +747,7 @@ class change_link extends change_log
             $qp->name = $lib->class_to_name($this::class);
         }
         $sc->set_name($qp->name);
-        $qp->sql = $sc->create_sql_insert($this->db_field_values_types($sc), $sc_par_lst);
+        $qp->sql = $sc->create_sql_insert($this->db_field_values_types($sc, $sbx), $sc_par_lst);
         $qp->par = $this->db_values();
 
         return $qp;
@@ -759,9 +762,11 @@ class change_link extends change_log
      * get a list of all database fields to log am link
      * list must be corresponding to the db_values fields
      *
+     * @param sql $sc with the target db_type set
+     * @param sandbox_link|null $sbx the sandbox link object used to get the sql parameter names e.g. "_from_phrase_id" instead of "_new_from_id"
      * @return sql_par_field_list list of the database field names
      */
-    function db_field_values_types(sql $sc): sql_par_field_list
+    function db_field_values_types(sql $sc, ?sandbox_link $sbx): sql_par_field_list
     {
         $fvt_lst = new sql_par_field_list();
         $fvt_lst->add_field(user::FLD_ID, $this->user()->id(), user::FLD_ID_SQLTYP);
@@ -797,16 +802,32 @@ class change_link extends change_log
             $fvt_lst->add_field(self::FLD_OLD_TO_ID, $this->old_to_id, sql_par_type::INT);
         }
         if ($this->new_from_id > 0) {
-            $fvt_lst->add_field(self::FLD_NEW_FROM_ID, $this->new_from_id, sql_par_type::INT);
+            $par_name = '';
+            if ($sbx != null) {
+                $par_name = sql::PAR_PREFIX . $sbx->from_field();
+            }
+            $fvt_lst->add_field(self::FLD_NEW_FROM_ID, $this->new_from_id, sql_par_type::INT, null, $par_name);
         }
         if ($this->new_link_id > 0) {
-            $fvt_lst->add_field(self::FLD_NEW_LINK_ID, $this->new_link_id, sql_par_type::INT);
+            $par_name = '';
+            if ($sbx != null) {
+                $par_name = sql::PAR_PREFIX . $sbx->type_field();
+            }
+            $fvt_lst->add_field(self::FLD_NEW_LINK_ID, $this->new_link_id, sql_par_type::INT, null, $par_name);
         }
         if ($this->new_to_id > 0) {
-            $fvt_lst->add_field(self::FLD_NEW_TO_ID, $this->new_to_id, sql_par_type::INT);
+            $par_name = '';
+            if ($sbx != null) {
+                $par_name = sql::PAR_PREFIX . $sbx->to_field();
+            }
+            $fvt_lst->add_field(self::FLD_NEW_TO_ID, $this->new_to_id, sql_par_type::INT, null, $par_name);
         }
 
-        $fvt_lst->add_field(self::FLD_ROW_ID, $this->row_id, sql_par_type::INT);
+        $par_name = '';
+        if ($sbx != null) {
+            $par_name = sql::PAR_NEW_ID_PREFIX . $sbx->id_field();
+        }
+        $fvt_lst->add_field(self::FLD_ROW_ID, $this->row_id, sql_par_type::INT, null, $par_name);
         return $fvt_lst;
     }
 
@@ -878,18 +899,42 @@ class change_link extends change_log
         $sql_values[] = $this->action_id;
         $sql_values[] = $this->field_id;
 
-        if ($this->old_value !== null) {
-            $sql_values[] = $this->old_value;
+        if ($this->old_text_from !== null) {
+            $sql_values[] = $this->old_text_from;
         }
-        if ($this->new_value !== null) {
-            $sql_values[] = $this->new_value;
+        if ($this->old_text_link !== null) {
+            $sql_values[] = $this->old_text_link;
+        }
+        if ($this->old_text_to !== null) {
+            $sql_values[] = $this->old_text_to;
+        }
+        if ($this->new_text_from !== null) {
+            $sql_values[] = $this->new_text_from;
+        }
+        if ($this->new_text_link !== null) {
+            $sql_values[] = $this->new_text_link;
+        }
+        if ($this->new_text_to !== null) {
+            $sql_values[] = $this->new_text_to;
         }
 
-        if ($this->old_id > 0) {
-            $sql_values[] = $this->new_id;
+        if ($this->old_from_id > 0) {
+            $sql_values[] = $this->old_from_id;
         }
-        if ($this->new_id > 0) {
-            $sql_values[] = $this->new_id;
+        if ($this->old_link_id > 0) {
+            $sql_values[] = $this->old_link_id;
+        }
+        if ($this->old_to_id > 0) {
+            $sql_values[] = $this->old_to_id;
+        }
+        if ($this->new_from_id > 0) {
+            $sql_values[] = $this->new_from_id;
+        }
+        if ($this->new_link_id > 0) {
+            $sql_values[] = $this->new_link_id;
+        }
+        if ($this->new_to_id > 0) {
+            $sql_values[] = $this->new_to_id;
         }
 
         $sql_values[] = $this->row_id;

@@ -3003,11 +3003,11 @@ class sandbox extends db_object_seq_id_user
             $fld_lst_ex_log_and_key = array_merge([$qp_id->par_fld->name], $fld_lst_ex_log);
         }
 
-        if ($this->is_link_obj()) {
+        if ($this->is_link_obj() and !$usr_tbl) {
 
             // create the log entry for the link
             $qp_log_lnk = $sc->sql_func_log_link($this, $this->user(), $fvt_lst, $sc_par_lst_log);
-            $sql .= ' ' . $qp_log_lnk->sql;
+            $sql .= ' ' . $qp_log_lnk->sql . ';';
             $par_lst_out->add_list($qp_log_lnk->par_fld_lst);
 
             // remove the link fields from the field list for the log entries, because the log is done with the log_link already
@@ -3053,6 +3053,12 @@ class sandbox extends db_object_seq_id_user
             $qp_update = $this->sql_common($sc_update, $sc_par_lst_upd_ex_log);;
             $update_fvt_lst = new sql_par_field_list();
             $update_fvt_lst->set($update_fld_val_typ_lst);
+            if ($this->is_link_obj()) {
+                $update_fvt_lst->del($this->from_field());
+                $update_fvt_lst->del($this->type_field());
+                $update_fvt_lst->del($this->to_field());
+                $update_fvt_lst->add($fvt_lst->get($this->name_field()));
+            }
             $qp_update->sql = $sc_update->create_sql_update(
                 $id_field, $var_name_row_id, $update_fvt_lst, [], $sc_par_lst_upd_ex_log);
             // add the insert row to the function body

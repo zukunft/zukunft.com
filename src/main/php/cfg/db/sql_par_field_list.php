@@ -82,11 +82,22 @@ class sql_par_field_list
         }
     }
 
+    /**
+     * add a field based on the single parameters to the list
+     *
+     * @param string $name
+     * @param string|int|float|null $value
+     * @param sql_par_type|sql_field_type $type
+     * @param string|int|float|null $old
+     * @param string $par_name
+     * @return void
+     */
     function add_field(
         string                      $name,
         string|int|float|null       $value,
         sql_par_type|sql_field_type $type,
-        string|int|float|null       $old = null
+        string|int|float|null       $old = null,
+        string $par_name = ''
     ): void
     {
         $fld = new sql_par_field();
@@ -98,7 +109,21 @@ class sql_par_field_list
             $fld->type = $type;
         }
         $fld->old = $old;
+        if ($par_name != '') {
+            $fld->par_name = $par_name;
+        }
         $this->add($fld);
+    }
+
+    function del(string $fld_name): void
+    {
+        $result = [];
+        foreach ($this->lst as $fld) {
+            if ($fld->name != $fld_name) {
+                $result[] = $fld;
+            }
+        }
+        $this->lst = $result;
     }
 
     function fill_from_arrays(array $fields, array $values, array $types = []): void

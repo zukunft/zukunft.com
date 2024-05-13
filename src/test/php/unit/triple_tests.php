@@ -62,8 +62,8 @@ class triple_tests
         // TODO activate db write
         $t->assert_sql_insert($sc, $trp);
         $t->assert_sql_insert($sc, $trp, [sql_type::USER]);
-        //$t->assert_sql_insert($sc, $trp, [sql_type::LOG]);
-        //$t->assert_sql_insert($sc, $trp, [sql_type::LOG, sql_type::USER]);
+        $t->assert_sql_insert($sc, $trp, [sql_type::LOG]);
+        $t->assert_sql_insert($sc, $trp, [sql_type::LOG, sql_type::USER]);
         // TODO activate db write
         //$t->assert_sql_update($sc, $trp);
         //$t->assert_sql_update($sc, $trp, [sql_type::USER]);

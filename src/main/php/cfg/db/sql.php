@@ -1092,6 +1092,7 @@ class sql
             $fld = $fvt->name;
             $val = $fvt->value;
             $typ = $fvt->type;
+            $par = $fvt->par_name;
             $this->par_values[] = $val;
             if ($fvt->value != sql::NOW) {
                 if ($typ != '') {
@@ -1124,12 +1125,24 @@ class sql
                             if ($this->db_type == sql_db::MYSQL
                                 and !$usr_tbl
                                 and $insert_part) {
-                                $fld_name = sql::PAR_PREFIX_MYSQL . $chg_row_fld;
+                                if ($par != '')  {
+                                    $fld_name = sql::PAR_PREFIX_MYSQL . $par;
+                                } else {
+                                    $fld_name = sql::PAR_PREFIX_MYSQL . $chg_row_fld;
+                                }
                             } else {
-                                $fld_name = $chg_row_fld;
+                                if ($par != '')  {
+                                    $fld_name = $par;
+                                } else {
+                                    $fld_name = $chg_row_fld;
+                                }
                             }
                         } else {
-                            $fld_name = '_' . $fld_name;
+                            if ($par != '')  {
+                                $fld_name = $par;
+                            } else {
+                                $fld_name = sql::PAR_PREFIX . $fld_name;
+                            }
                         }
                     }
                     $this->par_fields[] = $fld_name;
@@ -1170,7 +1183,8 @@ class sql
             } else {
                 // for log entries and user changes the change id does not need to be returned
                 // to indicate this tell the sql end function that this is a log table
-                if ($this->class == change::class and $sc_par_lst->use_named_par()) {
+                if (($this->class == change::class or $this->class == change_link::class)
+                    and $sc_par_lst->use_named_par()) {
                     $sc_par_lst->add(sql_type::NO_ID_RETURN);
                 }
             }
@@ -1439,9 +1453,9 @@ class sql
      */
     function sql_func_log_link(
         sandbox|sandbox_link|sandbox_link_typed $sbx,
-        user                            $usr,
-        sql_par_field_list              $fvt_lst,
-        sql_type_list                   $sc_par_lst
+        user                                    $usr,
+        sql_par_field_list                      $fvt_lst,
+        sql_type_list                           $sc_par_lst
     ): sql_par
     {
         $log = new change_link($usr);
@@ -1460,7 +1474,7 @@ class sql
 
         // create the sql for the log entry
         $qp = $log->sql_insert(
-            $sc_log, $sc_par_lst);
+            $sc_log, $sc_par_lst, $sbx);
 
         $par_lst_out = new sql_par_field_list();
         $par_lst_out->add_field(
