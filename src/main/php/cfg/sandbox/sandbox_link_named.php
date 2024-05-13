@@ -289,7 +289,7 @@ class sandbox_link_named extends sandbox_link
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return array list of all database field names that have been updated
      */
-    function db_all_fields_named_link(sql_type_list $sc_par_lst): array
+    function db_fields_all(sql_type_list $sc_par_lst): array
     {
         return array_merge(
             parent::db_all_fields_link($sc_par_lst),
@@ -306,7 +306,7 @@ class sandbox_link_named extends sandbox_link
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list with the field names of the object and any child object
      */
-    function db_changed_fields_named_link(sandbox|sandbox_link_named $sbx, sql_type_list $sc_par_lst): sql_par_field_list
+    function db_fields_changed(sandbox|sandbox_link_named $sbx, sql_type_list $sc_par_lst): sql_par_field_list
     {
         global $change_field_list;
 
@@ -314,7 +314,7 @@ class sandbox_link_named extends sandbox_link
         $do_log = $sc_par_lst->and_log();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_changed_fields_link($sbx, $sc_par_lst);
+        $lst = parent::db_fields_changed($sbx, $sc_par_lst);
         // for insert statements of user sandbox rows user id fields always needs to be included
         if ($sbx->name() <> $this->name()) {
             if ($do_log) {

@@ -258,7 +258,7 @@ class sql_db
     // classes which should use the "with log" function for saving data
     const CLASSES_USE_WITH_LOG_FUNC_FOR_SAVE = [
         word::class,
-        //triple::class,
+        triple::class,
         source::class,
         formula::class,
     ];

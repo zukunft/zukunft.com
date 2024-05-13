@@ -1461,10 +1461,13 @@ class sql
         $log = new change_link($usr);
         $log->set_table_by_class($sbx::class);
         $log->new_from_id = $sbx->from_id();
+        $log->new_text_from = $sbx->from_name();
         if ($sbx::class == sandbox_link_typed::class or $sbx::class == triple::class) {
             $log->new_link_id = $sbx->type_id();
+            $log->new_text_link = $sbx->type_name();
         }
         $log->new_to_id = $sbx->to_id();
+        $log->new_text_to = $sbx->to_name();
 
         // set the parameters for the log sql statement creation
         $sc_log = clone $this;

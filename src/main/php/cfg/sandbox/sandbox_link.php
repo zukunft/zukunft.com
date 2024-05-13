@@ -133,6 +133,18 @@ class sandbox_link extends sandbox
         }
     }
 
+    /**
+     * @return string the name of the linked object
+     */
+    function from_name(): string
+    {
+        if ($this->fob == null) {
+            return '';
+        } else {
+            return $this->fob->name();
+        }
+    }
+
     function set_tob(object $tob): void
     {
         $this->tob = $tob;
@@ -152,6 +164,18 @@ class sandbox_link extends sandbox
             return 0;
         } else {
             return $this->tob->id();
+        }
+    }
+
+    /**
+     * @return string the name of the linked object
+     */
+    function to_name(): string
+    {
+        if ($this->tob == null) {
+            return '';
+        } else {
+            return $this->tob->name();
         }
     }
 
@@ -695,6 +719,30 @@ class sandbox_link extends sandbox
         return $qp;
     }
 
+    /**
+     * @return sql_par_field_list with the text values of the linked items for the log
+     */
+    function sql_key_fields_text(): sql_par_field_list
+    {
+        $fvt_lst = new sql_par_field_list();
+        $fvt_lst->add_field(
+            change_link::FLD_NEW_FROM_TEXT,
+            $this->from_name(),
+            sql_field_type::NAME
+        );
+        $fvt_lst->add_field(
+            change_link::FLD_NEW_LINK_TEXT,
+            $this->type_name(),
+            sql_field_type::NAME
+        );
+        $fvt_lst->add_field(
+            change_link::FLD_NEW_TO_TEXT,
+            $this->to_name(),
+            sql_field_type::NAME
+        );
+        return $fvt_lst;
+    }
+
 
     /*
      * sql write fields
@@ -719,7 +767,6 @@ class sandbox_link extends sandbox
             return [$this::FLD_ID,
                 user::FLD_ID,
                 $this->from_field(),
-                $this->type_field(),
                 $this->to_field()
             ];
         }
@@ -733,7 +780,7 @@ class sandbox_link extends sandbox
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list with the field names of the object and any child object
      */
-    function db_changed_fields_link(sandbox|sandbox_link $sbx, sql_type_list $sc_par_lst): sql_par_field_list
+    function db_fields_changed(sandbox|sandbox_link $sbx, sql_type_list $sc_par_lst): sql_par_field_list
     {
         global $change_field_list;
 

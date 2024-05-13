@@ -31,6 +31,11 @@
 
 namespace cfg;
 
+use cfg\db\sql;
+use cfg\db\sql_par_field_list;
+use cfg\db\sql_type_list;
+use cfg\log\change;
+
 include_once MODEL_SANDBOX_PATH . 'sandbox_link_named.php';
 
 class sandbox_link_typed extends sandbox_link_named
@@ -40,6 +45,20 @@ class sandbox_link_typed extends sandbox_link_named
     // which is actually only triple
     // repeating _sandbox_typed, because php 8.1 does not yet allow multi extends
     public ?int $type_id = null;
+
+
+    /*
+     * construct and map
+     */
+
+    /**
+     * reset the type of the link object
+     */
+    function reset(): void
+    {
+        parent::reset();
+        $this->type_id = null;
+    }
 
 
     /*
@@ -125,6 +144,59 @@ class sandbox_link_typed extends sandbox_link_named
             }
         }
         return $result;
+    }
+
+
+    /*
+     * sql write fields
+     */
+
+    /**
+     * add the type fields to the list of all database fields that might be changed
+     *
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return array list of all database field names that have been updated
+     */
+    function db_fields_all(sql_type_list $sc_par_lst): array
+    {
+        return array_merge(
+            parent::db_fields_all($sc_par_lst),
+            [phrase::FLD_TYPE]
+        );
+    }
+
+    /**
+     * add tze type field to the list of changed database fields with name, value and type
+     *
+     * @param sandbox|word $sbx the compare value to detect the changed fields
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
+     */
+    function db_fields_changed(sandbox|word $sbx, sql_type_list $sc_par_lst): sql_par_field_list
+    {
+        global $change_field_list;
+
+        $sc = new sql();
+        $do_log = $sc_par_lst->and_log();
+        $table_id = $sc->table_id($this::class);
+
+        $lst = parent::db_fields_changed($sbx, $sc_par_lst);
+        if ($sbx->type_id() <> $this->type_id()) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . phrase::FLD_TYPE,
+                    $change_field_list->id($table_id . phrase::FLD_TYPE),
+                    change::FLD_FIELD_ID_SQLTYP
+                );
+            }
+            $lst->add_field(
+                phrase::FLD_TYPE,
+                $this->type_id(),
+                phrase::FLD_TYPE_SQLTYP,
+                $sbx->type_id()
+            );
+        }
+        return $lst;
     }
 
 }

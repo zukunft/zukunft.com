@@ -3010,6 +3010,8 @@ class sandbox extends db_object_seq_id_user
             $sql .= ' ' . $qp_log_lnk->sql . ';';
             $par_lst_out->add_list($qp_log_lnk->par_fld_lst);
 
+            $par_lst_out->add_list($this->sql_key_fields_text());
+
             // remove the link fields from the field list for the log entries, because the log is done with the log_link already
             $fld_lst_ex_log_and_key = array_diff($fld_lst_ex_log_and_key, $qp_id->par_fld_lst->names());
         }
@@ -3375,6 +3377,17 @@ class sandbox extends db_object_seq_id_user
         $sc->set_name($qp->name);
         return $qp;
     }
+
+    /**
+     * dummy function which is overwritten by the sandbox link class
+     * @return sql_par_field_list with the text values of the linked items for the log
+     */
+    function sql_key_fields_text(): sql_par_field_list
+    {
+        return new sql_par_field_list();
+    }
+
+
 
     /*
      * internal check

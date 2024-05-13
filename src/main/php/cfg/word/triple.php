@@ -2275,11 +2275,11 @@ class triple extends sandbox_link_typed implements JsonSerializable
     ): sql_par
     {
         // fields and values that the word has additional to the standard named user sandbox object
-        $wrd_empty = $this->clone_reset();
+        $trp_empty = $this->clone_reset();
         // for a new word the owner should be set, so remove the user id to force writing the user
-        $wrd_empty->set_user($this->user()->clone_reset());
+        $trp_empty->set_user($this->user()->clone_reset());
         $sc_par_lst->add(sql_type::INSERT);
-        $fvt_lst = $this->db_changed_list($wrd_empty, $sc_par_lst);
+        $fvt_lst = $this->db_fields_changed($trp_empty, $sc_par_lst);
         $all_fields = $this->db_fields_all($sc_par_lst);
         return parent::sql_insert_switch($sc, $fvt_lst, $all_fields, $sc_par_lst);
     }
@@ -2298,7 +2298,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
         // and that needs to be updated in the database
         // the db_* child function call the corresponding parent function
         // including the sql parameters for logging
-        $fld_lst = $this->db_changed_list($db_row, $sc_par_lst);
+        $fld_lst = $this->db_fields_changed($db_row, $sc_par_lst);
         $all_fields = $this->db_fields_all($sc_par_lst);
         // unlike the db_* function the sql_update_* parent function is called directly
         return parent::sql_update_named($sc, $fld_lst, $all_fields, $sc_par_lst);
@@ -2320,7 +2320,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
     function db_fields_all(sql_type_list $sc_par_lst): array
     {
         return array_merge(
-            parent::db_all_fields_named_link($sc_par_lst),
+            parent::db_fields_all($sc_par_lst),
             [verb::FLD_ID,
                 self::FLD_NAME_GIVEN,
                 self::FLD_NAME_AUTO,
@@ -2337,7 +2337,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
-    function db_changed_list(sandbox|triple $sbx, sql_type_list $sc_par_lst): sql_par_field_list
+    function db_fields_changed(sandbox|triple $sbx, sql_type_list $sc_par_lst): sql_par_field_list
     {
         global $change_field_list;
 
@@ -2347,7 +2347,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
         $table_id = $sc->table_id($this::class);
 
         // should be corresponding with the list of triple object vars
-        $lst = parent::db_changed_fields_named_link($sbx, $sc_par_lst);
+        $lst = parent::db_fields_changed($sbx, $sc_par_lst);
         // the link type cannot be changed by the user, because this would be another link
         if (!$usr_tbl) {
             if ($sbx->verb_id() <> $this->verb_id()) {
