@@ -259,7 +259,7 @@ class sandbox_multi extends db_object_multi_user
      * @param sandbox_multi $sbx the same sandbox as this to compare which fields have been changed
      * @return array with the field names of the object and any child object
      */
-    function db_changed_sandbox(sandbox_multi $sbx): array
+    function db_fields_changed_sandbox(sandbox_multi $sbx): array
     {
         $lst = [];
         if ($sbx->excluded <> $this->excluded) {

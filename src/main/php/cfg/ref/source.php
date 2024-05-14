@@ -642,7 +642,7 @@ class source extends sandbox_typed
         // for a new source the owner should be set, so remove the user id to force writing the user
         $empty_src->set_user($this->user()->clone_reset());
         $sc_par_lst->add(sql_type::INSERT);
-        $fvt_lst = $this->db_changed_list($empty_src, $sc_par_lst);
+        $fvt_lst = $this->db_fields_changed($empty_src, $sc_par_lst);
         $all_fields = $this->db_fields_all();
         return parent::sql_insert_switch($sc, $fvt_lst, $all_fields, $sc_par_lst);
     }
@@ -660,7 +660,7 @@ class source extends sandbox_typed
         // get the fields and values that have been changed
         // and that needs to be updated in the database
         // the db_* child function call the corresponding parent function
-        $fvt_lst = $this->db_changed_list($db_row, $sc_par_lst);
+        $fvt_lst = $this->db_fields_changed($db_row, $sc_par_lst);
         $all_fields = $this->db_fields_all();
         // unlike the db_* function the sql_update_* parent function is called directly
         return parent::sql_update_named($sc, $fvt_lst, $all_fields, $sc_par_lst);
@@ -681,7 +681,7 @@ class source extends sandbox_typed
     function db_fields_all(): array
     {
         return array_merge(
-            parent::db_fields_all_named(),
+            parent::db_fields_all(),
             [source::FLD_TYPE,
                 self::FLD_URL,
                 sql::FLD_CODE_ID],
@@ -696,7 +696,7 @@ class source extends sandbox_typed
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list of the database field names that have been updated
      */
-    function db_changed_list(sandbox|source $sbx, sql_type_list $sc_par_lst): sql_par_field_list
+    function db_fields_changed(sandbox|source $sbx, sql_type_list $sc_par_lst): sql_par_field_list
     {
         global $change_field_list;
 
@@ -704,7 +704,7 @@ class source extends sandbox_typed
         $do_log = $sc_par_lst->and_log();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_changed_named_list($sbx, $sc_par_lst);
+        $lst = parent::db_fields_changed($sbx, $sc_par_lst);
         if ($sbx->type_id() <> $this->type_id()) {
             if ($do_log) {
                 $lst->add_field(

@@ -68,7 +68,9 @@ class triple_tests
         // TODO activate db write
         $trp_renamed = $trp->cloned(word_api::TN_RENAMED);
         $t->assert_sql_update($sc, $trp_renamed, $trp);
-        //$t->assert_sql_update($sc, $trp_renamed, $trp, [sql_type::USER]);
+        $t->assert_sql_update($sc, $trp_renamed, $trp, [sql_type::USER]);
+        $t->assert_sql_update($sc, $trp_renamed, $trp, [sql_type::LOG]);
+        $t->assert_sql_update($sc, $trp_renamed, $trp, [sql_type::LOG, sql_type::USER]);
         // TODO activate db write
         //$t->assert_sql_delete($sc, $trp);
         //$t->assert_sql_delete($sc, $trp, [sql_type::USER]);

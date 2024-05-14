@@ -1788,7 +1788,7 @@ class result extends sandbox_value
                 sql_field_type::TIME
             ];
         }
-        return array_merge($lst, $this->db_changed_sandbox($sbv));
+        return array_merge($lst, $this->db_fields_changed($sbv));
     }
 
 }
