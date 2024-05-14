@@ -58,15 +58,17 @@ class triple_tests
         $t->assert_sql_standard($sc, $trp);
 
         $t->subheader('triple sql write');
+        // insert
         $trp = $t->triple();
-        // TODO activate db write
         $t->assert_sql_insert($sc, $trp);
         $t->assert_sql_insert($sc, $trp, [sql_type::USER]);
         $t->assert_sql_insert($sc, $trp, [sql_type::LOG]);
         $t->assert_sql_insert($sc, $trp, [sql_type::LOG, sql_type::USER]);
+        // update
         // TODO activate db write
-        //$t->assert_sql_update($sc, $trp);
-        //$t->assert_sql_update($sc, $trp, [sql_type::USER]);
+        $trp_renamed = $trp->cloned(word_api::TN_RENAMED);
+        $t->assert_sql_update($sc, $trp_renamed, $trp);
+        //$t->assert_sql_update($sc, $trp_renamed, $trp, [sql_type::USER]);
         // TODO activate db write
         //$t->assert_sql_delete($sc, $trp);
         //$t->assert_sql_delete($sc, $trp, [sql_type::USER]);

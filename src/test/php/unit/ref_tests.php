@@ -150,7 +150,6 @@ class ref_tests
         $t->assert_sql_insert($sc, $src, [sql_type::LOG]);
         $t->assert_sql_insert($sc, $src, [sql_type::LOG, sql_type::USER]);
         $src_renamed = $src->cloned(source_api::TN_RENAMED);
-        $src_renamed->set_id($src->id());
         $t->assert_sql_update($sc, $src_renamed, $src);
         $t->assert_sql_update($sc, $src_renamed, $src, [sql_type::USER]);
         $t->assert_sql_update($sc, $src_renamed, $src, [sql_type::LOG]);

@@ -218,6 +218,7 @@ class sandbox_named extends sandbox
 
     /**
      * create a clone and update the name (mainly used for unit testing)
+     * but keep the id a unique db id
      *
      * @param string $name the target name
      * @return $this a clone with the name changed
@@ -225,6 +226,7 @@ class sandbox_named extends sandbox
     function cloned(string $name): sandbox_named
     {
         $obj_cpy = $this->clone_reset();
+        $obj_cpy->set_id($this->id());
         $obj_cpy->set_name($name);
         return $obj_cpy;
     }
