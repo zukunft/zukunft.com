@@ -71,9 +71,12 @@ class triple_tests
         $t->assert_sql_update($sc, $trp_renamed, $trp, [sql_type::USER]);
         $t->assert_sql_update($sc, $trp_renamed, $trp, [sql_type::LOG]);
         $t->assert_sql_update($sc, $trp_renamed, $trp, [sql_type::LOG, sql_type::USER]);
+        // delete
         // TODO activate db write
-        //$t->assert_sql_delete($sc, $trp);
-        //$t->assert_sql_delete($sc, $trp, [sql_type::USER]);
+        $t->assert_sql_delete($sc, $trp);
+        $t->assert_sql_delete($sc, $trp, [sql_type::USER]);
+        $t->assert_sql_delete($sc, $trp, [sql_type::LOG]);
+        $t->assert_sql_delete($sc, $trp, [sql_type::LOG, sql_type::USER]);
 
         $t->subheader('API unit tests');
 
