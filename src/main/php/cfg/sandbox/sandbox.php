@@ -1212,10 +1212,20 @@ class sandbox extends db_object_seq_id_user
                 $this->usr_cfg_id = $db_row[$this->id_field()];
             }
             if (!$this->has_usr_cfg()) {
-                // create an entry in the user sandbox
-                $db_con->set_class($this::class, true);
-                $db_con->set_usr($this->user()->id());
-                $log_id = $db_con->insert_old(array($this->id_field(), user::FLD_ID), array($this->id, $this->user()->id()));
+                $log_id = 0;
+                if ($this->sql_write_prepared()) {
+                    $sc = $db_con->sql_creator();
+                    $qp = $this->sql_insert($sc, new sql_type_list([sql_type::USER]));
+                    $usr_msg = $db_con->insert($qp, 'add ' . $this->dsp_id() . ' for user ' . $this->user()->dsp_id());
+                    if ($usr_msg->is_ok()) {
+                        $log_id = $usr_msg->get_row_id();
+                    }
+                } else {
+                    // create an entry in the user sandbox
+                    $db_con->set_class($this::class, true);
+                    $db_con->set_usr($this->user()->id());
+                    $log_id = $db_con->insert_old(array($this->id_field(), user::FLD_ID), array($this->id, $this->user()->id()));
+                }
                 if ($log_id <= 0) {
                     log_err('Insert of ' . sql_db::USER_PREFIX . $this::class . ' failed.');
                     $result = false;
@@ -1629,16 +1639,12 @@ class sandbox extends db_object_seq_id_user
     /**
      * detects if this object has be changed compared to the given object
      *
-     * @param sandbox $db_obj the user database or standard record for compare
+     * @param sandbox_named $db_obj the user database or standard record for compare
      * @return bool true if any of the fields does not match
      */
-    function no_diff(sandbox $db_obj): bool
+    function no_diff(sandbox_named $db_obj): bool
     {
-        if (count($this->db_fields_changed($db_obj)) > 0) {
-            return false;
-        } else {
-            return true;
-        }
+        return $this->db_fields_changed($db_obj)->is_empty();
     }
 
     /**
@@ -3545,6 +3551,22 @@ class sandbox extends db_object_seq_id_user
      * @return sql_par_field_list with the text values of the linked items for the log
      */
     function sql_key_fields_text(): sql_par_field_list
+    {
+        return new sql_par_field_list();
+    }
+
+    /**
+     * get a list of database field names, values and types that have been updated
+     * dummy function overwritten by the child object
+     *
+     * @param sandbox_named $sbx the same named sandbox as this to compare which fields have been changed
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par_field_list with the field names of the object and any child object
+     */
+    function db_fields_changed(
+        sandbox_named $sbx,
+        sql_type_list $sc_par_lst = new sql_type_list([])
+    ): sql_par_field_list
     {
         return new sql_par_field_list();
     }

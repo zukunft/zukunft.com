@@ -696,7 +696,10 @@ class source extends sandbox_typed
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list of the database field names that have been updated
      */
-    function db_fields_changed(sandbox|source $sbx, sql_type_list $sc_par_lst): sql_par_field_list
+    function db_fields_changed(
+        sandbox|source $sbx,
+        sql_type_list $sc_par_lst = new sql_type_list([])
+    ): sql_par_field_list
     {
         global $change_field_list;
 

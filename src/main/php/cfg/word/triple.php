@@ -1671,10 +1671,11 @@ class triple extends sandbox_link_typed implements JsonSerializable
                 $this->usr_cfg_id = $db_row[self::FLD_ID];
             }
             if (!$this->has_usr_cfg()) {
+                $log_id = 0;
                 if ($this->sql_write_prepared()) {
                     $sc = $db_con->sql_creator();
                     $qp = $this->sql_insert($sc, new sql_type_list([sql_type::USER]));
-                    $usr_msg = $db_con->insert($qp, 'add ' . $this->dsp_id());
+                    $usr_msg = $db_con->insert($qp, 'add ' . $this->dsp_id() . ' for user ' . $this->user()->dsp_id());
                     if ($usr_msg->is_ok()) {
                         $log_id = $usr_msg->get_row_id();
                     }
@@ -2351,7 +2352,10 @@ class triple extends sandbox_link_typed implements JsonSerializable
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
-    function db_fields_changed(sandbox|triple $sbx, sql_type_list $sc_par_lst): sql_par_field_list
+    function db_fields_changed(
+        sandbox|triple $sbx,
+        sql_type_list $sc_par_lst = new sql_type_list([])
+    ): sql_par_field_list
     {
         global $change_field_list;
 

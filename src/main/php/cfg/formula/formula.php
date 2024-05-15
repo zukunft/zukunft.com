@@ -2633,7 +2633,10 @@ class formula extends sandbox_typed
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
-    function db_fields_changed(sandbox|formula $frm, sql_type_list $sc_par_lst): sql_par_field_list
+    function db_fields_changed(
+        sandbox|formula $frm,
+        sql_type_list $sc_par_lst = new sql_type_list([])
+    ): sql_par_field_list
     {
         global $change_field_list;
 

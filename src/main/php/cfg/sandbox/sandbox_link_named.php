@@ -323,7 +323,10 @@ class sandbox_link_named extends sandbox_link
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list with the field names of the object and any child object
      */
-    function db_fields_changed(sandbox|sandbox_link_named $sbx, sql_type_list $sc_par_lst): sql_par_field_list
+    function db_fields_changed(
+        sandbox|sandbox_link_named $sbx,
+        sql_type_list $sc_par_lst = new sql_type_list([])
+    ): sql_par_field_list
     {
         global $change_field_list;
 
