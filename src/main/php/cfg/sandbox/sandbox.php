@@ -1725,84 +1725,6 @@ class sandbox extends db_object_seq_id_user
         return $result;
     }
 
-    /**
-     * save the share level in the database if allowed
-     * @param sql_db $db_con the active database connection that should be used
-     * @param sandbox $db_rec the object as saved in the database before this field is updated
-     * @param sandbox $std_rec the default object without user specific changes
-     * @return string the message that should be shown to the user
-     */
-    function save_field_share(sql_db $db_con, sandbox $db_rec, sandbox $std_rec): string
-    {
-        log_debug($this->dsp_id());
-        $result = '';
-
-        if ($db_rec->share_id <> $this->share_id) {
-            $log = $this->log_upd_field();
-            $log->old_value = $db_rec->share_type_name();
-            $log->old_id = $db_rec->share_id;
-            $log->new_value = $this->share_type_name();
-            $log->new_id = $this->share_id;
-            // TODO is the setting of the standard needed?
-            $log->std_value = $std_rec->share_type_name();
-            $log->std_id = $std_rec->share_id;
-            $log->row_id = $this->id;
-            $log->set_field(self::FLD_SHARE);
-
-            // save_field_do is not used because the share type can only be set on the user record
-            if ($log->new_id > 0) {
-                $new_value = $log->new_id;
-                $std_value = $log->std_id;
-            } else {
-                $new_value = $log->new_value;
-                $std_value = $log->std_value;
-            }
-            if ($log->add()) {
-                if (!$this->has_usr_cfg()) {
-                    if (!$this->add_usr_cfg()) {
-                        $result = 'creation of user sandbox for share type failed';
-                    }
-                }
-                if ($result == '') {
-                    $db_con->set_class($this::class, true);
-                    $db_con->set_usr($this->user()->id());
-                    if (!$db_con->update_old($this->id, $log->field(), $new_value)) {
-                        $result = 'setting of share type failed';
-                    }
-                }
-            }
-        }
-
-        log_debug($this->dsp_id());
-        return $result;
-    }
-
-    /**
-     * save the protection level in the database if allowed
-     * TODO is the setting of the standard needed?
-     */
-    function save_field_protection(sql_db $db_con, sandbox $db_rec, sandbox $std_rec): string
-    {
-        $result = '';
-        log_debug($this->dsp_id());
-
-        if ($db_rec->protection_id <> $this->protection_id) {
-            $log = $this->log_upd_field();
-            $log->old_value = $db_rec->protection_type_name();
-            $log->old_id = $db_rec->protection_id;
-            $log->new_value = $this->protection_type_name();
-            $log->new_id = $this->protection_id;
-            $log->std_value = $std_rec->protection_type_name();
-            $log->std_id = $std_rec->protection_id;
-            $log->row_id = $this->id;
-            $log->set_field(self::FLD_PROTECT);
-            $result .= $this->save_field_user($db_con, $log);
-        }
-
-        log_debug($this->dsp_id());
-        return $result;
-    }
-
 
     /*
      * save id
@@ -3335,7 +3257,7 @@ class sandbox extends db_object_seq_id_user
             } else {
                 $qp->sql = $sc->create_sql_update($this->id_field(), $this->id(), $fvt_lst);
             }
-            $qp->par = $val_lst;
+            $qp->par = $sc->par_values();
         }
 
         return $qp;
