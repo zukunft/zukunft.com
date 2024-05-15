@@ -2629,13 +2629,13 @@ class formula extends sandbox_typed
     /**
      * get a list of database field names, values and types that have been updated
      *
-     * @param sandbox|formula $frm the compare value to detect the changed fields
+     * @param sandbox|formula $sbx the compare value to detect the changed fields
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
-        sandbox|formula $frm,
-        sql_type_list $sc_par_lst = new sql_type_list([])
+        sandbox|formula $sbx,
+        sql_type_list   $sc_par_lst = new sql_type_list([])
     ): sql_par_field_list
     {
         global $change_field_list;
@@ -2644,8 +2644,8 @@ class formula extends sandbox_typed
         $do_log = $sc_par_lst->and_log();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($frm, $sc_par_lst);
-        if ($frm->type_id() <> $this->type_id()) {
+        $lst = parent::db_fields_changed($sbx, $sc_par_lst);
+        if ($sbx->type_id() <> $this->type_id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_TYPE,
@@ -2657,10 +2657,10 @@ class formula extends sandbox_typed
                 self::FLD_TYPE,
                 $this->type_id(),
                 self::FLD_TYPE_SQLTYP,
-                $frm->type_id()
+                $sbx->type_id()
             );
         }
-        if ($frm->ref_text <> $this->ref_text) {
+        if ($sbx->ref_text <> $this->ref_text) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_FORMULA_TEXT,
@@ -2672,10 +2672,10 @@ class formula extends sandbox_typed
                 self::FLD_FORMULA_TEXT,
                 $this->ref_text,
                 self::FLD_FORMULA_TEXT_SQLTYP,
-                $frm->ref_text
+                $sbx->ref_text
             );
         }
-        if ($frm->usr_text <> $this->usr_text) {
+        if ($sbx->usr_text <> $this->usr_text) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_FORMULA_USER_TEXT,
@@ -2687,10 +2687,10 @@ class formula extends sandbox_typed
                 self::FLD_FORMULA_USER_TEXT,
                 $this->usr_text,
                 self::FLD_FORMULA_USER_TEXT_SQLTYP,
-                $frm->usr_text
+                $sbx->usr_text
             );
         }
-        if ($frm->need_all_val <> $this->need_all_val) {
+        if ($sbx->need_all_val <> $this->need_all_val) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_ALL_NEEDED,
@@ -2702,11 +2702,11 @@ class formula extends sandbox_typed
                 self::FLD_ALL_NEEDED,
                 $this->need_all_val,
                 self::FLD_ALL_NEEDED_SQLTYP,
-                $frm->need_all_val
+                $sbx->need_all_val
             );
         }
         // TODO maybe exclude?
-        if ($frm->last_update <> $this->last_update) {
+        if ($sbx->last_update <> $this->last_update) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_LAST_UPDATE,
@@ -2718,10 +2718,10 @@ class formula extends sandbox_typed
                 self::FLD_LAST_UPDATE,
                 $this->last_update,
                 self::FLD_LAST_UPDATE_SQLTYP,
-                $frm->last_update
+                $sbx->last_update
             );
         }
-        if ($frm->view_id() <> $this->view_id()) {
+        if ($sbx->view_id() <> $this->view_id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_VIEW,
@@ -2733,10 +2733,10 @@ class formula extends sandbox_typed
                 self::FLD_VIEW,
                 $this->view_id(),
                 self::FLD_VIEW_SQLTYP,
-                $frm->view_id()
+                $sbx->view_id()
             );
         }
-        if ($frm->usage() <> $this->usage()) {
+        if ($sbx->usage() <> $this->usage()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_USAGE,
@@ -2748,10 +2748,10 @@ class formula extends sandbox_typed
                 self::FLD_USAGE,
                 $this->usage(),
                 self::FLD_USAGE_SQLTYP,
-                $frm->usage()
+                $sbx->usage()
             );
         }
-        return $lst->merge($this->db_changed_sandbox_list($frm, $sc_par_lst));
+        return $lst->merge($this->db_changed_sandbox_list($sbx, $sc_par_lst));
     }
 
 }

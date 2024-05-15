@@ -1639,10 +1639,10 @@ class sandbox extends db_object_seq_id_user
     /**
      * detects if this object has be changed compared to the given object
      *
-     * @param sandbox_named $db_obj the user database or standard record for compare
+     * @param sandbox|sandbox_named|sandbox_link $db_obj the user database or standard record for compare
      * @return bool true if any of the fields does not match
      */
-    function no_diff(sandbox_named $db_obj): bool
+    function no_diff(sandbox|sandbox_named|sandbox_link $db_obj): bool
     {
         return $this->db_fields_changed($db_obj)->is_empty();
     }
@@ -2657,7 +2657,10 @@ class sandbox extends db_object_seq_id_user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return user_message the message and potential solution shown to the user in case of a problem
      */
-    function update(string $msg = '', sql_type_list $sc_par_lst): user_message
+    function update(
+        string $msg = '',
+        sql_type_list $sc_par_lst = new sql_type_list([])
+    ): user_message
     {
         global $db_con;
 
