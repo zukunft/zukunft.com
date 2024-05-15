@@ -1673,7 +1673,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
             if (!$this->has_usr_cfg()) {
                 if ($this->sql_write_prepared()) {
                     $sc = $db_con->sql_creator();
-                    $qp = $this->sql_insert($sc);
+                    $qp = $this->sql_insert($sc, new sql_type_list([sql_type::USER]));
                     $usr_msg = $db_con->insert($qp, 'add ' . $this->dsp_id());
                     if ($usr_msg->is_ok()) {
                         $log_id = $usr_msg->get_row_id();

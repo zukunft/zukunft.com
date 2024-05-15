@@ -255,7 +255,8 @@ class sql_db
         user_profile_list::class,
         user_profile::class
     ];
-    // classes which should use the "with log" function for saving data
+
+    // classes which use by default the "with log" function for saving data
     const CLASSES_USE_WITH_LOG_FUNC_FOR_SAVE = [
         word::class,
         triple::class,
@@ -263,15 +264,15 @@ class sql_db
         formula::class,
     ];
 
-
     // classes that use a sql write script with log write
     const DB_WRITE_LOG_SCRIPT_CLASSES = [
         word::class,
         source::class];
 
-    // classes that use a sql write script with log write
+    // classes that use the prepared sql write statement
     const DB_WRITE_PREPARED = [
         word::class,
+        triple::class,
         source::class];
 
     // tables that do not have a name

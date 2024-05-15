@@ -107,6 +107,7 @@ enum sql_field_type: string
             self::INT, self::KEY_INT, self::KEY_INT_NO_AUTO, self::KEY_PART_INT, self::INT_UNIQUE_PART => sql_par_type::INT,
             self::INT_SMALL => sql_par_type::INT_SMALL,
             self::NUMERIC_FLOAT => sql_par_type::FLOAT,
+            self::BOOL => sql_par_type::INT_SMALL,
             default => sql_par_type::TEXT,
         };
     }
