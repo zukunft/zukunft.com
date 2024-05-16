@@ -56,9 +56,9 @@ class value_list
         $phr_city = $t->city_word()->phrase();
         $phr_canton = $t->canton()->phrase();
         $phr_ch = $t->city_word()->phrase();
-        $phr_inhabitant = $t->dummy_word_inhabitant()->phrase();
-        $phr_2019 = $t->dummy_word_2019()->phrase();
-        $phr_mio = $t->dummy_word_mio()->phrase();
+        $phr_inhabitant = $t->word_inhabitant()->phrase();
+        $phr_2019 = $t->word_2019()->phrase();
+        $phr_mio = $t->word_mio()->phrase();
 
         // create a test set of phrase groups
         $grp_id = 1;

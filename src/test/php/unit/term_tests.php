@@ -77,7 +77,7 @@ class term_tests
         $t->assert($t->name . 'word id', $trm->id_obj(), $wrd->id());
         $t->assert($t->name . 'word name', $trm->name(), $wrd->name_dsp());
 
-        $trp = $t->dummy_triple_pi();
+        $trp = $t->triple_pi();
         $trm = $trp->term();
         $t->assert($t->name . 'triple id', $trm->id_obj(), $trp->id());
         $t->assert($t->name . 'triple name', $trm->name(), $trp->name());
@@ -87,14 +87,14 @@ class term_tests
         $t->assert($t->name . 'formula id', $trm->id_obj(), $frm->id());
         $t->assert($t->name . 'formula name', $trm->name(), $frm->name());
 
-        $vrb = $t->dummy_verb();
+        $vrb = $t->verb();
         $trm = $vrb->term();
         $t->assert($t->name . 'verb id', $trm->id_obj(), $vrb->id());
         $t->assert($t->name . 'verb name', $trm->name(), $vrb->name());
 
 
         $t->subheader('Term SQL setup statements');
-        $trm = $t->dummy_term();
+        $trm = $t->term();
         $t->assert_sql_view_create($trm);
 
 
@@ -110,13 +110,13 @@ class term_tests
 
         $t->subheader('HTML frontend unit tests');
 
-        $trm = $t->dummy_term();
+        $trm = $t->term();
         $t->assert_api_to_dsp($trm, new term_dsp());
-        $trm = $t->dummy_term_triple();
+        $trm = $t->term_triple();
         $t->assert_api_to_dsp($trm, new term_dsp());
-        $trm = $t->dummy_term_formula();
+        $trm = $t->term_formula();
         $t->assert_api_to_dsp($trm, new term_dsp());
-        $trm = $t->dummy_term_verb();
+        $trm = $t->term_verb();
         $t->assert_api_to_dsp($trm, new term_dsp());
 
     }

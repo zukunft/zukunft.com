@@ -111,7 +111,7 @@ class triple_tests
 
         $t->subheader('HTML frontend unit tests');
 
-        $trp = $t->dummy_triple_pi();
+        $trp = $t->triple_pi();
         $t->assert_api_to_dsp($trp, new triple_dsp());
     }
 

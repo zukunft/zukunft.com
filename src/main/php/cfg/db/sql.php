@@ -39,6 +39,7 @@ include_once MODEL_DB_PATH . 'sql_pg.php';
 
 use cfg\component\component_link;
 use cfg\element;
+use cfg\formula;
 use cfg\formula_link;
 use cfg\group\group;
 use cfg\group\group_id;
@@ -63,7 +64,9 @@ use cfg\user_official_type;
 use cfg\value\value;
 use cfg\value\value_phrase_link;
 use cfg\value\value_time_series;
+use cfg\view;
 use cfg\view_term_link;
+use DateTime;
 use shared\library;
 
 class sql
@@ -1756,10 +1759,10 @@ class sql
     }
 
     /**
-     * @param string|array|float|int|null $fld_val the field value to detect the sql parameter type that should be used
+     * @param string|array|float|int|DateTime|null $fld_val the field value to detect the sql parameter type that should be used
      * @return sql_par_type the prime sql parameter type
      */
-    public function get_sql_par_type(string|array|float|int|null $fld_val): sql_par_type
+    public function get_sql_par_type(string|array|float|int|DateTime|null $fld_val): sql_par_type
     {
         $text_type = sql_par_type::TEXT;
         if ($fld_val == sql::NOW) {

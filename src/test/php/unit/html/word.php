@@ -47,7 +47,7 @@ class word
         $t->subheader('Word tests');
 
         $wrd = new word_dsp($t->word()->api_json());
-        $wrd_pi = new word_dsp($t->dummy_word_pi()->api_json());
+        $wrd_pi = new word_dsp($t->word_pi()->api_json());
         $test_page = $html->text_h2('Word display test');
         $test_page .= 'with tooltip: ' . $wrd->display() . '<br>';
         $test_page .= 'with link: ' . $wrd->display_linked() . '<br>';

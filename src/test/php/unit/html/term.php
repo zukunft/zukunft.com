@@ -46,8 +46,8 @@ class term
         $t->subheader('term tests');
 
         $wrd = new term_dsp($t->word()->term()->api_json());
-        $trp = new term_dsp($t->dummy_triple_pi()->term()->api_json());
-        $vrb = new term_dsp($t->dummy_verb()->term()->api_json());
+        $trp = new term_dsp($t->triple_pi()->term()->api_json());
+        $vrb = new term_dsp($t->verb()->term()->api_json());
         $frm = new term_dsp($t->formula()->term()->api_json());
         $test_page = $html->text_h2('term display test');
         $test_page .= 'word term with tooltip: ' . $wrd->display() . '<br>';

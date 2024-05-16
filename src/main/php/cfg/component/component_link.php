@@ -895,7 +895,7 @@ class component_link extends sandbox_link_with_type
         $lib = new library();
         $db_con->set_class(self::class);
         return $db_con->insert_old(
-            array($this->from_name . sql_db::FLD_EXT_ID, $this->to_name . sql_db::FLD_EXT_ID, "user_id", 'order_nbr'),
+            array($this->from_name . sql_db::FLD_EXT_ID, $this->to_name . sql_db::FLD_EXT_ID, user::FLD_ID, 'order_nbr'),
             array($this->view()->id(), $this->component()->id(), $this->user()->id(), $this->order_nbr));
     }
 

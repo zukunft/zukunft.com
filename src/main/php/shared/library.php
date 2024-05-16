@@ -143,10 +143,10 @@ class library
     /**
      * convert a database datetime string to a php DateTime object
      *
-     * @param string $datetime_text the datetime as received from the database
+     * @param string|null $datetime_text the datetime as received from the database
      * @return DateTime the converted DateTime value or now()
      */
-    function get_datetime(string $datetime_text, string $obj_name = '', string $process = ''): DateTime
+    function get_datetime(?string $datetime_text, string $obj_name = '', string $process = ''): DateTime
     {
         $result = new DateTime();
         try {

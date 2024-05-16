@@ -64,13 +64,13 @@ class type_lists
         $t->Header('Test the HTML functions for the list preloaded in the Frontend');
 
         // load the types from the api message
-        $api_msg = $t->dummy_type_lists_api($t->usr1)->get_json();
+        $api_msg = $t->type_lists_api($t->usr1)->get_json();
         new type_list_dsp($api_msg);
 
         // use the system view to start the HTML test page
         global $html_system_views;
         $dsp = $html_system_views->get(view_api::TC_READ);
-        $wrd = $t->dummy_word_dsp();
+        $wrd = $t->word_dsp();
         $wrd->set_name('All type selectors');
         $test_page = $dsp->show($wrd, '') . '<br><br>';
 

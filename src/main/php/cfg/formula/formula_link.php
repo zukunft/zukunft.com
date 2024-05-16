@@ -612,7 +612,7 @@ class formula_link extends sandbox_link_with_type
         global $db_con;
         $db_con->set_class(self::class);
         return $db_con->insert_old(
-            array($this->from_name . sql_db::FLD_EXT_ID, $this->to_name . sql_db::FLD_EXT_ID, "user_id", 'order_nbr'),
+            array($this->from_name . sql_db::FLD_EXT_ID, $this->to_name . sql_db::FLD_EXT_ID, user::FLD_ID, 'order_nbr'),
             array($this->fob->id(), $this->tob->id(), $this->user()->id, $this->order_nbr));
     }
 

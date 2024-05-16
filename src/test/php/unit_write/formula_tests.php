@@ -57,10 +57,23 @@ class formula_tests
 
         // init
         $t->name = 'formula->';
-
-        $t->header('Test the formula class (classes/formula.php)');
-
         $back = 0;
+
+        $t->header('formula db write tests');
+
+        $test_name = 'add formula ' . formula_api::TN_ADD_VIA_FUNC . ' via sql function';
+        $frm = $t->formula_add_by_func();
+        $frm->save(true);
+        $frm->reset();
+        $frm->load_by_name(formula_api::TN_ADD_VIA_FUNC);
+        $t->assert_true($test_name, $frm->isset());
+
+        $test_name = 'add formula ' . formula_api::TN_ADD_VIA_SQL . ' via sql insert';
+        $frm = $t->formula_add_by_sql();
+        $frm->save(false);
+        $frm->reset();
+        $frm->load_by_name(formula_api::TN_ADD_VIA_SQL);
+        $t->assert_true($test_name, $frm->isset());
 
         // test loading of one formula
         $frm = new formula($t->usr1);
@@ -544,8 +557,12 @@ class formula_tests
         global $usr;
         $frm = new formula($usr);
         $frm->load_by_name(formula_api::TN_EXCLUDED);
-        $frm->set_excluded(true);
-        $frm->save();
+        if ($frm->name() == '') {
+            log_err('formula ' . formula_api::TN_EXCLUDED . ' could not be loaded');
+        } else {
+            $frm->set_excluded(true);
+            $frm->save();
+        }
     }
 
 

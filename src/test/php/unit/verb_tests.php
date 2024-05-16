@@ -89,7 +89,7 @@ class verb_tests
 
         $t->subheader('HTML frontend unit tests');
 
-        $vrb = $t->dummy_verb();
+        $vrb = $t->verb();
         $t->assert_api_to_dsp($vrb, new verb_dsp());
 
 

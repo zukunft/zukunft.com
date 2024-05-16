@@ -50,7 +50,7 @@ class expression_tests
 
         // init
         $t->name = 'expression->';
-        $trm_lst = $t->dummy_term_list_all();
+        $trm_lst = $t->term_list_all();
 
         $t->header('Unit tests of the formula expression class (src/main/php/model/formula/expression.php)');
 
@@ -195,7 +195,7 @@ class expression_tests
         // tests based on the pi formula
         $test_name = 'test the user text conversion with a triple';
         $exp = new expression($usr);
-        $exp->set_user_text(formula_api::TF_DIAMETER, $t->dummy_term_list_all());
+        $exp->set_user_text(formula_api::TF_DIAMETER, $t->term_list_all());
         $trm_names = $exp->get_usr_names();
         $trm_lst_rev = $t->term_list_for_tests($trm_names);
         $result = $exp->ref_text($trm_lst_rev);

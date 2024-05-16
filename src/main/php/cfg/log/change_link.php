@@ -387,7 +387,7 @@ class change_link extends change_log
 
     // log a user change of a link / verb
     // this should be dismissed, instead use add, which also save the text reference for fast and reliable displaying
-    function add_link()
+    function add_link(): bool
     {
         global $db_con;
         log_debug("user_log_link->add_link (u" . $this->user()->id() . " " . $this->action . " " . $this->table() .
@@ -401,28 +401,28 @@ class change_link extends change_log
 
         $sql_fields = array();
         $sql_values = array();
-        $sql_fields[] = "user_id";
+        $sql_fields[] = user::FLD_ID;
         $sql_values[] = $this->user()->id();
-        $sql_fields[] = "change_action_id";
+        $sql_fields[] = change_action::FLD_ID;
         $sql_values[] = $this->action_id;
-        $sql_fields[] = "change_table_id";
+        $sql_fields[] = change_table::FLD_ID;
         $sql_values[] = $this->table_id;
 
-        $sql_fields[] = "old_from_id";
+        $sql_fields[] = change_link::FLD_OLD_FROM_ID;
         $sql_values[] = $this->old_from;
-        $sql_fields[] = "old_link_id";
+        $sql_fields[] = change_link::FLD_OLD_LINK_ID;
         $sql_values[] = $this->old_link;
-        $sql_fields[] = "old_to_id";
+        $sql_fields[] = change_link::FLD_OLD_TO_ID;
         $sql_values[] = $this->old_to;
 
-        $sql_fields[] = "new_from_id";
+        $sql_fields[] = change_link::FLD_NEW_FROM_ID;
         $sql_values[] = $this->new_from;
-        $sql_fields[] = "new_link_id";
+        $sql_fields[] = change_link::FLD_NEW_LINK_ID;
         $sql_values[] = $this->new_link;
-        $sql_fields[] = "new_to_id";
+        $sql_fields[] = change_link::FLD_NEW_TO_ID;
         $sql_values[] = $this->new_to;
 
-        $sql_fields[] = "row_id";
+        $sql_fields[] = change_log::FLD_LST_ROW_ID;
         $sql_values[] = $this->row_id;
 
         //$db_con = new mysql;
@@ -591,40 +591,40 @@ class change_link extends change_log
         $sql_values = array();
         $sql_fields[] = user::FLD_ID;
         $sql_values[] = $this->user()->id();
-        $sql_fields[] = 'change_action_id';
+        $sql_fields[] = change_action::FLD_ID;
         $sql_values[] = $this->action_id;
-        $sql_fields[] = 'change_table_id';
+        $sql_fields[] = change_table::FLD_ID;
         $sql_values[] = $this->table_id;
 
-        $sql_fields[] = 'old_from_id';
+        $sql_fields[] = change_link::FLD_OLD_FROM_ID;
         $sql_values[] = $this->old_from_id;
-        $sql_fields[] = 'old_link_id';
+        $sql_fields[] = change_link::FLD_OLD_LINK_ID;
         $sql_values[] = $this->old_link_id;
-        $sql_fields[] = 'old_to_id';
+        $sql_fields[] = change_link::FLD_OLD_TO_ID;
         $sql_values[] = $this->old_to_id;
 
-        $sql_fields[] = 'new_from_id';
+        $sql_fields[] = change_link::FLD_NEW_FROM_ID;
         $sql_values[] = $this->new_from_id;
-        $sql_fields[] = 'new_link_id';
+        $sql_fields[] = change_link::FLD_NEW_LINK_ID;
         $sql_values[] = $this->new_link_id;
-        $sql_fields[] = 'new_to_id';
+        $sql_fields[] = change_link::FLD_NEW_TO_ID;
         $sql_values[] = $this->new_to_id;
 
-        $sql_fields[] = 'old_text_from';
+        $sql_fields[] = change_link::FLD_OLD_FROM_TEXT;
         $sql_values[] = $this->old_text_from;
-        $sql_fields[] = 'old_text_link';
+        $sql_fields[] = change_link::FLD_OLD_LINK_TEXT;
         $sql_values[] = $this->old_text_link;
-        $sql_fields[] = 'old_text_to';
+        $sql_fields[] = change_link::FLD_OLD_TO_TEXT;
         $sql_values[] = $this->old_text_to;
 
-        $sql_fields[] = 'new_text_from';
+        $sql_fields[] = change_link::FLD_NEW_FROM_TEXT;
         $sql_values[] = $this->new_text_from;
-        $sql_fields[] = 'new_text_link';
+        $sql_fields[] = change_link::FLD_NEW_LINK_TEXT;
         $sql_values[] = $this->new_text_link;
-        $sql_fields[] = 'new_text_to';
+        $sql_fields[] = change_link::FLD_NEW_TO_TEXT;
         $sql_values[] = $this->new_text_to;
 
-        $sql_fields[] = 'row_id';
+        $sql_fields[] = change_log::FLD_ROW_ID;
         $sql_values[] = $this->row_id;
 
         //$db_con = new mysql;

@@ -257,23 +257,18 @@ class sql_db
     ];
 
     // classes which use by default the "with log" function for saving data
-    const CLASSES_USE_WITH_LOG_FUNC_FOR_SAVE = [
+    const CLASSES_THAT_USE_SQL_FUNC = [
         word::class,
         triple::class,
         source::class,
-        formula::class,
     ];
-
-    // classes that use a sql write script with log write
-    const DB_WRITE_LOG_SCRIPT_CLASSES = [
-        word::class,
-        source::class];
 
     // classes that use the prepared sql write statement
     const DB_WRITE_PREPARED = [
         word::class,
         triple::class,
-        source::class];
+        source::class,
+        formula::class];
 
     // tables that do not have a name
     // e.g. sql_db::TBL_TRIPLE is a link which hase a name, but the generated name can be overwritten, so the standard field naming is not used

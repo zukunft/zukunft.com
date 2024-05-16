@@ -82,7 +82,7 @@ class user_tests
 
         $t->subheader('API unit tests');
 
-        $test_usr = $t->dummy_user();
+        $test_usr = $t->user_sys_test();
         $t->assert_api($test_usr);
 
 

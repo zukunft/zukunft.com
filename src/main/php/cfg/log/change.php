@@ -66,6 +66,7 @@ use cfg\user;
 use cfg\value\value;
 use cfg\view;
 use cfg\word;
+use DateTime;
 use Exception;
 use html\log\change_log_named as change_log_named_dsp;
 use shared\library;
@@ -123,11 +124,11 @@ class change extends change_log
      */
 
     // additional to user_log
-    public string|float|int|null $old_value = null;      // the field value before the user change
+    public string|float|int|DateTime|null $old_value = null;      // the field value before the user change
     public ?int $old_id = null;            // the reference id before the user change e.g. for fields using a sub table such as status
-    public string|float|int|null $new_value = null;      // the field value after the user change
+    public string|float|int|DateTime|null $new_value = null;      // the field value after the user change
     public ?int $new_id = null;            // the reference id after the user change e.g. for fields using a sub table such as status
-    public string|float|int|null $std_value = null;  // the standard field value for all users that does not have changed it
+    public string|float|int|DateTime|null $std_value = null;  // the standard field value for all users that does not have changed it
     public ?int $std_id = null;        // the standard reference id for all users that does not have changed it
 
 

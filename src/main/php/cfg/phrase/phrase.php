@@ -1400,7 +1400,7 @@ class phrase extends combine_named
         //$db_con = new mysql;
         $db_con->usr_id = $this->user()->id();
         $db_con->set_class(triple::class);
-        $key_result = $db_con->get_value_2key('from_phrase_id', 'to_phrase_id', $this->id(), verb::FLD_ID, $link_id);
+        $key_result = $db_con->get_value_2key(triple::FLD_FROM, triple::FLD_TO, $this->id(), verb::FLD_ID, $link_id);
         if (is_numeric($key_result)) {
             $id = intval($key_result);
             if ($id > 0) {
@@ -1429,7 +1429,7 @@ class phrase extends combine_named
         //$db_con = new mysql;
         $db_con->usr_id = $this->user()->id();
         $db_con->set_class(triple::class);
-        $key_result = $db_con->get_value_2key('to_phrase_id', 'from_phrase_id', $this->id(), verb::FLD_ID, $link_id);
+        $key_result = $db_con->get_value_2key(triple::FLD_TO, triple::FLD_FROM, $this->id(), verb::FLD_ID, $link_id);
         if (is_numeric($key_result)) {
             $id = intval($key_result);
             if ($id > 0) {

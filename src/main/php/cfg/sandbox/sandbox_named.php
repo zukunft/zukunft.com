@@ -583,8 +583,6 @@ class sandbox_named extends sandbox
 
         global $db_con;
         $result = new user_message();
-        $lib = new library();
-        $class_name = $lib->class_to_name($this::class);
 
         if ($use_func) {
             $sc = $db_con->sql_creator();
@@ -610,9 +608,11 @@ class sandbox_named extends sandbox
                         $this->id = $usr_msg->get_row_id();
                     }
                 } else {
+                    $lib = new library();
+                    $class_name = $lib->class_to_name($this::class);
                     $db_con->set_class($this::class);
                     $db_con->set_usr($this->user()->id);
-                    $this->id = $db_con->insert_old(array($class_name . '_name', "user_id"), array($this->name, $this->user()->id));
+                    $this->id = $db_con->insert_old(array($class_name . '_name', user::FLD_ID), array($this->name, $this->user()->id));
                 }
 
                 // save the object fields if saving the key was successful

@@ -32,6 +32,7 @@
 
 namespace cfg\db;
 
+use DateTime;
 use shared\library;
 
 class sql_par_field_list
@@ -86,18 +87,18 @@ class sql_par_field_list
      * add a field based on the single parameters to the list
      *
      * @param string $name
-     * @param string|int|float|null $value
+     * @param string|int|float|DateTime|null $value
      * @param sql_par_type|sql_field_type $type
-     * @param string|int|float|null $old
+     * @param string|int|float|DateTime|null $old
      * @param string $par_name
      * @return void
      */
     function add_field(
-        string                      $name,
-        string|int|float|null       $value,
-        sql_par_type|sql_field_type $type,
-        string|int|float|null       $old = null,
-        string $par_name = ''
+        string                         $name,
+        string|int|float|DateTime|null $value,
+        sql_par_type|sql_field_type    $type,
+        string|int|float|DateTime|null $old = null,
+        string                         $par_name = ''
     ): void
     {
         $fld = new sql_par_field();
@@ -229,9 +230,9 @@ class sql_par_field_list
     /**
      * get the value for the given field name
      * @param string $name the name of the field to select
-     * @return string|int|float|null the value related to the given field name
+     * @return string|int|float|DateTime|null the value related to the given field name
      */
-    function get_value(string $name): string|int|float|null
+    function get_value(string $name): string|int|float|DateTime|null
     {
         $key = array_search($name, $this->names());
         if ($key === false) {

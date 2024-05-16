@@ -1216,7 +1216,7 @@ class sandbox_multi extends db_object_multi_user
     }
 
     /**
-     * check again if there ist not yet a record
+     * check again if there is not yet a record
      * @return bool true if the user has done some personal changes on this object
      */
     protected function check_usr_cfg(): bool

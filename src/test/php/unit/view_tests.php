@@ -78,7 +78,7 @@ class view_tests
         $t->assert_sql_by_id($sc, $dsp);
         $t->assert_sql_by_name($sc, $dsp);
         $t->assert_sql_by_code_id($sc, $dsp);
-        $t->assert_sql_by_term($sc, $dsp, $t->dummy_term());
+        $t->assert_sql_by_term($sc, $dsp, $t->term());
 
 
         $t->subheader('SQL statement tests');

@@ -1956,7 +1956,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
             if ($log->add()) {
                 $db_con->set_class(triple::class);
                 if (!$db_con->update_old($this->id(),
-                    array("from_phrase_id", "verb_id", "to_phrase_id"),
+                    array(triple::FLD_FROM, verb::FLD_ID, triple::FLD_TO),
                     array($this->fob->id(), $this->verb->id(), $this->tob->id()))) {
                     $result = 'Update of work link name failed';
                 }
@@ -2073,7 +2073,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
                     }
                 } else {
                     $db_con->set_class(triple::class);
-                    $this->set_id($db_con->insert_old(array("from_phrase_id", "verb_id", "to_phrase_id", "user_id"),
+                    $this->set_id($db_con->insert_old(array(triple::FLD_FROM, verb::FLD_ID, triple::FLD_TO, user::FLD_ID),
                         array($this->fob->id(), $this->verb->id(), $this->tob->id(), $this->user()->id())));
                 }
                 // TODO make sure on all add functions that the database object is always set
@@ -2119,11 +2119,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
 
         // decide which db write method should be used
         if ($use_func === null) {
-            if (in_array($this::class, sql_db::CLASSES_USE_WITH_LOG_FUNC_FOR_SAVE)) {
-                $use_func = true;
-            } else {
-                $use_func = false;
-            }
+            $use_func = $this->sql_default_script_usage();
         }
 
         // check the preserved names

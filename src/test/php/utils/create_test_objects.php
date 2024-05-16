@@ -149,6 +149,8 @@ use DateTime;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\word\word as word_dsp;
 use shared\library;
+use shared\types\protection_type as protect_type_shared;
+use shared\types\share_type as share_type_shared;
 use unit_write\component_link_tests;
 use unit_write\component_tests;
 use unit_write\formula_link_tests;
@@ -169,7 +171,7 @@ class create_test_objects extends test_base
      * dummy objects for unit tests
      */
 
-    function dummy_type_lists_api(user $usr): type_lists_api
+    function type_lists_api(user $usr): type_lists_api
     {
         global $db_con;
 
@@ -405,7 +407,7 @@ class create_test_objects extends test_base
     /**
      * @return user the user used for unit testing
      */
-    function dummy_user(): user
+    function user_sys_test(): user
     {
         $usr = new user();
         $usr->set(2, user::SYSTEM_TEST_NAME, user::SYSTEM_TEST_EMAIL);
@@ -439,23 +441,45 @@ class create_test_objects extends test_base
      */
     function word_filled(): word
     {
+        global $share_types;
+        global $protection_types;
         $wrd = new word($this->usr1);
         $wrd->set(word_api::TI_MATH, word_api::TN_READ);
         $wrd->description = word_api::TD_READ;
         $wrd->set_type(phrase_type::NORMAL);
         $wrd->plural = word_api::TN_READ_PLURAL;
         $wrd->set_view_id(view_api::TI_READ);
-        $wrd->values = 1;
+        $wrd->values = 2;
         $wrd->excluded = true;
-        $wrd->share_id = 1;
-        $wrd->protection_id = 1;
+        $wrd->share_id = $share_types->id(share_type_shared::GROUP);
+        $wrd->protection_id = $protection_types->id(protect_type_shared::USER);
+        return $wrd;
+    }
+
+    /**
+     * @return word to test the sql insert via function
+     */
+    function word_add_by_func(): word
+    {
+        $wrd = new word($this->usr1);
+        $wrd->set_name(word_api::TN_ADD_VIA_FUNC);
+        return $wrd;
+    }
+
+    /**
+     * @return word to test the sql insert without use of function
+     */
+    function word_add_by_sql(): word
+    {
+        $wrd = new word($this->usr1);
+        $wrd->set_name(word_api::TN_ADD_VIA_SQL);
         return $wrd;
     }
 
     /**
      * @return word_dsp the word "Mathematics" for frontend unit testing
      */
-    function dummy_word_dsp(): word_dsp
+    function word_dsp(): word_dsp
     {
         $wrd = $this->word();
         return new word_dsp($wrd->api_json());
@@ -464,7 +488,7 @@ class create_test_objects extends test_base
     /**
      * @return word "constant" to create the main triple for unit testing
      */
-    function dummy_word_const(): word
+    function word_const(): word
     {
         $wrd = new word($this->usr1);
         $wrd->set(word_api::TI_CONST, word_api::TN_CONST);
@@ -476,7 +500,7 @@ class create_test_objects extends test_base
     /**
      * @return word "Pi" to test the const behavior
      */
-    function dummy_word_pi(): word
+    function word_pi(): word
     {
         $wrd = new word($this->usr1);
         $wrd->set(word_api::TI_PI, word_api::TN_PI);
@@ -488,7 +512,7 @@ class create_test_objects extends test_base
     /**
      * @return word "circumference" to test the const behavior
      */
-    function dummy_word_cf(): word
+    function word_cf(): word
     {
         $wrd = new word($this->usr1);
         $wrd->set(word_api::TI_CIRCUMFERENCE, word_api::TN_CIRCUMFERENCE);
@@ -498,7 +522,7 @@ class create_test_objects extends test_base
     /**
      * @return word "diameter" to test the const behavior
      */
-    function dummy_word_dia(): word
+    function word_diameter(): word
     {
         $wrd = new word($this->usr1);
         $wrd->set(word_api::TI_DIAMETER, word_api::TN_DIAMETER);
@@ -508,7 +532,7 @@ class create_test_objects extends test_base
     /**
      * @return word "Euler's constant" to test the handling of >'<
      */
-    function dummy_word_e(): word
+    function word_e(): word
     {
         $wrd = new word($this->usr1);
         $wrd->set(word_api::TI_E, word_api::TN_E);
@@ -519,7 +543,7 @@ class create_test_objects extends test_base
     /**
      * @return word 2019 to test creating of a year
      */
-    function dummy_word_2019(): word
+    function word_2019(): word
     {
         $wrd = new word($this->usr1);
         $wrd->set(word_api::TI_2019, word_api::TN_2019);
@@ -530,7 +554,7 @@ class create_test_objects extends test_base
     /**
      * @return word 2020 to test create a year
      */
-    function dummy_word_2020(): word
+    function word_2020(): word
     {
         $wrd = new word($this->usr1);
         $wrd->set(word_api::TI_2020, word_api::TN_2020);
@@ -541,7 +565,7 @@ class create_test_objects extends test_base
     /**
      * @return word percent to test percent related rules e.g. to remove measure at division
      */
-    function dummy_word_pct(): word
+    function word_pct(): word
     {
         $wrd = new word($this->usr1);
         $wrd->set(word_api::TI_PCT, word_api::TN_PCT);
@@ -551,7 +575,7 @@ class create_test_objects extends test_base
 
 // TODO explain for each test object for which test it is used
 // TODO rename because in the test object "$t->" the prefix dummy is not needed
-    function dummy_word_this(): word
+    function word_this(): word
     {
         $wrd = new word($this->usr1);
         $wrd->set(word_api::TI_THIS, word_api::TN_THIS_PRE);
@@ -559,7 +583,7 @@ class create_test_objects extends test_base
         return $wrd;
     }
 
-    function dummy_word_prior(): word
+    function word_prior(): word
     {
         $wrd = new word($this->usr1);
         $wrd->set(word_api::TI_PRIOR, word_api::TN_PRIOR_PRE);
@@ -567,7 +591,7 @@ class create_test_objects extends test_base
         return $wrd;
     }
 
-    function dummy_word_one(): word
+    function word_one(): word
     {
         $wrd = new word($this->usr1);
         $wrd->set(word_api::TI_ONE, word_api::TN_ONE);
@@ -575,7 +599,7 @@ class create_test_objects extends test_base
         return $wrd;
     }
 
-    function dummy_word_mio(): word
+    function word_mio(): word
     {
         $wrd = new word($this->usr1);
         $wrd->set(word_api::TI_MIO, word_api::TN_MIO_SHORT);
@@ -583,21 +607,21 @@ class create_test_objects extends test_base
         return $wrd;
     }
 
-    function dummy_word_minute(): word
+    function word_minute(): word
     {
         $wrd = new word($this->usr1);
         $wrd->set(word_api::TI_MINUTE, word_api::TN_MINUTE);
         return $wrd;
     }
 
-    function dummy_word_second(): word
+    function word_second(): word
     {
         $wrd = new word($this->usr1);
         $wrd->set(word_api::TI_SECOND, word_api::TN_SECOND);
         return $wrd;
     }
 
-    function dummy_word_ch(): word
+    function word_ch(): word
     {
         $wrd = new word($this->usr1);
         $wrd->set(word_api::TI_CH, word_api::TN_CH);
@@ -637,7 +661,7 @@ class create_test_objects extends test_base
     /**
      * @return word with id and name of Bern
      */
-    function dummy_word_be(): word
+    function word_bern(): word
     {
         $wrd = new word($this->usr1);
         $wrd->set(word_api::TI_BE, word_api::TN_BE);
@@ -647,28 +671,28 @@ class create_test_objects extends test_base
     /**
      * @return word with id and name of Geneva
      */
-    function dummy_word_ge(): word
+    function word_ge(): word
     {
         $wrd = new word($this->usr1);
         $wrd->set(word_api::TI_GE, word_api::TN_GE);
         return $wrd;
     }
 
-    function dummy_word_inhabitant(): word
+    function word_inhabitant(): word
     {
         $wrd = new word($this->usr1);
         $wrd->set(word_api::TI_INHABITANT, word_api::TN_INHABITANT);
         return $wrd;
     }
 
-    function dummy_word_parts(): word
+    function word_parts(): word
     {
         $wrd = new word($this->usr1);
         $wrd->set(word_api::TI_PARTS, word_api::TN_PARTS);
         return $wrd;
     }
 
-    function dummy_word_total(): word
+    function word_total(): word
     {
         $wrd = new word($this->usr1);
         $wrd->set(word_api::TI_TOTAL, word_api::TN_TOTAL_PRE);
@@ -678,47 +702,47 @@ class create_test_objects extends test_base
     /**
      * @return word_list with some basic words for unit testing
      */
-    function dummy_word_list(): word_list
+    function word_list(): word_list
     {
         $lst = new word_list($this->usr1);
         $lst->add($this->word());
-        $lst->add($this->dummy_word_const());
-        $lst->add($this->dummy_word_pi());
-        $lst->add($this->dummy_word_e());
+        $lst->add($this->word_const());
+        $lst->add($this->word_pi());
+        $lst->add($this->word_e());
         return $lst;
     }
 
     /**
      * @return word_list with a few words for unit testing
      */
-    function dummy_word_list_short(): word_list
+    function word_list_short(): word_list
     {
         $lst = new word_list($this->usr1);
         $lst->add($this->word());
-        $lst->add($this->dummy_word_pi());
+        $lst->add($this->word_pi());
         return $lst;
     }
 
     /**
      * @return word_list with at least one word of each type for unit testing
      */
-    function dummy_word_list_all_types(): word_list
+    function word_list_all_types(): word_list
     {
         $lst = new word_list($this->usr1);
         $lst->add($this->word());
-        $lst->add($this->dummy_word_const());
-        $lst->add($this->dummy_word_pi());
-        $lst->add($this->dummy_word_2019());
-        $lst->add($this->dummy_word_one());
-        $lst->add($this->dummy_word_mio());
-        $lst->add($this->dummy_word_pct());
+        $lst->add($this->word_const());
+        $lst->add($this->word_pi());
+        $lst->add($this->word_2019());
+        $lst->add($this->word_one());
+        $lst->add($this->word_mio());
+        $lst->add($this->word_pct());
         return $lst;
     }
 
     /**
      * @return verb the default verb
      */
-    function dummy_verb(): verb
+    function verb(): verb
     {
         $vrb = new verb(verb_api::TI_READ, verb_api::TN_READ, verb::NOT_SET);
         $vrb->set_user($this->usr1);
@@ -728,7 +752,7 @@ class create_test_objects extends test_base
     /**
      * @return verb a standard verb with user null
      */
-    function dummy_verb_is(): verb
+    function verb_is(): verb
     {
         return new verb(verb_api::TI_IS, verb_api::TN_IS, verb::IS);
     }
@@ -736,7 +760,7 @@ class create_test_objects extends test_base
     /**
      * @return verb a standard verb with user null
      */
-    function dummy_verb_part(): verb
+    function verb_part(): verb
     {
         return new verb(verb_api::TI_PART, verb_api::TN_PART, verb::IS_PART_OF);
     }
@@ -744,7 +768,7 @@ class create_test_objects extends test_base
     /**
      * @return verb a standard verb with user null
      */
-    function dummy_verb_of(): verb
+    function verb_of(): verb
     {
         $vrb = new verb(verb_api::TI_OF, verb_api::TN_OF, verb::CAN_CONTAIN_NAME_REVERSE);
         $vrb->set_user($this->usr1);
@@ -759,8 +783,8 @@ class create_test_objects extends test_base
         $trp = new triple($this->usr1);
         $trp->set(triple_api::TI_READ, triple_api::TN_READ);
         $trp->description = triple_api::TD_READ;
-        $trp->set_from($this->dummy_word_const()->phrase());
-        $trp->set_verb($this->dummy_verb_part());
+        $trp->set_from($this->word_const()->phrase());
+        $trp->set_verb($this->verb_part());
         $trp->set_to($this->word()->phrase());
         $trp->set_type(phrase_type::MATH_CONST);
         return $trp;
@@ -782,8 +806,8 @@ class create_test_objects extends test_base
     function triple_link_only(): triple
     {
         $trp = new triple($this->usr1);
-        $trp->set_from($this->dummy_word_const()->phrase());
-        $trp->set_verb($this->dummy_verb_part());
+        $trp->set_from($this->word_const()->phrase());
+        $trp->set_verb($this->verb_part());
         $trp->set_to($this->word()->phrase());
         return $trp;
     }
@@ -791,13 +815,13 @@ class create_test_objects extends test_base
     /**
      * @return triple "pi (math)" used for unit testing
      */
-    function dummy_triple_pi(): triple
+    function triple_pi(): triple
     {
         $trp = new triple($this->usr1);
         $trp->set(triple_api::TI_PI, triple_api::TN_PI_NAME);
         $trp->description = triple_api::TD_PI;
-        $trp->set_from($this->dummy_word_pi()->phrase());
-        $trp->set_verb($this->dummy_verb_is());
+        $trp->set_from($this->word_pi()->phrase());
+        $trp->set_verb($this->verb_is());
         $trp->set_to($this->triple()->phrase());
         $trp->set_type(phrase_type::TRIPLE_HIDDEN);
         return $trp;
@@ -806,15 +830,45 @@ class create_test_objects extends test_base
     /**
      * @return triple "e (math const)" used for unit testing
      */
-    function dummy_triple_e(): triple
+    function triple_e(): triple
     {
         $trp = new triple($this->usr1);
         $trp->set(triple_api::TI_E, triple_api::TN_E);
         $trp->description = triple_api::TD_E;
-        $trp->set_from($this->dummy_word_e()->phrase());
-        $trp->set_verb($this->dummy_verb_is());
+        $trp->set_from($this->word_e()->phrase());
+        $trp->set_verb($this->verb_is());
         $trp->set_to($this->triple()->phrase());
         $trp->set_type(phrase_type::TRIPLE_HIDDEN);
+        return $trp;
+    }
+
+    /**
+     * @return triple to test the sql insert via function
+     */
+    function triple_add_by_func(): triple
+    {
+        $trp = new triple($this->usr1);
+        $trp->set_name(triple_api::TN_ADD_VIA_FUNC);
+        $wrd_add_func = $this->load_word(word_api::TN_ADD_VIA_FUNC);
+        $wrd_math = $this->load_word(word_api::TN_READ);
+        $trp->set_from($wrd_add_func->phrase());
+        $trp->set_verb($this->verb_is());
+        $trp->set_to($wrd_math->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple to test the sql insert without use of a function
+     */
+    function triple_add_by_sql(): triple
+    {
+        $trp = new triple($this->usr1);
+        $trp->set_name(triple_api::TN_ADD_VIA_SQL);
+        $wrd_add_func = $this->load_word(word_api::TN_ADD_VIA_SQL);
+        $wrd_math = $this->load_word(word_api::TN_READ);
+        $trp->set_from($wrd_add_func->phrase());
+        $trp->set_verb($this->verb_is());
+        $trp->set_to($wrd_math->phrase());
         return $trp;
     }
 
@@ -826,7 +880,7 @@ class create_test_objects extends test_base
         $trp = new triple($this->usr1);
         $trp->set(triple_api::TI_ZH_CITY, triple_api::TN_ZH_CITY);
         $trp->set_from($this->zh_word()->phrase());
-        $trp->set_verb($this->dummy_verb_is());
+        $trp->set_verb($this->verb_is());
         $trp->set_to($this->city_word()->phrase());
         return $trp;
     }
@@ -839,7 +893,7 @@ class create_test_objects extends test_base
         $trp = new triple($this->usr1);
         $trp->set(triple_api::TI_ZH_CITY, triple_api::TN_ZH_CITY);
         $trp->set_from($this->zh_word()->phrase());
-        $trp->set_verb($this->dummy_verb_is());
+        $trp->set_verb($this->verb_is());
         $trp->set_to($this->canton()->phrase());
         return $trp;
     }
@@ -851,8 +905,8 @@ class create_test_objects extends test_base
     {
         $trp = new triple($this->usr1);
         $trp->set(triple_api::TI_BE_CITY, triple_api::TN_BE_CITY);
-        $trp->set_from($this->dummy_word_be()->phrase());
-        $trp->set_verb($this->dummy_verb_is());
+        $trp->set_from($this->word_bern()->phrase());
+        $trp->set_verb($this->verb_is());
         $trp->set_to($this->city_word()->phrase());
         return $trp;
     }
@@ -864,8 +918,8 @@ class create_test_objects extends test_base
     {
         $trp = new triple($this->usr1);
         $trp->set(triple_api::TI_GE_CITY, triple_api::TN_GE_CITY);
-        $trp->set_from($this->dummy_word_ge()->phrase());
-        $trp->set_verb($this->dummy_verb_is());
+        $trp->set_from($this->word_ge()->phrase());
+        $trp->set_verb($this->verb_is());
         $trp->set_to($this->city_word()->phrase());
         return $trp;
     }
@@ -873,7 +927,7 @@ class create_test_objects extends test_base
     function dummy_triple_list(): triple_list
     {
         $lst = new triple_list($this->usr1);
-        $lst->add($this->dummy_triple_pi());
+        $lst->add($this->triple_pi());
         return $lst;
     }
 
@@ -884,7 +938,7 @@ class create_test_objects extends test_base
 
     function phrase_pi(): phrase
     {
-        return $this->dummy_triple_pi()->phrase();
+        return $this->triple_pi()->phrase();
     }
 
     function phrase_zh(): phrase
@@ -896,10 +950,10 @@ class create_test_objects extends test_base
     {
         $lst = new phrase_list($this->usr1);
         $lst->add($this->word()->phrase());
-        $lst->add($this->dummy_word_const()->phrase());
-        $lst->add($this->dummy_word_pi()->phrase());
+        $lst->add($this->word_const()->phrase());
+        $lst->add($this->word_pi()->phrase());
         $lst->add($this->triple()->phrase());
-        $lst->add($this->dummy_triple_pi()->phrase());
+        $lst->add($this->triple_pi()->phrase());
         return $lst;
     }
 
@@ -907,9 +961,9 @@ class create_test_objects extends test_base
     {
         $lst = new phrase_list($this->usr1);
         $lst->add($this->word()->phrase());
-        $lst->add($this->dummy_word_const()->phrase());
+        $lst->add($this->word_const()->phrase());
         $lst->add($this->triple()->phrase());
-        $lst->add($this->dummy_triple_pi()->phrase());
+        $lst->add($this->triple_pi()->phrase());
         return $lst;
     }
 
@@ -919,7 +973,7 @@ class create_test_objects extends test_base
     function dummy_phrase_list_small(): phrase_list
     {
         $lst = new phrase_list($this->usr1);
-        $lst->add($this->dummy_word_pi()->phrase());
+        $lst->add($this->word_pi()->phrase());
         $lst->add($this->triple()->phrase());
         return $lst;
     }
@@ -927,7 +981,7 @@ class create_test_objects extends test_base
     function dummy_phrase_list_pi(): phrase_list
     {
         $lst = new phrase_list($this->usr1);
-        $lst->add($this->dummy_triple_pi()->phrase());
+        $lst->add($this->triple_pi()->phrase());
         return $lst;
     }
 
@@ -937,8 +991,8 @@ class create_test_objects extends test_base
     function phrase_list_math_const(): phrase_list
     {
         $lst = new phrase_list($this->usr1);
-        $lst->add($this->dummy_triple_pi()->phrase());
-        $lst->add($this->dummy_triple_e()->phrase());
+        $lst->add($this->triple_pi()->phrase());
+        $lst->add($this->triple_e()->phrase());
         return $lst;
     }
 
@@ -961,8 +1015,8 @@ class create_test_objects extends test_base
     {
         $lst = new phrase_list($this->usr1);
         $lst->add($this->zh()->phrase());
-        $lst->add($this->dummy_word_inhabitant()->phrase());
-        $lst->add($this->dummy_word_2020()->phrase());
+        $lst->add($this->word_inhabitant()->phrase());
+        $lst->add($this->word_2020()->phrase());
         return $lst;
     }
 
@@ -974,8 +1028,8 @@ class create_test_objects extends test_base
         $lst = new phrase_list($this->usr1);
         $lst->add($this->zh()->phrase());
         $lst->add($this->dummy_triple_ge()->phrase());
-        $lst->add($this->dummy_word_inhabitant()->phrase());
-        $lst->add($this->dummy_word_2020()->phrase());
+        $lst->add($this->word_inhabitant()->phrase());
+        $lst->add($this->word_2020()->phrase());
         return $lst;
     }
 
@@ -1174,7 +1228,7 @@ class create_test_objects extends test_base
         $lst = new phrase_list($this->usr1);
         $lst->add($this->canton()->phrase());
         $lst->add($this->zh_word()->phrase());
-        $lst->add($this->dummy_word_inhabitant()->phrase());
+        $lst->add($this->word_inhabitant()->phrase());
         return $lst;
     }
 
@@ -1185,41 +1239,41 @@ class create_test_objects extends test_base
     {
         $lst = new phrase_list($this->usr1);
         $lst->add($this->zh_word()->phrase());
-        $lst->add($this->dummy_word_inhabitant()->phrase());
-        $lst->add($this->dummy_word_2019()->phrase());
+        $lst->add($this->word_inhabitant()->phrase());
+        $lst->add($this->word_2019()->phrase());
         return $lst;
     }
 
     /**
      * @return phrase_list the phrases relevant for testing the max number of prime phrases
      */
-    function dummy_phrase_list_zh_mio(): phrase_list
+    function phrase_list_zh_mio(): phrase_list
     {
         $lst = new phrase_list($this->usr1);
         $lst->add($this->zh_word()->phrase());
-        $lst->add($this->dummy_word_inhabitant()->phrase());
-        $lst->add($this->dummy_word_2019()->phrase());
-        $lst->add($this->dummy_word_mio()->phrase());
+        $lst->add($this->word_inhabitant()->phrase());
+        $lst->add($this->word_2019()->phrase());
+        $lst->add($this->word_mio()->phrase());
         return $lst;
     }
 
     /**
      * @return phrase_list the phrases relevant for testing the increase formula
      */
-    function dummy_phrase_list_increase(): phrase_list
+    function phrase_list_increase(): phrase_list
     {
         $lst = new phrase_list($this->usr1);
-        $lst->add($this->dummy_word_pct()->phrase());
-        $lst->add($this->dummy_word_this()->phrase());
-        $lst->add($this->dummy_word_prior()->phrase());
-        $lst->add($this->dummy_word_ch()->phrase());
-        $lst->add($this->dummy_word_inhabitant()->phrase());
-        $lst->add($this->dummy_word_2020()->phrase());
-        $lst->add($this->dummy_word_mio()->phrase());
+        $lst->add($this->word_pct()->phrase());
+        $lst->add($this->word_this()->phrase());
+        $lst->add($this->word_prior()->phrase());
+        $lst->add($this->word_ch()->phrase());
+        $lst->add($this->word_inhabitant()->phrase());
+        $lst->add($this->word_2020()->phrase());
+        $lst->add($this->word_mio()->phrase());
         return $lst;
     }
 
-    function dummy_phrase_list_dsp(): phrase_list_dsp
+    function phrase_list_dsp(): phrase_list_dsp
     {
         return new phrase_list_dsp($this->dummy_phrase_list()->api_json());
     }
@@ -1238,7 +1292,7 @@ class create_test_objects extends test_base
     /**
      * @return group with three prime phrases
      */
-    function dummy_phrase_group_prime_3(): group
+    function phrase_group_prime_3(): group
     {
         $lst = $this->dummy_phrase_list_zh_2019();
         $grp = $lst->get_grp_id(false);
@@ -1249,15 +1303,15 @@ class create_test_objects extends test_base
     /**
      * @return group with the max number of prime phrases
      */
-    function dummy_phrase_group_prime_max(): group
+    function phrase_group_prime_max(): group
     {
-        $lst = $this->dummy_phrase_list_zh_mio();
+        $lst = $this->phrase_list_zh_mio();
         $grp = $lst->get_grp_id(false);
         $grp->name = group_api::TN_READ;
         return $grp;
     }
 
-    function dummy_phrase_group_16(): group
+    function phrase_group_16(): group
     {
         $lst = $this->dummy_phrase_list_16();
         $grp = $lst->get_grp_id(false);
@@ -1265,7 +1319,7 @@ class create_test_objects extends test_base
         return $grp;
     }
 
-    function dummy_phrase_group_17_plus(): group
+    function phrase_group_17_plus(): group
     {
         $lst = $this->dummy_phrase_list_17_plus();
         $grp = $lst->get_grp_id(false);
@@ -1273,7 +1327,7 @@ class create_test_objects extends test_base
         return $grp;
     }
 
-    function dummy_phrase_group_zh(): group
+    function phrase_group_zh(): group
     {
         $lst = $this->dummy_phrase_list_zh_2019();
         $grp = $lst->get_grp_id(false);
@@ -1281,89 +1335,89 @@ class create_test_objects extends test_base
         return $grp;
     }
 
-    function dummy_phrase_group_list(): group_list
+    function phrase_group_list(): group_list
     {
         $lst = new group_list($this->usr1);
         $lst->add($this->group());
         return $lst;
     }
 
-    function dummy_term(): term
+    function term(): term
     {
         return $this->word()->term();
     }
 
-    function dummy_term_triple(): term
+    function term_triple(): term
     {
         return $this->triple()->term();
     }
 
-    function dummy_term_formula(): term
+    function term_formula(): term
     {
         return $this->formula()->term();
     }
 
-    function dummy_term_verb(): term
+    function term_verb(): term
     {
-        return $this->dummy_verb()->term();
+        return $this->verb()->term();
     }
 
     /**
      * @return term_list with all terms used for the unit tests
      */
-    function dummy_term_list(): term_list
+    function term_list(): term_list
     {
         $lst = new term_list($this->usr1);
-        $lst->add($this->dummy_term());
-        $lst->add($this->dummy_term_triple());
-        $lst->add($this->dummy_term_formula());
-        $lst->add($this->dummy_term_verb());
+        $lst->add($this->term());
+        $lst->add($this->term_triple());
+        $lst->add($this->term_formula());
+        $lst->add($this->term_verb());
         return $lst;
     }
 
     /**
      * @return term_list with all terms used for the unit tests
      */
-    function dummy_term_list_all(): term_list
+    function term_list_all(): term_list
     {
         $lst = new term_list($this->usr1);
-        $lst->add($this->dummy_term());
-        $lst->add($this->dummy_term_triple());
-        $lst->add($this->dummy_term_formula());
-        $lst->add($this->dummy_term_verb());
-        $lst->add($this->dummy_triple_pi()->term());
-        $lst->add($this->dummy_word_pi()->term());
-        $lst->add($this->dummy_word_cf()->term());
-        $lst->add($this->dummy_word_pct()->term());
-        $lst->add($this->dummy_word_prior()->term());
-        $lst->add($this->dummy_word_this()->term());
-        $lst->add($this->dummy_word_parts()->term());
-        $lst->add($this->dummy_word_total()->term());
-        $lst->add($this->dummy_verb_of()->term());
-        $lst->add($this->dummy_word_one()->term());
-        $lst->add($this->dummy_word_mio()->term());
+        $lst->add($this->term());
+        $lst->add($this->term_triple());
+        $lst->add($this->term_formula());
+        $lst->add($this->term_verb());
+        $lst->add($this->triple_pi()->term());
+        $lst->add($this->word_pi()->term());
+        $lst->add($this->word_cf()->term());
+        $lst->add($this->word_pct()->term());
+        $lst->add($this->word_prior()->term());
+        $lst->add($this->word_this()->term());
+        $lst->add($this->word_parts()->term());
+        $lst->add($this->word_total()->term());
+        $lst->add($this->verb_of()->term());
+        $lst->add($this->word_one()->term());
+        $lst->add($this->word_mio()->term());
         return $lst;
     }
 
     /**
      * @return term_list a term list with the time terms e.g. minute and second
      */
-    function dummy_term_list_time(): term_list
+    function term_list_time(): term_list
     {
         $lst = new term_list($this->usr1);
-        $lst->add($this->dummy_word_second()->term());
-        $lst->add($this->dummy_word_minute()->term());
+        $lst->add($this->word_second()->term());
+        $lst->add($this->word_minute()->term());
         return $lst;
     }
 
     /**
      * @return term_list a term list with the scaling terms e.g. one and million
      */
-    function dummy_term_list_scale(): term_list
+    function term_list_scale(): term_list
     {
         $lst = new term_list($this->usr1);
-        $lst->add($this->dummy_word_one()->term());
-        $lst->add($this->dummy_word_mio()->term());
+        $lst->add($this->word_one()->term());
+        $lst->add($this->word_mio()->term());
         return $lst;
     }
 
@@ -1378,7 +1432,7 @@ class create_test_objects extends test_base
      */
     function dummy_value_prime_3(): value
     {
-        $grp = $this->dummy_phrase_group_prime_3();
+        $grp = $this->phrase_group_prime_3();
         return new value($this->usr1, round(value_api::TV_READ, 13), $grp);
     }
 
@@ -1387,25 +1441,25 @@ class create_test_objects extends test_base
      */
     function dummy_value_prime_max(): value
     {
-        $grp = $this->dummy_phrase_group_prime_max();
+        $grp = $this->phrase_group_prime_max();
         return new value($this->usr1, round(value_api::TV_READ, 13), $grp);
     }
 
     function dummy_value_16(): value
     {
-        $grp = $this->dummy_phrase_group_16();
+        $grp = $this->phrase_group_16();
         return new value($this->usr1, round(value_api::TV_READ, 13), $grp);
     }
 
     function dummy_value_17_plus(): value
     {
-        $grp = $this->dummy_phrase_group_17_plus();
+        $grp = $this->phrase_group_17_plus();
         return new value($this->usr1, round(value_api::TV_READ, 13), $grp);
     }
 
     function dummy_value_zh(): value
     {
-        $grp = $this->dummy_phrase_group_zh();
+        $grp = $this->phrase_group_zh();
         return new value($this->usr1, value_api::TV_CITY_ZH_INHABITANTS_2019, $grp);
     }
 
@@ -1430,7 +1484,7 @@ class create_test_objects extends test_base
     function value_time_series(): value_time_series
     {
         $vts = new value_time_series($this->usr1);
-        $vts->set_grp($this->dummy_phrase_group_16());
+        $vts->set_grp($this->phrase_group_16());
         return $vts;
     }
 
@@ -1451,8 +1505,40 @@ class create_test_objects extends test_base
     {
         $frm = new formula($this->usr1);
         $frm->set(1, formula_api::TN_READ);
-        $frm->set_user_text(formula_api::TF_READ, $this->dummy_term_list_time());
+        $frm->set_user_text(formula_api::TF_READ, $this->term_list_time());
         $frm->set_type(formula_type::CALC);
+        return $frm;
+    }
+
+    /**
+     * @return formula with only the name set to test reseving the name
+     */
+    function formula_name_only(): formula
+    {
+        $frm = new formula($this->usr1);
+        $frm->set(1, formula_api::TF_READ_SCALE_MIO);
+        return $frm;
+    }
+
+    /**
+     * @return formula with all object variables set for complete unit testing e.g. of the sql function creation
+     */
+    function formula_filled(): formula
+    {
+        global $share_types;
+        global $protection_types;
+        $frm = new formula($this->usr1);
+        $frm->set(1, formula_api::TN_READ);
+        $frm->set_user_text(formula_api::TF_READ, $this->term_list_time());
+        $frm->set_type(formula_type::CALC);
+        $frm->description = formula_api::TD_READ;
+        $frm->need_all_val = true;
+        $frm->last_update = new DateTime(sys_log_api::TV_TIME);
+        $frm->set_view_id(view_api::TI_READ);
+        $frm->set_usage(2);
+        $frm->excluded = true;
+        $frm->share_id = $share_types->id(share_type_shared::GROUP);
+        $frm->protection_id = $protection_types->id(protect_type_shared::USER);
         return $frm;
     }
 
@@ -1463,12 +1549,12 @@ class create_test_objects extends test_base
     {
         $frm = new formula($this->usr1);
         $frm->set(formula_api::TI_INCREASE, formula_api::TN_INCREASE);
-        $frm->set_user_text(formula_api::TF_INCREASE, $this->dummy_phrase_list_increase()->term_list());
+        $frm->set_user_text(formula_api::TF_INCREASE, $this->phrase_list_increase()->term_list());
         $frm->set_type(formula_type::CALC);
         return $frm;
     }
 
-    function dummy_formula_list(): formula_list
+    function formula_list(): formula_list
     {
         $lst = new formula_list($this->usr1);
         $lst->add($this->formula());
@@ -1482,9 +1568,33 @@ class create_test_objects extends test_base
         return $lnk;
     }
 
+    /**
+     * @return formula to test the sql insert via function
+     */
+    function formula_add_by_func(): formula
+    {
+        $frm = new formula($this->usr1);
+        $frm->set_name(formula_api::TN_ADD_VIA_FUNC);
+        $frm->set_user_text(formula_api::TF_INCREASE, $this->phrase_list_increase()->term_list());
+        $frm->set_type(formula_type::CALC);
+        return $frm;
+    }
+
+    /**
+     * @return formula to test the sql insert without use of function
+     */
+    function formula_add_by_sql(): formula
+    {
+        $frm = new formula($this->usr1);
+        $frm->set_name(formula_api::TN_ADD_VIA_SQL);
+        $frm->set_user_text(formula_api::TF_INCREASE, $this->phrase_list_increase()->term_list());
+        $frm->set_type(formula_type::CALC);
+        return $frm;
+    }
+
     function dummy_expression(): expression
     {
-        $trm_lst = $this->dummy_term_list_time();
+        $trm_lst = $this->term_list_time();
         return $this->formula()->expression($trm_lst);
     }
 
@@ -1496,7 +1606,7 @@ class create_test_objects extends test_base
 
     function dummy_element_list(): element_list
     {
-        $trm_lst = $this->dummy_term_list_time();
+        $trm_lst = $this->term_list_time();
         $exp = $this->formula()->expression($trm_lst);
         return $exp->element_list($trm_lst);
     }
@@ -1524,7 +1634,7 @@ class create_test_objects extends test_base
     function dummy_result_16(): result
     {
         $res = new result($this->usr1);
-        $res->set_grp($this->dummy_phrase_group_16());
+        $res->set_grp($this->phrase_group_16());
         $res->value = result_api::TV_INT;
         return $res;
     }
@@ -1597,7 +1707,7 @@ class create_test_objects extends test_base
     {
         $ref = new ref($this->usr1);
         $ref->set(4);
-        $ref->phr = $this->dummy_word_pi()->phrase();
+        $ref->phr = $this->word_pi()->phrase();
         $ref->source = $this->dummy_source1();
         $ref->external_key = ref_api::TK_READ;
         $ref->url = ref_api::TU_READ;

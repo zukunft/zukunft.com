@@ -86,7 +86,7 @@ class formula_list_tests
 
         $t->subheader('API unit tests');
 
-        $frm_lst = $t->dummy_formula_list();
+        $frm_lst = $t->formula_list();
         $t->assert_api($frm_lst);
 
 
@@ -97,7 +97,7 @@ class formula_list_tests
 
         $t->subheader('HTML frontend unit tests');
 
-        $trp_lst = $t->dummy_formula_list();
+        $trp_lst = $t->formula_list();
         $t->assert_api_to_dsp($trp_lst, new formula_list_dsp());
 
     }

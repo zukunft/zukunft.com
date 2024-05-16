@@ -54,7 +54,6 @@ class formula_tests
     {
 
         global $usr;
-        global $formula_types;
 
         // init
         $db_con = new sql_db();
@@ -64,28 +63,25 @@ class formula_tests
         $json_file = 'unit/formula/scale_second_to_minute.json';
         $usr->set_id(1);
 
+
         $t->header('formula unit tests');
 
-
-        $t->subheader('SQL setup statements');
+        $t->subheader('formula sql setup');
         $frm = $t->formula();
         $t->assert_sql_table_create($frm);
         $t->assert_sql_index_create($frm);
         $t->assert_sql_foreign_key_create($frm);
 
 
-        $t->subheader('SQL user sandbox statement tests');
-
+        $t->subheader('formula sql read');
         $frm = new formula($usr);
         $t->assert_sql_by_id($sc, $frm);
         $t->assert_sql_by_name($sc, $frm);
 
-
-        $t->subheader('SQL statement tests');
-
+        $t->subheader('formula sql read default and user changes');
         // sql to load the formula by id
         $frm = new formula($usr);
-        $frm->set_id(2);
+        $frm->set_id(formula_api::TI_READ_ANOTHER);
         //$t->assert_sql_all($db_con, $frm);
         $t->assert_sql_standard($sc, $frm);
         $t->assert_sql_not_changed($sc, $frm);
@@ -101,12 +97,18 @@ class formula_tests
 
         $t->subheader('formula sql write');
         // TODO activate db write
+        $frm = $t->formula_name_only();
         $t->assert_sql_insert($sc, $frm);
         $t->assert_sql_insert($sc, $frm, [sql_type::USER]);
         $t->assert_sql_insert($sc, $frm, [sql_type::LOG]);
         $t->assert_sql_insert($sc, $frm, [sql_type::LOG, sql_type::USER]);
+        $frm = $t->formula();
+        $t->assert_sql_insert($sc, $frm);
+        $t->assert_sql_insert($sc, $frm, [sql_type::LOG]);
+        $frm = $t->formula_filled();
+        $t->assert_sql_insert($sc, $frm, [sql_type::LOG]);
         // TODO activate db write
-        // TODO add a test with all fields changed
+        $frm = $t->formula_name_only();
         $frm_renamed = $frm->cloned(formula_api::TN_RENAMED);
         $t->assert_sql_update($sc, $frm_renamed, $frm);
         $t->assert_sql_update($sc, $frm_renamed, $frm, [sql_type::USER]);
@@ -134,11 +136,11 @@ class formula_tests
         // get the id of the phrases that should be added to the result based on the formula reference text
         $target = new phrase_list($usr);
         $trm_lst = new term_list($usr);
-        $frm = $t->dummy_word_one();
+        $frm = $t->word_one();
         $target->add($frm->phrase());
         $trm_lst->add($frm->term());
         $exp = new expression($usr);
-        $exp->set_ref_text('{w' . word_api::TI_ONE . '}={w' . word_api::TI_MIO . '}*1000000', $t->dummy_term_list_scale());
+        $exp->set_ref_text('{w' . word_api::TI_ONE . '}={w' . word_api::TI_MIO . '}*1000000', $t->term_list_scale());
         $result = $exp->res_phr_lst($trm_lst);
         $t->assert('Expression->res_phr_lst for ' . formula_api::TF_READ_SCALE_MIO, $result->dsp_id(), $target->dsp_id());
 
@@ -161,7 +163,7 @@ class formula_tests
             formula_api::TN_READ_THIS,
             formula_api::TN_READ_PRIOR
         ));
-        $phr_lst = $t->dummy_phrase_list_increase();
+        $phr_lst = $t->phrase_list_increase();
 
         $frm = $t->increase_formula();
         // TODO activate Prio 1

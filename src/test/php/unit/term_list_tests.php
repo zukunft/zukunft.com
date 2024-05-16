@@ -91,13 +91,13 @@ class term_list_tests
 
         $t->subheader('API unit tests');
 
-        $trm_lst = $t->dummy_term_list();
+        $trm_lst = $t->term_list();
         $t->assert_api($trm_lst);
 
 
         $t->subheader('HTML frontend unit tests');
 
-        $trm_lst = $t->dummy_term_list();
+        $trm_lst = $t->term_list();
         $t->assert_api_to_dsp($trm_lst, new term_list_dsp());
 
     }
@@ -127,7 +127,7 @@ class term_list_tests
     {
         global $usr;
         $trm_lst = new term_list($usr);
-        $trm_lst->add($t->dummy_triple_pi()->term());
+        $trm_lst->add($t->triple_pi()->term());
         $trm_lst->add($t->word()->term());
         return $trm_lst;
     }

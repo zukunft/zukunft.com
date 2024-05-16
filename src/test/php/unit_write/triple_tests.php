@@ -56,17 +56,18 @@ class triple_tests
 
         $t->header('triple db write tests');
 
-        $test_name = 'add triple ' . triple_api::TN_ADD_VIA_FUNC . ' via sql function ';
-        $trp = new triple($t->usr1);
-        $trp->set_name(triple_api::TN_ADD_VIA_FUNC);
-        $wrd_add_func = $t->load_word(word_api::TN_ADD_VIA_FUNC);
-        $wrd_math = $t->load_word(word_api::TN_READ);
-        $trp->set_from($wrd_add_func->phrase());
-        $trp->set_verb($verbs->get_verb(verb::IS));
-        $trp->set_to($wrd_math->phrase());
+        $test_name = 'add triple ' . triple_api::TN_ADD_VIA_FUNC . ' via sql function';
+        $trp = $t->triple_add_by_func();
         $trp->save(true);
         $trp->reset();
         $trp->load_by_name(triple_api::TN_ADD_VIA_FUNC);
+        $t->assert_true($test_name, $trp->isset());
+
+        $test_name = 'add triple ' . triple_api::TN_ADD_VIA_SQL . ' via sql insert';
+        $trp = $t->triple_add_by_sql();
+        $trp->save(false);
+        $trp->reset();
+        $trp->load_by_name(triple_api::TN_ADD_VIA_SQL);
         $t->assert_true($test_name, $trp->isset());
 
         // load the main test word and verb

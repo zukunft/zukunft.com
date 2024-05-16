@@ -50,7 +50,7 @@ class system_views
         // test the type list display functions
         $test_page = $html->text_h2('add word');
         $back = '';
-        $wrd = $t->dummy_word_dsp();
+        $wrd = $t->word_dsp();
 
         // check if the system views have set
         $dsp = $html_system_views->get(word_dsp::FORM_ADD);

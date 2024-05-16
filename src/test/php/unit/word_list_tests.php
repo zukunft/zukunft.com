@@ -289,7 +289,7 @@ class word_list_tests
 
         $t->subheader('HTML frontend unit tests');
 
-        $wrd_lst = $t->dummy_word_list();
+        $wrd_lst = $t->word_list();
         $t->assert_api_to_dsp($wrd_lst, new word_list_dsp());
 
     }

@@ -96,7 +96,7 @@ class phrase_tests
 
         $phr = $t->word()->phrase();
         $t->assert_api_to_dsp($phr, new phrase_dsp());
-        $phr = $t->dummy_triple_pi()->phrase();
+        $phr = $t->triple_pi()->phrase();
         $t->assert_api_to_dsp($phr, new phrase_dsp());
 
 

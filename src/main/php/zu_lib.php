@@ -1330,7 +1330,7 @@ function log_msg(string  $msg_text,
                 $fields[] = "sys_log_trace";
                 $values[] = $function_trace;
                 if ($user_id > 0) {
-                    $fields[] = "user_id";
+                    $fields[] = user::FLD_ID;
                     $values[] = $user_id;
                 }
                 $used_db_con->set_class(sys_log::class);

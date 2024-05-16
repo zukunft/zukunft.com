@@ -150,8 +150,8 @@ class formula extends sandbox_typed
     // TODO add foreign key for share and protection type?
     const FLD_LST_MUST_BE_IN_STD = array(
         [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::UNIQUE, '', self::FLD_NAME_COM],
-        [self::FLD_FORMULA_TEXT, self::FLD_FORMULA_TEXT_SQLTYP, sql_field_default::NOT_NULL, '', '', self::FLD_FORMULA_TEXT_COM],
-        [self::FLD_FORMULA_USER_TEXT, self::FLD_FORMULA_USER_TEXT_SQLTYP, sql_field_default::NOT_NULL, '', '', self::FLD_FORMULA_USER_TEXT_COM],
+        [self::FLD_FORMULA_TEXT, self::FLD_FORMULA_TEXT_SQLTYP, sql_field_default::NULL, '', '', self::FLD_FORMULA_TEXT_COM],
+        [self::FLD_FORMULA_USER_TEXT, self::FLD_FORMULA_USER_TEXT_SQLTYP, sql_field_default::NULL, '', '', self::FLD_FORMULA_USER_TEXT_COM],
     );
     // list of must fields that CAN be changed by the user
     const FLD_LST_MUST_BUT_USER_CAN_CHANGE = array(
@@ -208,12 +208,12 @@ class formula extends sandbox_typed
      */
 
     // database fields additional to the user sandbox fields
-    public ?string $ref_text = '';         // the formula expression with the names replaced by database references
+    public ?string $ref_text = null;       // the formula expression with the names replaced by database references
     private bool $ref_text_dirty;          // true if the human-readable text has been updated and not yet converted
-    public ?string $usr_text = '';         // the formula expression in the user format
+    public ?string $usr_text = null;       // the formula expression in the user format
     private bool $usr_text_dirty;          // true if the reference text has been updated and not yet converted
-    public ?string $description = '';      // describes to the user what this formula is doing
-    public ?bool $need_all_val = false;    // calculate and save the result only if all used values are not null
+    public ?string $description = null;    // describes to the user what this formula is doing
+    public ?bool $need_all_val = null;     // calculate and save the result only if all used values are not null
     public ?DateTime $last_update = null;  // the time of the last update of fields that may influence the calculated results
     private ?view $view;                   // name of the default view for this formula
     private ?int $usage = null;            // indicator of the popularity for sorting selection boxes
@@ -252,13 +252,14 @@ class formula extends sandbox_typed
 
         $this->name = '';
 
-        $this->ref_text = '';
+        $this->ref_text = null;
         $this->ref_text_dirty = false;
-        $this->usr_text = '';
+        $this->usr_text = null;
         $this->usr_text_dirty = false;
         $this->type_id = null;
-        $this->need_all_val = false;
+        $this->need_all_val = null;
         $this->last_update = null;
+        $this->usage = null;
 
         $this->type_cl = '';
         $this->name_wrd = null;
@@ -1834,11 +1835,13 @@ class formula extends sandbox_typed
     function generate_ref_text(?term_list $trm_lst = null): string
     {
         $result = '';
-        $exp = new expression($this->user());
-        $exp->set_user_text($this->usr_text, $trm_lst);
-        $this->ref_text = $exp->ref_text($trm_lst);
-        $this->ref_text_dirty = false;
-        $result .= $exp->err_text;
+        if ($this->usr_text != null) {
+            $exp = new expression($this->user());
+            $exp->set_user_text($this->usr_text, $trm_lst);
+            $this->ref_text = $exp->ref_text($trm_lst);
+            $this->ref_text_dirty = false;
+            $result .= $exp->err_text;
+        }
         return $result;
     }
 
@@ -2379,43 +2382,54 @@ class formula extends sandbox_typed
      */
     function add(bool $use_func = false): user_message
     {
-        log_debug('->add ' . $this->dsp_id());
+        log_debug($this->dsp_id());
 
         global $db_con;
         $result = new user_message();
 
-        // log the insert attempt first
-        $log = $this->log_add();
-        if ($log->id() > 0) {
-            // insert the new formula
-            $db_con->set_class(formula::class);
-            // include the formula_text and the resolved_text, because they should never be empty which is also forced by the db structure
-            $this->set_id($db_con->insert_old(
-                array(self::FLD_NAME, user::FLD_ID, self::FLD_LAST_UPDATE, self::FLD_FORMULA_TEXT, self::FLD_FORMULA_USER_TEXT),
-                array($this->name(), $this->user()->id, sql::NOW, $this->ref_text, $this->usr_text)));
-            if ($this->id() > 0) {
-                log_debug('->add formula ' . $this->dsp_id() . ' has been added as ' . $this->id);
-                // update the id in the log for the correct reference
-                if (!$log->add_ref($this->id)) {
-                    $result->add_message('Updating the reference in the log failed');
-                    // TODO do rollback or retry?
-                } else {
-                    // create the related formula word
-                    // the creation of a formula word should not be needed if on creation a view of word, phrase, verb nad formula is used to check uniqueness
-                    // the creation of the formula word is switched off because the term loading should be fine now
-                    // TODO check and remove the create_wrd function and the phrase_type::FORMULA_LINK
-                    if ($this->create_wrd()) {
+        if ($use_func) {
+            $sc = $db_con->sql_creator();
+            $qp = $this->sql_insert($sc, new sql_type_list([sql_type::LOG]));
+            $usr_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id());
+            if ($usr_msg->is_ok()) {
+                $this->id = $usr_msg->get_row_id();
+            }
+            $result->add($usr_msg);
+        } else {
 
-                        // create an empty db_frm element to force saving of all set fields
-                        $db_rec = new formula($this->user());
-                        $db_rec->set_name($this->name());
-                        $std_rec = clone $db_rec;
-                        // save the formula fields
-                        $result->add_message($this->save_fields($db_con, $db_rec, $std_rec));
+            // log the insert attempt first
+            $log = $this->log_add();
+            if ($log->id() > 0) {
+                // insert the new formula
+                $db_con->set_class(formula::class);
+                // include the formula_text and the resolved_text, because they should never be empty which is also forced by the db structure
+                $this->set_id($db_con->insert_old(
+                    array(self::FLD_NAME, user::FLD_ID, self::FLD_LAST_UPDATE, self::FLD_FORMULA_TEXT, self::FLD_FORMULA_USER_TEXT),
+                    array($this->name(), $this->user()->id, sql::NOW, $this->ref_text, $this->usr_text)));
+                if ($this->id() > 0) {
+                    log_debug('->add formula ' . $this->dsp_id() . ' has been added as ' . $this->id);
+                    // update the id in the log for the correct reference
+                    if (!$log->add_ref($this->id)) {
+                        $result->add_message('Updating the reference in the log failed');
+                        // TODO do rollback or retry?
+                    } else {
+                        // create the related formula word
+                        // the creation of a formula word should not be needed if on creation a view of word, phrase, verb nad formula is used to check uniqueness
+                        // the creation of the formula word is switched off because the term loading should be fine now
+                        // TODO check and remove the create_wrd function and the phrase_type::FORMULA_LINK
+                        if ($this->create_wrd()) {
+
+                            // create an empty db_frm element to force saving of all set fields
+                            $db_rec = new formula($this->user());
+                            $db_rec->set_name($this->name());
+                            $std_rec = clone $db_rec;
+                            // save the formula fields
+                            $result->add_message($this->save_fields($db_con, $db_rec, $std_rec));
+                        }
                     }
+                } else {
+                    $result->add_message("Adding formula " . $this->name . " failed.");
                 }
-            } else {
-                $result->add_message("Adding formula " . $this->name . " failed.");
             }
         }
 
@@ -2438,11 +2452,7 @@ class formula extends sandbox_typed
 
         // decide which db write method should be used
         if ($use_func === null) {
-            if (in_array($this::class, sql_db::CLASSES_USE_WITH_LOG_FUNC_FOR_SAVE)) {
-                $use_func = true;
-            } else {
-                $use_func = false;
-            }
+            $use_func = $this->sql_default_script_usage();
         }
 
         // check the preserved names
@@ -2451,8 +2461,8 @@ class formula extends sandbox_typed
         if ($result == '') {
 
             // build the database object because the is anyway needed
-            $db_con->set_usr($this->user()->id);
             $db_con->set_class(formula::class);
+            $db_con->set_usr($this->user()->id);
 
             // check if a new formula is supposed to be added
             if ($this->id() <= 0) {
@@ -2729,11 +2739,15 @@ class formula extends sandbox_typed
                     change::FLD_FIELD_ID_SQLTYP
                 );
             }
+            $old_val = $sbx->view_id();
+            if ($sbx->view == null) {
+                $old_val = null;
+            }
             $lst->add_field(
                 self::FLD_VIEW,
                 $this->view_id(),
                 self::FLD_VIEW_SQLTYP,
-                $sbx->view_id()
+                $old_val
             );
         }
         if ($sbx->usage() <> $this->usage()) {

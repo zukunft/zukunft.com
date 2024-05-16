@@ -244,6 +244,8 @@ class sandbox extends db_object_seq_id_user
         $this->id = 0;
         $this->usr_cfg_id = null;
         $this->owner_id = null;
+        $this->share_id = null;
+        $this->protection_id = null;
         $this->excluded = false;
     }
 
@@ -2062,21 +2064,17 @@ class sandbox extends db_object_seq_id_user
 
         global $db_con;
 
+        // init
         $result = '';
-
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
 
         // decide which db write method should be used
         if ($use_func === null) {
-            if (in_array($this::class, sql_db::CLASSES_USE_WITH_LOG_FUNC_FOR_SAVE)) {
-                $use_func = true;
-            } else {
-                $use_func = false;
-            }
+            $use_func = $this->sql_default_script_usage();
         }
 
-        // load the objects if needed
+        // load the objects if needed e.g. to log the names of the link
         if ($this->is_link_obj()) {
             $this->load_objects();
         }
@@ -2806,12 +2804,12 @@ class sandbox extends db_object_seq_id_user
 
     /**
      * @return bool true if for this database and class
-     *              a prepared script including the write to the log
-     *              for db write should be used
+     *              a prepared script including writing to the log
+     *              for db write should be used by default
      */
-    function sql_use_script_with_log(): bool
+    function sql_default_script_usage(): bool
     {
-        if (in_array($this::class, sql_db::DB_WRITE_LOG_SCRIPT_CLASSES)) {
+        if (in_array($this::class, sql_db::CLASSES_THAT_USE_SQL_FUNC)) {
             return true;
         } else {
             return false;
@@ -2876,11 +2874,16 @@ class sandbox extends db_object_seq_id_user
                     change::FLD_FIELD_ID_SQLTYP
                 );
             }
+            // TODO review and remove exception if possible
+            $old_val = $sbx->excluded;
+            if ($sbx->excluded === false) {
+                $old_val = null;
+            }
             $lst->add_field(
                 self::FLD_EXCLUDED,
                 $this->excluded,
                 self::FLD_EXCLUDED_SQLTYP,
-                $sbx->excluded
+                $old_val
             );
         }
         if ($sbx->share_id <> $this->share_id) {

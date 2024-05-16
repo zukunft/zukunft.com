@@ -444,7 +444,7 @@ class sandbox_link extends sandbox
         global $db_con;
         $db_con->set_class(self::class);
         return $db_con->insert_old(
-            array($this->from_name . sql_db::FLD_EXT_ID, $this->to_name . sql_db::FLD_EXT_ID, "user_id"),
+            array($this->from_name . sql_db::FLD_EXT_ID, $this->to_name . sql_db::FLD_EXT_ID, user::FLD_ID),
             array($this->fob->id, $this->tob->id, $this->user()->id));
     }
 
@@ -472,9 +472,18 @@ class sandbox_link extends sandbox
 
             // insert the new object and save the object key
             // TODO check that always before a db action is called the db type is set correctly
-            $db_con->set_class($this::class);
-            $db_con->set_usr($this->user()->id);
-            $this->id = $this->add_insert();
+            if ($this->sql_write_prepared()) {
+                $sc = $db_con->sql_creator();
+                $qp = $this->sql_insert($sc);
+                $usr_msg = $db_con->insert($qp, 'add ' . $this->dsp_id());
+                if ($usr_msg->is_ok()) {
+                    $this->id = $usr_msg->get_row_id();
+                }
+            } else {
+                $db_con->set_class($this::class);
+                $db_con->set_usr($this->user()->id);
+                $this->id = $this->add_insert();
+            }
 
             // save the object fields if saving the key was successful
             if ($this->id > 0) {
