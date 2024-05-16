@@ -261,7 +261,8 @@ class sql_db
         word::class,
         triple::class,
         source::class,
-        formula::class
+        formula::class,
+        view::class
     ];
 
     // classes that use the prepared sql write statement
@@ -269,7 +270,9 @@ class sql_db
         word::class,
         triple::class,
         source::class,
-        formula::class];
+        formula::class,
+        view::class
+    ];
 
     // tables that do not have a name
     // e.g. sql_db::TBL_TRIPLE is a link which hase a name, but the generated name can be overwritten, so the standard field naming is not used

@@ -125,6 +125,7 @@ class sql
 
     // sql field names used for several classes
     const FLD_CODE_ID = 'code_id';     // field name for the code link e.g. for words used for the system configuration
+    const FLD_CODE_ID_SQLTYP = sql_field_type::CODE_ID;
     const FLD_VALUE = 'value';         // field name e.g. for the configuration value
     const FLD_TYPE_NAME = 'type_name'; // field name for the user specific name of a type; types are used to assign code to a db row
     const FLD_CONST = 'const'; // for the view creation to indicate that the field name as a const

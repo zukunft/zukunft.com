@@ -58,11 +58,13 @@ use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
+use cfg\db\sql_par_field_list;
 use cfg\db\sql_par_type;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
 use cfg\export\sandbox_exp;
 use cfg\export\view_exp;
+use cfg\log\change;
 use shared\library;
 
 class view extends sandbox_typed
@@ -83,6 +85,7 @@ class view extends sandbox_typed
     const FLD_DESCRIPTION_COM = 'to explain the view to the user with a mouse over text; to be replaced by a language form entry';
     const FLD_TYPE_COM = 'to link coded functionality to views e.g. to use a view for the startup page';
     const FLD_TYPE = 'view_type_id';
+    const FLD_TYPE_SQLTYP = sql_field_type::INT_SMALL;
     const FLD_CODE_ID_COM = 'to link coded functionality to a specific view e.g. define the internal system views';
     // the JSON object field names
     const FLD_COMPONENT = 'components';
@@ -163,7 +166,7 @@ class view extends sandbox_typed
         parent::reset();
 
         $this->type_id = null;
-        $this->code_id = '';
+        $this->code_id = null;
 
         $this->cmp_lnk_lst = null;
     }
@@ -962,6 +965,128 @@ class view extends sandbox_typed
         }
 
         return $result;
+    }
+
+
+    /*
+     * sql write
+     */
+
+    /**
+     * create the sql statement to add a new view to the database
+     * always all fields are included in the query to be able to remove overwrites with a null value
+     *
+     * @param sql $sc with the target db_type set
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     */
+    function sql_insert(
+        sql $sc,
+        sql_type_list $sc_par_lst = new sql_type_list([])
+    ): sql_par
+    {
+        // fields and values that the view has additional to the standard named user sandbox object
+        $msk_empty = $this->clone_reset();
+        // for a new view the owner should be set, so remove the user id to force writing the user
+        $msk_empty->set_user($this->user()->clone_reset());
+        $sc_par_lst->add(sql_type::INSERT);
+        $fvt_lst = $this->db_fields_changed($msk_empty, $sc_par_lst);
+        $all_fields = $this->db_fields_all();
+        return parent::sql_insert_switch($sc, $fvt_lst, $all_fields, $sc_par_lst);
+    }
+
+    /**
+     * create the sql statement to update a view in the database
+     *
+     * @param sql $sc with the target db_type set
+     * @param sandbox|view $db_row the word with the database values before the update
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     */
+    function sql_update(sql $sc, sandbox|view $db_row, sql_type_list $sc_par_lst = new sql_type_list([])): sql_par
+    {
+        // get the field names, values and parameter types that have been changed
+        // and that needs to be updated in the database
+        // the db_* child function call the corresponding parent function
+        // including the sql parameters for logging
+        $fld_lst = $this->db_fields_changed($db_row, $sc_par_lst);
+        $all_fields = $this->db_fields_all();
+        // unlike the db_* function the sql_update_* parent function is called directly
+        return parent::sql_update_named($sc, $fld_lst, $all_fields, $sc_par_lst);
+    }
+
+
+    /*
+     * sql write fields
+     */
+
+    /**
+     * get a list of all database fields that might be changed
+     * excluding the internal fields e.g. the database id
+     * field list must be corresponding to the db_fields_changed fields
+     *
+     * @return array list of all database field names that have been updated
+     */
+    function db_fields_all(): array
+    {
+        return array_merge(
+            parent::db_fields_all(),
+            [view::FLD_TYPE,
+                sql::FLD_CODE_ID],
+            parent::db_fields_all_sandbox()
+        );
+    }
+
+    /**
+     * get a list of database field names, values and types that have been updated
+     *
+     * @param sandbox|view $sbx the compare value to detect the changed fields
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
+     */
+    function db_fields_changed(
+        sandbox|view $sbx,
+        sql_type_list $sc_par_lst = new sql_type_list([])
+    ): sql_par_field_list
+    {
+        global $change_field_list;
+
+        $sc = new sql();
+        $do_log = $sc_par_lst->and_log();
+        $table_id = $sc->table_id($this::class);
+
+        $lst = parent::db_fields_changed($sbx, $sc_par_lst);
+        if ($sbx->type_id() <> $this->type_id()) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . view::FLD_TYPE,
+                    $change_field_list->id($table_id . view::FLD_TYPE),
+                    change::FLD_FIELD_ID_SQLTYP
+                );
+            }
+            $lst->add_field(
+                view::FLD_TYPE,
+                $this->type_id(),
+                view::FLD_TYPE_SQLTYP,
+                $sbx->type_id()
+            );
+        }
+        if ($sbx->code_id <> $this->code_id) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . sql::FLD_CODE_ID,
+                    $change_field_list->id($table_id . sql::FLD_CODE_ID),
+                    change::FLD_FIELD_ID_SQLTYP
+                );
+            }
+            $lst->add_field(
+                sql::FLD_CODE_ID,
+                $this->code_id,
+                sql::FLD_CODE_ID_SQLTYP,
+                $sbx->code_id
+            );
+        }
+        return $lst->merge($this->db_changed_sandbox_list($sbx, $sc_par_lst));
     }
 
 }

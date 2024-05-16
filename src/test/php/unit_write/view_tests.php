@@ -50,11 +50,26 @@ class view_tests
     {
         global $view_types;
 
+        // init
         $back = 0;
 
-        $t->header('Test the view class (classes/view.php)');
 
         // test the creation and changing of a view
+        $t->header('view db write tests');
+
+        $test_name = 'add view ' . view_api::TN_ADD_VIA_SQL . ' via sql insert';
+        $msk = $t->view_add_by_sql();
+        $msk->save(false);
+        $msk->reset();
+        $msk->load_by_name(view_api::TN_ADD_VIA_SQL);
+        $t->assert_true($test_name, $msk->isset());
+
+        $test_name = 'add view ' . view_api::TN_ADD_VIA_FUNC . ' via sql function';
+        $msk = $t->view_add_by_func();
+        $msk->save(true);
+        $msk->reset();
+        $msk->load_by_name(view_api::TN_ADD_VIA_FUNC);
+        $t->assert_true($test_name, $msk->isset());
 
         // test loading of one view
         $dsp_db = new view($t->usr1);

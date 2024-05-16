@@ -57,6 +57,8 @@ class view extends sandbox_typed_api
     const TC_READ = 'word';
     const TI_READ = 1;
     const TN_ADD = 'System Test View';
+    const TN_ADD_VIA_FUNC = 'System Test View added via sql function';
+    const TN_ADD_VIA_SQL = 'System Test View added via sql insert';
     const TN_RENAMED = 'System Test View Renamed';
     const TN_COMPLETE = 'System Test View Complete';
     const TN_EXCLUDED = 'System Test View Excluded';

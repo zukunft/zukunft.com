@@ -63,18 +63,18 @@ class word_tests
 
         $t->header('word db write tests');
 
-        $test_name = 'add word ' . word_api::TN_ADD_VIA_FUNC . ' via sql function';
-        $wrd = $t->word_add_by_func();
-        $wrd->save(true);
-        $wrd->reset();
-        $wrd->load_by_name(word_api::TN_ADD_VIA_FUNC);
-        $t->assert_true($test_name, $wrd->isset());
-
         $test_name = 'add word ' . word_api::TN_ADD_VIA_SQL . ' via sql insert';
         $wrd = $t->word_add_by_sql();
         $wrd->save(false);
         $wrd->reset();
         $wrd->load_by_name(word_api::TN_ADD_VIA_SQL);
+        $t->assert_true($test_name, $wrd->isset());
+
+        $test_name = 'add word ' . word_api::TN_ADD_VIA_FUNC . ' via sql function';
+        $wrd = $t->word_add_by_func();
+        $wrd->save(true);
+        $wrd->reset();
+        $wrd->load_by_name(word_api::TN_ADD_VIA_FUNC);
         $t->assert_true($test_name, $wrd->isset());
 
 

@@ -2578,7 +2578,7 @@ class sandbox extends db_object_seq_id_user
      * @return user_message the message and potential solution shown to the user in case of a problem
      */
     function update(
-        string $msg = '',
+        string        $msg = '',
         sql_type_list $sc_par_lst = new sql_type_list([])
     ): user_message
     {
@@ -2809,11 +2809,7 @@ class sandbox extends db_object_seq_id_user
      */
     function sql_default_script_usage(): bool
     {
-        if (in_array($this::class, sql_db::CLASSES_THAT_USE_SQL_FUNC)) {
-            return true;
-        } else {
-            return false;
-        }
+        return in_array($this::class, sql_db::CLASSES_THAT_USE_SQL_FUNC);
     }
 
     /**
@@ -2821,11 +2817,7 @@ class sandbox extends db_object_seq_id_user
      */
     function sql_write_prepared(): bool
     {
-        if (in_array($this::class, sql_db::DB_WRITE_PREPARED)) {
-            return true;
-        } else {
-            return false;
-        }
+        return in_array($this::class, sql_db::DB_WRITE_PREPARED);
     }
 
 

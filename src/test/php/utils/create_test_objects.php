@@ -1724,6 +1724,37 @@ class create_test_objects extends test_base
         return $dsp;
     }
 
+    /**
+     * @return view created by a user, so without a code_id
+     */
+    function view_added(): view
+    {
+        $msk = new view($this->usr1);
+        $msk->set(1, view_api::TN_READ);
+        $msk->description = view_api::TD_READ;
+        return $msk;
+    }
+
+    /**
+     * @return view to test the sql insert via function
+     */
+    function view_add_by_func(): view
+    {
+        $msk = new view($this->usr1);
+        $msk->set_name(view_api::TN_ADD_VIA_FUNC);
+        return $msk;
+    }
+
+    /**
+     * @return view to test the sql insert without use of function
+     */
+    function view_add_by_sql(): view
+    {
+        $msk = new view($this->usr1);
+        $msk->set_name(view_api::TN_ADD_VIA_SQL);
+        return $msk;
+    }
+
     function view_with_components(): view
     {
         $dsp = $this->view();

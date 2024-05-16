@@ -35,6 +35,7 @@ namespace unit;
 use api\view\view as view_api;
 use cfg\db\sql;
 use cfg\db\sql_db;
+use cfg\db\sql_type;
 use cfg\view;
 use cfg\view_link_type;
 use cfg\view_term_link;
@@ -108,15 +109,30 @@ class view_tests
         $t->display('view->load_components_sql for MySQL', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         $t->subheader('view sql write');
+        // insert
+        $msk = $t->view_added();
+        $t->assert_sql_insert($sc, $msk);
+        $t->assert_sql_insert($sc, $msk, [sql_type::USER]);
+        $t->assert_sql_insert($sc, $msk, [sql_type::LOG]);
+        $t->assert_sql_insert($sc, $msk, [sql_type::LOG, sql_type::USER]);
+        $msk = $t->view(); // a view with a code_id as it might be imported
+        $t->assert_sql_insert($sc, $msk, [sql_type::LOG]);
+        // update
+        $msk = $t->view_added();
         // TODO activate db write
-        //$t->assert_sql_insert($sc, $dsp);
-        //$t->assert_sql_insert($sc, $dsp, [sql_type::USER]);
+        $msk_renamed = $msk->cloned(view_api::TN_RENAMED);
+        $t->assert_sql_update($sc, $msk_renamed, $msk);
+        $t->assert_sql_update($sc, $msk_renamed, $msk, [sql_type::USER]);
+        $t->assert_sql_update($sc, $msk_renamed, $msk, [sql_type::LOG]);
+        $t->assert_sql_update($sc, $msk_renamed, $msk, [sql_type::LOG, sql_type::USER]);
+        // delete
         // TODO activate db write
-        //$t->assert_sql_update($sc, $dsp);
-        //$t->assert_sql_update($sc, $dsp, [sql_type::USER]);
-        // TODO activate db write
-        //$t->assert_sql_delete($sc, $dsp);
-        //$t->assert_sql_delete($sc, $dsp, [sql_type::USER]);
+        $t->assert_sql_delete($sc, $msk);
+        $t->assert_sql_delete($sc, $msk, [sql_type::USER]);
+        $t->assert_sql_delete($sc, $msk, [sql_type::LOG]);
+        $t->assert_sql_delete($sc, $msk, [sql_type::LOG, sql_type::USER]);
+        $t->assert_sql_delete($sc, $msk, [sql_type::EXCLUDE]);
+        $t->assert_sql_delete($sc, $msk, [sql_type::USER, sql_type::EXCLUDE]);
 
         $t->subheader('Im- and Export tests');
         $t->assert_json_file(new view($usr), $json_file);
