@@ -66,20 +66,20 @@ class result_tests
         $t->header('Unit tests of the result class (src/main/php/model/formula/result.php)');
 
         $t->subheader('SQL creation tests');
-        $res = $t->dummy_result();
+        $res = $t->result();
         $t->assert_sql_table_create($res);
         $t->assert_sql_index_create($res);
         $t->assert_sql_foreign_key_create($res);
 
         // check the sql to load a result by the id
-        $res = $t->dummy_result_16();
+        $res = $t->result_16();
         $t->assert_sql_by_id($sc, $res);
         $this->assert_sql_by_group($t, $db_con, $res);
         $this->assert_sql_by_formula_and_group($t, $db_con, $res);
         $this->assert_sql_by_formula_and_group_list($t, $db_con, $res);
         $this->assert_sql_load_std_by_group_id($t, $db_con, $res);
 
-        $res = $t->dummy_result_prime();
+        $res = $t->result_prime();
         $t->assert_sql_by_id($sc, $res);
         $this->assert_sql_by_group($t, $db_con, $res);
 
@@ -90,8 +90,8 @@ class result_tests
         $t->assert_sql_user_changes($sc, $res);
 
         $t->subheader('result sql write');
-        $res_prime = $t->dummy_result_prime();
-        $res_prime_max = $t->dummy_result_prime();
+        $res_prime = $t->result_prime();
+        $res_prime_max = $t->result_prime();
         // TODO activate db write
         // $t->assert_sql_insert($sc, $res);
         // TODO activate db write
@@ -135,7 +135,7 @@ class result_tests
         $t->assert('result->val_formatted test small numbers', $res->val_formatted(), "12.35");
 
         // ... for percent values
-        $res = $t->dummy_result_pct();
+        $res = $t->result_pct();
         $t->assert('result->val_formatted test percent formatting', $res->val_formatted(), '1.23 %');
 
 
@@ -146,7 +146,7 @@ class result_tests
 
         $t->subheader('HTML frontend unit tests');
 
-        $res = $t->dummy_result();
+        $res = $t->result();
         $t->assert_api_to_dsp($res, new result_dsp());
 
     }

@@ -261,6 +261,7 @@ class sql_db
         word::class,
         triple::class,
         source::class,
+        formula::class
     ];
 
     // classes that use the prepared sql write statement

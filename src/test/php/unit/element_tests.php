@@ -60,14 +60,14 @@ class element_tests
         $elm_typ = new element_type('');
         $t->assert_sql_table_create($elm_typ);
         $t->assert_sql_index_create($elm_typ);
-        $elm = $t->dummy_element();
+        $elm = $t->element();
         $t->assert_sql_table_create($elm);
         $t->assert_sql_index_create($elm);
         $t->assert_sql_foreign_key_create($elm);
 
         $t->subheader('SQL creation tests');
 
-        $elm = $t->dummy_element();
+        $elm = $t->element();
         $t->assert_sql_by_id($sc, $elm);
 
 

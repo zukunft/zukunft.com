@@ -45,7 +45,7 @@ class reference
 
         $t->subheader('reference tests');
 
-        $ref = new ref_dsp($t->dummy_reference()->api_json());
+        $ref = new ref_dsp($t->reference()->api_json());
         $test_page = $html->text_h2('reference display test');
         $test_page .= 'with tooltip: ' . $ref->display() . '<br>';
         $test_page .= 'with link: ' . $ref->display_linked() . '<br>';

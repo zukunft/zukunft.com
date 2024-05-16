@@ -77,10 +77,10 @@ class value_list_tests
         $phr = $t->phrase_zh();
         $this->assert_sql_by_phr($t, $db_con, $val_lst, $phr);
         // ... a list of ids
-        $val_ids = $t->dummy_value_list()->id_lst();
+        $val_ids = $t->value_list()->id_lst();
         $t->assert_sql_by_ids($sc, $val_lst, $val_ids);
         // ... a list of groups
-        $grp_lst = $t->dummy_phrase_list_small();
+        $grp_lst = $t->phrase_list_small();
         $this->assert_sql_by_grp_lst($t, $db_con, $val_lst, $grp_lst);
         $test_name = 'load values related to all phrases of a list '
             . 'e.g. the inhabitants of Canton Zurich over time';
@@ -90,7 +90,7 @@ class value_list_tests
         $t->assert_sql_by_phr_lst($test_name, $val_lst, $t->phrase_list_math_const(), true);
         $test_name = 'load values related to any phrase of a longer word and triple list '
             . 'e.g. all phrase related to the math number pi';
-        $t->assert_sql_by_phr_lst($test_name, $val_lst, $t->dummy_phrase_list(), true);
+        $t->assert_sql_by_phr_lst($test_name, $val_lst, $t->phrase_list(), true);
 
 
         $t->subheader('Im- and Export tests');
@@ -100,7 +100,7 @@ class value_list_tests
 
         $t->subheader('HTML frontend unit tests');
 
-        $trp_lst = $t->dummy_value_list();
+        $trp_lst = $t->value_list();
         $t->assert_api_to_dsp($trp_lst, new value_list_dsp());
 
     }

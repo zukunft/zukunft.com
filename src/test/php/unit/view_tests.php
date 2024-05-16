@@ -59,43 +59,37 @@ class view_tests
         $json_file = 'unit/view/car_costs.json';
         $usr->set_id(1);
 
-        $t->header('Unit tests of the view class (src/main/php/model/view/view.php)');
 
+        $t->header('view unit tests');
 
-        $t->subheader('SQL setup statements');
+        $t->subheader('view sql setup');
         $dsp_typ = new view_type('');
         $t->assert_sql_table_create($dsp_typ);
         $t->assert_sql_index_create($dsp_typ);
-        $dsp = $t->dummy_view();
+        $dsp = $t->view();
         $t->assert_sql_table_create($dsp);
         $t->assert_sql_index_create($dsp);
         $t->assert_sql_foreign_key_create($dsp);
 
-
-        $t->subheader('SQL user sandbox statement tests');
-
+        $t->subheader('view sql read');
         $dsp = new view($usr);
         $t->assert_sql_by_id($sc, $dsp);
         $t->assert_sql_by_name($sc, $dsp);
         $t->assert_sql_by_code_id($sc, $dsp);
         $t->assert_sql_by_term($sc, $dsp, $t->term());
 
-
-        $t->subheader('SQL statement tests');
-
+        $t->subheader('view sql read default and user changes');
         // sql to load the view by id
         $dsp = new view($usr);
         $dsp->set_id(2);
         //$t->assert_load_sql($db_con, $dsp);
         $t->assert_sql_standard($sc, $dsp);
         $t->assert_sql_user_changes($sc, $dsp);
-
         // sql to load the view by name
         $dsp = new view($usr);
         $dsp->set_name(view_api::TN_ADD);
         //$t->assert_load_sql($db_con, $dsp);
         $t->assert_sql_standard($sc, $dsp);
-
         // sql to load the view components
         $dsp = new view($usr);
         $dsp->set_id(2);
@@ -125,17 +119,16 @@ class view_tests
         //$t->assert_sql_delete($sc, $dsp, [sql_type::USER]);
 
         $t->subheader('Im- and Export tests');
-
         $t->assert_json_file(new view($usr), $json_file);
 
 
         $t->subheader('API and frontend cast unit tests for views');
 
-        $dsp = $t->dummy_view();
+        $dsp = $t->view();
         $t->assert_api($dsp);
         $t->assert_api_to_dsp($dsp, new view_dsp());
 
-        $dsp = $t->dummy_view_with_components();
+        $dsp = $t->view_with_components();
         $t->assert_api($dsp, 'view_with_components');
         $t->assert_api_to_dsp($dsp, new view_dsp());
 

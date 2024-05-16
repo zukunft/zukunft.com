@@ -66,7 +66,7 @@ class formula_link_tests
         $frm_lnk_typ = new formula_link_type('');
         $t->assert_sql_table_create($frm_lnk_typ);
         $t->assert_sql_index_create($frm_lnk_typ);
-        $frm_lnk = $t->dummy_formula_link();
+        $frm_lnk = $t->formula_link();
         $t->assert_sql_table_create($frm_lnk);
         $t->assert_sql_index_create($frm_lnk);
         $t->assert_sql_foreign_key_create($frm_lnk);

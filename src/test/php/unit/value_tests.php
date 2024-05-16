@@ -73,8 +73,8 @@ class value_tests
         // TODO add sql insert and update tests to all db objects
         $t->subheader('SQL statements - for often used (prime) values');
         $val = $t->value();
-        $val_prime = $t->dummy_value_prime_3();
-        $val_prime_max = $t->dummy_value_prime_max();
+        $val_prime = $t->value_prime_3();
+        $val_prime_max = $t->value_prime_max();
         $t->assert_sql_insert($sc, $val);
         $t->assert_sql_insert($sc, $val, [sql_type::USER]);
         $t->assert_sql_insert($sc, $val_prime);
@@ -105,7 +105,7 @@ class value_tests
         $t->assert_sql_changer($sc, $val);
 
         $t->subheader('SQL statements - for values related to up to 16 phrases');
-        $val = $t->dummy_value_16();
+        $val = $t->value_16();
         // TODO insert value does not need to return the id because this is given by the group id
         $t->assert_sql_insert($sc, $val);
         $t->assert_sql_insert($sc, $val, [sql_type::USER]);
@@ -127,7 +127,7 @@ class value_tests
         $t->assert_sql_changer($sc, $val);
 
         $t->subheader('SQL statements - for values related to more than 16 phrases');
-        $val = $t->dummy_value_17_plus();
+        $val = $t->value_17_plus();
         $db_val = $val->cloned(value_api::TV_FLOAT);
         $t->assert_sql_insert($sc, $val);
         $t->assert_sql_update($sc, $val, $db_val);

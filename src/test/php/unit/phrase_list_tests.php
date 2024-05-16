@@ -122,7 +122,7 @@ class phrase_list_tests
         $t->display('phrase_list->ex_time names', $target, $result);
 
         $test_name = 'get all words related to a phrase list: Mathematics, constant, Mathematical constant, Pi and Pi (Math) results in Mathematics, constant and Pi';
-        $phr_lst = $t->dummy_phrase_list();
+        $phr_lst = $t->phrase_list();
         $wrd_lst = $phr_lst->wrd_lst_all();
         $t->assert($test_name, $wrd_lst->count(), 3);
 
@@ -141,13 +141,13 @@ class phrase_list_tests
 
         $t->subheader('API unit tests');
 
-        $phr_lst = $t->dummy_phrase_list();
+        $phr_lst = $t->phrase_list();
         $t->assert_api($phr_lst);
 
 
         $t->subheader('HTML frontend unit tests');
 
-        $phr_lst = $t->dummy_phrase_list();
+        $phr_lst = $t->phrase_list();
         $t->assert_api_to_dsp($phr_lst, new phrase_list_dsp());
 
         // math is dominant in a phrase list use math phrases as a suggestion for a new phrase

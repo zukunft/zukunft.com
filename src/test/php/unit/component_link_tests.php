@@ -68,7 +68,7 @@ class component_link_tests
         $cmp_pos_typ = new position_type('');
         $t->assert_sql_table_create($cmp_pos_typ);
         $t->assert_sql_index_create($cmp_pos_typ);
-        $cmp_lnk = $t->dummy_component_link();
+        $cmp_lnk = $t->component_link();
         $t->assert_sql_table_create($cmp_lnk);
         $t->assert_sql_index_create($cmp_lnk);
         $t->assert_sql_foreign_key_create($cmp_lnk);

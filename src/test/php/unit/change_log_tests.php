@@ -108,13 +108,13 @@ class change_log_tests
         $t->assert_sql_foreign_key_create($log_val_std);
 
         $t->subheader('SQL statement creation tests for logging prime value');
-        $log_val_prm = $t->dummy_change_log_value_prime();
+        $log_val_prm = $t->change_log_value_prime();
         $t->assert_sql_table_create($log_val_prm);
         $t->assert_sql_index_create($log_val_prm);
         $t->assert_sql_foreign_key_create($log_val_prm);
 
         $t->subheader('SQL statement creation tests for logging big value');
-        $log_val_big = $t->dummy_change_log_value_big();
+        $log_val_big = $t->change_log_value_big();
         $t->assert_sql_table_create($log_val_big);
         $t->assert_sql_index_create($log_val_big);
         $t->assert_sql_foreign_key_create($log_val_big);
@@ -180,7 +180,7 @@ class change_log_tests
 
         $t->subheader('API unit tests');
 
-        $log_lst = $t->dummy_change_log_list_named();
+        $log_lst = $t->change_log_list_named();
         $t->assert_api($log_lst);
 
     }

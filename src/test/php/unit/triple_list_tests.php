@@ -111,7 +111,7 @@ class triple_list_tests
 
         $t->subheader('HTML frontend unit tests');
 
-        $trp_lst = $t->dummy_triple_list();
+        $trp_lst = $t->triple_list();
         $t->assert_api_to_dsp($trp_lst, new triple_list_dsp());
 
     }

@@ -127,18 +127,18 @@ class group_tests
         $this->check_int2alpha($t, -12, '.....A(', true, );
         $this->check_int2alpha($t, -12, '.....A)', false, true);
 
-        $t->assert('group_id triple list', $grp_id->get_id($t->dummy_triple_list()->phrase_lst()),5);
-        $t->assert('triple ids 64 bit group_id ', $grp_id->get_array(5), $t->dummy_triple_list()->phrase_lst()->ids());
+        $t->assert('group_id triple list', $grp_id->get_id($t->triple_list()->phrase_lst()),5);
+        $t->assert('triple ids 64 bit group_id ', $grp_id->get_array(5), $t->triple_list()->phrase_lst()->ids());
         $phr_lst = new phrase_list($usr);
         $phr_lst->merge($t->word_list()->phrase_lst());
-        $phr_lst->merge($t->dummy_triple_list()->phrase_lst());
+        $phr_lst->merge($t->triple_list()->phrase_lst());
         $t->assert('group_id combine phrase list', $grp_id->get_id($phr_lst),
             '.....0-...../+.....0+.....1+.....2+......+......+......+......+......+......+......+......+......+......+......+');
-        $t->assert('group_id phrase list', $grp_id->get_id($t->dummy_phrase_list()),
+        $t->assert('group_id phrase list', $grp_id->get_id($t->phrase_list()),
             '.....0-...../-...../+.....0+.....1+......+......+......+......+......+......+......+......+......+......+......+');
-        $t->assert('group_id phrase list 16', $grp_id->get_id($t->dummy_phrase_list_16()),
+        $t->assert('group_id phrase list 16', $grp_id->get_id($t->phrase_list_16()),
             '1FajJ2-.4LYK3-..8jId-...I1A-....Yz-..../.-.....Z-.....9-...../+.....A+.....a+....3s+...1Ao+../vLC+.//ZSB+.ZSahL+');
-        $t->assert('group_id phrase list 16', $grp_id->get_id($t->dummy_phrase_list_17_plus()),
+        $t->assert('group_id phrase list 16', $grp_id->get_id($t->phrase_list_17_plus()),
             '1FajJ2-.4LYK3-..8jId-...I1A-....Yz-..../.-.....Z-.....9-...../+.....A+.....a+....3s+...1Ao+../vLC+.//ZSB+.ZSahL+.uraWl+');
         $t->assert('group_id revers phrase list 16',
             implode(',', $grp_id->get_array('...../+.....9-.....A+.....Z-.....a+..../.-....3s+....Yz-...1Ao+...I1A-../vLC+..8jId-.//ZSB+.4LYK3-.ZSahL+1FajJ2-')),
@@ -161,10 +161,10 @@ class group_tests
             $res_id->get_id($t->zh_ge_inhabitants_2020(), $t->zh_ge_inhabitants_2020(), $t->increase_formula()),
             '18039393492526607616');
         $t->assert('512 bit result_id ',
-            $res_id->get_id($t->dummy_phrase_list_14(), $t->dummy_phrase_list_14b(), $t->increase_formula()),
+            $res_id->get_id($t->phrase_list_14(), $t->phrase_list_14b(), $t->increase_formula()),
             '.....J=..8jId-...I1A-....Yz-..../.-.....Z-.....9-...../+.....A+.....a+....3s+...1Ao+../vLC+.//ZSB+1FajJ2(.4LYK3)1FajJ2)');
         $t->assert('512 bit result_id ',
-            $res_id->get_id($t->dummy_phrase_list_17_plus(), $t->dummy_phrase_list_17_plus(), $t->increase_formula()),
+            $res_id->get_id($t->phrase_list_17_plus(), $t->phrase_list_17_plus(), $t->increase_formula()),
             '...../+.....9-.....A+.....Z-.....a+..../.-....3s+....Yz-...1Ao+...I1A-../vLC+..8jId-.//ZSB+.4LYK3-.ZSahL+1FajJ2-.uraWl+');
 
         $t->subheader('SQL statements - setup');
@@ -180,16 +180,16 @@ class group_tests
         $this->assert_sql_by_phrase_list($t, $db_con);
 
         $t->subheader('SQL statements - write');
-        $grp->set_phrase_list($t->dummy_phrase_list_prime());
+        $grp->set_phrase_list($t->phrase_list_prime());
         $t->assert_sql_insert($sc, $grp);
         $t->assert_sql_insert($sc, $grp, [sql_type::USER]);
         $db_grp = $t->group();
         $grp = $grp->renamed(group_api::TN_RENAMED);
         $t->assert_sql_update($sc, $grp, $db_grp);
         $t->assert_sql_update($sc, $grp, $db_grp, [sql_type::USER]);
-        $grp->set_phrase_list($t->dummy_phrase_list_16());
+        $grp->set_phrase_list($t->phrase_list_16());
         $t->assert_sql_insert($sc, $grp);
-        $grp->set_phrase_list($t->dummy_phrase_list_17_plus());
+        $grp->set_phrase_list($t->phrase_list_17_plus());
         $t->assert_sql_insert($sc, $grp, [sql_type::USER]);
         // TODO activate db write
         //$t->assert_sql_delete($sc, $grp);
@@ -259,37 +259,37 @@ class group_tests
 
         // check the Postgres query syntax for a list of up to four prime phrases
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $grp->load_sql_by_phrase_list($db_con->sql_creator(), $t->dummy_phrase_list_prime());
+        $qp = $grp->load_sql_by_phrase_list($db_con->sql_creator(), $t->phrase_list_prime());
         $result = $t->assert_qp($qp, $db_con->db_type);
 
         // ... and for 16 phrase
         if ($result) {
-            $qp = $grp->load_sql_by_phrase_list($db_con->sql_creator(), $t->dummy_phrase_list_16());
+            $qp = $grp->load_sql_by_phrase_list($db_con->sql_creator(), $t->phrase_list_16());
             $t->assert_qp($qp, $db_con->db_type);
         }
 
         // ... and for more than 16 phrase
         if ($result) {
-            $qp = $grp->load_sql_by_phrase_list($db_con->sql_creator(), $t->dummy_phrase_list_17_plus());
+            $qp = $grp->load_sql_by_phrase_list($db_con->sql_creator(), $t->phrase_list_17_plus());
             $t->assert_qp($qp, $db_con->db_type);
         }
 
         // ... and check the MySQL query syntax
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
-            $qp = $grp->load_sql_by_phrase_list($db_con->sql_creator(), $t->dummy_phrase_list_prime());
+            $qp = $grp->load_sql_by_phrase_list($db_con->sql_creator(), $t->phrase_list_prime());
             $t->assert_qp($qp, $db_con->db_type);
         }
 
         // ... and for 16 phrase
         if ($result) {
-            $qp = $grp->load_sql_by_phrase_list($db_con->sql_creator(), $t->dummy_phrase_list_16());
+            $qp = $grp->load_sql_by_phrase_list($db_con->sql_creator(), $t->phrase_list_16());
             $t->assert_qp($qp, $db_con->db_type);
         }
 
         // ... and for more than 16 phrase
         if ($result) {
-            $qp = $grp->load_sql_by_phrase_list($db_con->sql_creator(), $t->dummy_phrase_list_17_plus());
+            $qp = $grp->load_sql_by_phrase_list($db_con->sql_creator(), $t->phrase_list_17_plus());
             $t->assert_qp($qp, $db_con->db_type);
         }
     }

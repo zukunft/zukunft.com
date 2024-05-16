@@ -50,7 +50,7 @@ class export_tests
 
         $t->subheader('Test the xml export class (classes/xml.php)');
 
-        $phr_lst = $t->dummy_phrase_list();
+        $phr_lst = $t->phrase_list();
         $xml_exp = new xml($t->usr1);
         $result = $xml_exp->export_by_phrase_list($phr_lst);
         $target = 'Mathematics';

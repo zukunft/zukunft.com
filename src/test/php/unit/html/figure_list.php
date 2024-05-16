@@ -46,7 +46,7 @@ class figure_list
         $t->subheader('figure list tests');
 
         // test the figure list display functions
-        $lst = new figure_list_dsp($t->dummy_figure_list()->api_json(false));
+        $lst = new figure_list_dsp($t->figure_list()->api_json(false));
         $test_page = $html->text_h2('figure list display test');
         $test_page .= 'figure list with tooltip: ' . $lst->display() . '<br>';
         $test_page .= 'figure list with link: ' . $lst->display_linked() . '<br>';

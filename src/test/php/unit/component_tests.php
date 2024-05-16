@@ -64,7 +64,7 @@ class component_tests
         $cmp_typ = new component_type('');
         $t->assert_sql_table_create($cmp_typ);
         $t->assert_sql_index_create($cmp_typ);
-        $cmp = $t->dummy_component();
+        $cmp = $t->component();
         $t->assert_sql_table_create($cmp);
         $t->assert_sql_index_create($cmp);
         $t->assert_sql_foreign_key_create($cmp);
@@ -107,7 +107,7 @@ class component_tests
         $t->subheader('Convert tests');
 
         // casting API
-        $cmp = $t->dummy_component();
+        $cmp = $t->component();
         $t->assert_api($cmp);
         $t->assert_api_to_dsp($cmp, new component_dsp());
 

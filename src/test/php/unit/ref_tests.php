@@ -104,7 +104,7 @@ class ref_tests
         $t->assert_json_file(new ref($usr), $json_file);
 
         $t->subheader('API and frontend cast unit tests for references');
-        $ref = $t->dummy_reference();
+        $ref = $t->reference();
         $t->assert_api($ref);
         $t->assert_api_to_dsp($ref, new ref_dsp());
 

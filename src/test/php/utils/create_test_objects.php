@@ -247,7 +247,7 @@ class create_test_objects extends test_base
         $lst->add($change_field_list->api_obj(), controller::API_LIST_CHANGE_LOG_FIELDS);
         $lst->add($verbs->api_obj(), controller::API_LIST_VERBS);
 
-        $system_views = $this->dummy_view_list();
+        $system_views = $this->view_list();
         $lst->add($system_views->api_obj(), controller::API_LIST_SYSTEM_VIEWS);
 
         return $lst;
@@ -901,7 +901,7 @@ class create_test_objects extends test_base
     /**
      * @return triple "Bern (City)" used for unit testing
      */
-    function dummy_triple_be(): triple
+    function triple_bern(): triple
     {
         $trp = new triple($this->usr1);
         $trp->set(triple_api::TI_BE_CITY, triple_api::TN_BE_CITY);
@@ -914,7 +914,7 @@ class create_test_objects extends test_base
     /**
      * @return triple "Geneva (City)" used for unit testing
      */
-    function dummy_triple_ge(): triple
+    function triple_ge(): triple
     {
         $trp = new triple($this->usr1);
         $trp->set(triple_api::TI_GE_CITY, triple_api::TN_GE_CITY);
@@ -924,14 +924,14 @@ class create_test_objects extends test_base
         return $trp;
     }
 
-    function dummy_triple_list(): triple_list
+    function triple_list(): triple_list
     {
         $lst = new triple_list($this->usr1);
         $lst->add($this->triple_pi());
         return $lst;
     }
 
-    function dummy_phrase(): phrase
+    function phrase(): phrase
     {
         return $this->word()->phrase();
     }
@@ -946,7 +946,7 @@ class create_test_objects extends test_base
         return $this->zh()->phrase();
     }
 
-    function dummy_phrase_list(): phrase_list
+    function phrase_list(): phrase_list
     {
         $lst = new phrase_list($this->usr1);
         $lst->add($this->word()->phrase());
@@ -957,7 +957,7 @@ class create_test_objects extends test_base
         return $lst;
     }
 
-    function dummy_phrase_list_prime(): phrase_list
+    function phrase_list_prime(): phrase_list
     {
         $lst = new phrase_list($this->usr1);
         $lst->add($this->word()->phrase());
@@ -970,7 +970,7 @@ class create_test_objects extends test_base
     /**
      * @return phrase_list with one word and one triple
      */
-    function dummy_phrase_list_small(): phrase_list
+    function phrase_list_small(): phrase_list
     {
         $lst = new phrase_list($this->usr1);
         $lst->add($this->word_pi()->phrase());
@@ -978,7 +978,7 @@ class create_test_objects extends test_base
         return $lst;
     }
 
-    function dummy_phrase_list_pi(): phrase_list
+    function phrase_list_pi(): phrase_list
     {
         $lst = new phrase_list($this->usr1);
         $lst->add($this->triple_pi()->phrase());
@@ -1003,8 +1003,8 @@ class create_test_objects extends test_base
     {
         $lst = new phrase_list($this->usr1);
         $lst->add($this->zh()->phrase());
-        $lst->add($this->dummy_triple_be()->phrase());
-        $lst->add($this->dummy_triple_ge()->phrase());
+        $lst->add($this->triple_bern()->phrase());
+        $lst->add($this->triple_ge()->phrase());
         return $lst;
     }
 
@@ -1027,7 +1027,7 @@ class create_test_objects extends test_base
     {
         $lst = new phrase_list($this->usr1);
         $lst->add($this->zh()->phrase());
-        $lst->add($this->dummy_triple_ge()->phrase());
+        $lst->add($this->triple_ge()->phrase());
         $lst->add($this->word_inhabitant()->phrase());
         $lst->add($this->word_2020()->phrase());
         return $lst;
@@ -1039,7 +1039,7 @@ class create_test_objects extends test_base
     function phrase_list_all(): phrase_list
     {
         $lst = new phrase_list($this->usr1);
-        $lst->merge($this->dummy_phrase_list());
+        $lst->merge($this->phrase_list());
         $lst->merge($this->phrase_list_math_const());
         $lst->merge($this->phrase_list_cities());
         return $lst;
@@ -1061,7 +1061,7 @@ class create_test_objects extends test_base
      * 2815273    ..8jId-
      * 17192845    .//ZSB+
      */
-    function dummy_phrase_list_13(): phrase_list
+    function phrase_list_13(): phrase_list
     {
         $lst = new phrase_list($this->usr1);
         $wrd = $this->word();
@@ -1136,9 +1136,9 @@ class create_test_objects extends test_base
      * 17192845    .//ZSB+
      * 106841477    .4LYK3-
      */
-    function dummy_phrase_list_14(): phrase_list
+    function phrase_list_14(): phrase_list
     {
-        $lst = $this->dummy_phrase_list_13();
+        $lst = $this->phrase_list_13();
         $trp = $this->triple();
         $trp->set_id(106841477);
         $trp->set_name('triple7');
@@ -1163,9 +1163,9 @@ class create_test_objects extends test_base
      * 17192845    .//ZSB+
      * 106841477    .4LYK3-
      */
-    function dummy_phrase_list_14b(): phrase_list
+    function phrase_list_14b(): phrase_list
     {
-        $lst = $this->dummy_phrase_list_13();
+        $lst = $this->phrase_list_13();
         $trp = $this->triple();
         $trp->set_id(3516593476);
         $trp->set_name('triple8');
@@ -1192,9 +1192,9 @@ class create_test_objects extends test_base
      * 628779863    .ZSahL+
      * 3516593476    1FajJ2-
      */
-    function dummy_phrase_list_16(): phrase_list
+    function phrase_list_16(): phrase_list
     {
-        $lst = $this->dummy_phrase_list_13();
+        $lst = $this->phrase_list_13();
         $trp = $this->triple();
         $trp->set_id(106841477);
         $trp->set_name('triple7');
@@ -1210,9 +1210,9 @@ class create_test_objects extends test_base
         return $lst;
     }
 
-    function dummy_phrase_list_17_plus(): phrase_list
+    function phrase_list_17_plus(): phrase_list
     {
-        $lst = $this->dummy_phrase_list_16();
+        $lst = $this->phrase_list_16();
         $wrd = $this->word();
         $wrd->set_id(987654321);
         $wrd->set_name('word17');
@@ -1235,7 +1235,7 @@ class create_test_objects extends test_base
     /**
      * @return phrase_list the phrases relevant for having a second entry in the phrase group list
      */
-    function dummy_phrase_list_zh_2019(): phrase_list
+    function phrase_list_zh_2019(): phrase_list
     {
         $lst = new phrase_list($this->usr1);
         $lst->add($this->zh_word()->phrase());
@@ -1275,7 +1275,7 @@ class create_test_objects extends test_base
 
     function phrase_list_dsp(): phrase_list_dsp
     {
-        return new phrase_list_dsp($this->dummy_phrase_list()->api_json());
+        return new phrase_list_dsp($this->phrase_list()->api_json());
     }
 
     /**
@@ -1283,7 +1283,7 @@ class create_test_objects extends test_base
      */
     function group(): group
     {
-        $lst = $this->dummy_phrase_list_pi();
+        $lst = $this->phrase_list_pi();
         $grp = $lst->get_grp_id(false);
         $grp->name = group_api::TN_READ;
         return $grp;
@@ -1294,7 +1294,7 @@ class create_test_objects extends test_base
      */
     function phrase_group_prime_3(): group
     {
-        $lst = $this->dummy_phrase_list_zh_2019();
+        $lst = $this->phrase_list_zh_2019();
         $grp = $lst->get_grp_id(false);
         $grp->name = group_api::TN_READ;
         return $grp;
@@ -1313,7 +1313,7 @@ class create_test_objects extends test_base
 
     function phrase_group_16(): group
     {
-        $lst = $this->dummy_phrase_list_16();
+        $lst = $this->phrase_list_16();
         $grp = $lst->get_grp_id(false);
         $grp->name = group_api::TN_READ;
         return $grp;
@@ -1321,7 +1321,7 @@ class create_test_objects extends test_base
 
     function phrase_group_17_plus(): group
     {
-        $lst = $this->dummy_phrase_list_17_plus();
+        $lst = $this->phrase_list_17_plus();
         $grp = $lst->get_grp_id(false);
         $grp->name = group_api::TN_READ;
         return $grp;
@@ -1329,7 +1329,7 @@ class create_test_objects extends test_base
 
     function phrase_group_zh(): group
     {
-        $lst = $this->dummy_phrase_list_zh_2019();
+        $lst = $this->phrase_list_zh_2019();
         $grp = $lst->get_grp_id(false);
         $grp->name = group_api::TN_ZH_2019;
         return $grp;
@@ -1430,7 +1430,7 @@ class create_test_objects extends test_base
     /**
      * @return value with more than one prime phrase
      */
-    function dummy_value_prime_3(): value
+    function value_prime_3(): value
     {
         $grp = $this->phrase_group_prime_3();
         return new value($this->usr1, round(value_api::TV_READ, 13), $grp);
@@ -1439,42 +1439,42 @@ class create_test_objects extends test_base
     /**
      * @return value with the maximal number of prime phrase
      */
-    function dummy_value_prime_max(): value
+    function value_prime_max(): value
     {
         $grp = $this->phrase_group_prime_max();
         return new value($this->usr1, round(value_api::TV_READ, 13), $grp);
     }
 
-    function dummy_value_16(): value
+    function value_16(): value
     {
         $grp = $this->phrase_group_16();
         return new value($this->usr1, round(value_api::TV_READ, 13), $grp);
     }
 
-    function dummy_value_17_plus(): value
+    function value_17_plus(): value
     {
         $grp = $this->phrase_group_17_plus();
         return new value($this->usr1, round(value_api::TV_READ, 13), $grp);
     }
 
-    function dummy_value_zh(): value
+    function value_zh(): value
     {
         $grp = $this->phrase_group_zh();
         return new value($this->usr1, value_api::TV_CITY_ZH_INHABITANTS_2019, $grp);
     }
 
-    function dummy_value_list(): value_list
+    function value_list(): value_list
     {
         $lst = new value_list($this->usr1);
         $lst->add($this->value());
-        $lst->add($this->dummy_value_zh());
+        $lst->add($this->value_zh());
         return $lst;
     }
 
-    function dummy_value_phrase_link(): value_phrase_link
+    function value_phrase_link(): value_phrase_link
     {
         $lnk = new value_phrase_link($this->usr1);
-        $lnk->set(1, $this->value(), $this->dummy_phrase());
+        $lnk->set(1, $this->value(), $this->phrase());
         return $lnk;
     }
 
@@ -1561,7 +1561,7 @@ class create_test_objects extends test_base
         return $lst;
     }
 
-    function dummy_formula_link(): formula_link
+    function formula_link(): formula_link
     {
         $lnk = new formula_link($this->usr1);
         $lnk->set(1, $this->formula(), $this->word()->phrase());
@@ -1592,26 +1592,26 @@ class create_test_objects extends test_base
         return $frm;
     }
 
-    function dummy_expression(): expression
+    function expression(): expression
     {
         $trm_lst = $this->term_list_time();
         return $this->formula()->expression($trm_lst);
     }
 
-    function dummy_element(): element
+    function element(): element
     {
-        $lst = $this->dummy_element_list();
+        $lst = $this->element_list();
         return $lst->lst()[0];
     }
 
-    function dummy_element_list(): element_list
+    function element_list(): element_list
     {
         $trm_lst = $this->term_list_time();
         $exp = $this->formula()->expression($trm_lst);
         return $exp->element_list($trm_lst);
     }
 
-    function dummy_result(): result
+    function result(): result
     {
         $res = new result($this->usr1);
         $wrd = $this->word();
@@ -1623,7 +1623,7 @@ class create_test_objects extends test_base
         return $res;
     }
 
-    function dummy_result_prime(): result
+    function result_prime(): result
     {
         $res = new result($this->usr1);
         $res->set_grp($this->group());
@@ -1631,7 +1631,7 @@ class create_test_objects extends test_base
         return $res;
     }
 
-    function dummy_result_16(): result
+    function result_16(): result
     {
         $res = new result($this->usr1);
         $res->set_grp($this->phrase_group_16());
@@ -1639,7 +1639,7 @@ class create_test_objects extends test_base
         return $res;
     }
 
-    function dummy_result_pct(): result
+    function result_pct(): result
     {
         $res = new result($this->usr1);
         $wrd_pct = $this->new_word(word_api::TN_PCT, 2, phrase_type::PERCENT);
@@ -1650,18 +1650,18 @@ class create_test_objects extends test_base
         return $res;
     }
 
-    function dummy_result_list(): result_list
+    function result_list(): result_list
     {
         $lst = new result_list($this->usr1);
-        $lst->add($this->dummy_result());
-        $lst->add($this->dummy_result_pct());
+        $lst->add($this->result());
+        $lst->add($this->result_pct());
         return $lst;
     }
 
     /**
      * @return figure with all vars set for unit testing - user value case
      */
-    function dummy_figure_value(): figure
+    function figure_value(): figure
     {
         $val = $this->value();
         $val->set_last_update(new DateTime(self::DUMMY_DATETIME));
@@ -1671,17 +1671,17 @@ class create_test_objects extends test_base
     /**
      * @return figure with all vars set for unit testing - user value case
      */
-    function dummy_figure_result(): figure
+    function figure_result(): figure
     {
-        $res = $this->dummy_result();
+        $res = $this->result();
         return $res->figure();
     }
 
-    function dummy_figure_list(): figure_list
+    function figure_list(): figure_list
     {
         $lst = new figure_list($this->usr1);
-        $lst->add($this->dummy_figure_value());
-        $lst->add($this->dummy_figure_result());
+        $lst->add($this->figure_value());
+        $lst->add($this->figure_result());
         return $lst;
     }
 
@@ -1694,7 +1694,7 @@ class create_test_objects extends test_base
         return $src;
     }
 
-    function dummy_source1(): source
+    function source1(): source
     {
         $src = new source($this->usr1);
         $src->set(1, source_api::TN_READ_API, source_type::PDF);
@@ -1703,19 +1703,19 @@ class create_test_objects extends test_base
         return $src;
     }
 
-    function dummy_reference(): ref
+    function reference(): ref
     {
         $ref = new ref($this->usr1);
         $ref->set(4);
         $ref->phr = $this->word_pi()->phrase();
-        $ref->source = $this->dummy_source1();
+        $ref->source = $this->source1();
         $ref->external_key = ref_api::TK_READ;
         $ref->url = ref_api::TU_READ;
         $ref->description = ref_api::TD_READ;
         return $ref;
     }
 
-    function dummy_view(): view
+    function view(): view
     {
         $dsp = new view($this->usr1);
         $dsp->set(1, view_api::TN_READ);
@@ -1724,32 +1724,32 @@ class create_test_objects extends test_base
         return $dsp;
     }
 
-    function dummy_view_with_components(): view
+    function view_with_components(): view
     {
-        $dsp = $this->dummy_view();
-        $dsp->cmp_lnk_lst = $this->dummy_component_link_list();
+        $dsp = $this->view();
+        $dsp->cmp_lnk_lst = $this->component_link_list();
         return $dsp;
     }
 
-    function dummy_view_word_add(): view
+    function view_word_add(): view
     {
         $dsp = new view($this->usr1);
         $dsp->set(3, view_api::TN_FORM);
         $dsp->description = view_api::TD_FORM;
         $dsp->code_id = view_api::TC_FORM;
-        $dsp->cmp_lnk_lst = $this->dummy_components_word_add($dsp);
+        $dsp->cmp_lnk_lst = $this->components_word_add($dsp);
         return $dsp;
     }
 
-    function dummy_view_list(): view_list
+    function view_list(): view_list
     {
         $lst = new view_list($this->usr1);
-        $lst->add($this->dummy_view_with_components());
-        $lst->add($this->dummy_view_word_add());
+        $lst->add($this->view_with_components());
+        $lst->add($this->view_word_add());
         return $lst;
     }
 
-    function dummy_component(): component
+    function component(): component
     {
         $cmp = new component($this->usr1);
         $cmp->set(1, component_api::TN_READ, comp_type_shared::PHRASE_NAME);
@@ -1757,7 +1757,7 @@ class create_test_objects extends test_base
         return $cmp;
     }
 
-    function dummy_component_word_add_title(): component
+    function component_word_add_title(): component
     {
         $cmp = new component($this->usr1);
         $cmp->set(1, component_api::TN_FORM_TITLE, comp_type_shared::FORM_TITLE);
@@ -1766,7 +1766,7 @@ class create_test_objects extends test_base
         return $cmp;
     }
 
-    function dummy_component_word_add_back_stack(): component
+    function component_word_add_back_stack(): component
     {
         $cmp = new component($this->usr1);
         $cmp->set(2, component_api::TN_FORM_BACK, comp_type_shared::FORM_BACK);
@@ -1775,7 +1775,7 @@ class create_test_objects extends test_base
         return $cmp;
     }
 
-    function dummy_component_word_add_button_confirm(): component
+    function component_word_add_button_confirm(): component
     {
         $cmp = new component($this->usr1);
         $cmp->set(3, component_api::TN_FORM_CONFIRM, comp_type_shared::FORM_CONFIRM);
@@ -1784,7 +1784,7 @@ class create_test_objects extends test_base
         return $cmp;
     }
 
-    function dummy_component_word_add_name(): component
+    function component_word_add_name(): component
     {
         $cmp = new component($this->usr1);
         $cmp->set(4, component_api::TN_FORM_NAME, comp_type_shared::FORM_NAME);
@@ -1793,7 +1793,7 @@ class create_test_objects extends test_base
         return $cmp;
     }
 
-    function dummy_component_word_add_description(): component
+    function component_word_add_description(): component
     {
         $cmp = new component($this->usr1);
         $cmp->set(5, component_api::TN_FORM_DESCRIPTION, comp_type_shared::FORM_DESCRIPTION);
@@ -1802,7 +1802,7 @@ class create_test_objects extends test_base
         return $cmp;
     }
 
-    function dummy_component_word_add_share_type(): component
+    function component_word_add_share_type(): component
     {
         $cmp = new component($this->usr1);
         $cmp->set(6, component_api::TN_FORM_SHARE_TYPE, comp_type_shared::FORM_SHARE_TYPE);
@@ -1811,7 +1811,7 @@ class create_test_objects extends test_base
         return $cmp;
     }
 
-    function dummy_component_word_add_protection_type(): component
+    function component_word_add_protection_type(): component
     {
         $cmp = new component($this->usr1);
         $cmp->set(7, component_api::TN_FORM_PROTECTION_TYPE, comp_type_shared::FORM_PROTECTION_TYPE);
@@ -1820,7 +1820,7 @@ class create_test_objects extends test_base
         return $cmp;
     }
 
-    function dummy_component_word_add_cancel(): component
+    function component_word_add_cancel(): component
     {
         $cmp = new component($this->usr1);
         $cmp->set(8, component_api::TN_FORM_CANCEL, comp_type_shared::FORM_CANCEL);
@@ -1829,7 +1829,7 @@ class create_test_objects extends test_base
         return $cmp;
     }
 
-    function dummy_component_word_add_save(): component
+    function component_word_add_save(): component
     {
         $cmp = new component($this->usr1);
         $cmp->set(9, component_api::TN_FORM_SAVE, comp_type_shared::FORM_SAVE);
@@ -1838,7 +1838,7 @@ class create_test_objects extends test_base
         return $cmp;
     }
 
-    function dummy_component_word_add_form_end(): component
+    function component_word_add_form_end(): component
     {
         $cmp = new component($this->usr1);
         $cmp->set(10, component_api::TN_FORM_END, comp_type_shared::FORM_END);
@@ -1847,55 +1847,55 @@ class create_test_objects extends test_base
         return $cmp;
     }
 
-    function dummy_component_list(): component_list
+    function component_list(): component_list
     {
         $lst = new component_list($this->usr1);
-        $lst->add($this->dummy_component());
-        $lst->add($this->dummy_component_word_add_share_type());
+        $lst->add($this->component());
+        $lst->add($this->component_word_add_share_type());
         return $lst;
     }
 
-    function dummy_component_link(): component_link
+    function component_link(): component_link
     {
         $lnk = new component_link($this->usr1);
-        $lnk->set(1, $this->dummy_view(), $this->dummy_component(), 1);
+        $lnk->set(1, $this->view(), $this->component(), 1);
         return $lnk;
     }
 
-    function dummy_component_link_list(): component_link_list
+    function component_link_list(): component_link_list
     {
         $lst = new component_link_list($this->usr1);
-        $lst->add_link($this->dummy_component_link());
+        $lst->add_link($this->component_link());
         return $lst;
     }
 
-    function dummy_components_word_add(view $msk): component_link_list
+    function components_word_add(view $msk): component_link_list
     {
         $pos = 1;
         $lst = new component_link_list($this->usr1);
-        $lst->add($pos, $msk, $this->dummy_component_word_add_title(), $pos);
+        $lst->add($pos, $msk, $this->component_word_add_title(), $pos);
         $pos++;
-        $lst->add($pos, $msk, $this->dummy_component_word_add_back_stack(), $pos);
+        $lst->add($pos, $msk, $this->component_word_add_back_stack(), $pos);
         $pos++;
-        $lst->add($pos, $msk, $this->dummy_component_word_add_button_confirm(), $pos);
+        $lst->add($pos, $msk, $this->component_word_add_button_confirm(), $pos);
         $pos++;
-        $lst->add($pos, $msk, $this->dummy_component_word_add_name(), $pos);
+        $lst->add($pos, $msk, $this->component_word_add_name(), $pos);
         $pos++;
-        $lst->add($pos, $msk, $this->dummy_component_word_add_description(), $pos);
+        $lst->add($pos, $msk, $this->component_word_add_description(), $pos);
         $pos++;
-        $lst->add($pos, $msk, $this->dummy_component_word_add_share_type(), $pos);
+        $lst->add($pos, $msk, $this->component_word_add_share_type(), $pos);
         $pos++;
-        $lst->add($pos, $msk, $this->dummy_component_word_add_protection_type(), $pos);
+        $lst->add($pos, $msk, $this->component_word_add_protection_type(), $pos);
         $pos++;
-        $lst->add($pos, $msk, $this->dummy_component_word_add_cancel(), $pos);
+        $lst->add($pos, $msk, $this->component_word_add_cancel(), $pos);
         $pos++;
-        $lst->add($pos, $msk, $this->dummy_component_word_add_save(), $pos);
+        $lst->add($pos, $msk, $this->component_word_add_save(), $pos);
         $pos++;
-        $lst->add($pos, $msk, $this->dummy_component_word_add_form_end(), $pos);
+        $lst->add($pos, $msk, $this->component_word_add_form_end(), $pos);
         return $lst;
     }
 
-    function dummy_language(): language
+    function language(): language
     {
         return new language(language::DEFAULT, language::TN_READ, 'English is the default', 1);
     }
@@ -1937,7 +1937,7 @@ class create_test_objects extends test_base
     /**
      * @return change_prime_value a change log entry of a value with some dummy values and a prime group id
      */
-    function dummy_change_log_value_prime(): change_prime_value
+    function change_log_value_prime(): change_prime_value
     {
         global $usr_sys;
 
@@ -1954,7 +1954,7 @@ class create_test_objects extends test_base
     /**
      * @return change_big_value a change log entry of a value with some dummy values and a big group id
      */
-    function dummy_change_log_value_big(): change_big_value
+    function change_log_value_big(): change_big_value
     {
         global $usr_sys;
 
@@ -2025,7 +2025,7 @@ class create_test_objects extends test_base
     /**
      * @return job a batch job entry with some dummy values
      */
-    function dummy_job(): job
+    function job(): job
     {
         $sys_usr = $this->system_user();
         $job = new job($sys_usr, new DateTime(sys_log_api::TV_TIME));
@@ -2042,7 +2042,7 @@ class create_test_objects extends test_base
      * TODO add at least one sample for rename and delete
      * TODO add at least one sample for verb, triple, value, formula, source, ref, view and component
      */
-    function dummy_change_log_list_named(): change_log_list
+    function change_log_list_named(): change_log_list
     {
         $log_lst = new change_log_list();
         $log_lst->add($this->change_log_named());
@@ -2063,11 +2063,11 @@ class create_test_objects extends test_base
     /**
      * @return job_list a list of batch job entries with some dummy values
      */
-    function dummy_job_list(): job_list
+    function job_list(): job_list
     {
         $sys_usr = $this->system_user();
         $job_lst = new job_list($sys_usr);
-        $job_lst->add($this->dummy_job());
+        $job_lst->add($this->job());
         return $job_lst;
     }
 

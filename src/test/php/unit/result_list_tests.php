@@ -116,7 +116,7 @@ class result_list_tests
 
         $t->subheader('HTML frontend unit tests');
 
-        $trp_lst = $t->dummy_result_list();
+        $trp_lst = $t->result_list();
         $t->assert_api_to_dsp($trp_lst, new result_list_dsp());
 
     }

@@ -70,13 +70,13 @@ class figure_list_tests
 
         $t->subheader('API unit tests');
 
-        $fig_lst = $t->dummy_figure_list();
+        $fig_lst = $t->figure_list();
         $t->assert_api($fig_lst);
 
 
         $t->subheader('HTML frontend unit tests');
 
-        $fig_lst = $t->dummy_figure_list();
+        $fig_lst = $t->figure_list();
         $t->assert_api_to_dsp($fig_lst, new figure_list_dsp());
 
     }

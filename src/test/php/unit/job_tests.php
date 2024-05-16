@@ -83,10 +83,10 @@ class job_tests
 
         $t->subheader('API unit tests');
 
-        $job = $t->dummy_job();
+        $job = $t->job();
         $t->assert_api($job);
 
-        $job_lst = $t->dummy_job_list();
+        $job_lst = $t->job_list();
         $t->assert_api($job_lst);
 
     }

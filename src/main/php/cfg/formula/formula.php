@@ -2392,7 +2392,7 @@ class formula extends sandbox_typed
             $qp = $this->sql_insert($sc, new sql_type_list([sql_type::LOG]));
             $usr_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id());
             if ($usr_msg->is_ok()) {
-                $this->id = $usr_msg->get_row_id();
+                $this->set_id($usr_msg->get_row_id());
             }
             $result->add($usr_msg);
         } else {
@@ -2411,26 +2411,30 @@ class formula extends sandbox_typed
                     // update the id in the log for the correct reference
                     if (!$log->add_ref($this->id)) {
                         $result->add_message('Updating the reference in the log failed');
+                        $this->set_id(0);
                         // TODO do rollback or retry?
-                    } else {
-                        // create the related formula word
-                        // the creation of a formula word should not be needed if on creation a view of word, phrase, verb nad formula is used to check uniqueness
-                        // the creation of the formula word is switched off because the term loading should be fine now
-                        // TODO check and remove the create_wrd function and the phrase_type::FORMULA_LINK
-                        if ($this->create_wrd()) {
-
-                            // create an empty db_frm element to force saving of all set fields
-                            $db_rec = new formula($this->user());
-                            $db_rec->set_name($this->name());
-                            $std_rec = clone $db_rec;
-                            // save the formula fields
-                            $result->add_message($this->save_fields($db_con, $db_rec, $std_rec));
-                        }
                     }
                 } else {
                     $result->add_message("Adding formula " . $this->name . " failed.");
                 }
             }
+        }
+        if ($this->id() > 0) {
+            // create the related formula word
+            // the creation of a formula word should not be needed if on creation a view of word, phrase, verb nad formula is used to check uniqueness
+            // the creation of the formula word is switched off because the term loading should be fine now
+            // TODO check and remove the create_wrd function and the phrase_type::FORMULA_LINK
+            if ($this->create_wrd()) {
+
+                // create an empty db_frm element to force saving of all set fields
+                $db_rec = new formula($this->user());
+                $db_rec->set_name($this->name());
+                $std_rec = clone $db_rec;
+                // save the formula fields
+                $result->add_message($this->save_fields($db_con, $db_rec, $std_rec));
+            }
+        } else {
+            $result->add_message("Adding formula " . $this->name . " failed.");
         }
 
         return $result;

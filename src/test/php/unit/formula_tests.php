@@ -96,7 +96,7 @@ class formula_tests
 
 
         $t->subheader('formula sql write');
-        // TODO activate db write
+        // insert
         $frm = $t->formula_name_only();
         $t->assert_sql_insert($sc, $frm);
         $t->assert_sql_insert($sc, $frm, [sql_type::USER]);

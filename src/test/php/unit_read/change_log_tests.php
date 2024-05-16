@@ -69,9 +69,9 @@ class change_log_tests
         $val = $t->value();
         $frm = $t->formula();
         $src = $t->source();
-        $ref = $t->dummy_reference();
-        $dsp = $t->dummy_view();
-        $cmp = $t->dummy_component();
+        $ref = $t->reference();
+        $dsp = $t->view();
+        $cmp = $t->component();
 
         // check if loading the changes technically works
         $lst = new change_log_list();

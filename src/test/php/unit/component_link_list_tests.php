@@ -88,7 +88,7 @@ class component_link_list_tests
         component_link_list $lst
     ): void
     {
-        $msk = $t->dummy_view();
+        $msk = $t->view();
 
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
@@ -116,7 +116,7 @@ class component_link_list_tests
         component_link_list $lst
     ): void
     {
-        $cmp = $t->dummy_component();
+        $cmp = $t->component();
 
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
