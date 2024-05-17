@@ -262,7 +262,8 @@ class sql_db
         triple::class,
         source::class,
         formula::class,
-        view::class
+        view::class,
+        component::class
     ];
 
     // classes that use the prepared sql write statement
@@ -271,7 +272,8 @@ class sql_db
         triple::class,
         source::class,
         formula::class,
-        view::class
+        view::class,
+        component::class
     ];
 
     // tables that do not have a name

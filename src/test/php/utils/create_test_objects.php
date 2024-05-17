@@ -1852,6 +1852,28 @@ class create_test_objects extends test_base
         return $cmp;
     }
 
+    /**
+     * @return component to test the sql insert via function
+     */
+    function component_add_by_func(): component
+    {
+        $cmp = new component($this->usr1);
+        $cmp->set_name(component_api::TN_ADD_VIA_FUNC);
+        $cmp->set_type(comp_type_shared::TEXT);
+        return $cmp;
+    }
+
+    /**
+     * @return component to test the sql insert without use of function
+     */
+    function component_add_by_sql(): component
+    {
+        $cmp = new component($this->usr1);
+        $cmp->set_name(component_api::TN_ADD_VIA_SQL);
+        $cmp->set_type(comp_type_shared::TEXT);
+        return $cmp;
+    }
+
     function component_word_add_title(): component
     {
         $cmp = new component($this->usr1);

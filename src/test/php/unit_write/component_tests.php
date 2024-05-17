@@ -51,7 +51,22 @@ class component_tests
     {
         global $component_types;
 
-        $t->header('Test the view component class (classes/component.php)');
+        $t->header('component db write tests');
+
+        $test_name = 'add component ' . component_api::TN_ADD_VIA_SQL . ' via sql insert';
+        $cmp = $t->component_add_by_sql();
+        $cmp->save(false);
+        $cmp->reset();
+        $cmp->load_by_name(component_api::TN_ADD_VIA_SQL);
+        $t->assert_true($test_name, $cmp->isset());
+
+        $test_name = 'add component ' . component_api::TN_ADD_VIA_FUNC . ' via sql function';
+        $cmp = $t->component_add_by_func();
+        $cmp->save(true);
+        $cmp->reset();
+        $cmp->load_by_name(component_api::TN_ADD_VIA_FUNC);
+        $t->assert_true($test_name, $cmp->isset());
+
         /*
         // test loading of one component
         $cmp = new component_dsp;

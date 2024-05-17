@@ -77,6 +77,8 @@ class view extends sandbox_typed_api
     const RESERVED_VIEWS = array(
         self::TN_READ,
         self::TN_ADD,
+        self::TN_ADD_VIA_SQL,
+        self::TN_ADD_VIA_FUNC,
         self::TN_RENAMED,
         self::TN_COMPLETE,
         self::TN_EXCLUDED,
@@ -86,6 +88,8 @@ class view extends sandbox_typed_api
     // array of test view names create before the test
     const TEST_VIEWS = array(
         self::TN_ADD,
+        self::TN_ADD_VIA_SQL,
+        self::TN_ADD_VIA_FUNC,
         self::TN_RENAMED,
         self::TN_COMPLETE,
         self::TN_EXCLUDED,

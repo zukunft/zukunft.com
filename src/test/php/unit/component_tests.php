@@ -96,7 +96,6 @@ class component_tests
 
         $t->subheader('component sql write');
         // insert
-        // TODO activate db write
         $cmp = $t->component();
         $t->assert_sql_insert($sc, $cmp);
         $t->assert_sql_insert($sc, $cmp, [sql_type::USER]);

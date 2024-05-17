@@ -59,6 +59,8 @@ class component extends sandbox_typed_api
 
     // persevered view component names for unit and integration tests
     const TN_ADD = 'System Test View Component';
+    const TN_ADD_VIA_FUNC = 'System Test Component added via sql function';
+    const TN_ADD_VIA_SQL = 'System Test Component added via sql insert';
     const TN_RENAMED = 'System Test View Component Renamed';
     const TN_ADD2 = 'System Test View Component Two';
     const TN_TITLE = 'System Test View Component Title';
@@ -103,6 +105,8 @@ class component extends sandbox_typed_api
     const RESERVED_COMPONENTS = array(
         self::TN_READ,
         self::TN_ADD,
+        self::TN_ADD_VIA_SQL,
+        self::TN_ADD_VIA_FUNC,
         self::TN_RENAMED,
         self::TN_ADD2,
         self::TN_TITLE,
@@ -115,6 +119,8 @@ class component extends sandbox_typed_api
     // array of test component names used for testing and removed after the testing is completed
     const TEST_COMPONENTS = array(
         self::TN_ADD,
+        self::TN_ADD_VIA_SQL,
+        self::TN_ADD_VIA_FUNC,
         self::TN_RENAMED,
         self::TN_ADD2,
         self::TN_TITLE,
