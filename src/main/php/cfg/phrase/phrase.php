@@ -85,6 +85,7 @@ class phrase extends combine_named
     // the database and JSON object duplicate field names for combined word and triples mainly to link phrases
     // *_SQLTYP is the sql data type used for the field
     const FLD_ID = 'phrase_id';
+    const FLD_ID_SQLTYP = sql_field_type::INT;
     const FLD_NAME = 'phrase_name';
     const FLD_TYPE = 'phrase_type_id';
     const FLD_TYPE_SQLTYP = sql_field_type::INT_SMALL;

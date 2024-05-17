@@ -999,7 +999,7 @@ class view extends sandbox_typed
      * create the sql statement to update a view in the database
      *
      * @param sql $sc with the target db_type set
-     * @param sandbox|view $db_row the word with the database values before the update
+     * @param sandbox|view $db_row the view with the database values before the update
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */

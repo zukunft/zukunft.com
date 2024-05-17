@@ -94,6 +94,7 @@ class word extends sandbox_typed_api
     const TI_INHABITANT = 198;
     const TN_INHABITANTS = 'inhabitants';
     const TN_YEAR = 'Year';
+    const TI_YEAR = 11;
     const TN_2013 = '2013';
     const TI_2013 = 272;
     const TN_2014 = '2014';

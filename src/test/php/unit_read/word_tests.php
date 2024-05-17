@@ -166,7 +166,7 @@ class word_tests
 
         // TODO review all tests base on this one
         $test_name = 'The list von cities must contain at least Zurich, Bern ans Geneva';
-        $city_lst = $t->city_word()->are();
+        $city_lst = $t->word_city()->are();
         $t->assert_contains($test_name, $t->phrase_list_cities()->wrd_lst_all()->names(), $city_lst->names());
 
 

@@ -5,6 +5,9 @@
     test/utils/create_test_objects.php - create the standard object for testing
     ----------------------------------
 
+    TODO create all test object from here
+    TODO shorten the names e.g. if the phrase is most often used use the functin name canton() for the phrase
+
     object adding, loading and testing functions
 
     create_* to create an object mainly used to shorten the code in unit tests
@@ -51,9 +54,11 @@ include_once MODEL_COMPONENT_PATH . 'component_list.php';
 include_once MODEL_VALUE_PATH . 'value_ts_data.php';
 include_once WEB_FORMULA_PATH . 'formula.php';
 
+use cfg\component\component_link_type;
 use cfg\db\sql_db;
 use cfg\log\change_field;
 use cfg\log\change_table;
+use html\system\messages;
 use shared\types\component_type as comp_type_shared;
 use api\api;
 use api\api_message;
@@ -541,6 +546,17 @@ class create_test_objects extends test_base
     }
 
     /**
+     * @return word year e.g. to test the table row selection
+     */
+    function word_year(): word
+    {
+        $wrd = new word($this->usr1);
+        $wrd->set(word_api::TI_YEAR, word_api::TN_YEAR);
+        $wrd->set_type(phrase_type::TIME);
+        return $wrd;
+    }
+
+    /**
      * @return word 2019 to test creating of a year
      */
     function word_2019(): word
@@ -631,7 +647,7 @@ class create_test_objects extends test_base
     /**
      * @return word city to test the verb "is a" / "are" to get the list of cities
      */
-    function city_word(): word
+    function word_city(): word
     {
         $wrd = new word($this->usr1);
         $wrd->set(word_api::TI_CITY, word_api::TN_CITY);
@@ -641,7 +657,7 @@ class create_test_objects extends test_base
     /**
      * @return word canton to test the separation of the cantons from the cities based on the same word
      */
-    function canton(): word
+    function word_canton(): word
     {
         $wrd = new word($this->usr1);
         $wrd->set(word_api::TI_CANTON, word_api::TN_CANTON);
@@ -651,7 +667,7 @@ class create_test_objects extends test_base
     /**
      * @return word with id and name of Zurich
      */
-    function zh_word(): word
+    function word_zh(): word
     {
         $wrd = new word($this->usr1);
         $wrd->set(word_api::TI_ZH, word_api::TN_ZH);
@@ -879,9 +895,9 @@ class create_test_objects extends test_base
     {
         $trp = new triple($this->usr1);
         $trp->set(triple_api::TI_ZH_CITY, triple_api::TN_ZH_CITY);
-        $trp->set_from($this->zh_word()->phrase());
+        $trp->set_from($this->word_zh()->phrase());
         $trp->set_verb($this->verb_is());
-        $trp->set_to($this->city_word()->phrase());
+        $trp->set_to($this->word_city()->phrase());
         return $trp;
     }
 
@@ -892,9 +908,9 @@ class create_test_objects extends test_base
     {
         $trp = new triple($this->usr1);
         $trp->set(triple_api::TI_ZH_CITY, triple_api::TN_ZH_CITY);
-        $trp->set_from($this->zh_word()->phrase());
+        $trp->set_from($this->word_zh()->phrase());
         $trp->set_verb($this->verb_is());
-        $trp->set_to($this->canton()->phrase());
+        $trp->set_to($this->word_canton()->phrase());
         return $trp;
     }
 
@@ -907,7 +923,7 @@ class create_test_objects extends test_base
         $trp->set(triple_api::TI_BE_CITY, triple_api::TN_BE_CITY);
         $trp->set_from($this->word_bern()->phrase());
         $trp->set_verb($this->verb_is());
-        $trp->set_to($this->city_word()->phrase());
+        $trp->set_to($this->word_city()->phrase());
         return $trp;
     }
 
@@ -920,7 +936,7 @@ class create_test_objects extends test_base
         $trp->set(triple_api::TI_GE_CITY, triple_api::TN_GE_CITY);
         $trp->set_from($this->word_ge()->phrase());
         $trp->set_verb($this->verb_is());
-        $trp->set_to($this->city_word()->phrase());
+        $trp->set_to($this->word_city()->phrase());
         return $trp;
     }
 
@@ -939,6 +955,30 @@ class create_test_objects extends test_base
     function phrase_pi(): phrase
     {
         return $this->triple_pi()->phrase();
+    }
+
+    /**
+     * @return phrase of the word year because on most case the phrase is used instead of the word
+     */
+    function year(): phrase
+    {
+        return $this->word_year()->phrase();
+    }
+
+    /**
+     * @return phrase of the word canton because on most case the phrase is used instead of the word
+     */
+    function canton(): phrase
+    {
+        return $this->word_canton()->phrase();
+    }
+
+    /**
+     * @return phrase of the word city
+     */
+    function city(): phrase
+    {
+        return $this->word_city()->phrase();
     }
 
     function phrase_zh(): phrase
@@ -1226,8 +1266,8 @@ class create_test_objects extends test_base
     function canton_zh_phrase_list(): phrase_list
     {
         $lst = new phrase_list($this->usr1);
-        $lst->add($this->canton()->phrase());
-        $lst->add($this->zh_word()->phrase());
+        $lst->add($this->word_canton()->phrase());
+        $lst->add($this->word_zh()->phrase());
         $lst->add($this->word_inhabitant()->phrase());
         return $lst;
     }
@@ -1238,7 +1278,7 @@ class create_test_objects extends test_base
     function phrase_list_zh_2019(): phrase_list
     {
         $lst = new phrase_list($this->usr1);
-        $lst->add($this->zh_word()->phrase());
+        $lst->add($this->word_zh()->phrase());
         $lst->add($this->word_inhabitant()->phrase());
         $lst->add($this->word_2019()->phrase());
         return $lst;
@@ -1250,7 +1290,7 @@ class create_test_objects extends test_base
     function phrase_list_zh_mio(): phrase_list
     {
         $lst = new phrase_list($this->usr1);
-        $lst->add($this->zh_word()->phrase());
+        $lst->add($this->word_zh()->phrase());
         $lst->add($this->word_inhabitant()->phrase());
         $lst->add($this->word_2019()->phrase());
         $lst->add($this->word_mio()->phrase());
@@ -1785,6 +1825,30 @@ class create_test_objects extends test_base
         $cmp = new component($this->usr1);
         $cmp->set(1, component_api::TN_READ, comp_type_shared::PHRASE_NAME);
         $cmp->description = component_api::TD_READ;
+        return $cmp;
+    }
+
+    /**
+     * @return component with all fields set to check if the save and load prozess is complete
+     */
+    function component_filled(): component
+    {
+        global $share_types;
+        global $protection_types;
+        $cmp = new component($this->usr1);
+        $cmp->set(1, component_api::TN_READ, comp_type_shared::PHRASE_NAME);
+        $cmp->description = component_api::TD_READ;
+        $cmp->set_type(comp_type_shared::TEXT);
+        $cmp->code_id = component_api::TI_FORM_TITLE;
+        $cmp->ui_msg_code_id = messages::PLEASE_SELECT;
+        $cmp->set_row_phrase($this->year());
+        $cmp->set_col_phrase($this->canton());
+        $cmp->set_col_sub_phrase($this->city());
+        $cmp->set_formula($this->formula());
+        $cmp->set_link_type(component_link_type::EXPRESSION);
+        $cmp->excluded = true;
+        $cmp->share_id = $share_types->id(share_type_shared::GROUP);
+        $cmp->protection_id = $protection_types->id(protect_type_shared::USER);
         return $cmp;
     }
 
