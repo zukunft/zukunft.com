@@ -13,7 +13,7 @@ CREATE OR REPLACE FUNCTION source_update_log_0011110000
      _source_type_id          smallint,
      _field_id_url            smallint,
      _url_old                 text,
-     _url                     text) RETURNS bigint AS
+     _url                     text) RETURNS void AS
 $$
 BEGIN
 
@@ -35,6 +35,11 @@ BEGIN
 
 END
 $$ LANGUAGE plpgsql;
+
+PREPARE source_update_log_0011110000_call
+        (bigint,smallint,smallint,text,text,bigint,smallint,text,text,smallint,smallint,smallint,smallint,text,text) AS
+SELECT source_update_log_0011110000
+        ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15);
 
 SELECT source_update_log_0011110000
        (1::bigint,

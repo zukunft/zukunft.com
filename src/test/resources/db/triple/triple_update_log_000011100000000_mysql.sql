@@ -29,6 +29,9 @@ BEGIN
 
 END;
 
+PREPARE triple_update_log_000011100000000_call FROM
+    'SELECT triple_update_log_000011100000000 (?,?,?,?,?,?,?,?,?,?,?,?)';
+
 SELECT triple_update_log_000011100000000
        (1,
         2,

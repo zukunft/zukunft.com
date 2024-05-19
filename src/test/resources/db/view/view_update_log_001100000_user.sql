@@ -7,7 +7,7 @@ CREATE OR REPLACE FUNCTION view_update_log_001100000_user
      _view_id                 bigint,
      _field_id_description    smallint,
      _description_old         text,
-     _description             text) RETURNS bigint AS
+     _description             text) RETURNS void AS
 $$
 BEGIN
 
@@ -24,6 +24,11 @@ BEGIN
 
 END
 $$ LANGUAGE plpgsql;
+
+PREPARE view_update_log_001100000_user_call
+        (bigint,smallint,smallint,text,text,bigint,smallint,text,text) AS
+SELECT view_update_log_001100000_user
+        ($1,$2,$3,$4,$5,$6,$7,$8,$9);
 
 SELECT view_update_log_001100000_user
        (1::bigint,

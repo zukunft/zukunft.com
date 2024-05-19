@@ -40,3 +40,16 @@ END;
 
 PREPARE formula_insert_log_01101110000000_call FROM
     'SELECT formula_insert_log_01101110000000 (?,?,?,?,?,?,?,?,?,?,?)';
+
+SELECT formula_insert_log_01101110000000 (
+               'scale minute to sec',
+               1,
+               1,
+               30,
+               173,
+               31,
+               1,
+               33,
+               '{w17}={w98}*60',
+               32,
+               '"second" = "minute" * 60');

@@ -8,7 +8,7 @@ CREATE PROCEDURE component_insert_log_011111111111111
      _field_id_description       smallint,
      _description                text,
      _field_id_component_type_id smallint,
-     _component_type_id          bigint,
+     _component_type_id          smallint,
      _field_id_code_id           smallint,
      _code_id                    text,
      _field_id_ui_msg_code_id    smallint,
@@ -22,13 +22,13 @@ CREATE PROCEDURE component_insert_log_011111111111111
      _field_id_formula_id        smallint,
      _formula_id                 bigint,
      _field_id_link_type_id      smallint,
-     _link_type_id               bigint,
+     _link_type_id               smallint,
      _field_id_excluded          smallint,
-     _excluded                   bigint,
+     _excluded                   smallint,
      _field_id_share_type_id     smallint,
-     _share_type_id              bigint,
+     _share_type_id              smallint,
      _field_id_protect_id        smallint,
-     _protect_id                 bigint)
+     _protect_id                 smallint)
 BEGIN
 
     INSERT INTO components ( component_name)
@@ -99,3 +99,34 @@ END;
 
 PREPARE component_insert_log_011111111111111_call FROM
     'SELECT component_insert_log_011111111111111 (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+
+SELECT component_insert_log_011111111111111 (
+               'Word',
+               1,
+               1,
+               51,
+               743,
+               52,
+               'simply show the word name',
+               53,
+               2,
+               63,
+               'form_title',
+               64,
+               'please_select',
+               143,
+               11,
+               146,
+               192,
+               147,
+               193,
+               145,
+               1,
+               144,
+               2,
+               73,
+               1,
+               148,
+               3,
+               149,
+               2);

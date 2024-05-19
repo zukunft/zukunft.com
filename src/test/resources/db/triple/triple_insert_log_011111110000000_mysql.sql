@@ -15,7 +15,7 @@ CREATE PROCEDURE triple_insert_log_011111110000000
      _field_id_description    smallint,
      _description             text,
      _field_id_phrase_type_id smallint,
-     _phrase_type_id          bigint)
+     _phrase_type_id          smallint)
 BEGIN
 
     INSERT INTO triples ( from_phrase_id, verb_id, to_phrase_id)
@@ -49,3 +49,21 @@ END;
 
 PREPARE triple_insert_log_011111110000000_call FROM
 'SELECT triple_insert_log_011111110000000 (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
+
+SELECT triple_insert_log_011111110000000
+        (2,
+         3,
+         1,
+         1,
+         1,
+         7,
+         'constant',
+         'constant',
+         'Mathematics',
+         18,
+         'Mathematical constant',
+         262,
+         68,
+         'A mathematical constant that never changes e.g. Pi',
+         69,
+         17);

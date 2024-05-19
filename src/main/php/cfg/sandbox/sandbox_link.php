@@ -805,37 +805,9 @@ class sandbox_link extends sandbox
 
         // for insert statements of user sandbox rows user id fields always needs to be included
         if ($usr_tbl and $is_insert) {
-            $lst->add_field(
-                $this::FLD_ID,
-                $this->id(),
-                db_object_seq_id::FLD_ID_SQLTYP
-            );
-            $lst->add_field(
-                user::FLD_ID,
-                $this->user_id(),
-                db_object_seq_id::FLD_ID_SQLTYP
-            );
+            $lst->add_id_and_user($this);
         } else {
-            if ($sbx->user_id() <> $this->user_id()) {
-                if ($do_log) {
-                    $lst->add_field(
-                        sql::FLD_LOG_FIELD_PREFIX . user::FLD_ID,
-                        $change_field_list->id($table_id . user::FLD_ID),
-                        change::FLD_FIELD_ID_SQLTYP
-                    );
-                }
-                if ($sbx->user_id() == 0) {
-                    $old_user_id = null;
-                } else {
-                    $old_user_id = $sbx->user_id();
-                }
-                $lst->add_field(
-                    user::FLD_ID,
-                    $this->user_id(),
-                    db_object_seq_id::FLD_ID_SQLTYP,
-                    $old_user_id
-                );
-            }
+            $lst->add_user($this, $sbx, $do_log, $table_id);
         }
         // the link type cannot be changed by the user, because this would be another link
         if (!$usr_tbl) {

@@ -2328,7 +2328,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return array list of all database field names that have been updated
      */
-    function db_fields_all(sql_type_list $sc_par_lst): array
+    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list([])): array
     {
         return array_merge(
             parent::db_fields_all($sc_par_lst),

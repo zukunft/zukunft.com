@@ -13,19 +13,19 @@ CREATE OR REPLACE FUNCTION formula_insert_log_01111111111111
      _field_id_resolved_text     smallint,
      _resolved_text              text,
      _field_id_all_values_needed smallint,
-     _all_values_needed          bigint,
+     _all_values_needed          smallint,
      _field_id_last_update       smallint,
-     _last_update                bigint,
+     _last_update                timestamp,
      _field_id_view_id           smallint,
      _view_id                    bigint,
      _field_id_usage             smallint,
      _usage                      bigint,
      _field_id_excluded          smallint,
-     _excluded                   bigint,
+     _excluded                   smallint,
      _field_id_share_type_id     smallint,
-     _share_type_id              bigint,
+     _share_type_id              smallint,
      _field_id_protect_id        smallint,
-     _protect_id                 bigint) RETURNS bigint AS
+     _protect_id                 smallint) RETURNS bigint AS
 $$
 DECLARE new_formula_id bigint;
 BEGIN
@@ -82,6 +82,35 @@ END
 $$ LANGUAGE plpgsql;
 
 PREPARE formula_insert_log_01111111111111_call
-        (text, bigint, smallint, smallint, smallint, smallint, text, smallint, bigint, smallint, text, smallint, text, smallint, bigint, smallint, bigint, smallint, bigint, smallint, bigint, smallint, bigint, smallint, bigint, smallint, bigint) AS
+        (text, bigint, smallint, smallint, smallint, smallint, text, smallint, bigint, smallint, text, smallint, text, smallint, smallint, smallint, timestamp, smallint, bigint, smallint, bigint, smallint, smallint, smallint, smallint, smallint, smallint) AS
     SELECT formula_insert_log_01111111111111
         ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27);
+
+SELECT formula_insert_log_01111111111111 (
+               'scale minute to sec'::text,
+               1::bigint,
+               1::smallint,
+               30::smallint,
+               173::smallint,
+               34::smallint,
+               'to convert times in minutes to seconds and the other way round'::text,
+               31::smallint,
+               1::bigint,
+               33::smallint,
+               '{w17}={w98}*60'::text,
+               32::smallint,
+               '"second" = "minute" * 60'::text,
+               35::smallint,
+               1::smallint,
+               116::smallint,
+               '2023-01-03T20:59:59+01:00'::timestamp,
+               655::smallint,
+               1::bigint,
+               656::smallint,
+               2::bigint,
+               71::smallint,
+               1::smallint,
+               117::smallint,
+               3::smallint,
+               118::smallint,
+               2::smallint);

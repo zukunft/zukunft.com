@@ -30,6 +30,9 @@ BEGIN
 
 END;
 
+PREPARE word_update_log_00111000000_user_call FROM
+    'SELECT word_update_log_00111000000_user (?,?,?,?,?,?,?,?,?,?,?,?)';
+
 SELECT word_update_log_00111000000_user
        (1,
         2,

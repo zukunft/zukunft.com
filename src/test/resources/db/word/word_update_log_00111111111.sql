@@ -28,7 +28,7 @@ CREATE OR REPLACE FUNCTION word_update_log_00111111111
      _share_type_id           smallint,
      _field_id_protect_id     smallint,
      _protect_id_old          smallint,
-     _protect_id              smallint) RETURNS bigint AS
+     _protect_id              smallint) RETURNS void AS
 $$
 BEGIN
 
@@ -65,6 +65,11 @@ BEGIN
 
 END
 $$ LANGUAGE plpgsql;
+
+PREPARE word_update_log_00111111111_call
+        (bigint,smallint,smallint,text,text,bigint,smallint,text,text,smallint,smallint,smallint,smallint,bigint,bigint,smallint,text,text,smallint,bigint,bigint,smallint,smallint,smallint,smallint,smallint,smallint,smallint,smallint,smallint) AS
+SELECT word_update_log_00111111111
+        ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30);
 
 SELECT word_update_log_00111111111
        (1::bigint,

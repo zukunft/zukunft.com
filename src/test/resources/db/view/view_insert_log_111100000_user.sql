@@ -25,3 +25,12 @@ PREPARE view_insert_log_111100000_user_call
         (bigint,smallint,smallint,text,bigint,smallint,text) AS
     SELECT view_insert_log_111100000_user
         ($1,$2,$3,$4,$5,$6,$7);
+
+SELECT view_insert_log_111100000_user (
+               1::bigint,
+               1::smallint,
+               42::smallint,
+               'Word'::text,
+               1::bigint,
+               43::smallint,
+               'the default view for words'::text);

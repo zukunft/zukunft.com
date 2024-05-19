@@ -1541,10 +1541,79 @@ class sandbox extends db_object_seq_id_user
     }
 
     /**
+     * save all updated fields with one sql function
+     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
+     * @param sandbox $db_rec the database record before the saving
+     * @param sandbox $std_rec the database record defined as standard because it is used by most users
+     * @return string if not empty the message that should be shown to the user
+     */
+    function save_fields_func(sql_db $db_con, sandbox $db_rec, sandbox $std_rec): string
+    {
+        $lib = new library();
+        $obj_name = $lib->class_to_name($this::class);
+        $sc = $db_con->sql_creator();
+        $sc_par_lst = new sql_type_list([sql_type::LOG]);
+        $all_fields = $this->db_fields_all();
+        // check the diff against standard
+        $usr_fvt_lst = $this->db_fields_changed($std_rec, $sc_par_lst);
+        $usr_msg = new user_message();
+        if (!$usr_fvt_lst->is_empty_except_user_action()) {
+            // if the user is owner of the standard ...
+            if ($this->user_id() == $std_rec->user_id()) {
+                // ... update the standard
+                $sc_par_lst->add(sql_type::UPDATE);
+                $qp = $this->sql_update_named($sc, $usr_fvt_lst, $all_fields, $sc_par_lst);
+                $usr_msg = $db_con->update($qp, 'update user ' . $obj_name);
+                // TODO maybe check of other user have used the object and if yes keep or inform
+            } else {
+                if (!$this->has_usr_cfg()) {
+                    $sc_par_lst->add(sql_type::INSERT);
+                    $sc_par_lst->add(sql_type::USER);
+                    $qp = $this->sql_insert_switch($sc, $usr_fvt_lst, $all_fields, $sc_par_lst);
+                    $usr_msg = $db_con->insert($qp, 'add user ' . $obj_name);
+                } else {
+                    $sc_par_lst->add(sql_type::UPDATE);
+                    $sc_par_lst->add(sql_type::USER);
+                    $qp = $this->sql_update_named($sc, $usr_fvt_lst, $all_fields, $sc_par_lst);
+                    $usr_msg = $db_con->update($qp, 'update user ' . $obj_name);
+                }
+            }
+        } else {
+            $fvt_lst = $this->db_fields_changed($db_rec, $sc_par_lst);
+            if (!$fvt_lst->is_empty_except_user_action()) {
+                $sc_par_lst->add(sql_type::UPDATE);
+                $qp = $this->sql_update_named($sc, $fvt_lst, $all_fields, $sc_par_lst);
+                $usr_msg = $db_con->update($qp, 'update ' . $obj_name);
+                if ($this->has_usr_cfg()) {
+                    $sc_par_lst->add(sql_type::USER);
+                    $qp = $this->sql_delete($sc, $sc_par_lst);
+                    $usr_msg = $db_con->delete($qp, 'del user ' . $obj_name);
+                }
+            }
+        }
+        $result = $usr_msg->get_last_message();
+        log_debug('all fields for ' . $this->dsp_id() . ' has been saved');
+        return $result;
+    }
+
+    /**
+     * dummy function to save all updated word fields, which is always overwritten by the child class
+     * @param sql_type_list $sc_par_lst only used for link objects
+     * @return array list of all database field names that have been updated
+     */
+    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list([])): array
+    {
+        log_err('function db_fields_all missing for class ' . $this::class);
+        return [];
+    }
+
+    /**
      * dummy function to save all updated word fields, which is always overwritten by the child class
      */
     function save_fields(sql_db $db_con, sandbox $db_rec, sandbox $std_rec): string
     {
+        // TODO activate
+        //log_err('function save_fields missing for class ' . $this::class);
         return '';
     }
 
@@ -1881,6 +1950,21 @@ class sandbox extends db_object_seq_id_user
         return '';
     }
 
+    /**
+     * dummy function that is supposed to be overwritten by the child classes for e.g. named or link objects
+     *
+     * updated the link object id fields (e.g. for a triple the two phrases and the verb)
+     * @param sql_db $db_con the active database connection
+     * @param sandbox $db_rec the database record before the saving
+     * @param sandbox $std_rec the database record defined as standard because it is used by most users
+     * @returns string either the id of the updated or created source or a message to the user with the reason, why it has failed
+     */
+    function save_id_fields_link(sql_db $db_con, sandbox $db_rec, sandbox $std_rec): string
+    {
+        log_warning($this->dsp_id());
+        return '';
+    }
+
 
     /*
      * similar
@@ -2196,7 +2280,12 @@ class sandbox extends db_object_seq_id_user
                     if ($result == '') {
                         // TODO activate when the prepared SQL is ready to use
                         //if (!$this->sql_write_prepared()) {
-                        $result .= $this->save_fields($db_con, $db_rec, $std_rec);
+                        if ($use_func) {
+                            //$result .= $this->save_fields_func($db_con, $db_rec, $std_rec);
+                            $result .= $this->save_fields($db_con, $db_rec, $std_rec);
+                        } else {
+                            $result .= $this->save_fields($db_con, $db_rec, $std_rec);
+                        }
                         //} else {
                         //    $result .= $this->save_all_fields($db_con, $db_rec, $std_rec)->get_last_message();
                         //}
@@ -2793,11 +2882,11 @@ class sandbox extends db_object_seq_id_user
         $qp->sql = $qp_func->sql . $sql . ';';
 
         // create the function call
-        $qp->call = ' ' . sql::SELECT . ' ' . $qp_func->name . ' (';
+        $qp->call_sql = ' ' . sql::SELECT . ' ' . $qp_func->name . ' (';
 
         $call_val_str = $fvt_lst_out->par_sql($sc);
 
-        $qp->call .= $call_val_str . ');';
+        $qp->call_sql .= $call_val_str . ');';
 
         return $qp;
     }
@@ -3172,20 +3261,40 @@ class sandbox extends db_object_seq_id_user
         $qp->par = $par_lst_out->values();
 
         // create the call sql statement
-        $qp->call_name = $qp_chg->name . '_call';
-        $qp->call = ' ' . sql::PREPARE . ' ' . $qp_chg->name . '_call';
+        return $this->sql_call($sc, $qp, $qp_chg->name, $par_lst_out);
+    }
+
+    /**
+     * create the call statement for insert and update sql functions
+     *
+     * @param sql $sc the sql creator object with the db type set
+     * @param sql_par $qp the query parameter with the name already set
+     * @param string $name the name of the function
+     * @param sql_par_field_list $par_lst_out the list of parameter used for the call
+     * @return sql_par with the call statement set
+     */
+    function sql_call(sql $sc, sql_par $qp, string $name, sql_par_field_list $par_lst_out): sql_par
+    {
+        // create the prepared call sql statement
+        $qp->call_name = $name . '_call';
+        $qp->call_sql = ' ' . sql::PREPARE . ' ' . $qp->call_name;
         if ($sc->db_type == sql_db::POSTGRES) {
-            $qp->call .= ' (' . $par_lst_out->par_types($sc) . ') ' . sql::AS . ' ';
+            $qp->call_sql .= ' (' . $par_lst_out->par_types($sc) . ') ' . sql::AS . ' ';
         } else {
-            $qp->call .= ' ' . sql::FROM . " '";
+            $qp->call_sql .= ' ' . sql::FROM . " '";
         }
-        $qp->call .= sql::SELECT . ' ' . $qp_chg->name;
-        $qp->call .= ' (' . $par_lst_out->par_vars($sc) . ')';
+        $qp->call_sql .= sql::SELECT . ' ' . $name;
+        $qp->call_sql .= ' (' . $par_lst_out->par_vars($sc) . ')';
         if ($sc->db_type == sql_db::POSTGRES) {
-            $qp->call .= ';';
+            $qp->call_sql .= ';';
         } else {
-            $qp->call .= "';";
+            $qp->call_sql .= "';";
         }
+
+        // create a sample call for testing
+        $qp->call = ' ' . sql::SELECT . ' ' . $name . ' (';
+        $call_val_str = $par_lst_out->par_sql($sc);
+        $qp->call .= $call_val_str . ');';
 
         return $qp;
     }
@@ -3244,6 +3353,7 @@ class sandbox extends db_object_seq_id_user
         if ($and_log) {
             // log functions must always use named parameters
             $sc_par_lst->add(sql_type::NAMED_PAR);
+            $sc_par_lst->add(sql_type::NO_ID_RETURN);
             $qp = $this->sql_update_named_and_log($sc, $qp, $fvt_lst, $fld_lst_all, $sc_par_lst);
         } else {
             if ($usr_tbl) {
@@ -3432,14 +3542,10 @@ class sandbox extends db_object_seq_id_user
 
         // merge all together and create the function
         $qp->sql = $qp_chg->sql . $sql . ';';
+        $qp->par = $par_lst_out->values();
 
-        $qp->call = ' ' . sql::SELECT . ' ' . $qp_chg->name . ' (';
-
-        $call_val_str = $par_lst_out->par_sql($sc);
-
-        $qp->call .= $call_val_str . ');';
-
-        return $qp;
+        // create the call sql statement
+        return $this->sql_call($sc, $qp, $qp_chg->name, $par_lst_out);
     }
 
     /**
@@ -3484,7 +3590,7 @@ class sandbox extends db_object_seq_id_user
      * @return sql_par_field_list with the field names of the object and any child object
      */
     function db_fields_changed(
-        sandbox_named $sbx,
+        sandbox       $sbx,
         sql_type_list $sc_par_lst = new sql_type_list([])
     ): sql_par_field_list
     {

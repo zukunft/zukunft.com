@@ -77,6 +77,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO move the time field of phrase groups to the group
     TODO check that all times include the time zone
     TODO unit test: create a unit test for all possible class functions next to review: formula expression
+    TODO check that all dummy function that are supposed to be overwritten by the child object create a error if overwrite is missing
     TODO api load: expose all load functions to the api (with security check!)
     TODO use always prepared queries based on the value_phrase_link_list_by_phrase_id.sql sample
     TODO fix error in upgrade process for MySQL

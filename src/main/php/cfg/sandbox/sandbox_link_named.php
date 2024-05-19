@@ -306,7 +306,7 @@ class sandbox_link_named extends sandbox_link
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return array list of all database field names that have been updated
      */
-    function db_fields_all(sql_type_list $sc_par_lst): array
+    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list([])): array
     {
         return array_merge(
             parent::db_all_fields_link($sc_par_lst),
@@ -336,41 +336,7 @@ class sandbox_link_named extends sandbox_link
 
         $lst = parent::db_fields_changed($sbx, $sc_par_lst);
         // for insert statements of user sandbox rows user id fields always needs to be included
-        if ($sbx->name() <> $this->name()) {
-            if ($do_log) {
-                $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . $this->name_field(),
-                    $change_field_list->id($table_id . $this->name_field()),
-                    change::FLD_FIELD_ID_SQLTYP
-                );
-            }
-            if ($sbx->name() == '') {
-                $old_name = null;
-            } else {
-                $old_name = $sbx->name();
-            }
-            $lst->add_field(
-                $this->name_field(),
-                $this->name(),
-                sandbox_named::FLD_NAME_SQLTYP,
-                $old_name
-            );
-        }
-        if ($sbx->description <> $this->description) {
-            if ($do_log) {
-                $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . sandbox_named::FLD_DESCRIPTION,
-                    $change_field_list->id($table_id . sandbox_named::FLD_DESCRIPTION),
-                    change::FLD_FIELD_ID_SQLTYP
-                );
-            }
-            $lst->add_field(
-                sandbox_named::FLD_DESCRIPTION,
-                $this->description,
-                sandbox_named::FLD_DESCRIPTION_SQLTYP,
-                $sbx->description
-            );
-        }
+        $lst->add_name_and_description($this, $sbx, $do_log, $table_id);
         return $lst;
     }
 

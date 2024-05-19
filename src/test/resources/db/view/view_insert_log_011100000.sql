@@ -37,3 +37,12 @@ PREPARE view_insert_log_011100000_call
     (text, bigint, smallint, smallint, smallint, smallint, text) AS
 SELECT view_insert_log_011100000
     ($1,$2, $3, $4, $5, $6, $7);
+
+SELECT view_insert_log_011100000 (
+               'Word'::text,
+               1::bigint,
+               1::smallint,
+               42::smallint,
+               278::smallint,
+               43::smallint,
+               'the default view for words'::text);

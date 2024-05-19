@@ -35,6 +35,7 @@ namespace cfg\component;
 
 use cfg\db\sql_db;
 use cfg\type_list;
+use cfg\type_object;
 
 include_once DB_PATH . 'sql_db.php';
 
@@ -42,5 +43,14 @@ global $component_link_types;
 
 class component_link_type_list extends type_list
 {
+
+    /**
+     * adding the view component position types used for unit tests to the dummy list
+     */
+    function load_dummy(): void {
+        parent::load_dummy();
+        $type = new type_object(component_link_type::EXPRESSION, component_link_type::EXPRESSION, '', 2);
+        $this->add($type);
+    }
 
 }

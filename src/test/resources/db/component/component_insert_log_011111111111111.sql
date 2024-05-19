@@ -7,7 +7,7 @@ CREATE OR REPLACE FUNCTION component_insert_log_011111111111111
      _field_id_description       smallint,
      _description                text,
      _field_id_component_type_id smallint,
-     _component_type_id          bigint,
+     _component_type_id          smallint,
      _field_id_code_id           smallint,
      _code_id                    text,
      _field_id_ui_msg_code_id    smallint,
@@ -21,13 +21,13 @@ CREATE OR REPLACE FUNCTION component_insert_log_011111111111111
      _field_id_formula_id        smallint,
      _formula_id                 bigint,
      _field_id_link_type_id      smallint,
-     _link_type_id               bigint,
+     _link_type_id               smallint,
      _field_id_excluded          smallint,
-     _excluded                   bigint,
+     _excluded                   smallint,
      _field_id_share_type_id     smallint,
-     _share_type_id              bigint,
+     _share_type_id              smallint,
      _field_id_protect_id        smallint,
-     _protect_id                 bigint) RETURNS bigint AS
+     _protect_id                 smallint) RETURNS bigint AS
 $$
 DECLARE new_component_id bigint;
 BEGIN
@@ -100,6 +100,37 @@ END
 $$ LANGUAGE plpgsql;
 
 PREPARE component_insert_log_011111111111111_call
-    (text, bigint, smallint, smallint, smallint, smallint, text, smallint, bigint, smallint, text, smallint, text, smallint, bigint, smallint, bigint, smallint, bigint, smallint, bigint, smallint, bigint, smallint, bigint, smallint, bigint, smallint, bigint) AS
+    (text, bigint, smallint, smallint, smallint, smallint, text, smallint, smallint, smallint, text, smallint, text, smallint, bigint, smallint, bigint, smallint, bigint, smallint, bigint, smallint, smallint, smallint, smallint, smallint, smallint, smallint, smallint) AS
 SELECT component_insert_log_011111111111111
     ($1,$2, $3, $4, $5, $6, $7, $8, $9, $10, $11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29);
+
+SELECT component_insert_log_011111111111111 (
+               'Word'::text,
+               1::bigint,
+               1::smallint,
+               51::smallint,
+               743::smallint,
+               52::smallint,
+               'simply show the word name'::text,
+               53::smallint,
+               2::smallint,
+               63::smallint,
+               'form_title'::text,
+               64::smallint,
+               'please_select'::text,
+               143::smallint,
+               11::bigint,
+               146::smallint,
+               192::bigint,
+               147::smallint,
+               193::bigint,
+               145::smallint,
+               1::bigint,
+               144::smallint,
+               2::smallint,
+               73::smallint,
+               1::smallint,
+               148::smallint,
+               3::smallint,
+               149::smallint,
+               2::smallint);

@@ -8,7 +8,7 @@ CREATE PROCEDURE component_insert_log_111110000000000_user
      _field_id_description       smallint,
      _description                text,
      _field_id_component_type_id smallint,
-     _component_type_id          bigint)
+     _component_type_id          smallint)
 BEGIN
 
     INSERT INTO changes ( user_id, change_action_id, change_field_id,    new_value, row_id)
@@ -26,3 +26,14 @@ END;
 
 PREPARE component_insert_log_111110000000000_user_call FROM
     'SELECT component_insert_log_111110000000000_user (?,?,?,?,?,?,?,?,?)';
+
+SELECT component_insert_log_111110000000000_user (
+               1,
+               1,
+               51,
+               'Word',
+               1,
+               52,
+               'simply show the word name',
+               53,
+               8);

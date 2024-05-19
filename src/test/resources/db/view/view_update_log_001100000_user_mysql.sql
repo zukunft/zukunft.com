@@ -24,6 +24,9 @@ BEGIN
 
 END;
 
+PREPARE view_update_log_001100000_user_call FROM
+    'SELECT view_update_log_001100000_user (?,?,?,?,?,?,?,?,?)';
+
 SELECT view_update_log_001100000_user
        (1,
         2,

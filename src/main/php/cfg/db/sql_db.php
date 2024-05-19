@@ -3701,7 +3701,7 @@ class sql_db
         $result = new user_message();
         $err_msg = 'Insert of ' . $description . ' failed.';
         try {
-            $sql_result = $this->exe($qp->sql, $qp->name, $qp->par, $qp->call, $qp->call_name);
+            $sql_result = $this->exe($qp->sql, $qp->name, $qp->par, $qp->call_sql, $qp->call_name);
             $db_id = 0;
             if ($this->db_type == sql_db::POSTGRES) {
                 $sql_error = pg_result_error($sql_result);
@@ -3743,7 +3743,7 @@ class sql_db
         $result = new user_message();
         $err_msg = 'Update of ' . $description . ' failed';
         try {
-            $sql_result = $this->exe($qp->sql, $qp->name, $qp->par);
+            $sql_result = $this->exe($qp->sql, $qp->name, $qp->par, $qp->call_sql, $qp->call_name);
             if ($this->db_type == sql_db::POSTGRES) {
                 $sql_error = pg_result_error($sql_result);
                 if ($sql_error != '') {

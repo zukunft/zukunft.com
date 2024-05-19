@@ -32,3 +32,12 @@ END;
 
 PREPARE view_insert_log_011100000_call FROM
     'SELECT view_insert_log_011100000 (?,?, ?, ?, ?, ?, ?)';
+
+SELECT view_insert_log_011100000 (
+               'Word',
+               1,
+               1,
+               42,
+               278,
+               43,
+               'the default view for words');

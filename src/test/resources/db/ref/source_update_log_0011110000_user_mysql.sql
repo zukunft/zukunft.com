@@ -40,6 +40,9 @@ BEGIN
 
 END;
 
+PREPARE source_update_log_0011110000_user_call FROM
+    'SELECT source_update_log_0011110000_user (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
+
 SELECT source_update_log_0011110000_user
        (1,
         2,

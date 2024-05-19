@@ -7,7 +7,7 @@ CREATE OR REPLACE FUNCTION source_insert_log_0111110000
      _field_id_description    smallint,
      _description             text,
      _field_id_source_type_id smallint,
-     _source_type_id          bigint,
+     _source_type_id          smallint,
      _field_id_url            smallint,
      _url                     text) RETURNS bigint AS
 $$
@@ -42,6 +42,19 @@ END
 $$ LANGUAGE plpgsql;
 
 PREPARE source_insert_log_0111110000_call
-        (text,bigint,smallint,smallint,smallint,smallint,text,smallint,bigint,smallint,text) AS
+        (text,bigint,smallint,smallint,smallint,smallint,text,smallint,smallint,smallint,text) AS
     SELECT source_insert_log_0111110000
         ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11);
+
+SELECT source_insert_log_0111110000 (
+               'The International System of Units'::text,
+               1::bigint,
+               1::smallint,
+               57::smallint,
+               56::smallint,
+               58::smallint,
+               'Bureau International des Poids et Mesures - The intergovernmental organization through which Member States act together on matters related to measurement science and measurement standards'::text,
+               59::smallint,
+               4::smallint,
+               60::smallint,
+               'https://www.bipm.org/documents/20126/41483022/SI-Brochure-9.pdf'::text);

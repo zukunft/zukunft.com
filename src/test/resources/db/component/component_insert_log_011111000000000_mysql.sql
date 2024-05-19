@@ -8,7 +8,7 @@ CREATE PROCEDURE component_insert_log_011111000000000
      _field_id_description       smallint,
      _description                text,
      _field_id_component_type_id smallint,
-     _component_type_id          bigint,
+     _component_type_id          smallint,
      _field_id_code_id           smallint,
      _code_id                    text)
 BEGIN
@@ -44,3 +44,16 @@ END;
 
 PREPARE component_insert_log_011111000000000_call FROM
     'SELECT component_insert_log_011111000000000 (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+
+SELECT component_insert_log_011111000000000 (
+               'form title',
+               1,
+               1,
+               51,
+               743,
+               52,
+               'show the language specific title of a add,change or delete form',
+               53,
+               17,
+               63,
+               'form_title');

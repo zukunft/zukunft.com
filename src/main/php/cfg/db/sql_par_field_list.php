@@ -32,7 +32,14 @@
 
 namespace cfg\db;
 
+use cfg\db_object_seq_id;
+use cfg\log\change;
+use cfg\sandbox;
+use cfg\sandbox_link_named;
+use cfg\sandbox_named;
+use cfg\user;
 use DateTime;
+use DateTimeInterface;
 use shared\library;
 
 class sql_par_field_list
@@ -116,6 +123,118 @@ class sql_par_field_list
         $this->add($fld);
     }
 
+    /**
+     * add the id and the user field to this list
+     * *
+     * @param sandbox $sbx the sandbox object that has been updated
+     * @return void
+     */
+    function add_id_and_user(sandbox $sbx): void
+    {
+        $this->add_field(
+            $sbx::FLD_ID,
+            $sbx->id(),
+            db_object_seq_id::FLD_ID_SQLTYP
+        );
+        $this->add_field(
+            user::FLD_ID,
+            $sbx->user_id(),
+            db_object_seq_id::FLD_ID_SQLTYP
+        );
+
+    }
+
+    /**
+     * add the user field to this list
+     *
+     * @param sandbox $sbx_upd the updated fields of the user sandbox object should be saved
+     * @param sandbox $sbx_db the same user sandbox object as $sbx_upd but with the values in the db before the update
+     * @param bool $do_log true if the field for logging the change should be included
+     * @param int $table_id the id of the table for logging
+     * @return void
+     */
+    function add_user(sandbox $sbx_upd, sandbox $sbx_db, bool $do_log, int $table_id): void
+    {
+        global $change_field_list;
+
+        if ($sbx_db->user_id() <> $sbx_upd->user_id()) {
+            if ($do_log) {
+                $this->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . user::FLD_ID,
+                    $change_field_list->id($table_id . user::FLD_ID),
+                    change::FLD_FIELD_ID_SQLTYP
+                );
+            }
+            if ($sbx_db->user_id() == 0) {
+                $old_user_id = null;
+            } else {
+                $old_user_id = $sbx_db->user_id();
+            }
+            $this->add_field(
+                user::FLD_ID,
+                $sbx_upd->user_id(),
+                db_object_seq_id::FLD_ID_SQLTYP,
+                $old_user_id
+            );
+        }
+
+    }
+
+    /**
+     * add the name and description field to this list
+     *
+     * @param sandbox_named|sandbox_link_named $sbx_upd the updated fields of the user sandbox object should be saved
+     * @param sandbox_named|sandbox_link_named $sbx_db the same user sandbox object as $sbx_upd but with the values in the db before the update
+     * @param bool $do_log true if the field for logging the change should be included
+     * @param int $table_id the id of the table for logging
+     * @return void
+     */
+    function add_name_and_description(
+        sandbox_named|sandbox_link_named $sbx_upd,
+        sandbox_named|sandbox_link_named $sbx_db,
+        bool $do_log,
+        int $table_id
+    ): void
+    {
+        global $change_field_list;
+
+        if ($sbx_db->name() <> $sbx_upd->name()) {
+            if ($do_log) {
+                $this->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . $sbx_upd->name_field(),
+                    $change_field_list->id($table_id . $sbx_upd->name_field()),
+                    change::FLD_FIELD_ID_SQLTYP
+                );
+            }
+            if ($sbx_db->name() == '') {
+                $old_name = null;
+            } else {
+                $old_name = $sbx_db->name();
+            }
+            $this->add_field(
+                $sbx_upd->name_field(),
+                $sbx_upd->name(),
+                sandbox_named::FLD_NAME_SQLTYP,
+                $old_name
+            );
+        }
+        if ($sbx_db->description <> $sbx_upd->description) {
+            if ($do_log) {
+                $this->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . sandbox_named::FLD_DESCRIPTION,
+                    $change_field_list->id($table_id . sandbox_named::FLD_DESCRIPTION),
+                    change::FLD_FIELD_ID_SQLTYP
+                );
+            }
+            $this->add_field(
+                sandbox_named::FLD_DESCRIPTION,
+                $sbx_upd->description,
+                sandbox_named::FLD_DESCRIPTION_SQLTYP,
+                $sbx_db->description
+            );
+        }
+    }
+
     function del(string $fld_name): void
     {
         $result = [];
@@ -153,6 +272,19 @@ class sql_par_field_list
     function is_empty(): bool
     {
         if (count($this->lst) == 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @return bool true if the list contains only the user and the action which means that there is no need for a database update
+     */
+    function is_empty_except_user_action(): bool
+    {
+        $names = array_diff($this->names(), [sql::FLD_LOG_FIELD_PREFIX . user::FLD_ID, user::FLD_ID]);
+        if (count($names) == 0) {
             return true;
         } else {
             return false;
@@ -297,6 +429,8 @@ class sql_par_field_list
                 if ($par_typ == sql_par_type::TEXT or $par_typ == sql_field_type::TEXT
                     or $par_typ == sql_field_type::NAME) {
                     $sql .= "'" . $fld->value . "'";
+                } elseif ($fld->value instanceof DateTime) {
+                    $sql .= "'" . $fld->value->format(DateTimeInterface::ATOM) . "'";
                 } else {
                     $sql .= $fld->value;
                 }

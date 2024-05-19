@@ -30,6 +30,9 @@ BEGIN
 
 END;
 
+PREPARE triple_update_log_0011100000000_user_call FROM
+    'SELECT triple_update_log_0011100000000_user (?,?,?,?,?,?,?,?,?,?,?,?)';
+
 SELECT triple_update_log_0011100000000_user
        (1,
         2,

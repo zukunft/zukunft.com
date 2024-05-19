@@ -44,11 +44,12 @@ use shared\library;
  */
 class sql_par
 {
-    public string $sql;     // the SQL statement to create a prepared query
-    public string $name;    // the unique name of the SQL statement
-    public array $par;      // the list of the parameters used for the execution
-    public string $call;    // the sql call for function sql statements
-    public string $call_name;// the sql call name
+    public string $sql;       // the SQL statement to create a prepared query or function
+    public string $name;      // the unique name of the SQL statement
+    public array $par;        // the list of the parameters used for this execution
+    public string $call_sql;  // the sql call for function sql statements
+    public string $call_name; // the sql call name
+    public string $call;      // sample call for testing only
     public array $par_name_lst; // the list of the parameters names to reuse already added parameters
     public sql_par_field $par_fld; //
     public sql_par_field_list $par_fld_lst; //
@@ -106,8 +107,9 @@ class sql_par
         $this->par = array();
         $this->ext = $ext;
         $this->typ = $tbl_typ;
-        $this->call = '';
+        $this->call_sql = '';
         $this->call_name = '';
+        $this->call = '';
     }
 
     /**

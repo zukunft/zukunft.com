@@ -10,7 +10,7 @@ CREATE OR REPLACE FUNCTION component_update_log_001110000000000_user
      _description                text,
      _field_id_component_type_id smallint,
      _component_type_id_old      smallint,
-     _component_type_id          smallint) RETURNS bigint AS
+     _component_type_id          smallint) RETURNS void AS
 $$
 BEGIN
 
@@ -30,6 +30,11 @@ BEGIN
 
 END
 $$ LANGUAGE plpgsql;
+
+PREPARE component_update_log_001110000000000_user_call
+        (bigint,smallint,smallint,text,text,bigint,smallint,text,text,smallint,smallint,smallint) AS
+SELECT component_update_log_001110000000000_user
+        ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12);
 
 SELECT component_update_log_001110000000000_user
        (1::bigint,

@@ -8,7 +8,7 @@ CREATE PROCEDURE word_insert_log_01111000000
      _field_id_description    smallint,
      _description             text,
      _field_id_phrase_type_id smallint,
-     _phrase_type_id          bigint)
+     _phrase_type_id          smallint)
 BEGIN
 
     INSERT INTO words ( word_name)
@@ -38,3 +38,14 @@ END;
 
 PREPARE word_insert_log_01111000000_call FROM
     'SELECT word_insert_log_01111000000 (?,?, ?, ?, ?, ?, ?, ?, ?)';
+
+SELECT word_insert_log_01111000000
+    ('Mathematics',
+     1,
+     1,
+     10,
+     9,
+     11,
+     'Mathematics is an area of knowledge that includes the topics of numbers and formulas',
+     12,
+     1);

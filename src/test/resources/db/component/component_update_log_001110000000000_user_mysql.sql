@@ -30,6 +30,9 @@ BEGIN
 
 END;
 
+PREPARE component_update_log_001110000000000_user_call FROM
+    'SELECT component_update_log_001110000000000_user (?,?,?,?,?,?,?,?,?,?,?,?)';
+
 SELECT component_update_log_001110000000000_user
        (1,
         2,

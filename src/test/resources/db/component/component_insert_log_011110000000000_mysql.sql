@@ -8,7 +8,7 @@ CREATE PROCEDURE component_insert_log_011110000000000
      _field_id_description       smallint,
      _description                text,
      _field_id_component_type_id smallint,
-     _component_type_id          bigint)
+     _component_type_id          smallint)
 BEGIN
 
     INSERT INTO components ( component_name)
@@ -38,3 +38,14 @@ END;
 
 PREPARE component_insert_log_011110000000000_call FROM
     'SELECT component_insert_log_011110000000000 (?,?, ?, ?, ?, ?, ?, ?, ?)';
+
+SELECT component_insert_log_011110000000000 (
+               'Word',
+               1,
+               1,
+               51,
+               743,
+               52,
+               'simply show the word name',
+               53,
+               8);

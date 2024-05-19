@@ -14,7 +14,7 @@ CREATE OR REPLACE FUNCTION triple_insert_log_011111110000000
      _field_id_description    smallint,
      _description             text,
      _field_id_phrase_type_id smallint,
-     _phrase_type_id          bigint) RETURNS bigint AS
+     _phrase_type_id          smallint) RETURNS bigint AS
 $$
 DECLARE new_triple_id bigint;
 BEGIN
@@ -51,6 +51,24 @@ END
 $$ LANGUAGE plpgsql;
 
 PREPARE triple_insert_log_011111110000000_call
-    (bigint, smallint, bigint, bigint, smallint, smallint, text, text, text, smallint, text, smallint, smallint, text, smallint, bigint) AS
+        (bigint, smallint, bigint, bigint, smallint, smallint, text, text, text, smallint, text, smallint, smallint, text, smallint, smallint) AS
 SELECT triple_insert_log_011111110000000
-($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16);
+        ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16);
+
+SELECT triple_insert_log_011111110000000
+        (2::bigint,
+         3::smallint,
+         1::bigint,
+         1::bigint,
+         1::smallint,
+         7::smallint,
+         'constant'::text,
+         'constant'::text,
+         'Mathematics'::text,
+         18::smallint,
+         'Mathematical constant'::text,
+         262::smallint,
+         68::smallint,
+         'A mathematical constant that never changes e.g. Pi'::text,
+         69::smallint,
+         17::smallint);

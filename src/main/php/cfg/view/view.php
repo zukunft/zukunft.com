@@ -1025,9 +1025,10 @@ class view extends sandbox_typed
      * excluding the internal fields e.g. the database id
      * field list must be corresponding to the db_fields_changed fields
      *
+     * @param sql_type_list $sc_par_lst only used for link objects
      * @return array list of all database field names that have been updated
      */
-    function db_fields_all(): array
+    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list([])): array
     {
         return array_merge(
             parent::db_fields_all(),

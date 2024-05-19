@@ -7,7 +7,7 @@ CREATE OR REPLACE FUNCTION component_insert_log_011110000000000
      _field_id_description       smallint,
      _description                text,
      _field_id_component_type_id smallint,
-     _component_type_id          bigint) RETURNS bigint AS
+     _component_type_id          smallint) RETURNS bigint AS
 $$
 DECLARE new_component_id bigint;
 BEGIN
@@ -40,6 +40,17 @@ END
 $$ LANGUAGE plpgsql;
 
 PREPARE component_insert_log_011110000000000_call
-    (text, bigint, smallint, smallint, smallint, smallint, text, smallint, bigint) AS
+    (text, bigint, smallint, smallint, smallint, smallint, text, smallint, smallint) AS
 SELECT component_insert_log_011110000000000
     ($1,$2, $3, $4, $5, $6, $7, $8, $9);
+
+SELECT component_insert_log_011110000000000 (
+               'Word'::text,
+               1::bigint,
+               1::smallint,
+               51::smallint,
+               743::smallint,
+               52::smallint,
+               'simply show the word name'::text,
+               53::smallint,
+               8::smallint);

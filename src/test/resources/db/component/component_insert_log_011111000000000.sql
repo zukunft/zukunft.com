@@ -7,7 +7,7 @@ CREATE OR REPLACE FUNCTION component_insert_log_011111000000000
      _field_id_description       smallint,
      _description                text,
      _field_id_component_type_id smallint,
-     _component_type_id          bigint,
+     _component_type_id          smallint,
      _field_id_code_id           smallint,
      _code_id                    text) RETURNS bigint AS
 $$
@@ -46,6 +46,19 @@ END
 $$ LANGUAGE plpgsql;
 
 PREPARE component_insert_log_011111000000000_call
-    (text, bigint, smallint, smallint, smallint, smallint, text, smallint, bigint, smallint, text) AS
+    (text, bigint, smallint, smallint, smallint, smallint, text, smallint, smallint, smallint, text) AS
 SELECT component_insert_log_011111000000000
     ($1,$2, $3, $4, $5, $6, $7, $8, $9, $10, $11);
+
+SELECT component_insert_log_011111000000000 (
+               'form title'::text,
+               1::bigint,
+               1::smallint,
+               51::smallint,
+               743::smallint,
+               52::smallint,
+               'show the language specific title of a add,change or delete form'::text,
+               53::smallint,
+               17::smallint,
+               63::smallint,
+               'form_title'::text);

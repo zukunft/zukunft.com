@@ -29,6 +29,9 @@ BEGIN
 
 END;
 
+PREPARE word_update_log_00111000000_call FROM
+    'SELECT word_update_log_00111000000 (?,?,?,?,?,?,?,?,?,?,?,?)';
+
 SELECT word_update_log_00111000000
        (1,
         2,

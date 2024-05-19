@@ -96,7 +96,9 @@ class sql
     const INTO = 'INTO';
     const FUNCTION_END = 'END $$ LANGUAGE plpgsql';
     const FUNCTION_END_MYSQL = 'END';
-    const FUNCTION_NO_RETURN = 'RETURNS bigint AS';
+    const FUNCTION_RETURN_INT = 'RETURNS bigint AS';
+    const FUNCTION_RETURN_INT_MYSQL = '';
+    const FUNCTION_NO_RETURN = 'RETURNS void AS';
     const FUNCTION_NO_RETURN_MYSQL = '';
     const RETURNING = 'RETURNING';
     const RETURN = 'RETURN';
@@ -1129,20 +1131,20 @@ class sql
                             if ($this->db_type == sql_db::MYSQL
                                 and !$usr_tbl
                                 and $insert_part) {
-                                if ($par != '')  {
+                                if ($par != '') {
                                     $fld_name = sql::PAR_PREFIX_MYSQL . $par;
                                 } else {
                                     $fld_name = sql::PAR_PREFIX_MYSQL . $chg_row_fld;
                                 }
                             } else {
-                                if ($par != '')  {
+                                if ($par != '') {
                                     $fld_name = $par;
                                 } else {
                                     $fld_name = $chg_row_fld;
                                 }
                             }
                         } else {
-                            if ($par != '')  {
+                            if ($par != '') {
                                 $fld_name = $par;
                             } else {
                                 $fld_name = sql::PAR_PREFIX . $fld_name;
@@ -1300,7 +1302,7 @@ class sql
             $this->sub_query = true;
         }
         if ($sc_par_lst->and_log()) {
-            $sql = $this->prepare_this_sql(self::FUNCTION);
+            $sql = $this->prepare_this_sql(self::FUNCTION, $sc_par_lst);
         } else {
             if ($sc_par_lst->is_update_part()) {
                 $sql = sql::UPDATE;
@@ -1433,12 +1435,12 @@ class sql
             $par_lst_out->add_field(
                 $fld,
                 $fvt_lst->get_value($fld),
-                $this->get_sql_par_type($fvt_lst->get_value($fld)));
+                $fvt_lst->get_type($fld));
             if ($usr_tbl) {
                 $par_lst_out->add_field(
                     $id_field,
                     $fvt_lst->get_value($id_field),
-                    $this->get_sql_par_type($fvt_lst->get_value($id_field)));
+                    $fvt_lst->get_type($id_field));
             }
         }
 
@@ -2822,11 +2824,21 @@ class sql
                 $par_string = '(' . $fvt_lst->par_names($this) . ')';
                 if ($this->db_type == sql_db::POSTGRES) {
                     $sql = sql::CREATE . ' ' . sql::FUNCTION . ' ' . $this->query_name . ' '
-                        . $par_string . ' ' . sql::FUNCTION_NO_RETURN . ' ';
+                        . $par_string . ' ';
+                    if ($sc_par_lst->no_id_return()) {
+                        $sql .= sql::FUNCTION_NO_RETURN;
+                    } else {
+                        $sql .= sql::FUNCTION_RETURN_INT . ' ';
+                    }
                 } else {
                     $sql = sql::DROP_MYSQL . ' ' . $this->query_name . '; ';
                     $sql .= sql::FUNCTION_MYSQL . ' ' . $this->query_name . ' '
-                        . $par_string . ' ' . sql::FUNCTION_NO_RETURN_MYSQL . ' ';
+                        . $par_string;
+                    if ($sc_par_lst->no_id_return()) {
+                        $sql .= sql::FUNCTION_NO_RETURN_MYSQL;
+                    } else {
+                        $sql .= sql::FUNCTION_RETURN_INT_MYSQL . ' ';
+                    }
                 }
             } else {
                 log_err('SQL statement creation not yet defined for SQL ' . $sc_par_lst->dsp_id());
@@ -2853,7 +2865,12 @@ class sql
                             if ($sql_statement_type == sql::FUNCTION) {
                                 $par_string = '(' . $this->par_named_types($par_types) . ')';
                                 $sql = sql::CREATE . ' ' . sql::FUNCTION . ' ' . $this->query_name . ' '
-                                    . $par_string . ' ' . sql::FUNCTION_NO_RETURN;
+                                    . $par_string . ' ';
+                                if ($sc_par_lst->no_id_return()) {
+                                    $sql .= sql::FUNCTION_NO_RETURN;
+                                } else {
+                                    $sql .= sql::FUNCTION_RETURN_INT;
+                                }
                             } else {
                                 $par_string = '(' . implode(', ', $par_types) . ')';
                                 $sql = sql::PREPARE . ' ' . $this->query_name . ' '
@@ -2869,7 +2886,12 @@ class sql
                                 $par_string = '(' . $this->par_named_types($par_types) . ')';
                                 $sql = sql::DROP_MYSQL . ' ' . $this->query_name . '; ';
                                 $sql .= sql::FUNCTION_MYSQL . ' ' . $this->query_name . ' '
-                                    . $par_string . ' ' . sql::FUNCTION_NO_RETURN_MYSQL;
+                                    . $par_string . ' ';
+                                if ($sc_par_lst->no_id_return()) {
+                                    $sql .= sql::FUNCTION_NO_RETURN_MYSQL;
+                                } else {
+                                    $sql .= sql::FUNCTION_RETURN_INT_MYSQL;
+                                }
                                 $this->end = ' ';
                             } else {
                                 $sql = sql::PREPARE . ' ' . $this->query_name . " FROM '" . $sql_statement_type;

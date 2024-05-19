@@ -1780,6 +1780,60 @@ class word extends sandbox_typed
         return $result;
     }
 
+    /**
+     * save all updated word fields with one sql function
+     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
+     * @param word|sandbox $db_rec the database record before the saving
+     * @param word|sandbox $std_rec the database record defined as standard because it is used by most users
+     * @return string if not empty the message that should be shown to the user
+     */
+    function save_fields_func(sql_db $db_con, word|sandbox $db_rec, word|sandbox $std_rec): string
+    {
+        $sc = $db_con->sql_creator();
+        $sc_par_lst = new sql_type_list([sql_type::LOG]);
+        $all_fields = $this->db_fields_all();
+        // check the diff against standard
+        $usr_fvt_lst = $this->db_fields_changed($std_rec, $sc_par_lst);
+        $usr_msg = new user_message();
+        if (!$usr_fvt_lst->is_empty_except_user_action()) {
+            // if the user is owner of the standard ...
+            if ($this->user_id() == $std_rec->user_id()) {
+                // ... update the standard
+                $sc_par_lst->add(sql_type::UPDATE);
+                $qp = parent::sql_update_named($sc, $usr_fvt_lst, $all_fields, $sc_par_lst);
+                $usr_msg = $db_con->update($qp, 'update user word');
+                // TODO maybe check of other user have used the object and if yes keep or inform
+            } else {
+                if (!$this->has_usr_cfg()) {
+                    $sc_par_lst->add(sql_type::INSERT);
+                    $sc_par_lst->add(sql_type::USER);
+                    $qp = parent::sql_insert_switch($sc, $usr_fvt_lst, $all_fields, $sc_par_lst);
+                    $usr_msg = $db_con->insert($qp, 'add user word');
+                } else {
+                    $sc_par_lst->add(sql_type::UPDATE);
+                    $sc_par_lst->add(sql_type::USER);
+                    $qp = parent::sql_update_named($sc, $usr_fvt_lst, $all_fields, $sc_par_lst);
+                    $usr_msg = $db_con->update($qp, 'update user word');
+                }
+            }
+        } else {
+            $fvt_lst = $this->db_fields_changed($db_rec, $sc_par_lst);
+            if (!$fvt_lst->is_empty_except_user_action()) {
+                $sc_par_lst->add(sql_type::UPDATE);
+                $qp = parent::sql_update_named($sc, $fvt_lst, $all_fields, $sc_par_lst);
+                $usr_msg = $db_con->update($qp, 'update word');
+                if ($this->has_usr_cfg()) {
+                    $sc_par_lst->add(sql_type::USER);
+                    $qp = parent::sql_delete($sc, $sc_par_lst);
+                    $usr_msg = $db_con->delete($qp, 'del user word');
+                }
+            }
+        }
+        $result = $usr_msg->get_last_message();
+        log_debug('all fields for ' . $this->dsp_id() . ' has been saved');
+        return $result;
+    }
+
 
     /*
      * del
@@ -1837,7 +1891,7 @@ class word extends sandbox_typed
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_insert(
-        sql $sc,
+        sql           $sc,
         sql_type_list $sc_par_lst = new sql_type_list([])
     ): sql_par
     {
@@ -1881,9 +1935,10 @@ class word extends sandbox_typed
      * excluding the internal fields e.g. the database id
      * field list must be corresponding to the db_fields_changed fields
      *
+     * @param sql_type_list $sc_par_lst only used for link objects
      * @return array list of all database field names that have been updated
      */
-    function db_fields_all(): array
+    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list([])): array
     {
         return array_merge(
             parent::db_fields_all(),
@@ -1903,7 +1958,7 @@ class word extends sandbox_typed
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
-        sandbox|word $sbx,
+        sandbox|word  $sbx,
         sql_type_list $sc_par_lst = new sql_type_list([])
     ): sql_par_field_list
     {

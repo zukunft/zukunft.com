@@ -1728,7 +1728,7 @@ class test_base
         $expected_sql = $this->assert_sql_expected($qp->name, $dialect);
         $result = $this->assert_sql(
             $this->name . 'sql creation of ' . $qp->name . '_' . $dialect . ' to ' . $test_name,
-            $qp->sql . $qp->call,
+            $qp->sql . $qp->call_sql . ' ' . $qp->call,
             $expected_sql
         );
 

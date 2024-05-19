@@ -14,19 +14,19 @@ CREATE PROCEDURE formula_insert_log_01111111111111
  _field_id_resolved_text     smallint,
  _resolved_text              text,
  _field_id_all_values_needed smallint,
- _all_values_needed          bigint,
+ _all_values_needed          smallint,
  _field_id_last_update       smallint,
- _last_update                bigint,
+ _last_update                timestamp,
  _field_id_view_id           smallint,
  _view_id                    bigint,
  _field_id_usage             smallint,
  _usage                      bigint,
  _field_id_excluded          smallint,
- _excluded                   bigint,
+ _excluded                   smallint,
  _field_id_share_type_id     smallint,
- _share_type_id              bigint,
+ _share_type_id              smallint,
  _field_id_protect_id        smallint,
- _protect_id                 bigint)
+ _protect_id                 smallint)
 BEGIN
 
     INSERT INTO formulas ( formula_name)
@@ -80,3 +80,32 @@ END;
 
 PREPARE formula_insert_log_01111111111111_call FROM
     'SELECT formula_insert_log_01111111111111 (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
+
+SELECT formula_insert_log_01111111111111 (
+               'scale minute to sec',
+               1,
+               1,
+               30,
+               173,
+               34,
+               'to convert times in minutes to seconds and the other way round',
+               31,
+               1,
+               33,
+               '{w17}={w98}*60',
+               32,
+               '"second" = "minute" * 60',
+               35,
+               1,
+               116,
+               '2023-01-03T20:59:59+01:00',
+               655,
+               1,
+               656,
+               2,
+               71,
+               1,
+               117,
+               3,
+               118,
+               2);

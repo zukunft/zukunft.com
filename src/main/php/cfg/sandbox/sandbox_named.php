@@ -998,9 +998,10 @@ class sandbox_named extends sandbox
      * excluding the internal fields e.g. the database id
      * field list must be corresponding to the db_fields_changed fields
      *
+     * @param sql_type_list $sc_par_lst only used for link objects
      * @return array list of all database field names that have been updated
      */
-    function db_fields_all(): array
+    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list([])): array
     {
         return [
             $this::FLD_ID,
@@ -1014,17 +1015,15 @@ class sandbox_named extends sandbox
      * get a list of database field names, values and types that have been updated
      * of the object to combine the list with the list of the child object e.g. word
      *
-     * @param sandbox_named $sbx the same named sandbox as this to compare which fields have been changed
+     * @param sandbox $sbx the same named sandbox as this to compare which fields have been changed
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list with the field names of the object and any child object
      */
     function db_fields_changed(
-        sandbox_named $sbx,
+        sandbox       $sbx,
         sql_type_list $sc_par_lst = new sql_type_list([])
     ): sql_par_field_list
     {
-        global $change_field_list;
-
         $lst = new sql_par_field_list();
         $sc = new sql();
         $usr_tbl = $sc_par_lst->is_usr_tbl();
@@ -1034,73 +1033,11 @@ class sandbox_named extends sandbox
 
         // for insert statements of user sandbox rows user id fields always needs to be included
         if ($usr_tbl and $is_insert) {
-            $lst->add_field(
-                $this::FLD_ID,
-                $this->id(),
-                db_object_seq_id::FLD_ID_SQLTYP
-            );
-            $lst->add_field(
-                user::FLD_ID,
-                $this->user_id(),
-                db_object_seq_id::FLD_ID_SQLTYP
-            );
+            $lst->add_id_and_user($this);
         } else {
-            if ($sbx->user_id() <> $this->user_id()) {
-                if ($do_log) {
-                    $lst->add_field(
-                        sql::FLD_LOG_FIELD_PREFIX . user::FLD_ID,
-                        $change_field_list->id($table_id . user::FLD_ID),
-                        change::FLD_FIELD_ID_SQLTYP
-                    );
-                }
-                if ($sbx->user_id() == 0) {
-                    $old_user_id = null;
-                } else {
-                    $old_user_id = $sbx->user_id();
-                }
-                $lst->add_field(
-                    user::FLD_ID,
-                    $this->user_id(),
-                    db_object_seq_id::FLD_ID_SQLTYP,
-                    $old_user_id
-                );
-            }
+            $lst->add_user($this, $sbx, $do_log, $table_id);
         }
-        if ($sbx->name() <> $this->name()) {
-            if ($do_log) {
-                $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . $this->name_field(),
-                    $change_field_list->id($table_id . $this->name_field()),
-                    change::FLD_FIELD_ID_SQLTYP
-                );
-            }
-            if ($sbx->name() == '') {
-                $old_name = null;
-            } else {
-                $old_name = $sbx->name();
-            }
-            $lst->add_field(
-                $this->name_field(),
-                $this->name(),
-                sandbox_named::FLD_NAME_SQLTYP,
-                $old_name
-            );
-        }
-        if ($sbx->description <> $this->description) {
-            if ($do_log) {
-                $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . sandbox_named::FLD_DESCRIPTION,
-                    $change_field_list->id($table_id . sandbox_named::FLD_DESCRIPTION),
-                    change::FLD_FIELD_ID_SQLTYP
-                );
-            }
-            $lst->add_field(
-                sandbox_named::FLD_DESCRIPTION,
-                $this->description(),
-                sandbox_named::FLD_DESCRIPTION_SQLTYP,
-                $sbx->description
-            );
-        }
+        $lst->add_name_and_description($this, $sbx, $do_log, $table_id);
         return $lst;
     }
 

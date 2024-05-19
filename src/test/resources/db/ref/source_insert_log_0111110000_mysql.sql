@@ -8,7 +8,7 @@ CREATE PROCEDURE source_insert_log_0111110000
      _field_id_description    smallint,
      _description             text,
      _field_id_source_type_id smallint,
-     _source_type_id          bigint,
+     _source_type_id          smallint,
      _field_id_url            smallint,
      _url                     text)
 BEGIN
@@ -44,3 +44,16 @@ END;
 
 PREPARE source_insert_log_0111110000_call FROM
     'SELECT source_insert_log_0111110000 (?,?,?,?,?,?,?,?,?,?,?)';
+
+SELECT source_insert_log_0111110000 (
+               'The International System of Units',
+               1,
+               1,
+               57,
+               56,
+               58,
+               'Bureau International des Poids et Mesures - The intergovernmental organization through which Member States act together on matters related to measurement science and measurement standards',
+               59,
+               4,
+               60,
+               'https://www.bipm.org/documents/20126/41483022/SI-Brochure-9.pdf');

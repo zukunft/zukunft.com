@@ -18,3 +18,10 @@ END;
 
 PREPARE formula_insert_log_11100000000000_user_call FROM
     'SELECT formula_insert_log_11100000000000_user (?,?,?,?,?)';
+
+SELECT formula_insert_log_11100000000000_user (
+               1,
+               1,
+               30,
+               '"one" = "millions" * 1000000',
+               1);
